@@ -86,7 +86,7 @@ describe("useConfigurableProduct", () => {
       expect(mocks.getConfigurationItems).not.toHaveBeenCalled();
       expect(composable.configuration.value).toEqual(mockConfiguration.configurationSections);
       expect(composable.selectedConfiguration.value).toEqual({
-        "Section 1": {
+        section_1: {
           productId: "product-1",
           quantity: 1,
           selectedOptionTextValue: "Product 1",
@@ -105,19 +105,19 @@ describe("useConfigurableProduct", () => {
       await composable.fetchProductConfiguration();
 
       composable.selectSectionValue({
-        sectionId: "Section 2",
+        sectionId: "section_2",
         option: { productId: "product-3", quantity: 1 },
         type: CartConfigurationItemEnumType.Product,
         customText: undefined,
       });
 
       expect(composable.selectedConfiguration.value).toEqual({
-        "Section 1": {
+        section_1: {
           productId: "product-1",
           quantity: 1,
           selectedOptionTextValue: "Product 1",
         },
-        "Section 2": {
+        section_2: {
           productId: "product-3",
           quantity: 1,
           selectedOptionTextValue: "Product 3",
@@ -138,7 +138,7 @@ describe("useConfigurableProduct", () => {
       await flushPromises();
 
       composable.selectSectionValue({
-        sectionId: "Section 1",
+        sectionId: "section_1",
         option: { productId: "product-2", quantity: 1 },
         type: CartConfigurationItemEnumType.Product,
         customText: undefined,
@@ -162,7 +162,7 @@ describe("useConfigurableProduct", () => {
           configurableProductId,
           configurationSections: [
             {
-              sectionId: "Section 1",
+              sectionId: "section_1",
               option: { productId: "product-2", quantity: 1 },
               type: CartConfigurationItemEnumType.Product,
             },
@@ -185,7 +185,7 @@ describe("useConfigurableProduct", () => {
         return Promise.resolve({});
       });
       composable.selectSectionValue({
-        sectionId: "Section 1",
+        sectionId: "section_1",
         option: { productId: "product-1", quantity: 1 },
         type: CartConfigurationItemEnumType.Product,
         customText: undefined,
@@ -204,7 +204,7 @@ describe("useConfigurableProduct", () => {
       vi.advanceTimersByTime(TIMER_DELAY);
 
       composable.selectSectionValue({
-        sectionId: "Section 1",
+        sectionId: "section_1",
         option: { productId: "product-1", quantity: 1 },
         type: CartConfigurationItemEnumType.Product,
         customText: undefined,
@@ -217,9 +217,43 @@ describe("useConfigurableProduct", () => {
 
   describe("text type configuration", () => {
     beforeEach(() => {
-      mocks.getUrlSearchParamMock.mockReturnValue(null);
-      mocks.useShortCartMock.mockReturnValue({ cart: ref({ id: "cart-id-1", items: [] }) });
+      vi.clearAllMocks();
+      mocks.getUrlSearchParamMock.mockReturnValue("line-item-1");
+      mocks.useShortCartMock.mockReturnValue({ cart: ref({ id: "cart-id-1" }) });
       composable = useConfigurableProduct(configurableProductId);
+    });
+
+    it("handles text type configuration with predefined value", async () => {
+      const mockConfiguration = {
+        configurationSections: [createTextConfigurationSection(1, { isRequired: true })],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      mocks.getConfigurationItems.mockResolvedValue({
+        configurationItems: [
+          {
+            sectionId: "text_section_1",
+            type: CartConfigurationItemEnumType.Text,
+            customText: "Predefined text",
+          },
+        ],
+      });
+      await composable.fetchProductConfiguration();
+
+      expect(composable.selectedConfiguration.value).toEqual({
+        text_section_1: {
+          productId: undefined,
+          quantity: undefined,
+          selectedOptionTextValue: "Predefined text",
+        },
+      });
+      expect(composable.selectedConfigurationInput.value).toEqual([
+        {
+          sectionId: "text_section_1",
+          type: CartConfigurationItemEnumType.Text,
+          customText: "Predefined text",
+          option: undefined,
+        },
+      ]);
     });
 
     it("handles text type configuration selection", async () => {
@@ -233,13 +267,13 @@ describe("useConfigurableProduct", () => {
       await composable.fetchProductConfiguration();
 
       composable.selectSectionValue({
-        sectionId: "Text Section 1",
+        sectionId: "text_section_1",
         type: CartConfigurationItemEnumType.Text,
         customText: "Test text 1",
       });
 
       expect(composable.selectedConfiguration.value).toEqual({
-        "Text Section 1": {
+        text_section_1: {
           productId: undefined,
           quantity: undefined,
           selectedOptionTextValue: "Test text 1",
@@ -255,19 +289,19 @@ describe("useConfigurableProduct", () => {
       await composable.fetchProductConfiguration();
 
       composable.selectSectionValue({
-        sectionId: "Text Section 1",
+        sectionId: "text_section_1",
         type: CartConfigurationItemEnumType.Text,
         customText: "First text",
       });
 
       composable.selectSectionValue({
-        sectionId: "Text Section 1",
+        sectionId: "text_section_1",
         type: CartConfigurationItemEnumType.Text,
         customText: "Updated text",
       });
 
       expect(composable.selectedConfiguration.value).toEqual({
-        "Text Section 1": {
+        text_section_1: {
           productId: undefined,
           quantity: undefined,
           selectedOptionTextValue: "Updated text",
@@ -283,13 +317,13 @@ describe("useConfigurableProduct", () => {
       await composable.fetchProductConfiguration();
 
       composable.selectSectionValue({
-        sectionId: "Text Section 1",
+        sectionId: "text_section_1",
         type: CartConfigurationItemEnumType.Text,
         customText: "Test text",
       });
 
       composable.selectSectionValue({
-        sectionId: "Text Section 1",
+        sectionId: "text_section_1",
         type: CartConfigurationItemEnumType.Text,
         customText: "",
       });
@@ -302,9 +336,12 @@ describe("useConfigurableProduct", () => {
         configurationSections: [createTextConfigurationSection(1, { isRequired: true })],
       };
       mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      mocks.getConfigurationItems.mockResolvedValue({ configurationItems: [] });
+
       await composable.fetchProductConfiguration();
 
       expect(composable.selectedConfiguration.value).toEqual({});
+      expect(composable.selectedConfigurationInput.value).toEqual([]);
     });
 
     it("creates configured line item with text configuration", async () => {
@@ -320,7 +357,7 @@ describe("useConfigurableProduct", () => {
       await flushPromises();
 
       composable.selectSectionValue({
-        sectionId: "Text Section 1",
+        sectionId: "text_section_1",
         type: CartConfigurationItemEnumType.Text,
         customText: "Test text",
       });
@@ -337,7 +374,7 @@ describe("useConfigurableProduct", () => {
           configurableProductId,
           configurationSections: [
             {
-              sectionId: "Text Section 1",
+              sectionId: "text_section_1",
               type: CartConfigurationItemEnumType.Text,
               customText: "Test text",
             },
@@ -367,7 +404,7 @@ describe("useConfigurableProduct", () => {
         return Promise.resolve({});
       });
       composable.selectSectionValue({
-        sectionId: "Section 1",
+        sectionId: "section_1",
         option: { productId: "product-1", quantity: 1 },
         type: CartConfigurationItemEnumType.Product,
         customText: undefined,
@@ -386,7 +423,7 @@ describe("useConfigurableProduct", () => {
       vi.advanceTimersByTime(TIMER_DELAY);
 
       composable.selectSectionValue({
-        sectionId: "Section 1",
+        sectionId: "section_1",
         option: { productId: "product-1", quantity: 1 },
         type: CartConfigurationItemEnumType.Product,
         customText: undefined,
@@ -407,7 +444,7 @@ describe("useConfigurableProduct", () => {
 
         composable.selectSectionValue({
           customText: undefined,
-          sectionId: "Section 1",
+          sectionId: "section_1",
           option: { productId: "product-2", quantity: 1 },
           type: CartConfigurationItemEnumType.Product,
         });
@@ -424,7 +461,7 @@ describe("useConfigurableProduct", () => {
 
         composable.selectSectionValue({
           customText: undefined,
-          sectionId: "Section 1",
+          sectionId: "section_1",
           option: { productId: "product-2", quantity: 1 },
           type: CartConfigurationItemEnumType.Product,
         });
@@ -432,7 +469,7 @@ describe("useConfigurableProduct", () => {
 
         composable.selectSectionValue({
           customText: undefined,
-          sectionId: "Section 1",
+          sectionId: "section_1",
           option: { productId: "product-1", quantity: 1 },
           type: CartConfigurationItemEnumType.Product,
         });
@@ -460,28 +497,24 @@ function createConfigurationSection(
   { isRequired = false, products = [1, 2] }: { isRequired?: boolean; products?: number[] } = {},
 ) {
   return {
-    id: `Section ${id}`,
+    id: `section_${id}`,
     name: `Section ${id}`,
     type: CartConfigurationItemEnumType.Product,
     isRequired,
     options: products.map((prodId) => ({
-      id: `option-${prodId}`,
+      id: `option_${prodId}`,
       product: createProduct(prodId),
       quantity: 1,
     })),
   };
 }
 
-function createTextConfigurationSection(
-  id: number,
-  { isRequired = false, customText }: { isRequired?: boolean; customText?: string } = {},
-) {
+function createTextConfigurationSection(id: number, { isRequired = false }: { isRequired?: boolean } = {}) {
   return {
-    id: `Text Section ${id}`,
+    id: `text_section_${id}`,
     name: `Text Section ${id}`,
     type: CartConfigurationItemEnumType.Text,
     isRequired,
     options: [],
-    customText,
   };
 }
