@@ -70,7 +70,8 @@
       "all_filters": "Tous les filtres",
       "sort_by": "Trier par",
       "add_items_to_cart": "Ajouter des articles au panier",
-      "show_details": "Afficher les détails"
+      "show_details": "Afficher les détails",
+      "add_with_bulk_order": "Ajouter par commande groupée"
     },
     "labels": {
       "actions": "Actions",
@@ -146,7 +147,11 @@
       "date_new_to_old": "Date, du nouveau à l’ancien",
       "date_old_to_new": "Date, de l’ancien au nouveau",
       "comments": "Commentaires",
-      "fields_required": "Les champs sont obligatoires"
+      "fields_required": "Les champs sont obligatoires",
+      "support_phone_number": "Numéro de téléphone du support",
+      "main_menu": "Menu principal",
+      "toggle_search_bar": "Basculer la barre de recherche",
+      "slider_image": "Image du curseur"
     },
     "prefixes": {
       "please": "S'il vous plaît",
@@ -192,7 +197,8 @@
       "blocked": "Vous avez été bloqué. Vous ne pouvez pas accéder à des informations ou créer la commande. Pour plus de détails, veuillez ",
       "password_about_expire": "Votre mot de passe expirera dans {value} jour(s). Veuillez définir un nouveau mot de passe dans votre profil.",
       "password_expired": "Votre mot de passe a expiré",
-      "data_changed": "Les données ont été modifiées dans l'un des autres onglets. Veuillez actualiser la page pour afficher les données actuelles."
+      "data_changed": "Les données ont été modifiées dans l'un des autres onglets. Veuillez actualiser la page pour afficher les données actuelles.",
+      "logo_changed": "Logo ajouté avec succès. Veuillez rafraîchir la page pour voir les modifications."
     },
     "placeholders": {
       "enter_value": "Veuillez entrer une valeur",
@@ -266,7 +272,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Carte bancaire (Authorize.Net)",
         "DefaultManualPaymentMethod": "Manuel",
-        "SkyflowPaymentMethod": "Carte bancaire (Skyflow)"
+        "SkyflowPaymentMethod": "Carte bancaire (Skyflow)",
+        "CyberSourcePaymentMethod": "Carte bancaire (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Tarif fixe (Terre)",
@@ -602,8 +609,7 @@
           "none": "Aucun",
           "nothing_selected": "Aucun sélectionné",
           "changed_notification": "La configuration du produit a été modifiée. Vous pouvez toujours enregistrer les modifications ultérieurement en cliquant sur le bouton \"@:{'ui_kit.buttons.update_cart'}\".",
-          "changed_confirmation": "La configuration du produit a été modifiée. Vous souhaitez-vous enregistrer les modifications ?",
-          "no_text_entered": "Aucun texte saisi"
+          "changed_confirmation": "La configuration du produit a été modifiée. Vous souhaitez-vous enregistrer les modifications ?"
         }
       },
       "discount_badge": {
@@ -721,7 +727,13 @@
         "month_placeholder": "MM",
         "year_label": "Année",
         "year_placeholder": "AA",
-        "security_code_label": "Code de sécurité"
+        "security_code_label": "Code de sécurité",
+        "expiration_date_placeholder_extended": "MM / AAAA",
+        "errors": {
+          "month": "Veuillez indiquer un mois d'expiration valide",
+          "year": "Veuillez indiquer une année d'expiration valide"
+        },
+        "user_error_message": "Impossible d'initialiser le paiement. Veuillez réessayer plus tard ou utiliser un autre mode de paiement"
       },
       "authorize_net": {
         "user_agreement_link": "Contrat d'utilisation",
@@ -1095,7 +1107,7 @@
           "title": "Liste : {0}"
         },
         "save_changes": "@:common.titles.save_changes",
-        "save_changes_message": "@:common.messages.save_changes dans la liste ?"
+        "save_changes_message": "@:common.messages.save_changes"
       },
       "profile": {
         "meta": {
@@ -1132,7 +1144,8 @@
           "country": "Pays",
           "default": "Par défaut",
           "favorite": "Favori",
-          "actions": "Actions"
+          "actions": "Actions",
+          "company_logo": "Logo de l'entreprise"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",

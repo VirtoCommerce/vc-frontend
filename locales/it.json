@@ -70,7 +70,8 @@
       "all_filters": "Tutti i filtri",
       "sort_by": "Ordina per",
       "add_items_to_cart": "Aggiungi articoli al carrello",
-      "show_details": "Mostra dettagli"
+      "show_details": "Mostra dettagli",
+      "add_with_bulk_order": "Aggiungi con ordine multiplo"
     },
     "labels": {
       "actions": "Azioni",
@@ -146,7 +147,11 @@
       "date_new_to_old": "Data, dal nuovo al vecchio",
       "date_old_to_new": "Data, dal vecchio al nuovo",
       "comments": "Commenti",
-      "fields_required": "I campi sono obbligatori"
+      "fields_required": "I campi sono obbligatori",
+      "support_phone_number": "Numero di telefono di supporto",
+      "main_menu": "Menu principale",
+      "toggle_search_bar": "Attiva/Disattiva barra di ricerca",
+      "slider_image": "Immagine del cursore"
     },
     "prefixes": {
       "please": "Per favore",
@@ -192,7 +197,8 @@
       "blocked": "Sei stato bloccato. Non puoi accedere a nessuna informazione o creare l'ordine. Per ulteriori dettagli, per favore ",
       "password_about_expire": "La tua password sta per scadere tra {value} giorno(i). Imposta una nuova password nel profilo.",
       "password_expired": "La tua password è scaduta",
-      "data_changed": "I dati sono stati modificati in uno degli altri tab. Per favore, aggiorna la pagina per visualizzare i dati correnti."
+      "data_changed": "I dati sono stati modificati in uno degli altri tab. Per favore, aggiorna la pagina per visualizzare i dati correnti.",
+      "logo_changed": "Logo aggiunto correttamente. Aggiorna la pagina per vedere le modifiche."
     },
     "placeholders": {
       "enter_value": "Inserisci un valore",
@@ -266,7 +272,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Carta bancaria (Authorize.Net)",
         "DefaultManualPaymentMethod": "Manuale",
-        "SkyflowPaymentMethod": "Carta bancaria (Skyflow)"
+        "SkyflowPaymentMethod": "Carta bancaria (Skyflow)",
+        "CyberSourcePaymentMethod": "Carta bancaria (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Tariffa fissa (Terra)",
@@ -602,8 +609,7 @@
           "none": "Nessuno",
           "nothing_selected": "Niente selezionato",
           "changed_notification": "La configurazione del prodotto è stata modificata. Puoi sempre salvarla più tardi facendo clic sul pulsante \"@:{'ui_kit.buttons.update_cart'}\".",
-          "changed_confirmation": "La configurazione del prodotto è stata modificata. Vuoi salvarla?",
-          "no_text_entered": "Nessun testo inserito"
+          "changed_confirmation": "La configurazione del prodotto è stata modificata. Vuoi salvarla?"
         }
       },
       "discount_badge": {
@@ -721,7 +727,13 @@
         "month_placeholder": "MM",
         "year_label": "Anno",
         "year_placeholder": "AA",
-        "security_code_label": "Codice di sicurezza"
+        "security_code_label": "Codice di sicurezza",
+        "expiration_date_placeholder_extended": "MM / AAAA",
+        "errors": {
+          "month": "Inserisci un mese di scadenza valido",
+          "year": "Inserisci un anno di scadenza valido"
+        },
+        "user_error_message": "Impossibile inizializzare il pagamento. Riprova più tardi o usa un altro metodo di pagamento"
       },
       "authorize_net": {
         "user_agreement_link": "Accordo utente",
@@ -1095,7 +1107,7 @@
           "title": "Lista: {0}"
         },
         "save_changes": "@:common.titles.save_changes",
-        "save_changes_message": "@:common.messages.save_changes nella lista?"
+        "save_changes_message": "@:common.messages.save_changes"
       },
       "profile": {
         "meta": {
@@ -1132,7 +1144,8 @@
           "country": "Paese",
           "default": "Predefinito",
           "favorite": "Preferito",
-          "actions": "Azioni"
+          "actions": "Azioni",
+          "company_logo": "Logo aziendale"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",

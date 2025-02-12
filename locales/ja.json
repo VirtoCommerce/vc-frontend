@@ -70,7 +70,8 @@
       "all_filters": "全フィルター",
       "sort_by": "並び替え",
       "add_items_to_cart": "カートに追加",
-      "show_details": "詳細表示"
+      "show_details": "詳細表示",
+      "add_with_bulk_order": "一括注文で追加"
     },
     "labels": {
       "actions": "操作",
@@ -146,7 +147,11 @@
       "date_new_to_old": "新しい順",
       "date_old_to_new": "古い順",
       "comments": "コメント",
-      "fields_required": "必須項目"
+      "fields_required": "必須項目",
+      "support_phone_number": "サポート電話番号",
+      "main_menu": "メインメニュー",
+      "toggle_search_bar": "検索バーを切り替える",
+      "slider_image": "スライダー画像"
     },
     "prefixes": {
       "please": "お願いします",
@@ -192,7 +197,8 @@
       "blocked": "アカウントがブロックされています",
       "password_about_expire": "パスワードは{value}日後に期限切れです",
       "password_expired": "パスワードが期限切れです",
-      "data_changed": "他のタブのいずれかでデータが変更されました。現在のデータを表示するには、ページを更新してください。"
+      "data_changed": "他のタブのいずれかでデータが変更されました。現在のデータを表示するには、ページを更新してください。",
+      "logo_changed": "ロゴが正常に追加されました。変更を確認するには、ページを更新してください。"
     },
     "placeholders": {
       "enter_value": "入力してください",
@@ -266,7 +272,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "クレジットカード (Authorize.Net)",
         "DefaultManualPaymentMethod": "手動決済",
-        "SkyflowPaymentMethod": "クレジットカード (Skyflow)"
+        "SkyflowPaymentMethod": "クレジットカード (Skyflow)",
+        "CyberSourcePaymentMethod": "クレジットカード (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "固定料金 (地上)",
@@ -602,8 +609,7 @@
           "none": "なし",
           "nothing_selected": "未選択",
           "changed_notification": "商品の設定が変更されました。後で「@:{'ui_kit.buttons.update_cart'}」ボタンをクリックして保存することもできます。",
-          "changed_confirmation": "商品の設定が変更されました。保存しますか？",
-          "no_text_entered": "テキストが入力されていません"
+          "changed_confirmation": "商品の設定が変更されました。保存しますか？"
         }
       },
       "discount_badge": {
@@ -721,7 +727,13 @@
         "month_placeholder": "MM",
         "year_label": "Year",
         "year_placeholder": "YY",
-        "security_code_label": "Security Code"
+        "security_code_label": "Security Code",
+        "expiration_date_placeholder_extended": "MM / YYYY",
+        "errors": {
+          "month": "有効な有効期限月を入力してください",
+          "year": "有効な有効期限の年を入力してください"
+        },
+        "user_error_message": "決済を開始できません。後でやり直すか、別の支払い方法をご利用ください"
       },
       "authorize_net": {
         "user_agreement_link": "User Agreement",
@@ -1132,7 +1144,8 @@
           "country": "国",
           "default": "既定",
           "favorite": "お気に入り",
-          "actions": "操作"
+          "actions": "操作",
+          "company_logo": "会社ロゴ"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",

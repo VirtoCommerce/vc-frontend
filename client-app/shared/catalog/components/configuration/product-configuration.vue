@@ -155,7 +155,7 @@ function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
     case ProductConfigurationSectionType.Product:
       return t("shared.catalog.product_details.product_configuration.nothing_selected");
     case ProductConfigurationSectionType.Text:
-      return t("shared.catalog.product_details.product_configuration.no_text_entered");
+      return t("shared.catalog.product_details.product_configuration.no_text");
     default:
       return t("shared.catalog.product_details.product_configuration.nothing_selected");
   }
