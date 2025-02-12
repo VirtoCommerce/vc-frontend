@@ -42,6 +42,7 @@ export function createRouter(options: { base: string }) {
       return next({ name: "Account" });
     }
 
+    // TODO: Need refactoring
     // Make Dashboard the default Home page for authorized users
     if (
       isAuthenticated.value &&

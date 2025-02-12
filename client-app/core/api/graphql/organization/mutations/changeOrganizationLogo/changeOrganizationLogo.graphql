@@ -1,0 +1,5 @@
+mutation changeOrganizationLogo($command: InputChangeOrganizationLogoCommandType!) {
+  changeOrganizationLogo(command: $command) {
+    isSuccess
+  }
+}
