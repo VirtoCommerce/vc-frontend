@@ -7,7 +7,12 @@
     </button>
 
     <ul class="space-y-1.5 pt-2 text-xs" :class="{ hidden: isCollapsed }">
-      <li v-for="(configurationItem, index) in configurationItems" :key="configurationItem.id">
+      <li
+        v-for="(configurationItem, index) in configurationItems"
+        :key="configurationItem.id"
+        class="max-w-lg truncate"
+        :title="getText(configurationItem)"
+      >
         {{ `${index + 1}. ${getText(configurationItem)}` }}
       </li>
       <li>
@@ -21,8 +26,13 @@
 
 <script setup lang="ts">
 import { computed, ref, toRef } from "vue";
+import { useI18n } from "vue-i18n";
 import { CartConfigurationItemEnumType } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
+
+const props = defineProps<IProps>();
+
+const { t } = useI18n();
 
 type ConfigurationItemType = {
   id: string;
@@ -38,7 +48,6 @@ interface IProps {
   route?: RouteLocationRaw;
 }
 
-const props = defineProps<IProps>();
 const configurationItems = toRef(props, "configurationItems");
 const lineItemId = toRef(props, "lineItemId");
 
@@ -57,7 +66,7 @@ const editRoute = computed(() => {
 function getText(configurationItem: ConfigurationItemType): string {
   switch (configurationItem.type) {
     case CartConfigurationItemEnumType.Text:
-      return configurationItem.customText ?? "";
+      return t("shared.cart.configuration_items.selected_text", { text: configurationItem.customText ?? "" });
     case CartConfigurationItemEnumType.Product:
       return configurationItem.name ?? "";
     default:

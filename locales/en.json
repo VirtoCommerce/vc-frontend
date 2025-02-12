@@ -558,7 +558,8 @@
       },
       "configuration_items": {
         "title": "Components list",
-        "edit_configuration": "Edit configuration"
+        "edit_configuration": "Edit configuration",
+        "selected_text": "Selected text: {text}"
       }
     },
     "catalog": {
