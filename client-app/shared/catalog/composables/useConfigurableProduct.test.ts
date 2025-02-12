@@ -213,6 +213,106 @@ describe("useConfigurableProduct", () => {
 
       expect(createConfiguredLineItemMutationMock).toBeCalledTimes(1);
     });
+
+    it("handles product type configuration with predefined values", async () => {
+      const mockConfiguration = {
+        configurationSections: [
+          createConfigurationSection(1, { isRequired: true, products: [1, 2] }),
+          createConfigurationSection(2, { isRequired: false, products: [3, 4] }),
+        ],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      mocks.getConfigurationItems.mockResolvedValue({
+        configurationItems: [
+          {
+            sectionId: "section_1",
+            productId: "product-2",
+            quantity: 1,
+            type: CartConfigurationItemEnumType.Product,
+          },
+          {
+            sectionId: "section_2",
+            productId: "product-4",
+            quantity: 2,
+            type: CartConfigurationItemEnumType.Product,
+          },
+        ],
+      });
+      mocks.getUrlSearchParamMock.mockReturnValue("line-item-1");
+      await composable.fetchProductConfiguration();
+
+      expect(composable.selectedConfiguration.value).toEqual({
+        section_1: {
+          productId: "product-2",
+          quantity: 1,
+          selectedOptionTextValue: "Product 2",
+        },
+        section_2: {
+          productId: "product-4",
+          quantity: 2,
+          selectedOptionTextValue: "Product 4",
+        },
+      });
+      expect(composable.selectedConfigurationInput.value).toEqual([
+        {
+          sectionId: "section_1",
+          type: CartConfigurationItemEnumType.Product,
+          option: { productId: "product-2", quantity: 1 },
+          customText: undefined,
+        },
+        {
+          sectionId: "section_2",
+          type: CartConfigurationItemEnumType.Product,
+          option: { productId: "product-4", quantity: 2 },
+          customText: undefined,
+        },
+      ]);
+    });
+
+    it("handles invalid predefined product values", async () => {
+      const mockConfiguration = {
+        configurationSections: [
+          createConfigurationSection(1, { isRequired: true, products: [1, 2] }),
+          createConfigurationSection(2, { isRequired: false, products: [3, 4] }),
+        ],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      mocks.getConfigurationItems.mockResolvedValue({
+        configurationItems: [
+          {
+            sectionId: "section_1",
+            productId: "product-1",
+            quantity: 1,
+            type: CartConfigurationItemEnumType.Product,
+          },
+          {
+            sectionId: "section_2",
+            productId: "invalid-product",
+            quantity: 2,
+            type: CartConfigurationItemEnumType.Product,
+          },
+        ],
+      });
+      mocks.getUrlSearchParamMock.mockReturnValue("line-item-1");
+      await composable.fetchProductConfiguration();
+
+      expect(composable.selectedConfiguration.value).toEqual({
+        section_1: {
+          productId: "product-1",
+          quantity: 1,
+          selectedOptionTextValue: "Product 1",
+        },
+        section_2: undefined,
+      });
+      expect(composable.selectedConfigurationInput.value).toEqual([
+        {
+          sectionId: "section_1",
+          type: CartConfigurationItemEnumType.Product,
+          option: { productId: "product-1", quantity: 1 },
+          customText: undefined,
+        },
+      ]);
+    });
   });
 
   describe("text type configuration", () => {
