@@ -602,7 +602,8 @@
           "none": "Нет",
           "nothing_selected": "Ничего не выбрано",
           "changed_notification": "Конфигурация товара была изменена. Вы можете всегда сохранить ее позже, нажав кнопку \"@:{'ui_kit.buttons.update_cart'}\".",
-          "changed_confirmation": "Конфигурация товара была изменена. Вы хотите ее сохранить?"
+          "changed_confirmation": "Конфигурация товара была изменена. Вы хотите ее сохранить?",
+          "no_text_entered": "Текст не введен"
         }
       },
       "discount_badge": {

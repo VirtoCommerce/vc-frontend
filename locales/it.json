@@ -602,7 +602,8 @@
           "none": "Nessuno",
           "nothing_selected": "Niente selezionato",
           "changed_notification": "La configurazione del prodotto è stata modificata. Puoi sempre salvarla più tardi facendo clic sul pulsante \"@:{'ui_kit.buttons.update_cart'}\".",
-          "changed_confirmation": "La configurazione del prodotto è stata modificata. Vuoi salvarla?"
+          "changed_confirmation": "La configurazione del prodotto è stata modificata. Vuoi salvarla?",
+          "no_text_entered": "Nessun testo inserito"
         }
       },
       "discount_badge": {
