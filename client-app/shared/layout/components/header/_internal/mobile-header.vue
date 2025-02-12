@@ -88,7 +88,9 @@
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="mr-4 grow"
         no-border
+        clearable
         @keydown.enter="searchPhrase && $router.push(searchPageLink)"
+        @clear="reset"
       />
 
       <VcButton :to="searchPhrase && searchPageLink" icon="search" />
@@ -121,17 +123,21 @@
 
 <script setup lang="ts">
 import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
+import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
-import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
+import { useNestedMobileHeader } from "@/shared/layout";
 import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
+import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
+const router = useRouter();
 
 const { customComponents } = useCustomMobileHeaderComponents();
 const searchPhrase = ref("");
@@ -158,8 +164,12 @@ const searchPageLink = computed<RouteLocationRaw>(() => ({
   },
 }));
 
+function reset() {
+  searchPhrase.value = "";
+  void router.push({ name: ROUTES.CATALOG.NAME });
+}
+
 syncRefs(mobileMenuVisible, useScrollLock(document.body));
 
-watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
 </script>
