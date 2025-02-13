@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "2.15.0",
+  "version": "2.16.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -81,7 +81,7 @@
     "@commitlint/config-conventional": "^19.2.2",
     "@google/generative-ai": "^0.21.0",
     "@graphql-codegen/add": "5.0.3",
-    "@graphql-codegen/cli": "5.0.2",
+    "@graphql-codegen/cli": "5.0.3",
     "@graphql-codegen/introspection": "4.0.3",
     "@graphql-codegen/named-operations-object": "3.0.0",
     "@graphql-codegen/near-operation-file-preset": "^3.0.0",
@@ -129,7 +129,7 @@
     "eslint-plugin-vuejs-accessibility": "^2.3.0",
     "glob": "^11.0.0",
     "husky": "^9.0.11",
-    "jsdom": "^24.1.0",
+    "jsdom": "^26.0.0",
     "lint-staged": "^15.2.7",
     "npm-run-all2": "^6.2.0",
     "postcss": "^8.4.38",
@@ -148,6 +148,9 @@
     "vitest": "^1.6.0",
     "vue-component-type-helpers": "^2.0.21",
     "vue-tsc": "2.1.10"
+  },
+  "resolutions": {
+    "uri-js": "npm:uri-js-replace@^1.0.0"
   },
   "lint-staged": {
     "*.{js,ts,vue}": [
