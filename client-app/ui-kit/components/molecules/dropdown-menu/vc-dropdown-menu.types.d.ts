@@ -1,6 +1,6 @@
-import type { VcPopoverPlacementType, VcPopoverOffsetOptionsType } from "../../atoms/popover/vc-popover.types.d";
+import type { Placement, OffsetOptions } from "@floating-ui/vue";
 
 declare global {
-  type VcDropdownMenuPlacementType = VcPopoverPlacementType;
-  type VcDropdownMenuOffsetOptionsType = VcPopoverOffsetOptionsType;
+  type VcDropdownMenuPlacementType = Placement;
+  type VcDropdownMenuOffsetOptionsType = OffsetOptions;
 }
