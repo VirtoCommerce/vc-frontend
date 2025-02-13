@@ -99,8 +99,8 @@ const { t } = useI18n();
 const { user, updateUser } = useUser();
 const { themeContext } = useThemeContext();
 const { openModal } = useModal();
-const { removeLocaleFromUrl, unpinLocale } = useLanguages();
-const { supportedCurrencies, saveCurrencyCode } = useCurrency();
+const { currentLanguage, removeLocaleFromUrl, unpinLocale } = useLanguages();
+const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
 const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
 const broadcast = useBroadcast();
 
@@ -166,8 +166,13 @@ const onSubmit = handleSubmit(async (data) => {
     component: ProfileUpdateSuccessModal,
     props: {
       async onClose() {
-        applyLanguage();
-        await applyCurrency();
+        if (currentLanguage.value.cultureName !== data.defaultLanguage) {
+          applyLanguage();
+        }
+
+        if (currentCurrency.value.code !== data.currencyCode) {
+          await applyCurrency();
+        }
 
         void broadcast.emit(dataChangedEvent);
 

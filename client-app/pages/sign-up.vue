@@ -1,11 +1,11 @@
 <template>
-  <TwoColumn class="max-w-screen-xl">
-    <template #left>
+  <VcEmptyPage icon="outline-security-pc" image="reg.jpg" hide-mobile-side>
+    <div class="order-first w-full text-start sm:pe-12 lg:pe-24 lg:ps-12">
       <VcTypography tag="h1" class="mb-6">
         {{ $t("pages.sign_up.header") }}
       </VcTypography>
 
-      <form @submit="onSubmit">
+      <form class="w-full" @submit="onSubmit">
         <div class="my-5 flex flex-col space-y-5 md:flex-row md:space-x-7 md:space-y-0">
           <VcRadioButton
             id="shipping"
@@ -132,12 +132,8 @@
           </VcButton>
         </div>
       </form>
-    </template>
-
-    <template #right>
-      <VcImage :alt="$t('common.labels.background_image')" class="max-w-md" src="sign-up-page-image.webp" lazy />
-    </template>
-  </TwoColumn>
+    </div>
+  </VcEmptyPage>
 </template>
 
 <script setup lang="ts">
@@ -151,7 +147,6 @@ import { object, ref as yupRef, string } from "yup";
 import { checkEmailUniqueness } from "@/core/api/graphql/account";
 import { usePageHead, useErrorsTranslator } from "@/core/composables";
 import { PasswordTips, RegistrationKind, usePasswordRequirements, useUser } from "@/shared/account";
-import { TwoColumn } from "@/shared/layout";
 import type { AccountCreationResultType, RegistrationErrorType } from "@/core/api/graphql/types";
 
 const router = useRouter();

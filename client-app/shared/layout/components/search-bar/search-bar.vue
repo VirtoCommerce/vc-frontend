@@ -2,21 +2,22 @@
   <div ref="searchBarElement" class="relative flex grow items-stretch">
     <VcInput
       v-model="searchPhrase"
+      type="search"
       :maxlength="MAX_LENGTH"
       class="w-full"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
+      clearable
       @keyup.enter="goToSearchResultsPage"
       @keyup.esc="hideSearchDropdown"
       @input="onSearchPhraseChanged"
+      @focus="onSearchBarFocused"
+      @clear="reset"
     >
       <template #append>
-        <button v-if="searchPhrase" type="button" class="flex h-full items-center px-3" @click="reset">
-          <VcIcon name="delete-2" size="xs" class="fill-primary" />
-        </button>
-
         <VcButton
           :aria-label="$t('shared.layout.search_bar.search_button')"
           icon="search"
+          :loading="loading"
           @click="goToSearchResultsPage"
         />
       </template>
@@ -131,7 +132,7 @@
 
 <script setup lang="ts">
 import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
-import { computed, ref, watchEffect } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -140,7 +141,8 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
-import { useSearchBar } from "../../composables";
+import { ROUTES } from "@/router/routes/constants";
+import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category } from "@/core/api/graphql/types";
@@ -184,15 +186,13 @@ const trimmedSearchPhrase = computed(() => {
   return searchPhrase.value.trim();
 });
 
-const isApplied = computed<boolean>(() => searchPhraseInUrl.value === trimmedSearchPhrase.value);
-
 const { bottom } = useElementBounding(searchBarElement);
 
 const searchDropdownStyle = computed<StyleValue | undefined>(() => {
   return { maxHeight: bottom.value ? `calc(100vh - ${bottom.value + 40}px)` : "auto" };
 });
 
-onClickOutside(searchBarElement, () => hideSearchDropdown());
+onClickOutside(searchBarElement, hideSearchDropdown);
 
 const categoriesColumns = computed<Array<Category[]>>(() => {
   const columnsCount: number = Math.ceil(categories.value.length / CATEGORIES_ITEMS_PER_COLUMN);
@@ -254,9 +254,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
 
   await searchResults(params);
 
-  if (!isApplied.value) {
-    showSearchDropdown();
-  }
+  showSearchDropdown();
 
   /**
    * Send Google Analytics event for products.
@@ -288,19 +286,27 @@ function goToSearchResultsPage() {
 function reset() {
   searchPhrase.value = "";
   hideSearchDropdown();
+  void router.push({ name: ROUTES.CATALOG.NAME });
 }
 
-const searchProductsDebounced = useDebounceFn(() => {
-  if (!isApplied.value) {
-    void searchAndShowDropdownResults();
-  }
-}, SEARCH_BAR_DEBOUNCE_TIME);
+const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEARCH_BAR_DEBOUNCE_TIME);
 
 function onSearchPhraseChanged() {
   hideSearchDropdown();
   void searchProductsDebounced();
 }
 
-watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
+function onSearchBarFocused() {
+  if (trimmedSearchPhrase.value) {
+    showSearchDropdown();
+  }
+}
+
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
+
+onMounted(() => {
+  if(searchPhraseInUrl.value) {
+    searchPhrase.value = searchPhraseInUrl.value;
+  }
+});
 </script>

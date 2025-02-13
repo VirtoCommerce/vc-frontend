@@ -21,7 +21,7 @@
       "allFilters": "Все фильтры",
       "filters": "Фильтры",
       "back": "Назад",
-      "reset": "Сброс",
+      "reset": "Очистить",
       "register": "Регистрация",
       "reset_password": "Сбросить пароль",
       "reset_filters": "Сбросить фильтры",
@@ -49,7 +49,7 @@
       "pay_now": "Оплатить сейчас",
       "payment_details": "Детали оплаты",
       "reorder_all": "Повторить заказ",
-      "view_cart": "Просмотреть корзину",
+      "view_cart": "Перейти в корзину",
       "add_new": "Добавить новый",
       "add_new_address": "Добавить новый адрес",
       "remove_selected": "Удалить выбранное",
@@ -70,7 +70,8 @@
       "all_filters": "Все фильтры",
       "sort_by": "Сортировать по",
       "add_items_to_cart": "Добавить товары в корзину",
-      "show_details": "Показать детали"
+      "show_details": "Показать детали",
+      "add_with_bulk_order": "Добавить оптом"
     },
     "labels": {
       "actions": "Действия",
@@ -146,7 +147,11 @@
       "date_new_to_old": "Дата, новые сначала",
       "date_old_to_new": "Дата, старые сначала",
       "comments": "Комментарии",
-      "fields_required": "Поля обязательны для заполнения"
+      "fields_required": "Поля обязательны для заполнения",
+      "support_phone_number": "Номер телефона службы поддержки",
+      "main_menu": "Главное меню",
+      "toggle_search_bar": "Отобразить/скрыть панель поиска",
+      "slider_image": "Картинка в слайдере"
     },
     "prefixes": {
       "please": "Пожалуйста",
@@ -192,7 +197,8 @@
       "blocked": "Ваш аккаунт заблокирован. Вы не можете получить доступ к информации или создать заказ. Для получения дополнительных сведений, пожалуйста, ",
       "password_about_expire": "Срок действия пароля истечет через {value} день(дня). Установите новый пароль в профиле.",
       "password_expired": "Срок действия пароля истек",
-      "data_changed": "Данные были изменены на одной из других вкладок. Обновите страницу, чтобы отобразить последние данные."
+      "data_changed": "Данные были изменены на одной из других вкладок. Обновите страницу, чтобы отобразить последние данные.",
+      "logo_changed": "Логотип успешно добавлен. Обновите страницу, чтобы увидеть изменения."
     },
     "placeholders": {
       "enter_value": "Введите значение",
@@ -266,7 +272,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Банковская карта (Authorize.Net)",
         "DefaultManualPaymentMethod": "Вручную",
-        "SkyflowPaymentMethod": "Банковская карта (Skyflow)"
+        "SkyflowPaymentMethod": "Банковская карта (Skyflow)",
+        "CyberSourcePaymentMethod": "Банковская карта (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Фиксированная ставка (наземный транспорт)",
@@ -720,7 +727,13 @@
         "month_placeholder": "ММ",
         "year_label": "Год",
         "year_placeholder": "ГГ",
-        "security_code_label": "Код безопасности"
+        "security_code_label": "Код безопасности",
+        "expiration_date_placeholder_extended": "MM / ГГГГ",
+        "errors": {
+          "month": "Укажите действительный месяц истечения срока действия",
+          "year": "Укажите действительный год окончания срока действия"
+        },
+        "user_error_message": "Не удалось инициализировать платёж. Попробуйте позже или выберите другой способ оплаты"
       },
       "authorize_net": {
         "user_agreement_link": "Пользовательского соглашения",
@@ -1094,7 +1107,7 @@
           "title": "Список: {0}"
         },
         "save_changes": "@:common.titles.save_changes",
-        "save_changes_message": "@:common.messages.save_changes в списке?"
+        "save_changes_message": "@:common.messages.save_changes"
       },
       "profile": {
         "meta": {
@@ -1131,7 +1144,8 @@
           "country": "Страна",
           "default": "По умолчанию",
           "favorite": "Избранное",
-          "actions": "Действия"
+          "actions": "Действия",
+          "company_logo": "Логотип компании"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",
@@ -1162,7 +1176,7 @@
           "block_user": "Заблокировать пользователя",
           "unblock_user": "Разблокировать пользователя",
           "delete": "Удалить",
-          "no_members": "Продолжить просмотр"
+          "no_members": "Перейти в каталог"
         },
         "content_header": {
           "name": "Имя",
@@ -1239,7 +1253,7 @@
       "variations_total_label": "Всего в вашей корзине:",
       "view_cart_button": "В корзину",
       "recommended_products": {
-        "related-products_section_title": "Похожие товары",
+        "related-products_section_title": "Сопутствующие товары",
         "bought-together_section_title": "Также покупают вместе"
       },
       "related_product_section_title": "Связанные товары",
@@ -1350,7 +1364,7 @@
       },
       "empty_list": {
         "title": "Сравнение товаров",
-        "message": "Список товаров для сравнения пуст",
+        "message": "Нет товаров для сравнения",
         "button_text": "Перейти в каталог",
         "img_alt": "пустаяКорзина",
         "img_alt_mobile": "пустаяКорзинаMobile"

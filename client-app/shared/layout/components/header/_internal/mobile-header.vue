@@ -11,7 +11,12 @@
         <component :is="customSlots.left" v-if="customSlots.left" />
 
         <div v-else class="flex h-full items-center">
-          <button type="button" class="h-full pe-3 ps-5 sm:pe-5" @click="mobileMenuVisible = true">
+          <button
+            :aria-label="$t('common.labels.main_menu')"
+            type="button"
+            class="h-full pe-3 ps-5 sm:pe-5"
+            @click="mobileMenuVisible = true"
+          >
             <VcIcon class="fill-primary" name="menu" :size="32" />
           </button>
 
@@ -25,17 +30,27 @@
         <component :is="customSlots.right" v-if="customSlots.right" />
 
         <div v-else class="flex h-full flex-row items-center pr-4">
-          <a v-if="support_phone_number" class="px-1 py-2 xs:px-2" :href="`tel:${support_phone_number}`">
+          <a
+            v-if="support_phone_number"
+            :aria-label="$t('common.labels.support_phone_number')"
+            class="px-1 py-2 xs:px-2"
+            :href="`tel:${support_phone_number}`"
+          >
             <VcIcon class="fill-primary" name="phone" :size="28" />
           </a>
 
-          <button type="button" class="px-1 py-2 xs:px-2" @click="toggleSearchBar">
+          <button
+            :aria-label="$t('common.labels.toggle_search_bar')"
+            type="button"
+            class="px-1 py-2 xs:px-2"
+            @click="toggleSearchBar"
+          >
             <VcIcon class="fill-primary" name="search" :size="28" />
           </button>
 
           <component :is="item" v-for="(item, index) in customComponents" :key="index" class="px-1 py-2 xs:px-2" />
 
-          <router-link :to="{ name: 'Cart' }" class="px-1 py-2 xs:px-2">
+          <router-link :to="{ name: 'Cart' }" :aria-label="$t('common.links.cart')" class="px-1 py-2 xs:px-2">
             <span class="relative block">
               <VcIcon class="fill-primary" name="cart" :size="28" />
 
@@ -73,7 +88,9 @@
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="mr-4 grow"
         no-border
+        clearable
         @keydown.enter="searchPhrase && $router.push(searchPageLink)"
+        @clear="reset"
       />
 
       <VcButton :to="searchPhrase && searchPageLink" icon="search" />
@@ -106,17 +123,21 @@
 
 <script setup lang="ts">
 import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
+import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
-import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
+import { useNestedMobileHeader } from "@/shared/layout";
 import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
+import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
+const router = useRouter();
 
 const { customComponents } = useCustomMobileHeaderComponents();
 const searchPhrase = ref("");
@@ -143,8 +164,12 @@ const searchPageLink = computed<RouteLocationRaw>(() => ({
   },
 }));
 
+function reset() {
+  searchPhrase.value = "";
+  void router.push({ name: ROUTES.CATALOG.NAME });
+}
+
 syncRefs(mobileMenuVisible, useScrollLock(document.body));
 
-watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
 </script>

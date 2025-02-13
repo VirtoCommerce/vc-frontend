@@ -113,9 +113,15 @@ export interface IProps {
   testIdInput?: string;
 }
 
+interface IEmits {
+  (event: "clear"): void;
+}
+
 defineOptions({
   inheritAttrs: false,
 });
+
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   type: "text",
@@ -160,6 +166,7 @@ function handleContainerClick() {
 function clear() {
   model.value = undefined;
   inputElement.value?.focus();
+  emit("clear");
 }
 
 // Workaround to fix Safari bug
@@ -298,6 +305,10 @@ function inputClick() {
 
   &__input {
     @apply relative m-px px-3 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
+
+    &::-webkit-search-cancel-button {
+      @apply appearance-none;
+    }
 
     &:autofill {
       &:disabled {
