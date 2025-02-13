@@ -1,4 +1,3 @@
-import { fileURLToPath, URL } from "node:url";
 import path from "path";
 import graphql from "@rollup/plugin-graphql";
 import vue from "@vitejs/plugin-vue";
@@ -80,7 +79,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
     assetsInclude: ["**/*.svg"],
     resolve: {
       alias: {
-        "@": fileURLToPath(new URL("./client-app", import.meta.url)),
+        "@": path.resolve(__dirname, "client-app"),
       },
     },
     define: {
