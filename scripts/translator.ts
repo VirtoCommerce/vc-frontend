@@ -1,8 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const MODEL_NAME = "gemini-1.5-flash";
+const MODEL_NAME = "gemini-2.0-flash";
 const SYSTEM_INSTRUCTION =
-  "You are a professional translator specializing in e-commerce localization. Your task is to provide translations that are short, concise, and adhere to commonly accepted e-commerce terminology. Ensure that the original text and formatting (e.g., i18n interpolation) are preserved. Do not translate placeholders such as '@:some_key' or '@:{'some_key'}'. The output should be the translated text only, without any additional comments, explanations, or symbols not present in the original text.";
+  "You are a professional translator specializing in e-commerce localization. Your task is to provide translations that are short, concise, and adhere to commonly accepted e-commerce terminology. Ensure that the original text formatting (e.g., i18n interpolation) are preserved. Do not translate placeholders such as '@:some_key' or '@:{'some_key'}'. The output should be the translated text only, without any additional comments, explanations, or symbols not present in the original text. 'From' and 'to' languages are set in ISO 639-1 language codes.";
 
 const genAI = new GoogleGenerativeAI(process.env.APP_GEMINI_API_KEY as string);
 const model = genAI.getGenerativeModel({
@@ -14,7 +14,7 @@ const model = genAI.getGenerativeModel({
 });
 
 function generatePrompt(text: string, originLanguage: string, targetLanguage: string) {
-  return `Translate from ${originLanguage} to ${targetLanguage}: ${text}`;
+  return `Translate from ${originLanguage} to ${targetLanguage}: "${text}"`;
 }
 
 export async function translate(text: string, originLanguage: string, targetLanguage: string) {
