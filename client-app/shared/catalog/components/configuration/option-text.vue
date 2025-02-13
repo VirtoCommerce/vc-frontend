@@ -2,7 +2,7 @@
   <div class="configuration-option-text">
     <div class="configuration-option-text__field">
       <VcRadioButton
-        :model-value="selected ? 'selected' : ''"
+        :model-value="selected || isRequired ? 'selected' : ''"
         name="text"
         value="selected"
         @input="$emit('input', inputValue)"
@@ -11,7 +11,7 @@
         v-model="inputValue"
         class="configuration-option-text__input"
         :maxlength="MAX_LENGTH"
-        @input="selected && $emit('input', inputValue)"
+        @input="(selected || isRequired) && $emit('input', inputValue)"
       />
     </div>
 
