@@ -3,6 +3,7 @@ import type {
   CartConfigurationItemEnumType,
   CommonVendor,
   MoneyType,
+  OrderConfigurationItemEnumType,
   Product,
   Property,
   VariationType,
@@ -39,7 +40,7 @@ export type AnyLineItemType = {
     id: string;
     name?: string;
     customText?: string;
-    type: CartConfigurationItemEnumType;
+    type: CartConfigurationItemEnumType | OrderConfigurationItemEnumType;
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;
@@ -79,7 +80,7 @@ export type PreparedLineItemType = {
     id: string;
     name?: string;
     customText?: string;
-    type: CartConfigurationItemEnumType;
+    type: CartConfigurationItemEnumType | OrderConfigurationItemEnumType;
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;

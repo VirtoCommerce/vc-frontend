@@ -28,6 +28,7 @@
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { CartConfigurationItemEnumType } from "@/core/api/graphql/types";
+import type { OrderConfigurationItemEnumType } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 const props = defineProps<IProps>();
@@ -38,7 +39,7 @@ type ConfigurationItemType = {
   id: string;
   name?: string;
   customText?: string;
-  type: CartConfigurationItemEnumType;
+  type: CartConfigurationItemEnumType | OrderConfigurationItemEnumType;
 };
 
 interface IProps {

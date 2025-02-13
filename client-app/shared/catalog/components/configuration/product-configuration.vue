@@ -206,7 +206,7 @@ async function openSaveChangesModal(): Promise<boolean> {
 
   &__description,
   &__subtitle {
-    @apply mt-1 text-xs font-normal normal-case text-neutral;
+    @apply mt-1 text-xs font-normal normal-case text-neutral max-w-3xl;
   }
 
   &__items {
