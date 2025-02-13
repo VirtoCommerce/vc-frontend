@@ -14,14 +14,18 @@
           :navigation="navigationOptions"
         >
           <SwiperSlide v-for="(item, index) in slides" :key="index" class="text-center">
-            <div class="vc-slider__image-wrap">
+            <component
+              :is="item.url ? getLinkTag(item.url) : 'div'"
+              class="vc-slider__image-wrap"
+              v-bind="getLinkAttr(item)"
+            >
               <VcImage
                 :src="item.image"
                 :aria-label="item.title ?? $t('common.labels.slider_image')"
                 :lazy="index > 0"
                 class="vc-slider__image"
               />
-            </div>
+            </component>
             <div v-if="item.title" class="my-3 text-2xl font-bold uppercase">
               {{ item.title }}
             </div>
@@ -55,8 +59,9 @@ type SlideHeightType = "small" | "medium" | "large" | "auto";
 
 type SlideType = {
   image: string;
-  text: string;
-  title: string;
+  text?: string;
+  title?: string;
+  url?: string;
 };
 interface IProps {
   id?: string;
@@ -111,6 +116,25 @@ const wrapperClasses = computed(() => {
     "py-10 lg:py-24": props.title || props.subtitle,
   };
 });
+
+function getLinkTag(url: string) {
+  if (url.startsWith("/")) {
+    return "router-link";
+  } else {
+    return "a";
+  }
+}
+
+function getLinkAttr(item: SlideType) {
+  if (!item.url) {
+    return {};
+  }
+  if (item.url.startsWith("/")) {
+    return { to: item.url, title: item.title };
+  } else {
+    return { href: item.url, title: item.title, target: "_blank" };
+  }
+}
 </script>
 
 <style lang="scss" scoped>
