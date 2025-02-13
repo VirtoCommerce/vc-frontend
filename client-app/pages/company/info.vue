@@ -4,29 +4,93 @@
       {{ $t("pages.company.info.title") }}
     </VcTypography>
 
-    <div class="space-y-5 lg:space-y-6">
-      <!-- Company name block -->
-      <VcWidget :title="$t('pages.company.info.labels.company_name')" size="lg">
-        <VcInput
-          v-model="organizationName"
-          :disabled="!canEditOrganization || loadingOrganization || loadingUser"
-          :error="!!errors[0]"
-          :message="errors[0]"
-          autocomplete="off"
-          maxlength="64"
-          name="organization-name"
-        >
-          <template v-if="canEditOrganization" #append>
-            <VcButton
-              :disabled="!meta.valid || !meta.dirty"
-              :loading="loadingOrganization || loadingUser"
-              class="flex-none"
-              icon="save-v2"
-              @click="saveOrganizationName"
-            />
-          </template>
-        </VcInput>
-      </VcWidget>
+    <div class="space-y-5">
+      <div class="flex flex-col gap-5 lg:flex-row">
+        <!-- Company name block -->
+        <VcWidget size="lg" class="grow">
+          <VcInput
+            v-model="organizationName"
+            :disabled="!canEditOrganization || loadingOrganization || loadingUser"
+            :error="!!errors[0]"
+            :message="errors[0]"
+            :label="$t('pages.company.info.labels.company_name')"
+            autocomplete="off"
+            maxlength="64"
+            name="organization-name"
+          >
+            <template v-if="canEditOrganization" #append>
+              <VcButton
+                :disabled="!meta.valid || !meta.dirty"
+                :loading="loadingOrganization || loadingUser"
+                class="flex-none"
+                icon="save-v2"
+                @click="saveOrganizationName"
+              />
+            </template>
+          </VcInput>
+        </VcWidget>
+
+        <VcWidget v-if="canEditOrganization" size="lg" class="lg:w-3/5">
+          <div class="flex flex-col gap-4 xs:flex-row">
+            <div class="grow">
+              <VcLabel>
+                {{ $t("pages.company.info.labels.company_logo") }}
+              </VcLabel>
+
+              <div class="mt-2 text-xxs text-neutral">
+                {{ logoRequirements }}
+              </div>
+            </div>
+
+            <VcFilePicker
+              class="xs:w-7/12 xs:flex-none"
+              :files="files"
+              :disabled="isLogoUploading || loadingOrganizationLogo || loadingOrganization || loadingUser"
+              v-bind="fileOptions"
+              @add-files="onAddFiles"
+            >
+              <template v-if="newLogoUrl" #custom="{ openFilePicker }">
+                <div class="flex flex-none items-center gap-3">
+                  <div class="flex h-[3.25rem] grow items-center rounded border p-1">
+                    <VcImage
+                      :alt="$t('pages.company.info.labels.company_logo')"
+                      :src="newLogoUrl"
+                      class="max-h-full max-w-full"
+                    />
+                  </div>
+
+                  <VcButton icon="edit" class="flex-none" :loading="isLogoUploading" @click="openFilePicker" />
+
+                  <VcButton
+                    v-if="whiteLabelingLogoUrl !== newLogoUrl"
+                    icon="save-v2"
+                    class="flex-none"
+                    :loading="loadingOrganizationLogo"
+                    @click="saveOrganizationLogo"
+                  />
+
+                  <VcButton
+                    v-else
+                    icon="delete-thin"
+                    color="danger"
+                    class="flex-none"
+                    :loading="loadingOrganizationLogo"
+                    @click="onRemoveFiles"
+                  />
+                </div>
+              </template>
+
+              <VcButton v-if="!newLogoUrl" color="secondary" size="xs">
+                {{ $t("ui_kit.file_uploader.browse") }}
+              </VcButton>
+            </VcFilePicker>
+          </div>
+
+          <VcAlert v-if="files.some(isFailedFile)" color="danger" variant="solid-light" size="sm" icon>
+            {{ $t("ui_kit.file_uploader.errors.fix_to_continue") }}
+          </VcAlert>
+        </VcWidget>
+      </div>
 
       <VcWidget
         v-if="canEditOrganization && !(loadingOrganization || loadingUser)"
@@ -55,7 +119,7 @@
         </div>
         <div class="mt-0 flex justify-end md:mt-4">
           <VcButton
-            :disabled="isSaveLogoDisabled || !newLogoUrl"
+            :disabled="!newLogoUrl"
             :loading="loadingOrganizationLogo"
             min-width="4.375rem"
             size="sm"
@@ -315,6 +379,7 @@ import {
 import { useFiles, downloadFile } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
+import { isFailedFile, fileRequirements } from "@/ui-kit/utilities";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
@@ -334,9 +399,8 @@ const {
   fetchOptions: fetchFileOptions,
   options: fileOptions,
 } = useFiles(DEFAULT_COMPANY_FILES_SCOPE, undefined);
-const { logoUrl, updateCustomCompanyLogo } = useWhiteLabeling();
-const newLogoUrl = ref(logoUrl.value ?? "");
-const isSaveLogoDisabled = ref(true);
+const { whiteLabelingLogoUrl, fetchWhiteLabelingSettings } = useWhiteLabeling();
+const newLogoUrl = ref(whiteLabelingLogoUrl.value ?? "");
 
 usePageHead({
   title: t("pages.company.info.meta.title"),
@@ -422,6 +486,12 @@ const columns = computed<ITableColumn[]>(() => {
   return result;
 });
 
+const logoRequirements = computed(() =>
+  fileRequirements(fileOptions.value.allowedExtensions, fileOptions.value.maxFileSize, fileOptions.value.maxFileCount),
+);
+
+const isLogoUploading = computed(() => files.value[0].status === "uploading");
+
 function onPageChange(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });
   page.value = newPage;
@@ -442,17 +512,15 @@ async function saveOrganizationName(): Promise<void> {
 
 async function saveOrganizationLogo(): Promise<void> {
   await updateLogo(organizationId.value, newLogoUrl.value);
+  await fetchWhiteLabelingSettings();
 
-  updateCustomCompanyLogo(newLogoUrl.value);
-
-  isSaveLogoDisabled.value = true;
   notifications.success({
     text: t("common.messages.logo_changed"),
     duration: 10000,
     single: true,
   });
 
-  files.value = [];
+  void removeFiles(files.value);
 }
 
 function openDeleteAddressModal(address: MemberAddressType): void {
@@ -519,17 +587,26 @@ function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
 void fetchAddresses();
 
 async function onAddFiles(items: INewFile[]) {
+  files.value.length = 0;
   addFiles(items);
   validateFiles();
   await uploadFiles();
-  newLogoUrl.value = uploadedFiles.value.map((attachment) => attachment.url)[0];
-  isSaveLogoDisabled.value = false;
+  newLogoUrl.value = uploadedFiles.value[0].url;
 }
 
-async function onRemoveFiles(items: FileType[]) {
-  await removeFiles(items);
-  newLogoUrl.value = logoUrl.value ?? "";
-  isSaveLogoDisabled.value = true;
+async function onRemoveFiles() {
+  void removeFiles(files.value);
+  await updateLogo(organizationId.value, "");
+  await fetchWhiteLabelingSettings();
+
+  notifications.warning({
+    text: t("common.messages.logo_changed"),
+    duration: 10000,
+    single: true,
+  });
+
+  files.value.length = 0;
+  newLogoUrl.value = "";
 }
 
 function onFileDownload(file: FileType) {
