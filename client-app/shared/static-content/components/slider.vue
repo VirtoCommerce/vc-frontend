@@ -17,7 +17,7 @@
             <component
               :is="item.url ? getLinkTag(item.url) : 'div'"
               class="vc-slider__image-wrap"
-              v-bind="item.url ? { ...getLinkAttr(item.url), alt: item.title } : {}"
+              v-bind="getLinkAttr(item)"
             >
               <VcImage
                 :src="item.image"
@@ -125,11 +125,14 @@ function getLinkTag(url: string) {
   }
 }
 
-function getLinkAttr(url: string) {
-  if (url.startsWith("/")) {
-    return { to: url };
+function getLinkAttr(item: SlideType) {
+  if (!item.url) {
+    return {};
+  }
+  if (item.url.startsWith("/")) {
+    return { to: item.url, title: item.title };
   } else {
-    return { href: url, target: "_blank" };
+    return { href: item.url, title: item.title, target: "_blank" };
   }
 }
 </script>
