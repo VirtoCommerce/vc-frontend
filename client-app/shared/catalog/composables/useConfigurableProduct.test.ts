@@ -1,8 +1,8 @@
 import { flushPromises } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, beforeAll, afterEach, vi } from "vitest";
 import { ref } from "vue";
-import { CartConfigurationItemEnumType } from "@/core/api/graphql/types";
 import { useConfigurableProduct } from "@/shared/catalog/composables/useConfigurableProduct";
+import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
 import type { CreateConfiguredLineItemMutationVariables } from "@/core/api/graphql/types";
 import type { Mock } from "vitest";
 
@@ -107,7 +107,7 @@ describe("useConfigurableProduct", () => {
       composable.selectSectionValue({
         sectionId: "section_2",
         option: { productId: "product-3", quantity: 1 },
-        type: CartConfigurationItemEnumType.Product,
+        type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
 
@@ -140,7 +140,7 @@ describe("useConfigurableProduct", () => {
       composable.selectSectionValue({
         sectionId: "section_1",
         option: { productId: "product-2", quantity: 1 },
-        type: CartConfigurationItemEnumType.Product,
+        type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
       await flushPromises();
@@ -164,7 +164,7 @@ describe("useConfigurableProduct", () => {
             {
               sectionId: "section_1",
               option: { productId: "product-2", quantity: 1 },
-              type: CartConfigurationItemEnumType.Product,
+              type: CONFIGURABLE_SECTION_TYPES.product,
             },
           ],
         },
@@ -187,7 +187,7 @@ describe("useConfigurableProduct", () => {
       composable.selectSectionValue({
         sectionId: "section_1",
         option: { productId: "product-1", quantity: 1 },
-        type: CartConfigurationItemEnumType.Product,
+        type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
       await flushPromises();
@@ -206,7 +206,7 @@ describe("useConfigurableProduct", () => {
       composable.selectSectionValue({
         sectionId: "section_1",
         option: { productId: "product-1", quantity: 1 },
-        type: CartConfigurationItemEnumType.Product,
+        type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
       await flushPromises();
@@ -228,13 +228,13 @@ describe("useConfigurableProduct", () => {
             sectionId: "section_1",
             productId: "product-2",
             quantity: 1,
-            type: CartConfigurationItemEnumType.Product,
+            type: CONFIGURABLE_SECTION_TYPES.product,
           },
           {
             sectionId: "section_2",
             productId: "product-4",
             quantity: 2,
-            type: CartConfigurationItemEnumType.Product,
+            type: CONFIGURABLE_SECTION_TYPES.product,
           },
         ],
       });
@@ -256,13 +256,13 @@ describe("useConfigurableProduct", () => {
       expect(composable.selectedConfigurationInput.value).toEqual([
         {
           sectionId: "section_1",
-          type: CartConfigurationItemEnumType.Product,
+          type: CONFIGURABLE_SECTION_TYPES.product,
           option: { productId: "product-2", quantity: 1 },
           customText: undefined,
         },
         {
           sectionId: "section_2",
-          type: CartConfigurationItemEnumType.Product,
+          type: CONFIGURABLE_SECTION_TYPES.product,
           option: { productId: "product-4", quantity: 2 },
           customText: undefined,
         },
@@ -283,13 +283,13 @@ describe("useConfigurableProduct", () => {
             sectionId: "section_1",
             productId: "product-1",
             quantity: 1,
-            type: CartConfigurationItemEnumType.Product,
+            type: CONFIGURABLE_SECTION_TYPES.product,
           },
           {
             sectionId: "section_2",
             productId: "invalid-product",
             quantity: 2,
-            type: CartConfigurationItemEnumType.Product,
+            type: CONFIGURABLE_SECTION_TYPES.product,
           },
         ],
       });
@@ -307,7 +307,7 @@ describe("useConfigurableProduct", () => {
       expect(composable.selectedConfigurationInput.value).toEqual([
         {
           sectionId: "section_1",
-          type: CartConfigurationItemEnumType.Product,
+          type: CONFIGURABLE_SECTION_TYPES.product,
           option: { productId: "product-1", quantity: 1 },
           customText: undefined,
         },
@@ -332,7 +332,7 @@ describe("useConfigurableProduct", () => {
         configurationItems: [
           {
             sectionId: "text_section_1",
-            type: CartConfigurationItemEnumType.Text,
+            type: CONFIGURABLE_SECTION_TYPES.text,
             customText: "Predefined text",
           },
         ],
@@ -349,7 +349,7 @@ describe("useConfigurableProduct", () => {
       expect(composable.selectedConfigurationInput.value).toEqual([
         {
           sectionId: "text_section_1",
-          type: CartConfigurationItemEnumType.Text,
+          type: CONFIGURABLE_SECTION_TYPES.text,
           customText: "Predefined text",
           option: undefined,
         },
@@ -368,7 +368,7 @@ describe("useConfigurableProduct", () => {
 
       composable.selectSectionValue({
         sectionId: "text_section_1",
-        type: CartConfigurationItemEnumType.Text,
+        type: CONFIGURABLE_SECTION_TYPES.text,
         customText: "Test text 1",
       });
 
@@ -390,13 +390,13 @@ describe("useConfigurableProduct", () => {
 
       composable.selectSectionValue({
         sectionId: "text_section_1",
-        type: CartConfigurationItemEnumType.Text,
+        type: CONFIGURABLE_SECTION_TYPES.text,
         customText: "First text",
       });
 
       composable.selectSectionValue({
         sectionId: "text_section_1",
-        type: CartConfigurationItemEnumType.Text,
+        type: CONFIGURABLE_SECTION_TYPES.text,
         customText: "Updated text",
       });
 
@@ -418,13 +418,13 @@ describe("useConfigurableProduct", () => {
 
       composable.selectSectionValue({
         sectionId: "text_section_1",
-        type: CartConfigurationItemEnumType.Text,
+        type: CONFIGURABLE_SECTION_TYPES.text,
         customText: "Test text",
       });
 
       composable.selectSectionValue({
         sectionId: "text_section_1",
-        type: CartConfigurationItemEnumType.Text,
+        type: CONFIGURABLE_SECTION_TYPES.text,
         customText: "",
       });
 
@@ -458,7 +458,7 @@ describe("useConfigurableProduct", () => {
 
       composable.selectSectionValue({
         sectionId: "text_section_1",
-        type: CartConfigurationItemEnumType.Text,
+        type: CONFIGURABLE_SECTION_TYPES.text,
         customText: "Test text",
       });
       await flushPromises();
@@ -475,7 +475,7 @@ describe("useConfigurableProduct", () => {
           configurationSections: [
             {
               sectionId: "text_section_1",
-              type: CartConfigurationItemEnumType.Text,
+              type: CONFIGURABLE_SECTION_TYPES.text,
               customText: "Test text",
             },
           ],
@@ -506,7 +506,7 @@ describe("useConfigurableProduct", () => {
       composable.selectSectionValue({
         sectionId: "section_1",
         option: { productId: "product-1", quantity: 1 },
-        type: CartConfigurationItemEnumType.Product,
+        type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
       await flushPromises();
@@ -525,7 +525,7 @@ describe("useConfigurableProduct", () => {
       composable.selectSectionValue({
         sectionId: "section_1",
         option: { productId: "product-1", quantity: 1 },
-        type: CartConfigurationItemEnumType.Product,
+        type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
       await flushPromises();
@@ -546,7 +546,7 @@ describe("useConfigurableProduct", () => {
           customText: undefined,
           sectionId: "section_1",
           option: { productId: "product-2", quantity: 1 },
-          type: CartConfigurationItemEnumType.Product,
+          type: CONFIGURABLE_SECTION_TYPES.product,
         });
         expect(composable.isConfigurationChanged.value).toBe(true);
       });
@@ -563,7 +563,7 @@ describe("useConfigurableProduct", () => {
           customText: undefined,
           sectionId: "section_1",
           option: { productId: "product-2", quantity: 1 },
-          type: CartConfigurationItemEnumType.Product,
+          type: CONFIGURABLE_SECTION_TYPES.product,
         });
         expect(composable.isConfigurationChanged.value).toBe(true);
 
@@ -571,7 +571,7 @@ describe("useConfigurableProduct", () => {
           customText: undefined,
           sectionId: "section_1",
           option: { productId: "product-1", quantity: 1 },
-          type: CartConfigurationItemEnumType.Product,
+          type: CONFIGURABLE_SECTION_TYPES.product,
         });
         expect(composable.isConfigurationChanged.value).toBe(false);
       });
@@ -599,7 +599,7 @@ function createConfigurationSection(
   return {
     id: `section_${id}`,
     name: `Section ${id}`,
-    type: CartConfigurationItemEnumType.Product,
+    type: CONFIGURABLE_SECTION_TYPES.product,
     isRequired,
     options: products.map((prodId) => ({
       id: `option_${prodId}`,
@@ -613,7 +613,7 @@ function createTextConfigurationSection(id: number, { isRequired = false }: { is
   return {
     id: `text_section_${id}`,
     name: `Text Section ${id}`,
-    type: CartConfigurationItemEnumType.Text,
+    type: CONFIGURABLE_SECTION_TYPES.text,
     isRequired,
     options: [],
   };

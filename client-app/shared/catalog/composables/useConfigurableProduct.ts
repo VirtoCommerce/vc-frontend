@@ -9,11 +9,11 @@ import {
   useChangeCartConfiguredItemMutation,
   useCreateConfiguredLineItemMutation,
 } from "@/core/api/graphql";
-import { ProductConfigurationSectionType, CartConfigurationItemEnumType } from "@/core/api/graphql/types";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { getUrlSearchParam, Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
+import { CONFIGURABLE_SECTION_TYPES } from "../constants/configurableProducts";
 import type {
   CartConfigurationItemType,
   ConfigurationSectionInput,
@@ -110,9 +110,9 @@ function _useConfigurableProduct(configurableProductId: string) {
   function getSelectedOptionTextValue(section: ConfigurationSectionInput, sectionId: string) {
     const rawSection = configuration.value.find(({ id }) => id === sectionId);
     switch (rawSection?.type) {
-      case ProductConfigurationSectionType.Text:
+      case CONFIGURABLE_SECTION_TYPES.text:
         return section.customText;
-      case ProductConfigurationSectionType.Product:
+      case CONFIGURABLE_SECTION_TYPES.product:
         return rawSection.options?.find(({ product }) => product?.id === section.option?.productId)?.product?.name;
       default:
         return "";
@@ -122,9 +122,9 @@ function _useConfigurableProduct(configurableProductId: string) {
   function isValidValue(sectionId: string, value?: InputSectionType) {
     const section = configuration.value.find(({ id }) => id === sectionId);
     switch (section?.type) {
-      case ProductConfigurationSectionType.Product:
+      case CONFIGURABLE_SECTION_TYPES.product:
         return section.options?.some(({ product }) => product?.id === value?.option?.productId);
-      case ProductConfigurationSectionType.Text:
+      case CONFIGURABLE_SECTION_TYPES.text:
         return !!value?.customText;
       default:
         return false;
@@ -134,9 +134,9 @@ function _useConfigurableProduct(configurableProductId: string) {
   function isEmptyValue(sectionId: string, value?: InputSectionType) {
     const section = configuration.value.find(({ id }) => id === sectionId);
     switch (section?.type) {
-      case ProductConfigurationSectionType.Product:
+      case CONFIGURABLE_SECTION_TYPES.product:
         return !value?.option?.productId;
-      case ProductConfigurationSectionType.Text:
+      case CONFIGURABLE_SECTION_TYPES.text:
         return !value?.customText;
       default:
         return true;
@@ -230,17 +230,17 @@ function _useConfigurableProduct(configurableProductId: string) {
         return;
       }
       switch (section.type) {
-        case ProductConfigurationSectionType.Product:
+        case CONFIGURABLE_SECTION_TYPES.product:
           changeSelectionValue({
             sectionId: section.id,
-            type: section.type as unknown as CartConfigurationItemEnumType,
+            type: section.type,
             option: {
               productId: section.options?.[0]?.product?.id ?? "",
               quantity: section.options?.[0]?.quantity ?? 1,
             },
           });
           break;
-        case ProductConfigurationSectionType.Text:
+        case CONFIGURABLE_SECTION_TYPES.text:
           break;
       }
     });
@@ -262,7 +262,7 @@ function _useConfigurableProduct(configurableProductId: string) {
       customText: value.customText,
       type: value.type,
       option:
-        value.type === CartConfigurationItemEnumType.Product && value.productId && value.quantity
+        value.type === CONFIGURABLE_SECTION_TYPES.product && value.productId && value.quantity
           ? {
               productId: value.productId,
               quantity: value.quantity,
@@ -273,9 +273,9 @@ function _useConfigurableProduct(configurableProductId: string) {
 
   function compareInputs(input1: ConfigurationSectionInput, input2: ConfigurationSectionInput) {
     switch (input1.type) {
-      case CartConfigurationItemEnumType.Product:
+      case CONFIGURABLE_SECTION_TYPES.product:
         return isEqual(input1.option, input2.option);
-      case CartConfigurationItemEnumType.Text:
+      case CONFIGURABLE_SECTION_TYPES.text:
         return input1.customText === input2.customText;
       default:
         return true;

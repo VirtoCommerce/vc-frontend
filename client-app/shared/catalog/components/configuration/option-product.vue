@@ -27,7 +27,7 @@
       </VcProperty>
     </VcProductProperties>
 
-    <VcProductPrice :has-variations="product.hasVariations" :actual-price="salePrice" :list-price="listPrice" />
+    <VcProductPrice :has-variations="product.hasVariations" :actual-price="extendedPrice" :list-price="listPrice" />
 
     <VcAddToCart hide-button disabled :model-value="quantity ?? 1" />
     <VcProductTotal :quantity="quantity" :actual-price="extendedPrice" />
@@ -49,7 +49,6 @@ interface IProps {
   product: DeepReadonly<Product>;
   quantity?: number;
   listPrice: MoneyType;
-  salePrice: MoneyType;
   extendedPrice: MoneyType;
   modelValue?: string;
   name: string;

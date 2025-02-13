@@ -27,8 +27,7 @@
 <script setup lang="ts">
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { CartConfigurationItemEnumType } from "@/core/api/graphql/types";
-import type { OrderConfigurationItemEnumType } from "@/core/api/graphql/types";
+import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
 import type { RouteLocationRaw } from "vue-router";
 
 const props = defineProps<IProps>();
@@ -39,7 +38,7 @@ type ConfigurationItemType = {
   id: string;
   name?: string;
   customText?: string;
-  type: CartConfigurationItemEnumType | OrderConfigurationItemEnumType;
+  type: string;
 };
 
 interface IProps {
@@ -66,9 +65,9 @@ const editRoute = computed(() => {
 
 function getText(configurationItem: ConfigurationItemType): string {
   switch (configurationItem.type) {
-    case CartConfigurationItemEnumType.Text:
+    case CONFIGURABLE_SECTION_TYPES.text:
       return t("shared.cart.configuration_items.selected_text", { text: configurationItem.customText ?? "" });
-    case CartConfigurationItemEnumType.Product:
+    case CONFIGURABLE_SECTION_TYPES.product:
       return configurationItem.name ?? "";
     default:
       return "";

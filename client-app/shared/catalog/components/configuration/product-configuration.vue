@@ -28,7 +28,7 @@
         </template>
 
         <div class="product-configuration__items">
-          <template v-if="section.type === ProductConfigurationSectionType.Product">
+          <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.product">
             <template v-for="option in section.options" :key="option.id">
               <OptionProduct
                 v-if="option.product"
@@ -36,14 +36,13 @@
                 :product="option.product"
                 :quantity="option.quantity"
                 :list-price="option.listPrice"
-                :sale-price="option.salePrice"
                 :extended-price="option.extendedPrice"
                 :name="`selection-${section.id}`"
                 @input="
                   handleInput({
                     sectionId: section.id,
                     option: { productId: option.product.id, quantity: option.quantity ?? 1 },
-                    type: section.type as unknown as CartConfigurationItemEnumType,
+                    type: section.type,
                   })
                 "
               />
@@ -56,14 +55,14 @@
                 handleInput({
                   sectionId: section.id,
                   option: undefined,
-                  type: section.type as unknown as CartConfigurationItemEnumType,
+                  type: section.type,
                 })
               "
             />
           </template>
 
           <OptionText
-            v-if="section.type === ProductConfigurationSectionType.Text"
+            v-if="section.type === CONFIGURABLE_SECTION_TYPES.text"
             :is-required="section.isRequired"
             :value="selectedConfiguration[section.id]?.selectedOptionTextValue"
             :selected="!!selectedConfiguration[section.id]"
@@ -71,7 +70,7 @@
               handleInput({
                 sectionId: section.id,
                 customText: $event,
-                type: section.type as unknown as CartConfigurationItemEnumType,
+                type: section.type,
               })
             "
           />
@@ -85,22 +84,19 @@
 import { toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import { ProductConfigurationSectionType } from "@/core/api/graphql/types";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { getUrlSearchParam } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
+import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
 import { SaveChangesModal } from "@/shared/common";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
 import OptionText from "./option-text.vue";
-import type {
-  CartConfigurationItemEnumType,
-  ConfigurationSectionInput,
-  ConfigurationSectionType,
-} from "@/core/api/graphql/types";
+import type { ConfigurationSectionInput, ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
+
 const props = defineProps<IProps>();
 
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
@@ -152,9 +148,9 @@ function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
     return selectedConfiguration.value?.[section.id]?.selectedOptionTextValue;
   }
   switch (section.type) {
-    case ProductConfigurationSectionType.Product:
+    case CONFIGURABLE_SECTION_TYPES.product:
       return t("shared.catalog.product_details.product_configuration.nothing_selected");
-    case ProductConfigurationSectionType.Text:
+    case CONFIGURABLE_SECTION_TYPES.text:
       return t("shared.catalog.product_details.product_configuration.no_text");
     default:
       return t("shared.catalog.product_details.product_configuration.nothing_selected");
