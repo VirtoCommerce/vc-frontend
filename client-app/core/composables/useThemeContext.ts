@@ -16,31 +16,37 @@ function _useThemeContext() {
       throw new Error("Can't get theme context");
     }
 
-    const defaultThemePreset = themeContext.value?.preset;
     const themePreset = await fetchThemePreset(themeConfig, themePresetName);
 
     themeContext.value = {
       ...store,
       settings: themeConfig.settings,
-      preset: themePreset ?? defaultThemePreset,
+      preset: themePreset,
       storeSettings: store.settings,
     };
   }
 
   async function fetchThemePreset(themeConfig: IThemeConfig, themePresetName?: string): Promise<IThemeConfigPreset> {
     const preset = themePresetName ?? themeConfig.current;
+    const defaultThemePreset = themeContext.value?.preset;
 
     if (typeof preset === "string") {
       const presetFileName = preset.toLowerCase().replace(" ", "-");
 
-      const module = (await import(`@/assets/presets/${presetFileName}.json`)) as {
-        default: IThemeConfigPreset;
-      };
+      try {
+        const module = (await import(`@/assets/presets/${presetFileName}.json`)) as {
+          default: IThemeConfigPreset;
+        };
 
-      return module.default;
+        return module?.default;
+      } catch {
+        if (defaultThemePreset) {
+          return defaultThemePreset;
+        }
+      }
     }
 
-    return preset;
+    return preset as IThemeConfigPreset;
   }
 
   function getThemeConfig() {
