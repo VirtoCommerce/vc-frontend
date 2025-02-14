@@ -13,6 +13,7 @@ export { default as VcDropdownMenu } from "./dropdown-menu/vc-dropdown-menu.vue"
 export { default as VcEmptyPage } from "./empty-page/vc-empty-page.vue";
 export { default as VcExpansionPanel } from "./expansion-panel/vc-expansion-panel.vue";
 export { default as VcFile } from "./file/vc-file.vue";
+export { default as VcFilePicker } from "./file-picker/vc-file-picker.vue";
 export { default as VcFileUploader } from "./file-uploader/vc-file-uploader.vue";
 export { default as VcInput } from "./input/vc-input.vue";
 export { default as VcItemPrice } from "./item-price/vc-item-price.vue";
