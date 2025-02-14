@@ -13,7 +13,6 @@
       class="vc-file-picker__input"
       :multiple="maxFileCount > 1"
       :accept="allowedExtensions?.join(',')"
-      :disabled="disabled"
       @input="onFileChange"
     />
 

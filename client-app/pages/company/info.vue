@@ -44,8 +44,8 @@
 
             <VcFilePicker
               class="xs:w-7/12 xs:flex-none"
+              :disabled="loadingOrganizationLogo || uploadingOrganizationLogo || loadingUser || loadingOrganizationLogo"
               :files="files"
-              :disabled="isLogoUploading || loadingOrganizationLogo || loadingOrganization || loadingUser"
               v-bind="fileOptions"
               @add-files="onAddFiles"
             >
@@ -59,7 +59,12 @@
                     />
                   </div>
 
-                  <VcButton icon="edit" class="flex-none" :loading="isLogoUploading" @click="openFilePicker" />
+                  <VcButton
+                    icon="edit"
+                    class="flex-none"
+                    :loading="uploadingOrganizationLogo"
+                    @click="openFilePicker"
+                  />
 
                   <VcButton
                     v-if="whiteLabelingLogoUrl !== newLogoUrl"
@@ -86,50 +91,13 @@
             </VcFilePicker>
           </div>
 
-          <VcAlert v-if="files.some(isFailedFile)" color="danger" variant="solid-light" size="sm" icon>
-            {{ $t("ui_kit.file_uploader.errors.fix_to_continue") }}
-          </VcAlert>
+          <div class="mt-1.5">
+            <VcAlert v-if="hasFailedFiles" color="danger" variant="solid-light" size="sm" icon>
+              {{ files[0].errorMessage }}
+            </VcAlert>
+          </div>
         </VcWidget>
       </div>
-
-      <VcWidget
-        v-if="canEditOrganization && !(loadingOrganization || loadingUser)"
-        :title="$t('pages.company.info.labels.company_logo')"
-        size="lg"
-      >
-        <div class="flex gap-4 max-md:flex-col-reverse">
-          <VcImage
-            v-if="newLogoUrl"
-            :alt="$t('pages.company.info.labels.company_logo')"
-            :src="newLogoUrl"
-            class="h-8 self-start object-contain xl:h-[2.8rem]"
-          />
-
-          <div class="grow">
-            <VcFileUploader
-              :files="files"
-              :loading="loadingOrganizationLogo"
-              removable
-              v-bind="fileOptions"
-              @download="onFileDownload"
-              @add-files="onAddFiles"
-              @remove-files="onRemoveFiles"
-            />
-          </div>
-        </div>
-        <div class="mt-0 flex justify-end md:mt-4">
-          <VcButton
-            :disabled="!newLogoUrl"
-            :loading="loadingOrganizationLogo"
-            min-width="4.375rem"
-            size="sm"
-            variant="outline"
-            @click="saveOrganizationLogo"
-          >
-            {{ $t("common.buttons.save") }}
-          </VcButton>
-        </div>
-      </VcWidget>
 
       <!-- Content block -->
       <VcWidget size="lg">
@@ -376,10 +344,10 @@ import {
   useOrganizationAddresses,
   useOrganizationLogo,
 } from "@/shared/company";
-import { useFiles, downloadFile } from "@/shared/files";
+import { useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { isFailedFile, fileRequirements } from "@/ui-kit/utilities";
+import { fileRequirements } from "@/ui-kit/utilities";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
@@ -398,6 +366,7 @@ const {
   removeFiles,
   fetchOptions: fetchFileOptions,
   options: fileOptions,
+  hasFailedFiles,
 } = useFiles(DEFAULT_COMPANY_FILES_SCOPE, undefined);
 const { whiteLabelingLogoUrl, fetchWhiteLabelingSettings } = useWhiteLabeling();
 const newLogoUrl = ref(whiteLabelingLogoUrl.value ?? "");
@@ -490,7 +459,7 @@ const logoRequirements = computed(() =>
   fileRequirements(fileOptions.value.allowedExtensions, fileOptions.value.maxFileSize, fileOptions.value.maxFileCount),
 );
 
-const isLogoUploading = computed(() => files.value[0].status === "uploading");
+const uploadingOrganizationLogo = computed(() => files.value[0].status === "uploading");
 
 function onPageChange(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });
@@ -607,12 +576,6 @@ async function onRemoveFiles() {
 
   files.value.length = 0;
   newLogoUrl.value = "";
-}
-
-function onFileDownload(file: FileType) {
-  if (file && file.url) {
-    void downloadFile(file.url, file.name);
-  }
 }
 
 async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: string) {
