@@ -206,14 +206,19 @@ async function addAllListItemsToCart(): Promise<void> {
   const items = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
   await addItemsToCart(items);
 
-  const products = wishlistItems.value.map((item) => item.product!);
-  analytics("addItemsToCart", products);
-  void pushHistoricalEvent({
-    eventType: "addToCart",
-    sessionId: cart.value?.id,
-    productIds: products.map((product) => product.id),
-    storeId: globals.storeId,
-  });
+  const products = wishlistItems.value
+    .map((item) => item.product)
+    .filter((product): product is NonNullable<typeof product> => !!product);
+
+  if (products.length) {
+    analytics("addItemsToCart", products);
+    void pushHistoricalEvent({
+      eventType: "addToCart",
+      sessionId: cart.value?.id,
+      productIds: products.map((product) => product.id),
+      storeId: globals.storeId,
+    });
+  }
 
   showResultModal(wishlistItems.value);
 }
