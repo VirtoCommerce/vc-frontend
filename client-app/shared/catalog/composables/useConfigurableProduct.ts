@@ -1,17 +1,13 @@
-import { provideApolloClient } from "@vue/apollo-composable";
+import { provideApolloClient, useMutation } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
 import isEqual from "lodash/isEqual";
 import sortBy from "lodash/sortBy";
 import { ref, readonly, computed } from "vue";
-import {
-  apolloClient,
-  getConfigurationItems,
-  getProductConfiguration,
-  useChangeCartConfiguredItemMutation,
-  useCreateConfiguredLineItemMutation,
-} from "@/core/api/graphql";
+import { apolloClient, getConfigurationItems, getProductConfiguration } from "@/core/api/graphql";
+import { ChangeCartConfiguredItemDocument, CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
+import { globals } from "@/core/globals";
 import { getUrlSearchParam, Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import type {
@@ -50,6 +46,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
   const creating: Ref<boolean> = ref(false);
   const { cart } = useShortCart();
+  const { storeId, currencyCode, cultureName, userId } = globals;
 
   const configuration: Ref<ConfigurationSectionType[]> = ref([]);
   const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]> = ref();
@@ -116,9 +113,9 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  const { mutate } = useCreateConfiguredLineItemMutation();
+  const { mutate: createConfiguredLineItemMutation } = useMutation(CreateConfiguredLineItemDocument);
   const { add: batchedCreateConfiguredLineItem, abort: abortBatchedCreateConfiguredLineItem } = useMutationBatcher(
-    mutate,
+    createConfiguredLineItemMutation,
     {
       mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
     },
@@ -130,6 +127,9 @@ function _useConfigurableProduct(configurableProductId: string) {
         command: {
           configurableProductId,
           configurationSections: selectedConfigurationInput.value,
+          cultureName,
+          currencyCode,
+          storeId,
         },
       });
       configuredLineItem.value = result?.data?.createConfiguredLineItem;
@@ -172,8 +172,9 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  const { mutate: _changeCartConfiguredItem, loading: changeCartConfiguredItemLoading } =
-    useChangeCartConfiguredItemMutation();
+  const { mutate: _changeCartConfiguredItem, loading: changeCartConfiguredItemLoading } = useMutation(
+    ChangeCartConfiguredItemDocument,
+  );
   async function changeCartConfiguredItem(
     lineItemId: string,
     quantity?: number,
@@ -181,9 +182,15 @@ function _useConfigurableProduct(configurableProductId: string) {
   ): Promise<ShortCartFragment | undefined> {
     try {
       const result = await _changeCartConfiguredItem({
-        lineItemId,
-        quantity,
-        configurationSections: configurationSections as ConfigurationSectionInput[],
+        command: {
+          lineItemId,
+          userId,
+          quantity,
+          configurationSections: configurationSections as ConfigurationSectionInput[],
+          cultureName,
+          currencyCode,
+          storeId,
+        },
       });
       initialSelectedConfigurationInput.value = configurationSections ?? [];
       return result?.data?.changeCartConfiguredItem;

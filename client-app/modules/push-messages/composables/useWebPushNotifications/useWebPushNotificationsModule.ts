@@ -1,4 +1,4 @@
-import { provideApolloClient } from "@vue/apollo-composable";
+import { provideApolloClient, useMutation } from "@vue/apollo-composable";
 import { createGlobalState, useLocalStorage, useEventBus } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken } from "firebase/messaging";
@@ -11,8 +11,7 @@ import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { WHITE_LABELING_FETCHED_SETTINGS_EVENT } from "@/core/constants/modules-events";
 import { Logger } from "@/core/utilities";
 import { userBeforeUnauthorizeEvent, useBroadcast } from "@/shared/broadcast";
-import { useAddFcmToken } from "../../api/graphql/mutations/addFcmToken";
-import { useDeleteFcmToken } from "../../api/graphql/mutations/deleteFcmToken";
+import { AddFcmTokenDocument, DeleteFcmTokenDocument } from "../../api/graphql/types";
 import {
   REGISTRATION_SCOPE,
   SERVICE_WORKER_PATH,
@@ -36,8 +35,8 @@ function _useWebPushNotifications() {
   let currentToken: string | undefined;
 
   const broadcast = useBroadcast();
-  const { mutate: addFcmTokenMutation } = useAddFcmToken();
-  const { mutate: deleteFcmTokenMutation } = useDeleteFcmToken();
+  const { mutate: addFcmTokenMutation } = useMutation(AddFcmTokenDocument);
+  const { mutate: deleteFcmTokenMutation } = useMutation(DeleteFcmTokenDocument);
   const savedFcmToken = useLocalStorage<string | null>("saved-fcm-token", null);
 
   async function initModule() {
