@@ -7,7 +7,8 @@
       "feedback": "反馈",
       "rating": "评分",
       "rate_product": "评价产品",
-      "item_as_described_by_vendor": "商品是否如卖家描述？"
+      "item_as_described_by_vendor": "商品是否如卖家描述？",
+      "product_review_image": "产品评审图像"
     },
     "messages": {
       "thanks_for_feedback": "您的反馈已成功提交，正在等待确认。谢谢！"

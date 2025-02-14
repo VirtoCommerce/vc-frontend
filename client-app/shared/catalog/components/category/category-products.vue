@@ -20,7 +20,7 @@
       <VcInfinityScrollLoader
         v-if="!Number(fixedProductsCount)"
         :loading="fetchingProducts || fetchingMoreProducts"
-        :is-page-limit-reached="pageNumber === PAGE_LIMIT"
+        :is-page-limit-reached="pageNumber >= PAGE_LIMIT"
         :page-number="pageNumber"
         :pages-count="pagesCount"
         distance="400"

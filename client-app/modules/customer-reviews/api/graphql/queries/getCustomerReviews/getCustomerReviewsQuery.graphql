@@ -23,6 +23,11 @@ query GetCustomerReviews(
       title
       review
       rating
+      images {
+        id
+        url
+        name
+      }
     }
   }
 }

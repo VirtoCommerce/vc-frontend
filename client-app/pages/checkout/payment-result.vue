@@ -1,61 +1,38 @@
 <template>
   <VcEmptyPage
-    :image="isPaymentSuccess ? 'order-payment-successful.webp' : 'order-payment-failed.webp'"
-    :mobile-image="isPaymentSuccess ? 'order-payment-successful.webp' : 'order-payment-failed.webp'"
-    class="flex grow flex-col"
+    :icon="isPaymentSuccess ? 'outline-payment-successful' : 'outline-payment-failed'"
+    :status-color="isPaymentSuccess ? 'success' : 'danger'"
+    image="basket.jpg"
   >
-    <template #title>
-      <h1 class="mb-3 text-center text-2xl font-bold uppercase lg:hidden lg:text-left">
-        {{ $t(isPaymentSuccess ? "pages.payment_result.title.success" : "pages.payment_result.title.failed") }}
-      </h1>
-    </template>
+    <VcTypography tag="h1" class="order-first mb-3">
+      {{ $t(isPaymentSuccess ? "pages.payment_result.title.success" : "pages.payment_result.title.failed") }}
+    </VcTypography>
 
-    <template #description>
-      <h1 class="mb-8 hidden text-center text-3xl font-bold uppercase lg:block lg:text-left">
-        {{ $t(isPaymentSuccess ? "pages.payment_result.title.success" : "pages.payment_result.title.failed") }}
-      </h1>
+    <div class="order-first mb-3 text-base font-bold">
+      {{
+        $t(isPaymentSuccess ? "pages.payment_result.subtitle.success" : "pages.payment_result.subtitle.failed", [
+          placedOrder!.number,
+        ])
+      }}
+    </div>
 
-      <div class="mb-10 flex flex-col gap-4 lg:flex-row">
-        <VcIcon
-          v-if="isPaymentSuccess"
-          name="check-circle"
-          size="md"
-          class="hidden size-12 shrink-0 fill-success lg:flex"
-        />
+    <div>
+      {{ $t(isPaymentSuccess ? "pages.payment_result.text.success" : "pages.payment_result.text.failed") }}
 
-        <VcIcon v-else name="delete" size="md" class="hidden size-12 shrink-0 fill-danger lg:flex" />
+      <div class="mt-10 flex flex-wrap justify-center gap-3 sm:justify-start">
+        <VcButton v-if="!isPaymentSuccess" :to="{ name: 'CheckoutPayment', replace: true }" prepend-icon="chevron-left">
+          {{ $t("common.buttons.payment_details") }}
+        </VcButton>
 
-        <div class="max-w-md text-center text-lg lg:text-left">
-          <strong class="mb-4 block">
-            {{
-              $t(isPaymentSuccess ? "pages.payment_result.subtitle.success" : "pages.payment_result.subtitle.failed", [
-                placedOrder!.number,
-              ])
-            }}
-          </strong>
+        <VcButton :to="{ name: 'OrderDetails', params: { orderId: placedOrder!.id } }" prepend-icon="document-text">
+          {{ $t("common.buttons.show_order") }}
+        </VcButton>
 
-          {{ $t(isPaymentSuccess ? "pages.payment_result.text.success" : "pages.payment_result.text.failed") }}
-
-          <div class="mt-10 flex flex-wrap justify-center gap-3 lg:justify-start">
-            <VcButton
-              v-if="!isPaymentSuccess"
-              :to="{ name: 'CheckoutPayment', replace: true }"
-              prepend-icon="chevron-left"
-            >
-              {{ $t("common.buttons.payment_details") }}
-            </VcButton>
-
-            <VcButton :to="{ name: 'OrderDetails', params: { orderId: placedOrder!.id } }" prepend-icon="document-text">
-              {{ $t("common.buttons.show_order") }}
-            </VcButton>
-
-            <VcButton v-if="isPaymentSuccess" to="/">
-              {{ $t("common.buttons.home") }}
-            </VcButton>
-          </div>
-        </div>
+        <VcButton v-if="isPaymentSuccess" to="/">
+          {{ $t("common.buttons.home") }}
+        </VcButton>
       </div>
-    </template>
+    </div>
   </VcEmptyPage>
 </template>
 

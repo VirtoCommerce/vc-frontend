@@ -1,21 +1,18 @@
 <template>
-  <VcEmptyPage image="emails.webp" mobile-image="emails.webp">
-    <template #description>
-      <VcTypography tag="h1" class="mb-8">
-        {{ $t("pages.welcome.title") }}
-      </VcTypography>
+  <VcEmptyPage image="email.jpg" icon="outline-e-mail">
+    <VcTypography tag="h1" class="order-first mb-3">
+      {{ $t("pages.welcome.title") }}
+    </VcTypography>
 
-      <VcTypography class="mb-8 max-w-lg text-center lg:text-left">
-        {{ $t("pages.welcome.description") }}
-      </VcTypography>
-    </template>
-    <template #actions>
-      <div class="flex justify-center lg:justify-start">
-        <VcButton to="/">
-          {{ $t("common.buttons.home") }}
-        </VcButton>
-      </div>
-    </template>
+    <VcTypography class="mb-8 max-w-md text-center sm:text-left">
+      {{ $t("pages.welcome.description") }}
+    </VcTypography>
+
+    <div class="flex justify-center sm:justify-start">
+      <VcButton to="/" min-width="12rem">
+        {{ $t("common.buttons.home") }}
+      </VcButton>
+    </div>
   </VcEmptyPage>
 </template>
 

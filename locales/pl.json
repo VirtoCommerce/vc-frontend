@@ -70,7 +70,8 @@
       "all_filters": "Wszystkie filtry",
       "sort_by": "Sortuj według",
       "add_items_to_cart": "Dodaj przedmioty do koszyka",
-      "show_details": "Pokaż szczegóły"
+      "show_details": "Pokaż szczegóły",
+      "add_with_bulk_order": "Dodaj z zamówieniem zbiorczym"
     },
     "labels": {
       "actions": "Akcje",
@@ -146,7 +147,11 @@
       "date_new_to_old": "Data, od najnowszej do najstarszej",
       "date_old_to_new": "Data, od najstarszej do najnowszej",
       "comments": "Komentarze",
-      "fields_required": "Pola są wymagane"
+      "fields_required": "Pola są wymagane",
+      "support_phone_number": "Numer telefonu wsparcia",
+      "main_menu": "Menu główne",
+      "toggle_search_bar": "Przełącz pasek wyszukiwania",
+      "slider_image": "Obraz slajdera"
     },
     "prefixes": {
       "please": "Proszę",
@@ -192,7 +197,8 @@
       "blocked": "Zostałeś zablokowany. Nie możesz uzyskać dostępu do żadnych informacji ani złożyć zamówienia. Więcej informacji znajdziesz ",
       "password_about_expire": "Twoje hasło wkrótce wygaśnie za {value} dzień/dni. Proszę ustawić nowe hasło w profilu.",
       "password_expired": "Twoje hasło wygasło",
-      "data_changed": "Dane zostały zmienione w jednym z innych tabów. Proszę odśwież stronę, aby wyświetlić aktualne dane."
+      "data_changed": "Dane zostały zmienione w jednym z innych tabów. Proszę odśwież stronę, aby wyświetlić aktualne dane.",
+      "logo_changed": "Logo zostało dodane. Odśwież stronę, aby zobaczyć zmiany."
     },
     "placeholders": {
       "enter_value": "Proszę wprowadzić wartość",
@@ -266,7 +272,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Karta bankowa (Authorize.Net)",
         "DefaultManualPaymentMethod": "Ręczne",
-        "SkyflowPaymentMethod": "Karta bankowa (Skyflow)"
+        "SkyflowPaymentMethod": "Karta bankowa (Skyflow)",
+        "CyberSourcePaymentMethod": "Karta bankowa (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Stała cena (drogowa)",
@@ -720,7 +727,13 @@
         "month_placeholder": "MM",
         "year_label": "Rok",
         "year_placeholder": "RR",
-        "security_code_label": "Kod bezpieczeństwa"
+        "security_code_label": "Kod bezpieczeństwa",
+        "expiration_date_placeholder_extended": "MM /RRRR",
+        "errors": {
+          "month": "Podaj prawidłowy miesiąc ważności",
+          "year": "Podaj prawidłowy rok ważności"
+        },
+        "user_error_message": "Nie można zainicjować płatności. Spróbuj ponownie później lub użyj innej metody płatności"
       },
       "authorize_net": {
         "user_agreement_link": "Umowa użytkownika",
@@ -1094,7 +1107,7 @@
           "title": "Lista: {0}"
         },
         "save_changes": "@:common.titles.save_changes",
-        "save_changes_message": "@:common.messages.save_changes w liście?"
+        "save_changes_message": "@:common.messages.save_changes"
       },
       "profile": {
         "meta": {
@@ -1131,7 +1144,8 @@
           "country": "Kraj",
           "default": "Domyślny",
           "favorite": "Ulubiony",
-          "actions": "Akcje"
+          "actions": "Akcje",
+          "company_logo": "Logo firmy"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",

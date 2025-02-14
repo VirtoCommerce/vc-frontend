@@ -36,9 +36,9 @@ export function useSignMeIn() {
 
       const currencyCode = me.value?.me?.contact?.currencyCode;
 
-      if (me.value?.me && currencyCode) {
+      if (me.value?.me) {
         if (cart.value?.id && cart.value.items?.length) {
-          if (currencyCode !== currentCurrencyCode) {
+          if (currencyCode && currencyCode !== currentCurrencyCode) {
             await clearCurrencyCart({
               command: { userId: me.value.me.id, currencyCode: currentCurrencyCode, storeId },
               skipQuery: false,
@@ -49,7 +49,7 @@ export function useSignMeIn() {
             command: { userId: me.value.me.id, secondCartId: cart.value.id, storeId },
           });
 
-          if (currencyCode !== currentCurrencyCode) {
+          if (currencyCode && currencyCode !== currentCurrencyCode) {
             await changeCartCurrency({
               command: {
                 userId: me.value.me.id,
