@@ -37,7 +37,7 @@
                 :quantity="option.quantity"
                 :list-price="option.listPrice"
                 :extended-price="option.extendedPrice"
-                :name="`selection-${section.id}`"
+                :name="section.id"
                 @input="
                   handleInput({
                     sectionId: section.id,
@@ -49,7 +49,7 @@
             </template>
             <OptionProductNone
               v-if="!section.isRequired"
-              :section-id="section.id"
+              name="section.id"
               :selected="selectedConfiguration[section.id]?.productId === undefined"
               @input="
                 handleInput({
@@ -61,19 +61,33 @@
             />
           </template>
 
-          <OptionText
-            v-if="section.type === CONFIGURABLE_SECTION_TYPES.text"
-            :is-required="section.isRequired"
-            :value="selectedConfiguration[section.id]?.selectedOptionTextValue"
-            :selected="!!selectedConfiguration[section.id]"
-            @input="
-              handleInput({
-                sectionId: section.id,
-                customText: $event,
-                type: section.type,
-              })
-            "
-          />
+          <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.text">
+            <OptionText
+              :name="section.id"
+              :is-required="section.isRequired"
+              :value="selectedConfiguration[section.id]?.selectedOptionTextValue"
+              :selected="!!selectedConfiguration[section.id]"
+              @input="
+                handleInput({
+                  sectionId: section.id,
+                  customText: $event,
+                  type: section.type,
+                })
+              "
+            />
+            <OptionNone
+              v-if="!section.isRequired"
+              :name="section.id"
+              :selected="selectedConfiguration[section.id]?.selectedOptionTextValue === undefined"
+              @input="
+                handleInput({
+                  sectionId: section.id,
+                  customText: undefined,
+                  type: section.type,
+                })
+              "
+            />
+          </template>
         </div>
       </VcWidget>
     </div>
@@ -91,6 +105,7 @@ import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configura
 import { SaveChangesModal } from "@/shared/common";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
+import OptionNone from "./option-none.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
 import OptionText from "./option-text.vue";

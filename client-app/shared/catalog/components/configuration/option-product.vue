@@ -1,5 +1,5 @@
 <template>
-  <VcProductCard view-mode="item" class="configuration-option-product">
+  <VcProductCard view-mode="item" class="option-product">
     <template #media>
       <VcRadioButton
         :model-value="modelValue"
@@ -7,6 +7,7 @@
         :name="name"
         @input="$emit('input', quantity ?? 1)"
       />
+
       <VcProductImage :img-src="product.imgSrc" :alt="product.name" />
     </template>
 
@@ -30,6 +31,7 @@
     <VcProductPrice :has-variations="product.hasVariations" :actual-price="extendedPrice" :list-price="listPrice" />
 
     <VcAddToCart hide-button disabled :model-value="quantity ?? 1" />
+
     <VcProductTotal :quantity="quantity" :actual-price="extendedPrice" />
   </VcProductCard>
 </template>
@@ -60,29 +62,16 @@ interface IEmits {
 
 function getProperties(properties: DeepReadonly<Property[]>) {
   return Object.values(getPropertiesGroupedByName(properties as Property[], PropertyType.Product)).slice(
+    0,
     PRODUCT_PROPERTY_LIMIT,
   );
 }
 </script>
 
 <style lang="scss">
-.configuration-option-product {
-  @container (max-width: theme("containers.2xl")) {
-    @apply border rounded;
-  }
-
-  @container (min-width: theme("containers.2xl")) {
-    &:nth-child(odd) {
-      @apply bg-neutral-50;
-    }
-
-    &:first-child {
-      @apply rounded-t;
-    }
-
-    &:last-child {
-      @apply rounded-b;
-    }
+.option-product {
+  &:nth-child(odd) {
+    --vc-product-card-bg-color: theme("colors.neutral.50");
   }
 }
 </style>
