@@ -505,11 +505,11 @@
       "notifications": {
         "user_blocked": "Der Benutzer wurde erfolgreich blockiert.",
         "user_unblocked": "Der Benutzer wurde erfolgreich entsperrt."
+      },
+      "delete_logo_modal": {
+        "title": "Organisationslogo löschen",
+        "message": "Möchten Sie wirklich das aktuelle Logo der Organisation entfernen? Dieser Vorgang ist irreversibel."
       }
-    },
-    "delete_logo_modal": {
-      "title": "Organisationslogo löschen",
-      "message": "Möchten Sie wirklich das aktuelle Logo der Organisation entfernen? Dieser Vorgang ist irreversibel."
     },
     "compare": {
       "add_to_compare": {
