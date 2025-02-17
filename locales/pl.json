@@ -198,7 +198,8 @@
       "password_about_expire": "Twoje hasło wkrótce wygaśnie za {value} dzień/dni. Proszę ustawić nowe hasło w profilu.",
       "password_expired": "Twoje hasło wygasło",
       "data_changed": "Dane zostały zmienione w jednym z innych tabów. Proszę odśwież stronę, aby wyświetlić aktualne dane.",
-      "logo_changed": "Logo zostało dodane. Odśwież stronę, aby zobaczyć zmiany."
+      "logo_changed": "Logo zostało pomyślnie zmienione.",
+      "logo_deleted": "Logo zostało usunięte."
     },
     "placeholders": {
       "enter_value": "Proszę wprowadzić wartość",
@@ -504,6 +505,10 @@
       "notifications": {
         "user_blocked": "Użytkownik został pomyślnie zablokowany.",
         "user_unblocked": "Użytkownik został pomyślnie odblokowany."
+      },
+      "delete_logo_modal": {
+        "title": "Usuń logo organizacji",
+        "message": "Czy na pewno chcesz usunąć aktualne logo organizacji? Proces ten jest nieodwracalny."
       }
     },
     "compare": {

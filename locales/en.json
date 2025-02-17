@@ -198,7 +198,8 @@
       "password_about_expire": "Your password is about to expire in {value} day(s). Please set a new password in profile",
       "password_expired": "Your password is expired",
       "data_changed": "The data has been modified on one of the other tabs. Please refresh the page to display the latest data.",
-      "logo_changed": "Logo successfully added. Please refresh the page to see the changes."
+      "logo_changed": "Logo was successfully chaged.",
+      "logo_deleted": "Logo was deleted."
     },
     "placeholders": {
       "enter_value": "Please enter a value",
@@ -504,6 +505,10 @@
       "notifications": {
         "user_blocked": "The user has been successfully blocked",
         "user_unblocked": "The user has been successfully unblocked"
+      },
+      "delete_logo_modal": {
+        "title": "Delete organization logo",
+        "message": "Do you really want to remove the organization's current logo? The removal process is irreversible."
       }
     },
     "compare": {

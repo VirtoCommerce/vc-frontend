@@ -198,7 +198,8 @@
       "password_about_expire": "您的密码将在 {value} 天后过期。请在配置文件中设置新密码。",
       "password_expired": "您的密码已过期",
       "data_changed": "数据在其他标签中被修改。请刷新页面以显示当前数据。",
-      "logo_changed": "徽标已成功添加。请刷新页面以查看更改。"
+      "logo_changed": "标志已成功更改。",
+      "logo_deleted": "标志已被删除。"
     },
     "placeholders": {
       "enter_value": "请输入值",
@@ -504,6 +505,10 @@
       "notifications": {
         "user_blocked": "用户已成功封锁。",
         "user_unblocked": "用户已成功解除封锁。"
+      },
+      "delete_logo_modal": {
+        "title": "删除组织标志",
+        "message": "您确定要删除组织当前的标志吗？删除过程不可恢复。"
       }
     },
     "compare": {

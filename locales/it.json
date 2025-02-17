@@ -198,7 +198,8 @@
       "password_about_expire": "La tua password sta per scadere tra {value} giorno(i). Imposta una nuova password nel profilo.",
       "password_expired": "La tua password è scaduta",
       "data_changed": "I dati sono stati modificati in uno degli altri tab. Per favore, aggiorna la pagina per visualizzare i dati correnti.",
-      "logo_changed": "Logo aggiunto correttamente. Aggiorna la pagina per vedere le modifiche."
+      "logo_changed": "Il logo è stato modificato con successo.",
+      "logo_deleted": "Il logo è stato eliminato."
     },
     "placeholders": {
       "enter_value": "Inserisci un valore",
@@ -504,6 +505,10 @@
       "notifications": {
         "user_blocked": "L'utente è stato bloccato con successo.",
         "user_unblocked": "L'utente è stato sbloccato con successo."
+      },
+      "delete_logo_modal": {
+        "title": "Elimina il logo dell'organizzazione",
+        "message": "Vuoi davvero rimuovere l'attuale logo dell'organizzazione? Questo processo è irreversibile."
       }
     },
     "compare": {

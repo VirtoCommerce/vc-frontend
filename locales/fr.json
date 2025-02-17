@@ -198,7 +198,8 @@
       "password_about_expire": "Votre mot de passe expirera dans {value} jour(s). Veuillez définir un nouveau mot de passe dans votre profil.",
       "password_expired": "Votre mot de passe a expiré",
       "data_changed": "Les données ont été modifiées dans l'un des autres onglets. Veuillez actualiser la page pour afficher les données actuelles.",
-      "logo_changed": "Logo ajouté avec succès. Veuillez rafraîchir la page pour voir les modifications."
+      "logo_changed": "Le logo a été changé avec succès.",
+      "logo_deleted": "Le logo a été supprimé."
     },
     "placeholders": {
       "enter_value": "Veuillez entrer une valeur",
@@ -504,6 +505,10 @@
       "notifications": {
         "user_blocked": "L'utilisateur a été bloqué avec succès.",
         "user_unblocked": "L'utilisateur a été débloqué avec succès."
+      },
+      "delete_logo_modal": {
+        "title": "Supprimer le logo de l'organisation",
+        "message": "Voulez-vous vraiment supprimer le logo actuel de l'organisation ? Cette action est irréversible."
       }
     },
     "compare": {

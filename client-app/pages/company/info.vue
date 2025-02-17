@@ -80,7 +80,7 @@
                     color="danger"
                     class="flex-none"
                     :loading="loadingOrganizationLogo"
-                    @click="onRemoveFiles"
+                    @click="openDeleteLogoModal"
                   />
                 </div>
               </template>
@@ -347,6 +347,7 @@ import {
 import { useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
+import { VcConfirmationModal } from "@/ui-kit/components";
 import { fileRequirements } from "@/ui-kit/utilities";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
@@ -392,7 +393,7 @@ const {
   removeAddressFromFavorite,
   loading: loadingAddresses,
 } = useOrganizationAddresses(organization.value!.id);
-const { openModal } = useModal();
+const { openModal, closeModal } = useModal();
 const notifications = useNotifications();
 
 const {
@@ -479,19 +480,6 @@ async function saveOrganizationName(): Promise<void> {
   });
 }
 
-async function saveOrganizationLogo(): Promise<void> {
-  await updateLogo(organizationId.value, newLogoUrl.value);
-  await fetchWhiteLabelingSettings();
-
-  notifications.success({
-    text: t("common.messages.logo_changed"),
-    duration: 10000,
-    single: true,
-  });
-
-  void removeFiles(files.value);
-}
-
 function openDeleteAddressModal(address: MemberAddressType): void {
   if (address.isDefault) {
     return;
@@ -555,6 +543,35 @@ function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
 
 void fetchAddresses();
 
+async function saveOrganizationLogo(): Promise<void> {
+  await updateLogo(organizationId.value, newLogoUrl.value);
+  await fetchWhiteLabelingSettings();
+
+  notifications.success({
+    text: t("common.messages.logo_changed"),
+    duration: 10000,
+    single: true,
+  });
+
+  void removeFiles(files.value);
+}
+
+function openDeleteLogoModal() {
+  openModal({
+    component: VcConfirmationModal,
+    props: {
+      variant: "danger",
+      icon: "delete-2",
+      title: t("shared.company.delete_logo_modal.title"),
+      text: t("shared.company.delete_logo_modal.message"),
+      onConfirm() {
+        void onRemoveFiles();
+        closeModal();
+      },
+    },
+  });
+}
+
 async function onAddFiles(items: INewFile[]) {
   files.value.length = 0;
   addFiles(items);
@@ -569,7 +586,7 @@ async function onRemoveFiles() {
   await fetchWhiteLabelingSettings();
 
   notifications.warning({
-    text: t("common.messages.logo_changed"),
+    text: t("common.messages.logo_deleted"),
     duration: 10000,
     single: true,
   });
