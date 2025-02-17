@@ -90,7 +90,7 @@
         <VcEmptyView
           v-else-if="!listLoading && list?.items?.length === 0"
           :text="$t('shared.wishlists.list_details.empty_list')"
-          icon="thin-lists"
+          icon="outline-lists"
         >
           <template #button>
             <VcButton :to="{ name: 'Catalog' }">
