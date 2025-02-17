@@ -114,9 +114,24 @@ jobs:
         run: |
           yarn build
 
-      - name: Unit Tests
+      - name: Unit Tests with Coverage
         run: |
-          yarn test:unit --run
+          yarn test:coverage
+
+      - name: Upload Coverage Report
+        uses:  actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage
+
+      - name: Check Coverage Threshold
+        run: |
+          # Example: Check if coverage is above 1%
+          COVERAGE=$(grep -oP 'All files.*?\K\d+(?=%)' coverage/index.html)
+          if [ "$COVERAGE" -lt 1 ]; then
+            echo "Coverage is below 1%: $COVERAGE%"
+            exit 1
+          fi
 
       - name: Typing Tests
         run: |
