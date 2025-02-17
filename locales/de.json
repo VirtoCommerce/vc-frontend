@@ -198,7 +198,8 @@
       "password_about_expire": "Ihr Passwort läuft in {value} Tag(en) ab. Bitte setzen Sie ein neues Passwort im Profil.",
       "password_expired": "Ihr Passwort ist abgelaufen",
       "data_changed": "Die Daten wurden in einem der anderen Tabs geändert. Bitte aktualisieren Sie die Seite, um die aktuellen Daten anzuzeigen.",
-      "logo_changed": "Logo erfolgreich hinzugefügt. Bitte aktualisieren Sie die Seite, um die Änderungen zu sehen."
+      "logo_changed": "Das Logo wurde erfolgreich geändert.",
+      "logo_deleted": "Das Logo wurde gelöscht."
     },
     "placeholders": {
       "enter_value": "Bitte geben Sie einen Wert ein",
@@ -505,6 +506,10 @@
         "user_blocked": "Der Benutzer wurde erfolgreich blockiert.",
         "user_unblocked": "Der Benutzer wurde erfolgreich entsperrt."
       }
+    },
+    "delete_logo_modal": {
+      "title": "Organisationslogo löschen",
+      "message": "Möchten Sie wirklich das aktuelle Logo der Organisation entfernen? Dieser Vorgang ist irreversibel."
     },
     "compare": {
       "add_to_compare": {
