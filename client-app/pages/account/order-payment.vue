@@ -187,7 +187,7 @@
           <div class="rounded border">
             <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-5">
               <div class="min-w-0 truncate">
-                <template v-if="payment?.paymentMethod">
+                <template v-if="isAvailablePayment && payment?.paymentMethod">
                   <VcImage
                     :src="payment.paymentMethod.logoUrl"
                     class="mr-3.5 inline-block size-8 object-center md:size-9"
@@ -325,7 +325,15 @@ const breadcrumbs = useBreadcrumbs(() => [
 const executed = computed<boolean>(() => success.value || failure.value);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
-const paymentTypeName = computed<string | undefined>(() => payment.value?.paymentMethod?.typeName);
+const paymentTypeName = computed<string | undefined>(() =>
+  isAvailablePayment.value ? payment.value?.paymentMethod?.typeName : undefined,
+);
+
+const isAvailablePayment = computed(() => {
+  return order.value?.availablePaymentMethods?.some((method) => {
+    return method.code === payment.value?.paymentMethod?.code;
+  });
+});
 
 function tryAgain() {
   location.reload();
