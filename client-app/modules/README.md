@@ -11,13 +11,13 @@ Welcome to the **Modules Guide**! This documentation will help you understand ho
 - Any **Module** in the `/modules` folder can be safely removed without affecting **Core**
 - **Clear Control** by decision-making person. 
 
-## Core
+### Core
 The **Core** is the main application that includes the API, router, builder, and other systems.
 
-## [Module](#what-is-a-module)
+### [Module](#what-is-a-module)
 A **Module** is an additional functionality developed with minimal impact on the **Core**.
 
-## Extension points
+### Extension points
 **Extension points** are belong to the **Core**. Also called **Holes** or **Sockets**
 ### Existing Extension points:
 - `client-app/shared/common/composables/useCustomProductComponents.ts`
@@ -26,15 +26,15 @@ A **Module** is an additional functionality developed with minimal impact on the
 - `client-app/shared/layout/composables/useCustomMobileHeaderComponents.ts`
 - `client-app/shared/layout/composables/useCustomMobileMenuLinkComponents.ts`
 
-## Module Management System
+### Module Management System
 The **Module Management System** is the decision-making point and business logic handler. It is represented as a [settings_data.json](../config/settings_data.json) as a bundle level and an array of `modules` in the `getStore` request as a store level settings. Could be considered as a "Feature Flags".
 
-## [Type Generation System](#what-is-a-type-generation-system)
+### [Type Generation System](#what-is-a-type-generation-system)
 The **Type Generation System** handles the generation of types and constants for GraphQL API.
 
 ---
 
-# Entity Relationships
+## Entity Relationships
 
 ![entity_relationships](entity_relationships.png)
 
