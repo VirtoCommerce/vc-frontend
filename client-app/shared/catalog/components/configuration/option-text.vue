@@ -52,7 +52,7 @@ watch(propsValue, (newVal) => {
   @apply flex flex-col gap-3;
 
   &__field {
-    @apply flex w-full gap-3 p-4 items-center odd:bg-neutral-50;
+    @apply flex gap-3 p-4 items-center odd:bg-neutral-50;
   }
 
   &__input {
