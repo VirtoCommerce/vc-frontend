@@ -290,10 +290,6 @@ function _useConfigurableProduct(configurableProductId: string) {
           });
           break;
         case CONFIGURABLE_SECTION_TYPES.text:
-          changeSelectionValue({
-            sectionId: section.id,
-            type: section.type,
-          });
           break;
       }
     });

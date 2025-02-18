@@ -411,12 +411,7 @@ describe("useConfigurableProduct", () => {
       await composable.fetchProductConfiguration();
 
       expect(composable.selectedConfiguration.value).toEqual({});
-      expect(composable.selectedConfigurationInput.value).toEqual([
-        {
-          sectionId: "text_section_1",
-          type: CONFIGURABLE_SECTION_TYPES.text,
-        },
-      ]);
+      expect(composable.selectedConfigurationInput.value).toEqual([]);
     });
 
     it("creates configured line item with text configuration", async () => {
