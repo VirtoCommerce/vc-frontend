@@ -611,7 +611,8 @@
           "nothing_selected": "未選択",
           "changed_notification": "商品の設定が変更されました。後で「@:{'ui_kit.buttons.update_cart'}」ボタンをクリックして保存することもできます。",
           "changed_confirmation": "商品の設定が変更されました。保存しますか？",
-          "no_text": "テキストが選択されていません"
+          "no_text": "テキストが選択されていません",
+          "check_your_configuration": "製品構成を確認してください"
         }
       },
       "discount_badge": {

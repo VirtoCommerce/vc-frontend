@@ -19,8 +19,13 @@
           {{ section.name }}
 
           <div class="product-configuration__subtitle">
-            {{ section.description }}<br />
-            {{ getSectionSubtitle(section) }}
+            {{ section.description }}
+
+            <div v-if="validationErrors.get(section.id)" class="product-configuration__error">
+              {{ validationErrors.get(section.id) }}
+            </div>
+
+            <div v-else>{{ getSectionSubtitle(section) }}</div>
           </div>
         </template>
 
@@ -47,7 +52,7 @@
 
             <OptionProductNone
               v-if="!section.isRequired"
-              name="section.id"
+              :name="section.id"
               :selected="selectedConfiguration[section.id]?.productId === undefined"
               @input="
                 handleInput({
@@ -130,28 +135,33 @@ const {
   selectedConfigurationInput,
   isConfigurationChanged,
   changeCartConfiguredItem,
+  validationErrors,
 } = useConfigurableProduct(configurableProductId.value);
 
 const { openModal } = useModal();
 const notifications = useNotifications();
 
-watch(isConfigurationChanged, (isChanged) => {
-  if (isChanged && configurableLineItemId) {
-    notifications.info({
-      text: t("shared.catalog.product_details.product_configuration.changed_notification"),
-      group: NOTIFICATIONS_GROUP,
-      button: {
-        text: t("common.buttons.save"),
-        color: "accent",
-        clickHandler() {
-          void changeCartConfiguredItem(configurableLineItemId, undefined, selectedConfigurationInput.value);
+watch(
+  () => [isConfigurationChanged.value, validationErrors.value.size === 0],
+  ([isChanged, isValid]) => {
+    if (isChanged && configurableLineItemId && isValid) {
+      notifications.info({
+        text: t("shared.catalog.product_details.product_configuration.changed_notification"),
+        singleInGroup: true,
+        group: NOTIFICATIONS_GROUP,
+        button: {
+          text: t("common.buttons.save"),
+          color: "accent",
+          clickHandler() {
+            void changeCartConfiguredItem(configurableLineItemId, undefined, selectedConfigurationInput.value);
+          },
         },
-      },
-    });
-  } else {
-    notifications.clear(NOTIFICATIONS_GROUP);
-  }
-});
+      });
+    } else {
+      notifications.clear(NOTIFICATIONS_GROUP);
+    }
+  },
+);
 
 function handleInput(payload: ConfigurationSectionInput) {
   selectSectionValue(payload);
@@ -224,6 +234,10 @@ async function openSaveChangesModal(): Promise<boolean> {
     @container (max-width: theme("containers.2xl")) {
       @apply space-y-3;
     }
+  }
+
+  &__error {
+    @apply text-danger;
   }
 }
 </style>

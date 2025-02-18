@@ -1,17 +1,18 @@
 <template>
   <div class="option-text">
     <VcRadioButton
+      v-if="!isRequired"
       :model-value="selected || isRequired ? 'selected' : ''"
       :name="name"
       value="selected"
-      @input="$emit('input', inputValue)"
+      @input="$emit('input', inputValue || undefined)"
     />
 
     <VcInput
       v-model="inputValue"
       class="option-text__input"
       :maxlength="MAX_LENGTH"
-      @input="(selected || isRequired) && $emit('input', inputValue)"
+      @input="(selected || isRequired) && $emit('input', inputValue || undefined)"
     />
   </div>
 </template>
@@ -51,10 +52,6 @@ watch(propsValue, (newVal) => {
 
   &__input {
     @apply w-full;
-  }
-
-  &__label {
-    @apply ms-2 text-sm font-bold;
   }
 }
 </style>

@@ -41,12 +41,14 @@ provideApolloClient(apolloClient);
  * @returns {Function} fetchProductConfiguration - Function to fetch the product configuration.
  * @returns {Function} selectSectionValue - Function to select a section value for a configuration section.
  * @returns {Function} changeCartConfiguredItem - Function to change the cart configured item.
+ * @returns {Function} validateInput - Function to validate the configuration input. Populates the validationErrors map with the errors and returns true if there are errors.
  * @returns {ComputedRef<boolean>} loading - Computed ref indicating if any operation is in progress.
  * @returns {ShallowReadonly<Ref<ConfigurationSectionType[]>>} configuration - Readonly ref containing the product configuration sections.
  * @returns {Readonly<ComputedRef<Record<string, SelectedConfigurationType>>>} selectedConfiguration - Readonly computed ref of the selected configuration state.
  * @returns {ShallowReadonly<Ref<ConfigurationSectionInput[]>>} selectedConfigurationInput - Readonly ref containing the configuration input data.
  * @returns {Readonly<Ref<CreateConfiguredLineItemMutation['createConfiguredLineItem']>>} configuredLineItem - Readonly ref of the created configured line item.
  * @returns {Readonly<ComputedRef<boolean>>} isConfigurationChanged - Readonly computed ref indicating if the configuration has changed.
+ * @returns {Readonly<ComputedRef<Map<string, string>>>} validationErrors - Readonly computed ref of the validation errors.
  */
 function _useConfigurableProduct(configurableProductId: string) {
   const fetching = ref(false);
@@ -55,6 +57,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   const configuredLineItem = ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]>();
   const selectedConfigurationInput = ref<ConfigurationSectionInput[]>([]);
   const initialSelectedConfigurationInput = ref<DeepReadonly<ConfigurationSectionInput[] | []>>([]);
+  const validationErrors = ref<Map<string, string>>(new Map());
 
   const { cart } = useShortCart();
   const { mutate: _changeCartConfiguredItem, loading: changeCartConfiguredItemLoading } =
@@ -66,6 +69,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   );
 
   const loading = computed(() => fetching.value || creating.value || changeCartConfiguredItemLoading.value);
+
   const isConfigurationChanged = computed(() => {
     if (initialSelectedConfigurationInput.value.length !== selectedConfigurationInput.value.length) {
       return true;
@@ -95,7 +99,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     const index = selectedConfigurationInput.value?.findIndex((section) => section.sectionId === payload.sectionId);
     if (index !== -1) {
       const newValue = [...selectedConfigurationInput.value];
-      isEmptyValue(payload.sectionId, payload) ? newValue.splice(index, 1) : newValue.splice(index, 1, payload);
+      newValue.splice(index, 1, payload);
       selectedConfigurationInput.value = newValue;
     } else {
       selectedConfigurationInput.value = [...selectedConfigurationInput.value, payload];
@@ -105,6 +109,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   function selectSectionValue(payload: ConfigurationSectionInput) {
     changeSelectionValue(payload);
     void createConfiguredLineItem();
+    validateInput();
   }
 
   function getSelectedOptionTextValue(section: ConfigurationSectionInput, sectionId: string) {
@@ -119,28 +124,43 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  function isValidValue(sectionId: string, value?: InputSectionType) {
+  function validateValue(
+    sectionId: string,
+    value?: InputSectionType,
+  ): { isValid: boolean } & ({ isValid: true } | { isValid: false; error: string }) {
     const section = configuration.value.find(({ id }) => id === sectionId);
     switch (section?.type) {
-      case CONFIGURABLE_SECTION_TYPES.product:
-        return section.options?.some(({ product }) => product?.id === value?.option?.productId);
-      case CONFIGURABLE_SECTION_TYPES.text:
-        return !!value?.customText;
+      case CONFIGURABLE_SECTION_TYPES.product: {
+        const isExistingProduct =
+          section.options?.some(({ product }) => product?.id === value?.option?.productId) ?? false;
+        const isRequired = section.isRequired;
+        const isEmpty = !value?.option?.productId;
+
+        const isValid = isEmpty ? !isRequired : isExistingProduct;
+        return isValid ? { isValid } : { isValid, error: "Product is required" };
+      }
+      case CONFIGURABLE_SECTION_TYPES.text: {
+        const isValid = !section.isRequired || !!value?.customText?.trim();
+        return isValid ? { isValid } : { isValid, error: "Text is required" };
+      }
       default:
-        return false;
+        return { isValid: false, error: "Invalid section type" };
     }
   }
 
-  function isEmptyValue(sectionId: string, value?: InputSectionType) {
-    const section = configuration.value.find(({ id }) => id === sectionId);
-    switch (section?.type) {
-      case CONFIGURABLE_SECTION_TYPES.product:
-        return !value?.option?.productId;
-      case CONFIGURABLE_SECTION_TYPES.text:
-        return !value?.customText;
-      default:
-        return true;
-    }
+  function isValidValue(sectionId: string, value?: InputSectionType) {
+    return validateValue(sectionId, value).isValid;
+  }
+
+  function validateInput() {
+    validationErrors.value.clear();
+    selectedConfigurationInput.value.forEach((value) => {
+      const validationResult = validateValue(value.sectionId, value);
+      if (!validationResult.isValid) {
+        validationErrors.value.set(value.sectionId, validationResult.error);
+      }
+    });
+    return validationErrors.value.size === 0;
   }
 
   async function fetchProductConfiguration() {
@@ -222,6 +242,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     configuration.value = [];
     configuredLineItem.value = undefined;
     abortBatchedCreateConfiguredLineItem();
+    validationErrors.value.clear();
   }
 
   function updateWithDefaultValues() {
@@ -241,6 +262,10 @@ function _useConfigurableProduct(configurableProductId: string) {
           });
           break;
         case CONFIGURABLE_SECTION_TYPES.text:
+          changeSelectionValue({
+            sectionId: section.id,
+            type: section.type,
+          });
           break;
       }
     });
@@ -250,6 +275,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     preselectedValues?.forEach((value) => {
       const section = configuration.value.find(({ id }) => id === value.sectionId);
       const isPreselectedValueValid = !!section && isValidValue(section.id, preselectedValueToInputSection(value));
+
       if (isPreselectedValueValid) {
         changeSelectionValue(preselectedValueToInputSection(value));
       }
@@ -286,12 +312,14 @@ function _useConfigurableProduct(configurableProductId: string) {
     fetchProductConfiguration,
     selectSectionValue,
     changeCartConfiguredItem,
+    validateInput,
     loading: readonly(loading),
     configuration: readonly(configuration),
     selectedConfiguration: readonly(selectedConfiguration),
     selectedConfigurationInput: readonly(selectedConfigurationInput),
     configuredLineItem: readonly(configuredLineItem),
     isConfigurationChanged: readonly(isConfigurationChanged),
+    validationErrors: readonly(validationErrors),
   };
 }
 

@@ -409,28 +409,6 @@ describe("useConfigurableProduct", () => {
       });
     });
 
-    it("removes text configuration when empty text is provided", async () => {
-      const mockConfiguration = {
-        configurationSections: [createTextConfigurationSection(1)],
-      };
-      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
-      await composable.fetchProductConfiguration();
-
-      composable.selectSectionValue({
-        sectionId: "text_section_1",
-        type: CONFIGURABLE_SECTION_TYPES.text,
-        customText: "Test text",
-      });
-
-      composable.selectSectionValue({
-        sectionId: "text_section_1",
-        type: CONFIGURABLE_SECTION_TYPES.text,
-        customText: "",
-      });
-
-      expect(composable.selectedConfiguration.value).toEqual({});
-    });
-
     it("handles required text configuration with default empty value", async () => {
       const mockConfiguration = {
         configurationSections: [createTextConfigurationSection(1, { isRequired: true })],
@@ -441,7 +419,12 @@ describe("useConfigurableProduct", () => {
       await composable.fetchProductConfiguration();
 
       expect(composable.selectedConfiguration.value).toEqual({});
-      expect(composable.selectedConfigurationInput.value).toEqual([]);
+      expect(composable.selectedConfigurationInput.value).toEqual([
+        {
+          sectionId: "text_section_1",
+          type: CONFIGURABLE_SECTION_TYPES.text,
+        },
+      ]);
     });
 
     it("creates configured line item with text configuration", async () => {
