@@ -204,6 +204,14 @@ async function openSaveChangesModal(): Promise<boolean> {
         message: t("shared.catalog.product_details.product_configuration.changed_confirmation"),
         onConfirm: async () => {
           closeModal();
+          if (validationErrors.value.size > 0) {
+            notifications.error({
+              text: t("shared.catalog.product_details.product_configuration.check_your_configuration"),
+              singleInGroup: true,
+              group: NOTIFICATIONS_GROUP,
+            });
+            return;
+          }
           if (configurableLineItemId) {
             await changeCartConfiguredItem(configurableLineItemId, undefined, selectedConfigurationInput.value);
           }
