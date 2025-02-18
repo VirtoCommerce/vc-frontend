@@ -612,7 +612,8 @@
           "changed_notification": "La configuration du produit a été modifiée. Vous pouvez toujours enregistrer les modifications ultérieurement en cliquant sur le bouton \"@:{'ui_kit.buttons.update_cart'}\".",
           "changed_confirmation": "La configuration du produit a été modifiée. Vous souhaitez-vous enregistrer les modifications ?",
           "no_text": "Aucun texte sélectionné",
-          "check_your_configuration": "Vérifiez la configuration de votre produit"
+          "check_your_configuration": "Vérifiez la configuration de votre produit",
+          "required_section": "La section est obligatoire"
         }
       },
       "discount_badge": {

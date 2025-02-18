@@ -612,7 +612,8 @@
           "changed_notification": "产品配置已更改。您可以随时稍后保存，点击按钮 \"@:{'ui_kit.buttons.update_cart'}\".",
           "changed_confirmation": "产品配置已更改。您要保存吗？",
           "no_text": "未选择文本",
-          "check_your_configuration": "检查您的产品配置"
+          "check_your_configuration": "检查您的产品配置",
+          "required_section": "此部分为必填项"
         }
       },
       "discount_badge": {

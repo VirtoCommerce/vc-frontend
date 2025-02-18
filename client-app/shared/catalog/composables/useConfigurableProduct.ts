@@ -2,6 +2,7 @@ import { provideApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
 import isEqual from "lodash/isEqual";
 import { ref, readonly, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import {
   apolloClient,
   getConfigurationItems,
@@ -59,6 +60,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   const initialSelectedConfigurationInput = ref<DeepReadonly<ConfigurationSectionInput[] | []>>([]);
   const validationErrors = ref<Map<string, string>>(new Map());
 
+  const { t } = useI18n();
   const { cart } = useShortCart();
   const { mutate: _changeCartConfiguredItem, loading: changeCartConfiguredItemLoading } =
     useChangeCartConfiguredItemMutation();
@@ -99,7 +101,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     const index = selectedConfigurationInput.value?.findIndex((section) => section.sectionId === payload.sectionId);
     if (index !== -1) {
       const newValue = [...selectedConfigurationInput.value];
-      newValue.splice(index, 1, payload);
+      isEmptyValue(payload.sectionId, payload) ? newValue.splice(index, 1) : newValue.splice(index, 1, payload);
       selectedConfigurationInput.value = newValue;
     } else {
       selectedConfigurationInput.value = [...selectedConfigurationInput.value, payload];
@@ -137,11 +139,15 @@ function _useConfigurableProduct(configurableProductId: string) {
         const isEmpty = !value?.option?.productId;
 
         const isValid = isEmpty ? !isRequired : isExistingProduct;
-        return isValid ? { isValid } : { isValid, error: "Product is required" };
+        return isValid
+          ? { isValid }
+          : { isValid, error: t("shared.catalog.product_details.product_configuration.required_section") };
       }
       case CONFIGURABLE_SECTION_TYPES.text: {
         const isValid = !section.isRequired || !!value?.customText?.trim();
-        return isValid ? { isValid } : { isValid, error: "Text is required" };
+        return isValid
+          ? { isValid }
+          : { isValid, error: t("shared.catalog.product_details.product_configuration.required_section") };
       }
       default:
         return { isValid: false, error: "Invalid section type" };
@@ -154,13 +160,35 @@ function _useConfigurableProduct(configurableProductId: string) {
 
   function validateInput() {
     validationErrors.value.clear();
-    selectedConfigurationInput.value.forEach((value) => {
-      const validationResult = validateValue(value.sectionId, value);
-      if (!validationResult.isValid) {
-        validationErrors.value.set(value.sectionId, validationResult.error);
+
+    configuration.value.forEach((section) => {
+      const input = selectedConfigurationInput.value.find((value) => value.sectionId === section.id);
+
+      if (!input && section.isRequired) {
+        validationErrors.value.set(
+          section.id,
+          t("shared.catalog.product_details.product_configuration.required_section"),
+        );
+      } else if (input) {
+        const validationResult = validateValue(section.id, input);
+        if (!validationResult.isValid) {
+          validationErrors.value.set(section.id, validationResult.error);
+        }
       }
     });
     return validationErrors.value.size === 0;
+  }
+
+  function isEmptyValue(sectionId: string, value?: InputSectionType) {
+    const section = configuration.value.find(({ id }) => id === sectionId);
+    switch (section?.type) {
+      case CONFIGURABLE_SECTION_TYPES.product:
+        return !value?.option?.productId;
+      case CONFIGURABLE_SECTION_TYPES.text:
+        return !value?.customText;
+      default:
+        return true;
+    }
   }
 
   async function fetchProductConfiguration() {

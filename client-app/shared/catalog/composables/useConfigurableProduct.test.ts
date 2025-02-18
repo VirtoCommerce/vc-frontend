@@ -45,6 +45,7 @@ describe("useConfigurableProduct", () => {
   let createConfiguredLineItemMutationMock: Mock;
 
   beforeAll(() => {
+    mockI18n();
     createConfiguredLineItemMutationMock = vi.fn();
     mocks.useCreateConfiguredLineItemMutation.mockReturnValue({
       mutate: createConfiguredLineItemMutationMock,
@@ -54,6 +55,9 @@ describe("useConfigurableProduct", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
+    mocks.getUrlSearchParamMock.mockReturnValue(null);
+    mocks.useShortCartMock.mockReturnValue({ cart: ref({ id: "cart-id-1", items: [] }) });
+    composable = useConfigurableProduct(configurableProductId);
   });
 
   afterEach(() => {
@@ -61,12 +65,6 @@ describe("useConfigurableProduct", () => {
   });
 
   describe("product type configuration", () => {
-    beforeEach(() => {
-      mocks.getUrlSearchParamMock.mockReturnValue(null);
-      mocks.useShortCartMock.mockReturnValue({ cart: ref({ id: "cart-id-1", items: [] }) });
-      composable = useConfigurableProduct(configurableProductId);
-    });
-
     it("initializes with correct default state", () => {
       expect(composable.configuration.value).toEqual([]);
       expect(composable.selectedConfiguration.value).toEqual({});
@@ -316,14 +314,8 @@ describe("useConfigurableProduct", () => {
   });
 
   describe("text type configuration", () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-      mocks.getUrlSearchParamMock.mockReturnValue("line-item-1");
-      mocks.useShortCartMock.mockReturnValue({ cart: ref({ id: "cart-id-1" }) });
-      composable = useConfigurableProduct(configurableProductId);
-    });
-
     it("handles text type configuration with predefined value", async () => {
+      mocks.getUrlSearchParamMock.mockReturnValue("line-item-1");
       const mockConfiguration = {
         configurationSections: [createTextConfigurationSection(1, { isRequired: true })],
       };
@@ -468,12 +460,6 @@ describe("useConfigurableProduct", () => {
   });
 
   describe("common functionality", () => {
-    beforeEach(() => {
-      mocks.getUrlSearchParamMock.mockReturnValue(null);
-      mocks.useShortCartMock.mockReturnValue({ cart: ref({ id: "cart-id-1", items: [] }) });
-      composable = useConfigurableProduct(configurableProductId);
-    });
-
     it("sets loading to true while fetching or creating", async () => {
       const mockConfiguration = { configurationSections: [] };
       mocks.getProductConfiguration.mockImplementation(() => {
@@ -569,6 +555,185 @@ describe("useConfigurableProduct", () => {
       });
     });
   });
+
+  describe("Input validation", () => {
+    describe("Product type validation", () => {
+      it("returns validation error for empty required product section", async () => {
+        const mockConfiguration = {
+          configurationSections: [createConfigurationSection(1, { isRequired: true, products: [1, 2] })],
+        };
+        mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+        await composable.fetchProductConfiguration();
+
+        composable.selectSectionValue({
+          sectionId: "section_1",
+          option: undefined,
+          type: CONFIGURABLE_SECTION_TYPES.product,
+          customText: undefined,
+        });
+
+        const isValid = composable.validateInput();
+        expect(isValid).toBe(false);
+        expect(composable.validationErrors.value.has("section_1")).toBe(true);
+      });
+
+      it("passes validation for optional empty product section", async () => {
+        const mockConfiguration = {
+          configurationSections: [createConfigurationSection(1, { isRequired: false, products: [1, 2] })],
+        };
+        mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+        await composable.fetchProductConfiguration();
+
+        composable.selectSectionValue({
+          sectionId: "section_1",
+          option: undefined,
+          type: CONFIGURABLE_SECTION_TYPES.product,
+          customText: undefined,
+        });
+
+        const isValid = composable.validateInput();
+        expect(isValid).toBe(true);
+        expect(composable.validationErrors.value.has("section_1")).toBe(false);
+      });
+
+      it("returns validation error for non-existent product selection", async () => {
+        const mockConfiguration = {
+          configurationSections: [createConfigurationSection(1, { isRequired: true, products: [1, 2] })],
+        };
+        mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+        await composable.fetchProductConfiguration();
+
+        composable.selectSectionValue({
+          sectionId: "section_1",
+          option: { productId: "non-existent", quantity: 1 },
+          type: CONFIGURABLE_SECTION_TYPES.product,
+          customText: undefined,
+        });
+
+        const isValid = composable.validateInput();
+        expect(isValid).toBe(false);
+        expect(composable.validationErrors.value.has("section_1")).toBe(true);
+      });
+    });
+
+    describe("Text type validation", () => {
+      it("returns validation error for empty required text section", async () => {
+        const mockConfiguration = {
+          configurationSections: [createTextConfigurationSection(1, { isRequired: true })],
+        };
+        mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+        await composable.fetchProductConfiguration();
+
+        composable.selectSectionValue({
+          sectionId: "text_section_1",
+          type: CONFIGURABLE_SECTION_TYPES.text,
+          customText: "",
+          option: undefined,
+        });
+
+        const isValid = composable.validateInput();
+        expect(isValid).toBe(false);
+        expect(composable.validationErrors.value.has("text_section_1")).toBe(true);
+      });
+
+      it("passes validation for optional empty text section", async () => {
+        const mockConfiguration = {
+          configurationSections: [createTextConfigurationSection(1, { isRequired: false })],
+        };
+        mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+        await composable.fetchProductConfiguration();
+
+        composable.selectSectionValue({
+          sectionId: "text_section_1",
+          type: CONFIGURABLE_SECTION_TYPES.text,
+          customText: "",
+          option: undefined,
+        });
+
+        const isValid = composable.validateInput();
+        expect(isValid).toBe(true);
+        expect(composable.validationErrors.value.has("text_section_1")).toBe(false);
+      });
+
+      it("returns validation error for whitespace-only text in required section", async () => {
+        const mockConfiguration = {
+          configurationSections: [createTextConfigurationSection(1, { isRequired: true })],
+        };
+        mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+        await composable.fetchProductConfiguration();
+
+        composable.selectSectionValue({
+          sectionId: "text_section_1",
+          type: CONFIGURABLE_SECTION_TYPES.text,
+          customText: "   ",
+          option: undefined,
+        });
+
+        const isValid = composable.validateInput();
+        expect(isValid).toBe(false);
+        expect(composable.validationErrors.value.has("text_section_1")).toBe(true);
+      });
+    });
+
+    describe("Mixed type validation", () => {
+      it("validates all sections and returns combined validation result", async () => {
+        const mockConfiguration = {
+          configurationSections: [
+            createConfigurationSection(1, { isRequired: true, products: [1, 2] }),
+            createTextConfigurationSection(2, { isRequired: true }),
+          ],
+        };
+        mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+        await composable.fetchProductConfiguration();
+
+        composable.selectSectionValue({
+          sectionId: "section_1",
+          option: { productId: "non-existent", quantity: 1 },
+          type: CONFIGURABLE_SECTION_TYPES.product,
+          customText: undefined,
+        });
+        composable.selectSectionValue({
+          sectionId: "text_section_2",
+          type: CONFIGURABLE_SECTION_TYPES.text,
+          customText: "",
+          option: undefined,
+        });
+
+        const isValid = composable.validateInput();
+        expect(isValid).toBe(false);
+        expect(composable.validationErrors.value.has("section_1")).toBe(true);
+        expect(composable.validationErrors.value.has("text_section_2")).toBe(true);
+      });
+
+      it("passes validation when all required sections are valid", async () => {
+        const mockConfiguration = {
+          configurationSections: [
+            createConfigurationSection(1, { isRequired: true, products: [1, 2] }),
+            createTextConfigurationSection(2, { isRequired: true }),
+          ],
+        };
+        mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+        await composable.fetchProductConfiguration();
+
+        composable.selectSectionValue({
+          sectionId: "section_1",
+          option: { productId: "product-1", quantity: 1 },
+          type: CONFIGURABLE_SECTION_TYPES.product,
+          customText: undefined,
+        });
+        composable.selectSectionValue({
+          sectionId: "text_section_2",
+          type: CONFIGURABLE_SECTION_TYPES.text,
+          customText: "Valid text",
+          option: undefined,
+        });
+
+        const isValid = composable.validateInput();
+        expect(isValid).toBe(true);
+        expect(composable.validationErrors.value.size).toBe(0);
+      });
+    });
+  });
 });
 
 function createProduct(id: number) {
@@ -600,4 +765,14 @@ function createTextConfigurationSection(id: number, { isRequired = false }: { is
     isRequired,
     options: [],
   };
+}
+
+function mockI18n(): void {
+  vi.mock("vue-i18n", () => {
+    return {
+      useI18n: vi.fn().mockReturnValue({
+        t: (key: string) => key,
+      }),
+    };
+  });
 }
