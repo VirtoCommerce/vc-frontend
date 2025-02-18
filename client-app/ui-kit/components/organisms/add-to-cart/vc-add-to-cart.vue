@@ -142,7 +142,12 @@ const { quantitySchema } = useQuantityValidationSchema({
 const rules = computed(() => toTypedSchema(quantitySchema.value));
 const isDisabled = computed(
   () =>
-    !isValid.value || disabled.value || !isActive.value || !isAvailable.value || !isBuyable.value || !isInStock.value,
+    !isValid.value ||
+    disabled.value ||
+    !isAvailable.value ||
+    !isBuyable.value ||
+    !isInStock.value ||
+    isActive?.value === false,
 );
 
 const {
