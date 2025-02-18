@@ -71,7 +71,9 @@
       "sort_by": "Sortieren nach",
       "add_items_to_cart": "Artikel in den Warenkorb legen",
       "show_details": "Details anzeigen",
-      "add_with_bulk_order": "Mit Sammelbestellung hinzufügen"
+      "add_with_bulk_order": "Mit Sammelbestellung hinzufügen",
+      "agency": "Agentur",
+      "personal": "Persönlich"
     },
     "labels": {
       "actions": "Aktionen",
@@ -1029,6 +1031,7 @@
         "title": "Bestellungen",
         "order_number_label": "Bestellnummer",
         "purchase_number_label": "Einkaufsbestellung",
+        "buyer_name_label": "Käufername",
         "status_label": "@:common.labels.status",
         "invoice_label": "Rechnung",
         "date_label": "@:common.labels.date",

@@ -71,7 +71,9 @@
       "sort_by": "Сортировать по",
       "add_items_to_cart": "Добавить товары в корзину",
       "show_details": "Показать детали",
-      "add_with_bulk_order": "Добавить оптом"
+      "add_with_bulk_order": "Добавить оптом",
+      "agency": "Агентства",
+      "personal": "Личные"
     },
     "labels": {
       "actions": "Действия",
@@ -1029,6 +1031,7 @@
         "title": "Заказы",
         "order_number_label": "Номер заказа",
         "purchase_number_label": "Номер закупки",
+        "buyer_name_label": "Имя покупателя",
         "status_label": "@:common.labels.status",
         "invoice_label": "Счет",
         "date_label": "@:common.labels.date",

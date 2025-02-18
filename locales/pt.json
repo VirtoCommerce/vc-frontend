@@ -71,7 +71,9 @@
       "sort_by": "Ordenar por",
       "add_items_to_cart": "Adicionar Itens ao Carrinho",
       "show_details": "Mostrar Detalhes",
-      "add_with_bulk_order": "Adicionar com pedido em lote"
+      "add_with_bulk_order": "Adicionar com pedido em lote",
+      "agency": "Agência",
+      "personal": "Pessoal"
     },
     "labels": {
       "actions": "Ações",
@@ -1029,6 +1031,7 @@
         "title": "Pedidos",
         "order_number_label": "Número do pedido",
         "purchase_number_label": "Número do pedido de compra",
+        "buyer_name_label": "Nome do comprador",
         "status_label": "@:common.labels.status",
         "invoice_label": "Fatura",
         "date_label": "@:common.labels.date",
