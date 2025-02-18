@@ -25,10 +25,10 @@ interface IEmits {
 
 <style lang="scss">
 .option-none {
-  @apply flex flex-col gap-3 p-4 odd:bg-neutral-50;
+  @apply p-4 odd:bg-neutral-50;
 
   &__label {
-    @apply ml-2 text-sm font-bold;
+    @apply ms-2 text-sm font-bold;
   }
 }
 </style>

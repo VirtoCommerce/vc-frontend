@@ -18,11 +18,8 @@
         <template #title>
           {{ section.name }}
 
-          <div v-if="section.description" class="product-configuration__description">
-            {{ section.description }}
-          </div>
-
           <div class="product-configuration__subtitle">
+            {{ section.description }}<br />
             {{ getSectionSubtitle(section) }}
           </div>
         </template>
@@ -47,6 +44,7 @@
                 "
               />
             </template>
+
             <OptionProductNone
               v-if="!section.isRequired"
               name="section.id"
@@ -75,6 +73,7 @@
                 })
               "
             />
+
             <OptionNone
               v-if="!section.isRequired"
               :name="section.id"
@@ -215,7 +214,6 @@ async function openSaveChangesModal(): Promise<boolean> {
     @apply space-y-5;
   }
 
-  &__description,
   &__subtitle {
     @apply mt-1 text-xs font-normal normal-case text-neutral max-w-3xl;
   }
