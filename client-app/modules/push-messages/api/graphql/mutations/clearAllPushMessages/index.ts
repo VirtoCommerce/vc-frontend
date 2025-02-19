@@ -1,5 +1,4 @@
-import { useApolloClient } from "@vue/apollo-composable";
-import { useMutation } from "@/core/api/graphql/composables/useMutation";
+import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import { ROOT_QUERY_CACHE_ID } from "@/core/api/graphql/consts";
 import { PUSH_MESSAGES_CACHE_ID } from "@/core/constants/notifications";
 import { ClearAllPushMessagesDocument, OperationNames } from "../../types";
