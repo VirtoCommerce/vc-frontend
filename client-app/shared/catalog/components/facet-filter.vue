@@ -29,7 +29,14 @@
           @click="handleFacetItemClick(item)"
         >
           <template #prepend>
-            <VcCheckbox v-model="item.selected" size="xs" :disabled="loading" @change="changeFacetValues" @click.stop />
+            <VcCheckbox
+              v-model="item.selected"
+              tabindex="-1"
+              size="xs"
+              :disabled="loading"
+              @change="changeFacetValues"
+              @click.stop
+            />
           </template>
 
           <span>{{ item.label }}</span>
