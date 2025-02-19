@@ -427,6 +427,10 @@ export function _useFullCart() {
     } catch (e) {
       Logger.error(updatePayment.name, e);
       notifications.error({ text: t("pages.account.order_payment.failure.title") });
+      setTimeout(() => {
+        // clear state
+        location.reload();
+      }, 3000);
     }
   }
 
