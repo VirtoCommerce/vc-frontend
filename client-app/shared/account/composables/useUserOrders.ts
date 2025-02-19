@@ -42,7 +42,7 @@ export function useUserOrders(options: IUseUserOrdersOptions) {
         facet: STATUS_ORDERS_FACET_NAME,
       };
 
-      const response = scope === "private" ? await getOrders(payload) : await getOrganizationOrders(payload);
+      const response = scope === "organization" ? await getOrganizationOrders(payload) : await getOrders(payload);
 
       orders.value = response.items ?? [];
       pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
