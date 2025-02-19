@@ -19,6 +19,7 @@ query GetProductConfigurations(
       name
       description
       isRequired
+      type
       options {
         id
         quantity
