@@ -237,7 +237,7 @@
                 <PaymentProcessingManual v-if="paymentMethodCode === 'DefaultManualPaymentMethod'" />
 
                 <PaymentProcessingAuthorizeNet
-                  v-else-if="paymentMethodCode === 'AuthorizeNetPaymentMethod'"
+                  v-if="paymentMethodCode === 'AuthorizeNetPaymentMethod'"
                   :order="order"
                   :disabled="loading"
                   @success="success = true"
@@ -245,7 +245,7 @@
                 />
 
                 <PaymentProcessingSkyflow
-                  v-else-if="paymentMethodCode === 'SkyflowPaymentMethod'"
+                  v-if="paymentMethodCode === 'SkyflowPaymentMethod'"
                   :order="order"
                   @success="success = true"
                   @fail="failure = true"
@@ -257,6 +257,10 @@
                   @success="success = true"
                   @fail="failure = true"
                 />
+              </template>
+              <template v-else>
+                {{ $t("pages.account.order_payment.failure.title") }}
+                <ContactAdministratorLink />.
               </template>
             </div>
           </div>
@@ -280,6 +284,7 @@ import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder } from "@/shared/account";
 import { OrderSummary, SelectPaymentMethodModal } from "@/shared/checkout";
+import { ContactAdministratorLink } from "@/shared/common";
 import { useModal } from "@/shared/modal";
 import { PaymentActionType, PaymentProcessingManual, PaymentProcessingRedirection } from "@/shared/payment";
 import type { MemberAddressType, OrderPaymentMethodType, PaymentInType } from "@/core/api/graphql/types";
