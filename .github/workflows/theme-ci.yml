@@ -42,7 +42,7 @@ jobs:
     steps:
 
       - name: Set up Node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.2.0
         with:
           node-version: '22'
 
