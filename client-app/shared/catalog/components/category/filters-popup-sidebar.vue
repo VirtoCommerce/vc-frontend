@@ -11,13 +11,13 @@
       :loading="loading || facetsLoading"
       @change="$emit('updatePopupSidebarFilters', $event)"
     >
-      <template #prepend="{ loading: _loading }">
+      <template #prepend="{ loading: updatingFiltersState }">
         <div class="filters-popup-sidebar__container">
           <VcCheckbox
             v-if="!hideControls"
             :model-value="popupSidebarFilters.inStock"
             class="filters-popup-sidebar__control"
-            :disabled="_loading"
+            :disabled="updatingFiltersState"
             @change="
               (value) => {
                 $emit('updatePopupSidebarFilters', { ...popupSidebarFilters, inStock: value as boolean });
@@ -31,7 +31,7 @@
             v-if="!hideControls"
             class="filters-popup-sidebar__control"
             :model-value="!!popupSidebarFilters.branches.length"
-            :disabled="_loading"
+            :disabled="updatingFiltersState"
             :message="$t('pages.catalog.branch_availability_filter_card.select_branch_text')"
             prevent-default
             @change="$emit('openBranchesModal', true)"
