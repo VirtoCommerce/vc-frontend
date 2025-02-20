@@ -53,7 +53,7 @@
             {{ $t("pages.account.order_payment.orders_list_button") }}
           </VcButton>
 
-          <VcButton :to="{ name: 'Catalog', replace: true }">
+          <VcButton :external-link="continue_shopping_link">
             {{ $t("pages.account.order_payment.continue_shopping_button") }}
           </VcButton>
         </div>
@@ -277,6 +277,8 @@ import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { useUserOrder } from "@/shared/account";
 import { OrderSummary, SelectPaymentMethodModal } from "@/shared/checkout";
 import { useModal } from "@/shared/modal";
@@ -293,6 +295,12 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
+
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
+});
 
 const success = ref(false);
 const failure = ref(false);

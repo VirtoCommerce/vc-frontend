@@ -134,7 +134,7 @@
         {{ $t("pages.account.orders.buttons.reset_search") }}
       </VcButton>
 
-      <VcButton v-else :to="{ name: 'Catalog' }">
+      <VcButton v-else :external-link="continue_shopping_link">
         {{ $t("pages.account.orders.buttons.no_orders") }}
       </VcButton>
     </template>
@@ -327,9 +327,11 @@ import { breakpointsTailwind, useBreakpoints, onClickOutside, useElementVisibili
 import { computed, onMounted, ref, shallowRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { usePageHead } from "@/core/composables/usePageHead";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { Sort } from "@/core/types";
 import { toDateISOString } from "@/core/utilities";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
@@ -374,8 +376,14 @@ const {
   removeFilterChipsItem,
 } = useUserOrdersFilter();
 
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+
 usePageHead({
   title: t("pages.account.orders.meta.title"),
+});
+
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
 });
 
 const isMobile = breakpoints.smaller("lg");

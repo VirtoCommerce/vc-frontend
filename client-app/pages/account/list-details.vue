@@ -93,7 +93,7 @@
           icon="thin-lists"
         >
           <template #button>
-            <VcButton :to="{ name: 'Catalog' }">
+            <VcButton :external-link="continue_shopping_link">
               {{ $t("shared.wishlists.list_details.empty_list_button") }}
             </VcButton>
           </template>
@@ -112,7 +112,9 @@ import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { globals } from "@/core/globals";
 import { prepareLineItem } from "@/core/utilities";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
@@ -145,6 +147,7 @@ const props = defineProps<IProps>();
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { t } = useI18n();
 const { analytics } = useAnalytics();
 const broadcast = useBroadcast();
@@ -163,6 +166,10 @@ const { pushHistoricalEvent } = useHistoricalEvents();
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
+});
+
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
 });
 
 const itemsPerPage = ref(6);

@@ -14,4 +14,5 @@ export const MODULE_XAPI_KEYS = {
   PAGE_TITLE_DIVIDER: "Frontend.PageTitleDivider",
   CATALOG_MENU_LINK_LIST_NAME: "Frontend.CatalogMenuLinkListName",
   CATALOG_EMPTY_CATEGORIES_ENABLED: "Frontend.CatalogEmptyCategoriesEnabled",
+  CONTINUE_SHOPPING_LINK: "Frontend.ContinueShoppingLink",
 } as const;
