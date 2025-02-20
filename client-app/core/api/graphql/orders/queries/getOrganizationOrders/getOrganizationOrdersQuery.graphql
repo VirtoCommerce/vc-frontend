@@ -1,0 +1,50 @@
+#import "../../../common/fragments/money.graphql"
+
+query GetOrganizationOrders(
+  $filter: String
+  $sort: String
+  $cultureName: String
+  $after: String
+  $first: Int
+  $facet: String
+  $organizationId: String
+) {
+  organizationOrders(
+    filter: $filter
+    sort: $sort
+    cultureName: $cultureName
+    after: $after
+    first: $first
+    facet: $facet
+    organizationId: $organizationId
+  ) {
+    totalCount
+    items {
+      id
+      createdDate
+      status
+      statusDisplayValue
+      currency {
+        code
+      }
+      total {
+        ...money
+      }
+      inPayments {
+        number
+      }
+      number
+      customerId
+      customerName
+      purchaseOrderNumber
+    }
+    term_facets {
+      name
+      terms {
+        term
+        label
+        count
+      }
+    }
+  }
+}
