@@ -13,26 +13,11 @@
     >
       <template #prepend="{ loading: _loading }">
         <div class="filters-popup-sidebar__container">
-          <div v-if="!hideSorting" class="filters-popup-sidebar__sorting">
-            <span class="filters-popup-sidebar__sorting-label">
-              {{ $t("pages.catalog.sort_by_label") }}
-            </span>
-
-            <VcSelect
-              v-model="sortQueryParam"
-              size="sm"
-              text-field="name"
-              value-field="id"
-              :disabled="_loading"
-              :items="PRODUCT_SORTING_LIST"
-            />
-          </div>
-
           <VcCheckbox
             v-if="!hideControls"
             :model-value="popupSidebarFilters.inStock"
             class="filters-popup-sidebar__control"
-            :disabled="loading"
+            :disabled="_loading"
             @change="
               (value) => {
                 $emit('updatePopupSidebarFilters', { ...popupSidebarFilters, inStock: value as boolean });
@@ -46,7 +31,7 @@
             v-if="!hideControls"
             class="filters-popup-sidebar__control"
             :model-value="!!popupSidebarFilters.branches.length"
-            :disabled="loading"
+            :disabled="_loading"
             :message="$t('pages.catalog.branch_availability_filter_card.select_branch_text')"
             prevent-default
             @change="$emit('openBranchesModal', true)"
@@ -109,9 +94,6 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
-import { useRouteQueryParam } from "@/core/composables";
-import { PRODUCT_SORTING_LIST } from "@/core/constants";
-import { QueryParamName } from "@/core/enums";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 
@@ -138,11 +120,6 @@ interface IProps {
   keywordQueryParam?: string;
   popupSidebarFilters: ProductsFiltersType;
 }
-
-const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
-  defaultValue: PRODUCT_SORTING_LIST[0].id,
-  validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
-});
 
 const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
   props.popupSidebarFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
