@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full columns-4 px-10 pt-3 xl:columns-5">
+  <div ref="menuContainer" class="w-full columns-4 px-10 pt-3 xl:columns-5">
     <CatalogMenuItem
       v-for="(item, index) in items"
       :key="index"
@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import CatalogMenuItem from "./catalog-menu-item.vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
@@ -43,10 +43,11 @@ const maxRowsNumber = computed(() => {
   return Math.ceil(props.items.length / columnsCount.value);
 });
 
+const menuContainer = ref<HTMLElement | null>(null);
+
 const handleFocusOut = (event: FocusEvent) => {
-  const menu = event.currentTarget as HTMLElement;
   // if focus moved outside of the menu, close the menu
-  if (!menu?.contains(event.relatedTarget as Node)) {
+  if (!menuContainer.value?.contains(event.relatedTarget as Node)) {
     emit("close");
   }
 };
