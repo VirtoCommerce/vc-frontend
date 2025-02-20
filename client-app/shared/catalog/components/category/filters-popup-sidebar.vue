@@ -115,7 +115,6 @@ interface IProps {
   isVisible?: boolean;
   loading?: boolean;
   facetsLoading?: boolean;
-  hideSorting?: boolean;
   hideControls?: boolean;
   keywordQueryParam?: string;
   popupSidebarFilters: ProductsFiltersType;
