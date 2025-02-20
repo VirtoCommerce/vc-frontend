@@ -13,7 +13,6 @@
               <VcCompositeShape
                 icon="outline-case"
                 img="sign-in.jpg"
-                size="6rem"
                 :alt="$t('pages.home.feature_descriptions_block.feature_1')"
               />
             </div>
@@ -27,7 +26,6 @@
               <VcCompositeShape
                 icon="outline-payments"
                 img="boxes.jpg"
-                size="6rem"
                 :alt="$t('pages.home.feature_descriptions_block.feature_1')"
               />
             </div>
@@ -41,7 +39,6 @@
               <VcCompositeShape
                 icon="outline-products"
                 img="statuses.jpg"
-                size="6rem"
                 :alt="$t('pages.home.feature_descriptions_block.feature_1')"
               />
             </div>
@@ -55,7 +52,6 @@
               <VcCompositeShape
                 icon="outline-document"
                 img="tax.jpg"
-                size="6rem"
                 :alt="$t('pages.home.feature_descriptions_block.feature_1')"
               />
             </div>
