@@ -558,7 +558,8 @@
       },
       "configuration_items": {
         "title": "Lista komponentów",
-        "edit_configuration": "Edytuj konfigurację"
+        "edit_configuration": "Edytuj konfigurację",
+        "selected_text": "Wybrany tekst: {text}"
       }
     },
     "catalog": {
@@ -609,7 +610,10 @@
           "none": "Brak",
           "nothing_selected": "Nic nie wybrano",
           "changed_notification": "Konfiguracja produktu została zmieniona. Możesz zawsze zapisać ją później, klikając przycisk \"@:{'ui_kit.buttons.update_cart'}\".",
-          "changed_confirmation": "Konfiguracja produktu została zmieniona. Chcesz ją zapisać?"
+          "changed_confirmation": "Konfiguracja produktu została zmieniona. Chcesz ją zapisać?",
+          "no_text": "Brak zaznaczonego tekstu",
+          "check_your_configuration": "Sprawdź konfigurację produktu",
+          "required_section": "Sekcja jest wymagana"
         }
       },
       "discount_badge": {

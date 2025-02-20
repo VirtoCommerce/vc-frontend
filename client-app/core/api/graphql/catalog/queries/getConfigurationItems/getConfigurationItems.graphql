@@ -14,10 +14,12 @@ query GetConfigurationItems(
   ) {
     configurationItems {
       id
+      customText
       name
       quantity
       productId
       sectionId
+      type
     }
   }
 }

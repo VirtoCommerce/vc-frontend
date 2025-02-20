@@ -62,7 +62,11 @@ const { t } = useI18n();
 const { analytics } = useAnalytics();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
-const { selectedConfigurationInput, changeCartConfiguredItem } = useConfigurableProduct(product.value.id);
+const {
+  selectedConfigurationInput,
+  changeCartConfiguredItem,
+  validateInput: validateConfigurableInput,
+} = useConfigurableProduct(product.value.id);
 
 const loading = ref(false);
 const errorMessage = ref<string | undefined>();
@@ -94,11 +98,17 @@ function onInput(value: number): void {
  * Process button click to add/update cart line item.
  */
 async function onChange() {
+  const lineItem = getLineItem(cart.value?.items);
+  const mode = lineItem ? AddToCartModeType.Update : AddToCartModeType.Add;
+
+  if (isConfigurable.value && !validateConfigurableInput()) {
+    displayErrorMessage(mode, t("shared.catalog.product_details.product_configuration.check_your_configuration"));
+    return;
+  }
+
   loading.value = true;
 
   try {
-    const lineItem = getLineItem(cart.value?.items);
-    const mode = lineItem ? AddToCartModeType.Update : AddToCartModeType.Add;
     const updatedCart = await updateOrAddToCart(lineItem, mode);
 
     if (isConfigurable.value && mode === AddToCartModeType.Add) {
@@ -144,20 +154,24 @@ function trackAddToCart(quantity: number) {
 function handleUpdateResult(lineItem: ShortLineItemFragment | undefined, mode: AddToCartModeType) {
   if (!lineItem) {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
-    notifications.error({
-      text: t(
-        mode === AddToCartModeType.Update
-          ? "common.messages.fail_to_change_quantity_in_cart"
-          : "common.messages.fail_add_product_to_cart",
-        { reason: getValidationErrors() },
-      ),
-      duration: 4000,
-      single: true,
-    });
+    displayErrorMessage(mode, getValidationErrors());
     return;
   }
 
   emit("update:lineItem", clone(lineItem));
+}
+
+function displayErrorMessage(mode: AddToCartModeType, message: string) {
+  notifications.error({
+    text: t(
+      mode === AddToCartModeType.Update
+        ? "common.messages.fail_to_change_quantity_in_cart"
+        : "common.messages.fail_add_product_to_cart",
+      { reason: message },
+    ),
+    duration: 4000,
+    single: true,
+  });
 }
 
 function getValidationErrors(): string {
