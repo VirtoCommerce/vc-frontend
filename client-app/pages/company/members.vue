@@ -228,7 +228,7 @@
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
 
-        <VcButton v-else :to="{ name: 'Catalog' }">
+        <VcButton v-else :external-link="continue_shopping_link">
           {{ $t("pages.company.members.buttons.no_members") }}
         </VcButton>
       </template>
@@ -357,7 +357,9 @@ import { breakpointsTailwind, computedEager, onClickOutside, useBreakpoints, use
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { B2B_ROLES } from "@/core/constants";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { PageToolbarBlock, useUser } from "@/shared/account";
@@ -416,8 +418,13 @@ const {
 const { openModal } = useModal();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const notifications = useNotifications();
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 const isMobile = breakpoints.smaller("lg");
+
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
+});
 
 const localKeyword = ref("");
 const filtersVisible = ref(false);

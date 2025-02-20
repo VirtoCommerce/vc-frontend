@@ -14,7 +14,7 @@
       </div>
 
       <div class="flex flex-wrap gap-x-6 gap-y-2.5 max-sm:justify-center">
-        <VcButton :to="continue_shopping_link" prepend-icon="shopping-bag">
+        <VcButton :external-link="continue_shopping_link" prepend-icon="shopping-bag">
           {{ $t("common.buttons.continue_shopping") }}
         </VcButton>
 
