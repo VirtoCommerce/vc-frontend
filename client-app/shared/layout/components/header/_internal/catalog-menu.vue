@@ -6,7 +6,10 @@
       :item="item"
       :class="[(index + 1) % maxRowsNumber === 0 ? 'break-after-column' : 'break-after-avoid']"
       class="min-h-[15.5rem] w-full break-inside-avoid p-5"
+      tabindex="-1"
       @select="$emit('select')"
+      @keydown.esc="$emit('close')"
+      @focusout="handleFocusOut"
     />
   </div>
 </template>
@@ -19,13 +22,14 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 
 interface IEmits {
   (event: "select"): void;
+  (event: "close"): void;
 }
 
 interface IProps {
   items: ExtendedMenuLinkType[];
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -38,4 +42,12 @@ const columnsCount = computed(() => {
 const maxRowsNumber = computed(() => {
   return Math.ceil(props.items.length / columnsCount.value);
 });
+
+const handleFocusOut = (event: FocusEvent) => {
+  const menu = event.currentTarget as HTMLElement;
+  // if focus moved outside of the menu, close the menu
+  if (!menu?.contains(event.relatedTarget as Node)) {
+    emit("close");
+  }
+};
 </script>
