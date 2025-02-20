@@ -174,6 +174,8 @@ function _useConfigurableProduct(configurableProductId: string) {
       const validationResult = validateValue(section.id, input);
       if (!validationResult.isValid) {
         validationErrors.value.set(section.id, validationResult.error);
+      } else {
+        validationErrors.value.delete(section.id);
       }
     }
   }
