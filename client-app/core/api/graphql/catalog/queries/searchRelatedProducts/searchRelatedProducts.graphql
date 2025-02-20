@@ -40,7 +40,11 @@ query SearchRelatedProducts(
             }
           }
           availabilityData {
-            ...availabilityData
+            isActive
+            isAvailable
+            isBuyable
+            isInStock
+            availableQuantity
           }
           minQuantity
           maxQuantity
