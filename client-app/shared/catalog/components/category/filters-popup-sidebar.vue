@@ -133,10 +133,6 @@ const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
     @apply space-y-5 mb-4;
   }
 
-  &__sorting-label {
-    @apply font-bold text-neutral-900;
-  }
-
   &__footer-btn {
     &:first-child {
       @apply me-auto;
