@@ -34,5 +34,8 @@ query GetMe($userId: String) {
         fullName
       }
     }
+    roles {
+      name
+    }
   }
 }

@@ -71,7 +71,9 @@
       "sort_by": "Ordina per",
       "add_items_to_cart": "Aggiungi articoli al carrello",
       "show_details": "Mostra dettagli",
-      "add_with_bulk_order": "Aggiungi con ordine multiplo"
+      "add_with_bulk_order": "Aggiungi con ordine multiplo",
+      "agency": "Agenzia",
+      "personal": "Personale"
     },
     "labels": {
       "actions": "Azioni",
@@ -1033,6 +1035,7 @@
         "title": "Ordini",
         "order_number_label": "Numero ordine",
         "purchase_number_label": "Ordine d'acquisto",
+        "buyer_name_label": "Nome dell'acquirente",
         "status_label": "@:common.labels.status",
         "invoice_label": "Fattura",
         "date_label": "@:common.labels.date",

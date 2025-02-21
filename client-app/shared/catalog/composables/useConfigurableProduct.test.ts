@@ -567,7 +567,7 @@ describe("useConfigurableProduct", () => {
           customText: undefined,
         });
 
-        const isValid = composable.validateInput();
+        const isValid = composable.validateSections();
         expect(isValid).toBe(false);
         expect(composable.validationErrors.value.has("section_1")).toBe(true);
       });
@@ -586,7 +586,7 @@ describe("useConfigurableProduct", () => {
           customText: undefined,
         });
 
-        const isValid = composable.validateInput();
+        const isValid = composable.validateSections();
         expect(isValid).toBe(true);
         expect(composable.validationErrors.value.has("section_1")).toBe(false);
       });
@@ -605,7 +605,7 @@ describe("useConfigurableProduct", () => {
           customText: undefined,
         });
 
-        const isValid = composable.validateInput();
+        const isValid = composable.validateSections();
         expect(isValid).toBe(false);
         expect(composable.validationErrors.value.has("section_1")).toBe(true);
       });
@@ -626,7 +626,7 @@ describe("useConfigurableProduct", () => {
           option: undefined,
         });
 
-        const isValid = composable.validateInput();
+        const isValid = composable.validateSections();
         expect(isValid).toBe(false);
         expect(composable.validationErrors.value.has("text_section_1")).toBe(true);
       });
@@ -645,7 +645,7 @@ describe("useConfigurableProduct", () => {
           option: undefined,
         });
 
-        const isValid = composable.validateInput();
+        const isValid = composable.validateSections();
         expect(isValid).toBe(true);
         expect(composable.validationErrors.value.has("text_section_1")).toBe(false);
       });
@@ -664,7 +664,7 @@ describe("useConfigurableProduct", () => {
           option: undefined,
         });
 
-        const isValid = composable.validateInput();
+        const isValid = composable.validateSections();
         expect(isValid).toBe(false);
         expect(composable.validationErrors.value.has("text_section_1")).toBe(true);
       });
@@ -694,7 +694,7 @@ describe("useConfigurableProduct", () => {
           option: undefined,
         });
 
-        const isValid = composable.validateInput();
+        const isValid = composable.validateSections();
         expect(isValid).toBe(false);
         expect(composable.validationErrors.value.has("section_1")).toBe(true);
         expect(composable.validationErrors.value.has("text_section_2")).toBe(true);
@@ -723,7 +723,7 @@ describe("useConfigurableProduct", () => {
           option: undefined,
         });
 
-        const isValid = composable.validateInput();
+        const isValid = composable.validateSections();
         expect(isValid).toBe(true);
         expect(composable.validationErrors.value.size).toBe(0);
       });

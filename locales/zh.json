@@ -71,7 +71,9 @@
       "sort_by": "排序方式",
       "add_items_to_cart": "添加商品到购物车",
       "show_details": "显示详情",
-      "add_with_bulk_order": "批量订单添加"
+      "add_with_bulk_order": "批量订单添加",
+      "agency": "机构",
+      "personal": "个人的"
     },
     "labels": {
       "actions": "操作",
@@ -1033,6 +1035,7 @@
         "title": "订单",
         "order_number_label": "订单编号",
         "purchase_number_label": "采购订单",
+        "buyer_name_label": "买方姓名",
         "status_label": "@:common.labels.status",
         "invoice_label": "发票",
         "date_label": "@:common.labels.date",

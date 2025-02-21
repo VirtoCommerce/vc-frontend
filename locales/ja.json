@@ -71,7 +71,9 @@
       "sort_by": "並び替え",
       "add_items_to_cart": "カートに追加",
       "show_details": "詳細表示",
-      "add_with_bulk_order": "一括注文で追加"
+      "add_with_bulk_order": "一括注文で追加",
+      "agency": "エージェンシー",
+      "personal": "個人的な"
     },
     "labels": {
       "actions": "操作",
@@ -1033,6 +1035,7 @@
         "title": "注文履歴",
         "order_number_label": "注文番号",
         "purchase_number_label": "発注番号",
+        "buyer_name_label": "購入者名",
         "status_label": "@:common.labels.status",
         "invoice_label": "請求書",
         "date_label": "@:common.labels.date",
