@@ -553,7 +553,7 @@ async function saveOrganizationLogo(): Promise<void> {
     single: true,
   });
 
-  void removeFiles(files.value);
+  files.value.length = 0;
 }
 
 function openDeleteLogoModal() {
