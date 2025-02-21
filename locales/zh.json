@@ -71,7 +71,9 @@
       "sort_by": "排序方式",
       "add_items_to_cart": "添加商品到购物车",
       "show_details": "显示详情",
-      "add_with_bulk_order": "批量订单添加"
+      "add_with_bulk_order": "批量订单添加",
+      "agency": "机构",
+      "personal": "个人的"
     },
     "labels": {
       "actions": "操作",
@@ -563,7 +565,8 @@
       },
       "configuration_items": {
         "title": "组件列表",
-        "edit_configuration": "编辑配置"
+        "edit_configuration": "编辑配置",
+        "selected_text": "已选文字：{text}"
       }
     },
     "catalog": {
@@ -614,7 +617,10 @@
           "none": "无",
           "nothing_selected": "未选择任何内容",
           "changed_notification": "产品配置已更改。您可以随时稍后保存，点击按钮 \"@:{'ui_kit.buttons.update_cart'}\".",
-          "changed_confirmation": "产品配置已更改。您要保存吗？"
+          "changed_confirmation": "产品配置已更改。您要保存吗？",
+          "no_text": "未选择文本",
+          "check_your_configuration": "检查您的产品配置",
+          "required_section": "此部分为必填项"
         }
       },
       "discount_badge": {
@@ -1034,6 +1040,7 @@
         "title": "订单",
         "order_number_label": "订单编号",
         "purchase_number_label": "采购订单",
+        "buyer_name_label": "买方姓名",
         "status_label": "@:common.labels.status",
         "invoice_label": "发票",
         "date_label": "@:common.labels.date",

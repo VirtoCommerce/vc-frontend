@@ -15,8 +15,8 @@
     v-bind="attrs"
     tabindex="-1"
     role="button"
-    @keyup="handleContainerClick"
-    @click="handleContainerClick"
+    @keyup="handleContainerClick($event)"
+    @click="handleContainerClick($event)"
   >
     <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">
       {{ label }}
@@ -157,7 +157,11 @@ function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
 }
 
-function handleContainerClick() {
+function handleContainerClick(event: Event) {
+  if (event instanceof KeyboardEvent && event.key === "Tab") {
+    return;
+  }
+
   if (inputElement.value) {
     inputElement.value.focus();
   }

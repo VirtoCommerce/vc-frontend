@@ -42,5 +42,7 @@ fragment fullLineItem on LineItemType {
   configurationItems {
     id
     name
+    customText
+    type
   }
 }

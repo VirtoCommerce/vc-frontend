@@ -71,7 +71,9 @@
       "sort_by": "Sort by",
       "add_items_to_cart": "Add items to cart",
       "show_details": "Show details",
-      "add_with_bulk_order": "Add with bulk order"
+      "add_with_bulk_order": "Add with bulk order",
+      "agency": "Agency",
+      "personal": "Personal"
     },
     "labels": {
       "actions": "Actions",
@@ -563,7 +565,8 @@
       },
       "configuration_items": {
         "title": "Components list",
-        "edit_configuration": "Edit configuration"
+        "edit_configuration": "Edit configuration",
+        "selected_text": "Selected text: {text}"
       }
     },
     "catalog": {
@@ -614,7 +617,10 @@
           "none": "None",
           "nothing_selected": "Nothing selected",
           "changed_notification": "The product configuration has been changed. You can always save it later by clicking \"@:{'ui_kit.buttons.update_cart'}\" button.",
-          "changed_confirmation": "The product configuration has been changed. Do you want to save it?"
+          "changed_confirmation": "The product configuration has been changed. Do you want to save it?",
+          "no_text": "No text selected",
+          "check_your_configuration": "Check your product configuration",
+          "required_section": "Section is required"
         }
       },
       "discount_badge": {
@@ -1034,6 +1040,7 @@
         "title": "Orders",
         "order_number_label": "Order number",
         "purchase_number_label": "Purchase order",
+        "buyer_name_label": "Buyer name",
         "status_label": "@:common.labels.status",
         "invoice_label": "Invoice",
         "date_label": "@:common.labels.date",
