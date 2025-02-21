@@ -67,20 +67,11 @@
                   />
 
                   <VcButton
-                    v-if="whiteLabelingLogoUrl !== newLogoUrl"
                     icon="save-v2"
                     class="flex-none"
+                    :disabled="whiteLabelingLogoUrl === newLogoUrl"
                     :loading="loadingOrganizationLogo"
                     @click="saveOrganizationLogo"
-                  />
-
-                  <VcButton
-                    v-else
-                    icon="delete-thin"
-                    color="danger"
-                    class="flex-none"
-                    :loading="loadingOrganizationLogo"
-                    @click="openDeleteLogoModal"
                   />
                 </div>
               </template>
@@ -347,7 +338,6 @@ import {
 import { useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { VcConfirmationModal } from "@/ui-kit/components";
 import { fileRequirements } from "@/ui-kit/utilities";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
@@ -364,7 +354,6 @@ const {
   addFiles,
   validateFiles,
   uploadFiles,
-  removeFiles,
   fetchOptions: fetchFileOptions,
   options: fileOptions,
   hasFailedFiles,
@@ -393,7 +382,7 @@ const {
   removeAddressFromFavorite,
   loading: loadingAddresses,
 } = useOrganizationAddresses(organization.value!.id);
-const { openModal, closeModal } = useModal();
+const { openModal } = useModal();
 const notifications = useNotifications();
 
 const {
@@ -556,43 +545,12 @@ async function saveOrganizationLogo(): Promise<void> {
   files.value.length = 0;
 }
 
-function openDeleteLogoModal() {
-  openModal({
-    component: VcConfirmationModal,
-    props: {
-      variant: "danger",
-      icon: "delete-2",
-      title: t("shared.company.delete_logo_modal.title"),
-      text: t("shared.company.delete_logo_modal.message"),
-      onConfirm() {
-        void onRemoveFiles();
-        closeModal();
-      },
-    },
-  });
-}
-
 async function onAddFiles(items: INewFile[]) {
   files.value.length = 0;
   addFiles(items);
   validateFiles();
   await uploadFiles();
   newLogoUrl.value = uploadedFiles.value[0].url;
-}
-
-async function onRemoveFiles() {
-  void removeFiles(files.value);
-  await updateLogo(organizationId.value, "");
-  await fetchWhiteLabelingSettings();
-
-  notifications.warning({
-    text: t("common.messages.logo_deleted"),
-    duration: 10000,
-    single: true,
-  });
-
-  files.value.length = 0;
-  newLogoUrl.value = "";
 }
 
 async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: string) {
