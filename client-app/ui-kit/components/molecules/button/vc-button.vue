@@ -3,7 +3,7 @@
     :is="componentTag"
     v-bind="attrs"
     :target="target"
-    :type="type"
+    :type="componentTag === 'button' ? type : null"
     :disabled="!enabled"
     :title="title"
     :class="[
@@ -67,10 +67,10 @@ interface IAttributes {
 }
 
 interface IProps {
-  color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger" | "accent";
-  size?: "xs" | "sm" | "md" | "lg";
-  variant?: "solid" | "outline" | "no-border" | "no-background";
-  type?: "button" | "reset" | "submit";
+  color?: VcButtonColorType;
+  size?: VcButtonSizeType;
+  variant?: VcButtonVariantType;
+  type?: VcButtonTypeType;
   disabled?: boolean;
   loading?: boolean;
   to?: RouteLocationRaw | null;
@@ -85,6 +85,7 @@ interface IProps {
   noWrap?: boolean;
   minWidth?: string;
   tag?: string;
+  iconSize?: string;
 }
 
 defineEmits<IEmits>();
@@ -102,6 +103,7 @@ const props = withDefaults(defineProps<IProps>(), {
   noWrap: false,
   minWidth: "",
   tag: "",
+  iconSize: "",
 });
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
@@ -146,7 +148,10 @@ const attrs = computed(() => {
 <style lang="scss">
 .vc-button {
   --props-min-width: v-bind(props.minWidth);
+  --props-icon-size: v-bind(props.iconSize);
   --min-w: var(--props-min-width, var(--vc-button-min-width, auto));
+
+  --vc-icon-size: var(--vc-button-icon-size, var(--props-icon-size, var(--line-height)));
 
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
 
@@ -159,7 +164,9 @@ const attrs = computed(() => {
   $loaderIcon: "";
   $noWrap: "";
 
-  @apply relative inline-block rounded border-2 select-none text-center;
+  @apply relative rounded border-2 select-none text-center;
+
+  appearance: button;
 
   &--truncate {
     $truncate: &;
@@ -196,7 +203,7 @@ const attrs = computed(() => {
   &__loader-icon {
     $loaderIcon: &;
 
-    @apply block rounded-full animate-spin;
+    @apply block rounded-full animate-spin border-2 size-[--line-height];
   }
 
   &:not(#{$icon}) {
@@ -204,60 +211,44 @@ const attrs = computed(() => {
   }
 
   &--size {
-    &--xs {
+    &--xxs {
+      --size: 1.375rem;
       --line-height: 0.875rem;
+      --px: theme("padding.2");
 
-      @apply px-3 py-1.5 text-xs/[--line-height] font-bold;
+      @apply text-xs/[--line-height] font-bold;
+    }
 
-      &#{$icon} {
-        @apply px-1.5;
-      }
+    &--xs {
+      --size: 1.625rem;
+      --line-height: 0.875rem;
+      --px: theme("padding.3");
 
-      & #{$loaderIcon} {
-        @apply border-2 size-3.5;
-      }
+      @apply text-xs/[--line-height] font-bold;
     }
 
     &--sm {
-      --line-height: 1.25rem;
+      --size: 2rem;
+      --line-height: 1rem;
+      --px: theme("padding[3.5]");
 
-      @apply px-3.5 py-1.5 text-xs/[--line-height] uppercase font-black;
-
-      &#{$icon} {
-        @apply px-1.5;
-      }
-
-      & #{$loaderIcon} {
-        @apply border-2 size-5;
-      }
+      @apply text-xs/[--line-height] uppercase font-black;
     }
 
     &--md {
+      --size: 2.5rem;
       --line-height: 1.25rem;
+      --px: theme("padding.4");
 
-      @apply px-4 py-2.5 text-sm/[--line-height] uppercase font-black;
-
-      &#{$icon} {
-        @apply px-2.5;
-      }
-
-      & #{$loaderIcon} {
-        @apply border-[3px] w-5 h-5;
-      }
+      @apply text-sm/[--line-height] uppercase font-black;
     }
 
     &--lg {
+      --size: 3rem;
       --line-height: 1.5rem;
+      --px: theme("padding.5");
 
-      @apply px-5 py-3 text-base/[--line-height] uppercase font-black;
-
-      &#{$icon} {
-        @apply px-3;
-      }
-
-      & #{$loaderIcon} {
-        @apply border-[3px] w-6 h-6;
-      }
+      @apply text-base/[--line-height] uppercase font-black;
     }
   }
 
@@ -336,9 +327,11 @@ const attrs = computed(() => {
   }
 
   &__content {
-    @apply grid grid-flow-col justify-center;
+    @apply grid grid-flow-col justify-center items-center min-h-[--size] px-[--px];
 
-    --vc-icon-size: var(--line-height);
+    #{$icon} & {
+      @apply p-0 size-[--size];
+    }
 
     #{$loading} & {
       @apply invisible;
@@ -349,6 +342,10 @@ const attrs = computed(() => {
     @apply max-w-full;
 
     word-break: break-word;
+
+    #{$icon} & {
+      @apply size-[--vc-icon-size];
+    }
 
     #{$truncate} & {
       @apply grow min-w-0 truncate;

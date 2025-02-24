@@ -2,7 +2,7 @@ import { VcButton } from "..";
 import { VcIcon } from "../../atoms";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
-const SIZES = ["xs", "sm", "md", "lg"];
+const SIZES = ["xxs", "xs", "sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
 const VARIANTS = ["solid", "outline", "no-border", "no-background"];
 const TYPES = ["button", "reset", "submit"];
@@ -104,6 +104,12 @@ export const SlotAppendIcon: StoryFn<typeof VcButton> = (args) => ({
 
 export const Icon = Template.bind({});
 Icon.args = {
+  icon: "save-v2",
+};
+
+export const IconSize = Template.bind({});
+IconSize.args = {
+  iconSize: "1.75rem",
   icon: "save-v2",
 };
 
