@@ -8,7 +8,7 @@
       :disabled="disabled"
       :max="maxQuantity"
       :min="minQuantity"
-      size="sm"
+      :size="size"
       single-line-message
       center
       :error="!isValid || error"
@@ -18,7 +18,7 @@
       @input="onChange"
       @blur="onFocusOut"
     >
-      <template #append>
+      <template #append="{ buttonSize }">
         <template v-if="!hideButton">
           <VcButton
             class="vc-add-to-cart__icon-button"
@@ -27,7 +27,7 @@
             :disabled="isDisabled"
             :title="buttonText"
             :icon="icon"
-            size="sm"
+            :size="buttonSize"
             @click.stop="$emit('update:cartItemQuantity', quantity!)"
           />
 
@@ -38,7 +38,7 @@
             :loading="loading"
             :disabled="isDisabled"
             :title="buttonText"
-            size="sm"
+            :size="buttonSize"
             truncate
             @click.stop="$emit('update:cartItemQuantity', quantity!)"
           >
@@ -93,12 +93,14 @@ interface IProps {
   readonly?: boolean;
   timeout?: number;
   validateOnMount?: boolean;
+  size?: "xs" | "sm" | "md";
 }
 
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   validateOnMount: true,
+  size: "sm",
 });
 
 const { t } = useI18n();
@@ -235,8 +237,6 @@ watchEffect(async () => {
   }
 
   &__icon-button.vc-button {
-    @apply w-24 max-w-full;
-
     @container (width > theme("containers.xxs")) {
       @apply hidden;
     }

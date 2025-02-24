@@ -18,6 +18,7 @@
           :aria-label="$t('shared.layout.search_bar.search_button')"
           icon="search"
           :loading="loading"
+          size="sm"
           @click="goToSearchResultsPage"
         />
       </template>
@@ -305,7 +306,7 @@ function onSearchBarFocused() {
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
 
 onMounted(() => {
-  if(searchPhraseInUrl.value) {
+  if (searchPhraseInUrl.value) {
     searchPhrase.value = searchPhraseInUrl.value;
   }
 });

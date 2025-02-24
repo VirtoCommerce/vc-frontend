@@ -117,22 +117,14 @@
             :disabled="ordersLoading"
             :placeholder="$t('pages.account.orders.search_placeholder')"
             @keydown.enter="applyKeyword"
+            @clear="resetKeyword"
           >
             <template #append>
-              <button
-                v-if="localKeyword"
-                :aria-label="$t('common.buttons.reset_orders_search_keyword')"
-                type="button"
-                class="flex h-full items-center px-4"
-                @click="resetKeyword"
-              >
-                <VcIcon class="fill-primary" name="delete-2" size="xs" />
-              </button>
-
               <VcButton
                 :disabled="ordersLoading"
                 :aria-label="$t('commmon.buttons.search_orders')"
                 icon="search"
+                size="sm"
                 @click="applyKeyword"
               />
             </template>
