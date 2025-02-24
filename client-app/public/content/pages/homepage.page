@@ -39,22 +39,22 @@
       "background": "bg-neutral-100",
       "columns": [
         {
-          "image": "hexa-1.webp",
+          "image": "sign-in.jpg",
           "text": null,
           "title": "Corporate account management"
         },
         {
-          "image": "hexa-2.webp",
+          "image": "boxes.jpg",
           "text": null,
           "title": "Quote management and price negotiation"
         },
         {
-          "image": "hexa-3.webp",
+          "image": "statuses.jpg",
           "text": null,
           "title": "Multiple stores, channels, and locations"
         },
         {
-          "image": "hexa-4.webp",
+          "image": "tax.jpg",
           "text": null,
           "title": "B2B customization and price management"
         }

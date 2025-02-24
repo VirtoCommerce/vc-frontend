@@ -71,7 +71,9 @@
       "sort_by": "Trier par",
       "add_items_to_cart": "Ajouter des articles au panier",
       "show_details": "Afficher les détails",
-      "add_with_bulk_order": "Ajouter par commande groupée"
+      "add_with_bulk_order": "Ajouter par commande groupée",
+      "agency": "Agence",
+      "personal": "Personnel"
     },
     "labels": {
       "actions": "Actions",
@@ -1033,6 +1035,7 @@
         "title": "Commandes",
         "order_number_label": "Numéro de commande",
         "purchase_number_label": "Numéro de commande d'achat",
+        "buyer_name_label": "Nom de l'acheteur",
         "status_label": "@:common.labels.status",
         "invoice_label": "Facture",
         "date_label": "@:common.labels.date",

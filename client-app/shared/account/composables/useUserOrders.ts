@@ -1,5 +1,5 @@
 import { computed, readonly, ref, shallowRef } from "vue";
-import { getOrders } from "@/core/api/graphql/orders";
+import { getOrders, getOrganizationOrders } from "@/core/api/graphql/orders";
 import { DEFAULT_ORDERS_PER_PAGE, STATUS_ORDERS_FACET_NAME } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
@@ -28,19 +28,22 @@ export function useUserOrders(options: IUseUserOrdersOptions) {
 
   const sort: Ref<Sort> = ref(new Sort("createdDate", SortDirection.Descending));
 
-  async function fetchOrders() {
+  async function fetchOrders(scope: "private" | "organization" = "private") {
     loading.value = true;
 
     const filterExpression = getFilterExpression(keyword.value, appliedFilterData.value);
 
     try {
-      const response = await getOrders({
+      const payload = {
         sort: sort.value.toString(),
         first: itemsPerPage.value,
         after: String((page.value - 1) * itemsPerPage.value),
         filter: filterExpression,
         facet: STATUS_ORDERS_FACET_NAME,
-      });
+      };
+
+      const response = scope === "organization" ? await getOrganizationOrders(payload) : await getOrders(payload);
+
       orders.value = response.items ?? [];
       pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
       facets.value = response.term_facets?.find((item) => item.name === STATUS_ORDERS_FACET_NAME)?.terms;

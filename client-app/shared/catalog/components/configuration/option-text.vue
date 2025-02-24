@@ -12,7 +12,7 @@
       v-model="inputValue"
       class="option-text__input"
       :maxlength="MAX_LENGTH"
-      @input="(selected || isRequired) && $emit('input', inputValue || undefined)"
+      @input="$emit('input', inputValue || undefined)"
     />
   </div>
 </template>

@@ -71,7 +71,9 @@
       "sort_by": "Sortuj według",
       "add_items_to_cart": "Dodaj przedmioty do koszyka",
       "show_details": "Pokaż szczegóły",
-      "add_with_bulk_order": "Dodaj z zamówieniem zbiorczym"
+      "add_with_bulk_order": "Dodaj z zamówieniem zbiorczym",
+      "agency": "Agencja",
+      "personal": "Osobisty"
     },
     "labels": {
       "actions": "Akcje",
@@ -1033,6 +1035,7 @@
         "title": "Zamówienia",
         "order_number_label": "Numer zamówienia",
         "purchase_number_label": "Numer zamówienia",
+        "buyer_name_label": "Nazwa kupującego",
         "status_label": "@:common.labels.status",
         "invoice_label": "Faktura",
         "date_label": "@:common.labels.date",
