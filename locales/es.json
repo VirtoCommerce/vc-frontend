@@ -200,7 +200,8 @@
       "password_about_expire": "Tu contraseña está a punto de expirar en {value} día(s). Por favor, establece una nueva contraseña en el perfil.",
       "password_expired": "Tu contraseña ha expirado",
       "data_changed": "Los datos han sido modificados en uno de los otros tabs. Por favor, actualiza la página para mostrar los datos actuales.",
-      "logo_changed": "Logotipo añadido correctamente. Actualiza la página para ver los cambios."
+      "logo_changed": "El logo se cambió correctamente.",
+      "logo_deleted": "El logo fue eliminado."
     },
     "placeholders": {
       "enter_value": "Por favor, introduce un valor",
@@ -506,6 +507,10 @@
       "notifications": {
         "user_blocked": "El usuario ha sido bloqueado con éxito.",
         "user_unblocked": "El usuario ha sido desbloqueado con éxito."
+      },
+      "delete_logo_modal": {
+        "title": "Eliminar el logotipo de la organización",
+        "message": "¿Realmente deseas eliminar el logotipo actual de la organización? Este proceso es irreversible."
       }
     },
     "compare": {
