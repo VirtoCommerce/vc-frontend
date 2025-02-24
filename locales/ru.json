@@ -71,7 +71,9 @@
       "sort_by": "Сортировать по",
       "add_items_to_cart": "Добавить товары в корзину",
       "show_details": "Показать детали",
-      "add_with_bulk_order": "Добавить оптом"
+      "add_with_bulk_order": "Добавить оптом",
+      "agency": "Агентства",
+      "personal": "Личные"
     },
     "labels": {
       "actions": "Действия",
@@ -558,7 +560,8 @@
       },
       "configuration_items": {
         "title": "Список компонентов",
-        "edit_configuration": "Редактировать конфигурацию"
+        "edit_configuration": "Редактировать конфигурацию",
+        "selected_text": "Выбранный текст: {text}"
       }
     },
     "catalog": {
@@ -609,7 +612,10 @@
           "none": "Нет",
           "nothing_selected": "Ничего не выбрано",
           "changed_notification": "Конфигурация товара была изменена. Вы можете всегда сохранить ее позже, нажав кнопку \"@:{'ui_kit.buttons.update_cart'}\".",
-          "changed_confirmation": "Конфигурация товара была изменена. Вы хотите ее сохранить?"
+          "changed_confirmation": "Конфигурация товара была изменена. Вы хотите ее сохранить?",
+          "no_text": "Текст не выбран",
+          "check_your_configuration": "Проверьте конфигурацию товара",
+          "required_section": "Раздел обязателен"
         }
       },
       "discount_badge": {
@@ -1029,6 +1035,7 @@
         "title": "Заказы",
         "order_number_label": "Номер заказа",
         "purchase_number_label": "Номер закупки",
+        "buyer_name_label": "Имя покупателя",
         "status_label": "@:common.labels.status",
         "invoice_label": "Счет",
         "date_label": "@:common.labels.date",

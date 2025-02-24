@@ -9,45 +9,53 @@
         </div>
         <div class="mx-auto mt-24 flex flex-wrap justify-between">
           <div class="mb-24 w-full md:mb-0 md:mt-44 md:w-1/2 lg:w-1/4">
-            <VcImage
-              src="hexa-1.webp"
-              :alt="$t('pages.home.feature_descriptions_block.feature_1')"
-              class="mx-auto w-full"
-              lazy
-            />
+            <div class="flex justify-center">
+              <VcCompositeShape
+                icon="outline-case"
+                img="sign-in.jpg"
+                :alt="$t('pages.home.feature_descriptions_block.feature_1')"
+              />
+            </div>
+
             <div class="mt-5 px-8 text-center text-2xl font-bold md:text-xl">
               {{ $t("pages.home.feature_descriptions_block.feature_1") }}
             </div>
           </div>
           <div class="mb-24 w-full md:mb-0 md:w-1/2 lg:w-1/4">
-            <VcImage
-              src="hexa-2.webp"
-              :alt="$t('pages.home.feature_descriptions_block.feature_2')"
-              class="mx-auto w-full"
-              lazy
-            />
+            <div class="flex justify-center">
+              <VcCompositeShape
+                icon="outline-payments"
+                img="boxes.jpg"
+                :alt="$t('pages.home.feature_descriptions_block.feature_1')"
+              />
+            </div>
+
             <div class="mt-5 px-8 text-center text-2xl font-bold md:text-xl">
               {{ $t("pages.home.feature_descriptions_block.feature_2") }}
             </div>
           </div>
           <div class="mb-24 w-full md:mb-0 md:mt-44 md:w-1/2 lg:w-1/4">
-            <VcImage
-              src="hexa-3.webp"
-              :alt="$t('pages.home.feature_descriptions_block.feature_3')"
-              class="mx-auto w-full"
-              lazy
-            />
+            <div class="flex justify-center">
+              <VcCompositeShape
+                icon="outline-products"
+                img="statuses.jpg"
+                :alt="$t('pages.home.feature_descriptions_block.feature_1')"
+              />
+            </div>
+
             <div class="mt-5 px-8 text-center text-2xl font-bold md:text-xl">
               {{ $t("pages.home.feature_descriptions_block.feature_3") }}
             </div>
           </div>
           <div class="mb-24 w-full md:mb-0 md:w-1/2 lg:w-1/4">
-            <VcImage
-              src="hexa-4.webp"
-              :alt="$t('pages.home.feature_descriptions_block.feature_4')"
-              class="mx-auto w-full"
-              lazy
-            />
+            <div class="flex justify-center">
+              <VcCompositeShape
+                icon="outline-document"
+                img="tax.jpg"
+                :alt="$t('pages.home.feature_descriptions_block.feature_1')"
+              />
+            </div>
+
             <div class="mt-5 px-8 text-center text-2xl font-bold md:text-xl">
               {{ $t("pages.home.feature_descriptions_block.feature_4") }}
             </div>

@@ -71,7 +71,9 @@
       "sort_by": "Ordina per",
       "add_items_to_cart": "Aggiungi articoli al carrello",
       "show_details": "Mostra dettagli",
-      "add_with_bulk_order": "Aggiungi con ordine multiplo"
+      "add_with_bulk_order": "Aggiungi con ordine multiplo",
+      "agency": "Agenzia",
+      "personal": "Personale"
     },
     "labels": {
       "actions": "Azioni",
@@ -558,7 +560,8 @@
       },
       "configuration_items": {
         "title": "Elenco componenti",
-        "edit_configuration": "Modifica configurazione"
+        "edit_configuration": "Modifica configurazione",
+        "selected_text": "Testo selezionato: {text}"
       }
     },
     "catalog": {
@@ -609,7 +612,10 @@
           "none": "Nessuno",
           "nothing_selected": "Niente selezionato",
           "changed_notification": "La configurazione del prodotto è stata modificata. Puoi sempre salvarla più tardi facendo clic sul pulsante \"@:{'ui_kit.buttons.update_cart'}\".",
-          "changed_confirmation": "La configurazione del prodotto è stata modificata. Vuoi salvarla?"
+          "changed_confirmation": "La configurazione del prodotto è stata modificata. Vuoi salvarla?",
+          "no_text": "Nessun testo selezionato",
+          "check_your_configuration": "Verifica la configurazione del prodotto",
+          "required_section": "Sezione obbligatoria"
         }
       },
       "discount_badge": {
@@ -1029,6 +1035,7 @@
         "title": "Ordini",
         "order_number_label": "Numero ordine",
         "purchase_number_label": "Ordine d'acquisto",
+        "buyer_name_label": "Nome dell'acquirente",
         "status_label": "@:common.labels.status",
         "invoice_label": "Fattura",
         "date_label": "@:common.labels.date",

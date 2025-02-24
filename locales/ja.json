@@ -71,7 +71,9 @@
       "sort_by": "並び替え",
       "add_items_to_cart": "カートに追加",
       "show_details": "詳細表示",
-      "add_with_bulk_order": "一括注文で追加"
+      "add_with_bulk_order": "一括注文で追加",
+      "agency": "エージェンシー",
+      "personal": "個人的な"
     },
     "labels": {
       "actions": "操作",
@@ -558,7 +560,8 @@
       },
       "configuration_items": {
         "title": "構成部品リスト",
-        "edit_configuration": "構成を編集"
+        "edit_configuration": "構成を編集",
+        "selected_text": "選択されたテキスト：{text}"
       }
     },
     "catalog": {
@@ -609,7 +612,10 @@
           "none": "なし",
           "nothing_selected": "未選択",
           "changed_notification": "商品の設定が変更されました。後で「@:{'ui_kit.buttons.update_cart'}」ボタンをクリックして保存することもできます。",
-          "changed_confirmation": "商品の設定が変更されました。保存しますか？"
+          "changed_confirmation": "商品の設定が変更されました。保存しますか？",
+          "no_text": "テキストが選択されていません",
+          "check_your_configuration": "製品構成を確認してください",
+          "required_section": "セクションは必須です"
         }
       },
       "discount_badge": {
@@ -1029,6 +1035,7 @@
         "title": "注文履歴",
         "order_number_label": "注文番号",
         "purchase_number_label": "発注番号",
+        "buyer_name_label": "購入者名",
         "status_label": "@:common.labels.status",
         "invoice_label": "請求書",
         "date_label": "@:common.labels.date",
