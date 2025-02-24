@@ -24,7 +24,7 @@
 
     <div class="vc-input__container">
       <div v-if="$slots.prepend" class="vc-input__decorator">
-        <slot name="prepend" />
+        <slot name="prepend" v-bind="{ buttonSize }" />
       </div>
 
       <input
@@ -52,26 +52,38 @@
       />
 
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
-        <button type="button" tabindex="-1" class="vc-input__clear" @click.stop="clear">
-          <VcIcon name="delete-2" size="xs" />
-        </button>
+        <VcButton
+          :disabled="disabled"
+          tabindex="-1"
+          type="button"
+          icon
+          color="neutral"
+          variant="no-border"
+          :size="buttonSize"
+          class="vc-input__clear"
+          @click.stop="clear"
+        >
+          <VcIcon name="delete-thin" class="vc-input__clear-icon" />
+        </VcButton>
       </div>
 
       <div v-if="type === 'password' && !hidePasswordSwitcher" class="vc-input__decorator">
-        <button
+        <VcButton
           :disabled="disabled"
           :aria-label="$t('ui_kit.buttons.show_hide_password')"
           tabindex="-1"
           type="button"
-          class="vc-input__password-icon"
+          :icon="passwordVisibilityIcon"
+          variant="no-border"
+          :size="buttonSize"
+          :icon-size="size === 'md' ? '1.5rem' : '1.25rem'"
+          class="vc-input__password-button"
           @click="togglePasswordVisibility"
-        >
-          <VcIcon :name="passwordVisibilityIcon" />
-        </button>
+        />
       </div>
 
       <div v-if="$slots.append" class="vc-input__decorator">
-        <slot name="append" />
+        <slot name="append" v-bind="{ buttonSize }" />
       </div>
     </div>
 
@@ -153,6 +165,18 @@ const stepValue = computed(() => (props.type === "number" ? props.step : undefin
 const isPasswordVisible = ref<boolean>(false);
 const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ? "eye-off" : "eye"));
 
+const buttonSize = computed<VcButtonSizeType>(() => {
+  if (props.size === "xs") {
+    return "xxs";
+  }
+
+  if (props.size === "sm") {
+    return "xs";
+  }
+
+  return "sm";
+});
+
 function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
 }
@@ -202,7 +226,9 @@ function inputClick() {
   $center: "";
   $truncate: "";
 
-  --base-color: var(--vc-input-base-color, var(--color-primary-500));
+  --base-color: var(--vc-input-base-color, theme("colors.primary.500"));
+  --error-color: var(--vc-input-error-color, theme("colors.danger.500"));
+
   --focus-color: rgb(from var(--base-color) r g b / 0.3);
 
   @apply flex flex-col;
@@ -210,20 +236,14 @@ function inputClick() {
   &--size {
     &--xs {
       $sizeXs: &;
-
-      --vc-icon-size: 1.25rem;
     }
 
     &--sm {
       $sizeSm: &;
-
-      --vc-icon-size: 1.25rem;
     }
 
     &--md {
       $sizeMd: &;
-
-      --vc-icon-size: 1.5rem;
     }
   }
 
@@ -238,7 +258,7 @@ function inputClick() {
   &--error {
     $error: &;
 
-    --base-color: var(--color-danger-500);
+    --base-color: var(--error-color);
   }
 
   &--no-border {
@@ -257,15 +277,15 @@ function inputClick() {
     @apply flex items-stretch border rounded bg-additional-50 select-none;
 
     #{$sizeXs} & {
-      @apply h-8 text-sm;
+      @apply h-8 text-sm px-0.5;
     }
 
     #{$sizeSm} & {
-      @apply h-9 text-sm;
+      @apply h-[2.375rem] text-sm px-1;
     }
 
     #{$sizeMd} & {
-      @apply h-11 text-base;
+      @apply h-[2.625rem] text-base px-0.5;
     }
 
     &:has(input:focus) {
@@ -287,28 +307,16 @@ function inputClick() {
   }
 
   &__decorator {
-    @apply flex items-center max-w-[50%] h-full;
-
-    &:first-child > * {
-      @apply rounded-r-none;
-    }
+    @apply flex-none flex items-center max-w-[50%] h-full;
 
     #{$disabled} &,
     &:disabled {
       @apply cursor-not-allowed;
     }
-
-    &:nth-last-child(-n + 2) > * {
-      @apply rounded-l-none;
-    }
-
-    & > * {
-      @apply max-h-full;
-    }
   }
 
   &__input {
-    @apply relative m-px px-3 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
+    @apply relative m-px px-2 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;
@@ -352,16 +360,8 @@ function inputClick() {
     }
   }
 
-  &__clear {
-    @apply flex items-center p-3 text-[--base-color];
-  }
-
-  &__password-icon {
-    @apply flex items-center h-full px-3 text-[--base-color];
-
-    #{$disabled} & {
-      @apply text-neutral-300 cursor-not-allowed;
-    }
+  &__clear-icon {
+    @apply text-neutral-400;
   }
 }
 </style>

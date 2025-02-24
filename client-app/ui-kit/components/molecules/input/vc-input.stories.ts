@@ -55,6 +55,16 @@ const Template: StoryFn<typeof VcInput> = (args) => ({
   template: '<VcInput v-bind="args" v-model="args.modelValue" />',
 });
 
+const withButtonTemplate: StoryFn<typeof VcInput> = (args) => ({
+  components: { VcInput },
+  setup: () => ({ args }),
+  template: `<VcInput v-bind="args" v-model="args.modelValue">
+    <template #append="{ buttonSize }">
+      <VcButton :size="buttonSize" min-width="7rem" truncate>Add to cart</VcButton>
+    </template>
+  </VcInput>`,
+});
+
 export const Basic = Template.bind({});
 
 export const Common = Template.bind({});
@@ -84,8 +94,19 @@ TypePassword.args = {
   type: "password",
 };
 
+export const Clearable = Template.bind({});
+Clearable.args = {
+  ...Common.args,
+  clearable: true,
+};
+
 export const Center = Template.bind({});
 Center.args = {
   ...Common.args,
   center: true,
+};
+
+export const WithButton = withButtonTemplate.bind({});
+WithButton.args = {
+  ...Common.args,
 };
