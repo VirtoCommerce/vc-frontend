@@ -20,7 +20,6 @@
       :keyword-query-param="keywordQueryParam"
       :sort-query-param="sortQueryParam"
       :loading="fetchingProducts"
-      :hide-sorting="hideSorting"
       :hide-controls="hideControls"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"

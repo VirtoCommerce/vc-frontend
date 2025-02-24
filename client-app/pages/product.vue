@@ -12,7 +12,6 @@
       :is-mobile="isMobile"
       :is-visible="isFiltersSidebarVisible"
       :loading="fetchingVariations"
-      hide-sorting
       :hide-controls="false"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
