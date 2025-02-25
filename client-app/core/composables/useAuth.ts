@@ -1,4 +1,3 @@
-import type { AfterFetchContext } from "@vueuse/core";
 import { createGlobalState, useLocalStorage } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useFetch } from "@/core/api/common";
@@ -6,6 +5,7 @@ import { errorHandler, toServerError } from "@/core/api/common/utils";
 import { globals } from "@/core/globals";
 import { TabsType, unauthorizedErrorEvent, useBroadcast, userBeforeUnauthorizeEvent } from "@/shared/broadcast";
 import type { ConnectTokenResponseType } from "../types";
+import type { AfterFetchContext } from "@vueuse/core";
 
 function _useAuth() {
   const broadcast = useBroadcast();

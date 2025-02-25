@@ -191,4 +191,31 @@ export const events: TrackerEventsType = {
         .trim(),
     });
   },
+
+  viewSearchResults(searchTerm, params) {
+    sendEvent("view_search_results", {
+      ...params,
+      search_term: searchTerm,
+      visible_items: params?.visible_items
+        ?.map((el) => el.code)
+        .join(", ")
+        .trim(),
+      results_count: params?.results_count,
+      results_page: params?.results_page,
+    });
+  },
+
+  login(method, params) {
+    sendEvent("login", {
+      ...params,
+      method,
+    });
+  },
+
+  signUp(method, params) {
+    sendEvent("sign_up", {
+      ...params,
+      method,
+    });
+  },
 };

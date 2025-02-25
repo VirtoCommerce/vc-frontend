@@ -84,8 +84,9 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
 import { ref, watch } from "vue";
 import { object, string } from "yup";
-import { useAuth, useErrorsTranslator } from "@/core/composables";
+import { useAnalytics, useAuth, useErrorsTranslator } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
+import { Logger } from "@/core/utilities";
 import { useSignMeIn } from "@/shared/account/composables";
 import { ContactAdministratorLink } from "@/shared/common";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -93,6 +94,7 @@ import type { IdentityErrorType } from "@/core/api/graphql/types";
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
 
 const { authorize } = useAuth();
+const { analytics } = useAnalytics();
 
 const schema = toTypedSchema(
   object({
@@ -119,8 +121,27 @@ const rememberMe = ref(false);
 const { errors, loading, signIn, resetErrors } = useSignMeIn();
 
 const onSubmit = handleSubmit(async () => {
-  await authorize(email.value, password.value);
-  await signIn();
+  try {
+    await authorize(email.value, password.value);
+    await signIn();
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    Logger.error("SignInForm", error);
+    analytics("login", "password", {
+      success: false,
+      errors: error?.message,
+    });
+  }
+
+  if (errors.value?.length) {
+    analytics("login", "password", {
+      success: false,
+      errors: errors.value.map((error) => `${error.code}: ${error.description}`).join(", "),
+    });
+    return;
+  }
+
+  analytics("login", "password", { success: true });
 });
 
 watch(meta, (value) => {

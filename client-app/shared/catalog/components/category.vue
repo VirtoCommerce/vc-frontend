@@ -429,6 +429,10 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
     item_list_id: `${currentCategory.value?.slug}_page_${currentPage.value}`,
     item_list_name: `${currentCategory.value?.name} (page ${currentPage.value})`,
   });
+
+  if (searchQueryParam.value) {
+    trackViewSearchResults();
+  }
 }
 
 async function fetchProducts(): Promise<void> {
@@ -440,6 +444,18 @@ async function fetchProducts(): Promise<void> {
   analytics("viewItemList", products.value, {
     item_list_id: currentCategory.value?.slug,
     item_list_name: currentCategory.value?.name,
+  });
+
+  if (searchQueryParam.value) {
+    trackViewSearchResults();
+  }
+}
+
+function trackViewSearchResults(): void {
+  analytics("viewSearchResults", searchQueryParam.value, {
+    visible_items: products.value.map((product) => ({ code: product.code })),
+    results_count: totalProductsCount.value,
+    results_page: currentPage.value,
   });
 }
 
