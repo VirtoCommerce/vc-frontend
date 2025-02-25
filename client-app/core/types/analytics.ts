@@ -21,12 +21,16 @@ export interface IAnalyticsEventMap {
   placeOrder: [order: CustomerOrderType, params?: EventParamsType];
   search: [searchTerm: string, visibleItems?: { code: string }[], itemsCount?: number];
   viewSearchResults: [searchTerm: string, params?: ViewSearchResultsParamsAdditionalType];
+  login: [method: string, params?: EventParamsType & LoginParamsAdditionalType];
+  signUp: [method: string, params?: EventParamsType & SignUpParamsAdditionalType];
 }
 
 export type AnalyticsEventNameType = keyof IAnalyticsEventMap;
 
 export type ViewItemListParamsAdditionalType = { item_list_id?: string; item_list_name?: string };
 export type AddToCartParamsAdditionalType = { source_route?: string; source_block?: string; search_terms?: string };
+export type LoginParamsAdditionalType = { errors?: string; success?: boolean };
+export type SignUpParamsAdditionalType = { type?: string; errors?: string; success?: boolean };
 export type ViewSearchResultsParamsAdditionalType = {
   visible_items?: { code: string }[];
   results_count?: number;

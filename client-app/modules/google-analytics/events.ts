@@ -204,4 +204,18 @@ export const events: TrackerEventsType = {
       results_page: params?.results_page,
     });
   },
+
+  login(method, params) {
+    sendEvent("login", {
+      ...params,
+      method,
+    });
+  },
+
+  signUp(method, params) {
+    sendEvent("sign_up", {
+      ...params,
+      method,
+    });
+  },
 };
