@@ -20,12 +20,18 @@ export interface IAnalyticsEventMap {
   purchase: [order: CustomerOrderType, transactionId?: string, params?: EventParamsType];
   placeOrder: [order: CustomerOrderType, params?: EventParamsType];
   search: [searchTerm: string, visibleItems?: { code: string }[], itemsCount?: number];
+  viewSearchResults: [searchTerm: string, params?: ViewSearchResultsParamsAdditionalType];
 }
 
 export type AnalyticsEventNameType = keyof IAnalyticsEventMap;
 
 export type ViewItemListParamsAdditionalType = { item_list_id?: string; item_list_name?: string };
 export type AddToCartParamsAdditionalType = { source_route?: string; source_block?: string; search_terms?: string };
+export type ViewSearchResultsParamsAdditionalType = {
+  visible_items?: { code: string }[];
+  results_count?: number;
+  results_page?: number;
+};
 
 export type EventParamsType = Record<string, unknown>;
 
