@@ -25,7 +25,7 @@ export interface IAnalyticsEventMap {
 export type AnalyticsEventNameType = keyof IAnalyticsEventMap;
 
 export type ViewItemListParamsAdditionalType = { item_list_id?: string; item_list_name?: string };
-export type AddToCartParamsAdditionalType = { sourceRoute?: string; sourceBlock?: string; searchTerms?: string };
+export type AddToCartParamsAdditionalType = { source_route?: string; source_block?: string; search_terms?: string };
 
 export type EventParamsType = Record<string, unknown>;
 

@@ -91,7 +91,7 @@ async function changeCartItemQuantity(qty: number) {
     }
   } else {
     await addToCart(product.value.id, qty);
-    trackAddItemToCart(product.value, qty, { sourceBlock: "recently-browsed" });
+    trackAddItemToCart(product.value, qty, { source_block: "recently-browsed" });
   }
 }
 

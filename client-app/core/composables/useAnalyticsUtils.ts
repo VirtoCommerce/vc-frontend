@@ -26,8 +26,8 @@ export function useAnalyticsUtils() {
     params?: AddToCartParamsAdditionalType,
   ) {
     analytics("addItemToCart", product, quantity, {
-      sourceRoute: sourceRoute.value,
-      searchTerms: searchQueryParam.value || undefined,
+      source_route: sourceRoute.value,
+      search_terms: searchQueryParam.value || undefined,
       ...params,
     });
     pushAddToCartHistoricalEvent(product.id);
@@ -35,8 +35,8 @@ export function useAnalyticsUtils() {
 
   function trackAddItemsToCart(products: Product[] | VariationType[], params?: AddToCartParamsAdditionalType) {
     analytics("addItemsToCart", products, {
-      sourceRoute: sourceRoute.value,
-      searchTerms: searchQueryParam.value || undefined,
+      source_route: sourceRoute.value,
+      search_terms: searchQueryParam.value || undefined,
       ...params,
     });
     pushAddToCartHistoricalEvent(products.map((product) => product.id));
