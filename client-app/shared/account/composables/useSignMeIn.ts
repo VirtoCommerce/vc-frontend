@@ -65,6 +65,7 @@ export function useSignMeIn() {
           saveCurrencyCode(contactCurrency.code, false);
         }
       }
+
       void broadcast.emit(openReturnUrl, undefined, TabsType.ALL);
     },
     null,
