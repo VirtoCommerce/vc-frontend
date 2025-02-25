@@ -29,10 +29,10 @@ import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useErrorsTranslator, useAnalytics, useHistoricalEvents } from "@/core/composables";
+import { useErrorsTranslator } from "@/core/composables";
+import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM, LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
-import { globals } from "@/core/globals";
 import { getUrlSearchParam, Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
@@ -45,7 +45,6 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const notifications = useNotifications();
-const { pushHistoricalEvent } = useHistoricalEvents();
 
 interface IEmits {
   (event: "update:lineItem", lineItem: ShortLineItemFragment): void;
@@ -59,7 +58,6 @@ interface IProps {
 const product = toRef(props, "product");
 const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { t } = useI18n();
-const { analytics } = useAnalytics();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 const {
@@ -67,6 +65,7 @@ const {
   changeCartConfiguredItem,
   validateSections: validateConfigurableInput,
 } = useConfigurableProduct(product.value.id);
+const { trackAddItemToCart } = useAnalyticsUtils();
 
 const loading = ref(false);
 const errorMessage = ref<string | undefined>();
@@ -137,18 +136,8 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
   const config = isConfigurable.value ? selectedConfigurationInput.value : undefined;
   const updatedCart = await addToCart(product.value.id, quantity, config);
 
-  trackAddToCart(quantity);
+  trackAddItemToCart(product.value, quantity);
   return updatedCart;
-}
-
-function trackAddToCart(quantity: number) {
-  analytics("addItemToCart", product.value, quantity);
-  void pushHistoricalEvent({
-    eventType: "addToCart",
-    sessionId: cart.value?.id,
-    productId: product.value.id,
-    storeId: globals.storeId,
-  });
 }
 
 function handleUpdateResult(lineItem: ShortLineItemFragment | undefined, mode: AddToCartModeType) {

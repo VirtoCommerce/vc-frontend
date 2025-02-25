@@ -52,6 +52,7 @@
 
 <script setup lang="ts">
 import { computed, ref, toRef, watch } from "vue";
+import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { getProductRoute } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
 import type { Product } from "@/core/api/graphql/types";
@@ -72,6 +73,7 @@ const props = defineProps<IProps>();
 const errorMessage = ref<string | undefined>();
 
 const { cart, addToCart, changeItemQuantity, changing } = useShortCart();
+const { trackAddItemToCart } = useAnalyticsUtils();
 
 const product = toRef(props, "product");
 
@@ -89,6 +91,7 @@ async function changeCartItemQuantity(qty: number) {
     }
   } else {
     await addToCart(product.value.id, qty);
+    trackAddItemToCart(product.value, qty, { sourceBlock: "recently-browsed" });
   }
 }
 

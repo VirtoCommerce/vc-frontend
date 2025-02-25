@@ -111,9 +111,9 @@ import { cloneDeep, isEqual, keyBy, pick } from "lodash";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
+import { useAnalytics, usePageHead } from "@/core/composables";
+import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { PAGE_LIMIT } from "@/core/constants";
-import { globals } from "@/core/globals";
 import { prepareLineItem } from "@/core/utilities";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
@@ -136,7 +136,6 @@ import type {
 import type { PreparedLineItemType } from "@/core/types";
 import type { RouteLocationNormalized } from "vue-router";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
-
 interface IProps {
   listId: string;
 }
@@ -159,7 +158,7 @@ const {
   changeItemQuantity,
 } = useShortCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { pushHistoricalEvent } = useHistoricalEvents();
+const { trackAddItemToCart, trackAddItemsToCart } = useAnalyticsUtils();
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
@@ -211,13 +210,7 @@ async function addAllListItemsToCart(): Promise<void> {
     .filter((product): product is NonNullable<typeof product> => !!product);
 
   if (products.length) {
-    analytics("addItemsToCart", products);
-    void pushHistoricalEvent({
-      eventType: "addToCart",
-      sessionId: cart.value?.id,
-      productIds: products.map((product) => product.id),
-      storeId: globals.storeId,
-    });
+    trackAddItemsToCart(products);
   }
 
   showResultModal(wishlistItems.value);
@@ -294,13 +287,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   } else {
     await addToCart(lineItem.product.id, quantity);
 
-    analytics("addItemToCart", lineItem.product, quantity);
-    void pushHistoricalEvent({
-      eventType: "addToCart",
-      sessionId: cart.value?.id,
-      productId: lineItem.product.id,
-      storeId: globals.storeId,
-    });
+    trackAddItemToCart(lineItem.product, quantity);
   }
   pendingItems.value[lineItem.id] = false;
 
