@@ -125,7 +125,7 @@ import { flatten, sortBy, uniqBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
-import { useErrorsTranslator } from "@/core/composables";
+import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
 import { getPropertyValue, getPropertiesGroupedByName } from "@/core/utilities";
@@ -163,6 +163,7 @@ const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { localizedItemsErrors: serverValidationErrors, setErrors } =
   useErrorsTranslator<ValidationErrorType>("validation_error");
 const { trackAddItemToCart } = useAnalyticsUtils();
+const { pushHistoricalEvent } = useHistoricalEvents();
 
 const clientValidation = ref<Record<string, { isValid: boolean; messages?: string[] }>>({});
 
@@ -285,6 +286,7 @@ async function changeCart(variation: Product, quantity: number) {
   } else {
     await addToCart(variation.id, quantity);
     trackAddItemToCart(variation, quantity);
+    void pushHistoricalEvent({ eventType: "addToCart", productId: variation.id });
   }
 }
 

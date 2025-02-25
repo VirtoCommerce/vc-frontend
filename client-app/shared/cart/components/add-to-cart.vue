@@ -29,7 +29,7 @@ import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useErrorsTranslator } from "@/core/composables";
+import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM, LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
@@ -66,6 +66,7 @@ const {
   validateSections: validateConfigurableInput,
 } = useConfigurableProduct(product.value.id);
 const { trackAddItemToCart } = useAnalyticsUtils();
+const { pushHistoricalEvent } = useHistoricalEvents();
 
 const loading = ref(false);
 const errorMessage = ref<string | undefined>();
@@ -137,6 +138,8 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
   const updatedCart = await addToCart(product.value.id, quantity, config);
 
   trackAddItemToCart(product.value, quantity);
+  void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
+
   return updatedCart;
 }
 

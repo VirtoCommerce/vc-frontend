@@ -111,7 +111,7 @@ import { cloneDeep, isEqual, keyBy, pick } from "lodash";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import { useAnalytics, usePageHead } from "@/core/composables";
+import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { PAGE_LIMIT } from "@/core/constants";
 import { prepareLineItem } from "@/core/utilities";
@@ -159,6 +159,7 @@ const {
 } = useShortCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { trackAddItemToCart, trackAddItemsToCart } = useAnalyticsUtils();
+const { pushHistoricalEvent } = useHistoricalEvents();
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
@@ -211,6 +212,7 @@ async function addAllListItemsToCart(): Promise<void> {
 
   if (products.length) {
     trackAddItemsToCart(products);
+    void pushHistoricalEvent({ eventType: "addToCart", productIds: products.map((product) => product.id) });
   }
 
   showResultModal(wishlistItems.value);
@@ -288,6 +290,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
     await addToCart(lineItem.product.id, quantity);
 
     trackAddItemToCart(lineItem.product, quantity);
+    void pushHistoricalEvent({ eventType: "addToCart", productId: lineItem.product.id });
   }
   pendingItems.value[lineItem.id] = false;
 
