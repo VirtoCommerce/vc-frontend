@@ -25,7 +25,7 @@ interface IProp {
 }
 
 withDefaults(defineProps<IProp>(), {
-  icon: "thin-stock",
+  icon: "outline-stock",
 });
 </script>
 

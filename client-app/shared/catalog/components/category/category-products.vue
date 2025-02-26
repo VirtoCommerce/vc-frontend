@@ -39,7 +39,7 @@
           ? $t('pages.catalog.no_products_filtered_message')
           : $t('pages.catalog.no_products_message')
       "
-      icon="thin-stock"
+      icon="outline-stock"
     >
       <template v-if="hasSelectedFacets || keywordQueryParam" #button>
         <VcButton prepend-icon="reset" @click="$emit('resetFilterKeyword')">

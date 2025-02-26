@@ -36,7 +36,7 @@
           <VcEmptyView
             v-else
             :text="$t('shared.catalog.branches_modal.no_results')"
-            icon="thin-stock"
+            icon="outline-stock"
             class="h-[23.8rem] max-h-screen-60"
           >
             <template v-if="searchInput.length" #button>
@@ -134,7 +134,7 @@
           </template>
         </div>
 
-        <VcEmptyView v-else :text="$t('shared.catalog.branches_modal.no_results')" icon="thin-stock">
+        <VcEmptyView v-else :text="$t('shared.catalog.branches_modal.no_results')" icon="outline-stock">
           <template v-if="searchInput.length" #button>
             <VcButton prepend-icon="reset" @click="searchInput = ''">
               {{ $t("shared.catalog.branches_modal.reset_search_button") }}

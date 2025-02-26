@@ -84,7 +84,7 @@
     <VcEmptyView
       v-if="variations.length === 0 && !fetchingVariations"
       :text="$t('shared.catalog.product_details.variations.no_results')"
-      icon="thin-stock"
+      icon="outline-stock"
     />
   </VcWidget>
 </template>

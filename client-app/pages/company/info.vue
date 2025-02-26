@@ -111,7 +111,7 @@
         <VcEmptyView
           v-if="!addresses.length && !loadingAddresses"
           :text="$t('pages.company.info.no_addresses_message')"
-          icon="thin-address"
+          icon="outline-address"
         >
           <template v-if="canEditOrganization" #button>
             <VcButton prepend-icon="plus" @click="openAddOrUpdateCompanyAddressModal()">
