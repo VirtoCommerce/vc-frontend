@@ -46,6 +46,14 @@
           :model="productInfoSection"
         />
 
+        <component
+          :is="productDescriptionSection && 'type' in productDescriptionSection ? productDescriptionSection.type : ''"
+          v-if="productDescriptionSection && !productDescriptionSection.hidden"
+          :product="product"
+          :model="productDescriptionSection"
+          :is-collapsible="false"
+        ></component>
+
         <ProductConfiguration
           v-if="product.isConfigurable && configuration?.length"
           :product-id="productId"
@@ -230,6 +238,8 @@ const seoUrl = computed(() =>
 const productTemplate = _productTemplate as IPageTemplate;
 
 const productInfoSection = productTemplate?.content?.find((item) => item?.type === "product-info");
+
+const productDescriptionSection = productTemplate?.content?.find((item) => item?.type === "product-description");
 
 const productReviewsSection = productTemplate?.content?.find((item) => item?.type === "product-reviews");
 
