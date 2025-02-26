@@ -17,7 +17,7 @@
       </VcCheckboxGroup>
     </VcWidget>
 
-    <VcWidget title="Buyer name" size="sm">
+    <VcWidget :title="$t('common.labels.buyer_name')" size="sm">
       <slot name="buyerNameFilterType" />
     </VcWidget>
 
