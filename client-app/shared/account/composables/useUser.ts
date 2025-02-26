@@ -15,7 +15,7 @@ import {
   updateContact,
 } from "@/core/api/graphql/account";
 import { useAuth } from "@/core/composables/useAuth";
-import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
+import { ORGANIZATION_MAINTAINER, USER_ID_LOCAL_STORAGE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
@@ -366,7 +366,7 @@ export function useUser() {
       () => user.value?.contact?.organizations?.items && user.value?.contact?.organizations?.items?.length > 1,
     ),
     isOrganizationMaintainer: computed(
-      () => user.value?.roles?.some((role) => role.name === "Organization maintainer") ?? false,
+      () => user.value?.roles?.some((role) => role.name === ORGANIZATION_MAINTAINER.name) ?? false,
     ),
     organization,
     allOrganizations,
