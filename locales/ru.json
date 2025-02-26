@@ -153,7 +153,8 @@
       "support_phone_number": "Номер телефона службы поддержки",
       "main_menu": "Главное меню",
       "toggle_search_bar": "Отобразить/скрыть панель поиска",
-      "slider_image": "Картинка в слайдере"
+      "slider_image": "Картинка в слайдере",
+      "buyer_name": "Имя покупателя"
     },
     "prefixes": {
       "please": "Пожалуйста",

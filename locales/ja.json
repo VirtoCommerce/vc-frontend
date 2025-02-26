@@ -153,7 +153,8 @@
       "support_phone_number": "サポート電話番号",
       "main_menu": "メインメニュー",
       "toggle_search_bar": "検索バーを切り替える",
-      "slider_image": "スライダー画像"
+      "slider_image": "スライダー画像",
+      "buyer_name": "購入者名"
     },
     "prefixes": {
       "please": "お願いします",
