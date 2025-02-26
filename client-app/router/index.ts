@@ -5,6 +5,8 @@ import { useUser } from "@/shared/account";
 import { mainRoutes } from "./routes";
 import type { RouteRecordName } from "vue-router";
 
+let lastHistoryIndex = ((window.history.state ?? {}) as { position?: number }).position ?? 0;
+
 export function createRouter(options: { base: string }) {
   const { base } = options;
   const { isAuthenticated, organization } = useUser();
@@ -60,6 +62,17 @@ export function createRouter(options: { base: string }) {
     }
 
     return next();
+  });
+
+  router.afterEach((to) => {
+    const currentHistoryIndex: number = ((window.history.state ?? {}) as { position?: number }).position ?? 0;
+    if (currentHistoryIndex < lastHistoryIndex) {
+      to.meta.isBack = true;
+    } else {
+      to.meta.isBack = false;
+    }
+
+    lastHistoryIndex = currentHistoryIndex;
   });
 
   return router;
