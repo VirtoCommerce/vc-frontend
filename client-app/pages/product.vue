@@ -52,7 +52,7 @@
           :product="product"
           :model="productDescriptionSection"
           :is-collapsible="false"
-        ></component>
+        />
 
         <ProductConfiguration
           v-if="product.isConfigurable && configuration?.length"
