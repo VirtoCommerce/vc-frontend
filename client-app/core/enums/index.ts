@@ -1,6 +1,7 @@
 export * from "./address-type.enum";
 export * from "./content-type.enum";
 export * from "./date-filter-ids.enum";
+export * from "./filter-fields.enum";
 export * from "./identity-errors.enum";
 export * from "./permissions.enum";
 export * from "./product-type.enum";

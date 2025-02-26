@@ -78,6 +78,10 @@ function getFilterExpression(keyword: string, filterData: OrdersFilterDataType):
     const statuses = filterData.statuses.map((status) => `"${status}"`);
     filterExpression += `status:${statuses.join(",")} `;
   }
+  if (filterData.customerNames?.length) {
+    const customerNames = filterData.customerNames.map((name) => `"${name}"`);
+    filterExpression += `customername:${customerNames.join(",")} `;
+  }
 
   const startDateFilterValue = toStartDateFilterValue(filterData.startDate);
   const endDateFilterValue = toEndDateFilterValue(filterData.endDate);

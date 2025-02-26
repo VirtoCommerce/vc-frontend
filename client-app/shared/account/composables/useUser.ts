@@ -365,6 +365,9 @@ export function useUser() {
     isMultiOrganization: computed(
       () => user.value?.contact?.organizations?.items && user.value?.contact?.organizations?.items?.length > 1,
     ),
+    isOrganizationMaintainer: computed(
+      () => user.value?.roles?.some((role) => role.name === "Organization maintainer") ?? false,
+    ),
     organization,
     allOrganizations,
     operator,

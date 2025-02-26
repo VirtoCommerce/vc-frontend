@@ -17,6 +17,10 @@
       </VcCheckboxGroup>
     </VcWidget>
 
+    <VcWidget title="Buyer name" size="sm">
+      <slot name="buyerNameFilterType" />
+    </VcWidget>
+
     <VcWidget :title="$t('shared.account.orders_filter.created_date_label')" size="sm">
       <div class="flex flex-col space-y-3">
         <slot name="dateFilterType" />

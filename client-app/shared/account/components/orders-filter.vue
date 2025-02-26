@@ -12,6 +12,10 @@
           <slot name="dateFilterType" />
         </div>
 
+        <div class="my-4">
+          <slot name="buyerNameFilterType" />
+        </div>
+
         <div v-if="!!facets">
           <VcLabel>{{ $t("shared.account.orders_filter.status_label") }}</VcLabel>
 

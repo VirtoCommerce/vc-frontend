@@ -1,13 +1,13 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { DateFilterId } from "@/core/enums";
+import { DateFilterId, FilterFields } from "@/core/enums";
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
 import type { FacetTermType } from "@/core/api/graphql/types";
 import type { DateFilterType } from "@/core/types";
 import type { OrdersFilterDataType, OrdersFilterChipsItemType } from "@/shared/account";
 import type { Ref } from "vue";
 
-const filterData: Ref<OrdersFilterDataType> = ref({ statuses: [] });
+const filterData: Ref<OrdersFilterDataType> = ref({ statuses: [], customerNames: [] });
 const appliedFilterData: Ref<OrdersFilterDataType> = ref({ ...filterData.value });
 const facetLocalization: Ref<FacetTermType[] | undefined> = ref();
 
@@ -87,8 +87,8 @@ export function useUserOrdersFilter() {
   }
 
   const isFilterEmpty = computed(() => {
-    const { statuses, startDate, endDate } = appliedFilterData.value;
-    return !statuses.length && !startDate && !endDate;
+    const { statuses, startDate, endDate, customerNames } = appliedFilterData.value;
+    return !statuses.length && !startDate && !endDate && !customerNames?.length;
   });
 
   const isFilterDirty = computed(() => {
@@ -100,7 +100,13 @@ export function useUserOrdersFilter() {
 
     if (appliedFilterData.value.statuses.length) {
       for (const status of appliedFilterData.value.statuses) {
-        items.push({ fieldName: "statuses", value: status, label: getFacetLocalization(status) || status });
+        items.push({ fieldName: FilterFields.Statuses, value: status, label: getFacetLocalization(status) || status });
+      }
+    }
+
+    if (appliedFilterData.value.customerNames?.length) {
+      for (const customerName of appliedFilterData.value.customerNames) {
+        items.push({ fieldName: FilterFields.CustomerNames, value: customerName, label: customerName });
       }
     }
 
@@ -109,7 +115,7 @@ export function useUserOrdersFilter() {
     if (startDateFilterValue) {
       const formattedDate = d(startDateFilterValue);
       items.push({
-        fieldName: "startDate",
+        fieldName: FilterFields.StartDate,
         value: appliedFilterData.value.startDate,
         label: t("common.labels.starts_from", [formattedDate]),
       });
@@ -117,7 +123,7 @@ export function useUserOrdersFilter() {
     if (endDateFilterValue) {
       const formattedDate = d(endDateFilterValue);
       items.push({
-        fieldName: "endDate",
+        fieldName: FilterFields.EndDate,
         value: appliedFilterData.value.endDate,
         label: t("common.labels.ends_to", [formattedDate]),
       });
@@ -133,7 +139,7 @@ export function useUserOrdersFilter() {
   }
 
   function resetFilters() {
-    filterData.value = { statuses: [], startDate: undefined, endDate: undefined };
+    filterData.value = { statuses: [], customerNames: [], startDate: undefined, endDate: undefined };
     appliedFilterData.value = { ...filterData.value };
   }
 
@@ -142,15 +148,22 @@ export function useUserOrdersFilter() {
   }
 
   function removeFilterChipsItem(item: OrdersFilterChipsItemType) {
-    if (item.fieldName === "statuses") {
+    if (item.fieldName === FilterFields.Statuses) {
       appliedFilterData.value.statuses.splice(appliedFilterData.value.statuses.indexOf(item.value as string), 1);
     }
 
-    if (item.fieldName === "startDate") {
+    if (item.fieldName === FilterFields.CustomerNames) {
+      appliedFilterData.value.customerNames?.splice(
+        appliedFilterData.value.customerNames.indexOf(item.value as string),
+        1,
+      );
+    }
+
+    if (item.fieldName === FilterFields.StartDate) {
       appliedFilterData.value.startDate = undefined;
     }
 
-    if (item.fieldName === "endDate") {
+    if (item.fieldName === FilterFields.EndDate) {
       appliedFilterData.value.endDate = undefined;
     }
 

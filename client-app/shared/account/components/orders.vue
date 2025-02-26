@@ -3,8 +3,19 @@
     <!-- Mobile filters sidebar -->
     <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <MobileOrdersFilter>
+        <template #buyerNameFilterType>
+          <VcSelect
+            v-if="isOrganizationMaintainer && orderScope === 'organization'"
+            v-model="filterData.customerNames"
+            :label="$t('common.labels.buyer_name')"
+            :items="['Andrew Orlov', 'Max Boss']"
+            class="my-4"
+            multiple
+          />
+        </template>
+
         <template #dateFilterType>
-          <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+          <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
         </template>
       </MobileOrdersFilter>
 
@@ -103,8 +114,19 @@
             @reset="resetOrderFilters"
             @close="hideFilters"
           >
+            <template #buyerNameFilterType>
+              <VcSelect
+                v-if="isOrganizationMaintainer && orderScope === 'organization'"
+                v-model="filterData.customerNames"
+                :label="$t('common.labels.buyer_name')"
+                :items="['Andrew Orlov', 'Max Boss']"
+                class="my-4"
+                multiple
+              />
+            </template>
+
             <template #dateFilterType>
-              <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+              <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
             </template>
           </OrdersFilter>
         </div>
@@ -414,7 +436,7 @@ const { themeContext } = useThemeContext();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loading: ordersLoading, orders, fetchOrders, sort, pages, page, keyword } = useUserOrders({ itemsPerPage });
-const { user } = useUser();
+const { user, isOrganizationMaintainer } = useUser();
 
 const {
   appliedFilterData,
@@ -459,9 +481,6 @@ const columns = computed<ITableColumn[]>(() => [
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
-const isOrganizationMaintainer = computed(() =>
-  user.value?.roles?.some((role) => role.name === "Organization maintainer"),
-);
 
 async function changePage(newPage: number) {
   page.value = newPage;
@@ -504,7 +523,7 @@ function hideFilters() {
   filtersVisible.value = false;
 }
 
-function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
+function handleOrdersDateFilterChange(dateFilterType: DateFilterType): void {
   filterData.value.startDate = dateFilterType.startDate ? toDateISOString(dateFilterType.startDate) : undefined;
   filterData.value.endDate = dateFilterType.endDate ? toDateISOString(dateFilterType.endDate) : undefined;
 

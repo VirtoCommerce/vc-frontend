@@ -55,6 +55,7 @@ export type OrdersFilterDataType = {
   statuses: string[];
   startDate?: string;
   endDate?: string;
+  customerNames?: string[];
 };
 
 export type OrdersFilterChipsItemType = {
