@@ -14,6 +14,8 @@
       @clear="reset"
     >
       <template #append>
+        <VcButton icon="qrcode" class="mr-0.5" @click="openBarcodeScanModal" />
+
         <VcButton
           :aria-label="$t('shared.layout.search_bar.search_button')"
           icon="search"
@@ -143,6 +145,8 @@ import { globals } from "@/core/globals";
 import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
+import { useModal } from "@/shared/modal";
+import BarcodeScanModal from "../barcoce-scan-modal/barcode-scan.modal.vue";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category } from "@/core/api/graphql/types";
@@ -180,6 +184,8 @@ const router = useRouter();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const categoriesRoutes = useCategoriesRoutes(categories);
+
+const { openModal } = useModal();
 
 const searchPhrase = ref("");
 const trimmedSearchPhrase = computed(() => {
@@ -302,10 +308,22 @@ function onSearchBarFocused() {
   }
 }
 
+function openBarcodeScanModal(): void {
+  openModal({
+    component: BarcodeScanModal,
+    /*props: {
+      onDecode: (barcode: string) => {
+        searchPhrase.value = barcode;
+        void searchAndShowDropdownResults();
+      },
+    },*/
+  });
+}
+
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
 
 onMounted(() => {
-  if(searchPhraseInUrl.value) {
+  if (searchPhraseInUrl.value) {
     searchPhrase.value = searchPhraseInUrl.value;
   }
 });
