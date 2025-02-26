@@ -1,3 +1,5 @@
+import type { FacetTermType } from "@/core/api/graphql/types";
+
 export enum RegistrationKind {
   personal = "personal",
   organization = "organization",
@@ -65,3 +67,8 @@ export type OrdersFilterChipsItemType = {
 };
 
 export type OrderScopeType = "private" | "organization";
+
+export type OrderFacetType = {
+  name: string;
+  items: FacetTermType[];
+};

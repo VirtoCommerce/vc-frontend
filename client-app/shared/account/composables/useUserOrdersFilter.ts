@@ -1,15 +1,14 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { DateFilterId, FilterFields } from "@/core/enums";
+import { DateFilterId } from "@/core/enums";
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
-import type { FacetTermType } from "@/core/api/graphql/types";
 import type { DateFilterType } from "@/core/types";
-import type { OrdersFilterDataType, OrdersFilterChipsItemType } from "@/shared/account";
+import type { OrdersFilterDataType, OrdersFilterChipsItemType, OrderFacetType } from "@/shared/account";
 import type { Ref } from "vue";
 
 const filterData: Ref<OrdersFilterDataType> = ref({ statuses: [], customerNames: [] });
 const appliedFilterData: Ref<OrdersFilterDataType> = ref({ ...filterData.value });
-const facetLocalization: Ref<FacetTermType[] | undefined> = ref();
+const facetLocalization: Ref<OrderFacetType[] | undefined> = ref();
 
 function getFirstDayOfWeek(currentDate: Date): Date {
   const date = new Date(currentDate);
@@ -100,13 +99,13 @@ export function useUserOrdersFilter() {
 
     if (appliedFilterData.value.statuses.length) {
       for (const status of appliedFilterData.value.statuses) {
-        items.push({ fieldName: FilterFields.Statuses, value: status, label: getFacetLocalization(status) || status });
+        items.push({ fieldName: "statuses", value: status, label: getFacetLocalization("status", status) || status });
       }
     }
 
     if (appliedFilterData.value.customerNames?.length) {
       for (const customerName of appliedFilterData.value.customerNames) {
-        items.push({ fieldName: FilterFields.CustomerNames, value: customerName, label: customerName });
+        items.push({ fieldName: "customerNames", value: customerName, label: customerName });
       }
     }
 
@@ -115,7 +114,7 @@ export function useUserOrdersFilter() {
     if (startDateFilterValue) {
       const formattedDate = d(startDateFilterValue);
       items.push({
-        fieldName: FilterFields.StartDate,
+        fieldName: "startDate",
         value: appliedFilterData.value.startDate,
         label: t("common.labels.starts_from", [formattedDate]),
       });
@@ -123,7 +122,7 @@ export function useUserOrdersFilter() {
     if (endDateFilterValue) {
       const formattedDate = d(endDateFilterValue);
       items.push({
-        fieldName: FilterFields.EndDate,
+        fieldName: "endDate",
         value: appliedFilterData.value.endDate,
         label: t("common.labels.ends_to", [formattedDate]),
       });
@@ -148,34 +147,35 @@ export function useUserOrdersFilter() {
   }
 
   function removeFilterChipsItem(item: OrdersFilterChipsItemType) {
-    if (item.fieldName === FilterFields.Statuses) {
+    if (item.fieldName === "statuses") {
       appliedFilterData.value.statuses.splice(appliedFilterData.value.statuses.indexOf(item.value as string), 1);
     }
 
-    if (item.fieldName === FilterFields.CustomerNames) {
+    if (item.fieldName === "customerNames") {
       appliedFilterData.value.customerNames?.splice(
         appliedFilterData.value.customerNames.indexOf(item.value as string),
         1,
       );
     }
 
-    if (item.fieldName === FilterFields.StartDate) {
+    if (item.fieldName === "startDate") {
       appliedFilterData.value.startDate = undefined;
     }
 
-    if (item.fieldName === FilterFields.EndDate) {
+    if (item.fieldName === "endDate") {
       appliedFilterData.value.endDate = undefined;
     }
 
     filterData.value = { ...appliedFilterData.value };
   }
 
-  function setFacetsLocalization(facets: FacetTermType[] | undefined) {
+  function setFacetsLocalization(facets: OrderFacetType[] | undefined) {
     facetLocalization.value = facets;
   }
 
-  function getFacetLocalization(term: string): string | undefined {
-    return facetLocalization.value?.find((el) => el.term === term)?.label;
+  function getFacetLocalization(facetName: string, term: string): string | undefined {
+    const facet = facetLocalization.value?.find((el) => el.name === facetName);
+    return facet?.items?.find((el) => el.term === term)?.label;
   }
 
   return {

@@ -5,10 +5,10 @@
       <MobileOrdersFilter>
         <template #buyerNameFilterType>
           <VcSelect
-            v-if="isOrganizationMaintainer && orderScope === 'organization'"
+            v-if="showCustomerNameFilter"
             v-model="filterData.customerNames"
             :label="$t('common.labels.buyer_name')"
-            :items="['Andrew Orlov', 'Max Boss']"
+            :items="organizationCustomerNames ?? []"
             class="my-4"
             multiple
           />
@@ -116,10 +116,10 @@
           >
             <template #buyerNameFilterType>
               <VcSelect
-                v-if="isOrganizationMaintainer && orderScope === 'organization'"
+                v-if="showCustomerNameFilter"
                 v-model="filterData.customerNames"
                 :label="$t('common.labels.buyer_name')"
-                :items="['Andrew Orlov', 'Max Boss']"
+                :items="organizationCustomerNames ?? []"
                 class="my-4"
                 multiple
               />
@@ -404,7 +404,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables/usePageHead";
 import { useThemeContext } from "@/core/composables/useThemeContext";
-import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
+import { CUSTOMER_NAME_FACET_NAME, DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { toDateISOString } from "@/core/utilities";
@@ -435,7 +435,16 @@ const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loading: ordersLoading, orders, fetchOrders, sort, pages, page, keyword } = useUserOrders({ itemsPerPage });
+const {
+  loading: ordersLoading,
+  orders,
+  fetchOrders,
+  sort,
+  pages,
+  page,
+  keyword,
+  facets,
+} = useUserOrders({ itemsPerPage });
 const { user, isOrganizationMaintainer } = useUser();
 
 const {
@@ -481,6 +490,14 @@ const columns = computed<ITableColumn[]>(() => [
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
+
+const organizationCustomerNames = computed(() =>
+  facets.value?.find((item) => item.name === CUSTOMER_NAME_FACET_NAME)?.items?.map((item) => item.label),
+);
+const showCustomerNameFilter = computed(
+  () =>
+    isOrganizationMaintainer.value && orderScope.value === "organization" && organizationCustomerNames.value?.length,
+);
 
 async function changePage(newPage: number) {
   page.value = newPage;
@@ -563,11 +580,11 @@ function resetOrderFilters(): void {
   hideFilters();
 }
 
-async function toggleOrdersScope(scope: OrderScopeType): Promise<void> {
+function toggleOrdersScope(scope: OrderScopeType): void {
   orderScope.value = scope;
   sort.value = new Sort("createdDate", SortDirection.Descending);
+
   resetFiltersWithKeyword();
-  await fetchOrders(scope);
 }
 
 onClickOutside(
@@ -590,6 +607,7 @@ watch(
   appliedFilterData,
   () => {
     page.value = 1;
+
     void fetchOrders(orderScope.value);
   },
   { deep: true },

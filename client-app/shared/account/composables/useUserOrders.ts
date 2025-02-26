@@ -1,19 +1,19 @@
 import { computed, readonly, ref, shallowRef } from "vue";
 import { getOrders, getOrganizationOrders } from "@/core/api/graphql/orders";
-import { DEFAULT_ORDERS_PER_PAGE, STATUS_ORDERS_FACET_NAME } from "@/core/constants";
+import { CUSTOMER_NAME_FACET_NAME, DEFAULT_ORDERS_PER_PAGE, STATUS_ORDERS_FACET_NAME } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { Logger, toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
 import { useUserOrdersFilter } from "./useUserOrdersFilter";
-import type { CustomerOrderType, FacetTermType } from "@/core/api/graphql/types";
-import type { OrdersFilterDataType } from "@/shared/account";
+import type { CustomerOrderType } from "@/core/api/graphql/types";
+import type { OrderFacetType, OrdersFilterDataType } from "@/shared/account";
 import type { MaybeRef, Ref } from "vue";
 
 export interface IUseUserOrdersOptions {
   itemsPerPage?: MaybeRef<number>;
 }
 
-const facets = shallowRef<FacetTermType[] | undefined>();
+const facets = shallowRef<OrderFacetType[] | undefined>();
 
 export function useUserOrders(options: IUseUserOrdersOptions) {
   const itemsPerPage = ref(options.itemsPerPage ?? DEFAULT_ORDERS_PER_PAGE);
@@ -39,14 +39,17 @@ export function useUserOrders(options: IUseUserOrdersOptions) {
         first: itemsPerPage.value,
         after: String((page.value - 1) * itemsPerPage.value),
         filter: filterExpression,
-        facet: STATUS_ORDERS_FACET_NAME,
+        facet:
+          scope === "organization"
+            ? `${STATUS_ORDERS_FACET_NAME} ${CUSTOMER_NAME_FACET_NAME}`
+            : STATUS_ORDERS_FACET_NAME,
       };
 
       const response = scope === "organization" ? await getOrganizationOrders(payload) : await getOrders(payload);
 
-      orders.value = response.items ?? [];
-      pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
-      facets.value = response.term_facets?.find((item) => item.name === STATUS_ORDERS_FACET_NAME)?.terms;
+      orders.value = response?.items ?? [];
+      pages.value = Math.ceil((response?.totalCount ?? 0) / itemsPerPage.value);
+      facets.value = response?.term_facets?.map((item) => ({ name: item.name, items: item.terms }));
       setFacetsLocalization(facets.value);
     } catch (e) {
       Logger.error(`${useUserOrders.name}.${fetchOrders.name}`, e);
