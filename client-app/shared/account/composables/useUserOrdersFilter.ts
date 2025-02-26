@@ -99,7 +99,7 @@ export function useUserOrdersFilter() {
 
     if (appliedFilterData.value.statuses.length) {
       for (const status of appliedFilterData.value.statuses) {
-        items.push({ fieldName: "statuses", value: status, label: getFacetLocalization("status", status) || status });
+        items.push({ fieldName: "statuses", value: status, label: getFacetLocalization("status", status) ?? status });
       }
     }
 
