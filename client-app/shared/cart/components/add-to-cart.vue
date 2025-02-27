@@ -65,7 +65,7 @@ const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 const {
   selectedConfigurationInput,
   changeCartConfiguredItem,
-  validateInput: validateConfigurableInput,
+  validateSections: validateConfigurableInput,
 } = useConfigurableProduct(product.value.id);
 
 const loading = ref(false);

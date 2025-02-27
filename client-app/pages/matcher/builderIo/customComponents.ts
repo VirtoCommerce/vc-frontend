@@ -226,21 +226,22 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         type: "list",
         subFields: [
           {
-            id: "image",
             name: "image",
             type: "file",
             allowedFileTypes: ["jpeg", "jpg", "png", "svg"],
           },
           {
             name: "title",
-            id: "title",
             label: "Title",
             type: "string",
           },
           {
             name: "text",
-            id: "text",
             type: "string",
+          },
+          {
+            name: "url",
+            type: "url",
           },
         ],
       },

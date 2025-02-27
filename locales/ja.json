@@ -200,7 +200,8 @@
       "password_about_expire": "パスワードは{value}日後に期限切れです",
       "password_expired": "パスワードが期限切れです",
       "data_changed": "他のタブのいずれかでデータが変更されました。現在のデータを表示するには、ページを更新してください。",
-      "logo_changed": "ロゴが正常に追加されました。変更を確認するには、ページを更新してください。"
+      "logo_changed": "ロゴが正常に変更されました。",
+      "logo_deleted": "ロゴが削除されました。"
     },
     "placeholders": {
       "enter_value": "入力してください",
@@ -506,6 +507,10 @@
       "notifications": {
         "user_blocked": "ユーザーをブロックしました。",
         "user_unblocked": "ユーザーのブロックを解除しました。"
+      },
+      "delete_logo_modal": {
+        "title": "組織のロゴを削除",
+        "message": "本当に組織の現在のロゴを削除しますか？この操作は元に戻せません。"
       }
     },
     "compare": {

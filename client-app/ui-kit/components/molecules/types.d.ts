@@ -20,6 +20,7 @@ declare module "vue" {
     VcExpansionPanel: typeof Components.VcExpansionPanel;
     VcFileUploader: typeof Components.VcFileUploader;
     VcFile: typeof Components.VcFile;
+    VcFilePicker: typeof Components.VcFilePicker;
     VcInput: typeof Components.VcInput;
     VcItemPrice: typeof Components.VcItemPrice;
     VcItemPriceCatalog: typeof Components.VcItemPriceCatalog;

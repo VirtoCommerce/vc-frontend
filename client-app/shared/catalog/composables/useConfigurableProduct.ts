@@ -42,7 +42,7 @@ provideApolloClient(apolloClient);
  * @returns {Function} fetchProductConfiguration - Function to fetch the product configuration.
  * @returns {Function} selectSectionValue - Function to select a section value for a configuration section.
  * @returns {Function} changeCartConfiguredItem - Function to change the cart configured item.
- * @returns {Function} validateInput - Function to validate the configuration input. Populates the validationErrors map with the errors and returns true if there are errors.
+ * @returns {Function} validateSections - Function to validate the configuration input. Populates the validationErrors map with the errors and returns true if there are errors.
  * @returns {ComputedRef<boolean>} loading - Computed ref indicating if any operation is in progress.
  * @returns {ShallowReadonly<Ref<ConfigurationSectionType[]>>} configuration - Readonly ref containing the product configuration sections.
  * @returns {Readonly<ComputedRef<Record<string, SelectedConfigurationType>>>} selectedConfiguration - Readonly computed ref of the selected configuration state.
@@ -111,7 +111,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   function selectSectionValue(payload: ConfigurationSectionInput) {
     changeSelectionValue(payload);
     void createConfiguredLineItem();
-    validateInput();
+    validateSection(payload.sectionId);
   }
 
   function getSelectedOptionTextValue(section: ConfigurationSectionInput, sectionId: string) {
@@ -158,24 +158,32 @@ function _useConfigurableProduct(configurableProductId: string) {
     return validateValue(sectionId, value).isValid;
   }
 
-  function validateInput() {
+  function validateSection(sectionId: string) {
+    const section = configuration.value.find(({ id }) => id === sectionId);
+    if (!section) {
+      return;
+    }
+    const input = selectedConfigurationInput.value.find((value) => value.sectionId === section.id);
+
+    if (!input && section.isRequired) {
+      validationErrors.value.set(
+        section.id,
+        t("shared.catalog.product_details.product_configuration.required_section"),
+      );
+    } else if (input) {
+      const validationResult = validateValue(section.id, input);
+      if (!validationResult.isValid) {
+        validationErrors.value.set(section.id, validationResult.error);
+      } else {
+        validationErrors.value.delete(section.id);
+      }
+    }
+  }
+
+  function validateSections() {
     validationErrors.value.clear();
 
-    configuration.value.forEach((section) => {
-      const input = selectedConfigurationInput.value.find((value) => value.sectionId === section.id);
-
-      if (!input && section.isRequired) {
-        validationErrors.value.set(
-          section.id,
-          t("shared.catalog.product_details.product_configuration.required_section"),
-        );
-      } else if (input) {
-        const validationResult = validateValue(section.id, input);
-        if (!validationResult.isValid) {
-          validationErrors.value.set(section.id, validationResult.error);
-        }
-      }
-    });
+    configuration.value.forEach((section) => validateSection(section.id));
     return validationErrors.value.size === 0;
   }
 
@@ -336,7 +344,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     fetchProductConfiguration,
     selectSectionValue,
     changeCartConfiguredItem,
-    validateInput,
+    validateSections,
     loading: readonly(loading),
     configuration: readonly(configuration),
     selectedConfiguration: readonly(selectedConfiguration),
