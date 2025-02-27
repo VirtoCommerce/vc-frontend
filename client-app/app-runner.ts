@@ -56,7 +56,7 @@ export default async () => {
   app.use(authPlugin);
 
   const { fetchUser, user, twoLetterContactLocale } = useUser();
-  const { themeContext, fetchThemeContext } = useThemeContext();
+  const { themeContext, fetchPreset, setGlobalState } = useThemeContext();
   const {
     detectLocale,
     currentLanguage,
@@ -80,16 +80,18 @@ export default async () => {
     },
   };
 
-  const store = (await getStore(
+  const storePromise = getStore(
     IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname,
-  )) as StoreResponseType;
+  ) as Promise<StoreResponseType>;
+
+  const [store] = await Promise.all([storePromise, fetchUser()]);
 
   if (!store) {
     alert("Related store not found. Please contact your site administrator.");
     throw new Error("Store not found. Check graphql request, GetStore query");
   }
 
-  await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
+  setGlobalState(store);
 
   // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
   const twoLetterAppLocale = detectLocale([
@@ -98,6 +100,8 @@ export default async () => {
     getLocaleFromUrl(),
     themeContext.value.defaultLanguage.twoLetterLanguageName,
   ]);
+
+  await Promise.all([fetchPreset(), fallback.setMessage()]);
 
   /**
    * Creating plugin instances
@@ -139,7 +143,7 @@ export default async () => {
   void initializeHotjar();
 
   if (themePresetName.value) {
-    await fetchThemeContext(store, themePresetName.value);
+    await fetchPreset(themePresetName.value);
   }
 
   // Plugins

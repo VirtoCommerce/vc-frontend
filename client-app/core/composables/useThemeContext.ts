@@ -2,51 +2,48 @@ import { createGlobalState } from "@vueuse/core";
 import cloneDeep from "lodash/cloneDeep";
 import { computed, ref } from "vue";
 import settingsData from "@/config/settings_data.json";
+import { Logger } from "@/core/utilities";
 import { IS_DEVELOPMENT } from "../constants";
 import type { StoreResponseType } from "../api/graphql/types";
-import type { IThemeConfig, IThemeContext, IThemeConfigPreset } from "../types";
+import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
 
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
 
-  async function fetchThemeContext(store: StoreResponseType, themePresetName?: string) {
+  async function fetchPreset(themePresetName?: string): Promise<void> {
     const themeConfig = getThemeConfig();
 
-    if (!themeConfig) {
-      throw new Error("Can't get theme context");
-    }
+    if (themeContext.value && themePresetName) {
+      const presetFileName = themePresetName.toLowerCase().replace(" ", "-");
 
-    const themePreset = await fetchThemePreset(themeConfig, themePresetName);
-
-    themeContext.value = {
-      ...store,
-      settings: themeConfig.settings,
-      preset: themePreset,
-      storeSettings: store.settings,
-    };
-  }
-
-  async function fetchThemePreset(themeConfig: IThemeConfig, themePresetName?: string): Promise<IThemeConfigPreset> {
-    const preset = themePresetName ?? themeConfig.current;
-    const defaultThemePreset = themeContext.value?.preset;
-
-    if (typeof preset === "string") {
-      const presetFileName = preset.toLowerCase().replace(" ", "-");
-
+      let preset: IThemeConfigPreset | null = null;
       try {
         const module = (await import(`@/assets/presets/${presetFileName}.json`)) as {
           default: IThemeConfigPreset;
         };
+        preset = module.default;
+      } catch (e) {
+        Logger.error(fetchPreset.name, e);
+      }
 
-        return module?.default;
-      } catch {
-        if (defaultThemePreset) {
-          return defaultThemePreset;
+      if(!preset) {
+        try {
+          // try to get default preset
+          const module = (await import(`@/assets/presets/${themeConfig.current}.json`)) as {
+            default: IThemeConfigPreset;
+          };
+          preset = module.default;
+        } catch (e) {
+          Logger.error(fetchPreset.name, e);
         }
       }
-    }
 
-    return preset as IThemeConfigPreset;
+      if (preset) {
+        themeContext.value.preset = preset;
+      } else {
+        throw new Error("Missing preset");
+      }
+    }
   }
 
   function getThemeConfig() {
@@ -59,8 +56,23 @@ function _useThemeContext() {
     return data;
   }
 
+  function setGlobalState(store: StoreResponseType) {
+    const themeConfig = getThemeConfig();
+
+    if (!themeConfig) {
+      throw new Error("Can't get theme context");
+    }
+
+    themeContext.value = {
+      ...store,
+      settings: themeConfig.settings,
+      storeSettings: store.settings,
+    };
+  }
+
   return {
-    fetchThemeContext,
+    setGlobalState,
+    fetchPreset,
     themeContext: computed({
       get() {
         if (!themeContext.value) {
