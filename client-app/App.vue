@@ -1,6 +1,10 @@
 <template>
   <component :is="layout">
-    <RouterView />
+    <router-view v-slot="{ Component }">
+      <keep-alive :include="keepAliveComponents">
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
   </component>
 
   <ModalHost />
@@ -30,6 +34,8 @@ const route = useRoute();
 const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { favIcons } = useWhiteLabeling();
+
+const keepAliveComponents = ["catalog"];
 
 // If favIcons.value is an empty array, the default favicon from index.html will be used.
 // The favicon will also NOT be updated in PWA mode (in manifest.json).
