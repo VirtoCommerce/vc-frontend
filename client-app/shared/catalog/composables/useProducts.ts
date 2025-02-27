@@ -223,7 +223,7 @@ export function useProducts(
     );
   }
 
-  async function fetchProducts(searchParams: Partial<ProductsSearchParamsType>) {
+  async function fetchProducts(searchParams: Partial<ProductsSearchParamsType>, first: number) {
     fetchingProducts.value = true;
     products.value = [];
     totalProductsCount.value = 0;
@@ -235,7 +235,7 @@ export function useProducts(
         term_facets = [],
         range_facets = [],
         totalCount = 0,
-      } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
+      } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice, first });
 
       products.value = items;
       totalProductsCount.value = totalCount;

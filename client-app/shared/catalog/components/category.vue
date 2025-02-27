@@ -244,7 +244,7 @@ import {
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useSlugInfo } from "@/shared/common";
-import { useCategory, useProducts } from "../composables";
+import { useCategory, useStatefulProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
@@ -324,7 +324,7 @@ const {
   currentPage,
   updateCurrentPage,
   resetCurrentPage,
-} = useProducts({
+} = useStatefulProducts({
   filtersDisplayOrder,
   useQueryParams: true,
   withFacets: true,

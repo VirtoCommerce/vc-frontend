@@ -4,3 +4,4 @@ export * from "./useProduct";
 export * from "./useProducts";
 export * from "./useRecommendedProducts";
 export * from "./useRelatedProducts";
+export * from "./useStatefulProducts";

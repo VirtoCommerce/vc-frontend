@@ -29,5 +29,8 @@ declare module "vue-router" {
 
     /** Hides the right sidebar of the route component. */
     hideRightSidebar?: boolean;
+
+    /** Whether we got to the route with browser back button. */
+    isBack?: boolean;
   }
 }
