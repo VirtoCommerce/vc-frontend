@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { useHead } from "@unhead/vue";
 import { computedEager } from "@vueuse/core";
-import { markRaw, onMounted } from "vue";
+import { markRaw, onMounted, ref, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import favicon16 from "@/assets/icons/favicon-16x16.png";
 import favicon32 from "@/assets/icons/favicon-32x32.png";
@@ -34,8 +34,9 @@ const route = useRoute();
 const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { favIcons } = useWhiteLabeling();
+const CATALOG_COMPONENT_NAME = "catalog";
 
-const keepAliveComponents = ["catalog"];
+const keepAliveComponents = ref([CATALOG_COMPONENT_NAME]);
 
 // If favIcons.value is an empty array, the default favicon from index.html will be used.
 // The favicon will also NOT be updated in PWA mode (in manifest.json).
@@ -77,6 +78,15 @@ router.beforeEach((to) => {
   // Hiding the search bar on mobile devices
   if (to.name !== "Search") {
     hideSearchBar();
+  }
+});
+
+router.afterEach(async (to) => {
+  // we need to reset catalog state when normal (not by browser back button) navigation is done
+  if (to.name === "Catalog" && !to.meta.isBack) {
+    keepAliveComponents.value = keepAliveComponents.value.filter((component) => component !== CATALOG_COMPONENT_NAME);
+    await nextTick();
+    keepAliveComponents.value.push(CATALOG_COMPONENT_NAME);
   }
 });
 
