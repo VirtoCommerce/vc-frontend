@@ -31,7 +31,7 @@
 
       <div class="divide-y rounded border">
         <div v-for="review in reviews" :key="review.id" class="space-y-2 p-4">
-          <div class="flex justify-between gap-2">
+          <div class="flex items-start justify-between gap-2">
             <div>
               {{ review.userName }}
               <div class="text-neutral-400">
@@ -39,7 +39,7 @@
               </div>
             </div>
 
-            <ReviewRating :rating="review.rating" read-only />
+            <VcRating mode="full" :size="16" :value="review.rating" :view-value="false" />
           </div>
 
           <div>
@@ -120,7 +120,14 @@
               {{ $t("common.labels.rate_product") }}
               <span class="text-danger">*</span>
             </div>
-            <ReviewRating :rating="newReviewRating" @set-rating="setRating" />
+            <VcRating
+              mode="full"
+              :size="16"
+              :read-only="false"
+              :value="newReviewRating"
+              :view-value="false"
+              @set-rating="setRating"
+            />
           </div>
         </div>
 
@@ -183,7 +190,6 @@ import {
 } from "../constants";
 import { useCustomerReviews } from "../useCustomerReviews";
 import ProductRating from "./product-rating.vue";
-import ReviewRating from "./review-rating.vue";
 import type { Rating } from "@/core/api/graphql/types";
 import type SwiperCore from "swiper";
 
