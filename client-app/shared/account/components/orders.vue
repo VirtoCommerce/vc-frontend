@@ -165,7 +165,7 @@
         ? $t('pages.account.orders.no_results_message')
         : $t('pages.account.orders.no_orders_message')
     "
-    icon="thin-order"
+    icon="outline-order"
   >
     <template #button>
       <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">

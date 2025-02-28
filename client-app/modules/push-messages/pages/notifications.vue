@@ -52,7 +52,7 @@
         <VcEmptyView
           v-if="totalCount === 0 && !loading"
           :text="$t('push_messages.empty_list')"
-          icon="thin-notifications"
+          icon="outline-notifications"
         />
 
         <div v-else class="p-3 lg:p-6">
