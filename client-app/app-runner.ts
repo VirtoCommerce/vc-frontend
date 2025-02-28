@@ -84,7 +84,7 @@ export default async () => {
     IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname,
   ) as Promise<StoreResponseType>;
 
-  const [store] = await Promise.all([storePromise, fetchUser()]);
+  const [store] = await Promise.all([storePromise, fetchUser(), fallback.setMessage()]);
 
   if (!store) {
     alert("Related store not found. Please contact your site administrator.");
@@ -101,8 +101,6 @@ export default async () => {
     themeContext.value.defaultLanguage.twoLetterLanguageName,
   ]);
 
-  await Promise.all([fallback.setMessage()]);
-
   /**
    * Creating plugin instances
    */
@@ -113,8 +111,6 @@ export default async () => {
   /**
    * Setting global variables
    */
-  await initLocale(i18n, twoLetterAppLocale);
-
   setGlobals({
     i18n,
     router,
@@ -127,13 +123,17 @@ export default async () => {
     currencyCode: currentCurrency.value.code,
   });
 
-  await fetchMenus();
-
   /**
    * Other settings
    */
 
-  await fetchWhiteLabelingSettings();
+  await Promise.all([
+    initLocale(i18n, twoLetterAppLocale),
+    fetchMenus(),
+    fetchWhiteLabelingSettings(),
+    addPresetToThemeContext(themePresetName.value || themeContext.value.defaultPresetName),
+  ]);
+
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
   void initModuleBackInStock(router, i18n);
@@ -141,8 +141,6 @@ export default async () => {
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
   void initializeHotjar();
-
-  await addPresetToThemeContext(themePresetName.value || themeContext.value.defaultPresetName);
 
   // Plugins
   app.use(head);
