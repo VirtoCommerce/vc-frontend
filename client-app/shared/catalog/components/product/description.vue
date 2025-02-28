@@ -12,16 +12,15 @@
   </template>
 
   <template v-else>
-    <VcWidget size="lg">
-      <ProductTitledBlock
-        v-if="!model.hidden && description"
-        :title="model.title || $t('shared.catalog.product_details.description_block_title')"
-        icon="document-text"
-      >
-        <div class="text-base text-neutral-600">
-          <VcMarkdownRender :src="description" />
-        </div>
-      </ProductTitledBlock>
+    <VcWidget
+      v-if="!model.hidden && description"
+      size="lg"
+      :title="model.title || $t('shared.catalog.product_details.description_block_title')"
+      prepend-icon="document-text"
+    >
+      <div class="text-base text-neutral-600">
+        <VcMarkdownRender :src="description" />
+      </div>
     </VcWidget>
   </template>
 </template>
