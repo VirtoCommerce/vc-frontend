@@ -52,7 +52,7 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
   const config = {
     debugMode: DEBUG_MODE,
     currency: currentCurrency.value.code,
-    user_id: isAuthenticated.value ? user.value.id : undefined,
+    user_id: isAuthenticated ? user.value.id : undefined,
     ...extendConfig,
   };
 
