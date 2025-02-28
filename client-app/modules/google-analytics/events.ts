@@ -1,6 +1,6 @@
 import { sumBy } from "lodash";
 import { globals } from "@/core/globals";
-import { Logger } from "@/core/utilities";
+import { Logger, toCSV } from "@/core/utilities";
 import { DEBUG_PREFIX } from "./constants";
 import { lineItemToGtagItem, productToGtagItem, sendEvent } from "./utils";
 import type { TrackerEventsType } from "@/core/types/analytics";
@@ -11,10 +11,7 @@ export const events: TrackerEventsType = {
   viewItemList(items, params) {
     sendEvent("view_item_list", {
       ...params,
-      items_skus: (items ?? [])
-        .map((el) => el.code)
-        .join(", ")
-        .trim(),
+      items_skus: toCSV((items ?? []).map((el) => el.code)),
       items_count: items?.length ?? 0,
     });
   },
@@ -185,10 +182,7 @@ export const events: TrackerEventsType = {
     sendEvent("search", {
       search_term: searchTerm,
       items_count: itemsCount,
-      visible_items: visibleItems
-        .map((el) => el.code)
-        .join(", ")
-        .trim(),
+      visible_items: toCSV(visibleItems.map((el) => el.code)),
     });
   },
 
@@ -196,10 +190,7 @@ export const events: TrackerEventsType = {
     sendEvent("view_search_results", {
       ...params,
       search_term: searchTerm,
-      visible_items: params?.visible_items
-        ?.map((el) => el.code)
-        .join(", ")
-        .trim(),
+      visible_items: toCSV(params?.visible_items?.map((el) => el.code)),
       results_count: params?.results_count,
       results_page: params?.results_page,
     });
