@@ -56,7 +56,7 @@ export default async () => {
   app.use(authPlugin);
 
   const { fetchUser, user, twoLetterContactLocale } = useUser();
-  const { themeContext, fetchPreset, setGlobalState } = useThemeContext();
+  const { themeContext, addPresetToGlobalState, setGlobalState } = useThemeContext();
   const {
     detectLocale,
     currentLanguage,
@@ -101,7 +101,7 @@ export default async () => {
     themeContext.value.defaultLanguage.twoLetterLanguageName,
   ]);
 
-  await Promise.all([fetchPreset(), fallback.setMessage()]);
+  await Promise.all([fallback.setMessage()]);
 
   /**
    * Creating plugin instances
@@ -142,9 +142,7 @@ export default async () => {
   void initializeGoogleAnalytics();
   void initializeHotjar();
 
-  if (themePresetName.value) {
-    await fetchPreset(themePresetName.value);
-  }
+  await addPresetToGlobalState(themePresetName.value || themeContext.value.defaultPresetName);
 
   // Plugins
   app.use(head);

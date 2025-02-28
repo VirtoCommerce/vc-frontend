@@ -10,40 +10,19 @@ import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
 
-  async function fetchPreset(themePresetName?: string): Promise<void> {
+  function setGlobalState(store: StoreResponseType) {
     const themeConfig = getThemeConfig();
 
-    if (themeContext.value && themePresetName) {
-      const presetFileName = themePresetName.toLowerCase().replace(" ", "-");
-
-      let preset: IThemeConfigPreset | null = null;
-      try {
-        const module = (await import(`@/assets/presets/${presetFileName}.json`)) as {
-          default: IThemeConfigPreset;
-        };
-        preset = module.default;
-      } catch (e) {
-        Logger.error(fetchPreset.name, e);
-      }
-
-      if(!preset) {
-        try {
-          // try to get default preset
-          const module = (await import(`@/assets/presets/${themeConfig.current}.json`)) as {
-            default: IThemeConfigPreset;
-          };
-          preset = module.default;
-        } catch (e) {
-          Logger.error(fetchPreset.name, e);
-        }
-      }
-
-      if (preset) {
-        themeContext.value.preset = preset;
-      } else {
-        throw new Error("Missing preset");
-      }
+    if (!themeConfig) {
+      throw new Error("Can't get theme context");
     }
+
+    themeContext.value = {
+      ...store,
+      settings: themeConfig.settings,
+      storeSettings: store.settings,
+      defaultPresetName: themeConfig.current,
+    };
   }
 
   function getThemeConfig() {
@@ -56,23 +35,43 @@ function _useThemeContext() {
     return data;
   }
 
-  function setGlobalState(store: StoreResponseType) {
-    const themeConfig = getThemeConfig();
-
-    if (!themeConfig) {
-      throw new Error("Can't get theme context");
+  async function addPresetToGlobalState(presetName: string): Promise<void> {
+    if (!themeContext.value) {
+      throw new Error("The global state should be defined");
     }
 
-    themeContext.value = {
-      ...store,
-      settings: themeConfig.settings,
-      storeSettings: store.settings,
-    };
+    let preset = await fetchPreset(presetNameToFileName(presetName));
+
+    if (!preset) {
+      const defaultPresetName = getThemeConfig().current;
+      preset = await fetchPreset(presetNameToFileName(defaultPresetName));
+    }
+
+    if (preset) {
+      themeContext.value.preset = preset;
+    } else {
+      throw new Error("Missing preset");
+    }
+  }
+
+  async function fetchPreset(themePresetName: string): Promise<IThemeConfigPreset | void> {
+    try {
+      const module = (await import(`@/assets/presets/${themePresetName}.json`)) as {
+        default: IThemeConfigPreset;
+      };
+      return module.default;
+    } catch (e) {
+      Logger.error(fetchPreset.name, e);
+    }
+  }
+
+  function presetNameToFileName(name: string): string {
+    return name.toLowerCase().replace(" ", "-");
   }
 
   return {
     setGlobalState,
-    fetchPreset,
+    addPresetToGlobalState,
     themeContext: computed({
       get() {
         if (!themeContext.value) {
