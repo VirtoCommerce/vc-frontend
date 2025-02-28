@@ -56,7 +56,7 @@ export default async () => {
   app.use(authPlugin);
 
   const { fetchUser, user, twoLetterContactLocale } = useUser();
-  const { themeContext, addPresetToGlobalState, setGlobalState } = useThemeContext();
+  const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
     detectLocale,
     currentLanguage,
@@ -91,7 +91,7 @@ export default async () => {
     throw new Error("Store not found. Check graphql request, GetStore query");
   }
 
-  setGlobalState(store);
+  setThemeContext(store);
 
   // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
   const twoLetterAppLocale = detectLocale([
@@ -142,7 +142,7 @@ export default async () => {
   void initializeGoogleAnalytics();
   void initializeHotjar();
 
-  await addPresetToGlobalState(themePresetName.value || themeContext.value.defaultPresetName);
+  await addPresetToThemeContext(themePresetName.value || themeContext.value.defaultPresetName);
 
   // Plugins
   app.use(head);

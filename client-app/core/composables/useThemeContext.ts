@@ -10,7 +10,7 @@ import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
 
-  function setGlobalState(store: StoreResponseType) {
+  function setThemeContext(store: StoreResponseType) {
     const themeConfig = getThemeConfig();
 
     if (!themeConfig) {
@@ -25,17 +25,7 @@ function _useThemeContext() {
     };
   }
 
-  function getThemeConfig() {
-    const data = cloneDeep(settingsData) as IThemeConfig;
-
-    if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
-      data.settings.details_browser_target = "_self";
-    }
-
-    return data;
-  }
-
-  async function addPresetToGlobalState(presetName: string): Promise<void> {
+  async function addPresetToThemeContext(presetName: string): Promise<void> {
     if (!themeContext.value) {
       throw new Error("The global state should be defined");
     }
@@ -54,6 +44,16 @@ function _useThemeContext() {
     }
   }
 
+  function getThemeConfig() {
+    const data = cloneDeep(settingsData) as IThemeConfig;
+
+    if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
+      data.settings.details_browser_target = "_self";
+    }
+
+    return data;
+  }
+
   async function fetchPreset(themePresetName: string): Promise<IThemeConfigPreset | void> {
     try {
       const module = (await import(`@/assets/presets/${themePresetName}.json`)) as {
@@ -70,8 +70,8 @@ function _useThemeContext() {
   }
 
   return {
-    setGlobalState,
-    addPresetToGlobalState,
+    setThemeContext,
+    addPresetToThemeContext,
     themeContext: computed({
       get() {
         if (!themeContext.value) {
