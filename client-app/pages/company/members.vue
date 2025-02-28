@@ -221,7 +221,7 @@
           ? $t('pages.company.members.no_results_message')
           : $t('pages.company.members.no_members_message')
       "
-      icon="thin-order"
+      icon="outline-order"
     >
       <template #button>
         <VcButton v-if="keyword || filter" prepent-icon="reset" @click="resetFiltersWithKeyword">
