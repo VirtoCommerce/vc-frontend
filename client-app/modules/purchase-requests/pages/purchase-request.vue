@@ -9,7 +9,7 @@
     <VcEmptyView
       v-if="!(loading || changing) && !quote?.items?.length"
       :text="$t('purchase_request.failed_or_used_description')"
-      icon="thin-order"
+      icon="outline-order"
     >
       <template #button>
         <VcButton :to="{ name: 'BulkOrder' }" size="lg">
