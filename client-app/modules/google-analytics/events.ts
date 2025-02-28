@@ -190,7 +190,7 @@ export const events: TrackerEventsType = {
     sendEvent("view_search_results", {
       ...params,
       search_term: searchTerm,
-      visible_items: toCSV(params?.visible_items?.map((el) => el.code)),
+      visible_items: toCSV(params?.visible_items?.map((el) => el.code) ?? []),
       results_count: params?.results_count,
       results_page: params?.results_page,
     });
