@@ -15,20 +15,16 @@ await initGoogleAnalytics();
 
 ## Extending Events
 
-1. Create custom events in your declaration file to extend the core analytics composable ([see documentation](/client-app/core/composables//useAnalytics/README.md#extending-with-custom-events)):
+1. Define your custom events interface to extend the core analytics composable. For more details, refer to the [documentation](/client-app/core/composables//useAnalytics/README.md#extending-with-custom-events):
 
-```typescript
-declare module "client-app/core/types/analytics" {
-  interface IAnalyticsEventMap {
-    // Will be sent as 'add_to_wishlist'
-    addToWishlist: [product: Product, quantity: number];
-  }
+```ts
+// client-app/core/types/analytics.ts
+
+export interface ICustomAnalyticsEventMap {
+  // NOTE: Add custom event maps here to either extend or override the basic event map
+  myCustomEvent: [item: [1], params?: EventParamsType];
 }
 ```
-
-> [!TIP]
->
-> [TypeScript Documentation - Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html)
 
 2. Extend the module with custom event handlers:
 

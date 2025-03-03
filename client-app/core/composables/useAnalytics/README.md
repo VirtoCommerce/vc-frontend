@@ -25,23 +25,16 @@ The following events are available out of the box:
 
 ## Extending with Custom Events
 
-1. Create a declaration file (e.g., `custom-analytics.d.ts`):
+1. Define your custom events or override existing ones by extending the `ICustomAnalyticsEventMap` interface located in `core/types/analytics.ts.`
 
-```typescript
-declare module "client-app/core/types/analytics" {
-  // Key: custom event name
-  // Value: tuple type representing event arguments
-  interface IAnalyticsEventMap {
-    myCustomEvent: [item: Product, params?: EventParamsType];
-  }
+```ts
+// client-app/core/types/analytics.ts
+
+export interface ICustomAnalyticsEventMap {
+  // NOTE: Add custom event maps here to either extend or override the basic event map
+  myCustomEvent: [item: Product, params?: EventParamsType];
 }
-
-export {};
 ```
-
-> [!TIP]
->
-> [TypeScript Documentation - Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html)
 
 2. Use your custom event:
 
