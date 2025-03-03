@@ -2,12 +2,12 @@ import { get, set, del, clear, keys, createStore } from "idb-keyval";
 import { ref } from "vue";
 
 interface UseIndexedDBOptions {
-  storeName: string;
-  dbName: string;
+  storeName?: string;
+  dbName?: string;
 }
 
-export function useIndexedDB(options: UseIndexedDBOptions) {
-  const { storeName, dbName } = options;
+export function useIndexedDB(options: UseIndexedDBOptions = {}) {
+  const { storeName = "keyval-store", dbName = "keyval-db" } = options;
 
   // Create a custom store if custom names are provided
   const customStore = createStore(dbName, storeName);

@@ -223,10 +223,11 @@ import {
   useBreakpoints,
   useElementVisibility,
   useLocalStorage,
+  useSessionStorage,
   watchDebounced,
   whenever,
 } from "@vueuse/core";
-import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import { computed, onBeforeUnmount, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -244,7 +245,7 @@ import {
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useSlugInfo } from "@/shared/common";
-import { useCategory, useStatefulProducts } from "../composables";
+import { useCategory, useProductsCached } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
@@ -324,13 +325,15 @@ const {
   currentPage,
   updateCurrentPage,
   resetCurrentPage,
-} = useStatefulProducts({
+} = useProductsCached({
   filtersDisplayOrder,
   useQueryParams: true,
   withFacets: true,
+  shouldUseCache: true,
 });
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();
+const lastScrollPosition = useSessionStorage("lastCatalogScrollPosition", 0);
 
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 
@@ -495,6 +498,10 @@ watchDebounced(
     immediate: true,
   },
 );
+
+onBeforeUnmount(() => {
+  lastScrollPosition.value = window.scrollY;
+});
 </script>
 
 <style scoped lang="scss">

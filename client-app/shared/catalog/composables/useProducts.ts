@@ -60,7 +60,7 @@ export function useProducts(
     defaultValue: "",
   });
 
-  const fetchingProducts = ref(true);
+  const fetchingProducts = ref(false);
   const fetchingMoreProducts = ref(false);
   const fetchingFacets = ref(false);
   const totalProductsCount = ref(0);
@@ -223,7 +223,7 @@ export function useProducts(
     );
   }
 
-  async function fetchProducts(searchParams: Partial<ProductsSearchParamsType>, first: number) {
+  async function fetchProducts(searchParams: Partial<ProductsSearchParamsType>, first?: number) {
     fetchingProducts.value = true;
     products.value = [];
     totalProductsCount.value = 0;
@@ -235,7 +235,7 @@ export function useProducts(
         term_facets = [],
         range_facets = [],
         totalCount = 0,
-      } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice, first });
+      } = await searchProducts({ ...searchParams, itemsPerPage: first }, { withFacets, withImages, withZeroPrice });
 
       products.value = items;
       totalProductsCount.value = totalCount;
