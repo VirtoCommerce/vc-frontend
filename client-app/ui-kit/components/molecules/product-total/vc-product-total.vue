@@ -8,7 +8,7 @@
       :actual-price="actualPrice"
       :list-price="listPrice"
       align="end"
-      :has-variations="hasVariations"
+      :with-from-label="hasVariations"
       :disabled="disabled"
     />
   </div>

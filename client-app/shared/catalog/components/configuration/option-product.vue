@@ -29,8 +29,7 @@
     </VcProductProperties>
 
     <VcProductPrice
-      :has-variations="product.hasVariations"
-      :is-configurable="product.isConfigurable"
+      :with-from-label="product.hasVariations || product.isConfigurable"
       :actual-price="extendedPrice"
       :list-price="listPrice"
     />

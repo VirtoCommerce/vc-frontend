@@ -90,8 +90,7 @@
 
     <div class="vc-product-card-list__price mt-2 w-full sm:mt-0 2xl:pr-2">
       <VcItemPriceCatalog
-        :is-configurable="product.isConfigurable"
-        :has-variations="product.hasVariations"
+        :with-from-label="product.hasVariations || product.isConfigurable"
         :value="price"
         class="md:flex-col md:gap-0"
       />

@@ -161,11 +161,7 @@
 
     <!-- Product price -->
     <div class="my-4 lg:my-3">
-      <VcItemPriceCatalog
-        :is-configurable="product.isConfigurable"
-        :has-variations="product.hasVariations"
-        :value="price"
-      />
+      <VcItemPriceCatalog :with-from-label="product.hasVariations || product.isConfigurable" :value="price" />
     </div>
 
     <component

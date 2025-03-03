@@ -23,8 +23,7 @@
         class="h-9 text-lg"
         :actual-price="price?.actual"
         :list-price="price?.list"
-        :has-variations="product.hasVariations"
-        :is-configurable="product.isConfigurable"
+        :with-from-label="product.hasVariations || product.isConfigurable"
       />
     </div>
 

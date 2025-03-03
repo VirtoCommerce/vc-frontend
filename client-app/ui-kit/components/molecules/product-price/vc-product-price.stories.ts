@@ -64,7 +64,7 @@ VariationsPrice.args = {
   listPrice: {
     ...sharedArgs.listPrice,
   },
-  hasVariations: true,
+  withFromLabel: true,
 };
 
 export const UsageExamples: StoryFn<typeof VcProductPrice> = (args) => ({
