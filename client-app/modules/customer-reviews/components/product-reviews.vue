@@ -39,7 +39,7 @@
               </div>
             </div>
 
-            <VcRating mode="full" :size="16" :value="review.rating" :view-value="false" />
+            <VcRating mode="full" size="sm" :value="review.rating" :view-value="false" />
           </div>
 
           <div>
@@ -122,7 +122,7 @@
             </div>
             <VcRating
               mode="full"
-              :size="16"
+              size="sm"
               :read-only="false"
               :value="newReviewRating"
               :view-value="false"

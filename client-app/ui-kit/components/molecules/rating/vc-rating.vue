@@ -1,5 +1,5 @@
 <template>
-  <div class="vc-rating" :class="{ 'space-x-1.5 text-nowrap text-neutral-300': mode === 'full' }">
+  <div :class="['vc-rating', `vc-rating--mode--${mode}`, `vc-rating--size--${size}`]">
     <template v-if="mode === 'mini'">
       <VcIcon class="vc-rating__icon vc-rating__icon--filled" name="star" :size="size" />
     </template>
@@ -10,7 +10,6 @@
         :class="{ 'cursor-pointer': !readOnly }"
         icon="whishlist"
         mask="whishlist"
-        :size="`${size}px`"
         :icon-color="getColor(i)"
         :bg-color="getColor(i)"
         @click="setRating(i)"
@@ -22,11 +21,7 @@
         <div v-if="isHalf(i)" class="absolute inset-y-0 left-0 w-1/2 bg-primary"></div>
       </VcShape>
     </template>
-    <div
-      v-if="viewValue"
-      class="vc-rating__text"
-      :style="{ fontSize: `${size}px`, marginLeft: size === 14 ? '4px' : '6px' }"
-    >
+    <div v-if="viewValue" class="vc-rating__text">
       <span class="vc-rating__current-rating">{{ value }}/5</span>
       <span v-if="reviewCount"> ({{ reviewCount }})</span>
     </div>
@@ -45,7 +40,7 @@ interface IProps {
   mode?: "mini" | "full";
   readOnly?: boolean;
   reviewCount?: number;
-  size?: VcIconSizeType;
+  size?: "xs" | "sm" | "md";
   value: number;
   viewValue?: boolean;
 }
@@ -55,7 +50,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   mode: "mini",
   readOnly: true,
-  size: 14,
+  size: "md",
   viewValue: true,
 });
 
@@ -98,6 +93,30 @@ function setRating(value: number): void {
 .vc-rating {
   @apply flex items-center gap-0.5;
 
+  &--size {
+    &--xs {
+      --vc-shape-size: 0.9rem;
+      @apply text-[0.75rem];
+      .vc-rating__text {
+        @apply ml-[0.25rem];
+      }
+    }
+    &--sm {
+      --vc-shape-size: 1rem;
+      @apply text-[0.9rem];
+    }
+    &--md {
+      --vc-shape-size: 1.25rem;
+      @apply text-[1rem];
+    }
+  }
+
+  &--mode {
+    &--full {
+      @apply space-x-1.5 text-nowrap text-neutral-300;
+    }
+  }
+
   &__icon {
     @apply inline-block;
     &--filled {
@@ -106,7 +125,7 @@ function setRating(value: number): void {
   }
 
   &__text {
-    @apply text-neutral-800;
+    @apply text-neutral-800 ml-[0.4rem];
   }
 
   &__current-rating {
