@@ -62,3 +62,5 @@ export type OrdersFilterChipsItemType = {
   value?: string;
   label: string;
 };
+
+export type OrderScopeType = "private" | "organization";

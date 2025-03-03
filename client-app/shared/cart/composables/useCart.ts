@@ -3,6 +3,7 @@ import { useApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable, computedEager } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge, intersection } from "lodash";
 import { computed, readonly, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { AbortReason } from "@/core/api/common/enums";
 import {
   useGetShortCartQuery,
@@ -34,6 +35,7 @@ import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { groupByVendor, Logger } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
+import { useNotifications } from "@/shared/notification";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { CartValidationErrors } from "../enums";
 import type {
@@ -158,6 +160,8 @@ export function _useFullCart() {
   const { openModal } = useModal();
   const { analytics } = useAnalytics();
   const { client } = useApolloClient();
+  const notifications = useNotifications();
+  const { t } = useI18n();
 
   const { result: query, load, refetch, loading } = useGetFullCartQuery();
 
@@ -398,27 +402,36 @@ export function _useFullCart() {
 
   const { mutate: _addOrUpdatePayment, loading: addOrUpdatePaymentLoading } = useAddOrUpdateCartPaymentMutation(cart);
   async function updatePayment(value: InputPaymentType): Promise<void> {
-    await _addOrUpdatePayment(
-      { command: { payment: value } },
-      {
-        optimisticResponse: (vars, { IGNORE }) => {
-          if ((vars as AddOrUpdateCartPaymentMutationVariables).command.payment.id === undefined) {
-            return IGNORE as AddOrUpdateCartPaymentMutation;
-          }
-          return {
-            addOrUpdateCartPayment: merge({}, cart.value!, {
-              payments: [
-                {
-                  id: value.id,
-                  paymentGatewayCode: value.paymentGatewayCode,
-                  billingAddress: generateCacheIdIfNew(value.billingAddress, "CartAddressType"),
-                },
-              ],
-            }),
-          };
+    try {
+      await _addOrUpdatePayment(
+        { command: { payment: value } },
+        {
+          optimisticResponse: (vars, { IGNORE }) => {
+            if ((vars as AddOrUpdateCartPaymentMutationVariables).command.payment.id === undefined) {
+              return IGNORE as AddOrUpdateCartPaymentMutation;
+            }
+            return {
+              addOrUpdateCartPayment: merge({}, cart.value!, {
+                payments: [
+                  {
+                    id: value.id,
+                    paymentGatewayCode: value.paymentGatewayCode,
+                    billingAddress: generateCacheIdIfNew(value.billingAddress, "CartAddressType"),
+                  },
+                ],
+              }),
+            };
+          },
         },
-      },
-    );
+      );
+    } catch (e) {
+      Logger.error(updatePayment.name, e);
+      notifications.error({ text: t("pages.account.order_payment.failure.title") });
+      setTimeout(() => {
+        // clear state
+        location.reload();
+      }, 3000);
+    }
   }
 
   const { mutate: _addGiftItems, loading: addGiftItemsLoading } = useAddGiftItemsMutation(cart);

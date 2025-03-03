@@ -86,7 +86,7 @@
         />
       </template>
 
-      <VcEmptyView v-else-if="!allLoading" :text="$t('back_in_stock.list_details.empty_list')" icon="thin-lists">
+      <VcEmptyView v-else-if="!allLoading" :text="$t('back_in_stock.list_details.empty_list')" icon="outline-lists">
         <template #button>
           <VcButton :external-link="continue_shopping_link">
             {{ $t("back_in_stock.list_details.empty_list_button") }}

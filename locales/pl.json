@@ -71,7 +71,9 @@
       "sort_by": "Sortuj według",
       "add_items_to_cart": "Dodaj przedmioty do koszyka",
       "show_details": "Pokaż szczegóły",
-      "add_with_bulk_order": "Dodaj z zamówieniem zbiorczym"
+      "add_with_bulk_order": "Dodaj z zamówieniem zbiorczym",
+      "agency": "Agencja",
+      "personal": "Osobisty"
     },
     "labels": {
       "actions": "Akcje",
@@ -198,7 +200,8 @@
       "password_about_expire": "Twoje hasło wkrótce wygaśnie za {value} dzień/dni. Proszę ustawić nowe hasło w profilu.",
       "password_expired": "Twoje hasło wygasło",
       "data_changed": "Dane zostały zmienione w jednym z innych tabów. Proszę odśwież stronę, aby wyświetlić aktualne dane.",
-      "logo_changed": "Logo zostało dodane. Odśwież stronę, aby zobaczyć zmiany."
+      "logo_changed": "Logo zostało pomyślnie zmienione.",
+      "logo_deleted": "Logo zostało usunięte."
     },
     "placeholders": {
       "enter_value": "Proszę wprowadzić wartość",
@@ -504,6 +507,10 @@
       "notifications": {
         "user_blocked": "Użytkownik został pomyślnie zablokowany.",
         "user_unblocked": "Użytkownik został pomyślnie odblokowany."
+      },
+      "delete_logo_modal": {
+        "title": "Usuń logo organizacji",
+        "message": "Czy na pewno chcesz usunąć aktualne logo organizacji? Proces ten jest nieodwracalny."
       }
     },
     "compare": {
@@ -558,7 +565,8 @@
       },
       "configuration_items": {
         "title": "Lista komponentów",
-        "edit_configuration": "Edytuj konfigurację"
+        "edit_configuration": "Edytuj konfigurację",
+        "selected_text": "Wybrany tekst: {text}"
       }
     },
     "catalog": {
@@ -609,7 +617,10 @@
           "none": "Brak",
           "nothing_selected": "Nic nie wybrano",
           "changed_notification": "Konfiguracja produktu została zmieniona. Możesz zawsze zapisać ją później, klikając przycisk \"@:{'ui_kit.buttons.update_cart'}\".",
-          "changed_confirmation": "Konfiguracja produktu została zmieniona. Chcesz ją zapisać?"
+          "changed_confirmation": "Konfiguracja produktu została zmieniona. Chcesz ją zapisać?",
+          "no_text": "Brak zaznaczonego tekstu",
+          "check_your_configuration": "Sprawdź konfigurację produktu",
+          "required_section": "Sekcja jest wymagana"
         }
       },
       "discount_badge": {
@@ -1029,6 +1040,7 @@
         "title": "Zamówienia",
         "order_number_label": "Numer zamówienia",
         "purchase_number_label": "Numer zamówienia",
+        "buyer_name_label": "Nazwa kupującego",
         "status_label": "@:common.labels.status",
         "invoice_label": "Faktura",
         "date_label": "@:common.labels.date",
