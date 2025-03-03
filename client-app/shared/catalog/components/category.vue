@@ -227,8 +227,8 @@ import {
   watchDebounced,
   whenever,
 } from "@vueuse/core";
-import { computed, onBeforeUnmount, ref, shallowRef, toRef, toRefs, watch } from "vue";
-import { useRoute } from "vue-router";
+import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
@@ -291,6 +291,7 @@ const { catalogId, currencyCode } = globals;
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
 
+const route = useRoute();
 const { themeContext } = useThemeContext();
 const {
   getFacets,
@@ -329,8 +330,9 @@ const {
   filtersDisplayOrder,
   useQueryParams: true,
   withFacets: true,
-  shouldUseCache: true,
+  shouldUseCache: route.meta.isBack,
 });
+
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();
 const lastScrollPosition = useSessionStorage("lastCatalogScrollPosition", 0);
@@ -351,7 +353,6 @@ const hideViewModeSelector = computed(() => {
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
 
-const route = useRoute();
 const { objectType, slugInfo } = useSlugInfo(route.path.slice(1));
 
 useCategorySeo({ category: currentCategory, allowSetMeta, categoryComponentAnchorIsVisible });
@@ -437,6 +438,10 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
 async function fetchProducts(): Promise<void> {
   await _fetchProducts(searchParams.value);
 
+  if (route.meta.isBack) {
+    window.scrollTo(0, lastScrollPosition.value);
+  }
+
   /**
    * Send Google Analytics event for products.
    */
@@ -499,7 +504,7 @@ watchDebounced(
   },
 );
 
-onBeforeUnmount(() => {
+onBeforeRouteLeave(() => {
   lastScrollPosition.value = window.scrollY;
 });
 </script>

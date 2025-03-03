@@ -1,4 +1,5 @@
-import { computed, readonly, ref, toRaw, watch } from "vue";
+import omit from "lodash/omit";
+import { computed, readonly, ref, toRaw } from "vue";
 import { useIndexedDB } from "@/core/composables/useIndexedDB";
 import { useProducts } from "./useProducts";
 import type { ProductsSearchParamsType } from "../types";
@@ -12,9 +13,21 @@ type MetaDataType = {
 };
 
 const CACHE_EXPIRATION_TIME = 1000 * 60 * 3; // 3 minutes
+const CACHE_KEY_PRODUCTS_PREFIX = "products";
+const CACHE_KEY_META_PREFIX = "meta";
+const STORE_NAME = "products";
+const DB_NAME = "products-db";
 
 function getCacheKey(params: Partial<ProductsSearchParamsType>): string {
-  return `products:${JSON.stringify(params)}`;
+  return JSON.stringify(omit(params, "page"));
+}
+
+function getMetaData(data: ReturnType<typeof useProducts>): MetaDataType {
+  return {
+    pagesCount: data.pagesCount.value,
+    totalProductsCount: data.totalProductsCount.value,
+    currentPage: data.currentPage.value,
+  };
 }
 
 /**
@@ -24,27 +37,35 @@ export function useProductsCached(options: Parameters<typeof useProducts>[0] & {
   const productsComposable = useProducts(options);
   const shouldUseCache = options.shouldUseCache ?? false;
 
+  const { setValue, getValue, deleteValue, getAllKeys } = useIndexedDB({
+    storeName: STORE_NAME,
+    dbName: DB_NAME,
+  });
+
   const products = ref<Product[]>([]);
   const metaData = ref<MetaDataType>({});
-
-  if (!shouldUseCache) {
-    return productsComposable;
-  }
-
-  const fetchingProducts = ref(false);
+  const readingProductsFromCache = ref(false);
   const isCacheLoaded = ref(false);
   const isUsingLiveMetadata = ref(false);
 
-  const { setValue, getValue, deleteValue, getAllKeys } = useIndexedDB({
-    storeName: "products",
-    dbName: "products-db",
-  });
+  const allProducts = computed(() => [...(products.value ?? []), ...(productsComposable.products.value ?? [])]);
+  const fetchingProducts = computed(() =>
+    isCacheLoaded.value ? productsComposable.fetchingProducts.value : readingProductsFromCache.value,
+  );
+  const totalProductsCount = computed(() =>
+    isUsingLiveMetadata.value ? productsComposable.totalProductsCount.value : (metaData.value.totalProductsCount ?? 0),
+  );
+  const currentPage = computed(() =>
+    isUsingLiveMetadata.value ? productsComposable.currentPage.value : (metaData.value.currentPage ?? 1),
+  );
+  const pagesCount = computed(() =>
+    isUsingLiveMetadata.value ? productsComposable.pagesCount.value : (metaData.value.pagesCount ?? 1),
+  );
 
   async function storeInCache(cacheKey: string, productsData: Product[], metadata: MetaDataType): Promise<void> {
     try {
-      console.log("storeInCache", cacheKey, productsData, metadata);
-      await setValue(cacheKey, productsData.map(toRaw));
-      await setValue(`${cacheKey}:meta`, {
+      await setValue(`${CACHE_KEY_PRODUCTS_PREFIX}:${cacheKey}`, productsData.map(toRaw));
+      await setValue(`${CACHE_KEY_META_PREFIX}:${cacheKey}`, {
         ...metadata,
         lastUpdated: Date.now(),
       });
@@ -55,32 +76,16 @@ export function useProductsCached(options: Parameters<typeof useProducts>[0] & {
     }
   }
 
-  watch(
-    () => productsComposable.products.value,
-    (newProducts) => {
-      if (newProducts && newProducts.length > 0) {
-        const metadata = {
-          pagesCount: productsComposable.pagesCount.value,
-          totalProductsCount: productsComposable.totalProductsCount.value,
-          currentPage: productsComposable.currentPage.value,
-        };
-        void storeInCache("products", newProducts, metadata);
-      }
-    },
-    { deep: true },
-  );
-
   async function cleanupOldCache(): Promise<void> {
     const keys = await getAllKeys();
-    console.log("cleanupOldCache", keys);
     const now = Date.now();
 
     for (const key of keys) {
       const keyString = String(key);
-      if (keyString.includes(":meta")) {
+      if (keyString.includes(CACHE_KEY_META_PREFIX)) {
         const meta = await getValue<MetaDataType>(keyString);
         if (meta?.lastUpdated && now - meta.lastUpdated > CACHE_EXPIRATION_TIME * 2) {
-          const baseKey = keyString.replace(":meta", "");
+          const baseKey = keyString.replace(CACHE_KEY_META_PREFIX, CACHE_KEY_PRODUCTS_PREFIX);
           await deleteValue(baseKey);
           await deleteValue(keyString);
         }
@@ -88,79 +93,58 @@ export function useProductsCached(options: Parameters<typeof useProducts>[0] & {
     }
   }
 
-  const fetchProducts = async (params: Partial<ProductsSearchParamsType>, first?: number) => {
+  async function fetchWithApi(params: Partial<ProductsSearchParamsType>, first?: number) {
     const cacheKey = getCacheKey(params);
+    await productsComposable.fetchProducts(params, first);
+    void storeInCache(cacheKey, productsComposable.products.value, getMetaData(productsComposable));
+    isUsingLiveMetadata.value = true;
+  }
 
-    if (isCacheLoaded.value) {
-      await productsComposable.fetchProducts(params, first);
-      const metadata = {
-        pagesCount: productsComposable.pagesCount.value,
-        totalProductsCount: productsComposable.totalProductsCount.value,
-        currentPage: productsComposable.currentPage.value,
-      };
-      void storeInCache(cacheKey, productsComposable.products.value, metadata);
-      isUsingLiveMetadata.value = true;
-      return;
-    }
+  async function fetchFromCache(params: Partial<ProductsSearchParamsType>) {
+    const cacheKey = getCacheKey(params);
+    readingProductsFromCache.value = true;
 
-    fetchingProducts.value = true;
-
-    const cachedProducts = await getValue<Product[]>(cacheKey);
-    const cachedMetaData = await getValue<MetaDataType>(`${cacheKey}:meta`);
+    const cachedProducts = await getValue<Product[]>(`${CACHE_KEY_PRODUCTS_PREFIX}:${cacheKey}`);
+    const cachedMetaData = await getValue<MetaDataType>(`${CACHE_KEY_META_PREFIX}:${cacheKey}`);
 
     if (cachedProducts) {
       products.value = cachedProducts ?? [];
       metaData.value = cachedMetaData ?? {};
     }
 
-    fetchingProducts.value = false;
+    readingProductsFromCache.value = false;
     isCacheLoaded.value = true;
+  }
+
+  const fetchProducts = async (params: Partial<ProductsSearchParamsType>, first?: number) => {
+    if (isCacheLoaded.value || !shouldUseCache) {
+      await fetchWithApi(params, first);
+      return;
+    }
+
+    await fetchFromCache(params);
 
     const isOutdated = !metaData.value.lastUpdated || metaData.value.lastUpdated < Date.now() - CACHE_EXPIRATION_TIME;
-    console.log("isOutdated", isOutdated);
-    console.log("products.value", products.value);
-    console.log("metaData.value.lastUpdated", metaData.value);
 
     if (isOutdated || !products.value.length) {
-      await productsComposable.fetchProducts(params, products.value.length || undefined);
-      isUsingLiveMetadata.value = true;
-
-      if (productsComposable.products.value.length > 0) {
-        const metadata = {
-          pagesCount: productsComposable.pagesCount.value,
-          totalProductsCount: productsComposable.totalProductsCount.value,
-          currentPage: productsComposable.currentPage.value,
-        };
-        void storeInCache(cacheKey, productsComposable.products.value, metadata);
-      }
+      await fetchWithApi(params, products.value.length || undefined);
     }
   };
 
   const fetchMoreProducts = async (params: Partial<ProductsSearchParamsType>) => {
-    if (isUsingLiveMetadata.value) {
-      await productsComposable.fetchMoreProducts(params);
-      return;
-    }
-    await productsComposable.fetchMoreProducts({ ...params, page: (metaData.value.currentPage ?? 1) + 1 });
+    const nextPage = (metaData.value.currentPage ?? 1) + 1;
+    await productsComposable.fetchMoreProducts({ ...params, page: isUsingLiveMetadata.value ? params.page : nextPage });
+    isUsingLiveMetadata.value = true;
+    void storeInCache(getCacheKey(params), allProducts.value, getMetaData(productsComposable));
   };
 
   return {
     ...productsComposable,
-    fetchingProducts: readonly(
-      computed(() => (isCacheLoaded.value ? productsComposable.fetchingProducts.value : fetchingProducts.value)),
-    ),
-    products: computed(() => [...(products.value ?? []), ...(productsComposable.products.value ?? [])]),
-    pagesCount: computed(() =>
-      isUsingLiveMetadata.value ? productsComposable.pagesCount.value : (metaData.value.pagesCount ?? 1),
-    ),
-    totalProductsCount: computed(() =>
-      isUsingLiveMetadata.value
-        ? productsComposable.totalProductsCount.value
-        : (metaData.value.totalProductsCount ?? 0),
-    ),
-    currentPage: computed(() =>
-      isUsingLiveMetadata.value ? productsComposable.currentPage.value : (metaData.value.currentPage ?? 1),
-    ),
+    fetchingProducts: readonly(fetchingProducts),
+    products: allProducts,
+    pagesCount: readonly(pagesCount),
+    totalProductsCount: readonly(totalProductsCount),
+    currentPage: readonly(currentPage),
     fetchProducts,
     fetchMoreProducts,
   };
