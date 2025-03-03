@@ -10,7 +10,11 @@
       {{ $t("pages.compare.empty_list.message") }}
     </div>
 
-    <VcButton :external-link="continue_shopping_link" prepend-icon="shopping-bag">
+    <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link" prepend-icon="shopping-bag">
+      {{ $t("pages.compare.empty_list.button_text") }}
+    </VcButton>
+
+    <VcButton v-else to="/" prepend-icon="shopping-bag">
       {{ $t("pages.compare.empty_list.button_text") }}
     </VcButton>
   </VcEmptyPage>

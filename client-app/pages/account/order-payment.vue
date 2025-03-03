@@ -53,7 +53,11 @@
             {{ $t("pages.account.order_payment.orders_list_button") }}
           </VcButton>
 
-          <VcButton :external-link="continue_shopping_link">
+          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+            {{ $t("pages.account.order_payment.continue_shopping_button") }}
+          </VcButton>
+
+          <VcButton v-else to="/">
             {{ $t("pages.account.order_payment.continue_shopping_button") }}
           </VcButton>
         </div>

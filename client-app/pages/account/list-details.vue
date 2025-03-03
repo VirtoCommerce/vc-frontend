@@ -93,7 +93,11 @@
           icon="outline-lists"
         >
           <template #button>
-            <VcButton :external-link="continue_shopping_link">
+            <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+              {{ $t("shared.wishlists.list_details.empty_list_button") }}
+            </VcButton>
+
+            <VcButton v-else to="/">
               {{ $t("shared.wishlists.list_details.empty_list_button") }}
             </VcButton>
           </template>

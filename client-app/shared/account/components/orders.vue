@@ -172,9 +172,15 @@
         {{ $t("pages.account.orders.buttons.reset_search") }}
       </VcButton>
 
-      <VcButton v-else :external-link="continue_shopping_link">
-        {{ $t("pages.account.orders.buttons.no_orders") }}
-      </VcButton>
+      <template v-else>
+        <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+          {{ $t("pages.account.orders.buttons.no_orders") }}
+        </VcButton>
+
+        <VcButton v-else to="/">
+          {{ $t("pages.account.orders.buttons.no_orders") }}
+        </VcButton>
+      </template>
     </template>
   </VcEmptyView>
 

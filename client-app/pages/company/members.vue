@@ -228,9 +228,15 @@
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
 
-        <VcButton v-else :external-link="continue_shopping_link">
-          {{ $t("pages.company.members.buttons.no_members") }}
-        </VcButton>
+        <template v-else>
+          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+            {{ $t("pages.company.members.buttons.no_members") }}
+          </VcButton>
+
+          <VcButton v-else to="/">
+            {{ $t("pages.company.members.buttons.no_members") }}
+          </VcButton>
+        </template>
       </template>
     </VcEmptyView>
 

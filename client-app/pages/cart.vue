@@ -14,7 +14,11 @@
       </div>
 
       <div class="flex flex-wrap gap-x-6 gap-y-2.5 max-sm:justify-center">
-        <VcButton :external-link="continue_shopping_link" prepend-icon="shopping-bag">
+        <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link" prepend-icon="shopping-bag">
+          {{ $t("common.buttons.continue_shopping") }}
+        </VcButton>
+
+        <VcButton v-else to="/" prepend-icon="shopping-bag">
           {{ $t("common.buttons.continue_shopping") }}
         </VcButton>
 
