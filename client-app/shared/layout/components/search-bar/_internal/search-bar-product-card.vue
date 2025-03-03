@@ -8,7 +8,11 @@
       {{ product.name }}
     </VcProductTitle>
 
-    <VcProductPrice :actual-price="price?.actual" :has-variations="product.hasVariations" />
+    <VcProductPrice
+      :actual-price="price?.actual"
+      :has-variations="product.hasVariations"
+      :is-configurable="product.isConfigurable"
+    />
   </VcProductCard>
 </template>
 

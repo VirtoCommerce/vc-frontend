@@ -8,6 +8,7 @@
 
     <VcProductPrice
       :has-variations="product.hasVariations"
+      :is-configurable="product.isConfigurable"
       :actual-price="price?.actual"
       :list-price="price?.list"
       single-line

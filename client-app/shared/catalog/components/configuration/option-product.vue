@@ -28,7 +28,12 @@
       </VcProperty>
     </VcProductProperties>
 
-    <VcProductPrice :has-variations="product.hasVariations" :actual-price="extendedPrice" :list-price="listPrice" />
+    <VcProductPrice
+      :has-variations="product.hasVariations"
+      :is-configurable="product.isConfigurable"
+      :actual-price="extendedPrice"
+      :list-price="listPrice"
+    />
 
     <VcAddToCart hide-button disabled :model-value="quantity ?? 1" />
 

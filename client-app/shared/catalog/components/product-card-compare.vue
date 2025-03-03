@@ -24,6 +24,7 @@
         :actual-price="price?.actual"
         :list-price="price?.list"
         :has-variations="product.hasVariations"
+        :is-configurable="product.isConfigurable"
       />
     </div>
 

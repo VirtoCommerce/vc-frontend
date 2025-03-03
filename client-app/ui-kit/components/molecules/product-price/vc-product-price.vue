@@ -12,13 +12,15 @@
     ]"
   >
     <span class="vc-product-price__actual">
-      <span v-if="hasVariations" class="vc-product-price__variations"> {{ $t("ui_kit.suffixes.from") }}</span>
+      <span v-if="hasVariations || isConfigurable" class="vc-product-price__variations">
+        {{ $t("ui_kit.suffixes.from") }}</span
+      >
 
       <VcPriceDisplay :value="shouldUseActualPrice(listPrice, actualPrice) || !listPrice ? actualPrice : listPrice" />
     </span>
 
     <VcPriceDisplay
-      v-if="!hasVariations && shouldUseActualPrice(listPrice, actualPrice)"
+      v-if="!hasVariations && !isConfigurable && shouldUseActualPrice(listPrice, actualPrice)"
       class="vc-product-price__list"
       :value="listPrice"
     />
@@ -37,6 +39,7 @@ interface IProps {
   truncate?: boolean;
   hasVariations?: boolean;
   disabled?: boolean;
+  isConfigurable?: boolean;
 }
 
 defineProps<IProps>();
