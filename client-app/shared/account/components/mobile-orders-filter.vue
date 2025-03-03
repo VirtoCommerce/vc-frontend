@@ -17,7 +17,7 @@
       </VcCheckboxGroup>
     </VcWidget>
 
-    <VcWidget :title="$t('common.labels.buyer_name')" size="sm">
+    <VcWidget v-if="isOrganizationMaintainer" :title="$t('common.labels.buyer_name')" size="sm">
       <slot name="buyerNameFilterType" />
     </VcWidget>
 
@@ -33,8 +33,9 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { STATUS_ORDERS_FACET_NAME } from "@/core/constants";
-import { useUserOrders, useUserOrdersFilter } from "../composables";
+import { useUser, useUserOrders, useUserOrdersFilter } from "../composables";
 
+const { isOrganizationMaintainer } = useUser();
 const { facets } = useUserOrders({});
 const { filterData } = useUserOrdersFilter();
 
