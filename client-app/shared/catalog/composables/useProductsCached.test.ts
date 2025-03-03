@@ -1,3 +1,4 @@
+import { flushPromises } from "@vue/test-utils";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { nextTick, ref } from "vue";
 import { useProductsCached } from "./useProductsCached";
@@ -20,6 +21,9 @@ const mockProductsComposable = {
 const mockIndexedDB = {
   setValue: vi.fn(() => Promise.resolve()),
   getValue: vi.fn(),
+  deleteValue: vi.fn(() => Promise.resolve()),
+  getAllKeys: vi.fn<() => Promise<IDBValidKey[]>>(() => Promise.resolve([])),
+  clearStore: vi.fn(() => Promise.resolve()),
 };
 
 // Set up mocks with proper module exports
@@ -62,6 +66,14 @@ describe("useProductsCached", () => {
     mockProductsComposable.pagesCount.value = 1;
     mockProductsComposable.totalProductsCount.value = 0;
     mockProductsComposable.currentPage.value = 1;
+
+    // Setup mock implementations for new methods
+    mockIndexedDB.getAllKeys.mockResolvedValue([
+      "products",
+      "products:meta",
+      'products:{"keyword":"test"}',
+      'products:{"keyword":"test"}:meta',
+    ] as IDBValidKey[]);
   });
 
   afterEach(() => {
@@ -91,11 +103,11 @@ describe("useProductsCached", () => {
       currentPage: 2,
     };
 
-    mockIndexedDB.getValue.mockImplementation((key) => {
-      if (key === "products") {
+    mockIndexedDB.getValue.mockImplementation((key: string) => {
+      if (key === "products:{}" || (key.includes("products") && !key.includes(":meta"))) {
         return Promise.resolve(cachedProducts);
       }
-      if (key === "meta") {
+      if (key === "products:{}:meta" || key.includes(":meta")) {
         return Promise.resolve(cachedMetaData);
       }
       return Promise.resolve(null);
@@ -123,11 +135,11 @@ describe("useProductsCached", () => {
       currentPage: 2,
     };
 
-    mockIndexedDB.getValue.mockImplementation((key) => {
-      if (key === "products") {
+    mockIndexedDB.getValue.mockImplementation((key: string) => {
+      if (key === "products:{}" || (key.includes("products") && !key.includes(":meta"))) {
         return Promise.resolve(cachedProducts);
       }
-      if (key === "meta") {
+      if (key === "products:{}:meta" || key.includes(":meta")) {
         return Promise.resolve(cachedMetaData);
       }
       return Promise.resolve(null);
@@ -164,7 +176,7 @@ describe("useProductsCached", () => {
     // Should save to cache
     expect(mockIndexedDB.setValue).toHaveBeenCalledWith("products", expect.any(Array));
     expect(mockIndexedDB.setValue).toHaveBeenCalledWith(
-      "meta",
+      "products:meta",
       expect.objectContaining({
         pagesCount: 2,
         totalProductsCount: 20,
@@ -176,11 +188,11 @@ describe("useProductsCached", () => {
 
   it("should merge cached products with newly fetched products", async () => {
     const cachedProducts = [...mockProducts];
-    mockIndexedDB.getValue.mockImplementation((key) => {
-      if (key === "products") {
+    mockIndexedDB.getValue.mockImplementation((key: string) => {
+      if (key === "products:{}" || (key.includes("products") && !key.includes(":meta"))) {
         return Promise.resolve(cachedProducts);
       }
-      if (key === "meta") {
+      if (key === "products:{}:meta" || key.includes(":meta")) {
         return Promise.resolve({ lastUpdated: Date.now() });
       }
       return Promise.resolve(null);
@@ -217,11 +229,11 @@ describe("useProductsCached", () => {
       currentPage: 1,
     };
 
-    mockIndexedDB.getValue.mockImplementation((key) => {
-      if (key === "products") {
+    mockIndexedDB.getValue.mockImplementation((key: string) => {
+      if (key === "products:{}" || (key.includes("products") && !key.includes(":meta"))) {
         return Promise.resolve(mockProducts);
       }
-      if (key === "meta") {
+      if (key === "products:{}:meta" || key.includes(":meta")) {
         return Promise.resolve(cachedMetaData);
       }
       return Promise.resolve(null);
@@ -256,5 +268,35 @@ describe("useProductsCached", () => {
     await composable.fetchProducts({});
     expect(mockProductsComposable.fetchProducts).toHaveBeenCalledTimes(2);
     expect(composable.products.value).toEqual(mockNewProducts);
+  });
+
+  it("should clean up old cache entries", async () => {
+    const oldMeta = {
+      lastUpdated: Date.now() - 1000 * 60 * 10, // 10 minutes ago (very expired)
+      pagesCount: 1,
+      totalProductsCount: 10,
+      currentPage: 1,
+    };
+
+    mockProductsComposable.products.value = [...mockProducts];
+
+    mockIndexedDB.getValue.mockImplementation((key: string) => {
+      if (key === "products:{}" || (key.includes("products") && !key.includes(":meta"))) {
+        return Promise.resolve(mockProducts);
+      }
+      if (key === "products:{}:meta" || key.includes(":meta")) {
+        return Promise.resolve(oldMeta);
+      }
+      return Promise.resolve(null);
+    });
+
+    const composable = useProductsCached({ shouldUseCache: true });
+    await composable.fetchProducts({});
+
+    await flushPromises();
+
+    // Should attempt to clean up old cache entries
+    expect(mockIndexedDB.getAllKeys).toHaveBeenCalled();
+    expect(mockIndexedDB.deleteValue).toHaveBeenCalled();
   });
 });
