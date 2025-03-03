@@ -4,13 +4,7 @@
       {{ $t("ui_kit.labels.total") }}
     </div>
 
-    <VcProductPrice
-      :actual-price="actualPrice"
-      :list-price="listPrice"
-      align="end"
-      :with-from-label="hasVariations"
-      :disabled="disabled"
-    />
+    <VcProductPrice :actual-price="actualPrice" :list-price="listPrice" align="end" :disabled="disabled" />
   </div>
 </template>
 
@@ -20,7 +14,6 @@ import type { MoneyType } from "@/core/api/graphql/types";
 interface IProps {
   actualPrice?: MoneyType;
   listPrice?: MoneyType;
-  hasVariations?: boolean;
   disabled?: boolean;
 }
 
