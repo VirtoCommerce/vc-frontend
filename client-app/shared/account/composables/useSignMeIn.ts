@@ -40,7 +40,7 @@ export function useSignMeIn() {
         if (cart.value?.id && cart.value.items?.length) {
           if (currencyCode && currencyCode !== currentCurrencyCode) {
             await clearCurrencyCart({
-              command: { userId: me.value.me.id, currencyCode: currentCurrencyCode, storeId },
+              command: { userId: me.value.me.id, currencyCode: currentCurrencyCode, storeId, cultureName },
               skipQuery: false,
             });
           }
