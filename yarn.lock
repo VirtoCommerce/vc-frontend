@@ -6004,7 +6004,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:10.11.1, @vueuse/core@npm:^10.11.0":
+"@vueuse/core@npm:10.11.1, @vueuse/core@npm:^10.11.0, @vueuse/core@npm:^10.6.1":
   version: 10.11.1
   resolution: "@vueuse/core@npm:10.11.1"
   dependencies:
@@ -6166,6 +6166,26 @@ __metadata:
   dependencies:
     tslib: "npm:^2.3.0"
   checksum: 10c0/8c8cfcac96ba4bc69dabf02740e19e613f501b398e80bacc32cd95e87228f75ecb41cd1a76a65abae9756c0f61ab3536e0da52de28857456f9381ffdf5995d3e
+  languageName: node
+  linkType: hard
+
+"@zxing/library@npm:^0.20.0":
+  version: 0.20.0
+  resolution: "@zxing/library@npm:0.20.0"
+  dependencies:
+    "@zxing/text-encoding": "npm:~0.9.0"
+    ts-custom-error: "npm:^3.2.1"
+  dependenciesMeta:
+    "@zxing/text-encoding":
+      optional: true
+  checksum: 10c0/466c75d893f6a830de9296d7403f75b192dbd704849fc1ae550856441b85f4108b9ba3e85004c5e1f56df16bb33813941d51dad2d230aa60ea3f799d44551c86
+  languageName: node
+  linkType: hard
+
+"@zxing/text-encoding@npm:~0.9.0":
+  version: 0.9.0
+  resolution: "@zxing/text-encoding@npm:0.9.0"
+  checksum: 10c0/d15bff181d46c2ab709e7242801a8d40408aa8c19b44462e5f60e766bf59105b44957914ab6baab60d10d466a5e965f21fe890c67dfdb7d5c7f940df457b4d0d
   languageName: node
   linkType: hard
 
@@ -15038,6 +15058,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-custom-error@npm:^3.2.1":
+  version: 3.3.1
+  resolution: "ts-custom-error@npm:3.3.1"
+  checksum: 10c0/67cc807d03406d7eeb2b908408d455d253cc43b480d669e2e3ea028b9aaa2c78ad1b392425b86368bbbc3c43a15e4abe304312d87ed845091646ec1937bab982
+  languageName: node
+  linkType: hard
+
 "ts-dedent@npm:^2.0.0, ts-dedent@npm:^2.2.0":
   version: 2.2.0
   resolution: "ts-dedent@npm:2.2.0"
@@ -15672,6 +15699,7 @@ __metadata:
     vue-router: "npm:^4.4.5"
     vue-tsc: "npm:2.1.10"
     vue3-application-insights: "npm:^1.1.0"
+    vue3-barcode-qrcode-reader: "npm:^1.0.16"
     yup: "npm:^1.4.0"
   languageName: unknown
   linkType: soft
@@ -16149,7 +16177,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:^3.5.12":
+"vue3-barcode-qrcode-reader@npm:^1.0.16":
+  version: 1.0.16
+  resolution: "vue3-barcode-qrcode-reader@npm:1.0.16"
+  dependencies:
+    "@vueuse/core": "npm:^10.6.1"
+    "@zxing/library": "npm:^0.20.0"
+    vue: "npm:^3.3.11"
+    vue-demi: "npm:^0.14.6"
+    vue-router: "npm:^4.2.5"
+  checksum: 10c0/5ec82607301507b19d6e1cbd43fa8631de37f1534f24f449e170914677a3d18b3ec2f9fd7376ef33400d9147a0bfa5cf6ee363222285e1a1963401184c1fb406
+  languageName: node
+  linkType: hard
+
+"vue@npm:^3.3.11, vue@npm:^3.5.12":
   version: 3.5.13
   resolution: "vue@npm:3.5.13"
   dependencies:
