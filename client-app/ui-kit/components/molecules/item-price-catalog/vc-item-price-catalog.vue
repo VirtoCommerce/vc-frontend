@@ -1,15 +1,9 @@
 <template>
-  <div v-if="hasVariations" class="flex items-end gap-1.5">
+  <div v-if="withFromLabel" class="flex items-end gap-1.5">
     <div class="pb-0.5 text-sm text-neutral lg:text-xs">
       {{ $t("ui_kit.suffixes.from") }}
     </div>
     <VcPriceDisplayCatalog :value="value?.actual" class="text-xl font-bold" />
-  </div>
-  <div v-else-if="isConfigurable" class="flex items-end gap-1.5">
-    <div class="pb-0.5 text-sm text-neutral lg:text-xs">
-      {{ $t("ui_kit.suffixes.from") }}
-    </div>
-    <VcPriceDisplayCatalog :class="priceColorClass" :value="value?.list" class="text-xl font-bold" />
   </div>
   <div v-else-if="shouldUseActualPrice(value?.list, value?.actual)" class="flex flex-wrap items-end gap-1.5">
     <VcPriceDisplayCatalog :class="priceColorClass" :value="value?.actual" class="text-xl font-bold" />
@@ -26,8 +20,7 @@ import type { MoneyType, PriceType } from "@/core/api/graphql/types";
 
 interface IProps {
   value?: PriceType | { list: MoneyType; actual: MoneyType };
-  hasVariations?: boolean;
-  isConfigurable?: boolean;
+  withFromLabel?: boolean;
   priceColorClass?: string;
 }
 
