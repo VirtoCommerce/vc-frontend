@@ -83,7 +83,7 @@ const useSharedShortCart = createSharedComposable(_useSharedShortCart);
 export function useShortCart() {
   const { cart, refetch, loading } = useSharedShortCart();
   const { storeId, currencyCode, cultureName, userId } = globals;
-
+  const commonVariables = { storeId, currencyCode, cultureName, userId };
   const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
   async function addToCart(
     productId: string,
@@ -96,10 +96,7 @@ export function useShortCart() {
           productId,
           quantity,
           configurationSections: configurationSections as ConfigurationSectionInput[],
-          storeId,
-          currencyCode,
-          cultureName,
-          userId,
+          ...commonVariables,
         },
       });
       return result?.data?.addItem;
@@ -110,14 +107,14 @@ export function useShortCart() {
 
   const { mutate: _addItemsToCart, loading: addItemsToCartLoading } = useMutation(AddItemsCartDocument);
   async function addItemsToCart(items: InputNewCartItemType[]): Promise<ShortCartFragment | undefined> {
-    const result = await _addItemsToCart({ command: { cartItems: items, storeId, currencyCode, cultureName, userId } });
+    const result = await _addItemsToCart({ command: { cartItems: items, ...commonVariables } });
     return result?.data?.addItemsCart;
   }
 
   const { mutate: _addBulkItemsToCart, loading: addBulkItemsToCartLoading } = useMutation(AddBulkItemsCartDocument);
   async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
     const result = await _addBulkItemsToCart({
-      command: { cartItems: items, storeId, currencyCode, cultureName, userId },
+      command: { cartItems: items, ...commonVariables },
     });
 
     return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
@@ -133,7 +130,7 @@ export function useShortCart() {
   async function changeItemQuantity(lineItemId: string, quantity: number): Promise<ShortCartFragment | undefined> {
     try {
       const result = await _changeItemQuantity({
-        command: { lineItemId, quantity, storeId, userId },
+        command: { lineItemId, quantity, ...commonVariables },
         skipQuery: false,
       });
       return result?.data?.changeCartItemQuantity;
@@ -175,7 +172,8 @@ export function _useFullCart() {
   const { openModal } = useModal();
   const { analytics } = useAnalytics();
   const { client, resolveClient } = useApolloClient();
-  const { storeId, userId } = globals;
+  const { storeId, currencyCode, cultureName, userId } = globals;
+  const commonVariables = { storeId, currencyCode, cultureName, userId };
   const notifications = useNotifications();
   const { t } = useI18n();
 
@@ -252,7 +250,7 @@ export function _useFullCart() {
       if (ids.length > 0) {
         void anotherBatcher.add(
           {
-            command: { lineItemIds: ids, storeId, userId },
+            command: { lineItemIds: ids, ...commonVariables },
             skipQuery: false,
           },
           undefined,
@@ -293,8 +291,7 @@ export function _useFullCart() {
     void _selectCartItems({
       command: {
         lineItemIds: ids,
-        storeId,
-        userId,
+        ...commonVariables,
       },
       skipQuery: false,
     });
@@ -305,8 +302,7 @@ export function _useFullCart() {
     void _unselectCartItems({
       command: {
         lineItemIds: ids,
-        storeId,
-        userId,
+        ...commonVariables,
       },
       skipQuery: false,
     });
@@ -317,13 +313,13 @@ export function _useFullCart() {
   onClearCartDone(() => resolveClient().cache.gc());
 
   async function clearCart(): Promise<void> {
-    await _clearCart({ command: { storeId, userId }, skipQuery: false });
+    await _clearCart({ command: { ...commonVariables }, skipQuery: false });
   }
 
   const { mutate: _removeItems, loading: removeItemsLoading } = useMutation(RemoveCartItemsDocument);
   async function removeItems(lineItemIds: string[]): Promise<void> {
     await _removeItems(
-      { command: { lineItemIds, storeId, userId }, skipQuery: false },
+      { command: { lineItemIds, ...commonVariables }, skipQuery: false },
       {
         optimisticResponse: {
           removeCartItems: {
@@ -339,7 +335,7 @@ export function _useFullCart() {
     ChangeFullCartItemQuantityDocument,
   );
   async function changeItemQuantity(lineItemId: string, quantity: number): Promise<void> {
-    await _changeItemQuantity({ command: { lineItemId, quantity, storeId, userId }, skipQuery: false });
+    await _changeItemQuantity({ command: { lineItemId, quantity, ...commonVariables }, skipQuery: false });
   }
 
   const { mutate: _changeItemsQuantity } = useMutation(ChangeFullCartItemsQuantityDocument);
@@ -355,8 +351,7 @@ export function _useFullCart() {
       await add({
         command: {
           cartItems: [{ lineItemId, quantity }],
-          storeId,
-          userId,
+          ...commonVariables,
         },
       });
     } catch (error) {
@@ -378,24 +373,24 @@ export function _useFullCart() {
 
   const { mutate: _addCoupon, loading: addCouponLoading } = useMutation(AddCouponDocument);
   async function addCartCoupon(couponCode: string): Promise<void> {
-    await _addCoupon({ command: { couponCode, storeId, userId }, skipQuery: false });
+    await _addCoupon({ command: { couponCode, ...commonVariables }, skipQuery: false });
   }
 
   const { mutate: _removeCoupon, loading: removeCouponLoading } = useMutation(RemoveCouponDocument);
   async function removeCartCoupon(couponCode: string): Promise<void> {
-    await _removeCoupon({ command: { couponCode, storeId, userId }, skipQuery: false });
+    await _removeCoupon({ command: { couponCode, ...commonVariables }, skipQuery: false });
   }
 
   const { mutate: _changeComment, loading: changeCommentLoading } = useMutation(ChangeCartCommentDocument);
   async function changeComment(comment: string): Promise<void> {
-    await _changeComment({ command: { comment, storeId, userId }, skipQuery: false });
+    await _changeComment({ command: { comment, ...commonVariables }, skipQuery: false });
   }
 
   const { mutate: _changePurchaseOrderNumber, loading: changePurchaseOrderNumberLoading } = useMutation(
     ChangePurchaseOrderNumberDocument,
   );
   async function updatePurchaseOrderNumber(purchaseOrderNumber: string): Promise<void> {
-    await _changePurchaseOrderNumber({ command: { purchaseOrderNumber, storeId, userId }, skipQuery: false });
+    await _changePurchaseOrderNumber({ command: { purchaseOrderNumber, ...commonVariables }, skipQuery: false });
   }
 
   const {
@@ -408,7 +403,7 @@ export function _useFullCart() {
 
   async function updateShipment(value: InputShipmentType): Promise<void> {
     await _addOrUpdateShipment(
-      { command: { shipment: value, storeId, userId }, skipQuery: false },
+      { command: { shipment: value, ...commonVariables }, skipQuery: false },
       {
         optimisticResponse: (vars, { IGNORE }) => {
           if ((vars as AddOrUpdateCartShipmentMutationVariables).command.shipment.id === undefined) {
@@ -441,7 +436,7 @@ export function _useFullCart() {
 
   async function removeShipment(shipmentId: string): Promise<void> {
     await _removeShipment(
-      { command: { shipmentId, storeId, userId }, skipQuery: false },
+      { command: { shipmentId, ...commonVariables }, skipQuery: false },
       {
         optimisticResponse: {
           removeShipment: {
@@ -464,7 +459,7 @@ export function _useFullCart() {
   async function updatePayment(value: InputPaymentType): Promise<void> {
     try {
       await _addOrUpdatePayment(
-        { command: { payment: value, storeId, userId }, skipQuery: false },
+        { command: { payment: value, ...commonVariables }, skipQuery: false },
         {
           optimisticResponse: (vars, { IGNORE }) => {
             if ((vars as AddOrUpdateCartPaymentMutationVariables).command.payment.id === undefined) {
@@ -496,12 +491,12 @@ export function _useFullCart() {
 
   const { mutate: _addGiftItems, loading: addGiftItemsLoading } = useMutation(AddGiftItemsDocument);
   async function addGiftsToCart(giftIds: string[]): Promise<void> {
-    await _addGiftItems({ command: { ids: giftIds, storeId, userId }, skipQuery: false });
+    await _addGiftItems({ command: { ids: giftIds, ...commonVariables }, skipQuery: false });
   }
 
   const { mutate: _rejectGiftItems, loading: rejectGiftItemsLoading } = useMutation(RejectGiftItemsDocument);
   async function removeGiftsFromCart(giftLineItemIds: string[]): Promise<void> {
-    await _rejectGiftItems({ command: { ids: giftLineItemIds, storeId, userId }, skipQuery: false });
+    await _rejectGiftItems({ command: { ids: giftLineItemIds, ...commonVariables }, skipQuery: false });
   }
 
   async function toggleGift(gift: ExtendedGiftItemType): Promise<void> {
