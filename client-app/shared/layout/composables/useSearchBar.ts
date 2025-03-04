@@ -38,7 +38,7 @@ export function useSearchBar() {
     }
   }
 
-  async function searchResults(params: GetSearchResultsParamsType) {
+  function searchResults(params: GetSearchResultsParamsType) {
     const preparedParams: GetSearchResultsParamsType = {
       ...params,
       keyword: prepareSearchText(params.keyword),
@@ -56,7 +56,7 @@ export function useSearchBar() {
         pages: { items: pagesItems = [] },
         categories: { items: categoriesItems = [] },
         products: { items: productsItems = [], totalCount = 0 },
-      } = await getSearchResults(preparedParams);
+      } = getSearchResults(preparedParams);
 
       suggestions.value = suggestionsItems.map((item) => ({
         text: item,

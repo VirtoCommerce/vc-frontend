@@ -209,7 +209,7 @@ const isExistResults = computed(
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
-async function searchAndShowDropdownResults(): Promise<void> {
+function searchAndShowDropdownResults(): void {
   const COLUMNS = 5;
   const { catalogId, currencyCode } = globals;
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
@@ -252,7 +252,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
     params.pages = { itemsPerPage: DEFAULT_PAGE_SIZE };
   }
 
-  await searchResults(params);
+  searchResults(params);
 
   showSearchDropdown();
 
@@ -305,7 +305,7 @@ function onSearchBarFocused() {
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
 
 onMounted(() => {
-  if(searchPhraseInUrl.value) {
+  if (searchPhraseInUrl.value) {
     searchPhrase.value = searchPhraseInUrl.value;
   }
 });

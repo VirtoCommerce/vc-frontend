@@ -1,3 +1,4 @@
+import { ref } from "vue";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
@@ -36,7 +37,9 @@ export type GetSearchResultsParamsType = {
   };
 };
 
-export async function getSearchResults(params: GetSearchResultsParamsType): Promise<SearchResultsType> {
+const searchResult = ref<SearchResultsType>();
+
+export function getSearchResults(params: GetSearchResultsParamsType): SearchResultsType {
   const { storeId, userId, cultureName, currencyCode } = globals;
 
   const withSuggestions = !!params.productSuggestions;
@@ -115,9 +118,15 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
     });
   }
 
-  const { data } = await graphqlClient.query<SearchResultsType, GetSearchResultsQueryVariables>({
+  const currentQuery = graphqlClient.watchQuery({
     query: searchQueryDocument,
     variables,
+  });
+
+  currentQuery.subscribe({
+    next(result) {
+      searchResult.value = result.data as SearchResultsType;
+    },
   });
 
   return Object.assign(
@@ -127,6 +136,6 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
       categories: {},
       products: {},
     },
-    data,
+    searchResult.value,
   );
 }
