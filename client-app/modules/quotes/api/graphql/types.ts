@@ -831,6 +831,7 @@ export enum PropertyValueTypes {
   Boolean = 'BOOLEAN',
   DateTime = 'DATE_TIME',
   GeoPoint = 'GEO_POINT',
+  Html = 'HTML',
   Integer = 'INTEGER',
   LongText = 'LONG_TEXT',
   Number = 'NUMBER',
