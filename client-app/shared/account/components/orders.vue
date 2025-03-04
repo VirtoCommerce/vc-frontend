@@ -193,9 +193,15 @@
         {{ $t("pages.account.orders.buttons.reset_search") }}
       </VcButton>
 
-      <VcButton v-else :to="{ name: 'Catalog' }">
-        {{ $t("pages.account.orders.buttons.no_orders") }}
-      </VcButton>
+      <template v-else>
+        <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+          {{ $t("pages.account.orders.buttons.no_orders") }}
+        </VcButton>
+
+        <VcButton v-else to="/">
+          {{ $t("pages.account.orders.buttons.no_orders") }}
+        </VcButton>
+      </template>
     </template>
   </VcEmptyView>
 
@@ -401,9 +407,11 @@ import {
 import { computed, onMounted, ref, shallowRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { usePageHead } from "@/core/composables/usePageHead";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { CUSTOMER_NAME_FACET_NAME, DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { toDateISOString } from "@/core/utilities";
@@ -418,7 +426,6 @@ import PageToolbarBlock from "./page-toolbar-block.vue";
 import type { OrderScopeType, OrdersFilterChipsItemType } from "../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { DateFilterType, ISortInfo } from "@/core/types";
-import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
 export interface IProps {
   withSearch?: boolean;
@@ -458,10 +465,19 @@ const {
   removeFilterChipsItem,
 } = useUserOrdersFilter();
 
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+
+usePageHead({
+  title: t("pages.account.orders.meta.title"),
+});
 usePageHead({ title: t("pages.account.orders.meta.title") });
 
 const ORDER_SCOPE_KEY = `order-scope-${user.value.id}`;
 const orderScope = useLocalStorage<OrderScopeType>(ORDER_SCOPE_KEY, "private");
+
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
+});
 
 const isMobile = breakpoints.smaller("lg");
 
