@@ -1,58 +1,63 @@
 <template>
   <div ref="root" class="form-group">
-    <div class="xl:w-2/3">
-      <VcLabel required for-id="cardNumber-container">{{ labels.number }}</VcLabel>
-      <div id="cardNumber-container" class="cyber-source-input-wrap form-control"></div>
-    </div>
+    <div class="flex flex-col xl:flex-row">
+      <div class="xl:w-2/3">
+        <div>
+          <VcLabel required for-id="cardNumber-container">{{ labels.number }}</VcLabel>
+          <div id="cardNumber-container" class="cyber-source-input-wrap form-control"></div>
+        </div>
+        <VcInput
+          v-model.trim="cardholderName"
+          :label="labels.cardholderName"
+          :message="formErrors.cardholderName"
+          :error="!!formErrors.cardholderName"
+          :disabled="disabled"
+          required
+          class="mt-3"
+          test-id-input="card-holder-input"
+        />
+        <div class="flex-25 mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
+          <VcInput
+            v-model="expirationDate"
+            v-maska
+            data-maska="## / ####"
+            :label="labels.expirationDate"
+            :placeholder="labels.datePlaceholder"
+            :message="expirationDateErrors"
+            :error="!!expirationDateErrors"
+            :disabled="disabled"
+            name="expirationDate"
+            autocomplete="off"
+            minlength="9"
+            maxlength="9"
+            class="basis-1/4"
+            required
+            test-id-input="expiration-date-input"
+          />
+          <div class="basis-1/4">
+            <VcLabel required for-id="securityCode-container">{{ labels.securityCode }}</VcLabel>
 
-    <VcInput
-      v-model.trim="cardholderName"
-      :label="labels.cardholderName"
-      :message="formErrors.cardholderName"
-      :error="!!formErrors.cardholderName"
-      :disabled="disabled"
-      required
-      class="mt-3 xl:w-2/3"
-      test-id-input="card-holder-input"
-    />
+            <div id="securityCode-container" class="form-control cyber-source-input-wrap"></div>
+          </div>
+        </div>
 
-    <div class="flex-25 mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
-      <VcInput
-        v-model="expirationDate"
-        v-maska
-        data-maska="## / ####"
-        :label="labels.expirationDate"
-        :placeholder="labels.datePlaceholder"
-        :message="expirationDateErrors"
-        :error="!!expirationDateErrors"
-        :disabled="disabled"
-        name="expirationDate"
-        autocomplete="off"
-        minlength="9"
-        maxlength="9"
-        class="basis-1/4"
-        required
-        test-id-input="expiration-date-input"
-      />
-      <div class="basis-1/4">
-        <VcLabel required for-id="securityCode-container">{{ labels.securityCode }}</VcLabel>
-
-        <div id="securityCode-container" class="form-control cyber-source-input-wrap"></div>
       </div>
+      <CardLabels class="mt-5" />
     </div>
   </div>
 
   <input id="flexresponse" type="hidden" name="flexresponse" />
-
-  <VcButton
-    :disabled="!isValidBankCard"
-    :loading="loading"
-    class="mt-3 flex-1 md:order-first md:flex-none"
-    data-test-id="pay-now-button"
-    @click="sendPaymentData"
-  >
-    {{ $t("shared.payment.authorize_net.pay_now_button") }}
-  </VcButton>
+  <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
+    <VcButton
+      :disabled="!isValidBankCard"
+      :loading="loading"
+      class="flex-1 md:order-first md:flex-none"
+      data-test-id="pay-now-button"
+      @click="sendPaymentData"
+    >
+      {{ $t("shared.payment.authorize_net.pay_now_button") }}
+    </VcButton>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -68,6 +73,7 @@ import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
+import CardLabels from "@/shared/payment/components/card-labels.vue";
 
 interface IEmits {
   (event: "success"): void;
