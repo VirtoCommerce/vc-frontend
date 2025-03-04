@@ -73,7 +73,8 @@
       "show_details": "Показать детали",
       "add_with_bulk_order": "Добавить оптом",
       "agency": "Агентства",
-      "personal": "Личные"
+      "personal": "Личные",
+      "scroll_to_top": "Прокрутить вверх"
     },
     "labels": {
       "actions": "Действия",

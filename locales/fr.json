@@ -73,7 +73,8 @@
       "show_details": "Afficher les détails",
       "add_with_bulk_order": "Ajouter par commande groupée",
       "agency": "Agence",
-      "personal": "Personnel"
+      "personal": "Personnel",
+      "scroll_to_top": "Haut de page"
     },
     "labels": {
       "actions": "Actions",

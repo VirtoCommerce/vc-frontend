@@ -73,7 +73,8 @@
       "show_details": "詳細表示",
       "add_with_bulk_order": "一括注文で追加",
       "agency": "エージェンシー",
-      "personal": "個人的な"
+      "personal": "個人的な",
+      "scroll_to_top": "トップへスクロール"
     },
     "labels": {
       "actions": "操作",

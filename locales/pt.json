@@ -73,7 +73,8 @@
       "show_details": "Mostrar Detalhes",
       "add_with_bulk_order": "Adicionar com pedido em lote",
       "agency": "Agência",
-      "personal": "Pessoal"
+      "personal": "Pessoal",
+      "scroll_to_top": "Voltar ao topo"
     },
     "labels": {
       "actions": "Ações",

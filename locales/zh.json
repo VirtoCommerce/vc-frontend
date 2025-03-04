@@ -73,7 +73,8 @@
       "show_details": "显示详情",
       "add_with_bulk_order": "批量订单添加",
       "agency": "机构",
-      "personal": "个人的"
+      "personal": "个人的",
+      "scroll_to_top": "回到顶部"
     },
     "labels": {
       "actions": "操作",
