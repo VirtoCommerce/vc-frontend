@@ -86,9 +86,13 @@
         />
       </template>
 
-      <VcEmptyView v-else-if="!allLoading" :text="$t('back_in_stock.list_details.empty_list')" icon="thin-lists">
+      <VcEmptyView v-else-if="!allLoading" :text="$t('back_in_stock.list_details.empty_list')" icon="outline-lists">
         <template #button>
-          <VcButton :to="{ name: 'Catalog' }">
+          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+            {{ $t("back_in_stock.list_details.empty_list_button") }}
+          </VcButton>
+
+          <VcButton v-else to="/">
             {{ $t("back_in_stock.list_details.empty_list_button") }}
           </VcButton>
         </template>
@@ -103,7 +107,9 @@ import keyBy from "lodash/keyBy";
 import { computed, ref, watchEffect, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ProductType } from "@/core/enums";
 import { prepareLineItemForProduct } from "@/core/utilities";
 import { PageToolbarBlock } from "@/shared/account";
@@ -134,9 +140,14 @@ usePageHead({
 const { fetchProducts, products, fetchingProducts } = useProducts();
 const { loading: cartLoading, cart } = useShortCart();
 const broadcast = useBroadcast();
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
+
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
+});
 
 const listElement = ref<HTMLElement | undefined>();
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
