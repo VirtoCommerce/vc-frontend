@@ -1,5 +1,10 @@
 <template>
   <div ref="root" class="form-group">
+    <div class="xl:w-2/3">
+      <VcLabel required for-id="cardNumber-container">{{ labels.number }}</VcLabel>
+      <div id="cardNumber-container" class="cyber-source-input-wrap form-control"></div>
+    </div>
+
     <VcInput
       v-model.trim="cardholderName"
       :label="labels.cardholderName"
@@ -7,12 +12,10 @@
       :error="!!formErrors.cardholderName"
       :disabled="disabled"
       required
+      class="mt-3 xl:w-2/3"
       test-id-input="card-holder-input"
     />
-    <div class="mt-3">
-      <VcLabel required for-id="cardNumber-container">{{ labels.number }}</VcLabel>
-      <div id="cardNumber-container" class="cyber-source-input-wrap form-control"></div>
-    </div>
+
     <div class="flex-25 mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
       <VcInput
         v-model="expirationDate"
@@ -280,7 +283,7 @@ function initForm() {
   const number = microform.createField("number");
   const securityCode = microform.createField("securityCode", {
     placeholder: "•••",
-    maxLength: 3,
+    maxLength: 4,
   });
   number.load("#cardNumber-container");
   number.on("change", onChange);
