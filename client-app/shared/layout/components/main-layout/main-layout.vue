@@ -4,7 +4,7 @@
     <VcHeader />
 
     <!-- Main Content -->
-    <div id="main-layout-content" class="main-layout__content">
+    <div id="main-content" class="main-layout__content">
       <slot />
     </div>
 
