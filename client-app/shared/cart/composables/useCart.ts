@@ -134,7 +134,7 @@ export function useShortCart() {
     try {
       const result = await _changeItemQuantity({
         command: { lineItemId, quantity, storeId, userId },
-        skipQuery: true,
+        skipQuery: false,
       });
       return result?.data?.changeCartItemQuantity;
     } catch (err) {
