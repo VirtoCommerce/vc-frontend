@@ -44,8 +44,7 @@ const config: StorybookConfig = {
       optimizeDeps: config.optimizeDeps,
     });
   },
-  docs: {
-    autodocs: true,
-  },
+  docs: {},
 };
+// eslint-disable-next-line no-restricted-exports
 export default config;
