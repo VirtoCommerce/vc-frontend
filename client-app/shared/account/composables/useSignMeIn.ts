@@ -46,7 +46,7 @@ export function useSignMeIn() {
           }
 
           await mergeCart({
-            command: { userId: me.value.me.id, secondCartId: cart.value.id, storeId },
+            command: { userId: me.value.me.id, secondCartId: cart.value.id, storeId, cultureName, currencyCode },
           });
 
           if (currencyCode && currencyCode !== currentCurrencyCode) {
