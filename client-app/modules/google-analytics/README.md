@@ -18,11 +18,11 @@ await initGoogleAnalytics();
 1. Define your custom events interface to extend the core analytics composable. For more details, refer to the [documentation](/client-app/core/composables//useAnalytics/README.md#extending-with-custom-events):
 
 ```ts
-// client-app/core/types/analytics.ts
+// client-app/core/types/analytics-custom.ts
 
 export interface ICustomAnalyticsEventMap {
   // NOTE: Add custom event maps here to either extend or override the basic event map
-  myCustomEvent: [item: [1], params?: EventParamsType];
+  myCustomEvent: [item: Product, params?: EventParamsType];
 }
 ```
 

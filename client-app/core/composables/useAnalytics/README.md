@@ -25,10 +25,10 @@ The following events are available out of the box:
 
 ## Extending with Custom Events
 
-1. Define your custom events or override existing ones by extending the `ICustomAnalyticsEventMap` interface located in `core/types/analytics.ts.`
+1. Define your custom events or override existing ones by extending the `ICustomAnalyticsEventMap` interface located in `core/types/analytics-custom.ts.`
 
 ```ts
-// client-app/core/types/analytics.ts
+// client-app/core/types/analytics-custom.ts
 
 export interface ICustomAnalyticsEventMap {
   // NOTE: Add custom event maps here to either extend or override the basic event map

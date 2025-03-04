@@ -1,5 +1,5 @@
 import type { CartType, CustomerOrderType, LineItemType, Product, VariationType } from "@/core/api/graphql/types";
-
+import type { ICustomAnalyticsEventMap } from "@/core/types/analytics-custom";
 export interface IBasicAnalyticsEventMap {
   viewItemList: [items: { code: string }[], params?: EventParamsType & ViewItemListParamsAdditionalType];
   selectItem: [item: Product | LineItemType, params?: EventParamsType];
@@ -18,7 +18,9 @@ export interface IBasicAnalyticsEventMap {
   search: [searchTerm: string, visibleItems?: { code: string }[], itemsCount?: number];
 }
 
-type AnalyticsEventMapType = Omit<IBasicAnalyticsEventMap, keyof ICustomAnalyticsEventMap> & ICustomAnalyticsEventMap;
+type AnalyticsEventMapType = [keyof ICustomAnalyticsEventMap] extends [never]
+  ? IBasicAnalyticsEventMap
+  : Omit<IBasicAnalyticsEventMap, keyof ICustomAnalyticsEventMap> & ICustomAnalyticsEventMap;
 
 export type AnalyticsEventNameType = keyof AnalyticsEventMapType;
 
@@ -38,7 +40,3 @@ export type TrackerMetaType = {
 export type TrackerEventsType = Partial<{
   [K in AnalyticsEventNameType]: (...args: AnalyticsEventMapType[K]) => void | Promise<void>;
 }>;
-
-export interface ICustomAnalyticsEventMap {
-  // NOTE: Add custom event maps here to either extend or override the basic event map
-}
