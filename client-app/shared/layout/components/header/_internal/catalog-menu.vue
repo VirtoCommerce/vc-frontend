@@ -23,6 +23,7 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 interface IEmits {
   (event: "select"): void;
   (event: "close"): void;
+  (event: "focusout", payload: FocusEvent): void;
 }
 
 interface IProps {
@@ -48,7 +49,7 @@ const menuContainer = ref<HTMLElement | null>(null);
 const handleFocusOut = (event: FocusEvent) => {
   // if focus moved outside of the menu, close the menu
   if (!menuContainer.value?.contains(event.relatedTarget as Node)) {
-    emit("close");
+    emit("focusout", event);
   }
 };
 </script>

@@ -57,7 +57,12 @@
         class="absolute w-full overflow-y-auto bg-inherit shadow-md transition-transform duration-200"
         :style="catalogMenuStyle"
       >
-        <CatalogMenu :items="catalogMenuItems" @close="closeCatalogDropdown" @select="closeCatalogDropdown" />
+        <CatalogMenu
+          :items="catalogMenuItems"
+          @focusout="focusoutDropdown"
+          @close="closeCatalogDropdown"
+          @select="closeCatalogDropdown"
+        />
       </div>
     </transition>
   </div>
@@ -123,6 +128,12 @@ async function closeCatalogDropdown() {
   catalogMenuVisible.value = false;
   await nextTick();
   showCatalogMenuButton.value?.focus();
+}
+
+function focusoutDropdown(payload: FocusEvent) {
+  if (payload.relatedTarget !== showCatalogMenuButton.value) {
+    void closeCatalogDropdown();
+  }
 }
 
 watch(route, () => {
