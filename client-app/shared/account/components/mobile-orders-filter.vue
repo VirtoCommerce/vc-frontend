@@ -17,9 +17,7 @@
       </VcCheckboxGroup>
     </VcWidget>
 
-    <VcWidget v-if="isOrganizationMaintainer" :title="$t('common.labels.buyer_name')" size="sm">
-      <slot name="buyerNameFilterType" />
-    </VcWidget>
+    <slot name="buyerNameFilterType" />
 
     <VcWidget :title="$t('shared.account.orders_filter.created_date_label')" size="sm">
       <div class="flex flex-col space-y-3">
@@ -33,9 +31,8 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { STATUS_ORDERS_FACET_NAME } from "@/core/constants";
-import { useUser, useUserOrders, useUserOrdersFilter } from "../composables";
+import { useUserOrders, useUserOrdersFilter } from "../composables";
 
-const { isOrganizationMaintainer } = useUser();
 const { facets } = useUserOrders({});
 const { filterData } = useUserOrdersFilter();
 

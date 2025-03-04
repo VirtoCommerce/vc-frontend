@@ -4,13 +4,14 @@
     <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <MobileOrdersFilter>
         <template #buyerNameFilterType>
-          <VcSelect
-            v-if="showCustomerNameFilter"
-            v-model="filterData.customerNames"
-            :items="organizationCustomerNames ?? []"
-            class="my-4"
-            multiple
-          />
+          <VcWidget v-if="showCustomerNameFilter" :title="$t('common.labels.buyer_name')" size="sm">
+            <VcSelect
+              v-model="filterData.customerNames"
+              :items="organizationCustomerNames ?? []"
+              class="my-4"
+              multiple
+            />
+          </VcWidget>
         </template>
 
         <template #dateFilterType>
