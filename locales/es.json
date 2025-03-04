@@ -71,7 +71,9 @@
       "sort_by": "Ordenar por",
       "add_items_to_cart": "Añadir artículos al carrito",
       "show_details": "Mostrar detalles",
-      "add_with_bulk_order": "Añadir con pedido masivo"
+      "add_with_bulk_order": "Añadir con pedido masivo",
+      "agency": "Agencia",
+      "personal": "Personal"
     },
     "labels": {
       "actions": "Acciones",
@@ -198,7 +200,8 @@
       "password_about_expire": "Tu contraseña está a punto de expirar en {value} día(s). Por favor, establece una nueva contraseña en el perfil.",
       "password_expired": "Tu contraseña ha expirado",
       "data_changed": "Los datos han sido modificados en uno de los otros tabs. Por favor, actualiza la página para mostrar los datos actuales.",
-      "logo_changed": "Logotipo añadido correctamente. Actualiza la página para ver los cambios."
+      "logo_changed": "El logo se cambió correctamente.",
+      "logo_deleted": "El logo fue eliminado."
     },
     "placeholders": {
       "enter_value": "Por favor, introduce un valor",
@@ -504,6 +507,10 @@
       "notifications": {
         "user_blocked": "El usuario ha sido bloqueado con éxito.",
         "user_unblocked": "El usuario ha sido desbloqueado con éxito."
+      },
+      "delete_logo_modal": {
+        "title": "Eliminar el logotipo de la organización",
+        "message": "¿Realmente deseas eliminar el logotipo actual de la organización? Este proceso es irreversible."
       }
     },
     "compare": {
@@ -558,7 +565,8 @@
       },
       "configuration_items": {
         "title": "Lista de componentes",
-        "edit_configuration": "Editar configuración"
+        "edit_configuration": "Editar configuración",
+        "selected_text": "Texto seleccionado: {text}"
       }
     },
     "catalog": {
@@ -609,7 +617,10 @@
           "none": "Ninguno",
           "nothing_selected": "Nada seleccionado",
           "changed_notification": "La configuración del producto ha sido cambiada. Puedes siempre guardarla más tarde haciendo clic en el botón \"@:{'ui_kit.buttons.update_cart'}\".",
-          "changed_confirmation": "La configuración del producto ha sido cambiada. ¿Quieres guardarla?"
+          "changed_confirmation": "La configuración del producto ha sido cambiada. ¿Quieres guardarla?",
+          "no_text": "Ningún texto seleccionado",
+          "check_your_configuration": "Verifica la configuración de tu producto",
+          "required_section": "La sección es obligatoria"
         }
       },
       "discount_badge": {
@@ -1029,6 +1040,7 @@
         "title": "Pedidos",
         "order_number_label": "Número de pedido",
         "purchase_number_label": "Orden de compra",
+        "buyer_name_label": "Nombre del comprador",
         "status_label": "@:common.labels.status",
         "invoice_label": "Factura",
         "date_label": "@:common.labels.date",

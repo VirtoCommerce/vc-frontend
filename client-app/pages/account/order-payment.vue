@@ -1,5 +1,5 @@
 <template>
-  <template v-if="order">
+  <div v-if="order">
     <VcEmptyPage
       v-if="executed"
       :icon="success ? 'outline-payment-successful' : 'outline-payment-failed'"
@@ -53,7 +53,11 @@
             {{ $t("pages.account.order_payment.orders_list_button") }}
           </VcButton>
 
-          <VcButton :to="{ name: 'Catalog', replace: true }">
+          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+            {{ $t("pages.account.order_payment.continue_shopping_button") }}
+          </VcButton>
+
+          <VcButton v-else to="/">
             {{ $t("pages.account.order_payment.continue_shopping_button") }}
           </VcButton>
         </div>
@@ -156,7 +160,7 @@
 
               <div class="self-start md:self-center">
                 <VcButton
-                  :disabled="paymentMethodComponent?.loading || loading"
+                  :disabled="loading"
                   :loading="changeAddressLoading"
                   size="sm"
                   variant="outline"
@@ -167,12 +171,12 @@
                 </VcButton>
 
                 <VcButton
-                  :disabled="paymentMethodComponent?.loading || loading"
+                  :disabled="loading"
                   class="md:!hidden"
                   size="sm"
                   icon="edit"
                   variant="outline"
-                  @click="paymentMethodComponent?.loading || loading ? null : showEditAddressModal()"
+                  @click="loading ? null : showEditAddressModal()"
                 />
               </div>
             </div>
@@ -187,7 +191,7 @@
           <div class="rounded border">
             <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-5">
               <div class="min-w-0 truncate">
-                <template v-if="payment?.paymentMethod">
+                <template v-if="isPaymentAvailable && payment?.paymentMethod">
                   <VcImage
                     :src="payment.paymentMethod.logoUrl"
                     class="mr-3.5 inline-block size-8 object-center md:size-9"
@@ -205,7 +209,7 @@
 
               <div>
                 <VcButton
-                  :disabled="paymentMethodComponent?.loading || loading"
+                  :disabled="loading"
                   :loading="changeMethodLoading"
                   size="sm"
                   variant="outline"
@@ -216,47 +220,52 @@
                 </VcButton>
 
                 <VcButton
-                  :disabled="paymentMethodComponent?.loading || loading"
+                  :disabled="loading"
                   class="md:!hidden"
                   size="sm"
                   icon="edit"
                   variant="outline"
-                  @click="paymentMethodComponent?.loading || loading ? null : showChangePaymentMethodModal()"
+                  @click="loading ? null : showChangePaymentMethodModal()"
                 />
               </div>
             </div>
 
             <div class="p-5 md:p-6">
-              <PaymentProcessingManual v-if="paymentTypeName === 'DefaultManualPaymentMethod'" />
-
               <PaymentProcessingRedirection
-                v-else-if="paymentMethodType === PaymentActionType.Redirection"
+                v-if="paymentMethodType === PaymentActionType.Redirection"
                 :order="order"
                 :disabled="loading"
               />
 
-              <PaymentProcessingAuthorizeNet
-                v-else-if="paymentTypeName === 'AuthorizeNetPaymentMethod'"
-                ref="paymentMethodComponent"
-                :order="order"
-                :disabled="loading"
-                @success="success = true"
-                @fail="failure = true"
-              />
+              <template v-else-if="isPaymentAvailable">
+                <PaymentProcessingManual v-if="paymentMethodCode === 'DefaultManualPaymentMethod'" />
 
-              <PaymentProcessingSkyflow
-                v-else-if="paymentTypeName === 'SkyflowPaymentMethod'"
-                :order="order"
-                @success="success = true"
-                @fail="failure = true"
-              />
+                <PaymentProcessingAuthorizeNet
+                  v-if="paymentMethodCode === 'AuthorizeNetPaymentMethod'"
+                  :order="order"
+                  :disabled="loading"
+                  @success="success = true"
+                  @fail="failure = true"
+                />
 
-              <PaymentProcessingCyberSource
-                v-if="paymentTypeName === 'CyberSourcePaymentMethod'"
-                :order="order"
-                @success="success = true"
-                @fail="failure = true"
-              />
+                <PaymentProcessingSkyflow
+                  v-if="paymentMethodCode === 'SkyflowPaymentMethod'"
+                  :order="order"
+                  @success="success = true"
+                  @fail="failure = true"
+                />
+
+                <PaymentProcessingCyberSource
+                  v-if="paymentMethodCode === 'CyberSourcePaymentMethod'"
+                  :order="order"
+                  @success="success = true"
+                  @fail="failure = true"
+                />
+              </template>
+              <template v-else>
+                {{ $t("pages.account.order_payment.failure.title") }}
+                <ContactAdministratorLink />.
+              </template>
             </div>
           </div>
           <!-- endregion Payment method -->
@@ -268,7 +277,7 @@
         </template>
       </VcLayout>
     </template>
-  </template>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -277,8 +286,11 @@ import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { useUserOrder } from "@/shared/account";
 import { OrderSummary, SelectPaymentMethodModal } from "@/shared/checkout";
+import { ContactAdministratorLink } from "@/shared/common";
 import { useModal } from "@/shared/modal";
 import { PaymentActionType, PaymentProcessingManual, PaymentProcessingRedirection } from "@/shared/payment";
 import type { MemberAddressType, OrderPaymentMethodType, PaymentInType } from "@/core/api/graphql/types";
@@ -294,11 +306,16 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
+});
+
 const success = ref(false);
 const failure = ref(false);
 const changeAddressLoading = ref(false);
 const changeMethodLoading = ref(false);
-const paymentMethodComponent = ref<InstanceType<typeof PaymentProcessingAuthorizeNet> | null>(null);
 
 const { t } = useI18n();
 const { loading, order, fetchShortOrder, fetchFullOrder, addOrUpdatePayment } = useUserOrder();
@@ -322,10 +339,16 @@ const breadcrumbs = useBreadcrumbs(() => [
   { title: t("pages.account.order_payment.breadcrumb_title") },
 ]);
 
+const isPaymentAvailable = computed(() => {
+  return order.value?.availablePaymentMethods?.some((method) => {
+    return method.code === payment.value?.paymentMethod?.code;
+  });
+});
+
 const executed = computed<boolean>(() => success.value || failure.value);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
-const paymentTypeName = computed<string | undefined>(() => payment.value?.paymentMethod?.typeName);
+const paymentMethodCode = computed<string | undefined>(() => payment.value?.paymentMethod?.code);
 
 function tryAgain() {
   location.reload();

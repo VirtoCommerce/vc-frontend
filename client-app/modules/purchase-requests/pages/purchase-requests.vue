@@ -7,7 +7,7 @@
     <VcEmptyView
       v-if="!loading && !purchaseRequests.length"
       :text="$t('purchase_requests.no_purchase_requests_message')"
-      icon="thin-order"
+      icon="outline-order"
     />
 
     <div v-else>

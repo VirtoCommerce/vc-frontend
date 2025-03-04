@@ -55,7 +55,7 @@
     <VcEmptyView
       v-if="!fetching && !quotes.length"
       :text="$t(!!keyword ? 'quotes.no_results_message' : 'quotes.no_quotes_message')"
-      icon="thin-quotes"
+      icon="outline-quotes"
     />
 
     <!-- Content block -->

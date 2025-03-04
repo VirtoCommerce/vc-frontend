@@ -71,7 +71,9 @@
       "sort_by": "Sort by",
       "add_items_to_cart": "Add items to cart",
       "show_details": "Show details",
-      "add_with_bulk_order": "Add with bulk order"
+      "add_with_bulk_order": "Add with bulk order",
+      "agency": "Agency",
+      "personal": "Personal"
     },
     "labels": {
       "actions": "Actions",
@@ -198,7 +200,8 @@
       "password_about_expire": "Your password is about to expire in {value} day(s). Please set a new password in profile",
       "password_expired": "Your password is expired",
       "data_changed": "The data has been modified on one of the other tabs. Please refresh the page to display the latest data.",
-      "logo_changed": "Logo successfully added. Please refresh the page to see the changes."
+      "logo_changed": "Logo was successfully changed.",
+      "logo_deleted": "Logo was deleted."
     },
     "placeholders": {
       "enter_value": "Please enter a value",
@@ -504,6 +507,10 @@
       "notifications": {
         "user_blocked": "The user has been successfully blocked",
         "user_unblocked": "The user has been successfully unblocked"
+      },
+      "delete_logo_modal": {
+        "title": "Delete organization logo",
+        "message": "Do you really want to remove the organization's current logo? The removal process is irreversible."
       }
     },
     "compare": {
@@ -558,7 +565,8 @@
       },
       "configuration_items": {
         "title": "Components list",
-        "edit_configuration": "Edit configuration"
+        "edit_configuration": "Edit configuration",
+        "selected_text": "Selected text: {text}"
       }
     },
     "catalog": {
@@ -609,7 +617,10 @@
           "none": "None",
           "nothing_selected": "Nothing selected",
           "changed_notification": "The product configuration has been changed. You can always save it later by clicking \"@:{'ui_kit.buttons.update_cart'}\" button.",
-          "changed_confirmation": "The product configuration has been changed. Do you want to save it?"
+          "changed_confirmation": "The product configuration has been changed. Do you want to save it?",
+          "no_text": "No text selected",
+          "check_your_configuration": "Check your product configuration",
+          "required_section": "Section is required"
         }
       },
       "discount_badge": {
@@ -1029,6 +1040,7 @@
         "title": "Orders",
         "order_number_label": "Order number",
         "purchase_number_label": "Purchase order",
+        "buyer_name_label": "Buyer name",
         "status_label": "@:common.labels.status",
         "invoice_label": "Invoice",
         "date_label": "@:common.labels.date",
