@@ -97,6 +97,12 @@ export default defineConfig(({ command, mode }): UserConfig => {
     },
     server: {
       port: 3000,
+      cors: true,
+      headers: {
+        "Content-Security-Policy": "frame-ancestors 'self' https://localhost:5001;",
+        "Cross-Origin-Resource-Policy": "cross-origin",
+        "Cross-Origin-Embedder-Policy": "credentialless",
+      },
       proxy: {
         "^/api": getProxy(process.env.APP_BACKEND_URL),
         "^/graphql": getProxy(process.env.APP_BACKEND_URL, { ws: true }),
