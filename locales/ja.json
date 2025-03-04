@@ -240,7 +240,9 @@
       "company_info": "会社情報",
       "company_members": "メンバー",
       "contact_administrator": "管理者に連絡",
-      "saved_credit_cards": "保存済カード"
+      "saved_credit_cards": "保存済カード",
+      "skip_to_main_content": "メインコンテンツへスキップ",
+      "skip_to_footer": "フッターへスキップ"
     },
     "titles": {
       "all_actions": "全ての操作",

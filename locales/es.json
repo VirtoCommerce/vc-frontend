@@ -240,7 +240,9 @@
       "company_info": "Información de la empresa",
       "company_members": "Miembros de la empresa",
       "contact_administrator": "contacta al administrador del sitio",
-      "saved_credit_cards": "Tarjetas de crédito guardadas"
+      "saved_credit_cards": "Tarjetas de crédito guardadas",
+      "skip_to_main_content": "Ir al contenido principal",
+      "skip_to_footer": "Ir al pie de página"
     },
     "titles": {
       "all_actions": "Todas las acciones",

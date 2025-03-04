@@ -240,7 +240,9 @@
       "company_info": "Информация о компании",
       "company_members": "Сотрудники компании",
       "contact_administrator": "свяжитесь с администратором сайта",
-      "saved_credit_cards": "Сохраненные кредитные карты"
+      "saved_credit_cards": "Сохраненные кредитные карты",
+      "skip_to_main_content": "Перейти к основному содержанию",
+      "skip_to_footer": "Перейти к подвалу"
     },
     "titles": {
       "all_actions": "Все действия",

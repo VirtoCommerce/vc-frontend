@@ -1,9 +1,10 @@
 <template>
   <div class="main-layout">
+    <SkipToLinks />
     <VcHeader />
 
     <!-- Main Content -->
-    <div class="main-layout__content">
+    <div id="main-layout-content" class="main-layout__content">
       <slot />
     </div>
 
@@ -14,6 +15,7 @@
 <script setup lang="ts">
 import VcFooter from "@/shared/layout/components/footer/vc-footer.vue";
 import VcHeader from "@/shared/layout/components/header/vc-header.vue";
+import SkipToLinks from "@/shared/layout/components/skip-to-links/skip-to-links.vue";
 </script>
 
 <style lang="scss">
