@@ -13,7 +13,7 @@ const TIMER_DELAY = 1000;
 const mocks = vi.hoisted(() => ({
   getProductConfiguration: vi.fn(),
   getConfigurationItems: vi.fn(),
-  useMutationMock: vi.fn<Parameters<typeof useMutation>, Partial<ReturnType<typeof useMutation>>>(),
+  useMutationMock: vi.fn<typeof useMutation>(),
   getUrlSearchParamMock: vi.fn(),
   useShortCartMock: vi.fn(),
 }));
@@ -63,6 +63,11 @@ describe("useConfigurableProduct", () => {
     createConfiguredLineItemMutationMock = vi.fn();
     mocks.useMutationMock.mockReturnValue({
       mutate: createConfiguredLineItemMutationMock,
+      loading: ref(false),
+      error: ref(null),
+      called: ref(false),
+      onDone: vi.fn(),
+      onError: vi.fn(),
     });
   });
 
