@@ -18,7 +18,7 @@ export interface IBasicAnalyticsEventMap {
   search: [searchTerm: string, visibleItems?: { code: string }[], itemsCount?: number];
 }
 
-type AnalyticsEventMapType = [keyof ICustomAnalyticsEventMap] extends [never]
+type AnalyticsEventMapType = keyof ICustomAnalyticsEventMap extends never
   ? IBasicAnalyticsEventMap
   : Omit<IBasicAnalyticsEventMap, keyof ICustomAnalyticsEventMap> & ICustomAnalyticsEventMap;
 
