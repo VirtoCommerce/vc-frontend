@@ -216,9 +216,22 @@ export type CartAddressType = {
   zip?: Maybe<Scalars['String']['output']>;
 };
 
+export type CartConfigurationItemFileType = {
+  /** Mime type of the file */
+  contentType?: Maybe<Scalars['String']['output']>;
+  /** Name of the file */
+  name: Scalars['String']['output'];
+  /** Size of the file */
+  size: Scalars['Long']['output'];
+  /** Url of the file */
+  url: Scalars['String']['output'];
+};
+
 export type CartConfigurationItemType = {
-  /** Custom text for 'Text' type configuration item section */
+  /** Custom text for 'Text'-type configuration item section */
   customText?: Maybe<Scalars['String']['output']>;
+  /** List of files for 'File'-type configuration item section */
+  files?: Maybe<Array<Maybe<CartConfigurationItemFileType>>>;
   /** Configuration item ID */
   id: Scalars['String']['output'];
   /** Configuration item name */
@@ -561,8 +574,10 @@ export type ConfigurationQueryResponseType = {
 };
 
 export type ConfigurationSectionInput = {
-  /** Custom text for 'Text' type section */
+  /** Custom text for 'Text'-type section */
   customText?: InputMaybe<Scalars['String']['input']>;
+  /** List of file links for 'File'-type section */
+  fileUrls?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   /** Configuration section option/product */
   option?: InputMaybe<ConfigurableProductOptionInput>;
   /** Configuration section ID */
@@ -1786,7 +1801,7 @@ export type InputChangeOrganizationContactRoleType = {
 };
 
 export type InputChangeOrganizationLogoCommandType = {
-  logoUrl: Scalars['String']['input'];
+  logoUrl?: InputMaybe<Scalars['String']['input']>;
   organizationId: Scalars['String']['input'];
 };
 
