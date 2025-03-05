@@ -3,8 +3,19 @@
     <!-- Mobile filters sidebar -->
     <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <MobileOrdersFilter>
+        <template #buyerNameFilterType>
+          <VcWidget v-if="showCustomerNameFilter" :title="$t('common.labels.buyer_name')" size="sm">
+            <VcSelect
+              v-model="filterData.customerNames"
+              :items="organizationCustomerNames ?? []"
+              class="my-4"
+              multiple
+            />
+          </VcWidget>
+        </template>
+
         <template #dateFilterType>
-          <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+          <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
         </template>
       </MobileOrdersFilter>
 
@@ -103,8 +114,19 @@
             @reset="resetOrderFilters"
             @close="hideFilters"
           >
+            <template #buyerNameFilterType>
+              <VcSelect
+                v-if="showCustomerNameFilter"
+                v-model="filterData.customerNames"
+                :label="$t('common.labels.buyer_name')"
+                :items="organizationCustomerNames ?? []"
+                class="my-4"
+                multiple
+              />
+            </template>
+
             <template #dateFilterType>
-              <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+              <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
             </template>
           </OrdersFilter>
         </div>
@@ -389,7 +411,7 @@ import { useRouter } from "vue-router";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { usePageHead } from "@/core/composables/usePageHead";
 import { useThemeContext } from "@/core/composables/useThemeContext";
-import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
+import { CUSTOMER_NAME_FACET_NAME, DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
@@ -420,8 +442,17 @@ const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loading: ordersLoading, orders, fetchOrders, sort, pages, page, keyword } = useUserOrders({ itemsPerPage });
-const { user } = useUser();
+const {
+  loading: ordersLoading,
+  orders,
+  fetchOrders,
+  sort,
+  pages,
+  page,
+  keyword,
+  facets,
+} = useUserOrders({ itemsPerPage });
+const { user, isOrganizationMaintainer } = useUser();
 
 const {
   appliedFilterData,
@@ -475,8 +506,13 @@ const columns = computed<ITableColumn[]>(() => [
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
-const isOrganizationMaintainer = computed(() =>
-  user.value?.roles?.some((role) => role.name === "Organization maintainer"),
+
+const organizationCustomerNames = computed(() =>
+  facets.value?.find((item) => item.name === CUSTOMER_NAME_FACET_NAME)?.items?.map((item) => item.label),
+);
+const showCustomerNameFilter = computed(
+  () =>
+    isOrganizationMaintainer.value && orderScope.value === "organization" && organizationCustomerNames.value?.length,
 );
 
 async function changePage(newPage: number) {
@@ -520,7 +556,7 @@ function hideFilters() {
   filtersVisible.value = false;
 }
 
-function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
+function handleOrdersDateFilterChange(dateFilterType: DateFilterType): void {
   filterData.value.startDate = dateFilterType.startDate ? toDateISOString(dateFilterType.startDate) : undefined;
   filterData.value.endDate = dateFilterType.endDate ? toDateISOString(dateFilterType.endDate) : undefined;
 
@@ -560,11 +596,11 @@ function resetOrderFilters(): void {
   hideFilters();
 }
 
-async function toggleOrdersScope(scope: OrderScopeType): Promise<void> {
+function toggleOrdersScope(scope: OrderScopeType): void {
   orderScope.value = scope;
   sort.value = new Sort("createdDate", SortDirection.Descending);
+
   resetFiltersWithKeyword();
-  await fetchOrders(scope);
 }
 
 onClickOutside(
@@ -587,6 +623,7 @@ watch(
   appliedFilterData,
   () => {
     page.value = 1;
+
     void fetchOrders(orderScope.value);
   },
   { deep: true },
