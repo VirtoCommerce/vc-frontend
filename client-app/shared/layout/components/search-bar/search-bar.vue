@@ -209,7 +209,7 @@ const isExistResults = computed(
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
-function searchAndShowDropdownResults(): void {
+async function searchAndShowDropdownResults(): Promise<void> {
   const COLUMNS = 5;
   const { catalogId, currencyCode } = globals;
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
@@ -252,7 +252,7 @@ function searchAndShowDropdownResults(): void {
     params.pages = { itemsPerPage: DEFAULT_PAGE_SIZE };
   }
 
-  searchResults(params);
+  await searchResults(params);
 
   showSearchDropdown();
 
