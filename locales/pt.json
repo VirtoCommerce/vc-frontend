@@ -153,7 +153,8 @@
       "support_phone_number": "Número de telefone de suporte",
       "main_menu": "Menu principal",
       "toggle_search_bar": "Alternar barra de pesquisa",
-      "slider_image": "Imagem do slider"
+      "slider_image": "Imagem do slider",
+      "buyer_name": "Nome do comprador"
     },
     "prefixes": {
       "please": "Por favor",

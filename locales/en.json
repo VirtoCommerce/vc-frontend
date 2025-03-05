@@ -153,7 +153,8 @@
       "support_phone_number": "Support phone number",
       "main_menu": "Main menu",
       "toggle_search_bar": "Toggle search bar",
-      "slider_image": "Slider image"
+      "slider_image": "Slider image",
+      "buyer_name": "Buyer name"
     },
     "prefixes": {
       "please": "Please",
