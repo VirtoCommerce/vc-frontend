@@ -36,6 +36,8 @@ export type GetSearchResultsParamsType = {
   };
 };
 
+let abortController: AbortController | undefined;
+
 export async function getSearchResults(params: GetSearchResultsParamsType): Promise<SearchResultsType> {
   const { storeId, userId, cultureName, currencyCode } = globals;
 
@@ -115,9 +117,19 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
     });
   }
 
+  if (abortController) {
+    abortController.abort();
+  }
+
+  abortController = new AbortController();
+  const { signal } = abortController;
+
   const { data } = await graphqlClient.query<SearchResultsType, GetSearchResultsQueryVariables>({
     query: searchQueryDocument,
     variables,
+    context: {
+      fetchOptions: { signal },
+    },
   });
 
   return Object.assign(
