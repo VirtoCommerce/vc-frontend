@@ -8,6 +8,18 @@ import type { DeepPartial } from "utility-types";
 import type { MaybeRefOrGetter } from "vue";
 
 // Workaround for variables deep merge
+/**
+ * @deprecated Use `useMutation` from '@vue/apollo-composable' directly and merge variables with globals manually if needed.
+ * Example:
+ * ```ts
+ * import { globals } from "@/core/globals";
+ * import { useMutation } from "@vue/apollo-composable";
+ *
+ * const { mutate } = useMutation(MyMutation);
+ *
+ * await mutate({ storeId: globals.storeId, cultureName: globals.cultureName, ...variables });
+ * ```
+ */
 export function useMutation<
   // Follow the original @vue/apollo-composable names and signatures
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

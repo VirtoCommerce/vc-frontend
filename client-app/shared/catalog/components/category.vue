@@ -100,10 +100,28 @@
           @click="showFiltersSidebar"
         />
 
+        <!-- View options -->
+        <ViewMode
+          v-if="!hideViewModeSelector && !isHorizontalFilters"
+          v-model:mode="savedViewMode"
+          class="ml-3 inline-flex max-lg:order-3 lg:ml-0 lg:mr-auto"
+        />
+
+        <!-- In stock and branches -->
+        <CategoryControls
+          v-if="!hideControls && !isMobile && !isHorizontalFilters"
+          v-model="localStorageInStock"
+          :loading="fetchingProducts"
+          :saved-branches="localStorageBranches"
+          class="max-lg:order-4"
+          @open-branches-modal="openBranchesModal"
+          @apply-in-stock="resetCurrentPage"
+        />
+
         <!-- Sorting -->
         <div
           v-if="!hideSorting && !isHorizontalFilters"
-          class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8"
+          class="z-10 ml-auto flex grow items-center max-lg:order-2 lg:ml-4 lg:grow-0 xl:ml-8"
         >
           <span class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block">
             {{ $t("pages.catalog.sort_by_label") }}
@@ -120,23 +138,6 @@
             @change="resetCurrentPage"
           />
         </div>
-
-        <!-- View options -->
-        <ViewMode
-          v-if="!hideViewModeSelector && !isHorizontalFilters"
-          v-model:mode="savedViewMode"
-          class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto"
-        />
-
-        <!-- In stock and branches -->
-        <CategoryControls
-          v-if="!hideControls && !isMobile && !isHorizontalFilters"
-          v-model="localStorageInStock"
-          :loading="fetchingProducts"
-          :saved-branches="localStorageBranches"
-          @open-branches-modal="openBranchesModal"
-          @apply-in-stock="resetCurrentPage"
-        />
       </div>
 
       <!-- Horizontal filters -->
