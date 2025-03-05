@@ -1,9 +1,10 @@
+import { useMutation } from "@vue/apollo-composable";
 import { computed, toValue, watch } from "vue";
 import { useAllGlobalVariables } from "@/core/api/graphql/composables";
-import { useUpdatePurchaseRequestByDocumentsMutation } from "@/modules/purchase-requests/api/graphql/mutations/updatePurchaseRequestByDocuments";
 import { useGetPurchaseRequestQuery } from "@/modules/purchase-requests/api/graphql/queries/getPurchaseRequest";
 import { useUserQuote } from "@/modules/quotes/useUserQuote";
 import { toAttachedFile } from "@/ui-kit/utilities/file";
+import { UpdatePurchaseRequestByDocumentsDocument } from "../api/graphql/types";
 import { usePurchaseRequestDocuments } from "./usePurchaseRequestDocuments";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -26,11 +27,13 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
     processDocuments,
   } = usePurchaseRequestDocuments(sourceFiles);
 
-  const { mutate: _updatePurchaseRequestByDocuments } = useUpdatePurchaseRequestByDocumentsMutation(variables);
+  const { mutate: _updatePurchaseRequestByDocuments } = useMutation(UpdatePurchaseRequestByDocumentsDocument);
 
   async function updatePurchaseRequestByDocuments(items: INewFile[]): Promise<void> {
     return await processDocuments(items, async (documentUrls) => {
-      await _updatePurchaseRequestByDocuments({ command: { documentUrls } });
+      await _updatePurchaseRequestByDocuments({
+        command: { documentUrls, ...toValue(variables) },
+      });
     });
   }
 

@@ -1,4 +1,3 @@
-export * from "./mutations/createConfiguredLineItem";
 export * from "./queries/childCategories";
 export * from "./queries/getCategory";
 export * from "./queries/getConfigurationItems";

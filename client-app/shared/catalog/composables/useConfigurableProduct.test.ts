@@ -1,9 +1,11 @@
 import { flushPromises } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, beforeAll, afterEach, vi } from "vitest";
 import { ref } from "vue";
+import { CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
 import { useConfigurableProduct } from "@/shared/catalog/composables/useConfigurableProduct";
 import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
 import type { CreateConfiguredLineItemMutationVariables } from "@/core/api/graphql/types";
+import type { useMutation } from "@vue/apollo-composable";
 import type { Mock } from "vitest";
 
 const TIMER_DELAY = 1000;
@@ -11,17 +13,29 @@ const TIMER_DELAY = 1000;
 const mocks = vi.hoisted(() => ({
   getProductConfiguration: vi.fn(),
   getConfigurationItems: vi.fn(),
-  useCreateConfiguredLineItemMutation: vi.fn(),
+  useMutationMock: vi.fn<typeof useMutation>(),
   getUrlSearchParamMock: vi.fn(),
   useShortCartMock: vi.fn(),
 }));
+
+vi.mock("@vue/apollo-composable", async () => {
+  const actual = await vi.importActual<typeof import("@vue/apollo-composable")>("@vue/apollo-composable");
+  return {
+    ...actual,
+    useMutation: (...args: Parameters<typeof actual.useMutation>) => {
+      if (args[0] === CreateConfiguredLineItemDocument) {
+        return mocks.useMutationMock(...args);
+      }
+      return actual.useMutation(...args);
+    },
+  };
+});
 
 vi.mock("@/core/api/graphql", async () => {
   const actual = await vi.importActual<typeof import("@/core/api/graphql")>("@/core/api/graphql");
   return {
     ...actual,
     getProductConfiguration: mocks.getProductConfiguration,
-    useCreateConfiguredLineItemMutation: mocks.useCreateConfiguredLineItemMutation,
     getConfigurationItems: mocks.getConfigurationItems,
   };
 });
@@ -47,8 +61,13 @@ describe("useConfigurableProduct", () => {
   beforeAll(() => {
     mockI18n();
     createConfiguredLineItemMutationMock = vi.fn();
-    mocks.useCreateConfiguredLineItemMutation.mockReturnValue({
+    mocks.useMutationMock.mockReturnValue({
       mutate: createConfiguredLineItemMutationMock,
+      loading: ref(false),
+      error: ref(null),
+      called: ref(false),
+      onDone: vi.fn(),
+      onError: vi.fn(),
     });
   });
 
