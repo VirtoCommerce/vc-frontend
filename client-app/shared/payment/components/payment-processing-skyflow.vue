@@ -74,12 +74,14 @@
         </div>
       </div>
 
-      <div class="mt-6 flex items-center justify-center gap-4 md:justify-start">
+      <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
+        <PaymentPolicies />
+
         <VcButton
           data-test-id="pay-now-button"
           :disabled="hasInvalid"
           :loading="loading"
-          class="shrink"
+          class="flex-1 md:order-first md:flex-none"
           @click="payWithNewCreditCard"
         >
           {{ $t("shared.payment.skyflow.pay_now_button") }}
@@ -103,6 +105,7 @@ import { IS_DEVELOPMENT } from "@/core/constants";
 import { replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { useSkyflowCards } from "../composables";
+import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, InputKeyValueType, KeyValueType } from "@/core/api/graphql/types";
 import type CollectContainer from "skyflow-js/types/core/external/collect/collect-container";
 import type CollectElement from "skyflow-js/types/core/external/collect/collect-element";

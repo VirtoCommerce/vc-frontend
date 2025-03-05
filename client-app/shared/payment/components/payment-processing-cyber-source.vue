@@ -40,7 +40,6 @@
             <div id="securityCode-container" class="form-control cyber-source-input-wrap"></div>
           </div>
         </div>
-
       </div>
       <CardLabels class="mt-5" />
     </div>
@@ -48,6 +47,8 @@
 
   <input id="flexresponse" type="hidden" name="flexresponse" />
   <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
+    <PaymentPolicies />
+
     <VcButton
       :disabled="!isValidBankCard"
       :loading="loading"
@@ -71,6 +72,7 @@ import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
+import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
