@@ -13,7 +13,19 @@
         class="max-w-lg truncate"
         :title="getText(configurationItem)"
       >
-        {{ `${index + 1}. ${getText(configurationItem)}` }}
+        {{ `${index + 1}.` }}
+        <span v-if="configurationItem.type === CONFIGURABLE_SECTION_TYPES.file" class="inline-flex flex-col gap-1.5">
+          <a
+            v-for="file in configurationItem.files"
+            :key="file.url"
+            :href="file.url"
+            target="_blank"
+            class="text-primary"
+          >
+            {{ file.name }}
+          </a>
+        </span>
+        <span v-else>{{ getText(configurationItem) }}</span>
       </li>
       <li>
         <VcButton v-if="allowEdit" size="xs" :to="editRoute" append-icon="edit" variant="outline">
@@ -28,21 +40,15 @@
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
+import type { CartConfigurationItemType, OrderConfigurationItemType } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
-type ConfigurationItemType = {
-  id: string;
-  name?: string;
-  customText?: string;
-  type: string;
-};
-
 interface IProps {
-  configurationItems?: ConfigurationItemType[];
+  configurationItems?: CartConfigurationItemType[] | OrderConfigurationItemType[];
   lineItemId?: string;
   allowEdit?: boolean;
   route?: RouteLocationRaw;
@@ -63,12 +69,14 @@ const editRoute = computed(() => {
   return "";
 });
 
-function getText(configurationItem: ConfigurationItemType): string {
+function getText(configurationItem: CartConfigurationItemType | OrderConfigurationItemType): string {
   switch (configurationItem.type) {
     case CONFIGURABLE_SECTION_TYPES.text:
       return t("shared.cart.configuration_items.selected_text", { text: configurationItem.customText ?? "" });
     case CONFIGURABLE_SECTION_TYPES.product:
       return configurationItem.name ?? "";
+    case CONFIGURABLE_SECTION_TYPES.file:
+      return configurationItem.files?.map((file) => file.name).join(", ") ?? "";
     default:
       return "";
   }

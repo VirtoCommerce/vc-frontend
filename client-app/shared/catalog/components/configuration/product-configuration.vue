@@ -42,8 +42,10 @@
                 :name="section.id"
                 @input="
                   handleInput({
+                    id: section.id,
                     sectionId: section.id,
-                    option: { productId: option.product.id, quantity: option.quantity ?? 1 },
+                    productId: option.product.id,
+                    quantity: option.quantity ?? 1,
                     type: section.type,
                   })
                 "
@@ -56,8 +58,10 @@
               :selected="selectedConfiguration[section.id]?.productId === undefined"
               @input="
                 handleInput({
+                  id: section.id,
                   sectionId: section.id,
-                  option: undefined,
+                  productId: undefined,
+                  quantity: undefined,
                   type: section.type,
                 })
               "
@@ -72,6 +76,7 @@
               :selected="!!selectedConfiguration[section.id]"
               @input="
                 handleInput({
+                  id: section.id,
                   sectionId: section.id,
                   customText: $event,
                   type: section.type,
@@ -85,6 +90,45 @@
               :selected="selectedConfiguration[section.id]?.selectedOptionTextValue === undefined"
               @input="
                 handleInput({
+                  id: section.id,
+                  sectionId: section.id,
+                  customText: undefined,
+                  type: section.type,
+                })
+              "
+            />
+          </template>
+
+          <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.file">
+            <OptionFile
+              :is-required="section.isRequired"
+              :name="section.id"
+              :value="selectedConfiguration[section.id]?.files"
+              @input="
+                handleInput({
+                  id: section.id,
+                  sectionId: section.id,
+                  files: $event,
+                  type: section.type,
+                })
+              "
+              @remove-files="
+                handleInput({
+                  id: section.id,
+                  sectionId: section.id,
+                  files: [],
+                  type: section.type,
+                })
+              "
+            />
+
+            <OptionNone
+              v-if="!section.isRequired"
+              :name="section.id"
+              :selected="selectedConfiguration[section.id]?.selectedOptionTextValue === undefined"
+              @input="
+                handleInput({
+                  id: section.id,
                   sectionId: section.id,
                   customText: undefined,
                   type: section.type,
@@ -109,11 +153,12 @@ import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configura
 import { SaveChangesModal } from "@/shared/common";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
+import OptionFile from "./option-file.vue";
 import OptionNone from "./option-none.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
 import OptionText from "./option-text.vue";
-import type { ConfigurationSectionInput, ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { CartConfigurationItemType, ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
 const props = defineProps<IProps>();
@@ -163,7 +208,7 @@ watch(
   },
 );
 
-function handleInput(payload: ConfigurationSectionInput) {
+function handleInput(payload: CartConfigurationItemType) {
   selectSectionValue(payload);
 }
 
@@ -176,6 +221,8 @@ function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
       return t("shared.catalog.product_details.product_configuration.nothing_selected");
     case CONFIGURABLE_SECTION_TYPES.text:
       return t("shared.catalog.product_details.product_configuration.no_text");
+    case CONFIGURABLE_SECTION_TYPES.file:
+      return t("shared.catalog.product_details.product_configuration.no_file");
     default:
       return t("shared.catalog.product_details.product_configuration.nothing_selected");
   }
