@@ -11,14 +11,17 @@
 </template>
 
 <script setup lang="ts">
+import { useMutation, useApolloClient } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
+import { OperationNames } from "@/core/api/graphql/types";
+import { filterActiveQueryNames } from "@/core/api/graphql/utils";
 import { globals } from "@/core/globals";
-import { useCreateQuoteFromCartMutation } from "@/modules/quotes/api/graphql";
 import { useUser } from "@/shared/account";
 import { CartDeletedProductsModal, useFullCart } from "@/shared/cart";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
+import { CreateQuoteFromCartDocument } from "../api/graphql/types";
 import type { LineItemType } from "@/core/api/graphql/types";
 import type { QuoteType } from "@/modules/quotes/api/graphql/types";
 
@@ -31,12 +34,15 @@ const emit = defineEmits<IEmits>();
 const notifications = useNotifications();
 const { cart, refetch } = useFullCart();
 const loading = ref(false);
+const { client } = useApolloClient();
 
 const router = useRouter();
 const { openModal } = useModal();
 const cartContainsDeletedProducts = computed(() => cart.value?.items?.some((item: LineItemType) => !item.product));
 
-const { mutate: createQuoteFromCart } = useCreateQuoteFromCartMutation();
+const { mutate: createQuoteFromCart } = useMutation(CreateQuoteFromCartDocument, {
+  refetchQueries: () => filterActiveQueryNames(client, [OperationNames.Query.GetFullCart]),
+});
 const { isAuthenticated } = useUser();
 
 async function createQuote(): Promise<void> {

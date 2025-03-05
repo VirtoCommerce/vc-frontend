@@ -20,13 +20,14 @@
 </template>
 
 <script setup lang="ts">
-import { useChangeCartCurrencyMutation } from "@/core/api/graphql";
+import { useMutation } from "@vue/apollo-composable";
+import { ChangeCartCurrencyDocument } from "@/core/api/graphql/types";
 import { useCurrency } from "@/core/composables";
 import { globals } from "@/core/globals";
 
 const { currentCurrency, supportedCurrencies, savedCurrencyCode } = useCurrency();
-const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
-const { userId } = globals;
+const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
+const { userId, storeId, cultureName, currencyCode: currentCurrencyCode } = globals;
 
 async function changeCurrency(code: string): Promise<void> {
   if (currentCurrency.value?.code === code) {
@@ -39,6 +40,9 @@ async function changeCurrency(code: string): Promise<void> {
     command: {
       userId,
       newCurrencyCode: code,
+      storeId,
+      cultureName,
+      currencyCode: currentCurrencyCode,
     },
   });
 
