@@ -23,6 +23,9 @@
         type="button"
         class="flex select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]"
         @click="toggleCatalogDropdown"
+        @keydown.enter="toggleCatalogDropdown"
+        @keydown.space="toggleCatalogDropdown"
+        @keydown.esc="closeCatalogDropdown"
       >
         <span class="font-bold uppercase tracking-wide">
           {{ $t("shared.layout.header.bottom_header.catalog_menu_button") }}
@@ -54,7 +57,12 @@
         class="absolute w-full overflow-y-auto bg-inherit shadow-md transition-transform duration-200"
         :style="catalogMenuStyle"
       >
-        <CatalogMenu :items="catalogMenuItems" @select="catalogMenuVisible = false" />
+        <CatalogMenu
+          :items="catalogMenuItems"
+          @focusout="focusoutDropdown"
+          @close="closeCatalogDropdown"
+          @select="closeCatalogDropdown"
+        />
       </div>
     </transition>
   </div>
@@ -62,7 +70,7 @@
 
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
-import { computed, ref, shallowRef, watch } from "vue";
+import { computed, nextTick, ref, shallowRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
@@ -104,10 +112,27 @@ onClickOutside(
 syncRefs(catalogMenuVisible, useScrollLock(document.body));
 
 // TODO: Redirect to localized catalog path if catalogMenuItems has not items
-function toggleCatalogDropdown(event: Event) {
-  if (catalogMenuItems.value.length) {
-    event.preventDefault();
-    catalogMenuVisible.value = !catalogMenuVisible.value;
+async function toggleCatalogDropdown(event: Event) {
+  if (!catalogMenuItems.value.length) {
+    return;
+  }
+  event.preventDefault();
+  catalogMenuVisible.value = !catalogMenuVisible.value;
+  await nextTick();
+  if (catalogMenuVisible.value) {
+    catalogMenuElement.value?.querySelector("a")?.focus();
+  }
+}
+
+async function closeCatalogDropdown() {
+  catalogMenuVisible.value = false;
+  await nextTick();
+  showCatalogMenuButton.value?.focus();
+}
+
+function focusoutDropdown(payload: FocusEvent) {
+  if (payload.relatedTarget !== showCatalogMenuButton.value) {
+    void closeCatalogDropdown();
   }
 }
 

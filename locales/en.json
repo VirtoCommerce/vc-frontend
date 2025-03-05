@@ -73,7 +73,8 @@
       "show_details": "Show details",
       "add_with_bulk_order": "Add with bulk order",
       "agency": "Agency",
-      "personal": "Personal"
+      "personal": "Personal",
+      "scroll_to_top": "Scroll to top"
     },
     "labels": {
       "actions": "Actions",
@@ -241,7 +242,9 @@
       "company_info": "Company info",
       "company_members": "Company members",
       "contact_administrator": "contact the site administrator",
-      "saved_credit_cards": "Saved credit cards"
+      "saved_credit_cards": "Saved credit cards",
+      "skip_to_main_content": "Skip to main content",
+      "skip_to_footer": "Skip to footer"
     },
     "titles": {
       "all_actions": "All actions",

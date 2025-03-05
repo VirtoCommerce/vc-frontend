@@ -73,7 +73,8 @@
       "show_details": "Mostrar Detalhes",
       "add_with_bulk_order": "Adicionar com pedido em lote",
       "agency": "Agência",
-      "personal": "Pessoal"
+      "personal": "Pessoal",
+      "scroll_to_top": "Voltar ao topo"
     },
     "labels": {
       "actions": "Ações",
@@ -241,7 +242,9 @@
       "company_info": "Informações da Empresa",
       "company_members": "Membros da Empresa",
       "contact_administrator": "contate o administrador do site",
-      "saved_credit_cards": "Cartões de Crédito Salvos"
+      "saved_credit_cards": "Cartões de Crédito Salvos",
+      "skip_to_main_content": "Ir para o conteúdo principal",
+      "skip_to_footer": "Ir para o rodapé"
     },
     "titles": {
       "all_actions": "Todas as ações",
