@@ -486,7 +486,7 @@ describe("useConfigurableProduct", () => {
 
       expect(composable.selectedConfiguration.value).toEqual({
         file_section_1: {
-          files: [{ ...testFile, status: "attached" }],
+          files: [{ ...testFile }],
           productId: undefined,
           quantity: undefined,
           selectedOptionTextValue: "test.pdf",
@@ -563,10 +563,7 @@ describe("useConfigurableProduct", () => {
 
       expect(composable.selectedConfiguration.value).toEqual({
         file_section_1: {
-          files: [
-            { ...firstFile, status: "attached" },
-            { ...secondFile, status: "attached" },
-          ],
+          files: [{ ...firstFile }, { ...secondFile }],
           productId: undefined,
           quantity: undefined,
           selectedOptionTextValue: "first.pdf, second.pdf",
@@ -1001,9 +998,7 @@ describe("useConfigurableProduct", () => {
 
         expect(composable.selectedConfiguration.value).toEqual({
           file_section_1: {
-            files: [
-              { name: "test.pdf", url: "test-url", size: 1024, contentType: "application/pdf", status: "attached" },
-            ],
+            files: [{ name: "test.pdf", url: "test-url", size: 1024, contentType: "application/pdf" }],
             productId: undefined,
             quantity: undefined,
             selectedOptionTextValue: "test.pdf",
