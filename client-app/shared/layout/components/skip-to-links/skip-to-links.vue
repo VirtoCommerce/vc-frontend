@@ -33,14 +33,14 @@ onMounted(() => {
 
 <style lang="scss">
 .skip-to-links {
-  @apply fixed left-0 top-0 z-50 flex h-10 w-full justify-start opacity-0 bg-primary-50 items-center divide-x-2 text-base text-neutral-800;
+  @apply fixed left-0 z-50 flex h-10 w-full justify-start opacity-0 bg-primary-50 items-center divide-x-2 text-base text-neutral-800 -top-10 pointer-events-none;
 
   &__item {
     @apply whitespace-nowrap grow text-center;
   }
 
   &:has(.skip-link:focus) {
-    @apply opacity-100;
+    @apply opacity-100 top-0 pointer-events-auto;
   }
 }
 </style>
