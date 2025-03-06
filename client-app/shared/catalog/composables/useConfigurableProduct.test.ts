@@ -49,9 +49,6 @@ describe("useConfigurableProduct", () => {
     createConfiguredLineItemMutationMock = vi.fn();
     mocks.useCreateConfiguredLineItemMutation.mockReturnValue({
       mutate: createConfiguredLineItemMutationMock,
-      loading: ref(false),
-      error: ref(null),
-      called: ref(false),
     });
   });
 
@@ -467,6 +464,127 @@ describe("useConfigurableProduct", () => {
           ],
         },
       });
+    });
+  });
+
+  describe("file type configuration", () => {
+    it("handles file type configuration selection", async () => {
+      const mockConfiguration = {
+        configurationSections: [createFileConfigurationSection(1, { isRequired: true })],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      await composable.fetchProductConfiguration();
+
+      const testFile = { name: "test.pdf", url: "test-url", size: 1024, contentType: "application/pdf" };
+      composable.selectSectionValue({
+        sectionId: "file_section_1",
+        type: CONFIGURABLE_SECTION_TYPES.file,
+        files: [testFile],
+        productId: undefined,
+        quantity: undefined,
+      });
+
+      expect(composable.selectedConfiguration.value).toEqual({
+        file_section_1: {
+          files: [{ ...testFile, status: "attached" }],
+          productId: undefined,
+          quantity: undefined,
+          selectedOptionTextValue: "test.pdf",
+        },
+      });
+    });
+
+    it("creates configured line item with file configuration", async () => {
+      const mockConfiguration = {
+        configurationSections: [createFileConfigurationSection(1)],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      const mockResponse = { data: { createConfiguredLineItem: { id: "configured-line-item-1" } } };
+      createConfiguredLineItemMutationMock.mockResolvedValue(mockResponse);
+
+      await composable.fetchProductConfiguration();
+      vi.advanceTimersByTime(TIMER_DELAY);
+      await flushPromises();
+
+      const testFile = { name: "test.pdf", url: "test-url", size: 1024, contentType: "application/pdf" };
+      composable.selectSectionValue({
+        sectionId: "file_section_1",
+        type: CONFIGURABLE_SECTION_TYPES.file,
+        files: [testFile],
+        productId: undefined,
+        quantity: undefined,
+      });
+      await flushPromises();
+      vi.advanceTimersByTime(TIMER_DELAY);
+
+      expect(createConfiguredLineItemMutationMock).toBeCalledTimes(2);
+      const [secondCall] = createConfiguredLineItemMutationMock.mock.calls[1] as [
+        CreateConfiguredLineItemMutationVariables,
+      ];
+
+      expect(secondCall).toEqual({
+        command: {
+          configurableProductId,
+          configurationSections: [
+            {
+              sectionId: "file_section_1",
+              type: CONFIGURABLE_SECTION_TYPES.file,
+              fileUrls: ["test-url"],
+            },
+          ],
+        },
+      });
+    });
+
+    it("updates selectedConfiguration when files are changed", async () => {
+      const mockConfiguration = {
+        configurationSections: [createFileConfigurationSection(1)],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      await composable.fetchProductConfiguration();
+
+      const firstFile = { name: "first.pdf", url: "first-url", size: 1024, contentType: "application/pdf" };
+      composable.selectSectionValue({
+        sectionId: "file_section_1",
+        type: CONFIGURABLE_SECTION_TYPES.file,
+        files: [firstFile],
+        productId: undefined,
+        quantity: undefined,
+      });
+
+      const secondFile = { name: "second.pdf", url: "second-url", size: 2048, contentType: "application/pdf" };
+      composable.selectSectionValue({
+        sectionId: "file_section_1",
+        type: CONFIGURABLE_SECTION_TYPES.file,
+        files: [firstFile, secondFile],
+        productId: undefined,
+        quantity: undefined,
+      });
+
+      expect(composable.selectedConfiguration.value).toEqual({
+        file_section_1: {
+          files: [
+            { ...firstFile, status: "attached" },
+            { ...secondFile, status: "attached" },
+          ],
+          productId: undefined,
+          quantity: undefined,
+          selectedOptionTextValue: "first.pdf, second.pdf",
+        },
+      });
+    });
+
+    it("handles required file configuration with default empty value", async () => {
+      const mockConfiguration = {
+        configurationSections: [createFileConfigurationSection(1, { isRequired: true })],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      mocks.getConfigurationItems.mockResolvedValue({ configurationItems: [] });
+
+      await composable.fetchProductConfiguration();
+
+      expect(composable.selectedConfiguration.value).toEqual({});
+      expect(composable.selectedConfigurationInput.value).toEqual([]);
     });
   });
 
