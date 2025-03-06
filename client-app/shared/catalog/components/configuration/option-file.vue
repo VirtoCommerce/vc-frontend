@@ -1,14 +1,12 @@
 <template>
-  <div class="option-file">
-    <VcFileUploader
-      :files="files"
-      v-bind="fileOptions"
-      removable
-      @add-files="onAddFiles"
-      @remove-files="onRemoveFiles"
-      @download="onFileDownload"
-    />
-  </div>
+  <VcFileUploader
+    :files="files"
+    v-bind="fileOptions"
+    removable
+    @add-files="onAddFiles"
+    @remove-files="onRemoveFiles"
+    @download="onFileDownload"
+  />
 </template>
 
 <script setup lang="ts">
@@ -19,17 +17,14 @@ import type { CartConfigurationItemFileType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<Props>();
+const props = defineProps<IProps>();
 
 const { value } = toRefs(props);
 
 const DEFAULT_FILES_SCOPE = "configuration-files";
 
-interface Props {
-  isRequired: boolean;
+interface IProps {
   value?: DeepReadonly<CartConfigurationItemFileType[]>;
-  selected?: boolean;
-  name: string;
 }
 
 interface IEmits {

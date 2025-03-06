@@ -96,11 +96,7 @@ function _useConfigurableProduct(configurableProductId: string) {
             productId: section.productId,
             quantity: section.quantity,
             selectedOptionTextValue: getSelectedOptionTextValue(section, section.sectionId),
-            files:
-              section.files?.map((file) => ({
-                ...file,
-                status: "attached",
-              })) ?? [],
+            files: section.files ?? [],
           };
           return acc;
         },
@@ -112,7 +108,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     const index = selectedConfigurationValue.value?.findIndex((section) => section.sectionId === payload.sectionId);
     if (index !== -1) {
       const newValue = [...selectedConfigurationValue.value];
-      isEmptyValue(payload?.sectionId, payload) ? newValue.splice(index, 1) : newValue.splice(index, 1, payload);
+      isEmptyValue(payload.sectionId, payload) ? newValue.splice(index, 1) : newValue.splice(index, 1, payload);
       selectedConfigurationValue.value = newValue;
     } else {
       selectedConfigurationValue.value = [...selectedConfigurationValue.value, payload];

@@ -16,7 +16,10 @@
         :collapsed="index !== 0"
       >
         <template #title>
-          {{ section.name }}
+          <div class="product-configuration__title">
+            {{ section.name }}
+            <span v-if="section.isRequired" class="product-configuration__required">*</span>
+          </div>
 
           <div class="product-configuration__subtitle">
             {{ section.description }}
@@ -25,7 +28,17 @@
               {{ validationErrors.get(section.id) }}
             </div>
 
-            <div v-else>{{ getSectionSubtitle(section) }}</div>
+            <div
+              v-else
+              class="product-configuration__value"
+              :class="
+                hasSelectedOption(section.id)
+                  ? 'product-configuration__value--selected'
+                  : 'product-configuration__value--not-selected'
+              "
+            >
+              {{ getSectionSubtitle(section) }}
+            </div>
           </div>
         </template>
 
@@ -58,8 +71,6 @@
               @input="
                 selectSectionValue({
                   sectionId: section.id,
-                  productId: undefined,
-                  quantity: undefined,
                   type: section.type,
                 })
               "
@@ -88,7 +99,6 @@
               @input="
                 selectSectionValue({
                   sectionId: section.id,
-                  customText: undefined,
                   type: section.type,
                 })
               "
@@ -110,7 +120,6 @@
               @remove-files="
                 selectSectionValue({
                   sectionId: section.id,
-                  files: [],
                   type: section.type,
                 })
               "
@@ -123,7 +132,6 @@
               @input="
                 selectSectionValue({
                   sectionId: section.id,
-                  customText: undefined,
                   type: section.type,
                 })
               "
@@ -201,8 +209,12 @@ watch(
   },
 );
 
+function hasSelectedOption(sectionId: string) {
+  return !!selectedConfiguration.value?.[sectionId]?.selectedOptionTextValue;
+}
+
 function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
-  if (selectedConfiguration.value?.[section.id]?.selectedOptionTextValue) {
+  if (hasSelectedOption(section.id)) {
     return selectedConfiguration.value?.[section.id]?.selectedOptionTextValue;
   }
   switch (section.type) {
@@ -268,6 +280,10 @@ async function openSaveChangesModal(): Promise<boolean> {
     @apply space-y-5;
   }
 
+  &__required {
+    @apply text-danger;
+  }
+
   &__subtitle {
     @apply mt-1 text-xs font-normal normal-case text-neutral max-w-3xl;
   }
@@ -282,6 +298,16 @@ async function openSaveChangesModal(): Promise<boolean> {
 
   &__error {
     @apply text-danger;
+  }
+
+  &__value {
+    &--selected {
+      @apply text-success font-bold;
+    }
+
+    &--not-selected {
+      @apply text-info;
+    }
   }
 }
 </style>
