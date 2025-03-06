@@ -1,7 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities/logger";
-import type { AnalyticsEventNameType, IAnalyticsEventMap, TrackerType } from "@/core/types/analytics";
+import type { AnalyticsEventNameType, AnalyticsEventMapType, TrackerType } from "@/core/types/analytics";
 
 function _useAnalytics() {
   const trackers: Set<TrackerType> = new Set();
@@ -10,7 +10,7 @@ function _useAnalytics() {
     trackers.add(tracker);
   }
 
-  function analytics<E extends AnalyticsEventNameType>(event: E, ...args: IAnalyticsEventMap[E]): void {
+  function analytics<E extends AnalyticsEventNameType>(event: E, ...args: AnalyticsEventMapType[E]): void {
     if (IS_DEVELOPMENT) {
       Logger.debug("useAnalytics, can't track event in development mode");
       return;
