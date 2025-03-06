@@ -73,7 +73,8 @@
       "show_details": "显示详情",
       "add_with_bulk_order": "批量订单添加",
       "agency": "机构",
-      "personal": "个人的"
+      "personal": "个人的",
+      "scroll_to_top": "回到顶部"
     },
     "labels": {
       "actions": "操作",
@@ -241,7 +242,9 @@
       "company_info": "公司信息",
       "company_members": "公司成员",
       "contact_administrator": "联系网站管理员",
-      "saved_credit_cards": "已保存的信用卡"
+      "saved_credit_cards": "已保存的信用卡",
+      "skip_to_main_content": "跳至主要内容",
+      "skip_to_footer": "跳至页脚"
     },
     "titles": {
       "all_actions": "所有操作",

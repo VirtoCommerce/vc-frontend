@@ -20,19 +20,7 @@
     </div>
 
     <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
-      <p class="text-center text-sm text-neutral md:text-left">
-        {{ $t("shared.payment.authorize_net.accept_terms_text") }}
-
-        <router-link to="/agreement" class="text-[--link-color] hover:text-[--link-hover-color]">
-          {{ $t("shared.payment.authorize_net.user_agreement_link") }}
-        </router-link>
-
-        {{ $t("shared.payment.authorize_net.processing_personal_data_text") }}
-
-        <router-link to="/policy" class="text-[--link-color] hover:text-[--link-hover-color]">
-          {{ $t("shared.payment.authorize_net.privacy_policy_link") }}
-        </router-link>
-      </p>
+      <PaymentPolicies />
 
       <VcButton
         :disabled="!isValidBankCard || disabled"
@@ -59,6 +47,7 @@ import { useAnalytics } from "@/core/composables/useAnalytics";
 import { Logger } from "@/core/utilities";
 import { useAuthorizeNet } from "@/shared/payment/composables/useAuthorizeNet";
 import { PaymentActionType } from "@/shared/payment/types";
+import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 import BankCardForm from "@/shared/payment/components/bank-card-form.vue";

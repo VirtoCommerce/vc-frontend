@@ -3,6 +3,7 @@
     v-if="showScrollButton"
     type="button"
     class="fixed bottom-10 right-3 z-20 opacity-60 hover:opacity-100"
+    :aria-label="$t('common.buttons.scroll_to_top')"
     @click="scrollToTop"
   >
     <VcIcon class="fill-primary" name="arrow-circle-up" size="xl" />
