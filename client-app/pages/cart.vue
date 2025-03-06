@@ -1,5 +1,5 @@
 <template>
-  <template v-if="!cart?.items?.length">
+  <template v-if="!cart?.items?.length && !recentlyBrowsedProducts?.length">
     <VcLoaderOverlay v-if="loading" no-bg />
 
     <VcEmptyPage
@@ -38,129 +38,161 @@
       {{ $t("pages.cart.title") }}
     </VcTypography>
 
-    <VcLayout sidebar-position="right" sticky-sidebar>
-      <ProductsSection
-        :grouped="!!$cfg.line_items_group_by_vendor_enabled"
-        :items="cart.items"
-        :items-grouped-by-vendor="lineItemsGroupedByVendor"
-        :selected-item-ids="selectedItemIds"
-        :validation-errors="cart.validationErrors"
-        :disabled="changeItemQuantityBatchedOverflowed || selectionOverflowed"
-        @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
-        @select:items="handleSelectItems"
-        @remove:items="handleRemoveItems"
-        @clear:cart="openClearCartModal"
-      />
+    <template v-if="!cart?.items?.length">
+      <VcWidget class="mb-10 mt-8" size="lg">
+        <div class="text-lg font-bold">
+          {{ $t("pages.cart.empty_cart_description") }}
+        </div>
 
-      <GiftsSection
-        v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
-        :gifts="availableExtendedGifts"
-        class="mt-5"
-        @toggle:gift="toggleGift"
-      />
+        <div class="mt-1 text-sm font-normal">{{ $t("pages.cart.empty_cart_search_text") }}</div>
 
-      <!-- Sections for single page checkout -->
-      <template v-if="!$cfg.checkout_multistep_enabled">
-        <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
+        <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2.5 max-sm:justify-center">
+          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+            {{ $t("common.buttons.continue_shopping") }}
+          </VcButton>
 
-        <BillingDetailsSection class="mt-5" />
+          <VcButton v-else to="/">
+            {{ $t("common.buttons.continue_shopping") }}
+          </VcButton>
 
-        <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
-      </template>
+          <VcButton :to="{ name: 'BulkOrder' }" prepend-icon="bulk">
+            {{ $t("common.buttons.add_with_bulk_order") }}
+          </VcButton>
+        </div>
+      </VcWidget>
 
       <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" class="mt-5" />
+    </template>
 
-      <template #sidebar>
-        <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
-          <template #footer>
-            <!-- Promotion code -->
-            <VcActionInput
-              v-if="$cfg.checkout_coupon_enabled"
-              v-model="couponCode"
-              :label="$t('common.labels.promotion_code')"
-              :placeholder="$t('common.placeholders.promotion_code')"
-              :applied="couponIsApplied"
-              :error-message="couponValidationError"
-              class="mt-4"
-              @apply="applyCoupon"
-              @deny="removeCoupon"
-              @update:model-value="clearCouponValidationError"
-            />
+    <template v-else>
+      <VcLayout sidebar-position="right" sticky-sidebar>
+        <ProductsSection
+          :grouped="!!$cfg.line_items_group_by_vendor_enabled"
+          :items="cart.items"
+          :items-grouped-by-vendor="lineItemsGroupedByVendor"
+          :selected-item-ids="selectedItemIds"
+          :validation-errors="cart.validationErrors"
+          :disabled="changeItemQuantityBatchedOverflowed || selectionOverflowed"
+          @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
+          @select:items="handleSelectItems"
+          @remove:items="handleRemoveItems"
+          @clear:cart="openClearCartModal"
+        />
 
-            <ProceedTo
-              v-if="$cfg.checkout_multistep_enabled"
-              :to="{ name: 'Checkout' }"
-              :disabled="hasOnlyUnselectedLineItems"
-              class="mt-4"
-            >
-              {{ $t("common.buttons.go_to_checkout") }}
-            </ProceedTo>
+        <GiftsSection
+          v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
+          :gifts="availableExtendedGifts"
+          class="mt-5"
+          @toggle:gift="toggleGift"
+        />
 
-            <PlaceOrder v-else class="mt-4" />
+        <!-- Sections for single page checkout -->
+        <template v-if="!$cfg.checkout_multistep_enabled">
+          <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
 
-            <template v-if="!$cfg.checkout_multistep_enabled">
+          <BillingDetailsSection class="mt-5" />
+
+          <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
+        </template>
+
+        <RecentlyBrowsedProducts
+          v-if="recentlyBrowsedProducts.length"
+          :products="recentlyBrowsedProducts"
+          class="mt-5"
+        />
+
+        <template #sidebar>
+          <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
+            <template #footer>
+              <!-- Promotion code -->
+              <VcActionInput
+                v-if="$cfg.checkout_coupon_enabled"
+                v-model="couponCode"
+                :label="$t('common.labels.promotion_code')"
+                :placeholder="$t('common.placeholders.promotion_code')"
+                :applied="couponIsApplied"
+                :error-message="couponValidationError"
+                class="mt-4"
+                @apply="applyCoupon"
+                @deny="removeCoupon"
+                @update:model-value="clearCouponValidationError"
+              />
+
+              <ProceedTo
+                v-if="$cfg.checkout_multistep_enabled"
+                :to="{ name: 'Checkout' }"
+                :disabled="hasOnlyUnselectedLineItems"
+                class="mt-4"
+              >
+                {{ $t("common.buttons.go_to_checkout") }}
+              </ProceedTo>
+
+              <PlaceOrder v-else class="mt-4" />
+
+              <template v-if="!$cfg.checkout_multistep_enabled">
+                <transition name="slide-fade-top" mode="out-in" appear>
+                  <VcAlert
+                    v-show="isShowIncompleteDataWarning"
+                    color="warning"
+                    size="sm"
+                    variant="solid-light"
+                    class="mt-4"
+                    icon
+                  >
+                    {{ $t("common.messages.fill_all_required") }}
+                  </VcAlert>
+                </transition>
+              </template>
+
               <transition name="slide-fade-top" mode="out-in" appear>
                 <VcAlert
-                  v-show="isShowIncompleteDataWarning"
+                  v-show="hasValidationErrors && !hasOnlyUnselectedValidationError"
                   color="warning"
                   size="sm"
                   variant="solid-light"
                   class="mt-4"
                   icon
                 >
-                  {{ $t("common.messages.fill_all_required") }}
+                  {{ $t("common.messages.something_went_wrong") }}
                 </VcAlert>
               </transition>
             </template>
+          </OrderSummary>
 
-            <transition name="slide-fade-top" mode="out-in" appear>
-              <VcAlert
-                v-show="hasValidationErrors && !hasOnlyUnselectedValidationError"
-                color="warning"
-                size="sm"
-                variant="solid-light"
-                class="mt-4"
-                icon
-              >
-                {{ $t("common.messages.something_went_wrong") }}
-              </VcAlert>
-            </transition>
-          </template>
-        </OrderSummary>
+          <component
+            :is="item.element"
+            v-for="item in sidebarWidgets"
+            :key="item.id"
+            class="mt-5"
+            @lock-cart="isCartLoked = true"
+            @unlock-cart="isCartLoked = false"
+          />
+        </template>
+      </VcLayout>
 
-        <component
-          :is="item.element"
-          v-for="item in sidebarWidgets"
-          :key="item.id"
-          class="mt-5"
-          @lock-cart="isCartLoked = true"
-          @unlock-cart="isCartLoked = false"
-        />
-      </template>
-    </VcLayout>
-
-    <transition name="slide-fade-bottom">
-      <div
-        v-if="!loading && cart?.items?.length"
-        class="fixed bottom-0 left-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.1),0px_0px_25px_-5px_rgba(0,0,0,0.2)] md:hidden print:hidden"
-      >
-        <div class="text-end text-base font-bold text-neutral-950">
-          <span class="me-1">{{ $t("common.labels.total") }}:</span>
-          <VcPriceDisplay v-if="cart.total" :value="cart.total" />
-        </div>
-
-        <ProceedTo
-          v-if="$cfg.checkout_multistep_enabled"
-          :to="{ name: 'Checkout' }"
-          :disabled="hasOnlyUnselectedLineItems"
-          class="!mt-2"
+      <transition name="slide-fade-bottom">
+        <div
+          v-if="!loading && cart?.items?.length"
+          class="fixed bottom-0 left-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.1),0px_0px_25px_-5px_rgba(0,0,0,0.2)] md:hidden print:hidden"
         >
-          {{ $t("common.buttons.go_to_checkout") }}
-        </ProceedTo>
+          <div class="text-end text-base font-bold text-neutral-950">
+            <span class="me-1">{{ $t("common.labels.total") }}:</span>
+            <VcPriceDisplay v-if="cart.total" :value="cart.total" />
+          </div>
 
-        <PlaceOrder v-else class="!mt-2" />
-      </div>
-    </transition>
+          <ProceedTo
+            v-if="$cfg.checkout_multistep_enabled"
+            :to="{ name: 'Checkout' }"
+            :disabled="hasOnlyUnselectedLineItems"
+            class="!mt-2"
+          >
+            {{ $t("common.buttons.go_to_checkout") }}
+          </ProceedTo>
+
+          <PlaceOrder v-else class="!mt-2" />
+        </div>
+      </transition>
+    </template>
   </VcContainer>
 </template>
 
