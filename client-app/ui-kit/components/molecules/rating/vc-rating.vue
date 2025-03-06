@@ -3,7 +3,7 @@
     :class="['vc-rating', `vc-rating--mode--${mode}`, `vc-rating--size--${size}`, { 'vc-rating--read-only': readOnly }]"
   >
     <template v-if="mode === 'mini'">
-      <VcIcon class="vc-rating__icon vc-rating__icon--filled" name="star" :size="size" />
+      <VcIcon class="vc-rating__icon" name="whishlist" :size="size" />
     </template>
 
     <template v-else>
@@ -18,7 +18,7 @@
         @mouseover="handleMouseOver(i)"
         @mouseleave="handleMouseOver(null)"
       >
-        <div v-if="isHalf(i)" class="vc-rating__icon--half"></div>
+        <div v-if="isHalf(i)" class="vc-rating--bg" />
       </VcShape>
     </template>
 
@@ -50,7 +50,6 @@ const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   mode: "mini",
-  readOnly: true,
   size: "md",
   withText: true,
 });
@@ -96,48 +95,48 @@ function setRating(value: number): void {
 
   &--size {
     &--xs {
-      @apply text-[0.75rem];
+      @apply text-xs;
 
-      --vc-shape-size: 0.9rem;
+      --vc-shape-size: theme("fontSize.sm");
 
       .vc-rating__text {
-        @apply ml-[0.25rem];
+        @apply ms-1;
       }
     }
 
     &--sm {
-      @apply text-[0.9rem];
+      @apply text-sm;
 
-      --vc-shape-size: 1rem;
+      --vc-shape-size: theme("fontSize.base");
     }
 
     &--md {
-      @apply text-[1rem];
+      @apply text-base;
 
-      --vc-shape-size: 1.25rem;
+      --vc-shape-size: theme("fontSize.lg");
     }
   }
 
   &--mode {
     &--full {
-      @apply space-x-1.5 text-nowrap text-neutral-300;
+      @apply space-x-1 text-neutral-300;
+
+      &.vc-rating--size--md {
+        @apply space-x-1.5;
+      }
     }
+  }
+
+  &--bg {
+    @apply absolute inset-y-0 left-0 w-1/2 bg-primary;
   }
 
   &__icon {
-    @apply inline-block;
-
-    &--filled {
-      @apply fill-primary;
-    }
-
-    &--half {
-      @apply absolute inset-y-0 left-0 w-1/2 bg-primary;
-    }
+    @apply inline-block fill-primary;
   }
 
   &__text {
-    @apply text-neutral-800 ms-[0.4rem];
+    @apply text-neutral-800 ms-1.5;
   }
 
   &__current-rating {

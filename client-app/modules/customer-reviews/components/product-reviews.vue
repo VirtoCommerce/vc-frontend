@@ -39,7 +39,7 @@
               </div>
             </div>
 
-            <VcRating mode="full" size="sm" :value="review.rating" :with-text="false" />
+            <VcRating mode="full" size="sm" :value="review.rating" :with-text="false" read-only />
           </div>
 
           <div>
