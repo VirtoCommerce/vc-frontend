@@ -586,6 +586,112 @@ describe("useConfigurableProduct", () => {
       expect(composable.selectedConfiguration.value).toEqual({});
       expect(composable.selectedConfigurationInput.value).toEqual([]);
     });
+
+    it("handles multiple files in a single section", async () => {
+      const mockConfiguration = {
+        configurationSections: [createFileConfigurationSection(1)],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      await composable.fetchProductConfiguration();
+
+      const files = [
+        { name: "document1.pdf", url: "url1", size: 1024, contentType: "application/pdf" },
+        { name: "document2.pdf", url: "url2", size: 2048, contentType: "application/pdf" },
+        { name: "image.jpg", url: "url3", size: 512, contentType: "image/jpeg" },
+      ];
+
+      composable.selectSectionValue({
+        sectionId: "file_section_1",
+        type: CONFIGURABLE_SECTION_TYPES.file,
+        files,
+        productId: undefined,
+        quantity: undefined,
+      });
+
+      expect(composable.selectedConfiguration.value.file_section_1?.files.length).toBe(3);
+      expect(composable.selectedConfiguration.value.file_section_1?.selectedOptionTextValue).toBe(
+        "document1.pdf, document2.pdf, image.jpg",
+      );
+
+      expect(composable.selectedConfigurationInput.value[0].fileUrls).toEqual(["url1", "url2", "url3"]);
+    });
+
+    it("correctly removes files from a section", async () => {
+      const mockConfiguration = {
+        configurationSections: [createFileConfigurationSection(1)],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      await composable.fetchProductConfiguration();
+
+      const files = [
+        { name: "document1.pdf", url: "url1", size: 1024, contentType: "application/pdf" },
+        { name: "document2.pdf", url: "url2", size: 2048, contentType: "application/pdf" },
+      ];
+
+      composable.selectSectionValue({
+        sectionId: "file_section_1",
+        type: CONFIGURABLE_SECTION_TYPES.file,
+        files,
+        productId: undefined,
+        quantity: undefined,
+      });
+
+      composable.selectSectionValue({
+        sectionId: "file_section_1",
+        type: CONFIGURABLE_SECTION_TYPES.file,
+        files: [files[0]],
+        productId: undefined,
+        quantity: undefined,
+      });
+
+      expect(composable.selectedConfiguration.value.file_section_1?.files.length).toBe(1);
+      expect(composable.selectedConfiguration.value.file_section_1?.files[0].name).toBe("document1.pdf");
+      expect(composable.selectedConfigurationInput.value[0].fileUrls).toEqual(["url1"]);
+    });
+
+    it("handles file configuration with predefined values from line item", async () => {
+      mocks.getUrlSearchParamMock.mockReturnValue("line-item-1");
+      const mockConfiguration = {
+        configurationSections: [createFileConfigurationSection(1)],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      mocks.getConfigurationItems.mockResolvedValue({
+        configurationItems: [
+          {
+            sectionId: "file_section_1",
+            type: CONFIGURABLE_SECTION_TYPES.file,
+            files: [{ name: "preexisting.pdf", url: "preexisting-url", size: 1024, contentType: "application/pdf" }],
+          },
+        ],
+      });
+
+      await composable.fetchProductConfiguration();
+
+      expect(composable.selectedConfiguration.value.file_section_1?.files.length).toBe(1);
+      expect(composable.selectedConfiguration.value.file_section_1?.files[0].name).toBe("preexisting.pdf");
+
+      expect(composable.selectedConfigurationInput.value[0].fileUrls).toEqual(["preexisting-url"]);
+    });
+
+    it("detects configuration changes for file sections", async () => {
+      const mockConfiguration = {
+        configurationSections: [createFileConfigurationSection(1)],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+      await composable.fetchProductConfiguration();
+
+      expect(composable.isConfigurationChanged.value).toBe(false);
+
+      composable.selectSectionValue({
+        sectionId: "file_section_1",
+        type: CONFIGURABLE_SECTION_TYPES.file,
+        files: [{ name: "new.pdf", url: "new-url", size: 1024, contentType: "application/pdf" }],
+        productId: undefined,
+        quantity: undefined,
+      });
+
+      expect(composable.isConfigurationChanged.value).toBe(true);
+    });
   });
 
   describe("common functionality", () => {
@@ -979,30 +1085,34 @@ describe("useConfigurableProduct", () => {
         mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
         await composable.fetchProductConfiguration();
 
-        // Set valid product selection
         composable.selectSectionValue({
           sectionId: "section_1",
-          productId: "product-1",
-          quantity: 1,
+          productId: undefined,
+          quantity: undefined,
           type: CONFIGURABLE_SECTION_TYPES.product,
           customText: undefined,
         });
 
-        // Set valid text
         composable.selectSectionValue({
           sectionId: "text_section_2",
           type: CONFIGURABLE_SECTION_TYPES.text,
-          customText: "Valid text",
+          customText: "",
           productId: undefined,
           quantity: undefined,
         });
 
-        // Leave file section empty (invalid)
+        composable.selectSectionValue({
+          sectionId: "file_section_3",
+          type: CONFIGURABLE_SECTION_TYPES.file,
+          files: [],
+          productId: undefined,
+          quantity: undefined,
+        });
 
         const isValid = composable.validateSections();
         expect(isValid).toBe(false);
-        expect(composable.validationErrors.value.has("section_1")).toBe(false);
-        expect(composable.validationErrors.value.has("text_section_2")).toBe(false);
+        expect(composable.validationErrors.value.has("section_1")).toBe(true);
+        expect(composable.validationErrors.value.has("text_section_2")).toBe(true);
         expect(composable.validationErrors.value.has("file_section_3")).toBe(true);
       });
 
@@ -1017,7 +1127,6 @@ describe("useConfigurableProduct", () => {
         mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
         await composable.fetchProductConfiguration();
 
-        // Set valid product selection
         composable.selectSectionValue({
           sectionId: "section_1",
           productId: "product-1",
@@ -1026,7 +1135,6 @@ describe("useConfigurableProduct", () => {
           customText: undefined,
         });
 
-        // Set valid text
         composable.selectSectionValue({
           sectionId: "text_section_2",
           type: CONFIGURABLE_SECTION_TYPES.text,
@@ -1035,7 +1143,6 @@ describe("useConfigurableProduct", () => {
           quantity: undefined,
         });
 
-        // Set valid file
         composable.selectSectionValue({
           sectionId: "file_section_3",
           type: CONFIGURABLE_SECTION_TYPES.file,
