@@ -293,7 +293,7 @@ async function initPayment() {
 }
 
 function initForm() {
-  const number = microform.createField("number");
+  const number = microform.createField("number", { placeholder: "1111 1111 1111 1111" });
   const securityCode = microform.createField("securityCode", {
     placeholder: "•••",
     maxLength: 4,
