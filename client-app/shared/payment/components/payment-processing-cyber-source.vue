@@ -4,8 +4,10 @@
       <div class="xl:w-2/3">
         <div>
           <VcLabel required for-id="cardNumber-container">{{ labels.number }}</VcLabel>
+
           <div id="cardNumber-container" class="cyber-source-input-wrap form-control"></div>
         </div>
+
         <VcInput
           v-model.trim="cardholderName"
           :label="labels.cardholderName"
@@ -16,6 +18,7 @@
           class="mt-3"
           test-id-input="card-holder-input"
         />
+
         <div class="flex-25 mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
           <VcInput
             v-model="expirationDate"
@@ -34,6 +37,7 @@
             required
             test-id-input="expiration-date-input"
           />
+
           <div class="basis-1/4">
             <VcLabel required for-id="securityCode-container">{{ labels.securityCode }}</VcLabel>
 
@@ -41,6 +45,7 @@
           </div>
         </div>
       </div>
+
       <CardLabels class="mt-5" />
     </div>
   </div>
