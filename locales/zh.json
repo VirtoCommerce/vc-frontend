@@ -620,7 +620,8 @@
           "changed_confirmation": "产品配置已更改。您要保存吗？",
           "no_text": "未选择文本",
           "check_your_configuration": "检查您的产品配置",
-          "required_section": "此部分为必填项"
+          "required_section": "此部分为必填项",
+          "no_file": "未选择文件"
         }
       },
       "discount_badge": {

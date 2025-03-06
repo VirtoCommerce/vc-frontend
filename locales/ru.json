@@ -620,7 +620,8 @@
           "changed_confirmation": "Конфигурация товара была изменена. Вы хотите ее сохранить?",
           "no_text": "Текст не выбран",
           "check_your_configuration": "Проверьте конфигурацию товара",
-          "required_section": "Раздел обязателен"
+          "required_section": "Раздел обязателен",
+          "no_file": "Файл не выбран"
         }
       },
       "discount_badge": {

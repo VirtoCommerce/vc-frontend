@@ -620,7 +620,8 @@
           "changed_confirmation": "商品の設定が変更されました。保存しますか？",
           "no_text": "テキストが選択されていません",
           "check_your_configuration": "製品構成を確認してください",
-          "required_section": "セクションは必須です"
+          "required_section": "セクションは必須です",
+          "no_file": "ファイルが選択されていません"
         }
       },
       "discount_badge": {

@@ -620,7 +620,8 @@
           "changed_confirmation": "A configuração do produto foi alterada. Você quer salvar?",
           "no_text": "Nenhum texto selecionado",
           "check_your_configuration": "Verifique a configuração do produto",
-          "required_section": "Secção obrigatória"
+          "required_section": "Secção obrigatória",
+          "no_file": "Nenhum ficheiro selecionado"
         }
       },
       "discount_badge": {
