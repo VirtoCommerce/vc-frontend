@@ -9,7 +9,7 @@
     <VcProductVendor>{{ product.vendor?.name }}</VcProductVendor>
 
     <VcProductPrice
-      :has-variations="product.hasVariations"
+      :with-from-label="product.hasVariations || product.isConfigurable"
       :actual-price="price?.actual"
       :list-price="price?.list"
       single-line

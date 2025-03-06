@@ -89,7 +89,11 @@
     </div>
 
     <div class="vc-product-card-list__price mt-2 w-full sm:mt-0 2xl:pr-2">
-      <VcItemPriceCatalog :has-variations="product.hasVariations" :value="price" class="md:flex-col md:gap-0" />
+      <VcItemPriceCatalog
+        :with-from-label="product.hasVariations || product.isConfigurable"
+        :value="price"
+        class="md:flex-col md:gap-0"
+      />
     </div>
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-0">
