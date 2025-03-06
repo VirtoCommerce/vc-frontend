@@ -48,6 +48,7 @@
             <VcLoaderWithText />
           </div>
         </div>
+
         <div class="mt-6 flex justify-center md:justify-start">
           <VcButton
             :disabled="isSavedCardPayBtnDisabled"
