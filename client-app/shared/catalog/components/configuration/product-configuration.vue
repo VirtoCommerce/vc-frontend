@@ -41,8 +41,7 @@
                 :extended-price="option.extendedPrice"
                 :name="section.id"
                 @input="
-                  handleInput({
-                    id: section.id,
+                  selectSectionValue({
                     sectionId: section.id,
                     productId: option.product.id,
                     quantity: option.quantity ?? 1,
@@ -57,8 +56,7 @@
               :name="section.id"
               :selected="selectedConfiguration[section.id]?.productId === undefined"
               @input="
-                handleInput({
-                  id: section.id,
+                selectSectionValue({
                   sectionId: section.id,
                   productId: undefined,
                   quantity: undefined,
@@ -75,8 +73,7 @@
               :value="selectedConfiguration[section.id]?.selectedOptionTextValue"
               :selected="!!selectedConfiguration[section.id]"
               @input="
-                handleInput({
-                  id: section.id,
+                selectSectionValue({
                   sectionId: section.id,
                   customText: $event,
                   type: section.type,
@@ -89,8 +86,7 @@
               :name="section.id"
               :selected="selectedConfiguration[section.id]?.selectedOptionTextValue === undefined"
               @input="
-                handleInput({
-                  id: section.id,
+                selectSectionValue({
                   sectionId: section.id,
                   customText: undefined,
                   type: section.type,
@@ -105,16 +101,14 @@
               :name="section.id"
               :value="selectedConfiguration[section.id]?.files"
               @input="
-                handleInput({
-                  id: section.id,
+                selectSectionValue({
                   sectionId: section.id,
                   files: $event,
                   type: section.type,
                 })
               "
               @remove-files="
-                handleInput({
-                  id: section.id,
+                selectSectionValue({
                   sectionId: section.id,
                   files: [],
                   type: section.type,
@@ -127,8 +121,7 @@
               :name="section.id"
               :selected="selectedConfiguration[section.id]?.selectedOptionTextValue === undefined"
               @input="
-                handleInput({
-                  id: section.id,
+                selectSectionValue({
                   sectionId: section.id,
                   customText: undefined,
                   type: section.type,
@@ -158,7 +151,7 @@ import OptionNone from "./option-none.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
 import OptionText from "./option-text.vue";
-import type { CartConfigurationItemType, ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
 const props = defineProps<IProps>();
@@ -207,10 +200,6 @@ watch(
     }
   },
 );
-
-function handleInput(payload: CartConfigurationItemType) {
-  selectSectionValue(payload);
-}
 
 function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
   if (selectedConfiguration.value?.[section.id]?.selectedOptionTextValue) {

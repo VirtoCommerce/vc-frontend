@@ -85,6 +85,7 @@ describe("useConfigurableProduct", () => {
       expect(composable.configuration.value).toEqual(mockConfiguration.configurationSections);
       expect(composable.selectedConfiguration.value).toEqual({
         section_1: {
+          files: [],
           productId: "product-1",
           quantity: 1,
           selectedOptionTextValue: "Product 1",
@@ -104,18 +105,21 @@ describe("useConfigurableProduct", () => {
 
       composable.selectSectionValue({
         sectionId: "section_2",
-        option: { productId: "product-3", quantity: 1 },
+        productId: "product-3",
+        quantity: 1,
         type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
 
       expect(composable.selectedConfiguration.value).toEqual({
         section_1: {
+          files: [],
           productId: "product-1",
           quantity: 1,
           selectedOptionTextValue: "Product 1",
         },
         section_2: {
+          files: [],
           productId: "product-3",
           quantity: 1,
           selectedOptionTextValue: "Product 3",
@@ -137,7 +141,8 @@ describe("useConfigurableProduct", () => {
 
       composable.selectSectionValue({
         sectionId: "section_1",
-        option: { productId: "product-2", quantity: 1 },
+        productId: "product-2",
+        quantity: 1,
         type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
@@ -184,7 +189,8 @@ describe("useConfigurableProduct", () => {
       });
       composable.selectSectionValue({
         sectionId: "section_1",
-        option: { productId: "product-1", quantity: 1 },
+        productId: "product-1",
+        quantity: 1,
         type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
@@ -203,7 +209,8 @@ describe("useConfigurableProduct", () => {
 
       composable.selectSectionValue({
         sectionId: "section_1",
-        option: { productId: "product-1", quantity: 1 },
+        productId: "product-1",
+        quantity: 1,
         type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
@@ -241,11 +248,13 @@ describe("useConfigurableProduct", () => {
 
       expect(composable.selectedConfiguration.value).toEqual({
         section_1: {
+          files: [],
           productId: "product-2",
           quantity: 1,
           selectedOptionTextValue: "Product 2",
         },
         section_2: {
+          files: [],
           productId: "product-4",
           quantity: 2,
           selectedOptionTextValue: "Product 4",
@@ -296,6 +305,7 @@ describe("useConfigurableProduct", () => {
 
       expect(composable.selectedConfiguration.value).toEqual({
         section_1: {
+          files: [],
           productId: "product-1",
           quantity: 1,
           selectedOptionTextValue: "Product 1",
@@ -333,6 +343,7 @@ describe("useConfigurableProduct", () => {
 
       expect(composable.selectedConfiguration.value).toEqual({
         text_section_1: {
+          files: [],
           productId: undefined,
           quantity: undefined,
           selectedOptionTextValue: "Predefined text",
@@ -366,6 +377,7 @@ describe("useConfigurableProduct", () => {
 
       expect(composable.selectedConfiguration.value).toEqual({
         text_section_1: {
+          files: [],
           productId: undefined,
           quantity: undefined,
           selectedOptionTextValue: "Test text 1",
@@ -394,6 +406,7 @@ describe("useConfigurableProduct", () => {
 
       expect(composable.selectedConfiguration.value).toEqual({
         text_section_1: {
+          files: [],
           productId: undefined,
           quantity: undefined,
           selectedOptionTextValue: "Updated text",
@@ -469,7 +482,8 @@ describe("useConfigurableProduct", () => {
       });
       composable.selectSectionValue({
         sectionId: "section_1",
-        option: { productId: "product-1", quantity: 1 },
+        productId: "product-1",
+        quantity: 1,
         type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
@@ -488,7 +502,8 @@ describe("useConfigurableProduct", () => {
 
       composable.selectSectionValue({
         sectionId: "section_1",
-        option: { productId: "product-1", quantity: 1 },
+        productId: "product-1",
+        quantity: 1,
         type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
@@ -507,9 +522,10 @@ describe("useConfigurableProduct", () => {
         expect(composable.isConfigurationChanged.value).toBe(false);
 
         composable.selectSectionValue({
-          customText: undefined,
           sectionId: "section_1",
-          option: { productId: "product-2", quantity: 1 },
+          customText: undefined,
+          productId: "product-2",
+          quantity: 1,
           type: CONFIGURABLE_SECTION_TYPES.product,
         });
         expect(composable.isConfigurationChanged.value).toBe(true);
@@ -524,17 +540,19 @@ describe("useConfigurableProduct", () => {
         expect(composable.isConfigurationChanged.value).toBe(false);
 
         composable.selectSectionValue({
-          customText: undefined,
           sectionId: "section_1",
-          option: { productId: "product-2", quantity: 1 },
+          customText: undefined,
+          productId: "product-2",
+          quantity: 1,
           type: CONFIGURABLE_SECTION_TYPES.product,
         });
         expect(composable.isConfigurationChanged.value).toBe(true);
 
         composable.selectSectionValue({
-          customText: undefined,
           sectionId: "section_1",
-          option: { productId: "product-1", quantity: 1 },
+          customText: undefined,
+          productId: "product-1",
+          quantity: 1,
           type: CONFIGURABLE_SECTION_TYPES.product,
         });
         expect(composable.isConfigurationChanged.value).toBe(false);
@@ -562,7 +580,8 @@ describe("useConfigurableProduct", () => {
 
         composable.selectSectionValue({
           sectionId: "section_1",
-          option: undefined,
+          productId: undefined,
+          quantity: undefined,
           type: CONFIGURABLE_SECTION_TYPES.product,
           customText: undefined,
         });
@@ -581,7 +600,8 @@ describe("useConfigurableProduct", () => {
 
         composable.selectSectionValue({
           sectionId: "section_1",
-          option: undefined,
+          productId: undefined,
+          quantity: undefined,
           type: CONFIGURABLE_SECTION_TYPES.product,
           customText: undefined,
         });
@@ -600,7 +620,8 @@ describe("useConfigurableProduct", () => {
 
         composable.selectSectionValue({
           sectionId: "section_1",
-          option: { productId: "non-existent", quantity: 1 },
+          productId: "non-existent",
+          quantity: 1,
           type: CONFIGURABLE_SECTION_TYPES.product,
           customText: undefined,
         });
@@ -623,7 +644,8 @@ describe("useConfigurableProduct", () => {
           sectionId: "text_section_1",
           type: CONFIGURABLE_SECTION_TYPES.text,
           customText: "",
-          option: undefined,
+          productId: undefined,
+          quantity: undefined,
         });
 
         const isValid = composable.validateSections();
@@ -642,7 +664,8 @@ describe("useConfigurableProduct", () => {
           sectionId: "text_section_1",
           type: CONFIGURABLE_SECTION_TYPES.text,
           customText: "",
-          option: undefined,
+          productId: undefined,
+          quantity: undefined,
         });
 
         const isValid = composable.validateSections();
@@ -661,7 +684,8 @@ describe("useConfigurableProduct", () => {
           sectionId: "text_section_1",
           type: CONFIGURABLE_SECTION_TYPES.text,
           customText: "   ",
-          option: undefined,
+          productId: undefined,
+          quantity: undefined,
         });
 
         const isValid = composable.validateSections();
@@ -683,7 +707,8 @@ describe("useConfigurableProduct", () => {
 
         composable.selectSectionValue({
           sectionId: "section_1",
-          option: { productId: "non-existent", quantity: 1 },
+          productId: "non-existent",
+          quantity: 1,
           type: CONFIGURABLE_SECTION_TYPES.product,
           customText: undefined,
         });
@@ -691,7 +716,8 @@ describe("useConfigurableProduct", () => {
           sectionId: "text_section_2",
           type: CONFIGURABLE_SECTION_TYPES.text,
           customText: "",
-          option: undefined,
+          productId: undefined,
+          quantity: undefined,
         });
 
         const isValid = composable.validateSections();
@@ -712,7 +738,8 @@ describe("useConfigurableProduct", () => {
 
         composable.selectSectionValue({
           sectionId: "section_1",
-          option: { productId: "product-1", quantity: 1 },
+          productId: "product-1",
+          quantity: 1,
           type: CONFIGURABLE_SECTION_TYPES.product,
           customText: undefined,
         });
@@ -720,7 +747,8 @@ describe("useConfigurableProduct", () => {
           sectionId: "text_section_2",
           type: CONFIGURABLE_SECTION_TYPES.text,
           customText: "Valid text",
-          option: undefined,
+          productId: undefined,
+          quantity: undefined,
         });
 
         const isValid = composable.validateSections();

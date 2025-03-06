@@ -25,14 +25,14 @@ import type {
 } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
+type SectionValueType = Omit<CartConfigurationItemType, "id">;
+
 type SelectedConfigurationType = {
   productId: string | undefined;
   quantity: number | undefined;
   selectedOptionTextValue: string | undefined;
   files: CartConfigurationItemFileType[];
 };
-
-type InputSectionType = Pick<ConfigurationSectionInput, "type" | "sectionId" | "customText" | "option" | "fileUrls">;
 
 provideApolloClient(apolloClient);
 
@@ -58,7 +58,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   const creating = ref(false);
   const configuration = ref<ConfigurationSectionType[]>([]);
   const configuredLineItem = ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]>();
-  const selectedConfigurationValue = ref<CartConfigurationItemType[]>([]);
+  const selectedConfigurationValue = ref<SectionValueType[]>([]);
   const initialSelectedConfigurationInput = ref<DeepReadonly<ConfigurationSectionInput[] | []>>([]);
   const validationErrors = ref<Map<string, string>>(new Map());
 
@@ -89,13 +89,13 @@ function _useConfigurableProduct(configurableProductId: string) {
 
   const selectedConfiguration = computed(() => {
     return selectedConfigurationValue.value
-      ?.filter((value) => isValidValue(value.sectionId ?? "", value))
+      ?.filter((value) => isValidValue(value.sectionId, value))
       ?.reduce(
         (acc, section) => {
-          acc[section.sectionId ?? ""] = {
+          acc[section.sectionId] = {
             productId: section.productId,
             quantity: section.quantity,
-            selectedOptionTextValue: getSelectedOptionTextValue(section, section.sectionId ?? ""),
+            selectedOptionTextValue: getSelectedOptionTextValue(section, section.sectionId),
             files:
               section.files?.map((file) => ({
                 ...file,
@@ -108,24 +108,24 @@ function _useConfigurableProduct(configurableProductId: string) {
       );
   });
 
-  function changeSelectionValue(payload: CartConfigurationItemType) {
+  function changeSelectionValue(payload: SectionValueType) {
     const index = selectedConfigurationValue.value?.findIndex((section) => section.sectionId === payload.sectionId);
     if (index !== -1) {
       const newValue = [...selectedConfigurationValue.value];
-      isEmptyValue(payload?.sectionId ?? "", payload) ? newValue.splice(index, 1) : newValue.splice(index, 1, payload);
+      isEmptyValue(payload?.sectionId, payload) ? newValue.splice(index, 1) : newValue.splice(index, 1, payload);
       selectedConfigurationValue.value = newValue;
     } else {
       selectedConfigurationValue.value = [...selectedConfigurationValue.value, payload];
     }
   }
 
-  function selectSectionValue(payload: CartConfigurationItemType) {
+  function selectSectionValue(payload: SectionValueType) {
     changeSelectionValue(payload);
     void createConfiguredLineItem();
-    validateSection(payload.id);
+    validateSection(payload.sectionId);
   }
 
-  function getSelectedOptionTextValue(section: CartConfigurationItemType, sectionId: string) {
+  function getSelectedOptionTextValue(section: SectionValueType, sectionId: string) {
     const rawSection = configuration.value.find(({ id }) => id === sectionId);
     switch (rawSection?.type) {
       case CONFIGURABLE_SECTION_TYPES.text:
@@ -140,7 +140,7 @@ function _useConfigurableProduct(configurableProductId: string) {
 
   function validateValue(
     sectionId: string,
-    value?: CartConfigurationItemType,
+    value?: SectionValueType,
   ): { isValid: boolean } & ({ isValid: true } | { isValid: false; error: string }) {
     const section = configuration.value.find(({ id }) => id === sectionId);
     switch (section?.type) {
@@ -171,7 +171,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  function isValidValue(sectionId: string, value?: CartConfigurationItemType) {
+  function isValidValue(sectionId: string, value?: SectionValueType) {
     return validateValue(sectionId, value).isValid;
   }
 
@@ -204,7 +204,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     return validationErrors.value.size === 0;
   }
 
-  function isEmptyValue(sectionId: string, value?: CartConfigurationItemType) {
+  function isEmptyValue(sectionId: string, value?: SectionValueType) {
     const section = configuration.value.find(({ id }) => id === sectionId);
     switch (section?.type) {
       case CONFIGURABLE_SECTION_TYPES.product:
@@ -308,7 +308,6 @@ function _useConfigurableProduct(configurableProductId: string) {
       switch (section.type) {
         case CONFIGURABLE_SECTION_TYPES.product:
           changeSelectionValue({
-            id: section.id,
             sectionId: section.id,
             type: section.type,
             productId: section.options?.[0]?.product?.id ?? "",
@@ -328,15 +327,14 @@ function _useConfigurableProduct(configurableProductId: string) {
       const section = configuration.value.find(({ id }) => id === value.sectionId);
       const isPreselectedValueValid = !!section && isValidValue(section.id, value);
       if (isPreselectedValueValid) {
-        console.log("value", value);
         changeSelectionValue(value);
       }
     });
   }
 
-  function preselectedValueToInputSection(value: CartConfigurationItemType): InputSectionType {
+  function preselectedValueToInputSection(value: SectionValueType): ConfigurationSectionInput {
     return {
-      sectionId: value.sectionId ?? "",
+      sectionId: value.sectionId,
       customText: value.customText,
       type: value.type,
       option:

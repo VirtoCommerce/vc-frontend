@@ -241,7 +241,7 @@ export type CartConfigurationItemType = {
   /** Configuration item product quantity */
   quantity?: Maybe<Scalars['Int']['output']>;
   /** Configuration item section ID */
-  sectionId?: Maybe<Scalars['String']['output']>;
+  sectionId: Scalars['String']['output'];
   /** Configuration item type. Possible values: 'Product', 'Text', 'File' */
   type: Scalars['String']['output'];
 };
@@ -6619,7 +6619,7 @@ export type GetConfigurationItemsQueryVariables = Exact<{
 }>;
 
 
-export type GetConfigurationItemsQuery = { configurationItems?: { configurationItems?: Array<{ id: string, customText?: string, name?: string, quantity?: number, productId?: string, sectionId?: string, type: string, files?: Array<{ contentType?: string, name: string, size: number, url: string }> }> } };
+export type GetConfigurationItemsQuery = { configurationItems?: { configurationItems?: Array<{ id: string, customText?: string, name?: string, quantity?: number, productId?: string, sectionId: string, type: string, files?: Array<{ contentType?: string, name: string, size: number, url: string }> }> } };
 
 export type GetProductQueryVariables = Exact<{
   storeId: Scalars['String']['input'];

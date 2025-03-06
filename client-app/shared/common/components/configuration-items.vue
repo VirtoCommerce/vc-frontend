@@ -13,19 +13,7 @@
         class="max-w-lg truncate"
         :title="getText(configurationItem)"
       >
-        {{ `${index + 1}.` }}
-        <span v-if="configurationItem.type === CONFIGURABLE_SECTION_TYPES.file" class="inline-flex flex-col gap-1.5">
-          <a
-            v-for="file in configurationItem.files"
-            :key="file.url"
-            :href="file.url"
-            target="_blank"
-            class="text-primary"
-          >
-            {{ file.name }}
-          </a>
-        </span>
-        <span v-else>{{ getText(configurationItem) }}</span>
+        {{ `${index + 1}. ${getText(configurationItem)}` }}
       </li>
       <li>
         <VcButton v-if="allowEdit" size="xs" :to="editRoute" append-icon="edit" variant="outline">
