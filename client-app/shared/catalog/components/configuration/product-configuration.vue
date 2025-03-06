@@ -120,6 +120,7 @@
               @remove-files="
                 selectSectionValue({
                   sectionId: section.id,
+                  files: $event,
                   type: section.type,
                 })
               "

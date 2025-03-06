@@ -1,12 +1,26 @@
 <template>
-  <VcFileUploader
-    :files="files"
-    v-bind="fileOptions"
-    removable
-    @add-files="onAddFiles"
-    @remove-files="onRemoveFiles"
-    @download="onFileDownload"
-  />
+  <div class="option-file">
+    <VcFileUploader
+      :files="files"
+      v-bind="fileOptions"
+      removable
+      @add-files="onAddFiles"
+      @remove-files="onRemoveFiles"
+      @download="onFileDownload"
+    />
+    <div class="option-file__errors">
+      <VcAlert
+        v-for="(file, index) in filesWithErrors"
+        :key="index"
+        color="danger"
+        variant="solid-light"
+        size="sm"
+        icon
+      >
+        {{ file.errorMessage }}
+      </VcAlert>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -53,6 +67,8 @@ async function onAddFiles(items: INewFile[]) {
   emit("input", attachedAndUploadedFiles.value);
 }
 
+const filesWithErrors = computed(() => files.value.filter((file) => file.errorMessage));
+
 async function onRemoveFiles(filesToRemove: FileType[]) {
   await removeFiles(filesToRemove);
   validateFiles();
@@ -69,3 +85,11 @@ watchEffect(async () => {
   await fetchFileOptions();
 });
 </script>
+
+<style lang="scss">
+.option-file {
+  &__errors {
+    @apply mt-2 flex flex-col gap-2;
+  }
+}
+</style>
