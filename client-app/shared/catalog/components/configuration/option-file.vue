@@ -5,7 +5,7 @@
       v-bind="fileOptions"
       removable
       @add-files="onAddFiles"
-      @remove-files="removeFiles"
+      @remove-files="onRemoveFiles"
       @download="onFileDownload"
     />
   </div>
@@ -55,6 +55,12 @@ async function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
   await uploadFiles();
+  emit("input", attachedAndUploadedFiles.value);
+}
+
+async function onRemoveFiles(filesToRemove: FileType[]) {
+  await removeFiles(filesToRemove);
+  validateFiles();
   emit("input", attachedAndUploadedFiles.value);
 }
 
