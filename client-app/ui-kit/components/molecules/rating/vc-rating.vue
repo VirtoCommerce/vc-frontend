@@ -1,16 +1,16 @@
 <template>
-  <div :class="['vc-rating', `vc-rating--mode--${mode}`, `vc-rating--size--${size}`]">
+  <div
+    :class="['vc-rating', `vc-rating--mode--${mode}`, `vc-rating--size--${size}`, { 'vc-rating--read-only': readOnly }]"
+  >
     <template v-if="mode === 'mini'">
       <VcIcon class="vc-rating__icon vc-rating__icon--filled" name="star" :size="size" />
     </template>
+
     <template v-else>
       <VcShape
         v-for="i in MAX_RATING"
         :key="i"
-        :class="{ 'cursor-pointer': !readOnly }"
-        icon="whishlist"
         mask="whishlist"
-        :icon-color="getColor(i)"
         :bg-color="getColor(i)"
         @click="setRating(i)"
         @focus="handleMouseOver(i)"
@@ -18,10 +18,11 @@
         @mouseover="handleMouseOver(i)"
         @mouseleave="handleMouseOver(null)"
       >
-        <div v-if="isHalf(i)" class="absolute inset-y-0 left-0 w-1/2 bg-primary"></div>
+        <div v-if="isHalf(i)" class="vc-rating__icon--half"></div>
       </VcShape>
     </template>
-    <div v-if="viewValue" class="vc-rating__text">
+
+    <div v-if="withText" class="vc-rating__text">
       <span class="vc-rating__current-rating">{{ value }}/5</span>
       <span v-if="reviewCount"> ({{ reviewCount }})</span>
     </div>
@@ -42,7 +43,7 @@ interface IProps {
   reviewCount?: number;
   size?: "xs" | "sm" | "md";
   value: number;
-  viewValue?: boolean;
+  withText?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -51,7 +52,7 @@ const props = withDefaults(defineProps<IProps>(), {
   mode: "mini",
   readOnly: true,
   size: "md",
-  viewValue: true,
+  withText: true,
 });
 
 const selectedRating = ref<number | null>(null);
@@ -91,23 +92,29 @@ function setRating(value: number): void {
 
 <style lang="scss">
 .vc-rating {
-  @apply flex items-center gap-0.5;
+  @apply flex items-center gap-0.5 cursor-pointer;
 
   &--size {
     &--xs {
-      --vc-shape-size: 0.9rem;
       @apply text-[0.75rem];
+
+      --vc-shape-size: 0.9rem;
+
       .vc-rating__text {
         @apply ml-[0.25rem];
       }
     }
+
     &--sm {
-      --vc-shape-size: 1rem;
       @apply text-[0.9rem];
+
+      --vc-shape-size: 1rem;
     }
+
     &--md {
-      --vc-shape-size: 1.25rem;
       @apply text-[1rem];
+
+      --vc-shape-size: 1.25rem;
     }
   }
 
@@ -119,17 +126,26 @@ function setRating(value: number): void {
 
   &__icon {
     @apply inline-block;
+
     &--filled {
       @apply fill-primary;
+    }
+
+    &--half {
+      @apply absolute inset-y-0 left-0 w-1/2 bg-primary;
     }
   }
 
   &__text {
-    @apply text-neutral-800 ml-[0.4rem];
+    @apply text-neutral-800 ms-[0.4rem];
   }
 
   &__current-rating {
     @apply font-bold;
+  }
+
+  &--read-only {
+    cursor: unset;
   }
 }
 </style>
