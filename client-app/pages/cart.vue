@@ -102,7 +102,7 @@
         />
 
         <template #sidebar>
-          <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
+          <OrderSummary :cart="cart" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
             <template #footer>
               <!-- Promotion code -->
               <VcActionInput
