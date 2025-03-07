@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs, watchEffect } from "vue";
+import { computed, toRefs } from "vue";
 import { downloadFile, useFiles } from "@/shared/files";
 import { toAttachedFile } from "@/ui-kit/utilities";
 import type { CartConfigurationItemFileType } from "@/core/api/graphql/types";
@@ -81,9 +81,7 @@ function onFileDownload(file: FileType) {
   }
 }
 
-watchEffect(async () => {
-  await fetchFileOptions();
-});
+void fetchFileOptions();
 </script>
 
 <style lang="scss">

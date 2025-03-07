@@ -13,6 +13,7 @@ import {
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { getUrlSearchParam, Logger } from "@/core/utilities";
+import { toCSV } from "@/core/utilities/common";
 import { useShortCart } from "@/shared/cart/composables";
 import { CONFIGURABLE_SECTION_TYPES } from "../constants/configurableProducts";
 import type {
@@ -129,7 +130,7 @@ function _useConfigurableProduct(configurableProductId: string) {
       case CONFIGURABLE_SECTION_TYPES.product:
         return rawSection.options?.find(({ product }) => product?.id === section.productId)?.product?.name;
       case CONFIGURABLE_SECTION_TYPES.file:
-        return section.files?.map((file) => file.name).join(", ");
+        return toCSV(section.files?.map((file) => file.name) ?? []);
       default:
     }
   }

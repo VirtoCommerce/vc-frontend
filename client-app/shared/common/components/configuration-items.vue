@@ -27,6 +27,7 @@
 <script setup lang="ts">
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { toCSV } from "@/core/utilities/common";
 import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
 import type { CartConfigurationItemType, OrderConfigurationItemType } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
@@ -64,7 +65,7 @@ function getText(configurationItem: CartConfigurationItemType | OrderConfigurati
     case CONFIGURABLE_SECTION_TYPES.product:
       return configurationItem.name ?? "";
     case CONFIGURABLE_SECTION_TYPES.file:
-      return configurationItem.files?.map((file) => file.name).join(", ") ?? "";
+      return toCSV(configurationItem.files?.map((file) => file.name) ?? []);
     default:
       return "";
   }
