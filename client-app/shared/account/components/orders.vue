@@ -49,8 +49,8 @@
 
     <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
 
-    <div class="flex flex-col gap-3 lg:flex-row">
-      <div v-if="isOrganizationMaintainer" class="flex gap-2">
+    <div class="flex flex-col items-center gap-3 lg:flex-row">
+      <div v-if="isOrganizationMaintainer" class="flex h-9 gap-2">
         <button
           :class="[
             orderScope === 'organization'
@@ -64,7 +64,7 @@
         >
           <VcIcon class="size-5" name="case" />
           <span class="ms-1.5 text-base font-bold">
-            {{ $t("common.buttons.agency") }}
+            {{ $t("common.buttons.all_orders") }}
           </span>
         </button>
 
@@ -81,7 +81,7 @@
         >
           <VcIcon class="size-5" name="user" />
           <span class="ms-1.5 text-base font-bold">
-            {{ $t("common.buttons.personal") }}
+            {{ $t("common.buttons.my_orders") }}
           </span>
         </button>
       </div>
