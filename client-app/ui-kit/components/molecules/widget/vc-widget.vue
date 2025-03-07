@@ -121,7 +121,7 @@ watchEffect(() => {
 
   @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded divide-y divide-[--divide-color] shadow-md bg-center;
 
-  @media (max-width: theme("screens.md")) {
+  @media (max-width < theme("screens.md")) {
     .vc-container & {
       @apply -mx-4.5;
     }
