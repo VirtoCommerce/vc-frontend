@@ -22,7 +22,7 @@
     </template>
 
     <template v-if="!disabled" #content="{ close }">
-      <ul class="vc-dropdown-menu__list" :style="{ maxHeight }">
+      <ul class="vc-dropdown-menu__list">
         <slot name="content" v-bind="{ close }" />
       </ul>
     </template>
@@ -48,9 +48,9 @@ interface IProps {
 
 defineEmits<IEmits>();
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   placement: "bottom-start",
-  maxHeight: "12rem",
+  maxHeight: "",
   offsetOptions: 4,
   width: "auto",
   dividers: true,
@@ -61,6 +61,9 @@ withDefaults(defineProps<IProps>(), {
 .vc-dropdown-menu {
   $disabled: "";
   $dividers: "";
+
+  --props-max-height: v-bind(props.maxHeight);
+  --max-height: var(--vc-dropdown-menu-max-height, var(--props-max-height, 12rem));
 
   @apply select-none;
 
@@ -85,7 +88,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__list {
-    @apply overflow-y-auto w-full rounded bg-additional-50 shadow-xl;
+    @apply overflow-y-auto max-h-[--max-height] w-full rounded bg-additional-50 shadow-2xl;
 
     #{$dividers} & {
       @apply divide-y divide-neutral-100;
