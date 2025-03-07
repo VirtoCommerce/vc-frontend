@@ -156,7 +156,13 @@ export default async () => {
   if (currentLanguage.value?.twoLetterLanguageName !== FALLBACK_LOCALE) {
     mergeLocales(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
   }
-  app.use(uiKit);
+  app.use(uiKit, {
+    // use only reletive paths without slash at the end
+    paths: {
+      images: new URL("./assets/images", import.meta.url).pathname,
+      icons: new URL("./ui-kit/icons", import.meta.url).pathname,
+    },
+  });
 
   app.use(applicationInsightsPlugin);
 
