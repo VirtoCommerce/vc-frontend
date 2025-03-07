@@ -17,6 +17,7 @@ import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
+import { builderIoConsoleWarnings } from "@/pages/matcher/builderIo/consoleWarnings";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
@@ -178,12 +179,7 @@ export default async () => {
 
   app.config.warnHandler = (msg, _, trace) => {
     // to remove builder.io warnings
-    if (
-      msg.includes('Failed setting prop "attributes" on <div>: value [object Object] is invalid.') ||
-      msg.includes(
-        "Extraneous non-props attributes (attributes) were passed to component but could not be automatically inherited because component renders fragment or text root nodes",
-      )
-    ) {
+    if (builderIoConsoleWarnings.some((warning) => msg.includes(warning))) {
       return;
     }
     Logger.warn(msg, trace);
