@@ -86,7 +86,7 @@
       <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>
 
       <div
-        class="sticky top-0 z-10 my-1.5 flex h-14 items-center empty:h-2 lg:relative lg:mb-3.5 lg:mt-3 lg:h-auto lg:flex-wrap lg:justify-end"
+        class="sticky top-0 z-10 my-1.5 flex h-14 items-center gap-3 empty:h-2 md:relative md:mb-3.5 md:mt-3 md:h-auto md:flex-wrap md:justify-end"
         :class="{
           'z-40 -mx-5 bg-additional-50 px-5 md:-mx-12 md:px-12': stickyMobileHeaderIsVisible,
         }"
@@ -94,7 +94,7 @@
         <!-- Popup sidebar filters toggler -->
         <VcButton
           v-if="!hideSidebar"
-          class="mr-2.5 flex-none lg:!hidden"
+          class="flex-none lg:!hidden"
           icon="filter"
           size="sm"
           @click="showFiltersSidebar"
@@ -104,7 +104,7 @@
         <ViewMode
           v-if="!hideViewModeSelector && !isHorizontalFilters"
           v-model:mode="savedViewMode"
-          class="ml-3 inline-flex max-lg:order-3 lg:ml-0 lg:mr-auto"
+          class="inline-flex max-lg:order-3"
         />
 
         <!-- In stock and branches -->
@@ -119,10 +119,7 @@
         />
 
         <!-- Sorting -->
-        <div
-          v-if="!hideSorting && !isHorizontalFilters"
-          class="z-10 ml-auto flex grow items-center max-lg:order-2 lg:ml-4 lg:grow-0 xl:ml-8"
-        >
+        <div v-if="!hideSorting && !isHorizontalFilters" class="z-10 flex grow items-center max-md:order-2 lg:grow-0">
           <span class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block">
             {{ $t("pages.catalog.sort_by_label") }}
           </span>
@@ -133,7 +130,7 @@
             value-field="id"
             :disabled="fetchingProducts"
             :items="PRODUCT_SORTING_LIST"
-            class="w-0 grow lg:w-48"
+            class="w-0 grow md:w-48"
             size="sm"
             @change="resetCurrentPage"
           />
