@@ -1,0 +1,135 @@
+<template>
+  <label
+    :class="[
+      'vc-tab-switch',
+      `vc-tab-switch--size--${size}`,
+      `vc-tab-switch--label--${labelPosition}`,
+      {
+        'vc-tab-switch--disabled': disabled,
+        'vc-tab-switch--checked': checked,
+      },
+    ]"
+    tabindex="0"
+  >
+    <input
+      :id="componentId"
+      type="radio"
+      class="vc-tab-switch__input"
+      :name="name"
+      :value="value"
+      :checked="checked"
+      :disabled="disabled"
+      :aria-checked="checked"
+      @change="emit('change', value)"
+      @input="emit('input', value)"
+    />
+
+    <slot name="icon" v-bind="{ checked, value, label }">
+      <VcIcon v-if="icon" :name="icon" class="vc-tab-switch__icon" />
+    </slot>
+
+    <span v-if="label" class="vc-tab-switch__label">
+      <slot v-bind="{ checked, value, label }">
+        {{ label }}
+      </slot>
+    </span>
+  </label>
+</template>
+
+<script setup lang="ts" generic="T extends string | number | null">
+import { computed } from "vue";
+import { useComponentId } from "@/ui-kit/composables";
+import { getColorValue } from "@/ui-kit/utilities";
+
+interface IEmits {
+  (event: "input", value: string | number | boolean): void;
+  (event: "change", value: string | number | boolean): void;
+}
+
+interface IProps {
+  label?: string;
+  name?: string;
+  value: string | number | boolean;
+  icon?: string;
+  color?: string;
+  disabled?: boolean;
+  size?: "sm" | "md";
+  labelPosition?: "left" | "right";
+}
+
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  size: "md",
+  labelPosition: "right",
+  color: "",
+});
+
+const model = defineModel<IProps["value"]>();
+
+const componentId = useComponentId("input");
+
+const checked = computed(() => model.value === props.value);
+const _color = computed(() => getColorValue(props.color));
+</script>
+
+<style lang="scss">
+.vc-tab-switch {
+  --vc-props-color: v-bind(_color);
+  --color: var(--vc-props-color, var(--vc-tab-switch-color, theme("colors.primary.500")));
+  --hover-color: var(--vc-tab-switch-hover-color, theme("colors.accent.500"));
+  --focus-color: var(--vc-tab-switch-focus-color, rgb(from theme("colors.primary.500") r g b / 0.3));
+
+  @apply inline-flex gap-1.5 rounded-sm border border-transparent font-bold cursor-pointer text-neutral select-none;
+
+  &--size {
+    &--sm {
+      --vc-icon-size: 1rem;
+
+      @apply p-1.5 text-sm;
+    }
+
+    &--md {
+      --vc-icon-size: 1.25rem;
+
+      @apply p-2 text-base;
+    }
+  }
+
+  &--label {
+    &--left {
+      $left: &;
+    }
+
+    &--right {
+      $right: &;
+    }
+  }
+
+  &--checked {
+    $checked: &;
+
+    --vc-icon-color: var(--color);
+
+    @apply border-neutral-200 shadow-md text-neutral-950 bg-additional-50;
+  }
+
+  &:hover {
+    --vc-icon-color: var(--hover-color);
+
+    @apply text-[--hover-color];
+  }
+
+  &:focus,
+  &:focus-visible {
+    @apply outline outline-2 outline-[--focus-color] -outline-offset-1;
+  }
+
+  &--disabled {
+    @apply pointer-events-none text-neutral-400;
+  }
+
+  &__input {
+    @apply hidden;
+  }
+}
+</style>

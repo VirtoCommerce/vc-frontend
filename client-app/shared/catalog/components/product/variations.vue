@@ -1,31 +1,42 @@
 <template>
   <VcWidget
     v-if="!model.hidden"
-    class="variations"
-    :class="{ 'variations--full-view': isFullView && !isSmallScreen }"
+    :class="[
+      'variations',
+      {
+        'variations--full-view': isFullView && !isSmallScreen,
+      },
+    ]"
     size="lg"
     :title="model.title || $t('shared.catalog.product_details.variations.title')"
     prepend-icon="cube"
   >
     <template v-if="!isSmallScreen && isTableView" #append>
-      <button type="button" @click="isFullView = !isFullView">
-        <VcIcon size="md" class="fill-neutral" :name="isFullView ? 'delete-2' : 'arrows-expand'" />
-      </button>
+      <VcButton
+        :icon="isFullView ? 'delete-2' : 'arrows-expand'"
+        color="neutral"
+        variant="no-border"
+        @click="isFullView = !isFullView"
+      />
     </template>
 
-    <div class="variations__views flex justify-between">
-      <div v-if="!isSmallScreen">
-        <button type="button" class="variations__view" :disabled="!isTableView" @click="toggleView">
-          <VcIcon name="list" class="variations__icon" />
+    <div class="variations__views">
+      <div v-if="!isSmallScreen" class="variations__view-mode">
+        <VcTabSwitch
+          v-model="isTableView"
+          :value="false"
+          icon="list"
+          :label="$t('shared.catalog.product_details.variations.list')"
+          @change="toggleView"
+        />
 
-          {{ $t("shared.catalog.product_details.variations.list") }}
-        </button>
-
-        <button type="button" class="variations__view" :disabled="isTableView" @click="toggleView">
-          <VcIcon name="table" class="variations__icon" />
-
-          {{ $t("shared.catalog.product_details.variations.table") }}
-        </button>
+        <VcTabSwitch
+          v-model="isTableView"
+          :value="Boolean(true)"
+          icon="table"
+          :label="$t('shared.catalog.product_details.variations.table')"
+          @change="toggleView"
+        />
       </div>
 
       <VcButton variant="outline" @click="$emit('showFilters')">
@@ -34,7 +45,7 @@
     </div>
 
     <!-- Filters chips -->
-    <div v-if="hasSelectedFilters" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+    <div v-if="hasSelectedFilters" class="variations__chips">
       <template v-for="facet in productsFilters?.facets">
         <template v-for="filterItem in facet.values">
           <VcChip
@@ -173,27 +184,15 @@ function handleKeyUp(event: KeyboardEvent) {
   }
 
   &__views {
-    @apply mb-6 space-x-3;
+    @apply flex justify-between items-center mb-6 gap-3;
   }
 
-  &__view {
-    @apply p-2 rounded bg-transparent text-sm text-neutral font-bold;
-
-    &:hover {
-      @apply bg-neutral-50;
-    }
-
-    &:disabled {
-      @apply bg-neutral-100 text-neutral-950;
-    }
+  &__view-mode {
+    @apply space-x-2;
   }
 
-  &__icon {
-    @apply me-1 size-5;
-
-    *:disabled > & {
-      @apply fill-primary;
-    }
+  &__chips {
+    @apply flex flex-wrap gap-x-3 gap-y-2 pb-6;
   }
 }
 </style>
