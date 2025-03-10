@@ -49,6 +49,7 @@ setup(async (app) => {
 
 const preview: Preview = {
   decorators: [vueRouter()],
+
   parameters: {
     controls: {
       matchers: {
@@ -63,6 +64,8 @@ const preview: Preview = {
       },
     },
   },
+
+  tags: ["autodocs"]
 };
 
 // eslint-disable-next-line no-restricted-exports

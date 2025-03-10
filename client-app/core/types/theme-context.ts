@@ -12,6 +12,7 @@ export interface IThemeContext {
   availableLanguages: ILanguage[];
   availableCurrencies: ICurrency[];
   settings: IThemeConfigSettings;
-  preset: IThemeConfigPreset;
+  preset?: IThemeConfigPreset;
+  defaultPresetName: string;
   storeSettings: NonNullable<GetStoreQuery["store"]>["settings"];
 }

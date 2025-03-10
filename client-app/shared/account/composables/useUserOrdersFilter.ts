@@ -2,14 +2,13 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { DateFilterId } from "@/core/enums";
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
-import type { FacetTermType } from "@/core/api/graphql/types";
 import type { DateFilterType } from "@/core/types";
-import type { OrdersFilterDataType, OrdersFilterChipsItemType } from "@/shared/account";
+import type { OrdersFilterDataType, OrdersFilterChipsItemType, OrderFacetType } from "@/shared/account";
 import type { Ref } from "vue";
 
-const filterData: Ref<OrdersFilterDataType> = ref({ statuses: [] });
+const filterData: Ref<OrdersFilterDataType> = ref({ statuses: [], customerNames: [] });
 const appliedFilterData: Ref<OrdersFilterDataType> = ref({ ...filterData.value });
-const facetLocalization: Ref<FacetTermType[] | undefined> = ref();
+const facetLocalization: Ref<OrderFacetType[] | undefined> = ref();
 
 function getFirstDayOfWeek(currentDate: Date): Date {
   const date = new Date(currentDate);
@@ -87,8 +86,8 @@ export function useUserOrdersFilter() {
   }
 
   const isFilterEmpty = computed(() => {
-    const { statuses, startDate, endDate } = appliedFilterData.value;
-    return !statuses.length && !startDate && !endDate;
+    const { statuses, startDate, endDate, customerNames } = appliedFilterData.value;
+    return !statuses.length && !startDate && !endDate && !customerNames?.length;
   });
 
   const isFilterDirty = computed(() => {
@@ -100,7 +99,13 @@ export function useUserOrdersFilter() {
 
     if (appliedFilterData.value.statuses.length) {
       for (const status of appliedFilterData.value.statuses) {
-        items.push({ fieldName: "statuses", value: status, label: getFacetLocalization(status) || status });
+        items.push({ fieldName: "statuses", value: status, label: getFacetLocalization("status", status) ?? status });
+      }
+    }
+
+    if (appliedFilterData.value.customerNames?.length) {
+      for (const customerName of appliedFilterData.value.customerNames) {
+        items.push({ fieldName: "customerNames", value: customerName, label: customerName });
       }
     }
 
@@ -133,7 +138,7 @@ export function useUserOrdersFilter() {
   }
 
   function resetFilters() {
-    filterData.value = { statuses: [], startDate: undefined, endDate: undefined };
+    filterData.value = { statuses: [], customerNames: [], startDate: undefined, endDate: undefined };
     appliedFilterData.value = { ...filterData.value };
   }
 
@@ -144,6 +149,13 @@ export function useUserOrdersFilter() {
   function removeFilterChipsItem(item: OrdersFilterChipsItemType) {
     if (item.fieldName === "statuses") {
       appliedFilterData.value.statuses.splice(appliedFilterData.value.statuses.indexOf(item.value as string), 1);
+    }
+
+    if (item.fieldName === "customerNames") {
+      appliedFilterData.value.customerNames?.splice(
+        appliedFilterData.value.customerNames.indexOf(item.value as string),
+        1,
+      );
     }
 
     if (item.fieldName === "startDate") {
@@ -157,12 +169,13 @@ export function useUserOrdersFilter() {
     filterData.value = { ...appliedFilterData.value };
   }
 
-  function setFacetsLocalization(facets: FacetTermType[] | undefined) {
+  function setFacetsLocalization(facets: OrderFacetType[] | undefined) {
     facetLocalization.value = facets;
   }
 
-  function getFacetLocalization(term: string): string | undefined {
-    return facetLocalization.value?.find((el) => el.term === term)?.label;
+  function getFacetLocalization(facetName: string, term: string): string | undefined {
+    const facet = facetLocalization.value?.find((el) => el.name === facetName);
+    return facet?.items?.find((el) => el.term === term)?.label;
   }
 
   return {
