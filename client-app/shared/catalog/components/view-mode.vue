@@ -5,7 +5,7 @@
       value="grid"
       icon="grid"
       :label="$t('shared.catalog.view_mode.grid_label')"
-      @change="$emit('update:mode', $event)"
+      @change="$emit('update:mode', $event as string)"
     />
 
     <VcTabSwitch
@@ -13,7 +13,7 @@
       value="list"
       icon="list"
       :label="$t('shared.catalog.view_mode.list_label')"
-      @change="$emit('update:mode', $event)"
+      @change="$emit('update:mode', $event as string)"
     />
   </div>
 </template>
