@@ -33,7 +33,6 @@ export { default as VcProperty } from "./property/vc-property.vue";
 export { default as VcRadioButton } from "./radio-button/vc-radio-button.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-button.vue";
 export { default as VcSwitch } from "./switch/vc-switch.vue";
-export { default as VcTabSwitch } from "./tab-switch/vc-tab-switch.vue";
 export { default as VcTabs } from "./tabs/vc-tabs.vue";
 export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";

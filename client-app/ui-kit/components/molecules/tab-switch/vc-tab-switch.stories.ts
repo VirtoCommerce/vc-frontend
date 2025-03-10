@@ -6,7 +6,7 @@ const COLORS = ["primary", "secondary", "success", "info", "neutral", "accent", 
 const LABEL = ["left", "right"];
 
 export default {
-  title: "Components/Atoms/VcTabSwitch",
+  title: "Components/Molecules/VcTabSwitch",
   component: VcTabSwitch,
   argTypes: {
     size: {
