@@ -10,7 +10,11 @@
       {{ $t("pages.compare.empty_list.message") }}
     </div>
 
-    <VcButton :to="{ name: 'Catalog' }" prepend-icon="shopping-bag">
+    <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link" prepend-icon="shopping-bag">
+      {{ $t("pages.compare.empty_list.button_text") }}
+    </VcButton>
+
+    <VcButton v-else to="/" prepend-icon="shopping-bag">
       {{ $t("pages.compare.empty_list.button_text") }}
     </VcButton>
   </VcEmptyPage>
@@ -98,6 +102,8 @@ import _ from "lodash";
 import { ref, computed, watch, watchEffect, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { getPropertyValue } from "@/core/utilities";
 import { ProductCardCompare, useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
@@ -118,11 +124,16 @@ usePageHead({
   },
 });
 
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { analytics } = useAnalytics();
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.compare.links.compare_products") }]);
 const { openModal, closeModal } = useModal();
+
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
+});
 
 const showOnlyDifferences = ref(false);
 

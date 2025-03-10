@@ -26,7 +26,7 @@
 
           <VcProductPrice
             v-if="item.hasVariations"
-            has-variations
+            with-from-label
             :actual-price="item.minVariationPrice?.actual"
             :list-price="item.minVariationPrice?.list"
           />

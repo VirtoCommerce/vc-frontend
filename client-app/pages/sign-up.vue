@@ -145,7 +145,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { object, ref as yupRef, string } from "yup";
 import { checkEmailUniqueness } from "@/core/api/graphql/account";
-import { usePageHead, useErrorsTranslator } from "@/core/composables";
+import { usePageHead, useErrorsTranslator, useAnalytics } from "@/core/composables";
 import { PasswordTips, RegistrationKind, usePasswordRequirements, useUser } from "@/shared/account";
 import type { AccountCreationResultType, RegistrationErrorType } from "@/core/api/graphql/types";
 
@@ -157,6 +157,7 @@ const { t } = useI18n();
 const { registerUser, registerOrganization, loading } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
 const { translate } = useErrorsTranslator<RegistrationErrorType>("identity_error");
+const { analytics } = useAnalytics();
 
 usePageHead({
   title: t("pages.sign_up.meta.title"),
@@ -255,8 +256,18 @@ const onSubmit = handleSubmit(async (data) => {
   }
 
   if (result.succeeded) {
+    analytics("signUp", "form", {
+      type: registrationKind.value,
+      success: true,
+    });
     void router.push({ name: "Welcome" });
   } else if (result.errors?.length) {
+    analytics("signUp", "form", {
+      type: registrationKind.value,
+      success: false,
+      errors: result.errors.map((error) => `${error.code}: ${error.description}`).join(", "),
+    });
+
     result.errors.forEach((error) => {
       const errorDescription = translate(error);
 

@@ -1,4 +1,4 @@
-import { useMutation } from "@/core/api/graphql/composables/useMutation";
+import { useMutation } from "@vue/apollo-composable";
 import {
   PUSH_MESSAGE_CACHE_ID,
   UNREAD_COUNT_CACHE_ID,

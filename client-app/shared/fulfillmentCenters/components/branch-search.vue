@@ -1,23 +1,16 @@
 <template>
   <div class="flex items-center">
-    <div
-      class="flex h-11 grow items-center rounded border border-neutral-300 bg-additional-50 pl-4 pr-2.5 sm:h-auto sm:pr-0.5"
-    >
-      <input
-        class="size-full bg-transparent text-sm outline-none placeholder:text-neutral-400 sm:h-7 sm:text-xs"
+    <div class="flex h-11 grow items-center bg-additional-50 pr-2.5 sm:h-auto sm:pr-0.5">
+      <VcInput
+        class="w-full"
+        size="sm"
         type="text"
         :placeholder="$t('shared.catalog.branches_modal.search_input_placeholder')"
         :value="modelValue"
+        clearable
         @input="onInput($event)"
+        @clear="emit('update:input', '')"
       />
-      <button
-        type="button"
-        class="flex h-5 w-6 items-center justify-center text-primary outline-none disabled:text-neutral-400"
-        :disabled="!modelValue.length"
-        @click="emit('update:input', '')"
-      >
-        <VcIcon name="delete" class="size-3 sm:size-2.5" />
-      </button>
     </div>
   </div>
 </template>

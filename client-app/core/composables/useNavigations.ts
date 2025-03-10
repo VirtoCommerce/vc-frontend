@@ -3,6 +3,7 @@ import mergeWith from "lodash/mergeWith";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import menuData from "@/config/menu.json";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
+import { useCurrency } from "@/core/composables/useCurrency";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -18,6 +19,8 @@ import {
 import { globals } from "../globals";
 import type { ExtendedMenuLinkType, MenuType } from "../types";
 import type { DeepPartial } from "utility-types";
+
+const { currentCurrency } = useCurrency();
 
 const loading = ref(false);
 const matchingRouteName = ref("");
@@ -118,7 +121,9 @@ export function useNavigations() {
         );
       } else {
         // Use the query `childCategories`, with `maxLevel` equal to 2
-        const { catalogId, currencyCode } = globals;
+
+        const catalogId = themeContext.value.catalogId;
+        const currencyCode = currentCurrency.value.code;
 
         const productFilter = catalog_empty_categories_enabled
           ? undefined
