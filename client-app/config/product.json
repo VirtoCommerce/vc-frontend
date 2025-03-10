@@ -14,6 +14,10 @@
           "hidden": false
         },
         {
+          "type": "product-description",
+          "id": "productdescriptionw4OT"
+        },
+        {
           "name": null,
           "type": "product-assets",
           "id": "productassetsgi5C",
@@ -25,11 +29,6 @@
           "hidden": false
         }
       ]
-    },
-    {
-      "id": "section2",
-      "type": "product-description",
-      "hidden": false
     },
     {
       "id": "section3",
