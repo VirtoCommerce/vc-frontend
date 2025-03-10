@@ -56,13 +56,13 @@ interface IProps {
   hoverColor?: string;
   disabled?: boolean;
   size?: "sm" | "md";
-  labelPosition?: "left" | "right";
+  labelPosition?: "start" | "end";
 }
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
-  labelPosition: "right",
+  labelPosition: "end",
   color: "",
   hoverColor: "",
 });
@@ -86,7 +86,9 @@ function onInput() {
 
 <style lang="scss">
 .vc-tab-switch {
-  $checked: &;
+  $start: "";
+  $end: "";
+  $checked: "";
 
   --vc-props-color: v-bind(_color);
   --vc-props-hover-color: v-bind(_hoverColor);
@@ -95,7 +97,7 @@ function onInput() {
   --hover-color: var(--vc-props-hover-color, var(--vc-tab-switch-hover-color, theme("colors.accent.500")));
   --focus-color: rgb(from var(--color) r g b / 0.3);
 
-  @apply inline-block;
+  @apply inline-block text-neutral;
 
   &--size {
     &--sm {
@@ -114,12 +116,12 @@ function onInput() {
   }
 
   &--label {
-    &--left {
-      $left: &;
+    &--start {
+      $start: &;
     }
 
-    &--right {
-      $right: &;
+    &--end {
+      $end: &;
     }
   }
 
@@ -134,7 +136,7 @@ function onInput() {
   }
 
   &__button {
-    @apply flex gap-1.5 rounded-sm border border-transparent p-[--p] font-bold cursor-pointer text-neutral select-none;
+    @apply flex gap-1.5 rounded-sm border border-transparent p-[--p] font-bold cursor-pointer select-none;
 
     input:checked ~ & {
       @apply border-neutral-200 shadow-md text-neutral-950 bg-additional-50;
@@ -149,6 +151,16 @@ function onInput() {
     &:focus,
     &:focus-visible {
       @apply outline outline-2 outline-[--focus-color] -outline-offset-1;
+    }
+  }
+
+  &__icon {
+    #{$start} & {
+      @apply order-last;
+    }
+
+    #{$end} & {
+      @apply order-first;
     }
   }
 

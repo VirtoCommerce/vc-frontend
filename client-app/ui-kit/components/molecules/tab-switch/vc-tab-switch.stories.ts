@@ -84,6 +84,12 @@ ColorCSSVariables.args = {
   class: "[--vc-tab-switch-color:#0055CC] [--vc-tab-switch-hover-color:rgba(255,99,71,0.8)]",
 };
 
+export const LabelPosition = Template.bind({});
+LabelPosition.args = {
+  ...Basic.args,
+  labelPosition: "start",
+};
+
 export const Disabled = Template.bind({});
 Disabled.args = {
   ...Basic.args,
