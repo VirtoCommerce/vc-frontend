@@ -61,12 +61,6 @@ Checked.args = {
   modelValue: "value",
 };
 
-export const Disabled = Template.bind({});
-Disabled.args = {
-  ...Basic.args,
-  disabled: true,
-};
-
 export const ColorProps = Template.bind({});
 ColorProps.args = {
   ...Basic.args,
@@ -88,4 +82,10 @@ ColorCSSVariables.args = {
   ...Basic.args,
   modelValue: "value",
   class: "[--vc-tab-switch-color:#0055CC] [--vc-tab-switch-hover-color:rgba(255,99,71,0.8)]",
+};
+
+export const Disabled = Template.bind({});
+Disabled.args = {
+  ...Basic.args,
+  disabled: true,
 };
