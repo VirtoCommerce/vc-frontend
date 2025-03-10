@@ -9,7 +9,6 @@
         'vc-tab-switch--checked': checked,
       },
     ]"
-    tabindex="0"
   >
     <input
       :id="componentId"
@@ -24,15 +23,17 @@
       @input="emit('input', value)"
     />
 
-    <slot name="icon" v-bind="{ checked, value, label }">
-      <VcIcon v-if="icon" :name="icon" class="vc-tab-switch__icon" />
-    </slot>
-
-    <span v-if="label" class="vc-tab-switch__label">
-      <slot v-bind="{ checked, value, label }">
-        {{ label }}
+    <button class="vc-tab-switch__button" type="button" tabindex="0">
+      <slot name="icon" v-bind="{ checked, value, label }">
+        <VcIcon v-if="icon" :name="icon" class="vc-tab-switch__icon" />
       </slot>
-    </span>
+
+      <span v-if="label" class="vc-tab-switch__label">
+        <slot v-bind="{ checked, value, label }">
+          {{ label }}
+        </slot>
+      </span>
+    </button>
   </label>
 </template>
 
@@ -77,6 +78,8 @@ const _hoverColor = computed(() => getColorValue(props.hoverColor));
 
 <style lang="scss">
 .vc-tab-switch {
+  $checked: &;
+
   --vc-props-color: v-bind(_color);
   --vc-props-hover-color: v-bind(_hoverColor);
 
@@ -84,19 +87,21 @@ const _hoverColor = computed(() => getColorValue(props.hoverColor));
   --hover-color: var(--vc-props-hover-color, var(--vc-tab-switch-hover-color, theme("colors.accent.500")));
   --focus-color: rgb(from var(--color) r g b / 0.3);
 
-  @apply inline-flex gap-1.5 rounded-sm border border-transparent font-bold cursor-pointer text-neutral select-none;
+  @apply inline-block;
 
   &--size {
     &--sm {
       --vc-icon-size: 1rem;
+      --p: theme("padding[1.5]");
 
-      @apply p-1.5 text-sm;
+      @apply text-sm;
     }
 
     &--md {
       --vc-icon-size: 1.25rem;
+      --p: theme("padding.2");
 
-      @apply p-2 text-base;
+      @apply text-base;
     }
   }
 
@@ -114,23 +119,29 @@ const _hoverColor = computed(() => getColorValue(props.hoverColor));
     $checked: &;
 
     --vc-icon-color: var(--color);
-
-    @apply border-neutral-200 shadow-md text-neutral-950 bg-additional-50;
-  }
-
-  &:hover {
-    --vc-icon-color: var(--hover-color);
-
-    @apply text-[--hover-color];
-  }
-
-  &:focus,
-  &:focus-visible {
-    @apply outline outline-2 outline-[--focus-color] -outline-offset-1;
   }
 
   &--disabled {
     @apply pointer-events-none text-neutral-400;
+  }
+
+  &__button {
+    @apply flex gap-1.5 rounded-sm border border-transparent p-[--p] font-bold cursor-pointer text-neutral select-none;
+
+    #{$checked} & {
+      @apply border-neutral-200 shadow-md text-neutral-950 bg-additional-50;
+    }
+
+    &:hover {
+      --vc-icon-color: var(--hover-color);
+
+      @apply text-[--hover-color];
+    }
+
+    &:focus,
+    &:focus-visible {
+      @apply outline outline-2 outline-[--focus-color] -outline-offset-1;
+    }
   }
 
   &__input {
