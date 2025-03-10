@@ -52,6 +52,7 @@ interface IProps {
   value: string | number | boolean;
   icon?: string;
   color?: string;
+  hoverColor?: string;
   disabled?: boolean;
   size?: "sm" | "md";
   labelPosition?: "left" | "right";
@@ -62,6 +63,7 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   labelPosition: "right",
   color: "",
+  hoverColor: "",
 });
 
 const model = defineModel<IProps["value"]>();
@@ -70,14 +72,17 @@ const componentId = useComponentId("input");
 
 const checked = computed(() => model.value === props.value);
 const _color = computed(() => getColorValue(props.color));
+const _hoverColor = computed(() => getColorValue(props.hoverColor));
 </script>
 
 <style lang="scss">
 .vc-tab-switch {
   --vc-props-color: v-bind(_color);
+  --vc-props-hover-color: v-bind(_hoverColor);
+
   --color: var(--vc-props-color, var(--vc-tab-switch-color, theme("colors.primary.500")));
-  --hover-color: var(--vc-tab-switch-hover-color, theme("colors.accent.500"));
-  --focus-color: var(--vc-tab-switch-focus-color, rgb(from theme("colors.primary.500") r g b / 0.3));
+  --hover-color: var(--vc-props-hover-color, var(--vc-tab-switch-hover-color, theme("colors.accent.500")));
+  --focus-color: rgb(from var(--color) r g b / 0.3);
 
   @apply inline-flex gap-1.5 rounded-sm border border-transparent font-bold cursor-pointer text-neutral select-none;
 

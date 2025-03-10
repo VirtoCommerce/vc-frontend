@@ -52,21 +52,40 @@ export const Basic = Template.bind({});
 Basic.args = {
   icon: "grid",
   label: "Grid",
-  value: "grid",
+  value: "value",
 };
 
 export const Checked = Template.bind({});
 Checked.args = {
-  icon: "grid",
-  label: "Grid",
-  value: "value",
+  ...Basic.args,
   modelValue: "value",
 };
 
 export const Disabled = Template.bind({});
 Disabled.args = {
-  icon: "grid",
-  label: "Grid",
-  value: "value",
+  ...Basic.args,
   disabled: true,
+};
+
+export const ColorProps = Template.bind({});
+ColorProps.args = {
+  ...Basic.args,
+  color: "success",
+  hoverColor: "info",
+  modelValue: "value",
+};
+
+export const RGBA_HEXColorProps = Template.bind({});
+RGBA_HEXColorProps.args = {
+  ...Basic.args,
+  color: "rgba(255, 99, 71, 0.8)",
+  hoverColor: "#0055CC",
+  modelValue: "value",
+};
+
+export const ColorCSSVariables = Template.bind({});
+ColorCSSVariables.args = {
+  ...Basic.args,
+  modelValue: "value",
+  class: "[--vc-tab-switch-color:#0055CC] [--vc-tab-switch-hover-color:rgba(255,99,71,0.8)]",
 };
