@@ -16,6 +16,7 @@
         :icon="isFullView ? 'delete-2' : 'arrows-expand'"
         color="neutral"
         variant="no-border"
+        size="sm"
         @click="isFullView = !isFullView"
       />
     </template>
