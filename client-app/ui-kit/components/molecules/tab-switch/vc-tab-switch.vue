@@ -19,11 +19,11 @@
       :checked="checked"
       :disabled="disabled"
       :aria-checked="checked"
-      @change="emit('change', value)"
-      @input="emit('input', value)"
+      @change="onChange"
+      @input="onInput"
     />
 
-    <button class="vc-tab-switch__button" type="button" tabindex="0">
+    <button class="vc-tab-switch__button" type="button" tabindex="0" @click="onChange">
       <slot name="icon" v-bind="{ checked, value, label }">
         <VcIcon v-if="icon" :name="icon" class="vc-tab-switch__icon" />
       </slot>
@@ -37,20 +37,20 @@
   </label>
 </template>
 
-<script setup lang="ts" generic="T extends string | number | null">
+<script setup lang="ts" generic="T extends string | number | boolean">
 import { computed } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
 import { getColorValue } from "@/ui-kit/utilities";
 
 interface IEmits {
-  (event: "input", value: string | number | boolean): void;
-  (event: "change", value: string | number | boolean): void;
+  (event: "input", value: T): void;
+  (event: "change", value: T): void;
 }
 
 interface IProps {
   label?: string;
   name?: string;
-  value: string | number | boolean;
+  value: T;
   icon?: string;
   color?: string;
   hoverColor?: string;
@@ -74,6 +74,14 @@ const componentId = useComponentId("input");
 const checked = computed(() => model.value === props.value);
 const _color = computed(() => getColorValue(props.color));
 const _hoverColor = computed(() => getColorValue(props.hoverColor));
+
+function onChange() {
+  emit("change", props.value);
+}
+
+function onInput() {
+  emit("input", props.value);
+}
 </script>
 
 <style lang="scss">
@@ -128,7 +136,7 @@ const _hoverColor = computed(() => getColorValue(props.hoverColor));
   &__button {
     @apply flex gap-1.5 rounded-sm border border-transparent p-[--p] font-bold cursor-pointer text-neutral select-none;
 
-    #{$checked} & {
+    input:checked ~ & {
       @apply border-neutral-200 shadow-md text-neutral-950 bg-additional-50;
     }
 
