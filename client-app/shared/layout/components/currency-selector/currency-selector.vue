@@ -1,5 +1,5 @@
 <template>
-  <VcDropdownMenu placement="bottom-end" width="8rem" class="h-full">
+  <VcDropdownMenu placement="bottom-end" width="8rem" class="h-full" close-on-blur>
     <template #trigger="{ opened }">
       <button type="button" class="flex h-full items-center gap-x-1.5">
         <span class="text-sm">
