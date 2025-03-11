@@ -13,6 +13,8 @@
     },
     "clear_all": "Cancella tutto",
     "view_all": "Visualizza tutte le notifiche",
-    "show_unread_only": "Mostra solo non letti"
+    "show_unread_only": "Mostra solo non letti",
+    "mark_as_read": "Segna come letto",
+    "mark_as_unread": "Segna come non letto"
   }
 }

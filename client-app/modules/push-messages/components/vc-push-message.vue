@@ -1,5 +1,9 @@
 <template>
   <div
+    role="button"
+    tabindex="0"
+    :aria-label="pushMessage.isRead ? $t('push_messages.mark_as_unread') : $t('push_messages.mark_as_read')"
+    :title="pushMessage.isRead ? $t('push_messages.mark_as_unread') : $t('push_messages.mark_as_read')"
     :class="[
       'vc-push-message',
       `vc-push-message--size--${size}`,
@@ -56,7 +60,7 @@ withDefaults(defineProps<IProps>(), {
 .vc-push-message {
   $unread: "";
 
-  @apply flex items-start;
+  @apply flex items-start cursor-pointer;
 
   &--size {
     &--md {

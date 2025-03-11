@@ -13,6 +13,8 @@
     },
     "clear_all": "すべてクリア",
     "view_all": "すべての通知を表示",
-    "show_unread_only": "未読のみ表示"
+    "show_unread_only": "未読のみ表示",
+    "mark_as_read": "既読にする",
+    "mark_as_unread": "未読にする"
   }
 }
