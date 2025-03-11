@@ -92,14 +92,14 @@ function setRating(value: number): void {
 
   &--size {
     &--xs {
+      $sizeXS: &;
+
       @apply text-xs;
 
       --vc-shape-size: 0.875rem;
     }
 
     &--sm {
-      $sizeXS: &;
-
       @apply text-sm;
 
       --vc-shape-size: 1rem;
