@@ -22,7 +22,7 @@
       </VcShape>
     </template>
 
-    <div v-if="withText" :class="['vc-rating__text', `vc-rating__text--${size}`]">
+    <div v-if="withText" class="vc-rating__text">
       <span class="vc-rating__current-rating">{{ value }}/5</span>
       <span v-if="reviewCount"> ({{ reviewCount }})</span>
     </div>
@@ -91,25 +91,29 @@ function setRating(value: number): void {
 
 <style lang="scss">
 .vc-rating {
+  $sizeXS: "";
+
   @apply flex items-center cursor-pointer;
 
   &--size {
     &--xs {
       @apply text-xs;
 
-      --vc-shape-size: theme("fontSize.sm");
+      --vc-shape-size: 0.875rem;
     }
 
     &--sm {
+      $sizeXS: &;
+
       @apply text-sm;
 
-      --vc-shape-size: theme("fontSize.base");
+      --vc-shape-size: 1rem;
     }
 
     &--md {
       @apply text-base;
 
-      --vc-shape-size: theme("fontSize.lg");
+      --vc-shape-size: 1.25rem;
     }
   }
 
@@ -130,7 +134,7 @@ function setRating(value: number): void {
   &__text {
     @apply text-neutral-800 ms-1.5;
 
-    &--xs {
+    #{$sizeXS} & {
       @apply ms-1;
     }
   }

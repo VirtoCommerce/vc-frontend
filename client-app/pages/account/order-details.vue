@@ -35,6 +35,7 @@
               <!-- Vendor -->
               <div class="flex max-w-full flex-wrap gap-x-3 print:break-after-avoid">
                 <VcVendor :vendor="group.vendor" />
+
                 <VcRating
                   v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
                   :review-count="group.vendor.rating.reviewCount"

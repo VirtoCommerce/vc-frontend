@@ -10,6 +10,7 @@
       <div class="mb-4 lg:flex lg:justify-between">
         <div v-if="productRating" class="flex">
           <span class="mr-2 content-center">{{ $t("common.labels.rating") }}:</span>
+
           <ProductRating :rating="productRating" class="font-bold" />
         </div>
 
@@ -120,6 +121,7 @@
               {{ $t("common.labels.rate_product") }}
               <span class="text-danger">*</span>
             </div>
+
             <VcRating
               mode="full"
               size="sm"
