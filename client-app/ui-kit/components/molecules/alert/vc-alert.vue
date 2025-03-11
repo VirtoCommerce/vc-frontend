@@ -86,6 +86,10 @@ const iconName = computed<string>(() => {
 
   @apply flex items-stretch border rounded;
 
+  @media print {
+    @apply hidden;
+  }
+
   &--shadow {
     @apply shadow-lg;
   }
