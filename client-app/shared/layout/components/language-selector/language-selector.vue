@@ -1,5 +1,5 @@
 <template>
-  <VcDropdownMenu placement="bottom-end" class="language-selector">
+  <VcDropdownMenu placement="bottom-end" class="language-selector" close-on-blur>
     <template #trigger="{ opened }">
       <button type="button" class="language-selector__button">
         <span class="language-selector__label">
