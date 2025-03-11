@@ -23,6 +23,7 @@ query GetProductRecommendations(
       name
       code
       hasVariations
+      isConfigurable
       imgSrc
       vendor {
         name

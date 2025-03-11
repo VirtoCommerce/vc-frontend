@@ -107,3 +107,7 @@ export function getUrlSearchParam(param: string): string | null {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(param);
 }
+
+export function toCSV(data: string[], delimiter = ", "): string {
+  return data.join(delimiter).trim();
+}

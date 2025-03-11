@@ -7,7 +7,8 @@
     <VcCollapsibleContent max-height="12.5rem">
       <div class="space-y-4">
         <VcProperty v-for="property in properties" :key="property.name" :label="property.label!" class="text-base">
-          {{ property.value }}
+          <template v-if="isHTML(property)"><VcMarkdownRender :src="String(property.value)" /></template>
+          <template v-else>{{ property.value }}</template>
         </VcProperty>
 
         <!-- Rating -->
@@ -39,8 +40,9 @@ import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
+import { PropertyValueTypes } from "@/modules/quotes/api/graphql/types";
 import { ProductTitledBlock, Vendor } from "@/shared/catalog";
-import type { Product } from "@/core/api/graphql/types";
+import type { Product, Property } from "@/core/api/graphql/types";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 
 interface IProps {
@@ -65,4 +67,8 @@ const showVendor = computed(
   () => themeContext.value?.settings?.vendor_enabled && !props.product.hasVariations && props.product.vendor,
 );
 const showPropertiesBlock = computed(() => !props.model.hidden && (properties.value.length || showVendor.value));
+
+function isHTML(property: Property): boolean {
+  return (property.propertyValueType as PropertyValueTypes) === PropertyValueTypes.Html;
+}
 </script>
