@@ -131,7 +131,7 @@ export default async () => {
     initLocale(i18n, twoLetterAppLocale),
     fetchMenus(),
     fetchWhiteLabelingSettings(),
-    addPresetToThemeContext(themePresetName.value || themeContext.value.defaultPresetName),
+    addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName),
   ]);
 
   void initPushNotifications(router, i18n);
