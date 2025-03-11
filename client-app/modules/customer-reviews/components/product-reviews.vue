@@ -10,6 +10,7 @@
       <div class="mb-4 lg:flex lg:justify-between">
         <div v-if="productRating" class="flex">
           <span class="mr-2 content-center">{{ $t("common.labels.rating") }}:</span>
+
           <ProductRating :rating="productRating" class="font-bold" />
         </div>
 
@@ -31,7 +32,7 @@
 
       <div class="divide-y rounded border">
         <div v-for="review in reviews" :key="review.id" class="space-y-2 p-4">
-          <div class="flex justify-between gap-2">
+          <div class="flex items-start justify-between gap-2">
             <div>
               {{ review.userName }}
               <div class="text-neutral-400">
@@ -39,7 +40,7 @@
               </div>
             </div>
 
-            <ReviewRating :rating="review.rating" read-only />
+            <VcRating mode="full" size="sm" :value="review.rating" :with-text="false" read-only />
           </div>
 
           <div>
@@ -120,7 +121,15 @@
               {{ $t("common.labels.rate_product") }}
               <span class="text-danger">*</span>
             </div>
-            <ReviewRating :rating="newReviewRating" @set-rating="setRating" />
+
+            <VcRating
+              mode="full"
+              size="sm"
+              :read-only="false"
+              :value="newReviewRating"
+              :with-text="false"
+              @set-rating="setRating"
+            />
           </div>
         </div>
 
@@ -183,7 +192,6 @@ import {
 } from "../constants";
 import { useCustomerReviews } from "../useCustomerReviews";
 import ProductRating from "./product-rating.vue";
-import ReviewRating from "./review-rating.vue";
 import type { Rating } from "@/core/api/graphql/types";
 import type SwiperCore from "swiper";
 
