@@ -10,8 +10,8 @@
       <VcShape
         v-for="i in MAX_RATING"
         :key="i"
+        :class="['vc-rating__shape', { 'vc-rating__shape--filled': isShapeFilled(i) }]"
         mask="whishlist"
-        :bg-color="getColor(i)"
         @click="setRating(i)"
         @focus="handleMouseOver(i)"
         @blur="handleMouseOver(null)"
@@ -56,23 +56,18 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const selectedRating = ref<number | null>(null);
 
-const getColor = (index: number): string => {
-  const rating = selectedRating.value ?? props.value;
-  const fullStars = Math.floor(rating);
-
-  if (index <= fullStars) {
-    return "--color-primary-500";
-  }
-
-  return "--color-neutral-300";
-};
-
-const isHalf = (index: number): boolean => {
+function isHalf(index: number): boolean {
   const rating = selectedRating.value ?? props.value;
   const fullStars = Math.floor(rating);
   const halfStar = rating % 1 !== 0 ? 1 : 0;
   return Boolean(index === fullStars + 1 && halfStar);
-};
+}
+
+function isShapeFilled(index: number): boolean {
+  const rating = selectedRating.value ?? props.value;
+  const fullStars = Math.floor(rating);
+  return index <= fullStars;
+}
 
 function handleMouseOver(value: number | null): void {
   if (props.readOnly) {
@@ -145,6 +140,14 @@ function setRating(value: number): void {
 
   &--read-only {
     cursor: unset;
+  }
+
+  &__shape {
+    --vc-shape-bg-color: theme("colors.neutral.300");
+
+    &--filled {
+      --vc-shape-bg-color: theme("colors.primary.500");
+    }
   }
 }
 </style>
