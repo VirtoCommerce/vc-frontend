@@ -1,6 +1,16 @@
 <template>
   <div>
     <template v-if="products.length || fetchingProducts">
+      <div v-if="minVisitedPage && minVisitedPage > 1" class="my-5 text-center">
+        <VcButton
+          size="xs"
+          variant="no-background"
+          color="accent"
+          :loading="fetchingMoreProducts"
+          @click="$emit('previousPage')"
+          >Load previous page</VcButton
+        >
+      </div>
       <DisplayProducts
         :loading="fetchingProducts"
         :view-mode="savedViewMode"
@@ -25,7 +35,7 @@
         :pages-count="pagesCount"
         distance="400"
         class="mt-8"
-        @visible="$emit('changePage', ++pageNumber)"
+        @visible="$emit('nextPage')"
       />
 
       <VcScrollTopButton />
@@ -77,11 +87,14 @@ interface IProps {
   pageNumber: number;
   products: Product[];
   savedViewMode: "grid" | "list";
+  minVisitedPage?: number;
+  maxVisitedPage?: number;
 }
 
 interface IEmits {
   (event: "resetFacetFilters"): void;
-  (event: "changePage", pageNumber: number): void;
+  (event: "previousPage"): void;
+  (event: "nextPage"): void;
   (event: "selectProduct", product: Product): void;
   (event: "resetFilterKeyword"): void;
 }

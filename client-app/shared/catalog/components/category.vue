@@ -202,7 +202,10 @@
         :products="products"
         :saved-view-mode="savedViewMode"
         :search-params="searchParams"
-        @change-page="changeProductsPage"
+        :min-visited-page="minVisitedPage"
+        :max-visited-page="maxVisitedPage"
+        @next-page="changeProductsPage(maxVisitedPage + 1)"
+        @previous-page="changeProductsPage(minVisitedPage - 1)"
         @reset-facet-filters="resetFacetFilters"
         @reset-filter-keyword="resetFilterKeyword"
         @select-product="selectProduct"
@@ -225,6 +228,7 @@ import {
   useLocalStorage,
   watchDebounced,
   whenever,
+  useUrlSearchParams,
 } from "@vueuse/core";
 import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useRoute } from "vue-router";
@@ -322,6 +326,7 @@ const {
   updateProductsFilters,
 
   currentPage,
+  pagesHistory,
   updateCurrentPage,
   resetCurrentPage,
 } = useProducts({
@@ -350,6 +355,7 @@ const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentA
 
 const route = useRoute();
 const { objectType, slugInfo } = useSlugInfo(route.path.slice(1));
+const urlSearchParams = useUrlSearchParams("history");
 
 useCategorySeo({ category: currentCategory, allowSetMeta, categoryComponentAnchorIsVisible });
 
@@ -383,6 +389,9 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
     .filter(Boolean)
     .join(" "),
 }));
+
+const minVisitedPage = computed(() => Math.min(...pagesHistory.value, currentPage.value));
+const maxVisitedPage = computed(() => Math.max(...pagesHistory.value, currentPage.value));
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
@@ -436,7 +445,7 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
 }
 
 async function fetchProducts(): Promise<void> {
-  await _fetchProducts(searchParams.value);
+  await _fetchProducts({ ...searchParams.value, page: Number(urlSearchParams.page) });
 
   /**
    * Send Google Analytics event for products.
@@ -464,6 +473,14 @@ function selectProduct(product: Product): void {
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
+
+watch(currentPage, (page) => {
+  console.log("page", page);
+  console.log("urlSearchParams.page", urlSearchParams.page);
+  if (!urlSearchParams.page || (Number(urlSearchParams.page) !== page && page > Number(urlSearchParams.page))) {
+    urlSearchParams.page = String(page);
+  }
+});
 
 watch(
   () => props.categoryId,
