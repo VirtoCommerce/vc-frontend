@@ -32,8 +32,9 @@ import {
   SelectCartItemsDocument,
   UnselectCartItemsDocument,
 } from "@/core/api/graphql/types";
-import { useAnalytics, useSyncMutationBatchers } from "@/core/composables";
+import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
+import { useSyncMutationBatchers } from "@/core/composables/useSyncMutationBatchers";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { groupByVendor, Logger } from "@/core/utilities";

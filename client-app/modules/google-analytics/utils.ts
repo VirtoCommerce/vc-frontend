@@ -1,4 +1,4 @@
-import { Logger } from "@/core/utilities";
+import { Logger, toCSV } from "@/core/utilities";
 import { canUseDOM, DEBUG_PREFIX } from "./constants";
 import type { EventParamsType } from "./types";
 import type {
@@ -56,13 +56,13 @@ export function lineItemToGtagItem(
     promotion_id: item.discounts?.[0]?.promotionId,
     promotion_name:
       item.discounts && "promotionName" in item.discounts[0] ? item.discounts?.[0]?.promotionName : undefined,
-    promotions: item.discounts
-      ?.map((promotion: DiscountType | OrderDiscountType) =>
-        "promotionName" in promotion ? promotion.promotionName : undefined,
-      )
-      .filter(Boolean)
-      .join(", ")
-      .trim(),
+    promotions: toCSV(
+      item.discounts
+        ?.map((promotion: DiscountType | OrderDiscountType) =>
+          "promotionName" in promotion ? promotion.promotionName : undefined,
+        )
+        .filter(Boolean) as string[],
+    ),
     ...categories,
   };
 }

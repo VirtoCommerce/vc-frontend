@@ -13,6 +13,8 @@
     },
     "clear_all": "Alle löschen",
     "view_all": "Alle Benachrichtigungen anzeigen",
-    "show_unread_only": "Nur ungelesene anzeigen"
+    "show_unread_only": "Nur ungelesene anzeigen",
+    "mark_as_read": "Als gelesen markieren",
+    "mark_as_unread": "Als ungelesen markieren"
   }
 }

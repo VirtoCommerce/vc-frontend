@@ -13,6 +13,8 @@
     },
     "clear_all": "Tout effacer",
     "view_all": "Voir toutes les notifications",
-    "show_unread_only": "Afficher uniquement les non lues"
+    "show_unread_only": "Afficher uniquement les non lues",
+    "mark_as_read": "Marquer comme lu",
+    "mark_as_unread": "Marquer comme non lu"
   }
 }

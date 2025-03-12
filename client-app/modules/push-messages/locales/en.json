@@ -13,6 +13,8 @@
     },
     "clear_all": "Clear all",
     "view_all": "View all notifications",
-    "show_unread_only": "Show unread only"
+    "show_unread_only": "Show unread only",
+    "mark_as_read": "Mark as read",
+    "mark_as_unread": "Mark as unread"
   }
 }

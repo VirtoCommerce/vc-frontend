@@ -11,6 +11,7 @@ import {
   replaceXFromBeginning,
   getLinkAttr,
   uniqByLast,
+  toCSV,
 } from "./index";
 
 describe("getBaseUrl", () => {
@@ -388,5 +389,27 @@ describe("uniqByLast", () => {
     const arr = [{ id: 1 }, { id: 2 }, { id: 3 }];
     const result = uniqByLast(arr, "id");
     expect(result).toEqual(arr);
+  });
+});
+
+describe("toCSV", () => {
+  it("should convert array to CSV string", () => {
+    const result = toCSV(["a", "b", "c"]);
+    expect(result).toBe("a, b, c");
+  });
+
+  it("should convert array to CSV string with custom delimiter", () => {
+    const result = toCSV(["a", "b", "c"], "|");
+    expect(result).toBe("a|b|c");
+  });
+
+  it("should handle empty array", () => {
+    const result = toCSV([]);
+    expect(result).toBe("");
+  });
+
+  it("should trim the result", () => {
+    const result = toCSV(["  a", "b", "c  "], "|");
+    expect(result).toBe("a|b|c");
   });
 });
