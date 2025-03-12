@@ -27,4 +27,5 @@
   @include meta.load-css("print/molecules/vc-steps");
   @include meta.load-css("print/molecules/vc-vendor");
   @include meta.load-css("print/organisms/vc-product-image");
+  @include meta.load-css("print/molecules/vc-alert");
 }
