@@ -79,13 +79,14 @@
                     icon="delete-thin"
                     color="danger"
                     class="flex-none"
+                    :disabled="!whiteLabelingLogoUrl"
                     :loading="loadingOrganizationLogo"
                     @click="openDeleteLogoModal"
                   />
                 </div>
               </template>
 
-              <VcButton v-if="!newLogoUrl" color="secondary" size="xs">
+              <VcButton v-if="!newLogoUrl" color="secondary" size="xs" tag="span">
                 {{ $t("ui_kit.file_uploader.browse") }}
               </VcButton>
             </VcFilePicker>
