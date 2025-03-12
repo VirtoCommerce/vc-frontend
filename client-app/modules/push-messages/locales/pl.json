@@ -13,6 +13,8 @@
     },
     "clear_all": "Wyczyść wszystko",
     "view_all": "Zobacz wszystkie powiadomienia",
-    "show_unread_only": "Pokaż tylko nieprzeczytane"
+    "show_unread_only": "Pokaż tylko nieprzeczytane",
+    "mark_as_read": "Oznacz jako przeczytane",
+    "mark_as_unread": "Oznacz jako nieprzeczytane"
   }
 }

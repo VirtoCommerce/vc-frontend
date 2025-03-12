@@ -1,17 +1,18 @@
 <template>
-  <VcDropdownMenu
+  <VcPopover
     class="vc-push-messages"
     :placement="placement"
     :offset-options="offsetOptions"
     arrow-enabled
     max-height="none"
+    close-on-blur
   >
     <template #trigger>
       <slot name="trigger" />
     </template>
 
     <template #content="{ close: closeMessages }">
-      <VcDialog dividers>
+      <VcDialog dividers class="vc-push-messages__dialog" tabindex="-1">
         <VcDialogHeader :closable="false">
           <template #main>
             <div class="vc-push-messages__head">
@@ -109,7 +110,7 @@
         </VcDialogFooter>
       </VcDialog>
     </template>
-  </VcDropdownMenu>
+  </VcPopover>
 </template>
 
 <script setup lang="ts">
@@ -132,6 +133,7 @@ interface IProps {
   withOptions?: boolean;
   offsetOptions?: VcPopoverOffsetOptionsType;
   placement?: VcPopoverPlacementType;
+  closeOnBlur?: boolean;
 }
 
 const emits = defineEmits<IEmits>();
@@ -146,7 +148,7 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
 
 <style lang="scss">
 .vc-push-messages {
-  --vc-dialog-width: 100vw;
+  --vc-dialog-width: calc(100vw - 1rem);
   --vc-dialog-max-height: calc(100vh - 5rem);
 
   @media (min-width: theme("screens.sm")) {
@@ -170,6 +172,12 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
 
   &__options-icon {
     @apply fill-neutral group-hover:fill-neutral-700;
+  }
+
+  &__dialog {
+    @media (width < theme("screens.sm")) {
+      @apply mx-2;
+    }
   }
 
   &__items {
