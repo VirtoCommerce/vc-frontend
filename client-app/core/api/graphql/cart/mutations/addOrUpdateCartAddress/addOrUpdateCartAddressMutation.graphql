@@ -1,0 +1,7 @@
+#import "../../fragments/fullCart.graphql"
+
+mutation AddOrUpdateCartAddress($command: InputAddOrUpdateCartAddressType!, $skipQuery: Boolean!) {
+  addOrUpdateCartAddress(command: $command) {
+    ...fullCart @skip(if: $skipQuery)
+  }
+}

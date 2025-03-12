@@ -25,6 +25,9 @@ fragment fullCart on CartType {
   availablePaymentMethods {
     ...paymentMethod
   }
+  addresses {
+    ...cartAddress
+  }
   items {
     ...fullLineItem
   }
