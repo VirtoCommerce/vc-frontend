@@ -252,6 +252,6 @@ export interface IThemeConfigSettings {
 }
 
 export interface IThemeConfig {
-  current: string | IThemeConfigPreset;
+  current: string;
   settings: IThemeConfigSettings;
 }

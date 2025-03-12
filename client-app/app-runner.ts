@@ -56,7 +56,7 @@ export default async () => {
   app.use(authPlugin);
 
   const { fetchUser, user, twoLetterContactLocale } = useUser();
-  const { themeContext, fetchThemeContext } = useThemeContext();
+  const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
     detectLocale,
     currentLanguage,
@@ -80,16 +80,18 @@ export default async () => {
     },
   };
 
-  const store = (await getStore(
+  const storePromise = getStore(
     IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname,
-  )) as StoreResponseType;
+  ) as Promise<StoreResponseType>;
+
+  const [store] = await Promise.all([storePromise, fetchUser(), fallback.setMessage()]);
 
   if (!store) {
     alert("Related store not found. Please contact your site administrator.");
     throw new Error("Store not found. Check graphql request, GetStore query");
   }
 
-  await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
+  setThemeContext(store);
 
   // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
   const twoLetterAppLocale = detectLocale([
@@ -109,8 +111,6 @@ export default async () => {
   /**
    * Setting global variables
    */
-  await initLocale(i18n, twoLetterAppLocale);
-
   setGlobals({
     i18n,
     router,
@@ -123,13 +123,13 @@ export default async () => {
     currencyCode: currentCurrency.value.code,
   });
 
-  await fetchMenus();
-
   /**
    * Other settings
    */
 
-  await fetchWhiteLabelingSettings();
+  await Promise.all([initLocale(i18n, twoLetterAppLocale), fetchMenus(), fetchWhiteLabelingSettings()]);
+  await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
+
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
   void initModuleBackInStock(router, i18n);
@@ -137,10 +137,6 @@ export default async () => {
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
   void initializeHotjar();
-
-  if (themePresetName.value) {
-    await fetchThemeContext(store, themePresetName.value);
-  }
 
   // Plugins
   app.use(head);

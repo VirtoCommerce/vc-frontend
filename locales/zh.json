@@ -72,8 +72,9 @@
       "add_items_to_cart": "添加商品到购物车",
       "show_details": "显示详情",
       "add_with_bulk_order": "批量订单添加",
-      "agency": "机构",
-      "personal": "个人的"
+      "all_orders": "所有订单",
+      "my_orders": "我的订单",
+      "scroll_to_top": "回到顶部"
     },
     "labels": {
       "actions": "操作",
@@ -153,7 +154,8 @@
       "support_phone_number": "支持电话号码",
       "main_menu": "主菜单",
       "toggle_search_bar": "切换搜索栏",
-      "slider_image": "滑动图像"
+      "slider_image": "滑动图像",
+      "buyer_name": "买方姓名"
     },
     "prefixes": {
       "please": "请",
@@ -240,7 +242,9 @@
       "company_info": "公司信息",
       "company_members": "公司成员",
       "contact_administrator": "联系网站管理员",
-      "saved_credit_cards": "已保存的信用卡"
+      "saved_credit_cards": "已保存的信用卡",
+      "skip_to_main_content": "跳至主要内容",
+      "skip_to_footer": "跳至页脚"
     },
     "titles": {
       "all_actions": "所有操作",

@@ -14,7 +14,11 @@
       </div>
 
       <div class="flex flex-wrap gap-x-6 gap-y-2.5 max-sm:justify-center">
-        <VcButton :to="{ name: 'Catalog' }" prepend-icon="shopping-bag">
+        <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link" prepend-icon="shopping-bag">
+          {{ $t("common.buttons.continue_shopping") }}
+        </VcButton>
+
+        <VcButton v-else to="/" prepend-icon="shopping-bag">
           {{ $t("common.buttons.continue_shopping") }}
         </VcButton>
 
@@ -166,7 +170,7 @@ import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { useBreadcrumbs, useAnalytics, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
+import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY, MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
@@ -184,6 +188,7 @@ import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
 
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { themeContext } = useThemeContext();
 const { analytics } = useAnalytics();
 const { t } = useI18n();
@@ -213,6 +218,9 @@ const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, init
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
+});
 const { isEnabled: isEnabledXRecommend } = useModuleSettings(MODULE_ID_XRECOMMEND);
 
 const { sidebarWidgets } = useCartExtensionPoints();

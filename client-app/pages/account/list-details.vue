@@ -93,7 +93,11 @@
           icon="outline-lists"
         >
           <template #button>
-            <VcButton :to="{ name: 'Catalog' }">
+            <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+              {{ $t("shared.wishlists.list_details.empty_list_button") }}
+            </VcButton>
+
+            <VcButton v-else to="/">
               {{ $t("shared.wishlists.list_details.empty_list_button") }}
             </VcButton>
           </template>
@@ -112,8 +116,10 @@ import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
+import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
-import { globals } from "@/core/globals";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem } from "@/core/utilities";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
@@ -136,7 +142,6 @@ import type {
 import type { PreparedLineItemType } from "@/core/types";
 import type { RouteLocationNormalized } from "vue-router";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
-
 interface IProps {
   listId: string;
 }
@@ -145,6 +150,7 @@ const props = defineProps<IProps>();
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { t } = useI18n();
 const { analytics } = useAnalytics();
 const broadcast = useBroadcast();
@@ -159,10 +165,15 @@ const {
   changeItemQuantity,
 } = useShortCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const { trackAddItemToCart, trackAddItemsToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
+});
+
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
 });
 
 const itemsPerPage = ref(6);
@@ -211,13 +222,8 @@ async function addAllListItemsToCart(): Promise<void> {
     .filter((product): product is NonNullable<typeof product> => !!product);
 
   if (products.length) {
-    analytics("addItemsToCart", products);
-    void pushHistoricalEvent({
-      eventType: "addToCart",
-      sessionId: cart.value?.id,
-      productIds: products.map((product) => product.id),
-      storeId: globals.storeId,
-    });
+    trackAddItemsToCart(products);
+    void pushHistoricalEvent({ eventType: "addToCart", productIds: products.map((product) => product.id) });
   }
 
   showResultModal(wishlistItems.value);
@@ -294,13 +300,8 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   } else {
     await addToCart(lineItem.product.id, quantity);
 
-    analytics("addItemToCart", lineItem.product, quantity);
-    void pushHistoricalEvent({
-      eventType: "addToCart",
-      sessionId: cart.value?.id,
-      productId: lineItem.product.id,
-      storeId: globals.storeId,
-    });
+    trackAddItemToCart(lineItem.product, quantity);
+    void pushHistoricalEvent({ eventType: "addToCart", productId: lineItem.product.id });
   }
   pendingItems.value[lineItem.id] = false;
 

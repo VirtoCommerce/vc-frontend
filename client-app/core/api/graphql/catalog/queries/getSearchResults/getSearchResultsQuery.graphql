@@ -106,6 +106,7 @@ query GetSearchResults(
         }
       }
       hasVariations
+      isConfigurable
       minVariationPrice {
         actual {
           amount

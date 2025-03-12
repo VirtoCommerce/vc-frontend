@@ -72,8 +72,9 @@
       "add_items_to_cart": "カートに追加",
       "show_details": "詳細表示",
       "add_with_bulk_order": "一括注文で追加",
-      "agency": "エージェンシー",
-      "personal": "個人的な"
+      "all_orders": "すべての注文",
+      "my_orders": "私の注文",
+      "scroll_to_top": "トップへスクロール"
     },
     "labels": {
       "actions": "操作",
@@ -153,7 +154,8 @@
       "support_phone_number": "サポート電話番号",
       "main_menu": "メインメニュー",
       "toggle_search_bar": "検索バーを切り替える",
-      "slider_image": "スライダー画像"
+      "slider_image": "スライダー画像",
+      "buyer_name": "購入者名"
     },
     "prefixes": {
       "please": "お願いします",
@@ -240,7 +242,9 @@
       "company_info": "会社情報",
       "company_members": "メンバー",
       "contact_administrator": "管理者に連絡",
-      "saved_credit_cards": "保存済カード"
+      "saved_credit_cards": "保存済カード",
+      "skip_to_main_content": "メインコンテンツへスキップ",
+      "skip_to_footer": "フッターへスキップ"
     },
     "titles": {
       "all_actions": "全ての操作",

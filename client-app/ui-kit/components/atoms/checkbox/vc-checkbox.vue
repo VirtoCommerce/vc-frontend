@@ -22,6 +22,7 @@
         :aria-checked="isChecked"
         class="vc-checkbox__input"
         :data-test-id="testId"
+        :tabindex="tabindex"
         @change="handleChange"
         @click="onClick"
       />
@@ -64,6 +65,7 @@ interface IProps {
   singleLineMessage?: boolean;
   testId?: string;
   preventDefault?: boolean;
+  tabindex?: string;
 }
 
 const emit = defineEmits<IEmits>();

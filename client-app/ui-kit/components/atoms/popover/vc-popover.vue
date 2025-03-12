@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="containerReference"
     :class="[
       'vc-popover',
       {
@@ -48,7 +49,7 @@
 
 <script setup lang="ts">
 import { flip, offset, shift, useFloating, autoUpdate, arrow } from "@floating-ui/vue";
-import { onClickOutside } from "@vueuse/core";
+import { onClickOutside, useFocusWithin } from "@vueuse/core";
 import { ref, toRefs, computed, watch } from "vue";
 
 interface IEmits {
@@ -68,6 +69,7 @@ interface IProps {
   hover?: boolean;
   disableTriggerEvents?: boolean;
   arrowEnabled?: boolean;
+  closeOnBlur?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -80,6 +82,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const opened = ref(false);
 const reference = ref<HTMLElement | null>(null);
+const containerReference = ref<HTMLElement | null>(null);
 const floating = ref<HTMLElement | null>(null);
 const floatingArrow = ref<Element | null>(null);
 const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs(props);
@@ -126,6 +129,8 @@ function toggle() {
   opened.value = !opened.value;
 }
 
+const { focused } = useFocusWithin(containerReference);
+
 onClickOutside(
   reference,
   () => {
@@ -135,6 +140,12 @@ onClickOutside(
 );
 
 watch(opened, (value: boolean) => emit("toggle", value));
+
+watch(focused, (value: boolean) => {
+  if (!value && props.closeOnBlur) {
+    close();
+  }
+});
 </script>
 
 <style lang="scss">

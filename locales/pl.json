@@ -72,8 +72,9 @@
       "add_items_to_cart": "Dodaj przedmioty do koszyka",
       "show_details": "Pokaż szczegóły",
       "add_with_bulk_order": "Dodaj z zamówieniem zbiorczym",
-      "agency": "Agencja",
-      "personal": "Osobisty"
+      "all_orders": "Wszystkie zamówienia",
+      "my_orders": "Moje zamówienia",
+      "scroll_to_top": "Przewiń do góry"
     },
     "labels": {
       "actions": "Akcje",
@@ -153,7 +154,8 @@
       "support_phone_number": "Numer telefonu wsparcia",
       "main_menu": "Menu główne",
       "toggle_search_bar": "Przełącz pasek wyszukiwania",
-      "slider_image": "Obraz slajdera"
+      "slider_image": "Obraz slajdera",
+      "buyer_name": "Nazwa nabywcy"
     },
     "prefixes": {
       "please": "Proszę",
@@ -240,7 +242,9 @@
       "company_info": "Informacje o firmie",
       "company_members": "Członkowie firmy",
       "contact_administrator": "skontaktuj się z administratorem strony",
-      "saved_credit_cards": "Zapisane karty kredytowe"
+      "saved_credit_cards": "Zapisane karty kredytowe",
+      "skip_to_main_content": "Przejdź do treści głównej",
+      "skip_to_footer": "Przejdź do stopki"
     },
     "titles": {
       "all_actions": "Wszystkie akcje",

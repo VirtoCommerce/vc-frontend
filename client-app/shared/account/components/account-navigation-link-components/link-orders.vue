@@ -2,7 +2,7 @@
   <AccountNavigationItem :item="item">
     <template v-if="isOrdersPage">
       <div
-        v-for="facet in facets"
+        v-for="facet in statusFacet?.items"
         :key="facet.term"
         class="flex items-center space-x-1 overflow-hidden text-ellipsis px-3 text-sm"
       >
@@ -25,6 +25,7 @@
 <script setup lang="ts">
 import { computed, toRef } from "vue";
 import { useRoute } from "vue-router";
+import { STATUS_ORDERS_FACET_NAME } from "@/core/constants";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
 import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
 import type { ExtendedMenuLinkType } from "@/core/types";
@@ -43,6 +44,8 @@ const { facets } = useUserOrders({});
 
 const isOrdersPage = computed(() => route.name === "Orders");
 const { filterData, applyFilters } = useUserOrdersFilter();
+
+const statusFacet = computed(() => facets.value?.find((facet) => facet.name === STATUS_ORDERS_FACET_NAME));
 
 function isSelectedOrderStatus(status: string): boolean {
   return filterData.value.statuses.indexOf(status) !== -1;

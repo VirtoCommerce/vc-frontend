@@ -1,17 +1,13 @@
-import { provideApolloClient } from "@vue/apollo-composable";
+import { provideApolloClient, useMutation } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
 import isEqual from "lodash/isEqual";
 import { ref, readonly, computed } from "vue";
+import { apolloClient, getConfigurationItems, getProductConfiguration } from "@/core/api/graphql";
+import { ChangeCartConfiguredItemDocument, CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
 import { useI18n } from "vue-i18n";
-import {
-  apolloClient,
-  getConfigurationItems,
-  getProductConfiguration,
-  useChangeCartConfiguredItemMutation,
-  useCreateConfiguredLineItemMutation,
-} from "@/core/api/graphql";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
+import { globals } from "@/core/globals";
 import { getUrlSearchParam, Logger } from "@/core/utilities";
 import { toCSV } from "@/core/utilities/common";
 import { useShortCart } from "@/shared/cart/composables";
@@ -65,13 +61,7 @@ function _useConfigurableProduct(configurableProductId: string) {
 
   const { t } = useI18n();
   const { cart } = useShortCart();
-  const { mutate: _changeCartConfiguredItem, loading: changeCartConfiguredItemLoading } =
-    useChangeCartConfiguredItemMutation();
-  const { mutate } = useCreateConfiguredLineItemMutation();
-  const { add: batchedCreateConfiguredLineItem, abort: abortBatchedCreateConfiguredLineItem } = useMutationBatcher(
-    mutate,
-    { mergeStrategy: getMergeStrategyUniqueBy("sectionId") },
-  );
+  const { storeId, currencyCode, cultureName, userId } = globals;
 
   const loading = computed(() => fetching.value || creating.value || changeCartConfiguredItemLoading.value);
 
@@ -236,6 +226,13 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
+  const { mutate: createConfiguredLineItemMutation } = useMutation(CreateConfiguredLineItemDocument);
+  const { add: batchedCreateConfiguredLineItem, abort: abortBatchedCreateConfiguredLineItem } = useMutationBatcher(
+    createConfiguredLineItemMutation,
+    {
+      mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
+    },
+  );
   async function createConfiguredLineItem() {
     creating.value = true;
     try {
@@ -243,6 +240,9 @@ function _useConfigurableProduct(configurableProductId: string) {
         command: {
           configurableProductId,
           configurationSections: selectedConfigurationInput.value,
+          cultureName,
+          currencyCode,
+          storeId,
         },
       });
       configuredLineItem.value = result?.data?.createConfiguredLineItem;
@@ -267,6 +267,9 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
+  const { mutate: _changeCartConfiguredItem, loading: changeCartConfiguredItemLoading } = useMutation(
+    ChangeCartConfiguredItemDocument,
+  );
   async function changeCartConfiguredItem(
     lineItemId: string,
     quantity?: number,
@@ -274,9 +277,15 @@ function _useConfigurableProduct(configurableProductId: string) {
   ): Promise<ShortCartFragment | undefined> {
     try {
       const result = await _changeCartConfiguredItem({
-        lineItemId,
-        quantity,
-        configurationSections: configurationSections as ConfigurationSectionInput[],
+        command: {
+          lineItemId,
+          userId,
+          quantity,
+          configurationSections: configurationSections as ConfigurationSectionInput[],
+          cultureName,
+          currencyCode,
+          storeId,
+        },
       });
       initialSelectedConfigurationInput.value = configurationSections ?? [];
       return result?.data?.changeCartConfiguredItem;
