@@ -17,6 +17,7 @@
     <template #trigger>
       <slot name="trigger" :total-count="totalCount" :unread-count="unreadCount" />
     </template>
+
     <template #items>
       <PushMessage v-for="item in items" :key="item.id" :push-message="item" />
     </template>
