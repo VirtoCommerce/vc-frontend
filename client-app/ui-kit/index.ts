@@ -2,24 +2,13 @@ import { vOnClickOutside } from "@vueuse/components";
 import { vMaska } from "maska";
 import VueSecureHTML from "vue-html-secure";
 import * as UIKitComponents from "@/ui-kit/components";
-import { setImageSettings } from "./utilities/images";
 import type { MaskaDetail } from "maska";
 import type { App, FunctionDirective, Plugin } from "vue";
-
-// UI Kit settings type
-export interface IUIKitSettings {
-  paths: {
-    images: string;
-    icons: string;
-  };
-}
 
 type VMaskaType = FunctionDirective<HTMLElement, MaskaDetail | undefined>;
 
 export const uiKit: Plugin = {
-  install: (app: App, settings: IUIKitSettings) => {
-    const { paths } = settings;
-    setImageSettings(paths);
+  install: (app: App) => {
     // Directives
     const vMask: VMaskaType = (element, binding, vnode, prevVNode) => {
       console.warn(
