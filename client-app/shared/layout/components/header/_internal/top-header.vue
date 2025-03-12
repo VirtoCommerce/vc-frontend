@@ -6,7 +6,7 @@
 
     <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
 
-    <ShipToSelector v-if="isAuthenticated" />
+    <ShipToSelector />
 
     <div class="ms-auto flex items-center">
       <!-- Call us block -->

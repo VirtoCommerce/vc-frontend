@@ -36,7 +36,7 @@
                   </VcButton>
                 </div>
 
-                <div class="ship-to-selector__search">
+                <div v-if="addresses.length > 0" class="ship-to-selector__search">
                   <VcInput v-model="filter" size="sm" clearable placeholder="Search" />
                 </div>
               </div>
@@ -84,10 +84,15 @@
             </template>
           </VcDialogContent>
 
-          <VcDialogFooter v-if="filter.length === 0">
+          <VcDialogFooter v-if="filter.length === 0 && addresses.length > 0">
             <template #container>
               <div class="ship-to-selector__foot">
-                <VcButtonSeeMoreLess :model-value="isSeeMore" size="xs" @click="isSeeMore = !isSeeMore" />
+                <VcButtonSeeMoreLess
+                  v-if="allAddresses.length > MAX_ADDRESSES_NUMBER"
+                  :model-value="isSeeMore"
+                  size="xs"
+                  @click="isSeeMore = !isSeeMore"
+                />
               </div>
             </template>
           </VcDialogFooter>
@@ -100,7 +105,7 @@
 <script setup lang="ts">
 import { computed, watchEffect, ref } from "vue";
 import { AddressLine } from "@/shared/common";
-import { useBopis } from "../composables";
+import { MAX_ADDRESSES_NUMBER, useBopis } from "../composables";
 
 interface IProps {
   title?: string;
@@ -111,8 +116,15 @@ defineProps<IProps>();
 const filter = ref("");
 const isSeeMore = ref(false);
 
-const { getFilteredAddresses, fetchAddresses, selectAddress, selectedAddress, loading, openAddOrUpdateAddressModal } =
-  useBopis();
+const {
+  accountAddresses: allAddresses,
+  getFilteredAddresses,
+  fetchAddresses,
+  selectAddress,
+  selectedAddress,
+  loading,
+  openAddOrUpdateAddressModal,
+} = useBopis();
 
 const addresses = computed(() => getFilteredAddresses(isSeeMore.value, filter.value));
 
