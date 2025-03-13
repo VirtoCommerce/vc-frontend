@@ -1214,7 +1214,8 @@
       },
       "title": "Koszyk",
       "empty_cart_description": "Twój koszyk jest pusty",
-      "recently_browsed_products": "Ostatnio przeglądane"
+      "recently_browsed_products": "Ostatnio przeglądane",
+      "empty_cart_search_text": "Użyj wyszukiwarki, aby znaleźć wszystko, czego potrzebujesz"
     },
     "checkout": {
       "meta": {

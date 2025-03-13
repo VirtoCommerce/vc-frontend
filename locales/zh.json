@@ -1214,7 +1214,8 @@
       },
       "title": "购物车",
       "empty_cart_description": "您的购物车为空",
-      "recently_browsed_products": "最近浏览的产品"
+      "recently_browsed_products": "最近浏览的产品",
+      "empty_cart_search_text": "使用搜索，找到您需要的一切"
     },
     "checkout": {
       "meta": {
