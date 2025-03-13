@@ -368,6 +368,7 @@ import { B2B_ROLES } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
+import { getHeadInstance } from "@/core/utilities/head";
 import { PageToolbarBlock, useUser } from "@/shared/account";
 import { FacetItem } from "@/shared/common";
 import {
@@ -386,10 +387,14 @@ import type { ExtendedContactType } from "@/shared/company";
 import type { INotification } from "@/shared/notification";
 
 const { t } = useI18n();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.company.members.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.company.members.meta.title"),
+  },
+  head,
+);
 
 /**
  * This page is accessible only to members of the organization,

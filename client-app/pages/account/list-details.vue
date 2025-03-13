@@ -121,6 +121,7 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem } from "@/core/utilities";
+import { getHeadInstance } from "@/core/utilities/head";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
@@ -142,6 +143,7 @@ import type {
 import type { PreparedLineItemType } from "@/core/types";
 import type { RouteLocationNormalized } from "vue-router";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
+
 interface IProps {
   listId: string;
 }
@@ -167,10 +169,14 @@ const {
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { trackAddItemToCart, trackAddItemsToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
+const head = getHeadInstance();
 
-usePageHead({
-  title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
-});
+usePageHead(
+  {
+    title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
+  },
+  head,
+);
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",

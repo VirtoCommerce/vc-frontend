@@ -29,6 +29,7 @@ import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { computed, shallowRef, unref, watchEffect } from "vue";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { useStaticPage } from "@/shared/static-content";
 
 const { staticPage: template } = useStaticPage();
@@ -38,6 +39,7 @@ const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBre
 
 const staticPageAnchor = shallowRef<HTMLElement | null>(null);
 const staticPageAnchorIsVisible = useElementVisibility(staticPageAnchor);
+const head = getHeadInstance();
 
 watchEffect(() => {
   if (staticPageAnchorIsVisible.value) {
@@ -45,13 +47,16 @@ watchEffect(() => {
     const pageDescription = unref(template)?.settings?.seoInfo?.metaDescription;
     const pageKeywords = unref(template)?.settings?.seoInfo?.metaKeywords;
 
-    usePageHead({
-      title: computed(() => pageTitle),
-      meta: {
-        keywords: computed(() => pageKeywords),
-        description: computed(() => pageDescription),
+    usePageHead(
+      {
+        title: computed(() => pageTitle),
+        meta: {
+          keywords: computed(() => pageKeywords),
+          description: computed(() => pageDescription),
+        },
       },
-    });
+      head,
+    );
 
     useSeoMeta({
       ogUrl: window.location.toString(),

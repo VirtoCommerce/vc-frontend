@@ -1,4 +1,3 @@
-import { useHead } from "@unhead/vue";
 import { computedEager } from "@vueuse/core";
 import { unref } from "vue";
 import { useEnvironmentName } from "@/core/composables/useEnvironmentName";
@@ -6,8 +5,9 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { useThemeContext } from "./useThemeContext";
 import type { IUsePageSeoData } from "../types";
+import type { VueHeadClient, MergeHead } from "@unhead/vue";
 
-export function usePageHead(data: IUsePageSeoData) {
+export function usePageHead(data: IUsePageSeoData, headInstance: VueHeadClient<MergeHead>) {
   const { themeContext } = useThemeContext();
   const { environmentName, isIgnored } = useEnvironmentName();
   const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -20,7 +20,7 @@ export function usePageHead(data: IUsePageSeoData) {
 
   const { storeName } = themeContext.value;
 
-  return useHead({
+  return headInstance.push({
     title: computedEager(() => {
       if (!data.title) {
         return "";

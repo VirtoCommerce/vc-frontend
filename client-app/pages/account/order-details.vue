@@ -143,6 +143,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
@@ -174,10 +175,14 @@ const {
 const { cart, addItemsToCart } = useShortCart();
 const { openModal } = useModal();
 const { t } = useI18n();
+const head = getHeadInstance();
 
-usePageHead({
-  title: computed(() => t("pages.account.order_details.meta.title", [order.value?.number])),
-});
+usePageHead(
+  {
+    title: computed(() => t("pages.account.order_details.meta.title", [order.value?.number])),
+  },
+  head,
+);
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },

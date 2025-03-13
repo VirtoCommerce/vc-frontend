@@ -175,6 +175,7 @@ import { useElementVisibility } from "@vueuse/core";
 import { onMounted, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead, useProductsRoutes } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { AddToCart } from "@/shared/cart";
 import { ProductCardGrid, useProducts } from "@/shared/catalog";
 
@@ -185,12 +186,16 @@ const productsRoutes = useProductsRoutes(products);
 
 const demoPageAnchor = shallowRef<HTMLElement | null>(null);
 const demoPageAnchorIsVisible = useElementVisibility(demoPageAnchor);
+const head = getHeadInstance();
 
 watch(demoPageAnchorIsVisible, (value) => {
   if (value) {
-    usePageHead({
-      title: t("pages.demo_landing.meta.title"),
-    });
+    usePageHead(
+      {
+        title: t("pages.demo_landing.meta.title"),
+      },
+      head,
+    );
   }
 });
 

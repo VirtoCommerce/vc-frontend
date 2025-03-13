@@ -10,6 +10,7 @@ import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
+import { setHeadInstance } from "@/core/utilities/head";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
@@ -188,6 +189,8 @@ export default async () => {
     }
     Logger.warn(msg, trace);
   };
+
+  setHeadInstance(head);
 
   app.mount(appElement);
 };

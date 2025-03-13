@@ -125,6 +125,7 @@ import { clone, isEqual } from "lodash";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { useUserCheckoutDefaults, CheckoutDefaultsSuccessModal } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
 import { useModal } from "@/shared/modal";
@@ -134,10 +135,14 @@ const { t } = useI18n();
 const { openModal } = useModal();
 const { loading, availableShippingMethods, availablePaymentMethods, forceFetch } = useFullCart();
 const { getUserCheckoutDefaults, setUserCheckoutDefaults } = useUserCheckoutDefaults();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.account.checkout_defaults.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.account.checkout_defaults.meta.title"),
+  },
+  head,
+);
 
 const savedCheckoutDefaults = ref<CheckoutDefaultsType>(getUserCheckoutDefaults());
 const localCheckoutDefaults = ref<CheckoutDefaultsType>(clone(savedCheckoutDefaults.value));

@@ -136,6 +136,7 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
 } from "@/core/utilities";
+import { getHeadInstance } from "@/core/utilities/head";
 import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
@@ -252,6 +253,7 @@ const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(product.value?.breadcr
 
 const productComponentAnchor = shallowRef<HTMLElement | null>(null);
 const productComponentAnchorIsVisible = useElementVisibility(productComponentAnchor);
+const head = getHeadInstance();
 
 async function sortVariations(sortInfo: ISortInfo): Promise<void> {
   variationSortInfo.value = sortInfo;
@@ -321,13 +323,16 @@ async function resetFacetFilters(): Promise<void> {
 
 watchEffect(() => {
   if (props.allowSetMeta && productComponentAnchorIsVisible.value) {
-    usePageHead({
-      title: seoTitle,
-      meta: {
-        keywords: seoKeywords,
-        description: seoDescription,
+    usePageHead(
+      {
+        title: seoTitle,
+        meta: {
+          keywords: seoKeywords,
+          description: seoDescription,
+        },
       },
-    });
+      head,
+    );
 
     useSeoMeta({
       ogUrl: seoUrl,

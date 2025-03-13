@@ -24,15 +24,20 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { ChangePasswordForm } from "@/shared/account";
 import { openReturnUrl, TabsType, useBroadcast } from "@/shared/broadcast";
 
 const { t } = useI18n();
 const broadcast = useBroadcast();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.change_password.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.change_password.meta.title"),
+  },
+  head,
+);
 
 const isSucceeded = ref(false);
 

@@ -146,6 +146,7 @@ import { useRouter } from "vue-router";
 import { object, ref as yupRef, string } from "yup";
 import { checkEmailUniqueness } from "@/core/api/graphql/account";
 import { usePageHead, useErrorsTranslator, useAnalytics } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { PasswordTips, RegistrationKind, usePasswordRequirements, useUser } from "@/shared/account";
 import type { AccountCreationResultType, RegistrationErrorType } from "@/core/api/graphql/types";
 
@@ -158,10 +159,14 @@ const { registerUser, registerOrganization, loading } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
 const { translate } = useErrorsTranslator<RegistrationErrorType>("identity_error");
 const { analytics } = useAnalytics();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.sign_up.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.sign_up.meta.title"),
+  },
+  head,
+);
 
 const validationSchema = toTypedSchema(
   object({

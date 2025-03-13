@@ -54,15 +54,20 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { usePageHead, useRouteQueryParam } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { ResetPasswordForm } from "@/shared/account";
 import { COLORS } from "@/ui-kit/constants";
 
 const route = useRoute();
 const { t } = useI18n();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.reset_password.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.reset_password.meta.title"),
+  },
+  head,
+);
 
 const isSucceeded = ref(false);
 

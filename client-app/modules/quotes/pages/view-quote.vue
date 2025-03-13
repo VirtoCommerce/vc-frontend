@@ -86,6 +86,7 @@ import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { useUserQuote } from "@/modules/quotes/useUserQuote";
 import { AddressInfo } from "@/shared/common";
 import { downloadFile } from "@/shared/files";
@@ -105,10 +106,14 @@ const { t } = useI18n();
 const { quote, billingAddress, approveItem, declineItem, shippingAddress, fetchQuote } = useUserQuote();
 const notification = useNotifications();
 const router = useRouter();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("quote_details.title", [quote!.value?.number]),
-});
+usePageHead(
+  {
+    title: t("quote_details.title", [quote!.value?.number]),
+  },
+  head,
+);
 
 async function approve() {
   try {

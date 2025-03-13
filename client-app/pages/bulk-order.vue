@@ -37,6 +37,7 @@ import { computed, ref, shallowRef, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
 import { useBulkOrderExtensionPoints } from "@/shared/bulk-order/composables/useBulkOrderExtensionPoints";
 import { useShortCart } from "@/shared/cart";
@@ -50,14 +51,18 @@ const router = useRouter();
 const { t } = useI18n();
 const { openModal } = useModal();
 const { loading: loadingCart, changing: cartChanging, addBulkItemsToCart } = useShortCart();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.bulk_order.meta.title"),
-  meta: {
-    keywords: t("pages.bulk_order.meta.keywords"),
-    description: t("pages.bulk_order.meta.description"),
+usePageHead(
+  {
+    title: t("pages.bulk_order.meta.title"),
+    meta: {
+      keywords: t("pages.bulk_order.meta.keywords"),
+      description: t("pages.bulk_order.meta.description"),
+    },
   },
-});
+  head,
+);
 
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.bulk_order.title") }]);
 

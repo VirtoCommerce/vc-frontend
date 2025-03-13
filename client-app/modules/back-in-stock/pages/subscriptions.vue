@@ -112,6 +112,7 @@ import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ProductType } from "@/core/enums";
 import { prepareLineItemForProduct } from "@/core/utilities";
+import { getHeadInstance } from "@/core/utilities/head";
 import { PageToolbarBlock } from "@/shared/account";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, AddToCart } from "@/shared/cart";
@@ -132,10 +133,14 @@ const {
   pagination,
   isProductSubscriptionActive,
 } = useBackInStockSubscriptions();
+const head = getHeadInstance();
 
-usePageHead({
-  title: computed(() => t("back_in_stock.subscriptions.meta.title")),
-});
+usePageHead(
+  {
+    title: computed(() => t("back_in_stock.subscriptions.meta.title")),
+  },
+  head,
+);
 
 const { fetchProducts, products, fetchingProducts } = useProducts();
 const { loading: cartLoading, cart } = useShortCart();
