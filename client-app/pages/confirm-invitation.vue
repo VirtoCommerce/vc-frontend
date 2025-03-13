@@ -109,6 +109,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { useErrorsTranslator, usePageHead, useRouteQueryParam } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { PasswordTips, RegistrationSuccessModal, usePasswordRequirements, useUser } from "@/shared/account";
 import { useModal } from "@/shared/modal";
 import type { IdentityErrorInfoType } from "@/core/api/graphql/types";
@@ -116,10 +117,14 @@ import type { IdentityErrorInfoType } from "@/core/api/graphql/types";
 const commonErrors = ref<string[]>([]);
 
 const { t } = useI18n();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.confirm_invitation.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.confirm_invitation.meta.title"),
+  },
+  head,
+);
 
 const { openModal } = useModal();
 const { loading, registerByInvite } = useUser();

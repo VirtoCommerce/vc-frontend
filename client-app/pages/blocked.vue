@@ -14,11 +14,16 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { ContactAdministratorLink } from "@/shared/common";
 
 const { t } = useI18n();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.blocked.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.blocked.meta.title"),
+  },
+  head,
+);
 </script>

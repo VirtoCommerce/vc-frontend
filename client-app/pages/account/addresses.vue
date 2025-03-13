@@ -186,6 +186,7 @@ import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
+import { getHeadInstance } from "@/core/utilities/head";
 import { AddressDropdownMenu, useUserAddresses } from "@/shared/account";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
@@ -205,10 +206,14 @@ const {
 } = useUserAddresses();
 const { openModal, closeModal } = useModal();
 const notifications = useNotifications();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.account.addresses.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.account.addresses.meta.title"),
+  },
+  head,
+);
 
 const page = ref(1);
 const itemsPerPage = ref(6);

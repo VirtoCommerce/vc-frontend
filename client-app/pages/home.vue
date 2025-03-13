@@ -86,29 +86,33 @@
 </template>
 
 <script setup lang="ts">
-import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { getHeadInstance, setSeoMeta } from "@/core/utilities/head";
 import { LoginFormSection } from "@/shared/layout";
 
 const { t } = useI18n();
 
 const homePageAnchor = shallowRef<HTMLElement | null>(null);
 const homePageAnchorIsVisible = useElementVisibility(homePageAnchor);
+const head = getHeadInstance();
 
 watch(homePageAnchorIsVisible, (value) => {
   if (value) {
-    usePageHead({
-      title: t("pages.home.meta.title"),
-      meta: {
-        keywords: t("pages.home.meta.keywords"),
-        description: t("pages.home.meta.description"),
+    usePageHead(
+      {
+        title: t("pages.home.meta.title"),
+        meta: {
+          keywords: t("pages.home.meta.keywords"),
+          description: t("pages.home.meta.description"),
+        },
       },
-    });
+      head,
+    );
 
-    useSeoMeta({
+    setSeoMeta({
       ogUrl: window.location.toString(),
       ogTitle: t("pages.home.meta.title"),
       ogDescription: t("pages.home.meta.description"),

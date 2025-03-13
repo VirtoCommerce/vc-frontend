@@ -125,6 +125,7 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { asyncForEach, isEqualAddresses } from "@/core/utilities";
+import { getHeadInstance } from "@/core/utilities/head";
 import { FILE_UPLOAD_SCOPE_NAME, MODULE_ID } from "@/modules/quotes/constants";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
@@ -194,10 +195,14 @@ const {
   options: fileOptions,
 } = useFiles(quoteFilesScope ? String(quoteFilesScope) : DEFAULT_QUOTE_FILES_SCOPE, attachedFiles);
 const notifications = useNotifications();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("quote_details.title", [quote!.value?.number]),
-});
+usePageHead(
+  {
+    title: t("quote_details.title", [quote!.value?.number]),
+  },
+  head,
+);
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },

@@ -416,6 +416,7 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { toDateISOString } from "@/core/utilities";
+import { getHeadInstance } from "@/core/utilities/head";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
 import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
 import { useUser } from "../composables";
@@ -467,11 +468,14 @@ const {
 } = useUserOrdersFilter();
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.account.orders.meta.title"),
-});
-usePageHead({ title: t("pages.account.orders.meta.title") });
+usePageHead(
+  {
+    title: t("pages.account.orders.meta.title"),
+  },
+  head,
+);
 
 const ORDER_SCOPE_KEY = `order-scope-${user.value.id}`;
 const orderScope = useLocalStorage<OrderScopeType>(ORDER_SCOPE_KEY, "private");

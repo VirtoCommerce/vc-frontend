@@ -113,6 +113,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables/usePageHead";
 import { Sort } from "@/core/types";
+import { getHeadInstance } from "@/core/utilities/head";
 import { usePurchaseRequests } from "@/modules/purchase-requests/composables/usePurchaseRequests";
 import type { SortDirection } from "@/core/enums";
 import type { ISortInfo } from "@/core/types";
@@ -120,10 +121,14 @@ import FromFile from "@/modules/purchase-requests/components/from-file.vue";
 
 const { t } = useI18n();
 const router = useRouter();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("purchase_requests.meta.title"),
-});
+usePageHead(
+  {
+    title: t("purchase_requests.meta.title"),
+  },
+  head,
+);
 
 const { loading, purchaseRequests, itemsPerPage, pages, page, sort } = usePurchaseRequests();
 

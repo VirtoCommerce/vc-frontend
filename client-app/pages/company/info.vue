@@ -328,6 +328,7 @@ import { useI18n } from "vue-i18n";
 import { string } from "yup";
 import { usePageHead, useWhiteLabeling } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
+import { getHeadInstance } from "@/core/utilities/head";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
 import {
   AddOrUpdateCompanyAddressModal,
@@ -360,10 +361,14 @@ const {
 } = useFiles(DEFAULT_COMPANY_FILES_SCOPE, undefined);
 const { whiteLabelingLogoUrl, fetchWhiteLabelingSettings } = useWhiteLabeling();
 const newLogoUrl = ref(whiteLabelingLogoUrl.value ?? "");
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.company.info.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.company.info.meta.title"),
+  },
+  head,
+);
 
 /**
  * This page is accessible only to members of the organization,

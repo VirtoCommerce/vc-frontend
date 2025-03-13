@@ -30,6 +30,7 @@
 import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useThemeContext } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { SignInForm } from "@/shared/account";
 
 const PASSWORD_AUTHENTICATION_TYPE = "Password";
@@ -52,10 +53,14 @@ const hasPasswordAuthentication = computed(() => {
 });
 
 const { t } = useI18n();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.sign_in.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.sign_in.meta.title"),
+  },
+  head,
+);
 </script>
 
 <style lang="scss">

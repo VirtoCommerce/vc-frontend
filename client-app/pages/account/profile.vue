@@ -91,9 +91,11 @@ import { ChangeCartCurrencyDocument } from "@/core/api/graphql/types";
 import { useCurrency, usePageHead, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { globals } from "@/core/globals";
+import { getHeadInstance } from "@/core/utilities/head";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
+
 const MAX_NAME_LENGTH = 64;
 
 const { t } = useI18n();
@@ -105,10 +107,14 @@ const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency()
 const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
 const broadcast = useBroadcast();
 const { storeId, cultureName } = globals;
+const head = getHeadInstance();
 
-usePageHead({
-  title: computed(() => t("pages.account.profile.meta.title")),
-});
+usePageHead(
+  {
+    title: computed(() => t("pages.account.profile.meta.title")),
+  },
+  head,
+);
 
 const validationSchema = toTypedSchema(
   yup.object({

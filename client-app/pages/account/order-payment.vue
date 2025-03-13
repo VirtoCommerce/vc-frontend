@@ -288,6 +288,7 @@ import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { getHeadInstance } from "@/core/utilities/head";
 import { useUserOrder } from "@/shared/account";
 import { OrderSummary, SelectPaymentMethodModal } from "@/shared/checkout";
 import { ContactAdministratorLink } from "@/shared/common";
@@ -321,13 +322,17 @@ const { t } = useI18n();
 const { loading, order, fetchShortOrder, fetchFullOrder, addOrUpdatePayment } = useUserOrder();
 const { openModal, closeModal } = useModal();
 const router = useRouter();
+const head = getHeadInstance();
 
-usePageHead({
-  title: computed(() => [
-    t("pages.account.order_details.meta.title", [order.value?.number]),
-    t("pages.account.order_payment.meta.title"),
-  ]),
-});
+usePageHead(
+  {
+    title: computed(() => [
+      t("pages.account.order_details.meta.title", [order.value?.number]),
+      t("pages.account.order_payment.meta.title"),
+    ]),
+  },
+  head,
+);
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },

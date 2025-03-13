@@ -1,7 +1,7 @@
-import { useSeoMeta } from "@unhead/vue";
 import { computed, watchEffect } from "vue";
 import { usePageHead } from "@/core/composables";
 import { globals } from "@/core/globals";
+import { getHeadInstance, setSeoMeta } from "@/core/utilities/head";
 import type { Category } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
@@ -12,6 +12,7 @@ type PropsType = {
 };
 
 const { i18n } = globals;
+const head = getHeadInstance();
 
 export function useCategorySeo({ category, allowSetMeta, categoryComponentAnchorIsVisible }: PropsType) {
   const seoTitle = computed(
@@ -26,19 +27,22 @@ export function useCategorySeo({ category, allowSetMeta, categoryComponentAnchor
 
   watchEffect(() => {
     if (allowSetMeta.value && categoryComponentAnchorIsVisible.value) {
-      usePageHead({
-        title: seoTitle,
-        meta: {
-          keywords: seoKeywords,
-          description: seoDescription,
+      usePageHead(
+        {
+          title: seoTitle,
+          meta: {
+            keywords: seoKeywords,
+            description: seoDescription,
+          },
         },
-      });
+        head,
+      );
 
       const seoUrl = category.value?.seoInfo?.semanticUrl
         ? `${window.location.host}\${currentCategory.value?.seoInfo?.semanticUrl`
         : window.location.toString();
 
-      useSeoMeta({
+      setSeoMeta({
         ogUrl: seoUrl,
         ogTitle: seoTitle,
         ogDescription: seoDescription,

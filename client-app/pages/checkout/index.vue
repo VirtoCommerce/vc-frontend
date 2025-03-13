@@ -24,6 +24,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { usePageHead, useThemeContext } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
 
@@ -40,6 +41,7 @@ const {
   canPayNow,
   initialize,
 } = useCheckout();
+const head = getHeadInstance();
 
 const loading = computedEager(() => loadingCart.value || loadingCheckout.value);
 const changing = computedEager(() => changingCart.value || changingCheckout.value);
@@ -102,9 +104,12 @@ const currentStepId = computed(() => route.name as string);
 const currentStepIndex = computed(() => steps.value.findIndex((step) => step.id === currentStepId.value));
 const pageTitle = computed(() => steps.value[currentStepIndex.value]?.text);
 
-usePageHead({
-  title: computed(() => [t("pages.checkout.meta.title"), pageTitle.value]),
-});
+usePageHead(
+  {
+    title: computed(() => [t("pages.checkout.meta.title"), pageTitle.value]),
+  },
+  head,
+);
 
 void (async () => {
   await forceFetch();

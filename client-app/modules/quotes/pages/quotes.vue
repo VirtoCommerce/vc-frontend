@@ -197,6 +197,7 @@ import { useRouteQueryParam, usePageHead, useThemeContext } from "@/core/composa
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
+import { getHeadInstance } from "@/core/utilities/head";
 import { PageToolbarBlock } from "@/shared/account";
 import { CreateQuoteDocument } from "../api/graphql/types";
 import QuoteStatus from "../components/quote-status.vue";
@@ -209,9 +210,14 @@ const { themeContext } = useThemeContext();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { storeId, userId, currencyCode, cultureName } = globals;
-usePageHead({
-  title: t("quotes.meta.title"),
-});
+const head = getHeadInstance();
+
+usePageHead(
+  {
+    title: t("quotes.meta.title"),
+  },
+  head,
+);
 
 const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
 const { mutate: createQuote } = useMutation(CreateQuoteDocument);

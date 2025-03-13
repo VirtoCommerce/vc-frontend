@@ -52,6 +52,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useThemeContext } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
+import { getHeadInstance } from "@/core/utilities/head";
 import { useModal } from "@/shared/modal";
 import {
   AddOrUpdateWishlistModal,
@@ -67,10 +68,14 @@ const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const { openModal } = useModal();
 const { loading, lists, fetchWishlists, updateWishlist } = useWishlists();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.account.lists.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.account.lists.meta.title"),
+  },
+  head,
+);
 
 const listsLimit = themeContext.value?.settings?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 

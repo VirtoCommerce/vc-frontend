@@ -68,14 +68,19 @@ import { invoke } from "@vueuse/core";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useRouteQueryParam } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { useUser } from "@/shared/account";
 import type { CustomIdentityResultType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.confirm_email.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.confirm_email.meta.title"),
+  },
+  head,
+);
 
 const { confirmEmail, sendVerifyEmail, loading } = useUser();
 

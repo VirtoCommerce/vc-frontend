@@ -105,6 +105,7 @@ import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { getPropertyValue } from "@/core/utilities";
+import { getHeadInstance } from "@/core/utilities/head";
 import { ProductCardCompare, useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
 import { useModal } from "@/shared/modal";
@@ -115,14 +116,18 @@ interface ICompareProductProperties {
 }
 
 const { t } = useI18n();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.compare.meta.title"),
-  meta: {
-    keywords: t("pages.compare.meta.keywords"),
-    description: t("pages.compare.meta.description"),
+usePageHead(
+  {
+    title: t("pages.compare.meta.title"),
+    meta: {
+      keywords: t("pages.compare.meta.keywords"),
+      description: t("pages.compare.meta.description"),
+    },
   },
-});
+  head,
+);
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { analytics } = useAnalytics();

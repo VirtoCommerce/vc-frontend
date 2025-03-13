@@ -87,9 +87,12 @@ import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
+import { getHeadInstance } from "@/core/utilities/head";
 import PushMessage from "../components/push-message.vue";
 import { usePushMessages } from "../composables/usePushMessages";
+
 const { t } = useI18n();
+const head = getHeadInstance();
 
 const showUnreadOnly = useLocalStorage<boolean>("showUnreadOnly_pushMessages_history", false);
 
@@ -100,9 +103,12 @@ const { items, markReadAll, markUnreadAll, totalCount, unreadCountWithHidden, lo
   withHidden: true,
 });
 
-usePageHead({
-  title: t("push_messages.title"),
-});
+usePageHead(
+  {
+    title: t("push_messages.title"),
+  },
+  head,
+);
 
 function resetPagination() {
   changePage(1);

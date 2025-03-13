@@ -171,6 +171,7 @@ import { recentlyBrowsed } from "@/core/api/graphql";
 import { useBreadcrumbs, useAnalytics, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY, MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { getHeadInstance } from "@/core/utilities/head";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
@@ -224,10 +225,14 @@ const { continue_shopping_link } = getModuleSettings({
 const { isEnabled: isEnabledXRecommend } = useModuleSettings(MODULE_ID_XRECOMMEND);
 
 const { sidebarWidgets } = useCartExtensionPoints();
+const head = getHeadInstance();
 
-usePageHead({
-  title: t("pages.cart.meta.title"),
-});
+usePageHead(
+  {
+    title: t("pages.cart.meta.title"),
+  },
+  head,
+);
 
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 

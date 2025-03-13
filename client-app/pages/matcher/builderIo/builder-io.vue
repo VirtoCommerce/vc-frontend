@@ -10,6 +10,7 @@ import { useElementVisibility } from "@vueuse/core";
 import { onMounted, ref, shallowRef, watchEffect } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
 import { usePageHead } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 import { builderIOComponents } from "./customComponents";
 import type { StateType } from "../priorityManager";
 import type { BuilderContent } from "@builder.io/sdk-vue";
@@ -77,6 +78,7 @@ async function tryLoadContent(urlPath: string) {
 
 const builderIoAnchor = shallowRef<HTMLElement | null>(null);
 const builderIoAnchorIsVisible = useElementVisibility(builderIoAnchor);
+const head = getHeadInstance();
 
 type MetaDataType = { title?: string; keywords?: string; description?: string };
 
@@ -86,14 +88,17 @@ watchEffect(() => {
   if (data && builderIoAnchorIsVisible.value) {
     const { title, keywords, description } = data;
 
-    usePageHead({
-      title,
-      meta: {
+    usePageHead(
+      {
         title,
-        keywords,
-        description,
+        meta: {
+          title,
+          keywords,
+          description,
+        },
       },
-    });
+      head,
+    );
   }
 });
 

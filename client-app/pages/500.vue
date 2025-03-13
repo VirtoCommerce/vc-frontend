@@ -23,12 +23,17 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { getHeadInstance } from "@/core/utilities/head";
 
 const { t } = useI18n();
+const head = getHeadInstance();
 
-usePageHead({
-  title: `${t("pages.500.error_code")} ${t("pages.500.error_text")}`,
-});
+usePageHead(
+  {
+    title: `${t("pages.500.error_code")} ${t("pages.500.error_text")}`,
+  },
+  head,
+);
 </script>
 
 <style scoped lang="scss">
