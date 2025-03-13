@@ -1,8 +1,7 @@
-import { useSeoMeta } from "@unhead/vue";
 import { computed, watchEffect } from "vue";
 import { usePageHead } from "@/core/composables";
 import { globals } from "@/core/globals";
-import { getHeadInstance } from "@/core/utilities/head";
+import { getHeadInstance, setSeoMeta } from "@/core/utilities/head";
 import type { Category } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
@@ -43,7 +42,7 @@ export function useCategorySeo({ category, allowSetMeta, categoryComponentAnchor
         ? `${window.location.host}\${currentCategory.value?.seoInfo?.semanticUrl`
         : window.location.toString();
 
-      useSeoMeta({
+      setSeoMeta({
         ogUrl: seoUrl,
         ogTitle: seoTitle,
         ogDescription: seoDescription,

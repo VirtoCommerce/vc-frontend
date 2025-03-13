@@ -86,12 +86,11 @@
 </template>
 
 <script setup lang="ts">
-import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
-import { getHeadInstance } from "@/core/utilities/head";
+import { getHeadInstance, setSeoMeta } from "@/core/utilities/head";
 import { LoginFormSection } from "@/shared/layout";
 
 const { t } = useI18n();
@@ -113,7 +112,7 @@ watch(homePageAnchorIsVisible, (value) => {
       head,
     );
 
-    useSeoMeta({
+    setSeoMeta({
       ogUrl: window.location.toString(),
       ogTitle: t("pages.home.meta.title"),
       ogDescription: t("pages.home.meta.description"),

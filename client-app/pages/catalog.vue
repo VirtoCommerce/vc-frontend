@@ -3,12 +3,11 @@
 </template>
 
 <script setup lang="ts">
-import { useSeoMeta } from "@unhead/vue";
 import { computed, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { globals } from "@/core/globals";
-import { getHeadInstance } from "@/core/utilities/head";
+import { getHeadInstance, setSeoMeta } from "@/core/utilities/head";
 import { useSlugInfo } from "@/shared/common";
 import Category from "@/shared/catalog/components/category.vue";
 
@@ -35,7 +34,7 @@ watchEffect(() => {
     head,
   );
 
-  useSeoMeta({
+  setSeoMeta({
     ogTitle: title.value,
     ogDescription: seoInfo?.value?.metaDescription,
   });

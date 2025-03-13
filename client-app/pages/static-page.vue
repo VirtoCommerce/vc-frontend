@@ -25,11 +25,10 @@
 </template>
 
 <script setup lang="ts">
-import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { computed, shallowRef, unref, watchEffect } from "vue";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { getHeadInstance } from "@/core/utilities/head";
+import { getHeadInstance, setSeoMeta } from "@/core/utilities/head";
 import { useStaticPage } from "@/shared/static-content";
 
 const { staticPage: template } = useStaticPage();
@@ -58,7 +57,7 @@ watchEffect(() => {
       head,
     );
 
-    useSeoMeta({
+    setSeoMeta({
       ogUrl: window.location.toString(),
       ogTitle: pageTitle,
       ogDescription: pageDescription,

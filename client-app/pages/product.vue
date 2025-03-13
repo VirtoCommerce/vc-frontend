@@ -117,7 +117,6 @@
 </template>
 
 <script setup lang="ts">
-import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
@@ -136,7 +135,7 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
 } from "@/core/utilities";
-import { getHeadInstance } from "@/core/utilities/head";
+import { getHeadInstance, setSeoMeta } from "@/core/utilities/head";
 import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
@@ -334,7 +333,7 @@ watchEffect(() => {
       head,
     );
 
-    useSeoMeta({
+    setSeoMeta({
       ogUrl: seoUrl,
       ogTitle: seoTitle,
       ogDescription: seoDescription,
