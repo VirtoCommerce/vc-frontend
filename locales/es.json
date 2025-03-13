@@ -336,6 +336,13 @@
             "input_placeholder": "Introduce palabra clave, artículo, modelo o número de pieza de repuesto"
           },
           "view_all_catalog": "Ver todos los productos en la categoría"
+        },
+        "ship_to_selector": {
+          "add_new": "Añadir nuevo",
+          "contact_administrator": "Contacta con el administrador de tu organización para añadir una nueva dirección.",
+          "search": "Buscar",
+          "select_address": "Seleccionar dirección",
+          "title": "Enviar a:"
         }
       },
       "footer": {

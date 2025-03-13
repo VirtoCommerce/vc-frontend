@@ -336,6 +336,13 @@
             "input_placeholder": "Digite palavra-chave, item, modelo ou número de peça de reposição"
           },
           "view_all_catalog": "Ver todos os produtos na categoria"
+        },
+        "ship_to_selector": {
+          "add_new": "Adicionar novo",
+          "contact_administrator": "Contacte o administrador da sua organização para adicionar um novo endereço.",
+          "search": "Pesquisar",
+          "select_address": "Selecionar endereço",
+          "title": "Enviar para:"
         }
       },
       "footer": {

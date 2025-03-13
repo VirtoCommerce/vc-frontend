@@ -336,6 +336,13 @@
             "input_placeholder": "Wpisz słowo kluczowe, przedmiot, model lub numer części zamiennych"
           },
           "view_all_catalog": "Zobacz wszystkie produkty w kategorii"
+        },
+        "ship_to_selector": {
+          "add_new": "Dodaj nowy",
+          "contact_administrator": "Skontaktuj się z administratorem organizacji, aby dodać nowy adres.",
+          "search": "Szukaj",
+          "select_address": "Wybierz adres",
+          "title": "Wyślij do:"
         }
       },
       "footer": {
