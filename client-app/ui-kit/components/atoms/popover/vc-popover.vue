@@ -69,6 +69,7 @@ interface IProps {
   hover?: boolean;
   disableTriggerEvents?: boolean;
   arrowEnabled?: boolean;
+  closeOnBlur?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -141,7 +142,7 @@ onClickOutside(
 watch(opened, (value: boolean) => emit("toggle", value));
 
 watch(focused, (value: boolean) => {
-  if (!value) {
+  if (!value && props.closeOnBlur) {
     close();
   }
 });

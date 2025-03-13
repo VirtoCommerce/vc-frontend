@@ -1,11 +1,17 @@
 <template>
-  <VcPopover class="vc-push-messages" :placement="placement" :offset-options="offsetOptions" arrow-enabled>
+  <VcPopover
+    class="vc-push-messages"
+    :placement="placement"
+    :offset-options="offsetOptions"
+    arrow-enabled
+    close-on-blur
+  >
     <template #trigger>
       <slot name="trigger" />
     </template>
 
     <template #content="{ close: closeMessages }">
-      <div class="vc-push-messages__dropdown">
+      <div class="vc-push-messages__dropdown" tabindex="-1">
         <div class="vc-push-messages__list">
           <div class="vc-push-messages__head">
             <div class="vc-push-messages__title">
@@ -115,6 +121,7 @@ interface IProps {
   withOptions?: boolean;
   offsetOptions?: VcPopoverOffsetOptionsType;
   placement?: VcPopoverPlacementType;
+  closeOnBlur?: boolean;
 }
 
 const emits = defineEmits<IEmits>();
