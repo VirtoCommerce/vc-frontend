@@ -75,7 +75,7 @@ export function useBopis() {
       return anonymousAddresses.value.find((address) => address.id === selectedAnonymousShipToAddressId.value);
     }
 
-    return cartShipment.value?.deliveryAddress;
+    return cartShipment.value?.deliveryAddress; // TODO: refactor to use from GetMe
   });
 
   function getFilteredAddresses(isSeeMore: boolean, filter?: string) {
@@ -127,11 +127,12 @@ export function useBopis() {
     if (userType.value === USER_TYPE.ANONYMOUS) {
       selectedAnonymousShipToAddressId.value = address.id;
     } else {
-      await updateShipmentCart({
-        id: cartShipment.value?.id,
-        deliveryAddress: omit(address, ["isDefault", "isFavorite"]),
-      });
+      // TODO: save to profile settings
     }
+    await updateShipmentCart({
+      id: cartShipment.value?.id,
+      deliveryAddress: omit(address, ["isDefault", "isFavorite"]),
+    });
   }
 
   function openSelectAddressModal(): void {

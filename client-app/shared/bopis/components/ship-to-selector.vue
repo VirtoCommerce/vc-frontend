@@ -5,11 +5,13 @@
         <button class="ship-to-selector__trigger" type="button">
           <VcIcon name="location-marker" size="xs" />
 
-          <span class="ship-to-selector__label">Ship to:</span>
+          <span class="ship-to-selector__label">{{ $t("shared.layout.header.ship_to_selector.title") }}:</span>
 
           <AddressLine v-if="selectedAddress" :address="selectedAddress" class="ship-to-selector__selected" />
 
-          <span v-else class="ship-to-selector__placeholder">Select address</span>
+          <span v-else class="ship-to-selector__placeholder">{{
+            $t("shared.layout.header.ship_to_selector.select_address")
+          }}</span>
 
           <VcIcon size="xxs" :name="opened ? 'chevron-up' : 'chevron-down'" />
         </button>
@@ -21,8 +23,11 @@
             <template #main>
               <div class="ship-to-selector__header">
                 <div class="ship-to-selector__head">
-                  <div class="ship-to-selector__title">Select address</div>
+                  <div v-if="hasAddresses" class="ship-to-selector__title">
+                    {{ $t("shared.layout.header.ship_to_selector.select_address") }}
+                  </div>
                   <VcButton
+                    v-if="canAddAddress"
                     size="xs"
                     variant="outline"
                     color="secondary"
@@ -32,12 +37,20 @@
                       close();
                     "
                   >
-                    Add new
+                    {{ $t("shared.layout.header.ship_to_selector.add_new") }}
                   </VcButton>
+                  <div v-if="!canAddAddress && !hasAddresses && isCorporateMember" class="ship-to-selector__empty">
+                    {{ $t("shared.layout.header.ship_to_selector.contact_administrator") }}
+                  </div>
                 </div>
 
-                <div v-if="addresses.length > 0" class="ship-to-selector__search">
-                  <VcInput v-model="filter" size="sm" clearable placeholder="Search" />
+                <div v-if="hasAddresses" class="ship-to-selector__search">
+                  <VcInput
+                    v-model="filter"
+                    size="sm"
+                    clearable
+                    :placeholder="$t('shared.layout.header.ship_to_selector.search')"
+                  />
                 </div>
               </div>
             </template>
@@ -84,7 +97,7 @@
             </template>
           </VcDialogContent>
 
-          <VcDialogFooter v-if="filter.length === 0 && addresses.length > 0">
+          <VcDialogFooter v-if="filter.length === 0 && hasAddresses">
             <template #container>
               <div class="ship-to-selector__foot">
                 <VcButtonSeeMoreLess
@@ -104,6 +117,8 @@
 
 <script setup lang="ts">
 import { computed, watchEffect, ref } from "vue";
+import { XApiPermissions } from "@/core/enums";
+import { useUser } from "@/shared/account";
 import { AddressLine } from "@/shared/common";
 import { MAX_ADDRESSES_NUMBER, useBopis } from "../composables";
 
@@ -118,15 +133,21 @@ const isSeeMore = ref(false);
 
 const {
   accountAddresses: allAddresses,
+  loading,
+  selectedAddress,
   getFilteredAddresses,
   fetchAddresses,
   selectAddress,
-  selectedAddress,
-  loading,
   openAddOrUpdateAddressModal,
 } = useBopis();
 
+const { isCorporateMember, checkPermissions } = useUser();
+
+// all users except corporate members without edit organization permission
+const canAddAddress = computed(() => !isCorporateMember.value || checkPermissions(XApiPermissions.CanEditOrganization));
+
 const addresses = computed(() => getFilteredAddresses(isSeeMore.value, filter.value));
+const hasAddresses = computed(() => addresses.value.length > 0);
 
 watchEffect(async () => {
   await fetchAddresses();
@@ -219,6 +240,10 @@ watchEffect(async () => {
 
   &__foot {
     @apply flex justify-center px-4 py-2 w-full;
+  }
+
+  &__empty {
+    @apply py-2 text-sm text-neutral;
   }
 }
 </style>
