@@ -5343,6 +5343,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/emscripten@npm:^1.40.0":
+  version: 1.40.0
+  resolution: "@types/emscripten@npm:1.40.0"
+  checksum: 10c0/2c809da43cb42396a78bc1bf1f8bb1eb23874b22425ccc0efd2dff80522318739fc38e845d98983948ca271fe1a551f68043094d20df14e745aff8db2123a0e5
+  languageName: node
+  linkType: hard
+
 "@types/estree@npm:1.0.6, @types/estree@npm:^1.0.0":
   version: 1.0.6
   resolution: "@types/estree@npm:1.0.6"
@@ -6855,6 +6862,15 @@ __metadata:
   version: 1.0.2
   resolution: "balanced-match@npm:1.0.2"
   checksum: 10c0/9308baf0a7e4838a82bbfd11e01b1cb0f0cf2893bc1676c27c2a8c0e70cbae1c59120c3268517a8ae7fb6376b4639ef81ca22582611dbee4ed28df945134aaee
+  languageName: node
+  linkType: hard
+
+"barcode-detector@npm:3.0.1":
+  version: 3.0.1
+  resolution: "barcode-detector@npm:3.0.1"
+  dependencies:
+    zxing-wasm: "npm:^2.1.0"
+  checksum: 10c0/28d842b985ce5d6d21b684e6be5b3f437f627af90478f0530b92ebbe0d896a5d4bf70d9738b747bb6a3deee85d16897b6cece73891d3d8a9dc0707f22782a9c5
   languageName: node
   linkType: hard
 
@@ -15382,6 +15398,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"type-fest@npm:^4.35.0":
+  version: 4.37.0
+  resolution: "type-fest@npm:4.37.0"
+  checksum: 10c0/5bad189f66fbe3431e5d36befa08cab6010e56be68b7467530b7ef94c3cf81ef775a8ac3047c8bbda4dd3159929285870357498d7bc1df062714f9c5c3a84926
+  languageName: node
+  linkType: hard
+
 "type-fest@npm:^4.8.3":
   version: 4.34.1
   resolution: "type-fest@npm:4.34.1"
@@ -15788,6 +15811,7 @@ __metadata:
     "@vueuse/integrations": "npm:^10.11.0"
     autoprefixer: "npm:^10.4.19"
     axios: "npm:^1.7.2"
+    barcode-detector: "npm:3.0.1"
     dependency-cruiser: "npm:^16.3.3"
     dompurify: "npm:^3.1.6"
     eslint: "npm:^8.57.0"
@@ -16841,5 +16865,17 @@ __metadata:
   version: 2.2.4
   resolution: "zhead@npm:2.2.4"
   checksum: 10c0/3d166fb661f1b7fdf8a0ef2222d9e574ab241e72141f2f1fda62a9250ca73aabf2eaf0d66046a3984cd24d1dd9bac231338c6271684d6b8caa6b66af7c45f275
+  languageName: node
+  linkType: hard
+
+"zxing-wasm@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "zxing-wasm@npm:2.1.0"
+  dependencies:
+    "@types/emscripten": "npm:^1.40.0"
+    type-fest: "npm:^4.35.0"
+  peerDependencies:
+    "@types/emscripten": ">=1.39.6"
+  checksum: 10c0/1b77f9c13749d54e6942c17a06b83a8d929163b5609a04e8ba93008acac4626172e2bca6243005094ea6b78c1c5363d0a0933ac6a7df5c2ededf66d060310909
   languageName: node
   linkType: hard
