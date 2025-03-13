@@ -1,7 +1,7 @@
 import { ApolloError, gql } from "@apollo/client/core";
 import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import { createSharedComposable, computedEager } from "@vueuse/core";
-import { sumBy, difference, keyBy, merge, intersection, omit } from "lodash";
+import { sumBy, difference, keyBy, merge, intersection } from "lodash";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { AbortReason } from "@/core/api/common/enums";
@@ -17,7 +17,6 @@ import {
   AddGiftItemsDocument,
   AddItemDocument,
   AddItemsCartDocument,
-  AddOrUpdateCartAddressDocument,
   AddOrUpdateCartPaymentDocument,
   AddOrUpdateCartShipmentDocument,
   ChangeCartCommentDocument,
@@ -36,7 +35,7 @@ import {
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
 import { useSyncMutationBatchers } from "@/core/composables/useSyncMutationBatchers";
-import { AddressType, ProductType, ValidationErrorObjectType } from "@/core/enums";
+import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { groupByVendor, Logger } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
@@ -56,9 +55,7 @@ import type {
   AddOrUpdateCartPaymentMutationVariables,
   LineItemType,
   ConfigurationSectionInput,
-  InputAddressType,
 } from "@/core/api/graphql/types";
-import type { AnyAddressType } from "@/core/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
 import type { DeepReadonly } from "vue";
 
@@ -190,7 +187,6 @@ export function _useFullCart() {
   const shipment = computed(() => cart.value?.shipments[0]);
   const payment = computed(() => cart.value?.payments[0]);
 
-  const addresses = computed(() => cart.value?.addresses ?? []);
   const availableShippingMethods = computed(() => cart.value?.availableShippingMethods ?? []);
   const availablePaymentMethods = computed(() => cart.value?.availablePaymentMethods ?? []);
 
@@ -494,17 +490,6 @@ export function _useFullCart() {
     }
   }
 
-  const { mutate: _addOrUpdateAddress, loading: addOrUpdateAddressLoading } =
-    useMutation(AddOrUpdateCartAddressDocument);
-  async function addOrUpdateAddress(value: InputAddressType): Promise<void> {
-    try {
-      await _addOrUpdateAddress({ command: { address: value, ...commonVariables }, skipQuery: false });
-    } catch (e) {
-      Logger.error(addOrUpdateAddress.name, e);
-      notifications.error({ text: "Cart Address Add Or Update Error" });
-    }
-  }
-
   const { mutate: _addGiftItems, loading: addGiftItemsLoading } = useMutation(AddGiftItemsDocument);
   async function addGiftsToCart(giftIds: string[]): Promise<void> {
     await _addGiftItems({ command: { ids: giftIds, ...commonVariables }, skipQuery: false });
@@ -523,19 +508,6 @@ export function _useFullCart() {
     }
   }
 
-  async function saveShipToAddress(address: AnyAddressType) {
-    if (!address) {
-      return;
-    }
-
-    const inputAddress: InputAddressType = {
-      ...omit(address, ["isDefault", "isFavorite"]),
-      addressType: AddressType.Shipping,
-    };
-
-    await addOrUpdateAddress(inputAddress);
-  }
-
   function openClearCartModal() {
     openModal({
       component: ClearCartModal,
@@ -552,7 +524,6 @@ export function _useFullCart() {
     cart,
     shipment,
     payment,
-    addresses,
     availableShippingMethods,
     availablePaymentMethods,
     selectedItemIds,
@@ -581,14 +552,12 @@ export function _useFullCart() {
     changeComment,
     updateShipment,
     removeShipment,
-    addOrUpdateAddress,
     updatePayment,
     updatePurchaseOrderNumber,
     clearCart,
     addGiftsToCart,
     removeGiftsFromCart,
     toggleGift,
-    saveShipToAddress,
     openClearCartModal,
     loading: readonly(loading),
     changing: computed(
@@ -605,7 +574,6 @@ export function _useFullCart() {
         changePurchaseOrderNumberLoading.value ||
         addOrUpdateShipmentLoading.value ||
         removeShipmentLoading.value ||
-        addOrUpdateAddressLoading.value ||
         addOrUpdatePaymentLoading.value ||
         addGiftItemsLoading.value ||
         rejectGiftItemsLoading.value,

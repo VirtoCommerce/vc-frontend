@@ -1,4 +1,5 @@
 import { useLocalStorage } from "@vueuse/core";
+import { omit } from "lodash";
 import { computed } from "vue";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
@@ -35,7 +36,7 @@ export function useBopis() {
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
   } = useOrganizationAddresses(organization.value?.id ?? "");
 
-  const { saveShipToAddress, changing, addresses: cartAddresses, forceFetch } = useFullCart();
+  const { updateShipment: updateShipmentCart, shipment: cartShipment, changing, forceFetch } = useFullCart();
 
   const anonymousAddresses = useLocalStorage<AnyAddressType[]>("anonymousShipToAddresses", []);
   const selectedAnonymousShipToAddressId = useLocalStorage<string | null>("selectedAnonymousShipToAddressId", null);
@@ -74,7 +75,7 @@ export function useBopis() {
       return anonymousAddresses.value.find((address) => address.id === selectedAnonymousShipToAddressId.value);
     }
 
-    return cartAddresses.value[0];
+    return cartShipment.value?.deliveryAddress;
   });
 
   function getFilteredAddresses(isSeeMore: boolean, filter?: string) {
@@ -126,7 +127,10 @@ export function useBopis() {
     if (userType.value === USER_TYPE.ANONYMOUS) {
       selectedAnonymousShipToAddressId.value = address.id;
     } else {
-      await saveShipToAddress(address);
+      await updateShipmentCart({
+        id: cartShipment.value?.id,
+        deliveryAddress: omit(address, ["isDefault", "isFavorite"]),
+      });
     }
   }
 
@@ -183,12 +187,14 @@ export function useBopis() {
   }
 
   return {
-    selectedAddress,
     accountAddresses,
-    getFilteredAddresses,
-    fetchAddresses,
-    selectAddress,
     loading,
+    selectedAddress,
+
+    fetchAddresses,
+    getFilteredAddresses,
+    selectAddress,
+
     openSelectAddressModal,
     openAddOrUpdateAddressModal,
   };
