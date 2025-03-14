@@ -38,7 +38,7 @@ export function useBopis() {
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
   } = useOrganizationAddresses(organization.value?.id ?? "");
 
-  const { updateShipment: updateShipmentCart, shipment: cartShipment, changing, forceFetch } = useFullCart();
+  const { updateShipment: updateShipmentCart, shipment: cartShipment, forceFetch } = useFullCart();
 
   const localShipToAddresses = useLocalStorage<AnyAddressType[]>("localShipToAddresses", []);
   const selectedLocalShipToAddressId = useLocalStorage<string | null>("selectedLocalShipToAddressId", null);
@@ -71,9 +71,7 @@ export function useBopis() {
     }
   });
 
-  const loading = computed(
-    () => loadingUser.value || loadingOrganizationAddresses.value || loadingUserAddresses.value || changing.value,
-  );
+  const loading = computed(() => loadingUser.value || loadingOrganizationAddresses.value || loadingUserAddresses.value);
 
   const selectedAddress = computed(() => {
     if (userType.value === USER_TYPE.ANONYMOUS) {

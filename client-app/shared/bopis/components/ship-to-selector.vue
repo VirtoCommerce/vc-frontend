@@ -1,17 +1,24 @@
 <template>
   <div class="ship-to-selector">
-    <VcPopover class="ship-to-selector__popover" arrow-enabled max-height="none" close-on-blur :offset-options="12">
+    <VcPopover
+      v-if="allAddresses.length > 0"
+      class="ship-to-selector__popover"
+      arrow-enabled
+      max-height="none"
+      close-on-blur
+      :offset-options="12"
+    >
       <template #trigger="{ opened }">
         <button class="ship-to-selector__trigger" type="button">
           <VcIcon name="location-marker" size="xs" />
 
-          <span class="ship-to-selector__label">{{ $t("shared.layout.header.ship_to_selector.title") }}:</span>
+          <span class="ship-to-selector__label">{{ $t("shared.layout.header.ship_to_selector.title") }}</span>
 
           <AddressLine v-if="selectedAddress" :address="selectedAddress" class="ship-to-selector__selected" />
 
-          <span v-else class="ship-to-selector__placeholder">{{
-            $t("shared.layout.header.ship_to_selector.select_address")
-          }}</span>
+          <span v-else class="ship-to-selector__placeholder">
+            {{ $t("shared.layout.header.ship_to_selector.select_address") }}
+          </span>
 
           <VcIcon size="xxs" :name="opened ? 'chevron-up' : 'chevron-down'" />
         </button>
@@ -23,11 +30,10 @@
             <template #main>
               <div class="ship-to-selector__header">
                 <div class="ship-to-selector__head">
-                  <div v-if="hasAddresses" class="ship-to-selector__title">
+                  <div class="ship-to-selector__title">
                     {{ $t("shared.layout.header.ship_to_selector.select_address") }}
                   </div>
                   <VcButton
-                    class="ship-to-selector__add-new"
                     size="xs"
                     variant="outline"
                     color="secondary"
@@ -41,7 +47,7 @@
                   </VcButton>
                 </div>
 
-                <div v-if="hasAddresses" class="ship-to-selector__search">
+                <div v-if="allAddresses.length > MAX_ADDRESSES_NUMBER" class="ship-to-selector__search">
                   <VcInput
                     v-model="filter"
                     size="sm"
@@ -94,21 +100,24 @@
             </template>
           </VcDialogContent>
 
-          <VcDialogFooter v-if="filter.length === 0 && hasAddresses">
+          <VcDialogFooter v-if="hasAddresses && filter.length === 0 && allAddresses.length > MAX_ADDRESSES_NUMBER">
             <template #container>
               <div class="ship-to-selector__foot">
-                <VcButtonSeeMoreLess
-                  v-if="allAddresses.length > MAX_ADDRESSES_NUMBER"
-                  :model-value="isSeeMore"
-                  size="xs"
-                  @click="isSeeMore = !isSeeMore"
-                />
+                <VcButtonSeeMoreLess :model-value="isSeeMore" size="xs" @click="isSeeMore = !isSeeMore" />
               </div>
             </template>
           </VcDialogFooter>
         </VcDialog>
       </template>
     </VcPopover>
+    <div v-else class="ship-to-selector__empty">
+      <VcIcon name="location-marker" size="xs" />
+
+      <span class="ship-to-selector__label">{{ $t("shared.layout.header.ship_to_selector.title") }}</span>
+      <VcButton size="xs" variant="no-background" @click="openAddOrUpdateAddressModal()">
+        {{ $t("shared.layout.header.ship_to_selector.add_new_address") }}
+      </VcButton>
+    </div>
   </div>
 </template>
 
@@ -185,7 +194,7 @@ watchEffect(async () => {
     }
   }
 
-  &__loader {
+  &__loading {
     @apply flex items-center justify-center min-h-20;
   }
 
@@ -233,11 +242,7 @@ watchEffect(async () => {
   }
 
   &__empty {
-    @apply py-2 text-sm text-neutral;
-  }
-
-  &__add-new {
-    @apply only:flex-grow;
+    @apply flex items-center gap-1;
   }
 }
 </style>
