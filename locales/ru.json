@@ -650,12 +650,19 @@
       },
       "shipping_details_section": {
         "title": "Информация о доставке",
+        "switchers": {
+          "pickup": "Самовывоз",
+          "shipping": "Доставка"
+        },
         "labels": {
           "shipping_address": "Адрес доставки",
-          "shipping_method": "Способ доставки"
+          "shipping_method": "Способ доставки",
+          "delivery_option": "Вариант доставки",
+          "pickup_point": "Пункт самовывоза"
         },
         "links": {
-          "select_address": "выберите адрес доставки"
+          "select_address": "выберите адрес доставки",
+          "select_pickup_point": "выбрать пункт самовывоза"
         }
       },
       "billing_details_section": {
