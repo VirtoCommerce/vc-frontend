@@ -13,6 +13,7 @@
     :z-index="zIndex"
     :disabled="disabled"
     :disable-trigger-events="disableTriggerEvents"
+    :close-on-blur="closeOnBlur"
     @toggle="$emit('toggle', $event)"
   >
     <template #trigger="{ toggle, open, close, opened }">
@@ -44,6 +45,7 @@ interface IProps {
   zIndex?: number | string;
   disableTriggerEvents?: boolean;
   dividers?: boolean;
+  closeOnBlur?: boolean;
 }
 
 defineEmits<IEmits>();

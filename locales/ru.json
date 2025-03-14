@@ -72,8 +72,9 @@
       "add_items_to_cart": "Добавить товары в корзину",
       "show_details": "Показать детали",
       "add_with_bulk_order": "Добавить оптом",
-      "agency": "Агентства",
-      "personal": "Личные"
+      "all_orders": "Все заказы",
+      "my_orders": "Мои заказы",
+      "scroll_to_top": "Прокрутить вверх"
     },
     "labels": {
       "actions": "Действия",
@@ -153,7 +154,8 @@
       "support_phone_number": "Номер телефона службы поддержки",
       "main_menu": "Главное меню",
       "toggle_search_bar": "Отобразить/скрыть панель поиска",
-      "slider_image": "Картинка в слайдере"
+      "slider_image": "Картинка в слайдере",
+      "buyer_name": "Имя покупателя"
     },
     "prefixes": {
       "please": "Пожалуйста",
@@ -240,7 +242,9 @@
       "company_info": "Информация о компании",
       "company_members": "Сотрудники компании",
       "contact_administrator": "свяжитесь с администратором сайта",
-      "saved_credit_cards": "Сохраненные кредитные карты"
+      "saved_credit_cards": "Сохраненные кредитные карты",
+      "skip_to_main_content": "Перейти к основному содержанию",
+      "skip_to_footer": "Перейти к подвалу"
     },
     "titles": {
       "all_actions": "Все действия",

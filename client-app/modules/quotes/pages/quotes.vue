@@ -55,7 +55,7 @@
     <VcEmptyView
       v-if="!fetching && !quotes.length"
       :text="$t(!!keyword ? 'quotes.no_results_message' : 'quotes.no_quotes_message')"
-      icon="thin-quotes"
+      icon="outline-quotes"
     />
 
     <!-- Content block -->
@@ -188,15 +188,17 @@
 </template>
 
 <script setup lang="ts">
+import { useMutation } from "@vue/apollo-composable";
 import { useBreakpoints, breakpointsTailwind, useElementVisibility } from "@vueuse/core";
 import { computed, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useRouteQueryParam, usePageHead, useThemeContext } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
+import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
 import { PageToolbarBlock } from "@/shared/account";
-import { useCreateQuoteMutation } from "../api/graphql";
+import { CreateQuoteDocument } from "../api/graphql/types";
 import QuoteStatus from "../components/quote-status.vue";
 import { useUserQuotes } from "../useUserQuotes";
 import type { SortDirection } from "@/core/enums";
@@ -206,13 +208,13 @@ const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-
+const { storeId, userId, currencyCode, cultureName } = globals;
 usePageHead({
   title: t("quotes.meta.title"),
 });
 
 const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
-const { mutate: createQuote } = useCreateQuoteMutation();
+const { mutate: createQuote } = useMutation(CreateQuoteDocument);
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -286,7 +288,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 }
 
 async function requestQuote(): Promise<void> {
-  const result = await createQuote();
+  const result = await createQuote({ command: { storeId, userId, currencyCode, cultureName } });
   const quoteId = result?.data?.createQuote?.id;
 
   await router.push({ name: "EditQuote", params: { quoteId } });

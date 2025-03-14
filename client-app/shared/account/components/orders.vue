@@ -3,8 +3,19 @@
     <!-- Mobile filters sidebar -->
     <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
       <MobileOrdersFilter>
+        <template #buyerNameFilterType>
+          <VcWidget v-if="showCustomerNameFilter" :title="$t('common.labels.buyer_name')" size="sm">
+            <VcSelect
+              v-model="filterData.customerNames"
+              :items="organizationCustomerNames ?? []"
+              class="my-4"
+              multiple
+            />
+          </VcWidget>
+        </template>
+
         <template #dateFilterType>
-          <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+          <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
         </template>
       </MobileOrdersFilter>
 
@@ -38,8 +49,8 @@
 
     <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
 
-    <div class="flex flex-col gap-3 lg:flex-row">
-      <div v-if="isOrganizationMaintainer" class="flex gap-2">
+    <div class="flex flex-col items-center gap-3 lg:flex-row">
+      <div v-if="isOrganizationMaintainer" class="flex h-9 gap-2">
         <button
           :class="[
             orderScope === 'organization'
@@ -53,7 +64,7 @@
         >
           <VcIcon class="size-5" name="case" />
           <span class="ms-1.5 text-base font-bold">
-            {{ $t("common.buttons.agency") }}
+            {{ $t("common.buttons.all_orders") }}
           </span>
         </button>
 
@@ -70,7 +81,7 @@
         >
           <VcIcon class="size-5" name="user" />
           <span class="ms-1.5 text-base font-bold">
-            {{ $t("common.buttons.personal") }}
+            {{ $t("common.buttons.my_orders") }}
           </span>
         </button>
       </div>
@@ -103,8 +114,19 @@
             @reset="resetOrderFilters"
             @close="hideFilters"
           >
+            <template #buyerNameFilterType>
+              <VcSelect
+                v-if="showCustomerNameFilter"
+                v-model="filterData.customerNames"
+                :label="$t('common.labels.buyer_name')"
+                :items="organizationCustomerNames ?? []"
+                class="my-4"
+                multiple
+              />
+            </template>
+
             <template #dateFilterType>
-              <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+              <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
             </template>
           </OrdersFilter>
         </div>
@@ -157,16 +179,22 @@
         ? $t('pages.account.orders.no_results_message')
         : $t('pages.account.orders.no_orders_message')
     "
-    icon="thin-order"
+    icon="outline-order"
   >
     <template #button>
       <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
         {{ $t("pages.account.orders.buttons.reset_search") }}
       </VcButton>
 
-      <VcButton v-else :to="{ name: 'Catalog' }">
-        {{ $t("pages.account.orders.buttons.no_orders") }}
-      </VcButton>
+      <template v-else>
+        <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+          {{ $t("pages.account.orders.buttons.no_orders") }}
+        </VcButton>
+
+        <VcButton v-else to="/">
+          {{ $t("pages.account.orders.buttons.no_orders") }}
+        </VcButton>
+      </template>
     </template>
   </VcEmptyView>
 
@@ -372,9 +400,11 @@ import {
 import { computed, onMounted, ref, shallowRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { usePageHead } from "@/core/composables/usePageHead";
 import { useThemeContext } from "@/core/composables/useThemeContext";
-import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
+import { CUSTOMER_NAME_FACET_NAME, DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { toDateISOString } from "@/core/utilities";
@@ -389,7 +419,6 @@ import PageToolbarBlock from "./page-toolbar-block.vue";
 import type { OrderScopeType, OrdersFilterChipsItemType } from "../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { DateFilterType, ISortInfo } from "@/core/types";
-import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
 export interface IProps {
   withSearch?: boolean;
@@ -405,8 +434,17 @@ const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loading: ordersLoading, orders, fetchOrders, sort, pages, page, keyword } = useUserOrders({ itemsPerPage });
-const { user } = useUser();
+const {
+  loading: ordersLoading,
+  orders,
+  fetchOrders,
+  sort,
+  pages,
+  page,
+  keyword,
+  facets,
+} = useUserOrders({ itemsPerPage });
+const { user, isOrganizationMaintainer } = useUser();
 
 const {
   appliedFilterData,
@@ -420,10 +458,19 @@ const {
   removeFilterChipsItem,
 } = useUserOrdersFilter();
 
+const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+
+usePageHead({
+  title: t("pages.account.orders.meta.title"),
+});
 usePageHead({ title: t("pages.account.orders.meta.title") });
 
 const ORDER_SCOPE_KEY = `order-scope-${user.value.id}`;
 const orderScope = useLocalStorage<OrderScopeType>(ORDER_SCOPE_KEY, "private");
+
+const { continue_shopping_link } = getModuleSettings({
+  [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
+});
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -451,8 +498,13 @@ const columns = computed<ITableColumn[]>(() => [
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
-const isOrganizationMaintainer = computed(() =>
-  user.value?.roles?.some((role) => role.name === "Organization maintainer"),
+
+const organizationCustomerNames = computed(() =>
+  facets.value?.find((item) => item.name === CUSTOMER_NAME_FACET_NAME)?.items?.map((item) => item.label),
+);
+const showCustomerNameFilter = computed(
+  () =>
+    isOrganizationMaintainer.value && orderScope.value === "organization" && organizationCustomerNames.value?.length,
 );
 
 async function changePage(newPage: number) {
@@ -496,7 +548,7 @@ function hideFilters() {
   filtersVisible.value = false;
 }
 
-function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
+function handleOrdersDateFilterChange(dateFilterType: DateFilterType): void {
   filterData.value.startDate = dateFilterType.startDate ? toDateISOString(dateFilterType.startDate) : undefined;
   filterData.value.endDate = dateFilterType.endDate ? toDateISOString(dateFilterType.endDate) : undefined;
 
@@ -536,11 +588,11 @@ function resetOrderFilters(): void {
   hideFilters();
 }
 
-async function toggleOrdersScope(scope: OrderScopeType): Promise<void> {
+function toggleOrdersScope(scope: OrderScopeType): void {
   orderScope.value = scope;
   sort.value = new Sort("createdDate", SortDirection.Descending);
+
   resetFiltersWithKeyword();
-  await fetchOrders(scope);
 }
 
 onClickOutside(
@@ -563,6 +615,7 @@ watch(
   appliedFilterData,
   () => {
     page.value = 1;
+
     void fetchOrders(orderScope.value);
   },
   { deep: true },

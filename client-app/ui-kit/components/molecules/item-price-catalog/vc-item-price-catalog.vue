@@ -1,5 +1,5 @@
 <template>
-  <div v-if="hasVariations" class="flex items-end gap-1.5">
+  <div v-if="withFromLabel" class="flex items-end gap-1.5">
     <div class="pb-0.5 text-sm text-neutral lg:text-xs">
       {{ $t("ui_kit.suffixes.from") }}
     </div>
@@ -20,7 +20,7 @@ import type { MoneyType, PriceType } from "@/core/api/graphql/types";
 
 interface IProps {
   value?: PriceType | { list: MoneyType; actual: MoneyType };
-  hasVariations?: boolean;
+  withFromLabel?: boolean;
   priceColorClass?: string;
 }
 

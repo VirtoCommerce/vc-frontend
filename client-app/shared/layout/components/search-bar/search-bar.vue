@@ -28,8 +28,10 @@
     <transition name="slide-fade-top">
       <div
         v-if="searchDropdownVisible"
+        ref="searchDropdownElement"
         class="absolute left-1/2 top-[3.45rem] z-20 flex w-full min-w-[640px] max-w-[100vw] -translate-x-1/2 flex-col gap-1 overflow-y-auto rounded bg-additional-50 shadow-lg"
         :style="searchDropdownStyle"
+        @focusout="handleFocusOut"
       >
         <!-- Results -->
         <template v-if="isExistResults">
@@ -182,6 +184,8 @@ const router = useRouter();
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const categoriesRoutes = useCategoriesRoutes(categories);
 
+const searchDropdownElement = ref<HTMLElement | null>(null);
+
 const searchPhrase = ref("");
 const trimmedSearchPhrase = computed(() => {
   return searchPhrase.value.trim();
@@ -302,6 +306,13 @@ function onSearchBarFocused() {
     showSearchDropdown();
   }
 }
+
+const handleFocusOut = (event: FocusEvent) => {
+  // if focus moved outside of the dropdown, close the dropdown
+  if (!searchDropdownElement.value?.contains(event.relatedTarget as Node)) {
+    hideSearchDropdown();
+  }
+};
 
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
 

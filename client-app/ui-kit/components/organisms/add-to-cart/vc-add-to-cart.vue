@@ -2,7 +2,7 @@
   <div class="vc-add-to-cart" :class="{ 'vc-add-to-cart--hide-button': hideButton }">
     <VcInput
       v-model.number="quantity"
-      :name
+      :name="name"
       type="number"
       :aria-label="$t('ui_kit.labels.product_quantity')"
       :disabled="disabled"
@@ -14,11 +14,11 @@
       :error="!isValid || error"
       :message="message"
       :show-empty-details="showEmptyDetails"
-      :readonly
+      :readonly="readonly"
       @input="onChange"
       @blur="onFocusOut"
     >
-      <template #append="{ buttonSize }">
+      <template #append>
         <template v-if="!hideButton">
           <VcButton
             class="vc-add-to-cart__icon-button"
@@ -27,7 +27,6 @@
             :disabled="isDisabled"
             :title="buttonText"
             :icon="icon"
-            :size="buttonSize"
             @click.stop="$emit('update:cartItemQuantity', quantity!)"
           />
 
@@ -38,13 +37,13 @@
             :loading="loading"
             :disabled="isDisabled"
             :title="buttonText"
-            :size="buttonSize"
             truncate
             @click.stop="$emit('update:cartItemQuantity', quantity!)"
           >
             {{ buttonText }}
           </VcButton>
         </template>
+
         <slot name="append" />
       </template>
     </VcInput>

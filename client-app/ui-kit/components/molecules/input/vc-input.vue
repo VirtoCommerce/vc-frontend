@@ -24,7 +24,7 @@
 
     <div class="vc-input__container">
       <div v-if="$slots.prepend" class="vc-input__decorator">
-        <slot name="prepend" v-bind="{ buttonSize }" />
+        <slot name="prepend" />
       </div>
 
       <input
@@ -54,28 +54,22 @@
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
         <VcButton
           :disabled="disabled"
-          tabindex="-1"
           type="button"
-          icon
+          icon="delete-thin"
           color="neutral"
           variant="no-border"
-          :size="buttonSize"
           class="vc-input__clear"
           @click.stop="clear"
-        >
-          <VcIcon name="delete-thin" class="vc-input__clear-icon" />
-        </VcButton>
+        />
       </div>
 
       <div v-if="type === 'password' && !hidePasswordSwitcher" class="vc-input__decorator">
         <VcButton
           :disabled="disabled"
           :aria-label="$t('ui_kit.buttons.show_hide_password')"
-          tabindex="-1"
           type="button"
           :icon="passwordVisibilityIcon"
           variant="no-border"
-          :size="buttonSize"
           :icon-size="size === 'md' ? '1.5rem' : '1.25rem'"
           class="vc-input__password-button"
           @click="togglePasswordVisibility"
@@ -83,7 +77,7 @@
       </div>
 
       <div v-if="$slots.append" class="vc-input__decorator">
-        <slot name="append" v-bind="{ buttonSize }" />
+        <slot name="append" />
       </div>
     </div>
 
@@ -165,18 +159,6 @@ const stepValue = computed(() => (props.type === "number" ? props.step : undefin
 const isPasswordVisible = ref<boolean>(false);
 const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ? "eye-off" : "eye"));
 
-const buttonSize = computed<VcButtonSizeType>(() => {
-  if (props.size === "xs") {
-    return "xxs";
-  }
-
-  if (props.size === "sm") {
-    return "xs";
-  }
-
-  return "sm";
-});
-
 function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
 }
@@ -226,10 +208,7 @@ function inputClick() {
   $center: "";
   $truncate: "";
 
-  --base-color: var(--vc-input-base-color, theme("colors.primary.500"));
-  --error-color: var(--vc-input-error-color, theme("colors.danger.500"));
-
-  --focus-color: rgb(from var(--base-color) r g b / 0.3);
+  --color: var(--vc-input-base-color, theme("colors.primary.500"));
 
   @apply flex flex-col;
 
@@ -258,7 +237,9 @@ function inputClick() {
   &--error {
     $error: &;
 
-    --base-color: var(--error-color);
+    --color: var(--vc-input-error-color, theme("colors.danger.500"));
+
+    @apply border-[--color] text-[--color];
   }
 
   &--no-border {
@@ -274,18 +255,18 @@ function inputClick() {
   }
 
   &__container {
-    @apply flex items-stretch border rounded bg-additional-50 select-none;
+    @apply flex items-stretch p-0.5 border rounded bg-additional-50 select-none;
 
     #{$sizeXs} & {
-      @apply h-8 text-sm px-0.5;
+      @apply h-8 text-sm;
     }
 
     #{$sizeSm} & {
-      @apply h-[2.375rem] text-sm px-1;
+      @apply h-[2.375rem] text-sm;
     }
 
     #{$sizeMd} & {
-      @apply h-[2.625rem] text-base px-0.5;
+      @apply h-11 text-base;
     }
 
     &:has(input:focus) {
@@ -295,10 +276,6 @@ function inputClick() {
     #{$disabled} &,
     &:has(input:disabled) {
       @apply bg-neutral-50 cursor-not-allowed;
-    }
-
-    #{$error} & {
-      @apply border-[--base-color];
     }
 
     #{$noBorder} & {
@@ -354,14 +331,6 @@ function inputClick() {
     #{$truncate} & {
       @apply truncate;
     }
-
-    #{$error} & {
-      @apply text-[--base-color];
-    }
-  }
-
-  &__clear-icon {
-    @apply text-neutral-400;
   }
 }
 </style>

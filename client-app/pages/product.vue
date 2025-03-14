@@ -12,7 +12,6 @@
       :is-mobile="isMobile"
       :is-visible="isFiltersSidebarVisible"
       :loading="fetchingVariations"
-      hide-sorting
       :hide-controls="false"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
@@ -44,6 +43,14 @@
           v-if="productInfoSection && !productInfoSection.hidden"
           :product="product"
           :model="productInfoSection"
+        />
+
+        <component
+          :is="productDescriptionSection && 'type' in productDescriptionSection ? productDescriptionSection.type : ''"
+          v-if="productDescriptionSection && !productDescriptionSection.hidden"
+          :product="product"
+          :model="productDescriptionSection"
+          :is-collapsible="false"
         />
 
         <ProductConfiguration
@@ -230,6 +237,8 @@ const seoUrl = computed(() =>
 const productTemplate = _productTemplate as IPageTemplate;
 
 const productInfoSection = productTemplate?.content?.find((item) => item?.type === "product-info");
+
+const productDescriptionSection = productTemplate?.content?.find((item) => item?.type === "product-description");
 
 const productReviewsSection = productTemplate?.content?.find((item) => item?.type === "product-reviews");
 

@@ -8,6 +8,7 @@
     can-view-all
     with-options
     :offset-options="offsetOptions"
+    close-on-blur
     @mark-read-all="markReadAll"
     @mark-unread-all="markUnreadAll"
     @clear-all="clearAll"
