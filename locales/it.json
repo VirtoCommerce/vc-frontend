@@ -650,12 +650,19 @@
       },
       "shipping_details_section": {
         "title": "Dettagli spedizione",
+        "switchers": {
+          "pickup": "Ritiro",
+          "shipping": "Spedizione"
+        },
         "labels": {
           "shipping_address": "Indirizzo di spedizione",
-          "shipping_method": "Metodo di consegna"
+          "shipping_method": "Metodo di consegna",
+          "delivery_option": "Opzione di consegna",
+          "pickup_point": "Punto di ritiro"
         },
         "links": {
-          "select_address": "seleziona un indirizzo di spedizione"
+          "select_address": "seleziona un indirizzo di spedizione",
+          "select_pickup_point": "seleziona un indirizzo di ritiro"
         }
       },
       "billing_details_section": {

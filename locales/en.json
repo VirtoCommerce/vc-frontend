@@ -650,12 +650,19 @@
       },
       "shipping_details_section": {
         "title": "Shipping details",
+        "switchers": {
+          "pickup": "Pickup",
+          "shipping": "Shipiing"
+        },
         "labels": {
           "shipping_address": "Shipping address",
-          "shipping_method": "Delivery method"
+          "shipping_method": "Delivery method",
+          "delivery_option": "Delivery option",
+          "pickup_point": "Pickup point"
         },
         "links": {
-          "select_address": "select a shipping address"
+          "select_address": "select a shipping address",
+          "select_pickup_point": "select a pickup address"
         }
       },
       "billing_details_section": {
