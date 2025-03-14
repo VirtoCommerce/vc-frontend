@@ -39,21 +39,14 @@
 </template>
 
 <script setup lang="ts">
-import { BarcodeDetector } from "barcode-detector";
+import { BarcodeDetector } from "barcode-detector/ponyfill";
 import { ref, onMounted, onBeforeUnmount } from "vue";
+import type { BarcodeDetector as BarcodeDetectorType } from "barcode-detector";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
-// TypeScript declarations for BarcodeDetector API
-declare global {
-  interface BarcodeDetectorDetectedBarcode {
-    boundingBox: DOMRectReadOnly;
-    rawValue: string;
-    format: string;
-    cornerPoints: [[number, number], [number, number], [number, number], [number, number]];
-  }
-}
 
 const emit = defineEmits<{
   (e: "value", value: string): void;
+  (e: "result", value: string): void;
 }>();
 
 // Define props and emits
@@ -67,7 +60,7 @@ const isScannerActive = ref(false);
 const scannedValue = ref("");
 const errorMessage = ref("");
 const videoStream = ref<MediaStream | null>(null);
-const barcodeDetector = ref<BarcodeDetector | null>(null);
+const barcodeDetector = ref<BarcodeDetectorType | null>(null);
 const detectionInterval = ref<number | null>(null);
 
 // Clean up resources and close the modal
@@ -105,6 +98,7 @@ onMounted(async () => {
 
 // Clean up on component unmount
 onBeforeUnmount(() => {
+  console.log("unmount");
   stopScanner();
   cleanupCamera();
 });
@@ -149,38 +143,27 @@ const stopScanner = () => {
 };
 
 // Start the detection process
-const startDetection = () => {
+const startDetection = async () => {
   if (!barcodeDetector.value || !videoElement.value) {
     return;
   }
 
-  detectionInterval.value = window.setInterval(async () => {
-    if (videoElement.value && isScannerActive.value) {
-      try {
-        const barcodes = await barcodeDetector.value!.detect(videoElement.value);
+  try {
+    const imageBitmap = await createImageBitmap(videoElement.value);
 
-        if (barcodes.length > 0) {
-          // Take the first detected barcode
-          scannedValue.value = barcodes[0].rawValue;
-          stopScanner(); // Pause scanning after successful detection
-        }
-      } catch (error) {
-        console.error("Barcode detection error:", error);
-      }
-    }
-  }, 200); // Check for barcodes every 200ms
+    const barcodes = await barcodeDetector.value.detect(imageBitmap);
+    barcodes.forEach((barcode) => {
+      emit("result", barcode.rawValue);
+      console.log("Найден штрих-код:", barcode.rawValue);
+    });
+  } catch (error) {
+    console.error("Ошибка при распознавании штрих-кода:", error);
+  }
 };
 
 // Use the scanned value and emit it
 const useScannedValue = () => {
   if (scannedValue.value) {
-    // Emit custom event that can be caught by parent
-    const customEvent = new CustomEvent("value", {
-      detail: scannedValue.value,
-      bubbles: true,
-    });
-    document.querySelector(".vc-modal-content")?.dispatchEvent(customEvent);
-
     // Also emit regular Vue event
     emit("value", scannedValue.value);
     handleClose();

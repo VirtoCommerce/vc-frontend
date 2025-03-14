@@ -8,6 +8,7 @@
 import { useModal } from "@/shared/modal";
 import BarcodeScannerModal from "./barcode-scanner-modal.vue";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
+import { useNotifications } from "@/shared/notification";
 
 // Define emits
 const emit = defineEmits<{
@@ -15,9 +16,12 @@ const emit = defineEmits<{
 }>();
 
 const { openModal, closeModal } = useModal();
+const notifications = useNotifications();
 
 // Handler for when barcode value is received
 const onBarcodeValueReceived = (value: string) => {
+  console.log(value);
+  notifications.success({ text: value })
   emit("value", value);
   closeModal();
 };
@@ -27,18 +31,8 @@ const openBarcodeScanner = () => {
     component: BarcodeScannerModal,
     props: {
       onClose: closeModal,
+      onResult: onBarcodeValueReceived,
     },
   });
-
-  // Set up event listener for barcode value
-  const modalElement = document.querySelector(".vc-modal-content");
-  if (modalElement) {
-    const handleBarcodeValue = (event: CustomEvent<string>) => {
-      onBarcodeValueReceived(event.detail);
-      modalElement.removeEventListener("value", handleBarcodeValue as EventListener);
-    };
-
-    modalElement.addEventListener("value", handleBarcodeValue as EventListener);
-  }
 };
 </script>
