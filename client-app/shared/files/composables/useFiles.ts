@@ -1,5 +1,5 @@
-import { computedEager, isDefined, syncRefs, toValue } from "@vueuse/core";
-import { computed, ref, unref } from "vue";
+import { computedEager, isDefined, syncRefs, toValue, useMemoize } from "@vueuse/core";
+import { computed, onUnmounted, ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAxios } from "@/core/api/common/composables/useAxios";
 import { getFileUploadOptions, deleteFile } from "@/core/api/graphql/files";
@@ -22,6 +22,8 @@ import {
 import type { FileUploadResultType, IFileOptions } from "@/shared/files/types";
 import type { AxiosProgressEvent, AxiosResponse } from "axios";
 import type { MaybeRef, WatchSource } from "vue";
+
+const getFileUploadOptionsMemoized = useMemoize(getFileUploadOptions);
 
 /**
  * File management
@@ -51,7 +53,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   const options = ref<IFileOptions>(defaultOptions);
 
   async function fetchOptions() {
-    const result = await getFileUploadOptions(unref(scope));
+    const result = await getFileUploadOptionsMemoized(unref(scope));
     if (result) {
       options.value = {
         ...defaultOptions,
@@ -200,6 +202,10 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       })),
     });
   }
+
+  onUnmounted(() => {
+    getFileUploadOptionsMemoized.delete(unref(scope));
+  });
 
   return {
     files,
