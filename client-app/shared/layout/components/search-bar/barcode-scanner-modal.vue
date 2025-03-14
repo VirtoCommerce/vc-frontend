@@ -160,7 +160,7 @@ const startDetection = async () => {
       console.log("Найден штрих-код:", barcode.rawValue);
     });
   } catch (error) {
-    errorText.value = error;
+    errorText.value = error as string;
     console.error("Ошибка при распознавании штрих-кода:", error);
   }
 };
