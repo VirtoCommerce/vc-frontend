@@ -1,5 +1,14 @@
 <template>
-  <VcPushMessage :size="size" :push-message="_pushMessage" @click="toggleRead" />
+  <VcPushMessage
+    :size="size"
+    :push-message="_pushMessage"
+    role="button"
+    tabindex="0"
+    :aria-label="pushMessage.isRead ? $t('push_messages.mark_as_unread') : $t('push_messages.mark_as_read')"
+    :title="pushMessage.isRead ? $t('push_messages.mark_as_unread') : $t('push_messages.mark_as_read')"
+    @click="toggleRead"
+    @keypress.enter="toggleRead"
+  />
 </template>
 
 <script setup lang="ts">

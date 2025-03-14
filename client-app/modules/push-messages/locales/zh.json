@@ -13,6 +13,8 @@
     },
     "clear_all": "清除所有",
     "view_all": "查看所有通知",
-    "show_unread_only": "仅显示未读"
+    "show_unread_only": "仅显示未读",
+    "mark_as_read": "标记为已读",
+    "mark_as_unread": "标记为未读"
   }
 }

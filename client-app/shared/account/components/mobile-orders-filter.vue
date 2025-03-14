@@ -1,7 +1,7 @@
 <template>
   <!-- Mobile filters -->
   <div v-if="isMobile" class="flex flex-col gap-4 lg:gap-5">
-    <VcWidget v-if="!!facets" :title="$t('shared.account.orders_filter.status_label')" size="sm" collapsible>
+    <VcWidget v-if="facets?.length" :title="$t('shared.account.orders_filter.status_label')" size="sm" collapsible>
       <VcCheckboxGroup v-model="filterData.statuses" class="space-y-4">
         <VcCheckbox
           v-for="facet in statusFacet?.items"

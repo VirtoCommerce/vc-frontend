@@ -16,7 +16,7 @@
           <slot name="buyerNameFilterType" />
         </div>
 
-        <div v-if="!!facets">
+        <div v-if="facets?.length">
           <VcLabel>{{ $t("shared.account.orders_filter.status_label") }}</VcLabel>
 
           <VcCheckboxGroup v-model="filterData.statuses" class="mt-2 space-y-3.5">
