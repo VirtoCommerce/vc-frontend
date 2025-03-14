@@ -23,6 +23,8 @@
           <router-link :to="$context.settings.default_return_url ?? '/'">
             <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8" lazy />
           </router-link>
+
+          <BarcodeScanner class="me-1" @value="onBarcodeScanned" />
         </div>
         <!-- endregion Left slot -->
 
@@ -137,6 +139,7 @@ import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
+import BarcodeScanner from "@/shared/layout/components/search-bar/barcode-scanner.vue";
 const router = useRouter();
 
 const { customComponents } = useCustomMobileHeaderComponents();
@@ -167,6 +170,17 @@ const searchPageLink = computed<RouteLocationRaw>(() => ({
 function reset() {
   searchPhrase.value = "";
   void router.push({ name: ROUTES.CATALOG.NAME });
+}
+
+const onBarcodeScanned = (value: string) => {
+  if (value) {
+    searchPhrase.value = value;
+    goToSearchResultsPage();
+  }
+};
+
+function goToSearchResultsPage() {
+    void router.push({ name: "Search" });
 }
 
 syncRefs(mobileMenuVisible, useScrollLock(document.body));

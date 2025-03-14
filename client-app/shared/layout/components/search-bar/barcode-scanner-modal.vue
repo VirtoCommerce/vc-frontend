@@ -34,6 +34,7 @@
           {{ $t("shared.layout.search_bar.use") || "Use" }}
         </VcButton>
       </div>
+      {{ errorText }}
     </div>
   </VcModal>
 </template>
@@ -62,6 +63,8 @@ const errorMessage = ref("");
 const videoStream = ref<MediaStream | null>(null);
 const barcodeDetector = ref<BarcodeDetectorType | null>(null);
 const detectionInterval = ref<number | null>(null);
+
+const errorText = ref("");
 
 // Clean up resources and close the modal
 const handleClose = () => {
@@ -157,6 +160,7 @@ const startDetection = async () => {
       console.log("Найден штрих-код:", barcode.rawValue);
     });
   } catch (error) {
+    errorText.value = error;
     console.error("Ошибка при распознавании штрих-кода:", error);
   }
 };
