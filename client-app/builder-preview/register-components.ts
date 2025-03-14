@@ -34,7 +34,7 @@ async function loadAllJsonFiles(): Promise<PageBuilderSchemaType> {
   };
 
   for (const jsonModulesName of Object.keys(allModules) as SchemaKeysType[]) {
-    const jsonModules = allModules[jsonModulesName] as PageBuilderJsonModulesType;
+    const jsonModules = allModules[jsonModulesName];
     for (const path in jsonModules) {
       const module = await jsonModules[path]();
       const name = path.split("/").pop()!.split(".")[0];
