@@ -341,7 +341,8 @@
           "add_new": "新增",
           "search": "搜索",
           "select_address": "选择地址",
-          "title": "运送至："
+          "title": "运送至：",
+          "add_new_address": "添加新地址"
         }
       },
       "footer": {

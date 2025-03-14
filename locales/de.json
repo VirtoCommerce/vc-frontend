@@ -341,7 +341,8 @@
           "add_new": "Neu hinzufügen",
           "search": "Suche",
           "select_address": "Adresse auswählen",
-          "title": "Liefern nach:"
+          "title": "Liefern nach:",
+          "add_new_address": "Neue Adresse hinzufügen"
         }
       },
       "footer": {

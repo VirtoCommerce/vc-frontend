@@ -341,7 +341,8 @@
           "add_new": "Aggiungi nuovo",
           "search": "Cerca",
           "select_address": "Seleziona indirizzo",
-          "title": "Spedire a:"
+          "title": "Spedire a:",
+          "add_new_address": "Aggiungi nuovo indirizzo"
         }
       },
       "footer": {
