@@ -7,10 +7,10 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+defineProps<{
   model: {
-    type: Object,
-    required: true,
-  },
-});
+    image: string;
+    alttext: string;
+  };
+}>();
 </script>
