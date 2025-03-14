@@ -14,6 +14,7 @@
       @clear="reset"
     >
       <template #append>
+        <BarcodeScanner class="me-1" @value="onBarcodeScanned" />
         <VcButton
           :aria-label="$t('shared.layout.search_bar.search_button')"
           icon="search"
@@ -146,10 +147,12 @@ import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice 
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
+import BarcodeScanner from "./barcode-scanner.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category } from "@/core/api/graphql/types";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
+import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
 const { themeContext } = useThemeContext();
 
@@ -320,4 +323,11 @@ onMounted(() => {
     searchPhrase.value = searchPhraseInUrl.value;
   }
 });
+
+const onBarcodeScanned = (value: string) => {
+  if (value) {
+    searchPhrase.value = value;
+    goToSearchResultsPage();
+  }
+};
 </script>
