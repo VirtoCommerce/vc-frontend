@@ -1,6 +1,7 @@
 import { useLocalStorage } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed } from "vue";
+import { XApiPermissions } from "@/core/enums";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
 import { SelectAddressModal } from "@/shared/checkout";
@@ -13,7 +14,8 @@ import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-a
 export const MAX_ADDRESSES_NUMBER = 6;
 export const USER_TYPE = {
   PERSONAL: "personal",
-  ORGANIZATION: "organization",
+  CORPORATE_LIMITED: "corporate-limited",
+  CORPORATE: "corporate",
   ANONYMOUS: "anonymous",
 } as const;
 
@@ -21,7 +23,7 @@ type UserType = (typeof USER_TYPE)[keyof typeof USER_TYPE];
 
 export function useBopis() {
   const { openModal, closeModal } = useModal();
-  const { loading: loadingUser, organization, isCorporateMember, isAuthenticated } = useUser();
+  const { loading: loadingUser, organization, isCorporateMember, isAuthenticated, checkPermissions } = useUser();
   const {
     addresses: personalAddresses,
     fetchAddresses: fetchPersonalAddresses,
@@ -38,8 +40,8 @@ export function useBopis() {
 
   const { updateShipment: updateShipmentCart, shipment: cartShipment, changing, forceFetch } = useFullCart();
 
-  const anonymousAddresses = useLocalStorage<AnyAddressType[]>("anonymousShipToAddresses", []);
-  const selectedAnonymousShipToAddressId = useLocalStorage<string | null>("selectedAnonymousShipToAddressId", null);
+  const localShipToAddresses = useLocalStorage<AnyAddressType[]>("localShipToAddresses", []);
+  const selectedLocalShipToAddressId = useLocalStorage<string | null>("selectedLocalShipToAddressId", null);
 
   const userType = computed<UserType>(() => {
     if (!isAuthenticated.value) {
@@ -47,7 +49,9 @@ export function useBopis() {
     }
 
     if (isCorporateMember.value) {
-      return USER_TYPE.ORGANIZATION;
+      const canEditOrganization = checkPermissions(XApiPermissions.CanEditOrganization);
+
+      return canEditOrganization ? USER_TYPE.CORPORATE : USER_TYPE.CORPORATE_LIMITED;
     }
 
     return USER_TYPE.PERSONAL;
@@ -55,12 +59,13 @@ export function useBopis() {
 
   const accountAddresses = computed<AnyAddressType[]>(() => {
     switch (userType.value) {
-      case USER_TYPE.ANONYMOUS:
-        return anonymousAddresses.value;
-      case USER_TYPE.ORGANIZATION:
+      case USER_TYPE.CORPORATE:
         return organizationsAddresses.value;
       case USER_TYPE.PERSONAL:
         return personalAddresses.value;
+      case USER_TYPE.ANONYMOUS:
+      case USER_TYPE.CORPORATE_LIMITED:
+        return localShipToAddresses.value;
       default:
         return [];
     }
@@ -72,7 +77,7 @@ export function useBopis() {
 
   const selectedAddress = computed(() => {
     if (userType.value === USER_TYPE.ANONYMOUS) {
-      return anonymousAddresses.value.find((address) => address.id === selectedAnonymousShipToAddressId.value);
+      return localShipToAddresses.value.find((address) => address.id === selectedLocalShipToAddressId.value);
     }
 
     return cartShipment.value?.deliveryAddress; // TODO: refactor to use from GetMe
@@ -113,22 +118,32 @@ export function useBopis() {
 
     switch (userType.value) {
       case USER_TYPE.ANONYMOUS:
-        return;
-      case USER_TYPE.ORGANIZATION:
-        await fetchOrganizationAddresses();
         break;
       case USER_TYPE.PERSONAL:
         await fetchPersonalAddresses();
+        break;
+      case USER_TYPE.CORPORATE:
+      case USER_TYPE.CORPORATE_LIMITED:
+        await fetchOrganizationAddresses();
         break;
     }
   }
 
   async function selectAddress(address: AnyAddressType) {
-    if (userType.value === USER_TYPE.ANONYMOUS) {
-      selectedAnonymousShipToAddressId.value = address.id;
-    } else {
-      // TODO: save to profile settings
+    switch (userType.value) {
+      case USER_TYPE.CORPORATE: {
+        // TODO: save to profile settings
+        break;
+      }
+      case USER_TYPE.PERSONAL:
+        // TODO: save to profile settings
+        break;
+      case USER_TYPE.ANONYMOUS:
+      case USER_TYPE.CORPORATE_LIMITED:
+        selectedLocalShipToAddressId.value = address.id;
+        break;
     }
+
     await updateShipmentCart({
       id: cartShipment.value?.id,
       deliveryAddress: omit(address, ["isDefault", "isFavorite"]),
@@ -167,16 +182,19 @@ export function useBopis() {
       props: {
         async onResult(address: MemberAddressType) {
           switch (userType.value) {
-            case USER_TYPE.ORGANIZATION:
+            case USER_TYPE.CORPORATE: {
               await addOrUpdateOrganizationAddresses([address]);
               break;
+            }
             case USER_TYPE.PERSONAL:
               await addOrUpdatePersonalAddresses([address]);
               break;
-            case USER_TYPE.ANONYMOUS:
+            case USER_TYPE.CORPORATE_LIMITED:
+            case USER_TYPE.ANONYMOUS: {
               address.id = crypto.randomUUID();
-              anonymousAddresses.value = [...anonymousAddresses.value, address];
+              localShipToAddresses.value = [...localShipToAddresses.value, address];
               break;
+            }
           }
 
           closeModal();

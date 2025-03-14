@@ -339,7 +339,6 @@
         },
         "ship_to_selector": {
           "add_new": "Add new",
-          "contact_administrator": "Contact your organization administrator to add a new address.",
           "search": "Search",
           "select_address": "Select address",
           "title": "Ship to:"

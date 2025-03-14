@@ -27,7 +27,7 @@
                     {{ $t("shared.layout.header.ship_to_selector.select_address") }}
                   </div>
                   <VcButton
-                    v-if="canAddAddress"
+                    class="ship-to-selector__add-new"
                     size="xs"
                     variant="outline"
                     color="secondary"
@@ -39,9 +39,6 @@
                   >
                     {{ $t("shared.layout.header.ship_to_selector.add_new") }}
                   </VcButton>
-                  <div v-if="!canAddAddress && !hasAddresses && isCorporateMember" class="ship-to-selector__empty">
-                    {{ $t("shared.layout.header.ship_to_selector.contact_administrator") }}
-                  </div>
                 </div>
 
                 <div v-if="hasAddresses" class="ship-to-selector__search">
@@ -117,8 +114,6 @@
 
 <script setup lang="ts">
 import { computed, watchEffect, ref } from "vue";
-import { XApiPermissions } from "@/core/enums";
-import { useUser } from "@/shared/account";
 import { AddressLine } from "@/shared/common";
 import { MAX_ADDRESSES_NUMBER, useBopis } from "../composables";
 
@@ -140,11 +135,6 @@ const {
   selectAddress,
   openAddOrUpdateAddressModal,
 } = useBopis();
-
-const { isCorporateMember, checkPermissions } = useUser();
-
-// all users except corporate members without edit organization permission
-const canAddAddress = computed(() => !isCorporateMember.value || checkPermissions(XApiPermissions.CanEditOrganization));
 
 const addresses = computed(() => getFilteredAddresses(isSeeMore.value, filter.value));
 const hasAddresses = computed(() => addresses.value.length > 0);
@@ -244,6 +234,10 @@ watchEffect(async () => {
 
   &__empty {
     @apply py-2 text-sm text-neutral;
+  }
+
+  &__add-new {
+    @apply only:flex-grow;
   }
 }
 </style>

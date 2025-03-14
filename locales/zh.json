@@ -339,7 +339,6 @@
         },
         "ship_to_selector": {
           "add_new": "新增",
-          "contact_administrator": "请联系您的组织管理员以添加新地址。",
           "search": "搜索",
           "select_address": "选择地址",
           "title": "运送至："

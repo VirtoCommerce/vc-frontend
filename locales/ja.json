@@ -339,7 +339,6 @@
         },
         "ship_to_selector": {
           "add_new": "新規追加",
-          "contact_administrator": "新しい住所を追加するには、組織の管理者にお問い合わせください。",
           "search": "検索",
           "select_address": "住所を選択",
           "title": "配送先："
