@@ -8,6 +8,7 @@ const openModalMock = vi.hoisted(() => vi.fn());
 const closeModalMock = vi.hoisted(() => vi.fn());
 const checkPermissionsMock = vi.hoisted(() => vi.fn());
 const fetchPersonalAddressesMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+const fetchOrganizationAddressesMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 const addOrUpdatePersonalAddressesMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 const addOrUpdateOrganizationAddressesMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 const updateShipmentMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
@@ -39,7 +40,7 @@ vi.mock("@/shared/account", () => ({
 vi.mock("@/shared/company", () => ({
   useOrganizationAddresses: () => ({
     addresses: organizationAddresses,
-    fetchAddresses: vi.fn().mockResolvedValue(undefined),
+    fetchAddresses: fetchOrganizationAddressesMock,
     addOrUpdateAddresses: addOrUpdateOrganizationAddressesMock,
     loading: orgLoading,
   }),
@@ -115,6 +116,7 @@ describe("useShipToLocation composable", () => {
     closeModalMock.mockClear();
     checkPermissionsMock.mockClear();
     fetchPersonalAddressesMock.mockClear();
+    fetchOrganizationAddressesMock.mockClear();
     addOrUpdatePersonalAddressesMock.mockClear();
     addOrUpdateOrganizationAddressesMock.mockClear();
     updateShipmentMock.mockClear();
@@ -166,6 +168,7 @@ describe("useShipToLocation composable", () => {
       const { fetchAddresses } = useShipToLocation();
       await fetchAddresses();
       expect(fetchPersonalAddressesMock).toHaveBeenCalled();
+      expect(fetchOrganizationAddressesMock).not.toHaveBeenCalled();
     });
 
     it("calls fetchOrganizationAddresses when user is corporate", async () => {
@@ -175,9 +178,8 @@ describe("useShipToLocation composable", () => {
       const { fetchAddresses } = useShipToLocation();
       await fetchAddresses();
 
-      // Verify organization addresses are fetched for corporate users
-      // Note: Since the actual function is mocked without a spy in the module mock,
-      // we're verifying the behavior rather than the exact call
+      // Verify organization addresses are fetched for corporate users with exact call check
+      expect(fetchOrganizationAddressesMock).toHaveBeenCalled();
       expect(fetchPersonalAddressesMock).not.toHaveBeenCalled();
     });
 
@@ -188,14 +190,14 @@ describe("useShipToLocation composable", () => {
       await fetchAddresses();
 
       expect(fetchPersonalAddressesMock).not.toHaveBeenCalled();
-      // Again, we're verifying behavior rather than exact call since direct spy isn't available
+      expect(fetchOrganizationAddressesMock).not.toHaveBeenCalled();
     });
   });
 
   describe("Address Filtering", () => {
     it("returns sliced addresses when no filter is provided and isSeeMore is false", () => {
       // Fill personalAddresses with more than MAX_ADDRESSES_NUMBER addresses
-      const addressesArray: AnyAddressType[] = Array.from({ length: 10 }, (_, i) => ({
+      const addressesArray: AnyAddressType[] = Array.from({ length: MAX_ADDRESSES_NUMBER + 2 }, (_, i) => ({
         id: `addr${i}`,
         line1: `Address ${i}`,
         line2: "",
