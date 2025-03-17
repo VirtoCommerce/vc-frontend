@@ -378,7 +378,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   selectedAddress:
     selectedAddress.value?.id && !selectedAddress.value?.id?.startsWith(LOCAL_ID_PREFIX)
       ? undefined
-      : stringifyAddress(selectedAddress.value ?? {}),
+      : stringifyAddress(selectedAddress.value) || undefined,
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
