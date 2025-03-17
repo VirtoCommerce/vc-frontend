@@ -124,7 +124,7 @@
 <script setup lang="ts">
 import { computed, watchEffect, ref } from "vue";
 import { AddressLine } from "@/shared/common";
-import { MAX_ADDRESSES_NUMBER, useBopis } from "../composables";
+import { MAX_ADDRESSES_NUMBER, useShipToLocation } from "../composables";
 
 interface IProps {
   title?: string;
@@ -143,7 +143,7 @@ const {
   fetchAddresses,
   selectAddress,
   openAddOrUpdateAddressModal,
-} = useBopis();
+} = useShipToLocation();
 
 const addresses = computed(() => getFilteredAddresses(isSeeMore.value, filter.value));
 const hasAddresses = computed(() => addresses.value.length > 0);

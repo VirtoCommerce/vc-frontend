@@ -146,8 +146,8 @@ import { ref } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { useSignMeOut, useUser } from "@/shared/account";
-import { ShipToSelector } from "@/shared/bopis";
 import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
+import { ShipToSelector } from "@/shared/ship-to-location";
 import TopHeaderLink from "./top-header-link.vue";
 
 const { isAuthenticated, isMultiOrganization, user, operator, organization, switchOrganization } = useUser();

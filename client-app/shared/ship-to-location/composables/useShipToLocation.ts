@@ -21,7 +21,7 @@ export const USER_TYPE = {
 
 type UserType = (typeof USER_TYPE)[keyof typeof USER_TYPE];
 
-export function useBopis() {
+export function useShipToLocation() {
   const { openModal, closeModal } = useModal();
   const { loading: loadingUser, organization, isCorporateMember, isAuthenticated, checkPermissions } = useUser();
   const {
@@ -38,7 +38,7 @@ export function useBopis() {
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
   } = useOrganizationAddresses(organization.value?.id ?? "");
 
-  const { updateShipment: updateShipmentCart, shipment: cartShipment, forceFetch } = useFullCart();
+  const { updateShipment: updateShipmentCart, shipment: cartShipment } = useFullCart();
 
   const localShipToAddresses = useLocalStorage<AnyAddressType[]>("localShipToAddresses", []);
   const selectedLocalShipToAddressId = useLocalStorage<string | null>("selectedLocalShipToAddressId", null);
@@ -113,8 +113,6 @@ export function useBopis() {
   }
 
   async function fetchAddresses(): Promise<void> {
-    void forceFetch(); // TODO: remove this ???
-
     switch (userType.value) {
       case USER_TYPE.ANONYMOUS:
         break;

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { nextTick, ref } from "vue";
-import { useBopis, MAX_ADDRESSES_NUMBER } from "./useBopis";
+import { useShipToLocation, MAX_ADDRESSES_NUMBER } from "./useShipToLocation";
 import type { AnyAddressType } from "@/core/types";
 
 // Use vi.hoisted() to properly hoist mock functions
@@ -108,7 +108,7 @@ const selectedLocalShipToAddressIdValue = ref<string | null>(null);
 // Cart mocks
 const shipment = ref({ id: "shipment1", deliveryAddress: { id: "addr1" } });
 
-describe("useBopis composable", () => {
+describe("useShipToLocation composable", () => {
   beforeEach(() => {
     // Reset mocks and reactive state
     openModalMock.mockClear();
@@ -158,12 +158,12 @@ describe("useBopis composable", () => {
 
   describe("User Type & Address Fetching", () => {
     it("computes user type as personal when authenticated and not corporate", () => {
-      const { accountAddresses } = useBopis();
+      const { accountAddresses } = useShipToLocation();
       expect(accountAddresses.value).toEqual(personalAddresses.value);
     });
 
     it("calls fetchPersonalAddresses when user is personal", async () => {
-      const { fetchAddresses } = useBopis();
+      const { fetchAddresses } = useShipToLocation();
       await fetchAddresses();
       expect(fetchPersonalAddressesMock).toHaveBeenCalled();
     });
@@ -172,7 +172,7 @@ describe("useBopis composable", () => {
       isCorporateMember.value = true;
       checkPermissionsMock.mockReturnValue(true);
 
-      const { fetchAddresses } = useBopis();
+      const { fetchAddresses } = useShipToLocation();
       await fetchAddresses();
 
       // Verify organization addresses are fetched for corporate users
@@ -184,7 +184,7 @@ describe("useBopis composable", () => {
     it("does not call any fetch method when user is anonymous", async () => {
       isAuthenticated.value = false;
 
-      const { fetchAddresses } = useBopis();
+      const { fetchAddresses } = useShipToLocation();
       await fetchAddresses();
 
       expect(fetchPersonalAddressesMock).not.toHaveBeenCalled();
@@ -205,7 +205,7 @@ describe("useBopis composable", () => {
         postalCode: "0000",
       }));
       personalAddresses.value = addressesArray;
-      const { getFilteredAddresses } = useBopis();
+      const { getFilteredAddresses } = useShipToLocation();
       const result = getFilteredAddresses(false);
       expect(result.length).toBe(MAX_ADDRESSES_NUMBER);
       expect(result).toEqual(addressesArray.slice(0, MAX_ADDRESSES_NUMBER));
@@ -232,7 +232,7 @@ describe("useBopis composable", () => {
           postalCode: "02108",
         },
       ];
-      const { getFilteredAddresses } = useBopis();
+      const { getFilteredAddresses } = useShipToLocation();
       const result = getFilteredAddresses(true, "New York");
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe("addr1");
@@ -250,7 +250,7 @@ describe("useBopis composable", () => {
           postalCode: "0000",
         },
       ];
-      const { getFilteredAddresses } = useBopis();
+      const { getFilteredAddresses } = useShipToLocation();
       const result = getFilteredAddresses(false, "NonExistent");
       expect(result).toBeInstanceOf(Array);
       expect(result.length).toBe(0);
@@ -278,7 +278,7 @@ describe("useBopis composable", () => {
         },
       ];
 
-      const { getFilteredAddresses } = useBopis();
+      const { getFilteredAddresses } = useShipToLocation();
 
       // Test with special characters and punctuation
       const result = getFilteredAddresses(true, "#402");
@@ -304,7 +304,7 @@ describe("useBopis composable", () => {
         countryName: "Country",
         postalCode: "0000",
       };
-      const { selectAddress } = useBopis();
+      const { selectAddress } = useShipToLocation();
       await selectAddress(dummyAddress);
       expect(selectedLocalShipToAddressIdValue.value).toBe("anonAddr1");
       expect(updateShipmentMock).toHaveBeenCalledWith({
@@ -326,7 +326,7 @@ describe("useBopis composable", () => {
       };
       localShipToAddressesValue.value = [localAddress];
       selectedLocalShipToAddressIdValue.value = "localAddr1";
-      const { selectedAddress } = useBopis();
+      const { selectedAddress } = useShipToLocation();
       await nextTick();
       expect(selectedAddress.value).toEqual(localAddress);
     });
@@ -345,7 +345,7 @@ describe("useBopis composable", () => {
         },
       ];
       selectedLocalShipToAddressIdValue.value = "nonMatchingId";
-      const { selectedAddress } = useBopis();
+      const { selectedAddress } = useShipToLocation();
       await nextTick();
       expect(selectedAddress.value).toBeUndefined();
     });
@@ -363,7 +363,7 @@ describe("useBopis composable", () => {
         countryName: "Country",
         postalCode: "0000",
       };
-      const { selectAddress } = useBopis();
+      const { selectAddress } = useShipToLocation();
       await selectAddress(dummyAddress);
       expect(selectedLocalShipToAddressIdValue.value).toBeNull();
       expect(updateShipmentMock).toHaveBeenCalledWith({
@@ -384,7 +384,7 @@ describe("useBopis composable", () => {
         postalCode: "0000",
       };
 
-      const { selectAddress } = useBopis();
+      const { selectAddress } = useShipToLocation();
       await selectAddress(nonExistentAddress);
 
       // Should still update shipment even if address is not in the list
@@ -397,7 +397,7 @@ describe("useBopis composable", () => {
 
   describe("Modal Handling", () => {
     it("opens select address modal with correct props", () => {
-      const { openSelectAddressModal } = useBopis();
+      const { openSelectAddressModal } = useShipToLocation();
       openSelectAddressModal();
       expect(openModalMock).toHaveBeenCalled();
       const modalOptions = openModalMock.mock.calls[0][0] as IModalOptions;
@@ -409,7 +409,7 @@ describe("useBopis composable", () => {
 
     it("opens add or update address modal and handles onResult for personal user", async () => {
       // Personal user: isCorporateMember remains false
-      const { openAddOrUpdateAddressModal } = useBopis();
+      const { openAddOrUpdateAddressModal } = useShipToLocation();
       openAddOrUpdateAddressModal();
       expect(openModalMock).toHaveBeenCalled();
       const modalOptions = openModalMock.mock.calls[0][0] as IModalOptions;
@@ -437,7 +437,7 @@ describe("useBopis composable", () => {
       // For corporate user with permission
       isCorporateMember.value = true; // user type becomes CORPORATE
       checkPermissionsMock.mockReturnValue(true);
-      const { openAddOrUpdateAddressModal } = useBopis();
+      const { openAddOrUpdateAddressModal } = useShipToLocation();
       openAddOrUpdateAddressModal();
       expect(openModalMock).toHaveBeenCalled();
       const modalOptions = openModalMock.mock.calls[0][0] as IModalOptions;
@@ -463,7 +463,7 @@ describe("useBopis composable", () => {
     it("opens add or update address modal and handles onResult for anonymous (or corporate limited)", async () => {
       // For anonymous user
       isAuthenticated.value = false;
-      const { openAddOrUpdateAddressModal } = useBopis();
+      const { openAddOrUpdateAddressModal } = useShipToLocation();
       openAddOrUpdateAddressModal();
       expect(openModalMock).toHaveBeenCalled();
       const modalOptions = openModalMock.mock.calls[0][0] as IModalOptions;
@@ -488,7 +488,7 @@ describe("useBopis composable", () => {
 
   describe("Loading State", () => {
     it("computes loading value based on user and addresses loading states", async () => {
-      const { loading } = useBopis();
+      const { loading } = useShipToLocation();
       expect(loading.value).toBe(false);
       loadingUser.value = true;
       await nextTick();
@@ -520,7 +520,7 @@ describe("useBopis composable", () => {
       ];
       // Simulate error in fetchPersonalAddresses
       fetchPersonalAddressesMock.mockRejectedValue(new Error("Test error"));
-      const { fetchAddresses } = useBopis();
+      const { fetchAddresses } = useShipToLocation();
       try {
         await fetchAddresses();
       } catch (e) {
@@ -549,7 +549,7 @@ describe("useBopis composable", () => {
 
       // Instead of trying to re-mock the module with error, we'll verify that the
       // corporate addresses are correctly obtained in the composable
-      const { accountAddresses } = useBopis();
+      const { accountAddresses } = useShipToLocation();
 
       // Verify that for corporate users, accountAddresses returns organizationAddresses
       expect(accountAddresses.value).toEqual(organizationAddresses.value);
@@ -562,7 +562,7 @@ describe("useBopis composable", () => {
     it("for corporate user with permission, use organization addresses", () => {
       isCorporateMember.value = true;
       checkPermissionsMock.mockReturnValue(true);
-      const { accountAddresses } = useBopis();
+      const { accountAddresses } = useShipToLocation();
       expect(accountAddresses.value).toEqual(organizationAddresses.value);
     });
 
@@ -580,7 +580,7 @@ describe("useBopis composable", () => {
       };
       localShipToAddressesValue.value = [localAddress];
 
-      const { accountAddresses } = useBopis();
+      const { accountAddresses } = useShipToLocation();
       expect(accountAddresses.value).toEqual(organizationAddresses.value);
     });
 
@@ -600,7 +600,7 @@ describe("useBopis composable", () => {
       };
       localShipToAddressesValue.value = [localAddress];
 
-      const { accountAddresses } = useBopis();
+      const { accountAddresses } = useShipToLocation();
       expect(accountAddresses.value).toEqual(localShipToAddressesValue.value);
     });
 
@@ -617,7 +617,7 @@ describe("useBopis composable", () => {
       };
       localShipToAddressesValue.value = [localAddress];
 
-      const { accountAddresses } = useBopis();
+      const { accountAddresses } = useShipToLocation();
       expect(accountAddresses.value).toEqual(localShipToAddressesValue.value);
     });
   });
@@ -634,7 +634,7 @@ describe("useBopis composable", () => {
         postalCode: "9999",
       };
 
-      const { selectAddress } = useBopis();
+      const { selectAddress } = useShipToLocation();
       await selectAddress(newAddress);
 
       expect(updateShipmentMock).toHaveBeenCalledWith({
@@ -656,7 +656,7 @@ describe("useBopis composable", () => {
         postalCode: "0000",
       };
 
-      const { selectAddress } = useBopis();
+      const { selectAddress } = useShipToLocation();
       await selectAddress(personalAddress);
 
       // Should update shipment but not local storage
@@ -708,7 +708,7 @@ describe("useBopis composable", () => {
       localShipToAddressesValue.value = [anonymousAddress];
 
       // Then select it
-      const { selectAddress } = useBopis();
+      const { selectAddress } = useShipToLocation();
       await selectAddress(anonymousAddress);
 
       // Verify it's stored in local storage
@@ -740,7 +740,7 @@ describe("useBopis composable", () => {
 
       localShipToAddressesValue.value = localAddresses;
 
-      const { accountAddresses } = useBopis();
+      const { accountAddresses } = useShipToLocation();
 
       // For anonymous users, accountAddresses should return the local addresses
       expect(accountAddresses.value).toEqual(localAddresses);
