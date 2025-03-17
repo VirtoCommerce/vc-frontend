@@ -244,6 +244,7 @@ import {
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useSlugInfo } from "@/shared/common";
+import { useShipToLocation } from "@/shared/ship-to-location/composables";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
@@ -332,6 +333,8 @@ const {
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();
 
+const { selectedAddress } = useShipToLocation();
+
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
@@ -370,6 +373,8 @@ const breadcrumbs = useBreadcrumbs(() =>
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
 const searchParams = computedEager<ProductsSearchParamsType>(() => ({
+  selectedAddressId: selectedAddress.value?.id,
+  selectedAddress: selectedAddress.value,
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,

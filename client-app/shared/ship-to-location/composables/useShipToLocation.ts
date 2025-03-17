@@ -1,6 +1,7 @@
 import { useLocalStorage } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed } from "vue";
+import { updateContact } from "@/core/api/graphql/account";
 import { XApiPermissions } from "@/core/enums";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
@@ -23,7 +24,7 @@ type UserType = (typeof USER_TYPE)[keyof typeof USER_TYPE];
 
 export function useShipToLocation() {
   const { openModal, closeModal } = useModal();
-  const { loading: loadingUser, organization, isCorporateMember, isAuthenticated, checkPermissions } = useUser();
+  const { loading: loadingUser, organization, isCorporateMember, isAuthenticated, checkPermissions, user } = useUser();
   const {
     addresses: personalAddresses,
     fetchAddresses: fetchPersonalAddresses,
@@ -75,11 +76,20 @@ export function useShipToLocation() {
   const loading = computed(() => loadingUser.value || loadingOrganizationAddresses.value || loadingUserAddresses.value);
 
   const selectedAddress = computed(() => {
-    if (userType.value === USER_TYPE.ANONYMOUS) {
-      return localShipToAddresses.value.find((address) => address.id === selectedLocalShipToAddressId.value);
+    switch (userType.value) {
+      case USER_TYPE.PERSONAL:
+      case USER_TYPE.CORPORATE:
+        return accountAddresses.value.find((address) => address.id === user.value?.contact?.selectedAddressId);
+      case USER_TYPE.CORPORATE_LIMITED:
+        return (
+          accountAddresses.value.find((address) => address.id === user.value?.contact?.selectedAddressId) ??
+          localShipToAddresses.value.find((address) => address.id === selectedLocalShipToAddressId.value)
+        );
+      case USER_TYPE.ANONYMOUS:
+        return localShipToAddresses.value.find((address) => address.id === selectedLocalShipToAddressId.value);
+      default:
+        return null;
     }
-
-    return cartShipment.value?.deliveryAddress; // TODO: refactor to use from GetMe
   });
 
   function getFilteredAddresses(isSeeMore: boolean, filter?: string) {
@@ -128,17 +138,47 @@ export function useShipToLocation() {
 
   async function selectAddress(address: AnyAddressType) {
     switch (userType.value) {
+      case USER_TYPE.PERSONAL:
       case USER_TYPE.CORPORATE: {
-        // TODO: save to profile settings
+        if (!user.value?.contact) {
+          break;
+        }
+
+        await updateContact({
+          id: user.value.contact.id,
+          firstName: user.value.contact.firstName,
+          lastName: user.value.contact.lastName,
+          selectedAddressId: address.id,
+        });
         break;
       }
-      case USER_TYPE.PERSONAL:
-        // TODO: save to profile settings
+      case USER_TYPE.CORPORATE_LIMITED: {
+        const isOrganizationAddress = organizationsAddresses.value.some(
+          (organizationAddress) => organizationAddress.id === address.id,
+        );
+
+        if (!isOrganizationAddress) {
+          selectedLocalShipToAddressId.value = address.id;
+          break;
+        }
+
+        if (!user.value?.contact) {
+          break;
+        }
+
+        await updateContact({
+          id: user.value.contact.id,
+          firstName: user.value.contact.firstName,
+          lastName: user.value.contact.lastName,
+          selectedAddressId: address.id,
+        });
+
         break;
-      case USER_TYPE.ANONYMOUS:
-      case USER_TYPE.CORPORATE_LIMITED:
+      }
+      case USER_TYPE.ANONYMOUS: {
         selectedLocalShipToAddressId.value = address.id;
         break;
+      }
     }
 
     await updateShipmentCart({

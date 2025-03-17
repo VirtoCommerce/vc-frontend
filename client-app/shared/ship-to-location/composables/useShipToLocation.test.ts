@@ -12,6 +12,7 @@ const fetchOrganizationAddressesMock = vi.hoisted(() => vi.fn().mockResolvedValu
 const addOrUpdatePersonalAddressesMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 const addOrUpdateOrganizationAddressesMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 const updateShipmentMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+const updateContactMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 
 // Module mocks
 vi.mock("@/shared/modal", () => ({
@@ -21,6 +22,10 @@ vi.mock("@/shared/modal", () => ({
   }),
 }));
 
+vi.mock("@/core/api/graphql/account", () => ({
+  updateContact: updateContactMock,
+}));
+
 vi.mock("@/shared/account", () => ({
   useUser: () => ({
     isAuthenticated,
@@ -28,6 +33,7 @@ vi.mock("@/shared/account", () => ({
     loading: loadingUser,
     organization,
     checkPermissions: checkPermissionsMock,
+    user,
   }),
   useUserAddresses: () => ({
     addresses: personalAddresses,
@@ -94,6 +100,21 @@ const isAuthenticated = ref(true);
 const isCorporateMember = ref(false);
 const loadingUser = ref(false);
 const organization = ref({ id: "org1" });
+const user = ref<{
+  contact?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    selectedAddressId: string;
+  };
+}>({
+  contact: {
+    id: "contact1",
+    firstName: "John",
+    lastName: "Doe",
+    selectedAddressId: "addr1",
+  },
+});
 
 const personalAddresses = ref<AnyAddressType[]>([]);
 
@@ -120,11 +141,20 @@ describe("useShipToLocation composable", () => {
     addOrUpdatePersonalAddressesMock.mockClear();
     addOrUpdateOrganizationAddressesMock.mockClear();
     updateShipmentMock.mockClear();
+    updateContactMock.mockClear();
 
     isAuthenticated.value = true;
     isCorporateMember.value = false;
     loadingUser.value = false;
     organization.value = { id: "org1" };
+    user.value = {
+      contact: {
+        id: "contact1",
+        firstName: "John",
+        lastName: "Doe",
+        selectedAddressId: "addr1",
+      },
+    };
 
     personalAddresses.value = [
       {
@@ -313,6 +343,185 @@ describe("useShipToLocation composable", () => {
         id: shipment.value.id,
         deliveryAddress: dummyAddress,
       });
+      expect(updateContactMock).not.toHaveBeenCalled();
+    });
+
+    it("calls updateContact when selectAddress is called for personal user", async () => {
+      // For personal user
+      isAuthenticated.value = true;
+      isCorporateMember.value = false;
+      const dummyAddress: AnyAddressType = {
+        id: "personal1",
+        line1: "Personal Address",
+        line2: "",
+        city: "City",
+        regionName: "Region",
+        countryName: "Country",
+        postalCode: "0000",
+      };
+      const { selectAddress } = useShipToLocation();
+      await selectAddress(dummyAddress);
+
+      expect(updateContactMock).toHaveBeenCalledWith({
+        id: user.value.contact!.id,
+        firstName: user.value.contact!.firstName,
+        lastName: user.value.contact!.lastName,
+        selectedAddressId: dummyAddress.id,
+      });
+
+      expect(updateShipmentMock).toHaveBeenCalledWith({
+        id: shipment.value.id,
+        deliveryAddress: dummyAddress,
+      });
+    });
+
+    it("calls updateContact when selectAddress is called for corporate user", async () => {
+      // For corporate user
+      isAuthenticated.value = true;
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(true);
+
+      const dummyAddress: AnyAddressType = {
+        id: "corporate1",
+        line1: "Corporate Address",
+        line2: "",
+        city: "City",
+        regionName: "Region",
+        countryName: "Country",
+        postalCode: "0000",
+      };
+
+      const { selectAddress } = useShipToLocation();
+      await selectAddress(dummyAddress);
+
+      expect(updateContactMock).toHaveBeenCalledWith({
+        id: user.value.contact!.id,
+        firstName: user.value.contact!.firstName,
+        lastName: user.value.contact!.lastName,
+        selectedAddressId: dummyAddress.id,
+      });
+
+      expect(updateShipmentMock).toHaveBeenCalledWith({
+        id: shipment.value.id,
+        deliveryAddress: dummyAddress,
+      });
+    });
+
+    it("handles corporate-limited user with organization address correctly", async () => {
+      // For corporate-limited user
+      isAuthenticated.value = true;
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(false);
+
+      // Use an address that exists in organization addresses
+      const orgAddress = organizationAddresses.value[0];
+
+      const { selectAddress } = useShipToLocation();
+      await selectAddress(orgAddress);
+
+      // Should call updateContact since it's an organization address
+      expect(updateContactMock).toHaveBeenCalledWith({
+        id: user.value.contact!.id,
+        firstName: user.value.contact!.firstName,
+        lastName: user.value.contact!.lastName,
+        selectedAddressId: orgAddress.id,
+      });
+
+      expect(updateShipmentMock).toHaveBeenCalledWith({
+        id: shipment.value.id,
+        deliveryAddress: orgAddress,
+      });
+    });
+
+    it("handles corporate-limited user with local address correctly", async () => {
+      // For corporate-limited user
+      isAuthenticated.value = true;
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(false);
+
+      // Use a local address that doesn't exist in organization addresses
+      const localAddress: AnyAddressType = {
+        id: "localCorpLimited",
+        line1: "Local Corp Limited Address",
+        line2: "",
+        city: "City",
+        regionName: "Region",
+        countryName: "Country",
+        postalCode: "0000",
+      };
+
+      const { selectAddress } = useShipToLocation();
+      await selectAddress(localAddress);
+
+      // Should not call updateContact since it's a local address
+      expect(updateContactMock).not.toHaveBeenCalled();
+
+      // Should update local storage
+      expect(selectedLocalShipToAddressIdValue.value).toBe("localCorpLimited");
+
+      expect(updateShipmentMock).toHaveBeenCalledWith({
+        id: shipment.value.id,
+        deliveryAddress: localAddress,
+      });
+    });
+
+    it("computes selectedAddress correctly for personal user", async () => {
+      isAuthenticated.value = true;
+      isCorporateMember.value = false;
+      user.value.contact!.selectedAddressId = "addr1";
+
+      const { selectedAddress } = useShipToLocation();
+      await nextTick();
+
+      expect(selectedAddress.value).toEqual(personalAddresses.value[0]);
+    });
+
+    it("computes selectedAddress correctly for corporate user", async () => {
+      isAuthenticated.value = true;
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(true);
+      user.value.contact!.selectedAddressId = "orgAddr1";
+
+      const { selectedAddress } = useShipToLocation();
+      await nextTick();
+
+      expect(selectedAddress.value).toEqual(organizationAddresses.value[0]);
+    });
+
+    it("computes selectedAddress correctly for corporate-limited user with organization address", async () => {
+      isAuthenticated.value = true;
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(false);
+      user.value.contact!.selectedAddressId = "orgAddr1";
+
+      const { selectedAddress } = useShipToLocation();
+      await nextTick();
+
+      expect(selectedAddress.value).toEqual(organizationAddresses.value[0]);
+    });
+
+    it("computes selectedAddress correctly for corporate-limited user with local address", async () => {
+      isAuthenticated.value = true;
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(false);
+      user.value.contact!.selectedAddressId = "nonExistentOrgAddress";
+
+      const localAddress: AnyAddressType = {
+        id: "localCorpLimited",
+        line1: "Local Corp Limited Address",
+        line2: "",
+        city: "City",
+        regionName: "Region",
+        countryName: "Country",
+        postalCode: "0000",
+      };
+      localShipToAddressesValue.value = [localAddress];
+      selectedLocalShipToAddressIdValue.value = "localCorpLimited";
+
+      const { selectedAddress } = useShipToLocation();
+      await nextTick();
+
+      expect(selectedAddress.value).toEqual(localAddress);
     });
 
     it("computes selectedAddress correctly for anonymous user", async () => {
@@ -393,6 +602,45 @@ describe("useShipToLocation composable", () => {
       expect(updateShipmentMock).toHaveBeenCalledWith({
         id: shipment.value.id,
         deliveryAddress: nonExistentAddress,
+      });
+    });
+
+    it("computes selectedAddress as undefined when user has no contact", async () => {
+      isAuthenticated.value = true;
+      isCorporateMember.value = false;
+      user.value = { contact: undefined };
+
+      const { selectedAddress } = useShipToLocation();
+      await nextTick();
+
+      expect(selectedAddress.value).toBeUndefined();
+    });
+
+    it("does not call updateContact when user.contact is undefined", async () => {
+      isAuthenticated.value = true;
+      // Set user.contact to undefined
+      user.value = { contact: undefined };
+
+      const dummyAddress: AnyAddressType = {
+        id: "personal1",
+        line1: "Personal Address",
+        line2: "",
+        city: "City",
+        regionName: "Region",
+        countryName: "Country",
+        postalCode: "0000",
+      };
+
+      const { selectAddress } = useShipToLocation();
+      await selectAddress(dummyAddress);
+
+      // Should not call updateContact
+      expect(updateContactMock).not.toHaveBeenCalled();
+
+      // Should still update shipment
+      expect(updateShipmentMock).toHaveBeenCalledWith({
+        id: shipment.value.id,
+        deliveryAddress: dummyAddress,
       });
     });
   });
