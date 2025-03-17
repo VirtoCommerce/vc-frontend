@@ -47,11 +47,11 @@
         <div class="mt-1 text-sm font-normal">{{ $t("pages.cart.empty_cart_search_text") }}</div>
 
         <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2.5 max-sm:justify-center">
-          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link" prepend-icon="shopping-bag">
             {{ $t("common.buttons.continue_shopping") }}
           </VcButton>
 
-          <VcButton v-else to="/">
+          <VcButton v-else to="/" prepend-icon="shopping-bag">
             {{ $t("common.buttons.continue_shopping") }}
           </VcButton>
 
