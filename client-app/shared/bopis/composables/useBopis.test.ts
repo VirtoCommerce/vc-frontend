@@ -452,16 +452,55 @@ describe("useBopis composable", () => {
     });
   });
 
-  describe("User Type Detection", () => {
-    it("detects corporate user type when user is corporate member", () => {
+  describe("Use correct addresses for different user types", () => {
+    it("for corporate user with permission, use organization addresses", () => {
       isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(true);
       const { accountAddresses } = useBopis();
       expect(accountAddresses.value).toEqual(organizationAddresses.value);
     });
 
-    it("uses local addresses for anonymous users", () => {
+    it("for corporate limited user type, and saved organization address, use organization addresses", () => {
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(false);
+      const localAddress = {
+        id: "localCorpLimited",
+        line1: "Local Corp Limited Address",
+        line2: "",
+        city: "City",
+        regionName: "Region",
+        countryName: "Country",
+        postalCode: "0000",
+      };
+      localShipToAddressesValue.value = [localAddress];
+
+      const { accountAddresses } = useBopis();
+      expect(accountAddresses.value).toEqual(organizationAddresses.value);
+    });
+
+    it("for corporate user without permission, and no saved organization address, use local addresses", () => {
+      isCorporateMember.value = true;
+      checkPermissionsMock.mockReturnValue(false);
+      organizationAddresses.value = [];
+
+      const localAddress = {
+        id: "localAddr1",
+        line1: "Local Address",
+        line2: "",
+        city: "City",
+        regionName: "Region",
+        countryName: "Country",
+        postalCode: "0000",
+      };
+      localShipToAddressesValue.value = [localAddress];
+
+      const { accountAddresses } = useBopis();
+      expect(accountAddresses.value).toEqual(localShipToAddressesValue.value);
+    });
+
+    it("for anonymous user, use local addresses", () => {
       isAuthenticated.value = false;
-      const localAddress: AnyAddressType = {
+      const localAddress = {
         id: "localAddr1",
         line1: "Local Address",
         line2: "",
