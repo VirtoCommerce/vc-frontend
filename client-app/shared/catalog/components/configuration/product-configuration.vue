@@ -31,11 +31,12 @@
             <div
               v-else
               class="product-configuration__value"
-              :class="
+              :class="[
                 hasSelectedOption(section.id)
                   ? 'product-configuration__value--selected'
-                  : 'product-configuration__value--not-selected'
-              "
+                  : 'product-configuration__value--not-selected',
+                section.isRequired ? 'product-configuration__value--required' : '',
+              ]"
             >
               {{ getSectionSubtitle(section) }}
             </div>
@@ -218,16 +219,9 @@ function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
   if (hasSelectedOption(section.id)) {
     return selectedConfiguration.value?.[section.id]?.selectedOptionTextValue;
   }
-  switch (section.type) {
-    case CONFIGURABLE_SECTION_TYPES.product:
-      return t("shared.catalog.product_details.product_configuration.nothing_selected");
-    case CONFIGURABLE_SECTION_TYPES.text:
-      return t("shared.catalog.product_details.product_configuration.no_text");
-    case CONFIGURABLE_SECTION_TYPES.file:
-      return t("shared.catalog.product_details.product_configuration.no_file");
-    default:
-      return t("shared.catalog.product_details.product_configuration.nothing_selected");
-  }
+  return section.isRequired
+    ? t("shared.catalog.product_details.product_configuration.required_no_selected")
+    : t("shared.catalog.product_details.product_configuration.optional_no_selected");
 }
 
 async function canChangeRoute(): Promise<boolean> {
@@ -277,6 +271,8 @@ async function openSaveChangesModal(): Promise<boolean> {
 
 <style lang="scss">
 .product-configuration {
+  $required: "";
+
   &__widgets {
     @apply space-y-5;
   }
@@ -298,16 +294,24 @@ async function openSaveChangesModal(): Promise<boolean> {
   }
 
   &__error {
-    @apply text-danger;
+    @apply text-danger-700;
   }
 
   &__value {
     &--selected {
-      @apply text-success font-bold;
+      @apply text-success-600;
+    }
+
+    &--required {
+      $required: &;
     }
 
     &--not-selected {
-      @apply text-info;
+      @apply text-info-800;
+
+      &#{$required} {
+        @apply text-danger-800;
+      }
     }
   }
 }
