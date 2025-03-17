@@ -56,7 +56,7 @@ function _useThemeContext() {
 
   async function fetchPreset(themePresetName: string): Promise<IThemeConfigPreset | void> {
     try {
-      const module = (await import(`/client-app/assets/presets/${themePresetName}.json`)) as {
+      const module = (await import(`../../assets/presets/${themePresetName}.json`)) as {
         default: IThemeConfigPreset;
       };
       return module.default;
