@@ -3,6 +3,7 @@ import { omit } from "lodash";
 import { computed } from "vue";
 import { updateContact } from "@/core/api/graphql/account";
 import { XApiPermissions } from "@/core/enums";
+import { Logger, stringifyAddress } from "@/core/utilities";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
 import { SelectAddressModal } from "@/shared/checkout";
@@ -19,6 +20,8 @@ export const USER_TYPE = {
   CORPORATE: "corporate",
   ANONYMOUS: "anonymous",
 } as const;
+
+export const LOCAL_ID_PREFIX = "local-";
 
 type UserType = (typeof USER_TYPE)[keyof typeof USER_TYPE];
 
@@ -106,17 +109,7 @@ export function useShipToLocation() {
     const lowerCaseStr = filter.toLowerCase();
 
     return accountAddresses.value.filter((address) => {
-      const combinedAddressString = [
-        address.line1,
-        address.line2,
-        address.city,
-        address.regionName,
-        address.countryName,
-        address.postalCode,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
+      const combinedAddressString = stringifyAddress(address).toLowerCase();
 
       return combinedAddressString.includes(lowerCaseStr);
     });
@@ -140,16 +133,7 @@ export function useShipToLocation() {
     switch (userType.value) {
       case USER_TYPE.PERSONAL:
       case USER_TYPE.CORPORATE: {
-        if (!user.value?.contact) {
-          break;
-        }
-
-        await updateContact({
-          id: user.value.contact.id,
-          firstName: user.value.contact.firstName,
-          lastName: user.value.contact.lastName,
-          selectedAddressId: address.id,
-        });
+        await updateContactWithAddress(address);
         break;
       }
       case USER_TYPE.CORPORATE_LIMITED: {
@@ -162,17 +146,7 @@ export function useShipToLocation() {
           break;
         }
 
-        if (!user.value?.contact) {
-          break;
-        }
-
-        await updateContact({
-          id: user.value.contact.id,
-          firstName: user.value.contact.firstName,
-          lastName: user.value.contact.lastName,
-          selectedAddressId: address.id,
-        });
-
+        await updateContactWithAddress(address);
         break;
       }
       case USER_TYPE.ANONYMOUS: {
@@ -185,6 +159,22 @@ export function useShipToLocation() {
       id: cartShipment.value?.id,
       deliveryAddress: omit(address, ["isDefault", "isFavorite"]),
     });
+  }
+
+  async function updateContactWithAddress(address: AnyAddressType) {
+    if (!user.value?.contact) {
+      return;
+    }
+    try {
+      await updateContact({
+        id: user.value.contact.id,
+        firstName: user.value.contact.firstName,
+        lastName: user.value.contact.lastName,
+        selectedAddressId: address.id,
+      });
+    } catch (error) {
+      Logger.error("updateContactWithAddress", error);
+    }
   }
 
   function openSelectAddressModal(): void {
@@ -228,7 +218,7 @@ export function useShipToLocation() {
               break;
             case USER_TYPE.CORPORATE_LIMITED:
             case USER_TYPE.ANONYMOUS: {
-              address.id = crypto.randomUUID();
+              address.id = `${LOCAL_ID_PREFIX}${crypto.randomUUID()}`;
               localShipToAddresses.value = [...localShipToAddresses.value, address];
               break;
             }

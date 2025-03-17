@@ -241,10 +241,11 @@ import {
   getFilterExpressionForInStock,
   getFilterExpressionForZeroPrice,
   getFilterExpressionFromFacets,
+  stringifyAddress,
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useSlugInfo } from "@/shared/common";
-import { useShipToLocation } from "@/shared/ship-to-location/composables";
+import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
@@ -373,8 +374,11 @@ const breadcrumbs = useBreadcrumbs(() =>
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
 const searchParams = computedEager<ProductsSearchParamsType>(() => ({
-  selectedAddressId: selectedAddress.value?.id,
-  selectedAddress: selectedAddress.value,
+  selectedAddressId: selectedAddress.value?.id?.startsWith(LOCAL_ID_PREFIX) ? undefined : selectedAddress.value?.id,
+  selectedAddress:
+    selectedAddress.value?.id && !selectedAddress.value?.id?.startsWith(LOCAL_ID_PREFIX)
+      ? undefined
+      : stringifyAddress(selectedAddress.value ?? {}),
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,

@@ -17,6 +17,8 @@ export async function searchProducts(
     fuzzy,
     fuzzyLevel,
     productIds,
+    selectedAddressId,
+    selectedAddress,
   }: Partial<ProductsSearchParamsType>,
   options: {
     /** @default false */
@@ -58,6 +60,8 @@ export async function searchProducts(
       first: itemsPerPage,
       after: String((page - 1) * itemsPerPage),
       productIds,
+      selectedAddressId,
+      selectedAddress,
     },
   });
 

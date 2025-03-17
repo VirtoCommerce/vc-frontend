@@ -19,6 +19,12 @@ export function getAddressName(address: AnyAddressType): string {
   return [countryCode, regionName, city, line1].filter(Boolean).join(", ");
 }
 
+export function stringifyAddress(address: AnyAddressType): string {
+  return [address.line1, address.line2, address.city, address.regionName, address.countryName, address.postalCode]
+    .filter(Boolean)
+    .join(" ");
+}
+
 export function isEqualAddresses(
   address1: AnyAddressType,
   address2: AnyAddressType,
