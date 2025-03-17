@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <VcButton icon="barcode" @click="openBarcodeScanner" />
-  </div>
+  <VcButton icon="barcode" @click="openBarcodeScanner" />
 </template>
 
 <script setup lang="ts">
@@ -16,9 +14,8 @@ const emit = defineEmits<{
 
 const { openModal, closeModal } = useModal();
 
-// Handler for when barcode value is received
 const onBarcodeValueReceived = (value: string[]) => {
-  emit("value", value.join(","));
+  emit("value", value.join(", "));
   closeModal();
 };
 

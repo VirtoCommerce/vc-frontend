@@ -18,11 +18,11 @@ const emit = defineEmits<{
   (e: "result", value: string[]): void;
 }>();
 
-const SCAN_INTERVAL = 400;
-
 const videoElement = ref<HTMLVideoElement | null>(null);
 const videoStream = ref<MediaStream | null>(null);
 let barcodeDetector: BarcodeDetector | null = null;
+
+const SCAN_INTERVAL = 400;
 
 const scan = async () => {
   if (!barcodeDetector || !videoElement.value) {
