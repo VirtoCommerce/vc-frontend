@@ -1,24 +1,9 @@
 <template>
-  <VcModal :title="$t('shared.layout.search_bar.barcode_scanner_modal.title')" class="barcode-scanner-modal">
-    <div class="mb-2 flex items-center justify-between">
-      <h3 class="text-base font-medium">{{ $t("shared.layout.search_bar.scan_barcode") || "Scan Barcode" }}</h3>
-      <VcButton icon="delete-thin" variant="no-background" @click="handleClose" />
-    </div>
-
+  <VcModal title="Barcode and QR Code Scanner" class="barcode-scanner-modal">
     <div class="relative">
-      <video ref="videoElement" class="h-[240px] w-full rounded bg-neutral-100 object-cover" playsinline>
+      <video ref="videoElement" playsinline>
         <track kind="captions" src="" label="Barcode Scanner" default disabled />
       </video>
-      <div
-        class="scanner-border pointer-events-none absolute inset-0 rounded border-2 border-primary"
-        :class="{ 'border-success': scannedValue }"
-      ></div>
-    </div>
-
-    <div class="mt-3 flex items-center justify-between">
-      <span v-if="scannedValue" class="max-w-[200px] truncate text-sm font-medium">
-        {{ scannedValue }}
-      </span>
     </div>
   </VcModal>
 </template>
@@ -27,52 +12,38 @@
 import { useIntervalFn } from "@vueuse/core";
 import { BarcodeDetector } from "barcode-detector/ponyfill";
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
+import { Logger } from "@/core/utilities";
 
 const emit = defineEmits<{
-  (e: "value", value: string): void;
-  (e: "result", value: string): void;
-}>();
-
-const props = defineProps<{
-  onClose: () => void;
+  (e: "result", value: string[]): void;
 }>();
 
 const SCAN_INTERVAL = 400;
-const videoElement = ref<HTMLVideoElement | null>(null);
-const scannedValue = ref("");
-const videoStream = ref<MediaStream | null>(null);
-const scansAmount = ref(0);
 
-// todo init in hook
-const barcodeDetector = new BarcodeDetector();
+const videoElement = ref<HTMLVideoElement | null>(null);
+const videoStream = ref<MediaStream | null>(null);
+let barcodeDetector: BarcodeDetector | null = null;
 
 const scan = async () => {
   if (!barcodeDetector || !videoElement.value) {
     return;
   }
-
   try {
     const imageBitmap = await createImageBitmap(videoElement.value);
 
     const barcodes = await barcodeDetector.detect(imageBitmap);
-    barcodes.forEach((barcode) => {
-      emit("result", barcode.rawValue);
-    });
-
-    scansAmount.value++;
+    if (barcodes.length) {
+      emit(
+        "result",
+        barcodes.map((el) => el.rawValue),
+      );
+    }
   } catch (error) {
-    console.error("Error during barcode scanning", error);
+    Logger.error(scan.name, error);
   }
 };
 
 const { resume: startScanner, pause: stopScanner } = useIntervalFn(scan, SCAN_INTERVAL);
-
-const handleClose = () => {
-  stopScanner();
-  stopCamera();
-  props.onClose();
-};
 
 async function startCamera() {
   try {
@@ -87,13 +58,13 @@ async function startCamera() {
       await videoElement.value.play();
     }
   } catch (error) {
-    console.error("Error accessing camera:", error);
+    Logger.error(startCamera.name, error);
   }
 }
 
 function stopCamera() {
   if (videoStream.value) {
-    videoStream.value.getTracks().forEach((track) => track.stop());
+    videoStream.value.getVideoTracks().every((track) => track.stop());
     videoStream.value = null;
   }
 
@@ -105,14 +76,16 @@ function stopCamera() {
 onMounted(async () => {
   try {
     await startCamera();
+    barcodeDetector = new BarcodeDetector();
     startScanner();
   } catch (error) {
-    console.error("BarcodeDetector initialization error:", error);
+    Logger.error("BarcodeDetector initialization error:", error);
   }
 });
 
 onBeforeUnmount(() => {
   stopScanner();
+  barcodeDetector = null;
   stopCamera();
 });
 </script>
