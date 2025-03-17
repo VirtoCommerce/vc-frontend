@@ -72,8 +72,8 @@
       "add_items_to_cart": "Adicionar Itens ao Carrinho",
       "show_details": "Mostrar Detalhes",
       "add_with_bulk_order": "Adicionar com pedido em lote",
-      "agency": "Agência",
-      "personal": "Pessoal",
+      "all_orders": "Todas as encomendas.",
+      "my_orders": "Minhas encomendas",
       "scroll_to_top": "Voltar ao topo"
     },
     "labels": {

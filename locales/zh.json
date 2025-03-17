@@ -72,8 +72,8 @@
       "add_items_to_cart": "添加商品到购物车",
       "show_details": "显示详情",
       "add_with_bulk_order": "批量订单添加",
-      "agency": "机构",
-      "personal": "个人的",
+      "all_orders": "所有订单",
+      "my_orders": "我的订单",
       "scroll_to_top": "回到顶部"
     },
     "labels": {

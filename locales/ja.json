@@ -72,8 +72,8 @@
       "add_items_to_cart": "カートに追加",
       "show_details": "詳細表示",
       "add_with_bulk_order": "一括注文で追加",
-      "agency": "エージェンシー",
-      "personal": "個人的な",
+      "all_orders": "すべての注文",
+      "my_orders": "私の注文",
       "scroll_to_top": "トップへスクロール"
     },
     "labels": {

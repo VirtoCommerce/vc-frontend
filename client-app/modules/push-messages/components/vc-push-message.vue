@@ -56,7 +56,7 @@ withDefaults(defineProps<IProps>(), {
 .vc-push-message {
   $unread: "";
 
-  @apply flex items-start;
+  @apply flex items-start cursor-pointer;
 
   &--size {
     &--md {

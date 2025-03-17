@@ -72,8 +72,8 @@
       "add_items_to_cart": "Aggiungi articoli al carrello",
       "show_details": "Mostra dettagli",
       "add_with_bulk_order": "Aggiungi con ordine multiplo",
-      "agency": "Agenzia",
-      "personal": "Personale",
+      "all_orders": "Tutti gli ordini",
+      "my_orders": "I miei ordini",
       "scroll_to_top": "Torna su"
     },
     "labels": {
