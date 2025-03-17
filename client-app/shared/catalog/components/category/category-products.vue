@@ -1,7 +1,7 @@
 <template>
   <div>
     <template v-if="products.length || fetchingProducts">
-      <div v-if="minVisitedPage && minVisitedPage > 1" class="my-5 text-center">
+      <div v-if="products.length && minVisitedPage && minVisitedPage > 1" class="my-5 text-center">
         <VcButton
           size="xs"
           variant="no-background"

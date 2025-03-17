@@ -390,8 +390,8 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
     .join(" "),
 }));
 
-const minVisitedPage = computed(() => Math.min(...pagesHistory.value, currentPage.value));
-const maxVisitedPage = computed(() => Math.max(...pagesHistory.value, currentPage.value));
+const minVisitedPage = computed(() => Math.min(...pagesHistory.value));
+const maxVisitedPage = computed(() => Math.max(...pagesHistory.value));
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
@@ -477,7 +477,7 @@ whenever(() => !isMobile.value, hideFiltersSidebar);
 watch(currentPage, (page) => {
   console.log("page", page);
   console.log("urlSearchParams.page", urlSearchParams.page);
-  if (!urlSearchParams.page || (Number(urlSearchParams.page) !== page && page > Number(urlSearchParams.page))) {
+  if (!urlSearchParams.page || Number(urlSearchParams.page) !== page) {
     urlSearchParams.page = String(page);
   }
 });

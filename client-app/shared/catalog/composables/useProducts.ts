@@ -240,6 +240,10 @@ export function useProducts(
         totalCount = 0,
       } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
 
+      const page = searchParams.page;
+      if (page) {
+        pagesHistory.value.push(page);
+      }
       products.value = items;
       totalProductsCount.value = totalCount;
       pagesCount.value = Math.min(
@@ -275,9 +279,6 @@ export function useProducts(
 
       const page = searchParams.page;
       const minVisitedPage = Math.min(...pagesHistory.value, currentPage.value);
-      console.log("minVisitedPage", minVisitedPage);
-      console.log("page", page);
-      console.log("pagesHistory", pagesHistory.value);
 
       if (page && minVisitedPage && page === minVisitedPage) {
         pagesHistory.value.push(page);
