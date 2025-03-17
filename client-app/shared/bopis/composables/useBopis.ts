@@ -61,10 +61,11 @@ export function useBopis() {
     switch (userType.value) {
       case USER_TYPE.CORPORATE:
         return organizationsAddresses.value;
+      case USER_TYPE.CORPORATE_LIMITED:
+        return organizationsAddresses.value ?? localShipToAddresses.value;
       case USER_TYPE.PERSONAL:
         return personalAddresses.value;
       case USER_TYPE.ANONYMOUS:
-      case USER_TYPE.CORPORATE_LIMITED:
         return localShipToAddresses.value;
       default:
         return [];
