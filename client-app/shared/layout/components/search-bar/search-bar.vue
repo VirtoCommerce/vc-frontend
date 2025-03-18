@@ -6,15 +6,17 @@
       :maxlength="MAX_LENGTH"
       class="w-full"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
-      clearable
       @keyup.enter="goToSearchResultsPage"
       @keyup.esc="hideSearchDropdown"
       @input="onSearchPhraseChanged"
       @focus="onSearchBarFocused"
-      @clear="reset"
     >
       <template #append>
-        <BarcodeScanner class="me-1" @scanned-code="onBarcodeScanned" />
+        <button v-if="searchPhrase" type="button" class="vc-input__clear" @click.stop="reset">
+          <VcIcon name="delete-2" size="xs" />
+        </button>
+        <BarcodeScanner v-else @scanned-code="onBarcodeScanned" />
+
         <VcButton
           :aria-label="$t('shared.layout.search_bar.search_button')"
           icon="search"
