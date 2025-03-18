@@ -35,7 +35,7 @@ const props = defineProps<IProps>();
 
 const { value } = toRefs(props);
 
-const DEFAULT_FILES_SCOPE = "configuration-files";
+const DEFAULT_FILES_SCOPE = "product-configuration";
 
 interface IProps {
   value?: DeepReadonly<CartConfigurationItemFileType[]>;
