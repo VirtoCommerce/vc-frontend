@@ -128,10 +128,16 @@ export function useShipToLocation() {
     });
   }
 
-  function getFilteredAddresses(isSeeMore: boolean, filter?: string): AnyAddressType[] {
-    return filter || isSeeMore
-      ? filterAddresses(accountAddresses.value, filter)
-      : accountAddresses.value.slice(0, MAX_ADDRESSES_NUMBER);
+  function getFilteredAddresses(filter?: string): AnyAddressType[] {
+    return filter ? filterAddresses(accountAddresses.value, filter) : getLimitedAddresses();
+  }
+
+  function getLimitedAddresses(limit = MAX_ADDRESSES_NUMBER): AnyAddressType[] {
+    return accountAddresses.value.slice(0, limit);
+  }
+
+  function getAllAddresses(filter?: string): AnyAddressType[] {
+    return filterAddresses(accountAddresses.value, filter);
   }
 
   async function fetchAddresses() {
@@ -271,8 +277,11 @@ export function useShipToLocation() {
     selectedAddress,
 
     fetchAddresses,
-    getFilteredAddresses,
     selectAddress,
+
+    getAllAddresses,
+    getFilteredAddresses,
+    getLimitedAddresses,
 
     openSelectAddressModal,
     openAddOrUpdateAddressModal,

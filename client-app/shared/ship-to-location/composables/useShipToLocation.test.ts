@@ -237,8 +237,8 @@ describe("useShipToLocation composable", () => {
         postalCode: "0000",
       }));
       personalAddresses.value = addressesArray;
-      const { getFilteredAddresses } = useShipToLocation();
-      const result = getFilteredAddresses(false);
+      const { getLimitedAddresses } = useShipToLocation();
+      const result = getLimitedAddresses();
       expect(result.length).toBe(MAX_ADDRESSES_NUMBER);
       expect(result).toEqual(addressesArray.slice(0, MAX_ADDRESSES_NUMBER));
     });
@@ -264,8 +264,8 @@ describe("useShipToLocation composable", () => {
           postalCode: "02108",
         },
       ];
-      const { getFilteredAddresses } = useShipToLocation();
-      const result = getFilteredAddresses(true, "New York");
+      const { getAllAddresses } = useShipToLocation();
+      const result = getAllAddresses("New York");
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe("addr1");
     });
@@ -283,7 +283,7 @@ describe("useShipToLocation composable", () => {
         },
       ];
       const { getFilteredAddresses } = useShipToLocation();
-      const result = getFilteredAddresses(false, "NonExistent");
+      const result = getFilteredAddresses("NonExistent");
       expect(result).toBeInstanceOf(Array);
       expect(result.length).toBe(0);
     });
@@ -310,15 +310,15 @@ describe("useShipToLocation composable", () => {
         },
       ];
 
-      const { getFilteredAddresses } = useShipToLocation();
+      const { getAllAddresses } = useShipToLocation();
 
       // Test with special characters and punctuation
-      const result = getFilteredAddresses(true, "#402");
+      const result = getAllAddresses("#402");
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe("addr1");
 
       // Test with empty string should return all addresses
-      const emptyResult = getFilteredAddresses(true, "");
+      const emptyResult = getAllAddresses("");
       expect(emptyResult).toHaveLength(2);
     });
   });

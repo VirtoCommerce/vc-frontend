@@ -171,7 +171,7 @@ describe("stringifyAddress", () => {
   });
 
   it("should return empty string when address is undefined", () => {
-    const result = stringifyAddress(undefined);
+    const result = stringifyAddress();
 
     expect(result).toBe("");
   });

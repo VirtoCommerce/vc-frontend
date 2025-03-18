@@ -145,6 +145,8 @@ const {
   loading,
   selectedAddress,
   getFilteredAddresses,
+  getLimitedAddresses,
+  getAllAddresses,
   fetchAddresses,
   selectAddress,
   openAddOrUpdateAddressModal,
@@ -152,7 +154,18 @@ const {
 
 const { checkPermissions, isCorporateMember } = useUser();
 
-const addresses = computed(() => getFilteredAddresses(isSeeMore.value, filter.value));
+const addresses = computed(() => {
+  if (isSeeMore.value) {
+    return getAllAddresses(filter.value);
+  }
+
+  if (filter.value) {
+    return getFilteredAddresses(filter.value);
+  }
+
+  return getLimitedAddresses();
+});
+
 const hasAddresses = computed(() => addresses.value.length > 0);
 const canAddNewAddress = computed(
   () => !isCorporateMember.value || checkPermissions(XApiPermissions.CanEditOrganization),
