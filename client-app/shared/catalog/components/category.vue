@@ -226,6 +226,7 @@ import {
   watchDebounced,
   whenever,
 } from "@vueuse/core";
+import omit from "lodash/omit";
 import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
@@ -241,7 +242,6 @@ import {
   getFilterExpressionForInStock,
   getFilterExpressionForZeroPrice,
   getFilterExpressionFromFacets,
-  stringifyAddress,
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useSlugInfo } from "@/shared/common";
@@ -373,12 +373,24 @@ const breadcrumbs = useBreadcrumbs(() =>
 );
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
+function getSelectedAddressArgs(): {
+  selectedAddressId: string | undefined;
+  selectedAddress: string | undefined;
+} {
+  const selectedAddressIdValue = selectedAddress.value?.id?.startsWith(LOCAL_ID_PREFIX)
+    ? undefined
+    : selectedAddress.value?.id;
+  const selectedAddressValue = selectedAddressIdValue
+    ? undefined
+    : JSON.stringify(omit(selectedAddress.value, ["id", "isDefault", "isFavorite"]));
+  return {
+    selectedAddressId: selectedAddressIdValue,
+    selectedAddress: selectedAddressValue,
+  };
+}
+
 const searchParams = computedEager<ProductsSearchParamsType>(() => ({
-  selectedAddressId: selectedAddress.value?.id?.startsWith(LOCAL_ID_PREFIX) ? undefined : selectedAddress.value?.id,
-  selectedAddress:
-    selectedAddress.value?.id && !selectedAddress.value?.id?.startsWith(LOCAL_ID_PREFIX)
-      ? undefined
-      : stringifyAddress(selectedAddress.value) || undefined,
+  ...getSelectedAddressArgs(),
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
