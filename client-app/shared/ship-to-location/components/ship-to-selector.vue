@@ -12,7 +12,7 @@
         <button class="ship-to-selector__trigger" type="button" :disabled="loading">
           <VcIcon name="location-marker" size="xs" />
 
-          <VcLoaderOverlay v-if="loading" />
+          <VcLoaderOverlay v-if="loading" no-bg />
 
           <span class="ship-to-selector__label">{{ $t("shared.layout.header.ship_to_selector.title") }}</span>
 
@@ -36,6 +36,7 @@
                     {{ $t("shared.layout.header.ship_to_selector.select_address") }}
                   </div>
                   <VcButton
+                    v-if="canAddNewAddress"
                     size="xs"
                     variant="outline"
                     color="secondary"
@@ -125,6 +126,8 @@
 
 <script setup lang="ts">
 import { computed, watchEffect, ref } from "vue";
+import { XApiPermissions } from "@/core/enums";
+import { useUser } from "@/shared/account";
 import { AddressLine } from "@/shared/common";
 import { MAX_ADDRESSES_NUMBER, useShipToLocation } from "../composables";
 
@@ -147,8 +150,13 @@ const {
   openAddOrUpdateAddressModal,
 } = useShipToLocation();
 
+const { checkPermissions, isCorporateMember } = useUser();
+
 const addresses = computed(() => getFilteredAddresses(isSeeMore.value, filter.value));
 const hasAddresses = computed(() => addresses.value.length > 0);
+const canAddNewAddress = computed(
+  () => !isCorporateMember.value || checkPermissions(XApiPermissions.CanEditOrganization),
+);
 
 watchEffect(async () => {
   await fetchAddresses();

@@ -1,5 +1,6 @@
 import { useLocalStorage } from "@vueuse/core";
-import { omit } from "lodash";
+import isEqual from "lodash/isEqual";
+import omit from "lodash/omit";
 import { computed, ref } from "vue";
 import { updateContact } from "@/core/api/graphql/account";
 import { XApiPermissions } from "@/core/enums";
@@ -99,10 +100,9 @@ export function useShipToLocation() {
       case USER_TYPE.CORPORATE:
         return accountAddresses.value.find((address) => address.id === user.value?.contact?.selectedAddressId);
       case USER_TYPE.CORPORATE_LIMITED:
-        return (
-          accountAddresses.value.find((address) => address.id === user.value?.contact?.selectedAddressId) ??
-          localShipToAddresses.value.find((address) => address.id === selectedLocalShipToAddressId.value)
-        );
+        return accountAddresses.value.length
+          ? accountAddresses.value.find((address) => address.id === user.value?.contact?.selectedAddressId)
+          : localShipToAddresses.value.find((address) => address.id === selectedLocalShipToAddressId.value);
       case USER_TYPE.ANONYMOUS:
         return localShipToAddresses.value.find((address) => address.id === selectedLocalShipToAddressId.value);
       default:
@@ -177,9 +177,7 @@ export function useShipToLocation() {
   }
 
   async function updateContactWithAddress(address: AnyAddressType) {
-    console.log("updateContactWithAddress", address);
-    console.log("user.value?.contact", user.value?.contact);
-    if (!user.value?.contact) {
+    if (!user.value?.contact || !address.id) {
       return;
     }
 
@@ -233,19 +231,24 @@ export function useShipToLocation() {
           switch (userType.value) {
             case USER_TYPE.CORPORATE: {
               await addOrUpdateOrganizationAddresses([address]);
-              await selectAddress(address);
+              const justAddedAddress = organizationsAddresses.value.find((_address) =>
+                isEqual(normalizeAddressToFind(_address), normalizeAddressToFind(address)),
+              );
+              address.id = justAddedAddress?.id;
               break;
             }
             case USER_TYPE.PERSONAL: {
               await addOrUpdatePersonalAddresses([address]);
-              await selectAddress(address);
+              const justAddedAddress = personalAddresses.value.find((_address) =>
+                isEqual(normalizeAddressToFind(_address), normalizeAddressToFind(address)),
+              );
+              address.id = justAddedAddress?.id;
               break;
             }
             case USER_TYPE.CORPORATE_LIMITED:
             case USER_TYPE.ANONYMOUS: {
               address.id = `${LOCAL_ID_PREFIX}${crypto.randomUUID()}`;
               localShipToAddresses.value = [...localShipToAddresses.value, address];
-              await selectAddress(address);
               break;
             }
           }
@@ -256,6 +259,10 @@ export function useShipToLocation() {
         },
       },
     });
+  }
+
+  function normalizeAddressToFind(address: AnyAddressType) {
+    return omit(address, ["id", "addressType", "regionName"]);
   }
 
   return {

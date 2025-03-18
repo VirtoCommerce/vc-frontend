@@ -521,7 +521,7 @@ describe("useShipToLocation composable", () => {
       const { selectedAddress } = useShipToLocation();
       await nextTick();
 
-      expect(selectedAddress.value).toEqual(localAddress);
+      expect(selectedAddress.value).toBe(undefined);
     });
 
     it("computes selectedAddress correctly for anonymous user", async () => {
