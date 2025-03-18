@@ -134,7 +134,7 @@ export function useShipToLocation() {
       : accountAddresses.value.slice(0, MAX_ADDRESSES_NUMBER);
   }
 
-  async function fetchAddresses(): Promise<void> {
+  async function fetchAddresses() {
     switch (userType.value) {
       case USER_TYPE.ANONYMOUS:
         break;
@@ -148,7 +148,7 @@ export function useShipToLocation() {
     }
   }
 
-  async function updateContactWithAddress(address: AnyAddressType): Promise<void> {
+  async function updateContactWithAddress(address: AnyAddressType) {
     if (!user.value?.contact || !address.id) {
       return;
     }
@@ -169,7 +169,7 @@ export function useShipToLocation() {
     }
   }
 
-  async function selectAddress(address: AnyAddressType): Promise<void> {
+  async function selectAddress(address: AnyAddressType) {
     switch (userType.value) {
       case USER_TYPE.PERSONAL:
       case USER_TYPE.CORPORATE: {
@@ -201,7 +201,7 @@ export function useShipToLocation() {
     });
   }
 
-  function openSelectAddressModal(): void {
+  function openSelectAddressModal() {
     openModal({
       component: SelectAddressModal,
       props: {
@@ -223,7 +223,7 @@ export function useShipToLocation() {
     });
   }
 
-  function openAddOrUpdateAddressModal(): void {
+  function openAddOrUpdateAddressModal() {
     const component = isCorporateMember.value ? AddOrUpdateCompanyAddressModal : AddOrUpdateAddressModal;
 
     openModal({
@@ -238,7 +238,7 @@ export function useShipToLocation() {
     });
   }
 
-  async function handleAddressAddition(address: MemberAddressType): Promise<void> {
+  async function handleAddressAddition(address: MemberAddressType) {
     switch (userType.value) {
       case USER_TYPE.CORPORATE: {
         await addOrUpdateOrganizationAddresses([address]);
