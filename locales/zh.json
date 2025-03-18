@@ -377,7 +377,11 @@
         "no_results": "您的 {keyword} 查询未返回任何结果",
         "enter_keyword_placeholder": "在这里搜索产品",
         "search_button": "搜索",
-        "view_all_results_button": "查看所有 {total} 个结果"
+        "view_all_results_button": "查看所有 {total} 个结果",
+        "barcode_detector": {
+          "title": "条码扫描",
+          "description": "请启用相机扫描产品条形码以继续。 这将帮助我们快速识别商品并为您提供必要的信息。"
+        }
       },
       "language_selector": {
         "label": "中文："

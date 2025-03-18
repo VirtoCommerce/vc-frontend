@@ -377,7 +377,11 @@
         "no_results": "{keyword}の検索結果はありません",
         "enter_keyword_placeholder": "商品を検索",
         "search_button": "検索",
-        "view_all_results_button": "全{total}件を表示"
+        "view_all_results_button": "全{total}件を表示",
+        "barcode_detector": {
+          "title": "バーコードスキャン",
+          "description": "続けるには、カメラを有効にして製品のバーコードをスキャンしてください。これにより、商品を迅速に特定し、必要な情報を提供できます。"
+        }
       },
       "language_selector": {
         "label": "言語:"

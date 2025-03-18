@@ -377,7 +377,11 @@
         "no_results": "Ihre {keyword} Abfrage hat keine Ergebnisse geliefert",
         "enter_keyword_placeholder": "Hier nach Produkten suchen",
         "search_button": "Suchen",
-        "view_all_results_button": "Alle {total} Ergebnisse anzeigen"
+        "view_all_results_button": "Alle {total} Ergebnisse anzeigen",
+        "barcode_detector": {
+          "title": "Barcode-Scan",
+          "description": "Um fortzufahren, aktivieren Sie bitte Ihre Kamera, um den Barcode auf dem Produkt zu scannen. Dies hilft uns, den Artikel schnell zu identifizieren und Ihnen die notwendigen Informationen bereitzustellen."
+        }
       },
       "language_selector": {
         "label": "Sprache:"

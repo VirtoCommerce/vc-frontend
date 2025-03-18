@@ -1,7 +1,15 @@
 <template>
-  <VcModal title="Barcode and QR Code Scanner" class="barcode-scanner-modal">
+  <VcModal
+    :title="$t('shared.layout.search_bar.barcode_detector.title')"
+    class="barcode-scanner-modal"
+    is-mobile-fullscreen
+  >
+    <p class="mb-2.5">
+      {{ $t("shared.layout.search_bar.barcode_detector.description") }}
+    </p>
+
     <div class="relative">
-      <video ref="videoElement" playsinline>
+      <video ref="videoElement" class="object-cover md:aspect-[2/1]" playsinline>
         <track kind="captions" src="" label="Barcode Scanner" default disabled />
       </video>
     </div>
@@ -49,7 +57,9 @@ async function startCamera() {
   try {
     if (!videoStream.value) {
       videoStream.value = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        video: { facingMode: "environment", advanced: [{ focusMode: "continuous" }] },
       });
     }
 
