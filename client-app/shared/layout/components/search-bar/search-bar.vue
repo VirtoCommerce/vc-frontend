@@ -14,7 +14,7 @@
       @clear="reset"
     >
       <template #append>
-        <BarcodeScanner class="me-1" @value="onBarcodeScanned" />
+        <BarcodeScanner class="me-1" @scanned-code="onBarcodeScanned" />
         <VcButton
           :aria-label="$t('shared.layout.search_bar.search_button')"
           icon="search"

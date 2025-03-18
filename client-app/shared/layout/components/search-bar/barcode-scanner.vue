@@ -1,22 +1,25 @@
 <template>
-  <VcButton icon="barcode" @click="openBarcodeScanner" />
+  <button class="barcode-scanner" type="button" icon="barcode" @click.stop="openBarcodeScanner">
+    <VcIcon name="barcode" size="sm" />
+  </button>
 </template>
 
 <script setup lang="ts">
 import { useModal } from "@/shared/modal";
 import BarcodeScannerModal from "./barcode-scanner-modal.vue";
-import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
-// Define emits
-const emit = defineEmits<{
-  (e: "value", value: string): void;
-}>();
+interface IEmits {
+  (e: "scannedCode", code: string): void;
+}
+const emit = defineEmits<IEmits>();
 
 const { openModal, closeModal } = useModal();
 
-const onBarcodeValueReceived = (value: string[]) => {
-  emit("value", value.join(", "));
-  closeModal();
+const onBarcodeValueReceived = (codes: string[]) => {
+  if (codes.length) {
+    emit("scannedCode", codes[0]);
+    closeModal();
+  }
 };
 
 const openBarcodeScanner = () => {
@@ -29,3 +32,9 @@ const openBarcodeScanner = () => {
   });
 };
 </script>
+
+<style lang="scss">
+.barcode-scanner {
+  @apply flex items-center p-3 text-[--base-color];
+}
+</style>

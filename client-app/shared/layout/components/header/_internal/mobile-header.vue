@@ -23,8 +23,6 @@
           <router-link :to="$context.settings.default_return_url ?? '/'">
             <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8" lazy />
           </router-link>
-
-          <BarcodeScanner class="me-1" @value="onBarcodeScanned" />
         </div>
         <!-- endregion Left slot -->
 
@@ -90,10 +88,15 @@
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="mr-4 grow"
         no-border
-        clearable
         @keydown.enter="searchPhrase && $router.push(searchPageLink)"
-        @clear="reset"
-      />
+      >
+        <template #append>
+          <button v-if="searchPhrase" type="button" class="vc-input__clear" @click.stop="reset">
+            <VcIcon name="delete-2" size="xs" />
+          </button>
+          <BarcodeScanner v-else @scanned-code="onBarcodeScanned" />
+        </template>
+      </VcInput>
 
       <VcButton :to="searchPhrase && searchPageLink" icon="search" />
 
@@ -175,7 +178,7 @@ function reset() {
 const onBarcodeScanned = (value: string) => {
   if (value) {
     searchPhrase.value = value;
-    router.push(searchPageLink.value);
+    void router.push(searchPageLink.value);
   }
 };
 
