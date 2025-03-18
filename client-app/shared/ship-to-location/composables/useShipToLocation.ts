@@ -26,9 +26,11 @@ export const LOCAL_ID_PREFIX = "local-";
 
 type UserType = (typeof USER_TYPE)[keyof typeof USER_TYPE];
 
+/**
+ * Composable for managing shipping locations and addresses
+ */
 export function useShipToLocation() {
   const updatingContact = ref(false);
-
   const { openModal, closeModal } = useModal();
 
   const {
@@ -67,7 +69,6 @@ export function useShipToLocation() {
 
     if (isCorporateMember.value) {
       const canEditOrganization = checkPermissions(XApiPermissions.CanEditOrganization);
-
       return canEditOrganization ? USER_TYPE.CORPORATE : USER_TYPE.CORPORATE_LIMITED;
     }
 
@@ -110,10 +111,8 @@ export function useShipToLocation() {
     }
   });
 
-  function getFilteredAddresses(isSeeMore: boolean, filter?: string) {
-    return filter || isSeeMore
-      ? filterAddresses(accountAddresses.value, filter)
-      : accountAddresses.value.slice(0, MAX_ADDRESSES_NUMBER);
+  function normalizeAddressToFind(address: AnyAddressType): Partial<AnyAddressType> {
+    return omit(address, ["id", "addressType", "regionName"]);
   }
 
   function filterAddresses(addresses: AnyAddressType[], filter?: string): AnyAddressType[] {
@@ -125,9 +124,14 @@ export function useShipToLocation() {
 
     return accountAddresses.value.filter((address) => {
       const combinedAddressString = stringifyAddress(address).toLowerCase();
-
       return combinedAddressString.includes(lowerCaseStr);
     });
+  }
+
+  function getFilteredAddresses(isSeeMore: boolean, filter?: string): AnyAddressType[] {
+    return filter || isSeeMore
+      ? filterAddresses(accountAddresses.value, filter)
+      : accountAddresses.value.slice(0, MAX_ADDRESSES_NUMBER);
   }
 
   async function fetchAddresses(): Promise<void> {
@@ -144,7 +148,28 @@ export function useShipToLocation() {
     }
   }
 
-  async function selectAddress(address: AnyAddressType) {
+  async function updateContactWithAddress(address: AnyAddressType): Promise<void> {
+    if (!user.value?.contact || !address.id) {
+      return;
+    }
+
+    try {
+      updatingContact.value = true;
+      await updateContact({
+        id: user.value.contact.id,
+        firstName: user.value.contact.firstName,
+        lastName: user.value.contact.lastName,
+        selectedAddressId: address.id,
+      });
+      await fetchUser({ withBroadcast: true });
+    } catch (error) {
+      Logger.error("updateContactWithAddress", error);
+    } finally {
+      updatingContact.value = false;
+    }
+  }
+
+  async function selectAddress(address: AnyAddressType): Promise<void> {
     switch (userType.value) {
       case USER_TYPE.PERSONAL:
       case USER_TYPE.CORPORATE: {
@@ -176,44 +201,19 @@ export function useShipToLocation() {
     });
   }
 
-  async function updateContactWithAddress(address: AnyAddressType) {
-    if (!user.value?.contact || !address.id) {
-      return;
-    }
-
-    try {
-      updatingContact.value = true;
-      await updateContact({
-        id: user.value.contact.id,
-        firstName: user.value.contact.firstName,
-        lastName: user.value.contact.lastName,
-        selectedAddressId: address.id,
-      });
-      await fetchUser({ withBroadcast: true });
-    } catch (error) {
-      Logger.error("updateContactWithAddress", error);
-    } finally {
-      updatingContact.value = false;
-    }
-  }
-
   function openSelectAddressModal(): void {
     openModal({
       component: SelectAddressModal,
-
       props: {
         addresses: accountAddresses.value,
         currentAddress: selectedAddress.value,
         isCorporateAddresses: isCorporateMember.value,
-
         async onResult(address?: AnyAddressType) {
           if (!address) {
             return;
           }
-
           await selectAddress(address);
         },
-
         onAddNewAddress() {
           setTimeout(() => {
             openAddOrUpdateAddressModal();
@@ -224,45 +224,45 @@ export function useShipToLocation() {
   }
 
   function openAddOrUpdateAddressModal(): void {
+    const component = isCorporateMember.value ? AddOrUpdateCompanyAddressModal : AddOrUpdateAddressModal;
+
     openModal({
-      component: isCorporateMember.value ? AddOrUpdateCompanyAddressModal : AddOrUpdateAddressModal,
+      component,
       props: {
         async onResult(address: MemberAddressType) {
-          switch (userType.value) {
-            case USER_TYPE.CORPORATE: {
-              await addOrUpdateOrganizationAddresses([address]);
-              const justAddedAddress = organizationsAddresses.value.find((_address) =>
-                isEqual(normalizeAddressToFind(_address), normalizeAddressToFind(address)),
-              );
-              address.id = justAddedAddress?.id;
-              break;
-            }
-            case USER_TYPE.PERSONAL: {
-              await addOrUpdatePersonalAddresses([address]);
-              const justAddedAddress = personalAddresses.value.find((_address) =>
-                isEqual(normalizeAddressToFind(_address), normalizeAddressToFind(address)),
-              );
-              address.id = justAddedAddress?.id;
-              break;
-            }
-            case USER_TYPE.CORPORATE_LIMITED:
-            case USER_TYPE.ANONYMOUS: {
-              address.id = `${LOCAL_ID_PREFIX}${crypto.randomUUID()}`;
-              localShipToAddresses.value = [...localShipToAddresses.value, address];
-              break;
-            }
-          }
-
+          await handleAddressAddition(address);
           closeModal();
-
           await selectAddress(address);
         },
       },
     });
   }
 
-  function normalizeAddressToFind(address: AnyAddressType) {
-    return omit(address, ["id", "addressType", "regionName"]);
+  async function handleAddressAddition(address: MemberAddressType): Promise<void> {
+    switch (userType.value) {
+      case USER_TYPE.CORPORATE: {
+        await addOrUpdateOrganizationAddresses([address]);
+        const justAddedAddress = organizationsAddresses.value.find((_address) =>
+          isEqual(normalizeAddressToFind(_address), normalizeAddressToFind(address)),
+        );
+        address.id = justAddedAddress?.id;
+        break;
+      }
+      case USER_TYPE.PERSONAL: {
+        await addOrUpdatePersonalAddresses([address]);
+        const justAddedAddress = personalAddresses.value.find((_address) =>
+          isEqual(normalizeAddressToFind(_address), normalizeAddressToFind(address)),
+        );
+        address.id = justAddedAddress?.id;
+        break;
+      }
+      case USER_TYPE.CORPORATE_LIMITED:
+      case USER_TYPE.ANONYMOUS: {
+        address.id = `${LOCAL_ID_PREFIX}${crypto.randomUUID()}`;
+        localShipToAddresses.value = [...localShipToAddresses.value, address];
+        break;
+      }
+    }
   }
 
   return {

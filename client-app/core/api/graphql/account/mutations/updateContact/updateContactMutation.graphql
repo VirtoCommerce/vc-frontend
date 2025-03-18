@@ -1,6 +1,5 @@
 mutation updateContact($command: InputUpdateContactType!) {
   updateContact(command: $command) {
     id
-    selectedAddressId
   }
 }
