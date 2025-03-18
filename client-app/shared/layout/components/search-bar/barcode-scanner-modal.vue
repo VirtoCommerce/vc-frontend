@@ -9,7 +9,20 @@
     </p>
 
     <div class="relative">
-      <video ref="videoElement" class="object-cover md:aspect-[2/1]" playsinline>
+      <VcWidgetSkeleton v-show="loading">
+        <template #default-container>
+          <div class="p-1">
+            <div class="h-60 w-full"></div>
+          </div>
+        </template>
+      </VcWidgetSkeleton>
+      <video
+        v-show="!loading"
+        ref="videoElement"
+        class="object-cover md:aspect-[2/1]"
+        playsinline
+        @canplaythrough="loading = false"
+      >
         <track kind="captions" src="" label="Barcode Scanner" default disabled />
       </video>
     </div>
@@ -29,6 +42,8 @@ const emit = defineEmits<{
 const videoElement = ref<HTMLVideoElement | null>(null);
 const videoStream = ref<MediaStream | null>(null);
 let barcodeDetector: BarcodeDetector | null = null;
+
+const loading = ref(true);
 
 const SCAN_INTERVAL = 400;
 
