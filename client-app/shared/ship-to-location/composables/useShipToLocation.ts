@@ -1,6 +1,6 @@
 import { useLocalStorage } from "@vueuse/core";
 import { omit } from "lodash";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { updateContact } from "@/core/api/graphql/account";
 import { XApiPermissions } from "@/core/enums";
 import { Logger, stringifyAddress } from "@/core/utilities";
@@ -26,8 +26,20 @@ export const LOCAL_ID_PREFIX = "local-";
 type UserType = (typeof USER_TYPE)[keyof typeof USER_TYPE];
 
 export function useShipToLocation() {
+  const updatingContact = ref(false);
+
   const { openModal, closeModal } = useModal();
-  const { loading: loadingUser, organization, isCorporateMember, isAuthenticated, checkPermissions, user } = useUser();
+
+  const {
+    loading: loadingUser,
+    organization,
+    isCorporateMember,
+    isAuthenticated,
+    checkPermissions,
+    user,
+    fetchUser,
+  } = useUser();
+
   const {
     addresses: personalAddresses,
     fetchAddresses: fetchPersonalAddresses,
@@ -76,7 +88,10 @@ export function useShipToLocation() {
     }
   });
 
-  const loading = computed(() => loadingUser.value || loadingOrganizationAddresses.value || loadingUserAddresses.value);
+  const loading = computed(
+    () =>
+      loadingUser.value || loadingOrganizationAddresses.value || loadingUserAddresses.value || updatingContact.value,
+  );
 
   const selectedAddress = computed(() => {
     switch (userType.value) {
@@ -133,7 +148,7 @@ export function useShipToLocation() {
     switch (userType.value) {
       case USER_TYPE.PERSONAL:
       case USER_TYPE.CORPORATE: {
-        await updateContactWithAddress(address);
+        void updateContactWithAddress(address);
         break;
       }
       case USER_TYPE.CORPORATE_LIMITED: {
@@ -146,7 +161,7 @@ export function useShipToLocation() {
           break;
         }
 
-        await updateContactWithAddress(address);
+        void updateContactWithAddress(address);
         break;
       }
       case USER_TYPE.ANONYMOUS: {
@@ -162,18 +177,25 @@ export function useShipToLocation() {
   }
 
   async function updateContactWithAddress(address: AnyAddressType) {
+    console.log("updateContactWithAddress", address);
+    console.log("user.value?.contact", user.value?.contact);
     if (!user.value?.contact) {
       return;
     }
+
     try {
+      updatingContact.value = true;
       await updateContact({
         id: user.value.contact.id,
         firstName: user.value.contact.firstName,
         lastName: user.value.contact.lastName,
         selectedAddressId: address.id,
       });
+      await fetchUser({ withBroadcast: true });
     } catch (error) {
       Logger.error("updateContactWithAddress", error);
+    } finally {
+      updatingContact.value = false;
     }
   }
 
@@ -211,15 +233,19 @@ export function useShipToLocation() {
           switch (userType.value) {
             case USER_TYPE.CORPORATE: {
               await addOrUpdateOrganizationAddresses([address]);
+              await selectAddress(address);
               break;
             }
-            case USER_TYPE.PERSONAL:
+            case USER_TYPE.PERSONAL: {
               await addOrUpdatePersonalAddresses([address]);
+              await selectAddress(address);
               break;
+            }
             case USER_TYPE.CORPORATE_LIMITED:
             case USER_TYPE.ANONYMOUS: {
               address.id = `${LOCAL_ID_PREFIX}${crypto.randomUUID()}`;
               localShipToAddresses.value = [...localShipToAddresses.value, address];
+              await selectAddress(address);
               break;
             }
           }

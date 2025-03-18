@@ -9,8 +9,10 @@
       :offset-options="12"
     >
       <template #trigger="{ opened }">
-        <button class="ship-to-selector__trigger" type="button">
+        <button class="ship-to-selector__trigger" type="button" :disabled="loading">
           <VcIcon name="location-marker" size="xs" />
+
+          <VcLoaderOverlay v-if="loading" />
 
           <span class="ship-to-selector__label">{{ $t("shared.layout.header.ship_to_selector.title") }}</span>
 
@@ -171,7 +173,7 @@ watchEffect(async () => {
   }
 
   &__trigger {
-    @apply inline-flex items-center max-w-full h-full gap-1;
+    @apply inline-flex items-center max-w-full h-full gap-1 relative;
   }
 
   &__label {
