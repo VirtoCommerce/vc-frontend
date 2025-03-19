@@ -28,11 +28,11 @@
         <VcIcon v-if="icon" :name="icon" class="vc-tab-switch__icon" />
       </slot>
 
-      <span v-if="label" class="vc-tab-switch__label">
-        <slot v-bind="{ checked, value, label }">
+      <slot v-bind="{ checked, value, label }">
+        <span v-if="label" class="vc-tab-switch__label">
           {{ label }}
-        </slot>
-      </span>
+        </span>
+      </slot>
     </button>
   </label>
 </template>
