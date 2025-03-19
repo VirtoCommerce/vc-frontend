@@ -7,7 +7,7 @@
     :disabled="!enabled"
     :title="title"
     :class="[
-      'vc-button',
+      'vc-button group',
       `vc-button--size--${size}`,
       `vc-button--color--${color}`,
       `vc-button--${variant}--${color}`,
