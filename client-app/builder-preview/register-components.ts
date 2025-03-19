@@ -37,8 +37,12 @@ async function loadAllJsonFiles(): Promise<PageBuilderSchemaType> {
     const jsonModules = allModules[jsonModulesName];
     for (const path in jsonModules) {
       const module = await jsonModules[path]();
-      const name = path.split("/").pop()!.split(".")[0];
-      result[jsonModulesName][name] = module.default;
+      const name = path.split("/").pop()?.split(".")[0];
+      if (name) {
+        result[jsonModulesName][name] = module.default;
+      } else {
+        console.warn(`Could not load ${jsonModulesName} file: ${path}`);
+      }
     }
   }
 
