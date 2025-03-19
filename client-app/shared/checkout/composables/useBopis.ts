@@ -55,7 +55,6 @@ export function useBopis() {
     error,
 
     fetchAddresses,
-
     openSelectAddressModal,
   };
 }
