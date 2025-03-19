@@ -133,13 +133,25 @@ type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
 
 const mode = ref<ShippingOptionType>("shipping");
 
-const { availableShippingMethods } = useFullCart();
+const { availableShippingMethods, updateShipment, shipment } = useFullCart();
 const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod } = useCheckout();
-const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses } = useBopis();
+const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
 
 const shippingMethods = computed(() => availableShippingMethods.value.filter((method) => method.code !== BOPIS_CODE));
 
 function switchShippingOptions(_mode: ShippingOptionType) {
   mode.value = _mode;
+  const shippingMethod = _mode === SHIPPING_OPTIONS.pickup ? bopisMethod.value : shippingMethods.value[0];
+
+  if (!shippingMethod) {
+    return;
+  }
+
+  void updateShipment({
+    id: shipment.value?.id,
+    shipmentMethodCode: shippingMethod.code,
+    shipmentMethodOption: shippingMethod.optionName,
+    price: shippingMethod.price?.amount,
+  });
 }
 </script>

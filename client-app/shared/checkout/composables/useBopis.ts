@@ -14,6 +14,7 @@ export function useBopis() {
 
   const addresses = computed(() => result.value?.getPickupInStoreAddresses?.addresses ?? []);
   const hasBOPIS = computed(() => availableShippingMethods.value.some((method) => method.code === BOPIS_CODE));
+  const bopisMethod = computed(() => availableShippingMethods.value.find((method) => method.code === BOPIS_CODE));
 
   async function fetchAddresses({ keyword, sort }: { keyword?: string; sort?: string } = {}) {
     await load(null, { keyword, sort });
@@ -47,9 +48,11 @@ export function useBopis() {
 
   return {
     addresses,
+    bopisMethod,
+    hasBOPIS,
+
     loading,
     error,
-    hasBOPIS,
 
     fetchAddresses,
 
