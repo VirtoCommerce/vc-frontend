@@ -349,10 +349,10 @@ export function _useCheckout() {
     }
   }
 
-  function onDeliveryAddressChange(): void {
-    addresses.value.length
-      ? openSelectAddressModal(AddressType.Shipping)
-      : openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
+  function onDeliveryAddressChange({ alwaysSelect, type }: { alwaysSelect?: boolean; type?: AddressType } = {}): void {
+    addresses.value.length || alwaysSelect
+      ? openSelectAddressModal(type ?? AddressType.Shipping)
+      : openAddOrUpdateAddressModal(type ?? AddressType.Shipping, shipment.value?.deliveryAddress);
   }
 
   function onBillingAddressChange(): void {

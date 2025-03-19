@@ -1,7 +1,7 @@
 <template>
   <VcWidget :title="$t('shared.checkout.shipping_details_section.title')" prepend-icon="truck" size="lg">
     <div class="flex flex-col flex-wrap gap-4 xs:flex-row xs:gap-y-6 lg:gap-8">
-      <div>
+      <div v-if="hasBOPIS">
         <VcLabel>
           {{ $t("shared.checkout.shipping_details_section.labels.delivery_option") }}
         </VcLabel>
@@ -9,7 +9,7 @@
         <div class="flex min-h-18 items-center gap-2 rounded border p-4">
           <VcTabSwitch
             v-model="mode"
-            value="pickup"
+            :value="SHIPPING_OPTIONS.pickup"
             icon="cube"
             :label="$t('shared.checkout.shipping_details_section.switchers.pickup')"
             @change="switchShippingOptions($event)"
@@ -17,7 +17,7 @@
 
           <VcTabSwitch
             v-model="mode"
-            value="shipping"
+            :value="SHIPPING_OPTIONS.shipping"
             icon="truck"
             :label="$t('shared.checkout.shipping_details_section.switchers.shipping')"
             @change="switchShippingOptions($event)"
@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <template v-if="mode === 'shipping'">
+      <template v-if="mode === SHIPPING_OPTIONS.shipping">
         <div class="grow">
           <VcLabel required>
             {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
@@ -51,11 +51,11 @@
         <VcSelect
           :model-value="shipmentMethod"
           :label="$t('shared.checkout.shipping_details_section.labels.shipping_method')"
-          :items="availableShippingMethods"
+          :items="shippingMethods"
           :disabled="disabled"
           size="auto"
           item-size="lg"
-          class="lg:w-3/12"
+          :class="hasBOPIS ? 'lg:w-3/12' : 'lg:w-4/12'"
           required
           test-id-dropdown="shipping-method-select"
           @change="(value) => setShippingMethod(value)"
@@ -98,9 +98,10 @@
           ]"
         >
           <AddressSelection
+            :address="deliveryAddress"
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_pickup_point')"
             :disabled="disabled"
-            @change="onDeliveryAddressChange"
+            @change="openSelectAddressModal"
           />
         </div>
       </div>
@@ -109,9 +110,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
+import { useBopis, BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
 import { AddressSelection } from "@/shared/common";
 
 interface IProps {
@@ -120,12 +122,22 @@ interface IProps {
 
 defineProps<IProps>();
 
-const mode = ref<"pickup" | "shipping">("shipping");
+const SHIPPING_OPTIONS = {
+  pickup: "pickup",
+  shipping: "shipping",
+} as const;
+
+type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
+
+const mode = ref<ShippingOptionType>("shipping");
 
 const { availableShippingMethods } = useFullCart();
 const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod } = useCheckout();
+const { hasBOPIS, openSelectAddressModal } = useBopis();
 
-function switchShippingOptions(_mode: "pickup" | "shipping") {
+const shippingMethods = computed(() => availableShippingMethods.value.filter((method) => method.code !== BOPIS_CODE));
+
+function switchShippingOptions(_mode: ShippingOptionType) {
   mode.value = _mode;
 }
 </script>
