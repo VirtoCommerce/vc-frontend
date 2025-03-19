@@ -8,7 +8,7 @@
     :title="title"
     :class="[
       'vc-button',
-      `vc-button--size--${size}`,
+      `vc-button--size--${_size}`,
       `vc-button--color--${color}`,
       `vc-button--${variant}--${color}`,
       {
@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -92,7 +92,6 @@ defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
-  size: "md",
   variant: "solid",
   type: "button",
   disabled: false,
@@ -104,6 +103,30 @@ const props = withDefaults(defineProps<IProps>(), {
   minWidth: "",
   tag: "",
   iconSize: "",
+});
+
+const inputContext = inject<VcInputContextType | null>("inputContext", null);
+
+const _size = computed(() => {
+  if (props.size) {
+    return props.size;
+  }
+
+  const inputSize = inputContext?.size.value;
+
+  if (inputSize) {
+    if (inputSize === "xs") {
+      return "xxs";
+    }
+
+    if (inputSize === "sm") {
+      return "xs";
+    }
+
+    return "sm";
+  }
+
+  return "md";
 });
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
@@ -164,7 +187,7 @@ const attrs = computed(() => {
   $loaderIcon: "";
   $noWrap: "";
 
-  @apply relative rounded border-2 select-none text-center;
+  @apply relative px-[--px] rounded border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
 
   appearance: button;
 
@@ -182,6 +205,8 @@ const attrs = computed(() => {
 
   &--icon {
     $icon: &;
+
+    @apply p-0 size-[--size];
   }
 
   &--full-width {
@@ -203,7 +228,7 @@ const attrs = computed(() => {
   &__loader-icon {
     $loaderIcon: &;
 
-    @apply block rounded-full animate-spin border-2 size-[--line-height];
+    @apply block rounded-full animate-spin border-2 size-[--line-height] border-[--loader-border] border-r-[--loader-border-r];
   }
 
   &:not(#{$icon}) {
@@ -212,15 +237,15 @@ const attrs = computed(() => {
 
   &--size {
     &--xxs {
-      --size: 1.375rem;
+      --size: 1.625rem;
       --line-height: 0.875rem;
-      --px: theme("padding.2");
+      --px: theme("padding[2.5]");
 
       @apply text-xs/[--line-height] font-bold;
     }
 
     &--xs {
-      --size: 1.625rem;
+      --size: 2rem;
       --line-height: 0.875rem;
       --px: theme("padding.3");
 
@@ -228,7 +253,7 @@ const attrs = computed(() => {
     }
 
     &--sm {
-      --size: 2rem;
+      --size: 2.375rem;
       --line-height: 1rem;
       --px: theme("padding[3.5]");
 
@@ -236,7 +261,7 @@ const attrs = computed(() => {
     }
 
     &--md {
-      --size: 2.5rem;
+      --size: 2.75rem;
       --line-height: 1.25rem;
       --px: theme("padding.4");
 
@@ -244,7 +269,7 @@ const attrs = computed(() => {
     }
 
     &--lg {
-      --size: 3rem;
+      --size: 3.25rem;
       --line-height: 1.5rem;
       --px: theme("padding.5");
 
@@ -255,83 +280,87 @@ const attrs = computed(() => {
   @each $color in $colors {
     &--color--#{$color} {
       &:focus {
-        @apply outline-[--color-#{$color}-100];
+        --outline-color: var(--color-#{$color}-100);
       }
 
       &:not([class*="--solid--"]) #{$loaderIcon} {
-        @apply border-[--color-#{$color}-100] border-r-[--color-#{$color}-600];
+        --loader-border: var(--color-#{$color}-100);
+        --loader-border-r: var(--color-#{$color}-500);
       }
     }
 
     &--solid--#{$color} {
-      @apply bg-[--color-#{$color}-600]
-      border-[--color-#{$color}-600]
-      text-additional-50;
+      --bg-color: var(--color-#{$color}-500);
+      --border-color: var(--color-#{$color}-500);
+      --text-color: var(--color-additional-50);
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        @apply bg-[--color-#{$color}-700]
-        border-[--color-#{$color}-700];
+        --bg-color: var(--color-#{$color}-700);
+        --border-color: var(--color-#{$color}-700);
       }
 
       & #{$loaderIcon} {
-        @apply border-[--color-#{$color}-200] border-r-additional-50;
+        --loader-border: var(--color-#{$color}-200);
+        --loader-border-r: var(--color-additional-50);
       }
     }
 
     &--no-border--#{$color} {
-      @apply bg-additional-50 text-[--color-#{$color}-600] border-additional-50;
+      --bg-color: var(--color-additional-50);
+      --border-color: var(--color-additional-50);
+      --text-color: var(--color-#{$color}-500);
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        @apply bg-[--color-#{$color}-100] border-[--color-#{$color}-100] text-[--color-#{$color}-700];
+        --bg-color: var(--color-#{$color}-100);
+        --border-color: var(--color-#{$color}-100);
+        --text-color: var(--color-#{$color}-700);
       }
     }
 
     &--outline {
       &--#{$color} {
-        @apply bg-additional-50
-        text-[--color-#{$color}-600]
-        border-current;
+        --bg-color: var(--color-additional-50);
+        --border-color: currentColor;
+        --text-color: var(--color-#{$color}-500);
 
         &:hover:not(#{$loading}, #{$disabled}) {
-          @apply text-[--color-#{$color}-700];
+          --text-color: var(--color-#{$color}-700);
         }
       }
     }
 
     &--no-background--#{$color} {
-      @apply bg-transparent text-[--color-#{$color}-600] border-transparent;
+      --bg-color: transparent;
+      --border-color: transparent;
+      --text-color: var(--color-#{$color}-500);
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        @apply text-[--color-#{$color}-700];
+        --text-color: var(--color-#{$color}-700);
       }
     }
   }
 
   &#{$disabled}:not(#{$loading}),
   &:disabled#{$disabled}:not(#{$loading}) {
+    --text-color: var(--color-neutral-400);
+
     &[class*="--solid--"] {
-      @apply bg-neutral-200 border-neutral-200 text-neutral-400;
+      --bg-color: var(--color-neutral-200);
+      --border-color: var(--color-neutral-200);
     }
 
     &[class*="--no-border--"] {
-      @apply bg-neutral-50 border-neutral-50 text-neutral-400;
+      --bg-color: var(--color-neutral-50);
+      --border-color: var(--color-neutral-50);
     }
 
     &[class*="--outline--"] {
-      @apply text-neutral-400 border-neutral-300;
-    }
-
-    &[class*="--no-background--"] {
-      @apply text-neutral-400;
+      --border-color: var(--color-neutral-300);
     }
   }
 
   &__content {
-    @apply grid grid-flow-col justify-center items-center min-h-[--size] px-[--px];
-
-    #{$icon} & {
-      @apply p-0 size-[--size];
-    }
+    @apply grid grid-flow-col justify-center items-center min-h-[calc(var(--size)-0.25rem)];
 
     #{$loading} & {
       @apply invisible;
@@ -342,10 +371,6 @@ const attrs = computed(() => {
     @apply max-w-full;
 
     word-break: break-word;
-
-    #{$icon} & {
-      @apply size-[--vc-icon-size];
-    }
 
     #{$truncate} & {
       @apply grow min-w-0 truncate;
@@ -387,7 +412,7 @@ const attrs = computed(() => {
   }
 
   &:focus {
-    @apply outline outline-[3px];
+    @apply outline outline-[3px] outline-[--outline-color];
   }
 }
 </style>
