@@ -4,28 +4,25 @@
     class="barcode-scanner-modal"
     is-mobile-fullscreen
   >
-    <p class="mb-2.5">
+    <p class="barcode-scanner-modal__description">
       {{ $t("shared.layout.search_bar.barcode_detector.description") }}
     </p>
-
-    <div class="relative">
-      <VcWidgetSkeleton v-show="loading">
-        <template #default-container>
-          <div class="p-1">
-            <div class="h-60 w-full"></div>
-          </div>
-        </template>
-      </VcWidgetSkeleton>
-      <video
-        v-show="!loading"
-        ref="videoElement"
-        class="aspect-[3/2] object-cover md:aspect-[2/1]"
-        playsinline
-        @canplaythrough="loading = false"
-      >
-        <track kind="captions" :label="$t('shared.layout.search_bar.barcode_detector.title')" default disabled />
-      </video>
-    </div>
+    <VcWidgetSkeleton v-show="loading">
+      <template #default-container>
+        <div class="p-1">
+          <div class="w-full! h-60"></div>
+        </div>
+      </template>
+    </VcWidgetSkeleton>
+    <video
+      v-show="!loading"
+      ref="videoElement"
+      class="barcode-scanner-modal__video"
+      playsinline
+      @canplaythrough="loading = false"
+    >
+      <track kind="captions" :label="$t('shared.layout.search_bar.barcode_detector.title')" default disabled src="" />
+    </video>
     <template #actions="{ close }">
       <VcButton class="barcode-scanner-modal__action" color="secondary" variant="outline" @click="close">
         {{ $t("shared.catalog.branches_modal.cancel_button") }}
@@ -120,6 +117,14 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .barcode-scanner-modal {
+  &__description {
+    @apply mb-2.5;
+  }
+
+  &__video {
+    @apply aspect-[3/2] object-cover md:aspect-[2/1];
+  }
+
   &__action {
     @apply ml-auto w-full md:w-auto;
   }
