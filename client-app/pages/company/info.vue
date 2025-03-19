@@ -45,13 +45,13 @@
             <VcFilePicker
               :disabled="loadingOrganizationLogo || uploadingOrganizationLogo || loadingUser || loadingOrganizationLogo"
               :files="files"
-              class="lg:w-7/12"
+              class="xs:w-6/12 xs:flex-none"
               v-bind="fileOptions"
               @add-files="onAddFiles"
             >
               <template v-if="newLogoUrl" #custom="{ openFilePicker }">
                 <div class="flex items-center gap-3">
-                  <div class="flex h-[3.375rem] max-w-56 grow items-center rounded border border-neutral-300 p-1">
+                  <div class="flex h-[3.375rem] grow items-center rounded border border-neutral-300 p-1 xs:max-w-56">
                     <VcImage
                       :alt="$t('pages.company.info.labels.company_logo')"
                       :src="newLogoUrl"

@@ -135,6 +135,7 @@
           <VcInput
             v-model="localKeyword"
             maxlength="64"
+            clearable
             class="w-full"
             :disabled="ordersLoading"
             :placeholder="$t('pages.account.orders.search_placeholder')"
@@ -146,7 +147,7 @@
                 :disabled="ordersLoading"
                 :aria-label="$t('commmon.buttons.search_orders')"
                 icon="search"
-                size="sm"
+                icon-size="1.25rem"
                 @click="applyKeyword"
               />
             </template>
