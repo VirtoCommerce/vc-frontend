@@ -164,7 +164,7 @@ const placeholderStyle = computed<StyleValue | undefined>(() =>
 );
 
 const searchPageLink = computed<RouteLocationRaw>(() => ({
-  name: "Search",
+  name: ROUTES.SEARCH.NAME,
   query: {
     [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
   },
@@ -172,7 +172,7 @@ const searchPageLink = computed<RouteLocationRaw>(() => ({
 
 function reset() {
   searchPhrase.value = "";
-  router.push({ name: ROUTES.CATALOG.NAME });
+  void router.push({ name: ROUTES.SEARCH.NAME });
 }
 
 const onBarcodeScanned = (value: string) => {

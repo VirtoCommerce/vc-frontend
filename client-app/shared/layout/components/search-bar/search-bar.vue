@@ -277,7 +277,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
 
 function getSearchRoute(phrase: string): RouteLocationRaw {
   return {
-    name: "Search",
+    name: ROUTES.SEARCH.NAME,
     query: {
       [QueryParamName.SearchPhrase]: phrase,
     },
@@ -295,7 +295,7 @@ function goToSearchResultsPage() {
 function reset() {
   searchPhrase.value = "";
   hideSearchDropdown();
-  void router.push({ name: ROUTES.CATALOG.NAME });
+  void router.push({ name: ROUTES.SEARCH.NAME });
 }
 
 const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEARCH_BAR_DEBOUNCE_TIME);
