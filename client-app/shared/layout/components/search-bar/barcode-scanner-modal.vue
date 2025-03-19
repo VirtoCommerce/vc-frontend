@@ -77,9 +77,7 @@ async function startCamera() {
   try {
     if (!videoStream.value) {
       videoStream.value = await navigator.mediaDevices.getUserMedia({
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        video: { facingMode: "environment", advanced: [{ focusMode: "continuous" }] },
+        video: { facingMode: "environment" },
       });
     }
 
