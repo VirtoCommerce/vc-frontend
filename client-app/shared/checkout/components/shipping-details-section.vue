@@ -112,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { useBopis, BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
@@ -141,17 +141,26 @@ const shippingMethods = computed(() => availableShippingMethods.value.filter((me
 
 function switchShippingOptions(_mode: ShippingOptionType) {
   mode.value = _mode;
-  const shippingMethod = _mode === SHIPPING_OPTIONS.pickup ? bopisMethod.value : shippingMethods.value[0];
-
-  if (!shippingMethod) {
-    return;
-  }
-
-  void updateShipment({
-    id: shipment.value?.id,
-    shipmentMethodCode: shippingMethod.code,
-    shipmentMethodOption: shippingMethod.optionName,
-    price: shippingMethod.price?.amount,
-  });
 }
+
+watch(
+  mode,
+  (newMode) => {
+    const shippingMethod = newMode === SHIPPING_OPTIONS.pickup ? bopisMethod.value : shippingMethods.value[0];
+
+    if (!shippingMethod || shippingMethod.code === shipment.value?.shipmentMethodCode) {
+      return;
+    }
+
+    void updateShipment({
+      id: shipment.value?.id,
+      shipmentMethodCode: shippingMethod.code,
+      shipmentMethodOption: shippingMethod.optionName,
+      price: shippingMethod.price?.amount,
+    });
+  },
+  {
+    immediate: true,
+  },
+);
 </script>

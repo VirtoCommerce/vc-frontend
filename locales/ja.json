@@ -284,7 +284,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "固定料金 (地上)",
-        "FixedRate_Air": "固定料金 (航空)"
+        "FixedRate_Air": "固定料金 (航空)",
+        "BuyOnlinePickupInStore_Pickup": "店舗で受け取る"
       }
     }
   },

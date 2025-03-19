@@ -284,7 +284,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "固定费率（陆运）",
-        "FixedRate_Air": "固定费率（空运）"
+        "FixedRate_Air": "固定费率（空运）",
+        "BuyOnlinePickupInStore_Pickup": "门店自提"
       }
     }
   },

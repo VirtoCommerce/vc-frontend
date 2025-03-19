@@ -284,7 +284,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Tarifa fija (terrestre)",
-        "FixedRate_Air": "Tarifa fija (aérea)"
+        "FixedRate_Air": "Tarifa fija (aérea)",
+        "BuyOnlinePickupInStore_Pickup": "Recogida en tienda"
       }
     }
   },

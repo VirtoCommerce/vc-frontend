@@ -284,7 +284,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Stała cena (drogowa)",
-        "FixedRate_Air": "Stała cena (lotnicza)"
+        "FixedRate_Air": "Stała cena (lotnicza)",
+        "BuyOnlinePickupInStore_Pickup": "Odbiór w sklepie"
       }
     }
   },

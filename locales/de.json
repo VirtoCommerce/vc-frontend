@@ -284,7 +284,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Festpreis (Boden)",
-        "FixedRate_Air": "Festpreis (Luft)"
+        "FixedRate_Air": "Festpreis (Luft)",
+        "BuyOnlinePickupInStore_Pickup": "Abholung im Geschäft"
       }
     }
   },
