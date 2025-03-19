@@ -23,7 +23,7 @@
         playsinline
         @canplaythrough="loading = false"
       >
-        <track kind="captions" src="" :label="$t('shared.layout.search_bar.barcode_detector.title')" default disabled />
+        <track kind="captions" :label="$t('shared.layout.search_bar.barcode_detector.title')" default disabled />
       </video>
     </div>
     <template #actions="{ close }">
