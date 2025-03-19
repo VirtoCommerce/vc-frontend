@@ -59,8 +59,8 @@ const withButtonTemplate: StoryFn<typeof VcInput> = (args) => ({
   components: { VcInput },
   setup: () => ({ args }),
   template: `<VcInput v-bind="args" v-model="args.modelValue">
-    <template #append="{ buttonSize }">
-      <VcButton :size="buttonSize" min-width="7rem" truncate>Add to cart</VcButton>
+    <template #append>
+      <VcButton truncate>Add to cart</VcButton>
     </template>
   </VcInput>`,
 });
@@ -98,6 +98,12 @@ export const Clearable = Template.bind({});
 Clearable.args = {
   ...Common.args,
   clearable: true,
+};
+
+export const Disabled = Template.bind({});
+Disabled.args = {
+  ...Common.args,
+  disabled: true,
 };
 
 export const Center = Template.bind({});

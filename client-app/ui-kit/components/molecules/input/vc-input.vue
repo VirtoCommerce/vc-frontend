@@ -57,8 +57,9 @@
           type="button"
           icon="delete-thin"
           color="neutral"
-          variant="no-border"
+          variant="no-background"
           class="vc-input__clear"
+          :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
           @click.stop="clear"
         />
       </div>
@@ -86,7 +87,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends string | number | null">
-import { computed, ref } from "vue";
+import { provide, computed, ref } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
 export interface IProps {
@@ -152,6 +153,8 @@ const model = defineModel<T>({
   },
 });
 
+const _size = computed(() => props.size);
+
 const minValue = computed(() => (props.type === "number" ? props.min : undefined));
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
@@ -193,6 +196,10 @@ function inputClick() {
     inputElement.value.select();
   }
 }
+
+provide<VcInputContextType>("inputContext", {
+  size: _size,
+});
 </script>
 
 <style lang="scss">
@@ -209,6 +216,7 @@ function inputClick() {
   $truncate: "";
 
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
+  --focus-color: rgb(from var(--color) r g b / 0.3);
 
   @apply flex flex-col;
 
@@ -238,8 +246,6 @@ function inputClick() {
     $error: &;
 
     --color: var(--vc-input-error-color, theme("colors.danger.500"));
-
-    @apply border-[--color] text-[--color];
   }
 
   &--no-border {
@@ -255,7 +261,7 @@ function inputClick() {
   }
 
   &__container {
-    @apply flex items-stretch p-0.5 border rounded bg-additional-50 select-none;
+    @apply flex items-stretch p-0.5 border border-neutral-400 rounded bg-additional-50 select-none;
 
     #{$sizeXs} & {
       @apply h-8 text-sm;
@@ -271,6 +277,10 @@ function inputClick() {
 
     &:has(input:focus) {
       @apply ring ring-[--focus-color];
+    }
+
+    #{$error} & {
+      @apply border-[--color] text-[--color];
     }
 
     #{$disabled} &,
@@ -315,12 +325,14 @@ function inputClick() {
 
     #{$disabled} &,
     &:disabled {
-      @apply text-neutral-600 cursor-not-allowed;
+      @apply text-neutral-500 cursor-not-allowed;
     }
 
     &::placeholder {
+      @apply text-neutral-400;
+
       #{$error} & {
-        @apply opacity-80 text-[--base-color];
+        @apply text-danger-400;
       }
     }
 

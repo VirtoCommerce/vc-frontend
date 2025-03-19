@@ -68,7 +68,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__message {
-    @apply grow text-neutral-400;
+    @apply grow text-neutral-500;
 
     #{$error} & {
       @apply text-danger;
