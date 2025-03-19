@@ -7,7 +7,7 @@
     :disabled="!enabled"
     :title="title"
     :class="[
-      'vc-button',
+      'vc-button group',
       `vc-button--size--${_size}`,
       `vc-button--color--${color}`,
       `vc-button--${variant}--${color}`,
@@ -206,7 +206,7 @@ const attrs = computed(() => {
   &--icon {
     $icon: &;
 
-    @apply p-0 size-[--size];
+    @apply flex-none p-0 size-[--size];
   }
 
   &--full-width {
