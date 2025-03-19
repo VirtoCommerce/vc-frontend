@@ -245,7 +245,7 @@ watchEffect(async () => {
     @apply hidden;
 
     @container (width > theme("containers.xxs")) {
-      @apply block w-32;
+      @apply block;
     }
   }
 
