@@ -22,7 +22,9 @@ export function useBopis() {
   const { openModal } = useModal();
 
   async function openSelectAddressModal() {
-    await fetchAddresses();
+    if (!addresses.value.length) {
+      await fetchAddresses();
+    }
 
     openModal({
       component: SelectAddressModal,

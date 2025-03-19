@@ -91,16 +91,18 @@
 
         <div
           :class="[
-            'flex min-h-18 grow flex-col justify-center divide-y rounded border px-3 py-1.5',
+            'relative flex min-h-18 grow flex-col justify-center divide-y rounded border px-3 py-1.5',
             {
               'cursor-not-allowed bg-neutral-50': disabled,
             },
           ]"
         >
+          <VcLoaderOverlay v-if="isLoadingBopisAddresses" />
+
           <AddressSelection
+            :disabled="isLoadingBopisAddresses || disabled"
             :address="deliveryAddress"
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_pickup_point')"
-            :disabled="disabled"
             @change="openSelectAddressModal"
           />
         </div>
@@ -133,7 +135,7 @@ const mode = ref<ShippingOptionType>("shipping");
 
 const { availableShippingMethods } = useFullCart();
 const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod } = useCheckout();
-const { hasBOPIS, openSelectAddressModal } = useBopis();
+const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses } = useBopis();
 
 const shippingMethods = computed(() => availableShippingMethods.value.filter((method) => method.code !== BOPIS_CODE));
 
