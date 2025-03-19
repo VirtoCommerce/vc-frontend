@@ -19,13 +19,18 @@
       <video
         v-show="!loading"
         ref="videoElement"
-        class="object-cover md:aspect-[2/1]"
+        class="aspect-[3/2] object-cover md:aspect-[2/1]"
         playsinline
         @canplaythrough="loading = false"
       >
-        <track kind="captions" src="" label="Barcode Scanner" default disabled />
+        <track kind="captions" src="" :label="$t('shared.layout.search_bar.barcode_detector.title')" default disabled />
       </video>
     </div>
+    <template #actions="{ close }">
+      <VcButton class="barcode-scanner-modal__action" color="secondary" variant="outline" @click="close">
+        {{ $t("shared.catalog.branches_modal.cancel_button") }}
+      </VcButton>
+    </template>
   </VcModal>
 </template>
 
@@ -114,3 +119,11 @@ onBeforeUnmount(() => {
   stopCamera();
 });
 </script>
+
+<style lang="scss">
+.barcode-scanner-modal {
+  &__action {
+    @apply ml-auto w-full md:w-auto;
+  }
+}
+</style>
