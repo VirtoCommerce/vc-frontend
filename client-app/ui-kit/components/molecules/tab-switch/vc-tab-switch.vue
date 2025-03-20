@@ -42,12 +42,12 @@ import { computed } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
 import { getColorValue } from "@/ui-kit/utilities";
 
-export interface IEmits {
+interface IEmits {
   (event: "input", value: T): void;
   (event: "change", value: T): void;
 }
 
-export interface IProps {
+interface IProps {
   label?: string;
   name?: string;
   value: T;
