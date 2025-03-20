@@ -72,8 +72,8 @@
       "add_items_to_cart": "Dodaj przedmioty do koszyka",
       "show_details": "Pokaż szczegóły",
       "add_with_bulk_order": "Dodaj z zamówieniem zbiorczym",
-      "agency": "Agencja",
-      "personal": "Osobisty",
+      "all_orders": "Wszystkie zamówienia",
+      "my_orders": "Moje zamówienia",
       "scroll_to_top": "Przewiń do góry"
     },
     "labels": {

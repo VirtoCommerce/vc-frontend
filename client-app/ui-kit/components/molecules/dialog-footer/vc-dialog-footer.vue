@@ -1,9 +1,13 @@
 <template>
   <div class="vc-dialog-footer">
-    <slot>
-      <VcButton color="secondary" variant="outline" class="mx-auto" @click="$emit('close')">
-        {{ $t("ui_kit.buttons.close") }}
-      </VcButton>
+    <slot name="container">
+      <div class="vc-dialog-footer__container">
+        <slot>
+          <VcButton color="secondary" variant="outline" class="mx-auto" @click="$emit('close')">
+            {{ $t("ui_kit.buttons.close") }}
+          </VcButton>
+        </slot>
+      </div>
     </slot>
   </div>
 </template>
@@ -20,7 +24,11 @@ defineEmits<IEmits>();
 .vc-dialog-footer {
   grid-area: vc-dialog-footer;
 
-  @apply @container flex flex-wrap items-center gap-x-5 gap-y-2 py-4 px-6;
+  @apply @container;
+
+  &__container {
+    @apply flex flex-wrap items-center gap-x-5 gap-y-2 py-4 px-6;
+  }
 
   & > .vc-button {
     @apply w-full;

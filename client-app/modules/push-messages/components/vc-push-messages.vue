@@ -1,57 +1,73 @@
 <template>
-  <VcPopover class="vc-push-messages" :placement="placement" :offset-options="offsetOptions" arrow-enabled>
+  <VcPopover
+    class="vc-push-messages"
+    :placement="placement"
+    :offset-options="offsetOptions"
+    arrow-enabled
+    max-height="none"
+    close-on-blur
+  >
     <template #trigger>
       <slot name="trigger" />
     </template>
 
     <template #content="{ close: closeMessages }">
-      <div class="vc-push-messages__dropdown">
-        <div class="vc-push-messages__list">
-          <div class="vc-push-messages__head">
-            <div class="vc-push-messages__title">
-              <span>{{ $t("push_messages.title") }}</span>
+      <VcDialog dividers class="vc-push-messages__dialog" tabindex="-1">
+        <VcDialogHeader :closable="false">
+          <template #main>
+            <div class="vc-push-messages__head">
+              <div class="vc-push-messages__title">
+                <span>{{ $t("push_messages.title") }}</span>
 
-              <VcBadge v-if="unreadCount > 0" variant="outline" size="lg" rounded>
-                {{ unreadCount }}
-              </VcBadge>
+                <VcBadge v-if="unreadCount > 0" variant="outline" size="lg" rounded>
+                  {{ unreadCount }}
+                </VcBadge>
+              </div>
+
+              <VcSwitch v-model="unreadVisibility" size="sm">
+                {{ $t("push_messages.show_unread_only") }}
+              </VcSwitch>
+
+              <VcDropdownMenu
+                :class="['vc-push-messages__options', { 'vc-push-messages__options--invisible': !withOptions }]"
+                placement="bottom-end"
+                close-on-blur
+              >
+                <template #trigger>
+                  <VcButton size="sm" icon variant="no-background">
+                    <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
+                  </VcButton>
+                </template>
+
+                <template #content="{ close: closeMenu }">
+                  <VcMenuItem
+                    @click="
+                      closeMenu();
+                      $emit('markReadAll');
+                    "
+                  >
+                    {{ $t("push_messages.options.make_all_as_read") }}
+                  </VcMenuItem>
+
+                  <VcMenuItem
+                    @click="
+                      closeMenu();
+                      $emit('markUnreadAll');
+                    "
+                  >
+                    {{ $t("push_messages.options.make_all_as_unread") }}
+                  </VcMenuItem>
+                </template>
+              </VcDropdownMenu>
             </div>
+          </template>
+        </VcDialogHeader>
 
-            <VcSwitch v-model="unreadVisibility" size="sm">
-              {{ $t("push_messages.show_unread_only") }}
-            </VcSwitch>
-
-            <VcDropdownMenu
-              :class="['vc-push-messages__options', { 'vc-push-messages__options--invisible': !withOptions }]"
-              placement="bottom-end"
-            >
-              <template #trigger>
-                <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
-              </template>
-
-              <template #content="{ close: closeMenu }">
-                <VcMenuItem
-                  @click="
-                    closeMenu();
-                    $emit('markReadAll');
-                  "
-                >
-                  {{ $t("push_messages.options.make_all_as_read") }}
-                </VcMenuItem>
-
-                <VcMenuItem
-                  @click="
-                    closeMenu();
-                    $emit('markUnreadAll');
-                  "
-                >
-                  {{ $t("push_messages.options.make_all_as_unread") }}
-                </VcMenuItem>
-              </template>
-            </VcDropdownMenu>
-          </div>
-
-          <div class="vc-push-messages__body">
-            <slot name="items" />
+        <VcDialogContent>
+          <template #container>
+            <div class="vc-push-messages__items">
+              <slot name="items" />
+            </div>
 
             <div v-if="totalCount === 0" class="vc-push-messages__empty">
               <div class="vc-push-messages__empty-title">
@@ -62,35 +78,38 @@
                 {{ $t("push_messages.empty.description") }}
               </div>
             </div>
-          </div>
+          </template>
+        </VcDialogContent>
 
-          <div class="vc-push-messages__foot">
-            <VcButton
-              v-if="removable && totalCount"
-              variant="outline"
-              color="secondary"
-              size="xs"
-              class="vc-push-messages__action-left"
-              @click="$emit('clearAll')"
-            >
-              {{ $t("push_messages.clear_all") }}
-            </VcButton>
-            <VcButton
-              v-if="canViewAll"
-              variant="outline"
-              color="secondary"
-              size="xs"
-              class="vc-push-messages__action-right"
-              @click="
-                closeMessages();
-                $emit('viewAll');
-              "
-            >
-              {{ $t("push_messages.view_all") }}
-            </VcButton>
-          </div>
-        </div>
-      </div>
+        <VcDialogFooter>
+          <template #container>
+            <div class="vc-push-messages__foot">
+              <VcButton
+                v-if="removable && totalCount"
+                variant="outline"
+                color="secondary"
+                size="xs"
+                @click="$emit('clearAll')"
+              >
+                {{ $t("push_messages.clear_all") }}
+              </VcButton>
+
+              <VcButton
+                v-if="canViewAll"
+                variant="outline"
+                color="secondary"
+                size="xs"
+                @click="
+                  closeMessages();
+                  $emit('viewAll');
+                "
+              >
+                {{ $t("push_messages.view_all") }}
+              </VcButton>
+            </div>
+          </template>
+        </VcDialogFooter>
+      </VcDialog>
     </template>
   </VcPopover>
 </template>
@@ -115,6 +134,7 @@ interface IProps {
   withOptions?: boolean;
   offsetOptions?: VcPopoverOffsetOptionsType;
   placement?: VcPopoverPlacementType;
+  closeOnBlur?: boolean;
 }
 
 const emits = defineEmits<IEmits>();
@@ -129,24 +149,16 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
 
 <style lang="scss">
 .vc-push-messages {
-  &__dropdown {
-    @apply px-1.5 w-screen;
+  --vc-dialog-width: calc(100vw - 1rem);
+  --vc-dialog-max-height: calc(100vh - 5rem);
 
-    @media (min-width: theme("screens.sm")) {
-      @apply max-w-none w-[25rem] px-0;
-    }
-  }
-
-  &__list {
-    @apply flex flex-col divide-y bg-additional-50 rounded text-neutral-950 shadow-2xl max-h-[calc(100vh-5rem)];
-
-    @media (min-width: theme("screens.lg")) {
-      @apply max-h-[calc(100vh-10rem)];
-    }
+  @media (min-width: theme("screens.sm")) {
+    --vc-dialog-width: 25rem;
+    --vc-dialog-max-height: calc(100vh - 10rem);
   }
 
   &__head {
-    @apply flex items-center gap-2 ps-4 pe-2 py-4;
+    @apply flex items-center gap-2 w-full min-h-14 ps-4 pe-1 py-1;
   }
 
   &__title {
@@ -160,15 +172,17 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
   }
 
   &__options-icon {
-    @apply fill-neutral;
+    @apply fill-neutral group-hover:fill-neutral-700;
+  }
 
-    &:hover {
-      @apply fill-neutral-700;
+  &__dialog {
+    @media (width < theme("screens.sm")) {
+      @apply mx-2;
     }
   }
 
-  &__body {
-    @apply overflow-y-auto divide-y;
+  &__items {
+    @apply divide-y;
   }
 
   &__empty {
@@ -183,16 +197,16 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
     @apply text-xs;
   }
 
-  &__foot {
-    @apply flex justify-between p-4 empty:hidden;
-  }
-
   &__action-left {
-    @apply mr-auto;
+    @apply ms-auto;
   }
 
   &__action-right {
-    @apply ml-auto;
+    @apply me-auto;
+  }
+
+  &__foot {
+    @apply flex gap-3 justify-between px-4 py-2 w-full;
   }
 }
 </style>

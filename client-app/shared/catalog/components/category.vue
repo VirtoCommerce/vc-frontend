@@ -94,7 +94,7 @@
         <!-- Popup sidebar filters toggler -->
         <VcButton
           v-if="!hideSidebar"
-          class="flex-none lg:!hidden"
+          class="mr-2.5 flex-none md:!hidden"
           icon="filter"
           size="sm"
           @click="showFiltersSidebar"
@@ -183,6 +183,7 @@
       </div>
 
       <div ref="categoryProductsAnchor"></div>
+
       <!-- Products -->
       <CategoryProducts
         :card-type="cardType"
@@ -426,6 +427,10 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
     item_list_id: `${currentCategory.value?.slug}_page_${currentPage.value}`,
     item_list_name: `${currentCategory.value?.name} (page ${currentPage.value})`,
   });
+
+  if (searchQueryParam.value) {
+    trackViewSearchResults();
+  }
 }
 
 async function fetchProducts(): Promise<void> {
@@ -437,6 +442,18 @@ async function fetchProducts(): Promise<void> {
   analytics("viewItemList", products.value, {
     item_list_id: currentCategory.value?.slug,
     item_list_name: currentCategory.value?.name,
+  });
+
+  if (searchQueryParam.value) {
+    trackViewSearchResults();
+  }
+}
+
+function trackViewSearchResults(): void {
+  analytics("viewSearchResults", searchQueryParam.value, {
+    visible_items: products.value.map((product) => ({ code: product.code })),
+    results_count: totalProductsCount.value,
+    results_page: currentPage.value,
   });
 }
 
