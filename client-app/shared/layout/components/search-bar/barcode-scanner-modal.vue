@@ -7,10 +7,11 @@
     <p class="barcode-scanner-modal__description">
       {{ $t("shared.layout.search_bar.barcode_detector.description") }}
     </p>
+
     <VcWidgetSkeleton v-show="loading">
       <template #default-container>
-        <div class="p-1">
-          <div class="w-full! h-60"></div>
+        <div class="barcode-scanner-modal__skeleton">
+          <div class="barcode-scanner-modal__skeleton-inner" />
         </div>
       </template>
     </VcWidgetSkeleton>
@@ -127,6 +128,14 @@ onBeforeUnmount(() => {
 
   &__action {
     @apply ml-auto w-full md:w-auto;
+  }
+
+  &__skeleton {
+    @apply p-1;
+  }
+
+  &__skeleton-inner {
+    @apply w-full h-60;
   }
 }
 </style>
