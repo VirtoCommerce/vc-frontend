@@ -42,12 +42,12 @@ import { computed } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
 import { getColorValue } from "@/ui-kit/utilities";
 
-export interface IEmits<T extends string | number | boolean> {
+export interface IEmits {
   (event: "input", value: T): void;
   (event: "change", value: T): void;
 }
 
-export interface IProps<T extends string | number | boolean> {
+export interface IProps {
   label?: string;
   name?: string;
   value: T;
@@ -59,15 +59,15 @@ export interface IProps<T extends string | number | boolean> {
   labelPosition?: "start" | "end";
 }
 
-const emit = defineEmits<IEmits<T>>();
-const props = withDefaults(defineProps<IProps<T>>(), {
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   labelPosition: "end",
   color: "",
   hoverColor: "",
 });
 
-const model = defineModel<IProps<T>["value"]>();
+const model = defineModel<IProps["value"]>();
 
 const componentId = useComponentId("input");
 
