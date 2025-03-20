@@ -94,7 +94,7 @@
         <!-- Popup sidebar filters toggler -->
         <VcButton
           v-if="!hideSidebar"
-          class="mr-2.5 flex-none lg:!hidden"
+          class="mr-2.5 flex-none md:!hidden"
           icon="filter"
           size="sm"
           @click="showFiltersSidebar"
