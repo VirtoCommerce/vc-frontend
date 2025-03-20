@@ -59,6 +59,9 @@ vi.mock("@/shared/cart", () => ({
     shipment,
     forceFetch: vi.fn(),
   }),
+  useShortCart: () => ({
+    cart: ref({ shipments: [{ id: "shipment1" }] }),
+  }),
 }));
 
 vi.mock("@vueuse/core", async () => {

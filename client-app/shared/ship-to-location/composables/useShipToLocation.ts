@@ -6,7 +6,7 @@ import { updateContact } from "@/core/api/graphql/account";
 import { XApiPermissions } from "@/core/enums";
 import { Logger, stringifyAddress } from "@/core/utilities";
 import { useUser, useUserAddresses } from "@/shared/account";
-import { useFullCart } from "@/shared/cart";
+import { useFullCart, useShortCart } from "@/shared/cart";
 import { SelectAddressModal } from "@/shared/checkout";
 import { AddOrUpdateCompanyAddressModal, useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
@@ -57,7 +57,9 @@ export function useShipToLocation() {
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
   } = useOrganizationAddresses(organization.value?.id ?? "");
 
-  const { updateShipment: updateShipmentCart, shipment: cartShipment } = useFullCart();
+  const { updateShipment: updateShipmentCart } = useFullCart();
+  const { cart: shortCart } = useShortCart();
+  const cartShipmentId = computed(() => shortCart.value?.shipments[0]?.id);
 
   const localShipToAddresses = useLocalStorage<AnyAddressType[]>("localShipToAddresses", []);
   const selectedLocalShipToAddressId = useLocalStorage<string | null>("selectedLocalShipToAddressId", null);
@@ -198,7 +200,7 @@ export function useShipToLocation() {
     }
 
     await updateShipmentCart({
-      id: cartShipment.value?.id,
+      id: cartShipmentId.value,
       deliveryAddress: omit(address, ["isDefault", "isFavorite"]),
     });
   }
