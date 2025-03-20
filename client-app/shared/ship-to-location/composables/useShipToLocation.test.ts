@@ -264,8 +264,8 @@ describe("useShipToLocation composable", () => {
           postalCode: "02108",
         },
       ];
-      const { getAllAddresses } = useShipToLocation();
-      const result = getAllAddresses("New York");
+      const { getFilteredAddresses } = useShipToLocation();
+      const result = getFilteredAddresses("New York");
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe("addr1");
     });
@@ -310,15 +310,15 @@ describe("useShipToLocation composable", () => {
         },
       ];
 
-      const { getAllAddresses } = useShipToLocation();
+      const { getFilteredAddresses } = useShipToLocation();
 
       // Test with special characters and punctuation
-      const result = getAllAddresses("#402");
+      const result = getFilteredAddresses("#402");
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe("addr1");
 
       // Test with empty string should return all addresses
-      const emptyResult = getAllAddresses("");
+      const emptyResult = getFilteredAddresses("");
       expect(emptyResult).toHaveLength(2);
     });
   });

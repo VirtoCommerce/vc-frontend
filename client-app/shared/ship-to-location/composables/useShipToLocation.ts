@@ -129,15 +129,11 @@ export function useShipToLocation() {
   }
 
   function getFilteredAddresses(filter?: string): AnyAddressType[] {
-    return filter ? filterAddresses(accountAddresses.value, filter) : getLimitedAddresses();
+    return filter ? filterAddresses(accountAddresses.value, filter) : accountAddresses.value;
   }
 
   function getLimitedAddresses(limit = MAX_ADDRESSES_NUMBER): AnyAddressType[] {
     return accountAddresses.value.slice(0, limit);
-  }
-
-  function getAllAddresses(filter?: string): AnyAddressType[] {
-    return filterAddresses(accountAddresses.value, filter);
   }
 
   async function fetchAddresses() {
@@ -279,7 +275,6 @@ export function useShipToLocation() {
     fetchAddresses,
     selectAddress,
 
-    getAllAddresses,
     getFilteredAddresses,
     getLimitedAddresses,
 

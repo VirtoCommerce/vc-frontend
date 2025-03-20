@@ -35,6 +35,7 @@
                   <div class="ship-to-selector__title">
                     {{ $t("shared.layout.header.ship_to_selector.select_address") }}
                   </div>
+
                   <VcButton
                     v-if="canAddNewAddress"
                     size="xs"
@@ -103,7 +104,7 @@
             </template>
           </VcDialogContent>
 
-          <VcDialogFooter v-if="hasAddresses && filter.length === 0 && allAddresses.length > MAX_ADDRESSES_NUMBER">
+          <VcDialogFooter v-if="hasAddresses && !filter && allAddresses.length > MAX_ADDRESSES_NUMBER">
             <template #container>
               <div class="ship-to-selector__foot">
                 <VcButtonSeeMoreLess :model-value="isSeeMore" size="xs" @click="isSeeMore = !isSeeMore" />
@@ -113,6 +114,7 @@
         </VcDialog>
       </template>
     </VcPopover>
+
     <div v-else class="ship-to-selector__empty">
       <VcIcon name="location-marker" size="xs" />
 
@@ -137,7 +139,7 @@ interface IProps {
 
 defineProps<IProps>();
 
-const filter = ref("");
+const filter = ref<string | undefined>("");
 const isSeeMore = ref(false);
 
 const {
@@ -146,7 +148,6 @@ const {
   selectedAddress,
   getFilteredAddresses,
   getLimitedAddresses,
-  getAllAddresses,
   fetchAddresses,
   selectAddress,
   openAddOrUpdateAddressModal,
@@ -155,15 +156,12 @@ const {
 const { checkPermissions, isCorporateMember } = useUser();
 
 const addresses = computed(() => {
-  if (isSeeMore.value) {
-    return getAllAddresses(filter.value);
+  console.log(isSeeMore.value, filter.value);
+  if (!isSeeMore.value && !filter.value) {
+    return getLimitedAddresses();
   }
 
-  if (filter.value) {
-    return getFilteredAddresses(filter.value);
-  }
-
-  return getLimitedAddresses();
+  return getFilteredAddresses(filter.value);
 });
 
 const hasAddresses = computed(() => addresses.value.length > 0);
