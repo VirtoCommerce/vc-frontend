@@ -181,7 +181,17 @@ export default {
     options.router.addRoute({ path: "/designer-preview", name: "StaticPage", component: StaticPage, props: true });
     options.router.addRoute(matcher);
 
+    options.router.beforeEach((to, from, next) => {
+      if (to.path !== "/designer-preview") {
+        next({ path: "/designer-preview", query: to.query, hash: to.hash });
+      } else {
+        next();
+      }
+    });
+
     const customComponents = await getRegisteredComponents();
     window.parent.postMessage({ source: "preview", type: "loaded", data: customComponents }, options.builderOrigin);
+
+    await options.router.push("/designer-preview");
   },
 };
