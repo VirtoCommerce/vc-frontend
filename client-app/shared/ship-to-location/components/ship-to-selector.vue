@@ -156,7 +156,6 @@ const {
 const { checkPermissions, isCorporateMember } = useUser();
 
 const addresses = computed(() => {
-  console.log(isSeeMore.value, filter.value);
   if (!isSeeMore.value && !filter.value) {
     return getLimitedAddresses();
   }
