@@ -96,8 +96,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
     },
     server: {
       port: 3000,
-      // Set to true to allow access from other devices in your local network (useful for debugging)
-      host: false,
       cors: true,
       headers: {
         "Content-Security-Policy": "frame-ancestors 'self' https://localhost:5001;",

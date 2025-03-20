@@ -1,7 +1,15 @@
 <template>
-  <button class="barcode-scanner" type="button" icon="barcode" @click.stop="openBarcodeScanner">
+  <VcButton
+    class="barcode-scanner"
+    color="primary"
+    variant="no-border"
+    size="xs"
+    type="button"
+    icon="barcode"
+    @click.stop="openBarcodeScanner"
+  >
     <VcIcon name="barcode" size="sm" />
-  </button>
+  </VcButton>
 </template>
 
 <script setup lang="ts">

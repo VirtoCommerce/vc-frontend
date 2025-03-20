@@ -175,12 +175,12 @@ function reset() {
   void router.push({ name: ROUTES.SEARCH.NAME });
 }
 
-const onBarcodeScanned = (value: string) => {
+function onBarcodeScanned(value: string) {
   if (value) {
     searchPhrase.value = value;
     void router.push(searchPageLink.value);
   }
-};
+}
 
 syncRefs(mobileMenuVisible, useScrollLock(document.body));
 
