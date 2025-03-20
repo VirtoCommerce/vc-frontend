@@ -137,7 +137,7 @@ onBeforeUnmount(() => {
   }
 
   &__skeleton-inner {
-    @apply w-full h-60;
+    @apply h-60 w-full #{!important};
   }
 }
 </style>
