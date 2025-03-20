@@ -28,11 +28,11 @@
         <VcIcon v-if="icon" :name="icon" class="vc-tab-switch__icon" />
       </slot>
 
-      <span v-if="label" class="vc-tab-switch__label">
-        <slot v-bind="{ checked, value, label }">
+      <slot v-bind="{ checked, value, label }">
+        <span v-if="label" class="vc-tab-switch__label">
           {{ label }}
-        </slot>
-      </span>
+        </span>
+      </slot>
     </button>
   </label>
 </template>
@@ -42,12 +42,12 @@ import { computed } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
 import { getColorValue } from "@/ui-kit/utilities";
 
-interface IEmits {
+export interface IEmits<T extends string | number | boolean> {
   (event: "input", value: T): void;
   (event: "change", value: T): void;
 }
 
-interface IProps {
+export interface IProps<T extends string | number | boolean> {
   label?: string;
   name?: string;
   value: T;
@@ -59,15 +59,15 @@ interface IProps {
   labelPosition?: "start" | "end";
 }
 
-const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
+const emit = defineEmits<IEmits<T>>();
+const props = withDefaults(defineProps<IProps<T>>(), {
   size: "md",
   labelPosition: "end",
   color: "",
   hoverColor: "",
 });
 
-const model = defineModel<IProps["value"]>();
+const model = defineModel<IProps<T>["value"]>();
 
 const componentId = useComponentId("input");
 

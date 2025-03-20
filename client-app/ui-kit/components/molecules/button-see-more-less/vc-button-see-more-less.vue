@@ -1,5 +1,5 @@
 <template>
-  <VcButton color="accent" variant="no-background" size="sm" :prepend-icon="icon" @click="toggled = !toggled">
+  <VcButton color="accent" variant="no-background" :size="size" :prepend-icon="icon" @click="toggled = !toggled">
     {{ text }}
   </VcButton>
 </template>
@@ -15,10 +15,13 @@ interface IEmits {
 
 interface IProps {
   modelValue?: boolean;
+  size?: "xs" | "sm" | "md" | "lg";
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  size: "sm",
+});
 
 const { t } = useI18n();
 const toggled = useVModel(props, "modelValue", emit);

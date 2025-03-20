@@ -1,14 +1,16 @@
 <template>
   <div :class="['vc-dialog-header', `vc-dialog-header--color--${color}`]">
-    <div class="vc-dialog-header__main">
-      <div v-if="icon" class="vc-dialog-header__icon">
-        <VcIcon :name="icon" size="sm" />
-      </div>
+    <slot name="main">
+      <div class="vc-dialog-header__main">
+        <div v-if="icon" class="vc-dialog-header__icon">
+          <VcIcon :name="icon" size="sm" />
+        </div>
 
-      <div class="vc-dialog-header__title">
-        <slot />
+        <div class="vc-dialog-header__title">
+          <slot />
+        </div>
       </div>
-    </div>
+    </slot>
 
     <button v-if="closable" type="button" class="vc-dialog-header__close" @click="$emit('close')">
       <VcIcon name="delete-thin" :size="16" />
@@ -52,7 +54,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__main {
-    @apply flex-grow flex flex-col justify-center gap-3 py-3 ps-6 min-h-[4.25rem];
+    @apply flex-grow flex flex-col justify-center gap-3 py-3 px-6 min-h-[4.25rem];
   }
 
   &__icon {
