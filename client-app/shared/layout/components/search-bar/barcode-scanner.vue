@@ -7,9 +7,7 @@
     type="button"
     icon="barcode"
     @click.stop="openBarcodeScanner"
-  >
-    <VcIcon name="barcode" size="sm" />
-  </VcButton>
+  />
 </template>
 
 <script setup lang="ts">
@@ -43,6 +41,6 @@ const openBarcodeScanner = () => {
 
 <style lang="scss">
 .barcode-scanner {
-  @apply flex items-center p-3 text-[--base-color];
+  @apply m-1.5;
 }
 </style>

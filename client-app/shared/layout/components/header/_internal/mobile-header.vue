@@ -87,14 +87,13 @@
         maxlength="64"
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="mr-4 grow"
+        :clearable="!!searchPhrase"
         no-border
+        @clear="reset"
         @keydown.enter="searchPhrase && $router.push(searchPageLink)"
       >
         <template #append>
-          <button v-if="searchPhrase" type="button" class="flex items-center p-3 text-[--base-color]" @click.stop="reset">
-            <VcIcon name="delete-2" size="xs" />
-          </button>
-          <BarcodeScanner v-else @scanned-code="onBarcodeScanned" />
+          <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
         </template>
       </VcInput>
 

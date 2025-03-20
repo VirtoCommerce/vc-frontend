@@ -15,6 +15,7 @@
         </div>
       </template>
     </VcWidgetSkeleton>
+
     <video
       v-show="!loading"
       ref="videoElement"
@@ -24,6 +25,7 @@
     >
       <track kind="captions" :label="$t('shared.layout.search_bar.barcode_detector.title')" default disabled src="" />
     </video>
+
     <template #actions="{ close }">
       <VcButton class="barcode-scanner-modal__action" color="secondary" variant="outline" @click="close">
         {{ $t("shared.catalog.branches_modal.cancel_button") }}
