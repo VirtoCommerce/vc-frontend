@@ -91,7 +91,7 @@
         @keydown.enter="searchPhrase && $router.push(searchPageLink)"
       >
         <template #append>
-          <button v-if="searchPhrase" type="button" class="vc-input__clear" @click.stop="reset">
+          <button v-if="searchPhrase" type="button" class="flex items-center p-3 text-[--base-color]" @click.stop="reset">
             <VcIcon name="delete-2" size="xs" />
           </button>
           <BarcodeScanner v-else @scanned-code="onBarcodeScanned" />
