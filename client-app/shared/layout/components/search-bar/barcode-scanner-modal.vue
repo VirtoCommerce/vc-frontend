@@ -25,9 +25,19 @@
     >
       <track kind="captions" :label="$t('shared.layout.search_bar.barcode_detector.title')" default disabled src="" />
     </video>
+    <input
+      ref="fileInputRef"
+      type="file"
+      class="barcode-scanner-modal__input"
+      accept="image/*"
+      @input="onFileSelected"
+    />
 
     <template #actions="{ close }">
-      <VcButton class="barcode-scanner-modal__action" color="secondary" variant="outline" @click="close">
+      <VcButton class="barcode-scanner-modal__action-browse" color="secondary" @click="openFilePicker">{{
+        $t("ui_kit.file_uploader.browse")
+      }}</VcButton>
+      <VcButton class="barcode-scanner-modal__action-cancel" color="secondary" variant="outline" @click="close">
         {{ $t("shared.catalog.branches_modal.cancel_button") }}
       </VcButton>
     </template>
@@ -39,6 +49,7 @@ import { useIntervalFn } from "@vueuse/core";
 import { BarcodeDetector } from "barcode-detector/ponyfill";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { Logger } from "@/core/utilities";
+import { useNotifications } from "@/shared/notification";
 
 const emit = defineEmits<{
   (e: "result", value: string[]): void;
@@ -52,6 +63,35 @@ const loading = ref(true);
 
 const SCAN_INTERVAL = 400;
 
+const fileInputRef = ref<HTMLInputElement>();
+
+const notifications = useNotifications();
+
+function openFilePicker() {
+  fileInputRef.value?.click();
+}
+
+async function onFileSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  try {
+    if (!file) {
+      showInfo("no file detected");
+      return;
+    }
+
+    const barcodes = await barcodeDetector?.detect(file);
+
+    if (barcodes?.length) {
+      emitResult(barcodes);
+    } else {
+      showInfo("no barcodes found on your photo");
+    }
+  } catch (e) {
+    Logger.error(onFileSelected.name, e);
+  }
+}
+
 const scan = async () => {
   if (!barcodeDetector || !videoElement.value) {
     return;
@@ -59,12 +99,9 @@ const scan = async () => {
   try {
     const imageBitmap = await createImageBitmap(videoElement.value);
 
-    const barcodes = await barcodeDetector.detect(imageBitmap);
-    if (barcodes.length) {
-      emit(
-        "result",
-        barcodes.map((el) => el.rawValue),
-      );
+    const barcodes = await barcodeDetector?.detect(imageBitmap);
+    if (barcodes?.length) {
+      emitResult(barcodes);
     }
   } catch (error) {
     Logger.error(scan.name, error);
@@ -101,6 +138,21 @@ function stopCamera() {
   }
 }
 
+function showInfo(text: string) {
+  notifications.info({
+    text,
+    duration: 5000,
+    single: true,
+  });
+}
+
+function emitResult(barcodes: { rawValue: string }[]) {
+  emit(
+    "result",
+    barcodes.map((el) => el.rawValue),
+  );
+}
+
 onMounted(async () => {
   try {
     await startCamera();
@@ -128,8 +180,8 @@ onBeforeUnmount(() => {
     @apply aspect-[3/2] object-cover md:aspect-[2/1];
   }
 
-  &__action {
-    @apply ml-auto w-full md:w-auto;
+  &__action-cancel {
+    @apply ml-auto md:w-auto;
   }
 
   &__skeleton {
@@ -138,6 +190,10 @@ onBeforeUnmount(() => {
 
   &__skeleton-inner {
     @apply h-60 w-full #{!important};
+  }
+
+  &__input {
+    @apply hidden;
   }
 }
 </style>
