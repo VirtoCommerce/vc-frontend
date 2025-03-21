@@ -29,8 +29,6 @@
       ref="fileInputRef"
       type="file"
       class="barcode-scanner-modal__input"
-      accept="image/*"
-      capture="environment"
       @input="onFileSelected"
     />
 
