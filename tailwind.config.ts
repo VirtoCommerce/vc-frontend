@@ -151,12 +151,12 @@ const colorSet = {
 
   borderColor: {
     ...colors,
-    DEFAULT: neutralColors[200],
+    DEFAULT: neutralColors[300],
   },
 
   divideColor: {
     ...colors,
-    DEFAULT: neutralColors[200],
+    DEFAULT: neutralColors[300],
   },
 
   outlineColor: {

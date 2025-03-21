@@ -216,7 +216,7 @@ provide<VcInputContextType>("inputContext", {
   $truncate: "";
 
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
-  --focus-color: rgb(from var(--color) r g b / 0.3);
+  --focus-color: rgb(from var(--color) r g b / 0.2);
 
   @apply flex flex-col;
 

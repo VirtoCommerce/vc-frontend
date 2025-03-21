@@ -139,6 +139,12 @@ Loading.args = {
   loading: true,
 };
 
+export const Disabled = Template.bind({});
+Disabled.args = {
+  disabled: true,
+  appendIcon: "save-v2",
+};
+
 export const MinWidth = Template.bind({});
 MinWidth.args = {
   minWidth: "12rem",

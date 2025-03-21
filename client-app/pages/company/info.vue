@@ -51,7 +51,7 @@
             >
               <template v-if="newLogoUrl" #custom="{ openFilePicker }">
                 <div class="flex items-center gap-3">
-                  <div class="flex h-[3.375rem] grow items-center rounded border border-neutral-300 p-1 xs:max-w-56">
+                  <div class="flex h-17 grow items-center justify-center rounded border p-2 xs:max-w-56">
                     <VcImage
                       :alt="$t('pages.company.info.labels.company_logo')"
                       :src="newLogoUrl"
@@ -70,13 +70,13 @@
                 </div>
               </template>
 
-              <VcButton v-if="!newLogoUrl" color="secondary" size="xs">
+              <VcButton v-if="!newLogoUrl" color="secondary" size="xs" tag="span">
                 {{ $t("ui_kit.file_uploader.browse") }}
               </VcButton>
             </VcFilePicker>
           </div>
 
-          <div class="mt-1.5">
+          <div class="mt-1.5 empty:hidden">
             <VcAlert v-if="hasFailedFiles" color="danger" variant="solid-light" size="sm" icon>
               {{ files[0].errorMessage }}
             </VcAlert>

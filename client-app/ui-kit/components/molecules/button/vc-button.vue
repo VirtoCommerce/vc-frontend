@@ -257,7 +257,7 @@ const attrs = computed(() => {
       --line-height: 1rem;
       --px: theme("padding[3.5]");
 
-      @apply text-xs/[--line-height] uppercase font-black;
+      @apply text-xs/[--line-height] uppercase font-black tracking-[1%];
     }
 
     &--md {
@@ -265,7 +265,7 @@ const attrs = computed(() => {
       --line-height: 1.25rem;
       --px: theme("padding.4");
 
-      @apply text-sm/[--line-height] uppercase font-black;
+      @apply text-sm/[--line-height] uppercase font-black tracking-[1%];
     }
 
     &--lg {
@@ -273,14 +273,14 @@ const attrs = computed(() => {
       --line-height: 1.5rem;
       --px: theme("padding.5");
 
-      @apply text-base/[--line-height] uppercase font-black;
+      @apply text-base/[--line-height] uppercase font-black tracking-[1%];
     }
   }
 
   @each $color in $colors {
     &--color--#{$color} {
       &:focus {
-        --outline-color: var(--color-#{$color}-100);
+        --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.2);
       }
 
       &:not([class*="--solid--"]) #{$loaderIcon} {
@@ -342,7 +342,8 @@ const attrs = computed(() => {
 
   &#{$disabled}:not(#{$loading}),
   &:disabled#{$disabled}:not(#{$loading}) {
-    --text-color: var(--color-neutral-400);
+    --vc-icon-color: var(--color-neutral-400);
+    --text-color: var(--color-neutral-600);
 
     &[class*="--solid--"] {
       --bg-color: var(--color-neutral-200);
@@ -350,8 +351,8 @@ const attrs = computed(() => {
     }
 
     &[class*="--no-border--"] {
-      --bg-color: var(--color-neutral-50);
-      --border-color: var(--color-neutral-50);
+      --bg-color: var(--color-neutral-200);
+      --border-color: var(--color-neutral-200);
     }
 
     &[class*="--outline--"] {
