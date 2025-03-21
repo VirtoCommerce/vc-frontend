@@ -1218,7 +1218,8 @@
       },
       "title": "Warenkorb",
       "empty_cart_description": "Ihr Warenkorb ist leer",
-      "recently_browsed_products": "Kürzlich angesehen"
+      "recently_browsed_products": "Kürzlich angesehen",
+      "empty_cart_search_text": "Nutze die Suche, um alles zu finden, was du brauchst"
     },
     "checkout": {
       "meta": {

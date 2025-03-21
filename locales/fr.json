@@ -1218,7 +1218,8 @@
       },
       "title": "Panier",
       "empty_cart_description": "Votre panier est vide",
-      "recently_browsed_products": "Récemment consultés"
+      "recently_browsed_products": "Récemment consultés",
+      "empty_cart_search_text": "Utilisez la recherche pour trouver tout ce dont vous avez besoin"
     },
     "checkout": {
       "meta": {

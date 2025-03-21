@@ -108,6 +108,8 @@ export default async () => {
   const i18n = createI18n(twoLetterAppLocale, currentCurrency.value.code, fallback);
   const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
+  await initLocale(i18n, twoLetterAppLocale);
+
   /**
    * Setting global variables
    */
@@ -127,7 +129,7 @@ export default async () => {
    * Other settings
    */
 
-  await Promise.all([initLocale(i18n, twoLetterAppLocale), fetchMenus(), fetchWhiteLabelingSettings()]);
+  await Promise.all([fetchMenus(), fetchWhiteLabelingSettings()]);
   await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
 
   void initPushNotifications(router, i18n);
