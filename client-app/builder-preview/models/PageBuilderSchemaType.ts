@@ -12,14 +12,3 @@ export type PageBuilderSchemasStructureType<T> = {
 };
 
 export type PageBuilderSchemaType = PageBuilderSchemasStructureType<PageBuilderSchemaItemType>;
-
-export function getEmptySchema(): PageBuilderSchemaType {
-  return {
-    blocks: {},
-    sections: {},
-    shared: {},
-    objects: {},
-    templates: {},
-    settingsSchema: {},
-  };
-}
