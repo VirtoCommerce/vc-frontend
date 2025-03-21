@@ -7,8 +7,11 @@
     <VcCollapsibleContent max-height="12.5rem">
       <div class="space-y-4">
         <VcProperty v-for="property in properties" :key="property.name" :label="property.label!" class="text-base">
-          <template v-if="isHTML(property)"><VcMarkdownRender :src="String(property.value)" /></template>
-          <template v-else>{{ property.value }}</template>
+          <span v-if="isHTML(property)" :title="String(property.value)">
+            <VcMarkdownRender :src="String(property.value)" />
+          </span>
+
+          <span v-else :title="String(property.value)">{{ property.value }}</span>
         </VcProperty>
 
         <!-- Rating -->
