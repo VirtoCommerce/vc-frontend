@@ -96,7 +96,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
     },
     server: {
       port: 3000,
-      host: true,
       cors: true,
       headers: {
         "Content-Security-Policy": "frame-ancestors 'self' https://localhost:5001;",
