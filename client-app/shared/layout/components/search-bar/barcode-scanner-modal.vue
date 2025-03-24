@@ -30,7 +30,6 @@
       type="file"
       class="barcode-scanner-modal__input"
       accept="image/*"
-      capture="environment"
       @change="onFileSelected"
       @cancel="onCancel"
     />
@@ -91,6 +90,11 @@ async function onFileSelected(event: Event) {
       showInfo("no file detected");
       await startCamera();
       startScanner();
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      showInfo("wrong file format");
       return;
     }
 
