@@ -148,6 +148,7 @@
                 :disabled="!isFacetsDirty"
                 size="sm"
                 min-width="6.25rem"
+                class="ms-auto"
                 @click="
                   applyFilters();
                   hideFilters();

@@ -47,7 +47,7 @@
         {{ $t("shared.account.invite_member_modal.cancel_button") }}
       </VcButton>
 
-      <VcButton :disabled="!meta.valid" :loading="loading" @click="send">
+      <VcButton class="ms-auto" :disabled="!meta.valid" :loading="loading" @click="send">
         {{ $t("shared.account.invite_member_modal.send_button") }}
       </VcButton>
     </template>

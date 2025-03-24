@@ -46,7 +46,7 @@
           {{ $t("shared.account.orders_filter.reset_button") }}
         </VcButton>
 
-        <VcButton size="sm" :disabled="!isFilterDirty" @click="$emit('apply')">
+        <VcButton size="sm" class="ms-auto" :disabled="!isFilterDirty" @click="$emit('apply')">
           {{ $t("shared.account.orders_filter.apply_button") }}
         </VcButton>
       </VcDialogFooter>

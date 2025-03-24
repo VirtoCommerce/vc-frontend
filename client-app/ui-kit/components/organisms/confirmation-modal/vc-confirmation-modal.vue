@@ -1,13 +1,25 @@
 <template>
-  <VcModal :title="title" :variant="variant" :icon="icon" @close="$emit('close')">
+  <VcModal :title="title" :variant="variant" :icon="icon" class="confirmation-modal" @close="$emit('close')">
     {{ text }}
 
     <template #actions="{ close }">
-      <VcButton v-if="!singleButton" :disabled="loading" color="secondary" variant="outline" @click="close">
+      <VcButton
+        v-if="!singleButton"
+        :disabled="loading"
+        color="secondary"
+        variant="outline"
+        class="confirmation-modal__button-cancel"
+        @click="close"
+      >
         {{ $t("ui_kit.buttons.cancel") }}
       </VcButton>
 
-      <VcButton :loading="loading" :color="variant" @click="$emit('confirm')">
+      <VcButton
+        :loading="loading"
+        :color="variant"
+        class="confirmation-modal__button-confirm"
+        @click="$emit('confirm')"
+      >
         {{ $t("ui_kit.buttons.ok") }}
       </VcButton>
     </template>
@@ -37,3 +49,11 @@ withDefaults(defineProps<IProps>(), {
   icon: "warning",
 });
 </script>
+
+<style lang="scss">
+.confirmation-modal {
+  &__button-confirm {
+    @apply ms-auto;
+  }
+}
+</style>

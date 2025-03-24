@@ -46,7 +46,7 @@ export interface IEmits {
 <style lang="scss">
 .save-changes-modal {
   &__button-confirm {
-    @apply ml-auto;
+    @apply ms-auto;
   }
 }
 </style>
