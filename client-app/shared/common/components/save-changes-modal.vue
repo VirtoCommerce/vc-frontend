@@ -1,13 +1,24 @@
 <template>
-  <VcModal :title="title ?? $t('common.messages.save_changes')" variant="info" icon="warning">
+  <VcModal
+    :title="title ?? $t('common.messages.save_changes')"
+    variant="info"
+    icon="warning"
+    class="save-changes-modal"
+  >
     {{ message ?? $t("common.messages.save_changes") }}
 
     <template #actions>
-      <VcButton color="secondary" variant="outline" min-width="8rem" @click="$emit('close')">
+      <VcButton
+        color="secondary"
+        variant="outline"
+        min-width="8rem"
+        class="save-changes-modal__button-cancel"
+        @click="$emit('close')"
+      >
         {{ closeButtonText ?? $t("common.buttons.no") }}
       </VcButton>
 
-      <VcButton class="ml-auto" min-width="8rem" @click="$emit('confirm')">
+      <VcButton min-width="8rem" class="save-changes-modal__button-confirm" @click="$emit('confirm')">
         {{ confirmButtonText ?? $t("common.buttons.yes") }}
       </VcButton>
     </template>
@@ -31,3 +42,11 @@ export interface IEmits {
   (event: "close"): void;
 }
 </script>
+
+<style lang="scss">
+.save-changes-modal {
+  &__button-confirm {
+    @apply ml-auto;
+  }
+}
+</style>
