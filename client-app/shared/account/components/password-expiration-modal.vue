@@ -5,7 +5,7 @@
         {{ $t("common.buttons.set_new_password") }}
       </VcButton>
 
-      <VcButton variant="outline" @click="$emit('dismiss')">
+      <VcButton class="ms-auto" variant="outline" @click="$emit('dismiss')">
         {{ $t("common.buttons.cancel") }}
       </VcButton>
     </template>
