@@ -146,12 +146,13 @@
     </VcCheckboxGroup>
 
     <template #actions="{ close }">
-      <VcButton color="secondary" variant="outline" @click="close">
+      <VcButton min-width="8rem" color="secondary" variant="outline" @click="close">
         {{ $t("shared.catalog.branches_modal.cancel_button") }}
       </VcButton>
 
       <VcButton
         :disabled="isSaveButtonDisabled"
+        min-width="8rem"
         class="ms-auto"
         @click="
           save();

@@ -18,13 +18,14 @@
     </div>
 
     <template #actions="{ close }">
-      <VcButton :disabled="loading" color="secondary" variant="outline" @click="close">
+      <VcButton min-width="8rem" :disabled="loading" color="secondary" variant="outline" @click="close">
         {{ $t("common.buttons.cancel") }}
       </VcButton>
 
       <VcButton
         :disabled="selectedRoleId === currentRoleId"
         :loading="loading"
+        min-width="8rem"
         class="ms-auto"
         @click="$emit('confirm', selectedRoleId)"
       >

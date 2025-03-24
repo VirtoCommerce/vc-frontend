@@ -7,11 +7,11 @@
     </i18n-t>
 
     <template #actions="{ close }">
-      <VcButton :loading="loading" color="danger" @click="remove(close)">
+      <VcButton min-width="8rem" :loading="loading" color="danger" @click="remove(close)">
         {{ $t("shared.wishlists.delete_wishlist_modal.delete_button") }}
       </VcButton>
 
-      <VcButton class="ms-auto" color="secondary" variant="outline" @click="close">
+      <VcButton min-width="8rem" class="ms-auto" color="secondary" variant="outline" @click="close">
         {{ $t("shared.wishlists.delete_wishlist_modal.cancel_button") }}
       </VcButton>
     </template>

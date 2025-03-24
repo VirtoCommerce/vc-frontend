@@ -1,11 +1,11 @@
 <template>
   <VcModal :title="$t('common.titles.password_expired')" variant="warning" is-persistent>
     <template #actions>
-      <VcButton @click="$emit('confirm')">
+      <VcButton min-width="8rem" @click="$emit('confirm')">
         {{ $t("common.buttons.set_new_password") }}
       </VcButton>
 
-      <VcButton class="ms-auto" variant="outline" @click="$emit('dismiss')">
+      <VcButton min-width="8rem" class="ms-auto" variant="outline" @click="$emit('dismiss')">
         {{ $t("common.buttons.cancel") }}
       </VcButton>
     </template>

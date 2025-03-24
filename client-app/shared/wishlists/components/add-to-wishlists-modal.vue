@@ -106,12 +106,13 @@
     </div>
 
     <template #actions="{ close }">
-      <VcButton color="secondary" variant="outline" @click="close">
+      <VcButton min-width="8rem" color="secondary" variant="outline" @click="close">
         {{ $t("shared.wishlists.add_to_wishlists_modal.cancel_button") }}
       </VcButton>
 
       <VcButton
         :loading="loading"
+        min-width="8rem"
         :disabled="!newLists.length && !selectedListsOtherIds.length && !removedLists.length"
         class="ms-auto"
         @click="save"

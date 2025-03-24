@@ -1,11 +1,12 @@
 <template>
   <VcModal :title="$t('shared.checkout.payment_method_modal.title')">
     <template #actions="{ close }">
-      <VcButton variant="outline" color="secondary" @click="close">
+      <VcButton min-width="8rem" variant="outline" color="secondary" @click="close">
         {{ $t("shared.checkout.payment_method_modal.cancel_button") }}
       </VcButton>
 
       <VcButton
+        min-width="8rem"
         class="ms-auto"
         @click="
           $emit('result', selectedMethod);

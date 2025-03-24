@@ -81,15 +81,17 @@
     </VcExpansionPanels>
 
     <template #actions="{ close }">
-      <VcButton :to="{ name: 'Cart' }" class="max-xs:!min-w-full xs:me-auto" @click="close()">
+      <VcButton min-width="8rem" :to="{ name: 'Cart' }" class="max-xs:!min-w-full xs:me-auto" @click="close()">
         {{ $t("common.buttons.view_cart") }}
       </VcButton>
 
-      <VcButton variant="outline" @click="print()">
+      <VcButton min-width="8rem" variant="outline" @click="print()">
         {{ $t("common.buttons.print") }}
       </VcButton>
 
       <VcButton
+        min-width="8rem"
+        class="max-xs:ms-auto"
         @click="
           close();
           $emit('confirm');

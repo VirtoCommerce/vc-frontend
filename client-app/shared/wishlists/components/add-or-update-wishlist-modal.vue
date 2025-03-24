@@ -38,11 +38,11 @@
     </div>
 
     <template #actions="{ close }">
-      <VcButton color="secondary" variant="outline" @click="close">
+      <VcButton min-width="8rem" color="secondary" variant="outline" @click="close">
         {{ $t("shared.wishlists.add_or_update_wishlist_modal.cancel_button") }}
       </VcButton>
 
-      <VcButton :loading="loading" :disabled="!canSave" class="ms-auto" @click="save(close)">
+      <VcButton min-width="8rem" :loading="loading" :disabled="!canSave" class="ms-auto" @click="save(close)">
         {{
           isEditMode
             ? $t("shared.wishlists.add_or_update_wishlist_modal.save_button")

@@ -8,6 +8,7 @@
         :disabled="loading"
         color="secondary"
         variant="outline"
+        min-width="8rem"
         class="confirmation-modal__button-cancel"
         @click="close"
       >
@@ -18,6 +19,7 @@
         :loading="loading"
         :color="variant"
         class="confirmation-modal__button-confirm"
+        min-width="8rem"
         @click="$emit('confirm')"
       >
         {{ $t("ui_kit.buttons.ok") }}

@@ -4,6 +4,7 @@
       <VcButton
         color="secondary"
         variant="outline"
+        min-width="8rem"
         @click="
           $emit('result');
           close();
@@ -12,7 +13,7 @@
         {{ $t("common.buttons.yes") }}
       </VcButton>
 
-      <VcButton class="ms-auto" @click="close()">
+      <VcButton min-width="8rem" class="ms-auto" @click="close()">
         {{ $t("common.buttons.no") }}
       </VcButton>
     </template>
