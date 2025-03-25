@@ -4,7 +4,7 @@ import { toStartDateFilterValue, toEndDateFilterValue, toDateISOString, isDateSt
 describe("Date Utility Functions (Timezone Independent Tests)", () => {
   describe("toStartDateFilterValue", () => {
     it("should return undefined when no date is provided", () => {
-      expect(toStartDateFilterValue(undefined)).toBeUndefined();
+      expect(toStartDateFilterValue()).toBeUndefined();
     });
 
     it("should convert a valid date string to the correct ISO string based on local midnight", () => {
@@ -51,7 +51,7 @@ describe("Date Utility Functions (Timezone Independent Tests)", () => {
 
   describe("toEndDateFilterValue", () => {
     it("should return undefined when no date is provided", () => {
-      expect(toEndDateFilterValue(undefined)).toBeUndefined();
+      expect(toEndDateFilterValue()).toBeUndefined();
     });
 
     it("should convert a valid date string to the correct ISO string representing the end of day based on local time", () => {
