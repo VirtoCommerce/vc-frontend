@@ -55,6 +55,8 @@ interface IProps {
   message?: string;
   error?: boolean;
   singleLineMessage?: boolean;
+  breakWord?: boolean;
+  maxLines?: number;
 }
 
 const emit = defineEmits<IEmits>();
@@ -72,6 +74,8 @@ interface IEmits {
 }
 
 const checked = computed(() => model.value === props.value);
+const breakWord = computed(() => (props.breakWord ? "break-word" : "normal"));
+const maxLines = computed(() => props.maxLines ?? "none");
 </script>
 
 <style lang="scss">
@@ -84,6 +88,8 @@ const checked = computed(() => model.value === props.value);
 
   --base-color: var(--vc-radio-button-base-color, var(--color-primary-500));
   --focus-color: rgb(from var(--base-color) r g b / 0.3);
+  --max-lines: v-bind(maxLines);
+  --break-word: v-bind(breakWord);
 
   @apply select-none;
 
@@ -153,7 +159,7 @@ const checked = computed(() => model.value === props.value);
   }
 
   &__label {
-    @apply min-w-0 empty:hidden;
+    @apply min-w-0 empty:hidden line-clamp-[var(--max-lines)] [word-break:var(--break-word)];
 
     #{$left} & {
       @apply order-first me-2;
