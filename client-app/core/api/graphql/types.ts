@@ -641,6 +641,8 @@ export type ContactType = {
   /** Phones */
   phones: Array<Maybe<Scalars['String']['output']>>;
   securityAccounts?: Maybe<Array<Maybe<UserType>>>;
+  /** Selected shipping address id. */
+  selectedAddressId?: Maybe<Scalars['String']['output']>;
   /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
   /** SEO object type */
@@ -1946,6 +1948,7 @@ export type InputCreateContactType = {
   phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   photoUrl?: InputMaybe<Scalars['String']['input']>;
   salutation?: InputMaybe<Scalars['String']['input']>;
+  selectedAddressId?: InputMaybe<Scalars['String']['input']>;
   timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -2591,6 +2594,7 @@ export type InputUpdateContactType = {
   phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   photoUrl?: InputMaybe<Scalars['String']['input']>;
   salutation?: InputMaybe<Scalars['String']['input']>;
+  selectedAddressId?: InputMaybe<Scalars['String']['input']>;
   timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -5104,6 +5108,8 @@ export type QueryProductsArgs = {
   fuzzyLevel?: InputMaybe<Scalars['Int']['input']>;
   productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   query?: InputMaybe<Scalars['String']['input']>;
+  selectedAddress?: InputMaybe<Scalars['String']['input']>;
+  selectedAddressId?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
