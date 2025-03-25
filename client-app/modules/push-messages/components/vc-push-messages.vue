@@ -83,7 +83,7 @@
 
         <VcDialogFooter>
           <template #container>
-            <div class="vc-push-messages__foot">
+            <div class="vc-push-messages__foot" tabindex="-1">
               <VcButton
                 v-if="removable && totalCount"
                 variant="outline"
