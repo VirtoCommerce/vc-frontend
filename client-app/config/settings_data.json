@@ -30,7 +30,7 @@
     "checkout_coupon_enabled": true,
     "checkout_gifts_enabled": true,
 
-    "isCVVinSkyflowRequired": false,
+    "isCVVinSkyflowRequired": true,
 
     "default_return_url": "/",
 
