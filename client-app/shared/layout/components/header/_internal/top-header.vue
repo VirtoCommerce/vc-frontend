@@ -107,7 +107,6 @@
                 v-model="contactOrganizationId"
                 :label="item.name"
                 :value="item.id"
-                single-line-message
                 class="flex px-3 py-1 text-sm"
                 :max-lines="2"
                 break-word
