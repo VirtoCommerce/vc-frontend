@@ -116,7 +116,7 @@ function slideChanged(swiper: SwiperInstance) {
 .vc-product-image {
   $self: &;
 
-  @apply relative max-w-full aspect-square border border-neutral-200 rounded;
+  @apply relative z-0 max-w-full aspect-square border border-neutral-200 rounded;
 
   &__carousel {
     @apply h-full w-full;
