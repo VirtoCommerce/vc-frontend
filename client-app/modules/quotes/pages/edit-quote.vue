@@ -228,9 +228,8 @@ const canSaveChanges = computed<boolean>(() => {
   const areAddressesChanged =
     !isEqual(quote.value!.addresses, originalQuote.value!.addresses) ||
     (billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value);
-  const areFilesChanged = anyFilesModified.value;
 
-  const hasChanges = isQuoteChanged || isCommentChanged || areAddressesChanged || areFilesChanged;
+  const hasChanges = isQuoteChanged || isCommentChanged || areAddressesChanged || anyFilesModified.value;
 
   return hasChanges && commentValid.value && allFilesAttachedOrUploaded.value;
 });
