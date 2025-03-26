@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "2.18.0",
+  "version": "2.19.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -165,5 +165,5 @@
   "engines": {
     "node": ">=22.10.0 <23.0.0"
   },
-  "packageManager": "yarn@4.5.1"
+  "packageManager": "yarn@4.7.0"
 }

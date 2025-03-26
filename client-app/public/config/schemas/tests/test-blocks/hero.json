@@ -1,7 +1,0 @@
-{
-  "name": "Hero block",
-  "icon": "image",
-  "displayField": "name",
-  "group": "Promo",
-  "groupIcon": "flight_takeoff"
-}
