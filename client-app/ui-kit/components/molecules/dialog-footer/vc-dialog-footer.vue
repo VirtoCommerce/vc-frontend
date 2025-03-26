@@ -28,23 +28,23 @@ defineEmits<IEmits>();
 
   &__container {
     @apply flex flex-wrap items-center gap-x-5 gap-y-2 py-4 px-6;
-  }
 
-  & > .vc-button {
-    @apply w-full;
+    & > .vc-button {
+      @apply w-full;
 
-    @container (min-width: theme("containers.xs")) {
-      @apply flex-1;
+      @container (min-width: theme("containers.xs")) {
+        @apply flex-1;
+      }
+
+      @container (min-width: theme("containers.md")) {
+        @apply flex-none min-w-32 w-auto;
+      }
     }
 
-    @container (min-width: theme("containers.md")) {
-      @apply flex-none min-w-32 w-auto;
-    }
-  }
-
-  & > * {
-    &:first-child:not(:last-child) {
-      @apply mr-auto;
+    & > * {
+      &:first-child:not(:last-child) {
+        @apply me-auto;
+      }
     }
   }
 }
