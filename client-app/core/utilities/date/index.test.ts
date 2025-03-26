@@ -163,8 +163,15 @@ describe("Date Utility Functions (Timezone Independent Tests)", () => {
     });
 
     it("should return false for ISO date strings with invalid components", () => {
+      //invalid day
+      expect(isDateString("2022-12-32T12:34:56.789Z")).toBe(false);
+      // invalid month
+      expect(isDateString("2022-13-13T12:34:56.789Z")).toBe(false);
+      // invalid hour
       expect(isDateString("2022-12-13T25:34:56.789Z")).toBe(false);
+      // invalid minute
       expect(isDateString("2022-12-13T12:60:56.789Z")).toBe(false);
+      // invalid second
       expect(isDateString("2022-12-13T12:34:60.789Z")).toBe(false);
     });
   });
