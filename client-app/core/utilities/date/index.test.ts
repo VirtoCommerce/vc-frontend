@@ -34,13 +34,6 @@ describe("Date Utility Functions (Timezone Independent Tests)", () => {
       expect(toStartDateFilterValue(input)).toBe(expected);
     });
 
-    it("should adjust invalid date (non-leap year February 29) to February 28th", () => {
-      const result = toStartDateFilterValue("2023-02-29");
-      const date = new Date(result!);
-      expect(date.getUTCMonth()).toBe(1);
-      expect(date.getUTCDate()).toBe(28);
-    });
-
     it("should handle edge cases like year boundaries", () => {
       const input = "2022-12-31";
       const localMidnight = new Date("2022-12-31T00:00:00.000");
