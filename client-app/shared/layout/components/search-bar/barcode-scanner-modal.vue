@@ -35,6 +35,9 @@
     />
 
     <template #actions="{ close }">
+      <VcButton class="barcode-scanner-modal__action-cancel" color="secondary" variant="outline" @click="close">
+        {{ $t("shared.catalog.branches_modal.cancel_button") }}
+      </VcButton>
       <VcButton
         class="barcode-scanner-modal__action-browse"
         color="secondary"
@@ -42,9 +45,6 @@
         @click="openFilePicker"
         >{{ $t("ui_kit.file_uploader.browse") }}</VcButton
       >
-      <VcButton class="barcode-scanner-modal__action-cancel" color="secondary" variant="outline" @click="close">
-        {{ $t("shared.catalog.branches_modal.cancel_button") }}
-      </VcButton>
     </template>
   </VcModal>
 </template>
