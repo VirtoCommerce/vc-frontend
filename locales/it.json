@@ -380,7 +380,12 @@
         "view_all_results_button": "Visualizza tutti i {total} risultati",
         "barcode_detector": {
           "title": "Scansione codice a barre",
-          "description": "Per procedere, abilita la fotocamera per scansionare il codice a barre sul prodotto. Questo ci aiuterà a identificare rapidamente l'articolo e fornirti le informazioni necessarie."
+          "description": "Per procedere, abilita la fotocamera per scansionare il codice a barre sul prodotto. Questo ci aiuterà a identificare rapidamente l'articolo e fornirti le informazioni necessarie.",
+          "errors": {
+            "no_barcode_detected": "Nessun codice a barre rilevato nell'immagine",
+            "wrong_format": "Formato file non supportato",
+            "no_file": "Nessun file caricato"
+          }
         }
       },
       "language_selector": {

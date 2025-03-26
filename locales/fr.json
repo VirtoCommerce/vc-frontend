@@ -380,7 +380,12 @@
         "view_all_results_button": "Voir tous les {total} résultats",
         "barcode_detector": {
           "title": "Scan du code-barres",
-          "description": "Pour continuer, veuillez activer votre caméra pour scanner le code-barres sur le produit. Cela nous aidera à identifier rapidement l'article et à vous fournir les informations nécessaires."
+          "description": "Pour continuer, veuillez activer votre caméra pour scanner le code-barres sur le produit. Cela nous aidera à identifier rapidement l'article et à vous fournir les informations nécessaires.",
+          "errors": {
+            "no_barcode_detected": "Aucun code-barres détecté dans l'image",
+            "wrong_format": "Format de fichier non pris en charge",
+            "no_file": "Aucun fichier n'a été téléchargé"
+          }
         }
       },
       "language_selector": {

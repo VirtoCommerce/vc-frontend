@@ -380,7 +380,12 @@
         "view_all_results_button": "Alle {total} Ergebnisse anzeigen",
         "barcode_detector": {
           "title": "Barcode-Scan",
-          "description": "Um fortzufahren, aktivieren Sie bitte Ihre Kamera, um den Barcode auf dem Produkt zu scannen. Dies hilft uns, den Artikel schnell zu identifizieren und Ihnen die notwendigen Informationen bereitzustellen."
+          "description": "Um fortzufahren, aktivieren Sie bitte Ihre Kamera, um den Barcode auf dem Produkt zu scannen. Dies hilft uns, den Artikel schnell zu identifizieren und Ihnen die notwendigen Informationen bereitzustellen.",
+          "errors": {
+            "no_barcode_detected": "Keine Barcodes im Bild erkannt",
+            "wrong_format": "Ungültiges Dateiformat",
+            "no_file": "Keine Datei hochgeladen"
+          }
         }
       },
       "language_selector": {

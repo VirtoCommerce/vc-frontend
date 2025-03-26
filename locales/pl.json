@@ -380,7 +380,12 @@
         "view_all_results_button": "Zobacz wszystkie {total} wyniki",
         "barcode_detector": {
           "title": "Skanowanie kodu kreskowego",
-          "description": "Aby kontynuować, włącz kamerę, aby zeskanować kod kreskowy na produkcie. Pomoże nam to szybko zidentyfikować przedmiot i dostarczyć niezbędne informacje."
+          "description": "Aby kontynuować, włącz kamerę, aby zeskanować kod kreskowy na produkcie. Pomoże nam to szybko zidentyfikować przedmiot i dostarczyć niezbędne informacje.",
+          "errors": {
+            "no_barcode_detected": "Nie wykryto kodów kreskowych na obrazie",
+            "wrong_format": "Nieobsługiwany format pliku",
+            "no_file": "Nie przesłano pliku"
+          }
         }
       },
       "language_selector": {

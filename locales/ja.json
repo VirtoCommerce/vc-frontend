@@ -380,7 +380,12 @@
         "view_all_results_button": "全{total}件を表示",
         "barcode_detector": {
           "title": "バーコードスキャン",
-          "description": "続けるには、カメラを有効にして製品のバーコードをスキャンしてください。これにより、商品を迅速に特定し、必要な情報を提供できます。"
+          "description": "続けるには、カメラを有効にして製品のバーコードをスキャンしてください。これにより、商品を迅速に特定し、必要な情報を提供できます。",
+          "errors": {
+            "no_barcode_detected": "画像にバーコードが検出されませんでした",
+            "wrong_format": "対応していないファイル形式です",
+            "no_file": "ファイルはアップロードされていません"
+          }
         }
       },
       "language_selector": {
