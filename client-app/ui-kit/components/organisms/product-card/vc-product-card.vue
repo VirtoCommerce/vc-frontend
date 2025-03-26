@@ -204,12 +204,8 @@ onMounted(() => {
           grid-auto-rows: 1fr 1fr min-content;
         }
 
-        &#{$hasTitlePriceOnly} {
-          grid-auto-rows: 1fr min-content min-content;
-
-          &#{$hasActions} {
-            grid-auto-rows: 1fr min-content 1fr;
-          }
+        &:#{$hasActions}:not(#{$hasVendor}) {
+          grid-auto-rows: 1fr min-content 1fr;
         }
       }
 
