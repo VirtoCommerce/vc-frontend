@@ -35,9 +35,13 @@
     />
 
     <template #actions="{ close }">
-      <VcButton class="barcode-scanner-modal__action-browse" color="secondary" :loading="loading" @click="openFilePicker">{{
-        $t("ui_kit.file_uploader.browse")
-      }}</VcButton>
+      <VcButton
+        class="barcode-scanner-modal__action-browse"
+        color="secondary"
+        :loading="loading"
+        @click="openFilePicker"
+        >{{ $t("ui_kit.file_uploader.browse") }}</VcButton
+      >
       <VcButton class="barcode-scanner-modal__action-cancel" color="secondary" variant="outline" @click="close">
         {{ $t("shared.catalog.branches_modal.cancel_button") }}
       </VcButton>
@@ -49,9 +53,9 @@
 import { useIntervalFn } from "@vueuse/core";
 import { BarcodeDetector } from "barcode-detector/ponyfill";
 import { ref, onMounted, onBeforeUnmount } from "vue";
+import { useI18n } from "vue-i18n";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
-import { useI18n } from "vue-i18n";
 
 const emit = defineEmits<{
   (e: "result", value: string[]): void;
@@ -209,10 +213,6 @@ onBeforeUnmount(() => {
 
   &__video {
     @apply aspect-[3/2] object-cover md:aspect-[2/1];
-  }
-
-  &__action-cancel {
-    @apply ml-auto md:w-auto;
   }
 
   &__skeleton {
