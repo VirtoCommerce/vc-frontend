@@ -31,7 +31,6 @@
       class="barcode-scanner-modal__input"
       accept="image/*"
       @change="onFileSelected"
-      @cancel="onCancel"
     />
 
     <template #actions="{ close }">
@@ -76,18 +75,7 @@ const notifications = useNotifications();
 const fileInputRef = ref<HTMLInputElement>();
 
 function openFilePicker() {
-  stopCamera();
-  stopScanner();
-  if (fileInputRef.value) {
-    fileInputRef.value.click();
-  }
-}
-
-async function onCancel() {
-  loading.value = true;
-  await startCamera();
-  startScanner();
-  loading.value = false;
+  fileInputRef.value?.click();
 }
 
 async function onFileSelected(event: Event) {
@@ -97,8 +85,6 @@ async function onFileSelected(event: Event) {
   try {
     if (!file) {
       showInfo(t("shared.layout.search_bar.barcode_detector.errors.no_file"));
-      await startCamera();
-      startScanner();
       return;
     }
 
@@ -114,15 +100,11 @@ async function onFileSelected(event: Event) {
     if (barcodes?.length) {
       emitResult(barcodes);
     } else {
-      await startCamera();
-      startScanner();
       showInfo(t("shared.layout.search_bar.barcode_detector.errors.no_barcode_detected"));
     }
 
     loading.value = false;
   } catch (e) {
-    await startCamera();
-    startScanner();
     Logger.error(onFileSelected.name, e);
   }
 }
