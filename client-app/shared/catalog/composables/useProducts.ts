@@ -228,6 +228,9 @@ export function useProducts(
     products.value = [];
     totalProductsCount.value = 0;
     pagesCount.value = 1;
+    if (searchParams.page) {
+      updateCurrentPage(Number(searchParams.page));
+    }
 
     try {
       const {
@@ -237,6 +240,10 @@ export function useProducts(
         totalCount = 0,
       } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
 
+      const page = searchParams.page;
+      if (page) {
+        pagesHistory.value.push(page);
+      }
       products.value = items;
       totalProductsCount.value = totalCount;
       pagesCount.value = Math.min(
@@ -270,7 +277,16 @@ export function useProducts(
     try {
       const { items = [], totalCount = 0 } = await searchProducts(searchParams, { withImages, withZeroPrice });
 
-      products.value = products.value.concat(items);
+      const page = searchParams.page;
+      const minVisitedPage = Math.min(...pagesHistory.value, currentPage.value);
+
+      if (page && minVisitedPage && page === minVisitedPage) {
+        pagesHistory.value.push(page);
+        products.value = [...items, ...products.value];
+      } else {
+        products.value = products.value.concat(items);
+      }
+
       totalProductsCount.value = totalCount;
       pagesCount.value = Math.min(
         Math.ceil(totalProductsCount.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
@@ -310,6 +326,7 @@ export function useProducts(
   }
 
   const currentPage = ref(1);
+  const pagesHistory = ref<number[]>([]);
 
   function updateCurrentPage(page: number) {
     currentPage.value = page;
@@ -340,6 +357,7 @@ export function useProducts(
     totalProductsCount: readonly(totalProductsCount),
 
     currentPage: readonly(currentPage),
+    pagesHistory: readonly(pagesHistory),
     resetCurrentPage,
     updateCurrentPage,
 
