@@ -35,7 +35,7 @@
     />
 
     <template #actions="{ close }">
-      <VcButton class="barcode-scanner-modal__action-browse" color="secondary" @click="openFilePicker">{{
+      <VcButton class="barcode-scanner-modal__action-browse" color="secondary" :loading="loading" @click="openFilePicker">{{
         $t("ui_kit.file_uploader.browse")
       }}</VcButton>
       <VcButton class="barcode-scanner-modal__action-cancel" color="secondary" variant="outline" @click="close">
@@ -51,6 +51,7 @@ import { BarcodeDetector } from "barcode-detector/ponyfill";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
+import { useI18n } from "vue-i18n";
 
 const emit = defineEmits<{
   (e: "result", value: string[]): void;
@@ -58,6 +59,8 @@ const emit = defineEmits<{
 
 const videoElement = ref<HTMLVideoElement | null>(null);
 const videoStream = ref<MediaStream | null>(null);
+const { t } = useI18n();
+
 let barcodeDetector: BarcodeDetector | null = null;
 
 const loading = ref(true);
@@ -77,8 +80,10 @@ function openFilePicker() {
 }
 
 async function onCancel() {
+  loading.value = true;
   await startCamera();
   startScanner();
+  loading.value = false;
 }
 
 async function onFileSelected(event: Event) {
@@ -87,16 +92,18 @@ async function onFileSelected(event: Event) {
 
   try {
     if (!file) {
-      showInfo("no file detected");
+      showInfo(t("shared.layout.search_bar.barcode_detector.errors.no_file"));
       await startCamera();
       startScanner();
       return;
     }
 
     if (!file.type.startsWith("image/")) {
-      showInfo("wrong file format");
+      showInfo(t("shared.layout.search_bar.barcode_detector.errors.wrong_format"));
       return;
     }
+
+    loading.value = true;
 
     const barcodes = await barcodeDetector?.detect(file);
 
@@ -105,8 +112,10 @@ async function onFileSelected(event: Event) {
     } else {
       await startCamera();
       startScanner();
-      showInfo("no barcodes found on your photo");
+      showInfo(t("shared.layout.search_bar.barcode_detector.errors.no_barcode_detected"));
     }
+
+    loading.value = false;
   } catch (e) {
     await startCamera();
     startScanner();
