@@ -15,10 +15,12 @@
 
     &--view-mode {
       &--grid #{$self} {
+        --vc-property-font-size: theme("fontSize.sm");
+
         @apply grow mt-3;
 
         @container (min-width: theme("containers.xxs")) {
-          --vc-property-font-size: 0.875rem;
+          --vc-property-font-size: theme("fontSize.xs");
 
           @apply mt-4;
         }

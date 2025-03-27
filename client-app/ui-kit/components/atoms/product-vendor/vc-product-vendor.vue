@@ -6,7 +6,7 @@
 
 <style lang="scss">
 .vc-product-vendor {
-  @apply text-xs font-bold empty:hidden;
+  @apply text-xs font-bold;
 
   @at-root .vc-product-card & {
     grid-area: vendor;

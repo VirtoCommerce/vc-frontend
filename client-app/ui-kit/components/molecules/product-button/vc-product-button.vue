@@ -8,7 +8,7 @@
         :variant="variant"
         :color="color"
         :prepend-icon="icon"
-        size="sm"
+        :size="size"
         full-width
         :no-wrap="noWrap"
         :loading="loading"
@@ -51,6 +51,7 @@ interface IProps {
   loading?: boolean;
   truncate?: boolean;
   title?: string;
+  size?: "sm" | "md";
 }
 
 defineEmits<IEmits>();
@@ -59,6 +60,7 @@ withDefaults(defineProps<IProps>(), {
   to: "",
   variant: "outline",
   color: "primary",
+  size: "sm",
 });
 </script>
 
@@ -69,15 +71,13 @@ withDefaults(defineProps<IProps>(), {
   @apply flex flex-col;
 
   &__link {
-    --vc-icon-size: 1.5rem;
+    --vc-icon-size: 1rem;
     --vc-icon-color: theme("colors.primary.500");
 
-    @apply flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] mt-3.5;
+    @apply flex items-center gap-1 text-xs text-[--link-color] hover:text-[--link-hover-color] mt-3.5;
 
-    @media (width > theme("screens.lg")) {
-      --vc-icon-size: 1.25rem;
-
-      @apply text-xs mt-[1.125rem];
+    @container (min-width: theme("containers.xl")) {
+      @apply mt-7;
     }
   }
 
