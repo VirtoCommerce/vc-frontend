@@ -74,8 +74,6 @@ interface IEmits {
 }
 
 const checked = computed(() => model.value === props.value);
-const breakWord = computed(() => (props.breakWord ? "break-word" : "normal"));
-const maxLines = computed(() => props.maxLines ?? "none");
 </script>
 
 <style lang="scss">
@@ -88,8 +86,8 @@ const maxLines = computed(() => props.maxLines ?? "none");
 
   --base-color: var(--vc-radio-button-base-color, var(--color-primary-500));
   --focus-color: rgb(from var(--base-color) r g b / 0.3);
-  --max-lines: v-bind(maxLines);
-  --break-word: v-bind(breakWord);
+  --max-lines: v-bind(props.maxLines ? props.maxLines: "none");
+  --break-word: v-bind(props.breakWord ? "break-word": "normal");
 
   @apply select-none;
 
