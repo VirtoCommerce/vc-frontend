@@ -109,7 +109,7 @@ async function onFileSelected(event: Event) {
   }
 }
 
-const scan = async () => {
+async function scan() {
   if (!barcodeDetector || !videoElement.value) {
     return;
   }
@@ -123,7 +123,7 @@ const scan = async () => {
   } catch (error) {
     Logger.error(scan.name, error);
   }
-};
+}
 
 const { resume: startScanner, pause: stopScanner } = useIntervalFn(scan, SCAN_INTERVAL);
 
@@ -146,7 +146,7 @@ async function startCamera() {
 
 function stopCamera() {
   if (videoStream.value) {
-    videoStream.value.getVideoTracks().every((track) => track.stop());
+    videoStream.value.getVideoTracks().forEach((track) => track.stop());
     videoStream.value = null;
   }
 

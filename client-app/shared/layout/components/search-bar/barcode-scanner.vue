@@ -42,8 +42,4 @@ const openBarcodeScanner = () => {
 .barcode-scanner {
   @apply m-1.5;
 }
-
-.mobile-icon {
-  @apply h-full m-2 text-[--base-color];
-}
 </style>
