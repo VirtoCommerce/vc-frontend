@@ -7,9 +7,22 @@
     <VcCollapsibleContent max-height="12.5rem">
       <div class="space-y-4">
         <VcProperty v-for="property in properties" :key="property.name" :label="property.label!" class="text-base">
-          <span v-if="isHTML(property)" :title="String(property.value)">
-            <VcMarkdownRender :src="String(property.value)" />
-          </span>
+          <VcTooltip
+            v-if="isHTML(property)"
+            class="html-property"
+            :text="property.value"
+            strategy="fixed"
+            width="max-content"
+            :hover="false"
+          >
+            <template #trigger>
+              <div v-html-safe="property.value" class="html-property_trigger" />
+            </template>
+
+            <template #content>
+              <div v-html-safe="property.value" class="html-property_content" />
+            </template>
+          </VcTooltip>
 
           <span v-else :title="String(property.value)">{{ property.value }}</span>
         </VcProperty>
@@ -75,3 +88,19 @@ function isHTML(property: Property): boolean {
   return (property.propertyValueType as PropertyValueTypes) === PropertyValueTypes.Html;
 }
 </script>
+
+<style lang="scss">
+.html-property {
+  img {
+    @apply inline-block align-bottom;
+  }
+
+  &_trigger {
+    @apply truncate;
+  }
+
+  &_content {
+    @apply shadow-sm w-full rounded-sm px-2.5 py-1.5 text-base whitespace-normal max-w-72 md:max-w-96;
+  }
+}
+</style>
