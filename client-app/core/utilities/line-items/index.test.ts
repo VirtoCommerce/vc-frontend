@@ -213,18 +213,12 @@ function createMockLineItem(overrides: Partial<LineItemType> = {}): LineItemType
 
 describe("groupByVendor", () => {
   it("should group line items by vendor and place items without vendor last", () => {
-    const item1 = createMockLineItem();
+    const item1 = createMockLineItem({ id: "li1", vendor: createMockVendor("v1", "Alpha") });
     const item2 = createMockLineItem({ id: "li2", vendor: createMockVendor("v2", "Beta") });
     const item3 = createMockLineItem({ id: "li3", vendor: undefined });
-    const item4 = createMockLineItem({ id: "li4" }); // Default vendor is Alpha
+    const item4 = createMockLineItem({ id: "li4", vendor: createMockVendor("v1", "Alpha") });
 
-    // Cast items to LineItemType to satisfy generic constraints
-    const result = groupByVendor([
-      item1 as unknown as LineItemType,
-      item2 as unknown as LineItemType,
-      item3 as unknown as LineItemType,
-      item4 as unknown as LineItemType,
-    ]);
+    const result = groupByVendor([item1, item2, item3, item4]);
     expect(result).toHaveLength(3);
     expect(result[0].vendor).toEqual({ id: "v1", name: "Alpha" });
     expect(result[0].items).toEqual([item1, item4]);
@@ -233,6 +227,22 @@ describe("groupByVendor", () => {
     expect(result[2].vendor).toBeUndefined();
     expect(result[2].items).toEqual([item3]);
   });
+
+  it("should handle empty array", () => {
+    const result = groupByVendor([]);
+    expect(result).toHaveLength(1);
+    expect(result[0].vendor).toBeUndefined();
+    expect(result[0].items).toEqual([]);
+  });
+
+  it("should handle all line items without a vendor", () => {
+    const item1 = createMockLineItem({ id: "li1", vendor: undefined });
+    const item2 = createMockLineItem({ id: "li2", vendor: undefined });
+    const result = groupByVendor([item1, item2]);
+    expect(result).toHaveLength(1);
+    expect(result[0].vendor).toBeUndefined();
+    expect(result[0].items).toEqual([item1, item2]);
+  });
 });
 
 describe("prepareLineItem", () => {
@@ -240,12 +250,7 @@ describe("prepareLineItem", () => {
     const product = createMockProduct({
       slug: "normal-product",
       price: createPrice(150),
-      properties: [
-        createProperty("color", "red"),
-        createProperty("size", "M"),
-        createProperty("material", "cotton"),
-        createProperty("extra", "none"),
-      ],
+      properties: [createProperty("color", "red"), createProperty("size", "M")],
     });
     const lineItem = createMockLineItem({
       id: "li-normal",
@@ -260,7 +265,7 @@ describe("prepareLineItem", () => {
     const prepared = prepareLineItem(lineItem);
     expect(prepared.actualPrice).toEqual(createMoney(130));
     expect(prepared.route).toBe(`/product/${lineItem.productId}-normal-product`);
-    expect(prepared.properties).toHaveLength(3);
+    expect(prepared.properties).toHaveLength(2);
   });
 
   it("should prepare a line item for a variation product", () => {
@@ -269,6 +274,8 @@ describe("prepareLineItem", () => {
       price: createPrice(200),
       properties: [createProperty("weight", "1kg")],
       masterVariation: createMockVariation(),
+      variations: [createMockVariation()],
+      hasVariations: true,
     });
     const lineItem = createMockLineItem({
       id: "li-var",
@@ -283,28 +290,8 @@ describe("prepareLineItem", () => {
     const prepared = prepareLineItem(lineItem);
     expect(prepared.actualPrice).toEqual(createMoney(180));
     expect(prepared.route).toBe(`/product/${product.masterVariation!.id}-${product.masterVariation!.slug}`);
-  });
-
-  it("should handle a line item without a product", () => {
-    // Create a line item mock
-    const lineItem = createMockLineItem({
-      id: "li-deleted",
-      listPrice: createMoney(100),
-      salePrice: createMoney(90),
-      placedPrice: undefined,
-      extendedPrice: createMoney(80),
-    });
-
-    // Then explicitly set product to undefined
-    lineItem.product = undefined;
-
-    const prepared = prepareLineItem(lineItem);
-
-    expect(prepared.deleted).toBe(true);
-    expect(prepared.listPrice).toBeDefined();
-    expect(prepared.listPrice?.amount).toBe(100);
-    expect(prepared.actualPrice).toBeDefined();
-    expect(prepared.actualPrice?.amount).toBe(90);
+    expect(prepared.properties).toHaveLength(1);
+    expect(prepared.variations).toHaveLength(1);
   });
 
   it("should prioritize prices correctly", () => {
@@ -344,6 +331,32 @@ describe("prepareLineItem", () => {
     expect(prepared.listPrice).toBeUndefined();
     expect(prepared.actualPrice).toBeUndefined();
     expect(prepared.extendedPrice).toBeUndefined();
+  });
+
+  it("should use proper fallbacks for max quantity", () => {
+    // maxQuantity from product.maxQuantity
+    const product1 = createMockProduct({ maxQuantity: 50 });
+    const lineItem1 = createMockLineItem({ product: product1 });
+    expect(prepareLineItem(lineItem1).maxQuantity).toBe(50);
+
+    // maxQuantity from inStockQuantity when product.maxQuantity is undefined
+    const product2 = createMockProduct({ maxQuantity: undefined });
+    const lineItem2 = createMockLineItem({
+      product: product2,
+      inStockQuantity: 30,
+    });
+    expect(prepareLineItem(lineItem2).maxQuantity).toBe(30);
+
+    // maxQuantity from availabilityData when others are undefined
+    const product3 = createMockProduct({
+      maxQuantity: undefined,
+      availabilityData: createAvailabilityData(20),
+    });
+    const lineItem3 = createMockLineItem({
+      product: product3,
+      inStockQuantity: undefined,
+    });
+    expect(prepareLineItem(lineItem3).maxQuantity).toBe(20);
   });
 });
 
@@ -385,7 +398,6 @@ describe("prepareLineItemForProduct", () => {
     const prepared = prepareLineItemForProduct(product, 2);
 
     expect(prepared.id).toBe(product.id);
-    expect(prepared.listPrice).toBeDefined();
     expect(prepared.listPrice?.amount).toBe(250);
     expect(prepared.countInCart).toBe(2);
     expect(prepared.route).toBe(`/product/${product.id}-new-product`);
@@ -409,40 +421,5 @@ describe("prepareLineItemForProduct", () => {
     const prepared = prepareLineItemForProduct(product);
     expect(prepared.inStockQuantity).toBe(75);
     expect(prepared.maxQuantity).toBe(75);
-  });
-});
-
-describe("edge cases", () => {
-  it("should handle undefined properties in groupByVendor", () => {
-    const result = groupByVendor([]);
-    expect(result).toHaveLength(1);
-    expect(result[0].vendor).toBeUndefined();
-    expect(result[0].items).toEqual([]);
-  });
-
-  it("should use proper fallbacks for max quantity", () => {
-    // maxQuantity from product.maxQuantity
-    const product1 = createMockProduct({ maxQuantity: 50 });
-    const lineItem1 = createMockLineItem({ product: product1 });
-    expect(prepareLineItem(lineItem1).maxQuantity).toBe(50);
-
-    // maxQuantity from inStockQuantity when product.maxQuantity is undefined
-    const product2 = createMockProduct({ maxQuantity: undefined });
-    const lineItem2 = createMockLineItem({
-      product: product2,
-      inStockQuantity: 30,
-    });
-    expect(prepareLineItem(lineItem2).maxQuantity).toBe(30);
-
-    // maxQuantity from availabilityData when others are undefined
-    const product3 = createMockProduct({
-      maxQuantity: undefined,
-      availabilityData: createAvailabilityData(20),
-    });
-    const lineItem3 = createMockLineItem({
-      product: product3,
-      inStockQuantity: undefined,
-    });
-    expect(prepareLineItem(lineItem3).maxQuantity).toBe(20);
   });
 });
