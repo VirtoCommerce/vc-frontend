@@ -33,7 +33,7 @@ defineProps<IProps>();
   }
 
   &__asterisk {
-    @apply text-danger ms-1;
+    @apply text-danger;
   }
 }
 </style>
