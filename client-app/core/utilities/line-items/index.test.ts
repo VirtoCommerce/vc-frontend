@@ -19,7 +19,11 @@ vi.mock("../product", () => ({
 vi.mock("../properties", () => ({
   getPropertiesGroupedByName: (props: Property[]): Record<string, Property> => {
     return props.reduce((grouped: Record<string, Property>, prop: Property) => {
-      grouped[prop.name] = prop;
+      if (grouped[prop.name]) {
+        grouped[prop.name].value += `, ${prop.value}`;
+      } else {
+        grouped[prop.name] = prop;
+      }
       return grouped;
     }, {});
   },
@@ -273,7 +277,6 @@ describe("prepareLineItem", () => {
       slug: "variation-product",
       price: createPrice(200),
       properties: [createProperty("weight", "1kg")],
-      masterVariation: createMockVariation(),
       variations: [createMockVariation()],
       hasVariations: true,
     });
@@ -289,7 +292,6 @@ describe("prepareLineItem", () => {
     });
     const prepared = prepareLineItem(lineItem);
     expect(prepared.actualPrice).toEqual(createMoney(180));
-    expect(prepared.route).toBe(`/product/${product.masterVariation!.id}-${product.masterVariation!.slug}`);
     expect(prepared.properties).toHaveLength(1);
     expect(prepared.variations).toHaveLength(1);
   });
@@ -357,6 +359,111 @@ describe("prepareLineItem", () => {
       inStockQuantity: undefined,
     });
     expect(prepareLineItem(lineItem3).maxQuantity).toBe(20);
+  });
+
+  it("should default name to empty string if name is missing", () => {
+    const lineItem = createMockLineItem({ name: undefined });
+    const prepared = prepareLineItem(lineItem);
+    expect(prepared.name).toBe("");
+  });
+
+  it("should mark line item as deleted if product is undefined", () => {
+    const lineItem = createMockLineItem({ product: undefined });
+    const prepared = prepareLineItem(lineItem);
+    expect(prepared.deleted).toBe(true);
+  });
+
+  it("should limit properties array to first three even if more are provided", () => {
+    const extraProperties = [
+      createProperty("prop1", "val1"),
+      createProperty("prop2", "val2"),
+      createProperty("prop3", "val3"),
+      createProperty("prop4", "val4"),
+      createProperty("prop5", "val5"),
+    ];
+    const product = createMockProduct({ properties: extraProperties });
+    const lineItem = createMockLineItem({ product });
+    const prepared = prepareLineItem(lineItem);
+    expect(prepared.properties!.length).toBe(3);
+    expect(prepared.properties!.map((p) => p.name)).toEqual(["prop1", "prop2", "prop3"]);
+  });
+
+  it("should propagate countInCart parameter", () => {
+    const lineItem = createMockLineItem();
+    const prepared = prepareLineItem(lineItem, 7);
+    expect(prepared.countInCart).toBe(7);
+  });
+
+  it("should use inStockQuantity from line item if provided over product availabilityData", () => {
+    const product = createMockProduct({ availabilityData: createAvailabilityData(50) });
+    const lineItem = createMockLineItem({ product, inStockQuantity: 80 });
+    const prepared = prepareLineItem(lineItem);
+    expect(prepared.inStockQuantity).toBe(80);
+  });
+
+  it("should propagate showPlacedPrice flag", () => {
+    const lineItem = createMockLineItem({ showPlacedPrice: true });
+    const prepared = prepareLineItem(lineItem);
+    expect(prepared.showPlacedPrice).toBe(true);
+  });
+
+  it("should use productType from line item if present", () => {
+    const lineItem = createMockLineItem({ productType: "customType" });
+    const prepared = prepareLineItem(lineItem);
+    expect(prepared.productType).toBe("customType");
+  });
+
+  it("should default properties to empty array when product properties are undefined", () => {
+    const product = createMockProduct({ properties: undefined });
+    const lineItem = createMockLineItem({ product });
+    const prepared = prepareLineItem(lineItem);
+    expect(prepared.properties).toEqual([]);
+  });
+
+  it("should include configurationItems if provided", () => {
+    const configurationItems = [{ id: "conf1", name: "Config 1", type: "text" }];
+    const lineItem = createMockLineItem({
+      configurationItems,
+    });
+    const prepared = prepareLineItem(lineItem);
+    expect(prepared.configurationItems).toEqual(configurationItems);
+  });
+
+  it("should not include configurationItems if not provided", () => {
+    const lineItem = createMockLineItem({
+      configurationItems: undefined,
+    });
+    const prepared = prepareLineItem(lineItem);
+    expect(prepared.configurationItems).toBeUndefined();
+  });
+
+  it("should group properties by name", () => {
+    // Create properties with duplicate names.
+    const property1 = createProperty("color", "red");
+    const property2 = createProperty("color", "blue");
+    const property3 = createProperty("size", "M");
+
+    const product = createMockProduct({
+      properties: [property1, property2, property3],
+    });
+    const lineItem = createMockLineItem({ product });
+    const prepared = prepareLineItem(lineItem);
+
+    expect(prepared.properties).toHaveLength(2);
+    expect(prepared.properties?.find((p) => p.name === "color")?.value).toEqual("red, blue");
+    expect(prepared.properties?.find((p) => p.name === "size")?.value).toEqual("M");
+  });
+
+  it("should use master variation's route when product has masterVariation", () => {
+    const masterVariation = createMockVariation({ id: "mv2", slug: "master-var2" });
+    const product = createMockProduct({
+      slug: "should-not-use-this",
+      masterVariation,
+    });
+    const lineItem = createMockLineItem({ product });
+    const prepared = prepareLineItem(lineItem);
+    // The route should be generated from the masterVariation.
+    expect(prepared.route).toBe(`/product/${masterVariation.id}-${masterVariation.slug}`);
   });
 });
 
