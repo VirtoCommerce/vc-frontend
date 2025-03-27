@@ -144,7 +144,7 @@ function createMockProduct(overrides: Partial<Product> = {}): Product {
     hasVariations: false,
     id: "p1",
     images: [],
-    imgSrc: "http://image",
+    imgSrc: "https://image",
     isConfigurable: false,
     inWishlist: false,
     keyProperties: [],
@@ -175,7 +175,7 @@ function createMockLineItem(overrides: Partial<LineItemType> = {}): LineItemType
   return {
     id: "li1",
     name: "Test Line Item",
-    imageUrl: "http://lineitem-image",
+    imageUrl: "https://lineitem-image",
     vendor: createMockVendor("v1", "Alpha"),
     product: createMockProduct(),
     productId: "p1",
@@ -530,7 +530,7 @@ describe("prepareLineItemForProduct", () => {
     const product = createMockProduct({
       id: "p2",
       name: "New Product",
-      imgSrc: "http://newimage",
+      imgSrc: "https://newimage",
       code: "SKU_NEW",
       slug: "new-product",
       availabilityData: createAvailabilityData(50),
@@ -568,7 +568,7 @@ describe("prepareLineItemForProduct", () => {
     const product = createMockProduct({
       id: "p6",
       name: "No Availability Product",
-      imgSrc: "http://image",
+      imgSrc: "https://image",
       code: "SKU_NO_AVAIL",
       slug: "no-availability",
       availabilityData: undefined,
