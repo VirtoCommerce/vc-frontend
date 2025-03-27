@@ -86,8 +86,8 @@ const checked = computed(() => model.value === props.value);
 
   --base-color: var(--vc-radio-button-base-color, var(--color-primary-500));
   --focus-color: rgb(from var(--base-color) r g b / 0.3);
-  --max-lines: v-bind(props.maxLines ? props.maxLines: "none");
-  --break-word: v-bind(props.breakWord ? "break-word": "normal");
+  --max-lines: v-bind(props.maxLines ? props.maxLines: "initial");
+  --break-word: v-bind(props.breakWord ? "break-word": "initial");
 
   @apply select-none;
 
