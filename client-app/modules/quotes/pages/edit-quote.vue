@@ -67,6 +67,7 @@
       <VcWidget :title="$t('quote_details.billing_address')" prepend-icon="cash" size="lg">
         <h4 class="text-md font-bold leading-5">
           {{ $t("quote_details.billing_address") }}
+          <span class="text-danger">*</span>
         </h4>
 
         <div :class="['mt-2.5 space-y-1.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
@@ -249,7 +250,8 @@ const isShippingAddressRequired = computed<boolean>(() => {
 
 const canSubmit = computed<boolean>(() => {
   const isShippingAddressValid = !isShippingAddressRequired.value || !!shippingAddress.value;
-  const isBillingAddressValid = !!billingAddress.value || billingAddressEqualsShipping.value;
+  const isBillingAddressValid =
+    !!billingAddress.value || (billingAddressEqualsShipping.value && !!shippingAddress.value);
   const isCommentValid = !!comment.value || quoteItemsValid.value;
 
   return isShippingAddressValid && isBillingAddressValid && isCommentValid && !anyFilesModified.value;
