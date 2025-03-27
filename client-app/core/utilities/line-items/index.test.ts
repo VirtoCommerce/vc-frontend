@@ -216,20 +216,49 @@ function createMockLineItem(overrides: Partial<LineItemType> = {}): LineItemType
 }
 
 describe("groupByVendor", () => {
-  it("should group line items by vendor and place items without vendor last", () => {
-    const item1 = createMockLineItem({ id: "li1", vendor: createMockVendor("v1", "Alpha") });
-    const item2 = createMockLineItem({ id: "li2", vendor: createMockVendor("v2", "Beta") });
-    const item3 = createMockLineItem({ id: "li3", vendor: undefined });
-    const item4 = createMockLineItem({ id: "li4", vendor: createMockVendor("v1", "Alpha") });
+  it("should group all items with the same vendor together, with empty vendor group empty", () => {
+    const vendor = createMockVendor("v1", "Alpha");
+    const item1 = createMockLineItem({ id: "li1", vendor });
+    const item2 = createMockLineItem({ id: "li2", vendor });
+    const result = groupByVendor([item1, item2]);
 
-    const result = groupByVendor([item1, item2, item3, item4]);
-    expect(result).toHaveLength(3);
-    expect(result[0].vendor).toEqual({ id: "v1", name: "Alpha" });
-    expect(result[0].items).toEqual([item1, item4]);
-    expect(result[1].vendor).toEqual({ id: "v2", name: "Beta" });
-    expect(result[1].items).toEqual([item2]);
+    expect(result).toHaveLength(2);
+    expect(result[0].vendor).toEqual(vendor);
+    expect(result[0].items).toEqual([item1, item2]);
+    expect(result[1].vendor).toBeUndefined();
+    expect(result[1].items).toEqual([]);
+  });
+
+  it("should sort vendor groups alphabetically by vendor name and then add the group without vendor at the end", () => {
+    const vendorA = createMockVendor("v1", "Alpha");
+    const vendorB = createMockVendor("v2", "Beta");
+    const vendorC = createMockVendor("v3", "Charlie");
+
+    const item1 = createMockLineItem({ id: "li1", vendor: vendorB });
+    const item2 = createMockLineItem({ id: "li2", vendor: vendorC });
+    const item3 = createMockLineItem({ id: "li3", vendor: vendorA });
+
+    const result = groupByVendor([item1, item2, item3]);
+
+    expect(result[0].vendor).toEqual(vendorA);
+    expect(result[1].vendor).toEqual(vendorB);
+    expect(result[2].vendor).toEqual(vendorC);
+
+    expect(result[3].vendor).toBeUndefined();
+  });
+
+  it("should handle vendors with empty or undefined name properly", () => {
+    const vendorEmpty = createMockVendor("v1", "");
+    const vendorNormal = createMockVendor("v2", "Beta");
+    const item1 = createMockLineItem({ id: "li1", vendor: vendorNormal });
+    const item2 = createMockLineItem({ id: "li2", vendor: vendorEmpty });
+    const result = groupByVendor([item1, item2]);
+
+    // An empty string is lexically less than a non-empty string,
+    // so the vendor with an empty name should come first.
+    expect(result[0].vendor).toEqual(vendorEmpty);
+    expect(result[1].vendor).toEqual(vendorNormal);
     expect(result[2].vendor).toBeUndefined();
-    expect(result[2].items).toEqual([item3]);
   });
 
   it("should handle empty array", () => {
@@ -489,6 +518,11 @@ describe("prepareLineItems", () => {
     expect(preparedItems[0].actualPrice).toEqual(createMoney(80));
     expect(preparedItems[1].actualPrice).toEqual(createMoney(160));
   });
+
+  it("should return an empty array when input is empty", () => {
+    const preparedItems = prepareLineItems([]);
+    expect(preparedItems).toEqual([]);
+  });
 });
 
 describe("prepareLineItemForProduct", () => {
@@ -528,5 +562,23 @@ describe("prepareLineItemForProduct", () => {
     const prepared = prepareLineItemForProduct(product);
     expect(prepared.inStockQuantity).toBe(75);
     expect(prepared.maxQuantity).toBe(75);
+  });
+
+  it("should handle a product without availabilityData", () => {
+    const product = createMockProduct({
+      id: "p6",
+      name: "No Availability Product",
+      imgSrc: "http://image",
+      code: "SKU_NO_AVAIL",
+      slug: "no-availability",
+      availabilityData: undefined,
+      price: createPrice(400),
+      maxQuantity: undefined,
+    });
+
+    const prepared = prepareLineItemForProduct(product, 3);
+
+    expect(prepared.inStockQuantity).toBeUndefined();
+    expect(prepared.maxQuantity).toBeUndefined();
   });
 });
