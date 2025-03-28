@@ -172,7 +172,7 @@ const attrs = computed(() => {
 .vc-button {
   --props-min-width: v-bind(props.minWidth);
   --props-icon-size: v-bind(props.iconSize);
-  --min-w: var(--props-min-width, var(--vc-button-min-width, auto));
+  --min-w: var(--props-min-width, var(--vc-button-min-width));
 
   --vc-icon-size: var(--vc-button-icon-size, var(--props-icon-size, var(--line-height)));
 
@@ -206,7 +206,7 @@ const attrs = computed(() => {
   &--icon {
     $icon: &;
 
-    @apply flex-none p-0 size-[--size];
+    @apply flex-none p-0 h-[--size] min-w-[var(--min-w,var(--size))];
   }
 
   &--full-width {
