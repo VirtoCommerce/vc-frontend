@@ -110,6 +110,7 @@
                 class="flex px-3 py-1 text-sm"
                 :max-lines="2"
                 :title="item.name"
+                word-break="break-word"
                 @change="selectOrganization"
               />
             </div>
