@@ -25,25 +25,18 @@
           v-model="keyword"
           :disabled="fetching"
           :placeholder="$t('quotes.search_placeholder')"
+          clearable
           maxlength="64"
           class="w-full"
           @keydown.enter="applyKeyword"
+          @clear="resetKeyword"
         >
           <template #append>
-            <button
-              v-if="keyword"
-              :aria-label="$t('quotes.reset_search')"
-              type="button"
-              class="flex h-full items-center px-4"
-              @click="resetKeyword"
-            >
-              <VcIcon class="fill-primary" name="delete-2" size="xs" />
-            </button>
-
             <VcButton
               :aria-label="$t('quotes.search_quote_requests')"
               :disabled="fetching"
               icon="search"
+              icon-size="1.25rem"
               @click="applyKeyword"
             />
           </template>

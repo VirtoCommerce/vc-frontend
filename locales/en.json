@@ -1221,6 +1221,7 @@
       },
       "title": "Cart",
       "empty_cart_description": "Your cart is empty",
+      "empty_cart_search_text": "Use the search to find everything you need",
       "recently_browsed_products": "Recently browsed"
     },
     "checkout": {

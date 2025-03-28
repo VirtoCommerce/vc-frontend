@@ -2,6 +2,7 @@ import { useGlobalInterceptors } from "@/core/api/common";
 import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
+import { getRegisteredComponents } from "./register-components";
 import ScrollToElement from "./scroll-to-element.vue";
 import type { IThemeConfig } from "@/core/types";
 import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
@@ -98,7 +99,7 @@ let templateUrl: string | undefined;
 
 // eslint-disable-next-line no-restricted-exports
 export default {
-  install: (app: App, options: { router: Router; builderOrigin: string }) => {
+  install: async (app: App, options: { router: Router; builderOrigin: string }) => {
     const { onRequest } = useGlobalInterceptors();
 
     onRequest.value.push((_, init) => {
@@ -179,6 +180,18 @@ export default {
     options.router.removeRoute("Matcher");
     options.router.addRoute({ path: "/designer-preview", name: "StaticPage", component: StaticPage, props: true });
     options.router.addRoute(matcher);
-    window.parent.postMessage({ source: "preview", type: "loaded" }, options.builderOrigin);
+
+    options.router.beforeEach((to, from, next) => {
+      if (to.path !== "/designer-preview") {
+        next({ path: "/designer-preview", query: to.query, hash: to.hash });
+      } else {
+        next();
+      }
+    });
+
+    const customComponents = await getRegisteredComponents();
+    window.parent.postMessage({ source: "preview", type: "loaded", data: customComponents }, options.builderOrigin);
+
+    await options.router.push("/designer-preview");
   },
 };
