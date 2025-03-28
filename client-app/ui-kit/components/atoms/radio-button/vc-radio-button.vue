@@ -55,6 +55,8 @@ interface IProps {
   message?: string;
   error?: boolean;
   singleLineMessage?: boolean;
+  wordBreak?: string;
+  maxLines?: number;
 }
 
 const emit = defineEmits<IEmits>();
@@ -82,8 +84,13 @@ const checked = computed(() => model.value === props.value);
   $left: "";
   $right: "";
 
+  --props-max-lines: v-bind(props.maxLines ? props.maxLines: null);
+  --props-word-break: v-bind(props.wordBreak ? props.wordBreak: null);
+
   --base-color: var(--vc-radio-button-base-color, var(--color-primary-500));
   --focus-color: rgb(from var(--base-color) r g b / 0.3);
+  --max-lines: var(--props-max-lines, var(--vc-radio-button-max-lines, initial));
+  --word-break: var(--props-word-break, var(--vc-radio-button-word-break, initial));
 
   @apply select-none;
 
@@ -153,7 +160,7 @@ const checked = computed(() => model.value === props.value);
   }
 
   &__label {
-    @apply min-w-0 empty:hidden;
+    @apply min-w-0 empty:hidden line-clamp-[var(--max-lines)] [word-break:var(--word-break)];
 
     #{$left} & {
       @apply order-first me-2;
