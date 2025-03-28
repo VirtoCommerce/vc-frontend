@@ -109,7 +109,6 @@
                 :value="item.id"
                 class="flex px-3 py-1 text-sm"
                 :max-lines="2"
-                break-word
                 :title="item.name"
                 @change="selectOrganization"
               />

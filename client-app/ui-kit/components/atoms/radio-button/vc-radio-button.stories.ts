@@ -70,7 +70,7 @@ BreakWord.decorators = [
 BreakWord.args = {
   value: "value",
   label: "RadioButtonLabelLongValueWithoutSpaces",
-  breakWord: true,
+  wordBreak: "break-word",
 };
 
 export const MaxLines = Template.bind({});
@@ -82,7 +82,7 @@ MaxLines.decorators = [
 MaxLines.args = {
   value: "value",
   label: "Radio Button Label With Very Long Value",
-  breakWord: true,
+  wordBreak: "break-word",
   maxLines: 2,
 };
 
