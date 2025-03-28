@@ -12,27 +12,18 @@
         :disabled="allLoading"
         :placeholder="$t('back_in_stock.subscriptions.search_placeholder')"
         maxlength="64"
+        clearable
         class="back-in-stock-subscriptions__keyword-input"
         @keydown.enter="applyKeyword"
+        @clear="resetKeyword"
       >
         <template #append>
-          <button
-            v-if="keyword"
-            :aria-label="$t('back_in_stock.subscriptions.reset_search')"
-            :title="$t('back_in_stock.subscriptions.reset_search')"
-            type="button"
-            class="flex h-full items-center px-4"
-            :disabled="allLoading"
-            @click="resetKeyword"
-          >
-            <VcIcon class="text-primary" name="delete-2" size="xs" />
-          </button>
-
           <VcButton
             :aria-label="$t('back_in_stock.subscriptions.search_button')"
             :title="$t('back_in_stock.subscriptions.search_button')"
             :disabled="allLoading"
             icon="search"
+            icon-size="1.25rem"
             @click="applyKeyword"
           />
         </template>

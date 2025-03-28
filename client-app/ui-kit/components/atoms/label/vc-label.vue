@@ -4,6 +4,7 @@
     :for="forId"
     :class="[
       'vc-label',
+      `vc-label--size--${_size}`,
       {
         'vc-label--error': error,
       },
@@ -15,25 +16,64 @@
 </template>
 
 <script setup lang="ts">
+import { computed, inject } from "vue";
+
 interface IProps {
   required?: boolean;
   error?: boolean;
   forId?: string;
+  size?: "xs" | "sm" | "md" | "lg";
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
+
+const inputContext = inject<VcInputContextType | null>("inputContext", null);
+
+const _size = computed(() => {
+  if (props.size) {
+    return props.size;
+  }
+
+  const inputSize = inputContext?.size.value;
+
+  if (inputSize === "xs") {
+    return "xs";
+  }
+
+  if (inputSize === "sm") {
+    return "sm";
+  }
+
+  return "md";
+});
 </script>
 
 <style lang="scss">
 .vc-label {
-  @apply block mb-0.5 text-sm font-bold text-neutral-900;
+  --color: var(--vc-label-color, theme("colors.neutral.950"));
 
-  &--error {
-    @apply text-danger;
+  @apply mb-0.5 font-bold text-[--color];
+
+  &--size {
+    &--xs {
+      @apply text-xs;
+    }
+
+    &--sm {
+      @apply text-sm;
+    }
+
+    &--md {
+      @apply text-base;
+    }
+
+    &--lg {
+      @apply text-lg;
+    }
   }
 
   &__asterisk {
-    @apply text-danger;
+    @apply ms-px text-danger;
   }
 }
 </style>
