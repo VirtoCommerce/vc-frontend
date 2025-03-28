@@ -336,6 +336,13 @@
             "input_placeholder": "Enter keyword, item, model, or replacement part number"
           },
           "view_all_catalog": "View all products in the category"
+        },
+        "ship_to_selector": {
+          "add_new": "Add new",
+          "add_new_address": "Add new address",
+          "search": "Search",
+          "select_address": "Select address",
+          "title": "Ship to:"
         }
       },
       "footer": {

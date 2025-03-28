@@ -18,6 +18,8 @@ query SearchProducts(
   $productIds: [String]
   $withFacets: Boolean!
   $withImages: Boolean!
+  $selectedAddressId: String
+  $selectedAddress: String
 ) {
   products(
     storeId: $storeId
@@ -32,6 +34,8 @@ query SearchProducts(
     fuzzy: $fuzzy
     fuzzyLevel: $fuzzyLevel
     productIds: $productIds
+    selectedAddressId: $selectedAddressId
+    selectedAddress: $selectedAddress
   ) {
     totalCount
     items {

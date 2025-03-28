@@ -10,6 +10,8 @@ export type ProductsSearchParamsType = {
   fuzzyLevel?: number;
   categoryId?: string;
   productIds?: string[];
+  selectedAddressId?: string;
+  selectedAddress?: string;
 };
 
 export type ProductsFiltersType = {

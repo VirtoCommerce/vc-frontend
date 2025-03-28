@@ -226,6 +226,7 @@ import {
   watchDebounced,
   whenever,
 } from "@vueuse/core";
+import omit from "lodash/omit";
 import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
@@ -244,6 +245,7 @@ import {
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useSlugInfo } from "@/shared/common";
+import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
@@ -332,6 +334,8 @@ const {
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();
 
+const { selectedAddress } = useShipToLocation();
+
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
@@ -369,7 +373,24 @@ const breadcrumbs = useBreadcrumbs(() =>
 );
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
+function getSelectedAddressArgs(): {
+  selectedAddressId: string | undefined;
+  selectedAddress: string | undefined;
+} {
+  const selectedAddressIdValue = selectedAddress.value?.id?.startsWith(LOCAL_ID_PREFIX)
+    ? undefined
+    : selectedAddress.value?.id;
+  const selectedAddressValue = selectedAddressIdValue
+    ? undefined
+    : JSON.stringify(omit(selectedAddress.value, ["id", "isDefault", "isFavorite"]));
+  return {
+    selectedAddressId: selectedAddressIdValue,
+    selectedAddress: selectedAddressValue,
+  };
+}
+
 const searchParams = computedEager<ProductsSearchParamsType>(() => ({
+  ...getSelectedAddressArgs(),
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
