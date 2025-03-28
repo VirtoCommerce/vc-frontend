@@ -1,11 +1,10 @@
-type RouteType = {
-  NAME: string;
-  PATH: string;
-};
-
-export const ROUTES: { [key: string]: RouteType } = {
+export const ROUTES = {
   CATALOG: {
     NAME: "Catalog",
     PATH: "/catalog",
+  },
+  SEARCH: {
+    NAME: "Search",
+    PATH: "/search",
   },
 } as const;

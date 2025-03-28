@@ -87,11 +87,15 @@
         maxlength="64"
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="mr-4 grow"
+        :clearable="!!searchPhrase"
         no-border
-        clearable
-        @keydown.enter="searchPhrase && $router.push(searchPageLink)"
         @clear="reset"
-      />
+        @keydown.enter="searchPhrase && $router.push(searchPageLink)"
+      >
+        <template #append>
+          <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
+        </template>
+      </VcInput>
 
       <VcButton :to="searchPhrase && searchPageLink" icon="search" />
 
@@ -137,6 +141,7 @@ import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
+import BarcodeScanner from "@/shared/layout/components/search-bar/barcode-scanner.vue";
 const router = useRouter();
 
 const { customComponents } = useCustomMobileHeaderComponents();
@@ -158,7 +163,7 @@ const placeholderStyle = computed<StyleValue | undefined>(() =>
 );
 
 const searchPageLink = computed<RouteLocationRaw>(() => ({
-  name: "Search",
+  name: ROUTES.SEARCH.NAME,
   query: {
     [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
   },
@@ -166,7 +171,14 @@ const searchPageLink = computed<RouteLocationRaw>(() => ({
 
 function reset() {
   searchPhrase.value = "";
-  void router.push({ name: ROUTES.CATALOG.NAME });
+  void router.push({ name: ROUTES.SEARCH.NAME });
+}
+
+function onBarcodeScanned(value: string) {
+  if (value) {
+    searchPhrase.value = value;
+    void router.push(searchPageLink.value);
+  }
 }
 
 syncRefs(mobileMenuVisible, useScrollLock(document.body));
