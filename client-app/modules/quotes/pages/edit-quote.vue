@@ -46,6 +46,7 @@
       <VcWidget :title="$t('quote_details.shipping_address')" prepend-icon="truck" size="lg">
         <h4 class="text-md font-bold leading-5">
           {{ $t("quote_details.shipping_address") }}
+          <span v-if="isShippingAddressRequired" class="text-danger">*</span>
         </h4>
 
         <div :class="['mt-2.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
@@ -66,6 +67,7 @@
       <VcWidget :title="$t('quote_details.billing_address')" prepend-icon="cash" size="lg">
         <h4 class="text-md font-bold leading-5">
           {{ $t("quote_details.billing_address") }}
+          <span class="text-danger">*</span>
         </h4>
 
         <div :class="['mt-2.5 space-y-1.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
@@ -164,6 +166,7 @@ const {
 const {
   fetching,
   quote,
+  allItemsAreDigital,
   shippingAddress,
   billingAddress,
   attachedFiles,
@@ -220,15 +223,18 @@ const accountAddresses = computed<AnyAddressType[]>(() => {
     : personalAddresses.value;
 });
 
-const canSaveChanges = computed<boolean>(
-  () =>
-    (!isEqual(originalQuote.value, quote.value) ||
-      originalQuote.value?.comment !== comment.value ||
-      (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value) ||
-      anyFilesModified.value) &&
-    commentValid.value &&
-    allFilesAttachedOrUploaded.value,
-);
+const canSaveChanges = computed<boolean>(() => {
+  const isQuoteChanged = !isEqual(originalQuote.value, quote.value);
+  const isCommentChanged = originalQuote.value?.comment !== comment.value;
+  const areAddressesChanged =
+    !isEqual(quote.value!.addresses, originalQuote.value!.addresses) ||
+    (billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value);
+
+  const hasChanges = isQuoteChanged || isCommentChanged || areAddressesChanged || anyFilesModified.value;
+
+  return hasChanges && commentValid.value && allFilesAttachedOrUploaded.value;
+});
+
 const quoteItemsValid = computed<boolean>(
   () =>
     !!quote.value?.items?.length &&
@@ -237,13 +243,19 @@ const quoteItemsValid = computed<boolean>(
       (item: QuoteItemType) => !!item.selectedTierPrice?.quantity && item.selectedTierPrice.quantity > 0,
     ),
 );
-const canSubmit = computed<boolean>(
-  () =>
-    !!shippingAddress.value &&
-    (!!billingAddress.value || billingAddressEqualsShipping.value) &&
-    (!!comment.value || quoteItemsValid.value) &&
-    !anyFilesModified.value,
-);
+
+const isShippingAddressRequired = computed<boolean>(() => {
+  return hasItems.value && !allItemsAreDigital.value;
+});
+
+const canSubmit = computed<boolean>(() => {
+  const isShippingAddressValid = !isShippingAddressRequired.value || !!shippingAddress.value;
+  const isBillingAddressValid =
+    !!billingAddress.value || (billingAddressEqualsShipping.value && !!shippingAddress.value);
+  const isCommentValid = !!comment.value || quoteItemsValid.value;
+
+  return isShippingAddressValid && isBillingAddressValid && isCommentValid && !anyFilesModified.value;
+});
 
 const userHasAddresses = computedEager<boolean>(() => !!accountAddresses.value.length);
 
