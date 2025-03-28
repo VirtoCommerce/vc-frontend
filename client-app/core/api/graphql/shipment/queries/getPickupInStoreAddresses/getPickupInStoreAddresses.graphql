@@ -1,0 +1,15 @@
+query getPickupInStoreAddresses($keyword: String, $sort: String) {
+  getPickupInStoreAddresses(keyword: $keyword, sort: $sort) {
+    addresses {
+      id
+      line1
+      line2
+      city
+      countryName
+      regionId
+      postalCode
+      phone
+      description
+    }
+  }
+}

@@ -15,7 +15,7 @@
 
         <div class="flex w-full flex-wrap gap-3 max-xs:*:grow sm:ms-auto sm:w-auto">
           <VcButton
-            v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization)"
+            v-if="allowAddNewAddress && (!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization))"
             variant="outline"
             no-wrap
             min-width="8rem"
@@ -219,6 +219,7 @@ interface IProps {
   currentAddress?: AnyAddressType;
   addresses?: AnyAddressType[];
   isCorporateAddresses: boolean;
+  allowAddNewAddress?: boolean;
 }
 
 interface IEmits {
@@ -230,6 +231,7 @@ const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   addresses: () => [],
+  allowAddNewAddress: true,
 });
 
 const { t } = useI18n();
