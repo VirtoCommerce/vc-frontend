@@ -11,6 +11,7 @@ import { Chart as ChartJS, Tooltip, BarElement, CategoryScale, LinearScale } fro
 import { computed, ref } from "vue";
 import VueSlider from "vue-3-slider-component";
 import { Bar } from "vue-chartjs";
+import type { ChartEvent } from "chart.js";
 
 const value = ref([20, 40]);
 ChartJS.register(Tooltip, BarElement, CategoryScale, LinearScale);
@@ -22,8 +23,8 @@ const chartData = computed(() => ({
 
 const chartOptions = computed(() => ({
   responsive: true,
+  devicePixelRatio: 2.5,
   scales: {
-    beginAtZero: true,
     x: {
       border: {
         display: false,
@@ -50,7 +51,7 @@ const chartOptions = computed(() => ({
   onClick: handleClick,
 }));
 
-function handleClick(e: Event) {
+function handleClick(e: ChartEvent) {
   console.log("handleClick", e);
 }
 </script>
