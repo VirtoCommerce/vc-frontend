@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { ref } from "vue";
+import { shallowRef } from "vue";
 import type { DefineComponent } from "vue";
 
 type ElementType = {
@@ -9,7 +9,7 @@ type ElementType = {
 };
 
 function _useCartExtensionPoints() {
-  const sidebarWidgets = ref<ElementType[]>([]);
+  const sidebarWidgets = shallowRef<ElementType[]>([]);
 
   function registerSidebarWidget(element: ElementType) {
     if (!sidebarWidgets.value.some((el) => el.id === element.id)) {
