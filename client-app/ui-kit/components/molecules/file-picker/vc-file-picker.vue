@@ -36,7 +36,7 @@
             {{ $t("ui_kit.file_uploader.drag_and_drop") }}
           </span>
 
-          <VcButton color="secondary" size="xs">
+          <VcButton color="secondary" size="xs" tag="span">
             {{ $t("ui_kit.file_uploader.browse") }}
           </VcButton>
         </slot>
@@ -121,7 +121,7 @@ function addFiles(items: File[]) {
   }
 
   &__drop-area {
-    @apply flex-1 flex flex-col justify-center items-center gap-2 w-full rounded border border-dashed border-secondary-200 p-5 bg-secondary-50;
+    @apply flex-1 flex flex-col min-h-17 justify-center items-center gap-2 w-full rounded border border-dashed border-secondary-200 p-4 bg-secondary-50;
   }
 
   &__droppable {

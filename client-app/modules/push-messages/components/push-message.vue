@@ -6,8 +6,8 @@
     tabindex="0"
     :aria-label="pushMessage.isRead ? $t('push_messages.mark_as_unread') : $t('push_messages.mark_as_read')"
     :title="pushMessage.isRead ? $t('push_messages.mark_as_unread') : $t('push_messages.mark_as_read')"
-    @click="toggleRead"
-    @keypress.enter="toggleRead"
+    @click="handleToggleRead"
+    @keypress.enter="handleToggleRead"
   />
 </template>
 
@@ -22,9 +22,18 @@ interface IProps {
   size?: "md" | "lg";
 }
 
-const props = defineProps<IProps>();
+interface IEmits {
+  (e: "toggleRead"): void;
+}
 
+const emit = defineEmits<IEmits>();
+const props = defineProps<IProps>();
 const { pushMessage: _pushMessage } = toRefs(props);
 
 const { toggleRead } = usePushMessage(_pushMessage);
+
+async function handleToggleRead() {
+  await toggleRead();
+  emit("toggleRead");
+}
 </script>

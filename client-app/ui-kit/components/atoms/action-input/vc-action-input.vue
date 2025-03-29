@@ -20,6 +20,7 @@
           variant="no-background"
           :disabled="disabled"
           icon="delete-2"
+          size="sm"
           @click="$emit('deny')"
         />
 
@@ -28,6 +29,7 @@
           :aria-label="$t('ui_kit.buttons.apply')"
           icon="apply"
           variant="no-background"
+          size="sm"
           :disabled="value.length === 0 || disabled || !!errorMessage"
           @click="$emit('apply')"
         />

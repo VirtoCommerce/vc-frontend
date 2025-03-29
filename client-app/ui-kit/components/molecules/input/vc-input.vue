@@ -52,22 +52,29 @@
       />
 
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
-        <button type="button" class="vc-input__clear" @click.stop="clear">
-          <VcIcon name="delete-2" size="xs" />
-        </button>
+        <VcButton
+          :disabled="disabled"
+          type="button"
+          icon="delete-thin"
+          color="neutral"
+          variant="no-background"
+          class="vc-input__clear"
+          :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+          @click.stop="clear"
+        />
       </div>
 
       <div v-if="type === 'password' && !hidePasswordSwitcher" class="vc-input__decorator">
-        <button
+        <VcButton
           :disabled="disabled"
           :aria-label="$t('ui_kit.buttons.show_hide_password')"
-          tabindex="-1"
           type="button"
-          class="vc-input__password-icon"
+          :icon="passwordVisibilityIcon"
+          variant="no-border"
+          :icon-size="size === 'md' ? '1.5rem' : '1.25rem'"
+          class="vc-input__password-button"
           @click="togglePasswordVisibility"
-        >
-          <VcIcon :name="passwordVisibilityIcon" />
-        </button>
+        />
       </div>
 
       <div v-if="$slots.append" class="vc-input__decorator">
@@ -80,7 +87,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends string | number | null">
-import { computed, ref } from "vue";
+import { provide, computed, ref } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
 export interface IProps {
@@ -146,6 +153,8 @@ const model = defineModel<T>({
   },
 });
 
+const _size = computed(() => props.size);
+
 const minValue = computed(() => (props.type === "number" ? props.min : undefined));
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
@@ -187,6 +196,10 @@ function inputClick() {
     inputElement.value.select();
   }
 }
+
+provide<VcInputContextType>("inputContext", {
+  size: _size,
+});
 </script>
 
 <style lang="scss">
@@ -202,28 +215,22 @@ function inputClick() {
   $center: "";
   $truncate: "";
 
-  --base-color: var(--vc-input-base-color, var(--color-primary-500));
-  --focus-color: rgb(from var(--base-color) r g b / 0.3);
+  --color: var(--vc-input-base-color, theme("colors.primary.500"));
+  --focus-color: rgb(from var(--color) r g b / 0.2);
 
   @apply flex flex-col;
 
   &--size {
     &--xs {
       $sizeXs: &;
-
-      --vc-icon-size: 1.25rem;
     }
 
     &--sm {
       $sizeSm: &;
-
-      --vc-icon-size: 1.25rem;
     }
 
     &--md {
       $sizeMd: &;
-
-      --vc-icon-size: 1.5rem;
     }
   }
 
@@ -238,7 +245,7 @@ function inputClick() {
   &--error {
     $error: &;
 
-    --base-color: var(--color-danger-500);
+    --color: var(--vc-input-error-color, theme("colors.danger.500"));
   }
 
   &--no-border {
@@ -254,14 +261,14 @@ function inputClick() {
   }
 
   &__container {
-    @apply flex items-stretch border rounded bg-additional-50 select-none;
+    @apply flex items-stretch p-0.5 border border-neutral-400 rounded bg-additional-50 select-none;
 
     #{$sizeXs} & {
       @apply h-8 text-sm;
     }
 
     #{$sizeSm} & {
-      @apply h-9 text-sm;
+      @apply h-[2.375rem] text-sm;
     }
 
     #{$sizeMd} & {
@@ -272,13 +279,13 @@ function inputClick() {
       @apply ring ring-[--focus-color];
     }
 
+    #{$error} & {
+      @apply border-[--color] text-[--color];
+    }
+
     #{$disabled} &,
     &:has(input:disabled) {
       @apply bg-neutral-50 cursor-not-allowed;
-    }
-
-    #{$error} & {
-      @apply border-[--base-color];
     }
 
     #{$noBorder} & {
@@ -287,28 +294,16 @@ function inputClick() {
   }
 
   &__decorator {
-    @apply flex items-center max-w-[50%] h-full;
-
-    &:first-child > * {
-      @apply rounded-r-none;
-    }
+    @apply flex-none flex items-center max-w-[50%] h-full;
 
     #{$disabled} &,
     &:disabled {
       @apply cursor-not-allowed;
     }
-
-    &:nth-last-child(-n + 2) > * {
-      @apply rounded-l-none;
-    }
-
-    & > * {
-      @apply max-h-full;
-    }
   }
 
   &__input {
-    @apply relative m-px px-3 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
+    @apply relative m-px px-2 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;
@@ -330,12 +325,14 @@ function inputClick() {
 
     #{$disabled} &,
     &:disabled {
-      @apply text-neutral-600 cursor-not-allowed;
+      @apply text-neutral-500 cursor-not-allowed;
     }
 
     &::placeholder {
+      @apply text-neutral-400;
+
       #{$error} & {
-        @apply opacity-80 text-[--base-color];
+        @apply text-danger-400;
       }
     }
 
@@ -345,22 +342,6 @@ function inputClick() {
 
     #{$truncate} & {
       @apply truncate;
-    }
-
-    #{$error} & {
-      @apply text-[--base-color];
-    }
-  }
-
-  &__clear {
-    @apply flex items-center p-3 text-[--base-color];
-  }
-
-  &__password-icon {
-    @apply flex items-center h-full px-3 text-[--base-color];
-
-    #{$disabled} & {
-      @apply text-neutral-300 cursor-not-allowed;
     }
   }
 }
