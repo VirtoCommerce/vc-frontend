@@ -8,18 +8,6 @@
       @remove-files="onRemoveFiles"
       @download="onFileDownload"
     />
-    <div class="option-file__errors">
-      <VcAlert
-        v-for="(file, index) in filesWithErrors"
-        :key="index"
-        color="danger"
-        variant="solid-light"
-        size="sm"
-        icon
-      >
-        {{ file.errorMessage }}
-      </VcAlert>
-    </div>
   </div>
 </template>
 
@@ -58,16 +46,16 @@ const {
   uploadFiles,
   fetchOptions: fetchFileOptions,
   options: fileOptions,
+  stopWatchInitialValue,
 } = useFiles(DEFAULT_FILES_SCOPE, initialFiles);
 
 async function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
   await uploadFiles();
+  stopWatchInitialValue();
   emit("input", attachedAndUploadedFiles.value);
 }
-
-const filesWithErrors = computed(() => files.value.filter((file) => file.errorMessage));
 
 async function onRemoveFiles(filesToRemove: FileType[]) {
   await removeFiles(filesToRemove);
@@ -85,11 +73,3 @@ onMounted(() => {
   void fetchFileOptions();
 });
 </script>
-
-<style lang="scss">
-.option-file {
-  &__errors {
-    @apply mt-2 flex flex-col gap-2;
-  }
-}
-</style>

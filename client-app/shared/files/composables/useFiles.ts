@@ -21,10 +21,9 @@ import {
 } from "@/ui-kit/utilities";
 import type { FileUploadResultType, IFileOptions } from "@/shared/files/types";
 import type { AxiosProgressEvent, AxiosResponse } from "axios";
-import type { MaybeRef, WatchSource } from "vue";
+import type { MaybeRef, WatchSource, WatchStopHandle } from "vue";
 
 const getFileUploadOptionsMemoized = useMemoize(getFileUploadOptions);
-
 /**
  * File management
  * @param scope Scope files belongs to.
@@ -32,6 +31,8 @@ const getFileUploadOptionsMemoized = useMemoize(getFileUploadOptions);
  */
 // eslint-disable-next-line sonarjs/cognitive-complexity
 export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAttachedFile[]>) {
+  let stopWatchInitialValue: (() => void) | WatchStopHandle = () => {};
+
   const { translate } = useErrorsTranslator("file_error");
   const { t, n } = useI18n();
 
@@ -64,7 +65,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
 
   const files = ref<FileType[]>([]);
   if (initialValue) {
-    syncRefs(initialValue, files);
+    stopWatchInitialValue = syncRefs(initialValue, files);
   }
 
   const newFiles = computed(() => files.value.filter(isNewfile));
@@ -230,5 +231,6 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     removeFiles,
 
     fetchOptions,
+    stopWatchInitialValue,
   };
 }
