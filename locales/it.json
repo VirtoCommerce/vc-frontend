@@ -385,7 +385,9 @@
             "no_barcode_detected": "Nessun codice a barre rilevato nell'immagine",
             "wrong_format": "Formato file non supportato",
             "no_file": "Nessun file caricato"
-          }
+          },
+          "browse": "Sfoglia file",
+          "cancel": "@:common.buttons.cancel"
         }
       },
       "language_selector": {

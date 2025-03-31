@@ -385,7 +385,9 @@
             "no_barcode_detected": "Штрихкоды на изображении не обнаружены",
             "wrong_format": "Неподдерживаемый формат файла",
             "no_file": "Файл не загружен"
-          }
+          },
+          "browse": "Обзор файлов",
+          "cancel": "@:common.buttons.cancel"
         }
       },
       "language_selector": {

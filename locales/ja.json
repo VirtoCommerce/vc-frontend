@@ -385,7 +385,9 @@
             "no_barcode_detected": "画像にバーコードが検出されませんでした",
             "wrong_format": "対応していないファイル形式です",
             "no_file": "ファイルはアップロードされていません"
-          }
+          },
+          "browse": "ファイルを参照",
+          "cancel": "@:common.buttons.cancel"
         }
       },
       "language_selector": {

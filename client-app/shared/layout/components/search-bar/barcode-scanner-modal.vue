@@ -35,14 +35,14 @@
 
     <template #actions="{ close }">
       <VcButton class="barcode-scanner-modal__action-cancel" color="secondary" variant="outline" @click="close">
-        {{ $t("shared.catalog.branches_modal.cancel_button") }}
+        {{ $t("shared.layout.search_bar.barcode_detector.cancel") }}
       </VcButton>
       <VcButton
         class="barcode-scanner-modal__action-browse"
         color="secondary"
         :loading="loading"
         @click="openFilePicker"
-        >{{ $t("ui_kit.file_uploader.browse") }}</VcButton
+        >{{ $t("shared.layout.search_bar.barcode_detector.browse") }}</VcButton
       >
     </template>
   </VcModal>

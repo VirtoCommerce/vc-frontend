@@ -385,7 +385,9 @@
             "no_barcode_detected": "Keine Barcodes im Bild erkannt",
             "wrong_format": "Ungültiges Dateiformat",
             "no_file": "Keine Datei hochgeladen"
-          }
+          },
+          "browse": "Dateien durchsuchen",
+          "cancel": "@:common.buttons.cancel"
         }
       },
       "language_selector": {

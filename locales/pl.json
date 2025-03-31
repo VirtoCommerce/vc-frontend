@@ -385,7 +385,9 @@
             "no_barcode_detected": "Nie wykryto kodów kreskowych na obrazie",
             "wrong_format": "Nieobsługiwany format pliku",
             "no_file": "Nie przesłano pliku"
-          }
+          },
+          "browse": "Przeglądaj pliki",
+          "cancel": "@:common.buttons.cancel"
         }
       },
       "language_selector": {

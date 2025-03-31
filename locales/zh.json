@@ -385,7 +385,9 @@
             "no_barcode_detected": "图片中未检测到条形码",
             "wrong_format": "不支持的文件格式",
             "no_file": "未上传文件"
-          }
+          },
+          "browse": "浏览文件",
+          "cancel": "@:common.buttons.cancel"
         }
       },
       "language_selector": {

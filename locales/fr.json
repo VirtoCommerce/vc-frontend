@@ -385,7 +385,9 @@
             "no_barcode_detected": "Aucun code-barres détecté dans l'image",
             "wrong_format": "Format de fichier non pris en charge",
             "no_file": "Aucun fichier n'a été téléchargé"
-          }
+          },
+          "browse": "Parcourir les fichiers",
+          "cancel": "@:common.buttons.cancel"
         }
       },
       "language_selector": {
