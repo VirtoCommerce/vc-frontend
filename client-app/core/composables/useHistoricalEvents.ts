@@ -2,9 +2,9 @@ import { pushHistoricalEvent as pushHistoricalEventMutation } from "@/core/api/g
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
 import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account/composables/useUser";
-import { useShortCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart/composables";
 import { useModuleSettings } from "./useModuleSettings";
-import type { InputPushHistoricalEventType } from "../api/graphql/types";
+import type { InputPushHistoricalEventType } from "@/core/api/graphql/types";
 
 export function useHistoricalEvents() {
   const { isAuthenticated } = useUser();

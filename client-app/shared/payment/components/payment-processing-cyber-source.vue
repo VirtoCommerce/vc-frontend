@@ -383,18 +383,19 @@ onUnmounted(removeScript);
 
 <style lang="scss">
 .cyber-source-input-wrap {
-  --base-color: var(--vc-input-base-color, var(--color-primary-500));
-  --focus-color: rgb(from var(--base-color) r g b / 0.3);
+  --color: var(--vc-input-base-color, var(--color-primary-500));
+  --focus-color: rgb(from var(--color) r g b / 0.3);
 
   @apply h-11 text-base relative m-px px-3 appearance-none bg-transparent border bg-additional-50 rounded-[3px] leading-none w-full min-w-0;
-}
 
-.cyber-source-input-wrap.flex-microform-focused {
-  @apply ring ring-[--focus-color];
-}
+  &.flex-microform-focused {
+    @apply ring ring-[--focus-color];
+  }
 
-.cyber-source-input-wrap.flex-microform-invalid {
-  --base-color: var(--color-danger-500);
-  @apply border-[--base-color];
+  &.flex-microform-invalid {
+    --color: var(--vc-input-error-color, var(--color-danger-500));
+
+    @apply border-[--color];
+  }
 }
 </style>

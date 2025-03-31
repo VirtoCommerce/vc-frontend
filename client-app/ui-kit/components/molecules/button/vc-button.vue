@@ -3,12 +3,12 @@
     :is="componentTag"
     v-bind="attrs"
     :target="target"
-    :type="type"
+    :type="componentTag === 'button' ? type : null"
     :disabled="!enabled"
     :title="title"
     :class="[
-      'vc-button',
-      `vc-button--size--${size}`,
+      'vc-button group',
+      `vc-button--size--${_size}`,
       `vc-button--color--${color}`,
       `vc-button--${variant}--${color}`,
       {
@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -67,10 +67,10 @@ interface IAttributes {
 }
 
 interface IProps {
-  color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger" | "accent";
-  size?: "xs" | "sm" | "md" | "lg";
-  variant?: "solid" | "outline" | "no-border" | "no-background";
-  type?: "button" | "reset" | "submit";
+  color?: VcButtonColorType;
+  size?: VcButtonSizeType;
+  variant?: VcButtonVariantType;
+  type?: VcButtonTypeType;
   disabled?: boolean;
   loading?: boolean;
   to?: RouteLocationRaw | null;
@@ -85,13 +85,13 @@ interface IProps {
   noWrap?: boolean;
   minWidth?: string;
   tag?: string;
+  iconSize?: string;
 }
 
 defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
-  size: "md",
   variant: "solid",
   type: "button",
   disabled: false,
@@ -102,6 +102,31 @@ const props = withDefaults(defineProps<IProps>(), {
   noWrap: false,
   minWidth: "",
   tag: "",
+  iconSize: "",
+});
+
+const inputContext = inject<VcInputContextType | null>("inputContext", null);
+
+const _size = computed(() => {
+  if (props.size) {
+    return props.size;
+  }
+
+  const inputSize = inputContext?.size.value;
+
+  if (inputSize) {
+    if (inputSize === "xs") {
+      return "xxs";
+    }
+
+    if (inputSize === "sm") {
+      return "xs";
+    }
+
+    return "sm";
+  }
+
+  return "md";
 });
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
@@ -146,7 +171,10 @@ const attrs = computed(() => {
 <style lang="scss">
 .vc-button {
   --props-min-width: v-bind(props.minWidth);
-  --min-w: var(--props-min-width, var(--vc-button-min-width, auto));
+  --props-icon-size: v-bind(props.iconSize);
+  --min-w: var(--props-min-width, var(--vc-button-min-width));
+
+  --vc-icon-size: var(--vc-button-icon-size, var(--props-icon-size, var(--line-height)));
 
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
 
@@ -159,7 +187,9 @@ const attrs = computed(() => {
   $loaderIcon: "";
   $noWrap: "";
 
-  @apply relative inline-block rounded border-2 select-none text-center;
+  @apply relative inline-block px-[--px] rounded border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
+
+  appearance: button;
 
   &--truncate {
     $truncate: &;
@@ -175,6 +205,8 @@ const attrs = computed(() => {
 
   &--icon {
     $icon: &;
+
+    @apply flex-none p-0 h-[--size] min-w-[var(--min-w,var(--size))];
   }
 
   &--full-width {
@@ -196,7 +228,7 @@ const attrs = computed(() => {
   &__loader-icon {
     $loaderIcon: &;
 
-    @apply block rounded-full animate-spin;
+    @apply block rounded-full animate-spin border-2 size-[--line-height] border-[--loader-border] border-r-[--loader-border-r];
   }
 
   &:not(#{$icon}) {
@@ -204,141 +236,132 @@ const attrs = computed(() => {
   }
 
   &--size {
-    &--xs {
+    &--xxs {
+      --size: 1.625rem;
       --line-height: 0.875rem;
+      --px: theme("padding[2.5]");
 
-      @apply px-3 py-1.5 text-xs/[--line-height] font-bold;
+      @apply text-xs/[--line-height] font-bold;
+    }
 
-      &#{$icon} {
-        @apply px-1.5;
-      }
+    &--xs {
+      --size: 2rem;
+      --line-height: 0.875rem;
+      --px: theme("padding.3");
 
-      & #{$loaderIcon} {
-        @apply border-2 size-3.5;
-      }
+      @apply text-xs/[--line-height] font-bold;
     }
 
     &--sm {
-      --line-height: 1.25rem;
+      --size: 2.375rem;
+      --line-height: 1rem;
+      --px: theme("padding[3.5]");
 
-      @apply px-3.5 py-1.5 text-xs/[--line-height] uppercase font-black;
-
-      &#{$icon} {
-        @apply px-1.5;
-      }
-
-      & #{$loaderIcon} {
-        @apply border-2 size-5;
-      }
+      @apply text-xs/[--line-height] uppercase font-black tracking-[1%];
     }
 
     &--md {
+      --size: 2.75rem;
       --line-height: 1.25rem;
+      --px: theme("padding.4");
 
-      @apply px-4 py-2.5 text-sm/[--line-height] uppercase font-black;
-
-      &#{$icon} {
-        @apply px-2.5;
-      }
-
-      & #{$loaderIcon} {
-        @apply border-[3px] w-5 h-5;
-      }
+      @apply text-sm/[--line-height] uppercase font-black tracking-[1%];
     }
 
     &--lg {
+      --size: 3.25rem;
       --line-height: 1.5rem;
+      --px: theme("padding.5");
 
-      @apply px-5 py-3 text-base/[--line-height] uppercase font-black;
-
-      &#{$icon} {
-        @apply px-3;
-      }
-
-      & #{$loaderIcon} {
-        @apply border-[3px] w-6 h-6;
-      }
+      @apply text-base/[--line-height] uppercase font-black tracking-[1%];
     }
   }
 
   @each $color in $colors {
     &--color--#{$color} {
       &:focus {
-        @apply outline-[--color-#{$color}-100];
+        --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.2);
       }
 
       &:not([class*="--solid--"]) #{$loaderIcon} {
-        @apply border-[--color-#{$color}-100] border-r-[--color-#{$color}-600];
+        --loader-border: var(--color-#{$color}-100);
+        --loader-border-r: var(--color-#{$color}-500);
       }
     }
 
     &--solid--#{$color} {
-      @apply bg-[--color-#{$color}-600]
-      border-[--color-#{$color}-600]
-      text-additional-50;
+      --bg-color: var(--color-#{$color}-500);
+      --border-color: var(--color-#{$color}-500);
+      --text-color: var(--color-additional-50);
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        @apply bg-[--color-#{$color}-700]
-        border-[--color-#{$color}-700];
+        --bg-color: var(--color-#{$color}-700);
+        --border-color: var(--color-#{$color}-700);
       }
 
       & #{$loaderIcon} {
-        @apply border-[--color-#{$color}-200] border-r-additional-50;
+        --loader-border: var(--color-#{$color}-200);
+        --loader-border-r: var(--color-additional-50);
       }
     }
 
     &--no-border--#{$color} {
-      @apply bg-additional-50 text-[--color-#{$color}-600] border-additional-50;
+      --bg-color: var(--color-additional-50);
+      --border-color: var(--color-additional-50);
+      --text-color: var(--color-#{$color}-500);
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        @apply bg-[--color-#{$color}-100] border-[--color-#{$color}-100] text-[--color-#{$color}-700];
+        --bg-color: var(--color-#{$color}-100);
+        --border-color: var(--color-#{$color}-100);
+        --text-color: var(--color-#{$color}-700);
       }
     }
 
     &--outline {
       &--#{$color} {
-        @apply bg-additional-50
-        text-[--color-#{$color}-600]
-        border-current;
+        --bg-color: var(--color-additional-50);
+        --border-color: currentColor;
+        --text-color: var(--color-#{$color}-500);
 
         &:hover:not(#{$loading}, #{$disabled}) {
-          @apply text-[--color-#{$color}-700];
+          --text-color: var(--color-#{$color}-700);
         }
       }
     }
 
     &--no-background--#{$color} {
-      @apply bg-transparent text-[--color-#{$color}-600] border-transparent;
+      --bg-color: transparent;
+      --border-color: transparent;
+      --text-color: var(--color-#{$color}-500);
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        @apply text-[--color-#{$color}-700];
+        --text-color: var(--color-#{$color}-700);
       }
     }
   }
 
   &#{$disabled}:not(#{$loading}),
   &:disabled#{$disabled}:not(#{$loading}) {
+    --vc-icon-color: var(--color-neutral-400);
+    --text-color: var(--color-neutral-600);
+
     &[class*="--solid--"] {
-      @apply bg-neutral-200 border-neutral-200 text-neutral-400;
+      --bg-color: var(--color-neutral-200);
+      --border-color: var(--color-neutral-200);
     }
 
     &[class*="--no-border--"] {
-      @apply bg-neutral-50 border-neutral-50 text-neutral-400;
+      --bg-color: var(--color-neutral-200);
+      --border-color: var(--color-neutral-200);
     }
 
     &[class*="--outline--"] {
-      @apply text-neutral-400 border-neutral-300;
-    }
-
-    &[class*="--no-background--"] {
-      @apply text-neutral-400;
+      --border-color: var(--color-neutral-300);
     }
   }
 
   &__content {
-    @apply grid grid-flow-col justify-center;
-
-    --vc-icon-size: var(--line-height);
+    @apply grid grid-flow-col justify-center items-center min-h-[calc(var(--size)-0.25rem)];
 
     #{$loading} & {
       @apply invisible;
@@ -390,7 +413,7 @@ const attrs = computed(() => {
   }
 
   &:focus {
-    @apply outline outline-[3px];
+    @apply outline outline-[3px] outline-[--outline-color];
   }
 }
 </style>
