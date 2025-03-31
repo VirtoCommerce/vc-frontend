@@ -17,12 +17,10 @@
       &--grid #{$self} {
         --vc-property-font-size: theme("fontSize.sm");
 
-        @apply grow mt-3;
+        @apply order-4 mt-3;
 
         @container (min-width: theme("containers.xxs")) {
           --vc-property-font-size: theme("fontSize.xs");
-
-          @apply mt-4;
         }
       }
 

@@ -111,13 +111,7 @@ defineProps<IProps>();
       &--grid #{$self} {
         --font-size: theme("fontSize.lg");
 
-        @apply mt-3;
-
-        @container (min-width: theme("containers.xxs")) {
-          --font-size: theme("fontSize.2xl");
-
-          @apply mt-4;
-        }
+        @apply mt-3 order-6;
       }
 
       &--list #{$self} {

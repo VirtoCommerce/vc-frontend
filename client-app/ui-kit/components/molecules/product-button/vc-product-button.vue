@@ -21,18 +21,31 @@
     </slot>
 
     <slot>
-      <router-link v-if="linkText" :to="to" target="_blank" class="vc-product-button__link">
-        <VcIcon class="vc-product-button__icon" name="external-link" />
+      <component
+        :is="linkTo ? 'router-link' : 'div'"
+        v-if="linkText"
+        :to="linkTo ?? null"
+        target="_blank"
+        :class="[
+          'vc-product-button__link',
+          {
+            'vc-product-button__link--text': !linkTo,
+          },
+        ]"
+      >
+        <VcIcon class="vc-product-button__icon" :name="linkIcon" />
 
         <span class="vc-product-button__text">
           {{ linkText }}
         </span>
-      </router-link>
+      </component>
     </slot>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { getColorValue } from "@/ui-kit/utilities";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -42,6 +55,8 @@ interface IEmits {
 interface IProps {
   to?: RouteLocationRaw;
   linkText?: string;
+  linkIcon?: string;
+  linkTo?: RouteLocationRaw;
   buttonText?: string;
   target?: BrowserTargetType;
   variant?: string;
@@ -56,28 +71,43 @@ interface IProps {
 
 defineEmits<IEmits>();
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   to: "",
+  linkTo: "",
   variant: "outline",
   color: "primary",
   size: "sm",
+  linkIcon: "external-link",
 });
+
+const iconColor = computed(() => getColorValue(props.color));
 </script>
 
 <style lang="scss">
 .vc-product-button {
   $self: &;
+  $link: &;
+
+  --props-link-icon-color: v-bind(iconColor);
+
+  --link-color: var(--vc-product-button-link-color, theme("colors.accent.600"));
+  --link-icon-color: var(--props-link-icon-color, theme("colors.primary.500"));
+  --link-hover-color: var(--vc-product-button-link-hover-color, theme("colors.accent.800"));
 
   @apply flex flex-col;
 
   &__link {
     --vc-icon-size: 1rem;
-    --vc-icon-color: theme("colors.primary.500");
+    --vc-icon-color: var(--link-icon-color);
 
-    @apply flex items-center gap-1 text-xs text-[--link-color] hover:text-[--link-hover-color] mt-3.5;
+    @apply mt-3 flex items-center min-h-4 gap-1 text-xs font-bold;
 
-    @container (min-width: theme("containers.xl")) {
-      @apply mt-7;
+    &:not(#{&}--text) {
+      @apply text-[--link-color];
+
+      &:hover {
+        @apply text-[--link-hover-color];
+      }
     }
   }
 
@@ -91,11 +121,15 @@ withDefaults(defineProps<IProps>(), {
     }
 
     &--view-mode {
-      &--grid #{$self} {
-        @apply mt-3;
+      &--grid {
+        #{$self} {
+          @apply mt-3 order-7;
+        }
 
-        @container (min-width: theme("containers.xs")) {
-          @apply mt-4;
+        #{$link} {
+          @media (min-width: theme("screens.xs")) {
+            @apply mt-7;
+          }
         }
       }
 
