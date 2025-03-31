@@ -20,6 +20,7 @@
             :img-src="item.imgSrc"
             :alt="item.name"
             :lazy="index >= lazyCardsCount"
+            :to="getProductRoute(item.id, item.slug)"
           >
             <DiscountBadge :price="item.price!" />
           </VcProductImage>
@@ -29,13 +30,16 @@
             :with-background="viewMode === 'grid'"
           >
             <AddToList :product="item" />
+
             <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="item" />
           </VcProductActions>
         </template>
 
         <VcProductTitle :title="item.name" :to="getProductRoute(item.id, item.slug)" lines-number="2" fix-height />
 
-        <VcProductVendor>{{ item.vendor?.name }}</VcProductVendor>
+        <VcProductVendor v-if="$cfg.vendor_enabled">
+          {{ item.vendor?.name }}
+        </VcProductVendor>
 
         <VcProductProperties v-if="cardType !== 'short'">
           <VcProperty
@@ -78,6 +82,7 @@
           v-else-if="item.isConfigurable"
           :to="getProductRoute(item.id, item.slug)"
           :link-text="$t('pages.catalog.customize_button')"
+          :link-to="getProductRoute(item.id, item.slug)"
           :button-text="$t('pages.catalog.customize_button')"
           icon="cube-transparent"
           :target="browserTarget || $cfg.details_browser_target || '_blank'"
@@ -88,6 +93,7 @@
           v-else-if="item.hasVariations"
           :to="getProductRoute(item.id, item.slug)"
           :link-text="$t('pages.catalog.show_on_a_separate_page')"
+          :link-to="getProductRoute(item.id, item.slug)"
           :button-text="$t('pages.catalog.variations_button', [(item.variations?.length || 0) + 1])"
           :target="browserTarget || $cfg.details_browser_target || '_blank'"
           @link-click="$emit('itemLinkClick', item, $event)"
