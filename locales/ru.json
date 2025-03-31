@@ -1222,7 +1222,8 @@
       },
       "title": "Корзина",
       "empty_cart_description": "Ваша корзина пуста",
-      "recently_browsed_products": "Недавно просмотренные"
+      "recently_browsed_products": "Недавно просмотренные",
+      "empty_cart_search_text": "Используйте поиск, чтобы найти всё необходимое"
     },
     "checkout": {
       "meta": {

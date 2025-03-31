@@ -83,12 +83,13 @@
 
         <VcDialogFooter>
           <template #container>
-            <div class="vc-push-messages__foot">
+            <div class="vc-push-messages__foot" tabindex="-1">
               <VcButton
                 v-if="removable && totalCount"
                 variant="outline"
                 color="secondary"
                 size="xs"
+                class="vc-push-messages__action-start"
                 @click="$emit('clearAll')"
               >
                 {{ $t("push_messages.clear_all") }}
@@ -99,6 +100,7 @@
                 variant="outline"
                 color="secondary"
                 size="xs"
+                class="vc-push-messages__action-end"
                 @click="
                   closeMessages();
                   $emit('viewAll');
@@ -197,16 +199,16 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
     @apply text-xs;
   }
 
-  &__action-left {
-    @apply ms-auto;
-  }
-
-  &__action-right {
+  &__action-start {
     @apply me-auto;
   }
 
+  &__action-end {
+    @apply ms-auto;
+  }
+
   &__foot {
-    @apply flex gap-3 justify-between px-4 py-2 w-full;
+    @apply flex gap-3 px-4 py-2 w-full;
   }
 }
 </style>

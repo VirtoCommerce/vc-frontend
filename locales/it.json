@@ -1222,7 +1222,8 @@
       },
       "title": "Carrello",
       "empty_cart_description": "Il tuo carrello è vuoto",
-      "recently_browsed_products": "Prodotti recentemente visualizzati"
+      "recently_browsed_products": "Prodotti recentemente visualizzati",
+      "empty_cart_search_text": "Usa la ricerca per trovare tutto ciò di cui hai bisogno"
     },
     "checkout": {
       "meta": {
