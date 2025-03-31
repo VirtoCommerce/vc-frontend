@@ -43,7 +43,7 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   isAvailable: true,
   quantity: null,
-  size: "xs",
+  size: "sm",
   textEnabled: true,
 });
 

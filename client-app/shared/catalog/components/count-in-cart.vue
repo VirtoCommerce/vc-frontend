@@ -16,7 +16,7 @@ export interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  size: "xs",
+  size: "sm",
 });
 
 const { cart } = useShortCart();
