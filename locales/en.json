@@ -653,7 +653,7 @@
         "title": "Shipping details",
         "switchers": {
           "pickup": "Pickup",
-          "shipping": "Shipiing"
+          "shipping": "Shipping"
         },
         "labels": {
           "shipping_address": "Shipping address",
