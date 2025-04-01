@@ -1,7 +1,10 @@
 <template>
   <VcChip v-if="countInCart > 0" :size="size" variant="outline-dark" color="neutral" rounded>
-    {{ countInCart }}
-    {{ $t("shared.cart.add_to_cart.errors.in_cart") }}
+    <VcIcon name="cart" />
+
+    <span class="inline-block min-w-3 text-center">
+      {{ countInCart }}
+    </span>
   </VcChip>
 </template>
 

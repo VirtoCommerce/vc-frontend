@@ -3,18 +3,11 @@
     {{ $t("common.labels.digital_product") }}
   </VcChip>
 
-  <VcChip v-else-if="isInStock" :size="size" variant="outline-dark" color="success" rounded>
-    <span v-if="quantity" class="inline-block min-w-5 text-center">
-      {{ inStockQuantityLabel }}
-    </span>
+  <VcChip v-else-if="isInStock && quantity" :size="size" variant="outline-dark" color="success" rounded>
+    <VcIcon name="cube" />
 
-    <span
-      v-if="textEnabled"
-      :class="{
-        'ms-1': quantity,
-      }"
-    >
-      {{ quantity ? $t("common.suffixes.product_count_in_stock") : $t("common.labels.in_stock") }}
+    <span class="inline-block min-w-3 text-center">
+      {{ inStockQuantityLabel }}
     </span>
   </VcChip>
 
