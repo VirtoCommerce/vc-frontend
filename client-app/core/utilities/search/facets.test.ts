@@ -249,6 +249,52 @@ describe("termFacetToCommonFacet", () => {
     });
     expect(globals.i18n.global.d).toHaveBeenCalledWith(mockDate);
   });
+
+  it("formats boolean labels using the i18n translator", () => {
+    vi.mock("@/core/globals", () => ({
+      globals: {
+        i18n: {
+          global: {
+            d: (date: Date) => date.toISOString().split("T")[0],
+            t: (key: string) => {
+              switch (key) {
+                case "common.labels.true_property":
+                  return "Yes";
+                case "common.labels.false_property":
+                  return "No";
+                default:
+                  return key;
+              }
+            },
+          },
+        },
+      },
+    }));
+    vi.mock("@/core/utilities/date", () => ({
+      isDateString: vi.fn().mockReturnValue(false),
+    }));
+
+    const termFacet: TermFacet = {
+      name: "isActive",
+      label: "Active Status",
+      facetType: FacetTypes.Terms,
+      terms: [
+        { term: "true", count: 5, label: "true", isSelected: true },
+        { term: "false", count: 3, label: "false", isSelected: false },
+      ],
+    };
+
+    const result = termFacetToCommonFacet(termFacet);
+    expect(result).toEqual({
+      type: "terms",
+      label: "Active Status",
+      paramName: "isActive",
+      values: [
+        { value: "false", count: 3, label: "No", selected: false },
+        { value: "true", count: 5, label: "Yes", selected: true },
+      ],
+    });
+  });
 });
 
 describe("rangeFacetToCommonFacet", () => {
