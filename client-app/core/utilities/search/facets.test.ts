@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "vitest";
 import { ref } from "vue";
 import { FacetTypes } from "@/core/api/graphql/types";
 import {
@@ -121,6 +121,33 @@ describe("getFilterExpressionFromFacets", () => {
 });
 
 describe("termFacetToCommonFacet", () => {
+  beforeEach(() => {
+    // Mock globals.i18n.global
+    vi.mock("@/core/globals", () => ({
+      globals: {
+        i18n: {
+          global: {
+            d: (date: Date) => {
+              // Format date as YYYY-MM-DD for consistency
+              return date.toISOString().split("T")[0];
+            },
+            t: (key: string) => {
+              // Handle specific translation keys used in getFacetLabel
+              switch (key) {
+                case "common.labels.true_property":
+                  return "Yes";
+                case "common.labels.false_property":
+                  return "No";
+                default:
+                  return key;
+              }
+            },
+          },
+        },
+      },
+    }));
+  });
+
   test("converts term facet to common facet", () => {
     const termFacet: TermFacet = {
       name: "color",
@@ -140,6 +167,29 @@ describe("termFacetToCommonFacet", () => {
       values: [
         { value: "blue", count: 3, label: "Blue", selected: false },
         { value: "red", count: 5, label: "Red", selected: true },
+      ],
+    });
+  });
+
+  test("handles date values with proper formatting", () => {
+    const termFacet: TermFacet = {
+      name: "createdDate",
+      label: "Creation Date",
+      facetType: FacetTypes.Terms,
+      terms: [
+        { term: "2024-01-01", count: 5, label: "2024-01-01", isSelected: true },
+        { term: "2024-02-01", count: 3, label: "2024-02-01", isSelected: false },
+      ],
+    };
+
+    const result = termFacetToCommonFacet(termFacet);
+    expect(result).toEqual({
+      type: "terms",
+      label: "Creation Date",
+      paramName: "createdDate",
+      values: [
+        { value: "2024-01-01", count: 5, label: "2024-01-01", selected: true },
+        { value: "2024-02-01", count: 3, label: "2024-02-01", selected: false },
       ],
     });
   });
