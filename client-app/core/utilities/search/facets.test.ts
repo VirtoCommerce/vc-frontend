@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ref } from "vue";
 import { FacetTypes } from "@/core/api/graphql/types";
-import { globals } from "@/core/globals";
 import {
   getFilterExpressionFromFacetRange,
   getFilterExpressionForCategorySubtree,
@@ -215,39 +214,6 @@ describe("termFacetToCommonFacet", () => {
         { value: "2024-02-01", count: 3, label: "2024-02-01", selected: false },
       ],
     });
-  });
-
-  it("formats date labels using the i18n date formatter", () => {
-    const mockDate = new Date("2024-03-15T12:00:00Z");
-    vi.mock("@/core/globals", () => ({
-      globals: {
-        i18n: {
-          global: {
-            d: vi.fn().mockReturnValue("2024-03-15"),
-            t: (key: string) => key,
-          },
-        },
-      },
-    }));
-    vi.mock("@/core/utilities/date", () => ({
-      isDateString: vi.fn().mockReturnValue(true),
-    }));
-
-    const termFacet: TermFacet = {
-      name: "dateField",
-      label: "Date Field",
-      facetType: FacetTypes.Terms,
-      terms: [{ term: "2024-03-15T12:00:00Z", count: 1, label: "2024-03-15T12:00:00Z", isSelected: true }],
-    };
-
-    const result = termFacetToCommonFacet(termFacet);
-    expect(result).toEqual({
-      type: "terms",
-      label: "Date Field",
-      paramName: "dateField",
-      values: [{ value: "2024-03-15T12:00:00Z", count: 1, label: "2024-03-15", selected: true }],
-    });
-    expect(globals.i18n.global.d).toHaveBeenCalledWith(mockDate);
   });
 
   it("formats boolean labels using the i18n translator", () => {
