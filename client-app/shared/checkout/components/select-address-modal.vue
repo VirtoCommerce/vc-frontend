@@ -220,6 +220,7 @@ interface IProps {
   addresses?: AnyAddressType[];
   isCorporateAddresses: boolean;
   allowAddNewAddress?: boolean;
+  omitFieldsOnCompare?: (keyof AnyAddressType)[];
 }
 
 interface IEmits {
@@ -232,6 +233,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   addresses: () => [],
   allowAddNewAddress: true,
+  omitFieldsOnCompare: () => [],
 });
 
 const { t } = useI18n();
@@ -286,6 +288,8 @@ function save(): void {
 }
 
 watchEffect(() => {
-  selectedAddress.value = props.addresses.find((item) => isEqualAddresses(item, props.currentAddress!));
+  selectedAddress.value = props.addresses.find((item) =>
+    isEqualAddresses(item, props.currentAddress!, { omitFields: props.omitFieldsOnCompare }),
+  );
 });
 </script>

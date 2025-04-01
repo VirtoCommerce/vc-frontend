@@ -50,7 +50,21 @@ export function useBopis() {
 
       props: {
         addresses: normalizedAddresses.value,
-        currentAddress: shipment.value?.deliveryAddress,
+        currentAddress: {
+          ...shipment.value?.deliveryAddress,
+          id: shipment.value?.deliveryAddress?.outerId,
+        },
+        omitFieldsOnCompare: [
+          "outerId",
+          "firstName",
+          "lastName",
+          "name",
+          "organization",
+          "countryCode",
+          "regionName",
+          "email",
+          "addressType",
+        ],
         isCorporateAddresses: true,
         allowAddNewAddress: false,
 
@@ -59,7 +73,7 @@ export function useBopis() {
             id: shipment.value?.id,
             deliveryAddress: {
               ...address,
-              key: address.id,
+              outerId: address.id,
             },
           });
         },
