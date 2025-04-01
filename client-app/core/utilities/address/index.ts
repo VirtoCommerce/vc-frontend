@@ -51,10 +51,6 @@ export function isEqualAddresses(
   const first = pick(address1, verifiableProperties);
   const second = pick(address2, verifiableProperties);
 
-  console.log("options.omitFields", options.omitFields);
-  console.log("first", first);
-  console.log("second", second);
-
   return isEqual(first, second);
 }
 
