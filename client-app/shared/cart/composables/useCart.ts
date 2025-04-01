@@ -433,7 +433,7 @@ export function _useFullCart() {
                         },
                         "CartAddressType",
                       )
-                    : null,
+                    : undefined,
                 },
               ],
             }),

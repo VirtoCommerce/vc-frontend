@@ -12,6 +12,7 @@
             :value="SHIPPING_OPTIONS.pickup"
             icon="cube"
             :label="$t('shared.checkout.shipping_details_section.switchers.pickup')"
+            :disabled="cartChanging"
             @change="switchShippingOptions($event)"
           />
 
@@ -20,9 +21,11 @@
             :value="SHIPPING_OPTIONS.shipping"
             icon="truck"
             :label="$t('shared.checkout.shipping_details_section.switchers.shipping')"
+            :disabled="cartChanging"
             @change="switchShippingOptions($event)"
           />
         </div>
+        {{ deliveryAddress }}
       </div>
 
       <template v-if="mode === SHIPPING_OPTIONS.shipping">
@@ -135,7 +138,7 @@ const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMet
 
 const mode = ref<ShippingOptionType>(shipmentMethod.value?.code === BOPIS_CODE ? "pickup" : "shipping");
 
-const { availableShippingMethods, updateShipment, shipment, removeShipment } = useFullCart();
+const { availableShippingMethods, updateShipment, shipment, removeShipment, changing: cartChanging } = useFullCart();
 const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
 
 const shippingMethods = computed(() => availableShippingMethods.value.filter((method) => method.code !== BOPIS_CODE));
