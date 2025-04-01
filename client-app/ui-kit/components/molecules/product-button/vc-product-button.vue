@@ -90,8 +90,11 @@ const iconColor = computed(() => getColorValue(props.color));
 
   --props-link-icon-color: v-bind(iconColor);
 
+  --link-icon-color: var(
+    --vc-product-button-link-icon-color,
+    var(--props-link-icon-color, theme("colors.primary.500"))
+  );
   --link-color: var(--vc-product-button-link-color, theme("colors.accent.600"));
-  --link-icon-color: var(--props-link-icon-color, theme("colors.primary.500"));
   --link-hover-color: var(--vc-product-button-link-hover-color, theme("colors.accent.800"));
 
   @apply flex flex-col;
