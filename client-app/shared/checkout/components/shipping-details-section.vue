@@ -25,7 +25,6 @@
             @change="switchShippingOptions($event)"
           />
         </div>
-        {{ deliveryAddress }}
       </div>
 
       <template v-if="mode === SHIPPING_OPTIONS.shipping">
