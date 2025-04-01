@@ -97,13 +97,15 @@ const iconColor = computed(() => getColorValue(props.color));
   @apply flex flex-col;
 
   &__link {
+    $link: &;
+
     --vc-icon-size: 1rem;
     --vc-icon-color: var(--link-icon-color);
 
-    @apply mt-3 flex items-center min-h-4 gap-1 text-xs font-bold;
+    @apply mt-3 flex items-center min-h-4 gap-1 text-xs;
 
     &:not(#{&}--text) {
-      @apply text-[--link-color];
+      @apply text-[--link-color] font-bold;
 
       &:hover {
         @apply text-[--link-hover-color];
