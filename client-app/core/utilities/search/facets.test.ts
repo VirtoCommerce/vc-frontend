@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ref } from "vue";
 import { FacetTypes } from "@/core/api/graphql/types";
 import {
@@ -11,11 +11,11 @@ import {
   termFacetToCommonFacet,
   rangeFacetToCommonFacet,
 } from "@/core/utilities";
-import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/core/api/graphql/types";
-import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import type { RangeFacet, TermFacet } from "@/core/api/graphql/types";
+import type { FacetItemType } from "@/core/types";
 
 describe("getFilterExpressionFromFacetRange", () => {
-  test.each`
+  it.each`
     from    | to      | includeFrom | includeTo | expectedString
     ${null} | ${-1.2} | ${true}     | ${false}  | ${"[TO -1.2)"}
     ${null} | ${0}    | ${true}     | ${false}  | ${"[TO 0)"}
@@ -47,7 +47,7 @@ describe("getFilterExpressionFromFacetRange", () => {
 });
 
 describe("getFilterExpressionForCategorySubtree", () => {
-  test.each`
+  it.each`
     catalogId     | categoryId     | expected
     ${"catalog1"} | ${undefined}   | ${"category.subtree:catalog1"}
     ${"catalog1"} | ${"category1"} | ${"category.subtree:catalog1/category1"}
@@ -58,7 +58,7 @@ describe("getFilterExpressionForCategorySubtree", () => {
 });
 
 describe("getFilterExpressionForZeroPrice", () => {
-  test.each`
+  it.each`
     value    | currencyCode | expected
     ${true}  | ${undefined} | ${""}
     ${false} | ${undefined} | ${"price:(0 TO)"}
@@ -72,7 +72,7 @@ describe("getFilterExpressionForZeroPrice", () => {
 });
 
 describe("getFilterExpressionForInStock", () => {
-  test.each`
+  it.each`
     value    | expected
     ${true}  | ${"availability:InStock"}
     ${false} | ${""}
@@ -83,7 +83,7 @@ describe("getFilterExpressionForInStock", () => {
 });
 
 describe("getFilterExpressionForAvailableIn", () => {
-  test.each`
+  it.each`
     branches                  | expected
     ${[]}                     | ${""}
     ${["branch1"]}            | ${'available_in:"branch1"'}
@@ -95,7 +95,7 @@ describe("getFilterExpressionForAvailableIn", () => {
 });
 
 describe("getFilterExpressionFromFacets", () => {
-  test.each`
+  it.each`
     facets                                                                                                                                                                                                                                                             | expected
     ${[]}                                                                                                                                                                                                                                                              | ${""}
     ${[{ type: "terms", paramName: "color", label: "Color", values: [{ selected: true, value: "red", label: "Red", count: 1 }] }]}                                                                                                                                     | ${'"color":"red"'}
@@ -106,7 +106,7 @@ describe("getFilterExpressionFromFacets", () => {
     expect(result).toBe(expected);
   });
 
-  test("handles special characters in facet values", () => {
+  it("handles special characters in facet values", () => {
     const facets: FacetItemType[] = [
       {
         type: "terms",
@@ -148,7 +148,7 @@ describe("termFacetToCommonFacet", () => {
     }));
   });
 
-  test("converts term facet to common facet", () => {
+  it("converts term facet to common facet", () => {
     const termFacet: TermFacet = {
       name: "color",
       label: "Color",
@@ -171,7 +171,7 @@ describe("termFacetToCommonFacet", () => {
     });
   });
 
-  test("handles date values with proper formatting", () => {
+  it("handles date values with proper formatting", () => {
     const termFacet: TermFacet = {
       name: "createdDate",
       label: "Creation Date",
@@ -196,7 +196,7 @@ describe("termFacetToCommonFacet", () => {
 });
 
 describe("rangeFacetToCommonFacet", () => {
-  test("converts range facet to common facet", () => {
+  it("converts range facet to common facet", () => {
     const rangeFacet: RangeFacet = {
       name: "price",
       label: "Price",
