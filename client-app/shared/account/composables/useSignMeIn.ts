@@ -45,8 +45,15 @@ export function useSignMeIn() {
             });
           }
 
+          // Ensure that the currency of the cart (secondCartId) matches the provided currencyCode
           await mergeCart({
-            command: { userId: me.value.me.id, secondCartId: cart.value.id, storeId, cultureName, currencyCode },
+            command: {
+              userId: me.value.me.id,
+              secondCartId: cart.value.id,
+              storeId,
+              cultureName,
+              currencyCode: currentCurrencyCode,
+            },
           });
 
           if (currencyCode && currencyCode !== currentCurrencyCode) {

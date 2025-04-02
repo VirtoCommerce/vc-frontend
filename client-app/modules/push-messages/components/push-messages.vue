@@ -1,5 +1,6 @@
 <template>
   <VcPushMessages
+    ref="pushMessagesRef"
     v-model:show-unread-only="showUnreadOnly"
     :total-count="totalCount"
     :unread-count="unreadCount"
@@ -17,8 +18,14 @@
     <template #trigger>
       <slot name="trigger" :total-count="totalCount" :unread-count="unreadCount" />
     </template>
+
     <template #items>
-      <PushMessage v-for="item in items" :key="item.id" :push-message="item" />
+      <PushMessage
+        v-for="(item, index) in items"
+        :key="item.id"
+        :push-message="item"
+        @toggle-read="handleToggleRead(index)"
+      />
     </template>
   </VcPushMessages>
 </template>
@@ -40,4 +47,19 @@ const showUnreadOnly = useLocalStorage<boolean>("showUnreadOnly_pushMessages_pop
 const { totalCount, unreadCount, items, markReadAll, markUnreadAll, clearAll } = usePushMessages({
   showUnreadOnly,
 });
+
+function handleToggleRead(index: number) {
+  const nextElement = document.querySelector(
+    `.vc-push-messages__items .vc-push-message:nth-child(${index + 2})`,
+  ) as HTMLElement | null;
+  if (nextElement) {
+    nextElement.focus();
+    return;
+  }
+
+  const footerElement = document.querySelector(".vc-push-messages__foot") as HTMLElement | null;
+  if (footerElement) {
+    footerElement.focus();
+  }
+}
 </script>

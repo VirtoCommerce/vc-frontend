@@ -377,7 +377,18 @@
         "no_results": "您的 {keyword} 查询未返回任何结果",
         "enter_keyword_placeholder": "在这里搜索产品",
         "search_button": "搜索",
-        "view_all_results_button": "查看所有 {total} 个结果"
+        "view_all_results_button": "查看所有 {total} 个结果",
+        "barcode_detector": {
+          "title": "条码扫描",
+          "description": "请启用相机扫描产品条形码以继续。 这将帮助我们快速识别商品并为您提供必要的信息。",
+          "errors": {
+            "no_barcode_detected": "图片中未检测到条形码",
+            "wrong_format": "不支持的文件格式",
+            "no_file": "未上传文件"
+          },
+          "browse": "浏览文件",
+          "cancel": "@:common.buttons.cancel"
+        }
       },
       "language_selector": {
         "label": "中文："
@@ -1214,7 +1225,8 @@
       },
       "title": "购物车",
       "empty_cart_description": "您的购物车为空",
-      "recently_browsed_products": "最近浏览的产品"
+      "recently_browsed_products": "最近浏览的产品",
+      "empty_cart_search_text": "使用搜索，找到您需要的一切"
     },
     "checkout": {
       "meta": {

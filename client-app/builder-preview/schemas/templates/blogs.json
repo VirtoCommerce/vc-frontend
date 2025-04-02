@@ -13,19 +13,6 @@
     }
   ],
   "type": "blogs",
-  "sections": [
-    "call-to-action",
-    "call-to-action-with-image",
-    "features",
-    "slider",
-    "login",
-    "image",
-    "page-header",
-    "products",
-    "text",
-    "title",
-    "demo-product-list"
-  ],
   "settings": [
     {
       "id": "header",

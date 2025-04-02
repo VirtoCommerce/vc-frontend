@@ -377,7 +377,18 @@
         "no_results": "Ihre {keyword} Abfrage hat keine Ergebnisse geliefert",
         "enter_keyword_placeholder": "Hier nach Produkten suchen",
         "search_button": "Suchen",
-        "view_all_results_button": "Alle {total} Ergebnisse anzeigen"
+        "view_all_results_button": "Alle {total} Ergebnisse anzeigen",
+        "barcode_detector": {
+          "title": "Barcode-Scan",
+          "description": "Um fortzufahren, aktivieren Sie bitte Ihre Kamera, um den Barcode auf dem Produkt zu scannen. Dies hilft uns, den Artikel schnell zu identifizieren und Ihnen die notwendigen Informationen bereitzustellen.",
+          "errors": {
+            "no_barcode_detected": "Keine Barcodes im Bild erkannt",
+            "wrong_format": "Ungültiges Dateiformat",
+            "no_file": "Keine Datei hochgeladen"
+          },
+          "browse": "Dateien durchsuchen",
+          "cancel": "@:common.buttons.cancel"
+        }
       },
       "language_selector": {
         "label": "Sprache:"
@@ -1214,7 +1225,8 @@
       },
       "title": "Warenkorb",
       "empty_cart_description": "Ihr Warenkorb ist leer",
-      "recently_browsed_products": "Kürzlich angesehen"
+      "recently_browsed_products": "Kürzlich angesehen",
+      "empty_cart_search_text": "Nutze die Suche, um alles zu finden, was du brauchst"
     },
     "checkout": {
       "meta": {

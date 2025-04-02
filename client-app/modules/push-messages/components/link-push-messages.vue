@@ -7,6 +7,7 @@
             <VcIcon :key="totalCount" :name="item.icon" class="mb-0.5 fill-primary" :size="24" />
           </transition>
         </template>
+
         {{ item.title }}
       </BottomHeaderLink>
     </template>

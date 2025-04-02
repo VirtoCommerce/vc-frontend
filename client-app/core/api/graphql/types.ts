@@ -641,6 +641,8 @@ export type ContactType = {
   /** Phones */
   phones: Array<Maybe<Scalars['String']['output']>>;
   securityAccounts?: Maybe<Array<Maybe<UserType>>>;
+  /** Selected shipping address id. */
+  selectedAddressId?: Maybe<Scalars['String']['output']>;
   /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
   /** SEO object type */
@@ -1946,6 +1948,7 @@ export type InputCreateContactType = {
   phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   photoUrl?: InputMaybe<Scalars['String']['input']>;
   salutation?: InputMaybe<Scalars['String']['input']>;
+  selectedAddressId?: InputMaybe<Scalars['String']['input']>;
   timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -2591,6 +2594,7 @@ export type InputUpdateContactType = {
   phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   photoUrl?: InputMaybe<Scalars['String']['input']>;
   salutation?: InputMaybe<Scalars['String']['input']>;
+  selectedAddressId?: InputMaybe<Scalars['String']['input']>;
   timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -4325,6 +4329,82 @@ export type PaymentTypeDynamicPropertiesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type PickupAddressType = {
+  /** City */
+  city: Scalars['String']['output'];
+  /** Country code */
+  countryCode: Scalars['String']['output'];
+  /** Country name */
+  countryName?: Maybe<Scalars['String']['output']>;
+  /** Description */
+  description?: Maybe<Scalars['String']['output']>;
+  /** Email */
+  email?: Maybe<Scalars['String']['output']>;
+  /** Id */
+  id: Scalars['String']['output'];
+  /** Key */
+  key?: Maybe<Scalars['String']['output']>;
+  /** Line1 */
+  line1: Scalars['String']['output'];
+  /** Line2 */
+  line2?: Maybe<Scalars['String']['output']>;
+  /** Name */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Company name */
+  organization?: Maybe<Scalars['String']['output']>;
+  /** Outer id */
+  outerId?: Maybe<Scalars['String']['output']>;
+  /** Phone */
+  phone?: Maybe<Scalars['String']['output']>;
+  /** Postal code */
+  postalCode: Scalars['String']['output'];
+  /** Region id */
+  regionId?: Maybe<Scalars['String']['output']>;
+  /** Region name */
+  regionName?: Maybe<Scalars['String']['output']>;
+};
+
+/** A connection from an object to a list of objects of type `PickupLocation`. */
+export type PickupLocationConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<PickupLocationEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<PickupLocationType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `PickupLocation`. */
+export type PickupLocationEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<PickupLocationType>;
+};
+
+export type PickupLocationType = {
+  /** Address */
+  address?: Maybe<PickupAddressType>;
+  /** ContactEmail */
+  contactEmail?: Maybe<Scalars['String']['output']>;
+  /** ContactPhone */
+  contactPhone?: Maybe<Scalars['String']['output']>;
+  /** Description */
+  description?: Maybe<Scalars['String']['output']>;
+  /** GeoLocation */
+  geoLocation?: Maybe<Scalars['String']['output']>;
+  /** Id */
+  id: Scalars['String']['output'];
+  /** IsActive */
+  isActive: Scalars['Boolean']['output'];
+  /** Name */
+  name: Scalars['String']['output'];
+  /** WorkingHours */
+  workingHours?: Maybe<Scalars['String']['output']>;
+};
+
 export type PriceType = {
   /** Actual price */
   actual: MoneyType;
@@ -4707,6 +4787,7 @@ export type Query = {
   fileUploadOptions?: Maybe<FileUploadScopeOptionsType>;
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
   fulfillmentCenters?: Maybe<FulfillmentCenterConnection>;
+  getPickupInStoreAddresses?: Maybe<PickupLocationConnection>;
   me?: Maybe<UserType>;
   menu?: Maybe<MenuLinkListType>;
   menus: Array<MenuLinkListType>;
@@ -4936,6 +5017,15 @@ export type QueryFulfillmentCentersArgs = {
 };
 
 
+export type QueryGetPickupInStoreAddressesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QueryMeArgs = {
   userId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -5104,6 +5194,8 @@ export type QueryProductsArgs = {
   fuzzyLevel?: InputMaybe<Scalars['Int']['input']>;
   productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   query?: InputMaybe<Scalars['String']['input']>;
+  selectedAddress?: InputMaybe<Scalars['String']['input']>;
+  selectedAddressId?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
@@ -6019,6 +6111,12 @@ export type WhiteLabelingSettingsType = {
   faviconUrl?: Maybe<Scalars['String']['output']>;
   favicons?: Maybe<Array<Maybe<FaviconType>>>;
   footerLinks?: Maybe<Array<Maybe<MenuLinkType>>>;
+  /** If true then FaviconUrl contains Organization favicon */
+  isOrganizationFaviconUploaded?: Maybe<Scalars['Boolean']['output']>;
+  /** If true then LogoUrl contains Organization logo */
+  isOrganizationLogoUploaded?: Maybe<Scalars['Boolean']['output']>;
+  /** If true then SecondaryLogoUrl contains Organization logo */
+  isOrganizationSecondaryLogoUploaded?: Maybe<Scalars['Boolean']['output']>;
   /** Logo URL */
   logoUrl?: Maybe<Scalars['String']['output']>;
   /** Organization ID */

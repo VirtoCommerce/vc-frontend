@@ -56,20 +56,10 @@
           truncate
           @keydown.down.prevent="next(-1)"
           @focus="open"
+          @clear="clear"
           @click="(autocomplete && open) || (!autocomplete && toggle)"
         >
           <template #append>
-            <button
-              v-if="clearable && (filterValue || (selectedText && !isShown))"
-              :aria-label="$t('ui_kit.buttons.toggle_dropdown')"
-              type="button"
-              tabindex="-1"
-              class="vc-select__clear"
-              @click="clear"
-            >
-              <VcIcon name="delete-2" size="xs" />
-            </button>
-
             <button
               :aria-label="$t('ui_kit.buttons.toggle_dropdown')"
               type="button"
