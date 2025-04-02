@@ -76,18 +76,14 @@ describe("buildBreadcrumbs", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should handle nullable seoPath values", () => {
+  it("should handle seoPath with empty string", () => {
     const items = [
-      { title: "Home", seoPath: "home" },
+      { title: "Home", seoPath: "/" },
       { title: "Category", seoPath: "category" },
-      { title: "Products", seoPath: '' },
+      { title: "Products", seoPath: "" },
     ];
 
-    const expected = [
-      { title: "Home", route: "/home" },
-      { title: "Category", route: "/category" },
-      { title: "Products", route: undefined },
-    ];
+    const expected = [{ title: "Home", route: "/" }, { title: "Category", route: "/category" }, { title: "Products" }];
 
     const result = buildBreadcrumbs(items);
     expect(result).toEqual(expected);
