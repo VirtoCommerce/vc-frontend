@@ -385,7 +385,18 @@
         "no_results": "Your {keyword} query did not return any results",
         "enter_keyword_placeholder": "Search for products here",
         "search_button": "Search",
-        "view_all_results_button": "View all {total} results"
+        "view_all_results_button": "View all {total} results",
+        "barcode_detector": {
+          "title": "Barcode scan",
+          "description": "To proceed, please enable your camera to scan the barcode on the product. This will help us quickly identify the item and provide you with the necessary information.",
+          "browse": "Browse files",
+          "cancel": "@:common.buttons.cancel",
+          "errors": {
+            "no_barcode_detected": "No barcodes detected in the image",
+            "wrong_format": "Unsupported file format",
+            "no_file": "No file uploaded"
+          }
+        }
       },
       "language_selector": {
         "label": "Language:"

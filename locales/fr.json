@@ -385,7 +385,18 @@
         "no_results": "Votre requête {keyword} n'a retourné aucun résultat",
         "enter_keyword_placeholder": "Recherchez des produits ici",
         "search_button": "Rechercher",
-        "view_all_results_button": "Voir tous les {total} résultats"
+        "view_all_results_button": "Voir tous les {total} résultats",
+        "barcode_detector": {
+          "title": "Scan du code-barres",
+          "description": "Pour continuer, veuillez activer votre caméra pour scanner le code-barres sur le produit. Cela nous aidera à identifier rapidement l'article et à vous fournir les informations nécessaires.",
+          "errors": {
+            "no_barcode_detected": "Aucun code-barres détecté dans l'image",
+            "wrong_format": "Format de fichier non pris en charge",
+            "no_file": "Aucun fichier n'a été téléchargé"
+          },
+          "browse": "Parcourir les fichiers",
+          "cancel": "@:common.buttons.cancel"
+        }
       },
       "language_selector": {
         "label": "Langue :"
