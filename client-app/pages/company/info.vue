@@ -65,7 +65,6 @@
                     v-if="whiteLabelingLogoUrl !== newLogoUrl"
                     icon="save-v2"
                     class="flex-none"
-                    :disabled="whiteLabelingLogoUrl === newLogoUrl"
                     :loading="loadingOrganizationLogo"
                     @click="saveOrganizationLogo"
                   />
@@ -74,7 +73,7 @@
                     v-else
                     icon="delete-thin"
                     class="flex-none"
-                    :disabled="!whiteLabelingLogoUrl"
+                    :disabled="!isOrganizationLogoUploaded"
                     :loading="loadingOrganizationLogo"
                     @click="openDeleteLogoModal"
                   />
@@ -365,8 +364,8 @@ const {
   options: fileOptions,
   hasFailedFiles,
 } = useFiles(DEFAULT_COMPANY_FILES_SCOPE, undefined);
-const { whiteLabelingLogoUrl, fetchWhiteLabelingSettings } = useWhiteLabeling();
-const newLogoUrl = ref(whiteLabelingLogoUrl.value ?? "");
+const { whiteLabelingLogoUrl, fetchWhiteLabelingSettings, isOrganizationLogoUploaded } = useWhiteLabeling();
+const newLogoUrl = ref(isOrganizationLogoUploaded.value ? whiteLabelingLogoUrl.value : "");
 
 usePageHead({
   title: t("pages.company.info.meta.title"),
@@ -580,11 +579,13 @@ async function onRemoveFiles() {
   void removeFiles(files.value);
   await updateLogo(organizationId.value, "");
   await fetchWhiteLabelingSettings();
+
   notifications.warning({
     text: t("common.messages.logo_deleted"),
     duration: 10000,
     single: true,
   });
+
   files.value.length = 0;
   newLogoUrl.value = "";
 }
