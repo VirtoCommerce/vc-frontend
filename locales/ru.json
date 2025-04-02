@@ -377,7 +377,18 @@
         "no_results": "По вашему запросу {keyword} ничего не найдено",
         "enter_keyword_placeholder": "Поиск товаров",
         "search_button": "Искать",
-        "view_all_results_button": "Просмотреть все {total} результаты"
+        "view_all_results_button": "Просмотреть все результаты ({total})",
+        "barcode_detector": {
+          "title": "Сканирование штрихкода",
+          "description": "Чтобы продолжить, включите камеру для сканирования штрихкода на товаре. Это поможет нам быстро идентифицировать товар и предоставить вам необходимую информацию.",
+          "errors": {
+            "no_barcode_detected": "Штрихкоды на изображении не обнаружены",
+            "wrong_format": "Неподдерживаемый формат файла",
+            "no_file": "Файл не загружен"
+          },
+          "browse": "Обзор файлов",
+          "cancel": "@:common.buttons.cancel"
+        }
       },
       "language_selector": {
         "label": "Язык:"
