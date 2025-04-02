@@ -30,7 +30,7 @@
           </VcInput>
         </VcWidget>
 
-        <VcWidget v-if="canEditOrganization" size="lg" class="lg:w-3/5">
+        <VcWidget v-if="canEditOrganization" size="lg" class="lg:w-7/12">
           <div class="flex flex-col gap-4 xs:flex-row">
             <div class="grow">
               <VcLabel>
@@ -43,15 +43,15 @@
             </div>
 
             <VcFilePicker
-              class="xs:w-7/12 xs:flex-none"
               :disabled="loadingOrganizationLogo || uploadingOrganizationLogo || loadingUser || loadingOrganizationLogo"
               :files="files"
+              class="xs:w-6/12 xs:flex-none"
               v-bind="fileOptions"
               @add-files="onAddFiles"
             >
               <template v-if="newLogoUrl" #custom="{ openFilePicker }">
-                <div class="flex flex-none items-center gap-3">
-                  <div class="flex h-[3.25rem] grow items-center rounded border p-1">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-17 grow items-center justify-center rounded border p-2 xs:max-w-56">
                     <VcImage
                       :alt="$t('pages.company.info.labels.company_logo')"
                       :src="newLogoUrl"
@@ -59,16 +59,10 @@
                     />
                   </div>
 
-                  <VcButton
-                    icon="edit"
-                    class="flex-none"
-                    :loading="uploadingOrganizationLogo"
-                    @click="openFilePicker"
-                  />
+                  <VcButton icon="edit" :loading="uploadingOrganizationLogo" @click="openFilePicker" />
 
                   <VcButton
                     icon="save-v2"
-                    class="flex-none"
                     :disabled="whiteLabelingLogoUrl === newLogoUrl"
                     :loading="loadingOrganizationLogo"
                     @click="saveOrganizationLogo"
@@ -76,13 +70,13 @@
                 </div>
               </template>
 
-              <VcButton v-if="!newLogoUrl" color="secondary" size="xs">
+              <VcButton v-if="!newLogoUrl" color="secondary" size="xs" tag="span">
                 {{ $t("ui_kit.file_uploader.browse") }}
               </VcButton>
             </VcFilePicker>
           </div>
 
-          <div class="mt-1.5">
+          <div class="mt-1.5 empty:hidden">
             <VcAlert v-if="hasFailedFiles" color="danger" variant="solid-light" size="sm" icon>
               {{ files[0].errorMessage }}
             </VcAlert>

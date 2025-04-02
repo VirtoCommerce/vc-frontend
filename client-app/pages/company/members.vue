@@ -76,11 +76,12 @@
           :disabled="contactsLoading"
           :icon="isMobile"
           :variant="isMobile ? 'solid' : 'outline'"
+          :min-width="numberOfFacetsApplied ? '4.25rem' : null"
           @click="filtersVisible = !filtersVisible"
         >
-          <VcIcon name="filter" class="lg:hidden" />
+          <VcIcon v-if="isMobile" name="filter" />
 
-          <span>{{ $t("common.buttons.filters") }}</span>
+          <span v-else>{{ $t("common.buttons.filters") }}</span>
 
           <template #append>
             <transition :name="isMobile ? 'fade' : 'slide-fade-right'">
@@ -88,7 +89,7 @@
                 v-if="numberOfFacetsApplied"
                 :color="contactsLoading ? 'neutral' : 'primary'"
                 :variant="isMobile ? 'outline' : 'solid'"
-                class="ms-2"
+                class="ms-1.5"
                 rounded
               >
                 {{ numberOfFacetsApplied }}
@@ -167,22 +168,16 @@
           class="w-full"
           :disabled="contactsLoading"
           :placeholder="$t('pages.company.members.search_placeholder')"
+          clearable
           @keydown.enter="applyKeyword"
+          @clear="resetKeyword"
         >
           <template #append>
-            <button v-if="localKeyword" type="button" class="flex h-full items-center px-4" @click="resetKeyword">
-              <VcIcon
-                :aria-label="$t('common.buttons.reset_company_members_search_keyword')"
-                class="fill-primary"
-                name="delete-2"
-                size="xs"
-              />
-            </button>
-
             <VcButton
               :aria-label="$t('common.buttons.search_company_members')"
               :disabled="contactsLoading"
               icon="search"
+              icon-size="1.25rem"
               @click="applyKeyword"
             />
           </template>
