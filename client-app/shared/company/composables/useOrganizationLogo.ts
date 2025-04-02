@@ -6,7 +6,7 @@ export function useOrganizationLogo() {
   const loading = ref(false);
 
   async function updateLogo(organizationId: string, logoUrl?: string) {
-    if (!logoUrl) {
+    if (logoUrl === undefined) {
       return;
     }
 
