@@ -2,8 +2,8 @@ query getPickupInStoreAddresses($storeId: String, $keyword: String, $sort: Strin
   getPickupInStoreAddresses(storeId: $storeId, keyword: $keyword, sort: $sort, first: $first, after: $after) {
     totalCount
     items {
-      isActive
       id
+      isActive
       name
       description
       address {
