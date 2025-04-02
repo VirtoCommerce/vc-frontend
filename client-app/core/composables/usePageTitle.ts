@@ -6,6 +6,16 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { useThemeContext } from "./useThemeContext";
 import type { MaybeRef } from "vue";
 
+/**
+ * Builds formatted page titles with environment prefix and store name based on configuration.
+ *
+ * @param title - Title string, array of title segments, or ref to either
+ * @returns {Object} Object containing the formatted page title
+ *
+ * @example
+ * const { title } = usePageTitle("Product Details");
+ * // With default settings in development: "DEV | My Store | Product Details"
+ */
 export function usePageTitle(title?: MaybeRef<string | string[] | undefined>) {
   const { themeContext } = useThemeContext();
   const { environmentName, isIgnored } = useEnvironmentName();
