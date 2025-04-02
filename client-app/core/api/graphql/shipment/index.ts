@@ -1,1 +1,1 @@
-export * from "./queries/getPickupInStoreAddresses";
+export * from "./queries/getPickupLocations";

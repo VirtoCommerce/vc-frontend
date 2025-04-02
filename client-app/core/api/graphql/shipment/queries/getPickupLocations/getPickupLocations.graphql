@@ -1,5 +1,5 @@
-query getPickupInStoreAddresses($storeId: String, $keyword: String, $sort: String, $first: Int, $after: String) {
-  getPickupInStoreAddresses(storeId: $storeId, keyword: $keyword, sort: $sort, first: $first, after: $after) {
+query getPickupLocations($storeId: String, $keyword: String, $sort: String, $first: Int, $after: String) {
+  pickupLocations(storeId: $storeId, keyword: $keyword, sort: $sort, first: $first, after: $after) {
     totalCount
     items {
       id

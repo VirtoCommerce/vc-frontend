@@ -1,5 +1,5 @@
 import { computed } from "vue";
-import { getPickupInStoreAddresses } from "@/core/api/graphql/shipment";
+import { getPickupLocations } from "@/core/api/graphql/shipment";
 import { globals } from "@/core/globals";
 import { useFullCart } from "@/shared/cart/composables";
 import { useModal } from "@/shared/modal";
@@ -14,10 +14,10 @@ const ADDRESSES_FETCH_LIMIT = 999;
 export function useBopis() {
   const { availableShippingMethods, updateShipment, shipment } = useFullCart();
 
-  const { result, loading, error, load } = getPickupInStoreAddresses();
+  const { result, loading, error, load } = getPickupLocations();
 
   const addresses = computed<PickupLocationType[]>(
-    () => (result.value?.getPickupInStoreAddresses?.items as PickupLocationType[]) ?? ([] as PickupLocationType[]),
+    () => (result.value?.pickupLocations?.items as PickupLocationType[]) ?? [],
   );
   const hasBOPIS = computed(() => availableShippingMethods.value.some((method) => method.code === BOPIS_CODE));
   const bopisMethod = computed(() => availableShippingMethods.value.find((method) => method.code === BOPIS_CODE));

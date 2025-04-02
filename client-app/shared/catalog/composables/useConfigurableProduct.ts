@@ -2,9 +2,9 @@ import { provideApolloClient, useMutation } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
 import isEqual from "lodash/isEqual";
 import { ref, readonly, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { apolloClient, getConfigurationItems, getProductConfiguration } from "@/core/api/graphql";
 import { ChangeCartConfiguredItemDocument, CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
-import { useI18n } from "vue-i18n";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { globals } from "@/core/globals";
@@ -338,7 +338,10 @@ function _useConfigurableProduct(configurableProductId: string) {
     };
   }
 
-  function compareInputs(input1: ConfigurationSectionInput, input2: ConfigurationSectionInput) {
+  function compareInputs(
+    input1: ConfigurationSectionInput | DeepReadonly<ConfigurationSectionInput>,
+    input2: ConfigurationSectionInput | DeepReadonly<ConfigurationSectionInput>,
+  ) {
     switch (input1.type) {
       case CONFIGURABLE_SECTION_TYPES.product:
         return isEqual(input1.option, input2.option);

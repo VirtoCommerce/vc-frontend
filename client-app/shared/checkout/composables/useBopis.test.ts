@@ -19,7 +19,7 @@ interface IShipment {
 }
 
 interface IPickupInStoreResult {
-  getPickupInStoreAddresses?: {
+  pickupLocations?: {
     items: IPickupLocation[];
   };
 }
@@ -53,7 +53,7 @@ interface IApolloLazyQueryReturn {
 
 // Mock external dependencies
 vi.mock("@/core/api/graphql/shipment", () => ({
-  getPickupInStoreAddresses: vi.fn(),
+  getPickupLocations: vi.fn(),
 }));
 
 vi.mock("@/shared/cart/composables", () => ({
@@ -71,7 +71,7 @@ vi.mock("@/core/globals", () => ({
 }));
 
 // Import the mocked functions for later configuration
-import { getPickupInStoreAddresses } from "@/core/api/graphql/shipment";
+import { getPickupLocations } from "@/core/api/graphql/shipment";
 import { useFullCart } from "@/shared/cart/composables";
 import { useModal } from "@/shared/modal";
 import { useBopis, BOPIS_CODE } from "./useBopis";
@@ -110,9 +110,9 @@ describe("useBopis composable", () => {
       restart: vi.fn(),
     };
 
-    // Setup getPickupInStoreAddresses mock
-    vi.mocked(getPickupInStoreAddresses).mockReturnValue(
-      mockUseLazyQueryReturn as unknown as ReturnType<typeof getPickupInStoreAddresses>,
+    // Setup getPickupLocations mock
+    vi.mocked(getPickupLocations).mockReturnValue(
+      mockUseLazyQueryReturn as unknown as ReturnType<typeof getPickupLocations>,
     );
 
     // Setup useFullCart mock
@@ -158,9 +158,9 @@ describe("useBopis composable", () => {
   });
 
   describe("Computed Properties and State Exposure", () => {
-    it("should return addresses from getPickupInStoreAddresses result", () => {
+    it("should return addresses from getPickupLocations result", () => {
       resultRef.value = {
-        getPickupInStoreAddresses: {
+        pickupLocations: {
           items: [
             { name: "Location 1", address: { id: "address1" } },
             { name: "Location 2", address: { id: "address2" } },
@@ -250,7 +250,7 @@ describe("useBopis composable", () => {
 
   describe("openSelectAddressModal function", () => {
     it("should call fetchAddresses if addresses are empty and then open modal", async () => {
-      resultRef.value = { getPickupInStoreAddresses: { items: [] } };
+      resultRef.value = { pickupLocations: { items: [] } };
       const { openSelectAddressModal } = useBopis();
       await openSelectAddressModal();
       expect(loadMock).toHaveBeenCalledWith(null, {
@@ -278,7 +278,7 @@ describe("useBopis composable", () => {
     it("should open modal directly if addresses exist without calling load", async () => {
       // Set up the result with existing pickup locations
       resultRef.value = {
-        getPickupInStoreAddresses: {
+        pickupLocations: {
           items: [{ name: "Location 1", address: { id: "address1" } }],
         },
       };
@@ -313,7 +313,7 @@ describe("useBopis composable", () => {
 
     it("should update shipment when onResult callback is called", async () => {
       resultRef.value = {
-        getPickupInStoreAddresses: {
+        pickupLocations: {
           items: [{ name: "Location 1", address: { id: "address1" } }],
         },
       };
@@ -340,7 +340,7 @@ describe("useBopis composable", () => {
     it("should handle missing shipment gracefully, passing undefined currentAddress", async () => {
       shipment.value = null;
       resultRef.value = {
-        getPickupInStoreAddresses: {
+        pickupLocations: {
           items: [{ name: "Location 1", address: { id: "address1" } }],
         },
       };
