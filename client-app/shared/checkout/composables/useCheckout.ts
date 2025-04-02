@@ -14,6 +14,7 @@ import { useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType } from "@/shared/payment";
+import { BOPIS_CODE } from "./useBopis";
 import type {
   CartAddressType,
   CustomerOrderType,
@@ -102,8 +103,13 @@ export function _useCheckout() {
   const { pushHistoricalEvent } = useHistoricalEvents();
 
   const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
+  const isShippingMethodBopis = computed(() => shipment.value?.shipmentMethodCode === BOPIS_CODE);
+
   const billingAddress = computed(() =>
-    !allItemsAreDigital.value && billingAddressEqualsShipping.value && deliveryAddress.value
+    !allItemsAreDigital.value &&
+    !isShippingMethodBopis.value &&
+    billingAddressEqualsShipping.value &&
+    deliveryAddress.value
       ? deliveryAddress.value
       : payment.value?.billingAddress,
   );

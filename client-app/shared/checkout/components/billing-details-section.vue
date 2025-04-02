@@ -8,7 +8,7 @@
 
         <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-neutral-50': disabled }]">
           <VcCheckbox
-            v-if="!allItemsAreDigital"
+            v-if="!allItemsAreDigital && !isShippingMethodBopis"
             v-model="billingAddressEqualsShipping"
             :disabled="disabled"
             name="billingAddressEqualsShipping"
@@ -19,13 +19,13 @@
 
           <AddressSelection
             :placeholder="
-              !allItemsAreDigital && billingAddressEqualsShipping
+              !allItemsAreDigital && !isShippingMethodBopis && billingAddressEqualsShipping
                 ? $t('shared.checkout.shipping_details_section.links.select_address')
                 : $t('shared.checkout.billing_details_section.links.select_address')
             "
             :address="billingAddress"
             :disabled="disabled"
-            :readonly="!allItemsAreDigital && billingAddressEqualsShipping"
+            :readonly="!allItemsAreDigital && !isShippingMethodBopis && billingAddressEqualsShipping"
             class="min-h-[3.313rem] px-3 py-1.5"
             @change="onBillingAddressChange"
           />
@@ -81,9 +81,10 @@
 </template>
 
 <script setup lang="ts">
-import { useFullCart } from "@/shared/cart";
+import { computed } from "vue";
 import { useCheckout } from "@/shared/checkout/composables";
 import { AddressSelection } from "@/shared/common";
+import { BOPIS_CODE } from "../composables/useBopis";
 
 interface IProps {
   disabled?: boolean;
@@ -91,11 +92,15 @@ interface IProps {
 
 defineProps<IProps>();
 
-const { allItemsAreDigital, availablePaymentMethods } = useFullCart();
+const isShippingMethodBopis = computed(() => {
+  return shipmentMethod.value?.code === BOPIS_CODE;
+});
+
 const {
   billingAddressEqualsShipping,
   billingAddress,
   paymentMethod,
+  shipmentMethod,
   onBillingAddressChange,
   setPaymentMethod,
   isPurchaseOrderNumberEnabled,
