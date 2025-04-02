@@ -1,6 +1,6 @@
 import { useSeoMeta } from "@unhead/vue";
 import { computed, watchEffect } from "vue";
-import { usePageHead } from "@/core/composables";
+import { usePageTitle } from "@/core/composables/usePageTitle";
 import { globals } from "@/core/globals";
 import type { Category } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
@@ -23,24 +23,21 @@ export function useCategorySeo({ category, allowSetMeta, categoryComponentAnchor
   const seoDescription = computed(() => category.value?.seoInfo?.metaDescription);
   const seoKeywords = computed(() => category.value?.seoInfo?.metaKeywords);
   const seoImageUrl = computed(() => category.value?.images?.[0]?.url);
+  const { title: pageTitle } = usePageTitle(seoTitle);
+  const seoMeta = useSeoMeta({});
 
   watchEffect(() => {
-    if (allowSetMeta.value && categoryComponentAnchorIsVisible.value) {
-      usePageHead({
-        title: seoTitle,
-        meta: {
-          keywords: seoKeywords,
-          description: seoDescription,
-        },
-      });
-
+    if (allowSetMeta.value && categoryComponentAnchorIsVisible.value && seoMeta) {
       const seoUrl = category.value?.seoInfo?.semanticUrl
         ? `${window.location.host}\${currentCategory.value?.seoInfo?.semanticUrl`
         : window.location.toString();
 
-      useSeoMeta({
+      seoMeta.patch({
+        title: pageTitle,
+        keywords: seoKeywords,
+        description: seoDescription,
         ogUrl: seoUrl,
-        ogTitle: seoTitle,
+        ogTitle: pageTitle,
         ogDescription: seoDescription,
         ogImage: seoImageUrl,
         ogType: "website",

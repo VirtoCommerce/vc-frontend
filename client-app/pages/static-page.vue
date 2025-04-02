@@ -27,40 +27,43 @@
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
-import { computed, shallowRef, unref, watchEffect } from "vue";
-import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { computed, shallowRef, unref, watch } from "vue";
+import { useBreadcrumbs } from "@/core/composables";
+import { usePageTitle } from "@/core/composables/usePageTitle";
 import { useStaticPage } from "@/shared/static-content";
 
 const { staticPage: template } = useStaticPage();
+
 const templateName = computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "");
 
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
 
 const staticPageAnchor = shallowRef<HTMLElement | null>(null);
-const staticPageAnchorIsVisible = useElementVisibility(staticPageAnchor);
+const staticPageAnchorVisible = useElementVisibility(staticPageAnchor);
 
-watchEffect(() => {
-  if (staticPageAnchorIsVisible.value) {
-    const pageTitle = unref(template)?.settings?.seoInfo?.pageTitle || unref(template)?.settings?.name;
-    const pageDescription = unref(template)?.settings?.seoInfo?.metaDescription;
-    const pageKeywords = unref(template)?.settings?.seoInfo?.metaKeywords;
+const { title: pageTitle } = usePageTitle(
+  template.value?.settings?.seoInfo?.pageTitle || template.value?.settings?.name,
+);
 
-    usePageHead({
-      title: computed(() => pageTitle),
-      meta: {
-        keywords: computed(() => pageKeywords),
-        description: computed(() => pageDescription),
-      },
-    });
+const seoMeta = useSeoMeta({});
 
-    useSeoMeta({
-      ogUrl: window.location.toString(),
-      ogTitle: pageTitle,
-      ogDescription: pageDescription,
-      ogType: "website",
-    });
-  }
-});
+watch(
+  staticPageAnchorVisible,
+  (isVisible) => {
+    if (isVisible && seoMeta) {
+      seoMeta.patch({
+        title: pageTitle,
+        description: template.value?.settings?.seoInfo?.metaDescription,
+        keywords: template.value?.settings?.seoInfo?.metaKeywords,
+        ogUrl: window.location.toString(),
+        ogTitle: pageTitle,
+        ogDescription: template.value?.settings?.seoInfo?.metaDescription,
+        ogType: "website",
+      });
+    }
+  },
+  { immediate: true },
+);
 
 function getBlockType(type: string): string {
   switch (type) {

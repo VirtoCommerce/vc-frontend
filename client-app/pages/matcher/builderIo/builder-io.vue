@@ -6,10 +6,11 @@
 
 <script setup lang="ts">
 import { Content, fetchOneEntry, getBuilderSearchParams, isPreviewing } from "@builder.io/sdk-vue";
+import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { onMounted, ref, shallowRef, watchEffect } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
-import { usePageHead } from "@/core/composables";
+import { usePageTitle } from "@/core/composables";
 import { builderIOComponents } from "./customComponents";
 import type { StateType } from "../priorityManager";
 import type { BuilderContent } from "@builder.io/sdk-vue";
@@ -79,20 +80,19 @@ const builderIoAnchor = shallowRef<HTMLElement | null>(null);
 const builderIoAnchorIsVisible = useElementVisibility(builderIoAnchor);
 
 type MetaDataType = { title?: string; keywords?: string; description?: string };
+const seoMeta = useSeoMeta({});
 
 watchEffect(() => {
   const data: MetaDataType | undefined = content.value?.data;
 
-  if (data && builderIoAnchorIsVisible.value) {
+  if (data && builderIoAnchorIsVisible.value && seoMeta) {
     const { title, keywords, description } = data;
+    const { title: pageTitle } = usePageTitle(title);
 
-    usePageHead({
-      title,
-      meta: {
-        title,
-        keywords,
-        description,
-      },
+    seoMeta.patch({
+      title: pageTitle,
+      keywords,
+      description,
     });
   }
 });

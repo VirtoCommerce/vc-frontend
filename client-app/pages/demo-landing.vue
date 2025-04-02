@@ -171,25 +171,29 @@
 </template>
 
 <script setup lang="ts">
+import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { onMounted, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBreadcrumbs, usePageHead, useProductsRoutes } from "@/core/composables";
+import { useBreadcrumbs, useProductsRoutes, usePageTitle } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
 import { ProductCardGrid, useProducts } from "@/shared/catalog";
 
 const { t } = useI18n();
 const { products, fetchProducts } = useProducts();
+const { title: pageTitle } = usePageTitle(t("pages.demo_landing.meta.title"));
 
 const productsRoutes = useProductsRoutes(products);
 
 const demoPageAnchor = shallowRef<HTMLElement | null>(null);
 const demoPageAnchorIsVisible = useElementVisibility(demoPageAnchor);
 
+const seoMeta = useSeoMeta({});
+
 watch(demoPageAnchorIsVisible, (value) => {
-  if (value) {
-    usePageHead({
-      title: t("pages.demo_landing.meta.title"),
+  if (value && seoMeta) {
+    seoMeta.patch({
+      title: pageTitle,
     });
   }
 });
