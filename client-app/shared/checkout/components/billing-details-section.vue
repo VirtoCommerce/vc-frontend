@@ -82,6 +82,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { AddressSelection } from "@/shared/common";
 import { BOPIS_CODE } from "../composables/useBopis";
@@ -95,6 +96,8 @@ defineProps<IProps>();
 const isShippingMethodBopis = computed(() => {
   return shipmentMethod.value?.code === BOPIS_CODE;
 });
+
+const { allItemsAreDigital, availablePaymentMethods } = useFullCart();
 
 const {
   billingAddressEqualsShipping,
