@@ -2,19 +2,19 @@
   <div class="vc-add-to-cart" :class="{ 'vc-add-to-cart--hide-button': hideButton }">
     <VcInput
       v-model.number="quantity"
-      :name
+      :name="name"
       type="number"
       :aria-label="$t('ui_kit.labels.product_quantity')"
       :disabled="disabled"
       :max="maxQuantity"
       :min="minQuantity"
-      size="sm"
+      :size="size"
       single-line-message
       center
       :error="!isValid || error"
       :message="message"
       :show-empty-details="showEmptyDetails"
-      :readonly
+      :readonly="readonly"
       @input="onChange"
       @blur="onFocusOut"
     >
@@ -27,7 +27,6 @@
             :disabled="isDisabled"
             :title="buttonText"
             :icon="icon"
-            size="sm"
             @click.stop="$emit('update:cartItemQuantity', quantity!)"
           />
 
@@ -38,13 +37,13 @@
             :loading="loading"
             :disabled="isDisabled"
             :title="buttonText"
-            size="sm"
             truncate
             @click.stop="$emit('update:cartItemQuantity', quantity!)"
           >
             {{ buttonText }}
           </VcButton>
         </template>
+
         <slot name="append" />
       </template>
     </VcInput>
@@ -93,12 +92,14 @@ interface IProps {
   readonly?: boolean;
   timeout?: number;
   validateOnMount?: boolean;
+  size?: "xs" | "sm" | "md";
 }
 
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   validateOnMount: true,
+  size: "sm",
 });
 
 const { t } = useI18n();
@@ -235,8 +236,6 @@ watchEffect(async () => {
   }
 
   &__icon-button.vc-button {
-    @apply w-24 max-w-full;
-
     @container (width > theme("containers.xxs")) {
       @apply hidden;
     }
@@ -246,7 +245,7 @@ watchEffect(async () => {
     @apply hidden;
 
     @container (width > theme("containers.xxs")) {
-      @apply block w-32;
+      @apply block;
     }
   }
 
