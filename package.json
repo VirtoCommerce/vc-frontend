@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "2.18.0",
+  "version": "2.19.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -56,6 +56,7 @@
     "@vueuse/core": "^10.11.0",
     "@vueuse/integrations": "^10.11.0",
     "axios": "^1.7.2",
+    "barcode-detector": "3.0.1",
     "dompurify": "^3.1.6",
     "firebase": "^11.0.1",
     "graphql": "^16.8.2",
@@ -165,5 +166,5 @@
   "engines": {
     "node": ">=22.10.0 <23.0.0"
   },
-  "packageManager": "yarn@4.5.1"
+  "packageManager": "yarn@4.7.0"
 }

@@ -12,7 +12,7 @@
         {{ $t("common.buttons.yes") }}
       </VcButton>
 
-      <VcButton class="ms-auto" @click="close()">
+      <VcButton @click="close()">
         {{ $t("common.buttons.no") }}
       </VcButton>
     </template>
