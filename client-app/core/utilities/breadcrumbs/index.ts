@@ -2,7 +2,7 @@ export function buildBreadcrumbs<T extends { title: string; seoPath?: string }[]
   return (
     items?.map(({ title, seoPath }) => ({
       title,
-      route: seoPath?.startsWith("/") ? seoPath : "/" + seoPath,
+      route: seoPath ? (seoPath.startsWith("/") ? seoPath : "/" + seoPath) : undefined,
     })) || []
   );
 }
