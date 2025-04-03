@@ -217,20 +217,20 @@ export type CartAddressType = {
 };
 
 export type CartConfigurationItemFileType = {
-  /** Mime type of the file */
+  /** MIME type of the file */
   contentType?: Maybe<Scalars['String']['output']>;
   /** Name of the file */
   name: Scalars['String']['output'];
   /** Size of the file */
   size: Scalars['Long']['output'];
-  /** Url of the file */
+  /** URL of the file */
   url: Scalars['String']['output'];
 };
 
 export type CartConfigurationItemType = {
-  /** Custom text for 'Text'-type configuration item section */
+  /** Custom text for 'Text' configuration item section */
   customText?: Maybe<Scalars['String']['output']>;
-  /** List of files for 'File'-type configuration item section */
+  /** List of files for 'File' configuration item section */
   files?: Maybe<Array<Maybe<CartConfigurationItemFileType>>>;
   /** Configuration item ID */
   id: Scalars['String']['output'];
@@ -396,11 +396,6 @@ export type CartType = {
   weight?: Maybe<Scalars['Decimal']['output']>;
   /** Shopping cart weight unit value */
   weightUnit?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type CartTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -574,9 +569,9 @@ export type ConfigurationQueryResponseType = {
 };
 
 export type ConfigurationSectionInput = {
-  /** Custom text for 'Text'-type section */
+  /** Custom text for 'Text' section */
   customText?: InputMaybe<Scalars['String']['input']>;
-  /** List of file links for 'File'-type section */
+  /** List of file links for 'File' section */
   fileUrls?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   /** Configuration section option/product */
   option?: InputMaybe<ConfigurableProductOptionInput>;
@@ -656,6 +651,8 @@ export type ContactType = {
   /** Phones */
   phones: Array<Maybe<Scalars['String']['output']>>;
   securityAccounts?: Maybe<Array<Maybe<UserType>>>;
+  /** Selected shipping address id. */
+  selectedAddressId?: Maybe<Scalars['String']['output']>;
   /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
   /** SEO object type */
@@ -1961,6 +1958,7 @@ export type InputCreateContactType = {
   phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   photoUrl?: InputMaybe<Scalars['String']['input']>;
   salutation?: InputMaybe<Scalars['String']['input']>;
+  selectedAddressId?: InputMaybe<Scalars['String']['input']>;
   timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -2606,6 +2604,7 @@ export type InputUpdateContactType = {
   phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   photoUrl?: InputMaybe<Scalars['String']['input']>;
   salutation?: InputMaybe<Scalars['String']['input']>;
+  selectedAddressId?: InputMaybe<Scalars['String']['input']>;
   timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -2850,11 +2849,6 @@ export type LineItemType = {
   weightUnit?: Maybe<Scalars['String']['output']>;
   /** Width value */
   width?: Maybe<Scalars['Decimal']['output']>;
-};
-
-
-export type LineItemTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type LocalizedSettingResponseType = {
@@ -3763,20 +3757,20 @@ export type OrderAddressType = {
 };
 
 export type OrderConfigurationItemFileType = {
-  /** Mime type of the file */
+  /** MIME type of the file */
   contentType?: Maybe<Scalars['String']['output']>;
   /** Name of the file */
   name: Scalars['String']['output'];
   /** Size of the file */
   size: Scalars['Long']['output'];
-  /** Url of the file */
+  /** URL of the file */
   url: Scalars['String']['output'];
 };
 
 export type OrderConfigurationItemType = {
   /** Configuration item custom text */
   customText?: Maybe<Scalars['String']['output']>;
-  /** List of files for 'File'-type configuration item section */
+  /** List of files for 'File' configuration item section */
   files?: Maybe<Array<Maybe<OrderConfigurationItemFileType>>>;
   /** Configuration item ID */
   id: Scalars['String']['output'];
@@ -4346,11 +4340,6 @@ export type PaymentType = {
   /** Total with tax */
   totalWithTax: MoneyType;
   vendor?: Maybe<CommonVendor>;
-};
-
-
-export type PaymentTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PriceType = {
@@ -5132,6 +5121,8 @@ export type QueryProductsArgs = {
   fuzzyLevel?: InputMaybe<Scalars['Int']['input']>;
   productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   query?: InputMaybe<Scalars['String']['input']>;
+  selectedAddress?: InputMaybe<Scalars['String']['input']>;
+  selectedAddressId?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
@@ -5665,11 +5656,6 @@ export type ShipmentType = {
   width?: Maybe<Scalars['Decimal']['output']>;
 };
 
-
-export type ShipmentTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type ShippingMethodType = {
   /** Value of shipping gateway code */
   code: Scalars['String']['output'];
@@ -6047,6 +6033,12 @@ export type WhiteLabelingSettingsType = {
   faviconUrl?: Maybe<Scalars['String']['output']>;
   favicons?: Maybe<Array<Maybe<FaviconType>>>;
   footerLinks?: Maybe<Array<Maybe<MenuLinkType>>>;
+  /** If true then FaviconUrl contains Organization favicon */
+  isOrganizationFaviconUploaded?: Maybe<Scalars['Boolean']['output']>;
+  /** If true then LogoUrl contains Organization logo */
+  isOrganizationLogoUploaded?: Maybe<Scalars['Boolean']['output']>;
+  /** If true then SecondaryLogoUrl contains Organization logo */
+  isOrganizationSecondaryLogoUploaded?: Maybe<Scalars['Boolean']['output']>;
   /** Logo URL */
   logoUrl?: Maybe<Scalars['String']['output']>;
   /** Organization ID */
