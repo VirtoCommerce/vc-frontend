@@ -1,7 +1,7 @@
 import { createSharedComposable } from "@vueuse/core";
 import { cloneDeep, omit, remove } from "lodash";
 import { computed, ref } from "vue";
-import { AddressType } from "@/core/enums";
+import { AddressType, ProductType } from "@/core/enums";
 import { Logger } from "@/core/utilities";
 import { toAttachedFile } from "@/ui-kit/utilities";
 import {
@@ -27,6 +27,10 @@ export function _useUserQuote() {
   const fetching = ref<boolean>(false);
 
   const quote = ref<QuoteType | undefined>();
+
+  const allItemsAreDigital = computed<boolean>(
+    () => quote.value?.items?.every((item) => item.product?.productType === ProductType.Digital) ?? false,
+  );
 
   const billingAddress = computed<QuoteAddressType | undefined>(() =>
     quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Billing),
@@ -179,6 +183,7 @@ export function _useUserQuote() {
   return {
     fetching: computed(() => fetching.value),
     quote: computed(() => quote.value),
+    allItemsAreDigital,
     billingAddress,
     shippingAddress,
     attachments,
