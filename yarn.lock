@@ -3643,13 +3643,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@kurkle/color@npm:^0.3.0":
-  version: 0.3.4
-  resolution: "@kurkle/color@npm:0.3.4"
-  checksum: 10c0/0e9fd55c614b005c5f0c4c755bca19ec0293bc7513b4ea3ec1725234f9c2fa81afbc78156baf555c8b9cb0d305619253c3f5bca016067daeebb3d00ebb4ea683
-  languageName: node
-  linkType: hard
-
 "@mdx-js/react@npm:^3.0.0":
   version: 3.1.0
   resolution: "@mdx-js/react@npm:3.1.0"
@@ -6793,15 +6786,6 @@ __metadata:
   version: 3.9.1
   resolution: "chart.js@npm:3.9.1"
   checksum: 10c0/a31342233403faaa53bebc1019aeb7b849d6d2cd4108c10f1dd73b36c4fcfc7c21bce8986f2f6eb00a28801fddc68a287b8c9f65e9758c50db6efef955b4e991
-  languageName: node
-  linkType: hard
-
-"chart.js@npm:^4.4.8":
-  version: 4.4.8
-  resolution: "chart.js@npm:4.4.8"
-  dependencies:
-    "@kurkle/color": "npm:^0.3.0"
-  checksum: 10c0/4777e3fef7ccfb664c02b79f90e53fb0e46c01293bc56af5ab81aa8ffef4b1ccc675bef948b7efd071a5dd0ebd59c0e95c42ef606f728da8e3ff1741fc2d1df0
   languageName: node
   linkType: hard
 
@@ -11774,6 +11758,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nouislider@npm:^15.8.1":
+  version: 15.8.1
+  resolution: "nouislider@npm:15.8.1"
+  checksum: 10c0/1e79a2fa2847084a36762de9b431104c83c5f5729b272e962291104f755c8235e92273ff9a4f9e866c34ae9eb2733b6bdc70e1e70701b39e4d172f1da98804e4
+  languageName: node
+  linkType: hard
+
 "npm-normalize-package-bin@npm:^3.0.0":
   version: 3.0.1
   resolution: "npm-normalize-package-bin@npm:3.0.1"
@@ -15216,7 +15207,6 @@ __metadata:
     "@vueuse/integrations": "npm:^10.11.0"
     autoprefixer: "npm:^10.4.19"
     axios: "npm:^1.7.2"
-    chart.js: "npm:^4.4.8"
     dependency-cruiser: "npm:^16.3.3"
     dompurify: "npm:^3.1.6"
     eslint: "npm:^8.57.0"
@@ -15240,6 +15230,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     marked: "npm:^13.0.3"
     maska: "npm:^2.1.11"
+    nouislider: "npm:^15.8.1"
     npm-run-all2: "npm:^6.2.0"
     postcss: "npm:^8.4.38"
     postcss-import: "npm:^16.1.0"
@@ -15262,8 +15253,6 @@ __metadata:
     vite-plugin-mkcert: "npm:^1.17.5"
     vitest: "npm:^3.0.5"
     vue: "npm:^3.5.12"
-    vue-3-slider-component: "npm:^1.0.2"
-    vue-chartjs: "npm:^5.3.2"
     vue-component-type-helpers: "npm:^2.0.21"
     vue-html-secure: "npm:^1.0.10"
     vue-i18n: "npm:^11.0.1"
@@ -15593,25 +15582,6 @@ __metadata:
   version: 3.1.0
   resolution: "vscode-uri@npm:3.1.0"
   checksum: 10c0/5f6c9c10fd9b1664d71fab4e9fbbae6be93c7f75bb3a1d9d74399a88ab8649e99691223fd7cef4644376cac6e94fa2c086d802521b9a8e31c5af3e60f0f35624
-  languageName: node
-  linkType: hard
-
-"vue-3-slider-component@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "vue-3-slider-component@npm:1.0.2"
-  peerDependencies:
-    vue: ^3.0.0
-  checksum: 10c0/8d7d51ef8ea8102004f61f4751457c2780723408b98ff8fb8bcdb2300205a3ff6c04eee87d7361fe8af1096ccc640bc192ee81a6cd62edd9dd6daa252df19ef2
-  languageName: node
-  linkType: hard
-
-"vue-chartjs@npm:^5.3.2":
-  version: 5.3.2
-  resolution: "vue-chartjs@npm:5.3.2"
-  peerDependencies:
-    chart.js: ^4.1.1
-    vue: ^3.0.0-0 || ^2.7.0
-  checksum: 10c0/e07d6766d058ecb11798ce3764105db2878c77bb6c887bf634644b5bf763e881e749b0d1a2981281126c889206b7fbe3b8db43ede275f951a84ec6087a83ff4e
   languageName: node
   linkType: hard
 

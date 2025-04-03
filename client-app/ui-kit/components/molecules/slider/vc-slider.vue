@@ -1,63 +1,51 @@
 <template>
   <div class="vc-slider">
-    <Bar :options="chartOptions" :data="chartData" />
+    <div class="vc-slider__cols">
+      <div class="vc-slider__col"></div>
+    </div>
 
-    <VueSlider v-model="value" />
+    <div ref="sliderRef" class="vc-slider__slider"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Chart as ChartJS, Tooltip, BarElement, CategoryScale, LinearScale } from "chart.js";
-import { computed, ref } from "vue";
-import VueSlider from "vue-3-slider-component";
-import { Bar } from "vue-chartjs";
-import type { ChartEvent } from "chart.js";
+import { create } from "nouislider";
+import { ref, onMounted } from "vue";
+import "nouislider/dist/nouislider.css";
 
-const value = ref([20, 40]);
-ChartJS.register(Tooltip, BarElement, CategoryScale, LinearScale);
+const sliderRef = ref<HTMLElement | null>(null);
 
-const chartData = computed(() => ({
-  labels: ["", "", "", ""],
-  datasets: [{ data: [40, 20, 62, 5] }],
-}));
+onMounted(() => {
+  if (sliderRef.value) {
+    create(sliderRef.value, {
+      range: {
+        min: 1300,
+        max: 3250,
+      },
 
-const chartOptions = computed(() => ({
-  responsive: true,
-  devicePixelRatio: 2.5,
-  scales: {
-    x: {
-      border: {
-        display: false,
-      },
-      grid: {
-        display: false,
-      },
-      ticks: {
-        display: false,
-      },
-    },
-    y: {
-      border: {
-        display: false,
-      },
-      grid: {
-        display: false,
-      },
-      ticks: {
-        display: false,
-      },
-    },
-  },
-  onClick: handleClick,
-}));
+      step: 10,
 
-function handleClick(e: ChartEvent) {
-  console.log("handleClick", e);
-}
+      start: [10, 2050],
+
+      connect: true,
+    });
+  }
+});
 </script>
 
 <style lang="scss">
 .vc-slider {
-  @apply w-48;
+  @apply w-full;
+
+  &__slider {
+    .noUi-handle {
+      @apply size-8 rounded-full;
+
+      &:before,
+      &:after {
+        content: none;
+      }
+    }
+  }
 }
 </style>
