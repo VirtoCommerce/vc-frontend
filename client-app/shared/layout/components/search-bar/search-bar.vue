@@ -5,18 +5,21 @@
       type="search"
       :maxlength="MAX_LENGTH"
       class="w-full"
+      :clearable="!!searchPhrase"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
-      clearable
+      @clear="reset"
       @keyup.enter="goToSearchResultsPage"
       @keyup.esc="hideSearchDropdown"
       @input="onSearchPhraseChanged"
       @focus="onSearchBarFocused"
-      @clear="reset"
     >
       <template #append>
+        <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
+
         <VcButton
           :aria-label="$t('shared.layout.search_bar.search_button')"
           icon="search"
+          icon-size="1.25rem"
           :loading="loading"
           @click="goToSearchResultsPage"
         />
@@ -146,10 +149,12 @@ import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice 
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
+import BarcodeScanner from "./barcode-scanner.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category } from "@/core/api/graphql/types";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
+import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
 const { themeContext } = useThemeContext();
 
@@ -272,7 +277,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
 
 function getSearchRoute(phrase: string): RouteLocationRaw {
   return {
-    name: "Search",
+    name: ROUTES.SEARCH.NAME,
     query: {
       [QueryParamName.SearchPhrase]: phrase,
     },
@@ -290,7 +295,7 @@ function goToSearchResultsPage() {
 function reset() {
   searchPhrase.value = "";
   hideSearchDropdown();
-  void router.push({ name: ROUTES.CATALOG.NAME });
+  void router.push({ name: ROUTES.SEARCH.NAME });
 }
 
 const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEARCH_BAR_DEBOUNCE_TIME);
@@ -320,4 +325,11 @@ onMounted(() => {
     searchPhrase.value = searchPhraseInUrl.value;
   }
 });
+
+const onBarcodeScanned = (value: string) => {
+  if (value) {
+    searchPhrase.value = value;
+    goToSearchResultsPage();
+  }
+};
 </script>
