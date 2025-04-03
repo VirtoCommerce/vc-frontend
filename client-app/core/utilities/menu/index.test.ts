@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { globals } from "@/core/globals";
+import { globals } from "../../globals";
 import { convertToExtendedMenuLink, categoryToExtendedMenuLink, getTranslatedMenuLink } from "./index";
 import type { MenuLinkType, Category } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
