@@ -1,8 +1,8 @@
 import { createGlobalState } from "@vueuse/core";
 import cloneDeep from "lodash/cloneDeep";
 import { computed, ref } from "vue";
+import { presets } from "@/assets/presets";
 import settingsData from "@/config/settings_data.json";
-import { Logger } from "@/core/utilities";
 import { IS_DEVELOPMENT } from "../constants";
 import type { StoreResponseType } from "../api/graphql/types";
 import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
@@ -25,16 +25,16 @@ function _useThemeContext() {
     };
   }
 
-  async function addPresetToThemeContext(presetName: string): Promise<void> {
+  function addPresetToThemeContext(presetName: string): void {
     if (!themeContext.value) {
       throw new Error("The global state should be defined");
     }
 
-    let preset = await fetchPreset(presetNameToFileName(presetName));
+    let preset = getPreset(presetNameToFileName(presetName));
 
     if (!preset) {
       const defaultPresetName = getThemeConfig().current;
-      preset = await fetchPreset(presetNameToFileName(defaultPresetName));
+      preset = getPreset(presetNameToFileName(defaultPresetName));
     }
 
     if (preset) {
@@ -54,14 +54,11 @@ function _useThemeContext() {
     return data;
   }
 
-  async function fetchPreset(themePresetName: string): Promise<IThemeConfigPreset | void> {
-    try {
-      const module = (await import(`../../assets/presets/${themePresetName}.json`)) as {
-        default: IThemeConfigPreset;
-      };
-      return module.default;
-    } catch (e) {
-      Logger.error(fetchPreset.name, e);
+  function getPreset(themePresetName: string): IThemeConfigPreset {
+    if (themePresetName in presets) {
+      return presets[themePresetName];
+    } else {
+      return presets.default;
     }
   }
 
