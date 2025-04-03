@@ -130,7 +130,7 @@ export default async () => {
    */
 
   await Promise.all([fetchMenus(), fetchWhiteLabelingSettings()]);
-  await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
+  addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
 
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
