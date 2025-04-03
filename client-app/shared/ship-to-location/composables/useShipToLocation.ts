@@ -109,7 +109,7 @@ export function useShipToLocation() {
       case USER_TYPE.CORPORATE:
         return accountAddresses.value.find((address) => address.id === user.value?.contact?.selectedAddressId);
       case USER_TYPE.CORPORATE_LIMITED:
-        return accountAddresses.value.length
+        return organizationsAddresses.value.length
           ? accountAddresses.value.find((address) => address.id === user.value?.contact?.selectedAddressId)
           : localShipToAddresses.value.find((address) => address.id === selectedLocalShipToAddressId.value);
       case USER_TYPE.ANONYMOUS:
@@ -301,6 +301,7 @@ export function useShipToLocation() {
     accountAddresses,
     loading,
     selectedAddress,
+    organizationsAddresses,
 
     fetchAddresses,
     selectAddress,

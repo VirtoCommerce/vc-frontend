@@ -146,6 +146,7 @@ const {
   accountAddresses: allAddresses,
   loading,
   selectedAddress,
+  organizationsAddresses,
   getFilteredAddresses,
   getLimitedAddresses,
   fetchAddresses,
@@ -165,7 +166,10 @@ const addresses = computed(() => {
 
 const hasAddresses = computed(() => addresses.value.length > 0);
 const canAddNewAddress = computed(
-  () => !isCorporateMember.value || checkPermissions(XApiPermissions.CanEditOrganization),
+  () =>
+    !isCorporateMember.value ||
+    checkPermissions(XApiPermissions.CanEditOrganization) ||
+    (!checkPermissions(XApiPermissions.CanEditOrganization) && organizationsAddresses.value.length === 0),
 );
 
 watchEffect(async () => {
