@@ -156,7 +156,9 @@ export function _useCheckout() {
 
   const isValidDeliveryAddress = computed<boolean>(() => !!shipment.value?.deliveryAddress);
   const isValidBillingAddress = computed<boolean>(
-    () => (!allItemsAreDigital.value && billingAddressEqualsShipping.value) || !!payment.value?.billingAddress,
+    () =>
+      (!allItemsAreDigital.value && !isShippingMethodBopis.value && billingAddressEqualsShipping.value) ||
+      !!payment.value?.billingAddress,
   );
   const isValidShipmentMethod = computed<boolean>(() => !!shipment.value?.shipmentMethodCode);
   const isValidPaymentMethod = computed<boolean>(() => !!payment.value?.paymentGatewayCode);
@@ -418,7 +420,7 @@ export function _useCheckout() {
     };
 
     // Save shipping address as billing address
-    if (!allItemsAreDigital.value && billingAddressEqualsShipping.value) {
+    if (!allItemsAreDigital.value && !isShippingMethodBopis.value && billingAddressEqualsShipping.value) {
       filledPayment.billingAddress = {
         ...omit(shipment.value!.deliveryAddress, ["id"]),
         addressType: AddressType.Billing,
@@ -435,7 +437,8 @@ export function _useCheckout() {
     // Parallel saving of new addresses in account. Before cleaning shopping cart
     if (isAuthenticated.value) {
       void saveNewAddresses({
-        shippingAddress: !allItemsAreDigital.value ? shipment.value!.deliveryAddress : undefined,
+        shippingAddress:
+          !allItemsAreDigital.value && !isShippingMethodBopis.value ? shipment.value!.deliveryAddress : undefined,
         billingAddress: payment.value!.billingAddress,
       });
     }
