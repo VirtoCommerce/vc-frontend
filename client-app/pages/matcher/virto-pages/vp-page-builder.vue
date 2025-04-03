@@ -1,7 +1,6 @@
 <template>
   <div v-if="pageBuilderContent">
     <template v-for="item in pageBuilderContent.content">
-      <!-- @deprecated. TODO Keep only v-bind="item". Remove settings and model from all components -->
       <component
         :is="item.type"
         v-if="!item.hidden"
