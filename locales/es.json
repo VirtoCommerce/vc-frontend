@@ -384,7 +384,18 @@
         "no_results": "Tu consulta {keyword} no devolvió ningún resultado",
         "enter_keyword_placeholder": "Buscar productos aquí",
         "search_button": "Buscar",
-        "view_all_results_button": "Ver todos los {total} resultados"
+        "view_all_results_button": "Ver todos los {total} resultados",
+        "barcode_detector": {
+          "title": "Escanear código de barras",
+          "description": "Para continuar, habilita tu cámara para escanear el código de barras del producto. Esto nos ayudará a identificar rápidamente el artículo y proporcionarte la información necesaria.",
+          "errors": {
+            "no_barcode_detected": "No se detectaron códigos de barras en la imagen",
+            "wrong_format": "Formato de archivo no admitido",
+            "no_file": "Ningún archivo subido"
+          },
+          "browse": "Explorar archivos",
+          "cancel": "@:common.buttons.cancel"
+        }
       },
       "language_selector": {
         "label": "Idioma:"

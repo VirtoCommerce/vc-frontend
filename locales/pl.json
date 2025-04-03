@@ -384,7 +384,18 @@
         "no_results": "Twoje zapytanie {keyword} nie zwróciło żadnych wyników",
         "enter_keyword_placeholder": "Szukaj produktów tutaj",
         "search_button": "Szukaj",
-        "view_all_results_button": "Zobacz wszystkie {total} wyniki"
+        "view_all_results_button": "Zobacz wszystkie {total} wyniki",
+        "barcode_detector": {
+          "title": "Skanowanie kodu kreskowego",
+          "description": "Aby kontynuować, włącz kamerę, aby zeskanować kod kreskowy na produkcie. Pomoże nam to szybko zidentyfikować przedmiot i dostarczyć niezbędne informacje.",
+          "errors": {
+            "no_barcode_detected": "Nie wykryto kodów kreskowych na obrazie",
+            "wrong_format": "Nieobsługiwany format pliku",
+            "no_file": "Nie przesłano pliku"
+          },
+          "browse": "Przeglądaj pliki",
+          "cancel": "@:common.buttons.cancel"
+        }
       },
       "language_selector": {
         "label": "Język:"
