@@ -38,7 +38,6 @@ describe("usePageTitle", () => {
   };
 
   beforeEach(() => {
-    // Setup mocks
     vi.mocked(useEnvironmentName).mockReturnValue({
       environmentName: "DEV",
       isIgnored: false,
@@ -76,7 +75,7 @@ describe("usePageTitle", () => {
     expect(title.value).toBe("DEV | Test Store | Product Page");
   });
 
-  it("should build title with environment and store name when title is undefined", () => {
+  it("should return empty string when title is undefined", () => {
     const { title } = usePageTitle();
     expect(title.value).toBe("");
   });
