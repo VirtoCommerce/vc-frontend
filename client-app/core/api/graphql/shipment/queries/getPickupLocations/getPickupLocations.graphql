@@ -12,6 +12,7 @@ query getPickupLocations($storeId: String, $keyword: String, $sort: String, $fir
         line2
         city
         countryName
+        countryCode
         regionId
         postalCode
         phone
