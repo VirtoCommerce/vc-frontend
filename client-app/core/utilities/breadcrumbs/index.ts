@@ -1,8 +1,13 @@
 export function buildBreadcrumbs<T extends { title: string; seoPath?: string }[]>(items?: T): IBreadcrumb[] {
   return (
-    items?.map(({ title, seoPath }) => ({
-      title,
-      route: seoPath?.startsWith("/") ? seoPath : "/" + seoPath,
-    })) || []
+    items?.map(({ title, seoPath }) => {
+      let route: string | undefined;
+
+      if (seoPath) {
+        route = seoPath.startsWith("/") ? seoPath : "/" + seoPath;
+      }
+
+      return { title, route };
+    }) || []
   );
 }

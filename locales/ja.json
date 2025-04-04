@@ -638,12 +638,12 @@
         "product_configuration": {
           "title": "パラメータ設定",
           "none": "なし",
-          "nothing_selected": "未選択",
           "changed_notification": "商品の設定が変更されました。後で「@:{'ui_kit.buttons.update_cart'}」ボタンをクリックして保存することもできます。",
           "changed_confirmation": "商品の設定が変更されました。保存しますか？",
-          "no_text": "テキストが選択されていません",
           "check_your_configuration": "製品構成を確認してください",
-          "required_section": "セクションは必須です"
+          "required_section": "セクションは必須です",
+          "optional_no_selected": "さらに選択をパーソナライズ（任意）",
+          "required_no_selected": "すべての必須オプションを選択して、完了してください"
         }
       },
       "discount_badge": {
