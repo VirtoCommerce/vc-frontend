@@ -630,12 +630,12 @@
         "product_configuration": {
           "title": "Configure the parameters",
           "none": "None",
-          "nothing_selected": "Nothing selected",
           "changed_notification": "The product configuration has been changed. You can always save it later by clicking \"@:{'ui_kit.buttons.update_cart'}\" button.",
           "changed_confirmation": "The product configuration has been changed. Do you want to save it?",
-          "no_text": "No text selected",
           "check_your_configuration": "Check your product configuration",
-          "required_section": "Section is required"
+          "required_section": "Section is required",
+          "optional_no_selected": "Personalize your selection further (optional)",
+          "required_no_selected": "Complete all required options to finalize your selection"
         }
       },
       "discount_badge": {

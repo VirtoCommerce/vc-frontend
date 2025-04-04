@@ -630,12 +630,12 @@
         "product_configuration": {
           "title": "Configurar os parâmetros",
           "none": "Nenhum",
-          "nothing_selected": "Nada selecionado",
           "changed_notification": "A configuração do produto foi alterada. Você sempre pode salvar mais tarde clicando no botão \"@:{'ui_kit.buttons.update_cart'}\".",
           "changed_confirmation": "A configuração do produto foi alterada. Você quer salvar?",
-          "no_text": "Nenhum texto selecionado",
           "check_your_configuration": "Verifique a configuração do produto",
-          "required_section": "Secção obrigatória"
+          "required_section": "Secção obrigatória",
+          "optional_no_selected": "Personalize ainda mais a sua seleção (opcional)",
+          "required_no_selected": "Complete todas as opções obrigatórias para finalizar a sua seleção"
         }
       },
       "discount_badge": {
