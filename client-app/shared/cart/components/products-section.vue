@@ -6,7 +6,7 @@
         <div v-if="group.items.length" class="space-y-3">
           <!-- Vendor -->
           <div class="flex max-w-full flex-wrap gap-x-3">
-            <VcVendor :name="group.vendor?.name" />
+            <VendorName :name="group.vendor?.name" />
 
             <VcRating
               v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
@@ -57,6 +57,7 @@
 </template>
 
 <script setup lang="ts">
+import { VendorName } from "@/shared/common";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { VendorGroupType } from "@/core/types";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";

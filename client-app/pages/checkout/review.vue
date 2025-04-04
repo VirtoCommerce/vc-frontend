@@ -13,7 +13,7 @@
           <div v-if="group.items.length" class="space-y-3">
             <!-- Vendor -->
             <div class="flex max-w-full flex-wrap gap-x-3">
-              <VcVendor :name="group.vendor?.name" />
+              <VendorName :name="group.vendor?.name" />
 
               <VcRating
                 v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
@@ -155,7 +155,7 @@ import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
-import { AddressSelection } from "@/shared/common";
+import { AddressSelection, VendorName } from "@/shared/common";
 import type { CartAddressType } from "@/core/api/graphql/types";
 
 const {

@@ -34,7 +34,7 @@
             <div v-if="group.items.length" class="space-y-3">
               <!-- Vendor -->
               <div class="flex max-w-full flex-wrap gap-x-3 print:break-after-avoid">
-                <VcVendor :name="group.vendor?.name" />
+                <VendorName :name="group.vendor?.name" />
 
                 <VcRating
                   v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
@@ -151,7 +151,7 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
-import { AddressInfo } from "@/shared/common";
+import { AddressInfo, VendorName } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";

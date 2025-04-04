@@ -155,7 +155,9 @@
       "main_menu": "Menu principal",
       "toggle_search_bar": "Alternar barra de pesquisa",
       "slider_image": "Imagem do slider",
-      "buyer_name": "Nome do comprador"
+      "buyer_name": "Nome do comprador",
+      "vendor_name": "Fornecedor: {name}",
+      "not_available": "N/D"
     },
     "prefixes": {
       "please": "Por favor",
