@@ -11774,6 +11774,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nouislider@npm:^15.8.1":
+  version: 15.8.1
+  resolution: "nouislider@npm:15.8.1"
+  checksum: 10c0/1e79a2fa2847084a36762de9b431104c83c5f5729b272e962291104f755c8235e92273ff9a4f9e866c34ae9eb2733b6bdc70e1e70701b39e4d172f1da98804e4
+  languageName: node
+  linkType: hard
+
 "npm-normalize-package-bin@npm:^3.0.0":
   version: 3.0.1
   resolution: "npm-normalize-package-bin@npm:3.0.1"
@@ -15240,6 +15247,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     marked: "npm:^13.0.3"
     maska: "npm:^2.1.11"
+    nouislider: "npm:^15.8.1"
     npm-run-all2: "npm:^6.2.0"
     postcss: "npm:^8.4.38"
     postcss-import: "npm:^16.1.0"
