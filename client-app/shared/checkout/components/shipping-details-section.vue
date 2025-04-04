@@ -137,7 +137,7 @@ const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMet
 
 const mode = ref<ShippingOptionType>(shipmentMethod.value?.code === BOPIS_CODE ? "pickup" : "shipping");
 
-const { availableShippingMethods, updateShipment, shipment, removeShipment, changing: cartChanging } = useFullCart();
+const { availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
 const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
 
 const shippingMethods = computed(() => availableShippingMethods.value.filter((method) => method.code !== BOPIS_CODE));
@@ -148,7 +148,7 @@ function switchShippingOptions(_mode: ShippingOptionType) {
 
 watch(
   mode,
-  async (newMode, previousMode) => {
+  (newMode, previousMode) => {
     if (!previousMode) {
       return;
     }
@@ -157,10 +157,6 @@ watch(
 
     if (!shippingMethod || shippingMethod.code === shipment.value?.shipmentMethodCode) {
       return;
-    }
-
-    if (shipment.value?.id) {
-      await removeShipment(shipment.value.id);
     }
 
     void updateShipment({
