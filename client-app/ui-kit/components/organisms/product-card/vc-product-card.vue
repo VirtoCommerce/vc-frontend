@@ -15,6 +15,8 @@
       </div>
 
       <div ref="content" class="vc-product-card__content">
+        <div v-if="viewMode === 'grid'" class="vc-product-card__expander"></div>
+
         <slot />
       </div>
     </div>
@@ -135,15 +137,6 @@ onMounted(() => {
 
     #{$grid} & {
       @apply flex flex-col items-stretch;
-
-      grid-template-areas:
-        "media"
-        "title"
-        "vendor"
-        "properties"
-        "price"
-        "add-to-cart";
-      grid-auto-rows: min-content min-content min-content min-content 1fr min-content;
     }
 
     #{$list} & {
@@ -204,12 +197,8 @@ onMounted(() => {
           grid-auto-rows: 1fr 1fr min-content;
         }
 
-        &#{$hasTitlePriceOnly} {
-          grid-auto-rows: 1fr min-content min-content;
-
-          &#{$hasActions} {
-            grid-auto-rows: 1fr min-content 1fr;
-          }
+        &:#{$hasActions}:not(#{$hasVendor}) {
+          grid-auto-rows: 1fr min-content 1fr;
         }
       }
 
@@ -280,6 +269,10 @@ onMounted(() => {
 
     @apply relative;
 
+    #{$grid} & {
+      @apply order-1;
+    }
+
     #{$list} & {
       @apply flex flex-col me-3 self-start items-center;
 
@@ -299,6 +292,10 @@ onMounted(() => {
 
   &__content {
     @apply contents;
+  }
+
+  &__expander {
+    @apply grow order-5;
   }
 }
 </style>
