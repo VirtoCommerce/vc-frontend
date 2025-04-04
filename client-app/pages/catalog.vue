@@ -6,7 +6,7 @@
 import { useSeoMeta } from "@unhead/vue";
 import { computed, watchEffect } from "vue";
 import { useRoute } from "vue-router";
-import { usePageHead } from "@/core/composables";
+import { usePageTitle } from "@/core/composables/usePageTitle";
 import { globals } from "@/core/globals";
 import { useSlugInfo } from "@/shared/common";
 import Category from "@/shared/catalog/components/category.vue";
@@ -15,24 +15,22 @@ const route = useRoute();
 const { seoInfo } = useSlugInfo(route.path.slice(1));
 
 const { i18n } = globals;
+
 const catalogName = i18n.global.t("pages.catalog.title");
 const title = computed(() => seoInfo.value?.pageTitle ?? catalogName);
+const { title: pageTitle } = usePageTitle(seoInfo.value?.pageTitle ?? catalogName);
+
+const seoMeta = useSeoMeta({});
 
 watchEffect(() => {
-  if (!seoInfo.value) {
-    return;
-  }
-  usePageHead({
-    title: title.value,
-    meta: {
+  if (seoInfo.value && seoMeta) {
+    seoMeta.patch({
+      title: pageTitle,
       keywords: seoInfo?.value?.metaKeywords,
       description: seoInfo?.value?.metaDescription,
-    },
-  });
-
-  useSeoMeta({
-    ogTitle: title.value,
-    ogDescription: seoInfo?.value?.metaDescription,
-  });
+      ogTitle: pageTitle,
+      ogDescription: seoInfo?.value?.metaDescription,
+    });
+  }
 });
 </script>

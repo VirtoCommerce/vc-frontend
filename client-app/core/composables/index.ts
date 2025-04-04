@@ -10,6 +10,7 @@ export * from "./useImpersonate";
 export * from "./useMutationBatcher";
 export * from "./useNavigations";
 export * from "./usePageHead";
+export * from "./usePageTitle";
 export * from "./useProductsRoutes";
 export * from "./useRouteQueryParam";
 export * from "./useSyncMutationBatchers";
