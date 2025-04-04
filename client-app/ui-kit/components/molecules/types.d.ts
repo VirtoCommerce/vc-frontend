@@ -46,6 +46,7 @@ declare module "vue" {
     VcTabSwitch: typeof Components.VcTabSwitch;
     VcTextarea: typeof Components.VcTextarea;
     VcRating: typeof Components.VcRating;
+    // @deprecated is deprecated, use VendorName instead
     VcVendor: typeof Components.VcVendor;
     VcWidget: typeof Components.VcWidget;
     VcWidgetSkeleton: typeof Components.VcWidgetSkeleton;

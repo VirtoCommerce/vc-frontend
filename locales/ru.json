@@ -155,7 +155,9 @@
       "main_menu": "Главное меню",
       "toggle_search_bar": "Отобразить/скрыть панель поиска",
       "slider_image": "Картинка в слайдере",
-      "buyer_name": "Имя покупателя"
+      "buyer_name": "Имя покупателя",
+      "vendor_name": "Поставщик: {name}",
+      "not_available": "Н/Д"
     },
     "prefixes": {
       "please": "Пожалуйста",

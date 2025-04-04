@@ -155,7 +155,9 @@
       "main_menu": "主菜单",
       "toggle_search_bar": "切换搜索栏",
       "slider_image": "滑动图像",
-      "buyer_name": "买方姓名"
+      "buyer_name": "买方姓名",
+      "vendor_name": "供应商: {name}",
+      "not_available": "不可用"
     },
     "prefixes": {
       "please": "请",
