@@ -188,6 +188,7 @@
       v-else-if="product.hasVariations"
       :to="link"
       :link-text="$t('pages.catalog.show_on_a_separate_page')"
+      :link-to="link"
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
       :target="browserTarget || $cfg.details_browser_target || '_blank'"
       @link-click="$emit('linkClick', $event)"
