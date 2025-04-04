@@ -27,7 +27,8 @@
       "subtotal": "Suma częściowa",
       "toggle_vendor_select": "Przełącz wybór dostawcy",
       "total": "Razem",
-      "vendor": "Dostawca"
+      "vendor": "Dostawca",
+      "vendor_name": "Dostawca: {name}"
     },
     "suffixes": {
       "from": "Od",

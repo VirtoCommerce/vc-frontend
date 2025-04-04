@@ -27,7 +27,8 @@
       "subtotal": "Zwischensumme",
       "toggle_vendor_select": "Anbieter-Auswahl umschalten",
       "total": "Gesamt",
-      "vendor": "Anbieter"
+      "vendor": "Anbieter",
+      "vendor_name": "Anbieter: {name}"
     },
     "suffixes": {
       "from": "Von",

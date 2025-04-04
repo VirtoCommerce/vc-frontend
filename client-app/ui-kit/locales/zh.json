@@ -27,7 +27,8 @@
       "subtotal": "小计",
       "toggle_vendor_select": "切换供应商选择",
       "total": "总计",
-      "vendor": "供应商"
+      "vendor": "供应商",
+      "vendor_name": "供应商: {name}"
     },
     "suffixes": {
       "from": "从",

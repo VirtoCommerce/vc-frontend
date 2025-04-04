@@ -27,7 +27,8 @@
       "subtotal": "Промежуточный итог",
       "toggle_vendor_select": "Переключить выбор поставщика",
       "total": "Итого",
-      "vendor": "Поставщик"
+      "vendor": "Поставщик",
+      "vendor_name": "Поставщик: {name}"
     },
     "suffixes": {
       "from": "От",
