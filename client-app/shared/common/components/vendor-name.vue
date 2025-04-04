@@ -1,6 +1,6 @@
 <template>
   <VcChip size="lg" color="secondary" variant="outline-dark">
-    {{ name ? $t("common.labels.vendor_name", { name }) : $t("common.labels.not_available") }}
+    {{ $t("common.labels.vendor_name", { name: name ?? $t("common.labels.not_available") }) }}
   </VcChip>
 </template>
 
