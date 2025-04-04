@@ -15279,6 +15279,7 @@ __metadata:
     uuid: "npm:^10.0.0"
     vee-validate: "npm:~4.13.1"
     vite: "npm:^6.2.5"
+    vite-node: "npm:^3.1.1"
     vite-plugin-checker: "npm:^0.9.1"
     vite-plugin-mkcert: "npm:^1.17.8"
     vitest: "npm:^3.1.1"
@@ -15306,7 +15307,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:3.1.1":
+"vite-node@npm:3.1.1, vite-node@npm:^3.1.1":
   version: 3.1.1
   resolution: "vite-node@npm:3.1.1"
   dependencies:
