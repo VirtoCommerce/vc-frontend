@@ -13,7 +13,7 @@
           <div v-if="group.items.length" class="space-y-3">
             <!-- Vendor -->
             <div class="flex max-w-full flex-wrap gap-x-3">
-              <VcVendor :vendor="group.vendor" />
+              <VcVendor :name="group.vendor?.name" />
 
               <VcRating
                 v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
