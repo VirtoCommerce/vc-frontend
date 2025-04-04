@@ -46,6 +46,7 @@ function _useWhiteLabeling() {
     themePresetName: computed(() => whiteLabelingSettings.value?.themePresetName),
     fetchWhiteLabelingSettings,
     whiteLabelingLogoUrl: computed(() => whiteLabelingSettings.value?.logoUrl),
+    isOrganizationLogoUploaded: computed(() => whiteLabelingSettings.value?.isOrganizationLogoUploaded),
   };
 }
 
