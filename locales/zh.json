@@ -284,7 +284,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "固定费率（陆运）",
-        "FixedRate_Air": "固定费率（空运）"
+        "FixedRate_Air": "固定费率（空运）",
+        "BuyOnlinePickupInStore_Pickup": "门店自提"
       }
     }
   },
@@ -668,12 +669,19 @@
       },
       "shipping_details_section": {
         "title": "运输详情",
+        "switchers": {
+          "pickup": "自提",
+          "shipping": "配送"
+        },
         "labels": {
           "shipping_address": "运输地址",
-          "shipping_method": "配送方式"
+          "shipping_method": "配送方式",
+          "delivery_option": "配送选项",
+          "pickup_point": "自提点"
         },
         "links": {
-          "select_address": "选择运输地址"
+          "select_address": "选择运输地址",
+          "select_pickup_point": "选择自提地址"
         }
       },
       "billing_details_section": {

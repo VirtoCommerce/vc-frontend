@@ -411,13 +411,29 @@ export function _useFullCart() {
             return IGNORE as AddOrUpdateCartShipmentMutation;
           }
           return {
-            addOrUpdateCartShipment: merge({}, cart.value!, {
+            addOrUpdateCartShipment: merge({}, cart.value, {
               shipments: [
                 {
                   id: value.id,
                   shipmentMethodCode: value.shipmentMethodCode,
                   shipmentMethodOption: value.shipmentMethodOption,
-                  deliveryAddress: generateCacheIdIfNew(value.deliveryAddress, "CartAddressType"),
+                  deliveryAddress: value.deliveryAddress
+                    ? generateCacheIdIfNew(
+                        {
+                          ...value.deliveryAddress,
+                          name: value.deliveryAddress?.name ?? null,
+                          organization: value.deliveryAddress?.organization ?? null,
+                          firstName: value.deliveryAddress?.firstName ?? null,
+                          lastName: value.deliveryAddress?.lastName ?? null,
+                          countryCode: value.deliveryAddress?.countryCode ?? null,
+                          regionName: value.deliveryAddress?.regionName ?? null,
+                          email: value.deliveryAddress?.email ?? null,
+                          addressType: value.deliveryAddress?.addressType ?? null,
+                          outerId: value.deliveryAddress?.outerId ?? null,
+                        },
+                        "CartAddressType",
+                      )
+                    : undefined,
                 },
               ],
             }),
