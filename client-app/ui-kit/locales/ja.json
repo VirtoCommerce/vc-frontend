@@ -27,8 +27,7 @@
       "subtotal": "小計",
       "toggle_vendor_select": "ベンダー選択を切り替え",
       "total": "合計",
-      "vendor": "ベンダー",
-      "vendor_name": "ベンダー: {name}"
+      "vendor": "ベンダー"
     },
     "suffixes": {
       "from": "から",

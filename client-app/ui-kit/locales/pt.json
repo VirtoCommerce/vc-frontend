@@ -27,8 +27,7 @@
       "subtotal": "Subtotal",
       "toggle_vendor_select": "Alternar seleção de fornecedor",
       "total": "Total",
-      "vendor": "Fornecedor",
-      "vendor_name": "Fornecedor: {name}"
+      "vendor": "Fornecedor"
     },
     "suffixes": {
       "from": "De",

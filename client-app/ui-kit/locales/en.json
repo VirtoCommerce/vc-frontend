@@ -27,8 +27,7 @@
       "subtotal": "Subtotal",
       "toggle_vendor_select": "Toggle vendor select",
       "total": "Total",
-      "vendor": "Vendor",
-      "vendor_name": "Vendor: {name}"
+      "vendor": "Vendor"
     },
     "suffixes": {
       "from": "From",
