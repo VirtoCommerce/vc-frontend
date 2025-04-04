@@ -37,3 +37,4 @@ export { default as VcTabs } from "./tabs/vc-tabs.vue";
 export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";
 export { default as VcTypography } from "./typography/vc-typography.vue";
+export { default as VcVendor } from "./vendor/vc-vendor.vue";

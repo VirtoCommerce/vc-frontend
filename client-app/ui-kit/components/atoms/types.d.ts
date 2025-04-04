@@ -44,6 +44,7 @@ declare module "vue" {
     VcTooltip: typeof Components.VcTooltip;
     VcTotalDisplay: typeof Components.VcTotalDisplay;
     VcTypography: typeof Components.VcTypography;
+    VcVendor: typeof Components.VcVendor;
   }
 }
 
