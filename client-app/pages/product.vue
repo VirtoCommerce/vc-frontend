@@ -109,6 +109,37 @@
           :product="product"
           :variations="variations"
         />
+
+        <VcWidget title="Shipment options" class="mt-6">
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 rounded border p-3 text-base font-bold">
+              <img src="" loading="eager" alt="" class="size-12 rounded-sm" />
+
+              <div>
+                <span> USPS </span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 rounded border p-3 text-base font-bold">
+              <img src="" loading="eager" alt="" class="size-12 rounded-sm" />
+
+              <div>
+                <span> Fedex </span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 rounded border p-3 text-base font-bold">
+              <img src="" loading="eager" alt="" class="size-12 rounded-sm" />
+
+              <div>
+                <div>In-Store Pickup</div>
+                <div class="text-xs text-[--link-color]">Select point</div>
+              </div>
+            </div>
+          </div>
+
+          <VcAlert icon="check-circle" variant="solid-light">No shipping options available</VcAlert>
+        </VcWidget>
       </template>
     </VcLayout>
   </VcContainer>
