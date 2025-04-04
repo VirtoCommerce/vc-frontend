@@ -338,6 +338,13 @@
             "input_placeholder": "Introduce palabra clave, artículo, modelo o número de pieza de repuesto"
           },
           "view_all_catalog": "Ver todos los productos en la categoría"
+        },
+        "ship_to_selector": {
+          "add_new": "Añadir nuevo",
+          "search": "Buscar",
+          "select_address": "Seleccionar dirección",
+          "title": "Enviar a:",
+          "add_new_address": "Añadir nueva dirección"
         }
       },
       "footer": {
@@ -632,12 +639,12 @@
         "product_configuration": {
           "title": "Configura los parámetros",
           "none": "Ninguno",
-          "nothing_selected": "Nada seleccionado",
           "changed_notification": "La configuración del producto ha sido cambiada. Puedes siempre guardarla más tarde haciendo clic en el botón \"@:{'ui_kit.buttons.update_cart'}\".",
           "changed_confirmation": "La configuración del producto ha sido cambiada. ¿Quieres guardarla?",
-          "no_text": "Ningún texto seleccionado",
           "check_your_configuration": "Verifica la configuración de tu producto",
-          "required_section": "La sección es obligatoria"
+          "required_section": "La sección es obligatoria",
+          "optional_no_selected": "Personaliza aún más tu selección (opcional)",
+          "required_no_selected": "Completa todas las opciones obligatorias para finalizar tu selección"
         }
       },
       "discount_badge": {
