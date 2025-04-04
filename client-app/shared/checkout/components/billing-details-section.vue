@@ -26,7 +26,7 @@
             :address="billingAddress"
             :disabled="disabled"
             :readonly="!allItemsAreDigital && !isShippingMethodBopis && billingAddressEqualsShipping"
-            class="min-h-[3.313rem] px-3 py-1.5"
+            class="min-h-18 px-3 py-1.5"
             @change="onBillingAddressChange"
           />
         </div>
