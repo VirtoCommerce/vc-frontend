@@ -133,6 +133,12 @@ const iconColor = computed(() => getColorValue(props.color));
       &--grid {
         #{$self} {
           @apply mt-3 order-7;
+
+          &:not(:has(#{$link})) {
+            @media (min-width: theme("screens.xs")) {
+              @apply pb-4;
+            }
+          }
         }
       }
 
