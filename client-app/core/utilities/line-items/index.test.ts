@@ -450,7 +450,7 @@ describe("prepareLineItem", () => {
   });
 
   it("should include configurationItems if provided", () => {
-    const configurationItems = [{ id: "conf1", name: "Config 1", type: "text" }];
+    const configurationItems = [{ id: "conf1", sectionId: "section1", name: "Config 1", type: "text" }];
     const lineItem = createMockLineItem({
       configurationItems,
     });
