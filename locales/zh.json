@@ -774,7 +774,8 @@
           "month": "请选择有效的月份",
           "year": "请输入有效的年份"
         },
-        "user_error_message": "无法初始化支付。请稍后再试或使用其他支付方式"
+        "user_error_message": "无法初始化支付。请稍后再试或使用其他支付方式",
+        "payment_unavailable": "支付方式不可用，请稍后重试"
       },
       "authorize_net": {
         "user_agreement_link": "用户协议",

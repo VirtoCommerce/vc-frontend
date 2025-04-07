@@ -774,7 +774,8 @@
           "month": "Podaj prawidłowy miesiąc ważności",
           "year": "Podaj prawidłowy rok ważności"
         },
-        "user_error_message": "Nie można zainicjować płatności. Spróbuj ponownie później lub użyj innej metody płatności"
+        "user_error_message": "Nie można zainicjować płatności. Spróbuj ponownie później lub użyj innej metody płatności",
+        "payment_unavailable": "Metoda płatności jest niedostępna. Spróbuj ponownie później."
       },
       "authorize_net": {
         "user_agreement_link": "Umowa użytkownika",
