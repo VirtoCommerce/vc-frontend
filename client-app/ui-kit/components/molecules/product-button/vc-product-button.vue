@@ -126,25 +126,21 @@ const iconColor = computed(() => getColorValue(props.color));
 
   @at-root .vc-product-card {
     #{$self} {
+      @apply mt-3;
+
       grid-area: add-to-cart;
     }
 
     &--view-mode {
-      &--grid {
-        #{$self} {
-          @apply mt-3 order-7;
+      &--grid #{$self} {
+        @apply order-7;
 
-          &:not(:has(#{$link})) {
-            @media (min-width: theme("screens.xs")) {
-              @apply pb-4;
-            }
-          }
+        @media (min-width: theme("screens.xs")) {
+          @apply min-h-[3.375rem];
         }
       }
 
       &--list #{$self} {
-        @apply mt-3;
-
         @container (min-width: theme("containers.sm")) {
           @apply w-72;
         }
@@ -154,7 +150,7 @@ const iconColor = computed(() => getColorValue(props.color));
         }
 
         @container (min-width: theme("containers.4xl")) {
-          @apply mt-0 ms-3 w-60;
+          @apply w-60;
         }
       }
     }
