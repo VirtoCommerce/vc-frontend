@@ -284,7 +284,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "固定料金 (地上)",
-        "FixedRate_Air": "固定料金 (航空)"
+        "FixedRate_Air": "固定料金 (航空)",
+        "BuyOnlinePickupInStore_Pickup": "店舗で受け取る"
       }
     }
   },
@@ -668,12 +669,19 @@
       },
       "shipping_details_section": {
         "title": "配送情報",
+        "switchers": {
+          "pickup": "受け取り",
+          "shipping": "配送"
+        },
         "labels": {
           "shipping_address": "配送先住所",
-          "shipping_method": "配送方法"
+          "shipping_method": "配送方法",
+          "delivery_option": "配送オプション",
+          "pickup_point": "受け取り場所"
         },
         "links": {
-          "select_address": "配送先住所を選択"
+          "select_address": "配送先住所を選択",
+          "select_pickup_point": "受け取り場所を選択"
         }
       },
       "billing_details_section": {
