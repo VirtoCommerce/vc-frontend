@@ -1,3 +1,12 @@
 > 1%
 last 2 versions
 not dead
+not chrome < 110
+not OperaMini all
+not android < 5
+not samsung < 27
+not firefox < 60
+not kaios > 0
+not and_uc > 0
+not and_qq > 0
+not op_mob > 0
