@@ -644,6 +644,9 @@
           "required_section": "此部分为必填项",
           "optional_no_selected": "个性化您的选择（可选）",
           "required_no_selected": "请填写所有必填选项以完成选择"
+        },
+        "product_availability": {
+          "not_available": "该商品已下架"
         }
       },
       "discount_badge": {
