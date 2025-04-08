@@ -1,7 +1,7 @@
 import type { BrowserTargetType } from "./browser-window-target";
 import type { ISocialSharingService } from "./social-sharing";
 import type { SortDirection } from "@/core/enums";
-import type { IOrderStatus } from "@/core/types";
+import type { IOrderStatus, IQuoteStatus } from "@/core/types";
 
 export interface IThemeConfigPreset {
   primary_font_family?: string;
@@ -228,7 +228,7 @@ export interface IThemeConfigSettings {
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
   orders_statuses?: IOrderStatus[];
-  quote_statuses?: IOrderStatus[];
+  quote_statuses?: IQuoteStatus[];
   line_items_group_by_vendor_enabled?: boolean;
 
   social_sharing_services?: ISocialSharingService[];

@@ -15,13 +15,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useThemeContext } from "@/core/composables";
-
-interface IQuoteStatus {
-  code: string;
-  color: VcChipColorType;
-  variant: VcChipVariantType;
-  icon?: string;
-}
+import type { IQuoteStatus } from "@/core/types";
 
 interface IProps {
   status?: string;
