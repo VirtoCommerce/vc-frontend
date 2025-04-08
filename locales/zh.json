@@ -284,7 +284,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "固定费率（陆运）",
-        "FixedRate_Air": "固定费率（空运）"
+        "FixedRate_Air": "固定费率（空运）",
+        "BuyOnlinePickupInStore_Pickup": "门店自提"
       }
     }
   },
@@ -336,6 +337,13 @@
             "input_placeholder": "输入关键词、商品、型号或替换零件号"
           },
           "view_all_catalog": "查看类别中的所有产品"
+        },
+        "ship_to_selector": {
+          "add_new": "新增",
+          "search": "搜索",
+          "select_address": "选择地址",
+          "title": "运送至：",
+          "add_new_address": "添加新地址"
         }
       },
       "footer": {
@@ -630,12 +638,12 @@
         "product_configuration": {
           "title": "配置参数",
           "none": "无",
-          "nothing_selected": "未选择任何内容",
           "changed_notification": "产品配置已更改。您可以随时稍后保存，点击按钮 \"@:{'ui_kit.buttons.update_cart'}\".",
           "changed_confirmation": "产品配置已更改。您要保存吗？",
-          "no_text": "未选择文本",
           "check_your_configuration": "检查您的产品配置",
-          "required_section": "此部分为必填项"
+          "required_section": "此部分为必填项",
+          "optional_no_selected": "个性化您的选择（可选）",
+          "required_no_selected": "请填写所有必填选项以完成选择"
         }
       },
       "discount_badge": {
@@ -661,12 +669,19 @@
       },
       "shipping_details_section": {
         "title": "运输详情",
+        "switchers": {
+          "pickup": "自提",
+          "shipping": "配送"
+        },
         "labels": {
           "shipping_address": "运输地址",
-          "shipping_method": "配送方式"
+          "shipping_method": "配送方式",
+          "delivery_option": "配送选项",
+          "pickup_point": "自提点"
         },
         "links": {
-          "select_address": "选择运输地址"
+          "select_address": "选择运输地址",
+          "select_pickup_point": "选择自提地址"
         }
       },
       "billing_details_section": {
