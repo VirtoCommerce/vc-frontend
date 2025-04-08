@@ -19,6 +19,8 @@
     ]"
   >
     <span class="vc-chip__content">
+      <VcIcon v-if="icon" :color="_iconColor" :name="icon" class="vc-chip__icon" />
+
       <slot />
     </span>
 
@@ -37,6 +39,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 interface IEmits {
   (event: "close"): void;
 }
@@ -52,15 +56,22 @@ interface IProps {
   rounded?: boolean;
   truncate?: boolean;
   nowrap?: boolean;
+  icon?: string;
+  iconColor?: string;
 }
 
 defineEmits<IEmits>();
-withDefaults(defineProps<IProps>(), {
+
+const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   variant: "solid",
   size: "md",
   nowrap: true,
 });
+
+const _iconColor = computed(() =>
+  props.variant === "solid" ? "--color-additional-50" : (props.iconColor ?? props.color),
+);
 </script>
 
 <style lang="scss">
@@ -70,7 +81,7 @@ withDefaults(defineProps<IProps>(), {
   $truncate: "";
   $clickable: "";
 
-  @apply inline-flex justify-between max-w-full rounded-sm border font-bold text-center;
+  @apply inline-flex justify-between max-w-full rounded-sm border font-bold text-center px-[--padding-x] py-[--padding-y];
 
   &--clickable {
     $clickable: &;
@@ -94,31 +105,31 @@ withDefaults(defineProps<IProps>(), {
       --padding-y: 0;
       --padding-x: 0.25rem;
 
-      @apply gap-1 px-[--padding-x] text-[0.625rem]/[0.875rem];
+      @apply gap-1 text-[0.625rem]/[0.875rem];
     }
 
     &--sm {
       --vc-icon-size: 0.625rem;
       --padding-y: 0.125rem;
-      --padding-x: 0.5rem;
+      --padding-x: 0.375rem;
 
-      @apply gap-1 px-[--padding-x] py-[--padding-y] text-xs;
+      @apply gap-1 text-xs/[1rem];
     }
 
     &--md {
       --vc-icon-size: 0.75rem;
       --padding-y: 0.25rem;
-      --padding-x: 0.75rem;
+      --padding-x: 0.5rem;
 
-      @apply gap-1.5 px-[--padding-x] py-[--padding-y] text-sm/[1.125rem];
+      @apply gap-1.5 text-sm/[1.125rem];
     }
 
     &--lg {
       --vc-icon-size: 0.875rem;
       --padding-y: 0.375rem;
-      --padding-x: 0.75rem;
+      --padding-x: 0.625rem;
 
-      @apply gap-1.5 px-[--padding-x] py-[--padding-y] text-sm;
+      @apply gap-1.5 text-sm/[1.25rem];
     }
   }
 
@@ -173,22 +184,11 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__content {
-    @apply grow;
+    @apply grow inline-flex items-center gap-[inherit] max-w-full;
 
-    &:has(.vc-icon) {
-      @apply inline-flex items-center gap-[inherit];
-    }
-
-    #{$truncate} & {
+    #{$truncate} &,
+    #{$truncate} & > * {
       @apply truncate;
-    }
-
-    & > * {
-      @apply text-left;
-
-      #{$truncate} & {
-        @apply truncate;
-      }
     }
   }
 
