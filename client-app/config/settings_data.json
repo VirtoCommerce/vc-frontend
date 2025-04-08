@@ -70,7 +70,7 @@
       {
         "code": "Cancelled",
         "color": "danger",
-        "variant": "outline",
+        "variant": "outline-dark",
         "icon": "circle-solid"
       },
       {
@@ -89,7 +89,7 @@
         "code": "Ready for pickup",
         "color": "success",
         "variant": "outline",
-        "icon": "cube"
+        "icon": "circle-solid"
       }
     ],
 
@@ -97,37 +97,44 @@
       {
         "code": "New",
         "color": "success",
-        "variant": "outline-dark"
+        "variant": "outline-dark",
+        "icon": "circle-solid"
       },
       {
         "code": "Processing",
         "color": "info",
-        "variant": "outline-dark"
+        "variant": "outline",
+        "icon": "process"
       },
       {
         "code": "Ordered",
         "color": "success",
-        "variant": "outline-dark"
+        "variant": "outline-dark",
+        "icon": "circle-solid"
       },
       {
         "code": "Proposal sent",
         "color": "info",
-        "variant": "outline-dark"
+        "variant": "outline",
+        "icon": "process"
       },
       {
         "code": "On hold",
         "color": "warning",
-        "variant": "outline-dark"
+        "variant": "outline-dark",
+        "icon": "circle-outline"
       },
       {
         "code": "Draft",
         "color": "neutral",
-        "variant": "outline-dark"
+        "variant": "outline",
+        "icon": "pencil-alt"
       },
       {
         "code": "Declined",
         "color": "danger",
-        "variant": "outline-dark"
+        "variant": "outline-dark",
+        "icon": "circle-solid"
       }
     ],
 

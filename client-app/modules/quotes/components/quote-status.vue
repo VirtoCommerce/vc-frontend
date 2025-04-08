@@ -1,6 +1,14 @@
 <template>
-  <VcChip :variant="quoteStatus?.variant" :color="quoteStatus?.color || defaultColor" truncate rounded>
-    {{ status }}
+  <VcChip
+    :variant="quoteStatus?.variant"
+    :icon="icon ?? quoteStatus?.icon"
+    :color="quoteStatus?.color || defaultColor"
+    truncate
+    rounded
+  >
+    <span class="text-neutral-800">
+      {{ status }}
+    </span>
   </VcChip>
 </template>
 
@@ -12,10 +20,12 @@ interface IQuoteStatus {
   code: string;
   color: VcChipColorType;
   variant: VcChipVariantType;
+  icon?: string;
 }
 
 interface IProps {
   status?: string;
+  icon?: string;
 }
 
 const props = defineProps<IProps>();

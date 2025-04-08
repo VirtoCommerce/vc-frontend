@@ -157,8 +157,8 @@
                 {{ $d(quote.createdDate) }}
               </td>
 
-              <td class="overflow-hidden text-ellipsis p-5 text-center">
-                <QuoteStatus class="w-full !max-w-36" :status="quote.status" />
+              <td class="overflow-hidden text-ellipsis p-1">
+                <QuoteStatus class="!max-w-full" :status="quote.status" />
               </td>
 
               <td class="overflow-hidden text-ellipsis p-5 text-right">
@@ -234,7 +234,7 @@ const columns = ref<ITableColumn[]>([
     id: "status",
     title: t("quotes.status_label"),
     sortable: true,
-    align: "center",
+    classes: "!px-3",
   },
   {
     id: "total",
