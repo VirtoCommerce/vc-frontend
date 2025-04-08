@@ -1,12 +1,7 @@
 import type { BrowserTargetType } from "./browser-window-target";
 import type { ISocialSharingService } from "./social-sharing";
 import type { SortDirection } from "@/core/enums";
-
-type StatusType = {
-  code: string;
-  color: VcChipColorType;
-  variant: VcChipVariantType;
-};
+import type { IOrderStatus } from "@/core/types";
 
 export interface IThemeConfigPreset {
   primary_font_family?: string;
@@ -232,8 +227,8 @@ export interface IThemeConfigSettings {
   orders_search_enabled?: boolean;
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
-  orders_statuses?: StatusType[];
-  quote_statuses?: StatusType[];
+  orders_statuses?: IOrderStatus[];
+  quote_statuses?: IOrderStatus[];
   line_items_group_by_vendor_enabled?: boolean;
 
   social_sharing_services?: ISocialSharingService[];
