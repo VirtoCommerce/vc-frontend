@@ -15,4 +15,5 @@ fragment cartAddress on CartAddressType {
   phone
   email
   addressType
+  outerId
 }
