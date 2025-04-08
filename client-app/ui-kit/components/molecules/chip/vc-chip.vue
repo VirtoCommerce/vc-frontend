@@ -184,7 +184,7 @@ const _iconColor = computed(() =>
   }
 
   &__content {
-    @apply grow inline-flex items-center gap-[inherit] max-w-full;
+    @apply grow inline-flex items-center justify-center gap-[inherit] max-w-full;
 
     #{$truncate} &,
     #{$truncate} & > * {
