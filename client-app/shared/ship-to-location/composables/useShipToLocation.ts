@@ -68,10 +68,13 @@ export function useShipToLocation() {
   const cartShipmentId = computed(() => shortCart.value?.shipments[0]?.id);
 
   const localStorageKeyPrefix = "local_ship_to_";
-  const userSuffix = isAuthenticated.value ? `_${user.value.id}` : "_anonymous";
-  const localShipToAddresses = useLocalStorage<AnyAddressType[]>(`${localStorageKeyPrefix}addresses${userSuffix}`, []);
+  const userSuffix = computed(() => (isAuthenticated.value ? `_${user.value.id}` : "_anonymous"));
+  const localShipToAddresses = useLocalStorage<AnyAddressType[]>(
+    `${localStorageKeyPrefix}addresses${userSuffix.value}`,
+    [],
+  );
   const selectedLocalShipToAddressId = useLocalStorage<string | null>(
-    `${localStorageKeyPrefix}selected_address_id${userSuffix}`,
+    `${localStorageKeyPrefix}selected_address_id${userSuffix.value}`,
     null,
   );
 
