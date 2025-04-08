@@ -111,7 +111,7 @@ const _iconColor = computed(() =>
     &--sm {
       --vc-icon-size: 0.625rem;
       --padding-y: 0.125rem;
-      --padding-x: 0.375rem;
+      --padding-x: 0.5rem;
 
       @apply gap-1 text-xs/[1rem];
     }
@@ -119,7 +119,7 @@ const _iconColor = computed(() =>
     &--md {
       --vc-icon-size: 0.75rem;
       --padding-y: 0.25rem;
-      --padding-x: 0.5rem;
+      --padding-x: 0.625rem;
 
       @apply gap-1.5 text-sm/[1.125rem];
     }
