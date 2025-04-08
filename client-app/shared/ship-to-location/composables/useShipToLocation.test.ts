@@ -71,11 +71,9 @@ vi.mock("@vueuse/core", async () => {
     useLocalStorage: <T>(key: string, initialValue: T) =>
       computed({
         get() {
-          console.log("!!!get", key);
           return getLocalStorageValue(key) ?? initialValue;
         },
         set(value: T) {
-          console.log("!!!set", key);
           setLocalStorageValue(key, value as [AnyAddressType] | string | null);
         },
       }),
@@ -958,6 +956,7 @@ describe("useShipToLocation composable", () => {
       // Reset and test for anonymous user
       updateShipmentMock.mockClear();
       isAuthenticated.value = false;
+      const { selectAddress: anonymousSelectAddress } = useShipToLocation();
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -971,7 +970,7 @@ describe("useShipToLocation composable", () => {
         postalCode: "0000",
       };
 
-      await selectAddress(anonymousAddress);
+      await anonymousSelectAddress(anonymousAddress);
       // Should update both shipment and local storage
       expect(updateShipmentMock).toHaveBeenCalledWith({
         id: shipment.value.id,
