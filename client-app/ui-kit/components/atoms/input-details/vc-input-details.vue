@@ -75,7 +75,7 @@ withDefaults(defineProps<IProps>(), {
     }
 
     #{$singleLine} & {
-      @apply xs:line-clamp-1;
+      @apply line-clamp-1;
     }
   }
 

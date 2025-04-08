@@ -133,11 +133,7 @@ const iconColor = computed(() => getColorValue(props.color));
 
     &--view-mode {
       &--grid #{$self} {
-        @apply order-7;
-
-        @media (min-width: theme("screens.xs")) {
-          @apply min-h-[3.375rem];
-        }
+        @apply order-7 min-h-[3.375rem];
       }
 
       &--list #{$self} {
