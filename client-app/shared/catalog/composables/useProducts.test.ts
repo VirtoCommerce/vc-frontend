@@ -326,15 +326,15 @@ describe("useProducts", () => {
     });
 
     it("should add page to history when fetchProducts is called without page", async () => {
-      const { fetchProducts, pagesHistory } = useProducts();
+      const { fetchProducts, pageHistory } = useProducts();
 
       await fetchProducts({ itemsPerPage: 2 });
 
-      expect(pagesHistory.value).toEqual([1]);
+      expect(pageHistory.value).toEqual([1]);
     });
 
     it("should add pages to history when fetchProducts is called", async () => {
-      const { fetchProducts, pagesHistory } = useProducts();
+      const { fetchProducts, pageHistory } = useProducts();
 
       // First page load
       mockData.searchProducts.mockResolvedValueOnce({
@@ -349,7 +349,7 @@ describe("useProducts", () => {
 
       await fetchProducts({ page: 3, itemsPerPage: 2 });
 
-      expect(pagesHistory.value).toEqual([3]);
+      expect(pageHistory.value).toEqual([3]);
 
       mockData.searchProducts.mockResolvedValueOnce({
         items: [{ id: "product3" }, { id: "product4" }],
@@ -363,11 +363,11 @@ describe("useProducts", () => {
 
       await fetchProducts({ page: 2, itemsPerPage: 2 });
 
-      expect(pagesHistory.value).toEqual([3, 2]);
+      expect(pageHistory.value).toEqual([3, 2]);
     });
 
     it("should add page to history on fetchMoreProducts", async () => {
-      const { fetchProducts, fetchMoreProducts, pagesHistory } = useProducts();
+      const { fetchProducts, fetchMoreProducts, pageHistory } = useProducts();
 
       mockData.searchProducts.mockResolvedValueOnce({
         items: [{ id: "product1" }, { id: "product2" }],
@@ -384,11 +384,11 @@ describe("useProducts", () => {
       await fetchMoreProducts({ page: 2, itemsPerPage: 2 });
       await fetchMoreProducts({ page: 1, itemsPerPage: 2 });
 
-      expect(pagesHistory.value).toEqual([3, 2, 1]);
+      expect(pageHistory.value).toEqual([3, 2, 1]);
     });
 
     it("should not add page to history when page is 0", async () => {
-      const { fetchProducts, pagesHistory } = useProducts();
+      const { fetchProducts, pageHistory } = useProducts();
 
       mockData.searchProducts.mockResolvedValueOnce({
         items: [{ id: "product3" }, { id: "product4" }],
@@ -402,11 +402,11 @@ describe("useProducts", () => {
 
       await fetchProducts({ page: 0, itemsPerPage: 2 });
 
-      expect(pagesHistory.value).toEqual([]);
+      expect(pageHistory.value).toEqual([]);
     });
 
     it("should not add page to history when page is greater than pagesCount", async () => {
-      const { fetchProducts, pagesHistory } = useProducts();
+      const { fetchProducts, pageHistory } = useProducts();
 
       mockData.searchProducts.mockResolvedValueOnce({
         items: [{ id: "product3" }, { id: "product4" }],
@@ -420,11 +420,11 @@ describe("useProducts", () => {
 
       await fetchProducts({ page: 10, itemsPerPage: 2 });
 
-      expect(pagesHistory.value).toEqual([]);
+      expect(pageHistory.value).toEqual([]);
     });
 
     it("should not add page to history when page is greater than page limit", async () => {
-      const { fetchProducts, pagesHistory } = useProducts();
+      const { fetchProducts, pageHistory } = useProducts();
 
       mockData.searchProducts.mockResolvedValueOnce({
         items: [{ id: "product3" }, { id: "product4" }],
@@ -438,7 +438,7 @@ describe("useProducts", () => {
 
       await fetchProducts({ page: PAGE_LIMIT + 1, itemsPerPage: 2 });
 
-      expect(pagesHistory.value).toEqual([]);
+      expect(pageHistory.value).toEqual([]);
     });
   });
 });

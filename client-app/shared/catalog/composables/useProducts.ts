@@ -281,7 +281,7 @@ export function useProducts(
       const { items = [], totalCount = 0 } = await searchProducts(searchParams, { withImages, withZeroPrice });
 
       const page = searchParams.page;
-      const minVisitedPage = Math.min(...pagesHistory.value, currentPage.value);
+      const minVisitedPage = Math.min(...pageHistory.value, currentPage.value);
 
       if (withLoadButton && page && minVisitedPage && page < minVisitedPage) {
         products.value = [...items, ...products.value];
@@ -306,7 +306,7 @@ export function useProducts(
 
   function setPageHistory(page?: number) {
     if (page === undefined || (page <= pagesCount.value && page > 0)) {
-      pagesHistory.value.push(page ?? 1);
+      pageHistory.value.push(page ?? 1);
     }
   }
 
@@ -336,7 +336,7 @@ export function useProducts(
   }
 
   const currentPage = ref(1);
-  const pagesHistory = ref<number[]>([]);
+  const pageHistory = ref<number[]>([]);
 
   function updateCurrentPage(page: number) {
     currentPage.value = page;
@@ -367,7 +367,7 @@ export function useProducts(
     totalProductsCount: readonly(totalProductsCount),
 
     currentPage: readonly(currentPage),
-    pagesHistory: readonly(pagesHistory),
+    pageHistory: readonly(pageHistory),
     resetCurrentPage,
     updateCurrentPage,
 
