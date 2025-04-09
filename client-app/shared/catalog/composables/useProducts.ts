@@ -30,6 +30,8 @@ export function useProducts(
     withZeroPrice?: boolean;
     filtersDisplayOrder?: Ref<FiltersDisplayOrderType | undefined>;
     useQueryParams?: boolean;
+    /** @default config.catalog_show_load_button */
+    withLoadButton?: boolean;
   } = {},
 ) {
   const { themeContext } = useThemeContext();
@@ -37,6 +39,7 @@ export function useProducts(
     withFacets = false,
     withImages = themeContext.value?.settings?.image_carousel_in_product_card_enabled,
     withZeroPrice = themeContext.value?.settings?.zero_price_product_enabled,
+    withLoadButton = themeContext.value?.settings?.catalog_show_load_button,
   } = options;
   const { openModal } = useModal();
 
@@ -228,6 +231,9 @@ export function useProducts(
     products.value = [];
     totalProductsCount.value = 0;
     pagesCount.value = 1;
+    if (searchParams.page) {
+      updateCurrentPage(Number(searchParams.page));
+    }
 
     try {
       const {
@@ -237,6 +243,10 @@ export function useProducts(
         totalCount = 0,
       } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
 
+      const page = searchParams.page;
+      if (page) {
+        pagesHistory.value.push(page);
+      }
       products.value = items;
       totalProductsCount.value = totalCount;
       pagesCount.value = Math.min(
@@ -270,7 +280,20 @@ export function useProducts(
     try {
       const { items = [], totalCount = 0 } = await searchProducts(searchParams, { withImages, withZeroPrice });
 
-      products.value = products.value.concat(items);
+      const page = searchParams.page;
+      const minVisitedPage = Math.min(...pagesHistory.value, currentPage.value);
+
+      console.log("page", page);
+      console.log("minVisitedPage", minVisitedPage);
+      console.log("items", items);
+
+      if (withLoadButton && page && minVisitedPage && page < minVisitedPage) {
+        pagesHistory.value.push(page);
+        products.value = [...items, ...products.value];
+      } else {
+        products.value = products.value.concat(items);
+      }
+
       totalProductsCount.value = totalCount;
       pagesCount.value = Math.min(
         Math.ceil(totalProductsCount.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
@@ -310,6 +333,7 @@ export function useProducts(
   }
 
   const currentPage = ref(1);
+  const pagesHistory = ref<number[]>([]);
 
   function updateCurrentPage(page: number) {
     currentPage.value = page;
@@ -340,6 +364,7 @@ export function useProducts(
     totalProductsCount: readonly(totalProductsCount),
 
     currentPage: readonly(currentPage),
+    pagesHistory: readonly(pagesHistory),
     resetCurrentPage,
     updateCurrentPage,
 
