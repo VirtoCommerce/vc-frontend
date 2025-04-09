@@ -8,7 +8,7 @@
         :lazy="lazy"
         :to="link"
       >
-        <DiscountBadge :price="product.price!" />
+        <DiscountBadge v-if="product.price" :price="product.price" />
       </VcProductImage>
 
       <VcProductActions

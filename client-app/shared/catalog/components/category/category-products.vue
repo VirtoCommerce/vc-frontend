@@ -17,7 +17,7 @@
         <template v-else>
           <ProductCard
             v-for="(item, index) in products"
-            :key="item.id + index"
+            :key="index"
             :loading="fetchingProducts"
             :view-mode="savedViewMode"
             :lazy="index >= lazyCardsCount"
