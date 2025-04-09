@@ -1,5 +1,7 @@
 <template>
   <VcChip v-if="isDigital" :size="size" variant="outline-dark" color="info" rounded>
+    <VcIcon name="cloud" />
+
     {{ $t("common.labels.digital_product") }}
   </VcChip>
 
