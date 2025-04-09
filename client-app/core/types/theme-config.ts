@@ -192,6 +192,7 @@ export interface IThemeConfigSettings {
 
   catalog_items_limit?: number;
   catalog_items_selector?: number[];
+  catalog_show_load_button?: boolean;
   infinite_scrolling_enabled?: boolean;
   in_stock_count_enabled?: boolean;
   zero_price_product_enabled?: boolean;
