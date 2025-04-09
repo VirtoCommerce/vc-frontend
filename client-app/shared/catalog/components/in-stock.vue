@@ -3,27 +3,34 @@
     {{ $t("common.labels.digital_product") }}
   </VcChip>
 
-  <VcChip v-else-if="isInStock" :size="size" variant="outline-dark" color="success" rounded>
-    <span v-if="quantity" class="inline-block min-w-5 text-center">
+  <VcChip
+    v-else-if="isInStock && quantity"
+    :size="size"
+    variant="outline-dark"
+    color="success"
+    rounded
+    :title="$t('common.labels.in_stock')"
+  >
+    <VcIcon name="cube" />
+
+    <span class="inline-block min-w-3 text-center">
       {{ inStockQuantityLabel }}
     </span>
-
-    <span
-      v-if="textEnabled"
-      :class="{
-        'ms-1': quantity,
-      }"
-    >
-      {{ quantity ? $t("common.suffixes.product_count_in_stock") : $t("common.labels.in_stock") }}
-    </span>
   </VcChip>
 
-  <VcChip v-else-if="!isAvailable" :size="size" variant="outline-dark" color="danger" rounded>
-    {{ $t("common.messages.product_no_longer_available") }}
-  </VcChip>
+  <VcChip
+    v-else
+    :size="size"
+    variant="outline-dark"
+    color="danger"
+    rounded
+    :title="
+      !isAvailable ? $t('common.messages.product_no_longer_available') : $t('common.messages.product_out_of_stock')
+    "
+  >
+    <VcIcon name="cube" />
 
-  <VcChip v-else :size="size" variant="outline-dark" color="danger" rounded>
-    {{ $t("common.messages.product_out_of_stock") }}
+    <span class="inline-block min-w-3 text-center">0</span>
   </VcChip>
 </template>
 
@@ -43,7 +50,7 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   isAvailable: true,
   quantity: null,
-  size: "xs",
+  size: "sm",
   textEnabled: true,
 });
 
