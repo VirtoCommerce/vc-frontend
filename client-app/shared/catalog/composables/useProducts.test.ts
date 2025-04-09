@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { PAGE_LIMIT } from "@/core/constants";
 import { useProducts } from "./useProducts";
 
 // Mock types
@@ -240,7 +241,7 @@ describe("useProducts", () => {
       expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }, { id: "product3" }, { id: "product4" }]);
     });
 
-    it.only("should prepend products when loading a page equal to the minimum visited page with catalog_show_load_button=true", async () => {
+    it("should prepend products when loading a page equal to the minimum visited page with catalog_show_load_button=true", async () => {
       const localThemeContext = { ...mockData.mockThemeContext };
       localThemeContext.settings = {
         ...mockData.mockThemeContext.settings,
@@ -308,6 +309,136 @@ describe("useProducts", () => {
       await expect(fetchMoreProducts({ page: 2, itemsPerPage: 2 })).rejects.toThrow(errorMessage);
 
       expect(fetchingMoreProducts.value).toBe(false);
+    });
+  });
+
+  describe("page history handling", () => {
+    beforeEach(() => {
+      const localThemeContext = { ...mockData.mockThemeContext };
+      localThemeContext.settings = {
+        ...mockData.mockThemeContext.settings,
+        catalog_show_load_button: true,
+      };
+
+      mockData.useThemeContext.mockReturnValue({
+        themeContext: { value: localThemeContext },
+      });
+    });
+
+    it("should add page to history when fetchProducts is called without page", async () => {
+      const { fetchProducts, pagesHistory } = useProducts();
+
+      await fetchProducts({ itemsPerPage: 2 });
+
+      expect(pagesHistory.value).toEqual([1]);
+    });
+
+    it("should add pages to history when fetchProducts is called", async () => {
+      const { fetchProducts, pagesHistory } = useProducts();
+
+      // First page load
+      mockData.searchProducts.mockResolvedValueOnce({
+        items: [{ id: "product1" }, { id: "product2" }],
+        totalCount: 10,
+        pageInfo: mockData.mockPageInfo,
+        term_facets: [],
+        range_facets: [],
+        filter_facets: [],
+        edges: [],
+      });
+
+      await fetchProducts({ page: 3, itemsPerPage: 2 });
+
+      expect(pagesHistory.value).toEqual([3]);
+
+      mockData.searchProducts.mockResolvedValueOnce({
+        items: [{ id: "product3" }, { id: "product4" }],
+        totalCount: 10,
+        pageInfo: mockData.mockPageInfo,
+        term_facets: [],
+        range_facets: [],
+        filter_facets: [],
+        edges: [],
+      });
+
+      await fetchProducts({ page: 2, itemsPerPage: 2 });
+
+      expect(pagesHistory.value).toEqual([3, 2]);
+    });
+
+    it("should add page to history on fetchMoreProducts", async () => {
+      const { fetchProducts, fetchMoreProducts, pagesHistory } = useProducts();
+
+      mockData.searchProducts.mockResolvedValueOnce({
+        items: [{ id: "product1" }, { id: "product2" }],
+        totalCount: 10,
+        pageInfo: mockData.mockPageInfo,
+        term_facets: [],
+        range_facets: [],
+        filter_facets: [],
+        edges: [],
+      });
+
+      await fetchProducts({ page: 3, itemsPerPage: 2 });
+
+      await fetchMoreProducts({ page: 2, itemsPerPage: 2 });
+      await fetchMoreProducts({ page: 1, itemsPerPage: 2 });
+
+      expect(pagesHistory.value).toEqual([3, 2, 1]);
+    });
+
+    it("should not add page to history when page is 0", async () => {
+      const { fetchProducts, pagesHistory } = useProducts();
+
+      mockData.searchProducts.mockResolvedValueOnce({
+        items: [{ id: "product3" }, { id: "product4" }],
+        totalCount: 10,
+        pageInfo: mockData.mockPageInfo,
+        term_facets: [],
+        range_facets: [],
+        filter_facets: [],
+        edges: [],
+      });
+
+      await fetchProducts({ page: 0, itemsPerPage: 2 });
+
+      expect(pagesHistory.value).toEqual([]);
+    });
+
+    it("should not add page to history when page is greater than pagesCount", async () => {
+      const { fetchProducts, pagesHistory } = useProducts();
+
+      mockData.searchProducts.mockResolvedValueOnce({
+        items: [{ id: "product3" }, { id: "product4" }],
+        totalCount: 10,
+        pageInfo: mockData.mockPageInfo,
+        term_facets: [],
+        range_facets: [],
+        filter_facets: [],
+        edges: [],
+      });
+
+      await fetchProducts({ page: 10, itemsPerPage: 2 });
+
+      expect(pagesHistory.value).toEqual([]);
+    });
+
+    it("should not add page to history when page is greater than page limit", async () => {
+      const { fetchProducts, pagesHistory } = useProducts();
+
+      mockData.searchProducts.mockResolvedValueOnce({
+        items: [{ id: "product3" }, { id: "product4" }],
+        totalCount: 300,
+        pageInfo: mockData.mockPageInfo,
+        term_facets: [],
+        range_facets: [],
+        filter_facets: [],
+        edges: [],
+      });
+
+      await fetchProducts({ page: PAGE_LIMIT + 1, itemsPerPage: 2 });
+
+      expect(pagesHistory.value).toEqual([]);
     });
   });
 });

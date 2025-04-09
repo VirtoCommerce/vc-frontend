@@ -244,15 +244,15 @@ export function useProducts(
       } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
 
       const page = searchParams.page;
-      if (page) {
-        pagesHistory.value.push(page);
-      }
+
       products.value = items;
       totalProductsCount.value = totalCount;
       pagesCount.value = Math.min(
         Math.ceil(totalProductsCount.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
         PAGE_LIMIT,
       );
+
+      setPageHistory(page);
 
       if (withFacets) {
         setFacets({
@@ -283,12 +283,7 @@ export function useProducts(
       const page = searchParams.page;
       const minVisitedPage = Math.min(...pagesHistory.value, currentPage.value);
 
-      console.log("page", page);
-      console.log("minVisitedPage", minVisitedPage);
-      console.log("items", items);
-
       if (withLoadButton && page && minVisitedPage && page < minVisitedPage) {
-        pagesHistory.value.push(page);
         products.value = [...items, ...products.value];
       } else {
         products.value = products.value.concat(items);
@@ -299,11 +294,19 @@ export function useProducts(
         Math.ceil(totalProductsCount.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
         PAGE_LIMIT,
       );
+
+      setPageHistory(page);
     } catch (e) {
       Logger.error(`useProducts.${fetchMoreProducts.name}`, e);
       throw e;
     } finally {
       fetchingMoreProducts.value = false;
+    }
+  }
+
+  function setPageHistory(page?: number) {
+    if (page === undefined || (page <= pagesCount.value && page > 0)) {
+      pagesHistory.value.push(page ?? 1);
     }
   }
 
