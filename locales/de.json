@@ -1288,7 +1288,9 @@
       "no_facet_found_message": "Keine Ergebnisse",
       "no_products_button": "Suche zurücksetzen",
       "products_icon": "Produktikone",
-      "show_all_results": "Alle Ergebnisse anzeigen"
+      "show_all_results": "Alle Ergebnisse anzeigen",
+      "load_previous_page": "Vorherige Seite laden",
+      "load_next_page": "Nächste Seite laden"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

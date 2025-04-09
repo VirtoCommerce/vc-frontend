@@ -1288,7 +1288,9 @@
       "no_facet_found_message": "Результатов нет",
       "no_products_button": "Очистить поиск",
       "products_icon": "Иконка товара",
-      "show_all_results": "Показать все результаты"
+      "show_all_results": "Показать все результаты",
+      "load_previous_page": "Загрузить предыдущую страницу",
+      "load_next_page": "Загрузить следующую страницу"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

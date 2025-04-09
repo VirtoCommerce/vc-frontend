@@ -199,9 +199,11 @@
         :items-per-page="itemsPerPage"
         :pages-count="pagesCount"
         :page-number="currentPage"
+        :page-history="pageHistory"
         :products="products"
         :saved-view-mode="savedViewMode"
         :search-params="searchParams"
+        mode="load-more-buttons"
         @change-page="changeProductsPage"
         @reset-facet-filters="resetFacetFilters"
         @reset-filter-keyword="resetFilterKeyword"
@@ -306,6 +308,7 @@ const {
   localStorageBranches,
   localStorageInStock,
   pagesCount,
+  pageHistory,
   products,
   productsFilters,
   searchQueryParam,

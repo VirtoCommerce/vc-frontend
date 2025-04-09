@@ -1288,7 +1288,9 @@
       "no_facet_found_message": "无结果",
       "no_products_button": "重置搜索",
       "products_icon": "产品图标",
-      "show_all_results": "显示所有结果"
+      "show_all_results": "显示所有结果",
+      "load_previous_page": "加载上一页",
+      "load_next_page": "加载下一页"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

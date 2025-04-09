@@ -1,6 +1,16 @@
 <template>
   <div>
     <template v-if="products.length || fetchingProducts">
+      <div v-if="mode === 'load-more-buttons' && minVisitedPage > 1" class="mb-4 flex justify-center">
+        <VcButton
+          :loading="fetchingMoreProducts && pageNumber < minVisitedPage"
+          prepend-icon="arrow-left"
+          @click="loadPreviousPage"
+        >
+          {{ $t("pages.catalog.load_previous_page") }}
+        </VcButton>
+      </div>
+
       <DisplayProducts
         :loading="fetchingProducts"
         :view-mode="savedViewMode"
@@ -18,15 +28,25 @@
       </DisplayProducts>
 
       <VcInfinityScrollLoader
-        v-if="!Number(fixedProductsCount)"
+        v-if="mode === 'infinite-scroll' && !Number(fixedProductsCount)"
         :loading="fetchingProducts || fetchingMoreProducts"
         :is-page-limit-reached="pageNumber >= PAGE_LIMIT"
         :page-number="pageNumber"
         :pages-count="pagesCount"
         distance="400"
         class="mt-8"
-        @visible="$emit('changePage', ++pageNumber)"
+        @visible="$emit('changePage', pageNumber + 1)"
       />
+
+      <div v-if="mode === 'load-more-buttons' && maxVisitedPage < pagesCount" class="mt-4 flex justify-center">
+        <VcButton
+          :loading="fetchingMoreProducts && pageNumber > maxVisitedPage"
+          append-icon="arrow-right"
+          @click="loadNextPage"
+        >
+          {{ $t("pages.catalog.load_next_page") }}
+        </VcButton>
+      </div>
 
       <VcScrollTopButton />
     </template>
@@ -51,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from "vue";
+import { computed, toRef } from "vue";
 import { useRouteQueryParam } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
@@ -61,7 +81,9 @@ import DisplayProducts from "@/shared/catalog/components/display-products.vue";
 
 const emit = defineEmits<IEmits>();
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  mode: "infinite-scroll",
+});
 
 interface IProps {
   cardType?: "full" | "short";
@@ -74,9 +96,11 @@ interface IProps {
   hasSelectedFacets: boolean;
   itemsPerPage: number;
   pagesCount: number;
+  pageHistory: Readonly<number[]>;
   pageNumber: number;
   products: Product[];
   savedViewMode: "grid" | "list";
+  mode?: "infinite-scroll" | "load-more-buttons";
 }
 
 interface IEmits {
@@ -90,7 +114,19 @@ const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
   defaultValue: "",
 });
 
+function loadPreviousPage() {
+  emit("changePage", minVisitedPage.value - 1);
+}
+
+function loadNextPage() {
+  emit("changePage", maxVisitedPage.value + 1);
+}
+
 const pageNumber = toRef(props, "pageNumber");
+const pageHistory = toRef(props, "pageHistory");
+
+const minVisitedPage = computed(() => Math.min(...pageHistory.value));
+const maxVisitedPage = computed(() => Math.max(...pageHistory.value));
 
 function sendGASelectItemEvent(product: Product): void {
   emit("selectProduct", product);
