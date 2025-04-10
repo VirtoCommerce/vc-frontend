@@ -1,9 +1,10 @@
 <template>
   <div>
     <template v-if="products.length || fetchingProducts">
-      <div v-if="mode === CATALOG_MODES.loadMoreButtons && minVisitedPage > 1" class="mb-4 flex justify-center">
+      <div v-if="mode === CATALOG_MODES.loadMoreButtons && minVisitedPage > 1" class="-mt-2 mb-6 flex justify-center">
         <VcButton
           v-if="products.length"
+          size="sm"
           :loading="fetchingMoreProducts && pageNumber < minVisitedPage"
           prepend-icon="arrow-left"
           @click="loadPreviousPage"
@@ -41,11 +42,12 @@
 
       <div
         v-if="mode === CATALOG_MODES.loadMoreButtons && maxVisitedPage < pagesCount"
-        class="mt-4 flex justify-center"
+        class="mt-6 flex justify-center"
       >
         <VcButton
           :loading="fetchingMoreProducts && pageNumber > maxVisitedPage"
           append-icon="arrow-right"
+          size="sm"
           @click="loadNextPage"
         >
           {{ $t("pages.catalog.load_next_page") }}
