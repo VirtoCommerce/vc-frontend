@@ -12,8 +12,9 @@ import {
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
 } from "@/core/utilities";
+import { CATALOG_MODES } from "@/shared/catalog/constants/catalog";
 import { useModal } from "@/shared/modal";
-import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "../types";
+import type { CatalogModeType, FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "../types";
 import type { Product, RangeFacet, TermFacet } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { Ref } from "vue";
@@ -32,7 +33,7 @@ export function useProducts(
     filtersDisplayOrder?: Ref<FiltersDisplayOrderType | undefined>;
     useQueryParams?: boolean;
     /** @default config.catalog_mode */
-    catalogMode?: "infinite-scroll" | "load-more-buttons";
+    catalogMode?: CatalogModeType;
   } = {},
 ) {
   const { themeContext } = useThemeContext();
@@ -40,7 +41,7 @@ export function useProducts(
     withFacets = false,
     withImages = themeContext.value?.settings?.image_carousel_in_product_card_enabled,
     withZeroPrice = themeContext.value?.settings?.zero_price_product_enabled,
-    catalogMode = "infinite-scroll",
+    catalogMode = CATALOG_MODES.infiniteScroll,
   } = options;
   const { openModal } = useModal();
 
@@ -77,7 +78,7 @@ export function useProducts(
   const pagesCount = ref(1);
   const isFiltersSidebarVisible = ref(false);
   const currentPage = ref(
-    catalogMode === "load-more-buttons" && pageQueryParam.value ? (Number(pageQueryParam.value) ?? 1) : 1,
+    catalogMode === CATALOG_MODES.loadMoreButtons && pageQueryParam.value ? (Number(pageQueryParam.value) ?? 1) : 1,
   );
   const pageHistory = ref<number[]>([]);
 
@@ -245,7 +246,7 @@ export function useProducts(
     const searchParams = {
       ..._searchParams,
       page:
-        catalogMode === "load-more-buttons" && _searchParams.page === undefined
+        catalogMode === CATALOG_MODES.loadMoreButtons && _searchParams.page === undefined
           ? currentPage.value
           : _searchParams.page,
     };
@@ -308,7 +309,7 @@ export function useProducts(
       const minVisitedPage = Math.min(...pageHistory.value);
 
       if (
-        catalogMode === "load-more-buttons" &&
+        catalogMode === CATALOG_MODES.loadMoreButtons &&
         page &&
         minVisitedPage &&
         page < minVisitedPage &&
@@ -368,14 +369,18 @@ export function useProducts(
   function updateCurrentPage(page: number) {
     currentPage.value = page;
 
-    if (catalogMode === "load-more-buttons" && page > Math.max(...pageHistory.value) && Number.isFinite(page)) {
+    if (
+      catalogMode === CATALOG_MODES.loadMoreButtons &&
+      page > Math.max(...pageHistory.value) &&
+      Number.isFinite(page)
+    ) {
       pageQueryParam.value = page.toString();
     }
   }
 
   async function resetCurrentPage() {
     updateCurrentPage(1);
-    if (catalogMode === "load-more-buttons") {
+    if (catalogMode === CATALOG_MODES.loadMoreButtons) {
       await new Promise((resolve) => setTimeout(resolve, 0));
       // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
       pageQueryParam.value = "";

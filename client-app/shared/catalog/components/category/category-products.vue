@@ -1,7 +1,7 @@
 <template>
   <div>
     <template v-if="products.length || fetchingProducts">
-      <div v-if="mode === 'load-more-buttons' && minVisitedPage > 1" class="mb-4 flex justify-center">
+      <div v-if="mode === CATALOG_MODES.loadMoreButtons && minVisitedPage > 1" class="mb-4 flex justify-center">
         <VcButton
           v-if="products.length"
           :loading="fetchingMoreProducts && pageNumber < minVisitedPage"
@@ -29,7 +29,7 @@
       </DisplayProducts>
 
       <VcInfinityScrollLoader
-        v-if="mode === 'infinite-scroll' && !Number(fixedProductsCount)"
+        v-if="mode === CATALOG_MODES.infiniteScroll && !Number(fixedProductsCount)"
         :loading="fetchingProducts || fetchingMoreProducts"
         :is-page-limit-reached="pageNumber >= PAGE_LIMIT"
         :page-number="pageNumber"
@@ -39,7 +39,10 @@
         @visible="$emit('changePage', pageNumber + 1)"
       />
 
-      <div v-if="mode === 'load-more-buttons' && maxVisitedPage < pagesCount" class="mt-4 flex justify-center">
+      <div
+        v-if="mode === CATALOG_MODES.loadMoreButtons && maxVisitedPage < pagesCount"
+        class="mt-4 flex justify-center"
+      >
         <VcButton
           :loading="fetchingMoreProducts && pageNumber > maxVisitedPage"
           append-icon="arrow-right"
@@ -77,13 +80,15 @@ import { useRouteQueryParam } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { AddToCart } from "@/shared/cart";
+import { CATALOG_MODES } from "@/shared/catalog/constants/catalog";
 import type { Product } from "@/core/api/graphql/types";
+import type { CatalogModeType } from "@/shared/catalog/types/catalog";
 import DisplayProducts from "@/shared/catalog/components/display-products.vue";
 
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  mode: "infinite-scroll",
+  mode: CATALOG_MODES.infiniteScroll,
 });
 
 interface IProps {
@@ -101,7 +106,7 @@ interface IProps {
   pageNumber: number;
   products: Product[];
   savedViewMode: "grid" | "list";
-  mode?: "infinite-scroll" | "load-more-buttons";
+  mode?: CatalogModeType;
 }
 
 interface IEmits {

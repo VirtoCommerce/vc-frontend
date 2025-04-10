@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PAGE_LIMIT } from "@/core/constants";
+import { CATALOG_MODES } from "@/shared/catalog/constants/catalog";
 import { useProducts } from "./useProducts";
+import type { CatalogModeType } from "../types";
 
 // Mock types
 interface Product {
@@ -34,7 +36,7 @@ interface ICurrency {
 }
 
 interface IThemeSettings {
-  catalog_mode: "infinite-scroll" | "load-more-buttons";
+  catalog_mode?: CatalogModeType;
   image_carousel_in_product_card_enabled: boolean;
   zero_price_product_enabled: boolean;
 }
@@ -69,7 +71,6 @@ const mockData = vi.hoisted(() => {
     availableLanguages: [],
     availableCurrencies: [],
     settings: {
-      catalog_mode: "infinite-scroll",
       image_carousel_in_product_card_enabled: true,
       zero_price_product_enabled: true,
     },
@@ -191,7 +192,9 @@ describe("useProducts", () => {
     });
 
     it("should append products when loading a page higher than minimum visited page with catalog_mode=load-more-buttons", async () => {
-      const { fetchProducts, fetchMoreProducts, products } = useProducts({ catalogMode: "load-more-buttons" });
+      const { fetchProducts, fetchMoreProducts, products } = useProducts({
+        catalogMode: CATALOG_MODES.loadMoreButtons,
+      });
 
       mockData.searchProducts.mockResolvedValueOnce({
         items: [{ id: "product1" }, { id: "product2" }],
@@ -221,7 +224,9 @@ describe("useProducts", () => {
     });
 
     it("should prepend products when loading a page equal to the minimum visited page with catalog_mode=load-more-buttons", async () => {
-      const { fetchProducts, fetchMoreProducts, products } = useProducts({ catalogMode: "load-more-buttons" });
+      const { fetchProducts, fetchMoreProducts, products } = useProducts({
+        catalogMode: CATALOG_MODES.loadMoreButtons,
+      });
 
       mockData.searchProducts.mockResolvedValueOnce({
         items: [{ id: "product5" }, { id: "product6" }],
@@ -286,7 +291,7 @@ describe("useProducts", () => {
       const localThemeContext = { ...mockData.mockThemeContext };
       localThemeContext.settings = {
         ...mockData.mockThemeContext.settings,
-        catalog_mode: "load-more-buttons",
+        catalog_mode: CATALOG_MODES.loadMoreButtons,
       };
 
       mockData.useThemeContext.mockReturnValue({

@@ -1,6 +1,7 @@
 import type { BrowserTargetType } from "./browser-window-target";
 import type { ISocialSharingService } from "./social-sharing";
 import type { SortDirection } from "@/core/enums";
+import type { CatalogModeType } from "@/shared/catalog/types/catalog";
 
 type StatusType = {
   code: string;
@@ -192,7 +193,7 @@ export interface IThemeConfigSettings {
 
   catalog_items_limit?: number;
   catalog_items_selector?: number[];
-  catalog_mode?: "infinite-scroll" | "load-more-buttons";
+  catalog_mode?: CatalogModeType;
   infinite_scrolling_enabled?: boolean;
   in_stock_count_enabled?: boolean;
   zero_price_product_enabled?: boolean;
