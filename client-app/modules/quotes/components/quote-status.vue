@@ -6,9 +6,7 @@
     truncate
     rounded
   >
-    <span class="text-neutral-800">
-      {{ status }}
-    </span>
+    {{ status }}
   </VcChip>
 </template>
 

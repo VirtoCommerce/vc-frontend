@@ -81,7 +81,7 @@ const _iconColor = computed(() =>
   $truncate: "";
   $clickable: "";
 
-  @apply inline-flex justify-between max-w-full rounded-sm border font-bold text-center px-[--padding-x] py-[--padding-y];
+  @apply inline-flex justify-between max-w-full rounded-sm border font-bold text-center px-[--padding-x] py-[--padding-y] text-neutral-800;
 
   &--clickable {
     $clickable: &;
@@ -135,7 +135,7 @@ const _iconColor = computed(() =>
 
   @each $color in $colors {
     &--solid--#{$color} {
-      @apply bg-[--color-#{$color}-500] border-[--color-#{$color}-500] text-additional-50;
+      @apply bg-[--color-#{$color}-500] border-[--color-#{$color}-500];
 
       &#{$clickable} {
         &:hover {
@@ -145,7 +145,7 @@ const _iconColor = computed(() =>
     }
 
     &--solid-light--#{$color} {
-      @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-50] text-[--color-#{$color}-800];
+      @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-50];
 
       &#{$clickable} {
         &:hover {
@@ -155,7 +155,7 @@ const _iconColor = computed(() =>
     }
 
     &--outline--#{$color} {
-      @apply bg-additional-50 text-[--color-#{$color}-800] border-[--color-#{$color}-500];
+      @apply border-[--color-#{$color}-500];
 
       &#{$clickable} {
         &:hover {
@@ -165,7 +165,7 @@ const _iconColor = computed(() =>
     }
 
     &--outline-dark--#{$color} {
-      @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-800] border-[--color-#{$color}-500];
+      @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-500];
 
       &#{$clickable} {
         &:hover {
@@ -181,6 +181,20 @@ const _iconColor = computed(() =>
         }
       }
     }
+
+    &[class*="--#{$color}"] {
+      --close-button-icon-color: var(--color-#{$color}-700);
+    }
+  }
+
+  &[class*="--solid--"] {
+    --close-button-icon-color: var(--color-additional-50);
+
+    @apply text-additional-50;
+  }
+
+  &[class*="--outline--"] {
+    @apply bg-additional-50;
   }
 
   &__content {
@@ -193,6 +207,8 @@ const _iconColor = computed(() =>
   }
 
   &__close-button {
+    --vc-icon-color: var(--close-button-icon-color);
+
     @apply self-stretch flex items-center ps-1 pe-[--padding-x] -ms-1 -me-[--padding-x] py-[--padding-y] -my-[--padding-y] rounded-r-[inherit];
   }
 
