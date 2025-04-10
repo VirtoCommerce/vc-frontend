@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { nextTick, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 import { useShipToLocation, MAX_ADDRESSES_NUMBER } from "./useShipToLocation";
 import type { AnyAddressType } from "@/core/types";
 
@@ -68,15 +68,15 @@ vi.mock("@vueuse/core", async () => {
   const actual = await vi.importActual("@vueuse/core");
   return {
     ...actual,
-    useLocalStorage: <T>(key: string, initialValue: T) => {
-      if (key === "localShipToAddresses") {
-        return localShipToAddressesValue;
-      }
-      if (key === "selectedLocalShipToAddressId") {
-        return selectedLocalShipToAddressIdValue;
-      }
-      return ref(initialValue);
-    },
+    useLocalStorage: <T>(key: string, initialValue: T) =>
+      computed({
+        get() {
+          return getLocalStorageValue(key) ?? initialValue;
+        },
+        set(value: T) {
+          setLocalStorageValue(key, value as [AnyAddressType] | string | null);
+        },
+      }),
   };
 });
 
@@ -104,6 +104,7 @@ const isCorporateMember = ref(false);
 const loadingUser = ref(false);
 const organization = ref({ id: "org1" });
 const user = ref<{
+  id?: string;
   contact?: {
     id: string;
     firstName: string;
@@ -111,6 +112,7 @@ const user = ref<{
     selectedAddressId: string;
   };
 }>({
+  id: "user1",
   contact: {
     id: "contact1",
     firstName: "John",
@@ -126,9 +128,31 @@ const organizationAddresses = ref<AnyAddressType[]>([]);
 const orgLoading = ref(false);
 const userAddressesLoading = ref(false);
 
-// Mocks for vueuse local storage
-const localShipToAddressesValue = ref<AnyAddressType[]>([]);
-const selectedLocalShipToAddressIdValue = ref<string | null>(null);
+const localShipToAddressesData = ref<Record<string, AnyAddressType[]>>({});
+const selectedLocalShipToAddressIdData = ref<Record<string, string | null>>({});
+
+function setLocalStorageValue(key: string, value: [AnyAddressType] | string | null) {
+  if (key.includes("local_ship_to_addresses")) {
+    const id = key.replace("local_ship_to_addresses_", "");
+    localShipToAddressesData.value[id] = value as [AnyAddressType];
+  }
+  if (key.includes("local_ship_to_selected_address_id")) {
+    const id = key.replace("local_ship_to_selected_address_id_", "");
+    selectedLocalShipToAddressIdData.value[id] = value as string | null;
+  }
+}
+
+function getLocalStorageValue(key: string) {
+  if (key.includes("local_ship_to_addresses")) {
+    const id = key.replace("local_ship_to_addresses_", "");
+    return localShipToAddressesData.value[id] ?? null;
+  }
+  if (key.includes("local_ship_to_selected_address_id")) {
+    const id = key.replace("local_ship_to_selected_address_id_", "");
+    return selectedLocalShipToAddressIdData.value[id] ?? null;
+  }
+  return null;
+}
 
 // Cart mocks
 const shipment = ref({ id: "shipment1", deliveryAddress: { id: "addr1" } });
@@ -151,6 +175,7 @@ describe("useShipToLocation composable", () => {
     loadingUser.value = false;
     organization.value = { id: "org1" };
     user.value = {
+      id: "user1",
       contact: {
         id: "contact1",
         firstName: "John",
@@ -185,8 +210,8 @@ describe("useShipToLocation composable", () => {
 
     userAddressesLoading.value = false;
     orgLoading.value = false;
-    localShipToAddressesValue.value = [];
-    selectedLocalShipToAddressIdValue.value = null;
+    localShipToAddressesData.value = {};
+    selectedLocalShipToAddressIdData.value = {};
     shipment.value = { id: "shipment1", deliveryAddress: { id: "addr1" } };
     checkPermissionsMock.mockReturnValue(false);
   });
@@ -339,13 +364,17 @@ describe("useShipToLocation composable", () => {
         countryName: "Country",
         postalCode: "0000",
       };
+
       const { selectAddress } = useShipToLocation();
       await selectAddress(dummyAddress);
-      expect(selectedLocalShipToAddressIdValue.value).toBe("anonAddr1");
+
+      expect(getLocalStorageValue("local_ship_to_selected_address_id_anonymous")).toBe("anonAddr1");
+
       expect(updateShipmentMock).toHaveBeenCalledWith({
         id: shipment.value.id,
         deliveryAddress: dummyAddress,
       });
+
       expect(updateContactMock).not.toHaveBeenCalled();
     });
 
@@ -460,7 +489,7 @@ describe("useShipToLocation composable", () => {
       expect(updateContactMock).not.toHaveBeenCalled();
 
       // Should update local storage
-      expect(selectedLocalShipToAddressIdValue.value).toBe("localCorpLimited");
+      expect(getLocalStorageValue("local_ship_to_selected_address_id_user1")).toBe("localCorpLimited");
 
       expect(updateShipmentMock).toHaveBeenCalledWith({
         id: shipment.value.id,
@@ -518,8 +547,9 @@ describe("useShipToLocation composable", () => {
         countryName: "Country",
         postalCode: "0000",
       };
-      localShipToAddressesValue.value = [localAddress];
-      selectedLocalShipToAddressIdValue.value = "localCorpLimited";
+
+      setLocalStorageValue("local_ship_to_addresses_localCorpLimited", [localAddress]);
+      setLocalStorageValue("selected_local_ship_to_address_id_localCorpLimited", "localCorpLimited");
 
       const { selectedAddress } = useShipToLocation();
       await nextTick();
@@ -538,16 +568,20 @@ describe("useShipToLocation composable", () => {
         countryName: "Country",
         postalCode: "0000",
       };
-      localShipToAddressesValue.value = [localAddress];
-      selectedLocalShipToAddressIdValue.value = "localAddr1";
+
+      setLocalStorageValue("local_ship_to_addresses_anonymous", [localAddress]);
+      setLocalStorageValue("local_ship_to_selected_address_id_anonymous", "localAddr1");
+
       const { selectedAddress } = useShipToLocation();
+
       await nextTick();
+
       expect(selectedAddress.value).toEqual(localAddress);
     });
 
     it("returns undefined for selectedAddress when selectedLocalShipToAddressId does not match any address (anonymous)", async () => {
       isAuthenticated.value = false;
-      localShipToAddressesValue.value = [
+      setLocalStorageValue("local_ship_to_addresses_localAddr1", [
         {
           id: "localAddr1",
           line1: "Local Address",
@@ -557,8 +591,8 @@ describe("useShipToLocation composable", () => {
           countryName: "Country",
           postalCode: "0000",
         },
-      ];
-      selectedLocalShipToAddressIdValue.value = "nonMatchingId";
+      ]);
+      setLocalStorageValue("selected_local_ship_to_address_id_localAddr1", "nonMatchingId");
       const { selectedAddress } = useShipToLocation();
       await nextTick();
       expect(selectedAddress.value).toBeUndefined();
@@ -567,7 +601,7 @@ describe("useShipToLocation composable", () => {
     it("does not update local selected address when selectAddress is called for an authenticated (personal) user, but calls updateShipment", async () => {
       // For authenticated user
       isAuthenticated.value = true;
-      selectedLocalShipToAddressIdValue.value = null; // should remain null for authenticated
+      setLocalStorageValue("selected_local_ship_to_address_id_personal1", null); // should remain null for authenticated
       const dummyAddress = {
         id: "personal1",
         line1: "Personal Address",
@@ -579,7 +613,7 @@ describe("useShipToLocation composable", () => {
       };
       const { selectAddress } = useShipToLocation();
       await selectAddress(dummyAddress);
-      expect(selectedLocalShipToAddressIdValue.value).toBeNull();
+      expect(getLocalStorageValue("selected_local_ship_to_address_id_personal1")).toBeNull();
       expect(updateShipmentMock).toHaveBeenCalledWith({
         id: shipment.value.id,
         deliveryAddress: dummyAddress,
@@ -730,7 +764,7 @@ describe("useShipToLocation composable", () => {
         postalCode: "0000",
       };
       await modalOptions.props.onResult(dummyAddress);
-      expect(localShipToAddressesValue.value.length).toBe(1);
+      expect(getLocalStorageValue("local_ship_to_addresses_anonymous")?.length).toBe(1);
       expect(closeModalMock).toHaveBeenCalled();
       expect(updateShipmentMock).toHaveBeenCalledWith({
         id: shipment.value.id,
@@ -831,7 +865,7 @@ describe("useShipToLocation composable", () => {
         countryName: "Country",
         postalCode: "0000",
       };
-      localShipToAddressesValue.value = [localAddress];
+      setLocalStorageValue("local_ship_to_addresses_localCorpLimited", [localAddress]);
 
       const { accountAddresses } = useShipToLocation();
       expect(accountAddresses.value).toEqual(organizationAddresses.value);
@@ -851,10 +885,10 @@ describe("useShipToLocation composable", () => {
         countryName: "Country",
         postalCode: "0000",
       };
-      localShipToAddressesValue.value = [localAddress];
+      setLocalStorageValue("local_ship_to_addresses_user1", [localAddress]);
 
       const { accountAddresses } = useShipToLocation();
-      expect(accountAddresses.value).toEqual(localShipToAddressesValue.value);
+      expect(accountAddresses.value).toEqual(getLocalStorageValue("local_ship_to_addresses_user1"));
     });
 
     it("for anonymous user, use local addresses", () => {
@@ -868,10 +902,10 @@ describe("useShipToLocation composable", () => {
         countryName: "Country",
         postalCode: "0000",
       };
-      localShipToAddressesValue.value = [localAddress];
+      setLocalStorageValue("local_ship_to_addresses_anonymous", [localAddress]);
 
       const { accountAddresses } = useShipToLocation();
-      expect(accountAddresses.value).toEqual(localShipToAddressesValue.value);
+      expect(accountAddresses.value).toEqual(getLocalStorageValue("local_ship_to_addresses_anonymous"));
     });
   });
 
@@ -917,11 +951,14 @@ describe("useShipToLocation composable", () => {
         id: shipment.value.id,
         deliveryAddress: personalAddress,
       });
-      expect(selectedLocalShipToAddressIdValue.value).toBeNull();
+      expect(getLocalStorageValue("local_ship_to_selected_address_id_user1")).toBeNull();
 
       // Reset and test for anonymous user
       updateShipmentMock.mockClear();
       isAuthenticated.value = false;
+      const { selectAddress: anonymousSelectAddress } = useShipToLocation();
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const anonymousAddress: AnyAddressType = {
         id: "anon1",
@@ -933,14 +970,13 @@ describe("useShipToLocation composable", () => {
         postalCode: "0000",
       };
 
-      await selectAddress(anonymousAddress);
-
+      await anonymousSelectAddress(anonymousAddress);
       // Should update both shipment and local storage
       expect(updateShipmentMock).toHaveBeenCalledWith({
         id: shipment.value.id,
         deliveryAddress: anonymousAddress,
       });
-      expect(selectedLocalShipToAddressIdValue.value).toBe("anon1");
+      expect(getLocalStorageValue("local_ship_to_selected_address_id_anonymous")).toBe("anon1");
     });
   });
 
@@ -958,14 +994,14 @@ describe("useShipToLocation composable", () => {
       };
 
       // First, ensure the address exists in local storage
-      localShipToAddressesValue.value = [anonymousAddress];
+      setLocalStorageValue("local_ship_to_addresses_anonymous", [anonymousAddress]);
 
       // Then select it
       const { selectAddress } = useShipToLocation();
       await selectAddress(anonymousAddress);
 
       // Verify it's stored in local storage
-      expect(selectedLocalShipToAddressIdValue.value).toBe("anon1");
+      expect(getLocalStorageValue("local_ship_to_selected_address_id_anonymous")).toBe("anon1");
     });
 
     it("uses addresses from local storage for anonymous users", () => {
@@ -991,7 +1027,7 @@ describe("useShipToLocation composable", () => {
         },
       ];
 
-      localShipToAddressesValue.value = localAddresses;
+      setLocalStorageValue("local_ship_to_addresses_anonymous", localAddresses as [AnyAddressType]);
 
       const { accountAddresses } = useShipToLocation();
 

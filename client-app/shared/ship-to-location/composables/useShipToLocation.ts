@@ -8,6 +8,7 @@ import { Logger, stringifyAddress } from "@/core/utilities";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { useFullCart, useShortCart } from "@/shared/cart";
 import { SelectAddressModal } from "@/shared/checkout";
+import { BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
 import { AddOrUpdateCompanyAddressModal, useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import type { MemberAddressType } from "@/core/api/graphql/types";
@@ -57,12 +58,25 @@ export function useShipToLocation() {
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
   } = useOrganizationAddresses(organization.value?.id ?? "");
 
-  const { updateShipment: updateShipmentCart } = useFullCart();
+  const {
+    updateShipment: updateShipmentCart,
+    availableShippingMethods,
+    shipment: currentShipment,
+    forceFetch: forceFetchCart,
+  } = useFullCart();
   const { cart: shortCart } = useShortCart();
   const cartShipmentId = computed(() => shortCart.value?.shipments[0]?.id);
 
-  const localShipToAddresses = useLocalStorage<AnyAddressType[]>("localShipToAddresses", []);
-  const selectedLocalShipToAddressId = useLocalStorage<string | null>("selectedLocalShipToAddressId", null);
+  const localStorageKeyPrefix = "local_ship_to_";
+  const userSuffix = computed(() => (isAuthenticated.value ? `_${user.value.id}` : "_anonymous"));
+  const localShipToAddresses = useLocalStorage<AnyAddressType[]>(
+    `${localStorageKeyPrefix}addresses${userSuffix.value}`,
+    [],
+  );
+  const selectedLocalShipToAddressId = useLocalStorage<string | null>(
+    `${localStorageKeyPrefix}selected_address_id${userSuffix.value}`,
+    null,
+  );
 
   const userType = computed<UserType>(() => {
     if (!isAuthenticated.value) {
@@ -199,9 +213,31 @@ export function useShipToLocation() {
       }
     }
 
+    if (!currentShipment.value) {
+      await forceFetchCart();
+    }
+
+    const isBopis = currentShipment.value?.shipmentMethodCode === BOPIS_CODE;
+
+    if (!isBopis) {
+      await updateShipmentCart({
+        id: cartShipmentId.value,
+        deliveryAddress: omit(address, ["isDefault", "isFavorite"]),
+      });
+      return;
+    }
+
+    const firstNotBopisShippingMethod = availableShippingMethods.value.find((method) => method.code !== BOPIS_CODE);
+    if (!firstNotBopisShippingMethod) {
+      return;
+    }
+
     await updateShipmentCart({
       id: cartShipmentId.value,
       deliveryAddress: omit(address, ["isDefault", "isFavorite"]),
+      shipmentMethodCode: firstNotBopisShippingMethod?.code,
+      shipmentMethodOption: firstNotBopisShippingMethod?.optionName,
+      price: firstNotBopisShippingMethod?.price?.amount,
     });
   }
 
