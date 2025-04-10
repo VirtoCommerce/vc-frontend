@@ -17,7 +17,6 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
         cultureName: $cultureName
         currencyCode: $currencyCode
         previousOutline: $previousOutline
-
         id: "${categoryId}",
     ) {
         id
@@ -65,6 +64,7 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
         maxLevel: $maxLevel
         onlyActive: $onlyActive
         productFilter: $productFilter
+        previousOutline: $previousOutline
         ${categoryId ? `categoryId: "${categoryId}"` : ""}
       ) {
         __typename
