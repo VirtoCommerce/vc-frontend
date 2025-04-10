@@ -39,7 +39,7 @@
     "favicon_image": "/static/icons/favicon-32x32.png",
     "homepage_background_image": "main-banner.webp",
 
-    "catalog_show_load_button": true,
+    "catalog_mode": "load-more-buttons",
 
     "image_thumbnails_enabled": true,
     "image_thumbnails_original_fallback_enabled": true,

@@ -203,7 +203,7 @@
         :products="products"
         :saved-view-mode="savedViewMode"
         :search-params="searchParams"
-        mode="load-more-buttons"
+        :mode="catalogMode"
         @change-page="changeProductsPage"
         @reset-facet-filters="resetFacetFilters"
         @reset-filter-keyword="resetFilterKeyword"
@@ -294,6 +294,8 @@ const { catalogId, currencyCode } = globals;
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
 
+const catalogMode = computed(() => themeContext.value?.settings?.catalog_mode ?? "infinite-scroll");
+
 const { themeContext } = useThemeContext();
 const {
   getFacets,
@@ -333,6 +335,7 @@ const {
   filtersDisplayOrder,
   useQueryParams: true,
   withFacets: true,
+  catalogMode: catalogMode.value,
 });
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();

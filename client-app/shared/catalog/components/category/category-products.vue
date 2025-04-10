@@ -3,6 +3,7 @@
     <template v-if="products.length || fetchingProducts">
       <div v-if="mode === 'load-more-buttons' && minVisitedPage > 1" class="mb-4 flex justify-center">
         <VcButton
+          v-if="products.length"
           :loading="fetchingMoreProducts && pageNumber < minVisitedPage"
           prepend-icon="arrow-left"
           @click="loadPreviousPage"

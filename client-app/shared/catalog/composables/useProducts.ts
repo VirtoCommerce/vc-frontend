@@ -1,5 +1,6 @@
 import { useLocalStorage } from "@vueuse/core";
-import { cloneDeep, isEqual } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+import isEqual from "lodash/isEqual";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
@@ -30,8 +31,8 @@ export function useProducts(
     withZeroPrice?: boolean;
     filtersDisplayOrder?: Ref<FiltersDisplayOrderType | undefined>;
     useQueryParams?: boolean;
-    /** @default config.catalog_show_load_button */
-    withLoadButton?: boolean;
+    /** @default config.catalog_mode */
+    catalogMode?: "infinite-scroll" | "load-more-buttons";
   } = {},
 ) {
   const { themeContext } = useThemeContext();
@@ -39,12 +40,17 @@ export function useProducts(
     withFacets = false,
     withImages = themeContext.value?.settings?.image_carousel_in_product_card_enabled,
     withZeroPrice = themeContext.value?.settings?.zero_price_product_enabled,
-    withLoadButton = themeContext.value?.settings?.catalog_show_load_button,
+    catalogMode = "infinite-scroll",
   } = options;
   const { openModal } = useModal();
 
   const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
   const localStorageBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
+
+  const pageQueryParam = useRouteQueryParam<string>(QueryParamName.Page, {
+    defaultValue: "1",
+    removeDefaultValue: true,
+  });
 
   const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
     defaultValue: PRODUCT_SORTING_LIST[0].id,
@@ -69,6 +75,10 @@ export function useProducts(
   const totalProductsCount = ref(0);
   const pagesCount = ref(1);
   const isFiltersSidebarVisible = ref(false);
+  const currentPage = ref(
+    catalogMode === "load-more-buttons" && pageQueryParam.value ? (Number(pageQueryParam.value) ?? 1) : 1,
+  );
+  const pageHistory = ref<number[]>([]);
 
   const products = ref<Product[]>([]);
   const facets = shallowRef<FacetItemType[]>([]);
@@ -226,11 +236,20 @@ export function useProducts(
     );
   }
 
-  async function fetchProducts(searchParams: Partial<ProductsSearchParamsType>) {
+  async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>) {
+    const searchParams = {
+      ..._searchParams,
+      page:
+        catalogMode === "load-more-buttons" && _searchParams.page === undefined
+          ? currentPage.value
+          : _searchParams.page,
+    };
+
     fetchingProducts.value = true;
     products.value = [];
     totalProductsCount.value = 0;
     pagesCount.value = 1;
+
     if (searchParams.page) {
       updateCurrentPage(Number(searchParams.page));
     }
@@ -252,7 +271,7 @@ export function useProducts(
         PAGE_LIMIT,
       );
 
-      setPageHistory(page);
+      addPageHistory(page ?? 1);
 
       if (withFacets) {
         setFacets({
@@ -281,9 +300,15 @@ export function useProducts(
       const { items = [], totalCount = 0 } = await searchProducts(searchParams, { withImages, withZeroPrice });
 
       const page = searchParams.page;
-      const minVisitedPage = Math.min(...pageHistory.value, currentPage.value);
+      const minVisitedPage = Math.min(...pageHistory.value);
 
-      if (withLoadButton && page && minVisitedPage && page < minVisitedPage) {
+      if (
+        catalogMode === "load-more-buttons" &&
+        page &&
+        minVisitedPage &&
+        page < minVisitedPage &&
+        Number.isFinite(page)
+      ) {
         products.value = [...items, ...products.value];
       } else {
         products.value = products.value.concat(items);
@@ -295,7 +320,7 @@ export function useProducts(
         PAGE_LIMIT,
       );
 
-      setPageHistory(page);
+      addPageHistory(page);
     } catch (e) {
       Logger.error(`useProducts.${fetchMoreProducts.name}`, e);
       throw e;
@@ -304,9 +329,9 @@ export function useProducts(
     }
   }
 
-  function setPageHistory(page?: number) {
-    if (page === undefined || (page <= pagesCount.value && page > 0)) {
-      pageHistory.value.push(page ?? 1);
+  function addPageHistory(page?: number) {
+    if (page && page <= pagesCount.value && !pageHistory.value.includes(page)) {
+      pageHistory.value.push(page);
     }
   }
 
@@ -335,14 +360,19 @@ export function useProducts(
     }
   }
 
-  const currentPage = ref(1);
-  const pageHistory = ref<number[]>([]);
-
   function updateCurrentPage(page: number) {
     currentPage.value = page;
+
+    if (catalogMode === "load-more-buttons" && page > Math.max(...pageHistory.value) && Number.isFinite(page)) {
+      pageQueryParam.value = page.toString();
+    }
   }
 
   function resetCurrentPage() {
+    if (catalogMode === "load-more-buttons") {
+      pageQueryParam.value = "";
+      pageHistory.value = [1];
+    }
     updateCurrentPage(1);
   }
 

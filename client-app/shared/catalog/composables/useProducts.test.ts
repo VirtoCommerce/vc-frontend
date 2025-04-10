@@ -34,7 +34,7 @@ interface ICurrency {
 }
 
 interface IThemeSettings {
-  catalog_show_load_button: boolean;
+  catalog_mode: "infinite-scroll" | "load-more-buttons";
   image_carousel_in_product_card_enabled: boolean;
   zero_price_product_enabled: boolean;
 }
@@ -69,7 +69,7 @@ const mockData = vi.hoisted(() => {
     availableLanguages: [],
     availableCurrencies: [],
     settings: {
-      catalog_show_load_button: false,
+      catalog_mode: "infinite-scroll",
       image_carousel_in_product_card_enabled: true,
       zero_price_product_enabled: true,
     },
@@ -160,17 +160,7 @@ describe("useProducts", () => {
   });
 
   describe("fetchMoreProducts", () => {
-    it("should fetch more products and append them to the existing products list when catalog_load_button_enabled is false", async () => {
-      const localThemeContext = { ...mockData.mockThemeContext };
-      localThemeContext.settings = {
-        ...mockData.mockThemeContext.settings,
-        catalog_show_load_button: false,
-      };
-
-      mockData.useThemeContext.mockReturnValue({
-        themeContext: { value: localThemeContext },
-      });
-
+    it("should fetch more products and append them to the existing products list when catalog_mode is infinite-scroll", async () => {
       const { fetchProducts, fetchMoreProducts, products } = useProducts();
 
       mockData.searchProducts.mockResolvedValueOnce({
@@ -200,19 +190,8 @@ describe("useProducts", () => {
       expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }, { id: "product3" }, { id: "product4" }]);
     });
 
-    it("should append products when loading a page higher than minimum visited page with catalog_show_load_button=true", async () => {
-      // Set up the theme context with catalog_show_load_button=true
-      const localThemeContext = { ...mockData.mockThemeContext };
-      localThemeContext.settings = {
-        ...mockData.mockThemeContext.settings,
-        catalog_show_load_button: true,
-      };
-
-      mockData.useThemeContext.mockReturnValue({
-        themeContext: { value: localThemeContext },
-      });
-
-      const { fetchProducts, fetchMoreProducts, products } = useProducts();
+    it("should append products when loading a page higher than minimum visited page with catalog_mode=load-more-buttons", async () => {
+      const { fetchProducts, fetchMoreProducts, products } = useProducts({ catalogMode: "load-more-buttons" });
 
       mockData.searchProducts.mockResolvedValueOnce({
         items: [{ id: "product1" }, { id: "product2" }],
@@ -241,18 +220,8 @@ describe("useProducts", () => {
       expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }, { id: "product3" }, { id: "product4" }]);
     });
 
-    it("should prepend products when loading a page equal to the minimum visited page with catalog_show_load_button=true", async () => {
-      const localThemeContext = { ...mockData.mockThemeContext };
-      localThemeContext.settings = {
-        ...mockData.mockThemeContext.settings,
-        catalog_show_load_button: true,
-      };
-
-      mockData.useThemeContext.mockReturnValue({
-        themeContext: { value: localThemeContext },
-      });
-
-      const { fetchProducts, fetchMoreProducts, products } = useProducts();
+    it("should prepend products when loading a page equal to the minimum visited page with catalog_mode=load-more-buttons", async () => {
+      const { fetchProducts, fetchMoreProducts, products } = useProducts({ catalogMode: "load-more-buttons" });
 
       mockData.searchProducts.mockResolvedValueOnce({
         items: [{ id: "product5" }, { id: "product6" }],
@@ -317,7 +286,7 @@ describe("useProducts", () => {
       const localThemeContext = { ...mockData.mockThemeContext };
       localThemeContext.settings = {
         ...mockData.mockThemeContext.settings,
-        catalog_show_load_button: true,
+        catalog_mode: "load-more-buttons",
       };
 
       mockData.useThemeContext.mockReturnValue({
@@ -328,6 +297,16 @@ describe("useProducts", () => {
     it("should add page to history when fetchProducts is called without page", async () => {
       const { fetchProducts, pageHistory } = useProducts();
 
+      mockData.searchProducts.mockResolvedValueOnce({
+        items: [{ id: "product1" }, { id: "product2" }],
+        totalCount: 10,
+        pageInfo: mockData.mockPageInfo,
+        term_facets: [],
+        range_facets: [],
+        filter_facets: [],
+        edges: [],
+      });
+
       await fetchProducts({ itemsPerPage: 2 });
 
       expect(pageHistory.value).toEqual([1]);
@@ -336,7 +315,6 @@ describe("useProducts", () => {
     it("should add pages to history when fetchProducts is called", async () => {
       const { fetchProducts, pageHistory } = useProducts();
 
-      // First page load
       mockData.searchProducts.mockResolvedValueOnce({
         items: [{ id: "product1" }, { id: "product2" }],
         totalCount: 10,
