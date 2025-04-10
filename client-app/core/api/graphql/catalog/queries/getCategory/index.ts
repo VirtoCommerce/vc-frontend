@@ -7,11 +7,7 @@ import { graphqlClient } from "../../../client";
 import type { Query, QueryChildCategoriesArgs } from "@/core/api/graphql/types";
 import type { DocumentNode } from "graphql";
 
-function getCategoryQueryDocument(
-  categoryId: string,
-  maxChildCategoriesLevel = 0,
-  previousOutline: string,
-): DocumentNode {
+function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 0): DocumentNode {
   const childCategoriesFragment = getChildCategoriesTreeString(maxChildCategoriesLevel);
   const categoryQueryString = categoryId
     ? `
@@ -20,8 +16,9 @@ function getCategoryQueryDocument(
         userId: $userId
         cultureName: $cultureName
         currencyCode: $currencyCode
+        previousOutline: $previousOutline
+
         id: "${categoryId}",
-        previousOutline: "${previousOutline}"
     ) {
         id
         name
@@ -68,7 +65,6 @@ function getCategoryQueryDocument(
         maxLevel: $maxLevel
         onlyActive: $onlyActive
         productFilter: $productFilter
-        previousOutline: $previousOutline
         ${categoryId ? `categoryId: "${categoryId}"` : ""}
       ) {
         __typename
@@ -84,7 +80,7 @@ export async function getCategory(payload: Omit<ExtendedQueryCategoryArgsType, "
   const { storeId, userId, cultureName, currencyCode } = globals;
   const navigationOutline = useLocalStorage<string>(NAVIGATION_OUTLINE, "");
 
-  const queryDocument = getCategoryQueryDocument(payload.categoryId ?? "", payload.maxLevel, navigationOutline.value);
+  const queryDocument = getCategoryQueryDocument(payload.categoryId ?? "", payload.maxLevel);
 
   const { data } = await graphqlClient.query<
     Required<Pick<Query, "category" | "childCategories">>,
