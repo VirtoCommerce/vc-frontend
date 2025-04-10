@@ -74,7 +74,8 @@
       "add_with_bulk_order": "Añadir con pedido masivo",
       "all_orders": "Todos los pedidos",
       "my_orders": "Mis pedidos",
-      "scroll_to_top": "Ir arriba"
+      "scroll_to_top": "Ir arriba",
+      "reset_page": "Restablecer página"
     },
     "labels": {
       "actions": "Acciones",

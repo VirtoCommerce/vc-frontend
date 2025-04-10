@@ -157,7 +157,13 @@
       />
 
       <!-- Filters chips -->
-      <div v-if="hasSelectedFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+      <div
+        v-if="
+          hasSelectedFacets ||
+          (catalogMode === 'load-more-buttons' && $route.query.page && Number($route.query.page) > 1)
+        "
+        class="flex flex-wrap gap-x-3 gap-y-2 pb-6"
+      >
         <template v-for="facet in productsFilters.facets">
           <template v-for="filterItem in facet.values">
             <VcChip
@@ -178,7 +184,19 @@
           </template>
         </template>
 
-        <VcChip color="secondary" variant="outline" clickable @click="resetFacetFilters">
+        <VcChip
+          v-if="catalogMode === 'load-more-buttons' && $route.query.page && Number($route.query.page) > 1"
+          color="secondary"
+          variant="outline"
+          clickable
+          @click="resetPage"
+        >
+          <span>{{ $t("common.buttons.reset_page") }}</span>
+
+          <VcIcon name="reset" />
+        </VcChip>
+
+        <VcChip v-if="hasSelectedFacets" color="secondary" variant="outline" clickable @click="resetFacetFilters">
           <span>{{ $t("common.buttons.reset_filters") }}</span>
 
           <VcIcon name="reset" />
@@ -488,6 +506,11 @@ function trackViewSearchResults(): void {
 
 function selectProduct(product: Product): void {
   analytics("selectItem", product);
+}
+
+function resetPage() {
+  void resetCurrentPage();
+  void fetchProducts();
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);

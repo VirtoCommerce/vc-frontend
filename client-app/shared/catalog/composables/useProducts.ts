@@ -159,21 +159,25 @@ export function useProducts(
     void resetCurrentPage();
   }
 
-  function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">): void {
+  async function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {
     const facet = productsFilters.value.facets.find((item) => item.paramName === payload.paramName);
     const facetValue = facet?.values.find((item) => item.value === payload.value);
 
     if (facetValue) {
       facetValue.selected = false;
       facetsQueryParam.value = options?.useQueryParams ? getFilterExpressionFromFacets(facets) : "";
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
 
       triggerRef(facets);
       void resetCurrentPage();
     }
   }
 
-  function resetFacetFilters(): void {
+  async function resetFacetFilters() {
     facetsQueryParam.value = "";
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
 
     productsFilters.value.facets.forEach((filter) =>
       filter.values.forEach((filterItem) => (filterItem.selected = false)),

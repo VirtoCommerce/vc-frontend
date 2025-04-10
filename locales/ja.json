@@ -74,7 +74,8 @@
       "add_with_bulk_order": "一括注文で追加",
       "all_orders": "すべての注文",
       "my_orders": "私の注文",
-      "scroll_to_top": "トップへスクロール"
+      "scroll_to_top": "トップへスクロール",
+      "reset_page": "ページをリセット"
     },
     "labels": {
       "actions": "操作",

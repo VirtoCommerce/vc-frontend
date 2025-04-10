@@ -74,7 +74,8 @@
       "add_with_bulk_order": "Ajouter par commande groupée",
       "all_orders": "Toutes les commandes",
       "my_orders": "Mes commandes",
-      "scroll_to_top": "Haut de page"
+      "scroll_to_top": "Haut de page",
+      "reset_page": "Réinitialiser la page"
     },
     "labels": {
       "actions": "Actions",

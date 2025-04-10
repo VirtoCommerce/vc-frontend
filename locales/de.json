@@ -74,7 +74,8 @@
       "add_with_bulk_order": "Mit Sammelbestellung hinzufügen",
       "all_orders": "Alle Bestellungen",
       "my_orders": "Meine Bestellungen",
-      "scroll_to_top": "Nach oben scrollen"
+      "scroll_to_top": "Nach oben scrollen",
+      "reset_page": "Seite zurücksetzen"
     },
     "labels": {
       "actions": "Aktionen",
