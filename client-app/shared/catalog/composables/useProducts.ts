@@ -50,6 +50,7 @@ export function useProducts(
   const pageQueryParam = useRouteQueryParam<string>(QueryParamName.Page, {
     defaultValue: "1",
     removeDefaultValue: true,
+    updateMethod: "replace",
   });
 
   const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
@@ -155,7 +156,7 @@ export function useProducts(
       localStorageBranches.value = newFilters.branches;
     }
 
-    resetCurrentPage();
+    void resetCurrentPage();
   }
 
   function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">): void {
@@ -167,7 +168,7 @@ export function useProducts(
       facetsQueryParam.value = options?.useQueryParams ? getFilterExpressionFromFacets(facets) : "";
 
       triggerRef(facets);
-      resetCurrentPage();
+      void resetCurrentPage();
     }
   }
 
@@ -179,7 +180,7 @@ export function useProducts(
     );
 
     triggerRef(facets);
-    resetCurrentPage();
+    void resetCurrentPage();
   }
 
   function resetFilterKeyword(): void {
@@ -212,7 +213,7 @@ export function useProducts(
           } else {
             localStorageBranches.value = branches;
           }
-          resetCurrentPage();
+          void resetCurrentPage();
         },
       },
     });
@@ -368,12 +369,14 @@ export function useProducts(
     }
   }
 
-  function resetCurrentPage() {
+  async function resetCurrentPage() {
+    updateCurrentPage(1);
     if (catalogMode === "load-more-buttons") {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
       pageQueryParam.value = "";
       pageHistory.value = [1];
     }
-    updateCurrentPage(1);
   }
 
   return {
