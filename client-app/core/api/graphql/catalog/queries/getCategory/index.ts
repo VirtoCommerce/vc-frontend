@@ -1,11 +1,17 @@
+import { useLocalStorage } from "@vueuse/core";
 import { gql } from "graphql-tag";
 import { getChildCategoriesTreeString } from "@/core/api/graphql/utils";
+import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
 import type { Query, QueryChildCategoriesArgs } from "@/core/api/graphql/types";
 import type { DocumentNode } from "graphql";
 
-function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 0): DocumentNode {
+function getCategoryQueryDocument(
+  categoryId: string,
+  maxChildCategoriesLevel = 0,
+  previousOutline: string,
+): DocumentNode {
   const childCategoriesFragment = getChildCategoriesTreeString(maxChildCategoriesLevel);
   const categoryQueryString = categoryId
     ? `
@@ -14,11 +20,13 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
         userId: $userId
         cultureName: $cultureName
         currencyCode: $currencyCode
-        id: "${categoryId}"
+        id: "${categoryId}",
+        previousOutline: "${previousOutline}"
     ) {
         id
         name
         slug
+        outline
         seoInfo {
             pageTitle
             metaKeywords
@@ -48,6 +56,7 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
       $maxLevel: Int
       $onlyActive: Boolean
       $productFilter: String
+      $previousOutline: String
     ) {
       ${categoryQueryString}
 
@@ -59,6 +68,7 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
         maxLevel: $maxLevel
         onlyActive: $onlyActive
         productFilter: $productFilter
+        previousOutline: $previousOutline
         ${categoryId ? `categoryId: "${categoryId}"` : ""}
       ) {
         __typename
@@ -72,7 +82,9 @@ export type ExtendedQueryCategoryArgsType = QueryChildCategoriesArgs;
 
 export async function getCategory(payload: Omit<ExtendedQueryCategoryArgsType, "storeId">) {
   const { storeId, userId, cultureName, currencyCode } = globals;
-  const queryDocument = getCategoryQueryDocument(payload.categoryId ?? "", payload.maxLevel);
+  const navigationOutline = useLocalStorage<string>(NAVIGATION_OUTLINE, "");
+
+  const queryDocument = getCategoryQueryDocument(payload.categoryId ?? "", payload.maxLevel, navigationOutline.value);
 
   const { data } = await graphqlClient.query<
     Required<Pick<Query, "category" | "childCategories">>,
@@ -84,9 +96,14 @@ export async function getCategory(payload: Omit<ExtendedQueryCategoryArgsType, "
       userId,
       cultureName,
       currencyCode,
+      previousOutline: navigationOutline.value,
       ...payload,
     },
   });
+
+  if (data?.category?.outline) {
+    navigationOutline.value = data.category.outline;
+  }
 
   return data;
 }

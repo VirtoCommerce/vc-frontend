@@ -13,7 +13,7 @@ export async function getProduct(id: string, previousOutline: string): Promise<P
       cultureName,
       currencyCode,
       id,
-      previousOutline
+      previousOutline,
     },
   });
 
