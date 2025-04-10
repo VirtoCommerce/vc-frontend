@@ -32,7 +32,7 @@ export function useProducts(
     withZeroPrice?: boolean;
     filtersDisplayOrder?: Ref<FiltersDisplayOrderType | undefined>;
     useQueryParams?: boolean;
-    /** @default config.catalog_mode */
+    /** @default CATALOG_MODES.infiniteScroll */
     catalogMode?: CatalogModeType;
   } = {},
 ) {
@@ -51,7 +51,6 @@ export function useProducts(
   const pageQueryParam = useRouteQueryParam<string>(QueryParamName.Page, {
     defaultValue: "1",
     removeDefaultValue: true,
-    updateMethod: "replace",
   });
 
   const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
@@ -268,8 +267,6 @@ export function useProducts(
         totalCount = 0,
       } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
 
-      const page = searchParams.page;
-
       products.value = items;
       totalProductsCount.value = totalCount;
       pagesCount.value = Math.min(
@@ -277,7 +274,7 @@ export function useProducts(
         PAGE_LIMIT,
       );
 
-      addPageHistory(page ?? 1);
+      addPageHistory(searchParams.page ?? 1);
 
       if (withFacets) {
         setFacets({
@@ -308,15 +305,11 @@ export function useProducts(
       const page = searchParams.page;
       const minVisitedPage = Math.min(...pageHistory.value);
 
-      if (
-        catalogMode === CATALOG_MODES.loadMoreButtons &&
-        page &&
-        minVisitedPage &&
-        page < minVisitedPage &&
-        Number.isFinite(page)
-      ) {
+      if (catalogMode === CATALOG_MODES.loadMoreButtons && page && minVisitedPage && page < minVisitedPage) {
+        // if load previous page, we need to add new items to the beginning of the array
         products.value = [...items, ...products.value];
       } else {
+        // if load next page, we need to add new items to the end of the array
         products.value = products.value.concat(items);
       }
 
@@ -369,11 +362,7 @@ export function useProducts(
   function updateCurrentPage(page: number) {
     currentPage.value = page;
 
-    if (
-      catalogMode === CATALOG_MODES.loadMoreButtons &&
-      page > Math.max(...pageHistory.value) &&
-      Number.isFinite(page)
-    ) {
+    if (catalogMode === CATALOG_MODES.loadMoreButtons && page > Math.max(...pageHistory.value)) {
       pageQueryParam.value = page.toString();
     }
   }
