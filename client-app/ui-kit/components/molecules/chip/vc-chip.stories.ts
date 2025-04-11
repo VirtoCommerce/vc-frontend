@@ -107,7 +107,7 @@ export const AllStates: StoryFn<typeof VcChip> = () => ({
         <div class="text-base">Variant: <b>{{ variant }}</b></div>
 
         <div class="flex flex-wrap gap-2 items-center">
-          <VcChip v-for="color in colors" :size="size" :color="color" :variant="variant">
+          <VcChip v-for="color in colors" :size="size" :color="color" :variant="variant" icon="cog">
             Color: {{ color }}
           </VcChip>
         </div>

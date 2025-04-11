@@ -67,6 +67,7 @@ const props = withDefaults(defineProps<IProps>(), {
   variant: "solid",
   size: "md",
   nowrap: true,
+  iconColor: "",
 });
 
 const _iconColor = computed(() =>
@@ -76,6 +77,9 @@ const _iconColor = computed(() =>
 
 <style lang="scss">
 .vc-chip {
+  --props-icon-color: v-bind(props.iconColor);
+  --icon-color: var(--props-icon-color, var(--vc-chip-icon-color));
+
   $colors: primary, secondary, success, info, warning, danger, neutral;
 
   $truncate: "";
@@ -183,11 +187,13 @@ const _iconColor = computed(() =>
     }
 
     &[class*="--#{$color}"] {
+      --vc-icon-color: var(--icon-color, var(--color-#{$color}-500));
       --close-button-icon-color: var(--color-#{$color}-700);
     }
   }
 
   &[class*="--solid--"] {
+    --vc-icon-color: var(--icon-color, var(--color-additional-50));
     --close-button-icon-color: var(--color-additional-50);
 
     @apply text-additional-50;
