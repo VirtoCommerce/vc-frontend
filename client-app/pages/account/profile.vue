@@ -4,7 +4,7 @@
       {{ $t("pages.account.profile.title") }}
     </VcTypography>
 
-    <VcWidget size="lg" class="polygon-bg [--polygon-bg-position:right_bottom_-180px]">
+    <VcWidget size="lg">
       <form class="flex flex-col lg:w-1/2" @submit.prevent="onSubmit">
         <VcInput
           v-model="firstName"
