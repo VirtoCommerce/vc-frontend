@@ -824,9 +824,9 @@ export type PropertyGroup = {
   /** The unique ID of the property group. */
   id: Scalars['String']['output'];
   /** The localized description of the property group. */
-  localizedDescription: Scalars['String']['output'];
+  localizedDescription?: Maybe<Scalars['String']['output']>;
   /** The localized name of the property group. */
-  localizedName: Scalars['String']['output'];
+  localizedName?: Maybe<Scalars['String']['output']>;
   /** The name of the property group. */
   name: Scalars['String']['output'];
   /** The display order of the property group. */
