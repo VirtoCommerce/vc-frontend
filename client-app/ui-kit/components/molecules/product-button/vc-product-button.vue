@@ -44,8 +44,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { getColorValue } from "@/ui-kit/utilities";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -71,7 +69,7 @@ interface IProps {
 
 defineEmits<IEmits>();
 
-const props = withDefaults(defineProps<IProps>(), {
+withDefaults(defineProps<IProps>(), {
   to: "",
   linkTo: "",
   variant: "outline",
@@ -79,8 +77,6 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "sm",
   linkIcon: "external-link",
 });
-
-const iconColor = computed(() => getColorValue(props.color));
 </script>
 
 <style lang="scss">
@@ -88,12 +84,7 @@ const iconColor = computed(() => getColorValue(props.color));
   $self: &;
   $link: &;
 
-  --props-link-icon-color: v-bind(iconColor);
-
-  --link-icon-color: var(
-    --vc-product-button-link-icon-color,
-    var(--props-link-icon-color, theme("colors.primary.500"))
-  );
+  --link-icon-color: var(--vc-product-button-link-icon-color, theme("colors.primary.500"));
   --link-color: var(--vc-product-button-link-color, theme("colors.accent.600"));
   --link-hover-color: var(--vc-product-button-link-hover-color, theme("colors.accent.800"));
 
