@@ -774,7 +774,8 @@
           "month": "有効な有効期限月を入力してください",
           "year": "有効な有効期限の年を入力してください"
         },
-        "user_error_message": "決済を開始できません。後でやり直すか、別の支払い方法をご利用ください"
+        "user_error_message": "決済を開始できません。後でやり直すか、別の支払い方法をご利用ください",
+        "payment_unavailable": "お支払い方法をご利用いただけません。しばらくしてからもう一度お試しください"
       },
       "authorize_net": {
         "user_agreement_link": "User Agreement",
