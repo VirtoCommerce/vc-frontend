@@ -606,6 +606,9 @@
         "product_vendor": "Vendor:"
       },
       "product_details": {
+        "product_availability": {
+          "not_available": "The product is no longer available for purchase"
+        },
         "technical_specs_block_title": "Properties",
         "variations_block_title": "Product variations",
         "description_block_title": "Description",
