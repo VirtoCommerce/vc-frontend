@@ -98,10 +98,6 @@ withDefaults(defineProps<IProps>(), {
 
     @apply mt-3 flex items-center min-h-4 gap-1 text-xs;
 
-    @media (min-width: theme("screens.xs")) {
-      @apply mt-5;
-    }
-
     &:not(#{&}--text) {
       @apply text-[--link-color] font-bold;
 
@@ -123,8 +119,14 @@ withDefaults(defineProps<IProps>(), {
     }
 
     &--view-mode {
-      &--grid #{$self} {
-        @apply order-7 min-h-[3.375rem];
+      &--grid {
+        #{$self} {
+          @apply order-7 min-h-[3.375rem];
+        }
+
+        #{$link} {
+          @apply mt-7;
+        }
       }
 
       &--list #{$self} {
@@ -137,7 +139,7 @@ withDefaults(defineProps<IProps>(), {
         }
 
         @container (min-width: theme("containers.4xl")) {
-          @apply w-60;
+          @apply mt-0 ms-3 w-60;
         }
       }
     }

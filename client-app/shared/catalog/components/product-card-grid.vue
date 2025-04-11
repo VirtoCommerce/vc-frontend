@@ -244,6 +244,8 @@ interface IProps {
   productReviewsEnabled?: boolean;
 }
 
+console.warn("ProductCardGrid is deprecated. Use VcProductCard or ProductCard instead.");
+
 const swiperInstance = ref<SwiperInstance>();
 const swiperBulletsState = ref<boolean[]>([true, false, false]);
 
