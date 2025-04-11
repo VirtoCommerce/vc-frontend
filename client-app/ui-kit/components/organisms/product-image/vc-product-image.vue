@@ -1,7 +1,7 @@
 <template>
   <div class="vc-product-image">
     <Swiper
-      v-if="images?.length"
+      v-if="images?.length > 1"
       :modules="[Pagination, Navigation]"
       :navigation="{
         nextEl: '[data-btn=btn-next]',
@@ -65,11 +65,13 @@
       </template>
     </Swiper>
 
-    <VcImage v-else :src="imgSrc" :alt="alt" size-suffix="md" class="vc-product-image__img" :lazy="lazy" />
+    <component :is="to ? 'router-link' : 'div'" v-else :to="to" class="contents">
+      <VcImage :src="images[0]?.url ?? imgSrc" :alt="alt" size-suffix="md" class="vc-product-image__img" :lazy="lazy" />
 
-    <div v-if="!!$slots.default" class="vc-product-image__slot">
-      <slot />
-    </div>
+      <span v-if="!!$slots.default" class="vc-product-image__slot">
+        <slot />
+      </span>
+    </component>
   </div>
 </template>
 
@@ -79,17 +81,20 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import { ref } from "vue";
 import type { ImageType } from "@/core/api/graphql/types";
 import type { Swiper as SwiperInstance } from "swiper/types";
+import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
   images?: ImageType[];
   alt?: string;
   imgSrc?: string;
   lazy?: boolean;
+  to?: RouteLocationRaw;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   images: () => [],
   lazy: true,
+  to: "",
 });
 
 const swiperInstance = ref<SwiperInstance>();
@@ -115,14 +120,18 @@ function slideChanged(swiper: SwiperInstance) {
 <style lang="scss">
 .vc-product-image {
   $self: &;
+  $carouselImg: "";
+  $img: "";
 
-  @apply relative max-w-full aspect-square border border-neutral-200 rounded;
+  @apply relative z-0 max-w-full aspect-square border border-neutral-200 rounded;
 
   &__carousel {
     @apply h-full w-full;
   }
 
   &__carousel-img {
+    $carouselImg: &;
+
     @apply w-full aspect-square select-none rounded object-contain object-center;
   }
 
@@ -155,6 +164,7 @@ function slideChanged(swiper: SwiperInstance) {
   }
 
   &__img {
+    $img: &;
     @apply w-full aspect-square rounded object-contain object-center;
   }
 
@@ -170,8 +180,18 @@ function slideChanged(swiper: SwiperInstance) {
     }
 
     &--view-mode {
-      &--grid #{$self} {
-        @apply mb-4;
+      &--grid {
+        #{$self} {
+          @apply mb-4 aspect-[220/196];
+        }
+
+        #{$carouselImg} {
+          @apply aspect-[220/196];
+        }
+
+        #{$img} {
+          @apply aspect-[220/196];
+        }
       }
 
       &--list #{$self} {

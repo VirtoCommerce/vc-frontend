@@ -16,13 +16,10 @@
         ? $t('back_in_stock.messages.you_will_be_notified')
         : $t('back_in_stock.messages.notify_me_when_in_stock')
     "
+    link-icon="information-circle"
+    :link-text="isTextShown ? $t('back_in_stock.messages.click_to_receive_alert') : ''"
     @link-click="updateBackInStockSubscription"
-  >
-    <div v-if="isTextShown" class="back-in-stock-notify-button__text">
-      <VcIcon name="information-circle" size="xs" />
-      {{ $t("back_in_stock.messages.click_to_receive_alert") }}
-    </div>
-  </VcProductButton>
+  />
 </template>
 
 <script setup lang="ts">
@@ -100,11 +97,3 @@ onUnmounted(() => {
   }
 });
 </script>
-
-<style lang="scss">
-.back-in-stock-notify-button {
-  &__text {
-    @apply flex items-center text-xs font-bold gap-1 w-full justify-start h-5 mt-4.5 text-[--link-color] truncate;
-  }
-}
-</style>

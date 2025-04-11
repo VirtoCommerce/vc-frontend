@@ -174,6 +174,8 @@ interface IProps {
   productReviewsEnabled?: boolean;
 }
 
+console.warn("ProductCardList is deprecated. Use VcProductCard or ProductCard instead.");
+
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));

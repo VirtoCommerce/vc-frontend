@@ -51,7 +51,7 @@ const onClick = () => {
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
   $active: "";
 
-  @apply flex justify-center items-center;
+  @apply flex justify-center items-center p-1;
 
   &:disabled,
   &--disabled {
