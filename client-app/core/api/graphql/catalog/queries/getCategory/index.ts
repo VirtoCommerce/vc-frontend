@@ -1,5 +1,7 @@
+import { useLocalStorage } from "@vueuse/core";
 import { gql } from "graphql-tag";
 import { getChildCategoriesTreeString } from "@/core/api/graphql/utils";
+import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
 import type { Query, QueryChildCategoriesArgs } from "@/core/api/graphql/types";
@@ -14,11 +16,13 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
         userId: $userId
         cultureName: $cultureName
         currencyCode: $currencyCode
-        id: "${categoryId}"
+        previousOutline: $previousOutline
+        id: "${categoryId}",
     ) {
         id
         name
         slug
+        outline
         seoInfo {
             pageTitle
             metaKeywords
@@ -48,6 +52,7 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
       $maxLevel: Int
       $onlyActive: Boolean
       $productFilter: String
+      $previousOutline: String
     ) {
       ${categoryQueryString}
 
@@ -59,6 +64,7 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
         maxLevel: $maxLevel
         onlyActive: $onlyActive
         productFilter: $productFilter
+        previousOutline: $previousOutline
         ${categoryId ? `categoryId: "${categoryId}"` : ""}
       ) {
         __typename
@@ -72,6 +78,8 @@ export type ExtendedQueryCategoryArgsType = QueryChildCategoriesArgs;
 
 export async function getCategory(payload: Omit<ExtendedQueryCategoryArgsType, "storeId">) {
   const { storeId, userId, cultureName, currencyCode } = globals;
+  const navigationOutline = useLocalStorage<string>(NAVIGATION_OUTLINE, "");
+
   const queryDocument = getCategoryQueryDocument(payload.categoryId ?? "", payload.maxLevel);
 
   const { data } = await graphqlClient.query<
@@ -84,9 +92,14 @@ export async function getCategory(payload: Omit<ExtendedQueryCategoryArgsType, "
       userId,
       cultureName,
       currencyCode,
+      previousOutline: navigationOutline.value,
       ...payload,
     },
   });
+
+  if (data?.category?.outline) {
+    navigationOutline.value = data.category.outline;
+  }
 
   return data;
 }
