@@ -1,6 +1,6 @@
 <template>
   <div ref="headerElement" class="fixed z-40 w-full shadow-md print:hidden">
-    <div class="relative z-[2] flex border-b bg-[--header-top-bg-color] px-5 py-2.5 text-xs max-sm:justify-center">
+    <div class="relative z-[2] flex h-[2.125rem] items-center border-b bg-[--header-top-bg-color] px-5 py-1 text-xs">
       <ShipToSelector />
     </div>
 
