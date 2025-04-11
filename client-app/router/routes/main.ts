@@ -71,7 +71,12 @@ export const mainRoutes: RouteRecordRaw[] = [
   ...checkoutRoutes,
   { path: ROUTES.CATALOG.PATH, name: ROUTES.CATALOG.NAME, component: Catalog, props: true },
   { path: "/category/:categoryId", name: "Category", component: Category, props: true },
-  { path: "/product/:productId", name: "Product", component: Product, props: true },
+  {
+    path: "/product/:productId",
+    name: "Product",
+    component: Product,
+    props: (route) => ({ allowSetMeta: true, productId: route.params.productId }),
+  },
 
   /** NOTE: Always leave it last. */
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
