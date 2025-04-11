@@ -42,14 +42,14 @@ const price = {
 
 const chip1 = {
   color: "success",
-  size: "xs",
+  size: "sm",
   rounded: true,
   variant: "outline-dark",
 };
 
 const chip2 = {
   color: "secondary",
-  size: "xs",
+  size: "sm",
   rounded: true,
   variant: "outline-dark",
 };
