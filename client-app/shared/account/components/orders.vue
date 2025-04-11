@@ -237,7 +237,7 @@
 
           <div class="flex flex-col items-end justify-center">
             <OrderStatus
-              class="w-full !max-w-36"
+              class="!max-w-36"
               :status="itemData.item.status"
               :display-value="itemData.item.statusDisplayValue"
             />
@@ -334,14 +334,10 @@
             {{ $d(order?.createdDate) }}
           </td>
 
-          <td class="p-5 text-center">
+          <td class="p-1">
             <VcTooltip class="!block">
               <template #trigger>
-                <OrderStatus
-                  class="w-full !max-w-36"
-                  :status="order.status"
-                  :display-value="order.statusDisplayValue"
-                />
+                <OrderStatus class="!max-w-full" :status="order.status" :display-value="order.statusDisplayValue" />
               </template>
 
               <template #content>
@@ -383,6 +379,7 @@
           </td>
         </tr>
       </template>
+
       <template #page-limit-message>
         {{ $t("ui_kit.reach_limit.page_limit_filters") }}
       </template>
@@ -492,7 +489,7 @@ const columns = computed<ITableColumn[]>(() => [
   },
   { id: "invoice", title: t("pages.account.orders.invoice_label") },
   { id: "createdDate", title: t("pages.account.orders.date_label"), sortable: true },
-  { id: "status", title: t("pages.account.orders.status_label"), sortable: true, align: "center" },
+  { id: "status", title: t("pages.account.orders.status_label"), sortable: true, classes: "!px-3" },
   { id: "total", title: t("pages.account.orders.total_label"), sortable: true, align: "right" },
 ]);
 

@@ -1,5 +1,11 @@
 <template>
-  <VcChip :variant="quoteStatus?.variant" :color="quoteStatus?.color || defaultColor" truncate rounded>
+  <VcChip
+    :variant="quoteStatus?.variant"
+    :icon="icon ?? quoteStatus?.icon"
+    :color="quoteStatus?.color || defaultColor"
+    truncate
+    rounded
+  >
     {{ status }}
   </VcChip>
 </template>
@@ -7,15 +13,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useThemeContext } from "@/core/composables";
-
-interface IQuoteStatus {
-  code: string;
-  color: VcChipColorType;
-  variant: VcChipVariantType;
-}
+import type { IQuoteStatus } from "@/core/types";
 
 interface IProps {
   status?: string;
+  icon?: string;
 }
 
 const props = defineProps<IProps>();

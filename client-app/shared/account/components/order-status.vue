@@ -1,5 +1,11 @@
 <template>
-  <VcChip :variant="orderStatus?.variant" :color="orderStatus?.color || defaultColor" truncate rounded>
+  <VcChip
+    :variant="orderStatus?.variant"
+    :color="orderStatus?.color || defaultColor"
+    :icon="icon ?? orderStatus?.icon"
+    truncate
+    rounded
+  >
     {{ displayValue || status }}
   </VcChip>
 </template>
@@ -12,6 +18,7 @@ import type { IOrderStatus } from "@/core/types";
 interface IProps {
   status?: string;
   displayValue?: string;
+  icon?: string;
 }
 
 const props = defineProps<IProps>();
