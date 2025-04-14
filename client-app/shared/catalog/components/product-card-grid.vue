@@ -178,6 +178,7 @@
       v-else-if="product.isConfigurable"
       :to="link"
       :link-text="$t('pages.catalog.customize_button')"
+      :link-to="link"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
       :target="browserTarget || $cfg.details_browser_target || '_blank'"

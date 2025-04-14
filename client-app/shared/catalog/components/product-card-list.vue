@@ -96,7 +96,7 @@
       />
     </div>
 
-    <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-0">
+    <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col sm:mt-0">
       <component
         :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
         v-if="
@@ -110,9 +110,9 @@
       <VcProductButton
         v-else-if="product.isConfigurable"
         :to="link"
-        link-text="Customize"
-        button-text="Customize"
-        color="accent"
+        :link-text="$t('pages.catalog.customize_button')"
+        :link-to="link"
+        :button-text="$t('pages.catalog.customize_button')"
         icon="cube-transparent"
         :target="browserTarget || $cfg.details_browser_target || '_blank'"
         @link-click="$emit('linkClick', $event)"
