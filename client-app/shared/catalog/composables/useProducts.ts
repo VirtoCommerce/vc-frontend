@@ -77,7 +77,7 @@ export function useProducts(
   const pagesCount = ref(1);
   const isFiltersSidebarVisible = ref(false);
   const currentPage = ref(
-    catalogMode === CATALOG_MODES.loadMoreButtons && pageQueryParam.value ? (Number(pageQueryParam.value) ?? 1) : 1,
+    catalogMode === CATALOG_MODES.loadMore && pageQueryParam.value ? (Number(pageQueryParam.value) ?? 1) : 1,
   );
   const pageHistory = ref<number[]>([]);
 
@@ -245,7 +245,7 @@ export function useProducts(
     const searchParams = {
       ..._searchParams,
       page:
-        catalogMode === CATALOG_MODES.loadMoreButtons && _searchParams.page === undefined
+        catalogMode === CATALOG_MODES.loadMore && _searchParams.page === undefined
           ? currentPage.value
           : _searchParams.page,
     };
@@ -305,7 +305,7 @@ export function useProducts(
       const page = searchParams.page;
       const minVisitedPage = Math.min(...pageHistory.value);
 
-      if (catalogMode === CATALOG_MODES.loadMoreButtons && page && minVisitedPage && page < minVisitedPage) {
+      if (catalogMode === CATALOG_MODES.loadMore && page && minVisitedPage && page < minVisitedPage) {
         // if load previous page, we need to add new items to the beginning of the array
         products.value = [...items, ...products.value];
       } else {
@@ -362,14 +362,14 @@ export function useProducts(
   function updateCurrentPage(page: number) {
     currentPage.value = page;
 
-    if (catalogMode === CATALOG_MODES.loadMoreButtons && page > Math.max(...pageHistory.value)) {
+    if (catalogMode === CATALOG_MODES.loadMore && page > Math.max(...pageHistory.value)) {
       pageQueryParam.value = page.toString();
     }
   }
 
   async function resetCurrentPage() {
     updateCurrentPage(1);
-    if (catalogMode === CATALOG_MODES.loadMoreButtons) {
+    if (catalogMode === CATALOG_MODES.loadMore) {
       await new Promise((resolve) => setTimeout(resolve, 0));
       // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
       pageQueryParam.value = "";

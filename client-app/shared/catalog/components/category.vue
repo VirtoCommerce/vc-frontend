@@ -160,7 +160,7 @@
       <div
         v-if="
           hasSelectedFacets ||
-          (catalogMode === CATALOG_MODES.loadMoreButtons && $route.query.page && Number($route.query.page) > 1)
+          (catalogMode === CATALOG_MODES.loadMore && $route.query.page && Number($route.query.page) > 1)
         "
         class="flex flex-wrap gap-x-3 gap-y-2 pb-6"
       >
@@ -185,7 +185,7 @@
         </template>
 
         <VcChip
-          v-if="catalogMode === CATALOG_MODES.loadMoreButtons && $route.query.page && Number($route.query.page) > 1"
+          v-if="catalogMode === CATALOG_MODES.loadMore && $route.query.page && Number($route.query.page) > 1"
           color="secondary"
           variant="outline"
           clickable

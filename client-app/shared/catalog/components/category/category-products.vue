@@ -1,7 +1,7 @@
 <template>
   <div>
     <template v-if="products.length || fetchingProducts">
-      <div v-if="mode === CATALOG_MODES.loadMoreButtons && minVisitedPage > 1" class="-mt-2 mb-6 flex justify-center">
+      <div v-if="mode === CATALOG_MODES.loadMore && minVisitedPage > 1" class="-mt-2 mb-6 flex justify-center">
         <VcButton
           v-if="products.length"
           size="sm"
@@ -40,10 +40,7 @@
         @visible="$emit('changePage', pageNumber + 1)"
       />
 
-      <div
-        v-if="mode === CATALOG_MODES.loadMoreButtons && maxVisitedPage < pagesCount"
-        class="mt-6 flex justify-center"
-      >
+      <div v-if="mode === CATALOG_MODES.loadMore && maxVisitedPage < pagesCount" class="mt-6 flex justify-center">
         <VcButton
           :loading="fetchingMoreProducts && pageNumber > maxVisitedPage"
           append-icon="arrow-right"

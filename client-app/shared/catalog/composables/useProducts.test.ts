@@ -191,9 +191,9 @@ describe("useProducts", () => {
       expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }, { id: "product3" }, { id: "product4" }]);
     });
 
-    it("should append products when loading a page higher than minimum visited page with catalog_mode=load-more-buttons", async () => {
+    it("should append products when loading a page higher than minimum visited page with catalog_mode=load-more", async () => {
       const { fetchProducts, fetchMoreProducts, products } = useProducts({
-        catalogMode: CATALOG_MODES.loadMoreButtons,
+        catalogMode: CATALOG_MODES.loadMore,
       });
 
       mockData.searchProducts.mockResolvedValueOnce({
@@ -223,9 +223,9 @@ describe("useProducts", () => {
       expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }, { id: "product3" }, { id: "product4" }]);
     });
 
-    it("should prepend products when loading a page equal to the minimum visited page with catalog_mode=load-more-buttons", async () => {
+    it("should prepend products when loading a page equal to the minimum visited page with catalog_mode=load-more", async () => {
       const { fetchProducts, fetchMoreProducts, products } = useProducts({
-        catalogMode: CATALOG_MODES.loadMoreButtons,
+        catalogMode: CATALOG_MODES.loadMore,
       });
 
       mockData.searchProducts.mockResolvedValueOnce({
@@ -291,7 +291,7 @@ describe("useProducts", () => {
       const localThemeContext = { ...mockData.mockThemeContext };
       localThemeContext.settings = {
         ...mockData.mockThemeContext.settings,
-        catalog_mode: CATALOG_MODES.loadMoreButtons,
+        catalog_mode: CATALOG_MODES.loadMore,
       };
 
       mockData.useThemeContext.mockReturnValue({
