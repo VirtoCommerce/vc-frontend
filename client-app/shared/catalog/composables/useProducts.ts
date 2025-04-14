@@ -77,7 +77,7 @@ export function useProducts(
   const pagesCount = ref(1);
   const isFiltersSidebarVisible = ref(false);
   const currentPage = ref(
-    catalogMode === CATALOG_MODES.loadMore && pageQueryParam.value ? (Number(pageQueryParam.value) ?? 1) : 1,
+    catalogMode === CATALOG_MODES.loadMore && pageQueryParam.value ? Number(pageQueryParam.value) : 1,
   );
   const pageHistory = ref<number[]>([]);
 
