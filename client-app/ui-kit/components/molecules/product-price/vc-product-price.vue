@@ -12,7 +12,9 @@
     ]"
   >
     <span class="vc-product-price__actual">
-      <span v-if="withFromLabel" class="vc-product-price__variations"> {{ $t("ui_kit.suffixes.from") }}</span>
+      <span v-if="withFromLabel" class="vc-product-price__variations">
+        {{ $t("ui_kit.suffixes.from") }}
+      </span>
 
       <VcPriceDisplay :value="shouldUseActualPrice(listPrice, actualPrice) || !listPrice ? actualPrice : listPrice" />
     </span>
@@ -46,6 +48,7 @@ defineProps<IProps>();
 .vc-product-price {
   $self: &;
   $truncate: "";
+  $singleLine: "";
 
   --font-size: var(--vc-product-price-font-size);
 
@@ -62,6 +65,8 @@ defineProps<IProps>();
   }
 
   &--single-line {
+    $singleLine: &;
+
     @apply flex-row flex-wrap items-center gap-x-1;
   }
 
@@ -82,7 +87,11 @@ defineProps<IProps>();
   }
 
   &__variations {
-    @apply me-1 whitespace-nowrap text-xs font-normal text-neutral;
+    @apply block whitespace-nowrap text-xs font-normal text-neutral;
+
+    #{$singleLine} & {
+      @apply inline-block me-1;
+    }
   }
 
   &__list {
@@ -102,13 +111,7 @@ defineProps<IProps>();
       &--grid #{$self} {
         --font-size: theme("fontSize.lg");
 
-        @apply mt-3;
-
-        @container (min-width: theme("containers.xxs")) {
-          --font-size: theme("fontSize.2xl");
-
-          @apply mt-4;
-        }
+        @apply mt-3 order-6;
       }
 
       &--list #{$self} {
