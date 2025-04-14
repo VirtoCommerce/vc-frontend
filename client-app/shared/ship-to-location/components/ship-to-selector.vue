@@ -115,14 +115,15 @@
       </template>
     </VcPopover>
 
-    <div v-else class="ship-to-selector__empty">
+    <button v-else type="button" class="ship-to-selector__trigger" @click="openAddOrUpdateAddressModal()">
       <VcIcon name="location-marker" size="xs" />
 
       <span class="ship-to-selector__label">{{ $t("shared.layout.header.ship_to_selector.title") }}</span>
-      <VcButton size="xs" variant="no-background" @click="openAddOrUpdateAddressModal()">
+
+      <span class="ship-to-selector__placeholder">
         {{ $t("shared.layout.header.ship_to_selector.add_new_address") }}
-      </VcButton>
-    </div>
+      </span>
+    </button>
   </div>
 </template>
 
@@ -183,7 +184,7 @@ watchEffect(async () => {
   --vc-dialog-width: calc(100vw - 1rem);
   --vc-dialog-max-height: calc(100vh - 2.5rem);
 
-  @apply grow flex w-0 h-full;
+  @apply grow flex w-0 h-full text-[--header-top-text-color];
 
   @media (min-width: theme("screens.sm")) {
     --vc-dialog-width: 25rem;
@@ -195,7 +196,11 @@ watchEffect(async () => {
   }
 
   &__trigger {
-    @apply inline-flex items-center max-w-full h-full gap-1 relative;
+    @apply flex items-center max-w-full h-full gap-1 relative font-bold;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply font-normal;
+    }
   }
 
   &__label {
@@ -203,11 +208,19 @@ watchEffect(async () => {
   }
 
   &__placeholder {
-    @apply font-bold;
+    @apply font-bold text-[--header-top-link-color];
+
+    &:hover {
+      @apply text-[--header-top-link-hover-color];
+    }
   }
 
   &__selected {
-    @apply font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color] truncate;
+    @apply truncate font-bold text-[--header-top-link-color];
+
+    &:hover {
+      @apply text-[--header-top-link-hover-color];
+    }
   }
 
   &__dialog {
@@ -263,10 +276,6 @@ watchEffect(async () => {
 
   &__foot {
     @apply flex justify-center px-4 py-2 w-full;
-  }
-
-  &__empty {
-    @apply flex items-center gap-1;
   }
 }
 </style>
