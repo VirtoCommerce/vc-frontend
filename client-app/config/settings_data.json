@@ -2,33 +2,44 @@
   "current": "default",
   "settings": {
     "details_browser_target": "_blank",
+
     "files_enabled": true,
+
     "push_messages_enabled": true,
+
     "product_compare_enabled": true,
     "product_compare_limit": 5,
     "product_filters_sorting": false,
     "product_filters_sorting_direction": "asc",
+
     "vendor_enabled": true,
     "vendor_rating_enabled": true,
     "categories_limit": 499,
     "wishlists_limit": 10,
+
     "search_min_chars": 2,
     "search_max_chars": 400,
     "search_static_content_suggestions_enabled": true,
     "search_product_phrase_suggestions_enabled": false,
+
     "zero_price_product_enabled": false,
+
     "checkout_multistep_enabled": true,
     "checkout_comment_enabled": true,
     "checkout_purchase_order_enabled": true,
     "checkout_coupon_enabled": true,
     "checkout_gifts_enabled": true,
+
     "isCVVinSkyflowRequired": true,
+
     "default_return_url": "/",
+
     "logo_image": "logo.svg",
     "logo_inverted_image": "logo-white.svg",
     "favicon_image": "/static/icons/favicon-32x32.png",
     "homepage_background_image": "main-banner.webp",
     "catalog_mode": "load_more",
+
     "image_thumbnails_enabled": true,
     "image_thumbnails_original_fallback_enabled": true,
     "image_thumbnails_suffixes": {
@@ -37,6 +48,7 @@
       "lg": "lg"
     },
     "image_carousel_in_product_card_enabled": true,
+
     "orders_statuses": [
       {
         "code": "New",
@@ -69,6 +81,7 @@
         "variant": "outline-dark"
       }
     ],
+
     "quote_statuses": [
       {
         "code": "New",
@@ -106,6 +119,7 @@
         "variant": "outline-dark"
       }
     ],
+
     "line_items_group_by_vendor_enabled": true,
     "social_sharing_services": [
       {
