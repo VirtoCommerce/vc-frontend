@@ -173,7 +173,7 @@ watch(enabled, async (newValue, oldValue) => {
   await nextTick();
   if (newValue && oldValue === false && document.activeElement === document.body) {
     // return focus after button is enabled if it was focused before
-    buttonRef.value?.focus();
+    buttonRef.value?.focus({ preventScroll: true });
   }
 });
 </script>
