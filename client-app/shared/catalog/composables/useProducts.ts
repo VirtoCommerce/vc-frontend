@@ -51,6 +51,9 @@ export function useProducts(
   const pageQueryParam = useRouteQueryParam<string>(QueryParamName.Page, {
     defaultValue: "1",
     removeDefaultValue: true,
+    validator: (value) => {
+      return String(Number(value)) === value && Number(value) > 0 && Number.isInteger(Number(value));
+    },
   });
 
   const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
