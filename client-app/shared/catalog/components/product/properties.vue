@@ -1,11 +1,62 @@
 <template>
-  <ProductTitledBlock
-    v-if="showPropertiesBlock"
-    :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
-    icon="adjustments"
-    class="properties"
-  >
-    <div class="space-y-4">
+  <div class="properties">
+    <ProductTitledBlock
+      v-if="showPropertiesBlock"
+      :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
+      icon="adjustments"
+      class="properties"
+    >
+      <template #after>
+        <VcButton
+          v-if="groupedProperties.length > 1"
+          color="secondary"
+          size="xs"
+          variant="outline"
+          @click="expandAll = !expandAll"
+        >
+          {{ expandAll ? "Collapse" : "Expand all" }}
+        </VcButton>
+      </template>
+
+      <div class="properties__groups">
+        <VcWidget
+          v-for="(item, index) in groupedProperties"
+          :key="index"
+          size="xs"
+          :title="item.group?.name"
+          collapsible
+          :collapsed="!expandAll && index > 0"
+          :shadow="false"
+        >
+          <div class="properties__group">
+            <VcCollapsibleContent :max-height="groupedProperties.length === 1 ? '18.75rem' : 'none'">
+              <div
+                v-for="property in item.properties"
+                :key="property.id"
+                :label="property.label!"
+                class="properties__prop"
+              >
+                <div class="properties__label">
+                  {{ property.label }}
+                </div>
+
+                <div class="properties__value">
+                  <span v-if="isHTML(property)">
+                    <VcMarkdownRender :src="String(property.value)" />
+                  </span>
+
+                  <span v-else>
+                    {{ property.value }}
+                  </span>
+                </div>
+              </div>
+            </VcCollapsibleContent>
+          </div>
+        </VcWidget>
+      </div>
+    </ProductTitledBlock>
+
+    <div class="mt-5 space-y-4">
       <!-- Rating -->
       <VcProperty
         v-if="productReviewsEnabled && product.rating"
@@ -20,38 +71,11 @@
         <Vendor :vendor="product.vendor!" with-rating />
       </VcProperty>
     </div>
-
-    <VcWidget
-      v-for="(item, index) in groupedProperties"
-      :key="index"
-      size="xs"
-      :title="item.group?.localizedName"
-      collapsible
-      :collapsed="index > 0"
-    >
-      <div class="properties__group">
-        <div v-for="property in item.properties" :key="property.id" :label="property.label!" class="properties__prop">
-          <div class="properties__label">
-            {{ property.label }}
-          </div>
-
-          <div class="properties__value">
-            <span v-if="isHTML(property)">
-              <VcMarkdownRender :src="String(property.value)" />
-            </span>
-
-            <span v-else>
-              {{ property.value }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </VcWidget>
-  </ProductTitledBlock>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -80,14 +104,15 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const expandAll = ref(false);
+
 function groupAndSortProperties(source: Property[]): IGroupedProperties[] {
   const result = new Map<string, IGroupedProperties>();
   const defaultGroup: PropertyGroup = {
     id: "ungrouped",
     name: "Other",
     priority: Infinity,
-    localizedName: "Other",
-    localizedDescription: "",
+    description: "",
   };
 
   let hasValid = false;
@@ -142,6 +167,10 @@ function isHTML(property: Property): boolean {
 
 <style lang="scss">
 .properties {
+  &__groups {
+    @apply space-y-4;
+  }
+
   &__prop {
     @apply flex items-stretch text-sm rounded even:bg-neutral-100;
   }

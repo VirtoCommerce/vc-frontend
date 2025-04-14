@@ -33,12 +33,14 @@ interface IEmits {
 }
 
 interface IProps {
-  maxHeight: string;
+  maxHeight?: string;
   collapse?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  maxHeight: "",
+});
 
 const contentWrapperElement = shallowRef<HTMLDivElement>();
 const contentElement = shallowRef<ComponentPublicInstance>();
@@ -66,11 +68,14 @@ watch(showAll, (value: boolean) => {
 
 <style lang="scss">
 .vc-collapsible-content {
+  --props-max-height: v-bind("props.maxHeight");
+  --max-height: var(--props-max-height, var(--vc-collapsible-content-max-height));
+
   &__wrapper {
     @apply relative;
 
     &--collapsed {
-      @apply overflow-y-hidden max-h-[#{v-bind("props.maxHeight")}];
+      @apply overflow-y-hidden max-h-[--max-height];
 
       @media print {
         @apply max-h-none;
@@ -89,7 +94,7 @@ watch(showAll, (value: boolean) => {
   }
 
   &__button {
-    @apply my-3;
+    @apply mt-3;
 
     @media print {
       @apply hidden;

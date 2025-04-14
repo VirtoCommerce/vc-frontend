@@ -115,7 +115,7 @@ watchEffect(() => {
   $sizeLG: "";
 
   --p-x: theme("padding.4");
-  --border-color: var(--vc-widget-border-color, theme("colors.neutral.100"));
+  --border-color: var(--vc-widget-border-color, theme("colors.neutral.300"));
   --divide-color: var(--vc-widget-divide-color, var(--border-color));
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
 
