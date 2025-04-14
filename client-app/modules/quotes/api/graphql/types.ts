@@ -821,14 +821,12 @@ export type PropertyDictionaryItemEdge = {
 
 /** Property group. */
 export type PropertyGroup = {
+  /** The localized description of the property group. */
+  description?: Maybe<Scalars['String']['output']>;
   /** The unique ID of the property group. */
   id: Scalars['String']['output'];
-  /** The localized description of the property group. */
-  localizedDescription?: Maybe<Scalars['String']['output']>;
   /** The localized name of the property group. */
-  localizedName?: Maybe<Scalars['String']['output']>;
-  /** The name of the property group. */
-  name: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
   /** The display order of the property group. */
   priority?: Maybe<Scalars['Int']['output']>;
 };
