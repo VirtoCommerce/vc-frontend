@@ -161,7 +161,7 @@ describe("useProducts", () => {
   });
 
   describe("fetchMoreProducts", () => {
-    it("should fetch more products and append them to the existing products list when catalog_mode is infinite-scroll", async () => {
+    it("should fetch more products and append them to the existing products list when catalog_mode is infinite_scroll", async () => {
       const { fetchProducts, fetchMoreProducts, products } = useProducts();
 
       mockData.searchProducts.mockResolvedValueOnce({
@@ -191,7 +191,7 @@ describe("useProducts", () => {
       expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }, { id: "product3" }, { id: "product4" }]);
     });
 
-    it("should append products when loading a page higher than minimum visited page with catalog_mode=load-more", async () => {
+    it("should append products when loading a page higher than minimum visited page with catalog_mode=load_more", async () => {
       const { fetchProducts, fetchMoreProducts, products } = useProducts({
         catalogMode: CATALOG_MODES.loadMore,
       });
@@ -223,7 +223,7 @@ describe("useProducts", () => {
       expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }, { id: "product3" }, { id: "product4" }]);
     });
 
-    it("should prepend products when loading a page equal to the minimum visited page with catalog_mode=load-more", async () => {
+    it("should prepend products when loading a page equal to the minimum visited page with catalog_mode=load_more", async () => {
       const { fetchProducts, fetchMoreProducts, products } = useProducts({
         catalogMode: CATALOG_MODES.loadMore,
       });

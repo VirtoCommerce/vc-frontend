@@ -1,4 +1,4 @@
 export const CATALOG_MODES = {
-  loadMore: "load-more",
-  infiniteScroll: "infinite-scroll",
+  loadMore: "load_more",
+  infiniteScroll: "infinite_scroll",
 } as const;
