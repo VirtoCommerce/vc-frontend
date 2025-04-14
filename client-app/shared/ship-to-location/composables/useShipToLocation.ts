@@ -7,13 +7,13 @@ import { XApiPermissions } from "@/core/enums";
 import { Logger, stringifyAddress } from "@/core/utilities";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { useFullCart, useShortCart } from "@/shared/cart";
-import { SelectAddressModal } from "@/shared/checkout";
 import { BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
 import { AddOrUpdateCompanyAddressModal, useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
+import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
 export const MAX_ADDRESSES_NUMBER = 6;
 export const USER_TYPE = {

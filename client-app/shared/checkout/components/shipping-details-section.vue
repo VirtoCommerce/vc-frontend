@@ -35,7 +35,7 @@
 
           <div
             :class="[
-              'flex min-h-18 grow flex-col justify-center divide-y rounded border px-3 py-1.5',
+              'relative flex min-h-18 grow flex-col justify-center divide-y rounded border px-3 py-1.5',
               {
                 'cursor-not-allowed bg-neutral-50': disabled,
               },
@@ -47,6 +47,8 @@
               :disabled="disabled"
               @change="onDeliveryAddressChange"
             />
+
+            <VcLoaderOverlay v-if="cartChanging" />
           </div>
         </div>
 
@@ -99,14 +101,14 @@
             },
           ]"
         >
-          <VcLoaderOverlay v-if="isLoadingBopisAddresses" />
-
           <AddressSelection
             :disabled="isLoadingBopisAddresses || disabled"
             :address="deliveryAddress"
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_pickup_point')"
             @change="openSelectAddressModal"
           />
+
+          <VcLoaderOverlay v-if="isLoadingBopisAddresses || cartChanging" />
         </div>
       </div>
     </div>
@@ -114,11 +116,13 @@
 </template>
 
 <script setup lang="ts">
+import omit from "lodash/omit";
 import { computed, ref, watch } from "vue";
 import { useFullCart } from "@/shared/cart";
-import { useCheckout } from "@/shared/checkout/composables";
 import { useBopis, BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
+import { useCheckout } from "@/shared/checkout/composables/useCheckout";
 import { AddressSelection } from "@/shared/common";
+import { useShipToLocation } from "@/shared/ship-to-location";
 
 interface IProps {
   disabled?: boolean;
@@ -134,6 +138,7 @@ const SHIPPING_OPTIONS = {
 type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
 
 const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod } = useCheckout();
+const { selectedAddress } = useShipToLocation();
 
 const mode = ref<ShippingOptionType>(shipmentMethod.value?.code === BOPIS_CODE ? "pickup" : "shipping");
 
@@ -149,13 +154,23 @@ function switchShippingOptions(_mode: ShippingOptionType) {
 watch(
   mode,
   (newMode, previousMode) => {
-    if (!previousMode) {
+    if (!previousMode && (shipment.value?.shipmentMethodCode === BOPIS_CODE || deliveryAddress.value)) {
       return;
     }
 
     const shippingMethod = newMode === SHIPPING_OPTIONS.pickup ? bopisMethod.value : shippingMethods.value[0];
 
-    if (!shippingMethod || shippingMethod.code === shipment.value?.shipmentMethodCode) {
+    if (!shippingMethod) {
+      return;
+    }
+
+    if (deliveryAddress.value) {
+      void updateShipment({
+        id: shipment.value?.id,
+        shipmentMethodCode: shippingMethod.code,
+        shipmentMethodOption: shippingMethod.optionName,
+        price: shippingMethod.price?.amount,
+      });
       return;
     }
 
@@ -164,6 +179,8 @@ watch(
       shipmentMethodCode: shippingMethod.code,
       shipmentMethodOption: shippingMethod.optionName,
       price: shippingMethod.price?.amount,
+      deliveryAddress:
+        shippingMethod.code === BOPIS_CODE ? undefined : omit(selectedAddress.value, ["isDefault", "isFavorite"]),
     });
   },
   {
