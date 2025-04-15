@@ -1,4 +1,10 @@
 fragment property on Property {
+  group {
+    id
+    name
+    priority
+    description
+  }
   name
   value
   propertyType

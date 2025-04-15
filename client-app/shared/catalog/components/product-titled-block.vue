@@ -3,7 +3,9 @@
     <div class="flex items-center gap-2">
       <VcShape :icon="icon" />
 
-      <h2 class="text-xl font-bold uppercase text-neutral-950">{{ title }}</h2>
+      <h2 class="grow text-xl font-bold uppercase text-neutral-950">{{ title }}</h2>
+
+      <slot name="after" />
     </div>
 
     <slot />
