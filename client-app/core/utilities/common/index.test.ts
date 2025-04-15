@@ -414,7 +414,7 @@ describe("toCSV", () => {
   });
 
   it("should handle undefined", () => {
-    const result = toCSV(undefined);
+    const result = toCSV();
     expect(result).toBe("");
   });
 });
