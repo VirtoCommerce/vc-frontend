@@ -91,6 +91,7 @@ import { provide, computed, ref } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
 export interface IProps {
+  modelModifiers?: Record<string, boolean>;
   autocomplete?: string;
   readonly?: boolean;
   disabled?: boolean;
@@ -216,7 +217,7 @@ provide<VcInputContextType>("inputContext", {
   $truncate: "";
 
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
-  --focus-color: rgb(from var(--color) r g b / 0.2);
+  --focus-color: rgb(from var(--color) r g b / 0.3);
 
   @apply flex flex-col;
 

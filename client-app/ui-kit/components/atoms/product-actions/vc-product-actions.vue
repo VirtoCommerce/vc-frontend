@@ -27,7 +27,7 @@ withDefaults(defineProps<IProps>(), {
 .vc-product-actions {
   $self: &;
 
-  @apply flex gap-2 w-fit empty:hidden;
+  @apply flex w-fit empty:hidden;
 
   &--direction {
     &--horizontal {
@@ -46,7 +46,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &--background {
-    @apply bg-additional-50 rounded-3xl p-2;
+    @apply bg-additional-50 rounded-full p-1;
   }
 
   .vc-icon {
@@ -65,7 +65,7 @@ withDefaults(defineProps<IProps>(), {
         @apply mt-2.5;
 
         @container (min-width: theme("containers.xl")) {
-          @apply self-start mt-2;
+          @apply mt-0;
         }
       }
 
