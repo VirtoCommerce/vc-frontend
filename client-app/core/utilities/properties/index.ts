@@ -68,7 +68,7 @@ export function getGroupedAndSortedProperties(source: Property[]): IGroupedPrope
   let hasValid = false;
 
   for (const prop of source) {
-    const group = prop.group?.id ? prop.group! : defaultGroup;
+    const group = prop.group?.id ? prop.group : defaultGroup;
 
     if (group !== defaultGroup) {
       hasValid = true;
@@ -89,8 +89,9 @@ export function getGroupedAndSortedProperties(source: Property[]): IGroupedPrope
 
   return Array.from(result.values())
     .sort((a, b) => (a.group?.priority ?? 0) - (b.group?.priority ?? 0))
-    .map(({ group, properties }) => ({
-      group,
-      properties: properties.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)),
-    }));
+    .map(({ group, properties }) => {
+      const sortedProps = [...properties].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+
+      return { group, properties: sortedProps };
+    });
 }
