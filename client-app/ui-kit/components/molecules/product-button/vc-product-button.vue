@@ -8,7 +8,7 @@
         :variant="variant"
         :color="color"
         :prepend-icon="icon"
-        size="sm"
+        :size="size"
         full-width
         :no-wrap="noWrap"
         :loading="loading"
@@ -21,13 +21,24 @@
     </slot>
 
     <slot>
-      <router-link v-if="linkText" :to="to" target="_blank" class="vc-product-button__link">
-        <VcIcon class="vc-product-button__icon" name="external-link" />
+      <component
+        :is="linkTo ? 'router-link' : 'div'"
+        v-if="linkText"
+        :to="linkTo ?? null"
+        target="_blank"
+        :class="[
+          'vc-product-button__link',
+          {
+            'vc-product-button__link--text': !linkTo,
+          },
+        ]"
+      >
+        <VcIcon class="vc-product-button__icon" :name="linkIcon" />
 
         <span class="vc-product-button__text">
           {{ linkText }}
         </span>
-      </router-link>
+      </component>
     </slot>
   </div>
 </template>
@@ -42,6 +53,8 @@ interface IEmits {
 interface IProps {
   to?: RouteLocationRaw;
   linkText?: string;
+  linkIcon?: string;
+  linkTo?: RouteLocationRaw;
   buttonText?: string;
   target?: BrowserTargetType;
   variant?: string;
@@ -51,33 +64,50 @@ interface IProps {
   loading?: boolean;
   truncate?: boolean;
   title?: string;
+  size?: "sm" | "md";
 }
 
 defineEmits<IEmits>();
 
 withDefaults(defineProps<IProps>(), {
   to: "",
+  linkTo: "",
   variant: "outline",
   color: "primary",
+  size: "sm",
+  linkIcon: "external-link",
 });
 </script>
 
 <style lang="scss">
 .vc-product-button {
   $self: &;
+  $link: &;
+
+  --link-icon-color: var(--vc-product-button-link-icon-color, theme("colors.primary.500"));
+  --link-color: var(--vc-product-button-link-color, theme("colors.accent.600"));
+  --link-hover-color: var(--vc-product-button-link-hover-color, theme("colors.accent.800"));
 
   @apply flex flex-col;
 
   &__link {
-    --vc-icon-size: 1.5rem;
-    --vc-icon-color: theme("colors.primary.500");
+    $link: &;
 
-    @apply flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] mt-3.5;
+    --vc-icon-size: 1rem;
+    --vc-icon-color: var(--link-icon-color);
 
-    @media (width > theme("screens.lg")) {
-      --vc-icon-size: 1.25rem;
+    @apply mt-3 flex items-center min-h-4 gap-1 text-xs;
 
-      @apply text-xs mt-[1.125rem];
+    @media (min-width: theme("screens.xs")) {
+      @apply mt-5;
+    }
+
+    &:not(#{&}--text) {
+      @apply text-[--link-color] font-bold;
+
+      &:hover {
+        @apply text-[--link-hover-color];
+      }
     }
   }
 
@@ -87,21 +117,17 @@ withDefaults(defineProps<IProps>(), {
 
   @at-root .vc-product-card {
     #{$self} {
+      @apply mt-3;
+
       grid-area: add-to-cart;
     }
 
     &--view-mode {
       &--grid #{$self} {
-        @apply mt-3;
-
-        @container (min-width: theme("containers.xs")) {
-          @apply mt-4;
-        }
+        @apply order-7 min-h-[3.375rem];
       }
 
       &--list #{$self} {
-        @apply mt-3;
-
         @container (min-width: theme("containers.sm")) {
           @apply w-72;
         }
@@ -111,7 +137,7 @@ withDefaults(defineProps<IProps>(), {
         }
 
         @container (min-width: theme("containers.4xl")) {
-          @apply mt-0 ms-3 w-60;
+          @apply w-60;
         }
       }
     }
