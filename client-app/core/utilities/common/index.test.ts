@@ -412,4 +412,9 @@ describe("toCSV", () => {
     const result = toCSV(["  a", "b", "c  "], "|");
     expect(result).toBe("a|b|c");
   });
+
+  it("should handle undefined", () => {
+    const result = toCSV(undefined);
+    expect(result).toBe("");
+  });
 });

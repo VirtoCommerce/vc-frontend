@@ -1,6 +1,5 @@
 import { Logger, toCSV } from "@/core/utilities";
 import { canUseDOM, DEBUG_PREFIX } from "./constants";
-import type { EventParamsType } from "./types";
 import type {
   Breadcrumb,
   LineItemType,
@@ -14,6 +13,7 @@ import type { CamelToSnake } from "@/core/types/utility";
 import type { AnalyticsEventNameType } from "client-app/core/types/analytics";
 
 type CustomEventNamesType = Exclude<CamelToSnake<AnalyticsEventNameType>, Gtag.EventNames>;
+type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 
 export function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParams?: EventParamsType): void {
   if (canUseDOM && window.gtag) {
@@ -41,7 +41,7 @@ export function productToGtagItem(item: Product | VariationType, index?: number)
 export function lineItemToGtagItem(
   item: LineItemType | OrderLineItemType,
   index?: number,
-): Gtag.Item & { promotions: string } {
+): Gtag.Item & { promotions: string | undefined } {
   const categories: Record<string, string> = getCategories(item.product?.breadcrumbs);
 
   return {
@@ -56,13 +56,15 @@ export function lineItemToGtagItem(
     promotion_id: item.discounts?.[0]?.promotionId,
     promotion_name:
       item.discounts && "promotionName" in item.discounts[0] ? item.discounts?.[0]?.promotionName : undefined,
-    promotions: toCSV(
-      item.discounts
-        ?.map((promotion: DiscountType | OrderDiscountType) =>
-          "promotionName" in promotion ? promotion.promotionName : undefined,
-        )
-        .filter(Boolean) as string[],
-    ),
+    promotions: !item.discounts
+      ? undefined
+      : toCSV(
+          item.discounts
+            ?.map((promotion: DiscountType | OrderDiscountType) =>
+              "promotionName" in promotion ? promotion.promotionName : undefined,
+            )
+            ?.filter(Boolean) as string[],
+        ),
     ...categories,
   };
 }
