@@ -129,7 +129,7 @@ usePageHead({
     @apply max-sm:mx-auto;
 
     @media (width > theme("screens.lg")) {
-      @apply w-56;
+      @apply w-60;
     }
 
     &--only {

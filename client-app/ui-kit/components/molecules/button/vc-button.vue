@@ -290,7 +290,7 @@ watch(enabled, async (newValue, oldValue) => {
   @each $color in $colors {
     &--color--#{$color} {
       &:focus {
-        --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.2);
+        --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
       }
 
       &:not([class*="--solid--"]) #{$loaderIcon} {
