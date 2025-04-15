@@ -19,6 +19,7 @@
                 v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
                 :review-count="group.vendor?.rating?.reviewCount"
                 :value="group.vendor?.rating?.value"
+                size="xs"
               />
             </div>
 
@@ -156,7 +157,6 @@ import { OrderLineItems } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
 import { AddressSelection, VendorName } from "@/shared/common";
-import type { CartAddressType } from "@/core/api/graphql/types";
 
 const {
   cart,
@@ -169,16 +169,11 @@ const {
   hasValidationErrors,
   allItemsAreDigital,
 } = useFullCart();
-const { billingAddressEqualsShipping, comment, purchaseOrderNumber, isPurchaseOrderNumberEnabled } = useCheckout();
+const { comment, billingAddress, purchaseOrderNumber, isPurchaseOrderNumberEnabled } = useCheckout();
 const { couponCode } = useCoupon();
 
 const shippingMethodId = computed(
   () => shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,
-);
-const billingAddress = computed<CartAddressType | undefined>(() =>
-  !allItemsAreDigital.value && billingAddressEqualsShipping.value
-    ? shipment.value?.deliveryAddress
-    : payment.value?.billingAddress,
 );
 
 function print() {

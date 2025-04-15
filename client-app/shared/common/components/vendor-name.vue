@@ -1,5 +1,5 @@
 <template>
-  <VcChip size="lg" color="secondary" variant="outline-dark">
+  <VcChip size="lg" color="secondary" variant="outline-dark" truncate>
     {{ $t("common.labels.vendor_name", { name: name ?? $t("common.labels.not_available") }) }}
   </VcChip>
 </template>

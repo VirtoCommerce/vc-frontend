@@ -286,7 +286,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Fixed Rate (Ground)",
-        "FixedRate_Air": "Fixed Rate (Air)"
+        "FixedRate_Air": "Fixed Rate (Air)",
+        "BuyOnlinePickupInStore_Pickup": "Pickup in store"
       }
     }
   },
@@ -670,12 +671,19 @@
       },
       "shipping_details_section": {
         "title": "Shipping details",
+        "switchers": {
+          "pickup": "Pickup",
+          "shipping": "Shipping"
+        },
         "labels": {
           "shipping_address": "Shipping address",
-          "shipping_method": "Delivery method"
+          "shipping_method": "Delivery method",
+          "delivery_option": "Delivery option",
+          "pickup_point": "Pickup point"
         },
         "links": {
-          "select_address": "select a shipping address"
+          "select_address": "select a shipping address",
+          "select_pickup_point": "select a pickup address"
         }
       },
       "billing_details_section": {

@@ -40,6 +40,7 @@
                   v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
                   :review-count="group.vendor.rating.reviewCount"
                   :value="group.vendor.rating.value"
+                  size="xs"
                 />
               </div>
 

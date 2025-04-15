@@ -286,7 +286,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Tarif fixe (Terre)",
-        "FixedRate_Air": "Tarif fixe (Air)"
+        "FixedRate_Air": "Tarif fixe (Air)",
+        "BuyOnlinePickupInStore_Pickup": "Ramassage en magasin"
       }
     }
   },
@@ -670,12 +671,19 @@
       },
       "shipping_details_section": {
         "title": "Détails de l'expédition",
+        "switchers": {
+          "pickup": "Retrait",
+          "shipping": "Livraison"
+        },
         "labels": {
           "shipping_address": "Adresse de livraison",
-          "shipping_method": "Méthode de livraison"
+          "shipping_method": "Méthode de livraison",
+          "delivery_option": "Option de livraison",
+          "pickup_point": "Point de retrait"
         },
         "links": {
-          "select_address": "sélectionner une adresse de livraison"
+          "select_address": "sélectionner une adresse de livraison",
+          "select_pickup_point": "sélectionner une adresse de retrait"
         }
       },
       "billing_details_section": {

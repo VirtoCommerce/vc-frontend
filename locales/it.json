@@ -156,7 +156,7 @@
       "toggle_search_bar": "Attiva/Disattiva barra di ricerca",
       "slider_image": "Immagine del cursore",
       "buyer_name": "Nome dell'acquirente",
-      "vendor_name": "Fornitore, {name}",
+      "vendor_name": "Fornitore: {name}",
       "not_available": "N/D"
     },
     "prefixes": {
@@ -286,7 +286,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Tariffa fissa (Terra)",
-        "FixedRate_Air": "Tariffa fissa (Aria)"
+        "FixedRate_Air": "Tariffa fissa (Aria)",
+        "BuyOnlinePickupInStore_Pickup": "Ritiro in negozio"
       }
     }
   },
@@ -670,12 +671,19 @@
       },
       "shipping_details_section": {
         "title": "Dettagli spedizione",
+        "switchers": {
+          "pickup": "Ritiro",
+          "shipping": "Spedizione"
+        },
         "labels": {
           "shipping_address": "Indirizzo di spedizione",
-          "shipping_method": "Metodo di consegna"
+          "shipping_method": "Metodo di consegna",
+          "delivery_option": "Opzione di consegna",
+          "pickup_point": "Punto di ritiro"
         },
         "links": {
-          "select_address": "seleziona un indirizzo di spedizione"
+          "select_address": "seleziona un indirizzo di spedizione",
+          "select_pickup_point": "seleziona un indirizzo di ritiro"
         }
       },
       "billing_details_section": {
