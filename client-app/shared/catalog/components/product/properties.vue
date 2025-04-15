@@ -14,7 +14,7 @@
           variant="outline"
           @click="expandAll = !expandAll"
         >
-          {{ expandAll ? "Collapse" : "Expand all" }}
+          {{ expandAll ? $t("common.buttons.show_less") : $t("common.buttons.expand_all") }}
         </VcButton>
       </template>
 
@@ -79,20 +79,15 @@ import { computed, ref } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { getPropertiesGroupedByName } from "@/core/utilities";
+import { getPropertiesGroupedByName, getGroupedAndSortedProperties } from "@/core/utilities";
 import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
 import { PropertyValueTypes } from "@/modules/quotes/api/graphql/types";
 import { ProductTitledBlock, Vendor } from "@/shared/catalog";
-import type { Product, Property, PropertyGroup } from "@/core/api/graphql/types";
+import type { Product, Property } from "@/core/api/graphql/types";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
-
-interface IGroupedProperties {
-  group?: PropertyGroup;
-  properties: Property[];
-}
 
 interface IProps {
   product: Product;
@@ -106,45 +101,6 @@ const props = defineProps<IProps>();
 
 const expandAll = ref(false);
 
-function groupAndSortProperties(source: Property[]): IGroupedProperties[] {
-  const result = new Map<string, IGroupedProperties>();
-  const defaultGroup: PropertyGroup = {
-    id: "ungrouped",
-    name: "Other",
-    priority: Infinity,
-    description: "",
-  };
-
-  let hasValid = false;
-
-  for (const prop of source) {
-    const group = prop.group?.id ? prop.group! : defaultGroup;
-
-    if (group !== defaultGroup) {
-      hasValid = true;
-    }
-
-    const entry = result.get(group.id) ?? { group, properties: [] };
-    entry.properties.push(prop);
-    result.set(group.id, entry);
-  }
-
-  if (!hasValid) {
-    return [
-      {
-        properties: source,
-      },
-    ];
-  }
-
-  return Array.from(result.values())
-    .sort((a, b) => (a.group?.priority ?? 0) - (b.group?.priority ?? 0))
-    .map(({ group, properties }) => ({
-      group,
-      properties: properties.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)),
-    }));
-}
-
 const { themeContext } = useThemeContext();
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
@@ -153,7 +109,7 @@ const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)),
 );
 
-const groupedProperties = computed(() => groupAndSortProperties(properties.value));
+const groupedProperties = computed(() => getGroupedAndSortedProperties(properties.value));
 
 const showVendor = computed(
   () => themeContext.value?.settings?.vendor_enabled && !props.product.hasVariations && props.product.vendor,
@@ -168,7 +124,7 @@ function isHTML(property: Property): boolean {
 <style lang="scss">
 .properties {
   &__groups {
-    @apply space-y-4;
+    @apply space-y-3;
   }
 
   &__prop {
