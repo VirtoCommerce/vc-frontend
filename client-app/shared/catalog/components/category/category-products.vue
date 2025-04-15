@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, toRef } from "vue";
+import { computed, toRef } from "vue";
 import { useRouteQueryParam } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
@@ -142,12 +142,4 @@ const maxVisitedPage = computed(() => Math.max(...pageHistory.value));
 function sendGASelectItemEvent(product: Product): void {
   emit("selectProduct", product);
 }
-
-onMounted(() => {
-  document.documentElement.style.setProperty("overflow-anchor", "none");
-});
-
-onBeforeUnmount(() => {
-  document.documentElement.style.removeProperty("overflow-anchor");
-});
 </script>

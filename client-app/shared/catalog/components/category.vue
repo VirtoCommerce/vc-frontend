@@ -1,6 +1,7 @@
 <template>
   <VcContainer
     ref="categoryComponentAnchor"
+    style="overflow-anchor: none"
     :class="{
       'polygon-neutral-bg': !products.length && !fetchingProducts,
     }"
