@@ -17,7 +17,7 @@
 
     <slot v-if="showSeeMoreButton" name="toggle-button" v-bind="{ showAll }">
       <div class="vc-collapsible-content__button">
-        <VcButtonSeeMoreLess v-model="showAll" />
+        <VcButtonSeeMoreLess v-model="showAll" size="xs" variant="outline" />
       </div>
     </slot>
   </div>
