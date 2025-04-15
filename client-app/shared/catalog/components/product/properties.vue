@@ -12,9 +12,9 @@
           color="secondary"
           size="xs"
           variant="outline"
-          @click="expandAll = !expandAll"
+          @click="toggleWidgets"
         >
-          {{ expandAll ? $t("common.buttons.show_less") : $t("common.buttons.expand_all") }}
+          {{ allExpanded ? $t("common.buttons.show_less") : $t("common.buttons.expand_all") }}
         </VcButton>
       </template>
 
@@ -25,8 +25,9 @@
           size="xs"
           :title="item.group?.name"
           collapsible
-          :collapsed="!expandAll && index > 0"
+          :collapsed="collapsedStates[index]"
           :shadow="false"
+          @toggle-collapse="($event) => (collapsedStates[index] = $event)"
         >
           <div class="properties__group">
             <VcCollapsibleContent :max-height="groupedProperties.length === 1 ? '18.75rem' : 'none'">
@@ -75,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -99,7 +100,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const expandAll = ref(false);
+const collapsedStates = ref<boolean[]>([]);
 
 const { themeContext } = useThemeContext();
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
@@ -116,9 +117,27 @@ const showVendor = computed(
 );
 const showPropertiesBlock = computed(() => !props.model.hidden && (properties.value.length || showVendor.value));
 
+const allExpanded = computed(() => collapsedStates.value.every((val) => val === false));
+
+function toggleWidgets() {
+  if (!allExpanded.value) {
+    collapsedStates.value = groupedProperties.value.map(() => false);
+  } else {
+    collapsedStates.value = groupedProperties.value.map((_, index) => index !== 0);
+  }
+}
+
+function initCollapsedStates() {
+  collapsedStates.value = groupedProperties.value.map((_, index) => index !== 0);
+}
+
 function isHTML(property: Property): boolean {
   return (property.propertyValueType as PropertyValueTypes) === PropertyValueTypes.Html;
 }
+
+onMounted(() => {
+  initCollapsedStates();
+});
 </script>
 
 <style lang="scss">
