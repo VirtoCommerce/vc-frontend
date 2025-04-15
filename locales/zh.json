@@ -157,7 +157,8 @@
       "main_menu": "主菜单",
       "toggle_search_bar": "切换搜索栏",
       "slider_image": "滑动图像",
-      "buyer_name": "买方姓名"
+      "buyer_name": "买方姓名",
+      "other": "其他"
     },
     "prefixes": {
       "please": "请",

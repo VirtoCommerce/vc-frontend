@@ -157,7 +157,8 @@
       "main_menu": "Hauptmenü",
       "toggle_search_bar": "Suchleiste umschalten",
       "slider_image": "Slider-Bild",
-      "buyer_name": "Name des Käufers"
+      "buyer_name": "Name des Käufers",
+      "other": "Andere"
     },
     "prefixes": {
       "please": "Bitte",

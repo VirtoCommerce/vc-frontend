@@ -157,7 +157,8 @@
       "main_menu": "Main menu",
       "toggle_search_bar": "Toggle search bar",
       "slider_image": "Slider image",
-      "buyer_name": "Buyer name"
+      "buyer_name": "Buyer name",
+      "other": "Other"
     },
     "prefixes": {
       "please": "Please",

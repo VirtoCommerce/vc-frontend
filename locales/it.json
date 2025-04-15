@@ -157,7 +157,8 @@
       "main_menu": "Menu principale",
       "toggle_search_bar": "Attiva/Disattiva barra di ricerca",
       "slider_image": "Immagine del cursore",
-      "buyer_name": "Nome dell'acquirente"
+      "buyer_name": "Nome dell'acquirente",
+      "other": "Altro"
     },
     "prefixes": {
       "please": "Per favore",

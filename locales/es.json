@@ -157,7 +157,8 @@
       "main_menu": "Menú principal",
       "toggle_search_bar": "Alternar barra de búsqueda",
       "slider_image": "Imagen del deslizador",
-      "buyer_name": "Nombre del comprador"
+      "buyer_name": "Nombre del comprador",
+      "other": "Otro"
     },
     "prefixes": {
       "please": "Por favor",

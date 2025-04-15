@@ -157,7 +157,8 @@
       "main_menu": "Menu główne",
       "toggle_search_bar": "Przełącz pasek wyszukiwania",
       "slider_image": "Obraz slajdera",
-      "buyer_name": "Nazwa nabywcy"
+      "buyer_name": "Nazwa nabywcy",
+      "other": "Inne"
     },
     "prefixes": {
       "please": "Proszę",

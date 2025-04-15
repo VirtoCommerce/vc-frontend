@@ -57,10 +57,11 @@ export function getPropertiesGroupedByName(properties: Property[], type?: Proper
 }
 
 export function getGroupedAndSortedProperties(source: Property[]): IGroupedProperties[] {
+  const { t } = globals.i18n.global;
   const result = new Map<string, IGroupedProperties>();
   const defaultGroup: PropertyGroup = {
     id: "ungrouped",
-    name: "Other",
+    name: t("common.labels.other"),
     priority: Infinity,
     description: "",
   };

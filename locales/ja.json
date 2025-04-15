@@ -157,7 +157,8 @@
       "main_menu": "メインメニュー",
       "toggle_search_bar": "検索バーを切り替える",
       "slider_image": "スライダー画像",
-      "buyer_name": "購入者名"
+      "buyer_name": "購入者名",
+      "other": "その他"
     },
     "prefixes": {
       "please": "お願いします",

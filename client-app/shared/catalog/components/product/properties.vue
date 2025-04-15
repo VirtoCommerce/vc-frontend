@@ -31,12 +31,7 @@
         >
           <div class="properties__group">
             <VcCollapsibleContent :max-height="groupedProperties.length === 1 ? '18.75rem' : 'none'">
-              <div
-                v-for="property in item.properties"
-                :key="property.id"
-                :label="property.label!"
-                class="properties__prop"
-              >
+              <div v-for="property in item.properties" :key="property.id" class="properties__prop">
                 <div class="properties__label">
                   {{ property.label }}
                 </div>
