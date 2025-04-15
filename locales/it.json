@@ -74,7 +74,9 @@
       "add_with_bulk_order": "Aggiungi con ordine multiplo",
       "all_orders": "Tutti gli ordini",
       "my_orders": "I miei ordini",
-      "scroll_to_top": "Torna su"
+      "scroll_to_top": "Torna su",
+      "show_less": "Mostra di meno",
+      "expand_all": "Espandi tutto"
     },
     "labels": {
       "actions": "Azioni",

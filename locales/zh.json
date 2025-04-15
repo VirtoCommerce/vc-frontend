@@ -74,7 +74,9 @@
       "add_with_bulk_order": "批量订单添加",
       "all_orders": "所有订单",
       "my_orders": "我的订单",
-      "scroll_to_top": "回到顶部"
+      "scroll_to_top": "回到顶部",
+      "show_less": "收起",
+      "expand_all": "全部展开"
     },
     "labels": {
       "actions": "操作",
