@@ -1,7 +1,10 @@
 <template>
   <div>
     <template v-if="products.length || fetchingProducts">
-      <div v-if="mode === CATALOG_MODES.loadMore && minVisitedPage > 1" class="-mt-2 mb-6 flex justify-center">
+      <div
+        v-if="mode === CATALOG_PAGINATION_MODES.loadMore && minVisitedPage > 1"
+        class="-mt-2 mb-6 flex justify-center"
+      >
         <VcButton
           v-if="products.length"
           size="sm"
@@ -30,7 +33,7 @@
       </DisplayProducts>
 
       <VcInfinityScrollLoader
-        v-if="mode === CATALOG_MODES.infiniteScroll && !Number(fixedProductsCount)"
+        v-if="mode === CATALOG_PAGINATION_MODES.infiniteScroll && !Number(fixedProductsCount)"
         :loading="fetchingProducts || fetchingMoreProducts"
         :is-page-limit-reached="pageNumber >= PAGE_LIMIT"
         :page-number="pageNumber"
@@ -40,7 +43,10 @@
         @visible="$emit('changePage', pageNumber + 1)"
       />
 
-      <div v-if="mode === CATALOG_MODES.loadMore && maxVisitedPage < pagesCount" class="mt-6 flex justify-center">
+      <div
+        v-if="mode === CATALOG_PAGINATION_MODES.loadMore && maxVisitedPage < pagesCount"
+        class="mt-6 flex justify-center"
+      >
         <VcButton
           :loading="fetchingMoreProducts && pageNumber > maxVisitedPage"
           append-icon="arrow-right"
@@ -79,15 +85,15 @@ import { useRouteQueryParam } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { AddToCart } from "@/shared/cart";
-import { CATALOG_MODES } from "@/shared/catalog/constants/catalog";
+import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import type { Product } from "@/core/api/graphql/types";
-import type { CatalogModeType } from "@/shared/catalog/types/catalog";
+import type { CatalogPaginationModeType } from "@/shared/catalog/types/catalog";
 import DisplayProducts from "@/shared/catalog/components/display-products.vue";
 
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  mode: CATALOG_MODES.infiniteScroll,
+  mode: CATALOG_PAGINATION_MODES.infiniteScroll,
 });
 
 interface IProps {
@@ -105,7 +111,7 @@ interface IProps {
   pageNumber: number;
   products: Product[];
   savedViewMode: "grid" | "list";
-  mode?: CatalogModeType;
+  mode?: CatalogPaginationModeType;
 }
 
 interface IEmits {

@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PAGE_LIMIT } from "@/core/constants";
-import { CATALOG_MODES } from "@/shared/catalog/constants/catalog";
+import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useProducts } from "./useProducts";
-import type { CatalogModeType } from "../types";
+import type { CatalogPaginationModeType } from "../types";
 
 // Mock types
 interface Product {
@@ -36,7 +36,7 @@ interface ICurrency {
 }
 
 interface IThemeSettings {
-  catalog_mode?: CatalogModeType;
+  catalog_pagination_mode?: CatalogPaginationModeType;
   image_carousel_in_product_card_enabled: boolean;
   zero_price_product_enabled: boolean;
 }
@@ -161,7 +161,7 @@ describe("useProducts", () => {
   });
 
   describe("fetchMoreProducts", () => {
-    it("should fetch more products and append them to the existing products list when catalog_mode is infinite_scroll", async () => {
+    it("should fetch more products and append them to the existing products list when catalog_pagination_mode is infinite_scroll", async () => {
       const { fetchProducts, fetchMoreProducts, products } = useProducts();
 
       mockData.searchProducts.mockResolvedValueOnce({
@@ -191,9 +191,9 @@ describe("useProducts", () => {
       expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }, { id: "product3" }, { id: "product4" }]);
     });
 
-    it("should append products when loading a page higher than minimum visited page with catalog_mode=load_more", async () => {
+    it("should append products when loading a page higher than minimum visited page with catalog_pagination_mode=load_more", async () => {
       const { fetchProducts, fetchMoreProducts, products } = useProducts({
-        catalogMode: CATALOG_MODES.loadMore,
+        catalogPaginationMode: CATALOG_PAGINATION_MODES.loadMore,
       });
 
       mockData.searchProducts.mockResolvedValueOnce({
@@ -223,9 +223,9 @@ describe("useProducts", () => {
       expect(products.value).toEqual([{ id: "product1" }, { id: "product2" }, { id: "product3" }, { id: "product4" }]);
     });
 
-    it("should prepend products when loading a page equal to the minimum visited page with catalog_mode=load_more", async () => {
+    it("should prepend products when loading a page equal to the minimum visited page with catalog_pagination_mode=load_more", async () => {
       const { fetchProducts, fetchMoreProducts, products } = useProducts({
-        catalogMode: CATALOG_MODES.loadMore,
+        catalogPaginationMode: CATALOG_PAGINATION_MODES.loadMore,
       });
 
       mockData.searchProducts.mockResolvedValueOnce({
@@ -291,7 +291,7 @@ describe("useProducts", () => {
       const localThemeContext = { ...mockData.mockThemeContext };
       localThemeContext.settings = {
         ...mockData.mockThemeContext.settings,
-        catalog_mode: CATALOG_MODES.loadMore,
+        catalog_pagination_mode: CATALOG_PAGINATION_MODES.loadMore,
       };
 
       mockData.useThemeContext.mockReturnValue({

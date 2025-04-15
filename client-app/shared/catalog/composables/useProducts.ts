@@ -12,9 +12,14 @@ import {
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
 } from "@/core/utilities";
-import { CATALOG_MODES } from "@/shared/catalog/constants/catalog";
+import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useModal } from "@/shared/modal";
-import type { CatalogModeType, FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "../types";
+import type {
+  CatalogPaginationModeType,
+  FiltersDisplayOrderType,
+  ProductsFiltersType,
+  ProductsSearchParamsType,
+} from "../types";
 import type { Product, RangeFacet, TermFacet } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { Ref } from "vue";
@@ -32,8 +37,8 @@ export function useProducts(
     withZeroPrice?: boolean;
     filtersDisplayOrder?: Ref<FiltersDisplayOrderType | undefined>;
     useQueryParams?: boolean;
-    /** @default CATALOG_MODES.infiniteScroll */
-    catalogMode?: CatalogModeType;
+    /** @default CATALOG_PAGINATION_MODES.infiniteScroll */
+    catalogPaginationMode?: CatalogPaginationModeType;
   } = {},
 ) {
   const { themeContext } = useThemeContext();
@@ -41,7 +46,7 @@ export function useProducts(
     withFacets = false,
     withImages = themeContext.value?.settings?.image_carousel_in_product_card_enabled,
     withZeroPrice = themeContext.value?.settings?.zero_price_product_enabled,
-    catalogMode = CATALOG_MODES.infiniteScroll,
+    catalogPaginationMode = CATALOG_PAGINATION_MODES.infiniteScroll,
   } = options;
   const { openModal } = useModal();
 
@@ -80,7 +85,9 @@ export function useProducts(
   const pagesCount = ref(1);
   const isFiltersSidebarVisible = ref(false);
   const currentPage = ref(
-    catalogMode === CATALOG_MODES.loadMore && pageQueryParam.value ? Number(pageQueryParam.value) : 1,
+    catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore && pageQueryParam.value
+      ? Number(pageQueryParam.value)
+      : 1,
   );
   const pageHistory = ref<number[]>([]);
 
@@ -248,7 +255,7 @@ export function useProducts(
     const searchParams = {
       ..._searchParams,
       page:
-        catalogMode === CATALOG_MODES.loadMore && _searchParams.page === undefined
+        catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore && _searchParams.page === undefined
           ? currentPage.value
           : _searchParams.page,
     };
@@ -308,7 +315,12 @@ export function useProducts(
       const page = searchParams.page;
       const minVisitedPage = Math.min(...pageHistory.value);
 
-      if (catalogMode === CATALOG_MODES.loadMore && page && minVisitedPage && page < minVisitedPage) {
+      if (
+        catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
+        page &&
+        minVisitedPage &&
+        page < minVisitedPage
+      ) {
         // if load previous page, we need to add new items to the beginning of the array
         products.value = [...items, ...products.value];
       } else {
@@ -365,14 +377,14 @@ export function useProducts(
   function updateCurrentPage(page: number) {
     currentPage.value = page;
 
-    if (catalogMode === CATALOG_MODES.loadMore && page > Math.max(...pageHistory.value)) {
+    if (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore && page > Math.max(...pageHistory.value)) {
       pageQueryParam.value = page.toString();
     }
   }
 
   async function resetCurrentPage() {
     updateCurrentPage(1);
-    if (catalogMode === CATALOG_MODES.loadMore) {
+    if (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore) {
       await new Promise((resolve) => setTimeout(resolve, 0));
       // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
       pageQueryParam.value = "";

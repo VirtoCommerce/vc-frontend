@@ -160,7 +160,9 @@
       <div
         v-if="
           hasSelectedFacets ||
-          (catalogMode === CATALOG_MODES.loadMore && $route.query.page && Number($route.query.page) > 1)
+          (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
+            $route.query.page &&
+            Number($route.query.page) > 1)
         "
         class="flex flex-wrap gap-x-3 gap-y-2 pb-6"
       >
@@ -185,7 +187,11 @@
         </template>
 
         <VcChip
-          v-if="catalogMode === CATALOG_MODES.loadMore && $route.query.page && Number($route.query.page) > 1"
+          v-if="
+            catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
+            $route.query.page &&
+            Number($route.query.page) > 1
+          "
           color="secondary"
           variant="outline"
           clickable
@@ -221,7 +227,7 @@
         :products="products"
         :saved-view-mode="savedViewMode"
         :search-params="searchParams"
-        :mode="catalogMode"
+        :mode="catalogPaginationMode"
         @change-page="changeProductsPage"
         @reset-facet-filters="resetFacetFilters"
         @reset-filter-keyword="resetFilterKeyword"
@@ -264,7 +270,7 @@ import {
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
-import { CATALOG_MODES } from "@/shared/catalog/constants/catalog";
+import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useSlugInfo } from "@/shared/common";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
 import { useCategory, useProducts } from "../composables";
@@ -313,7 +319,9 @@ const { catalogId, currencyCode } = globals;
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
 
-const catalogMode = computed(() => themeContext.value?.settings?.catalog_mode ?? CATALOG_MODES.infiniteScroll);
+const catalogPaginationMode = computed(
+  () => themeContext.value?.settings?.catalog_pagination_mode ?? CATALOG_PAGINATION_MODES.infiniteScroll,
+);
 
 const { themeContext } = useThemeContext();
 const {
@@ -354,7 +362,7 @@ const {
   filtersDisplayOrder,
   useQueryParams: true,
   withFacets: true,
-  catalogMode: catalogMode.value,
+  catalogPaginationMode: catalogPaginationMode.value,
 });
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();

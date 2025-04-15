@@ -1,3 +1,3 @@
-import type { CATALOG_MODES } from "@/shared/catalog/constants/catalog";
+import type { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 
-export type CatalogModeType = (typeof CATALOG_MODES)[keyof typeof CATALOG_MODES];
+export type CatalogPaginationModeType = (typeof CATALOG_PAGINATION_MODES)[keyof typeof CATALOG_PAGINATION_MODES];
