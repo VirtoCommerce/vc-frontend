@@ -1,15 +1,14 @@
 <template>
-  <div class="vendor">
-    <VcChip size="lg" color="secondary" variant="outline-dark" truncate>
-      {{ $t("common.labels.vendor_name", { name: vendor.name ?? $t("common.labels.not_available") }) }}
-    </VcChip>
+  <div class="flex items-center gap-x-1">
+    <div class="truncate font-bold">{{ vendor.name }}</div>
 
-    <VcRating
-      v-if="$cfg.vendor_rating_enabled && displayRating"
-      :value="vendor.rating?.value"
-      :review-count="vendor.rating?.reviewCount"
-      size="xs"
-    />
+    <div v-if="$cfg.vendor_rating_enabled && displayRating" class="flex items-center gap-1">
+      <VcIcon class="flex-none fill-primary" name="star" size="xs" />
+
+      <span class="whitespace-nowrap font-normal">
+        <span class="font-black"> {{ vendor.rating?.value }} </span>/5 ({{ vendor.rating?.reviewCount }})
+      </span>
+    </div>
   </div>
 </template>
 
@@ -30,9 +29,3 @@ const displayRating = computed(
   () => props.withRating && props.vendor.rating?.reviewCount !== undefined && props.vendor.rating?.reviewCount > 0,
 );
 </script>
-
-<style lang="scss">
-.vendor {
-  @apply flex items-center gap-2;
-}
-</style>
