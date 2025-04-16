@@ -776,7 +776,8 @@
           "month": "Por favor, forneça um mês de validade válido",
           "year": "Por favor, forneça um ano de validade válido"
         },
-        "user_error_message": "Não foi possível inicializar o pagamento. Tente novamente mais tarde ou use outro método de pagamento"
+        "user_error_message": "Não foi possível inicializar o pagamento. Tente novamente mais tarde ou use outro método de pagamento",
+        "payment_unavailable": "O método de pagamento não está disponível. Tente novamente mais tarde"
       },
       "authorize_net": {
         "user_agreement_link": "Acordo de Usuário",
