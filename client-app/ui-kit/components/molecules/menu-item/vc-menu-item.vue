@@ -18,7 +18,7 @@
       ]"
       @click="enabled ? $emit('click', $event) : null"
     >
-      <span class="vc-menu-item__prepend">
+      <span v-if="$slots.prepend" class="vc-menu-item__prepend">
         <slot name="prepend" />
       </span>
 
@@ -26,7 +26,7 @@
         <slot />
       </span>
 
-      <span class="vc-menu-item__append">
+      <span v-if="$slots.append" class="vc-menu-item__append">
         <slot name="append" />
       </span>
     </component>
@@ -136,7 +136,7 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply grid grid-cols-[auto_1fr_auto] w-full px-3 text-left rounded-[inherit] text-sm/[0.875rem];
+    @apply flex w-full px-3 text-left rounded-[inherit] text-sm/[0.875rem];
 
     &:not(:disabled) {
       @apply bg-additional-50 text-neutral-950;
