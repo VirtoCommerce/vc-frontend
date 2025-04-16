@@ -135,6 +135,7 @@ const props = withDefaults(defineProps<IProps>(), {
   type: "text",
   size: "md",
   browserTooltip: "disabled",
+  selectOnClick: true,
 });
 
 const componentId = useComponentId("input");
