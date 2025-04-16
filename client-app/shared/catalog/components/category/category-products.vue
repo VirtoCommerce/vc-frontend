@@ -1,6 +1,21 @@
 <template>
   <div>
     <template v-if="products.length || fetchingProducts">
+      <div
+        v-if="mode === CATALOG_PAGINATION_MODES.loadMore && minVisitedPage > 1"
+        class="-mt-2 mb-6 flex justify-center"
+      >
+        <VcButton
+          v-if="products.length"
+          size="sm"
+          :loading="fetchingMoreProducts && pageNumber < minVisitedPage"
+          prepend-icon="arrow-left"
+          @click="loadPreviousPage"
+        >
+          {{ $t("pages.catalog.load_previous_page") }}
+        </VcButton>
+      </div>
+
       <DisplayProducts
         :loading="fetchingProducts"
         :view-mode="savedViewMode"
@@ -18,15 +33,29 @@
       </DisplayProducts>
 
       <VcInfinityScrollLoader
-        v-if="!Number(fixedProductsCount)"
+        v-if="mode === CATALOG_PAGINATION_MODES.infiniteScroll && !Number(fixedProductsCount)"
         :loading="fetchingProducts || fetchingMoreProducts"
         :is-page-limit-reached="pageNumber >= PAGE_LIMIT"
         :page-number="pageNumber"
         :pages-count="pagesCount"
         distance="400"
         class="mt-8"
-        @visible="$emit('changePage', ++pageNumber)"
+        @visible="$emit('changePage', pageNumber + 1)"
       />
+
+      <div
+        v-if="mode === CATALOG_PAGINATION_MODES.loadMore && maxVisitedPage < pagesCount"
+        class="mt-6 flex justify-center"
+      >
+        <VcButton
+          :loading="fetchingMoreProducts && pageNumber > maxVisitedPage"
+          append-icon="arrow-right"
+          size="sm"
+          @click="loadNextPage"
+        >
+          {{ $t("pages.catalog.load_next_page") }}
+        </VcButton>
+      </div>
 
       <VcScrollTopButton />
     </template>
@@ -51,17 +80,21 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from "vue";
+import { computed, toRef } from "vue";
 import { useRouteQueryParam } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { AddToCart } from "@/shared/cart";
+import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import type { Product } from "@/core/api/graphql/types";
+import type { CatalogPaginationModeType } from "@/shared/catalog/types/catalog";
 import DisplayProducts from "@/shared/catalog/components/display-products.vue";
 
 const emit = defineEmits<IEmits>();
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  mode: CATALOG_PAGINATION_MODES.infiniteScroll,
+});
 
 interface IProps {
   cardType?: "full" | "short";
@@ -74,9 +107,11 @@ interface IProps {
   hasSelectedFacets: boolean;
   itemsPerPage: number;
   pagesCount: number;
+  pageHistory: Readonly<number[]>;
   pageNumber: number;
   products: Product[];
   savedViewMode: "grid" | "list";
+  mode?: CatalogPaginationModeType;
 }
 
 interface IEmits {
@@ -90,7 +125,19 @@ const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
   defaultValue: "",
 });
 
+function loadPreviousPage() {
+  emit("changePage", minVisitedPage.value - 1);
+}
+
+function loadNextPage() {
+  emit("changePage", maxVisitedPage.value + 1);
+}
+
 const pageNumber = toRef(props, "pageNumber");
+const pageHistory = toRef(props, "pageHistory");
+
+const minVisitedPage = computed(() => Math.min(...pageHistory.value));
+const maxVisitedPage = computed(() => Math.max(...pageHistory.value));
 
 function sendGASelectItemEvent(product: Product): void {
   emit("selectProduct", product);

@@ -1,6 +1,7 @@
 <template>
   <VcContainer
     ref="categoryComponentAnchor"
+    style="overflow-anchor: none"
     :class="{
       'polygon-neutral-bg': !products.length && !fetchingProducts,
     }"
@@ -157,7 +158,15 @@
       />
 
       <!-- Filters chips -->
-      <div v-if="hasSelectedFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+      <div
+        v-if="
+          hasSelectedFacets ||
+          (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
+            $route.query.page &&
+            Number($route.query.page) > 1)
+        "
+        class="flex flex-wrap gap-x-3 gap-y-2 pb-6"
+      >
         <template v-for="facet in productsFilters.facets">
           <template v-for="filterItem in facet.values">
             <VcChip
@@ -178,7 +187,23 @@
           </template>
         </template>
 
-        <VcChip color="secondary" variant="outline" clickable @click="resetFacetFilters">
+        <VcChip
+          v-if="
+            catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
+            $route.query.page &&
+            Number($route.query.page) > 1
+          "
+          color="secondary"
+          variant="outline"
+          clickable
+          @click="resetPage"
+        >
+          <span>{{ $t("common.buttons.reset_page") }}</span>
+
+          <VcIcon name="reset" />
+        </VcChip>
+
+        <VcChip v-if="hasSelectedFacets" color="secondary" variant="outline" clickable @click="resetFacetFilters">
           <span>{{ $t("common.buttons.reset_filters") }}</span>
 
           <VcIcon name="reset" />
@@ -199,9 +224,11 @@
         :items-per-page="itemsPerPage"
         :pages-count="pagesCount"
         :page-number="currentPage"
+        :page-history="pageHistory"
         :products="products"
         :saved-view-mode="savedViewMode"
         :search-params="searchParams"
+        :mode="catalogPaginationMode"
         @change-page="changeProductsPage"
         @reset-facet-filters="resetFacetFilters"
         @reset-filter-keyword="resetFilterKeyword"
@@ -244,6 +271,7 @@ import {
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
+import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useSlugInfo } from "@/shared/common";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
 import { useCategory, useProducts } from "../composables";
@@ -292,6 +320,10 @@ const { catalogId, currencyCode } = globals;
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
 
+const catalogPaginationMode = computed(
+  () => themeContext.value?.settings?.catalog_pagination_mode ?? CATALOG_PAGINATION_MODES.infiniteScroll,
+);
+
 const { themeContext } = useThemeContext();
 const {
   getFacets,
@@ -306,6 +338,7 @@ const {
   localStorageBranches,
   localStorageInStock,
   pagesCount,
+  pageHistory,
   products,
   productsFilters,
   searchQueryParam,
@@ -330,6 +363,7 @@ const {
   filtersDisplayOrder,
   useQueryParams: true,
   withFacets: true,
+  catalogPaginationMode: catalogPaginationMode.value,
 });
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();
@@ -482,6 +516,11 @@ function trackViewSearchResults(): void {
 
 function selectProduct(product: Product): void {
   analytics("selectItem", product);
+}
+
+function resetPage() {
+  void resetCurrentPage();
+  void fetchProducts();
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);

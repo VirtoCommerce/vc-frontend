@@ -60,13 +60,11 @@ function initObserver(): void {
 
 onMounted(() => {
   initObserver();
-  document.documentElement.style.setProperty("overflow-anchor", "none");
 });
 
 onBeforeUnmount(() => {
   observer?.disconnect();
   observer = null;
-  document.documentElement.style.removeProperty("overflow-anchor");
 });
 
 watch(() => [props.viewport, props.distance], initObserver);
