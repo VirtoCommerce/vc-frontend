@@ -24,7 +24,8 @@ export function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eve
 }
 
 export function productToGtagItem(item: Product | VariationType, index?: number): Gtag.Item {
-  const categories: Record<string, string> = "breadcrumbs" in item ? getCategories(item.breadcrumbs) : {};
+  const categories: Record<string, string> =
+    item && typeof item === "object" && "breadcrumbs" in item ? getCategories(item.breadcrumbs) : {};
 
   return {
     index,
@@ -51,12 +52,14 @@ export function lineItemToGtagItem(
     affiliation: item.vendor?.name ?? "?",
     currency: item.placedPrice.currency.code,
     discount: item.discountAmount?.amount || item.discountTotal?.amount,
-    price: "price" in item ? item.price.amount : item.listPrice.amount,
+    price: item && typeof item === "object" && "price" in item ? item.price.amount : item.listPrice.amount,
     quantity: item.quantity,
     promotion_id: item.discounts?.[0]?.promotionId,
     promotion_name:
-      item.discounts && "promotionName" in item.discounts[0] ? item.discounts?.[0]?.promotionName : undefined,
-    promotions: !item.discounts
+      item.discounts?.[0] && typeof item.discounts[0] === "object" && "promotionName" in item.discounts[0]
+        ? item.discounts?.[0]?.promotionName
+        : undefined,
+    promotions: !item.discounts.length
       ? undefined
       : toCSV(
           item.discounts
