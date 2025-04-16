@@ -62,7 +62,7 @@
             <div class="flex items-center gap-2">
               <span class="text-base font-bold">{{ $t("quote_details.status") }}:</span>
 
-              <QuoteStatus class="min-w-[7.785rem]" :status="quote.status" />
+              <QuoteStatus size="sm" :status="quote.status" />
             </div>
           </div>
         </VcWidget>
