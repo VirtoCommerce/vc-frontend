@@ -1,12 +1,7 @@
 <template>
-  <VcContainer
-    ref="categoryComponentAnchor"
-    :class="{
-      'polygon-neutral-bg': !products.length && !fetchingProducts,
-    }"
-  >
+  <VcContainer ref="categoryComponentAnchor" class="category">
     <!-- Breadcrumbs -->
-    <VcBreadcrumbs v-if="!hideBreadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
+    <VcBreadcrumbs v-if="!hideBreadcrumbs" class="category__breadcrumbs" :items="breadcrumbs" />
 
     <!-- Popup sidebar for mobile and horizontal desktop view -->
     <FiltersPopupSidebar
@@ -34,98 +29,67 @@
           v-if="categoryId || isRoot"
           :category="currentCategory"
           :loading="!currentCategory && loadingCategory"
-          class="mb-4 lg:mb-5"
+          class="category__selector"
         />
 
         <ProductsFilters
           :keyword="keywordQueryParam"
           :filters="productsFilters"
           :loading="fetchingProducts"
+          class="category__product-filters"
           @change="applyFilters($event)"
         />
       </template>
 
-      <div class="flex">
-        <VcTypography tag="h1">
-          <i18n-t v-if="!categoryId && !isRoot" keypath="pages.search.header" tag="span">
-            <template #keyword>
-              <strong>{{ searchParams.keyword }}</strong>
-            </template>
-          </i18n-t>
+      <VcTypography tag="h1" class="category__title">
+        <i18n-t v-if="!categoryId && !isRoot" keypath="pages.search.header" tag="span">
+          <template #keyword>
+            <strong>{{ searchParams.keyword }}</strong>
+          </template>
+        </i18n-t>
 
-          <!-- Skeleton -->
-          <span v-else-if="!currentCategory && loadingCategory" class="inline-block w-48 bg-neutral-200 md:w-64">
-            &nbsp;
-          </span>
+        <!-- Skeleton -->
+        <span v-else-if="!currentCategory && loadingCategory" class="category__title-skeleton"> &nbsp; </span>
 
-          <span v-else-if="title">
-            {{ title }}
-          </span>
+        <span v-else-if="title">
+          {{ title }}
+        </span>
 
-          <span v-else>
-            {{ currentCategory?.name }}
-          </span>
+        <span v-else>
+          {{ currentCategory?.name }}
+        </span>
 
-          <sup
-            v-if="!fetchingProducts && !hideTotal && !fixedProductsCount"
-            class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base"
-          >
-            <b class="font-black">{{ $n(totalProductsCount, "decimal") }}</b>
-            {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
-          </sup>
-        </VcTypography>
+        <sup v-if="!fetchingProducts && !hideTotal && !fixedProductsCount" class="category__products-count">
+          <b>{{ $n(totalProductsCount, "decimal") }}</b>
 
-        <!-- View options - horizontal view -->
-        <ViewMode
-          v-if="!hideViewModeSelector && isHorizontalFilters"
-          v-model:mode="savedViewMode"
-          class="ml-auto flex"
-        />
-      </div>
+          {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
+        </sup>
+      </VcTypography>
 
-      <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>
+      <div ref="stickyMobileHeaderAnchor" class="category__header-anchor"></div>
 
       <div
-        class="sticky top-0 z-10 my-1.5 flex h-14 items-center empty:h-2 lg:relative lg:mb-3.5 lg:mt-3 lg:h-auto lg:flex-wrap lg:justify-end"
-        :class="{
-          'z-40 -mx-5 bg-additional-50 px-5 md:-mx-12 md:px-12': stickyMobileHeaderIsVisible,
-        }"
+        :class="[
+          'category__filters',
+          {
+            'category__filters--sticky': stickyMobileHeaderIsVisible,
+          },
+        ]"
       >
         <!-- Popup sidebar filters toggler -->
         <VcButton
           v-if="!hideSidebar"
-          class="mr-2.5 flex-none md:!hidden"
+          class="category__facets-button"
           icon="filter"
           size="sm"
           @click="showFiltersSidebar"
         />
 
-        <!-- View options -->
-        <ViewMode
-          v-if="!hideViewModeSelector && !isHorizontalFilters"
-          v-model:mode="savedViewMode"
-          class="ml-3 inline-flex max-lg:order-3 lg:ml-0 lg:mr-auto"
-        />
-
-        <!-- In stock and branches -->
-        <CategoryControls
-          v-if="!hideControls && !isMobile && !isHorizontalFilters"
-          v-model="localStorageInStock"
-          :loading="fetchingProducts"
-          :saved-branches="localStorageBranches"
-          class="max-lg:order-4"
-          @open-branches-modal="openBranchesModal"
-          @apply-in-stock="resetCurrentPage"
-        />
-
         <!-- Sorting -->
-        <div
-          v-if="!hideSorting && !isHorizontalFilters"
-          class="z-10 ml-auto flex grow items-center max-lg:order-2 lg:ml-4 lg:grow-0 xl:ml-8"
-        >
-          <span class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block">
+        <div v-if="!hideSorting && !isHorizontalFilters" class="category__sort">
+          <VcLabel class="category__sort-label">
             {{ $t("pages.catalog.sort_by_label") }}
-          </span>
+          </VcLabel>
 
           <VcSelect
             v-model="sortQueryParam"
@@ -133,11 +97,25 @@
             value-field="id"
             :disabled="fetchingProducts"
             :items="PRODUCT_SORTING_LIST"
-            class="w-0 grow lg:w-48"
+            class="category__sort-dropdown"
             size="sm"
             @change="resetCurrentPage"
           />
         </div>
+
+        <!-- View options - horizontal view -->
+        <ViewMode v-if="!hideViewModeSelector" v-model:mode="savedViewMode" class="category__view-mode" />
+
+        <!-- In stock and branches -->
+        <CategoryControls
+          v-if="!hideControls && !isMobile && !isHorizontalFilters"
+          v-model="localStorageInStock"
+          :loading="fetchingProducts"
+          :saved-branches="localStorageBranches"
+          class="category__controls"
+          @open-branches-modal="openBranchesModal"
+          @apply-in-stock="resetCurrentPage"
+        />
       </div>
 
       <!-- Horizontal filters -->
@@ -157,7 +135,7 @@
       />
 
       <!-- Filters chips -->
-      <div v-if="hasSelectedFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+      <div v-if="hasSelectedFacets" class="category__chips">
         <template v-for="facet in productsFilters.facets">
           <template v-for="filterItem in facet.values">
             <VcChip
@@ -185,7 +163,8 @@
         </VcChip>
       </div>
 
-      <div ref="categoryProductsAnchor"></div>
+      <div ref="categoryProductsAnchor" class="category__products-anchor"></div>
+
       <!-- Products -->
       <CategoryProducts
         :card-type="cardType"
@@ -202,14 +181,15 @@
         :products="products"
         :saved-view-mode="savedViewMode"
         :search-params="searchParams"
+        class="category__products"
         @change-page="changeProductsPage"
         @reset-facet-filters="resetFacetFilters"
         @reset-filter-keyword="resetFilterKeyword"
         @select-product="selectProduct"
       />
 
-      <div class="text-center">
-        <VcButton v-if="showButtonToDefaultView" class="my-8" color="primary" :to="{ query: { view: 'default' } }">
+      <div class="category__products-bottom">
+        <VcButton v-if="showButtonToDefaultView" color="primary" :to="{ query: { view: 'default' } }">
           {{ $t("pages.catalog.show_all_results") }}
         </VcButton>
       </div>
@@ -534,8 +514,98 @@ watchDebounced(
 );
 </script>
 
-<style scoped lang="scss">
-.vc-typography--variant--h1 {
-  @apply normal-case;
+<style lang="scss">
+.category {
+  &__breadcrumbs {
+    @apply mb-2.5;
+
+    @media (min-width: theme("screens.md")) {
+      @apply mb-4;
+    }
+  }
+
+  &__selector {
+    @apply mb-4;
+
+    @media (min-width: theme("screens.md")) {
+      @apply mb-5;
+    }
+  }
+
+  &__title {
+    --vc-typography-text-transform: none;
+  }
+
+  &__title-skeleton {
+    @apply inline-block w-48 bg-neutral-200 md:w-64;
+  }
+
+  &__products-count {
+    @apply -top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base;
+  }
+
+  &__filters {
+    @apply flex items-center gap-3 my-3 empty:h-2;
+
+    @media (min-width: theme("screens.md")) {
+      @apply mb-3.5 mt-3 flex-wrap justify-end;
+    }
+
+    @media (min-width: theme("screens.xl")) {
+      @apply gap-x-6;
+    }
+
+    &--sticky {
+      @apply z-40 sticky top-0 -mx-6 bg-additional-50 px-5 py-3 shadow-lg;
+    }
+  }
+
+  &__facets-button {
+    @media (min-width: theme("screens.md")) {
+      @apply hidden;
+    }
+  }
+
+  &__sort {
+    @apply flex gap-2 items-center;
+
+    @media (width < theme("screens.md")) {
+      @apply grow;
+    }
+
+    @media (min-width: theme("screens.lg")) {
+      @apply order-last;
+    }
+  }
+
+  &__sort-label {
+    @apply me-2 shrink-0;
+
+    @media (width < theme("screens.md")) {
+      @apply hidden;
+    }
+  }
+
+  &__sort-dropdown {
+    @apply w-full;
+  }
+
+  &__view-mode {
+    @apply order-last;
+
+    @media (min-width: theme("screens.md")) {
+      @apply order-first me-auto;
+    }
+  }
+
+  &__controls {
+    @media (width < theme("screens.lg")) and (min-width: theme("screens.md")) {
+      @apply order-last w-full;
+    }
+  }
+
+  &__products-bottom {
+    @apply my-8 text-center;
+  }
 }
 </style>

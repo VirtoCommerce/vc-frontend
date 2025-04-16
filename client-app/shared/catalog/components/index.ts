@@ -2,12 +2,14 @@ export { default as CarouselProductCard } from "./carousel-product-card.vue";
 export { default as CategorySelector } from "./category-selector.vue";
 export { default as CountInCart } from "./count-in-cart.vue";
 export { default as DiscountBadge } from "./discount-badge.vue";
-export { default as DisplayProducts } from "./display-products.vue";
 export { default as FacetFilter } from "./facet-filter.vue";
 export { default as ImageGallery } from "./image-gallery.vue";
 export { default as InStock } from "./in-stock.vue";
+export { default as ProductCard } from "./product-card.vue";
 export { default as ProductCardCompare } from "./product-card-compare.vue";
+// @deprecated Use VcProductCard or ProductCard instead.
 export { default as ProductCardGrid } from "./product-card-grid.vue";
+// @deprecated Use VcProductCard or ProductCard instead.
 export { default as ProductCardList } from "./product-card-list.vue";
 export { default as ProductCardRecentlyBrowsed } from "./product-card-recently-browsed.vue";
 export { default as ProductCardRecommended } from "./product-card-recommended.vue";
