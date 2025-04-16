@@ -85,9 +85,10 @@ const price = computed(() => (product.value.hasVariations ? product.value.minVar
 const link = computed<RouteLocationRaw>(() => getProductRoute(product.value.id, product.value.slug));
 const cartLineItem = computed(() => cart.value?.items.find((item) => item.productId === product.value.id));
 const countInCart = computed<number>(() => cartLineItem.value?.quantity || 0);
+
 const notAvailableMessage = computed<string | undefined>(() => {
   if (!product.value.availabilityData?.isBuyable || !product.value.availabilityData?.isAvailable) {
-    return t("shared.catalog.product_details.product_availability.not_available");
+    return t("validation_error.CART_PRODUCT_UNAVAILABLE");
   }
   return undefined;
 });
