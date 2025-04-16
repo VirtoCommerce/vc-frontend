@@ -14,7 +14,7 @@
         'vc-chip--closable': closable,
         'vc-chip--rounded': rounded,
         'vc-chip--truncate': truncate,
-        'vc-chip--nowrap': nowrap,
+        'vc-chip--nowrap': nowrap && !truncate,
       },
     ]"
   >
@@ -204,7 +204,7 @@ const _iconColor = computed(() =>
   }
 
   &__content {
-    @apply grow inline-flex items-center justify-center gap-[inherit] max-w-full;
+    @apply grow flex items-center justify-center gap-[inherit] max-w-full;
 
     #{$truncate} &,
     #{$truncate} & > * {

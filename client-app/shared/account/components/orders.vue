@@ -236,11 +236,7 @@
           </div>
 
           <div class="flex flex-col items-end justify-center">
-            <OrderStatus
-              class="!max-w-36"
-              :status="itemData.item.status"
-              :display-value="itemData.item.statusDisplayValue"
-            />
+            <OrderStatus :status="itemData.item.status" :display-value="itemData.item.statusDisplayValue" />
           </div>
 
           <div v-if="orderScope === 'organization' && itemData.item?.customerName" class="flex flex-col">
@@ -335,15 +331,7 @@
           </td>
 
           <td class="p-1">
-            <VcTooltip class="!block">
-              <template #trigger>
-                <OrderStatus class="!max-w-full" :status="order.status" :display-value="order.statusDisplayValue" />
-              </template>
-
-              <template #content>
-                {{ order.statusDisplayValue }}
-              </template>
-            </VcTooltip>
+            <OrderStatus :status="order.status" :display-value="order.statusDisplayValue" class="inline-block" />
           </td>
 
           <td class="overflow-hidden text-ellipsis p-5 text-right">

@@ -85,7 +85,7 @@
               </div>
 
               <div class="flex flex-col items-end justify-center">
-                <QuoteStatus class="w-full !max-w-36" :status="itemData.item.status" />
+                <QuoteStatus :status="itemData.item.status" />
               </div>
 
               <div class="flex flex-col">
@@ -158,7 +158,7 @@
               </td>
 
               <td class="overflow-hidden text-ellipsis p-1">
-                <QuoteStatus class="!max-w-full" :status="quote.status" />
+                <QuoteStatus :status="quote.status" />
               </td>
 
               <td class="overflow-hidden text-ellipsis p-5 text-right">

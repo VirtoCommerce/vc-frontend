@@ -68,7 +68,7 @@
             <div v-if="order.status" class="flex items-center gap-2">
               <span class="font-black"> {{ $t("common.labels.status") }}: </span>
 
-              <OrderStatus class="min-w-0" size="sm" :status="order.status" :display-value="order.statusDisplayValue" />
+              <OrderStatus size="sm" :status="order.status" :display-value="order.statusDisplayValue" />
             </div>
           </div>
         </VcWidget>
