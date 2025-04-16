@@ -73,7 +73,7 @@ const errorMessage = ref<string | undefined>();
 
 const notAvailableMessage = computed<string | undefined>(() => {
   if (!product.value.availabilityData?.isBuyable || !product.value.availabilityData?.isAvailable) {
-    return t("shared.catalog.product_details.product_availability.not_available");
+    return t("validation_error.CART_PRODUCT_UNAVAILABLE");
   }
   return undefined;
 });

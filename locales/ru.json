@@ -644,9 +644,6 @@
           "required_section": "Раздел обязателен",
           "optional_no_selected": "Персонализируйте свой выбор (необязательно)",
           "required_no_selected": "Завершите выбор, указав все необходимые параметры"
-        },
-        "product_availability": {
-          "not_available": "Товар больше недоступен для покупки"
         }
       },
       "discount_badge": {

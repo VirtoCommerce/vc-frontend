@@ -644,9 +644,6 @@
           "required_section": "セクションは必須です",
           "optional_no_selected": "さらに選択をパーソナライズ（任意）",
           "required_no_selected": "すべての必須オプションを選択して、完了してください"
-        },
-        "product_availability": {
-          "not_available": "この商品は現在購入できません"
         }
       },
       "discount_badge": {

@@ -644,9 +644,6 @@
           "required_section": "Secção obrigatória",
           "optional_no_selected": "Personalize ainda mais a sua seleção (opcional)",
           "required_no_selected": "Complete todas as opções obrigatórias para finalizar a sua seleção"
-        },
-        "product_availability": {
-          "not_available": "O produto não está mais disponível para compra"
         }
       },
       "discount_badge": {

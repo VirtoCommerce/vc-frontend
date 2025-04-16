@@ -606,9 +606,6 @@
         "product_vendor": "Vendor:"
       },
       "product_details": {
-        "product_availability": {
-          "not_available": "The product is no longer available for purchase"
-        },
         "technical_specs_block_title": "Properties",
         "variations_block_title": "Product variations",
         "description_block_title": "Description",
@@ -1478,7 +1475,7 @@
   },
   "validation_error": {
     "PRODUCT_QTY_CHANGED": "You can order maximum {availQty} item(s)",
-    "CART_PRODUCT_UNAVAILABLE": "The product is not longer available for purchase",
+    "CART_PRODUCT_UNAVAILABLE": "The product is no longer available for purchase",
     "CART_PRODUCT_INACTIVE": "The product is inactive",
     "PRODUCT_PRICE_INVALID": "Price is invalid",
     "PRODUCT_FFC_QTY": "The product is out of stock",
