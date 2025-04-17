@@ -80,7 +80,7 @@ const builderIoAnchor = shallowRef<HTMLElement | null>(null);
 const builderIoAnchorIsVisible = useElementVisibility(builderIoAnchor);
 
 const canSetMeta = computed(() => !!builderIoAnchorIsVisible.value && !!content.value?.data);
-const pageTitle = computed(() => usePageTitle(content.value?.data?.title).title.value ?? "");
+const pageTitle = computed(() => usePageTitle(content.value?.data?.title).title.value);
 
 useSeoMeta({
   title: () => (canSetMeta.value ? pageTitle.value : undefined),
