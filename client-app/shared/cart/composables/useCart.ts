@@ -144,14 +144,18 @@ export function useShortCart() {
     }
   }
 
-  async function getItemsTotal(productIds: string[]): Promise<number> {
-    if (!productIds.length) {
+  async function getItemsTotal(lineItemIds: string[]): Promise<number> {
+    if (!lineItemIds.length) {
       return 0;
     }
 
-    const prices = await getPricesSum(productIds, cart.value?.id ?? "");
-
-    return prices?.total?.amount ?? 0;
+    try {
+      const prices = await getPricesSum(lineItemIds, cart.value?.id ?? "");
+      return prices?.total?.amount ?? 0;
+    } catch (err: unknown) {
+      Logger.error(err as string);
+      return 0;
+    }
   }
 
   return {
