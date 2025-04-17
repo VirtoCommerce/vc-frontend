@@ -99,7 +99,7 @@ const variationsCartTotalAmountLoading = ref(false);
 watch(
   variationsLineItems,
   async (items) => {
-    if (items.length === 0) {
+    if (items.length === 0 || !cart.value?.id) {
       variationsCartTotalAmount.value = 0;
       variationsCartTotalAmountLoading.value = false;
 
@@ -110,7 +110,7 @@ watch(
     try {
       const data = await getPricesSum(
         items.map((item) => item.id),
-        cart.value?.id ?? "",
+        cart.value.id,
       );
 
       variationsCartTotalAmount.value = data?.total?.amount ?? 0;
