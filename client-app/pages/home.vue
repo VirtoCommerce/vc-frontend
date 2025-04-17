@@ -88,7 +88,7 @@
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
-import { shallowRef, watch } from "vue";
+import { shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageTitle } from "@/core/composables/usePageTitle";
 import { LoginFormSection } from "@/shared/layout";
@@ -100,19 +100,13 @@ const homePageAnchorIsVisible = useElementVisibility(homePageAnchor);
 
 const { title: pageTitle } = usePageTitle(t("pages.home.meta.title"));
 
-const seoMeta = useSeoMeta({});
-
-watch(homePageAnchorIsVisible, (value) => {
-  if (value && seoMeta) {
-    seoMeta.patch({
-      title: pageTitle.value,
-      keywords: t("pages.home.meta.keywords"),
-      description: t("pages.home.meta.description"),
-      ogUrl: window.location.toString(),
-      ogTitle: t("pages.home.meta.title"),
-      ogDescription: t("pages.home.meta.description"),
-      ogType: "website",
-    });
-  }
+useSeoMeta({
+  title: () => (homePageAnchorIsVisible.value ? pageTitle.value : undefined),
+  keywords: () => (homePageAnchorIsVisible.value ? t("pages.home.meta.keywords") : undefined),
+  description: () => (homePageAnchorIsVisible.value ? t("pages.home.meta.description") : undefined),
+  ogUrl: () => (homePageAnchorIsVisible.value ? window.location.toString() : undefined),
+  ogTitle: () => (homePageAnchorIsVisible.value ? t("pages.home.meta.title") : undefined),
+  ogDescription: () => (homePageAnchorIsVisible.value ? t("pages.home.meta.description") : undefined),
+  ogType: () => (homePageAnchorIsVisible.value ? "website" : undefined),
 });
 </script>

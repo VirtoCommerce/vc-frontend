@@ -8,7 +8,7 @@
 import { Content, fetchOneEntry, getBuilderSearchParams, isPreviewing } from "@builder.io/sdk-vue";
 import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
-import { onMounted, ref, shallowRef, watchEffect } from "vue";
+import { computed, onMounted, ref, shallowRef } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
 import { usePageTitle } from "@/core/composables";
 import { builderIOComponents } from "./customComponents";
@@ -79,22 +79,13 @@ async function tryLoadContent(urlPath: string) {
 const builderIoAnchor = shallowRef<HTMLElement | null>(null);
 const builderIoAnchorIsVisible = useElementVisibility(builderIoAnchor);
 
-type MetaDataType = { title?: string; keywords?: string; description?: string };
-const seoMeta = useSeoMeta({});
+const canSetMeta = computed(() => !!builderIoAnchorIsVisible.value && !!content.value?.data);
+const pageTitle = computed(() => usePageTitle(content.value?.data?.title).title.value ?? "");
 
-watchEffect(() => {
-  const data: MetaDataType | undefined = content.value?.data;
-
-  if (data && builderIoAnchorIsVisible.value && seoMeta) {
-    const { title, keywords, description } = data;
-    const { title: pageTitle } = usePageTitle(title);
-
-    seoMeta.patch({
-      title: pageTitle.value,
-      keywords,
-      description,
-    });
-  }
+useSeoMeta({
+  title: () => (canSetMeta.value ? pageTitle.value : undefined),
+  keywords: () => (canSetMeta.value ? (content.value?.data?.keywords as string) : undefined),
+  description: () => (canSetMeta.value ? (content.value?.data?.description as string) : undefined),
 });
 
 const getRegisteredComponents = () => {

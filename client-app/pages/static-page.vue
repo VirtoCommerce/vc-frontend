@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
-import { computed, shallowRef, unref, watch } from "vue";
+import { computed, shallowRef, unref } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageTitle } from "@/core/composables/usePageTitle";
 import { useStaticPage } from "@/shared/static-content";
@@ -45,25 +45,15 @@ const { title: pageTitle } = usePageTitle(
   template.value?.settings?.seoInfo?.pageTitle || template.value?.settings?.name,
 );
 
-const seoMeta = useSeoMeta({});
-
-watch(
-  staticPageAnchorVisible,
-  (isVisible) => {
-    if (isVisible && seoMeta) {
-      seoMeta.patch({
-        title: pageTitle.value,
-        description: template.value?.settings?.seoInfo?.metaDescription,
-        keywords: template.value?.settings?.seoInfo?.metaKeywords,
-        ogUrl: window.location.toString(),
-        ogTitle: pageTitle.value,
-        ogDescription: template.value?.settings?.seoInfo?.metaDescription,
-        ogType: "website",
-      });
-    }
-  },
-  { immediate: true },
-);
+useSeoMeta({
+  title: () => (staticPageAnchorVisible.value ? pageTitle.value : undefined),
+  description: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaDescription : undefined),
+  keywords: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaKeywords : undefined),
+  ogUrl: () => (staticPageAnchorVisible.value ? window.location.toString() : undefined),
+  ogTitle: () => (staticPageAnchorVisible.value ? pageTitle.value : undefined),
+  ogDescription: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaDescription : undefined),
+  ogType: () => (staticPageAnchorVisible.value ? "website" : undefined),
+});
 
 function getBlockType(type: string): string {
   switch (type) {

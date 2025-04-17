@@ -173,7 +173,7 @@
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
-import { onMounted, shallowRef, watch } from "vue";
+import { onMounted, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useProductsRoutes, usePageTitle } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
@@ -188,14 +188,8 @@ const productsRoutes = useProductsRoutes(products);
 const demoPageAnchor = shallowRef<HTMLElement | null>(null);
 const demoPageAnchorIsVisible = useElementVisibility(demoPageAnchor);
 
-const seoMeta = useSeoMeta({});
-
-watch(demoPageAnchorIsVisible, (value) => {
-  if (value && seoMeta) {
-    seoMeta.patch({
-      title: pageTitle.value,
-    });
-  }
+useSeoMeta({
+  title: () => (demoPageAnchorIsVisible.value ? pageTitle.value : undefined),
 });
 
 useBreadcrumbs([{ title: t("shared.layout.footer.demo_landing_link") }]);

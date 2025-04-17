@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
-import { computed, watchEffect } from "vue";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { usePageTitle } from "@/core/composables/usePageTitle";
 import { globals } from "@/core/globals";
@@ -20,17 +20,11 @@ const catalogName = i18n.global.t("pages.catalog.title");
 const title = computed(() => seoInfo.value?.pageTitle ?? catalogName);
 const { title: pageTitle } = usePageTitle(seoInfo.value?.pageTitle ?? catalogName);
 
-const seoMeta = useSeoMeta({});
-
-watchEffect(() => {
-  if (seoInfo.value && seoMeta) {
-    seoMeta.patch({
-      title: pageTitle.value,
-      keywords: seoInfo?.value?.metaKeywords,
-      description: seoInfo?.value?.metaDescription,
-      ogTitle: pageTitle.value,
-      ogDescription: seoInfo?.value?.metaDescription,
-    });
-  }
+useSeoMeta({
+  title: () => pageTitle.value,
+  keywords: () => seoInfo?.value?.metaKeywords,
+  description: () => seoInfo?.value?.metaDescription,
+  ogTitle: () => pageTitle.value,
+  ogDescription: () => seoInfo?.value?.metaDescription,
 });
 </script>

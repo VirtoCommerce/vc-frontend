@@ -234,6 +234,7 @@ const seoUrl = computed(() =>
     ? `${window.location.host}\${product.value?.seoInfo?.semanticUrl}`
     : window.location.toString(),
 );
+const canSetMeta = computed(() => props.allowSetMeta && productComponentAnchorIsVisible.value);
 
 const productTemplate = _productTemplate as IPageTemplate;
 
@@ -320,21 +321,15 @@ async function resetFacetFilters(): Promise<void> {
   await fetchProducts(variationsSearchParams.value);
 }
 
-const seoMeta = useSeoMeta({});
-
-watchEffect(() => {
-  if (props.allowSetMeta && productComponentAnchorIsVisible.value && seoMeta) {
-    seoMeta.patch({
-      title: pageTitle.value,
-      keywords: seoKeywords.value,
-      description: seoDescription.value,
-      ogUrl: seoUrl.value,
-      ogTitle: pageTitle.value,
-      ogDescription: seoDescription.value,
-      ogImage: seoImageUrl.value,
-      ogType: "website",
-    });
-  }
+useSeoMeta({
+  title: () => (canSetMeta.value ? pageTitle.value : undefined),
+  keywords: () => (canSetMeta.value ? seoKeywords.value : undefined),
+  description: () => (canSetMeta.value ? seoDescription.value : undefined),
+  ogUrl: () => (canSetMeta.value ? seoUrl.value : undefined),
+  ogTitle: () => (canSetMeta.value ? pageTitle.value : undefined),
+  ogDescription: () => (canSetMeta.value ? seoDescription.value : undefined),
+  ogImage: () => (canSetMeta.value ? seoImageUrl.value : undefined),
+  ogType: () => (canSetMeta.value ? "website" : undefined),
 });
 
 watchEffect(async () => {
