@@ -155,7 +155,9 @@
       "main_menu": "Главное меню",
       "toggle_search_bar": "Отобразить/скрыть панель поиска",
       "slider_image": "Картинка в слайдере",
-      "buyer_name": "Имя покупателя"
+      "buyer_name": "Имя покупателя",
+      "vendor_name": "Поставщик: {name}",
+      "not_available": "Н/Д"
     },
     "prefixes": {
       "please": "Пожалуйста",
@@ -284,7 +286,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Фиксированная ставка (наземный транспорт)",
-        "FixedRate_Air": "Фиксированная ставка (воздушный транспорт)"
+        "FixedRate_Air": "Фиксированная ставка (воздушный транспорт)",
+        "BuyOnlinePickupInStore_Pickup": "Самовывоз из магазина"
       }
     }
   },
@@ -336,6 +339,13 @@
             "input_placeholder": "Введите ключевое слово, товар, модель или номер запчасти"
           },
           "view_all_catalog": "Просмотреть все товары в категории"
+        },
+        "ship_to_selector": {
+          "add_new": "Добавить новый",
+          "search": "Поиск",
+          "select_address": "Выберите адрес",
+          "title": "Доставка в:",
+          "add_new_address": "Добавить новый адрес"
         }
       },
       "footer": {
@@ -630,12 +640,12 @@
         "product_configuration": {
           "title": "Настройте параметры",
           "none": "Нет",
-          "nothing_selected": "Ничего не выбрано",
           "changed_notification": "Конфигурация товара была изменена. Вы можете всегда сохранить ее позже, нажав кнопку \"@:{'ui_kit.buttons.update_cart'}\".",
           "changed_confirmation": "Конфигурация товара была изменена. Вы хотите ее сохранить?",
-          "no_text": "Текст не выбран",
           "check_your_configuration": "Проверьте конфигурацию товара",
-          "required_section": "Раздел обязателен"
+          "required_section": "Раздел обязателен",
+          "optional_no_selected": "Персонализируйте свой выбор (необязательно)",
+          "required_no_selected": "Завершите выбор, указав все необходимые параметры"
         }
       },
       "discount_badge": {
@@ -661,12 +671,19 @@
       },
       "shipping_details_section": {
         "title": "Информация о доставке",
+        "switchers": {
+          "pickup": "Самовывоз",
+          "shipping": "Доставка"
+        },
         "labels": {
           "shipping_address": "Адрес доставки",
-          "shipping_method": "Способ доставки"
+          "shipping_method": "Способ доставки",
+          "delivery_option": "Вариант доставки",
+          "pickup_point": "Пункт самовывоза"
         },
         "links": {
-          "select_address": "выберите адрес доставки"
+          "select_address": "выберите адрес доставки",
+          "select_pickup_point": "выбрать пункт самовывоза"
         }
       },
       "billing_details_section": {

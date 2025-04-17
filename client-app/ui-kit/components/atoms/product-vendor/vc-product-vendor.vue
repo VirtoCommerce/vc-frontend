@@ -6,12 +6,23 @@
 
 <style lang="scss">
 .vc-product-vendor {
-  @apply text-xs font-bold empty:hidden;
+  $self: &;
 
-  @at-root .vc-product-card & {
-    grid-area: vendor;
+  @apply text-xs font-bold;
 
-    @apply mt-1 self-start;
+  @at-root .vc-product-card {
+    &--view-mode {
+      &--grid #{$self} {
+        @apply order-3 mt-1 min-h-3.5;
+      }
+
+      &--list #{$self},
+      &--item #{$self} {
+        grid-area: vendor;
+
+        @apply mt-1 self-start;
+      }
+    }
   }
 }
 </style>
