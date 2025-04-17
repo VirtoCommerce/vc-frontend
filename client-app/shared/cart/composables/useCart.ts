@@ -14,7 +14,6 @@ import {
   useValidateCouponQuery,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
-import { getPricesSum } from "@/core/api/graphql/catalog/queries/pricesSum";
 import {
   AddBulkItemsCartDocument,
   AddCouponDocument,
@@ -144,20 +143,6 @@ export function useShortCart() {
     }
   }
 
-  async function getItemsTotal(lineItemIds: string[]): Promise<number> {
-    if (!lineItemIds.length) {
-      return 0;
-    }
-
-    try {
-      const prices = await getPricesSum(lineItemIds, cart.value?.id ?? "");
-      return prices?.total?.amount ?? 0;
-    } catch (err: unknown) {
-      Logger.error(err as string);
-      return 0;
-    }
-  }
-
   return {
     cart,
     refetch,
@@ -165,7 +150,6 @@ export function useShortCart() {
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
-    getItemsTotal,
     loading,
     changing: computed(
       () =>

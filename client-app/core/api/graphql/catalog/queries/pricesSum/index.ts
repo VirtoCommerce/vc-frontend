@@ -1,22 +1,22 @@
+import { graphqlClient } from "@/core/api/graphql/client";
 import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
 import pricesSumQueryDocument from "./pricesSumQuery.graphql";
 import type { PricesSumQuery, PricesSumQueryVariables } from "@/core/api/graphql/types";
+import type { ApolloQueryResult } from "@apollo/client/core";
 
-export async function getPricesSum(lineItemIds: string[], cartId: string) {
-  const { storeId, cultureName, currencyCode, userId } = globals;
-
-  const { data } = await graphqlClient.query<PricesSumQuery, PricesSumQueryVariables>({
+export async function getPricesSum(lineItemIds: string[], cartId: string): Promise<PricesSumQuery["pricesSum"]> {
+  const { storeId, currencyCode, cultureName, userId } = globals;
+  const result: ApolloQueryResult<PricesSumQuery> = await graphqlClient.query<PricesSumQuery, PricesSumQueryVariables>({
     query: pricesSumQueryDocument,
     variables: {
       cartId,
       storeId,
-      cultureName,
       currencyCode,
+      cultureName,
       userId,
       lineItemIds,
     },
   });
 
-  return data.pricesSum;
+  return result.data.pricesSum;
 }
