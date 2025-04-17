@@ -1,7 +1,10 @@
 import { ApolloError, gql } from "@apollo/client/core";
 import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import { createSharedComposable, computedEager } from "@vueuse/core";
-import { sumBy, difference, keyBy, merge, intersection } from "lodash";
+import difference from "lodash/difference";
+import intersection from "lodash/intersection";
+import keyBy from "lodash/keyBy";
+import merge from "lodash/merge";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { AbortReason } from "@/core/api/common/enums";
@@ -11,6 +14,7 @@ import {
   useValidateCouponQuery,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
+import { getPricesSum } from "@/core/api/graphql/catalog/queries/pricesSum";
 import {
   AddBulkItemsCartDocument,
   AddCouponDocument,
@@ -140,14 +144,14 @@ export function useShortCart() {
     }
   }
 
-  function getItemsTotal(productIds: string[]): number {
-    if (!cart.value?.items.length) {
+  async function getItemsTotal(productIds: string[]): Promise<number> {
+    if (!productIds.length) {
       return 0;
     }
 
-    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId));
+    const prices = await getPricesSum(productIds, cart.value?.id ?? "");
 
-    return sumBy(filteredItems, (x) => x.extendedPrice.amount);
+    return prices?.total?.amount ?? 0;
   }
 
   return {

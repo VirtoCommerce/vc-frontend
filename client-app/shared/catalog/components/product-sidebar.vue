@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from "vue";
+import { ref, watchEffect, computed, toRef } from "vue";
 import { useCurrency } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { AddToCart, useShortCart } from "@/shared/cart";
@@ -77,20 +77,25 @@ const props = defineProps<IProps>();
 const product = toRef(props, "product");
 
 const { currentCurrency } = useCurrency();
-const { getItemsTotal } = useShortCart();
+const { getItemsTotal, cart } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
 const { getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 
-const variationsCartTotalAmount = computed<number>(() => {
+const variationsCartTotalAmount = ref(0);
+
+watchEffect(async () => {
   if (!props.product) {
-    return 0;
+    variationsCartTotalAmount.value = 0;
+    return;
   }
 
-  const variationsIds = props.variations?.map((variation) => variation.id!) ?? [];
+  const variationsLineItemIds = (cart.value?.items ?? [])
+    .filter((cartItem) => props.variations?.some((variation) => variation.id === cartItem.productId))
+    .map((cartItem) => cartItem.id);
 
-  return getItemsTotal(variationsIds);
+  variationsCartTotalAmount.value = await getItemsTotal(variationsLineItemIds);
 });
 
 const price = computed<PriceType | { actual: MoneyType; list: MoneyType } | undefined>(() => {

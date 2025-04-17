@@ -764,6 +764,7 @@ export type Promotion = {
 export type Property = {
   /** The display order of the property. */
   displayOrder?: Maybe<Scalars['Int']['output']>;
+  group?: Maybe<PropertyGroup>;
   /** Is property hidden. */
   hidden: Scalars['Boolean']['output'];
   /** The unique ID of the property. */
@@ -816,6 +817,18 @@ export type PropertyDictionaryItemEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<PropertyDictionaryItem>;
+};
+
+/** Property group. */
+export type PropertyGroup = {
+  /** The localized description of the property group. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The unique ID of the property group. */
+  id: Scalars['String']['output'];
+  /** The localized name of the property group. */
+  name?: Maybe<Scalars['String']['output']>;
+  /** The display order of the property group. */
+  priority?: Maybe<Scalars['Int']['output']>;
 };
 
 /** The type of catalog property. */
