@@ -52,11 +52,11 @@ watch(
   (isVisible) => {
     if (isVisible && seoMeta) {
       seoMeta.patch({
-        title: pageTitle,
+        title: pageTitle.value,
         description: template.value?.settings?.seoInfo?.metaDescription,
         keywords: template.value?.settings?.seoInfo?.metaKeywords,
         ogUrl: window.location.toString(),
-        ogTitle: pageTitle,
+        ogTitle: pageTitle.value,
         ogDescription: template.value?.settings?.seoInfo?.metaDescription,
         ogType: "website",
       });

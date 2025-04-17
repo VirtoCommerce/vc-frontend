@@ -33,13 +33,13 @@ export function useCategorySeo({ category, allowSetMeta, categoryComponentAnchor
         : window.location.toString();
 
       seoMeta.patch({
-        title: pageTitle,
-        keywords: seoKeywords,
-        description: seoDescription,
+        title: pageTitle.value,
+        keywords: seoKeywords.value,
+        description: seoDescription.value,
         ogUrl: seoUrl,
-        ogTitle: pageTitle,
-        ogDescription: seoDescription,
-        ogImage: seoImageUrl,
+        ogTitle: pageTitle.value,
+        ogDescription: seoDescription.value,
+        ogImage: seoImageUrl.value,
         ogType: "website",
       });
     }

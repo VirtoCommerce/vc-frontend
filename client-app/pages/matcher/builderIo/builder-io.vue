@@ -90,7 +90,7 @@ watchEffect(() => {
     const { title: pageTitle } = usePageTitle(title);
 
     seoMeta.patch({
-      title: pageTitle,
+      title: pageTitle.value,
       keywords,
       description,
     });

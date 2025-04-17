@@ -38,7 +38,7 @@ const { title } = usePageTitle(`${t("pages.404.error_code")} ${t("pages.404.erro
 watch(page404AnchorIsVisible, (value) => {
   if (value && head) {
     head.patch({
-      title,
+      title: title.value,
     });
   }
 });

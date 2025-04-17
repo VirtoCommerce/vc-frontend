@@ -25,10 +25,10 @@ const seoMeta = useSeoMeta({});
 watchEffect(() => {
   if (seoInfo.value && seoMeta) {
     seoMeta.patch({
-      title: pageTitle,
+      title: pageTitle.value,
       keywords: seoInfo?.value?.metaKeywords,
       description: seoInfo?.value?.metaDescription,
-      ogTitle: pageTitle,
+      ogTitle: pageTitle.value,
       ogDescription: seoInfo?.value?.metaDescription,
     });
   }

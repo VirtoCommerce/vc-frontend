@@ -105,7 +105,7 @@ const seoMeta = useSeoMeta({});
 watch(homePageAnchorIsVisible, (value) => {
   if (value && seoMeta) {
     seoMeta.patch({
-      title: pageTitle,
+      title: pageTitle.value,
       keywords: t("pages.home.meta.keywords"),
       description: t("pages.home.meta.description"),
       ogUrl: window.location.toString(),

@@ -325,13 +325,13 @@ const seoMeta = useSeoMeta({});
 watchEffect(() => {
   if (props.allowSetMeta && productComponentAnchorIsVisible.value && seoMeta) {
     seoMeta.patch({
-      title: pageTitle,
-      keywords: seoKeywords,
-      description: seoDescription,
-      ogUrl: seoUrl,
-      ogTitle: pageTitle,
-      ogDescription: seoDescription,
-      ogImage: seoImageUrl,
+      title: pageTitle.value,
+      keywords: seoKeywords.value,
+      description: seoDescription.value,
+      ogUrl: seoUrl.value,
+      ogTitle: pageTitle.value,
+      ogDescription: seoDescription.value,
+      ogImage: seoImageUrl.value,
       ogType: "website",
     });
   }

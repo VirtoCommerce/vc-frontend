@@ -193,7 +193,7 @@ const seoMeta = useSeoMeta({});
 watch(demoPageAnchorIsVisible, (value) => {
   if (value && seoMeta) {
     seoMeta.patch({
-      title: pageTitle,
+      title: pageTitle.value,
     });
   }
 });
