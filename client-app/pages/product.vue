@@ -119,7 +119,7 @@
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
-import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
+import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import _productTemplate from "@/config/product.json";
 import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
@@ -319,8 +319,8 @@ async function resetFacetFilters(): Promise<void> {
   await fetchProducts(variationsSearchParams.value);
 }
 
-watchEffect(() => {
-  if (props.allowSetMeta && productComponentAnchorIsVisible.value) {
+watch([() => props.allowSetMeta, () => productComponentAnchorIsVisible.value], (allowSetMeta, isVisible) => {
+  if (allowSetMeta && isVisible) {
     usePageHead({
       title: seoTitle,
       meta: {
