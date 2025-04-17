@@ -49,21 +49,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
             vueTsc: {
               tsconfigPath: path.resolve(__dirname, "tsconfig.app.json"),
             },
-            eslint: {
-              lintCommand: "eslint client-app",
-              dev: {
-                overrideConfig: {
-                  cache: true,
-                  cacheLocation: "node_modules/.cache/.eslintcache",
-                  cwd: process.cwd(),
-                  extensions: ["js", "ts", "vue"],
-                  ignore: true,
-                  ignorePath: ".eslintignore",
-                  useEslintrc: true,
-                },
-                logLevel: ["error"],
-              },
-            },
           })
         : undefined,
       splitVendorChunkPlugin(),
