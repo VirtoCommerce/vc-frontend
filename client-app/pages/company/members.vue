@@ -302,7 +302,7 @@
                 <RoleIcon :role-id="item.extended.roles[0]?.id" />
               </div>
 
-              <div class="grow py-4.5 pl-4">
+              <div class="grow py-4.5 pl-4 [word-break:break-word]">
                 <div>
                   <b>{{ item.fullName }}</b>
                 </div>
