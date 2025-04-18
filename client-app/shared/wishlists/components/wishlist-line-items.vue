@@ -63,6 +63,11 @@
             :is-buyable="item.availabilityData?.isBuyable"
             :is-in-stock="item.availabilityData?.isInStock"
             :loading="pendingItems[item.id]"
+            :message="
+              !item.availabilityData?.isAvailable || !item.availabilityData?.isBuyable
+                ? $t('validation_error.CART_PRODUCT_UNAVAILABLE')
+                : undefined
+            "
             @update:model-value="changeItemQuantity(item, $event)"
             @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
             @update:validation="setValidationStatus(item, $event)"
