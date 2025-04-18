@@ -91,6 +91,7 @@ import { provide, computed, ref } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
 export interface IProps {
+  modelModifiers?: Record<string, boolean>;
   autocomplete?: string;
   readonly?: boolean;
   disabled?: boolean;

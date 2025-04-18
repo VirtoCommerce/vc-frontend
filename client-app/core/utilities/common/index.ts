@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { uniqBy } from "lodash";
+import uniqBy from "lodash/uniqBy";
 
 export function getBaseUrl(supportedLocales: string[]): string {
   const localeInPath = location.pathname.split("/")[1];
@@ -108,6 +108,6 @@ export function getUrlSearchParam(param: string): string | null {
   return urlParams.get(param);
 }
 
-export function toCSV(data: string[], delimiter = ", "): string {
-  return data.join(delimiter).trim();
+export function toCSV(data?: string[], delimiter = ", "): string {
+  return data?.join(delimiter)?.trim() ?? "";
 }

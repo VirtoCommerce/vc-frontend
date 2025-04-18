@@ -1,4 +1,4 @@
-import { createHead } from "@unhead/vue";
+import { createHead } from "@unhead/vue/client";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { getEpParam, isPreviewMode as isPageBuilderPreviewMode } from "@/builder-preview/utils";
