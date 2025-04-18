@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line import/order
 import uniqBy from "lodash/uniqBy";
 
 export function getBaseUrl(supportedLocales: string[]): string {
@@ -20,7 +20,7 @@ export function getReturnUrlValue(): string | null {
 }
 
 export function extractHostname(url: string) {
-  let hostname = "";
+  let hostname: string;
 
   // Find & remove protocol (http, ftp, etc.) and get hostname
   if (url.indexOf("://") > -1) {
