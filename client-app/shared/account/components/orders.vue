@@ -461,9 +461,6 @@ const {
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
-usePageHead({
-  title: t("pages.account.orders.meta.title"),
-});
 usePageHead({ title: t("pages.account.orders.meta.title") });
 
 const ORDER_SCOPE_KEY = `order-scope-${user.value.id}`;
