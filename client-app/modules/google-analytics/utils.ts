@@ -50,16 +50,16 @@ export function lineItemToGtagItem(
     item_id: item.sku,
     item_name: item.name,
     affiliation: item.vendor?.name ?? "?",
-    currency: item.placedPrice.currency.code,
+    currency: item.placedPrice?.currency?.code,
     discount: item.discountAmount?.amount || item.discountTotal?.amount,
-    price: item && typeof item === "object" && "price" in item ? item.price.amount : item.listPrice.amount,
+    price: item && typeof item === "object" && "price" in item ? item.price?.amount : item.listPrice?.amount,
     quantity: item.quantity,
     promotion_id: item.discounts?.[0]?.promotionId,
     promotion_name:
       item.discounts?.[0] && typeof item.discounts[0] === "object" && "promotionName" in item.discounts[0]
         ? item.discounts?.[0]?.promotionName
         : undefined,
-    promotions: !item.discounts.length
+    promotions: !item.discounts?.length
       ? undefined
       : toCSV(
           item.discounts
