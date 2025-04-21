@@ -103,7 +103,7 @@ import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useAnalytics, useThemeContext } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
-import { replaceXFromBeginning } from "@/core/utilities";
+import { Logger, replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { useSkyflowCards } from "../composables";
 import PaymentPolicies from "./payment-policies.vue";
@@ -112,6 +112,7 @@ import type CollectContainer from "skyflow-js/types/core/external/collect/collec
 import type CollectElement from "skyflow-js/types/core/external/collect/collect-element";
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
 import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
+import { useNotifications } from "@/shared/notification";
 
 interface IProps {
   order: CustomerOrderType;
@@ -132,6 +133,7 @@ const { user, isAuthenticated } = useUser();
 const { skyflowCards, fetchSkyflowCards } = useSkyflowCards();
 const { analytics } = useAnalytics();
 const { themeContext } = useThemeContext();
+const notifications = useNotifications();
 
 const loading = ref(false);
 const cardContainer = ref(null);
@@ -503,7 +505,7 @@ async function initPayment() {
     });
 
     if (errorMessage || !publicParameters) {
-      emit("fail");
+      showError(t("shared.payment.bank_card_form.payment_unavailable"));
       return;
     }
 
@@ -518,7 +520,7 @@ async function initPayment() {
       },
     });
   } catch (e) {
-    emit("fail");
+    showError(t("shared.payment.bank_card_form.payment_unavailable"));
   }
 }
 
@@ -592,8 +594,20 @@ async function payWithSavedCreditCard() {
 }
 // PAYMENT END
 
+function showError(message: string) {
+  notifications.error({
+    text: message,
+    duration: 10000,
+    single: true,
+  });
+}
+
 onMounted(async () => {
-  await fetchSkyflowCards();
+  try {
+    await fetchSkyflowCards();
+  } catch (e) {
+    Logger.error(onMounted.name, e);
+  }
 
   if (!skyflowCards.value?.length) {
     void initNewCardForm();

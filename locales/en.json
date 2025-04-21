@@ -776,7 +776,8 @@
           "month": "Please provide a valid expiration month",
           "year": "Please provide a valid expiration year"
         },
-        "user_error_message": "Can't initialize payment. Please try again later or use another payment method"
+        "user_error_message": "Can't initialize payment. Please try again later or use another payment method",
+        "payment_unavailable": "Payment method is unavailable. Please try again later"
       },
       "authorize_net": {
         "user_agreement_link": "User agreement",
