@@ -122,7 +122,7 @@ import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import _productTemplate from "@/config/product.json";
-import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS } from "@/core/constants";
@@ -225,6 +225,7 @@ const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
 });
 
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
+const { title: pageTitle } = usePageTitle(seoTitle);
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
@@ -233,6 +234,7 @@ const seoUrl = computed(() =>
     ? `${window.location.host}\${product.value?.seoInfo?.semanticUrl}`
     : window.location.toString(),
 );
+const canSetMeta = computed(() => props.allowSetMeta && productComponentAnchorIsVisible.value);
 
 const productTemplate = _productTemplate as IPageTemplate;
 
@@ -319,24 +321,15 @@ async function resetFacetFilters(): Promise<void> {
   await fetchProducts(variationsSearchParams.value);
 }
 
-watchEffect(() => {
-  if (props.allowSetMeta && productComponentAnchorIsVisible.value) {
-    usePageHead({
-      title: seoTitle,
-      meta: {
-        keywords: seoKeywords,
-        description: seoDescription,
-      },
-    });
-
-    useSeoMeta({
-      ogUrl: seoUrl,
-      ogTitle: seoTitle,
-      ogDescription: seoDescription,
-      ogImage: seoImageUrl,
-      ogType: "website",
-    });
-  }
+useSeoMeta({
+  title: () => (canSetMeta.value ? pageTitle.value : undefined),
+  keywords: () => (canSetMeta.value ? seoKeywords.value : undefined),
+  description: () => (canSetMeta.value ? seoDescription.value : undefined),
+  ogUrl: () => (canSetMeta.value ? seoUrl.value : undefined),
+  ogTitle: () => (canSetMeta.value ? pageTitle.value : undefined),
+  ogDescription: () => (canSetMeta.value ? seoDescription.value : undefined),
+  ogImage: () => (canSetMeta.value ? seoImageUrl.value : undefined),
+  ogType: () => (canSetMeta.value ? "website" : undefined),
 });
 
 watchEffect(async () => {

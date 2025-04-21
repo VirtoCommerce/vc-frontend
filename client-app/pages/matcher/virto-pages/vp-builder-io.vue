@@ -4,7 +4,8 @@
       model="page"
       :content="pageDocumentContent"
       :api-key="builderIoApiKey"
-      :custom-components="getRegisteredComponents()" />
+      :custom-components="getRegisteredComponents()"
+    />
   </div>
 </template>
 
@@ -29,8 +30,9 @@ const moduleSettings = computed(() => {
 });
 
 const builderIoApiKey = computed(() => {
-  return (moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.PublicApiKey")?.value as string)
-    || 'NO_KEY'; // that's enought to display page
+  return (
+    (moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.PublicApiKey")?.value as string) || "NO_KEY"
+  ); // that's enought to display page
 });
 
 const canShowContent = shallowRef(false);

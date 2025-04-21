@@ -17,7 +17,8 @@ export const events: TrackerEventsType = {
   },
 
   selectItem(item, params) {
-    const gtagItem = "productId" in item ? lineItemToGtagItem(item) : productToGtagItem(item);
+    const gtagItem =
+      item && typeof item === "object" && "productId" in item ? lineItemToGtagItem(item) : productToGtagItem(item);
     sendEvent("select_item", {
       ...params,
       items: [gtagItem],
