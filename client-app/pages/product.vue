@@ -119,7 +119,7 @@
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
-import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
+import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import _productTemplate from "@/config/product.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
@@ -332,7 +332,7 @@ useSeoMeta({
   ogType: () => (canSetMeta.value ? "website" : undefined),
 });
 
-watchEffect(async () => {
+watch(productId, async () => {
   await fetchProduct(productId.value);
   if (product.value?.isConfigurable) {
     await fetchProductConfiguration();
@@ -359,10 +359,13 @@ watchEffect(async () => {
 /**
  * Send Google Analytics event and historical event for product.
  */
-watchEffect(() => {
-  if (product.value) {
-    // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
+
+const fetchedProductId = toRef(product.value?.id);
+
+watch(fetchedProductId, () => {
+  if (fetchedProductId.value && product.value) {
     analytics("viewItem", product.value);
+
     void pushHistoricalEvent({
       eventType: "click",
       productId: product.value.id,
@@ -374,8 +377,11 @@ watchEffect(() => {
 /**
  * Send Google Analytics event for related products.
  */
-watchEffect(() => {
-  if (relatedProducts.value.length) {
+
+const hasRelatedProducts = toRef(relatedProducts.value.length);
+
+watch(hasRelatedProducts, () => {
+  if (hasRelatedProducts.value) {
     analytics("viewItemList", relatedProducts.value, {
       item_list_id: "related_products",
       item_list_name: t("pages.product.related_product_section_title"),
