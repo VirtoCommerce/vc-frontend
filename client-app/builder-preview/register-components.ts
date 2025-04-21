@@ -1,3 +1,4 @@
+import { Logger } from "@/core/utilities";
 import { PageBuilderComponents } from "./page-builder-components";
 import type { PageBuilderDescriptorType } from "./models/PageBuilderComponentType";
 import type { PageBuilderSchemasStructureType, PageBuilderSchemaType } from "./models/PageBuilderSchemaType";
@@ -41,7 +42,7 @@ async function loadAllJsonFiles(): Promise<PageBuilderSchemaType> {
       if (name) {
         result[jsonModulesName][name] = module.default;
       } else {
-        console.warn(`Could not load ${jsonModulesName} file: ${path}`);
+        Logger.warn(`Could not load ${jsonModulesName} file: ${path}`);
       }
     }
   }
