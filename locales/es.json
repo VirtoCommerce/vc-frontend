@@ -158,7 +158,9 @@
       "toggle_search_bar": "Alternar barra de búsqueda",
       "slider_image": "Imagen del deslizador",
       "buyer_name": "Nombre del comprador",
-      "other": "Otro"
+      "other": "Otro",
+      "vendor_name": "Proveedor: {name}",
+      "not_available": "N/D"
     },
     "prefixes": {
       "please": "Por favor",
@@ -1478,7 +1480,6 @@
   },
   "validation_error": {
     "PRODUCT_QTY_CHANGED": "You can order maximum {availQty} item(s)",
-    "CART_PRODUCT_UNAVAILABLE": "The product is not longer available for purchase.",
     "CART_PRODUCT_INACTIVE": "The product is inactive.",
     "PRODUCT_PRICE_INVALID": "Price is invalid.",
     "PRODUCT_FFC_QTY": "The product is out of stock",
@@ -1491,7 +1492,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Min order {minQty} item(s) is not available in stock",
     "PRODUCT_EXACT_QTY": "You can order {minQty} item(s)",
-    "CART_INVALID_PRODUCT": "Invalid product"
+    "CART_INVALID_PRODUCT": "Invalid product",
+    "CART_PRODUCT_UNAVAILABLE": "Este producto ya no está disponible."
   },
   "file_error": {
     "ALREADY_EXISTS": "Cannot upload file with the same name.",

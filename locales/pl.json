@@ -158,7 +158,9 @@
       "toggle_search_bar": "Przełącz pasek wyszukiwania",
       "slider_image": "Obraz slajdera",
       "buyer_name": "Nazwa nabywcy",
-      "other": "Inne"
+      "other": "Inne",
+      "vendor_name": "Dostawca: {name}",
+      "not_available": "N/D"
     },
     "prefixes": {
       "please": "Proszę",

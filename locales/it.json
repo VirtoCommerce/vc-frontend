@@ -158,7 +158,9 @@
       "toggle_search_bar": "Attiva/Disattiva barra di ricerca",
       "slider_image": "Immagine del cursore",
       "buyer_name": "Nome dell'acquirente",
-      "other": "Altro"
+      "other": "Altro",
+      "vendor_name": "Fornitore: {name}",
+      "not_available": "N/D"
     },
     "prefixes": {
       "please": "Per favore",

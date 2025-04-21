@@ -158,7 +158,9 @@
       "toggle_search_bar": "Отобразить/скрыть панель поиска",
       "slider_image": "Картинка в слайдере",
       "buyer_name": "Имя покупателя",
-      "other": "Другое"
+      "other": "Другое",
+      "vendor_name": "Поставщик: {name}",
+      "not_available": "Н/Д"
     },
     "prefixes": {
       "please": "Пожалуйста",

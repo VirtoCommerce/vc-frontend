@@ -158,7 +158,9 @@
       "toggle_search_bar": "Suchleiste umschalten",
       "slider_image": "Slider-Bild",
       "buyer_name": "Name des Käufers",
-      "other": "Andere"
+      "other": "Andere",
+      "vendor_name": "Anbieter: {name}",
+      "not_available": "N/V"
     },
     "prefixes": {
       "please": "Bitte",

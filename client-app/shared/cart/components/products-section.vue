@@ -5,13 +5,14 @@
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
         <div v-if="group.items.length" class="space-y-3">
           <!-- Vendor -->
-          <div class="flex max-w-full flex-wrap gap-x-3">
-            <VcVendor :vendor="group.vendor" />
+          <div class="flex max-w-full gap-2 max-xs:flex-col">
+            <VendorName :name="group.vendor?.name" class="min-w-0" />
 
             <VcRating
               v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
               :review-count="group.vendor?.rating.reviewCount"
               :value="group.vendor?.rating.value"
+              size="xs"
             />
           </div>
 
@@ -57,6 +58,7 @@
 </template>
 
 <script setup lang="ts">
+import { VendorName } from "@/shared/common";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { VendorGroupType } from "@/core/types";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";

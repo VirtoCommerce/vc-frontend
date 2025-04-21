@@ -146,7 +146,9 @@ describe("AddToCart", () => {
     });
 
     it("emits 'update:validation' event with false if validation fails", async () => {
-      const wrapper = createWrapper({ props: { isInStock: true, modelValue: 1, maxQuantity: 9 } });
+      const wrapper = createWrapper({
+        props: { isInStock: true, isBuyable: true, isAvailable: true, isActive: true, modelValue: 1, maxQuantity: 9 },
+      });
       await wrapper.find("input[type='number']").setValue("10");
       await vi.advanceTimersToNextTimerAsync();
       expect(wrapper.emitted("update:validation")).toBeTruthy();
