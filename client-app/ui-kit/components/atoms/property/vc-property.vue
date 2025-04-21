@@ -36,7 +36,7 @@ defineProps<IProps>();
     --value-color: var(--color-neutral-500);
   }
 
-  @apply grid grid-cols-[auto_1fr_auto] gap-1 text-[length:var(--font-size)] leading-[1.5];
+  @apply grid grid-cols-[auto_1fr_auto] gap-1 items-end text-[length:var(--font-size)] leading-[1.5];
 
   &__label {
     @apply min-w-0 truncate text-[--label-color];
