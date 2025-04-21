@@ -332,62 +332,74 @@ useSeoMeta({
   ogType: () => (canSetMeta.value ? "website" : undefined),
 });
 
-watch(productId, async () => {
-  await fetchProduct(productId.value);
-  if (product.value?.isConfigurable) {
-    await fetchProductConfiguration();
-  }
+watch(
+  productId,
+  async () => {
+    await fetchProduct(productId.value);
+    if (product.value?.isConfigurable) {
+      await fetchProductConfiguration();
+    }
 
-  if (product.value?.associations?.totalCount && !relatedProductsSection?.hidden) {
-    await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
-  }
+    if (product.value?.associations?.totalCount && !relatedProductsSection?.hidden) {
+      await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
+    }
 
-  const recommendedProductsBlocks = recommendedProductsSection?.blocks?.filter((block) => !!block.model) ?? [];
-  if (!recommendedProductsSection?.hidden && recommendedProductsSection?.blocks?.length) {
-    const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
-      productId: productId.value,
-      model: model as string,
-    }));
-    await fetchRecommendedProducts(paramsToFetch);
-  }
+    const recommendedProductsBlocks = recommendedProductsSection?.blocks?.filter((block) => !!block.model) ?? [];
+    if (!recommendedProductsSection?.hidden && recommendedProductsSection?.blocks?.length) {
+      const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
+        productId: productId.value,
+        model: model as string,
+      }));
+      await fetchRecommendedProducts(paramsToFetch);
+    }
 
-  if (product.value?.hasVariations && !productVariationsBlock?.hidden) {
-    await fetchProducts(variationsSearchParams.value);
-  }
-});
+    if (product.value?.hasVariations && !productVariationsBlock?.hidden) {
+      await fetchProducts(variationsSearchParams.value);
+    }
+  },
+  { immediate: true },
+);
 
 /**
  * Send Google Analytics event and historical event for product.
  */
 
-const fetchedProductId = toRef(product.value?.id);
+const fetchedProductId = computed(() => product.value?.id);
 
-watch(fetchedProductId, () => {
-  if (fetchedProductId.value && product.value) {
-    analytics("viewItem", product.value);
+watch(
+  fetchedProductId,
+  () => {
+    if (fetchedProductId.value && product.value) {
+      analytics("viewItem", product.value);
 
-    void pushHistoricalEvent({
-      eventType: "click",
-      productId: product.value.id,
-      storeId: globals.storeId,
-    });
-  }
-});
+      void pushHistoricalEvent({
+        eventType: "click",
+        productId: product.value.id,
+        storeId: globals.storeId,
+      });
+    }
+  },
+  { immediate: true },
+);
 
 /**
  * Send Google Analytics event for related products.
  */
 
-const hasRelatedProducts = toRef(relatedProducts.value.length);
+const hasRelatedProducts = computed(() => !!relatedProducts.value.length);
 
-watch(hasRelatedProducts, () => {
-  if (hasRelatedProducts.value) {
-    analytics("viewItemList", relatedProducts.value, {
-      item_list_id: "related_products",
-      item_list_name: t("pages.product.related_product_section_title"),
-    });
-  }
-});
+watch(
+  hasRelatedProducts,
+  () => {
+    if (hasRelatedProducts.value) {
+      analytics("viewItemList", relatedProducts.value, {
+        item_list_id: "related_products",
+        item_list_name: t("pages.product.related_product_section_title"),
+      });
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped lang="scss">
