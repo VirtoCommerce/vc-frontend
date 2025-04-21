@@ -31,7 +31,6 @@
           />
 
           <VcButton
-            v-if="!hideButton"
             class="vc-add-to-cart__text-button"
             :variant="isButtonOutlined ? 'outline' : 'solid'"
             :loading="loading"
@@ -156,7 +155,7 @@ const {
 });
 
 async function validateFields(): Promise<void> {
-  if (isInStock.value) {
+  if (isInStock.value && !disabled.value && isAvailable.value && isBuyable.value && isActive?.value) {
     const { valid } = await validate();
     isValid.value = valid;
     if (!valid && errorMessage.value) {
@@ -250,7 +249,7 @@ watchEffect(async () => {
   }
 
   &__badges {
-    @apply mt-1.5 flex flex-wrap gap-x-1.5 gap-y-0.5 empty:hidden;
+    @apply mt-2 flex flex-wrap gap-x-1.5 gap-y-0.5 empty:hidden;
   }
 
   @at-root .vc-product-card {
@@ -261,11 +260,7 @@ watchEffect(async () => {
     &--view-mode {
       &--grid {
         #{$self} {
-          @apply mt-3;
-
-          @container (min-width: theme("containers.xs")) {
-            @apply mt-4;
-          }
+          @apply mt-3 order-7;
         }
       }
 

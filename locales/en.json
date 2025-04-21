@@ -155,7 +155,9 @@
       "main_menu": "Main menu",
       "toggle_search_bar": "Toggle search bar",
       "slider_image": "Slider image",
-      "buyer_name": "Buyer name"
+      "buyer_name": "Buyer name",
+      "vendor_name": "Vendor: {name}",
+      "not_available": "N/A"
     },
     "prefixes": {
       "please": "Please",
@@ -1476,7 +1478,7 @@
   },
   "validation_error": {
     "PRODUCT_QTY_CHANGED": "You can order maximum {availQty} item(s)",
-    "CART_PRODUCT_UNAVAILABLE": "The product is not longer available for purchase",
+    "CART_PRODUCT_UNAVAILABLE": "The product is no longer available for purchase",
     "CART_PRODUCT_INACTIVE": "The product is inactive",
     "PRODUCT_PRICE_INVALID": "Price is invalid",
     "PRODUCT_FFC_QTY": "The product is out of stock",

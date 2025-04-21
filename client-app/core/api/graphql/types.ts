@@ -6119,6 +6119,12 @@ export type WhiteLabelingSettingsType = {
   faviconUrl?: Maybe<Scalars['String']['output']>;
   favicons?: Maybe<Array<Maybe<FaviconType>>>;
   footerLinks?: Maybe<Array<Maybe<MenuLinkType>>>;
+  /** If true then FaviconUrl contains Organization favicon */
+  isOrganizationFaviconUploaded?: Maybe<Scalars['Boolean']['output']>;
+  /** If true then LogoUrl contains Organization logo */
+  isOrganizationLogoUploaded?: Maybe<Scalars['Boolean']['output']>;
+  /** If true then SecondaryLogoUrl contains Organization logo */
+  isOrganizationSecondaryLogoUploaded?: Maybe<Scalars['Boolean']['output']>;
   /** Logo URL */
   logoUrl?: Maybe<Scalars['String']['output']>;
   /** Organization ID */
