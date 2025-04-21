@@ -556,7 +556,7 @@ watchDebounced(
     }
 
     &--sticky {
-      @apply z-40 sticky top-0 -mx-6 bg-additional-50 px-5 py-3 shadow-lg;
+      @apply z-40 sticky top-[2.1rem] -mx-6 bg-additional-50 px-5 py-3 shadow-lg;
     }
   }
 
