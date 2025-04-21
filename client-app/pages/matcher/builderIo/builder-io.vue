@@ -6,10 +6,11 @@
 
 <script setup lang="ts">
 import { Content, fetchOneEntry, getBuilderSearchParams, isPreviewing } from "@builder.io/sdk-vue";
+import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
-import { onMounted, ref, shallowRef, watchEffect } from "vue";
+import { computed, onMounted, ref, shallowRef } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
-import { usePageHead } from "@/core/composables";
+import { usePageTitle } from "@/core/composables";
 import { builderIOComponents } from "./customComponents";
 import type { StateType } from "../priorityManager";
 import type { BuilderContent } from "@builder.io/sdk-vue";
@@ -78,23 +79,13 @@ async function tryLoadContent(urlPath: string) {
 const builderIoAnchor = shallowRef<HTMLElement | null>(null);
 const builderIoAnchorIsVisible = useElementVisibility(builderIoAnchor);
 
-type MetaDataType = { title?: string; keywords?: string; description?: string };
+const canSetMeta = computed(() => !!builderIoAnchorIsVisible.value && !!content.value?.data);
+const pageTitle = computed(() => usePageTitle(content.value?.data?.title).title.value);
 
-watchEffect(() => {
-  const data: MetaDataType | undefined = content.value?.data;
-
-  if (data && builderIoAnchorIsVisible.value) {
-    const { title, keywords, description } = data;
-
-    usePageHead({
-      title,
-      meta: {
-        title,
-        keywords,
-        description,
-      },
-    });
-  }
+useSeoMeta({
+  title: () => (canSetMeta.value ? pageTitle.value : undefined),
+  keywords: () => (canSetMeta.value ? (content.value?.data?.keywords as string) : undefined),
+  description: () => (canSetMeta.value ? (content.value?.data?.description as string) : undefined),
 });
 
 const getRegisteredComponents = () => {
