@@ -11,7 +11,7 @@
     :is-buyable="product.availabilityData?.isBuyable"
     :is-in-stock="product.availabilityData?.isInStock"
     :available-quantity="product.availabilityData?.availableQuantity"
-    :message="errorMessage"
+    :message="errorMessage || notAvailableMessage"
     :disabled="disabled"
     :loading="loading"
     :show-empty-details="reservedSpace"
@@ -71,6 +71,12 @@ const { pushHistoricalEvent } = useHistoricalEvents();
 const loading = ref(false);
 const errorMessage = ref<string | undefined>();
 
+const notAvailableMessage = computed<string | undefined>(() => {
+  if (!product.value.availabilityData?.isBuyable || !product.value.availabilityData?.isAvailable) {
+    return t("validation_error.CART_PRODUCT_UNAVAILABLE");
+  }
+  return undefined;
+});
 const isConfigurable = computed<boolean>(() => "isConfigurable" in product.value && product.value.isConfigurable);
 const disabled = computed<boolean>(() => loading.value || !product.value.availabilityData?.isAvailable);
 const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
