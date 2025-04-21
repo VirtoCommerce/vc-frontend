@@ -390,7 +390,7 @@ const hasRelatedProducts = computed(() => !!relatedProducts.value.length);
 
 watch(
   // also watch relatedProducts in case of same length but different content
-  [() => hasRelatedProducts, () => relatedProducts.value],
+  [hasRelatedProducts, relatedProducts],
   () => {
     if (hasRelatedProducts.value) {
       analytics("viewItemList", relatedProducts.value, {
