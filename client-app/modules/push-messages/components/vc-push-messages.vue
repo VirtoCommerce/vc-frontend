@@ -32,6 +32,7 @@
                 :class="['vc-push-messages__options', { 'vc-push-messages__options--invisible': !withOptions }]"
                 placement="bottom-end"
                 close-on-blur
+                width="9rem"
               >
                 <template #trigger>
                   <VcButton size="sm" icon variant="no-background">
@@ -41,21 +42,23 @@
 
                 <template #content="{ close: closeMenu }">
                   <VcMenuItem
+                    truncate
                     @click="
                       closeMenu();
                       $emit('markReadAll');
                     "
                   >
-                    {{ $t("push_messages.options.make_all_as_read") }}
+                    <span>{{ $t("push_messages.options.make_all_as_read") }}</span>
                   </VcMenuItem>
 
                   <VcMenuItem
+                    truncate
                     @click="
                       closeMenu();
                       $emit('markUnreadAll');
                     "
                   >
-                    {{ $t("push_messages.options.make_all_as_unread") }}
+                    <span>{{ $t("push_messages.options.make_all_as_unread") }}</span>
                   </VcMenuItem>
                 </template>
               </VcDropdownMenu>
