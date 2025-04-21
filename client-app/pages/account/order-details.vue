@@ -33,13 +33,14 @@
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
             <div v-if="group.items.length" class="space-y-3">
               <!-- Vendor -->
-              <div class="flex max-w-full flex-wrap gap-x-3 print:break-after-avoid">
-                <VcVendor :vendor="group.vendor" />
+              <div class="flex max-w-full gap-2 max-xs:flex-col">
+                <VendorName :name="group.vendor?.name" class="min-w-0" />
 
                 <VcRating
                   v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
                   :review-count="group.vendor.rating.reviewCount"
                   :value="group.vendor.rating.value"
+                  size="xs"
                 />
               </div>
 
@@ -149,7 +150,7 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
-import { AddressInfo } from "@/shared/common";
+import { AddressInfo, VendorName } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";

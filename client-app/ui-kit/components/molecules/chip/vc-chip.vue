@@ -48,7 +48,7 @@ interface IEmits {
 interface IProps {
   color?: VcChipColorType;
   variant?: VcChipVariantType;
-  size?: "xs" | "sm" | "md" | "lg";
+  size?: VcChipSizeType;
   clickable?: boolean;
   closable?: boolean;
   disabled?: boolean;
