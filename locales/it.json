@@ -155,7 +155,9 @@
       "main_menu": "Menu principale",
       "toggle_search_bar": "Attiva/Disattiva barra di ricerca",
       "slider_image": "Immagine del cursore",
-      "buyer_name": "Nome dell'acquirente"
+      "buyer_name": "Nome dell'acquirente",
+      "vendor_name": "Fornitore: {name}",
+      "not_available": "N/D"
     },
     "prefixes": {
       "please": "Per favore",
@@ -774,7 +776,8 @@
           "month": "Inserisci un mese di scadenza valido",
           "year": "Inserisci un anno di scadenza valido"
         },
-        "user_error_message": "Impossibile inizializzare il pagamento. Riprova più tardi o usa un altro metodo di pagamento"
+        "user_error_message": "Impossibile inizializzare il pagamento. Riprova più tardi o usa un altro metodo di pagamento",
+        "payment_unavailable": "Metodo di pagamento non disponibile. Riprova più tardi."
       },
       "authorize_net": {
         "user_agreement_link": "Accordo utente",
