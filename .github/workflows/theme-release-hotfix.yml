@@ -1,5 +1,3 @@
-# v3.800.11
-# bump-ubuntu-version
 name: Theme Release Hotfix
 on:
   workflow_dispatch:
@@ -56,8 +54,7 @@ jobs:
     - name: Set VERSION
       run: |
         echo "VERSION=${{ steps.image.outputs.prefix }}" >> $GITHUB_ENV
-        # echo "VERSION=${{ steps.image.outputs.prefix }}${{ env.VERSION_SUFFIX && '-' || '' }}${{ env.VERSION_SUFFIX }}" >> $GITHUB_ENV
-    
+
     - name: Update package.json Version
       run: |
         yarn version ${{ env.VERSION }}
