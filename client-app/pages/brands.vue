@@ -36,7 +36,9 @@
       <template #title>
         <div class="brands__filters">
           <div class="brands__letters">
-            <VcButton size="xs" square>All</VcButton>
+            <VcButton size="xs" square>
+              {{ $t("pages.brands.button_all") }}
+            </VcButton>
 
             <VcButton
               v-for="letter in letters"
@@ -130,7 +132,7 @@ function scrollToLetter(letter: string) {
   }
 
   &__tile {
-    @apply flex items-center justify-center p-3 aspect-[204/100] bg-additional-50 shadow-md;
+    @apply flex items-center justify-center p-3 aspect-[204/100] bg-additional-50 shadow-md rounded-sm;
   }
 
   &__img {
@@ -142,13 +144,15 @@ function scrollToLetter(letter: string) {
   }
 
   &__letters {
+    @apply grow;
+
     @media (width < theme("screens.lg")) {
       @apply hidden;
     }
   }
 
   &__search {
-    @apply grow;
+    @apply w-full;
 
     @media (min-width: theme("screens.lg")) {
       @apply max-w-[18.75rem];
@@ -168,6 +172,10 @@ function scrollToLetter(letter: string) {
 
     @media (min-width: theme("screens.lg")) {
       @apply grid-cols-5;
+    }
+
+    @media (min-width: theme("screens.xl")) {
+      @apply gap-x-16;
     }
   }
 

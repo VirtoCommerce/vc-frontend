@@ -1447,6 +1447,11 @@
       },
       "title": "Il tuo account è bloccato",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Principali marchi",
+      "search": "Cerca",
+      "button_all": "Tutto"
     }
   },
   "identity_error": {

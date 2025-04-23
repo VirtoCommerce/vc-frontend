@@ -1447,6 +1447,11 @@
       },
       "title": "您的账户已被封锁",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "热门品牌",
+      "search": "搜索",
+      "button_all": "全部"
     }
   },
   "identity_error": {

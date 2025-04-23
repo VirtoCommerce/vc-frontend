@@ -1447,6 +1447,11 @@
       },
       "title": "Ваш аккаунт заблокирован",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Популярные бренды",
+      "search": "Поиск",
+      "button_all": "Все"
     }
   },
   "identity_error": {

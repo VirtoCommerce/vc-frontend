@@ -1447,6 +1447,11 @@
       },
       "title": "Twoje konto jest zablokowane",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Najlepsze marki",
+      "search": "Szukaj",
+      "button_all": "Wszystkie"
     }
   },
   "identity_error": {

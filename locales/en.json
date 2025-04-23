@@ -1447,6 +1447,11 @@
       },
       "title": "Your account is blocked",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Top brands",
+      "search": "Search",
+      "button_all": "All"
     }
   },
   "identity_error": {

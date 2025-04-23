@@ -1447,6 +1447,11 @@
       },
       "title": "Votre compte est bloqué",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Meilleures marques",
+      "search": "Rechercher",
+      "button_all": "Tout"
     }
   },
   "identity_error": {

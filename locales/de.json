@@ -1447,6 +1447,11 @@
       },
       "title": "Ihr Konto ist blockiert",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Top-Marken",
+      "search": "Suche",
+      "button_all": "Alle"
     }
   },
   "identity_error": {
