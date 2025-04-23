@@ -13,28 +13,14 @@
         :key="index"
         :product="item"
         class="w-[calc((100%-1.75rem)/2)] sm:w-[calc((100%-2*1.75rem)/3)] md:w-[calc((100%-1.75rem)/2)]"
-        @link-click="
-          analytics('selectItem', item, {
-            item_list_id: `related_products_${props.productId}`,
-            item_list_name: 'related_products',
-          })
-        "
+        @link-click="selectItem(item)"
       />
     </div>
 
     <VcCarousel v-else :slides="relatedProducts" :options="relatedProductsCarouselOptions" navigation>
       <template #slide="{ slide: item }">
         <div class="h-full px-4 py-3 xl:px-3">
-          <ProductCardRelated
-            class="h-full"
-            :product="item"
-            @link-click="
-              analytics('selectItem', item, {
-                item_list_id: `related_products_${props.productId}`,
-                item_list_name: 'related_products',
-              })
-            "
-          />
+          <ProductCardRelated class="h-full" :product="item" @link-click="selectItem(item)" />
         </div>
       </template>
     </VcCarousel>
@@ -43,7 +29,8 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, toRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useAnalytics } from "@/core/composables";
 import { BREAKPOINTS } from "@/core/constants";
 import { extractNumberFromString } from "@/core/utilities";
@@ -53,9 +40,14 @@ import type { Product } from "@/core/api/graphql/types";
 interface IProps {
   relatedProducts?: Product[];
   productId: string;
+  productName: string;
 }
+
 const props = defineProps<IProps>();
 
+const relatedProducts = toRef(props, "relatedProducts");
+
+const { t } = useI18n();
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const { analytics } = useAnalytics();
 
@@ -98,4 +90,28 @@ const relatedProductsCarouselOptions: CarouselOptions = {
     },
   },
 };
+
+function selectItem(item: Product) {
+  analytics("selectItem", item, {
+    item_list_id: `related_products_${props.productId}`,
+    item_list_name: `${t("pages.product.related_product_section_title")} ${props.productName}`,
+  });
+}
+
+watch(
+  relatedProducts,
+  () => {
+    if (!relatedProducts.value?.length) {
+      return;
+    }
+
+    analytics("viewItemList", relatedProducts.value, {
+      item_list_id: `related_products_${props.productId}`,
+      item_list_name: `${t("pages.product.related_product_section_title")} ${props.productName}`,
+    });
+  },
+  {
+    immediate: true,
+  },
+);
 </script>

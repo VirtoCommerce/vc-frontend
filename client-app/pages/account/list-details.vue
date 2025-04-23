@@ -352,8 +352,8 @@ function selectItemEvent(item: Product | undefined): void {
   }
 
   analytics("selectItem", item, {
-    item_list_id: list.value?.id,
-    item_list_name: list.value?.name,
+    item_list_id: `wishlist_${list.value?.id}`,
+    item_list_name: `Wishlist "${list.value?.name}"`,
   });
 }
 
@@ -378,7 +378,7 @@ watchEffect(() => {
   if (items?.length) {
     analytics("viewItemList", items, {
       item_list_name: `Wishlist "${list.value?.name}"`,
-      item_list_id: list.value?.id,
+      item_list_id: `wishlist_${list.value?.id}`,
     });
   }
 });

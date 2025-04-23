@@ -447,8 +447,8 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
    * Send Google Analytics event for products on next page.
    */
   analytics("viewItemList", products.value, {
-    item_list_id: `${currentCategory.value?.slug}_page_${currentPage.value}`,
-    item_list_name: `${currentCategory.value?.name} (page ${currentPage.value})`,
+    item_list_id: `category_${currentCategory.value?.slug}_page_${currentPage.value}`,
+    item_list_name: `Category "${currentCategory.value?.name}" (page ${currentPage.value})`,
   });
 
   if (searchQueryParam.value) {
@@ -463,8 +463,8 @@ async function fetchProducts(): Promise<void> {
    * Send Google Analytics event for products.
    */
   analytics("viewItemList", products.value, {
-    item_list_id: currentCategory.value?.id,
-    item_list_name: currentCategory.value?.name,
+    item_list_id: `category_${currentCategory.value?.slug}_page_${currentPage.value}`,
+    item_list_name: `Category "${currentCategory.value?.name}" (page ${currentPage.value})`,
   });
 
   if (searchQueryParam.value) {
@@ -482,8 +482,8 @@ function trackViewSearchResults(): void {
 
 function selectProduct(product: Product): void {
   analytics("selectItem", product, {
-    item_list_id: currentCategory.value?.slug,
-    item_list_name: currentCategory.value?.name,
+    item_list_id: `category_${currentCategory.value?.slug}_page_${currentPage.value}`,
+    item_list_name: `Category "${currentCategory.value?.name}" (page ${currentPage.value})`,
   });
 }
 

@@ -220,7 +220,7 @@ function syncScroll(event: Event) {
 function selectItemEvent(product: Product) {
   analytics("selectItem", product, {
     item_list_id: "compare_products",
-    item_list_name: "compare_products",
+    item_list_name: t("pages.compare.header_block.title"),
   });
 }
 

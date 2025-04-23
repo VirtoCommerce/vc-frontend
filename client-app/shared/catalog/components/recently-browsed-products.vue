@@ -19,20 +19,21 @@
 
 <script setup lang="ts">
 import { toRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import type { Product } from "@/core/api/graphql/types";
 import ProductCardRecentlyBrowsed from "@/shared/catalog/components/product-card-recently-browsed.vue";
 
 const props = defineProps<IProps>();
 
-const LIST_NAME = "recently_browsed_products";
-
 interface IProps {
   products: Product[];
 }
+
 const products = toRef(props, "products");
 
 const { analytics } = useAnalytics();
+const { t } = useI18n();
 
 watch(products, () => {
   if (!products.value?.length) {
@@ -40,15 +41,17 @@ watch(products, () => {
   }
 
   analytics("viewItemList", products.value, {
-    item_list_id: LIST_NAME,
-    item_list_name: LIST_NAME,
+    item_list_id: "recently_browsed_products",
+    item_list_name: t("pages.cart.recently_browsed_products"),
+    source_route: "cart",
   });
 });
 
 const selectItemEvent = (item: Product) => {
   analytics("selectItem", item, {
-    item_list_id: LIST_NAME,
-    item_list_name: LIST_NAME,
+    item_list_id: "recently_browsed_products",
+    item_list_name: t("pages.cart.recently_browsed_products"),
+    source_route: "cart",
   });
 };
 </script>

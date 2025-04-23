@@ -61,7 +61,13 @@
         </div>
       </VcWidget>
 
-      <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" class="mt-5" />
+      <RecentlyBrowsedProducts
+        v-if="recentlyBrowsedProducts.length"
+        :products="recentlyBrowsedProducts"
+        :product-id="recentlyBrowsedProducts[0]?.id"
+        :product-name="recentlyBrowsedProducts[0]?.name"
+        class="mt-5"
+      />
     </template>
 
     <template v-else>
@@ -298,8 +304,8 @@ function selectItemEvent(item: LineItemType | undefined): void {
   }
 
   analytics("selectItem", item, {
-    item_list_id: cart.value?.id,
-    item_list_name: "cart",
+    item_list_id: `cart_${cart.value?.id}`,
+    item_list_name: t("pages.cart.title"),
   });
 }
 

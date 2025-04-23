@@ -19,17 +19,23 @@ import type { Product } from "@/core/api/graphql/types";
 
 const props = defineProps<IProps>();
 
-const LIST_NAME = "recommended_products";
-
 interface IProps {
   recommendedProducts?: Product[];
   title: string;
   model: string;
   productId: string;
+  productName: string;
 }
 const recommendedProducts = toRef(props, "recommendedProducts");
 
 const { analytics } = useAnalytics();
+
+function selectItemEvent(item: Product) {
+  analytics("selectItem", item, {
+    item_list_id: `recommended_products_${props.productId}`,
+    item_list_name: `${props.title} ${props.productName}`,
+  });
+}
 
 watch(
   recommendedProducts,
@@ -39,19 +45,12 @@ watch(
     }
 
     analytics("viewItemList", recommendedProducts.value, {
-      item_list_name: `${LIST_NAME}_${props.model.toLowerCase()}`,
-      item_list_id: `${LIST_NAME}_${props.productId}`,
+      item_list_id: `recommended_products_${props.productId}`,
+      item_list_name: `${props.title} ${props.productName}`,
     });
   },
   {
     immediate: true,
   },
 );
-
-const selectItemEvent = (item: Product) => {
-  analytics("selectItem", item, {
-    item_list_id: `${LIST_NAME}_${props.productId}`,
-    item_list_name: `${LIST_NAME}_${props.model.toLowerCase()}`,
-  });
-};
 </script>
