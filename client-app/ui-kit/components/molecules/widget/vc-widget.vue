@@ -133,21 +133,21 @@ watchEffect(() => {
 
   &--size {
     &--xs {
-      --header-p-y: theme("padding.[1.5]");
+      --header-p-y: theme("padding.3");
       --header-gap: theme("gap.[1.5]");
       --title-text: theme("fontSize.sm");
       --title-min-h: 1.625rem;
     }
 
     &--sm {
-      --header-p-y: theme("padding.[1.5]");
+      --header-p-y: theme("padding.3");
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.base");
       --title-min-h: 1.875rem;
     }
 
     &--md {
-      --header-p-y: theme("padding.2");
+      --header-p-y: theme("padding.3");
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.xl");
       --title-min-h: 2.125rem;

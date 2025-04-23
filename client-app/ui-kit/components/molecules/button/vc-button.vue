@@ -13,6 +13,7 @@
       `vc-button--${variant}--${color}`,
       {
         'vc-button--icon': !!icon,
+        'vc-button--square': square,
         'vc-button--disabled': !enabled,
         'vc-button--loading': loading,
         'vc-button--truncate': truncate,
@@ -86,6 +87,7 @@ interface IProps {
   minWidth?: string;
   tag?: string;
   iconSize?: string;
+  square?: boolean;
 }
 
 defineEmits<IEmits>();
@@ -181,6 +183,7 @@ const attrs = computed(() => {
   $prepend: "";
   $append: "";
   $icon: "";
+  $square: "";
   $truncate: "";
   $disabled: "";
   $loading: "";
@@ -209,6 +212,12 @@ const attrs = computed(() => {
     @apply flex-none p-0 h-[--size] min-w-[var(--min-w,var(--size))];
   }
 
+  &--square {
+    $square: &;
+
+    @apply flex-none p-0 h-[--size] min-w-[var(--min-w,var(--size))];
+  }
+
   &--full-width {
     @apply w-full;
   }
@@ -231,7 +240,7 @@ const attrs = computed(() => {
     @apply block rounded-full animate-spin border-2 size-[--line-height] border-[--loader-border] border-r-[--loader-border-r];
   }
 
-  &:not(#{$icon}) {
+  &:not(#{$icon}, #{$square}) {
     @apply min-w-[--min-w];
   }
 
