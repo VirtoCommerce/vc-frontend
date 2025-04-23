@@ -108,6 +108,7 @@
                   hideSearchDropdown();
                   analytics('selectItem', product, {
                     search_term: trimmedSearchPhrase,
+                    item_list_id: 'search_bar',
                     item_list_name: `Search phrase '${trimmedSearchPhrase}'`,
                   });
                 "

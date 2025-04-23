@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef, watch } from "vue";
+import { toRef, watch } from "vue";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { ProductCardRecommended } from "@/shared/catalog";
 import type { Product } from "@/core/api/graphql/types";
@@ -24,26 +24,34 @@ const LIST_NAME = "recommended_products";
 interface IProps {
   recommendedProducts?: Product[];
   title: string;
+  model: string;
+  productId: string;
 }
 const recommendedProducts = toRef(props, "recommendedProducts");
 
-const itemListName = computed(() => `${LIST_NAME}_${props.title.toLowerCase()}`);
-
 const { analytics } = useAnalytics();
 
-watch(recommendedProducts, () => {
-  if (!recommendedProducts.value?.length) {
-    return;
-  }
+watch(
+  recommendedProducts,
+  () => {
+    if (!recommendedProducts.value?.length) {
+      return;
+    }
 
-  analytics("viewItemList", recommendedProducts.value, {
-    item_list_name: itemListName.value,
-  });
-});
+    analytics("viewItemList", recommendedProducts.value, {
+      item_list_name: `${LIST_NAME}_${props.model.toLowerCase()}`,
+      item_list_id: `${LIST_NAME}_${props.productId}`,
+    });
+  },
+  {
+    immediate: true,
+  },
+);
 
 const selectItemEvent = (item: Product) => {
   analytics("selectItem", item, {
-    item_list_name: itemListName.value,
+    item_list_id: `${LIST_NAME}_${props.productId}`,
+    item_list_name: `${LIST_NAME}_${props.model.toLowerCase()}`,
   });
 };
 </script>

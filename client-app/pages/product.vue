@@ -89,7 +89,7 @@
           :is="relatedProductsSection?.type"
           v-if="relatedProductsSection && !relatedProductsSection.hidden"
           :related-products="relatedProducts"
-          :model="relatedProductsSection"
+          :product-id="productId"
         />
 
         <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
@@ -99,6 +99,8 @@
             :key="id"
             :recommended-products="recommendedProducts[model as string]"
             :title="$t(`pages.product.recommended_products.${model}_section_title`)"
+            :model="model"
+            :product-id="productId"
           />
         </template>
       </div>
@@ -374,12 +376,14 @@ watchEffect(() => {
 watch(
   variations,
   (newVariations) => {
-    if (newVariations.length) {
-      analytics("viewItemList", newVariations, {
-        item_list_id: `variations_${product.value?.id}`,
-        item_list_name: "variations",
-      });
+    if (!newVariations.length) {
+      return;
     }
+
+    analytics("viewItemList", newVariations, {
+      item_list_id: `variations_${product.value?.id}`,
+      item_list_name: "variations",
+    });
   },
   { immediate: true },
 );

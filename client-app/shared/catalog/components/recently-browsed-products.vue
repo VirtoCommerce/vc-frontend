@@ -40,12 +40,14 @@ watch(products, () => {
   }
 
   analytics("viewItemList", products.value, {
+    item_list_id: LIST_NAME,
     item_list_name: LIST_NAME,
   });
 });
 
 const selectItemEvent = (item: Product) => {
   analytics("selectItem", item, {
+    item_list_id: LIST_NAME,
     item_list_name: LIST_NAME,
   });
 };

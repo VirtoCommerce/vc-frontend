@@ -13,7 +13,12 @@
         :key="index"
         :product="item"
         class="w-[calc((100%-1.75rem)/2)] sm:w-[calc((100%-2*1.75rem)/3)] md:w-[calc((100%-1.75rem)/2)]"
-        @link-click="analytics('selectItem', item, { item_list_name: 'related_products' })"
+        @link-click="
+          analytics('selectItem', item, {
+            item_list_id: `related_products_${props.productId}`,
+            item_list_name: 'related_products',
+          })
+        "
       />
     </div>
 
@@ -23,7 +28,12 @@
           <ProductCardRelated
             class="h-full"
             :product="item"
-            @link-click="analytics('selectItem', item, { item_list_name: 'related_products' })"
+            @link-click="
+              analytics('selectItem', item, {
+                item_list_id: `related_products_${props.productId}`,
+                item_list_name: 'related_products',
+              })
+            "
           />
         </div>
       </template>
@@ -42,6 +52,7 @@ import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   relatedProducts?: Product[];
+  productId: string;
 }
 const props = defineProps<IProps>();
 

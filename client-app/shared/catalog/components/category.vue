@@ -463,7 +463,7 @@ async function fetchProducts(): Promise<void> {
    * Send Google Analytics event for products.
    */
   analytics("viewItemList", products.value, {
-    item_list_id: currentCategory.value?.slug,
+    item_list_id: currentCategory.value?.id,
     item_list_name: currentCategory.value?.name,
   });
 
