@@ -481,7 +481,10 @@ function trackViewSearchResults(): void {
 }
 
 function selectProduct(product: Product): void {
-  analytics("selectItem", product);
+  analytics("selectItem", product, {
+    item_list_id: currentCategory.value?.slug,
+    item_list_name: currentCategory.value?.name,
+  });
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);

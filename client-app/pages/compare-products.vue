@@ -66,6 +66,7 @@
               :product="product"
               class="w-[9.625rem] lg:w-[13.625rem]"
               @remove="removeFromCompareList(product)"
+              @link-click="selectItemEvent(product)"
             />
           </div>
         </div>
@@ -109,6 +110,7 @@ import { ProductCardCompare, useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
 import { useModal } from "@/shared/modal";
 import { VcConfirmationModal } from "@/ui-kit/components";
+import type { Product } from "@/core/api/graphql/types";
 
 interface ICompareProductProperties {
   [key: string]: { label: string; values: string[] };
@@ -213,6 +215,12 @@ function syncScroll(event: Event) {
       cardsElement.value.scrollLeft = propertiesElement.value.scrollLeft;
     }
   }
+}
+
+function selectItemEvent(product: Product) {
+  analytics("selectItem", product, {
+    item_list_name: "compare_products",
+  });
 }
 
 /**

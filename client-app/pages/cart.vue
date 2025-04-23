@@ -77,6 +77,7 @@
           @select:items="handleSelectItems"
           @remove:items="handleRemoveItems"
           @clear:cart="openClearCartModal"
+          @link-click="selectItemEvent"
         />
 
         <GiftsSection
@@ -215,7 +216,7 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
-import type { Product } from "@/core/api/graphql/types";
+import type { LineItemType, Product } from "@/core/api/graphql/types";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
@@ -289,6 +290,17 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
   } else {
     selectCartItems(value.itemIds);
   }
+}
+
+function selectItemEvent(item: LineItemType | undefined): void {
+  if (!item) {
+    return;
+  }
+
+  analytics("selectItem", item, {
+    item_list_id: cart.value?.id,
+    item_list_name: "cart",
+  });
 }
 
 void (async () => {

@@ -71,6 +71,7 @@
                 @update:cart-item="addOrUpdateCartItem"
                 @update:list-item="updateWishListItem"
                 @remove:items="openDeleteProductModal"
+                @link-click="selectItemEvent"
               />
 
               <p v-if="page >= PAGE_LIMIT" class="my-3 text-center">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
@@ -138,6 +139,7 @@ import type {
   InputUpdateWishlistItemsType,
   InputUpdateWishlistLineItemType,
   LineItemType,
+  Product,
 } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 import type { RouteLocationNormalized } from "vue-router";
@@ -344,6 +346,17 @@ async function canChangeRoute(to: RouteLocationNormalized): Promise<boolean> {
   return to.name === "NoAccess" || !list.value || !isDirty.value || (await openSaveChangesModal());
 }
 
+function selectItemEvent(item: Product | undefined): void {
+  if (!item) {
+    return;
+  }
+
+  analytics("selectItem", item, {
+    item_list_id: list.value?.id,
+    item_list_name: list.value?.name,
+  });
+}
+
 onBeforeRouteLeave(canChangeRoute);
 onBeforeRouteUpdate(canChangeRoute);
 
@@ -365,6 +378,7 @@ watchEffect(() => {
   if (items?.length) {
     analytics("viewItemList", items, {
       item_list_name: `Wishlist "${list.value?.name}"`,
+      item_list_id: list.value?.id,
     });
   }
 });

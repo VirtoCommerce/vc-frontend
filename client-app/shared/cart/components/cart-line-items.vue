@@ -14,6 +14,7 @@
     :selectable="selectable"
     @select:items="$emit('select:items', $event)"
     @remove:items="$emit('remove:items', $event)"
+    @link-click="$emit('linkClick', $event)"
   >
     <template #titles>
       <div class="text-center">
@@ -88,6 +89,7 @@ interface IEmits {
   (event: "change:itemQuantity", value: { itemId: string; quantity: number }): void;
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
+  (event: "linkClick", value: LineItemType | undefined): void;
 }
 
 defineEmits<IEmits>();

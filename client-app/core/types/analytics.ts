@@ -2,7 +2,7 @@ import type { CartType, CustomerOrderType, LineItemType, Product, VariationType 
 import type { ICustomAnalyticsEventMap } from "@/core/types/analytics-custom";
 export interface IBasicAnalyticsEventMap {
   viewItemList: [items: { code: string }[], params?: EventParamsType & ViewItemListParamsAdditionalType];
-  selectItem: [item: Product | LineItemType, params?: EventParamsType];
+  selectItem: [item: Product | LineItemType, params?: EventParamsType & SelectItemParamsAdditionalType];
   viewItem: [item: Product, params?: EventParamsType];
   addItemToWishList: [item: Product, params?: EventParamsType];
   addItemToCart: [
@@ -32,6 +32,7 @@ export type AnalyticsEventMapType = keyof ICustomAnalyticsEventMap extends never
 export type AnalyticsEventNameType = keyof AnalyticsEventMapType;
 
 export type ViewItemListParamsAdditionalType = { item_list_id?: string; item_list_name?: string };
+export type SelectItemParamsAdditionalType = { item_list_id?: string; item_list_name?: string };
 export type AddToCartParamsAdditionalType = { source_route?: string; source_block?: string; search_terms?: string };
 export type LoginParamsAdditionalType = { errors?: string; success?: boolean };
 export type SignUpParamsAdditionalType = { type?: string; errors?: string; success?: boolean };

@@ -39,6 +39,7 @@
         @change:item-quantity="$emit('change:itemQuantity', $event)"
         @select:items="$emit('select:items', $event)"
         @remove:items="$emit('remove:items', $event)"
+        @link-click="$emit('linkClick', $event)"
       />
     </template>
 
@@ -68,6 +69,7 @@ interface IEmits {
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "clear:cart"): void;
+  (event: "linkClick", value: LineItemType | undefined): void;
 }
 
 interface IProps {
