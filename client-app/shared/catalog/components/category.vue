@@ -352,6 +352,7 @@ const hideViewModeSelector = computed(() => {
 const categoryListProperties = computed(() => ({
   item_list_id: `category_${currentCategory.value?.slug}_page_${currentPage.value}`,
   item_list_name: `Category "${currentCategory.value?.name}" (page ${currentPage.value})`,
+  related_id: currentCategory.value?.id,
 }));
 
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);

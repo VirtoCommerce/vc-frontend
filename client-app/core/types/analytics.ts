@@ -31,7 +31,11 @@ export type AnalyticsEventMapType = keyof ICustomAnalyticsEventMap extends never
 
 export type AnalyticsEventNameType = keyof AnalyticsEventMapType;
 
-export type ViewItemListParamsAdditionalType = { item_list_id?: string; item_list_name?: string };
+export type ViewItemListParamsAdditionalType = {
+  item_list_id?: string;
+  item_list_name?: string;
+  related_id?: string;
+};
 export type SelectItemParamsAdditionalType = { item_list_id?: string; item_list_name?: string };
 export type AddToCartParamsAdditionalType = { source_route?: string; source_block?: string; search_terms?: string };
 export type LoginParamsAdditionalType = { errors?: string; success?: boolean };

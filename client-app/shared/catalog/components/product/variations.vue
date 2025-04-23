@@ -186,8 +186,9 @@ watch(
     }
 
     analytics("viewItemList", newVariations, {
-      item_list_id: `variations_${props.productId}`,
+      item_list_id: "variations",
       item_list_name: `${t("shared.catalog.product_details.variations.title")} ${props.productName}`,
+      related_id: props.productId,
     });
   },
   { immediate: true },

@@ -48,8 +48,9 @@ const props = defineProps<IProps>();
 const relatedProducts = toRef(props, "relatedProducts");
 
 const relatedProductsListProperties = computed(() => ({
-  item_list_id: `related_products_${props.productId}`,
+  item_list_id: "related_products",
   item_list_name: `${t("pages.product.related_product_section_title")} ${props.productName}`,
+  related_id: props.productId,
 }));
 
 const { t } = useI18n();
