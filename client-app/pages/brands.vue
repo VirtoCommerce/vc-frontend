@@ -6,6 +6,32 @@
       {{ $t("pages.brands.title") }}
     </VcTypography>
 
+    <div class="brands__top">
+      <router-link class="brands__tile" to="#">
+        <VcImage class="brands__img" src="logo.svg" alt="" />
+      </router-link>
+
+      <router-link class="brands__tile" to="#">
+        <VcImage class="brands__img" src="ms.svg" alt="" />
+      </router-link>
+
+      <router-link class="brands__tile" to="#">
+        <VcImage class="brands__img" src="mastercard.svg" alt="" />
+      </router-link>
+
+      <router-link class="brands__tile" to="#">
+        <VcImage class="brands__img" src="main-banner.webp" alt="" />
+      </router-link>
+
+      <router-link class="brands__tile" to="#">
+        <VcImage class="brands__img" src="google.webp" alt="" />
+      </router-link>
+
+      <router-link class="brands__tile" to="#">
+        <VcImage class="brands__img" src="maestro.svg" alt="" />
+      </router-link>
+    </div>
+
     <VcWidget>
       <template #title>
         <div class="brands__filters">
@@ -83,6 +109,34 @@ function scrollToLetter(letter: string) {
     @apply mb-5;
   }
 
+  &__top {
+    @apply grid mb-5 grid-cols-2 gap-4;
+
+    @media (min-width: theme("screens.xs")) {
+      @apply grid-cols-3;
+    }
+
+    @media (min-width: theme("screens.md")) {
+      @apply grid-cols-4;
+    }
+
+    @media (min-width: theme("screens.lg")) {
+      @apply grid-cols-5 mb-7 gap-6;
+    }
+
+    @media (min-width: theme("screens.xl")) {
+      @apply grid-cols-6;
+    }
+  }
+
+  &__tile {
+    @apply flex items-center justify-center p-3 aspect-[204/100] bg-additional-50 shadow-md;
+  }
+
+  &__img {
+    @apply max-w-full max-h-full;
+  }
+
   &__filters {
     @apply flex items-center gap-3;
   }
@@ -95,6 +149,10 @@ function scrollToLetter(letter: string) {
 
   &__search {
     @apply grow;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply max-w-[18.75rem];
+    }
   }
 
   &__list {
@@ -113,15 +171,12 @@ function scrollToLetter(letter: string) {
     }
   }
 
-  &__items {
-  }
-
   &__letter {
     @apply mb-3.5 text-secondary-700 text-3xl font-bold;
   }
 
   &__links {
-    @apply flex flex-col gap-1;
+    @apply flex flex-col gap-1 text-base;
   }
 
   &__link {
