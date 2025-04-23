@@ -125,7 +125,7 @@
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
-import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
+import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
 import _productTemplate from "@/config/product.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
@@ -336,44 +336,55 @@ useSeoMeta({
   ogType: () => (canSetMeta.value ? "website" : undefined),
 });
 
-watchEffect(async () => {
-  await fetchProduct(productId.value);
-  if (product.value?.isConfigurable) {
-    await fetchProductConfiguration();
-  }
+watch(
+  productId,
+  async () => {
+    await fetchProduct(productId.value);
+    if (product.value?.isConfigurable) {
+      await fetchProductConfiguration();
+    }
 
-  if (product.value?.associations?.totalCount && !relatedProductsSection?.hidden) {
-    await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
-  }
+    if (product.value?.associations?.totalCount && !relatedProductsSection?.hidden) {
+      await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
+    }
 
-  const recommendedProductsBlocks = recommendedProductsSection?.blocks?.filter((block) => !!block.model) ?? [];
-  if (!recommendedProductsSection?.hidden && recommendedProductsSection?.blocks?.length) {
-    const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
-      productId: productId.value,
-      model: model as string,
-    }));
-    await fetchRecommendedProducts(paramsToFetch);
-  }
+    const recommendedProductsBlocks = recommendedProductsSection?.blocks?.filter((block) => !!block.model) ?? [];
+    if (!recommendedProductsSection?.hidden && recommendedProductsSection?.blocks?.length) {
+      const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
+        productId: productId.value,
+        model: model as string,
+      }));
+      await fetchRecommendedProducts(paramsToFetch);
+    }
 
-  if (product.value?.hasVariations && !productVariationsBlock?.hidden) {
-    await fetchProducts(variationsSearchParams.value);
-  }
-});
+    if (product.value?.hasVariations && !productVariationsBlock?.hidden) {
+      await fetchProducts(variationsSearchParams.value);
+    }
+  },
+  { immediate: true },
+);
 
 /**
  * Send Google Analytics event and historical event for product.
  */
-watchEffect(() => {
-  if (product.value) {
-    // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
-    analytics("viewItem", product.value);
-    void pushHistoricalEvent({
-      eventType: "click",
-      productId: product.value.id,
-      storeId: globals.storeId,
-    });
-  }
-});
+
+const fetchedProductId = computed(() => product.value?.id);
+
+watch(
+  fetchedProductId,
+  () => {
+    if (fetchedProductId.value && product.value) {
+      analytics("viewItem", product.value);
+
+      void pushHistoricalEvent({
+        eventType: "click",
+        productId: product.value.id,
+        storeId: globals.storeId,
+      });
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped lang="scss">
