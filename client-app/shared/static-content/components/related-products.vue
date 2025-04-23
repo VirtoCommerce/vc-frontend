@@ -104,12 +104,12 @@ function selectItem(item: Product) {
 
 watch(
   relatedProducts,
-  () => {
-    if (!relatedProducts.value?.length) {
+  (relatedProductsValue) => {
+    if (!relatedProductsValue?.length) {
       return;
     }
 
-    analytics("viewItemList", relatedProducts.value, relatedProductsListProperties.value);
+    analytics("viewItemList", relatedProductsValue, relatedProductsListProperties.value);
   },
   {
     immediate: true,

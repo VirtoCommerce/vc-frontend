@@ -110,7 +110,7 @@ const preparedLineItems = computed(() => prepareLineItems(props.items));
 watchEffect(() => setErrors(validationErrors.value));
 
 const handleLinkClick = (item: PreparedLineItemType) => {
-  const lineItem = props.items.find((i) => i.id === item.id);
+  const lineItem = props.items.find((cartLineItem) => cartLineItem.id === item.id);
   emit("linkClick", lineItem);
 };
 </script>

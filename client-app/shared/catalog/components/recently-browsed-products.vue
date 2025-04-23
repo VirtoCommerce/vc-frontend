@@ -46,12 +46,12 @@ function selectItemEvent(item: Product) {
 
 watch(
   products,
-  () => {
-    if (!products.value?.length) {
+  (productsValue) => {
+    if (!productsValue?.length) {
       return;
     }
 
-    analytics("viewItemList", products.value, listProperties.value);
+    analytics("viewItemList", productsValue, listProperties.value);
   },
   {
     immediate: true,

@@ -231,12 +231,12 @@ function selectItemEvent(product: Product) {
  */
 watch(
   products,
-  () => {
-    if (!products.value.length) {
+  (productsValue) => {
+    if (!productsValue.length) {
       return;
     }
 
-    analytics("viewItemList", products.value, compareProductsListProperties.value);
+    analytics("viewItemList", productsValue, compareProductsListProperties.value);
   },
   { immediate: true },
 );

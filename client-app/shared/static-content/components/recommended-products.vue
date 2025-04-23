@@ -43,12 +43,12 @@ function selectItemEvent(item: Product) {
 
 watch(
   recommendedProducts,
-  () => {
-    if (!recommendedProducts.value?.length) {
+  (recommendedProductsValue) => {
+    if (!recommendedProductsValue?.length) {
       return;
     }
 
-    analytics("viewItemList", recommendedProducts.value, recommendedProductsListProperties.value);
+    analytics("viewItemList", recommendedProductsValue, recommendedProductsListProperties.value);
   },
   {
     immediate: true,
