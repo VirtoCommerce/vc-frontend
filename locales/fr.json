@@ -779,7 +779,8 @@
           "month": "Veuillez indiquer un mois d'expiration valide",
           "year": "Veuillez indiquer une année d'expiration valide"
         },
-        "user_error_message": "Impossible d'initialiser le paiement. Veuillez réessayer plus tard ou utiliser un autre mode de paiement"
+        "user_error_message": "Impossible d'initialiser le paiement. Veuillez réessayer plus tard ou utiliser un autre mode de paiement",
+        "payment_unavailable": "Le mode de paiement est indisponible. Veuillez réessayer plus tard."
       },
       "authorize_net": {
         "user_agreement_link": "Contrat d'utilisation",

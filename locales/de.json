@@ -779,7 +779,8 @@
           "month": "Bitte geben Sie einen gültigen Ablaufmonat an",
           "year": "Bitte geben Sie ein gültiges Ablaufjahr an"
         },
-        "user_error_message": "Zahlung konnte nicht initialisiert werden. Bitte versuchen Sie es später noch einmal oder wählen Sie eine andere Zahlungsmethode."
+        "user_error_message": "Zahlung konnte nicht initialisiert werden. Bitte versuchen Sie es später noch einmal oder wählen Sie eine andere Zahlungsmethode.",
+        "payment_unavailable": "Zahlungsmethode ist nicht verfügbar. Bitte versuche es später noch einmal."
       },
       "authorize_net": {
         "user_agreement_link": "Nutzungsbedingungen",
