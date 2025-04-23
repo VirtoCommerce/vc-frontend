@@ -119,7 +119,7 @@
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
-import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
+import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import _productTemplate from "@/config/product.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
@@ -370,6 +370,19 @@ watchEffect(() => {
     });
   }
 });
+
+watch(
+  variations,
+  (newVariations) => {
+    if (newVariations.length) {
+      analytics("viewItemList", newVariations, {
+        item_list_id: `variations_${product.value?.id}`,
+        item_list_name: "variations",
+      });
+    }
+  },
+  { immediate: true },
+);
 
 /**
  * Send Google Analytics event for related products.

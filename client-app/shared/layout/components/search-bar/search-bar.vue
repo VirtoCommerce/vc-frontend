@@ -106,7 +106,10 @@
                 :product="product"
                 @link-click="
                   hideSearchDropdown();
-                  analytics('selectItem', product, { search_term: trimmedSearchPhrase });
+                  analytics('selectItem', product, {
+                    search_term: trimmedSearchPhrase,
+                    item_list_name: `Search phrase '${trimmedSearchPhrase}'`,
+                  });
                 "
               />
             </div>
