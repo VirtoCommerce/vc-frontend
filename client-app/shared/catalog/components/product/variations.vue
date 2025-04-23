@@ -189,6 +189,7 @@ watch(
       item_list_id: "variations",
       item_list_name: `${t("shared.catalog.product_details.variations.title")} ${props.productName}`,
       related_id: props.productId,
+      related_type: "product",
     });
   },
   { immediate: true },

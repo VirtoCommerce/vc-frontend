@@ -51,6 +51,7 @@ const relatedProductsListProperties = computed(() => ({
   item_list_id: "related_products",
   item_list_name: `${t("pages.product.related_product_section_title")} ${props.productName}`,
   related_id: props.productId,
+  related_type: "product",
 }));
 
 const { t } = useI18n();

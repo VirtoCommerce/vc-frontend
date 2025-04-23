@@ -203,6 +203,7 @@ const wishlistListProperties = computed(() => ({
   item_list_id: "wishlist",
   item_list_name: `Wishlist "${list.value?.name}"`,
   related_id: list.value?.id,
+  related_type: "wishlist",
 }));
 
 const isMobile = breakpoints.smaller("lg");
