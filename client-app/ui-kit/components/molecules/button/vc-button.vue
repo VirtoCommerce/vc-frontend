@@ -215,7 +215,7 @@ const attrs = computed(() => {
   &--square {
     $square: &;
 
-    @apply flex-none p-0 h-[--size] min-w-[var(--min-w,var(--size))];
+    @apply flex-none px-0.5 h-[--size] min-w-[var(--min-w,var(--size))];
   }
 
   &--full-width {
