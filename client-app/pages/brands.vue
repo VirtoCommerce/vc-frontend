@@ -55,7 +55,7 @@
 
           <VcInput class="brands__search" maxlength="64" clearable :placeholder="$t('pages.brands.search')">
             <template #append>
-              <VcButton :aria-label="$t('commmon.buttons.search_orders')" icon="search" icon-size="1.25rem" />
+              <VcButton :aria-label="$t('pages.brands.search')" icon="search" icon-size="1.25rem" />
             </template>
           </VcInput>
         </div>
