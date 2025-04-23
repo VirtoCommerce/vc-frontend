@@ -823,12 +823,12 @@ export type PropertyDictionaryItemEdge = {
 export type PropertyGroup = {
   /** The localized description of the property group. */
   description?: Maybe<Scalars['String']['output']>;
+  /** The display order of the property group. */
+  displayOrder?: Maybe<Scalars['Int']['output']>;
   /** The unique ID of the property group. */
   id: Scalars['String']['output'];
   /** The localized name of the property group. */
   name?: Maybe<Scalars['String']['output']>;
-  /** The display order of the property group. */
-  priority?: Maybe<Scalars['Int']['output']>;
 };
 
 /** The type of catalog property. */
@@ -847,6 +847,7 @@ export enum PropertyValueTypes {
   Html = 'HTML',
   Integer = 'INTEGER',
   LongText = 'LONG_TEXT',
+  Measure = 'MEASURE',
   Number = 'NUMBER',
   ShortText = 'SHORT_TEXT'
 }

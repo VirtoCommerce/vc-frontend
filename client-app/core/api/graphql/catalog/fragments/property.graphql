@@ -2,7 +2,7 @@ fragment property on Property {
   group {
     id
     name
-    priority
+    displayOrder
     description
   }
   name

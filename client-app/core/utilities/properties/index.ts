@@ -62,7 +62,7 @@ export function getGroupedAndSortedProperties(source: Property[]): IGroupedPrope
   const defaultGroup: PropertyGroup = {
     id: "ungrouped",
     name: t("common.labels.other"),
-    priority: Infinity,
+    displayOrder: Infinity,
     description: "",
   };
 
@@ -89,7 +89,7 @@ export function getGroupedAndSortedProperties(source: Property[]): IGroupedPrope
   }
 
   return Array.from(result.values())
-    .sort((a, b) => (a.group?.priority ?? 0) - (b.group?.priority ?? 0))
+    .sort((a, b) => (a.group?.displayOrder ?? 0) - (b.group?.displayOrder ?? 0))
     .map(({ group, properties }) => {
       const sortedProps = [...properties].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
 
