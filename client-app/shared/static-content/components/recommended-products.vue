@@ -31,7 +31,7 @@ const recommendedProducts = toRef(props, "recommendedProducts");
 const { analytics } = useAnalytics();
 
 const recommendedProductsListProperties = computed(() => ({
-  item_list_id: "recommended_products",
+  item_list_id: `recommended_products_${props.model}`,
   item_list_name: `${props.title} ${props.productName}`,
   related_id: props.productId,
   related_type: "product",

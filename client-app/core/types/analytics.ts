@@ -56,8 +56,8 @@ export type TrackerEventsType = Partial<{
 }>;
 
 type ListPropertiesType = {
-  item_list_id: string;
-  item_list_name: string;
-  related_id: string;
-  related_type: string;
+  item_list_id?: string;
+  item_list_name?: string;
+  related_id?: string;
+  related_type?: string;
 };

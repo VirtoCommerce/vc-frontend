@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef, watch } from "vue";
+import { computed, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import type { Product } from "@/core/api/graphql/types";
@@ -32,24 +32,29 @@ interface IProps {
 
 const products = toRef(props, "products");
 
+const listProperties = computed(() => ({
+  item_list_id: "recently_browsed_products",
+  item_list_name: t("pages.cart.recently_browsed_products"),
+}));
+
 const { analytics } = useAnalytics();
 const { t } = useI18n();
 
 function selectItemEvent(item: Product) {
-  analytics("selectItem", item, {
-    item_list_id: "recently_browsed_products",
-    item_list_name: t("pages.cart.recently_browsed_products"),
-  });
+  analytics("selectItem", item, listProperties.value);
 }
 
-watch(products, () => {
-  if (!products.value?.length) {
-    return;
-  }
+watch(
+  products,
+  () => {
+    if (!products.value?.length) {
+      return;
+    }
 
-  analytics("viewItemList", products.value, {
-    item_list_id: "recently_browsed_products",
-    item_list_name: t("pages.cart.recently_browsed_products"),
-  });
-});
+    analytics("viewItemList", products.value, listProperties.value);
+  },
+  {
+    immediate: true,
+  },
+);
 </script>

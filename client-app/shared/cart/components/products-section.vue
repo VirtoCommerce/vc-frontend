@@ -24,6 +24,7 @@
             @change:item-quantity="$emit('change:itemQuantity', $event)"
             @select:items="$emit('select:items', $event)"
             @remove:items="$emit('remove:items', $event)"
+            @link-click="$emit('linkClick', $event)"
           />
         </div>
       </template>

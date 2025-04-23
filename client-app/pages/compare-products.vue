@@ -232,9 +232,11 @@ function selectItemEvent(product: Product) {
 watch(
   products,
   () => {
-    if (products.value.length) {
-      analytics("viewItemList", products.value, compareProductsListProperties.value);
+    if (!products.value.length) {
+      return;
     }
+
+    analytics("viewItemList", products.value, compareProductsListProperties.value);
   },
   { immediate: true },
 );
