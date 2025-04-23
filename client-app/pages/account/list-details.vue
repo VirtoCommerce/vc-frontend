@@ -199,6 +199,10 @@ const isDirty = computed<boolean>(() => {
   const changedItemsToCompare = (wishlistItems.value ?? []).map((item) => pick(item, ["productId", "quantity"]));
   return !isEqual(originalItemsToCompare, changedItemsToCompare);
 });
+const wishlistListProperties = computed(() => ({
+  item_list_id: `wishlist_${list.value?.id}`,
+  item_list_name: `Wishlist "${list.value?.name}"`,
+}));
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -351,10 +355,7 @@ function selectItemEvent(item: Product | undefined): void {
     return;
   }
 
-  analytics("selectItem", item, {
-    item_list_id: `wishlist_${list.value?.id}`,
-    item_list_name: `Wishlist "${list.value?.name}"`,
-  });
+  analytics("selectItem", item, wishlistListProperties.value);
 }
 
 onBeforeRouteLeave(canChangeRoute);
@@ -376,10 +377,7 @@ watchEffect(() => {
     .filter(Boolean);
 
   if (items?.length) {
-    analytics("viewItemList", items, {
-      item_list_name: `Wishlist "${list.value?.name}"`,
-      item_list_id: `wishlist_${list.value?.id}`,
-    });
+    analytics("viewItemList", items, wishlistListProperties.value);
   }
 });
 </script>

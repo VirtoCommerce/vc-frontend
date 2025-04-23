@@ -100,7 +100,7 @@
 
 <script setup lang="ts">
 import _ from "lodash";
-import { ref, computed, watch, watchEffect, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -147,6 +147,11 @@ const propertiesElement = ref<HTMLElement | null>(null);
 const propertiesDiffs = computed<ICompareProductProperties>(() => {
   return _.pickBy(properties.value, (prop) => _.uniq(prop.values).length !== 1);
 });
+
+const compareProductsListProperties = computed(() => ({
+  item_list_id: "compare_products",
+  item_list_name: t("pages.compare.header_block.title"),
+}));
 
 async function refreshProducts() {
   await fetchProducts({ productIds: productsIds.value });
@@ -218,23 +223,21 @@ function syncScroll(event: Event) {
 }
 
 function selectItemEvent(product: Product) {
-  analytics("selectItem", product, {
-    item_list_id: "compare_products",
-    item_list_name: t("pages.compare.header_block.title"),
-  });
+  analytics("selectItem", product, compareProductsListProperties.value);
 }
 
 /**
  * Send Google Analytics event for related products.
  */
-watchEffect(() => {
-  if (products.value.length) {
-    analytics("viewItemList", products.value, {
-      item_list_id: "compare_products",
-      item_list_name: t("pages.compare.header_block.title"),
-    });
-  }
-});
+watch(
+  products,
+  () => {
+    if (products.value.length) {
+      analytics("viewItemList", products.value, compareProductsListProperties.value);
+    }
+  },
+  { immediate: true },
+);
 
 onMounted(() => {
   // Add scroll event listeners to both elements

@@ -47,6 +47,11 @@ const props = defineProps<IProps>();
 
 const relatedProducts = toRef(props, "relatedProducts");
 
+const relatedProductsListProperties = computed(() => ({
+  item_list_id: `related_products_${props.productId}`,
+  item_list_name: `${t("pages.product.related_product_section_title")} ${props.productName}`,
+}));
+
 const { t } = useI18n();
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const { analytics } = useAnalytics();
@@ -92,10 +97,7 @@ const relatedProductsCarouselOptions: CarouselOptions = {
 };
 
 function selectItem(item: Product) {
-  analytics("selectItem", item, {
-    item_list_id: `related_products_${props.productId}`,
-    item_list_name: `${t("pages.product.related_product_section_title")} ${props.productName}`,
-  });
+  analytics("selectItem", item, relatedProductsListProperties.value);
 }
 
 watch(
@@ -105,10 +107,7 @@ watch(
       return;
     }
 
-    analytics("viewItemList", relatedProducts.value, {
-      item_list_id: `related_products_${props.productId}`,
-      item_list_name: `${t("pages.product.related_product_section_title")} ${props.productName}`,
-    });
+    analytics("viewItemList", relatedProducts.value, relatedProductsListProperties.value);
   },
   {
     immediate: true,

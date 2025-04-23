@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef, watch } from "vue";
+import { toRef, watch, computed } from "vue";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { ProductCardRecommended } from "@/shared/catalog";
 import type { Product } from "@/core/api/graphql/types";
@@ -30,11 +30,13 @@ const recommendedProducts = toRef(props, "recommendedProducts");
 
 const { analytics } = useAnalytics();
 
+const recommendedProductsListProperties = computed(() => ({
+  item_list_id: `recommended_products_${props.productId}`,
+  item_list_name: `${props.title} ${props.productName}`,
+}));
+
 function selectItemEvent(item: Product) {
-  analytics("selectItem", item, {
-    item_list_id: `recommended_products_${props.productId}`,
-    item_list_name: `${props.title} ${props.productName}`,
-  });
+  analytics("selectItem", item, recommendedProductsListProperties.value);
 }
 
 watch(
@@ -44,10 +46,7 @@ watch(
       return;
     }
 
-    analytics("viewItemList", recommendedProducts.value, {
-      item_list_id: `recommended_products_${props.productId}`,
-      item_list_name: `${props.title} ${props.productName}`,
-    });
+    analytics("viewItemList", recommendedProducts.value, recommendedProductsListProperties.value);
   },
   {
     immediate: true,

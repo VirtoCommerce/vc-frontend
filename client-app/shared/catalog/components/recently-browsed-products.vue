@@ -35,6 +35,13 @@ const products = toRef(props, "products");
 const { analytics } = useAnalytics();
 const { t } = useI18n();
 
+function selectItemEvent(item: Product) {
+  analytics("selectItem", item, {
+    item_list_id: "recently_browsed_products",
+    item_list_name: t("pages.cart.recently_browsed_products"),
+  });
+}
+
 watch(products, () => {
   if (!products.value?.length) {
     return;
@@ -43,15 +50,6 @@ watch(products, () => {
   analytics("viewItemList", products.value, {
     item_list_id: "recently_browsed_products",
     item_list_name: t("pages.cart.recently_browsed_products"),
-    source_route: "cart",
   });
 });
-
-const selectItemEvent = (item: Product) => {
-  analytics("selectItem", item, {
-    item_list_id: "recently_browsed_products",
-    item_list_name: t("pages.cart.recently_browsed_products"),
-    source_route: "cart",
-  });
-};
 </script>

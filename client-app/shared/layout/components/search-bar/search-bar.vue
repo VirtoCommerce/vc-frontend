@@ -195,6 +195,12 @@ const trimmedSearchPhrase = computed(() => {
   return searchPhrase.value.trim();
 });
 
+const searchBarListProperties = computed(() => ({
+  search_term: trimmedSearchPhrase,
+  item_list_id: "search_bar",
+  item_list_name: `Search phrase '${trimmedSearchPhrase.value}'`,
+}));
+
 const { bottom } = useElementBounding(searchBarElement);
 
 const searchDropdownStyle = computed<StyleValue | undefined>(() => {
@@ -269,19 +275,12 @@ async function searchAndShowDropdownResults(): Promise<void> {
    * Send Google Analytics event for products.
    */
   if (products.value.length) {
-    analytics("viewItemList", products.value, {
-      item_list_id: "search_bar",
-      item_list_name: `Search phrase "${trimmedSearchPhrase.value}"`,
-    });
+    analytics("viewItemList", products.value, searchBarListProperties.value);
   }
 }
 
 function selectItemEvent(product: Product) {
-  analytics("selectItem", product, {
-    search_term: trimmedSearchPhrase,
-    item_list_id: "search_bar",
-    item_list_name: `Search phrase '${trimmedSearchPhrase.value}'`,
-  });
+  analytics("selectItem", product, searchBarListProperties.value);
 }
 
 function getSearchRoute(phrase: string): RouteLocationRaw {

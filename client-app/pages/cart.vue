@@ -61,13 +61,7 @@
         </div>
       </VcWidget>
 
-      <RecentlyBrowsedProducts
-        v-if="recentlyBrowsedProducts.length"
-        :products="recentlyBrowsedProducts"
-        :product-id="recentlyBrowsedProducts[0]?.id"
-        :product-name="recentlyBrowsedProducts[0]?.name"
-        class="mt-5"
-      />
+      <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" class="mt-5" />
     </template>
 
     <template v-else>

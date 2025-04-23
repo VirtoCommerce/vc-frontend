@@ -349,6 +349,11 @@ const hideViewModeSelector = computed(() => {
   return props.viewMode && viewModes.includes(props.viewMode);
 });
 
+const categoryListProperties = computed(() => ({
+  item_list_id: `category_${currentCategory.value?.slug}_page_${currentPage.value}`,
+  item_list_name: `Category "${currentCategory.value?.name}" (page ${currentPage.value})`,
+}));
+
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
 
@@ -446,10 +451,7 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
   /**
    * Send Google Analytics event for products on next page.
    */
-  analytics("viewItemList", products.value, {
-    item_list_id: `category_${currentCategory.value?.slug}_page_${currentPage.value}`,
-    item_list_name: `Category "${currentCategory.value?.name}" (page ${currentPage.value})`,
-  });
+  analytics("viewItemList", products.value, categoryListProperties.value);
 
   if (searchQueryParam.value) {
     trackViewSearchResults();
@@ -462,10 +464,7 @@ async function fetchProducts(): Promise<void> {
   /**
    * Send Google Analytics event for products.
    */
-  analytics("viewItemList", products.value, {
-    item_list_id: `category_${currentCategory.value?.slug}_page_${currentPage.value}`,
-    item_list_name: `Category "${currentCategory.value?.name}" (page ${currentPage.value})`,
-  });
+  analytics("viewItemList", products.value, categoryListProperties.value);
 
   if (searchQueryParam.value) {
     trackViewSearchResults();
@@ -481,10 +480,7 @@ function trackViewSearchResults(): void {
 }
 
 function selectProduct(product: Product): void {
-  analytics("selectItem", product, {
-    item_list_id: `category_${currentCategory.value?.slug}_page_${currentPage.value}`,
-    item_list_name: `Category "${currentCategory.value?.name}" (page ${currentPage.value})`,
-  });
+  analytics("selectItem", product, categoryListProperties.value);
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
