@@ -14,11 +14,24 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 interface IProps {
   short?: boolean;
+  columns?: Partial<Record<"default" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl", number>>;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
+
+const cols = computed(() => ({
+  default: props.columns?.default ?? 2,
+  xs: props.columns?.xs ?? 3,
+  sm: props.columns?.sm ?? 4,
+  md: props.columns?.md ?? 4,
+  lg: props.columns?.lg ?? 5,
+  xl: props.columns?.xl ?? 6,
+  "2xl": props.columns?.["2xl"] ?? 6,
+}));
 </script>
 
 <style lang="scss">
@@ -32,65 +45,39 @@ defineProps<IProps>();
   }
 
   &__wrapper {
-    @apply flex flex-wrap items-stretch gap-6;
+    --cols: v-bind(cols.default);
 
-    @container (width > theme(containers.3xl)) {
-      @apply gap-7;
+    @apply grid gap-x-6 grid-cols-[repeat(var(--cols),minmax(0,1fr))];
+
+    @media (min-width: theme("screens.xs")) {
+      --cols: v-bind(cols.xs);
     }
 
-    & > * {
-      width: calc((100% - theme("space.6")) / 2);
+    @media (min-width: theme("screens.sm")) {
+      --cols: v-bind(cols.sm);
+    }
 
-      @container (width > theme(containers.sm)) {
-        width: calc((100% - 2 * theme("space.6")) / 3);
-      }
+    @media (min-width: theme("screens.md")) {
+      --cols: v-bind(cols.md);
+    }
 
-      @container (width > theme(containers.xl)) {
-        width: calc((100% - 3 * theme("space.6")) / 4);
-      }
+    @media (min-width: theme("screens.lg")) {
+      --cols: v-bind(cols.lg);
+    }
 
-      @container (width > theme(containers.3xl)) {
-        width: calc((100% - 4 * theme("space.7")) / 5);
-      }
+    @media (min-width: theme("screens.xl")) {
+      --cols: v-bind(cols.xl);
+    }
 
-      @container (width > theme(containers.4xl)) {
-        width: calc((100% - 5 * theme("space.7")) / 6);
-      }
+    @media (min-width: theme("screens.2xl")) {
+      --cols: v-bind(cols[ "2xl"]);
+    }
 
-      #{$short} & {
-        @apply hidden;
-
-        &:nth-child(1),
-        &:nth-child(2),
-        &:nth-child(3),
-        &:nth-child(4) {
-          @apply block;
-        }
-
-        @container (width > theme(containers.sm)) {
-          &:nth-child(4) {
-            @apply hidden;
-          }
-        }
-
-        @container (width > theme(containers.xl)) {
-          &:nth-child(4) {
-            @apply block;
-          }
-        }
-
-        @container (width > theme(containers.3xl)) {
-          &:nth-child(5) {
-            @apply block;
-          }
-        }
-
-        @container (width > theme(containers.4xl)) {
-          &:nth-child(6) {
-            @apply block;
-          }
-        }
-      }
+    #{$short} & {
+      overflow-y: hidden;
+      grid-template-rows: auto;
+      grid-auto-rows: 0;
+      grid-auto-flow: row;
     }
   }
 }

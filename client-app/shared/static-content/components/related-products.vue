@@ -7,15 +7,14 @@
     size="lg"
     class="order-last max-md:-mx-4.5"
   >
-    <div v-if="lg" class="-mb-2 flex flex-wrap items-stretch gap-x-7 gap-y-4">
+    <VcProductGrid v-if="lg" short :columns="{ default: 2, xs: 2, sm: 3, md: 2 }">
       <ProductCardRelated
         v-for="(item, index) in mobileProducts"
         :key="index"
         :product="item"
-        class="w-[calc((100%-1.75rem)/2)] sm:w-[calc((100%-2*1.75rem)/3)] md:w-[calc((100%-1.75rem)/2)]"
         @link-click="analytics('selectItem', item)"
       />
-    </div>
+    </VcProductGrid>
 
     <VcCarousel v-else :slides="relatedProducts" :options="relatedProductsCarouselOptions" navigation>
       <template #slide="{ slide: item }">
