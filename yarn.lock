@@ -15255,7 +15255,7 @@ __metadata:
     vue-router: "npm:^4.5.0"
     vue-tsc: "npm:^2.2.8"
     vue3-application-insights: "npm:^1.1.0"
-    yup: "npm:^1.4.0"
+    yup: "npm:^1.6.1"
   languageName: unknown
   linkType: soft
 
@@ -16180,7 +16180,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yup@npm:^1.4.0":
+"yup@npm:^1.6.1":
   version: 1.6.1
   resolution: "yup@npm:1.6.1"
   dependencies:
