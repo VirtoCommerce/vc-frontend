@@ -146,11 +146,13 @@ onMounted(() => {
   }
 
   &__label {
-    @apply w-32 py-2.5 ps-2 text-neutral-600;
+    @apply flex-none w-32 py-2.5 ps-2 text-neutral-600 break-words;
   }
 
   &__value {
     @apply grow py-2.5 px-2 text-neutral-950;
+
+    word-break: break-word;
   }
 }
 </style>
