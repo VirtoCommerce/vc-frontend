@@ -7,14 +7,14 @@
     size="lg"
     class="order-last max-md:-mx-4.5"
   >
-    <VcProductGrid v-if="lg" short :columns="{ default: 2, xs: 2, sm: 3, md: 2 }">
+    <VcProductsGrid v-if="lg" short :columns="{ default: 2, xs: 2, sm: 3, md: 2 }">
       <ProductCardRelated
         v-for="(item, index) in mobileProducts"
         :key="index"
         :product="item"
         @link-click="analytics('selectItem', item)"
       />
-    </VcProductGrid>
+    </VcProductsGrid>
 
     <VcCarousel v-else :slides="relatedProducts" :options="relatedProductsCarouselOptions" navigation>
       <template #slide="{ slide: item }">
