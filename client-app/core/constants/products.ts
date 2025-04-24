@@ -1,3 +1,9 @@
+/**
+ * A list of product sorting options.
+ * @type {Array<{id: string, name: string}>}
+ * @property {string} id - The filter id.
+ * @property {string} name - The i18n key for the sorting option name.
+ */
 export const PRODUCT_SORTING_LIST = [
   { id: "", name: "shared.featured" },
   { id: "name-ascending", name: "shared.alphabetically_a_z" },
