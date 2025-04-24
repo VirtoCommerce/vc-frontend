@@ -1406,14 +1406,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@builder.io/sdk-vue@npm:^4.0.9":
-  version: 4.0.9
-  resolution: "@builder.io/sdk-vue@npm:4.0.9"
+"@builder.io/sdk-vue@npm:^4.0.10":
+  version: 4.0.10
+  resolution: "@builder.io/sdk-vue@npm:4.0.10"
   dependencies:
     isolated-vm: "npm:^5.0.0"
   peerDependencies:
     vue: ">= 3"
-  checksum: 10c0/80ee415fd0a5e1c5730708ccb636530539c4efc5e0d34958ea5b9b6071165ec404c39156bfb932d95981504de2e2a1bd4083b236f1e7ebabc5a8cb5664e09fc5
+  checksum: 10c0/981c1b42f0afd2fa09547bfbe828f24f294eb13b37029379c48ea0f9d703a4fb659ccb75984b14a95a2f32365e090e50a9d2b84e966a03eb0043038e0bd2736a
   languageName: node
   linkType: hard
 
@@ -2468,7 +2468,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/vue@npm:^1.1.4":
+"@floating-ui/vue@npm:^1.1.6":
   version: 1.1.6
   resolution: "@floating-ui/vue@npm:1.1.6"
   dependencies:
@@ -15149,10 +15149,10 @@ __metadata:
   resolution: "vc-theme-b2b-vue@workspace:."
   dependencies:
     "@apollo/client": "npm:^3.12.7"
-    "@builder.io/sdk-vue": "npm:^4.0.9"
+    "@builder.io/sdk-vue": "npm:^4.0.10"
     "@commitlint/cli": "npm:^19.3.0"
     "@commitlint/config-conventional": "npm:^19.2.2"
-    "@floating-ui/vue": "npm:^1.1.4"
+    "@floating-ui/vue": "npm:^1.1.6"
     "@google/generative-ai": "npm:^0.21.0"
     "@graphql-codegen/add": "npm:5.0.3"
     "@graphql-codegen/cli": "npm:5.0.3"

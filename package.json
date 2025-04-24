@@ -43,8 +43,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.12.7",
-    "@builder.io/sdk-vue": "^4.0.9",
-    "@floating-ui/vue": "^1.1.4",
+    "@builder.io/sdk-vue": "^4.0.10",
+    "@floating-ui/vue": "^1.1.6",
     "@headlessui/vue": "^1.7.23",
     "@tailwindcss/container-queries": "^0.1.1",
     "@unhead/vue": "^2.0.8",
