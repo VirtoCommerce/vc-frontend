@@ -105,6 +105,7 @@ import { useAnalytics, useThemeContext } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger, replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
+import { useNotifications } from "@/shared/notification";
 import { useSkyflowCards } from "../composables";
 import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, InputKeyValueType, KeyValueType } from "@/core/api/graphql/types";
@@ -112,7 +113,6 @@ import type CollectContainer from "skyflow-js/types/core/external/collect/collec
 import type CollectElement from "skyflow-js/types/core/external/collect/collect-element";
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
 import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
-import { useNotifications } from "@/shared/notification";
 
 interface IProps {
   order: CustomerOrderType;
@@ -393,8 +393,6 @@ function isNewCard(card: { skyflowId: string }) {
 
 // CVV only START
 const isSavedCardCvvRequired = computed(() => {
-  // todo add "isCvvRequired" flag to saved cards
-  // return selectedSkyflowCard.value?.isCvvRequired
   return themeContext.value.settings.isCVVinSkyflowRequired;
 });
 

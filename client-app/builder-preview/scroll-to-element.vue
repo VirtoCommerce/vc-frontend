@@ -3,12 +3,13 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+interface IProps {
   model: {
-    type: Object,
-    required: true,
-  },
-});
+    id: string;
+  };
+}
+
+defineProps<IProps>();
 </script>
 
 <style lang="scss" scoped>
