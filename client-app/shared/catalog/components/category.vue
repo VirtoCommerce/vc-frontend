@@ -132,7 +132,7 @@
             text-field="name"
             value-field="id"
             :disabled="fetchingProducts"
-            :items="PRODUCT_SORTING_LIST"
+            :items="translatedProductSortingList"
             class="w-0 grow lg:w-48"
             size="sm"
             @change="resetCurrentPage"
@@ -228,6 +228,7 @@ import {
 } from "@vueuse/core";
 import omit from "lodash/omit";
 import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -372,6 +373,17 @@ const breadcrumbs = useBreadcrumbs(() =>
   ),
 );
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
+
+const { t } = useI18n();
+
+function getTranslatedProductSortingList() {
+  return PRODUCT_SORTING_LIST.map((item) => ({
+    ...item,
+    name: t(item.name),
+  }));
+}
+
+const translatedProductSortingList = computed(() => getTranslatedProductSortingList());
 
 function getSelectedAddressArgs(): {
   selectedAddressId: string | undefined;
