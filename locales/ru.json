@@ -871,6 +871,15 @@
         "shared": "Общий",
         "private": "Приватный"
       }
+    },
+    "sorting": {
+      "featured": "Рекомендуемые",
+      "alphabetically_a_z": "По алфавиту, А-Я",
+      "alphabetically_z_a": "По алфавиту, Я-А",
+      "price_low_to_high": "Цена, от низкой к высокой",
+      "price_high_to_low": "Цена: от высокой к низкой",
+      "date_new_to_old": "Дата, от новых к старым",
+      "date_old_to_new": "Дата: сначала старые"
     }
   },
   "pages": {

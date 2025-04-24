@@ -871,6 +871,15 @@
         "shared": "Compartilhada",
         "private": "Privada"
       }
+    },
+    "sorting": {
+      "featured": "Em destaque",
+      "alphabetically_a_z": "Alfabeticamente, A-Z",
+      "alphabetically_z_a": "Alfabeticamente, Z-A",
+      "price_low_to_high": "Preço, do menor para o maior",
+      "price_high_to_low": "Preço, do maior para o menor",
+      "date_new_to_old": "Data, mais recente para o mais antigo",
+      "date_old_to_new": "Data, do mais antigo para o mais recente"
     }
   },
   "pages": {
