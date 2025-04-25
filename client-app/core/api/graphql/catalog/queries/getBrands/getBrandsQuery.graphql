@@ -1,0 +1,26 @@
+query GetBrands(
+  $storeId: String!
+  $currencyCode: String
+  $cultureName: String
+  $after: String
+  $first: Int
+  $userId: String
+) {
+  brands(
+    storeId: $storeId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+    after: $after
+    first: $first
+    userId: $userId
+  ) {
+    totalCount
+    items {
+      id
+      name
+      image
+      description
+      featured
+    }
+  }
+}
