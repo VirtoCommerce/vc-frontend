@@ -157,8 +157,8 @@
                 {{ $d(quote.createdDate) }}
               </td>
 
-              <td class="overflow-hidden text-ellipsis p-1">
-                <QuoteStatus :status="quote.status" />
+              <td class="p-1">
+                <QuoteStatus :status="quote.status" class="inline-block" />
               </td>
 
               <td class="overflow-hidden text-ellipsis p-5 text-right">

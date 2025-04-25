@@ -135,6 +135,12 @@
         "color": "danger",
         "variant": "outline-dark",
         "icon": "circle-solid"
+      },
+      {
+        "code": "Canceled",
+        "color": "danger",
+        "variant": "outline-dark",
+        "icon": "circle-solid"
       }
     ],
 
