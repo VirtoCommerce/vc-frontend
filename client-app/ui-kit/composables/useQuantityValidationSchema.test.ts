@@ -103,6 +103,24 @@ describe("use-quantity-validation-schema", () => {
     }
   });
 
+  it("available quantity equals minimum quantity", () => {
+    const { quantitySchema } = useQuantityValidationSchema({
+      availableQuantity: ref(3),
+      minQuantity: ref(3),
+      maxQuantity: ref(3),
+    });
+
+    expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
+
+    expect(() => quantitySchema.value.validateSync(2)).toThrowError(
+      expect.objectContaining({ type: "minValue" }) as Error,
+    );
+
+    expect(() => quantitySchema.value.validateSync(4)).toThrowError(
+      expect.objectContaining({ type: "maxValue" }) as Error,
+    );
+  });
+
   it("available quantity < minimum quantity", () => {
     const { quantitySchema } = useQuantityValidationSchema({
       availableQuantity: ref(5),

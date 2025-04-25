@@ -54,7 +54,7 @@ export function useQuantityValidationSchema(payload: {
       return minMaxTest(schema, minQuantity.value, Math.min(quantity, maxQuantity.value));
     }
     if (maxQuantity?.value && maxQuantity?.value === minQuantity?.value) {
-      return maxTest(schema, maxQuantity.value);
+      return minTest(schema, minQuantity.value) && maxTest(schema, maxQuantity.value);
     }
     if (minQuantity?.value) {
       if (minQuantity.value > quantity) {
