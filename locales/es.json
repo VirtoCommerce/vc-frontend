@@ -776,7 +776,8 @@
           "month": "Por favor, proporciona un mes de vencimiento válido",
           "year": "Por favor, proporcione un año de vencimiento válido"
         },
-        "user_error_message": "No se pudo inicializar el pago. Inténtalo de nuevo más tarde o usa otro método de pago"
+        "user_error_message": "No se pudo inicializar el pago. Inténtalo de nuevo más tarde o usa otro método de pago",
+        "payment_unavailable": "El método de pago no está disponible. Inténtalo de nuevo más tarde."
       },
       "authorize_net": {
         "user_agreement_link": "Acuerdo de usuario",
