@@ -1,0 +1,101 @@
+name: Theme Release Hotfix
+on:
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    env: 
+      SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+      GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+      BLOB_SAS: ${{ secrets.BLOB_TOKEN }}
+      VERSION_SUFFIX: ""
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Node 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Enable corepack
+      run: |
+        corepack enable
+
+    - name: Setup sonarqube
+      uses: warchant/setup-sonar-scanner@v8
+
+    - name: Install VirtoCommerce.GlobalTool
+      uses: VirtoCommerce/vc-github-actions/setup-vcbuild@master
+    
+    - name: Setup Git Credentials
+      uses: VirtoCommerce/vc-github-actions/setup-git-credentials-github@master
+      with:
+        githubToken: ${{ secrets.REPO_TOKEN }}
+    
+    - name: Increment Version
+      run: |
+        vc-build IncrementPatch
+        git add ${{ github.workspace }}/package.json
+        git commit -m "ci: Auto IncrementPatch"
+        git push
+
+    - name: Get Image Version
+      uses: VirtoCommerce/vc-github-actions/get-image-version@master
+      id: image
+
+    - name: Set VERSION_SUFFIX variable
+      run: |
+        echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}" >> $GITHUB_ENV
+
+    - name: Set VERSION
+      run: |
+        echo "VERSION=${{ steps.image.outputs.prefix }}" >> $GITHUB_ENV
+
+    - name: Update package.json Version
+      run: |
+        yarn version ${{ env.VERSION }}
+
+    - name: Install dependencies
+      run: |
+        yarn install
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    
+    - name: Build
+      run: |
+        yarn build
+
+    - name: Unit Tests
+      run: |
+        yarn test:unit --run
+
+    - name: Typing Tests
+      run: |
+        yarn test:typing --run
+
+    - name: Packaging
+      run: |
+        yarn compress
+
+    - name: Publish to Blob
+      id: blobRelease
+      uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
+      with:
+        blobSAS: ${{ secrets.BLOB_TOKEN }}
+    
+    - name: Create GH Release
+      run: |
+        gh release create ${{ steps.image.outputs.prefix }} \
+              --generate-notes \
+              --latest=false \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${GITHUB_REPOSITORY#*/} ${{ steps.image.outputs.prefix }}" \
+              "./artifacts/${GITHUB_REPOSITORY#*/}-${{ steps.image.outputs.prefix }}.zip#${GITHUB_REPOSITORY#*/}-${{ steps.image.outputs.prefix }}.zip"

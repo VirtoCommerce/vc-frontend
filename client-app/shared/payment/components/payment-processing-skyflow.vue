@@ -103,8 +103,9 @@ import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useAnalytics, useThemeContext } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
-import { replaceXFromBeginning } from "@/core/utilities";
+import { Logger, replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
+import { useNotifications } from "@/shared/notification";
 import { useSkyflowCards } from "../composables";
 import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, InputKeyValueType, KeyValueType } from "@/core/api/graphql/types";
@@ -132,6 +133,7 @@ const { user, isAuthenticated } = useUser();
 const { skyflowCards, fetchSkyflowCards } = useSkyflowCards();
 const { analytics } = useAnalytics();
 const { themeContext } = useThemeContext();
+const notifications = useNotifications();
 
 const loading = ref(false);
 const cardContainer = ref(null);
@@ -391,8 +393,6 @@ function isNewCard(card: { skyflowId: string }) {
 
 // CVV only START
 const isSavedCardCvvRequired = computed(() => {
-  // todo add "isCvvRequired" flag to saved cards
-  // return selectedSkyflowCard.value?.isCvvRequired
   return themeContext.value.settings.isCVVinSkyflowRequired;
 });
 
@@ -503,7 +503,7 @@ async function initPayment() {
     });
 
     if (errorMessage || !publicParameters) {
-      emit("fail");
+      showError(t("shared.payment.bank_card_form.payment_unavailable"));
       return;
     }
 
@@ -518,7 +518,7 @@ async function initPayment() {
       },
     });
   } catch (e) {
-    emit("fail");
+    showError(t("shared.payment.bank_card_form.payment_unavailable"));
   }
 }
 
@@ -592,8 +592,20 @@ async function payWithSavedCreditCard() {
 }
 // PAYMENT END
 
+function showError(message: string) {
+  notifications.error({
+    text: message,
+    duration: 10000,
+    single: true,
+  });
+}
+
 onMounted(async () => {
-  await fetchSkyflowCards();
+  try {
+    await fetchSkyflowCards();
+  } catch (e) {
+    Logger.error(onMounted.name, e);
+  }
 
   if (!skyflowCards.value?.length) {
     void initNewCardForm();
