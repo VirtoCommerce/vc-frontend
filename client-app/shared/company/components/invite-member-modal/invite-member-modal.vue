@@ -79,6 +79,7 @@ const emit = defineEmits<IEmits>();
 const MAX_INVITED_CONTACTS_COUNT = 200;
 const MAX_EMAIL_LENGTH = 120;
 
+// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 const modalComponent = shallowRef<InstanceType<typeof VcModal> | null>(null);
 const loading = ref(false);
 const commonErrors = ref<string[]>([]);
