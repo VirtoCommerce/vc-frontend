@@ -47,7 +47,7 @@ const { t } = useI18n();
 async function initPayment() {
   const { isSuccess, paymentActionType, actionRedirectUrl, errorMessage } = await initializePayment({
     orderId: props.order.id,
-    paymentId: props.order.inPayments[0]!.id,
+    paymentId: props.order.inPayments[0].id,
   });
 
   if (paymentActionType !== PaymentActionType[PaymentActionType.Redirection]) {
