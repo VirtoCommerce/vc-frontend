@@ -71,7 +71,12 @@ Disabled.args = {
   disabled: true,
 };
 
-export const Icon: StoryFn<typeof VcChip> = (args) => ({
+export const Icon = Template.bind({});
+Icon.args = {
+  icon: "cog",
+};
+
+export const IconInSlot: StoryFn<typeof VcChip> = (args) => ({
   components: { VcChip, VcIcon },
   setup: () => ({ args }),
   template: `<VcChip v-bind="args">
@@ -98,12 +103,11 @@ export const AllStates: StoryFn<typeof VcChip> = () => ({
     <div v-for="size in sizes" class="space-y-3">
       <h2 class="text-lg font-bold">Size: {{ size }}</h2>
 
-
       <div class="space-y-1" v-for="variant in variants">
         <div class="text-base">Variant: <b>{{ variant }}</b></div>
 
         <div class="flex flex-wrap gap-2 items-center">
-          <VcChip v-for="color in colors" :size="size" :color="color" :variant="variant">
+          <VcChip v-for="color in colors" :size="size" :color="color" :variant="variant" icon="cog">
             Color: {{ color }}
           </VcChip>
         </div>
