@@ -184,7 +184,7 @@ const pendingItems = ref<Record<string, boolean>>({});
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
-  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku!]?.quantity)),
+  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku]?.quantity)),
 );
 const loading = computed<boolean>(() => listLoading.value || cartLoading.value || cartChanging.value);
 const pagesCount = computed<number>(() => Math.ceil((wishlistItems.value.length ?? 0) / itemsPerPage.value));
@@ -230,9 +230,9 @@ async function addAllListItemsToCart(): Promise<void> {
 }
 async function updateItems() {
   const payload: InputUpdateWishlistItemsType = {
-    listId: list.value!.id!,
-    items: wishlistItems
-      .value!.filter((el) => !!el.product)
+    listId: list.value!.id,
+    items: wishlistItems.value
+      .filter((el) => !!el.product)
       .map<InputUpdateWishlistLineItemType>((item) => ({
         lineItemId: item.id,
         quantity: item.quantity,

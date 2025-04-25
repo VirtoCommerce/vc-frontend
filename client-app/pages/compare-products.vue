@@ -163,8 +163,8 @@ function getProperties() {
   const names = _.uniq(
     propertiesCombined.map((prop) => {
       return {
-        name: prop!.name,
-        label: prop!.label!,
+        name: prop.name,
+        label: prop.label,
       };
     }),
   );

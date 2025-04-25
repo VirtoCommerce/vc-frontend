@@ -31,7 +31,7 @@ const props = defineProps<IProps>();
 const { loading, removeWishlist } = useWishlists();
 
 async function remove(closingHandle: () => void) {
-  const result: boolean = await removeWishlist(props.list.id!);
+  const result: boolean = await removeWishlist(props.list.id);
 
   if (result) {
     closingHandle();
