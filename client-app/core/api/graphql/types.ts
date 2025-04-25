@@ -141,6 +141,39 @@ export type BackInStockSubscriptionType = {
   userId: Scalars['String']['output'];
 };
 
+/** A connection from an object to a list of objects of type `Brand`. */
+export type BrandConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<BrandEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<BrandType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `Brand`. */
+export type BrandEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<BrandType>;
+};
+
+export type BrandType = {
+  /** Brand description. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** Brand. */
+  featured?: Maybe<Scalars['Boolean']['output']>;
+  /** Brand ID. */
+  id: Scalars['String']['output'];
+  /** Brand logo URL. */
+  image?: Maybe<Scalars['String']['output']>;
+  /** Brand name. */
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 export type Breadcrumb = {
   /** Id of item the breadcrumb calculated for */
   itemId: Scalars['String']['output'];
@@ -4745,6 +4778,7 @@ export enum PropertyValueTypes {
   Html = 'HTML',
   Integer = 'INTEGER',
   LongText = 'LONG_TEXT',
+  Measure = 'MEASURE',
   Number = 'NUMBER',
   ShortText = 'SHORT_TEXT'
 }
@@ -4779,6 +4813,7 @@ export type PushMessageType = {
 
 export type Query = {
   backInStockSubscriptions?: Maybe<BackInStockSubscriptionConnection>;
+  brands?: Maybe<BrandConnection>;
   canLeaveFeedback?: Maybe<Scalars['Boolean']['output']>;
   cart?: Maybe<CartType>;
   carts?: Maybe<CartConnection>;
@@ -4856,6 +4891,19 @@ export type QueryBackInStockSubscriptionsArgs = {
   productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryBrandsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
