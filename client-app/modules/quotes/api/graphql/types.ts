@@ -834,6 +834,7 @@ export enum PropertyValueTypes {
   Html = 'HTML',
   Integer = 'INTEGER',
   LongText = 'LONG_TEXT',
+  Measure = 'MEASURE',
   Number = 'NUMBER',
   ShortText = 'SHORT_TEXT'
 }
