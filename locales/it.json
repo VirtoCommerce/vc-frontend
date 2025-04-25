@@ -776,7 +776,8 @@
           "month": "Inserisci un mese di scadenza valido",
           "year": "Inserisci un anno di scadenza valido"
         },
-        "user_error_message": "Impossibile inizializzare il pagamento. Riprova più tardi o usa un altro metodo di pagamento"
+        "user_error_message": "Impossibile inizializzare il pagamento. Riprova più tardi o usa un altro metodo di pagamento",
+        "payment_unavailable": "Metodo di pagamento non disponibile. Riprova più tardi."
       },
       "authorize_net": {
         "user_agreement_link": "Accordo utente",
