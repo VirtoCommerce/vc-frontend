@@ -23,12 +23,17 @@
           v-for="(item, index) in groupedProperties"
           :key="index"
           size="xs"
-          :title="item.group?.name"
           collapsible
           :collapsed="collapsedStates[index]"
           :shadow="false"
           @toggle-collapse="($event) => (collapsedStates[index] = $event)"
         >
+          <template #title>
+            <span class="normal-case">
+              {{ item.group?.name }}
+            </span>
+          </template>
+
           <div class="properties__group">
             <VcCollapsibleContent :max-height="groupedProperties.length === 1 ? '18.75rem' : 'none'">
               <div v-for="property in item.properties" :key="property.id" class="properties__prop">
