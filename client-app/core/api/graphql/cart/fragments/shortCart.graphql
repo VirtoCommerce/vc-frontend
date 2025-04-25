@@ -4,8 +4,6 @@
 
 fragment shortCart on CartType {
   ...cartId
-  name
-  type
   itemsQuantity
   items {
     ...shortLineItem

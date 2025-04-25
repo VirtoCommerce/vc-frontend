@@ -57,8 +57,6 @@ async function select(code: string): Promise<void> {
         command: {
           userId,
           cartId: cart.value.id,
-          cartName: cart.value.name,
-          cartType: cart.value.type,
           newCurrencyCode: code,
           storeId,
           cultureName,
