@@ -28,7 +28,13 @@
       </VcWidget>
 
       <!-- Quote comment -->
-      <VcWidget v-if="quote.comment" :title="$t('quote_details.comment')" prepend-icon="document-text" size="lg">
+      <VcWidget
+        v-if="quote.comment"
+        :title="$t('quote_details.comment')"
+        prepend-icon="document-text"
+        size="lg"
+        class="mt-5"
+      >
         <div class="text-base">
           {{ quote.comment }}
         </div>
