@@ -74,7 +74,9 @@
       "add_with_bulk_order": "Ajouter par commande groupée",
       "all_orders": "Toutes les commandes",
       "my_orders": "Mes commandes",
-      "scroll_to_top": "Haut de page"
+      "scroll_to_top": "Haut de page",
+      "show_less": "Afficher moins",
+      "expand_all": "Tout développer"
     },
     "labels": {
       "actions": "Actions",
@@ -156,6 +158,7 @@
       "toggle_search_bar": "Basculer la barre de recherche",
       "slider_image": "Image du curseur",
       "buyer_name": "Nom de l'acheteur",
+      "other": "Autre",
       "vendor_name": "Fournisseur: {name}",
       "not_available": "N/A"
     },
