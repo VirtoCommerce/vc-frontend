@@ -69,15 +69,15 @@ describe("use-quantity-validation-schema", () => {
     const { quantitySchema } = useQuantityValidationSchema({
       availableQuantity: ref(3),
       minQuantity: ref(3),
-      maxQuantity: ref(3),
+      maxQuantity: ref(0),
     });
 
     expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(2)).toThrowError(
-      expect.objectContaining({ type: "minValue" }) as Error,
+      expect.objectContaining({ type: "exactQtyValue" }) as Error,
     );
     expect(() => quantitySchema.value.validateSync(4)).toThrowError(
-      expect.objectContaining({ type: "maxValue" }) as Error,
+      expect.objectContaining({ type: "exactQtyValue" }) as Error,
     );
   });
 

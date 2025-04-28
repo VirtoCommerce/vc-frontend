@@ -30,6 +30,14 @@ export function useQuantityValidationSchema(payload: {
     return schema.test("minValue", t("ui_kit.add_to_cart.errors.min", [min]), (value) => !!value && value >= min);
   }
 
+  function exactQtyTest(schema: NumberSchema, exactQty: number): NumberSchema {
+    return schema.test(
+      "exactQtyValue",
+      t("ui_kit.add_to_cart.errors.exact_qty", [exactQty]),
+      (value) => !!value && value === exactQty,
+    );
+  }
+
   function availableLessThenMinError(schema: NumberSchema, min: number): NumberSchema {
     return schema.test("incorrectMinValue", t("ui_kit.add_to_cart.errors.min_not_available", [min]), () => false);
   }
@@ -54,11 +62,14 @@ export function useQuantityValidationSchema(payload: {
       return minMaxTest(schema, minQuantity.value, Math.min(quantity, maxQuantity.value));
     }
     if (maxQuantity?.value && maxQuantity?.value === minQuantity?.value) {
-      return minTest(schema, minQuantity.value) && maxTest(schema, maxQuantity.value);
+      return exactQtyTest(schema, minQuantity.value);
     }
     if (minQuantity?.value) {
       if (minQuantity.value > quantity) {
         return availableLessThenMinError(schema, minQuantity.value);
+      }
+      if (minQuantity.value === quantity) {
+        return exactQtyTest(schema, minQuantity.value);
       }
       return minMaxTest(schema, minQuantity.value, quantity);
     }
@@ -71,6 +82,9 @@ export function useQuantityValidationSchema(payload: {
 
   function withoutAvailableQuantityTest(schema: NumberSchema): NumberSchema {
     if (minQuantity?.value && maxQuantity?.value) {
+      if (minQuantity.value === maxQuantity.value) {
+        return exactQtyTest(schema, minQuantity.value);
+      }
       return minMaxTest(schema, minQuantity?.value, maxQuantity.value);
     }
     if (minQuantity?.value) {
