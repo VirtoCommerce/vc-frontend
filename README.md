@@ -218,7 +218,7 @@ yarn build:watch
 ## Types generation
 
 Command:
-```
+```bash
 yarn generate:graphql-types
 ```
 
