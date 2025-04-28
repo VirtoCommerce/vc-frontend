@@ -236,10 +236,10 @@ describe("use-quantity-validation-schema", () => {
 
     expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(2)).toThrowError(
-      expect.objectContaining({ type: "minMaxValue" }) as Error,
+      expect.objectContaining({ type: "exactQtyValue" }) as Error,
     );
     expect(() => quantitySchema.value.validateSync(4)).toThrowError(
-      expect.objectContaining({ type: "minMaxValue" }) as Error,
+      expect.objectContaining({ type: "exactQtyValue" }) as Error,
     );
   });
 
