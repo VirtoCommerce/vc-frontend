@@ -21,7 +21,6 @@
         v-model="isSelected"
         class="vc-line-item__checkbox"
         :name="$t('ui_kit.labels.toggle_vendor_select')"
-        :disabled="disabled"
         test-id="vc-line-item-checkbox"
         @change="$emit('select', isSelected)"
       />
