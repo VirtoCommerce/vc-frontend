@@ -7,28 +7,8 @@
     </VcTypography>
 
     <div class="brands__top">
-      <router-link class="brands__tile" to="#">
-        <VcImage class="brands__img" src="logo.svg" alt="" />
-      </router-link>
-
-      <router-link class="brands__tile" to="#">
-        <VcImage class="brands__img" src="ms.svg" alt="" />
-      </router-link>
-
-      <router-link class="brands__tile" to="#">
-        <VcImage class="brands__img" src="mastercard.svg" alt="" />
-      </router-link>
-
-      <router-link class="brands__tile" to="#">
-        <VcImage class="brands__img" src="main-banner.webp" alt="" />
-      </router-link>
-
-      <router-link class="brands__tile" to="#">
-        <VcImage class="brands__img" src="google.webp" alt="" />
-      </router-link>
-
-      <router-link class="brands__tile" to="#">
-        <VcImage class="brands__img" src="maestro.svg" alt="" />
+      <router-link v-for="brand in featuredBrands" :key="brand.id" class="brands__tile" to="#">
+        <VcImage class="brands__img" :src="brand.image" :alt="brand.name" />
       </router-link>
     </div>
 
@@ -41,7 +21,7 @@
             </VcButton>
 
             <VcButton
-              v-for="letter in letters"
+              v-for="letter in Object.keys(groupedBrands)"
               :key="letter"
               size="xs"
               color="neutral"
@@ -62,14 +42,16 @@
       </template>
 
       <div class="brands__list">
-        <div v-for="letter in letters" :id="'brands-' + letter" :key="letter" class="brands__items">
+        <div v-for="letter in Object.keys(groupedBrands)" :id="'brands-' + letter" :key="letter" class="brands__items">
           <div class="brands__letter">
             {{ letter }}
           </div>
 
           <ul class="brands__links">
-            <li v-for="i in Math.floor(Math.random() * 20)" :key="i">
-              <router-link to="#" class="brands__link"> {{ letter }}brand name {{ i }} </router-link>
+            <li v-for="brand in groupedBrands[letter]" :key="brand.id">
+              <router-link to="#" class="brands__link">
+                {{ brand.name }}
+              </router-link>
             </li>
           </ul>
         </div>
@@ -79,9 +61,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { useBrands } from "@/shared/catalog";
 
 const { t } = useI18n();
 
@@ -89,8 +71,10 @@ usePageHead({
   title: t("pages.brands.title"),
 });
 
-const letters = computed(() => "abcdefghijklmnopqrstuvwxyz".toUpperCase().split(""));
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.brands.title") }]);
+const { groupedBrands, featuredBrands, fetchBrands } = useBrands({ itemsPerPage: 1000 });
+
+void fetchBrands();
 
 function scrollToLetter(letter: string) {
   const element = document.getElementById(`brands-${letter}`);

@@ -5,6 +5,7 @@ query GetBrands(
   $after: String
   $first: Int
   $userId: String
+  $sort: String
 ) {
   brands(
     storeId: $storeId
@@ -13,6 +14,7 @@ query GetBrands(
     after: $after
     first: $first
     userId: $userId
+    sort: $sort
   ) {
     totalCount
     items {
