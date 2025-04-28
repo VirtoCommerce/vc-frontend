@@ -604,6 +604,10 @@ watchDebounced(
     }
   }
 
+  &__chips {
+    @apply flex mb-3 flex-wrap gap-2;
+  }
+
   &__products-bottom {
     @apply my-8 text-center;
   }

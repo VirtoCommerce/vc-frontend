@@ -6,7 +6,7 @@
   </VcChip>
 
   <VcChip
-    v-else-if="isInStock && quantity"
+    v-else-if="isInStock"
     :size="size"
     variant="outline-dark"
     color="success"
@@ -16,7 +16,7 @@
     <VcIcon name="cube" />
 
     <span class="inline-block min-w-3 text-center">
-      {{ inStockQuantityLabel }}
+      {{ quantity ? inStockQuantityLabel : $t("common.labels.in_stock") }}
     </span>
   </VcChip>
 

@@ -45,7 +45,6 @@
       :list-price="product.minVariationPrice?.list ?? product.price.list"
       :with-from-label="product.hasVariations"
       :single-line="viewMode === 'grid'"
-      :align="viewMode === 'list' ? 'end' : 'start'"
     />
 
     <component
