@@ -74,7 +74,9 @@
       "add_with_bulk_order": "Adicionar com pedido em lote",
       "all_orders": "Todas as encomendas.",
       "my_orders": "Minhas encomendas",
-      "scroll_to_top": "Voltar ao topo"
+      "scroll_to_top": "Voltar ao topo",
+      "show_less": "Mostrar menos",
+      "expand_all": "Expandir tudo"
     },
     "labels": {
       "actions": "Ações",
@@ -156,6 +158,7 @@
       "toggle_search_bar": "Alternar barra de pesquisa",
       "slider_image": "Imagem do slider",
       "buyer_name": "Nome do comprador",
+      "other": "Outro",
       "vendor_name": "Fornecedor: {name}",
       "not_available": "N/D"
     },

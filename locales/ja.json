@@ -74,7 +74,9 @@
       "add_with_bulk_order": "一括注文で追加",
       "all_orders": "すべての注文",
       "my_orders": "私の注文",
-      "scroll_to_top": "トップへスクロール"
+      "scroll_to_top": "トップへスクロール",
+      "show_less": "折りたたむ",
+      "expand_all": "すべて展開"
     },
     "labels": {
       "actions": "操作",
@@ -156,6 +158,7 @@
       "toggle_search_bar": "検索バーを切り替える",
       "slider_image": "スライダー画像",
       "buyer_name": "購入者名",
+      "other": "その他",
       "vendor_name": "ベンダー: {name}",
       "not_available": "N/A"
     },
