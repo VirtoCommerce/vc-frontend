@@ -74,7 +74,9 @@
       "add_with_bulk_order": "Add with bulk order",
       "all_orders": "All orders",
       "my_orders": "My orders",
-      "scroll_to_top": "Scroll to top"
+      "scroll_to_top": "Scroll to top",
+      "show_less": "Show less",
+      "expand_all": "Expand all"
     },
     "labels": {
       "actions": "Actions",
@@ -156,6 +158,7 @@
       "toggle_search_bar": "Toggle search bar",
       "slider_image": "Slider image",
       "buyer_name": "Buyer name",
+      "other": "Other",
       "vendor_name": "Vendor: {name}",
       "not_available": "N/A"
     },
