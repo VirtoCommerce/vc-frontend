@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { ref, shallowRef } from "vue";
+import { ref, useTemplateRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { string } from "yup";
@@ -79,8 +79,7 @@ const emit = defineEmits<IEmits>();
 const MAX_INVITED_CONTACTS_COUNT = 200;
 const MAX_EMAIL_LENGTH = 120;
 
-// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-const modalComponent = shallowRef<InstanceType<typeof VcModal> | null>(null);
+const modalComponent = useTemplateRef<InstanceType<typeof VcModal>>("modalComponent");
 const loading = ref(false);
 const commonErrors = ref<string[]>([]);
 
@@ -157,7 +156,7 @@ const send = handleSubmit(async (data) => {
   if (result.succeeded) {
     emit("result", true);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
     modalComponent.value?.close();
 
     notifications.success({
