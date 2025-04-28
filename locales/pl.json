@@ -74,7 +74,9 @@
       "add_with_bulk_order": "Dodaj z zamówieniem zbiorczym",
       "all_orders": "Wszystkie zamówienia",
       "my_orders": "Moje zamówienia",
-      "scroll_to_top": "Przewiń do góry"
+      "scroll_to_top": "Przewiń do góry",
+      "show_less": "Pokaż mniej",
+      "expand_all": "Rozwiń wszystko"
     },
     "labels": {
       "actions": "Akcje",
@@ -156,6 +158,7 @@
       "toggle_search_bar": "Przełącz pasek wyszukiwania",
       "slider_image": "Obraz slajdera",
       "buyer_name": "Nazwa nabywcy",
+      "other": "Inne",
       "vendor_name": "Dostawca: {name}",
       "not_available": "N/D"
     },
