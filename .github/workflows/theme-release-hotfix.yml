@@ -89,7 +89,8 @@ jobs:
         mkdir ./artifacts
         mv ./dist/* ./tmp/default
         cd ./tmp
-        zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./default
+        # zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./default
+        zip -r ../artifacts/${GITHUB_REPOSITORY#*/}-${{ steps.image.outputs.prefix }}.zip ./default
 
     - name: Publish to Blob
       id: blobRelease
