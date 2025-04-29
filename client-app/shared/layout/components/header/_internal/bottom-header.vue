@@ -70,7 +70,7 @@
 
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
-import { computed, nextTick, ref, shallowRef, watch } from "vue";
+import { computed, nextTick, ref, shallowRef, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
@@ -83,7 +83,7 @@ import LinkDefault from "@/shared/layout/components/header/_internal/link-compon
 const router = useRouter();
 const { organization } = useUser();
 const { logoUrl } = useWhiteLabeling();
-const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
+const { catalogMenuItems, fetchCatalogMenu, desktopMainMenuItems } = useNavigations();
 const { customLinkComponents } = useCustomHeaderLinkComponents();
 
 const bottomHeader = ref<HTMLElement | null>(null);
@@ -138,5 +138,9 @@ function focusoutDropdown(payload: FocusEvent) {
 
 watch(route, () => {
   catalogMenuVisible.value = false;
+});
+
+onMounted(() => {
+  void fetchCatalogMenu();
 });
 </script>

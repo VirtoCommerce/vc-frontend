@@ -22,9 +22,8 @@ import type { DeepPartial } from "utility-types";
 
 const { currentCurrency } = useCurrency();
 
-const loading = ref(false);
 const matchingRouteName = ref("");
-const menuSchema = shallowRef<MenuType | null>(null);
+const menuSchema = shallowRef<MenuType>(menuData);
 const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
 const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
 
@@ -148,13 +147,6 @@ export function useNavigations() {
     }
   }
 
-  async function fetchMenus() {
-    loading.value = true;
-    menuSchema.value = menuData as MenuType;
-    await Promise.all([fetchCatalogMenu(), fetchFooterLinks()]);
-    loading.value = false;
-  }
-
   function setMatchingRouteName(value: string) {
     matchingRouteName.value = value;
   }
@@ -169,7 +161,6 @@ export function useNavigations() {
   }
 
   return {
-    fetchMenus,
     setMatchingRouteName,
     desktopMainMenuItems,
     desktopAccountMenuItems,
@@ -180,7 +171,11 @@ export function useNavigations() {
     mobileCorporateMenuItem,
     mobilePreSelectedMenuItem,
     matchingRouteName: readonly(matchingRouteName),
+
+    fetchCatalogMenu,
     catalogMenuItems: computed(() => catalogMenuItems.value),
+
+    fetchFooterLinks,
     footerLinks: computed(() => footerLinks.value),
 
     mergeMenuSchema,
