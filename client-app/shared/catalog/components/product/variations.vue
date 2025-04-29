@@ -103,7 +103,9 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, ref, toRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useAnalytics } from "@/core/composables";
 import { BREAKPOINTS } from "@/core/constants";
 import VariationsDefault from "./variations-default.vue";
 import VariationsTable from "./variations-table.vue";
@@ -131,12 +133,18 @@ interface IProps {
   pagesCount: number;
   productsFilters?: ProductsFiltersType;
   hasSelectedFilters: boolean;
+  productId: string;
+  productName: string;
 }
 
 const emit = defineEmits<IEmits>();
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
+const variations = toRef(props, "variations");
+
+const { analytics } = useAnalytics();
+const { t } = useI18n();
 const breakpoints = useBreakpoints(BREAKPOINTS);
 
 const isFullView = ref(false);
@@ -169,6 +177,23 @@ function handleKeyUp(event: KeyboardEvent) {
     isFullView.value = false;
   }
 }
+
+watch(
+  variations,
+  (variationsValue) => {
+    if (!variationsValue.length) {
+      return;
+    }
+
+    analytics("viewItemList", variationsValue, {
+      item_list_id: "variations",
+      item_list_name: `${t("shared.catalog.product_details.variations.title")} ${props.productName}`,
+      related_id: props.productId,
+      related_type: "product",
+    });
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">

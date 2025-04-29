@@ -96,7 +96,7 @@
             text-field="name"
             value-field="id"
             :disabled="fetchingProducts"
-            :items="PRODUCT_SORTING_LIST"
+            :items="translatedProductSortingList"
             class="category__sort-dropdown"
             size="sm"
             @change="resetCurrentPage"
@@ -208,6 +208,7 @@ import {
 } from "@vueuse/core";
 import omit from "lodash/omit";
 import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -329,6 +330,13 @@ const hideViewModeSelector = computed(() => {
   return props.viewMode && viewModes.includes(props.viewMode);
 });
 
+const categoryListProperties = computed(() => ({
+  item_list_id: `category_${currentCategory.value?.slug}_page_${currentPage.value}`,
+  item_list_name: `Category "${currentCategory.value?.name}" (page ${currentPage.value})`,
+  related_id: currentCategory.value?.id,
+  related_type: "category",
+}));
+
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
 
@@ -352,6 +360,17 @@ const breadcrumbs = useBreadcrumbs(() =>
   ),
 );
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
+
+const { t } = useI18n();
+
+function getTranslatedProductSortingList() {
+  return PRODUCT_SORTING_LIST.map((item) => ({
+    ...item,
+    name: t(item.name),
+  }));
+}
+
+const translatedProductSortingList = computed(() => getTranslatedProductSortingList());
 
 function getSelectedAddressArgs(): {
   selectedAddressId: string | undefined;
@@ -426,10 +445,7 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
   /**
    * Send Google Analytics event for products on next page.
    */
-  analytics("viewItemList", products.value, {
-    item_list_id: `${currentCategory.value?.slug}_page_${currentPage.value}`,
-    item_list_name: `${currentCategory.value?.name} (page ${currentPage.value})`,
-  });
+  analytics("viewItemList", products.value, categoryListProperties.value);
 
   if (searchQueryParam.value) {
     trackViewSearchResults();
@@ -442,10 +458,7 @@ async function fetchProducts(): Promise<void> {
   /**
    * Send Google Analytics event for products.
    */
-  analytics("viewItemList", products.value, {
-    item_list_id: currentCategory.value?.slug,
-    item_list_name: currentCategory.value?.name,
-  });
+  analytics("viewItemList", products.value, categoryListProperties.value);
 
   if (searchQueryParam.value) {
     trackViewSearchResults();
@@ -461,7 +474,7 @@ function trackViewSearchResults(): void {
 }
 
 function selectProduct(product: Product): void {
-  analytics("selectItem", product);
+  analytics("selectItem", product, categoryListProperties.value);
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
