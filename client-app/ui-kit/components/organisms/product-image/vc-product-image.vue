@@ -67,11 +67,11 @@
 
     <component :is="to ? 'router-link' : 'div'" v-else :to="to" class="contents">
       <VcImage :src="images[0]?.url ?? imgSrc" :alt="alt" size-suffix="md" class="vc-product-image__img" :lazy="lazy" />
-
-      <span v-if="!!$slots.default" class="vc-product-image__slot">
-        <slot />
-      </span>
     </component>
+
+    <span v-if="!!$slots.default" class="vc-product-image__slot">
+      <slot />
+    </span>
   </div>
 </template>
 
