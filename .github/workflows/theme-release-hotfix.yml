@@ -100,7 +100,7 @@ jobs:
 
       - name: Create GH Release
         run: |
-          PREVIOUS_VERSION=$(${{ steps.image.outputs.prefix }} | awk -F. '{$NF=$NF-1; print $1"."$2"."$NF}')
+          PREVIOUS_VERSION=$(echo ${{ steps.image.outputs.prefix }} | awk -F. '{$NF=$NF-1; print $1"."$2"."$NF}')
           gh release create ${{ steps.image.outputs.prefix }} \
                 --notes-start-tag $PREVIOUS_VERSION \
                 --generate-notes \
