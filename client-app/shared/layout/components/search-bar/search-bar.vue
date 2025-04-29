@@ -106,7 +106,7 @@
                 :product="product"
                 @link-click="
                   hideSearchDropdown();
-                  analytics('selectItem', product, { search_term: trimmedSearchPhrase });
+                  selectItemEvent(product);
                 "
               />
             </div>
@@ -151,7 +151,7 @@ import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import BarcodeScanner from "./barcode-scanner.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
-import type { Category } from "@/core/api/graphql/types";
+import type { Category, Product } from "@/core/api/graphql/types";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
@@ -194,6 +194,12 @@ const searchPhrase = ref("");
 const trimmedSearchPhrase = computed(() => {
   return searchPhrase.value.trim();
 });
+
+const searchBarListProperties = computed(() => ({
+  search_term: trimmedSearchPhrase,
+  item_list_id: "search_bar",
+  item_list_name: `Search phrase '${trimmedSearchPhrase.value}'`,
+}));
 
 const { bottom } = useElementBounding(searchBarElement);
 
@@ -269,10 +275,12 @@ async function searchAndShowDropdownResults(): Promise<void> {
    * Send Google Analytics event for products.
    */
   if (products.value.length) {
-    analytics("viewItemList", products.value, {
-      item_list_name: `Search phrase "${trimmedSearchPhrase.value}"`,
-    });
+    analytics("viewItemList", products.value, searchBarListProperties.value);
   }
+}
+
+function selectItemEvent(product: Product) {
+  analytics("selectItem", product, searchBarListProperties.value);
 }
 
 function getSearchRoute(phrase: string): RouteLocationRaw {
