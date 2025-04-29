@@ -127,7 +127,7 @@
       "recipient_name": "受取人",
       "active_address": "有効な住所",
       "addresses_icon": "住所アイコン",
-      "digital_product": "デジタル商品",
+      "digital_product": "デジタル",
       "search": "{0}を検索",
       "in_stock": "在庫あり",
       "starts_from": "開始: {0}",
@@ -874,6 +874,15 @@
         "shared": "Shared",
         "private": "Private"
       }
+    },
+    "sorting": {
+      "featured": "おすすめ",
+      "alphabetically_a_z": "アルファベット順 (A-Z)",
+      "alphabetically_z_a": "アルファベット順 (Z-A)",
+      "price_low_to_high": "価格の低い順",
+      "price_high_to_low": "価格（高い順）",
+      "date_new_to_old": "日付、新しい順",
+      "date_old_to_new": "日付、古い順"
     }
   },
   "pages": {

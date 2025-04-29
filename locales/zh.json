@@ -127,7 +127,7 @@
       "recipient_name": "收件人姓名",
       "active_address": "激活地址",
       "addresses_icon": "地址图标",
-      "digital_product": "数字产品",
+      "digital_product": "数字",
       "search": "搜索 {0}",
       "in_stock": "有库存",
       "starts_from": "开始于：{0}",
@@ -874,6 +874,15 @@
         "shared": "共享",
         "private": "私人"
       }
+    },
+    "sorting": {
+      "featured": "精选",
+      "alphabetically_a_z": "按字母顺序，A-Z",
+      "alphabetically_z_a": "按字母 Z-A 排序",
+      "price_low_to_high": "价格，从低到高",
+      "price_high_to_low": "价格从高到低",
+      "date_new_to_old": "日期，由新到旧",
+      "date_old_to_new": "日期，从旧到新"
     }
   },
   "pages": {

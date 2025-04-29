@@ -127,7 +127,7 @@
       "recipient_name": "Nome destinatario",
       "active_address": "Indirizzo attivo",
       "addresses_icon": "Icona indirizzo",
-      "digital_product": "Prodotto digitale",
+      "digital_product": "Digitale",
       "search": "Cerca {0}",
       "in_stock": "Disponibile",
       "starts_from": "Inizio: {0}",
@@ -874,6 +874,15 @@
         "shared": "Condivisa",
         "private": "Privata"
       }
+    },
+    "sorting": {
+      "featured": "In primo piano",
+      "alphabetically_a_z": "Ordine alfabetico, A-Z",
+      "alphabetically_z_a": "Ordine alfabetico inverso",
+      "price_low_to_high": "Prezzo, dal più basso al più alto",
+      "price_high_to_low": "Prezzo, dal più caro al più economico",
+      "date_new_to_old": "Data, dal più recente",
+      "date_old_to_new": "Data, dal meno recente al più recente"
     }
   },
   "pages": {
