@@ -74,7 +74,9 @@
       "add_with_bulk_order": "Añadir con pedido masivo",
       "all_orders": "Todos los pedidos",
       "my_orders": "Mis pedidos",
-      "scroll_to_top": "Ir arriba"
+      "scroll_to_top": "Ir arriba",
+      "show_less": "Mostrar menos",
+      "expand_all": "Expandir todo"
     },
     "labels": {
       "actions": "Acciones",
@@ -125,7 +127,7 @@
       "recipient_name": "Nombre del destinatario",
       "active_address": "Dirección activa",
       "addresses_icon": "Icono de dirección",
-      "digital_product": "Producto digital",
+      "digital_product": "Digital",
       "search": "Buscar {0}",
       "in_stock": "En stock",
       "starts_from": "Inicio: {0}",
@@ -156,6 +158,7 @@
       "toggle_search_bar": "Alternar barra de búsqueda",
       "slider_image": "Imagen del deslizador",
       "buyer_name": "Nombre del comprador",
+      "other": "Otro",
       "vendor_name": "Proveedor: {name}",
       "not_available": "N/D"
     },

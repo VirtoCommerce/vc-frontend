@@ -74,7 +74,9 @@
       "add_with_bulk_order": "Добавить оптом",
       "all_orders": "Все заказы",
       "my_orders": "Мои заказы",
-      "scroll_to_top": "Прокрутить вверх"
+      "scroll_to_top": "Прокрутить вверх",
+      "show_less": "Показать меньше",
+      "expand_all": "Развернуть все"
     },
     "labels": {
       "actions": "Действия",
@@ -125,7 +127,7 @@
       "recipient_name": "Имя получателя",
       "active_address": "Активный адрес",
       "addresses_icon": "Иконка адресов",
-      "digital_product": "Цифровой товар",
+      "digital_product": "Цифровой",
       "search": "Поиск {0}",
       "in_stock": "В наличии",
       "starts_from": "Начало: {0}",
@@ -156,6 +158,7 @@
       "toggle_search_bar": "Отобразить/скрыть панель поиска",
       "slider_image": "Картинка в слайдере",
       "buyer_name": "Имя покупателя",
+      "other": "Другое",
       "vendor_name": "Поставщик: {name}",
       "not_available": "Н/Д"
     },

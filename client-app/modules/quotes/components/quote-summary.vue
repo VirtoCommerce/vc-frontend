@@ -37,7 +37,7 @@
         {{ $t("quote_details.total") }}
       </span>
 
-      <span class="text-lg font-black text-success-700">
+      <span class="text-lg font-black text-[--price-color]">
         <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
       </span>
     </div>

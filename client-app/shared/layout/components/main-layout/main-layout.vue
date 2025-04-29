@@ -1,6 +1,7 @@
 <template>
   <div class="main-layout">
     <SkipToLinks />
+
     <VcHeader />
 
     <!-- Main Content -->
@@ -23,7 +24,7 @@ import SkipToLinks from "@/shared/layout/components/skip-to-links/skip-to-links.
   @apply flex min-h-screen flex-col;
 
   &__content {
-    @apply relative z-[1] flex grow flex-col min-h-[60vh];
+    @apply relative flex grow flex-col min-h-[60vh];
   }
 }
 </style>

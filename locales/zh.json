@@ -74,7 +74,9 @@
       "add_with_bulk_order": "批量订单添加",
       "all_orders": "所有订单",
       "my_orders": "我的订单",
-      "scroll_to_top": "回到顶部"
+      "scroll_to_top": "回到顶部",
+      "show_less": "收起",
+      "expand_all": "全部展开"
     },
     "labels": {
       "actions": "操作",
@@ -125,7 +127,7 @@
       "recipient_name": "收件人姓名",
       "active_address": "激活地址",
       "addresses_icon": "地址图标",
-      "digital_product": "数字产品",
+      "digital_product": "数字",
       "search": "搜索 {0}",
       "in_stock": "有库存",
       "starts_from": "开始于：{0}",
@@ -156,6 +158,7 @@
       "toggle_search_bar": "切换搜索栏",
       "slider_image": "滑动图像",
       "buyer_name": "买方姓名",
+      "other": "其他",
       "vendor_name": "供应商: {name}",
       "not_available": "不可用"
     },
