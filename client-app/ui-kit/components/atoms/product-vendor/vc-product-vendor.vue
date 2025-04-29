@@ -8,7 +8,7 @@
 .vc-product-vendor {
   $self: &;
 
-  @apply text-xs font-bold;
+  @apply text-xs font-bold text-neutral-950 truncate;
 
   @at-root .vc-product-card {
     &--view-mode {

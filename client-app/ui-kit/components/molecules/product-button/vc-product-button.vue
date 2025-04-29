@@ -123,8 +123,14 @@ withDefaults(defineProps<IProps>(), {
     }
 
     &--view-mode {
-      &--grid #{$self} {
-        @apply order-7 min-h-[3.375rem];
+      &--grid {
+        #{$self} {
+          @apply order-7 min-h-[3.375rem];
+        }
+
+        #{$link} {
+          @apply mt-7;
+        }
       }
 
       &--list #{$self} {
