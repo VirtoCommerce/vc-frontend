@@ -42,7 +42,7 @@ interface IProps {
   readOnly?: boolean;
   reviewCount?: number;
   size?: "xs" | "sm" | "md";
-  value: number;
+  value?: number;
   withText?: boolean;
 }
 
@@ -52,6 +52,7 @@ const props = withDefaults(defineProps<IProps>(), {
   mode: "mini",
   size: "md",
   withText: true,
+  value: 0,
 });
 
 const selectedRating = ref<number | null>(null);

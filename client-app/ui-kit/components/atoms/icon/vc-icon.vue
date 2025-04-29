@@ -4,15 +4,17 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { loadIconRaw } from "@/ui-kit/utilities";
+import { getColorValue, loadIconRaw } from "@/ui-kit/utilities";
 
 interface IProps {
   name?: string;
   size?: VcIconSizeType;
+  color?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   name: "document-text",
+  color: "",
 });
 
 const icon = ref();
@@ -27,6 +29,8 @@ const style = computed(() =>
 );
 
 const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--size--${props.size}` : ""));
+
+const _color = computed(() => getColorValue(props.color));
 
 async function loadIcon(name?: string) {
   icon.value = await loadIconRaw(name);
@@ -43,8 +47,10 @@ watch(
 
 <style lang="scss">
 .vc-icon {
+  --props-color: v-bind(_color);
+
   --size: var(--vc-icon-size, 1.5rem);
-  --color: var(--vc-icon-color, currentColor);
+  --color: var(--props-color, var(--vc-icon-color, currentColor));
 
   $self: &;
 

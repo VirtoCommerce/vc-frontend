@@ -74,7 +74,9 @@
       "add_with_bulk_order": "Añadir con pedido masivo",
       "all_orders": "Todos los pedidos",
       "my_orders": "Mis pedidos",
-      "scroll_to_top": "Ir arriba"
+      "scroll_to_top": "Ir arriba",
+      "show_less": "Mostrar menos",
+      "expand_all": "Expandir todo"
     },
     "labels": {
       "actions": "Acciones",
@@ -125,7 +127,7 @@
       "recipient_name": "Nombre del destinatario",
       "active_address": "Dirección activa",
       "addresses_icon": "Icono de dirección",
-      "digital_product": "Producto digital",
+      "digital_product": "Digital",
       "search": "Buscar {0}",
       "in_stock": "En stock",
       "starts_from": "Inicio: {0}",
@@ -155,7 +157,10 @@
       "main_menu": "Menú principal",
       "toggle_search_bar": "Alternar barra de búsqueda",
       "slider_image": "Imagen del deslizador",
-      "buyer_name": "Nombre del comprador"
+      "buyer_name": "Nombre del comprador",
+      "other": "Otro",
+      "vendor_name": "Proveedor: {name}",
+      "not_available": "N/D"
     },
     "prefixes": {
       "please": "Por favor",
@@ -774,7 +779,8 @@
           "month": "Por favor, proporciona un mes de vencimiento válido",
           "year": "Por favor, proporcione un año de vencimiento válido"
         },
-        "user_error_message": "No se pudo inicializar el pago. Inténtalo de nuevo más tarde o usa otro método de pago"
+        "user_error_message": "No se pudo inicializar el pago. Inténtalo de nuevo más tarde o usa otro método de pago",
+        "payment_unavailable": "El método de pago no está disponible. Inténtalo de nuevo más tarde."
       },
       "authorize_net": {
         "user_agreement_link": "Acuerdo de usuario",
@@ -868,6 +874,15 @@
         "shared": "Compartida",
         "private": "Privada"
       }
+    },
+    "sorting": {
+      "featured": "Destacados",
+      "alphabetically_a_z": "Alfabéticamente, A-Z",
+      "alphabetically_z_a": "Alfabéticamente, Z-A",
+      "price_low_to_high": "Precio: de menor a mayor",
+      "price_high_to_low": "Precio, de mayor a menor",
+      "date_new_to_old": "Fecha, de más reciente a más antigua",
+      "date_old_to_new": "Fecha, de antiguo a nuevo"
     }
   },
   "pages": {
@@ -1475,7 +1490,6 @@
   },
   "validation_error": {
     "PRODUCT_QTY_CHANGED": "You can order maximum {availQty} item(s)",
-    "CART_PRODUCT_UNAVAILABLE": "The product is not longer available for purchase.",
     "CART_PRODUCT_INACTIVE": "The product is inactive.",
     "PRODUCT_PRICE_INVALID": "Price is invalid.",
     "PRODUCT_FFC_QTY": "The product is out of stock",
@@ -1488,7 +1502,8 @@
     "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Min order {minQty} item(s) is not available in stock",
     "PRODUCT_EXACT_QTY": "You can order {minQty} item(s)",
-    "CART_INVALID_PRODUCT": "Invalid product"
+    "CART_INVALID_PRODUCT": "Invalid product",
+    "CART_PRODUCT_UNAVAILABLE": "Este producto ya no está disponible."
   },
   "file_error": {
     "ALREADY_EXISTS": "Cannot upload file with the same name.",

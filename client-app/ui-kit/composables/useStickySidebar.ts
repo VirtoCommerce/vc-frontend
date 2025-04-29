@@ -88,8 +88,8 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
   }
 
   onMounted(() => {
-    const _maxOffsetTop = unref(useCssVar("--sidebar-offset-top", sidebar));
-    const _maxOffsetBottom = unref(useCssVar("--sidebar-offset-bottom", sidebar));
+    const _maxOffsetTop = unref(useCssVar("--sidebar-offset-top", sidebar)) ?? "0";
+    const _maxOffsetBottom = unref(useCssVar("--sidebar-offset-bottom", sidebar)) ?? "0";
 
     const re = /\d+/;
 
