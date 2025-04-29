@@ -87,6 +87,7 @@ export function useShortCart() {
   const commonVariables = { storeId, currencyCode, cultureName, userId };
   const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
   const { analytics } = useAnalytics();
+
   async function addToCart(
     productId: string,
     quantity: number,
@@ -136,9 +137,11 @@ export function useShortCart() {
         command: { lineItemId, quantity, ...commonVariables },
         skipQuery: false,
       });
+
       if (lineItem) {
         analytics("updateCartItem", lineItem.sku, quantity, lineItem?.quantity);
       }
+
       return result?.data?.changeCartItemQuantity;
     } catch (err) {
       Logger.error(err as string);
@@ -361,6 +364,7 @@ export function _useFullCart() {
           ...commonVariables,
         },
       });
+
       if (item) {
         analytics("updateCartItem", item.sku, quantity, item.quantity);
       }
