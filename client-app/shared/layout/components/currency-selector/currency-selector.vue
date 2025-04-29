@@ -42,10 +42,10 @@ import { ChangeCartCurrencyDocument } from "@/core/api/graphql/types";
 import { useCurrency } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
-import { useFullCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart";
 
 const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
-const { cart } = useFullCart();
+const { cart } = useShortCart();
 const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
 const broadcast = useBroadcast();
 const { userId, storeId, cultureName, currencyCode: currentCurrencyCode } = globals;
@@ -57,8 +57,6 @@ async function select(code: string): Promise<void> {
         command: {
           userId,
           cartId: cart.value.id,
-          cartName: cart.value.name,
-          cartType: cart.value.type,
           newCurrencyCode: code,
           storeId,
           cultureName,

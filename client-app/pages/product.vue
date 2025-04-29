@@ -78,6 +78,8 @@
           :pages-count="variationsPagesCount"
           :products-filters="productsFilters"
           :has-selected-filters="hasSelectedFacets"
+          :product-id="productId"
+          :product-name="product.name"
           @apply-sorting="sortVariations"
           @change-page="changeVariationsPage"
           @show-filters="showFiltersSidebar"
@@ -89,7 +91,8 @@
           :is="relatedProductsSection?.type"
           v-if="relatedProductsSection && !relatedProductsSection.hidden"
           :related-products="relatedProducts"
-          :model="relatedProductsSection"
+          :product-id="productId"
+          :product-name="product.name"
         />
 
         <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
@@ -99,6 +102,9 @@
             :key="id"
             :recommended-products="recommendedProducts[model as string]"
             :title="$t(`pages.product.recommended_products.${model}_section_title`)"
+            :model="model"
+            :product-id="productId"
+            :product-name="product.name"
           />
         </template>
       </div>
@@ -119,10 +125,9 @@
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
-import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
-import { useI18n } from "vue-i18n";
+import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
 import _productTemplate from "@/config/product.json";
-import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS } from "@/core/constants";
@@ -173,7 +178,6 @@ const isMobile = breakpoints.smaller("lg");
 const productId = toRef(props, "productId");
 const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
 
-const { t } = useI18n();
 const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
 const { fetchProductConfiguration, configuration } = useConfigurableProduct(productId.value);
 const {
@@ -225,6 +229,7 @@ const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
 });
 
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
+const { title: pageTitle } = usePageTitle(seoTitle);
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
@@ -233,6 +238,7 @@ const seoUrl = computed(() =>
     ? `${window.location.host}\${product.value?.seoInfo?.semanticUrl}`
     : window.location.toString(),
 );
+const canSetMeta = computed(() => props.allowSetMeta && productComponentAnchorIsVisible.value);
 
 const productTemplate = _productTemplate as IPageTemplate;
 
@@ -319,76 +325,66 @@ async function resetFacetFilters(): Promise<void> {
   await fetchProducts(variationsSearchParams.value);
 }
 
-watchEffect(() => {
-  if (props.allowSetMeta && productComponentAnchorIsVisible.value) {
-    usePageHead({
-      title: seoTitle,
-      meta: {
-        keywords: seoKeywords,
-        description: seoDescription,
-      },
-    });
-
-    useSeoMeta({
-      ogUrl: seoUrl,
-      ogTitle: seoTitle,
-      ogDescription: seoDescription,
-      ogImage: seoImageUrl,
-      ogType: "website",
-    });
-  }
+useSeoMeta({
+  title: () => (canSetMeta.value ? pageTitle.value : undefined),
+  keywords: () => (canSetMeta.value ? seoKeywords.value : undefined),
+  description: () => (canSetMeta.value ? seoDescription.value : undefined),
+  ogUrl: () => (canSetMeta.value ? seoUrl.value : undefined),
+  ogTitle: () => (canSetMeta.value ? pageTitle.value : undefined),
+  ogDescription: () => (canSetMeta.value ? seoDescription.value : undefined),
+  ogImage: () => (canSetMeta.value ? seoImageUrl.value : undefined),
+  ogType: () => (canSetMeta.value ? "website" : undefined),
 });
 
-watchEffect(async () => {
-  await fetchProduct(productId.value);
-  if (product.value?.isConfigurable) {
-    await fetchProductConfiguration();
-  }
+watch(
+  productId,
+  async () => {
+    await fetchProduct(productId.value);
+    if (product.value?.isConfigurable) {
+      await fetchProductConfiguration();
+    }
 
-  if (product.value?.associations?.totalCount && !relatedProductsSection?.hidden) {
-    await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
-  }
+    if (product.value?.associations?.totalCount && !relatedProductsSection?.hidden) {
+      await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
+    }
 
-  const recommendedProductsBlocks = recommendedProductsSection?.blocks?.filter((block) => !!block.model) ?? [];
-  if (!recommendedProductsSection?.hidden && recommendedProductsSection?.blocks?.length) {
-    const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
-      productId: productId.value,
-      model: model as string,
-    }));
-    await fetchRecommendedProducts(paramsToFetch);
-  }
+    const recommendedProductsBlocks = recommendedProductsSection?.blocks?.filter((block) => !!block.model) ?? [];
+    if (!recommendedProductsSection?.hidden && recommendedProductsSection?.blocks?.length) {
+      const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
+        productId: productId.value,
+        model: model as string,
+      }));
+      await fetchRecommendedProducts(paramsToFetch);
+    }
 
-  if (product.value?.hasVariations && !productVariationsBlock?.hidden) {
-    await fetchProducts(variationsSearchParams.value);
-  }
-});
+    if (product.value?.hasVariations && !productVariationsBlock?.hidden) {
+      await fetchProducts(variationsSearchParams.value);
+    }
+  },
+  { immediate: true },
+);
 
 /**
  * Send Google Analytics event and historical event for product.
  */
-watchEffect(() => {
-  if (product.value) {
-    // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
-    analytics("viewItem", product.value);
-    void pushHistoricalEvent({
-      eventType: "click",
-      productId: product.value.id,
-      storeId: globals.storeId,
-    });
-  }
-});
 
-/**
- * Send Google Analytics event for related products.
- */
-watchEffect(() => {
-  if (relatedProducts.value.length) {
-    analytics("viewItemList", relatedProducts.value, {
-      item_list_id: "related_products",
-      item_list_name: t("pages.product.related_product_section_title"),
-    });
-  }
-});
+const fetchedProductId = computed(() => product.value?.id);
+
+watch(
+  fetchedProductId,
+  () => {
+    if (fetchedProductId.value && product.value) {
+      analytics("viewItem", product.value);
+
+      void pushHistoricalEvent({
+        eventType: "click",
+        productId: product.value.id,
+        storeId: globals.storeId,
+      });
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped lang="scss">

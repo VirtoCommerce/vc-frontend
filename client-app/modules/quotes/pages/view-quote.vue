@@ -28,7 +28,13 @@
       </VcWidget>
 
       <!-- Quote comment -->
-      <VcWidget v-if="quote.comment" :title="$t('quote_details.comment')" prepend-icon="document-text" size="lg">
+      <VcWidget
+        v-if="quote.comment"
+        :title="$t('quote_details.comment')"
+        prepend-icon="document-text"
+        size="lg"
+        class="mt-5"
+      >
         <div class="text-base">
           {{ quote.comment }}
         </div>
@@ -62,7 +68,7 @@
             <div class="flex items-center gap-2">
               <span class="text-base font-bold">{{ $t("quote_details.status") }}:</span>
 
-              <QuoteStatus class="min-w-[7.785rem]" :status="quote.status" />
+              <QuoteStatus size="sm" :status="quote.status" />
             </div>
           </div>
         </VcWidget>

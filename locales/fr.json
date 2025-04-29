@@ -75,7 +75,9 @@
       "all_orders": "Toutes les commandes",
       "my_orders": "Mes commandes",
       "scroll_to_top": "Haut de page",
-      "reset_page": "Réinitialiser la page"
+      "reset_page": "Réinitialiser la page",
+      "show_less": "Afficher moins",
+      "expand_all": "Tout développer"
     },
     "labels": {
       "actions": "Actions",
@@ -126,7 +128,7 @@
       "recipient_name": "Nom du destinataire",
       "active_address": "Adresse active",
       "addresses_icon": "Icône d'adresse",
-      "digital_product": "Produit numérique",
+      "digital_product": "Numérique",
       "search": "Rechercher {0}",
       "in_stock": "En stock",
       "starts_from": "Commence à : {0}",
@@ -156,7 +158,10 @@
       "main_menu": "Menu principal",
       "toggle_search_bar": "Basculer la barre de recherche",
       "slider_image": "Image du curseur",
-      "buyer_name": "Nom de l'acheteur"
+      "buyer_name": "Nom de l'acheteur",
+      "other": "Autre",
+      "vendor_name": "Fournisseur: {name}",
+      "not_available": "N/A"
     },
     "prefixes": {
       "please": "S'il vous plaît",
@@ -775,7 +780,8 @@
           "month": "Veuillez indiquer un mois d'expiration valide",
           "year": "Veuillez indiquer une année d'expiration valide"
         },
-        "user_error_message": "Impossible d'initialiser le paiement. Veuillez réessayer plus tard ou utiliser un autre mode de paiement"
+        "user_error_message": "Impossible d'initialiser le paiement. Veuillez réessayer plus tard ou utiliser un autre mode de paiement",
+        "payment_unavailable": "Le mode de paiement est indisponible. Veuillez réessayer plus tard."
       },
       "authorize_net": {
         "user_agreement_link": "Contrat d'utilisation",
@@ -869,6 +875,15 @@
         "shared": "Partagé",
         "private": "Privé"
       }
+    },
+    "sorting": {
+      "featured": "À la une",
+      "alphabetically_a_z": "Alphabétique, A-Z",
+      "alphabetically_z_a": "Alphabétiquement, Z-A",
+      "price_low_to_high": "Prix, du moins cher au plus cher",
+      "price_high_to_low": "Prix, du plus cher au moins cher",
+      "date_new_to_old": "Date, du plus récent au plus ancien",
+      "date_old_to_new": "Date, du plus ancien au plus récent"
     }
   },
   "pages": {

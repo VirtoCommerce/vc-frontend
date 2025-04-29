@@ -75,7 +75,9 @@
       "all_orders": "Todas as encomendas.",
       "my_orders": "Minhas encomendas",
       "scroll_to_top": "Voltar ao topo",
-      "reset_page": "Redefinir página"
+      "reset_page": "Redefinir página",
+      "show_less": "Mostrar menos",
+      "expand_all": "Expandir tudo"
     },
     "labels": {
       "actions": "Ações",
@@ -126,7 +128,7 @@
       "recipient_name": "Nome do destinatário",
       "active_address": "Endereço ativo",
       "addresses_icon": "Ícone de endereços",
-      "digital_product": "Produto digital",
+      "digital_product": "Digital",
       "search": "Pesquisar {0}",
       "in_stock": "Em estoque",
       "starts_from": "Início: {0}",
@@ -156,7 +158,10 @@
       "main_menu": "Menu principal",
       "toggle_search_bar": "Alternar barra de pesquisa",
       "slider_image": "Imagem do slider",
-      "buyer_name": "Nome do comprador"
+      "buyer_name": "Nome do comprador",
+      "other": "Outro",
+      "vendor_name": "Fornecedor: {name}",
+      "not_available": "N/D"
     },
     "prefixes": {
       "please": "Por favor",
@@ -775,7 +780,8 @@
           "month": "Por favor, forneça um mês de validade válido",
           "year": "Por favor, forneça um ano de validade válido"
         },
-        "user_error_message": "Não foi possível inicializar o pagamento. Tente novamente mais tarde ou use outro método de pagamento"
+        "user_error_message": "Não foi possível inicializar o pagamento. Tente novamente mais tarde ou use outro método de pagamento",
+        "payment_unavailable": "O método de pagamento não está disponível. Tente novamente mais tarde"
       },
       "authorize_net": {
         "user_agreement_link": "Acordo de Usuário",
@@ -869,6 +875,15 @@
         "shared": "Compartilhada",
         "private": "Privada"
       }
+    },
+    "sorting": {
+      "featured": "Em destaque",
+      "alphabetically_a_z": "Alfabeticamente, A-Z",
+      "alphabetically_z_a": "Alfabeticamente, Z-A",
+      "price_low_to_high": "Preço, do menor para o maior",
+      "price_high_to_low": "Preço, do maior para o menor",
+      "date_new_to_old": "Data, mais recente para o mais antigo",
+      "date_old_to_new": "Data, do mais antigo para o mais recente"
     }
   },
   "pages": {

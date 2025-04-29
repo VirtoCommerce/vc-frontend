@@ -63,5 +63,5 @@ export function createI18n(locale: string, currency: string, fallback?: { locale
     },
   });
 }
-
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export type I18n = ReturnType<typeof createI18n>;
