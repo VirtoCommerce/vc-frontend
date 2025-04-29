@@ -1,5 +1,6 @@
 import type { CartType, CustomerOrderType, LineItemType, Product, VariationType } from "@/core/api/graphql/types";
 import type { ICustomAnalyticsEventMap } from "@/core/types/analytics-custom";
+
 export interface IBasicAnalyticsEventMap {
   viewItemList: [items: { code: string }[], params?: EventParamsType & ViewItemListParamsAdditionalType];
   selectItem: [item: Product | LineItemType, params?: EventParamsType];
@@ -10,6 +11,7 @@ export interface IBasicAnalyticsEventMap {
     quantity?: number,
     params?: EventParamsType & AddToCartParamsAdditionalType,
   ];
+  updateCartItem: [itemId: string, newQuantity: number, previousQuantity: number, params?: EventParamsType];
   addItemsToCart: [items: (Product | VariationType)[], params?: EventParamsType & AddToCartParamsAdditionalType];
   removeItemsFromCart: [items: LineItemType[], params?: EventParamsType];
   viewCart: [cart: CartType, params?: EventParamsType];
