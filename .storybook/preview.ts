@@ -65,7 +65,7 @@ const preview: Preview = {
     },
   },
 
-  tags: ["autodocs"]
+  tags: ["autodocs"],
 };
 
 // eslint-disable-next-line no-restricted-exports

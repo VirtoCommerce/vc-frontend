@@ -155,7 +155,7 @@ const {
 });
 
 async function validateFields(): Promise<void> {
-  if (isInStock.value) {
+  if (isInStock.value && !disabled.value && isAvailable.value && isBuyable.value && isActive?.value) {
     const { valid } = await validate();
     isValid.value = valid;
     if (!valid && errorMessage.value) {

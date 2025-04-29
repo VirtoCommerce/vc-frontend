@@ -44,6 +44,7 @@
           :to="route"
           :title="name"
           :target="browserTarget"
+          @click="$emit('linkClick')"
         >
           {{ name }}
         </VcProductTitle>
@@ -136,6 +137,7 @@ import type { RouteLocationRaw } from "vue-router";
 interface IEmits {
   (event: "remove"): void;
   (event: "select", value: boolean): void;
+  (event: "linkClick"): void;
 }
 
 interface IProps {
