@@ -1,3 +1,4 @@
+import { createGlobalState } from "@vueuse/core";
 import clone from "lodash/clone";
 import mergeWith from "lodash/mergeWith";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
@@ -20,81 +21,81 @@ import { globals } from "../globals";
 import type { ExtendedMenuLinkType, MenuType } from "../types";
 import type { DeepPartial } from "utility-types";
 
-const { currentCurrency } = useCurrency();
+export function _useNavigations() {
+  const { currentCurrency } = useCurrency();
 
-const matchingRouteName = ref("");
-const menuSchema = shallowRef<MenuType>(menuData);
-const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
-const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
+  const matchingRouteName = ref("");
+  const menuSchema = shallowRef<MenuType>(menuData);
+  const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
+  const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
 
-const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-  (menuSchema.value?.header?.desktop?.main || [])
-    .map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item))
-    .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
-);
+  const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
+    (menuSchema.value?.header?.desktop?.main || [])
+      .map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item))
+      .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
+  );
 
-const desktopAccountMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-  const schema = menuSchema.value?.header?.desktop?.account
-    ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.account))
-    : undefined;
-  if (Array.isArray(schema?.children)) {
-    schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
-  }
-  return schema;
-});
+  const desktopAccountMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+    const schema = menuSchema.value?.header?.desktop?.account
+      ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.account))
+      : undefined;
+    if (Array.isArray(schema?.children)) {
+      schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+    }
+    return schema;
+  });
 
-const desktopCorporateMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-  return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.corporate) : undefined;
-});
+  const desktopCorporateMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+    return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.corporate) : undefined;
+  });
 
-const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-  (menuSchema.value?.header?.mobile?.main || []).map((item: ExtendedMenuLinkType) => {
-    const menuLink: ExtendedMenuLinkType = getTranslatedMenuLink(item);
+  const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
+    (menuSchema.value?.header?.mobile?.main || []).map((item: ExtendedMenuLinkType) => {
+      const menuLink: ExtendedMenuLinkType = getTranslatedMenuLink(item);
 
-    if (menuLink.id === "catalog") {
-      menuLink.children = catalogMenuItems.value;
+      if (menuLink.id === "catalog") {
+        menuLink.children = catalogMenuItems.value;
+      }
+
+      return menuLink;
+    }),
+  );
+
+  const mobileCatalogMenuItem = computed<ExtendedMenuLinkType | undefined>(
+    () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || undefined,
+  );
+
+  const mobileAccountMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
+    if (!menuSchema.value) {
+      return undefined;
     }
 
-    return menuLink;
-  }),
-);
+    return getTranslatedMenuLink(menuSchema.value?.header?.mobile?.account);
+  });
 
-const mobileCatalogMenuItem = computed<ExtendedMenuLinkType | undefined>(
-  () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || undefined,
-);
+  const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
+    menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : undefined,
+  );
 
-const mobileAccountMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
-  if (!menuSchema.value) {
-    return undefined;
-  }
+  const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
+    const matchedRouteNames = globals.router.currentRoute.value.matched
+      .map((item) => item.name)
+      .concat(matchingRouteName.value)
+      .filter(Boolean);
 
-  return getTranslatedMenuLink(menuSchema.value?.header?.mobile?.account);
-});
+    let preSelectedLink: ExtendedMenuLinkType | undefined;
 
-const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
-  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : undefined,
-);
+    if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
+      preSelectedLink = mobileCatalogMenuItem.value;
+    } else if (matchedRouteNames.includes("Account") && !matchedRouteNames.includes("Dashboard")) {
+      preSelectedLink = mobileAccountMenuItem.value;
+    } else if (matchedRouteNames.includes("Company")) {
+      preSelectedLink = mobileCorporateMenuItem.value;
+    }
 
-const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
-  const matchedRouteNames = globals.router.currentRoute.value.matched
-    .map((item) => item.name)
-    .concat(matchingRouteName.value)
-    .filter(Boolean);
+    return preSelectedLink;
+  });
 
-  let preSelectedLink: ExtendedMenuLinkType | undefined;
-
-  if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
-    preSelectedLink = mobileCatalogMenuItem.value;
-  } else if (matchedRouteNames.includes("Account") && !matchedRouteNames.includes("Dashboard")) {
-    preSelectedLink = mobileAccountMenuItem.value;
-  } else if (matchedRouteNames.includes("Company")) {
-    preSelectedLink = mobileCorporateMenuItem.value;
-  }
-
-  return preSelectedLink;
-});
-
-export function useNavigations() {
   const { themeContext } = useThemeContext();
   const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
@@ -181,3 +182,5 @@ export function useNavigations() {
     mergeMenuSchema,
   };
 }
+
+export const useNavigations = createGlobalState(_useNavigations);
