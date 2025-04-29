@@ -32,6 +32,7 @@
         with-price
         removable
         @remove="() => removeSingleItem(item.id)"
+        @link-click="$emit('linkClick', item.product)"
       >
         <div v-if="!item.deleted" ref="itemDefaultSlot" :style="{ width: itemDefaultSlotWidth }">
           <VcProductButton
@@ -110,7 +111,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { ProductType } from "@/core/enums";
-import type { ValidationErrorType } from "@/core/api/graphql/types";
+import type { Product, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 import CountInCart from "@/shared/catalog/components/count-in-cart.vue";
 import InStock from "@/shared/catalog/components/in-stock.vue";
@@ -119,6 +120,7 @@ interface IEmits {
   (event: "update:cartItem", item: PreparedLineItemType, quantity: number): void;
   (event: "update:listItem", item: PreparedLineItemType, quantity: number): void;
   (event: "remove:items", value: string[]): void;
+  (event: "linkClick", item: Product | undefined): void;
 }
 
 interface IProps {

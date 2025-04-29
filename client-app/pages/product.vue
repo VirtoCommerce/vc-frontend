@@ -78,6 +78,8 @@
           :pages-count="variationsPagesCount"
           :products-filters="productsFilters"
           :has-selected-filters="hasSelectedFacets"
+          :product-id="productId"
+          :product-name="product.name"
           @apply-sorting="sortVariations"
           @change-page="changeVariationsPage"
           @show-filters="showFiltersSidebar"
@@ -89,7 +91,8 @@
           :is="relatedProductsSection?.type"
           v-if="relatedProductsSection && !relatedProductsSection.hidden"
           :related-products="relatedProducts"
-          :model="relatedProductsSection"
+          :product-id="productId"
+          :product-name="product.name"
         />
 
         <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
@@ -99,6 +102,9 @@
             :key="id"
             :recommended-products="recommendedProducts[model as string]"
             :title="$t(`pages.product.recommended_products.${model}_section_title`)"
+            :model="model"
+            :product-id="productId"
+            :product-name="product.name"
           />
         </template>
       </div>
@@ -120,7 +126,6 @@
 import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
-import { useI18n } from "vue-i18n";
 import _productTemplate from "@/config/product.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
@@ -173,7 +178,6 @@ const isMobile = breakpoints.smaller("lg");
 const productId = toRef(props, "productId");
 const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
 
-const { t } = useI18n();
 const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
 const { fetchProductConfiguration, configuration } = useConfigurableProduct(productId.value);
 const {
@@ -376,26 +380,6 @@ watch(
         eventType: "click",
         productId: product.value.id,
         storeId: globals.storeId,
-      });
-    }
-  },
-  { immediate: true },
-);
-
-/**
- * Send Google Analytics event for related products.
- */
-
-const hasRelatedProducts = computed(() => !!relatedProducts.value.length);
-
-watch(
-  // also watch relatedProducts in case of same length but different content
-  [hasRelatedProducts, relatedProducts],
-  () => {
-    if (hasRelatedProducts.value) {
-      analytics("viewItemList", relatedProducts.value, {
-        item_list_id: "related_products",
-        item_list_name: t("pages.product.related_product_section_title"),
       });
     }
   },
