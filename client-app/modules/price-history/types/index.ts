@@ -1,4 +1,4 @@
 export type PriceHistoryItemType = {
   date: string;
-  priceAmount: number;
+  price: number;
 };

@@ -1,8 +1,8 @@
 <template>
   <VcContainer>
     <VcTypography variant="h1">Price History</VcTypography>
-    <PriceHistory />
-    {{ result }} {{ loading }}
+    <VcLoading v-if="loading" />
+    <PriceHistory v-else-if="result?.data" :data="result.data" />
   </VcContainer>
 </template>
 

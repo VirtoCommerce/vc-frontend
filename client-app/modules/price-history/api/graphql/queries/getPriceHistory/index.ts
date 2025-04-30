@@ -2,17 +2,6 @@ import { ref } from "vue";
 import type { PriceHistoryItemType } from "@/modules/price-history/types";
 
 /**
- * Formats date as YYYY-MM-DD using Intl
- */
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
-}
-
-/**
  * Adds the specified number of days to a date
  */
 function addDays(date: Date, days: number): Date {
@@ -43,14 +32,14 @@ function generateMockPriceHistory(productIds: string[]): Record<string, PriceHis
     for (let dayOffset = -3; dayOffset <= 3; dayOffset++) {
       const currentDate = addDays(new Date(), dayOffset);
       // Format date as YYYY-MM-DD
-      const dateString = formatDate(currentDate);
+      const dateString = currentDate.toISOString();
 
       const fluctuation = basePrice * (Math.random() * 0.1 - 0.05);
-      const priceAmount = Number((basePrice + fluctuation).toFixed(2));
+      const price = Number((basePrice + fluctuation).toFixed(2));
 
       priceHistory.push({
         date: dateString,
-        priceAmount,
+        price,
       });
     }
 
