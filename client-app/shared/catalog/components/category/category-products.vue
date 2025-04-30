@@ -2,6 +2,22 @@
   <div class="category-products">
     <template v-if="products.length || fetchingProducts">
       <div
+        v-if="mode === CATALOG_PAGINATION_MODES.loadMore && minVisitedPage > 1"
+        class="-mt-2 mb-6 flex justify-center"
+      >
+        <VcButton
+          v-if="products.length"
+          class="mt-4"
+          size="sm"
+          :loading="fetchingMoreProducts && pageNumber < minVisitedPage"
+          prepend-icon="arrow-left"
+          @click="loadPreviousPage"
+        >
+          {{ $t("pages.catalog.load_previous_page") }}
+        </VcButton>
+      </div>
+
+      <div
         :class="[
           'category-products__list',
           {
@@ -30,15 +46,29 @@
       </div>
 
       <VcInfinityScrollLoader
-        v-if="!Number(fixedProductsCount)"
+        v-if="mode === CATALOG_PAGINATION_MODES.infiniteScroll && !Number(fixedProductsCount)"
         :loading="fetchingProducts || fetchingMoreProducts"
         :is-page-limit-reached="pageNumber >= PAGE_LIMIT"
         :page-number="pageNumber"
         :pages-count="pagesCount"
         distance="400"
         class="category-products__infinity"
-        @visible="$emit('changePage', ++pageNumber)"
+        @visible="$emit('changePage', pageNumber + 1)"
       />
+
+      <div
+        v-if="mode === CATALOG_PAGINATION_MODES.loadMore && maxVisitedPage < pagesCount"
+        class="mt-6 flex justify-center"
+      >
+        <VcButton
+          :loading="fetchingMoreProducts && pageNumber > maxVisitedPage"
+          append-icon="arrow-right"
+          size="sm"
+          @click="loadNextPage"
+        >
+          {{ $t("pages.catalog.load_next_page") }}
+        </VcButton>
+      </div>
 
       <VcScrollTopButton />
     </template>
@@ -69,11 +99,14 @@ import { useRouteQueryParam } from "@/core/composables";
 import { PAGE_LIMIT, BREAKPOINTS, DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { ProductCard, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog/components";
+import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import type { Product } from "@/core/api/graphql/types";
+import type { CatalogPaginationModeType } from "@/shared/catalog/types/catalog";
 
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
+  mode: CATALOG_PAGINATION_MODES.infiniteScroll,
   itemsPerPage: DEFAULT_PAGE_SIZE,
   viewMode: "grid",
   columnsAmountTablet: "3",
@@ -91,9 +124,11 @@ interface IProps {
   hasSelectedFacets: boolean;
   itemsPerPage?: number;
   pagesCount: number;
+  pageHistory: Readonly<number[]>;
   pageNumber: number;
   products: Product[];
   savedViewMode: "grid" | "list";
+  mode?: CatalogPaginationModeType;
 }
 
 interface IEmits {
@@ -107,7 +142,19 @@ const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
   defaultValue: "",
 });
 
+function loadPreviousPage() {
+  emit("changePage", minVisitedPage.value - 1);
+}
+
+function loadNextPage() {
+  emit("changePage", maxVisitedPage.value + 1);
+}
+
 const pageNumber = toRef(props, "pageNumber");
+const pageHistory = toRef(props, "pageHistory");
+
+const minVisitedPage = computed(() => Math.min(...pageHistory.value));
+const maxVisitedPage = computed(() => Math.max(...pageHistory.value));
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 
