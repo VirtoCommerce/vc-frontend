@@ -1,0 +1,39 @@
+query GetProductDetails(
+  $storeId: String!
+  $userId: String
+  $currencyCode: String
+  $cultureName: String
+  $productIds: String
+) {
+  products(productIds: $productIds) {
+    id
+    name
+    code
+    hasVariations
+    isConfigurable
+    imgSrc
+    vendor {
+      name
+    }
+    price {
+      actual {
+        amount
+        formattedAmount
+      }
+      list {
+        amount
+        formattedAmount
+      }
+    }
+    minVariationPrice {
+      actual {
+        amount
+        formattedAmount
+      }
+      list {
+        amount
+        formattedAmount
+      }
+    }
+  }
+}
