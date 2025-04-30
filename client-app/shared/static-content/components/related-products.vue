@@ -7,9 +7,9 @@
     size="lg"
     class="order-last max-md:-mx-4.5"
   >
-    <VcProductsGrid v-if="lg" short :columns="{ default: 2, xs: 2, sm: 3, md: 2 }">
+    <VcProductsGrid v-if="lg" short :columns="{ default: 2, xs: 2, sm: 3, md: 3 }">
       <ProductCardRelated
-        v-for="(item, index) in mobileProducts"
+        v-for="(item, index) in relatedProducts"
         :key="index"
         :product="item"
         @link-click="analytics('selectItem', item)"
@@ -18,7 +18,7 @@
 
     <VcCarousel v-else :slides="relatedProducts" :options="relatedProductsCarouselOptions" navigation>
       <template #slide="{ slide: item }">
-        <div class="h-full px-4 py-3 xl:px-3">
+        <div class="h-full p-2">
           <ProductCardRelated class="h-full" :product="item" @link-click="analytics('selectItem', item)" />
         </div>
       </template>
@@ -28,7 +28,6 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { computed } from "vue";
 import { useAnalytics } from "@/core/composables";
 import { BREAKPOINTS } from "@/core/constants";
 import { extractNumberFromString } from "@/core/utilities";
@@ -38,47 +37,22 @@ import type { Product } from "@/core/api/graphql/types";
 interface IProps {
   relatedProducts?: Product[];
 }
-const props = defineProps<IProps>();
+defineProps<IProps>();
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const { analytics } = useAnalytics();
 
-const sm = breakpoints.smaller("sm");
-const md = breakpoints.smaller("md");
 const lg = breakpoints.smaller("lg");
 
-const lgScreenWidth = extractNumberFromString(BREAKPOINTS.lg);
 const xlScreenWidth = extractNumberFromString(BREAKPOINTS.xl);
-
-const mobileProductsNumber = computed(() => {
-  if (sm.value) {
-    return 4;
-  }
-
-  if (md.value) {
-    return 3;
-  }
-
-  if (lg.value) {
-    return 2;
-  }
-
-  return 4;
-});
-
-const mobileProducts = computed(() => props.relatedProducts?.slice(0, mobileProductsNumber.value));
 
 const relatedProductsCarouselOptions: CarouselOptions = {
   slidesPerView: 4,
   slidesPerGroup: 4,
   breakpoints: {
-    [lgScreenWidth]: {
-      slidesPerView: 3,
-      slidesPerGroup: 3,
-    },
     [xlScreenWidth]: {
-      slidesPerView: 4,
-      slidesPerGroup: 4,
+      slidesPerView: 5,
+      slidesPerGroup: 5,
     },
   },
 };

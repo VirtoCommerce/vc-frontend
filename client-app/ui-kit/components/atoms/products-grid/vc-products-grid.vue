@@ -8,20 +8,29 @@
     ]"
   >
     <div class="vc-products-grid__wrapper">
-      <slot />
+      <template v-for="(child, index) in visibleChildren" :key="index">
+        <component :is="child" />
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { useBreakpoints } from "@vueuse/core";
+import { computed, useSlots } from "vue";
+import { BREAKPOINTS } from "@/core/constants";
+import type { BreakpointsType } from "@/core/constants";
+import type { VNode } from "vue";
 
 interface IProps {
   short?: boolean;
-  columns?: Partial<Record<"default" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl", number>>;
+  columns?: Partial<Record<"default" | BreakpointsType, number>>;
 }
 
 const props = defineProps<IProps>();
+
+const breakpoints = useBreakpoints(BREAKPOINTS);
+const slots = useSlots();
 
 const cols = computed(() => ({
   default: props.columns?.default ?? 2,
@@ -32,6 +41,20 @@ const cols = computed(() => ({
   xl: props.columns?.xl ?? 6,
   "2xl": props.columns?.["2xl"] ?? 6,
 }));
+
+const currentBreakpoint = computed(() => breakpoints.active().value ?? "default");
+
+const visibleChildren = computed(() => {
+  const bp = currentBreakpoint.value as "default" | BreakpointsType;
+
+  const colCount = cols.value[bp];
+  const count = colCount === 2 || colCount == null ? 4 : colCount;
+
+  const slotRaw = slots.default?.() ?? [];
+  const rawChildren = slotRaw[0]?.type === Symbol.for("v-fgt") ? (slotRaw[0].children ?? []) : slotRaw;
+
+  return props.short ? (rawChildren as VNode[]).slice(0, count) : rawChildren;
+});
 </script>
 
 <style lang="scss">
@@ -47,7 +70,7 @@ const cols = computed(() => ({
   &__wrapper {
     --cols: v-bind(cols.default);
 
-    @apply grid gap-x-6 grid-cols-[repeat(var(--cols),minmax(0,1fr))];
+    @apply grid gap-x-6 gap-y-3 grid-cols-[repeat(var(--cols),minmax(0,1fr))];
 
     @media (min-width: theme("screens.xs")) {
       --cols: v-bind(cols.xs);
@@ -71,13 +94,6 @@ const cols = computed(() => ({
 
     @media (min-width: theme("screens.2xl")) {
       --cols: v-bind(cols[ "2xl"]);
-    }
-
-    #{$short} & {
-      overflow-y: hidden;
-      grid-template-rows: auto;
-      grid-auto-rows: 0;
-      grid-auto-flow: row;
     }
   }
 }
