@@ -28,7 +28,7 @@
           :shadow="false"
           @toggle-collapse="($event) => (collapsedStates[index] = $event)"
         >
-          <template #title>
+          <template v-if="item.group" #title>
             <span class="normal-case">
               {{ item.group?.name }}
             </span>
