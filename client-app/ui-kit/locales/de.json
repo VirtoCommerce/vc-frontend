@@ -49,7 +49,8 @@
         "out_of_stock": "Nicht auf Lager",
         "positive_number": "Der Wert muss eine positive Zahl sein",
         "integer_number": "Der Wert muss eine ganze Zahl sein",
-        "pack_size": "Bestellen in Packungen von {0}"
+        "pack_size": "Bestellen in Packungen von {0}",
+        "exact_qty": "Du kannst {0} Artikel bestellen"
       }
     },
     "pagination": {

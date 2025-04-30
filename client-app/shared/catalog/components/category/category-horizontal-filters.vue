@@ -40,7 +40,7 @@
 
         <template #content="{ close }">
           <VcMenuItem
-            v-for="sortingOption in PRODUCT_SORTING_LIST"
+            v-for="sortingOption in translatedProductSortingList"
             :key="sortingOption.id"
             class="category-horizontal-filters__sorting-input"
             color="secondary"
@@ -69,6 +69,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouteQueryParam } from "@/core/composables";
 import { PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
@@ -104,6 +106,17 @@ function sortingItemClickHandler(id: string, close: () => void) {
   sortQueryParam.value = id;
   close();
 }
+
+const { t } = useI18n();
+
+function getTranslatedProductSortingList() {
+  return PRODUCT_SORTING_LIST.map((item) => ({
+    ...item,
+    name: t(item.name),
+  }));
+}
+
+const translatedProductSortingList = computed(() => getTranslatedProductSortingList());
 </script>
 
 <style lang="scss">

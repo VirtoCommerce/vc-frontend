@@ -874,6 +874,15 @@
         "shared": "Współdzielona",
         "private": "Prywatna"
       }
+    },
+    "sorting": {
+      "featured": "Polecane",
+      "alphabetically_a_z": "Alfabetycznie, A-Z",
+      "alphabetically_z_a": "Alfabetycznie, od Z do A",
+      "price_low_to_high": "Cena, od najniższej",
+      "price_high_to_low": "Cena: od najwyższej",
+      "date_new_to_old": "Data, od najnowszej",
+      "date_old_to_new": "Data, od najstarszych"
     }
   },
   "pages": {

@@ -14,6 +14,7 @@
     :selectable="selectable"
     @select:items="$emit('select:items', $event)"
     @remove:items="$emit('remove:items', $event)"
+    @link-click="handleLinkClick($event)"
   >
     <template #titles>
       <div class="text-center">
@@ -74,6 +75,7 @@ import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
 import { ConfigurationItems } from "@/shared/common";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
+import type { PreparedLineItemType } from "@/core/types";
 
 interface IProps {
   disabled?: boolean;
@@ -88,9 +90,10 @@ interface IEmits {
   (event: "change:itemQuantity", value: { itemId: string; quantity: number }): void;
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
+  (event: "linkClick", value: LineItemType | undefined): void;
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
@@ -105,4 +108,9 @@ const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorT
 const preparedLineItems = computed(() => prepareLineItems(props.items));
 
 watchEffect(() => setErrors(validationErrors.value));
+
+const handleLinkClick = (item: PreparedLineItemType) => {
+  const lineItem = props.items.find((cartLineItem) => cartLineItem.id === item.id);
+  emit("linkClick", lineItem);
+};
 </script>
