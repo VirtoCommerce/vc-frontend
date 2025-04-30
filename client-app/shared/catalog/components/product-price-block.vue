@@ -56,14 +56,7 @@
           </template>
         </VcPopover>
 
-        <a
-          :href="mailToLink"
-          :aria-label="$t('common.buttons.send_link_email')"
-          target="_blank"
-          class="flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50"
-        >
-          <VcIcon name="mail" size="sm" class="fill-primary" />
-        </a>
+        <AddToHistoryV2 :product="product" />
 
         <button
           :aria-label="$t('common.buttons.print')"
@@ -81,23 +74,22 @@
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, ref, shallowRef } from "vue";
-import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { stringFormat } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import { VcIcon } from "@/ui-kit/components";
 import type { Product } from "@/core/api/graphql/types";
+import AddToHistoryV2 from "@/modules/price-history/components/add-to-history-v2.vue";
 
 interface IProps {
   product: Product;
 }
 
-const props = defineProps<IProps>();
+defineProps<IProps>();
 
 const route = useRoute();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { t } = useI18n();
 
 const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
 
@@ -105,13 +97,6 @@ const isMobile = breakpoints.smaller("lg");
 
 const pageUrl = computed(() => location.origin + route.path);
 const shareProductPopoverShown = ref(false);
-
-const mailToLink = computed(
-  () =>
-    `mailto:?subject=${encodeURIComponent(
-      t("shared.catalog.product_details.price_block.product_email_title", [props.product?.name]),
-    )}&body=${encodeURIComponent(pageUrl.value)}`,
-);
 
 function getProductSocialShareUrl(urlTemplate: string, url: string): string {
   return stringFormat(urlTemplate, url);
