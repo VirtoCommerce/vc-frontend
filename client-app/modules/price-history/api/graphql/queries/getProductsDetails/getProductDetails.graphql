@@ -1,38 +1,76 @@
-query GetProductDetails(
-  $storeId: String!
-  $userId: String
-  $currencyCode: String
-  $cultureName: String
-  $productIds: String
-) {
-  products(productIds: $productIds) {
-    id
-    name
-    code
-    hasVariations
-    isConfigurable
-    imgSrc
-    vendor {
+#import "./money.graphql"
+#import "./property.graphql"
+#import "./availabilityData.graphql"
+#import "./rating.graphql"
+
+query GetProductDetails($storeId: String!, $currencyCode: String, $cultureName: String, $productIds: [String!]) {
+  products(storeId: $storeId, currencyCode: $currencyCode, cultureName: $cultureName, productIds: $productIds) {
+    totalCount
+    items {
       name
-    }
-    price {
-      actual {
-        amount
-        formattedAmount
+      id
+      code
+      minQuantity
+      maxQuantity
+      packSize
+      inWishlist
+      productType
+      isConfigurable
+      vendor {
+        id
+        name
       }
-      list {
-        amount
-        formattedAmount
+      variations {
+        id
+        price {
+          list {
+            ...money
+          }
+          actual {
+            ...money
+          }
+        }
       }
-    }
-    minVariationPrice {
-      actual {
-        amount
-        formattedAmount
+      hasVariations
+      slug
+      outline
+      imgSrc
+      images {
+        url
       }
-      list {
-        amount
-        formattedAmount
+      description(type: "QuickReview") {
+        content
+      }
+      availabilityData {
+        ...availabilityData
+      }
+      price {
+        actual {
+          ...money
+        }
+        discountAmount {
+          amount
+          formattedAmount
+        }
+        sale {
+          amount
+          formattedAmount
+        }
+        list {
+          ...money
+        }
+        discountPercent
+      }
+      minVariationPrice {
+        actual {
+          ...money
+        }
+      }
+      properties {
+        ...property
+      }
+      rating {
+        ...rating
       }
     }
   }
