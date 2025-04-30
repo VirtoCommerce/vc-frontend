@@ -14,6 +14,7 @@ import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
+import { init as initModulePriceHistory } from "@/modules/price-history";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
@@ -135,6 +136,7 @@ export default async () => {
 
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
+  void initModulePriceHistory(router, i18n);
   void initModuleBackInStock(router, i18n);
   void initCustomerReviews(i18n);
   void initializePurchaseRequests(router, i18n);
