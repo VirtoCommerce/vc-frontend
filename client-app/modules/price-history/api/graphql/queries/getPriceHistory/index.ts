@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { PriceHistoryItemType } from "@/modules/price-history/types";
 
 /**
@@ -9,12 +9,6 @@ function addDays(date: Date, days: number): Date {
   result.setDate(date.getDate() + days);
   return result;
 }
-
-type PriceHistoryResponseType =
-  | {
-      data?: Record<string, PriceHistoryItemType[]>;
-    }
-  | undefined;
 
 /**
  * Generates mock price history data for the given product IDs
@@ -50,7 +44,7 @@ function generateMockPriceHistory(productIds: string[]): Record<string, PriceHis
 }
 
 export function useGetPriceHistory(productIds: string[]) {
-  const result = ref<PriceHistoryResponseType>();
+  const result = ref<Record<string, PriceHistoryItemType[]>>({});
   const loading = ref(false);
 
   async function fetchPriceHistory(): Promise<void> {
@@ -68,6 +62,6 @@ export function useGetPriceHistory(productIds: string[]) {
 
   return {
     loading,
-    result,
+    result: computed(() => ({ data: result.value })),
   };
 }

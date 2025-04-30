@@ -4,7 +4,7 @@ import { globals } from "@/core/globals";
 import GetProductDetailsDocument from "./getProductDetails.graphql";
 import type { MaybeRefOrGetter } from "vue";
 
-export function getProductDetails(payload: MaybeRefOrGetter<{ productIds: string }>) {
+export function getProductDetails(payload: MaybeRefOrGetter<{ productIds: string[] }>) {
   const { storeId, cultureName, currencyCode } = globals;
   return useQuery(
     GetProductDetailsDocument,

@@ -1,17 +1,32 @@
 <template>
-  <VcContainer>
-    <VcTypography variant="h1">Price History</VcTypography>
-    <VcLoading v-if="loading" />
-    <PriceHistory v-else-if="result?.data" :data="result.data" />
+  <VcContainer class="price-history-page">
+    <VcTypography class="price-history-page__title" variant="h1">Price History</VcTypography>
+
+    <VcLoaderOverlay v-if="loading" />
+
+    <PriceHistory v-else :data="result.data" :products="products" />
   </VcContainer>
 </template>
 
 <script setup lang="ts">
 import { useLocalStorage } from "@vueuse/core";
 import { useGetPriceHistory } from "../api/graphql/queries/getPriceHistory";
+import { getProductDetails } from "../api/graphql/queries/getProductsDetails";
 import PriceHistory from "../components/price-history.vue";
 import { PRICE_HISTORY_ITEMS_KEY } from "../constants";
 
 const priceHistoryItems = useLocalStorage<string[]>(PRICE_HISTORY_ITEMS_KEY, []);
 const { result, loading } = useGetPriceHistory(priceHistoryItems.value);
+
+const { result: products } = getProductDetails({
+  productIds: priceHistoryItems.value,
+});
 </script>
+
+<style scoped lang="scss">
+.price-history-page {
+  &__title {
+    @apply mb-6;
+  }
+}
+</style>

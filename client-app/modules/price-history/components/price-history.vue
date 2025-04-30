@@ -1,16 +1,29 @@
 <template>
   <div class="price-history">
-    <PriceChart v-for="productId in Object.keys(data)" :key="productId" currency="$" :price-data="data[productId]" />
+    <PriceHistoryItem
+      v-for="productId in Object.keys(data)"
+      :key="productId"
+      :product="{ name: productId }"
+      :price-data="data[productId]"
+    />
+    {{ products }}
   </div>
 </template>
 
 <script setup lang="ts">
-import PriceChart from "./price-chart.vue";
+import PriceHistoryItem from "./price-history-item.vue";
 import type { PriceHistoryItemType } from "../types";
 
 interface IProps {
   data: Record<string, PriceHistoryItemType[]>;
+  products: unknown;
 }
 
 defineProps<IProps>();
 </script>
+
+<style lang="scss">
+.price-history {
+  @apply flex flex-col gap-4;
+}
+</style>
