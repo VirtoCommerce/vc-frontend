@@ -1,0 +1,15 @@
+fragment property on Property {
+  group {
+    id
+    name
+    displayOrder
+    description
+  }
+  name
+  value
+  propertyType
+  hidden
+  propertyValueType
+  label
+  displayOrder
+}

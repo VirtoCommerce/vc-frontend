@@ -1,0 +1,7 @@
+fragment availabilityData on AvailabilityData {
+  isActive
+  isAvailable
+  isBuyable
+  isInStock
+  availableQuantity
+}
