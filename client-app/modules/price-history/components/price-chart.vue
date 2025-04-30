@@ -1,12 +1,12 @@
 <template>
-  <div>
-    <canvas id="priceChart"></canvas>
+  <div class="price-chart">
+    <canvas ref="chartCanvas" class="price-chart__canvas"></canvas>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Chart, registerables } from "chart.js";
-import { ref, onMounted, defineProps } from "vue";
+import { ref, onMounted, onUnmounted, defineProps } from "vue";
 
 const props = defineProps({
   currency: {
@@ -74,20 +74,31 @@ const chartOptions = ref({
   },
 });
 
+const chartCanvas = ref<HTMLCanvasElement | null>(null);
+let chartInstance: Chart | null = null;
+
 onMounted(() => {
-  const ctx = document.getElementById("priceChart") as HTMLCanvasElement;
-  new Chart(ctx, {
-    type: "line",
-    data: chartData.value,
-    options: chartOptions.value,
-  });
+  if (chartCanvas.value) {
+    chartInstance = new Chart(chartCanvas.value, {
+      type: "line",
+      data: chartData.value,
+      options: chartOptions.value,
+    });
+  }
+});
+
+onUnmounted(() => {
+  if (chartInstance) {
+    chartInstance.destroy();
+    chartInstance = null;
+  }
 });
 </script>
 
-<style scoped lang="scss">
-#priceChart {
-  max-width: 800px;
-  height: 250px;
-  margin: 0 auto;
+<style lang="scss">
+.price-chart {
+  &__canvas {
+    @apply max-w-[800px] h-[250px];
+  }
 }
 </style>
