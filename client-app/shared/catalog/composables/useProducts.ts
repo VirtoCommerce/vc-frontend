@@ -1,5 +1,6 @@
 import { useLocalStorage } from "@vueuse/core";
-import { cloneDeep, isEqual } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+import isEqual from "lodash/isEqual";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
@@ -11,8 +12,14 @@ import {
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
 } from "@/core/utilities";
+import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useModal } from "@/shared/modal";
-import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "../types";
+import type {
+  CatalogPaginationModeType,
+  FiltersDisplayOrderType,
+  ProductsFiltersType,
+  ProductsSearchParamsType,
+} from "../types";
 import type { Product, RangeFacet, TermFacet } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { Ref } from "vue";
@@ -30,6 +37,8 @@ export function useProducts(
     withZeroPrice?: boolean;
     filtersDisplayOrder?: Ref<FiltersDisplayOrderType | undefined>;
     useQueryParams?: boolean;
+    /** @default CATALOG_PAGINATION_MODES.infiniteScroll */
+    catalogPaginationMode?: CatalogPaginationModeType;
   } = {},
 ) {
   const { themeContext } = useThemeContext();
@@ -37,11 +46,20 @@ export function useProducts(
     withFacets = false,
     withImages = themeContext.value?.settings?.image_carousel_in_product_card_enabled,
     withZeroPrice = themeContext.value?.settings?.zero_price_product_enabled,
+    catalogPaginationMode = CATALOG_PAGINATION_MODES.infiniteScroll,
   } = options;
   const { openModal } = useModal();
 
   const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
   const localStorageBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
+
+  const pageQueryParam = useRouteQueryParam<string>(QueryParamName.Page, {
+    defaultValue: "1",
+    removeDefaultValue: true,
+    validator: (value) => {
+      return String(Number(value)) === value && Number(value) > 0 && Number.isInteger(Number(value));
+    },
+  });
 
   const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
     defaultValue: PRODUCT_SORTING_LIST[0].id,
@@ -66,6 +84,12 @@ export function useProducts(
   const totalProductsCount = ref(0);
   const pagesCount = ref(1);
   const isFiltersSidebarVisible = ref(false);
+  const currentPage = ref(
+    catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore && pageQueryParam.value
+      ? Number(pageQueryParam.value)
+      : 1,
+  );
+  const pageHistory = ref<number[]>([]);
 
   const products = ref<Product[]>([]);
   const facets = shallowRef<FacetItemType[]>([]);
@@ -142,31 +166,35 @@ export function useProducts(
       localStorageBranches.value = newFilters.branches;
     }
 
-    resetCurrentPage();
+    void resetCurrentPage();
   }
 
-  function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">): void {
+  async function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {
     const facet = productsFilters.value.facets.find((item) => item.paramName === payload.paramName);
     const facetValue = facet?.values.find((item) => item.value === payload.value);
 
     if (facetValue) {
       facetValue.selected = false;
       facetsQueryParam.value = options?.useQueryParams ? getFilterExpressionFromFacets(facets) : "";
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
 
       triggerRef(facets);
-      resetCurrentPage();
+      void resetCurrentPage();
     }
   }
 
-  function resetFacetFilters(): void {
+  async function resetFacetFilters() {
     facetsQueryParam.value = "";
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
 
     productsFilters.value.facets.forEach((filter) =>
       filter.values.forEach((filterItem) => (filterItem.selected = false)),
     );
 
     triggerRef(facets);
-    resetCurrentPage();
+    void resetCurrentPage();
   }
 
   function resetFilterKeyword(): void {
@@ -199,7 +227,7 @@ export function useProducts(
           } else {
             localStorageBranches.value = branches;
           }
-          resetCurrentPage();
+          void resetCurrentPage();
         },
       },
     });
@@ -223,11 +251,23 @@ export function useProducts(
     );
   }
 
-  async function fetchProducts(searchParams: Partial<ProductsSearchParamsType>) {
+  async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>) {
+    const searchParams = {
+      ..._searchParams,
+      page:
+        catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore && _searchParams.page === undefined
+          ? currentPage.value
+          : _searchParams.page,
+    };
+
     fetchingProducts.value = true;
     products.value = [];
     totalProductsCount.value = 0;
     pagesCount.value = 1;
+
+    if (searchParams.page) {
+      updateCurrentPage(Number(searchParams.page));
+    }
 
     try {
       const {
@@ -243,6 +283,8 @@ export function useProducts(
         Math.ceil(totalProductsCount.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
         PAGE_LIMIT,
       );
+
+      addPageHistory(searchParams.page ?? 1);
 
       if (withFacets) {
         setFacets({
@@ -270,17 +312,40 @@ export function useProducts(
     try {
       const { items = [], totalCount = 0 } = await searchProducts(searchParams, { withImages, withZeroPrice });
 
-      products.value = products.value.concat(items);
+      const page = searchParams.page;
+      const minVisitedPage = Math.min(...pageHistory.value);
+
+      if (
+        catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
+        page &&
+        minVisitedPage &&
+        page < minVisitedPage
+      ) {
+        // if load previous page, we need to add new items to the beginning of the array
+        products.value = [...items, ...products.value];
+      } else {
+        // if load next page, we need to add new items to the end of the array
+        products.value = products.value.concat(items);
+      }
+
       totalProductsCount.value = totalCount;
       pagesCount.value = Math.min(
         Math.ceil(totalProductsCount.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
         PAGE_LIMIT,
       );
+
+      addPageHistory(page);
     } catch (e) {
       Logger.error(`useProducts.${fetchMoreProducts.name}`, e);
       throw e;
     } finally {
       fetchingMoreProducts.value = false;
+    }
+  }
+
+  function addPageHistory(page?: number) {
+    if (page && page <= pagesCount.value && !pageHistory.value.includes(page)) {
+      pageHistory.value.push(page);
     }
   }
 
@@ -309,14 +374,22 @@ export function useProducts(
     }
   }
 
-  const currentPage = ref(1);
-
   function updateCurrentPage(page: number) {
     currentPage.value = page;
+
+    if (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore && page > Math.max(...pageHistory.value)) {
+      pageQueryParam.value = page.toString();
+    }
   }
 
-  function resetCurrentPage() {
+  async function resetCurrentPage() {
     updateCurrentPage(1);
+    if (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore) {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
+      pageQueryParam.value = "";
+      pageHistory.value = [1];
+    }
   }
 
   return {
@@ -340,6 +413,7 @@ export function useProducts(
     totalProductsCount: readonly(totalProductsCount),
 
     currentPage: readonly(currentPage),
+    pageHistory: readonly(pageHistory),
     resetCurrentPage,
     updateCurrentPage,
 

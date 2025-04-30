@@ -75,6 +75,7 @@
       "all_orders": "Toutes les commandes",
       "my_orders": "Mes commandes",
       "scroll_to_top": "Haut de page",
+      "reset_page": "Réinitialiser la page",
       "show_less": "Afficher moins",
       "expand_all": "Tout développer"
     },
@@ -1303,7 +1304,9 @@
       "no_facet_found_message": "Aucun résultat",
       "no_products_button": "Réinitialiser la recherche",
       "products_icon": "Icône du produit",
-      "show_all_results": "Afficher tous les résultats"
+      "show_all_results": "Afficher tous les résultats",
+      "load_previous_page": "Charger la page précédente",
+      "load_next_page": "Charger la page suivante"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
