@@ -7,6 +7,7 @@
       >
         <VcButton
           v-if="products.length"
+          class="mt-4"
           size="sm"
           :loading="fetchingMoreProducts && pageNumber < minVisitedPage"
           prepend-icon="arrow-left"
