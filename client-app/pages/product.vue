@@ -107,6 +107,8 @@
             :product-name="product.name"
           />
         </template>
+
+        <PriceHistoryBlock :product-id="productId" />
       </div>
 
       <template #sidebar>
@@ -157,6 +159,7 @@ import {
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import type { IPageTemplate } from "@/shared/static-content";
+import PriceHistoryBlock from "@/modules/price-history/components/price-history-block.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 
 const props = withDefaults(defineProps<IProps>(), {

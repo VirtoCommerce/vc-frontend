@@ -23,7 +23,7 @@ const { result: products } = getProductDetails({
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .price-history-page {
   &__title {
     @apply mb-6;

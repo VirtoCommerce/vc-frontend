@@ -3,10 +3,9 @@
     <PriceHistoryItem
       v-for="productId in Object.keys(data)"
       :key="productId"
-      :product="{ name: productId }"
       :price-data="data[productId]"
+      :product="{ name: productId }"
     />
-    {{ products }}
   </div>
 </template>
 
@@ -16,7 +15,7 @@ import type { PriceHistoryItemType } from "../types";
 
 interface IProps {
   data: Record<string, PriceHistoryItemType[]>;
-  products: unknown;
+  products?: unknown;
 }
 
 defineProps<IProps>();

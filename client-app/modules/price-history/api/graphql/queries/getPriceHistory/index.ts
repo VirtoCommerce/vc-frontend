@@ -28,8 +28,8 @@ function generateMockPriceHistory(productIds: string[]): Record<string, PriceHis
       // Format date as YYYY-MM-DD
       const dateString = currentDate.toISOString();
 
-      const fluctuation = basePrice * (Math.random() * 0.1 - 0.05);
-      const price = Number((basePrice + fluctuation).toFixed(2));
+      const fluctuation = basePrice * (Math.random() * 0.2);
+      const price = Math.floor(basePrice + fluctuation);
 
       priceHistory.push({
         date: dateString,

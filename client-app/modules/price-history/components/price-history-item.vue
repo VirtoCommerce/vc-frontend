@@ -1,7 +1,7 @@
 <template>
   <div class="price-history-item">
     <PriceChart :price-data="priceData" />
-    <VcLabel>{{ product.name }}</VcLabel>
+    <VcLabel v-if="product">{{ product.name }}</VcLabel>
   </div>
 </template>
 
@@ -10,7 +10,7 @@ import PriceChart from "./price-chart.vue";
 
 interface IProps {
   priceData: { price: number; date: string }[];
-  product: {
+  product?: {
     name: string;
   };
 }
@@ -18,7 +18,7 @@ interface IProps {
 defineProps<IProps>();
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .price-history-item {
   @apply flex justify-start items-center gap-4;
 }
