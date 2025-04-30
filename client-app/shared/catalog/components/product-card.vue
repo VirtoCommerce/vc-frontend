@@ -18,6 +18,7 @@
         <AddToList :product="product" />
 
         <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
+        <AddToHistory :product="product" />
       </VcProductActions>
     </template>
 
@@ -110,6 +111,7 @@ import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { BrowserTargetType } from "@/core/types";
+import AddToHistory from "@/modules/price-history/components/add-to-history.vue";
 
 interface IEmits {
   (eventName: "linkClick", product: Product, globalEvent: MouseEvent): void;
