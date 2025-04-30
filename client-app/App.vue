@@ -18,13 +18,15 @@ import favicon32 from "@/assets/icons/favicon-32x32.png";
 import faviconSVG from "@/assets/icons/favicon.svg";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
-import { ModalHost } from "@/shared/modal";
+import { ModalHost, useModal } from "@/shared/modal";
 import { NotificationsHost } from "@/shared/notification";
 import { useWhiteLabeling } from "./core/composables";
 import { SecureLayout } from "./shared/layout";
 import type { Component } from "vue";
+import PriceHistoryModal from "@/modules/price-history/components/price-history-modal.vue";
 import EnvironmentBadge from "@/shared/layout/components/environmentBadge/environment-badge.vue";
 import MainLayout from "@/shared/layout/components/main-layout/main-layout.vue";
+const { openModal } = useModal();
 
 const route = useRoute();
 const router = useRouter();
@@ -74,7 +76,16 @@ router.beforeEach((to) => {
   }
 });
 
-onMounted(setupBroadcastGlobalListeners);
+onMounted(() => {
+  setupBroadcastGlobalListeners();
+  openPriceHistoryModal();
+});
+
+function openPriceHistoryModal() {
+  openModal({
+    component: PriceHistoryModal,
+  });
+}
 </script>
 
 <style lang="scss">
