@@ -25,6 +25,6 @@ function getProduct(productId: string): Product | undefined {
 
 <style lang="scss">
 .price-history {
-  @apply flex flex-col gap-4;
+  @apply @container flex flex-col gap-8 divide-y-2 divide-neutral-200;
 }
 </style>

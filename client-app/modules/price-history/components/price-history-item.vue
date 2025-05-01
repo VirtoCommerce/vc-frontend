@@ -34,9 +34,9 @@ defineProps<IProps>();
 
 <style lang="scss">
 .price-history-item {
-  @apply flex justify-start  gap-4 flex-col max-w-full container;
+  @apply flex justify-start gap-4 flex-col max-w-full;
 
-  @container (max-width: theme("containers.2xl")) {
+  @container (min-width: theme("containers.4xl")) {
     @apply flex-row items-center;
   }
 
@@ -47,7 +47,7 @@ defineProps<IProps>();
   &__price-chart {
     @apply flex-shrink-0;
 
-    @container (max-width: theme("containers.2xl")) {
+    @container (min-width: theme("containers.4xl")) {
       @apply w-[600px];
     }
   }

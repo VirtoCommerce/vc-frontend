@@ -2,6 +2,10 @@
   <VcContainer class="price-history-page">
     <VcTypography class="price-history-page__title" variant="h1">Price History</VcTypography>
 
+    <div v-if="loading" class="price-history-page__loader">
+      <VcLoaderOverlay />
+    </div>
+
     <VcLoaderOverlay v-if="loading" />
 
     <PriceHistory v-else :data="result.data" :products="products.products.items" />
@@ -27,6 +31,10 @@ const { result: products } = getProductDetails({
 .price-history-page {
   &__title {
     @apply mb-6;
+  }
+
+  &__loader {
+    @apply min-h-60;
   }
 }
 </style>

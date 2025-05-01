@@ -10,7 +10,8 @@ const { mergeMenuSchema } = useNavigations();
 
 const route: RouteRecordRaw = {
   path: "/price-history",
-  children: [{ path: "", name: "PriceHistory", component: PriceHistoryPage }],
+  name: "PriceHistory",
+  component: PriceHistoryPage,
 };
 
 const menuItems: DeepPartial<MenuType> = {
@@ -21,7 +22,7 @@ const menuItems: DeepPartial<MenuType> = {
           {
             id: "price-history",
             route: { name: "PriceHistory" },
-            title: "price_history.navigation.route_name",
+            title: "Price History",
             icon: "clipboard-arrow",
             priority: 100,
           },
@@ -34,7 +35,7 @@ const menuItems: DeepPartial<MenuType> = {
           {
             id: "price-history",
             route: { name: "PriceHistory" },
-            title: "price_history.navigation.route_name",
+            title: "Price History",
             icon: "clipboard-arrow",
             priority: 100,
           },

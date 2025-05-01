@@ -1,8 +1,15 @@
 <template>
   <VcModal title="Price History">
-    <VcLoaderOverlay v-if="loading" />
+    <div v-if="loading" class="price-history-modal__loader">
+      <VcLoaderOverlay />
+    </div>
 
     <PriceHistory v-else :data="dataToShow" :products="productsToShow" />
+
+    <template #actions="{ close }">
+      <VcButton variant="secondary" :to="{ name: 'PriceHistory' }" @click="close">See all</VcButton>
+      <VcButton @click="close">Close</VcButton>
+    </template>
   </VcModal>
 </template>
 
@@ -15,7 +22,7 @@ import { PRICE_HISTORY_ITEMS_KEY } from "../constants";
 import PriceHistory from "./price-history.vue";
 import type { Product } from "@/core/api/graphql/types";
 
-const ITEMS_TO_SHOW = 3;
+const ITEMS_TO_SHOW = 5;
 
 const priceHistoryItems = useLocalStorage<string[]>(PRICE_HISTORY_ITEMS_KEY, []);
 const { result, loading } = useGetPriceHistory(priceHistoryItems.value);
@@ -39,3 +46,11 @@ const productsToShow = computed(() => {
   return productItems.slice(0, ITEMS_TO_SHOW);
 });
 </script>
+
+<style lang="scss">
+.price-history-modal {
+  &__loader {
+    @apply min-h-60;
+  }
+}
+</style>
