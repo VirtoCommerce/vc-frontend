@@ -15,6 +15,20 @@
         <div class="filters-popup-sidebar__container">
           <VcCheckbox
             v-if="!hideControls"
+            :model-value="popupSidebarFilters.purchasedBefore"
+            class="filters-popup-sidebar__control"
+            :disabled="updatingFiltersState"
+            @change="
+              (value) => {
+                $emit('updatePopupSidebarFilters', { ...popupSidebarFilters, purchasedBefore: value as boolean });
+              }
+            "
+          >
+            Purchased before
+          </VcCheckbox>
+
+          <VcCheckbox
+            v-if="!hideControls"
             :model-value="popupSidebarFilters.inStock"
             class="filters-popup-sidebar__control"
             :disabled="updatingFiltersState"

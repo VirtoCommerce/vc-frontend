@@ -8,7 +8,10 @@
         :lazy="lazy"
         :to="link"
       >
-        <DiscountBadge v-if="product.price" :price="product.price" />
+        <BadgesWrapper>
+          <PurchasedBeforeBadge v-if="product.isPurchased" />
+          <DiscountBadge v-if="product.price" static :price="product.price" />
+        </BadgesWrapper>
       </VcProductImage>
 
       <VcProductActions
@@ -105,9 +108,11 @@ import { useCustomProductComponents } from "@/shared/common/composables";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
+import BadgesWrapper from "./badges-wrapper.vue";
 import CountInCart from "./count-in-cart.vue";
 import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
+import PurchasedBeforeBadge from "./purchased-before-badge.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { BrowserTargetType } from "@/core/types";
 

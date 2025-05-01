@@ -653,7 +653,10 @@
         }
       },
       "discount_badge": {
-        "off": "off"
+        "off": "- {discount}"
+      },
+      "purchased_before_badge": {
+        "title": "Purchased before"
       },
       "branches_modal": {
         "title": "Select Branch",

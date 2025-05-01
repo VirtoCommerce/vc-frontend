@@ -1,5 +1,30 @@
 <template>
   <div class="category-controls">
+    <!-- Purchased before -->
+    <VcTooltip placement="bottom-start" width="12rem">
+      <template #trigger>
+        <VcCheckbox
+          v-model="savedPurchasedBefore"
+          :disabled="loading"
+          @click="$emit('applyPurchasedBefore')"
+          @keyup.enter="$emit('applyPurchasedBefore')"
+        >
+          <span
+            class="whitespace-nowrap text-sm"
+            :class="{
+              'text-neutral': !savedPurchasedBefore,
+            }"
+          >
+            Purchased before
+          </span>
+        </VcCheckbox>
+      </template>
+
+      <template #content>
+        {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
+      </template>
+    </VcTooltip>
+
     <!-- In Stock -->
     <VcTooltip placement="bottom-start" width="12rem">
       <template #trigger>
@@ -64,9 +89,11 @@ defineProps<IProps>();
 interface IEmits {
   (event: "openBranchesModal", value: boolean): void;
   (event: "applyInStock"): void;
+  (event: "applyPurchasedBefore"): void;
 }
 
 const savedInStock = defineModel<boolean>();
+const savedPurchasedBefore = defineModel<boolean>("purchased-before");
 
 interface IProps {
   savedBranches: string[];
