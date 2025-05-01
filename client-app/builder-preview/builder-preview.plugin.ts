@@ -178,7 +178,13 @@ export default {
     const routes = options.router.getRoutes();
     const matcher = routes.find((x) => x.name === "Matcher")!;
     options.router.removeRoute("Matcher");
-    options.router.addRoute({ path: "/designer-preview", name: "StaticPage", component: StaticPage, props: true });
+    options.router.addRoute({
+      path: "/designer-preview",
+      name: "StaticPage",
+      component: StaticPage,
+      props: true,
+      meta: { public: true },
+    });
     options.router.addRoute(matcher);
 
     options.router.beforeEach((to, from, next) => {
