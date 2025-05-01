@@ -7,6 +7,7 @@
 <style lang="scss">
 .badges-wrapper {
   --corner-radius: 4px;
+  --decorative-size: calc(var(--corner-radius) * 2);
 
   @apply absolute -left-px -top-px flex items-center gap-2 rounded-br-lg bg-additional-50 z-[1];
 
@@ -21,17 +22,17 @@
 
     background-image: radial-gradient(
       circle at right bottom,
-      transparent calc(var(--corner-radius) * 2),
-      var(--color-additional-50) calc(var(--corner-radius) * 2)
+      transparent var(--decorative-size),
+      var(--color-additional-50) var(--decorative-size)
     );
   }
 
   &::after {
-    @apply -right-2 top-0;
+    @apply top-0 -right-[var(--decorative-size)];
   }
 
   &::before {
-    @apply left-0 -bottom-2;
+    @apply left-0 -bottom-[var(--decorative-size)];
   }
 }
 </style>

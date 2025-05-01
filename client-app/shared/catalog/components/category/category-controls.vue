@@ -15,13 +15,13 @@
               'text-neutral': !savedPurchasedBefore,
             }"
           >
-            Purchased before
+            {{ $t("pages.catalog.purchased_before_filter_card.title") }}
           </span>
         </VcCheckbox>
       </template>
 
       <template #content>
-        {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
+        {{ $t("pages.catalog.purchased_before_filter_card.tooltip_text") }}
       </template>
     </VcTooltip>
 
