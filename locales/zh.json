@@ -665,6 +665,9 @@
         "ok_button": "确定",
         "no_results": "未找到结果",
         "reset_search_button": "重置搜索"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -1306,7 +1309,11 @@
       "products_icon": "产品图标",
       "show_all_results": "显示所有结果",
       "load_previous_page": "加载上一页",
-      "load_next_page": "加载下一页"
+      "load_next_page": "加载下一页",
+      "purchased_before_filter_card": {
+        "title": "已购买过",
+        "tooltip_text": "选择以仅显示之前购买过的商品"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
