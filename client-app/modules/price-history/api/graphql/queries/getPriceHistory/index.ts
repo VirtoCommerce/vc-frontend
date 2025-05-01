@@ -12,7 +12,7 @@ function addDays(date: Date, days: number): Date {
 
 /**
  * Generates mock price history data for the given product IDs
- * with dates ±3 days from today and minor random price fluctuations
+ * with dates -30 days from today and minor random price fluctuations
  */
 function generateMockPriceHistory(productIds: string[]): Record<string, PriceHistoryItemType[]> {
   const result: Record<string, PriceHistoryItemType[]> = {};
