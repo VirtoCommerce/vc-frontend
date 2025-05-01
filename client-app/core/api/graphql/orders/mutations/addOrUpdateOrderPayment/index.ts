@@ -1,17 +1,14 @@
+import { AddOrUpdateOrderPaymentDocument } from "@/core/api/graphql/types";
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./addOrUpdateOrderPaymentMutation.graphql";
 import type {
   InputAddOrUpdateOrderPaymentType,
-  Mutations,
-  MutationsAddOrUpdateOrderPaymentArgs,
+  AddOrUpdateOrderPaymentMutation,
+  AddOrUpdateOrderPaymentMutationVariables,
 } from "@/core/api/graphql/types";
 
-export async function addOrUpdateOrderPayment(payload: InputAddOrUpdateOrderPaymentType): Promise<void> {
-  await graphqlClient.mutate<
-    Required<Pick<Mutations, "addOrUpdateOrderPayment">>,
-    MutationsAddOrUpdateOrderPaymentArgs
-  >({
-    mutation: mutationDocument,
+export async function addOrUpdateOrderPayment(payload: InputAddOrUpdateOrderPaymentType) {
+  await graphqlClient.mutate<AddOrUpdateOrderPaymentMutation, AddOrUpdateOrderPaymentMutationVariables>({
+    mutation: AddOrUpdateOrderPaymentDocument,
     variables: {
       command: payload,
     },
