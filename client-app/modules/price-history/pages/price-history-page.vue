@@ -4,7 +4,7 @@
 
     <VcLoaderOverlay v-if="loading" />
 
-    <PriceHistory v-else :data="result.data" :products="products" />
+    <PriceHistory v-else :data="result.data" :products="products.products.items" />
   </VcContainer>
 </template>
 

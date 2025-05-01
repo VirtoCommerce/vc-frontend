@@ -1,10 +1,9 @@
 import { defineAsyncComponent } from "vue";
 import { useNavigations } from "@/core/composables";
-import { loadModuleLocale } from "../utils";
 import type { MenuType } from "@/core/types";
-import type { I18n } from "@/i18n";
 import type { DeepPartial } from "utility-types";
 import type { Router, RouteRecordRaw } from "vue-router";
+
 const PriceHistoryPage = defineAsyncComponent(() => import("./pages/price-history-page.vue"));
 
 const { mergeMenuSchema } = useNavigations();
@@ -45,8 +44,7 @@ const menuItems: DeepPartial<MenuType> = {
   },
 };
 
-export function init(router: Router, i18n: I18n) {
+export function init(router: Router) {
   router.addRoute("PriceHistory", route);
   mergeMenuSchema(menuItems);
-  void loadModuleLocale(i18n, "price-history");
 }

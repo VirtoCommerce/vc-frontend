@@ -136,7 +136,7 @@ export default async () => {
 
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
-  void initModulePriceHistory(router, i18n);
+  void initModulePriceHistory(router);
   void initModuleBackInStock(router, i18n);
   void initCustomerReviews(i18n);
   void initializePurchaseRequests(router, i18n);

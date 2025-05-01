@@ -2,7 +2,7 @@
   <VcWidget class="price-history-block" title="Price History" prepend-icon="table">
     <VcLoaderOverlay v-if="loading" />
 
-    <PriceChart v-else :price-data="result.data[productId]" />
+    <PriceChart v-else :price-data="result.data[productId]" class="price-history-block__price-chart" />
   </VcWidget>
 </template>
 

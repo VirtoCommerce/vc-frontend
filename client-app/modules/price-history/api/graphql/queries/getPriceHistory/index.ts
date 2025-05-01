@@ -22,8 +22,8 @@ function generateMockPriceHistory(productIds: string[]): Record<string, PriceHis
     const basePrice = 10 + Math.random() * 90;
     const priceHistory: PriceHistoryItemType[] = [];
 
-    // Generate data for the last 3 days and next 3 days (7 days total including today)
-    for (let dayOffset = -3; dayOffset <= 3; dayOffset++) {
+    // Generate data for the last 14 days and next 14 days
+    for (let dayOffset = -14; dayOffset <= 14; dayOffset++) {
       const currentDate = addDays(new Date(), dayOffset);
       // Format date as YYYY-MM-DD
       const dateString = currentDate.toISOString();
