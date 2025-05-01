@@ -22,10 +22,10 @@ function generateMockPriceHistory(productIds: string[]): Record<string, PriceHis
     const basePrice = 10 + Math.random() * 90;
     const priceHistory: PriceHistoryItemType[] = [];
 
-    // Generate data for the last 14 days and next 14 days
-    for (let dayOffset = -14; dayOffset <= 14; dayOffset++) {
+    // Generate data for the last 30 days
+    for (let dayOffset = -30; dayOffset <= 0; dayOffset++) {
       const currentDate = addDays(new Date(), dayOffset);
-      // Format date as YYYY-MM-DD
+
       const dateString = currentDate.toISOString();
 
       const fluctuation = basePrice * (Math.random() * 0.2);
