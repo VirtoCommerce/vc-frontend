@@ -74,7 +74,10 @@
       "add_with_bulk_order": "Aggiungi con ordine multiplo",
       "all_orders": "Tutti gli ordini",
       "my_orders": "I miei ordini",
-      "scroll_to_top": "Torna su"
+      "scroll_to_top": "Torna su",
+      "reset_page": "Resetta pagina",
+      "show_less": "Mostra di meno",
+      "expand_all": "Espandi tutto"
     },
     "labels": {
       "actions": "Azioni",
@@ -125,7 +128,7 @@
       "recipient_name": "Nome destinatario",
       "active_address": "Indirizzo attivo",
       "addresses_icon": "Icona indirizzo",
-      "digital_product": "Prodotto digitale",
+      "digital_product": "Digitale",
       "search": "Cerca {0}",
       "in_stock": "Disponibile",
       "starts_from": "Inizio: {0}",
@@ -156,6 +159,7 @@
       "toggle_search_bar": "Attiva/Disattiva barra di ricerca",
       "slider_image": "Immagine del cursore",
       "buyer_name": "Nome dell'acquirente",
+      "other": "Altro",
       "vendor_name": "Fornitore: {name}",
       "not_available": "N/D"
     },
@@ -776,7 +780,8 @@
           "month": "Inserisci un mese di scadenza valido",
           "year": "Inserisci un anno di scadenza valido"
         },
-        "user_error_message": "Impossibile inizializzare il pagamento. Riprova più tardi o usa un altro metodo di pagamento"
+        "user_error_message": "Impossibile inizializzare il pagamento. Riprova più tardi o usa un altro metodo di pagamento",
+        "payment_unavailable": "Metodo di pagamento non disponibile. Riprova più tardi."
       },
       "authorize_net": {
         "user_agreement_link": "Accordo utente",
@@ -870,6 +875,15 @@
         "shared": "Condivisa",
         "private": "Privata"
       }
+    },
+    "sorting": {
+      "featured": "In primo piano",
+      "alphabetically_a_z": "Ordine alfabetico, A-Z",
+      "alphabetically_z_a": "Ordine alfabetico inverso",
+      "price_low_to_high": "Prezzo, dal più basso al più alto",
+      "price_high_to_low": "Prezzo, dal più caro al più economico",
+      "date_new_to_old": "Data, dal più recente",
+      "date_old_to_new": "Data, dal meno recente al più recente"
     }
   },
   "pages": {
@@ -1290,7 +1304,9 @@
       "no_facet_found_message": "Nessun risultato",
       "no_products_button": "Reimposta ricerca",
       "products_icon": "Icona prodotto",
-      "show_all_results": "Mostra tutti i risultati"
+      "show_all_results": "Mostra tutti i risultati",
+      "load_previous_page": "Carica la pagina precedente",
+      "load_next_page": "Carica la pagina successiva"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

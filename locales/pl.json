@@ -74,7 +74,10 @@
       "add_with_bulk_order": "Dodaj z zamówieniem zbiorczym",
       "all_orders": "Wszystkie zamówienia",
       "my_orders": "Moje zamówienia",
-      "scroll_to_top": "Przewiń do góry"
+      "scroll_to_top": "Przewiń do góry",
+      "reset_page": "Resetuj stronę",
+      "show_less": "Pokaż mniej",
+      "expand_all": "Rozwiń wszystko"
     },
     "labels": {
       "actions": "Akcje",
@@ -125,7 +128,7 @@
       "recipient_name": "Imię odbiorcy",
       "active_address": "Aktywny adres",
       "addresses_icon": "Ikona adresów",
-      "digital_product": "Produkt cyfrowy",
+      "digital_product": "Cyfrowy",
       "search": "Szukaj {0}",
       "in_stock": "Dostępny",
       "starts_from": "Rozpoczęcie: {0}",
@@ -156,6 +159,7 @@
       "toggle_search_bar": "Przełącz pasek wyszukiwania",
       "slider_image": "Obraz slajdera",
       "buyer_name": "Nazwa nabywcy",
+      "other": "Inne",
       "vendor_name": "Dostawca: {name}",
       "not_available": "N/D"
     },
@@ -776,7 +780,8 @@
           "month": "Podaj prawidłowy miesiąc ważności",
           "year": "Podaj prawidłowy rok ważności"
         },
-        "user_error_message": "Nie można zainicjować płatności. Spróbuj ponownie później lub użyj innej metody płatności"
+        "user_error_message": "Nie można zainicjować płatności. Spróbuj ponownie później lub użyj innej metody płatności",
+        "payment_unavailable": "Metoda płatności jest niedostępna. Spróbuj ponownie później."
       },
       "authorize_net": {
         "user_agreement_link": "Umowa użytkownika",
@@ -870,6 +875,15 @@
         "shared": "Współdzielona",
         "private": "Prywatna"
       }
+    },
+    "sorting": {
+      "featured": "Polecane",
+      "alphabetically_a_z": "Alfabetycznie, A-Z",
+      "alphabetically_z_a": "Alfabetycznie, od Z do A",
+      "price_low_to_high": "Cena, od najniższej",
+      "price_high_to_low": "Cena: od najwyższej",
+      "date_new_to_old": "Data, od najnowszej",
+      "date_old_to_new": "Data, od najstarszych"
     }
   },
   "pages": {
@@ -1290,7 +1304,9 @@
       "no_facet_found_message": "Brak wyników",
       "no_products_button": "Resetuj wyszukiwanie",
       "products_icon": "Ikona produktu",
-      "show_all_results": "Pokaż wszystkie wyniki"
+      "show_all_results": "Pokaż wszystkie wyniki",
+      "load_previous_page": "Załaduj poprzednią stronę",
+      "load_next_page": "Załaduj następną stronę"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

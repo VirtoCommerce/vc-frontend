@@ -11,9 +11,9 @@
 <script setup lang="ts">
 defineEmits<IEmits>();
 
-defineProps<Props>();
+defineProps<IProps>();
 
-interface Props {
+interface IProps {
   selected?: boolean;
   name: string;
 }

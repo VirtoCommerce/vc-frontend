@@ -236,11 +236,7 @@
           </div>
 
           <div class="flex flex-col items-end justify-center">
-            <OrderStatus
-              class="w-full !max-w-36"
-              :status="itemData.item.status"
-              :display-value="itemData.item.statusDisplayValue"
-            />
+            <OrderStatus :status="itemData.item.status" :display-value="itemData.item.statusDisplayValue" />
           </div>
 
           <div v-if="orderScope === 'organization' && itemData.item?.customerName" class="flex flex-col">
@@ -334,20 +330,8 @@
             {{ $d(order?.createdDate) }}
           </td>
 
-          <td class="p-5 text-center">
-            <VcTooltip class="!block">
-              <template #trigger>
-                <OrderStatus
-                  class="w-full !max-w-36"
-                  :status="order.status"
-                  :display-value="order.statusDisplayValue"
-                />
-              </template>
-
-              <template #content>
-                {{ order.statusDisplayValue }}
-              </template>
-            </VcTooltip>
+          <td class="p-1">
+            <OrderStatus :status="order.status" :display-value="order.statusDisplayValue" class="inline-block" />
           </td>
 
           <td class="overflow-hidden text-ellipsis p-5 text-right">
@@ -383,6 +367,7 @@
           </td>
         </tr>
       </template>
+
       <template #page-limit-message>
         {{ $t("ui_kit.reach_limit.page_limit_filters") }}
       </template>
@@ -461,9 +446,6 @@ const {
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
-usePageHead({
-  title: t("pages.account.orders.meta.title"),
-});
 usePageHead({ title: t("pages.account.orders.meta.title") });
 
 const ORDER_SCOPE_KEY = `order-scope-${user.value.id}`;
@@ -492,7 +474,7 @@ const columns = computed<ITableColumn[]>(() => [
   },
   { id: "invoice", title: t("pages.account.orders.invoice_label") },
   { id: "createdDate", title: t("pages.account.orders.date_label"), sortable: true },
-  { id: "status", title: t("pages.account.orders.status_label"), sortable: true, align: "center" },
+  { id: "status", title: t("pages.account.orders.status_label"), sortable: true, classes: "!px-3" },
   { id: "total", title: t("pages.account.orders.total_label"), sortable: true, align: "right" },
 ]);
 
