@@ -47,7 +47,7 @@ export function useUserOrders(options: IUseUserOrdersOptions) {
 
       const response = scope === "organization" ? await getOrganizationOrders(payload) : await getOrders(payload);
 
-      // FIXME as CustomerOrderType[] and as OrderFacetType[] - infer them from query
+      // TODO as CustomerOrderType[] and as OrderFacetType[] - infer them from query
       orders.value = (response?.items ?? []) as CustomerOrderType[];
       pages.value = Math.ceil((response?.totalCount ?? 0) / itemsPerPage.value);
       facets.value = response?.term_facets?.map((item) => ({ name: item.name, items: item.terms })) as OrderFacetType[];

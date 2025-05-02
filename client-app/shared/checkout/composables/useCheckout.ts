@@ -450,7 +450,7 @@ export function _useCheckout() {
     await prepareOrderData();
 
     try {
-      // FIXME remove as CustomerOrderType. Infer it from API
+      // TODO remove as CustomerOrderType. Infer it from API
       placedOrder.value = (await _createOrderFromCart(cart.value!.id)) as CustomerOrderType;
     } catch (e) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
