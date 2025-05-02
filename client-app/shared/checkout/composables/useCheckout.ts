@@ -17,7 +17,7 @@ import { PaymentMethodGroupType } from "@/shared/payment";
 import { BOPIS_CODE } from "./useBopis";
 import type {
   CartAddressType,
-  FullOrderFieldsFragment,
+  CustomerOrderType,
   InputAddressType,
   InputPaymentType,
   MemberAddressType,
@@ -31,7 +31,7 @@ import SelectAddressModal from "@/shared/checkout/components/select-address-moda
 const useGlobalCheckout = createGlobalState(() => {
   const loading = ref(false);
   const billingAddressEqualsShipping = ref(true);
-  const placedOrder = shallowRef<FullOrderFieldsFragment | null>(null);
+  const placedOrder = shallowRef<CustomerOrderType | null>(null);
 
   const commentChanging = ref(false);
   const _comment = ref<string>();
@@ -444,13 +444,14 @@ export function _useCheckout() {
     }
   }
 
-  async function createOrderFromCart(): Promise<FullOrderFieldsFragment | null> {
+  async function createOrderFromCart(): Promise<CustomerOrderType | null> {
     loading.value = true;
 
     await prepareOrderData();
 
     try {
-      placedOrder.value = (await _createOrderFromCart(cart.value!.id)) as FullOrderFieldsFragment;
+      // FIXME remove as CustomerOrderType. Infer it from API
+      placedOrder.value = (await _createOrderFromCart(cart.value!.id)) as CustomerOrderType;
     } catch (e) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }
