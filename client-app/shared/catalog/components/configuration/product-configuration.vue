@@ -80,10 +80,11 @@
 
           <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.text">
             <OptionText
+              v-if="section.allowCustomText"
               :name="section.id"
-              :is-required="section.isRequired"
-              :value="selectedConfiguration[section.id]?.selectedOptionTextValue"
-              :selected="!!selectedConfiguration[section.id]"
+              :is-required="section.isRequired && !section.allowTextOptions"
+              :value="isSelectedOptionText(section) ? '' : selectedConfiguration[section.id]?.selectedOptionTextValue"
+              :selected="!isSelectedOptionText(section)"
               @input="
                 selectSectionValue({
                   sectionId: section.id,
@@ -92,6 +93,24 @@
                 })
               "
             />
+
+            <template v-if="section.allowTextOptions">
+              <template v-for="option in section.options" :key="option.id">
+                <OptionPredefinedText
+                  v-if="option.text"
+                  :name="section.id"
+                  :model-value="selectedConfiguration[section.id]?.selectedOptionTextValue"
+                  :text="option.text"
+                  @input="
+                    selectSectionValue({
+                      sectionId: section.id,
+                      customText: option.text,
+                      type: section.type,
+                    })
+                  "
+                />
+              </template>
+            </template>
 
             <OptionNone
               v-if="!section.isRequired"
@@ -146,6 +165,7 @@
 </template>
 
 <script setup lang="ts">
+import _ from "lodash";
 import { toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
@@ -158,6 +178,7 @@ import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import OptionFile from "./option-file.vue";
 import OptionNone from "./option-none.vue";
+import OptionPredefinedText from "./option-predefined-text.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
 import OptionText from "./option-text.vue";
@@ -213,6 +234,17 @@ watch(
 
 function hasSelectedOption(sectionId: string) {
   return !!selectedConfiguration.value?.[sectionId]?.selectedOptionTextValue;
+}
+
+function isSelectedOptionText(section: DeepReadonly<ConfigurationSectionType>) {
+  return (
+    section.allowTextOptions &&
+    hasSelectedOption(section.id) &&
+    _.some(
+      section.options,
+      (option) => option.text === selectedConfiguration.value?.[section.id]?.selectedOptionTextValue,
+    )
+  );
 }
 
 function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {

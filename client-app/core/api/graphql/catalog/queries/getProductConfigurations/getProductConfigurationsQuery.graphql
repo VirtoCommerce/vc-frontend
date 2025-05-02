@@ -20,8 +20,11 @@ query GetProductConfigurations(
       description
       isRequired
       type
+      allowCustomText
+      allowTextOptions
       options {
         id
+        text
         quantity
         listPrice {
           ...money
