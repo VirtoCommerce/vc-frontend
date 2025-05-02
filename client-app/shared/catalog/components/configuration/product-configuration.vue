@@ -83,8 +83,8 @@
               v-if="section.allowCustomText"
               :name="section.id"
               :is-required="section.isRequired && !section.allowTextOptions"
-              :value="isSelectedOptionText(section) ? '' : selectedConfiguration[section.id]?.selectedOptionTextValue"
-              :selected="!isSelectedOptionText(section)"
+              :value="optionTextValue(section)"
+              :selected="!isSelectedOptionPredefinedText(section)"
               @input="
                 selectSectionValue({
                   sectionId: section.id,
@@ -165,7 +165,7 @@
 </template>
 
 <script setup lang="ts">
-import _ from "lodash";
+import some from "lodash/some";
 import { toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
@@ -236,15 +236,21 @@ function hasSelectedOption(sectionId: string) {
   return !!selectedConfiguration.value?.[sectionId]?.selectedOptionTextValue;
 }
 
-function isSelectedOptionText(section: DeepReadonly<ConfigurationSectionType>) {
+function isSelectedOptionPredefinedText(section: DeepReadonly<ConfigurationSectionType>) {
   return (
     section.allowTextOptions &&
     hasSelectedOption(section.id) &&
-    _.some(
+    some(
       section.options,
       (option) => option.text === selectedConfiguration.value?.[section.id]?.selectedOptionTextValue,
     )
   );
+}
+
+function optionTextValue(section: DeepReadonly<ConfigurationSectionType>) {
+  return isSelectedOptionPredefinedText(section)
+    ? ""
+    : selectedConfiguration.value?.[section.id]?.selectedOptionTextValue;
 }
 
 function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {

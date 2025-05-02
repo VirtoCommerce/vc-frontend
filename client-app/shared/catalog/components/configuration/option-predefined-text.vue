@@ -9,9 +9,6 @@
 </template>
 
 <script setup lang="ts">
-defineEmits<IEmits>();
-defineProps<IProps>();
-
 interface IProps {
   text: string;
   modelValue?: string;
@@ -21,6 +18,9 @@ interface IProps {
 interface IEmits {
   (e: "input"): void;
 }
+
+defineEmits<IEmits>();
+defineProps<IProps>();
 </script>
 
 <style lang="scss">

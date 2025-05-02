@@ -2,7 +2,7 @@
   <div class="option-text">
     <VcRadioButton
       v-if="!isRequired"
-      :model-value="selected || isRequired ? 'selected' : ''"
+      :model-value="selected ? 'selected' : ''"
       :name="name"
       value="selected"
       @input="$emit('input', inputValue || undefined)"
