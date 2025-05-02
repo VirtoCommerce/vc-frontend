@@ -1,8 +1,7 @@
 import { GetStoreDocument } from "@/core/api/graphql/types";
 import { graphqlClient } from "../../../client";
-import type { GetStoreQuery } from "@/core/api/graphql/types";
 
-export async function getStore(domain: string): Promise<GetStoreQuery["store"]> {
+export async function getStore(domain: string) {
   const { data } = await graphqlClient.query({
     query: GetStoreDocument,
     variables: {
