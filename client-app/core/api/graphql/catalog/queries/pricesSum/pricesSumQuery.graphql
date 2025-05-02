@@ -1,0 +1,23 @@
+#import "../../../common/fragments/money.graphql"
+
+query PricesSum(
+  $storeId: String!
+  $cartId: String!
+  $currencyCode: String!
+  $userId: String!
+  $cultureName: String
+  $lineItemIds: [String!]!
+) {
+  pricesSum(
+    storeId: $storeId
+    cartId: $cartId
+    currencyCode: $currencyCode
+    userId: $userId
+    cultureName: $cultureName
+    lineItemIds: $lineItemIds
+  ) {
+    total {
+      ...money
+    }
+  }
+}
