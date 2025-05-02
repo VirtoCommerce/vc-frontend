@@ -1,4 +1,4 @@
-import type { CartType, CustomerOrderType, LineItemType, Product, VariationType } from "@/core/api/graphql/types";
+import type { CartType, FullOrderFieldsFragment, LineItemType, Product, VariationType } from "@/core/api/graphql/types";
 import type { ICustomAnalyticsEventMap } from "@/core/types/analytics-custom";
 
 export interface IBasicAnalyticsEventMap {
@@ -19,8 +19,8 @@ export interface IBasicAnalyticsEventMap {
   beginCheckout: [cart: CartType, params?: EventParamsType];
   addShippingInfo: [cart?: CartType, params?: EventParamsType, shipmentMethodOption?: string];
   addPaymentInfo: [cart?: CartType, params?: EventParamsType, paymentGatewayCode?: string];
-  purchase: [order: CustomerOrderType, transactionId?: string, params?: EventParamsType];
-  placeOrder: [order: CustomerOrderType, params?: EventParamsType];
+  purchase: [order: FullOrderFieldsFragment, transactionId?: string, params?: EventParamsType];
+  placeOrder: [order: FullOrderFieldsFragment, params?: EventParamsType];
   search: [searchTerm: string, visibleItems?: { code: string }[], itemsCount?: number];
   viewSearchResults: [searchTerm: string, params?: ViewSearchResultsParamsAdditionalType];
   login: [method: string, params?: EventParamsType & LoginParamsAdditionalType];

@@ -1,11 +1,9 @@
 import { CreateOrderFromCartDocument } from "@/core/api/graphql/types";
 import { graphqlClient } from "../../../client";
-import type { CreateOrderFromCartMutation, CreateOrderFromCartMutationVariables } from "@/core/api/graphql/types";
+import type { FullOrderFieldsFragment } from "@/core/api/graphql/types";
 
-export async function createOrderFromCart(
-  cartId?: string,
-): Promise<CreateOrderFromCartMutation["createOrderFromCart"]> {
-  const { data } = await graphqlClient.mutate<CreateOrderFromCartMutation, CreateOrderFromCartMutationVariables>({
+export async function createOrderFromCart(cartId?: string): Promise<FullOrderFieldsFragment | void> {
+  const { data } = await graphqlClient.mutate({
     mutation: CreateOrderFromCartDocument,
     variables: {
       command: {
