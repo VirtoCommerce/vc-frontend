@@ -344,9 +344,7 @@ function openSelectAddressModal(addressType: AddressType): void {
     component: SelectAddressModal,
     props: {
       addresses: accountAddresses.value,
-      currentAddress: cloneDeep(
-        addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value,
-      ) as MemberAddressFieldsFragment, // TODO refactor QuoteAddressType and remove `as MemberAddressFieldsFragment`
+      currentAddress: cloneDeep(addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value),
       isCorporateAddresses: isCorporateMember.value,
 
       onResult(selectedAddress: MemberAddressFieldsFragment): void {
