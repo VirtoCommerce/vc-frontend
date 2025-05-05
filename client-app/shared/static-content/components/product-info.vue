@@ -4,7 +4,11 @@
       <div class="product-info__side">
         <ImageGallery :images="product.images">
           <template #badges>
-            <DiscountBadge :price="product.price!" />
+            <BadgesWrapper>
+              <PurchasedBeforeBadge v-if="product.isPurchased" />
+
+              <DiscountBadge static :price="product.price" />
+            </BadgesWrapper>
           </template>
         </ImageGallery>
 
@@ -47,6 +51,8 @@
 import { ImageGallery, DiscountBadge, ProductVideos } from "@/shared/catalog";
 import type { IPageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
+import BadgesWrapper from "@/shared/catalog/components/badges-wrapper.vue";
+import PurchasedBeforeBadge from "@/shared/catalog/components/purchased-before-badge.vue";
 
 interface IProps {
   product: Product;

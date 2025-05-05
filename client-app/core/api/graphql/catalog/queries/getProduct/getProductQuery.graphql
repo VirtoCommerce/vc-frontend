@@ -2,8 +2,20 @@
 #import "../../fragments/availabilityData.graphql"
 #import "../../../common/fragments/rating.graphql"
 
-query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String, $id: String!, $previousOutline: String) {
-  product(storeId: $storeId, id: $id, currencyCode: $currencyCode, cultureName: $cultureName, previousOutline: $previousOutline) {
+query GetProduct(
+  $storeId: String!
+  $currencyCode: String!
+  $cultureName: String
+  $id: String!
+  $previousOutline: String
+) {
+  product(
+    storeId: $storeId
+    id: $id
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+    previousOutline: $previousOutline
+  ) {
     name
     id
     code
@@ -16,6 +28,7 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     imgSrc
     inWishlist
     isConfigurable
+    isPurchased
     associations {
       totalCount
     }

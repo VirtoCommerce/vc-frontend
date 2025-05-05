@@ -282,6 +282,7 @@ async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<vo
   updateProductsFilters({
     branches: newFilters.branches,
     inStock: newFilters.inStock,
+    purchasedBefore: newFilters.purchasedBefore,
     facets: await getFacets(searchParamsForFacets),
   });
 }
