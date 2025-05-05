@@ -70,10 +70,12 @@ const visibleChildren = computed(() => {
   &__wrapper {
     --cols: v-bind(cols.default);
 
-    @apply grid gap-x-6 gap-y-3 grid-cols-[repeat(var(--cols),minmax(0,1fr))];
+    @apply grid gap-3 grid-cols-[repeat(var(--cols),minmax(0,1fr))];
 
     @media (min-width: theme("screens.xs")) {
       --cols: v-bind(cols.xs);
+
+      @apply gap-6;
     }
 
     @media (min-width: theme("screens.sm")) {

@@ -44,7 +44,7 @@
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
     />
 
-    <AddToCart v-else :product="product" />
+    <AddToCart v-else :product="product" reserved-space />
   </VcProductCard>
 </template>
 

@@ -5,7 +5,6 @@
     :title="$t('pages.product.related_product_section_title')"
     prepend-icon="cube"
     size="lg"
-    class="order-last max-md:-mx-4.5"
   >
     <VcProductsGrid v-if="lg" short :columns="{ default: 2, xs: 2, sm: 3, md: 3 }">
       <ProductCardRelated
