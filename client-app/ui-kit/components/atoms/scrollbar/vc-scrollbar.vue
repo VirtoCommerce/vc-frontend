@@ -1,5 +1,6 @@
 <template>
-  <div
+  <component
+    :is="tag"
     :class="[
       'vc-scrollbar',
       {
@@ -10,7 +11,7 @@
     ]"
   >
     <slot />
-  </div>
+  </component>
 </template>
 
 <script setup lang="ts">
@@ -18,12 +19,14 @@ interface IProps {
   disabled?: boolean;
   vertical?: boolean;
   horizontal?: boolean;
+  tag?: string;
 }
 
 withDefaults(defineProps<IProps>(), {
   vertical: true,
   horizontal: false,
   disabled: false,
+  tag: "div",
 });
 </script>
 
@@ -89,6 +92,18 @@ withDefaults(defineProps<IProps>(), {
 
     &::-webkit-scrollbar-thumb {
       @apply bg-neutral-400 opacity-70 rounded;
+    }
+
+    @supports (scrollbar-color: theme("colors.neutral.300") theme("colors.neutral.50")) {
+      & {
+        scrollbar-width: thin;
+        scrollbar-color: theme("colors.neutral.300") theme("colors.neutral.50");
+        scrollbar-gutter: stable both-edges;
+
+        &:hover {
+          scrollbar-color: theme("colors.neutral.400") theme("colors.neutral.100");
+        }
+      }
     }
   }
 }

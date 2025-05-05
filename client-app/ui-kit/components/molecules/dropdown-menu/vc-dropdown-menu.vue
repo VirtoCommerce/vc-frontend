@@ -23,9 +23,9 @@
     </template>
 
     <template v-if="!disabled" #content="{ close }">
-      <ul class="vc-dropdown-menu__list">
+      <VcScrollbar tag="ul" class="vc-dropdown-menu__list">
         <slot name="content" v-bind="{ close }" />
-      </ul>
+      </VcScrollbar>
     </template>
   </VcPopover>
 </template>
@@ -90,7 +90,7 @@ const props = withDefaults(defineProps<IProps>(), {
   }
 
   &__list {
-    @apply overflow-y-auto max-h-[--max-height] w-full rounded bg-additional-50 shadow-2xl;
+    @apply max-h-[--max-height] w-full rounded bg-additional-50 shadow-2xl;
 
     #{$dividers} & {
       @apply divide-y divide-neutral-100;
