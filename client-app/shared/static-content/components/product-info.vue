@@ -7,7 +7,7 @@
             <BadgesWrapper>
               <PurchasedBeforeBadge v-if="product.isPurchased" />
 
-              <DiscountBadge static :price="product.price!" />
+              <DiscountBadge static :price="product.price" />
             </BadgesWrapper>
           </template>
         </ImageGallery>

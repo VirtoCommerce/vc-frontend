@@ -15,6 +15,11 @@
     @apply pb-1.5 pr-1.5 pl-px pt-px;
   }
 
+  &:empty::after,
+  &:empty::before {
+    @apply hidden;
+  }
+
   &::after,
   &::before {
     content: "";

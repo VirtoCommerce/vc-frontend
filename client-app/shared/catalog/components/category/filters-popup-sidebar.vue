@@ -18,11 +18,7 @@
             :model-value="popupSidebarFilters.purchasedBefore"
             class="filters-popup-sidebar__control"
             :disabled="updatingFiltersState"
-            @change="
-              (value) => {
-                $emit('updatePopupSidebarFilters', { ...popupSidebarFilters, purchasedBefore: value as boolean });
-              }
-            "
+            @change="onChange({ purchasedBefore: $event })"
           >
             {{ $t("pages.catalog.purchased_before_filter_card.checkbox_label") }}
           </VcCheckbox>
@@ -32,11 +28,7 @@
             :model-value="popupSidebarFilters.inStock"
             class="filters-popup-sidebar__control"
             :disabled="updatingFiltersState"
-            @change="
-              (value) => {
-                $emit('updatePopupSidebarFilters', { ...popupSidebarFilters, inStock: value as boolean });
-              }
-            "
+            @change="onChange({ inStock: $event })"
           >
             {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
           </VcCheckbox>
@@ -111,7 +103,7 @@ import { computedEager } from "@vueuse/core";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 interface IEmits {
@@ -137,6 +129,10 @@ interface IProps {
 const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
   props.popupSidebarFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
 );
+
+function onChange(payload: Partial<ProductsFiltersType>) {
+  emit("updatePopupSidebarFilters", { ...props.popupSidebarFilters, ...payload });
+}
 </script>
 
 <style lang="scss">
