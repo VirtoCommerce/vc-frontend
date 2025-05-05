@@ -75,6 +75,7 @@
       "all_orders": "すべての注文",
       "my_orders": "私の注文",
       "scroll_to_top": "トップへスクロール",
+      "reset_page": "ページをリセット",
       "show_less": "折りたたむ",
       "expand_all": "すべて展開"
     },
@@ -1303,7 +1304,9 @@
       "no_facet_found_message": "該当なし",
       "no_products_button": "検索をリセット",
       "products_icon": "商品アイコン",
-      "show_all_results": "すべての結果を表示"
+      "show_all_results": "すべての結果を表示",
+      "load_previous_page": "前のページを読み込む",
+      "load_next_page": "次のページを読み込む"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
