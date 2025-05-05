@@ -75,6 +75,7 @@
       "all_orders": "Toutes les commandes",
       "my_orders": "Mes commandes",
       "scroll_to_top": "Haut de page",
+      "reset_page": "Réinitialiser la page",
       "show_less": "Afficher moins",
       "expand_all": "Tout développer"
     },
@@ -127,7 +128,7 @@
       "recipient_name": "Nom du destinataire",
       "active_address": "Adresse active",
       "addresses_icon": "Icône d'adresse",
-      "digital_product": "Produit numérique",
+      "digital_product": "Numérique",
       "search": "Rechercher {0}",
       "in_stock": "En stock",
       "starts_from": "Commence à : {0}",
@@ -874,6 +875,15 @@
         "shared": "Partagé",
         "private": "Privé"
       }
+    },
+    "sorting": {
+      "featured": "À la une",
+      "alphabetically_a_z": "Alphabétique, A-Z",
+      "alphabetically_z_a": "Alphabétiquement, Z-A",
+      "price_low_to_high": "Prix, du moins cher au plus cher",
+      "price_high_to_low": "Prix, du plus cher au moins cher",
+      "date_new_to_old": "Date, du plus récent au plus ancien",
+      "date_old_to_new": "Date, du plus ancien au plus récent"
     }
   },
   "pages": {
@@ -1294,7 +1304,9 @@
       "no_facet_found_message": "Aucun résultat",
       "no_products_button": "Réinitialiser la recherche",
       "products_icon": "Icône du produit",
-      "show_all_results": "Afficher tous les résultats"
+      "show_all_results": "Afficher tous les résultats",
+      "load_previous_page": "Charger la page précédente",
+      "load_next_page": "Charger la page suivante"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
