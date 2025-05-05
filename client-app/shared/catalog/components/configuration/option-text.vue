@@ -1,7 +1,7 @@
 <template>
   <div class="option-text">
     <VcRadioButton
-      v-if="!isRequired"
+      v-if="!hideSelection"
       :model-value="selected ? 'selected' : ''"
       :name="name"
       value="selected"
@@ -29,7 +29,7 @@ const propsValue = toRef(props, "value");
 const inputValue = ref(propsValue.value);
 
 interface IProps {
-  isRequired: boolean;
+  hideSelection: boolean;
   value?: string;
   selected?: boolean;
   name: string;
