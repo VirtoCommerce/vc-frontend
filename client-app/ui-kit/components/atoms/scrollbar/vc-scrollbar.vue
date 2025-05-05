@@ -15,19 +15,29 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { getColorValue } from "@/ui-kit/utilities";
+
 interface IProps {
   disabled?: boolean;
   vertical?: boolean;
   horizontal?: boolean;
   tag?: string;
+  trackColor?: string;
+  thumbColor?: string;
 }
 
-withDefaults(defineProps<IProps>(), {
-  vertical: true,
+const props = withDefaults(defineProps<IProps>(), {
+  vertical: false,
   horizontal: false,
   disabled: false,
   tag: "div",
+  trackColor: "",
+  thumbColor: "",
 });
+
+const _trackColor = computed(() => getColorValue(props.trackColor));
+const _thumbColor = computed(() => getColorValue(props.thumbColor));
 </script>
 
 <style lang="scss">
@@ -35,6 +45,12 @@ withDefaults(defineProps<IProps>(), {
   $vertical: "";
   $horizontal: "";
   $disabled: "";
+
+  --props-track-color: v-bind(_trackColor);
+  --track-color: var(--vc-scrollbar-track-color, var(--props-track-color, theme("colors.neutral.100")));
+
+  --props-thumb-color: v-bind(_thumbColor);
+  --thumb-color: var(--vc-scrollbar-thumb-color, var(--props-thumb-color, theme("colors.neutral.400")));
 
   overflow: unset;
 
@@ -64,15 +80,19 @@ withDefaults(defineProps<IProps>(), {
     @apply overflow-y-hidden;
   }
 
-  &#{$vertical}:not(#{$disabled}),
-  &#{$horizontal}:not(#{$disabled}) {
+  &#{$horizontal},
+  &#{$vertical} {
+    scroll-behavior: smooth;
+
+    /* Firefox */
+    @supports not selector(::-webkit-scrollbar) {
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
+      scrollbar-color: var(--thumb-color) var(--track-color);
+    }
+
+    /* webkit */
     &:hover {
-      &::-webkit-scrollbar {
-        @apply size-2;
-
-        transition: all 0.3s;
-      }
-
       &::-webkit-scrollbar-track {
         @apply opacity-100;
       }
@@ -83,27 +103,15 @@ withDefaults(defineProps<IProps>(), {
     }
 
     &::-webkit-scrollbar {
-      @apply size-1;
+      @apply size-1.5;
     }
 
     &::-webkit-scrollbar-track {
-      @apply bg-neutral-100 opacity-70 rounded;
+      @apply bg-[--track-color] opacity-70 rounded;
     }
 
     &::-webkit-scrollbar-thumb {
-      @apply bg-neutral-400 opacity-70 rounded;
-    }
-
-    @supports (scrollbar-color: theme("colors.neutral.300") theme("colors.neutral.50")) {
-      & {
-        scrollbar-width: thin;
-        scrollbar-color: theme("colors.neutral.300") theme("colors.neutral.50");
-        scrollbar-gutter: stable both-edges;
-
-        &:hover {
-          scrollbar-color: theme("colors.neutral.400") theme("colors.neutral.100");
-        }
-      }
+      @apply bg-[--thumb-color] opacity-70 rounded;
     }
   }
 }

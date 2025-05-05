@@ -10,7 +10,7 @@ export default {
 const Template: StoryFn<typeof VcScrollbar> = (args) => ({
   components: { VcScrollbar },
   setup: () => ({ args }),
-  template: `<VcScrollbar v-bind="args" class="h-44">
+  template: `<VcScrollbar v-bind="args">
     <div class="flex gap-3">
       <div v-for="i in 100" class="flex-none w-32 h-32 bg-neutral-300 rounded"></div>
     </div>
@@ -25,14 +25,20 @@ const Template: StoryFn<typeof VcScrollbar> = (args) => ({
 
 export const Basic = Template.bind({});
 
+export const Vertical = Template.bind({});
+Vertical.args = {
+  vertical: true,
+  class: "h-44",
+};
+
 export const Horizontal = Template.bind({});
 Horizontal.args = {
-  vertical: false,
   horizontal: true,
 };
 
 export const VerticalHorizontal = Template.bind({});
 VerticalHorizontal.args = {
+  class: "h-44",
   vertical: true,
   horizontal: true,
 };

@@ -23,7 +23,7 @@
     </template>
 
     <template v-if="!disabled" #content="{ close }">
-      <VcScrollbar tag="ul" class="vc-dropdown-menu__list">
+      <VcScrollbar vertical tag="ul" class="vc-dropdown-menu__list">
         <slot name="content" v-bind="{ close }" />
       </VcScrollbar>
     </template>
