@@ -4452,13 +4452,6 @@ export type PriceType = {
   tierPrices: Array<TierPriceType>;
 };
 
-export type PricesSumType = {
-  /** Total discount amount */
-  discountTotal: MoneyType;
-  /** Total price */
-  total: MoneyType;
-};
-
 /** Products are the sellable goods in an e-commerce project. */
 export type Product = {
   /** Assets */
@@ -4839,7 +4832,6 @@ export type Query = {
   paymentStatuses?: Maybe<LocalizedSettingResponseType>;
   payments?: Maybe<PaymentInConnection>;
   pickupLocations?: Maybe<PickupLocationConnection>;
-  pricesSum?: Maybe<PricesSumType>;
   product?: Maybe<Product>;
   productConfiguration?: Maybe<ConfigurationQueryResponseType>;
   productSuggestions?: Maybe<ProductSuggestionsQueryResponseType>;
@@ -5191,16 +5183,6 @@ export type QueryPickupLocationsArgs = {
   keyword?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryPricesSumArgs = {
-  cartId: Scalars['String']['input'];
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-  currencyCode: Scalars['String']['input'];
-  lineItemIds: Array<InputMaybe<Scalars['String']['input']>>;
-  storeId: Scalars['String']['input'];
-  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
