@@ -24,7 +24,7 @@
               }
             "
           >
-            Purchased before
+            {{ $t("pages.catalog.purchased_before_filter_card.checkbox_label") }}
           </VcCheckbox>
 
           <VcCheckbox

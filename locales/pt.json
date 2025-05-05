@@ -1312,7 +1312,8 @@
       "load_next_page": "Carregar próxima página",
       "purchased_before_filter_card": {
         "title": "Comprado antes",
-        "tooltip_text": "Selecionar para mostrar apenas produtos comprados antes"
+        "tooltip_text": "Selecionar para mostrar apenas produtos comprados antes",
+        "checkbox_label": "Já comprado"
       }
     },
     "product": {

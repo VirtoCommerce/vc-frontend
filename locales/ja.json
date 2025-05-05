@@ -1312,7 +1312,8 @@
       "load_next_page": "次のページを読み込む",
       "purchased_before_filter_card": {
         "title": "購入済み",
-        "tooltip_text": "購入済みの商品のみを表示する"
+        "tooltip_text": "購入済みの商品のみを表示する",
+        "checkbox_label": "購入済み"
       }
     },
     "product": {

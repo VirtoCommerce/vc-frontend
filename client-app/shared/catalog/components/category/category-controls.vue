@@ -15,7 +15,7 @@
               'text-neutral': !savedPurchasedBefore,
             }"
           >
-            {{ $t("pages.catalog.purchased_before_filter_card.title") }}
+            {{ $t("pages.catalog.purchased_before_filter_card.checkbox_label") }}
           </span>
         </VcCheckbox>
       </template>

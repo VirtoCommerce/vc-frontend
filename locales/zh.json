@@ -1312,7 +1312,8 @@
       "load_next_page": "加载下一页",
       "purchased_before_filter_card": {
         "title": "已购买过",
-        "tooltip_text": "选择以仅显示之前购买过的商品"
+        "tooltip_text": "选择以仅显示之前购买过的商品",
+        "checkbox_label": "之前购买"
       }
     },
     "product": {

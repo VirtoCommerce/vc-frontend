@@ -1289,6 +1289,7 @@
       },
       "purchased_before_filter_card": {
         "title": "Purchased before",
+        "checkbox_label": "Purchased before",
         "tooltip_text": "Select to show only products, that were purchased before"
       },
       "branch_availability_filter_card": {
