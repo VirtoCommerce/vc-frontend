@@ -89,7 +89,7 @@ watchDebounced(
         [];
       let filtersCount = 1;
       for (let i = 0; i < localFilters.facets.length; i++) {
-        const facetFilter = facetsElements[i] as HTMLElement;
+        const facetFilter = facetsElements[i];
         if (!facetFilter) {
           filtersCountToShow.value++;
           await nextTick();

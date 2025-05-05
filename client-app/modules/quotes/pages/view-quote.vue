@@ -113,7 +113,7 @@ const notification = useNotifications();
 const router = useRouter();
 
 usePageHead({
-  title: t("quote_details.title", [quote!.value?.number]),
+  title: t("quote_details.title", [quote.value?.number]),
 });
 
 async function approve() {

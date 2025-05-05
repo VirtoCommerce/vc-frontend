@@ -112,7 +112,7 @@ async function save(closeHandle: () => void): Promise<void> {
 
   if (isEditMode.value) {
     await updateWishlist({
-      listId: props.list!.id!,
+      listId: props.list!.id,
       listName: name.value?.trim(),
       description: description.value?.trim(),
       scope,

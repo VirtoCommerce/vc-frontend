@@ -230,7 +230,7 @@ async function sendPaymentData() {
 
     const { isSuccess } = await authorizePayment({
       orderId: props.order.id,
-      paymentId: props.order.inPayments[0]!.id,
+      paymentId: props.order.inPayments[0].id,
       parameters: [
         {
           key: "token",
@@ -273,7 +273,7 @@ async function initPayment() {
   loading.value = true;
   const { publicParameters } = await initializePayment({
     orderId: props.order.id,
-    paymentId: props.order.inPayments[0]!.id,
+    paymentId: props.order.inPayments[0].id,
   });
 
   const scriptUrl = getValue(publicParameters, "clientScript");
