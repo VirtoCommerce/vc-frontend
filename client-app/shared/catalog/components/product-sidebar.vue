@@ -8,8 +8,7 @@
           </span>
 
           <!-- todo: extract a component for price and use it here -->
-          <span class="relative text-[--price-color]">
-            <VcLoaderOverlay v-if="variationsCartTotalAmountLoading" />
+          <span class="text-[--price-color]">
             {{ currentCurrency.symbol }}{{ variationsCartTotalAmount.toFixed(2) }}
           </span>
         </div>
@@ -56,11 +55,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRef, watch } from "vue";
-import { getPricesSum } from "@/core/api/graphql/catalog/queries/pricesSum";
+import { computed, toRef } from "vue";
 import { useCurrency } from "@/core/composables";
 import { ProductType } from "@/core/enums";
-import { Logger } from "@/core/utilities/logger";
 import { AddToCart, useShortCart } from "@/shared/cart";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useCustomProductComponents } from "@/shared/common/composables";
@@ -80,48 +77,21 @@ const props = defineProps<IProps>();
 const product = toRef(props, "product");
 
 const { currentCurrency } = useCurrency();
-
-const { cart } = useShortCart();
+const { getItemsTotal } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
 const { getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 
-const variationsLineItems = computed(() =>
-  (cart.value?.items ?? []).filter((cartItem) =>
-    props.variations?.some((variation) => variation.id === cartItem.productId),
-  ),
-);
+const variationsCartTotalAmount = computed<number>(() => {
+  if (!props.product) {
+    return 0;
+  }
 
-const variationsCartTotalAmount = ref(0);
-const variationsCartTotalAmountLoading = ref(false);
+  const variationsIds = props.variations?.map((variation) => variation.id!) ?? [];
 
-watch(
-  variationsLineItems,
-  async (items) => {
-    if (items.length === 0 || !cart.value?.id) {
-      variationsCartTotalAmount.value = 0;
-      variationsCartTotalAmountLoading.value = false;
-
-      return;
-    }
-
-    variationsCartTotalAmountLoading.value = true;
-    try {
-      const data = await getPricesSum(
-        items.map((item) => item.id),
-        cart.value.id,
-      );
-
-      variationsCartTotalAmount.value = data?.total?.amount ?? 0;
-    } catch (error) {
-      Logger.error("Error fetching variations cart total amount", error);
-    } finally {
-      variationsCartTotalAmountLoading.value = false;
-    }
-  },
-  { immediate: true },
-);
+  return getItemsTotal(variationsIds);
+});
 
 const price = computed<PriceType | { actual: MoneyType; list: MoneyType } | undefined>(() => {
   if (props.product.isConfigurable && configuredLineItem.value) {

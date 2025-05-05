@@ -1,10 +1,7 @@
 import { ApolloError, gql } from "@apollo/client/core";
 import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import { createSharedComposable, computedEager } from "@vueuse/core";
-import difference from "lodash/difference";
-import intersection from "lodash/intersection";
-import keyBy from "lodash/keyBy";
-import merge from "lodash/merge";
+import { sumBy, difference, keyBy, merge, intersection } from "lodash";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { AbortReason } from "@/core/api/common/enums";
@@ -151,6 +148,16 @@ export function useShortCart() {
     }
   }
 
+  function getItemsTotal(productIds: string[]): number {
+    if (!cart.value?.items.length) {
+      return 0;
+    }
+
+    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId));
+
+    return sumBy(filteredItems, (x) => x.extendedPrice.amount);
+  }
+
   return {
     cart,
     refetch,
@@ -158,6 +165,7 @@ export function useShortCart() {
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
+    getItemsTotal,
     loading,
     changing: computed(
       () =>
