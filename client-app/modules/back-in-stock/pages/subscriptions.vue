@@ -163,7 +163,7 @@ const actualItemsCount = computed<number>(() => preparedLineItems.value.length |
 const fetchProductsAndSubscriptions = async () => {
   await fetchSubscriptions({ keyword: keyword.value });
   await fetchProducts({
-    productIds: subscriptions.value.map((item) => item.productId!),
+    productIds: subscriptions.value.map((item) => item.productId),
     itemsPerPage: subscriptions.value.length,
   });
   subscriptionsProducts.value = subscriptions.value

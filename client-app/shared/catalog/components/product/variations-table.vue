@@ -247,7 +247,7 @@ function getStockQuantity(variation: Product) {
   return variation.availabilityData.availableQuantity &&
     variation.availabilityData.availableQuantity > MAX_DISPLAY_IN_STOCK_QUANTITY
     ? `${MAX_DISPLAY_IN_STOCK_QUANTITY}+`
-    : variation.availabilityData.availableQuantity!.toString();
+    : variation.availabilityData.availableQuantity.toString();
 }
 
 function getProperties(variation: Product) {
