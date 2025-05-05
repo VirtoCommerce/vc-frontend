@@ -194,7 +194,6 @@ import { PageToolbarBlock } from "@/shared/account";
 import { CreateQuoteDocument } from "../api/graphql/types";
 import QuoteStatus from "../components/quote-status.vue";
 import { useUserQuotes } from "../useUserQuotes";
-import type { SortDirection } from "@/core/enums";
 import type { ISortInfo } from "@/core/types";
 
 const { t } = useI18n();
@@ -273,7 +272,7 @@ async function resetKeyword(): Promise<void> {
 
 async function applySorting(sortInfo: ISortInfo): Promise<void> {
   // Workaround. Put Sort in vc-table then delete
-  const sortObj = new Sort(sortInfo.column, sortInfo.direction as SortDirection);
+  const sortObj = new Sort(sortInfo.column, sortInfo.direction);
   sortQueryParam.value = sortObj.toString();
   sort.value = sortInfo;
   page.value = 1;

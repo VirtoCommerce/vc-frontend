@@ -93,6 +93,7 @@ module.exports = {
     "@typescript-eslint/no-unsafe-enum-comparison": "error",
     "@typescript-eslint/no-unsafe-member-access": "error",
     "@typescript-eslint/no-unsafe-return": "error",
+    "@typescript-eslint/no-unnecessary-type-assertion": "error",
     "import/consistent-type-specifier-style": "warn",
     "import/no-cycle": "error",
     "import/order": [
@@ -156,7 +157,6 @@ module.exports = {
      * Disabled
      */
     "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/no-unnecessary-type-assertion": "off",
     "@typescript-eslint/no-redundant-type-constituents": "warn",
     "sonarjs/no-duplicate-string": "off",
     "tailwindcss/no-custom-classname": "off",

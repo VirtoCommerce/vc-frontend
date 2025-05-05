@@ -89,7 +89,7 @@ const FIXED_HEIGHTS: FixedHeightsType = {
 };
 
 const imageHeight = computed(() => {
-  const currentBreakpoint = (breakpoints.current().value.at(-1) || "xs") as BreakpointsType;
+  const currentBreakpoint = breakpoints.current().value.at(-1) || "xs";
 
   return props.height === "auto" ? "auto" : `${FIXED_HEIGHTS[props.height][currentBreakpoint]}px`;
 });
