@@ -76,6 +76,7 @@ withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "sm",
   linkIcon: "external-link",
+  truncate: true,
 });
 </script>
 
