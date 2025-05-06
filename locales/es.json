@@ -1462,6 +1462,12 @@
       },
       "title": "Tu cuenta está bloqueada",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Marcas",
+      "featured_brands_title": "Primeras marcas",
+      "all": "Todos",
+      "search": "Buscar"
     }
   },
   "identity_error": {

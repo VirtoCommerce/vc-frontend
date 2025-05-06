@@ -1462,6 +1462,12 @@
       },
       "title": "Votre compte est bloqué",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Marques",
+      "featured_brands_title": "Meilleures marques",
+      "all": "Tous",
+      "search": "Rechercher"
     }
   },
   "identity_error": {

@@ -1462,6 +1462,12 @@
       },
       "title": "Ваш аккаунт заблокирован",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Бренды",
+      "featured_brands_title": "Топ бренды",
+      "all": "Все",
+      "search": "Поиск"
     }
   },
   "identity_error": {

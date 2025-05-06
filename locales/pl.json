@@ -1462,6 +1462,12 @@
       },
       "title": "Twoje konto jest zablokowane",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Marki",
+      "featured_brands_title": "Najlepsze marki",
+      "all": "Wszystkie",
+      "search": "Szukaj"
     }
   },
   "identity_error": {
