@@ -3,7 +3,9 @@ import { GetBrandsDocument } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import type { GetBrandsQueryVariables } from "@/core/api/graphql/types";
 
-export const useGetBrands = (variables: Partial<GetBrandsQueryVariables> = { first: 1000 }) => {
+const LIMIT = 1000;
+
+export const useGetBrands = (variables: Partial<GetBrandsQueryVariables> = { first: LIMIT }) => {
   const { storeId, cultureName } = globals;
 
   return useQuery(GetBrandsDocument, {
