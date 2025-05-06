@@ -1,0 +1,30 @@
+#import "../fragments/brand.graphql"
+
+query GetBrands(
+  $storeId: String!
+  $after: String
+  $first: Int
+  $userId: String
+  $currencyCode: String
+  $cultureName: String
+  $sort: String
+  $filter: String
+  $query: String
+) {
+  brands(
+    storeId: $storeId
+    after: $after
+    first: $first
+    userId: $userId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+    sort: $sort
+    filter: $filter
+    query: $query
+  ) {
+    totalCount
+    items {
+      ...brand
+    }
+  }
+}

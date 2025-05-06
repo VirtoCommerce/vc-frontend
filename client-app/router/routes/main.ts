@@ -28,6 +28,7 @@ const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
+const Brands = () => import("@/pages/brands.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
   { path: "/auth/callback", name: "AuthCallback", component: callback, meta: { public: true } },
@@ -43,6 +44,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/set-password", name: "SetPassword", component: ResetPassword, meta: { public: true } },
   { path: "/blocked", name: "Blocked", component: BlockedPage, meta: { public: true } },
   { path: "/account/confirmemail", name: "ConfirmEmail", component: ConfirmEmail, meta: { public: true } },
+  { path: "/brands", name: "Brands", component: Brands, meta: { public: true } },
   {
     path: "/account",
     name: "Account",
