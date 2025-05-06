@@ -81,7 +81,6 @@
           <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.text">
             <OptionText
               v-if="section.allowCustomText"
-              :key="optionTextComponentKey"
               :name="section.id"
               :hide-selection="section.isRequired && !section.allowTextOptions"
               :value="optionTextValue(section)"
@@ -167,7 +166,7 @@
 
 <script setup lang="ts">
 import some from "lodash/some";
-import { toRef, watch, ref } from "vue";
+import { toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
@@ -210,7 +209,6 @@ const {
 
 const { openModal } = useModal();
 const notifications = useNotifications();
-const optionTextComponentKey = ref(0);
 
 watch(
   () => [isConfigurationChanged.value, validationErrors.value.size === 0],
@@ -239,9 +237,6 @@ function hasSelectedOption(sectionId: string) {
 }
 
 function isSelectedOptionPredefinedText(section: DeepReadonly<ConfigurationSectionType>) {
-  // Incrementing the optionTextComponentKey to force re-rendering of the component when the selected option changes
-  // This is a workaround to avoid the issue of the component not updating when the selected option changes
-  optionTextComponentKey.value += 1;
   return (
     section.allowTextOptions &&
     hasSelectedOption(section.id) &&
