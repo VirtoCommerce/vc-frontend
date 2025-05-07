@@ -10,8 +10,14 @@
       }}
     </VcTypography>
 
-    <div v-if="featuredBrands.length" class="brands__top">
-      <router-link v-for="brand in featuredBrands" :key="brand.id" class="brands__tile" :title="brand.name" to="#">
+    <div v-if="featuredBrandsTrimmed.length" class="brands__top">
+      <router-link
+        v-for="brand in featuredBrandsTrimmed"
+        :key="brand.id"
+        class="brands__tile"
+        :title="brand.name"
+        to="#"
+      >
         <VcImage v-if="brand.image" class="brands__img" :src="brand.image" :alt="brand.name" />
         <span v-else class="brands__img-fallback">
           {{ brand.name }}
@@ -87,9 +93,11 @@
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { NAV_INDEX_ITEMS } from "@/core/constants/brands";
 import { getGroupByLetter } from "@/core/utilities/brands";
 import { useBrands } from "@/shared/catalog";
 
@@ -102,18 +110,39 @@ usePageHead({
   title: t("pages.brands.title"),
 });
 
-const activeNavItem = ref("all");
+const activeNavItem = ref(NAV_INDEX_ITEMS.all);
 const searchInput = ref("");
 
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.brands.title") }]);
 const { brandNavIndex, groupedBrands, featuredBrands, search } = useBrands({ itemsPerPage: ITEMS_PER_PAGE });
+const breakpoints = useBreakpoints(breakpointsTailwind);
+
+const featuredBrandsTrimmed = computed(() => {
+  if (breakpoints.greaterOrEqual("xs").value) {
+    return featuredBrands.value.slice(0, 12);
+  }
+
+  if (breakpoints.greaterOrEqual("lg").value) {
+    return featuredBrands.value.slice(0, 10);
+  }
+
+  if (breakpoints.greaterOrEqual("md").value) {
+    return featuredBrands.value.slice(0, 8);
+  }
+
+  if (breakpoints.smaller("md").value) {
+    return featuredBrands.value.slice(0, 6);
+  }
+
+  return featuredBrands.value;
+});
 
 const sortedNavItems = computed(() => {
   return Object.keys(groupedBrands.value).sort();
 });
 
 const enabledNavItems = computed(() => {
-  return [...sortedNavItems.value, "all"];
+  return [...sortedNavItems.value, NAV_INDEX_ITEMS.all];
 });
 
 function setActiveNavItem(value: string) {
@@ -121,7 +150,7 @@ function setActiveNavItem(value: string) {
 }
 
 function isFullWidthItem(letter: string) {
-  return letter === "others" && groupedBrands.value[letter].length > MIN_ITEMS_TO_SHOW_FULL_WIDTH;
+  return letter === NAV_INDEX_ITEMS.others && groupedBrands.value[letter].length > MIN_ITEMS_TO_SHOW_FULL_WIDTH;
 }
 
 watch(activeNavItem, (newActiveNavItem) => {

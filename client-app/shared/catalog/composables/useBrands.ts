@@ -1,7 +1,7 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGetBrands } from "@/core/api/graphql/catalog";
-import { DEFAULT_BRANDS_PER_PAGE, LATIN_UPPERCASE_LETTERS_MAPPING, MAX_FEATURED_BRANDS } from "@/core/constants/brands";
+import { DEFAULT_BRANDS_PER_PAGE, LATIN_UPPERCASE_LETTERS_MAPPING, NAV_INDEX_ITEMS } from "@/core/constants/brands";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { getGroupByLetter } from "@/core/utilities/brands";
@@ -43,7 +43,7 @@ export function useBrands(options: IUseBrandsOptions, variables?: Partial<GetBra
     return brands.value.filter((brand) => brand.name?.toLowerCase().includes(search.value.toLowerCase()));
   });
 
-  const featuredBrands = computed(() => brands.value.filter((brand) => brand.featured).slice(0, MAX_FEATURED_BRANDS));
+  const featuredBrands = computed(() => brands.value.filter((brand) => brand.featured));
 
   const groupedBrands = computed(() => {
     return filteredBrands.value.reduce((acc, brand) => {
@@ -59,8 +59,8 @@ export function useBrands(options: IUseBrandsOptions, variables?: Partial<GetBra
   const brandNavIndex: Record<string, string> = {
     all: t("pages.brands.button_all"),
     ...LATIN_UPPERCASE_LETTERS_MAPPING,
-    numbers: "0-9",
-    others: "#",
+    [NAV_INDEX_ITEMS.numbers]: "0-9",
+    [NAV_INDEX_ITEMS.others]: "#",
   };
 
   return {
