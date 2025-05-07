@@ -10,15 +10,23 @@
       }}
     </VcTypography>
 
-    <div v-if="featuredBrandsTrimmed.length" class="brands__top">
+    <div v-if="loading || featuredBrandsTrimmed.length" class="brands__top">
+      <template v-if="loading">
+        <div v-for="brand in featuredBrandsSkeletonData" :key="brand.id" class="brands__tile">
+          <VcImage class="brands__skeleton-img" />
+        </div>
+      </template>
+
       <router-link
         v-for="brand in featuredBrandsTrimmed"
+        v-else
         :key="brand.id"
         class="brands__tile"
         :title="brand.name"
         to="#"
       >
         <VcImage v-if="brand.image" class="brands__img" :src="brand.image" :alt="brand.name" />
+
         <span v-else class="brands__img-fallback">
           {{ brand.name }}
         </span>
@@ -66,8 +74,18 @@
       </template>
 
       <div class="brands__list">
+        <template v-if="loading">
+          <div v-for="i in 10" :key="i" class="brands__items">
+            <div class="brands__skeleton-letter" />
+            <div class="brands__skeleton-links">
+              <div v-for="j in 5" :key="j" class="brands__skeleton-link" />
+            </div>
+          </div>
+        </template>
+
         <div
           v-for="letter in sortedNavItems"
+          v-else
           :id="'brands-' + letter"
           :key="letter"
           class="brands__items"
@@ -114,27 +132,11 @@ const activeNavItem = ref(NAV_INDEX_ITEMS.all);
 const searchInput = ref("");
 
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.brands.title") }]);
-const { brandNavIndex, groupedBrands, featuredBrands, search } = useBrands({ itemsPerPage: ITEMS_PER_PAGE });
+const { brandNavIndex, groupedBrands, featuredBrands, search, loading } = useBrands({ itemsPerPage: ITEMS_PER_PAGE });
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const featuredBrandsTrimmed = computed(() => {
-  if (breakpoints.greaterOrEqual("xs").value) {
-    return featuredBrands.value.slice(0, 12);
-  }
-
-  if (breakpoints.greaterOrEqual("lg").value) {
-    return featuredBrands.value.slice(0, 10);
-  }
-
-  if (breakpoints.greaterOrEqual("md").value) {
-    return featuredBrands.value.slice(0, 8);
-  }
-
-  if (breakpoints.smaller("md").value) {
-    return featuredBrands.value.slice(0, 6);
-  }
-
-  return featuredBrands.value;
+  return trimDataByBreakpoint(featuredBrands.value);
 });
 
 const sortedNavItems = computed(() => {
@@ -145,12 +147,36 @@ const enabledNavItems = computed(() => {
   return [...sortedNavItems.value, NAV_INDEX_ITEMS.all];
 });
 
+const featuredBrandsSkeletonData = computed(() =>
+  trimDataByBreakpoint(
+    Array.from({ length: 12 }, (_, i) => ({
+      id: i,
+    })),
+  ),
+);
+
 function setActiveNavItem(value: string) {
   activeNavItem.value = value;
 }
 
 function isFullWidthItem(letter: string) {
   return letter === NAV_INDEX_ITEMS.others && groupedBrands.value[letter].length > MIN_ITEMS_TO_SHOW_FULL_WIDTH;
+}
+
+function trimDataByBreakpoint<T>(data: T[]): T[] {
+  if (breakpoints.greaterOrEqual("xl").value) {
+    return data.slice(0, 12);
+  }
+
+  if (breakpoints.greaterOrEqual("md").value) {
+    return data.slice(0, 8);
+  }
+
+  if (breakpoints.smaller("md").value) {
+    return data.slice(0, 6);
+  }
+
+  return data.slice(0, 12);
 }
 
 watch(activeNavItem, (newActiveNavItem) => {
@@ -287,6 +313,34 @@ watch(activeNavItem, (newActiveNavItem) => {
     &:hover {
       @apply text-[--link-hover-color];
     }
+  }
+
+  &__skeleton-letter {
+    @apply h-8 w-6 mb-6 bg-neutral-300 animate-pulse;
+  }
+
+  &__skeleton-link {
+    @apply h-3 bg-neutral-300 animate-pulse mb-2;
+
+    &:nth-child(1) {
+      @apply w-[50%];
+    }
+    &:nth-child(2) {
+      @apply w-[40%];
+    }
+    &:nth-child(3) {
+      @apply w-[65%];
+    }
+    &:nth-child(4) {
+      @apply w-[55%];
+    }
+    &:nth-child(5) {
+      @apply w-[60%];
+    }
+  }
+
+  &__skeleton-img {
+    @apply animate-pulse;
   }
 }
 </style>

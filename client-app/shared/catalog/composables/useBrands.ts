@@ -33,7 +33,7 @@ export function useBrands(options: IUseBrandsOptions, variables?: Partial<GetBra
 
   const pages = computed(() => Math.ceil((result.value?.brands?.totalCount ?? 0) / itemsPerPage.value));
 
-  const brands = computed(() => result.value?.brands?.items?.map((item) => ({ ...item })) ?? []);
+  const brands = computed(() => result.value?.brands?.items ?? []);
 
   const filteredBrands = computed(() => {
     if (!search.value) {
