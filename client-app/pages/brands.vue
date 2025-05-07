@@ -3,12 +3,19 @@
     <VcBreadcrumbs class="brands__breadcrumbs" :items="breadcrumbs" />
 
     <VcTypography tag="h1" class="brands__title">
-      {{ $t("pages.brands.title") }}
+      {{
+        featuredBrands.length
+          ? $t("pages.brands.top_brands_title")
+          : $t("pages.brands.title", { count: groupedBrands.length })
+      }}
     </VcTypography>
 
-    <div class="brands__top">
-      <router-link v-for="brand in featuredBrands" :key="brand.id" class="brands__tile" to="#">
-        <VcImage class="brands__img" :src="brand.image" :alt="brand.name" />
+    <div v-if="featuredBrands.length" class="brands__top">
+      <router-link v-for="brand in featuredBrands" :key="brand.id" class="brands__tile" :title="brand.name" to="#">
+        <VcImage v-if="brand.image" class="brands__img" :src="brand.image" :alt="brand.name" />
+        <span v-else class="brands__img-fallback">
+          {{ brand.name }}
+        </span>
       </router-link>
     </div>
 
@@ -16,35 +23,52 @@
       <template #title>
         <div class="brands__filters">
           <div class="brands__letters">
-            <VcButton size="xs" square>
-              {{ $t("pages.brands.button_all") }}
-            </VcButton>
-
             <VcButton
-              v-for="letter in Object.keys(groupedBrands)"
-              :key="letter"
+              v-for="[navValue, navLabel] in Object.entries(brandNavIndex)"
+              :key="navValue"
               size="xs"
-              color="neutral"
-              variant="no-background"
+              :disabled="!enabledNavItems.includes(navValue)"
+              :color="activeNavItem === navValue ? 'primary' : 'neutral'"
+              :variant="activeNavItem === navValue ? 'solid' : 'no-background'"
               square
-              @click="scrollToLetter(letter)"
+              class="brands__nav-letter"
+              @click="setActiveNavItem(navValue)"
             >
-              {{ letter }}
+              {{ navLabel }}
             </VcButton>
           </div>
 
-          <VcInput class="brands__search" maxlength="64" clearable :placeholder="$t('pages.brands.search')">
+          <VcInput
+            v-model="searchInput"
+            class="brands__search"
+            maxlength="64"
+            clearable
+            :placeholder="$t('pages.brands.search')"
+            @clear="search = ''"
+            @keyup.enter="search = searchInput"
+          >
             <template #append>
-              <VcButton :aria-label="$t('pages.brands.search')" icon="search" icon-size="1.25rem" />
+              <VcButton
+                :aria-label="$t('pages.brands.search')"
+                icon="search"
+                icon-size="1.25rem"
+                @click="search = searchInput"
+              />
             </template>
           </VcInput>
         </div>
       </template>
 
       <div class="brands__list">
-        <div v-for="letter in Object.keys(groupedBrands)" :id="'brands-' + letter" :key="letter" class="brands__items">
-          <div class="brands__letter">
-            {{ letter }}
+        <div
+          v-for="letter in sortedNavItems"
+          :id="'brands-' + letter"
+          :key="letter"
+          class="brands__items"
+          :class="{ 'brands__items--full': isFullWidthItem(letter) }"
+        >
+          <div class="brands__letter" :class="{ 'brands__letter--active': activeNavItem === letter }">
+            {{ brandNavIndex[letter] }}
           </div>
 
           <ul class="brands__links">
@@ -57,13 +81,20 @@
         </div>
       </div>
     </VcWidget>
+
+    <VcScrollTopButton />
   </VcContainer>
 </template>
 
 <script setup lang="ts">
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { getGroupByLetter } from "@/core/utilities/brands";
 import { useBrands } from "@/shared/catalog";
+
+const ITEMS_PER_PAGE = 1000;
+const MIN_ITEMS_TO_SHOW_FULL_WIDTH = 10;
 
 const { t } = useI18n();
 
@@ -71,20 +102,42 @@ usePageHead({
   title: t("pages.brands.title"),
 });
 
+const activeNavItem = ref("all");
+const searchInput = ref("");
+
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.brands.title") }]);
-const { groupedBrands, featuredBrands, fetchBrands } = useBrands({ itemsPerPage: 1000 });
+const { brandNavIndex, groupedBrands, featuredBrands, search } = useBrands({ itemsPerPage: ITEMS_PER_PAGE });
 
-void fetchBrands();
+const sortedNavItems = computed(() => {
+  return Object.keys(groupedBrands.value).sort();
+});
 
-function scrollToLetter(letter: string) {
-  const element = document.getElementById(`brands-${letter}`);
+const enabledNavItems = computed(() => {
+  return [...sortedNavItems.value, "all"];
+});
 
-  element?.scrollIntoView({ behavior: "smooth", block: "center" });
+function setActiveNavItem(value: string) {
+  activeNavItem.value = value;
 }
+
+function isFullWidthItem(letter: string) {
+  return letter === "others" && groupedBrands.value[letter].length > MIN_ITEMS_TO_SHOW_FULL_WIDTH;
+}
+
+watch(activeNavItem, (newActiveNavItem) => {
+  const group = getGroupByLetter(newActiveNavItem);
+  const element = document.getElementById(`brands-${group}`);
+
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+});
 </script>
 
 <style lang="scss">
 .brands {
+  $fullWidthItem: "";
+
   @apply bg-neutral-50;
 
   &__breadcrumbs {
@@ -121,6 +174,10 @@ function scrollToLetter(letter: string) {
 
   &__img {
     @apply max-w-full max-h-full;
+  }
+
+  &__img-fallback {
+    @apply text-center text-xl font-bold whitespace-nowrap overflow-hidden text-ellipsis;
   }
 
   &__filters {
@@ -163,12 +220,36 @@ function scrollToLetter(letter: string) {
     }
   }
 
+  &__items {
+    &--full {
+      $fullWidthItem: &;
+
+      @apply col-span-full grid grid-cols-subgrid;
+    }
+  }
+
   &__letter {
     @apply mb-3.5 text-secondary-700 text-3xl font-bold;
+
+    &--active {
+      @apply text-primary;
+    }
+
+    #{$fullWidthItem} & {
+      @apply col-span-full;
+    }
+  }
+
+  &__nav-letter {
+    @apply disabled:opacity-20;
   }
 
   &__links {
     @apply flex flex-col gap-1 text-base;
+
+    #{$fullWidthItem} & {
+      @apply contents;
+    }
   }
 
   &__link {

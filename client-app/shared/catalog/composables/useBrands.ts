@@ -1,80 +1,77 @@
-import { computed, readonly, ref, shallowRef } from "vue";
-import { getBrands } from "@/core/api/graphql/catalog";
-import { DEFAULT_BRANDS_PER_PAGE } from "@/core/constants";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useGetBrands } from "@/core/api/graphql/catalog";
+import { DEFAULT_BRANDS_PER_PAGE, LATIN_UPPERCASE_LETTERS_MAPPING, MAX_FEATURED_BRANDS } from "@/core/constants/brands";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
-import { Logger } from "@/core/utilities";
-import type { BrandType } from "@/core/api/graphql/types";
-import type { MaybeRef, Ref } from "vue";
+import { getGroupByLetter } from "@/core/utilities/brands";
+import type { BrandFragment, GetBrandsQueryVariables } from "@/core/api/graphql/types";
+import type { MaybeRef } from "vue";
+
+export type GroupedBrandsType = Record<string, BrandFragment[]>;
 
 export interface IUseBrandsOptions {
   itemsPerPage?: MaybeRef<number>;
 }
 
-export function useBrands(options: IUseBrandsOptions) {
+export function useBrands(options: IUseBrandsOptions, variables?: Partial<GetBrandsQueryVariables>) {
   const itemsPerPage = ref(options.itemsPerPage ?? DEFAULT_BRANDS_PER_PAGE);
 
-  const brands: Ref<BrandType[]> = shallowRef<BrandType[]>([]);
-  const letters: Ref<string[]> = shallowRef<string[]>([]);
-  const loading: Ref<boolean> = ref(false);
-  const pages: Ref<number> = ref(0);
-  const page: Ref<number> = ref(1);
-  const keyword: Ref<string> = ref("");
-  const sort: Ref<Sort> = ref(new Sort("name", SortDirection.Ascending));
+  const page = ref(1);
+  const keyword = ref("");
+  const sort = ref(new Sort("name", SortDirection.Ascending));
+  const search = ref("");
 
-  async function fetchBrands() {
-    loading.value = true;
+  const { t } = useI18n();
 
-    try {
-      const payload = {
-        first: itemsPerPage.value,
-        after: String((page.value - 1) * itemsPerPage.value),
-        sort: sort.value.toString(),
-      };
+  const { result, loading } = useGetBrands({
+    first: itemsPerPage.value,
+    after: String((page.value - 1) * itemsPerPage.value),
+    sort: sort.value.toString(),
+    ...variables,
+  });
 
-      const response = await getBrands(payload);
+  const pages = computed(() => Math.ceil((result.value?.brands?.totalCount ?? 0) / itemsPerPage.value));
 
-      brands.value = response?.items?.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "")) ?? [];
+  const brands = computed(() => result.value?.brands?.items?.map((item) => ({ ...item })) ?? []);
 
-      pages.value = Math.ceil((response?.totalCount ?? 0) / itemsPerPage.value);
-    } catch (e) {
-      Logger.error(`${useBrands.name}.${fetchBrands.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
+  const filteredBrands = computed(() => {
+    if (!search.value) {
+      return brands.value;
     }
-  }
 
-  type GroupedBrandsType = Record<string, BrandType[]>;
+    return brands.value.filter((brand) => brand.name?.toLowerCase().includes(search.value.toLowerCase()));
+  });
 
-  function groupBrandsByFirstLetter(items: BrandType[]): GroupedBrandsType {
-    return items.reduce<GroupedBrandsType>((acc, brand) => {
-      const letter = brand.name?.charAt(0).toUpperCase() ?? "";
+  const featuredBrands = computed(() => brands.value.filter((brand) => brand.featured).slice(0, MAX_FEATURED_BRANDS));
 
-      if (!letter || !acc[letter]) {
-        acc[letter] = [];
-      }
+  const groupedBrands = computed(() => {
+    return filteredBrands.value.reduce((acc, brand) => {
+      const firstChar = brand.name?.charAt(0).toUpperCase() ?? "";
+      const key = getGroupByLetter(firstChar);
 
-      acc[letter].push(brand);
-
-      if (!letters.value.includes(letter)) {
-        letters.value.push(letter);
-      }
-
+      acc[key] = acc[key] || [];
+      acc[key].push(brand);
       return acc;
-    }, {});
-  }
+    }, {} as GroupedBrandsType);
+  });
+
+  const brandNavIndex: Record<string, string> = {
+    all: t("pages.brands.button_all"),
+    ...LATIN_UPPERCASE_LETTERS_MAPPING,
+    numbers: "0-9",
+    others: "#",
+  };
 
   return {
-    fetchBrands,
-    loading: readonly(loading),
-    brands: computed(() => brands.value),
-    groupedBrands: computed(() => groupBrandsByFirstLetter(brands.value)),
-    featuredBrands: computed(() => brands.value.filter((brand) => brand.featured)),
-    letters: readonly(letters),
+    loading,
+    groupedBrands,
+    featuredBrands,
+    brandNavIndex,
     itemsPerPage,
     pages,
     page,
     keyword,
+    search,
   };
 }

@@ -1464,7 +1464,8 @@
       "message": "@:common.messages.blocked"
     },
     "brands": {
-      "title": "Top brands",
+      "top_brands_title": "Top brands",
+      "title": "Brands",
       "search": "Search",
       "button_all": "All"
     }
