@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="option-text">
-      <VcRadioButton v-model="selectedInput" value="custom" />
+      <VcRadioButton v-model="selectedInput" :value="CUSTOM_VALUE" />
       <VcInput
         v-model="customInput"
         :maxlength="MAX_LENGTH"
@@ -18,7 +18,7 @@
     </div>
 
     <div class="option-text">
-      <VcRadioButton v-model="selectedInput" value="none"> none </VcRadioButton>
+      <VcRadioButton v-model="selectedInput" :value="NOT_SELECTED_VALUE"> none </VcRadioButton>
     </div>
   </div>
 </template>
@@ -30,34 +30,34 @@ import type { DeepReadonly } from "vue";
 
 interface IProps {
   section: DeepReadonly<ConfigurationSectionType>;
-  modelValue?: string;
+  initialValue?: string;
 }
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: string | undefined): void;
+  (e: "update", value: string | undefined): void;
 }>();
 const props = defineProps<IProps>();
 const MAX_LENGTH = 255;
-// const EMPTY_VALUE = "__none__";
-// const CUSTOM_VALUE = "__custom__";
+const NOT_SELECTED_VALUE = "__none__";
+const CUSTOM_VALUE = "__custom__";
 
 const customInput = ref("");
-const selectedInput = ref("none");
+const selectedInput = ref(NOT_SELECTED_VALUE);
 const isInitialized = ref(false);
 
 watch(selectedInput, (newValue) => {
-  if (newValue === "custom") {
-    emit("update:modelValue", customInput.value || undefined);
-  } else if (newValue === "none") {
-    emit("update:modelValue", undefined);
+  if (newValue === CUSTOM_VALUE) {
+    emit("update", customInput.value || undefined);
+  } else if (newValue === NOT_SELECTED_VALUE) {
+    emit("update", undefined);
   } else {
     const option = props.section.options?.find((opt) => opt.id === newValue);
-    emit("update:modelValue", option?.text || undefined);
+    emit("update", option?.text || undefined);
   }
 });
 
 watch(
-  () => props.modelValue,
+  () => props.initialValue,
   (newValue) => {
     if (!isInitialized.value && newValue !== undefined) {
       setInitialValue(newValue);
@@ -71,7 +71,7 @@ function setInitialValue(newValue: string) {
   if (matchingOption) {
     selectedInput.value = matchingOption.id!;
   } else {
-    selectedInput.value = "custom";
+    selectedInput.value = CUSTOM_VALUE;
     customInput.value = newValue;
   }
   isInitialized.value = true;
@@ -80,15 +80,15 @@ function setInitialValue(newValue: string) {
 function updateCustomValue(event: Event) {
   const target = event.target as HTMLInputElement;
 
-  if (selectedInput.value !== "custom") {
-    selectedInput.value = "custom";
+  if (selectedInput.value !== CUSTOM_VALUE) {
+    selectedInput.value = CUSTOM_VALUE;
   }
 
-  emit("update:modelValue", target.value || undefined);
+  emit("update", target.value || undefined);
 }
 
 function selectCustomInput() {
-  selectedInput.value = "custom";
+  selectedInput.value = CUSTOM_VALUE;
 }
 </script>
 
