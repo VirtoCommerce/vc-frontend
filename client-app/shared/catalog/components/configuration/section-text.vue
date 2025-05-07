@@ -8,17 +8,18 @@
         class="option-text__input"
         @input="text = customInput"
         @focus="text = customInput"
+        @focusout="update"
       />
     </div>
 
     <div v-for="option in section.options" :key="option.id" class="option-text">
-      <VcRadioButton v-model="text" :value="option.text!">
+      <VcRadioButton v-model="text" :value="option.text!" @change="update">
         {{ option.text }}
       </VcRadioButton>
     </div>
 
     <div class="option-text">
-      <VcRadioButton v-model="text" :value="EMPTY_VALUE"> none </VcRadioButton>
+      <VcRadioButton v-model="text" :value="EMPTY_VALUE" @change="update"> none </VcRadioButton>
     </div>
 
     <p>Вы выбрали: {{ text }}</p>
@@ -30,10 +31,16 @@ import { ref } from "vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
+interface IEmits {
+  (event: "input", value?: string): void;
+}
+
 interface IProps {
   section: DeepReadonly<ConfigurationSectionType>;
   selected?: string;
 }
+
+const emit = defineEmits<IEmits>();
 
 defineProps<IProps>();
 
@@ -43,6 +50,10 @@ const EMPTY_VALUE = "__none__";
 const text = ref(EMPTY_VALUE);
 
 const customInput = ref("");
+
+function update() {
+  emit("input", text.value === EMPTY_VALUE ? undefined : text.value);
+}
 </script>
 
 <style lang="scss">
