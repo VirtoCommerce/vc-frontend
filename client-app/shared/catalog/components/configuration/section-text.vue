@@ -1,24 +1,35 @@
 <template>
   <div>
     <div class="option-text">
-      <VcRadioButton v-model="selectedInput" :value="CUSTOM_VALUE" />
+      <VcRadioButton
+        v-model="selectedInput"
+        :value="CUSTOM_VALUE"
+        :aria-label="customInput ? `Custom option: ${customInput}` : 'Custom option: empty'"
+      />
       <VcInput
         v-model="customInput"
         :maxlength="MAX_LENGTH"
         class="option-text__input"
+        aria-label="Enter custom text"
         @input="updateCustomValue"
         @focus="selectCustomInput"
       />
     </div>
 
     <div v-for="(option, index) in section.options" :key="option.id" class="option-text">
-      <VcRadioButton v-model="selectedInput" :value="`${PREDEFINED_PREFIX}${index + 1}`">
+      <VcRadioButton
+        v-model="selectedInput"
+        :value="`${PREDEFINED_PREFIX}${index + 1}`"
+        :aria-label="`Option ${index + 1}: ${option.text}`"
+      >
         {{ option.text }}
       </VcRadioButton>
     </div>
 
     <div class="option-text">
-      <VcRadioButton v-model="selectedInput" :value="NOT_SELECTED_VALUE"> none </VcRadioButton>
+      <VcRadioButton v-model="selectedInput" :value="NOT_SELECTED_VALUE" aria-label="No selection">
+        none
+      </VcRadioButton>
     </div>
   </div>
 </template>
