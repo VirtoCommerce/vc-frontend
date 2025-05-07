@@ -1467,7 +1467,8 @@
       "search": "Buscar",
       "button_all": "Todo",
       "top_brands_title": "Primeras marcas",
-      "title": "Marcas"
+      "title": "Marcas",
+      "no_results": "No se encontraron resultados"
     }
   },
   "identity_error": {

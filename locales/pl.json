@@ -1467,7 +1467,8 @@
       "search": "Szukaj",
       "button_all": "Wszystkie",
       "top_brands_title": "Najlepsze marki",
-      "title": "Marki"
+      "title": "Marki",
+      "no_results": "Brak wyników"
     }
   },
   "identity_error": {

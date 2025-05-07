@@ -1467,7 +1467,8 @@
       "search": "Cerca",
       "button_all": "Tutto",
       "top_brands_title": "Marchi principali",
-      "title": "Marchi"
+      "title": "Marchi",
+      "no_results": "Nessun risultato trovato"
     }
   },
   "identity_error": {

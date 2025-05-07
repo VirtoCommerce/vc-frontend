@@ -1467,7 +1467,8 @@
       "search": "搜索",
       "button_all": "全部",
       "top_brands_title": "热门品牌",
-      "title": "品牌"
+      "title": "品牌",
+      "no_results": "未找到结果"
     }
   },
   "identity_error": {

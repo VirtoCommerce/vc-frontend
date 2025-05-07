@@ -3,11 +3,7 @@
     <VcBreadcrumbs class="brands__breadcrumbs" :items="breadcrumbs" />
 
     <VcTypography tag="h1" class="brands__title">
-      {{
-        featuredBrands.length
-          ? $t("pages.brands.top_brands_title")
-          : $t("pages.brands.title", { count: groupedBrands.length })
-      }}
+      {{ featuredBrands.length ? $t("pages.brands.top_brands_title") : $t("pages.brands.title") }}
     </VcTypography>
 
     <div v-if="loading || featuredBrandsTrimmed.length" class="brands__top">
@@ -73,10 +69,11 @@
         </div>
       </template>
 
-      <div class="brands__list">
+      <div v-if="loading || sortedNavItems.length" class="brands__list">
         <template v-if="loading">
           <div v-for="i in 10" :key="i" class="brands__items">
             <div class="brands__skeleton-letter" />
+
             <div class="brands__skeleton-links">
               <div v-for="j in 5" :key="j" class="brands__skeleton-link" />
             </div>
@@ -104,6 +101,12 @@
           </ul>
         </div>
       </div>
+
+      <VcEmptyView
+        v-if="!loading && !sortedNavItems.length"
+        icon="outline-stock"
+        :text="$t('pages.brands.no_results')"
+      />
     </VcWidget>
 
     <VcScrollTopButton />

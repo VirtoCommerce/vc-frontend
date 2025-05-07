@@ -1467,7 +1467,8 @@
       "search": "検索",
       "button_all": "すべて",
       "top_brands_title": "人気ブランド",
-      "title": "ブランド"
+      "title": "ブランド",
+      "no_results": "該当する情報は見つかりませんでした"
     }
   },
   "identity_error": {

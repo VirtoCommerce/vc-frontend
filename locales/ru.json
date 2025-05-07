@@ -1467,7 +1467,8 @@
       "search": "Поиск",
       "button_all": "Все",
       "top_brands_title": "Топ бренды",
-      "title": "Бренды"
+      "title": "Бренды",
+      "no_results": "Ничего не найдено"
     }
   },
   "identity_error": {
