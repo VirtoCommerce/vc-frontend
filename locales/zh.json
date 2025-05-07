@@ -74,7 +74,10 @@
       "add_with_bulk_order": "批量订单添加",
       "all_orders": "所有订单",
       "my_orders": "我的订单",
-      "scroll_to_top": "回到顶部"
+      "scroll_to_top": "回到顶部",
+      "reset_page": "重置页面",
+      "show_less": "收起",
+      "expand_all": "全部展开"
     },
     "labels": {
       "actions": "操作",
@@ -125,7 +128,7 @@
       "recipient_name": "收件人姓名",
       "active_address": "激活地址",
       "addresses_icon": "地址图标",
-      "digital_product": "数字产品",
+      "digital_product": "数字",
       "search": "搜索 {0}",
       "in_stock": "有库存",
       "starts_from": "开始于：{0}",
@@ -156,6 +159,7 @@
       "toggle_search_bar": "切换搜索栏",
       "slider_image": "滑动图像",
       "buyer_name": "买方姓名",
+      "other": "其他",
       "vendor_name": "供应商: {name}",
       "not_available": "不可用"
     },
@@ -871,6 +875,15 @@
         "shared": "共享",
         "private": "私人"
       }
+    },
+    "sorting": {
+      "featured": "精选",
+      "alphabetically_a_z": "按字母顺序，A-Z",
+      "alphabetically_z_a": "按字母 Z-A 排序",
+      "price_low_to_high": "价格，从低到高",
+      "price_high_to_low": "价格从高到低",
+      "date_new_to_old": "日期，由新到旧",
+      "date_old_to_new": "日期，从旧到新"
     }
   },
   "pages": {
@@ -1291,7 +1304,9 @@
       "no_facet_found_message": "无结果",
       "no_products_button": "重置搜索",
       "products_icon": "产品图标",
-      "show_all_results": "显示所有结果"
+      "show_all_results": "显示所有结果",
+      "load_previous_page": "加载上一页",
+      "load_next_page": "加载下一页"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

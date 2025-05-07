@@ -66,6 +66,7 @@
               :product="product"
               class="w-[9.625rem] lg:w-[13.625rem]"
               @remove="removeFromCompareList(product)"
+              @link-click="selectItemEvent(product)"
             />
           </div>
         </div>
@@ -99,7 +100,7 @@
 
 <script setup lang="ts">
 import _ from "lodash";
-import { ref, computed, watch, watchEffect, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -109,6 +110,7 @@ import { ProductCardCompare, useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
 import { useModal } from "@/shared/modal";
 import { VcConfirmationModal } from "@/ui-kit/components";
+import type { Product } from "@/core/api/graphql/types";
 
 interface ICompareProductProperties {
   [key: string]: { label: string; values: string[] };
@@ -146,6 +148,11 @@ const propertiesDiffs = computed<ICompareProductProperties>(() => {
   return _.pickBy(properties.value, (prop) => _.uniq(prop.values).length !== 1);
 });
 
+const compareProductsListProperties = computed(() => ({
+  item_list_id: "compare_products",
+  item_list_name: t("pages.compare.header_block.title"),
+}));
+
 async function refreshProducts() {
   await fetchProducts({ productIds: productsIds.value });
 
@@ -163,8 +170,8 @@ function getProperties() {
   const names = _.uniq(
     propertiesCombined.map((prop) => {
       return {
-        name: prop!.name,
-        label: prop!.label!,
+        name: prop.name,
+        label: prop.label,
       };
     }),
   );
@@ -215,17 +222,24 @@ function syncScroll(event: Event) {
   }
 }
 
+function selectItemEvent(product: Product) {
+  analytics("selectItem", product, compareProductsListProperties.value);
+}
+
 /**
  * Send Google Analytics event for related products.
  */
-watchEffect(() => {
-  if (products.value.length) {
-    analytics("viewItemList", products.value, {
-      item_list_id: "compare_products",
-      item_list_name: t("pages.compare.header_block.title"),
-    });
-  }
-});
+watch(
+  products,
+  (productsValue) => {
+    if (!productsValue.length) {
+      return;
+    }
+
+    analytics("viewItemList", productsValue, compareProductsListProperties.value);
+  },
+  { immediate: true },
+);
 
 onMounted(() => {
   // Add scroll event listeners to both elements

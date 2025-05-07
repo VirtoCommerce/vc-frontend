@@ -71,6 +71,7 @@
                 @update:cart-item="addOrUpdateCartItem"
                 @update:list-item="updateWishListItem"
                 @remove:items="openDeleteProductModal"
+                @link-click="selectItemEvent"
               />
 
               <p v-if="page >= PAGE_LIMIT" class="my-3 text-center">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
@@ -138,6 +139,7 @@ import type {
   InputUpdateWishlistItemsType,
   InputUpdateWishlistLineItemType,
   LineItemType,
+  Product,
 } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 import type { RouteLocationNormalized } from "vue-router";
@@ -184,7 +186,7 @@ const pendingItems = ref<Record<string, boolean>>({});
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
-  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku!]?.quantity)),
+  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku]?.quantity)),
 );
 const loading = computed<boolean>(() => listLoading.value || cartLoading.value || cartChanging.value);
 const pagesCount = computed<number>(() => Math.ceil((wishlistItems.value.length ?? 0) / itemsPerPage.value));
@@ -197,6 +199,12 @@ const isDirty = computed<boolean>(() => {
   const changedItemsToCompare = (wishlistItems.value ?? []).map((item) => pick(item, ["productId", "quantity"]));
   return !isEqual(originalItemsToCompare, changedItemsToCompare);
 });
+const wishlistListProperties = computed(() => ({
+  item_list_id: "wishlist",
+  item_list_name: `Wishlist "${list.value?.name}"`,
+  related_id: list.value?.id,
+  related_type: "wishlist",
+}));
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -230,9 +238,9 @@ async function addAllListItemsToCart(): Promise<void> {
 }
 async function updateItems() {
   const payload: InputUpdateWishlistItemsType = {
-    listId: list.value!.id!,
-    items: wishlistItems
-      .value!.filter((el) => !!el.product)
+    listId: list.value!.id,
+    items: wishlistItems.value
+      .filter((el) => !!el.product)
       .map<InputUpdateWishlistLineItemType>((item) => ({
         lineItemId: item.id,
         quantity: item.quantity,
@@ -344,6 +352,14 @@ async function canChangeRoute(to: RouteLocationNormalized): Promise<boolean> {
   return to.name === "NoAccess" || !list.value || !isDirty.value || (await openSaveChangesModal());
 }
 
+function selectItemEvent(item: Product | undefined): void {
+  if (!item) {
+    return;
+  }
+
+  analytics("selectItem", item, wishlistListProperties.value);
+}
+
 onBeforeRouteLeave(canChangeRoute);
 onBeforeRouteUpdate(canChangeRoute);
 
@@ -363,9 +379,7 @@ watchEffect(() => {
     .filter(Boolean);
 
   if (items?.length) {
-    analytics("viewItemList", items, {
-      item_list_name: `Wishlist "${list.value?.name}"`,
-    });
+    analytics("viewItemList", items, wishlistListProperties.value);
   }
 });
 </script>

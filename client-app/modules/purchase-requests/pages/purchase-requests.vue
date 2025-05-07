@@ -114,7 +114,6 @@ import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables/usePageHead";
 import { Sort } from "@/core/types";
 import { usePurchaseRequests } from "@/modules/purchase-requests/composables/usePurchaseRequests";
-import type { SortDirection } from "@/core/enums";
 import type { ISortInfo } from "@/core/types";
 import FromFile from "@/modules/purchase-requests/components/from-file.vue";
 
@@ -141,7 +140,7 @@ const columns = ref<ITableColumn[]>([
 ]);
 
 function applySorting(sortInfo: ISortInfo): void {
-  sort.value = new Sort(sortInfo.column, sortInfo.direction as SortDirection);
+  sort.value = new Sort(sortInfo.column, sortInfo.direction);
   page.value = 1;
 }
 

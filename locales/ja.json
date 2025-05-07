@@ -74,7 +74,10 @@
       "add_with_bulk_order": "一括注文で追加",
       "all_orders": "すべての注文",
       "my_orders": "私の注文",
-      "scroll_to_top": "トップへスクロール"
+      "scroll_to_top": "トップへスクロール",
+      "reset_page": "ページをリセット",
+      "show_less": "折りたたむ",
+      "expand_all": "すべて展開"
     },
     "labels": {
       "actions": "操作",
@@ -125,7 +128,7 @@
       "recipient_name": "受取人",
       "active_address": "有効な住所",
       "addresses_icon": "住所アイコン",
-      "digital_product": "デジタル商品",
+      "digital_product": "デジタル",
       "search": "{0}を検索",
       "in_stock": "在庫あり",
       "starts_from": "開始: {0}",
@@ -156,6 +159,7 @@
       "toggle_search_bar": "検索バーを切り替える",
       "slider_image": "スライダー画像",
       "buyer_name": "購入者名",
+      "other": "その他",
       "vendor_name": "ベンダー: {name}",
       "not_available": "N/A"
     },
@@ -871,6 +875,15 @@
         "shared": "Shared",
         "private": "Private"
       }
+    },
+    "sorting": {
+      "featured": "おすすめ",
+      "alphabetically_a_z": "アルファベット順 (A-Z)",
+      "alphabetically_z_a": "アルファベット順 (Z-A)",
+      "price_low_to_high": "価格の低い順",
+      "price_high_to_low": "価格（高い順）",
+      "date_new_to_old": "日付、新しい順",
+      "date_old_to_new": "日付、古い順"
     }
   },
   "pages": {
@@ -1291,7 +1304,9 @@
       "no_facet_found_message": "該当なし",
       "no_products_button": "検索をリセット",
       "products_icon": "商品アイコン",
-      "show_all_results": "すべての結果を表示"
+      "show_all_results": "すべての結果を表示",
+      "load_previous_page": "前のページを読み込む",
+      "load_next_page": "次のページを読み込む"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

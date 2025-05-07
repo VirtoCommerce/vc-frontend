@@ -25,6 +25,7 @@
       "register": "Register",
       "reset_password": "Reset password",
       "reset_filters": "Reset filters",
+      "reset_page": "Reset page",
       "add_to_cart": "Add to cart",
       "apply": "Apply",
       "send": "Send",
@@ -74,7 +75,9 @@
       "add_with_bulk_order": "Add with bulk order",
       "all_orders": "All orders",
       "my_orders": "My orders",
-      "scroll_to_top": "Scroll to top"
+      "scroll_to_top": "Scroll to top",
+      "show_less": "Show less",
+      "expand_all": "Expand all"
     },
     "labels": {
       "actions": "Actions",
@@ -125,7 +128,7 @@
       "recipient_name": "Recipient name",
       "active_address": "Active address",
       "addresses_icon": "Address icon",
-      "digital_product": "Digital product",
+      "digital_product": "Digital",
       "search": "Search {0}",
       "in_stock": "In stock",
       "starts_from": "Start: {0}",
@@ -156,6 +159,7 @@
       "toggle_search_bar": "Toggle search bar",
       "slider_image": "Slider image",
       "buyer_name": "Buyer name",
+      "other": "Other",
       "vendor_name": "Vendor: {name}",
       "not_available": "N/A"
     },
@@ -871,6 +875,15 @@
         "shared": "Shared",
         "private": "Private"
       }
+    },
+    "sorting": {
+      "featured": "Featured",
+      "alphabetically_a_z": "Alphabetically, A-Z",
+      "alphabetically_z_a": "Alphabetically, Z-A",
+      "price_low_to_high": "Price, low to high",
+      "price_high_to_low": "Price, high to low",
+      "date_new_to_old": "Date, new to old",
+      "date_old_to_new": "Date, old to new"
     }
   },
   "pages": {
@@ -1291,7 +1304,9 @@
       "no_facet_found_message": "No results",
       "no_products_button": "Reset search",
       "products_icon": "Product icon",
-      "show_all_results": "Show all results"
+      "show_all_results": "Show all results",
+      "load_previous_page": "Load previous page",
+      "load_next_page": "Load next page"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

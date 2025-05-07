@@ -74,7 +74,10 @@
       "add_with_bulk_order": "Adicionar com pedido em lote",
       "all_orders": "Todas as encomendas.",
       "my_orders": "Minhas encomendas",
-      "scroll_to_top": "Voltar ao topo"
+      "scroll_to_top": "Voltar ao topo",
+      "reset_page": "Redefinir página",
+      "show_less": "Mostrar menos",
+      "expand_all": "Expandir tudo"
     },
     "labels": {
       "actions": "Ações",
@@ -125,7 +128,7 @@
       "recipient_name": "Nome do destinatário",
       "active_address": "Endereço ativo",
       "addresses_icon": "Ícone de endereços",
-      "digital_product": "Produto digital",
+      "digital_product": "Digital",
       "search": "Pesquisar {0}",
       "in_stock": "Em estoque",
       "starts_from": "Início: {0}",
@@ -156,6 +159,7 @@
       "toggle_search_bar": "Alternar barra de pesquisa",
       "slider_image": "Imagem do slider",
       "buyer_name": "Nome do comprador",
+      "other": "Outro",
       "vendor_name": "Fornecedor: {name}",
       "not_available": "N/D"
     },
@@ -871,6 +875,15 @@
         "shared": "Compartilhada",
         "private": "Privada"
       }
+    },
+    "sorting": {
+      "featured": "Em destaque",
+      "alphabetically_a_z": "Alfabeticamente, A-Z",
+      "alphabetically_z_a": "Alfabeticamente, Z-A",
+      "price_low_to_high": "Preço, do menor para o maior",
+      "price_high_to_low": "Preço, do maior para o menor",
+      "date_new_to_old": "Data, mais recente para o mais antigo",
+      "date_old_to_new": "Data, do mais antigo para o mais recente"
     }
   },
   "pages": {
@@ -1291,7 +1304,9 @@
       "no_facet_found_message": "Nenhum resultado",
       "no_products_button": "Resetar pesquisa",
       "products_icon": "Ícone de produto",
-      "show_all_results": "Mostrar todos os resultados"
+      "show_all_results": "Mostrar todos os resultados",
+      "load_previous_page": "Carregar página anterior",
+      "load_next_page": "Carregar próxima página"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
