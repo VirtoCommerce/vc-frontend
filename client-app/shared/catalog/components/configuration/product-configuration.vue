@@ -78,52 +78,18 @@
             />
           </template>
 
-          <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.text">
-            <OptionText
-              v-if="section.allowCustomText"
-              :name="section.id"
-              :hide-selection="section.isRequired && !section.allowTextOptions"
-              :value="optionTextValue(section)"
-              :selected="!isSelectedOptionPredefinedText(section)"
-              @input="
-                selectSectionValue({
-                  sectionId: section.id,
-                  customText: $event,
-                  type: section.type,
-                })
-              "
-            />
-
-            <template v-if="section.allowTextOptions">
-              <template v-for="option in section.options" :key="option.id">
-                <OptionPredefinedText
-                  v-if="option.text"
-                  :name="section.id"
-                  :model-value="selectedConfiguration[section.id]?.selectedOptionTextValue"
-                  :text="option.text"
-                  @input="
-                    selectSectionValue({
-                      sectionId: section.id,
-                      customText: option.text,
-                      type: section.type,
-                    })
-                  "
-                />
-              </template>
-            </template>
-
-            <OptionNone
-              v-if="!section.isRequired"
-              :name="section.id"
-              :selected="selectedConfiguration[section.id]?.selectedOptionTextValue === undefined"
-              @input="
-                selectSectionValue({
-                  sectionId: section.id,
-                  type: section.type,
-                })
-              "
-            />
-          </template>
+          <SectionText
+            v-if="section.type === CONFIGURABLE_SECTION_TYPES.text"
+            :section="section"
+            :selected="selectedConfiguration[section.id]?.selectedOptionTextValue"
+            @input="
+              selectSectionValue({
+                sectionId: section.id,
+                customText: $event,
+                type: section.type,
+              })
+            "
+          />
 
           <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.file">
             <OptionFile
@@ -165,7 +131,6 @@
 </template>
 
 <script setup lang="ts">
-import some from "lodash/some";
 import { toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
@@ -178,12 +143,11 @@ import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import OptionFile from "./option-file.vue";
 import OptionNone from "./option-none.vue";
-import OptionPredefinedText from "./option-predefined-text.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
-import OptionText from "./option-text.vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
+import SectionText from "@/shared/catalog/components/configuration/section-text.vue";
 
 const props = defineProps<IProps>();
 
@@ -234,23 +198,6 @@ watch(
 
 function hasSelectedOption(sectionId: string) {
   return !!selectedConfiguration.value?.[sectionId]?.selectedOptionTextValue;
-}
-
-function isSelectedOptionPredefinedText(section: DeepReadonly<ConfigurationSectionType>) {
-  return (
-    section.allowTextOptions &&
-    hasSelectedOption(section.id) &&
-    some(
-      section.options,
-      (option) => option.text === selectedConfiguration.value?.[section.id]?.selectedOptionTextValue,
-    )
-  );
-}
-
-function optionTextValue(section: DeepReadonly<ConfigurationSectionType>) {
-  return isSelectedOptionPredefinedText(section)
-    ? ""
-    : selectedConfiguration.value?.[section.id]?.selectedOptionTextValue;
 }
 
 function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
