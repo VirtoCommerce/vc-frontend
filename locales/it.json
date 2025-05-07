@@ -1464,9 +1464,10 @@
       "message": "@:common.messages.blocked"
     },
     "brands": {
-      "title": "Principali marchi",
       "search": "Cerca",
-      "button_all": "Tutto"
+      "button_all": "Tutto",
+      "top_brands_title": "Marchi principali",
+      "title": "Marchi"
     }
   },
   "identity_error": {

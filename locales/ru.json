@@ -1464,9 +1464,10 @@
       "message": "@:common.messages.blocked"
     },
     "brands": {
-      "title": "Популярные бренды",
       "search": "Поиск",
-      "button_all": "Все"
+      "button_all": "Все",
+      "top_brands_title": "Топ бренды",
+      "title": "Бренды"
     }
   },
   "identity_error": {

@@ -1464,9 +1464,10 @@
       "message": "@:common.messages.blocked"
     },
     "brands": {
-      "title": "Meilleures marques",
       "search": "Rechercher",
-      "button_all": "Tout"
+      "button_all": "Tout",
+      "top_brands_title": "Meilleures marques",
+      "title": "Marques"
     }
   },
   "identity_error": {

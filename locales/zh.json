@@ -1464,9 +1464,10 @@
       "message": "@:common.messages.blocked"
     },
     "brands": {
-      "title": "热门品牌",
       "search": "搜索",
-      "button_all": "全部"
+      "button_all": "全部",
+      "top_brands_title": "热门品牌",
+      "title": "品牌"
     }
   },
   "identity_error": {

@@ -1464,9 +1464,10 @@
       "message": "@:common.messages.blocked"
     },
     "brands": {
-      "title": "Principais marcas",
       "search": "Pesquisar",
-      "button_all": "Tudo"
+      "button_all": "Tudo",
+      "top_brands_title": "Melhores marcas",
+      "title": "Marcas"
     }
   },
   "identity_error": {

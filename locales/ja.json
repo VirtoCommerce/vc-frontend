@@ -1464,9 +1464,10 @@
       "message": "@:common.messages.blocked"
     },
     "brands": {
-      "title": "トップブランド",
       "search": "検索",
-      "button_all": "すべて"
+      "button_all": "すべて",
+      "top_brands_title": "人気ブランド",
+      "title": "ブランド"
     }
   },
   "identity_error": {
