@@ -81,19 +81,19 @@
         </template>
 
         <div
-          v-for="letter in sortedNavItems"
+          v-for="navItem in sortedNavItems"
           v-else
-          :id="'brands-' + letter"
-          :key="letter"
+          :id="'brands-' + navItem"
+          :key="navItem"
           class="brands__items"
-          :class="{ 'brands__items--full': isFullWidthItem(letter) }"
+          :class="{ 'brands__items--full': isFullWidthItem(navItem) }"
         >
-          <div class="brands__letter" :class="{ 'brands__letter--active': activeNavItem === letter }">
-            {{ brandNavIndex[letter] }}
+          <div class="brands__letter" :class="{ 'brands__letter--active': activeNavItem === navItem }">
+            {{ brandNavIndex[navItem] }}
           </div>
 
           <ul class="brands__links">
-            <li v-for="brand in groupedBrands[letter]" :key="brand.id">
+            <li v-for="brand in groupedBrands[navItem]" :key="brand.id">
               <router-link to="#" class="brands__link">
                 {{ brand.name }}
               </router-link>
@@ -162,8 +162,8 @@ function setActiveNavItem(value: string) {
   activeNavItem.value = value;
 }
 
-function isFullWidthItem(letter: string) {
-  return letter === NAV_INDEX_ITEMS.others && groupedBrands.value[letter].length > MIN_ITEMS_TO_SHOW_FULL_WIDTH;
+function isFullWidthItem(navItem: string) {
+  return navItem === NAV_INDEX_ITEMS.others && groupedBrands.value[navItem].length >= MIN_ITEMS_TO_SHOW_FULL_WIDTH;
 }
 
 function trimDataByBreakpoint<T>(data: T[]): T[] {
@@ -182,7 +182,15 @@ function trimDataByBreakpoint<T>(data: T[]): T[] {
   return data.slice(0, 12);
 }
 
+watch(search, () => {
+  activeNavItem.value = NAV_INDEX_ITEMS.all;
+});
+
 watch(activeNavItem, (newActiveNavItem) => {
+  if (newActiveNavItem === NAV_INDEX_ITEMS.all) {
+    return;
+  }
+
   const group = getGroupByLetter(newActiveNavItem);
   const element = document.getElementById(`brands-${group}`);
 

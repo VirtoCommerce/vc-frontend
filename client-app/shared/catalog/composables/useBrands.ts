@@ -57,7 +57,7 @@ export function useBrands(options: IUseBrandsOptions, variables?: Partial<GetBra
   });
 
   const brandNavIndex: Record<string, string> = {
-    all: t("pages.brands.button_all"),
+    [NAV_INDEX_ITEMS.all]: t("pages.brands.button_all"),
     ...LATIN_UPPERCASE_LETTERS_MAPPING,
     [NAV_INDEX_ITEMS.numbers]: "0-9",
     [NAV_INDEX_ITEMS.others]: "#",
