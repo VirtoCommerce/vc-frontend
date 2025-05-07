@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="option-text">
+    <div v-if="section.allowCustomText" class="option-text">
       <VcRadioButton
         v-model="selectedInput"
         :value="CUSTOM_VALUE"
@@ -15,27 +15,28 @@
         @focus="selectCustomInput"
       />
     </div>
+    <template v-if="section.allowTextOptions">
+      <div v-for="(option, index) in section.options" :key="option.id" class="option-text">
+        <VcRadioButton
+          v-model="selectedInput"
+          :value="`${PREDEFINED_PREFIX}${index + 1}`"
+          :aria-label="`Option ${index + 1}: ${option.text}`"
+        >
+          {{ option.text }}
+        </VcRadioButton>
+      </div>
+    </template>
 
-    <div v-for="(option, index) in section.options" :key="option.id" class="option-text">
-      <VcRadioButton
-        v-model="selectedInput"
-        :value="`${PREDEFINED_PREFIX}${index + 1}`"
-        :aria-label="`Option ${index + 1}: ${option.text}`"
-      >
-        {{ option.text }}
-      </VcRadioButton>
-    </div>
-
-    <div class="option-text">
+    <div v-if="!section.isRequired" class="option-text">
       <VcRadioButton v-model="selectedInput" :value="NOT_SELECTED_VALUE" aria-label="No selection">
-        none
+        None
       </VcRadioButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
@@ -43,6 +44,11 @@ interface IProps {
   section: DeepReadonly<ConfigurationSectionType>;
   initialValue?: string;
 }
+
+// если одна опция и нужная- выбрать
+// убрать радио для - isReq = true, Predif = false, Custom = true
+// перевод
+// корзина
 
 const emit = defineEmits<{
   (e: "update", value: string | undefined): void;
@@ -104,6 +110,12 @@ function updateCustomValue(event: Event) {
 function selectCustomInput() {
   selectedInput.value = CUSTOM_VALUE;
 }
+
+onMounted(() => {
+  if (props.section.options?.length === 1 && props.section.isRequired) {
+    selectedInput.value = `${PREDEFINED_PREFIX}1`;
+  }
+});
 </script>
 
 <style lang="scss">
