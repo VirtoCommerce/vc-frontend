@@ -81,8 +81,8 @@
           <SectionText
             v-if="section.type === CONFIGURABLE_SECTION_TYPES.text"
             :section="section"
-            :selected="selectedConfiguration[section.id]?.selectedOptionTextValue"
-            @input="
+            :model-value="selectedConfiguration[section.id]?.selectedOptionTextValue"
+            @update:model-value="
               selectSectionValue({
                 sectionId: section.id,
                 customText: $event,

@@ -1,58 +1,73 @@
 <template>
   <div>
     <div class="option-text">
-      <VcRadioButton v-model="text" :value="customInput" />
+      <VcRadioButton v-model="localValue" :value="customInput" />
       <VcInput
         v-model="customInput"
         :maxlength="MAX_LENGTH"
         class="option-text__input"
-        @input="text = customInput"
-        @focus="text = customInput"
-        @focusout="update"
+        @input="updateValue(customInput)"
+        @focus="updateValue(customInput)"
       />
     </div>
 
     <div v-for="option in section.options" :key="option.id" class="option-text">
-      <VcRadioButton v-model="text" :value="option.text!" @change="update">
+      <VcRadioButton v-model="localValue" :value="option.text!">
         {{ option.text }}
       </VcRadioButton>
     </div>
 
     <div class="option-text">
-      <VcRadioButton v-model="text" :value="EMPTY_VALUE" @change="update"> none </VcRadioButton>
+      <VcRadioButton v-model="localValue" :value="EMPTY_VALUE"> none </VcRadioButton>
     </div>
 
-    <p>Вы выбрали: {{ text }}</p>
+    <p>Вы выбрали: {{ localValue }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
-interface IEmits {
-  (event: "input", value?: string): void;
-}
-
 interface IProps {
   section: DeepReadonly<ConfigurationSectionType>;
-  selected?: string;
+  modelValue?: string;
 }
 
-const emit = defineEmits<IEmits>();
-
-defineProps<IProps>();
-
+const emit = defineEmits<{
+  (e: "update:modelValue", value: string | undefined): void;
+}>();
+const props = defineProps<IProps>();
 const MAX_LENGTH = 255;
 const EMPTY_VALUE = "__none__";
 
-const text = ref(EMPTY_VALUE);
-
+const localValue = ref(EMPTY_VALUE);
 const customInput = ref("");
 
-function update() {
-  emit("input", text.value === EMPTY_VALUE ? undefined : text.value);
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue !== localValue.value) {
+      localValue.value = newValue ?? EMPTY_VALUE;
+    }
+  },
+);
+
+watch(localValue, (newValue) => {
+  updateValue(newValue);
+});
+
+function updateValue(value: string) {
+  if (value === "") {
+    return;
+  }
+  /*
+  if (props.section.options?.some((option) => option.text === value)) {
+    return;
+  }*/
+
+  emit("update:modelValue", value === EMPTY_VALUE ? undefined : value);
 }
 </script>
 
