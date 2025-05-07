@@ -2,6 +2,7 @@
   <div>
     <div v-if="section.allowCustomText" class="option-text">
       <VcRadioButton
+        v-if="!isCustomInputRadioButtonHidden"
         v-model="selectedInput"
         :value="CUSTOM_VALUE"
         :aria-label="customInput ? `Custom option: ${customInput}` : 'Custom option: empty'"
@@ -36,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
@@ -45,10 +46,8 @@ interface IProps {
   initialValue?: string;
 }
 
-// если одна опция и нужная- выбрать
-// убрать радио для - isReq = true, Predif = false, Custom = true
-// перевод
-// корзина
+// add translation
+// check the cart
 
 const emit = defineEmits<{
   (e: "update", value: string | undefined): void;
@@ -62,6 +61,10 @@ const PREDEFINED_PREFIX = "predefined_";
 const customInput = ref("");
 const selectedInput = ref(NOT_SELECTED_VALUE);
 const isInitialized = ref(false);
+
+const isCustomInputRadioButtonHidden = computed(() => {
+  return props.section.isRequired && props.section.allowCustomText && !props.section.allowTextOptions;
+});
 
 watch(selectedInput, (newValue) => {
   if (newValue === CUSTOM_VALUE) {
