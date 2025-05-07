@@ -24,6 +24,7 @@ const Cart = () => import("@/pages/cart.vue");
 const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
 const Category = () => import("@/pages/category.vue");
+const Brands = () => import("@/pages/brands.vue");
 const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
@@ -71,6 +72,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   ...checkoutRoutes,
   { path: ROUTES.CATALOG.PATH, name: ROUTES.CATALOG.NAME, component: Catalog, props: true },
   { path: "/category/:categoryId", name: "Category", component: Category, props: true },
+  { path: "/brands", name: "Brands", component: Brands },
   {
     path: "/product/:productId",
     name: "Product",

@@ -1,4 +1,5 @@
 export * from "./address";
+export * from "./brands";
 export * from "./breadcrumbs";
 export * from "./categories";
 export * from "./common";
