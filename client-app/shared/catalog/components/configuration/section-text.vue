@@ -11,8 +11,8 @@
       />
     </div>
 
-    <div v-for="option in section.options" :key="option.id" class="option-text">
-      <VcRadioButton v-model="selectedInput" :value="option.id!">
+    <div v-for="(option, index) in section.options" :key="option.id" class="option-text">
+      <VcRadioButton v-model="selectedInput" :value="`${PREDEFINED_PREFIX}${index + 1}`">
         {{ option.text }}
       </VcRadioButton>
     </div>
@@ -38,8 +38,9 @@ const emit = defineEmits<{
 }>();
 const props = defineProps<IProps>();
 const MAX_LENGTH = 255;
-const NOT_SELECTED_VALUE = "__none__";
-const CUSTOM_VALUE = "__custom__";
+const NOT_SELECTED_VALUE = "no selection";
+const CUSTOM_VALUE = "custom input";
+const PREDEFINED_PREFIX = "predefined_";
 
 const customInput = ref("");
 const selectedInput = ref(NOT_SELECTED_VALUE);
@@ -51,7 +52,9 @@ watch(selectedInput, (newValue) => {
   } else if (newValue === NOT_SELECTED_VALUE) {
     emit("update", undefined);
   } else {
-    const option = props.section.options?.find((opt) => opt.id === newValue);
+    // Extract index from predefined_N
+    const index = parseInt(newValue.replace(PREDEFINED_PREFIX, "")) - 1;
+    const option = props.section.options?.[index];
     emit("update", option?.text || undefined);
   }
 });
@@ -67,9 +70,9 @@ watch(
 );
 
 function setInitialValue(newValue: string) {
-  const matchingOption = props.section.options?.find((el) => el.text === newValue);
-  if (matchingOption) {
-    selectedInput.value = matchingOption.id!;
+  const optionIndex = props.section.options?.findIndex((el) => el.text === newValue);
+  if (optionIndex !== undefined && optionIndex !== -1) {
+    selectedInput.value = `${PREDEFINED_PREFIX}${optionIndex + 1}`;
   } else {
     selectedInput.value = CUSTOM_VALUE;
     customInput.value = newValue;
