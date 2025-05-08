@@ -1,6 +1,6 @@
 <template>
-  <fieldset role="radiogroup" :aria-label="section.name" class="section-text-selector">
-    <div v-if="section.allowCustomText" class="section-text-selector__option">
+  <fieldset role="radiogroup" :aria-label="section.name" class="section-text-fieldset">
+    <div v-if="section.allowCustomText" class="section-text-fieldset__option">
       <VcRadioButton
         v-if="!isCustomInputRadioButtonHidden"
         v-model="selectedInput"
@@ -11,7 +11,7 @@
       <VcInput
         v-model="customInput"
         :maxlength="MAX_LENGTH"
-        class="section-text-selector__input"
+        class="section-text-fieldset__input"
         aria-label="Enter custom text"
         @input="updateCustomValue"
         @focus="selectCustomInput"
@@ -19,7 +19,7 @@
     </div>
 
     <template v-if="section.allowTextOptions">
-      <div v-for="(option, index) in section.options" :key="option.id" class="section-text-selector__option">
+      <div v-for="(option, index) in section.options" :key="option.id" class="section-text-fieldset__option">
         <VcRadioButton
           v-model="selectedInput"
           :value="`${PREDEFINED_PREFIX}${index + 1}`"
@@ -31,7 +31,7 @@
       </div>
     </template>
 
-    <div v-if="!section.isRequired" class="section-text-selector__option">
+    <div v-if="!section.isRequired" class="section-text-fieldset__option">
       <VcRadioButton v-model="selectedInput" :value="NOT_SELECTED_VALUE" aria-label="No selection" :name="section.name">
         None
       </VcRadioButton>
@@ -56,7 +56,7 @@ const props = defineProps<IProps>();
 const MAX_LENGTH = 255;
 const NOT_SELECTED_VALUE = "no selection";
 const CUSTOM_VALUE = "custom input";
-const PREDEFINED_PREFIX = "predefined_";
+const PREDEFINED_PREFIX = "predefined";
 
 const customInput = ref("");
 const selectedInput = ref(NOT_SELECTED_VALUE);
@@ -122,7 +122,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-.section-text-selector {
+.section-text-fieldset {
   @apply border-none p-0 m-0;
 
   &__option {

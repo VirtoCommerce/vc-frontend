@@ -78,7 +78,7 @@
             />
           </template>
 
-          <SectionText
+          <SectionTextFieldset
             v-if="section.type === CONFIGURABLE_SECTION_TYPES.text"
             :section="section"
             :initial-value="selectedConfiguration[section.id]?.selectedOptionTextValue"
@@ -145,9 +145,9 @@ import OptionFile from "./option-file.vue";
 import OptionNone from "./option-none.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
+import SectionTextFieldset from "./section-text-fieldset.vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
-import SectionText from "@/shared/catalog/components/configuration/section-text.vue";
 
 const props = defineProps<IProps>();
 
