@@ -143,7 +143,12 @@ function removePrefixAndSpace(value: string) {
 }
 
 onMounted(() => {
-  if (props.section.options?.length === 1 && props.section.isRequired) {
+  if (
+    props.section.options?.length === 1 &&
+    props.section.isRequired &&
+    !props.section.allowCustomText &&
+    props.section.allowTextOptions
+  ) {
     selectedInput.value = addPrefixAndSpace(1);
   }
 });
