@@ -649,7 +649,17 @@
           "check_your_configuration": "Überprüfe deine Produktkonfiguration",
           "required_section": "Abschnitt erforderlich",
           "optional_no_selected": "Personalisieren Sie Ihre Auswahl weiter (optional)",
-          "required_no_selected": "Bitte alle erforderlichen Optionen auswählen, um Ihre Auswahl abzuschließen."
+          "required_no_selected": "Bitte alle erforderlichen Optionen auswählen, um Ihre Auswahl abzuschließen.",
+          "section-text-fieldset": {
+            "custom_option_with_input": "Benutzerdefinierte Option: {0}",
+            "custom_option_empty": "Benutzerdefinierte Option: leer",
+            "enter_custom_text": "Benutzerdefinierten Text eingeben",
+            "no_selection": "Keine Auswahl",
+            "none": "Keine",
+            "custom_input": "Benutzerdefinierte Eingabe",
+            "predefined_prefix": "Vordefiniert",
+            "option_label": "Option {0}: {1}"
+          }
         }
       },
       "discount_badge": {
