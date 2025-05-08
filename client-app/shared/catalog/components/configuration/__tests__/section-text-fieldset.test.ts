@@ -2,6 +2,7 @@ import { mount } from "@vue/test-utils";
 import { describe, it, expect, vi } from "vitest";
 import SectionTextFieldset from "../section-text-fieldset.vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { PropType } from "vue";
 
 // Mock translations function
 const mockTranslate = (key: string) => {
@@ -46,9 +47,23 @@ describe("SectionTextFieldset", () => {
       global: {
         stubs: {
           VcRadioButton: {
+            emits: {
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              "update:modelValue": (value: string | undefined) => true,
+            },
+            methods: {
+              handleClick() {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+                this.$emit("update:modelValue", this.value);
+              },
+            },
             name: "VcRadioButton",
+            props: {
+              modelValue: { type: [String, undefined] as PropType<string | undefined>, required: true },
+              value: { type: [String, undefined] as PropType<string | undefined>, required: true },
+            },
             template: `
-                            <div 
+                            <div
                                 :data-test-id="$attrs['data-test-id']"
                                 class="radio-button"
                                 :class="{ 'selected': modelValue === value }"
@@ -57,32 +72,32 @@ describe("SectionTextFieldset", () => {
                                 <slot />
                             </div>
                         `,
-            props: ["modelValue", "value"],
-            emits: ["update:modelValue"],
-            methods: {
-              handleClick() {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-                this.$emit("update:modelValue", this.value);
-              },
-            },
           },
           VcInput: {
             template: `
-                            <input 
+                            <input
                                 :data-test-id="$attrs['data-test-id']"
-                                class="input" 
-                                :value="modelValue" 
+                                class="input"
+                                :value="modelValue"
                                 @input="handleInput"
                                 @focus="$emit('focus')"
                             />
                         `,
             props: ["modelValue"],
-            emits: ["update:modelValue", "input", "focus"],
+            emits: {
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              "update:modelValue": (value: string) => true,
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              input: (e: { target: { value: string } }) => true,
+              focus: () => true,
+            },
             inheritAttrs: false,
             methods: {
               handleInput(e: Event) {
                 const target = e.target as HTMLInputElement;
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+                /* eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
+                this.$emit("update:modelValue", target.value);
+                /* eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
                 this.$emit("input", { target: { value: target.value } });
               },
             },
@@ -154,13 +169,59 @@ describe("SectionTextFieldset", () => {
       expect(emitted?.[emitted.length - 1]).toEqual([testValue]);
     });
 
+    it("automatically selects custom input when updating input without selecting it first", async () => {
+      const wrapper = createComponent();
+      const input = wrapper.find('[data-test-id="custom-input"]');
+
+      // Update input value without selecting custom input first
+      const testValue = "direct input";
+      await input.setValue(testValue);
+      // Trigger the input event without target value
+      await input.trigger("input");
+      await wrapper.vm.$nextTick();
+
+      const emitted = wrapper.emitted("update");
+      expect(emitted).toBeTruthy();
+      expect(emitted?.[emitted.length - 1]).toEqual([testValue]);
+    });
+
+    it("emits undefined when input value is empty", async () => {
+      const wrapper = createComponent();
+      const input = wrapper.find('[data-test-id="custom-input"]');
+
+      // First set some value
+      await input.setValue("some value");
+      await input.trigger("input");
+      await wrapper.vm.$nextTick();
+
+      // Then clear it
+      await input.setValue("");
+      await input.trigger("input");
+      await wrapper.vm.$nextTick();
+
+      const emitted = wrapper.emitted("update");
+      expect(emitted).toBeTruthy();
+      expect(emitted?.[emitted.length - 1]).toEqual([undefined]);
+    });
+
     it("selects custom input when focusing on input field", async () => {
       const wrapper = createComponent();
       const input = wrapper.find('[data-test-id="custom-input"]');
 
-      await input.trigger("focus");
+      // First select a predefined option
+      const predefinedOption = wrapper.find('[data-test-id="predefined-option-1"]');
+      await predefinedOption.trigger("click");
+      await wrapper.vm.$nextTick();
 
-      expect(wrapper.emitted("update")).toBeTruthy();
+      // Then focus the input field
+      await input.trigger("focus");
+      await wrapper.vm.$nextTick();
+
+      // Verify that custom input is selected
+      const emitted = wrapper.emitted("update");
+      expect(emitted).toBeTruthy();
+      // Should emit undefined since no value is entered yet
+      expect(emitted?.[emitted.length - 1]).toEqual([undefined]);
     });
 
     it("automatically selects first option when required and single option", async () => {
@@ -223,6 +284,17 @@ describe("SectionTextFieldset", () => {
 
       expect(wrapper.emitted("update")).toBeTruthy();
       expect(wrapper.emitted("update")?.[0]).toEqual(["Custom Value"]);
+    });
+
+    it("handles undefined initial value", async () => {
+      const wrapper = createComponent({
+        initialValue: undefined,
+      });
+
+      await wrapper.vm.$nextTick();
+
+      // Should not emit update when initialValue is undefined
+      expect(wrapper.emitted("update")).toBeFalsy();
     });
   });
 
@@ -315,6 +387,47 @@ describe("SectionTextFieldset", () => {
 
       const emitted = wrapper.emitted("update");
       expect(emitted).toBeFalsy();
+    });
+  });
+
+  describe("Helper functions", () => {
+    it("constructs proper locale keys", () => {
+      const wrapper = createComponent();
+      const customRadio = wrapper.find('[data-test-id="custom-input-radio"]');
+
+      // The aria-label uses constructLocaleKey internally
+      expect(customRadio.attributes("aria-label")).toBe("Custom");
+    });
+  });
+
+  describe("v-model bindings", () => {
+    it("properly binds customInput v-model", async () => {
+      const wrapper = createComponent();
+      const input = wrapper.find('[data-test-id="custom-input"]');
+
+      // First select custom input mode
+      const customRadio = wrapper.find('[data-test-id="custom-input-radio"]');
+      await customRadio.trigger("click");
+      await wrapper.vm.$nextTick();
+
+      // Then update the input value
+      const testValue = "test via v-model";
+      const inputEl = input.element as HTMLInputElement;
+      inputEl.value = testValue;
+      await input.trigger("input");
+      await wrapper.vm.$nextTick();
+
+      // Verify that the internal customInput ref is updated (getter)
+      // @ts-expect-error - vm.customInput exists but TypeScript doesn't know about it
+      expect(wrapper.vm.customInput).toBe(testValue);
+
+      // Check that the update event was emitted with the new value (setter)
+      const emitted = wrapper.emitted("update");
+      expect(emitted).toBeTruthy();
+      expect(emitted?.[emitted.length - 1]).toEqual([testValue]);
+
+      // Verify v-model two-way binding by checking input value
+      expect(inputEl.value).toBe(testValue);
     });
   });
 });
