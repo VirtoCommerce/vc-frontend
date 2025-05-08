@@ -1,39 +1,42 @@
 <template>
-  <div>
-    <div v-if="section.allowCustomText" class="option-text">
+  <fieldset role="radiogroup" :aria-label="section.name" class="section-text-selector">
+    <div v-if="section.allowCustomText" class="section-text-selector__option">
       <VcRadioButton
         v-if="!isCustomInputRadioButtonHidden"
         v-model="selectedInput"
         :value="CUSTOM_VALUE"
         :aria-label="customInput ? `Custom option: ${customInput}` : 'Custom option: empty'"
+        :name="section.name"
       />
       <VcInput
         v-model="customInput"
         :maxlength="MAX_LENGTH"
-        class="option-text__input"
+        class="section-text-selector__input"
         aria-label="Enter custom text"
         @input="updateCustomValue"
         @focus="selectCustomInput"
       />
     </div>
+
     <template v-if="section.allowTextOptions">
-      <div v-for="(option, index) in section.options" :key="option.id" class="option-text">
+      <div v-for="(option, index) in section.options" :key="option.id" class="section-text-selector__option">
         <VcRadioButton
           v-model="selectedInput"
           :value="`${PREDEFINED_PREFIX}${index + 1}`"
           :aria-label="`Option ${index + 1}: ${option.text}`"
+          :name="section.name"
         >
           {{ option.text }}
         </VcRadioButton>
       </div>
     </template>
 
-    <div v-if="!section.isRequired" class="option-text">
-      <VcRadioButton v-model="selectedInput" :value="NOT_SELECTED_VALUE" aria-label="No selection">
+    <div v-if="!section.isRequired" class="section-text-selector__option">
+      <VcRadioButton v-model="selectedInput" :value="NOT_SELECTED_VALUE" aria-label="No selection" :name="section.name">
         None
       </VcRadioButton>
     </div>
-  </div>
+  </fieldset>
 </template>
 
 <script setup lang="ts">
@@ -45,9 +48,6 @@ interface IProps {
   section: DeepReadonly<ConfigurationSectionType>;
   initialValue?: string;
 }
-
-// add translation
-// check the cart
 
 const emit = defineEmits<{
   (e: "update", value: string | undefined): void;
@@ -122,8 +122,12 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-.option-text {
-  @apply flex gap-3 p-4 items-center odd:bg-neutral-50 w-full;
+.section-text-selector {
+  @apply border-none p-0 m-0;
+
+  &__option {
+    @apply flex gap-3 p-4 items-center odd:bg-neutral-50 w-full;
+  }
 
   &__input {
     @apply w-full;
