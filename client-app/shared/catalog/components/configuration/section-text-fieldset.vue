@@ -11,12 +11,14 @@
             : $t(constructLocaleKey('custom_option_empty'))
         "
         :name="section.name"
+        data-test-id="custom-input-radio"
       />
       <VcInput
         v-model="customInput"
         :maxlength="MAX_LENGTH"
         class="section-text-fieldset__input"
         :aria-label="$t(constructLocaleKey('enter_custom_text'))"
+        data-test-id="custom-input"
         @input="updateCustomValue"
         @focus="selectCustomInput"
       />
@@ -29,6 +31,7 @@
           :value="addPrefixAndSpace(index + 1)"
           :aria-label="$t(constructLocaleKey('option_label'), [index + 1, option.text])"
           :name="section.name"
+          :data-test-id="'predefined-option-' + (index + 1)"
         >
           {{ option.text }}
         </VcRadioButton>
@@ -41,6 +44,7 @@
         :value="NOT_SELECTED_VALUE"
         :aria-label="$t(constructLocaleKey('no_selection'))"
         :name="section.name"
+        data-test-id="none-option"
       >
         {{ $t(constructLocaleKey("none")) }}
       </VcRadioButton>
