@@ -649,7 +649,17 @@
           "check_your_configuration": "检查您的产品配置",
           "required_section": "此部分为必填项",
           "optional_no_selected": "个性化您的选择（可选）",
-          "required_no_selected": "请填写所有必填选项以完成选择"
+          "required_no_selected": "请填写所有必填选项以完成选择",
+          "section-text-fieldset": {
+            "custom_option_with_input": "自定义选项：{0}",
+            "custom_option_empty": "自定义选项：无",
+            "enter_custom_text": "输入自定义文本",
+            "no_selection": "未选择",
+            "none": "无",
+            "custom_input": "自定义输入",
+            "predefined_prefix": "预定义",
+            "option_label": "选项 {0}: {1}"
+          }
         }
       },
       "discount_badge": {

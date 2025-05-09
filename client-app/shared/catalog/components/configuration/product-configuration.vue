@@ -78,33 +78,18 @@
             />
           </template>
 
-          <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.text">
-            <OptionText
-              :name="section.id"
-              :is-required="section.isRequired"
-              :value="selectedConfiguration[section.id]?.selectedOptionTextValue"
-              :selected="!!selectedConfiguration[section.id]"
-              @input="
-                selectSectionValue({
-                  sectionId: section.id,
-                  customText: $event,
-                  type: section.type,
-                })
-              "
-            />
-
-            <OptionNone
-              v-if="!section.isRequired"
-              :name="section.id"
-              :selected="selectedConfiguration[section.id]?.selectedOptionTextValue === undefined"
-              @input="
-                selectSectionValue({
-                  sectionId: section.id,
-                  type: section.type,
-                })
-              "
-            />
-          </template>
+          <SectionTextFieldset
+            v-if="section.type === CONFIGURABLE_SECTION_TYPES.text"
+            :section="section"
+            :initial-value="selectedConfiguration[section.id]?.selectedOptionTextValue"
+            @update="
+              selectSectionValue({
+                sectionId: section.id,
+                customText: $event,
+                type: section.type,
+              })
+            "
+          />
 
           <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.file">
             <OptionFile
@@ -160,7 +145,7 @@ import OptionFile from "./option-file.vue";
 import OptionNone from "./option-none.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
-import OptionText from "./option-text.vue";
+import SectionTextFieldset from "./section-text-fieldset.vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 

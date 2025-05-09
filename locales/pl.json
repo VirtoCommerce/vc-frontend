@@ -649,7 +649,17 @@
           "check_your_configuration": "Sprawdź konfigurację produktu",
           "required_section": "Sekcja jest wymagana",
           "optional_no_selected": "Spersonalizuj swój wybór (opcjonalne)",
-          "required_no_selected": "Uzupełnij wszystkie wymagane opcje, aby sfinalizować wybór"
+          "required_no_selected": "Uzupełnij wszystkie wymagane opcje, aby sfinalizować wybór",
+          "section-text-fieldset": {
+            "custom_option_with_input": "Opcja niestandardowa: {0}",
+            "custom_option_empty": "Opcja niestandardowa: pusta",
+            "enter_custom_text": "Wprowadź własny tekst",
+            "no_selection": "Brak wyboru",
+            "none": "Brak",
+            "custom_input": "Własne dane",
+            "predefined_prefix": "Predefiniowane",
+            "option_label": "Opcja {0}: {1}"
+          }
         }
       },
       "discount_badge": {

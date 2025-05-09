@@ -649,7 +649,17 @@
           "check_your_configuration": "Check your product configuration",
           "required_section": "Section is required",
           "optional_no_selected": "Personalize your selection further (optional)",
-          "required_no_selected": "Complete all required options to finalize your selection"
+          "required_no_selected": "Complete all required options to finalize your selection",
+          "section-text-fieldset": {
+            "custom_option_with_input": "Custom option: {0}",
+            "custom_option_empty": "Custom option: empty",
+            "enter_custom_text": "Enter custom text",
+            "no_selection": "No selection",
+            "none": "None",
+            "custom_input": "Custom input",
+            "predefined_prefix": "Predefined",
+            "option_label": "Option {0}: {1}"
+          }
         }
       },
       "discount_badge": {
