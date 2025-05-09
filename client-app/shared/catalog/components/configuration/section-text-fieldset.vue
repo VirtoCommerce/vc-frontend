@@ -1,5 +1,5 @@
 <template>
-  <fieldset role="radiogroup" :aria-label="section.name" class="section-text-fieldset">
+  <fieldset :aria-label="section.name" class="section-text-fieldset">
     <div v-if="section.allowCustomText" class="section-text-fieldset__option">
       <VcRadioButton
         v-if="!isCustomInputRadioButtonHidden"

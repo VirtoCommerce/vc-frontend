@@ -77,7 +77,7 @@ const VcInputStub = defineComponent({
     },
 
     input: (e: { target: { value: unknown } }) => {
-      return e && e.target && typeof e.target.value === "string";
+      return typeof e?.target?.value === "string";
     },
 
     focus: () => true,
@@ -135,7 +135,9 @@ describe("SectionTextFieldset", () => {
   describe("Component rendering", () => {
     it("renders correctly with default props", () => {
       const wrapper = createComponent();
-      expect(wrapper.find("fieldset").exists()).toBe(true);
+      const fieldset = wrapper.find("fieldset");
+      expect(fieldset.exists()).toBe(true);
+      expect(fieldset.attributes("role")).toBeFalsy();
       const options = [
         wrapper.find('[data-test-id="custom-input-radio"]'),
         wrapper.find('[data-test-id="predefined-option-1"]'),
