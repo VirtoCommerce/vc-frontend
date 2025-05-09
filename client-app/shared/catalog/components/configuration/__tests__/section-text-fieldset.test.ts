@@ -136,14 +136,26 @@ describe("SectionTextFieldset", () => {
     it("renders correctly with default props", () => {
       const wrapper = createComponent();
       expect(wrapper.find("fieldset").exists()).toBe(true);
-      expect(wrapper.findAll(".section-text-fieldset__option")).toHaveLength(4); // Custom + 2 options + None
+      const options = [
+        wrapper.find('[data-test-id="custom-input-radio"]'),
+        wrapper.find('[data-test-id="predefined-option-1"]'),
+        wrapper.find('[data-test-id="predefined-option-2"]'),
+        wrapper.find('[data-test-id="none-option"]'),
+      ];
+      expect(options.every((option) => option.exists())).toBe(true);
     });
 
     it('does not render "None" option when isRequired is true', () => {
       const wrapper = createComponent({
         section: { isRequired: true },
       });
-      expect(wrapper.findAll(".section-text-fieldset__option")).toHaveLength(3); // Custom + 2 options
+      const options = [
+        wrapper.find('[data-test-id="custom-input-radio"]'),
+        wrapper.find('[data-test-id="predefined-option-1"]'),
+        wrapper.find('[data-test-id="predefined-option-2"]'),
+      ];
+      expect(options.every((option) => option.exists())).toBe(true);
+      expect(wrapper.find('[data-test-id="none-option"]').exists()).toBe(false);
     });
 
     it("hides custom input radio when specified conditions are met", () => {
@@ -154,8 +166,7 @@ describe("SectionTextFieldset", () => {
           allowTextOptions: false,
         },
       });
-      const customRadio = wrapper.find(".section-text-fieldset__option .radio-button");
-      expect(customRadio.exists()).toBe(false);
+      expect(wrapper.find('[data-test-id="custom-input-radio"]').exists()).toBe(false);
     });
 
     it("renders only text options when custom text is not allowed", () => {
@@ -166,8 +177,9 @@ describe("SectionTextFieldset", () => {
           options: [{ id: "1", text: "Option 1" }],
         },
       });
-      expect(wrapper.find(".section-text-fieldset__input").exists()).toBe(false);
-      expect(wrapper.findAll(".radio-button")).toHaveLength(2); // One option + None
+      expect(wrapper.find('[data-test-id="custom-input"]').exists()).toBe(false);
+      expect(wrapper.find('[data-test-id="predefined-option-1"]').exists()).toBe(true);
+      expect(wrapper.find('[data-test-id="none-option"]').exists()).toBe(true);
     });
   });
 
