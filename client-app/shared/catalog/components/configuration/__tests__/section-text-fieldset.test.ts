@@ -1,5 +1,7 @@
+/* eslint-disable vue/one-component-per-file */
 import { mount } from "@vue/test-utils";
 import { describe, it, expect, vi } from "vitest";
+import { defineComponent, h } from "vue";
 import SectionTextFieldset from "../section-text-fieldset.vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
@@ -20,12 +22,86 @@ const mockTranslate = (key: string) => {
   return translations[key] || key;
 };
 
-// Mock vue-i18n
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({
     t: mockTranslate,
   }),
 }));
+
+const VcRadioButtonStub = defineComponent({
+  name: "VcRadioButton",
+
+  props: {
+    modelValue: {
+      type: String as PropType<string | undefined>,
+      required: true,
+    },
+
+    value: {
+      type: String as PropType<string | undefined>,
+      required: true,
+    },
+  },
+
+  emits: {
+    "update:modelValue": (value: string | undefined) => {
+      return typeof value === "string" || typeof value === "undefined";
+    },
+  },
+
+  setup(props, { emit, attrs }) {
+    const handleClick = () => emit("update:modelValue", props.value);
+    return () =>
+      h("div", {
+        "data-test-id": attrs["data-test-id"],
+        class: ["radio-button", { selected: props.modelValue === props.value }],
+        onClick: handleClick,
+      });
+  },
+});
+
+const VcInputStub = defineComponent({
+  name: "VcInput",
+  inheritAttrs: false,
+
+  props: {
+    modelValue: {
+      type: String,
+      required: true,
+    },
+  },
+
+  emits: {
+    "update:modelValue": (value: unknown) => {
+      return typeof value === "string";
+    },
+
+    input: (e: { target: { value: unknown } }) => {
+      return e && e.target && typeof e.target.value === "string";
+    },
+
+    focus: () => true,
+  },
+
+  setup(props, { emit, attrs }) {
+    const handleInput = (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      const value = target.value;
+      emit("update:modelValue", value);
+      emit("input", { target: { value } });
+    };
+
+    const handleFocus = () => emit("focus");
+    return () =>
+      h("input", {
+        "data-test-id": attrs["data-test-id"] as string,
+        class: "input",
+        value: props.modelValue,
+        onInput: handleInput,
+        onFocus: handleFocus,
+      });
+  },
+});
 
 describe("SectionTextFieldset", () => {
   const createComponent = (props: { section?: Partial<ConfigurationSectionType>; initialValue?: string } = {}) => {
@@ -46,62 +122,8 @@ describe("SectionTextFieldset", () => {
       },
       global: {
         stubs: {
-          VcRadioButton: {
-            emits: {
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              "update:modelValue": (value: string | undefined) => true,
-            },
-            methods: {
-              handleClick() {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-                this.$emit("update:modelValue", this.value);
-              },
-            },
-            name: "VcRadioButton",
-            props: {
-              modelValue: { type: [String, undefined] as PropType<string | undefined>, required: true },
-              value: { type: [String, undefined] as PropType<string | undefined>, required: true },
-            },
-            template: `
-                            <div
-                                :data-test-id="$attrs['data-test-id']"
-                                class="radio-button"
-                                :class="{ 'selected': modelValue === value }"
-                                @click="handleClick"
-                            >
-                                <slot />
-                            </div>
-                        `,
-          },
-          VcInput: {
-            template: `
-                            <input
-                                :data-test-id="$attrs['data-test-id']"
-                                class="input"
-                                :value="modelValue"
-                                @input="handleInput"
-                                @focus="$emit('focus')"
-                            />
-                        `,
-            props: ["modelValue"],
-            emits: {
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              "update:modelValue": (value: string) => true,
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              input: (e: { target: { value: string } }) => true,
-              focus: () => true,
-            },
-            inheritAttrs: false,
-            methods: {
-              handleInput(e: Event) {
-                const target = e.target as HTMLInputElement;
-                /* eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-                this.$emit("update:modelValue", target.value);
-                /* eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-                this.$emit("input", { target: { value: target.value } });
-              },
-            },
-          },
+          VcRadioButton: VcRadioButtonStub,
+          VcInput: VcInputStub,
         },
         mocks: {
           $t: mockTranslate,
