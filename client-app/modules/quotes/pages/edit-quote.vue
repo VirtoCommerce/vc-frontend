@@ -193,7 +193,7 @@ const {
 const notifications = useNotifications();
 
 usePageHead({
-  title: t("quote_details.title", [quote!.value?.number]),
+  title: t("quote_details.title", [quote.value?.number]),
 });
 
 const breadcrumbs = useBreadcrumbs(() => [
@@ -290,7 +290,7 @@ function accountAddressExists(address: AnyAddressType): boolean {
 }
 
 function onRemoveItem(itemId: string): void {
-  remove(quote.value!.items!, ({ id }) => id === itemId);
+  remove(quote.value!.items, ({ id }) => id === itemId);
 }
 
 function toggleBillingAddressEqualsShippingAddress(): void {
@@ -386,7 +386,7 @@ async function saveChanges(): Promise<void> {
     await changeComment(quote.value!.id, comment.value!);
   }
 
-  await asyncForEach(originalQuote.value!.items!, async (originalItem: QuoteItemType) => {
+  await asyncForEach(originalQuote.value!.items, async (originalItem: QuoteItemType) => {
     const quoteItem: QuoteItemType | undefined = quote.value!.items?.find(
       (item: QuoteItemType) => item.id === originalItem.id,
     );
@@ -453,7 +453,7 @@ function onFileDownload(file: FileType) {
 }
 
 function onUpdateItem({ itemId, quantity }: { itemId: string; quantity: number }): void {
-  const item = quote.value!.items!.find(({ id }) => id === itemId);
+  const item = quote.value!.items.find(({ id }) => id === itemId);
   if (item) {
     item.selectedTierPrice!.quantity = quantity;
   }
