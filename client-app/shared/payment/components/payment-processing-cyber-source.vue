@@ -19,7 +19,7 @@
           test-id-input="card-holder-input"
         />
 
-        <div class="flex-25 mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
+        <div class="mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
           <VcInput
             v-model="expirationDate"
             v-maska
@@ -33,12 +33,12 @@
             autocomplete="off"
             minlength="9"
             maxlength="9"
-            class="basis-1/4"
+            class="min-w-32 basis-1/4"
             required
             test-id-input="expiration-date-input"
           />
 
-          <div class="basis-1/4">
+          <div class="min-w-32 basis-1/4">
             <VcLabel required for-id="securityCode-container">{{ labels.securityCode }}</VcLabel>
 
             <div id="securityCode-container" class="form-control cyber-source-input-wrap"></div>
