@@ -47,6 +47,7 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from "vue";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import pkg from "../../../../../package.json";
 import FooterLinks from "./_internal/footer-links.vue";
@@ -58,7 +59,11 @@ interface IProps {
 defineProps<IProps>();
 
 const { secondaryLogoUrl, footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
-const { footerLinks } = useNavigations();
+const { footerLinks, fetchFooterLinks } = useNavigations();
 
 const { version } = pkg;
+
+onMounted(() => {
+  void fetchFooterLinks();
+});
 </script>
