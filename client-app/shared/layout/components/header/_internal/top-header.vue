@@ -69,22 +69,20 @@
 
           <div
             v-if="loginMenuVisible"
-            class="absolute right-0 top-full z-10 flex w-60 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
+            class="absolute right-0 top-full z-10 flex w-64 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
           >
-            <div class="flex items-center justify-between p-3">
+            <div class="flex max-w-full items-center justify-between p-3">
               <router-link
                 to="/account/dashboard"
-                class="flex items-center hover:text-primary"
+                class="flex min-w-0 items-center gap-2 hover:text-primary"
                 @click="loginMenuVisible = false"
               >
                 <VcIcon class="fill-primary" name="user-circle" />
 
-                <span class="ml-2">
+                <span class="truncate">
                   {{ user.contact?.fullName }}
                 </span>
               </router-link>
-
-              <div class="grow"></div>
 
               <VcButton
                 :title="$t('shared.layout.header.link_logout')"

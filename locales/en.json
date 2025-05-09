@@ -25,6 +25,7 @@
       "register": "Register",
       "reset_password": "Reset password",
       "reset_filters": "Reset filters",
+      "reset_page": "Reset page",
       "add_to_cart": "Add to cart",
       "apply": "Apply",
       "send": "Send",
@@ -1303,7 +1304,9 @@
       "no_facet_found_message": "No results",
       "no_products_button": "Reset search",
       "products_icon": "Product icon",
-      "show_all_results": "Show all results"
+      "show_all_results": "Show all results",
+      "load_previous_page": "Load previous page",
+      "load_next_page": "Load next page"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

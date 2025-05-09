@@ -54,7 +54,7 @@ export function createRouter(options: { base: string }) {
         "ResetPassword",
         "SetPassword",
         "ConfirmInvitation",
-      ).includes(to.name!)
+      ).includes(to.name)
     ) {
       return next(getReturnUrlValue() || { name: "Catalog" });
     }

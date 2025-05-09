@@ -2,6 +2,7 @@
   <component
     :is="componentTag"
     v-bind="attrs"
+    ref="buttonRef"
     :target="target"
     :type="componentTag === 'button' ? type : null"
     :disabled="!enabled"
@@ -54,7 +55,7 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { computed, inject } from "vue";
+import { computed, inject, nextTick, ref, watch } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -106,6 +107,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const inputContext = inject<VcInputContextType | null>("inputContext", null);
+const buttonRef = ref<HTMLElement | null>(null);
 
 const _size = computed(() => {
   if (props.size) {
@@ -165,6 +167,14 @@ const attrs = computed(() => {
   }
 
   return attributes;
+});
+
+watch(enabled, async (newValue, oldValue) => {
+  await nextTick();
+  if (newValue && oldValue === false && document.activeElement === document.body) {
+    // return focus after button is enabled if it was focused before
+    buttonRef.value?.focus({ preventScroll: true });
+  }
 });
 </script>
 

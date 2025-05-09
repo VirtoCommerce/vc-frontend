@@ -20,7 +20,8 @@ const DB_DEFAULT_ICON_ID = "defaultIcon";
 self.addEventListener("message", (event) => {
   if (event.data.type === "initialize") {
     const { config } = event.data;
-    initialize(config);
+    // eslint-disable-next-line no-console
+    initialize(config).catch((e) => console.error(e));
   }
 });
 
