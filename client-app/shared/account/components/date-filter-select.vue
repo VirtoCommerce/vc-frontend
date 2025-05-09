@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import { ref, toRefs } from "vue";
 import { DateFilterId } from "@/core/enums";
-import { useUserOrdersFilter } from "../composables";
+import { useUserOrdersFilter } from "../composables/useUserOrdersFilter";
 import type { DateFilterType } from "@/core/types";
 
 interface IEmits {
