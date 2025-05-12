@@ -2,7 +2,7 @@
   <nav :id="componentId" class="mega-menu">
     <VcPopover arrow-enabled placement="bottom-start" class="mega-menu__popover">
       <template #trigger>
-        <button type="button" to="/catalog" class="mega-menu__button">
+        <button type="button" to="/catalog" class="mega-menu__button" :disabled="loading">
           <VcIcon class="mega-menu__icon" name="drag-dots" />
           <span> All Products </span>
         </button>
@@ -10,26 +10,7 @@
 
       <template #content="{ close }">
         <div class="mega-menu__content">
-          <ul class="mega-menu__list">
-            <VcMenuItem
-              v-for="(item, index) in catalogMenuItems"
-              :key="index"
-              class="mega-menu__item"
-              size="sm"
-              :to="item.route"
-              @click="close"
-              @focus="() => openChildren(item)"
-              @mouseover="() => openChildren(item)"
-            >
-              {{ item.title }}
-
-              <template v-if="item.children?.length" #append>
-                <VcIcon class="mega-menu__arrow" name="chevron-right" />
-              </template>
-            </VcMenuItem>
-          </ul>
-
-          <Subcategories v-if="activeItem" :item="activeItem" @close="close" />
+          <Subcategories v-if="category" :item="category" @close="close" />
         </div>
       </template>
     </VcPopover>
@@ -47,24 +28,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps } from "vue";
+import { onMounted } from "vue";
 import { useNavigations } from "@/core/composables";
+import { useCategory } from "@/shared/catalog";
 import { useComponentId } from "@/ui-kit/composables";
 import Subcategories from "./subcategories.vue";
-import type { ExtendedMenuLinkType } from "@/core/types";
 
 interface IProps {}
 
 defineProps<IProps>();
 
-const activeItem = ref<ExtendedMenuLinkType | null>(null);
-
 const componentId = useComponentId("mega-menu");
 const { catalogMenuItems } = useNavigations();
+const { category, fetchCategory, loading } = useCategory();
 
-function openChildren(item: ExtendedMenuLinkType) {
-  activeItem.value = item;
-}
+onMounted(() => {
+  void fetchCategory({
+    maxLevel: 4,
+    onlyActive: true,
+  });
+});
 </script>
 
 <style lang="scss">
@@ -97,18 +80,6 @@ function openChildren(item: ExtendedMenuLinkType) {
 
   &__content {
     @apply flex min-w-0 p-5 bg-[--header-bottom-bg-color] rounded shadow-lg;
-  }
-
-  &__list {
-    @apply flex-none w-[21.5rem];
-  }
-
-  &__arrow {
-    @apply fill-secondary-400;
-  }
-
-  &__catalog-divider {
-    @apply w-px bg-secondary-200;
   }
 }
 </style>

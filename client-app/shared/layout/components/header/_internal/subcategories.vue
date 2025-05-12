@@ -1,17 +1,19 @@
 <template>
   <Transition name="subcategories--slide">
-    <div v-if="item && item.children?.length" :data-target="item.route" class="subcategories">
+    <div v-if="item && item.childCategories?.length" class="subcategories">
       <ul class="subcategories__list">
         <VcMenuItem
-          v-for="child in item.children"
+          v-for="child in item.childCategories"
           :key="child.id"
           class="subcategories__item"
           size="sm"
-          :to="child.route"
           @click="$emit('close')"
+          @focus="showChildren(child)"
+          @mouseover="showChildren(child)"
         >
-          {{ child.title }}
-          <template v-if="child.children?.length" #append>
+          {{ child.name }}
+
+          <template v-if="child.childCategories?.length" #append>
             <VcIcon class="subcategories__arrow" name="chevron-right" />
           </template>
         </VcMenuItem>
@@ -19,24 +21,31 @@
     </div>
   </Transition>
 
-  <template v-for="_item in item.children" :key="_item.id">
-    <Subcategories :item="_item" @close="$emit('close')" />
-  </template>
+  <div class="mega-menu__divider"></div>
+
+  <Subcategories v-if="activeItem" :item="activeItem" @close="$emit('close')" />
 </template>
 
 <script setup lang="ts">
-import type { ExtendedMenuLinkType } from "@/core/types";
+import { ref } from "vue";
+import type { Category } from "@/core/api/graphql/types";
 
 interface IEmits {
   (e: "close"): void;
 }
 
 interface IProps {
-  item: ExtendedMenuLinkType;
+  item: Category;
 }
 
 defineEmits<IEmits>();
 defineProps<IProps>();
+
+const activeItem = ref<Category | null>(null);
+
+function showChildren(item: Category) {
+  activeItem.value = item;
+}
 </script>
 
 <style lang="scss">
@@ -74,6 +83,10 @@ defineProps<IProps>();
 
   &__arrow {
     @apply fill-secondary-400;
+  }
+
+  &__divider {
+    @apply w-px bg-secondary-200;
   }
 }
 </style>
