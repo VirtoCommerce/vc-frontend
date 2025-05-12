@@ -1,5 +1,5 @@
 <template>
-  <VcProductCard view-mode="item" class="option-product-none">
+  <VcProductCard view-mode="item" class="option-product-none" data-test-id="none-option">
     <template #media>
       <VcRadioButton value="none" :name="name" :model-value="selected ? 'none' : ''" @input="$emit('input')" />
 

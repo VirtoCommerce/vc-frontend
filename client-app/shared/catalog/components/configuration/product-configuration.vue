@@ -11,17 +11,18 @@
       <VcWidget
         v-for="(section, index) in configuration"
         :key="section.id"
+        :data-test-id="`section-${index + 1} ${section.name}`"
         collapsible
         size="xs"
         :collapsed="index !== 0"
       >
         <template #title>
-          <div class="product-configuration__title">
+          <div class="product-configuration__title" data-test-id="section-title">
             {{ section.name }}
             <span v-if="section.isRequired" class="product-configuration__required">*</span>
           </div>
 
-          <div class="product-configuration__subtitle">
+          <div class="product-configuration__subtitle" data-test-id="section-description">
             {{ section.description }}
 
             <div v-if="validationErrors.get(section.id)" class="product-configuration__error">
@@ -30,6 +31,7 @@
 
             <div
               v-else
+              data-test-id="section-subtitle"
               class="product-configuration__value"
               :class="[
                 hasSelectedOption(section.id)
@@ -43,11 +45,12 @@
           </div>
         </template>
 
-        <div class="product-configuration__items" :data-test-id="`${index} ${section.name}`">
+        <div class="product-configuration__items">
           <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.product">
-            <template v-for="option in section.options" :key="option.id">
+            <template v-for="(option, idx) in section.options" :key="option.id">
               <OptionProduct
                 v-if="option.product"
+                :data-test-id="`product-option-${idx + 1} ${option.product.name}`"
                 :model-value="selectedConfiguration[section.id]?.productId"
                 :product="option.product"
                 :quantity="option.quantity"
