@@ -1,5 +1,5 @@
 <template>
-  <component :is="componentTag" v-bind="$attrs" ref="currentElement" class="vc-menu-item">
+  <component :is="componentTag" :id="componentId" v-bind="$attrs" ref="currentElement" class="vc-menu-item">
     <component
       :is="innerTag"
       v-bind="attrs"
@@ -36,6 +36,8 @@
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
 import { ref, computed, onMounted } from "vue";
+import { getLinkAttr } from "@/core/utilities/common";
+import { useComponentId } from "@/ui-kit/composables";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -45,7 +47,7 @@ interface IEmits {
 interface IProps {
   color?: VcMenuItemColorType;
   size?: "xs" | "sm" | "md" | "lg";
-  to?: RouteLocationRaw | null;
+  to?: RouteLocationRaw;
   externalLink?: string;
   target?: "_self" | "_blank";
   title?: string;
@@ -73,7 +75,10 @@ const currentElement = ref<HTMLElement>();
 const parentTag = ref("");
 const enabled = eagerComputed<boolean>(() => !props.disabled);
 const isRouterLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
-const isExternalLink = eagerComputed<boolean>(() => !!props.externalLink && enabled.value);
+const isExternalLink = eagerComputed<boolean>(
+  () => ("externalLink" in getLinkAttr(props.to) || !!props.externalLink) && enabled.value,
+);
+const componentId = useComponentId("menu-item");
 
 const componentTag = computed(() => {
   if (props.tag) {
@@ -88,12 +93,12 @@ const componentTag = computed(() => {
 });
 
 const innerTag = computed(() => {
-  if (isRouterLink.value) {
-    return "router-link";
-  }
-
   if (isExternalLink.value) {
     return "a";
+  }
+
+  if (isRouterLink.value) {
+    return "router-link";
   }
 
   if (props.clickable) {
