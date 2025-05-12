@@ -43,7 +43,7 @@
           </div>
         </template>
 
-        <div class="product-configuration__items">
+        <div class="product-configuration__items" :data-test-id="`${index} ${section.name}`">
           <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.product">
             <template v-for="option in section.options" :key="option.id">
               <OptionProduct
