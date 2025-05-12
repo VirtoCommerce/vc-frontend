@@ -5,7 +5,12 @@
   <!-- Desktop header -->
   <template v-else>
     <TopHeader class="relative z-[21] border-b border-neutral-300 print:hidden" />
-    <BottomHeader class="sticky top-0 z-20 shadow-md print:hidden" />
+
+    <div class="sticky top-0 z-20 shadow-md print:hidden">
+      <BottomHeader />
+
+      <MegaMenu class="border-t border-neutral-200" />
+    </div>
   </template>
 
   <div class="hidden items-start justify-between print:flex">
@@ -20,6 +25,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { useWhiteLabeling } from "@/core/composables";
 import Created from "../print/created.vue";
 import BottomHeader from "./_internal/bottom-header.vue";
+import MegaMenu from "./_internal/mega-menu.vue";
 import MobileHeader from "./_internal/mobile-header.vue";
 import TopHeader from "./_internal/top-header.vue";
 
