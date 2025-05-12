@@ -1462,6 +1462,12 @@
       },
       "title": "您的账户已被封锁",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "品牌"
+    },
+    "brand": {
+      "products_title": "商品"
     }
   },
   "identity_error": {

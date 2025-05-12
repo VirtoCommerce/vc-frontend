@@ -1462,6 +1462,12 @@
       },
       "title": "アカウントがブロックされています",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "ブランド"
+    },
+    "brand": {
+      "products_title": "製品"
     }
   },
   "identity_error": {
