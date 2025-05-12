@@ -19,7 +19,7 @@
         :key="brand.id"
         class="brands__tile"
         :title="brand.name"
-        to="#"
+        :to="brand.permalink"
       >
         <VcImage v-if="brand.image" class="brands__img" :src="brand.image" :alt="brand.name" />
 
@@ -94,7 +94,7 @@
 
           <ul class="brands__links">
             <li v-for="brand in groupedBrands[navItem]" :key="brand.id">
-              <router-link to="#" class="brands__link">
+              <router-link :to="brand.permalink" class="brands__link">
                 {{ brand.name }}
               </router-link>
             </li>

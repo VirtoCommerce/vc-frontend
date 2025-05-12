@@ -4,4 +4,5 @@ fragment brand on BrandType {
   image
   description
   featured
+  permalink
 }
