@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import { useAxios as _useAxios } from "@vueuse/integrations/useAxios";
+import { useAxios as _useAxios } from "@vueuse/integrations/useAxios.mjs";
 import { default as axios } from "axios";
 /* eslint-enable no-restricted-imports */
 import { useGlobalInterceptors } from "@/core/api/common/composables/useGlobalInterceptors";

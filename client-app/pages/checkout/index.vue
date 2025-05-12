@@ -19,7 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import { computedEager } from "@vueuse/core";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -41,8 +40,8 @@ const {
   initialize,
 } = useCheckout();
 
-const loading = computedEager(() => loadingCart.value || loadingCheckout.value);
-const changing = computedEager(() => changingCart.value || changingCheckout.value);
+const loading = computed(() => loadingCart.value || loadingCheckout.value);
+const changing = computed(() => changingCart.value || changingCheckout.value);
 
 const steps = computed<IStepsItem[]>(() => {
   const result: IStepsItem[] = [];

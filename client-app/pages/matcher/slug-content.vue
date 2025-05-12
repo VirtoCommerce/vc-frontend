@@ -13,8 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { computedEager } from "@vueuse/core";
-import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect } from "vue";
+import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect, computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
 import { useStaticPage } from "@/shared/static-content";
@@ -43,7 +42,7 @@ const { setMatchingRouteName } = useNavigations();
 
 const { staticPage } = useStaticPage();
 
-const seoUrl = computedEager(() => {
+const seoUrl = computed(() => {
   if (!props.pathMatch) {
     return "/";
   }
