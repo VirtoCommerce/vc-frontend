@@ -2,7 +2,8 @@
   <VcBadge v-if="discount" color="danger" size="lg" class="left-0 top-0 z-[2]" :class="{ absolute: !static }">
     <VcIcon v-if="isHot" name="fire" />
 
-    <span>{{ $t("shared.catalog.discount_badge.off", { discount }) }}</span>
+    <span v-if="compact" :title="$t('shared.catalog.discount_badge.off', { discount })">%</span>
+    <span v-else>{{ $t("shared.catalog.discount_badge.off", { discount }) }}</span>
   </VcBadge>
 </template>
 
@@ -15,6 +16,7 @@ interface IProps {
   isHot?: boolean;
   size?: "sm" | "md" | "lg";
   static?: boolean;
+  compact?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
