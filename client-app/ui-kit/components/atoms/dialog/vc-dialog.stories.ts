@@ -8,7 +8,7 @@ export default {
   component: VcDialog,
 } as Meta<typeof VcDialog>;
 
-const Template: StoryFn<typeof VcDialog> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { Dialog, VcDialog, VcDialogHeader, VcDialogContent, VcDialogFooter },
   setup: () => ({ args }),
   template: `<Dialog v-bind="{ open: true, as: 'div' }">

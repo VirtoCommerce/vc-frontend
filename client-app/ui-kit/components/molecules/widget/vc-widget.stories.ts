@@ -20,7 +20,7 @@ export default {
   },
 } as Meta<typeof VcWidget>;
 
-const Template: StoryFn<typeof VcWidget> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcWidget },
   setup: () => ({ args }),
   template: '<VcWidget v-bind="args">Widget text</VcWidget>',
@@ -68,7 +68,7 @@ Collapsed.args = {
   collapsed: true,
 };
 
-export const CollapsibleCustomIcon: StoryFn<typeof VcWidget> = (args) => ({
+export const CollapsibleCustomIcon: StoryFn = (args) => ({
   components: { VcWidget },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
@@ -84,7 +84,7 @@ CollapsibleCustomIcon.args = {
   collapsible: true,
 };
 
-export const PrependSlot: StoryFn<typeof VcWidget> = (args) => ({
+export const PrependSlot: StoryFn = (args) => ({
   components: { VcWidget },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
@@ -99,7 +99,7 @@ PrependSlot.args = {
   title: "Widget title",
 };
 
-export const AppendSlot: StoryFn<typeof VcWidget> = (args) => ({
+export const AppendSlot: StoryFn = (args) => ({
   components: { VcWidget },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
@@ -117,7 +117,7 @@ AppendSlot.args = {
   title: "Widget title",
 };
 
-export const HeaderSlot: StoryFn<typeof VcWidget> = (args) => ({
+export const HeaderSlot: StoryFn = (args) => ({
   components: { VcWidget },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
@@ -127,7 +127,7 @@ export const HeaderSlot: StoryFn<typeof VcWidget> = (args) => ({
   </VcWidget>`,
 });
 
-export const HeaderContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
+export const HeaderContainerSlot: StoryFn = (args) => ({
   components: { VcWidget },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
@@ -141,7 +141,7 @@ export const HeaderContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
   </VcWidget>`,
 });
 
-export const DefaultContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
+export const DefaultContainerSlot: StoryFn = (args) => ({
   components: { VcWidget },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
@@ -158,7 +158,7 @@ export const DefaultContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
   </VcWidget>`,
 });
 
-export const FooterSlot: StoryFn<typeof VcWidget> = (args) => ({
+export const FooterSlot: StoryFn = (args) => ({
   components: { VcWidget },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
@@ -168,7 +168,7 @@ export const FooterSlot: StoryFn<typeof VcWidget> = (args) => ({
   </VcWidget>`,
 });
 
-export const FooterContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
+export const FooterContainerSlot: StoryFn = (args) => ({
   components: { VcWidget },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">

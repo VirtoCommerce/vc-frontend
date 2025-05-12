@@ -73,7 +73,7 @@ const actionsButton = {
   active: true,
 };
 
-const BasicTemplate: StoryFn<typeof VcProductCard> = (args) => ({
+const BasicTemplate: StoryFn = (args) => ({
   components: { VcProductCard },
   setup: () => ({ args, title }),
   template: `<VcProductCard v-bind="args">
@@ -83,7 +83,7 @@ const BasicTemplate: StoryFn<typeof VcProductCard> = (args) => ({
 
 export const Basic = BasicTemplate.bind({});
 
-const ImageTemplate: StoryFn<typeof VcProductCard> = (args) => ({
+const ImageTemplate: StoryFn = (args) => ({
   components: { VcProductCard, VcProductImage },
   setup: () => ({ args, title, image }),
   template: `<VcProductCard v-bind="args">
@@ -95,7 +95,7 @@ const ImageTemplate: StoryFn<typeof VcProductCard> = (args) => ({
 
 export const Image = ImageTemplate.bind({});
 
-const ImageVendorTemplate: StoryFn<typeof VcProductCard> = (args) => ({
+const ImageVendorTemplate: StoryFn = (args) => ({
   components: { VcProductCard, VcProductImage, VcProductVendor },
   setup: () => ({ args, title, image }),
   template: `<VcProductCard v-bind="args">
@@ -107,7 +107,7 @@ const ImageVendorTemplate: StoryFn<typeof VcProductCard> = (args) => ({
 
 export const ImageVendor = ImageVendorTemplate.bind({});
 
-const ImageVendorPropertiesTemplate: StoryFn<typeof VcProductCard> = (args) => ({
+const ImageVendorPropertiesTemplate: StoryFn = (args) => ({
   components: { VcProductCard, VcProductImage, VcProductVendor, VcProductProperties },
   setup: () => ({ args, title, image }),
   template: `<VcProductCard v-bind="args">
@@ -125,7 +125,7 @@ const ImageVendorPropertiesTemplate: StoryFn<typeof VcProductCard> = (args) => (
 
 export const ImageVendorProperties = ImageVendorPropertiesTemplate.bind({});
 
-const ImagePriceTemplate: StoryFn<typeof VcProductCard> = (args) => ({
+const ImagePriceTemplate: StoryFn = (args) => ({
   components: { VcProductCard, VcProductImage, VcProductTitle, VcProductPrice, VcProductVendor },
   setup: () => ({ args, title, price, image }),
   template: `<VcProductCard v-bind="args">
@@ -145,7 +145,7 @@ ImagePriceList.args = {
   viewMode: "list",
 };
 
-const ImageVendorPriceTemplate: StoryFn<typeof VcProductCard> = (args) => ({
+const ImageVendorPriceTemplate: StoryFn = (args) => ({
   components: { VcProductCard, VcProductImage, VcProductTitle, VcProductPrice, VcProductVendor },
   setup: () => ({ args, title, price, image }),
   template: `<VcProductCard v-bind="args">
@@ -166,7 +166,7 @@ ImageVendorPriceList.args = {
   viewMode: "list",
 };
 
-const FullTemplate: StoryFn<typeof VcProductCard> = (args) => ({
+const FullTemplate: StoryFn = (args) => ({
   components: {
     VcProductCard,
     VcProductActions,
@@ -215,7 +215,7 @@ FullList.args = {
   viewMode: "list",
 };
 
-const FullGridTemplateRecommended: StoryFn<typeof VcProductCard> = (args) => ({
+const FullGridTemplateRecommended: StoryFn = (args) => ({
   components: {
     VcProductCard,
     VcProductActions,
@@ -262,7 +262,7 @@ FullCardRecommendedWay.args = {
   viewMode: "grid",
 };
 
-const FullListTemplateRecommended: StoryFn<typeof VcProductCard> = (args) => ({
+const FullListTemplateRecommended: StoryFn = (args) => ({
   components: {
     VcProductCard,
     VcProductActions,
@@ -309,7 +309,7 @@ FullListRecommendedWay.args = {
   viewMode: "list",
 };
 
-const LineItemTemplate: StoryFn<typeof VcProductCard> = (args) => ({
+const LineItemTemplate: StoryFn = (args) => ({
   components: {
     VcProductCard,
     VcProductActions,
