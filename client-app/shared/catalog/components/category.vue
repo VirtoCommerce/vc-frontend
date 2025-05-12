@@ -42,7 +42,7 @@
       </template>
 
       <VcTypography tag="h1" class="category__title">
-        <i18n-t v-if="!categoryId && !isRoot" keypath="pages.search.header" tag="span">
+        <i18n-t v-if="!categoryId && !isRoot && searchParams.keyword" keypath="pages.search.header" tag="span">
           <template #keyword>
             <strong>{{ searchParams.keyword }}</strong>
           </template>

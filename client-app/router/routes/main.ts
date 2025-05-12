@@ -26,7 +26,6 @@ const Catalog = () => import("@/pages/catalog.vue");
 const Category = () => import("@/pages/category.vue");
 const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
-const Brand = () => import("@/pages/brand.vue");
 const Welcome = () => import("@/pages/welcome.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
@@ -43,7 +42,6 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/change-password", name: "ChangePassword", component: ChangePassword, meta: { public: false } },
   { path: "/set-password", name: "SetPassword", component: ResetPassword, meta: { public: true } },
   { path: "/blocked", name: "Blocked", component: BlockedPage, meta: { public: true } },
-  { path: "/brand/:brandId", name: "Brand", component: Brand, props: true },
   { path: "/account/confirmemail", name: "ConfirmEmail", component: ConfirmEmail, meta: { public: true } },
   {
     path: "/account",

@@ -52,7 +52,7 @@ const _bgColor = computed(() => getColorValue(props.bgColor));
   --vc-container-width: min(var(--max-width), calc(100vw - var(--px) * 2));
   --vc-container-offset: calc((100vw - var(--vc-container-width)) / 2);
 
-  @apply relative grow pb-[--pb] pt-[--pt] px-[--px];
+  @apply relative grow pb-[--pb] pt-[--pt] px-[--px] bg-[--bg-color];
 
   @media (width >= theme("screens.md")) {
     --pb: var(--vc-container-pb, theme("padding.9"));

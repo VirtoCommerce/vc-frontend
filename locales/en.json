@@ -1462,6 +1462,12 @@
       },
       "title": "Your account is blocked",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Brands"
+    },
+    "brand": {
+      "products_title": "Products"
     }
   },
   "identity_error": {

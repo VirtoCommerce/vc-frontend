@@ -1,0 +1,8 @@
+fragment brand on BrandType {
+  id
+  name
+  image
+  description
+  featured
+  permalink
+}
