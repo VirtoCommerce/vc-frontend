@@ -1,7 +1,7 @@
-/* eslint-disable no-restricted-imports */
+// eslint-disable-next-line no-restricted-imports
 import { useAxios as _useAxios } from "@vueuse/integrations/useAxios.mjs";
+// eslint-disable-next-line no-restricted-imports
 import { default as axios } from "axios";
-/* eslint-enable no-restricted-imports */
 import { useGlobalInterceptors } from "@/core/api/common/composables/useGlobalInterceptors";
 import { errorHandler, toServerError } from "@/core/api/common/utils";
 import type { AxiosError } from "axios";
