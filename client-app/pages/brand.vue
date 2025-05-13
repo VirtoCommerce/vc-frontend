@@ -50,6 +50,7 @@ const filterExpression = computed(() => {
 });
 
 const { t } = useI18n();
+
 const { result } = useGetBrand(brandId.value ?? "");
 const brand = computed(() => result.value?.brand);
 

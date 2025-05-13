@@ -97,7 +97,6 @@ interface IProps {
   filters: ProductsFiltersType;
   hideSorting?: boolean;
   hideAllFilters?: boolean;
-  facetsToHide?: string[];
 }
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
