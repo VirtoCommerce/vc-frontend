@@ -3,17 +3,18 @@
     <VcContainer class="brand-page__top-container" :has-bg-image="false" :max-width="MAX_CONTAINER_WIDTH">
       <VcBreadcrumbs class="brand-page__breadcrumbs" :items="breadcrumbs" />
 
-      <VcTypography v-if="brand?.image" tag="h1" class="brand-page__title">
+      <VcTypography v-if="brand?.image" tag="h1" class="brand-page__title" data-test-id="brand-title">
         {{ brand?.name }}
       </VcTypography>
 
-      <div v-if="brand?.image" class="brand-page__banner">
+      <div v-if="brand?.image" class="brand-page__banner" data-test-id="brand-banner">
         <VcImage :src="brand?.image" lazy :alt="brand?.name" class="brand-page__banner-image" />
       </div>
     </VcContainer>
 
     <Category
       v-if="brand"
+      data-test-id="brand-products"
       class="brand-page__products"
       :max-width="MAX_CONTAINER_WIDTH"
       filters-orientation="horizontal"
