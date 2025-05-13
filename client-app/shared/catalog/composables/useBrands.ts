@@ -14,8 +14,8 @@ export interface IUseBrandsOptions {
   itemsPerPage?: MaybeRef<number>;
 }
 
-export function useBrands(options: IUseBrandsOptions, variables?: Partial<GetBrandsQueryVariables>) {
-  const itemsPerPage = ref(options.itemsPerPage ?? DEFAULT_BRANDS_PER_PAGE);
+export function useBrands(options?: IUseBrandsOptions, variables?: Partial<GetBrandsQueryVariables>) {
+  const itemsPerPage = ref(options?.itemsPerPage ?? DEFAULT_BRANDS_PER_PAGE);
 
   const page = ref(1);
   const keyword = ref("");
