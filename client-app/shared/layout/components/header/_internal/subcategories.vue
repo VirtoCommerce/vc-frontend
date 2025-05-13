@@ -3,6 +3,8 @@
     <div
       v-if="item && item.childCategories?.length"
       class="subcategories"
+      role="button"
+      tabindex="-1"
       @blur="scheduleHide"
       @mouseleave="scheduleHide"
       @focus="cancelHide"
@@ -14,6 +16,7 @@
           :key="child.id"
           class="subcategories__item"
           size="sm"
+          :to="routes[child.id]"
           @click="$emit('close')"
           @focus="showChildren(child)"
           @mouseover="showChildren(child)"
@@ -40,7 +43,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from "vue";
+import { ref, computed, onBeforeUnmount } from "vue";
+import { useCategoriesRoutes } from "@/core/composables";
 import type { Category } from "@/core/api/graphql/types";
 
 interface IEmits {
@@ -58,10 +62,25 @@ const props = defineProps<IProps>();
 
 const activeItem = ref<Category | null>(null);
 let timeout: ReturnType<typeof setTimeout> | null = null;
+let switchTimeout: ReturnType<typeof setTimeout> | null = null;
+
+const items = computed(() => props.item.childCategories || []);
+const routes = useCategoriesRoutes(items);
 
 function showChildren(item: Category) {
   cancelHide();
-  activeItem.value = item;
+
+  if (switchTimeout) {
+    clearTimeout(switchTimeout);
+  }
+
+  if (activeItem.value?.id === item.id) {
+    return;
+  }
+
+  switchTimeout = setTimeout(() => {
+    activeItem.value = item;
+  }, 200);
 }
 
 function scheduleHide() {
@@ -77,7 +96,13 @@ function cancelHide() {
     clearTimeout(timeout);
   }
 
+  if (switchTimeout) {
+    clearTimeout(switchTimeout);
+  }
+
   timeout = null;
+  switchTimeout = null;
+
   props.onCancelHide?.();
 }
 
@@ -85,36 +110,39 @@ onBeforeUnmount(() => {
   if (timeout) {
     clearTimeout(timeout);
   }
+
+  if (switchTimeout) {
+    clearTimeout(switchTimeout);
+  }
 });
 </script>
 
 <style lang="scss">
 .subcategories {
-  @apply w-[21.5rem];
+  @apply w-[21.5rem] max-h-[100%-2.5rem] overflow-y-auto;
 
   &--slide {
     &-enter-active,
     &-leave-active {
-      overflow: hidden;
+      @apply overflow-hidden;
+
       transition:
         width 0.3s ease,
         opacity 0.3s ease-in-out;
 
       & > * {
-        width: calc(21.5rem - 2rem);
+        @apply w-[19.5rem];
       }
     }
 
     &-enter-from,
     &-leave-to {
-      width: 0;
-      opacity: 0;
+      @apply w-0 opacity-0;
     }
 
     &-enter-to,
     &-leave-from {
-      width: 21.5rem;
-      opacity: 1;
+      @apply w-[21.5rem] opacity-100;
     }
   }
 
@@ -127,7 +155,7 @@ onBeforeUnmount(() => {
   }
 
   &__divider {
-    @apply w-px bg-secondary-200;
+    @apply self-stretch w-px bg-secondary-200;
   }
 }
 </style>
