@@ -53,10 +53,10 @@ export function getFilterExpressionForAvailableIn(value: MaybeRef<string[]>): st
 
 /**
  * Generates a filter expression for brand filtering
- * @param brandName - A reactive string value representing the brand name
+ * @param brandName - A string or reactive string value representing the brand name
  * @returns A string representing the brand filter expression
  */
-export function getFilterExpressionForBrand(brandName: MaybeRef<string>): string {
+export function getFilterExpressionForBrand(brandName?: MaybeRef<string>): string {
   return unref(brandName) ? `"BRAND":"${unref(brandName)}"` : "";
 }
 

@@ -30,10 +30,11 @@
 </template>
 
 <script setup lang="ts">
+import { useSeoMeta } from "@unhead/vue";
 import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGetBrand } from "@/core/api/graphql/catalog";
-import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, usePageTitle } from "@/core/composables";
 import { getFilterExpressionForBrand } from "@/core/utilities/search/facets";
 import Category from "@/shared/catalog/components/category.vue";
 
@@ -45,20 +46,29 @@ const props = defineProps<IProps>();
 const brandId = toRef(props, "brandId");
 
 const filterExpression = computed(() => {
-  return getFilterExpressionForBrand(brand.value?.name ?? "");
+  return getFilterExpressionForBrand(brand.value?.name);
 });
 
 const { t } = useI18n();
 const { result } = useGetBrand(brandId.value ?? "");
 const brand = computed(() => result.value?.brand);
 
+const { title: pageTitle } = usePageTitle(brand.value?.name);
+
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("pages.brands.title"), route: "/brands" },
   { title: brand.value?.name ?? "" },
 ]);
 
-usePageHead({
-  title: result.value?.brand?.name,
+useSeoMeta({
+  title: pageTitle,
+  keywords: brand.value?.name,
+  description: brand?.value?.description,
+  ogUrl: window.location.toString(),
+  ogTitle: pageTitle,
+  ogDescription: brand?.value?.description,
+  ogImage: brand?.value?.image,
+  ogType: "website",
 });
 </script>
 
