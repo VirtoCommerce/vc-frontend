@@ -1,6 +1,6 @@
 <template>
   <div class="brand-page">
-    <VcContainer class="brand-page__top-container" :has-bg-image="false" max-width="85rem">
+    <VcContainer class="brand-page__top-container" :has-bg-image="false" :max-width="MAX_CONTAINER_WIDTH">
       <VcBreadcrumbs class="brand-page__breadcrumbs" :items="breadcrumbs" />
 
       <VcTypography v-if="brand?.image" tag="h1" class="brand-page__title">
@@ -13,9 +13,9 @@
     </VcContainer>
 
     <Category
-      v-if="filterExpression"
+      v-if="brand"
       class="brand-page__products"
-      max-width="85rem"
+      :max-width="MAX_CONTAINER_WIDTH"
       filters-orientation="horizontal"
       :filter="filterExpression"
       hide-breadcrumbs
@@ -38,11 +38,14 @@ import { useBreadcrumbs, usePageTitle } from "@/core/composables";
 import { getFilterExpressionForBrand } from "@/core/utilities/search/facets";
 import Category from "@/shared/catalog/components/category.vue";
 
+const props = defineProps<IProps>();
+
+const MAX_CONTAINER_WIDTH = "85rem";
+
 interface IProps {
   brandId?: string;
 }
 
-const props = defineProps<IProps>();
 const brandId = toRef(props, "brandId");
 
 const filterExpression = computed(() => {
