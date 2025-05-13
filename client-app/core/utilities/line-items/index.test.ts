@@ -154,6 +154,7 @@ function createMockProduct(overrides: Partial<Product> = {}): Product {
     name: "Test Product",
     outlines: [],
     packSize: 1,
+    isPurchased: false,
     price: createPrice(100),
     prices: [createPrice(100)],
     productType: "TYPE_A",

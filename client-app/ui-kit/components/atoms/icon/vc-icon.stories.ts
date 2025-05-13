@@ -6,7 +6,7 @@ export default {
   component: VcIcon,
 } as Meta<typeof VcIcon>;
 
-const Template: StoryFn<typeof VcIcon> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcIcon },
   setup: () => ({ args }),
   template: '<VcIcon v-bind="args" />',
@@ -14,7 +14,7 @@ const Template: StoryFn<typeof VcIcon> = (args) => ({
 
 const iconList = import.meta.glob("../../../icons/*.svg", { eager: true });
 
-const TemplateList: StoryFn<typeof VcIcon> = (args) => ({
+const TemplateList: StoryFn = (args) => ({
   components: { VcIcon },
   setup() {
     const icons = Object.keys(iconList).map((path) => path.split("/").pop()?.replace(".svg", ""));
