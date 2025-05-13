@@ -18,9 +18,7 @@
       >
         {{ $t("common.buttons.all_filters") }}
       </VcButton>
-    </template>
 
-    <template #append>
       <VcDropdownMenu
         v-if="!hideSorting"
         :offset-options="4"
@@ -130,7 +128,7 @@ const translatedProductSortingList = computed(() => getTranslatedProductSortingL
   }
 
   &__sorting {
-    @apply shrink-0 ml-auto;
+    @apply shrink-0;
   }
 }
 </style>
