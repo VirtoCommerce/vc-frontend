@@ -48,6 +48,7 @@ query SearchProducts(
       inWishlist
       productType
       isConfigurable
+      isPurchased
       vendor {
         id
         name

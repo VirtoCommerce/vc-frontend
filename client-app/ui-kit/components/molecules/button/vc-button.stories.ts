@@ -55,7 +55,7 @@ export default {
   },
 } as Meta<typeof VcButton>;
 
-const Template: StoryFn<typeof VcButton> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcButton },
   setup: () => ({ args }),
   template: '<VcButton v-bind="args" @click="args.onClick">Button text</VcButton>',
@@ -79,7 +79,7 @@ PrependIcon.args = {
   prependIcon: "save-v2",
 };
 
-export const SlotPrependIcon: StoryFn<typeof VcButton> = (args) => ({
+export const SlotPrependIcon: StoryFn = (args) => ({
   components: { VcButton, VcIcon },
   setup: () => ({ args }),
   template: `<VcButton v-bind="args">
@@ -93,7 +93,7 @@ AppendIcon.args = {
   appendIcon: "save-v2",
 };
 
-export const SlotAppendIcon: StoryFn<typeof VcButton> = (args) => ({
+export const SlotAppendIcon: StoryFn = (args) => ({
   components: { VcButton, VcIcon },
   setup: () => ({ args }),
   template: `<VcButton v-bind="args">
@@ -113,7 +113,7 @@ IconSize.args = {
   icon: "save-v2",
 };
 
-export const SlotIcon: StoryFn<typeof VcButton> = (args) => ({
+export const SlotIcon: StoryFn = (args) => ({
   components: { VcButton, VcIcon },
   setup: () => ({ args }),
   template: `<VcButton v-bind="args">
@@ -150,7 +150,7 @@ MinWidth.args = {
   minWidth: "12rem",
 };
 
-export const Truncate: StoryFn<typeof VcButton> = (args) => ({
+export const Truncate: StoryFn = (args) => ({
   components: { VcButton },
   setup: () => ({ args }),
   template: '<VcButton class="w-48" v-bind="args">Long long button text</VcButton>',
@@ -160,7 +160,7 @@ Truncate.args = {
   prependIcon: "save-v2",
 };
 
-export const AllStates: StoryFn<typeof VcButton> = () => ({
+export const AllStates: StoryFn = () => ({
   components: { VcButton },
   setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
   template: `<div class="space-y-8">

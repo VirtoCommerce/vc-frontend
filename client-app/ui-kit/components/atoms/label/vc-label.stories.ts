@@ -10,7 +10,7 @@ export default {
   },
 } as Meta<typeof VcLabel>;
 
-const Template: StoryFn<typeof VcLabel> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcLabel },
   setup: () => ({ args }),
   template: '<VcLabel v-bind="args">Label</VcLabel>',

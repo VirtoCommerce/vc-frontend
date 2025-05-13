@@ -6,13 +6,13 @@ export default {
   component: VcShape,
 } as Meta<typeof VcShape>;
 
-const Template: StoryFn<typeof VcShape> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcShape },
   setup: () => ({ args }),
   template: '<VcShape v-bind="args" />',
 });
 
-const RatingHalfTemplate: StoryFn<typeof VcShape> = (args) => ({
+const RatingHalfTemplate: StoryFn = (args) => ({
   components: { VcShape },
   setup: () => ({ args }),
   template: `<VcShape v-bind="args">
@@ -20,7 +20,7 @@ const RatingHalfTemplate: StoryFn<typeof VcShape> = (args) => ({
   </VcShape>`,
 });
 
-const RatingQuarterTemplate: StoryFn<typeof VcShape> = (args) => ({
+const RatingQuarterTemplate: StoryFn = (args) => ({
   components: { VcShape },
   setup: () => ({ args }),
   template: `<VcShape v-bind="args">

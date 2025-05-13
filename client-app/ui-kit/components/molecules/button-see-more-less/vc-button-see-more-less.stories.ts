@@ -12,7 +12,7 @@ export default {
   },
 } as Meta<typeof VcButtonSeeMoreLess>;
 
-const Template: StoryFn<typeof VcButtonSeeMoreLess> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcButtonSeeMoreLess },
   setup: () => ({ args }),
   template: '<VcButtonSeeMoreLess v-bind="args" />',

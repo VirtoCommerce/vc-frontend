@@ -6,7 +6,7 @@ export default {
   component: VcCheckboxGroup,
 } as Meta<typeof VcCheckboxGroup>;
 
-const Template: StoryFn<typeof VcCheckboxGroup> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcCheckbox, VcCheckboxGroup },
   setup: () => ({ args }),
   template: `<VcCheckboxGroup v-bind="args" class="space-y-3">

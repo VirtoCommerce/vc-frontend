@@ -1,5 +1,30 @@
 <template>
   <div class="category-controls">
+    <!-- Purchased before -->
+    <VcTooltip v-if="isPurchasedBeforeEnabled" placement="bottom-start" width="12rem">
+      <template #trigger>
+        <VcCheckbox
+          v-model="savedPurchasedBefore"
+          :disabled="loading"
+          @click="$emit('applyPurchasedBefore')"
+          @keyup.enter="$emit('applyPurchasedBefore')"
+        >
+          <span
+            class="whitespace-nowrap text-sm"
+            :class="{
+              'text-neutral': !savedPurchasedBefore,
+            }"
+          >
+            {{ $t("pages.catalog.purchased_before_filter_card.checkbox_label") }}
+          </span>
+        </VcCheckbox>
+      </template>
+
+      <template #content>
+        {{ $t("pages.catalog.purchased_before_filter_card.tooltip_text") }}
+      </template>
+    </VcTooltip>
+
     <!-- In Stock -->
     <VcTooltip placement="bottom-start" width="12rem">
       <template #trigger>
@@ -58,15 +83,22 @@
 </template>
 
 <script setup lang="ts">
+import { usePurchasedBefore } from "@/shared/catalog/composables";
+
 defineEmits<IEmits>();
+
 defineProps<IProps>();
+
+const { isPurchasedBeforeEnabled } = usePurchasedBefore();
 
 interface IEmits {
   (event: "openBranchesModal", value: boolean): void;
   (event: "applyInStock"): void;
+  (event: "applyPurchasedBefore"): void;
 }
 
 const savedInStock = defineModel<boolean>();
+const savedPurchasedBefore = defineModel<boolean>("purchased-before");
 
 interface IProps {
   savedBranches: string[];

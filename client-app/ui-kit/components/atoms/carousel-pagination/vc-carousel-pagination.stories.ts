@@ -24,7 +24,7 @@ export default {
 
 let i = 0;
 
-const Template: StoryFn<typeof VcCarouselPagination> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcCarouselPagination, Swiper, SwiperSlide },
   setup: () => ({ args, modules: [Pagination], count: i++ }),
   template: `

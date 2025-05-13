@@ -42,13 +42,13 @@ export default {
   },
 } as Meta<typeof VcSwitch>;
 
-const Template: StoryFn<typeof VcSwitch> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcSwitch },
   setup: () => ({ args }),
   template: '<VcSwitch v-bind="args" v-model="modelValue" />',
 });
 
-const Label: StoryFn<typeof VcSwitch> = (args) => ({
+const Label: StoryFn = (args) => ({
   components: { VcSwitch },
   setup: () => ({ args }),
   template: '<VcSwitch v-bind="args">Label</VcSwitch>',
@@ -80,7 +80,7 @@ DisabledOn.args = {
   modelValue: true,
 };
 
-export const AllStates: StoryFn<typeof VcSwitch> = () => ({
+export const AllStates: StoryFn = () => ({
   components: { VcSwitch },
   setup: () => ({ colors: COLORS, sizes: SIZES }),
   template: `<div class="space-y-6">
