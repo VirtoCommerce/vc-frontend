@@ -6,7 +6,7 @@
       {{ featuredBrands.length ? $t("pages.brands.top_brands_title") : $t("pages.brands.title") }}
     </VcTypography>
 
-    <div v-if="loading || featuredBrandsTrimmed.length" class="brands__top">
+    <div v-if="loading || featuredBrandsTrimmed.length" class="brands__top" data-test-id="brands-featured">
       <template v-if="loading">
         <div v-for="brand in featuredBrandsSkeletonData" :key="brand.id" class="brands__tile">
           <VcImage class="brands__skeleton-img" />
@@ -42,6 +42,7 @@
               :variant="activeNavItem === navValue ? 'solid' : 'no-background'"
               square
               class="brands__nav-letter"
+              data-test-id="brands-nav-item"
               @click="setActiveNavItem(navValue)"
             >
               {{ navLabel }}
@@ -54,6 +55,7 @@
             maxlength="64"
             clearable
             :placeholder="$t('pages.brands.search')"
+            data-test-id="brands-search-input"
             @clear="search = ''"
             @keyup.enter="search = searchInput"
           >
@@ -62,6 +64,7 @@
                 :aria-label="$t('pages.brands.search')"
                 icon="search"
                 icon-size="1.25rem"
+                data-test-id="brands-search-button"
                 @click="search = searchInput"
               />
             </template>
@@ -88,13 +91,17 @@
           class="brands__items"
           :class="{ 'brands__items--full': isFullWidthItem(navItem) }"
         >
-          <div class="brands__letter" :class="{ 'brands__letter--active': activeNavItem === navItem }">
+          <div
+            class="brands__letter"
+            :class="{ 'brands__letter--active': activeNavItem === navItem }"
+            data-test-id="brands-letter"
+          >
             {{ brandNavIndex[navItem] }}
           </div>
 
-          <ul class="brands__links">
-            <li v-for="brand in groupedBrands[navItem]" :key="brand.id">
-              <router-link :to="brand.permalink" class="brands__link">
+          <ul class="brands__links" data-test-id="brands-letter-list">
+            <li v-for="brand in groupedBrands[navItem]" :key="brand.id" data-test-id="brands-letter-item">
+              <router-link :to="brand.permalink" class="brands__link" data-test-id="brands-letter-link">
                 {{ brand.name }}
               </router-link>
             </li>
@@ -106,6 +113,7 @@
         v-if="!loading && !sortedNavItems.length"
         icon="outline-stock"
         :text="$t('pages.brands.no_results')"
+        data-test-id="brands-empty-view"
       />
     </VcWidget>
 
