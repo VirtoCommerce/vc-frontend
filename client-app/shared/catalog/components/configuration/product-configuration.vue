@@ -11,7 +11,7 @@
       <VcWidget
         v-for="(section, index) in configuration"
         :key="section.id"
-        :data-test-id="`section-${index + 1} ${section.name}`"
+        data-test-id="section"
         collapsible
         size="xs"
         :collapsed="index !== 0"
@@ -47,10 +47,10 @@
 
         <div class="product-configuration__items">
           <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.product">
-            <template v-for="(option, idx) in section.options" :key="option.id">
+            <template v-for="option in section.options" :key="option.id">
               <OptionProduct
                 v-if="option.product"
-                :data-test-id="`product-option-${idx + 1} ${option.product.name}`"
+                data-test-id="product-option"
                 :model-value="selectedConfiguration[section.id]?.productId"
                 :product="option.product"
                 :quantity="option.quantity"
