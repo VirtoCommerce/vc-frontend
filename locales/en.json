@@ -663,7 +663,10 @@
         }
       },
       "discount_badge": {
-        "off": "off"
+        "off": "- {discount}"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       },
       "branches_modal": {
         "title": "Select Branch",
@@ -1293,6 +1296,11 @@
         "title": "In stock",
         "checkbox_label": "Show in stock",
         "tooltip_text": "Select to show only products, that are in stock"
+      },
+      "purchased_before_filter_card": {
+        "title": "Purchased before",
+        "checkbox_label": "Purchased before",
+        "tooltip_text": "Select to show only products, that were purchased before"
       },
       "branch_availability_filter_card": {
         "title": "Branch availability",

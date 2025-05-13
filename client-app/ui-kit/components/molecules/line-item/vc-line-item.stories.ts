@@ -16,7 +16,7 @@ export default {
   },
 } as Meta<typeof VcLineItem>;
 
-const Template: StoryFn<typeof VcLineItem> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcLineItem },
   setup: () => ({ args }),
   template: '<VcLineItem v-bind="args" />',
@@ -54,7 +54,7 @@ Disabled.args = {
   disabled: true,
 };
 
-export const DeletedProduct: StoryFn<typeof VcLineItem> = (args) => ({
+export const DeletedProduct: StoryFn = (args) => ({
   components: { VcLineItem, VcAlert },
   setup: () => ({ args }),
   template: `<VcLineItem v-bind="args">
@@ -71,7 +71,7 @@ DeletedProduct.args = {
   deleted: true,
 };
 
-export const AddToCart: StoryFn<typeof VcLineItem> = (args) => ({
+export const AddToCart: StoryFn = (args) => ({
   components: { VcLineItem },
   setup: () => ({ args }),
   template: `<VcLineItem v-bind="args">
@@ -89,7 +89,7 @@ AddToCart.args = {
   removable: true,
 };
 
-export const QuantityInput: StoryFn<typeof VcLineItem> = (args) => ({
+export const QuantityInput: StoryFn = (args) => ({
   components: { VcLineItem },
   setup: () => ({ args }),
   template: `<VcLineItem v-bind="args">

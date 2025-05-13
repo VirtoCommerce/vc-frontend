@@ -6,7 +6,7 @@ export default {
   component: VcCompositeShape,
 } as Meta<typeof VcCompositeShape>;
 
-const Template: StoryFn<typeof VcCompositeShape> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcCompositeShape },
   setup: () => ({ args }),
   template: '<VcCompositeShape v-bind="args" />',

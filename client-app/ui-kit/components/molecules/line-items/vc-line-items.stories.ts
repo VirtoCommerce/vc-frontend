@@ -12,13 +12,13 @@ export default {
   },
 } as Meta<typeof VcLineItems>;
 
-const Template: StoryFn<typeof VcLineItems> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcLineItems },
   setup: () => ({ args }),
   template: '<VcLineItems v-bind="args" />',
 });
 
-const TemplateQuantity: StoryFn<typeof VcLineItems> = (args) => ({
+const TemplateQuantity: StoryFn = (args) => ({
   components: { VcLineItems },
   setup: () => ({ args }),
   template: `<VcLineItems v-bind="args">
@@ -34,7 +34,7 @@ const TemplateQuantity: StoryFn<typeof VcLineItems> = (args) => ({
   </VcLineItems>`,
 });
 
-const TemplateAddToCart: StoryFn<typeof VcLineItems> = (args) => ({
+const TemplateAddToCart: StoryFn = (args) => ({
   components: { VcLineItems },
   setup: () => ({ args }),
   template: `<VcLineItems v-bind="args">

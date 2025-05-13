@@ -31,13 +31,13 @@ export default {
   },
 } as Meta<typeof VcCheckbox>;
 
-const Template: StoryFn<typeof VcCheckbox> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcCheckbox },
   setup: () => ({ args }),
   template: '<VcCheckbox v-bind="args" />',
 });
 
-const TemplateLabel: StoryFn<typeof VcCheckbox> = (args) => ({
+const TemplateLabel: StoryFn = (args) => ({
   components: { VcCheckbox },
   setup: () => ({ args }),
   template: '<VcCheckbox v-bind="args">VcCheckbox Label</VcCheckbox>',
@@ -79,7 +79,7 @@ Message.args = {
   message: "Some smart message",
 };
 
-const TemplateCustomColor: StoryFn<typeof VcCheckbox> = (args) => ({
+const TemplateCustomColor: StoryFn = (args) => ({
   components: { VcCheckbox },
   setup: () => ({ args }),
   template: '<VcCheckbox v-bind="args" class="[--vc-checkbox-base-color:red]">VcCheckbox Label</VcCheckbox>',

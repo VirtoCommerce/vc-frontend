@@ -6,7 +6,7 @@ export default {
   component: VcProductImage,
 } as Meta<typeof VcProductImage>;
 
-const Template: StoryFn<typeof VcProductImage> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcProductImage },
   setup: () => ({ args }),
   template: '<VcProductImage class="w-32 h-32" v-bind="args" />',
