@@ -14,7 +14,7 @@
       <template #prepend="{ loading: updatingFiltersState }">
         <div class="filters-popup-sidebar__container">
           <VcCheckbox
-            v-if="!hideControls"
+            v-if="!hideControls && isPurchasedBeforeEnabled"
             :model-value="popupSidebarFilters.purchasedBefore"
             class="filters-popup-sidebar__control"
             :disabled="updatingFiltersState"
@@ -100,6 +100,7 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
+import { usePurchasedBefore } from "@/shared/catalog/composables";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 
@@ -125,6 +126,8 @@ interface IProps {
   keywordQueryParam?: string;
   popupSidebarFilters: ProductsFiltersType;
 }
+
+const { isPurchasedBeforeEnabled } = usePurchasedBefore();
 
 const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
   props.popupSidebarFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
