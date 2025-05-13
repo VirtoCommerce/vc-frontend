@@ -83,6 +83,7 @@
 
           <SectionTextFieldset
             v-if="section.type === CONFIGURABLE_SECTION_TYPES.text"
+            data-test-id="text-option"
             :section="section"
             :initial-value="selectedConfiguration[section.id]?.selectedOptionTextValue"
             @update="
