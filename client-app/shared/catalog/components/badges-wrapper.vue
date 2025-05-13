@@ -6,6 +6,6 @@
 
 <style lang="scss">
 .badges-wrapper {
-  @apply absolute flex items-center gap-1 z-[1];
+  @apply absolute flex gap-0.5 z-[1];
 }
 </style>

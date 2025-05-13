@@ -1,5 +1,5 @@
 <template>
-  <VcBadge v-if="discount" color="danger" size="lg" class="left-0 top-0 z-[2]" :class="{ absolute: !static }">
+  <VcBadge v-if="discount" color="danger" size="sm" class="left-0 top-0 z-[2]" :class="{ absolute: !static }">
     <VcIcon v-if="isHot" name="fire" />
 
     <span v-if="compact" class="cursor-default" :title="$t('shared.catalog.discount_badge.off', { discount })">%</span>
