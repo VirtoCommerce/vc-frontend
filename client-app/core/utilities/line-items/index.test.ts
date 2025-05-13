@@ -147,7 +147,6 @@ function createMockProduct(overrides: Partial<Product> = {}): Product {
     imgSrc: "https://image",
     isConfigurable: false,
     inWishlist: false,
-    isPurchased: false,
     keyProperties: [],
     maxQuantity: 10,
     minQuantity: 1,
