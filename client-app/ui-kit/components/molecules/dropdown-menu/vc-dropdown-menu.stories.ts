@@ -7,7 +7,7 @@ export default {
   component: VcDropdownMenu,
 } as Meta<typeof VcMenuItem>;
 
-const Template: StoryFn<typeof VcMenuItem> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcDropdownMenu, VcMenuItem, VcIcon },
   setup: () => ({ args }),
   template: `

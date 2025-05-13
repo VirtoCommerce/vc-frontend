@@ -10,7 +10,7 @@ export default {
   },
 } as Meta<typeof VcFilePicker>;
 
-const Template: StoryFn<typeof VcFilePicker> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcFilePicker },
   setup: () => ({ args }),
   template: '<VcFilePicker v-bind="args" />',

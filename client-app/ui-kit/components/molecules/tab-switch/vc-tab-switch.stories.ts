@@ -42,7 +42,7 @@ export default {
   },
 } as Meta<typeof VcTabSwitch>;
 
-const Template: StoryFn<typeof VcTabSwitch> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcTabSwitch },
   setup: () => ({ args }),
   template: '<VcTabSwitch v-bind="args" />',

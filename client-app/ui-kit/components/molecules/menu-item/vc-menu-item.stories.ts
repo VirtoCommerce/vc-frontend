@@ -32,7 +32,7 @@ export default {
   },
 } as Meta<typeof VcMenuItem>;
 
-const Template: StoryFn<typeof VcMenuItem> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcMenuItem },
   setup: () => ({ args }),
   template: '<VcMenuItem v-bind="args">Menu Item text</VcMenuItem>',
@@ -60,7 +60,7 @@ Disabled.args = {
   disabled: true,
 };
 
-export const Icon: StoryFn<typeof VcMenuItem> = (args) => ({
+export const Icon: StoryFn = (args) => ({
   components: { VcMenuItem, VcIcon },
   setup: () => ({ args }),
   template: `<VcMenuItem v-bind="args">
@@ -74,7 +74,7 @@ IconDisabled.args = {
   disabled: true,
 };
 
-export const Truncate: StoryFn<typeof VcMenuItem> = (args) => ({
+export const Truncate: StoryFn = (args) => ({
   components: { VcMenuItem },
   setup: () => ({ args }),
   template: `<VcMenuItem v-bind="args" class="w-36">
@@ -85,7 +85,7 @@ Truncate.args = {
   truncate: true,
 };
 
-export const AllStates: StoryFn<typeof VcMenuItem> = () => ({
+export const AllStates: StoryFn = () => ({
   components: { VcMenuItem },
   setup: () => ({ colors: COLORS, sizes: SIZES }),
   template: `<div class="space-y-8">

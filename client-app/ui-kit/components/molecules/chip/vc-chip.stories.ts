@@ -43,7 +43,7 @@ export default {
   },
 } as Meta<typeof VcChip>;
 
-const Template: StoryFn<typeof VcChip> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcChip },
   setup: () => ({ args }),
   template: '<VcChip v-bind="args">Chip text</VcChip>',
@@ -76,7 +76,7 @@ Icon.args = {
   icon: "cog",
 };
 
-export const IconInSlot: StoryFn<typeof VcChip> = (args) => ({
+export const IconInSlot: StoryFn = (args) => ({
   components: { VcChip, VcIcon },
   setup: () => ({ args }),
   template: `<VcChip v-bind="args">
@@ -85,7 +85,7 @@ export const IconInSlot: StoryFn<typeof VcChip> = (args) => ({
   </VcChip>`,
 });
 
-export const Truncate: StoryFn<typeof VcChip> = (args) => ({
+export const Truncate: StoryFn = (args) => ({
   components: { VcChip },
   setup: () => ({ args }),
   template: `<VcChip v-bind="args" class="w-36">
@@ -96,7 +96,7 @@ Truncate.args = {
   truncate: true,
 };
 
-export const AllStates: StoryFn<typeof VcChip> = () => ({
+export const AllStates: StoryFn = () => ({
   components: { VcChip },
   setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
   template: `<div class="space-y-8">
