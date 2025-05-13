@@ -18,6 +18,7 @@
             :model-value="popupSidebarFilters.purchasedBefore"
             class="filters-popup-sidebar__control"
             :disabled="updatingFiltersState"
+            data-test-id="purchased-before-checkbox-filter"
             @change="onChange({ purchasedBefore: $event })"
           >
             {{ $t("pages.catalog.purchased_before_filter_card.checkbox_label") }}
