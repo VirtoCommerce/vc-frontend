@@ -18,6 +18,7 @@ import {
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
 } from "@/core/utilities";
+import { usePurchasedBefore } from "@/shared/catalog/composables/usePurchasedBefore";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useModal } from "@/shared/modal";
 import type {
@@ -56,9 +57,17 @@ export function useProducts(
   } = options;
   const { openModal } = useModal();
 
+  const { isPurchasedBeforeEnabled } = usePurchasedBefore();
+
   const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
   const localStorageBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
-  const localStoragePurchasedBefore = useLocalStorage<boolean>(PURCHASED_BEFORE_LOCAL_STORAGE, false);
+  const _localStoragePurchasedBefore = useLocalStorage<boolean>(PURCHASED_BEFORE_LOCAL_STORAGE, false);
+  const localStoragePurchasedBefore = computed({
+    get: () => isPurchasedBeforeEnabled.value && _localStoragePurchasedBefore.value,
+    set: (value) => {
+      _localStoragePurchasedBefore.value = value;
+    },
+  });
 
   const pageQueryParam = useRouteQueryParam<string>(QueryParamName.Page, {
     defaultValue: "1",
