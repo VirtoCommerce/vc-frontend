@@ -39,7 +39,7 @@ import type { NavigationOptions, PaginationOptions, SwiperEvents } from "swiper/
 const props = withDefaults(
   defineProps<{
     slides?: T[];
-    options?: CarouselOptions;
+    options?: ICarouselOptions;
     navigation?: boolean;
     pagination?: boolean;
   }>(),
@@ -54,7 +54,7 @@ const modules = [Pagination, Navigation];
 
 const listeners = computed<SwiperEvents>(() => props.options.on ?? ({} as SwiperEvents));
 
-const attrs = computed<Omit<CarouselOptions, "on">>(() => {
+const attrs = computed<Omit<ICarouselOptions, "on">>(() => {
   const options = _.clone(props.options);
   delete options.on;
   return options;
