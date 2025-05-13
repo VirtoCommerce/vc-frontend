@@ -18,6 +18,7 @@ import {
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
 } from "@/core/utilities";
+import { usePurchasedBefore } from "@/shared/catalog/composables/usePurchasedBefore";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useModal } from "@/shared/modal";
 import type {
@@ -55,6 +56,8 @@ export function useProducts(
     catalogPaginationMode = CATALOG_PAGINATION_MODES.infiniteScroll,
   } = options;
   const { openModal } = useModal();
+
+  const { isPurchasedBeforeEnabled } = usePurchasedBefore();
 
   const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
   const localStorageBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
@@ -105,7 +108,7 @@ export function useProducts(
   const productsFilters = shallowRef<ProductsFiltersType>({
     branches: localStorageBranches.value,
     inStock: localStorageInStock.value,
-    purchasedBefore: localStoragePurchasedBefore.value,
+    purchasedBefore: isPurchasedBeforeEnabled.value && localStoragePurchasedBefore.value,
     facets: [],
   });
   const productFiltersSorted = computed(() => {
@@ -307,7 +310,7 @@ export function useProducts(
 
         productsFilters.value = {
           inStock: localStorageInStock.value,
-          purchasedBefore: localStoragePurchasedBefore.value,
+          purchasedBefore: isPurchasedBeforeEnabled.value && localStoragePurchasedBefore.value,
           branches: localStorageBranches.value.slice(),
           facets: getSortedFacets(facets.value),
         };
