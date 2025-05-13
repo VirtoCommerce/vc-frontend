@@ -11,12 +11,7 @@
         <BadgesWrapper>
           <PurchasedBeforeBadge v-if="product.isPurchased" />
 
-          <DiscountBadge
-            v-if="product.price"
-            :compact="viewMode === 'list' && product.isPurchased"
-            static
-            :price="product.price"
-          />
+          <DiscountBadge v-if="product.price" static :price="product.price" />
         </BadgesWrapper>
       </VcProductImage>
 
