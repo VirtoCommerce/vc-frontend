@@ -31,7 +31,8 @@
           :value="addPrefixAndSpace(index + 1)"
           :aria-label="$t(constructLocaleKey('option_label'), [index + 1, option.text])"
           :name="section.name"
-          :data-test-id="'predefined-option-' + (index + 1)"
+          data-test-id="predefined-option"
+          :data-test-option-order="index + 1"
         >
           {{ option.text }}
         </VcRadioButton>

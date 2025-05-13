@@ -6,7 +6,6 @@ import SectionTextFieldset from "../section-text-fieldset.vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 
-// Mock translations function
 const mockTranslate = (key: string) => {
   const translations: Record<string, string> = {
     "shared.catalog.product_details.product_configuration.section-text-fieldset.no_selection": "No selection",
@@ -138,25 +137,25 @@ describe("SectionTextFieldset", () => {
       const fieldset = wrapper.find("fieldset");
       expect(fieldset.exists()).toBe(true);
       expect(fieldset.attributes("role")).toBeFalsy();
-      const options = [
-        wrapper.find('[data-test-id="custom-input-radio"]'),
-        wrapper.find('[data-test-id="predefined-option-1"]'),
-        wrapper.find('[data-test-id="predefined-option-2"]'),
-        wrapper.find('[data-test-id="none-option"]'),
-      ];
-      expect(options.every((option) => option.exists())).toBe(true);
+
+      expect(wrapper.find('[data-test-id="custom-input-radio"]').exists()).toBe(true);
+
+      const predefinedOptions = wrapper.findAll('[data-test-id="predefined-option"]');
+      expect(predefinedOptions.length).toBe(2);
+
+      expect(wrapper.find('[data-test-id="none-option"]').exists()).toBe(true);
     });
 
     it('does not render "None" option when isRequired is true', () => {
       const wrapper = createComponent({
         section: { isRequired: true },
       });
-      const options = [
-        wrapper.find('[data-test-id="custom-input-radio"]'),
-        wrapper.find('[data-test-id="predefined-option-1"]'),
-        wrapper.find('[data-test-id="predefined-option-2"]'),
-      ];
-      expect(options.every((option) => option.exists())).toBe(true);
+
+      expect(wrapper.find('[data-test-id="custom-input-radio"]').exists()).toBe(true);
+
+      const predefinedOptions = wrapper.findAll('[data-test-id="predefined-option"]');
+      expect(predefinedOptions.length).toBe(2);
+
       expect(wrapper.find('[data-test-id="none-option"]').exists()).toBe(false);
     });
 
@@ -180,7 +179,7 @@ describe("SectionTextFieldset", () => {
         },
       });
       expect(wrapper.find('[data-test-id="custom-input"]').exists()).toBe(false);
-      expect(wrapper.find('[data-test-id="predefined-option-1"]').exists()).toBe(true);
+      expect(wrapper.find('[data-test-id="predefined-option"]').exists()).toBe(true);
       expect(wrapper.find('[data-test-id="none-option"]').exists()).toBe(true);
     });
   });
@@ -191,11 +190,9 @@ describe("SectionTextFieldset", () => {
       const customRadio = wrapper.find('[data-test-id="custom-input-radio"]');
       const input = wrapper.find('[data-test-id="custom-input"]');
 
-      // First select the custom input option
       await customRadio.trigger("click");
       await wrapper.vm.$nextTick();
 
-      // Then update the input value
       const testValue = "test input";
       await input.setValue(testValue);
       await wrapper.vm.$nextTick();
@@ -209,10 +206,8 @@ describe("SectionTextFieldset", () => {
       const wrapper = createComponent();
       const input = wrapper.find('[data-test-id="custom-input"]');
 
-      // Update input value without selecting custom input first
       const testValue = "direct input";
       await input.setValue(testValue);
-      // Trigger the input event without target value
       await input.trigger("input");
       await wrapper.vm.$nextTick();
 
@@ -225,12 +220,10 @@ describe("SectionTextFieldset", () => {
       const wrapper = createComponent();
       const input = wrapper.find('[data-test-id="custom-input"]');
 
-      // First set some value
       await input.setValue("some value");
       await input.trigger("input");
       await wrapper.vm.$nextTick();
 
-      // Then clear it
       await input.setValue("");
       await input.trigger("input");
       await wrapper.vm.$nextTick();
@@ -244,19 +237,16 @@ describe("SectionTextFieldset", () => {
       const wrapper = createComponent();
       const input = wrapper.find('[data-test-id="custom-input"]');
 
-      // First select a predefined option
-      const predefinedOption = wrapper.find('[data-test-id="predefined-option-1"]');
+      const predefinedOption = wrapper.find('[data-test-id="predefined-option"][data-test-option-order="1"]');
       await predefinedOption.trigger("click");
       await wrapper.vm.$nextTick();
 
-      // Then focus the input field
       await input.trigger("focus");
       await wrapper.vm.$nextTick();
 
-      // Verify that custom input is selected
       const emitted = wrapper.emitted("update");
       expect(emitted).toBeTruthy();
-      // Should emit undefined since no value is entered yet
+
       expect(emitted?.[emitted.length - 1]).toEqual([undefined]);
     });
 
@@ -289,7 +279,6 @@ describe("SectionTextFieldset", () => {
       });
       const options = wrapper.findAll(".radio-button");
 
-      // Select the first predefined option
       await options[0].trigger("click");
       await wrapper.vm.$nextTick();
 
@@ -329,7 +318,6 @@ describe("SectionTextFieldset", () => {
 
       await wrapper.vm.$nextTick();
 
-      // Should not emit update when initialValue is undefined
       expect(wrapper.emitted("update")).toBeFalsy();
     });
   });
@@ -338,12 +326,10 @@ describe("SectionTextFieldset", () => {
     it('handles selection of "None" option', async () => {
       const wrapper = createComponent();
 
-      // First select a predefined option
-      const firstOption = wrapper.find('[data-test-id="predefined-option-1"]');
+      const firstOption = wrapper.find('[data-test-id="predefined-option"][data-test-option-order="1"]');
       await firstOption.trigger("click");
       await wrapper.vm.$nextTick();
 
-      // Then select None option
       const noneOption = wrapper.find('[data-test-id="none-option"]');
       await noneOption.trigger("click");
       await wrapper.vm.$nextTick();
@@ -364,8 +350,7 @@ describe("SectionTextFieldset", () => {
         },
       });
 
-      // Select the first predefined option
-      const firstOption = wrapper.find('[data-test-id="predefined-option-1"]');
+      const firstOption = wrapper.find('[data-test-id="predefined-option"][data-test-option-order="1"]');
       await firstOption.trigger("click");
       await wrapper.vm.$nextTick();
 
@@ -378,12 +363,11 @@ describe("SectionTextFieldset", () => {
       const wrapper = createComponent({
         section: {
           allowTextOptions: true,
-          options: [{ id: "1" }], // Option without text
+          options: [{ id: "1" }],
         },
       });
 
-      // Select the option without text
-      const option = wrapper.find('[data-test-id="predefined-option-1"]');
+      const option = wrapper.find('[data-test-id="predefined-option"][data-test-option-order="1"]');
       await option.trigger("click");
       await wrapper.vm.$nextTick();
 
@@ -415,7 +399,7 @@ describe("SectionTextFieldset", () => {
       const wrapper = createComponent({
         section: {
           isRequired: true,
-          allowCustomText: true, // This should prevent auto-selection
+          allowCustomText: true,
           allowTextOptions: true,
           options: [{ id: "1", text: "Single Option" }],
         },
@@ -431,7 +415,6 @@ describe("SectionTextFieldset", () => {
       const wrapper = createComponent();
       const customRadio = wrapper.find('[data-test-id="custom-input-radio"]');
 
-      // The aria-label uses constructLocaleKey internally
       expect(customRadio.attributes("aria-label")).toBe("Custom");
     });
   });
@@ -441,28 +424,23 @@ describe("SectionTextFieldset", () => {
       const wrapper = createComponent();
       const input = wrapper.find('[data-test-id="custom-input"]');
 
-      // First select custom input mode
       const customRadio = wrapper.find('[data-test-id="custom-input-radio"]');
       await customRadio.trigger("click");
       await wrapper.vm.$nextTick();
 
-      // Then update the input value
       const testValue = "test via v-model";
       const inputEl = input.element as HTMLInputElement;
       inputEl.value = testValue;
       await input.trigger("input");
       await wrapper.vm.$nextTick();
 
-      // Verify that the internal customInput ref is updated (getter)
       // @ts-expect-error - vm.customInput exists but TypeScript doesn't know about it
       expect(wrapper.vm.customInput).toBe(testValue);
 
-      // Check that the update event was emitted with the new value (setter)
       const emitted = wrapper.emitted("update");
       expect(emitted).toBeTruthy();
       expect(emitted?.[emitted.length - 1]).toEqual([testValue]);
 
-      // Verify v-model two-way binding by checking input value
       expect(inputEl.value).toBe(testValue);
     });
   });
