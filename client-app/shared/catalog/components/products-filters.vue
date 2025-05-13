@@ -128,6 +128,12 @@ watch(
 );
 
 watch(
+  () => props.filters.purchasedBefore,
+  (newValue) => (localFilters.purchasedBefore = newValue),
+  { immediate: true },
+);
+
+watch(
   () => props.filters.branches,
   (newValue) => (localFilters.branches = newValue.slice()),
   { immediate: true },
