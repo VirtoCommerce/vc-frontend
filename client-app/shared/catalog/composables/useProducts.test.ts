@@ -122,6 +122,13 @@ vi.mock("@/core/composables", () => ({
   }),
 }));
 
+vi.mock("@/core/composables/useModuleSettings", () => ({
+  useModuleSettings: () => ({
+    getModuleSettings: () => ({}),
+    isEnabled: () => true,
+  }),
+}));
+
 vi.mock("@/core/utilities", () => ({
   Logger: {
     error: vi.fn(),

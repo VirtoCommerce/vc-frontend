@@ -110,11 +110,13 @@
         <CategoryControls
           v-if="!hideControls && !isMobile && !isHorizontalFilters"
           v-model="localStorageInStock"
+          v-model:purchased-before="localStoragePurchasedBefore"
           :loading="fetchingProducts"
           :saved-branches="localStorageBranches"
           class="category__controls"
           @open-branches-modal="openBranchesModal"
           @apply-in-stock="resetCurrentPage"
+          @apply-purchased-before="resetCurrentPage"
         />
       </div>
 
@@ -199,7 +201,9 @@
         :fetching-more-products="fetchingMoreProducts"
         :fetching-products="fetchingProducts"
         :fixed-products-count="fixedProductsCount"
-        :has-active-filters="hasSelectedFacets || localStorageInStock || !!localStorageBranches.length"
+        :has-active-filters="
+          hasSelectedFacets || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
+        "
         :has-selected-facets="hasSelectedFacets"
         :items-per-page="itemsPerPage"
         :pages-count="pagesCount"
@@ -249,6 +253,7 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForCategorySubtree,
   getFilterExpressionForInStock,
+  getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
@@ -332,6 +337,7 @@ const {
   keywordQueryParam,
   localStorageBranches,
   localStorageInStock,
+  localStoragePurchasedBefore,
   pagesCount,
   pageHistory,
   products,
@@ -447,6 +453,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
     props.filter,
     facetsQueryParam.value,
     getFilterExpressionForInStock(localStorageInStock.value),
+    getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
     getFilterExpressionForAvailableIn(localStorageBranches.value),
   ]
     .filter(Boolean)
@@ -466,6 +473,7 @@ async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<vo
       props.filter,
       getFilterExpressionFromFacets(newFilters.facets),
       getFilterExpressionForInStock(newFilters.inStock),
+      getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
       getFilterExpressionForAvailableIn(newFilters.branches),
     ]
       .filter(Boolean)
@@ -475,6 +483,7 @@ async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<vo
   updateProductsFilters({
     branches: newFilters.branches,
     inStock: newFilters.inStock,
+    purchasedBefore: newFilters.purchasedBefore,
     facets: await getFacets(searchParamsForFacets),
   });
 }

@@ -20,7 +20,7 @@ export default {
   },
 } as Meta<typeof VcProductTitle>;
 
-const Template: StoryFn<typeof VcProductTitle> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcProductTitle },
   setup: () => ({ args }),
   template: '<VcProductTitle class="text-sm" v-bind="args">Product title</VcProductTitle>',
@@ -39,7 +39,7 @@ Disabled.args = {
   disabled: true,
 };
 
-export const Responsive: StoryFn<typeof VcProductTitle> = (args) => ({
+export const Responsive: StoryFn = (args) => ({
   components: { VcProductTitle },
   setup: () => ({ args }),
   template: '<VcProductTitle class="text-lg md:text-sm" v-bind="args">Product title</VcProductTitle>',

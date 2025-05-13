@@ -20,7 +20,7 @@ export default {
   },
 } as Meta<typeof VcTypography>;
 
-const Template: StoryFn<typeof VcTypography> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcTypography },
   setup: () => ({ args }),
   template: '<VcTypography v-bind="args">Lorem ipsum DOLOR</VcTypography>',

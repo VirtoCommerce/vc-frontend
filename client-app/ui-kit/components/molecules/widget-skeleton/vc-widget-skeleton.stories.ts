@@ -20,7 +20,7 @@ export default {
   },
 } as Meta<typeof VcWidgetSkeleton>;
 
-const Template: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcWidgetSkeleton },
   setup: () => ({ args }),
   template: '<VcWidgetSkeleton v-bind="args" />',
@@ -38,7 +38,7 @@ Foot.args = {
   foot: true,
 };
 
-export const HeaderSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
+export const HeaderSlot: StoryFn = (args) => ({
   components: { VcWidgetSkeleton },
   setup: () => ({ args }),
   template: `<VcWidgetSkeleton v-bind="args">
@@ -51,7 +51,7 @@ export const HeaderSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
   </VcWidgetSkeleton>`,
 });
 
-export const DefaultSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
+export const DefaultSlot: StoryFn = (args) => ({
   components: { VcWidgetSkeleton },
   setup: () => ({ args }),
   template: `<VcWidgetSkeleton v-bind="args">
@@ -68,7 +68,7 @@ export const DefaultSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
   </VcWidgetSkeleton>`,
 });
 
-export const FooterSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
+export const FooterSlot: StoryFn = (args) => ({
   components: { VcWidgetSkeleton },
   setup: () => ({ args }),
   template: `<VcWidgetSkeleton v-bind="args">
@@ -81,7 +81,7 @@ export const FooterSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
   </VcWidgetSkeleton>`,
 });
 
-export const HeaderContainerSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
+export const HeaderContainerSlot: StoryFn = (args) => ({
   components: { VcWidgetSkeleton },
   setup: () => ({ args }),
   template: `<VcWidgetSkeleton v-bind="args">
@@ -101,7 +101,7 @@ export const HeaderContainerSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => (
   </VcWidgetSkeleton>`,
 });
 
-export const DefaultContainerSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
+export const DefaultContainerSlot: StoryFn = (args) => ({
   components: { VcWidgetSkeleton },
   setup: () => ({ args }),
   template: `<VcWidgetSkeleton v-bind="args">
@@ -113,7 +113,7 @@ export const DefaultContainerSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => 
   </VcWidgetSkeleton>`,
 });
 
-export const FooterContainerSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
+export const FooterContainerSlot: StoryFn = (args) => ({
   components: { VcWidgetSkeleton },
   setup: () => ({ args }),
   template: `<VcWidgetSkeleton v-bind="args">

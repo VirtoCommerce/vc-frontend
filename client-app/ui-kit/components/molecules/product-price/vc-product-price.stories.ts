@@ -21,7 +21,7 @@ export default {
   },
 } as Meta<typeof VcProductPrice>;
 
-const Template: StoryFn<typeof VcProductPrice> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcProductPrice },
   setup: () => ({ args }),
   template: '<VcProductPrice v-bind="args" />',
@@ -49,7 +49,7 @@ SingleLine.args = {
   singleLine: true,
 };
 
-export const Truncate: StoryFn<typeof VcProductPrice> = (args) => ({
+export const Truncate: StoryFn = (args) => ({
   components: { VcProductPrice },
   setup: () => ({ args }),
   template: '<VcProductPrice class="text-lg w-20" v-bind="args" />',
@@ -67,7 +67,7 @@ VariationsPrice.args = {
   withFromLabel: true,
 };
 
-export const UsageExamples: StoryFn<typeof VcProductPrice> = (args) => ({
+export const UsageExamples: StoryFn = (args) => ({
   components: { VcProductPrice },
   setup: () => ({ args }),
   template: `<div class="space-y-2">

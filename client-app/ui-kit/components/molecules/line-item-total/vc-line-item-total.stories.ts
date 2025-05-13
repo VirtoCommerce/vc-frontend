@@ -7,7 +7,7 @@ export default {
   component: VcLineItemTotal,
 } as Meta<typeof VcLineItemTotal>;
 
-const Template: StoryFn<typeof VcLineItemTotal> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcLineItemTotal },
   setup: () => ({ args }),
   template: '<VcLineItemTotal v-bind="args" />',
