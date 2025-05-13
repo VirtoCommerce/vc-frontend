@@ -1,6 +1,13 @@
 <template>
   <Transition name="subcategories--slide">
-    <div v-if="item && item.childCategories?.length" class="subcategories">
+    <div
+      v-if="item && item.childCategories?.length"
+      class="subcategories"
+      @blur="scheduleHide"
+      @mouseleave="scheduleHide"
+      @focus="cancelHide"
+      @mouseenter="cancelHide"
+    >
       <ul class="subcategories__list">
         <VcMenuItem
           v-for="child in item.childCategories"
@@ -23,11 +30,17 @@
 
   <div class="mega-menu__divider"></div>
 
-  <Subcategories v-if="activeItem" :item="activeItem" @close="$emit('close')" />
+  <Subcategories
+    v-if="activeItem"
+    :item="activeItem"
+    :on-schedule-hide="scheduleHide"
+    :on-cancel-hide="cancelHide"
+    @close="$emit('close')"
+  />
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onBeforeUnmount } from "vue";
 import type { Category } from "@/core/api/graphql/types";
 
 interface IEmits {
@@ -36,16 +49,43 @@ interface IEmits {
 
 interface IProps {
   item: Category;
+  onCancelHide?: () => void;
+  onScheduleHide?: () => void;
 }
 
 defineEmits<IEmits>();
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const activeItem = ref<Category | null>(null);
+let timeout: ReturnType<typeof setTimeout> | null = null;
 
 function showChildren(item: Category) {
+  cancelHide();
   activeItem.value = item;
 }
+
+function scheduleHide() {
+  timeout = setTimeout(() => {
+    activeItem.value = null;
+  }, 300);
+
+  props.onScheduleHide?.();
+}
+
+function cancelHide() {
+  if (timeout) {
+    clearTimeout(timeout);
+  }
+
+  timeout = null;
+  props.onCancelHide?.();
+}
+
+onBeforeUnmount(() => {
+  if (timeout) {
+    clearTimeout(timeout);
+  }
+});
 </script>
 
 <style lang="scss">
@@ -55,6 +95,7 @@ function showChildren(item: Category) {
   &--slide {
     &-enter-active,
     &-leave-active {
+      overflow: hidden;
       transition:
         width 0.3s ease,
         opacity 0.3s ease-in-out;
