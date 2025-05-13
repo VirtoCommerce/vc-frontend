@@ -39,6 +39,7 @@ export function useProducts(
     useQueryParams?: boolean;
     /** @default CATALOG_PAGINATION_MODES.infiniteScroll */
     catalogPaginationMode?: CatalogPaginationModeType;
+    facetsToHide?: string[];
   } = {},
 ) {
   const { themeContext } = useThemeContext();
@@ -234,7 +235,9 @@ export function useProducts(
   }
 
   function hasSelectedFacets(): boolean {
-    return facets.value?.some((facet) => facet.values.some((value) => value.selected));
+    return facets.value?.some((facet) =>
+      facet.values.some((value) => value.selected && !options.facetsToHide?.includes(facet.paramName)),
+    );
   }
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {

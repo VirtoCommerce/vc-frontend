@@ -24,6 +24,7 @@
       :title="brand?.image ? $t('pages.brand.products_title') : brand?.name"
       columns-amount-desktop="5"
       :has-bg-image="false"
+      :facets-to-hide="['BRAND']"
     />
   </div>
 </template>

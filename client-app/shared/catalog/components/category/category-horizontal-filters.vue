@@ -18,7 +18,9 @@
       >
         {{ $t("common.buttons.all_filters") }}
       </VcButton>
+    </template>
 
+    <template #append>
       <VcDropdownMenu
         v-if="!hideSorting"
         :offset-options="4"
@@ -95,6 +97,7 @@ interface IProps {
   filters: ProductsFiltersType;
   hideSorting?: boolean;
   hideAllFilters?: boolean;
+  facetsToHide?: string[];
 }
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
@@ -128,7 +131,7 @@ const translatedProductSortingList = computed(() => getTranslatedProductSortingL
   }
 
   &__sorting {
-    @apply shrink-0;
+    @apply shrink-0 ml-auto;
   }
 }
 </style>

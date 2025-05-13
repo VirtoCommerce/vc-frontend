@@ -33,6 +33,8 @@
             @update:facet="onFacetFilterChanged"
           />
         </template>
+
+        <slot name="append" :loading="loading" />
       </div>
     </template>
   </div>
