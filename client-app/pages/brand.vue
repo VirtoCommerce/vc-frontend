@@ -3,12 +3,16 @@
     <VcContainer class="brand-page__top-container" :has-bg-image="false" :max-width="MAX_CONTAINER_WIDTH">
       <VcBreadcrumbs class="brand-page__breadcrumbs" :items="breadcrumbs" />
 
-      <VcTypography v-if="brand?.image" tag="h1" class="brand-page__title" data-test-id="brand-title">
+      <VcTypography v-if="hasBannerOrLogo" tag="h1" class="brand-page__title" data-test-id="brand-title">
         {{ brand?.name }}
       </VcTypography>
 
-      <div v-if="brand?.image" class="brand-page__banner" data-test-id="brand-banner">
-        <VcImage :src="brand?.image" lazy :alt="brand?.name" class="brand-page__banner-image" />
+      <div v-if="brand?.bannerUrl" class="brand-page__banner" data-test-id="brand-banner">
+        <VcImage :src="brand?.bannerUrl" lazy :alt="brand?.name" class="brand-page__banner-image" />
+      </div>
+
+      <div v-else-if="brand?.logoUrl" class="brand-page__logo" data-test-id="brand-logo">
+        <VcImage :src="brand?.logoUrl" lazy :alt="brand?.name" class="brand-page__logo-image" />
       </div>
     </VcContainer>
 
@@ -22,7 +26,7 @@
       hide-breadcrumbs
       hide-total
       view-mode="grid"
-      :title="brand?.image ? $t('pages.brand.products_title') : brand?.name"
+      :title="hasBannerOrLogo ? $t('pages.brand.products_title') : brand?.name"
       columns-amount-desktop="5"
       :has-bg-image="false"
       :facets-to-hide="['BRAND']"
@@ -56,7 +60,9 @@ const filterExpression = computed(() => {
 const { t } = useI18n();
 
 const { result } = useGetBrand(brandId.value ?? "");
+
 const brand = computed(() => result.value?.brand);
+const hasBannerOrLogo = computed(() => brand.value?.bannerUrl || brand.value?.logoUrl);
 
 const { title: pageTitle } = usePageTitle(brand.value?.name);
 
@@ -72,7 +78,7 @@ useSeoMeta({
   ogUrl: window.location.toString(),
   ogTitle: pageTitle,
   ogDescription: brand?.value?.description,
-  ogImage: brand?.value?.image,
+  ogImage: brand?.value?.logoUrl,
   ogType: "website",
 });
 </script>
@@ -87,12 +93,21 @@ useSeoMeta({
     @apply mb-5;
   }
 
-  &__banner {
+  &__banner,
+  &__logo {
     @apply flex items-center justify-center bg-additional-50 rounded xs:aspect-[3.75] aspect-[4/3];
   }
 
   &__banner-image {
     @apply w-full h-full object-cover;
+  }
+
+  &__logo {
+    @apply p-5;
+  }
+
+  &__logo-image {
+    @apply max-h-full;
   }
 }
 </style>
