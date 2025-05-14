@@ -56,7 +56,7 @@ interface IProps {
   compact?: boolean;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const { secondaryLogoUrl, footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
 const { footerLinks, fetchFooterLinks } = useNavigations();
@@ -64,6 +64,8 @@ const { footerLinks, fetchFooterLinks } = useNavigations();
 const { version } = pkg;
 
 onMounted(() => {
-  void fetchFooterLinks();
+  if (!props.compact) {
+    void fetchFooterLinks();
+  }
 });
 </script>

@@ -3,7 +3,7 @@ import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { getEpParam, isPreviewMode as isPageBuilderPreviewMode } from "@/builder-preview/utils";
 import { apolloClient, getStore } from "@/core/api/graphql";
-import { useCurrency, useThemeContext, useWhiteLabeling } from "@/core/composables";
+import { useCurrency, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
@@ -70,6 +70,7 @@ export default async () => {
   } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
+  const { fetchCatalogMenu } = useNavigations();
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
   const fallback = {
@@ -131,6 +132,8 @@ export default async () => {
 
   await fetchWhiteLabelingSettings();
   addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
+
+  void fetchCatalogMenu();
 
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
