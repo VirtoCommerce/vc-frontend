@@ -4,7 +4,13 @@ import isEqual from "lodash/isEqual";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
-import { FFC_LOCAL_STORAGE, IN_STOCK_PRODUCTS_LOCAL_STORAGE, PAGE_LIMIT, PRODUCT_SORTING_LIST } from "@/core/constants";
+import {
+  FFC_LOCAL_STORAGE,
+  IN_STOCK_PRODUCTS_LOCAL_STORAGE,
+  PAGE_LIMIT,
+  PRODUCT_SORTING_LIST,
+  PURCHASED_BEFORE_LOCAL_STORAGE,
+} from "@/core/constants";
 import { QueryParamName, SortDirection } from "@/core/enums";
 import {
   getFilterExpressionFromFacets,
@@ -12,6 +18,7 @@ import {
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
 } from "@/core/utilities";
+import { usePurchasedBefore } from "@/shared/catalog/composables/usePurchasedBefore";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useModal } from "@/shared/modal";
 import type {
@@ -50,8 +57,17 @@ export function useProducts(
   } = options;
   const { openModal } = useModal();
 
+  const { isPurchasedBeforeEnabled } = usePurchasedBefore();
+
   const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
   const localStorageBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
+  const _localStoragePurchasedBefore = useLocalStorage<boolean>(PURCHASED_BEFORE_LOCAL_STORAGE, false);
+  const localStoragePurchasedBefore = computed({
+    get: () => isPurchasedBeforeEnabled.value && _localStoragePurchasedBefore.value,
+    set: (value) => {
+      _localStoragePurchasedBefore.value = value;
+    },
+  });
 
   const pageQueryParam = useRouteQueryParam<string>(QueryParamName.Page, {
     defaultValue: "1",
@@ -98,6 +114,7 @@ export function useProducts(
   const productsFilters = shallowRef<ProductsFiltersType>({
     branches: localStorageBranches.value,
     inStock: localStorageInStock.value,
+    purchasedBefore: localStoragePurchasedBefore.value,
     facets: [],
   });
   const productFiltersSorted = computed(() => {
@@ -166,6 +183,10 @@ export function useProducts(
       localStorageBranches.value = newFilters.branches;
     }
 
+    if (localStoragePurchasedBefore.value !== newFilters.purchasedBefore) {
+      localStoragePurchasedBefore.value = newFilters.purchasedBefore;
+    }
+
     void resetCurrentPage();
   }
 
@@ -221,6 +242,7 @@ export function useProducts(
               branches,
               facets: productsFilters.value.facets,
               inStock: productsFilters.value.inStock,
+              purchasedBefore: productsFilters.value.purchasedBefore,
             };
 
             updateProductsFilters(newFilters);
@@ -294,6 +316,7 @@ export function useProducts(
 
         productsFilters.value = {
           inStock: localStorageInStock.value,
+          purchasedBefore: localStoragePurchasedBefore.value,
           branches: localStorageBranches.value.slice(),
           facets: getSortedFacets(facets.value),
         };
@@ -404,6 +427,7 @@ export function useProducts(
     keywordQueryParam,
     localStorageBranches,
     localStorageInStock,
+    localStoragePurchasedBefore,
     pagesCount: readonly(pagesCount),
     products: computed(() => products.value),
     productsById,

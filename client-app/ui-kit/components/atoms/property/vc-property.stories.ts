@@ -6,7 +6,7 @@ export default {
   component: VcProperty,
 } as Meta<typeof VcProperty>;
 
-const Template: StoryFn<typeof VcProperty> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcProperty },
   setup: () => ({ args }),
   template: '<VcProperty v-bind="args">Value</VcProperty>',

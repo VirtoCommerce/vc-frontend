@@ -6,7 +6,7 @@ export default {
   component: VcFile,
 } as Meta<typeof VcFile>;
 
-const Template: StoryFn<typeof VcFile> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcFile },
   setup: () => ({ args }),
   template: '<VcFile v-bind="args" />',
