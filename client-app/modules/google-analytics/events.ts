@@ -66,6 +66,15 @@ export const events: TrackerEventsType = {
     });
   },
 
+  updateCartItem(itemId, newQuantity, previousQuantity, params) {
+    sendEvent("update_cart_item", {
+      ...params,
+      item_id: itemId,
+      new_quantity: newQuantity,
+      previous_quantity: previousQuantity,
+    });
+  },
+
   removeItemsFromCart(items, params) {
     const subtotal: number = sumBy(items, (item) => item.extendedPrice?.amount);
     const inputItems = items.map(lineItemToGtagItem);

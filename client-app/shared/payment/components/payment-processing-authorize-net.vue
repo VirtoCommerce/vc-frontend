@@ -98,7 +98,7 @@ async function initPayment() {
     errorMessage = "",
   } = await initializePayment({
     orderId: props.order.id,
-    paymentId: props.order.inPayments[0]!.id,
+    paymentId: props.order.inPayments[0].id,
   });
 
   if (paymentActionType !== PaymentActionType[PaymentActionType.PreparedForm]) {

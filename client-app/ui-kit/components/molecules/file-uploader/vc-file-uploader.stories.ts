@@ -20,7 +20,7 @@ export default {
   },
 } as Meta<typeof VcFileUploader>;
 
-const Template: StoryFn<typeof VcFileUploader> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcFileUploader },
   setup: () => ({ args }),
   template: '<VcFileUploader v-bind="args" />',

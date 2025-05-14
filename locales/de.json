@@ -75,6 +75,7 @@
       "all_orders": "Alle Bestellungen",
       "my_orders": "Meine Bestellungen",
       "scroll_to_top": "Nach oben scrollen",
+      "reset_page": "Seite zurücksetzen",
       "show_less": "Weniger anzeigen",
       "expand_all": "Alle ausklappen"
     },
@@ -664,6 +665,9 @@
         "ok_button": "Ok",
         "no_results": "Keine Ergebnisse gefunden",
         "reset_search_button": "Suche zurücksetzen"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -1303,7 +1307,14 @@
       "no_facet_found_message": "Keine Ergebnisse",
       "no_products_button": "Suche zurücksetzen",
       "products_icon": "Produktikone",
-      "show_all_results": "Alle Ergebnisse anzeigen"
+      "show_all_results": "Alle Ergebnisse anzeigen",
+      "load_previous_page": "Vorherige Seite laden",
+      "load_next_page": "Nächste Seite laden",
+      "purchased_before_filter_card": {
+        "title": "Bereits gekauft",
+        "tooltip_text": "Auswählen, um nur Produkte anzuzeigen, die zuvor gekauft wurden",
+        "checkbox_label": "Bereits gekauft"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",

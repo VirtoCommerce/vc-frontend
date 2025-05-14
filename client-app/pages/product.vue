@@ -140,6 +140,7 @@ import {
   getSortingExpression,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
+  getFilterExpressionForPurchasedBefore,
 } from "@/core/utilities";
 import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
@@ -282,6 +283,7 @@ async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<vo
   updateProductsFilters({
     branches: newFilters.branches,
     inStock: newFilters.inStock,
+    purchasedBefore: newFilters.purchasedBefore,
     facets: await getFacets(searchParamsForFacets),
   });
 }
@@ -295,6 +297,7 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
     getFilterExpressionFromFacets(newFilters.facets),
     getFilterExpressionForInStock(newFilters.inStock),
     getFilterExpressionForAvailableIn(newFilters.branches),
+    getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
   ]);
 
   await fetchProducts(variationsSearchParams.value);

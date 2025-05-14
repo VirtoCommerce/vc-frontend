@@ -499,7 +499,7 @@ async function initPayment() {
   try {
     const { publicParameters, errorMessage } = await initializePayment({
       orderId: props.order.id,
-      paymentId: props.order.inPayments[0]!.id,
+      paymentId: props.order.inPayments[0].id,
     });
 
     if (errorMessage || !publicParameters) {
@@ -542,7 +542,7 @@ function getAdditionalRecords(): IInsertRecordInput | undefined {
 async function pay(parameters: InputKeyValueType[]): Promise<void> {
   const { isSuccess } = await authorizePayment({
     orderId: props.order.id,
-    paymentId: props.order.inPayments[0]!.id,
+    paymentId: props.order.inPayments[0].id,
     parameters,
   });
 

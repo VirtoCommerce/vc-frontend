@@ -1,5 +1,5 @@
 <template>
-  <VcContainer ref="categoryComponentAnchor" class="category">
+  <VcContainer ref="categoryComponentAnchor" class="category" style="overflow-anchor: none">
     <!-- Breadcrumbs -->
     <VcBreadcrumbs v-if="!hideBreadcrumbs" class="category__breadcrumbs" :items="breadcrumbs" />
 
@@ -110,11 +110,13 @@
         <CategoryControls
           v-if="!hideControls && !isMobile && !isHorizontalFilters"
           v-model="localStorageInStock"
+          v-model:purchased-before="localStoragePurchasedBefore"
           :loading="fetchingProducts"
           :saved-branches="localStorageBranches"
           class="category__controls"
           @open-branches-modal="openBranchesModal"
           @apply-in-stock="resetCurrentPage"
+          @apply-purchased-before="resetCurrentPage"
         />
       </div>
 
@@ -135,7 +137,15 @@
       />
 
       <!-- Filters chips -->
-      <div v-if="hasSelectedFacets" class="category__chips">
+      <div
+        v-if="
+          hasSelectedFacets ||
+          (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
+            $route.query.page &&
+            Number($route.query.page) > 1)
+        "
+        class="category__chips"
+      >
         <template v-for="facet in productsFilters.facets">
           <template v-for="filterItem in facet.values">
             <VcChip
@@ -156,7 +166,23 @@
           </template>
         </template>
 
-        <VcChip color="secondary" variant="outline" clickable @click="resetFacetFilters">
+        <VcChip
+          v-if="
+            catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
+            $route.query.page &&
+            Number($route.query.page) > 1
+          "
+          color="secondary"
+          variant="outline"
+          clickable
+          @click="resetPage"
+        >
+          <span>{{ $t("common.buttons.reset_page") }}</span>
+
+          <VcIcon name="reset" />
+        </VcChip>
+
+        <VcChip v-if="hasSelectedFacets" color="secondary" variant="outline" clickable @click="resetFacetFilters">
           <span>{{ $t("common.buttons.reset_filters") }}</span>
 
           <VcIcon name="reset" />
@@ -173,14 +199,18 @@
         :fetching-more-products="fetchingMoreProducts"
         :fetching-products="fetchingProducts"
         :fixed-products-count="fixedProductsCount"
-        :has-active-filters="hasSelectedFacets || localStorageInStock || !!localStorageBranches.length"
+        :has-active-filters="
+          hasSelectedFacets || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
+        "
         :has-selected-facets="hasSelectedFacets"
         :items-per-page="itemsPerPage"
         :pages-count="pagesCount"
         :page-number="currentPage"
+        :page-history="pageHistory"
         :products="products"
         :saved-view-mode="savedViewMode"
         :search-params="searchParams"
+        :mode="catalogPaginationMode"
         class="category__products"
         @change-page="changeProductsPage"
         @reset-facet-filters="resetFacetFilters"
@@ -221,10 +251,12 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForCategorySubtree,
   getFilterExpressionForInStock,
+  getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
+import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useSlugInfo } from "@/shared/common";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
 import { useCategory, useProducts } from "../composables";
@@ -273,6 +305,10 @@ const { catalogId, currencyCode } = globals;
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
 
+const catalogPaginationMode = computed(
+  () => themeContext.value?.settings?.catalog_pagination_mode ?? CATALOG_PAGINATION_MODES.infiniteScroll,
+);
+
 const { themeContext } = useThemeContext();
 const {
   getFacets,
@@ -286,7 +322,9 @@ const {
   keywordQueryParam,
   localStorageBranches,
   localStorageInStock,
+  localStoragePurchasedBefore,
   pagesCount,
+  pageHistory,
   products,
   productsFilters,
   searchQueryParam,
@@ -311,6 +349,7 @@ const {
   filtersDisplayOrder,
   useQueryParams: true,
   withFacets: true,
+  catalogPaginationMode: catalogPaginationMode.value,
 });
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();
@@ -398,6 +437,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
     props.filter,
     facetsQueryParam.value,
     getFilterExpressionForInStock(localStorageInStock.value),
+    getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
     getFilterExpressionForAvailableIn(localStorageBranches.value),
   ]
     .filter(Boolean)
@@ -417,6 +457,7 @@ async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<vo
       props.filter,
       getFilterExpressionFromFacets(newFilters.facets),
       getFilterExpressionForInStock(newFilters.inStock),
+      getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
       getFilterExpressionForAvailableIn(newFilters.branches),
     ]
       .filter(Boolean)
@@ -426,6 +467,7 @@ async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<vo
   updateProductsFilters({
     branches: newFilters.branches,
     inStock: newFilters.inStock,
+    purchasedBefore: newFilters.purchasedBefore,
     facets: await getFacets(searchParamsForFacets),
   });
 }
@@ -475,6 +517,11 @@ function trackViewSearchResults(): void {
 
 function selectProduct(product: Product): void {
   analytics("selectItem", product, categoryListProperties.value);
+}
+
+function resetPage() {
+  void resetCurrentPage();
+  void fetchProducts();
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);

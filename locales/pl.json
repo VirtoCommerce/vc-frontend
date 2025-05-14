@@ -75,6 +75,7 @@
       "all_orders": "Wszystkie zamówienia",
       "my_orders": "Moje zamówienia",
       "scroll_to_top": "Przewiń do góry",
+      "reset_page": "Resetuj stronę",
       "show_less": "Pokaż mniej",
       "expand_all": "Rozwiń wszystko"
     },
@@ -664,6 +665,9 @@
         "ok_button": "OK",
         "no_results": "Nie znaleziono wyników",
         "reset_search_button": "Resetuj wyszukiwanie"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -1303,7 +1307,14 @@
       "no_facet_found_message": "Brak wyników",
       "no_products_button": "Resetuj wyszukiwanie",
       "products_icon": "Ikona produktu",
-      "show_all_results": "Pokaż wszystkie wyniki"
+      "show_all_results": "Pokaż wszystkie wyniki",
+      "load_previous_page": "Załaduj poprzednią stronę",
+      "load_next_page": "Załaduj następną stronę",
+      "purchased_before_filter_card": {
+        "title": "Kupione wcześniej",
+        "tooltip_text": "Wybierz, aby wyświetlić tylko produkty zakupione wcześniej",
+        "checkbox_label": "Kupione wcześniej"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",

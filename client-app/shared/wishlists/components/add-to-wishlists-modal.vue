@@ -221,13 +221,13 @@ async function addToWishlistsFromListOther() {
   await addItemsToWishlists({
     listIds: selectedListsOtherIds.value,
     productId: product.value.id,
-    quantity: product.value!.minQuantity || 1,
+    quantity: product.value.minQuantity || 1,
   });
 
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  analytics("addItemToWishList", product.value!);
+  analytics("addItemToWishList", product.value);
 }
 
 async function createLists() {
@@ -248,7 +248,7 @@ async function createLists() {
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  analytics("addItemToWishList", product.value!);
+  analytics("addItemToWishList", product.value);
 }
 
 async function removeProductFromWishlists() {

@@ -49,7 +49,7 @@ export default {
   },
 } as Meta<typeof VcAddToCart>;
 
-const Template: StoryFn<typeof VcAddToCart> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcAddToCart },
   setup: () => ({ args }),
   template: '<VcAddToCart v-bind="args" v-model="args.modelValue" />',

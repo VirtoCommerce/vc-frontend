@@ -25,6 +25,7 @@
       "register": "Register",
       "reset_password": "Reset password",
       "reset_filters": "Reset filters",
+      "reset_page": "Reset page",
       "add_to_cart": "Add to cart",
       "apply": "Apply",
       "send": "Send",
@@ -652,7 +653,10 @@
         }
       },
       "discount_badge": {
-        "off": "off"
+        "off": "- {discount}"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       },
       "branches_modal": {
         "title": "Select Branch",
@@ -1283,6 +1287,11 @@
         "checkbox_label": "Show in stock",
         "tooltip_text": "Select to show only products, that are in stock"
       },
+      "purchased_before_filter_card": {
+        "title": "Purchased before",
+        "checkbox_label": "Purchased before",
+        "tooltip_text": "Select to show only products, that were purchased before"
+      },
       "branch_availability_filter_card": {
         "title": "Branch availability",
         "available_in": "Available at {0}",
@@ -1303,7 +1312,9 @@
       "no_facet_found_message": "No results",
       "no_products_button": "Reset search",
       "products_icon": "Product icon",
-      "show_all_results": "Show all results"
+      "show_all_results": "Show all results",
+      "load_previous_page": "Load previous page",
+      "load_next_page": "Load next page"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

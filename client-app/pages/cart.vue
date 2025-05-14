@@ -280,7 +280,7 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
    */
   analytics(
     "removeItemsFromCart",
-    cart.value!.items!.filter((item) => itemIds.includes(item.id)),
+    cart.value!.items.filter((item) => itemIds.includes(item.id)),
   );
 }
 
