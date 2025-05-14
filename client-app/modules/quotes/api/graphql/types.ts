@@ -624,6 +624,8 @@ export type Product = {
   inWishlist: Scalars['Boolean']['output'];
   /** Product is configurable */
   isConfigurable: Scalars['Boolean']['output'];
+  /** Product was purchased */
+  isPurchased: Scalars['Boolean']['output'];
   keyProperties: Array<Property>;
   /** Length */
   length?: Maybe<Scalars['Decimal']['output']>;

@@ -15,7 +15,7 @@ export default {
   },
 } as Meta<typeof VcCollapsibleContent>;
 
-const Template: StoryFn<typeof VcCollapsibleContent> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcCollapsibleContent, VcMarkdownRender },
   setup: () => ({ args }),
   template: `
@@ -27,7 +27,7 @@ const Template: StoryFn<typeof VcCollapsibleContent> = (args) => ({
 
 export const Basic = Template.bind({});
 
-export const Toggled: StoryFn<typeof VcCollapsibleContent> = (args) => ({
+export const Toggled: StoryFn = (args) => ({
   components: { VcCollapsibleContent },
   setup: () => ({ args }),
   template: `

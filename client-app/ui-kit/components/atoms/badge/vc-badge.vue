@@ -66,7 +66,7 @@ withDefaults(defineProps<IProps>(), {
     &--lg {
       --vc-icon-size: 0.875rem;
 
-      @apply min-w-[1.375rem] gap-1 px-1.5 text-sm;
+      @apply min-w-[1.375rem] gap-1 px-1.5 text-base/[1.375];
 
       &--dot {
         @apply w-2.5 h-2.5;

@@ -665,6 +665,9 @@
         "ok_button": "ОК",
         "no_results": "Результатов не найдено",
         "reset_search_button": "Очистить поиск"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -1306,7 +1309,12 @@
       "products_icon": "Иконка товара",
       "show_all_results": "Показать все результаты",
       "load_previous_page": "Загрузить предыдущую страницу",
-      "load_next_page": "Загрузить следующую страницу"
+      "load_next_page": "Загрузить следующую страницу",
+      "purchased_before_filter_card": {
+        "title": "Куплено ранее",
+        "tooltip_text": "Показывать только товары, купленные ранее",
+        "checkbox_label": "Куплено ранее"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",

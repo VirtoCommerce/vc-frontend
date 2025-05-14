@@ -6,7 +6,7 @@ export default {
   component: VcPagination,
 } as Meta<typeof VcPagination>;
 
-const Template: StoryFn<typeof VcPagination> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcPagination },
   setup: () => ({ args }),
   template: '<VcPagination v-bind="args" />',
