@@ -21,7 +21,7 @@ export default {
   },
 } as Meta<typeof VcProductTotal>;
 
-const Template: StoryFn<typeof VcProductTotal> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcProductTotal },
   setup: () => ({ args }),
   template: '<VcProductTotal v-bind="args" />',

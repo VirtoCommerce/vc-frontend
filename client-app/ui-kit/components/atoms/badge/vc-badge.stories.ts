@@ -42,7 +42,7 @@ export default {
   },
 } as Meta<typeof VcBadge>;
 
-const Template: StoryFn<typeof VcBadge> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcBadge },
   setup: () => ({ args }),
   template: '<VcBadge v-bind="args">35</VcBadge>',
@@ -70,7 +70,7 @@ Rounded.args = {
   rounded: true,
 };
 
-export const Truncate: StoryFn<typeof VcBadge> = (args) => ({
+export const Truncate: StoryFn = (args) => ({
   components: { VcBadge },
   setup: () => ({ args }),
   template: '<VcBadge class="w-32" v-bind="args">Long long long long badge text</VcBadge>',
@@ -79,7 +79,7 @@ Truncate.args = {
   truncate: true,
 };
 
-export const Icon: StoryFn<typeof VcBadge> = (args) => ({
+export const Icon: StoryFn = (args) => ({
   components: { VcBadge },
   setup: () => ({ args }),
   template: `<VcBadge v-bind="args">
@@ -91,12 +91,12 @@ Truncate.args = {
   truncate: true,
 };
 
-export const Dot: StoryFn<typeof VcBadge> = () => ({
+export const Dot: StoryFn = () => ({
   components: { VcBadge },
   template: "<VcBadge />",
 });
 
-export const AllStates: StoryFn<typeof VcBadge> = () => ({
+export const AllStates: StoryFn = () => ({
   components: { VcBadge },
   setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
   template: `<div class="space-y-6">

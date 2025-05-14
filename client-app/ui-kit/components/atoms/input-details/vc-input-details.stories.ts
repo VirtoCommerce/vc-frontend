@@ -12,7 +12,7 @@ export default {
   },
 } as Meta<typeof VcInputDetails>;
 
-const Template: StoryFn<typeof VcInputDetails> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcInputDetails },
   setup: () => ({ args }),
   template: '<VcInputDetails v-bind="args" />',

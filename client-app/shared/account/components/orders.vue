@@ -497,7 +497,7 @@ async function changePage(newPage: number) {
 }
 
 async function applySorting(sortInfo: ISortInfo): Promise<void> {
-  sort.value = new Sort(sortInfo.column, sortInfo.direction as SortDirection);
+  sort.value = new Sort(sortInfo.column, sortInfo.direction);
   page.value = 1;
   await fetchOrders(orderScope.value);
 }

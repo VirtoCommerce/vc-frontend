@@ -25,6 +25,7 @@
       "register": "Register",
       "reset_password": "Reset password",
       "reset_filters": "Reset filters",
+      "reset_page": "Reset page",
       "add_to_cart": "Add to cart",
       "apply": "Apply",
       "send": "Send",
@@ -127,7 +128,7 @@
       "recipient_name": "Recipient name",
       "active_address": "Active address",
       "addresses_icon": "Address icon",
-      "digital_product": "Digital product",
+      "digital_product": "Digital",
       "search": "Search {0}",
       "in_stock": "In stock",
       "starts_from": "Start: {0}",
@@ -652,7 +653,10 @@
         }
       },
       "discount_badge": {
-        "off": "off"
+        "off": "- {discount}"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       },
       "branches_modal": {
         "title": "Select Branch",
@@ -874,6 +878,15 @@
         "shared": "Shared",
         "private": "Private"
       }
+    },
+    "sorting": {
+      "featured": "Featured",
+      "alphabetically_a_z": "Alphabetically, A-Z",
+      "alphabetically_z_a": "Alphabetically, Z-A",
+      "price_low_to_high": "Price, low to high",
+      "price_high_to_low": "Price, high to low",
+      "date_new_to_old": "Date, new to old",
+      "date_old_to_new": "Date, old to new"
     }
   },
   "pages": {
@@ -1274,6 +1287,11 @@
         "checkbox_label": "Show in stock",
         "tooltip_text": "Select to show only products, that are in stock"
       },
+      "purchased_before_filter_card": {
+        "title": "Purchased before",
+        "checkbox_label": "Purchased before",
+        "tooltip_text": "Select to show only products, that were purchased before"
+      },
       "branch_availability_filter_card": {
         "title": "Branch availability",
         "available_in": "Available at {0}",
@@ -1294,7 +1312,9 @@
       "no_facet_found_message": "No results",
       "no_products_button": "Reset search",
       "products_icon": "Product icon",
-      "show_all_results": "Show all results"
+      "show_all_results": "Show all results",
+      "load_previous_page": "Load previous page",
+      "load_next_page": "Load next page"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

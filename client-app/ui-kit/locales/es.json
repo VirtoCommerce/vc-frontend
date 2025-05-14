@@ -49,7 +49,8 @@
         "out_of_stock": "Agotado",
         "positive_number": "El valor debe ser un número positivo",
         "integer_number": "El valor debe ser un número entero",
-        "pack_size": "Pedir en paquetes de {0}"
+        "pack_size": "Pedir en paquetes de {0}",
+        "exact_qty": "Puedes pedir {0} artículo(s)"
       }
     },
     "pagination": {

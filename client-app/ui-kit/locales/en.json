@@ -46,6 +46,7 @@
         "max": "Max order {0} item(s)",
         "min_max": "Order from {0} to {1} item(s)",
         "min_not_available": "Min order {0} item(s) is not available in stock",
+        "exact_qty": "You can order {0} item(s)",
         "out_of_stock": "Out of stock",
         "positive_number": "Value must be a positive number",
         "integer_number": "Value must be an integer",
