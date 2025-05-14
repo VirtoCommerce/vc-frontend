@@ -83,7 +83,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       port: 3000,
       cors: true,
       headers: {
-        "Content-Security-Policy": "frame-ancestors 'self' https://localhost:5001;",
+        "Content-Security-Policy": "frame-ancestors 'self' https://localhost:5001 https://builder.io/;",
         "Cross-Origin-Resource-Policy": "cross-origin",
         "Cross-Origin-Embedder-Policy": "unsafe-none",
       },
