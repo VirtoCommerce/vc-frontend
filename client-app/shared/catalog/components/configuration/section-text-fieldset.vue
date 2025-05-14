@@ -33,6 +33,8 @@
           :name="section.name"
           data-test-id="predefined-option"
           :data-test-option-order="index + 1"
+          word-break="break-word"
+          :max-lines="1"
         >
           {{ option.text }}
         </VcRadioButton>
