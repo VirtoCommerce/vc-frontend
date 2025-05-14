@@ -42,7 +42,7 @@
               :variant="activeNavItem === navValue ? 'solid' : 'no-background'"
               square
               class="brands__nav-letter"
-              data-test-id="brands-nav-item"
+              data-test-id="brands-nav_item"
               @click="setActiveNavItem(navValue)"
             >
               {{ navLabel }}
@@ -55,7 +55,7 @@
             maxlength="64"
             clearable
             :placeholder="$t('pages.brands.search')"
-            data-test-id="brands-search-input"
+            data-test-id="brands-search_input"
             @clear="search = ''"
             @keyup.enter="search = searchInput"
           >
@@ -64,7 +64,7 @@
                 :aria-label="$t('pages.brands.search')"
                 icon="search"
                 icon-size="1.25rem"
-                data-test-id="brands-search-button"
+                data-test-id="brands-search_button"
                 @click="search = searchInput"
               />
             </template>
@@ -99,9 +99,9 @@
             {{ brandNavIndex[navItem] }}
           </div>
 
-          <ul class="brands__links" data-test-id="brands-letter-list">
-            <li v-for="brand in groupedBrands[navItem]" :key="brand.id" data-test-id="brands-letter-item">
-              <router-link :to="brand.permalink" class="brands__link" data-test-id="brands-letter-link">
+          <ul class="brands__links" data-test-id="brands-letter_list">
+            <li v-for="brand in groupedBrands[navItem]" :key="brand.id" data-test-id="brands-letter_item">
+              <router-link :to="brand.permalink" class="brands__link" data-test-id="brands-letter_link">
                 {{ brand.name }}
               </router-link>
             </li>
@@ -113,7 +113,7 @@
         v-if="!loading && !sortedNavItems.length"
         icon="outline-stock"
         :text="$t('pages.brands.no_results')"
-        data-test-id="brands-empty-view"
+        data-test-id="brands-empty_view"
       />
     </VcWidget>
 
