@@ -21,7 +21,7 @@
         :title="brand.name"
         :to="brand.permalink"
       >
-        <VcImage v-if="brand.image" class="brands__img" :src="brand.image" :alt="brand.name" />
+        <VcImage v-if="brand.logoUrl" class="brands__img" :src="brand.logoUrl" :alt="brand.name" />
 
         <span v-else class="brands__img-fallback">
           {{ brand.name }}

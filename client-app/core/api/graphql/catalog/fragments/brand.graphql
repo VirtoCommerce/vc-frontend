@@ -1,7 +1,8 @@
 fragment brand on BrandType {
   id
   name
-  image
+  bannerUrl
+  logoUrl
   description
   featured
   permalink
