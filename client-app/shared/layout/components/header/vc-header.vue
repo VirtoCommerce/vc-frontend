@@ -21,15 +21,16 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { useBreakpoints } from "@vueuse/core";
 import { useWhiteLabeling } from "@/core/composables";
+import { BREAKPOINTS } from "@/core/constants";
 import Created from "../print/created.vue";
 import BottomHeader from "./_internal/bottom-header.vue";
 import MegaMenu from "./_internal/mega-menu.vue";
 import MobileHeader from "./_internal/mobile-header.vue";
 import TopHeader from "./_internal/top-header.vue";
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
+const breakpoints = useBreakpoints(BREAKPOINTS);
 const { logoUrl } = useWhiteLabeling();
 
 // For optimization on mobile devices
