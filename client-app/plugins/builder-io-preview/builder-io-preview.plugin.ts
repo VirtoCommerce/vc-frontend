@@ -6,10 +6,12 @@ import VpPagesBuilderIo from "@/pages/matcher/virto-pages/vp-builder-io.vue";
 export default {
   install: (app: App, options: { router: Router }) => {
     const routes = options.router.getRoutes();
-    const matcher = routes.find((x) => x.name === "Matcher")!;
-    matcher.meta.public = true;
-    if (matcher.components) {
-      matcher.components.default = VpPagesBuilderIo;
+    const matcher = routes.find((x) => x.name === "Matcher");
+    if (matcher) {
+      matcher.meta.public = true;
+      if (matcher.components) {
+        matcher.components.default = VpPagesBuilderIo;
+      }
     }
   },
 };
