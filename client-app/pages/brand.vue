@@ -1,6 +1,6 @@
 <template>
   <div class="brand-page">
-    <VcContainer class="brand-page__top-container" :has-bg-image="false" :max-width="MAX_CONTAINER_WIDTH">
+    <VcContainer class="brand-page__top-container" :has-bg-image="false">
       <VcBreadcrumbs class="brand-page__breadcrumbs" :items="breadcrumbs" />
 
       <VcTypography v-if="hasBannerOrLogo" tag="h1" class="brand-page__title" data-test-id="brand-title">
@@ -20,7 +20,6 @@
       v-if="brand"
       data-test-id="brand-products"
       class="brand-page__products"
-      :max-width="MAX_CONTAINER_WIDTH"
       filters-orientation="horizontal"
       :filter="filterExpression"
       hide-breadcrumbs
@@ -44,8 +43,6 @@ import { getFilterExpressionForBrand } from "@/core/utilities/search/facets";
 import Category from "@/shared/catalog/components/category.vue";
 
 const props = defineProps<IProps>();
-
-const MAX_CONTAINER_WIDTH = "85rem";
 
 interface IProps {
   brandId?: string;
