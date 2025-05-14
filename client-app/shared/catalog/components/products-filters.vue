@@ -64,7 +64,12 @@ const facetFiltersContainer = shallowRef<HTMLDivElement | null>(null);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
-const localFilters = shallowReactive<ProductsFiltersType>({ facets: [], inStock: false, branches: [] });
+const localFilters = shallowReactive<ProductsFiltersType>({
+  facets: [],
+  inStock: false,
+  branches: [],
+  purchasedBefore: false,
+});
 const isHorizontal = props.orientation === "horizontal";
 
 const filterCalculationInProgress = ref(false);
@@ -119,6 +124,12 @@ watch(
 watch(
   () => props.filters.inStock,
   (newValue) => (localFilters.inStock = newValue),
+  { immediate: true },
+);
+
+watch(
+  () => props.filters.purchasedBefore,
+  (newValue) => (localFilters.purchasedBefore = newValue),
   { immediate: true },
 );
 

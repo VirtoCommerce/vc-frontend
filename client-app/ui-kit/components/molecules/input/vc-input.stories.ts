@@ -49,13 +49,13 @@ export default {
   },
 } as Meta<typeof VcInput>;
 
-const Template: StoryFn<typeof VcInput> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcInput },
   setup: () => ({ args }),
   template: '<VcInput v-bind="args" v-model="args.modelValue" />',
 });
 
-const withButtonTemplate: StoryFn<typeof VcInput> = (args) => ({
+const withButtonTemplate: StoryFn = (args) => ({
   components: { VcInput },
   setup: () => ({ args }),
   template: `<VcInput v-bind="args" v-model="args.modelValue">

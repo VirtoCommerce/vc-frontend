@@ -17,5 +17,6 @@ export type ProductsSearchParamsType = {
 export type ProductsFiltersType = {
   facets: FacetItemType[];
   inStock: boolean;
+  purchasedBefore: boolean;
   branches: string[];
 };
