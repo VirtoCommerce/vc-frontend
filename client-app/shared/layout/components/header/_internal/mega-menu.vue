@@ -4,7 +4,7 @@
       <template #trigger>
         <button type="button" to="/catalog" class="mega-menu__button" :disabled="loading">
           <VcIcon class="mega-menu__icon" name="drag-dots" />
-          <span> All Products </span>
+          <span> {{ $t("common.buttons.all_products") }} </span>
         </button>
       </template>
 

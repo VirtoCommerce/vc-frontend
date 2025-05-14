@@ -77,7 +77,8 @@
       "scroll_to_top": "トップへスクロール",
       "reset_page": "ページをリセット",
       "show_less": "折りたたむ",
-      "expand_all": "すべて展開"
+      "expand_all": "すべて展開",
+      "all_products": "すべての商品"
     },
     "labels": {
       "actions": "操作",
