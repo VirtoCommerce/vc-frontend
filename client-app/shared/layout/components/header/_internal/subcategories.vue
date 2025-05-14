@@ -16,6 +16,7 @@
           :key="child.id"
           class="subcategories__item"
           size="sm"
+          color="secondary"
           :to="routes[child.id]"
           @click="$emit('close')"
           @focus="showChildren(child)"
@@ -31,15 +32,16 @@
     </div>
   </Transition>
 
-  <div class="mega-menu__divider"></div>
+  <template v-if="activeItem">
+    <div class="subcategories__divider"></div>
 
-  <Subcategories
-    v-if="activeItem"
-    :item="activeItem"
-    :on-schedule-hide="scheduleHide"
-    :on-cancel-hide="cancelHide"
-    @close="$emit('close')"
-  />
+    <Subcategories
+      :item="activeItem"
+      :on-schedule-hide="scheduleHide"
+      :on-cancel-hide="cancelHide"
+      @close="$emit('close')"
+    />
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -155,7 +157,11 @@ onBeforeUnmount(() => {
   }
 
   &__divider {
-    @apply self-stretch w-px bg-secondary-200;
+    @apply self-stretch w-px bg-neutral-200;
+
+    &:last-child {
+      @apply hidden;
+    }
   }
 }
 </style>

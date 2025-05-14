@@ -3,7 +3,9 @@
     <VcPopover arrow-enabled placement="bottom-start" class="mega-menu__popover">
       <template #trigger>
         <button type="button" to="/catalog" class="mega-menu__button" :disabled="loading">
-          <VcIcon class="mega-menu__icon" name="drag-dots" />
+          <VcLoader v-if="loading" class="mega-menu__loader" />
+          <VcIcon v-else class="mega-menu__icon" name="drag-dots" />
+
           <span> {{ $t("common.buttons.all_products") }} </span>
         </button>
       </template>
@@ -113,6 +115,10 @@ onMounted(async () => {
 
   &__button {
     @apply flex items-center p-1 h-full gap-2 text-sm text-[--header-bottom-link-color] font-bold whitespace-nowrap hover:text-[--header-bottom-link-hover-color];
+
+    &:disabled {
+      @apply cursor-not-allowed text-neutral-400;
+    }
   }
 
   &__icon {
@@ -132,7 +138,7 @@ onMounted(async () => {
   }
 
   &__content {
-    @apply flex min-w-0 max-h-[calc(100vh-11.5rem)] p-5 bg-[--header-bottom-bg-color] rounded shadow-lg;
+    @apply flex gap-3 min-w-0 max-h-[calc(100vh-11.5rem)] p-5 bg-[--header-bottom-bg-color] rounded shadow-lg;
   }
 }
 </style>
