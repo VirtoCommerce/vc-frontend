@@ -1,5 +1,5 @@
 <template>
-  <VcContainer class="brands">
+  <VcContainer class="brands" style="overflow-anchor: none">
     <VcBreadcrumbs class="brands__breadcrumbs" :items="breadcrumbs" />
 
     <VcTypography tag="h1" class="brands__title">
@@ -278,7 +278,7 @@ watch(activeNavItem, (newActiveNavItem) => {
   }
 
   &__search {
-    @apply w-full;
+    @apply w-full font-normal;
 
     @media (min-width: theme("screens.lg")) {
       @apply max-w-[18.75rem];
