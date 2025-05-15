@@ -1,4 +1,5 @@
 <template>
+  <!--  eslint-disable -->
   <div
     :class="[
       'vc-line-item',
@@ -21,7 +22,6 @@
         v-model="isSelected"
         class="vc-line-item__checkbox"
         :name="$t('ui_kit.labels.toggle_vendor_select')"
-        :disabled="disabled"
         test-id="vc-line-item-checkbox"
         @change="$emit('select', isSelected)"
       />
@@ -263,7 +263,7 @@ watchEffect(() => {
   }
 
   &__checkbox {
-    @apply flex-none absolute top-0.5 left-0.5 p-2 rounded bg-[--bg-color];
+    @apply flex-none z-[1] absolute top-0.5 left-0.5 p-2 rounded bg-[--bg-color];
 
     @container (width > theme("containers.2xl")) {
       @apply static top-auto left-auto -m-2;
