@@ -7,7 +7,7 @@
         </span>
 
         <VcImage
-          :src="`/static/icons/flags/${getCountryCode(currentLanguage)}.svg`"
+          :src="getFlagIconUrl(getCountryCode(currentLanguage))"
           :alt="currentLanguage.nativeName"
           class="language-selector__img"
           lazy
@@ -33,7 +33,7 @@
         "
       >
         <VcImage
-          :src="`/static/icons/flags/${getCountryCode(item)}.svg`"
+          :src="getFlagIconUrl(getCountryCode(item))"
           :alt="currentLanguage.nativeName"
           class="language-selector__item-img"
           lazy
@@ -51,6 +51,7 @@
 import { useLanguages } from "@/core/composables/useLanguages";
 import { languageToCountryMap } from "@/core/constants";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
+import { getFlagIconUrl } from "@/ui-kit/utilities";
 import type { ILanguage } from "@/core/types";
 
 const { pinedLocale, supportedLanguages, pinLocale, removeLocaleFromUrl, currentLanguage } = useLanguages();
