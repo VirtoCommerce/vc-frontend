@@ -29,7 +29,7 @@
       </router-link>
     </div>
 
-    <VcWidget>
+    <VcWidget class="brands__widget">
       <template #title>
         <div class="brands__filters">
           <div class="brands__letters">
@@ -61,6 +61,7 @@
           >
             <template #append>
               <VcButton
+                :color="searchInput ? 'primary' : 'neutral'"
                 :aria-label="$t('pages.brands.search')"
                 icon="search"
                 icon-size="1.25rem"
@@ -212,7 +213,13 @@ watch(activeNavItem, (newActiveNavItem) => {
 .brands {
   $fullWidthItem: "";
 
-  @apply bg-neutral-50;
+  @apply bg-neutral-50 grow;
+
+  &__widget {
+    --header-p-y: 1.25rem;
+    --p-x: 1.75rem;
+    --slot-p-t: 1.75rem;
+  }
 
   &__breadcrumbs {
     @apply mb-3;

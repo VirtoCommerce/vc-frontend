@@ -8,7 +8,13 @@
       </VcTypography>
 
       <div v-if="brand?.bannerUrl" class="brand-page__banner" data-test-id="brand-banner">
-        <VcImage :src="brand?.bannerUrl" lazy :alt="brand?.name" class="brand-page__banner-image" />
+        <VcImage
+          :src="brand?.bannerUrl"
+          lazy
+          :alt="brand?.name"
+          class="brand-page__banner-image"
+          :size-suffix="imageSizeSuffix"
+        />
       </div>
 
       <div v-else-if="brand?.logoUrl" class="brand-page__logo" data-test-id="brand-logo">
@@ -30,11 +36,14 @@
       :has-bg-image="false"
       :facets-to-hide="['BRAND']"
     />
+
+    <VcEmptyView v-else :text="$t('pages.brands.no_results')" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
+import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGetBrand } from "@/core/api/graphql/catalog";
@@ -56,10 +65,28 @@ const filterExpression = computed(() => {
 
 const { t } = useI18n();
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
+
 const { result } = useGetBrand(brandId.value ?? "");
 
 const brand = computed(() => result.value?.brand);
 const hasBannerOrLogo = computed(() => brand.value?.bannerUrl || brand.value?.logoUrl);
+
+const imageSizeSuffix = computed(() => {
+  if (breakpoints.greaterOrEqual("lg").value) {
+    return undefined;
+  }
+
+  if (breakpoints.greaterOrEqual("md").value) {
+    return "lg";
+  }
+
+  if (breakpoints.greaterOrEqual("sm").value) {
+    return "md";
+  }
+
+  return "sm";
+});
 
 const { title: pageTitle } = usePageTitle(brand.value?.name);
 
@@ -82,7 +109,15 @@ useSeoMeta({
 
 <style lang="scss">
 .brand-page {
-  @apply bg-neutral-50;
+  @apply bg-neutral-50 grow;
+
+  &__top-container {
+    --pb: 0;
+
+    @media (min-width: theme("screens.lg")) {
+      --pb: 1rem;
+    }
+  }
 
   &__breadcrumbs:not(:only-child) {
     @apply mb-5;
@@ -94,7 +129,7 @@ useSeoMeta({
 
   &__banner,
   &__logo {
-    @apply flex items-center justify-center bg-additional-50 rounded xs:aspect-[3.75] aspect-[4/3];
+    @apply flex items-center justify-center bg-additional-50 rounded sm:aspect-[3.75] aspect-[4/3];
   }
 
   &__banner-image {
