@@ -106,10 +106,6 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
     &--view-mode {
       &--grid #{$self} {
         @apply order-2;
-
-        @container (min-width: theme("containers.xxs")) {
-          font-size: var(--font-size, theme("fontSize.lg"));
-        }
       }
 
       &--list {
