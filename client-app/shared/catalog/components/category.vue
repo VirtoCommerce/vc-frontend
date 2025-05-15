@@ -577,15 +577,24 @@ watch(props, ({ viewMode }) => {
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
   () => {
-    if (categoryProductsAnchor.value && (!isHorizontalFilters.value || isMobile.value)) {
-      categoryProductsAnchor.value.scrollIntoView({ block: "center" });
-    }
     void fetchProducts();
   },
   {
     debounce: 20,
     flush: "post",
     immediate: true,
+  },
+);
+
+watchDebounced(
+  computed(() => JSON.stringify(searchParams.value)),
+  () => {
+    if (categoryProductsAnchor.value && (!isHorizontalFilters.value || isMobile.value)) {
+      categoryProductsAnchor.value.scrollIntoView({ block: "center" });
+    }
+  },
+  {
+    debounce: 20,
   },
 );
 </script>
