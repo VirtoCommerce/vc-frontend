@@ -43,7 +43,7 @@
       :facets-to-hide="['BRAND']"
     />
 
-    <VcEmptyView v-else :text="$t('pages.brands.no_results')" />
+    <VcEmptyView v-else-if="!loading" :text="$t('pages.brands.no_results')" />
   </div>
 </template>
 
@@ -73,7 +73,7 @@ const { t } = useI18n();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
-const { result } = useGetBrand(brandId.value ?? "");
+const { result, loading } = useGetBrand(brandId.value ?? "");
 
 const brand = computed(() => result.value?.brand);
 const hasBannerOrLogo = computed(() => brand.value?.bannerUrl || brand.value?.logoUrl);
