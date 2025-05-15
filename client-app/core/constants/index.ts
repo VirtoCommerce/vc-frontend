@@ -3,6 +3,7 @@ export * from "./images";
 export * from "./line-items";
 export * from "./local-storage-keys";
 export * from "./locale";
+export * from "./menu";
 export * from "./notifications";
 export * from "./orders";
 export * from "./products";

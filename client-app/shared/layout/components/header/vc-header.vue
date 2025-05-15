@@ -7,9 +7,9 @@
     <TopHeader class="relative z-[21] border-b border-neutral-300 print:hidden" />
 
     <div class="sticky top-0 z-20 shadow-md print:hidden">
-      <BottomHeader />
+      <BottomHeader :show-menu="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
 
-      <MegaMenu class="border-t border-neutral-200" />
+      <MegaMenu v-if="desktopMenuMode === DESKTOP_MENU_MODES.horizontal" class="border-y border-neutral-200" />
     </div>
   </template>
 
@@ -22,8 +22,9 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { useWhiteLabeling } from "@/core/composables";
-import { BREAKPOINTS } from "@/core/constants";
+import { computed } from "vue";
+import { useWhiteLabeling, useThemeContext } from "@/core/composables";
+import { BREAKPOINTS, DESKTOP_MENU_MODES } from "@/core/constants";
 import Created from "../print/created.vue";
 import BottomHeader from "./_internal/bottom-header.vue";
 import MegaMenu from "./_internal/mega-menu.vue";
@@ -32,7 +33,10 @@ import TopHeader from "./_internal/top-header.vue";
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const { logoUrl } = useWhiteLabeling();
+const { themeContext } = useThemeContext();
 
 // For optimization on mobile devices
 const isMobile = breakpoints.smaller("lg");
+
+const desktopMenuMode = computed(() => themeContext.value?.settings?.desktop_menu_mode);
 </script>
