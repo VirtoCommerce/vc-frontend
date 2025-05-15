@@ -6,6 +6,7 @@
         <VcCheckbox
           v-model="savedPurchasedBefore"
           :disabled="loading"
+          data-test-id="purchased-before-checkbox-filter"
           @click="$emit('applyPurchasedBefore')"
           @keyup.enter="$emit('applyPurchasedBefore')"
         >
