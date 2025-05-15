@@ -21,7 +21,9 @@
         :title="brand.name"
         :to="brand.permalink"
       >
-        <VcImage v-if="brand.logoUrl" class="brands__img" :src="brand.logoUrl" :alt="brand.name" />
+        <span v-if="brand.logoUrl" class="brands__img-container">
+          <VcImage class="brands__img" :src="brand.logoUrl" :alt="brand.name" />
+        </span>
 
         <span v-else class="brands__img-fallback">
           {{ brand.name }}
@@ -254,11 +256,15 @@ watch(activeNavItem, (newActiveNavItem) => {
   }
 
   &__tile {
-    @apply flex items-center justify-center p-3 aspect-[204/100] bg-additional-50 shadow-md rounded-sm;
+    @apply p-3 aspect-[204/100] bg-additional-50 shadow-md rounded-sm flex items-center justify-center;
   }
 
   &__img {
     @apply max-w-full max-h-full;
+  }
+
+  &__img-container {
+    @apply flex items-center justify-center h-full w-full;
   }
 
   &__img-fallback {
