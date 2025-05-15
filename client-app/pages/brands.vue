@@ -180,6 +180,10 @@ function trimDataByBreakpoint<T>(data: T[]): T[] {
     return data.slice(0, 12);
   }
 
+  if (breakpoints.greaterOrEqual("lg").value) {
+    return data.slice(0, 10);
+  }
+
   if (breakpoints.greaterOrEqual("md").value) {
     return data.slice(0, 8);
   }
