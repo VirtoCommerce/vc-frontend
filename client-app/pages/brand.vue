@@ -66,7 +66,7 @@ interface IProps {
 const brandId = toRef(props, "brandId");
 
 const filterExpression = computed(() => {
-  return getFilterExpressionForBrand(brand.value?.name);
+  return getFilterExpressionForBrand(brand.value?.brandPropertyValue);
 });
 
 const { t } = useI18n();

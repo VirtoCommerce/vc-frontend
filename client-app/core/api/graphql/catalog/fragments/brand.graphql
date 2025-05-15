@@ -6,4 +6,5 @@ fragment brand on BrandType {
   description
   featured
   permalink
+  brandPropertyValue
 }
