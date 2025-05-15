@@ -82,6 +82,8 @@ useSeoMeta({
 
 <style lang="scss">
 .brand-page {
+  @apply bg-neutral-50;
+
   &__breadcrumbs:not(:only-child) {
     @apply mb-5;
   }
