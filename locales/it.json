@@ -1470,6 +1470,12 @@
       },
       "title": "Il tuo account è bloccato",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Marchi"
+    },
+    "brand": {
+      "products_title": "Prodotti"
     }
   },
   "identity_error": {

@@ -1470,6 +1470,12 @@
       },
       "title": "Ваш аккаунт заблокирован",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Бренды"
+    },
+    "brand": {
+      "products_title": "Товары"
     }
   },
   "identity_error": {

@@ -1470,6 +1470,12 @@
       },
       "title": "Ihr Konto ist blockiert",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "title": "Marken"
+    },
+    "brand": {
+      "products_title": "Produkte"
     }
   },
   "identity_error": {
