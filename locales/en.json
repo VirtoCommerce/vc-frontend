@@ -1477,6 +1477,9 @@
       "search": "Search",
       "button_all": "All",
       "no_results": "No results found"
+    },
+    "brand": {
+      "products_title": "Products"
     }
   },
   "identity_error": {

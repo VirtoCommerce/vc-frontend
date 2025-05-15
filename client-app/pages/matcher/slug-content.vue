@@ -1,14 +1,25 @@
 <template>
   <div v-if="isVisible && !loading && (hasContent || objectType || hasPageDocumentContent)" class="slug-content">
     <CatalogComponent v-if="objectType === ObjectType.Catalog" />
+
     <CategoryComponent
       v-else-if="objectType === 'Category'"
       :category-id="slugInfo?.entityInfo?.objectId"
       allow-set-meta
     />
-    <Product v-else-if="objectType === 'CatalogProduct'" :product-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
+
     <BrandsPage v-else-if="objectType === ObjectType.Brands" />
+
+    <BrandPage v-else-if="objectType === ObjectType.Brand" :brand-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
+
+    <Product
+      v-else-if="objectType === ObjectType.CatalogProduct"
+      :product-id="slugInfo?.entityInfo?.objectId"
+      allow-set-meta
+    />
+
     <VirtoPage v-else-if="hasPageDocumentContent" :page-document="pageDocumentContent" />
+
     <StaticPage v-else-if="hasContent" />
   </div>
 </template>
@@ -40,6 +51,7 @@ const Product = defineAsyncComponent(() => import("@/pages/product.vue"));
 const VirtoPage = defineAsyncComponent(() => import("@/pages/matcher/virto-pages/virto-pages.vue"));
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
 const BrandsPage = defineAsyncComponent(() => import("@/pages/brands.vue"));
+const BrandPage = defineAsyncComponent(() => import("@/pages/brand.vue"));
 
 const { setMatchingRouteName } = useNavigations();
 
@@ -73,13 +85,14 @@ enum ObjectType {
   ContentFile = "ContentFile",
   VirtoPages = "Pages",
   Brands = "Brands",
+  Brand = "Brand",
 }
 
 watchEffect(() => {
   if (loading.value) {
     emit("setState", "loading");
   } else if (
-    [ObjectType.Catalog, ObjectType.Category, ObjectType.CatalogProduct, ObjectType.Brands].includes(
+    [ObjectType.Catalog, ObjectType.Category, ObjectType.CatalogProduct, ObjectType.Brands, ObjectType.Brand].includes(
       objectType.value as ObjectType,
     )
   ) {

@@ -1477,6 +1477,9 @@
       "top_brands_title": "热门品牌",
       "title": "品牌",
       "no_results": "未找到结果"
+    },
+    "brand": {
+      "products_title": "商品"
     }
   },
   "identity_error": {

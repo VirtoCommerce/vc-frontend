@@ -1477,6 +1477,9 @@
       "top_brands_title": "Meilleures marques",
       "title": "Marques",
       "no_results": "Aucun résultat trouvé"
+    },
+    "brand": {
+      "products_title": "Produits"
     }
   },
   "identity_error": {

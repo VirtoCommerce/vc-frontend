@@ -1477,6 +1477,9 @@
       "top_brands_title": "Marchi principali",
       "title": "Marchi",
       "no_results": "Nessun risultato trovato"
+    },
+    "brand": {
+      "products_title": "Prodotti"
     }
   },
   "identity_error": {

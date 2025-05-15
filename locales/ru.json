@@ -1477,6 +1477,9 @@
       "top_brands_title": "Топ бренды",
       "title": "Бренды",
       "no_results": "Ничего не найдено"
+    },
+    "brand": {
+      "products_title": "Товары"
     }
   },
   "identity_error": {
