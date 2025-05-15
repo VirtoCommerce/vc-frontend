@@ -330,7 +330,7 @@ provide<VcInputContextType>("inputContext", {
     }
 
     &::placeholder {
-      @apply text-neutral-400;
+      @apply text-neutral-400 font-normal;
 
       #{$error} & {
         @apply text-danger-400;
