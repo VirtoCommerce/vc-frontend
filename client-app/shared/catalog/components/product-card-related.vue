@@ -1,55 +1,45 @@
 <template>
-  <div
-    class="flex flex-col gap-2 bg-additional-50 xl:gap-4 xl:rounded xl:border xl:border-neutral-100 xl:p-5 xl:pb-1 xl:shadow-md"
-  >
-    <VcProductImage :img-src="product.imgSrc" :images="product.images" :alt="product.name">
-      <div
-        class="absolute -right-4 -top-2.5 z-[2] space-y-1.5 rounded-3xl bg-additional-50 px-1.5 py-2 empty:hidden lg:space-y-2 print:hidden"
-      >
-        <AddToList :product="product" />
-        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" class="relative" />
-      </div>
+  <VcProductCard>
+    <VcProductImage :img-src="product.imgSrc" :images="product.images" :alt="product.name" lazy>
+      <BadgesWrapper>
+        <PurchasedBeforeBadge v-if="product.isPurchased" />
+
+        <DiscountBadge v-if="product.price" static :price="product.price" />
+      </BadgesWrapper>
     </VcProductImage>
 
-    <div class="flex grow flex-col justify-between gap-2">
-      <VcProductTitle
-        class="text-sm"
-        :to="link"
-        :title="product.name"
-        target="_blank"
-        @click="$emit('linkClick', $event)"
-      >
-        {{ product.name }}
-      </VcProductTitle>
+    <VcProductActions direction="vertical" with-background>
+      <AddToList :product="product" />
 
-      <VcProductPrice
-        class="h-9 text-lg"
-        :actual-price="price?.actual"
-        :list-price="price?.list"
-        :with-from-label="product.hasVariations || product.isConfigurable"
-      />
-    </div>
+      <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
+    </VcProductActions>
 
-    <div class="h-[3.25rem] print:hidden">
-      <VcProductButton
-        v-if="product.isConfigurable"
-        :to="link"
-        :button-text="$t('pages.catalog.customize_button')"
-        icon="cube-transparent"
-        target="_blank"
-      />
+    <VcProductTitle :title="product.name" :to="link" lines-number="2" fix-height @click="$emit('linkClick', $event)" />
 
-      <VcProductButton
-        v-else-if="product.hasVariations"
-        :to="link"
-        target="_blank"
-        variant="outline"
-        :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
-      />
+    <VcProductPrice
+      :actual-price="price?.actual"
+      :list-price="price?.list"
+      :with-from-label="product.hasVariations || product.isConfigurable"
+    />
 
-      <AddToCart v-else :product="product" />
-    </div>
-  </div>
+    <VcProductButton
+      v-if="product.isConfigurable"
+      :to="link"
+      :button-text="$t('pages.catalog.customize_button')"
+      icon="cube-transparent"
+      :target="$cfg.details_browser_target || '_blank'"
+    />
+
+    <VcProductButton
+      v-else-if="product.hasVariations"
+      :to="link"
+      :target="$cfg.details_browser_target || '_blank'"
+      variant="outline"
+      :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
+    />
+
+    <AddToCart v-else :product="product" />
+  </VcProductCard>
 </template>
 
 <script setup lang="ts">
@@ -58,8 +48,11 @@ import { getProductRoute } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
+import DiscountBadge from "./discount-badge.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
+import BadgesWrapper from "@/shared/catalog/components/badges-wrapper.vue";
+import PurchasedBeforeBadge from "@/shared/catalog/components/purchased-before-badge.vue";
 
 interface IEmits {
   (event: "linkClick", globalEvent: MouseEvent): void;
