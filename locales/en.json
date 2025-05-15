@@ -1470,6 +1470,13 @@
       },
       "title": "Your account is blocked",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "top_brands_title": "Top brands",
+      "title": "Brands",
+      "search": "Search",
+      "button_all": "All",
+      "no_results": "No results found"
     }
   },
   "identity_error": {
