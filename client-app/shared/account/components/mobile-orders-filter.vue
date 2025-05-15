@@ -31,7 +31,8 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { STATUS_ORDERS_FACET_NAME } from "@/core/constants";
-import { useUserOrders, useUserOrdersFilter } from "../composables";
+import { useUserOrders } from "../composables";
+import { useUserOrdersFilter } from "../composables/useUserOrdersFilter";
 
 const { facets } = useUserOrders({});
 const { filterData } = useUserOrdersFilter();
