@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex h-[39px] items-center gap-3 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-5 xl:px-12"
+    class="flex h-10 items-center gap-3 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-5 xl:px-12"
   >
     <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
 

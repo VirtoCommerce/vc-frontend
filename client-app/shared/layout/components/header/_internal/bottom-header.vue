@@ -18,6 +18,7 @@
 
       <!-- Catalog button -->
       <a
+        v-if="showMenu"
         ref="showCatalogMenuButton"
         :href="catalogLink"
         type="button"
@@ -45,7 +46,7 @@
 
     <!-- Catalog dropdown -->
     <transition
-      v-if="catalogMenuItems.length"
+      v-if="showMenu && catalogMenuItems.length"
       enter-from-class="-translate-y-full"
       leave-to-class="-translate-y-full"
       enter-active-class="will-change-transform"
@@ -79,6 +80,12 @@ import { useCustomHeaderLinkComponents } from "@/shared/layout/composables/useCu
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
 import LinkDefault from "@/shared/layout/components/header/_internal/link-components/link-default.vue";
+
+interface IProps {
+  showMenu?: boolean;
+}
+
+defineProps<IProps>();
 
 const router = useRouter();
 const { organization } = useUser();

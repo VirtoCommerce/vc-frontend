@@ -30,7 +30,13 @@
       <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
     </div>
 
-    <div ref="floating" :style="{ zIndex, display, width, ...floatingStyles }" class="vc-popover__content" :role="role">
+    <div
+      v-if="$slots.content && !disabled"
+      ref="floating"
+      :style="{ zIndex, display, width, ...floatingStyles }"
+      class="vc-popover__content"
+      :role="role"
+    >
       <div
         v-if="arrowEnabled"
         ref="floatingArrow"
@@ -165,7 +171,7 @@ watch(focused, (value: boolean) => {
   }
 
   &__content {
-    @apply hidden absolute top-0 left-0;
+    @apply hidden;
 
     #{$arrow} & {
       @apply pt-2.5;

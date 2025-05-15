@@ -39,6 +39,7 @@
     "favicon_image": "/static/icons/favicon-32x32.png",
     "homepage_background_image": "main-banner.webp",
     "catalog_pagination_mode": "infinite_scroll",
+    "desktop_menu_mode": "horizontal",
 
     "image_thumbnails_enabled": true,
     "image_thumbnails_original_fallback_enabled": true,
