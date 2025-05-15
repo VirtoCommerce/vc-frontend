@@ -5,9 +5,8 @@
     :title="$t('pages.product.related_product_section_title')"
     prepend-icon="cube"
     size="lg"
-    class="order-last max-md:-mx-4.5"
   >
-    <div v-if="lg" class="-mb-2 flex flex-wrap items-stretch gap-x-7 gap-y-4">
+    <VcProductsGrid v-if="lg">
       <ProductCardRelated
         v-for="(item, index) in mobileProducts"
         :key="index"
@@ -15,7 +14,7 @@
         class="w-[calc((100%-1.75rem)/2)] sm:w-[calc((100%-2*1.75rem)/3)] md:w-[calc((100%-1.75rem)/2)]"
         @link-click="selectItem(item)"
       />
-    </div>
+    </VcProductsGrid>
 
     <VcCarousel v-else :slides="relatedProducts" :options="relatedProductsCarouselOptions" navigation>
       <template #slide="{ slide: item }">
