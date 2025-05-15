@@ -18,7 +18,13 @@
       </div>
 
       <div v-else-if="brand?.logoUrl" class="brand-page__logo" data-test-id="brand-logo">
-        <VcImage :src="brand?.logoUrl" lazy :alt="brand?.name" class="brand-page__logo-image" />
+        <VcImage
+          :src="brand?.logoUrl"
+          lazy
+          :alt="brand?.name"
+          class="brand-page__logo-image"
+          :size-suffix="imageSizeSuffix"
+        />
       </div>
     </VcContainer>
 
