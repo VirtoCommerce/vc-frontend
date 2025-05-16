@@ -649,7 +649,17 @@
           "check_your_configuration": "製品構成を確認してください",
           "required_section": "セクションは必須です",
           "optional_no_selected": "さらに選択をパーソナライズ（任意）",
-          "required_no_selected": "すべての必須オプションを選択して、完了してください"
+          "required_no_selected": "すべての必須オプションを選択して、完了してください",
+          "section-text-fieldset": {
+            "custom_option_with_input": "カスタムオプション：{0}",
+            "custom_option_empty": "カスタムオプション：空",
+            "enter_custom_text": "カスタムテキストを入力",
+            "no_selection": "未選択",
+            "none": "なし",
+            "custom_input": "カスタム入力",
+            "predefined_prefix": "定義済み",
+            "option_label": "オプション{0}: {1}"
+          }
         }
       },
       "discount_badge": {
