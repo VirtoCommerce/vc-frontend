@@ -4,7 +4,7 @@ import type { Meta, StoryFn } from "@storybook/vue3";
 
 const SIZES = ["xxs", "xs", "sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
-const VARIANTS = ["solid", "outline", "no-border", "no-background"];
+const VARIANTS = ["solid", "outline", "no-border", "no-background", "solid-light"];
 const TYPES = ["button", "reset", "submit"];
 
 export default {
@@ -66,6 +66,24 @@ export const Basic = Template.bind({});
 export const Outline = Template.bind({});
 Outline.args = {
   variant: "outline",
+  color: "secondary",
+};
+
+export const NoBorder = Template.bind({});
+NoBorder.args = {
+  variant: "no-border",
+  color: "secondary",
+};
+
+export const NoBackground = Template.bind({});
+NoBackground.args = {
+  variant: "no-background",
+  color: "secondary",
+};
+
+export const SolidLight = Template.bind({});
+SolidLight.args = {
+  variant: "solid-light",
   color: "secondary",
 };
 

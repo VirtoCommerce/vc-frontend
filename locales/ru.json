@@ -649,7 +649,17 @@
           "check_your_configuration": "Проверьте конфигурацию товара",
           "required_section": "Раздел обязателен",
           "optional_no_selected": "Персонализируйте свой выбор (необязательно)",
-          "required_no_selected": "Завершите выбор, указав все необходимые параметры"
+          "required_no_selected": "Завершите выбор, указав все необходимые параметры",
+          "section-text-fieldset": {
+            "custom_option_with_input": "Настраиваемый параметр: {0}",
+            "custom_option_empty": "Настраиваемая опция: пусто",
+            "enter_custom_text": "Введите свой текст",
+            "no_selection": "Нет выбора",
+            "none": "Нет",
+            "custom_input": "Пользовательский ввод",
+            "predefined_prefix": "Предопределенный",
+            "option_label": "Опция {0}: {1}"
+          }
         }
       },
       "discount_badge": {
@@ -1470,6 +1480,16 @@
       },
       "title": "Ваш аккаунт заблокирован",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "Поиск",
+      "button_all": "Все",
+      "top_brands_title": "Топ бренды",
+      "title": "Бренды",
+      "no_results": "Ничего не найдено"
+    },
+    "brand": {
+      "products_title": "Товары"
     }
   },
   "identity_error": {
