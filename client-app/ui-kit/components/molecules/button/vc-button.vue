@@ -293,7 +293,7 @@ watch(enabled, async (newValue, oldValue) => {
         --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
       }
 
-      &:not([class*="--solid--"]) #{$loaderIcon} {
+      &:not([class*="--solid-"]) #{$loaderIcon} {
         --loader-border: var(--color-#{$color}-100);
         --loader-border-r: var(--color-#{$color}-500);
       }
@@ -348,6 +348,23 @@ watch(enabled, async (newValue, oldValue) => {
         --text-color: var(--color-#{$color}-700);
       }
     }
+
+    &--solid-light--#{$color} {
+      --bg-color: var(--color-#{$color}-50);
+      --border-color: var(--color-#{$color}-50);
+      --text-color: var(--color-#{$color}-500);
+
+      &:hover:not(#{$loading}, #{$disabled}) {
+        --bg-color: var(--color-#{$color}-100);
+        --border-color: var(--color-#{$color}-100);
+        --text-color: var(--color-#{$color}-600);
+      }
+
+      & #{$loaderIcon} {
+        --loader-border: var(--color-#{$color}-200);
+        --loader-border-r: var(--color-#{$color}-500);
+      }
+    }
   }
 
   &#{$disabled}:not(#{$loading}),
@@ -367,6 +384,11 @@ watch(enabled, async (newValue, oldValue) => {
 
     &[class*="--outline--"] {
       --border-color: var(--color-neutral-300);
+    }
+
+    &[class*="--solid-light--"] {
+      --bg-color: var(--color-neutral-100);
+      --border-color: var(--color-neutral-100);
     }
   }
 
