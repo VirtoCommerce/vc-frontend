@@ -61,8 +61,12 @@ import { useI18n } from "vue-i18n";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
+type SectionType = Pick<ConfigurationSectionType, "allowTextOptions" | "allowCustomText" | "isRequired" | "name"> & {
+  options?: { id?: string; text?: string }[];
+};
+
 interface IProps {
-  section: DeepReadonly<ConfigurationSectionType>;
+  section: DeepReadonly<SectionType>;
   initialValue?: string;
 }
 
