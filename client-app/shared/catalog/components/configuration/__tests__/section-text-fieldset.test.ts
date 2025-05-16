@@ -4,6 +4,7 @@ import { describe, it, expect, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import SectionTextFieldset from "../section-text-fieldset.vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { DeepPartial } from "utility-types";
 import type { PropType } from "vue";
 
 const mockTranslate = (key: string) => {
@@ -103,7 +104,7 @@ const VcInputStub = defineComponent({
 });
 
 describe("SectionTextFieldset", () => {
-  const createComponent = (props: { section?: Partial<ConfigurationSectionType>; initialValue?: string } = {}) => {
+  const createComponent = (props: { section?: DeepPartial<ConfigurationSectionType>; initialValue?: string } = {}) => {
     return mount(SectionTextFieldset, {
       props: {
         section: {
