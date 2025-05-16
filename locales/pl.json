@@ -1470,6 +1470,16 @@
       },
       "title": "Twoje konto jest zablokowane",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "Szukaj",
+      "button_all": "Wszystkie",
+      "top_brands_title": "Najlepsze marki",
+      "title": "Marki",
+      "no_results": "Brak wyników"
+    },
+    "brand": {
+      "products_title": "Produkty"
     }
   },
   "identity_error": {

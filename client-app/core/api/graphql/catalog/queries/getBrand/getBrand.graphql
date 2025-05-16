@@ -1,0 +1,7 @@
+#import "../../fragments/brand.graphql"
+
+query GetBrand($id: String!, $storeId: String!, $cultureName: String!) {
+  brand(id: $id, storeId: $storeId, cultureName: $cultureName) {
+    ...brand
+  }
+}
