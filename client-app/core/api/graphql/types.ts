@@ -600,7 +600,6 @@ export type ConfigurationLineItemType = {
   id?: Maybe<Scalars['String']['output']>;
   /** List price */
   listPrice?: Maybe<MoneyType>;
-  /** Product (item) */
   product?: Maybe<Product>;
   /** The quantity of the option */
   quantity: Scalars['Int']['output'];
@@ -643,10 +642,6 @@ export type ConfigurationSectionType = {
   options?: Maybe<Array<Maybe<ConfigurationLineItemType>>>;
   /** Configuration section type. Possible values: 'Product', 'Text', 'File' */
   type: Scalars['String']['output'];
-  /** Is custom text allowed for Text-type section */
-  allowCustomText: Scalars['Boolean']['output'];
-  /** Is predefined text options allowed for Text-type section */
-  allowTextOptions: Scalars['Boolean']['output'];
 };
 
 export type ConfirmTaskCommandType = {
