@@ -1480,6 +1480,16 @@
       },
       "title": "アカウントがブロックされています",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "検索",
+      "button_all": "すべて",
+      "top_brands_title": "人気ブランド",
+      "title": "ブランド",
+      "no_results": "該当する情報は見つかりませんでした"
+    },
+    "brand": {
+      "products_title": "製品"
     }
   },
   "identity_error": {

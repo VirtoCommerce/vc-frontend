@@ -1480,6 +1480,16 @@
       },
       "title": "Sua conta está bloqueada",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "Pesquisar",
+      "button_all": "Tudo",
+      "top_brands_title": "Melhores marcas",
+      "title": "Marcas",
+      "no_results": "Nenhum resultado encontrado"
+    },
+    "brand": {
+      "products_title": "Produtos"
     }
   },
   "identity_error": {

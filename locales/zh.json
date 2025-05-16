@@ -1480,6 +1480,16 @@
       },
       "title": "您的账户已被封锁",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "搜索",
+      "button_all": "全部",
+      "top_brands_title": "热门品牌",
+      "title": "品牌",
+      "no_results": "未找到结果"
+    },
+    "brand": {
+      "products_title": "商品"
     }
   },
   "identity_error": {
