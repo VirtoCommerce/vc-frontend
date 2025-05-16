@@ -88,7 +88,7 @@ const variationsCartTotalAmount = computed<number>(() => {
     return 0;
   }
 
-  const variationsIds = props.variations?.map((variation) => variation.id!) ?? [];
+  const variationsIds = props.variations?.map((variation) => variation.id) ?? [];
 
   return getItemsTotal(variationsIds);
 });

@@ -32,28 +32,29 @@
 <script setup lang="ts" generic="T">
 import _ from "lodash";
 import { Pagination, Navigation } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
+import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, getCurrentInstance } from "vue";
 import type { NavigationOptions, PaginationOptions, SwiperEvents } from "swiper/types";
 
-interface IProps<T> {
-  slides?: T[];
-  options?: CarouselOptions;
-  navigation?: boolean;
-  pagination?: boolean;
-}
-
-const props = withDefaults(defineProps<IProps<T>>(), {
-  slides: () => [],
-  options: () => ({}),
-});
+const props = withDefaults(
+  defineProps<{
+    slides?: T[];
+    options?: ICarouselOptions;
+    navigation?: boolean;
+    pagination?: boolean;
+  }>(),
+  {
+    slides: () => [],
+    options: () => ({}),
+  },
+);
 
 const componentId = `vc-carousel_${getCurrentInstance()!.uid}`;
 const modules = [Pagination, Navigation];
 
 const listeners = computed<SwiperEvents>(() => props.options.on ?? ({} as SwiperEvents));
 
-const attrs = computed<Omit<CarouselOptions, "on">>(() => {
+const attrs = computed<Omit<ICarouselOptions, "on">>(() => {
   const options = _.clone(props.options);
   delete options.on;
   return options;

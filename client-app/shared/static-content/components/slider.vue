@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints } from "@vueuse/core/index";
+import { useBreakpoints } from "@vueuse/core";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, getCurrentInstance } from "vue";
