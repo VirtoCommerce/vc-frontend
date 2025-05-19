@@ -1,2 +1,2 @@
-export * from "./useCustomAccountLinkComponents";
+export * from "./useCustomLinkComponents";
 export * from "./useNestedMobileHeader";

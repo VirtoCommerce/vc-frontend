@@ -6,14 +6,13 @@ import { useThemeContext } from "@/core/composables/useThemeContext";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { loadModuleLocale } from "@/modules/utils";
 import { useUser } from "@/shared/account/composables/useUser";
-import { useCustomHeaderLinkComponents } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
+import { useCustomLinkComponents } from "@/shared/layout/composables";
 import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
-import { useCustomMobileMenuLinkComponents } from "@/shared/layout/composables/useCustomMobileMenuLinkComponents";
 import { pushMessagesTypePolices } from "./api/graphql/typePolices";
 import { PUSH_MESSAGES_MODULE_ENABLED_KEY, PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY } from "./constants";
 import type { MenuType } from "@/core/types";
 import type { I18n } from "@/i18n";
-import type { ElementType } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
+import type { ElementType } from "@/shared/layout/composables/useCustomLinkComponents";
 import type { ElementType as HeaderElementType } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
 import type { DeepPartial } from "utility-types";
 import type { Router, RouteRecordRaw } from "vue-router";
@@ -102,8 +101,7 @@ export async function init(router: Router, i18n: I18n) {
 
   if (isModuleEnabled) {
     const { mergeMenuSchema } = useNavigations();
-    const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
-    const { registerCustomLinkComponent: registerCustomMobileLinkComponent } = useCustomMobileMenuLinkComponents();
+    const { registerCustomLinkComponent } = useCustomLinkComponents();
     const { registerCustomComponent: registerCustomMobileHeaderComponent } = useCustomMobileHeaderComponents();
     const route: RouteRecordRaw = {
       path: "notifications",
@@ -121,8 +119,8 @@ export async function init(router: Router, i18n: I18n) {
     cache.policies.addTypePolicies(pushMessagesTypePolices);
     mergeMenuSchema(menuItems);
     void loadModuleLocale(i18n, "push-messages");
-    registerCustomLinkComponent(menuLinkCustomElement);
-    registerCustomMobileLinkComponent(menuLinkCustomElementMobile);
+    registerCustomLinkComponent("header", menuLinkCustomElement);
+    registerCustomLinkComponent("mobileMenu", menuLinkCustomElementMobile);
     registerCustomMobileHeaderComponent(headerWidgetCustomElementMobile);
     router.addRoute("Account", route); // NOTE: This route must be added before any asynchronous calls. Delaying it can cause a 404 error if accessed prematurely.
   }
