@@ -650,7 +650,17 @@
           "check_your_configuration": "Vérifiez la configuration de votre produit",
           "required_section": "La section est obligatoire",
           "optional_no_selected": "Personnalisez davantage votre sélection (facultatif)",
-          "required_no_selected": "Veuillez compléter toutes les options requises pour finaliser votre sélection."
+          "required_no_selected": "Veuillez compléter toutes les options requises pour finaliser votre sélection.",
+          "section-text-fieldset": {
+            "custom_option_with_input": "Option personnalisée : {0}",
+            "custom_option_empty": "Option personnalisée : vide",
+            "enter_custom_text": "Saisir un texte personnalisé",
+            "no_selection": "Aucune sélection",
+            "none": "Aucun(e)",
+            "custom_input": "Saisie personnalisée",
+            "predefined_prefix": "Prédéfini",
+            "option_label": "Option {0} : {1}"
+          }
         }
       },
       "discount_badge": {
@@ -1471,6 +1481,16 @@
       },
       "title": "Votre compte est bloqué",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "Rechercher",
+      "button_all": "Tout",
+      "top_brands_title": "Meilleures marques",
+      "title": "Marques",
+      "no_results": "Aucun résultat trouvé"
+    },
+    "brand": {
+      "products_title": "Produits"
     }
   },
   "identity_error": {

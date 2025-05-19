@@ -1,6 +1,7 @@
 <template>
   <div class="option-file">
     <VcFileUploader
+      data-test-id="file-option"
       :files="files"
       v-bind="fileOptions"
       removable
