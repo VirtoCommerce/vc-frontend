@@ -14,6 +14,7 @@
           'vc-menu-item__inner--disabled': disabled,
           'vc-menu-item__inner--truncate': truncate,
           'vc-menu-item__inner--nowrap': nowrap,
+          'vc-menu-item__inner--max-lines': maxLines,
         },
       ]"
       @click="enabled ? $emit('click', $event) : null"
@@ -55,6 +56,7 @@ interface IProps {
   disabled?: boolean;
   truncate?: boolean;
   nowrap?: boolean;
+  maxLines?: number | string;
   tag?: string;
   clickable?: boolean;
 }
@@ -69,6 +71,7 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   clickable: true,
+  maxLines: "",
 });
 
 const currentElement = ref<HTMLElement>();
@@ -131,17 +134,21 @@ onMounted(() => {
 
 <style lang="scss">
 .vc-menu-item {
+  --props-max-lines: v-bind(maxLines);
+  --max-lines: var(--props-max-lines, 2);
+
   $colors: primary, secondary, success, info, warning, danger, neutral;
 
   $active: "";
   $truncate: "";
+  $maxLines: "";
 
   @apply list-none select-none;
 
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex w-full px-3 text-left rounded-[inherit] text-sm/[0.875rem];
+    @apply flex items-center w-full px-3 text-left rounded-[inherit] text-sm/[0.875rem];
 
     &:not(:disabled) {
       @apply bg-additional-50 text-neutral-950;
@@ -159,6 +166,10 @@ onMounted(() => {
 
     &--nowrap {
       @apply whitespace-nowrap #{!important};
+    }
+
+    &--max-lines {
+      $maxLines: &;
     }
 
     &--size {
@@ -228,6 +239,10 @@ onMounted(() => {
 
     #{$truncate} & > * {
       @apply min-w-0 truncate;
+    }
+
+    #{$maxLines} & {
+      @apply line-clamp-[var(--max-lines)];
     }
   }
 

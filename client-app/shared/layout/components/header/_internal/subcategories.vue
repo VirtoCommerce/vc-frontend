@@ -1,10 +1,11 @@
 <template>
   <Transition name="subcategories--slide">
-    <div
+    <VcScrollbar
       v-if="item && item.childCategories?.length"
       class="subcategories"
       role="button"
       tabindex="-1"
+      vertical
       @blur="scheduleHide"
       @mouseleave="scheduleHide"
       @focus="cancelHide"
@@ -17,6 +18,7 @@
           class="subcategories__item"
           size="sm"
           color="secondary"
+          max-lines="2"
           :to="routes[child.id]"
           @click="$emit('close')"
           @focus="showChildren(child)"
@@ -29,19 +31,16 @@
           </template>
         </VcMenuItem>
       </ul>
-    </div>
+    </VcScrollbar>
   </Transition>
 
-  <template v-if="activeItem">
-    <div class="subcategories__divider"></div>
-
-    <Subcategories
-      :item="activeItem"
-      :on-schedule-hide="scheduleHide"
-      :on-cancel-hide="cancelHide"
-      @close="$emit('close')"
-    />
-  </template>
+  <Subcategories
+    v-if="activeItem"
+    :item="activeItem"
+    :on-schedule-hide="scheduleHide"
+    :on-cancel-hide="cancelHide"
+    @close="$emit('close')"
+  />
 </template>
 
 <script setup lang="ts">
@@ -121,7 +120,15 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .subcategories {
-  @apply w-[21.5rem] max-h-[100%-2.5rem] overflow-y-auto;
+  @apply relative pe-2.5 w-[15rem] max-h-[100%-2.5rem];
+
+  @media (min-width: theme("screens.2xl")) {
+    @apply w-[21.5rem];
+  }
+
+  &:first-child {
+    @apply ms-2.5;
+  }
 
   &--slide {
     &-enter-active,
@@ -133,34 +140,42 @@ onBeforeUnmount(() => {
         opacity 0.3s ease-in-out;
 
       & > * {
-        @apply w-[19.5rem];
+        @apply w-full;
       }
     }
 
     &-enter-from,
     &-leave-to {
-      @apply w-0 opacity-0;
+      @apply w-0 opacity-0 overflow-hidden;
     }
 
     &-enter-to,
     &-leave-from {
-      @apply w-[21.5rem] opacity-100;
+      @apply w-[15rem] max-w-full opacity-100 overflow-hidden;
+
+      @media (min-width: theme("screens.2xl")) {
+        @apply w-[21.5rem];
+      }
     }
   }
 
   &__list {
-    @apply flex-none w-[21.5rem];
+    @apply flex-none w-[15rem];
+
+    @media (min-width: theme("screens.2xl")) {
+      @apply w-[21.5rem];
+    }
   }
 
   &__arrow {
     @apply fill-secondary-400;
   }
 
-  &__divider {
-    @apply self-stretch w-px bg-neutral-200;
+  &__divider-container {
+    @apply flex justify-center w-6 transition-all duration-300 ease-in-out;
 
     &:last-child {
-      @apply hidden;
+      @apply w-0;
     }
   }
 }
