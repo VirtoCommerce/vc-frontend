@@ -6,6 +6,7 @@
       role="button"
       tabindex="-1"
       vertical
+      :aria-label="ariaLabel"
       @blur="scheduleHide"
       @mouseleave="scheduleHide"
       @focus="cancelHide"
@@ -19,6 +20,7 @@
           size="sm"
           color="secondary"
           max-lines="2"
+          role="menuitem"
           :to="routes[child.id]"
           @click="$emit('close')"
           @focus="showChildren(child)"
@@ -39,6 +41,7 @@
     :item="activeItem"
     :on-schedule-hide="scheduleHide"
     :on-cancel-hide="cancelHide"
+    :aria-label="$t('shared.layout.header.mega_menu.aria_labels.subcategories', { category: activeItem.name })"
     @close="$emit('close')"
   />
 </template>
@@ -56,6 +59,7 @@ interface IProps {
   item: Category;
   onCancelHide?: () => void;
   onScheduleHide?: () => void;
+  ariaLabel?: string;
 }
 
 defineEmits<IEmits>();

@@ -1,10 +1,11 @@
 <template>
-  <component :is="componentTag" :id="componentId" v-bind="$attrs" ref="currentElement" class="vc-menu-item">
+  <component :is="componentTag" :id="componentId" v-bind="$attrs" ref="currentElement" class="vc-menu-item" role="none">
     <component
       :is="innerTag"
       v-bind="attrs"
       :disabled="disabled"
       :title="title"
+      :role="role"
       :class="[
         'vc-menu-item__inner',
         `vc-menu-item__inner--size--${size}`,
@@ -59,6 +60,7 @@ interface IProps {
   maxLines?: number | string;
   tag?: string;
   clickable?: boolean;
+  role?: string;
 }
 
 defineOptions({

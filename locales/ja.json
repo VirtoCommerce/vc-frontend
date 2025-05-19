@@ -351,6 +351,13 @@
           "select_address": "住所を選択",
           "title": "配送先：",
           "add_new_address": "新しい住所を追加"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "カテゴリー",
+            "subcategories": "サブカテゴリー {category}",
+            "navigation": "ナビゲーション"
+          }
         }
       },
       "footer": {

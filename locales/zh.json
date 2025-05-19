@@ -351,6 +351,13 @@
           "select_address": "选择地址",
           "title": "运送至：",
           "add_new_address": "添加新地址"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "类别",
+            "subcategories": "子类 {category}",
+            "navigation": "导航"
+          }
         }
       },
       "footer": {

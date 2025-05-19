@@ -7,7 +7,7 @@
     <TopHeader class="relative z-[21] border-b border-neutral-300 print:hidden" />
 
     <div class="sticky top-0 z-20 shadow-md print:hidden">
-      <BottomHeader :show-menu="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
+      <BottomHeader :is-menu-shown="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
 
       <MegaMenu v-if="desktopMenuMode === DESKTOP_MENU_MODES.horizontal" class="border-y border-neutral-200" />
     </div>

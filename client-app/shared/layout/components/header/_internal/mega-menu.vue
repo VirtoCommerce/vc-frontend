@@ -1,8 +1,14 @@
 <template>
-  <nav :id="componentId" ref="megaMenuElement" class="mega-menu">
-    <VcPopover arrow-enabled placement="bottom-start" class="mega-menu__popover">
+  <nav ref="megaMenuElement" class="mega-menu" role="navigation">
+    <VcPopover
+      arrow-enabled
+      placement="bottom-start"
+      class="mega-menu__popover"
+      :aria-label="$t('common.buttons.all_products')"
+      role="menu"
+    >
       <template #trigger>
-        <button type="button" to="/catalog" class="mega-menu__button" :disabled="loading">
+        <button type="button" class="mega-menu__button" tabindex="0" :disabled="loading">
           <VcLoader v-if="loading" class="mega-menu__loader" />
           <VcIcon v-else class="mega-menu__icon" name="drag-dots" />
 
@@ -10,18 +16,27 @@
         </button>
       </template>
 
-      <template #content="{ close }">
+      <template v-if="category" #content="{ close }">
         <div class="mega-menu__content">
-          <Subcategories v-if="category" :item="category" @close="close" />
+          <Subcategories
+            :item="category"
+            :aria-label="$t('shared.layout.header.mega_menu.aria_labels.categories')"
+            @close="close"
+          />
         </div>
       </template>
     </VcPopover>
 
     <div class="mega-menu__divider"></div>
 
-    <ul ref="navElement" class="mega-menu__nav">
-      <li v-for="(item, index) in visibleItems" :key="index" class="mega-menu__item" menu-item>
-        <router-link :to="item.route ?? '#'" class="mega-menu__link">
+    <ul
+      ref="navElement"
+      class="mega-menu__nav"
+      role="menubar"
+      :aria-label="$t('shared.layout.header.mega_menu.aria_labels.navigation')"
+    >
+      <li v-for="(item, index) in visibleItems" :key="index" class="mega-menu__item" menu-item role="none">
+        <router-link :to="item.route ?? '#'" class="mega-menu__link" role="menuitem">
           {{ item.title }}
         </router-link>
       </li>
@@ -34,12 +49,13 @@ import { useElementBounding, watchDebounced } from "@vueuse/core";
 import { ref, computed, onMounted, useTemplateRef, nextTick } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useCategory } from "@/shared/catalog";
-import { useComponentId } from "@/ui-kit/composables";
 import Subcategories from "./subcategories.vue";
 
 interface IProps {}
 
 defineProps<IProps>();
+
+const MENU_PADDING_RIGHT = 20;
 
 const calculating = ref(false);
 const navRef = useTemplateRef<HTMLElement>("navElement");
@@ -47,8 +63,6 @@ const menuRef = useTemplateRef<HTMLElement>("megaMenuElement");
 const visibleItemsCount = ref(1);
 
 const { width: menuRight } = useElementBounding(menuRef);
-
-const componentId = useComponentId("mega-menu");
 const { catalogMenuItems } = useNavigations();
 const { category, fetchCategory, loading } = useCategory();
 
@@ -70,7 +84,7 @@ async function calculateVisibleItems() {
       return;
     }
 
-    if (useElementBounding(item).right.value > menuRight.value - 20) {
+    if (useElementBounding(item).right.value > menuRight.value - MENU_PADDING_RIGHT) {
       itemsCount--;
       break;
     }

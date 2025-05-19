@@ -18,6 +18,8 @@
       class="vc-popover__trigger"
       role="button"
       tabindex="-1"
+      :aria-label="ariaLabel"
+      :aria-expanded="opened"
       @mouseenter="hover && open()"
       @mouseleave="hover && close()"
       @focusin="hover && open()"
@@ -76,6 +78,7 @@ interface IProps {
   disableTriggerEvents?: boolean;
   arrowEnabled?: boolean;
   closeOnBlur?: boolean;
+  ariaLabel?: string;
 }
 
 const emit = defineEmits<IEmits>();

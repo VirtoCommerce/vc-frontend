@@ -351,6 +351,13 @@
           "select_address": "Wybierz adres",
           "title": "Wyślij do:",
           "add_new_address": "Dodaj nowy adres"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "Kategorie",
+            "subcategories": "Podkategorie {category}",
+            "navigation": "Navigacja"
+          }
         }
       },
       "footer": {
