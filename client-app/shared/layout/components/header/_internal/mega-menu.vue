@@ -8,7 +8,13 @@
       role="menu"
     >
       <template #trigger>
-        <button type="button" class="mega-menu__button" tabindex="0" :disabled="loading">
+        <button
+          type="button"
+          class="mega-menu__button"
+          tabindex="0"
+          :disabled="loading"
+          @keyup.arrow-down="focusMenuItem"
+        >
           <VcLoader v-if="loading" class="mega-menu__loader" />
           <VcIcon v-else class="mega-menu__icon" name="drag-dots" />
 
@@ -96,6 +102,20 @@ async function calculateVisibleItems() {
   calculating.value = false;
 }
 
+function focusMenuItem() {
+  if (!category.value || !category.value.childCategories.length) {
+    return;
+  }
+
+  const item = document.querySelector(
+    `[id="subcategory-${category.value?.childCategories[0].id}"] > [role="menuitem"]`,
+  ) as HTMLElement;
+
+  if (item) {
+    item.focus();
+  }
+}
+
 watchDebounced(
   [menuRight, () => catalogMenuItems.value],
   async () => {
@@ -128,10 +148,18 @@ onMounted(async () => {
   }
 
   &__button {
-    @apply flex items-center p-1 h-full gap-2 text-sm text-[--header-bottom-link-color] font-bold whitespace-nowrap hover:text-[--header-bottom-link-hover-color];
+    @apply flex items-center p-1 h-full gap-2 text-sm text-[--header-bottom-link-color] font-bold whitespace-nowrap border-none rounded;
+
+    &:hover {
+      @apply text-[--header-bottom-link-hover-color];
+    }
 
     &:disabled {
       @apply cursor-not-allowed text-neutral-400;
+    }
+
+    &:focus {
+      @apply outline-none ring-2 ring-primary-100;
     }
   }
 
@@ -148,7 +176,11 @@ onMounted(async () => {
   }
 
   &__link {
-    @apply text-sm font-normal text-[--header-bottom-link-color] whitespace-nowrap hover:text-[--header-bottom-link-hover-color];
+    @apply text-sm font-normal text-[--header-bottom-link-color] whitespace-nowrap;
+
+    &:hover {
+      @apply text-[--header-bottom-link-hover-color];
+    }
   }
 
   &__content {
