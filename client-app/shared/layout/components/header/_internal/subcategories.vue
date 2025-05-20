@@ -3,10 +3,11 @@
     <VcScrollbar
       v-if="item && item.childCategories?.length"
       class="subcategories"
-      role="button"
+      role="menubar"
       tabindex="-1"
       vertical
       :aria-label="ariaLabel"
+      @onkeydown.enter="scheduleHide"
       @blur="scheduleHide"
       @mouseleave="scheduleHide"
       @focus="cancelHide"
@@ -14,7 +15,8 @@
     >
       <ul class="subcategories__list">
         <VcMenuItem
-          v-for="child in item.childCategories"
+          v-for="(child, index) in item.childCategories"
+          :id="`subcategory-${child.id}`"
           :key="child.id"
           class="subcategories__item"
           size="sm"
@@ -22,8 +24,12 @@
           max-lines="2"
           role="menuitem"
           :to="routes[child.id]"
+          @keyup.arrow-right="focusMenuItem(child.childCategories[0].id)"
+          @keyup.arrow-left="focusMenuItem(item.id)"
+          @keyup.arrow-up="focusMenuItem(item.childCategories[index - 1].id)"
+          @keyup.arrow-down="focusMenuItem(item.childCategories[index + 1].id)"
           @click="$emit('close')"
-          @focus="showChildren(child)"
+          @focusin="showChildren(child)"
           @mouseover="showChildren(child)"
         >
           {{ child.name }}
@@ -109,6 +115,18 @@ function cancelHide() {
   switchTimeout = null;
 
   props.onCancelHide?.();
+}
+
+function focusMenuItem(id?: string) {
+  if (!id) {
+    return;
+  }
+
+  const element = document.querySelector(`[id="subcategory-${id}"] > [role="menuitem"]`) as HTMLElement;
+
+  if (element) {
+    element.focus();
+  }
 }
 
 onBeforeUnmount(() => {

@@ -35,7 +35,7 @@
       role="menubar"
       :aria-label="$t('shared.layout.header.mega_menu.aria_labels.navigation')"
     >
-      <li v-for="(item, index) in visibleItems" :key="index" class="mega-menu__item" menu-item role="none">
+      <li v-for="(item, index) in visibleItems" :key="index" class="mega-menu__item" menu-item>
         <router-link :to="item.route ?? '#'" class="mega-menu__link" role="menuitem">
           {{ item.title }}
         </router-link>
