@@ -184,7 +184,7 @@ onMounted(async () => {
   }
 
   &__content {
-    @apply flex min-w-0 max-h-[calc(100vh-11.5rem)] px-2.5 py-5 bg-[--header-bottom-bg-color] rounded shadow-lg;
+    @apply flex min-w-0 max-h-[calc(100vh-11.5rem)] ps-2.5 py-5 bg-[--header-bottom-bg-color] rounded shadow-lg;
   }
 }
 </style>

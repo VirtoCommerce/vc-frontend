@@ -142,14 +142,14 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .subcategories {
-  @apply relative pe-2.5 w-[15rem] max-h-[100%-2.5rem];
+  @apply relative me-2.5 w-[15rem] max-h-[100%-2.5rem];
 
   @media (min-width: theme("screens.2xl")) {
     @apply w-[21.5rem];
   }
 
-  &:first-child {
-    @apply ms-2.5;
+  &:not(:first-child) {
+    @apply ps-2.5 border-l border-secondary-200;
   }
 
   &--slide {
@@ -168,24 +168,20 @@ onBeforeUnmount(() => {
 
     &-enter-from,
     &-leave-to {
-      @apply w-0 opacity-0 overflow-hidden;
+      @apply me-0 w-0 opacity-0 overflow-hidden;
     }
 
     &-enter-to,
     &-leave-from {
-      @apply w-[15rem] max-w-full opacity-100 overflow-hidden;
-
-      @media (min-width: theme("screens.2xl")) {
-        @apply w-[21.5rem];
-      }
+      @apply me-2.5 max-w-full opacity-100 overflow-hidden;
     }
   }
 
   &__list {
-    @apply flex-none w-[15rem];
+    @apply flex-none w-[14.375rem];
 
     @media (min-width: theme("screens.2xl")) {
-      @apply w-[21.5rem];
+      @apply w-[20.875rem];
     }
   }
 
