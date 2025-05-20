@@ -100,7 +100,7 @@ export async function init(router: Router, i18n: I18n) {
     cache.policies.addTypePolicies(pushMessagesTypePolices);
     mergeMenuSchema(menuItems);
     void loadModuleLocale(i18n, "push-messages");
-    registerComponent("header", "push-messages", {
+    registerComponent("headerMenu", "push-messages", {
       component: defineAsyncComponent(() => import("./components/link-push-messages.vue")),
     });
     registerComponent("mobileMenu", "push-messages", {

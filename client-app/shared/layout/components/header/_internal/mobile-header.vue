@@ -54,7 +54,7 @@
             </button>
 
             <component
-              :is="item"
+              :is="item.component"
               v-for="(item, index) in mobileHeaderComponents"
               :key="index"
               class="px-1 py-2 xs:px-2"

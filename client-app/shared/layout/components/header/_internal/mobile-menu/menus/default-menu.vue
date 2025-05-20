@@ -3,7 +3,7 @@
     <li v-for="item in items" :key="item.title">
       <template v-if="item.id && customLinkComponents[item.id]">
         <component
-          :is="item.id && customLinkComponents[item.id]"
+          :is="item.id && customLinkComponents[item.id].component"
           :item="item"
           @close="$emit('close')"
           @select-item="$emit('selectItem', item)"

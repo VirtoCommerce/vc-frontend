@@ -38,7 +38,7 @@
 
       <ul class="-mx-2 flex items-center">
         <li v-for="item in desktopMainMenuItems" :key="item.id">
-          <component :is="(item.id && customLinkComponents[item.id]) || LinkDefault" :item="item" />
+          <component :is="(item.id && customLinkComponents[item.id]?.component) || LinkDefault" :item="item" />
         </li>
       </ul>
     </nav>

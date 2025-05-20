@@ -5,7 +5,7 @@ import { Logger } from "@/core/utilities";
 import type { ComponentRegistryType, ConditionParamsType } from "@/shared/common/types/components-registry";
 
 const initialComponentRegistry: ComponentRegistryType = {
-  header: {
+  headerMenu: {
     compare: {
       component: defineAsyncComponent(
         () => import("@/shared/layout/components/header/_internal/link-components/link-compare.vue"),
@@ -29,7 +29,7 @@ const initialComponentRegistry: ComponentRegistryType = {
       ),
     },
   },
-  account: {
+  accountMenu: {
     orders: {
       component: defineAsyncComponent(
         () => import("@/shared/account/components/account-navigation-link-components/link-orders.vue"),
@@ -106,9 +106,9 @@ function _useComponentsRegistry() {
   return {
     components: componentRegistry.value,
 
-    headerLinkComponents: getComponents("header"),
+    headerLinkComponents: getComponents("headerMenu"),
     mobileLinkComponents: getComponents("mobileMenu"),
-    accountLinkComponents: getComponents("account"),
+    accountLinkComponents: getComponents("accountMenu"),
     mobileHeaderComponents: getComponents("mobileHeader"),
 
     getComponents,

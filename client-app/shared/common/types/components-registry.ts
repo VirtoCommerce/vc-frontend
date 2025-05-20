@@ -21,8 +21,8 @@ export type RawConditionType<T> = T extends { condition?: infer C } ? C : never;
 export type ConditionParamsType<T> = RawConditionType<T> extends (...args: infer P) => boolean ? P : never;
 
 export type ComponentRegistryType = {
-  header: { [key: string]: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }> };
+  headerMenu: { [key: string]: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }> };
   mobileMenu: { [key: string]: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }> };
-  account: { [key: string]: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }> };
+  accountMenu: { [key: string]: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }> };
   mobileHeader: { [key: string]: ComponentRegistryItemType };
 };

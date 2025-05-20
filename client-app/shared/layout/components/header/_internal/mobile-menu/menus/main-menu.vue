@@ -8,7 +8,7 @@
       </li>
       <li v-for="item in mobileMainMenuItems" :key="item.title">
         <component
-          :is="(item.id && mobileLinkComponents[item.id]) || LinkDefault"
+          :is="(item.id && mobileLinkComponents[item.id]?.component) || LinkDefault"
           :item="item"
           @close="$emit('close')"
           @select-item="$emit('selectItem', item)"
