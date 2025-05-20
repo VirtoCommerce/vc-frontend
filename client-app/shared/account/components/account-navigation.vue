@@ -24,7 +24,7 @@
 import { computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
-import { useCustomLinkComponents } from "@/shared/layout/composables";
+import { useComponentsRegistry } from "@/shared/common/composables";
 import LinkDefault from "./account-navigation-link-components/link-default.vue";
 import LinkLists from "./account-navigation-link-components/link-lists.vue";
 import LinkOrders from "./account-navigation-link-components/link-orders.vue";
@@ -33,10 +33,10 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 const { isCorporateMember } = useUser();
 
 const { desktopAccountMenuItems, desktopCorporateMenuItems } = useNavigations();
-const { accountLinkComponents, registerCustomLinkComponent } = useCustomLinkComponents();
+const { accountLinkComponents, registerComponent } = useComponentsRegistry();
 
-registerCustomLinkComponent("account", { id: "orders", component: LinkOrders });
-registerCustomLinkComponent("account", { id: "lists", component: LinkLists });
+registerComponent("account", { id: "orders", component: LinkOrders });
+registerComponent("account", { id: "lists", component: LinkLists });
 
 function canShowItem(item: ExtendedMenuLinkType) {
   return !(item.id === "addresses" && isCorporateMember.value);

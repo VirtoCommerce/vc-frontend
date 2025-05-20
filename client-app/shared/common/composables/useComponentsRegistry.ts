@@ -1,31 +1,28 @@
 import { createGlobalState } from "@vueuse/core";
 import { defineAsyncComponent, shallowReadonly, shallowRef } from "vue";
+import { IS_DEVELOPMENT } from "@/core/constants";
 import type { ExtendedMenuLinkType } from "@/core/types";
-import type { DefineComponent } from "vue";
+import type { Component } from "vue";
 
 export type LinkElementType = {
   id: string;
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  component: DefineComponent<{ item: ExtendedMenuLinkType }, Record<string, any>, any>;
+  component: Component<{ item: ExtendedMenuLinkType }, Record<string, unknown>, unknown>;
 };
 
 export type MobileHeaderElementType = {
   id: string;
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  component: DefineComponent<Record<string, any>, Record<string, any>, any>;
+  component: Component;
 };
 
-export type ComponentType = "header" | "mobileMenu" | "account" | "mobileHeader";
-
-type ComponentRegistry = {
+type ComponentRegistryType = {
   header: { [key: string]: LinkElementType["component"] };
   mobileMenu: { [key: string]: LinkElementType["component"] };
   account: { [key: string]: LinkElementType["component"] };
   mobileHeader: { [key: string]: MobileHeaderElementType["component"] };
 };
 
-function _useCustomLinkComponents() {
-  const componentRegistry = shallowRef<ComponentRegistry>({
+function _useComponentsRegistry() {
+  const componentRegistry = shallowRef<ComponentRegistryType>({
     header: {
       compare: defineAsyncComponent(
         () => import("@/shared/layout/components/header/_internal/link-components/link-compare.vue"),
@@ -53,24 +50,29 @@ function _useCustomLinkComponents() {
     mobileHeader: {},
   });
 
-  function registerCustomLinkComponent(type: Exclude<ComponentType, "mobileHeader">, element: LinkElementType): void;
-  function registerCustomLinkComponent(type: "mobileHeader", element: MobileHeaderElementType): void;
-  function registerCustomLinkComponent(type: ComponentType, element: LinkElementType | MobileHeaderElementType) {
+  function registerComponent<T extends keyof ComponentRegistryType>(
+    type: T,
+    element: { id: string; component: ComponentRegistryType[T][string] },
+  ) {
     if (!componentRegistry.value[type][element.id]) {
-      if (type === "mobileHeader") {
-        (componentRegistry.value[type] as Record<string, MobileHeaderElementType["component"]>)[element.id] = (
-          element as MobileHeaderElementType
-        ).component;
-      } else {
-        (componentRegistry.value[type] as Record<string, LinkElementType["component"]>)[element.id] = (
-          element as LinkElementType
-        ).component;
-      }
+      componentRegistry.value[type][element.id] = element.component;
     }
   }
 
-  function getCustomLinkComponents(type: ComponentType) {
+  function unregisterComponent<T extends keyof ComponentRegistryType>(type: T, id: string) {
+    delete componentRegistry.value[type][id];
+  }
+
+  function getComponents(type: keyof ComponentRegistryType) {
     return shallowReadonly(componentRegistry.value[type]);
+  }
+
+  if (IS_DEVELOPMENT) {
+    window.componentsRegistry = {
+      components: componentRegistry.value,
+      registerComponent,
+      getComponents,
+    };
   }
 
   return {
@@ -79,9 +81,10 @@ function _useCustomLinkComponents() {
     accountLinkComponents: shallowReadonly(componentRegistry.value.account),
     mobileHeaderComponents: shallowReadonly(componentRegistry.value.mobileHeader),
 
-    getCustomLinkComponents,
-    registerCustomLinkComponent,
+    getComponents,
+    registerComponent,
+    unregisterComponent,
   };
 }
 
-export const useCustomLinkComponents = createGlobalState(_useCustomLinkComponents);
+export const useComponentsRegistry = createGlobalState(_useComponentsRegistry);

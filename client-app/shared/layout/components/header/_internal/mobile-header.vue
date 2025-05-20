@@ -145,8 +145,8 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
+import { useComponentsRegistry } from "@/shared/common/composables/useComponentsRegistry";
 import { useNestedMobileHeader } from "@/shared/layout";
-import { useCustomLinkComponents } from "@/shared/layout/composables/useCustomLinkComponents";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
@@ -155,7 +155,7 @@ import type { RouteLocationRaw } from "vue-router";
 import BarcodeScanner from "@/shared/layout/components/search-bar/barcode-scanner.vue";
 const router = useRouter();
 
-const { mobileHeaderComponents } = useCustomLinkComponents();
+const { mobileHeaderComponents } = useComponentsRegistry();
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);

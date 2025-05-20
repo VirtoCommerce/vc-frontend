@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { capitalize } from "lodash";
-import { useCustomLinkComponents } from "@/shared/layout/composables";
+import { useComponentsRegistry } from "@/shared/common/composables";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import MobileMenuLink from "@/shared/layout/components/header/_internal/mobile-menu/mobile-menu-link.vue";
 
@@ -35,7 +35,7 @@ defineEmits<IEmits>();
 
 defineProps<IProps>();
 
-const { mobileLinkComponents: customLinkComponents } = useCustomLinkComponents();
+const { mobileLinkComponents: customLinkComponents } = useComponentsRegistry();
 
 interface IProps {
   items: ExtendedMenuLinkType[];
