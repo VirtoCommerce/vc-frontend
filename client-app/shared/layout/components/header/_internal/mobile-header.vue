@@ -55,7 +55,7 @@
 
             <component
               :is="item.component"
-              v-for="(item, index) in mobileHeaderComponents"
+              v-for="(item, index) in getRegistryItems('mobileHeader')"
               :key="index"
               class="px-1 py-2 xs:px-2"
             />
@@ -155,7 +155,7 @@ import type { RouteLocationRaw } from "vue-router";
 import BarcodeScanner from "@/shared/layout/components/search-bar/barcode-scanner.vue";
 const router = useRouter();
 
-const { mobileHeaderComponents } = useComponentsRegistry();
+const { getRegistryItems } = useComponentsRegistry();
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);

@@ -63,8 +63,16 @@ function _useComponentsRegistry() {
     delete componentRegistry.value[type][id];
   }
 
-  function getComponents(type: keyof ComponentRegistryType) {
+  function getRegistryItem(type: keyof ComponentRegistryType, id: string) {
+    return componentRegistry.value[type][id];
+  }
+
+  function getRegistryItems(type: keyof ComponentRegistryType) {
     return shallowReadonly(componentRegistry.value[type]);
+  }
+
+  function getComponent(type: keyof ComponentRegistryType, id: string) {
+    return componentRegistry.value[type][id]?.component;
   }
 
   function isComponentRegistered<T extends keyof ComponentRegistryType>(type: T, id: string) {
@@ -94,29 +102,35 @@ function _useComponentsRegistry() {
   if (IS_DEVELOPMENT) {
     window.vcComponentsRegistry = {
       components: componentRegistry.value,
+
       registerComponent,
-      getComponents,
       unregisterComponent,
+
+      getComponent,
+      getRegistryItem,
+      getRegistryItems,
+
+      getComponentProps,
+
       isComponentRegistered,
       shouldRenderComponent,
-      getComponentProps,
     };
   }
 
   return {
     components: componentRegistry.value,
 
-    headerLinkComponents: getComponents("headerMenu"),
-    mobileLinkComponents: getComponents("mobileMenu"),
-    accountLinkComponents: getComponents("accountMenu"),
-    mobileHeaderComponents: getComponents("mobileHeader"),
-
-    getComponents,
     registerComponent,
     unregisterComponent,
+
+    getComponent,
+    getRegistryItem,
+    getRegistryItems,
+
+    getComponentProps,
+
     isComponentRegistered,
     shouldRenderComponent,
-    getComponentProps,
   };
 }
 

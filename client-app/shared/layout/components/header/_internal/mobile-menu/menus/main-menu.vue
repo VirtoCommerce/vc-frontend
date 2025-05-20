@@ -8,7 +8,7 @@
       </li>
       <li v-for="item in mobileMainMenuItems" :key="item.title">
         <component
-          :is="(item.id && mobileLinkComponents[item.id]?.component) || LinkDefault"
+          :is="(item.id && getComponent('mobileMenu', item.id)) || LinkDefault"
           :item="item"
           @close="$emit('close')"
           @select-item="$emit('selectItem', item)"
@@ -133,7 +133,7 @@ const { user, operator, isAuthenticated, isCorporateMember } = useUser();
 const { mobileMainMenuItems, mobileCorporateMenuItem, mobileAccountMenuItem } = useNavigations();
 const { t } = useI18n();
 const { supportedCurrencies } = useCurrency();
-const { mobileLinkComponents } = useComponentsRegistry();
+const { getComponent } = useComponentsRegistry();
 
 const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
   { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },
