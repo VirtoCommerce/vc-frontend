@@ -8,14 +8,14 @@ declare global {
   type VcColorType = (typeof COLORS)[number];
   type VcMainColorType = (typeof MAIN_COLORS)[number];
 
-  type NonNullableSwiperOptions = {
+  type NonNullableSwiperOptionsType = {
     [prop in keyof Omit<
       SwiperOptions,
       "navigation" | "pagination" | "createElements" | "onAny" | "swipeHandler" | "_emitClasses"
     >]?: NonNullable<SwiperOptions[prop]>;
   };
 
-  interface CarouselOptions extends NonNullableSwiperOptions {
+  interface ICarouselOptions extends NonNullableSwiperOptionsType {
     swipeHandler?: boolean;
     on?: SwiperEvents;
   }
