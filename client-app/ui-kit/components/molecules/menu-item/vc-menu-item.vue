@@ -16,7 +16,7 @@
           'vc-menu-item__inner--nowrap': nowrap,
         },
       ]"
-      @mousedown="enabled ? $emit('click', $event) : null"
+      @click="enabled ? $emit('click', $event) : null"
     >
       <span v-if="$slots.prepend" class="vc-menu-item__prepend">
         <slot name="prepend" />
