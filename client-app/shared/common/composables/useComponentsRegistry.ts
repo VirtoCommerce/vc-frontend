@@ -76,7 +76,7 @@ function _useComponentsRegistry() {
   }
 
   function isComponentRegistered<T extends keyof ComponentRegistryType>(type: T, id: string) {
-    return componentRegistry.value[type][id] !== undefined;
+    return componentRegistry.value[type][id]?.component !== undefined;
   }
 
   function shouldRenderComponent(
@@ -101,7 +101,7 @@ function _useComponentsRegistry() {
 
   if (IS_DEVELOPMENT) {
     window.vcComponentsRegistry = {
-      components: componentRegistry.value,
+      registryItems: componentRegistry.value,
 
       registerComponent,
       unregisterComponent,
@@ -118,7 +118,7 @@ function _useComponentsRegistry() {
   }
 
   return {
-    components: componentRegistry.value,
+    registryItems: componentRegistry.value,
 
     registerComponent,
     unregisterComponent,
