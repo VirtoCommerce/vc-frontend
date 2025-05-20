@@ -1,25 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { defineAsyncComponent, shallowReadonly, shallowRef } from "vue";
 import { IS_DEVELOPMENT } from "@/core/constants";
-import type { ExtendedMenuLinkType } from "@/core/types";
-import type { Component } from "vue";
-
-export type LinkElementType = {
-  id: string;
-  component: Component<{ item: ExtendedMenuLinkType }, Record<string, unknown>, unknown>;
-};
-
-export type MobileHeaderElementType = {
-  id: string;
-  component: Component;
-};
-
-type ComponentRegistryType = {
-  header: { [key: string]: LinkElementType["component"] };
-  mobileMenu: { [key: string]: LinkElementType["component"] };
-  account: { [key: string]: LinkElementType["component"] };
-  mobileHeader: { [key: string]: MobileHeaderElementType["component"] };
-};
+import type { ComponentRegistryType } from "@/shared/common/types/components-registry";
 
 function _useComponentsRegistry() {
   const componentRegistry = shallowRef<ComponentRegistryType>({
@@ -52,10 +34,11 @@ function _useComponentsRegistry() {
 
   function registerComponent<T extends keyof ComponentRegistryType>(
     type: T,
-    element: { id: string; component: ComponentRegistryType[T][string] },
+    id: string,
+    component: ComponentRegistryType[T][string],
   ) {
-    if (!componentRegistry.value[type][element.id]) {
-      componentRegistry.value[type][element.id] = element.component;
+    if (!componentRegistry.value[type][id]) {
+      componentRegistry.value[type][id] = component;
     }
   }
 
@@ -68,10 +51,11 @@ function _useComponentsRegistry() {
   }
 
   if (IS_DEVELOPMENT) {
-    window.componentsRegistry = {
+    window.vcComponentsRegistry = {
       components: componentRegistry.value,
       registerComponent,
       getComponents,
+      unregisterComponent,
     };
   }
 

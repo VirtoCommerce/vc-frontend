@@ -11,7 +11,6 @@ import { pushMessagesTypePolices } from "./api/graphql/typePolices";
 import { PUSH_MESSAGES_MODULE_ENABLED_KEY, PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY } from "./constants";
 import type { MenuType } from "@/core/types";
 import type { I18n } from "@/i18n";
-import type { LinkElementType, MobileHeaderElementType } from "@/shared/common/composables/useComponentsRegistry";
 import type { DeepPartial } from "utility-types";
 import type { Router, RouteRecordRaw } from "vue-router";
 
@@ -63,21 +62,6 @@ const menuItems: DeepPartial<MenuType> = {
 const Notifications = () => import("@/modules/push-messages/pages/notifications.vue");
 const PushMessage = () => import("@/modules/push-messages/pages/push-message.vue");
 
-const menuLinkCustomElement: LinkElementType = {
-  id: "push-messages",
-  component: defineAsyncComponent(() => import("./components/link-push-messages.vue")),
-};
-
-const menuLinkCustomElementMobile: LinkElementType = {
-  id: "push-messages",
-  component: defineAsyncComponent(() => import("./components/link-push-messages-mobile.vue")),
-};
-
-const headerWidgetCustomElementMobile: MobileHeaderElementType = {
-  id: "push-messages",
-  component: defineAsyncComponent(() => import("./components/push-messages-mobile.vue")),
-};
-
 async function unregisterFCM() {
   const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
   if (serviceWorkerRegistration) {
@@ -116,9 +100,21 @@ export async function init(router: Router, i18n: I18n) {
     cache.policies.addTypePolicies(pushMessagesTypePolices);
     mergeMenuSchema(menuItems);
     void loadModuleLocale(i18n, "push-messages");
-    registerComponent("header", menuLinkCustomElement);
-    registerComponent("mobileMenu", menuLinkCustomElementMobile);
-    registerComponent("mobileHeader", headerWidgetCustomElementMobile);
+    registerComponent(
+      "header",
+      "push-messages",
+      defineAsyncComponent(() => import("./components/link-push-messages.vue")),
+    );
+    registerComponent(
+      "mobileMenu",
+      "push-messages",
+      defineAsyncComponent(() => import("./components/link-push-messages-mobile.vue")),
+    );
+    registerComponent(
+      "mobileHeader",
+      "push-messages",
+      defineAsyncComponent(() => import("./components/push-messages-mobile.vue")),
+    );
     router.addRoute("Account", route); // NOTE: This route must be added before any asynchronous calls. Delaying it can cause a 404 error if accessed prematurely.
   }
 
