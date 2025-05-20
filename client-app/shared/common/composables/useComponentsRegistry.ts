@@ -1,32 +1,45 @@
 import { createGlobalState } from "@vueuse/core";
 import { defineAsyncComponent, shallowReadonly, shallowRef } from "vue";
 import { IS_DEVELOPMENT } from "@/core/constants";
-import type { ComponentRegistryType } from "@/shared/common/types/components-registry";
+import { Logger } from "@/core/utilities";
+import type { ComponentRegistryType, ConditionParamsType } from "@/shared/common/types/components-registry";
 
 const initialComponentRegistry: ComponentRegistryType = {
   header: {
-    compare: defineAsyncComponent(
-      () => import("@/shared/layout/components/header/_internal/link-components/link-compare.vue"),
-    ),
-    cart: defineAsyncComponent(
-      () => import("@/shared/layout/components/header/_internal/link-components/link-cart.vue"),
-    ),
+    compare: {
+      component: defineAsyncComponent(
+        () => import("@/shared/layout/components/header/_internal/link-components/link-compare.vue"),
+      ),
+    },
+    cart: {
+      component: defineAsyncComponent(
+        () => import("@/shared/layout/components/header/_internal/link-components/link-cart.vue"),
+      ),
+    },
   },
   mobileMenu: {
-    cart: defineAsyncComponent(
-      () => import("@/shared/layout/components/header/_internal/mobile-menu/link-components/link-cart.vue"),
-    ),
-    compare: defineAsyncComponent(
-      () => import("@/shared/layout/components/header/_internal/mobile-menu/link-components/link-compare.vue"),
-    ),
+    cart: {
+      component: defineAsyncComponent(
+        () => import("@/shared/layout/components/header/_internal/mobile-menu/link-components/link-cart.vue"),
+      ),
+    },
+    compare: {
+      component: defineAsyncComponent(
+        () => import("@/shared/layout/components/header/_internal/mobile-menu/link-components/link-compare.vue"),
+      ),
+    },
   },
   account: {
-    orders: defineAsyncComponent(
-      () => import("@/shared/account/components/account-navigation-link-components/link-orders.vue"),
-    ),
-    lists: defineAsyncComponent(
-      () => import("@/shared/account/components/account-navigation-link-components/link-lists.vue"),
-    ),
+    orders: {
+      component: defineAsyncComponent(
+        () => import("@/shared/account/components/account-navigation-link-components/link-orders.vue"),
+      ),
+    },
+    lists: {
+      component: defineAsyncComponent(
+        () => import("@/shared/account/components/account-navigation-link-components/link-lists.vue"),
+      ),
+    },
   },
   mobileHeader: {},
 };
@@ -41,6 +54,8 @@ function _useComponentsRegistry() {
   ) {
     if (!componentRegistry.value[type][id]) {
       componentRegistry.value[type][id] = component;
+    } else {
+      Logger.warn(`useComponentsRegistry: Component "${type}/${id}" already registered`);
     }
   }
 
@@ -56,6 +71,26 @@ function _useComponentsRegistry() {
     return componentRegistry.value[type][id] !== undefined;
   }
 
+  function shouldRenderComponent(
+    type: keyof ComponentRegistryType,
+    id: string,
+    params?: ConditionParamsType<ComponentRegistryType[keyof ComponentRegistryType][string]>,
+  ) {
+    if (typeof componentRegistry.value[type][id]?.condition === "function") {
+      try {
+        return componentRegistry.value[type][id]?.condition?.(...(params || []));
+      } catch (error) {
+        Logger.error(`useComponentsRegistry: Error in condition for component "${type}/${id}"`, error);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function getComponentProps(type: keyof ComponentRegistryType, id: string) {
+    return componentRegistry.value[type][id]?.props;
+  }
+
   if (IS_DEVELOPMENT) {
     window.vcComponentsRegistry = {
       components: componentRegistry.value,
@@ -63,21 +98,25 @@ function _useComponentsRegistry() {
       getComponents,
       unregisterComponent,
       isComponentRegistered,
+      shouldRenderComponent,
+      getComponentProps,
     };
   }
 
   return {
     components: componentRegistry.value,
 
-    headerLinkComponents: shallowReadonly(componentRegistry.value.header),
-    mobileLinkComponents: shallowReadonly(componentRegistry.value.mobileMenu),
-    accountLinkComponents: shallowReadonly(componentRegistry.value.account),
-    mobileHeaderComponents: shallowReadonly(componentRegistry.value.mobileHeader),
+    headerLinkComponents: getComponents("header"),
+    mobileLinkComponents: getComponents("mobileMenu"),
+    accountLinkComponents: getComponents("account"),
+    mobileHeaderComponents: getComponents("mobileHeader"),
 
     getComponents,
     registerComponent,
     unregisterComponent,
     isComponentRegistered,
+    shouldRenderComponent,
+    getComponentProps,
   };
 }
 

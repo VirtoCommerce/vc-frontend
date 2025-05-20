@@ -35,8 +35,8 @@ const { isCorporateMember } = useUser();
 const { desktopAccountMenuItems, desktopCorporateMenuItems } = useNavigations();
 const { accountLinkComponents, registerComponent } = useComponentsRegistry();
 
-registerComponent("account", "orders", LinkOrders);
-registerComponent("account", "lists", LinkLists);
+registerComponent("account", "orders", { component: LinkOrders });
+registerComponent("account", "lists", { component: LinkLists });
 
 function canShowItem(item: ExtendedMenuLinkType) {
   return !(item.id === "addresses" && isCorporateMember.value);
