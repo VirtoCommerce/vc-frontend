@@ -11,7 +11,6 @@
         v-for="(item, index) in mobileProducts"
         :key="index"
         :product="item"
-        class="w-[calc((100%-1.75rem)/2)] sm:w-[calc((100%-2*1.75rem)/3)] md:w-[calc((100%-1.75rem)/2)]"
         @link-click="selectItem(item)"
       />
     </VcProductsGrid>
@@ -19,7 +18,7 @@
     <VcCarousel v-else :slides="relatedProducts" :options="relatedProductsCarouselOptions" navigation>
       <template #slide="{ slide: item }">
         <div class="h-full px-4 py-3 xl:px-3">
-          <ProductCardRelated class="h-full" :product="item" @link-click="selectItem(item)" />
+          <ProductCardRelated class="h-full" :product="item" border @link-click="selectItem(item)" />
         </div>
       </template>
     </VcCarousel>

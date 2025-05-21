@@ -1,5 +1,5 @@
 <template>
-  <VcProductCard border>
+  <VcProductCard :border="border">
     <VcProductImage :img-src="product.imgSrc" :images="product.images" :alt="product.name" />
 
     <VcProductActions direction="vertical" with-background>
@@ -7,18 +7,11 @@
       <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" class="relative" />
     </VcProductActions>
 
-    <VcProductTitle
-      class="text-sm"
-      :to="link"
-      :title="product.name"
-      target="_blank"
-      @click="$emit('linkClick', $event)"
-    >
+    <VcProductTitle :to="link" :title="product.name" :target="linkTarget" @click="$emit('linkClick', $event)">
       {{ product.name }}
     </VcProductTitle>
 
     <VcProductPrice
-      class="h-9 text-lg"
       :actual-price="price?.actual"
       :list-price="price?.list"
       :with-from-label="product.hasVariations || product.isConfigurable"
@@ -29,13 +22,13 @@
       :to="link"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
-      target="_blank"
+      :target="linkTarget"
     />
 
     <VcProductButton
       v-else-if="product.hasVariations"
       :to="link"
-      target="_blank"
+      :target="linkTarget"
       variant="outline"
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
     />
@@ -46,6 +39,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import { getProductRoute } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { AddToCompareCatalog } from "@/shared/compare";
@@ -58,6 +52,7 @@ interface IEmits {
 }
 
 interface IProps {
+  border?: boolean;
   product: Product;
 }
 
@@ -65,7 +60,13 @@ defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
+const { themeContext } = useThemeContext();
+
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
+
+const linkTarget = computed(() => {
+  return themeContext.value.settings.details_browser_target || "_blank";
+});
 </script>
