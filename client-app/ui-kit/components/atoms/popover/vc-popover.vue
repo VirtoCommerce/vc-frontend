@@ -38,6 +38,7 @@
       :style="{ zIndex, display, width, ...floatingStyles }"
       class="vc-popover__content"
       :role="role"
+      @mousedown.prevent
     >
       <div
         v-if="arrowEnabled"

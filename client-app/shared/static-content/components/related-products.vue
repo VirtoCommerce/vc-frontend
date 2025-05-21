@@ -83,7 +83,7 @@ const mobileProductsNumber = computed(() => {
 
 const mobileProducts = computed(() => props.relatedProducts?.slice(0, mobileProductsNumber.value));
 
-const relatedProductsCarouselOptions: CarouselOptions = {
+const relatedProductsCarouselOptions: ICarouselOptions = {
   slidesPerView: 4,
   slidesPerGroup: 4,
   breakpoints: {

@@ -141,7 +141,7 @@ onMounted(async () => {
 
 <style lang="scss">
 .mega-menu {
-  @apply relative z-[3] flex gap-4 h-10 bg-[--header-bottom-bg-color] px-5 xl:px-12;
+  @apply flex gap-4 h-10 bg-[--header-bottom-bg-color] px-5 xl:px-12;
 
   &__popover {
     @apply flex items-stretch;
