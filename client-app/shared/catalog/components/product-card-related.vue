@@ -1,22 +1,24 @@
 <template>
-  <VcProductCard>
-    <VcProductImage :img-src="product.imgSrc" :images="product.images" :alt="product.name" lazy>
-      <BadgesWrapper>
-        <PurchasedBeforeBadge v-if="product.isPurchased" />
-
-        <DiscountBadge v-if="product.price" static :price="product.price" />
-      </BadgesWrapper>
-    </VcProductImage>
+  <VcProductCard border>
+    <VcProductImage :img-src="product.imgSrc" :images="product.images" :alt="product.name" />
 
     <VcProductActions direction="vertical" with-background>
       <AddToList :product="product" />
-
-      <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
+      <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" class="relative" />
     </VcProductActions>
 
-    <VcProductTitle :title="product.name" :to="link" lines-number="2" fix-height @click="$emit('linkClick', $event)" />
+    <VcProductTitle
+      class="text-sm"
+      :to="link"
+      :title="product.name"
+      target="_blank"
+      @click="$emit('linkClick', $event)"
+    >
+      {{ product.name }}
+    </VcProductTitle>
 
     <VcProductPrice
+      class="h-9 text-lg"
       :actual-price="price?.actual"
       :list-price="price?.list"
       :with-from-label="product.hasVariations || product.isConfigurable"
@@ -27,13 +29,13 @@
       :to="link"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
-      :target="$cfg.details_browser_target || '_blank'"
+      target="_blank"
     />
 
     <VcProductButton
       v-else-if="product.hasVariations"
       :to="link"
-      :target="$cfg.details_browser_target || '_blank'"
+      target="_blank"
       variant="outline"
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
     />
@@ -48,11 +50,8 @@ import { getProductRoute } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
-import DiscountBadge from "./discount-badge.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
-import BadgesWrapper from "@/shared/catalog/components/badges-wrapper.vue";
-import PurchasedBeforeBadge from "@/shared/catalog/components/purchased-before-badge.vue";
 
 interface IEmits {
   (event: "linkClick", globalEvent: MouseEvent): void;
