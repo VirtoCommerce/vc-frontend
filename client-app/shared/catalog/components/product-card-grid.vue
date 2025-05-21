@@ -165,13 +165,13 @@
     </div>
 
     <component
-      :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
+      :is="getComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
       v-if="
-        isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-        shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
+        isComponentRegistered('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
+        shouldRenderComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
       "
       :product="product"
-      v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
+      v-bind="getComponentProps('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
     />
 
     <VcProductButton
@@ -218,7 +218,7 @@ import { computed, ref } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
-import { useCustomProductComponents } from "@/shared/common/composables";
+import { useComponentsRegistry } from "@/shared/common/composables";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
@@ -256,7 +256,7 @@ const properties = computed(() =>
 );
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
-const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
+const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useComponentsRegistry();
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;

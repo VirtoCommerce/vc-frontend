@@ -55,7 +55,7 @@
       :is="getComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
       v-if="
         isComponentRegistered('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-        shouldRenderComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, [product])
+        shouldRenderComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
       "
       :product="product"
       v-bind="getComponentProps('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
