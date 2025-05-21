@@ -15,7 +15,7 @@
       fix-height
       :to="link"
       :title="product.name"
-      target="_blank"
+      :target="linkTarget"
       @click="$emit('linkClick', $event)"
     >
       {{ product.name }}
@@ -33,13 +33,13 @@
       :to="link"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
-      target="_blank"
+      :target="linkTarget"
     />
 
     <VcProductButton
       v-else-if="product.hasVariations"
       :to="link"
-      target="_blank"
+      :target="linkTarget"
       variant="outline"
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
     />
@@ -50,6 +50,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import { getProductRoute } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { AddToCompareCatalog } from "@/shared/compare";
@@ -72,4 +73,10 @@ const props = defineProps<IProps>();
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
+
+const { themeContext } = useThemeContext();
+
+const linkTarget = computed(() => {
+  return themeContext.value.settings.details_browser_target || "_blank";
+});
 </script>
