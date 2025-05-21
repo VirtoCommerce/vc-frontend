@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { toInputAddress, getAddressName, isEqualAddresses, isMemberAddressType } from "./index";
+import { toInputAddress, getAddressName, isEqualAddresses, isMemberAddressType, stringifyAddress } from "./index";
 import type { AnyAddressType } from "../../types";
 import type { MemberAddressType, InputMemberAddressType, OrderAddressType } from "@/core/api/graphql/types";
 
@@ -119,6 +119,82 @@ describe("getAddressName", () => {
     expect(() => {
       getAddressName(undefined as unknown as AnyAddressType);
     }).toThrowError();
+  });
+});
+
+describe("stringifyAddress", () => {
+  it("should return a single string with all address parts joined by spaces when all fields are present", () => {
+    const address: AnyAddressType = {
+      line1: "123 Main St",
+      line2: "Apt 4B",
+      city: "San Francisco",
+      regionName: "California",
+      countryName: "United States",
+      postalCode: "94105",
+    };
+
+    const result = stringifyAddress(address);
+
+    expect(result).toBe("123 Main St Apt 4B San Francisco California United States 94105");
+  });
+
+  it("should filter out missing fields when joining address parts", () => {
+    const address: AnyAddressType = {
+      line1: "456 Market St",
+      city: "San Francisco",
+      countryName: "United States",
+      postalCode: "94105",
+    };
+
+    const result = stringifyAddress(address);
+
+    expect(result).toBe("456 Market St San Francisco United States 94105");
+  });
+
+  it("should handle address with minimal fields properly", () => {
+    const address: AnyAddressType = {
+      line1: "789 Mission St",
+      postalCode: "94103",
+    };
+
+    const result = stringifyAddress(address);
+
+    expect(result).toBe("789 Mission St 94103");
+  });
+
+  it("should return empty string when address object is empty", () => {
+    const address: AnyAddressType = {};
+
+    const result = stringifyAddress(address);
+
+    expect(result).toBe("");
+  });
+
+  it("should return empty string when address is undefined", () => {
+    const result = stringifyAddress();
+
+    expect(result).toBe("");
+  });
+
+  it("should return empty string when address is null", () => {
+    const result = stringifyAddress(null as unknown as AnyAddressType);
+
+    expect(result).toBe("");
+  });
+
+  it("should handle address with all falsy values and return empty string", () => {
+    const address: AnyAddressType = {
+      line1: "",
+      line2: undefined,
+      city: null as unknown as string,
+      regionName: "",
+      countryName: undefined,
+      postalCode: "",
+    };
+
+    const result = stringifyAddress(address);
+
+    expect(result).toBe("");
   });
 });
 

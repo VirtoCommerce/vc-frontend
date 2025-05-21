@@ -6,7 +6,7 @@
 --link-color: var(--color-link, var(--color-accent-600));
 --link-hover-color: var(--color-link-hover, var(--color-accent-700));
 
---price-color: var(--color-price, var(--color-success-600));
+--price-color: var(--color-price, var(--color-neutral-900));
 
 --shape-icon-bg-color: var(--color-shape-icon-bg, var(--color-secondary-500));
 --shape-icon-color: var(--color-shape-icon, var(--color-additional-50));
@@ -52,6 +52,8 @@
 --vc-radio-button-focus-color: var(--focus-color);
 --vc-product-title-link-color: var(--link-color);
 --vc-product-title-link-hover-color: var(--link-hover-color);
+--vc-product-button-link-color: var(--link-color);
+--vc-product-button-link-hover-color: var(--link-hover-color);
 --vc-shape-bg-color: var(--shape-icon-bg-color);
 --vc-shape-color: var(--shape-icon-color);
 --vc-container-bg-color: var(--body-bg-color);

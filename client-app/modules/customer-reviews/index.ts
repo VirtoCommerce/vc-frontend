@@ -1,7 +1,7 @@
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { loadModuleLocale } from "@/modules/utils";
 import { ENABLED_KEY, MODULE_ID } from "./constants";
 import type { I18n } from "@/i18n";
-import { loadModuleLocale } from "@/modules/utils";
 
 const { isEnabled } = useModuleSettings(MODULE_ID);
 

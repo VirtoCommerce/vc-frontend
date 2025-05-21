@@ -33,13 +33,14 @@
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
             <div v-if="group.items.length" class="space-y-3">
               <!-- Vendor -->
-              <div class="flex max-w-full flex-wrap gap-x-3 print:break-after-avoid">
-                <VcVendor :vendor="group.vendor" />
+              <div class="flex max-w-full gap-2 max-xs:flex-col">
+                <VendorName :name="group.vendor?.name" class="min-w-0" />
 
                 <VcRating
                   v-if="$cfg.vendor_rating_enabled && group.vendor?.rating"
                   :review-count="group.vendor.rating.reviewCount"
                   :value="group.vendor.rating.value"
+                  size="xs"
                 />
               </div>
 
@@ -60,18 +61,16 @@
         <!-- Order Data Widget -->
         <VcWidget id="order-data-widget" :title="$t('common.titles.order_data')" class="order-first mb-5">
           <div class="flex flex-col gap-1.5 text-sm">
-            <p v-if="order.createdDate">
+            <div v-if="order.createdDate">
               <span class="font-black"> {{ $t("common.labels.created") }}: </span>
               {{ $d(order.createdDate) }}
-            </p>
-            <p v-if="order.status" class="flex items-center">
-              <span class="mr-1 font-black"> {{ $t("common.labels.status") }}: </span>
-              <OrderStatus
-                class="min-w-[7.785rem] print:min-w-0"
-                :status="order.status"
-                :display-value="order.statusDisplayValue"
-              />
-            </p>
+            </div>
+
+            <div v-if="order.status" class="flex items-center gap-2">
+              <span class="font-black"> {{ $t("common.labels.status") }}: </span>
+
+              <OrderStatus size="sm" :status="order.status" :display-value="order.statusDisplayValue" />
+            </div>
           </div>
         </VcWidget>
 
@@ -151,7 +150,7 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
-import { AddressInfo } from "@/shared/common";
+import { AddressInfo, VendorName } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";

@@ -31,7 +31,7 @@ export default {
   },
 } as Meta<typeof VcRadioButton>;
 
-const Template: StoryFn<typeof VcRadioButton> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcRadioButton },
   setup: () => ({ args }),
   template: '<VcRadioButton v-bind="args" />',
@@ -59,6 +59,31 @@ LabelLeft.args = {
   value: "value",
   label: "RadioButton Label",
   labelPosition: "left",
+};
+
+export const BreakWord = Template.bind({});
+BreakWord.decorators = [
+  () => ({
+    template: '<div class="w-40"><story /></div>',
+  }),
+];
+BreakWord.args = {
+  value: "value",
+  label: "RadioButtonLabelLongValueWithoutSpaces",
+  wordBreak: "break-word",
+};
+
+export const MaxLines = Template.bind({});
+MaxLines.decorators = [
+  () => ({
+    template: '<div class="w-40"><story /></div>',
+  }),
+];
+MaxLines.args = {
+  value: "value",
+  label: "Radio Button Label With Very Long Value",
+  wordBreak: "break-word",
+  maxLines: 2,
 };
 
 export const Disabled = Template.bind({});

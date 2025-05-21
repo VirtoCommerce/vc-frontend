@@ -31,6 +31,7 @@ function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
         logoUrl
         secondaryLogoUrl
         themePresetName
+        isOrganizationLogoUploaded
         favicons {
           rel
           type

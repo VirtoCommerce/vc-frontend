@@ -10,10 +10,13 @@ export type ProductsSearchParamsType = {
   fuzzyLevel?: number;
   categoryId?: string;
   productIds?: string[];
+  selectedAddressId?: string;
+  selectedAddress?: string;
 };
 
 export type ProductsFiltersType = {
   facets: FacetItemType[];
   inStock: boolean;
+  purchasedBefore: boolean;
   branches: string[];
 };

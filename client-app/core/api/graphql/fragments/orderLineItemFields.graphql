@@ -59,5 +59,9 @@ fragment orderLineItemFields on OrderLineItemType {
     name
     customText
     type
+    files {
+      name
+      url
+    }
   }
 }

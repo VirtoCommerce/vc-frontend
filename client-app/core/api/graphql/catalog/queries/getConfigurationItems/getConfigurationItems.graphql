@@ -20,6 +20,12 @@ query GetConfigurationItems(
       productId
       sectionId
       type
+      files {
+        contentType
+        name
+        size
+        url
+      }
     }
   }
 }

@@ -5,8 +5,6 @@ import type {
 } from "./utils";
 import type { TrackerEventsType } from "client-app/core/types/analytics";
 
-export type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
-
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   interface Window {

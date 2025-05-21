@@ -71,6 +71,7 @@
             :show-placed-price="item.showPlacedPrice"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
+            @link-click="$emit('linkClick', item)"
           >
             <template #before>
               <slot name="before-content" v-bind="{ item }" />
@@ -132,6 +133,7 @@ import type { PreparedLineItemType } from "@/core/types";
 interface IEmits {
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
+  (event: "linkClick", value: PreparedLineItemType): void;
 }
 
 interface IProps {

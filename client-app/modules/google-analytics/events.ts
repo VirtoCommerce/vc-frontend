@@ -17,7 +17,8 @@ export const events: TrackerEventsType = {
   },
 
   selectItem(item, params) {
-    const gtagItem = "productId" in item ? lineItemToGtagItem(item) : productToGtagItem(item);
+    const gtagItem =
+      item && typeof item === "object" && "productId" in item ? lineItemToGtagItem(item) : productToGtagItem(item);
     sendEvent("select_item", {
       ...params,
       items: [gtagItem],
@@ -62,6 +63,15 @@ export const events: TrackerEventsType = {
       value: subtotal,
       items: inputItems,
       items_count: inputItems.length,
+    });
+  },
+
+  updateCartItem(itemId, newQuantity, previousQuantity, params) {
+    sendEvent("update_cart_item", {
+      ...params,
+      item_id: itemId,
+      new_quantity: newQuantity,
+      previous_quantity: previousQuantity,
     });
   },
 

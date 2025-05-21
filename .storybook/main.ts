@@ -2,7 +2,7 @@ import { resolve } from "path";
 import { loadConfigFromFile, mergeConfig, splitVendorChunkPlugin } from "vite";
 import type { StorybookConfig } from "@storybook/vue3-vite";
 
-const config: StorybookConfig = {
+const storybookConfig: StorybookConfig = {
   stories: ["../client-app/**/*.stories.ts"],
   staticDirs: [{ from: "../storybook-styles/dist", to: "/assets" }],
   addons: [
@@ -47,4 +47,4 @@ const config: StorybookConfig = {
   docs: {},
 };
 // eslint-disable-next-line no-restricted-exports
-export default config;
+export default storybookConfig;

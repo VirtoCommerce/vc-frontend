@@ -86,6 +86,8 @@ export function useShortCart() {
   const { storeId, currencyCode, cultureName, userId } = globals;
   const commonVariables = { storeId, currencyCode, cultureName, userId };
   const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
+  const { analytics } = useAnalytics();
+
   async function addToCart(
     productId: string,
     quantity: number,
@@ -130,10 +132,16 @@ export function useShortCart() {
   );
   async function changeItemQuantity(lineItemId: string, quantity: number): Promise<ShortCartFragment | undefined> {
     try {
+      const lineItem = cart.value?.items.find((item) => item.id === lineItemId);
       const result = await _changeItemQuantity({
         command: { lineItemId, quantity, ...commonVariables },
         skipQuery: false,
       });
+
+      if (lineItem) {
+        analytics("updateCartItem", lineItem.sku, quantity, lineItem?.quantity);
+      }
+
       return result?.data?.changeCartItemQuantity;
     } catch (err) {
       Logger.error(err as string);
@@ -349,12 +357,17 @@ export function _useFullCart() {
   });
   async function changeItemQuantityBatched(lineItemId: string, quantity: number): Promise<void> {
     try {
+      const item = cart.value?.items.find((lineItem) => lineItem.id === lineItemId);
       await add({
         command: {
           cartItems: [{ lineItemId, quantity }],
           ...commonVariables,
         },
       });
+
+      if (item) {
+        analytics("updateCartItem", item.sku, quantity, item.quantity);
+      }
     } catch (error) {
       if (error instanceof ApolloError && error.networkError?.toString() === (AbortReason.Explicit as string)) {
         return;
@@ -411,13 +424,29 @@ export function _useFullCart() {
             return IGNORE as AddOrUpdateCartShipmentMutation;
           }
           return {
-            addOrUpdateCartShipment: merge({}, cart.value!, {
+            addOrUpdateCartShipment: merge({}, cart.value, {
               shipments: [
                 {
                   id: value.id,
                   shipmentMethodCode: value.shipmentMethodCode,
                   shipmentMethodOption: value.shipmentMethodOption,
-                  deliveryAddress: generateCacheIdIfNew(value.deliveryAddress, "CartAddressType"),
+                  deliveryAddress: value.deliveryAddress
+                    ? generateCacheIdIfNew(
+                        {
+                          ...value.deliveryAddress,
+                          name: value.deliveryAddress?.name ?? null,
+                          organization: value.deliveryAddress?.organization ?? null,
+                          firstName: value.deliveryAddress?.firstName ?? null,
+                          lastName: value.deliveryAddress?.lastName ?? null,
+                          countryCode: value.deliveryAddress?.countryCode ?? null,
+                          regionName: value.deliveryAddress?.regionName ?? null,
+                          email: value.deliveryAddress?.email ?? null,
+                          addressType: value.deliveryAddress?.addressType ?? null,
+                          outerId: value.deliveryAddress?.outerId ?? null,
+                        },
+                        "CartAddressType",
+                      )
+                    : undefined,
                 },
               ],
             }),

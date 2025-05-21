@@ -5,7 +5,11 @@ import { Logger } from "@/core/utilities";
 export function useOrganizationLogo() {
   const loading = ref(false);
 
-  async function updateLogo(organizationId: string, logoUrl: string) {
+  async function updateLogo(organizationId: string, logoUrl?: string) {
+    if (logoUrl === undefined) {
+      return;
+    }
+
     loading.value = true;
 
     try {

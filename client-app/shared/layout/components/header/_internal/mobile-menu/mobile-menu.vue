@@ -4,7 +4,10 @@
   >
     <header class="flex h-16 shrink-0 items-center gap-x-3 px-6">
       <div class="grow pr-6">
-        <span v-if="organization" class="line-clamp-2 text-xl italic leading-[22px] text-[--mobile-menu-text-color]">
+        <span
+          v-if="organization"
+          class="line-clamp-2 text-xl italic leading-[22px] text-[--mobile-menu-text-color] [word-break:break-word]"
+        >
           {{ organization?.name }}
         </span>
 

@@ -14,11 +14,13 @@
         'vc-chip--closable': closable,
         'vc-chip--rounded': rounded,
         'vc-chip--truncate': truncate,
-        'vc-chip--nowrap': nowrap,
+        'vc-chip--nowrap': nowrap && !truncate,
       },
     ]"
   >
     <span class="vc-chip__content">
+      <VcIcon v-if="icon" :color="_iconColor" :name="icon" class="vc-chip__icon" />
+
       <slot />
     </span>
 
@@ -37,6 +39,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 interface IEmits {
   (event: "close"): void;
 }
@@ -44,7 +48,7 @@ interface IEmits {
 interface IProps {
   color?: VcChipColorType;
   variant?: VcChipVariantType;
-  size?: "xs" | "sm" | "md" | "lg";
+  size?: VcChipSizeType;
   clickable?: boolean;
   closable?: boolean;
   disabled?: boolean;
@@ -52,25 +56,36 @@ interface IProps {
   rounded?: boolean;
   truncate?: boolean;
   nowrap?: boolean;
+  icon?: string;
+  iconColor?: string;
 }
 
 defineEmits<IEmits>();
-withDefaults(defineProps<IProps>(), {
+
+const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   variant: "solid",
   size: "md",
   nowrap: true,
+  iconColor: "",
 });
+
+const _iconColor = computed(() =>
+  props.variant === "solid" ? "--color-additional-50" : (props.iconColor ?? props.color),
+);
 </script>
 
 <style lang="scss">
 .vc-chip {
+  --props-icon-color: v-bind(props.iconColor);
+  --icon-color: var(--props-icon-color, var(--vc-chip-icon-color));
+
   $colors: primary, secondary, success, info, warning, danger, neutral;
 
   $truncate: "";
   $clickable: "";
 
-  @apply inline-flex justify-between max-w-full rounded-sm border font-bold text-center;
+  @apply inline-flex justify-between max-w-full rounded-sm border font-bold text-center px-[--padding-x] py-[--padding-y] text-neutral-800;
 
   &--clickable {
     $clickable: &;
@@ -94,7 +109,7 @@ withDefaults(defineProps<IProps>(), {
       --padding-y: 0;
       --padding-x: 0.25rem;
 
-      @apply gap-1 px-[--padding-x] text-[0.625rem]/[0.875rem];
+      @apply gap-1 text-[0.625rem]/[0.875rem];
     }
 
     &--sm {
@@ -102,29 +117,29 @@ withDefaults(defineProps<IProps>(), {
       --padding-y: 0.125rem;
       --padding-x: 0.5rem;
 
-      @apply gap-1 px-[--padding-x] py-[--padding-y] text-xs;
+      @apply gap-1 text-xs/[1rem];
     }
 
     &--md {
       --vc-icon-size: 0.75rem;
       --padding-y: 0.25rem;
-      --padding-x: 0.75rem;
+      --padding-x: 0.625rem;
 
-      @apply gap-1.5 px-[--padding-x] py-[--padding-y] text-sm/[1.125rem];
+      @apply gap-1.5 text-sm/[1.125rem];
     }
 
     &--lg {
       --vc-icon-size: 0.875rem;
       --padding-y: 0.375rem;
-      --padding-x: 0.75rem;
+      --padding-x: 0.625rem;
 
-      @apply gap-1.5 px-[--padding-x] py-[--padding-y] text-sm;
+      @apply gap-1.5 text-sm/[1.25rem];
     }
   }
 
   @each $color in $colors {
     &--solid--#{$color} {
-      @apply bg-[--color-#{$color}-500] border-[--color-#{$color}-500] text-additional-50;
+      @apply bg-[--color-#{$color}-500] border-[--color-#{$color}-500];
 
       &#{$clickable} {
         &:hover {
@@ -134,7 +149,7 @@ withDefaults(defineProps<IProps>(), {
     }
 
     &--solid-light--#{$color} {
-      @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-50] text-[--color-#{$color}-800];
+      @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-50];
 
       &#{$clickable} {
         &:hover {
@@ -144,7 +159,7 @@ withDefaults(defineProps<IProps>(), {
     }
 
     &--outline--#{$color} {
-      @apply bg-additional-50 text-[--color-#{$color}-800] border-[--color-#{$color}-500];
+      @apply border-[--color-#{$color}-500];
 
       &#{$clickable} {
         &:hover {
@@ -154,7 +169,7 @@ withDefaults(defineProps<IProps>(), {
     }
 
     &--outline-dark--#{$color} {
-      @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-800] border-[--color-#{$color}-500];
+      @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-500];
 
       &#{$clickable} {
         &:hover {
@@ -170,29 +185,36 @@ withDefaults(defineProps<IProps>(), {
         }
       }
     }
+
+    &[class*="--#{$color}"] {
+      --vc-icon-color: var(--icon-color, var(--color-#{$color}-500));
+      --close-button-icon-color: var(--color-#{$color}-700);
+    }
+  }
+
+  &[class*="--solid--"] {
+    --vc-icon-color: var(--icon-color, var(--color-additional-50));
+    --close-button-icon-color: var(--color-additional-50);
+
+    @apply text-additional-50;
+  }
+
+  &[class*="--outline--"] {
+    @apply bg-additional-50;
   }
 
   &__content {
-    @apply grow;
+    @apply grow flex items-center justify-center gap-[inherit] max-w-full;
 
-    &:has(.vc-icon) {
-      @apply inline-flex items-center gap-[inherit];
-    }
-
-    #{$truncate} & {
+    #{$truncate} &,
+    #{$truncate} & > * {
       @apply truncate;
-    }
-
-    & > * {
-      @apply text-left;
-
-      #{$truncate} & {
-        @apply truncate;
-      }
     }
   }
 
   &__close-button {
+    --vc-icon-color: var(--close-button-icon-color);
+
     @apply self-stretch flex items-center ps-1 pe-[--padding-x] -ms-1 -me-[--padding-x] py-[--padding-y] -my-[--padding-y] rounded-r-[inherit];
   }
 

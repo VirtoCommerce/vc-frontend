@@ -44,5 +44,9 @@ fragment fullLineItem on LineItemType {
     name
     customText
     type
+    files {
+      name
+      url
+    }
   }
 }

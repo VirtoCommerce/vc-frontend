@@ -1,13 +1,16 @@
 <template>
   <div
-    class="flex h-[39px] items-center gap-x-5 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:px-12"
+    class="flex h-[39px] items-center gap-3 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-5 xl:px-12"
   >
     <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
+
     <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
+
+    <ShipToSelector />
 
     <div class="ms-auto flex items-center">
       <!-- Call us block -->
-      <div v-if="support_phone_number" class="flex items-center">
+      <div v-if="support_phone_number" class="flex items-center whitespace-nowrap">
         <VcIcon class="me-1.5 fill-primary" name="phone" size="sm" />
 
         <span class="mr-1 font-thin">
@@ -50,7 +53,7 @@
 
           <button
             type="button"
-            class="flex cursor-pointer items-center py-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
+            class="flex cursor-pointer items-center whitespace-nowrap py-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
             @click="loginMenuVisible = !loginMenuVisible"
           >
             <span class="font-bold">
@@ -66,22 +69,20 @@
 
           <div
             v-if="loginMenuVisible"
-            class="absolute right-0 top-full z-10 flex w-60 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
+            class="absolute right-0 top-full z-10 flex w-64 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
           >
-            <div class="flex items-center justify-between p-3">
+            <div class="flex max-w-full items-center justify-between p-3">
               <router-link
                 to="/account/dashboard"
-                class="flex items-center hover:text-primary"
+                class="flex min-w-0 items-center gap-2 hover:text-primary"
                 @click="loginMenuVisible = false"
               >
                 <VcIcon class="fill-primary" name="user-circle" />
 
-                <span class="ml-2">
+                <span class="truncate">
                   {{ user.contact?.fullName }}
                 </span>
               </router-link>
-
-              <div class="grow"></div>
 
               <VcButton
                 :title="$t('shared.layout.header.link_logout')"
@@ -108,6 +109,9 @@
                 :label="item.name"
                 :value="item.id"
                 class="flex px-3 py-1 text-sm"
+                :max-lines="2"
+                :title="item.name"
+                word-break="break-word"
                 @change="selectOrganization"
               />
             </div>
@@ -143,9 +147,9 @@ import { ref } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { useSignMeOut, useUser } from "@/shared/account";
+import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
+import { ShipToSelector } from "@/shared/ship-to-location";
 import TopHeaderLink from "./top-header-link.vue";
-import CurrencySelector from "@/shared/layout/components/currency-selector/currency-selector.vue";
-import LanguageSelector from "@/shared/layout/components/language-selector/language-selector.vue";
 
 const { isAuthenticated, isMultiOrganization, user, operator, organization, switchOrganization } = useUser();
 const { signMeOut } = useSignMeOut();

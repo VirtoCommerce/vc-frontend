@@ -23,6 +23,7 @@ fragment quoteLineItemFields on QuoteItemType {
     properties {
       ...property
     }
+    productType
     availabilityData {
       availableQuantity
       isInStock

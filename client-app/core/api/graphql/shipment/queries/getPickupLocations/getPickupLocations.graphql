@@ -1,0 +1,22 @@
+query getPickupLocations($storeId: String, $keyword: String, $sort: String, $first: Int, $after: String) {
+  pickupLocations(storeId: $storeId, keyword: $keyword, sort: $sort, first: $first, after: $after) {
+    totalCount
+    items {
+      id
+      isActive
+      name
+      description
+      address {
+        id
+        line1
+        line2
+        city
+        countryName
+        countryCode
+        regionId
+        postalCode
+        phone
+      }
+    }
+  }
+}

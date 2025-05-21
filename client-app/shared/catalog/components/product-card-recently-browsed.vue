@@ -30,7 +30,7 @@
 
     <VcAddToCart
       v-else
-      :message="errorMessage"
+      :message="errorMessage || notAvailableMessage"
       :model-value="quantity"
       :is-active="product.availabilityData?.isActive"
       :is-available="product.availabilityData?.isAvailable"
@@ -52,6 +52,7 @@
 
 <script setup lang="ts">
 import { computed, ref, toRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useHistoricalEvents } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { getProductRoute } from "@/core/utilities";
@@ -76,6 +77,7 @@ const errorMessage = ref<string | undefined>();
 const { cart, addToCart, changeItemQuantity, changing } = useShortCart();
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
+const { t } = useI18n();
 
 const product = toRef(props, "product");
 
@@ -83,6 +85,13 @@ const price = computed(() => (product.value.hasVariations ? product.value.minVar
 const link = computed<RouteLocationRaw>(() => getProductRoute(product.value.id, product.value.slug));
 const cartLineItem = computed(() => cart.value?.items.find((item) => item.productId === product.value.id));
 const countInCart = computed<number>(() => cartLineItem.value?.quantity || 0);
+
+const notAvailableMessage = computed<string | undefined>(() => {
+  if (!product.value.availabilityData?.isBuyable || !product.value.availabilityData?.isAvailable) {
+    return t("validation_error.CART_PRODUCT_UNAVAILABLE");
+  }
+  return undefined;
+});
 
 const quantity = ref(countInCart.value || product.value.minQuantity || 1);
 

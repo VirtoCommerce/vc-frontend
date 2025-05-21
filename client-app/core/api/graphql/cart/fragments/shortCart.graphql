@@ -11,4 +11,7 @@ fragment shortCart on CartType {
   validationErrors(ruleSet: "*") {
     ...validationError
   }
+  shipments {
+    id
+  }
 }

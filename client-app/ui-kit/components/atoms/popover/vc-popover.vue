@@ -30,7 +30,13 @@
       <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
     </div>
 
-    <div ref="floating" :style="{ zIndex, display, width, ...floatingStyles }" class="vc-popover__content" :role="role">
+    <div
+      ref="floating"
+      :style="{ zIndex, display, width, ...floatingStyles }"
+      class="vc-popover__content"
+      :role="role"
+      @mousedown.prevent
+    >
       <div
         v-if="arrowEnabled"
         ref="floatingArrow"

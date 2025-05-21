@@ -49,7 +49,8 @@
         "out_of_stock": "Brak w magazynie",
         "positive_number": "Wartość musi być liczbą dodatnią",
         "integer_number": "Wartość musi być liczbą całkowitą",
-        "pack_size": "Zamów w paczkach po {0}"
+        "pack_size": "Zamów w paczkach po {0}",
+        "exact_qty": "Możesz zamówić {0} przedmiot(ów)"
       }
     },
     "pagination": {

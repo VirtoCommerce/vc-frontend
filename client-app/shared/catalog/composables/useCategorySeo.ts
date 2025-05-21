@@ -1,6 +1,6 @@
 import { useSeoMeta } from "@unhead/vue";
-import { computed, watchEffect } from "vue";
-import { usePageHead } from "@/core/composables";
+import { computed } from "vue";
+import { usePageTitle } from "@/core/composables/usePageTitle";
 import { globals } from "@/core/globals";
 import type { Category } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
@@ -23,28 +23,23 @@ export function useCategorySeo({ category, allowSetMeta, categoryComponentAnchor
   const seoDescription = computed(() => category.value?.seoInfo?.metaDescription);
   const seoKeywords = computed(() => category.value?.seoInfo?.metaKeywords);
   const seoImageUrl = computed(() => category.value?.images?.[0]?.url);
+  const seoUrl = computed(() =>
+    category.value?.seoInfo?.semanticUrl
+      ? `${window.location.host}\${currentCategory.value?.seoInfo?.semanticUrl`
+      : window.location.toString(),
+  );
+  const canSetMeta = computed(() => allowSetMeta.value && categoryComponentAnchorIsVisible.value);
 
-  watchEffect(() => {
-    if (allowSetMeta.value && categoryComponentAnchorIsVisible.value) {
-      usePageHead({
-        title: seoTitle,
-        meta: {
-          keywords: seoKeywords,
-          description: seoDescription,
-        },
-      });
+  const { title: pageTitle } = usePageTitle(seoTitle);
 
-      const seoUrl = category.value?.seoInfo?.semanticUrl
-        ? `${window.location.host}\${currentCategory.value?.seoInfo?.semanticUrl`
-        : window.location.toString();
-
-      useSeoMeta({
-        ogUrl: seoUrl,
-        ogTitle: seoTitle,
-        ogDescription: seoDescription,
-        ogImage: seoImageUrl,
-        ogType: "website",
-      });
-    }
+  useSeoMeta({
+    title: () => (canSetMeta.value ? pageTitle.value : undefined),
+    keywords: () => (canSetMeta.value ? seoKeywords.value : undefined),
+    description: () => (canSetMeta.value ? seoDescription.value : undefined),
+    ogUrl: () => (canSetMeta.value ? seoUrl.value : undefined),
+    ogTitle: () => (canSetMeta.value ? pageTitle.value : undefined),
+    ogDescription: () => (canSetMeta.value ? seoDescription.value : undefined),
+    ogImage: () => (canSetMeta.value ? seoImageUrl.value : undefined),
+    ogType: () => (canSetMeta.value ? "website" : undefined),
   });
 }

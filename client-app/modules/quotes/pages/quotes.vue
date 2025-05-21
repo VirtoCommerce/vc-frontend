@@ -85,7 +85,7 @@
               </div>
 
               <div class="flex flex-col items-end justify-center">
-                <QuoteStatus class="w-full !max-w-36" :status="itemData.item.status" />
+                <QuoteStatus :status="itemData.item.status" />
               </div>
 
               <div class="flex flex-col">
@@ -157,8 +157,8 @@
                 {{ $d(quote.createdDate) }}
               </td>
 
-              <td class="overflow-hidden text-ellipsis p-5 text-center">
-                <QuoteStatus class="w-full !max-w-36" :status="quote.status" />
+              <td class="p-1">
+                <QuoteStatus :status="quote.status" class="inline-block" />
               </td>
 
               <td class="overflow-hidden text-ellipsis p-5 text-right">
@@ -194,7 +194,6 @@ import { PageToolbarBlock } from "@/shared/account";
 import { CreateQuoteDocument } from "../api/graphql/types";
 import QuoteStatus from "../components/quote-status.vue";
 import { useUserQuotes } from "../useUserQuotes";
-import type { SortDirection } from "@/core/enums";
 import type { ISortInfo } from "@/core/types";
 
 const { t } = useI18n();
@@ -234,7 +233,7 @@ const columns = ref<ITableColumn[]>([
     id: "status",
     title: t("quotes.status_label"),
     sortable: true,
-    align: "center",
+    classes: "!px-3",
   },
   {
     id: "total",
@@ -273,7 +272,7 @@ async function resetKeyword(): Promise<void> {
 
 async function applySorting(sortInfo: ISortInfo): Promise<void> {
   // Workaround. Put Sort in vc-table then delete
-  const sortObj = new Sort(sortInfo.column, sortInfo.direction as SortDirection);
+  const sortObj = new Sort(sortInfo.column, sortInfo.direction);
   sortQueryParam.value = sortObj.toString();
   sort.value = sortInfo;
   page.value = 1;

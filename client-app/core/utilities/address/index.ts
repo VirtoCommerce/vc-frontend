@@ -1,4 +1,6 @@
-import { clone, isEqual, pick } from "lodash";
+import clone from "lodash/cloneDeep";
+import isEqual from "lodash/isEqual";
+import pick from "lodash/pick";
 import type { AnyAddressType } from "../../types";
 import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graphql/types";
 
@@ -19,13 +21,23 @@ export function getAddressName(address: AnyAddressType): string {
   return [countryCode, regionName, city, line1].filter(Boolean).join(", ");
 }
 
+export function stringifyAddress(address?: AnyAddressType | null): string {
+  if (!address) {
+    return "";
+  }
+
+  return [address.line1, address.line2, address.city, address.regionName, address.countryName, address.postalCode]
+    .filter(Boolean)
+    .join(" ");
+}
+
 export function isEqualAddresses(
   address1: AnyAddressType,
   address2: AnyAddressType,
-  options: { skipDescription?: boolean } = {},
+  options: { skipDescription?: boolean; omitFields?: (keyof MemberAddressType)[] } = {},
 ): boolean {
   const { skipDescription = true } = options;
-  const verifiableProperties: Array<keyof MemberAddressType> = [
+  let verifiableProperties: Array<keyof MemberAddressType> = [
     "firstName",
     "lastName",
     "city",
@@ -40,6 +52,10 @@ export function isEqualAddresses(
 
   if (!skipDescription) {
     verifiableProperties.push("description");
+  }
+
+  if (options.omitFields) {
+    verifiableProperties = verifiableProperties.filter((prop) => !options.omitFields?.includes(prop));
   }
 
   const first = pick(address1, verifiableProperties);

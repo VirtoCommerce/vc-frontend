@@ -74,7 +74,10 @@
       "add_with_bulk_order": "一括注文で追加",
       "all_orders": "すべての注文",
       "my_orders": "私の注文",
-      "scroll_to_top": "トップへスクロール"
+      "scroll_to_top": "トップへスクロール",
+      "reset_page": "ページをリセット",
+      "show_less": "折りたたむ",
+      "expand_all": "すべて展開"
     },
     "labels": {
       "actions": "操作",
@@ -125,7 +128,7 @@
       "recipient_name": "受取人",
       "active_address": "有効な住所",
       "addresses_icon": "住所アイコン",
-      "digital_product": "デジタル商品",
+      "digital_product": "デジタル",
       "search": "{0}を検索",
       "in_stock": "在庫あり",
       "starts_from": "開始: {0}",
@@ -155,7 +158,10 @@
       "main_menu": "メインメニュー",
       "toggle_search_bar": "検索バーを切り替える",
       "slider_image": "スライダー画像",
-      "buyer_name": "購入者名"
+      "buyer_name": "購入者名",
+      "other": "その他",
+      "vendor_name": "ベンダー: {name}",
+      "not_available": "N/A"
     },
     "prefixes": {
       "please": "お願いします",
@@ -284,7 +290,8 @@
       },
       "delivery_by_id": {
         "FixedRate_Ground": "固定料金 (地上)",
-        "FixedRate_Air": "固定料金 (航空)"
+        "FixedRate_Air": "固定料金 (航空)",
+        "BuyOnlinePickupInStore_Pickup": "店舗で受け取る"
       }
     }
   },
@@ -336,6 +343,13 @@
             "input_placeholder": "キーワード、商品番号、型番を入力"
           },
           "view_all_catalog": "カテゴリー内の全商品を表示"
+        },
+        "ship_to_selector": {
+          "add_new": "新規追加",
+          "search": "検索",
+          "select_address": "住所を選択",
+          "title": "配送先：",
+          "add_new_address": "新しい住所を追加"
         }
       },
       "footer": {
@@ -630,12 +644,22 @@
         "product_configuration": {
           "title": "パラメータ設定",
           "none": "なし",
-          "nothing_selected": "未選択",
           "changed_notification": "商品の設定が変更されました。後で「@:{'ui_kit.buttons.update_cart'}」ボタンをクリックして保存することもできます。",
           "changed_confirmation": "商品の設定が変更されました。保存しますか？",
-          "no_text": "テキストが選択されていません",
           "check_your_configuration": "製品構成を確認してください",
-          "required_section": "セクションは必須です"
+          "required_section": "セクションは必須です",
+          "optional_no_selected": "さらに選択をパーソナライズ（任意）",
+          "required_no_selected": "すべての必須オプションを選択して、完了してください",
+          "section-text-fieldset": {
+            "custom_option_with_input": "カスタムオプション：{0}",
+            "custom_option_empty": "カスタムオプション：空",
+            "enter_custom_text": "カスタムテキストを入力",
+            "no_selection": "未選択",
+            "none": "なし",
+            "custom_input": "カスタム入力",
+            "predefined_prefix": "定義済み",
+            "option_label": "オプション{0}: {1}"
+          }
         }
       },
       "discount_badge": {
@@ -651,6 +675,9 @@
         "ok_button": "OK",
         "no_results": "該当する店舗がありません",
         "reset_search_button": "検索をリセット"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -661,12 +688,19 @@
       },
       "shipping_details_section": {
         "title": "配送情報",
+        "switchers": {
+          "pickup": "受け取り",
+          "shipping": "配送"
+        },
         "labels": {
           "shipping_address": "配送先住所",
-          "shipping_method": "配送方法"
+          "shipping_method": "配送方法",
+          "delivery_option": "配送オプション",
+          "pickup_point": "受け取り場所"
         },
         "links": {
-          "select_address": "配送先住所を選択"
+          "select_address": "配送先住所を選択",
+          "select_pickup_point": "受け取り場所を選択"
         }
       },
       "billing_details_section": {
@@ -759,7 +793,8 @@
           "month": "有効な有効期限月を入力してください",
           "year": "有効な有効期限の年を入力してください"
         },
-        "user_error_message": "決済を開始できません。後でやり直すか、別の支払い方法をご利用ください"
+        "user_error_message": "決済を開始できません。後でやり直すか、別の支払い方法をご利用ください",
+        "payment_unavailable": "お支払い方法をご利用いただけません。しばらくしてからもう一度お試しください"
       },
       "authorize_net": {
         "user_agreement_link": "User Agreement",
@@ -853,6 +888,15 @@
         "shared": "Shared",
         "private": "Private"
       }
+    },
+    "sorting": {
+      "featured": "おすすめ",
+      "alphabetically_a_z": "アルファベット順 (A-Z)",
+      "alphabetically_z_a": "アルファベット順 (Z-A)",
+      "price_low_to_high": "価格の低い順",
+      "price_high_to_low": "価格（高い順）",
+      "date_new_to_old": "日付、新しい順",
+      "date_old_to_new": "日付、古い順"
     }
   },
   "pages": {
@@ -1273,7 +1317,14 @@
       "no_facet_found_message": "該当なし",
       "no_products_button": "検索をリセット",
       "products_icon": "商品アイコン",
-      "show_all_results": "すべての結果を表示"
+      "show_all_results": "すべての結果を表示",
+      "load_previous_page": "前のページを読み込む",
+      "load_next_page": "次のページを読み込む",
+      "purchased_before_filter_card": {
+        "title": "購入済み",
+        "tooltip_text": "購入済みの商品のみを表示する",
+        "checkbox_label": "購入済み"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1429,6 +1480,16 @@
       },
       "title": "アカウントがブロックされています",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "検索",
+      "button_all": "すべて",
+      "top_brands_title": "人気ブランド",
+      "title": "ブランド",
+      "no_results": "該当する情報は見つかりませんでした"
+    },
+    "brand": {
+      "products_title": "製品"
     }
   },
   "identity_error": {
