@@ -649,7 +649,17 @@
           "check_your_configuration": "Sprawdź konfigurację produktu",
           "required_section": "Sekcja jest wymagana",
           "optional_no_selected": "Spersonalizuj swój wybór (opcjonalne)",
-          "required_no_selected": "Uzupełnij wszystkie wymagane opcje, aby sfinalizować wybór"
+          "required_no_selected": "Uzupełnij wszystkie wymagane opcje, aby sfinalizować wybór",
+          "section-text-fieldset": {
+            "custom_option_with_input": "Opcja niestandardowa: {0}",
+            "custom_option_empty": "Opcja niestandardowa: pusta",
+            "enter_custom_text": "Wprowadź własny tekst",
+            "no_selection": "Brak wyboru",
+            "none": "Brak",
+            "custom_input": "Własne dane",
+            "predefined_prefix": "Predefiniowane",
+            "option_label": "Opcja {0}: {1}"
+          }
         }
       },
       "discount_badge": {
@@ -665,6 +675,9 @@
         "ok_button": "OK",
         "no_results": "Nie znaleziono wyników",
         "reset_search_button": "Resetuj wyszukiwanie"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -1306,7 +1319,12 @@
       "products_icon": "Ikona produktu",
       "show_all_results": "Pokaż wszystkie wyniki",
       "load_previous_page": "Załaduj poprzednią stronę",
-      "load_next_page": "Załaduj następną stronę"
+      "load_next_page": "Załaduj następną stronę",
+      "purchased_before_filter_card": {
+        "title": "Kupione wcześniej",
+        "tooltip_text": "Wybierz, aby wyświetlić tylko produkty zakupione wcześniej",
+        "checkbox_label": "Kupione wcześniej"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1462,6 +1480,16 @@
       },
       "title": "Twoje konto jest zablokowane",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "Szukaj",
+      "button_all": "Wszystkie",
+      "top_brands_title": "Najlepsze marki",
+      "title": "Marki",
+      "no_results": "Brak wyników"
+    },
+    "brand": {
+      "products_title": "Produkty"
     }
   },
   "identity_error": {

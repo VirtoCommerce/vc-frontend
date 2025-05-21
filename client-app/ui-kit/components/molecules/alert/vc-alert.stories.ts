@@ -42,7 +42,7 @@ export default {
   },
 } as Meta<typeof VcAlert>;
 
-const Template: StoryFn<typeof VcAlert> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcAlert },
   setup: () => ({ args }),
   template: `<VcAlert v-bind="args">
@@ -77,7 +77,7 @@ Closable.args = {
   closable: true,
 };
 
-export const AllStates: StoryFn<typeof VcAlert> = () => ({
+export const AllStates: StoryFn = () => ({
   components: { VcAlert },
   setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
   template: `<div class="space-y-6">

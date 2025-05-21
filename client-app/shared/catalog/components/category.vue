@@ -8,7 +8,7 @@
       v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
       :is-exist-selected-facets="hasSelectedFacets"
       :is-popup-sidebar-filter-dirty="isFiltersDirty"
-      :popup-sidebar-filters="productsFilters"
+      :popup-sidebar-filters="filtersToShow"
       :facets-loading="fetchingFacets"
       :is-mobile="isMobile"
       :is-visible="isFiltersSidebarVisible"
@@ -34,7 +34,7 @@
 
         <ProductsFilters
           :keyword="keywordQueryParam"
-          :filters="productsFilters"
+          :filters="filtersToShow"
           :loading="fetchingProducts"
           class="category__product-filters"
           @change="applyFilters($event)"
@@ -42,7 +42,7 @@
       </template>
 
       <VcTypography tag="h1" class="category__title">
-        <i18n-t v-if="!categoryId && !isRoot" keypath="pages.search.header" tag="span">
+        <i18n-t v-if="!categoryId && !isRoot && searchParams.keyword" keypath="pages.search.header" tag="span">
           <template #keyword>
             <strong>{{ searchParams.keyword }}</strong>
           </template>
@@ -110,11 +110,13 @@
         <CategoryControls
           v-if="!hideControls && !isMobile && !isHorizontalFilters"
           v-model="localStorageInStock"
+          v-model:purchased-before="localStoragePurchasedBefore"
           :loading="fetchingProducts"
           :saved-branches="localStorageBranches"
           class="category__controls"
           @open-branches-modal="openBranchesModal"
           @apply-in-stock="resetCurrentPage"
+          @apply-purchased-before="resetCurrentPage"
         />
       </div>
 
@@ -125,15 +127,15 @@
         :keyword-query-param="keywordQueryParam"
         :sort-query-param="sortQueryParam"
         :loading="fetchingProducts || fetchingFacets"
-        :filters="productsFilters"
+        :filters="filtersToShow"
         :hide-sorting="hideSorting"
         :hide-all-filters="hideSidebar"
+        :facets-to-hide="facetsToHide"
         @reset-facet-filters="resetFacetFilters"
         @apply-filters="applyFilters"
         @show-popup-sidebar="showFiltersSidebar"
         @apply-sort="resetCurrentPage"
       />
-
       <!-- Filters chips -->
       <div
         v-if="
@@ -145,22 +147,24 @@
         class="category__chips"
       >
         <template v-for="facet in productsFilters.facets">
-          <template v-for="filterItem in facet.values">
-            <VcChip
-              v-if="filterItem.selected"
-              :key="facet.paramName + filterItem.value"
-              color="secondary"
-              closable
-              truncate
-              @close="
-                removeFacetFilter({
-                  paramName: facet.paramName,
-                  value: filterItem.value,
-                })
-              "
-            >
-              {{ filterItem.label }}
-            </VcChip>
+          <template v-if="!facetsToHide?.includes(facet.paramName)">
+            <template v-for="filterItem in facet.values">
+              <VcChip
+                v-if="filterItem.selected"
+                :key="facet.paramName + filterItem.value"
+                color="secondary"
+                closable
+                truncate
+                @close="
+                  removeFacetFilter({
+                    paramName: facet.paramName,
+                    value: filterItem.value,
+                  })
+                "
+              >
+                {{ filterItem.label }}
+              </VcChip>
+            </template>
           </template>
         </template>
 
@@ -197,7 +201,9 @@
         :fetching-more-products="fetchingMoreProducts"
         :fetching-products="fetchingProducts"
         :fixed-products-count="fixedProductsCount"
-        :has-active-filters="hasSelectedFacets || localStorageInStock || !!localStorageBranches.length"
+        :has-active-filters="
+          hasSelectedFacets || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
+        "
         :has-selected-facets="hasSelectedFacets"
         :items-per-page="itemsPerPage"
         :pages-count="pagesCount"
@@ -247,6 +253,7 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForCategorySubtree,
   getFilterExpressionForInStock,
+  getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
@@ -290,10 +297,12 @@ interface IProps {
   allowSetMeta?: boolean;
   showButtonToDefaultView?: boolean;
   filtersDisplayOrder?: FiltersDisplayOrderType;
+  facetsToHide?: string[];
 }
 
 const { allowSetMeta } = toRefs(props);
 const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
+const facetsToHide = toRef(props, "facetsToHide");
 
 const { catalogId, currencyCode } = globals;
 
@@ -303,6 +312,17 @@ const isMobile = breakpoints.smaller("md");
 const catalogPaginationMode = computed(
   () => themeContext.value?.settings?.catalog_pagination_mode ?? CATALOG_PAGINATION_MODES.infiniteScroll,
 );
+
+const filtersToShow = computed(() => {
+  if (!facetsToHide.value?.length) {
+    return productsFilters.value;
+  }
+
+  return {
+    ...productsFilters.value,
+    facets: productsFilters.value.facets.filter((facet) => !facetsToHide.value?.includes(facet.paramName)),
+  };
+});
 
 const { themeContext } = useThemeContext();
 const {
@@ -317,6 +337,7 @@ const {
   keywordQueryParam,
   localStorageBranches,
   localStorageInStock,
+  localStoragePurchasedBefore,
   pagesCount,
   pageHistory,
   products,
@@ -344,6 +365,7 @@ const {
   useQueryParams: true,
   withFacets: true,
   catalogPaginationMode: catalogPaginationMode.value,
+  facetsToHide: facetsToHide.value,
 });
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();
@@ -431,6 +453,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
     props.filter,
     facetsQueryParam.value,
     getFilterExpressionForInStock(localStorageInStock.value),
+    getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
     getFilterExpressionForAvailableIn(localStorageBranches.value),
   ]
     .filter(Boolean)
@@ -450,6 +473,7 @@ async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<vo
       props.filter,
       getFilterExpressionFromFacets(newFilters.facets),
       getFilterExpressionForInStock(newFilters.inStock),
+      getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
       getFilterExpressionForAvailableIn(newFilters.branches),
     ]
       .filter(Boolean)
@@ -459,6 +483,7 @@ async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<vo
   updateProductsFilters({
     branches: newFilters.branches,
     inStock: newFilters.inStock,
+    purchasedBefore: newFilters.purchasedBefore,
     facets: await getFacets(searchParamsForFacets),
   });
 }
@@ -552,15 +577,24 @@ watch(props, ({ viewMode }) => {
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
   () => {
-    if (categoryProductsAnchor.value) {
-      categoryProductsAnchor.value.scrollIntoView({ block: "center" });
-    }
     void fetchProducts();
   },
   {
     debounce: 20,
     flush: "post",
     immediate: true,
+  },
+);
+
+watchDebounced(
+  computed(() => JSON.stringify(searchParams.value)),
+  () => {
+    if (categoryProductsAnchor.value && (!isHorizontalFilters.value || isMobile.value)) {
+      categoryProductsAnchor.value.scrollIntoView({ block: "center" });
+    }
+  },
+  {
+    debounce: 20,
   },
 );
 </script>

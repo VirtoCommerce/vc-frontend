@@ -42,6 +42,15 @@ export function getFilterExpressionForInStock(value: MaybeRef<boolean>): string 
 }
 
 /**
+ * Generates a filter expression for purchased before filtering
+ * @param value - A reactive boolean value indicating whether to filter purchased before items
+ * @returns A string representing the purchased before filter expression
+ */
+export function getFilterExpressionForPurchasedBefore(value: MaybeRef<boolean>): string {
+  return unref(value) ? "isPurchased:true" : "";
+}
+
+/**
  * Generates a filter expression for available in branches filtering
  * @param value - A reactive array of branch identifiers
  * @returns A string representing the available in branches filter expression
@@ -49,6 +58,15 @@ export function getFilterExpressionForInStock(value: MaybeRef<boolean>): string 
 export function getFilterExpressionForAvailableIn(value: MaybeRef<string[]>): string {
   const branches = unref(value);
   return branches.length ? `available_in:"${branches.join('","')}"` : "";
+}
+
+/**
+ * Generates a filter expression for brand filtering
+ * @param brandName - A string or reactive string value representing the brand name
+ * @returns A string representing the brand filter expression
+ */
+export function getFilterExpressionForBrand(brandName?: MaybeRef<string>): string {
+  return unref(brandName) ? `"BRAND":"${unref(brandName)}"` : "";
 }
 
 /**

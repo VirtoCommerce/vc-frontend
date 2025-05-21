@@ -649,7 +649,17 @@
           "check_your_configuration": "Überprüfe deine Produktkonfiguration",
           "required_section": "Abschnitt erforderlich",
           "optional_no_selected": "Personalisieren Sie Ihre Auswahl weiter (optional)",
-          "required_no_selected": "Bitte alle erforderlichen Optionen auswählen, um Ihre Auswahl abzuschließen."
+          "required_no_selected": "Bitte alle erforderlichen Optionen auswählen, um Ihre Auswahl abzuschließen.",
+          "section-text-fieldset": {
+            "custom_option_with_input": "Benutzerdefinierte Option: {0}",
+            "custom_option_empty": "Benutzerdefinierte Option: leer",
+            "enter_custom_text": "Benutzerdefinierten Text eingeben",
+            "no_selection": "Keine Auswahl",
+            "none": "Keine",
+            "custom_input": "Benutzerdefinierte Eingabe",
+            "predefined_prefix": "Vordefiniert",
+            "option_label": "Option {0}: {1}"
+          }
         }
       },
       "discount_badge": {
@@ -665,6 +675,9 @@
         "ok_button": "Ok",
         "no_results": "Keine Ergebnisse gefunden",
         "reset_search_button": "Suche zurücksetzen"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -1306,7 +1319,12 @@
       "products_icon": "Produktikone",
       "show_all_results": "Alle Ergebnisse anzeigen",
       "load_previous_page": "Vorherige Seite laden",
-      "load_next_page": "Nächste Seite laden"
+      "load_next_page": "Nächste Seite laden",
+      "purchased_before_filter_card": {
+        "title": "Bereits gekauft",
+        "tooltip_text": "Auswählen, um nur Produkte anzuzeigen, die zuvor gekauft wurden",
+        "checkbox_label": "Bereits gekauft"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1462,6 +1480,16 @@
       },
       "title": "Ihr Konto ist blockiert",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "Suche",
+      "button_all": "Alle",
+      "top_brands_title": "Top-Marken",
+      "title": "Marken",
+      "no_results": "Keine Ergebnisse gefunden"
+    },
+    "brand": {
+      "products_title": "Produkte"
     }
   },
   "identity_error": {

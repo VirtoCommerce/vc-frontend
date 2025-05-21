@@ -31,7 +31,7 @@ export default {
   },
 } as Meta<typeof VcRadioButton>;
 
-const Template: StoryFn<typeof VcRadioButton> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcRadioButton },
   setup: () => ({ args }),
   template: '<VcRadioButton v-bind="args" />',

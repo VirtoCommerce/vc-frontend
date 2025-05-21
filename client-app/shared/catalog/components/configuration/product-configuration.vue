@@ -11,17 +11,18 @@
       <VcWidget
         v-for="(section, index) in configuration"
         :key="section.id"
+        data-test-id="section"
         collapsible
         size="xs"
         :collapsed="index !== 0"
       >
         <template #title>
-          <div class="product-configuration__title">
+          <div class="product-configuration__title" data-test-id="section-title">
             {{ section.name }}
             <span v-if="section.isRequired" class="product-configuration__required">*</span>
           </div>
 
-          <div class="product-configuration__subtitle">
+          <div class="product-configuration__subtitle" data-test-id="section-description">
             {{ section.description }}
 
             <div v-if="validationErrors.get(section.id)" class="product-configuration__error">
@@ -30,6 +31,7 @@
 
             <div
               v-else
+              data-test-id="section-subtitle"
               class="product-configuration__value"
               :class="[
                 hasSelectedOption(section.id)
@@ -48,6 +50,7 @@
             <template v-for="option in section.options" :key="option.id">
               <OptionProduct
                 v-if="option.product"
+                data-test-id="product-option"
                 :model-value="selectedConfiguration[section.id]?.productId"
                 :product="option.product"
                 :quantity="option.quantity"
@@ -78,33 +81,19 @@
             />
           </template>
 
-          <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.text">
-            <OptionText
-              :name="section.id"
-              :is-required="section.isRequired"
-              :value="selectedConfiguration[section.id]?.selectedOptionTextValue"
-              :selected="!!selectedConfiguration[section.id]"
-              @input="
-                selectSectionValue({
-                  sectionId: section.id,
-                  customText: $event,
-                  type: section.type,
-                })
-              "
-            />
-
-            <OptionNone
-              v-if="!section.isRequired"
-              :name="section.id"
-              :selected="selectedConfiguration[section.id]?.selectedOptionTextValue === undefined"
-              @input="
-                selectSectionValue({
-                  sectionId: section.id,
-                  type: section.type,
-                })
-              "
-            />
-          </template>
+          <SectionTextFieldset
+            v-if="section.type === CONFIGURABLE_SECTION_TYPES.text"
+            data-test-id="text-option"
+            :section="section"
+            :initial-value="selectedConfiguration[section.id]?.selectedOptionTextValue"
+            @update="
+              selectSectionValue({
+                sectionId: section.id,
+                customText: $event,
+                type: section.type,
+              })
+            "
+          />
 
           <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.file">
             <OptionFile
@@ -160,7 +149,7 @@ import OptionFile from "./option-file.vue";
 import OptionNone from "./option-none.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
-import OptionText from "./option-text.vue";
+import SectionTextFieldset from "./section-text-fieldset.vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 

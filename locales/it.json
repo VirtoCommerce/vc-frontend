@@ -649,7 +649,17 @@
           "check_your_configuration": "Verifica la configurazione del prodotto",
           "required_section": "Sezione obbligatoria",
           "optional_no_selected": "Personalizza ulteriormente la tua selezione (opzionale)",
-          "required_no_selected": "Completa tutte le opzioni obbligatorie per finalizzare la selezione"
+          "required_no_selected": "Completa tutte le opzioni obbligatorie per finalizzare la selezione",
+          "section-text-fieldset": {
+            "custom_option_with_input": "Opzione personalizzata: {0}",
+            "custom_option_empty": "Opzione personalizzata: vuoto",
+            "enter_custom_text": "Inserisci testo personalizzato",
+            "no_selection": "Nessuna selezione",
+            "none": "Nessuno",
+            "custom_input": "Input personalizzato",
+            "predefined_prefix": "Predefinito",
+            "option_label": "Opzione {0}: {1}"
+          }
         }
       },
       "discount_badge": {
@@ -665,6 +675,9 @@
         "ok_button": "Ok",
         "no_results": "Nessun risultato trovato",
         "reset_search_button": "Reimposta ricerca"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -1306,7 +1319,12 @@
       "products_icon": "Icona prodotto",
       "show_all_results": "Mostra tutti i risultati",
       "load_previous_page": "Carica la pagina precedente",
-      "load_next_page": "Carica la pagina successiva"
+      "load_next_page": "Carica la pagina successiva",
+      "purchased_before_filter_card": {
+        "title": "Acquistato in precedenza",
+        "tooltip_text": "Seleziona per mostrare solo i prodotti acquistati in precedenza",
+        "checkbox_label": "Acquistato in precedenza"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1462,6 +1480,16 @@
       },
       "title": "Il tuo account è bloccato",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "Cerca",
+      "button_all": "Tutto",
+      "top_brands_title": "Marchi principali",
+      "title": "Marchi",
+      "no_results": "Nessun risultato trovato"
+    },
+    "brand": {
+      "products_title": "Prodotti"
     }
   },
   "identity_error": {

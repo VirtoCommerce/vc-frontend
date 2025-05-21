@@ -3,6 +3,7 @@ import { PAGE_LIMIT } from "@/core/constants";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useProducts } from "./useProducts";
 import type { CatalogPaginationModeType } from "../types";
+import type { FacetItemType } from "@/core/types";
 
 // Mock types
 interface Product {
@@ -119,6 +120,13 @@ vi.mock("@/core/composables", () => ({
   useThemeContext: mockData.useThemeContext,
   useRouteQueryParam: () => ({
     value: "",
+  }),
+}));
+
+vi.mock("@/core/composables/useModuleSettings", () => ({
+  useModuleSettings: () => ({
+    getModuleSettings: () => ({}),
+    isEnabled: () => true,
   }),
 }));
 
@@ -422,6 +430,60 @@ describe("useProducts", () => {
       await fetchProducts({ page: PAGE_LIMIT + 1, itemsPerPage: 2 });
 
       expect(pageHistory.value).toEqual([]);
+    });
+  });
+
+  describe("facetsToHide property", () => {
+    it("should not count hidden facets as selected in hasSelectedFacets", () => {
+      const { facets, hasSelectedFacets } = useProducts({ facetsToHide: ["hiddenFacet"] });
+      facets.value = [
+        {
+          paramName: "hiddenFacet",
+          values: [{ value: "v1", selected: true }],
+        },
+      ] as unknown as FacetItemType[];
+      expect(hasSelectedFacets.value).toBe(false);
+    });
+
+    it("should count visible facets as selected in hasSelectedFacets", () => {
+      const { facets, hasSelectedFacets } = useProducts({ facetsToHide: ["hiddenFacet"] });
+      facets.value = [
+        {
+          paramName: "visibleFacet",
+          values: [{ value: "v1", selected: true }],
+        },
+      ] as unknown as FacetItemType[];
+      expect(hasSelectedFacets.value).toBe(true);
+    });
+
+    it("should ignore hidden facets and count visible ones correctly", () => {
+      const { facets, hasSelectedFacets } = useProducts({ facetsToHide: ["hiddenFacet"] });
+      facets.value = [
+        {
+          paramName: "hiddenFacet",
+          values: [{ value: "v1", selected: true }],
+        },
+        {
+          paramName: "visibleFacet",
+          values: [{ value: "v2", selected: true }],
+        },
+      ] as unknown as FacetItemType[];
+      expect(hasSelectedFacets.value).toBe(true);
+    });
+
+    it("should return false when all selected facets are hidden", () => {
+      const { facets, hasSelectedFacets } = useProducts({ facetsToHide: ["hiddenFacet", "anotherHidden"] });
+      facets.value = [
+        {
+          paramName: "hiddenFacet",
+          values: [{ value: "v1", selected: true }],
+        },
+        {
+          paramName: "anotherHidden",
+          values: [{ value: "v2", selected: true }],
+        },
+      ] as unknown as FacetItemType[];
+      expect(hasSelectedFacets.value).toBe(false);
     });
   });
 });
