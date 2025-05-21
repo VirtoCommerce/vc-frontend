@@ -13,7 +13,7 @@ type ComponentType<Props = unknown, Emits extends EmitsOptions = Record<string, 
 
 export type ComponentRegistryItemType<
   Props = unknown,
-  Emits extends EmitsOptions = never,
+  Emits extends EmitsOptions = EmitsOptions,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Condition extends (parameter: any) => boolean = never,
 > = {
