@@ -10,8 +10,7 @@
 
 <script setup lang="ts">
 import { useHead } from "@unhead/vue";
-import { computedEager } from "@vueuse/core";
-import { markRaw, onMounted } from "vue";
+import { markRaw, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import favicon16 from "@/assets/icons/favicon-16x16.png";
 import favicon32 from "@/assets/icons/favicon-32x32.png";
@@ -62,7 +61,7 @@ const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Secure: markRaw(SecureLayout),
 };
 
-const layout = computedEager(() => layouts[route.meta?.layout ?? "Main"]);
+const layout = computed(() => layouts[route.meta?.layout ?? "Main"]);
 
 router.beforeEach((to) => {
   // Hiding the drop-down list of search results

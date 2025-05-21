@@ -1,10 +1,10 @@
+import { useLocalStorage } from "@vueuse/core";
 import { ref, computed, readonly } from "vue";
 import { getProduct } from "@/core/api/graphql/catalog";
+import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import type { Product } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
-import { useLocalStorage } from "@vueuse/core";
-import { NAVIGATION_OUTLINE } from "@/core/constants";
 
 export function useProduct() {
   const fetching: Ref<boolean> = ref(true);
