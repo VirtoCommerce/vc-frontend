@@ -1,3 +1,4 @@
+import type { Product } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { Component, ComputedOptions, EmitsOptions, MethodOptions } from "vue";
 
@@ -20,9 +21,20 @@ export type RawConditionType<T> = T extends { condition?: infer C } ? C : never;
 
 export type ConditionParamsType<T> = RawConditionType<T> extends (...args: infer P) => boolean ? P : never;
 
-export type ComponentRegistryType = {
-  headerMenu: { [key: string]: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }> };
-  mobileMenu: { [key: string]: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }> };
-  accountMenu: { [key: string]: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }> };
-  mobileHeader: { [key: string]: ComponentRegistryItemType };
+export type ComponentsRegistryType = {
+  headerMenu: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }>;
+  mobileMenu: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }>;
+  accountMenu: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }>;
+  mobileHeader?: ComponentRegistryItemType;
+  productCard?: ComponentRegistryItemType<{ product: Product; isTextShown?: boolean; lazy?: boolean }>;
 };
+
+export type ComponentRegistryStateType = {
+  [K in keyof ComponentsRegistryType]: Record<string, ComponentsRegistryType[K]>;
+};
+
+export type ComponentTypeByRegistryKeyType<T extends keyof ComponentRegistryStateType> = NonNullable<
+  ComponentRegistryStateType[T]
+>[string] extends { component: infer C }
+  ? C
+  : never;
