@@ -1,20 +1,31 @@
 <template>
   <div v-if="isVisible && !loading && (hasContent || objectType || hasPageDocumentContent)" class="slug-content">
     <CatalogComponent v-if="objectType === ObjectType.Catalog" />
+
     <CategoryComponent
       v-else-if="objectType === 'Category'"
       :category-id="slugInfo?.entityInfo?.objectId"
       allow-set-meta
     />
-    <Product v-else-if="objectType === 'CatalogProduct'" :product-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
+
+    <BrandsPage v-else-if="objectType === ObjectType.Brands" />
+
+    <BrandPage v-else-if="objectType === ObjectType.Brand" :brand-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
+
+    <Product
+      v-else-if="objectType === ObjectType.CatalogProduct"
+      :product-id="slugInfo?.entityInfo?.objectId"
+      allow-set-meta
+    />
+
     <VirtoPage v-else-if="hasPageDocumentContent" :page-document="pageDocumentContent" />
+
     <StaticPage v-else-if="hasContent" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computedEager } from "@vueuse/core";
-import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect } from "vue";
+import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect, computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
 import { useStaticPage } from "@/shared/static-content";
@@ -38,12 +49,14 @@ const CategoryComponent = defineAsyncComponent(() => import("@/pages/category.vu
 const Product = defineAsyncComponent(() => import("@/pages/product.vue"));
 const VirtoPage = defineAsyncComponent(() => import("@/pages/matcher/virto-pages/virto-pages.vue"));
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
+const BrandsPage = defineAsyncComponent(() => import("@/pages/brands.vue"));
+const BrandPage = defineAsyncComponent(() => import("@/pages/brand.vue"));
 
 const { setMatchingRouteName } = useNavigations();
 
 const { staticPage } = useStaticPage();
 
-const seoUrl = computedEager(() => {
+const seoUrl = computed(() => {
   if (!props.pathMatch) {
     return "/";
   }
@@ -70,13 +83,17 @@ enum ObjectType {
   Category = "Category",
   ContentFile = "ContentFile",
   VirtoPages = "Pages",
+  Brands = "Brands",
+  Brand = "Brand",
 }
 
 watchEffect(() => {
   if (loading.value) {
     emit("setState", "loading");
   } else if (
-    [ObjectType.Catalog, ObjectType.Category, ObjectType.CatalogProduct].includes(objectType.value as ObjectType)
+    [ObjectType.Catalog, ObjectType.Category, ObjectType.CatalogProduct, ObjectType.Brands, ObjectType.Brand].includes(
+      objectType.value as ObjectType,
+    )
   ) {
     emit("setState", "ready");
   } else if (pageDocumentContent.value) {
