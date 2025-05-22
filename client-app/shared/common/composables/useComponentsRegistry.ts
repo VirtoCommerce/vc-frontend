@@ -82,11 +82,14 @@ function _useComponentsRegistry() {
     return componentRegistry.value[type]?.[id]?.component ?? null;
   }
 
-  function isComponentRegistered<T extends keyof ComponentRegistryStateType>(type: T, id: string) {
+  function isComponentRegistered<
+    T extends keyof ComponentRegistryStateType,
+    I extends keyof ComponentRegistryStateType[T],
+  >(type: T, id: I) {
     return componentRegistry.value[type]?.[id]?.component !== undefined;
   }
 
-  function shouldRenderComponent<T extends keyof ComponentRegistryStateType, I extends string>(
+  function shouldRender<T extends keyof ComponentRegistryStateType, I extends string>(
     type: T,
     id: I,
     parameter: Parameters<NonNullable<ComponentRegistryStateType[T][I]["condition"]>>[0],
@@ -125,7 +128,7 @@ function _useComponentsRegistry() {
       getComponentProps,
 
       isComponentRegistered,
-      shouldRenderComponent,
+      shouldRender,
     };
   }
 
@@ -142,7 +145,7 @@ function _useComponentsRegistry() {
     getComponentProps,
 
     isComponentRegistered,
-    shouldRenderComponent,
+    shouldRender,
   };
 }
 

@@ -30,15 +30,13 @@
         </div>
 
         <div class="mt-4 print:hidden">
-          <component
-            :is="getComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
-            v-if="
-              isComponentRegistered('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON) &&
-              shouldRenderComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, product)
-            "
+          <ExtensionPoint
+            v-if="shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, product)"
+            :id="CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON"
+            type="productCard"
             :product="product"
-            v-bind="getComponentProps('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
           />
+
           <AddToCart v-else :product="product">
             <InStock
               :is-in-stock="product.availabilityData?.isInStock"
@@ -79,7 +77,7 @@ const product = toRef(props, "product");
 const { currentCurrency } = useCurrency();
 const { getItemsTotal } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
-const { getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps } = useComponentsRegistry();
+const { shouldRender } = useComponentsRegistry();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 

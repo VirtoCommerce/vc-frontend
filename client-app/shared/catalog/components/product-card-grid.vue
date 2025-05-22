@@ -164,14 +164,11 @@
       <VcItemPriceCatalog :with-from-label="product.hasVariations || product.isConfigurable" :value="price" />
     </div>
 
-    <component
-      :is="getComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
-      v-if="
-        isComponentRegistered('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-        shouldRenderComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
-      "
+    <ExtensionPoint
+      v-if="shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
+      :id="CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON"
+      type="productCard"
       :product="product"
-      v-bind="getComponentProps('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
     />
 
     <VcProductButton
@@ -256,7 +253,7 @@ const properties = computed(() =>
 );
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
-const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useComponentsRegistry();
+const { shouldRender } = useComponentsRegistry();
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;

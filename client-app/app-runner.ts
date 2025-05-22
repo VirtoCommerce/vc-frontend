@@ -26,6 +26,7 @@ import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
 import type { StoreResponseType } from "./core/api/graphql/types";
+import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
@@ -172,6 +173,9 @@ export default async () => {
 
   // Register Page builder product components globally
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
+
+  // register extension points globally
+  app.component("ExtensionPoint", ExtensionPoint);
 
   await router.isReady();
 

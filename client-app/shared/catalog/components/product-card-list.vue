@@ -97,14 +97,11 @@
     </div>
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col sm:mt-0">
-      <component
-        :is="getComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
-        v-if="
-          isComponentRegistered('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-          shouldRenderComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
-        "
+      <ExtensionPoint
+        v-if="shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
+        :id="CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON"
+        type="productCard"
         :product="product"
-        v-bind="getComponentProps('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
       />
 
       <VcProductButton
@@ -177,7 +174,7 @@ interface IProps {
 
 console.warn("ProductCardList is deprecated. Use VcProductCard or ProductCard instead.");
 
-const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useComponentsRegistry();
+const { shouldRender } = useComponentsRegistry();
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
 const isDigital = computed(() => props.product.productType === ProductType.Digital);

@@ -51,14 +51,11 @@
       :single-line="viewMode === 'grid'"
     />
 
-    <component
-      :is="getComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
-      v-if="
-        isComponentRegistered('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-        shouldRenderComponent('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
-      "
+    <ExtensionPoint
+      v-if="shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
+      :id="CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON"
+      type="productCard"
       :product="product"
-      v-bind="getComponentProps('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
     />
 
     <VcProductButton
@@ -134,7 +131,7 @@ defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
-const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useComponentsRegistry();
+const { shouldRender } = useComponentsRegistry();
 
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
