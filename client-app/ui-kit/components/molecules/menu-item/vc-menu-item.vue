@@ -1,5 +1,12 @@
 <template>
-  <component :is="componentTag" :id="componentId" v-bind="$attrs" ref="currentElement" class="vc-menu-item">
+  <component
+    :is="componentTag"
+    :id="componentId"
+    v-bind="$attrs"
+    ref="currentElement"
+    class="vc-menu-item"
+    role="presentation"
+  >
     <component
       :is="innerTag"
       v-bind="attrs"

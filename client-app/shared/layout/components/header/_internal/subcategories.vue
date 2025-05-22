@@ -3,7 +3,7 @@
     <VcScrollbar
       v-if="item && item.childCategories?.length"
       class="subcategories"
-      role="menubar"
+      role="presentation"
       tabindex="-1"
       vertical
       :aria-label="ariaLabel"
@@ -13,7 +13,7 @@
       @focus="cancelHide"
       @mouseenter="cancelHide"
     >
-      <ul class="subcategories__list">
+      <ul class="subcategories__list" role="menubar">
         <VcMenuItem
           v-for="(child, index) in item.childCategories"
           :id="`subcategory-${child.id}`"
