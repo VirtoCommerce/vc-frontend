@@ -2,7 +2,7 @@ import { computedEager, isDefined, syncRefs, toValue, useMemoize } from "@vueuse
 import { computed, onUnmounted, ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAxios } from "@/core/api/common/composables/useAxios";
-import { getFileUploadOptions, deleteFile } from "@/core/api/graphql/files";
+import { deleteFile, getFileUploadOptions } from "@/core/api/graphql/files";
 import { useErrorsTranslator } from "@/core/composables";
 import { asyncForEach } from "@/core/utilities";
 import { DEFAULT_FILE_MAX_COUNT, DEFAULT_FILE_MAX_SIZE } from "@/shared/files/constants";
@@ -24,6 +24,10 @@ import type { AxiosProgressEvent, AxiosResponse } from "axios";
 import type { MaybeRef, WatchSource, WatchStopHandle } from "vue";
 
 const getFileUploadOptionsMemoized = useMemoize(getFileUploadOptions);
+
+// Maximum number of simultaneous uploads
+const MAX_CONCURRENT_UPLOADS = 2;
+
 /**
  * File management
  * @param scope Scope files belongs to.
@@ -36,14 +40,16 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   const { translate } = useErrorsTranslator("file_error");
   const { t, n } = useI18n();
 
-  const { data, execute: _uploadFiles } = useAxios<
-    FileUploadResultType[],
-    AxiosResponse<FileUploadResultType[]>,
-    FormData
-  >({
-    method: "POST",
-    onUploadProgress,
-  });
+  // Track active upload count instead of a single flag
+  const activeUploadCount = ref(0);
+
+  // Create a factory function to get a new useAxios instance for each upload
+  const createUploader = () => {
+    return useAxios<FileUploadResultType[], AxiosResponse<FileUploadResultType[]>, FormData>({
+      method: "POST",
+      onUploadProgress,
+    });
+  };
 
   const defaultOptions = {
     maxFileCount: DEFAULT_FILE_MAX_COUNT,
@@ -72,7 +78,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   const hasNewFiles = computedEager(() => newFiles.value.length > 0);
 
   const uploadingFiles = computed(() => files.value.filter(isUploadingFile));
-  const uploadingFileSize = computed(() => uploadingFiles.value.reduce((sum, file) => sum + file.size, 0));
+  // const uploadingFileSize = computed(() => uploadingFiles.value.reduce((sum, file) => sum + file.size, 0));
 
   const failedFiles = computed(() => files.value.filter(isFailedFile));
   const hasFailedFiles = computedEager(() => failedFiles.value.length > 0);
@@ -98,6 +104,8 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     }
 
     files.value.push(...filesToAdd);
+    // Try to upload newly added files
+    uploadFiles();
     return true;
   }
 
@@ -126,22 +134,14 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     });
   }
 
-  async function uploadFiles(): Promise<void> {
-    if (!hasNewFiles.value) {
+  // Helper function to process upload results
+  function processUploadResults(results: FileUploadResultType[] | undefined, filesToProcess: IUploadingFile[]) {
+    if (!results) {
       return;
     }
 
-    newFiles.value.forEach(toUploadingFile);
-
-    const formData = new FormData();
-
-    uploadingFiles.value.forEach((file) => formData.append("file", file.file));
-
-    await _uploadFiles(`/api/files/${unref(scope)}`, { data: formData });
-
-    data.value?.forEach((result) => {
-      const uploadedFile = uploadingFiles.value.find((fileInfo) => fileInfo.name === result.name);
-
+    results.forEach((result) => {
+      const uploadedFile = filesToProcess.find((fileInfo) => fileInfo.name === result.name);
       if (uploadedFile) {
         if (result.succeeded) {
           toUploadedFile(uploadedFile, result.id, result.url);
@@ -152,17 +152,102 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     });
   }
 
-  function onUploadProgress(event: AxiosProgressEvent) {
-    const requestSize = event.total! - uploadingFileSize.value;
-    let processedSize = requestSize;
+  // Upload a batch of files
+  async function uploadBatch(filesToUpload: INewFile[]): Promise<void> {
+    if (filesToUpload.length === 0) {
+      return;
+    }
 
-    uploadingFiles.value.forEach((file) => {
-      if (processedSize + file.size <= event.loaded) {
-        file.progress = 100;
-      } else if (processedSize >= event.loaded - file.size) {
-        file.progress = Math.round((Math.max(event.loaded - processedSize, 0) / file.size) * 100);
+    try {
+      activeUploadCount.value++;
+
+      // Mark selected files as uploading
+      filesToUpload.forEach((file) => {
+        toUploadingFile(file);
+      });
+
+      const formData = new FormData();
+      const filesToProcess = uploadingFiles.value.filter((file) =>
+        filesToUpload.some((newFile) => newFile.name === file.name),
+      );
+
+      filesToProcess.forEach((file) => formData.append("file", file.file));
+
+      // Create a new uploader instance for this batch
+      const { data, execute: _uploadFiles } = createUploader();
+
+      await _uploadFiles(`/api/files/${unref(scope)}`, { data: formData });
+
+      processUploadResults(data.value, filesToProcess);
+    } catch (error) {
+      // Mark files as failed
+      filesToUpload.forEach((file) => {
+        const uploadingFile = uploadingFiles.value.find((f) => f.name === file.name);
+        if (uploadingFile) {
+          toFailedFile(uploadingFile, t("file_error.UPLOAD_FAILED"));
+        }
+      });
+    } finally {
+      activeUploadCount.value--;
+      // Check for more files to upload
+      uploadFiles();
+    }
+  }
+
+  function uploadFiles() {
+    if (!hasNewFiles.value) {
+      return;
+    }
+
+    // Check if we can start more uploads
+    if (activeUploadCount.value >= MAX_CONCURRENT_UPLOADS) {
+      return;
+    }
+
+    // Calculate how many more uploads we can start
+    const availableSlots = MAX_CONCURRENT_UPLOADS - activeUploadCount.value;
+    if (availableSlots <= 0) {
+      return;
+    }
+
+    // Get files that need to be uploaded
+    const filesToUpload = [...newFiles.value];
+    if (filesToUpload.length === 0) {
+      return;
+    }
+
+    // Split files into batches for each available upload slot
+    const batchSize = Math.max(1, Math.ceil(filesToUpload.length / availableSlots));
+
+    // Start uploads for each batch
+    for (let i = 0; i < availableSlots && filesToUpload.length > 0; i++) {
+      const batch = filesToUpload.splice(0, batchSize);
+      if (batch.length > 0) {
+        // Start upload in background without waiting
+        void uploadBatch(batch);
       }
-      processedSize += file.size;
+    }
+  }
+
+  function onUploadProgress(event: AxiosProgressEvent) {
+    if (!event.total) {
+      return;
+    }
+
+    // Files associated with this upload
+    const relevantFiles = uploadingFiles.value;
+    if (relevantFiles.length === 0) {
+      return;
+    }
+
+    // Calculate total size of all files
+    const totalSize = relevantFiles.reduce((sum, file) => sum + file.size, 0);
+
+    // Estimate progress for each file
+    relevantFiles.forEach((file) => {
+      // Calculate the weight of this file within the total upload
+      const fileWeight = file.size / totalSize;
+      file.progress = Math.min(100, Math.round((event.loaded / (event.total || 1)) * 100 * fileWeight));
     });
   }
 
