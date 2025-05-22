@@ -2,7 +2,7 @@ import { createGlobalState } from "@vueuse/core";
 import { defineAsyncComponent, shallowReadonly, shallowRef } from "vue";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
-import type { ComponentRegistryStateType } from "@/shared/common/types/components-registry";
+import type { ComponentRegistryStateType } from "@/shared/common/types/extension-registry";
 
 const initialComponentRegistry: ComponentRegistryStateType = {
   headerMenu: {

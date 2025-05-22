@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
-import type { ComponentRegistryKeysType } from "@/shared/common/types/components-registry";
+import type { ComponentRegistryKeysType } from "@/shared/common/types/extension-registry";
 
 interface IProps {
   type: ComponentRegistryKeysType;
