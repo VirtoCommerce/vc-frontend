@@ -98,7 +98,7 @@
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col sm:mt-0">
       <ExtensionPoint
-        v-if="shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
+        v-if="$shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
         :id="CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON"
         type="productCard"
         :product="product"
@@ -147,7 +147,6 @@ import { computed } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
-import { useComponentsRegistry } from "@/shared/common/composables";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
@@ -173,8 +172,6 @@ interface IProps {
 }
 
 console.warn("ProductCardList is deprecated. Use VcProductCard or ProductCard instead.");
-
-const { shouldRender } = useComponentsRegistry();
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
 const isDigital = computed(() => props.product.productType === ProductType.Digital);

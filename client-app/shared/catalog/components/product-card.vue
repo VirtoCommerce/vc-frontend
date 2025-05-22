@@ -52,7 +52,7 @@
     />
 
     <ExtensionPoint
-      v-if="shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
+      v-if="$shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
       :id="CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON"
       type="productCard"
       :product="product"
@@ -102,7 +102,6 @@ import {
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
 import { AddToCart } from "@/shared/cart";
-import { useComponentsRegistry } from "@/shared/common/composables";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
@@ -130,8 +129,6 @@ interface IProps {
 defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
-
-const { shouldRender } = useComponentsRegistry();
 
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);

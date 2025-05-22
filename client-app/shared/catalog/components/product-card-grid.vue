@@ -165,7 +165,7 @@
     </div>
 
     <ExtensionPoint
-      v-if="shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
+      v-if="$shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
       :id="CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON"
       type="productCard"
       :product="product"
@@ -215,7 +215,6 @@ import { computed, ref } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
-import { useComponentsRegistry } from "@/shared/common/composables";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
@@ -252,8 +251,6 @@ const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
 );
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
-
-const { shouldRender } = useComponentsRegistry();
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;

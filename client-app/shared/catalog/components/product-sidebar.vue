@@ -31,7 +31,7 @@
 
         <div class="mt-4 print:hidden">
           <ExtensionPoint
-            v-if="shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, product)"
+            v-if="$shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, product)"
             :id="CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON"
             type="productCard"
             :product="product"
@@ -58,7 +58,6 @@ import { useCurrency } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { AddToCart, useShortCart } from "@/shared/cart";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
-import { useComponentsRegistry } from "@/shared/common/composables";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import CountInCart from "./count-in-cart.vue";
 import InStock from "./in-stock.vue";
@@ -77,7 +76,6 @@ const product = toRef(props, "product");
 const { currentCurrency } = useCurrency();
 const { getItemsTotal } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
-const { shouldRender } = useComponentsRegistry();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 

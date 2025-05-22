@@ -8,7 +8,14 @@ import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
-import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
+import {
+  applicationInsightsPlugin,
+  authPlugin,
+  configPlugin,
+  contextPlugin,
+  extensionPointsPlugin,
+  permissionsPlugin,
+} from "@/core/plugins";
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
@@ -26,7 +33,6 @@ import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
 import type { StoreResponseType } from "./core/api/graphql/types";
-import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
@@ -147,6 +153,7 @@ export default async () => {
   app.use(i18n);
   app.use(router);
   app.use(permissionsPlugin);
+  app.use(extensionPointsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
 
@@ -173,9 +180,6 @@ export default async () => {
 
   // Register Page builder product components globally
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
-
-  // register extension points globally
-  app.component("ExtensionPoint", ExtensionPoint);
 
   await router.isReady();
 
