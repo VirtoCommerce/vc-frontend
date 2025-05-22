@@ -1,9 +1,9 @@
 <template>
   <ul class="mt-4 flex grow flex-col gap-y-2">
     <li v-for="item in items" :key="item.title">
-      <template v-if="item.id && getComponent('mobileMenu', item.id)">
+      <template v-if="item.id && resolve('mobileMenu', item.id)">
         <component
-          :is="item.id && getComponent('mobileMenu', item.id)"
+          :is="item.id && resolve('mobileMenu', item.id)"
           :item="item"
           @close="$emit('close')"
           @select-item="$emit('selectItem', item)"
@@ -35,7 +35,7 @@ defineEmits<IEmits>();
 
 defineProps<IProps>();
 
-const { getComponent } = useExtensionRegistry();
+const { resolve } = useExtensionRegistry();
 
 interface IProps {
   items: ExtendedMenuLinkType[];

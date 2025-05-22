@@ -38,7 +38,7 @@
 
       <ul class="-mx-2 flex items-center">
         <li v-for="item in desktopMainMenuItems" :key="item.id">
-          <component :is="(item.id && getComponent('headerMenu', item.id)) || LinkDefault" :item="item" />
+          <component :is="(item.id && resolve('headerMenu', item.id)) || LinkDefault" :item="item" />
         </li>
       </ul>
     </nav>
@@ -84,7 +84,7 @@ const router = useRouter();
 const { organization } = useUser();
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
-const { getComponent } = useExtensionRegistry();
+const { resolve } = useExtensionRegistry();
 
 const bottomHeader = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);

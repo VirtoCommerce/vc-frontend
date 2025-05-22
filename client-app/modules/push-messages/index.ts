@@ -83,7 +83,7 @@ export async function init(router: Router, i18n: I18n) {
 
   if (isModuleEnabled) {
     const { mergeMenuSchema } = useNavigations();
-    const { registerComponent } = useExtensionRegistry();
+    const { register } = useExtensionRegistry();
     const route: RouteRecordRaw = {
       path: "notifications",
       name: "Notifications",
@@ -100,13 +100,13 @@ export async function init(router: Router, i18n: I18n) {
     cache.policies.addTypePolicies(pushMessagesTypePolices);
     mergeMenuSchema(menuItems);
     void loadModuleLocale(i18n, "push-messages");
-    registerComponent("headerMenu", "push-messages", {
+    register("headerMenu", "push-messages", {
       component: defineAsyncComponent(() => import("./components/link-push-messages.vue")),
     });
-    registerComponent("mobileMenu", "push-messages", {
+    register("mobileMenu", "push-messages", {
       component: defineAsyncComponent(() => import("./components/link-push-messages-mobile.vue")),
     });
-    registerComponent("mobileHeader", "push-messages", {
+    register("mobileHeader", "push-messages", {
       component: defineAsyncComponent(() => import("./components/push-messages-mobile.vue")),
     });
     router.addRoute("Account", route); // NOTE: This route must be added before any asynchronous calls. Delaying it can cause a 404 error if accessed prematurely.

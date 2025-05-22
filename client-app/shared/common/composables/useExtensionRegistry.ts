@@ -46,55 +46,55 @@ const initialComponentRegistry: ComponentRegistryStateType = {
 };
 
 function _useExtensionRegistry() {
-  const componentRegistry = shallowRef<ComponentRegistryStateType>(initialComponentRegistry);
+  const entries = shallowRef<ComponentRegistryStateType>(initialComponentRegistry);
 
-  function registerItem<T extends keyof ComponentRegistryStateType, I extends string>(
+  function register<T extends keyof ComponentRegistryStateType, I extends string>(
     type: T,
     id: I,
     item: ComponentRegistryStateType[T][I],
   ) {
-    if (!componentRegistry.value[type]) {
-      componentRegistry.value[type] = {};
+    if (!entries.value[type]) {
+      entries.value[type] = {};
     }
-    if (!componentRegistry.value[type][id]) {
-      componentRegistry.value[type][id] = item;
+    if (!entries.value[type][id]) {
+      entries.value[type][id] = item;
     } else {
       Logger.warn(`useExtensionRegistry: Component "${type}/${id}" already registered`);
     }
   }
 
-  function unregisterComponent<T extends keyof ComponentRegistryStateType>(type: T, id: string) {
-    delete componentRegistry.value[type]?.[id];
+  function unregister<T extends keyof ComponentRegistryStateType>(type: T, id: string) {
+    delete entries.value[type]?.[id];
   }
 
-  function getRegistryItem<T extends keyof ComponentRegistryStateType>(type: T, id: string) {
-    return componentRegistry.value[type]?.[id];
+  function getEntry<T extends keyof ComponentRegistryStateType>(type: T, id: string) {
+    return entries.value[type]?.[id];
   }
 
-  function getRegistryItems<T extends keyof ComponentRegistryStateType>(type: T) {
-    return shallowReadonly(componentRegistry.value[type] ?? {});
+  function getEntries<T extends keyof ComponentRegistryStateType>(type: T) {
+    return shallowReadonly(entries.value[type] ?? {});
   }
 
-  function getComponent<T extends keyof ComponentRegistryStateType, I extends keyof ComponentRegistryStateType[T]>(
+  function resolve<T extends keyof ComponentRegistryStateType, I extends keyof ComponentRegistryStateType[T]>(
     type: T,
     id: I,
   ) {
-    return componentRegistry.value[type]?.[id]?.component ?? null;
+    return entries.value[type]?.[id]?.component ?? null;
   }
 
-  function isComponentRegistered<
-    T extends keyof ComponentRegistryStateType,
-    I extends keyof ComponentRegistryStateType[T],
-  >(type: T, id: I) {
-    return componentRegistry.value[type]?.[id]?.component !== undefined;
+  function isRegistered<T extends keyof ComponentRegistryStateType, I extends keyof ComponentRegistryStateType[T]>(
+    type: T,
+    id: I,
+  ) {
+    return entries.value[type]?.[id]?.component !== undefined;
   }
 
-  function shouldRender<T extends keyof ComponentRegistryStateType, I extends string>(
+  function canRender<T extends keyof ComponentRegistryStateType, I extends string>(
     type: T,
     id: I,
     parameter: Parameters<NonNullable<ComponentRegistryStateType[T][I]["condition"]>>[0],
   ): boolean {
-    const condition = componentRegistry.value[type]?.[id]?.condition as ComponentRegistryStateType[T][I]["condition"];
+    const condition = entries.value[type]?.[id]?.condition as ComponentRegistryStateType[T][I]["condition"];
 
     if (condition && typeof condition === "function") {
       try {
@@ -107,45 +107,45 @@ function _useExtensionRegistry() {
     return true;
   }
 
-  function getComponentProps<T extends keyof ComponentRegistryStateType, I extends keyof ComponentRegistryStateType[T]>(
+  function getProps<T extends keyof ComponentRegistryStateType, I extends keyof ComponentRegistryStateType[T]>(
     type: T,
     id: I,
   ): ComponentRegistryStateType[T][I]["props"] {
-    return componentRegistry.value[type]?.[id]?.props;
+    return entries.value[type]?.[id]?.props;
   }
 
   if (IS_DEVELOPMENT) {
     window.VCExtensionRegistry = {
-      registryItems: componentRegistry.value,
+      entries,
 
-      registerComponent: registerItem,
-      unregisterComponent,
+      register,
+      unregister,
 
-      getComponent,
-      getRegistryItem,
-      getRegistryItems,
+      resolve,
+      getEntry,
+      getEntries,
 
-      getComponentProps,
+      getProps,
 
-      isComponentRegistered,
-      shouldRender,
+      isRegistered,
+      canRender,
     };
   }
 
   return {
-    registryItems: componentRegistry.value,
+    entries,
 
-    registerComponent: registerItem,
-    unregisterComponent,
+    register,
+    unregister,
 
-    getComponent,
-    getRegistryItem,
-    getRegistryItems,
+    resolve,
+    getEntry,
+    getEntries,
 
-    getComponentProps,
+    getProps,
 
-    isComponentRegistered,
-    shouldRender,
+    isRegistered,
+    canRender,
   };
 }
 

@@ -17,7 +17,7 @@ const BackInStockButton = defineAsyncComponent(() => import("./components/back-i
 
 const { isEnabled } = useModuleSettings(MODULE_ID);
 const { mergeMenuSchema } = useNavigations();
-const { registerComponent } = useExtensionRegistry();
+const { register } = useExtensionRegistry();
 
 const route: RouteRecordRaw = {
   path: "back-in-stock",
@@ -64,12 +64,12 @@ export function init(router: Router, i18n: I18n) {
   }
   if (isAuthenticated.value && isEnabled(ENABLED_KEY)) {
     mergeMenuSchema(menuItems);
-    registerComponent("productCard", CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, {
+    register("productCard", CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, {
       component: BackInStockButton,
       condition: (product) => !product.availabilityData.isInStock,
       props: { isTextShown: true },
     });
-    registerComponent("productCard", CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, {
+    register("productCard", CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, {
       component: BackInStockButton,
       condition: (product) => !product.availabilityData.isInStock,
     });

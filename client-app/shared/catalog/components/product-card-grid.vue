@@ -165,7 +165,7 @@
     </div>
 
     <ExtensionPoint
-      v-if="$shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
+      v-if="$canRenderExtensionPoint('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
       :id="CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON"
       type="productCard"
       :product="product"

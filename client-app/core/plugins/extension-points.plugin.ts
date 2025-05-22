@@ -4,14 +4,14 @@ import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
 export const extensionPointsPlugin: Plugin = {
   install: (app: App) => {
-    const { shouldRender } = useExtensionRegistry();
+    const { canRender } = useExtensionRegistry();
 
     /**
      * Checking if component should be rendered
      * @example:
-     *  <ExtensionPoint v-if="$shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)" />
+     *  <ExtensionPoint v-if="$canRenderExtensionPoint('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)" />
      */
-    app.config.globalProperties.$shouldRender = shouldRender;
+    app.config.globalProperties.$canRenderExtensionPoint = canRender;
 
     app.component("ExtensionPoint", ExtensionPoint);
   },

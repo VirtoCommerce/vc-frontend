@@ -1,9 +1,5 @@
 <template>
-  <component
-    :is="getComponent(type, id)"
-    v-bind="{ ...getComponentProps(type, id), ...$attrs }"
-    v-if="isComponentRegistered(type, id)"
-  />
+  <component :is="resolve(type, id)" v-bind="{ ...getProps(type, id), ...$attrs }" v-if="isRegistered(type, id)" />
 </template>
 
 <script setup lang="ts">
@@ -21,5 +17,5 @@ defineOptions({
 
 defineProps<IProps>();
 
-const { getComponent, getComponentProps, isComponentRegistered } = useExtensionRegistry();
+const { resolve, getProps, isRegistered } = useExtensionRegistry();
 </script>

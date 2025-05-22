@@ -2,7 +2,7 @@
   <div class="space-y-6">
     <VcWidget :title="$t(`shared.account.navigation.main_title`)" size="sm">
       <component
-        :is="(link.id && getComponent('accountMenu', link.id)) || LinkDefault"
+        :is="(link.id && resolve('accountMenu', link.id)) || LinkDefault"
         v-for="link in filteredDesktopAccountMenuItems"
         :key="link.id"
         :item="link"
@@ -11,7 +11,7 @@
 
     <VcWidget v-if="isCorporateMember" :title="$t(`shared.account.navigation.corporate_title`)" size="sm">
       <component
-        :is="(link.id && getComponent('accountMenu', link.id)) || LinkDefault"
+        :is="(link.id && resolve('accountMenu', link.id)) || LinkDefault"
         v-for="link in desktopCorporateMenuItems?.children"
         :key="link.id"
         :item="link"
@@ -31,7 +31,7 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 const { isCorporateMember } = useUser();
 
 const { desktopAccountMenuItems, desktopCorporateMenuItems } = useNavigations();
-const { getComponent } = useExtensionRegistry();
+const { resolve } = useExtensionRegistry();
 
 function canShowItem(item: ExtendedMenuLinkType) {
   return !(item.id === "addresses" && isCorporateMember.value);

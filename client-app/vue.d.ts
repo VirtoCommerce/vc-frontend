@@ -16,8 +16,8 @@ declare module "@vue/runtime-core" {
     $n: Composer["n"];
     $router: import("vue-router").Router;
     $route: import("vue-router").RouteLocationNormalizedLoaded;
-    $shouldRender: ReturnType<
+    $canRenderExtensionPoint: ReturnType<
       typeof import("@/shared/common/composables/useExtensionRegistry").useExtensionRegistry
-    >["shouldRender"];
+    >["canRender"];
   }
 }

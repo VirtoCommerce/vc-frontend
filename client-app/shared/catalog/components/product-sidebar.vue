@@ -31,7 +31,7 @@
 
         <div class="mt-4 print:hidden">
           <ExtensionPoint
-            v-if="$shouldRender('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, product)"
+            v-if="$canRenderExtensionPoint('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, product)"
             :id="CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON"
             type="productCard"
             :product="product"
