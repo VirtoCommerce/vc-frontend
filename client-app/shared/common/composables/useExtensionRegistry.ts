@@ -1,49 +1,9 @@
 import { createGlobalState } from "@vueuse/core";
-import { defineAsyncComponent, shallowReadonly, shallowRef } from "vue";
+import { shallowReadonly, shallowRef } from "vue";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
-import type { ExtensionCategoryType, ExtensionRegistryStateType } from "@/shared/common/types/extension-registry";
-
-const initialExtensionRegistry: ExtensionRegistryStateType = {
-  headerMenu: {
-    compare: {
-      component: defineAsyncComponent(
-        () => import("@/shared/layout/components/header/_internal/link-components/link-compare.vue"),
-      ),
-    },
-    cart: {
-      component: defineAsyncComponent(
-        () => import("@/shared/layout/components/header/_internal/link-components/link-cart.vue"),
-      ),
-    },
-  },
-  mobileMenu: {
-    cart: {
-      component: defineAsyncComponent(
-        () => import("@/shared/layout/components/header/_internal/mobile-menu/link-components/link-cart.vue"),
-      ),
-    },
-    compare: {
-      component: defineAsyncComponent(
-        () => import("@/shared/layout/components/header/_internal/mobile-menu/link-components/link-compare.vue"),
-      ),
-    },
-  },
-  accountMenu: {
-    orders: {
-      component: defineAsyncComponent(
-        () => import("@/shared/account/components/account-navigation-link-components/link-orders.vue"),
-      ),
-    },
-    lists: {
-      component: defineAsyncComponent(
-        () => import("@/shared/account/components/account-navigation-link-components/link-lists.vue"),
-      ),
-    },
-  },
-  mobileHeader: {},
-  productCard: {},
-};
+import { initialExtensionRegistry } from "@/shared/common/constants/initialExtensionRegistry";
+import type { ExtensionCategoryType, ExtensionRegistryStateType } from "@/shared/common/types/extensionRegistry";
 
 function _useExtensionRegistry() {
   const entries = shallowRef<ExtensionRegistryStateType>(initialExtensionRegistry);

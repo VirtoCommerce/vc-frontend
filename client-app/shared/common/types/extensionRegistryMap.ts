@@ -1,17 +1,11 @@
 import type { Product } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
-import type { Component } from "vue";
+import type { ExtensionEntryType } from "@/shared/common/types/extensionRegistry";
 
-export type ExtensionEntryType<
-  Props = never,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Condition extends (parameter: any) => boolean = never,
-> = {
-  component: Component;
-  condition?: Condition;
-  props?: Props;
-};
-
+/**
+ * Here we define the extension categories and the extension entries for each category.
+ * ExtensionEntryType<Props, Condition> is a type that defines the extension entry for a given category.
+ */
 export type ExtensionCategoryMapType = {
   headerMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }>;
   mobileMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }>;
@@ -22,9 +16,3 @@ export type ExtensionCategoryMapType = {
     (product: Product) => boolean
   >;
 };
-
-export type ExtensionRegistryStateType = {
-  [K in keyof ExtensionCategoryMapType]: Record<string, ExtensionCategoryMapType[K]>;
-};
-
-export type ExtensionCategoryType = keyof ExtensionCategoryMapType;

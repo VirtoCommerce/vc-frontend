@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
-import type { ExtensionCategoryType } from "@/shared/common/types/extension-registry";
+import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 
 interface IProps {
   type: ExtensionCategoryType;
