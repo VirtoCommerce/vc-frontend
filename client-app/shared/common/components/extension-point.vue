@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 
 interface IProps {

@@ -1,4 +1,4 @@
-import type { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
+import type { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 
 export {};
 

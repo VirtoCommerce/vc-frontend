@@ -74,7 +74,7 @@ import { computed, nextTick, ref, shallowRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
-import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { SearchBar } from "@/shared/layout";
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";

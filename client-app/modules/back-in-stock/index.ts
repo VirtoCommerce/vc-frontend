@@ -2,7 +2,7 @@ import { defineAsyncComponent } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useUser } from "@/shared/account/composables";
-import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import { loadModuleLocale } from "../utils";
 import { MODULE_ID, ENABLED_KEY } from "./constants";

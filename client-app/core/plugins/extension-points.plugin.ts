@@ -1,4 +1,4 @@
-import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { App, Plugin } from "vue";
 import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
