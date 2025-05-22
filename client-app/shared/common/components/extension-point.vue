@@ -1,5 +1,5 @@
 <template>
-  <component :is="getComponent(type, id)" v-bind="{ ...getProps(type, id), ...$attrs }" v-if="isRegistered(type, id)" />
+  <component :is="getComponent(category, name)" v-bind="{ ...getProps(category, name), ...$attrs }" />
 </template>
 
 <script setup lang="ts">
@@ -7,8 +7,8 @@ import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRe
 import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 
 interface IProps {
-  type: ExtensionCategoryType;
-  id: string;
+  category: ExtensionCategoryType;
+  name: string;
 }
 
 defineOptions({
@@ -17,5 +17,5 @@ defineOptions({
 
 defineProps<IProps>();
 
-const { getComponent, getProps, isRegistered } = useExtensionRegistry();
+const { getComponent, getProps } = useExtensionRegistry();
 </script>

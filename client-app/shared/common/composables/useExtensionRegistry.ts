@@ -54,6 +54,10 @@ function _useExtensionRegistry() {
     name: N,
     parameter: Parameters<NonNullable<ExtensionRegistryStateType[C][N]["condition"]>>[0],
   ): boolean {
+    if (!isRegistered(category, name)) {
+      return false;
+    }
+
     const condition = entries.value[category]?.[name]?.condition as ExtensionRegistryStateType[C][N]["condition"];
 
     if (condition && typeof condition === "function") {
@@ -64,6 +68,7 @@ function _useExtensionRegistry() {
         return false;
       }
     }
+
     return true;
   }
 
@@ -85,7 +90,6 @@ function _useExtensionRegistry() {
       getComponent,
       getEntry,
       getEntries,
-
       getProps,
 
       isRegistered,
@@ -102,7 +106,6 @@ function _useExtensionRegistry() {
     getComponent,
     getEntry,
     getEntries,
-
     getProps,
 
     isRegistered,

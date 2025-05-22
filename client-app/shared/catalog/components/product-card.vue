@@ -53,8 +53,8 @@
 
     <ExtensionPoint
       v-if="$canRenderExtensionPoint('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
-      :id="CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON"
-      type="productCard"
+      :name="CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON"
+      category="productCard"
       :product="product"
     />
 
