@@ -2,9 +2,9 @@ import { createGlobalState } from "@vueuse/core";
 import { defineAsyncComponent, shallowReadonly, shallowRef } from "vue";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
-import type { ComponentRegistryStateType } from "@/shared/common/types/extension-registry";
+import type { ExtensionCategoryType, ExtensionRegistryStateType } from "@/shared/common/types/extension-registry";
 
-const initialComponentRegistry: ComponentRegistryStateType = {
+const initialExtensionRegistry: ExtensionRegistryStateType = {
   headerMenu: {
     compare: {
       component: defineAsyncComponent(
@@ -46,74 +46,75 @@ const initialComponentRegistry: ComponentRegistryStateType = {
 };
 
 function _useExtensionRegistry() {
-  const entries = shallowRef<ComponentRegistryStateType>(initialComponentRegistry);
+  const entries = shallowRef<ExtensionRegistryStateType>(initialExtensionRegistry);
 
-  function register<T extends keyof ComponentRegistryStateType, I extends string>(
-    type: T,
-    id: I,
-    item: ComponentRegistryStateType[T][I],
+  function register<C extends ExtensionCategoryType, N extends string>(
+    category: C,
+    name: N,
+    item: ExtensionRegistryStateType[C][N],
   ) {
-    if (!entries.value[type]) {
-      entries.value[type] = {};
+    if (!entries.value[category]) {
+      entries.value[category] = {};
     }
-    if (!entries.value[type][id]) {
-      entries.value[type][id] = item;
+    if (!entries.value[category][name]) {
+      entries.value[category][name] = item;
     } else {
-      Logger.warn(`useExtensionRegistry: Component "${type}/${id}" already registered`);
+      Logger.warn(`useExtensionRegistry: Component "${category}/${name}" already registered`);
     }
   }
 
-  function unregister<T extends keyof ComponentRegistryStateType>(type: T, id: string) {
-    delete entries.value[type]?.[id];
+  function unregister<C extends ExtensionCategoryType>(category: C, name: string) {
+    delete entries.value[category]?.[name];
   }
 
-  function getEntry<T extends keyof ComponentRegistryStateType>(type: T, id: string) {
-    return entries.value[type]?.[id];
+  function getEntry<C extends ExtensionCategoryType>(category: C, name: string) {
+    return entries.value[category]?.[name];
   }
 
-  function getEntries<T extends keyof ComponentRegistryStateType>(type: T) {
-    return shallowReadonly(entries.value[type] ?? {});
+  function getEntries<C extends ExtensionCategoryType>(category: C) {
+    return shallowReadonly(entries.value[category] ?? {});
   }
 
-  function getComponent<T extends keyof ComponentRegistryStateType, I extends keyof ComponentRegistryStateType[T]>(
-    type: T,
-    id: I,
+  function getComponent<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
+    category: C,
+    name: N,
   ) {
-    return entries.value[type]?.[id]?.component ?? null;
+    return entries.value[category]?.[name]?.component ?? null;
   }
 
-  function isRegistered<T extends keyof ComponentRegistryStateType, I extends keyof ComponentRegistryStateType[T]>(
-    type: T,
-    id: I,
+  function isRegistered<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
+    category: C,
+    name: N,
   ) {
-    return entries.value[type]?.[id]?.component !== undefined;
+    return entries.value[category]?.[name]?.component !== undefined;
   }
 
-  function canRender<T extends keyof ComponentRegistryStateType, I extends string>(
-    type: T,
-    id: I,
-    parameter: Parameters<NonNullable<ComponentRegistryStateType[T][I]["condition"]>>[0],
+  function canRender<C extends ExtensionCategoryType, N extends string>(
+    category: C,
+    name: N,
+    parameter: Parameters<NonNullable<ExtensionRegistryStateType[C][N]["condition"]>>[0],
   ): boolean {
-    const condition = entries.value[type]?.[id]?.condition as ComponentRegistryStateType[T][I]["condition"];
+    const condition = entries.value[category]?.[name]?.condition as ExtensionRegistryStateType[C][N]["condition"];
 
     if (condition && typeof condition === "function") {
       try {
         return condition(parameter);
       } catch (error) {
-        Logger.error(`useExtensionRegistry: Error in condition for component "${type}/${id}"`, error);
+        Logger.error(`useExtensionRegistry: Error in condition for component "${category}/${name}"`, error);
         return false;
       }
     }
     return true;
   }
 
-  function getProps<T extends keyof ComponentRegistryStateType, I extends keyof ComponentRegistryStateType[T]>(
-    type: T,
-    id: I,
-  ): ComponentRegistryStateType[T][I]["props"] {
-    return entries.value[type]?.[id]?.props;
+  function getProps<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
+    category: C,
+    name: N,
+  ): ExtensionRegistryStateType[C][N]["props"] {
+    return entries.value[category]?.[name]?.props;
   }
 
+  // To debug in development mode
   if (IS_DEVELOPMENT) {
     window.VCExtensionRegistry = {
       entries,

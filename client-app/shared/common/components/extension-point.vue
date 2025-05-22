@@ -4,10 +4,10 @@
 
 <script setup lang="ts">
 import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
-import type { ComponentRegistryKeysType } from "@/shared/common/types/extension-registry";
+import type { ExtensionCategoryType } from "@/shared/common/types/extension-registry";
 
 interface IProps {
-  type: ComponentRegistryKeysType;
+  type: ExtensionCategoryType;
   id: string;
 }
 

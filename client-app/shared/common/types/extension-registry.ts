@@ -2,7 +2,7 @@ import type { Product } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { Component } from "vue";
 
-export type ComponentRegistryItemType<
+export type ExtensionEntryType<
   Props = never,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Condition extends (parameter: any) => boolean = never,
@@ -12,19 +12,19 @@ export type ComponentRegistryItemType<
   props?: Props;
 };
 
-export type ComponentsRegistryType = {
-  headerMenu: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }>;
-  mobileMenu: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }>;
-  accountMenu: ComponentRegistryItemType<{ item: ExtendedMenuLinkType }>;
-  mobileHeader: ComponentRegistryItemType;
-  productCard: ComponentRegistryItemType<
+export type ExtensionCategoryMapType = {
+  headerMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }>;
+  mobileMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }>;
+  accountMenu: ExtensionEntryType<{ item: ExtendedMenuLinkType }>;
+  mobileHeader: ExtensionEntryType;
+  productCard: ExtensionEntryType<
     { product?: Product; isTextShown?: boolean; lazy?: boolean },
     (product: Product) => boolean
   >;
 };
 
-export type ComponentRegistryStateType = {
-  [K in keyof ComponentsRegistryType]: Record<string, ComponentsRegistryType[K]>;
+export type ExtensionRegistryStateType = {
+  [K in keyof ExtensionCategoryMapType]: Record<string, ExtensionCategoryMapType[K]>;
 };
 
-export type ComponentRegistryKeysType = keyof ComponentsRegistryType;
+export type ExtensionCategoryType = keyof ExtensionCategoryMapType;
