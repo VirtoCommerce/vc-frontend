@@ -75,7 +75,7 @@ function _useExtensionRegistry() {
     return shallowReadonly(entries.value[type] ?? {});
   }
 
-  function resolve<T extends keyof ComponentRegistryStateType, I extends keyof ComponentRegistryStateType[T]>(
+  function getComponent<T extends keyof ComponentRegistryStateType, I extends keyof ComponentRegistryStateType[T]>(
     type: T,
     id: I,
   ) {
@@ -121,7 +121,7 @@ function _useExtensionRegistry() {
       register,
       unregister,
 
-      resolve,
+      getComponent,
       getEntry,
       getEntries,
 
@@ -138,7 +138,7 @@ function _useExtensionRegistry() {
     register,
     unregister,
 
-    resolve,
+    getComponent,
     getEntry,
     getEntries,
 
