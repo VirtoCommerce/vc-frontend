@@ -1,13 +1,5 @@
 <template>
-  <div
-    ref="containerReference"
-    :class="[
-      'vc-popover',
-      {
-        'vc-popover--arrow': arrowEnabled && arrowLeft,
-      },
-    ]"
-  >
+  <div ref="containerReference" class="vc-popover">
     <div v-if="disableTriggerEvents" ref="reference" class="vc-popover__trigger">
       <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
     </div>
@@ -30,26 +22,28 @@
       <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
     </div>
 
-    <div
-      ref="floating"
-      :style="{ zIndex, display, width, ...floatingStyles }"
-      class="vc-popover__content"
-      :role="role"
-      @mousedown.prevent
-    >
+    <teleport :to="teleportSelector" :disabled="!enableTeleport">
       <div
-        v-if="arrowEnabled"
-        ref="floatingArrow"
-        class="vc-popover__popper"
-        :style="{
-          left: arrowLeft,
-        }"
+        ref="floating"
+        :style="{ zIndex, display, width, ...floatingStyles }"
+        class="vc-popover__content"
+        :role="role"
+        @mousedown.prevent
       >
-        <div class="vc-popover__arrow"></div>
-      </div>
+        <div
+          v-if="arrowEnabled"
+          ref="floatingArrow"
+          class="vc-popover__popper"
+          :style="{
+            left: arrowLeft,
+          }"
+        >
+          <div class="vc-popover__arrow"></div>
+        </div>
 
-      <slot name="content" :close="close" />
-    </div>
+        <slot name="content" :close="close" />
+      </div>
+    </teleport>
   </div>
 </template>
 
@@ -76,6 +70,8 @@ interface IProps {
   disableTriggerEvents?: boolean;
   arrowEnabled?: boolean;
   closeOnBlur?: boolean;
+  enableTeleport?: boolean;
+  teleportSelector?: string;
 }
 
 const emit = defineEmits<IEmits>();
@@ -84,6 +80,8 @@ const props = withDefaults(defineProps<IProps>(), {
   zIndex: 1,
   placement: "bottom",
   width: "auto",
+  enableTeleport: false,
+  teleportSelector: "[id='popover-host']",
 });
 
 const opened = ref(false);
@@ -93,7 +91,7 @@ const floating = ref<HTMLElement | null>(null);
 const floatingArrow = ref<Element | null>(null);
 const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs(props);
 
-const display = computed(() => (opened.value ? "block" : ""));
+const display = computed(() => (opened.value ? "block" : "none"));
 const arrowLeft = computed(() => (middlewareData.value.arrow?.x != null ? `${middlewareData.value.arrow.x}px` : ""));
 
 const { floatingStyles, middlewareData } = useFloating(reference, floating, {
@@ -156,13 +154,11 @@ watch(focused, (value: boolean) => {
 
 <style lang="scss">
 .vc-popover {
-  $arrow: "";
-
-  &--arrow {
-    $arrow: &;
-  }
+  $popper: "";
 
   &__popper {
+    $popper: &;
+
     @apply absolute top-0 w-5 h-2.5 p-1 overflow-hidden;
   }
 
@@ -171,9 +167,9 @@ watch(focused, (value: boolean) => {
   }
 
   &__content {
-    @apply hidden absolute top-0 left-0;
+    @apply max-w-[100vw];
 
-    #{$arrow} & {
+    &:has(#{$popper}) {
       @apply pt-2.5;
     }
   }
