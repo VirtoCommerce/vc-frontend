@@ -6,7 +6,7 @@ import { useThemeContext } from "@/core/composables/useThemeContext";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { loadModuleLocale } from "@/modules/utils";
 import { useUser } from "@/shared/account/composables/useUser";
-import { useComponentsRegistry } from "@/shared/common/composables/useComponentsRegistry";
+import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
 import { pushMessagesTypePolices } from "./api/graphql/typePolices";
 import { PUSH_MESSAGES_MODULE_ENABLED_KEY, PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY } from "./constants";
 import type { MenuType } from "@/core/types";
@@ -83,7 +83,7 @@ export async function init(router: Router, i18n: I18n) {
 
   if (isModuleEnabled) {
     const { mergeMenuSchema } = useNavigations();
-    const { registerComponent } = useComponentsRegistry();
+    const { registerComponent } = useExtensionRegistry();
     const route: RouteRecordRaw = {
       path: "notifications",
       name: "Notifications",

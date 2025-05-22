@@ -111,7 +111,7 @@
 import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
 import { useSignMeOut, useUser } from "@/shared/account";
-import { useComponentsRegistry } from "@/shared/common/composables";
+import { useExtensionRegistry } from "@/shared/common/composables";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import LinkDefault from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-default.vue";
 import MobileMenuLink from "@/shared/layout/components/header/_internal/mobile-menu/mobile-menu-link.vue";
@@ -133,7 +133,7 @@ const { user, operator, isAuthenticated, isCorporateMember } = useUser();
 const { mobileMainMenuItems, mobileCorporateMenuItem, mobileAccountMenuItem } = useNavigations();
 const { t } = useI18n();
 const { supportedCurrencies } = useCurrency();
-const { getComponent } = useComponentsRegistry();
+const { getComponent } = useExtensionRegistry();
 
 const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
   { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },

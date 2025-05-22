@@ -1,9 +1,9 @@
-import type { useComponentsRegistry } from "@/shared/common/composables";
+import type { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
 
 export {};
 
 declare global {
   interface Window {
-    vcComponentsRegistry: Partial<ReturnType<typeof useComponentsRegistry>>;
+    VCExtensionRegistry: Partial<ReturnType<typeof useExtensionRegistry>>;
   }
 }

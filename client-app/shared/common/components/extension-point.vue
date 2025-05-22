@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { useComponentsRegistry } from "@/shared/common/composables/useComponentsRegistry";
+import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
 import type { ComponentRegistryKeysType } from "@/shared/common/types/components-registry";
 
 interface IProps {
@@ -21,5 +21,5 @@ defineOptions({
 
 defineProps<IProps>();
 
-const { getComponent, getComponentProps, isComponentRegistered } = useComponentsRegistry();
+const { getComponent, getComponentProps, isComponentRegistered } = useExtensionRegistry();
 </script>

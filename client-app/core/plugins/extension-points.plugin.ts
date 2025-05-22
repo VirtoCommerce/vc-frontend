@@ -1,10 +1,10 @@
-import { useComponentsRegistry } from "@/shared/common/composables/useComponentsRegistry";
+import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
 import type { App, Plugin } from "vue";
 import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
 export const extensionPointsPlugin: Plugin = {
   install: (app: App) => {
-    const { shouldRender } = useComponentsRegistry();
+    const { shouldRender } = useExtensionRegistry();
 
     /**
      * Checking if component should be rendered

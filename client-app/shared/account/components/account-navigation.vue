@@ -24,14 +24,14 @@
 import { computed } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
-import { useComponentsRegistry } from "@/shared/common/composables";
+import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
 import LinkDefault from "./account-navigation-link-components/link-default.vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
 const { isCorporateMember } = useUser();
 
 const { desktopAccountMenuItems, desktopCorporateMenuItems } = useNavigations();
-const { getComponent } = useComponentsRegistry();
+const { getComponent } = useExtensionRegistry();
 
 function canShowItem(item: ExtendedMenuLinkType) {
   return !(item.id === "addresses" && isCorporateMember.value);

@@ -2,7 +2,7 @@ import { defineAsyncComponent } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useUser } from "@/shared/account/composables";
-import { useComponentsRegistry } from "@/shared/common/composables";
+import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import { loadModuleLocale } from "../utils";
 import { MODULE_ID, ENABLED_KEY } from "./constants";
@@ -17,7 +17,7 @@ const BackInStockButton = defineAsyncComponent(() => import("./components/back-i
 
 const { isEnabled } = useModuleSettings(MODULE_ID);
 const { mergeMenuSchema } = useNavigations();
-const { registerComponent } = useComponentsRegistry();
+const { registerComponent } = useExtensionRegistry();
 
 const route: RouteRecordRaw = {
   path: "back-in-stock",

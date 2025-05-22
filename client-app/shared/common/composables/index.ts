@@ -1,2 +1,2 @@
-export * from "./useComponentsRegistry";
+export * from "./useExtensionRegistry";
 export * from "./useSlugInfo";

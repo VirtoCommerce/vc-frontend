@@ -45,7 +45,7 @@ const initialComponentRegistry: ComponentRegistryStateType = {
   productCard: {},
 };
 
-function _useComponentsRegistry() {
+function _useExtensionRegistry() {
   const componentRegistry = shallowRef<ComponentRegistryStateType>(initialComponentRegistry);
 
   function registerItem<T extends keyof ComponentRegistryStateType, I extends string>(
@@ -59,7 +59,7 @@ function _useComponentsRegistry() {
     if (!componentRegistry.value[type][id]) {
       componentRegistry.value[type][id] = item;
     } else {
-      Logger.warn(`useComponentsRegistry: Component "${type}/${id}" already registered`);
+      Logger.warn(`useExtensionRegistry: Component "${type}/${id}" already registered`);
     }
   }
 
@@ -100,7 +100,7 @@ function _useComponentsRegistry() {
       try {
         return condition(parameter);
       } catch (error) {
-        Logger.error(`useComponentsRegistry: Error in condition for component "${type}/${id}"`, error);
+        Logger.error(`useExtensionRegistry: Error in condition for component "${type}/${id}"`, error);
         return false;
       }
     }
@@ -115,7 +115,7 @@ function _useComponentsRegistry() {
   }
 
   if (IS_DEVELOPMENT) {
-    window.vcComponentsRegistry = {
+    window.VCExtensionRegistry = {
       registryItems: componentRegistry.value,
 
       registerComponent: registerItem,
@@ -149,4 +149,4 @@ function _useComponentsRegistry() {
   };
 }
 
-export const useComponentsRegistry = createGlobalState(_useComponentsRegistry);
+export const useExtensionRegistry = createGlobalState(_useExtensionRegistry);
