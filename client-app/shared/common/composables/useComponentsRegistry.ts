@@ -78,7 +78,7 @@ function _useComponentsRegistry() {
   function getComponent<T extends keyof ComponentRegistryStateType, I extends keyof ComponentRegistryStateType[T]>(
     type: T,
     id: I,
-  ): ComponentRegistryStateType[T][I]["component"] | null {
+  ) {
     return componentRegistry.value[type]?.[id]?.component ?? null;
   }
 

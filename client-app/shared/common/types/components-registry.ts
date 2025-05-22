@@ -1,23 +1,13 @@
 import type { Product } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
-import type { Component, ComputedOptions, EmitsOptions, MethodOptions } from "vue";
-
-type ComponentType<Props = unknown, Emits extends EmitsOptions = Record<string, never>> = Component<
-  Props, // Props
-  unknown, // RawBindings
-  unknown, // Data
-  ComputedOptions, // Computed
-  MethodOptions, // Methods
-  Emits // Emits
->;
+import type { Component } from "vue";
 
 export type ComponentRegistryItemType<
   Props = unknown,
-  Emits extends EmitsOptions = EmitsOptions,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Condition extends (parameter: any) => boolean = never,
 > = {
-  component: ComponentType<Props, Emits>;
+  component: Component;
   condition?: Condition;
   props?: Partial<Props>;
 };
@@ -29,7 +19,6 @@ export type ComponentsRegistryType = {
   mobileHeader: ComponentRegistryItemType;
   productCard: ComponentRegistryItemType<
     { product: Product; isTextShown?: boolean; lazy?: boolean },
-    [],
     (product: Product) => boolean
   >;
 };
@@ -37,8 +26,3 @@ export type ComponentsRegistryType = {
 export type ComponentRegistryStateType = {
   [K in keyof ComponentsRegistryType]: Record<string, ComponentsRegistryType[K]>;
 };
-
-// export type RegistryItemPropertyType<
-//   T extends keyof ComponentRegistryStateType,
-//   Prop extends keyof ComponentRegistryItemType,
-// > = NonNullable<ComponentRegistryStateType[T]>[string] extends { [K in Prop]: infer P } ? P : never;
