@@ -50,10 +50,10 @@ const {
   stopWatchInitialValue,
 } = useFiles(DEFAULT_FILES_SCOPE, initialFiles);
 
-async function onAddFiles(items: INewFile[]) {
+function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
-  await uploadFiles();
+  uploadFiles();
   stopWatchInitialValue();
   emit("input", attachedAndUploadedFiles.value);
 }

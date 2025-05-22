@@ -1,4 +1,5 @@
-import { computedEager, isDefined, syncRefs, toValue, useMemoize } from "@vueuse/core";
+import { computedEager, isDefined, syncRefs, useMemoize } from "@vueuse/core";
+import { v4 as uuidv4 } from "uuid";
 import { computed, onUnmounted, ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAxios } from "@/core/api/common/composables/useAxios";
@@ -26,7 +27,7 @@ import type { MaybeRef, WatchSource, WatchStopHandle } from "vue";
 const getFileUploadOptionsMemoized = useMemoize(getFileUploadOptions);
 
 // Maximum number of simultaneous uploads
-const MAX_CONCURRENT_UPLOADS = 2;
+const MAX_CONCURRENT_UPLOADS = 5;
 
 /**
  * File management
@@ -44,12 +45,15 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   const activeUploadCount = ref(0);
 
   // Create a factory function to get a new useAxios instance for each upload
-  const createUploader = () => {
+  const createUploader = (batchId: string) => {
     return useAxios<FileUploadResultType[], AxiosResponse<FileUploadResultType[]>, FormData>({
       method: "POST",
-      onUploadProgress,
+      onUploadProgress: (event) => onUploadProgress(event, batchId),
     });
   };
+
+  // Track upload batches
+  const uploadBatches = ref<Map<string, INewFile[]>>(new Map());
 
   const defaultOptions = {
     maxFileCount: DEFAULT_FILE_MAX_COUNT,
@@ -78,8 +82,6 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   const hasNewFiles = computedEager(() => newFiles.value.length > 0);
 
   const uploadingFiles = computed(() => files.value.filter(isUploadingFile));
-  // const uploadingFileSize = computed(() => uploadingFiles.value.reduce((sum, file) => sum + file.size, 0));
-
   const failedFiles = computed(() => files.value.filter(isFailedFile));
   const hasFailedFiles = computedEager(() => failedFiles.value.length > 0);
 
@@ -90,7 +92,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   const anyFilesModified = computedEager(
     () =>
       modifiedFiles.value.length > 0 ||
-      (isDefined(initialValue) && attachedFiles.value.length !== toValue<IAttachedFile[]>(initialValue).length),
+      (isDefined(initialValue) && attachedFiles.value.length !== (unref(initialValue) as IAttachedFile[]).length),
   );
 
   const attachedAndUploadedFiles = computed(() => [...attachedFiles.value, ...uploadedFiles.value]);
@@ -104,7 +106,6 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     }
 
     files.value.push(...filesToAdd);
-    // Try to upload newly added files
     uploadFiles();
     return true;
   }
@@ -158,8 +159,13 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       return;
     }
 
+    const batchId = uuidv4();
+
     try {
       activeUploadCount.value++;
+
+      // Store the batch for progress tracking
+      uploadBatches.value.set(batchId, filesToUpload);
 
       // Mark selected files as uploading
       filesToUpload.forEach((file) => {
@@ -174,7 +180,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       filesToProcess.forEach((file) => formData.append("file", file.file));
 
       // Create a new uploader instance for this batch
-      const { data, execute: _uploadFiles } = createUploader();
+      const { data, execute: _uploadFiles } = createUploader(batchId);
 
       await _uploadFiles(`/api/files/${unref(scope)}`, { data: formData });
 
@@ -189,6 +195,8 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       });
     } finally {
       activeUploadCount.value--;
+      // Remove the batch from tracking
+      uploadBatches.value.delete(batchId);
       // Check for more files to upload
       uploadFiles();
     }
@@ -229,23 +237,32 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     }
   }
 
-  function onUploadProgress(event: AxiosProgressEvent) {
+  function onUploadProgress(event: AxiosProgressEvent, batchId: string) {
     if (!event.total) {
       return;
     }
 
-    // Files associated with this upload
-    const relevantFiles = uploadingFiles.value;
+    // Get files associated with this specific batch
+    const batchFiles = uploadBatches.value.get(batchId);
+    if (!batchFiles || batchFiles.length === 0) {
+      return;
+    }
+
+    // Find the corresponding uploading files
+    const relevantFiles = uploadingFiles.value.filter((file) =>
+      batchFiles.some((batchFile) => batchFile.name === file.name),
+    );
+
     if (relevantFiles.length === 0) {
       return;
     }
 
-    // Calculate total size of all files
+    // Calculate total size of files in this batch
     const totalSize = relevantFiles.reduce((sum, file) => sum + file.size, 0);
 
-    // Estimate progress for each file
+    // Calculate progress for each file in this batch
     relevantFiles.forEach((file) => {
-      // Calculate the weight of this file within the total upload
+      // Calculate the weight of this file within the batch
       const fileWeight = file.size / totalSize;
       file.progress = Math.min(100, Math.round((event.loaded / (event.total || 1)) * 100 * fileWeight));
     });

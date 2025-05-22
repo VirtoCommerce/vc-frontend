@@ -567,11 +567,11 @@ function openDeleteLogoModal() {
   });
 }
 
-async function onAddFiles(items: INewFile[]) {
+function onAddFiles(items: INewFile[]) {
   files.value.length = 0;
   addFiles(items);
   validateFiles();
-  await uploadFiles();
+  uploadFiles();
   newLogoUrl.value = uploadedFiles.value[0].url;
 }
 

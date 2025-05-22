@@ -287,11 +287,11 @@ async function submitReview(): Promise<void> {
   reviewSubmitted.value = true;
 }
 
-async function onAddFiles(items: INewFile[]): Promise<void> {
+function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
 
-  await uploadFiles();
+  uploadFiles();
 }
 
 async function onRemoveFiles(items: FileType[]): Promise<void> {

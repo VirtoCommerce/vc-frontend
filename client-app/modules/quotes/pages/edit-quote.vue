@@ -366,10 +366,10 @@ function openSelectAddressModal(addressType: AddressType): void {
   });
 }
 
-async function onAddFiles(items: INewFile[]) {
+function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
-  await uploadFiles();
+  uploadFiles();
 }
 
 async function onRemoveFiles(items: FileType[]) {
