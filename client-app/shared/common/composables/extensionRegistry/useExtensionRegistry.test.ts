@@ -122,7 +122,7 @@ describe("useExtensionRegistry", () => {
       registry.register(uniqueCategory, "entryB", { component: DummyComponent });
 
       const entries = registry.getEntries(uniqueCategory);
-      expect(Object.keys(entries).sort()).toEqual(["entryA", "entryB"]);
+      expect(Object.keys(entries)).toEqual(["entryA", "entryB"]);
     });
   });
 
