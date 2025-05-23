@@ -1,6 +1,16 @@
 import type { Product } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
-import type { ExtensionEntryType } from "@/shared/common/types/extensionRegistry";
+import type { Component } from "vue";
+
+type ExtensionEntryType<
+  Props = never,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Condition extends (parameter: any) => boolean = never,
+> = {
+  component: Component;
+  condition?: Condition;
+  props?: Props;
+};
 
 /**
  * Here we define the extension categories and the extension entries for each category.
