@@ -10,6 +10,8 @@
       class="vc-popover__trigger"
       role="button"
       tabindex="-1"
+      :aria-label="ariaLabel"
+      :aria-expanded="opened"
       @mouseenter="hover && open()"
       @mouseleave="hover && close()"
       @focusin="hover && open()"
@@ -24,6 +26,7 @@
 
     <teleport :to="teleportSelector" :disabled="!enableTeleport">
       <div
+        v-if="$slots.content && !disabled"
         ref="floating"
         :style="{ zIndex, display, width, ...floatingStyles }"
         class="vc-popover__content"
@@ -70,6 +73,7 @@ interface IProps {
   disableTriggerEvents?: boolean;
   arrowEnabled?: boolean;
   closeOnBlur?: boolean;
+  ariaLabel?: string;
   enableTeleport?: boolean;
   teleportSelector?: string;
 }

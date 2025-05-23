@@ -77,7 +77,8 @@
       "scroll_to_top": "Przewiń do góry",
       "reset_page": "Resetuj stronę",
       "show_less": "Pokaż mniej",
-      "expand_all": "Rozwiń wszystko"
+      "expand_all": "Rozwiń wszystko",
+      "all_products": "Wszystkie produkty"
     },
     "labels": {
       "actions": "Akcje",
@@ -350,6 +351,13 @@
           "select_address": "Wybierz adres",
           "title": "Wyślij do:",
           "add_new_address": "Dodaj nowy adres"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "Kategorie",
+            "subcategories": "Podkategorie {category}",
+            "navigation": "Navigacja"
+          }
         }
       },
       "footer": {
