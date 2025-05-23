@@ -41,7 +41,11 @@
 
       <ul class="-mx-2 flex items-center">
         <li v-for="item in desktopMainMenuItems" :key="item.id">
-          <component :is="(item.id && getComponent('headerMenu', item.id)) || LinkDefault" :item="item" />
+          <ExtensionPoint :item="item" category="headerMenu" :name="item.id">
+            <template #default>
+              <LinkDefault :item="item" />
+            </template>
+          </ExtensionPoint>
         </li>
       </ul>
     </nav>
@@ -77,7 +81,6 @@ import { computed, nextTick, ref, shallowRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
-import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { SearchBar } from "@/shared/layout";
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
@@ -93,7 +96,6 @@ const router = useRouter();
 const { organization } = useUser();
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
-const { getComponent } = useExtensionRegistry();
 
 const bottomHeader = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);
