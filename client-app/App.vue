@@ -6,6 +6,10 @@
   <ModalHost />
   <NotificationsHost />
   <EnvironmentBadge />
+
+  <teleport to="body">
+    <div id="popover-host"></div>
+  </teleport>
 </template>
 
 <script setup lang="ts">
@@ -78,4 +82,8 @@ onMounted(setupBroadcastGlobalListeners);
 
 <style lang="scss">
 @use "assets/styles/main.scss";
+
+#popover-host {
+  @apply absolute bottom-0 right-0 z-[9999] size-0;
+}
 </style>

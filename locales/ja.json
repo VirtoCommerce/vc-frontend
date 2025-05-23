@@ -77,7 +77,8 @@
       "scroll_to_top": "トップへスクロール",
       "reset_page": "ページをリセット",
       "show_less": "折りたたむ",
-      "expand_all": "すべて展開"
+      "expand_all": "すべて展開",
+      "all_products": "すべての商品"
     },
     "labels": {
       "actions": "操作",
@@ -350,6 +351,13 @@
           "select_address": "住所を選択",
           "title": "配送先：",
           "add_new_address": "新しい住所を追加"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "カテゴリー",
+            "subcategories": "サブカテゴリー {category}",
+            "navigation": "ナビゲーション"
+          }
         }
       },
       "footer": {
@@ -845,17 +853,17 @@
         "list_icon": "List icon"
       },
       "add_to_wishlists_modal": {
-        "title": "Please select list",
-        "empty_list": "You do not have any shopping lists",
+        "title": "リストを選択してください",
+        "empty_list": "ショッピングリストはまだありません",
         "cancel_button": "@:common.buttons.cancel",
-        "already_in_the_lists": "Already in the lists",
-        "add_to_other_lists": "Add to other lists",
-        "add_to_list_button": "Add to list",
-        "add_new_list": "Add new list",
-        "save_button": "Save",
-        "notification_success": "Your lists were successfully updated",
-        "is_required_validation_error": "The <b>List name</b> is required",
-        "new_list": "New list"
+        "already_in_the_lists": "リストに追加済み",
+        "add_to_other_lists": "別のリストに追加",
+        "add_to_list_button": "リストに追加",
+        "add_new_list": "新しいリストを追加",
+        "save_button": "保存",
+        "notification_success": "リストが更新されました。",
+        "is_required_validation_error": "<b>リスト名</b>が必要です",
+        "new_list": "新しいリスト"
       },
       "unsuccessful_create_wishlist_modal": {
         "message": "You have reached the maximum number of lists. Please delete one you do not use or reshuffle products to reuse an existing list.",
