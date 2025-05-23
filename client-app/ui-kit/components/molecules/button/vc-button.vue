@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { computed, inject, nextTick, ref, watch } from "vue";
+import { computed, inject, ref } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -170,17 +170,13 @@ const attrs = computed(() => {
 
   return attributes;
 });
-
-watch(enabled, async (newValue, oldValue) => {
-  const hadFocus = document.activeElement === buttonRef.value;
-  await nextTick();
-  if (newValue && oldValue === false && hadFocus && typeof buttonRef.value?.focus === "function") {
-    buttonRef.value?.focus({ preventScroll: true });
-  }
-});
 </script>
 
 <style lang="scss">
+*:focus {
+  outline: 3px solid red !important;
+}
+
 .vc-button {
   --props-min-width: v-bind(props.minWidth);
   --props-icon-size: v-bind(props.iconSize);
