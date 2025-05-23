@@ -172,14 +172,9 @@ const attrs = computed(() => {
 });
 
 watch(enabled, async (newValue, oldValue) => {
+  const hadFocus = document.activeElement === buttonRef.value;
   await nextTick();
-  if (
-    newValue &&
-    oldValue === false &&
-    document.activeElement === document.body &&
-    typeof buttonRef.value?.focus === "function"
-  ) {
-    // return focus after button is enabled if it was focused before
+  if (newValue && oldValue === false && hadFocus && typeof buttonRef.value?.focus === "function") {
     buttonRef.value?.focus({ preventScroll: true });
   }
 });
