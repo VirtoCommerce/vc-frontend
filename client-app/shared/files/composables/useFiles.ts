@@ -1,6 +1,6 @@
-import { computedEager, isDefined, syncRefs, useMemoize } from "@vueuse/core";
+import { computedEager, isDefined, useMemoize } from "@vueuse/core";
 import { v4 as uuidv4 } from "uuid";
-import { computed, onUnmounted, ref, unref } from "vue";
+import { computed, onUnmounted, ref, unref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAxios } from "@/core/api/common/composables/useAxios";
 import { deleteFile, getFileUploadOptions } from "@/core/api/graphql/files";
@@ -22,12 +22,12 @@ import {
 } from "@/ui-kit/utilities";
 import type { FileUploadResultType, IFileOptions } from "@/shared/files/types";
 import type { AxiosProgressEvent, AxiosResponse } from "axios";
-import type { MaybeRef, WatchSource, WatchStopHandle } from "vue";
+import type { MaybeRef, WatchSource } from "vue";
 
 const getFileUploadOptionsMemoized = useMemoize(getFileUploadOptions);
 
 // Maximum number of simultaneous uploads
-const MAX_CONCURRENT_UPLOADS = 5;
+const MAX_CONCURRENT_UPLOADS = 3;
 
 /**
  * File management
@@ -36,8 +36,6 @@ const MAX_CONCURRENT_UPLOADS = 5;
  */
 // eslint-disable-next-line sonarjs/cognitive-complexity
 export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAttachedFile[]>) {
-  let stopWatchInitialValue: (() => void) | WatchStopHandle = () => {};
-
   const { translate } = useErrorsTranslator("file_error");
   const { t, n } = useI18n();
 
@@ -75,7 +73,15 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
 
   const files = ref<FileType[]>([]);
   if (initialValue) {
-    stopWatchInitialValue = syncRefs(initialValue, files);
+    watch(
+      initialValue,
+      (newValue) => {
+        if (newValue && files.value.length === 0) {
+          files.value = [...unref(newValue)];
+        }
+      },
+      { immediate: true },
+    );
   }
 
   const newFiles = computed(() => files.value.filter(isNewfile));
@@ -106,7 +112,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     }
 
     files.value.push(...filesToAdd);
-    uploadFiles();
+
     return true;
   }
 
@@ -333,6 +339,5 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     removeFiles,
 
     fetchOptions,
-    stopWatchInitialValue,
   };
 }
