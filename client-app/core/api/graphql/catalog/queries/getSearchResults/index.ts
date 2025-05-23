@@ -1,3 +1,4 @@
+import { AbortReason } from "@/core/api/common/enums";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
@@ -118,7 +119,7 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
   }
 
   if (abortController) {
-    abortController.abort();
+    abortController.abort(AbortReason.Explicit);
   }
 
   abortController = new AbortController();

@@ -1,4 +1,6 @@
+import { ApolloError } from "@apollo/client/errors";
 import { computed, readonly, ref, shallowRef } from "vue";
+import { AbortReason } from "@/core/api/common/enums";
 import { getSearchResults } from "@/core/api/graphql/catalog";
 import { Logger } from "@/core/utilities";
 import { highlightSearchText, prepareSearchText } from "../utils";
@@ -77,6 +79,9 @@ export function useSearchBar() {
       products.value = productsItems;
       searchPhraseOfUploadedResults.value = preparedParams.keyword;
     } catch (e) {
+      if (e instanceof ApolloError && e.networkError?.toString() === (AbortReason.Explicit as string)) {
+        return;
+      }
       Logger.error(`${useSearchBar.name}.${searchResults.name}`, e);
       throw e;
     } finally {
