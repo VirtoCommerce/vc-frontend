@@ -1,12 +1,9 @@
+import { CreateOrderFromCartDocument } from "@/core/api/graphql/types";
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./createOrderFromCartMutation.graphql";
-import type { MutationsCreateOrderFromCartArgs, CreateOrderFromCartMutation } from "@/core/api/graphql/types";
 
-export async function createOrderFromCart(
-  cartId?: string,
-): Promise<CreateOrderFromCartMutation["createOrderFromCart"]> {
-  const { data } = await graphqlClient.mutate<CreateOrderFromCartMutation, MutationsCreateOrderFromCartArgs>({
-    mutation: mutationDocument,
+export async function createOrderFromCart(cartId?: string) {
+  const { data } = await graphqlClient.mutate({
+    mutation: CreateOrderFromCartDocument,
     variables: {
       command: {
         cartId,

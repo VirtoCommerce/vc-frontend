@@ -65,7 +65,7 @@ export function useOrganizationAddresses(organizationId: MaybeRef<string>) {
     try {
       await updateMemberAddresses(unref(organizationId), inputAddresses);
     } catch (e) {
-      Logger.error("useUserAddresses.updateAddresses", e);
+      Logger.error(`${useOrganizationAddresses.name}.${updateAddresses.name}`, e);
       throw e;
     } finally {
       loading.value = false;
