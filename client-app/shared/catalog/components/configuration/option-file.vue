@@ -49,10 +49,10 @@ const {
   options: fileOptions,
 } = useFiles(DEFAULT_FILES_SCOPE, initialFiles);
 
-function onAddFiles(items: INewFile[]) {
+async function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
-  uploadFiles();
+  await uploadFiles();
   emit("input", attachedAndUploadedFiles.value);
 }
 
