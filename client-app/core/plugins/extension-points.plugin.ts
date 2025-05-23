@@ -1,5 +1,6 @@
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { App, Plugin } from "vue";
+import ExtensionPointMulti from "@/shared/common/components/extension-point-multi.vue";
 import ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
 export const extensionPointsPlugin: Plugin = {
@@ -14,5 +15,6 @@ export const extensionPointsPlugin: Plugin = {
     app.config.globalProperties.$canRenderExtensionPoint = canRender;
 
     app.component("ExtensionPoint", ExtensionPoint);
+    app.component("ExtensionPointMulti", ExtensionPointMulti);
   },
 };

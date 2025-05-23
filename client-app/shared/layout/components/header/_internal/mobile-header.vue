@@ -53,12 +53,7 @@
               <VcIcon class="fill-primary" name="search" :size="28" />
             </button>
 
-            <component
-              :is="item?.component"
-              v-for="(item, index) in getEntries('mobileHeader')"
-              :key="index"
-              class="px-1 py-2 xs:px-2"
-            />
+            <ExtensionPointMulti category="mobileHeader" class="px-1 py-2 xs:px-2" />
 
             <router-link :to="{ name: 'Cart' }" :aria-label="$t('common.links.cart')" class="px-1 py-2 xs:px-2">
               <span class="relative block">
@@ -145,7 +140,6 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
-import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { useNestedMobileHeader } from "@/shared/layout";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { ShipToSelector } from "@/shared/ship-to-location";
@@ -155,7 +149,6 @@ import type { RouteLocationRaw } from "vue-router";
 import BarcodeScanner from "@/shared/layout/components/search-bar/barcode-scanner.vue";
 const router = useRouter();
 
-const { getEntries } = useExtensionRegistry();
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);

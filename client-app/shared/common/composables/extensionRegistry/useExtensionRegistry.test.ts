@@ -38,9 +38,8 @@ describe("useExtensionRegistry", () => {
   describe("registration", () => {
     it("should register and retrieve entries", () => {
       registry.register("productCard", "a", { component: DummyComponent });
-      const entry = registry.getEntry("productCard", "a");
-      expect(entry).toBeDefined();
-      expect(entry?.component).toBe(DummyComponent);
+      const entries = registry.getEntries("productCard");
+      expect(entries).toEqual({ a: { component: DummyComponent } });
       expect(registry.getComponent("productCard", "a")).toBe(DummyComponent);
       expect(registry.isRegistered("productCard", "a")).toBe(true);
       expect(registry.canRender("productCard", "a", dummyProduct)).toBe(true);
@@ -58,7 +57,7 @@ describe("useExtensionRegistry", () => {
       registry.register("productCard", "toRemove", { component: DummyComponent });
       expect(registry.isRegistered("productCard", "toRemove")).toBe(true);
       registry.unregister("productCard", "toRemove");
-      expect(registry.getEntry("productCard", "toRemove")).toBeUndefined();
+      expect(registry.getEntries("productCard")).not.toContain("toRemove");
       expect(registry.isRegistered("productCard", "toRemove")).toBe(false);
       expect(registry.getComponent("productCard", "toRemove")).toBeNull();
     });
@@ -71,7 +70,9 @@ describe("useExtensionRegistry", () => {
       const reg1 = useExtensionRegistry();
       const reg2 = useExtensionRegistry();
       reg1.register("productCard", "globalTest", { component: DummyComponent });
-      expect(reg2.getEntry("productCard", "globalTest")?.component).toBe(DummyComponent);
+      expect(reg2.getEntries("productCard")).toEqual(
+        expect.objectContaining({ globalTest: { component: DummyComponent } }),
+      );
     });
 
     it("should warn when registering duplicate entries", () => {
@@ -111,8 +112,8 @@ describe("useExtensionRegistry", () => {
     it("should maintain immutability of entries snapshot", () => {
       registry.register("productCard", "readonly", { component: DummyComponent });
       const entries = registry.getEntries("productCard");
-      (entries as Record<string, unknown>)["mut"] = 123;
-      expect(registry.getEntry("productCard", "mut")).toBeUndefined();
+      (entries as Record<string, unknown>)["mutated"] = 123;
+      expect(registry.getEntries("productCard")).not.toContain("mutated");
     });
 
     it("should reflect entries keys with getEntries", () => {
@@ -128,7 +129,6 @@ describe("useExtensionRegistry", () => {
 
   describe("error handling", () => {
     it("should return false for unregistered entries", () => {
-      expect(registry.getEntry("productCard", "unknown")).toBeUndefined();
       expect(registry.getComponent("productCard", "unknown")).toBeNull();
       expect(registry.isRegistered("productCard", "unknown")).toBe(false);
       expect(registry.canRender("productCard", "unknown", dummyProduct)).toBe(false);

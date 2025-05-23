@@ -1,4 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
+import pick from "lodash/pick";
 import { shallowReadonly, shallowRef } from "vue";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
@@ -27,11 +28,10 @@ function _useExtensionRegistry() {
     delete entries.value[category]?.[name];
   }
 
-  function getEntry<C extends ExtensionCategoryType>(category: C, name: string) {
-    return entries.value[category]?.[name];
-  }
-
-  function getEntries<C extends ExtensionCategoryType>(category: C) {
+  function getEntries<C extends ExtensionCategoryType>(category: C, names?: string[]) {
+    if (names) {
+      return shallowReadonly(pick(entries.value[category], names));
+    }
     return shallowReadonly(entries.value[category] ?? {});
   }
 
@@ -88,7 +88,6 @@ function _useExtensionRegistry() {
       unregister,
 
       getComponent,
-      getEntry,
       getEntries,
       getProps,
 
@@ -104,7 +103,6 @@ function _useExtensionRegistry() {
     unregister,
 
     getComponent,
-    getEntry,
     getEntries,
     getProps,
 
