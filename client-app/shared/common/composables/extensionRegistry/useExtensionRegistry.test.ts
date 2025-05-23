@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent } from "vue";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import type { Product } from "@/core/api/graphql/types";
+import type { ExtensionCategoryType } from "@/shared/common/types/extensionRegistry";
 
 // Mock Logger and initial registry to avoid flakiness
 const mockLogger = vi.hoisted(() => ({ warn: vi.fn(), error: vi.fn() }));
@@ -22,6 +23,7 @@ describe("useExtensionRegistry", () => {
   const dummyProduct = {} as unknown as Product;
 
   beforeEach(() => {
+    vi.resetModules();
     registry = useExtensionRegistry();
     vi.resetAllMocks();
   });
@@ -114,9 +116,12 @@ describe("useExtensionRegistry", () => {
     });
 
     it("should reflect entries keys with getEntries", () => {
-      registry.register("productCard", "entryA", { component: DummyComponent });
-      registry.register("productCard", "entryB", { component: DummyComponent });
-      const entries = registry.getEntries("productCard");
+      const uniqueCategory = "testCategoryForEntriesSnapshot" as ExtensionCategoryType;
+
+      registry.register(uniqueCategory, "entryA", { component: DummyComponent });
+      registry.register(uniqueCategory, "entryB", { component: DummyComponent });
+
+      const entries = registry.getEntries(uniqueCategory);
       expect(Object.keys(entries).sort()).toEqual(["entryA", "entryB"]);
     });
   });
@@ -130,8 +135,7 @@ describe("useExtensionRegistry", () => {
     });
 
     it("should return false and log an error when condition throws", () => {
-      const errorCondition = (product: Product) => {
-        void product;
+      const errorCondition = () => {
         throw new Error("Test condition error");
       };
       registry.register("productCard", "errTest", { component: DummyComponent, condition: errorCondition });
