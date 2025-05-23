@@ -77,7 +77,8 @@
       "scroll_to_top": "回到顶部",
       "reset_page": "重置页面",
       "show_less": "收起",
-      "expand_all": "全部展开"
+      "expand_all": "全部展开",
+      "all_products": "所有产品"
     },
     "labels": {
       "actions": "操作",
@@ -350,6 +351,13 @@
           "select_address": "选择地址",
           "title": "运送至：",
           "add_new_address": "添加新地址"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "类别",
+            "subcategories": "子类 {category}",
+            "navigation": "导航"
+          }
         }
       },
       "footer": {

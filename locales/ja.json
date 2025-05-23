@@ -77,7 +77,8 @@
       "scroll_to_top": "トップへスクロール",
       "reset_page": "ページをリセット",
       "show_less": "折りたたむ",
-      "expand_all": "すべて展開"
+      "expand_all": "すべて展開",
+      "all_products": "すべての商品"
     },
     "labels": {
       "actions": "操作",
@@ -350,6 +351,13 @@
           "select_address": "住所を選択",
           "title": "配送先：",
           "add_new_address": "新しい住所を追加"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "カテゴリー",
+            "subcategories": "サブカテゴリー {category}",
+            "navigation": "ナビゲーション"
+          }
         }
       },
       "footer": {

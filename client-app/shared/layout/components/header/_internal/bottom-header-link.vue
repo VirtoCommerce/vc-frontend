@@ -8,7 +8,7 @@
           ? 'text-[--header-bottom-link-active-color]'
           : 'text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]',
       ]"
-      class="flex flex-col items-center gap-0.5 px-3 text-sm font-bold tracking-wide"
+      class="flex flex-col items-center gap-0.5 px-3 text-xs tracking-wide"
       @click="navigate"
     >
       <span class="relative">
