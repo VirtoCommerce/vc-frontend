@@ -291,7 +291,7 @@ function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
 
-  uploadFiles();
+  void uploadFiles();
 }
 
 async function onRemoveFiles(items: FileType[]): Promise<void> {

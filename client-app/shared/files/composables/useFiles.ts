@@ -42,6 +42,9 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   // Track active upload count instead of a single flag
   const activeUploadCount = ref(0);
 
+  // Track all active upload promises
+  const activeUploadPromises = ref<Promise<void>[]>([]);
+
   // Create a factory function to get a new useAxios instance for each upload
   const createUploader = (batchId: string) => {
     return useAxios<FileUploadResultType[], AxiosResponse<FileUploadResultType[]>, FormData>({
@@ -159,6 +162,62 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     });
   }
 
+  async function uploadFiles(): Promise<void> {
+    if (!hasNewFiles.value) {
+      return;
+    }
+
+    // Check if we can start more uploads
+    if (activeUploadCount.value >= MAX_CONCURRENT_UPLOADS) {
+      // Wait for any existing uploads to complete
+      await Promise.all(activeUploadPromises.value);
+      return uploadFiles();
+    }
+
+    // Calculate how many more uploads we can start
+    const availableSlots = MAX_CONCURRENT_UPLOADS - activeUploadCount.value;
+    if (availableSlots <= 0) {
+      // Wait for any existing uploads to complete
+      await Promise.all(activeUploadPromises.value);
+      return uploadFiles();
+    }
+
+    // Get files that need to be uploaded
+    const filesToUpload = [...newFiles.value];
+    if (filesToUpload.length === 0) {
+      // Wait for any existing uploads to complete
+      await Promise.all(activeUploadPromises.value);
+      return;
+    }
+
+    // Split files into batches for each available upload slot
+    const batchSize = Math.max(1, Math.ceil(filesToUpload.length / availableSlots));
+
+    // Start uploads for each batch
+    for (let i = 0; i < availableSlots && filesToUpload.length > 0; i++) {
+      const batch = filesToUpload.splice(0, batchSize);
+      if (batch.length > 0) {
+        const uploadPromise = uploadBatch(batch);
+        activeUploadPromises.value.push(uploadPromise);
+        // Remove the promise from the array when it completes
+        void uploadPromise.finally(() => {
+          const index = activeUploadPromises.value.indexOf(uploadPromise);
+          if (index > -1) {
+            void activeUploadPromises.value.splice(index, 1);
+          }
+        });
+      }
+    }
+
+    // Wait for all current uploads to complete
+    await Promise.all(activeUploadPromises.value);
+
+    // If there are more files to upload, start another batch
+    if (hasNewFiles.value) {
+      return uploadFiles();
+    }
+  }
+
   // Upload a batch of files
   async function uploadBatch(filesToUpload: INewFile[]): Promise<void> {
     if (filesToUpload.length === 0) {
@@ -203,54 +262,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       activeUploadCount.value--;
       // Remove the batch from tracking
       uploadBatches.value.delete(batchId);
-      // Check for more files to upload
-      void uploadFiles();
     }
-  }
-
-  async function uploadFiles(): Promise<void> {
-    if (!hasNewFiles.value) {
-      return Promise.resolve();
-    }
-
-    // Check if we can start more uploads
-    if (activeUploadCount.value >= MAX_CONCURRENT_UPLOADS) {
-      return Promise.resolve();
-    }
-
-    // Calculate how many more uploads we can start
-    const availableSlots = MAX_CONCURRENT_UPLOADS - activeUploadCount.value;
-    if (availableSlots <= 0) {
-      return Promise.resolve();
-    }
-
-    // Get files that need to be uploaded
-    const filesToUpload = [...newFiles.value];
-    if (filesToUpload.length === 0) {
-      return Promise.resolve();
-    }
-
-    // Split files into batches for each available upload slot
-    const batchSize = Math.max(1, Math.ceil(filesToUpload.length / availableSlots));
-
-    // Create an array to track all upload promises
-    const uploadPromises: Promise<void>[] = [];
-
-    // Start uploads for each batch
-    for (let i = 0; i < availableSlots && filesToUpload.length > 0; i++) {
-      const batch = filesToUpload.splice(0, batchSize);
-      if (batch.length > 0) {
-        uploadPromises.push(uploadBatch(batch));
-      }
-    }
-
-    // Return a promise that resolves when all uploads are complete
-    return Promise.all(uploadPromises).then(() => {
-      // If there are more files to upload, start another batch
-      if (hasNewFiles.value) {
-        return uploadFiles();
-      }
-    });
   }
 
   function onUploadProgress(event: AxiosProgressEvent, batchId: string) {
