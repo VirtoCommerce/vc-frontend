@@ -2,7 +2,6 @@
   <component
     :is="componentTag"
     v-bind="attrs"
-    ref="buttonRef"
     :target="target"
     :type="componentTag === 'button' ? type : null"
     :disabled="!enabled"
@@ -56,7 +55,7 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { computed, inject, ref } from "vue";
+import { computed, inject } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -109,7 +108,6 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const inputContext = inject<VcInputContextType | null>("inputContext", null);
-const buttonRef = ref<HTMLElement | null>(null);
 
 const _size = computed(() => {
   if (props.size) {
