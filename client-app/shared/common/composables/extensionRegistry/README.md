@@ -11,134 +11,53 @@
 | Item | Description |
 |------|-------------|
 | **`useExtensionRegistry()`** | Global store + API |
-| **`ExtensionPoint`** | Placeholder component |
+| **`ExtensionPoint`** | Placeholder component  to render registered extension; renders default slot for each unregistered entry  |
 | **`ExtensionPointMulti`** | Placeholder component to render multiple registered extensions; accepts optional `names` array; renders default slot for each unregistered entry |
 | **`$canRenderExtensionPoint`** | Global helper that evaluates `condition` |
 
 ---
 
-## Register a component
-```ts
-import { useExtensionRegistry } from '@/shared/common/composables/useExtensionRegistry';
-const { register } = useExtensionRegistry();
+## Main Scenarios
 
-register('productCard', 'card-button', {
-  component: BackInStockButton,
-  condition: (product) => !product.availabilityData.isInStock, // optional render condition
-  props: { isTextShown: true }, // default props (optional)
-});
-```
+### 1. Defining extension points in the core app
 
-## Use `ExtensionPoint` in a template
-
-### Props
-- `category` (ExtensionCategoryType): Category key whose extension will be rendered.
-- `name?` (string): Name of the extension entry to render.
-
-### Render a registered extension
-```vue
-<ExtensionPoint
-  category="productCard"
-  name="card-button"
-  :product="product"
-/> 
-```
-
-### Conditional rendering
-To render only when the extension is registered and meets its condition, use `$canRenderExtensionPoint`:
-```vue
-<ExtensionPoint
-  v-if="$canRenderExtensionPoint('productCard', 'card-button', product)"
-  category="productCard"
-  name="card-button"
-  :product="product"
-/> 
-```
-
-### Fallback for unregistered entries
-Provide default slot content to render when the named extension is not registered:
-```vue
-<ExtensionPoint
-  category="productCard"
-  name="card-button"
->
-  <div>Fallback content when no extension is registered</div>
-</ExtensionPoint>
-```
-
-## Use `ExtensionPointMulti` in a template
-
-### Props
-- `category` (ExtensionCategoryType): Category key whose extensions will be rendered.
-- `names?` (string[]): Optional array of extension names to render; if omitted, all registered entries in the category are rendered.
-
-### Render registered extensions
-```vue
-<ExtensionPointMulti
-  category="productCard"
-  :names="['card-button', 'badge']"
-/>  
-```
-
-### Fallback for unregistered entries
-To display fallback content when a specified extension name is not registered, provide a default slot. This slot will render once for each unregistered name.
-```vue
-<ExtensionPointMulti
-  category="productCard"
-  :names="['card-button', 'badge']"
->
-  <!-- renders for each unregistered name -->
-  <div>No extension available</div>
-</ExtensionPointMulti>
-```
-
-## Registry API (common subset)
-
-| Method | Action |
-|--------|--------|
-| `register(cat, name, entry)` | Add a slot component |
-| `unregister(cat, name)` | Remove it |
-| `getComponent(cat, name)` | Get the Vue component |
-| `getProps(cat, name)` | Get default props |
-| `canRender(cat, name, param)` | Run `condition`; return `boolean` |
-
----
-
-### Add a **new** category
-
-1. **Extend the map**  
-   *File:* `client-app/shared/common/types/extensionRegistryMap.ts`
-   ```ts
-   export type ExtensionCategoryMapType = {
-     // existing…
-     mySidebar: ExtensionEntryType<{ item: SidebarLink }>;
-   };
-   ```
-   - **Type structure:** `ExtensionEntryType<Props, Condition>`  
-      - `Props` — object with props injected into every registered component (`{ item: SidebarLink }` means each component receives a prop named `item` of type `SidebarLink`).  
-      - `Condition` *(optional)* — `(param) => boolean` predicate checked by `$canRenderExtensionPoint`.
-
-2. **Add an empty object placeholder**  
-   *File:* `client-app/shared/common/constants/initialExtensionRegistry.ts`
-   ```ts
-   export const initialExtensionRegistry: ExtensionRegistryStateType = {
-     // existing…
-     mySidebar: {},
-   };
-   ```
-
-3. **Register components**  
-   ```ts
-   register('mySidebar', 'help', { component: HelpLink });
-   ```
-
-4. **Render**  
+1. Extend the category map:
+   - In `client-app/shared/common/types/extensionRegistryMap.ts`, add your new category key to `ExtensionCategoryMapType` with the appropriate `ExtensionEntryType<Props, Condition>`.
+2. Initialize the registry placeholder:
+   - In `client-app/shared/common/constants/initialExtensionRegistry.ts`, add an empty object for the new category.
+3. Declare extension points in templates:
+   - Insert `<ExtensionPoint>` or `<ExtensionPointMulti>` in your Vue components, specifying `category` and `name` (`names` for multi).
+4. (Optional) Provide fallback slot content for unregistered names:
    ```vue
-   <ExtensionPoint
-     v-if="$canRenderExtensionPoint('mySidebar', 'help')"
-     category="mySidebar"
-     name="help"
-   />
+   <ExtensionPoint category="myCategory" name="myName">
+     <div>Fallback content when no extension is registered</div>
+   </ExtensionPoint>
    ```
 
-**Dev tip:** In dev mode the registry is available as `window.VCExtensionRegistry`.
+### 2. Enriching the app from modules
+
+1. Import and register your extension:
+   ```ts
+   import { useExtensionRegistry } from '@/shared/common/composables/useExtensionRegistry';
+   const { register } = useExtensionRegistry();
+   register('myCategory', 'myExtension', {
+     component: MyComponent,
+     props: { /* default props */ },
+     condition: (param) => /* boolean condition */
+   });
+   ```
+2. (Optional) Unregister on cleanup:
+   ```ts
+   import { onUnmounted } from 'vue';
+   const { unregister } = useExtensionRegistry();
+   onUnmounted(() => {
+     unregister('myCategory', 'myExtension');
+   });
+   ```
+3. Your registered components will then be automatically rendered at the corresponding extension points in the core app.
+
+
+> [!TIP]
+>
+> **Dev tip:** In dev mode the registry is available as `window.VCExtensionRegistry`.
+
