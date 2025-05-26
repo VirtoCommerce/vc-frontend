@@ -8,19 +8,17 @@
         @close="$emit('close')"
         @select-item="$emit('selectItem', item)"
       >
-        <template #default>
-          <MobileMenuLink
-            :link="item"
-            :format-text-function="capitalize"
-            class="py-1 text-lg"
-            @close="$emit('close')"
-            @select="$emit('selectItem', item)"
-          >
-            <template #default="{ formattedText }">
-              {{ formattedText }}
-            </template>
-          </MobileMenuLink>
-        </template>
+        <MobileMenuLink
+          :link="item"
+          :format-text-function="capitalize"
+          class="py-1 text-lg"
+          @close="$emit('close')"
+          @select="$emit('selectItem', item)"
+        >
+          <template #default="{ formattedText }">
+            {{ formattedText }}
+          </template>
+        </MobileMenuLink>
       </ExtensionPoint>
     </li>
   </ul>

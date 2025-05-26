@@ -42,9 +42,7 @@
       <ul class="-mx-2 flex items-center">
         <li v-for="item in desktopMainMenuItems" :key="item.id">
           <ExtensionPoint :item="item" category="headerMenu" :name="item.id">
-            <template #default>
-              <LinkDefault :item="item" />
-            </template>
+            <LinkDefault :item="item" />
           </ExtensionPoint>
         </li>
       </ul>

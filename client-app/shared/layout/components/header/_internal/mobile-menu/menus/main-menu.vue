@@ -14,9 +14,7 @@
           @close="$emit('close')"
           @select-item="$emit('selectItem', item)"
         >
-          <template #default>
-            <LinkDefault :item="item" @close="$emit('close')" @select-item="$emit('selectItem', item)" />
-          </template>
+          <LinkDefault :item="item" @close="$emit('close')" @select-item="$emit('selectItem', item)" />
         </ExtensionPoint>
       </li>
     </ul>

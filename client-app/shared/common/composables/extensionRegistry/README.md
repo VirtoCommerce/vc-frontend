@@ -12,6 +12,7 @@
 |------|-------------|
 | **`useExtensionRegistry()`** | Global store + API |
 | **`ExtensionPoint`** | Placeholder component |
+| **`ExtensionPointMulti`** | Placeholder component to render multiple registered extensions; accepts optional `names` array; renders default slot for each unregistered entry |
 | **`$canRenderExtensionPoint`** | Global helper that evaluates `condition` |
 
 ---
@@ -28,16 +29,68 @@ register('productCard', 'card-button', {
 });
 ```
 
-## Use in a template
+## Use `ExtensionPoint` in a template
+
+### Props
+- `category` (ExtensionCategoryType): Category key whose extension will be rendered.
+- `name?` (string): Name of the extension entry to render.
+
+### Render a registered extension
 ```vue
 <ExtensionPoint
-  v-if="$canRenderExtensionPoint('productCard', 'card-button', product)"  <!-- optional -->
   category="productCard"
   name="card-button"
   :product="product"
-/>
+/> 
 ```
-*Skip the `v-if` if you want the entry to render unconditionally.*
+
+### Conditional rendering
+To render only when the extension is registered and meets its condition, use `$canRenderExtensionPoint`:
+```vue
+<ExtensionPoint
+  v-if="$canRenderExtensionPoint('productCard', 'card-button', product)"
+  category="productCard"
+  name="card-button"
+  :product="product"
+/> 
+```
+
+### Fallback for unregistered entries
+Provide default slot content to render when the named extension is not registered:
+```vue
+<ExtensionPoint
+  category="productCard"
+  name="card-button"
+>
+  <div>Fallback content when no extension is registered</div>
+</ExtensionPoint>
+```
+
+## Use `ExtensionPointMulti` in a template
+
+### Props
+- `category` (ExtensionCategoryType): Category key whose extensions will be rendered.
+- `names?` (string[]): Optional array of extension names to render; if omitted, all registered entries in the category are rendered.
+
+### Render registered extensions
+```vue
+<ExtensionPointMulti
+  category="productCard"
+  :names="['card-button', 'badge']"
+/>  
+```
+
+### Fallback for unregistered entries
+To display fallback content when a specified extension name is not registered, provide a default slot. This slot will render once for each unregistered name.
+```vue
+<ExtensionPointMulti
+  category="productCard"
+  :names="['card-button', 'badge']"
+>
+  <!-- renders for each unregistered name -->
+  <div>No extension available</div>
+</ExtensionPointMulti>
+```
 
 ## Registry API (common subset)
 
