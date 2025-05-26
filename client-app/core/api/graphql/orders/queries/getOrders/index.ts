@@ -1,13 +1,13 @@
+import { GetOrdersDocument } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
-import getOrdersQueryDocument from "./getOrdersQuery.graphql";
-import type { CustomerOrderConnection, Query, QueryOrdersArgs } from "@/core/api/graphql/types";
+import type { QueryOrdersArgs } from "@/core/api/graphql/types";
 
-export async function getOrders(payload?: QueryOrdersArgs): Promise<CustomerOrderConnection> {
+export async function getOrders(payload?: QueryOrdersArgs) {
   const { userId, cultureName } = globals;
 
-  const { data } = await graphqlClient.query<Required<Pick<Query, "orders">>, QueryOrdersArgs>({
-    query: getOrdersQueryDocument,
+  const { data } = await graphqlClient.query({
+    query: GetOrdersDocument,
     variables: {
       userId,
       cultureName,
