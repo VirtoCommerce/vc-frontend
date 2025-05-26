@@ -1,5 +1,5 @@
 <template>
-  <VcBadge v-if="discount" color="danger" size="md" class="left-0 top-0 z-[2]" :class="{ absolute: !static }">
+  <VcBadge v-if="discount" color="danger" :size="size" class="left-0 top-0 z-[2]" :class="{ absolute: !static }">
     <VcIcon v-if="isHot" name="fire" />
 
     <span>{{ $t("shared.catalog.discount_badge.off", { discount }) }}</span>
@@ -19,7 +19,7 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   isHot: false,
-  size: "md",
+  size: "lg",
 });
 
 const discount = computedEager<string | null>(() =>

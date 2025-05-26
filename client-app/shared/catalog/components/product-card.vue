@@ -9,9 +9,9 @@
         :to="link"
       >
         <BadgesWrapper>
-          <PurchasedBeforeBadge v-if="product.isPurchased" />
+          <PurchasedBeforeBadge v-if="product.isPurchased" :size="viewMode === 'grid' ? 'lg' : 'sm'" />
 
-          <DiscountBadge v-if="product.price" static :price="product.price" />
+          <DiscountBadge v-if="product.price" static :price="product.price" :size="viewMode === 'grid' ? 'lg' : 'sm'" />
         </BadgesWrapper>
       </VcProductImage>
 

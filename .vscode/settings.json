@@ -29,5 +29,6 @@
   "sonarlint.connectedMode.project": {
     "connectionId": "virto-commerce",
     "projectKey": "VirtoCommerce_vc-theme-b2b-vue"
-  }
+  },
+  "svg.preview.background": "dark-transparent"
 }
