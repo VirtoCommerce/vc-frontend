@@ -25,4 +25,5 @@ export type ExtensionCategoryMapType = {
     { product?: Product; isTextShown?: boolean; lazy?: boolean },
     (product: Product) => boolean
   >;
+  productPage: ExtensionEntryType<{ product?: Product }, (product: Product) => boolean>;
 };

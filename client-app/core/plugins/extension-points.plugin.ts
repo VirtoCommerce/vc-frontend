@@ -10,7 +10,7 @@ export const extensionPointsPlugin: Plugin = {
     /**
      * Checking if component should be rendered
      * @example:
-     *  <ExtensionPoint v-if="$canRenderExtensionPoint('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)" />
+     *  <ExtensionPoint v-if="$canRenderExtensionPoint('productCard', 'card-button', product)" />
      */
     app.config.globalProperties.$canRenderExtensionPoint = canRender;
 

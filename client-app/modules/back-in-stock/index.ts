@@ -3,7 +3,7 @@ import { useNavigations } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useUser } from "@/shared/account/composables";
 import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
-import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import { loadModuleLocale } from "../utils";
 import { MODULE_ID, ENABLED_KEY } from "./constants";
 import type { MenuType } from "@/core/types";
@@ -64,12 +64,12 @@ export function init(router: Router, i18n: I18n) {
   }
   if (isAuthenticated.value && isEnabled(ENABLED_KEY)) {
     mergeMenuSchema(menuItems);
-    register("productCard", CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, {
+    register("productCard", EXTENSION_NAMES.productCard.cardButton, {
       component: BackInStockButton,
       condition: (product) => !product.availabilityData.isInStock,
       props: { isTextShown: true },
     });
-    register("productCard", CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, {
+    register("productPage", EXTENSION_NAMES.productPage.sidebarButton, {
       component: BackInStockButton,
       condition: (product) => !product.availabilityData.isInStock,
     });

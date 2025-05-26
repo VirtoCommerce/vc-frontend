@@ -52,8 +52,8 @@
     />
 
     <ExtensionPoint
-      v-if="$canRenderExtensionPoint('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
-      :name="CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON"
+      v-if="$canRenderExtensionPoint('productCard', EXTENSION_NAMES.productCard.cardButton, product)"
+      :name="EXTENSION_NAMES.productCard.cardButton"
       category="productCard"
       :product="product"
     />
@@ -102,7 +102,7 @@ import {
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
 import { AddToCart } from "@/shared/cart";
-import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import BadgesWrapper from "./badges-wrapper.vue";

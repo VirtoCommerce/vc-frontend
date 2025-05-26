@@ -31,8 +31,8 @@
 
         <div class="mt-4 print:hidden">
           <ExtensionPoint
-            v-if="$canRenderExtensionPoint('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, product)"
-            :name="CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON"
+            v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.sidebarButton, product)"
+            :name="EXTENSION_NAMES.productPage.sidebarButton"
             category="productCard"
             :product="product"
           />
@@ -58,7 +58,7 @@ import { useCurrency } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { AddToCart, useShortCart } from "@/shared/cart";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
-import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import CountInCart from "./count-in-cart.vue";
 import InStock from "./in-stock.vue";
 import ProductPriceBlock from "./product-price-block.vue";

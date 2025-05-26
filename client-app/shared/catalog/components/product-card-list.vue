@@ -98,8 +98,8 @@
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col sm:mt-0">
       <ExtensionPoint
-        v-if="$canRenderExtensionPoint('productCard', CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)"
-        :name="CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON"
+        v-if="$canRenderExtensionPoint('productCard', EXTENSION_NAMES.productCard.cardButton, product)"
+        :name="EXTENSION_NAMES.productCard.cardButton"
         category="productCard"
         :product="product"
       />
@@ -147,7 +147,7 @@ import { computed } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
-import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
