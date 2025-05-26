@@ -18,10 +18,13 @@
 
       <!-- Catalog button -->
       <a
+        v-if="isMenuShown"
         ref="showCatalogMenuButton"
         :href="catalogLink"
         type="button"
         class="flex select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]"
+        :aria-label="$t('shared.layout.header.bottom_header.catalog_menu_button')"
+        aria-haspopup="menu"
         @click="toggleCatalogDropdown"
         @keydown.enter="toggleCatalogDropdown"
         @keydown.space="toggleCatalogDropdown"
@@ -45,7 +48,7 @@
 
     <!-- Catalog dropdown -->
     <transition
-      v-if="catalogMenuItems.length"
+      v-if="isMenuShown && catalogMenuItems.length"
       enter-from-class="-translate-y-full"
       leave-to-class="-translate-y-full"
       enter-active-class="will-change-transform"
@@ -79,6 +82,12 @@ import { useCustomHeaderLinkComponents } from "@/shared/layout/composables/useCu
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
 import LinkDefault from "@/shared/layout/components/header/_internal/link-components/link-default.vue";
+
+interface IProps {
+  isMenuShown?: boolean;
+}
+
+defineProps<IProps>();
 
 const router = useRouter();
 const { organization } = useUser();

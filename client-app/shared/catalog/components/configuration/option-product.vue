@@ -54,8 +54,8 @@ const PRODUCT_PROPERTY_LIMIT = 3;
 interface IProps {
   product: DeepReadonly<Product>;
   quantity?: number;
-  listPrice: MoneyType;
-  extendedPrice: MoneyType;
+  listPrice?: MoneyType;
+  extendedPrice?: MoneyType;
   modelValue?: string;
   name: string;
 }

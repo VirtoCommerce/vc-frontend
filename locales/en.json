@@ -25,6 +25,7 @@
       "register": "Register",
       "reset_password": "Reset password",
       "reset_filters": "Reset filters",
+      "reset_page": "Reset page",
       "add_to_cart": "Add to cart",
       "apply": "Apply",
       "send": "Send",
@@ -74,7 +75,10 @@
       "add_with_bulk_order": "Add with bulk order",
       "all_orders": "All orders",
       "my_orders": "My orders",
-      "scroll_to_top": "Scroll to top"
+      "scroll_to_top": "Scroll to top",
+      "show_less": "Show less",
+      "expand_all": "Expand all",
+      "all_products": "All products"
     },
     "labels": {
       "actions": "Actions",
@@ -125,7 +129,7 @@
       "recipient_name": "Recipient name",
       "active_address": "Active address",
       "addresses_icon": "Address icon",
-      "digital_product": "Digital product",
+      "digital_product": "Digital",
       "search": "Search {0}",
       "in_stock": "In stock",
       "starts_from": "Start: {0}",
@@ -156,6 +160,7 @@
       "toggle_search_bar": "Toggle search bar",
       "slider_image": "Slider image",
       "buyer_name": "Buyer name",
+      "other": "Other",
       "vendor_name": "Vendor: {name}",
       "not_available": "N/A"
     },
@@ -346,6 +351,13 @@
           "search": "Search",
           "select_address": "Select address",
           "title": "Ship to:"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "Categories",
+            "subcategories": "Subcategories of {category}",
+            "navigation": "Navigation"
+          }
         }
       },
       "footer": {
@@ -645,11 +657,24 @@
           "check_your_configuration": "Check your product configuration",
           "required_section": "Section is required",
           "optional_no_selected": "Personalize your selection further (optional)",
-          "required_no_selected": "Complete all required options to finalize your selection"
+          "required_no_selected": "Complete all required options to finalize your selection",
+          "section-text-fieldset": {
+            "custom_option_with_input": "Custom option: {0}",
+            "custom_option_empty": "Custom option: empty",
+            "enter_custom_text": "Enter custom text",
+            "no_selection": "No selection",
+            "none": "None",
+            "custom_input": "Custom input",
+            "predefined_prefix": "Predefined",
+            "option_label": "Option {0}: {1}"
+          }
         }
       },
       "discount_badge": {
-        "off": "off"
+        "off": "- {discount}"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       },
       "branches_modal": {
         "title": "Select Branch",
@@ -776,7 +801,8 @@
           "month": "Please provide a valid expiration month",
           "year": "Please provide a valid expiration year"
         },
-        "user_error_message": "Can't initialize payment. Please try again later or use another payment method"
+        "user_error_message": "Can't initialize payment. Please try again later or use another payment method",
+        "payment_unavailable": "Payment method is unavailable. Please try again later"
       },
       "authorize_net": {
         "user_agreement_link": "User agreement",
@@ -870,6 +896,15 @@
         "shared": "Shared",
         "private": "Private"
       }
+    },
+    "sorting": {
+      "featured": "Featured",
+      "alphabetically_a_z": "Alphabetically, A-Z",
+      "alphabetically_z_a": "Alphabetically, Z-A",
+      "price_low_to_high": "Price, low to high",
+      "price_high_to_low": "Price, high to low",
+      "date_new_to_old": "Date, new to old",
+      "date_old_to_new": "Date, old to new"
     }
   },
   "pages": {
@@ -1270,6 +1305,11 @@
         "checkbox_label": "Show in stock",
         "tooltip_text": "Select to show only products, that are in stock"
       },
+      "purchased_before_filter_card": {
+        "title": "Purchased before",
+        "checkbox_label": "Purchased before",
+        "tooltip_text": "Select to show only products, that were purchased before"
+      },
       "branch_availability_filter_card": {
         "title": "Branch availability",
         "available_in": "Available at {0}",
@@ -1290,7 +1330,9 @@
       "no_facet_found_message": "No results",
       "no_products_button": "Reset search",
       "products_icon": "Product icon",
-      "show_all_results": "Show all results"
+      "show_all_results": "Show all results",
+      "load_previous_page": "Load previous page",
+      "load_next_page": "Load next page"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1446,6 +1488,16 @@
       },
       "title": "Your account is blocked",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "top_brands_title": "Top brands",
+      "title": "Brands",
+      "search": "Search",
+      "button_all": "All",
+      "no_results": "No results found"
+    },
+    "brand": {
+      "products_title": "Products"
     }
   },
   "identity_error": {

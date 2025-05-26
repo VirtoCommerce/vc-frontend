@@ -13,6 +13,7 @@
       `vc-button--${variant}--${color}`,
       {
         'vc-button--icon': !!icon,
+        'vc-button--square': square,
         'vc-button--disabled': !enabled,
         'vc-button--loading': loading,
         'vc-button--truncate': truncate,
@@ -86,6 +87,7 @@ interface IProps {
   minWidth?: string;
   tag?: string;
   iconSize?: string;
+  square?: boolean;
 }
 
 defineEmits<IEmits>();
@@ -181,6 +183,7 @@ const attrs = computed(() => {
   $prepend: "";
   $append: "";
   $icon: "";
+  $square: "";
   $truncate: "";
   $disabled: "";
   $loading: "";
@@ -209,6 +212,12 @@ const attrs = computed(() => {
     @apply flex-none p-0 h-[--size] min-w-[var(--min-w,var(--size))];
   }
 
+  &--square {
+    $square: &;
+
+    @apply flex-none px-0.5 h-[--size] min-w-[var(--min-w,var(--size))];
+  }
+
   &--full-width {
     @apply w-full;
   }
@@ -231,7 +240,7 @@ const attrs = computed(() => {
     @apply block rounded-full animate-spin border-2 size-[--line-height] border-[--loader-border] border-r-[--loader-border-r];
   }
 
-  &:not(#{$icon}) {
+  &:not(#{$icon}, #{$square}) {
     @apply min-w-[--min-w];
   }
 
@@ -283,7 +292,7 @@ const attrs = computed(() => {
         --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
       }
 
-      &:not([class*="--solid--"]) #{$loaderIcon} {
+      &:not([class*="--solid-"]) #{$loaderIcon} {
         --loader-border: var(--color-#{$color}-100);
         --loader-border-r: var(--color-#{$color}-500);
       }
@@ -338,6 +347,23 @@ const attrs = computed(() => {
         --text-color: var(--color-#{$color}-700);
       }
     }
+
+    &--solid-light--#{$color} {
+      --bg-color: var(--color-#{$color}-50);
+      --border-color: var(--color-#{$color}-50);
+      --text-color: var(--color-#{$color}-500);
+
+      &:hover:not(#{$loading}, #{$disabled}) {
+        --bg-color: var(--color-#{$color}-100);
+        --border-color: var(--color-#{$color}-100);
+        --text-color: var(--color-#{$color}-600);
+      }
+
+      & #{$loaderIcon} {
+        --loader-border: var(--color-#{$color}-200);
+        --loader-border-r: var(--color-#{$color}-500);
+      }
+    }
   }
 
   &#{$disabled}:not(#{$loading}),
@@ -357,6 +383,11 @@ const attrs = computed(() => {
 
     &[class*="--outline--"] {
       --border-color: var(--color-neutral-300);
+    }
+
+    &[class*="--solid-light--"] {
+      --bg-color: var(--color-neutral-100);
+      --border-color: var(--color-neutral-100);
     }
   }
 

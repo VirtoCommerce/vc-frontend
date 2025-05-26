@@ -74,7 +74,11 @@
       "add_with_bulk_order": "Adicionar com pedido em lote",
       "all_orders": "Todas as encomendas.",
       "my_orders": "Minhas encomendas",
-      "scroll_to_top": "Voltar ao topo"
+      "scroll_to_top": "Voltar ao topo",
+      "reset_page": "Redefinir página",
+      "show_less": "Mostrar menos",
+      "expand_all": "Expandir tudo",
+      "all_products": "Todos os produtos"
     },
     "labels": {
       "actions": "Ações",
@@ -125,7 +129,7 @@
       "recipient_name": "Nome do destinatário",
       "active_address": "Endereço ativo",
       "addresses_icon": "Ícone de endereços",
-      "digital_product": "Produto digital",
+      "digital_product": "Digital",
       "search": "Pesquisar {0}",
       "in_stock": "Em estoque",
       "starts_from": "Início: {0}",
@@ -156,6 +160,7 @@
       "toggle_search_bar": "Alternar barra de pesquisa",
       "slider_image": "Imagem do slider",
       "buyer_name": "Nome do comprador",
+      "other": "Outro",
       "vendor_name": "Fornecedor: {name}",
       "not_available": "N/D"
     },
@@ -346,6 +351,13 @@
           "select_address": "Selecionar endereço",
           "title": "Enviar para:",
           "add_new_address": "Adicionar novo endereço"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "Categorias",
+            "subcategories": "Subcategorias de {category}",
+            "navigation": "Navegação"
+          }
         }
       },
       "footer": {
@@ -645,7 +657,17 @@
           "check_your_configuration": "Verifique a configuração do produto",
           "required_section": "Secção obrigatória",
           "optional_no_selected": "Personalize ainda mais a sua seleção (opcional)",
-          "required_no_selected": "Complete todas as opções obrigatórias para finalizar a sua seleção"
+          "required_no_selected": "Complete todas as opções obrigatórias para finalizar a sua seleção",
+          "section-text-fieldset": {
+            "custom_option_with_input": "Opção personalizada: {0}",
+            "custom_option_empty": "Opção personalizada: vazio",
+            "enter_custom_text": "Introduza texto personalizado",
+            "no_selection": "Nenhuma seleção",
+            "none": "Nenhum",
+            "custom_input": "Entrada personalizada",
+            "predefined_prefix": "Predefinido",
+            "option_label": "Opção {0}: {1}"
+          }
         }
       },
       "discount_badge": {
@@ -661,6 +683,9 @@
         "ok_button": "OK",
         "no_results": "Nenhum resultado encontrado",
         "reset_search_button": "Resetar pesquisa"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -776,7 +801,8 @@
           "month": "Por favor, forneça um mês de validade válido",
           "year": "Por favor, forneça um ano de validade válido"
         },
-        "user_error_message": "Não foi possível inicializar o pagamento. Tente novamente mais tarde ou use outro método de pagamento"
+        "user_error_message": "Não foi possível inicializar o pagamento. Tente novamente mais tarde ou use outro método de pagamento",
+        "payment_unavailable": "O método de pagamento não está disponível. Tente novamente mais tarde"
       },
       "authorize_net": {
         "user_agreement_link": "Acordo de Usuário",
@@ -870,6 +896,15 @@
         "shared": "Compartilhada",
         "private": "Privada"
       }
+    },
+    "sorting": {
+      "featured": "Em destaque",
+      "alphabetically_a_z": "Alfabeticamente, A-Z",
+      "alphabetically_z_a": "Alfabeticamente, Z-A",
+      "price_low_to_high": "Preço, do menor para o maior",
+      "price_high_to_low": "Preço, do maior para o menor",
+      "date_new_to_old": "Data, mais recente para o mais antigo",
+      "date_old_to_new": "Data, do mais antigo para o mais recente"
     }
   },
   "pages": {
@@ -1290,7 +1325,14 @@
       "no_facet_found_message": "Nenhum resultado",
       "no_products_button": "Resetar pesquisa",
       "products_icon": "Ícone de produto",
-      "show_all_results": "Mostrar todos os resultados"
+      "show_all_results": "Mostrar todos os resultados",
+      "load_previous_page": "Carregar página anterior",
+      "load_next_page": "Carregar próxima página",
+      "purchased_before_filter_card": {
+        "title": "Comprado antes",
+        "tooltip_text": "Selecionar para mostrar apenas produtos comprados antes",
+        "checkbox_label": "Já comprado"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1446,6 +1488,16 @@
       },
       "title": "Sua conta está bloqueada",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "Pesquisar",
+      "button_all": "Tudo",
+      "top_brands_title": "Melhores marcas",
+      "title": "Marcas",
+      "no_results": "Nenhum resultado encontrado"
+    },
+    "brand": {
+      "products_title": "Produtos"
     }
   },
   "identity_error": {

@@ -1,6 +1,12 @@
 <template>
   <div class="option-none">
-    <VcRadioButton :name="name" :model-value="selected ? 'none' : ''" value="none" @input="$emit('input')">
+    <VcRadioButton
+      data-test-id="none-option"
+      :name="name"
+      :model-value="selected ? 'none' : ''"
+      value="none"
+      @input="$emit('input')"
+    >
       <span class="option-none__label">
         {{ $t("shared.catalog.product_details.product_configuration.none") }}
       </span>
@@ -11,9 +17,9 @@
 <script setup lang="ts">
 defineEmits<IEmits>();
 
-defineProps<Props>();
+defineProps<IProps>();
 
-interface Props {
+interface IProps {
   selected?: boolean;
   name: string;
 }

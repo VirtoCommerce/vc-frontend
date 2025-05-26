@@ -14,7 +14,7 @@
     :message="errorMessage || notAvailableMessage"
     :disabled="disabled"
     :loading="loading"
-    show-empty-details
+    :show-empty-details="reservedSpace"
     validate-on-mount
     @update:model-value="onInput"
     @update:cart-item-quantity="onChange"

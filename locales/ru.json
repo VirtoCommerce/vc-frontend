@@ -74,7 +74,11 @@
       "add_with_bulk_order": "Добавить оптом",
       "all_orders": "Все заказы",
       "my_orders": "Мои заказы",
-      "scroll_to_top": "Прокрутить вверх"
+      "scroll_to_top": "Прокрутить вверх",
+      "reset_page": "Сбросить страницу",
+      "show_less": "Показать меньше",
+      "expand_all": "Развернуть все",
+      "all_products": "Все продукты"
     },
     "labels": {
       "actions": "Действия",
@@ -125,7 +129,7 @@
       "recipient_name": "Имя получателя",
       "active_address": "Активный адрес",
       "addresses_icon": "Иконка адресов",
-      "digital_product": "Цифровой товар",
+      "digital_product": "Цифровой",
       "search": "Поиск {0}",
       "in_stock": "В наличии",
       "starts_from": "Начало: {0}",
@@ -156,6 +160,7 @@
       "toggle_search_bar": "Отобразить/скрыть панель поиска",
       "slider_image": "Картинка в слайдере",
       "buyer_name": "Имя покупателя",
+      "other": "Другое",
       "vendor_name": "Поставщик: {name}",
       "not_available": "Н/Д"
     },
@@ -346,6 +351,13 @@
           "select_address": "Выберите адрес",
           "title": "Доставка в:",
           "add_new_address": "Добавить новый адрес"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "Категории",
+            "subcategories": "Подкатегории {category}",
+            "navigation": "Навигация"
+          }
         }
       },
       "footer": {
@@ -645,7 +657,17 @@
           "check_your_configuration": "Проверьте конфигурацию товара",
           "required_section": "Раздел обязателен",
           "optional_no_selected": "Персонализируйте свой выбор (необязательно)",
-          "required_no_selected": "Завершите выбор, указав все необходимые параметры"
+          "required_no_selected": "Завершите выбор, указав все необходимые параметры",
+          "section-text-fieldset": {
+            "custom_option_with_input": "Настраиваемый параметр: {0}",
+            "custom_option_empty": "Настраиваемая опция: пусто",
+            "enter_custom_text": "Введите свой текст",
+            "no_selection": "Нет выбора",
+            "none": "Нет",
+            "custom_input": "Пользовательский ввод",
+            "predefined_prefix": "Предопределенный",
+            "option_label": "Опция {0}: {1}"
+          }
         }
       },
       "discount_badge": {
@@ -661,6 +683,9 @@
         "ok_button": "ОК",
         "no_results": "Результатов не найдено",
         "reset_search_button": "Очистить поиск"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -776,7 +801,8 @@
           "month": "Укажите действительный месяц истечения срока действия",
           "year": "Укажите действительный год окончания срока действия"
         },
-        "user_error_message": "Не удалось инициализировать платёж. Попробуйте позже или выберите другой способ оплаты"
+        "user_error_message": "Не удалось инициализировать платёж. Попробуйте позже или выберите другой способ оплаты",
+        "payment_unavailable": "Способ оплаты недоступен. Повторите попытку позже."
       },
       "authorize_net": {
         "user_agreement_link": "Пользовательского соглашения",
@@ -870,6 +896,15 @@
         "shared": "Общий",
         "private": "Приватный"
       }
+    },
+    "sorting": {
+      "featured": "Рекомендуемые",
+      "alphabetically_a_z": "По алфавиту, А-Я",
+      "alphabetically_z_a": "По алфавиту, Я-А",
+      "price_low_to_high": "Цена, от низкой к высокой",
+      "price_high_to_low": "Цена: от высокой к низкой",
+      "date_new_to_old": "Дата, от новых к старым",
+      "date_old_to_new": "Дата: сначала старые"
     }
   },
   "pages": {
@@ -1290,7 +1325,14 @@
       "no_facet_found_message": "Результатов нет",
       "no_products_button": "Очистить поиск",
       "products_icon": "Иконка товара",
-      "show_all_results": "Показать все результаты"
+      "show_all_results": "Показать все результаты",
+      "load_previous_page": "Загрузить предыдущую страницу",
+      "load_next_page": "Загрузить следующую страницу",
+      "purchased_before_filter_card": {
+        "title": "Куплено ранее",
+        "tooltip_text": "Показывать только товары, купленные ранее",
+        "checkbox_label": "Куплено ранее"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1446,6 +1488,16 @@
       },
       "title": "Ваш аккаунт заблокирован",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "Поиск",
+      "button_all": "Все",
+      "top_brands_title": "Топ бренды",
+      "title": "Бренды",
+      "no_results": "Ничего не найдено"
+    },
+    "brand": {
+      "products_title": "Товары"
     }
   },
   "identity_error": {

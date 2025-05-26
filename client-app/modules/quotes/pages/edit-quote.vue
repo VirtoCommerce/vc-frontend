@@ -131,7 +131,7 @@ import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import QuoteLineItems from "../components/quote-line-items.vue";
 import { useUserQuote } from "../useUserQuote";
-import type { MemberAddressType } from "@/core/api/graphql/types";
+import type { MemberAddressFieldsFragment } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import type { QuoteAddressType, QuoteItemType, QuoteType } from "@/modules/quotes/api/graphql/types";
 import type { StringSchema } from "yup";
@@ -193,7 +193,7 @@ const {
 const notifications = useNotifications();
 
 usePageHead({
-  title: t("quote_details.title", [quote!.value?.number]),
+  title: t("quote_details.title", [quote.value?.number]),
 });
 
 const breadcrumbs = useBreadcrumbs(() => [
@@ -290,7 +290,7 @@ function accountAddressExists(address: AnyAddressType): boolean {
 }
 
 function onRemoveItem(itemId: string): void {
-  remove(quote.value!.items!, ({ id }) => id === itemId);
+  remove(quote.value!.items, ({ id }) => id === itemId);
 }
 
 function toggleBillingAddressEqualsShippingAddress(): void {
@@ -314,7 +314,7 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
     props: {
       address: currentAddress,
 
-      async onResult(updatedAddress: MemberAddressType): Promise<void> {
+      async onResult(updatedAddress: MemberAddressFieldsFragment): Promise<void> {
         const quoteAddress = cloneDeep({ ...updatedAddress, addressType }) as QuoteAddressType;
 
         setQuoteAddress(quoteAddress);
@@ -344,12 +344,10 @@ function openSelectAddressModal(addressType: AddressType): void {
     component: SelectAddressModal,
     props: {
       addresses: accountAddresses.value,
-      currentAddress: cloneDeep(
-        addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value,
-      ) as MemberAddressType,
+      currentAddress: cloneDeep(addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value),
       isCorporateAddresses: isCorporateMember.value,
 
-      onResult(selectedAddress: MemberAddressType): void {
+      onResult(selectedAddress: MemberAddressFieldsFragment): void {
         const quoteAddress = cloneDeep({ ...selectedAddress, addressType }) as QuoteAddressType;
 
         setQuoteAddress(quoteAddress);
@@ -386,7 +384,7 @@ async function saveChanges(): Promise<void> {
     await changeComment(quote.value!.id, comment.value!);
   }
 
-  await asyncForEach(originalQuote.value!.items!, async (originalItem: QuoteItemType) => {
+  await asyncForEach(originalQuote.value!.items, async (originalItem: QuoteItemType) => {
     const quoteItem: QuoteItemType | undefined = quote.value!.items?.find(
       (item: QuoteItemType) => item.id === originalItem.id,
     );
@@ -453,7 +451,7 @@ function onFileDownload(file: FileType) {
 }
 
 function onUpdateItem({ itemId, quantity }: { itemId: string; quantity: number }): void {
-  const item = quote.value!.items!.find(({ id }) => id === itemId);
+  const item = quote.value!.items.find(({ id }) => id === itemId);
   if (item) {
     item.selectedTierPrice!.quantity = quantity;
   }

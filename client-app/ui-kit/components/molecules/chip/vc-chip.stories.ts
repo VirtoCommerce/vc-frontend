@@ -43,7 +43,7 @@ export default {
   },
 } as Meta<typeof VcChip>;
 
-const Template: StoryFn<typeof VcChip> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcChip },
   setup: () => ({ args }),
   template: '<VcChip v-bind="args">Chip text</VcChip>',
@@ -71,7 +71,12 @@ Disabled.args = {
   disabled: true,
 };
 
-export const Icon: StoryFn<typeof VcChip> = (args) => ({
+export const Icon = Template.bind({});
+Icon.args = {
+  icon: "cog",
+};
+
+export const IconInSlot: StoryFn = (args) => ({
   components: { VcChip, VcIcon },
   setup: () => ({ args }),
   template: `<VcChip v-bind="args">
@@ -80,7 +85,7 @@ export const Icon: StoryFn<typeof VcChip> = (args) => ({
   </VcChip>`,
 });
 
-export const Truncate: StoryFn<typeof VcChip> = (args) => ({
+export const Truncate: StoryFn = (args) => ({
   components: { VcChip },
   setup: () => ({ args }),
   template: `<VcChip v-bind="args" class="w-36">
@@ -91,19 +96,18 @@ Truncate.args = {
   truncate: true,
 };
 
-export const AllStates: StoryFn<typeof VcChip> = () => ({
+export const AllStates: StoryFn = () => ({
   components: { VcChip },
   setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
   template: `<div class="space-y-8">
     <div v-for="size in sizes" class="space-y-3">
       <h2 class="text-lg font-bold">Size: {{ size }}</h2>
 
-
       <div class="space-y-1" v-for="variant in variants">
         <div class="text-base">Variant: <b>{{ variant }}</b></div>
 
         <div class="flex flex-wrap gap-2 items-center">
-          <VcChip v-for="color in colors" :size="size" :color="color" :variant="variant">
+          <VcChip v-for="color in colors" :size="size" :color="color" :variant="variant" icon="cog">
             Color: {{ color }}
           </VcChip>
         </div>

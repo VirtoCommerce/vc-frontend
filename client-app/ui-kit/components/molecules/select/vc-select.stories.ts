@@ -41,7 +41,7 @@ export default {
   },
 } as Meta<typeof VcSelect>;
 
-const Template: StoryFn<typeof VcSelect> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcSelect },
   setup: () => ({ args }),
   template: `<VcSelect v-bind="args" v-model="args.modelValue" class="mb-32" />`,
@@ -118,7 +118,7 @@ MultipleSelectAutocompleteClearable.args = {
   clearable: true,
 };
 
-export const Custom: StoryFn<typeof VcSelect> = (args) => ({
+export const Custom: StoryFn = (args) => ({
   components: { VcSelect },
   setup: () => ({ args }),
   template: `<VcSelect v-bind="args" v-model="args.modelValue" class="mb-32">

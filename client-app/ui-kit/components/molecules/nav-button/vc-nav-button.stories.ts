@@ -31,7 +31,7 @@ export default {
   },
 } as Meta<typeof VcNavButton>;
 
-const Template: StoryFn<typeof VcNavButton> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcNavButton },
   setup: () => ({ args }),
   template: '<VcNavButton v-bind="args" />',

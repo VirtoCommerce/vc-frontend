@@ -48,6 +48,7 @@ defineProps<IProps>();
 .vc-product-price {
   $self: &;
   $truncate: "";
+  $variations: "";
   $singleLine: "";
 
   --font-size: var(--vc-product-price-font-size);
@@ -87,6 +88,8 @@ defineProps<IProps>();
   }
 
   &__variations {
+    $variations: &;
+
     @apply block whitespace-nowrap text-xs font-normal text-neutral;
 
     #{$singleLine} & {
@@ -114,23 +117,33 @@ defineProps<IProps>();
         @apply mt-3 order-6;
       }
 
-      &--list #{$self} {
-        --font-size: theme("fontSize.lg");
-
-        @container (max-width: theme("containers.xl")) {
-          @apply self-start mt-1 flex-row items-center gap-x-1.5 flex-wrap;
-        }
-
-        @container (min-width: theme("containers.xl")) {
-          --font-size: theme("fontSize.sm");
-
-          @apply ms-3 w-[7.5rem] justify-end;
-        }
-
-        @container (min-width: theme("containers.4xl")) {
+      &--list {
+        #{$self} {
           --font-size: theme("fontSize.lg");
 
-          @apply w-[9.5rem];
+          @container (max-width: theme("containers.xl")) {
+            @apply self-start mt-1 flex-row items-center gap-x-1.5 flex-wrap;
+          }
+
+          @container (min-width: theme("containers.xl")) {
+            --font-size: theme("fontSize.sm");
+
+            @apply ms-3 w-[7.5rem] text-end;
+          }
+
+          @container (min-width: theme("containers.4xl")) {
+            --font-size: theme("fontSize.lg");
+
+            @apply w-[9.5rem];
+          }
+        }
+
+        #{$variations} {
+          @apply inline-block me-1;
+
+          @container (min-width: theme("containers.xl")) {
+            @apply block;
+          }
         }
       }
 

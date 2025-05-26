@@ -74,7 +74,11 @@
       "add_with_bulk_order": "一括注文で追加",
       "all_orders": "すべての注文",
       "my_orders": "私の注文",
-      "scroll_to_top": "トップへスクロール"
+      "scroll_to_top": "トップへスクロール",
+      "reset_page": "ページをリセット",
+      "show_less": "折りたたむ",
+      "expand_all": "すべて展開",
+      "all_products": "すべての商品"
     },
     "labels": {
       "actions": "操作",
@@ -125,7 +129,7 @@
       "recipient_name": "受取人",
       "active_address": "有効な住所",
       "addresses_icon": "住所アイコン",
-      "digital_product": "デジタル商品",
+      "digital_product": "デジタル",
       "search": "{0}を検索",
       "in_stock": "在庫あり",
       "starts_from": "開始: {0}",
@@ -156,6 +160,7 @@
       "toggle_search_bar": "検索バーを切り替える",
       "slider_image": "スライダー画像",
       "buyer_name": "購入者名",
+      "other": "その他",
       "vendor_name": "ベンダー: {name}",
       "not_available": "N/A"
     },
@@ -346,6 +351,13 @@
           "select_address": "住所を選択",
           "title": "配送先：",
           "add_new_address": "新しい住所を追加"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "カテゴリー",
+            "subcategories": "サブカテゴリー {category}",
+            "navigation": "ナビゲーション"
+          }
         }
       },
       "footer": {
@@ -645,7 +657,17 @@
           "check_your_configuration": "製品構成を確認してください",
           "required_section": "セクションは必須です",
           "optional_no_selected": "さらに選択をパーソナライズ（任意）",
-          "required_no_selected": "すべての必須オプションを選択して、完了してください"
+          "required_no_selected": "すべての必須オプションを選択して、完了してください",
+          "section-text-fieldset": {
+            "custom_option_with_input": "カスタムオプション：{0}",
+            "custom_option_empty": "カスタムオプション：空",
+            "enter_custom_text": "カスタムテキストを入力",
+            "no_selection": "未選択",
+            "none": "なし",
+            "custom_input": "カスタム入力",
+            "predefined_prefix": "定義済み",
+            "option_label": "オプション{0}: {1}"
+          }
         }
       },
       "discount_badge": {
@@ -661,6 +683,9 @@
         "ok_button": "OK",
         "no_results": "該当する店舗がありません",
         "reset_search_button": "検索をリセット"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -776,7 +801,8 @@
           "month": "有効な有効期限月を入力してください",
           "year": "有効な有効期限の年を入力してください"
         },
-        "user_error_message": "決済を開始できません。後でやり直すか、別の支払い方法をご利用ください"
+        "user_error_message": "決済を開始できません。後でやり直すか、別の支払い方法をご利用ください",
+        "payment_unavailable": "お支払い方法をご利用いただけません。しばらくしてからもう一度お試しください"
       },
       "authorize_net": {
         "user_agreement_link": "User Agreement",
@@ -827,17 +853,17 @@
         "list_icon": "List icon"
       },
       "add_to_wishlists_modal": {
-        "title": "Please select list",
-        "empty_list": "You do not have any shopping lists",
+        "title": "リストを選択してください",
+        "empty_list": "ショッピングリストはまだありません",
         "cancel_button": "@:common.buttons.cancel",
-        "already_in_the_lists": "Already in the lists",
-        "add_to_other_lists": "Add to other lists",
-        "add_to_list_button": "Add to list",
-        "add_new_list": "Add new list",
-        "save_button": "Save",
-        "notification_success": "Your lists were successfully updated",
-        "is_required_validation_error": "The <b>List name</b> is required",
-        "new_list": "New list"
+        "already_in_the_lists": "リストに追加済み",
+        "add_to_other_lists": "別のリストに追加",
+        "add_to_list_button": "リストに追加",
+        "add_new_list": "新しいリストを追加",
+        "save_button": "保存",
+        "notification_success": "リストが更新されました。",
+        "is_required_validation_error": "<b>リスト名</b>が必要です",
+        "new_list": "新しいリスト"
       },
       "unsuccessful_create_wishlist_modal": {
         "message": "You have reached the maximum number of lists. Please delete one you do not use or reshuffle products to reuse an existing list.",
@@ -870,6 +896,15 @@
         "shared": "Shared",
         "private": "Private"
       }
+    },
+    "sorting": {
+      "featured": "おすすめ",
+      "alphabetically_a_z": "アルファベット順 (A-Z)",
+      "alphabetically_z_a": "アルファベット順 (Z-A)",
+      "price_low_to_high": "価格の低い順",
+      "price_high_to_low": "価格（高い順）",
+      "date_new_to_old": "日付、新しい順",
+      "date_old_to_new": "日付、古い順"
     }
   },
   "pages": {
@@ -1290,7 +1325,14 @@
       "no_facet_found_message": "該当なし",
       "no_products_button": "検索をリセット",
       "products_icon": "商品アイコン",
-      "show_all_results": "すべての結果を表示"
+      "show_all_results": "すべての結果を表示",
+      "load_previous_page": "前のページを読み込む",
+      "load_next_page": "次のページを読み込む",
+      "purchased_before_filter_card": {
+        "title": "購入済み",
+        "tooltip_text": "購入済みの商品のみを表示する",
+        "checkbox_label": "購入済み"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1446,6 +1488,16 @@
       },
       "title": "アカウントがブロックされています",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "検索",
+      "button_all": "すべて",
+      "top_brands_title": "人気ブランド",
+      "title": "ブランド",
+      "no_results": "該当する情報は見つかりませんでした"
+    },
+    "brand": {
+      "products_title": "製品"
     }
   },
   "identity_error": {

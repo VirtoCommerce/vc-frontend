@@ -115,7 +115,7 @@ watchEffect(() => {
   $sizeLG: "";
 
   --p-x: theme("padding.4");
-  --border-color: var(--vc-widget-border-color, theme("colors.neutral.100"));
+  --border-color: var(--vc-widget-border-color, theme("colors.neutral.200"));
   --divide-color: var(--vc-widget-divide-color, var(--border-color));
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
 
@@ -133,24 +133,27 @@ watchEffect(() => {
 
   &--size {
     &--xs {
-      --header-p-y: theme("padding.[1.5]");
+      --header-p-y: theme("padding.3");
       --header-gap: theme("gap.[1.5]");
       --title-text: theme("fontSize.sm");
       --title-min-h: 1.625rem;
+      --slot-p-t: theme("padding.4");
     }
 
     &--sm {
-      --header-p-y: theme("padding.[1.5]");
+      --header-p-y: theme("padding.3");
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.base");
       --title-min-h: 1.875rem;
+      --slot-p-t: theme("padding.4");
     }
 
     &--md {
-      --header-p-y: theme("padding.2");
+      --header-p-y: theme("padding.3");
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.xl");
       --title-min-h: 2.125rem;
+      --slot-p-t: theme("padding.4");
 
       @media (min-width: theme("screens.lg")) {
         --p-x: theme("padding.6");
@@ -164,6 +167,7 @@ watchEffect(() => {
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.xl");
       --title-min-h: 2.625rem;
+      --slot-p-t: 0;
 
       @apply divide-none;
 
@@ -215,15 +219,11 @@ watchEffect(() => {
   }
 
   &__slot {
-    @apply pt-4 pb-5 px-[--p-x];
-
-    #{$sizeLG} & {
-      @apply pt-0;
-    }
+    @apply pt-[--slot-p-t] pb-5 px-[--p-x];
 
     *:first-child > & {
       #{$sizeLG} & {
-        @apply pt-5;
+        --slot-p-t: theme("padding.5");
       }
     }
   }

@@ -128,7 +128,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watchEffect, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { XApiPermissions } from "@/core/enums";
 import { useUser } from "@/shared/account";
 import { AddressLine } from "@/shared/common";
@@ -173,8 +173,8 @@ const canAddNewAddress = computed(
     (!checkPermissions(XApiPermissions.CanEditOrganization) && organizationsAddresses.value.length === 0),
 );
 
-watchEffect(async () => {
-  await fetchAddresses();
+onMounted(() => {
+  void fetchAddresses();
 });
 </script>
 

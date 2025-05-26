@@ -48,17 +48,22 @@ const { totalCount, unreadCount, items, markReadAll, markUnreadAll, clearAll } =
   showUnreadOnly,
 });
 
+/**
+ * Handles toggling the read status of a push message.
+ * When a push message is marked as read by pressing enter, the focus will move to the next line.
+ * If there is no next line, the focus will move to the footer.
+ *
+ * @param {number} index - The index of the push message to toggle.
+ */
 function handleToggleRead(index: number) {
-  const nextElement = document.querySelector(
-    `.vc-push-messages__items .vc-push-message:nth-child(${index + 2})`,
-  ) as HTMLElement | null;
-  if (nextElement) {
+  const nextElement = document.querySelector(`.vc-push-messages__items .vc-push-message:nth-child(${index + 2})`);
+  if (nextElement instanceof HTMLElement) {
     nextElement.focus();
     return;
   }
 
-  const footerElement = document.querySelector(".vc-push-messages__foot") as HTMLElement | null;
-  if (footerElement) {
+  const footerElement = document.querySelector(".vc-push-messages__foot");
+  if (footerElement instanceof HTMLElement) {
     footerElement.focus();
   }
 }

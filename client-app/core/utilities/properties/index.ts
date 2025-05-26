@@ -1,7 +1,12 @@
 import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
-import type { Property, PropertyType } from "@/core/api/graphql/types";
+import type { Property, PropertyType, PropertyGroup } from "@/core/api/graphql/types";
 import type { NonUndefined } from "utility-types";
+
+interface IGroupedProperties {
+  group?: PropertyGroup;
+  properties: Property[];
+}
 
 function hasPropertyValue(property: Property): property is Property & { value: NonUndefined<Property["value"]> } {
   return !(
@@ -49,4 +54,45 @@ export function getPropertiesGroupedByName(properties: Property[], type?: Proper
 
     return propertiesByName;
   }, {});
+}
+
+export function getGroupedAndSortedProperties(source: Property[]): IGroupedProperties[] {
+  const { t } = globals.i18n.global;
+  const result = new Map<string, IGroupedProperties>();
+  const defaultGroup: PropertyGroup = {
+    id: "ungrouped",
+    name: t("common.labels.other"),
+    displayOrder: Infinity,
+    description: "",
+  };
+
+  let hasValid = false;
+
+  for (const prop of source) {
+    const group = prop.group?.id ? prop.group : defaultGroup;
+
+    if (group !== defaultGroup) {
+      hasValid = true;
+    }
+
+    const entry = result.get(group.id) ?? { group, properties: [] };
+    entry.properties.push(prop);
+    result.set(group.id, entry);
+  }
+
+  if (!hasValid) {
+    return [
+      {
+        properties: source,
+      },
+    ];
+  }
+
+  return Array.from(result.values())
+    .sort((a, b) => (a.group?.displayOrder ?? 0) - (b.group?.displayOrder ?? 0))
+    .map(({ group, properties }) => {
+      const sortedProps = [...properties].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+
+      return { group, properties: sortedProps };
+    });
 }

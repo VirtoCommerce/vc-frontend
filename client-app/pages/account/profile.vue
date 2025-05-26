@@ -155,7 +155,7 @@ async function applyCurrency(): Promise<void> {
       },
     });
 
-    const contactCurrency = supportedCurrencies.value.find((item) => item.code === user.value!.contact!.currencyCode);
+    const contactCurrency = supportedCurrencies.value.find((item) => item.code === user.value.contact!.currencyCode);
 
     if (contactCurrency) {
       saveCurrencyCode(contactCurrency.code, false);

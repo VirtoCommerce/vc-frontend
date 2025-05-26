@@ -74,7 +74,11 @@
       "add_with_bulk_order": "批量订单添加",
       "all_orders": "所有订单",
       "my_orders": "我的订单",
-      "scroll_to_top": "回到顶部"
+      "scroll_to_top": "回到顶部",
+      "reset_page": "重置页面",
+      "show_less": "收起",
+      "expand_all": "全部展开",
+      "all_products": "所有产品"
     },
     "labels": {
       "actions": "操作",
@@ -125,7 +129,7 @@
       "recipient_name": "收件人姓名",
       "active_address": "激活地址",
       "addresses_icon": "地址图标",
-      "digital_product": "数字产品",
+      "digital_product": "数字",
       "search": "搜索 {0}",
       "in_stock": "有库存",
       "starts_from": "开始于：{0}",
@@ -156,6 +160,7 @@
       "toggle_search_bar": "切换搜索栏",
       "slider_image": "滑动图像",
       "buyer_name": "买方姓名",
+      "other": "其他",
       "vendor_name": "供应商: {name}",
       "not_available": "不可用"
     },
@@ -346,6 +351,13 @@
           "select_address": "选择地址",
           "title": "运送至：",
           "add_new_address": "添加新地址"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "类别",
+            "subcategories": "子类 {category}",
+            "navigation": "导航"
+          }
         }
       },
       "footer": {
@@ -645,7 +657,17 @@
           "check_your_configuration": "检查您的产品配置",
           "required_section": "此部分为必填项",
           "optional_no_selected": "个性化您的选择（可选）",
-          "required_no_selected": "请填写所有必填选项以完成选择"
+          "required_no_selected": "请填写所有必填选项以完成选择",
+          "section-text-fieldset": {
+            "custom_option_with_input": "自定义选项：{0}",
+            "custom_option_empty": "自定义选项：无",
+            "enter_custom_text": "输入自定义文本",
+            "no_selection": "未选择",
+            "none": "无",
+            "custom_input": "自定义输入",
+            "predefined_prefix": "预定义",
+            "option_label": "选项 {0}: {1}"
+          }
         }
       },
       "discount_badge": {
@@ -661,6 +683,9 @@
         "ok_button": "确定",
         "no_results": "未找到结果",
         "reset_search_button": "重置搜索"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -776,7 +801,8 @@
           "month": "请选择有效的月份",
           "year": "请输入有效的年份"
         },
-        "user_error_message": "无法初始化支付。请稍后再试或使用其他支付方式"
+        "user_error_message": "无法初始化支付。请稍后再试或使用其他支付方式",
+        "payment_unavailable": "支付方式不可用，请稍后重试"
       },
       "authorize_net": {
         "user_agreement_link": "用户协议",
@@ -870,6 +896,15 @@
         "shared": "共享",
         "private": "私人"
       }
+    },
+    "sorting": {
+      "featured": "精选",
+      "alphabetically_a_z": "按字母顺序，A-Z",
+      "alphabetically_z_a": "按字母 Z-A 排序",
+      "price_low_to_high": "价格，从低到高",
+      "price_high_to_low": "价格从高到低",
+      "date_new_to_old": "日期，由新到旧",
+      "date_old_to_new": "日期，从旧到新"
     }
   },
   "pages": {
@@ -1290,7 +1325,14 @@
       "no_facet_found_message": "无结果",
       "no_products_button": "重置搜索",
       "products_icon": "产品图标",
-      "show_all_results": "显示所有结果"
+      "show_all_results": "显示所有结果",
+      "load_previous_page": "加载上一页",
+      "load_next_page": "加载下一页",
+      "purchased_before_filter_card": {
+        "title": "已购买过",
+        "tooltip_text": "选择以仅显示之前购买过的商品",
+        "checkbox_label": "之前购买"
+      }
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1446,6 +1488,16 @@
       },
       "title": "您的账户已被封锁",
       "message": "@:common.messages.blocked"
+    },
+    "brands": {
+      "search": "搜索",
+      "button_all": "全部",
+      "top_brands_title": "热门品牌",
+      "title": "品牌",
+      "no_results": "未找到结果"
+    },
+    "brand": {
+      "products_title": "商品"
     }
   },
   "identity_error": {

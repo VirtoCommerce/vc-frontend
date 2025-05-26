@@ -5,22 +5,20 @@
     :title="$t('pages.product.related_product_section_title')"
     prepend-icon="cube"
     size="lg"
-    class="order-last max-md:-mx-4.5"
   >
-    <div v-if="lg" class="-mb-2 flex flex-wrap items-stretch gap-x-7 gap-y-4">
+    <VcProductsGrid v-if="lg" short :columns="{ default: 2, xs: 3, sm: 4, md: 3 }">
       <ProductCardRelated
-        v-for="(item, index) in mobileProducts"
+        v-for="(item, index) in relatedProducts"
         :key="index"
         :product="item"
-        class="w-[calc((100%-1.75rem)/2)] sm:w-[calc((100%-2*1.75rem)/3)] md:w-[calc((100%-1.75rem)/2)]"
-        @link-click="analytics('selectItem', item)"
+        @link-click="selectItem(item)"
       />
-    </div>
+    </VcProductsGrid>
 
     <VcCarousel v-else :slides="relatedProducts" :options="relatedProductsCarouselOptions" navigation>
       <template #slide="{ slide: item }">
-        <div class="h-full px-4 py-3 xl:px-3">
-          <ProductCardRelated class="h-full" :product="item" @link-click="analytics('selectItem', item)" />
+        <div class="h-full p-3">
+          <ProductCardRelated class="h-full" :product="item" @link-click="selectItem(item)" />
         </div>
       </template>
     </VcCarousel>
@@ -29,7 +27,8 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, toRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useAnalytics } from "@/core/composables";
 import { BREAKPOINTS } from "@/core/constants";
 import { extractNumberFromString } from "@/core/utilities";
@@ -38,49 +37,55 @@ import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   relatedProducts?: Product[];
+  productId: string;
+  productName: string;
 }
+
 const props = defineProps<IProps>();
 
+const relatedProducts = toRef(props, "relatedProducts");
+
+const relatedProductsListProperties = computed(() => ({
+  item_list_id: "related_products",
+  item_list_name: `${t("pages.product.related_product_section_title")} ${props.productName}`,
+  related_id: props.productId,
+  related_type: "product",
+}));
+
+const { t } = useI18n();
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const { analytics } = useAnalytics();
 
-const sm = breakpoints.smaller("sm");
-const md = breakpoints.smaller("md");
 const lg = breakpoints.smaller("lg");
 
-const lgScreenWidth = extractNumberFromString(BREAKPOINTS.lg);
 const xlScreenWidth = extractNumberFromString(BREAKPOINTS.xl);
 
-const mobileProductsNumber = computed(() => {
-  if (sm.value) {
-    return 4;
-  }
-
-  if (md.value) {
-    return 3;
-  }
-
-  if (lg.value) {
-    return 2;
-  }
-
-  return 4;
-});
-
-const mobileProducts = computed(() => props.relatedProducts?.slice(0, mobileProductsNumber.value));
-
-const relatedProductsCarouselOptions: CarouselOptions = {
+const relatedProductsCarouselOptions: ICarouselOptions = {
   slidesPerView: 4,
   slidesPerGroup: 4,
   breakpoints: {
-    [lgScreenWidth]: {
-      slidesPerView: 3,
-      slidesPerGroup: 3,
-    },
     [xlScreenWidth]: {
-      slidesPerView: 4,
-      slidesPerGroup: 4,
+      slidesPerView: 5,
+      slidesPerGroup: 5,
     },
   },
 };
+
+function selectItem(item: Product) {
+  analytics("selectItem", item, relatedProductsListProperties.value);
+}
+
+watch(
+  relatedProducts,
+  (relatedProductsValue) => {
+    if (!relatedProductsValue?.length) {
+      return;
+    }
+
+    analytics("viewItemList", relatedProductsValue, relatedProductsListProperties.value);
+  },
+  {
+    immediate: true,
+  },
+);
 </script>

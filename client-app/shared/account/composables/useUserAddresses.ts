@@ -3,11 +3,11 @@ import { deleteMemberAddresses, getMyAddresses, updateMemberAddresses } from "@/
 import { SortDirection } from "@/core/enums";
 import { getSortingExpression, isEqualAddresses, Logger, toInputAddress } from "@/core/utilities";
 import { useUser } from "./useUser";
-import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graphql/types";
+import type { InputMemberAddressType, MemberAddressFieldsFragment } from "@/core/api/graphql/types";
 import type { AnyAddressType, ISortInfo } from "@/core/types";
 
 const loading = ref(false);
-const addresses = shallowRef<MemberAddressType[]>([]);
+const addresses = shallowRef<MemberAddressFieldsFragment[]>([]);
 const sort = ref<ISortInfo>({
   column: "lastName",
   direction: SortDirection.Ascending,
@@ -35,7 +35,7 @@ export function useUserAddresses() {
     }
   }
 
-  async function updateAddresses(items: MemberAddressType[]): Promise<void> {
+  async function updateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
     loading.value = true;
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
@@ -52,16 +52,16 @@ export function useUserAddresses() {
     await fetchAddresses();
   }
 
-  async function addOrUpdateAddresses(items: MemberAddressType[]): Promise<void> {
+  async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
     if (!items.length) {
       return;
     }
 
     loading.value = true;
 
-    const updatedAddresses: MemberAddressType[] = addresses.value.slice();
+    const updatedAddresses: MemberAddressFieldsFragment[] = addresses.value.slice();
 
-    items.forEach((newAddress: MemberAddressType) => {
+    items.forEach((newAddress: MemberAddressFieldsFragment) => {
       const index = updatedAddresses.findIndex((oldAddress) => oldAddress.id === newAddress.id);
 
       if (index === -1) {
@@ -74,7 +74,7 @@ export function useUserAddresses() {
     await updateAddresses(updatedAddresses);
   }
 
-  async function removeAddresses(items: MemberAddressType[]): Promise<void> {
+  async function removeAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
     if (!items.length) {
       return;
     }

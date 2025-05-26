@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints } from "@vueuse/core/index";
+import { useBreakpoints } from "@vueuse/core";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, getCurrentInstance } from "vue";
@@ -89,7 +89,7 @@ const FIXED_HEIGHTS: FixedHeightsType = {
 };
 
 const imageHeight = computed(() => {
-  const currentBreakpoint = (breakpoints.current().value.at(-1) || "xs") as BreakpointsType;
+  const currentBreakpoint = breakpoints.current().value.at(-1) || "xs";
 
   return props.height === "auto" ? "auto" : `${FIXED_HEIGHTS[props.height][currentBreakpoint]}px`;
 });

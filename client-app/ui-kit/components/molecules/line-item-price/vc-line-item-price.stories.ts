@@ -7,7 +7,7 @@ export default {
   component: VcLineItemPrice,
 } as Meta<typeof VcLineItemPrice>;
 
-const Template: StoryFn<typeof VcLineItemPrice> = (args) => ({
+const Template: StoryFn = (args) => ({
   components: { VcLineItemPrice },
   setup: () => ({ args }),
   template: '<VcLineItemPrice v-bind="args" />',
