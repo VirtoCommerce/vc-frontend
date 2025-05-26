@@ -8,9 +8,7 @@
         category="accountMenu"
         :name="link.id"
       >
-        <template #default>
-          <LinkDefault :item="link" />
-        </template>
+        <LinkDefault :item="link" />
       </ExtensionPoint>
     </VcWidget>
 
