@@ -28,6 +28,7 @@ import {
 } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
+import type { UserType } from "@/core/api/graphql/account/queries/getMe";
 import type {
   AccountCreationResultType,
   CustomIdentityResultType,
@@ -35,8 +36,6 @@ import type {
   InputConfirmEmailType,
   InputInviteUserType,
   InputRegisterByInvitationType,
-  Organization,
-  UserType,
 } from "@/core/api/graphql/types";
 import type {
   ForgotPasswordType,
@@ -52,14 +51,14 @@ const user = ref<UserType>();
 
 const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
 const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
-const organization = eagerComputed<Organization | null>(
+const organization = eagerComputed(
   () =>
     user.value?.contact?.organizations?.items?.find((item) => item.id === user.value?.contact?.organizationId) ?? null,
 );
 
-const allOrganizations = computed<Organization[]>(() => user.value?.contact?.organizations?.items || []);
+const allOrganizations = computed(() => user.value?.contact?.organizations?.items || []);
 
-const operator = computed<UserType | null>(() => user.value?.operator ?? null);
+const operator = computed(() => user.value?.operator ?? null);
 
 interface IPasswordExpirationEntry {
   userId: string;
@@ -144,7 +143,7 @@ export function useUser() {
       loading.value = true;
 
       user.value = await getMe(savedUserId.value);
-      if (user.value?.id !== savedUserId.value) {
+      if (user.value && user.value.id !== savedUserId.value) {
         savedUserId.value = user.value.id;
       }
       handlePasswordExpiration();
