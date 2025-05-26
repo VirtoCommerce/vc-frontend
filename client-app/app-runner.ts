@@ -1,7 +1,6 @@
 import { createHead } from "@unhead/vue/client";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
-import { getEpParam, isPreviewMode as isPageBuilderPreviewMode } from "@/builder-preview/utils";
 import { apolloClient, getStore } from "@/core/api/graphql";
 import { useCurrency, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
@@ -18,6 +17,8 @@ import { initialize as initializePurchaseRequests } from "@/modules/purchase-req
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
 import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/builderIo/console-ignored-errors";
+import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
+import { getEpParam, isPreviewMode as isPageBuilderPreviewMode } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
@@ -162,10 +163,19 @@ export default async () => {
 
   const builderOrigin = getEpParam();
   if (builderOrigin && isPageBuilderPreviewMode(builderOrigin)) {
-    const builderPreviewPlugin = (await import("@/builder-preview/builder-preview.plugin").catch(Logger.error))
+    const builderPreviewPlugin = (await import("@/plugins/builder-preview/builder-preview.plugin").catch(Logger.error))
       ?.default;
     if (builderPreviewPlugin) {
       app.use(builderPreviewPlugin, { router, builderOrigin });
+    }
+  }
+
+  if (isBuilderIoPreviewMode()) {
+    const builderIoPreviewPlugin = (
+      await import("@/plugins/builder-io-preview/builder-io-preview.plugin").catch(Logger.error)
+    )?.default;
+    if (builderIoPreviewPlugin) {
+      app.use(builderIoPreviewPlugin, { router });
     }
   }
 

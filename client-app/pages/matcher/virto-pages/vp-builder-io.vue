@@ -1,12 +1,10 @@
 <template>
-  <div v-if="content">
-    <Content
-      model="page"
-      :content="pageDocumentContent"
-      :api-key="builderIoApiKey"
-      :custom-components="getRegisteredComponents()"
-    />
-  </div>
+  <Content
+    model="page"
+    :content="pageDocumentContent"
+    :api-key="builderIoApiKey"
+    :custom-components="getRegisteredComponents()"
+  />
 </template>
 
 <script setup lang="ts">
