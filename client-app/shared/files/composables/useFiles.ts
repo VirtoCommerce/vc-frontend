@@ -167,15 +167,9 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       return;
     }
 
-    // Check if we can start more uploads
-    if (activeUploadCount.value >= MAX_CONCURRENT_UPLOADS) {
-      // Wait for any existing uploads to complete
-      await Promise.all(activeUploadPromises.value);
-      return uploadFiles();
-    }
-
     // Calculate how many more uploads we can start
     const availableSlots = MAX_CONCURRENT_UPLOADS - activeUploadCount.value;
+
     if (availableSlots <= 0) {
       // Wait for any existing uploads to complete
       await Promise.all(activeUploadPromises.value);
@@ -184,11 +178,6 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
 
     // Get files that need to be uploaded
     const filesToUpload = [...newFiles.value];
-    if (filesToUpload.length === 0) {
-      // Wait for any existing uploads to complete
-      await Promise.all(activeUploadPromises.value);
-      return;
-    }
 
     // Split files into batches for each available upload slot
     const batchSize = Math.max(1, Math.ceil(filesToUpload.length / availableSlots));
@@ -196,17 +185,18 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     // Start uploads for each batch
     for (let i = 0; i < availableSlots && filesToUpload.length > 0; i++) {
       const batch = filesToUpload.splice(0, batchSize);
-      if (batch.length > 0) {
-        const uploadPromise = uploadBatch(batch);
-        activeUploadPromises.value.push(uploadPromise);
-        // Remove the promise from the array when it completes
-        void uploadPromise.finally(() => {
-          const index = activeUploadPromises.value.indexOf(uploadPromise);
-          if (index > -1) {
-            void activeUploadPromises.value.splice(index, 1);
-          }
-        });
-      }
+
+      const uploadPromise = uploadBatch(batch);
+
+      activeUploadPromises.value.push(uploadPromise);
+
+      // Remove the promise from the array when it completes
+      void uploadPromise.finally(() => {
+        const index = activeUploadPromises.value.indexOf(uploadPromise);
+        if (index > -1) {
+          void activeUploadPromises.value.splice(index, 1);
+        }
+      });
     }
 
     // Wait for all current uploads to complete
@@ -260,6 +250,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       });
     } finally {
       activeUploadCount.value--;
+
       // Remove the batch from tracking
       uploadBatches.value.delete(batchId);
     }
