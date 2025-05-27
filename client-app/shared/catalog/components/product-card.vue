@@ -8,10 +8,10 @@
         :lazy="lazy"
         :to="link"
       >
-        <BadgesWrapper>
-          <PurchasedBeforeBadge v-if="product.isPurchased" :size="viewMode === 'grid' ? 'lg' : 'sm'" />
+        <BadgesWrapper :size="badgeSize">
+          <PurchasedBeforeBadge v-if="product.isPurchased" :size="badgeSize" />
 
-          <DiscountBadge v-if="product.price" static :price="product.price" :size="viewMode === 'grid' ? 'lg' : 'sm'" />
+          <DiscountBadge v-if="product.price" static :price="product.price" :size="badgeSize" />
         </BadgesWrapper>
       </VcProductImage>
 
@@ -95,6 +95,7 @@
 </template>
 
 <script setup lang="ts">
+import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { computed } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -136,6 +137,9 @@ const props = defineProps<IProps>();
 
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
+
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
@@ -144,4 +148,12 @@ const link = computed(() => getProductRoute(props.product.id, props.product.slug
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
 );
+
+const badgeSize = computed(() => {
+  if (props.viewMode === "grid") {
+    return "lg";
+  }
+
+  return isMobile.value ? "sm" : "md";
+});
 </script>

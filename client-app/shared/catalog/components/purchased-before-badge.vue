@@ -28,7 +28,7 @@ const iconSize = computed(() => {
     case "sm":
       return "xxs";
     case "md":
-      return 12;
+      return 14;
     case "lg":
       return 16;
     default:
