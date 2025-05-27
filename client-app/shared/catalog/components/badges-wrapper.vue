@@ -16,12 +16,12 @@ withDefaults(defineProps<IProps>(), {
 
 <style lang="scss">
 .badges-wrapper {
+  --decorative-corner-radius: v-bind(size === "lg" ? "3px": "2px");
+  --decorative-size: calc(var(--decorative-corner-radius) * 2);
+
   @apply absolute -left-px -top-px flex items-center gap-1 z-[1] bg-additional-50 flex-wrap max-w-full rounded-br-[var(--decorative-size)];
 
-  --corner-radius: v-bind(size === "lg" ? "4px": "2px");
-  --decorative-size: calc(var(--corner-radius) * 2);
-
-  &--lg:not(:empty) {
+  &--lg {
     @apply pb-[7px] pr-[7px];
 
     .vc-badge {
@@ -29,7 +29,7 @@ withDefaults(defineProps<IProps>(), {
     }
   }
 
-  &--md:not(:empty) {
+  &--md {
     @apply pb-[3px] pr-[3px];
 
     .vc-badge {
@@ -37,12 +37,16 @@ withDefaults(defineProps<IProps>(), {
     }
   }
 
-  &--sm:not(:empty) {
+  &--sm {
     @apply pb-0.5 pr-0.5;
 
     .vc-badge {
       @apply min-h-4;
     }
+  }
+
+  &:empty {
+    @apply hidden;
   }
 
   &:not(:empty) {

@@ -20,7 +20,7 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  size: "lg",
+  size: "md",
 });
 
 const iconSize = computed(() => {
@@ -30,9 +30,9 @@ const iconSize = computed(() => {
     case "md":
       return 14;
     case "lg":
-      return 16;
+      return 17;
     default:
-      return 16;
+      return 17;
   }
 });
 </script>

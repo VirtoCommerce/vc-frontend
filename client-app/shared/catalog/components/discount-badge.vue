@@ -19,7 +19,7 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   isHot: false,
-  size: "lg",
+  size: "md",
 });
 
 const discount = computedEager<string | null>(() =>
