@@ -66,10 +66,10 @@ withDefaults(defineProps<IProps>(), {
     &--lg {
       --vc-icon-size: 0.875rem;
 
-      @apply min-w-[1.375rem] gap-1 px-1.5 text-base/[1.35];
+      @apply min-w-[1.375rem] gap-1 px-1.5 text-base/[1.375];
 
       &--dot {
-        @apply w-2.5 h-2.5 min-h-0;
+        @apply w-2.5 h-2.5;
       }
     }
   }
@@ -109,10 +109,10 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__content {
-    @apply grow text-center;
+    @apply grow text-center inline-flex items-center;
 
     &:has(.vc-icon):has(:not(.vc-icon)) {
-      @apply inline-flex items-center gap-[inherit];
+      @apply gap-[inherit];
     }
 
     #{$truncate} & {
