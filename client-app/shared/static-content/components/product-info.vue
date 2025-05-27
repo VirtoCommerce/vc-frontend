@@ -4,7 +4,7 @@
       <div class="product-info__side">
         <ImageGallery :images="product.images">
           <template #badges>
-            <BadgesWrapper>
+            <BadgesWrapper size="lg">
               <PurchasedBeforeBadge v-if="product.isPurchased" size="lg" show-text truncate />
 
               <DiscountBadge static :price="product.price" size="lg" />

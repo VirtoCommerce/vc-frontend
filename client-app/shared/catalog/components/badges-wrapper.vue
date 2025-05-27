@@ -10,7 +10,7 @@ interface IProps {
 }
 
 withDefaults(defineProps<IProps>(), {
-  size: "lg",
+  size: "md",
 });
 </script>
 
