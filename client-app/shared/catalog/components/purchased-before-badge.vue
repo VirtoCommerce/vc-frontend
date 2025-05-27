@@ -3,11 +3,13 @@
     color="success"
     :size="size"
     :title="$t('shared.catalog.purchased_before_badge.title')"
-    class="max-w-full"
+    class="purchased-before-badge"
     data-test-id="purchased-before-badge"
   >
     <VcIcon name="round-check" :size="iconSize" />
-    <span v-if="showText" class="max-w-full truncate">{{ $t("shared.catalog.purchased_before_badge.title") }}</span>
+    <span v-if="showText" class="max-w-full truncate">
+      {{ $t("shared.catalog.purchased_before_badge.title") }}
+    </span>
   </VcBadge>
 </template>
 
@@ -36,3 +38,9 @@ const iconSize = computed(() => {
   }
 });
 </script>
+
+<style lang="scss">
+.purchased-before-badge {
+  @apply max-w-full;
+}
+</style>
