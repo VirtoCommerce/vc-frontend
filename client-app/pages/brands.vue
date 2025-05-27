@@ -21,12 +21,12 @@
         :title="brand.name"
         :to="brand.permalink"
       >
-        <span v-if="brand.logoUrl" class="brands__img-container">
-          <VcImage class="brands__img" :src="brand.logoUrl" :alt="brand.name" />
-        </span>
+        <span class="brands__img-container">
+          <VcImage v-if="brand.logoUrl" class="brands__img" :src="brand.logoUrl" :alt="brand.name" />
 
-        <span v-else class="brands__img-fallback">
-          {{ brand.name }}
+          <span v-else class="brands__img-fallback">
+            {{ brand.name }}
+          </span>
         </span>
       </router-link>
     </div>

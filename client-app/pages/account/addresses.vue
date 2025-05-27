@@ -189,7 +189,7 @@ import { AddressType } from "@/core/enums";
 import { AddressDropdownMenu, useUserAddresses } from "@/shared/account";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import type { MemberAddressType } from "@/core/api/graphql/types";
+import type { MemberAddressFieldsFragment } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
@@ -214,7 +214,7 @@ const page = ref(1);
 const itemsPerPage = ref(6);
 
 const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
-const paginatedAddresses = computed<MemberAddressType[]>(() =>
+const paginatedAddresses = computed(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 
@@ -246,14 +246,14 @@ function onPageChange(newPage: number): void {
   page.value = newPage;
 }
 
-function openAddOrUpdateAddressModal(address?: MemberAddressType): void {
+function openAddOrUpdateAddressModal(address?: MemberAddressFieldsFragment): void {
   openModal({
     component: AddOrUpdateAddressModal,
     props: {
       address,
       loading: addressesLoading,
 
-      async onResult(updatedAddress: MemberAddressType) {
+      async onResult(updatedAddress: MemberAddressFieldsFragment) {
         await addOrUpdateAddresses([{ ...updatedAddress, addressType: AddressType.BillingAndShipping }]);
         closeModal();
       },
@@ -267,7 +267,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
   await fetchAddresses();
 }
 
-function removeAddress(address: MemberAddressType): void {
+function removeAddress(address: MemberAddressFieldsFragment): void {
   const closeDeleteAddressModal = openModal({
     component: "VcConfirmationModal",
     props: {

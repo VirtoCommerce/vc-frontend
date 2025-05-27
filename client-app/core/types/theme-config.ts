@@ -1,5 +1,6 @@
 import type { BrowserTargetType } from "./browser-window-target";
 import type { ISocialSharingService } from "./social-sharing";
+import type { DesktopMenuModeType } from "@/core/constants";
 import type { SortDirection } from "@/core/enums";
 import type { IOrderStatus, IQuoteStatus } from "@/core/types";
 import type { CatalogPaginationModeType } from "@/shared/catalog/types/catalog";
@@ -173,6 +174,7 @@ export interface IThemeConfigSettings {
   store_selector_enabled?: boolean;
   top_header_menu_link_list?: string;
   header_menu_link_list?: string;
+  desktop_menu_mode?: DesktopMenuModeType;
   products_menu_link_list?: string;
   footer_menu_link_list?: string;
   image_thumbnails_enabled?: boolean;

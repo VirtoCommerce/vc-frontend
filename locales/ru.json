@@ -77,7 +77,8 @@
       "scroll_to_top": "Прокрутить вверх",
       "reset_page": "Сбросить страницу",
       "show_less": "Показать меньше",
-      "expand_all": "Развернуть все"
+      "expand_all": "Развернуть все",
+      "all_products": "Все продукты"
     },
     "labels": {
       "actions": "Действия",
@@ -350,6 +351,13 @@
           "select_address": "Выберите адрес",
           "title": "Доставка в:",
           "add_new_address": "Добавить новый адрес"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "Категории",
+            "subcategories": "Подкатегории {category}",
+            "navigation": "Навигация"
+          }
         }
       },
       "footer": {
@@ -1365,7 +1373,8 @@
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Ваш запрос <strong>{0}</strong> не дал результатов",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "title": "Поиск"
     },
     "bulk_order": {
       "meta": {
