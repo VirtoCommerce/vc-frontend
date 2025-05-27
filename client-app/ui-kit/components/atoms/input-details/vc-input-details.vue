@@ -14,7 +14,7 @@
       <!-- eslint-disable-next-line vue/no-v-html -->
       <div v-if="!singleLine" v-html-safe="message" class="vc-input-details__message"></div>
 
-      <VcTooltip v-else class="vc-input-details__tooltip-container" placement="bottom-start">
+      <VcTooltip v-else class="vc-input-details__tooltip-container" placement="bottom-start" enable-teleport>
         <template #trigger>
           <div class="vc-input-details__message">{{ message }}</div>
         </template>

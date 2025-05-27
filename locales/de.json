@@ -77,7 +77,8 @@
       "scroll_to_top": "Nach oben scrollen",
       "reset_page": "Seite zurücksetzen",
       "show_less": "Weniger anzeigen",
-      "expand_all": "Alle ausklappen"
+      "expand_all": "Alle ausklappen",
+      "all_products": "Alle Produkte"
     },
     "labels": {
       "actions": "Aktionen",
@@ -350,6 +351,13 @@
           "select_address": "Adresse auswählen",
           "title": "Liefern nach:",
           "add_new_address": "Neue Adresse hinzufügen"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "Kategorien",
+            "subcategories": "Subkategorien von {category}",
+            "navigation": "Navigationsleiste"
+          }
         }
       },
       "footer": {
@@ -1365,7 +1373,8 @@
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Ihre <strong>{0}</strong>-Abfrage ergab keine Ergebnisse",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "title": "Suche"
     },
     "bulk_order": {
       "meta": {
