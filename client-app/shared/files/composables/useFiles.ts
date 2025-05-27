@@ -163,10 +163,6 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   }
 
   async function uploadFiles(): Promise<void> {
-    if (!hasNewFiles.value) {
-      return;
-    }
-
     // Calculate how many more uploads we can start
     const availableSlots = MAX_CONCURRENT_UPLOADS - activeUploadCount.value;
 
@@ -202,8 +198,9 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     // Wait for all current uploads to complete
     await Promise.all(activeUploadPromises.value);
 
-    // If there are more files to upload, start another batch
-    if (hasNewFiles.value) {
+    // Check if there are any files that still need to be uploaded
+    const remainingFiles = files.value.filter((file) => isNewfile(file) || isUploadingFile(file));
+    if (remainingFiles.length > 0) {
       return uploadFiles();
     }
   }
