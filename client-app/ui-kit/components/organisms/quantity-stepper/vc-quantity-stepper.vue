@@ -49,10 +49,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-interface IEmits {
-  (e: "update:value", value: number): void;
-}
-
 interface IProps {
   name?: string;
   value?: number;
@@ -71,8 +67,6 @@ interface IProps {
   selectOnClick?: boolean;
 }
 
-const emit = defineEmits<IEmits>();
-
 const props = withDefaults(defineProps<IProps>(), {
   step: 1,
   value: 0,
@@ -90,7 +84,6 @@ const isIncrementDisabled = computed(
 
 function update(value: number) {
   model.value = value;
-  emit("update:value", value);
 }
 </script>
 
