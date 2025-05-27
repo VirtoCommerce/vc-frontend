@@ -36,6 +36,9 @@ export const cache = new InMemoryCache({
         },
       },
     },
+    CartAddressType: {
+      keyFields: false,
+    },
     CouponType: {
       keyFields: ["code"],
     },
