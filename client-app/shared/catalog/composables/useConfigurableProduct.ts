@@ -66,7 +66,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   const loading = computed(() => fetching.value || creating.value || changeCartConfiguredItemLoading.value);
 
   const isConfigurationChanged = computed(() => {
-    if (!loading.value && initialSelectedConfigurationInput.value.length !== selectedConfigurationValue.value.length) {
+    if (initialSelectedConfigurationInput.value.length !== selectedConfigurationValue.value.length) {
       return true;
     }
     return initialSelectedConfigurationInput.value.some(
