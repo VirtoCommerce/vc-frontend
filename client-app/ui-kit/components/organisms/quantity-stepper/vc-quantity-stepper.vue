@@ -16,6 +16,7 @@
       :max="max"
       center
       :select-on-click="selectOnClick"
+      @blur="$emit('blur')"
     >
       <template v-if="!readonly" #prepend>
         <VcButton
@@ -24,7 +25,7 @@
           :loading="loading"
           :color="buttonsColor"
           :variant="buttonsVariant"
-          @click="model && update(model - step)"
+          @click="handleDecrement"
         />
       </template>
 
@@ -35,7 +36,7 @@
           :loading="loading"
           :color="buttonsColor"
           :variant="buttonsVariant"
-          @click="model !== undefined && update(model + step)"
+          @click="handleIncrement"
         />
       </template>
     </VcInput>
@@ -67,6 +68,12 @@ interface IProps {
   selectOnClick?: boolean;
 }
 
+interface IEmits {
+  blur: [];
+}
+
+defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
   step: 1,
   value: 0,
@@ -76,11 +83,32 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const model = defineModel<IProps["value"]>();
 
-const isDecrementDisabled = computed(() => props.disabled || !model.value || (model.value && model.value <= props.min));
+const isMinimumValue = computed(() => !model.value || (model.value && model.value - props.step <= props.min));
+const isDecrementDisabled = computed(() => props.disabled || model.value === 0);
 
 const isIncrementDisabled = computed(
-  () => props.disabled || model.value === null || (!!props.max && model.value && model.value >= props.max),
+  () => props.disabled || model.value === null || (!!props.max && model.value && model.value + props.step > props.max),
 );
+
+function handleDecrement() {
+  if (model.value === undefined) {
+    return;
+  }
+
+  if (isMinimumValue.value && !isDecrementDisabled.value) {
+    update(0);
+    return;
+  }
+
+  update(model.value - props.step);
+}
+
+function handleIncrement() {
+  if (model.value !== undefined) {
+    const newValue = !!props.min && model.value < props.min ? props.min : model.value + props.step;
+    update(newValue);
+  }
+}
 
 function update(value: number) {
   model.value = value;
