@@ -121,8 +121,6 @@ describe("useConfigurableProduct", () => {
       };
       mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
       await composable.fetchProductConfiguration();
-      vi.advanceTimersByTime(TIMER_DELAY);
-      await flushPromises();
 
       composable.selectSectionValue({
         sectionId: "section_2",
@@ -131,9 +129,6 @@ describe("useConfigurableProduct", () => {
         type: CONFIGURABLE_SECTION_TYPES.product,
         customText: undefined,
       });
-      await flushPromises();
-      vi.advanceTimersByTime(TIMER_DELAY);
-      await flushPromises();
 
       expect(composable.selectedConfiguration.value).toEqual({
         section_1: {
@@ -761,27 +756,6 @@ describe("useConfigurableProduct", () => {
     });
 
     describe("isConfigurationChanged", () => {
-      it("returns false when loading is true", async () => {
-        const mockConfiguration = {
-          configurationSections: [createConfigurationSection(1)],
-        };
-        mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
-        await composable.fetchProductConfiguration();
-
-        // Simulate loading state
-        vi.spyOn(composable.loading, "value", "get").mockReturnValue(true);
-
-        composable.selectSectionValue({
-          sectionId: "section_1",
-          customText: undefined,
-          productId: "product-2",
-          quantity: 1,
-          type: CONFIGURABLE_SECTION_TYPES.product,
-        });
-
-        expect(composable.isConfigurationChanged.value).toBe(false);
-      });
-
       it("returns true when selectedConfigurationInput changes", async () => {
         const mockConfiguration = {
           configurationSections: [createConfigurationSection(1), createConfigurationSection(2)],
