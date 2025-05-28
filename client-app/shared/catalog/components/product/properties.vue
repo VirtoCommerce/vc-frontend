@@ -17,7 +17,7 @@
       </VcButton>
     </template>
 
-    <div v-if="groupedProperties.length" class="properties__groups">
+    <div v-if="properties.length" class="properties__groups">
       <VcWidget
         v-for="(item, index) in groupedProperties"
         :key="index"
