@@ -6,7 +6,7 @@
     class="purchased-before-badge"
     data-test-id="purchased-before-badge"
   >
-    <VcIcon name="round-check" :size="iconSize" />
+    <VcIcon name="round-check" />
     <span v-if="showText" class="max-w-full truncate">
       {{ $t("shared.catalog.purchased_before_badge.title") }}
     </span>
@@ -14,28 +14,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-
 interface IProps {
   size?: "sm" | "md" | "lg";
   showText?: boolean;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
+withDefaults(defineProps<IProps>(), {
   size: "md",
-});
-
-const iconSize = computed(() => {
-  switch (props.size) {
-    case "sm":
-      return "xxs";
-    case "md":
-      return 14;
-    case "lg":
-      return 17;
-    default:
-      return 17;
-  }
 });
 </script>
 

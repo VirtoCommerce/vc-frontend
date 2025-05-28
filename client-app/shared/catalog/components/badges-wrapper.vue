@@ -1,5 +1,5 @@
 <template>
-  <div class="badges-wrapper" :class="`badges-wrapper--${size}`">
+  <div class="badges-wrapper" :class="`badges-wrapper--size--${size}`">
     <slot />
   </div>
 </template>
@@ -23,12 +23,12 @@ withDefaults(defineProps<IProps>(), {
 
   @apply absolute -left-px -top-px flex items-center gap-1 z-[1] bg-additional-50 flex-wrap max-w-full rounded-br-[var(--decorative-size)] pb-[var(--padding)] pr-[var(--padding)];
 
-  &--lg {
+  &--size--lg {
     --padding: 7px;
     --height: 1.625rem;
   }
 
-  &--md {
+  &--size--md {
     --padding: 3px;
     --height: 1.375rem;
   }
