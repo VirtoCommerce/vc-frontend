@@ -5,12 +5,7 @@
       <MobileOrdersFilter>
         <template #buyerNameFilterType>
           <VcWidget v-if="showCustomerNameFilter" :title="$t('common.labels.buyer_name')" size="sm">
-            <VcSelect
-              v-model="filterData.customerNames"
-              :items="organizationCustomerNames ?? []"
-              class="my-4"
-              multiple
-            />
+            <VcSelect v-model="filterData.customerNames" :items="organizationCustomerNames ?? []" multiple />
           </VcWidget>
         </template>
 
