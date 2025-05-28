@@ -109,10 +109,10 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__content {
-    @apply grow text-center inline-flex items-center;
+    @apply grow text-center;
 
     &:has(.vc-icon):has(:not(.vc-icon)) {
-      @apply gap-[inherit];
+      @apply gap-[inherit] inline-flex items-center;
     }
 
     #{$truncate} & {
