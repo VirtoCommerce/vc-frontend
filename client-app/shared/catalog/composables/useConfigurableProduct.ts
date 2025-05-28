@@ -69,6 +69,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     if (!loading.value && initialSelectedConfigurationInput.value.length !== selectedConfigurationValue.value.length) {
       return true;
     }
+
     return initialSelectedConfigurationInput.value.some(
       (section, i) => !compareInputs(section, selectedConfigurationInput.value[i]),
     );
