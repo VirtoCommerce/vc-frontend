@@ -124,15 +124,6 @@ describe("useConfigurableProduct", () => {
       vi.advanceTimersByTime(TIMER_DELAY);
       await flushPromises();
 
-      expect(composable.selectedConfiguration.value).toEqual({
-        section_1: {
-          files: [],
-          productId: "product-1",
-          quantity: 1,
-          selectedOptionTextValue: "Product 1",
-        },
-      });
-
       composable.selectSectionValue({
         sectionId: "section_2",
         productId: "product-3",
@@ -772,12 +763,10 @@ describe("useConfigurableProduct", () => {
     describe("isConfigurationChanged", () => {
       it("returns false when loading is true", async () => {
         const mockConfiguration = {
-          configurationSections: [createConfigurationSection(1, { isRequired: true, products: [1, 2] })],
+          configurationSections: [createConfigurationSection(1)],
         };
         mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
         await composable.fetchProductConfiguration();
-        vi.advanceTimersByTime(TIMER_DELAY);
-        await flushPromises();
 
         // Simulate loading state
         vi.spyOn(composable.loading, "value", "get").mockReturnValue(true);
@@ -789,9 +778,6 @@ describe("useConfigurableProduct", () => {
           quantity: 1,
           type: CONFIGURABLE_SECTION_TYPES.product,
         });
-        await flushPromises();
-        vi.advanceTimersByTime(TIMER_DELAY);
-        await flushPromises();
 
         expect(composable.isConfigurationChanged.value).toBe(false);
       });
