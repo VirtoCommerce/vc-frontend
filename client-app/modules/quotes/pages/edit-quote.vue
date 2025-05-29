@@ -131,7 +131,7 @@ import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import QuoteLineItems from "../components/quote-line-items.vue";
 import { useUserQuote } from "../useUserQuote";
-import type { MemberAddressType } from "@/core/api/graphql/types";
+import type { MemberAddressFieldsFragment } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import type { QuoteAddressType, QuoteItemType, QuoteType } from "@/modules/quotes/api/graphql/types";
 import type { StringSchema } from "yup";
@@ -221,7 +221,7 @@ const canSaveChanges = computed<boolean>(() => {
   const isQuoteChanged = !isEqual(originalQuote.value, quote.value);
   const isCommentChanged = originalQuote.value?.comment !== comment.value;
   const areAddressesChanged =
-    !isEqual(quote.value!.addresses, originalQuote.value!.addresses) ||
+    !isEqual(quote.value?.addresses, originalQuote.value?.addresses) ||
     (billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value);
 
   const hasChanges = isQuoteChanged || isCommentChanged || areAddressesChanged || anyFilesModified.value;
@@ -314,7 +314,7 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
     props: {
       address: currentAddress,
 
-      async onResult(updatedAddress: MemberAddressType): Promise<void> {
+      async onResult(updatedAddress: MemberAddressFieldsFragment): Promise<void> {
         const quoteAddress = cloneDeep({ ...updatedAddress, addressType }) as QuoteAddressType;
 
         setQuoteAddress(quoteAddress);
@@ -344,12 +344,10 @@ function openSelectAddressModal(addressType: AddressType): void {
     component: SelectAddressModal,
     props: {
       addresses: accountAddresses.value,
-      currentAddress: cloneDeep(
-        addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value,
-      ) as MemberAddressType,
+      currentAddress: cloneDeep(addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value),
       isCorporateAddresses: isCorporateMember.value,
 
-      onResult(selectedAddress: MemberAddressType): void {
+      onResult(selectedAddress: MemberAddressFieldsFragment): void {
         const quoteAddress = cloneDeep({ ...selectedAddress, addressType }) as QuoteAddressType;
 
         setQuoteAddress(quoteAddress);

@@ -77,7 +77,8 @@
       "my_orders": "My orders",
       "scroll_to_top": "Scroll to top",
       "show_less": "Show less",
-      "expand_all": "Expand all"
+      "expand_all": "Expand all",
+      "all_products": "All products"
     },
     "labels": {
       "actions": "Actions",
@@ -350,6 +351,13 @@
           "search": "Search",
           "select_address": "Select address",
           "title": "Ship to:"
+        },
+        "mega_menu": {
+          "aria_labels": {
+            "categories": "Categories",
+            "subcategories": "Subcategories of {category}",
+            "navigation": "Navigation"
+          }
         }
       },
       "footer": {
@@ -1361,6 +1369,7 @@
       "meta": {
         "title": "Search: {0}"
       },
+      "title": "Search",
       "header": "Your search for {keyword} returned the following",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",

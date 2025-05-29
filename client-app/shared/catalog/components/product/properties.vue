@@ -1,77 +1,75 @@
 <template>
-  <div class="properties">
-    <ProductTitledBlock
-      v-if="showPropertiesBlock"
-      :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
-      icon="adjustments"
-      class="properties"
-    >
-      <template #after>
-        <VcButton
-          v-if="groupedProperties.length > 1"
-          color="secondary"
-          size="xs"
-          variant="outline"
-          @click="toggleWidgets"
-        >
-          {{ allExpanded ? $t("common.buttons.show_less") : $t("common.buttons.expand_all") }}
-        </VcButton>
-      </template>
-
-      <div class="properties__groups">
-        <VcWidget
-          v-for="(item, index) in groupedProperties"
-          :key="index"
-          size="xs"
-          collapsible
-          :collapsed="collapsedStates[index]"
-          :shadow="false"
-          @toggle-collapse="($event) => (collapsedStates[index] = $event)"
-        >
-          <template v-if="item.group" #title>
-            <span class="normal-case">
-              {{ item.group?.name }}
-            </span>
-          </template>
-
-          <div class="properties__group">
-            <VcCollapsibleContent :max-height="groupedProperties.length === 1 ? '18.75rem' : 'none'">
-              <div v-for="property in item.properties" :key="property.id" class="properties__prop">
-                <div class="properties__label">
-                  {{ property.label }}
-                </div>
-
-                <div class="properties__value">
-                  <span v-if="isHTML(property)">
-                    <VcMarkdownRender :src="String(property.value)" />
-                  </span>
-
-                  <span v-else>
-                    {{ property.value }}
-                  </span>
-                </div>
-              </div>
-            </VcCollapsibleContent>
-          </div>
-        </VcWidget>
-      </div>
-    </ProductTitledBlock>
-
-    <div class="mt-5 space-y-4">
-      <!-- Rating -->
-      <VcProperty
-        v-if="productReviewsEnabled && product.rating"
-        :label="$t('shared.catalog.product_card.product_rating')"
-        class="text-base"
+  <ProductTitledBlock
+    v-if="showPropertiesBlock"
+    :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
+    icon="adjustments"
+    class="properties"
+  >
+    <template #after>
+      <VcButton
+        v-if="groupedProperties.length > 1"
+        color="secondary"
+        size="xs"
+        variant="outline"
+        @click="toggleWidgets"
       >
-        <ProductRating :rating="product.rating" />
-      </VcProperty>
+        {{ allExpanded ? $t("common.buttons.show_less") : $t("common.buttons.expand_all") }}
+      </VcButton>
+    </template>
 
-      <!-- Vendor -->
-      <VcProperty v-if="showVendor" :label="$t('shared.catalog.product_details.vendor_label')" class="text-base">
-        <Vendor :vendor="product.vendor!" with-rating />
-      </VcProperty>
+    <div v-if="properties.length" class="properties__groups">
+      <VcWidget
+        v-for="(item, index) in groupedProperties"
+        :key="index"
+        size="xs"
+        collapsible
+        :collapsed="collapsedStates[index]"
+        :shadow="false"
+        @toggle-collapse="($event) => (collapsedStates[index] = $event)"
+      >
+        <template v-if="item.group" #title>
+          <span class="normal-case">
+            {{ item.group?.name }}
+          </span>
+        </template>
+
+        <div class="properties__group">
+          <VcCollapsibleContent :max-height="groupedProperties.length === 1 ? '18.75rem' : 'none'">
+            <div v-for="property in item.properties" :key="property.id" class="properties__prop">
+              <div class="properties__label">
+                {{ property.label }}
+              </div>
+
+              <div class="properties__value">
+                <span v-if="isHTML(property)">
+                  <VcMarkdownRender :src="String(property.value)" />
+                </span>
+
+                <span v-else>
+                  {{ property.value }}
+                </span>
+              </div>
+            </div>
+          </VcCollapsibleContent>
+        </div>
+      </VcWidget>
     </div>
+  </ProductTitledBlock>
+
+  <div class="space-y-4 empty:hidden">
+    <!-- Rating -->
+    <VcProperty
+      v-if="productReviewsEnabled && product.rating"
+      :label="$t('shared.catalog.product_card.product_rating')"
+      class="text-base"
+    >
+      <ProductRating :rating="product.rating" />
+    </VcProperty>
+
+    <!-- Vendor -->
+    <VcProperty v-if="showVendor" :label="$t('shared.catalog.product_details.vendor_label')" class="text-base">
+      <Vendor :vendor="product.vendor!" with-rating />
+    </VcProperty>
   </div>
 </template>
 

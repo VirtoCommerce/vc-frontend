@@ -1,5 +1,5 @@
 #import "./money.graphql"
-#import "./property.graphql"
+#import "./quoteProductProperty.graphql"
 
 fragment quoteLineItemFields on QuoteItemType {
   id
@@ -21,7 +21,7 @@ fragment quoteLineItemFields on QuoteItemType {
     slug
     brandName
     properties {
-      ...property
+      ...quoteProductProperty
     }
     productType
     availabilityData {

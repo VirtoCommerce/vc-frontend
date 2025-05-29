@@ -50,17 +50,16 @@
                 item.product && !isProductSubscriptionActive(item.product.id) && item.product.availabilityData.isInStock
               "
             >
-              <AddToCart :product="item.product" />
-
-              <div class="back-in-stock-subscriptions__info">
+              <AddToCart :product="item.product">
                 <InStock
                   :is-in-stock="item.availabilityData?.isInStock"
                   :is-available="!item.deleted"
                   :quantity="item.availabilityData?.availableQuantity"
                   :is-digital="item.productType === ProductType.Digital"
                 />
+
                 <CountInCart :product-id="item.productId" />
-              </div>
+              </AddToCart>
             </template>
 
             <BackInStockNotifyButton v-else-if="item.product" :product="item.product" lazy />
@@ -223,10 +222,6 @@ watchEffect(fetchProductsAndSubscriptions);
 
   &__pagination {
     @apply mt-5;
-  }
-
-  &__info {
-    @apply flex items-center gap-1;
   }
 }
 </style>
