@@ -44,14 +44,14 @@ withDefaults(defineProps<IProps>(), {
   $truncate: "";
   $square: "";
 
-  --size: 1.125rem;
   --vc-icon-size: 0.75rem;
+  --size: 1.125rem;
 
   @apply flex-none inline-flex align-top gap-1 border rounded-sm font-bold min-h-[var(--size)] min-w-[var(--size)];
 
   &--size {
     &--sm {
-      @apply px-0.5 text-xxs/[1.375];
+      @apply px-0.5 text-xs/[1.2];
 
       &--dot {
         @apply w-1.5 h-1.5;
@@ -62,7 +62,7 @@ withDefaults(defineProps<IProps>(), {
       --vc-icon-size: 0.875rem;
       --size: 1.375rem;
 
-      @apply px-1 text-xs/[1.35];
+      @apply px-1 text-sm/[1.2];
 
       &--dot {
         @apply w-2 h-2;
@@ -73,7 +73,7 @@ withDefaults(defineProps<IProps>(), {
       --vc-icon-size: 1rem;
       --size: 1.625rem;
 
-      @apply px-1.5 text-base/[1.375];
+      @apply px-1.5 text-base/[1.25];
 
       &--dot {
         @apply w-2.5 h-2.5;
@@ -90,7 +90,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &--dot {
-    @apply min-h-0;
+    @apply min-h-0 min-w-0;
   }
 
   &--square {
