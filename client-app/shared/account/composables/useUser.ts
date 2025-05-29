@@ -168,13 +168,17 @@ export function useUser() {
   }
 
   async function updateUser(personalData: UserPersonalDataType): Promise<void> {
+    if (!user.value?.contact) {
+      return;
+    }
+
     try {
       loading.value = true;
 
       await updateContact({
         ...personalData,
-        id: user.value!.contact!.id,
-        organizations: user.value?.contact?.organizations?.items?.map((item) => item.id),
+        selectedAddressId: user.value.contact.selectedAddressId,
+        id: user.value.contact.id,
       });
 
       await fetchUser({ withBroadcast: true });
