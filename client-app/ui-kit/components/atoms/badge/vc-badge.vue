@@ -45,13 +45,12 @@ withDefaults(defineProps<IProps>(), {
   $square: "";
 
   --size: 1.125rem;
+  --vc-icon-size: 0.75rem;
 
   @apply flex-none inline-flex align-top gap-1 border rounded-sm font-bold min-h-[var(--size)];
 
   &--size {
     &--sm {
-      --vc-icon-size: 0.75rem;
-
       @apply min-w-[1rem] px-0.5 text-xxs/[1.375];
 
       &--dot {
