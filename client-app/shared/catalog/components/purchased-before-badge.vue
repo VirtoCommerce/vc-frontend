@@ -6,7 +6,7 @@
     class="purchased-before-badge"
     data-test-id="purchased-before-badge"
   >
-    <VcIcon name="round-check" />
+    <VcIcon name="round-check" square />
     <span v-if="showText" class="max-w-full truncate">
       {{ $t("shared.catalog.purchased_before_badge.title") }}
     </span>
