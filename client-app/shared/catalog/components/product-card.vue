@@ -95,7 +95,6 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { computed } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -137,9 +136,6 @@ const props = defineProps<IProps>();
 
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
-
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
@@ -150,10 +146,6 @@ const properties = computed(() =>
 );
 
 const badgeSize = computed(() => {
-  if (props.viewMode === "grid") {
-    return "lg";
-  }
-
-  return isMobile.value ? "sm" : "md";
+  return props.viewMode === "grid" ? "lg" : "md";
 });
 </script>

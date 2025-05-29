@@ -40,11 +40,17 @@ withDefaults(defineProps<IProps>(), {
 
   $truncate: "";
 
-  @apply flex-none inline-flex align-top border rounded-sm font-bold;
+  --size: 1.125rem;
+
+  @apply flex-none inline-flex align-top border rounded-sm font-bold min-h-[var(--size)];
+
+  &:has(.vc-icon:only-child) {
+    @apply w-[var(--size)] px-0;
+  }
 
   &--size {
     &--sm {
-      --vc-icon-size: 0.625rem;
+      --vc-icon-size: 0.75rem;
 
       @apply min-w-[1rem] gap-1 px-0.5 text-xxs/[1.375];
 
@@ -54,7 +60,8 @@ withDefaults(defineProps<IProps>(), {
     }
 
     &--md {
-      --vc-icon-size: 0.75rem;
+      --vc-icon-size: 0.875rem;
+      --size: 1.375rem;
 
       @apply min-w-[1.125rem] gap-1 px-1 text-xs/[1.35];
 
@@ -64,7 +71,8 @@ withDefaults(defineProps<IProps>(), {
     }
 
     &--lg {
-      --vc-icon-size: 0.875rem;
+      --vc-icon-size: 1rem;
+      --size: 1.625rem;
 
       @apply min-w-[1.375rem] gap-1 px-1.5 text-base/[1.375];
 
@@ -109,7 +117,11 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__content {
-    @apply grow text-center;
+    @apply grow text-center self-center;
+
+    &:has(.vc-icon:only-child) {
+      @apply justify-center;
+    }
 
     &:has(.vc-icon):has(:not(.vc-icon)) {
       @apply gap-[inherit] inline-flex items-center;
@@ -124,10 +136,6 @@ withDefaults(defineProps<IProps>(), {
 
       #{$truncate} & {
         @apply truncate;
-      }
-
-      &:not(.vc-icon) {
-        @apply px-0.5;
       }
     }
   }

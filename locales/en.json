@@ -671,7 +671,7 @@
         }
       },
       "discount_badge": {
-        "off": "- {discount}"
+        "off": "-{discount}"
       },
       "purchased_before_badge": {
         "title": "@:pages.catalog.purchased_before_filter_card.title"

@@ -671,7 +671,7 @@
         }
       },
       "discount_badge": {
-        "off": "wyłączone"
+        "off": "-{discount}"
       },
       "branches_modal": {
         "title": "Wybierz oddział",
