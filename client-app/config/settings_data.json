@@ -1,7 +1,7 @@
 {
   "current": "default",
   "settings": {
-    "details_browser_target": "_blank",
+    "details_browser_target": "_self",
 
     "files_enabled": true,
 
@@ -24,7 +24,7 @@
 
     "zero_price_product_enabled": false,
 
-    "checkout_multistep_enabled": true,
+    "checkout_multistep_enabled": false,
     "checkout_comment_enabled": true,
     "checkout_purchase_order_enabled": true,
     "checkout_coupon_enabled": true,
