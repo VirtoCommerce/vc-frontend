@@ -51,12 +51,17 @@ export function useSearchBar() {
     loading.value = true;
 
     try {
+      const result = await getSearchResults(preparedParams);
+      if (!result) {
+        return;
+      }
+
       const {
         productSuggestions: { suggestions: suggestionsItems = [] },
         pages: { items: pagesItems = [] },
         categories: { items: categoriesItems = [] },
         products: { items: productsItems = [], totalCount = 0 },
-      } = await getSearchResults(preparedParams);
+      } = result;
 
       suggestions.value = suggestionsItems.map((item) => ({
         text: item,
@@ -76,11 +81,11 @@ export function useSearchBar() {
       total.value = totalCount;
       products.value = productsItems;
       searchPhraseOfUploadedResults.value = preparedParams.keyword;
+      loading.value = false;
     } catch (e) {
       Logger.error(`${useSearchBar.name}.${searchResults.name}`, e);
-      throw e;
-    } finally {
       loading.value = false;
+      throw e;
     }
   }
 
