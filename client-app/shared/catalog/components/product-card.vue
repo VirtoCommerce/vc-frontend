@@ -9,7 +9,7 @@
         :to="link"
       >
         <BadgesWrapper :size="badgeSize">
-          <PurchasedBeforeBadge v-if="product.isPurchased" :size="badgeSize" />
+          <PurchasedBeforeBadge v-if="product.isPurchased" :size="badgeSize" square />
 
           <DiscountBadge v-if="product.price" static :price="product.price" :size="badgeSize" />
         </BadgesWrapper>
