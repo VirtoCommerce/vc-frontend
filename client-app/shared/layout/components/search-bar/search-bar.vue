@@ -270,6 +270,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
   }
 
   await searchResults(params);
+
   showSearchDropdown();
 
   /**
