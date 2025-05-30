@@ -230,7 +230,9 @@ async function searchAndShowDropdownResults(): Promise<void> {
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
     themeContext.value.settings;
 
-  hideSearchDropdown();
+  if (!loading.value) {
+    hideSearchDropdown();
+  }
 
   if (trimmedSearchPhrase.value.length > MAX_LENGTH || trimmedSearchPhrase.value.length < MIN_LENGTH) {
     return;
@@ -268,9 +270,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
   }
 
   await searchResults(params);
-  if (!loading.value) {
-    showSearchDropdown();
-  }
+  showSearchDropdown();
 
   /**
    * Send Google Analytics event for products.
