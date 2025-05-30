@@ -133,7 +133,8 @@ const SHIPPING_OPTIONS = {
 
 type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
 
-const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod } = useCheckout();
+const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod, billingAddressEqualsShipping } =
+  useCheckout();
 
 const mode = ref<ShippingOptionType>(shipmentMethod.value?.code === BOPIS_CODE ? "pickup" : "shipping");
 
@@ -155,6 +156,10 @@ watch(
 
     if (!shippingMethod || shippingMethod.code === shipment.value?.shipmentMethodCode) {
       return;
+    }
+
+    if (shippingMethod.code === BOPIS_CODE) {
+      billingAddressEqualsShipping.value = false;
     }
 
     void updateShipment({
