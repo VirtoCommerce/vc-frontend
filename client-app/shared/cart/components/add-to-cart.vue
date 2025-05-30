@@ -1,5 +1,6 @@
 <template>
-  <VcAddToCart
+  <QuantityWrapper
+    mode="quantity-stepper"
     :model-value="enteredQuantity"
     :name="product.id"
     :count-in-cart="countInCart"
@@ -21,7 +22,7 @@
     @update:validation="onValidationUpdate"
   >
     <slot />
-  </VcAddToCart>
+  </QuantityWrapper>
 </template>
 
 <script setup lang="ts">
@@ -39,6 +40,7 @@ import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
 import { AddToCartModeType } from "@/ui-kit/enums";
 import type { Product, ShortLineItemFragment, VariationType, ValidationErrorType } from "@/core/api/graphql/types";
+import QuantityWrapper from "@/shared/common/components/quantity-wrapper.vue";
 
 const emit = defineEmits<IEmits>();
 
@@ -80,7 +82,7 @@ const notAvailableMessage = computed<string | undefined>(() => {
 const isConfigurable = computed<boolean>(() => "isConfigurable" in product.value && product.value.isConfigurable);
 const disabled = computed<boolean>(() => loading.value || !product.value.availabilityData?.isAvailable);
 const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
-const minQty = computed<number>(() => product.value.minQuantity || 1);
+const minQty = computed<number>(() => product.value.minQuantity || 0);
 const maxQty = computed<number>(() =>
   Math.min(
     product.value.availabilityData?.availableQuantity || LINE_ITEM_QUANTITY_LIMIT,
@@ -88,10 +90,10 @@ const maxQty = computed<number>(() =>
   ),
 );
 
-const enteredQuantity = ref(!disabled.value ? countInCart.value || minQty.value : undefined);
+const enteredQuantity = ref(!disabled.value ? countInCart.value : undefined);
 
 function onInput(value: number): void {
-  if (!value) {
+  if (value === undefined) {
     enteredQuantity.value = undefined;
   } else if (value > LINE_ITEM_QUANTITY_LIMIT) {
     enteredQuantity.value = LINE_ITEM_QUANTITY_LIMIT;
@@ -117,7 +119,7 @@ async function onChange() {
   try {
     const updatedCart = await updateOrAddToCart(lineItem, mode);
 
-    if (isConfigurable.value && mode === AddToCartModeType.Add) {
+    if ((isConfigurable.value && mode === AddToCartModeType.Add) || enteredQuantity.value === 0) {
       loading.value = false;
       return;
     }
@@ -130,10 +132,10 @@ async function onChange() {
 }
 
 async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mode: AddToCartModeType) {
-  if (mode === AddToCartModeType.Update && !enteredQuantity.value) {
+  if (mode === AddToCartModeType.Update && enteredQuantity.value === undefined) {
     return cart.value;
   }
-  if (mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value) {
+  if (mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value !== undefined) {
     return isConfigurable.value
       ? await changeCartConfiguredItem(lineItem.id, enteredQuantity.value, selectedConfigurationInput.value)
       : await changeItemQuantity(lineItem.id, enteredQuantity.value);

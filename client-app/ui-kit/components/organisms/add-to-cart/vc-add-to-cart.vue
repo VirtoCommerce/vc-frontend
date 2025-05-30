@@ -91,7 +91,7 @@ interface IProps {
   readonly?: boolean;
   timeout?: number;
   validateOnMount?: boolean;
-  size?: "xs" | "sm" | "md";
+  size?: "sm" | "md";
 }
 
 const emit = defineEmits<IEmits>();
