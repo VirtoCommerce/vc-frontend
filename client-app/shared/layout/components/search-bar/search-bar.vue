@@ -310,7 +310,6 @@ function reset() {
 const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEARCH_BAR_DEBOUNCE_TIME);
 
 function onSearchPhraseChanged() {
-  hideSearchDropdown();
   void searchProductsDebounced();
 }
 
