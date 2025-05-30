@@ -8,6 +8,8 @@
         'vc-badge--rounded': rounded,
         'vc-badge--truncate': truncate,
         'vc-badge--nowrap': nowrap,
+        'vc-badge--dot': !$slots.default,
+        'vc-badge--square': square,
       },
     ]"
   >
@@ -25,6 +27,7 @@ interface IProps {
   rounded?: boolean;
   truncate?: boolean;
   nowrap?: boolean;
+  square?: boolean;
 }
 
 withDefaults(defineProps<IProps>(), {
@@ -39,14 +42,16 @@ withDefaults(defineProps<IProps>(), {
   $colors: primary, secondary, neutral, info, success, warning, danger;
 
   $truncate: "";
+  $square: "";
 
-  @apply flex-none inline-flex align-top border rounded-sm font-bold;
+  --vc-icon-size: 0.75rem;
+  --size: 1.125rem;
+
+  @apply flex-none inline-flex align-top gap-1 border rounded-sm font-bold min-h-[var(--size)] min-w-[var(--size)];
 
   &--size {
     &--sm {
-      --vc-icon-size: 0.625rem;
-
-      @apply min-w-[1rem] gap-1 px-0.5 text-xxs/[1.375];
+      @apply px-0.5 text-xs/[1.2];
 
       &--dot {
         @apply w-1.5 h-1.5;
@@ -54,9 +59,10 @@ withDefaults(defineProps<IProps>(), {
     }
 
     &--md {
-      --vc-icon-size: 0.75rem;
+      --vc-icon-size: 0.875rem;
+      --size: 1.375rem;
 
-      @apply min-w-[1.125rem] gap-1 px-1 text-xs/[1.35];
+      @apply px-1 text-sm/[1.2];
 
       &--dot {
         @apply w-2 h-2;
@@ -64,9 +70,10 @@ withDefaults(defineProps<IProps>(), {
     }
 
     &--lg {
-      --vc-icon-size: 0.875rem;
+      --vc-icon-size: 1rem;
+      --size: 1.625rem;
 
-      @apply min-w-[1.375rem] gap-1 px-1.5 text-base/[1.375];
+      @apply px-1.5 text-base/[1.25];
 
       &--dot {
         @apply w-2.5 h-2.5;
@@ -80,6 +87,16 @@ withDefaults(defineProps<IProps>(), {
 
   &--truncate {
     $truncate: &;
+  }
+
+  &--dot {
+    @apply min-h-0 min-w-0;
+  }
+
+  &--square {
+    $square: &;
+
+    @apply min-w-[var(--size)] px-0;
   }
 
   @each $color in $colors {
@@ -109,7 +126,11 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__content {
-    @apply grow text-center;
+    @apply grow text-center self-center;
+
+    #{$square} & {
+      @apply justify-center;
+    }
 
     &:has(.vc-icon):has(:not(.vc-icon)) {
       @apply inline-flex items-center gap-[inherit];
@@ -124,10 +145,6 @@ withDefaults(defineProps<IProps>(), {
 
       #{$truncate} & {
         @apply truncate;
-      }
-
-      &:not(.vc-icon) {
-        @apply px-0.5;
       }
     }
   }

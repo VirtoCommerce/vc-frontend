@@ -79,12 +79,23 @@ Truncate.args = {
   truncate: true,
 };
 
-export const Icon: StoryFn = (args) => ({
+export const WithIcon: StoryFn = (args) => ({
   components: { VcBadge },
   setup: () => ({ args }),
   template: `<VcBadge v-bind="args">
     <VcIcon name="fire" />
     <span>35</span>
+  </VcBadge>`,
+});
+Truncate.args = {
+  truncate: true,
+};
+
+export const OnlyIcon: StoryFn = (args) => ({
+  components: { VcBadge },
+  setup: () => ({ args }),
+  template: `<VcBadge v-bind="args">
+    <VcIcon name="fire" />
   </VcBadge>`,
 });
 Truncate.args = {
@@ -109,6 +120,20 @@ export const AllStates: StoryFn = () => ({
         <div class="space-y-2">
           <div class="flex justify-around flex-wrap gap-1">
             <VcBadge v-for="color in colors" :size="size" :color="color" :variant="variant">
+              <VcIcon name="fire" />
+              Color: {{ color }}
+            </VcBadge>
+          </div>
+
+          <div class="flex justify-around flex-wrap gap-1">
+            <VcBadge v-for="color in colors" :size="size" :color="color" :variant="variant" rounded>
+              <VcIcon name="fire" />
+              Color: {{ color }}
+            </VcBadge>
+          </div>
+
+          <div class="flex justify-around flex-wrap gap-1">
+            <VcBadge v-for="color in colors" :size="size" :color="color" :variant="variant">
               Color: {{ color }}
             </VcBadge>
           </div>
@@ -116,6 +141,18 @@ export const AllStates: StoryFn = () => ({
           <div class="flex justify-around flex-wrap gap-1">
             <VcBadge v-for="color in colors" :size="size" :color="color" :variant="variant" rounded>
               Color: {{ color }}
+            </VcBadge>
+          </div>
+
+          <div class="flex justify-around flex-wrap gap-1">
+            <VcBadge v-for="color in colors" :size="size" :color="color" :variant="variant" square>
+              <VcIcon name="fire" />
+            </VcBadge>
+          </div>
+
+          <div class="flex justify-around flex-wrap gap-1">
+            <VcBadge v-for="color in colors" :size="size" :color="color" :variant="variant" square rounded>
+              <VcIcon name="fire" />
             </VcBadge>
           </div>
 
