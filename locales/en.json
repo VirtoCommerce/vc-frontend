@@ -39,7 +39,7 @@
       "show_order": "Show order",
       "print": "Print",
       "print_order": "Print order",
-      "place_order": "Place order",
+      "place_order": "Review Payment",
       "back_to_cart": "Back to cart",
       "back_to_order_details": "Back to order details",
       "go_to_checkout": "Proceed to checkout",
@@ -285,8 +285,8 @@
     "methods": {
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Bank card (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Manual",
-        "SkyflowPaymentMethod": "Bank card (Skyflow)",
+        "DefaultManualPaymentMethod": "Pay on Pickup",
+        "SkyflowPaymentMethod": "Pay by Credit Card",
         "CyberSourcePaymentMethod": "Bank card (CyberSource)"
       },
       "delivery_by_id": {
