@@ -268,8 +268,9 @@ async function searchAndShowDropdownResults(): Promise<void> {
   }
 
   await searchResults(params);
-
-  showSearchDropdown();
+  if (!loading.value) {
+    showSearchDropdown();
+  }
 
   /**
    * Send Google Analytics event for products.
