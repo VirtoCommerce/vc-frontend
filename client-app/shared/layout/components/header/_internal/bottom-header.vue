@@ -5,7 +5,7 @@
       class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-inherit px-5 py-3 xl:px-12"
     >
       <router-link :to="$context.settings.default_return_url ?? '/'">
-        <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
+        <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8 xl:h-16" lazy />
       </router-link>
 
       <template v-if="organization">
