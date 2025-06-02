@@ -1,11 +1,4 @@
 <template>
-  <div>quantity: {{ quantity }}</div>
-  <div>modelValue: {{ modelValue }}</div>
-  <div>packSize: {{ packSize }}</div>
-  <div>maxQuantity: {{ maxQuantity }}</div>
-  <div>minQuantity: {{ minQuantity }}</div>
-  <div>availableQuantity: {{ availableQuantity }}</div>
-
   <VcAddToCart
     v-if="mode === 'button'"
     :model-value="modelValue"
@@ -30,7 +23,7 @@
     :validate-on-mount="validateOnMount"
     @update:cart-item-quantity="emit('update:cartItemQuantity', $event)"
     @update:validation="emit('update:validation', $event)"
-    @update:model-value="emit('update:modelValue', $event)"
+    @update:model-value="value = $event"
   >
     <slot />
   </VcAddToCart>
@@ -63,7 +56,6 @@ import { useQuantityField } from "@/ui-kit/composables/useQuantityField";
 interface IEmits {
   "update:cartItemQuantity": [quantity: number];
   "update:validation": [value: { isValid: true } | { isValid: false; errorMessage: string }];
-  "update:modelValue": [value: number];
 }
 
 interface IProps {
