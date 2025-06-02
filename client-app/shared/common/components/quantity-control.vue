@@ -110,7 +110,6 @@ const mode = toRef(props, "mode");
 const value = defineModel<number>({ default: 0 });
 
 const quantity = ref<number>(value.value || 0);
-const pendingQuantity = ref<number>(0);
 
 const allowZero = computed(() => mode.value === "stepper");
 
@@ -152,8 +151,6 @@ const handleChange = debounce(async () => {
 
   await nextTick();
   await validateFields();
-
-  pendingQuantity.value = newQuantity;
 
   if (isValid.value && mode.value === "stepper") {
     emit("update:cartItemQuantity", newQuantity);
