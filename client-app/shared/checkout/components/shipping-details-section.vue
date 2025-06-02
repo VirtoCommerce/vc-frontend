@@ -158,7 +158,9 @@ watch(
       return;
     }
 
-    billingAddressEqualsShipping.value = shippingMethod.code !== BOPIS_CODE;
+    if (shippingMethod.code === BOPIS_CODE) {
+      billingAddressEqualsShipping.value = false;
+    }
 
     void updateShipment({
       id: shipment.value?.id,

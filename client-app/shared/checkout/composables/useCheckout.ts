@@ -118,7 +118,7 @@ export function _useCheckout() {
       (item) => item.id === shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,
     );
 
-    return currentMethod ?? availableShippingMethods.value.at(-1);
+    return currentMethod ?? availableShippingMethods.value[0];
   });
   const paymentMethod = computed(() =>
     availablePaymentMethods.value.find((item) => item.code === payment.value?.paymentGatewayCode),
