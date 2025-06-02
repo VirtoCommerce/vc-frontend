@@ -230,7 +230,9 @@ async function searchAndShowDropdownResults(): Promise<void> {
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
     themeContext.value.settings;
 
-  hideSearchDropdown();
+  if (!loading.value) {
+    hideSearchDropdown();
+  }
 
   if (trimmedSearchPhrase.value.length > MAX_LENGTH || trimmedSearchPhrase.value.length < MIN_LENGTH) {
     return;
@@ -309,7 +311,6 @@ function reset() {
 const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEARCH_BAR_DEBOUNCE_TIME);
 
 function onSearchPhraseChanged() {
-  hideSearchDropdown();
   void searchProductsDebounced();
 }
 
