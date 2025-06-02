@@ -13,7 +13,7 @@ function handleIncrement(value: number, step: number, minAligned: number, maxAli
   return clamp(value + step, minAligned, maxAligned);
 }
 
-function handleDecrement(value: number, step: number, maxAligned: number): number {
+function handleDecrement(value: number, step: number, minAligned: number, maxAligned: number): number {
   if (value <= 0) {
     return 0;
   }
@@ -21,7 +21,7 @@ function handleDecrement(value: number, step: number, maxAligned: number): numbe
     return maxAligned;
   }
   const result = value - step;
-  return result <= 0 ? 0 : clamp(result, 0, maxAligned);
+  return result < minAligned ? 0 : clamp(result, minAligned, maxAligned);
 }
 
 export function calculateStepper(
@@ -49,7 +49,7 @@ export function calculateStepper(
 
   return direction === "increment"
     ? handleIncrement(value, step, minAligned, maxAligned)
-    : handleDecrement(value, step, maxAligned);
+    : handleDecrement(value, step, minAligned, maxAligned);
 }
 
 export function checkIfOperationIsAllowed(
@@ -65,7 +65,7 @@ export function checkIfOperationIsAllowed(
 
   if (direction === "increment") {
     const maxAligned = max === 0 ? Number.POSITIVE_INFINITY : Math.floor(max / step) * step;
-    return value + step <= maxAligned;
+    return value < maxAligned;
   }
 
   // Decrement should be always available if qty is > 0

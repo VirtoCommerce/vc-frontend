@@ -16,7 +16,6 @@
       :max="max"
       center
       :select-on-click="selectOnClick"
-      @blur="$emit('blur')"
     >
       <template v-if="!readonly" #prepend>
         <VcButton
@@ -69,12 +68,6 @@ interface IProps {
   selectOnClick?: boolean;
 }
 
-interface IEmits {
-  blur: [];
-}
-
-defineEmits<IEmits>();
-
 const props = withDefaults(defineProps<IProps>(), {
   step: 1,
   value: 0,
@@ -86,11 +79,11 @@ const props = withDefaults(defineProps<IProps>(), {
 const model = defineModel<IProps["value"]>();
 
 const isDecrementDisabled = computed(
-  () => !checkIfOperationIsAllowed(model.value, props.step, props.min, props.max, "decrement"),
+  () => props.disabled || !checkIfOperationIsAllowed(model.value, props.step, props.min, props.max, "decrement"),
 );
 
 const isIncrementDisabled = computed(
-  () => !checkIfOperationIsAllowed(model.value, props.step, props.min, props.max, "increment"),
+  () => props.disabled || !checkIfOperationIsAllowed(model.value, props.step, props.min, props.max, "increment"),
 );
 
 function handleDecrement() {

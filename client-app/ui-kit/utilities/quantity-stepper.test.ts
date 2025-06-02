@@ -60,6 +60,15 @@ describe("calculateStepper", () => {
       const result = calculateStepper(value, step, min, max, "decrement");
       expect(result).toBe(0);
     });
+
+    it("clamps to minAligned then decrements", () => {
+      const value = 2;
+      const step = 1;
+      const min = 2;
+      const max = 10;
+      const result = calculateStepper(value, step, min, max, "decrement");
+      expect(result).toBe(0);
+    });
   });
 
   describe("values above maximum", () => {
@@ -118,7 +127,7 @@ describe("calculateStepper", () => {
       const min = 3.2;
       const max = 12.7;
       const result = calculateStepper(value, step, min, max, "decrement");
-      expect(result).toBe(3);
+      expect(result).toBe(0);
     });
   });
 
@@ -261,7 +270,7 @@ describe("checkIfOperationIsAllowed", () => {
         expect(checkIfOperationIsAllowed(3, 2, 1, 7, "increment")).toBe(true);
       });
       it("blocks increment exceeding aligned max", () => {
-        expect(checkIfOperationIsAllowed(5, 2, 1, 7, "increment")).toBe(false);
+        expect(checkIfOperationIsAllowed(6, 2, 1, 7, "increment")).toBe(false);
       });
     });
   });

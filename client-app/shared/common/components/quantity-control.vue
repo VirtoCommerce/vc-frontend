@@ -7,7 +7,7 @@
   <div>availableQuantity: {{ availableQuantity }}</div>
 
   <VcAddToCart
-    v-if="mode === 'add-to-cart'"
+    v-if="mode === 'button'"
     :model-value="modelValue"
     :name="name"
     :loading="loading"
@@ -36,7 +36,7 @@
   </VcAddToCart>
 
   <VcQuantityStepper
-    v-else-if="mode === 'quantity-stepper'"
+    v-else-if="mode === 'stepper'"
     v-model="quantity"
     :name="name"
     :loading="loading"
@@ -49,7 +49,6 @@
     :error="!isValid"
     :message="errorMessage"
     :step="packSize"
-    @blur="handleBlur"
   >
     <slot />
   </VcQuantityStepper>
@@ -89,13 +88,13 @@ interface IProps {
   timeout?: number;
   validateOnMount?: boolean;
   size?: "sm" | "md";
-  mode?: "add-to-cart" | "quantity-stepper";
+  mode?: "button" | "stepper";
 }
 
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  mode: "add-to-cart",
+  mode: "button",
   minQuantity: 1,
   maxQuantity: 1,
   packSize: 1,
@@ -121,7 +120,7 @@ const value = defineModel<number>({ default: 0 });
 const quantity = ref<number>(value.value || 0);
 const pendingQuantity = ref<number>(0);
 
-const allowZero = computed(() => mode.value === "quantity-stepper");
+const allowZero = computed(() => mode.value === "stepper");
 
 const { isDisabled, isValid, errorMessage, validateFields } = useQuantityField({
   modelValue: value,
@@ -144,14 +143,6 @@ function applyPreValidationModifiers() {
   }
 }
 
-function handleBlur() {
-  const newQuantity = Number(quantity.value);
-
-  if (isNaN(newQuantity) || (!allowZero.value && newQuantity < 1)) {
-    quantity.value = value.value;
-  }
-}
-
 const handleChange = debounce(async () => {
   applyPreValidationModifiers();
 
@@ -161,7 +152,7 @@ const handleChange = debounce(async () => {
     return;
   }
 
-  if (mode.value === "add-to-cart" && newQuantity < 1) {
+  if (mode.value === "button" && newQuantity < 1) {
     return;
   }
 
@@ -172,13 +163,13 @@ const handleChange = debounce(async () => {
 
   pendingQuantity.value = newQuantity;
 
-  if (isValid.value && mode.value === "quantity-stepper") {
+  if (isValid.value && mode.value === "stepper") {
     emit("update:cartItemQuantity", newQuantity);
   }
 }, timeout.value ?? 0);
 
 onMounted(async () => {
-  if (mode.value === "quantity-stepper" && value.value === 0) {
+  if (mode.value === "stepper" && value.value === 0) {
     return;
   }
 
