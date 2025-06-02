@@ -1,10 +1,10 @@
 import { ApolloError } from "@apollo/client/core";
 import { AbortReason } from "@/core/api/common/enums";
+import { graphqlClient } from "@/core/api/graphql/client";
+import { GetSearchResultsDocument } from "@/core/api/graphql/types";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities/logger";
-import { graphqlClient } from "../../../client";
-import searchQueryDocument from "./getSearchResultsQuery.graphql";
 import type { GetSearchResultsQueryVariables, Query } from "@/core/api/graphql/types";
 
 export type SearchResultsType = Required<Pick<Query, "categories" | "products" | "pages" | "productSuggestions">>;
@@ -129,7 +129,7 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
 
   try {
     const { data } = await graphqlClient.query<SearchResultsType, GetSearchResultsQueryVariables>({
-      query: searchQueryDocument,
+      query: GetSearchResultsDocument,
       variables,
       context: {
         fetchOptions: { signal },
