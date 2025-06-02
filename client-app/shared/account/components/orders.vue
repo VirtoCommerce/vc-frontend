@@ -42,8 +42,6 @@
       </template>
     </VcPopupSidebar>
 
-    <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
-
     <div class="flex flex-col items-center gap-3 lg:flex-row">
       <div v-if="isOrganizationMaintainer" class="flex h-9 gap-2">
         <button
@@ -83,7 +81,7 @@
 
       <!-- Page Toolbar -->
       <PageToolbarBlock
-        :stick="stickyMobileHeaderIsVisible"
+        :stick="false"
         class="flex grow flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5"
         shadow
       >
@@ -371,13 +369,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  breakpointsTailwind,
-  useBreakpoints,
-  onClickOutside,
-  useElementVisibility,
-  useLocalStorage,
-} from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, onClickOutside, useLocalStorage } from "@vueuse/core";
 import { computed, onMounted, ref, shallowRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -472,10 +464,6 @@ const columns = computed<ITableColumn[]>(() => [
   { id: "status", title: t("pages.account.orders.status_label"), sortable: true, classes: "!px-3" },
   { id: "total", title: t("pages.account.orders.total_label"), sortable: true, align: "right" },
 ]);
-
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
-const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const organizationCustomerNames = computed(() =>
   facets.value?.find((item) => item.name === CUSTOMER_NAME_FACET_NAME)?.items?.map((item) => item.label),
