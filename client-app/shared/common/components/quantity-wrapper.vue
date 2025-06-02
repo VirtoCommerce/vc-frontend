@@ -1,9 +1,14 @@
 <template>
   <div>quantity: {{ quantity }}</div>
   <div>modelValue: {{ modelValue }}</div>
-  <VcAddToCartDummy
+  <div>packSize: {{ packSize }}</div>
+  <div>maxQuantity: {{ maxQuantity }}</div>
+  <div>minQuantity: {{ minQuantity }}</div>
+  <div>availableQuantity: {{ availableQuantity }}</div>
+
+  <VcAddToCart
     v-if="mode === 'add-to-cart'"
-    v-model="quantity"
+    :model-value="modelValue"
     :name="name"
     :loading="loading"
     :disabled="disabled"
@@ -16,17 +21,19 @@
     :is-available="isAvailable"
     :is-buyable="isBuyable"
     :is-in-stock="isInStock"
+    :error="error"
     :hide-button="hideButton"
     :readonly="readonly"
     :size="size"
     :show-empty-details="showEmptyDetails"
-    :error="!isValid"
-    :message="errorMessage"
-    @update:cart-item-quantity="handleUpdateCartItemQuantity"
-    @blur="handleBlur"
+    :message="message"
+    :validate-on-mount="validateOnMount"
+    @update:cart-item-quantity="emit('update:cartItemQuantity', $event)"
+    @update:validation="emit('update:validation', $event)"
+    @update:model-value="emit('update:modelValue', $event)"
   >
     <slot />
-  </VcAddToCartDummy>
+  </VcAddToCart>
 
   <VcQuantityStepper
     v-else-if="mode === 'quantity-stepper'"
@@ -57,6 +64,7 @@ import { useQuantityField } from "@/ui-kit/composables/useQuantityField";
 interface IEmits {
   "update:cartItemQuantity": [quantity: number];
   "update:validation": [value: { isValid: true } | { isValid: false; errorMessage: string }];
+  "update:modelValue": [value: number];
 }
 
 interface IProps {
@@ -101,7 +109,6 @@ const props = withDefaults(defineProps<IProps>(), {
   hideButton: false,
   readonly: false,
   timeout: 0,
-  validateOnMount: true,
   size: "sm",
   showEmptyDetails: false,
 });
@@ -137,10 +144,6 @@ function applyPreValidationModifiers() {
   }
 }
 
-function handleUpdateCartItemQuantity() {
-  emit("update:cartItemQuantity", quantity.value);
-}
-
 function handleBlur() {
   const newQuantity = Number(quantity.value);
 
@@ -169,7 +172,7 @@ const handleChange = debounce(async () => {
 
   pendingQuantity.value = newQuantity;
 
-  if (isValid.value) {
+  if (isValid.value && mode.value === "quantity-stepper") {
     emit("update:cartItemQuantity", newQuantity);
   }
 }, timeout.value ?? 0);

@@ -1,6 +1,6 @@
 <template>
   <QuantityWrapper
-    mode="quantity-stepper"
+    mode="add-to-cart"
     :model-value="enteredQuantity"
     :name="product.id"
     :count-in-cart="countInCart"
@@ -86,7 +86,9 @@ const minQty = computed<number>(() => product.value.minQuantity || 0);
 const maxQty = computed<number>(() =>
   Math.min(
     product.value.availabilityData?.availableQuantity || LINE_ITEM_QUANTITY_LIMIT,
-    isDefined(product.value.maxQuantity) ? product.value.maxQuantity : LINE_ITEM_QUANTITY_LIMIT,
+    isDefined(product.value.maxQuantity) && product.value.maxQuantity !== 0
+      ? product.value.maxQuantity
+      : LINE_ITEM_QUANTITY_LIMIT,
   ),
 );
 

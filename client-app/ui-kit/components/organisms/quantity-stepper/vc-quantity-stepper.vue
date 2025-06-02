@@ -49,6 +49,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { calculateStepper, checkIfOperationIsAllowed } from "@/ui-kit/utilities/quantity-stepper";
 
 interface IProps {
   name?: string;
@@ -78,36 +79,36 @@ const props = withDefaults(defineProps<IProps>(), {
   step: 1,
   value: 0,
   min: 0,
+  max: Number.MAX_SAFE_INTEGER,
   size: "sm",
 });
 
 const model = defineModel<IProps["value"]>();
 
-const isMinimumValue = computed(() => !model.value || (model.value && model.value - props.step <= props.min));
-const isDecrementDisabled = computed(() => props.disabled || model.value === 0);
+const isDecrementDisabled = computed(
+  () => !checkIfOperationIsAllowed(model.value, props.step, props.min, props.max, "decrement"),
+);
 
 const isIncrementDisabled = computed(
-  () => props.disabled || model.value === null || (!!props.max && model.value && model.value + props.step > props.max),
+  () => !checkIfOperationIsAllowed(model.value, props.step, props.min, props.max, "increment"),
 );
 
 function handleDecrement() {
-  if (model.value === undefined) {
+  if (model.value === undefined || isDecrementDisabled.value) {
     return;
   }
 
-  if (isMinimumValue.value && !isDecrementDisabled.value) {
-    update(0);
-    return;
-  }
-
-  update(model.value - props.step);
+  const newValue = calculateStepper(model.value, props.step, props.min, props.max, "decrement");
+  update(newValue);
 }
 
 function handleIncrement() {
-  if (model.value !== undefined) {
-    const newValue = !!props.min && model.value < props.min ? props.min : model.value + props.step;
-    update(newValue);
+  if (model.value === undefined || isIncrementDisabled.value) {
+    return;
   }
+
+  const newValue = calculateStepper(model.value, props.step, props.min, props.max, "increment");
+  update(newValue);
 }
 
 function update(value: number) {
