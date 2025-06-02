@@ -71,15 +71,15 @@ export function useSearchBar() {
       pages.value = pagesItems.map((item) => ({
         ...item,
         name: highlightSearchText(item.name ?? "", params.keyword),
-      }));
+      })) as PageType[]; // TODO: remove type assertion
 
       categories.value = categoriesItems.map((item) => ({
         ...item,
         name: highlightSearchText(item.name, params.keyword),
-      }));
+      })) as Category[]; // TODO: remove type assertion
 
       total.value = totalCount;
-      products.value = productsItems;
+      products.value = productsItems as Product[]; // TODO: remove type assertion
       searchPhraseOfUploadedResults.value = preparedParams.keyword;
       loading.value = false;
     } catch (e) {

@@ -5,9 +5,7 @@ import { GetSearchResultsDocument } from "@/core/api/graphql/types";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities/logger";
-import type { GetSearchResultsQueryVariables, Query } from "@/core/api/graphql/types";
-
-export type SearchResultsType = Required<Pick<Query, "categories" | "products" | "pages" | "productSuggestions">>;
+import type { GetSearchResultsQueryVariables } from "@/core/api/graphql/types";
 
 export type GetSearchResultsParamsType = {
   keyword: string;
@@ -41,7 +39,7 @@ export type GetSearchResultsParamsType = {
 
 let abortController: AbortController | undefined;
 
-export async function getSearchResults(params: GetSearchResultsParamsType): Promise<SearchResultsType | undefined> {
+export async function getSearchResults(params: GetSearchResultsParamsType) {
   const { storeId, userId, cultureName, currencyCode } = globals;
 
   const withSuggestions = !!params.productSuggestions;
@@ -128,7 +126,7 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
   const { signal } = abortController;
 
   try {
-    const { data } = await graphqlClient.query<SearchResultsType, GetSearchResultsQueryVariables>({
+    const { data } = await graphqlClient.query({
       query: GetSearchResultsDocument,
       variables,
       context: {
