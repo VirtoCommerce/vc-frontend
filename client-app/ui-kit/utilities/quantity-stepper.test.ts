@@ -241,6 +241,119 @@ describe("calculateStepper", () => {
       expect(result).toBe(0);
     });
   });
+
+  describe("allowZero=false scenarios", () => {
+    it("defaults to 1 when value is undefined and allowZero=false", () => {
+      const result = calculateStepper(undefined, 1, 0, 10, false, "increment");
+      expect(result).toBe(2);
+    });
+
+    it("returns minAligned when incrementing negative value with allowZero=false", () => {
+      const value = -5;
+      const step = 2;
+      const min = 3;
+      const max = 10;
+      const result = calculateStepper(value, step, min, max, false, "increment");
+      expect(result).toBe(4);
+    });
+
+    it("returns minAligned when decrementing from zero with allowZero=false", () => {
+      const value = 0;
+      const step = 1;
+      const min = 2;
+      const max = 10;
+      const result = calculateStepper(value, step, min, max, false, "decrement");
+      expect(result).toBe(2);
+    });
+
+    it("returns minAligned when decrementing below minAligned with allowZero=false", () => {
+      const value = 3;
+      const step = 2;
+      const min = 4;
+      const max = 10;
+      const result = calculateStepper(value, step, min, max, false, "decrement");
+      expect(result).toBe(4);
+    });
+
+    it("handles decrement from positive value with allowZero=false", () => {
+      const value = 5;
+      const step = 2;
+      const min = 2;
+      const max = 10;
+      const result = calculateStepper(value, step, min, max, false, "decrement");
+      expect(result).toBe(3);
+    });
+  });
+
+  describe("undefined value handling", () => {
+    it("defaults to 0 when value is undefined and allowZero=true", () => {
+      const result = calculateStepper(undefined, 1, 0, 10, true, "increment");
+      expect(result).toBe(1);
+    });
+
+    it("defaults to 1 when value is undefined and allowZero=false", () => {
+      const result = calculateStepper(undefined, 1, 0, 10, false, "increment");
+      expect(result).toBe(2);
+    });
+
+    it("handles undefined value with decrement operation", () => {
+      const result = calculateStepper(undefined, 1, 0, 10, true, "decrement");
+      expect(result).toBe(0);
+    });
+  });
+
+  describe("floating point truncation", () => {
+    it("truncates floating point values", () => {
+      const value = 5.7;
+      const step = 2.3;
+      const min = 1.8;
+      const max = 10.9;
+      const result = calculateStepper(value, step, min, max, true, "increment");
+      expect(result).toBe(7);
+    });
+
+    it("truncates negative floating point values", () => {
+      const value = -2.7;
+      const step = 1.9;
+      const min = 0.5;
+      const max = 5.8;
+      const result = calculateStepper(value, step, min, max, true, "increment");
+      expect(result).toBe(0);
+    });
+  });
+
+  describe("allowZero parameter handling", () => {
+    it("treats undefined allowZero as true", () => {
+      const value = 1;
+      const step = 2;
+      const min = 0;
+      const max = 10;
+      const result = calculateStepper(value, step, min, max, undefined, "decrement");
+      expect(result).toBe(0);
+    });
+  });
+
+  describe("complex alignment scenarios", () => {
+    it("handles step alignment with non-zero min", () => {
+      const value = 7;
+      const step = 3;
+      const min = 2;
+      const max = 20;
+      const inc = calculateStepper(value, step, min, max, true, "increment");
+      const dec = calculateStepper(value, step, min, max, true, "decrement");
+      expect(inc).toBe(10);
+      expect(dec).toBe(4);
+    });
+
+    it("handles large step with small range", () => {
+      const value = 2;
+      const step = 10;
+      const min = 1;
+      const max = 5;
+      const result = calculateStepper(value, step, min, max, true, "increment");
+      expect(result).toBe(2);
+    });
+  });
 });
 
 describe("checkIfOperationIsAllowed", () => {
@@ -310,6 +423,85 @@ describe("checkIfOperationIsAllowed", () => {
         expect(checkIfOperationIsAllowed(3, 1, 10, 2, true, "increment")).toBe(false);
         expect(checkIfOperationIsAllowed(3, 1, 10, 2, true, "decrement")).toBe(false);
       });
+    });
+  });
+
+  describe("undefined value handling", () => {
+    it("blocks operations when value is undefined", () => {
+      expect(checkIfOperationIsAllowed(undefined, 1, 0, 10, true, "increment")).toBe(false);
+      expect(checkIfOperationIsAllowed(undefined, 1, 0, 10, true, "decrement")).toBe(false);
+    });
+  });
+
+  describe("allowZero=false scenarios", () => {
+    it("allows decrement when value > minAligned and allowZero=false", () => {
+      const value = 5;
+      const step = 2;
+      const min = 2;
+      const max = 10;
+      expect(checkIfOperationIsAllowed(value, step, min, max, false, "decrement")).toBe(true);
+    });
+
+    it("blocks decrement when value <= minAligned and allowZero=false", () => {
+      const value = 2;
+      const step = 2;
+      const min = 2;
+      const max = 10;
+      expect(checkIfOperationIsAllowed(value, step, min, max, false, "decrement")).toBe(false);
+    });
+
+    it("blocks decrement when value < minAligned and allowZero=false", () => {
+      const value = 1;
+      const step = 2;
+      const min = 2;
+      const max = 10;
+      expect(checkIfOperationIsAllowed(value, step, min, max, false, "decrement")).toBe(false);
+    });
+  });
+
+  describe("increment boundary edge cases", () => {
+    it("allows increment when value is exactly at maxAligned - step", () => {
+      const value = 8;
+      const step = 2;
+      const min = 0;
+      const max = 10;
+      expect(checkIfOperationIsAllowed(value, step, min, max, true, "increment")).toBe(true);
+    });
+
+    it("blocks increment when value equals maxAligned", () => {
+      const value = 10;
+      const step = 2;
+      const min = 0;
+      const max = 10;
+      expect(checkIfOperationIsAllowed(value, step, min, max, true, "increment")).toBe(false);
+    });
+
+    it("blocks increment when value > maxAligned", () => {
+      const value = 12;
+      const step = 2;
+      const min = 0;
+      const max = 10;
+      expect(checkIfOperationIsAllowed(value, step, min, max, true, "increment")).toBe(false);
+    });
+  });
+
+  describe("floating point step alignment", () => {
+    it("handles floating point steps correctly for increment", () => {
+      const value = 3;
+      const step = 2.5;
+      const min = 0;
+      const max = 10;
+      expect(checkIfOperationIsAllowed(value, step, min, max, true, "increment")).toBe(true);
+    });
+  });
+
+  describe("edge case with max=0 and non-zero min", () => {
+    it("allows increment with max=0 regardless of min", () => {
+      const value = 5;
+      const step = 1;
+      const min = 10;
+      const max = 0;
+      expect(checkIfOperationIsAllowed(value, step, min, max, true, "increment")).toBe(true);
     });
   });
 });
