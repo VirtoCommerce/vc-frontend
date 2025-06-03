@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import debounce from "lodash/debounce";
-import { computed, nextTick, onMounted, ref, toRef, watch, watchEffect } from "vue";
+import { computed, nextTick, onMounted, ref, toRefs, watch, watchEffect } from "vue";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants/line-items";
 import { useQuantityField } from "@/ui-kit/composables/useQuantityField";
 
@@ -104,8 +104,23 @@ const props = withDefaults(defineProps<IProps>(), {
   emitUpdateOnStepperChange: true,
 });
 
-const timeout = toRef(props, "timeout");
-const mode = toRef(props, "mode");
+const {
+  timeout,
+  mode,
+  allowZero,
+  disabled,
+  isActive,
+  isAvailable,
+  isBuyable,
+  isInStock,
+  minQuantity,
+  maxQuantity,
+  availableQuantity,
+  packSize,
+  countInCart,
+  emitUpdateOnStepperChange,
+  validateOnMount,
+} = toRefs(props);
 
 const value = defineModel<number>({ default: 0 });
 
@@ -113,17 +128,17 @@ const quantity = ref<number>(value.value || 0);
 
 const { isDisabled, isValid, errorMessage, validateFields } = useQuantityField({
   modelValue: value,
-  disabled: toRef(props, "disabled"),
-  isActive: toRef(props, "isActive"),
-  isAvailable: toRef(props, "isAvailable"),
-  isBuyable: toRef(props, "isBuyable"),
-  isInStock: toRef(props, "isInStock"),
-  minQuantity: toRef(props, "minQuantity"),
-  maxQuantity: toRef(props, "maxQuantity"),
-  availableQuantity: toRef(props, "availableQuantity"),
-  packSize: toRef(props, "packSize"),
-  countInCart: toRef(props, "countInCart"),
-  allowZero: computed(() => mode.value === "stepper" && props.allowZero),
+  disabled,
+  isActive,
+  isAvailable,
+  isBuyable,
+  isInStock,
+  minQuantity,
+  maxQuantity,
+  availableQuantity,
+  packSize,
+  countInCart,
+  allowZero: computed(() => mode.value === "stepper" && allowZero.value),
 });
 
 function applyPreValidationModifiers() {
@@ -141,7 +156,7 @@ const handleChange = debounce(async () => {
     return;
   }
 
-  if (mode.value === "button" && newQuantity < 1) {
+  if (mode.value === "button" && newQuantity < 1 && !allowZero.value) {
     return;
   }
 
@@ -150,7 +165,7 @@ const handleChange = debounce(async () => {
   await nextTick();
   await validateFields();
 
-  if (isValid.value && mode.value === "stepper" && props.emitUpdateOnStepperChange) {
+  if (isValid.value && mode.value === "stepper" && emitUpdateOnStepperChange.value) {
     emit("update:cartItemQuantity", newQuantity);
   }
 }, timeout.value ?? 0);
@@ -160,7 +175,7 @@ onMounted(async () => {
     return;
   }
 
-  if (props.validateOnMount) {
+  if (validateOnMount.value) {
     await validateFields();
   }
 });

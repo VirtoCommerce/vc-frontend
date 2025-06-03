@@ -1,12 +1,10 @@
 import { toTypedSchema } from "@vee-validate/yup";
-// import { debounce } from "lodash";
 import { useField } from "vee-validate";
 import { computed, ref } from "vue";
-// import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { useQuantityValidationSchema } from "@/ui-kit/composables/useQuantityValidationSchema";
 import type { Ref } from "vue";
 
-type UseQuantityValidationParams = {
+type ParamsType = {
   timeout?: number | undefined;
   disabled?: Ref<boolean | undefined>;
   isInStock?: Ref<boolean | undefined>;
@@ -22,7 +20,7 @@ type UseQuantityValidationParams = {
   allowZero?: Ref<boolean | undefined>;
 };
 
-export function useQuantityField(params: UseQuantityValidationParams) {
+export function useQuantityField(params: ParamsType) {
   const isValid = ref(true);
 
   const { quantitySchema } = useQuantityValidationSchema({
@@ -58,45 +56,6 @@ export function useQuantityField(params: UseQuantityValidationParams) {
       isValid.value = true;
     }
   }
-
-  // const handleChange = debounce(async () => {
-  //   setValue(quantity.value);
-
-  //   const newQuantity = Number(quantity.value);
-
-  //   if (
-  //     isNaN(newQuantity) ||
-  //     newQuantity < 1 ||
-  //     newQuantity === params.modelValue ||
-  //     pendingQuantity.value === newQuantity
-  //   ) {
-  //     return;
-  //   }
-
-  //   await validateFields();
-
-  //   pendingQuantity.value = newQuantity;
-  // }, params.timeout ?? 0);
-
-  // function onChange() {
-  //   if (quantity.value && quantity.value > LINE_ITEM_QUANTITY_LIMIT) {
-  //     quantity.value = Number(quantity.value.toString().slice(0, -1));
-  //   }
-  //   void handleChange();
-  // }
-
-  // function onFocusOut() {
-  //   const newQuantity = Number(quantity.value);
-
-  //   if (isNaN(newQuantity) || newQuantity < 1) {
-  //     quantity.value = unref(params.modelValue);
-  //   }
-  // }
-
-  // watchEffect(() => {
-  //   quantity.value = unref(params.modelValue);
-  //   pendingQuantity.value = null;
-  // });
 
   return {
     validateFields,
