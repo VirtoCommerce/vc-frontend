@@ -84,6 +84,7 @@ interface IProps {
   mode?: "button" | "stepper";
   allowZero?: boolean;
   emitUpdateOnStepperChange?: boolean;
+  disableValidation?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -120,6 +121,7 @@ const {
   countInCart,
   emitUpdateOnStepperChange,
   validateOnMount,
+  disableValidation,
 } = toRefs(props);
 
 const value = defineModel<number>({ default: 0 });
@@ -163,7 +165,9 @@ const handleChange = debounce(async () => {
   value.value = newQuantity;
 
   await nextTick();
-  await validateFields();
+  if (!disableValidation.value) {
+    await validateFields();
+  }
 
   if (isValid.value && mode.value === "stepper" && emitUpdateOnStepperChange.value) {
     emit("update:cartItemQuantity", newQuantity);
@@ -175,7 +179,7 @@ onMounted(async () => {
     return;
   }
 
-  if (validateOnMount.value) {
+  if (validateOnMount.value && !disableValidation.value) {
     await validateFields();
   }
 });
