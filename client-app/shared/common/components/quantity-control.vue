@@ -169,7 +169,6 @@ const handleChange = debounce(async () => {
     await validateFields();
   }
 
-  console.log("isValid", isValid.value);
   if (isValid.value && mode.value === "stepper" && emitUpdateOnStepperChange.value) {
     emit("update:cartItemQuantity", newQuantity);
   }

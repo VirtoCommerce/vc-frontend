@@ -20,7 +20,7 @@ export function useQuantityValidationSchema(payload: {
       return schema.test(
         "exactQtyValue",
         t("ui_kit.add_to_cart.errors.exact_qty", [min]),
-        (value) => value !== undefined && value === min,
+        (value) => value !== undefined && (value === min || (allowZero?.value && value === 0)),
       );
     }
     return schema.test("minMaxValue", t("ui_kit.add_to_cart.errors.min_max", [min, max]), (value) => {

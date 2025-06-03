@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHistoricalEvents } from "@/core/composables";
+import { useHistoricalEvents, useThemeContext } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { getProductRoute } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
@@ -81,6 +81,7 @@ const { cart, addToCart, changeItemQuantity, changing } = useShortCart();
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
 const { t } = useI18n();
+const { themeContext } = useThemeContext();
 
 const product = toRef(props, "product");
 
@@ -96,7 +97,17 @@ const notAvailableMessage = computed<string | undefined>(() => {
   return undefined;
 });
 
-const quantity = ref(countInCart.value || product.value.minQuantity || 1);
+const quantity = ref(getInitialQuantity());
+
+function getInitialQuantity() {
+  if (countInCart.value) {
+    return countInCart.value;
+  }
+  if (themeContext.value.settings.product_quantity_control === "stepper") {
+    return 0;
+  }
+  return product.value.minQuantity || 1;
+}
 
 async function changeCartItemQuantity(qty: number) {
   if (cartLineItem.value && countInCart.value) {
