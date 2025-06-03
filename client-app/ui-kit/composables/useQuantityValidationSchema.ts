@@ -41,15 +41,18 @@ export function useQuantityValidationSchema(payload: {
   }
 
   function minTest(schema: NumberSchema, min: number): NumberSchema {
-    return schema.test(
-      "minValue",
-      t("ui_kit.add_to_cart.errors.min", [min]),
-      (value) => value !== undefined && value >= min,
-    );
+    return schema.test("minValue", t("ui_kit.add_to_cart.errors.min", [min]), (value) => {
+      if (allowZero?.value && value === 0) {
+        return true;
+      }
+      return value !== undefined && value >= min;
+    });
   }
 
   function availableLessThenMinError(schema: NumberSchema, min: number): NumberSchema {
-    return schema.test("incorrectMinValue", t("ui_kit.add_to_cart.errors.min_not_available", [min]), () => false);
+    return schema.test("incorrectMinValue", t("ui_kit.add_to_cart.errors.min_not_available", [min]), (value) => {
+      return allowZero?.value && value === 0;
+    });
   }
 
   function packSizeTest(schema: NumberSchema, size?: number): NumberSchema {
@@ -57,11 +60,12 @@ export function useQuantityValidationSchema(payload: {
       return schema;
     }
 
-    return schema.test(
-      "divisible-by-packSize",
-      t("ui_kit.add_to_cart.errors.pack_size", [size]),
-      (value) => value !== undefined && value % size === 0,
-    );
+    return schema.test("divisible-by-packSize", t("ui_kit.add_to_cart.errors.pack_size", [size]), (value) => {
+      if (allowZero?.value && value === 0) {
+        return true;
+      }
+      return value !== undefined && value % size === 0;
+    });
   }
 
   function withAvailableQuantityTest(schema: NumberSchema, quantity: number): NumberSchema {
@@ -98,21 +102,23 @@ export function useQuantityValidationSchema(payload: {
     return schema;
   }
 
-  const commonSchema = number()
-    .typeError(t("ui_kit.add_to_cart.errors.enter_correct_number_message"))
-    .integer(t("ui_kit.add_to_cart.errors.integer_number"))
-    .max(LINE_ITEM_QUANTITY_LIMIT, t("ui_kit.add_to_cart.errors.max", [LINE_ITEM_QUANTITY_LIMIT]))
-    .withMutation((schema) => {
-      if (availableQuantity?.value) {
-        return packSizeTest(withAvailableQuantityTest(schema, availableQuantity.value), packSize?.value);
-      } else {
-        return packSizeTest(withoutAvailableQuantityTest(schema), packSize?.value);
-      }
-    });
+  const quantitySchema = computed<NumberSchema>(() => {
+    const commonSchema = number()
+      .typeError(t("ui_kit.add_to_cart.errors.enter_correct_number_message"))
+      .integer(t("ui_kit.add_to_cart.errors.integer_number"))
+      .max(LINE_ITEM_QUANTITY_LIMIT, t("ui_kit.add_to_cart.errors.max", [LINE_ITEM_QUANTITY_LIMIT]))
+      .withMutation((schema) => {
+        if (availableQuantity?.value) {
+          return packSizeTest(withAvailableQuantityTest(schema, availableQuantity.value), packSize?.value);
+        } else {
+          return packSizeTest(withoutAvailableQuantityTest(schema), packSize?.value);
+        }
+      });
 
-  const quantitySchema = computed<NumberSchema>(() =>
-    allowZero ? commonSchema : commonSchema.positive(t("ui_kit.add_to_cart.errors.positive_number")),
-  );
+    return allowZero?.value
+      ? commonSchema.min(0, t("ui_kit.add_to_cart.errors.positive_number"))
+      : commonSchema.positive(t("ui_kit.add_to_cart.errors.positive_number"));
+  });
 
   return {
     quantitySchema,
