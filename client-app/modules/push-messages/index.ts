@@ -96,6 +96,11 @@ export async function init(router: Router, i18n: I18n) {
   const isFCMModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY);
 
   if (!themeContext.value?.settings?.push_messages_enabled || !isAuthenticated.value) {
+    router.addRoute("Account", {
+      path: "notifications",
+      redirect: { name: "SignIn" },
+    });
+
     void unregisterFCM();
     return;
   }
@@ -109,13 +114,6 @@ export async function init(router: Router, i18n: I18n) {
       path: "notifications",
       name: "Notifications",
       component: Notifications,
-      beforeEnter(_to, _from, next) {
-        if (isAuthenticated.value) {
-          next();
-        } else {
-          next({ name: "Dashboard" });
-        }
-      },
     };
 
     cache.policies.addTypePolicies(pushMessagesTypePolices);
