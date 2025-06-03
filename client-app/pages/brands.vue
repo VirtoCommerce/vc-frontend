@@ -89,12 +89,12 @@
         <div
           v-for="navItem in sortedNavItems"
           v-else
-          :id="'brands-' + navItem"
           :key="navItem"
           class="brands__items"
           :class="{ 'brands__items--full': isFullWidthItem(navItem) }"
         >
           <div
+            :id="`brands-${navItem}-letter`"
             class="brands__letter"
             :class="{ 'brands__letter--active': activeNavItem === navItem }"
             data-test-id="brands-letter"
@@ -207,7 +207,7 @@ watch(activeNavItem, (newActiveNavItem) => {
   }
 
   const group = getGroupByLetter(newActiveNavItem);
-  const element = document.getElementById(`brands-${group}`);
+  const element = document.getElementById(`brands-${group}-letter`);
 
   if (element) {
     element.scrollIntoView({ behavior: "smooth", block: "center" });
