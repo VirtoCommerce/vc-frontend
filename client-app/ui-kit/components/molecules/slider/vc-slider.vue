@@ -2,41 +2,51 @@
   <div class="vc-slider">
     <div v-if="cols.length > 1" class="vc-slider__cols" :style="colsHeight && { height: colsHeight }">
       <VcTooltip
-        v-for="(h, i) in normalizedCols"
+        v-for="(col, i) in normalizedCols"
         :key="i"
         :class="[
           'vc-slider__col',
           {
-            'vc-slider__col--hoverable': updateOnColumnClick || (showTooltipOnColHover && cols[i].tooltip),
+            'vc-slider__col--hoverable': showTooltipOnColHover && col.tooltip,
+            'vc-slider__col--clickable': updateOnColumnClick,
           },
         ]"
+        :style="{
+          left: col.position.left + '%',
+          right: col.position.right + '%',
+        }"
         width="10rem"
         z-index="20"
         placement="top"
-        :disabled="!showTooltipOnColHover || !cols[i].tooltip"
+        :disabled="!showTooltipOnColHover || !col.count"
       >
         <template #trigger>
-          <button
-            type="button"
-            class="vc-slider__button"
-            :style="proportionalByPrice ? { flex: '0 0 ' + colWidths[i] + '%' } : {}"
-            @click="updateOnColumnClick && updateModel(cols[i].value)"
-          >
-            <span class="vc-slider__col-line" :style="{ height: h + '%' }"></span>
+          <button type="button" class="vc-slider__button" @click="updateOnColumnClick && updateModel(col.value)">
+            <span class="vc-slider__col-line" :style="{ height: col.height + '%' }"></span>
           </button>
         </template>
 
-        <template #content>{{ cols[i].tooltip }}</template>
+        <template #content>
+          {{ $t("ui_kit.slider.tooltip", { count: col.count }) }}
+        </template>
       </VcTooltip>
     </div>
 
-    <div ref="sliderRef" class="vc-slider__slider" />
+    <div ref="sliderRef" class="vc-slider__slider"></div>
+
+    <div class="vc-slider__inputs">
+      <VcInput v-model="start" size="sm" class="vc-slider__input" :disabled="disabled" />
+
+      <b class="vc-slider__dash">&mdash;</b>
+
+      <VcInput v-model="end" size="sm" class="vc-slider__input" :disabled="disabled" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { create } from "nouislider";
-import { ref, onMounted, watch, computed, toRefs } from "vue";
+import { ref, onMounted, computed, toRefs, watch } from "vue";
 import type { API } from "nouislider";
 import "nouislider/dist/nouislider.css";
 
@@ -46,13 +56,13 @@ type ColType = { count: number; value: RangeType; tooltip?: string };
 interface IProps {
   value: RangeType;
   min?: number;
-  max?: number | null;
+  max: number;
   step?: number;
   cols?: ColType[];
   colsHeight?: string;
   updateOnColumnClick?: boolean;
   showTooltipOnColHover?: boolean;
-  proportionalByPrice?: boolean;
+  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -62,115 +72,88 @@ const props = withDefaults(defineProps<IProps>(), {
   colsHeight: "",
   updateOnColumnClick: false,
   showTooltipOnColHover: false,
-  proportionalByPrice: false,
 });
 
-const model = defineModel<IProps["value"]>("value", {
-  default: () => [null, null],
-});
-const { min, max, step, cols, proportionalByPrice } = toRefs(props);
+const model = defineModel<IProps["value"]>("value");
+const { min, max, step, cols } = toRefs(props);
+const start = ref(model.value ? model.value[0] : min.value);
+const end = ref(model.value ? model.value[1] : max.value);
 
 const sliderRef = ref<HTMLElement | null>(null);
-let api: API | null = null;
+let slider: API | null = null;
 
 const normalizedCols = computed(() => {
-  const counts = cols.value.map((c) => c.count);
-  const m = Math.max(...counts, 1);
-  return counts.map((c) => Math.round((c / m) * 100));
-});
-
-const RESERVED_LAST_PERC = 10;
-
-const hasOpenLast = computed(() => {
-  const last = cols.value.length - 1;
-  return last >= 0 && cols.value[last].value[1] === null;
-});
-
-const derivedMax = computed(() => {
-  if (max.value !== null && max.value !== undefined) {
-    return max.value;
-  }
-
-  if (hasOpenLast.value && proportionalByPrice.value) {
-    const startLast = cols.value.at(-1)!.value[0] ?? min.value;
-    const ratio = RESERVED_LAST_PERC / 100;
-    return Math.ceil((startLast - ratio * min.value) / (1 - ratio) / step.value) * step.value;
-  }
-
-  const nums = [...cols.value.flatMap((c) => c.value), ...model.value].filter(
-    (v): v is number => typeof v === "number",
-  );
-  const maxNum = nums.length ? Math.max(...nums) : min.value + step.value * 100;
-
-  return maxNum + step.value * 10;
-});
-
-const colWidths = computed(() => {
-  if (!proportionalByPrice.value) {
-    return [];
-  }
-
-  const full = derivedMax.value - min.value;
-  const widths = cols.value.map((c) => {
+  const allowedCols = cols.value.filter((c) => {
     const [from, to] = c.value;
-    const start = from ?? min.value;
-    const end = to ?? derivedMax.value;
-    return ((end - start) / full) * 100;
+
+    if (!from && to) {
+      return to > min.value && to < max.value;
+    }
+
+    if (from && !to) {
+      return from > min.value && from < max.value;
+    }
+
+    return from && to && to > min.value && from < max.value;
   });
 
-  const last = cols.value.length - 1;
-  if (hasOpenLast.value) {
-    widths[last] = RESERVED_LAST_PERC;
+  const counts = allowedCols.map((c) => c.count);
+  const m = Math.max(...counts, 1);
 
-    const restTotal = widths.slice(0, last).reduce((a, b) => a + b, 0);
-    const k = (100 - RESERVED_LAST_PERC) / restTotal;
+  return allowedCols.map((c) => {
+    const [from, to] = c.value;
+    const _from = from && from > min.value ? from : min.value;
+    const _to = to && to < max.value ? to : max.value;
 
-    for (let i = 0; i < last; i++) {
-      widths[i] *= k;
-    }
-  }
-
-  return widths;
+    return {
+      value: [_from, _to] as RangeType,
+      count: c.count,
+      tooltip: c.tooltip,
+      height: Math.round((c.count / m) * 100),
+      position: {
+        left: _from ? ((_from - min.value) / (max.value - min.value)) * 100 : 0,
+        right: _to ? ((max.value - _to) / (max.value - min.value)) * 100 : 100,
+      },
+    };
+  });
 });
 
-function resolveRange(r: RangeType): [number, number] {
-  return [r[0] ?? min.value, r[1] ?? derivedMax.value];
-}
 function updateModel(r: RangeType) {
   model.value = r;
+
+  if (slider) {
+    slider.set(r, false);
+  }
 }
+
+watch([start, end], ([v1, v2]) => {
+  updateModel([v1, v2]);
+});
 
 onMounted(() => {
   if (!sliderRef.value) {
     return;
   }
 
-  api = create(sliderRef.value, {
-    start: resolveRange(model.value),
+  slider = create(sliderRef.value, {
+    start: model.value,
     connect: true,
     step: step.value,
-    range: { min: min.value, max: derivedMax.value },
+    range: { min: min.value, max: max.value },
   });
 
-  api.on("update", (values) => updateModel([+values[0], +values[1]]));
-});
-
-watch(model, (v) => {
-  if (api) {
-    api.set(resolveRange(v));
-  }
-});
-
-watch([min, derivedMax, step], () => {
-  if (api) {
-    api.updateOptions({ range: { min: min.value, max: derivedMax.value }, step: step.value }, false);
-  }
+  slider.on("update", (v) => {
+    model.value = [+v[0], +v[1]];
+    start.value = +v[0];
+    end.value = +v[1];
+  });
 });
 </script>
 
 <style lang="scss">
 .vc-slider {
-  $colHover: "";
+  $hoverable: "";
+  $clickable: "";
 
   --props-cols-height: v-bind(colsHeight);
   --cols-height: var(--vc-slider-cols-height, var(--props-cols-height, 2rem));
@@ -183,11 +166,17 @@ watch([min, derivedMax, step], () => {
   }
 
   &__col {
-    @apply grow cursor-default;
+    @apply absolute cursor-default;
 
     &--hoverable {
       &:hover {
-        $colHover: &;
+        $hoverable: &;
+      }
+    }
+
+    &--clickable {
+      &:hover {
+        $clickable: &;
       }
     }
   }
@@ -195,7 +184,7 @@ watch([min, derivedMax, step], () => {
   &__button {
     @apply flex flex-col justify-end w-full h-[var(--cols-height)] border-t border-x border-transparent cursor-default;
 
-    #{$colHover} & {
+    #{$clickable} & {
       @apply cursor-pointer;
     }
   }
@@ -203,16 +192,20 @@ watch([min, derivedMax, step], () => {
   &__col-line {
     @apply bg-neutral-200 rounded-sm transition-all border-t border-x border-transparent;
 
-    #{$colHover} & {
+    #{$hoverable} & {
       @apply bg-primary-200 border-primary-300;
     }
   }
 
   &__slider {
-    @apply h-1 w-full border-none;
+    @apply h-1 w-full border-none bg-neutral-300 shadow-none;
+
+    .noUi-base {
+      @apply flex flex-col justify-center;
+    }
 
     .noUi-target {
-      @apply bg-neutral-300 rounded-full border-none;
+      @apply rounded-full border-none;
     }
 
     .noUi-connect {
@@ -220,7 +213,7 @@ watch([min, derivedMax, step], () => {
     }
 
     .noUi-handle {
-      @apply top-[calc(var(--handle-size)/-2.5)] size-[--handle-size] rounded-full bg-additional-50 border-4 border-primary cursor-pointer;
+      @apply top-[calc(var(--handle-size)/-2.5)] right-[calc(var(--handle-size)/-2)] size-[--handle-size] rounded-full bg-additional-50 border-4 border-primary cursor-pointer;
 
       &::before,
       &::after {
@@ -231,6 +224,18 @@ watch([min, derivedMax, step], () => {
     .noUi-touch-area {
       @apply absolute size-[300%] top-[calc(var(--handle-size)/-2)] left-[calc(var(--handle-size)/-2)] rounded-full;
     }
+  }
+
+  &__inputs {
+    @apply flex items-center gap-4 mt-5;
+  }
+
+  &__input {
+    @apply grow;
+  }
+
+  &__dash {
+    @apply text-xl;
   }
 }
 </style>

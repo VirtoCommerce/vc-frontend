@@ -121,7 +121,7 @@ export interface IProps {
   testIdInput?: string;
 }
 
-interface IEmits {
+export interface IEmits {
   (event: "clear"): void;
 }
 
