@@ -35,12 +35,14 @@
         :removable="!readonly"
         @remove="() => $emit('remove:item', item.id)"
       >
-        <VcAddToCart
+        <QuantityControl
+          :mode="$cfg.product_quantity_control"
           hide-button
           :disabled="readonly"
           class="quote-line-items__quantity"
           :model-value="item.selectedTierPrice?.quantity"
           :name="item.id"
+          :allow-zero="false"
           @update:model-value="$emit('update:item', { itemId: item.id, quantity: $event })"
         />
       </VcLineItem>
@@ -60,6 +62,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import type { MoneyType, QuoteItemType } from "../api/graphql/types";
+import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 defineEmits<IEmits>();
 const props = defineProps<IProps>();

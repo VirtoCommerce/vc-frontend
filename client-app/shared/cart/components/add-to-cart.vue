@@ -18,6 +18,7 @@
     :show-empty-details="reservedSpace"
     validate-on-mount
     :timeout="DEFAULT_DEBOUNCE_IN_MS"
+    :allow-zero="$cfg.product_quantity_control === 'stepper'"
     @update:model-value="onInput"
     @update:cart-item-quantity="onChange"
     @update:validation="onValidationUpdate"

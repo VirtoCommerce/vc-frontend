@@ -8,7 +8,7 @@ describe("calculateStepper", () => {
       const step = 1;
       const min = 1;
       const max = 5;
-      const result = calculateStepper(value, step, min, max, "increment");
+      const result = calculateStepper(value, step, min, max, true, "increment");
       expect(result).toBe(4);
     });
 
@@ -17,7 +17,7 @@ describe("calculateStepper", () => {
       const step = 1;
       const min = 1;
       const max = 5;
-      const result = calculateStepper(value, step, min, max, "decrement");
+      const result = calculateStepper(value, step, min, max, true, "decrement");
       expect(result).toBe(2);
     });
   });
@@ -28,7 +28,7 @@ describe("calculateStepper", () => {
       const step = 2;
       const min = 0;
       const max = 10;
-      const result = calculateStepper(value, step, min, max, "increment");
+      const result = calculateStepper(value, step, min, max, true, "increment");
       expect(result).toBe(5);
     });
 
@@ -37,7 +37,7 @@ describe("calculateStepper", () => {
       const step = 2;
       const min = 0;
       const max = 10;
-      const result = calculateStepper(value, step, min, max, "decrement");
+      const result = calculateStepper(value, step, min, max, true, "decrement");
       expect(result).toBe(1);
     });
   });
@@ -48,7 +48,7 @@ describe("calculateStepper", () => {
       const step = 2;
       const min = 3;
       const max = 10;
-      const result = calculateStepper(value, step, min, max, "increment");
+      const result = calculateStepper(value, step, min, max, true, "increment");
       expect(result).toBe(4);
     });
 
@@ -57,7 +57,7 @@ describe("calculateStepper", () => {
       const step = 2;
       const min = 3;
       const max = 10;
-      const result = calculateStepper(value, step, min, max, "decrement");
+      const result = calculateStepper(value, step, min, max, true, "decrement");
       expect(result).toBe(0);
     });
 
@@ -66,7 +66,7 @@ describe("calculateStepper", () => {
       const step = 1;
       const min = 2;
       const max = 10;
-      const result = calculateStepper(value, step, min, max, "decrement");
+      const result = calculateStepper(value, step, min, max, true, "decrement");
       expect(result).toBe(0);
     });
   });
@@ -77,7 +77,7 @@ describe("calculateStepper", () => {
       const step = 2;
       const min = 1;
       const max = 9;
-      const result = calculateStepper(value, step, min, max, "increment");
+      const result = calculateStepper(value, step, min, max, true, "increment");
       expect(result).toBe(8);
     });
 
@@ -86,7 +86,7 @@ describe("calculateStepper", () => {
       const step = 2;
       const min = 1;
       const max = 9;
-      const result = calculateStepper(value, step, min, max, "decrement");
+      const result = calculateStepper(value, step, min, max, true, "decrement");
       expect(result).toBe(8);
     });
   });
@@ -97,7 +97,7 @@ describe("calculateStepper", () => {
       const step = 5;
       const min = 0;
       const max = 10;
-      const result = calculateStepper(value, step, min, max, "increment");
+      const result = calculateStepper(value, step, min, max, true, "increment");
       expect(result).toBe(10);
     });
 
@@ -106,7 +106,7 @@ describe("calculateStepper", () => {
       const step = 5;
       const min = 0;
       const max = 10;
-      const result = calculateStepper(value, step, min, max, "decrement");
+      const result = calculateStepper(value, step, min, max, true, "decrement");
       expect(result).toBe(0);
     });
   });
@@ -117,7 +117,7 @@ describe("calculateStepper", () => {
       const step = 2.5;
       const min = 3.2;
       const max = 12.7;
-      const result = calculateStepper(value, step, min, max, "increment");
+      const result = calculateStepper(value, step, min, max, true, "increment");
       expect(result).toBe(7);
     });
 
@@ -126,7 +126,7 @@ describe("calculateStepper", () => {
       const step = 2.5;
       const min = 3.2;
       const max = 12.7;
-      const result = calculateStepper(value, step, min, max, "decrement");
+      const result = calculateStepper(value, step, min, max, true, "decrement");
       expect(result).toBe(0);
     });
   });
@@ -137,8 +137,8 @@ describe("calculateStepper", () => {
       const step = 3;
       const min = 1;
       const max = 2;
-      const inc = calculateStepper(value, step, min, max, "increment");
-      const dec = calculateStepper(value, step, min, max, "decrement");
+      const inc = calculateStepper(value, step, min, max, true, "increment");
+      const dec = calculateStepper(value, step, min, max, true, "decrement");
       expect(inc).toBe(0);
       expect(dec).toBe(0);
     });
@@ -150,8 +150,8 @@ describe("calculateStepper", () => {
       const step = 2;
       const min = -10;
       const max = 10;
-      const inc = calculateStepper(value, step, min, max, "increment");
-      const dec = calculateStepper(value, step, min, max, "decrement");
+      const inc = calculateStepper(value, step, min, max, true, "increment");
+      const dec = calculateStepper(value, step, min, max, true, "decrement");
       expect(inc).toBe(0);
       expect(dec).toBe(0);
     });
@@ -161,7 +161,7 @@ describe("calculateStepper", () => {
       const step = 1;
       const min = 2;
       const max = 3;
-      const inc = calculateStepper(value, step, min, max, "increment");
+      const inc = calculateStepper(value, step, min, max, true, "increment");
       expect(inc).toBe(2);
     });
   });
@@ -172,7 +172,7 @@ describe("calculateStepper", () => {
       const step = 0;
       const min = 0;
       const max = 10;
-      const result = calculateStepper(value, step, min, max, "increment");
+      const result = calculateStepper(value, step, min, max, true, "increment");
       expect(result).toBe(value);
     });
 
@@ -181,7 +181,7 @@ describe("calculateStepper", () => {
       const step = -2;
       const min = 0;
       const max = 10;
-      const result = calculateStepper(value, step, min, max, "increment");
+      const result = calculateStepper(value, step, min, max, true, "increment");
       expect(result).toBe(value);
     });
 
@@ -190,7 +190,7 @@ describe("calculateStepper", () => {
       const step = 1;
       const min = 10;
       const max = 2;
-      const result = calculateStepper(value, step, min, max, "increment");
+      const result = calculateStepper(value, step, min, max, true, "increment");
       expect(result).toBe(value);
     });
 
@@ -199,7 +199,7 @@ describe("calculateStepper", () => {
       const step = 1;
       const min = 3;
       const max = 3;
-      const result = calculateStepper(value, step, min, max, "increment");
+      const result = calculateStepper(value, step, min, max, true, "increment");
       expect(result).toBe(3);
     });
   });
@@ -210,7 +210,7 @@ describe("calculateStepper", () => {
       const step = 10;
       const min = 0;
       const max = 0;
-      const result = calculateStepper(value, step, min, max, "increment");
+      const result = calculateStepper(value, step, min, max, true, "increment");
       expect(result).toBe(110);
     });
 
@@ -219,7 +219,7 @@ describe("calculateStepper", () => {
       const step = 5;
       const min = 0;
       const max = 0;
-      const result = calculateStepper(value, step, min, max, "decrement");
+      const result = calculateStepper(value, step, min, max, true, "decrement");
       expect(result).toBe(5);
     });
 
@@ -228,7 +228,7 @@ describe("calculateStepper", () => {
       const step = 3;
       const min = 2;
       const max = 0;
-      const result = calculateStepper(value, step, min, max, "increment");
+      const result = calculateStepper(value, step, min, max, true, "increment");
       expect(result).toBe(0);
     });
 
@@ -237,7 +237,7 @@ describe("calculateStepper", () => {
       const step = 3;
       const min = 2;
       const max = 0;
-      const result = calculateStepper(value, step, min, max, "decrement");
+      const result = calculateStepper(value, step, min, max, true, "decrement");
       expect(result).toBe(0);
     });
   });
@@ -247,19 +247,19 @@ describe("checkIfOperationIsAllowed", () => {
   describe("basic operations", () => {
     describe("increment", () => {
       it("allows increment within bounds", () => {
-        expect(checkIfOperationIsAllowed(3, 1, 1, 5, "increment")).toBe(true);
+        expect(checkIfOperationIsAllowed(3, 1, 1, 5, true, "increment")).toBe(true);
       });
       it("blocks increment at upper bound", () => {
-        expect(checkIfOperationIsAllowed(5, 1, 1, 5, "increment")).toBe(false);
+        expect(checkIfOperationIsAllowed(5, 1, 1, 5, true, "increment")).toBe(false);
       });
     });
 
     describe("decrement", () => {
       it("allows decrement within bounds", () => {
-        expect(checkIfOperationIsAllowed(3, 1, 1, 5, "decrement")).toBe(true);
+        expect(checkIfOperationIsAllowed(3, 1, 1, 5, true, "decrement")).toBe(true);
       });
       it("does not block decrement at lower bound", () => {
-        expect(checkIfOperationIsAllowed(1, 1, 1, 5, "decrement")).toBe(true);
+        expect(checkIfOperationIsAllowed(1, 1, 1, 5, true, "decrement")).toBe(true);
       });
     });
   });
@@ -267,10 +267,10 @@ describe("checkIfOperationIsAllowed", () => {
   describe("boundary conditions", () => {
     describe("unaligned min/max", () => {
       it("allows increment within aligned max", () => {
-        expect(checkIfOperationIsAllowed(3, 2, 1, 7, "increment")).toBe(true);
+        expect(checkIfOperationIsAllowed(3, 2, 1, 7, true, "increment")).toBe(true);
       });
       it("blocks increment exceeding aligned max", () => {
-        expect(checkIfOperationIsAllowed(6, 2, 1, 7, "increment")).toBe(false);
+        expect(checkIfOperationIsAllowed(6, 2, 1, 7, true, "increment")).toBe(false);
       });
     });
   });
@@ -278,13 +278,13 @@ describe("checkIfOperationIsAllowed", () => {
   describe("special cases", () => {
     describe("max=0 (no upper limit)", () => {
       it("allows increment without upper bound", () => {
-        expect(checkIfOperationIsAllowed(100, 10, 0, 0, "increment")).toBe(true);
+        expect(checkIfOperationIsAllowed(100, 10, 0, 0, true, "increment")).toBe(true);
       });
       it("allows decrement above zero", () => {
-        expect(checkIfOperationIsAllowed(10, 5, 0, 0, "decrement")).toBe(true);
+        expect(checkIfOperationIsAllowed(10, 5, 0, 0, true, "decrement")).toBe(true);
       });
       it("blocks decrement at zero", () => {
-        expect(checkIfOperationIsAllowed(0, 5, 0, 0, "decrement")).toBe(false);
+        expect(checkIfOperationIsAllowed(0, 5, 0, 0, true, "decrement")).toBe(false);
       });
     });
   });
@@ -292,23 +292,23 @@ describe("checkIfOperationIsAllowed", () => {
   describe("error conditions", () => {
     describe("invalid step", () => {
       it("blocks increment with zero step", () => {
-        expect(checkIfOperationIsAllowed(3, 0, 1, 5, "increment")).toBe(false);
+        expect(checkIfOperationIsAllowed(3, 0, 1, 5, true, "increment")).toBe(false);
       });
       it("blocks increment with negative step", () => {
-        expect(checkIfOperationIsAllowed(3, -1, 1, 5, "increment")).toBe(false);
+        expect(checkIfOperationIsAllowed(3, -1, 1, 5, true, "increment")).toBe(false);
       });
       it("blocks decrement with zero step", () => {
-        expect(checkIfOperationIsAllowed(3, 0, 1, 5, "decrement")).toBe(false);
+        expect(checkIfOperationIsAllowed(3, 0, 1, 5, true, "decrement")).toBe(false);
       });
       it("blocks decrement with negative step", () => {
-        expect(checkIfOperationIsAllowed(3, -1, 1, 5, "decrement")).toBe(false);
+        expect(checkIfOperationIsAllowed(3, -1, 1, 5, true, "decrement")).toBe(false);
       });
     });
 
     describe("invalid range", () => {
       it("blocks operations when min > max", () => {
-        expect(checkIfOperationIsAllowed(3, 1, 10, 2, "increment")).toBe(false);
-        expect(checkIfOperationIsAllowed(3, 1, 10, 2, "decrement")).toBe(false);
+        expect(checkIfOperationIsAllowed(3, 1, 10, 2, true, "increment")).toBe(false);
+        expect(checkIfOperationIsAllowed(3, 1, 10, 2, true, "decrement")).toBe(false);
       });
     });
   });

@@ -36,12 +36,13 @@
     :disabled="isDisabled"
     :readonly="readonly"
     :min="minQuantity"
-    :max="maxQuantity"
+    :max="maxQuantity || availableQuantity"
     :size="size"
     :show-empty-details="showEmptyDetails"
     :error="!isValid"
     :message="errorMessage"
     :step="packSize"
+    :allow-zero="allowZero"
   >
     <slot />
   </VcQuantityStepper>
@@ -81,17 +82,14 @@ interface IProps {
   validateOnMount?: boolean;
   size?: "sm" | "md";
   mode?: "button" | "stepper";
+  allowZero?: boolean;
+  emitUpdateOnStepperChange?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   mode: "button",
-  minQuantity: 1,
-  maxQuantity: 1,
-  packSize: 1,
-  countInCart: 0,
-  availableQuantity: 0,
   disabled: false,
   isActive: true,
   isAvailable: true,
@@ -102,6 +100,8 @@ const props = withDefaults(defineProps<IProps>(), {
   timeout: 0,
   size: "sm",
   showEmptyDetails: false,
+  allowZero: false,
+  emitUpdateOnStepperChange: true,
 });
 
 const timeout = toRef(props, "timeout");
@@ -110,8 +110,6 @@ const mode = toRef(props, "mode");
 const value = defineModel<number>({ default: 0 });
 
 const quantity = ref<number>(value.value || 0);
-
-const allowZero = computed(() => mode.value === "stepper");
 
 const { isDisabled, isValid, errorMessage, validateFields } = useQuantityField({
   modelValue: value,
@@ -125,7 +123,7 @@ const { isDisabled, isValid, errorMessage, validateFields } = useQuantityField({
   availableQuantity: toRef(props, "availableQuantity"),
   packSize: toRef(props, "packSize"),
   countInCart: toRef(props, "countInCart"),
-  allowZero: allowZero,
+  allowZero: computed(() => mode.value === "stepper" && props.allowZero),
 });
 
 function applyPreValidationModifiers() {
@@ -152,7 +150,7 @@ const handleChange = debounce(async () => {
   await nextTick();
   await validateFields();
 
-  if (isValid.value && mode.value === "stepper") {
+  if (isValid.value && mode.value === "stepper" && props.emitUpdateOnStepperChange) {
     emit("update:cartItemQuantity", newQuantity);
   }
 }, timeout.value ?? 0);

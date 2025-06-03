@@ -28,8 +28,9 @@
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
     />
 
-    <VcAddToCart
+    <QuantityControl
       v-else
+      :mode="$cfg.product_quantity_control"
       :message="errorMessage || notAvailableMessage"
       :model-value="quantity"
       :is-active="product.availabilityData?.isActive"
@@ -44,6 +45,7 @@
       :disabled="changing"
       :loading="changing"
       show-empty-details
+      :allow-zero="$cfg.product_quantity_control === 'stepper'"
       @update:cart-item-quantity="changeCartItemQuantity"
       @update:validation="onValidationUpdate"
     />
@@ -59,6 +61,7 @@ import { getProductRoute } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
 import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
+import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 interface IEmits {
   (event: "linkClick", globalEvent: MouseEvent): void;

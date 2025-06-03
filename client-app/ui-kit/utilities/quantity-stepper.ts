@@ -1,8 +1,14 @@
 import clamp from "lodash/clamp";
 
-function handleIncrement(value: number, step: number, minAligned: number, maxAligned: number): number {
+function handleIncrement(
+  value: number,
+  step: number,
+  minAligned: number,
+  maxAligned: number,
+  allowZero: boolean = true,
+): number {
   if (value < 0) {
-    return 0;
+    return allowZero ? 0 : minAligned;
   }
   if (value < minAligned) {
     return minAligned;
@@ -13,15 +19,22 @@ function handleIncrement(value: number, step: number, minAligned: number, maxAli
   return clamp(value + step, minAligned, maxAligned);
 }
 
-function handleDecrement(value: number, step: number, minAligned: number, maxAligned: number): number {
+function handleDecrement(
+  value: number,
+  step: number,
+  minAligned: number,
+  maxAligned: number,
+  allowZero: boolean = true,
+): number {
   if (value <= 0) {
-    return 0;
+    return allowZero ? 0 : minAligned;
   }
   if (value > maxAligned) {
     return maxAligned;
   }
   const result = value - step;
-  return result < minAligned ? 0 : clamp(result, minAligned, maxAligned);
+  const minValue = allowZero ? 0 : minAligned;
+  return result < minAligned ? minValue : clamp(result, minAligned, maxAligned);
 }
 
 export function calculateStepper(
@@ -29,12 +42,14 @@ export function calculateStepper(
   _step: number,
   _min: number,
   _max: number,
+  _allowZero: boolean,
   direction: "increment" | "decrement",
 ): number {
-  const value = Math.trunc(_value ?? 0);
   const step = Math.trunc(_step);
   const min = Math.trunc(_min);
   const max = Math.trunc(_max);
+  const allowZero = _allowZero ?? true;
+  const value = Math.trunc(_value ?? (allowZero ? 0 : 1));
 
   if (step <= 0) {
     return value;
@@ -48,8 +63,8 @@ export function calculateStepper(
   }
 
   return direction === "increment"
-    ? handleIncrement(value, step, minAligned, maxAligned)
-    : handleDecrement(value, step, minAligned, maxAligned);
+    ? handleIncrement(value, step, minAligned, maxAligned, allowZero)
+    : handleDecrement(value, step, minAligned, maxAligned, allowZero);
 }
 
 export function checkIfOperationIsAllowed(
@@ -57,6 +72,7 @@ export function checkIfOperationIsAllowed(
   step: number,
   min: number,
   max: number,
+  allowZero: boolean,
   direction: "increment" | "decrement",
 ) {
   if (step <= 0 || value === undefined || (max < min && max !== 0)) {
@@ -68,6 +84,10 @@ export function checkIfOperationIsAllowed(
     return value < maxAligned;
   }
 
-  // Decrement should be always available if qty is > 0
-  return value > 0;
+  if (allowZero) {
+    return value > 0;
+  }
+
+  const minAligned = Math.ceil(min / step) * step;
+  return value > minAligned;
 }

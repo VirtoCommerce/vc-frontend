@@ -66,24 +66,30 @@ interface IProps {
   size?: "sm" | "md";
   showEmptyDetails?: boolean;
   selectOnClick?: boolean;
+  allowZero?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   step: 1,
-  value: 0,
-  min: 0,
   max: Number.MAX_SAFE_INTEGER,
   size: "sm",
+  allowZero: true,
 });
+
+const min = computed(() => props.min ?? (props.allowZero ? 0 : 1));
 
 const model = defineModel<IProps["value"]>();
 
 const isDecrementDisabled = computed(
-  () => props.disabled || !checkIfOperationIsAllowed(model.value, props.step, props.min, props.max, "decrement"),
+  () =>
+    props.disabled ||
+    !checkIfOperationIsAllowed(model.value, props.step, min.value, props.max, props.allowZero, "decrement"),
 );
 
 const isIncrementDisabled = computed(
-  () => props.disabled || !checkIfOperationIsAllowed(model.value, props.step, props.min, props.max, "increment"),
+  () =>
+    props.disabled ||
+    !checkIfOperationIsAllowed(model.value, props.step, min.value, props.max, props.allowZero, "increment"),
 );
 
 function handleDecrement() {
@@ -91,7 +97,7 @@ function handleDecrement() {
     return;
   }
 
-  const newValue = calculateStepper(model.value, props.step, props.min, props.max, "decrement");
+  const newValue = calculateStepper(model.value, props.step, min.value, props.max, props.allowZero, "decrement");
   update(newValue);
 }
 
@@ -100,7 +106,7 @@ function handleIncrement() {
     return;
   }
 
-  const newValue = calculateStepper(model.value, props.step, props.min, props.max, "increment");
+  const newValue = calculateStepper(model.value, props.step, min.value, props.max, props.allowZero, "increment");
   update(newValue);
 }
 
