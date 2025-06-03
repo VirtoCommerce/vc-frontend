@@ -33,11 +33,19 @@ export function useQuantityValidationSchema(payload: {
   }
 
   function maxTest(schema: NumberSchema, max: number): NumberSchema {
-    return schema.test("maxValue", t("ui_kit.add_to_cart.errors.max", [max]), (value) => !!value && value <= max);
+    return schema.test(
+      "maxValue",
+      t("ui_kit.add_to_cart.errors.max", [max]),
+      (value) => value !== undefined && value <= max,
+    );
   }
 
   function minTest(schema: NumberSchema, min: number): NumberSchema {
-    return schema.test("minValue", t("ui_kit.add_to_cart.errors.min", [min]), (value) => !!value && value >= min);
+    return schema.test(
+      "minValue",
+      t("ui_kit.add_to_cart.errors.min", [min]),
+      (value) => value !== undefined && value >= min,
+    );
   }
 
   function availableLessThenMinError(schema: NumberSchema, min: number): NumberSchema {
