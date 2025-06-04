@@ -1,6 +1,7 @@
 import path from "path";
 import graphql from "@rollup/plugin-graphql";
 import vue from "@vitejs/plugin-vue";
+import browserslistToEsbuild from "browserslist-to-esbuild";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
 import { checker } from "vite-plugin-checker";
@@ -73,6 +74,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       __VUE_I18N_LEGACY_API__: false,
     },
     build: {
+      target: browserslistToEsbuild(),
       emptyOutDir: true,
       sourcemap: true,
     },
