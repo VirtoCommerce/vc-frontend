@@ -7,15 +7,15 @@
         :class="[
           'vc-slider__col',
           {
-            'vc-slider__col--hoverable': showTooltipOnColHover && col.tooltip,
+            'vc-slider__col--hoverable': showTooltipOnColHover && col.count,
             'vc-slider__col--clickable': updateOnColumnClick,
           },
         ]"
         :style="{
-          left: col.position.left + '%',
-          right: col.position.right + '%',
+          left: col.position.left,
+          right: col.position.right,
         }"
-        width="10rem"
+        width="7rem"
         z-index="20"
         placement="top"
         :disabled="!showTooltipOnColHover || !col.count"
@@ -51,7 +51,7 @@ import type { API } from "nouislider";
 import "nouislider/dist/nouislider.css";
 
 type RangeType = [number | null, number | null];
-type ColType = { count: number; value: RangeType; tooltip?: string };
+type ColType = { count: number; value: RangeType };
 
 interface IProps {
   value: RangeType;
@@ -108,11 +108,10 @@ const normalizedCols = computed(() => {
     return {
       value: [_from, _to] as RangeType,
       count: column.count,
-      tooltip: column.tooltip,
       height: `${Math.round((column.count / maxCount) * 100)}%`,
       position: {
-        left: _from ? ((_from - min.value) / (max.value - min.value)) * 100 : 0,
-        right: _to ? ((max.value - _to) / (max.value - min.value)) * 100 : 100,
+        left: _from ? `${((_from - min.value) / (max.value - min.value)) * 100}%` : 0,
+        right: _to ? `${((max.value - _to) / (max.value - min.value)) * 100}%` : 100,
       },
     };
   });
