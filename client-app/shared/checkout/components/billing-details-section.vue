@@ -93,11 +93,14 @@ interface IProps {
 
 defineProps<IProps>();
 
-const isShippingMethodBopis = computed(() => {
-  return shipmentMethod.value?.code === BOPIS_CODE;
-});
+const { allItemsAreDigital, availablePaymentMethods, availableShippingMethods } = useFullCart();
 
-const { allItemsAreDigital, availablePaymentMethods } = useFullCart();
+const isShippingMethodBopis = computed(() => {
+  return (
+    shipmentMethod.value?.code === BOPIS_CODE ||
+    (availableShippingMethods.value.length === 1 && availableShippingMethods.value[0].code === BOPIS_CODE)
+  );
+});
 
 const {
   billingAddressEqualsShipping,
