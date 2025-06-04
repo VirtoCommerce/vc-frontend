@@ -1,10 +1,11 @@
+import { ApolloError } from "@apollo/client/core";
+import { AbortReason } from "@/core/api/common/enums";
+import { graphqlClient } from "@/core/api/graphql/client";
+import { GetSearchResultsDocument } from "@/core/api/graphql/types";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
-import searchQueryDocument from "./getSearchResultsQuery.graphql";
-import type { GetSearchResultsQueryVariables, Query } from "@/core/api/graphql/types";
-
-export type SearchResultsType = Required<Pick<Query, "categories" | "products" | "pages" | "productSuggestions">>;
+import { Logger } from "@/core/utilities/logger";
+import type { GetSearchResultsQueryVariables } from "@/core/api/graphql/types";
 
 export type GetSearchResultsParamsType = {
   keyword: string;
@@ -38,7 +39,7 @@ export type GetSearchResultsParamsType = {
 
 let abortController: AbortController | undefined;
 
-export async function getSearchResults(params: GetSearchResultsParamsType): Promise<SearchResultsType> {
+export async function getSearchResults(params: GetSearchResultsParamsType) {
   const { storeId, userId, cultureName, currencyCode } = globals;
 
   const withSuggestions = !!params.productSuggestions;
@@ -118,27 +119,32 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
   }
 
   if (abortController) {
-    abortController.abort();
+    abortController.abort(AbortReason.Explicit);
   }
 
   abortController = new AbortController();
   const { signal } = abortController;
 
-  const { data } = await graphqlClient.query<SearchResultsType, GetSearchResultsQueryVariables>({
-    query: searchQueryDocument,
-    variables,
-    context: {
-      fetchOptions: { signal },
-    },
-  });
+  try {
+    const { data } = await graphqlClient.query({
+      query: GetSearchResultsDocument,
+      variables,
+      context: {
+        fetchOptions: { signal },
+      },
+    });
 
-  return Object.assign(
-    {
-      productSuggestions: {},
-      pages: {},
-      categories: {},
-      products: {},
-    },
-    data,
-  );
+    return {
+      productSuggestions: data.productSuggestions ?? {},
+      pages: data.pages ?? {},
+      categories: data.categories ?? {},
+      products: data.products ?? {},
+    };
+  } catch (e) {
+    if (e instanceof ApolloError && e.networkError?.toString() === (AbortReason.Explicit as string)) {
+      return;
+    }
+    Logger.error(`${getSearchResults.name}`, e);
+    throw e;
+  }
 }
