@@ -79,9 +79,9 @@ describe("calculateStepper", () => {
     ],
 
     // Complex scenarios
+    [{ value: 2, step: 10, min: 1, max: 5, allowZero: true, direction: "increment" as const }, 2, "large step"],
     [{ value: 7, step: 3, min: 2, max: 20, allowZero: true, direction: "increment" as const }, 10, "alignment"],
     [{ value: 7, step: 3, min: 2, max: 20, allowZero: true, direction: "decrement" as const }, 4, "alignment"],
-    [{ value: 2, step: 10, min: 1, max: 5, allowZero: true, direction: "increment" as const }, 2, "large step"],
   ] as const)(
     "$direction $value with step $step = $1 | [$min - $max] allowZero $allowZero | $2",
     (options, expected, description) => {
