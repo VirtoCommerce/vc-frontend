@@ -113,13 +113,11 @@ export function _useCheckout() {
       ? deliveryAddress.value
       : payment.value?.billingAddress,
   );
-  const shipmentMethod = computed(() => {
-    const currentMethod = availableShippingMethods.value.find(
+  const shipmentMethod = computed(() =>
+    availableShippingMethods.value.find(
       (item) => item.id === shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,
-    );
-
-    return currentMethod ?? availableShippingMethods.value[0];
-  });
+    ),
+  );
   const paymentMethod = computed(() =>
     availablePaymentMethods.value.find((item) => item.code === payment.value?.paymentGatewayCode),
   );
