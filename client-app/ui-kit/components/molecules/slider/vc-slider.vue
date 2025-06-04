@@ -22,7 +22,7 @@
       >
         <template #trigger>
           <button type="button" class="vc-slider__button" @click="updateOnColumnClick && updateModel(col.value)">
-            <span class="vc-slider__col-line" :style="{ height: col.height + '%' }"></span>
+            <span class="vc-slider__col-line" :style="{ height: col.height }"></span>
           </button>
         </template>
 
@@ -83,8 +83,8 @@ const sliderRef = ref<HTMLElement | null>(null);
 let slider: API | null = null;
 
 const normalizedCols = computed(() => {
-  const allowedCols = cols.value.filter((c) => {
-    const [from, to] = c.value;
+  const allowedCols = cols.value.filter((column) => {
+    const [from, to] = column.value;
 
     if (!from && to) {
       return to > min.value && to < max.value;
@@ -97,19 +97,19 @@ const normalizedCols = computed(() => {
     return from && to && to > min.value && from < max.value;
   });
 
-  const counts = allowedCols.map((c) => c.count);
-  const m = Math.max(...counts, 1);
+  const counts = allowedCols.map((column) => column.count);
+  const maxCount = Math.max(...counts, 1);
 
-  return allowedCols.map((c) => {
-    const [from, to] = c.value;
+  return allowedCols.map((column) => {
+    const [from, to] = column.value;
     const _from = from && from > min.value ? from : min.value;
     const _to = to && to < max.value ? to : max.value;
 
     return {
       value: [_from, _to] as RangeType,
-      count: c.count,
-      tooltip: c.tooltip,
-      height: Math.round((c.count / m) * 100),
+      count: column.count,
+      tooltip: column.tooltip,
+      height: `${Math.round((column.count / maxCount) * 100)}%`,
       position: {
         left: _from ? ((_from - min.value) / (max.value - min.value)) * 100 : 0,
         right: _to ? ((max.value - _to) / (max.value - min.value)) * 100 : 100,
@@ -118,11 +118,11 @@ const normalizedCols = computed(() => {
   });
 });
 
-function updateModel(r: RangeType) {
-  model.value = r;
+function updateModel(range: RangeType) {
+  model.value = range;
 
   if (slider) {
-    slider.set(r, false);
+    slider.set(range, false);
   }
 }
 
