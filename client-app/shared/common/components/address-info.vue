@@ -16,16 +16,35 @@
         {{ address.email }}
       </span>
     </div>
+    <div class="flex items-center justify-between gap-2.5 pt-4 empty:hidden">
+      <VcButton size="xs" prepend-icon="information" @click="openInfo">Point info</VcButton>
+      <GetDirectionsAction />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useModal } from "@/shared/modal";
+import AddressInfoModal from "./address-info-modal.vue";
 import AddressLine from "./address-line.vue";
 import type { AnyAddressType } from "@/core/types";
+import GetDirectionsAction from "@/shared/common/components/get-directions-action.vue";
 
 interface IProps {
   address: AnyAddressType;
 }
 
 defineProps<IProps>();
+
+const { openModal, closeModal } = useModal();
+
+function openInfo() {
+  openModal({
+    component: AddressInfoModal,
+    props: {
+      info: "Company information",
+      onClose: closeModal,
+    },
+  });
+}
 </script>
