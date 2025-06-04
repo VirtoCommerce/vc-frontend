@@ -61,8 +61,8 @@ Readonly.args = {
   value: 5,
 };
 
-export const Error = Template.bind({});
-Error.args = {
+export const Errored = Template.bind({});
+Errored.args = {
   error: true,
   message: "Error message",
   value: 5,

@@ -1,5 +1,14 @@
 import clamp from "lodash/clamp";
 
+type StepperParamsType = {
+  value: number | undefined;
+  step: number;
+  min: number;
+  max: number;
+  allowZero: boolean | undefined;
+  direction: "increment" | "decrement";
+};
+
 function handleIncrement(
   value: number,
   step: number,
@@ -37,18 +46,12 @@ function handleDecrement(
   return result < minAligned ? minValue : clamp(result, minAligned, maxAligned);
 }
 
-export function calculateStepper(
-  _value: number | undefined,
-  _step: number,
-  _min: number,
-  _max: number,
-  _allowZero: boolean,
-  direction: "increment" | "decrement",
-): number {
+export function calculateStepper(options: StepperParamsType): number {
+  const { value: _value, step: _step, min: _min, max: _max, allowZero = true, direction } = options;
+
   const step = Math.trunc(_step);
   const min = Math.trunc(_min);
   const max = Math.trunc(_max);
-  const allowZero = _allowZero ?? true;
   const value = Math.trunc(_value ?? (allowZero ? 0 : 1));
 
   if (step <= 0) {
@@ -67,14 +70,9 @@ export function calculateStepper(
     : handleDecrement(value, step, minAligned, maxAligned, allowZero);
 }
 
-export function checkIfOperationIsAllowed(
-  value: number | undefined,
-  step: number,
-  min: number,
-  max: number,
-  allowZero: boolean,
-  direction: "increment" | "decrement",
-) {
+export function checkIfOperationIsAllowed(options: StepperParamsType): boolean {
+  const { value, step, min, max, allowZero, direction } = options;
+
   if (step <= 0 || value === undefined || (max < min && max !== 0)) {
     return false;
   }

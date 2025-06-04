@@ -5,7 +5,7 @@ import { useQuantityValidationSchema } from "@/ui-kit/composables/useQuantityVal
 import type { Ref } from "vue";
 
 type ParamsType = {
-  timeout?: number | undefined;
+  timeout?: number;
   disabled?: Ref<boolean | undefined>;
   isInStock?: Ref<boolean | undefined>;
   minQuantity?: Ref<number | undefined>;
