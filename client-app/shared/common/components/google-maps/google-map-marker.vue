@@ -1,28 +1,37 @@
-<template><slot /></template>
+<template>
+  <slot v-if="map" />
+</template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onBeforeUnmount, shallowRef, watch } from "vue";
 import { Logger } from "@/core/utilities";
+import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
+
+const props = withDefaults(defineProps<IProps>(), {
+  showInfo: true,
+});
+
+const { addMarker, initInfoWindow, map, infoWindow } = useGoogleMaps();
 
 interface IProps {
   position: google.maps.LatLngLiteral;
-  map: google.maps.Map;
-  markerLibrary: google.maps.MarkerLibrary | null;
   title?: string;
+  content?: string;
+  showInfo?: boolean;
 }
 
-const props = defineProps<IProps>();
+let listener: google.maps.MapsEventListener | undefined;
 
-const marker = ref<google.maps.marker.AdvancedMarkerElement>();
+const marker = shallowRef<google.maps.marker.AdvancedMarkerElement>();
 
 function createMarker() {
-  if (!props.map || !props.markerLibrary) {
+  if (!map.value || marker.value) {
     return;
   }
 
   try {
-    marker.value = new props.markerLibrary.AdvancedMarkerElement({
-      map: props.map,
+    marker.value = addMarker({
+      map: map.value,
       position: props.position,
       title: props.title,
     });
@@ -31,21 +40,35 @@ function createMarker() {
   }
 }
 
-onMounted(() => {
-  createMarker();
+function init() {
+  if (map.value) {
+    createMarker();
+    if (!props.showInfo) {
+      return;
+    }
+    initInfoWindow();
+    listener = marker.value?.addListener("gmp-click", () => {
+      infoWindow.value?.setContent(props.content);
+      infoWindow.value?.open({
+        anchor: marker.value,
+        map: map.value,
+      });
+    });
+  }
+}
+
+const unwatch = watch(
+  map,
+  () => {
+    if (map.value) {
+      init();
+      unwatch();
+    }
+  },
+  { immediate: true },
+);
+
+onBeforeUnmount(() => {
+  listener?.remove();
 });
-
-watch(
-  () => props.markerLibrary,
-  () => {
-    createMarker();
-  },
-);
-
-watch(
-  () => props.map,
-  () => {
-    createMarker();
-  },
-);
 </script>

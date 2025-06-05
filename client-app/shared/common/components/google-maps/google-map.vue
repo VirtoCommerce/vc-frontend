@@ -1,6 +1,6 @@
 <template>
   <div :id="elementId" ref="mapContainer" class="size-full"></div>
-  <slot :map="map" :marker-library="markerLibrary" :error="error" :is-loading="isLoading" />
+  <slot />
 </template>
 
 <script setup lang="ts">
@@ -24,14 +24,14 @@ const { apiKey, center, zoom, elementId } = toRefs(props);
 
 const mapContainer = ref<HTMLDivElement>();
 
-const { map, markerLibrary, error, isLoading, initMap } = useGoogleMaps({
-  apiKey: apiKey.value,
-  elementId: elementId.value,
-  center: center.value,
-  zoom: zoom.value,
-});
+const { initMap } = useGoogleMaps();
 
 onMounted(async () => {
-  await initMap();
+  await initMap({
+    apiKey: apiKey.value,
+    elementId: elementId.value,
+    center: center.value,
+    zoom: zoom.value,
+  });
 });
 </script>
