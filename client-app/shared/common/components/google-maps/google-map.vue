@@ -14,6 +14,7 @@ interface IProps {
   zoom?: number;
   options?: Omit<google.maps.MapOptions, "center" | "zoom" | "mapId">;
   listenToBounds?: boolean;
+  mapId?: string;
 }
 
 interface IEmits {
@@ -26,21 +27,18 @@ const props = withDefaults(defineProps<IProps>(), {
   center: () => ({ lat: 0, lng: 0 }),
   zoom: 10,
   elementId: "google-map",
+  mapId: "google-map",
 });
 
 let listener: google.maps.MapsEventListener | undefined;
 
-const { apiKey, center, zoom, elementId } = toRefs(props);
+const { apiKey, center, zoom, elementId, mapId } = toRefs(props);
 
 const mapContainer = ref<HTMLDivElement>();
 
-const { initMap, map, isInitialized, cleanup } = useGoogleMaps();
+const { initMap, map } = useGoogleMaps(mapId.value);
 
 onMounted(async () => {
-  if (isInitialized.value) {
-    return;
-  }
-
   await initMap({
     apiKey: apiKey.value,
     elementId: elementId.value,
@@ -65,6 +63,5 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   listener?.remove();
-  cleanup();
 });
 </script>

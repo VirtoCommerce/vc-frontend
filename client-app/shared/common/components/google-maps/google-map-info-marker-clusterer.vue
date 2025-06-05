@@ -4,26 +4,24 @@
 
 <script setup lang="ts">
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import { watch } from "vue";
+import { toRefs, watch } from "vue";
 import { Logger } from "@/core/utilities";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
-import type { MarkerClustererOptions, onClusterClickHandler } from "@googlemaps/markerclusterer";
+import type { MarkerClustererOptions } from "@googlemaps/markerclusterer";
 
 interface IProps {
   options?: Omit<MarkerClustererOptions, "map" | "markers" | "onClusterClick">;
+  mapId?: string;
 }
-
-interface IEmits {
-  clusterClick: [...Parameters<onClusterClickHandler>];
-}
-
-const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   options: () => ({}),
+  mapId: "google-map",
 });
 
-const { map, markers } = useGoogleMaps();
+const { mapId } = toRefs(props);
+
+const { map, markers } = useGoogleMaps(mapId.value);
 
 let markerClusterer: MarkerClusterer | undefined;
 
@@ -36,9 +34,6 @@ function createMarkerClusterer() {
     markerClusterer = new MarkerClusterer({
       map: map.value,
       markers: markers.value,
-      onClusterClick: (event, cluster, _map) => {
-        emit("clusterClick", event, cluster, _map);
-      },
       ...props.options,
     });
   } catch (error) {

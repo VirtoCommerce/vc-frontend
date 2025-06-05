@@ -1,8 +1,8 @@
 import { Loader } from "@googlemaps/js-api-loader";
-import { createSharedComposable } from "@vueuse/core";
 import uniqueId from "lodash/uniqueId";
-import { ref, shallowRef } from "vue";
+import { ref, shallowRef, onUnmounted } from "vue";
 import { Logger } from "@/core/utilities/logger";
+import type { Ref, ShallowRef } from "vue";
 
 export type UseGoogleMapsOptionsType = {
   apiKey: string;
@@ -10,41 +10,75 @@ export type UseGoogleMapsOptionsType = {
   options?: google.maps.MapOptions;
 };
 
+interface IMapInstance {
+  refCount: Ref<number>;
+  map: ShallowRef<google.maps.Map | null>;
+  markers: Ref<google.maps.marker.AdvancedMarkerElement[]>;
+  infoWindow: Ref<google.maps.InfoWindow | undefined>;
+  isLoading: Ref<boolean>;
+  isInitialized: Ref<boolean>;
+}
+
 const defaults = {
   apiKey: "",
   elementId: "google-map",
   options: {},
 };
 
-export function _useGoogleMaps() {
-  const map = shallowRef<google.maps.Map | null>(null);
+// Global storage for all map instances
+const mapInstances = new Map<string, IMapInstance>();
 
-  const markers = ref<google.maps.marker.AdvancedMarkerElement[]>([]);
-  const infoWindow = ref<google.maps.InfoWindow>();
+export function useGoogleMaps(mapId: string) {
+  let instance = mapInstances.get(mapId);
 
-  const isLoading = ref(false);
-  const isInitialized = ref(false);
+  if (!instance) {
+    const map = shallowRef<google.maps.Map | null>(null);
+    const markers = ref<google.maps.marker.AdvancedMarkerElement[]>([]);
+    const infoWindow = ref<google.maps.InfoWindow | undefined>(undefined);
+    const isLoading = ref(false);
+    const isInitialized = ref(false);
+    const refCount = ref(0);
+
+    instance = {
+      refCount,
+      map,
+      markers,
+      infoWindow,
+      isLoading,
+      isInitialized,
+    };
+    mapInstances.set(mapId, instance);
+  }
+
+  instance.refCount.value++;
+
+  const { map, markers, infoWindow, isLoading, isInitialized, refCount } = instance;
 
   async function initMap(params: UseGoogleMapsOptionsType) {
-    if (isLoading.value) {
+    const currentInstance = mapInstances.get(mapId);
+    if (!currentInstance || currentInstance.isLoading.value) {
       return;
     }
 
-    // If we already have a map but it's for a different element, clean up first
-    if (isInitialized.value && map.value) {
-      const currentElementId = params.elementId ?? defaults.elementId;
-      const mapElement = document.getElementById(currentElementId);
+    const elementId = params.elementId ?? defaults.elementId;
+    const mapElement = document.getElementById(elementId);
 
-      // If the map element is different or doesn't exist, cleanup and reinitialize
-      if (!mapElement || mapElement !== map.value.getDiv()) {
-        cleanup();
-      } else {
-        // Map is already initialized for the correct element
-        return;
-      }
+    if (!mapElement) {
+      Logger.error(`Map container element with id "${elementId}" not found`);
+      return;
     }
 
-    isLoading.value = true;
+    // Check if map exists and is properly attached to the DOM
+    // The map's div might be null if the element was recreated by v-if
+    const mapDiv = currentInstance.map.value?.getDiv();
+    const isMapAttached = mapDiv === mapElement && mapElement.children.length > 0 && mapDiv !== null;
+
+    // If map is already initialized and properly attached, nothing to do
+    if (currentInstance.map.value && currentInstance.isInitialized.value && isMapAttached) {
+      return;
+    }
+
+    currentInstance.isLoading.value = true;
 
     const loader = new Loader({
       apiKey: params.apiKey,
@@ -56,86 +90,120 @@ export function _useGoogleMaps() {
       const { Map: GoogleMap } = await loader.importLibrary("maps");
       await loader.importLibrary("places");
 
-      const mapElement = document.getElementById(params.elementId ?? defaults.elementId);
-      if (!mapElement) {
-        Logger.error(`Map container element with id "${params.elementId ?? defaults.elementId}" not found`);
-        return;
-      }
+      mapElement.innerHTML = "";
 
-      map.value = new GoogleMap(mapElement, {
+      const mapInstance = new GoogleMap(mapElement, {
         mapId: uniqueId("map-"),
         ...params.options,
       });
-      isInitialized.value = true;
+
+      currentInstance.map.value = mapInstance;
+      currentInstance.isInitialized.value = true;
     } catch (err) {
       Logger.error("Google Maps initialization failed:", err);
     } finally {
-      isLoading.value = false;
+      currentInstance.isLoading.value = false;
     }
   }
 
   function addMarker(markerProps: google.maps.marker.AdvancedMarkerElementOptions) {
-    if (!map.value) {
+    const currentInstance = mapInstances.get(mapId);
+    if (!currentInstance?.map.value) {
+      Logger.warn(`Cannot add marker: map not initialized for mapId: ${mapId}`);
       return;
     }
 
     const marker = new google.maps.marker.AdvancedMarkerElement({
       ...markerProps,
-      map: map.value,
+      map: currentInstance.map.value,
     });
-    markers.value = [...markers.value, marker];
+
+    const currentMarkers = currentInstance.markers.value ?? [];
+    currentInstance.markers.value = [...currentMarkers, marker];
+
     return marker;
   }
 
   function removeMarker(markerToRemove: google.maps.marker.AdvancedMarkerElement) {
-    if (!markerToRemove) {
+    const currentInstance = mapInstances.get(mapId);
+    if (!markerToRemove || !currentInstance) {
       return;
     }
 
     markerToRemove.map = null;
 
-    const markerIndex = markers.value.indexOf(markerToRemove);
+    const currentMarkers = currentInstance.markers.value ?? [];
+    const markerIndex = currentMarkers.indexOf(markerToRemove);
     if (markerIndex > -1) {
-      markers.value.splice(markerIndex, 1);
+      const newMarkers = [...currentMarkers];
+      newMarkers.splice(markerIndex, 1);
+      currentInstance.markers.value = newMarkers;
     }
   }
 
   function initInfoWindow() {
-    if (!map.value || infoWindow.value) {
+    const currentInstance = mapInstances.get(mapId);
+    if (!currentInstance?.map.value || currentInstance.infoWindow.value) {
       return;
     }
 
-    infoWindow.value = new google.maps.InfoWindow();
+    currentInstance.infoWindow.value = new google.maps.InfoWindow();
   }
 
   function clearMarkers() {
-    markers.value.forEach((marker) => {
+    const currentInstance = mapInstances.get(mapId);
+    if (!currentInstance) {
+      return;
+    }
+
+    const currentMarkers = currentInstance.markers.value ?? [];
+    currentMarkers.forEach((marker) => {
       marker.map = null;
     });
-    markers.value.length = 0;
+    currentInstance.markers.value = [];
   }
 
   function cleanup() {
-    clearMarkers();
-    infoWindow.value = undefined;
-    map.value = null;
-    isInitialized.value = false;
+    const currentInstance = mapInstances.get(mapId);
+    if (!currentInstance) {
+      return;
+    }
+
+    currentInstance.refCount.value--;
+
+    if (currentInstance.refCount.value <= 0) {
+      clearMarkers();
+
+      if (currentInstance.infoWindow.value) {
+        currentInstance.infoWindow.value.close();
+        currentInstance.infoWindow.value = undefined;
+      }
+
+      currentInstance.map.value = null;
+      currentInstance.isInitialized.value = false;
+      currentInstance.isLoading.value = false;
+
+      mapInstances.delete(mapId);
+    }
   }
 
+  onUnmounted(() => {
+    cleanup();
+  });
+
   return {
+    refCount,
+
     map,
     markers,
     infoWindow,
     isInitialized,
-
     isLoading,
-
     initMap,
     initInfoWindow,
     addMarker,
     removeMarker,
+    clearMarkers,
     cleanup,
   };
 }
-
-export const useGoogleMaps = createSharedComposable(_useGoogleMaps);
