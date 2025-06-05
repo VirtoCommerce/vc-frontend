@@ -136,30 +136,40 @@ type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
 const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod, billingAddressEqualsShipping } =
   useCheckout();
 
-const mode = ref<ShippingOptionType>(shipmentMethod.value?.code === BOPIS_CODE ? "pickup" : "shipping");
-
 const { availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
 const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
 
-const shippingMethods = computed(() => availableShippingMethods.value.filter((method) => method.code !== BOPIS_CODE));
+const mode = ref<ShippingOptionType>(getDefaultMode());
 
 const onlyOneDeliveryMethod = computed(() => availableShippingMethods.value.length === 1);
+const shippingMethods = computed(() => availableShippingMethods.value.filter((method) => method.code !== BOPIS_CODE));
 
 function switchShippingOptions(_mode: ShippingOptionType) {
   mode.value = _mode;
 }
 
+function getDefaultMode() {
+  if (shipmentMethod.value?.code) {
+    return shipmentMethod.value?.code === BOPIS_CODE ? "pickup" : "shipping";
+  }
+  if (availableShippingMethods.value.length === 1) {
+    return availableShippingMethods.value[0].code === BOPIS_CODE ? "pickup" : "shipping";
+  }
+  return "shipping";
+}
+
 watch(
   mode,
-  (newMode) => {
+  (newMode, previousMode) => {
     const shippingMethod = newMode === SHIPPING_OPTIONS.pickup ? bopisMethod.value : shippingMethods.value[0];
+    billingAddressEqualsShipping.value = shippingMethod?.code !== BOPIS_CODE;
 
-    if (!shippingMethod || shippingMethod.code === shipment.value?.shipmentMethodCode) {
+    if (
+      !shippingMethod ||
+      shippingMethod.code === shipment.value?.shipmentMethodCode ||
+      (!previousMode && shippingMethod.code !== BOPIS_CODE)
+    ) {
       return;
-    }
-
-    if (shippingMethod.code === BOPIS_CODE) {
-      billingAddressEqualsShipping.value = false;
     }
 
     void updateShipment({
