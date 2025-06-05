@@ -79,6 +79,15 @@ Truncate.args = {
   truncate: true,
 };
 
+export const WithIcon: StoryFn = (args) => ({
+  components: { VcBadge },
+  setup: () => ({ args }),
+  template: `<VcBadge v-bind="args">
+    <VcIcon name="round-check" />
+    <span>35</span>
+  </VcBadge>`,
+});
+
 export const WithIcons: StoryFn = (args) => ({
   components: { VcBadge },
   setup: () => ({ args }),

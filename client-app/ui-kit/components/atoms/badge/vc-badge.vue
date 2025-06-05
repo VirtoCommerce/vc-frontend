@@ -43,7 +43,7 @@ withDefaults(defineProps<IProps>(), {
   $truncate: "";
   $square: "";
 
-  @apply flex-none inline-flex align-top border rounded-sm font-bold min-h-[var(--size)] min-w-[var(--size)];
+  @apply flex-none inline-flex align-top min-h-[var(--size)] min-w-[var(--size)] max-w-full border rounded-sm font-bold;
 
   &--size {
     &--xs {
@@ -138,14 +138,27 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__content {
-    @apply grow flex items-center justify-center gap-[inherit] text-center self-center;
+    @apply grow gap-[inherit] text-center self-center [word-break:break-word];
 
-    &:not(:has(.vc-icon)) {
-      @apply px-0.5;
+    &:has(.vc-icon) {
+      @apply flex items-center;
     }
 
-    #{$truncate} & {
+    &:not(:has(.vc-icon:first-child)) {
+      @apply ps-0.5;
+    }
+
+    &:not(:has(.vc-icon:last-child)) {
+      @apply pe-0.5;
+    }
+
+    #{$truncate} &,
+    #{$truncate} & * {
       @apply truncate;
+    }
+
+    #{$square} & {
+      @apply justify-center;
     }
 
     & > * {
