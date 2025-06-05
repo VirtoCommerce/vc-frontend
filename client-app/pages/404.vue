@@ -1,23 +1,17 @@
 <template>
-  <VcEmptyPage ref="page404Anchor" icon="outline-404" image="404.jpg">
-    <h1 class="text-5xl font-black text-primary max-sm:order-first lg:mb-5 lg:text-8xl">
-      {{ $t("pages.404.error_code") }}
-    </h1>
-
-    <VcTypography tag="h2" variant="h1" class="mb-5 max-sm:order-first sm:mb-2">
-      {{ $t("pages.404.error_text") }}
-    </VcTypography>
-
-    <p class="mb-7 text-base text-neutral-700 lg:text-xl">
-      {{ $t("pages.404.message") }}
-    </p>
-
-    <div>
-      <VcButton to="/" min-width="11rem">
-        {{ $t("pages.404.home_button") }}
-      </VcButton>
-    </div>
-  </VcEmptyPage>
+  <div class="h-screen w-screen">
+    <GoogleMap api-key="AIzaSyAAt1IUts-x_5Veq-HxUElzZOtYuBzzG5Q" :center="{ lat: 40.7128, lng: -74.006 }" :zoom="15">
+      <template #default="{ map, markerLibrary, error }">
+        <GoogleMapMarker
+          v-if="map && markerLibrary && !error"
+          :map="map"
+          :marker-library="markerLibrary"
+          :position="{ lat: 40.7128, lng: -74.006 }"
+          title="New York City"
+        />
+      </template>
+    </GoogleMap>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -26,6 +20,8 @@ import { useElementVisibility } from "@vueuse/core";
 import { shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageTitle } from "@/core/composables";
+import GoogleMapMarker from "@/shared/common/components/google-maps/google-map-marker.vue";
+import GoogleMap from "@/shared/common/components/google-maps/google-map.vue";
 
 const { t } = useI18n();
 

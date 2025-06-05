@@ -7,7 +7,7 @@ export default {
   argTypes: {},
 } as Meta<typeof VcScrollbar>;
 
-const Template: StoryFn<typeof VcScrollbar> = (args) => ({
+const Template: StoryFn<typeof VcScrollbar> = (args: any) => ({
   components: { VcScrollbar },
   setup: () => ({ args }),
   template: `<VcScrollbar v-bind="args">
