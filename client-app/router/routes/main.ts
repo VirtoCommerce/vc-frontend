@@ -34,7 +34,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/403", name: "NoAccess", component: Error403, meta: { public: true } },
   { path: "/404", name: "NotFound", component: Error404, meta: { public: true } },
   { path: "/500", name: "InternalError", component: Error500, meta: { public: true } },
-  { path: "/sign-in", name: "SignIn", component: SingInPage, meta: { public: true } },
+  { path: ROUTES.SIGN_IN.PATH, name: ROUTES.SIGN_IN.NAME, component: SingInPage, meta: { public: true } },
   { path: "/sign-up", name: "SignUp", component: SignUpPage, meta: { public: true } },
   { path: "/confirm-invitation", name: "ConfirmInvitation", component: ConfirmInvitation, meta: { public: true } },
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword, meta: { public: true } },

@@ -91,7 +91,7 @@
                 color="neutral"
                 size="xs"
                 icon
-                @click="() => signMeOut()"
+                @click="signMeOut"
               >
                 <VcIcon name="logout" />
               </VcButton>
@@ -127,7 +127,7 @@
 
         <span class="mx-4 h-5 w-px bg-primary" />
 
-        <TopHeaderLink to="/sign-in">
+        <TopHeaderLink :to="ROUTES.SIGN_IN.PATH">
           {{ $t("shared.layout.header.link_sign_in") }}
         </TopHeaderLink>
 
@@ -146,6 +146,7 @@ import { onClickOutside } from "@vueuse/core";
 import { ref } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { ROUTES } from "@/router/routes/constants";
 import { useSignMeOut, useUser } from "@/shared/account";
 import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
 import { ShipToSelector } from "@/shared/ship-to-location";
