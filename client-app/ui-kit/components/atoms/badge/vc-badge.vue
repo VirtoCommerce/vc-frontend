@@ -8,7 +8,6 @@
         'vc-badge--rounded': rounded,
         'vc-badge--truncate': truncate,
         'vc-badge--nowrap': nowrap,
-        'vc-badge--dot': !$slots.default,
         'vc-badge--square': square,
       },
     ]"
@@ -22,7 +21,7 @@
 <script setup lang="ts">
 interface IProps {
   color?: VcBadgeColorType;
-  size?: "sm" | "md" | "lg";
+  size?: VcBadgeSizeType;
   variant?: VcBadgeVariantType;
   rounded?: boolean;
   truncate?: boolean;
@@ -44,39 +43,50 @@ withDefaults(defineProps<IProps>(), {
   $truncate: "";
   $square: "";
 
-  --vc-icon-size: 0.75rem;
-  --size: 1.125rem;
-
-  @apply flex-none inline-flex align-top gap-1 border rounded-sm font-bold min-h-[var(--size)] min-w-[var(--size)];
+  @apply flex-none inline-flex align-top border rounded-sm font-bold min-h-[var(--size)] min-w-[var(--size)];
 
   &--size {
-    &--sm {
-      @apply px-0.5 text-xs/[1.2];
+    &--xs {
+      --size: 1rem;
+      --vc-icon-size: 0.625rem;
+
+      @apply gap-1 px-0.5 text-xxs;
 
       &--dot {
-        @apply w-1.5 h-1.5;
+        @apply size-1.5;
+      }
+    }
+
+    &--sm {
+      --size: 1.125rem;
+      --vc-icon-size: 0.75rem;
+
+      @apply gap-1.5 px-0.5 text-xs/[1.2];
+
+      &--dot {
+        @apply size-2;
       }
     }
 
     &--md {
-      --vc-icon-size: 0.875rem;
       --size: 1.375rem;
+      --vc-icon-size: 0.875rem;
 
-      @apply px-1 text-sm/[1.2];
+      @apply gap-1.5 px-1 text-sm/[1.2];
 
       &--dot {
-        @apply w-2 h-2;
+        @apply size-2.5;
       }
     }
 
     &--lg {
-      --vc-icon-size: 1rem;
       --size: 1.625rem;
+      --vc-icon-size: 1rem;
 
-      @apply px-1.5 text-base/[1.25];
+      @apply gap-1.5 px-1 text-base/[1.25];
 
       &--dot {
-        @apply w-2.5 h-2.5;
+        @apply size-3;
       }
     }
   }
@@ -89,51 +99,49 @@ withDefaults(defineProps<IProps>(), {
     $truncate: &;
   }
 
-  &--dot {
-    @apply min-h-0 min-w-0;
-  }
-
   &--square {
     $square: &;
 
-    @apply min-w-[var(--size)] px-0;
+    @apply p-0;
   }
 
   @each $color in $colors {
     &--solid--#{$color} {
       @apply bg-[color:var(--color-#{$color}-500)]
       border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-additional-50)];
+      text-additional-50;
     }
 
     &--solid-light--#{$color} {
-      @apply bg-[color:var(--color-#{$color}-50)]
-      border-[color:var(--color-#{$color}-50)]
-      text-[color:var(--color-#{$color}-700)];
+      --vc-icon-color: var(--color-#{$color}-700);
+
+      @apply bg-[color:var(--color-#{$color}-100)]
+      border-[color:var(--color-#{$color}-100)]
+      text-[color:var(--color-#{$color}-800)];
     }
 
     &--outline--#{$color} {
-      @apply bg-[color:var(--color-additional-50)]
+      --vc-icon-color: var(--color-#{$color}-700);
+
+      @apply bg-additional-50
       border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-#{$color}-700)];
+      text-[color:var(--color-#{$color}-800)];
     }
 
     &--outline-dark--#{$color} {
-      @apply bg-[color:var(--color-#{$color}-50)]
+      --vc-icon-color: var(--color-#{$color}-700);
+
+      @apply bg-[color:var(--color-#{$color}-100)]
       border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-#{$color}-700)];
+      text-[color:var(--color-#{$color}-800)];
     }
   }
 
   &__content {
-    @apply grow text-center self-center;
+    @apply grow flex items-center justify-center gap-[inherit] text-center self-center;
 
-    #{$square} & {
-      @apply justify-center;
-    }
-
-    &:has(.vc-icon):has(:not(.vc-icon)) {
-      @apply inline-flex items-center gap-[inherit];
+    &:not(:has(.vc-icon)) {
+      @apply px-0.5;
     }
 
     #{$truncate} & {

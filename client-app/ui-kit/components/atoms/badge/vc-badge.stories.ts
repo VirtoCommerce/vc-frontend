@@ -1,7 +1,7 @@
 import { VcBadge } from "..";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
-const SIZES = ["sm", "md", "lg"];
+const SIZES = ["xs", "sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger"];
 const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];
 
@@ -79,17 +79,15 @@ Truncate.args = {
   truncate: true,
 };
 
-export const WithIcon: StoryFn = (args) => ({
+export const WithIcons: StoryFn = (args) => ({
   components: { VcBadge },
   setup: () => ({ args }),
   template: `<VcBadge v-bind="args">
-    <VcIcon name="fire" />
+    <VcIcon name="round-check" />
     <span>35</span>
+    <VcIcon name="round-check" />
   </VcBadge>`,
 });
-Truncate.args = {
-  truncate: true,
-};
 
 export const OnlyIcon: StoryFn = (args) => ({
   components: { VcBadge },
@@ -98,8 +96,8 @@ export const OnlyIcon: StoryFn = (args) => ({
     <VcIcon name="fire" />
   </VcBadge>`,
 });
-Truncate.args = {
-  truncate: true,
+OnlyIcon.args = {
+  square: true,
 };
 
 export const Dot: StoryFn = () => ({
