@@ -43,6 +43,7 @@ interface IProps {
   //  Estimated Time of Arrival
   eta?: string;
   address: AddressType;
+  otherAddress: AddressType;
 }
 
 defineProps<IProps>();

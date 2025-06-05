@@ -117,7 +117,7 @@
 
           <!-- Shipping Address Card -->
           <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="$t('common.titles.shipping_address')">
-            <AddressInfo :address="deliveryAddress" class="text-base" show-actions />
+            <AddressInfo :address="deliveryAddress" :other-address="bopisAddress" class="text-base" show-actions />
           </VcWidget>
 
           <!-- Payment Method section -->
@@ -144,12 +144,13 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
+import { useBopis } from "@/shared/checkout/composables/useBopis.ts";
 import { AddressInfo, VendorName } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
@@ -178,6 +179,12 @@ const {
 const { cart, addItemsToCart } = useShortCart();
 const { openModal } = useModal();
 const { t } = useI18n();
+
+const { addresses, fetchAddresses } = useBopis();
+
+const bopisAddress = computed(() => {
+  return addresses.value[0];
+});
 
 usePageHead({
   title: computed(() => t("pages.account.order_details.meta.title", [order.value?.number])),
@@ -230,6 +237,10 @@ function print() {
 watchEffect(() => {
   clearOrder();
   void fetchFullOrder({ id: props.orderId });
+});
+
+onMounted(() => {
+  void fetchAddresses();
 });
 </script>
 
