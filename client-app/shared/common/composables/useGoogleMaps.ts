@@ -16,7 +16,6 @@ interface IMapInstance {
   markers: Ref<google.maps.marker.AdvancedMarkerElement[]>;
   infoWindow: Ref<google.maps.InfoWindow | undefined>;
   isLoading: Ref<boolean>;
-  isInitialized: Ref<boolean>;
 }
 
 const defaults = {
@@ -36,7 +35,6 @@ export function useGoogleMaps(mapId: string) {
     const markers = ref<google.maps.marker.AdvancedMarkerElement[]>([]);
     const infoWindow = ref<google.maps.InfoWindow | undefined>(undefined);
     const isLoading = ref(false);
-    const isInitialized = ref(false);
     const refCount = ref(0);
 
     instance = {
@@ -45,14 +43,13 @@ export function useGoogleMaps(mapId: string) {
       markers,
       infoWindow,
       isLoading,
-      isInitialized,
     };
     mapInstances.set(mapId, instance);
   }
 
   instance.refCount.value++;
 
-  const { map, markers, infoWindow, isLoading, isInitialized, refCount } = instance;
+  const { map, markers, infoWindow, isLoading, refCount } = instance;
 
   async function initMap(params: UseGoogleMapsOptionsType) {
     const currentInstance = mapInstances.get(mapId);
@@ -74,7 +71,7 @@ export function useGoogleMaps(mapId: string) {
     const isMapAttached = mapDiv === mapElement && mapElement.children.length > 0 && mapDiv !== null;
 
     // If map is already initialized and properly attached, nothing to do
-    if (currentInstance.map.value && currentInstance.isInitialized.value && isMapAttached) {
+    if (currentInstance.map.value && isMapAttached) {
       return;
     }
 
@@ -98,7 +95,6 @@ export function useGoogleMaps(mapId: string) {
       });
 
       currentInstance.map.value = mapInstance;
-      currentInstance.isInitialized.value = true;
     } catch (err) {
       Logger.error("Google Maps initialization failed:", err);
     } finally {
@@ -180,7 +176,6 @@ export function useGoogleMaps(mapId: string) {
       }
 
       currentInstance.map.value = null;
-      currentInstance.isInitialized.value = false;
       currentInstance.isLoading.value = false;
 
       mapInstances.delete(mapId);
@@ -197,13 +192,12 @@ export function useGoogleMaps(mapId: string) {
     map,
     markers,
     infoWindow,
-    isInitialized,
     isLoading,
+
     initMap,
     initInfoWindow,
     addMarker,
     removeMarker,
-    clearMarkers,
     cleanup,
   };
 }
