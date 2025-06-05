@@ -44,7 +44,7 @@ export function createWrapperFactory<T extends Component>(
   mount: typeof import("@vue/test-utils").mount,
   component: T,
   globalOverrides: Parameters<typeof mount>[1] = {},
-) {
+): (overrides?: Parameters<typeof mount<T>>[1]) => ReturnType<typeof mount<T>> {
   return (overrides: Parameters<typeof mount<T>>[1] = {}) =>
     mount(component, {
       ...merge({}, defaults, globalOverrides, overrides),
@@ -55,7 +55,7 @@ export function createShallowWrapperFactory<T extends Component>(
   shallowMount: typeof import("@vue/test-utils").shallowMount,
   component: T,
   globalOverrides: Parameters<typeof shallowMount>[1] = {},
-) {
+): (overrides?: Parameters<typeof shallowMount<T>>[1]) => ReturnType<typeof shallowMount<T>> {
   return (overrides: Parameters<typeof shallowMount<T>>[1] = {}) =>
     shallowMount(component, {
       ...merge({}, defaults, globalOverrides, overrides),
