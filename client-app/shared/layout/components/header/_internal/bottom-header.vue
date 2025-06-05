@@ -120,7 +120,6 @@ onClickOutside(
 
 syncRefs(catalogMenuVisible, useScrollLock(document.body));
 
-// TODO: Redirect to localized catalog path if catalogMenuItems has not items
 async function toggleCatalogDropdown(event: Event) {
   if (!catalogMenuItems.value.length) {
     return;
