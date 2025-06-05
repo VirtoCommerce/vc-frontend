@@ -15,10 +15,10 @@
 import { computed } from "vue";
 import GetDirectionsAction from "./get-directions-action.vue";
 
-type IProps = {
+interface IProps {
   info: string;
-};
+}
 
 defineProps<IProps>();
-const title = computed(() => "title");
+const title = computed(() => "Pick point info");
 </script>
