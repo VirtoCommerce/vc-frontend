@@ -36,28 +36,30 @@ const emit = defineEmits<{
   (event: "change", value: EmitType): void;
 }>();
 
-const props = withDefaults(defineProps<IProps>(), {
-  isDisabled: false,
-  items: () => [],
-  size: "md",
-});
-interface IProps {
-  isDisabled?: boolean;
-  modelValue: T extends ItemType ? T[U] : T;
-  items?: readonly T[];
-  /**
-   * The property of the object that will be displayed in the "selected" and "item" slots.
-   * (Optional) Only for objects array of modelValue.
-   */
-  textField?: string;
+const props = withDefaults(
+  defineProps<{
+    isDisabled?: boolean;
+    modelValue: T extends ItemType ? T[U] : T;
+    items?: readonly T[];
+    /**
+     * The property of the object that will be displayed in the "selected" and "item" slots.
+     * (Optional) Only for objects array of modelValue.
+     */
+    textField?: string;
 
-  /**
-   * An object property passed as a new value for the "modelValue" or "change" events
-   * (Optional) Only for objects array of modelValue.
-   */
-  valueField?: U;
-  size?: "sm" | "md" | "lg";
-}
+    /**
+     * An object property passed as a new value for the "modelValue" or "change" events
+     * (Optional) Only for objects array of modelValue.
+     */
+    valueField?: U;
+    size?: "sm" | "md" | "lg";
+  }>(),
+  {
+    isDisabled: false,
+    items: () => [],
+    size: "md",
+  },
+);
 
 function isActiveItem(item: T): boolean {
   const itemValue = props.valueField && isItemObject(item) ? item[props.valueField] : item;
