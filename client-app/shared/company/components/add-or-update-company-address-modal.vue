@@ -1,21 +1,6 @@
 <template>
-  <VcModal
-    :title="
-      $t(
-        !address
-          ? 'shared.company.add_or_update_address_modal.create_title'
-          : 'shared.company.add_or_update_address_modal.edit_title',
-      )
-    "
-    hide-actions
-    is-mobile-fullscreen
-    dividers
-  >
+  <VcModal :title="title" hide-actions is-mobile-fullscreen>
     <template #default="{ close }">
-      <h3 class="mb-3 text-xl font-black uppercase">
-        {{ $t("shared.company.add_or_update_address_modal.address_title") }}
-      </h3>
-
       <AddressForm
         :model-value="address"
         :countries="countries"
@@ -41,7 +26,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useCountries } from "@/core/composables";
 import { AddressForm } from "@/shared/common";
 import type { MemberAddressType } from "@/core/api/graphql/types";
@@ -57,9 +43,16 @@ export interface IProps {
 
 const emit = defineEmits<IEmits>();
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const { countries, loadCountries } = useCountries();
+const { t } = useI18n();
+
+const title = computed<string>(() =>
+  props.address
+    ? t("shared.company.add_or_update_address_modal.edit_title")
+    : t("shared.company.add_or_update_address_modal.create_title"),
+);
 
 function saveAddress(address: MemberAddressType) {
   emit("result", address);
