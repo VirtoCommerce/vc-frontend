@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, ref, shallowRef, watch } from "vue";
+import { onBeforeUnmount, shallowRef, watch } from "vue";
 import { Logger } from "@/core/utilities";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 
@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<IProps>(), {
   pin: () => ({}),
 });
 
-const { addMarker, initInfoWindow, map, infoWindow } = useGoogleMaps();
+const { addMarker, initInfoWindow, map, infoWindow, removeMarker } = useGoogleMaps();
 
 interface IProps {
   position: google.maps.LatLngLiteral;
@@ -31,7 +31,6 @@ interface IEmits {
 let listener: google.maps.MapsEventListener | undefined;
 
 const marker = shallowRef<google.maps.marker.AdvancedMarkerElement>();
-const isInitialized = ref(false);
 
 function createMarker() {
   if (!map.value || marker.value) {
@@ -73,9 +72,8 @@ function init() {
 const unwatch = watch(
   map,
   () => {
-    if (map.value && !isInitialized.value) {
+    if (map.value) {
       init();
-      isInitialized.value = true;
       unwatch();
     }
   },
@@ -84,5 +82,10 @@ const unwatch = watch(
 
 onBeforeUnmount(() => {
   listener?.remove();
+
+  if (marker.value) {
+    removeMarker(marker.value);
+    marker.value = undefined;
+  }
 });
 </script>

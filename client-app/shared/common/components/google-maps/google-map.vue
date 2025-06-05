@@ -37,8 +37,6 @@ const mapContainer = ref<HTMLDivElement>();
 const { initMap, map, isInitialized, cleanup } = useGoogleMaps();
 
 onMounted(async () => {
-  cleanup();
-
   if (isInitialized.value) {
     return;
   }

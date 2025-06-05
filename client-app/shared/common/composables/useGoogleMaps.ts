@@ -32,6 +32,20 @@ export function _useGoogleMaps() {
       return;
     }
 
+    // If we already have a map but it's for a different element, clean up first
+    if (isInitialized.value && map.value) {
+      const currentElementId = params.elementId ?? defaults.elementId;
+      const mapElement = document.getElementById(currentElementId);
+
+      // If the map element is different or doesn't exist, cleanup and reinitialize
+      if (!mapElement || mapElement !== map.value.getDiv()) {
+        cleanup();
+      } else {
+        // Map is already initialized for the correct element
+        return;
+      }
+    }
+
     isLoading.value = true;
 
     const loader = new Loader({
@@ -67,7 +81,6 @@ export function _useGoogleMaps() {
     if (!map.value) {
       return;
     }
-    console.trace("addMarker", markerProps);
 
     const marker = new google.maps.marker.AdvancedMarkerElement({
       ...markerProps,
@@ -75,6 +88,19 @@ export function _useGoogleMaps() {
     });
     markers.value = [...markers.value, marker];
     return marker;
+  }
+
+  function removeMarker(markerToRemove: google.maps.marker.AdvancedMarkerElement) {
+    if (!markerToRemove) {
+      return;
+    }
+
+    markerToRemove.map = null;
+
+    const markerIndex = markers.value.indexOf(markerToRemove);
+    if (markerIndex > -1) {
+      markers.value.splice(markerIndex, 1);
+    }
   }
 
   function initInfoWindow() {
@@ -110,6 +136,7 @@ export function _useGoogleMaps() {
     initMap,
     initInfoWindow,
     addMarker,
+    removeMarker,
     cleanup,
   };
 }
