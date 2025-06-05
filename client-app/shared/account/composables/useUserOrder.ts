@@ -28,7 +28,7 @@ export function useUserOrder() {
     loading.value = true;
 
     try {
-      order.value = (await getShortOrder(payload)) as CustomerOrderType;
+      order.value = (await getShortOrder(payload)) as CustomerOrderType; // todo refactor and remove assertion
     } catch (e) {
       Logger.error(`${useUserOrder.name}.${fetchShortOrder.name}`, e);
       throw e;
@@ -41,7 +41,7 @@ export function useUserOrder() {
     loading.value = true;
 
     try {
-      order.value = (await getFullOrder(payload)) as CustomerOrderType;
+      order.value = (await getFullOrder(payload)) as CustomerOrderType; // todo refactor and remove assertion
     } catch (e) {
       Logger.error(`${useUserOrder.name}.${fetchFullOrder.name}`, e);
       throw e;
