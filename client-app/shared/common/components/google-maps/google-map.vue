@@ -44,9 +44,11 @@ onMounted(async () => {
   await initMap({
     apiKey: apiKey.value,
     elementId: elementId.value,
-    center: center.value,
-    zoom: zoom.value,
-    ...props.options,
+    options: {
+      center: center.value,
+      zoom: zoom.value,
+      ...props.options,
+    },
   });
 
   if (!props.listenToBounds) {

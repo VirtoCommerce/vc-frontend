@@ -7,15 +7,13 @@ import { Logger } from "@/core/utilities/logger";
 export type UseGoogleMapsOptionsType = {
   apiKey: string;
   elementId?: string;
-  center?: google.maps.LatLngLiteral;
-  zoom?: number;
+  options?: google.maps.MapOptions;
 };
 
 const defaults = {
   apiKey: "",
   elementId: "google-map",
-  center: { lat: 0, lng: 0 },
-  zoom: 10,
+  options: {},
 };
 
 export function _useGoogleMaps() {
@@ -65,9 +63,8 @@ export function _useGoogleMaps() {
       }
 
       map.value = new GoogleMap(mapElement, {
-        center: params.center ?? defaults.center,
-        zoom: params.zoom ?? defaults.zoom,
         mapId: uniqueId("map-"),
+        ...params.options,
       });
       isInitialized.value = true;
     } catch (err) {
