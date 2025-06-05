@@ -5,7 +5,7 @@
         <ImageGallery :images="product.images">
           <template #badges>
             <BadgesWrapper size="lg">
-              <PurchasedBeforeBadge v-if="product.isPurchased" size="lg" show-text truncate />
+              <PurchasedBeforeBadge v-if="product.isPurchased" size="lg" show-text />
 
               <DiscountBadge static :price="product.price" size="lg" />
             </BadgesWrapper>

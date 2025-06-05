@@ -6,6 +6,7 @@
     class="purchased-before-badge"
     data-test-id="purchased-before-badge"
     :square="!showText"
+    truncate
   >
     <VcIcon name="round-check" />
 
