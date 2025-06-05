@@ -30,15 +30,13 @@
         </div>
 
         <div class="mt-4 print:hidden">
-          <component
-            :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
-            v-if="
-              isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON) &&
-              shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, product)
-            "
+          <ExtensionPoint
+            v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.sidebarButton, product)"
+            :name="EXTENSION_NAMES.productPage.sidebarButton"
+            category="productCard"
             :product="product"
-            v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
           />
+
           <AddToCart v-else :product="product">
             <InStock
               :is-in-stock="product.availabilityData?.isInStock"
@@ -60,8 +58,7 @@ import { useCurrency } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { AddToCart, useShortCart } from "@/shared/cart";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
-import { useCustomProductComponents } from "@/shared/common/composables";
-import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import CountInCart from "./count-in-cart.vue";
 import InStock from "./in-stock.vue";
 import ProductPriceBlock from "./product-price-block.vue";
@@ -79,7 +76,6 @@ const product = toRef(props, "product");
 const { currentCurrency } = useCurrency();
 const { getItemsTotal } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
-const { getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 
