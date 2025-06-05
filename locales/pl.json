@@ -1373,7 +1373,8 @@
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Twoje zapytanie <strong>{0}</strong> nie zwróciło żadnych wyników",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "title": "Szukaj"
     },
     "bulk_order": {
       "meta": {

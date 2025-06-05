@@ -1373,7 +1373,8 @@
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "「<strong>{0}</strong>」に一致する結果が見つかりませんでした",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "title": "検索"
     },
     "bulk_order": {
       "meta": {
