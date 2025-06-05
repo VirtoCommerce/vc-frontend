@@ -671,7 +671,7 @@
         }
       },
       "discount_badge": {
-        "off": "OFF"
+        "off": "-{discount}"
       },
       "branches_modal": {
         "title": "店舗を選択",
