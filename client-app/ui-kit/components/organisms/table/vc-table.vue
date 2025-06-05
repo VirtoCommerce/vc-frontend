@@ -96,34 +96,33 @@ export type ItemType = {
   [key: string]: unknown;
 };
 
-interface IEmits {
+const emit = defineEmits<{
   (event: "itemClick", item: T): void;
   (event: "headerClick", item: ISortInfo): void;
   (event: "pageChanged", page: number): void;
-}
+}>();
 
-interface IProps {
-  columns?: ITableColumn[];
-  items?: T[];
-  sort?: ISortInfo;
-  pages?: number;
-  page?: number;
-  loading?: boolean;
-  hideDefaultHeader?: boolean;
-  hideDefaultFooter?: boolean;
-  description?: string;
-  pageLimit?: number | null;
-}
-
-const emit = defineEmits<IEmits>();
-
-withDefaults(defineProps<IProps>(), {
-  columns: () => [],
-  items: () => [],
-  pages: 0,
-  page: 0,
-  pageLimit: PAGE_LIMIT,
-});
+withDefaults(
+  defineProps<{
+    columns?: ITableColumn[];
+    items?: T[];
+    sort?: ISortInfo;
+    pages?: number;
+    page?: number;
+    loading?: boolean;
+    hideDefaultHeader?: boolean;
+    hideDefaultFooter?: boolean;
+    description?: string;
+    pageLimit?: number | null;
+  }>(),
+  {
+    columns: () => [],
+    items: () => [],
+    pages: 0,
+    page: 0,
+    pageLimit: PAGE_LIMIT,
+  },
+);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
