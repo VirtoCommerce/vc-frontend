@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, toRefs } from "vue";
+import { onBeforeUnmount, onMounted, ref, toRefs } from "vue";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 
 interface IProps {
@@ -12,7 +12,15 @@ interface IProps {
   elementId?: string;
   center?: google.maps.LatLngLiteral;
   zoom?: number;
+  options?: Omit<google.maps.MapOptions, "center" | "zoom" | "mapId">;
+  listenToBounds?: boolean;
 }
+
+interface IEmits {
+  boundariesChanged: [boundaries: google.maps.LatLngBounds];
+}
+
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   center: () => ({ lat: 0, lng: 0 }),
@@ -20,18 +28,43 @@ const props = withDefaults(defineProps<IProps>(), {
   elementId: "google-map",
 });
 
+let listener: google.maps.MapsEventListener | undefined;
+
 const { apiKey, center, zoom, elementId } = toRefs(props);
 
 const mapContainer = ref<HTMLDivElement>();
 
-const { initMap } = useGoogleMaps();
+const { initMap, map, isInitialized, cleanup } = useGoogleMaps();
 
 onMounted(async () => {
+  cleanup();
+
+  if (isInitialized.value) {
+    return;
+  }
+
   await initMap({
     apiKey: apiKey.value,
     elementId: elementId.value,
     center: center.value,
     zoom: zoom.value,
+    ...props.options,
   });
+
+  if (!props.listenToBounds) {
+    return;
+  }
+
+  listener = map.value?.addListener("bounds_changed", () => {
+    const bounds = map.value?.getBounds();
+    if (bounds) {
+      emit("boundariesChanged", bounds);
+    }
+  });
+});
+
+onBeforeUnmount(() => {
+  listener?.remove();
+  cleanup();
 });
 </script>

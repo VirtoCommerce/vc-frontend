@@ -25,6 +25,7 @@ export function _useGoogleMaps() {
   const infoWindow = ref<google.maps.InfoWindow>();
 
   const isLoading = ref(false);
+  const isInitialized = ref(false);
 
   async function initMap(params: UseGoogleMapsOptionsType) {
     if (isLoading.value) {
@@ -45,7 +46,8 @@ export function _useGoogleMaps() {
 
       const mapElement = document.getElementById(params.elementId ?? defaults.elementId);
       if (!mapElement) {
-        throw new Error(`Map container element with id "${params.elementId ?? defaults.elementId}" not found`);
+        Logger.error(`Map container element with id "${params.elementId ?? defaults.elementId}" not found`);
+        return;
       }
 
       map.value = new GoogleMap(mapElement, {
@@ -53,6 +55,7 @@ export function _useGoogleMaps() {
         zoom: params.zoom ?? defaults.zoom,
         mapId: uniqueId("map-"),
       });
+      isInitialized.value = true;
     } catch (err) {
       Logger.error("Google Maps initialization failed:", err);
     } finally {
@@ -64,6 +67,7 @@ export function _useGoogleMaps() {
     if (!map.value) {
       return;
     }
+    console.trace("addMarker", markerProps);
 
     const marker = new google.maps.marker.AdvancedMarkerElement({
       ...markerProps,
@@ -81,16 +85,32 @@ export function _useGoogleMaps() {
     infoWindow.value = new google.maps.InfoWindow();
   }
 
+  function clearMarkers() {
+    markers.value.forEach((marker) => {
+      marker.map = null;
+    });
+    markers.value.length = 0;
+  }
+
+  function cleanup() {
+    clearMarkers();
+    infoWindow.value = undefined;
+    map.value = null;
+    isInitialized.value = false;
+  }
+
   return {
     map,
     markers,
     infoWindow,
+    isInitialized,
 
     isLoading,
 
     initMap,
     initInfoWindow,
     addMarker,
+    cleanup,
   };
 }
 

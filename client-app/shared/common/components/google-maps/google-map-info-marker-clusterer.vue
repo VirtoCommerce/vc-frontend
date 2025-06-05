@@ -7,6 +7,21 @@ import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { watch } from "vue";
 import { Logger } from "@/core/utilities";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
+import type { MarkerClustererOptions, onClusterClickHandler } from "@googlemaps/markerclusterer";
+
+interface IProps {
+  options?: Omit<MarkerClustererOptions, "map" | "markers" | "onClusterClick">;
+}
+
+interface IEmits {
+  clusterClick: [...Parameters<onClusterClickHandler>];
+}
+
+const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  options: () => ({}),
+});
 
 const { map, markers } = useGoogleMaps();
 
@@ -21,6 +36,10 @@ function createMarkerClusterer() {
     markerClusterer = new MarkerClusterer({
       map: map.value,
       markers: markers.value,
+      onClusterClick: (event, cluster, _map) => {
+        emit("clusterClick", event, cluster, _map);
+      },
+      ...props.options,
     });
   } catch (error) {
     Logger.error("Failed to create MarkerClusterer:", error);
