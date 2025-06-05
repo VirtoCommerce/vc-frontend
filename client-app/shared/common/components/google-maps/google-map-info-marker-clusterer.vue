@@ -10,13 +10,15 @@ import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 
 const { map, markers } = useGoogleMaps();
 
+let markerClusterer: MarkerClusterer | undefined;
+
 function createMarkerClusterer() {
   if (!map.value) {
     return;
   }
 
   try {
-    new MarkerClusterer({
+    markerClusterer = new MarkerClusterer({
       map: map.value,
       markers: markers.value,
     });
@@ -25,11 +27,23 @@ function createMarkerClusterer() {
   }
 }
 
+const unwatch = watch(
+  map,
+  () => {
+    if (map.value) {
+      createMarkerClusterer();
+      unwatch();
+    }
+  },
+  { immediate: true },
+);
+
 watch(
   markers,
   () => {
-    if (markers.value && markers.value.length > 0) {
-      createMarkerClusterer();
+    if (markers.value && markers.value.length > 0 && markerClusterer) {
+      markerClusterer.clearMarkers();
+      markerClusterer.addMarkers(markers.value);
     }
   },
   { immediate: true },

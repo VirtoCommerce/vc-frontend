@@ -1,15 +1,14 @@
 <template>
   <div class="mt-5 h-screen w-screen">
-    <GoogleMap api-key="AIzaSyAAt1IUts-x_5Veq-HxUElzZOtYuBzzG5Q" :center="{ lat: 40.7589, lng: -73.9851 }" :zoom="12">
+    <GoogleMap api-key="AIzaSyAAt1IUts-x_5Veq-HxUElzZOtYuBzzG5Q" :center="{ lat: 40.7589, lng: -73.9851 }" :zoom="10">
       <GoogleMapInfoMarkerClusterer>
         <GoogleMapMarker
           v-for="location in nycLocations"
           :key="location.title"
           :position="location.position"
           :title="location.title"
-          :content="location.title"
-        >
-        </GoogleMapMarker>
+          :info-content="location.title"
+        />
       </GoogleMapInfoMarkerClusterer>
     </GoogleMap>
   </div>
