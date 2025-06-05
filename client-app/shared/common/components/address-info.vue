@@ -16,7 +16,7 @@
         {{ address.email }}
       </span>
     </div>
-    <div class="flex items-center justify-between gap-2.5 pt-4 empty:hidden">
+    <div v-if="showActions" class="flex items-center justify-between gap-2.5 pt-4 empty:hidden">
       <VcButton size="xs" prepend-icon="information" @click="openInfo">Point info</VcButton>
       <GetDirectionsAction />
     </div>
@@ -32,9 +32,10 @@ import GetDirectionsAction from "@/shared/common/components/get-directions-actio
 
 interface IProps {
   address: AnyAddressType;
+  showActions: boolean;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const { openModal, closeModal } = useModal();
 
@@ -42,7 +43,8 @@ function openInfo() {
   openModal({
     component: AddressInfoModal,
     props: {
-      info: "Company information",
+      eta: "in the future",
+      address: props.address,
       onClose: closeModal,
     },
   });

@@ -117,7 +117,7 @@
 
           <!-- Shipping Address Card -->
           <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="$t('common.titles.shipping_address')">
-            <AddressInfo :address="deliveryAddress" class="text-base" />
+            <AddressInfo :address="deliveryAddress" class="text-base" show-actions />
           </VcWidget>
 
           <!-- Payment Method section -->

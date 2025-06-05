@@ -15,7 +15,7 @@ const order = shallowRef<CustomerOrderType>();
 const giftItems = computed(() => (order.value?.items || []).filter((item) => item.isGift));
 const orderItems = computed(() => (order.value?.items || []).filter((item) => !item.isGift));
 const orderItemsGroupedByVendor = computed(() => groupByVendor(orderItems.value));
-const allItemsAreDigital = computed<boolean>(
+const allItemsAreDigital = computed(
   () => !!order.value?.items?.every((item) => item.productType === ProductType.Digital),
 );
 const shipment = computed(() => order.value?.shipments?.[0]);
