@@ -34,6 +34,7 @@
                 v-if="getLatLng(address.geoLocation)"
                 :map-id="MAP_ID"
                 :position="getLatLng(address.geoLocation)!"
+                :pin="createPin()"
               >
                 <div class="select-address-map-modal__info-window">
                   <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
@@ -116,6 +117,8 @@ import { getAddressName } from "@/core/utilities/address";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
 import { Logger } from "@/core/utilities/logger";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
+import { getColorValue } from "@/ui-kit/utilities/css";
+import { getIconUrl } from "@/ui-kit/utilities/images";
 import type { GetPickupLocationsQuery } from "@/core/api/graphql/types";
 import GoogleMapMarkerClusterer from "@/shared/common/components/google-maps/google-map-marker-clusterer.vue";
 import GoogleMapMarker from "@/shared/common/components/google-maps/google-map-marker.vue";
@@ -146,6 +149,21 @@ interface IProps {
 
 interface IEmits {
   result: [string];
+}
+
+const pinColor = getColorValue("primary");
+const pinGlyphIcon = getIconUrl("cube");
+
+function createPin() {
+  const glyphImg = document.createElement("img");
+  glyphImg.src = pinGlyphIcon;
+
+  return {
+    background: pinColor,
+    borderColor: pinColor,
+    glyph: glyphImg,
+    scale: 1.5,
+  };
 }
 
 function getLatLng(location: string | undefined) {
