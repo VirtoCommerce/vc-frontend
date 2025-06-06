@@ -717,11 +717,6 @@ export type ContactTypeAddressesArgs = {
 };
 
 
-export type ContactTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-};
-
-
 export type ContactTypeOrganizationsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -767,11 +762,6 @@ export type ContractType = {
   status?: Maybe<Scalars['String']['output']>;
   storeId?: Maybe<Scalars['String']['output']>;
   vendorId?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type ContractTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CountryRegionType = {
@@ -959,11 +949,6 @@ export type CustomerOrderType = {
   taxTotal: MoneyType;
   taxType?: Maybe<Scalars['String']['output']>;
   total: MoneyType;
-};
-
-
-export type CustomerOrderTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -2366,6 +2351,7 @@ export type InputRegisterContactType = {
 
 export type InputRegisterOrganizationType = {
   address?: InputMaybe<InputMemberAddressType>;
+  addresses?: InputMaybe<Array<InputMaybe<InputMemberAddressType>>>;
   description?: InputMaybe<Scalars['String']['input']>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
   name: Scalars['String']['input'];
@@ -3004,11 +2990,6 @@ export type MemberTypeAddressesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type MemberTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -3901,11 +3882,6 @@ export type OrderLineItemType = {
   width?: Maybe<Scalars['Decimal']['output']>;
 };
 
-
-export type OrderLineItemTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type OrderPaymentMethodType = {
   code: Scalars['String']['output'];
   currency: CurrencyType;
@@ -4010,11 +3986,6 @@ export type OrderShipmentType = {
   width?: Maybe<Scalars['Decimal']['output']>;
 };
 
-
-export type OrderShipmentTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type OrderShippingMethodType = {
   code: Scalars['String']['output'];
   description?: Maybe<Scalars['String']['output']>;
@@ -4087,12 +4058,6 @@ export type OrganizationContactsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   searchPhrase?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-/** Organization info */
-export type OrganizationDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -4283,11 +4248,6 @@ export type PaymentInType = {
   transactions: Array<PaymentTransactionType>;
   vendor?: Maybe<CommonVendor>;
   voidedDate?: Maybe<Scalars['DateTime']['output']>;
-};
-
-
-export type PaymentInTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PaymentMethodType = {
@@ -5687,26 +5647,22 @@ export type RegisterContactType = {
   status?: Maybe<Scalars['String']['output']>;
 };
 
-
-export type RegisterContactTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type RegisterOrganizationType = {
+  /**
+   * Returns first organization address.
+   * @deprecated Use addresses field instead.
+   */
   address?: Maybe<MemberAddressType>;
+  /** Organization's addresses */
+  addresses?: Maybe<Array<Maybe<MemberAddressType>>>;
   createdBy?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
-  /** Contact's dynamic property values */
+  /** Organization's dynamic property values */
   dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   ownerId?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type RegisterOrganizationTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RegistrationErrorType = {
@@ -6139,12 +6095,6 @@ export type VendorAddressesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-/** Vendor Info */
-export type VendorDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
