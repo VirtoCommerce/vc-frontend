@@ -35,12 +35,12 @@
     <div ref="sliderRef" class="vc-slider__slider"></div>
 
     <div class="vc-slider__inputs">
-      <VcInput v-model="start" size="sm" class="vc-slider__input" :disabled="disabled" />
+      <VcInput v-model="start" size="sm" class="vc-slider__input" min="min" :max="max" :disabled="disabled" />
 
-      <template v-if="!!end">
+      <template v-if="!isNaN(end)">
         <b class="vc-slider__dash">&mdash;</b>
 
-        <VcInput v-model="end" size="sm" class="vc-slider__input" :disabled="disabled" />
+        <VcInput v-model="end" size="sm" class="vc-slider__input" min="min" :max="max" :disabled="disabled" />
       </template>
     </div>
   </div>
@@ -51,6 +51,7 @@ import { create } from "nouislider";
 import { ref, onMounted, computed, toRefs, watch } from "vue";
 import type { API } from "nouislider";
 import "nouislider/dist/nouislider.css";
+import { isNaN } from "lodash";
 
 type RangeType = [number | null, number | null];
 type ColType = { count: number; value: RangeType };
