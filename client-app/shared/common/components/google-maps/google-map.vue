@@ -14,7 +14,7 @@ interface IProps {
   zoom?: number;
   options?: Omit<google.maps.MapOptions, "center" | "zoom" | "mapId">;
   listenToBounds?: boolean;
-  mapId?: string;
+  mapId: string;
 }
 
 interface IEmits {
@@ -27,7 +27,6 @@ const props = withDefaults(defineProps<IProps>(), {
   center: () => ({ lat: 0, lng: 0 }),
   zoom: 10,
   elementId: "google-map",
-  mapId: "google-map",
 });
 
 let listener: google.maps.MapsEventListener | undefined;

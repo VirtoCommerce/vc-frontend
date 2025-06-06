@@ -11,12 +11,11 @@ import type { MarkerClustererOptions } from "@googlemaps/markerclusterer";
 
 interface IProps {
   options?: Omit<MarkerClustererOptions, "map" | "markers" | "onClusterClick">;
-  mapId?: string;
+  mapId: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   options: () => ({}),
-  mapId: "google-map",
 });
 
 const { mapId } = toRefs(props);

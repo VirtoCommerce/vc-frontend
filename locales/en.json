@@ -752,6 +752,9 @@
         "select_button": "@:common.buttons.select",
         "price_label": "@:common.labels.price{':'}",
         "title": "Select shipping method"
+      },
+      "select_bopis_modal": {
+        "title": "Pick points"
       }
     },
     "bulk_order": {

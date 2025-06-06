@@ -1,11 +1,12 @@
-import { computed } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import { getPickupLocations } from "@/core/api/graphql/shipment";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_ID_SHIPPING, BOPIS_MAP_ENABLED_KEY, BOPIS_MAP_API_KEY } from "@/core/constants/modules";
 import { globals } from "@/core/globals";
 import { useFullCart } from "@/shared/cart/composables";
 import { useModal } from "@/shared/modal";
 import type { PickupLocationType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
-import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
 export const BOPIS_CODE = "BuyOnlinePickupInStore";
 
@@ -13,6 +14,7 @@ const ADDRESSES_FETCH_LIMIT = 999;
 
 export function useBopis() {
   const { availableShippingMethods, updateShipment, shipment } = useFullCart();
+  const { isEnabled, getSettingValue } = useModuleSettings(MODULE_ID_SHIPPING);
 
   const { result, loading, error, load } = getPickupLocations();
 
@@ -21,11 +23,21 @@ export function useBopis() {
   );
   const hasBOPIS = computed(() => availableShippingMethods.value.some((method) => method.code === BOPIS_CODE));
   const bopisMethod = computed(() => availableShippingMethods.value.find((method) => method.code === BOPIS_CODE));
+  const isBopisMapEnabled = computed(() => isEnabled(BOPIS_MAP_ENABLED_KEY));
+  const bopisMapApiKey = computed(() => getSettingValue(BOPIS_MAP_API_KEY));
+
+  const modalComponent = computed(() =>
+    isBopisMapEnabled.value
+      ? defineAsyncComponent(() => import("@/shared/checkout/components/select-address-map-modal.vue"))
+      : defineAsyncComponent(() => import("@/shared/checkout/components/select-address-modal.vue")),
+  );
 
   const normalizedAddresses = computed<AnyAddressType[]>(() =>
     addresses.value.map((pickupInStoreAddress) => ({
       ...pickupInStoreAddress.address,
-      description: pickupInStoreAddress.name,
+      description: isBopisMapEnabled.value ? pickupInStoreAddress.description : pickupInStoreAddress.name,
+      workingHours: isBopisMapEnabled.value ? pickupInStoreAddress.workingHours : undefined,
+      geoLocation: isBopisMapEnabled.value ? pickupInStoreAddress.geoLocation : undefined,
     })),
   );
 
@@ -46,10 +58,11 @@ export function useBopis() {
     }
 
     openModal({
-      component: SelectAddressModal,
+      component: modalComponent.value,
 
       props: {
         addresses: normalizedAddresses.value,
+        apiKey: isBopisMapEnabled.value ? bopisMapApiKey.value : undefined,
         currentAddress: {
           ...shipment.value?.deliveryAddress,
           id: shipment.value?.deliveryAddress?.outerId,

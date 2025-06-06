@@ -12,7 +12,6 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   showInfo: true,
   pin: () => ({}),
-  mapId: "google-map",
 });
 
 const { mapId } = toRefs(props);
@@ -25,7 +24,7 @@ interface IProps {
   infoContent?: string;
   showInfo?: boolean;
   pin?: google.maps.marker.PinElementOptions;
-  mapId?: string;
+  mapId: string;
 }
 
 interface IEmits {
