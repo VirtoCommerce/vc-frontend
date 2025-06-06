@@ -69,14 +69,12 @@ Cols.args = {
   value: [500, 800],
   min: 100,
   max: 900,
-  step: 10,
   cols: manyCols,
 };
 
 export const WithTooltip = Template.bind({});
 WithTooltip.args = {
   value: [400, 1100],
-  step: 10,
   min: 470,
   max: 1300,
   colsHeight: "5rem",
@@ -87,7 +85,6 @@ WithTooltip.args = {
 export const UpdateOnColumnClick = Template.bind({});
 UpdateOnColumnClick.args = {
   value: [450, 800],
-  step: 10,
   min: 450,
   max: 1100,
   cols: similarWidthCol,
@@ -98,7 +95,6 @@ UpdateOnColumnClick.args = {
 export const UpdateOnColumnClickManyDifferentColumns = Template.bind({});
 UpdateOnColumnClickManyDifferentColumns.args = {
   value: [0, 500],
-  step: 10,
   colsHeight: "5rem",
   cols: manyCols,
   min: 150,
@@ -110,7 +106,6 @@ UpdateOnColumnClickManyDifferentColumns.args = {
 export const NoStartEndColumns = Template.bind({});
 NoStartEndColumns.args = {
   value: [0, 500],
-  step: 10,
   colsHeight: "5rem",
   cols: noStartEndCols,
   min: 0,
@@ -119,10 +114,10 @@ NoStartEndColumns.args = {
   updateOnColumnClick: true,
 };
 
-export const Range = Template.bind({});
-Range.args = {
+export const OneSlider = Template.bind({});
+OneSlider.args = {
   value: [1600],
   min: 1300,
   max: 3250,
-  step: 10,
+  step: 100,
 };
