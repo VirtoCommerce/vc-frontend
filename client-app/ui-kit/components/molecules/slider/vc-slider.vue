@@ -242,14 +242,6 @@ onMounted(() => {
     .noUi-touch-area {
       @apply absolute size-[300%] top-[calc(var(--handle-size)/-2)] left-[calc(var(--handle-size)/-2)] rounded-full;
     }
-
-    #slider-hide .noUi-tooltip {
-      display: none;
-    }
-
-    #slider-hide .noUi-active .noUi-tooltip {
-      display: block;
-    }
   }
 
   &__inputs {
