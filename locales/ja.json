@@ -1135,6 +1135,13 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "到着予定時刻",
+          "emailAndPhone": "{phone} にお電話いただくか、{email} にメールでお問い合わせください",
+          "emailOnly": "メール {email}",
+          "phoneOnly": "電話 {phone}",
+          "questions": "ご質問は？"
         }
       },
       "order_payment": {

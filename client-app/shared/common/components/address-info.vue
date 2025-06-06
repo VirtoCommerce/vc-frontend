@@ -32,7 +32,6 @@ import GetDirectionsAction from "@/shared/common/components/get-directions-actio
 
 interface IProps {
   address: AnyAddressType;
-  otherAddress?: AddressType;
   showActions?: boolean;
 }
 
@@ -44,9 +43,7 @@ function openInfo() {
   openModal({
     component: AddressInfoModal,
     props: {
-      eta: "in the future",
       address: props.address,
-      otherAddress: props.otherAddress,
       onClose: closeModal,
     },
   });

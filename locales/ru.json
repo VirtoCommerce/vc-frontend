@@ -1135,6 +1135,13 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Ориентировочное время прибытия",
+          "emailAndPhone": "Позвоните по номеру {phone} или напишите на {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Позвонить {phone}",
+          "questions": "Вопросы?"
         }
       },
       "order_payment": {
