@@ -4,6 +4,7 @@ export * from "./breadcrumbs";
 export * from "./categories";
 export * from "./common";
 export * from "./date";
+export * from "./geo";
 export * from "./line-items";
 export * from "./logger";
 export * from "./menu";
