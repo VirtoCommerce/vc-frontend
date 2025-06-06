@@ -9,7 +9,9 @@
               :map-id="MAP_ID"
               :position="getLatLng(address.geoLocation)!"
               :info-content="address.description"
-            />
+            >
+              {{ address.description }}
+            </GoogleMapMarker>
           </template>
         </GoogleMapMarkerClusterer>
       </GoogleMap>
