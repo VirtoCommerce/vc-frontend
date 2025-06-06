@@ -1,7 +1,7 @@
 <template>
   <VcWidget :title="$t('shared.checkout.shipping_details_section.title')" prepend-icon="truck" size="lg">
     <div class="flex flex-col flex-wrap gap-4 xs:flex-row xs:gap-y-6 lg:gap-8">
-      <div v-if="hasBOPIS">
+      <div v-if="hasBOPIS && !onlyOneDeliveryMethod">
         <VcLabel>
           {{ $t("shared.checkout.shipping_details_section.labels.delivery_option") }}
         </VcLabel>
@@ -133,29 +133,42 @@ const SHIPPING_OPTIONS = {
 
 type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
 
-const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod } = useCheckout();
-
-const mode = ref<ShippingOptionType>(shipmentMethod.value?.code === BOPIS_CODE ? "pickup" : "shipping");
+const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod, billingAddressEqualsShipping } =
+  useCheckout();
 
 const { availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
 const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
 
+const mode = ref<ShippingOptionType>(getDefaultMode());
+
+const onlyOneDeliveryMethod = computed(() => availableShippingMethods.value.length === 1);
 const shippingMethods = computed(() => availableShippingMethods.value.filter((method) => method.code !== BOPIS_CODE));
 
 function switchShippingOptions(_mode: ShippingOptionType) {
   mode.value = _mode;
 }
 
+function getDefaultMode() {
+  if (shipmentMethod.value?.code) {
+    return shipmentMethod.value?.code === BOPIS_CODE ? "pickup" : "shipping";
+  }
+  if (availableShippingMethods.value.length === 1) {
+    return availableShippingMethods.value[0].code === BOPIS_CODE ? "pickup" : "shipping";
+  }
+  return "shipping";
+}
+
 watch(
   mode,
   (newMode, previousMode) => {
-    if (!previousMode) {
-      return;
-    }
-
     const shippingMethod = newMode === SHIPPING_OPTIONS.pickup ? bopisMethod.value : shippingMethods.value[0];
+    billingAddressEqualsShipping.value = shippingMethod?.code !== BOPIS_CODE;
 
-    if (!shippingMethod || shippingMethod.code === shipment.value?.shipmentMethodCode) {
+    if (
+      !shippingMethod ||
+      shippingMethod.code === shipment.value?.shipmentMethodCode ||
+      (!previousMode && shippingMethod.code !== BOPIS_CODE)
+    ) {
       return;
     }
 
