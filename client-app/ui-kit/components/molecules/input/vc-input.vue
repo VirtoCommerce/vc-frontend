@@ -121,15 +121,13 @@ export interface IProps {
   testIdInput?: string;
 }
 
-export interface IEmits {
-  (event: "clear"): void;
-}
-
 defineOptions({
   inheritAttrs: false,
 });
 
-const emit = defineEmits<IEmits>();
+const emit = defineEmits<{
+  (event: "clear"): void;
+}>();
 
 const props = withDefaults(defineProps<IProps>(), {
   type: "text",
