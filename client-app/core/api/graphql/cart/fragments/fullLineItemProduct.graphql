@@ -17,4 +17,5 @@ fragment fullLineItemProduct on Product {
     ...availabilityData
   }
   isConfigurable
+  packSize
 }

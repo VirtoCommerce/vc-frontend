@@ -5,4 +5,5 @@ export { default as VcModal } from "./modal/vc-modal.vue";
 export { default as VcPagination } from "./pagination/vc-pagination.vue";
 export { default as VcProductCard } from "./product-card/vc-product-card.vue";
 export { default as VcProductImage } from "./product-image/vc-product-image.vue";
+export { default as VcQuantityStepper } from "./quantity-stepper/vc-quantity-stepper.vue";
 export { default as VcTable } from "./table/vc-table.vue";

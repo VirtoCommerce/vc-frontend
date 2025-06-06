@@ -87,7 +87,9 @@ describe("use-quantity-validation-schema", () => {
       minQuantity: ref(6),
     });
 
-    expect(() => quantitySchema.value.validateSync(0)).toThrowError(expect.objectContaining({ type: "min" }) as Error);
+    expect(() => quantitySchema.value.validateSync(0)).toThrowError(
+      expect.objectContaining({ type: "incorrectMinValue" }) as Error,
+    );
     expect(() => quantitySchema.value.validateSync(4)).toThrowError(
       expect.objectContaining({ type: "incorrectMinValue" }) as Error,
     );
@@ -103,7 +105,9 @@ describe("use-quantity-validation-schema", () => {
       maxQuantity: ref(110),
     });
 
-    expect(() => quantitySchema.value.validateSync(0)).toThrowError(expect.objectContaining({ type: "min" }) as Error);
+    expect(() => quantitySchema.value.validateSync(0)).toThrowError(
+      expect.objectContaining({ type: "incorrectMinValue" }) as Error,
+    );
     expect(() => quantitySchema.value.validateSync(4)).toThrowError(
       expect.objectContaining({ type: "incorrectMinValue" }) as Error,
     );
@@ -322,5 +326,212 @@ describe("use-quantity-validation-schema", () => {
 
     expect(() => quantitySchema.value.validateSync(1)).not.toThrow();
     expect(() => quantitySchema.value.validateSync(2)).not.toThrow();
+  });
+
+  describe("allowZero parameter", () => {
+    it("allowZero=true allows quantity 0", () => {
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero: ref(true),
+      });
+
+      expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(1)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(-1)).toThrowError(
+        expect.objectContaining({ type: "min" }) as Error,
+      );
+    });
+
+    it("allowZero=false disallows quantity 0", () => {
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero: ref(false),
+      });
+
+      expect(() => quantitySchema.value.validateSync(0)).toThrowError(
+        expect.objectContaining({ type: "min" }) as Error,
+      );
+      expect(() => quantitySchema.value.validateSync(1)).not.toThrow();
+    });
+
+    it("allowZero=undefined (default) disallows quantity 0", () => {
+      const { quantitySchema } = useQuantityValidationSchema({});
+
+      expect(() => quantitySchema.value.validateSync(0)).toThrowError(
+        expect.objectContaining({ type: "min" }) as Error,
+      );
+      expect(() => quantitySchema.value.validateSync(1)).not.toThrow();
+    });
+
+    it("allowZero=true with minimum quantity allows 0", () => {
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero: ref(true),
+        minQuantity: ref(2),
+      });
+
+      expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+        expect.objectContaining({ type: "minValue" }) as Error,
+      );
+      expect(() => quantitySchema.value.validateSync(2)).not.toThrow();
+    });
+
+    it("allowZero=true with maximum quantity allows 0", () => {
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero: ref(true),
+        maxQuantity: ref(5),
+      });
+
+      expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(5)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(6)).toThrowError(
+        expect.objectContaining({ type: "maxValue" }) as Error,
+      );
+    });
+
+    it("allowZero=true with min and max quantity allows 0", () => {
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero: ref(true),
+        minQuantity: ref(2),
+        maxQuantity: ref(5),
+      });
+
+      expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+        expect.objectContaining({ type: "minMaxValue" }) as Error,
+      );
+      expect(() => quantitySchema.value.validateSync(2)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(5)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(6)).toThrowError(
+        expect.objectContaining({ type: "minMaxValue" }) as Error,
+      );
+    });
+
+    it("allowZero=true with exact min/max quantity allows 0", () => {
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero: ref(true),
+        minQuantity: ref(3),
+        maxQuantity: ref(3),
+      });
+
+      expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(2)).toThrowError(
+        expect.objectContaining({ type: "exactQtyValue" }) as Error,
+      );
+      expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(4)).toThrowError(
+        expect.objectContaining({ type: "exactQtyValue" }) as Error,
+      );
+    });
+
+    it("allowZero=true with available quantity allows 0", () => {
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero: ref(true),
+        availableQuantity: ref(5),
+      });
+
+      expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(5)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(6)).toThrowError(
+        expect.objectContaining({ type: "maxValue" }) as Error,
+      );
+    });
+
+    it("allowZero=true with available quantity and min quantity allows 0", () => {
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero: ref(true),
+        availableQuantity: ref(5),
+        minQuantity: ref(2),
+      });
+
+      expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+        expect.objectContaining({ type: "minMaxValue" }) as Error,
+      );
+      expect(() => quantitySchema.value.validateSync(2)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(5)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(6)).toThrowError(
+        expect.objectContaining({ type: "minMaxValue" }) as Error,
+      );
+    });
+
+    it("allowZero=true with available quantity < min quantity allows 0", () => {
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero: ref(true),
+        availableQuantity: ref(3),
+        minQuantity: ref(5),
+      });
+
+      // With allowZero=true, 0 should be allowed even when available < min
+      expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+        expect.objectContaining({ type: "incorrectMinValue" }) as Error,
+      );
+      expect(() => quantitySchema.value.validateSync(5)).toThrowError(
+        expect.objectContaining({ type: "incorrectMinValue" }) as Error,
+      );
+    });
+
+    it("allowZero=true with pack size allows 0", () => {
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero: ref(true),
+        packSize: ref(3),
+      });
+
+      expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(6)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+        expect.objectContaining({ type: "divisible-by-packSize" }) as Error,
+      );
+      expect(() => quantitySchema.value.validateSync(2)).toThrowError(
+        expect.objectContaining({ type: "divisible-by-packSize" }) as Error,
+      );
+    });
+
+    it("allowZero=true with pack size and min quantity allows 0", () => {
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero: ref(true),
+        packSize: ref(3),
+        minQuantity: ref(2),
+      });
+
+      expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
+      expect(() => quantitySchema.value.validateSync(1)).toThrowError(
+        expect.objectContaining({ type: "minValue" }) as Error,
+      );
+      expect(() => quantitySchema.value.validateSync(2)).toThrowError(
+        expect.objectContaining({ type: "divisible-by-packSize" }) as Error,
+      );
+      expect(() => quantitySchema.value.validateSync(3)).not.toThrow();
+    });
+
+    it("allowZero reactive changes from false to true", () => {
+      const allowZero = ref(false);
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero,
+      });
+
+      expect(() => quantitySchema.value.validateSync(0)).toThrowError(
+        expect.objectContaining({ type: "min" }) as Error,
+      );
+
+      allowZero.value = true;
+
+      expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
+    });
+
+    it("allowZero reactive changes from true to false", () => {
+      const allowZero = ref(true);
+      const { quantitySchema } = useQuantityValidationSchema({
+        allowZero,
+      });
+
+      expect(() => quantitySchema.value.validateSync(0)).not.toThrow();
+
+      allowZero.value = false;
+
+      expect(() => quantitySchema.value.validateSync(0)).toThrowError(
+        expect.objectContaining({ type: "min" }) as Error,
+      );
+    });
   });
 });

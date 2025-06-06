@@ -72,7 +72,8 @@
           </td>
 
           <td class="variations-table__col variations-table__col--quantity">
-            <VcAddToCart
+            <QuantityControl
+              :mode="$cfg.product_quantity_control"
               :model-value="mappedLineItems[variation.id]?.quantity ?? 0"
               :name="variation.id"
               :disabled="
@@ -92,6 +93,7 @@
               :is-active="variation.availabilityData?.isActive"
               :is-available="variation.availabilityData?.isAvailable"
               :is-buyable="variation.availabilityData?.isBuyable"
+              :allow-zero="$cfg.product_quantity_control === 'stepper'"
               @update:model-value="changeCart(variation, $event)"
               @update:validation="handleClientValidation(variation.id, $event)"
             >
@@ -110,7 +112,7 @@
                   </template>
                 </VcTooltip>
               </template>
-            </VcAddToCart>
+            </QuantityControl>
 
             <CountInCart :product-id="variation.id" class="variations-table__in-cart" />
           </td>
@@ -134,6 +136,7 @@ import { useShortCart } from "@/shared/cart/composables";
 import CountInCart from "../count-in-cart.vue";
 import type { Product, ShortLineItemFragment, ValidationErrorType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
+import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 interface IEmits {
   (event: "applySorting", item: ISortInfo): void;

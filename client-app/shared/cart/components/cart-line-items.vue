@@ -23,12 +23,19 @@
     </template>
 
     <template #default="{ item }">
-      <VcAddToCart
+      <QuantityControl
+        :mode="$cfg.product_quantity_control"
+        :min-quantity="item.minQuantity"
+        :max-quantity="item.maxQuantity"
+        :pack-size="item.packSize"
+        :count-in-cart="item.countInCart"
+        :available-quantity="item.availabilityData?.availableQuantity"
         hide-button
         :model-value="item.quantity"
         :name="item.id"
         :disabled="disabled"
         :readonly="readonly"
+        disable-validation
         @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
       />
 
@@ -76,6 +83,7 @@ import { InStock } from "@/shared/catalog";
 import { ConfigurationItems } from "@/shared/common";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 interface IProps {
   disabled?: boolean;

@@ -28,8 +28,9 @@
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
     />
 
-    <VcAddToCart
+    <QuantityControl
       v-else
+      :mode="$cfg.product_quantity_control"
       :message="errorMessage || notAvailableMessage"
       :model-value="quantity"
       :is-active="product.availabilityData?.isActive"
@@ -44,6 +45,7 @@
       :disabled="changing"
       :loading="changing"
       show-empty-details
+      :allow-zero="$cfg.product_quantity_control === 'stepper'"
       @update:cart-item-quantity="changeCartItemQuantity"
       @update:validation="onValidationUpdate"
     />
@@ -53,12 +55,13 @@
 <script setup lang="ts">
 import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHistoricalEvents } from "@/core/composables";
+import { useHistoricalEvents, useThemeContext } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { getProductRoute } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
 import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
+import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 interface IEmits {
   (event: "linkClick", globalEvent: MouseEvent): void;
@@ -78,6 +81,7 @@ const { cart, addToCart, changeItemQuantity, changing } = useShortCart();
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
 const { t } = useI18n();
+const { themeContext } = useThemeContext();
 
 const product = toRef(props, "product");
 
@@ -93,7 +97,17 @@ const notAvailableMessage = computed<string | undefined>(() => {
   return undefined;
 });
 
-const quantity = ref(countInCart.value || product.value.minQuantity || 1);
+const quantity = ref(getInitialQuantity());
+
+function getInitialQuantity() {
+  if (countInCart.value) {
+    return countInCart.value;
+  }
+  if (themeContext.value.settings.product_quantity_control === "stepper") {
+    return 0;
+  }
+  return product.value.minQuantity || 1;
+}
 
 async function changeCartItemQuantity(qty: number) {
   if (cartLineItem.value && countInCart.value) {
