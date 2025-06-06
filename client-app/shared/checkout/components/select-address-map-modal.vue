@@ -17,9 +17,9 @@
               @change="selectHandler(address, { scrollToSelected: true })"
             >
               <div class="flex flex-col">
-                <div class="select-address-map-modal__radio-button-name">{{ address.name }}</div>
+                <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
 
-                <div class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</div>
+                <p class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</p>
               </div>
             </VcRadioButton>
           </li>
@@ -35,9 +35,61 @@
                 :map-id="MAP_ID"
                 :position="getLatLng(address.geoLocation)!"
               >
-                {{ address.description }}
+                <div class="select-address-map-modal__info-window">
+                  <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
+                  <div class="select-address-map-modal__info-window-content">
+                    <dl>
+                      <dt>
+                        {{ $t("common.address.address") }}
+                      </dt>
 
-                <VcButton @click="selectHandler(address, { closeInfo: true })">Test test</VcButton>
+                      <dd>{{ getAddressName(address) }}</dd>
+
+                      <dt>
+                        {{ $t("common.address.phone") }}
+                      </dt>
+
+                      <dd>
+                        <a :href="`tel:${address.contactPhone}`">{{ address.contactPhone }}</a>
+                      </dd>
+
+                      <dt>
+                        {{ $t("common.address.email") }}
+                      </dt>
+
+                      <dd>
+                        <a :href="`mailto:${address.contactEmail}`">{{ address.contactEmail }}</a>
+                      </dd>
+
+                      <dt v-if="address.workingHours">
+                        {{ $t("common.address.working_hours") }}
+                      </dt>
+
+                      <dd v-if="address.workingHours">
+                        <VcMarkdownRender
+                          class="select-address-map-modal__info-window-working-hours"
+                          :src="address.workingHours"
+                        />
+                      </dd>
+
+                      <dt>
+                        {{ $t("common.address.description") }}
+                      </dt>
+
+                      <dd>{{ address.description }}</dd>
+                    </dl>
+                  </div>
+
+                  <div class="select-address-map-modal__info-window-actions">
+                    <VcButton variant="no-background" color="secondary" size="xs" @click="closeInfoWindow">
+                      {{ $t("common.buttons.cancel") }}
+                    </VcButton>
+
+                    <VcButton size="xs" variant="outline" @click="selectHandler(address, { closeInfo: true })">
+                      {{ $t("common.buttons.select") }}
+                    </VcButton>
+                  </div>
+                </div>
               </GoogleMapMarker>
             </template>
           </GoogleMapMarkerClusterer>
@@ -186,6 +238,8 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
   }
 
   &__radio-button {
+    @apply flex flex-col gap-0.5;
+
     &-name {
       @apply text-xs font-bold;
     }
@@ -197,6 +251,36 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 
   &__actions {
     @apply flex gap-4 justify-end w-full;
+  }
+
+  &__info-window {
+    @apply flex flex-col gap-2 font-lato;
+  }
+
+  &__info-window-title {
+    @apply text-xs font-bold;
+  }
+
+  &__info-window-content {
+    dl {
+      @apply flex flex-col gap-1.5;
+    }
+
+    dt {
+      @apply text-xxs font-bold;
+    }
+
+    dd {
+      @apply text-xxs font-normal text-neutral-600;
+    }
+  }
+
+  &__info-window-working-hours {
+    @apply text-xxs;
+  }
+
+  &__info-window-actions {
+    @apply flex gap-2 justify-end;
   }
 }
 </style>
