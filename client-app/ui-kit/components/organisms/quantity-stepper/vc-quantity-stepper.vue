@@ -16,6 +16,12 @@
       :max="max"
       center
       :select-on-click="selectOnClick"
+      :aria="{
+        role: 'spinbutton',
+        'aria-valuemin': min,
+        'aria-valuemax': max,
+        'aria-valuenow': model ?? '',
+      }"
     >
       <template v-if="!readonly" #prepend>
         <VcButton

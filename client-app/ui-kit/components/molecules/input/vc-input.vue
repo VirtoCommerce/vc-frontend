@@ -31,7 +31,7 @@
         :id="componentId"
         ref="inputElement"
         v-model="model"
-        v-bind="listeners"
+        v-bind="{ ...listeners, ...aria }"
         :type="inputType"
         :name="name"
         :placeholder="placeholder"
@@ -44,9 +44,6 @@
         :step="stepValue"
         :autocomplete="autocomplete"
         :aria-label="ariaLabel ?? label"
-        :aria-valuemin="min"
-        :aria-valuemax="max"
-        :aria-valuenow="model ?? ''"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
         :data-test-id="testIdInput"
@@ -122,6 +119,7 @@ export interface IProps {
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
   testIdInput?: string;
+  aria?: Record<string, string | number | null>;
 }
 
 defineOptions({
