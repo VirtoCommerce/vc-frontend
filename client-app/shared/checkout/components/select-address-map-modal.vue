@@ -40,29 +40,29 @@
                   <div class="select-address-map-modal__info-window-content">
                     <dl>
                       <dt>
-                        {{ $t("common.address.address") }}
+                        {{ $t("shared.checkout.select_bopis_modal.location_label") }}
                       </dt>
 
                       <dd>{{ getAddressName(address) }}</dd>
 
-                      <dt>
-                        {{ $t("common.address.phone") }}
+                      <dt v-if="address.contactPhone">
+                        {{ $t("shared.checkout.select_bopis_modal.contact_phone_label") }}
                       </dt>
 
-                      <dd>
+                      <dd v-if="address.contactPhone">
                         <a :href="`tel:${address.contactPhone}`">{{ address.contactPhone }}</a>
                       </dd>
 
-                      <dt>
-                        {{ $t("common.address.email") }}
+                      <dt v-if="address.contactEmail">
+                        {{ $t("shared.checkout.select_bopis_modal.contact_email_label") }}
                       </dt>
 
-                      <dd>
+                      <dd v-if="address.contactEmail">
                         <a :href="`mailto:${address.contactEmail}`">{{ address.contactEmail }}</a>
                       </dd>
 
                       <dt v-if="address.workingHours">
-                        {{ $t("common.address.working_hours") }}
+                        {{ $t("shared.checkout.select_bopis_modal.working_hours_label") }}
                       </dt>
 
                       <dd v-if="address.workingHours">
@@ -72,11 +72,11 @@
                         />
                       </dd>
 
-                      <dt>
-                        {{ $t("common.address.description") }}
+                      <dt v-if="address.description">
+                        {{ $t("shared.checkout.select_bopis_modal.description_label") }}
                       </dt>
 
-                      <dd>{{ address.description }}</dd>
+                      <dd v-if="address.description">{{ address.description }}</dd>
                     </dl>
                   </div>
 

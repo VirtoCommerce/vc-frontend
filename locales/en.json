@@ -754,7 +754,12 @@
         "title": "Select shipping method"
       },
       "select_bopis_modal": {
-        "title": "Pick points"
+        "title": "Pick points",
+        "location_label": "Location",
+        "working_hours_label": "Working hours",
+        "description_label": "Description",
+        "contact_phone_label": "Contact phone",
+        "contact_email_label": "Contact email"
       }
     },
     "bulk_order": {
