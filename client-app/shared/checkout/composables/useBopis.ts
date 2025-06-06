@@ -34,10 +34,9 @@ export function useBopis() {
 
   const normalizedAddresses = computed<AnyAddressType[]>(() =>
     addresses.value.map((pickupInStoreAddress) => ({
+      ...(isBopisMapEnabled.value ? pickupInStoreAddress : {}),
       ...pickupInStoreAddress.address,
       description: isBopisMapEnabled.value ? pickupInStoreAddress.description : pickupInStoreAddress.name,
-      workingHours: isBopisMapEnabled.value ? pickupInStoreAddress.workingHours : undefined,
-      geoLocation: isBopisMapEnabled.value ? pickupInStoreAddress.geoLocation : undefined,
     })),
   );
 
@@ -81,7 +80,25 @@ export function useBopis() {
         isCorporateAddresses: true,
         allowAddNewAddress: false,
 
-        onResult: async (address: AnyAddressType) => {
+        onResult: async (addressOrAddressId: AnyAddressType | string) => {
+          if (typeof addressOrAddressId === "string") {
+            const address = addresses.value.find(({ id }) => id === addressOrAddressId)?.address;
+
+            if (address) {
+              await updateShipment({
+                id: shipment.value?.id,
+                deliveryAddress: {
+                  ...address,
+                  outerId: address.id,
+                },
+              });
+            }
+
+            return;
+          }
+
+          const address = addressOrAddressId;
+
           await updateShipment({
             id: shipment.value?.id,
             deliveryAddress: {
