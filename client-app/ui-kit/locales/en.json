@@ -79,6 +79,9 @@
       "end_list": "You have reached the end of the list.",
       "page_limit_filters": "No more results. Please try to change filters.",
       "page_limit": "No more results could be shown."
+    },
+    "slider": {
+      "tooltip": "{count} items"
     }
   }
 }

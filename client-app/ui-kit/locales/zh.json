@@ -79,6 +79,9 @@
       "end_list": "您已到达列表末尾。",
       "page_limit_filters": "没有更多结果。请尝试更改筛选条件。",
       "page_limit": "无法显示更多结果。"
+    },
+    "slider": {
+      "tooltip": "{count} 件商品"
     }
   }
 }
