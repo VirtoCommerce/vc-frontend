@@ -53,6 +53,7 @@
 <script setup lang="ts">
 import { useElementBounding, watchDebounced } from "@vueuse/core";
 import { ref, computed, onMounted, useTemplateRef, nextTick } from "vue";
+import { useRoute } from "vue-router";
 import { useNavigations } from "@/core/composables";
 import { useCategory } from "@/shared/catalog";
 import Subcategories from "./subcategories.vue";
@@ -70,7 +71,9 @@ const visibleItemsCount = ref(1);
 
 const { width: menuRight } = useElementBounding(menuRef);
 const { catalogMenuItems } = useNavigations();
-const { category, fetchCategory, loading } = useCategory();
+const { markActiveCategoryTree, category: _category, fetchCategory, loading } = useCategory();
+const currentRoute = useRoute();
+const category = computed(() => markActiveCategoryTree(_category.value, currentRoute));
 
 const visibleItems = computed(() => catalogMenuItems.value.slice(0, visibleItemsCount.value));
 

@@ -24,6 +24,7 @@
           max-lines="2"
           role="menuitem"
           :to="routes[child.id]"
+          :active="child.isActive"
           @keyup.arrow-right="focusMenuItem(child.childCategories[0].id)"
           @keyup.arrow-left="focusMenuItem(item.id)"
           @keyup.arrow-up="focusMenuItem(item.childCategories[index - 1].id)"
@@ -55,14 +56,14 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeUnmount } from "vue";
 import { useCategoriesRoutes } from "@/core/composables";
-import type { Category } from "@/core/api/graphql/types";
+import type { IMarkedCategory } from "@/core/types";
 
 interface IEmits {
   (e: "close"): void;
 }
 
 interface IProps {
-  item: Category;
+  item: IMarkedCategory;
   onCancelHide?: () => void;
   onScheduleHide?: () => void;
   ariaLabel?: string;
@@ -71,14 +72,14 @@ interface IProps {
 defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
-const activeItem = ref<Category | null>(null);
+const activeItem = ref<IMarkedCategory | null>(null);
 let timeout: ReturnType<typeof setTimeout> | null = null;
 let switchTimeout: ReturnType<typeof setTimeout> | null = null;
 
 const items = computed(() => props.item.childCategories || []);
 const routes = useCategoriesRoutes(items);
 
-function showChildren(item: Category) {
+function showChildren(item: IMarkedCategory) {
   cancelHide();
 
   if (switchTimeout) {
