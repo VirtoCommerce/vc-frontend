@@ -182,6 +182,22 @@ export function useGoogleMaps(mapId: string) {
     }
   }
 
+  function zoomToMarkers() {
+    const currentInstance = mapInstances.get(mapId);
+    if (!currentInstance?.map.value) {
+      return;
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+    const currentMarkers = currentInstance.markers.value ?? [];
+    currentMarkers.forEach((marker) => {
+      if (marker.position) {
+        bounds.extend(marker.position);
+      }
+    });
+    currentInstance.map.value?.fitBounds(bounds);
+  }
+
   onUnmounted(() => {
     cleanup();
   });
@@ -199,5 +215,6 @@ export function useGoogleMaps(mapId: string) {
     addMarker,
     removeMarker,
     cleanup,
+    zoomToMarkers,
   };
 }
