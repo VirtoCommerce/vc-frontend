@@ -146,6 +146,15 @@ export function useGoogleMaps(mapId: string) {
     currentInstance.infoWindow.value = new google.maps.InfoWindow();
   }
 
+  function closeInfoWindow() {
+    const currentInstance = mapInstances.get(mapId);
+    if (!currentInstance?.infoWindow.value) {
+      return;
+    }
+
+    currentInstance.infoWindow.value.close();
+  }
+
   function clearMarkers() {
     const currentInstance = mapInstances.get(mapId);
     if (!currentInstance) {
@@ -198,6 +207,16 @@ export function useGoogleMaps(mapId: string) {
     currentInstance.map.value?.fitBounds(bounds);
   }
 
+  function zoomToLatLng(latLng: google.maps.LatLngLiteral, zoom: number = 15) {
+    const currentInstance = mapInstances.get(mapId);
+    if (!currentInstance?.map.value) {
+      return;
+    }
+
+    currentInstance.map.value.setCenter(latLng);
+    currentInstance.map.value.setZoom(zoom);
+  }
+
   onUnmounted(() => {
     cleanup();
   });
@@ -211,10 +230,16 @@ export function useGoogleMaps(mapId: string) {
     isLoading,
 
     initMap,
+
     initInfoWindow,
+    closeInfoWindow,
+
     addMarker,
     removeMarker,
-    cleanup,
+
     zoomToMarkers,
+    zoomToLatLng,
+
+    cleanup,
   };
 }
