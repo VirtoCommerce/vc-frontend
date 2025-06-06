@@ -1135,6 +1135,15 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Szacowany czas dostawy",
+          "emailAndPhone": "Zadzwoń {phone} lub napisz na {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Zadzwoń {phone}",
+          "questions": "Pytania?",
+          "address": "Adres",
+          "pick_point_info": "Informacje o punkcie odbioru"
         }
       },
       "order_payment": {

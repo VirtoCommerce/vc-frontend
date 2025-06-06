@@ -581,6 +581,8 @@ export type PriceType = {
   minQuantity?: Maybe<Scalars['Int']['output']>;
   /** The product price list */
   pricelistId?: Maybe<Scalars['String']['output']>;
+  /** The product price list name */
+  pricelistName?: Maybe<Scalars['String']['output']>;
   /** Sale price */
   sale: MoneyType;
   /** Sale price with tax */

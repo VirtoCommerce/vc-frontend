@@ -1135,6 +1135,15 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Estimated Time of Arrival",
+          "emailAndPhone": "Call {phone} or email {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Call {phone}",
+          "questions": "Questions?",
+          "address": "Address",
+          "pick_point_info": "Pick point info"
         }
       },
       "order_payment": {
