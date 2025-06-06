@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, shallowRef, toRefs, watch, ref, nextTick, useSlots } from "vue";
+import { onBeforeUnmount, shallowRef, toRefs, watch, ref, useSlots } from "vue";
 import { Logger } from "@/core/utilities";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 
@@ -60,7 +60,7 @@ function createMarker() {
   }
 }
 
-async function openInfoWindow() {
+function openInfoWindow() {
   if (!slots.default) {
     return;
   }
@@ -74,7 +74,6 @@ async function openInfoWindow() {
     map: map.value,
   });
 
-  await nextTick();
   isInfoWindowOpen.value = true;
 }
 
@@ -86,7 +85,7 @@ function init() {
 
   listener = marker.value?.addListener("gmp-click", () => {
     emit("click");
-    void openInfoWindow();
+    openInfoWindow();
   });
 
   if (infoWindow.value) {
