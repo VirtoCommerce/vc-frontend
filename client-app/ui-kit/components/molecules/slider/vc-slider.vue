@@ -37,9 +37,11 @@
     <div class="vc-slider__inputs">
       <VcInput v-model="start" size="sm" class="vc-slider__input" :disabled="disabled" />
 
-      <b class="vc-slider__dash">&mdash;</b>
+      <template v-if="!!end">
+        <b class="vc-slider__dash">&mdash;</b>
 
-      <VcInput v-model="end" size="sm" class="vc-slider__input" :disabled="disabled" />
+        <VcInput v-model="end" size="sm" class="vc-slider__input" :disabled="disabled" />
+      </template>
     </div>
   </div>
 </template>
@@ -77,12 +79,16 @@ const props = withDefaults(defineProps<IProps>(), {
 const model = defineModel<IProps["value"]>("value");
 const { min, max, step, cols } = toRefs(props);
 const start = ref(model.value ? model.value[0] : min.value);
-const end = ref(model.value ? model.value[1] : max.value);
+const end = ref(model.value ? (model.value[1] ?? null) : max.value);
 
 const sliderRef = ref<HTMLElement | null>(null);
 let slider: API | null = null;
 
 const normalizedCols = computed(() => {
+  if (!cols.value.length) {
+    return [];
+  }
+
   const allowedCols = cols.value.filter((column) => {
     const [from, to] = column.value;
 
@@ -120,7 +126,7 @@ const normalizedCols = computed(() => {
 function updateModel(range: RangeType) {
   model.value = range;
 
-  if (slider) {
+  if (slider && (range[0] !== start.value || (end.value && range[1] !== end.value))) {
     slider.set(range, false);
   }
 }
@@ -142,7 +148,6 @@ onMounted(() => {
   });
 
   slider.on("update", (v) => {
-    model.value = [+v[0], +v[1]];
     start.value = +v[0];
     end.value = +v[1];
   });
@@ -189,7 +194,7 @@ onMounted(() => {
   }
 
   &__col-line {
-    @apply bg-neutral-200 rounded-sm transition-all border-t border-x border-transparent;
+    @apply w-full bg-neutral-200 rounded-sm transition-all border-t border-x border-transparent;
 
     #{$hoverable} & {
       @apply bg-primary-200 border-primary-300;
@@ -222,6 +227,14 @@ onMounted(() => {
 
     .noUi-touch-area {
       @apply absolute size-[300%] top-[calc(var(--handle-size)/-2)] left-[calc(var(--handle-size)/-2)] rounded-full;
+    }
+
+    #slider-hide .noUi-tooltip {
+      display: none;
+    }
+
+    #slider-hide .noUi-active .noUi-tooltip {
+      display: block;
     }
   }
 
