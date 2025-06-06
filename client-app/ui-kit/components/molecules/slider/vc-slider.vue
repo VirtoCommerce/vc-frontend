@@ -124,11 +124,23 @@ const normalizedCols = computed(() => {
   });
 });
 
-function updateModel(range: RangeType) {
+function isRangesEqual(a?: RangeType, b?: RangeType) {
+  if (!a || !b) {
+    return false;
+  }
+
+  return a[0] === b[0] && a[1] === b[1];
+}
+
+function updateModel(range: RangeType, fromSlider = false) {
+  if (isRangesEqual(model.value, range)) {
+    return;
+  }
+
   model.value = range;
 
-  if (slider && (range[0] !== start.value || (end.value && range[1] !== end.value))) {
-    slider.set(range, false);
+  if (!fromSlider && slider) {
+    slider.set(range);
   }
 }
 
@@ -151,6 +163,7 @@ onMounted(() => {
   slider.on("update", (v) => {
     start.value = +v[0];
     end.value = +v[1];
+    updateModel([+v[0], +v[1]], true);
   });
 });
 </script>
