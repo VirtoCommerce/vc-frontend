@@ -1,7 +1,6 @@
 <template>
-  <VcModal :title="title" max-width="40rem">
+  <VcModal :title="$t(`${TRANSLATION_KEYS_ORIGIN}.pick_point_info`)" max-width="40rem">
     <div v-if="eta">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.eta`) }}: {{ eta }}</div>
-    <!-- todo translation and formating -->
     <div>
       {{ $t(`${TRANSLATION_KEYS_ORIGIN}.questions`) }}
       <i18n-t v-if="props.address.email || props.address.phone" :keypath="contactKey">
@@ -17,9 +16,7 @@
         </template>
       </i18n-t>
     </div>
-    <div>
-      Address: {{ address.line1 }}, {{ address.line2 }}, {{ address.city }}, {{ address.regionId }}, {{ address.zip }}
-    </div>
+    <div>{{ $t(`${TRANSLATION_KEYS_ORIGIN}.address`) }}: {{ addressSentence }}</div>
     <template #actions="{ close }">
       <GetDirectionsAction size="md" />
 
@@ -32,6 +29,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { toCSV } from "@/core/utilities";
 import GetDirectionsAction from "./get-directions-action.vue";
 import type { OrderAddressType } from "@/core/api/graphql/types.ts";
 
@@ -42,7 +40,6 @@ type AddressType = Pick<
   | "zip"
   | "countryName"
   | "regionName"
-  | "regionId"
   | "city"
   | "line1"
   | "line2"
@@ -57,7 +54,6 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
-const title = computed(() => "Pick point info");
 
 const TRANSLATION_KEYS_ORIGIN = "pages.account.order_details.bopis";
 
@@ -75,6 +71,11 @@ const contactKey = computed(() => {
   }
 
   return key;
+});
+
+const addressSentence = computed(() => {
+  const { line1, line2, city, regionName, zip, countryName } = props.address;
+  return toCSV([line1, line2, city, regionName, zip, countryName]);
 });
 </script>
 

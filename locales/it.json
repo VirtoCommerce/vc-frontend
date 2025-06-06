@@ -1141,7 +1141,9 @@
           "emailAndPhone": "Chiama {phone} o scrivi a {email}",
           "emailOnly": "Email {email}",
           "phoneOnly": "Chiama {phone}",
-          "questions": "Domande?"
+          "questions": "Domande?",
+          "address": "Indirizzo",
+          "pick_point_info": "Info punto di ritiro"
         }
       },
       "order_payment": {

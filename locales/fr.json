@@ -1141,7 +1141,9 @@
           "emailAndPhone": "Appelez le {phone} ou envoyez un e-mail à {email}",
           "emailOnly": "Email {email}",
           "phoneOnly": "Appeler {phone}",
-          "questions": "Des questions ?"
+          "questions": "Des questions ?",
+          "address": "Adresse",
+          "pick_point_info": "Infos point de collecte"
         }
       },
       "order_payment": {

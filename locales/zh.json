@@ -1141,7 +1141,9 @@
           "emailAndPhone": "致电 {phone} 或发送邮件至 {email}",
           "emailOnly": "邮箱 {email}",
           "phoneOnly": "致电 {phone}",
-          "questions": "有问题吗？"
+          "questions": "有问题吗？",
+          "address": "地址",
+          "pick_point_info": "自提点信息"
         }
       },
       "order_payment": {

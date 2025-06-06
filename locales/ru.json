@@ -1141,7 +1141,9 @@
           "emailAndPhone": "Позвоните по номеру {phone} или напишите на {email}",
           "emailOnly": "Email {email}",
           "phoneOnly": "Позвонить {phone}",
-          "questions": "Вопросы?"
+          "questions": "Вопросы?",
+          "address": "Адрес",
+          "pick_point_info": "Информация о пункте выдачи"
         }
       },
       "order_payment": {

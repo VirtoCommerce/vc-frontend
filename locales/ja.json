@@ -1141,7 +1141,9 @@
           "emailAndPhone": "{phone} にお電話いただくか、{email} にメールでお問い合わせください",
           "emailOnly": "メール {email}",
           "phoneOnly": "電話 {phone}",
-          "questions": "ご質問は？"
+          "questions": "ご質問は？",
+          "address": "住所",
+          "pick_point_info": "受取場所情報"
         }
       },
       "order_payment": {
