@@ -107,7 +107,7 @@ const defaultQuantity =
 const enteredQuantity = ref(!disabled.value ? defaultQuantity : undefined);
 
 function onInput(value: number): void {
-  if (value === undefined) {
+  if (!Number.isFinite(value)) {
     enteredQuantity.value = undefined;
   } else if (value > LINE_ITEM_QUANTITY_LIMIT) {
     enteredQuantity.value = LINE_ITEM_QUANTITY_LIMIT;

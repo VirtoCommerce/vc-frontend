@@ -42,7 +42,6 @@
           class="quote-line-items__quantity"
           :model-value="item.selectedTierPrice?.quantity"
           :name="item.id"
-          :allow-zero="false"
           @update:model-value="$emit('update:item', { itemId: item.id, quantity: $event })"
         />
       </VcLineItem>

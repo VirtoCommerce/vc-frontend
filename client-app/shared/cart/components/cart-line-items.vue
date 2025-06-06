@@ -35,7 +35,6 @@
         :name="item.id"
         :disabled="disabled"
         :readonly="readonly"
-        :allow-zero="false"
         disable-validation
         @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
       />
