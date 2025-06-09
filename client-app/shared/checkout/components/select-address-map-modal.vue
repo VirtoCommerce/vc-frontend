@@ -1,7 +1,7 @@
 <template>
   <VcModal
     :title="$t('shared.checkout.select_bopis_modal.title')"
-    max-width="60rem"
+    max-width="72rem"
     is-mobile-fullscreen
     class="select-address-map-modal"
   >
@@ -97,6 +97,7 @@
         </GoogleMap>
       </div>
     </div>
+
     <template #actions="{ close }">
       <div class="select-address-map-modal__actions">
         <VcButton variant="outline" size="sm" color="neutral" @click="close">
@@ -117,8 +118,8 @@ import { getAddressName } from "@/core/utilities/address";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
 import { Logger } from "@/core/utilities/logger";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
+import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
 import { getColorValue } from "@/ui-kit/utilities/css";
-import { getIconUrl } from "@/ui-kit/utilities/images";
 import type { GetPickupLocationsQuery } from "@/core/api/graphql/types";
 import GoogleMapMarkerClusterer from "@/shared/common/components/google-maps/google-map-marker-clusterer.vue";
 import GoogleMapMarker from "@/shared/common/components/google-maps/google-map-marker.vue";
@@ -152,16 +153,19 @@ interface IEmits {
 }
 
 const pinColor = getColorValue("primary");
-const pinGlyphIcon = getIconUrl("cube");
+const parser = new DOMParser();
+const cube = parser.parseFromString(cubeIcon, "image/svg+xml").documentElement;
+cube.style.fill = "#fff";
+
+function cloneElement<T extends Element>(el: T): T {
+  return el.cloneNode(true) as T;
+}
 
 function createPin() {
-  const glyphImg = document.createElement("img");
-  glyphImg.src = pinGlyphIcon;
-
   return {
     background: pinColor,
     borderColor: pinColor,
-    glyph: glyphImg,
+    glyph: cloneElement(cube),
     scale: 1.5,
   };
 }
