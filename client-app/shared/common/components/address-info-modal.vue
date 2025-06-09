@@ -1,8 +1,13 @@
 <template>
-  <VcModal :title="$t(`${TRANSLATION_KEYS_ORIGIN}.pick_point_info`)" max-width="40rem" icon="check">
+  <VcModal
+    class="address-info-modal"
+    :title="$t(`${TRANSLATION_KEYS_ORIGIN}.pick_point_info`)"
+    max-width="35rem"
+    icon="check"
+  >
     <VcTable hide-default-footer hide-default-header :columns="TABLE_COLUMNS" :items="tableItems">
       <template #desktop-body>
-        <tbody>
+        <tbody class="address-info-modal__table-body">
           <tr v-if="eta">
             <td>
               <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.eta`) }}:</span>
@@ -41,7 +46,7 @@
     <template #actions="{ close }">
       <GetDirectionsAction v-if="link" size="md" :link="link" />
 
-      <VcButton @click="close">
+      <VcButton class="address-info-modal__action-ok" @click="close">
         {{ $t("common.buttons.ok") }}
       </VcButton>
     </template>
@@ -53,6 +58,8 @@ import { computed } from "vue";
 import { toCSV } from "@/core/utilities";
 import GetDirectionsAction from "./get-directions-action.vue";
 import type { OrderAddressType } from "@/core/api/graphql/types.ts";
+
+const props = defineProps<IProps>();
 
 type AddressType = Pick<
   OrderAddressType,
@@ -75,14 +82,14 @@ interface IProps {
   address: AddressType;
 }
 
-const props = defineProps<IProps>();
-
 const TRANSLATION_KEYS_ORIGIN = "pages.account.order_details.bopis";
 
-const TABLE_COLUMNS = [{ id: "label" }, { id: "text" }];
+const TABLE_COLUMNS = [{ id: "label" }];
 
+// Minimal implementation: no table head and no separate mobile layout.
+// Extend as needed.
 const tableItems = computed(() => {
-  return [];
+  return [{ label: "eta" }, { label: "questions" }, { label: "address" }];
 });
 
 const contactKey = computed(() => {
@@ -109,12 +116,20 @@ const addressSentence = computed(() => {
 
 <style lang="scss">
 .address-info-modal {
+  &__table-body {
+    @apply text-base;
+  }
+
   &__link {
     @apply py-1 text-[--header-top-link-color] hover:text-[--header-top-link-hover-color];
   }
 
   &__label {
     @apply font-bold;
+  }
+
+  &__action-ok {
+    @apply ml-auto;
   }
 }
 </style>
