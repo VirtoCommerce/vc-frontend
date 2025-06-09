@@ -82,14 +82,15 @@ export function useBopis() {
 
         onResult: async (addressOrAddressId: AnyAddressType | string) => {
           if (typeof addressOrAddressId === "string") {
-            const address = addresses.value.find(({ id }) => id === addressOrAddressId)?.address;
+            const item = addresses.value.find(({ id }) => id === addressOrAddressId);
 
-            if (address) {
+            if (item?.address) {
               await updateShipment({
                 id: shipment.value?.id,
                 deliveryAddress: {
-                  ...address,
-                  outerId: address.id,
+                  ...item.address,
+                  name: item.name,
+                  outerId: item?.address.id,
                 },
               });
             }
