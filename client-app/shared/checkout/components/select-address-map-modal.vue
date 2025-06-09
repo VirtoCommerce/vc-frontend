@@ -14,8 +14,10 @@
                 v-if="getLatLng(address.geoLocation)"
                 :map-id="MAP_ID"
                 :position="getLatLng(address.geoLocation)!"
-                :pin="createPin()"
+                :pin-options="createPin()"
                 :title="address.name"
+                :is-active="selectedAddressId === address.id"
+                :active-pin-options="activePinOptions"
               >
                 <div class="select-address-map-modal__info-window">
                   <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
@@ -161,6 +163,12 @@ cube.style.fill = getColorValue("--color-additional-50");
 function cloneElement<T extends Element>(el: T): T {
   return el.cloneNode(true) as T;
 }
+
+const activePinOptions = {
+  background: getColorValue("success"),
+  borderColor: getColorValue("success"),
+  scale: 1.7,
+};
 
 function createPin() {
   return {

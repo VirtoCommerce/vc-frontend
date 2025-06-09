@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, shallowRef, toRefs, watch, ref, useSlots } from "vue";
+import { onBeforeUnmount, shallowRef, toRefs, watch, ref, useSlots, computed } from "vue";
 import { Logger } from "@/core/utilities";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 
@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<IProps>(), {
   pin: () => ({}),
 });
 
-const { mapId } = toRefs(props);
+const { mapId, isActive, pinOptions, activePinOptions } = toRefs(props);
 
 const { addMarker, initInfoWindow, map, infoWindow, removeMarker } = useGoogleMaps(mapId.value);
 const slots = useSlots();
@@ -25,8 +25,10 @@ interface IProps {
   position: google.maps.LatLngLiteral;
   title?: string;
   showInfo?: boolean;
-  pin?: google.maps.marker.PinElementOptions;
   mapId: string;
+  isActive?: boolean;
+  pinOptions?: google.maps.marker.PinElementOptions;
+  activePinOptions?: google.maps.marker.PinElementOptions;
 }
 
 interface IEmits {
@@ -40,20 +42,23 @@ let closeListener: google.maps.MapsEventListener | undefined;
 
 const marker = shallowRef<google.maps.marker.AdvancedMarkerElement>();
 const isInfoWindowOpen = ref(false);
+const currentPinElement = shallowRef<google.maps.marker.PinElement | null>(null);
+
+const activePin = computed(() => ({ ...pinOptions.value, ...activePinOptions.value }));
 
 function createMarker() {
   if (!map.value || marker.value) {
     return;
   }
 
-  const customPin = new google.maps.marker.PinElement(props.pin);
+  currentPinElement.value = new google.maps.marker.PinElement(isActive.value ? activePin.value : pinOptions.value);
 
   try {
     marker.value = addMarker({
       map: map.value,
       position: props.position,
       title: props.title,
-      content: customPin.element,
+      content: currentPinElement.value.element,
     });
   } catch (error) {
     Logger.error("Failed to create AdvancedMarkerElement:", error);
@@ -101,6 +106,21 @@ const unwatch = watch(
     if (map.value && !marker.value) {
       init();
       unwatch();
+    }
+  },
+  { immediate: true },
+);
+
+watch(
+  isActive,
+  () => {
+    if (currentPinElement.value) {
+      currentPinElement.value.background = isActive.value ? activePin.value.background : pinOptions.value?.background;
+      currentPinElement.value.borderColor = isActive.value
+        ? activePin.value.borderColor
+        : pinOptions.value?.borderColor;
+      currentPinElement.value.glyph = isActive.value ? activePin.value.glyph : pinOptions.value?.glyph;
+      currentPinElement.value.scale = isActive.value ? activePin.value.scale : pinOptions.value?.scale;
     }
   },
   { immediate: true },
