@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import { toRefs, watch } from "vue";
+import { onBeforeUnmount, toRefs, watch } from "vue";
 import { Logger } from "@/core/utilities";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 import type { MarkerClustererOptions } from "@googlemaps/markerclusterer";
@@ -61,4 +61,10 @@ watch(
   },
   { immediate: true },
 );
+
+onBeforeUnmount(() => {
+  if (markerClusterer) {
+    markerClusterer.clearMarkers();
+  }
+});
 </script>
