@@ -8,13 +8,13 @@
     <VcTable hide-default-footer hide-default-header :columns="TABLE_COLUMNS" :items="tableItems">
       <template #desktop-body>
         <tbody class="address-info-modal__table-body">
-          <tr v-if="eta">
+          <tr v-if="eta" class="address-info-modal__table-row">
             <td>
               <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.eta`) }}:</span>
             </td>
             <td>{{ eta }}</td>
           </tr>
-          <tr v-if="props.address.email || props.address.phone">
+          <tr v-if="props.address.email || props.address.phone" class="address-info-modal__table-row">
             <td>
               <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.questions`) }}</span>
             </td>
@@ -34,7 +34,7 @@
               </i18n-t>
             </td>
           </tr>
-          <tr>
+          <tr class="address-info-modal__table-row">
             <td>
               <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.address`) }}:</span>
             </td>
@@ -118,6 +118,10 @@ const addressSentence = computed(() => {
 .address-info-modal {
   &__table-body {
     @apply text-base;
+  }
+
+  &__table-row {
+    @apply flex items-start;
   }
 
   &__link {
