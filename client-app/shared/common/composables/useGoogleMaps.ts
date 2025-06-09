@@ -70,7 +70,7 @@ export function useGoogleMaps(mapId: string) {
     const mapDiv = currentInstance.map.value?.getDiv();
     const isMapAttached = mapDiv === mapElement && mapElement.children.length > 0 && mapDiv !== null;
 
-    // If map is already initialized and properly attached, nothing to do
+    // If map is already initialized and properly attached, do nothing
     if (currentInstance.map.value && isMapAttached) {
       return;
     }

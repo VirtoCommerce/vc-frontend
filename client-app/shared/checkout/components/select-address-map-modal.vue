@@ -156,7 +156,7 @@ interface IEmits {
 const pinColor = getColorValue("primary");
 const parser = new DOMParser();
 const cube = parser.parseFromString(cubeIcon, "image/svg+xml").documentElement;
-cube.style.fill = "#fff";
+cube.style.fill = getColorValue("--color-additional-50");
 
 function cloneElement<T extends Element>(el: T): T {
   return el.cloneNode(true) as T;
