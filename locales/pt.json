@@ -1143,7 +1143,9 @@
           "phoneOnly": "Ligar para {phone}",
           "questions": "Perguntas?",
           "address": "Endereço",
-          "pick_point_info": "Informações do ponto de coleta"
+          "pick_point_info": "Informações do ponto de coleta",
+          "get_directions": "Obter direções",
+          "point_info": "Informações"
         }
       },
       "order_payment": {

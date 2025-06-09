@@ -17,8 +17,9 @@
       </span>
     </div>
     <div v-if="showActions" class="flex items-center justify-between gap-2.5 pt-4 empty:hidden">
-      <VcButton size="xs" prepend-icon="information" @click="openInfo">Point info</VcButton>
-      <GetDirectionsAction />
+      <VcButton size="xs" prepend-icon="information" @click="openInfo">
+        {{ $t("pages.account.order_details.bopis.point_info") }}
+      </VcButton>
     </div>
   </div>
 </template>
@@ -28,7 +29,6 @@ import { useModal } from "@/shared/modal";
 import AddressInfoModal from "./address-info-modal.vue";
 import AddressLine from "./address-line.vue";
 import type { AnyAddressType } from "@/core/types";
-import GetDirectionsAction from "@/shared/common/components/get-directions-action.vue";
 
 interface IProps {
   address: AnyAddressType;

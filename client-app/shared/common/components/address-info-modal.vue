@@ -1,6 +1,7 @@
 <template>
   <VcModal :title="$t(`${TRANSLATION_KEYS_ORIGIN}.pick_point_info`)" max-width="40rem">
     <div v-if="eta">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.eta`) }}: {{ eta }}</div>
+
     <div>
       {{ $t(`${TRANSLATION_KEYS_ORIGIN}.questions`) }}
       <i18n-t v-if="props.address.email || props.address.phone" :keypath="contactKey">
@@ -9,6 +10,7 @@
             {{ props.address.email }}
           </a>
         </template>
+
         <template #phone>
           <a class="address-info-modal__link" :href="`tel:${props.address.phone}`">
             {{ props.address.phone }}
@@ -18,7 +20,7 @@
     </div>
     <div>{{ $t(`${TRANSLATION_KEYS_ORIGIN}.address`) }}: {{ addressSentence }}</div>
     <template #actions="{ close }">
-      <GetDirectionsAction size="md" />
+      <GetDirectionsAction v-if="link" size="md" :link="link" />
 
       <VcButton @click="close">
         {{ $t("common.buttons.ok") }}
@@ -50,6 +52,7 @@ type AddressType = Pick<
 interface IProps {
   //  Estimated Time of Arrival
   eta?: string;
+  link?: string;
   address: AddressType;
 }
 

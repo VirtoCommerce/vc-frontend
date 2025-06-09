@@ -1143,7 +1143,9 @@
           "phoneOnly": "電話 {phone}",
           "questions": "ご質問は？",
           "address": "住所",
-          "pick_point_info": "受取場所情報"
+          "pick_point_info": "受取場所情報",
+          "get_directions": "ルート検索",
+          "point_info": "ポイント情報"
         }
       },
       "order_payment": {

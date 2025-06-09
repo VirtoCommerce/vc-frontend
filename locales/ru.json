@@ -1143,7 +1143,9 @@
           "phoneOnly": "Позвонить {phone}",
           "questions": "Вопросы?",
           "address": "Адрес",
-          "pick_point_info": "Информация о пункте выдачи"
+          "pick_point_info": "Информация о пункте выдачи",
+          "get_directions": "Как добраться",
+          "point_info": "Информация"
         }
       },
       "order_payment": {

@@ -1143,7 +1143,9 @@
           "phoneOnly": "Llamar a {phone}",
           "questions": "¿Preguntas?",
           "address": "Dirección",
-          "pick_point_info": "Información del punto de recogida"
+          "pick_point_info": "Información del punto de recogida",
+          "get_directions": "Obtener indicaciones",
+          "point_info": "Información del punto"
         }
       },
       "order_payment": {
