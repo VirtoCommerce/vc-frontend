@@ -245,11 +245,11 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
   }
 
   &__sidebar {
-    @apply min-w-56;
+    @apply min-w-56 max-h-full;
   }
 
   &__list {
-    @apply flex flex-col gap-3 overflow-y-auto;
+    @apply flex flex-col gap-3 max-h-full overflow-y-auto;
   }
 
   &__list-item {
