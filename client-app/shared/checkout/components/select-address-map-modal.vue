@@ -6,26 +6,6 @@
     class="select-address-map-modal"
   >
     <div class="select-address-map-modal__content">
-      <div class="select-address-map-modal__sidebar">
-        <ul class="select-address-map-modal__list">
-          <li v-for="address in addresses" :key="address.id" class="select-address-map-modal__list-item">
-            <VcRadioButton
-              v-model="selectedAddressId"
-              :value="address.id"
-              class="select-address-map-modal__radio-button"
-              size="sm"
-              @change="selectHandler(address, { scrollToSelected: true })"
-            >
-              <div class="flex flex-col">
-                <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
-
-                <p class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</p>
-              </div>
-            </VcRadioButton>
-          </li>
-        </ul>
-      </div>
-
       <div class="select-address-map-modal__map">
         <GoogleMap :api-key="apiKey" :map-id="MAP_ID" :options="{ disableDefaultUI: true }">
           <GoogleMapMarkerClusterer :map-id="MAP_ID">
@@ -96,6 +76,26 @@
             </template>
           </GoogleMapMarkerClusterer>
         </GoogleMap>
+      </div>
+
+      <div class="select-address-map-modal__sidebar">
+        <ul class="select-address-map-modal__list">
+          <li v-for="address in addresses" :key="address.id" class="select-address-map-modal__list-item">
+            <VcRadioButton
+              v-model="selectedAddressId"
+              :value="address.id"
+              class="select-address-map-modal__radio-button"
+              size="sm"
+              @change="selectHandler(address, { scrollToSelected: true })"
+            >
+              <div class="flex flex-col">
+                <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
+
+                <p class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</p>
+              </div>
+            </VcRadioButton>
+          </li>
+        </ul>
       </div>
     </div>
 
@@ -235,17 +235,19 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 </script>
 
 <style lang="scss">
+$mapHeight: 523px;
+
 .select-address-map-modal {
   &__content {
-    @apply relative max-h-screen w-full flex flex-col h-[523px] lg:flex-row gap-5;
+    @apply relative w-full flex flex-col lg:h-[#{$mapHeight}] lg:flex-row gap-5;
   }
 
   &__map {
-    @apply size-full order-first lg:order-1 rounded-lg overflow-hidden;
+    @apply h-[#{$mapHeight}] size-full flex-grow rounded-lg overflow-hidden;
   }
 
   &__sidebar {
-    @apply min-w-56 max-h-full;
+    @apply min-w-56 max-h-full lg:order-first;
   }
 
   &__list {
