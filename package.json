@@ -67,6 +67,7 @@
     "lodash": "^4.17.21",
     "marked": "^13.0.3",
     "maska": "^2.1.11",
+    "nouislider": "^15.8.1",
     "skyflow-js": "^1.38.2",
     "swiper": "11.2.8",
     "tw-elements": "^1.1.0",
