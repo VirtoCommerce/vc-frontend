@@ -7,37 +7,26 @@
 
       <div class="text-center lg:text-lg">{{ subtitle }}</div>
 
-      <div
-        :class="[
-          'grid grid-cols-1 gap-6 xs:grid-cols-2 lg:gap-5',
-          `md:grid-cols-${columnsAmountTablet}`,
-          `lg:grid-cols-${columnsAmountDesktop}`,
-        ]"
+      <VcProductsGrid
+        :columns="{
+          default: 1,
+          xs: 2,
+          sm: 2,
+          md: Number(columnsAmountTablet),
+          lg: Number(columnsAmountDesktop),
+          xl: Number(columnsAmountDesktop),
+          '2xl': Number(columnsAmountDesktop),
+        }"
       >
-        <ProductCardGrid
-          v-for="item in products"
-          :key="item.id"
-          :hide-properties="cardType === 'short'"
-          :product="item"
-        >
-          <template #cart-handler>
-            <VcButton v-if="item.hasVariations" :to="productsRoutes[item.id]" class="mb-4">
-              {{ $t("pages.demo_landing.products_block.choose_button") }}
-            </VcButton>
-
-            <AddToCart v-else :product="item" />
-          </template>
-        </ProductCardGrid>
-      </div>
+        <ProductCard v-for="item in products" :key="item.id" :card-type="cardType" :product="item" />
+      </VcProductsGrid>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { watchEffect } from "vue";
-import { useProductsRoutes } from "@/core/composables";
-import { AddToCart } from "@/shared/cart";
-import { ProductCardGrid, useProducts } from "@/shared/catalog";
+import { ProductCard, useProducts } from "@/shared/catalog";
 
 interface IProps {
   id?: string;
@@ -60,7 +49,6 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const { products, fetchProducts } = useProducts();
-const productsRoutes = useProductsRoutes(products);
 
 watchEffect(async () => {
   await fetchProducts({
