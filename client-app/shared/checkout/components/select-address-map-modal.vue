@@ -236,7 +236,7 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 <style lang="scss">
 .select-address-map-modal {
   &__content {
-    @apply relative h-[400px] max-h-screen w-full flex flex-col lg:h-[523px] lg:flex-row gap-5;
+    @apply relative max-h-screen w-full flex flex-col h-[523px] lg:flex-row gap-5;
   }
 
   &__map {
