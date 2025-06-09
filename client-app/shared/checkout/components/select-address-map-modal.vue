@@ -35,6 +35,7 @@
                 :map-id="MAP_ID"
                 :position="getLatLng(address.geoLocation)!"
                 :pin="createPin()"
+                :title="address.name"
               >
                 <div class="select-address-map-modal__info-window">
                   <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
