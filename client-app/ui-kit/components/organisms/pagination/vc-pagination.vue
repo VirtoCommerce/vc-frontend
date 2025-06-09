@@ -32,7 +32,7 @@
         <VcButton
           class="vc-pagination__button vc-pagination__button--prev"
           color="secondary"
-          variant="outline"
+          variant="solid-light"
           size="sm"
           :disabled="page === 1"
           @click="setPage(page - 1)"
@@ -44,7 +44,7 @@
         <VcButton
           class="vc-pagination__button vc-pagination__button--next"
           color="secondary"
-          variant="outline"
+          variant="solid-light"
           size="sm"
           :disabled="page === pages"
           @click="setPage(page + 1)"

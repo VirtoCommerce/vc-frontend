@@ -42,32 +42,31 @@ import { computed } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
 import { getColorValue } from "@/ui-kit/utilities";
 
-interface IEmits {
+const emit = defineEmits<{
   (event: "input", value: T): void;
   (event: "change", value: T): void;
-}
+}>();
+const props = withDefaults(
+  defineProps<{
+    label?: string;
+    name?: string;
+    value: T;
+    icon?: string;
+    color?: string;
+    hoverColor?: string;
+    disabled?: boolean;
+    size?: "sm" | "md";
+    labelPosition?: "start" | "end";
+  }>(),
+  {
+    size: "md",
+    labelPosition: "end",
+    color: "",
+    hoverColor: "",
+  },
+);
 
-interface IProps {
-  label?: string;
-  name?: string;
-  value: T;
-  icon?: string;
-  color?: string;
-  hoverColor?: string;
-  disabled?: boolean;
-  size?: "sm" | "md";
-  labelPosition?: "start" | "end";
-}
-
-const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  size: "md",
-  labelPosition: "end",
-  color: "",
-  hoverColor: "",
-});
-
-const model = defineModel<IProps["value"]>();
+const model = defineModel<T>();
 
 const componentId = useComponentId("input");
 
