@@ -1,11 +1,21 @@
 <template>
-  <div :id="elementId" ref="mapContainer" class="size-full"></div>
+  <div :id="mapElementId" ref="mapContainer" class="size-full"></div>
   <slot />
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, toRefs } from "vue";
+import uniqueId from "lodash/uniqueId";
+import { computed, onBeforeUnmount, onMounted, ref, toRefs } from "vue";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
+
+const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  center: () => ({ lat: 0, lng: 0 }),
+  zoom: 10,
+});
+
+const MAP_ELEMENT_ID_PREFIX = "google-map-";
 
 interface IProps {
   apiKey: string;
@@ -21,17 +31,10 @@ interface IEmits {
   boundariesChanged: [boundaries: google.maps.LatLngBounds];
 }
 
-const emit = defineEmits<IEmits>();
-
-const props = withDefaults(defineProps<IProps>(), {
-  center: () => ({ lat: 0, lng: 0 }),
-  zoom: 10,
-  elementId: "google-map",
-});
-
 let listener: google.maps.MapsEventListener | undefined;
 
 const { apiKey, center, zoom, elementId, mapId } = toRefs(props);
+const mapElementId = computed(() => (elementId.value ? elementId.value : uniqueId(MAP_ELEMENT_ID_PREFIX)));
 
 const mapContainer = ref<HTMLDivElement>();
 
@@ -40,7 +43,7 @@ const { initMap, map } = useGoogleMaps(mapId.value);
 onMounted(async () => {
   await initMap({
     apiKey: apiKey.value,
-    elementId: elementId.value,
+    elementId: mapElementId.value,
     options: {
       center: center.value,
       zoom: zoom.value,

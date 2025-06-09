@@ -113,7 +113,7 @@ describe("useBopis composable", () => {
       getSettingValue,
       hasModuleSettings: ref(false) as unknown as ComputedRef<boolean>,
       moduleSettings: ref([]) as unknown as ComputedRef<
-        { name: string; value?: string | number | boolean | null | undefined }[] | undefined
+        { name: string; value?: string | number | boolean | null }[] | undefined
       >,
       getModuleSettings: vi.fn().mockReturnValue({}),
     });
