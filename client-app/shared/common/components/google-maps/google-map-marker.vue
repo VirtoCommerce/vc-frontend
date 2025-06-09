@@ -16,8 +16,6 @@ const props = withDefaults(defineProps<IProps>(), {
   pin: () => ({}),
 });
 
-const ACTIVE_INFO_WINDOW_CONTENT_ID = "active-info-window-content";
-
 const { mapId } = toRefs(props);
 
 const { addMarker, initInfoWindow, map, infoWindow, removeMarker } = useGoogleMaps(mapId.value);
@@ -34,6 +32,8 @@ interface IProps {
 interface IEmits {
   click: [];
 }
+
+const ACTIVE_INFO_WINDOW_CONTENT_ID = `active-info-window-content-${mapId.value}`;
 
 let listener: google.maps.MapsEventListener | undefined;
 let closeListener: google.maps.MapsEventListener | undefined;
