@@ -78,9 +78,7 @@
               icon="exclamation-circle"
               variant="outline-dark"
             >
-              <div class="break-words">
-                {{ order.cancelReason }}
-              </div>
+              {{ order.cancelReason }}
             </VcAlert>
           </div>
         </VcWidget>
