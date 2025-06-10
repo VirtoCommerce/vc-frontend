@@ -14,7 +14,7 @@
   </div>
 
   <!-- Desktop table view -->
-  <table v-else class="w-full table-fixed text-left text-sm" :aria-describedby="tableDescriptionId">
+  <table v-else class="w-full table-fixed text-left text-sm" :aria-describedby="tableDescribedBy">
     <caption class="sr-only">
       {{
         description
@@ -120,7 +120,7 @@ withDefaults(
     hideDefaultFooter?: boolean;
     description?: string;
     pageLimit?: number | null;
-    tableDescriptionId?: string;
+    tableDescribedBy?: string;
   }>(),
   {
     columns: () => [],

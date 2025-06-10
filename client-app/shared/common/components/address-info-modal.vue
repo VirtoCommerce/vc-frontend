@@ -7,40 +7,38 @@
   >
     <VcTable hide-default-footer hide-default-header :columns="TABLE_COLUMNS" :items="tableItems">
       <template #desktop-body>
-        <tbody class="address-info-modal__table-body">
-          <tr v-if="eta" class="address-info-modal__table-row">
-            <td>
-              <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.eta`) }}:</span>
-            </td>
-            <td>{{ eta }}</td>
-          </tr>
-          <tr v-if="props.address.email || props.address.phone" class="address-info-modal__table-row">
-            <td>
-              <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.questions`) }}</span>
-            </td>
-            <td>
-              <i18n-t :keypath="contactKey">
-                <template #email>
-                  <a class="address-info-modal__link" :href="`mailto:${props.address.email}`">
-                    {{ props.address.email }}
-                  </a>
-                </template>
+        <tr v-if="eta" class="address-info-modal__table-row">
+          <td>
+            <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.eta`) }}:</span>
+          </td>
+          <td>{{ eta }}</td>
+        </tr>
+        <tr v-if="props.address.email || props.address.phone" class="address-info-modal__table-row">
+          <td>
+            <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.questions`) }}</span>
+          </td>
+          <td>
+            <i18n-t :keypath="contactKey">
+              <template #email>
+                <a class="address-info-modal__link" :href="`mailto:${props.address.email}`">
+                  {{ props.address.email }}
+                </a>
+              </template>
 
-                <template #phone>
-                  <a class="address-info-modal__link" :href="`tel:${props.address.phone}`">
-                    {{ props.address.phone }}
-                  </a>
-                </template>
-              </i18n-t>
-            </td>
-          </tr>
-          <tr class="address-info-modal__table-row">
-            <td>
-              <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.address`) }}:</span>
-            </td>
-            <td>{{ addressSentence }}</td>
-          </tr>
-        </tbody>
+              <template #phone>
+                <a class="address-info-modal__link" :href="`tel:${props.address.phone}`">
+                  {{ props.address.phone }}
+                </a>
+              </template>
+            </i18n-t>
+          </td>
+        </tr>
+        <tr class="address-info-modal__table-row">
+          <td>
+            <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.address`) }}:</span>
+          </td>
+          <td>{{ addressSentence }}</td>
+        </tr>
       </template>
     </VcTable>
     <template #actions="{ close }">
@@ -116,9 +114,7 @@ const addressSentence = computed(() => {
 
 <style lang="scss">
 .address-info-modal {
-  &__table-body {
-    @apply text-base;
-  }
+  @apply text-base;
 
   &__table-row {
     @apply flex items-start gap-1;
