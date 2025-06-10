@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-2">
+  <div class="space-y-2" :aria-labelledby="labelledBy">
     <div class="flex flex-col">
       <span class="font-bold">{{ address.firstName }} {{ address.lastName }}</span>
       <AddressLine :address="address" />
@@ -26,6 +26,7 @@ import type { AnyAddressType } from "@/core/types";
 
 interface IProps {
   address: AnyAddressType;
+  labelledBy?: string;
 }
 
 defineProps<IProps>();

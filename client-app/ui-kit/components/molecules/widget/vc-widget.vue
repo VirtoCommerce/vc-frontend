@@ -26,7 +26,7 @@
               </slot>
             </span>
 
-            <span class="vc-widget__title">
+            <span :id="titleId" class="vc-widget__title">
               <slot name="title">
                 {{ title }}
               </slot>
@@ -83,6 +83,7 @@ interface IProps {
   shadow?: boolean;
   border?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
+  titleId?: string;
 }
 
 const emit = defineEmits<IEmits>();
