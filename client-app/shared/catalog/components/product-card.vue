@@ -51,14 +51,11 @@
       :single-line="viewMode === 'grid'"
     />
 
-    <component
-      :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
-      v-if="
-        isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-        shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
-      "
+    <ExtensionPoint
+      v-if="$canRenderExtensionPoint('productCard', EXTENSION_NAMES.productCard.cardButton, product)"
+      :name="EXTENSION_NAMES.productCard.cardButton"
+      category="productCard"
       :product="product"
-      v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
     />
 
     <VcProductButton
@@ -105,8 +102,7 @@ import {
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
 import { AddToCart } from "@/shared/cart";
-import { useCustomProductComponents } from "@/shared/common/composables";
-import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import BadgesWrapper from "./badges-wrapper.vue";
@@ -133,8 +129,6 @@ interface IProps {
 defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
-
-const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
