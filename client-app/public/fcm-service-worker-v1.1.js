@@ -6,7 +6,7 @@
 
 // NOTE: When updating the service worker, make sure to update the version in the service worker module constants "client-app/modules/push-messages/constants/index.ts"
 
-const VERSION = "11.0.1";
+const VERSION = "11.9.0";
 importScripts(
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-app-compat.js`,
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`,
@@ -34,7 +34,7 @@ try {
   });
   firebase.messaging(firebaseApp);
 } catch (e) {
-  // Ignore placeholder initialization errors
+  // eslint-disable-next-line no-console
   console.warn("Firebase placeholder initialization failed:", e);
 }
 
@@ -43,19 +43,17 @@ self.addEventListener("message", (event) => {
   if (event.data.type === "initialize") {
     const { config } = event.data;
     try {
-      // Only update if we have a valid config
-      if (config && config.apiKey && config.projectId && config.appId) {
-        // Update the app options internally
-        if (firebaseApp && firebaseApp.options) {
-          // Replace placeholder config with real config
-          Object.assign(firebaseApp.options, config);
-          isInitialized = true;
-        } else {
-          // Fallback: create new app if placeholder failed
-          firebaseApp = firebase.initializeApp(config);
-          firebase.messaging(firebaseApp);
-          isInitialized = true;
-        }
+      if (!config || !config.apiKey || !config.projectId || !config.appId) {
+        return;
+      }
+
+      if (firebaseApp && firebaseApp.options) {
+        Object.assign(firebaseApp.options, config);
+        isInitialized = true;
+      } else {
+        firebaseApp = firebase.initializeApp(config);
+        firebase.messaging(firebaseApp);
+        isInitialized = true;
       }
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -71,7 +69,6 @@ self.addEventListener("message", (event) => {
   }
 });
 
-// Event handlers are registered during initial evaluation
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
   const url = event.notification?.data?.url || DEFAULT_RETURN_URL;
@@ -80,6 +77,7 @@ self.addEventListener("notificationclick", function (event) {
 
 self.addEventListener("push", function (event) {
   if (!isInitialized) {
+    // eslint-disable-next-line no-console
     console.warn("Firebase not properly initialized, skipping push notification");
     return;
   }
@@ -100,6 +98,7 @@ self.addEventListener("push", function (event) {
 
 self.addEventListener("pushsubscriptionchange", function (event) {
   if (!isInitialized) {
+    // eslint-disable-next-line no-console
     console.warn("Firebase not properly initialized, skipping subscription change");
     return;
   }
@@ -108,14 +107,17 @@ self.addEventListener("pushsubscriptionchange", function (event) {
     registration.pushManager
       .subscribe(event.oldSubscription.options)
       .then((newSubscription) => {
+        // eslint-disable-next-line no-console
         console.log("Push subscription changed:", newSubscription);
       })
       .catch((error) => {
+        // eslint-disable-next-line no-console
         console.error("Failed to resubscribe:", error);
       }),
   );
 });
 
+// needs to persist the default icon url in indexedDB, since it's getting lost when the service worker is restarted
 function storeDefaultIcon(iconUrl) {
   const request = indexedDB.open(DB_NAME, 1);
 
