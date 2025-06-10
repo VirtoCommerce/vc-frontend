@@ -79,6 +79,9 @@
       "end_list": "Vous avez atteint la fin de la liste.",
       "page_limit_filters": "Pas d'autres résultats. Veuillez essayer de changer les filtres.",
       "page_limit": "Aucun autre résultat ne peut être affiché."
+    },
+    "slider": {
+      "tooltip": "{count} articles"
     }
   }
 }
