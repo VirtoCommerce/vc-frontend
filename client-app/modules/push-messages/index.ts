@@ -6,11 +6,15 @@ import { useThemeContext } from "@/core/composables/useThemeContext";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { loadModuleLocale } from "@/modules/utils";
 import { useUser } from "@/shared/account/composables/useUser";
-import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import { useCustomHeaderLinkComponents } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
+import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
+import { useCustomMobileMenuLinkComponents } from "@/shared/layout/composables/useCustomMobileMenuLinkComponents";
 import { pushMessagesTypePolices } from "./api/graphql/typePolices";
 import { PUSH_MESSAGES_MODULE_ENABLED_KEY, PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY } from "./constants";
 import type { MenuType } from "@/core/types";
 import type { I18n } from "@/i18n";
+import type { ElementType } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
+import type { ElementType as HeaderElementType } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
 import type { DeepPartial } from "utility-types";
 import type { Router, RouteRecordRaw } from "vue-router";
 
@@ -62,6 +66,21 @@ const menuItems: DeepPartial<MenuType> = {
 const Notifications = () => import("@/modules/push-messages/pages/notifications.vue");
 const PushMessage = () => import("@/modules/push-messages/pages/push-message.vue");
 
+const menuLinkCustomElement: ElementType = {
+  id: "push-messages",
+  component: defineAsyncComponent(() => import("./components/link-push-messages.vue")),
+};
+
+const menuLinkCustomElementMobile: ElementType = {
+  id: "push-messages",
+  component: defineAsyncComponent(() => import("./components/link-push-messages-mobile.vue")),
+};
+
+const headerWidgetCustomElementMobile: HeaderElementType = {
+  id: "push-messages",
+  component: defineAsyncComponent(() => import("./components/push-messages-mobile.vue")),
+};
+
 async function unregisterFCM() {
   const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
   if (serviceWorkerRegistration) {
@@ -83,7 +102,9 @@ export async function init(router: Router, i18n: I18n) {
 
   if (isModuleEnabled) {
     const { mergeMenuSchema } = useNavigations();
-    const { register } = useExtensionRegistry();
+    const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
+    const { registerCustomLinkComponent: registerCustomMobileLinkComponent } = useCustomMobileMenuLinkComponents();
+    const { registerCustomComponent: registerCustomMobileHeaderComponent } = useCustomMobileHeaderComponents();
     const route: RouteRecordRaw = {
       path: "notifications",
       name: "Notifications",
@@ -100,15 +121,9 @@ export async function init(router: Router, i18n: I18n) {
     cache.policies.addTypePolicies(pushMessagesTypePolices);
     mergeMenuSchema(menuItems);
     void loadModuleLocale(i18n, "push-messages");
-    register("headerMenu", "push-messages", {
-      component: defineAsyncComponent(() => import("./components/link-push-messages.vue")),
-    });
-    register("mobileMenu", "push-messages", {
-      component: defineAsyncComponent(() => import("./components/link-push-messages-mobile.vue")),
-    });
-    register("mobileHeader", "push-messages", {
-      component: defineAsyncComponent(() => import("./components/push-messages-mobile.vue")),
-    });
+    registerCustomLinkComponent(menuLinkCustomElement);
+    registerCustomMobileLinkComponent(menuLinkCustomElementMobile);
+    registerCustomMobileHeaderComponent(headerWidgetCustomElementMobile);
     router.addRoute("Account", route); // NOTE: This route must be added before any asynchronous calls. Delaying it can cause a 404 error if accessed prematurely.
   }
 

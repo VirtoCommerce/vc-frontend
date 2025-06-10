@@ -2,8 +2,8 @@ import { defineAsyncComponent } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useUser } from "@/shared/account/composables";
-import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
-import { EXTENSION_NAMES } from "@/shared/common/constants";
+import { useCustomProductComponents } from "@/shared/common/composables";
+import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import { loadModuleLocale } from "../utils";
 import { MODULE_ID, ENABLED_KEY } from "./constants";
 import type { MenuType } from "@/core/types";
@@ -17,7 +17,7 @@ const BackInStockButton = defineAsyncComponent(() => import("./components/back-i
 
 const { isEnabled } = useModuleSettings(MODULE_ID);
 const { mergeMenuSchema } = useNavigations();
-const { register } = useExtensionRegistry();
+const { registerComponent } = useCustomProductComponents();
 
 const route: RouteRecordRaw = {
   path: "back-in-stock",
@@ -64,14 +64,16 @@ export function init(router: Router, i18n: I18n) {
   }
   if (isAuthenticated.value && isEnabled(ENABLED_KEY)) {
     mergeMenuSchema(menuItems);
-    register("productCard", EXTENSION_NAMES.productCard.cardButton, {
+    registerComponent({
+      id: CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON,
       component: BackInStockButton,
-      condition: (product) => !product.availabilityData.isInStock,
+      shouldRender: (product) => !product.availabilityData.isInStock,
       props: { isTextShown: true },
     });
-    register("productPage", EXTENSION_NAMES.productPage.sidebarButton, {
+    registerComponent({
+      id: CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON,
       component: BackInStockButton,
-      condition: (product) => !product.availabilityData.isInStock,
+      shouldRender: (product) => !product.availabilityData.isInStock,
     });
   }
 }

@@ -1,2 +1,1 @@
-export * from "./extensionPointsNames";
-export * from "./initialExtensionRegistry";
+export * from "./customProductComponents";
