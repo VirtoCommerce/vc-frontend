@@ -176,15 +176,15 @@ function update(value: number) {
           @apply mt-3;
 
           @container (min-width: theme("containers.sm")) {
-            @apply w-44;
+            @apply w-72;
           }
 
           @container (min-width: theme("containers.xl")) {
-            @apply mt-0 ms-3;
+            @apply mt-0 ms-3 w-44;
           }
 
           @container (min-width: theme("containers.4xl")) {
-            @apply mt-0 ms-3;
+            @apply mt-0 ms-3 w-60;
           }
         }
       }
