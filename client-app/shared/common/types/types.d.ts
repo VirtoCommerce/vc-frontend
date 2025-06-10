@@ -1,4 +1,4 @@
-import type ExtensionPointMulti from "@/shared/common/components/extension-point-multi.vue";
+import type ExtensionPointList from "@/shared/common/components/extension-point-list.vue";
 import type ExtensionPoint from "@/shared/common/components/extension-point.vue";
 
 declare module "vue" {
@@ -6,7 +6,7 @@ declare module "vue" {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   export interface GlobalComponents {
     ExtensionPoint: typeof ExtensionPoint;
-    ExtensionPointMulti: typeof ExtensionPointMulti;
+    ExtensionPointList: typeof ExtensionPointList;
   }
 }
 

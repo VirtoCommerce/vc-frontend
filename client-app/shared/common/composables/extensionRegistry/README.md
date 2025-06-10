@@ -12,7 +12,7 @@
 |------|-------------|
 | **`useExtensionRegistry()`** | Global store + API |
 | **`ExtensionPoint`** | Placeholder component  to render registered extension; renders default slot for each unregistered entry  |
-| **`ExtensionPointMulti`** | Placeholder component to render multiple registered extensions; accepts optional `names` array; renders default slot for each unregistered entry |
+| **`ExtensionPointList`** | Placeholder component to render multiple registered extensions; accepts optional `names` array; renders default slot for each unregistered entry |
 | **`$canRenderExtensionPoint`** | Global helper that evaluates `condition` |
 
 ---
@@ -35,7 +35,7 @@
      });
      ```
 4. Declare extension points in templates:
-   - Insert `<ExtensionPoint>` or `<ExtensionPointMulti>` in your Vue components, specifying `category` and `name` (`names` for multi).
+   - Insert `<ExtensionPoint>` or `<ExtensionPointList>` in your Vue components, specifying `category` and `name` (`names` for multi).
 5. (Optional) Provide fallback slot content for unregistered names:
    ```vue
    <ExtensionPoint category="myCategory" name="myName">
