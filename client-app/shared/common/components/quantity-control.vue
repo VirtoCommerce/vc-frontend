@@ -150,8 +150,6 @@ function applyPreValidationModifiers() {
 }
 
 const handleChange = debounce(async () => {
-  applyPreValidationModifiers();
-
   const newQuantity = Number(quantity.value);
 
   if (isNaN(newQuantity) || newQuantity === value.value) {
@@ -184,7 +182,10 @@ onMounted(async () => {
   }
 });
 
-watch(quantity, handleChange);
+watch(quantity, () => {
+  applyPreValidationModifiers();
+  void handleChange();
+});
 
 watchEffect(() => {
   if (isValid.value) {
