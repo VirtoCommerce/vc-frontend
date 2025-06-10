@@ -17,11 +17,50 @@ const DB_NAME = "fcm-auxiliary-database";
 const DB_STORE_OBJECT = "data";
 const DB_DEFAULT_ICON_ID = "defaultIcon";
 
+// Firebase initialization state
+let firebaseApp;
+let isInitialized = false;
+
+// Initialize Firebase with placeholder config during initial evaluation
+// This prevents the "Event handler must be added on initial evaluation" warnings
+try {
+  firebaseApp = firebase.initializeApp({
+    apiKey: "placeholder",
+    authDomain: "placeholder.firebaseapp.com",
+    projectId: "placeholder",
+    storageBucket: "placeholder.appspot.com",
+    messagingSenderId: "placeholder",
+    appId: "placeholder",
+  });
+  firebase.messaging(firebaseApp);
+} catch (e) {
+  // Ignore placeholder initialization errors
+  console.warn("Firebase placeholder initialization failed:", e);
+}
+
+// Update configuration when received from main thread
 self.addEventListener("message", (event) => {
   if (event.data.type === "initialize") {
     const { config } = event.data;
-    // eslint-disable-next-line no-console
-    initialize(config).catch((e) => console.error(e));
+    try {
+      // Only update if we have a valid config
+      if (config && config.apiKey && config.projectId && config.appId) {
+        // Update the app options internally
+        if (firebaseApp && firebaseApp.options) {
+          // Replace placeholder config with real config
+          Object.assign(firebaseApp.options, config);
+          isInitialized = true;
+        } else {
+          // Fallback: create new app if placeholder failed
+          firebaseApp = firebase.initializeApp(config);
+          firebase.messaging(firebaseApp);
+          isInitialized = true;
+        }
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to update Firebase config:", e);
+    }
   }
 });
 
@@ -32,6 +71,7 @@ self.addEventListener("message", (event) => {
   }
 });
 
+// Event handlers are registered during initial evaluation
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
   const url = event.notification?.data?.url || DEFAULT_RETURN_URL;
@@ -39,6 +79,11 @@ self.addEventListener("notificationclick", function (event) {
 });
 
 self.addEventListener("push", function (event) {
+  if (!isInitialized) {
+    console.warn("Firebase not properly initialized, skipping push notification");
+    return;
+  }
+
   const { data } = event.data.json();
   event.waitUntil(
     registration.pushManager.getSubscription().then(async () => {
@@ -53,12 +98,24 @@ self.addEventListener("push", function (event) {
   );
 });
 
-async function initialize(config) {
-  const app = firebase.initializeApp(config);
-  await firebase.messaging(app);
-}
+self.addEventListener("pushsubscriptionchange", function (event) {
+  if (!isInitialized) {
+    console.warn("Firebase not properly initialized, skipping subscription change");
+    return;
+  }
 
-// needs to persist the default icon url in indexedDB, since it's getting lost when the service worker is restarted
+  event.waitUntil(
+    registration.pushManager
+      .subscribe(event.oldSubscription.options)
+      .then((newSubscription) => {
+        console.log("Push subscription changed:", newSubscription);
+      })
+      .catch((error) => {
+        console.error("Failed to resubscribe:", error);
+      }),
+  );
+});
+
 function storeDefaultIcon(iconUrl) {
   const request = indexedDB.open(DB_NAME, 1);
 
@@ -136,7 +193,7 @@ function htmlToText(html) {
 
   // Function to handle blockquotes
   function handleBlockquotes(match, p1) {
-    return "\n“" + p1.trim().replace(/\n/g, "\n ") + "”\n";
+    return "\n" + p1.trim().replace(/\n/g, "\n ") + "\n";
   }
 
   // Function to handle paragraphs
