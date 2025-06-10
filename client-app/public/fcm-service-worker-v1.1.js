@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable no-console */
 /* eslint-disable no-undef */
 
 // NOTE: When updating the service worker, make sure to update the version in the service worker module constants "client-app/modules/push-messages/constants/index.ts"
@@ -34,7 +35,6 @@ try {
   });
   firebase.messaging(firebaseApp);
 } catch (e) {
-  // eslint-disable-next-line no-console
   console.warn("Firebase placeholder initialization failed:", e);
 }
 
@@ -56,7 +56,6 @@ self.addEventListener("message", (event) => {
         isInitialized = true;
       }
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error("Failed to update Firebase config:", e);
     }
   }
@@ -77,7 +76,6 @@ self.addEventListener("notificationclick", function (event) {
 
 self.addEventListener("push", function (event) {
   if (!isInitialized) {
-    // eslint-disable-next-line no-console
     console.warn("Firebase not properly initialized, skipping push notification");
     return;
   }
@@ -98,7 +96,6 @@ self.addEventListener("push", function (event) {
 
 self.addEventListener("pushsubscriptionchange", function (event) {
   if (!isInitialized) {
-    // eslint-disable-next-line no-console
     console.warn("Firebase not properly initialized, skipping subscription change");
     return;
   }
@@ -107,11 +104,9 @@ self.addEventListener("pushsubscriptionchange", function (event) {
     registration.pushManager
       .subscribe(event.oldSubscription.options)
       .then((newSubscription) => {
-        // eslint-disable-next-line no-console
         console.log("Push subscription changed:", newSubscription);
       })
       .catch((error) => {
-        // eslint-disable-next-line no-console
         console.error("Failed to resubscribe:", error);
       }),
   );
