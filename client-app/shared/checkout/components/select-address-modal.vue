@@ -1,6 +1,8 @@
 <template>
   <VcModal :title="$t('shared.checkout.select_address_modal.title')" max-width="60rem" is-mobile-fullscreen dividers>
-    <VcAlert class="mb-4" icon="check-circle" size="sm" variant="solid-light"> For selection tap the address </VcAlert>
+    <VcAlert class="mb-4 lg:hidden" icon="check-circle" size="sm" variant="solid-light">
+      {{ $t("shared.checkout.select_address_modal.message") }}
+    </VcAlert>
 
     <template #actions="{ close }">
       <div class="flex w-full flex-wrap items-center gap-3">
