@@ -71,6 +71,17 @@
 
               <OrderStatus size="sm" :status="order.status" :display-value="order.statusDisplayValue" />
             </div>
+            <VcAlert
+              v-if="order.cancelReason"
+              class="mt-2.5"
+              :color="order.status === OrderStatusEnum.CANCELLED ? 'danger' : 'warning'"
+              icon="exclamation-circle"
+              variant="outline-dark"
+            >
+              <div class="break-words">
+                {{ order.cancelReason }}
+              </div>
+            </VcAlert>
           </div>
         </VcWidget>
 
@@ -116,8 +127,16 @@
           </VcWidget>
 
           <!-- Shipping Address Card -->
-          <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="$t('common.titles.shipping_address')">
-            <AddressInfo :address="deliveryAddress" :other-address="bopisAddress" class="text-base" show-actions />
+          <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="shipToTitle">
+            <AddressInfo :address="deliveryAddress" class="text-base">
+              <template v-if="shipmentType === 'pick_up'" #actions>
+                <div class="flex items-center justify-between gap-2.5 pt-1">
+                  <VcButton size="xs" prepend-icon="information-circle" variant="outline" @click="openInfo">
+                    {{ $t("pages.account.order_details.bopis.point_info") }}
+                  </VcButton>
+                </div>
+              </template>
+            </AddressInfo>
           </VcWidget>
 
           <!-- Payment Method section -->
@@ -147,14 +166,18 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { OrderStatusEnum } from "@/core/enums/order-status.enum.ts";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
-import { useBopis } from "@/shared/checkout/composables/useBopis.ts";
+import { BOPIS_CODE, useBopis } from "@/shared/checkout/composables/useBopis.ts";
 import { AddressInfo, VendorName } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
+import AddressInfoModal from "@/shared/common/components/address-info-modal.vue";
+
+type ShipmentType = "delivery" | "pick_up";
 
 interface IProps {
   orderId: string;
@@ -177,13 +200,13 @@ const {
   clearOrder,
 } = useUserOrder();
 const { cart, addItemsToCart } = useShortCart();
-const { openModal } = useModal();
+const { openModal, closeModal } = useModal();
 const { t } = useI18n();
 
-const { addresses, fetchAddresses } = useBopis();
+const { fetchAddresses } = useBopis();
 
-const bopisAddress = computed(() => {
-  return addresses.value[0];
+const shipmentType = computed<ShipmentType>(() => {
+  return shipment.value?.shipmentMethodCode === BOPIS_CODE ? "pick_up" : "delivery";
 });
 
 usePageHead({
@@ -211,6 +234,22 @@ const shipmentMethodName = computed<string>(() =>
 const paymentMethodName = computed<string>(() =>
   t(`common.methods.payment_by_code.${payment.value?.paymentMethod?.code}`),
 );
+
+const shipToTitle = computed(() => {
+  return shipmentType.value === "delivery"
+    ? t("common.titles.shipping_address")
+    : t("pages.account.order_details.bopis.pickup_address");
+});
+
+function openInfo() {
+  openModal({
+    component: AddressInfoModal,
+    props: {
+      address: deliveryAddress,
+      onClose: closeModal,
+    },
+  });
+}
 
 async function reorderItems() {
   const items = order.value!.items.filter((item) => !item.isGift);

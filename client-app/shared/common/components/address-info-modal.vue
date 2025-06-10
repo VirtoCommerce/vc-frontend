@@ -121,7 +121,7 @@ const addressSentence = computed(() => {
   }
 
   &__table-row {
-    @apply flex items-start;
+    @apply flex items-start gap-1;
   }
 
   &__link {

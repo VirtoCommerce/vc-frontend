@@ -1145,7 +1145,8 @@
           "address": "Адрес",
           "pick_point_info": "Информация о пункте выдачи",
           "get_directions": "Как добраться",
-          "point_info": "Информация"
+          "point_info": "Информация",
+          "pickup_address": "Адрес самовывоза"
         }
       },
       "order_payment": {

@@ -1145,7 +1145,8 @@
           "address": "Adres",
           "pick_point_info": "Informacje o punkcie odbioru",
           "get_directions": "Wyznacz trasę",
-          "point_info": "Punkt informacyjny"
+          "point_info": "Punkt informacyjny",
+          "pickup_address": "Adres odbioru"
         }
       },
       "order_payment": {

@@ -1145,7 +1145,8 @@
           "address": "Endereço",
           "pick_point_info": "Informações do ponto de coleta",
           "get_directions": "Obter direções",
-          "point_info": "Informações"
+          "point_info": "Informações",
+          "pickup_address": "Endereço de retirada"
         }
       },
       "order_payment": {

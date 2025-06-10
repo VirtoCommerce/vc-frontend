@@ -389,10 +389,10 @@ export type InputQuoteAddressType = {
   countryCode?: InputMaybe<Scalars['String']['input']>;
   countryName: Scalars['String']['input'];
   email?: InputMaybe<Scalars['String']['input']>;
-  firstName: Scalars['String']['input'];
+  firstName?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
   key?: InputMaybe<Scalars['String']['input']>;
-  lastName: Scalars['String']['input'];
+  lastName?: InputMaybe<Scalars['String']['input']>;
   line1?: InputMaybe<Scalars['String']['input']>;
   line2?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -581,8 +581,6 @@ export type PriceType = {
   minQuantity?: Maybe<Scalars['Int']['output']>;
   /** The product price list */
   pricelistId?: Maybe<Scalars['String']['output']>;
-  /** The product price list name */
-  pricelistName?: Maybe<Scalars['String']['output']>;
   /** Sale price */
   sale: MoneyType;
   /** Sale price with tax */
@@ -890,11 +888,11 @@ export type QuoteAddressType = {
   countryCode?: Maybe<Scalars['String']['output']>;
   countryName: Scalars['String']['output'];
   email?: Maybe<Scalars['String']['output']>;
-  firstName: Scalars['String']['output'];
+  firstName?: Maybe<Scalars['String']['output']>;
   /** ID */
   id?: Maybe<Scalars['String']['output']>;
   key?: Maybe<Scalars['String']['output']>;
-  lastName: Scalars['String']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
   line1?: Maybe<Scalars['String']['output']>;
   line2?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
@@ -912,6 +910,30 @@ export type QuoteAttachmentType = {
   name: Scalars['String']['output'];
   size: Scalars['Long']['output'];
   url: Scalars['String']['output'];
+};
+
+export type QuoteConfigurationItemFileType = {
+  /** MIME type of the file */
+  contentType?: Maybe<Scalars['String']['output']>;
+  /** Name of the file */
+  name: Scalars['String']['output'];
+  /** Size of the file */
+  size: Scalars['Long']['output'];
+  /** URL of the file */
+  url: Scalars['String']['output'];
+};
+
+export type QuoteConfigurationItemType = {
+  /** Configuration item custom text */
+  customText?: Maybe<Scalars['String']['output']>;
+  /** List of files for 'File' configuration item section */
+  files?: Maybe<Array<Maybe<QuoteConfigurationItemFileType>>>;
+  /** Configuration item ID */
+  id: Scalars['String']['output'];
+  /** Configuration item name */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Configuration item type. Possible values: 'Product', 'Text', 'File' */
+  type: Scalars['String']['output'];
 };
 
 /** A connection from an object to a list of objects of type `Quote`. */
@@ -938,6 +960,8 @@ export type QuoteItemType = {
   catalogId?: Maybe<Scalars['String']['output']>;
   categoryId?: Maybe<Scalars['String']['output']>;
   comment?: Maybe<Scalars['String']['output']>;
+  /** Configuration items for configurable product */
+  configurationItems?: Maybe<Array<Maybe<QuoteConfigurationItemType>>>;
   id: Scalars['String']['output'];
   imageUrl?: Maybe<Scalars['String']['output']>;
   listPrice: MoneyType;
@@ -1174,7 +1198,7 @@ export type CurrencyFragment = { code: string, symbol: string };
 
 export type MoneyFragment = { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } };
 
-export type QuoteAddressFieldsFragment = { firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string };
+export type QuoteAddressFieldsFragment = { firstName?: string, lastName?: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string };
 
 export type QuoteAttachmentFragment = { name: string, url: string, contentType?: string, size: number };
 
@@ -1261,7 +1285,7 @@ export type GetQuoteQueryVariables = Exact<{
 }>;
 
 
-export type GetQuoteQuery = { quote?: { id: string, number: string, createdDate: any, cancelledDate?: any, cancelReason?: string, comment?: string, isCancelled: boolean, status?: string, attachments: Array<{ name: string, url: string, contentType?: string, size: number }>, items: Array<{ id: string, sku?: string, productId?: string, name: string, imageUrl?: string, listPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, selectedTierPrice?: { quantity: number, price: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, product?: { id: string, slug?: string, brandName?: string, productType?: string, properties: Array<{ name: string, value?: string | number | boolean | null, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number }>, availabilityData: { availableQuantity: number, isInStock: boolean } } }>, addresses: Array<{ firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string }>, totals: { grandTotalInclTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, subTotalExlTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, shippingTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, adjustmentQuoteExlTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, grandTotalExlTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } } };
+export type GetQuoteQuery = { quote?: { id: string, number: string, createdDate: any, cancelledDate?: any, cancelReason?: string, comment?: string, isCancelled: boolean, status?: string, attachments: Array<{ name: string, url: string, contentType?: string, size: number }>, items: Array<{ id: string, sku?: string, productId?: string, name: string, imageUrl?: string, listPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, selectedTierPrice?: { quantity: number, price: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, product?: { id: string, slug?: string, brandName?: string, productType?: string, properties: Array<{ name: string, value?: string | number | boolean | null, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number }>, availabilityData: { availableQuantity: number, isInStock: boolean } } }>, addresses: Array<{ firstName?: string, lastName?: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string }>, totals: { grandTotalInclTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, subTotalExlTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, shippingTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, adjustmentQuoteExlTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, grandTotalExlTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } } };
 
 export type GetQuotesQueryVariables = Exact<{
   storeId?: InputMaybe<Scalars['String']['input']>;

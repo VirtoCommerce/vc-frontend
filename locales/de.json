@@ -1145,7 +1145,8 @@
           "address": "Adresse",
           "pick_point_info": "Abholpunkt-Info",
           "get_directions": "Wegbeschreibung abrufen",
-          "point_info": "Info-Punkt"
+          "point_info": "Info-Punkt",
+          "pickup_address": "Abholadresse"
         }
       },
       "order_payment": {

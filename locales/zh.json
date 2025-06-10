@@ -1145,7 +1145,8 @@
           "address": "地址",
           "pick_point_info": "自提点信息",
           "get_directions": "获取路线",
-          "point_info": "积分信息"
+          "point_info": "积分信息",
+          "pickup_address": "自提地址"
         }
       },
       "order_payment": {

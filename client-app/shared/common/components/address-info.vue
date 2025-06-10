@@ -16,36 +16,17 @@
         {{ address.email }}
       </span>
     </div>
-    <div v-if="showActions" class="flex items-center justify-between gap-2.5 pt-4 empty:hidden">
-      <VcButton size="xs" prepend-icon="information" @click="openInfo">
-        {{ $t("pages.account.order_details.bopis.point_info") }}
-      </VcButton>
-    </div>
+    <slot name="actions" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useModal } from "@/shared/modal";
-import AddressInfoModal from "./address-info-modal.vue";
 import AddressLine from "./address-line.vue";
 import type { AnyAddressType } from "@/core/types";
 
 interface IProps {
   address: AnyAddressType;
-  showActions?: boolean;
 }
 
-const props = defineProps<IProps>();
-
-const { openModal, closeModal } = useModal();
-
-function openInfo() {
-  openModal({
-    component: AddressInfoModal,
-    props: {
-      address: props.address,
-      onClose: closeModal,
-    },
-  });
-}
+defineProps<IProps>();
 </script>
