@@ -69,7 +69,11 @@
                       {{ $t("common.buttons.cancel") }}
                     </VcButton>
 
-                    <VcButton size="xs" variant="outline" @click="selectHandler(address, { closeInfo: true })">
+                    <VcButton
+                      size="xs"
+                      variant="outline"
+                      @click="selectHandler(address, { closeInfo: true, scrollToSelectedOnList: true })"
+                    >
                       {{ $t("common.buttons.select") }}
                     </VcButton>
                   </div>
@@ -82,13 +86,18 @@
 
       <div class="select-address-map-modal__sidebar">
         <ul class="select-address-map-modal__list">
-          <li v-for="address in addresses" :key="address.id" class="select-address-map-modal__list-item">
+          <li
+            v-for="address in addresses"
+            :key="address.id"
+            :data-address-id="address.id"
+            class="select-address-map-modal__list-item"
+          >
             <VcRadioButton
               v-model="selectedAddressId"
               :value="address.id"
               class="select-address-map-modal__radio-button"
               size="sm"
-              @change="selectHandler(address, { scrollToSelected: true })"
+              @change="selectHandler(address, { scrollToSelectedOnMap: true })"
             >
               <div class="flex flex-col">
                 <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
@@ -188,16 +197,27 @@ function getLatLng(location: string | undefined) {
   }
 }
 
-function selectHandler(address: PickupLocationType, options: { scrollToSelected?: boolean; closeInfo?: boolean } = {}) {
+function selectHandler(
+  address: PickupLocationType,
+  options: { scrollToSelectedOnMap?: boolean; scrollToSelectedOnList?: boolean; closeInfo?: boolean } = {},
+) {
   if (address.id) {
     selectedAddressId.value = address.id;
   }
 
-  if (options.scrollToSelected) {
+  if (options.scrollToSelectedOnMap) {
     const latLng = getLatLng(address.geoLocation);
 
     if (latLng) {
       zoomToLatLng(latLng);
+    }
+  }
+
+  if (options.scrollToSelectedOnList) {
+    const listElement = document.querySelector(`[data-address-id="${address.id}"]`);
+
+    if (listElement) {
+      listElement.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }
 
