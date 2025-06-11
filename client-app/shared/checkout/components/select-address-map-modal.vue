@@ -170,7 +170,7 @@ interface IEmits {
 const pinColor = getColorValue("primary");
 const parser = new DOMParser();
 const cube = parser.parseFromString(cubeIcon, "image/svg+xml").documentElement;
-cube.style.fill = getColorValue("--color-additional-50");
+cube.classList.add("select-address-map-modal__marker-glyph");
 
 function cloneElement<T extends Element>(el: T): T {
   return el.cloneNode(true) as T;
@@ -337,6 +337,10 @@ $mapHeight: 523px;
 
   &__info-window-actions {
     @apply flex gap-2 justify-end sticky bottom-0 bg-additional-50 pt-2;
+  }
+
+  &__marker-glyph {
+    @apply fill-additional-50 size-7;
   }
 }
 </style>
