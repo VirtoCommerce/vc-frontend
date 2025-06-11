@@ -122,17 +122,20 @@ interface IEmits {
 }
 
 interface IProps {
-  loading: boolean;
+  loading?: boolean;
   product: Product;
   viewMode?: "grid" | "list";
   browserTarget?: BrowserTargetType;
   cardType?: "full" | "short";
-  lazy: boolean;
+  lazy?: boolean;
 }
 
 defineEmits<IEmits>();
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  viewMode: "grid",
+  browserTarget: "_blank",
+});
 
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
