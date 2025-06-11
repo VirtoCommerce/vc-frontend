@@ -37,7 +37,7 @@
           <td>
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.address`) }}:</span>
           </td>
-          <td>{{ addressSentence }}</td>
+          <td><AddressLine :address="address"></AddressLine></td>
         </tr>
       </template>
     </VcTable>
@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { toCSV } from "@/core/utilities";
+import { AddressLine } from "@/shared/common";
 import GetDirectionsAction from "./get-directions-action.vue";
 import type { OrderAddressType } from "@/core/api/graphql/types.ts";
 
@@ -61,17 +61,17 @@ const props = defineProps<IProps>();
 
 type AddressType = Pick<
   OrderAddressType,
-  | "phone"
-  | "email"
-  | "zip"
-  | "countryName"
-  | "regionName"
-  | "city"
-  | "line1"
-  | "line2"
   | "firstName"
   | "middleName"
   | "lastName"
+  | "phone"
+  | "email"
+  | "line1"
+  | "line2"
+  | "city"
+  | "regionName"
+  | "postalCode"
+  | "countryName"
 >;
 interface IProps {
   //  Estimated Time of Arrival
@@ -104,11 +104,6 @@ const contactKey = computed(() => {
   }
 
   return key;
-});
-
-const addressSentence = computed(() => {
-  const { line1, line2, city, regionName, zip, countryName } = props.address;
-  return toCSV([line1, line2, city, regionName, zip, countryName]);
 });
 </script>
 

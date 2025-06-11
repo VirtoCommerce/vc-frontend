@@ -109,5 +109,10 @@ export function getUrlSearchParam(param: string): string | null {
 }
 
 export function toCSV(parts?: (string | undefined | null)[], delimiter = ", "): string {
-  return parts?.filter((part): part is string => typeof part === "string" && part.trim() !== "").join(delimiter) ?? "";
+  return (
+    parts
+      ?.map((part) => (typeof part === "string" ? part.trim() : ""))
+      .filter((part) => part !== "")
+      .join(delimiter) ?? ""
+  );
 }
