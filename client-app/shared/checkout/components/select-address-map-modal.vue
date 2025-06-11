@@ -125,6 +125,7 @@
 </template>
 
 <script setup lang="ts">
+import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { computed, ref, toRef, watch } from "vue";
 import { getAddressName } from "@/core/utilities/address";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
@@ -153,6 +154,8 @@ const changed = computed(() => selectedAddressId.value !== currentAddress.value?
 const MAP_ID = "select-bopis-map-modal";
 
 const { zoomToMarkers, markers, zoomToLatLng, closeInfoWindow, map } = useGoogleMaps(MAP_ID);
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
 
 interface IProps {
   addresses?: PickupLocationType[];
@@ -213,7 +216,7 @@ function selectHandler(
     }
   }
 
-  if (options.scrollToSelectedOnList) {
+  if (options.scrollToSelectedOnList && !isMobile.value) {
     const listElement = document.querySelector(`[data-address-id="${address.id}"]`);
 
     if (listElement) {
@@ -307,7 +310,7 @@ $mapHeight: 523px;
   }
 
   &__info-window {
-    @apply flex flex-col gap-2 font-lato;
+    @apply flex flex-col gap-2 font-lato w-52;
   }
 
   &__info-window-title {
@@ -320,11 +323,11 @@ $mapHeight: 523px;
     }
 
     dt {
-      @apply text-xxs font-bold;
+      @apply text-xxs font-bold break-words;
     }
 
     dd {
-      @apply text-xxs font-normal text-neutral-600;
+      @apply text-xxs font-normal text-neutral-600 break-words;
     }
   }
 
@@ -333,7 +336,7 @@ $mapHeight: 523px;
   }
 
   &__info-window-actions {
-    @apply flex gap-2 justify-end;
+    @apply flex gap-2 justify-end sticky bottom-0 bg-additional-50 pt-2;
   }
 }
 </style>
