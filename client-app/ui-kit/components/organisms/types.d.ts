@@ -10,6 +10,7 @@ declare module "vue" {
     VcPagination: typeof Components.VcPagination;
     VcProductCard: typeof Components.VcProductCard;
     VcProductImage: typeof Components.VcProductImage;
+    VcQuantityStepper: typeof Components.VcQuantityStepper;
     VcTable: typeof Components.VcTable;
     TableStatusBadge: typeof Components.TableStatusBadge;
   }

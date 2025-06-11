@@ -1,5 +1,5 @@
 import { getMoney } from "@/ui-kit/mocks";
-import { VcProductCard, VcProductImage, VcAddToCart } from "..";
+import { VcProductCard, VcProductImage, VcAddToCart, VcQuantityStepper } from "..";
 import { VcProductVendor, VcProductProperties, VcProductTitle, VcProductActions, VcRadioButton } from "../../atoms";
 import { VcChip, VcProductPrice, VcProductActionsButton } from "../../molecules";
 import type { Meta, StoryFn } from "@storybook/vue3";
@@ -45,6 +45,7 @@ const chip1 = {
   size: "sm",
   rounded: true,
   variant: "outline-dark",
+  icon: "cube",
 };
 
 const chip2 = {
@@ -52,6 +53,7 @@ const chip2 = {
   size: "sm",
   rounded: true,
   variant: "outline-dark",
+  icon: "cart",
 };
 
 const availabilityData = {
@@ -194,8 +196,8 @@ const FullTemplate: StoryFn = (args) => ({
     <VcProductPrice v-bind="price" />
 
     <VcAddToCart v-bind="availabilityData">
-      <VcChip v-bind="chip1">1230 in Stock</VcChip>
-      <VcChip v-bind="chip2">23 in Cart</VcChip>
+      <VcChip v-bind="chip1">1230</VcChip>
+      <VcChip v-bind="chip2">23</VcChip>
     </VcAddToCart>
 
     <VcProductActions v-bind="args.viewMode === 'grid' ? actions : {}">
@@ -249,8 +251,8 @@ const FullGridTemplateRecommended: StoryFn = (args) => ({
     </VcProductProperties>
 
     <VcAddToCart v-bind="availabilityData">
-      <VcChip v-bind="chip1">1230 in Stock</VcChip>
-      <VcChip v-bind="chip2">23 in Cart</VcChip>
+      <VcChip v-bind="chip1">1230</VcChip>
+      <VcChip v-bind="chip2">23</VcChip>
     </VcAddToCart>
 
     <VcProductPrice v-bind="price" />
@@ -296,8 +298,8 @@ const FullListTemplateRecommended: StoryFn = (args) => ({
     </VcProductProperties>
 
     <VcAddToCart v-bind="availabilityData">
-      <VcChip v-bind="chip1">1230 in Stock</VcChip>
-      <VcChip v-bind="chip2">23 in Cart</VcChip>
+      <VcChip v-bind="chip1">1230</VcChip>
+      <VcChip v-bind="chip2">23</VcChip>
     </VcAddToCart>
 
     <VcProductPrice v-bind="{ ...price, singleLine: false }" />
@@ -339,7 +341,7 @@ const LineItemTemplate: StoryFn = (args) => ({
     </VcProductProperties>
 
     <VcAddToCart v-bind="{availabilityData, hideButton: true}">
-      <VcChip v-bind="chip1">1230 in Stock</VcChip>
+      <VcChip v-bind="chip1">1230</VcChip>
     </VcAddToCart>
 
     <VcProductPrice v-bind="{ ...price, singleLine: false }" />
@@ -350,5 +352,101 @@ const LineItemTemplate: StoryFn = (args) => ({
 
 export const LineItem = LineItemTemplate.bind({});
 LineItem.args = {
+  viewMode: "item",
+};
+
+const FullListQuantityStepperTemplate: StoryFn = (args) => ({
+  components: {
+    VcProductCard,
+    VcProductActions,
+    VcProductActionsButton,
+    VcProductImage,
+    VcProductTitle,
+    VcProductVendor,
+    VcProductProperties,
+    VcQuantityStepper,
+    VcChip,
+  },
+  setup: () => ({ args, title, price, chip1, chip2, image, actions, actionsButton }),
+  template: `<VcProductCard v-bind="args">
+    <template #media>
+      <VcProductImage v-bind="image" />
+
+      <VcProductActions v-bind="args.viewMode === 'grid' ? actions : {}">
+        <VcProductActionsButton />
+        <VcProductActionsButton v-bind="actionsButton" />
+      </VcProductActions>
+    </template>
+
+    <VcProductTitle v-bind="title">Product title Product title</VcProductTitle>
+
+    <VcProductVendor>Product Vendor</VcProductVendor>
+
+    <VcProductProperties>
+      <VcProperty label="Label">Value</VcProperty>
+      <VcProperty label="Label">Value</VcProperty>
+      <VcProperty label="Label">Value</VcProperty>
+    </VcProductProperties>
+
+    <VcQuantityStepper>
+      <VcChip v-bind="chip1">1230</VcChip>
+      <VcChip v-bind="chip2">23</VcChip>
+    </VcQuantityStepper>
+
+    <VcProductPrice v-bind="{ ...price, singleLine: false }" />
+  </VcProductCard>`,
+});
+
+export const FullListQuantityStepper = FullListQuantityStepperTemplate.bind({});
+FullListQuantityStepper.args = {
+  viewMode: "list",
+};
+
+export const FullGridQuantityStepper = FullListQuantityStepperTemplate.bind({});
+FullGridQuantityStepper.args = {
+  viewMode: "grid",
+};
+
+const LineItemQuantityStepperTemplate: StoryFn = (args) => ({
+  components: {
+    VcProductCard,
+    VcProductActions,
+    VcProductActionsButton,
+    VcProductImage,
+    VcProductTitle,
+    VcProductVendor,
+    VcProductProperties,
+    VcQuantityStepper,
+    VcChip,
+    VcRadioButton,
+  },
+  setup: () => ({ args, title, price, chip1, image }),
+  template: `<VcProductCard v-bind="args">
+    <template #media>
+      <VcProductImage v-bind="image" />
+      <VcRadioButton />
+    </template>
+
+    <VcProductTitle v-bind="{ ...title, linesNumber: 3}">Product title Product title</VcProductTitle>
+
+    <VcProductProperties>
+      <VcProperty label="Label">Value</VcProperty>
+      <VcProperty label="Label">Value</VcProperty>
+      <VcProperty label="Label">Value</VcProperty>
+      <VcProperty label="Price per item" class="@4xl:hidden">$1,000</VcProperty>
+    </VcProductProperties>
+
+    <VcQuantityStepper v-bind="{ value: 0 }">
+      <VcChip v-bind="chip1">1230</VcChip>
+    </VcQuantityStepper>
+
+    <VcProductPrice v-bind="{ ...price, singleLine: false }" />
+
+    <VcProductTotal v-bind="{ ...price, singleLine: false }" />
+  </VcProductCard>`,
+});
+
+export const LineItemQuantityStepper = LineItemQuantityStepperTemplate.bind({});
+LineItemQuantityStepper.args = {
   viewMode: "item",
 };
