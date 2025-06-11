@@ -310,7 +310,7 @@ $mapHeight: 523px;
   }
 
   &__info-window {
-    @apply flex flex-col gap-2 font-lato w-52;
+    @apply flex flex-col gap-2 font-lato w-52 max-w-full;
   }
 
   &__info-window-title {
