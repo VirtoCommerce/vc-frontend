@@ -70,7 +70,7 @@
 
 <script setup lang="ts">
 import { uniqueId } from "lodash";
-import { ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 
 export interface IEmits {
   (event: "toggleCollapse", value: boolean): void;
@@ -97,9 +97,11 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const _collapsed = ref(false);
 
-const ARIAIds = {
-  title: uniqueId("title"),
-};
+const ARIAIds = computed(() => {
+  return {
+    title: props.title && uniqueId("title"),
+  };
+});
 
 function toggleCollapse() {
   if (props.collapsible) {
