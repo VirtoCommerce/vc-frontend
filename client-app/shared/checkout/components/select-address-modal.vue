@@ -71,13 +71,7 @@
         @page-changed="onPageChange"
       >
         <template #mobile-item="{ item }">
-          <div
-            class="flex cursor-pointer items-center space-x-3 border-b p-4 last:border-none"
-            role="button"
-            tabindex="0"
-            @click="setAddress(item)"
-            @keydown.enter="setAddress(item)"
-          >
+          <div class="relative flex items-center space-x-3 border-b p-4 last:border-none">
             <div class="w-2/3 grow">
               <div class="mb-2.5 flex items-center gap-2 empty:hidden">
                 <VcBadge v-if="item.isFavorite" size="sm" variant="outline-dark" rounded color="warning">
@@ -136,6 +130,13 @@
             <div class="w-10 flex-none text-center">
               <VcIcon v-if="item.id === selectedAddress?.id" class="fill-secondary" name="check-circle" :size="20" />
             </div>
+
+            <button
+              v-if="item.id !== selectedAddress?.id"
+              type="button"
+              class="absolute inset-0 opacity-0"
+              @click="setAddress(item)"
+            ></button>
           </div>
         </template>
 
@@ -146,7 +147,13 @@
         </template>
 
         <template #desktop-item="{ item }">
-          <tr class="group cursor-pointer border-b last:border-none hover:bg-secondary-50" @click="setAddress(item)">
+          <tr
+            :class="[
+              'group border-b last:border-none hover:bg-secondary-50',
+              { 'cursor-pointer': item.id !== selectedAddress?.id },
+            ]"
+            @click="setAddress(item)"
+          >
             <td class="px-4 py-3.5">
               <span class="line-clamp-2">
                 <VcIcon
