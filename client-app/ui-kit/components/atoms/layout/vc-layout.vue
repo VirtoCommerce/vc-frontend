@@ -61,12 +61,8 @@ const { sidebarStyle } = useStickySidebar({
   $right: "";
 
   //useStickySidebar requires "px"
-  --sidebar-offset-top: var(--vc-layout-sidebar-offset-top, 68px);
+  --sidebar-offset-top: var(--vc-layout-sidebar-offset-top);
   --sidebar-offset-bottom: var(--vc-layout-sidebar-offset-bottom, 20px);
-
-  @media (min-width: theme("screens.lg")) {
-    --sidebar-offset-top: var(--vc-layout-sidebar-offset-top, 108px);
-  }
 
   &__container {
     @apply flex flex-col max-w-full;
