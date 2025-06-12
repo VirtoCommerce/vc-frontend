@@ -61,17 +61,7 @@ const props = defineProps<IProps>();
 
 type AddressType = Pick<
   OrderAddressType,
-  | "firstName"
-  | "middleName"
-  | "lastName"
-  | "phone"
-  | "email"
-  | "line1"
-  | "line2"
-  | "city"
-  | "regionName"
-  | "postalCode"
-  | "countryName"
+  "phone" | "email" | "line1" | "line2" | "city" | "regionName" | "postalCode" | "countryName"
 >;
 interface IProps {
   //  Estimated Time of Arrival

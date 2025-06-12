@@ -3,7 +3,6 @@ fragment orderAddressFields on OrderAddressType {
   name
   organization
   firstName
-  middleName
   lastName
   line1
   line2
