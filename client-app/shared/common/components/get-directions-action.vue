@@ -5,10 +5,10 @@
 </template>
 
 <script setup lang="ts">
-type IProps = {
+interface IProps {
   size?: VcButtonSizeType;
   link: string;
-};
+}
 
 withDefaults(defineProps<IProps>(), {
   size: "xs",

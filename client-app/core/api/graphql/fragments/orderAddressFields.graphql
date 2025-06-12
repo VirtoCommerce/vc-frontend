@@ -16,5 +16,4 @@ fragment orderAddressFields on OrderAddressType {
   phone
   email
   addressType
-  zip
 }
