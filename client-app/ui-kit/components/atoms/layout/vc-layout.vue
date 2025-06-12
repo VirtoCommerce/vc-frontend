@@ -14,13 +14,14 @@
             },
           ]"
           :style="stickySidebar && !isMobile ? sidebarStyle : {}"
+          data-test-id="sidebar"
         >
           <slot name="sidebar" />
         </div>
       </aside>
 
       <main class="vc-layout__content-container">
-        <div ref="content" class="vc-layout__content">
+        <div ref="content" class="vc-layout__content" data-test-id="content">
           <slot />
         </div>
       </main>
