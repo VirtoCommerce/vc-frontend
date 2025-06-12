@@ -10,73 +10,91 @@
       ]"
     />
 
-    <div class="vc-file__main">
-      <span class="vc-file__details">
-        <span class="vc-file__row">
-          <a
-            v-if="isAttachedFile(file) || isUploadedFile(file)"
-            class="vc-file__link"
-            :target="nativeDownload ? '_blank' : ''"
-            :href="file.url"
-            :download="file.name"
-            @click="onFileDownloadClick"
+    <div class="vc-file__content">
+      <div class="vc-file__main">
+        <div class="vc-file__details">
+          <div
+            :class="[
+              'vc-file__row',
+              {
+                'vc-file__row--pending': isUploadingFile(file) || isFailedFile(file),
+              },
+            ]"
           >
-            {{ file.name }}
-          </a>
+            <a
+              v-if="isAttachedFile(file) || isUploadedFile(file)"
+              class="vc-file__link"
+              :target="nativeDownload ? '_blank' : ''"
+              :href="file.url"
+              :download="file.name"
+              @click="onFileDownloadClick"
+            >
+              {{ file.name }}
+            </a>
 
-          <span v-else class="vc-file__name">
-            {{ file.name }}
-          </span>
-
-          <span class="vc-file__size">
-            {{
-              $n(fileSize.value, {
-                notation: "compact",
-                style: "unit",
-                unit: fileSize.unit,
-                unitDisplay: "narrow",
-              })
-            }}
-          </span>
-        </span>
-
-        <template v-if="isUploadingFile(file)">
-          <div class="vc-file__progress">
-            <div class="vc-file__progress-value" :style="{ width: `${file.progress || 0}%` }"></div>
+            <span v-else class="vc-file__name">
+              {{ file.name }}
+            </span>
           </div>
 
-          <span class="vc-file__message">
-            {{ $t("ui_kit.file.progress", { percent: $n(file.progress / 100, { style: "percent" }) }) }}
-          </span>
-        </template>
+          <div v-if="isUploadingFile(file)" class="vc-file__progress">
+            <div class="vc-file__progress-value" :style="{ width: `${file.progress || 0}%` }"></div>
+          </div>
+        </div>
 
-        <span v-else-if="isUploadedFile(file)" class="vc-file__message">{{ $t("ui_kit.file.uploaded") }}</span>
+        <div v-if="removable || reloadable" class="vc-file__buttons">
+          <VcButton
+            v-if="reloadable"
+            :class="{ invisible: !reloadable }"
+            variant="no-background"
+            color="accent"
+            size="xxs"
+            icon="reset"
+            @click="reload"
+          />
 
-        <span v-else-if="isFailedFile(file)" class="vc-file__message vc-file__message--error">
+          <VcButton
+            v-if="removable"
+            variant="no-background"
+            color="neutral"
+            size="xxs"
+            icon="delete-thin"
+            @click="remove"
+          />
+        </div>
+      </div>
+
+      <div
+        :class="[
+          'vc-file__message',
+          {
+            'vc-file__message--error': isFailedFile(file),
+          },
+        ]"
+      >
+        <span v-if="isUploadingFile(file)">
+          {{ $t("ui_kit.file.progress", { percent: $n(file.progress / 100, { style: "percent" }) }) }}
+        </span>
+
+        <span v-else-if="isUploadedFile(file)">
+          {{ $t("ui_kit.file.uploaded") }}
+        </span>
+
+        <span v-else-if="isFailedFile(file)">
           {{ file.errorMessage }}
         </span>
-      </span>
 
-      <span class="vc-file__buttons">
-        <VcButton
-          v-if="reloadable || removable"
-          :class="{ invisible: !reloadable }"
-          variant="no-background"
-          color="accent"
-          size="xs"
-          icon="reset"
-          @click="reload"
-        />
-
-        <VcButton
-          v-if="removable"
-          variant="no-background"
-          color="neutral"
-          size="xs"
-          icon="delete-thin"
-          @click="remove"
-        />
-      </span>
+        <span class="vc-file__size">
+          ({{
+            $n(fileSize.value, {
+              notation: "compact",
+              style: "unit",
+              unit: fileSize.unit,
+              unitDisplay: "narrow",
+            })
+          }})
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -139,14 +157,21 @@ const fileSize = computed(() => getFileSize(props.file.size));
 
 <style lang="scss">
 .vc-file {
-  @apply flex items-center gap-2 min-h-[2.375rem];
+  --link-color: var(--vc-file-link-color, theme("colors.accent.600"));
+  --link-hover-color: var(--vc-file-link-hover-color, theme("colors.accent.700"));
+
+  @apply flex items-center gap-2 min-h-[2.275rem];
 
   &__icon {
-    @apply flex-none w-8 h-8;
+    @apply flex-none w-8 h-8 self-start;
 
     &--loading {
       @apply opacity-50;
     }
+  }
+
+  &__content {
+    @apply flex flex-col gap-1 grow min-w-0;
   }
 
   &__main {
@@ -154,11 +179,15 @@ const fileSize = computed(() => getFileSize(props.file.size));
   }
 
   &__details {
-    @apply grow;
+    @apply grow flex flex-col gap-1;
   }
 
   &__row {
     @apply flex gap-2 justify-between items-center;
+
+    &--pending {
+      @apply opacity-50;
+    }
   }
 
   &__link {
@@ -171,11 +200,7 @@ const fileSize = computed(() => getFileSize(props.file.size));
 
   &__name,
   &__link {
-    @apply grow line-clamp-2 break-all text-sm font-bold;
-  }
-
-  &__size {
-    @apply flex-none pt-0.5 text-xs text-neutral-400;
+    @apply grow line-clamp-2 text-sm/4 font-bold [word-break:break-word];
   }
 
   &__progress {
@@ -187,14 +212,28 @@ const fileSize = computed(() => getFileSize(props.file.size));
   }
 
   &__message {
-    @apply text-xxs text-neutral-600;
+    @apply text-xxs text-neutral-600 [word-break:break-word];
 
     &--error {
       @apply text-danger;
     }
   }
 
+  &__text {
+    @apply [word-break:break-all];
+  }
+
+  &__size {
+    @apply flex-none inline-block text-neutral-400;
+
+    &:not(:first-child) {
+      @apply ml-1;
+    }
+  }
+
   &__buttons {
+    --vc-icon-color: theme("colors.neutral.400");
+
     @apply flex-none flex self-center;
   }
 }

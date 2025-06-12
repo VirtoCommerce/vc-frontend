@@ -1,5 +1,6 @@
 <template>
-  <VcAddToCart
+  <QuantityControl
+    :mode="$cfg.product_quantity_control"
     :model-value="enteredQuantity"
     :name="product.id"
     :count-in-cart="countInCart"
@@ -16,12 +17,14 @@
     :loading="loading"
     :show-empty-details="reservedSpace"
     validate-on-mount
+    :timeout="DEFAULT_DEBOUNCE_IN_MS"
+    :allow-zero="$cfg.product_quantity_control === 'stepper'"
     @update:model-value="onInput"
     @update:cart-item-quantity="onChange"
     @update:validation="onValidationUpdate"
   >
     <slot />
-  </VcAddToCart>
+  </QuantityControl>
 </template>
 
 <script setup lang="ts">
@@ -31,6 +34,7 @@ import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM, LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
 import { getUrlSearchParam, Logger } from "@/core/utilities";
@@ -38,7 +42,9 @@ import { useShortCart } from "@/shared/cart/composables";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
 import { AddToCartModeType } from "@/ui-kit/enums";
+import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
 import type { Product, ShortLineItemFragment, VariationType, ValidationErrorType } from "@/core/api/graphql/types";
+import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 const emit = defineEmits<IEmits>();
 
@@ -67,6 +73,7 @@ const {
 } = useConfigurableProduct(product.value.id);
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
+const { themeContext } = useThemeContext();
 
 const loading = ref(false);
 const errorMessage = ref<string | undefined>();
@@ -77,21 +84,30 @@ const notAvailableMessage = computed<string | undefined>(() => {
   }
   return undefined;
 });
+
+const defaultMinQuantity = computed<number>(() =>
+  themeContext.value.settings.product_quantity_control === "button" ? 1 : 0,
+);
 const isConfigurable = computed<boolean>(() => "isConfigurable" in product.value && product.value.isConfigurable);
 const disabled = computed<boolean>(() => loading.value || !product.value.availabilityData?.isAvailable);
 const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
-const minQty = computed<number>(() => product.value.minQuantity || 1);
+const minQty = computed<number>(() => product.value.minQuantity || defaultMinQuantity.value);
 const maxQty = computed<number>(() =>
   Math.min(
     product.value.availabilityData?.availableQuantity || LINE_ITEM_QUANTITY_LIMIT,
-    isDefined(product.value.maxQuantity) ? product.value.maxQuantity : LINE_ITEM_QUANTITY_LIMIT,
+    isDefined(product.value.maxQuantity) && product.value.maxQuantity !== 0
+      ? product.value.maxQuantity
+      : LINE_ITEM_QUANTITY_LIMIT,
   ),
 );
-
-const enteredQuantity = ref(!disabled.value ? countInCart.value || minQty.value : undefined);
+const defaultQuantity =
+  themeContext.value.settings.product_quantity_control === "button"
+    ? countInCart.value || minQty.value
+    : countInCart.value;
+const enteredQuantity = ref(!disabled.value ? defaultQuantity : undefined);
 
 function onInput(value: number): void {
-  if (!value) {
+  if (!Number.isFinite(value)) {
     enteredQuantity.value = undefined;
   } else if (value > LINE_ITEM_QUANTITY_LIMIT) {
     enteredQuantity.value = LINE_ITEM_QUANTITY_LIMIT;
@@ -117,7 +133,7 @@ async function onChange() {
   try {
     const updatedCart = await updateOrAddToCart(lineItem, mode);
 
-    if (isConfigurable.value && mode === AddToCartModeType.Add) {
+    if ((isConfigurable.value && mode === AddToCartModeType.Add) || enteredQuantity.value === 0) {
       loading.value = false;
       return;
     }
@@ -130,10 +146,10 @@ async function onChange() {
 }
 
 async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mode: AddToCartModeType) {
-  if (mode === AddToCartModeType.Update && !enteredQuantity.value) {
+  if (mode === AddToCartModeType.Update && enteredQuantity.value === undefined) {
     return cart.value;
   }
-  if (mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value) {
+  if (mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value !== undefined) {
     return isConfigurable.value
       ? await changeCartConfiguredItem(lineItem.id, enteredQuantity.value, selectedConfigurationInput.value)
       : await changeItemQuantity(lineItem.id, enteredQuantity.value);

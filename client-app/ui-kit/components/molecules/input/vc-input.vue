@@ -31,7 +31,7 @@
         :id="componentId"
         ref="inputElement"
         v-model="model"
-        v-bind="listeners"
+        v-bind="{ ...listeners, ...aria }"
         :type="inputType"
         :name="name"
         :placeholder="placeholder"
@@ -119,17 +119,16 @@ export interface IProps {
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
   testIdInput?: string;
-}
-
-interface IEmits {
-  (event: "clear"): void;
+  aria?: Record<string, string | number | null>;
 }
 
 defineOptions({
   inheritAttrs: false,
 });
 
-const emit = defineEmits<IEmits>();
+const emit = defineEmits<{
+  (event: "clear"): void;
+}>();
 
 const props = withDefaults(defineProps<IProps>(), {
   type: "text",

@@ -1373,7 +1373,8 @@
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "您的 <strong>{0}</strong> 查询未返回任何结果",
-      "home_button": "@:common.buttons.home"
+      "home_button": "@:common.buttons.home",
+      "title": "搜索"
     },
     "bulk_order": {
       "meta": {
