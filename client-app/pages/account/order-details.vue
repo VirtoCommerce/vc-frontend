@@ -128,9 +128,9 @@
           <VcWidget
             v-if="!allItemsAreDigital && deliveryAddress"
             :title="shipToTitle"
-            :title-id="accessibilityIds.deliveryAddress"
+            :title-id="ARIAIds.deliveryAddress"
           >
-            <AddressInfo :address="deliveryAddress" class="text-base" :labelled-by="accessibilityIds.deliveryAddress">
+            <AddressInfo :address="deliveryAddress" class="text-base" :labelled-by="ARIAIds.deliveryAddress">
               <template v-if="shipmentType === 'pick_up'" #actions>
                 <div class="flex items-center justify-between gap-2.5 pt-1">
                   <VcButton size="xs" prepend-icon="information-circle" variant="outline" @click="openInfo">
@@ -222,8 +222,8 @@ const breadcrumbs = useBreadcrumbs(() => [
   { title: t("pages.account.order_details.title", [order.value?.number]) },
 ]);
 
-const accessibilityIds = {
-  deliveryAddress: `delivery_address_${uniqueId()}`,
+const ARIAIds = {
+  deliveryAddress: uniqueId("delivery_address"),
 };
 
 const isMobile = breakpoints.smaller("lg");
