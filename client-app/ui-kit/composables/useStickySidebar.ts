@@ -112,16 +112,6 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
   });
 
   watch(
-    () => _sidebarTop.value,
-    (value, oldValue) => {
-      if (value !== oldValue) {
-        setSidebarPosition();
-      }
-    },
-    { deep: true },
-  );
-
-  watch(
     () => _sidebarHeight.value,
     (value, oldValue) => {
       if (value !== oldValue) {
