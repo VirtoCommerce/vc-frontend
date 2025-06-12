@@ -13,7 +13,6 @@ export type AnyAddressType = {
   line2?: string;
   phone?: string;
   postalCode?: string;
-  zip?: string;
   regionId?: string;
   regionName?: string;
 };
