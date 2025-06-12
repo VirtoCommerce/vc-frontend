@@ -125,12 +125,8 @@
           </VcWidget>
 
           <!-- Shipping Address Card -->
-          <VcWidget
-            v-if="!allItemsAreDigital && deliveryAddress"
-            :title="shipToTitle"
-            :title-id="ARIAIds.deliveryAddress"
-          >
-            <AddressInfo :address="deliveryAddress" class="text-base" :labelled-by="ARIAIds.deliveryAddress">
+          <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="shipToTitle">
+            <AddressInfo :address="deliveryAddress" class="text-base">
               <template v-if="shipmentType === 'pick_up'" #actions>
                 <div class="flex items-center justify-between gap-2.5 pt-1">
                   <VcButton size="xs" prepend-icon="information-circle" variant="outline" @click="openInfo">
@@ -165,7 +161,6 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { uniqueId } from "lodash";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
@@ -221,10 +216,6 @@ const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.orders"), route: { name: "Orders" } },
   { title: t("pages.account.order_details.title", [order.value?.number]) },
 ]);
-
-const ARIAIds = {
-  deliveryAddress: uniqueId("delivery_address"),
-};
 
 const isMobile = breakpoints.smaller("lg");
 
