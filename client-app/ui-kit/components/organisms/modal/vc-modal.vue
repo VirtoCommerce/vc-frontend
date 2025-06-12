@@ -35,7 +35,7 @@
           @after-leave="$emit('close')"
         >
           <DialogPanel class="vc-modal__dialog" :style="{ maxWidth }">
-            <VcDialog :dividers="dividers" :is-mobile-fullscreen="isMobileFullscreen" :role="role">
+            <VcDialog :dividers="dividers" :is-mobile-fullscreen="isMobileFullscreen">
               <DialogTitle>
                 <VcDialogHeader :icon="icon" :color="variant" :closable="!isPersistent" @close="close">
                   <slot name="title">
@@ -44,9 +44,11 @@
                 </VcDialogHeader>
               </DialogTitle>
 
-              <VcDialogContent>
-                <slot :close="close" />
-              </VcDialogContent>
+              <DialogDescription>
+                <VcDialogContent>
+                  <slot :close="close" />
+                </VcDialogContent>
+              </DialogDescription>
 
               <VcDialogFooter v-if="!hideActions" @close="close">
                 <slot name="actions" :close="close" />
@@ -60,9 +62,8 @@
 </template>
 
 <script setup lang="ts">
-import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from "@headlessui/vue";
+import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle, DialogDescription } from "@headlessui/vue";
 import { ref, watchSyncEffect } from "vue";
-import type { AriaRole } from "@/core/types/aria-roles.ts";
 
 interface IEmits {
   (event: "close"): void;
@@ -78,7 +79,6 @@ interface IProps {
   maxWidth?: string;
   variant?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
   dividers?: boolean;
-  role?: Extract<AriaRole, "dialog" | "alertdialog">;
 }
 
 defineOptions({
@@ -91,7 +91,6 @@ const props = withDefaults(defineProps<IProps>(), {
   show: true,
   variant: "info",
   maxWidth: "35.25rem",
-  role: "dialog",
 });
 
 const isOpen = ref(true);
