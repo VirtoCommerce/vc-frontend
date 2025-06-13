@@ -110,6 +110,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
+import { ROUTES } from "@/router/routes/constants";
 import { useSignMeOut, useUser } from "@/shared/account";
 import { useCustomMobileMenuLinkComponents } from "@/shared/layout/composables/useCustomMobileMenuLinkComponents";
 import type { ExtendedMenuLinkType } from "@/core/types";
@@ -141,7 +142,7 @@ registerCustomLinkComponent({ id: "cart", component: LinkCart });
 registerCustomLinkComponent({ id: "compare", component: LinkCompare });
 
 const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
-  { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },
+  { route: { name: ROUTES.SIGN_IN.NAME }, title: t("shared.layout.header.link_sign_in") },
   { route: { name: "SignUp" }, title: t("shared.layout.header.link_register_now") },
 ];
 
