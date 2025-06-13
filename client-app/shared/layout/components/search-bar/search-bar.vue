@@ -305,7 +305,6 @@ function goToSearchResultsPage() {
 function reset() {
   searchPhrase.value = "";
   hideSearchDropdown();
-  void router.push({ name: ROUTES.SEARCH.NAME });
 }
 
 const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEARCH_BAR_DEBOUNCE_TIME);
