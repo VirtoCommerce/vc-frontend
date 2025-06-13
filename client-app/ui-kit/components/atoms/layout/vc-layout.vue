@@ -14,13 +14,14 @@
             },
           ]"
           :style="stickySidebar && !isMobile ? sidebarStyle : {}"
+          data-test-id="sidebar"
         >
           <slot name="sidebar" />
         </div>
       </aside>
 
       <main class="vc-layout__content-container">
-        <div ref="content" class="vc-layout__content">
+        <div ref="content" class="vc-layout__content" data-test-id="content">
           <slot />
         </div>
       </main>
@@ -61,12 +62,8 @@ const { sidebarStyle } = useStickySidebar({
   $right: "";
 
   //useStickySidebar requires "px"
-  --sidebar-offset-top: var(--vc-layout-sidebar-offset-top, 68px);
+  --sidebar-offset-top: var(--vc-layout-sidebar-offset-top);
   --sidebar-offset-bottom: var(--vc-layout-sidebar-offset-bottom, 20px);
-
-  @media (min-width: theme("screens.lg")) {
-    --sidebar-offset-top: var(--vc-layout-sidebar-offset-top, 108px);
-  }
 
   &__container {
     @apply flex flex-col max-w-full;
