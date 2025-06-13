@@ -127,7 +127,7 @@
       "payment_number": "ID de pago",
       "payment_type": "Tipo de pago",
       "recipient_name": "Nombre del destinatario",
-      "active_address": "Dirección activa",
+      "active_address": "Activa",
       "addresses_icon": "Icono de dirección",
       "digital_product": "Digital",
       "search": "Buscar {0}",
@@ -733,6 +733,7 @@
         "title": "Seleccionar método de pago"
       },
       "select_address_modal": {
+        "message": "Para seleccionar la dirección, pulsa la dirección",
         "meta": {
           "table_description": "direcciones disponibles"
         },
@@ -740,7 +741,7 @@
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
-        "add_address_button": "@:common.buttons.add_new_address",
+        "add_address_button": "@:common.buttons.add_new",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Aún no tienes ninguna dirección",
