@@ -55,14 +55,14 @@
             <div class="flex items-center gap-3 p-3 text-sm">
               <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
-              {{ $t(`common.methods.payment_by_code.${item.code}`) }}
+              {{ item.name }}
             </div>
           </template>
 
           <template #item="{ item }">
             <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
-            {{ $t(`common.methods.payment_by_code.${item.code}`) }}
+            {{ item.name }}
           </template>
         </VcSelect>
 
