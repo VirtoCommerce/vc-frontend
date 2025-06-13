@@ -3,6 +3,7 @@ import defaultPreset from './default.json'
 import mercury from './mercury.json'
 import purplePink from './purple-pink.json'
 import watermelon from './watermelon.json'
+import moa from './moa.json'
 import type { IThemeConfigPreset } from "@/core/types";
 
 export const presets: Record<string, IThemeConfigPreset> = {
@@ -10,5 +11,6 @@ export const presets: Record<string, IThemeConfigPreset> = {
   default: defaultPreset,
   mercury: mercury,
   ['purple-pink']: purplePink,
-  watermelon: watermelon
+  watermelon: watermelon,
+  moa: moa
 } as const;
