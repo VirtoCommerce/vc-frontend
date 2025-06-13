@@ -417,4 +417,9 @@ describe("toCSV", () => {
     const result = toCSV();
     expect(result).toBe("");
   });
+
+  it("should filter undefined, null and empty string", () => {
+    const result = toCSV([" ", "", undefined, "foo", null, "bar"]);
+    expect(result).toBe("foo, bar");
+  });
 });
