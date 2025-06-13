@@ -752,6 +752,14 @@
         "select_button": "@:common.buttons.select",
         "price_label": "@:common.labels.price{':'}",
         "title": "配送方法を選択"
+      },
+      "select_bopis_modal": {
+        "title": "受取スポット",
+        "location_label": "場所",
+        "working_hours_label": "営業時間",
+        "description_label": "説明",
+        "contact_phone_label": "電話番号",
+        "contact_email_label": "お問い合わせメールアドレス"
       }
     },
     "bulk_order": {

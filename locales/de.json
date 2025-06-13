@@ -752,6 +752,14 @@
         "select_button": "@:common.buttons.select",
         "price_label": "@:common.labels.price{':' }",
         "title": "Versandmethode auswählen"
+      },
+      "select_bopis_modal": {
+        "title": "Abholpunkte",
+        "location_label": "Standort",
+        "working_hours_label": "Arbeitszeiten",
+        "description_label": "Beschreibung",
+        "contact_phone_label": "Telefonnummer",
+        "contact_email_label": "E-Mail-Adresse für Kontakt"
       }
     },
     "bulk_order": {

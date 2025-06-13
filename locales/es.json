@@ -752,6 +752,14 @@
         "select_button": "@:common.buttons.select",
         "price_label": "@:common.labels.price{':'}",
         "title": "Seleccionar método de envío"
+      },
+      "select_bopis_modal": {
+        "title": "Puntos de recogida",
+        "location_label": "Ubicación",
+        "working_hours_label": "Horario de trabajo",
+        "description_label": "Descripción",
+        "contact_phone_label": "Teléfono de contacto",
+        "contact_email_label": "Correo electrónico de contacto"
       }
     },
     "bulk_order": {

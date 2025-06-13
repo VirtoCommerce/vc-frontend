@@ -6,6 +6,10 @@ query getPickupLocations($storeId: String, $keyword: String, $sort: String, $fir
       isActive
       name
       description
+      geoLocation
+      workingHours
+      contactPhone
+      contactEmail
       address {
         id
         line1
