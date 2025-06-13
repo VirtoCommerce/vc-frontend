@@ -19,13 +19,6 @@ import { toAttachedFile } from "@/ui-kit/utilities";
 import type { CartConfigurationItemFileType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
-const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
-
-const { value } = toRefs(props);
-
-const DEFAULT_FILES_SCOPE = "product-configuration";
-
 interface IProps {
   value?: DeepReadonly<CartConfigurationItemFileType[]>;
 }
@@ -33,6 +26,13 @@ interface IProps {
 interface IEmits {
   (e: "input", value: CartConfigurationItemFileType[]): void;
 }
+
+const emit = defineEmits<IEmits>();
+const props = defineProps<IProps>();
+
+const { value } = toRefs(props);
+
+const DEFAULT_FILES_SCOPE = "product-configuration";
 
 const initialFiles = computed(
   () => value.value?.map((file) => toAttachedFile(file.name, file.size, file.contentType, file.url)) ?? [],
@@ -47,20 +47,18 @@ const {
   uploadFiles,
   fetchOptions: fetchFileOptions,
   options: fileOptions,
-  stopWatchInitialValue,
 } = useFiles(DEFAULT_FILES_SCOPE, initialFiles);
 
 async function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
   await uploadFiles();
-  stopWatchInitialValue();
   emit("input", attachedAndUploadedFiles.value);
 }
 
 async function onRemoveFiles(filesToRemove: FileType[]) {
   await removeFiles(filesToRemove);
-  validateFiles();
+
   emit("input", attachedAndUploadedFiles.value);
 }
 
