@@ -15,3 +15,4 @@ client-app/modules/**/api/graphql/types.ts
 client-app/core/api/graphql/**/types.ts
 dist/
 coverage/
+scripts/add-tailwind-references.js
