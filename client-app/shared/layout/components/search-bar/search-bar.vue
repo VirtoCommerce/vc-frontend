@@ -13,6 +13,11 @@
       @input="onSearchPhraseChanged"
       @focus="onSearchBarFocused"
     >
+      <template #prepend>
+        <VcButton class="ml-1" color="secondary" append-icon="delete-2" size="xs" variant="solid-light">
+          Alcoholic Drinks
+        </VcButton>
+      </template>
       <template #append>
         <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
 
