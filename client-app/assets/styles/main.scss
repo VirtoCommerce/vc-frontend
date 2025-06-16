@@ -1,4 +1,5 @@
 @use "sass:meta";
+@tailwind base;
 @tailwind components;
 
 @include meta.load-css("helpers");
