@@ -1,15 +1,17 @@
 <template>
   <div
     v-if="pages > 1"
+    ref="paginationRef"
     :class="[
       'vc-pagination',
       {
         'vc-pagination--compact': compact,
+        'vc-pagination--wrapped': isWrapped,
       },
     ]"
   >
     <div class="vc-pagination__container">
-      <div class="vc-pagination__pages">
+      <div ref="pagesRef" class="vc-pagination__pages">
         <component
           :is="item > 0 && page !== item ? 'button' : 'span'"
           v-for="(item, index) in visiblePages"
@@ -30,11 +32,14 @@
 
       <div class="vc-pagination__nav">
         <VcButton
+          ref="prevButtonRef"
           class="vc-pagination__button vc-pagination__button--prev"
           color="secondary"
           variant="solid-light"
           size="sm"
           :disabled="page === 1"
+          no-wrap
+          :square="compact"
           @click="setPage(page - 1)"
         >
           <VcIcon name="chevron-left" />
@@ -42,11 +47,14 @@
         </VcButton>
 
         <VcButton
+          ref="nextButtonRef"
           class="vc-pagination__button vc-pagination__button--next"
           color="secondary"
           variant="solid-light"
           size="sm"
           :disabled="page === pages"
+          no-wrap
+          :square="compact"
           @click="setPage(page + 1)"
         >
           <span v-if="!compact">{{ $t("ui_kit.pagination.next") }}</span>
@@ -58,7 +66,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { useElementBounding } from "@vueuse/core";
+import { computed, ref } from "vue";
 
 interface IEmits {
   (event: "update:page", page: number): void;
@@ -78,6 +87,20 @@ const props = withDefaults(defineProps<IProps>(), {
   page: 1,
   pages: 0,
   scrollOffset: 20,
+});
+
+const paginationRef = ref<HTMLDivElement | null>(null);
+const pagesRef = ref<HTMLDivElement | null>(null);
+const prevButtonRef = ref<HTMLButtonElement | null>(null);
+const nextButtonRef = ref<HTMLButtonElement | null>(null);
+
+const { width: paginationWidth } = useElementBounding(paginationRef);
+const { width: pagesWidth } = useElementBounding(pagesRef);
+const { width: prevButtonWidth } = useElementBounding(prevButtonRef);
+const { width: nextButtonWidth } = useElementBounding(nextButtonRef);
+
+const isWrapped = computed(() => {
+  return paginationWidth.value < pagesWidth.value + prevButtonWidth.value + nextButtonWidth.value;
 });
 
 const visiblePages = computed(() => {
@@ -135,38 +158,29 @@ const setPage = (page: number) => {
 <style lang="scss">
 .vc-pagination {
   $compact: "";
-
-  @apply @container;
+  $wrapped: "";
 
   &--compact {
     $compact: &;
   }
 
+  &--wrapped {
+    $wrapped: &;
+  }
+
   &__container {
-    @apply flex min-w-fit flex-wrap justify-center items-center;
+    @apply flex justify-center items-center gap-x-3 gap-y-1.5;
 
-    #{$compact} & {
-      @container (width > theme("containers.sm")) {
-        @apply gap-3 justify-start;
-      }
-    }
-
-    @container (width > theme("containers.xl")) {
-      @apply gap-3 justify-start;
+    #{$wrapped} & {
+      @apply flex-wrap;
     }
   }
 
   &__pages {
-    @apply flex justify-center w-full;
+    @apply order-2 flex justify-center;
 
-    #{$compact} & {
-      @container (width > theme("containers.sm")) {
-        @apply w-auto;
-      }
-    }
-
-    @container (width > theme("containers.xl")) {
-      @apply w-auto;
+    #{$wrapped} & {
+      @apply flex-wrap;
     }
   }
 
@@ -191,28 +205,20 @@ const setPage = (page: number) => {
   }
 
   &__nav {
-    @apply flex gap-8 justify-between mt-1.5;
+    @apply contents;
 
-    #{$compact} & {
-      @container (width > theme("containers.sm")) {
-        @apply contents;
-      }
-    }
-
-    @container (width > theme("containers.xl")) {
-      @apply contents;
+    #{$wrapped} & {
+      @apply order-last flex flex-wrap gap-3;
     }
   }
 
   &__button {
-    @apply min-w-[6.5rem];
-
-    #{$compact} & {
-      @apply min-w-min;
+    &--prev {
+      @apply order-1;
     }
 
-    &--prev {
-      @apply -order-1;
+    &--next {
+      @apply order-3;
     }
   }
 }
