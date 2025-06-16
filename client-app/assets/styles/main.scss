@@ -1,6 +1,8 @@
 @use "sass:meta";
+
 @tailwind base;
 @tailwind components;
+@tailwind utilities;
 
 @include meta.load-css("helpers");
 @include meta.load-css("deprecated");
@@ -10,5 +12,3 @@
 
 /* Use for custom themes only */
 @include meta.load-css("custom");
-
-@tailwind utilities;
