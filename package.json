@@ -39,7 +39,8 @@
     "storybook:build": "yarn precheck && yarn storybook:styles && storybook build",
     "postinstall": "yarn precheck && husky",
     "check-locales": "yarn precheck && vite-node scripts/check-and-show-missing-locales.ts locales client-app/ui-kit/locales client-app/modules/**/locales",
-    "fix-locales": "yarn precheck && vite-node scripts/fix-missing-locales.ts locales client-app/ui-kit/locales client-app/modules/**/locales"
+    "fix-locales": "yarn precheck && vite-node scripts/fix-missing-locales.ts locales client-app/ui-kit/locales client-app/modules/**/locales",
+    "generate:tailwind-references": "yarn precheck && node scripts/add-tailwind-references.js"
   },
   "dependencies": {
     "@apollo/client": "^3.13.8",
