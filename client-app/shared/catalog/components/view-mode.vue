@@ -35,6 +35,8 @@ const viewMode = computed(() => props.mode);
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .view-mode {
   @apply flex gap-2;
 

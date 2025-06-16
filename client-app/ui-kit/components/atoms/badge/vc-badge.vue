@@ -35,6 +35,8 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-badge {
   $colors: primary, secondary, neutral, info, success, warning, danger;
 

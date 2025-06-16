@@ -28,6 +28,8 @@ interface IProps {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .account-navigation-item {
   $active: "";
   $hover: "";

@@ -76,6 +76,8 @@ const _iconColor = computed(() =>
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-chip {
   --props-icon-color: v-bind(props.iconColor);
   --icon-color: var(--props-icon-color, var(--vc-chip-icon-color));

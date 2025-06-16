@@ -59,6 +59,8 @@ usePageHead({
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .sign-in {
   &__form {
     @apply order-first w-full;

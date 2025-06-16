@@ -21,6 +21,8 @@ defineEmits<IEmits>();
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-dialog-footer {
   grid-area: vc-dialog-footer;
 

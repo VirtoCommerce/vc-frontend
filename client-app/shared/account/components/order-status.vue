@@ -43,6 +43,8 @@ const orderStatus = computed(() => statuses.find((s: IOrderStatus) => props.stat
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .order-status {
   @apply min-w-0 max-w-full;
 }

@@ -70,6 +70,8 @@ function onHide() {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-popup-sidebar {
   &__backdrop {
     @apply fixed inset-0 z-50 size-full bg-neutral-900/30;

@@ -153,6 +153,8 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-push-messages {
   --vc-dialog-width: calc(100vw - 1rem);
   --vc-dialog-max-height: calc(100vh - 5rem);

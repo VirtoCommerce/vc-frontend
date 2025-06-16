@@ -90,6 +90,8 @@ const text = useVModel(props, "modelValue", emit);
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-textarea {
   $readonly: "";
   $disabled: "";

@@ -600,6 +600,8 @@ watchDebounced(
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .category {
   &__breadcrumbs {
     @apply mb-2.5;

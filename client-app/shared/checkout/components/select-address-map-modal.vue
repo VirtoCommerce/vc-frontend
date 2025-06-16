@@ -266,6 +266,8 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 $mapHeight: 523px;
 
 .select-address-map-modal {

@@ -26,6 +26,8 @@ interface IProps {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .identity-providers {
   @apply flex items-center gap-5 flex-col justify-center;
 }

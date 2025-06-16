@@ -38,6 +38,8 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-nav-button {
   @apply flex-none flex items-center justify-center rounded-full shadow-xl bg-additional-50 text-primary;
 

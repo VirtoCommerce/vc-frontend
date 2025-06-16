@@ -110,6 +110,8 @@ function onFileDownload(file: FileType) {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-file-uploader {
   $horizontal: &;
   $vertical: &;

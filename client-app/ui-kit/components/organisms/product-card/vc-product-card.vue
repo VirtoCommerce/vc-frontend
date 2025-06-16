@@ -54,6 +54,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-product-card {
   $self: &;
   $background: "";

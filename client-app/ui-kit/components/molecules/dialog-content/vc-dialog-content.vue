@@ -9,6 +9,8 @@
 </template>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-dialog-content {
   grid-area: vc-dialog-content;
 

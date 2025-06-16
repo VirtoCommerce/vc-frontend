@@ -203,6 +203,8 @@ provide<VcInputContextType>("inputContext", {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-input {
   $sizeXs: "";
   $sizeSm: "";

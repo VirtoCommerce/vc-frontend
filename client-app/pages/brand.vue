@@ -114,6 +114,8 @@ useSeoMeta({
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .brand-page {
   @apply bg-neutral-50 grow;
 

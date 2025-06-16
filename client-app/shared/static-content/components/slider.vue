@@ -138,6 +138,8 @@ function getLinkAttr(item: SlideType) {
 </script>
 
 <style lang="scss" scoped>
+@reference "tailwindcss";
+
 .vc-slider {
   $self: &;
 

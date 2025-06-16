@@ -69,6 +69,8 @@ function change() {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-switch {
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
 

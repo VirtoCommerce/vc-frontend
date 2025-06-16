@@ -107,6 +107,8 @@ function addFiles(items: File[]) {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-file-picker {
   &--disabled {
     @apply opacity-40 pointer-events-none;

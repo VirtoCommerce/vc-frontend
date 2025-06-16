@@ -25,6 +25,8 @@ const props = withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-dialog {
   --props-width: v-bind(props.width);
   --props-max-height: v-bind(props.maxHeight);

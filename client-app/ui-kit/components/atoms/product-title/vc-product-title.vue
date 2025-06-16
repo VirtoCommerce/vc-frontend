@@ -51,6 +51,8 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-product-title {
   $self: &;
   $disabled: "";

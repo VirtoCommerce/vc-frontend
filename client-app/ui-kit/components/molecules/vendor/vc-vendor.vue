@@ -25,6 +25,8 @@ console.log("[UI-kit] VcVendor is deprecated. Use VendorName instead.");
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-vendor {
   $notAvailable: "";
 

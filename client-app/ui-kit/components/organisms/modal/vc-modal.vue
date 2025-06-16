@@ -113,6 +113,8 @@ defineExpose({ close });
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-modal {
   $mobileFullscreen: "";
 

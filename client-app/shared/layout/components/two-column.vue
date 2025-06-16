@@ -43,6 +43,8 @@ function breakpointClassName(className: string): string {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .two-column {
   @apply grow;
 

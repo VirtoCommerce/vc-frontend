@@ -81,6 +81,8 @@ onMounted(setupBroadcastGlobalListeners);
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 @use "assets/styles/main.scss";
 
 #popover-host {

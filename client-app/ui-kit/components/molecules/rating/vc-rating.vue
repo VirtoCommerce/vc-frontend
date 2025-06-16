@@ -86,6 +86,8 @@ function setRating(value: number): void {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-rating {
   $sizeXS: "";
 

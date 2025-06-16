@@ -157,6 +157,8 @@ watch(focused, (value: boolean) => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-popover {
   $popper: "";
 

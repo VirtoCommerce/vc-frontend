@@ -317,6 +317,8 @@ watchEffect(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .variations-table {
   @apply overflow-x-auto rounded border;
 

@@ -32,6 +32,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .skip-to-links {
   @apply fixed left-0 z-50 flex h-10 w-full justify-start opacity-0 bg-primary-50 items-center divide-x-2 text-base text-neutral-800 -top-10 pointer-events-none;
 

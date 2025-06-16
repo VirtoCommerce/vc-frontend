@@ -170,6 +170,8 @@ function getDiscountAmount(discount: DiscountType | OrderDiscountType): number {
 </script>
 
 <style scoped lang="scss">
+@reference "tailwindcss";
+
 @media print {
   #order-summary {
     :deep(.vc-widget__header-container) {

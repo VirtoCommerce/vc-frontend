@@ -49,6 +49,8 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-input-details {
   $error: "";
   $singleLine: "";

@@ -188,6 +188,8 @@ const price = computed(() => (props.product.hasVariations ? props.product.minVar
 </script>
 
 <style scoped lang="scss">
+@reference "tailwindcss";
+
 .vc-product-card-list {
   @apply @container;
 

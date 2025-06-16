@@ -37,6 +37,8 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-dialog-header {
   $colors: primary, secondary, success, info, warning, danger, neutral, accent;
 

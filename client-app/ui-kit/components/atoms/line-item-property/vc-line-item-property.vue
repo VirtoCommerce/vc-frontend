@@ -19,6 +19,8 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-line-item-property {
   @apply grid grid-cols-[auto_1fr_auto] gap-1.5 text-sm;
 

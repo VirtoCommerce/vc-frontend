@@ -7,6 +7,8 @@
 </template>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .card-labels {
   @apply flex items-start gap-3 pt-0.5 xl:ml-6 xl:w-1/3 xl:gap-4;
 

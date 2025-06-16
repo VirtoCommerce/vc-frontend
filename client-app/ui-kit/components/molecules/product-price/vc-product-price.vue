@@ -45,6 +45,8 @@ defineProps<IProps>();
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-product-price {
   $self: &;
   $truncate: "";

@@ -78,6 +78,8 @@ function getCountryCode(language: ILanguage): string {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .language-selector {
   @apply h-full;
 

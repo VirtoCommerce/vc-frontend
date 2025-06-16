@@ -197,6 +197,8 @@ watch(
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .variations {
   &--full-view {
     @media (width >= theme("screens.xl")) {

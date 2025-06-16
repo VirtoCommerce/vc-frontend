@@ -207,6 +207,8 @@ watchEffect(fetchProductsAndSubscriptions);
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .back-in-stock-subscriptions {
   &__toolbar {
     @apply mt-2  flex flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5;

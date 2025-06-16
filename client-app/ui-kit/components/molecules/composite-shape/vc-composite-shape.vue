@@ -33,6 +33,8 @@ const props = withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-composite-shape {
   --props-size: v-bind(props.size);
   --props-icon-size: v-bind(props.iconSize);

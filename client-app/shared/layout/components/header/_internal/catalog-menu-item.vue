@@ -89,6 +89,8 @@ function isExternalLink(link?: RouteLocationRaw) {
 </script>
 
 <style scoped lang="scss">
+@reference "tailwindcss";
+
 .catalog-menu-link {
   @apply mb-2 block px-2 py-1 text-base font-bold hover:bg-neutral-100;
 }

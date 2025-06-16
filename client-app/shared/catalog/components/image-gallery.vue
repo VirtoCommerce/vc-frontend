@@ -144,6 +144,8 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .image-gallery {
   @apply select-none;
 

@@ -70,6 +70,8 @@ function handleCreateConfiguration() {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .product-info {
   &__container {
     @apply flex flex-col lg:flex-row lg:gap-8 print:flex-row print:gap-4;

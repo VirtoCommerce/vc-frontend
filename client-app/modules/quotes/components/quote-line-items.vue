@@ -110,6 +110,8 @@ function getProperties(item: QuoteItemType) {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .quote-line-items {
   &__quantity {
     @apply ml-5;

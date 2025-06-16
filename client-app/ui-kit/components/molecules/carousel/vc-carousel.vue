@@ -82,6 +82,8 @@ const paginationParams = computed<PaginationOptions | boolean>(() =>
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-carousel {
   --pagination-offset: -5px;
 

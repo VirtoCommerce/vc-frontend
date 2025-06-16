@@ -142,6 +142,8 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .subcategories {
   @apply relative me-2.5 w-[15rem] max-h-[100%-2.5rem];
 

@@ -149,6 +149,8 @@ function onFacetFilterChanged(facet: FacetItemType): void {
 </script>
 
 <style scoped lang="scss">
+@reference "tailwindcss";
+
 :deep(.facet-filter--dropdown:last-child) {
   .vc-popover__content {
     @apply right-0 left-auto #{!important};

@@ -46,6 +46,8 @@ defineProps<IProps>();
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .credit-card {
   $disabled: "";
 

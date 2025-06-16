@@ -143,6 +143,8 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .mega-menu {
   @apply flex gap-4 h-10 bg-[--header-bottom-bg-color] px-5 xl:px-12;
 

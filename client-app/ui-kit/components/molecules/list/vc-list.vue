@@ -7,6 +7,8 @@
 <script setup lang="ts"></script>
 
 <style scoped lang="scss">
+@reference "tailwindcss";
+
 .vc-list {
   @apply list-disc space-y-1 pl-5;
 }

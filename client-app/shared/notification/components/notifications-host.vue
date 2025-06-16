@@ -50,6 +50,8 @@ const { stack, close } = useNotifications();
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .notifications-host {
   @apply z-[5000] overflow-y-auto fixed bottom-0 max-h-screen w-full empty:hidden;
 

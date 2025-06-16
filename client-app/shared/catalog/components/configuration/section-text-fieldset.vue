@@ -166,6 +166,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .section-text-fieldset {
   @apply border-none p-0 m-0;
 

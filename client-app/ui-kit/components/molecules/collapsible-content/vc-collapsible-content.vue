@@ -67,6 +67,8 @@ watch(showAll, (value: boolean) => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-collapsible-content {
   --props-max-height: v-bind("props.maxHeight");
   --max-height: var(--props-max-height, var(--vc-collapsible-content-max-height));

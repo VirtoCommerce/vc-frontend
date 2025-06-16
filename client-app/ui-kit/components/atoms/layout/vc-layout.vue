@@ -56,6 +56,8 @@ const { sidebarStyle } = useStickySidebar({
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-layout {
   $left: "";
   $right: "";

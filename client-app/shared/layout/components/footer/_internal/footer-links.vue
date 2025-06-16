@@ -50,6 +50,8 @@ const isMobile = breakpoints.smaller("sm");
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .footer-links {
   --vc-widget-bg-color: transparent;
   --vc-widget-divide-color: var(--footer-top-link-color);

@@ -139,6 +139,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .properties {
   &__groups {
     @apply space-y-3;

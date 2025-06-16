@@ -108,6 +108,8 @@ interface IProps {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .category-controls {
   @apply flex gap-4 justify-end;
 
