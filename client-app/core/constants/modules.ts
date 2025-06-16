@@ -16,3 +16,7 @@ export const MODULE_XAPI_KEYS = {
   CATALOG_EMPTY_CATEGORIES_ENABLED: "Frontend.CatalogEmptyCategoriesEnabled",
   CONTINUE_SHOPPING_LINK: "Frontend.ContinueShoppingLink",
 } as const;
+
+export const MODULE_ID_SHIPPING = "VirtoCommerce.Shipping";
+export const BOPIS_MAP_ENABLED_KEY = "Shipping.Bopis.GoogleMaps.Enabled";
+export const BOPIS_MAP_API_KEY = "Shipping.Bopis.GoogleMaps.ApiKey";
