@@ -18,7 +18,6 @@ module.exports = {
     "plugin:import/typescript",
     "plugin:sort-export-all/recommended",
     "plugin:sonarjs/recommended-legacy",
-    "plugin:tailwindcss/recommended", // See rules: https://github.com/francoismassart/eslint-plugin-tailwindcss#supported-rules
     "plugin:vuejs-accessibility/recommended", // See rules: https://github.com/vue-a11y/eslint-plugin-vuejs-accessibility/tree/main/docs
     "plugin:storybook/recommended", // See rules: https://github.com/storybookjs/eslint-plugin-storybook/tree/main/docs/rules
   ],
@@ -159,7 +158,6 @@ module.exports = {
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-redundant-type-constituents": "warn",
     "sonarjs/no-duplicate-string": "off",
-    "tailwindcss/no-custom-classname": "off",
     "vue/multi-word-component-names": "off",
     "vue/require-default-prop": "off",
     "vuejs-accessibility/form-control-has-label": "off",
