@@ -14,8 +14,17 @@
       @focus="onSearchBarFocused"
     >
       <template #prepend>
-        <VcButton class="ml-1" color="secondary" append-icon="delete-2" size="xs" variant="solid-light">
-          Alcoholic Drinks
+        <VcButton
+          v-for="item in searchScope"
+          :key="item.id"
+          class="ml-1"
+          color="secondary"
+          append-icon="delete-2"
+          size="xs"
+          variant="solid-light"
+          @click.stop="resetScope(item.id)"
+        >
+          {{ item.name }}
         </VcButton>
       </template>
       <template #append>
@@ -151,7 +160,6 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
-import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import BarcodeScanner from "./barcode-scanner.vue";
@@ -291,8 +299,9 @@ function selectItemEvent(product: Product) {
 }
 
 function getSearchRoute(phrase: string): RouteLocationRaw {
+  // todo is scope - current rout if not - search
   return {
-    name: ROUTES.SEARCH.NAME,
+    path: router.currentRoute.value.path,
     query: {
       [QueryParamName.SearchPhrase]: phrase,
     },
@@ -310,6 +319,25 @@ function goToSearchResultsPage() {
 function reset() {
   searchPhrase.value = "";
   hideSearchDropdown();
+}
+
+const searchScope = ref([
+  {
+    name: "Alcoholic drinks",
+    id: 123,
+  },
+  {
+    name: "0.5L",
+    id: 1234,
+  },
+  {
+    name: "Can",
+    id: 12345,
+  },
+]);
+
+function resetScope(id: string | number) {
+  searchScope.value = searchScope.value.filter((el) => el.id !== id);
 }
 
 const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEARCH_BAR_DEBOUNCE_TIME);
