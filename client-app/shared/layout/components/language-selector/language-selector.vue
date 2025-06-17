@@ -26,7 +26,7 @@
         v-for="item in supportedLanguages"
         :key="item.twoLetterLanguageName"
         :active="item.twoLetterLanguageName === currentLanguage.twoLetterLanguageName"
-        :data-test-aid="`language-selector-item-${item.twoLetterLanguageName}`"
+        :data-test-id="`language-selector-item-${item.twoLetterLanguageName}`"
         color="secondary"
         @click="
           select(item.twoLetterLanguageName);
