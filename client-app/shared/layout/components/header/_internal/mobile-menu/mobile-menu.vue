@@ -159,6 +159,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+@reference "tailwindcss";
+
 .mobile-menu {
   --sidebar-max-width: 430px;
   --vc-radio-button-base-color: var(--mobile-menu-control-color);

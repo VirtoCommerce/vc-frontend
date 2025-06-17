@@ -135,6 +135,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-menu-item {
   --props-max-lines: v-bind(maxLines);
   --max-lines: var(--props-max-lines, 2);

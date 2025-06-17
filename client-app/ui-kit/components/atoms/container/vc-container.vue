@@ -39,6 +39,8 @@ const _bgColor = computed(() => getColorValue(props.bgColor));
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-container {
   --props-max-width: v-bind(props.maxWidth);
   --props-bg-color: v-bind(_bgColor);

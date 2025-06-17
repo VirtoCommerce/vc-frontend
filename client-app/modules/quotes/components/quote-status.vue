@@ -43,6 +43,8 @@ const quoteStatus = computed(() => statuses.find((s: IQuoteStatus) => props.stat
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .quote-status {
   @apply min-w-0 max-w-full;
 }

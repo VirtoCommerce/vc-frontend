@@ -79,6 +79,8 @@ const iconName = computed<string>(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-alert {
   $colors: success, warning, danger, info;
   $sizeSm: "";

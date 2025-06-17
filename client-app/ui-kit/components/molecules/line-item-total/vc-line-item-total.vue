@@ -31,6 +31,8 @@ Logger.warn("[UIKit][warn] VcLineItemTotal is deprecated, use VcProductPrice ins
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-line-item-total {
   --actual-color: var(--vc-line-item-total-actual-color, var(--color-neutral-900));
   --list-color: var(--vc-line-item-total-list-color, var(--color-neutral-500));

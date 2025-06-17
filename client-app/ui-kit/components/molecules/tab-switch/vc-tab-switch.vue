@@ -84,6 +84,8 @@ function onInput() {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-tab-switch {
   $start: "";
   $end: "";

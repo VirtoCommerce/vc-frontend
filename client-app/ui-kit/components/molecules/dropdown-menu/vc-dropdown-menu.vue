@@ -60,6 +60,8 @@ const props = withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-dropdown-menu {
   $disabled: "";
   $dividers: "";

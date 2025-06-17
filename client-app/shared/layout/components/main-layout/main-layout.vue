@@ -20,6 +20,8 @@ import SkipToLinks from "@/shared/layout/components/skip-to-links/skip-to-links.
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .main-layout {
   @apply flex min-h-screen flex-col;
 

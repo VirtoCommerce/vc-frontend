@@ -54,6 +54,8 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-empty-page {
   $hideMobileSide: "";
 

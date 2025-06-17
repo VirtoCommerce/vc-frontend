@@ -150,6 +150,8 @@ function update(value: number) {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-quantity-stepper {
   $self: &;
 

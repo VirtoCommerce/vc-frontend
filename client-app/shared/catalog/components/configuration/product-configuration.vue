@@ -260,6 +260,8 @@ async function openSaveChangesModal(): Promise<boolean> {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .product-configuration {
   $required: "";
 

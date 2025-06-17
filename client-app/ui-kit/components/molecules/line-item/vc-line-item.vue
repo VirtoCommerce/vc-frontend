@@ -199,6 +199,8 @@ watchEffect(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-line-item {
   $selected: "";
   $removable: "";

@@ -58,6 +58,8 @@ const visibleChildren = computed(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-products-grid {
   $short: "";
 

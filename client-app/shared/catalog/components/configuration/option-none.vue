@@ -30,6 +30,8 @@ interface IEmits {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .option-none {
   @apply p-4 odd:bg-neutral-50;
 

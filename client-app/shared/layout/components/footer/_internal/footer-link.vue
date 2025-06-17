@@ -28,6 +28,8 @@ const isExternalLink = computed(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .footer-link {
   @apply block text-sm text-[--footer-top-link-color] truncate;
 

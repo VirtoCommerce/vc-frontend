@@ -15,6 +15,8 @@ defineProps<IProps>();
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .top-header-link {
   @apply py-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color];
 

@@ -25,6 +25,8 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-loader-overlay {
   @apply absolute inset-0 z-[996];
 

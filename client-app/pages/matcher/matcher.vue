@@ -127,6 +127,8 @@ watch(
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .matcher {
   @apply contents;
 }

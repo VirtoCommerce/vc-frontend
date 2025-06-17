@@ -54,6 +54,8 @@ const _color = computed(() => getColorValue(props.color));
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-typography {
   --props-font-size: v-bind(props.fontSize);
   --props-font-weight: v-bind(props.fontWeight);

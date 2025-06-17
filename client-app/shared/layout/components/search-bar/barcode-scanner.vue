@@ -39,6 +39,8 @@ const openBarcodeScanner = () => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .barcode-scanner {
   @apply m-1.5;
 }

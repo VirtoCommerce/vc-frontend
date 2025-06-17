@@ -184,6 +184,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .ship-to-selector {
   --vc-icon-color: theme("colors.primary.500");
   --vc-dialog-width: calc(100vw - 1rem);

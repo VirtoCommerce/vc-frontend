@@ -202,6 +202,8 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+@reference "tailwindcss";
+
 .vc-typography--variant--h1 {
   @apply normal-case;
 }

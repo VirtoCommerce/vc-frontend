@@ -188,6 +188,8 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .barcode-scanner-modal {
   &__description {
     @apply mb-2.5;

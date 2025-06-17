@@ -5,6 +5,8 @@
 </template>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-product-vendor {
   $self: &;
 

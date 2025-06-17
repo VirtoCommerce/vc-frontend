@@ -21,6 +21,8 @@ defineProps<IProps>();
 </script>
 
 <style scoped lang="scss">
+@reference "tailwindcss";
+
 .vc-list-item {
   @apply marker:text-xl marker:text-primary;
 

@@ -219,6 +219,8 @@ function sendGASelectItemEvent(product: Product): void {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .category-products {
   --vc-product-title-font-size: theme("fontSize.sm");
   --columnsAmountTablet: v-bind(props.columnsAmountTablet);

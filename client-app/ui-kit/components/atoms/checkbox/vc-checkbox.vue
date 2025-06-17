@@ -109,6 +109,8 @@ function onClick(event: Event) {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-checkbox {
   $disabled: "";
   $left: "";

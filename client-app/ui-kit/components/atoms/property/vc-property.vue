@@ -26,6 +26,8 @@ defineProps<IProps>();
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-property {
   --font-size: var(--vc-property-font-size, 0.75rem);
   --label-color: var(--vc-property-label-color, var(--color-neutral-700));

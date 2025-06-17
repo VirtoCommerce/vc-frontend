@@ -13,6 +13,8 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-carousel-pagination {
   --swiper-pagination-color: var(--color-primary-500);
   --swiper-pagination-bullet-inactive-opacity: 1;

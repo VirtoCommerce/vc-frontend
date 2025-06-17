@@ -234,6 +234,8 @@ watchEffect(() => {
 </script>
 
 <style scoped lang="scss">
+@reference "tailwindcss";
+
 @media print {
   #order-data-widget,
   #line-items-widget {
