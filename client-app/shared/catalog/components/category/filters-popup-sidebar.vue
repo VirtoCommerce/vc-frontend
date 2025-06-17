@@ -6,8 +6,9 @@
     @hide="$emit('hidePopupSidebar')"
   >
     <ProductsFilters
+      v-if="localFilters"
       :keyword="keywordQueryParam"
-      :filters="popupSidebarFilters"
+      :filters="localFilters"
       :loading="loading || facetsLoading"
       @change="onProductsFiltersChange"
     >
@@ -15,7 +16,7 @@
         <div class="filters-popup-sidebar__container">
           <VcCheckbox
             v-if="!hideControls && isPurchasedBeforeEnabled"
-            :model-value="popupSidebarFilters.purchasedBefore"
+            :model-value="localFilters.purchasedBefore"
             class="filters-popup-sidebar__control"
             :disabled="updatingFiltersState"
             data-test-id="purchased-before-checkbox-filter"
@@ -26,7 +27,7 @@
 
           <VcCheckbox
             v-if="!hideControls"
-            :model-value="popupSidebarFilters.inStock"
+            :model-value="localFilters.inStock"
             class="filters-popup-sidebar__control"
             :disabled="updatingFiltersState"
             @change="onChange({ inStock: $event })"
@@ -37,7 +38,7 @@
           <VcCheckbox
             v-if="!hideControls"
             class="filters-popup-sidebar__control"
-            :model-value="!!popupSidebarFilters.branches.length"
+            :model-value="!!localFilters.branches.length"
             :disabled="updatingFiltersState"
             :message="$t('pages.catalog.branch_availability_filter_card.select_branch_text')"
             prevent-default
@@ -47,7 +48,7 @@
               <span>
                 {{
                   $t("pages.catalog.branch_availability_filter_card.branches", {
-                    n: popupSidebarFilters.branches.length,
+                    n: localFilters.branches.length,
                   })
                 }}
               </span>
@@ -66,19 +67,16 @@
         :title="$t('common.buttons.reset')"
         size="sm"
         icon="reset"
-        @click="
-          $emit('resetFacetFilters');
-          $emit('hidePopupSidebar');
-        "
+        @click="onReset"
       />
 
       <VcButton
         class="filters-popup-sidebar__footer-btn"
         variant="outline"
-        :disabled="!isExistSelectedPopupSidebarFacets"
+        :disabled="!isPopupSidebarFilterDirty"
         min-width="6.25rem"
         size="sm"
-        @click="$emit('hidePopupSidebar')"
+        @click="onCancel"
       >
         {{ $t("common.buttons.cancel") }}
       </VcButton>
@@ -88,10 +86,7 @@
         :disabled="!isPopupSidebarFilterDirty"
         min-width="6.25rem"
         size="sm"
-        @click="
-          $emit('applyFilters', popupSidebarFilters);
-          $emit('hidePopupSidebar');
-        "
+        @click="onApply"
       >
         {{ $t("common.buttons.apply") }}
       </VcButton>
@@ -101,6 +96,7 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
+import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
 import { watch, ref, computed } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
@@ -112,7 +108,6 @@ const props = defineProps<IProps>();
 
 interface IEmits {
   (event: "hidePopupSidebar"): void;
-  (event: "updatePopupSidebarFilters", filters: ProductsFiltersType): void;
   (event: "openBranchesModal", fromPopupSidebarFilter: boolean): void;
   (event: "resetFacetFilters"): void;
   (event: "applyFilters", filters: ProductsFiltersType): void;
@@ -136,24 +131,52 @@ const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
   props.popupSidebarFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
 );
 
-function onChange(payload: Partial<ProductsFiltersType>) {
-  emit("updatePopupSidebarFilters", { ...props.popupSidebarFilters, ...payload });
+function onChange(payload: { purchasedBefore: boolean } | { inStock: boolean }) {
+  if (!localFilters.value) {
+    return;
+  }
+  if ("purchasedBefore" in payload) {
+    localFilters.value.purchasedBefore = payload.purchasedBefore;
+  } else {
+    localFilters.value.inStock = payload.inStock;
+  }
 }
 
-function onProductsFiltersChange(data: ProductsFiltersType) {
-  localFilters.value = data;
+function onProductsFiltersChange(payload: ProductsFiltersType) {
+  localFilters.value = cloneDeep(payload);
 }
 
 watch(
   () => props.popupSidebarFilters,
   (filters) => {
-    localFilters.value = filters;
+    localFilters.value = cloneDeep(filters);
   },
 );
 
 const isPopupSidebarFilterDirty = computed(() => {
   return !isEqual(props.popupSidebarFilters, localFilters.value);
 });
+
+function onCancel() {
+  localFilters.value = cloneDeep(props.popupSidebarFilters);
+  emit("hidePopupSidebar");
+}
+
+function onReset() {
+  localFilters.value = undefined;
+  emit("resetFacetFilters");
+  emit("hidePopupSidebar");
+}
+
+function onApply() {
+  if (!localFilters.value) {
+    return;
+  }
+
+  emit("applyFilters", localFilters.value);
+  localFilters.value = undefined;
+  emit("hidePopupSidebar");
+}
 </script>
 
 <style lang="scss">
