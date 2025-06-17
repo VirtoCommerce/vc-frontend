@@ -160,6 +160,8 @@ const setPage = (page: number) => {
   $compact: "";
   $wrapped: "";
 
+  @apply flex;
+
   &--compact {
     $compact: &;
   }
@@ -169,10 +171,10 @@ const setPage = (page: number) => {
   }
 
   &__container {
-    @apply flex justify-center items-center gap-x-3 gap-y-1.5;
+    @apply flex items-center gap-x-3 gap-y-1.5;
 
     #{$wrapped} & {
-      @apply flex-wrap;
+      @apply flex-wrap justify-center;
     }
   }
 
