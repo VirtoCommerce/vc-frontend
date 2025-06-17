@@ -9,7 +9,7 @@
       :keyword="keywordQueryParam"
       :filters="popupSidebarFilters"
       :loading="loading || facetsLoading"
-      @change="$emit('updatePopupSidebarFilters', $event)"
+      @change="onProductsFiltersChange"
     >
       <template #prepend="{ loading: updatingFiltersState }">
         <div class="filters-popup-sidebar__container">
@@ -62,7 +62,7 @@
         class="filters-popup-sidebar__footer-btn"
         variant="outline"
         color="secondary"
-        :disabled="!isExistSelectedFacets && !isExistSelectedPopupSidebarFacets"
+        :disabled="!isExistSelectedPopupSidebarFacets"
         :title="$t('common.buttons.reset')"
         size="sm"
         icon="reset"
@@ -75,7 +75,7 @@
       <VcButton
         class="filters-popup-sidebar__footer-btn"
         variant="outline"
-        :disabled="!isExistSelectedFacets && !isExistSelectedPopupSidebarFacets"
+        :disabled="!isExistSelectedPopupSidebarFacets"
         min-width="6.25rem"
         size="sm"
         @click="$emit('hidePopupSidebar')"
@@ -101,6 +101,8 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
+import isEqual from "lodash/isEqual";
+import { watch, ref, computed } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
@@ -117,9 +119,7 @@ interface IEmits {
 }
 
 interface IProps {
-  isExistSelectedFacets?: boolean;
   isMobile?: boolean;
-  isPopupSidebarFilterDirty?: boolean;
   isVisible?: boolean;
   loading?: boolean;
   facetsLoading?: boolean;
@@ -127,6 +127,8 @@ interface IProps {
   keywordQueryParam?: string;
   popupSidebarFilters: ProductsFiltersType;
 }
+
+const localFilters = ref<ProductsFiltersType>();
 
 const { isPurchasedBeforeEnabled } = usePurchasedBefore();
 
@@ -137,6 +139,21 @@ const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
 function onChange(payload: Partial<ProductsFiltersType>) {
   emit("updatePopupSidebarFilters", { ...props.popupSidebarFilters, ...payload });
 }
+
+function onProductsFiltersChange(data: ProductsFiltersType) {
+  localFilters.value = data;
+}
+
+watch(
+  () => props.popupSidebarFilters,
+  (filters) => {
+    localFilters.value = filters;
+  },
+);
+
+const isPopupSidebarFilterDirty = computed(() => {
+  return !isEqual(props.popupSidebarFilters, localFilters.value);
+});
 </script>
 
 <style lang="scss">
