@@ -1,5 +1,5 @@
 <template>
-  <router-link class="top-header-link" exact-active-class="top-header-link--active" :to="to" :data-testid="testId">
+  <router-link class="top-header-link" exact-active-class="top-header-link--active" :to="to" :data-test-id="testId">
     <slot />
   </router-link>
 </template>

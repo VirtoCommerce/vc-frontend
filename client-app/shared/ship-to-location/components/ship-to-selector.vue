@@ -12,7 +12,7 @@
         <button
           class="ship-to-selector__trigger"
           type="button"
-          data-testid="ship-to-selector-button"
+          data-test-id="ship-to-selector-button"
           :disabled="loading"
         >
           <VcIcon name="location-marker" size="xs" />

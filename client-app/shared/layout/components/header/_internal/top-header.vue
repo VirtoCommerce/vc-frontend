@@ -19,7 +19,7 @@
 
         <a
           class="py-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
-          data-testid="support-phone-number-link"
+          data-test-id="support-phone-number-link"
           :href="`tel:${support_phone_number}`"
         >
           {{ support_phone_number }}
@@ -46,7 +46,7 @@
         <div ref="loginMenu" class="relative flex flex-row items-center gap-x-1">
           <!-- Operator -->
           <template v-if="operator">
-            <span class="font-bold" data-testid="operator-name-label">
+            <span class="font-bold" data-test-id="operator-name-label">
               {{ operator.contact?.fullName || operator.userName }}
             </span>
             <span class="text-neutral-400">
@@ -57,14 +57,14 @@
           <button
             type="button"
             class="flex cursor-pointer items-center whitespace-nowrap py-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
-            data-testid="account-menu-button"
+            data-test-id="account-menu-button"
             @click="loginMenuVisible = !loginMenuVisible"
           >
             <span class="font-bold">
               <template v-if="isMultiOrganization">
-                <span data-testid="organization-name-label">{{ organization?.name }}</span> /
+                <span data-test-id="organization-name-label">{{ organization?.name }}</span> /
               </template>
-              <span data-testid="customer-name-label">{{ user.contact?.fullName || user.userName }}</span>
+              <span data-test-id="customer-name-label">{{ user.contact?.fullName || user.userName }}</span>
             </span>
 
             <VcIcon
@@ -81,7 +81,7 @@
               <router-link
                 to="/account/dashboard"
                 class="flex min-w-0 items-center gap-2 hover:text-primary"
-                data-testid="account-menu-dashboard-link"
+                data-test-id="account-menu-dashboard-link"
                 @click="loginMenuVisible = false"
               >
                 <VcIcon class="fill-primary" name="user-circle" />
@@ -97,7 +97,7 @@
                 variant="outline"
                 color="neutral"
                 size="xs"
-                data-testid="sign-out-button"
+                data-test-id="sign-out-button"
                 icon
                 @click="() => signMeOut()"
               >
@@ -120,7 +120,7 @@
                 :max-lines="2"
                 :title="item.name"
                 word-break="break-word"
-                :data-testid="`organization-selector-item-${item.name}`"
+                :data-test-id="`organization-selector-item-${item.name}`"
                 @change="selectOrganization"
               />
             </div>

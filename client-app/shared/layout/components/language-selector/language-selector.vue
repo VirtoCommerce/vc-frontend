@@ -1,7 +1,7 @@
 <template>
   <VcDropdownMenu placement="bottom-end" class="language-selector" close-on-blur>
     <template #trigger="{ opened }">
-      <button type="button" class="language-selector__button" data-testid="language-selector-button">
+      <button type="button" class="language-selector__button" data-test-id="language-selector-button">
         <span class="language-selector__label">
           {{ $t("shared.layout.language_selector.label") }}
         </span>
@@ -13,7 +13,7 @@
           lazy
         />
 
-        <span class="language-selector__text" data-testid="current-language-label">
+        <span class="language-selector__text" data-test-id="current-language-label">
           {{ currentLanguage.twoLetterLanguageName }}
         </span>
 
@@ -26,7 +26,7 @@
         v-for="item in supportedLanguages"
         :key="item.twoLetterLanguageName"
         :active="item.twoLetterLanguageName === currentLanguage.twoLetterLanguageName"
-        :data-testid="`language-selector-item-${item.twoLetterLanguageName}`"
+        :data-test-aid="`language-selector-item-${item.twoLetterLanguageName}`"
         color="secondary"
         @click="
           select(item.twoLetterLanguageName);
