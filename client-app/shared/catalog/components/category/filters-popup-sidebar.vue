@@ -42,7 +42,7 @@
             :disabled="updatingFiltersState"
             :message="$t('pages.catalog.branch_availability_filter_card.select_branch_text')"
             prevent-default
-            @change="$emit('openBranchesModal', true)"
+            @change="openBranchesModal"
           >
             <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
               <span>
@@ -63,7 +63,6 @@
         class="filters-popup-sidebar__footer-btn"
         variant="outline"
         color="secondary"
-        :disabled="!isExistSelectedPopupSidebarFacets"
         :title="$t('common.buttons.reset')"
         size="sm"
         icon="reset"
@@ -73,7 +72,6 @@
       <VcButton
         class="filters-popup-sidebar__footer-btn"
         variant="outline"
-        :disabled="!isPopupSidebarFilterDirty"
         min-width="6.25rem"
         size="sm"
         @click="onCancel"
@@ -95,20 +93,20 @@
 </template>
 
 <script setup lang="ts">
-import { computedEager } from "@vueuse/core";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
 import { watch, ref, computed } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
+import { useModal } from "@/shared/modal";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
+import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 interface IEmits {
   (event: "hidePopupSidebar"): void;
-  (event: "openBranchesModal", fromPopupSidebarFilter: boolean): void;
   (event: "resetFacetFilters"): void;
   (event: "applyFilters", filters: ProductsFiltersType): void;
 }
@@ -126,10 +124,6 @@ interface IProps {
 const localFilters = ref<ProductsFiltersType>();
 
 const { isPurchasedBeforeEnabled } = usePurchasedBefore();
-
-const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
-  props.popupSidebarFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
-);
 
 function onChange(payload: { purchasedBefore: boolean } | { inStock: boolean }) {
   if (!localFilters.value) {
@@ -151,6 +145,7 @@ watch(
   (filters) => {
     localFilters.value = cloneDeep(filters);
   },
+  { immediate: true },
 );
 
 const isPopupSidebarFilterDirty = computed(() => {
@@ -163,7 +158,6 @@ function onCancel() {
 }
 
 function onReset() {
-  localFilters.value = undefined;
   emit("resetFacetFilters");
   emit("hidePopupSidebar");
 }
@@ -174,8 +168,23 @@ function onApply() {
   }
 
   emit("applyFilters", localFilters.value);
-  localFilters.value = undefined;
   emit("hidePopupSidebar");
+}
+
+const { openModal } = useModal();
+function openBranchesModal() {
+  openModal({
+    component: BranchesModal,
+    props: {
+      selectedBranches: localFilters.value?.branches,
+      onSave(branches: string[]) {
+        if (!localFilters.value) {
+          return;
+        }
+        localFilters.value.branches = branches;
+      },
+    },
+  });
 }
 </script>
 
