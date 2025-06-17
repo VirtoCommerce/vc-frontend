@@ -1,12 +1,15 @@
 <template>
   <VcDropdownMenu placement="bottom-end" width="8rem" class="h-full" close-on-blur>
     <template #trigger="{ opened }">
-      <button type="button" class="flex h-full items-center gap-x-1.5">
+      <button type="button" class="flex h-full items-center gap-x-1.5" data-testid="currency-selector-button">
         <span class="text-sm">
           {{ $t("shared.layout.currency_selector.label") }}
         </span>
 
-        <span class="uppercase text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]">
+        <span
+          class="uppercase text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
+          data-testid="current-currency-label"
+        >
           {{ currentCurrency.code }}
         </span>
 
@@ -19,6 +22,7 @@
         v-for="item in supportedCurrencies"
         :key="item.code"
         :active="item.code === currentCurrency.code"
+        :data-testid="`currency-selector-item-${item.code}`"
         color="secondary"
         truncate
         @click="

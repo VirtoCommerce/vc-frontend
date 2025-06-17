@@ -1,5 +1,5 @@
 <template>
-  <router-link class="top-header-link" exact-active-class="top-header-link--active" :to="to">
+  <router-link class="top-header-link" exact-active-class="top-header-link--active" :to="to" :data-testid="testId">
     <slot />
   </router-link>
 </template>
@@ -9,6 +9,7 @@ import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
   to: RouteLocationRaw;
+  testId?: string;
 }
 
 defineProps<IProps>();
