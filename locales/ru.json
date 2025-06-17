@@ -752,6 +752,14 @@
         "select_button": "@:common.buttons.select",
         "price_label": "@:common.labels.price{':'}",
         "title": "Выбрать способ доставки"
+      },
+      "select_bopis_modal": {
+        "title": "Пункты выдачи",
+        "location_label": "Местоположение",
+        "working_hours_label": "Часы работы",
+        "description_label": "Описание",
+        "contact_phone_label": "Контактный телефон",
+        "contact_email_label": "Email для связи"
       }
     },
     "bulk_order": {
