@@ -30,13 +30,13 @@
 
       <!-- Authorized menu items -->
       <template v-if="isAuthenticated">
-        <TopHeaderLink to="/account/dashboard" test-id="dashboard-link">
+        <TopHeaderLink to="/account/dashboard" data-test-id="dashboard-link">
           {{ $t("shared.layout.header.top_header.link_dashboard") }}
         </TopHeaderLink>
 
         <span class="mx-2 size-1 rounded-full bg-primary" />
 
-        <TopHeaderLink to="/contacts" test-id="contacts-link">
+        <TopHeaderLink to="/contacts" data-test-id="contacts-link">
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
         </TopHeaderLink>
 
@@ -130,19 +130,19 @@
 
       <!-- Unauthorized menu items -->
       <template v-else>
-        <TopHeaderLink to="/contacts" test-id="contact-us-link">
+        <TopHeaderLink to="/contacts" test-id="contact-us-link" data-test-id="contact-us-link">
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
         </TopHeaderLink>
 
         <span class="mx-4 h-5 w-px bg-primary" />
 
-        <TopHeaderLink to="/sign-in" test-id="sign-in-link">
+        <TopHeaderLink to="/sign-in" test-id="sign-in-link" data-test-id="sign-in-link">
           {{ $t("shared.layout.header.link_sign_in") }}
         </TopHeaderLink>
 
         <span class="mx-3 size-1 rounded-full bg-primary" />
 
-        <TopHeaderLink to="/sign-up" test-id="sign-up-link">
+        <TopHeaderLink to="/sign-up" test-id="sign-up-link" data-test-id="sign-up-link">
           {{ $t("shared.layout.header.link_register_now") }}
         </TopHeaderLink>
       </template>
