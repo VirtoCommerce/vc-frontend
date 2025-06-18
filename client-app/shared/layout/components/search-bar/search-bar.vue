@@ -22,9 +22,9 @@
           append-icon="delete-2"
           size="xs"
           variant="solid-light"
-          @click.stop="resetScope(item.id)"
+          @click.stop="removeScopeItem(item.id)"
         >
-          {{ item.name }}
+          {{ item.label }}
         </VcButton>
       </template>
       <template #append>
@@ -193,6 +193,8 @@ const {
   hideSearchDropdown,
   showSearchDropdown,
   searchResults,
+  searchScope,
+  removeScopeItem,
 } = useSearchBar();
 
 const { analytics } = useAnalytics();
@@ -240,6 +242,7 @@ const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 async function searchAndShowDropdownResults(): Promise<void> {
   const COLUMNS = 5;
   const { catalogId, currencyCode } = globals;
+  console.log(catalogId);
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
     themeContext.value.settings;
 
@@ -319,25 +322,6 @@ function goToSearchResultsPage() {
 function reset() {
   searchPhrase.value = "";
   hideSearchDropdown();
-}
-
-const searchScope = ref([
-  {
-    name: "Alcoholic drinks",
-    id: 123,
-  },
-  {
-    name: "0.5L",
-    id: 1234,
-  },
-  {
-    name: "Can",
-    id: 12345,
-  },
-]);
-
-function resetScope(id: string | number) {
-  searchScope.value = searchScope.value.filter((el) => el.id !== id);
 }
 
 const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEARCH_BAR_DEBOUNCE_TIME);

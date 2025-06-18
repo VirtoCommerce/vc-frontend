@@ -6,6 +6,12 @@ import { highlightSearchText, prepareSearchText } from "../utils";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category, PageType, Product } from "@/core/api/graphql/types";
 
+type ScopeItemType = {
+  id: string | number;
+  label: string;
+  filter: string;
+};
+
 function _useSearchBar() {
   const loading = ref(false);
   const searchBarVisible = ref(false);
@@ -16,6 +22,14 @@ function _useSearchBar() {
   const pages = shallowRef<PageType[]>([]);
   const suggestions = shallowRef<{ text: string; label: string }[]>([]);
   const total = ref(0);
+
+  const searchScope = ref<ScopeItemType[]>([
+    {
+      label: "Alcoholic drinks",
+      id: 123,
+      filter: "category.subtree:fc596540864a41bf8ab78734ee7353a3",
+    },
+  ]);
 
   function showSearchDropdown() {
     if (!searchDropdownVisible.value) {
@@ -90,6 +104,14 @@ function _useSearchBar() {
     }
   }
 
+  function removeScopeItem(itemId: ScopeItemType["id"]) {
+    searchScope.value = searchScope.value.filter((el) => el.id !== itemId);
+  }
+
+  function addScopeItem(item: ScopeItemType) {
+    searchScope.value.push(item);
+  }
+
   return {
     searchResults,
     toggleSearchBar,
@@ -105,6 +127,10 @@ function _useSearchBar() {
     products: computed(() => products.value),
     pages: computed(() => pages.value),
     suggestions: computed(() => suggestions.value),
+
+    searchScope,
+    removeScopeItem,
+    addScopeItem,
   };
 }
 
