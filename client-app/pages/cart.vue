@@ -29,7 +29,7 @@
     </VcEmptyPage>
   </template>
 
-  <VcContainer v-else class="relative z-0 max-lg:pb-12">
+  <VcContainer v-else class="relative max-lg:pb-12">
     <VcLoaderOverlay :visible="isCartLoked" fixed-spinner />
 
     <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />

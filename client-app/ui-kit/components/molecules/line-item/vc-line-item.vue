@@ -386,9 +386,11 @@ watchEffect(() => {
       @apply w-[6.5rem];
     }
 
+    &:has(.vc-quantity-stepper, * .vc-quantity-stepper) {
+      @apply w-32;
+    }
+
     &:has(
-        .add-to-cart,
-        * .add-to-cart,
         .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
         * .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
         .vc-product-button
