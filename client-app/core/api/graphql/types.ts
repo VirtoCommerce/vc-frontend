@@ -717,11 +717,6 @@ export type ContactTypeAddressesArgs = {
 };
 
 
-export type ContactTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-};
-
-
 export type ContactTypeOrganizationsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -767,11 +762,6 @@ export type ContractType = {
   status?: Maybe<Scalars['String']['output']>;
   storeId?: Maybe<Scalars['String']['output']>;
   vendorId?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type ContractTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CountryRegionType = {
@@ -959,11 +949,6 @@ export type CustomerOrderType = {
   taxTotal: MoneyType;
   taxType?: Maybe<Scalars['String']['output']>;
   total: MoneyType;
-};
-
-
-export type CustomerOrderTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -2312,10 +2297,10 @@ export type InputQuoteAddressType = {
   countryCode?: InputMaybe<Scalars['String']['input']>;
   countryName: Scalars['String']['input'];
   email?: InputMaybe<Scalars['String']['input']>;
-  firstName: Scalars['String']['input'];
+  firstName?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
   key?: InputMaybe<Scalars['String']['input']>;
-  lastName: Scalars['String']['input'];
+  lastName?: InputMaybe<Scalars['String']['input']>;
   line1?: InputMaybe<Scalars['String']['input']>;
   line2?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -2366,9 +2351,11 @@ export type InputRegisterContactType = {
 
 export type InputRegisterOrganizationType = {
   address?: InputMaybe<InputMemberAddressType>;
+  addresses?: InputMaybe<Array<InputMaybe<InputMemberAddressType>>>;
   description?: InputMaybe<Scalars['String']['input']>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
   name: Scalars['String']['input'];
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputRejectGiftItemsType = {
@@ -3004,11 +2991,6 @@ export type MemberTypeAddressesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type MemberTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -3901,11 +3883,6 @@ export type OrderLineItemType = {
   width?: Maybe<Scalars['Decimal']['output']>;
 };
 
-
-export type OrderLineItemTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type OrderPaymentMethodType = {
   code: Scalars['String']['output'];
   currency: CurrencyType;
@@ -4010,11 +3987,6 @@ export type OrderShipmentType = {
   width?: Maybe<Scalars['Decimal']['output']>;
 };
 
-
-export type OrderShipmentTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type OrderShippingMethodType = {
   code: Scalars['String']['output'];
   description?: Maybe<Scalars['String']['output']>;
@@ -4087,12 +4059,6 @@ export type OrganizationContactsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   searchPhrase?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-/** Organization info */
-export type OrganizationDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -4283,11 +4249,6 @@ export type PaymentInType = {
   transactions: Array<PaymentTransactionType>;
   vendor?: Maybe<CommonVendor>;
   voidedDate?: Maybe<Scalars['DateTime']['output']>;
-};
-
-
-export type PaymentInTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PaymentMethodType = {
@@ -4490,6 +4451,8 @@ export type PriceType = {
   minQuantity?: Maybe<Scalars['Int']['output']>;
   /** The product price list */
   pricelistId?: Maybe<Scalars['String']['output']>;
+  /** The product price list name */
+  pricelistName?: Maybe<Scalars['String']['output']>;
   /** Sale price */
   sale: MoneyType;
   /** Sale price with tax */
@@ -4498,6 +4461,13 @@ export type PriceType = {
   startDate?: Maybe<Scalars['DateTime']['output']>;
   /** Tier prices */
   tierPrices: Array<TierPriceType>;
+};
+
+export type PricesSumType = {
+  /** Total discount amount */
+  discountTotal: MoneyType;
+  /** Total price */
+  total: MoneyType;
 };
 
 /** Products are the sellable goods in an e-commerce project. */
@@ -4884,6 +4854,7 @@ export type Query = {
   paymentStatuses?: Maybe<LocalizedSettingResponseType>;
   payments?: Maybe<PaymentInConnection>;
   pickupLocations?: Maybe<PickupLocationConnection>;
+  pricesSum?: Maybe<PricesSumType>;
   product?: Maybe<Product>;
   productConfiguration?: Maybe<ConfigurationQueryResponseType>;
   productSuggestions?: Maybe<ProductSuggestionsQueryResponseType>;
@@ -5257,6 +5228,16 @@ export type QueryPickupLocationsArgs = {
 };
 
 
+export type QueryPricesSumArgs = {
+  cartId: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode: Scalars['String']['input'];
+  lineItemIds: Array<InputMaybe<Scalars['String']['input']>>;
+  storeId: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QueryProductArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
@@ -5464,7 +5445,6 @@ export type QueryVendorArgs = {
 
 export type QueryWhiteLabelingSettingsArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
-  domain?: InputMaybe<Scalars['String']['input']>;
   organizationId?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['String']['input']>;
@@ -5494,11 +5474,11 @@ export type QuoteAddressType = {
   countryCode?: Maybe<Scalars['String']['output']>;
   countryName: Scalars['String']['output'];
   email?: Maybe<Scalars['String']['output']>;
-  firstName: Scalars['String']['output'];
+  firstName?: Maybe<Scalars['String']['output']>;
   /** ID */
   id?: Maybe<Scalars['String']['output']>;
   key?: Maybe<Scalars['String']['output']>;
-  lastName: Scalars['String']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
   line1?: Maybe<Scalars['String']['output']>;
   line2?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
@@ -5516,6 +5496,30 @@ export type QuoteAttachmentType = {
   name: Scalars['String']['output'];
   size: Scalars['Long']['output'];
   url: Scalars['String']['output'];
+};
+
+export type QuoteConfigurationItemFileType = {
+  /** MIME type of the file */
+  contentType?: Maybe<Scalars['String']['output']>;
+  /** Name of the file */
+  name: Scalars['String']['output'];
+  /** Size of the file */
+  size: Scalars['Long']['output'];
+  /** URL of the file */
+  url: Scalars['String']['output'];
+};
+
+export type QuoteConfigurationItemType = {
+  /** Configuration item custom text */
+  customText?: Maybe<Scalars['String']['output']>;
+  /** List of files for 'File' configuration item section */
+  files?: Maybe<Array<Maybe<QuoteConfigurationItemFileType>>>;
+  /** Configuration item ID */
+  id: Scalars['String']['output'];
+  /** Configuration item name */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Configuration item type. Possible values: 'Product', 'Text', 'File' */
+  type: Scalars['String']['output'];
 };
 
 /** A connection from an object to a list of objects of type `Quote`. */
@@ -5542,6 +5546,8 @@ export type QuoteItemType = {
   catalogId?: Maybe<Scalars['String']['output']>;
   categoryId?: Maybe<Scalars['String']['output']>;
   comment?: Maybe<Scalars['String']['output']>;
+  /** Configuration items for configurable product */
+  configurationItems?: Maybe<Array<Maybe<QuoteConfigurationItemType>>>;
   id: Scalars['String']['output'];
   imageUrl?: Maybe<Scalars['String']['output']>;
   listPrice: MoneyType;
@@ -5687,13 +5693,14 @@ export type RegisterContactType = {
   status?: Maybe<Scalars['String']['output']>;
 };
 
-
-export type RegisterContactTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type RegisterOrganizationType = {
+  /**
+   * Returns first organization address.
+   * @deprecated Use addresses field instead.
+   */
   address?: Maybe<MemberAddressType>;
+  /** Organization's addresses */
+  addresses?: Maybe<Array<Maybe<MemberAddressType>>>;
   createdBy?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   /** Contact's dynamic property values */
@@ -5701,12 +5708,8 @@ export type RegisterOrganizationType = {
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   ownerId?: Maybe<Scalars['String']['output']>;
+  phoneNumber?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type RegisterOrganizationTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RegistrationErrorType = {
@@ -6139,12 +6142,6 @@ export type VendorAddressesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-/** Vendor Info */
-export type VendorDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
