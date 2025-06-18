@@ -20,7 +20,7 @@
             class="filters-popup-sidebar__control"
             :disabled="updatingFiltersState"
             data-test-id="purchased-before-checkbox-filter"
-            @change="onChange({ purchasedBefore: $event })"
+            @change="onTopFiltersChange({ purchasedBefore: $event })"
           >
             {{ $t("pages.catalog.purchased_before_filter_card.checkbox_label") }}
           </VcCheckbox>
@@ -30,7 +30,7 @@
             :model-value="localFilters.inStock"
             class="filters-popup-sidebar__control"
             :disabled="updatingFiltersState"
-            @change="onChange({ inStock: $event })"
+            @change="onTopFiltersChange({ inStock: $event })"
           >
             {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
           </VcCheckbox>
@@ -125,7 +125,7 @@ const localFilters = ref<ProductsFiltersType>();
 
 const { isPurchasedBeforeEnabled } = usePurchasedBefore();
 
-function onChange(payload: { purchasedBefore: boolean } | { inStock: boolean }) {
+function onTopFiltersChange(payload: { purchasedBefore: boolean } | { inStock: boolean }) {
   if (!localFilters.value) {
     return;
   }
@@ -134,10 +134,13 @@ function onChange(payload: { purchasedBefore: boolean } | { inStock: boolean }) 
   } else {
     localFilters.value.inStock = payload.inStock;
   }
+
+  emit("applyFilters", localFilters.value);
 }
 
 function onProductsFiltersChange(payload: ProductsFiltersType) {
   localFilters.value = cloneDeep(payload);
+  emit("applyFilters", localFilters.value);
 }
 
 watch(
@@ -167,7 +170,6 @@ function onApply() {
     return;
   }
 
-  emit("applyFilters", localFilters.value);
   emit("hidePopupSidebar");
 }
 
@@ -182,6 +184,8 @@ function openBranchesModal() {
           return;
         }
         localFilters.value.branches = branches;
+
+        emit("applyFilters", localFilters.value);
       },
     },
   });
