@@ -1,3 +1,4 @@
+import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { getSearchResults } from "@/core/api/graphql/catalog";
 import { Logger } from "@/core/utilities";
@@ -5,17 +6,17 @@ import { highlightSearchText, prepareSearchText } from "../utils";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category, PageType, Product } from "@/core/api/graphql/types";
 
-const loading = ref(false);
-const searchBarVisible = ref(false);
-const searchDropdownVisible = ref(false);
-const searchPhraseOfUploadedResults = ref("");
-const categories = shallowRef<Category[]>([]);
-const products = shallowRef<Product[]>([]);
-const pages = shallowRef<PageType[]>([]);
-const suggestions = shallowRef<{ text: string; label: string }[]>([]);
-const total = ref(0);
+function _useSearchBar() {
+  const loading = ref(false);
+  const searchBarVisible = ref(false);
+  const searchDropdownVisible = ref(false);
+  const searchPhraseOfUploadedResults = ref("");
+  const categories = shallowRef<Category[]>([]);
+  const products = shallowRef<Product[]>([]);
+  const pages = shallowRef<PageType[]>([]);
+  const suggestions = shallowRef<{ text: string; label: string }[]>([]);
+  const total = ref(0);
 
-export function useSearchBar() {
   function showSearchDropdown() {
     if (!searchDropdownVisible.value) {
       searchDropdownVisible.value = true;
@@ -106,3 +107,5 @@ export function useSearchBar() {
     suggestions: computed(() => suggestions.value),
   };
 }
+
+export const useSearchBar = createGlobalState(_useSearchBar);
