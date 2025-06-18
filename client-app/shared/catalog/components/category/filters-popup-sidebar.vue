@@ -200,7 +200,7 @@ function openBranchesModal() {
         if (!localFilters.value) {
           return;
         }
-        localFilters.value.branches = branches;
+        localFilters.value.branches = cloneDeep(branches);
 
         emit("applyFilters", localFilters.value);
       },
