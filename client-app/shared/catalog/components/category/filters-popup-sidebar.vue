@@ -66,6 +66,7 @@
         :title="$t('common.buttons.reset')"
         size="sm"
         icon="reset"
+        :disabled="!isExistSelectedFacets"
         @click="onReset"
       />
 
@@ -120,11 +121,12 @@ interface IProps {
   hideControls?: boolean;
   keywordQueryParam?: string;
   popupSidebarFilters: ProductsFiltersType;
+  isExistSelectedFacets: boolean;
 }
 
 const localFilters = ref<ProductsFiltersType>();
 
-const beforeChageFilterState = ref<ProductsFiltersType>();
+const beforeChangeFilterState = ref<ProductsFiltersType>();
 
 const { isPurchasedBeforeEnabled } = usePurchasedBefore();
 
@@ -141,11 +143,6 @@ function onTopFiltersChange(payload: { purchasedBefore: boolean } | { inStock: b
   emit("applyFilters", localFilters.value);
 }
 
-function onProductsFiltersChange(payload: ProductsFiltersType) {
-  localFilters.value = cloneDeep(payload);
-  emit("applyFilters", localFilters.value);
-}
-
 watch(
   () => props.popupSidebarFilters,
   (filters) => {
@@ -158,18 +155,23 @@ watch(
   () => props.isVisible,
   (visible) => {
     if (visible) {
-      beforeChageFilterState.value = cloneDeep(props.popupSidebarFilters);
+      beforeChangeFilterState.value = cloneDeep(props.popupSidebarFilters);
     }
   },
 );
 
 const isPopupSidebarFilterDirty = computed(() => {
-  return !isEqual(beforeChageFilterState.value, localFilters.value);
+  return !isEqual(beforeChangeFilterState.value, localFilters.value);
 });
 
+function onProductsFiltersChange(payload: ProductsFiltersType) {
+  localFilters.value = cloneDeep(payload);
+  emit("applyFilters", localFilters.value);
+}
+
 function onCancel() {
-  if (beforeChageFilterState.value) {
-    emit("applyFilters", cloneDeep(beforeChageFilterState.value));
+  if (beforeChangeFilterState.value) {
+    emit("applyFilters", cloneDeep(beforeChangeFilterState.value));
   }
 
   emit("hidePopupSidebar");
