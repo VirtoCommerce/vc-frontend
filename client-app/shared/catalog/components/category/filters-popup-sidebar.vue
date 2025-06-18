@@ -72,6 +72,7 @@
       <VcButton
         class="filters-popup-sidebar__footer-btn"
         variant="outline"
+        :disabled="!isPopupSidebarFilterDirty"
         min-width="6.25rem"
         size="sm"
         @click="onCancel"
@@ -123,6 +124,8 @@ interface IProps {
 
 const localFilters = ref<ProductsFiltersType>();
 
+const beforeChageFilterState = ref<ProductsFiltersType>();
+
 const { isPurchasedBeforeEnabled } = usePurchasedBefore();
 
 function onTopFiltersChange(payload: { purchasedBefore: boolean } | { inStock: boolean }) {
@@ -151,12 +154,24 @@ watch(
   { immediate: true },
 );
 
+watch(
+  () => props.isVisible,
+  (visible) => {
+    if (visible) {
+      beforeChageFilterState.value = cloneDeep(props.popupSidebarFilters);
+    }
+  },
+);
+
 const isPopupSidebarFilterDirty = computed(() => {
-  return !isEqual(props.popupSidebarFilters, localFilters.value);
+  return !isEqual(beforeChageFilterState.value, localFilters.value);
 });
 
 function onCancel() {
-  localFilters.value = cloneDeep(props.popupSidebarFilters);
+  if (beforeChageFilterState.value) {
+    emit("applyFilters", cloneDeep(beforeChageFilterState.value));
+  }
+
   emit("hidePopupSidebar");
 }
 
