@@ -139,8 +139,8 @@ function isHTML(property: Property): boolean {
   return (property.propertyValueType as PropertyValueTypes) === PropertyValueTypes.Html;
 }
 
-function isBrand(property: Property): boolean | undefined {
-  return brand.value && property.name.toLowerCase() === brand.value.brandPropertyName?.toLowerCase();
+function isBrand(property: Property): boolean {
+  return !!brand.value && property.name.toLowerCase() === brand.value.brandPropertyName?.toLowerCase();
 }
 
 onMounted(() => {
