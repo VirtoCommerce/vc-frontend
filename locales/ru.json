@@ -127,7 +127,7 @@
       "payment_number": "ID платежа",
       "payment_type": "Тип оплаты",
       "recipient_name": "Имя получателя",
-      "active_address": "Активный адрес",
+      "active_address": "Активный",
       "addresses_icon": "Иконка адресов",
       "digital_product": "Цифровой",
       "search": "Поиск {0}",
@@ -733,6 +733,7 @@
         "title": "Выбрать способ оплаты"
       },
       "select_address_modal": {
+        "message": "Выберите адрес доставки",
         "meta": {
           "table_description": "доступные адреса"
         },
@@ -740,7 +741,7 @@
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
-        "add_address_button": "@:common.buttons.add_new_address",
+        "add_address_button": "@:common.buttons.add_new",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "У вас пока нет адресов",

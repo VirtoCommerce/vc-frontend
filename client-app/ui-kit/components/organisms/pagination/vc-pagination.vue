@@ -35,9 +35,11 @@
           variant="solid-light"
           size="sm"
           :disabled="page === 1"
+          :icon="compact"
           @click="setPage(page - 1)"
         >
           <VcIcon name="chevron-left" />
+
           <span v-if="!compact">{{ $t("ui_kit.pagination.previous") }}</span>
         </VcButton>
 
@@ -47,9 +49,11 @@
           variant="solid-light"
           size="sm"
           :disabled="page === pages"
+          :icon="compact"
           @click="setPage(page + 1)"
         >
           <span v-if="!compact">{{ $t("ui_kit.pagination.next") }}</span>
+
           <VcIcon name="chevron-right" />
         </VcButton>
       </div>
@@ -134,6 +138,7 @@ const setPage = (page: number) => {
 
 <style lang="scss">
 .vc-pagination {
+  $self: &;
   $compact: "";
 
   @apply @container;
@@ -205,10 +210,8 @@ const setPage = (page: number) => {
   }
 
   &__button {
-    @apply min-w-[6.5rem];
-
-    #{$compact} & {
-      @apply min-w-min;
+    #{$self}:not(#{$compact}) & {
+      @apply min-w-[6.5rem];
     }
 
     &--prev {
