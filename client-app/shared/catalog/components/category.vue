@@ -260,7 +260,7 @@ import {
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useSlugInfo } from "@/shared/common";
-import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
@@ -578,11 +578,11 @@ watch(props, ({ viewMode }) => {
 watch(
   () => currentCategory.value?.id,
   () => {
-    if (!currentCategory.value) {
-      return;
+    if (currentCategory.value) {
+      handleSearchBadScope(currentCategory.value.id, currentCategory.value.name);
+    } else {
+      //get from title and filter
     }
-
-    handleSearchBadScope(currentCategory.value.id, currentCategory.value.name);
   },
 );
 
@@ -610,7 +610,7 @@ watchDebounced(
   },
 );
 
-const { addScopeItem, removeScopeItemByType } = useSearchBar();
+const { addScopeItem, removeScopeItemByType } = useSearchScore();
 
 function handleSearchBadScope(categoryId: string, label: string) {
   removeScopeItemByType("category");

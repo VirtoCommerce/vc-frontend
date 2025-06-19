@@ -1,30 +1,21 @@
 import { createGlobalState } from "@vueuse/core";
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computed, readonly, ref } from "vue";
 import { getSearchResults } from "@/core/api/graphql/catalog";
 import { Logger } from "@/core/utilities";
 import { highlightSearchText, prepareSearchText } from "../utils";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category, PageType, Product } from "@/core/api/graphql/types";
 
-type ScopeItemType = {
-  id: string | number;
-  label: string;
-  filter: string;
-  type: "category";
-};
-
 function _useSearchBar() {
   const loading = ref(false);
   const searchBarVisible = ref(false);
   const searchDropdownVisible = ref(false);
   const searchPhraseOfUploadedResults = ref("");
-  const categories = shallowRef<Category[]>([]);
-  const products = shallowRef<Product[]>([]);
-  const pages = shallowRef<PageType[]>([]);
-  const suggestions = shallowRef<{ text: string; label: string }[]>([]);
+  const categories = ref<Category[]>([]);
+  const products = ref<Product[]>([]);
+  const pages = ref<PageType[]>([]);
+  const suggestions = ref<{ text: string; label: string }[]>([]);
   const total = ref(0);
-
-  const searchScope = ref<ScopeItemType[]>([]);
 
   function showSearchDropdown() {
     if (!searchDropdownVisible.value) {
@@ -99,14 +90,6 @@ function _useSearchBar() {
     }
   }
 
-  function removeScopeItemByType(itemType: ScopeItemType["type"]) {
-    searchScope.value = searchScope.value.filter((el) => el.type !== itemType);
-  }
-
-  function addScopeItem(item: ScopeItemType) {
-    searchScope.value.push(item);
-  }
-
   return {
     searchResults,
     toggleSearchBar,
@@ -122,10 +105,6 @@ function _useSearchBar() {
     products: computed(() => products.value),
     pages: computed(() => pages.value),
     suggestions: computed(() => suggestions.value),
-
-    searchScope,
-    removeScopeItemByType,
-    addScopeItem,
   };
 }
 

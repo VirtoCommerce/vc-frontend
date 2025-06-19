@@ -22,7 +22,7 @@
           append-icon="delete-2"
           size="xs"
           variant="solid-light"
-          @click.stop="removeScopeItem(item.id)"
+          @click.stop="onScopeItemClick(item.id)"
         >
           {{ item.label }}
         </VcButton>
@@ -161,6 +161,7 @@ import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import BarcodeScanner from "./barcode-scanner.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
@@ -193,8 +194,6 @@ const {
   hideSearchDropdown,
   showSearchDropdown,
   searchResults,
-  searchScope,
-  removeScopeItem,
 } = useSearchBar();
 
 const { analytics } = useAnalytics();
@@ -239,10 +238,16 @@ const isExistResults = computed(
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
+const { searchScope, searchScopeFilterExpression, removeScopeItemById } = useSearchScore();
+
+function onScopeItemClick(itemId: string | number) {
+  removeScopeItemById(itemId);
+  void searchProductsDebounced();
+}
+
 async function searchAndShowDropdownResults(): Promise<void> {
   const COLUMNS = 5;
   const { catalogId, currencyCode } = globals;
-  console.log(catalogId);
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
     themeContext.value.settings;
 
@@ -260,7 +265,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
   const filterExpression = catalog_empty_categories_enabled
     ? undefined
     : [
-        getFilterExpressionForCategorySubtree({ catalogId }),
+        searchScopeFilterExpression.value || getFilterExpressionForCategorySubtree({ catalogId }),
         getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
       ]
         .filter(Boolean)
@@ -285,6 +290,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
     params.pages = { itemsPerPage: DEFAULT_PAGE_SIZE };
   }
 
+  console.log('trigger')
   await searchResults(params);
 
   showSearchDropdown();
