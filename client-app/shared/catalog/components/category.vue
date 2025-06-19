@@ -7,19 +7,15 @@
     <FiltersPopupSidebar
       v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
       :is-exist-selected-facets="hasSelectedFacets"
-      :is-popup-sidebar-filter-dirty="isFiltersDirty"
       :popup-sidebar-filters="filtersToShow"
       :facets-loading="fetchingFacets"
       :is-mobile="isMobile"
       :is-visible="isFiltersSidebarVisible"
       :keyword-query-param="keywordQueryParam"
-      :sort-query-param="sortQueryParam"
       :loading="fetchingProducts"
       :hide-controls="hideControls"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
-      @open-branches-modal="openBranchesModal"
-      @update-popup-sidebar-filters="updateFiltersSidebar"
       @apply-filters="applyFilters"
     />
 
@@ -255,7 +251,6 @@ import {
   getFilterExpressionForInStock,
   getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
-  getFilterExpressionFromFacets,
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
@@ -326,13 +321,11 @@ const filtersToShow = computed(() => {
 
 const { themeContext } = useThemeContext();
 const {
-  getFacets,
   facetsQueryParam,
   fetchingMoreProducts,
   fetchingProducts,
   fetchingFacets,
   hasSelectedFacets,
-  isFiltersDirty,
   isFiltersSidebarVisible,
   keywordQueryParam,
   localStorageBranches,
@@ -355,7 +348,6 @@ const {
   resetFacetFilters,
   resetFilterKeyword,
   showFiltersSidebar,
-  updateProductsFilters,
 
   currentPage,
   updateCurrentPage,
@@ -464,28 +456,6 @@ const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 function applyFilters(newFilters: ProductsFiltersType): void {
   _applyFilters(newFilters);
-}
-
-async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<void> {
-  const searchParamsForFacets: ProductsSearchParamsType = {
-    ...searchParams.value,
-    filter: [
-      props.filter,
-      getFilterExpressionFromFacets(newFilters.facets),
-      getFilterExpressionForInStock(newFilters.inStock),
-      getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
-      getFilterExpressionForAvailableIn(newFilters.branches),
-    ]
-      .filter(Boolean)
-      .join(" "),
-  };
-
-  updateProductsFilters({
-    branches: newFilters.branches,
-    inStock: newFilters.inStock,
-    purchasedBefore: newFilters.purchasedBefore,
-    facets: await getFacets(searchParamsForFacets),
-  });
 }
 
 async function changeProductsPage(pageNumber: number): Promise<void> {
