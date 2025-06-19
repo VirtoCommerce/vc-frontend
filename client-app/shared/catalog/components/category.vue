@@ -239,7 +239,7 @@ import {
   whenever,
 } from "@vueuse/core";
 import omit from "lodash/omit";
-import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import { computed, onBeforeUnmount, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
@@ -260,6 +260,7 @@ import {
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useSlugInfo } from "@/shared/common";
+import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
@@ -574,6 +575,17 @@ watch(props, ({ viewMode }) => {
   }
 });
 
+watch(
+  () => currentCategory.value?.id,
+  () => {
+    if (!currentCategory.value) {
+      return;
+    }
+
+    handleSearchBadScope(currentCategory.value.id, currentCategory.value.name);
+  },
+);
+
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
   () => {
@@ -597,6 +609,23 @@ watchDebounced(
     debounce: 20,
   },
 );
+
+const { addScopeItem, removeScopeItemByType } = useSearchBar();
+
+function handleSearchBadScope(categoryId: string, label: string) {
+  removeScopeItemByType("category");
+
+  addScopeItem({
+    filter: getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
+    label,
+    id: categoryId,
+    type: "category",
+  });
+}
+
+onBeforeUnmount(() => {
+  removeScopeItemByType("category");
+});
 </script>
 
 <style lang="scss">

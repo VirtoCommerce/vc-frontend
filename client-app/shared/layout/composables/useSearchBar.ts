@@ -10,6 +10,7 @@ type ScopeItemType = {
   id: string | number;
   label: string;
   filter: string;
+  type: "category";
 };
 
 function _useSearchBar() {
@@ -23,13 +24,7 @@ function _useSearchBar() {
   const suggestions = shallowRef<{ text: string; label: string }[]>([]);
   const total = ref(0);
 
-  const searchScope = ref<ScopeItemType[]>([
-    {
-      label: "Alcoholic drinks",
-      id: 123,
-      filter: "category.subtree:fc596540864a41bf8ab78734ee7353a3",
-    },
-  ]);
+  const searchScope = ref<ScopeItemType[]>([]);
 
   function showSearchDropdown() {
     if (!searchDropdownVisible.value) {
@@ -104,8 +99,8 @@ function _useSearchBar() {
     }
   }
 
-  function removeScopeItem(itemId: ScopeItemType["id"]) {
-    searchScope.value = searchScope.value.filter((el) => el.id !== itemId);
+  function removeScopeItemByType(itemType: ScopeItemType["type"]) {
+    searchScope.value = searchScope.value.filter((el) => el.type !== itemType);
   }
 
   function addScopeItem(item: ScopeItemType) {
@@ -129,7 +124,7 @@ function _useSearchBar() {
     suggestions: computed(() => suggestions.value),
 
     searchScope,
-    removeScopeItem,
+    removeScopeItemByType,
     addScopeItem,
   };
 }
