@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/order
 import uniqBy from "lodash/uniqBy";
+import type { RouteLocationRaw, RouteLocationNormalizedLoaded } from "vue-router";
 
 export function getBaseUrl(supportedLocales: string[]): string {
   const localeInPath = location.pathname.split("/")[1];
@@ -83,8 +84,6 @@ export function replaceXFromBeginning(input: string, by: string = "•••• 
   return input.replace(/^X+/, by);
 }
 
-import type { RouteLocationRaw } from "vue-router";
-
 type LinkAttrType = { to: RouteLocationRaw } | { externalLink: string } | object;
 
 export const getLinkAttr = (link?: RouteLocationRaw): LinkAttrType => {
@@ -115,4 +114,18 @@ export function toCSV(parts?: (string | undefined | null)[], delimiter = ", "): 
       .filter((part) => part !== "")
       .join(delimiter) ?? ""
   );
+}
+
+export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocationNormalizedLoaded) {
+  if (typeof link === "string") {
+    return link === currentRoute.path;
+  }
+
+  if (typeof link === "object" && link !== null && "name" in link) {
+    return (
+      link.name === currentRoute.name && JSON.stringify(link.params ?? {}) === JSON.stringify(currentRoute.params ?? {})
+    );
+  }
+
+  return false;
 }
