@@ -45,10 +45,6 @@ function _useSearchBar() {
       keyword: prepareSearchText(params.keyword),
     };
 
-    if (searchPhraseOfUploadedResults.value === preparedParams.keyword) {
-      return;
-    }
-
     loading.value = true;
 
     try {

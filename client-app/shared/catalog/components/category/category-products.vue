@@ -138,6 +138,7 @@ interface IEmits {
   (event: "resetFilterKeyword"): void;
 }
 
+// todo take from useProducts or remove
 const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
   defaultValue: "",
 });

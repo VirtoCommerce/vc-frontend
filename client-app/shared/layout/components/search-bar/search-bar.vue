@@ -290,7 +290,6 @@ async function searchAndShowDropdownResults(): Promise<void> {
     params.pages = { itemsPerPage: DEFAULT_PAGE_SIZE };
   }
 
-  console.log('trigger')
   await searchResults(params);
 
   showSearchDropdown();

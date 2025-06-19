@@ -449,7 +449,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
-  keyword: props.keyword || (!props.categoryId && !props.isRoot ? searchQueryParam.value : keywordQueryParam.value),
+  keyword: searchQueryParam.value || keywordQueryParam.value || props.keyword,
   filter: [
     props.filter,
     facetsQueryParam.value,
@@ -580,8 +580,6 @@ watch(
   () => {
     if (currentCategory.value) {
       handleSearchBadScope(currentCategory.value.id, currentCategory.value.name);
-    } else {
-      //get from title and filter
     }
   },
 );
@@ -589,6 +587,7 @@ watch(
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
   () => {
+    console.log("change");
     void fetchProducts();
   },
   {
