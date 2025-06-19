@@ -4477,6 +4477,7 @@ export type Product = {
   associations?: Maybe<ProductAssociationConnection>;
   /** Product availability data */
   availabilityData: AvailabilityData;
+  brand?: Maybe<BrandType>;
   /** Get brandName for product. */
   brandName?: Maybe<Scalars['String']['output']>;
   /** Breadcrumbs */
