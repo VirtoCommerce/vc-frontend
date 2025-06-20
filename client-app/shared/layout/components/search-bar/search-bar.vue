@@ -6,13 +6,27 @@
       :maxlength="MAX_LENGTH"
       class="w-full"
       :clearable="!!searchPhrase"
-      :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
+      :placeholder="searchPlaceholder"
       @clear="reset"
       @keyup.enter="goToSearchResultsPage"
       @keyup.esc="hideSearchDropdown"
       @input="onSearchPhraseChanged"
       @focus="onSearchBarFocused"
     >
+      <template #prepend>
+        <VcButton
+          v-for="item in searchScope"
+          :key="item.id"
+          class="ml-1"
+          color="secondary"
+          append-icon="delete-2"
+          size="xs"
+          variant="solid-light"
+          @click.stop="onScopeItemClick(item.id)"
+        >
+          {{ item.label }}
+        </VcButton>
+      </template>
       <template #append>
         <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
 
@@ -138,6 +152,7 @@
 <script setup lang="ts">
 import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -145,9 +160,10 @@ import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
+import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice, toCSV } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import BarcodeScanner from "./barcode-scanner.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
@@ -224,6 +240,25 @@ const isExistResults = computed(
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
+const { searchScope, searchScopeFilterExpression, removeScopeItemById, isCategoryScope } = useSearchScore();
+
+const { t } = useI18n();
+
+const searchPlaceholder = computed(() => {
+  return isCategoryScope.value
+    ? t("shared.layout.search_bar.enter_keyword_placeholder_category", { category: getCategoriesNames() })
+    : t("shared.layout.search_bar.enter_keyword_placeholder");
+});
+
+function getCategoriesNames() {
+  return toCSV(searchScope.value.filter((item) => item.type === "category").map((el) => el.label));
+}
+
+function onScopeItemClick(itemId: string | number) {
+  removeScopeItemById(itemId);
+  void searchProductsDebounced();
+}
+
 async function searchAndShowDropdownResults(): Promise<void> {
   const COLUMNS = 5;
   const { catalogId, currencyCode } = globals;
@@ -244,7 +279,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
   const filterExpression = catalog_empty_categories_enabled
     ? undefined
     : [
-        getFilterExpressionForCategorySubtree({ catalogId }),
+        searchScopeFilterExpression.value || getFilterExpressionForCategorySubtree({ catalogId }),
         getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
       ]
         .filter(Boolean)
@@ -286,12 +321,21 @@ function selectItemEvent(product: Product) {
 }
 
 function getSearchRoute(phrase: string): RouteLocationRaw {
-  return {
-    name: ROUTES.SEARCH.NAME,
-    query: {
-      [QueryParamName.SearchPhrase]: phrase,
-    },
-  };
+  if (isCategoryScope.value) {
+    return {
+      path: router.currentRoute.value.path,
+      query: {
+        [QueryParamName.SearchPhrase]: phrase,
+      },
+    };
+  } else {
+    return {
+      name: ROUTES.SEARCH.NAME,
+      query: {
+        [QueryParamName.SearchPhrase]: phrase,
+      },
+    };
+  }
 }
 
 function goToSearchResultsPage() {

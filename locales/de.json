@@ -397,7 +397,6 @@
         "pages_label": "Seiten",
         "suggestions_label": "Vorschläge",
         "no_results": "Ihre {keyword} Abfrage hat keine Ergebnisse geliefert",
-        "enter_keyword_placeholder": "Hier nach Produkten suchen",
         "search_button": "Suchen",
         "view_all_results_button": "Alle {total} Ergebnisse anzeigen",
         "barcode_detector": {
@@ -410,7 +409,9 @@
           },
           "browse": "Dateien durchsuchen",
           "cancel": "@:common.buttons.cancel"
-        }
+        },
+        "enter_keyword_placeholder": "Durchsuche den gesamten Shop",
+        "enter_keyword_placeholder_category": "Suche in {category}"
       },
       "language_selector": {
         "label": "Sprache:"
