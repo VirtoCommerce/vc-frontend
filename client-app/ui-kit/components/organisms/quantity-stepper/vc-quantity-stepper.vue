@@ -30,7 +30,7 @@
           :loading="loading"
           :color="buttonsColor"
           :variant="buttonsVariant"
-          @click="handleDecrement"
+          @click.stop="handleDecrement"
         />
       </template>
 
@@ -41,7 +41,7 @@
           :loading="loading"
           :color="buttonsColor"
           :variant="buttonsVariant"
-          @click="handleIncrement"
+          @click.stop="handleIncrement"
         />
       </template>
     </VcInput>
