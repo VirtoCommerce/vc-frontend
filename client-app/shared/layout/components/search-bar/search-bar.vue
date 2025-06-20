@@ -6,7 +6,7 @@
       :maxlength="MAX_LENGTH"
       class="w-full"
       :clearable="!!searchPhrase"
-      :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
+      :placeholder="searchPlaceholder"
       @clear="reset"
       @keyup.enter="goToSearchResultsPage"
       @keyup.esc="hideSearchDropdown"
@@ -152,6 +152,7 @@
 <script setup lang="ts">
 import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -159,7 +160,7 @@ import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
+import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice, toCSV } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
@@ -239,7 +240,19 @@ const isExistResults = computed(
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
-const { searchScope, searchScopeFilterExpression, removeScopeItemById } = useSearchScore();
+const { searchScope, searchScopeFilterExpression, removeScopeItemById, isCategoryScope } = useSearchScore();
+
+const { t } = useI18n();
+
+const searchPlaceholder = computed(() => {
+  return isCategoryScope.value
+    ? t("shared.layout.search_bar.enter_keyword_placeholder_category", { category: getCategoriesNames() })
+    : t("shared.layout.search_bar.enter_keyword_placeholder");
+});
+
+function getCategoriesNames() {
+  return toCSV(searchScope.value.filter((item) => item.type === "category").map((el) => el.label));
+}
 
 function onScopeItemClick(itemId: string | number) {
   removeScopeItemById(itemId);
@@ -308,7 +321,7 @@ function selectItemEvent(product: Product) {
 }
 
 function getSearchRoute(phrase: string): RouteLocationRaw {
-  if (searchScope.value.some((el) => el.type === "category")) {
+  if (isCategoryScope.value) {
     return {
       path: router.currentRoute.value.path,
       query: {

@@ -397,7 +397,6 @@
         "pages_label": "Páginas",
         "suggestions_label": "Sugerencias",
         "no_results": "Tu consulta {keyword} no devolvió ningún resultado",
-        "enter_keyword_placeholder": "Buscar productos aquí",
         "search_button": "Buscar",
         "view_all_results_button": "Ver todos los {total} resultados",
         "barcode_detector": {

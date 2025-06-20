@@ -397,7 +397,6 @@
         "pages_label": "ページ",
         "suggestions_label": "おすすめ",
         "no_results": "{keyword}の検索結果はありません",
-        "enter_keyword_placeholder": "商品を検索",
         "search_button": "検索",
         "view_all_results_button": "全{total}件を表示",
         "barcode_detector": {

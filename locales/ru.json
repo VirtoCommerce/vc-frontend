@@ -397,7 +397,6 @@
         "pages_label": "Страницы",
         "suggestions_label": "Предложения",
         "no_results": "По вашему запросу {keyword} ничего не найдено",
-        "enter_keyword_placeholder": "Поиск товаров",
         "search_button": "Искать",
         "view_all_results_button": "Просмотреть все результаты ({total})",
         "barcode_detector": {

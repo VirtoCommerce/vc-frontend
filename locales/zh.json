@@ -397,7 +397,6 @@
         "pages_label": "页面",
         "suggestions_label": "建议",
         "no_results": "您的 {keyword} 查询未返回任何结果",
-        "enter_keyword_placeholder": "在这里搜索产品",
         "search_button": "搜索",
         "view_all_results_button": "查看所有 {total} 个结果",
         "barcode_detector": {
