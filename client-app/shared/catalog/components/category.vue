@@ -587,7 +587,6 @@ watch(
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
   () => {
-    console.log("change");
     void fetchProducts();
   },
   {

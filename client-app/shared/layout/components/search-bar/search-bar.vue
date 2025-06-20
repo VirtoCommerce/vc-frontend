@@ -160,6 +160,7 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
@@ -307,13 +308,21 @@ function selectItemEvent(product: Product) {
 }
 
 function getSearchRoute(phrase: string): RouteLocationRaw {
-  // todo is scope - current rout if not - search
-  return {
-    path: router.currentRoute.value.path,
-    query: {
-      [QueryParamName.SearchPhrase]: phrase,
-    },
-  };
+  if (searchScope.value.some((el) => el.type === "category")) {
+    return {
+      path: router.currentRoute.value.path,
+      query: {
+        [QueryParamName.SearchPhrase]: phrase,
+      },
+    };
+  } else {
+    return {
+      name: ROUTES.SEARCH.NAME,
+      query: {
+        [QueryParamName.SearchPhrase]: phrase,
+      },
+    };
+  }
 }
 
 function goToSearchResultsPage() {
