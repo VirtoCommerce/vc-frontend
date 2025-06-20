@@ -409,7 +409,9 @@
           },
           "browse": "Przeglądaj pliki",
           "cancel": "@:common.buttons.cancel"
-        }
+        },
+        "enter_keyword_placeholder": "Szukaj w całym sklepie",
+        "enter_keyword_placeholder_category": "Szukaj w {category}"
       },
       "language_selector": {
         "label": "Język:"

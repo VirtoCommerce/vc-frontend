@@ -409,7 +409,9 @@
           },
           "browse": "Обзор файлов",
           "cancel": "@:common.buttons.cancel"
-        }
+        },
+        "enter_keyword_placeholder": "Поиск по магазину",
+        "enter_keyword_placeholder_category": "Искать в {category}"
       },
       "language_selector": {
         "label": "Язык:"

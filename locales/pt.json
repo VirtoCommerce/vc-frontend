@@ -409,7 +409,9 @@
           },
           "browse": "Procurar ficheiros",
           "cancel": "@:common.buttons.cancel"
-        }
+        },
+        "enter_keyword_placeholder": "Pesquisar em toda a loja",
+        "enter_keyword_placeholder_category": "Pesquisar em {category}"
       },
       "language_selector": {
         "label": "Idioma:"
