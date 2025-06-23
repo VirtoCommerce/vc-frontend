@@ -3,21 +3,20 @@
     <div v-for="i in 6" :key="i" />
   </VcWidgetSkeleton>
 
-  <VcWidget v-else-if="!!parentCategory || category?.childCategories?.length" size="xs">
+  <VcWidget v-else-if="!!parentCategory || subcategories.length" size="xs">
     <template v-if="!!parentCategory" #header>
       <router-link
-        :to="getCategoryRoute(parentCategory!)"
+        :to="getCategoryRoute(parentCategory, filterQuery)"
         class="-mx-2 flex grow items-center gap-1.5 rounded-sm px-2 py-1 text-sm hover:bg-neutral-50"
       >
         <VcIcon class="fill-primary" name="chevron-left" size="xs" />
-
         <span class="font-bold">
-          {{ parentCategory!.name }}
+          {{ parentCategory.name }}
         </span>
       </router-link>
     </template>
 
-    <template v-if="category?.childCategories?.length" #default>
+    <template v-if="category?.name && subcategories.length" #default>
       <div class="-mt-1 mb-0.5 py-0.5 text-xs font-black uppercase text-neutral-900">
         <template v-if="objectType === 'Category'">
           {{ category.name }}
@@ -53,6 +52,7 @@ import type { Category } from "@/core/api/graphql/types";
 interface IProps {
   category?: Category | null;
   loading?: boolean;
+  filterQuery?: { facets?: string };
 }
 
 const props = defineProps<IProps>();

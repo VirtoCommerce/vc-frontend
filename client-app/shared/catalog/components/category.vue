@@ -26,6 +26,7 @@
           :category="currentCategory"
           :loading="!currentCategory && loadingCategory"
           class="category__selector"
+          :filter-query="{ facets: facetsQueryParam }"
         />
 
         <ProductsFilters
