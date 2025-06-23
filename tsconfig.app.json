@@ -13,6 +13,7 @@
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "lib": ["es2020", "dom"],
     "baseUrl": ".",
     "resolvePackageJsonExports": false,
     "paths": {
