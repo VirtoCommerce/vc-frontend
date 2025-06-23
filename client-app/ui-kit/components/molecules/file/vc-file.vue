@@ -156,6 +156,8 @@ const fileSize = computed(() => getFileSize(props.file.size));
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-file {
   --link-color: var(--vc-file-link-color, theme("colors.accent.600"));
   --link-hover-color: var(--vc-file-link-hover-color, theme("colors.accent.700"));

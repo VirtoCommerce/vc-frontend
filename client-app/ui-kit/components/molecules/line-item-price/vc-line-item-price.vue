@@ -27,6 +27,8 @@ Logger.warn("[UIKit][warn] VcLineItemPrice is deprecated, use VcProductPrice ins
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-line-item-price {
   --actual-color: var(--vc-line-item-price-actual-color, var(--color-neutral-900));
   --list-color: var(--vc-line-item-price-list-color, var(--color-neutral-400));

@@ -47,6 +47,8 @@ const onClick = () => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-product-actions-button {
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
   $active: "";

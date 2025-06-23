@@ -133,6 +133,8 @@ const setPage = (page: number) => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-pagination {
   $compact: "";
 

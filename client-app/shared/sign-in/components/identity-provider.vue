@@ -22,6 +22,8 @@ defineProps<IProps>();
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .identity-provider {
   @apply w-full;
 

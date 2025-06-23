@@ -120,6 +120,8 @@ const translatedProductSortingList = computed(() => getTranslatedProductSortingL
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .category-horizontal-filters {
   @apply mb-4.5;
 

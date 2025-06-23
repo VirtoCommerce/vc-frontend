@@ -17,6 +17,8 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-markdown-render {
   font-size: 1rem;
   line-height: 1.5;

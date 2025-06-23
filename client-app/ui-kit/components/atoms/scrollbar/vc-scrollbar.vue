@@ -41,6 +41,8 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-scrollbar {
   $vertical: "";
   $horizontal: "";

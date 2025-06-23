@@ -46,6 +46,8 @@ watch(
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-icon {
   --props-color: v-bind(_color);
 

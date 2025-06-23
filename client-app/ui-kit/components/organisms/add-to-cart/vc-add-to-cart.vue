@@ -224,6 +224,8 @@ watchEffect(async () => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-add-to-cart {
   $self: &;
   $hideButton: &;

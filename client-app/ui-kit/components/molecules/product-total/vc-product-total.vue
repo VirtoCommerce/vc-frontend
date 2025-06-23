@@ -21,6 +21,8 @@ defineProps<IProps>();
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-product-total {
   $self: &;
 

@@ -42,6 +42,8 @@ const copyText = async () => {
 </script>
 
 <style scoped lang="scss">
+@reference "tailwindcss";
+
 .vc-copy-text {
   @apply flex items-center gap-1.5;
 }

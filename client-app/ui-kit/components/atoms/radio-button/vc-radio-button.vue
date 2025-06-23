@@ -79,6 +79,8 @@ const checked = computed(() => model.value === props.value);
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-radio-button {
   $self: &;
   $checked: "";

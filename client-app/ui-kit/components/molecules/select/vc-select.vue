@@ -313,6 +313,8 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-select {
   $disabled: "";
   $readonly: "";

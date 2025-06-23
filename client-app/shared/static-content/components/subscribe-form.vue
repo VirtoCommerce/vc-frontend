@@ -34,6 +34,8 @@ defineProps({
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .block-subscribe-form .checkbox-label a {
   @apply text-[--link-color] hover:text-[--link-hover-color];
 }

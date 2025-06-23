@@ -30,6 +30,8 @@ defineProps<IProps>();
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-breadcrumbs {
   &__list {
     @apply flex flex-wrap text-sm font-normal;

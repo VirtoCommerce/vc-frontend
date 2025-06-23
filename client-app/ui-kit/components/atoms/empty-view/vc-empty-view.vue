@@ -30,6 +30,8 @@ withDefaults(defineProps<IProp>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-empty-view {
   @apply flex grow flex-col items-center gap-4 py-20 px-6 text-center md:gap-5;
 

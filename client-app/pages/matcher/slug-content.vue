@@ -143,6 +143,8 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .slug-content {
   @apply contents;
 }

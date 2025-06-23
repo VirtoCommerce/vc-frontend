@@ -40,6 +40,8 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-shape {
   --props-size: v-bind(props.size);
   --props-bg-color: v-bind(_bgColor);

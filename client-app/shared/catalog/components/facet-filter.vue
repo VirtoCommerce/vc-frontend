@@ -231,6 +231,8 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .facet-filter-widget {
   &__search {
     @apply p-3 border-b;

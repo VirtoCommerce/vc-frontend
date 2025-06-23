@@ -49,6 +49,8 @@ const _size = computed(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-label {
   --color: var(--vc-label-color, theme("colors.neutral.950"));
 

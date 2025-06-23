@@ -216,6 +216,8 @@ watch(activeNavItem, (newActiveNavItem) => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .brands {
   $fullWidthItem: "";
 

@@ -35,6 +35,8 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .payment-policies {
   @apply text-center text-sm text-neutral md:text-left;
 

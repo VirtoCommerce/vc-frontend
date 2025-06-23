@@ -182,6 +182,8 @@ function print() {
 </script>
 
 <style scoped lang="scss">
+@reference "tailwindcss";
+
 @media print {
   #line-items-widget {
     :deep(.vc-widget__header-container) {

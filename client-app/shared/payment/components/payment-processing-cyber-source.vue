@@ -382,6 +382,8 @@ onUnmounted(removeScript);
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .cyber-source-input-wrap {
   --color: var(--vc-input-base-color, var(--color-primary-500));
   --focus-color: rgb(from var(--color) r g b / 0.3);

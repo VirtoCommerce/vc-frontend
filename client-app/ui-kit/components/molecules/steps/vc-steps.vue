@@ -65,6 +65,8 @@ function isDisabledStep(step: IStepsItem) {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-steps {
   $itemActive: "";
   $itemCompleted: "";

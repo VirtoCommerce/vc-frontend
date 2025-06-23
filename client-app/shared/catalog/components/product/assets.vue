@@ -40,6 +40,8 @@ const files = computed<FileType[]>(() =>
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .assets {
   &__list {
     @apply px-3 py-4 border border-neutral-200 rounded space-y-2;

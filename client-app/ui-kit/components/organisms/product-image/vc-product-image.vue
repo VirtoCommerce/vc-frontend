@@ -118,6 +118,8 @@ function slideChanged(swiper: SwiperInstance) {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-product-image {
   $self: &;
   $carouselImg: "";

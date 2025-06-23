@@ -214,6 +214,8 @@ watchEffect(() => {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .vc-line-items {
   @apply @container;
 

@@ -140,6 +140,8 @@ function onChange(payload: Partial<ProductsFiltersType>) {
 </script>
 
 <style lang="scss">
+@reference "tailwindcss";
+
 .filters-popup-sidebar {
   @apply lg:w-[22rem] #{!important};
 
