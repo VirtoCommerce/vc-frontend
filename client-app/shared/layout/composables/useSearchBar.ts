@@ -86,6 +86,15 @@ function _useSearchBar() {
     }
   }
 
+  function clearSearchResults() {
+    suggestions.value = [];
+    pages.value = [];
+    categories.value = [];
+    total.value = 0;
+    products.value = [];
+    searchPhraseOfUploadedResults.value = "";
+  }
+
   return {
     searchResults,
     toggleSearchBar,
@@ -101,6 +110,8 @@ function _useSearchBar() {
     products: computed(() => products.value),
     pages: computed(() => pages.value),
     suggestions: computed(() => suggestions.value),
+
+    clearSearchResults,
   };
 }
 

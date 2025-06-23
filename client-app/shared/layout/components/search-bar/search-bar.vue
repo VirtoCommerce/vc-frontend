@@ -256,7 +256,6 @@ function getCategoriesNames() {
 
 function onScopeItemClick(itemId: string | number) {
   removeScopeItemById(itemId);
-  void searchProductsDebounced();
 }
 
 async function searchAndShowDropdownResults(): Promise<void> {
@@ -359,7 +358,7 @@ function onSearchPhraseChanged() {
 
 function onSearchBarFocused() {
   if (trimmedSearchPhrase.value) {
-    showSearchDropdown();
+    void searchProductsDebounced();
   }
 }
 

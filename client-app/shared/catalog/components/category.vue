@@ -260,6 +260,7 @@ import {
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useSlugInfo } from "@/shared/common";
+import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
 import { useCategory, useProducts } from "../composables";
@@ -579,7 +580,7 @@ watch(
   () => currentCategory.value?.id,
   () => {
     if (currentCategory.value) {
-      handleSearchBadScope(currentCategory.value.id, currentCategory.value.name);
+      changeSearchBarScope(currentCategory.value.id, currentCategory.value.name);
     }
   },
 );
@@ -609,9 +610,14 @@ watchDebounced(
 );
 
 const { addScopeItem, removeScopeItemByType } = useSearchScore();
+const { clearSearchResults } = useSearchBar();
 
-function handleSearchBadScope(categoryId: string, label: string) {
-  removeScopeItemByType("category");
+function changeSearchBarScope(categoryId: string, label?: string) {
+  clearCategoryScope();
+
+  if (!label) {
+    return;
+  }
 
   addScopeItem({
     filter: getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
@@ -622,8 +628,13 @@ function handleSearchBadScope(categoryId: string, label: string) {
 }
 
 onBeforeUnmount(() => {
-  removeScopeItemByType("category");
+  clearCategoryScope();
 });
+
+function clearCategoryScope() {
+  removeScopeItemByType("category");
+  clearSearchResults();
+}
 </script>
 
 <style lang="scss">
