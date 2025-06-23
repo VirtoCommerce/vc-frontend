@@ -16,6 +16,8 @@
     "lib": ["es2020", "dom"],
     "baseUrl": ".",
     "resolvePackageJsonExports": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "@/*": ["./client-app/*"]
     },
