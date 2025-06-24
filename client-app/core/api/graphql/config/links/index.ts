@@ -4,7 +4,7 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { Kind, OperationTypeNode } from "graphql";
 import { cartLink } from "@/core/api/graphql/cart/links";
 import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
-import { queryHttpLink, mutationHttpLink } from "./http";
+import { httpLink } from "./http";
 import { timeoutLink } from "./timeout";
 import { wsLink } from "./ws";
 import type { OperationDefinitionNode } from "graphql";
@@ -12,14 +12,11 @@ import type { OperationDefinitionNode } from "graphql";
 // Custom link to add x-operation-type header for query and mutation
 const operationTypeHeaderLink = new ApolloLink((operation, forward) => {
   const definition = getMainDefinition(operation.query) as OperationDefinitionNode;
-  if (
-    definition.kind === Kind.OPERATION_DEFINITION &&
-    (definition.operation === OperationTypeNode.QUERY || definition.operation === OperationTypeNode.MUTATION)
-  ) {
+  if (definition.kind === Kind.OPERATION_DEFINITION && definition.operation === OperationTypeNode.QUERY) {
     operation.setContext(({ headers = {} }) => ({
       headers: {
         ...headers,
-        "x-operation-type": definition.operation,
+        "X-GraphQL-Operationtype": "readonly",
       },
     }));
   }
@@ -57,14 +54,6 @@ export const link = from([
       return definition.kind === "OperationDefinition" && definition.operation === "subscription";
     },
     wsLink,
-    split(
-      ({ query }) => {
-        const definition = getMainDefinition(query);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-        return definition.kind === "OperationDefinition" && definition.operation === "query";
-      },
-      queryHttpLink,
-      mutationHttpLink,
-    ),
+    httpLink,
   ),
 ]);
