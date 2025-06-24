@@ -11,13 +11,13 @@
     "product_compare_limit": 5,
     "product_filters_sorting": false,
     "product_filters_sorting_direction": "asc",
+    "product_quantity_control": "button",
 
     "vendor_enabled": true,
     "vendor_rating_enabled": true,
     "categories_limit": 499,
     "wishlists_limit": 10,
 
-    "search_min_chars": 2,
     "search_max_chars": 400,
     "search_static_content_suggestions_enabled": true,
     "search_product_phrase_suggestions_enabled": false,

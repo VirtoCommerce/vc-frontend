@@ -4,6 +4,7 @@
     <VcAlert
       v-for="error in errors"
       :key="error.code"
+      :data-test-id="`sign-in-error-${error.code}-alert`"
       class="mb-4"
       color="danger"
       size="sm"
@@ -41,6 +42,7 @@
       :message="validationErrors.email"
       :error="!!validationErrors.email"
       autocomplete="email"
+      test-id-input="sign-in-email-input"
     />
 
     <VcInput
@@ -54,6 +56,7 @@
       :message="validationErrors.password"
       :error="!!validationErrors.password"
       autocomplete="password"
+      test-id-input="sign-in-password-input"
     />
 
     <div class="flex justify-between">
@@ -61,18 +64,29 @@
         {{ $t("shared.account.sign_in_form.remember_me_label") }}
       </VcCheckbox>
 
-      <router-link to="/forgot-password" class="text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]">
+      <router-link
+        to="/forgot-password"
+        class="text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]"
+        data-test-id="sign-in-forgot-password-link"
+      >
         {{ $t("shared.account.sign_in_form.forgot_password_link") }}
       </router-link>
     </div>
 
     <!-- Form actions -->
     <div class="mt-8 flex flex-wrap gap-4" :class="{ 'max-w-sm': !props.growButtons }">
-      <VcButton :loading="loading" type="submit" class="flex-1 shrink" no-wrap>
+      <VcButton :loading="loading" type="submit" class="flex-1 shrink" no-wrap data-test-id="sign-in-login-button">
         {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
 
-      <VcButton :to="{ name: 'SignUp' }" :disabled="loading" variant="outline" class="flex-1" no-wrap>
+      <VcButton
+        :to="{ name: 'SignUp' }"
+        :disabled="loading"
+        variant="outline"
+        class="flex-1"
+        no-wrap
+        data-test-id="sign-in-registration-button"
+      >
         {{ $t("shared.account.sign_in_form.registration_button") }}
       </VcButton>
     </div>

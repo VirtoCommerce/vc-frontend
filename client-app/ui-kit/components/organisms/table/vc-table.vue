@@ -21,7 +21,7 @@
           <th
             v-for="column in columns"
             :key="column.id"
-            class="px-5 py-3 font-bold"
+            class="px-4 py-3 font-bold"
             :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
             @click="
               column.sortable && sort
@@ -61,8 +61,13 @@
     </tbody>
 
     <!-- Desktop table view -->
-    <tbody v-else>
+    <tbody v-else-if="$slots['desktop-body']">
       <slot name="desktop-body" />
+    </tbody>
+
+    <!-- Desktop table item view -->
+    <tbody v-else-if="items.length && $slots['desktop-item']">
+      <slot v-for="(item, index) in items" :key="item.id || index" name="desktop-item" :item="item" />
     </tbody>
   </table>
 
@@ -96,34 +101,33 @@ export type ItemType = {
   [key: string]: unknown;
 };
 
-interface IEmits {
+const emit = defineEmits<{
   (event: "itemClick", item: T): void;
   (event: "headerClick", item: ISortInfo): void;
   (event: "pageChanged", page: number): void;
-}
+}>();
 
-interface IProps {
-  columns?: ITableColumn[];
-  items?: T[];
-  sort?: ISortInfo;
-  pages?: number;
-  page?: number;
-  loading?: boolean;
-  hideDefaultHeader?: boolean;
-  hideDefaultFooter?: boolean;
-  description?: string;
-  pageLimit?: number | null;
-}
-
-const emit = defineEmits<IEmits>();
-
-withDefaults(defineProps<IProps>(), {
-  columns: () => [],
-  items: () => [],
-  pages: 0,
-  page: 0,
-  pageLimit: PAGE_LIMIT,
-});
+withDefaults(
+  defineProps<{
+    columns?: ITableColumn[];
+    items?: T[];
+    sort?: ISortInfo;
+    pages?: number;
+    page?: number;
+    loading?: boolean;
+    hideDefaultHeader?: boolean;
+    hideDefaultFooter?: boolean;
+    description?: string;
+    pageLimit?: number | null;
+  }>(),
+  {
+    columns: () => [],
+    items: () => [],
+    pages: 0,
+    page: 0,
+    pageLimit: PAGE_LIMIT,
+  },
+);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");

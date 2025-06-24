@@ -20,6 +20,7 @@
         :checked="checked"
         :disabled="disabled"
         :aria-checked="checked"
+        :data-test-id="testIdInput"
         @change="emit('change', value)"
         @input="emit('input', value)"
       />
@@ -57,6 +58,7 @@ interface IProps {
   singleLineMessage?: boolean;
   wordBreak?: string;
   maxLines?: number;
+  testIdInput?: string;
 }
 
 const emit = defineEmits<IEmits>();
