@@ -736,6 +736,7 @@
         "title": "支払い方法を選択"
       },
       "select_address_modal": {
+        "message": "住所を選択してください",
         "meta": {
           "table_description": "登録済み住所"
         },
@@ -743,7 +744,7 @@
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
-        "add_address_button": "@:common.buttons.add_new_address",
+        "add_address_button": "@:common.buttons.add_new",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "住所が登録されていません",

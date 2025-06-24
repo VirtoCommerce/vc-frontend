@@ -127,7 +127,7 @@
       "payment_number": "Número de pagamento",
       "payment_type": "Tipo de pagamento",
       "recipient_name": "Nome do destinatário",
-      "active_address": "Endereço ativo",
+      "active_address": "Ativo",
       "addresses_icon": "Ícone de endereços",
       "digital_product": "Digital",
       "search": "Pesquisar {0}",
@@ -736,6 +736,7 @@
         "title": "Selecionar método de pagamento"
       },
       "select_address_modal": {
+        "message": "Selecione um endereço de envio",
         "meta": {
           "table_description": "endereços disponíveis"
         },
@@ -743,7 +744,7 @@
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
-        "add_address_button": "@:common.buttons.add_new_address",
+        "add_address_button": "@:common.buttons.add_new",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Você ainda não tem nenhum endereço",
