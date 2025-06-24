@@ -411,7 +411,9 @@
           "cancel": "@:common.buttons.cancel"
         },
         "enter_keyword_placeholder": "ストア全体を検索",
-        "enter_keyword_placeholder_category": "{category} 内を検索"
+        "enter_keyword_placeholder_category": "{category} 内を検索",
+        "scope_loading_label": "検索コンテキストを読み込み中",
+        "scope_remove_label": "削除: {label}"
       },
       "language_selector": {
         "label": "言語:"

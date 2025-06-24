@@ -411,7 +411,9 @@
           "cancel": "@:common.buttons.cancel"
         },
         "enter_keyword_placeholder": "Buscar en toda la tienda",
-        "enter_keyword_placeholder_category": "Buscar en {category}"
+        "enter_keyword_placeholder_category": "Buscar en {category}",
+        "scope_loading_label": "Cargando contexto de búsqueda",
+        "scope_remove_label": "Eliminar: {label}"
       },
       "language_selector": {
         "label": "Idioma:"

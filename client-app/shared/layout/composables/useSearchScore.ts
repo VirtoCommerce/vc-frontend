@@ -11,6 +11,8 @@ type ScopeItemType = {
 function _useSearchScore() {
   const searchScope = ref<ScopeItemType[]>([]);
 
+  const preparingScope = ref(false);
+
   const isCategoryScope = computed(() => {
     return searchScope.value.some((el) => el.type === "category");
   });
@@ -34,6 +36,7 @@ function _useSearchScore() {
   return {
     searchScope,
     searchScopeFilterExpression,
+    preparingScope,
 
     removeScopeItemByType,
     removeScopeItemById,

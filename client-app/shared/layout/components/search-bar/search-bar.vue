@@ -15,6 +15,17 @@
     >
       <template #prepend>
         <VcButton
+          v-if="preparingScope"
+          class="ml-1 w-20"
+          color="secondary"
+          append-icon="delete-2"
+          size="xs"
+          variant="solid-light"
+          disabled
+          loading
+          :aria-label="$t('shared.layout.search_bar.scope_loading_label')"
+        />
+        <VcButton
           v-for="item in searchScope"
           :key="item.id"
           class="ml-1"
@@ -22,6 +33,7 @@
           append-icon="delete-2"
           size="xs"
           variant="solid-light"
+          :aria-label="$t('shared.layout.search_bar.scope_remove_label', { label: item.label })"
           @click.stop="onScopeItemClick(item.id)"
         >
           {{ item.label }}
@@ -240,7 +252,8 @@ const isExistResults = computed(
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
-const { searchScope, searchScopeFilterExpression, removeScopeItemById, isCategoryScope } = useSearchScore();
+const { searchScope, searchScopeFilterExpression, removeScopeItemById, isCategoryScope, preparingScope } =
+  useSearchScore();
 
 const { t } = useI18n();
 

@@ -411,7 +411,9 @@
           "cancel": "@:common.buttons.cancel"
         },
         "enter_keyword_placeholder": "搜索全店",
-        "enter_keyword_placeholder_category": "在 {category} 中搜索"
+        "enter_keyword_placeholder_category": "在 {category} 中搜索",
+        "scope_loading_label": "正在加载搜索上下文",
+        "scope_remove_label": "移除：{label}"
       },
       "language_selector": {
         "label": "中文："

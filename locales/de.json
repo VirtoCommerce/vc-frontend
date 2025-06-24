@@ -411,7 +411,9 @@
           "cancel": "@:common.buttons.cancel"
         },
         "enter_keyword_placeholder": "Durchsuche den gesamten Shop",
-        "enter_keyword_placeholder_category": "Suche in {category}"
+        "enter_keyword_placeholder_category": "Suche in {category}",
+        "scope_loading_label": "Suchkontext wird geladen",
+        "scope_remove_label": "Entfernen: {label}"
       },
       "language_selector": {
         "label": "Sprache:"

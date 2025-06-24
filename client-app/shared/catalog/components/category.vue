@@ -543,11 +543,16 @@ function resetPage() {
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
+const { addScopeItem, removeScopeItemByType, preparingScope } = useSearchScore();
 
 watch(
   () => props.categoryId,
-  (categoryId) => {
+  async (categoryId) => {
+    preparingScope.value = true;
+
     if (categoryId || props.isRoot) {
+      preparingScope.value = true;
+
       const { zero_price_product_enabled } = themeContext.value.settings;
       const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
@@ -558,13 +563,14 @@ watch(
             getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
             getFilterExpressionForInStock(true),
           ]);
-
-      void fetchCategory({
+      await fetchCategory({
         categoryId,
         maxLevel: 1,
         onlyActive: true,
         productFilter,
       });
+
+      preparingScope.value = false;
     }
   },
   { immediate: true },
@@ -609,7 +615,6 @@ watchDebounced(
   },
 );
 
-const { addScopeItem, removeScopeItemByType } = useSearchScore();
 const { clearSearchResults } = useSearchBar();
 
 function changeSearchBarScope(categoryId: string, label?: string) {

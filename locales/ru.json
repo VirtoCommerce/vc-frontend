@@ -411,7 +411,9 @@
           "cancel": "@:common.buttons.cancel"
         },
         "enter_keyword_placeholder": "Поиск по магазину",
-        "enter_keyword_placeholder_category": "Искать в {category}"
+        "enter_keyword_placeholder_category": "Искать в {category}",
+        "scope_loading_label": "Загрузка контекста поиска",
+        "scope_remove_label": "Удалить: {label}"
       },
       "language_selector": {
         "label": "Язык:"
