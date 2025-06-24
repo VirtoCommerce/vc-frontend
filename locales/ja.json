@@ -1344,7 +1344,8 @@
         "tooltip_text": "購入済みの商品のみを表示する",
         "checkbox_label": "購入済み"
       },
-      "search_in_category": "「{category}」で「{keyword}」を検索"
+      "search_in_category": "「{category}」で「{keyword}」を検索",
+      "products_found_message_search": "件見つかりました | 件見つかりました"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

@@ -1344,7 +1344,8 @@
         "tooltip_text": "Auswählen, um nur Produkte anzuzeigen, die zuvor gekauft wurden",
         "checkbox_label": "Bereits gekauft"
       },
-      "search_in_category": "Suche nach \"{keyword}\" in {category}"
+      "search_in_category": "Suche nach \"{keyword}\" in {category}",
+      "products_found_message_search": "Ergebnis gefunden | Ergebnisse gefunden"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

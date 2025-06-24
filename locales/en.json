@@ -1328,6 +1328,7 @@
         "select_branch_text": "Select a pickup branch to see the products that are in stock now"
       },
       "products_found_message": "result | results",
+      "products_found_message_search": "result found | results found",
       "search_in_category": "Search for \"{keyword}\" in {category}",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",

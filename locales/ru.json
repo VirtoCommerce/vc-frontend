@@ -1322,7 +1322,7 @@
         "branches": "филиал | {n} филиал | {n} филиалов",
         "select_branch_text": "Выберите филиал, чтобы увидеть товары в наличии"
       },
-      "products_found_message": "результат | результаты",
+      "products_found_message": "результат | результатов",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
@@ -1344,7 +1344,8 @@
         "tooltip_text": "Показывать только товары, купленные ранее",
         "checkbox_label": "Куплено ранее"
       },
-      "search_in_category": "Поиск \"{keyword}\" в {category}"
+      "search_in_category": "Поиск \"{keyword}\" в {category}",
+      "products_found_message_search": "результат найден | результата найдено"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
