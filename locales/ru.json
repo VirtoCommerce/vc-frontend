@@ -397,7 +397,6 @@
         "pages_label": "Страницы",
         "suggestions_label": "Предложения",
         "no_results": "По вашему запросу {keyword} ничего не найдено",
-        "enter_keyword_placeholder": "Поиск товаров",
         "search_button": "Искать",
         "view_all_results_button": "Просмотреть все результаты ({total})",
         "barcode_detector": {
@@ -410,7 +409,11 @@
           },
           "browse": "Обзор файлов",
           "cancel": "@:common.buttons.cancel"
-        }
+        },
+        "enter_keyword_placeholder": "Поиск по магазину",
+        "enter_keyword_placeholder_category": "Искать в {category}",
+        "scope_loading_label": "Загрузка контекста поиска",
+        "scope_remove_label": "Удалить: {label}"
       },
       "language_selector": {
         "label": "Язык:"
@@ -1320,7 +1323,7 @@
         "branches": "филиал | {n} филиал | {n} филиалов",
         "select_branch_text": "Выберите филиал, чтобы увидеть товары в наличии"
       },
-      "products_found_message": "результат | результаты",
+      "products_found_message": "результат | результатов",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
@@ -1341,7 +1344,9 @@
         "title": "Куплено ранее",
         "tooltip_text": "Показывать только товары, купленные ранее",
         "checkbox_label": "Куплено ранее"
-      }
+      },
+      "search_in_category": "Поиск \"{keyword}\" в {category}",
+      "products_found_message_search": "результат найден | результата найдено"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

@@ -397,7 +397,6 @@
         "pages_label": "Seiten",
         "suggestions_label": "Vorschläge",
         "no_results": "Ihre {keyword} Abfrage hat keine Ergebnisse geliefert",
-        "enter_keyword_placeholder": "Hier nach Produkten suchen",
         "search_button": "Suchen",
         "view_all_results_button": "Alle {total} Ergebnisse anzeigen",
         "barcode_detector": {
@@ -410,7 +409,11 @@
           },
           "browse": "Dateien durchsuchen",
           "cancel": "@:common.buttons.cancel"
-        }
+        },
+        "enter_keyword_placeholder": "Durchsuche den gesamten Shop",
+        "enter_keyword_placeholder_category": "Suche in {category}",
+        "scope_loading_label": "Suchkontext wird geladen",
+        "scope_remove_label": "Entfernen: {label}"
       },
       "language_selector": {
         "label": "Sprache:"
@@ -1341,7 +1344,9 @@
         "title": "Bereits gekauft",
         "tooltip_text": "Auswählen, um nur Produkte anzuzeigen, die zuvor gekauft wurden",
         "checkbox_label": "Bereits gekauft"
-      }
+      },
+      "search_in_category": "Suche nach \"{keyword}\" in {category}",
+      "products_found_message_search": "Ergebnis gefunden | Ergebnisse gefunden"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
