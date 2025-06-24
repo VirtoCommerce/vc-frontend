@@ -64,7 +64,7 @@
         </span>
 
         <sup v-if="!fetchingProducts && !hideTotal && !fixedProductsCount" class="category__products-count">
-          <b>{{ $n(totalProductsCount, "decimal") }}&nbsp;</b>
+          <b class="mr-1">{{ $n(totalProductsCount, "decimal") }}</b>
           <template v-if="currentCategory && searchQueryParam">
             {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
           </template>
