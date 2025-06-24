@@ -1343,7 +1343,8 @@
         "title": "Куплено ранее",
         "tooltip_text": "Показывать только товары, купленные ранее",
         "checkbox_label": "Куплено ранее"
-      }
+      },
+      "search_in_category": "Поиск \"{keyword}\" в {category}"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

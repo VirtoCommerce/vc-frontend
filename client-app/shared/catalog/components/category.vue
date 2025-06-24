@@ -55,6 +55,10 @@
           {{ title }}
         </span>
 
+        <span v-else-if="currentCategory && searchQueryParam">
+          {{ $t("pages.catalog.search_in_category", { keyword: searchQueryParam, category: currentCategory.name }) }}
+        </span>
+
         <span v-else>
           {{ currentCategory?.name }}
         </span>

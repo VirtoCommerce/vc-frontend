@@ -1343,7 +1343,8 @@
         "title": "已购买过",
         "tooltip_text": "选择以仅显示之前购买过的商品",
         "checkbox_label": "之前购买"
-      }
+      },
+      "search_in_category": "在 {category} 中搜索“{keyword}”"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

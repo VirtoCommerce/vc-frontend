@@ -1343,7 +1343,8 @@
         "title": "Acquistato in precedenza",
         "tooltip_text": "Seleziona per mostrare solo i prodotti acquistati in precedenza",
         "checkbox_label": "Acquistato in precedenza"
-      }
+      },
+      "search_in_category": "Cerca \"{keyword}\" in {category}"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

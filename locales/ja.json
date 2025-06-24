@@ -1343,7 +1343,8 @@
         "title": "購入済み",
         "tooltip_text": "購入済みの商品のみを表示する",
         "checkbox_label": "購入済み"
-      }
+      },
+      "search_in_category": "「{category}」で「{keyword}」を検索"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
