@@ -191,10 +191,9 @@ const searchBarElement = ref<HTMLElement | null>(null);
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;
 
-const SEARCH_BAR_DEBOUNCE_TIME = 300;
+const SEARCH_BAR_DEBOUNCE_TIME = 200;
 
 const MAX_LENGTH = themeContext.value?.settings?.search_max_chars || 999;
-const MIN_LENGTH = themeContext.value?.settings?.search_min_chars || 0;
 
 const {
   total,
@@ -281,7 +280,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
     hideSearchDropdown();
   }
 
-  if (trimmedSearchPhrase.value.length > MAX_LENGTH || trimmedSearchPhrase.value.length < MIN_LENGTH) {
+  if (trimmedSearchPhrase.value.length > MAX_LENGTH) {
     return;
   }
 
@@ -333,27 +332,30 @@ function selectItemEvent(product: Product) {
 }
 
 function getSearchRoute(phrase: string): RouteLocationRaw {
+  const query = phrase
+    ? {
+        [QueryParamName.SearchPhrase]: phrase,
+      }
+    : undefined;
+
   if (isCategoryScope.value) {
     return {
       path: router.currentRoute.value.path,
-      query: {
-        [QueryParamName.SearchPhrase]: phrase,
-      },
+      query,
     };
   } else {
     return {
       name: ROUTES.SEARCH.NAME,
-      query: {
-        [QueryParamName.SearchPhrase]: phrase,
-      },
+      query,
     };
   }
 }
 
 function goToSearchResultsPage() {
+  hideSearchDropdown();
+  void router.push(getSearchRoute(trimmedSearchPhrase.value));
+
   if (trimmedSearchPhrase.value) {
-    hideSearchDropdown();
-    void router.push(getSearchRoute(trimmedSearchPhrase.value));
     analytics("search", trimmedSearchPhrase.value, products.value, total.value);
   }
 }
