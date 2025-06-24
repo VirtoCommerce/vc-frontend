@@ -733,6 +733,7 @@
         "title": "选择支付方式"
       },
       "select_address_modal": {
+        "message": "选择运输地址",
         "meta": {
           "table_description": "可用地址"
         },
@@ -740,7 +741,7 @@
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
-        "add_address_button": "@:common.buttons.add_new_address",
+        "add_address_button": "@:common.buttons.add_new",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "您尚未有任何地址",

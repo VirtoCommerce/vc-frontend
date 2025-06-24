@@ -127,7 +127,7 @@
       "payment_number": "Zahlungs-ID",
       "payment_type": "Zahlungsart",
       "recipient_name": "Empfängername",
-      "active_address": "Aktive Adresse",
+      "active_address": "Aktive",
       "addresses_icon": "Adressensymbol",
       "digital_product": "Digitales",
       "search": "Suche {0}",
@@ -733,6 +733,7 @@
         "title": "Zahlungsmethode auswählen"
       },
       "select_address_modal": {
+        "message": "Bitte geben Sie eine Adresse an",
         "meta": {
           "table_description": "verfügbare Adressen"
         },
@@ -740,7 +741,7 @@
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
-        "add_address_button": "@:common.buttons.add_new_address",
+        "add_address_button": "@:common.buttons.add_new",
         "phone_label": "@:common.labels.phone{':' }",
         "email_label": "@:common.labels.email{':' }",
         "no_addresses_message": "Sie haben noch keine Adressen",

@@ -127,7 +127,7 @@
       "payment_number": "Payment ID",
       "payment_type": "Payment type",
       "recipient_name": "Recipient name",
-      "active_address": "Active address",
+      "active_address": "Active",
       "addresses_icon": "Address icon",
       "digital_product": "Digital",
       "search": "Search {0}",
@@ -733,6 +733,7 @@
         "title": "Select payment method"
       },
       "select_address_modal": {
+        "message": "For selection tap the address",
         "meta": {
           "table_description": "available addresses"
         },
@@ -740,7 +741,7 @@
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
-        "add_address_button": "@:common.buttons.add_new_address",
+        "add_address_button": "@:common.buttons.add_new",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "You do not have any addresses yet",
