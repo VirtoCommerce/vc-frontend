@@ -16,7 +16,7 @@ const operationTypeHeaderLink = new ApolloLink((operation, forward) => {
     operation.setContext(({ headers = {} }) => ({
       headers: {
         ...headers,
-        "X-GraphQL-Operationtype": "readonly",
+        "X-GraphQL-Operation": "readonly",
       },
     }));
   }
