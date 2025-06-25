@@ -9,7 +9,12 @@
       :offset-options="12"
     >
       <template #trigger="{ opened }">
-        <button class="ship-to-selector__trigger" type="button" :disabled="loading">
+        <button
+          class="ship-to-selector__trigger"
+          type="button"
+          data-test-id="ship-to-selector-button"
+          :disabled="loading"
+        >
           <VcIcon name="location-marker" size="xs" />
 
           <VcLoaderOverlay v-if="loading" no-bg />

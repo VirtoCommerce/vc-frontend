@@ -44,7 +44,11 @@
                 <span v-if="isHTML(property)">
                   <VcMarkdownRender :src="String(property.value)" />
                 </span>
-
+                <span v-else-if="isBrand(property)">
+                  <a :href="`/${brand?.permalink}`" class="text-[--link-color] hover:text-[--link-hover-color]">
+                    {{ property.value }}
+                  </a>
+                </span>
                 <span v-else>
                   {{ property.value }}
                 </span>
@@ -117,6 +121,8 @@ const showPropertiesBlock = computed(() => !props.model.hidden && (properties.va
 
 const allExpanded = computed(() => collapsedStates.value.every((val) => val === false));
 
+const brand = computed(() => props.product.brand);
+
 function toggleWidgets() {
   if (!allExpanded.value) {
     collapsedStates.value = groupedProperties.value.map(() => false);
@@ -131,6 +137,10 @@ function initCollapsedStates() {
 
 function isHTML(property: Property): boolean {
   return (property.propertyValueType as PropertyValueTypes) === PropertyValueTypes.Html;
+}
+
+function isBrand(property: Property): boolean {
+  return !!brand.value && property.name.toLowerCase() === brand.value.brandPropertyName?.toLowerCase();
 }
 
 onMounted(() => {

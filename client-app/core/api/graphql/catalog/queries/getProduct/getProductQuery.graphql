@@ -99,5 +99,9 @@ query GetProduct(
     rating {
       ...rating
     }
+    brand {
+      permalink
+      brandPropertyName
+    }
   }
 }

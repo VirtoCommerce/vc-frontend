@@ -1,6 +1,7 @@
 import { createRouter as _createRouter, createWebHistory } from "vue-router";
 import { useThemeContext } from "@/core/composables";
 import { getReturnUrlValue } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
 import { mainRoutes } from "./routes";
 import type { RouteRecordName } from "vue-router";
@@ -31,8 +32,8 @@ export function createRouter(options: { base: string }) {
 
     if (unauthorizedAccessIsDenied) {
       return next({
-        name: "SignIn",
-        // save the location we were at to come back later
+        name: ROUTES.SIGN_IN.NAME,
+        // save current location to return to it after sign in
         query: { returnUrl: to.fullPath },
       });
     }
@@ -48,7 +49,7 @@ export function createRouter(options: { base: string }) {
       isAuthenticated.value &&
       Array<RouteRecordName>(
         "Home",
-        "SignIn",
+        ROUTES.SIGN_IN.NAME,
         "SignUp",
         "ForgotPassword",
         "ResetPassword",
@@ -56,7 +57,7 @@ export function createRouter(options: { base: string }) {
         "ConfirmInvitation",
       ).includes(to.name)
     ) {
-      return next(getReturnUrlValue() || { name: "Catalog" });
+      return next(getReturnUrlValue() || { name: ROUTES.CATALOG.NAME });
     }
 
     return next();
