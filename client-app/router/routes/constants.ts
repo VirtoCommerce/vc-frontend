@@ -7,4 +7,8 @@ export const ROUTES = {
     NAME: "Search",
     PATH: "/search",
   },
+  SIGN_IN: {
+    NAME: "SignIn",
+    PATH: "/sign-in",
+  },
 } as const;
