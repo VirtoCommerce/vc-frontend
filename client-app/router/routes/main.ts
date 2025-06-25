@@ -28,6 +28,7 @@ const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
+const NewsArticles = () => import("@/modules/news/pages/news-articles.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
   { path: "/auth/callback", name: "AuthCallback", component: callback, meta: { public: true } },
@@ -77,6 +78,7 @@ export const mainRoutes: RouteRecordRaw[] = [
     component: Product,
     props: (route) => ({ allowSetMeta: true, productId: route.params.productId }),
   },
+  { path: "/news", name: "News", component: NewsArticles },
 
   /** NOTE: Always leave it last. */
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
