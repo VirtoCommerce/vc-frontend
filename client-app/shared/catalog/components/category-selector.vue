@@ -6,7 +6,7 @@
   <VcWidget v-else-if="!!parentCategory || subcategories.length" size="xs">
     <template v-if="!!parentCategory" #header>
       <router-link
-        :to="getCategoryRoute(parentCategory, filterQuery)"
+        :to="getCategoryRoute(parentCategory, locationQuery)"
         class="-mx-2 flex grow items-center gap-1.5 rounded-sm px-2 py-1 text-sm hover:bg-neutral-50"
       >
         <VcIcon class="fill-primary" name="chevron-left" size="xs" />
@@ -16,9 +16,9 @@
       </router-link>
     </template>
 
-    <template v-if="category?.name && subcategories.length" #default>
+    <template v-if="subcategories.length" #default>
       <div class="-mt-1 mb-0.5 py-0.5 text-xs font-black uppercase text-neutral-900">
-        <template v-if="objectType === 'Category'">
+        <template v-if="objectType === 'Category' && category?.name">
           {{ category.name }}
         </template>
 
@@ -42,9 +42,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import pickBy from "lodash/pickBy";
+import { computed, toValue } from "vue";
 import { useRoute } from "vue-router";
-import { useCategoriesRoutes } from "@/core/composables";
+import { useCategoriesRoutes, useRouteQueryParam } from "@/core/composables";
+import { QueryParamName } from "@/core/enums";
 import { getCategoryRoute } from "@/core/utilities";
 import { useSlugInfo } from "@/shared/common";
 import type { Category } from "@/core/api/graphql/types";
@@ -52,7 +54,6 @@ import type { Category } from "@/core/api/graphql/types";
 interface IProps {
   category?: Category | null;
   loading?: boolean;
-  filterQuery?: { facets?: string };
 }
 
 const props = defineProps<IProps>();
@@ -63,5 +64,20 @@ const { objectType, seoInfo } = useSlugInfo(route.path.slice(1));
 const parentCategory = computed<Category | undefined>(() => props.category?.parent);
 const subcategories = computed<Category[]>(() => props.category?.childCategories || []);
 
-const subcategoriesRoutes = useCategoriesRoutes(subcategories);
+const searchParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
+const facetsParam = useRouteQueryParam<string>(QueryParamName.Facets);
+const sortParam = useRouteQueryParam<string>(QueryParamName.Sort);
+
+const locationQuery = computed(() => {
+  return pickBy(
+    {
+      [QueryParamName.SearchPhrase]: toValue(searchParam),
+      [QueryParamName.Facets]: toValue(facetsParam),
+      [QueryParamName.Sort]: toValue(sortParam),
+    },
+    (value) => !!value,
+  );
+});
+
+const subcategoriesRoutes = useCategoriesRoutes(subcategories, locationQuery);
 </script>
