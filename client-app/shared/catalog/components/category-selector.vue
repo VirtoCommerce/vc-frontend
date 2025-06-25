@@ -32,9 +32,11 @@
           v-for="(item, index) in subcategories"
           :key="index"
           :to="subcategoriesRoutes[item.id]"
-          class="-mx-2 mt-0.5 truncate rounded-sm px-2 py-0.5 text-sm transition-colors hover:bg-neutral-50"
+          class="items-stretc -mx-2 mt-0.5 flex truncate rounded-sm px-2 py-0.5 text-sm transition-colors hover:bg-neutral-50"
         >
-          {{ item.name }}
+          <span>{{ item.name }}</span>
+
+          <span class="ml-auto">{{ item.facet?.count }}</span>
         </router-link>
       </div>
     </template>
@@ -50,10 +52,17 @@ import { QueryParamName } from "@/core/enums";
 import { getCategoryRoute } from "@/core/utilities";
 import { useSlugInfo } from "@/shared/common";
 import type { Category } from "@/core/api/graphql/types";
+import type { FacetValueItemType } from "@/core/types";
+
+type CategoryType = Pick<Category, "name" | "parent" | "id" | "slug"> & { childCategories: CategoryType[] } & {
+  facet?: FacetType;
+};
+type FacetType = Pick<FacetValueItemType, "label" | "count">;
 
 interface IProps {
-  category?: Category | null;
+  category?: CategoryType | null;
   loading?: boolean;
+  categoryFacets?: FacetType[];
 }
 
 const props = defineProps<IProps>();
@@ -61,8 +70,16 @@ const props = defineProps<IProps>();
 const route = useRoute();
 const { objectType, seoInfo } = useSlugInfo(route.path.slice(1));
 
-const parentCategory = computed<Category | undefined>(() => props.category?.parent);
-const subcategories = computed<Category[]>(() => props.category?.childCategories || []);
+const parentCategory = computed<CategoryType | undefined>(() => props.category?.parent);
+const subcategories = computed<CategoryType[]>(
+  () =>
+    props.category?.childCategories.map((el) => {
+      return {
+        ...el,
+        facet: getFacet(el),
+      };
+    }) || [],
+);
 
 const searchParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const facetsParam = useRouteQueryParam<string>(QueryParamName.Facets);
@@ -80,4 +97,10 @@ const locationQuery = computed(() => {
 });
 
 const subcategoriesRoutes = useCategoriesRoutes(subcategories, locationQuery);
+
+function getFacet(category: CategoryType) {
+  return props.categoryFacets?.find((el) => {
+    return el.label.toLowerCase() === category.name.toLowerCase();
+  });
+}
 </script>
