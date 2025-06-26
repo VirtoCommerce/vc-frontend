@@ -1,0 +1,26 @@
+query NewsArticles(
+  $storeId: String!
+  $languageCode: String!
+  $userId: String
+  $first: Int
+  $after: String
+  $sort: String
+) {
+  newsArticles(
+    storeId: $storeId
+    languageCode: $languageCode
+    userId: $userId
+    first: $first
+    after: $after
+    sort: $sort
+  ) {
+    totalCount
+    items {
+      id
+      title
+      publishDate
+      content
+      contentPreview
+    }
+  }
+}

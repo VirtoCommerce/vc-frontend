@@ -1,0 +1,9 @@
+query NewsArticle($id: String!, $storeId: String!, $languageCode: String!) {
+  newsArticle(id: $id, storeId: $storeId, languageCode: $languageCode) {
+    id
+    title
+    publishDate
+    content
+    contentPreview
+  }
+}
