@@ -127,7 +127,7 @@
       "payment_number": "Payment ID",
       "payment_type": "Payment type",
       "recipient_name": "Recipient name",
-      "active_address": "Active address",
+      "active_address": "Active",
       "addresses_icon": "Address icon",
       "digital_product": "Digital",
       "search": "Search {0}",
@@ -397,9 +397,12 @@
         "pages_label": "Pages",
         "suggestions_label": "Suggestions",
         "no_results": "Your {keyword} query did not return any results",
-        "enter_keyword_placeholder": "Search for products here",
+        "enter_keyword_placeholder": "Search the entire store",
+        "enter_keyword_placeholder_category": "Search within {category}",
         "search_button": "Search",
         "view_all_results_button": "View all {total} results",
+        "scope_loading_label": "Loading search context",
+        "scope_remove_label": "Remove: {label}",
         "barcode_detector": {
           "title": "Barcode scan",
           "description": "To proceed, please enable your camera to scan the barcode on the product. This will help us quickly identify the item and provide you with the necessary information.",
@@ -733,6 +736,7 @@
         "title": "Select payment method"
       },
       "select_address_modal": {
+        "message": "For selection tap the address",
         "meta": {
           "table_description": "available addresses"
         },
@@ -740,7 +744,7 @@
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
-        "add_address_button": "@:common.buttons.add_new_address",
+        "add_address_button": "@:common.buttons.add_new",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "You do not have any addresses yet",
@@ -1337,6 +1341,8 @@
         "select_branch_text": "Select a pickup branch to see the products that are in stock now"
       },
       "products_found_message": "result | results",
+      "products_found_message_search": "result found | results found",
+      "search_in_category": "Search for \"{keyword}\" in {category}",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",

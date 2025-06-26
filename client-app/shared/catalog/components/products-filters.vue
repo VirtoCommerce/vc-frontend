@@ -45,7 +45,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 import { useBreakpoints, breakpointsTailwind, useElementBounding, watchDebounced } from "@vueuse/core";
 import { cloneDeep } from "lodash";
-import { watch, shallowReactive, shallowRef, ref, nextTick, computed } from "vue";
+import { watch, shallowRef, ref, nextTick, computed } from "vue";
 import FacetFilter from "./facet-filter.vue";
 import type { FacetItemType } from "@/core/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
@@ -64,7 +64,7 @@ const facetFiltersContainer = shallowRef<HTMLDivElement | null>(null);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
-const localFilters = shallowReactive<ProductsFiltersType>({
+const localFilters = ref<ProductsFiltersType>({
   facets: [],
   inStock: false,
   branches: [],
@@ -76,13 +76,13 @@ const filterCalculationInProgress = ref(false);
 const filtersCountToShow = ref(1);
 const filtersToShow = computed(() =>
   props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value
-    ? localFilters.facets
-    : localFilters.facets.slice(0, filtersCountToShow.value),
+    ? localFilters.value.facets
+    : localFilters.value.facets.slice(0, filtersCountToShow.value),
 );
 const { right: containerRight } = useElementBounding(facetFiltersContainer);
 
 watchDebounced(
-  [containerRight, () => localFilters.facets],
+  [containerRight, () => localFilters.value.facets],
   async () => {
     if (props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value) {
       return;
@@ -93,7 +93,7 @@ watchDebounced(
         (facetFiltersContainer?.value?.querySelectorAll("[data-facet-filter-dropdown]") as NodeListOf<HTMLElement>) ||
         [];
       let filtersCount = 1;
-      for (let i = 0; i < localFilters.facets.length; i++) {
+      for (let i = 0; i < localFilters.value.facets.length; i++) {
         const facetFilter = facetsElements[i];
         if (!facetFilter) {
           filtersCountToShow.value++;
@@ -117,33 +117,33 @@ watchDebounced(
 
 watch(
   () => props.filters.facets,
-  (newFacets) => (localFilters.facets = cloneDeep(newFacets)),
+  (newFacets) => (localFilters.value.facets = cloneDeep(newFacets)),
   { immediate: true },
 );
 
 watch(
   () => props.filters.inStock,
-  (newValue) => (localFilters.inStock = newValue),
+  (newValue) => (localFilters.value.inStock = newValue),
   { immediate: true },
 );
 
 watch(
   () => props.filters.purchasedBefore,
-  (newValue) => (localFilters.purchasedBefore = newValue),
+  (newValue) => (localFilters.value.purchasedBefore = newValue),
   { immediate: true },
 );
 
 watch(
   () => props.filters.branches,
-  (newValue) => (localFilters.branches = newValue.slice()),
+  (newValue) => (localFilters.value.branches = newValue.slice()),
   { immediate: true },
 );
 
 function onFacetFilterChanged(facet: FacetItemType): void {
-  const existingFacet = localFilters.facets.find((item) => item.paramName === facet.paramName);
+  const existingFacet = localFilters.value.facets.find((item) => item.paramName === facet.paramName);
   if (existingFacet) {
     existingFacet.values = facet.values;
-    emit("change", localFilters);
+    emit("change", localFilters.value);
   }
 }
 </script>

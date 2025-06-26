@@ -7,19 +7,15 @@
     <FiltersPopupSidebar
       v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
       :is-exist-selected-facets="hasSelectedFacets"
-      :is-popup-sidebar-filter-dirty="isFiltersDirty"
       :popup-sidebar-filters="filtersToShow"
       :facets-loading="fetchingFacets"
       :is-mobile="isMobile"
       :is-visible="isFiltersSidebarVisible"
       :keyword-query-param="keywordQueryParam"
-      :sort-query-param="sortQueryParam"
       :loading="fetchingProducts"
       :hide-controls="hideControls"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
-      @open-branches-modal="openBranchesModal"
-      @update-popup-sidebar-filters="updateFiltersSidebar"
       @apply-filters="applyFilters"
     />
 
@@ -55,14 +51,22 @@
           {{ title }}
         </span>
 
+        <span v-else-if="currentCategory && searchQueryParam">
+          {{ $t("pages.catalog.search_in_category", { keyword: searchQueryParam, category: currentCategory.name }) }}
+        </span>
+
         <span v-else>
           {{ currentCategory?.name }}
         </span>
 
         <sup v-if="!fetchingProducts && !hideTotal && !fixedProductsCount" class="category__products-count">
-          <b>{{ $n(totalProductsCount, "decimal") }}</b>
-
-          {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
+          <b class="mr-1">{{ $n(totalProductsCount, "decimal") }}</b>
+          <template v-if="currentCategory && searchQueryParam">
+            {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
+          </template>
+          <template v-else>
+            {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
+          </template>
         </sup>
       </VcTypography>
 
@@ -239,7 +243,7 @@ import {
   whenever,
 } from "@vueuse/core";
 import omit from "lodash/omit";
-import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import { computed, onBeforeUnmount, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
@@ -255,11 +259,12 @@ import {
   getFilterExpressionForInStock,
   getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
-  getFilterExpressionFromFacets,
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useSlugInfo } from "@/shared/common";
+import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
@@ -326,13 +331,11 @@ const filtersToShow = computed(() => {
 
 const { themeContext } = useThemeContext();
 const {
-  getFacets,
   facetsQueryParam,
   fetchingMoreProducts,
   fetchingProducts,
   fetchingFacets,
   hasSelectedFacets,
-  isFiltersDirty,
   isFiltersSidebarVisible,
   keywordQueryParam,
   localStorageBranches,
@@ -355,7 +358,6 @@ const {
   resetFacetFilters,
   resetFilterKeyword,
   showFiltersSidebar,
-  updateProductsFilters,
 
   currentPage,
   updateCurrentPage,
@@ -448,7 +450,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
-  keyword: props.keyword || (!props.categoryId && !props.isRoot ? searchQueryParam.value : keywordQueryParam.value),
+  keyword: searchQueryParam.value || keywordQueryParam.value || props.keyword,
   filter: [
     props.filter,
     facetsQueryParam.value,
@@ -464,28 +466,6 @@ const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 function applyFilters(newFilters: ProductsFiltersType): void {
   _applyFilters(newFilters);
-}
-
-async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<void> {
-  const searchParamsForFacets: ProductsSearchParamsType = {
-    ...searchParams.value,
-    filter: [
-      props.filter,
-      getFilterExpressionFromFacets(newFilters.facets),
-      getFilterExpressionForInStock(newFilters.inStock),
-      getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
-      getFilterExpressionForAvailableIn(newFilters.branches),
-    ]
-      .filter(Boolean)
-      .join(" "),
-  };
-
-  updateProductsFilters({
-    branches: newFilters.branches,
-    inStock: newFilters.inStock,
-    purchasedBefore: newFilters.purchasedBefore,
-    facets: await getFacets(searchParamsForFacets),
-  });
 }
 
 async function changeProductsPage(pageNumber: number): Promise<void> {
@@ -541,11 +521,16 @@ function resetPage() {
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
+const { addScopeItem, removeScopeItemByType, preparingScope } = useSearchScore();
 
 watch(
   () => props.categoryId,
-  (categoryId) => {
+  async (categoryId) => {
     if (categoryId || props.isRoot) {
+      if (categoryId) {
+        preparingScope.value = true;
+      }
+
       const { zero_price_product_enabled } = themeContext.value.settings;
       const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
@@ -556,13 +541,14 @@ watch(
             getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
             getFilterExpressionForInStock(true),
           ]);
-
-      void fetchCategory({
+      await fetchCategory({
         categoryId,
         maxLevel: 1,
         onlyActive: true,
         productFilter,
       });
+
+      preparingScope.value = false;
     }
   },
   { immediate: true },
@@ -573,6 +559,15 @@ watch(props, ({ viewMode }) => {
     savedViewMode.value = viewMode;
   }
 });
+
+watch(
+  () => currentCategory.value?.id,
+  () => {
+    if (currentCategory.value) {
+      changeSearchBarScope(currentCategory.value.id, currentCategory.value.name);
+    }
+  },
+);
 
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
@@ -597,6 +592,32 @@ watchDebounced(
     debounce: 20,
   },
 );
+
+const { clearSearchResults } = useSearchBar();
+
+function changeSearchBarScope(categoryId: string, label?: string) {
+  clearCategoryScope();
+
+  if (!label) {
+    return;
+  }
+
+  addScopeItem({
+    filter: getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
+    label,
+    id: categoryId,
+    type: "category",
+  });
+}
+
+onBeforeUnmount(() => {
+  clearCategoryScope();
+});
+
+function clearCategoryScope() {
+  removeScopeItemByType("category");
+  clearSearchResults();
+}
 </script>
 
 <style lang="scss">
