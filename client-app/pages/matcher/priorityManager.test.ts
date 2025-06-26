@@ -62,7 +62,7 @@ describe("getVisiblePreviewer", () => {
       },
     ];
 
-    expect(getVisiblePreviewer(test3)).toBe("slugContent");
+    expect((<PreviewerStateType>getVisiblePreviewer(test3)).id).toBe("slugContent");
   });
 
   it("should return 'loader' if every previewers has 'initial' state", () => {
@@ -138,7 +138,7 @@ describe("getVisiblePreviewer", () => {
       },
     ];
 
-    expect(getVisiblePreviewer(test7)).toBe("someOther");
+    expect((<PreviewerStateType>getVisiblePreviewer(test7)).id).toBe("someOther");
   });
 
   it("returns loader if max priority previewer is still loading", () => {
@@ -192,6 +192,6 @@ describe("getVisiblePreviewer", () => {
       { id: "internal", priority: 1, state: "empty", isActive: true },
     ];
 
-    expect(getVisiblePreviewer(test9)).toBe("slugContent");
+    expect((<PreviewerStateType>getVisiblePreviewer(test9)).id).toBe("slugContent");
   });
 });
