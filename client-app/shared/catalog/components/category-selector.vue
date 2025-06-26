@@ -36,7 +36,16 @@
         >
           <span>{{ item.name }}</span>
 
-          <span class="ml-auto">{{ item.facet?.count }}</span>
+          <VcBadge
+            v-if="item.facet?.count"
+            class="ml-auto items-center"
+            variant="outline"
+            size="sm"
+            rounded
+            color="secondary"
+          >
+            {{ $n(item.facet.count, "decimal") }}
+          </VcBadge>
         </router-link>
       </div>
     </template>
