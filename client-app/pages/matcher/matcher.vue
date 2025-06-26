@@ -30,9 +30,10 @@
 
 <script setup lang="ts">
 import { computed, defineAsyncComponent, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import { useThemeContext, useRouteQueryParam } from "@/core/composables";
 import { getVisiblePreviewer } from "./priorityManager";
-import type { StateType, PreviewerStateType } from "./priorityManager";
+import type { PreviewerStateType, UpdateStateEventArgs } from "./priorityManager";
 import NotFound from "@/pages/404.vue";
 
 interface IProps {
@@ -50,6 +51,8 @@ const DEFAULT_PRIORITIES = {
 const BuilderIo = defineAsyncComponent(() => import("@/pages/matcher/builderIo/builder-io.vue"));
 const SlugContent = defineAsyncComponent(() => import("@/pages/matcher/slug-content.vue"));
 const Internal = defineAsyncComponent(() => import("@/pages/matcher/internal.vue"));
+
+const router = useRouter();
 
 const { modulesSettings, themeContext } = useThemeContext();
 
@@ -93,11 +96,22 @@ const previewers = ref<{ [key in string]: PreviewerStateType }>({
   },
 });
 
-const visibleComponent = computed(() => getVisiblePreviewer(Object.values(previewers.value)));
+const visibleComponent = computed(() => {
+  const result = getVisiblePreviewer(Object.values(previewers.value));
+  if (result && result !== "loader") {
+    if (result.state === "redirect" && result.redirectUrl) {
+      router.replace({ path: result.redirectUrl });
+    }
+    return result.id;
+  }
+  return result;
+});
 
-function updateState(state: StateType, previewerId: PreviewerStateType["id"]) {
+function updateState(eventArgs: UpdateStateEventArgs, previewerId: PreviewerStateType["id"]) {
+  const { state, redirectUrl } = eventArgs;
   if (previewers.value[previewerId]) {
     previewers.value[previewerId].state = state;
+    previewers.value[previewerId].redirectUrl = redirectUrl;
   }
 }
 
