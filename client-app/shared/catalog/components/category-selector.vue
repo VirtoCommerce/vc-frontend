@@ -38,7 +38,8 @@
 
           <VcBadge
             v-if="item.facet?.count"
-            class="ml-auto items-center"
+            class=""
+            :class="['ml-auto', 'items-center', 'h-3.5', { 'px-1': item.facet.count > 9 }]"
             variant="outline"
             size="sm"
             rounded
