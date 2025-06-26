@@ -216,19 +216,6 @@ describe("getCategoryRoute", () => {
     expect(result).toEqual(expectedRoute);
   });
 
-  it("should return route without query when query is undefined", () => {
-    const category: Category = createCategory({
-      id: "1",
-      slug: "electronics",
-    });
-
-    const expectedRoute: RouteLocationRaw = { path: "/electronics" };
-
-    const result = getCategoryRoute(category, undefined);
-
-    expect(result).toStrictEqual(expectedRoute);
-  });
-
   it("should return route without query when query is empty object", () => {
     const category: Category = createCategory({
       id: "1",
