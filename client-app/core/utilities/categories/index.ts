@@ -5,13 +5,13 @@ export function getCategoryRoute(category: Pick<Category, "id" | "slug">, query?
   if (category.slug) {
     return {
       path: `/${category.slug}`,
-      query,
+      ...(query && { query }),
     };
   }
 
   return {
     name: "Category",
     params: { categoryId: category.id },
-    query,
+    ...(query && { query }),
   };
 }

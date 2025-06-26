@@ -32,7 +32,7 @@
           v-for="(item, index) in subcategories"
           :key="index"
           :to="subcategoriesRoutes[item.id]"
-          class="items-stretc -mx-2 mt-0.5 flex truncate rounded-sm px-2 py-0.5 text-sm transition-colors hover:bg-neutral-50"
+          class="-mx-2 mt-0.5 flex truncate rounded-sm px-2 py-0.5 text-sm transition-colors hover:bg-neutral-50"
         >
           <span>{{ item.name }}</span>
 

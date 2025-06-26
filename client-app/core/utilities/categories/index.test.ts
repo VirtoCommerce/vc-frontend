@@ -48,11 +48,11 @@ describe("getCategoryRoute", () => {
       slug: "electronics",
     });
 
-    const expectedRoute: RouteLocationRaw = "/electronics";
+    const expectedRoute: RouteLocationRaw = { path: "/electronics" };
 
     const result = getCategoryRoute(category);
 
-    expect(result).toBe(expectedRoute);
+    expect(result).toStrictEqual(expectedRoute);
   });
 
   it("should return named route when category slug is undefined", () => {
@@ -93,11 +93,11 @@ describe("getCategoryRoute", () => {
       slug: "books",
     });
 
-    const expectedRoute: RouteLocationRaw = "/books";
+    const expectedRoute: RouteLocationRaw = { path: "/books" };
 
     const result = getCategoryRoute(category);
 
-    expect(result).toBe(expectedRoute);
+    expect(result).toStrictEqual(expectedRoute);
   });
 
   it("should handle CategoryTreeItemType without slug", () => {
