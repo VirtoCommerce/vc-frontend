@@ -194,4 +194,24 @@ describe("getVisiblePreviewer", () => {
 
     expect((<PreviewerStateType>getVisiblePreviewer(test9)).id).toBe("slugContent");
   });
+
+  it("returns redirect if others are empty", () => {
+    const test10: PreviewerStateType[] = [
+      { id: "builderIo", priority: 3, state: "empty", isActive: true },
+      { id: "slugContent", priority: 2, state: "redirect", isActive: true },
+      { id: "internal", priority: 1, state: "empty", isActive: true },
+    ];
+
+    expect((<PreviewerStateType>getVisiblePreviewer(test10)).id).toBe("slugContent");
+  });
+
+  it("returns builderIo if it is ready but array has redirect", () => {
+    const test11: PreviewerStateType[] = [
+      { id: "builderIo", priority: 3, state: "ready", isActive: true },
+      { id: "slugContent", priority: 2, state: "redirect", isActive: true },
+      { id: "internal", priority: 1, state: "empty", isActive: true },
+    ];
+
+    expect((<PreviewerStateType>getVisiblePreviewer(test11)).id).toBe("builderIo");
+  });
 });

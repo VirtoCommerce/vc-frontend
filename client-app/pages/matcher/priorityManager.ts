@@ -22,14 +22,15 @@ export function getVisiblePreviewer(previewers: PreviewerStateType[]): Previewer
     return null;
   }
 
-  if (activeUnits[0].state === "ready") {
-    return activeUnits[0];
-  }
-
   const redirectUnit = activeUnits.find((el) => el.state === "redirect");
   const nonEmptyUnits = activeUnits.filter((el) => el.state !== "redirect");
+
   if (!nonEmptyUnits.length && redirectUnit) {
     return redirectUnit;
+  }
+
+  if (nonEmptyUnits?.[0].state === "ready") {
+    return nonEmptyUnits[0];
   }
 
   return "loader";
