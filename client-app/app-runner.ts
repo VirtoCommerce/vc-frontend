@@ -149,7 +149,7 @@ export default async () => {
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
   void initializeHotjar();
-  void initNews(i18n);
+  void initNews(router, i18n);
 
   // Plugins
   app.use(head);
