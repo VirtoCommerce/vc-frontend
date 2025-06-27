@@ -1,12 +1,15 @@
 import path from "path";
-import graphql from "@rollup/plugin-graphql";
+import graphqlImport from "@rollup/plugin-graphql";
 import vue from "@vitejs/plugin-vue";
 import browserslistToEsbuild from "browserslist-to-esbuild";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
 import { checker } from "vite-plugin-checker";
-import mkcert from "vite-plugin-mkcert";
+import mkcertImport from "vite-plugin-mkcert";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
+
+const mkcert = mkcertImport.default ?? mkcertImport;
+const graphql = graphqlImport.default ?? graphqlImport;
 
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
   const dontTrustSelfSignedCertificate = false;
