@@ -26,6 +26,7 @@
           :category="currentCategory"
           :loading="!currentCategory && loadingCategory"
           class="category__selector"
+          :category-facets="categoryFacets"
         />
 
         <ProductsFilters
@@ -280,6 +281,9 @@ import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-po
 const props = defineProps<IProps>();
 
 const viewModes = ["grid", "list"] as const;
+
+const CATEGORY_FACET_PARAM_NAME = "__outline_named";
+
 type ViewModeType = (typeof viewModes)[number];
 
 interface IProps {
@@ -327,6 +331,10 @@ const filtersToShow = computed(() => {
     ...productsFilters.value,
     facets: productsFilters.value.facets.filter((facet) => !facetsToHide.value?.includes(facet.paramName)),
   };
+});
+
+const categoryFacets = computed(() => {
+  return filtersToShow.value.facets.find((el) => el.paramName === CATEGORY_FACET_PARAM_NAME)?.values;
 });
 
 const { themeContext } = useThemeContext();
