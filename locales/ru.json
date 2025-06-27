@@ -674,7 +674,7 @@
         }
       },
       "discount_badge": {
-        "off": "скидка"
+        "off": "-{discount}"
       },
       "branches_modal": {
         "title": "Выбрать филиал",
