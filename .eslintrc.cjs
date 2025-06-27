@@ -238,12 +238,6 @@ module.exports = {
       rules: {
         "no-console": "off",
       }
-    },
-    {
-      files: ['tailwind.config.ts'],
-      rules: {
-        '@typescript-eslint/no-unsafe-assignment': 'off'
-      }
     }
   ],
   globals: {
