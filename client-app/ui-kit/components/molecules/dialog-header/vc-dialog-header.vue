@@ -12,7 +12,13 @@
       </div>
     </slot>
 
-    <button v-if="closable" type="button" class="vc-dialog-header__close" @click="$emit('close')">
+    <button
+      v-if="closable"
+      type="button"
+      class="vc-dialog-header__close"
+      :aria-label="$t('ui_kit.buttons.close')"
+      @click="$emit('close')"
+    >
       <VcIcon name="delete-thin" :size="16" />
     </button>
   </div>
