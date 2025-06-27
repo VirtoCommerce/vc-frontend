@@ -27,7 +27,7 @@ import type { NewsArticleContent } from "../api/graphql/types";
 const newsArticles = ref<NewsArticleContent[]>([]);
 
 const fetchNewsArticles = async () => {
-  const response = await getNewsArticles({ languageCode: "en-US", storeId: "B2B-store" });
+  const response = await getNewsArticles({});
   newsArticles.value = response.items ?? [];
 };
 

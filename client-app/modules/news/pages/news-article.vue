@@ -29,7 +29,7 @@ interface IProps {
 const newsArticle = ref<NewsArticleContent>();
 
 const fetchNewsArticle = async () => {
-  const response = await getNewsArticle({ id: props.articleId, languageCode: "en-US", storeId: "B2B-store" });
+  const response = await getNewsArticle({ id: props.articleId });
   newsArticle.value = response;
 };
 
