@@ -5,14 +5,7 @@
     </VcTypography>
     <router-link :to="{ name: 'NewsArticles' }"> back-link </router-link>
 
-    <div v-if="newsArticle">
-      <div>
-        {{ newsArticle.title }}
-      </div>
-      <div>
-        {{ newsArticle.content }}
-      </div>
-    </div>
+    <NewsArticle v-if="newsArticle" :news-article="newsArticle" />
   </div>
 </template>
 
@@ -20,11 +13,12 @@
 import { ref, watchEffect } from "vue";
 import { getNewsArticle } from "../api/graphql/queries/newsArticle";
 import type { NewsArticleContent } from "../api/graphql/types";
+import NewsArticle from "@/modules/news/components/news-article.vue";
 
-const props = defineProps<IProps>();
 interface IProps {
   articleId: string;
 }
+const props = defineProps<IProps>();
 
 const newsArticle = ref<NewsArticleContent>();
 

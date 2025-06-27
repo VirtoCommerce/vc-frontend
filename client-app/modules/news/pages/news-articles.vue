@@ -4,18 +4,7 @@
       {{ $t("news.title") }}
     </VcTypography>
 
-    <div v-if="newsArticles.length">
-      <div v-for="item in newsArticles" :key="item.id">
-        <div>
-          <router-link :to="{ name: 'NewsArticle', params: { articleId: item.id } }">
-            {{ item.title }}
-          </router-link>
-        </div>
-        <div>
-          {{ item.content }}
-        </div>
-      </div>
-    </div>
+    <NewsArticlePreview v-for="item in newsArticles" :key="item.id" :news-article="item" />
   </div>
 </template>
 
@@ -23,6 +12,7 @@
 import { ref, watchEffect } from "vue";
 import { getNewsArticles } from "../api/graphql/queries/newsArticles";
 import type { NewsArticleContent } from "../api/graphql/types";
+import NewsArticlePreview from "@/modules/news/components/news-article-preview.vue";
 
 const newsArticles = ref<NewsArticleContent[]>([]);
 
