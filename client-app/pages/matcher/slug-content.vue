@@ -29,7 +29,7 @@ import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect, computed } f
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
 import { useStaticPage } from "@/shared/static-content";
-import type { StateType } from "@/pages/matcher/priorityManager";
+import type { StateType, UpdateStateEventArgs } from "@/pages/matcher/priorityManager";
 
 interface IProps {
   pathMatch?: string[];
@@ -37,7 +37,7 @@ interface IProps {
 }
 
 interface IEmits {
-  (event: "setState", value: StateType): void;
+  (event: "setState", value: UpdateStateEventArgs): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -89,21 +89,27 @@ enum ObjectType {
 
 watchEffect(() => {
   if (loading.value) {
-    emit("setState", "loading");
+    emitState("loading");
   } else if (
     [ObjectType.Catalog, ObjectType.Category, ObjectType.CatalogProduct, ObjectType.Brands, ObjectType.Brand].includes(
       objectType.value as ObjectType,
     )
   ) {
-    emit("setState", "ready");
+    emitState("ready");
   } else if (pageDocumentContent.value) {
-    emit("setState", "ready");
+    emitState("ready");
   } else if (pageContent.value) {
-    emit("setState", "ready");
+    emitState("ready");
+  } else if (slugInfo.value?.redirectUrl) {
+    emitState("redirect", slugInfo.value.redirectUrl);
   } else {
-    emit("setState", "empty");
+    emitState("empty");
   }
 });
+
+function emitState(state: StateType, redirectUrl?: string) {
+  emit("setState", { state, redirectUrl });
+}
 
 watch(slugInfo, () => {
   const type = slugInfo.value?.entityInfo?.objectType;
