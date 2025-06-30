@@ -6,11 +6,9 @@
 
 <style lang="scss">
 .badges-wrapper {
-  --decorative-corner-radius: theme("borderRadius.sm");
-  --decorative-size: calc(var(--decorative-corner-radius) * 2);
-  --padding: theme("spacing.1");
+  --decorative-size: calc(theme("borderRadius.sm") * 2);
 
-  @apply absolute -left-px -top-px flex items-center gap-1 z-[1] bg-additional-50 max-w-full rounded-br-[var(--decorative-size)] pb-[var(--padding)] pr-[var(--padding)] pl-px pt-px;
+  @apply absolute -left-px -top-px flex items-center gap-1 z-[1] bg-additional-50 max-w-full rounded-br-[var(--decorative-size)] pb-1 pr-1 pl-px pt-px;
 
   &:empty {
     @apply hidden;

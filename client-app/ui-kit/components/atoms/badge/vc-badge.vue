@@ -95,6 +95,10 @@ withDefaults(defineProps<IProps>(), {
     @apply rounded-full;
   }
 
+  &--nowrap {
+    @apply whitespace-nowrap;
+  }
+
   &--truncate {
     $truncate: &;
   }
