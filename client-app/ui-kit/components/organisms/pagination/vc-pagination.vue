@@ -163,7 +163,7 @@ const setPage = (page: number) => {
   $compact: "";
   $wrapped: "";
 
-  @apply flex;
+  @apply flex max-w-full;
 
   &--compact {
     $compact: &;
