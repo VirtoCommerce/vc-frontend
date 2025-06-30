@@ -4,7 +4,7 @@
       <VcMarkdownRender :src="newsArticle.contentPreview ?? ''" class="text-lg" />
     </router-link>
     <template v-if="newsArticle.publishDate" #footer>
-      <div class="text-right">{{ $d(newsArticle.publishDate) }}</div>
+      <div class="text-right text-sm text-neutral">{{ $d(newsArticle.publishDate) }}</div>
     </template>
   </VcWidget>
 </template>

@@ -1,11 +1,11 @@
 <template>
   <VcEmptyPage v-if="!loading && !newsArticles?.length" :title="$t('news.title-empty')"></VcEmptyPage>
   <VcContainer v-else>
-    <div v-if="loading">
-      <VcWidgetSkeleton v-for="i in 3" :key="i" head size="lg" class="mt-4"></VcWidgetSkeleton>
+    <div v-if="loading" class="grid grid-cols-2 gap-4">
+      <VcWidgetSkeleton v-for="i in 3" :key="i" head size="lg"></VcWidgetSkeleton>
     </div>
-    <div v-if="!loading && newsArticles?.length">
-      <NewsArticlePreview v-for="item in newsArticles" :key="item.id" :news-article="item" class="mt-4" />
+    <div v-if="!loading && newsArticles?.length" class="grid grid-cols-2 gap-4">
+      <NewsArticlePreview v-for="item in newsArticles" :key="item.id" :news-article="item" />
     </div>
   </VcContainer>
 </template>
