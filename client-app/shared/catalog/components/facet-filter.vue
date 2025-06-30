@@ -42,7 +42,13 @@
           <span>{{ item.label }}</span>
 
           <template #append>
-            <VcBadge variant="outline" size="sm" rounded color="secondary">
+            <VcBadge
+              :class="{ 'px-1': item.count && item.count > 9 }"
+              variant="outline"
+              size="sm"
+              rounded
+              color="secondary"
+            >
               {{ $n(Number(item.count), "decimal") }}
             </VcBadge>
           </template>

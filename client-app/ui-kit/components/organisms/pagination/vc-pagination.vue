@@ -39,10 +39,11 @@
           size="sm"
           :disabled="page === 1"
           no-wrap
-          :square="compact"
+          :icon="compact"
           @click="setPage(page - 1)"
         >
           <VcIcon name="chevron-left" />
+
           <span v-if="!compact">{{ $t("ui_kit.pagination.previous") }}</span>
         </VcButton>
 
@@ -54,10 +55,11 @@
           size="sm"
           :disabled="page === pages"
           no-wrap
-          :square="compact"
+          :icon="compact"
           @click="setPage(page + 1)"
         >
           <span v-if="!compact">{{ $t("ui_kit.pagination.next") }}</span>
+
           <VcIcon name="chevron-right" />
         </VcButton>
       </div>
@@ -157,6 +159,7 @@ const setPage = (page: number) => {
 
 <style lang="scss">
 .vc-pagination {
+  $self: &;
   $compact: "";
   $wrapped: "";
 
@@ -215,6 +218,10 @@ const setPage = (page: number) => {
   }
 
   &__button {
+    #{$self}:not(#{$compact}) & {
+      @apply min-w-[6.5rem];
+    }
+
     &--prev {
       @apply order-1;
     }
