@@ -19,12 +19,7 @@ A **Module** is an additional functionality developed with minimal impact on the
 
 ### Extension points
 **Extension points** are belong to the **Core**. Also called **Holes** or **Sockets**
-### Existing Extension points:
-- `client-app/shared/common/composables/useCustomProductComponents.ts`
-- `client-app/shared/layout/composables/useCustomAccountLinkComponents.ts`
-- `client-app/shared/layout/composables/useCustomHeaderLinkComponents.ts`
-- `client-app/shared/layout/composables/useCustomMobileHeaderComponents.ts`
-- `client-app/shared/layout/composables/useCustomMobileMenuLinkComponents.ts`
+You can read more about them in the [Extension points](../shared/common/composables/extensionRegistry/README.md) documentation.
 
 ### Module Management System
 The **Module Management System** is the decision-making point and business logic handler. It is represented as a [settings_data.json](../config/settings_data.json) as a bundle level and an array of `modules` in the `getStore` request as a store level settings. Could be considered as a "Feature Flags".

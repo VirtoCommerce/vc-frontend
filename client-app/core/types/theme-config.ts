@@ -212,7 +212,6 @@ export interface IThemeConfigSettings {
 
   wishlists_limit?: number;
 
-  search_min_chars?: number;
   search_max_chars?: number;
   search_static_content_suggestions_enabled?: boolean;
   search_product_phrase_suggestions_enabled?: boolean;

@@ -6,7 +6,6 @@
   >
     <FiltersPopupSidebar
       :is-exist-selected-facets="hasSelectedFacets"
-      :is-popup-sidebar-filter-dirty="isFiltersDirty"
       :popup-sidebar-filters="productsFilters"
       :facets-loading="fetchingFacets"
       :is-mobile="isMobile"
@@ -15,8 +14,6 @@
       :hide-controls="false"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
-      @open-branches-modal="openBranchesModal"
-      @update-popup-sidebar-filters="updateFiltersSidebar"
       @apply-filters="applyFilters"
     />
 
@@ -187,18 +184,14 @@ const {
   pagesCount: variationsPagesCount,
   fetchingFacets,
   fetchProducts,
-  getFacets,
   hasSelectedFacets,
-  isFiltersDirty,
   isFiltersSidebarVisible,
   productsFilters,
   applyFilters: _applyFilters,
   hideFiltersSidebar,
-  openBranchesModal,
   removeFacetFilter: _removeFacetFilter,
   resetFacetFilters: _resetFacetFilters,
   showFiltersSidebar,
-  updateProductsFilters,
 } = useProducts({
   withFacets: true,
   filtersDisplayOrder,
@@ -275,19 +268,6 @@ async function changeVariationsPage(pageNumber: number): Promise<void> {
   await fetchProducts(variationsSearchParams.value);
 }
 
-async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<void> {
-  const searchParamsForFacets: ProductsSearchParamsType = {
-    filter: getFilterExpression([variationsFilterExpression.value, getFilterExpressionFromFacets(newFilters.facets)]),
-  };
-
-  updateProductsFilters({
-    branches: newFilters.branches,
-    inStock: newFilters.inStock,
-    purchasedBefore: newFilters.purchasedBefore,
-    facets: await getFacets(searchParamsForFacets),
-  });
-}
-
 async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
   _applyFilters(newFilters);
 
@@ -306,7 +286,7 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
 async function removeFacetFilter(
   payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">,
 ): Promise<void> {
-  _removeFacetFilter(payload);
+  void _removeFacetFilter(payload);
 
   variationsSearchParams.value.page = 1;
   variationsSearchParams.value.filter = getFilterExpression([
@@ -320,7 +300,7 @@ async function removeFacetFilter(
 }
 
 async function resetFacetFilters(): Promise<void> {
-  _resetFacetFilters();
+  void _resetFacetFilters();
 
   variationsSearchParams.value.page = 1;
   variationsSearchParams.value.filter = getFilterExpression([variationsFilterExpression.value]);
