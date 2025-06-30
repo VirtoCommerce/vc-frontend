@@ -1,8 +1,11 @@
 <template>
   <VcWidget :title="newsArticle.title">
     <router-link :to="{ name: 'NewsArticle', params: { articleId: newsArticle.id } }">
-      <VcMarkdownRender :src="newsArticle.contentPreview ?? ''" class="text-center text-lg" />
+      <VcMarkdownRender :src="newsArticle.contentPreview ?? ''" class="text-lg" />
     </router-link>
+    <template v-if="newsArticle.publishDate" #footer>
+      <div class="text-right">{{ $d(newsArticle.publishDate) }}</div>
+    </template>
   </VcWidget>
 </template>
 

@@ -1,10 +1,12 @@
 <template>
   <div>
-    <router-link :to="{ name: 'NewsArticles' }" class="text-[--link-color] hover:text-[--link-hover-color]">
-      back-link
-    </router-link>
-
-    <NewsArticle v-if="newsArticle" :news-article="newsArticle" />
+    <VcEmptyPage v-if="!newsArticle" :title="$t('news.title-not-found')"> </VcEmptyPage>
+    <VcContainer v-else>
+      <router-link :to="{ name: 'NewsArticles' }" class="text-[--link-color] hover:text-[--link-hover-color]">
+        {{ $t("news.links.to-list") }}
+      </router-link>
+      <NewsArticle :news-article="newsArticle" />
+    </VcContainer>
   </div>
 </template>
 

@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <VcEmptyPage v-if="!newsArticles.length" :title="$t('news.title-empty')"> </VcEmptyPage>
+  <VcContainer v-else>
     <NewsArticlePreview v-for="item in newsArticles" :key="item.id" :news-article="item" />
-  </div>
+  </VcContainer>
 </template>
 
 <script lang="ts" setup>

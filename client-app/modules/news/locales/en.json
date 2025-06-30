@@ -1,5 +1,9 @@
 {
   "news": {
-    "title": "[en] news page title"
+    "title-empty": "No news",
+    "title-not-found": "Not found",
+    "links": {
+      "to-list": "All news"
+    }
   }
 }
