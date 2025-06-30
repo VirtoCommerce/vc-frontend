@@ -21,8 +21,10 @@ const newsArticles = ref<NewsArticleContent[]>([]);
 
 const fetchNewsArticles = async () => {
   loading.value = true;
+
   const response = await getNewsArticles({});
   newsArticles.value = response.items ?? [];
+
   loading.value = false;
 };
 

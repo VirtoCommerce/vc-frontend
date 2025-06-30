@@ -27,8 +27,10 @@ const newsArticle = ref<NewsArticleContent>();
 
 const fetchNewsArticle = async () => {
   loading.value = true;
+
   const response = await getNewsArticle({ id: props.articleId });
   newsArticle.value = response;
+
   loading.value = false;
 };
 
