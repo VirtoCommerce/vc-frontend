@@ -166,6 +166,7 @@ export interface IThemeConfigSettings {
   product_compare_limit?: number;
   product_filters_sorting?: boolean;
   product_filters_sorting_direction?: SortDirection | string;
+  product_quantity_control?: "stepper" | "button";
   out_of_stock_order_enabled?: boolean;
   search_suggestions_category_enabled?: boolean;
   search_suggestions_category_limit?: number;
@@ -211,7 +212,6 @@ export interface IThemeConfigSettings {
 
   wishlists_limit?: number;
 
-  search_min_chars?: number;
   search_max_chars?: number;
   search_static_content_suggestions_enabled?: boolean;
   search_product_phrase_suggestions_enabled?: boolean;

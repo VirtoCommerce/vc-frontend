@@ -397,7 +397,6 @@
         "pages_label": "页面",
         "suggestions_label": "建议",
         "no_results": "您的 {keyword} 查询未返回任何结果",
-        "enter_keyword_placeholder": "在这里搜索产品",
         "search_button": "搜索",
         "view_all_results_button": "查看所有 {total} 个结果",
         "barcode_detector": {
@@ -410,7 +409,11 @@
           },
           "browse": "浏览文件",
           "cancel": "@:common.buttons.cancel"
-        }
+        },
+        "enter_keyword_placeholder": "搜索全店",
+        "enter_keyword_placeholder_category": "在 {category} 中搜索",
+        "scope_loading_label": "正在加载搜索上下文",
+        "scope_remove_label": "移除：{label}"
       },
       "language_selector": {
         "label": "中文："
@@ -733,6 +736,7 @@
         "title": "选择支付方式"
       },
       "select_address_modal": {
+        "message": "选择运输地址",
         "meta": {
           "table_description": "可用地址"
         },
@@ -740,7 +744,7 @@
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
-        "add_address_button": "@:common.buttons.add_new_address",
+        "add_address_button": "@:common.buttons.add_new",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "您尚未有任何地址",
@@ -752,6 +756,14 @@
         "select_button": "@:common.buttons.select",
         "price_label": "@:common.labels.price{':'}",
         "title": "选择运输方式"
+      },
+      "select_bopis_modal": {
+        "title": "自提点",
+        "location_label": "位置",
+        "working_hours_label": "工作时间",
+        "description_label": "描述",
+        "contact_phone_label": "联系电话",
+        "contact_email_label": "联系邮箱"
       }
     },
     "bulk_order": {
@@ -1332,7 +1344,9 @@
         "title": "已购买过",
         "tooltip_text": "选择以仅显示之前购买过的商品",
         "checkbox_label": "之前购买"
-      }
+      },
+      "search_in_category": "在 {category} 中搜索“{keyword}”",
+      "products_found_message_search": "找到结果 | 找到结果"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

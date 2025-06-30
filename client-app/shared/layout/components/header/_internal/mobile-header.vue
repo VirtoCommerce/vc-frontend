@@ -177,7 +177,6 @@ const searchPageLink = computed<RouteLocationRaw>(() => ({
 
 function reset() {
   searchPhrase.value = "";
-  void router.push({ name: ROUTES.SEARCH.NAME });
 }
 
 function onBarcodeScanned(value: string) {
