@@ -499,7 +499,7 @@ export function _useFullCart() {
               addOrUpdateCartPayment: merge({}, cart.value!, {
                 payments: [
                   {
-                    __typename: "CartAddressType",
+                    __typename: "PaymentType",
                     id: value.id,
                     paymentGatewayCode: value.paymentGatewayCode,
                     billingAddress: generateCacheIdIfNew(value.billingAddress, "CartAddressType"),
