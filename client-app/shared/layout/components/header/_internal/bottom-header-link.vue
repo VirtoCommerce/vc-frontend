@@ -24,6 +24,7 @@
             rounded
             nowrap
             size="sm"
+            max-width="none"
           >
             {{ $n(count, { style: "decimal", notation: "compact" }) }}
           </VcBadge>

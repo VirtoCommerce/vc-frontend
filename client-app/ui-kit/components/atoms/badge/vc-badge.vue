@@ -27,12 +27,14 @@ interface IProps {
   truncate?: boolean;
   nowrap?: boolean;
   square?: boolean;
+  maxWidth?: string;
 }
 
 withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   variant: "solid",
+  maxWidth: "",
 });
 </script>
 
@@ -43,7 +45,10 @@ withDefaults(defineProps<IProps>(), {
   $truncate: "";
   $square: "";
 
-  @apply flex-none inline-flex align-top min-h-[var(--size)] min-w-[var(--size)] max-w-full border rounded-sm font-bold;
+  --props-max-width: v-bind(maxWidth);
+  --max-width: var(--props-max-width, var(--vc-badge-max-width, 100%));
+
+  @apply flex-none inline-flex align-top min-h-[--size] min-w-[--size] max-w-[--max-width] border rounded-sm font-bold;
 
   &--size {
     &--xs {
