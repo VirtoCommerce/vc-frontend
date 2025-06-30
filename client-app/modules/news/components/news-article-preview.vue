@@ -1,16 +1,15 @@
 <template>
-  <div>
+  <VcWidget :title="newsArticle.title">
     <router-link :to="{ name: 'NewsArticle', params: { articleId: newsArticle.id } }">
-      {{ newsArticle.title }}
+      <VcMarkdownRender :src="newsArticle.contentPreview ?? ''" class="text-center text-lg" />
     </router-link>
-  </div>
-  <div>
-    {{ newsArticle.contentPreview }}
-  </div>
+  </VcWidget>
 </template>
 
 <script lang="ts" setup>
 import { toRef } from "vue";
+import { VcWidget } from "@/ui-kit/components";
+import { VcMarkdownRender } from "@/ui-kit/components/atoms";
 import type { NewsArticleContent } from "../api/graphql/types";
 
 interface IProps {

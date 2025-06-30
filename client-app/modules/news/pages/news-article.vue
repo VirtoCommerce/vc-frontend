@@ -1,9 +1,8 @@
 <template>
   <div>
-    <VcTypography tag="h1">
-      {{ $t("news.title") }}
-    </VcTypography>
-    <router-link :to="{ name: 'NewsArticles' }"> back-link </router-link>
+    <router-link :to="{ name: 'NewsArticles' }" class="text-[--link-color] hover:text-[--link-hover-color]">
+      back-link
+    </router-link>
 
     <NewsArticle v-if="newsArticle" :news-article="newsArticle" />
   </div>

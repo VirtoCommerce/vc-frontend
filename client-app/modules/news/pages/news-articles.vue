@@ -1,9 +1,5 @@
 <template>
   <div>
-    <VcTypography tag="h1">
-      {{ $t("news.title") }}
-    </VcTypography>
-
     <NewsArticlePreview v-for="item in newsArticles" :key="item.id" :news-article="item" />
   </div>
 </template>

@@ -1,16 +1,13 @@
 <template>
-  <div v-if="newsArticle">
-    <div>
-      {{ newsArticle.title }}
-    </div>
-    <div>
-      {{ newsArticle.content }}
-    </div>
-  </div>
+  <VcWidget :title="newsArticle.title">
+    <VcMarkdownRender :src="newsArticle.content ?? ''" class="text-center text-lg" />
+  </VcWidget>
 </template>
 
 <script lang="ts" setup>
 import { toRef } from "vue";
+import { VcWidget } from "@/ui-kit/components";
+import { VcMarkdownRender } from "@/ui-kit/components/atoms";
 import type { NewsArticleContent } from "../api/graphql/types";
 
 interface IProps {
