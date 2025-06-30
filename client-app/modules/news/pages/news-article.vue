@@ -34,5 +34,3 @@ const fetchNewsArticle = async () => {
 
 watchEffect(fetchNewsArticle);
 </script>
-
-<style lang="scss"></style>

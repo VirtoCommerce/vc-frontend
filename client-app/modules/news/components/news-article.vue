@@ -17,5 +17,6 @@ interface IProps {
   newsArticle: NewsArticleContent;
 }
 const props = defineProps<IProps>();
+
 const newsArticle = toRef(props, "newsArticle");
 </script>
