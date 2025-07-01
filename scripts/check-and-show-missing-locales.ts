@@ -1,6 +1,6 @@
-import groupBy from "lodash/groupBy";
-import { main as checkLocales } from "./check-locales-missing-keys";
-import type { MissingKeyType } from "./check-locales-missing-keys";
+import groupBy from "lodash/groupBy.js";
+import { main as checkLocales } from "./check-locales-missing-keys.js";
+import type { MissingKeyType } from "./check-locales-missing-keys.js";
 
 function showMissingKeys(missingKeys: MissingKeyType[]) {
   const groupedByLanguages = groupBy(missingKeys, ({ originFile, targetFile }) => `${originFile}|${targetFile}`);
