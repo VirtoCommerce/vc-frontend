@@ -1,10 +1,10 @@
 <template>
   <VcEmptyPage v-if="!loading && !newsArticles?.length" :title="$t('news.title-empty')"></VcEmptyPage>
   <VcContainer v-else>
-    <div v-if="loading" class="grid grid-cols-2 gap-4">
-      <VcWidgetSkeleton v-for="i in 3" :key="i" head size="lg"></VcWidgetSkeleton>
+    <div v-if="loading" class="news-articles-grid">
+      <VcWidgetSkeleton v-for="i in 8" :key="i" head size="lg"></VcWidgetSkeleton>
     </div>
-    <div v-if="!loading && newsArticles?.length" class="grid grid-cols-2 gap-4">
+    <div v-if="!loading && newsArticles?.length" class="news-articles-grid">
       <NewsArticlePreview v-for="item in newsArticles" :key="item.id" :news-article="item" />
     </div>
   </VcContainer>
@@ -30,3 +30,29 @@ const fetchNewsArticles = async () => {
 
 watchEffect(fetchNewsArticles);
 </script>
+
+<style lang="scss">
+.news-articles-grid {
+  @apply grid;
+
+  @media (min-width: theme("screens.xs")) {
+    @apply grid-cols-1 gap-2;
+  }
+
+  @media (min-width: theme("screens.sm")) {
+    @apply grid-cols-2 gap-2;
+  }
+
+  @media (min-width: theme("screens.md")) {
+    @apply grid-cols-3 gap-3;
+  }
+
+  @media (min-width: theme("screens.lg")) {
+    @apply grid-cols-4 gap-4;
+  }
+
+  @media (min-width: theme("screens.xl")) {
+    @apply grid-cols-4 gap-4;
+  }
+}
+</style>

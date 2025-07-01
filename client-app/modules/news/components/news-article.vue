@@ -2,7 +2,7 @@
   <VcWidget :title="newsArticle.title">
     <VcMarkdownRender :src="newsArticle.content ?? ''" />
     <template v-if="newsArticle.publishDate" #footer>
-      <div class="text-right text-sm text-neutral">{{ $d(newsArticle.publishDate) }}</div>
+      <div class="mt-3 text-right text-sm text-neutral">{{ $d(newsArticle.publishDate) }}</div>
     </template>
   </VcWidget>
 </template>
