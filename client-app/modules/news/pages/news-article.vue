@@ -12,7 +12,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watchEffect } from "vue";
+import { useSeoMeta } from "@unhead/vue";
+import { computed, ref, watchEffect } from "vue";
+import { usePageTitle } from "@/core/composables";
 import { getNewsArticle } from "../api/graphql/queries/newsArticle";
 import type { NewsArticleContent } from "../api/graphql/types";
 import NewsArticle from "@/modules/news/components/news-article.vue";
@@ -25,6 +27,18 @@ const props = defineProps<IProps>();
 const loading = ref<boolean>(false);
 const newsArticle = ref<NewsArticleContent>();
 
+const seoTitle = computed(() => newsArticle.value?.seoInfo?.pageTitle || newsArticle.value?.title);
+const { title: pageTitle } = usePageTitle(seoTitle);
+
+const seoDescription = computed(() => newsArticle.value?.seoInfo?.metaDescription);
+const seoKeywords = computed(() => newsArticle.value?.seoInfo?.metaKeywords);
+
+const seoUrl = computed(() =>
+  newsArticle.value?.seoInfo?.semanticUrl
+    ? `${window.location.host}\${newsArticle.value?.seoInfo?.semanticUrl}`
+    : window.location.toString(),
+);
+
 const fetchNewsArticle = async () => {
   loading.value = true;
 
@@ -33,6 +47,16 @@ const fetchNewsArticle = async () => {
 
   loading.value = false;
 };
+
+useSeoMeta({
+  title: () => pageTitle.value,
+  keywords: () => seoKeywords.value,
+  description: () => seoDescription.value,
+  ogUrl: () => seoUrl.value,
+  ogTitle: () => pageTitle.value,
+  ogDescription: () => seoDescription.value,
+  ogType: () => "website",
+});
 
 watchEffect(fetchNewsArticle);
 </script>
