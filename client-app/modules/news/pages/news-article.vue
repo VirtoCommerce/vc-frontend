@@ -35,7 +35,7 @@ const seoKeywords = computed(() => newsArticle.value?.seoInfo?.metaKeywords);
 
 const seoUrl = computed(() =>
   newsArticle.value?.seoInfo?.semanticUrl
-    ? `${window.location.host}\${newsArticle.value?.seoInfo?.semanticUrl}`
+    ? `${window.location.host}\\${newsArticle.value?.seoInfo?.semanticUrl}`
     : window.location.toString(),
 );
 
