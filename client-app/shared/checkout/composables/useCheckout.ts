@@ -329,7 +329,7 @@ export function _useCheckout() {
           }
 
           const inputAddress: InputAddressType = {
-            ...omit(address, ["id", "isDefault", "description", "isFavorite"]),
+            ...omit(address, ["isDefault", "description", "isFavorite"]),
             addressType,
           };
 
