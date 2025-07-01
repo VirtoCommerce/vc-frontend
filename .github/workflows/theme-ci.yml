@@ -220,15 +220,27 @@ jobs:
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
-  deploy-cloud:
-    if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
-    needs: ci
-    uses: ./.github/workflows/deploy-cloud.yml
+  UI-auto-tests:
+    needs: 'ci'
+    if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push') && (needs.ci.outputs.run-e2e == 'true')) ||
+        (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request') }}
+    uses: VirtoCommerce/.github/.github/workflows/ui-autotests.yml@VCST-2789   
     with:
-      cmPath: 'theme/artifact.json'
-      artifactKey: 'URL'
-      artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
-      environmentId: ${{ ((github.event_name == 'pull_request' && github.base_ref == 'dev') || github.ref == 'refs/heads/master') && 'qa' || 'dev' }}
-      jiraKeys: ${{ needs.ci.outputs.jira-keys }}
-      forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
-    secrets: inherit
+      installModules: 'true'
+      installCustomModule: 'false'
+      platformDockerTag: 'linux-latest'
+    secrets:
+      envPAT: ${{ secrets.REPO_TOKEN }}
+
+  # deploy-cloud:
+  #   if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
+  #   needs: ci
+  #   uses: ./.github/workflows/deploy-cloud.yml
+  #   with:
+  #     cmPath: 'theme/artifact.json'
+  #     artifactKey: 'URL'
+  #     artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
+  #     environmentId: ${{ ((github.event_name == 'pull_request' && github.base_ref == 'dev') || github.ref == 'refs/heads/master') && 'qa' || 'dev' }}
+  #     jiraKeys: ${{ needs.ci.outputs.jira-keys }}
+  #     forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
+  #   secrets: inherit
