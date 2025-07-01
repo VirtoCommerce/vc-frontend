@@ -1,5 +1,5 @@
 <template>
-  <div ref="containerReference" class="vc-popover">
+  <div class="vc-popover">
     <div v-if="disableTriggerEvents" ref="reference" class="vc-popover__trigger">
       <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
     </div>
@@ -88,7 +88,6 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const opened = ref(false);
 const reference = ref<HTMLElement | null>(null);
-const containerReference = ref<HTMLElement | null>(null);
 const floating = ref<HTMLElement | null>(null);
 const floatingArrow = ref<Element | null>(null);
 const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs(props);
