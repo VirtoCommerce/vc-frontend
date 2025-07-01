@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { flip, offset, shift, useFloating, autoUpdate, arrow } from "@floating-ui/vue";
-import { onClickOutside, useFocusWithin } from "@vueuse/core";
+import { onClickOutside } from "@vueuse/core";
 import { ref, toRefs, computed, watch } from "vue";
 
 interface IEmits {
@@ -71,7 +71,6 @@ interface IProps {
   hover?: boolean;
   disableTriggerEvents?: boolean;
   arrowEnabled?: boolean;
-  closeOnBlur?: boolean;
   ariaLabel?: string;
   enableTeleport?: boolean;
   teleportSelector?: string;
@@ -136,8 +135,6 @@ function toggle() {
   opened.value = !opened.value;
 }
 
-const { focused } = useFocusWithin(containerReference);
-
 onClickOutside(
   reference,
   () => {
@@ -147,12 +144,6 @@ onClickOutside(
 );
 
 watch(opened, (value: boolean) => emit("toggle", value));
-
-watch(focused, (value: boolean) => {
-  if (!value && props.closeOnBlur) {
-    close();
-  }
-});
 </script>
 
 <style lang="scss">
