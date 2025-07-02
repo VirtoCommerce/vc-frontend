@@ -35,12 +35,13 @@ jobs:
         with:
           githubToken: ${{ secrets.REPO_TOKEN }}
 
-      - name: Increment Version
-        run: |
-          vc-build IncrementPatch
-          git add ${{ github.workspace }}/package.json
-          git commit -m "ci: Auto IncrementPatch"
-          git push
+        # - name: Increment Version
+        #   run: |
+        #     vc-build IncrementPatch
+        #     git add ${{ github.workspace }}/package.json
+        #     git commit -m "ci: Auto IncrementPatch"
+        #     git push
+
       - name: Get Image Version
         uses: VirtoCommerce/vc-github-actions/get-image-version@master
         id: image
