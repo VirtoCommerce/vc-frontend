@@ -38,15 +38,16 @@ try {
   console.warn("Firebase placeholder initialization failed:", e);
 }
 
-// Update configuration when received from main thread
+// Update configuration when received config from main thread
 self.addEventListener("message", (event) => {
   if (event.data.type === "initialize") {
     const { config } = event.data;
-    try {
-      if (!config || !config.apiKey || !config.projectId || !config.appId) {
-        return;
-      }
 
+    if (!config || !config.apiKey || !config.projectId || !config.appId) {
+      return;
+    }
+
+    try {
       if (firebaseApp && firebaseApp.options) {
         Object.assign(firebaseApp.options, config);
         isInitialized = true;
