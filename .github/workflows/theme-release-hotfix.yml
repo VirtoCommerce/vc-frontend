@@ -24,7 +24,7 @@ jobs:
       - name: Enable corepack
         run: |
           corepack enable
-          
+
       - name: Setup sonarqube
         uses: warchant/setup-sonar-scanner@v8
 
@@ -36,13 +36,6 @@ jobs:
         with:
           githubToken: ${{ secrets.REPO_TOKEN }}
 
-      # - name: Increment Version
-      #   run: |
-      #     vc-build IncrementPatch
-      #     git add ${{ github.workspace }}/package.json
-      #     git commit -m "ci: Auto IncrementPatch"
-      #     git push
-          
       - name: Get Image Version
         uses: VirtoCommerce/vc-github-actions/get-image-version@master
         id: image
@@ -52,19 +45,19 @@ jobs:
       - name: Set VERSION_SUFFIX variable
         run: |
           echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}" >> $GITHUB_ENV
-          
+
       - name: Set VERSION
         run: |
           echo "VERSION=${{ steps.image.outputs.prefix }}" >> $GITHUB_ENV
-          
+
       - name: Update package.json Version
         run: |
           yarn version ${{ env.VERSION }}
-          
+
       - name: Install dependencies
         run: |
           yarn install
-          
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
@@ -74,15 +67,15 @@ jobs:
       - name: Build
         run: |
           yarn build
-          
+
       - name: Unit Tests
         run: |
           yarn test:unit --run
-          
+
       - name: Typing Tests
         run: |
           yarn test:typing --run
-          
+
       - name: Add files to zip
         run: |
           mkdir -p ./tmp/default
@@ -91,7 +84,7 @@ jobs:
           cd ./tmp
           # zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./default
           zip -r ../artifacts/${GITHUB_REPOSITORY#*/}-${{ steps.image.outputs.prefix }}.zip ./default
-          
+
       - name: Publish to Blob
         id: blobRelease
         uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
