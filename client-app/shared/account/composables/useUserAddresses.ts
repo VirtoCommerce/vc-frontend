@@ -36,12 +36,16 @@ export function useUserAddresses() {
   }
 
   async function updateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
+    if (!user.value.memberId) {
+      return;
+    }
+
     loading.value = true;
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await updateMemberAddresses(user.value.memberId!, inputAddresses);
+      await updateMemberAddresses(user.value.memberId, inputAddresses);
     } catch (e) {
       Logger.error(`${useUserAddresses.name}.${updateAddresses.name}`, e);
       throw e;

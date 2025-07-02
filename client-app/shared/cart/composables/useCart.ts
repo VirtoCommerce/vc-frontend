@@ -49,10 +49,8 @@ import type {
   CartType,
   InputPaymentType,
   InputShipmentType,
-  AddOrUpdateCartPaymentMutation,
   AddOrUpdateCartShipmentMutation,
   AddOrUpdateCartShipmentMutationVariables,
-  AddOrUpdateCartPaymentMutationVariables,
   LineItemType,
   ConfigurationSectionInput,
 } from "@/core/api/graphql/types";
@@ -488,28 +486,7 @@ export function _useFullCart() {
 
   async function updatePayment(value: InputPaymentType): Promise<void> {
     try {
-      await _addOrUpdatePayment(
-        { command: { payment: value, ...commonVariables }, skipQuery: false },
-        {
-          optimisticResponse: (vars, { IGNORE }) => {
-            if ((vars as AddOrUpdateCartPaymentMutationVariables).command.payment.id === undefined) {
-              return IGNORE as AddOrUpdateCartPaymentMutation;
-            }
-            return {
-              addOrUpdateCartPayment: merge({}, cart.value!, {
-                payments: [
-                  {
-                    __typename: "CartAddressType",
-                    id: value.id,
-                    paymentGatewayCode: value.paymentGatewayCode,
-                    billingAddress: generateCacheIdIfNew(value.billingAddress, "CartAddressType"),
-                  },
-                ],
-              }),
-            };
-          },
-        },
-      );
+      await _addOrUpdatePayment({ command: { payment: value, ...commonVariables }, skipQuery: false });
     } catch (e) {
       Logger.error(updatePayment.name, e);
       notifications.error({ text: t("pages.account.order_payment.failure.title") });

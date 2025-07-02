@@ -113,17 +113,19 @@
           {{ $t("pages.demo_landing.products_block.message") }}
         </div>
 
-        <div class="grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4">
-          <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
-            <template #cart-handler>
-              <VcButton v-if="item.hasVariations" :to="productsRoutes[item.id]" class="mb-4">
-                {{ $t("pages.demo_landing.products_block.choose_button") }}
-              </VcButton>
-
-              <AddToCart v-else :product="item" />
-            </template>
-          </ProductCardGrid>
-        </div>
+        <VcProductsGrid
+          :columns="{
+            default: 1,
+            xs: 2,
+            sm: 2,
+            md: 3,
+            lg: 4,
+            xl: 4,
+            '2xl': 4,
+          }"
+        >
+          <ProductCard v-for="(item, index) in products" :key="index" :product="item" lazy />
+        </VcProductsGrid>
       </div>
     </div>
 
@@ -175,15 +177,12 @@ import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { onMounted, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBreadcrumbs, useProductsRoutes, usePageTitle } from "@/core/composables";
-import { AddToCart } from "@/shared/cart";
-import { ProductCardGrid, useProducts } from "@/shared/catalog";
+import { useBreadcrumbs, usePageTitle } from "@/core/composables";
+import { ProductCard, useProducts } from "@/shared/catalog";
 
 const { t } = useI18n();
 const { products, fetchProducts } = useProducts();
 const { title: pageTitle } = usePageTitle(t("pages.demo_landing.meta.title"));
-
-const productsRoutes = useProductsRoutes(products);
 
 const demoPageAnchor = shallowRef<HTMLElement | null>(null);
 const demoPageAnchorIsVisible = useElementVisibility(demoPageAnchor);

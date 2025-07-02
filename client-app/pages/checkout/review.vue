@@ -96,7 +96,7 @@
                 <div class="flex items-center gap-3 p-3 text-sm print:px-0 print:py-1.5">
                   <VcImage class="size-12 rounded-sm print:hidden" :src="item.logoUrl" />
 
-                  {{ $t(`common.methods.payment_by_code.${item.code}`) }}
+                  {{ item.name }}
                 </div>
               </template>
             </VcSelect>

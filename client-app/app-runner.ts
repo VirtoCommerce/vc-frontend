@@ -7,7 +7,14 @@ import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
-import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
+import {
+  applicationInsightsPlugin,
+  authPlugin,
+  configPlugin,
+  contextPlugin,
+  extensionPointsPlugin,
+  permissionsPlugin,
+} from "@/core/plugins";
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
@@ -147,6 +154,7 @@ export default async () => {
   app.use(i18n);
   app.use(router);
   app.use(permissionsPlugin);
+  app.use(extensionPointsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
 
