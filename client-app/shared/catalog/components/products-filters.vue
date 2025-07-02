@@ -29,6 +29,7 @@
           <FacetFilter
             :mode="isHorizontal ? 'dropdown' : 'collapsable'"
             :facet="facet"
+            :type="facet.label === 'price' ? 'slider' : 'default'"
             :loading="loading"
             @update:facet="onFacetFilterChanged"
           />
@@ -39,10 +40,6 @@
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  orientation: "vertical",
-});
 import { useBreakpoints, breakpointsTailwind, useElementBounding, watchDebounced } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { watch, shallowRef, ref, nextTick, computed } from "vue";
@@ -59,6 +56,11 @@ interface IProps {
   filters: ProductsFiltersType;
   orientation?: "vertical" | "horizontal";
 }
+
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  orientation: "vertical",
+});
 
 const facetFiltersContainer = shallowRef<HTMLDivElement | null>(null);
 

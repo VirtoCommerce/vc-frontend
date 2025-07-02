@@ -168,10 +168,13 @@ interface IProps {
   facet: FacetItemType;
   loading?: boolean;
   mode: "dropdown" | "collapsable";
+  type?: "default" | "slider";
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  type: "default",
+});
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
