@@ -238,7 +238,7 @@ jobs:
 
   # deploy-cloud:
   #   if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
-  #   needs: ui-auto-tests
+  #   needs: ci
   #   uses: ./.github/workflows/deploy-cloud.yml
   #   with:
   #     cmPath: 'theme/artifact.json'
