@@ -60,7 +60,7 @@
     "axios": "^1.9.0",
     "barcode-detector": "3.0.4",
     "dompurify": "^3.2.6",
-    "firebase": "^11.9.0",
+    "firebase": "^11.10.0",
     "graphql": "^16.11.0",
     "graphql-tag": "^2.12.6",
     "graphql-ws": "^6.0.5",

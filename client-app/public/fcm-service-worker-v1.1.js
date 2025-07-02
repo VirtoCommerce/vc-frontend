@@ -7,7 +7,7 @@
 
 // NOTE: When updating the service worker, make sure to update the version in the service worker module constants "client-app/modules/push-messages/constants/index.ts"
 
-const VERSION = "11.9.0";
+const VERSION = "11.10.0";
 importScripts(
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-app-compat.js`,
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`,
@@ -94,24 +94,6 @@ self.addEventListener("push", function (event) {
   );
 });
 
-self.addEventListener("pushsubscriptionchange", function (event) {
-  if (!isInitialized) {
-    console.warn("Firebase not properly initialized, skipping subscription change");
-    return;
-  }
-
-  event.waitUntil(
-    registration.pushManager
-      .subscribe(event.oldSubscription.options)
-      .then((newSubscription) => {
-        console.log("Push subscription changed:", newSubscription);
-      })
-      .catch((error) => {
-        console.error("Failed to resubscribe:", error);
-      }),
-  );
-});
-
 // needs to persist the default icon url in indexedDB, since it's getting lost when the service worker is restarted
 function storeDefaultIcon(iconUrl) {
   const request = indexedDB.open(DB_NAME, 1);
@@ -190,7 +172,7 @@ function htmlToText(html) {
 
   // Function to handle blockquotes
   function handleBlockquotes(match, p1) {
-    return "\n" + p1.trim().replace(/\n/g, "\n ") + "\n";
+    return "\n“" + p1.trim().replace(/\n/g, "\n ") + "”\n";
   }
 
   // Function to handle paragraphs
