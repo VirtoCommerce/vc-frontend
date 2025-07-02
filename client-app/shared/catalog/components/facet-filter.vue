@@ -20,6 +20,21 @@
         />
       </div>
 
+      <div class="px-3">
+        <VcSlider
+          v-if="type === 'slider'"
+          :value="sliderValue"
+          :min="facetMin"
+          :max="facetMax"
+          @update:value="
+            (val) =>
+              (sliderValue = val
+                ? [val[0] || facetMin || 10, val[1] || facetMax || 100]
+                : [facetMin || 10, facetMax || 100])
+          "
+        />
+      </div>
+
       <div class="facet-filter-widget__container" :style="{ maxHeight }">
         <VcMenuItem
           v-for="item in searchedValues"
@@ -158,6 +173,7 @@
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef, toRef } from "vue";
+import { VcSlider } from "@/ui-kit/components";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 interface IEmits {
@@ -237,6 +253,40 @@ const hasFade = computed(
 );
 const selectedFiltersCount = computed(() => facet.value.values.filter((item) => item.selected)?.length);
 const hasSelected = computed(() => selectedFiltersCount.value > 0);
+
+const facetMin = computed(() => {
+  const numericValues = facet.value.values
+    .map((v) => {
+      // Parse range strings like "[10 TO 20)" or "10" or "[10 TO *]"
+      const match = v.value.match(/^\[?(\d+(?:\.\d+)?)\s+TO\s+(\d+(?:\.\d+)?|\*)\]?\)?$/);
+      if (match) {
+        return parseFloat(match[1]); // Return the lower bound
+      }
+      // Fallback for simple numeric values
+      const num = parseFloat(v.value);
+      return isNaN(num) ? null : num;
+    })
+    .filter((v) => v !== null);
+  return numericValues.length > 0 ? Math.min(...numericValues) : 1;
+});
+
+const facetMax = computed(() => {
+  const numericValues = facet.value.values
+    .map((v) => {
+      // Parse range strings like "[10 TO 20)" or "10" or "[10 TO *]"
+      const match = v.value.match(/^\[?(\d+(?:\.\d+)?)\s+TO\s+(\d+(?:\.\d+)?|\*)\]?\)?$/);
+      if (match && match[2] !== "*") {
+        return parseFloat(match[2]); // Return the upper bound
+      }
+      // Fallback for simple numeric values
+      const num = parseFloat(v.value);
+      return isNaN(num) ? null : num;
+    })
+    .filter((v) => v !== null);
+  return numericValues.length > 0 ? Math.max(...numericValues) : 500;
+});
+
+const sliderValue = ref<[number, number]>([10, 100]);
 </script>
 
 <style lang="scss">
