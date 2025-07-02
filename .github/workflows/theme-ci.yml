@@ -229,6 +229,7 @@ jobs:
       installModules: 'true'
       installCustomModule: 'false'
       platformDockerTag: 'linux-latest'
+      frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
 
