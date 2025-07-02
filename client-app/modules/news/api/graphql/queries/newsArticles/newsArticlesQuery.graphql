@@ -21,6 +21,9 @@ query NewsArticles(
       publishDate
       content
       contentPreview
+      seoInfo {
+        semanticUrl
+      }
     }
   }
 }
