@@ -93,5 +93,5 @@ jobs:
           gh release create ${{ steps.image.outputs.prefix }} \
                 --latest=false \
                 --repo="$GITHUB_REPOSITORY" \
-                --title="${GITHUB_REPOSITORY#*/} ${{ steps.image.outputs.prefix }}" \
+                --title="${{ steps.image.outputs.prefix }}" \
                 "./artifacts/${GITHUB_REPOSITORY#*/}-${{ steps.image.outputs.prefix }}.zip#${GITHUB_REPOSITORY#*/}-${{ steps.image.outputs.prefix }}.zip"
