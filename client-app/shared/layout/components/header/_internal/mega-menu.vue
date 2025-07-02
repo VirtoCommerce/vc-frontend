@@ -26,6 +26,7 @@
         <div class="mega-menu__content">
           <Subcategories
             :item="category"
+            :pinned-links="pinnedLinks"
             :aria-label="$t('shared.layout.header.mega_menu.aria_labels.categories')"
             @close="close"
           />
@@ -33,20 +34,22 @@
       </template>
     </VcPopover>
 
-    <div class="mega-menu__divider"></div>
+    <template v-if="visibleItems.length">
+      <div class="mega-menu__divider"></div>
 
-    <ul
-      ref="navElement"
-      class="mega-menu__nav"
-      role="menubar"
-      :aria-label="$t('shared.layout.header.mega_menu.aria_labels.navigation')"
-    >
-      <li v-for="(item, index) in visibleItems" :key="index" class="mega-menu__item" menu-item role="none">
-        <VcLink :to="item.route ?? '#'" class="mega-menu__link" role="menuitem">
-          {{ item.title }}
-        </VcLink>
-      </li>
-    </ul>
+      <ul
+        ref="navElement"
+        class="mega-menu__nav"
+        role="menubar"
+        :aria-label="$t('shared.layout.header.mega_menu.aria_labels.navigation')"
+      >
+        <li v-for="(item, index) in visibleItems" :key="index" class="mega-menu__item" menu-item role="none">
+          <VcLink :to="item.route ?? '#'" class="mega-menu__link" role="menuitem">
+            {{ item.title }}
+          </VcLink>
+        </li>
+      </ul>
+    </template>
   </nav>
 </template>
 
@@ -70,7 +73,7 @@ const menuRef = useTemplateRef<HTMLElement>("megaMenuElement");
 const visibleItemsCount = ref(1);
 
 const { width: menuRight } = useElementBounding(menuRef);
-const { catalogMenuItems } = useNavigations();
+const { catalogMenuItems, pinnedLinks } = useNavigations();
 const { markActiveCategoryTree, category: _category, fetchCategory, loading } = useCategory();
 const currentRoute = useRoute();
 const category = computed(() => markActiveCategoryTree(_category.value, currentRoute));
@@ -110,9 +113,7 @@ function focusMenuItem() {
     return;
   }
 
-  const item = document.querySelector(
-    `[id="subcategory-${category.value?.childCategories[0].id}"] > [role="menuitem"]`,
-  ) as HTMLElement;
+  const item = document.querySelector(".subcategories .vc-menu-item > [role='menuitem']") as HTMLElement;
 
   if (item) {
     item.focus();

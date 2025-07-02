@@ -15,7 +15,23 @@
     >
       <ul class="subcategories__list" role="none">
         <VcMenuItem
-          v-for="(child, index) in item.childCategories"
+          v-for="link in pinnedLinks"
+          :key="link.id"
+          role="menuitem"
+          color="secondary"
+          :to="link.route"
+          :active="isActiveRoute(link.route ?? '', currentRoute)"
+          @click="$emit('close')"
+          @keyup.arrow-up="focusPrevNextItem('UP', $event)"
+          @keyup.arrow-down="focusPrevNextItem('DOWN', $event)"
+          @focusin="showChildren"
+          @mouseover="showChildren"
+        >
+          <b>{{ link.title }}</b>
+        </VcMenuItem>
+
+        <VcMenuItem
+          v-for="child in item.childCategories"
           :id="`subcategory-${child.id}`"
           :key="child.id"
           class="subcategories__item"
@@ -27,8 +43,8 @@
           :active="child.isActive"
           @keyup.arrow-right="focusMenuItem(child.childCategories[0].id)"
           @keyup.arrow-left="focusMenuItem(item.id)"
-          @keyup.arrow-up="focusMenuItem(item.childCategories[index - 1].id)"
-          @keyup.arrow-down="focusMenuItem(item.childCategories[index + 1].id)"
+          @keyup.arrow-up.stop="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
+          @keyup.arrow-down.stop="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
           @click="$emit('close')"
           @focusin="showChildren(child)"
           @mouseover="showChildren(child)"
@@ -55,8 +71,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onBeforeUnmount } from "vue";
+import { useRoute } from "vue-router";
 import { useCategoriesRoutes } from "@/core/composables";
-import type { IMarkedCategory } from "@/core/types";
+import { isActiveRoute } from "@/core/utilities";
+import type { IMarkedCategory, ExtendedMenuLinkType } from "@/core/types";
 
 interface IEmits {
   (e: "close"): void;
@@ -67,6 +85,7 @@ interface IProps {
   onCancelHide?: () => void;
   onScheduleHide?: () => void;
   ariaLabel?: string;
+  pinnedLinks?: ExtendedMenuLinkType[];
 }
 
 defineEmits<IEmits>();
@@ -75,18 +94,19 @@ const props = defineProps<IProps>();
 const activeItem = ref<IMarkedCategory | null>(null);
 let timeout: ReturnType<typeof setTimeout> | null = null;
 let switchTimeout: ReturnType<typeof setTimeout> | null = null;
+const currentRoute = useRoute();
 
 const items = computed(() => props.item.childCategories || []);
 const routes = useCategoriesRoutes(items);
 
-function showChildren(item: IMarkedCategory) {
+function showChildren(item?: IMarkedCategory) {
   cancelHide();
 
   if (switchTimeout) {
     clearTimeout(switchTimeout);
   }
 
-  if (activeItem.value?.id === item.id) {
+  if (!item || activeItem.value?.id === item.id) {
     return;
   }
 
@@ -127,6 +147,19 @@ function focusMenuItem(id?: string) {
 
   if (element) {
     element.focus();
+  }
+}
+
+function focusPrevNextItem(direction: "UP" | "DOWN", event: KeyboardEvent) {
+  const target = event.target as HTMLElement;
+  const currentItem = target.parentElement as HTMLElement;
+  const prev = currentItem.previousElementSibling?.childNodes[0] as HTMLElement | null;
+  const next = currentItem.nextElementSibling?.childNodes[0] as HTMLElement | null;
+
+  if (direction === "UP" && prev) {
+    prev.focus();
+  } else if (direction === "DOWN" && next) {
+    next.focus();
   }
 }
 
