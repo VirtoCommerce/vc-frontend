@@ -5,7 +5,6 @@
       class="ship-to-selector__popover"
       arrow-enabled
       max-height="none"
-      close-on-blur
       :offset-options="12"
     >
       <template #trigger="{ opened }">
