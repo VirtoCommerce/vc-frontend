@@ -77,7 +77,7 @@ const props = withDefaults(defineProps<IProps>(), {
   showTooltipOnColHover: false,
 });
 
-const model = defineModel<RangeType>("value");
+const model = defineModel<RangeType>();
 const { min, max, step, cols } = toRefs(props);
 const start = ref(model.value ? model.value[0] : min.value);
 const end = ref(model.value ? model.value[1] : max.value);

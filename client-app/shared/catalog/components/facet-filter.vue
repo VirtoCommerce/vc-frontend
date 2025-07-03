@@ -159,9 +159,10 @@
 </template>
 
 <script lang="ts" setup>
-import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, useElementVisibility, watchDebounced } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef, toRef } from "vue";
+import { getFilterExpressionFromFacetRange } from "@/core/utilities";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 interface IEmits {
@@ -250,7 +251,31 @@ const facetMax = computed(() => {
   return facet.value.values.at(-1)?.to || 1799999999;
 });
 
-const sliderValue = ref([1, 500]);
+const sliderValue = ref<[number, number]>([50, 600]);
+
+watchDebounced(
+  sliderValue,
+  (value) => {
+    emit("update:facet", {
+      label: "price",
+      paramName: "price",
+      type: "range",
+      values: [
+        {
+          label: "?",
+          selected: true,
+          value: getFilterExpressionFromFacetRange({
+            from: value[0],
+            to: value[1],
+            includeFrom: true,
+            includeTo: true,
+          }),
+        },
+      ],
+    });
+  },
+  { debounce: 200 },
+);
 </script>
 
 <style lang="scss">
