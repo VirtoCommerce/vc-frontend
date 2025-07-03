@@ -15,9 +15,9 @@
     >
       <ul class="subcategories__list" role="none">
         <VcMenuItem
-          v-for="child in item.children"
-          :id="`subcategory-${child.id}`"
-          :key="child.id"
+          v-for="(child, index) in item.children"
+          :id="child.id ? `subcategory-${child.id}` : null"
+          :key="index"
           class="subcategories__item"
           size="sm"
           color="secondary"
