@@ -3,6 +3,10 @@ export type FacetValueItemType = {
   label: string;
   count?: number;
   selected: boolean;
+  from?: number;
+  includeFrom?: boolean;
+  to?: number;
+  includeTo?: boolean;
 };
 
 export type FacetItemType = {

@@ -243,35 +243,11 @@ const selectedFiltersCount = computed(() => facet.value.values.filter((item) => 
 const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
 const facetMin = computed(() => {
-  const numericValues = facet.value.values
-    .map((v) => {
-      // Parse range strings like "[10 TO 20)" or "10" or "[10 TO *]"
-      const match = v.value.match(/^\[?(\d+(?:\.\d+)?)\s+TO\s+(\d+(?:\.\d+)?|\*)\]?\)?$/);
-      if (match) {
-        return parseFloat(match[1]); // Return the lower bound
-      }
-      // Fallback for simple numeric values
-      const num = parseFloat(v.value);
-      return isNaN(num) ? null : num;
-    })
-    .filter((v) => v !== null);
-  return numericValues.length > 0 ? Math.min(...numericValues) : 1;
+  return facet.value.values[0].from || 0;
 });
 
 const facetMax = computed(() => {
-  const numericValues = facet.value.values
-    .map((v) => {
-      // Parse range strings like "[10 TO 20)" or "10" or "[10 TO *]"
-      const match = v.value.match(/^\[?(\d+(?:\.\d+)?)\s+TO\s+(\d+(?:\.\d+)?|\*)\]?\)?$/);
-      if (match && match[2] !== "*") {
-        return parseFloat(match[2]); // Return the upper bound
-      }
-      // Fallback for simple numeric values
-      const num = parseFloat(v.value);
-      return isNaN(num) ? null : num;
-    })
-    .filter((v) => v !== null);
-  return numericValues.length > 0 ? Math.max(...numericValues) : 500;
+  return facet.value.values.at(-1)?.to || 1799999999;
 });
 
 const sliderValue = ref([1, 500]);
