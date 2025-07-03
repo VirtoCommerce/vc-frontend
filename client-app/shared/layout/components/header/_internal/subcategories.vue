@@ -1,7 +1,7 @@
 <template>
   <Transition name="subcategories--slide">
     <VcScrollbar
-      v-if="item && item.childCategories?.length"
+      v-if="item && item.children?.length"
       class="subcategories"
       role="menubar"
       tabindex="-1"
@@ -15,23 +15,7 @@
     >
       <ul class="subcategories__list" role="none">
         <VcMenuItem
-          v-for="link in pinnedLinks"
-          :key="link.id"
-          role="menuitem"
-          color="secondary"
-          :to="link.route"
-          :active="isActiveRoute(link.route ?? '', currentRoute)"
-          @click="$emit('close')"
-          @keyup.arrow-up="focusPrevNextItem('UP', $event)"
-          @keyup.arrow-down="focusPrevNextItem('DOWN', $event)"
-          @focusin="showChildren"
-          @mouseover="showChildren"
-        >
-          <b>{{ link.title }}</b>
-        </VcMenuItem>
-
-        <VcMenuItem
-          v-for="child in item.childCategories"
+          v-for="child in item.children"
           :id="`subcategory-${child.id}`"
           :key="child.id"
           class="subcategories__item"
@@ -39,9 +23,9 @@
           color="secondary"
           max-lines="2"
           role="menuitem"
-          :to="routes[child.id]"
+          :to="child.route ?? '#'"
           :active="child.isActive"
-          @keyup.arrow-right="focusMenuItem(child.childCategories[0].id)"
+          @keyup.arrow-right="child.children?.length && focusMenuItem(child.children[0].id)"
           @keyup.arrow-left="focusMenuItem(item.id)"
           @keyup.arrow-up.stop="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
           @keyup.arrow-down.stop="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
@@ -49,9 +33,11 @@
           @focusin="showChildren(child)"
           @mouseover="showChildren(child)"
         >
-          {{ child.name }}
+          <span :class="{ 'font-bold': child.type === 'pinned' }">
+            {{ child.title }}
+          </span>
 
-          <template v-if="child.childCategories?.length" #append>
+          <template v-if="child.children?.length" #append>
             <VcIcon class="subcategories__arrow" name="chevron-right" />
           </template>
         </VcMenuItem>
@@ -64,42 +50,34 @@
     :item="activeItem"
     :on-schedule-hide="scheduleHide"
     :on-cancel-hide="cancelHide"
-    :aria-label="$t('shared.layout.header.mega_menu.aria_labels.subcategories', { category: activeItem.name })"
+    :aria-label="$t('shared.layout.header.mega_menu.aria_labels.subcategories', { category: activeItem.title })"
     @close="$emit('close')"
   />
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount } from "vue";
-import { useRoute } from "vue-router";
-import { useCategoriesRoutes } from "@/core/composables";
-import { isActiveRoute } from "@/core/utilities";
-import type { IMarkedCategory, ExtendedMenuLinkType } from "@/core/types";
+import { ref, onBeforeUnmount } from "vue";
+import type { MarkedMenuLinkType } from "@/core/types";
 
 interface IEmits {
   (e: "close"): void;
 }
 
 interface IProps {
-  item: IMarkedCategory;
+  item?: MarkedMenuLinkType;
   onCancelHide?: () => void;
   onScheduleHide?: () => void;
   ariaLabel?: string;
-  pinnedLinks?: ExtendedMenuLinkType[];
 }
 
 defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
-const activeItem = ref<IMarkedCategory | null>(null);
+const activeItem = ref<MarkedMenuLinkType | null>(null);
 let timeout: ReturnType<typeof setTimeout> | null = null;
 let switchTimeout: ReturnType<typeof setTimeout> | null = null;
-const currentRoute = useRoute();
 
-const items = computed(() => props.item.childCategories || []);
-const routes = useCategoriesRoutes(items);
-
-function showChildren(item?: IMarkedCategory) {
+function showChildren(item?: MarkedMenuLinkType) {
   cancelHide();
 
   if (switchTimeout) {

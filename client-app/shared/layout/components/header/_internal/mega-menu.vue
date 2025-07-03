@@ -26,7 +26,6 @@
         <div class="mega-menu__content">
           <Subcategories
             :item="category"
-            :pinned-links="pinnedLinks"
             :aria-label="$t('shared.layout.header.mega_menu.aria_labels.categories')"
             @close="close"
           />
@@ -58,6 +57,7 @@ import { useElementBounding, watchDebounced } from "@vueuse/core";
 import { ref, computed, onMounted, useTemplateRef, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { useNavigations } from "@/core/composables";
+import { categoryToExtendedMenuLink } from "@/core/utilities";
 import { useCategory } from "@/shared/catalog";
 import Subcategories from "./subcategories.vue";
 
@@ -73,10 +73,18 @@ const menuRef = useTemplateRef<HTMLElement>("megaMenuElement");
 const visibleItemsCount = ref(1);
 
 const { width: menuRight } = useElementBounding(menuRef);
-const { catalogMenuItems, pinnedLinks } = useNavigations();
-const { markActiveCategoryTree, category: _category, fetchCategory, loading } = useCategory();
+const { catalogMenuItems, pinnedLinks: _pinnedLinks, markLinkTree } = useNavigations();
+const { category: _category, fetchCategory, loading } = useCategory();
 const currentRoute = useRoute();
-const category = computed(() => markActiveCategoryTree(_category.value, currentRoute));
+
+const _categoryLinks = computed(() => (_category.value ? categoryToExtendedMenuLink(_category.value) : undefined));
+const pinnedLinks = computed(() => markLinkTree({ children: _pinnedLinks.value }, currentRoute, "pinned"));
+const categoryLinks = computed(() => markLinkTree(_categoryLinks.value, currentRoute, "category"));
+
+const category = computed(() => ({
+  ..._category.value,
+  children: pinnedLinks.value?.children?.concat(categoryLinks.value?.children ?? []),
+}));
 
 const visibleItems = computed(() => catalogMenuItems.value.slice(0, visibleItemsCount.value));
 
@@ -109,7 +117,7 @@ async function calculateVisibleItems() {
 }
 
 function focusMenuItem() {
-  if (!category.value || !category.value.childCategories.length) {
+  if (!category.value || !category.value.children?.length) {
     return;
   }
 
