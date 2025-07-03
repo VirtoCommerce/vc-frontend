@@ -183,11 +183,7 @@ export function _useCheckout() {
   );
 
   const addresses = computed<AnyAddressType[]>(() => {
-    const { firstName, lastName } = user.value.contact ?? {};
-
-    return isCorporateMember.value
-      ? organizationsAddresses.value.map((address) => ({ ...address, firstName, lastName }))
-      : personalAddresses.value;
+    return isCorporateMember.value ? organizationsAddresses.value : personalAddresses.value;
   });
 
   const isPurchaseOrderNumberEnabled = computed<boolean>(
