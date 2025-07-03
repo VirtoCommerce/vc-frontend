@@ -47,17 +47,16 @@
 </template>
 
 <script setup lang="ts">
+import { isNaN } from "lodash";
 import { create } from "nouislider";
 import { ref, onMounted, computed, toRefs, watch } from "vue";
 import type { API } from "nouislider";
 import "nouislider/dist/nouislider.css";
-import { isNaN } from "lodash";
 
-type RangeType = [number | null, number | null];
-type ColType = { count: number; value: RangeType };
+type RangeType = [number, number] | [number];
+type ColType = { count: number; value: [number | null, number | null] };
 
 interface IProps {
-  value: RangeType;
   min?: number;
   max: number;
   step?: number;
@@ -77,10 +76,10 @@ const props = withDefaults(defineProps<IProps>(), {
   showTooltipOnColHover: false,
 });
 
-const model = defineModel<IProps["value"]>("value");
+const model = defineModel<RangeType>("value");
 const { min, max, step, cols } = toRefs(props);
 const start = ref(model.value ? model.value[0] : min.value);
-const end = ref(model.value ? (model.value[1] ?? null) : max.value);
+const end = ref(model.value ? model.value[1] : max.value);
 
 const sliderRef = ref<HTMLElement | null>(null);
 let slider: API | null = null;
@@ -145,7 +144,7 @@ function updateModel(range: RangeType, fromSlider = false) {
 }
 
 watch([start, end], ([v1, v2]) => {
-  updateModel([v1, v2]);
+  updateModel([v1, v2] as RangeType);
 });
 
 onMounted(() => {
@@ -154,7 +153,7 @@ onMounted(() => {
   }
 
   slider = create(sliderRef.value, {
-    start: model.value,
+    start: model.value || [min.value, max.value],
     connect: true,
     step: step.value,
     range: { min: min.value, max: max.value },

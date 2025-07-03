@@ -21,18 +21,7 @@
       </div>
 
       <div class="px-3">
-        <VcSlider
-          v-if="type === 'slider'"
-          :value="sliderValue"
-          :min="facetMin"
-          :max="facetMax"
-          @update:value="
-            (val) =>
-              (sliderValue = val
-                ? [val[0] || facetMin || 10, val[1] || facetMax || 100]
-                : [facetMin || 10, facetMax || 100])
-          "
-        />
+        <VcSlider v-if="type === 'slider'" v-model="sliderValue" :min="facetMin" :max="facetMax" />
       </div>
 
       <div class="facet-filter-widget__container" :style="{ maxHeight }">
@@ -173,7 +162,6 @@
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef, toRef } from "vue";
-import { VcSlider } from "@/ui-kit/components";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 interface IEmits {
@@ -286,7 +274,7 @@ const facetMax = computed(() => {
   return numericValues.length > 0 ? Math.max(...numericValues) : 500;
 });
 
-const sliderValue = ref<[number, number]>([10, 100]);
+const sliderValue = ref([1, 500]);
 </script>
 
 <style lang="scss">
