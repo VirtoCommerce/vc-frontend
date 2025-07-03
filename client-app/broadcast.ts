@@ -24,7 +24,6 @@ import {
   dataChangedEvent,
 } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
-import type { GraphQLFormattedError } from "graphql";
 
 let installed = false;
 
@@ -84,11 +83,11 @@ export function setupBroadcastGlobalListeners() {
       location.href = `${ROUTES.SIGN_IN.PATH}?returnUrl=${pathname + search + hash}`;
     }
   });
-  on(graphqlErrorEvent, (error: GraphQLFormattedError) => {
+  on(graphqlErrorEvent, (error) => {
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
       group: "GraphqlError",
-      text: error.message,
+      text: t("common.messages.something_went_wrong"),
     });
 
     throw error;
