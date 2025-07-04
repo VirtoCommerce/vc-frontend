@@ -1,6 +1,6 @@
 <template>
   <div>
-    <VcEmptyPage v-if="!loading && !newsArticle" :title="$t('news.title-not-found')"></VcEmptyPage>
+    <Error404 v-if="!loading && !newsArticle"></Error404>
     <VcContainer v-else>
       <router-link :to="{ name: 'NewsArticles' }" class="text-[--link-color] hover:text-[--link-hover-color]">
         {{ $t("news.links.to-list") }}
@@ -13,17 +13,19 @@
 
 <script lang="ts" setup>
 import { useSeoMeta } from "@unhead/vue";
-import { computed, ref, watchEffect } from "vue";
+import { computed, defineAsyncComponent, ref, watchEffect } from "vue";
 import { usePageTitle } from "@/core/composables";
 import { getNewsArticle } from "../api/graphql/queries/newsArticle";
 import type { NewsArticleContent } from "../api/graphql/types";
 import NewsArticle from "@/modules/news/components/news-article.vue";
 
+const props = defineProps<IProps>();
+
+const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
+
 interface IProps {
   articleId: string;
 }
-const props = defineProps<IProps>();
-
 const loading = ref<boolean>(false);
 const newsArticle = ref<NewsArticleContent>();
 

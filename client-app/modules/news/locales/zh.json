@@ -1,7 +1,6 @@
 {
   "news": {
     "title-empty": "暂无消息",
-    "title-not-found": "未找到",
     "links": {
       "to-list": "所有新闻"
     }

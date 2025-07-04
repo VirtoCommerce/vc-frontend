@@ -1,7 +1,6 @@
 {
   "news": {
     "title-empty": "Нет новостей",
-    "title-not-found": "Не найдено",
     "links": {
       "to-list": "Все новости"
     }

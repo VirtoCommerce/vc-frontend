@@ -1,7 +1,6 @@
 {
   "news": {
     "title-empty": "Brak wiadomości",
-    "title-not-found": "Nie znaleziono",
     "links": {
       "to-list": "Wszystkie wiadomości"
     }

@@ -16,8 +16,10 @@
 
 <script lang="ts" setup>
 import { computed, toRef } from "vue";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { VcWidget } from "@/ui-kit/components";
 import { VcMarkdownRender } from "@/ui-kit/components/atoms";
+import { MODULE_ID, USE_ROOT_LINKS } from "../constants";
 import type { NewsArticleContent } from "../api/graphql/types";
 
 interface IProps {
@@ -25,10 +27,16 @@ interface IProps {
 }
 const props = defineProps<IProps>();
 
+const { getSettingValue } = useModuleSettings(MODULE_ID);
+const useRootLink = getSettingValue(USE_ROOT_LINKS);
+
 const articleRoute = computed(() => {
-  if (newsArticle.value?.seoInfo?.semanticUrl) {
+  console.warn("useRootLink", useRootLink);
+  if (newsArticle.value?.seoInfo?.semanticUrl && newsArticle.value?.seoInfo?.semanticUrl != newsArticle.value?.id) {
     return {
-      path: `/news/${newsArticle.value?.seoInfo?.semanticUrl}`,
+      path: useRootLink
+        ? `/${newsArticle.value?.seoInfo?.semanticUrl}`
+        : `/news/${newsArticle.value?.seoInfo?.semanticUrl}`,
     };
   }
 

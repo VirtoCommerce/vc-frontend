@@ -1,7 +1,6 @@
 {
   "news": {
     "title-empty": "ニュースはありません",
-    "title-not-found": "見つかりません",
     "links": {
       "to-list": "すべてのニュース"
     }
