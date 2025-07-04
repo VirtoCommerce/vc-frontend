@@ -103,6 +103,7 @@
               </div>
             </ul>
           </section>
+          <!-- Search history end -->
 
           <!-- Suggestions -->
           <section v-if="suggestions.length">
@@ -110,20 +111,20 @@
               {{ $t("shared.layout.search_bar.suggestions_label") }}
             </header>
 
-            <div class="flex gap-5 px-5 pb-3 pt-2.5 text-sm">
-              <ul class="min-w-0">
-                <li v-for="suggestion in suggestions" :key="suggestion.text">
-                  <router-link
-                    :to="getSearchRoute(suggestion.text)"
-                    class="flex items-center gap-2 py-1"
-                    @click="hideSearchDropdown"
-                  >
-                    <VcIcon name="search-circle" size="xs" class="shrink-0 fill-neutral-300" />
-                    <span v-html-safe="suggestion.label" class="truncate" />
-                  </router-link>
-                </li>
-              </ul>
-            </div>
+            <ul class="gap-5 px-2 py-3">
+              <VcMenuItem
+                v-for="suggestion in suggestions"
+                :key="suggestion.text"
+                :to="getSearchRoute(suggestion.text)"
+                tag="li"
+                @click="hideSearchDropdown"
+              >
+                <span class="flex items-center gap-2">
+                  <VcIcon name="search-circle" size="xs" class="shrink-0 fill-neutral-300" />
+                  <span v-html-safe="suggestion.label" class="truncate" />
+                </span>
+              </VcMenuItem>
+            </ul>
           </section>
 
           <!-- Pages -->
@@ -132,16 +133,20 @@
               {{ $t("shared.layout.search_bar.pages_label") }}
             </header>
 
-            <div class="flex gap-5 px-5 pb-3 pt-2.5 text-sm">
-              <ul>
-                <li v-for="(page, index) in pages" :key="index">
-                  <router-link :to="page.permalink!" class="block py-1" @click="hideSearchDropdown">
-                    <span v-html-safe="page.name" />
-                  </router-link>
-                </li>
-              </ul>
-            </div>
+            <ul class="px-2 py-3">
+              <VcMenuItem
+                v-for="(page, index) in pages"
+                :key="index"
+                class="w-full"
+                :to="page.permalink"
+                tag="li"
+                @click="hideSearchDropdown"
+              >
+                <span v-html-safe="page.name" />
+              </VcMenuItem>
+            </ul>
           </section>
+          <!-- Suggestions end -->
 
           <!-- Categories -->
           <section v-if="categories.length">
@@ -149,16 +154,19 @@
               {{ $t("shared.layout.search_bar.categories_label") }}
             </header>
 
-            <div class="flex gap-5 px-5 pb-3 pt-2.5 text-sm">
-              <ul v-for="(column, index) in categoriesColumns" :key="index">
-                <li v-for="category in column" :key="category.name">
-                  <router-link :to="categoriesRoutes[category.id]" class="block py-1" @click="hideSearchDropdown">
-                    <span v-html-safe="category.name" />
-                  </router-link>
-                </li>
-              </ul>
-            </div>
+            <ul v-for="(column, index) in categoriesColumns" :key="index" class="px-2 py-3">
+              <VcMenuItem
+                v-for="category in column"
+                :key="category.name"
+                :to="categoriesRoutes[category.id]"
+                tag="li"
+                @click="hideSearchDropdown"
+              >
+                <span v-html-safe="category.name" />
+              </VcMenuItem>
+            </ul>
           </section>
+          <!-- Categories end -->
 
           <!-- Products -->
           <section v-if="products.length" class="pb-4">
@@ -178,6 +186,7 @@
               />
             </div>
           </section>
+          <!-- Products end -->
 
           <!-- Actions -->
           <section v-if="total" class="sticky bottom-0 mt-0.5 border-t border-neutral-100 bg-additional-50 px-5 py-3">
@@ -369,6 +378,8 @@ async function searchAndShowDropdownResults(): Promise<void> {
     params.pages = { itemsPerPage: DEFAULT_PAGE_SIZE };
   }
 
+  console.log("params!", params);
+
   await searchResults(params);
 
   showSearchDropdown();
@@ -445,7 +456,6 @@ function onSearchPhraseChanged() {
 }
 
 function onSearchBarFocused() {
-  console.log("onSearchBarFocused");
   void loadSearchHistory();
 
   if (trimmedSearchPhrase.value) {
