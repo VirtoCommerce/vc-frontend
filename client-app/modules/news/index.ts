@@ -7,8 +7,8 @@ import type { Router, RouteRecordRaw } from "vue-router";
 
 const { isEnabled } = useModuleSettings(MODULE_ID);
 
-const NewsArticle = () => import("./pages/news-article.vue");
-const NewsArticles = () => import("./pages/news-articles.vue");
+const NewsArticle = () => import(/* webpackChunkName: "news" */ "./pages/news-article.vue");
+const NewsArticles = () => import(/* webpackChunkName: "news" */ "./pages/news-articles.vue");
 
 const route: RouteRecordRaw = {
   path: `/${ROUTES.LINK_SEGMENT}`,
