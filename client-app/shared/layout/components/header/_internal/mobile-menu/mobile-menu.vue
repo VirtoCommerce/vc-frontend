@@ -2,7 +2,7 @@
   <nav
     class="mobile-menu fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-[--mobile-menu-text-color]"
   >
-    <header class="flex h-16 shrink-0 items-center gap-x-3 px-6">
+    <div class="flex h-16 shrink-0 items-center gap-x-3 px-6">
       <div class="grow pr-6">
         <span
           v-if="organization"
@@ -20,7 +20,7 @@
       <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
         <VcIcon name="delete-thin" class="fill-[--mobile-menu-navigation-color]" :size="22" />
       </button>
-    </header>
+    </div>
 
     <section v-if="openedItem" class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
       <div class="flex flex-col px-10 py-6">
