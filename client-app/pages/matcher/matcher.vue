@@ -100,7 +100,13 @@ const visibleComponent = computed(() => {
   const result = getVisiblePreviewer(Object.values(previewers.value));
   if (result && result !== "loader") {
     if (result.state === "redirect" && result.redirectUrl) {
-      router.replace({ path: result.redirectUrl });
+      const targetUrl = result.redirectUrl;
+      const isExternalUrlRegex = /^(https?:\/\/|www\.)/i;
+      if (isExternalUrlRegex.test(targetUrl)) {
+        location.href = targetUrl;
+      } else {
+        router.replace({ path: targetUrl });
+      }
     }
     return result.id;
   }
