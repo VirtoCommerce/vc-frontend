@@ -2,7 +2,7 @@
   <div>
     <Error404 v-if="!loading && !newsArticle"></Error404>
     <VcContainer v-else>
-      <router-link :to="{ name: 'NewsArticles' }" class="text-[--link-color] hover:text-[--link-hover-color]">
+      <router-link :to="{ name: ROUTES.ARTICLES.NAME }" class="text-[--link-color] hover:text-[--link-hover-color]">
         {{ $t("news.links.to-list") }}
       </router-link>
       <VcWidgetSkeleton v-if="loading" head size="lg"></VcWidgetSkeleton>
@@ -18,6 +18,7 @@ import { usePageTitle } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { getNewsArticle } from "../api/graphql/queries/newsArticle";
 import { MODULE_ID, USE_ROOT_LINKS } from "../constants";
+import { ROUTES } from "../routes/constants";
 import type { NewsArticleContent } from "../api/graphql/types";
 import NewsArticle from "@/modules/news/components/news-article.vue";
 
@@ -44,7 +45,7 @@ const seoUrl = computed(() =>
   newsArticle.value?.seoInfo?.semanticUrl
     ? useRootLink
       ? `${window.location.host}/${newsArticle.value?.seoInfo?.semanticUrl}`
-      : `${window.location.host}/news/${newsArticle.value?.seoInfo?.semanticUrl}`
+      : `${window.location.host}/${ROUTES.LINK_SEGMENT}/${newsArticle.value?.seoInfo?.semanticUrl}`
     : window.location.toString(),
 );
 

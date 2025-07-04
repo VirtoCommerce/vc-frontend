@@ -20,6 +20,7 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { VcWidget } from "@/ui-kit/components";
 import { VcMarkdownRender } from "@/ui-kit/components/atoms";
 import { MODULE_ID, USE_ROOT_LINKS } from "../constants";
+import { ROUTES } from "../routes/constants";
 import type { NewsArticleContent } from "../api/graphql/types";
 
 interface IProps {
@@ -35,12 +36,12 @@ const articleRoute = computed(() => {
     return {
       path: useRootLink
         ? `/${newsArticle.value?.seoInfo?.semanticUrl}`
-        : `/news/${newsArticle.value?.seoInfo?.semanticUrl}`,
+        : `/${ROUTES.LINK_SEGMENT}/${newsArticle.value?.seoInfo?.semanticUrl}`,
     };
   }
 
   return {
-    name: "NewsArticle",
+    name: ROUTES.ARTICLE.NAME,
     params: { articleId: newsArticle.value?.id },
   };
 });
