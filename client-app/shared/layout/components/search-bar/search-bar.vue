@@ -8,7 +8,7 @@
       :clearable="!!searchPhrase"
       :placeholder="searchPlaceholder"
       @clear="reset"
-      @keyup.enter="goToSearchResultsPage"
+      @keyup.enter="handleSearch()"
       @keyup.esc="hideSearchDropdown"
       @input="onSearchPhraseChanged"
       @focus="onSearchBarFocused"
@@ -47,7 +47,7 @@
           icon="search"
           icon-size="1.25rem"
           :loading="loading"
-          @click="goToSearchResultsPage"
+          @click="handleSearch()"
         />
       </template>
     </VcInput>
@@ -61,8 +61,49 @@
         :style="searchDropdownStyle"
         @focusout="handleFocusOut"
       >
-        <!-- Results -->
-        <template v-if="isExistResults">
+        <!-- Results and history -->
+        <template v-if="isExistResults || searchHistoryQueries.length || searchHistoryLoading">
+          <!-- Search history -->
+          <section v-if="searchHistoryQueries.length || searchHistoryLoading">
+            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
+              {{ $t("shared.layout.search_bar.search_history_label") }}
+            </header>
+
+            <ul class="px-2 py-3">
+              <VcMenuItem v-if="searchHistoryLoading" tag="li" disabled>
+                <div class="flex items-center gap-1.5">
+                  <VcIcon name="history" size="md" class="shrink-0 fill-secondary-500" />
+                  <div class="h-3 w-20 animate-pulse bg-neutral-200"></div>
+                </div>
+              </VcMenuItem>
+
+              <VcMenuItem
+                v-for="query in searchHistoryQueries"
+                v-else
+                :key="query"
+                class="w-full"
+                :label="query"
+                tag="li"
+                truncate
+                nowrap
+                max-lines="1"
+                @click="handleSearchHistoryClick(query)"
+              >
+                <span class="flex items-center gap-1.5">
+                  <VcIcon name="history" size="md" class="shrink-0 fill-secondary-500" />
+                  <span v-html-safe="query" />
+                </span>
+              </VcMenuItem>
+
+              <div
+                v-if="searchHistoryQueries.length === 0 && !searchHistoryLoading"
+                class="px-2 py-3 text-sm text-neutral-400"
+              >
+                {{ $t("shared.layout.search_bar.no_search_history") }}
+              </div>
+            </ul>
+          </section>
+
           <!-- Suggestions -->
           <section v-if="suggestions.length">
             <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
@@ -140,7 +181,7 @@
 
           <!-- Actions -->
           <section v-if="total" class="sticky bottom-0 mt-0.5 border-t border-neutral-100 bg-additional-50 px-5 py-3">
-            <VcButton size="sm" @click="goToSearchResultsPage">
+            <VcButton size="sm" @click="handleSearch()">
               {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
             </VcButton>
           </section>
@@ -168,6 +209,7 @@ import { computed, onMounted, ref, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -186,6 +228,7 @@ import type { RouteLocationRaw } from "vue-router";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
 const { themeContext } = useThemeContext();
+const { saveSearchQuery, useGetSearchHistoryQuery } = useHistoricalEvents();
 
 const searchBarElement = ref<HTMLElement | null>(null);
 
@@ -215,6 +258,16 @@ const router = useRouter();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const categoriesRoutes = useCategoriesRoutes(categories);
+const {
+  result: searchHistory,
+  load: loadSearchHistory,
+  loading: searchHistoryLoading,
+} = useGetSearchHistoryQuery({
+  storeId: "B2B-store",
+  maxCount: 10,
+});
+
+const searchHistoryQueries = computed(() => searchHistory.value?.searchHistory?.queries ?? []);
 
 const searchDropdownElement = ref<HTMLElement | null>(null);
 
@@ -358,6 +411,19 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
   }
 }
 
+function handleSearch(saveQuery = true) {
+  if (saveQuery) {
+    void saveSearchQuery(trimmedSearchPhrase.value);
+  }
+
+  goToSearchResultsPage();
+}
+
+function handleSearchHistoryClick(query: string) {
+  searchPhrase.value = query;
+  handleSearch(false);
+}
+
 function goToSearchResultsPage() {
   hideSearchDropdown();
   void router.push(getSearchRoute(trimmedSearchPhrase.value));
@@ -379,8 +445,13 @@ function onSearchPhraseChanged() {
 }
 
 function onSearchBarFocused() {
+  console.log("onSearchBarFocused");
+  void loadSearchHistory();
+
   if (trimmedSearchPhrase.value) {
     void searchProductsDebounced();
+  } else {
+    showSearchDropdown();
   }
 }
 
@@ -402,7 +473,7 @@ onMounted(() => {
 const onBarcodeScanned = (value: string) => {
   if (value) {
     searchPhrase.value = value;
-    goToSearchResultsPage();
+    handleSearch(false);
   }
 };
 </script>

@@ -1,15 +1,13 @@
 import { useLazyQuery } from "@vue/apollo-composable";
+import { GetSearchHistoryDocument } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
-import getSearchHistoryDocument from "./getSearchHistory.graphql";
 import type { QuerySearchHistoryArgs } from "@/core/api/graphql/types";
 
-export function getSearchHistory(payload?: Partial<QuerySearchHistoryArgs>) {
+export function useGetSearchHistoryQuery(payload?: Partial<QuerySearchHistoryArgs>) {
   const { storeId } = globals;
 
-  return useLazyQuery(getSearchHistoryDocument, {
-    variables: {
-      storeId: payload?.storeId ?? storeId,
-      maxCount: payload?.maxCount ?? 10,
-    },
+  return useLazyQuery(GetSearchHistoryDocument, {
+    storeId: payload?.storeId ?? storeId,
+    maxCount: payload?.maxCount ?? 10,
   });
 }

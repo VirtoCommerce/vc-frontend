@@ -1,6 +1,11 @@
-import { pushHistoricalEvent as pushHistoricalEventMutation } from "@/core/api/graphql/common/mutations";
+import { useGetSearchHistoryQuery } from "@/core/api/graphql/common";
+import {
+  pushHistoricalEvent as pushHistoricalEventMutation,
+  saveSearchQuery as saveSearchQueryMutation,
+} from "@/core/api/graphql/common/mutations";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
 import { globals } from "@/core/globals";
+import { Logger } from "@/core/utilities/logger";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart/composables";
 import { useModuleSettings } from "./useModuleSettings";
@@ -25,7 +30,19 @@ export function useHistoricalEvents() {
     return Promise.resolve();
   }
 
+  async function saveSearchQuery(payload: string) {
+    try {
+      await saveSearchQueryMutation({
+        query: payload,
+      });
+    } catch (error) {
+      Logger.error("Error saving search query", error);
+    }
+  }
+
   return {
     pushHistoricalEvent,
+    saveSearchQuery,
+    useGetSearchHistoryQuery,
   };
 }
