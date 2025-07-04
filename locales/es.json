@@ -415,7 +415,8 @@
         "scope_loading_label": "Cargando contexto de búsqueda",
         "scope_remove_label": "Eliminar: {label}",
         "suggestions_and_history_label": "Sugerencias e historial",
-        "nothing_to_show": "No hay nada que mostrar"
+        "nothing_to_show": "Empieza a escribir o prueba con otra búsqueda",
+        "search_label": "Buscar"
       },
       "language_selector": {
         "label": "Idioma:"

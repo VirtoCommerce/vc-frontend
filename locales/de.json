@@ -415,7 +415,8 @@
         "scope_loading_label": "Suchkontext wird geladen",
         "scope_remove_label": "Entfernen: {label}",
         "suggestions_and_history_label": "Vorschläge & Verlauf",
-        "nothing_to_show": "Nichts anzuzeigen"
+        "nothing_to_show": "Beginnen Sie mit der Eingabe oder versuchen Sie eine andere Anfrage",
+        "search_label": "Suche"
       },
       "language_selector": {
         "label": "Sprache:"

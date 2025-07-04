@@ -65,7 +65,7 @@
         <div>
           <!-- Search history and suggestions -->
           <section>
-            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
+            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
               {{ $t("shared.layout.search_bar.suggestions_and_history_label") }}
             </header>
 
@@ -120,7 +120,7 @@
 
           <!-- Pages -->
           <section v-if="pages.length">
-            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
+            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
               {{ $t("shared.layout.search_bar.pages_label") }}
             </header>
 
@@ -142,7 +142,7 @@
 
           <!-- Categories -->
           <section v-if="categories.length">
-            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
+            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
               {{ $t("shared.layout.search_bar.categories_label") }}
             </header>
 
@@ -162,7 +162,7 @@
 
           <!-- Products -->
           <section v-if="products.length" class="pb-4">
-            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
+            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
               {{ $t("shared.layout.search_bar.products_label") }}
             </header>
 
@@ -190,14 +190,19 @@
         <!-- Results and history end -->
 
         <!-- Not found -->
-        <div v-if="!loading && !isExistResults && trimmedSearchPhrase" class="my-16 text-center">
-          <VcIcon name="search-not-found" class="mr-5 inline-block !h-12 !w-12 fill-primary" />
+        <div v-if="!loading && !isExistResults && trimmedSearchPhrase">
+          <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
+            {{ $t("shared.layout.search_bar.search_label") }}
+          </header>
+          <div class="flex items-center gap-1.5 px-4 py-6 text-sm text-neutral">
+            <VcIcon name="search-not-found" size="md" class="shrink-0 fill-secondary-500" />
 
-          <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
-            <template #keyword>
-              <strong>{{ trimmedSearchPhrase }}</strong>
-            </template>
-          </i18n-t>
+            <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
+              <template #keyword>
+                <strong>{{ trimmedSearchPhrase }}</strong>
+              </template>
+            </i18n-t>
+          </div>
         </div>
       </div>
     </transition>

@@ -414,8 +414,9 @@
             "no_file": "No file uploaded"
           }
         },
-        "nothing_to_show": "Nothing to show",
-        "suggestions_label": "Suggestion"
+        "nothing_to_show": "Start typing or try a different query",
+        "suggestions_label": "Suggestion",
+        "search_label": "Search"
       },
       "language_selector": {
         "label": "Language:"
