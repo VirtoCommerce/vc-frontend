@@ -6,13 +6,39 @@
       :maxlength="MAX_LENGTH"
       class="w-full"
       :clearable="!!searchPhrase"
-      :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
+      :placeholder="searchPlaceholder"
       @clear="reset"
       @keyup.enter="goToSearchResultsPage"
       @keyup.esc="hideSearchDropdown"
       @input="onSearchPhraseChanged"
       @focus="onSearchBarFocused"
     >
+      <template #prepend>
+        <VcButton
+          v-if="preparingScope"
+          class="ml-1 w-20"
+          color="secondary"
+          append-icon="delete-2"
+          size="xs"
+          variant="solid-light"
+          disabled
+          loading
+          :aria-label="$t('shared.layout.search_bar.scope_loading_label')"
+        />
+        <VcButton
+          v-for="item in searchScope"
+          :key="item.id"
+          class="ml-1"
+          color="secondary"
+          append-icon="delete-2"
+          size="xs"
+          variant="solid-light"
+          :aria-label="$t('shared.layout.search_bar.scope_remove_label', { label: item.label })"
+          @click.stop="onScopeItemClick(item.id)"
+        >
+          {{ item.label }}
+        </VcButton>
+      </template>
       <template #append>
         <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
 
@@ -137,7 +163,9 @@
 
 <script setup lang="ts">
 import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
-import { computed, onMounted, ref } from "vue";
+import { pickBy } from "lodash";
+import { computed, onMounted, ref, toValue } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -145,9 +173,10 @@ import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
+import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice, toCSV } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import BarcodeScanner from "./barcode-scanner.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
@@ -163,10 +192,9 @@ const searchBarElement = ref<HTMLElement | null>(null);
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;
 
-const SEARCH_BAR_DEBOUNCE_TIME = 300;
+const SEARCH_BAR_DEBOUNCE_TIME = 200;
 
 const MAX_LENGTH = themeContext.value?.settings?.search_max_chars || 999;
-const MIN_LENGTH = themeContext.value?.settings?.search_min_chars || 0;
 
 const {
   total,
@@ -224,15 +252,36 @@ const isExistResults = computed(
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
+const { searchScope, searchScopeFilterExpression, removeScopeItemById, isCategoryScope, preparingScope } =
+  useSearchScore();
+
+const { t } = useI18n();
+
+const searchPlaceholder = computed(() => {
+  return isCategoryScope.value
+    ? t("shared.layout.search_bar.enter_keyword_placeholder_category", { category: getCategoriesNames() })
+    : t("shared.layout.search_bar.enter_keyword_placeholder");
+});
+
+function getCategoriesNames() {
+  return toCSV(searchScope.value.filter((item) => item.type === "category").map((el) => el.label));
+}
+
+function onScopeItemClick(itemId: string | number) {
+  removeScopeItemById(itemId);
+}
+
 async function searchAndShowDropdownResults(): Promise<void> {
   const COLUMNS = 5;
   const { catalogId, currencyCode } = globals;
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
     themeContext.value.settings;
 
-  hideSearchDropdown();
+  if (!loading.value) {
+    hideSearchDropdown();
+  }
 
-  if (trimmedSearchPhrase.value.length > MAX_LENGTH || trimmedSearchPhrase.value.length < MIN_LENGTH) {
+  if (trimmedSearchPhrase.value.length > MAX_LENGTH) {
     return;
   }
 
@@ -242,7 +291,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
   const filterExpression = catalog_empty_categories_enabled
     ? undefined
     : [
-        getFilterExpressionForCategorySubtree({ catalogId }),
+        searchScopeFilterExpression.value || getFilterExpressionForCategorySubtree({ catalogId }),
         getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
       ]
         .filter(Boolean)
@@ -283,19 +332,37 @@ function selectItemEvent(product: Product) {
   analytics("selectItem", product, searchBarListProperties.value);
 }
 
+const facetsParam = useRouteQueryParam<string>(QueryParamName.Facets);
+const sortParam = useRouteQueryParam<string>(QueryParamName.Sort);
+
 function getSearchRoute(phrase: string): RouteLocationRaw {
-  return {
-    name: ROUTES.SEARCH.NAME,
-    query: {
+  const query = pickBy(
+    {
       [QueryParamName.SearchPhrase]: phrase,
+      [QueryParamName.Facets]: toValue(facetsParam),
+      [QueryParamName.Sort]: toValue(sortParam),
     },
-  };
+    (value) => !!value,
+  );
+
+  if (isCategoryScope.value) {
+    return {
+      path: router.currentRoute.value.path,
+      query,
+    };
+  } else {
+    return {
+      name: ROUTES.SEARCH.NAME,
+      query,
+    };
+  }
 }
 
 function goToSearchResultsPage() {
+  hideSearchDropdown();
+  void router.push(getSearchRoute(trimmedSearchPhrase.value));
+
   if (trimmedSearchPhrase.value) {
-    hideSearchDropdown();
-    void router.push(getSearchRoute(trimmedSearchPhrase.value));
     analytics("search", trimmedSearchPhrase.value, products.value, total.value);
   }
 }
@@ -303,19 +370,17 @@ function goToSearchResultsPage() {
 function reset() {
   searchPhrase.value = "";
   hideSearchDropdown();
-  void router.push({ name: ROUTES.SEARCH.NAME });
 }
 
 const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEARCH_BAR_DEBOUNCE_TIME);
 
 function onSearchPhraseChanged() {
-  hideSearchDropdown();
   void searchProductsDebounced();
 }
 
 function onSearchBarFocused() {
   if (trimmedSearchPhrase.value) {
-    showSearchDropdown();
+    void searchProductsDebounced();
   }
 }
 

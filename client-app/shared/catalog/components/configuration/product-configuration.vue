@@ -173,15 +173,16 @@ const {
   isConfigurationChanged,
   changeCartConfiguredItem,
   validationErrors,
+  loading: isDataUpdating,
 } = useConfigurableProduct(configurableProductId.value);
 
 const { openModal } = useModal();
 const notifications = useNotifications();
 
 watch(
-  () => [isConfigurationChanged.value, validationErrors.value.size === 0],
-  ([isChanged, isValid]) => {
-    if (isChanged && configurableLineItemId && isValid) {
+  () => [isConfigurationChanged.value, validationErrors.value.size === 0, isDataUpdating.value],
+  ([isChanged, isValid, isUpdating]) => {
+    if (isChanged && configurableLineItemId && isValid && !isUpdating) {
       notifications.info({
         text: t("shared.catalog.product_details.product_configuration.changed_notification"),
         singleInGroup: true,

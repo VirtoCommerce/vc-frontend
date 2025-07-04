@@ -55,14 +55,14 @@
             <div class="flex items-center gap-3 p-3 text-sm">
               <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
-              {{ $t(`common.methods.payment_by_code.${item.code}`) }}
+              {{ item.name }}
             </div>
           </template>
 
           <template #item="{ item }">
             <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
-            {{ $t(`common.methods.payment_by_code.${item.code}`) }}
+            {{ item.name }}
           </template>
         </VcSelect>
 
@@ -93,11 +93,14 @@ interface IProps {
 
 defineProps<IProps>();
 
-const isShippingMethodBopis = computed(() => {
-  return shipmentMethod.value?.code === BOPIS_CODE;
-});
+const { allItemsAreDigital, availablePaymentMethods, availableShippingMethods } = useFullCart();
 
-const { allItemsAreDigital, availablePaymentMethods } = useFullCart();
+const isShippingMethodBopis = computed(() => {
+  return (
+    shipmentMethod.value?.code === BOPIS_CODE ||
+    (availableShippingMethods.value.length === 1 && availableShippingMethods.value[0].code === BOPIS_CODE)
+  );
+});
 
 const {
   billingAddressEqualsShipping,

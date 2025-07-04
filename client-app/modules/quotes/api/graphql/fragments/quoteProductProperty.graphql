@@ -1,4 +1,4 @@
-fragment property on Property {
+fragment quoteProductProperty on Property {
   name
   value
   propertyType

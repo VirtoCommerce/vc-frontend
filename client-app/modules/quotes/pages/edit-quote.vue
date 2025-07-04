@@ -221,7 +221,7 @@ const canSaveChanges = computed<boolean>(() => {
   const isQuoteChanged = !isEqual(originalQuote.value, quote.value);
   const isCommentChanged = originalQuote.value?.comment !== comment.value;
   const areAddressesChanged =
-    !isEqual(quote.value!.addresses, originalQuote.value!.addresses) ||
+    !isEqual(quote.value?.addresses, originalQuote.value?.addresses) ||
     (billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value);
 
   const hasChanges = isQuoteChanged || isCommentChanged || areAddressesChanged || anyFilesModified.value;
@@ -364,10 +364,10 @@ function openSelectAddressModal(addressType: AddressType): void {
   });
 }
 
-async function onAddFiles(items: INewFile[]) {
+function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
-  await uploadFiles();
+  void uploadFiles();
 }
 
 async function onRemoveFiles(items: FileType[]) {
