@@ -1,4 +1,4 @@
-import { BREAKPOINTS } from "./client-app/core/constants/tailwind";
+import { BREAKPOINTS } from "./client-app/core/constants/tailwind.js";
 import type { Config } from "tailwindcss";
 
 const primaryColors = {
