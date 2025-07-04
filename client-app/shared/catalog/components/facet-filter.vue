@@ -20,8 +20,16 @@
         />
       </div>
 
-      <div class="px-3">
-        <VcSlider v-if="type === 'slider'" v-model="sliderValue" :min="facetMin" :max="facetMax" />
+      <div class="mb-2 mt-8 px-3">
+        <VcSlider
+          v-if="type === 'slider'"
+          v-model="sliderValue"
+          :min="facetMin"
+          :max="facetMax"
+          :cols="sliderCols"
+          show-tooltip-on-col-hover
+          update-on-column-click
+        />
       </div>
 
       <div class="facet-filter-widget__container" :style="{ maxHeight }">
@@ -164,6 +172,7 @@ import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef, toRef } from "vue";
 import { getFilterExpressionFromFacetRange } from "@/core/utilities";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import type { ColType } from "@/ui-kit/components/molecules/slider/vc-slider.vue";
 
 interface IEmits {
   (event: "update:facet", facet: FacetItemType): void;
@@ -253,6 +262,17 @@ const facetMax = computed(() => {
 
 const sliderValue = ref<[number, number]>([50, 600]);
 
+const sliderCols = computed<ColType[]>(() => {
+  return facet.value.values
+    .filter((item) => item.count !== undefined && item.from !== undefined && item.to !== undefined)
+    .map((item) => {
+      return {
+        count: item.count!,
+        value: [item.from!, item.to!] as [number, number],
+      };
+    });
+});
+
 watchDebounced(
   sliderValue,
   (value) => {
@@ -262,7 +282,7 @@ watchDebounced(
       type: "range",
       values: [
         {
-          label: "?",
+          label: "slider",
           selected: true,
           value: getFilterExpressionFromFacetRange({
             from: value[0],

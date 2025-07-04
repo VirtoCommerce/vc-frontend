@@ -55,7 +55,7 @@ import "nouislider/dist/nouislider.css";
 
 type RangeType = [number, number] | [number];
 type ColRangeType = [null, number] | [number, number] | [number, null];
-type ColType = { count: number; value: ColRangeType };
+export type ColType = { count: number; value: ColRangeType };
 
 interface IProps {
   min?: number;
