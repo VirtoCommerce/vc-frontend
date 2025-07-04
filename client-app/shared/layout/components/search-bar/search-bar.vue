@@ -62,11 +62,11 @@
         @focusout="handleFocusOut"
       >
         <!-- Results and history -->
-        <template v-if="isExistResults || searchHistoryQueries.length || searchHistoryLoading">
-          <!-- Search history -->
-          <section v-if="searchHistoryQueries.length || searchHistoryLoading">
+        <div>
+          <!-- Search history and suggestions -->
+          <section>
             <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
-              {{ $t("shared.layout.search_bar.search_history_label") }}
+              {{ $t("shared.layout.search_bar.suggestions_and_history_label") }}
             </header>
 
             <ul class="px-2 py-3">
@@ -91,27 +91,10 @@
               >
                 <span class="flex items-center gap-1.5">
                   <VcIcon name="history" size="md" class="shrink-0 fill-secondary-500" />
-                  <span v-html-safe="highlightSearchText(query, trimmedSearchPhrase)" />
+                  <span v-html-safe="highlightSearchText(query, trimmedSearchPhrase)" class="truncate" />
                 </span>
               </VcMenuItem>
 
-              <div
-                v-if="searchHistoryQueries.length === 0 && !searchHistoryLoading"
-                class="px-2 py-3 text-sm text-neutral-400"
-              >
-                {{ $t("shared.layout.search_bar.no_search_history") }}
-              </div>
-            </ul>
-          </section>
-          <!-- Search history end -->
-
-          <!-- Suggestions -->
-          <section v-if="suggestions.length">
-            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
-              {{ $t("shared.layout.search_bar.suggestions_label") }}
-            </header>
-
-            <ul class="gap-5 px-2 py-3">
               <VcMenuItem
                 v-for="suggestion in suggestions"
                 :key="suggestion.text"
@@ -120,12 +103,20 @@
                 @click="hideSearchDropdown"
               >
                 <span class="flex items-center gap-2">
-                  <VcIcon name="search-circle" size="xs" class="shrink-0 fill-neutral-300" />
+                  <VcIcon name="light-bulb" size="md" class="shrink-0 fill-secondary-500" />
                   <span v-html-safe="suggestion.label" class="truncate" />
                 </span>
               </VcMenuItem>
+
+              <div
+                v-if="searchHistoryQueries.length === 0 && !searchHistoryLoading && !suggestions.length"
+                class="px-2 py-3 text-sm text-neutral-400"
+              >
+                {{ $t("shared.layout.search_bar.nothing_to_show") }}
+              </div>
             </ul>
           </section>
+          <!-- Search history and suggestions end -->
 
           <!-- Pages -->
           <section v-if="pages.length">
@@ -133,20 +124,21 @@
               {{ $t("shared.layout.search_bar.pages_label") }}
             </header>
 
-            <ul class="px-2 py-3">
+            <ul class="grid grid-cols-4 gap-2 px-2 py-3">
               <VcMenuItem
                 v-for="(page, index) in pages"
                 :key="index"
                 class="w-full"
                 :to="page.permalink"
                 tag="li"
+                size="xs"
                 @click="hideSearchDropdown"
               >
                 <span v-html-safe="page.name" />
               </VcMenuItem>
             </ul>
           </section>
-          <!-- Suggestions end -->
+          <!-- Pages end -->
 
           <!-- Categories -->
           <section v-if="categories.length">
@@ -154,7 +146,7 @@
               {{ $t("shared.layout.search_bar.categories_label") }}
             </header>
 
-            <ul v-for="(column, index) in categoriesColumns" :key="index" class="px-2 py-3">
+            <ul v-for="(column, index) in categoriesColumns" :key="index" class="grid grid-cols-4 gap-2 px-2 py-3">
               <VcMenuItem
                 v-for="category in column"
                 :key="category.name"
@@ -194,10 +186,11 @@
               {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
             </VcButton>
           </section>
-        </template>
+        </div>
+        <!-- Results and history end -->
 
         <!-- Not found -->
-        <div v-else-if="!loading" class="my-16 text-center">
+        <div v-if="!loading && !isExistResults && trimmedSearchPhrase" class="my-16 text-center">
           <VcIcon name="search-not-found" class="mr-5 inline-block !h-12 !w-12 fill-primary" />
 
           <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
@@ -378,8 +371,6 @@ async function searchAndShowDropdownResults(): Promise<void> {
   if (search_static_content_suggestions_enabled) {
     params.pages = { itemsPerPage: DEFAULT_PAGE_SIZE };
   }
-
-  console.log("params!", params);
 
   await searchResults(params);
 

@@ -413,7 +413,9 @@
         "enter_keyword_placeholder": "Rechercher dans toute la boutique",
         "enter_keyword_placeholder_category": "Rechercher dans {category}",
         "scope_loading_label": "Chargement du contexte de recherche",
-        "scope_remove_label": "Supprimer : {label}"
+        "scope_remove_label": "Supprimer : {label}",
+        "suggestions_and_history_label": "Suggestions et historique",
+        "nothing_to_show": "Rien à afficher"
       },
       "language_selector": {
         "label": "Langue :"

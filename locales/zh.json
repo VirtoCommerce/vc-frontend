@@ -413,7 +413,9 @@
         "enter_keyword_placeholder": "搜索全店",
         "enter_keyword_placeholder_category": "在 {category} 中搜索",
         "scope_loading_label": "正在加载搜索上下文",
-        "scope_remove_label": "移除：{label}"
+        "scope_remove_label": "移除：{label}",
+        "suggestions_and_history_label": "建议和历史记录",
+        "nothing_to_show": "无内容"
       },
       "language_selector": {
         "label": "中文："
