@@ -17,7 +17,15 @@
         </slot>
 
         <transition mode="out-in" name="scale">
-          <VcBadge v-if="count" class="absolute -right-3 -top-2 transition-transform" variant="outline" rounded>
+          <VcBadge
+            v-if="count"
+            class="absolute -right-3 -top-2 transition-transform"
+            variant="outline"
+            rounded
+            nowrap
+            size="sm"
+            max-width="none"
+          >
             {{ $n(count, { style: "decimal", notation: "compact" }) }}
           </VcBadge>
         </transition>

@@ -674,7 +674,7 @@
         }
       },
       "discount_badge": {
-        "off": "折扣"
+        "off": "-{discount}"
       },
       "branches_modal": {
         "title": "选择分支",
