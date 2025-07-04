@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="news-article-page">
     <Error404 v-if="!loading && !newsArticle"></Error404>
     <VcContainer v-else>
-      <router-link :to="{ name: ROUTES.ARTICLES.NAME }" class="text-[--link-color] hover:text-[--link-hover-color]">
+      <router-link :to="{ name: ROUTES.ARTICLES.NAME }" class="news-article-page__back-link">
         {{ $t("news.links.to-list") }}
       </router-link>
       <VcWidgetSkeleton v-if="loading" head size="lg"></VcWidgetSkeleton>
@@ -70,3 +70,11 @@ useSeoMeta({
 
 watchEffect(fetchNewsArticle);
 </script>
+
+<style lang="scss">
+.news-article-page {
+  &__back-link {
+    @apply text-[--link-color] hover:text-[--link-hover-color];
+  }
+}
+</style>

@@ -1,15 +1,15 @@
 <template>
-  <VcWidget :title="newsArticle.title">
+  <VcWidget :title="newsArticle.title" class="news-article">
     <template #title>
       <router-link :to="articleRoute">
-        <div class="text-left">{{ newsArticle.title }}</div>
+        <div class="news-article__title">{{ newsArticle.title }}</div>
       </router-link>
-      <div v-if="newsArticle.publishDate" class="mt-3 text-right text-sm text-neutral">
+      <div v-if="newsArticle.publishDate" class="news-article__publish-date">
         {{ $d(newsArticle.publishDate) }}
       </div>
     </template>
     <router-link :to="articleRoute">
-      <VcMarkdownRender :src="newsArticle.contentPreview ?? ''" class="text-lg" />
+      <VcMarkdownRender :src="newsArticle.contentPreview ?? ''" class="news-article__preview" />
     </router-link>
   </VcWidget>
 </template>
@@ -48,3 +48,19 @@ const articleRoute = computed(() => {
 
 const newsArticle = toRef(props, "newsArticle");
 </script>
+
+<style lang="scss">
+.news-article {
+  &__title {
+    @apply text-left;
+  }
+
+  &__publish-date {
+    @apply mt-3 text-right text-sm text-neutral;
+  }
+
+  &__preview {
+    @apply text-lg;
+  }
+}
+</style>
