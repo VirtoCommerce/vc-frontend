@@ -35,29 +35,48 @@
     <div ref="sliderRef" class="vc-slider__slider"></div>
 
     <div class="vc-slider__inputs">
-      <VcInput v-model="start" size="sm" class="vc-slider__input" min="min" :max="max" :disabled="disabled" />
+      <VcInput
+        v-model="start"
+        size="sm"
+        class="vc-slider__input"
+        :disabled="disabled"
+        type="number"
+        @blur="handleInputBlur"
+      />
 
       <template v-if="!isNaN(end)">
         <b class="vc-slider__dash">&mdash;</b>
 
-        <VcInput v-model="end" size="sm" class="vc-slider__input" min="min" :max="max" :disabled="disabled" />
+        <VcInput
+          v-model="end"
+          size="sm"
+          class="vc-slider__input"
+          :disabled="disabled"
+          type="number"
+          @blur="handleInputBlur"
+        />
       </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { watchDebounced } from "@vueuse/core";
+import { isNaN } from "lodash";
 import { create } from "nouislider";
 import { ref, onMounted, computed, toRefs, watch } from "vue";
 import type { API } from "nouislider";
 import "nouislider/dist/nouislider.css";
-import { isNaN } from "lodash";
 
-type RangeType = [number | null, number | null];
-type ColType = { count: number; value: RangeType };
+type RangeType = [number, number] | [number];
+type ColRangeType = [null, number] | [number, number] | [number, null];
+export type ColType = { count: number; value: ColRangeType };
+
+interface IEmits {
+  (event: "change", value: RangeType): void;
+}
 
 interface IProps {
-  value: RangeType;
   min?: number;
   max: number;
   step?: number;
@@ -68,6 +87,8 @@ interface IProps {
   disabled?: boolean;
 }
 
+const emit = defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
   step: 1,
   min: 0,
@@ -77,10 +98,15 @@ const props = withDefaults(defineProps<IProps>(), {
   showTooltipOnColHover: false,
 });
 
-const model = defineModel<IProps["value"]>("value");
+const model = defineModel<RangeType>();
+
 const { min, max, step, cols } = toRefs(props);
+
 const start = ref(model.value ? model.value[0] : min.value);
-const end = ref(model.value ? (model.value[1] ?? null) : max.value);
+const end = ref(model.value ? model.value[1] : max.value);
+
+// Internal debounced model for immediate visual updates
+const internalModel = ref<RangeType>(model.value || [min.value, max.value]);
 
 const sliderRef = ref<HTMLElement | null>(null);
 let slider: API | null = null;
@@ -124,28 +150,30 @@ const normalizedCols = computed(() => {
   });
 });
 
-function isRangesEqual(a?: RangeType, b?: RangeType) {
-  if (!a || !b) {
-    return false;
-  }
-
-  return a[0] === b[0] && a[1] === b[1];
-}
-
 function updateModel(range: RangeType, fromSlider = false) {
-  if (isRangesEqual(model.value, range)) {
-    return;
-  }
-
-  model.value = range;
+  internalModel.value = range;
 
   if (!fromSlider && slider) {
     slider.set(range);
   }
 }
 
+function handleInputBlur() {
+  model.value = internalModel.value;
+  emit("change", internalModel.value);
+}
+
+// Debounced watcher for the internal model to update the actual model
+watchDebounced(
+  internalModel,
+  (newValue: RangeType) => {
+    model.value = newValue;
+  },
+  { debounce: 200 },
+);
+
 watch([start, end], ([v1, v2]) => {
-  updateModel([v1, v2]);
+  updateModel([v1, v2] as RangeType);
 });
 
 onMounted(() => {
@@ -154,16 +182,23 @@ onMounted(() => {
   }
 
   slider = create(sliderRef.value, {
-    start: model.value,
+    start: model.value || [min.value, max.value],
     connect: true,
     step: step.value,
     range: { min: min.value, max: max.value },
   });
 
-  slider.on("update", (v) => {
+  slider.on("update", (v: (string | number)[]) => {
     start.value = +v[0];
     end.value = +v[1];
     updateModel([+v[0], +v[1]], true);
+  });
+
+  // Listen for when user stops dragging the slider
+  slider.on("change", (v: (string | number)[]) => {
+    const range: RangeType = [+v[0], +v[1]];
+    model.value = range;
+    emit("change", range);
   });
 });
 </script>
