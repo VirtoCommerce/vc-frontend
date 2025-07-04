@@ -18,6 +18,11 @@
       allow-set-meta
     />
 
+    <NewsArticlePage
+      v-else-if="objectType === ObjectType.NewsArticle"
+      :article-id="slugInfo?.entityInfo?.objectId ?? ''"
+    />
+
     <VirtoPage v-else-if="hasPageDocumentContent" :page-document="pageDocumentContent" />
 
     <StaticPage v-else-if="hasContent" />
@@ -51,6 +56,7 @@ const VirtoPage = defineAsyncComponent(() => import("@/pages/matcher/virto-pages
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
 const BrandsPage = defineAsyncComponent(() => import("@/pages/brands.vue"));
 const BrandPage = defineAsyncComponent(() => import("@/pages/brand.vue"));
+const NewsArticlePage = defineAsyncComponent(() => import("@/modules/news/pages/news-article.vue"));
 
 const { setMatchingRouteName } = useNavigations();
 
@@ -85,15 +91,21 @@ enum ObjectType {
   VirtoPages = "Pages",
   Brands = "Brands",
   Brand = "Brand",
+  NewsArticle = "NewsArticle",
 }
 
 watchEffect(() => {
   if (loading.value) {
     emit("setState", "loading");
   } else if (
-    [ObjectType.Catalog, ObjectType.Category, ObjectType.CatalogProduct, ObjectType.Brands, ObjectType.Brand].includes(
-      objectType.value as ObjectType,
-    )
+    [
+      ObjectType.Catalog,
+      ObjectType.Category,
+      ObjectType.CatalogProduct,
+      ObjectType.Brands,
+      ObjectType.Brand,
+      ObjectType.NewsArticle,
+    ].includes(objectType.value as ObjectType)
   ) {
     emit("setState", "ready");
   } else if (pageDocumentContent.value) {
@@ -113,6 +125,9 @@ watch(slugInfo, () => {
       break;
     case ObjectType.Category:
       setMatchingRouteName("Category");
+      break;
+    case ObjectType.NewsArticle:
+      setMatchingRouteName("NewsArticle");
       break;
     case ObjectType.ContentFile:
       void fetchContent();
