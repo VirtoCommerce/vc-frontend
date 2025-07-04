@@ -15,7 +15,9 @@
 import { useSeoMeta } from "@unhead/vue";
 import { computed, defineAsyncComponent, ref, watchEffect } from "vue";
 import { usePageTitle } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { getNewsArticle } from "../api/graphql/queries/newsArticle";
+import { MODULE_ID, USE_ROOT_LINKS } from "../constants";
 import type { NewsArticleContent } from "../api/graphql/types";
 import NewsArticle from "@/modules/news/components/news-article.vue";
 
@@ -29,6 +31,9 @@ interface IProps {
 const loading = ref(false);
 const newsArticle = ref<NewsArticleContent>();
 
+const { getSettingValue } = useModuleSettings(MODULE_ID);
+const useRootLink = getSettingValue(USE_ROOT_LINKS);
+
 const seoTitle = computed(() => newsArticle.value?.seoInfo?.pageTitle || newsArticle.value?.title);
 const { title: pageTitle } = usePageTitle(seoTitle);
 
@@ -37,7 +42,9 @@ const seoKeywords = computed(() => newsArticle.value?.seoInfo?.metaKeywords);
 
 const seoUrl = computed(() =>
   newsArticle.value?.seoInfo?.semanticUrl
-    ? `${window.location.host}/news/${newsArticle.value?.seoInfo?.semanticUrl}`
+    ? useRootLink
+      ? `${window.location.host}/${newsArticle.value?.seoInfo?.semanticUrl}`
+      : `${window.location.host}/news/${newsArticle.value?.seoInfo?.semanticUrl}`
     : window.location.toString(),
 );
 
