@@ -39,7 +39,7 @@
 
       <SearchBar />
 
-      <ul class="-mx-2 flex items-center">
+      <ul class="-mx-2 flex items-center" role="menubar">
         <li v-for="item in desktopMainMenuItems" :key="item.id">
           <component :is="(item.id && customLinkComponents[item.id]) || LinkDefault" :item="item" />
         </li>
