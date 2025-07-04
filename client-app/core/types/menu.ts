@@ -25,3 +25,9 @@ export type ExtendedMenuLinkType = {
   priority?: number;
   isCatalogItem?: boolean;
 };
+
+export type MarkedMenuLinkType = ExtendedMenuLinkType & {
+  isActive?: boolean;
+  type?: "pinned" | "category";
+  children?: MarkedMenuLinkType[];
+};

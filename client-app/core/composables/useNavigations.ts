@@ -15,10 +15,12 @@ import {
   Logger,
   categoryToExtendedMenuLink,
   getTranslatedMenuLink,
+  isActiveRoute,
 } from "@/core/utilities";
 import { globals } from "../globals";
-import type { ExtendedMenuLinkType, MenuType } from "../types";
+import type { ExtendedMenuLinkType, MenuType, MarkedMenuLinkType } from "../types";
 import type { DeepPartial } from "utility-types";
+import type { RouteLocationNormalizedLoaded } from "vue-router";
 
 const { currentCurrency } = useCurrency();
 
@@ -27,6 +29,33 @@ const matchingRouteName = ref("");
 const menuSchema = shallowRef<MenuType | null>(null);
 const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
 const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
+const pinnedLinks = shallowRef<ExtendedMenuLinkType[]>([]);
+
+function markLinkTree(
+  link?: ExtendedMenuLinkType,
+  currentRoute?: RouteLocationNormalizedLoaded,
+  type?: "pinned" | "category",
+): MarkedMenuLinkType | undefined {
+  if (!link) {
+    return;
+  }
+
+  function markRecursively(_link?: ExtendedMenuLinkType): MarkedMenuLinkType {
+    const children = _link?.children?.map(markRecursively) ?? [];
+
+    const isSelfActive = isActiveRoute(_link?.route ?? "", currentRoute as RouteLocationNormalizedLoaded);
+    const isChildActive = children.some((c) => c.isActive);
+
+    return {
+      ..._link,
+      children,
+      isActive: isSelfActive || isChildActive,
+      type,
+    };
+  }
+
+  return markRecursively(link);
+}
 
 const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
   (menuSchema.value?.header?.desktop?.main || [])
@@ -107,6 +136,14 @@ export function useNavigations() {
     }
   }
 
+  async function fetchPinnedLinks() {
+    try {
+      pinnedLinks.value = (await getMenu("pinned-links")).map((item) => convertToExtendedMenuLink(item, false));
+    } catch (e) {
+      Logger.error(`${useNavigations.name}.${fetchPinnedLinks.name}`, e);
+    }
+  }
+
   async function fetchCatalogMenu() {
     const { zero_price_product_enabled } = themeContext.value.settings;
 
@@ -151,7 +188,7 @@ export function useNavigations() {
   async function fetchMenus() {
     loading.value = true;
     menuSchema.value = menuData as MenuType;
-    await Promise.all([fetchCatalogMenu(), fetchFooterLinks()]);
+    await Promise.all([fetchCatalogMenu(), fetchFooterLinks(), fetchPinnedLinks()]);
     loading.value = false;
   }
 
@@ -182,6 +219,8 @@ export function useNavigations() {
     matchingRouteName: readonly(matchingRouteName),
     catalogMenuItems: computed(() => catalogMenuItems.value),
     footerLinks: computed(() => footerLinks.value),
+    pinnedLinks: computed(() => pinnedLinks.value),
+    markLinkTree,
 
     mergeMenuSchema,
   };
