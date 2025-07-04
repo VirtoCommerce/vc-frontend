@@ -16,7 +16,7 @@ import { getNewsArticles } from "../api/graphql/queries/newsArticles";
 import type { NewsArticleContent } from "../api/graphql/types";
 import NewsArticlePreview from "@/modules/news/components/news-article-preview.vue";
 
-const loading = ref<boolean>(false);
+const loading = ref(false);
 const newsArticles = ref<NewsArticleContent[]>([]);
 
 const fetchNewsArticles = async () => {

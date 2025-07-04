@@ -26,7 +26,7 @@ const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 interface IProps {
   articleId: string;
 }
-const loading = ref<boolean>(false);
+const loading = ref(false);
 const newsArticle = ref<NewsArticleContent>();
 
 const seoTitle = computed(() => newsArticle.value?.seoInfo?.pageTitle || newsArticle.value?.title);
