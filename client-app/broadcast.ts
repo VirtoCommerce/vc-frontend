@@ -84,6 +84,12 @@ export function setupBroadcastGlobalListeners() {
     }
   });
   on(graphqlErrorEvent, (error) => {
+    notifications.error({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      group: "GraphqlError",
+      text: t("common.messages.something_went_wrong"),
+    });
+
     throw error;
   });
   on(unhandledErrorEvent, () => {
