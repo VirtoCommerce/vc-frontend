@@ -31,7 +31,6 @@ const { getSettingValue } = useModuleSettings(MODULE_ID);
 const useRootLink = getSettingValue(USE_ROOT_LINKS);
 
 const articleRoute = computed(() => {
-  console.warn("useRootLink", useRootLink);
   if (newsArticle.value?.seoInfo?.semanticUrl && newsArticle.value?.seoInfo?.semanticUrl != newsArticle.value?.id) {
     return {
       path: useRootLink
