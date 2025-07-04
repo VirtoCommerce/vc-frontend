@@ -35,18 +35,37 @@
     <div ref="sliderRef" class="vc-slider__slider"></div>
 
     <div class="vc-slider__inputs">
-      <VcInput v-model="start" size="sm" class="vc-slider__input" min="min" :max="max" :disabled="disabled" />
+      <VcInput
+        v-model="start"
+        size="sm"
+        class="vc-slider__input"
+        min="min"
+        :max="max"
+        :disabled="disabled"
+        type="number"
+        @blur="handleInputBlur"
+      />
 
       <template v-if="!isNaN(end)">
         <b class="vc-slider__dash">&mdash;</b>
 
-        <VcInput v-model="end" size="sm" class="vc-slider__input" min="min" :max="max" :disabled="disabled" />
+        <VcInput
+          v-model="end"
+          size="sm"
+          class="vc-slider__input"
+          min="min"
+          :max="max"
+          :disabled="disabled"
+          type="number"
+          @blur="handleInputBlur"
+        />
       </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { watchDebounced } from "@vueuse/core";
 import { isNaN } from "lodash";
 import { create } from "nouislider";
 import { ref, onMounted, computed, toRefs, watch } from "vue";
@@ -56,6 +75,10 @@ import "nouislider/dist/nouislider.css";
 type RangeType = [number, number] | [number];
 type ColRangeType = [null, number] | [number, number] | [number, null];
 export type ColType = { count: number; value: ColRangeType };
+
+interface IEmits {
+  (event: "change", value: RangeType): void;
+}
 
 interface IProps {
   min?: number;
@@ -68,6 +91,8 @@ interface IProps {
   disabled?: boolean;
 }
 
+const emit = defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
   step: 1,
   min: 0,
@@ -78,9 +103,14 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const model = defineModel<RangeType>();
+
 const { min, max, step, cols } = toRefs(props);
+
 const start = ref(model.value ? model.value[0] : min.value);
 const end = ref(model.value ? model.value[1] : max.value);
+
+// Internal debounced model for immediate visual updates
+const internalModel = ref<RangeType>(model.value || [min.value, max.value]);
 
 const sliderRef = ref<HTMLElement | null>(null);
 let slider: API | null = null;
@@ -133,16 +163,36 @@ function isRangesEqual(a?: RangeType, b?: RangeType) {
 }
 
 function updateModel(range: RangeType, fromSlider = false) {
-  if (isRangesEqual(model.value, range)) {
+  if (isRangesEqual(internalModel.value, range)) {
     return;
   }
 
-  model.value = range;
+  internalModel.value = range;
 
   if (!fromSlider && slider) {
     slider.set(range);
   }
 }
+
+function handleInputBlur() {
+  // Update the model when user stops editing inputs
+  // The debounced watcher will handle emitting the change event
+  if (!isRangesEqual(model.value, internalModel.value)) {
+    model.value = internalModel.value;
+    emit("change", internalModel.value);
+  }
+}
+
+// Debounced watcher for the internal model to update the actual model
+watchDebounced(
+  internalModel,
+  (newValue: RangeType) => {
+    if (!isRangesEqual(model.value, newValue)) {
+      model.value = newValue;
+    }
+  },
+  { debounce: 200 },
+);
 
 watch([start, end], ([v1, v2]) => {
   updateModel([v1, v2] as RangeType);
@@ -160,10 +210,19 @@ onMounted(() => {
     range: { min: min.value, max: max.value },
   });
 
-  slider.on("update", (v) => {
+  slider.on("update", (v: (string | number)[]) => {
     start.value = +v[0];
     end.value = +v[1];
     updateModel([+v[0], +v[1]], true);
+  });
+
+  // Listen for when user stops dragging the slider
+  slider.on("change", (v: (string | number)[]) => {
+    const range: RangeType = [+v[0], +v[1]];
+    if (!isRangesEqual(model.value, range)) {
+      model.value = range;
+      emit("change", range);
+    }
   });
 });
 </script>

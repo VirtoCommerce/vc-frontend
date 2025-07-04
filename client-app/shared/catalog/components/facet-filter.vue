@@ -29,6 +29,7 @@
           :cols="sliderCols"
           show-tooltip-on-col-hover
           update-on-column-click
+          @change="handleSliderChange"
         />
       </div>
 
@@ -167,7 +168,7 @@
 </template>
 
 <script lang="ts" setup>
-import { breakpointsTailwind, useBreakpoints, useElementVisibility, watchDebounced } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef, toRef } from "vue";
 import { getFilterExpressionFromFacetRange } from "@/core/utilities";
@@ -273,29 +274,28 @@ const sliderCols = computed<ColType[]>(() => {
     });
 });
 
-watchDebounced(
-  sliderValue,
-  (value) => {
-    emit("update:facet", {
-      label: "price",
-      paramName: "price",
-      type: "range",
-      values: [
-        {
-          label: "slider",
-          selected: true,
-          value: getFilterExpressionFromFacetRange({
-            from: value[0],
-            to: value[1],
-            includeFrom: true,
-            includeTo: true,
-          }),
-        },
-      ],
-    });
-  },
-  { debounce: 200 },
-);
+function handleSliderChange(value: [number, number] | [number]) {
+  // Ensure we have both start and end values
+  const [start, end] = Array.isArray(value) && value.length === 2 ? value : [value[0], value[0]];
+
+  emit("update:facet", {
+    label: "price",
+    paramName: "price",
+    type: "range",
+    values: [
+      {
+        label: "slider",
+        selected: true,
+        value: getFilterExpressionFromFacetRange({
+          from: start,
+          to: end,
+          includeFrom: true,
+          includeTo: true,
+        }),
+      },
+    ],
+  });
+}
 </script>
 
 <style lang="scss">
