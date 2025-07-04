@@ -14,7 +14,13 @@
   </div>
 
   <!-- Desktop table view -->
-  <table v-else class="w-full table-fixed text-left text-sm" :aria-describedby="description">
+  <table v-else class="w-full table-fixed text-left text-sm">
+    <caption class="sr-only">
+      {{
+        description
+      }}
+    </caption>
+
     <slot name="header">
       <thead v-if="!hideDefaultHeader && columns.length" class="border-b border-neutral-200">
         <tr>
