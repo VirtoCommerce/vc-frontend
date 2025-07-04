@@ -20,7 +20,7 @@
 
     "search_max_chars": 400,
     "search_static_content_suggestions_enabled": true,
-    "search_product_phrase_suggestions_enabled": false,
+    "search_product_phrase_suggestions_enabled": true,
 
     "zero_price_product_enabled": false,
 

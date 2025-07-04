@@ -8,7 +8,7 @@
       :clearable="!!searchPhrase"
       :placeholder="searchPlaceholder"
       @clear="reset"
-      @keyup.enter="goToSearchResultsPage"
+      @keyup.enter="handleSearch()"
       @keyup.esc="hideSearchDropdown"
       @input="onSearchPhraseChanged"
       @focus="onSearchBarFocused"
@@ -47,7 +47,7 @@
           icon="search"
           icon-size="1.25rem"
           :loading="loading"
-          @click="goToSearchResultsPage"
+          @click="handleSearch()"
         />
       </template>
     </VcInput>
@@ -61,67 +61,108 @@
         :style="searchDropdownStyle"
         @focusout="handleFocusOut"
       >
-        <!-- Results -->
-        <template v-if="isExistResults">
-          <!-- Suggestions -->
-          <section v-if="suggestions.length">
-            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
-              {{ $t("shared.layout.search_bar.suggestions_label") }}
+        <!-- Results and history -->
+        <div>
+          <!-- Search history and suggestions -->
+          <section>
+            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
+              {{ $t("shared.layout.search_bar.suggestions_and_history_label") }}
             </header>
 
-            <div class="flex gap-5 px-5 pb-3 pt-2.5 text-sm">
-              <ul class="min-w-0">
-                <li v-for="suggestion in suggestions" :key="suggestion.text">
-                  <router-link
-                    :to="getSearchRoute(suggestion.text)"
-                    class="flex items-center gap-2 py-1"
-                    @click="hideSearchDropdown"
-                  >
-                    <VcIcon name="search-circle" size="xs" class="shrink-0 fill-neutral-300" />
-                    <span v-html-safe="suggestion.label" class="truncate" />
-                  </router-link>
-                </li>
-              </ul>
-            </div>
+            <ul class="px-2 py-3">
+              <VcMenuItem v-if="searchHistoryLoading" tag="li" disabled>
+                <div class="flex items-center gap-1.5">
+                  <VcIcon name="history" size="md" class="shrink-0 fill-secondary-500" />
+                  <div class="h-3 w-20 animate-pulse bg-neutral-200"></div>
+                </div>
+              </VcMenuItem>
+
+              <VcMenuItem
+                v-for="query in searchHistoryQueries"
+                v-else
+                :key="query"
+                class="w-full"
+                :label="query"
+                tag="li"
+                truncate
+                nowrap
+                max-lines="1"
+                @click="handleSearchHistoryClick(query)"
+              >
+                <span class="flex items-center gap-1.5">
+                  <VcIcon name="history" size="md" class="shrink-0 fill-secondary-500" />
+                  <span v-html-safe="highlightSearchText(query, trimmedSearchPhrase)" class="truncate" />
+                </span>
+              </VcMenuItem>
+
+              <VcMenuItem
+                v-for="suggestion in suggestions"
+                :key="suggestion.text"
+                :to="getSearchRoute(suggestion.text)"
+                tag="li"
+                @click="hideSearchDropdown"
+              >
+                <span class="flex items-center gap-2">
+                  <VcIcon name="light-bulb" size="md" class="shrink-0 fill-secondary-500" />
+                  <span v-html-safe="suggestion.label" class="truncate" />
+                </span>
+              </VcMenuItem>
+
+              <div
+                v-if="searchHistoryQueries.length === 0 && !searchHistoryLoading && !suggestions.length"
+                class="px-2 py-3 text-sm text-neutral-400"
+              >
+                {{ $t("shared.layout.search_bar.nothing_to_show") }}
+              </div>
+            </ul>
           </section>
+          <!-- Search history and suggestions end -->
 
           <!-- Pages -->
           <section v-if="pages.length">
-            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
+            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
               {{ $t("shared.layout.search_bar.pages_label") }}
             </header>
 
-            <div class="flex gap-5 px-5 pb-3 pt-2.5 text-sm">
-              <ul>
-                <li v-for="(page, index) in pages" :key="index">
-                  <router-link :to="page.permalink!" class="block py-1" @click="hideSearchDropdown">
-                    <span v-html-safe="page.name" />
-                  </router-link>
-                </li>
-              </ul>
-            </div>
+            <ul class="grid grid-cols-4 gap-2 px-2 py-3">
+              <VcMenuItem
+                v-for="(page, index) in pages"
+                :key="index"
+                class="w-full"
+                :to="page.permalink"
+                tag="li"
+                size="xs"
+                @click="hideSearchDropdown"
+              >
+                <span v-html-safe="page.name" />
+              </VcMenuItem>
+            </ul>
           </section>
+          <!-- Pages end -->
 
           <!-- Categories -->
           <section v-if="categories.length">
-            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
+            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
               {{ $t("shared.layout.search_bar.categories_label") }}
             </header>
 
-            <div class="flex gap-5 px-5 pb-3 pt-2.5 text-sm">
-              <ul v-for="(column, index) in categoriesColumns" :key="index">
-                <li v-for="category in column" :key="category.name">
-                  <router-link :to="categoriesRoutes[category.id]" class="block py-1" @click="hideSearchDropdown">
-                    <span v-html-safe="category.name" />
-                  </router-link>
-                </li>
-              </ul>
-            </div>
+            <ul v-for="(column, index) in categoriesColumns" :key="index" class="grid grid-cols-4 gap-2 px-2 py-3">
+              <VcMenuItem
+                v-for="category in column"
+                :key="category.name"
+                :to="categoriesRoutes[category.id]"
+                tag="li"
+                @click="hideSearchDropdown"
+              >
+                <span v-html-safe="category.name" />
+              </VcMenuItem>
+            </ul>
           </section>
+          <!-- Categories end -->
 
           <!-- Products -->
           <section v-if="products.length" class="pb-4">
-            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
+            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
               {{ $t("shared.layout.search_bar.products_label") }}
             </header>
 
@@ -137,24 +178,31 @@
               />
             </div>
           </section>
+          <!-- Products end -->
 
           <!-- Actions -->
           <section v-if="total" class="sticky bottom-0 mt-0.5 border-t border-neutral-100 bg-additional-50 px-5 py-3">
-            <VcButton size="sm" @click="goToSearchResultsPage">
+            <VcButton size="sm" @click="handleSearch()">
               {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
             </VcButton>
           </section>
-        </template>
+        </div>
+        <!-- Results and history end -->
 
         <!-- Not found -->
-        <div v-else-if="!loading" class="my-16 text-center">
-          <VcIcon name="search-not-found" class="mr-5 inline-block !h-12 !w-12 fill-primary" />
+        <div v-if="!loading && !isExistResults && trimmedSearchPhrase">
+          <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
+            {{ $t("shared.layout.search_bar.search_label") }}
+          </header>
+          <div class="flex items-center gap-1.5 px-4 py-6 text-sm text-neutral">
+            <VcIcon name="search-not-found" size="md" class="shrink-0 fill-secondary-500" />
 
-          <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
-            <template #keyword>
-              <strong>{{ trimmedSearchPhrase }}</strong>
-            </template>
-          </i18n-t>
+            <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
+              <template #keyword>
+                <strong>{{ trimmedSearchPhrase }}</strong>
+              </template>
+            </i18n-t>
+          </div>
         </div>
       </div>
     </transition>
@@ -168,6 +216,7 @@ import { computed, onMounted, ref, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -177,6 +226,7 @@ import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice,
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
+import { highlightSearchText } from "@/shared/layout/utils";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import BarcodeScanner from "./barcode-scanner.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
@@ -186,6 +236,7 @@ import type { RouteLocationRaw } from "vue-router";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
 const { themeContext } = useThemeContext();
+const { saveSearchQuery, useGetSearchHistoryQuery } = useHistoricalEvents();
 
 const searchBarElement = ref<HTMLElement | null>(null);
 
@@ -215,6 +266,16 @@ const router = useRouter();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const categoriesRoutes = useCategoriesRoutes(categories);
+const {
+  result: searchHistory,
+  load: loadSearchHistory,
+  loading: searchHistoryLoading,
+} = useGetSearchHistoryQuery({
+  storeId: "B2B-store",
+  maxCount: 10,
+});
+
+const searchHistoryQueries = computed(() => searchHistory.value?.searchHistory?.queries ?? []);
 
 const searchDropdownElement = ref<HTMLElement | null>(null);
 
@@ -358,6 +419,19 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
   }
 }
 
+function handleSearch(saveQuery = true) {
+  if (saveQuery) {
+    void saveSearchQuery(trimmedSearchPhrase.value);
+  }
+
+  goToSearchResultsPage();
+}
+
+function handleSearchHistoryClick(query: string) {
+  searchPhrase.value = query;
+  handleSearch(false);
+}
+
 function goToSearchResultsPage() {
   hideSearchDropdown();
   void router.push(getSearchRoute(trimmedSearchPhrase.value));
@@ -379,8 +453,12 @@ function onSearchPhraseChanged() {
 }
 
 function onSearchBarFocused() {
+  void loadSearchHistory();
+
   if (trimmedSearchPhrase.value) {
     void searchProductsDebounced();
+  } else {
+    showSearchDropdown();
   }
 }
 
@@ -402,7 +480,7 @@ onMounted(() => {
 const onBarcodeScanned = (value: string) => {
   if (value) {
     searchPhrase.value = value;
-    goToSearchResultsPage();
+    handleSearch(false);
   }
 };
 </script>
