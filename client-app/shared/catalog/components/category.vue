@@ -577,6 +577,8 @@ watch(
   },
 );
 
+watch(searchQueryParam, resetCurrentPage);
+
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
   () => {
