@@ -91,7 +91,7 @@
               >
                 <span class="flex items-center gap-1.5">
                   <VcIcon name="history" size="md" class="shrink-0 fill-secondary-500" />
-                  <span v-html-safe="query" />
+                  <span v-html-safe="highlightSearchText(query, trimmedSearchPhrase)" />
                 </span>
               </VcMenuItem>
 
@@ -228,6 +228,7 @@ import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice,
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
+import { highlightSearchText } from "@/shared/layout/utils";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import BarcodeScanner from "./barcode-scanner.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
