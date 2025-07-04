@@ -116,10 +116,17 @@ export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocatio
     return link === currentRoute.path;
   }
 
-  if (typeof link === "object" && link !== null && "name" in link) {
-    return (
-      link.name === currentRoute.name && JSON.stringify(link.params ?? {}) === JSON.stringify(currentRoute.params ?? {})
-    );
+  if (typeof link === "object" && link !== null) {
+    if ("name" in link) {
+      return (
+        link.name === currentRoute.name &&
+        JSON.stringify(link.params ?? {}) === JSON.stringify(currentRoute.params ?? {})
+      );
+    }
+
+    if ("path" in link) {
+      return link.path === currentRoute.path;
+    }
   }
 
   return false;
