@@ -39,8 +39,6 @@
         v-model="start"
         size="sm"
         class="vc-slider__input"
-        min="min"
-        :max="max"
         :disabled="disabled"
         type="number"
         @blur="handleInputBlur"
@@ -53,8 +51,6 @@
           v-model="end"
           size="sm"
           class="vc-slider__input"
-          min="min"
-          :max="max"
           :disabled="disabled"
           type="number"
           @blur="handleInputBlur"
@@ -154,19 +150,7 @@ const normalizedCols = computed(() => {
   });
 });
 
-function isRangesEqual(a?: RangeType, b?: RangeType) {
-  if (!a || !b) {
-    return false;
-  }
-
-  return a[0] === b[0] && a[1] === b[1];
-}
-
 function updateModel(range: RangeType, fromSlider = false) {
-  if (isRangesEqual(internalModel.value, range)) {
-    return;
-  }
-
   internalModel.value = range;
 
   if (!fromSlider && slider) {
@@ -175,21 +159,15 @@ function updateModel(range: RangeType, fromSlider = false) {
 }
 
 function handleInputBlur() {
-  // Update the model when user stops editing inputs
-  // The debounced watcher will handle emitting the change event
-  if (!isRangesEqual(model.value, internalModel.value)) {
-    model.value = internalModel.value;
-    emit("change", internalModel.value);
-  }
+  model.value = internalModel.value;
+  emit("change", internalModel.value);
 }
 
 // Debounced watcher for the internal model to update the actual model
 watchDebounced(
   internalModel,
   (newValue: RangeType) => {
-    if (!isRangesEqual(model.value, newValue)) {
-      model.value = newValue;
-    }
+    model.value = newValue;
   },
   { debounce: 200 },
 );
@@ -219,10 +197,8 @@ onMounted(() => {
   // Listen for when user stops dragging the slider
   slider.on("change", (v: (string | number)[]) => {
     const range: RangeType = [+v[0], +v[1]];
-    if (!isRangesEqual(model.value, range)) {
-      model.value = range;
-      emit("change", range);
-    }
+    model.value = range;
+    emit("change", range);
   });
 });
 </script>

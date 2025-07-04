@@ -49,6 +49,7 @@
         :data-test-id="testIdInput"
         @keydown="keyDown($event)"
         @click.prevent.stop="inputClick()"
+        @blur="handleBlur($event)"
       />
 
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
@@ -128,6 +129,7 @@ defineOptions({
 
 const emit = defineEmits<{
   (event: "clear"): void;
+  (event: "blur", blurEvent: FocusEvent): void;
 }>();
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -195,6 +197,10 @@ function inputClick() {
   if (inputElement.value && props.selectOnClick) {
     inputElement.value.select();
   }
+}
+
+function handleBlur(event: FocusEvent) {
+  emit("blur", event);
 }
 
 provide<VcInputContextType>("inputContext", {
