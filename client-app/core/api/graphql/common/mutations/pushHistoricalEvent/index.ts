@@ -6,7 +6,7 @@ import type {
   MutationsPushHistoricalEventArgs,
 } from "@/core/api/graphql/types";
 
-export async function pushHistoricalEvent(payload: InputPushHistoricalEventType): Promise<void> {
+export async function pushHistoricalEvent(payload: InputPushHistoricalEventType) {
   await graphqlClient.mutate<Required<Pick<Mutations, "pushHistoricalEvent">>, MutationsPushHistoricalEventArgs>({
     mutation: mutationDocument,
     variables: {
