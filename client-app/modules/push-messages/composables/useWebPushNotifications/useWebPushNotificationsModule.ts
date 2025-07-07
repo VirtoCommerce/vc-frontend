@@ -4,6 +4,7 @@ import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken } from "firebase/messaging";
 import omit from "lodash/omit";
 import { computed, ref, watch } from "vue";
+import faviconSVG from "@/assets/icons/favicon.svg";
 import { apolloClient } from "@/core/api/graphql";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
@@ -12,13 +13,7 @@ import { WHITE_LABELING_FETCHED_SETTINGS_EVENT } from "@/core/constants/modules-
 import { Logger } from "@/core/utilities";
 import { userBeforeUnauthorizeEvent, useBroadcast } from "@/shared/broadcast";
 import { AddFcmTokenDocument, DeleteFcmTokenDocument } from "../../api/graphql/types";
-import {
-  REGISTRATION_SCOPE,
-  SERVICE_WORKER_PATH,
-  DEFAULT_ICON_URL,
-  PREFERRED_ICON_PROPERTIES,
-  SETTINGS_MAPPING,
-} from "../../constants";
+import { REGISTRATION_SCOPE, SERVICE_WORKER_PATH, PREFERRED_ICON_PROPERTIES, SETTINGS_MAPPING } from "../../constants";
 import type { FcmSettingsType } from "../../api/graphql/types";
 import type { EventBusKey } from "@vueuse/core";
 import type { Messaging } from "firebase/messaging";
@@ -113,7 +108,7 @@ function _useWebPushNotifications() {
       () =>
         favIcons.value?.find(
           ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
-        )?.href ?? DEFAULT_ICON_URL,
+        )?.href ?? faviconSVG,
     );
 
     const { on } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);

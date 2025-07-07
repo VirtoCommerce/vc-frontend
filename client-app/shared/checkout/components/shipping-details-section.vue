@@ -162,7 +162,10 @@ watch(
   mode,
   (newMode, previousMode) => {
     const shippingMethod = newMode === SHIPPING_OPTIONS.pickup ? bopisMethod.value : shippingMethods.value[0];
-    billingAddressEqualsShipping.value = shippingMethod?.code !== BOPIS_CODE;
+
+    if (shippingMethod?.code === BOPIS_CODE) {
+      billingAddressEqualsShipping.value = false;
+    }
 
     if (
       !shippingMethod ||

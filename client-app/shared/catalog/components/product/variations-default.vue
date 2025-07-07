@@ -14,6 +14,7 @@
         with-image
         with-price
         with-properties
+        show-placed-price
       >
         <AddToCart :product="variation">
           <InStock
