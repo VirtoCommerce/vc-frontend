@@ -8,6 +8,7 @@
         'vc-badge--rounded': rounded,
         'vc-badge--truncate': truncate,
         'vc-badge--nowrap': nowrap,
+        'vc-badge--square': square,
       },
     ]"
   >
@@ -20,17 +21,20 @@
 <script setup lang="ts">
 interface IProps {
   color?: VcBadgeColorType;
-  size?: "sm" | "md" | "lg";
+  size?: VcBadgeSizeType;
   variant?: VcBadgeVariantType;
   rounded?: boolean;
   truncate?: boolean;
   nowrap?: boolean;
+  square?: boolean;
+  maxWidth?: string;
 }
 
 withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   variant: "solid",
+  maxWidth: "",
 });
 </script>
 
@@ -39,37 +43,55 @@ withDefaults(defineProps<IProps>(), {
   $colors: primary, secondary, neutral, info, success, warning, danger;
 
   $truncate: "";
+  $square: "";
 
-  @apply flex-none inline-flex align-top border rounded-sm font-bold;
+  --props-max-width: v-bind(maxWidth);
+  --max-width: var(--props-max-width, var(--vc-badge-max-width, 100%));
+
+  @apply flex-none inline-flex align-top min-h-[--size] min-w-[--size] max-w-[--max-width] border rounded-sm font-bold;
 
   &--size {
-    &--sm {
+    &--xs {
+      --size: 1rem;
       --vc-icon-size: 0.625rem;
 
-      @apply min-w-[1rem] gap-1 px-0.5 text-xxs/[1.375];
+      @apply gap-1 px-0.5 text-xxs;
 
       &--dot {
-        @apply w-1.5 h-1.5;
+        @apply size-1.5;
+      }
+    }
+
+    &--sm {
+      --size: 1.125rem;
+      --vc-icon-size: 0.75rem;
+
+      @apply gap-1.5 px-0.5 text-xs/[1.2];
+
+      &--dot {
+        @apply size-2;
       }
     }
 
     &--md {
-      --vc-icon-size: 0.75rem;
+      --size: 1.375rem;
+      --vc-icon-size: 0.875rem;
 
-      @apply min-w-[1.125rem] gap-1 px-1 text-xs/[1.35];
+      @apply gap-1.5 px-1 text-sm/[1.2];
 
       &--dot {
-        @apply w-2 h-2;
+        @apply size-2.5;
       }
     }
 
     &--lg {
-      --vc-icon-size: 0.875rem;
+      --size: 1.625rem;
+      --vc-icon-size: 1rem;
 
-      @apply min-w-[1.375rem] gap-1 px-1.5 text-base/[1.375];
+      @apply gap-1.5 px-1 text-base/[1.25];
 
       &--dot {
-        @apply w-2.5 h-2.5;
+        @apply size-3;
       }
     }
   }
@@ -78,45 +100,74 @@ withDefaults(defineProps<IProps>(), {
     @apply rounded-full;
   }
 
+  &--nowrap {
+    @apply whitespace-nowrap;
+  }
+
   &--truncate {
     $truncate: &;
+  }
+
+  &--square {
+    $square: &;
+
+    @apply p-0;
   }
 
   @each $color in $colors {
     &--solid--#{$color} {
       @apply bg-[color:var(--color-#{$color}-500)]
       border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-additional-50)];
+      text-additional-50;
     }
 
     &--solid-light--#{$color} {
-      @apply bg-[color:var(--color-#{$color}-50)]
-      border-[color:var(--color-#{$color}-50)]
-      text-[color:var(--color-#{$color}-700)];
+      --vc-icon-color: var(--color-#{$color}-700);
+
+      @apply bg-[color:var(--color-#{$color}-100)]
+      border-[color:var(--color-#{$color}-100)]
+      text-[color:var(--color-#{$color}-800)];
     }
 
     &--outline--#{$color} {
-      @apply bg-[color:var(--color-additional-50)]
+      --vc-icon-color: var(--color-#{$color}-700);
+
+      @apply bg-additional-50
       border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-#{$color}-700)];
+      text-[color:var(--color-#{$color}-800)];
     }
 
     &--outline-dark--#{$color} {
-      @apply bg-[color:var(--color-#{$color}-50)]
+      --vc-icon-color: var(--color-#{$color}-700);
+
+      @apply bg-[color:var(--color-#{$color}-100)]
       border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-#{$color}-700)];
+      text-[color:var(--color-#{$color}-800)];
     }
   }
 
   &__content {
-    @apply grow text-center;
+    @apply grow gap-[inherit] text-center self-center [word-break:break-word];
 
-    &:has(.vc-icon):has(:not(.vc-icon)) {
-      @apply inline-flex items-center gap-[inherit];
+    &:has(.vc-icon) {
+      @apply flex items-center;
     }
 
-    #{$truncate} & {
+    &:not(:has(.vc-icon:first-child)) {
+      @apply ps-0.5;
+    }
+
+    &:not(:has(.vc-icon:last-child)) {
+      @apply pe-0.5;
+    }
+
+    #{$truncate} &,
+    #{$truncate} & * {
       @apply truncate;
+    }
+
+    #{$square} & {
+      @apply justify-center;
     }
 
     & > * {
@@ -124,10 +175,6 @@ withDefaults(defineProps<IProps>(), {
 
       #{$truncate} & {
         @apply truncate;
-      }
-
-      &:not(.vc-icon) {
-        @apply px-0.5;
       }
     }
   }
