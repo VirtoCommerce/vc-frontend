@@ -39,6 +39,11 @@ ErrorState.args = {
 };
 
 export const SingleLine = Template.bind({});
+SingleLine.decorators = [
+  () => ({
+    template: '<div id="popover-host"></div><story />',
+  }),
+];
 SingleLine.args = {
   ...Counter.args,
   message:
