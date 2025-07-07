@@ -220,6 +220,20 @@ jobs:
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
+  ui-auto-tests:
+    needs: 'ci'
+    if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
+      (github.base_ref == 'dev') && (github.event_name == 'pull_request') || 
+      (github.event_name == 'workflow_dispatch') }}
+    uses: VirtoCommerce/.github/.github/workflows/ui-autotests.yml@v3.800.13 
+    with:
+      installModules: 'true'
+      installCustomModule: 'false'
+      platformDockerTag: 'linux-latest'
+      frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
+    secrets:
+      envPAT: ${{ secrets.REPO_TOKEN }}
+
   deploy-cloud:
     if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
     needs: ci
