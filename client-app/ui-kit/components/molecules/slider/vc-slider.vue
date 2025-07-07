@@ -21,7 +21,11 @@
         :disabled="!showTooltipOnColHover || !col.count"
       >
         <template #trigger>
-          <button type="button" class="vc-slider__button" @click="updateOnColumnClick && updateModel(col.value)">
+          <button
+            type="button"
+            class="vc-slider__button"
+            @click="onColumnClick({ value: [col.value[0], col.value[1]] })"
+          >
             <span class="vc-slider__col-line" :style="{ height: col.height }"></span>
           </button>
         </template>
@@ -61,14 +65,14 @@
 </template>
 
 <script setup lang="ts">
-import { watchDebounced } from "@vueuse/core";
 import { isNaN } from "lodash";
+import isEqual from "lodash/isEqual";
 import { create } from "nouislider";
 import { ref, onMounted, computed, toRefs, watch } from "vue";
 import type { API } from "nouislider";
 import "nouislider/dist/nouislider.css";
 
-type RangeType = [number, number] | [number];
+export type RangeType = [number, number] | [number];
 type ColRangeType = [null, number] | [number, number] | [number, null];
 export type ColType = { count: number; value: ColRangeType };
 
@@ -85,6 +89,7 @@ interface IProps {
   updateOnColumnClick?: boolean;
   showTooltipOnColHover?: boolean;
   disabled?: boolean;
+  value: RangeType;
 }
 
 const emit = defineEmits<IEmits>();
@@ -98,15 +103,15 @@ const props = withDefaults(defineProps<IProps>(), {
   showTooltipOnColHover: false,
 });
 
-const model = defineModel<RangeType>();
+const { value, min, max, step, cols } = toRefs(props);
 
-const { min, max, step, cols } = toRefs(props);
+const start = ref<number>(0);
+const end = ref<number>();
 
-const start = ref(model.value ? model.value[0] : min.value);
-const end = ref(model.value ? model.value[1] : max.value);
-
-// Internal debounced model for immediate visual updates
-const internalModel = ref<RangeType>(model.value || [min.value, max.value]);
+watch([value, min, max], ([valueProp, minProp, maxProp]) => {
+  start.value = Math.min(minProp, valueProp[0]);
+  end.value = typeof valueProp[1] === "number" ? Math.min(maxProp, valueProp[1]) : undefined;
+});
 
 const sliderRef = ref<HTMLElement | null>(null);
 let slider: API | null = null;
@@ -139,7 +144,7 @@ const normalizedCols = computed(() => {
     const _to = to && to < max.value ? to : max.value;
 
     return {
-      value: [_from, _to] as RangeType,
+      value: [_from, _to],
       count: column.count,
       height: `${Math.round((column.count / maxCount) * 100)}%`,
       position: {
@@ -150,31 +155,12 @@ const normalizedCols = computed(() => {
   });
 });
 
-function updateModel(range: RangeType, fromSlider = false) {
-  internalModel.value = range;
-
-  if (!fromSlider && slider) {
-    slider.set(range);
+function handleInputBlur() {
+  const innerRange = (typeof end.value === "number" ? [start.value, end.value] : [start.value]) satisfies RangeType;
+  if (!isEqual(innerRange, props.value)) {
+    emit("change", innerRange);
   }
 }
-
-function handleInputBlur() {
-  model.value = internalModel.value;
-  emit("change", internalModel.value);
-}
-
-// Debounced watcher for the internal model to update the actual model
-watchDebounced(
-  internalModel,
-  (newValue: RangeType) => {
-    model.value = newValue;
-  },
-  { debounce: 200 },
-);
-
-watch([start, end], ([v1, v2]) => {
-  updateModel([v1, v2] as RangeType);
-});
 
 onMounted(() => {
   if (!sliderRef.value) {
@@ -182,7 +168,10 @@ onMounted(() => {
   }
 
   slider = create(sliderRef.value, {
-    start: model.value || [min.value, max.value],
+    start:
+      typeof props.value[1] === "number"
+        ? [Math.min(props.value[0], props.min), Math.min(props.value[1], props.max)]
+        : [Math.min(props.value[0], props.min)],
     connect: true,
     step: step.value,
     range: { min: min.value, max: max.value },
@@ -191,16 +180,26 @@ onMounted(() => {
   slider.on("update", (v: (string | number)[]) => {
     start.value = +v[0];
     end.value = +v[1];
-    updateModel([+v[0], +v[1]], true);
   });
 
   // Listen for when user stops dragging the slider
   slider.on("change", (v: (string | number)[]) => {
     const range: RangeType = [+v[0], +v[1]];
-    model.value = range;
+    start.value = range[0];
+    end.value = range[1];
     emit("change", range);
   });
 });
+
+function onColumnClick(col: { value: [number, number] }): void {
+  if (!props.updateOnColumnClick) {
+    return;
+  }
+  start.value = col.value[0];
+  end.value = col.value[1];
+
+  emit("change", [start.value, end.value]);
+}
 </script>
 
 <style lang="scss">

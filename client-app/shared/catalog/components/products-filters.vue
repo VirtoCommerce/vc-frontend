@@ -25,11 +25,17 @@
       >
         <slot name="prepend" :loading="loading" />
 
+        <SliderFilter
+          v-if="priceFacet"
+          :mode="isHorizontal ? 'dropdown' : 'collapsable'"
+          :facet="priceFacet"
+          query-key="price"
+        />
+
         <template v-for="facet in filtersToShow" :key="facet.paramName">
           <FacetFilter
             :mode="isHorizontal ? 'dropdown' : 'collapsable'"
             :facet="facet"
-            :type="facet.label === 'price' ? 'slider' : 'default'"
             :loading="loading"
             @update:facet="onFacetFilterChanged"
           />
@@ -43,9 +49,11 @@
 import { useBreakpoints, breakpointsTailwind, useElementBounding, watchDebounced } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { watch, shallowRef, ref, nextTick, computed } from "vue";
+// import { useThemeContext } from "@/core/composables";
 import FacetFilter from "./facet-filter.vue";
 import type { FacetItemType } from "@/core/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
+import SliderFilter from "@/shared/catalog/components/product/slider-filter.vue";
 
 interface IEmits {
   (event: "change", value: ProductsFiltersType): void;
@@ -76,11 +84,21 @@ const isHorizontal = props.orientation === "horizontal";
 
 const filterCalculationInProgress = ref(false);
 const filtersCountToShow = ref(1);
-const filtersToShow = computed(() =>
-  props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value
+
+// const { themeContext } = useThemeContext();
+
+const filtersToShow = computed(() => {
+  return props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value
     ? localFilters.value.facets
-    : localFilters.value.facets.slice(0, filtersCountToShow.value),
-);
+    : localFilters.value.facets.slice(0, filtersCountToShow.value);
+
+  /*if (themeContext.value.settings.price_filter_type === "slider") {
+    return filters.filter((filter) => filter.paramName !== "price");
+  }*/
+});
+
+const priceFacet = computed(() => localFilters.value.facets.find((el) => el.paramName === "price"));
+
 const { right: containerRight } = useElementBounding(facetFiltersContainer);
 
 watchDebounced(

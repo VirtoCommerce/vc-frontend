@@ -20,19 +20,6 @@
         />
       </div>
 
-      <div class="mb-2 mt-8 px-3">
-        <VcSlider
-          v-if="type === 'slider'"
-          v-model="sliderValue"
-          :min="facetMin"
-          :max="facetMax"
-          :cols="sliderCols"
-          show-tooltip-on-col-hover
-          update-on-column-click
-          @change="handleSliderChange"
-        />
-      </div>
-
       <div class="facet-filter-widget__container" :style="{ maxHeight }">
         <VcMenuItem
           v-for="item in searchedValues"
@@ -171,9 +158,7 @@
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef, toRef } from "vue";
-import { getFilterExpressionFromFacetRange } from "@/core/utilities";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
-import type { ColType } from "@/ui-kit/components/molecules/slider/vc-slider.vue";
 
 interface IEmits {
   (event: "update:facet", facet: FacetItemType): void;
@@ -183,13 +168,10 @@ interface IProps {
   facet: FacetItemType;
   loading?: boolean;
   mode: "dropdown" | "collapsable";
-  type?: "default" | "slider";
 }
 
 const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  type: "default",
-});
+const props = defineProps<IProps>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
@@ -252,50 +234,6 @@ const hasFade = computed(
 );
 const selectedFiltersCount = computed(() => facet.value.values.filter((item) => item.selected)?.length);
 const hasSelected = computed(() => selectedFiltersCount.value > 0);
-
-const facetMin = computed(() => {
-  return facet.value.values[0].from || 0;
-});
-
-const facetMax = computed(() => {
-  return facet.value.values.at(-1)?.to || 1799999999;
-});
-
-const sliderValue = ref<[number, number]>([50, 600]);
-
-const sliderCols = computed<ColType[]>(() => {
-  return facet.value.values
-    .filter((item) => item.count !== undefined && item.from !== undefined && item.to !== undefined)
-    .map((item) => {
-      return {
-        count: item.count!,
-        value: [item.from!, item.to!] as [number, number],
-      };
-    });
-});
-
-function handleSliderChange(value: [number, number] | [number]) {
-  // Ensure we have both start and end values
-  const [start, end] = Array.isArray(value) && value.length === 2 ? value : [value[0], value[0]];
-
-  emit("update:facet", {
-    label: "price",
-    paramName: "price",
-    type: "range",
-    values: [
-      {
-        label: "slider",
-        selected: true,
-        value: getFilterExpressionFromFacetRange({
-          from: start,
-          to: end,
-          includeFrom: true,
-          includeTo: true,
-        }),
-      },
-    ],
-  });
-}
 </script>
 
 <style lang="scss">
