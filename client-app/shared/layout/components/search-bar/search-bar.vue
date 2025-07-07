@@ -65,7 +65,7 @@
         <div>
           <!-- Search history and suggestions -->
           <section>
-            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
+            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral-600">
               {{ $t("shared.layout.search_bar.suggestions_and_history_label") }}
             </header>
 
@@ -102,15 +102,12 @@
                 tag="li"
                 @click="hideSearchDropdown"
               >
-                <span class="flex items-center gap-2">
-                  <VcIcon name="light-bulb" size="md" class="shrink-0 fill-secondary-500" />
-                  <span v-html-safe="suggestion.label" class="truncate" />
-                </span>
+                <span v-html-safe="suggestion.label" class="truncate" />
               </VcMenuItem>
 
               <div
                 v-if="searchHistoryQueries.length === 0 && !searchHistoryLoading && !suggestions.length"
-                class="px-2 py-3 text-sm text-neutral-400"
+                class="px-2 py-3 text-sm text-neutral-500"
               >
                 {{ $t("shared.layout.search_bar.nothing_to_show") }}
               </div>
@@ -120,7 +117,7 @@
 
           <!-- Pages -->
           <section v-if="pages.length">
-            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
+            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral-600">
               {{ $t("shared.layout.search_bar.pages_label") }}
             </header>
 
@@ -142,7 +139,7 @@
 
           <!-- Categories -->
           <section v-if="categories.length">
-            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
+            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral-600">
               {{ $t("shared.layout.search_bar.categories_label") }}
             </header>
 
@@ -162,7 +159,7 @@
 
           <!-- Products -->
           <section v-if="products.length" class="pb-4">
-            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
+            <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral-600">
               {{ $t("shared.layout.search_bar.products_label") }}
             </header>
 
@@ -191,10 +188,11 @@
 
         <!-- Not found -->
         <div v-if="!loading && !isExistResults && trimmedSearchPhrase">
-          <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral">
+          <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral-600">
             {{ $t("shared.layout.search_bar.search_label") }}
           </header>
-          <div class="flex items-center gap-1.5 px-4 py-6 text-sm text-neutral">
+
+          <div class="flex items-center gap-1.5 px-4 py-6 text-sm text-neutral-500">
             <VcIcon name="search-not-found" size="md" class="shrink-0 fill-secondary-500" />
 
             <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
@@ -266,14 +264,7 @@ const router = useRouter();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const categoriesRoutes = useCategoriesRoutes(categories);
-const {
-  result: searchHistory,
-  load: loadSearchHistory,
-  loading: searchHistoryLoading,
-} = useGetSearchHistoryQuery({
-  storeId: "B2B-store",
-  maxCount: 10,
-});
+const { result: searchHistory, load: loadSearchHistory, loading: searchHistoryLoading } = useGetSearchHistoryQuery();
 
 const searchHistoryQueries = computed(() => searchHistory.value?.searchHistory?.queries ?? []);
 

@@ -6,15 +6,15 @@ import type { InputSaveSearchQueryType } from "@/core/api/graphql/types";
 import type { Optional } from "utility-types";
 
 export async function saveSearchQuery(payload: Optional<InputSaveSearchQueryType, "storeId">) {
-  const { storeId } = globals;
+  const { storeId: currentStoreId } = globals;
 
-  const currentStoreId = payload.storeId ?? storeId;
+  const storeId = payload.storeId ?? currentStoreId;
 
   await apolloClient.mutate({
     mutation: mutationDocument,
     variables: {
       command: {
-        storeId: currentStoreId,
+        storeId,
         ...payload,
       },
     },

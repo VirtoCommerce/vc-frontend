@@ -6,6 +6,7 @@ import {
   saveSearchQuery as saveSearchQueryMutation,
 } from "@/core/api/graphql/common/mutations";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
+import { DEFAULT_SEARCH_HISTORY_MAX_COUNT } from "@/core/constants/search";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities/logger";
 import { useUser } from "@/shared/account/composables/useUser";
@@ -49,7 +50,7 @@ export function useHistoricalEvents() {
       }
     } else {
       localSearchQueries.value.push(payload);
-      if (localSearchQueries.value.length > 10) {
+      if (localSearchQueries.value.length > DEFAULT_SEARCH_HISTORY_MAX_COUNT) {
         localSearchQueries.value.shift();
       }
     }
@@ -63,7 +64,7 @@ export function useHistoricalEvents() {
       load: () => Promise.resolve(),
       result: computed(() => ({
         searchHistory: {
-          queries: localSearchQueries.value,
+          queries: localSearchQueries.value.slice(0, DEFAULT_SEARCH_HISTORY_MAX_COUNT),
         },
       })),
       loading: false,
