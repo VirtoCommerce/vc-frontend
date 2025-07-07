@@ -949,7 +949,7 @@
       },
       "sign_in_form_title": "Sign in",
       "main_banner_block": {
-        "message": "We can help you <br />make informed<br />and wise decisions",
+        "message": "We can help you{br}make informed{br}and wise decisions",
         "key_feature_1": "Result oriented",
         "key_feature_2": "Trustworthy",
         "key_feature_3": "Reliable"

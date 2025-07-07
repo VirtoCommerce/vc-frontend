@@ -949,7 +949,7 @@
       },
       "sign_in_form_title": "Accedi",
       "main_banner_block": {
-        "message": "Possiamo aiutarti a <br />prendere decisioni<br />informate e sagge",
+        "message": "Possiamo aiutarti a{br}prendere decisioni{br}informate e sagge",
         "key_feature_1": "Orientato ai risultati",
         "key_feature_2": "Affidabile",
         "key_feature_3": "Affidabile"

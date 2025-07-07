@@ -949,7 +949,7 @@
       },
       "sign_in_form_title": "Zaloguj się",
       "main_banner_block": {
-        "message": "Możemy pomóc Ci <br />podejmować przemyślane<br />i mądre decyzje",
+        "message": "Możemy pomóc Ci{br}podejmować przemyślane{br}i mądre decyzje",
         "key_feature_1": "Skupiony na wynikach",
         "key_feature_2": "Wiarygodny",
         "key_feature_3": "Niezawodny"

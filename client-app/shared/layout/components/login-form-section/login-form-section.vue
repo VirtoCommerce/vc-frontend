@@ -2,7 +2,7 @@
   <section class="banner flex items-center" :style="{ backgroundImage: `url(${bgImage})` }">
     <div class="container mx-auto flex flex-col items-center space-y-10 p-6 md:p-12 lg:flex-row lg:space-x-24">
       <div v-if="!isAuthenticated" class="w-full rounded bg-additional-50 p-6 shadow-lg md:p-10 lg:w-2/5">
-        <VcTypography tag="h2" varian="h1" class="mb-8">
+        <VcTypography tag="h2" variant="h1" class="mb-8">
           {{ $t("pages.home.sign_in_form_title") }}
         </VcTypography>
 
@@ -10,11 +10,13 @@
       </div>
 
       <div class="w-full select-none text-center font-bold text-additional-50 drop-shadow-lg lg:w-3/5 lg:text-left">
-        <!-- eslint-disable-next-line vuejs-accessibility/heading-has-content -->
-        <h1
-          v-html-safe="$t('pages.home.main_banner_block.message')"
+        <i18n-t
+          keypath="pages.home.main_banner_block.message"
+          tag="h1"
           class="mb-8 text-3xl uppercase leading-tight md:text-5xl"
-        ></h1>
+        >
+          <template #br><br /></template>
+        </i18n-t>
 
         <div
           class="flex flex-col items-center justify-center space-y-2 text-xl md:flex-row md:space-x-7 md:space-y-0 md:text-2xl lg:justify-start"
