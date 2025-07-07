@@ -1,8 +1,8 @@
 <template>
-  <div class="news-article-page">
+  <div class="news-article">
     <Error404 v-if="!loading && !newsArticle"></Error404>
     <VcContainer v-else>
-      <router-link :to="{ name: ROUTES.ARTICLES.NAME }" class="news-article-page__back-link">
+      <router-link :to="{ name: ROUTES.ARTICLES.NAME }" class="news-article__back-link">
         {{ $t("news.links.to-list") }}
       </router-link>
       <VcWidgetSkeleton v-if="loading" head size="lg"></VcWidgetSkeleton>
@@ -20,7 +20,7 @@ import { getNewsArticle } from "../api/graphql/queries/newsArticle";
 import { MODULE_ID, USE_ROOT_LINKS } from "../constants";
 import { ROUTES } from "../routes/constants";
 import type { NewsArticleContent } from "../api/graphql/types";
-import NewsArticle from "@/modules/news/components/news-article.vue";
+import NewsArticle from "@/modules/news/components/news-article-content.vue";
 
 const props = defineProps<IProps>();
 
@@ -72,7 +72,7 @@ watchEffect(fetchNewsArticle);
 </script>
 
 <style lang="scss">
-.news-article-page {
+.news-article {
   &__back-link {
     @apply text-[--link-color] hover:text-[--link-hover-color];
   }

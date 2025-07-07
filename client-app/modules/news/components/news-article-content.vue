@@ -1,8 +1,8 @@
 <template>
-  <VcWidget :title="newsArticle.title" class="news-article">
-    <VcMarkdownRender :src="newsArticle.content ?? ''" class="news-article__content" />
+  <VcWidget :title="newsArticle.title" class="news-article-content">
+    <VcMarkdownRender :src="newsArticle.content ?? ''" class="news-article-content__content" />
     <template v-if="newsArticle.publishDate" #footer>
-      <div class="news-article__publish-date">{{ $d(newsArticle.publishDate) }}</div>
+      <div class="news-article-content__publish-date">{{ $d(newsArticle.publishDate) }}</div>
     </template>
   </VcWidget>
 </template>
@@ -22,7 +22,7 @@ const newsArticle = toRef(props, "newsArticle");
 </script>
 
 <style lang="scss">
-.news-article {
+.news-article-content {
   &__publish-date {
     @apply mt-3 text-right text-sm text-neutral;
   }
