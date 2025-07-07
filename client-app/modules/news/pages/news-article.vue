@@ -41,13 +41,14 @@ const { title: pageTitle } = usePageTitle(seoTitle);
 const seoDescription = computed(() => newsArticle.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => newsArticle.value?.seoInfo?.metaKeywords);
 
-const seoUrl = computed(() =>
-  newsArticle.value?.seoInfo?.semanticUrl
-    ? useRootLink
-      ? `${window.location.host}/${newsArticle.value?.seoInfo?.semanticUrl}`
-      : `${window.location.host}/${ROUTES.LINK_SEGMENT}/${newsArticle.value?.seoInfo?.semanticUrl}`
-    : window.location.toString(),
-);
+const seoUrl = computed(() => {
+  if (!newsArticle.value?.seoInfo?.semanticUrl) {
+    return window.location.toString();
+  }
+  return useRootLink
+    ? `${window.location.host}/${newsArticle.value?.seoInfo?.semanticUrl}`
+    : `${window.location.host}/${ROUTES.LINK_SEGMENT}/${newsArticle.value?.seoInfo?.semanticUrl}`;
+});
 
 const fetchNewsArticle = async () => {
   loading.value = true;
