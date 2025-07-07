@@ -17,7 +17,7 @@ import { computed, defineAsyncComponent, ref, watchEffect } from "vue";
 import { usePageTitle } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { getNewsArticle } from "../api/graphql/queries/newsArticle";
-import { MODULE_ID, USE_ROOT_LINKS } from "../constants";
+import { MODULE_ID, USE_NEWS_PREFIX_IN_LINKS } from "../constants";
 import { ROUTES } from "../routes/constants";
 import type { NewsArticleContent } from "../api/graphql/types";
 import NewsArticle from "@/modules/news/components/news-article-content.vue";
@@ -33,7 +33,7 @@ const loading = ref(false);
 const newsArticle = ref<NewsArticleContent>();
 
 const { getSettingValue } = useModuleSettings(MODULE_ID);
-const useRootLink = getSettingValue(USE_ROOT_LINKS);
+const useNewsPrefixInLinks = getSettingValue(USE_NEWS_PREFIX_IN_LINKS);
 
 const seoTitle = computed(() => newsArticle.value?.seoInfo?.pageTitle || newsArticle.value?.title);
 const { title: pageTitle } = usePageTitle(seoTitle);
@@ -45,9 +45,9 @@ const seoUrl = computed(() => {
   if (!newsArticle.value?.seoInfo?.semanticUrl) {
     return window.location.toString();
   }
-  return useRootLink
-    ? `${window.location.host}/${newsArticle.value?.seoInfo?.semanticUrl}`
-    : `${window.location.host}/${ROUTES.LINK_SEGMENT}/${newsArticle.value?.seoInfo?.semanticUrl}`;
+  return useNewsPrefixInLinks
+    ? `${window.location.host}/${ROUTES.LINK_SEGMENT}/${newsArticle.value?.seoInfo?.semanticUrl}`
+    : `${window.location.host}/${newsArticle.value?.seoInfo?.semanticUrl}`;
 });
 
 const fetchNewsArticle = async () => {
