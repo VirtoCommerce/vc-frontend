@@ -136,6 +136,7 @@ import {
   WishlistProductItemSkeleton,
 } from "@/shared/wishlists";
 import type {
+  InputRemoveWishlistItemType,
   InputUpdateWishlistItemsType,
   InputUpdateWishlistLineItemType,
   LineItemType,
@@ -157,7 +158,7 @@ const { t } = useI18n();
 const { analytics } = useAnalytics();
 const broadcast = useBroadcast();
 const { openModal } = useModal();
-const { listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
+const { listLoading, list, fetchWishList, updateItemsInWishlist, removeItemsFromWishlists } = useWishlists();
 const {
   loading: cartLoading,
   changing: cartChanging,
@@ -325,15 +326,18 @@ function openDeleteProductModal(values: string[]): void {
       props: {
         listId: list.value?.id,
         listItem: item,
+        loading: loading.value,
+        removeFunction: (payload: InputRemoveWishlistItemType[]) => {
+          console.log("payload", payload);
+          void removeItemsFromWishlists(payload);
+        },
 
-        async onResult(): Promise<void> {
+        onResult() {
           const previousPagesCount = pagesCount.value;
 
           void broadcast.emit(dataChangedEvent);
 
           wishlistItems.value = wishlistItems.value?.filter((listItem) => listItem.id !== item.id);
-
-          await fetchWishList(props.listId);
 
           /**
            * If you were on the last page, and after deleting the product

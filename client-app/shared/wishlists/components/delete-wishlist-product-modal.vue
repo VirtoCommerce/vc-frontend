@@ -19,7 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import { useWishlists } from "../composables/useWishlists";
 import type { InputRemoveWishlistItemType, LineItemType } from "@/core/api/graphql/types";
 
 interface IEmits {
@@ -33,9 +32,9 @@ const props = defineProps<IProps>();
 interface IProps {
   listItem: LineItemType;
   listId: string;
+  loading?: boolean;
+  removeFunction: (payload: InputRemoveWishlistItemType[]) => Promise<void>;
 }
-
-const { loading, removeItemsFromWishlists } = useWishlists();
 
 async function remove(closingHandle: () => void) {
   const payload: InputRemoveWishlistItemType = {
@@ -43,7 +42,7 @@ async function remove(closingHandle: () => void) {
     listId: props.listId,
   };
 
-  await removeItemsFromWishlists([payload]);
+  await props.removeFunction([payload]);
 
   emit("result");
   closingHandle();

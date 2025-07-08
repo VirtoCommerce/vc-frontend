@@ -1,4 +1,4 @@
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computed, readonly, ref } from "vue";
 import {
   addWishlist,
   addWishlistBulkItem,
@@ -21,7 +21,7 @@ import type { ChangeWishlistPayloadType, CreateWishlistPayloadType } from "@/cor
 import type { Ref } from "vue";
 
 const loading = ref(true);
-const lists = shallowRef<WishlistType[]>([]);
+const lists = ref<WishlistType[]>([]);
 const list: Ref<WishlistType | undefined> = ref();
 const listLoading = ref(true);
 
@@ -126,12 +126,29 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     }
   }
 
-  function removeItemFromList(listId: string, productId: string) {
-    lists.value = lists.value.map((wishlist) =>
-      wishlist.id === listId
-        ? { ...wishlist, items: wishlist.items?.filter((item) => item.productId !== productId) }
-        : wishlist,
+  function removeItemFromLists(listId: string, productId?: string, lineItemId?: string) {
+    const newLists = lists.value.map((wishlist) =>
+      wishlist.id === listId ? filterListItems(wishlist, productId, lineItemId) : wishlist,
     );
+    lists.value = newLists;
+
+    if (list.value?.id === listId) {
+      list.value = filterListItems(list.value, productId, lineItemId);
+    }
+  }
+
+  function filterListItems(_list: WishlistType, productId?: string, lineItemId?: string) {
+    const filteredItems = _list.items?.filter((item) => {
+      if (lineItemId) {
+        return item.id !== lineItemId;
+      }
+      return item.productId !== productId;
+    });
+
+    return {
+      ..._list,
+      items: filteredItems,
+    };
   }
 
   async function removeItemsFromWishlists(payload: InputRemoveWishlistItemType[]) {
@@ -142,8 +159,9 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
       try {
         const result = await deleteWishlistItem(payloadItem);
         const isInResultList = result.items?.some((item) => item.productId === payloadItem.productId);
-        if (result.id && payloadItem.productId && !isInResultList) {
-          removeItemFromList(payloadItem.listId, payloadItem.productId);
+
+        if (result.id && !isInResultList) {
+          removeItemFromLists(payloadItem.listId, payloadItem.productId, payloadItem.lineItemId);
         }
       } catch (e) {
         Logger.error(`${useWishlists.name}.${removeItemsFromWishlists.name}`, e);
