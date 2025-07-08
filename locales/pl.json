@@ -127,7 +127,7 @@
       "payment_number": "Numer płatności",
       "payment_type": "Typ płatności",
       "recipient_name": "Imię odbiorcy",
-      "active_address": "Aktywny adres",
+      "active_address": "Aktywny",
       "addresses_icon": "Ikona adresów",
       "digital_product": "Cyfrowy",
       "search": "Szukaj {0}",
@@ -397,7 +397,6 @@
         "pages_label": "Strony",
         "suggestions_label": "Sugestie",
         "no_results": "Twoje zapytanie {keyword} nie zwróciło żadnych wyników",
-        "enter_keyword_placeholder": "Szukaj produktów tutaj",
         "search_button": "Szukaj",
         "view_all_results_button": "Zobacz wszystkie {total} wyniki",
         "barcode_detector": {
@@ -410,7 +409,11 @@
           },
           "browse": "Przeglądaj pliki",
           "cancel": "@:common.buttons.cancel"
-        }
+        },
+        "enter_keyword_placeholder": "Szukaj w całym sklepie",
+        "enter_keyword_placeholder_category": "Szukaj w {category}",
+        "scope_loading_label": "Ładowanie kontekstu wyszukiwania",
+        "scope_remove_label": "Usuń: {label}"
       },
       "language_selector": {
         "label": "Język:"
@@ -671,7 +674,7 @@
         }
       },
       "discount_badge": {
-        "off": "wyłączone"
+        "off": "-{discount}"
       },
       "branches_modal": {
         "title": "Wybierz oddział",
@@ -733,6 +736,7 @@
         "title": "Wybierz metodę płatności"
       },
       "select_address_modal": {
+        "message": "Wybierz adres wysyłki",
         "meta": {
           "table_description": "dostępne adresy"
         },
@@ -740,7 +744,7 @@
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
-        "add_address_button": "@:common.buttons.add_new_address",
+        "add_address_button": "@:common.buttons.add_new",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "Nie masz jeszcze żadnych adresów",
@@ -752,6 +756,14 @@
         "select_button": "@:common.buttons.select",
         "price_label": "@:common.labels.price{':'}",
         "title": "Wybierz metodę wysyłki"
+      },
+      "select_bopis_modal": {
+        "title": "Punkty odbioru",
+        "location_label": "Lokalizacja",
+        "working_hours_label": "Godziny pracy",
+        "description_label": "Opis",
+        "contact_phone_label": "Telefon kontaktowy",
+        "contact_email_label": "Adres e-mail do kontaktu"
       }
     },
     "bulk_order": {
@@ -1344,7 +1356,9 @@
         "title": "Kupione wcześniej",
         "tooltip_text": "Wybierz, aby wyświetlić tylko produkty zakupione wcześniej",
         "checkbox_label": "Kupione wcześniej"
-      }
+      },
+      "search_in_category": "Szukaj \"{keyword}\" w {category}",
+      "products_found_message_search": "znaleziono wynik | znaleziono wyników"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

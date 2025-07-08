@@ -2,12 +2,19 @@ import { createHead } from "@unhead/vue/client";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { apolloClient, getStore } from "@/core/api/graphql";
-import { useCurrency, useThemeContext, useWhiteLabeling, useNavigations } from "@/core/composables";
+import { useCurrency, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
-import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
+import {
+  applicationInsightsPlugin,
+  authPlugin,
+  configPlugin,
+  contextPlugin,
+  extensionPointsPlugin,
+  permissionsPlugin,
+} from "@/core/plugins";
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
@@ -71,7 +78,7 @@ export default async () => {
   } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
-  const { fetchMenus } = useNavigations();
+  const { fetchCatalogMenu } = useNavigations();
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
   const fallback = {
@@ -131,8 +138,10 @@ export default async () => {
    * Other settings
    */
 
-  await Promise.all([fetchMenus(), fetchWhiteLabelingSettings()]);
+  await fetchWhiteLabelingSettings();
   addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
+
+  void fetchCatalogMenu();
 
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
@@ -147,6 +156,7 @@ export default async () => {
   app.use(i18n);
   app.use(router);
   app.use(permissionsPlugin);
+  app.use(extensionPointsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
 

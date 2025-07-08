@@ -27,7 +27,7 @@
           <th
             v-for="column in columns"
             :key="column.id"
-            class="px-5 py-3 font-bold"
+            class="px-4 py-3 font-bold"
             :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
             @click="
               column.sortable && sort
@@ -67,8 +67,13 @@
     </tbody>
 
     <!-- Desktop table view -->
-    <tbody v-else>
+    <tbody v-else-if="$slots['desktop-body']">
       <slot name="desktop-body" />
+    </tbody>
+
+    <!-- Desktop table item view -->
+    <tbody v-else-if="items.length && $slots['desktop-item']">
+      <slot v-for="(item, index) in items" :key="item.id || index" name="desktop-item" :item="item" />
     </tbody>
   </table>
 

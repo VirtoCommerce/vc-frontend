@@ -5,14 +5,14 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted } from "vue";
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
-import type { StateType } from "@/pages/matcher/priorityManager";
+import type { StateType, UpdateStateEventArgs } from "@/pages/matcher/priorityManager";
 
 interface IProps {
   isVisible?: boolean;
 }
 
 interface IEmits {
-  (event: "setState", value: StateType): void;
+  (event: "setState", value: UpdateStateEventArgs): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -32,23 +32,27 @@ const page = computed(() => {
   return null;
 });
 
+function emitState(state: StateType) {
+  emit("setState", { state });
+}
+
 onMounted(() => {
   if (!Object.keys(pages).includes(route.path)) {
-    emit("setState", "empty");
+    emitState("empty");
   } else {
-    emit("setState", "ready");
+    emitState("ready");
   }
 });
 
 onBeforeRouteUpdate((to) => {
   if (Object.keys(pages).includes(to.path)) {
-    emit("setState", "ready");
+    emitState("ready");
   } else {
-    emit("setState", "empty");
+    emitState("empty");
   }
 });
 
 onBeforeUnmount(() => {
-  emit("setState", "initial");
+  emitState("initial");
 });
 </script>

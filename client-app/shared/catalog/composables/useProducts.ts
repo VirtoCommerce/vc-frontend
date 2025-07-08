@@ -1,7 +1,7 @@
 import { useLocalStorage } from "@vueuse/core";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
-import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
+import { computed, readonly, ref } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import {
@@ -109,10 +109,10 @@ export function useProducts(
   const pageHistory = ref<number[]>([]);
 
   const products = ref<Product[]>([]);
-  const facets = shallowRef<FacetItemType[]>([]);
+  const facets = ref<FacetItemType[]>([]);
 
-  const prevProductsFilters = shallowRef<ProductsFiltersType>();
-  const productsFilters = shallowRef<ProductsFiltersType>({
+  const prevProductsFilters = ref<ProductsFiltersType>();
+  const productsFilters = ref<ProductsFiltersType>({
     branches: localStorageBranches.value,
     inStock: localStorageInStock.value,
     purchasedBefore: localStoragePurchasedBefore.value,
@@ -201,7 +201,6 @@ export function useProducts(
       await new Promise((resolve) => setTimeout(resolve, 0));
       // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
 
-      triggerRef(facets);
       void resetCurrentPage();
     }
   }
@@ -215,14 +214,11 @@ export function useProducts(
       filter.values.forEach((filterItem) => (filterItem.selected = false)),
     );
 
-    triggerRef(facets);
     void resetCurrentPage();
   }
 
   function resetFilterKeyword(): void {
     keywordQueryParam.value = "";
-
-    triggerRef(facets);
   }
 
   function updateProductsFilters(newFilters: ProductsFiltersType): void {

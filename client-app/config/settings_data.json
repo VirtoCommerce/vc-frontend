@@ -18,7 +18,6 @@
     "categories_limit": 499,
     "wishlists_limit": 10,
 
-    "search_min_chars": 2,
     "search_max_chars": 400,
     "search_static_content_suggestions_enabled": true,
     "search_product_phrase_suggestions_enabled": false,

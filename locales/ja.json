@@ -397,7 +397,6 @@
         "pages_label": "ページ",
         "suggestions_label": "おすすめ",
         "no_results": "{keyword}の検索結果はありません",
-        "enter_keyword_placeholder": "商品を検索",
         "search_button": "検索",
         "view_all_results_button": "全{total}件を表示",
         "barcode_detector": {
@@ -410,7 +409,11 @@
           },
           "browse": "ファイルを参照",
           "cancel": "@:common.buttons.cancel"
-        }
+        },
+        "enter_keyword_placeholder": "ストア全体を検索",
+        "enter_keyword_placeholder_category": "{category} 内を検索",
+        "scope_loading_label": "検索コンテキストを読み込み中",
+        "scope_remove_label": "削除: {label}"
       },
       "language_selector": {
         "label": "言語:"
@@ -671,7 +674,7 @@
         }
       },
       "discount_badge": {
-        "off": "OFF"
+        "off": "-{discount}"
       },
       "branches_modal": {
         "title": "店舗を選択",
@@ -733,6 +736,7 @@
         "title": "支払い方法を選択"
       },
       "select_address_modal": {
+        "message": "住所を選択してください",
         "meta": {
           "table_description": "登録済み住所"
         },
@@ -740,7 +744,7 @@
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
-        "add_address_button": "@:common.buttons.add_new_address",
+        "add_address_button": "@:common.buttons.add_new",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "住所が登録されていません",
@@ -752,6 +756,14 @@
         "select_button": "@:common.buttons.select",
         "price_label": "@:common.labels.price{':'}",
         "title": "配送方法を選択"
+      },
+      "select_bopis_modal": {
+        "title": "受取スポット",
+        "location_label": "場所",
+        "working_hours_label": "営業時間",
+        "description_label": "説明",
+        "contact_phone_label": "電話番号",
+        "contact_email_label": "お問い合わせメールアドレス"
       }
     },
     "bulk_order": {
@@ -1344,7 +1356,9 @@
         "title": "購入済み",
         "tooltip_text": "購入済みの商品のみを表示する",
         "checkbox_label": "購入済み"
-      }
+      },
+      "search_in_category": "「{category}」で「{keyword}」を検索",
+      "products_found_message_search": "件見つかりました | 件見つかりました"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

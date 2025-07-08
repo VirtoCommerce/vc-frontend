@@ -1,5 +1,5 @@
 import { useElementBounding, useCssVar } from "@vueuse/core";
-import throttle from "lodash/throttle";
+import trottle from "lodash/throttle";
 import { onBeforeUnmount, onMounted, ref, unref, watch } from "vue";
 import type { StyleValue, Ref } from "vue";
 
@@ -15,10 +15,10 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
   const sidebarStyle = ref<StyleValue | undefined>();
   const scrollDirection = ref<"UP" | "DOWN" | null>(null);
 
-  const { top: cTop, height: cHeight } = useElementBounding(content, BOUNDING_OPTIONS);
-  const { height: fHeight, top: fTop } = useElementBounding(sidebar, BOUNDING_OPTIONS);
+  const { top: _contentTop, height: _contentHeight } = useElementBounding(content, BOUNDING_OPTIONS);
+  const { height: _sidebarHeight, top: _sidebarTop } = useElementBounding(sidebar, BOUNDING_OPTIONS);
 
-  const setSidebarPosition = throttle(_setSidebarPosition, 50);
+  const setSidebarPosition = trottle(_setSidebarPosition, 50);
 
   const maxOffsetTop = ref(0);
   const maxOffsetBottom = ref(0);
@@ -26,24 +26,34 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
   function _setSidebarPosition() {
     const { clientHeight, scrollTop } = document.documentElement;
 
-    const contentHeight = cHeight.value;
-    const contentTop = cTop.value;
+    const contentTop = _contentTop.value;
+    const contentHeight = _contentHeight.value;
+    const sidebarTop = _sidebarTop.value;
+    const sidebarHeight = _sidebarHeight.value;
     const contentBottom = contentTop + contentHeight;
-
-    const sidebarHeight = fHeight.value;
-    const sidebarTop = fTop.value;
     const sidebarBottom = sidebarTop + sidebarHeight;
 
-    const zoomCorrection = window.devicePixelRatio === 1 ? 0 : 1;
+    const offsetTop = maxOffsetTop.value;
+    const offsetBottom = maxOffsetBottom.value;
 
-    const offsetTop = maxOffsetTop.value - zoomCorrection;
-    const offsetBottom = maxOffsetBottom.value - zoomCorrection;
-
-    let action = "BETWEEN";
+    if (sidebarHeight <= clientHeight - offsetTop) {
+      sidebarStyle.value = {};
+      scrollOld = scrollTop;
+      return;
+    }
 
     const up = scrollTop < scrollOld;
 
-    if (sidebarHeight > clientHeight - offsetTop) {
+    const reachedTop = sidebarTop <= contentTop - offsetTop;
+    const reachedBottom = sidebarBottom >= contentBottom + offsetBottom;
+
+    let action: "TOP" | "BOTTOM" | "BETWEEN" = "BETWEEN";
+
+    if (reachedTop) {
+      action = "TOP";
+    } else if (reachedBottom) {
+      action = "BOTTOM";
+    } else if (sidebarHeight > clientHeight - offsetTop - offsetBottom) {
       if (up && sidebarTop >= offsetTop && sidebarBottom >= clientHeight - offsetBottom && sidebarTop > contentTop) {
         action = "TOP";
       } else if (
@@ -55,33 +65,29 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
       ) {
         action = "BOTTOM";
       }
+    }
 
-      switch (action) {
-        case "BOTTOM":
-          sidebarStyle.value = {
-            placeSelf: "flex-end",
-            position: "sticky",
-            top: "auto",
-          };
-
-          break;
-        case "BETWEEN":
-          sidebarStyle.value = {
-            position: "relative",
-            marginTop: `${sidebarTop - contentTop}px`,
-            top: "auto",
-            bottom: "auto",
-          };
-
-          break;
-        default:
-          sidebarStyle.value = {
-            position: "sticky",
-            bottom: "auto",
-          };
-      }
-    } else {
-      sidebarStyle.value = {};
+    switch (action) {
+      case "BOTTOM":
+        sidebarStyle.value = {
+          placeSelf: "flex-end",
+          position: "sticky",
+          top: "auto",
+        };
+        break;
+      case "BETWEEN":
+        sidebarStyle.value = {
+          position: "relative",
+          marginTop: `${sidebarTop - contentTop}px`,
+          top: "auto",
+          bottom: "auto",
+        };
+        break;
+      default:
+        sidebarStyle.value = {
+          position: "sticky",
+          bottom: "auto",
+        };
     }
 
     scrollOld = scrollTop;
@@ -97,18 +103,16 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
     maxOffsetBottom.value = Number(re.exec(_maxOffsetBottom)?.[0]);
 
     window.addEventListener("scroll", setSidebarPosition);
-    window.addEventListener("resize", setSidebarPosition);
 
     setSidebarPosition();
   });
 
   onBeforeUnmount(() => {
     window.removeEventListener("scroll", setSidebarPosition);
-    window.removeEventListener("resize", setSidebarPosition);
   });
 
   watch(
-    () => fHeight.value,
+    () => _sidebarHeight.value,
     (value, oldValue) => {
       if (value !== oldValue) {
         setSidebarPosition();
@@ -118,7 +122,7 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
   );
 
   watch(
-    () => cHeight.value,
+    () => _contentHeight.value,
     (value, oldValue) => {
       if (value !== oldValue) {
         setSidebarPosition();
