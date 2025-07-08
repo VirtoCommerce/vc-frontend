@@ -138,15 +138,41 @@ export function useShortCart() {
 
   const { mutate: _addItemsToCart, loading: addItemsToCartLoading } = useMutation(AddItemsCartDocument);
   async function addItemsToCart(items: InputNewCartItemType[]): Promise<ShortCartFragment | undefined> {
-    const result = await _addItemsToCart({ command: { cartItems: items, ...commonVariables } });
+    const result = await _addItemsToCart(
+      { command: { cartItems: items, ...commonVariables } },
+      {
+        update: (cache, { data }) => {
+          if (data?.addItemsCart) {
+            cache.writeQuery({
+              query: GetShortCartDocument,
+              data: { cart: data.addItemsCart },
+              variables: commonVariables,
+            });
+          }
+        },
+      },
+    );
     return result?.data?.addItemsCart;
   }
 
   const { mutate: _addBulkItemsToCart, loading: addBulkItemsToCartLoading } = useMutation(AddBulkItemsCartDocument);
   async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
-    const result = await _addBulkItemsToCart({
-      command: { cartItems: items, ...commonVariables },
-    });
+    const result = await _addBulkItemsToCart(
+      {
+        command: { cartItems: items, ...commonVariables },
+      },
+      {
+        update: (cache, { data }) => {
+          if (data?.addBulkItemsCart?.cart) {
+            cache.writeQuery({
+              query: GetShortCartDocument,
+              data: { cart: data.addBulkItemsCart.cart },
+              variables: commonVariables,
+            });
+          }
+        },
+      },
+    );
 
     return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
       productSku,
