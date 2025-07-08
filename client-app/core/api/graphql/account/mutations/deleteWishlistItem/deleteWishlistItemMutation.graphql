@@ -1,5 +1,13 @@
+#import "../../../fragments/wishlistLineItemFields.graphql"
+
 mutation DeleteWishlistItem($command: InputRemoveWishlistItemType!) {
   removeWishlistItem(command: $command) {
     id
+    name
+    description
+    scope
+    items {
+      ...wishlistLineItemFields
+    }
   }
 }

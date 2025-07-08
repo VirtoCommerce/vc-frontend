@@ -112,22 +112,36 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     loading.value = true;
 
     try {
-      await addWishlistBulkItem(payloads);
+      const result = await addWishlistBulkItem(payloads);
+      if (result.wishlists) {
+        lists.value = result.wishlists;
+      }
+
+      if (options.autoRefetch) {
+        await fetchWishlists();
+      }
+
+      return result;
     } catch (e) {
       Logger.error(`${useWishlists.name}.${addItemsToWishlists.name}`, e);
       throw e;
     }
-
-    loading.value = false;
   }
 
   async function removeItemsFromWishlists(payload: InputRemoveWishlistItemType[]) {
     loading.value = true;
 
     // TODO: Use single query
-    await asyncForEach(payload, async (item) => {
+    await asyncForEach(payload, async (payloadItem) => {
       try {
-        await deleteWishlistItem(item);
+        const result = await deleteWishlistItem(payloadItem);
+        if (result.id) {
+          lists.value = lists.value.map((wishlist) =>
+            wishlist.id === payloadItem.listId
+              ? { ...wishlist, items: wishlist.items?.filter((item) => item.productId !== payloadItem.productId) }
+              : wishlist,
+          );
+        }
       } catch (e) {
         Logger.error(`${useWishlists.name}.${removeItemsFromWishlists.name}`, e);
         throw e;
