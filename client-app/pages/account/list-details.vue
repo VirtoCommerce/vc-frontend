@@ -136,7 +136,6 @@ import {
   WishlistProductItemSkeleton,
 } from "@/shared/wishlists";
 import type {
-  InputRemoveWishlistItemType,
   InputUpdateWishlistItemsType,
   InputUpdateWishlistLineItemType,
   LineItemType,
@@ -327,10 +326,7 @@ function openDeleteProductModal(values: string[]): void {
         listId: list.value?.id,
         listItem: item,
         loading: loading.value,
-        removeFunction: (payload: InputRemoveWishlistItemType[]) => {
-          console.log("payload", payload);
-          void removeItemsFromWishlists(payload);
-        },
+        removeFunction: removeItemsFromWishlists,
 
         onResult() {
           const previousPagesCount = pagesCount.value;
