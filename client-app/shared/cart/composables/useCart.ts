@@ -81,10 +81,6 @@ function _useSharedShortCart() {
   const { result: query, refetch, loading } = useGetShortCartQuery();
   const cart = computed(() => query.value?.cart);
 
-  /* watch(cart, (val) => {
-    console.log("cart watch", JSON.stringify(val));
-  });*/
-
   return {
     cart,
     refetch,
