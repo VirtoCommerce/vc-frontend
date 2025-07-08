@@ -128,6 +128,14 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     }
   }
 
+  function removeItemFromList(listId: string, productId: string) {
+    lists.value = lists.value.map((wishlist) =>
+      wishlist.id === listId
+        ? { ...wishlist, items: wishlist.items?.filter((item) => item.productId !== productId) }
+        : wishlist,
+    );
+  }
+
   async function removeItemsFromWishlists(payload: InputRemoveWishlistItemType[]) {
     loading.value = true;
 
@@ -135,12 +143,9 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     await asyncForEach(payload, async (payloadItem) => {
       try {
         const result = await deleteWishlistItem(payloadItem);
-        if (result.id) {
-          lists.value = lists.value.map((wishlist) =>
-            wishlist.id === payloadItem.listId
-              ? { ...wishlist, items: wishlist.items?.filter((item) => item.productId !== payloadItem.productId) }
-              : wishlist,
-          );
+        const isInResultList = result.items?.some((item) => item.productId === payloadItem.productId);
+        if (result.id && payloadItem.productId && !isInResultList) {
+          removeItemFromList(payloadItem.listId, payloadItem.productId);
         }
       } catch (e) {
         Logger.error(`${useWishlists.name}.${removeItemsFromWishlists.name}`, e);
