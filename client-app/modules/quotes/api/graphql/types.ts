@@ -83,6 +83,28 @@ export type AvailabilityData = {
   isTrackInventory: Scalars['Boolean']['output'];
 };
 
+export type BrandType = {
+  bannerUrl?: Maybe<Scalars['String']['output']>;
+  /** Brand property name. */
+  brandPropertyName?: Maybe<Scalars['String']['output']>;
+  /** Unlocalized brand name. */
+  brandPropertyValue?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  /** Indicates if the brand is featured. */
+  featured?: Maybe<Scalars['Boolean']['output']>;
+  /** Brand ID. */
+  id: Scalars['String']['output'];
+  logoUrl?: Maybe<Scalars['String']['output']>;
+  /** Brand name. */
+  name?: Maybe<Scalars['String']['output']>;
+  permalink: Scalars['String']['output'];
+};
+
+
+export type BrandTypeDescriptionArgs = {
+  type?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Breadcrumb = {
   /** Id of item the breadcrumb calculated for */
   itemId: Scalars['String']['output'];
@@ -600,6 +622,7 @@ export type Product = {
   associations?: Maybe<ProductAssociationConnection>;
   /** Product availability data */
   availabilityData: AvailabilityData;
+  brand?: Maybe<BrandType>;
   /** Get brandName for product. */
   brandName?: Maybe<Scalars['String']['output']>;
   /** Breadcrumbs */
