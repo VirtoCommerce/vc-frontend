@@ -206,6 +206,7 @@ export function _useCheckout() {
       price: method.price?.amount,
       shipmentMethodCode: method.code,
       shipmentMethodOption: method.optionName,
+      pickupLocationId: method.id,
     });
   }
 
