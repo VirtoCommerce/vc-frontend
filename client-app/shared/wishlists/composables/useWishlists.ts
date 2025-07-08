@@ -117,14 +117,12 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
         lists.value = result.wishlists;
       }
 
-      if (options.autoRefetch) {
-        await fetchWishlists();
-      }
-
       return result;
     } catch (e) {
       Logger.error(`${useWishlists.name}.${addItemsToWishlists.name}`, e);
       throw e;
+    } finally {
+      loading.value = false;
     }
   }
 
