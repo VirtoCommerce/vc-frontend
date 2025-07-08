@@ -2485,11 +2485,6 @@ export type InputResetPasswordByTokenType = {
   userId: Scalars['String']['input'];
 };
 
-export type InputSaveSearchQueryType = {
-  query: Scalars['String']['input'];
-  storeId: Scalars['String']['input'];
-};
-
 export type InputSendVerifyEmailType = {
   email?: InputMaybe<Scalars['String']['input']>;
   /** Notification language code */
@@ -3150,7 +3145,6 @@ export type Mutations = {
   removeWishlistItems?: Maybe<WishlistType>;
   requestRegistration?: Maybe<RequestRegistrationType>;
   resetPasswordByToken?: Maybe<CustomIdentityResultType>;
-  saveSearchQuery?: Maybe<Scalars['Boolean']['output']>;
   selectAllCartItems?: Maybe<CartType>;
   selectCartItems?: Maybe<CartType>;
   sendVerifyEmail?: Maybe<Scalars['Boolean']['output']>;
@@ -3617,11 +3611,6 @@ export type MutationsRequestRegistrationArgs = {
 
 export type MutationsResetPasswordByTokenArgs = {
   command?: InputMaybe<InputResetPasswordByTokenType>;
-};
-
-
-export type MutationsSaveSearchQueryArgs = {
-  command: InputSaveSearchQueryType;
 };
 
 
@@ -4884,7 +4873,6 @@ export type Query = {
   regions: Array<CountryRegionType>;
   requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
   role?: Maybe<RoleType>;
-  searchHistory?: Maybe<SearchHistoryResultType>;
   shipmentStatuses?: Maybe<LocalizedSettingResponseType>;
   skyflowCards?: Maybe<SkyflowCardResponseType>;
   slugInfo?: Maybe<SlugInfoResponseType>;
@@ -5386,12 +5374,6 @@ export type QueryRoleArgs = {
 };
 
 
-export type QuerySearchHistoryArgs = {
-  maxCount: Scalars['Int']['input'];
-  storeId: Scalars['String']['input'];
-};
-
-
 export type QueryShipmentStatusesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
 };
@@ -5777,10 +5759,6 @@ export type RoleType = {
   normalizedName: Scalars['String']['output'];
   /** Permissions in Role */
   permissions: Array<Maybe<Scalars['String']['output']>>;
-};
-
-export type SearchHistoryResultType = {
-  queries?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
 export type SeoInfo = {
