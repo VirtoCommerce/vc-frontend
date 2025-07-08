@@ -141,7 +141,7 @@ watchEffect(() => {
 
   &--size {
     &--xs {
-      --header-p-y: theme("padding.3");
+      --header-min-height: 2.5rem;
       --header-gap: theme("gap.[1.5]");
       --title-text: theme("fontSize.sm");
       --title-min-h: 1.625rem;
@@ -149,7 +149,7 @@ watchEffect(() => {
     }
 
     &--sm {
-      --header-p-y: theme("padding.3");
+      --header-min-height: 2.75rem;
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.base");
       --title-min-h: 1.875rem;
@@ -157,7 +157,7 @@ watchEffect(() => {
     }
 
     &--md {
-      --header-p-y: theme("padding.3");
+      --header-min-height: 3.25rem;
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.xl");
       --title-min-h: 2.125rem;
@@ -171,11 +171,11 @@ watchEffect(() => {
     &--lg {
       $sizeLG: &;
 
-      --header-p-y: theme("padding.4");
+      --header-min-height: 4rem;
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.xl");
-      --title-min-h: 2.625rem;
-      --slot-p-t: 0;
+      --title-min-h: 2.75rem;
+      --slot-p-t: theme("padding[3.5]");
 
       @apply divide-none;
 
@@ -213,7 +213,11 @@ watchEffect(() => {
   &__header {
     --vc-hexagon-icon-size: var(--title-min-h);
 
-    @apply flex items-start gap-[--header-gap] px-[--p-x] py-[--header-p-y] w-full;
+    @apply flex items-center gap-[--header-gap] px-[--p-x] py-1 w-full min-h-[--header-min-height];
+
+    #{$sizeLG} & {
+      @apply items-end;
+    }
   }
 
   &__prepend-append {
