@@ -26,13 +26,14 @@
           "label": "Product",
           "type": "select",
           "equalKey": "id",
+          "searchable": true,
           "request": {
             "url": "/graphql",
             "method": "post",
             "body": {
               "operationName": null,
               "variables": {},
-              "query": "{products(storeId:\"{{location.params.storeId}}\"){items{id,code,name,imgSrc,prices{currency,list{formattedAmount}}}}}"
+              "query": "{products(storeId:\"{{location.params.storeId}}\",cultureName:\"en-US\",currencyCode:\"USD\",query:\"{{__searchQuery}}\"){items{id,code,name,imgSrc,prices{currency,list{formattedAmount}}}}}"
             },
             "cacheable": true,
             "response": {

@@ -1,11 +1,11 @@
 <template>
   <div class="pb-16 pt-6">
     <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
-      <h2 class="mb-4 text-center text-2xl">{{ model.title }}</h2>
-      <VcMarkdownRender :src="model.content" class="text-center text-lg" />
+      <h2 class="mb-4 text-center text-2xl">{{ title }}</h2>
+      <VcMarkdownRender v-if="content" :src="content" class="text-center text-lg" />
     </div>
     <div class="flex flex-row justify-center space-x-4">
-      <template v-for="(item, index) in model.products" :key="index">
+      <template v-for="(item, index) in products" :key="index">
         <div v-if="item.product" class="flex w-48 flex-col">
           <VcImage
             :src="item.product.imgSrc"
@@ -24,10 +24,29 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+interface IProps {
+  background?: string;
+  title?: string;
+  content?: string;
+  products: Array<{
+    product: {
+      id: string;
+      code: string;
+      name: string;
+      imgSrc: string;
+      prices: Array<{
+        currency: string;
+        list: {
+          formattedAmount: string;
+        };
+      }>;
+    };
+  }>;
   model: {
-    type: Object,
-    required: true,
-  },
-});
+    type: object;
+    required: true;
+  };
+}
+
+defineProps<IProps>();
 </script>

@@ -5,7 +5,7 @@
         {{ title }}
       </VcTypography>
 
-      <div class="text-center lg:text-lg">{{ subtitle }}</div>
+      <div class="mb-8 text-center lg:text-lg">{{ subtitle }}</div>
 
       <VcProductsGrid
         :columns="{

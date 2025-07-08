@@ -1,0 +1,217 @@
+{
+  "name": "Category",
+  "icon": "category",
+  "displayField": "title",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string",
+      "default": "Custom Category"
+    },
+    {
+      "id": "hideBreadcrumbs",
+      "label": "Hide breadcrumbs",
+      "type": "checkbox",
+      "defaultValue": true
+    },
+    {
+      "id": "hideSidebar",
+      "label": "Hide sidebar",
+      "type": "checkbox"
+    },
+    {
+      "id": "hideControls",
+      "label": "Hide controls",
+      "type": "checkbox"
+    },
+    {
+      "id": "hideSorting",
+      "label": "Hide sorting",
+      "type": "checkbox"
+    },
+    {
+      "id": "viewMode",
+      "label": "View mode",
+      "type": "select",
+      "default": "<unset>",
+      "options": [
+        {
+          "label": "<unset>",
+          "value": "<unset>"
+        },
+        {
+          "label": "Grid",
+          "value": "grid"
+        },
+        {
+          "label": "List",
+          "value": "list"
+        }
+      ],
+      "info": "Fixing the View Mode",
+      "visibility": "this.model.hideViewModeSelector !== false"
+    },
+    {
+      "id": "filtersOrientation",
+      "label": "Filters orientation",
+      "type": "select",
+      "default": "vertical",
+      "options": [
+        {
+          "label": "Vertical",
+          "value": "vertical"
+        },
+        {
+          "label": "Horizontal",
+          "value": "horizontal"
+        }
+      ],
+      "info": "Show filters vertically or horizontally"
+    },
+    {
+      "id": "filtersDisplayOrder",
+      "label": "Filters display order",
+      "type": "object",
+      "default": {
+        "order": "",
+        "showRest": false
+      },
+      "element": [
+        {
+          "id": "order",
+          "label": "Filters order",
+          "type": "string",
+          "info": "Order of the filters - comma-separated string of any case. Leave empty to show all filters in default order. Example: \"price, brand, category\"."
+        },
+        {
+          "id": "showRest",
+          "label": "Show rest of filters",
+          "type": "checkbox",
+          "info": "Show the rest of the filters."
+        }
+      ]
+    },
+    {
+      "id": "cardType",
+      "label": "Card type",
+      "type": "select",
+      "default": "full",
+      "info": "Card type for grid view mode",
+      "options": [
+        {
+          "label": "Full",
+          "value": "full"
+        },
+        {
+          "label": "Short",
+          "value": "short"
+        }
+      ]
+    },
+    {
+      "id": "columnsAmountTablet",
+      "label": "Columns amount on tablet device",
+      "type": "select",
+      "default": "3",
+      "options": [
+        {
+          "label": "3",
+          "value": "3"
+        },
+        {
+          "label": "2",
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "id": "columnsAmountDesktop",
+      "label": "Columns amount on desktop",
+      "type": "select",
+      "default": "4",
+      "options": [
+        {
+          "label": "4",
+          "value": "4"
+        },
+        {
+          "label": "3",
+          "value": "3"
+        },
+        {
+          "label": "2",
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "id": "keyword",
+      "label": "Keyword",
+      "type": "string"
+    },
+    {
+      "id": "categoryId",
+      "label": "Category",
+      "type": "select",
+      "equalKey": "id",
+      "searchable": true,
+      "request": {
+        "url": "/graphql",
+        "method": "post",
+        "body": {
+          "operationName": null,
+          "variables": {},
+          "query": "{categories(storeId:\"{{location.params.storeId}}\",cultureName:\"en-US\",currencyCode:\"USD\",query:\"{{__searchQuery}}\"){items{id,name}}}"
+        },
+        "cacheable": true,
+        "response": {
+          "result": "data.categories.items"
+        },
+        "label": "name",
+        "value": "id"
+      }
+    },
+    {
+      "id": "filter",
+      "label": "Filter",
+      "type": "string",
+      "info": "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter"
+    },
+    {
+      "id": "countLimitation",
+      "label": "Count limitation",
+      "type": "checkbox",
+      "info": "Turn on to set up products count limitation"
+    },
+    {
+      "visibility": "this.model.countLimitation !== true",
+      "id": "fixedProductsCount",
+      "label": "Fixed products count",
+      "type": "number",
+      "default": 0,
+      "max": 20
+    },
+    {
+      "id": "hideTotal",
+      "label": "Hide total products count",
+      "type": "checkbox",
+      "visibility": "this.model.countLimitation !== false",
+      "info": "Hidden if Count Limitation is active"
+    },
+    {
+      "id": "allowSetMeta",
+      "label": "Allow set metadata",
+      "type": "checkbox",
+      "default": false,
+      "info": "Allow the component to set SEO meta tags based on fetched category"
+    },
+    {
+      "id": "showButtonToDefaultView",
+      "label": "Show button to default category view",
+      "type": "checkbox",
+      "default": false,
+      "info": "Toggle this switch to add a button that, when clicked, shows the default category view. Applicable for pages with an URL overlapping the existing category page URL (e.g., /printers)."
+    }
+  ]
+}
