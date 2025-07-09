@@ -157,6 +157,10 @@ export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItemType {
       label: getFacetLabel(facetRange.label),
       value: getFilterExpressionFromFacetRange(facetRange),
       selected: facetRange.isSelected,
+      from: facetRange.from,
+      includeFrom: facetRange.includeFrom,
+      to: facetRange.to,
+      includeTo: facetRange.includeTo,
     })),
   };
 }
