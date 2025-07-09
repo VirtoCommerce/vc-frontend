@@ -1,10 +1,12 @@
 <template>
   <div class="news-articles">
     <VcEmptyPage v-if="!loading && !newsArticles?.length" :title="$t('news.title-empty')" />
+
     <VcContainer v-else>
       <div v-if="loading" class="news-articles__grid">
         <VcWidgetSkeleton v-for="i in 8" :key="i" head size="lg" />
       </div>
+
       <div v-if="!loading && newsArticles?.length" class="news-articles__grid">
         <NewsArticlePreview v-for="item in newsArticles" :key="item.id" :news-article="item" />
       </div>

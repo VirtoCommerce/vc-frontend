@@ -1,11 +1,14 @@
 <template>
   <div class="news-article">
     <Error404 v-if="!loading && !newsArticle" />
+
     <VcContainer v-else>
       <router-link :to="{ name: ROUTES.ARTICLES.NAME }" class="news-article__back-link">
         {{ $t("news.links.to-list") }}
       </router-link>
+
       <VcWidgetSkeleton v-if="loading" head size="lg" />
+
       <NewsArticle v-if="!loading && newsArticle" :news-article="newsArticle" />
     </VcContainer>
   </div>

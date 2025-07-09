@@ -4,10 +4,12 @@
       <router-link :to="articleRoute">
         <div class="news-article-preview__title">{{ newsArticle.title }}</div>
       </router-link>
+
       <div v-if="newsArticle.publishDate" class="news-article-preview__publish-date">
         {{ $d(newsArticle.publishDate) }}
       </div>
     </template>
+
     <router-link :to="articleRoute">
       <VcMarkdownRender :src="newsArticle.contentPreview ?? ''" class="news-article-preview__preview" />
     </router-link>
