@@ -9,9 +9,9 @@
         :to="link"
       >
         <BadgesWrapper>
-          <PurchasedBeforeBadge v-if="product.isPurchased" />
+          <PurchasedBeforeBadge v-if="product.isPurchased" :size="badgeSize" square />
 
-          <DiscountBadge v-if="product.price" static :price="product.price" />
+          <DiscountBadge v-if="product.price" static :price="product.price" :size="badgeSize" />
         </BadgesWrapper>
       </VcProductImage>
 
@@ -147,4 +147,8 @@ const link = computed(() => getProductRoute(props.product.id, props.product.slug
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
 );
+
+const badgeSize = computed(() => {
+  return props.viewMode === "grid" ? "lg" : "md";
+});
 </script>

@@ -163,7 +163,8 @@
 
 <script setup lang="ts">
 import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
-import { computed, onMounted, ref } from "vue";
+import { pickBy } from "lodash";
+import { computed, onMounted, ref, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
@@ -331,12 +332,18 @@ function selectItemEvent(product: Product) {
   analytics("selectItem", product, searchBarListProperties.value);
 }
 
+const facetsParam = useRouteQueryParam<string>(QueryParamName.Facets);
+const sortParam = useRouteQueryParam<string>(QueryParamName.Sort);
+
 function getSearchRoute(phrase: string): RouteLocationRaw {
-  const query = phrase
-    ? {
-        [QueryParamName.SearchPhrase]: phrase,
-      }
-    : undefined;
+  const query = pickBy(
+    {
+      [QueryParamName.SearchPhrase]: phrase,
+      [QueryParamName.Facets]: toValue(facetsParam),
+      [QueryParamName.Sort]: toValue(sortParam),
+    },
+    (value) => !!value,
+  );
 
   if (isCategoryScope.value) {
     return {
