@@ -157,7 +157,7 @@ const { t } = useI18n();
 const { analytics } = useAnalytics();
 const broadcast = useBroadcast();
 const { openModal } = useModal();
-const { listLoading, list, fetchWishList, updateItemsInWishlist, removeItemsFromWishlists } = useWishlists();
+const { listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
 const {
   loading: cartLoading,
   changing: cartChanging,
@@ -326,7 +326,6 @@ function openDeleteProductModal(values: string[]): void {
         listId: list.value?.id,
         listItem: item,
         loading: loading.value,
-        removeFunction: removeItemsFromWishlists,
 
         onResult() {
           const previousPagesCount = pagesCount.value;

@@ -154,7 +154,6 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
   async function removeItemsFromWishlists(payload: InputRemoveWishlistItemType[]) {
     loading.value = true;
 
-    // TODO: Use single query
     await asyncForEach(payload, async (payloadItem) => {
       try {
         const result = await deleteWishlistItem(payloadItem);
