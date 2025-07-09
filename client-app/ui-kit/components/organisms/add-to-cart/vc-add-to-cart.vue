@@ -15,6 +15,7 @@
       :message="message"
       :show-empty-details="showEmptyDetails"
       :readonly="readonly"
+      test-id-input="quantity-input"
       @input="onChange"
       @blur="onFocusOut"
     >
@@ -37,6 +38,7 @@
             :disabled="isDisabled"
             :title="buttonText"
             truncate
+            data-test-id="add-to-cart-button"
             @click.stop="$emit('update:cartItemQuantity', quantity!)"
           >
             {{ buttonText }}

@@ -10,6 +10,7 @@
         'vc-line-item--deleted': deleted,
       },
     ]"
+    data-test-id="line-item"
     @keydown="changeFocus"
   >
     <div v-if="$slots.before" class="vc-line-item__before">

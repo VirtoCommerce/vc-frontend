@@ -108,7 +108,12 @@
         </div>
 
         <!-- View options - horizontal view -->
-        <ViewMode v-if="!hideViewModeSelector" v-model:mode="savedViewMode" class="category__view-mode" />
+        <ViewMode
+          v-if="!hideViewModeSelector"
+          v-model:mode="savedViewMode"
+          class="category__view-mode"
+          data-test-id="category-view-switcher"
+        />
 
         <!-- In stock and branches -->
         <CategoryControls

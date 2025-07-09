@@ -1,6 +1,7 @@
 <template>
   <div
     class="flex h-10 items-center gap-3 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-5 xl:px-12"
+    data-test-id="top-header"
   >
     <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
 
@@ -76,6 +77,7 @@
           <div
             v-if="loginMenuVisible"
             class="absolute right-0 top-full z-10 flex w-64 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
+            data-test-id="account-menu"
           >
             <div class="flex max-w-full items-center justify-between p-3">
               <router-link
