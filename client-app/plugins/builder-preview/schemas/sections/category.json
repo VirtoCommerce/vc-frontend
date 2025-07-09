@@ -49,7 +49,7 @@
           "value": "list"
         }
       ],
-      "info": "Fixing the View Mode",
+      "info": "Switching the View Mode",
       "visibility": "this.model.hideViewModeSelector !== false"
     },
     {

@@ -42,10 +42,6 @@ interface IProps {
       }>;
     };
   }>;
-  model: {
-    type: object;
-    required: true;
-  };
 }
 
 defineProps<IProps>();
