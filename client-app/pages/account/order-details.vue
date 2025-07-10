@@ -190,6 +190,7 @@ const {
   orderItems,
   orderItemsGroupedByVendor,
   deliveryAddress,
+  pickupLocation,
   billingAddress,
   shipment,
   payment,
@@ -243,10 +244,19 @@ function openInfo() {
   openModal({
     component: AddressInfoModal,
     props: {
-      address: deliveryAddress,
+      link: coordsToGoogleMapsLink(pickupLocation.value?.geoLocation),
+      pickupLocation: pickupLocation,
       onClose: closeModal,
     },
   });
+}
+
+function coordsToGoogleMapsLink(geoLocation?: string) {
+  if (!geoLocation || !/^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/.test(geoLocation)) {
+    return;
+  }
+
+  return `https://www.google.com/maps?q=${geoLocation}`;
 }
 
 async function reorderItems() {

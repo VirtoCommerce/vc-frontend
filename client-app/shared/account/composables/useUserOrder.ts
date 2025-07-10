@@ -21,6 +21,8 @@ const allItemsAreDigital = computed(
 const shipment = computed(() => order.value?.shipments?.[0]);
 const payment = computed(() => order.value?.inPayments?.[0]);
 const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
+const pickupLocation = computed(() => shipment.value?.pickupLocation);
+
 const billingAddress = computed(() => payment.value?.billingAddress);
 
 export function useUserOrder() {
@@ -79,6 +81,7 @@ export function useUserOrder() {
     orderItems,
     orderItemsGroupedByVendor,
     deliveryAddress,
+    pickupLocation,
     billingAddress,
     shipment,
     payment,

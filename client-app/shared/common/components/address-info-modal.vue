@@ -13,27 +13,27 @@
           </td>
           <td>{{ eta }}</td>
         </tr>
-        <tr v-if="props.address.email || props.address.phone" class="address-info-modal__table-row">
+        <tr v-if="pickupLocation.contactEmail || pickupLocation.contactPhone" class="address-info-modal__table-row">
           <td>
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.questions`) }}</span>
           </td>
           <td>
             <i18n-t :keypath="contactKey">
               <template #email>
-                <a class="address-info-modal__link" :href="`mailto:${props.address.email}`">
-                  {{ props.address.email }}
+                <a class="address-info-modal__link" :href="`mailto:${pickupLocation.contactEmail}`">
+                  {{ pickupLocation.contactEmail }}
                 </a>
               </template>
 
               <template #phone>
-                <a class="address-info-modal__link" :href="`tel:${props.address.phone}`">
-                  {{ props.address.phone }}
+                <a class="address-info-modal__link" :href="`tel:${pickupLocation.contactPhone}`">
+                  {{ pickupLocation.contactPhone }}
                 </a>
               </template>
             </i18n-t>
           </td>
         </tr>
-        <tr class="address-info-modal__table-row">
+        <tr v-if="address" class="address-info-modal__table-row">
           <td>
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.address`) }}:</span>
           </td>
@@ -55,19 +55,16 @@
 import { computed } from "vue";
 import { AddressLine } from "@/shared/common";
 import GetDirectionsAction from "./get-directions-action.vue";
-import type { OrderAddressType } from "@/core/api/graphql/types.ts";
+import type { PickupLocationType } from "@/core/api/graphql/types.ts";
 
 const props = defineProps<IProps>();
 
-type AddressType = Pick<
-  OrderAddressType,
-  "phone" | "email" | "line1" | "line2" | "city" | "regionName" | "postalCode" | "countryName"
->;
+type PickupType = Pick<PickupLocationType, "address" | "contactPhone" | "contactEmail">;
 interface IProps {
   //  Estimated Time of Arrival
   eta?: string;
   link?: string;
-  address: AddressType;
+  pickupLocation: PickupType;
 }
 
 const TRANSLATION_KEYS_ORIGIN = "pages.account.order_details.bopis";
@@ -80,10 +77,14 @@ const tableItems = computed(() => {
   return [{ label: "eta" }, { label: "questions" }, { label: "address" }];
 });
 
+const address = computed(() => {
+  return props.pickupLocation.address;
+});
+
 const contactKey = computed(() => {
   let key = "";
-  const email = props.address.email;
-  const phone = props.address.phone;
+  const email = props.pickupLocation.contactEmail;
+  const phone = props.pickupLocation.contactPhone;
 
   if (email && phone) {
     key = `${TRANSLATION_KEYS_ORIGIN}.emailAndPhone`;
@@ -107,6 +108,10 @@ const contactKey = computed(() => {
 
   &__link {
     @apply py-1 text-[--header-top-link-color] hover:text-[--header-top-link-hover-color];
+
+    &:hover {
+      @apply text-[--link-hover-color];
+    }
   }
 
   &__label {
