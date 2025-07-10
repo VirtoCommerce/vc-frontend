@@ -14,7 +14,10 @@
           <td>{{ eta }}</td>
         </tr>
 
-        <tr v-if="pickupLocation.contactEmail || pickupLocation.contactPhone" class="address-info-modal__table-row">
+        <tr
+          v-if="pickupLocation.contactEmail || pickupLocation.contactPhone"
+          class="address-info-modal__table-row mb-4"
+        >
           <td>
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.questions`) }}</span>
           </td>
@@ -37,14 +40,14 @@
         </tr>
 
         <tr v-if="pickupLocation.name" class="address-info-modal__table-row">
-          <td>
+          <td class="min-w-20">
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.name`) }}:</span>
           </td>
           <td>{{ pickupLocation.name }}</td>
         </tr>
 
         <tr v-if="address" class="address-info-modal__table-row">
-          <td>
+          <td class="min-w-20">
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.address`) }}:</span>
           </td>
 
@@ -52,14 +55,14 @@
         </tr>
 
         <tr v-if="pickupLocation.workingHours" class="address-info-modal__table-row">
-          <td>
+          <td class="min-w-20">
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.workingHours`) }}:</span>
           </td>
           <td><VcMarkdownRender :src="pickupLocation.workingHours" /></td>
         </tr>
 
         <tr v-if="pickupLocation.description" class="address-info-modal__table-row">
-          <td>
+          <td class="min-w-20">
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.instructions`) }}:</span>
           </td>
           <td>{{ pickupLocation.description }}</td>
