@@ -49,9 +49,16 @@ export function useHistoricalEvents() {
         Logger.error("Error saving search query", error);
       }
     } else {
-      localSearchQueries.value.push(payload);
+      if (localSearchQueries.value.includes(payload)) {
+        const index = localSearchQueries.value.indexOf(payload);
+        localSearchQueries.value.splice(index, 1);
+        localSearchQueries.value.unshift(payload);
+      } else {
+        localSearchQueries.value.unshift(payload);
+      }
+
       if (localSearchQueries.value.length > DEFAULT_SEARCH_HISTORY_MAX_COUNT) {
-        localSearchQueries.value.shift();
+        localSearchQueries.value.splice(DEFAULT_SEARCH_HISTORY_MAX_COUNT, 1);
       }
     }
   }

@@ -58,7 +58,7 @@
       <div
         v-if="searchDropdownVisible"
         ref="searchDropdownElement"
-        class="absolute left-1/2 top-[3.45rem] z-20 flex w-full min-w-[640px] max-w-[100vw] -translate-x-1/2 flex-col gap-1 overflow-y-auto rounded bg-additional-50 shadow-lg"
+        class="absolute left-1/2 top-[3.45rem] z-20 flex w-full min-w-[640px] max-w-[100vw] -translate-x-1/2 flex-col overflow-y-auto rounded bg-additional-50 shadow-lg"
         :style="searchDropdownStyle"
         @focusout="handleFocusOut"
       >
