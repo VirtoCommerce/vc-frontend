@@ -11,7 +11,7 @@
         >
           <div class="flex gap-1">
             <div class="min-w-0 grow truncate">{{ facet.label }}</div>
-            <VcBadge variant="outline" rounded>{{ facet.count }}</VcBadge>
+            <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
           </div>
         </VcCheckbox>
       </VcCheckboxGroup>

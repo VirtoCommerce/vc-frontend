@@ -28,7 +28,8 @@
             >
               <div class="flex w-full max-w-full gap-1">
                 <div class="min-w-0 truncate">{{ facet.label }}</div>
-                <VcBadge variant="outline" rounded>{{ facet.count }}</VcBadge>
+
+                <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
               </div>
             </VcCheckbox>
           </VcCheckboxGroup>

@@ -18,7 +18,7 @@
               <div class="vc-push-messages__title">
                 <span>{{ $t("push_messages.title") }}</span>
 
-                <VcBadge v-if="unreadCount > 0" variant="outline" size="lg" rounded>
+                <VcBadge v-if="unreadCount > 0" variant="outline" size="sm" rounded>
                   {{ unreadCount }}
                 </VcBadge>
               </div>

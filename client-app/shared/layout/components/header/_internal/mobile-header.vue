@@ -72,6 +72,8 @@
                     size="sm"
                     class="absolute -right-2 -top-2 transition-transform"
                     rounded
+                    nowrap
+                    max-width="none"
                   >
                     {{ $n(cart.itemsQuantity, { style: "decimal", notation: "compact" }) }}
                   </VcBadge>

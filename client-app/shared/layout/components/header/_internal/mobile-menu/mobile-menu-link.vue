@@ -30,7 +30,7 @@
         <slot v-bind="{ isActive, isExactActive, formattedText: formatTextFunction(link.title) }" />
       </span>
 
-      <VcBadge v-if="count" variant="solid-light" color="neutral" size="lg" rounded>
+      <VcBadge v-if="count" variant="solid-light" color="neutral" rounded>
         {{ $n(count, { style: "decimal", notation: "compact" }) }}
       </VcBadge>
 

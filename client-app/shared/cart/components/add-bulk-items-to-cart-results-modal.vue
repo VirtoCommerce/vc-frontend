@@ -18,7 +18,7 @@
               {{ $t(`shared.cart.add_bulk_items_to_cart_results_modal.groups.${group.name}`) }}
             </span>
 
-            <VcBadge class="flex-none" variant="outline" rounded>
+            <VcBadge class="flex-none" variant="outline" size="sm" rounded>
               {{ group.items.length }}
             </VcBadge>
           </div>
