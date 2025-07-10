@@ -1,13 +1,19 @@
 <template>
-  <Category :title is-root />
+  <VcContainer>
+    <VcBreadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" />
+
+    <Category :title is-root />
+  </VcContainer>
 </template>
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { useBreadcrumbs } from "@/core/composables";
 import { usePageTitle } from "@/core/composables/usePageTitle";
 import { globals } from "@/core/globals";
+import { buildBreadcrumbs } from "@/core/utilities";
 import { useSlugInfo } from "@/shared/common";
 import Category from "@/shared/catalog/components/category.vue";
 
@@ -27,4 +33,17 @@ useSeoMeta({
   ogTitle: () => pageTitle.value,
   ogDescription: () => seoInfo?.value?.metaDescription,
 });
+
+const { objectType, slugInfo } = useSlugInfo(route.path.slice(1));
+
+const breadcrumbs = useBreadcrumbs(() =>
+  buildBreadcrumbs([
+    {
+      itemId: slugInfo.value?.entityInfo?.id,
+      semanticUrl: slugInfo.value?.entityInfo?.semanticUrl,
+      title: slugInfo.value?.entityInfo?.pageTitle ?? slugInfo.value?.entityInfo?.semanticUrl ?? "",
+      typeName: objectType.value,
+    },
+  ]),
+);
 </script>

@@ -1,5 +1,8 @@
 <template>
-  <div ref="categoryComponentAnchor" class="category" style="overflow-anchor: none">
+  <VcContainer ref="categoryComponentAnchor" class="category" style="overflow-anchor: none">
+    <!-- Breadcrumbs -->
+    <VcBreadcrumbs v-if="!hideBreadcrumbs" class="category__breadcrumbs" :items="breadcrumbs" />
+
     <!-- Popup sidebar for mobile and horizontal desktop view -->
     <FiltersPopupSidebar
       v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
@@ -228,10 +231,14 @@
         </VcButton>
       </div>
     </VcLayout>
-  </div>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">
+// the component is deprecated. Use category.vue instead.
+// need to keep it for a while to avoid breaking changes on pages created with builder.io
+// https://www.builder.io/c/docs/custom-components-versioning
+
 import {
   computedEager,
   useBreakpoints,
@@ -243,12 +250,14 @@ import {
 import omit from "lodash/omit";
 import { computed, onBeforeUnmount, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useAnalytics, useThemeContext } from "@/core/composables";
+import { useRoute } from "vue-router";
+import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { BREAKPOINTS, DEFAULT_PAGE_SIZE, IS_DEVELOPMENT, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { globals } from "@/core/globals";
 import {
+  buildBreadcrumbs,
   getFilterExpression,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForCategorySubtree,
@@ -258,6 +267,7 @@ import {
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
+import { useSlugInfo } from "@/shared/common";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
@@ -285,6 +295,7 @@ interface IProps {
   categoryId?: string;
   title?: string;
   hideTotal?: boolean;
+  hideBreadcrumbs?: boolean;
   hideSidebar?: boolean;
   hideControls?: boolean;
   hideSorting?: boolean;
@@ -398,8 +409,25 @@ const categoryListProperties = computed(() => ({
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
 
+const route = useRoute();
+const { objectType, slugInfo } = useSlugInfo(route.path.slice(1));
+
 useCategorySeo({ category: currentCategory, allowSetMeta, categoryComponentAnchorIsVisible });
 
+const breadcrumbs = useBreadcrumbs(() =>
+  buildBreadcrumbs(
+    objectType.value === "Catalog" && !!slugInfo.value?.entityInfo
+      ? [
+          {
+            itemId: slugInfo.value.entityInfo.id,
+            semanticUrl: slugInfo.value.entityInfo.semanticUrl,
+            title: slugInfo.value.entityInfo.pageTitle ?? slugInfo.value.entityInfo.semanticUrl,
+            typeName: objectType.value,
+          },
+        ]
+      : currentCategory.value?.breadcrumbs,
+  ),
+);
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
 const { t } = useI18n();
@@ -603,6 +631,10 @@ onBeforeUnmount(() => {
 function clearCategoryScope() {
   removeScopeItemByType("category");
   clearSearchResults();
+}
+
+if (IS_DEVELOPMENT) {
+  console.warn("[DEPRECATED] category-deprecated.vue is deprecated. Use category.vue instead.");
 }
 </script>
 
