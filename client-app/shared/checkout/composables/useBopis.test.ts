@@ -354,6 +354,7 @@ describe("useBopis composable", () => {
           ...newAddress,
           outerId: newAddress.id,
         },
+        pickupLocationId: "address2",
       });
     });
 
@@ -386,6 +387,7 @@ describe("useBopis composable", () => {
           ...sampleAddress,
           outerId: sampleAddress.id,
         },
+        pickupLocationId: "address3",
       });
     });
   });
