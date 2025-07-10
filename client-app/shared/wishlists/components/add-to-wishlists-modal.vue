@@ -18,7 +18,7 @@
                 model-value
                 :value="list.id"
                 :disabled="loading"
-                class="w-full"
+                class="grow"
                 @update:model-value="listsRemoveUpdate(list.id || '', !!$event)"
               >
                 <span class="line-clamp-1 text-base">
@@ -26,7 +26,7 @@
                 </span>
               </VcCheckbox>
 
-              <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" />
+              <WishlistStatus v-if="isCorporateMember && list.scope" class="shrink-0" :scope="list.scope" />
             </li>
           </ul>
         </template>
@@ -75,7 +75,7 @@
         <VcCheckboxGroup v-model="selectedListsOtherIds">
           <transition-group name="list-input" tag="ul">
             <li v-for="list in listsOther" :key="list.id" class="flex justify-between px-6 pb-5 last:pb-5 sm:pb-4">
-              <VcCheckbox :value="list.id" :disabled="loading" class="w-full">
+              <VcCheckbox :value="list.id" :disabled="loading" class="grow">
                 <span
                   class="line-clamp-1 ps-0.5 text-base"
                   :class="{ 'text-neutral': !selectedListsOtherIds.includes(list.id!) }"
@@ -84,7 +84,7 @@
                 </span>
               </VcCheckbox>
 
-              <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" />
+              <WishlistStatus v-if="isCorporateMember && list.scope" class="shrink-0" :scope="list.scope" />
             </li>
           </transition-group>
         </VcCheckboxGroup>
