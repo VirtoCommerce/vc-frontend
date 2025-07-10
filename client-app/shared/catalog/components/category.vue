@@ -1,5 +1,5 @@
 <template>
-  <div ref="categoryComponentAnchor" class="category" style="overflow-anchor: none">
+  <div ref="categoryComponentAnchor" class="category">
     <!-- Popup sidebar for mobile and horizontal desktop view -->
     <FiltersPopupSidebar
       v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
@@ -241,7 +241,7 @@ import {
   whenever,
 } from "@vueuse/core";
 import omit from "lodash/omit";
-import { computed, onBeforeUnmount, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -598,12 +598,17 @@ function changeSearchBarScope(categoryId: string, label?: string) {
 
 onBeforeUnmount(() => {
   clearCategoryScope();
+  document.body.style.overflowAnchor = "auto";
 });
 
 function clearCategoryScope() {
   removeScopeItemByType("category");
   clearSearchResults();
 }
+
+onMounted(() => {
+  document.body.style.overflowAnchor = "none";
+});
 </script>
 
 <style lang="scss">
