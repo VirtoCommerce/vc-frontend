@@ -1,0 +1,5 @@
+query GetSearchHistory($storeId: String!, $maxCount: Int!) {
+  searchHistory(storeId: $storeId, maxCount: $maxCount) {
+    queries
+  }
+}
