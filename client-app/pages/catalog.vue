@@ -34,15 +34,12 @@ useSeoMeta({
   ogDescription: () => seoInfo?.value?.metaDescription,
 });
 
-const { objectType, slugInfo } = useSlugInfo(route.path.slice(1));
+const { slugInfo } = useSlugInfo(route.path.slice(1));
 
 const breadcrumbs = useBreadcrumbs(() =>
   buildBreadcrumbs([
     {
-      itemId: slugInfo.value?.entityInfo?.id,
-      semanticUrl: slugInfo.value?.entityInfo?.semanticUrl,
       title: slugInfo.value?.entityInfo?.pageTitle ?? slugInfo.value?.entityInfo?.semanticUrl ?? "",
-      typeName: objectType.value,
     },
   ]),
 );

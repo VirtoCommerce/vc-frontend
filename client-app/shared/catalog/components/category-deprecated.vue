@@ -419,10 +419,7 @@ const breadcrumbs = useBreadcrumbs(() =>
     objectType.value === "Catalog" && !!slugInfo.value?.entityInfo
       ? [
           {
-            itemId: slugInfo.value.entityInfo.id,
-            semanticUrl: slugInfo.value.entityInfo.semanticUrl,
             title: slugInfo.value.entityInfo.pageTitle ?? slugInfo.value.entityInfo.semanticUrl,
-            typeName: objectType.value,
           },
         ]
       : currentCategory.value?.breadcrumbs,
