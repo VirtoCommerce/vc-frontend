@@ -5,7 +5,6 @@ export * from "./queries/getCategory";
 export * from "./queries/getConfigurationItems";
 export * from "./queries/getProduct";
 export * from "./queries/getProductConfigurations";
-export * from "./queries/getProductWishlists";
 export * from "./queries/getSearchResults";
 export * from "./queries/recentlyBrowsed";
 export * from "./queries/searchProducts";
