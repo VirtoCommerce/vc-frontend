@@ -415,7 +415,6 @@
         "scope_loading_label": "検索コンテキストを読み込み中",
         "scope_remove_label": "削除: {label}",
         "suggestions_and_history_label": "候補と履歴",
-        "nothing_to_show": "入力するか、別の検索をお試しください",
         "search_label": "検索"
       },
       "language_selector": {

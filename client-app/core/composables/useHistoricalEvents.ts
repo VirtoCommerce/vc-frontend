@@ -1,5 +1,5 @@
 import { useSessionStorage } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useGetSearchHistoryQuery as _useGetSearchHistoryQuery } from "@/core/api/graphql/common";
 import {
   pushHistoricalEvent as pushHistoricalEventMutation,
@@ -74,8 +74,7 @@ export function useHistoricalEvents() {
           queries: localSearchQueries.value.slice(0, DEFAULT_SEARCH_HISTORY_MAX_COUNT),
         },
       })),
-      loading: false,
-      error: null,
+      loading: ref(false),
     };
   }
 

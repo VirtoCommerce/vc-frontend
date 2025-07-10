@@ -415,7 +415,6 @@
         "scope_loading_label": "Загрузка контекста поиска",
         "scope_remove_label": "Удалить: {label}",
         "suggestions_and_history_label": "Предложения и история",
-        "nothing_to_show": "Начните ввод или попробуйте другой запрос",
         "search_label": "Поиск"
       },
       "language_selector": {

@@ -64,23 +64,14 @@
       >
         <!-- Results and history -->
         <!-- Search history and suggestions -->
-        <section>
+        <section v-if="(searchHistoryQueries.length && !searchHistoryLoading) || (suggestions.length && !loading)">
           <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral-600">
             {{ $t("shared.layout.search_bar.suggestions_and_history_label") }}
           </header>
 
           <ul class="px-2 py-3">
-            <VcMenuItem v-if="searchHistoryLoading" tag="li" disabled>
-              <template #prepend>
-                <VcIcon name="history" size="md" class="fill-secondary-500" />
-              </template>
-
-              <div class="h-3 w-20 animate-pulse bg-neutral-200"></div>
-            </VcMenuItem>
-
             <VcMenuItem
               v-for="query in searchHistoryQueries"
-              v-else
               :key="query"
               class="w-full"
               :label="query"
@@ -105,13 +96,6 @@
             >
               <span v-html-safe="suggestion.label" class="truncate" />
             </VcMenuItem>
-
-            <div
-              v-if="searchHistoryQueries.length === 0 && !searchHistoryLoading && !suggestions.length"
-              class="px-2 py-3 text-sm text-neutral-500"
-            >
-              {{ $t("shared.layout.search_bar.nothing_to_show") }}
-            </div>
           </ul>
         </section>
         <!-- Search history and suggestions end -->
@@ -187,7 +171,7 @@
         <!-- Results and history end -->
 
         <!-- Not found -->
-        <div v-if="!loading && !isExistResults && trimmedSearchPhrase">
+        <div v-if="!searchInProgress && !isExistResults && trimmedSearchPhrase">
           <header class="bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral-600">
             {{ $t("shared.layout.search_bar.search_label") }}
           </header>
@@ -237,6 +221,7 @@ const { themeContext } = useThemeContext();
 const { saveSearchQuery, useGetSearchHistoryQuery } = useHistoricalEvents();
 
 const searchBarElement = ref<HTMLElement | null>(null);
+const searchInProgress = ref(false);
 
 // Number of categories column items in dropdown list
 const CATEGORIES_ITEMS_PER_COLUMN = 4;
@@ -437,17 +422,22 @@ function reset() {
 
 const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEARCH_BAR_DEBOUNCE_TIME);
 
-function onSearchPhraseChanged() {
-  void searchProductsDebounced();
+async function onSearchPhraseChanged() {
+  searchInProgress.value = true;
+  await searchProductsDebounced();
+  searchInProgress.value = false;
+}
+
+async function getSearchHistory() {
+  await loadSearchHistory();
+  showSearchDropdown();
 }
 
 function onSearchBarFocused() {
-  void loadSearchHistory();
+  void getSearchHistory();
 
   if (trimmedSearchPhrase.value) {
-    void searchProductsDebounced();
-  } else {
-    showSearchDropdown();
+    void searchAndShowDropdownResults();
   }
 }
 
