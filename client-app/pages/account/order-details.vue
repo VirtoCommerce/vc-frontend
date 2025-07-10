@@ -202,7 +202,7 @@ const shipmentMethodName = computed<string>(() =>
   t(`common.methods.delivery_by_id.${shipment.value?.shipmentMethodCode}_${shipment.value?.shipmentMethodOption}`),
 );
 const paymentMethodName = computed<string>(() =>
-  t(`common.methods.payment_by_code.${payment.value?.paymentMethod?.code}`),
+  t(`common.methods.payment_by_code.${payment.value?.paymentMethod?.name}`),
 );
 
 async function reorderItems() {
