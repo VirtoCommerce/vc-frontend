@@ -949,7 +949,7 @@
       },
       "sign_in_form_title": "Iniciar sesión",
       "main_banner_block": {
-        "message": "Podemos ayudarte a <br />tomar decisiones<br />informadas y sabias",
+        "message": "Podemos ayudarte a{br}tomar decisiones{br}informadas y sabias",
         "key_feature_1": "Orientado a resultados",
         "key_feature_2": "Confiable",
         "key_feature_3": "Fiable"

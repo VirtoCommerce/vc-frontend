@@ -20,11 +20,11 @@
         </div>
       </aside>
 
-      <main class="vc-layout__content-container">
+      <div class="vc-layout__content-container">
         <div ref="content" class="vc-layout__content" data-test-id="content">
           <slot />
         </div>
-      </main>
+      </div>
     </div>
   </div>
 </template>
