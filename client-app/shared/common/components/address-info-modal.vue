@@ -13,10 +13,12 @@
           </td>
           <td>{{ eta }}</td>
         </tr>
+
         <tr v-if="pickupLocation.contactEmail || pickupLocation.contactPhone" class="address-info-modal__table-row">
           <td>
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.questions`) }}</span>
           </td>
+
           <td>
             <i18n-t :keypath="contactKey">
               <template #email>
@@ -33,11 +35,34 @@
             </i18n-t>
           </td>
         </tr>
+
+        <tr v-if="pickupLocation.name" class="address-info-modal__table-row">
+          <td>
+            <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.name`) }}:</span>
+          </td>
+          <td>{{ pickupLocation.name }}</td>
+        </tr>
+
         <tr v-if="address" class="address-info-modal__table-row">
           <td>
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.address`) }}:</span>
           </td>
+
           <td><AddressLine :address="address"></AddressLine></td>
+        </tr>
+
+        <tr v-if="pickupLocation.workingHours" class="address-info-modal__table-row">
+          <td>
+            <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.workingHours`) }}:</span>
+          </td>
+          <td><VcMarkdownRender :src="pickupLocation.workingHours" /></td>
+        </tr>
+
+        <tr v-if="pickupLocation.description" class="address-info-modal__table-row">
+          <td>
+            <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.instructions`) }}:</span>
+          </td>
+          <td>{{ pickupLocation.description }}</td>
         </tr>
       </template>
     </VcTable>
@@ -59,7 +84,10 @@ import type { PickupLocationType } from "@/core/api/graphql/types.ts";
 
 const props = defineProps<IProps>();
 
-type PickupType = Pick<PickupLocationType, "address" | "contactPhone" | "contactEmail">;
+type PickupType = Pick<
+  PickupLocationType,
+  "address" | "contactPhone" | "contactEmail" | "workingHours" | "name" | "description"
+>;
 interface IProps {
   //  Estimated Time of Arrival
   eta?: string;
