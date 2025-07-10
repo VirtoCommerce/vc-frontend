@@ -1158,7 +1158,10 @@
           "pick_point_info": "Infos point de collecte",
           "get_directions": "Itinéraire",
           "point_info": "Point d'info",
-          "pickup_address": "Adresse de retrait"
+          "pickup_address": "Adresse de retrait",
+          "workingHours": "Heures",
+          "name": "Nom",
+          "instructions": "Instructions"
         }
       },
       "order_payment": {

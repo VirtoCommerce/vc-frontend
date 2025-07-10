@@ -1158,7 +1158,10 @@
           "pick_point_info": "Abholpunkt-Info",
           "get_directions": "Wegbeschreibung abrufen",
           "point_info": "Info-Punkt",
-          "pickup_address": "Abholadresse"
+          "pickup_address": "Abholadresse",
+          "workingHours": "Stunden",
+          "name": "Name",
+          "instructions": "Anleitung"
         }
       },
       "order_payment": {

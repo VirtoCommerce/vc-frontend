@@ -1158,7 +1158,10 @@
           "pick_point_info": "Информация о пункте выдачи",
           "get_directions": "Как добраться",
           "point_info": "Информация",
-          "pickup_address": "Адрес самовывоза"
+          "pickup_address": "Адрес самовывоза",
+          "workingHours": "Часы",
+          "name": "Имя",
+          "instructions": "Инструкции"
         }
       },
       "order_payment": {

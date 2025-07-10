@@ -1158,7 +1158,10 @@
           "pick_point_info": "Informacje o punkcie odbioru",
           "get_directions": "Wyznacz trasę",
           "point_info": "Punkt informacyjny",
-          "pickup_address": "Adres odbioru"
+          "pickup_address": "Adres odbioru",
+          "workingHours": "Godziny",
+          "name": "Nazwa",
+          "instructions": "Instrukcje"
         }
       },
       "order_payment": {
