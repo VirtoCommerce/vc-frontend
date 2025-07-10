@@ -677,7 +677,7 @@
         }
       },
       "discount_badge": {
-        "off": "réduction"
+        "off": "-{discount}"
       },
       "branches_modal": {
         "title": "Sélectionner une branche",

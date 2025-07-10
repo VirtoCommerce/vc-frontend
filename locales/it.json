@@ -677,7 +677,7 @@
         }
       },
       "discount_badge": {
-        "off": "sconto"
+        "off": "-{discount}"
       },
       "branches_modal": {
         "title": "Seleziona filiale",
