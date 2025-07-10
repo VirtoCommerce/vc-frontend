@@ -39,7 +39,6 @@ export function useCategory() {
   const { catalogId } = globals;
 
   async function fetchCategory(payload: Omit<ExtendedQueryCategoryArgsType, "storeId">) {
-    console.log("fetchCategory", payload);
     loading.value = true;
     try {
       const data = await getCategory(payload);
