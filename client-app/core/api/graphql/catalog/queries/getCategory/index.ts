@@ -82,6 +82,8 @@ export async function getCategory(payload: Omit<ExtendedQueryCategoryArgsType, "
 
   const queryDocument = getCategoryQueryDocument(payload.categoryId ?? "", payload.maxLevel);
 
+  console.log("getCategory", payload);
+
   const { data } = await graphqlClient.query<
     Required<Pick<Query, "category" | "childCategories">>,
     ExtendedQueryCategoryArgsType

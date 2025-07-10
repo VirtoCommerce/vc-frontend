@@ -415,15 +415,13 @@ const { objectType, slugInfo } = useSlugInfo(route.path.slice(1));
 useCategorySeo({ category: currentCategory, allowSetMeta, categoryComponentAnchorIsVisible });
 
 const breadcrumbs = useBreadcrumbs(() =>
-  buildBreadcrumbs(
-    objectType.value === "Catalog" && !!slugInfo.value?.entityInfo
-      ? [
-          {
-            title: slugInfo.value.entityInfo.pageTitle ?? slugInfo.value.entityInfo.semanticUrl,
-          },
-        ]
-      : currentCategory.value?.breadcrumbs,
-  ),
+  objectType.value === "Catalog" && !!slugInfo.value?.entityInfo
+    ? [
+        {
+          title: slugInfo.value.entityInfo.pageTitle ?? slugInfo.value.entityInfo.semanticUrl,
+        },
+      ]
+    : buildBreadcrumbs(currentCategory.value?.breadcrumbs),
 );
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
