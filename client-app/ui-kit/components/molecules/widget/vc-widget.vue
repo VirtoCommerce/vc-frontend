@@ -1,5 +1,5 @@
 <template>
-  <div
+  <section
     :class="[
       'vc-widget',
       `vc-widget--size--${size}`,
@@ -9,6 +9,7 @@
         'vc-widget--no-border': !border,
       },
     ]"
+    :aria-labelledby="ARIAIds.title"
   >
     <component
       :is="collapsible ? 'button' : 'div'"
@@ -26,7 +27,7 @@
               </slot>
             </span>
 
-            <span class="vc-widget__title">
+            <span :id="ARIAIds.title" class="vc-widget__title">
               <slot name="title">
                 {{ title }}
               </slot>
@@ -64,11 +65,12 @@
         </div>
       </slot>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { uniqueId } from "lodash";
+import { computed, ref, watchEffect } from "vue";
 
 export interface IEmits {
   (event: "toggleCollapse", value: boolean): void;
@@ -94,6 +96,12 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const _collapsed = ref(false);
+
+const ARIAIds = computed(() => {
+  return {
+    title: props.title && uniqueId("title"),
+  };
+});
 
 function toggleCollapse() {
   if (props.collapsible) {

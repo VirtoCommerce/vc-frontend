@@ -92,6 +92,7 @@ export function useBopis() {
                   name: item.name,
                   outerId: item?.address.id,
                 },
+                pickupLocationId: item.address.id,
               });
             }
 
@@ -106,6 +107,7 @@ export function useBopis() {
               ...address,
               outerId: address.id,
             },
+            pickupLocationId: address.id,
           });
         },
       },
