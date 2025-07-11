@@ -33,6 +33,7 @@ fragment fullOrderFields on CustomerOrderType {
     isApproved
     gatewayCode
     paymentMethod {
+      name
       logoUrl
       code
       typeName
