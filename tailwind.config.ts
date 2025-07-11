@@ -1,4 +1,4 @@
-import { BREAKPOINTS } from "./client-app/core/constants/tailwind";
+import { BREAKPOINTS } from "./client-app/core/constants/tailwind.js";
 import type { Config } from "tailwindcss";
 
 const primaryColors = {
@@ -273,6 +273,16 @@ module.exports = {
         17: "4.25rem", //68px
         18: "4.5rem", //72px
         19: "4.75rem", //76px
+      },
+
+      boxShadow: {
+        0: "0 1px 3px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 1px 2px -1px rgb(from var(--color-additional-950) r g b / 0.1)",
+        sm: "0 1px 2px 0 rgb(from var(--color-additional-950) r g b / 0.05)",
+        md: "0 4px 6px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 2px 4px -2px rgb(from var(--color-additional-950) r g b / 0.1)",
+        lg: "0 6px 15px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 4px 6px -4px rgb(from var(--color-additional-950) r g b / 0.1)",
+        xl: "0 8px 25px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 8px 10px -6px rgb(from var(--color-additional-950) r g b / 0.1)",
+        "2xl": "0 10px 50px 0 rgb(from var(--color-additional-950) r g b / 0.25)",
+        "inner": "inset 0 2px 4px 0 rgb(from var(--color-additional-950) r g b / 0.05)",
       },
 
       maxHeight: {

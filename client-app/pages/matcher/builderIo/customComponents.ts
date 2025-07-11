@@ -97,6 +97,11 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         type: "string",
       },
       {
+        name: "categoryId",
+        type: "string",
+        helperText: "Get from the Back office -> Catalog -> Category > right click on the category -> Copy ID",
+      },
+      {
         name: "filter",
         type: "string",
         helperText:

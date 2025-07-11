@@ -6,6 +6,7 @@ import { useThemeContext } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { getReturnUrlValue } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { useSignMeOut, useUser } from "@/shared/account";
 import {
   cartReloadEvent,
@@ -78,11 +79,17 @@ export function setupBroadcastGlobalListeners() {
 
     const { hash, pathname, search } = location;
 
-    if (pathname !== "/sign-in") {
-      location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
+    if (pathname !== ROUTES.SIGN_IN.PATH) {
+      location.href = `${ROUTES.SIGN_IN.PATH}?returnUrl=${pathname + search + hash}`;
     }
   });
   on(graphqlErrorEvent, (error) => {
+    notifications.error({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      group: "GraphqlError",
+      text: t("common.messages.something_went_wrong"),
+    });
+
     throw error;
   });
   on(unhandledErrorEvent, () => {
