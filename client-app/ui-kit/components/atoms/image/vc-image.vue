@@ -49,9 +49,10 @@ const preparedSrc = computed<string>(() => {
     return getImageUrl(props.src);
   }
 
-  const sizeSuffix = props.sizeSuffix
-    ? themeContext.value?.settings?.image_thumbnails_suffixes?.[props.sizeSuffix]
-    : "";
+  const sizeSuffix =
+    props.sizeSuffix && !!themeContext.value
+      ? themeContext.value?.settings?.image_thumbnails_suffixes?.[props.sizeSuffix]
+      : "";
 
   if (originalEnabled.value || !themeContext.value?.settings?.image_thumbnails_enabled || !sizeSuffix) {
     return props.src;
