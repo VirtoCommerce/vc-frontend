@@ -32,6 +32,7 @@ export default tseslint.config(
       "client-app/modules/**/api/graphql/types.ts",
       "client-app/core/api/graphql/**/types.ts",
       "coverage/",
+      ".history/",
     ],
   },
   {
@@ -86,19 +87,53 @@ export default tseslint.config(
       parser: vueParser,
       parserOptions: {
         parser: tseslint.parser,
-        project: [
-          "./tsconfig.app.json",
-          "./tsconfig.vitest.json",
-          "./tsconfig.storybook.json",
-          "./tsconfig.node.json",
-        ],
+        project: ["./tsconfig.app.json"],
         tsconfigRootDir: import.meta.dirname,
-        sourceType: "module",
         extraFileExtensions: [".vue"],
       },
     },
     rules: {
       "no-undef": "off",
+    },
+  },
+
+  {
+    files: ["client-app/**/*.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: ["./tsconfig.app.json"],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+
+  {
+    files: ["**/*.stories.ts", ".storybook/**/*.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: ["./tsconfig.storybook.json"],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+
+  {
+    files: ["client-app/**/*.test.ts", "client-app/**/*.spec.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: ["./tsconfig.vitest.json"],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+
+  {
+    files: ["*.cjs", "*.mjs", "*.config.ts", "scripts/**/*.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: ["./tsconfig.node.json"],
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
   },
 
