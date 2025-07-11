@@ -26,24 +26,23 @@
           :size-suffix="imageSizeSuffix"
         />
       </div>
+
+      <Category
+        v-if="brand"
+        data-test-id="brand-products"
+        class="brand-page__products"
+        filters-orientation="horizontal"
+        :filter="filterExpression"
+        hide-total
+        view-mode="grid"
+        :title="hasBannerOrLogo ? $t('pages.brand.products_title') : brand?.name"
+        columns-amount-desktop="5"
+        :has-bg-image="false"
+        :facets-to-hide="['BRAND']"
+      />
     </VcContainer>
 
-    <Category
-      v-if="brand"
-      data-test-id="brand-products"
-      class="brand-page__products"
-      filters-orientation="horizontal"
-      :filter="filterExpression"
-      hide-breadcrumbs
-      hide-total
-      view-mode="grid"
-      :title="hasBannerOrLogo ? $t('pages.brand.products_title') : brand?.name"
-      columns-amount-desktop="5"
-      :has-bg-image="false"
-      :facets-to-hide="['BRAND']"
-    />
-
-    <VcEmptyView v-else-if="!loading" :text="$t('pages.brands.no_results')" />
+    <VcEmptyView v-if="!loading && !brand" :text="$t('pages.brands.no_results')" />
   </div>
 </template>
 
@@ -148,6 +147,10 @@ useSeoMeta({
 
   &__logo-image {
     @apply max-h-full;
+  }
+
+  &__products {
+    @apply pt-[var(--pt)];
   }
 }
 </style>

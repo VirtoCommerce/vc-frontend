@@ -2,6 +2,7 @@ import { defineAsyncComponent } from "vue";
 import { VcContainer } from "@/ui-kit/components";
 import type { Component } from "vue";
 
+const CategoryDeprecated = defineAsyncComponent(() => import("@/shared/catalog/components/category-deprecated.vue"));
 const Category = defineAsyncComponent(() => import("@/shared/catalog/components/category.vue"));
 const Slider = defineAsyncComponent(() => import("@/shared/static-content/components/slider.vue"));
 const ProductsBlock = defineAsyncComponent(() => import("@/shared/static-content/components/products-block.vue"));
@@ -11,7 +12,8 @@ const BreadcrumbsBlock = defineAsyncComponent(() => import("@/shared/static-cont
 export const builderIOComponents: Array<BuilderIOComponentType> = [
   {
     name: "Category",
-    component: Category,
+    component: CategoryDeprecated,
+    hideFromInsertMenu: true,
     inputs: [
       {
         name: "title",
@@ -21,6 +23,143 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
       {
         name: "hideBreadcrumbs",
         type: "boolean",
+      },
+      {
+        name: "hideSidebar",
+        type: "boolean",
+      },
+      {
+        name: "hideControls",
+        type: "boolean",
+      },
+      {
+        name: "hideSorting",
+        type: "boolean",
+      },
+      {
+        name: "viewMode",
+        type: "string",
+        defaultValue: "<unset>",
+        enum: ["<unset>", "grid", "list"],
+        helperText: "Fixing the View Mode",
+        showIf: `options.get('hideViewModeSelector') === false`,
+      },
+      {
+        name: "filtersOrientation",
+        type: "string",
+        defaultValue: "vertical",
+        enum: ["vertical", "horizontal"],
+        helperText: "Show filters vertically or horizontally",
+      },
+      {
+        name: "filtersDisplayOrder",
+        type: "object",
+        defaultValue: {
+          order: "",
+          showRest: false,
+        },
+        subFields: [
+          {
+            friendlyName: "Filters order",
+            name: "order",
+            type: "string",
+            helperText:
+              'Order of the filters - comma-separated string of any case. Leave empty to show all filters in default order. Example: "price, brand, category".',
+          },
+          {
+            friendlyName: "Show rest of filters",
+            name: "showRest",
+            type: "boolean",
+            helperText: "Show the rest of the filters.",
+            showIf: "options.get('value') !== ''",
+          },
+        ],
+      },
+      {
+        name: "cardType",
+        type: "string",
+        defaultValue: "full",
+        helperText: "Card type for grid view mode",
+        enum: ["full", "short"],
+      },
+      {
+        name: "columnsAmountTablet",
+        type: "string",
+        defaultValue: "3",
+        enum: ["3", "2"],
+      },
+      {
+        name: "columnsAmountDesktop",
+        type: "string",
+        defaultValue: "4",
+        enum: ["4", "3"],
+      },
+      {
+        name: "keyword",
+        type: "string",
+      },
+      {
+        name: "categoryId",
+        type: "string",
+        helperText: "Get from the Back office -> Catalog -> Category > right click on the category -> Copy ID",
+      },
+      {
+        name: "filter",
+        type: "string",
+        helperText:
+          "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter",
+      },
+      {
+        name: "countLimitation",
+        type: "boolean",
+        helperText: "Turn on to set up products count limitation",
+        onChange: "options.set('fixedProductsCount', 0)",
+      },
+      {
+        showIf: `options.get('countLimitation') === true`,
+        name: "fixedProductsCount",
+        type: "number",
+        defaultValue: 0,
+        onChange: (options: Map<string, number>) => {
+          const count = options.get("fixedProductsCount");
+          if (typeof count !== "number") {
+            return;
+          }
+          if (count > 20) {
+            options.set("fixedProductsCount", 20);
+            alert("the maximum number of cards is 20");
+          }
+        },
+      },
+      {
+        name: "hideTotal",
+        type: "boolean",
+        showIf: `options.get('countLimitation') === false`,
+        helperText: "hidden if Count Limitation is active",
+      },
+      {
+        name: "allowSetMeta",
+        type: "boolean",
+        defaultValue: false,
+        helperText: "Allow the component to set SEO meta tags based on fetched category",
+      },
+      {
+        name: "showButtonToDefaultView",
+        type: "boolean",
+        defaultValue: false,
+        helperText:
+          "Toggle this switch to add a button that, when clicked, shows the default category view. Applicable for pages with an URL overlapping the existing category page URL (e.g., /printers).",
+      },
+    ],
+  },
+  {
+    name: "v2: Category",
+    component: Category,
+    inputs: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Custom Category",
       },
       {
         name: "hideSidebar",
@@ -386,4 +525,5 @@ type BuilderIOComponentType = {
   inputs?: Array<object>;
   canHaveChildren?: boolean;
   defaultChildren?: Array<object>;
+  hideFromInsertMenu?: boolean;
 };
