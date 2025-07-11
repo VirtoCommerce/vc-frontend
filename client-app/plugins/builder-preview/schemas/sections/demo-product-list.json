@@ -22,17 +22,60 @@
       "displayField": "product.name",
       "element": [
         {
-          "id": "product",
-          "label": "Product",
+          "id": "culture",
+          "label": "Culture",
           "type": "select",
-          "equalKey": "id",
+          "default": "en-US",
           "request": {
             "url": "/graphql",
             "method": "post",
             "body": {
               "operationName": null,
               "variables": {},
-              "query": "{products(storeId:\"{{location.params.storeId}}\"){items{id,code,name,imgSrc,prices{currency,list{formattedAmount}}}}}"
+              "query": "{store(storeId:\"{{location.params.storeId}}\"){availableLanguages{cultureName}}}"
+            },
+            "cacheable": true,
+            "response": {
+              "result": "data.store.availableLanguages"
+            },
+            "label": "cultureName",
+            "value": "cultureName"
+          }
+        },
+        {
+          "id": "currency",
+          "label": "Currency",
+          "type": "select",
+          "default": "USD",
+          "request": {
+            "url": "/graphql",
+            "method": "post",
+            "body": {
+              "operationName": null,
+              "variables": {},
+              "query": "{store(storeId:\"{{location.params.storeId}}\"){availableCurrencies{code}}}"
+            },
+            "cacheable": true,
+            "response": {
+              "result": "data.store.availableCurrencies"
+            },
+            "label": "code",
+            "value": "code"
+          }
+        },
+        {
+          "id": "product",
+          "label": "Product",
+          "type": "select",
+          "equalKey": "id",
+          "searchable": true,
+          "request": {
+            "url": "/graphql",
+            "method": "post",
+            "body": {
+              "operationName": null,
+              "variables": {},
+              "query": "{products(storeId:\"{{location.params.storeId}}\",cultureName:\"{{element.culture}}\",currencyCode:\"{{element.currency}}\",query:\"{{__searchQuery}}\"){items{id,code,name,imgSrc,prices{currency,list{formattedAmount}}}}}"
             },
             "cacheable": true,
             "response": {
