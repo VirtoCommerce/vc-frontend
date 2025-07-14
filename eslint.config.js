@@ -60,7 +60,7 @@ export default tseslint.config(
       "import/resolver": {
         typescript: {
           alwaysTryTypes: true,
-          project: "tsconfig.app.json",
+          project: ["tsconfig.app.json", "tsconfig.storybook.json", "tsconfig.node.json", "tsconfig.vitest.json"],
         },
         node: true,
       },
@@ -68,10 +68,13 @@ export default tseslint.config(
   },
 
   js.configs.recommended,
+  sonarjs.configs.recommended,
+  vuejsAccessibility.configs["flat/recommended"],
+  storybook.configs["flat/recommended"],
+
   ...tseslint.configs.recommendedTypeChecked,
   ...vue.configs["flat/recommended"],
-
-  sonarjs.configs.recommended,
+  ...tailwindcss.configs["flat/recommended"],
   {
     plugins: {
       "sort-export-all": sortExportAll,
@@ -80,9 +83,6 @@ export default tseslint.config(
       "sort-export-all/sort-export-all": "warn",
     },
   },
-  ...tailwindcss.configs["flat/recommended"],
-  vuejsAccessibility.configs["flat/recommended"],
-  storybook.configs["flat/recommended"],
 
   {
     files: ["**/*.vue"],
@@ -90,7 +90,7 @@ export default tseslint.config(
       parser: vueParser,
       parserOptions: {
         parser: tseslint.parser,
-        project: ["./tsconfig.app.json"],
+        project: true,
         tsconfigRootDir: import.meta.dirname,
         extraFileExtensions: [".vue"],
       },
@@ -101,20 +101,13 @@ export default tseslint.config(
   },
 
   {
-    files: ["client-app/**/*.ts"],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
+    files: ["**/*.{ts,vue}"],
+    rules: {
+      "storybook/no-renderer-packages": "off",
     },
-  },
-
-  {
-    files: ["**/*.stories.ts", ".storybook/**/*.ts"],
     languageOptions: {
       parserOptions: {
-        project: ["./tsconfig.storybook.json"],
+        project: ["./tsconfig.app.json", "./tsconfig.storybook.json", "./tsconfig.node.json"],
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -131,7 +124,7 @@ export default tseslint.config(
   },
 
   {
-    files: ["*.cjs", "*.mjs", "*.config.ts", "scripts/**/*.ts"],
+    files: ["*.cjs", "*.mjs", "*.config.ts", "scripts/**/*.ts"], // TODO: remove "*.config.ts", "scripts/**/*.ts" ?
     languageOptions: {
       parserOptions: {
         project: ["./tsconfig.node.json"],
@@ -258,6 +251,24 @@ export default tseslint.config(
       "vue/require-default-prop": "off",
       "vuejs-accessibility/form-control-has-label": "off",
       "vuejs-accessibility/label-has-for": "off",
+
+      "@typescript-eslint/no-require-imports": "off",
+      "sonarjs/different-types-comparison": "off",
+      "sonarjs/void-use": "off",
+      "sonarjs/function-return-type": "off",
+      "sonarjs/todo-tag": "off",
+      "sonarjs/prefer-regexp-exec": "off",
+      "sonarjs/no-ignored-exceptions": "off",
+      "sonarjs/deprecation": "off",
+      "sonarjs/no-os-command-from-path": "off",
+      "sonarjs/slow-regex": "off",
+      "sonarjs/no-selector-parameter": "off",
+      "sonarjs/array-callback-without-return": "off",
+      "sonarjs/no-hardcoded-passwords": "off",
+      "sonarjs/no-nested-assignment": "off",
+
+      "@typescript-eslint/no-unused-expressions": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
     },
   },
 
@@ -327,7 +338,7 @@ export default tseslint.config(
 
   {
     // Disable type-aware linting on JS/CJS files.
-    files: ["**/*.js", "**/*.cjs"],
+  files: ["**/*.js", "**/*.cjs"],
     ...tseslint.configs.disableTypeChecked,
   },
 
