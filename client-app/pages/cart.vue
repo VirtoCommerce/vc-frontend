@@ -76,6 +76,7 @@
           @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
           @select:items="handleSelectItems"
           @remove:items="handleRemoveItems"
+          @save-for-later:items="handleSaveForLater"
           @clear:cart="openClearCartModal"
           @link-click="selectItemEvent"
         />
@@ -289,6 +290,12 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
     unselectCartItems(value.itemIds);
   } else {
     selectCartItems(value.itemIds);
+  }
+}
+
+function handleSaveForLater(itemIds: string[]) {
+  if (!itemIds?.length) {
+    return;
   }
 }
 
