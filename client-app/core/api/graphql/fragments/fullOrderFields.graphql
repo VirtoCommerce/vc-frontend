@@ -45,6 +45,7 @@ fragment fullOrderFields on CustomerOrderType {
     }
   }
   availablePaymentMethods {
+    name
     code
     logoUrl
     price {

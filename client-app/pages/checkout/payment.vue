@@ -10,7 +10,7 @@
               lazy
             />
 
-            <span>{{ $t(`common.methods.payment_by_code.${payment?.paymentMethod?.code}`) }}</span>
+            <span>{{ payment?.paymentMethod?.name }}</span>
           </div>
         </div>
 
