@@ -31,6 +31,7 @@ import {
   RemoveShipmentDocument,
   SelectCartItemsDocument,
   UnselectCartItemsDocument,
+  GetShortCartDocument,
 } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
@@ -66,6 +67,16 @@ const CartItemsSelectionFragment = gql`
   }
 `;
 
+/**
+ * Reactive shared access to the current cart state using the GetShortCart GraphQL query.
+ *
+ * Notes:
+ * - Ensure that any mutation which modifies the cart returns a CartType object
+ *   matching the shape of the GetShortCart query result.
+ * - If a new mutation is added, explicitly test the scenario where the cart is initially null.
+ *   This is common in lazy-initialization flows where the cart is created only upon user action.
+ * - Consumers of `cart` should gracefully handle `null` values to avoid rendering errors.
+ */
 function _useSharedShortCart() {
   const { result: query, refetch, loading } = useGetShortCartQuery();
   const cart = computed(() => query.value?.cart);
@@ -92,14 +103,29 @@ export function useShortCart() {
     configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
   ): Promise<ShortCartFragment | undefined> {
     try {
-      const result = await _addToCart({
-        command: {
-          productId,
-          quantity,
-          configurationSections: configurationSections as ConfigurationSectionInput[],
-          ...commonVariables,
+      const result = await _addToCart(
+        {
+          command: {
+            productId,
+            quantity,
+            configurationSections: configurationSections as ConfigurationSectionInput[],
+            ...commonVariables,
+          },
         },
-      });
+        {
+          update: (cache, { data }) => {
+            if (data?.addItem) {
+              // Write the new cart to the cache for the GetShortCart query
+              cache.writeQuery({
+                query: GetShortCartDocument,
+                data: { cart: data.addItem },
+                variables: commonVariables,
+              });
+            }
+          },
+        },
+      );
+
       return result?.data?.addItem;
     } catch (err) {
       Logger.error(err as string);
@@ -108,15 +134,41 @@ export function useShortCart() {
 
   const { mutate: _addItemsToCart, loading: addItemsToCartLoading } = useMutation(AddItemsCartDocument);
   async function addItemsToCart(items: InputNewCartItemType[]): Promise<ShortCartFragment | undefined> {
-    const result = await _addItemsToCart({ command: { cartItems: items, ...commonVariables } });
+    const result = await _addItemsToCart(
+      { command: { cartItems: items, ...commonVariables } },
+      {
+        update: (cache, { data }) => {
+          if (data?.addItemsCart) {
+            cache.writeQuery({
+              query: GetShortCartDocument,
+              data: { cart: data.addItemsCart },
+              variables: commonVariables,
+            });
+          }
+        },
+      },
+    );
     return result?.data?.addItemsCart;
   }
 
   const { mutate: _addBulkItemsToCart, loading: addBulkItemsToCartLoading } = useMutation(AddBulkItemsCartDocument);
   async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
-    const result = await _addBulkItemsToCart({
-      command: { cartItems: items, ...commonVariables },
-    });
+    const result = await _addBulkItemsToCart(
+      {
+        command: { cartItems: items, ...commonVariables },
+      },
+      {
+        update: (cache, { data }) => {
+          if (data?.addBulkItemsCart?.cart) {
+            cache.writeQuery({
+              query: GetShortCartDocument,
+              data: { cart: data.addBulkItemsCart.cart },
+              variables: commonVariables,
+            });
+          }
+        },
+      },
+    );
 
     return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
       productSku,

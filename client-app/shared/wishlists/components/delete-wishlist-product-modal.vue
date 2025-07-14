@@ -33,9 +33,10 @@ const props = defineProps<IProps>();
 interface IProps {
   listItem: LineItemType;
   listId: string;
+  loading?: boolean;
 }
 
-const { loading, removeItemsFromWishlists } = useWishlists();
+const { removeItemsFromWishlists } = useWishlists();
 
 async function remove(closingHandle: () => void) {
   const payload: InputRemoveWishlistItemType = {
