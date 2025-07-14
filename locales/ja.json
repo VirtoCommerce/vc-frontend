@@ -306,7 +306,8 @@
           "logged_in_as": "ログインユーザー:"
         },
         "bottom_header": {
-          "catalog_menu_button": "カタログ"
+          "catalog_menu_button": "カタログ",
+          "main_menu": "メインメニュー"
         },
         "link_sign_in": "ログイン",
         "link_register_now": "今すぐ登録",

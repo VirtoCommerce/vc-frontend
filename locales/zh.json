@@ -306,7 +306,8 @@
           "logged_in_as": "已登录为"
         },
         "bottom_header": {
-          "catalog_menu_button": "目录"
+          "catalog_menu_button": "目录",
+          "main_menu": "主菜单"
         },
         "link_sign_in": "登录",
         "link_register_now": "立即注册",

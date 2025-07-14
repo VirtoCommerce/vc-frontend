@@ -306,7 +306,8 @@
           "logged_in_as": "eingeloggt als"
         },
         "bottom_header": {
-          "catalog_menu_button": "Katalog"
+          "catalog_menu_button": "Katalog",
+          "main_menu": "Hauptmenü"
         },
         "link_sign_in": "Anmelden",
         "link_register_now": "Jetzt registrieren",

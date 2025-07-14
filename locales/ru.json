@@ -306,7 +306,8 @@
           "logged_in_as": "вход под именем"
         },
         "bottom_header": {
-          "catalog_menu_button": "Каталог"
+          "catalog_menu_button": "Каталог",
+          "main_menu": "Основное меню"
         },
         "link_sign_in": "Вход",
         "link_register_now": "Регистрация",
