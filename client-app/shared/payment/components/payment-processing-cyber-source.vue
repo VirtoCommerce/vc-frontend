@@ -257,15 +257,8 @@ async function createToken(options: Record<string, unknown>): Promise<string> {
   return new Promise((resolve, reject) => {
     microform.createToken(options, (err: unknown, token: string) => {
       if (err) {
-        if (err instanceof Error) {
-          reject(err);
-        }
-
-        if (typeof err === "string") {
-          reject(new Error(err));
-        }
-
-        reject(new Error("Failed to create token"));
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+        reject(err);
       } else {
         resolve(token);
       }

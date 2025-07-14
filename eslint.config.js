@@ -207,6 +207,7 @@ export default tseslint.config(
       "sonarjs/slow-regex": "off",
       "sonarjs/todo-tag": "off",
       "sonarjs/void-use": "off",
+      "sonarjs/no-alphabetical-sort": "off",
       "tailwindcss/no-custom-classname": "off",
       "vue/multi-word-component-names": "off",
       "vue/require-default-prop": "off",

@@ -154,7 +154,7 @@ const featuredBrandsTrimmed = computed(() => {
 });
 
 const sortedNavItems = computed(() => {
-  return Object.keys(groupedBrands.value).sort((a, b) => a.localeCompare(b));
+  return Object.keys(groupedBrands.value).sort();
 });
 
 const enabledNavItems = computed(() => {
