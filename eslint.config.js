@@ -13,6 +13,7 @@ import tseslint from "typescript-eslint";
 import vueParser from "vue-eslint-parser";
 
 export default tseslint.config(
+  // The global `ignores` configuration remains at the top level.
   {
     ignores: [
       "**/node_modules/",
@@ -35,7 +36,22 @@ export default tseslint.config(
       ".history/",
     ],
   },
+
+  // Base configurations from plugins are grouped together for clarity.
+  js.configs.recommended,
+  sonarjs.configs.recommended,
+  storybook.configs["flat/recommended"],
+  vuejsAccessibility.configs["flat/recommended"],
+  ...tailwindcss.configs["flat/recommended"],
+  ...tseslint.configs.recommendedTypeChecked,
+  ...vue.configs["flat/recommended"],
+
+  // A central configuration object for project-wide settings, plugins, and rules.
+  // This consolidation reduces redundancy by defining shared configurations once.
   {
+    linterOptions: {
+      reportUnusedDisableDirectives: "error",
+    },
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
@@ -65,83 +81,13 @@ export default tseslint.config(
         node: true,
       },
     },
-  },
-
-  js.configs.recommended,
-  sonarjs.configs.recommended,
-  vuejsAccessibility.configs["flat/recommended"],
-  storybook.configs["flat/recommended"],
-
-  ...tseslint.configs.recommendedTypeChecked,
-  ...vue.configs["flat/recommended"],
-  ...tailwindcss.configs["flat/recommended"],
-  {
-    plugins: {
-      "sort-export-all": sortExportAll,
-    },
     rules: {
-      "sort-export-all/sort-export-all": "warn",
-    },
-  },
-
-  {
-    files: ["**/*.vue"],
-    languageOptions: {
-      parser: vueParser,
-      parserOptions: {
-        parser: tseslint.parser,
-        project: true,
-        tsconfigRootDir: import.meta.dirname,
-        extraFileExtensions: [".vue"],
-      },
-    },
-    rules: {
-      "no-undef": "off",
-    },
-  },
-
-  {
-    files: ["**/*.{ts,vue}"],
-    rules: {
-      "storybook/no-renderer-packages": "off",
-    },
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.app.json", "./tsconfig.storybook.json", "./tsconfig.node.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-  },
-
-  {
-    files: ["client-app/**/*.test.ts", "client-app/**/*.spec.ts"],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.vitest.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-  },
-
-  {
-    files: ["*.cjs", "*.mjs", "*.config.ts", "scripts/**/*.ts"], // TODO: remove "*.config.ts", "scripts/**/*.ts" ?
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-  },
-
-  {
-    linterOptions: {
-      reportUnusedDisableDirectives: "error",
-    },
-    rules: {
+      // Rules are now consolidated into a single block for easier management.
       "@typescript-eslint/no-shadow": "error",
       curly: "error",
       "import/no-unresolved": "error",
       "no-debugger": process.env.NODE_ENV === "production" ? "error" : "warn",
+      "sort-export-all/sort-export-all": "warn",
       "vue/block-lang": ["error", { script: { lang: "ts" } }],
       "vue/prefer-prop-type-boolean-first": "error",
       "vue/prefer-true-attribute-shorthand": "error",
@@ -251,7 +197,6 @@ export default tseslint.config(
       "vue/require-default-prop": "off",
       "vuejs-accessibility/form-control-has-label": "off",
       "vuejs-accessibility/label-has-for": "off",
-
       "@typescript-eslint/no-require-imports": "off",
       "sonarjs/different-types-comparison": "off",
       "sonarjs/void-use": "off",
@@ -266,12 +211,60 @@ export default tseslint.config(
       "sonarjs/array-callback-without-return": "off",
       "sonarjs/no-hardcoded-passwords": "off",
       "sonarjs/no-nested-assignment": "off",
-
       "@typescript-eslint/no-unused-expressions": "off",
       "@typescript-eslint/no-empty-object-type": "off",
     },
   },
 
+  // File-specific configurations follow, keeping them distinct where necessary
+  // for different parsing requirements and rules.
+  {
+    files: ["**/*.vue"],
+    languageOptions: {
+      parser: vueParser,
+      parserOptions: {
+        parser: tseslint.parser,
+        project: true,
+        tsconfigRootDir: import.meta.dirname,
+        extraFileExtensions: [".vue"],
+      },
+    },
+    rules: {
+      "no-undef": "off",
+    },
+  },
+  {
+    files: ["**/*.{ts,vue}"],
+    languageOptions: {
+      parserOptions: {
+        project: ["./tsconfig.app.json", "./tsconfig.storybook.json", "./tsconfig.node.json"],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    rules: {
+      "storybook/no-renderer-packages": "off",
+    },
+  },
+  {
+    files: ["client-app/**/*.test.ts", "client-app/**/*.spec.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: ["./tsconfig.vitest.json"],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
+    files: ["*.cjs", "*.mjs", "*.config.ts", "scripts/**/*.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: ["./tsconfig.node.json"],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+
+  // Specific rule overrides for different parts of the application.
   {
     files: ["**/*.ts"],
     ignores: ["./*.js", "./*.ts", "**/components/**/index.ts", "*.stories.ts", "shims-*.d.ts"],
@@ -282,7 +275,8 @@ export default tseslint.config(
           paths: [
             {
               name: "@apollo/client",
-              message: "@apollo/client is for React only. Please import from @apollo/client/* or @vue/apollo-composable",
+              message:
+                "@apollo/client is for React only. Please import from @apollo/client/* or @vue/apollo-composable",
             },
             {
               name: "@vueuse/core",
@@ -335,12 +329,13 @@ export default tseslint.config(
       "no-console": "off",
     },
   },
-
   {
-    // Disable type-aware linting on JS/CJS files.
-  files: ["**/*.js", "**/*.cjs"],
+    // Disable type-aware linting on JS/CJS files. This block must be placed
+    // after any other configurations that might enable type checking for these files.
+    files: ["**/*.js", "**/*.cjs"],
     ...tseslint.configs.disableTypeChecked,
   },
 
+  // Prettier configuration should always be last to override other styling rules.
   prettier,
 );
