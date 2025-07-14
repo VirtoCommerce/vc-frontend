@@ -12,8 +12,15 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import vueParser from "vue-eslint-parser";
 
+const tsconfigRootDir = import.meta.dirname;
+const tsconfigs = {
+  app: "./tsconfig.app.json",
+  node: "./tsconfig.node.json",
+  storybook: "./tsconfig.storybook.json",
+  vitest: "./tsconfig.vitest.json",
+};
+
 export default tseslint.config(
-  // The global `ignores` configuration remains at the top level.
   {
     ignores: [
       "**/node_modules/",
@@ -37,17 +44,16 @@ export default tseslint.config(
     ],
   },
 
-  // Base configurations from plugins are grouped together for clarity.
+  // Base configurations
   js.configs.recommended,
   sonarjs.configs.recommended,
-  storybook.configs["flat/recommended"],
-  vuejsAccessibility.configs["flat/recommended"],
+  ...storybook.configs["flat/recommended"],
+  ...vuejsAccessibility.configs["flat/recommended"],
   ...tailwindcss.configs["flat/recommended"],
   ...tseslint.configs.recommendedTypeChecked,
   ...vue.configs["flat/recommended"],
 
-  // A central configuration object for project-wide settings, plugins, and rules.
-  // This consolidation reduces redundancy by defining shared configurations once.
+  // General configuration for all files
   {
     linterOptions: {
       reportUnusedDisableDirectives: "error",
@@ -69,31 +75,36 @@ export default tseslint.config(
       tailwindcss,
       "vuejs-accessibility": vuejsAccessibility,
     },
-    settings: {
-      "import/parsers": {
-        "@typescript-eslint/parser": [".ts", ".tsx"],
-      },
-      "import/resolver": {
-        typescript: {
-          alwaysTryTypes: true,
-          project: ["tsconfig.app.json", "tsconfig.storybook.json", "tsconfig.node.json", "tsconfig.vitest.json"],
-        },
-        node: true,
-      },
-    },
     rules: {
-      // Rules are now consolidated into a single block for easier management.
+      // General rules, sorted for readability
+      // Error-level rules
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        {
+          checksVoidReturn: {
+            arguments: false,
+          },
+        },
+      ],
       "@typescript-eslint/no-shadow": "error",
+      "@typescript-eslint/no-unsafe-argument": "error",
+      "@typescript-eslint/no-unsafe-assignment": "error",
+      "@typescript-eslint/no-unsafe-call": "error",
+      "@typescript-eslint/no-unsafe-enum-comparison": "error",
+      "@typescript-eslint/no-unsafe-member-access": "error",
+      "@typescript-eslint/no-unsafe-return": "error",
+      "@typescript-eslint/no-unnecessary-type-assertion": "error",
       curly: "error",
+      "import/no-cycle": "error",
       "import/no-unresolved": "error",
       "no-debugger": process.env.NODE_ENV === "production" ? "error" : "warn",
-      "sort-export-all/sort-export-all": "warn",
       "vue/block-lang": ["error", { script: { lang: "ts" } }],
+      "vue/no-duplicate-attr-inheritance": "error",
+      "vue/no-irregular-whitespace": "error",
+      "vue/no-setup-props-reactivity-loss": "error",
       "vue/prefer-prop-type-boolean-first": "error",
       "vue/prefer-true-attribute-shorthand": "error",
       "vue/v-for-delimiter-style": "error",
-      "vue/no-duplicate-attr-inheritance": "error",
-      "vue/no-irregular-whitespace": "error",
       "vue/valid-define-options": "error",
       "vuejs-accessibility/anchor-has-content": [
         "error",
@@ -109,6 +120,8 @@ export default tseslint.config(
           accessibleDirectives: ["t"],
         },
       ],
+
+      // Warning-level rules
       "@typescript-eslint/consistent-type-imports": ["warn", { disallowTypeAnnotations: false }],
       "@typescript-eslint/naming-convention": [
         "warn",
@@ -116,23 +129,8 @@ export default tseslint.config(
         { selector: "typeAlias", format: ["PascalCase"], suffix: ["Type"] },
       ],
       "@typescript-eslint/no-floating-promises": "warn",
-      "@typescript-eslint/no-misused-promises": [
-        "error",
-        {
-          checksVoidReturn: {
-            arguments: false,
-          },
-        },
-      ],
-      "@typescript-eslint/no-unsafe-argument": "error",
-      "@typescript-eslint/no-unsafe-assignment": "error",
-      "@typescript-eslint/no-unsafe-call": "error",
-      "@typescript-eslint/no-unsafe-enum-comparison": "error",
-      "@typescript-eslint/no-unsafe-member-access": "error",
-      "@typescript-eslint/no-unsafe-return": "error",
-      "@typescript-eslint/no-unnecessary-type-assertion": "error",
+      "@typescript-eslint/no-redundant-type-constituents": "warn",
       "import/consistent-type-specifier-style": "warn",
-      "import/no-cycle": "error",
       "import/order": [
         "warn",
         {
@@ -146,6 +144,8 @@ export default tseslint.config(
         },
       ],
       "no-console": "warn",
+      "sort-export-all/sort-export-all": "warn",
+      "vue/block-order": ["warn", { order: ["template", "script[setup]", "style:not([scoped])", "style[scoped]"] }],
       "vue/component-api-style": "warn",
       "vue/component-name-in-template-casing": [
         "warn",
@@ -166,7 +166,6 @@ export default tseslint.config(
           ],
         },
       ],
-      "vue/block-order": ["warn", { order: ["template", "script[setup]", "style:not([scoped])", "style[scoped]"] }],
       "vue/custom-event-name-casing": [
         "warn",
         "camelCase",
@@ -181,7 +180,6 @@ export default tseslint.config(
       "vue/no-multiple-objects-in-class": "warn",
       "vue/no-required-prop-with-default": "warn",
       "vue/no-static-inline-styles": "warn",
-      "vue/no-setup-props-reactivity-loss": "error",
       "vue/no-useless-v-bind": "warn",
       "vue/padding-line-between-blocks": "warn",
       "vue/padding-lines-in-component-definition": "warn",
@@ -189,85 +187,54 @@ export default tseslint.config(
       "vue/require-emit-validator": "warn",
       "vuejs-accessibility/click-events-have-key-events": "warn",
       "vuejs-accessibility/no-static-element-interactions": "warn",
+
+      // Disabled rules
+      "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/no-redundant-type-constituents": "warn",
+      "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/no-unused-expressions": "off",
+      "sonarjs/array-callback-without-return": "off",
+      "sonarjs/deprecation": "off",
+      "sonarjs/different-types-comparison": "off",
+      "sonarjs/function-return-type": "off",
       "sonarjs/no-duplicate-string": "off",
+      "sonarjs/no-hardcoded-passwords": "off",
+      "sonarjs/no-ignored-exceptions": "off",
+      "sonarjs/no-nested-assignment": "off",
+      "sonarjs/no-os-command-from-path": "off",
+      "sonarjs/no-selector-parameter": "off",
+      "sonarjs/prefer-regexp-exec": "off",
+      "sonarjs/slow-regex": "off",
+      "sonarjs/todo-tag": "off",
+      "sonarjs/void-use": "off",
       "tailwindcss/no-custom-classname": "off",
       "vue/multi-word-component-names": "off",
       "vue/require-default-prop": "off",
       "vuejs-accessibility/form-control-has-label": "off",
       "vuejs-accessibility/label-has-for": "off",
-      "@typescript-eslint/no-require-imports": "off",
-      "sonarjs/different-types-comparison": "off",
-      "sonarjs/void-use": "off",
-      "sonarjs/function-return-type": "off",
-      "sonarjs/todo-tag": "off",
-      "sonarjs/prefer-regexp-exec": "off",
-      "sonarjs/no-ignored-exceptions": "off",
-      "sonarjs/deprecation": "off",
-      "sonarjs/no-os-command-from-path": "off",
-      "sonarjs/slow-regex": "off",
-      "sonarjs/no-selector-parameter": "off",
-      "sonarjs/array-callback-without-return": "off",
-      "sonarjs/no-hardcoded-passwords": "off",
-      "sonarjs/no-nested-assignment": "off",
-      "@typescript-eslint/no-unused-expressions": "off",
-      "@typescript-eslint/no-empty-object-type": "off",
     },
   },
 
-  // File-specific configurations follow, keeping them distinct where necessary
-  // for different parsing requirements and rules.
+  // Type-aware configuration for application files
   {
-    files: ["**/*.vue"],
+    files: ["client-app/**/*.ts", "client-app/**/*.vue"],
+    ignores: ["client-app/**/*.test.ts", "client-app/**/*.spec.ts", "**/*.stories.ts"],
     languageOptions: {
       parser: vueParser,
       parserOptions: {
         parser: tseslint.parser,
-        project: true,
-        tsconfigRootDir: import.meta.dirname,
+        project: tsconfigs.app,
+        tsconfigRootDir,
         extraFileExtensions: [".vue"],
       },
     },
-    rules: {
-      "no-undef": "off",
-    },
-  },
-  {
-    files: ["**/*.{ts,vue}"],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.app.json", "./tsconfig.storybook.json", "./tsconfig.node.json"],
-        tsconfigRootDir: import.meta.dirname,
+    settings: {
+      "import/resolver": {
+        typescript: {
+          project: tsconfigs.app,
+        },
       },
     },
-    rules: {
-      "storybook/no-renderer-packages": "off",
-    },
-  },
-  {
-    files: ["client-app/**/*.test.ts", "client-app/**/*.spec.ts"],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.vitest.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-  },
-  {
-    files: ["*.cjs", "*.mjs", "*.config.ts", "scripts/**/*.ts"],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-  },
-
-  // Specific rule overrides for different parts of the application.
-  {
-    files: ["**/*.ts"],
-    ignores: ["./*.js", "./*.ts", "**/components/**/index.ts", "*.stories.ts", "shims-*.d.ts"],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -310,6 +277,74 @@ export default tseslint.config(
       ],
     },
   },
+
+  // Type-aware configuration for test files
+  {
+    files: ["client-app/**/*.test.ts", "client-app/**/*.spec.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: tsconfigs.vitest,
+        tsconfigRootDir,
+      },
+    },
+    settings: {
+      "import/resolver": {
+        typescript: {
+          project: tsconfigs.vitest,
+        },
+      },
+    },
+  },
+
+  // Configuration for Storybook files
+  {
+    files: [".storybook/preview.ts", "**/*.stories.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: tsconfigs.storybook,
+        tsconfigRootDir,
+      },
+    },
+    settings: {
+      "import/resolver": {
+        typescript: {
+          project: tsconfigs.storybook,
+        },
+      },
+    },
+    rules: {
+      "storybook/no-renderer-packages": "off",
+    },
+  },
+
+  // Type-aware configuration for Node.js scripts and config files
+  {
+    files: ["*.config.js", "*.config.ts", "scripts/**/*.ts", ".storybook/main.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: tsconfigs.node,
+        tsconfigRootDir,
+      },
+    },
+    settings: {
+      "import/resolver": {
+        typescript: {
+          project: tsconfigs.node,
+        },
+      },
+    },
+    rules: {
+      "no-console": "off",
+    },
+  },
+
+  // Specific overrides
+  {
+    files: ["**/*.vue"],
+    rules: {
+      "no-undef": "off",
+    },
+  },
   {
     files: ["**/components/**/index.ts"],
     rules: {
@@ -324,18 +359,10 @@ export default tseslint.config(
     },
   },
   {
-    files: ["scripts/*"],
-    rules: {
-      "no-console": "off",
-    },
-  },
-  {
-    // Disable type-aware linting on JS/CJS files. This block must be placed
-    // after any other configurations that might enable type checking for these files.
     files: ["**/*.js", "**/*.cjs"],
     ...tseslint.configs.disableTypeChecked,
   },
 
-  // Prettier configuration should always be last to override other styling rules.
+  // Prettier must be last
   prettier,
 );
