@@ -11,10 +11,10 @@ export const operationTypeLink = new ApolloLink((operation, forward) => {
 
     switch (definition.operation) {
       case OperationTypeNode.QUERY:
-        operationType = "readonly";
+        operationType = "query";
         break;
       case OperationTypeNode.MUTATION:
-        operationType = "write";
+        operationType = "mutation";
         break;
       case OperationTypeNode.SUBSCRIPTION:
         operationType = "subscription";
