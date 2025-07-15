@@ -12,12 +12,11 @@
     :offset-options="offsetOptions"
     :z-index="zIndex"
     :disabled="disabled"
-    :disable-trigger-events="disableTriggerEvents"
     @toggle="$emit('toggle', $event)"
   >
-    <template #trigger="{ toggle, open, close, opened }">
+    <template #trigger="{ toggle, open, close, opened, triggerProps }">
       <div class="vc-dropdown-menu__trigger">
-        <slot name="trigger" v-bind="{ toggle, open, close, opened }" />
+        <slot name="trigger" v-bind="{ toggle, open, close, opened, triggerProps }" />
       </div>
     </template>
 
@@ -42,7 +41,6 @@ interface IProps {
   disabled?: boolean;
   width?: string;
   zIndex?: number | string;
-  disableTriggerEvents?: boolean;
   dividers?: boolean;
 }
 
