@@ -46,5 +46,5 @@ const storybookConfig: StorybookConfig = {
   },
   docs: {},
 };
-// eslint-disable-next-line no-restricted-exports
+
 export default storybookConfig;
