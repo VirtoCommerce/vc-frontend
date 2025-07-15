@@ -127,7 +127,7 @@
           <!-- Shipping Address Card -->
           <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="shipToTitle">
             <AddressInfo :address="deliveryAddress" class="text-base">
-              <template v-if="shipmentType === 'pick_up'" #actions>
+              <template v-if="shipmentType === 'pick_up' && pickupLocation" #actions>
                 <div class="flex items-center justify-between gap-2.5 pt-1">
                   <VcButton size="xs" prepend-icon="information-circle" variant="outline" @click="openInfo">
                     {{ $t("pages.account.order_details.bopis.point_info") }}
@@ -161,14 +161,14 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, onMounted, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { OrderStatusEnum } from "@/core/enums/order-status.enum.ts";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
-import { BOPIS_CODE, useBopis } from "@/shared/checkout/composables/useBopis.ts";
+import { BOPIS_CODE } from "@/shared/checkout/composables/useBopis.ts";
 import { AddressInfo, VendorName } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
@@ -201,8 +201,6 @@ const {
 const { cart, addItemsToCart } = useShortCart();
 const { openModal, closeModal } = useModal();
 const { t } = useI18n();
-
-const { fetchAddresses } = useBopis();
 
 const shipmentType = computed<ShipmentType>(() => {
   return shipment.value?.shipmentMethodCode === BOPIS_CODE ? "pick_up" : "delivery";
@@ -284,10 +282,6 @@ function print() {
 watchEffect(() => {
   clearOrder();
   void fetchFullOrder({ id: props.orderId });
-});
-
-onMounted(() => {
-  void fetchAddresses();
 });
 </script>
 

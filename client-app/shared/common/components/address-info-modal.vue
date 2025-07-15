@@ -4,6 +4,7 @@
     :title="$t(`${TRANSLATION_KEYS_ORIGIN}.pick_point_info`)"
     max-width="35rem"
     icon="check"
+    variant="success"
   >
     <VcTable hide-default-footer hide-default-header :columns="TABLE_COLUMNS" :items="tableItems">
       <template #desktop-body>

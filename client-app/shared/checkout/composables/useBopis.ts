@@ -1,7 +1,7 @@
 import { computed, defineAsyncComponent } from "vue";
 import { getPickupLocations } from "@/core/api/graphql/shipment";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { MODULE_ID_SHIPPING, BOPIS_MAP_ENABLED_KEY, BOPIS_MAP_API_KEY } from "@/core/constants/modules";
+import { BOPIS_MAP_API_KEY, BOPIS_MAP_ENABLED_KEY, MODULE_ID_SHIPPING } from "@/core/constants/modules";
 import { globals } from "@/core/globals";
 import { useFullCart } from "@/shared/cart/composables";
 import { useModal } from "@/shared/modal";
@@ -87,11 +87,6 @@ export function useBopis() {
             if (item?.address) {
               await updateShipment({
                 id: shipment.value?.id,
-                deliveryAddress: {
-                  ...item.address,
-                  name: item.name,
-                  outerId: item?.address.id,
-                },
                 pickupLocationId: item.address.id,
               });
             }
@@ -99,15 +94,9 @@ export function useBopis() {
             return;
           }
 
-          const address = addressOrAddressId;
-
           await updateShipment({
             id: shipment.value?.id,
-            deliveryAddress: {
-              ...address,
-              outerId: address.id,
-            },
-            pickupLocationId: address.id,
+            pickupLocationId: addressOrAddressId.id,
           });
         },
       },
