@@ -17,6 +17,7 @@ describe("getLinkAttr", () => {
   });
 
   it('should return an object with "externalLink" property for a full URL with http', () => {
+    // eslint-disable-next-line sonarjs/no-clear-text-protocols
     const link = "http://external-link.com";
     expect(getLinkAttr(link)).toEqual({ externalLink: link });
   });

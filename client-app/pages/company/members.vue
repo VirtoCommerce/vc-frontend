@@ -614,6 +614,7 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
         } else {
           notifications.error({
             ...notification,
+            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             text: t("common.messages.role_update_failed", [result?.errors?.join(" ")]),
           });
         }
