@@ -76,7 +76,7 @@ export default tseslint.config(
       "vuejs-accessibility": vuejsAccessibility,
     },
     rules: {
-      // General rules, sorted for readability
+      // General rules
       // Error-level rules
       "@typescript-eslint/no-misused-promises": [
         "error",
@@ -189,30 +189,29 @@ export default tseslint.config(
       "vuejs-accessibility/no-static-element-interactions": "warn",
 
       // Disabled rules
-      "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/no-require-imports": "off",
-      "@typescript-eslint/no-unused-expressions": "off",
-      "sonarjs/array-callback-without-return": "off",
-      "sonarjs/deprecation": "off",
-      "sonarjs/different-types-comparison": "off",
-      "sonarjs/function-return-type": "off",
       "sonarjs/no-duplicate-string": "off",
-      "sonarjs/no-hardcoded-passwords": "off",
-      "sonarjs/no-ignored-exceptions": "off",
-      "sonarjs/no-nested-assignment": "off",
-      "sonarjs/no-os-command-from-path": "off",
-      "sonarjs/no-selector-parameter": "off",
-      "sonarjs/prefer-regexp-exec": "off",
-      "sonarjs/slow-regex": "off",
-      "sonarjs/todo-tag": "off",
-      "sonarjs/void-use": "off",
-      "sonarjs/no-alphabetical-sort": "off",
       "tailwindcss/no-custom-classname": "off",
       "vue/multi-word-component-names": "off",
       "vue/require-default-prop": "off",
       "vuejs-accessibility/form-control-has-label": "off",
       "vuejs-accessibility/label-has-for": "off",
+
+      "@typescript-eslint/no-empty-object-type": "warn",
+      "@typescript-eslint/no-require-imports": "warn",
+      "@typescript-eslint/no-unused-expressions": "warn",
+      "sonarjs/array-callback-without-return": "warn",
+      "sonarjs/deprecation": "warn",
+      "sonarjs/different-types-comparison": "warn",
+      "sonarjs/function-return-type": "warn",
+      "sonarjs/no-ignored-exceptions": "warn",
+      "sonarjs/no-nested-assignment": "warn",
+      "sonarjs/no-os-command-from-path": "warn",
+      "sonarjs/no-selector-parameter": "warn",
+      "sonarjs/prefer-regexp-exec": "warn",
+      "sonarjs/slow-regex": "warn",
+      "sonarjs/todo-tag": "warn",
+      "sonarjs/void-use": "warn",
     },
   },
 
