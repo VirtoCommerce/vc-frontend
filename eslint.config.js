@@ -188,15 +188,6 @@ export default tseslint.config(
       "vuejs-accessibility/click-events-have-key-events": "warn",
       "vuejs-accessibility/no-static-element-interactions": "warn",
 
-      // Disabled rules
-      "@typescript-eslint/no-non-null-assertion": "off",
-      "sonarjs/no-duplicate-string": "off",
-      "tailwindcss/no-custom-classname": "off",
-      "vue/multi-word-component-names": "off",
-      "vue/require-default-prop": "off",
-      "vuejs-accessibility/form-control-has-label": "off",
-      "vuejs-accessibility/label-has-for": "off",
-
       "@typescript-eslint/no-empty-object-type": "warn",
       "@typescript-eslint/no-require-imports": "warn",
       "@typescript-eslint/no-unused-expressions": "warn",
@@ -212,6 +203,15 @@ export default tseslint.config(
       "sonarjs/slow-regex": "warn",
       "sonarjs/todo-tag": "warn",
       "sonarjs/void-use": "warn",
+
+      // Disabled rules
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "sonarjs/no-duplicate-string": "off",
+      "tailwindcss/no-custom-classname": "off",
+      "vue/multi-word-component-names": "off",
+      "vue/require-default-prop": "off",
+      "vuejs-accessibility/form-control-has-label": "off",
+      "vuejs-accessibility/label-has-for": "off",
     },
   },
 
