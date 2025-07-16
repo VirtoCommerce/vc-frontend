@@ -1,22 +1,23 @@
 import { ApolloLink } from "@apollo/client/core";
 import { getMainDefinition } from "@apollo/client/utilities";
-import { Kind, OperationTypeNode } from "graphql";
-import type { OperationDefinitionNode } from "graphql";
 
 export const operationTypeLink = new ApolloLink((operation, forward) => {
-  const definition = getMainDefinition(operation.query) as OperationDefinitionNode;
-
-  if (definition.kind === Kind.OPERATION_DEFINITION) {
+  const definition = getMainDefinition(operation.query);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+  if (definition.kind === "OperationDefinition") {
     let operationType: string;
 
     switch (definition.operation) {
-      case OperationTypeNode.QUERY:
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+      case "query":
         operationType = "query";
         break;
-      case OperationTypeNode.MUTATION:
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+      case "mutation":
         operationType = "mutation";
         break;
-      case OperationTypeNode.SUBSCRIPTION:
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+      case "subscription":
         operationType = "subscription";
         break;
     }
