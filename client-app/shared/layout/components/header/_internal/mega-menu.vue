@@ -58,10 +58,6 @@ import { useNavigations } from "@/core/composables";
 import { useCategory } from "@/shared/catalog";
 import Subcategories from "./subcategories.vue";
 
-interface IProps {}
-
-defineProps<IProps>();
-
 const MENU_PADDING_RIGHT = 20;
 
 const calculating = ref(false);

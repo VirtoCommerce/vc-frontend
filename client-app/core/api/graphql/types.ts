@@ -2518,8 +2518,6 @@ export type InputShipmentType = {
   length?: InputMaybe<Scalars['OptionalNullableDecimal']['input']>;
   /** Measurement unit value */
   measureUnit?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Pickup location Id when shipment is Pickup */
-  pickupLocationId?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Price value */
   price?: InputMaybe<Scalars['OptionalDecimal']['input']>;
   /** Shipping method code */
@@ -3905,6 +3903,7 @@ export type OrderPaymentMethodType = {
   isActive: Scalars['Boolean']['output'];
   isAvailableForPartial: Scalars['Boolean']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
+  /** Localized name of payment method. */
   name?: Maybe<Scalars['String']['output']>;
   paymentMethodGroupType: Scalars['Int']['output'];
   paymentMethodType: Scalars['Int']['output'];
@@ -3979,7 +3978,6 @@ export type OrderShipmentType = {
   outerId?: Maybe<Scalars['String']['output']>;
   packages: Array<OrderShipmentPackageType>;
   parentOperationId?: Maybe<Scalars['String']['output']>;
-  pickupLocation?: Maybe<PickupLocationType>;
   price: MoneyType;
   priceWithTax: MoneyType;
   shipmentMethodCode?: Maybe<Scalars['String']['output']>;
@@ -4429,8 +4427,6 @@ export type PickupLocationType = {
   contactEmail?: Maybe<Scalars['String']['output']>;
   /** ContactPhone */
   contactPhone?: Maybe<Scalars['String']['output']>;
-  /** Days until ready for pickup */
-  deliveryDays?: Maybe<Scalars['Int']['output']>;
   /** Description */
   description?: Maybe<Scalars['String']['output']>;
   /** GeoLocation */
@@ -4441,8 +4437,6 @@ export type PickupLocationType = {
   isActive: Scalars['Boolean']['output'];
   /** Name */
   name: Scalars['String']['output'];
-  /** How long an order will be stored at a pickup point */
-  storageDays?: Maybe<Scalars['Int']['output']>;
   /** WorkingHours */
   workingHours?: Maybe<Scalars['String']['output']>;
 };
@@ -5837,7 +5831,6 @@ export type ShipmentType = {
   length?: Maybe<Scalars['Decimal']['output']>;
   /** Value of measurement units */
   measureUnit?: Maybe<Scalars['String']['output']>;
-  pickupLocation?: Maybe<PickupLocationType>;
   /** Price */
   price: MoneyType;
   /** Price with tax */
