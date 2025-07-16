@@ -21,6 +21,7 @@
           class="p-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
           data-test-id="support-phone-number-link"
           :href="`tel:${support_phone_number}`"
+          tabindex="0"
         >
           {{ support_phone_number }}
         </a>

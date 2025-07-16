@@ -1,5 +1,5 @@
 <template>
-  <router-link class="top-header-link" exact-active-class="top-header-link--active" :to="to">
+  <router-link class="top-header-link" exact-active-class="top-header-link--active" :to="to" tabindex="0">
     <slot />
   </router-link>
 </template>
