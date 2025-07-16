@@ -4,6 +4,7 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import { cartLink } from "@/core/api/graphql/cart/links";
+import { operationTypeLink } from "@/core/api/graphql/cart/links/operation-type-link";
 import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
 import { apolloFetch, apolloWebSocketConnectionParams } from "@/core/api/graphql/config/interceptors";
 import { HTTP_ENDPOINT_URL, WEBSOCKETS_ENDPOINT_URL, WEBSOCKETS_ENDPOINT_TIMEOUT } from "@/core/api/graphql/consts";
@@ -18,7 +19,7 @@ const wsLink = new WebSocketLink(
   }),
 );
 
-const sharedLink = from([removeTypenameFromVariables(), errorHandlerLink]);
+const sharedLink = from([removeTypenameFromVariables(), operationTypeLink, errorHandlerLink]);
 
 export const deprecatedLink = from([sharedLink, httpLink]);
 
