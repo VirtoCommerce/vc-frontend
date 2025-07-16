@@ -810,7 +810,7 @@ describe("useShipToLocation composable", () => {
       const { fetchAddresses } = useShipToLocation();
       try {
         await fetchAddresses();
-      } catch (e) {
+      } catch {
         // swallow error
       }
       expect(personalAddresses.value).toHaveLength(1);

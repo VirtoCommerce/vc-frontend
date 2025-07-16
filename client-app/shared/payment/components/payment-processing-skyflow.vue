@@ -517,7 +517,7 @@ async function initPayment() {
         env: IS_DEVELOPMENT ? Skyflow.Env.DEV : Skyflow.Env.PROD,
       },
     });
-  } catch (e) {
+  } catch {
     showError(t("shared.payment.bank_card_form.payment_unavailable"));
   }
 }
