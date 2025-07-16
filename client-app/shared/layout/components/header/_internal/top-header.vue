@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex h-10 items-center gap-3 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-5 xl:px-12"
+    class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
   >
     <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
 
@@ -13,19 +13,19 @@
       <div v-if="support_phone_number" class="flex items-center whitespace-nowrap">
         <VcIcon class="me-1.5 fill-primary" name="phone" size="sm" />
 
-        <span class="mr-1 font-thin">
+        <span class="font-thin">
           {{ $t("shared.layout.header.top_header.call_us_label") }}
         </span>
 
         <a
-          class="py-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
+          class="p-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
           data-test-id="support-phone-number-link"
           :href="`tel:${support_phone_number}`"
         >
           {{ support_phone_number }}
         </a>
 
-        <span class="mx-4 h-5 w-px bg-primary" />
+        <span class="mx-3 h-5 w-px bg-primary" />
       </div>
 
       <!-- Authorized menu items -->
@@ -40,7 +40,7 @@
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
         </TopHeaderLink>
 
-        <span class="mx-4 h-5 w-px bg-primary" />
+        <span class="mx-3 h-5 w-px bg-primary" />
 
         <!-- Account menu -->
         <div ref="loginMenu" class="relative flex flex-row items-center gap-x-1">
@@ -56,7 +56,7 @@
 
           <button
             type="button"
-            class="flex cursor-pointer items-center whitespace-nowrap py-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
+            class="flex cursor-pointer items-center whitespace-nowrap p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
             data-test-id="account-menu-button"
             @click="loginMenuVisible = !loginMenuVisible"
           >

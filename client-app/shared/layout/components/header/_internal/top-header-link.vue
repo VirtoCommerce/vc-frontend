@@ -16,7 +16,7 @@ defineProps<IProps>();
 
 <style lang="scss">
 .top-header-link {
-  @apply py-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color];
+  @apply p-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color];
 
   &--active {
     @apply text-[--header-top-link-active-color];
