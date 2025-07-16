@@ -1,14 +1,11 @@
 <template>
   <div class="vc-popover">
-    <div ref="reference" class="vc-popover__trigger">
-      <slot
-        name="trigger"
-        :open="open"
-        :close="close"
-        :toggle="toggle"
-        :opened="opened"
-        :trigger-props="emitTriggerProps"
-      />
+    <div v-if="$slots.default" ref="reference" class="vc-popover__trigger">
+      <slot :open="open" :close="close" :toggle="toggle" :opened="opened" :trigger-props="emitTriggerProps" />
+    </div>
+
+    <div v-else-if="$slots.trigger" ref="reference" class="vc-popover__trigger" v-bind="emitTriggerProps">
+      <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
     </div>
 
     <teleport :to="teleportSelector" :disabled="!enableTeleport">
@@ -82,7 +79,7 @@ const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs
 const emitTriggerProps = computed(() => ({
   role: "button" as const,
   tabindex: 0,
-  ariaHaspopup: "dialog",
+  "aria-haspopup": "dialog" as const,
   ariaExpanded: opened.value,
   onMouseenter: props.hover ? open : undefined,
   onMouseleave: props.hover ? close : undefined,

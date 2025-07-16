@@ -14,7 +14,7 @@
     :disabled="disabled"
     @toggle="$emit('toggle', $event)"
   >
-    <template #trigger="{ toggle, open, close, opened, triggerProps }">
+    <template #default="{ toggle, open, close, opened, triggerProps }">
       <div class="vc-dropdown-menu__trigger">
         <slot name="trigger" v-bind="{ toggle, open, close, opened, triggerProps }" />
       </div>
@@ -80,7 +80,7 @@ const props = withDefaults(defineProps<IProps>(), {
   &__trigger {
     @apply flex h-full w-full items-center cursor-pointer;
 
-    #{$disabled} & {
+    #{$disabled} & > * {
       @apply cursor-not-allowed;
     }
   }

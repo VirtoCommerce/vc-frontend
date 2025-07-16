@@ -6,7 +6,7 @@
     arrow-enabled
     max-height="none"
   >
-    <template #trigger="{ triggerProps }">
+    <template #default="{ triggerProps }">
       <slot name="trigger" :trigger-props="triggerProps" />
     </template>
 

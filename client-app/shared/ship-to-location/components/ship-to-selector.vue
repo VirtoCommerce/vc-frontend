@@ -7,7 +7,7 @@
       max-height="none"
       :offset-options="4"
     >
-      <template #trigger="{ opened, triggerProps }">
+      <template #default="{ opened, triggerProps }">
         <button
           class="ship-to-selector__trigger"
           type="button"
