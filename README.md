@@ -110,14 +110,13 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── .editorconfig                    // Common editor settings to sync codestyle.
 ├── .env                             // Envfile to define different Environment Variables.
 ├── .env.local                       // Local envfile to override Environment Variables.
-├── .eslintignore                    // Ignore some files from ESlint.
-├── .eslintrc.cjs                    // ESlint configuration file.
 ├── .gitattributes                   // Set attributes to specified path in Git.
 ├── .gitignore                       // Ignore some files from Git.
 ├── .npmrc                           // Node.js package manager settings and Node.js restrictions
 ├── .prettierignore                  // Ignore some files from Prettier.
 ├── .prettierrc.json                 // Config for Prettier.
 ├── .yarnrc.yml                      // Yarn package manager configuration
+├── eslint.config.js                 // ESlint configuration file.
 ├── graphql-codegen
 |   └── generator.ts                 // Generate GraphQL types 
 ├── index.html                       // Vite Development entry point.

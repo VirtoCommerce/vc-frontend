@@ -154,6 +154,7 @@ const featuredBrandsTrimmed = computed(() => {
 });
 
 const sortedNavItems = computed(() => {
+  // eslint-disable-next-line sonarjs/no-alphabetical-sort
   return Object.keys(groupedBrands.value).sort();
 });
 

@@ -105,7 +105,7 @@ const visibleComponent = computed(() => {
       if (isExternalUrlRegex.test(targetUrl)) {
         location.href = targetUrl;
       } else {
-        router.replace({ path: targetUrl });
+        void router.replace({ path: targetUrl });
       }
     }
     return result.id;

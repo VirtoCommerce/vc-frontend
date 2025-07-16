@@ -94,7 +94,6 @@ const PLUGINS = [
 ];
 
 async function runCodegen() {
-  // eslint-disable-next-line no-console
   console.log("\nGenerate types for general modules:");
   const typesPath = `${core.apiPath}/types.ts`;
   await generate(
@@ -115,7 +114,6 @@ async function runCodegen() {
     },
     true,
   );
-  // eslint-disable-next-line no-console
   console.log(`Types for The Core have been generated in "${typesPath}\n`);
 
   await Promise.allSettled(
@@ -136,10 +134,8 @@ async function runCodegen() {
           },
           true,
         );
-        // eslint-disable-next-line no-console
         console.log(`Types for "${module.name}" module have been generated in "${moduleTypesPath}"\n`);
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.error(`Error during types generation for "${module.name} module"\n`, err);
       }
     }),
@@ -147,7 +143,6 @@ async function runCodegen() {
 }
 
 runCodegen().catch((err) => {
-  // eslint-disable-next-line no-console
   console.error(err);
 });
 
