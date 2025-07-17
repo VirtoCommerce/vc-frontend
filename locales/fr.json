@@ -283,12 +283,6 @@
       "store-manager": "Gestionnaire de magasin"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Carte bancaire (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Manuel",
-        "SkyflowPaymentMethod": "Carte bancaire (Skyflow)",
-        "CyberSourcePaymentMethod": "Carte bancaire (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "Tarif fixe (Terre)",
         "FixedRate_Air": "Tarif fixe (Air)",
