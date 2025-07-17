@@ -68,5 +68,4 @@ const preview: Preview = {
   tags: ["autodocs"],
 };
 
-// eslint-disable-next-line no-restricted-exports
 export default preview;

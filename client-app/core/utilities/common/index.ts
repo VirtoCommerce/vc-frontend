@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/order
 import uniqBy from "lodash/uniqBy";
 import type { RouteLocationRaw, RouteLocationNormalizedLoaded } from "vue-router";
 

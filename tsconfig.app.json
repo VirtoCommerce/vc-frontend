@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["client-app/**/*", "client-app/**/*.vue", "config/*.json", "locales/*.json", "package.json"],
+  "include": ["client-app/**/*", "config/*.json", "locales/*.json", "package.json"],
   "exclude": [
     "artifacts",
     "assets",
@@ -21,6 +21,6 @@
     "paths": {
       "@/*": ["./client-app/*"]
     },
-    "types": ["@types/gtag.js"]
+    "types": ["@types/gtag.js", "@types/google.maps"]
   }
 }
