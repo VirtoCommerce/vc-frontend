@@ -1,6 +1,7 @@
 {
   "name": "Related products",
   "icon": "smartphone",
+  "targetTemplates": ["product"],
   "displayField": "name",
   "settings": []
 }

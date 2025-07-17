@@ -179,7 +179,7 @@
       "info": "Turn on to set up products count limitation"
     },
     {
-      "visibility": "this.model.countLimitation !== true",
+      "visibility": "this.model.countLimitation === true",
       "id": "fixedProductsCount",
       "label": "Fixed products count",
       "type": "number",
