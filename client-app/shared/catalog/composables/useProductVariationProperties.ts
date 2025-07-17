@@ -5,7 +5,7 @@ import type { Product, Property } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import type { ComposerTranslation } from "vue-i18n";
 
-type PrimitiveValueType = string | number | boolean | null;
+export type PrimitiveValueType = string | number | boolean | null;
 
 export interface IPropertyValue {
   value: PrimitiveValueType;

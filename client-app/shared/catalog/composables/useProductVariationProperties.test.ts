@@ -2,79 +2,100 @@ import { describe, it, expect, vi } from "vitest";
 import { ref, nextTick } from "vue";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
 import { useProductVariationProperties } from "./useProductVariationProperties";
-import type { Product } from "@/core/api/graphql/types";
+import type { PrimitiveValueType } from "./useProductVariationProperties";
+import type { Product, Property } from "@/core/api/graphql/types";
 
-const MOCK_VARIATIONS = [
-  {
-    id: "1",
-    properties: [
-      {
-        name: "Color",
-        value: "Red",
+interface IPropertyRecord {
+  name: string;
+  value?: PrimitiveValueType;
+  valueType?: PropertyValueTypes;
+}
+
+function createVariation(id: string, properties: IPropertyRecord[]): Product {
+  return {
+    id,
+    properties: properties.map(
+      ({ name, value, valueType = PropertyValueTypes.ShortText }): Property => ({
+        name: name,
+        value,
         propertyType: PropertyType.Variation,
-        propertyValueType: PropertyValueTypes.ShortText,
-        label: "Color",
-      },
-      {
-        name: "Size",
-        value: "M",
-        propertyType: PropertyType.Variation,
-        propertyValueType: PropertyValueTypes.ShortText,
-        label: "Size",
-      },
-    ],
-  },
-  {
-    id: "2",
-    properties: [
-      {
-        name: "Color",
-        value: "Red",
-        propertyType: PropertyType.Variation,
-        propertyValueType: PropertyValueTypes.ShortText,
-        label: "Color",
-      },
-      {
-        name: "Size",
-        value: "L",
-        propertyType: PropertyType.Variation,
-        propertyValueType: PropertyValueTypes.ShortText,
-        label: "Size",
-      },
-    ],
-  },
-  {
-    id: "3",
-    properties: [
-      {
-        name: "Color",
-        value: "Blue",
-        propertyType: PropertyType.Variation,
-        propertyValueType: PropertyValueTypes.ShortText,
-        label: "Color",
-      },
-      {
-        name: "Size",
-        value: "M",
-        propertyType: PropertyType.Variation,
-        propertyValueType: PropertyValueTypes.ShortText,
-        label: "Size",
-      },
-    ],
-  },
-  {
-    id: "4",
-    properties: [
-      {
-        name: "Material",
-        value: "Cotton",
-        propertyType: PropertyType.Variation,
-        propertyValueType: PropertyValueTypes.ShortText,
-        label: "Material",
-      },
-    ],
-  },
-] as unknown as readonly Product[];
+        propertyValueType: valueType,
+        label: name,
+        hidden: false,
+        id: name,
+        multivalue: false,
+      }),
+    ),
+  } as unknown as Product;
+}
+
+const mockData = {
+  basic: [
+    createVariation("1", [
+      { name: "Color", value: "Red" },
+      { name: "Size", value: "M" },
+    ]),
+    createVariation("2", [
+      { name: "Color", value: "Red" },
+      { name: "Size", value: "L" },
+    ]),
+    createVariation("3", [
+      { name: "Color", value: "Blue" },
+      { name: "Size", value: "M" },
+    ]),
+    createVariation("4", [{ name: "Material", value: "Cotton" }]),
+  ],
+
+  autoSelect: [
+    createVariation("1", [
+      { name: "Color", value: "Red" },
+      { name: "Fit", value: "Slim" },
+    ]),
+    createVariation("2", [
+      { name: "Color", value: "Blue" },
+      { name: "Fit", value: "Regular" },
+    ]),
+  ],
+
+  chainedAutoSelect: [
+    createVariation("1", [
+      { name: "Color", value: "Red" },
+      { name: "Size", value: "S" },
+      { name: "Fit", value: "Slim" },
+    ]),
+    createVariation("2", [
+      { name: "Color", value: "Red" },
+      { name: "Size", value: "M" },
+      { name: "Fit", value: "Slim" },
+    ]),
+    createVariation("3", [
+      { name: "Color", value: "Blue" },
+      { name: "Size", value: "S" },
+      { name: "Fit", value: "Regular" },
+    ]),
+  ],
+
+  withDifferentPropTypes: [
+    createVariation("1", [
+      { name: "Available", value: true, valueType: PropertyValueTypes.Boolean },
+      { name: "Count", value: 10, valueType: PropertyValueTypes.Integer },
+      { name: "ReleaseDate", value: "2023-10-27T10:00:00Z", valueType: PropertyValueTypes.DateTime },
+    ]),
+    createVariation("2", [{ name: "Available", value: false, valueType: PropertyValueTypes.Boolean }]),
+  ],
+
+  withProblematicValues: [
+    createVariation("1", [
+      { name: "Color", value: "Red" },
+      { name: "Size", value: null },
+    ]),
+    createVariation("2", [
+      { name: "Color", value: "Red" },
+      { name: "Size", value: undefined },
+    ]),
+    createVariation("3", [{ name: "noname", value: "orphaned" }]),
+  ],
+};
 
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({
@@ -84,7 +105,7 @@ vi.mock("vue-i18n", () => ({
 
 describe("useProductVariationProperties", () => {
   it("initializes correctly with variation properties", () => {
-    const variations = ref(MOCK_VARIATIONS);
+    const variations = ref(mockData.basic);
     const { properties } = useProductVariationProperties(variations);
 
     expect(properties.value.size).toBe(3);
@@ -103,7 +124,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("selects a property and updates selected state", () => {
-    const variations = ref(MOCK_VARIATIONS);
+    const variations = ref(mockData.basic);
     const { select, isSelected } = useProductVariationProperties(variations);
 
     select("Color", "Red");
@@ -112,7 +133,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("determines inactive state of properties correctly", () => {
-    const variations = ref(MOCK_VARIATIONS);
+    const variations = ref(mockData.basic);
     const { select, isInactive } = useProductVariationProperties(variations);
 
     select("Color", "Blue");
@@ -121,46 +142,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("auto-selects a property when only one choice remains", () => {
-    const variationsWithAutoSelect = ref([
-      {
-        id: "1",
-        properties: [
-          {
-            name: "Color",
-            value: "Red",
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.ShortText,
-            label: "Color",
-          },
-          {
-            name: "Fit",
-            value: "Slim",
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.ShortText,
-            label: "Fit",
-          },
-        ],
-      },
-      {
-        id: "2",
-        properties: [
-          {
-            name: "Color",
-            value: "Blue",
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.ShortText,
-            label: "Color",
-          },
-          {
-            name: "Fit",
-            value: "Regular",
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.ShortText,
-            label: "Fit",
-          },
-        ],
-      },
-    ] as unknown as readonly Product[]);
+    const variationsWithAutoSelect = ref(mockData.autoSelect);
     const { select, isSelected } = useProductVariationProperties(variationsWithAutoSelect);
 
     select("Color", "Red");
@@ -168,7 +150,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("resets incompatible selections when a new property is selected", () => {
-    const variations = ref(MOCK_VARIATIONS);
+    const variations = ref(mockData.basic);
     const { select, isSelected } = useProductVariationProperties(variations);
 
     select("Size", "L");
@@ -180,7 +162,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("correctly identifies when all properties are selected (isCompleted)", () => {
-    const variations = ref(MOCK_VARIATIONS.slice(0, 3));
+    const variations = ref(mockData.basic.slice(0, 3));
     const { select, isCompleted } = useProductVariationProperties(variations);
 
     expect(isCompleted.value).toBe(false);
@@ -191,7 +173,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("returns the correct final variation when selection is complete", () => {
-    const variations = ref(MOCK_VARIATIONS.slice(0, 3));
+    const variations = ref(mockData.basic.slice(0, 3));
     const { select, variationResult } = useProductVariationProperties(variations);
 
     select("Color", "Red");
@@ -201,7 +183,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("returns undefined for variationResult when selection is not complete", () => {
-    const variations = ref(MOCK_VARIATIONS.slice(0, 3));
+    const variations = ref(mockData.basic.slice(0, 3));
     const { select, variationResult } = useProductVariationProperties(variations);
 
     select("Color", "Red");
@@ -209,7 +191,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("handles variations with different property counts", () => {
-    const variations = ref(MOCK_VARIATIONS);
+    const variations = ref(mockData.basic);
     const { select, isSelected, isInactive } = useProductVariationProperties(variations);
 
     select("Material", "Cotton");
@@ -219,7 +201,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("resets selections when the variations array changes", async () => {
-    const variations = ref(MOCK_VARIATIONS.slice(0, 1));
+    const variations = ref(mockData.basic.slice(0, 1));
     const { select, isSelected, variationResult } = useProductVariationProperties(variations);
 
     select("Color", "Red");
@@ -227,7 +209,7 @@ describe("useProductVariationProperties", () => {
     expect(isSelected("Color", "Red")).toBe(true);
     expect(variationResult.value).toBeDefined();
 
-    variations.value = MOCK_VARIATIONS.slice(2, 3);
+    variations.value = mockData.basic.slice(2, 3);
     await nextTick();
 
     expect(isSelected("Color", "Red")).toBe(false);
@@ -265,7 +247,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("does not change selection when selecting the same value again", () => {
-    const variations = ref(MOCK_VARIATIONS);
+    const variations = ref(mockData.basic);
     const { select, isSelected } = useProductVariationProperties(variations);
 
     select("Color", "Red");
@@ -280,32 +262,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("handles a chain of auto-selections", () => {
-    const variationsWithChain = ref([
-      {
-        id: "1",
-        properties: [
-          { name: "Color", value: "Red" },
-          { name: "Size", value: "S" },
-          { name: "Fit", value: "Slim" },
-        ].map((p) => ({ ...p, propertyType: PropertyType.Variation, propertyValueType: PropertyValueTypes.ShortText })),
-      },
-      {
-        id: "2",
-        properties: [
-          { name: "Color", value: "Red" },
-          { name: "Size", value: "M" },
-          { name: "Fit", value: "Slim" },
-        ].map((p) => ({ ...p, propertyType: PropertyType.Variation, propertyValueType: PropertyValueTypes.ShortText })),
-      },
-      {
-        id: "3",
-        properties: [
-          { name: "Color", value: "Blue" },
-          { name: "Size", value: "S" },
-          { name: "Fit", value: "Regular" },
-        ].map((p) => ({ ...p, propertyType: PropertyType.Variation, propertyValueType: PropertyValueTypes.ShortText })),
-      },
-    ] as unknown as readonly Product[]);
+    const variationsWithChain = ref(mockData.chainedAutoSelect);
 
     const { select, isSelected, isCompleted } = useProductVariationProperties(variationsWithChain);
 
@@ -317,46 +274,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("correctly formats display labels for different property value types", () => {
-    const variationsWithTypes = ref([
-      {
-        id: "1",
-        properties: [
-          {
-            name: "Available",
-            value: true,
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.Boolean,
-            label: "Available",
-          },
-          {
-            name: "Count",
-            value: 10,
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.Integer,
-            label: "Count",
-          },
-          {
-            name: "ReleaseDate",
-            value: "2023-10-27T10:00:00Z",
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.DateTime,
-            label: "ReleaseDate",
-          },
-        ],
-      },
-      {
-        id: "2",
-        properties: [
-          {
-            name: "Available",
-            value: false,
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.Boolean,
-            label: "Available",
-          },
-        ],
-      },
-    ] as unknown as readonly Product[]);
+    const variationsWithTypes = ref(mockData.withDifferentPropTypes);
 
     const dateSpy = vi.spyOn(Date.prototype, "toLocaleDateString").mockReturnValue("mock date");
     const { properties } = useProductVariationProperties(variationsWithTypes);
@@ -381,7 +299,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("does not mark any property as inactive when no selections are made", () => {
-    const variations = ref(MOCK_VARIATIONS);
+    const variations = ref(mockData.basic);
     const { isInactive } = useProductVariationProperties(variations);
 
     expect(isInactive("Color", "Red")).toBe(false);
@@ -392,58 +310,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("handles properties with null, undefined or no name gracefully", () => {
-    const variationsWithProblematicValues = ref([
-      {
-        id: "1",
-        properties: [
-          {
-            name: "Color",
-            value: "Red",
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.ShortText,
-            label: "Color",
-          },
-          {
-            name: "Size",
-            value: null,
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.ShortText,
-            label: "Size",
-          },
-        ],
-      },
-      {
-        id: "2",
-        properties: [
-          {
-            name: "Color",
-            value: "Red",
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.ShortText,
-            label: "Color",
-          },
-          {
-            name: "Size",
-            value: undefined,
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.ShortText,
-            label: "Size",
-          },
-        ],
-      },
-      {
-        id: "3",
-        properties: [
-          {
-            name: undefined,
-            value: "orphaned",
-            propertyType: PropertyType.Variation,
-            propertyValueType: PropertyValueTypes.ShortText,
-            label: "No name",
-          },
-        ],
-      },
-    ] as unknown as readonly Product[]);
+    const variationsWithProblematicValues = ref(mockData.withProblematicValues);
 
     const { properties } = useProductVariationProperties(variationsWithProblematicValues);
 
@@ -456,7 +323,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("has a correct initial state before any selections", () => {
-    const variations = ref(MOCK_VARIATIONS);
+    const variations = ref(mockData.basic);
     const { isCompleted, variationResult, properties } = useProductVariationProperties(variations);
 
     expect(isCompleted.value).toBe(false);
