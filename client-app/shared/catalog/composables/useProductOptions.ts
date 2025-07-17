@@ -1,4 +1,4 @@
-import { ref, computed, watch, readonly } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
 import type { Product, Property } from "@/core/api/graphql/types";
