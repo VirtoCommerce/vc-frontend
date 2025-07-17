@@ -31,7 +31,7 @@
         "
       >
         <template #prepend>
-          <VcBadge rounded color="secondary" size="lg">{{ item.symbol }}</VcBadge>
+          <VcBadge rounded color="secondary">{{ item.symbol }}</VcBadge>
         </template>
 
         <span>{{ item.code }}</span>

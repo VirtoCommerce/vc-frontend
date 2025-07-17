@@ -283,12 +283,6 @@
       "store-manager": "商店经理"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "银行卡（Authorize.Net）",
-        "DefaultManualPaymentMethod": "手动",
-        "SkyflowPaymentMethod": "银行卡（Skyflow）",
-        "CyberSourcePaymentMethod": "银行卡（CyberSource）"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "固定费率（陆运）",
         "FixedRate_Air": "固定费率（空运）",
@@ -413,7 +407,9 @@
         "enter_keyword_placeholder": "搜索全店",
         "enter_keyword_placeholder_category": "在 {category} 中搜索",
         "scope_loading_label": "正在加载搜索上下文",
-        "scope_remove_label": "移除：{label}"
+        "scope_remove_label": "移除：{label}",
+        "suggestions_and_history_label": "建议和历史记录",
+        "search_label": "搜索"
       },
       "language_selector": {
         "label": "中文："
@@ -674,7 +670,7 @@
         }
       },
       "discount_badge": {
-        "off": "折扣"
+        "off": "-{discount}"
       },
       "branches_modal": {
         "title": "选择分支",

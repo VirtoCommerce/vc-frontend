@@ -72,6 +72,8 @@
                     size="sm"
                     class="absolute -right-2 -top-2 transition-transform"
                     rounded
+                    nowrap
+                    max-width="none"
                   >
                     {{ $n(cart.itemsQuantity, { style: "decimal", notation: "compact" }) }}
                   </VcBadge>
@@ -95,7 +97,7 @@
           :clearable="!!searchPhrase"
           no-border
           @clear="reset"
-          @keydown.enter="searchPhrase && $router.push(searchPageLink)"
+          @keydown.enter="handleSearch"
         >
           <template #append>
             <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
@@ -135,6 +137,7 @@ import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core"
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
+import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
@@ -163,6 +166,7 @@ const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
+const { saveSearchQuery } = useHistoricalEvents();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
@@ -182,6 +186,13 @@ function reset() {
 function onBarcodeScanned(value: string) {
   if (value) {
     searchPhrase.value = value;
+    void router.push(searchPageLink.value);
+  }
+}
+
+function handleSearch() {
+  if (searchPhrase.value) {
+    void saveSearchQuery(searchPhrase.value);
     void router.push(searchPageLink.value);
   }
 }

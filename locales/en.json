@@ -283,12 +283,6 @@
       "store-manager": "Store manager"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Bank card (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Manual",
-        "SkyflowPaymentMethod": "Bank card (Skyflow)",
-        "CyberSourcePaymentMethod": "Bank card (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "Fixed Rate (Ground)",
         "FixedRate_Air": "Fixed Rate (Air)",
@@ -395,7 +389,7 @@
         "categories_label": "Categories",
         "products_label": "Products",
         "pages_label": "Pages",
-        "suggestions_label": "Suggestions",
+        "suggestions_and_history_label": "Suggestions & history",
         "no_results": "Your {keyword} query did not return any results",
         "enter_keyword_placeholder": "Search the entire store",
         "enter_keyword_placeholder_category": "Search within {category}",
@@ -413,7 +407,9 @@
             "wrong_format": "Unsupported file format",
             "no_file": "No file uploaded"
           }
-        }
+        },
+        "suggestions_label": "Suggestion",
+        "search_label": "Search"
       },
       "language_selector": {
         "label": "Language:"
@@ -674,7 +670,7 @@
         }
       },
       "discount_badge": {
-        "off": "- {discount}"
+        "off": "-{discount}"
       },
       "purchased_before_badge": {
         "title": "@:pages.catalog.purchased_before_filter_card.title"

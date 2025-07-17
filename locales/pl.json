@@ -283,12 +283,6 @@
       "store-manager": "Menedżer sklepu"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Karta bankowa (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Ręczne",
-        "SkyflowPaymentMethod": "Karta bankowa (Skyflow)",
-        "CyberSourcePaymentMethod": "Karta bankowa (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "Stała cena (drogowa)",
         "FixedRate_Air": "Stała cena (lotnicza)",
@@ -413,7 +407,9 @@
         "enter_keyword_placeholder": "Szukaj w całym sklepie",
         "enter_keyword_placeholder_category": "Szukaj w {category}",
         "scope_loading_label": "Ładowanie kontekstu wyszukiwania",
-        "scope_remove_label": "Usuń: {label}"
+        "scope_remove_label": "Usuń: {label}",
+        "suggestions_and_history_label": "Sugestie i historia",
+        "search_label": "Szukaj"
       },
       "language_selector": {
         "label": "Język:"
@@ -674,7 +670,7 @@
         }
       },
       "discount_badge": {
-        "off": "wyłączone"
+        "off": "-{discount}"
       },
       "branches_modal": {
         "title": "Wybierz oddział",

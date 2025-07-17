@@ -249,6 +249,8 @@ export interface IThemeConfigSettings {
       [key: string]: number;
     };
   };
+
+  graphql_operation_marking_enabled?: boolean;
 }
 
 export interface IThemeConfig {

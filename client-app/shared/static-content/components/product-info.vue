@@ -4,10 +4,10 @@
       <div class="product-info__side">
         <ImageGallery :images="product.images">
           <template #badges>
-            <BadgesWrapper>
-              <PurchasedBeforeBadge v-if="product.isPurchased" />
+            <BadgesWrapper size="lg">
+              <PurchasedBeforeBadge v-if="product.isPurchased" size="lg" show-text />
 
-              <DiscountBadge static :price="product.price" />
+              <DiscountBadge static :price="product.price" size="lg" />
             </BadgesWrapper>
           </template>
         </ImageGallery>

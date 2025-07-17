@@ -2,11 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable no-console */
 /* eslint-disable no-undef */
 
 // NOTE: When updating the service worker, make sure to update the version in the service worker module constants "client-app/modules/push-messages/constants/index.ts"
 
-const VERSION = "11.0.1";
+const VERSION = "11.10.0";
 importScripts(
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-app-compat.js`,
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`,
@@ -17,11 +18,47 @@ const DB_NAME = "fcm-auxiliary-database";
 const DB_STORE_OBJECT = "data";
 const DB_DEFAULT_ICON_ID = "defaultIcon";
 
+// Firebase initialization state
+let firebaseApp;
+let isInitialized = false;
+
+// Initialize Firebase with placeholder config during initial evaluation
+// This prevents the "Event handler must be added on initial evaluation" warnings
+try {
+  firebaseApp = firebase.initializeApp({
+    apiKey: "placeholder",
+    authDomain: "placeholder.firebaseapp.com",
+    projectId: "placeholder",
+    storageBucket: "placeholder.appspot.com",
+    messagingSenderId: "placeholder",
+    appId: "placeholder",
+  });
+  firebase.messaging(firebaseApp);
+} catch (e) {
+  console.warn("Firebase placeholder initialization failed:", e);
+}
+
+// Update configuration when received config from main thread
 self.addEventListener("message", (event) => {
   if (event.data.type === "initialize") {
     const { config } = event.data;
-    // eslint-disable-next-line no-console
-    initialize(config).catch((e) => console.error(e));
+
+    if (!config || !config.apiKey || !config.projectId || !config.appId) {
+      return;
+    }
+
+    try {
+      if (firebaseApp && firebaseApp.options) {
+        Object.assign(firebaseApp.options, config);
+        isInitialized = true;
+      } else {
+        firebaseApp = firebase.initializeApp(config);
+        firebase.messaging(firebaseApp);
+        isInitialized = true;
+      }
+    } catch (e) {
+      console.error("Failed to update Firebase config:", e);
+    }
   }
 });
 
@@ -39,6 +76,11 @@ self.addEventListener("notificationclick", function (event) {
 });
 
 self.addEventListener("push", function (event) {
+  if (!isInitialized) {
+    console.warn("Firebase not properly initialized, skipping push notification");
+    return;
+  }
+
   const { data } = event.data.json();
   event.waitUntil(
     registration.pushManager.getSubscription().then(async () => {
@@ -52,11 +94,6 @@ self.addEventListener("push", function (event) {
     }),
   );
 });
-
-async function initialize(config) {
-  const app = firebase.initializeApp(config);
-  await firebase.messaging(app);
-}
 
 // needs to persist the default icon url in indexedDB, since it's getting lost when the service worker is restarted
 function storeDefaultIcon(iconUrl) {
