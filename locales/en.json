@@ -283,12 +283,6 @@
       "store-manager": "Store manager"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Bank card (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Manual",
-        "SkyflowPaymentMethod": "Bank card (Skyflow)",
-        "CyberSourcePaymentMethod": "Bank card (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "Fixed Rate (Ground)",
         "FixedRate_Air": "Fixed Rate (Air)",

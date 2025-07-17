@@ -33,6 +33,7 @@ fragment fullOrderFields on CustomerOrderType {
     isApproved
     gatewayCode
     paymentMethod {
+      name
       logoUrl
       code
       typeName
@@ -44,6 +45,7 @@ fragment fullOrderFields on CustomerOrderType {
     }
   }
   availablePaymentMethods {
+    name
     code
     logoUrl
     price {
