@@ -109,14 +109,6 @@ function getDisplayLabel(property: Property, t: ComposerTranslation): string {
   switch (propertyValueType) {
     case PropertyValueTypes.Boolean:
       return value ? t("common.labels.true_property") : t("common.labels.false_property");
-    case PropertyValueTypes.ShortText:
-      return value as string;
-    case PropertyValueTypes.LongText:
-      return value as string;
-    case PropertyValueTypes.Integer:
-      return String(value);
-    case PropertyValueTypes.Number:
-      return String(value);
     case PropertyValueTypes.DateTime:
       return new Date(value as string).toLocaleDateString();
     default:
