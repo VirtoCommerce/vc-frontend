@@ -89,5 +89,3 @@ function getMaxFromFacet(_facet?: FacetValueItemType) {
   return typeof _facet?.to === 'number' ? _facet.to : _facet?.from
 }
 </script>
-
-<style scoped lang="scss"></style>
