@@ -21,8 +21,8 @@
 import { computed, toRefs } from "vue";
 import { useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
-import type { FacetItemType } from "@/core/types";
-import type { ColType, RangeType } from "@/ui-kit/components/molecules/slider/vc-slider.vue";
+import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import type { ColType } from "@/ui-kit/components/molecules/slider/vc-slider.vue";
 
 interface IProps {
   facet: Readonly<FacetItemType>;
@@ -31,7 +31,7 @@ interface IProps {
 }
 
 interface IEmits {
-  (event: "update:range", value: RangeType): void;
+  (event: "update:range", value: [number, number]): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -42,22 +42,18 @@ const { facet } = toRefs(props);
 
 const facetsParam = useRouteQueryParam<string>(QueryParamName.Facets);
 
+
 // todo get from back
-const facetMin = 0;
+const facetMin = computed(() => {
+  return getMinFromFacet(facet.value.values.at(0)) || 0
+});
 
-const facetMax = 99999;
+const facetMax = computed(() => {
+  return getMaxFromFacet(facet.value.values.at(-1)) || 999999
+});
 
-const sliderValue = computed<RangeType>(() => {
-  const ranges = extractPriceFacets(facetsParam.value, props.queryKey);
-
-  if (ranges.length) {
-    const from = ranges.at(0)?.from;
-    const to = ranges.at(-1)?.to;
-    return [typeof from === "number" ? from : facetMin, typeof to === "number" ? to : facetMax];
-  }
-  // todo check predefined facets
-
-  return [facetMin, facetMax];
+const sliderValue = computed(() => {
+  return (parsePriceRange(facetsParam.value) || [facetMin.value, facetMax.value]) as [number, number];
 });
 
 const sliderCols = computed<ColType[]>(() => {
@@ -72,30 +68,25 @@ const sliderCols = computed<ColType[]>(() => {
 });
 
 function handleSliderChange(value: [number, number] | [number]) {
-  emit("update:range", value);
+  emit("update:range", value.length === 2 ? value : [value[0], value[0]]);
 }
 
-function extractPriceFacets(url: string, queryKey: string): { from: number | null; to: number | null }[] {
-  if (!url && !queryKey) {
-    return [];
-  }
-  // const result: { from: number | null; to: number | null }[] = [];
+function parsePriceRange(str: string) {
+  const match = RegExp(/"price":\[(\d+)\s+TO\s+(\d+)]/).exec(str)
 
-  // const facetString = extractFacetBlock(url, queryKey);
+  if (!match) return null
 
-  // console.log(facetString);
-
-  return [{ from: 10, to: 100 }];
+  const [, from, to] = match
+  return [parseInt(from, 10), parseInt(to, 10)]
 }
 
-/*function extractFacetBlock(input: string, queryKey: string): string | null {
-  const decoded = decodeURIComponent(input);
+function getMinFromFacet(_facet?: FacetValueItemType) {
+  return typeof _facet?.from === 'number' ? _facet.from : _facet?.to
+}
 
-  const pattern = new RegExp(`"${queryKey}":(\\[[^\\]]+?(?:\\)\\]|\\))?)`, 'i');
-  const match = decoded.match(pattern);
-
-  return match ? match[1] : null;
-}*/
+function getMaxFromFacet(_facet?: FacetValueItemType) {
+  return typeof _facet?.to === 'number' ? _facet.to : _facet?.from
+}
 </script>
 
 <style scoped lang="scss"></style>
