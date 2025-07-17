@@ -3,9 +3,11 @@
     <Error404 v-if="!loading && !newsArticle" />
 
     <VcContainer v-else>
-      <router-link :to="{ name: ROUTES.ARTICLES.NAME }" class="news-article__back-link">
-        {{ $t("news.links.to-list") }}
-      </router-link>
+      <div class="news-article__back-link">
+        <router-link :to="{ name: ROUTES.ARTICLES.NAME }">
+          {{ $t("news.links.to-list") }}
+        </router-link>
+      </div>
 
       <VcWidgetSkeleton v-if="loading" head size="lg" />
 
@@ -78,7 +80,11 @@ watchEffect(fetchNewsArticle);
 <style lang="scss">
 .news-article {
   &__back-link {
-    @apply text-[--link-color] hover:text-[--link-hover-color];
+    @apply mb-2.5 text-[--link-color] hover:text-[--link-hover-color];
+
+    @media (min-width: theme("screens.md")) {
+      @apply mb-4;
+    }
   }
 }
 </style>
