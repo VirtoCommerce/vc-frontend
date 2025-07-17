@@ -12,6 +12,7 @@
         :min="facetMin"
         :max="facetMax"
         :cols="sliderCols"
+        show-tooltip-on-col-hover
         @change="handleSliderChange"
       /></div
   ></VcWidget>
@@ -81,7 +82,7 @@ function parsePriceRange(str: string) {
 }
 
 function getMinFromFacet(_facet?: FacetValueItemType) {
-  return typeof _facet?.from === 'number' ? _facet.from : _facet?.to
+  return _facet?.from || 0
 }
 
 function getMaxFromFacet(_facet?: FacetValueItemType) {

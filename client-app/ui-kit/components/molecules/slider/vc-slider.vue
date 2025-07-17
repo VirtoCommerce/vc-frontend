@@ -109,7 +109,7 @@ const start = ref<number>(0);
 const end = ref<number>();
 
 watch([value, min, max], ([valueProp, minProp, maxProp]) => {
-  start.value = Math.min(minProp, valueProp[0]);
+  start.value = Math.max(minProp, valueProp[0]);
   end.value = typeof valueProp[1] === "number" ? Math.min(maxProp, valueProp[1]) : undefined;
 });
 
