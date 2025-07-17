@@ -395,7 +395,7 @@
         "categories_label": "Categories",
         "products_label": "Products",
         "pages_label": "Pages",
-        "suggestions_label": "Suggestions",
+        "suggestions_and_history_label": "Suggestions & history",
         "no_results": "Your {keyword} query did not return any results",
         "enter_keyword_placeholder": "Search the entire store",
         "enter_keyword_placeholder_category": "Search within {category}",
@@ -413,7 +413,9 @@
             "wrong_format": "Unsupported file format",
             "no_file": "No file uploaded"
           }
-        }
+        },
+        "suggestions_label": "Suggestion",
+        "search_label": "Search"
       },
       "language_selector": {
         "label": "Language:"
@@ -674,7 +676,7 @@
         }
       },
       "discount_badge": {
-        "off": "- {discount}"
+        "off": "-{discount}"
       },
       "purchased_before_badge": {
         "title": "@:pages.catalog.purchased_before_filter_card.title"

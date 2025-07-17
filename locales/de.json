@@ -413,7 +413,9 @@
         "enter_keyword_placeholder": "Durchsuche den gesamten Shop",
         "enter_keyword_placeholder_category": "Suche in {category}",
         "scope_loading_label": "Suchkontext wird geladen",
-        "scope_remove_label": "Entfernen: {label}"
+        "scope_remove_label": "Entfernen: {label}",
+        "suggestions_and_history_label": "Vorschläge & Verlauf",
+        "search_label": "Suche"
       },
       "language_selector": {
         "label": "Sprache:"
@@ -674,7 +676,7 @@
         }
       },
       "discount_badge": {
-        "off": "Rabatt"
+        "off": "-{discount}"
       },
       "branches_modal": {
         "title": "Filiale auswählen",

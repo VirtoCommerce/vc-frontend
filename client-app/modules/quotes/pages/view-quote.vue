@@ -120,7 +120,7 @@ async function approve() {
   try {
     const result = await approveItem(quote.value!.id);
     await router.push({ name: "OrderDetails", params: { orderId: result.orderId } });
-  } catch (e) {
+  } catch {
     notification.error({
       text: t("quote_details.error.approve"),
     });
@@ -131,7 +131,7 @@ async function decline() {
   try {
     await declineItem(quote.value!.id);
     await fetchQuote({ id: props.quoteId });
-  } catch (e) {
+  } catch {
     notification.error({
       text: t("quote_details.error.decline"),
     });

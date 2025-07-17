@@ -1,3 +1,4 @@
+import { createGlobalState } from "@vueuse/core";
 import clone from "lodash/clone";
 import mergeWith from "lodash/mergeWith";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
@@ -22,109 +23,108 @@ import type { ExtendedMenuLinkType, MenuType, MarkedMenuLinkType } from "../type
 import type { DeepPartial } from "utility-types";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 
-const { currentCurrency } = useCurrency();
+export function _useNavigations() {
+  const { currentCurrency } = useCurrency();
 
-const loading = ref(false);
-const matchingRouteName = ref("");
-const menuSchema = shallowRef<MenuType | null>(null);
-const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
-const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
-const pinnedLinks = shallowRef<ExtendedMenuLinkType[]>([]);
+  const matchingRouteName = ref("");
+  const menuSchema = shallowRef<MenuType | null>(menuData);
+  const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
+  const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
+  const pinnedLinks = shallowRef<ExtendedMenuLinkType[]>([]);
 
-function markLinkTree(
-  link?: ExtendedMenuLinkType,
-  currentRoute?: RouteLocationNormalizedLoaded,
-  type?: "pinned" | "category",
-): MarkedMenuLinkType | undefined {
-  if (!link) {
-    return;
-  }
-
-  function markRecursively(_link?: ExtendedMenuLinkType): MarkedMenuLinkType {
-    const children = _link?.children?.map(markRecursively) ?? [];
-
-    const isSelfActive = isActiveRoute(_link?.route ?? "", currentRoute as RouteLocationNormalizedLoaded);
-    const isChildActive = children.some((c) => c.isActive);
-
-    return {
-      ..._link,
-      children,
-      isActive: isSelfActive || isChildActive,
-      type,
-    };
-  }
-
-  return markRecursively(link);
-}
-
-const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-  (menuSchema.value?.header?.desktop?.main || [])
-    .map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item))
-    .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
-);
-
-const desktopAccountMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-  const schema = menuSchema.value?.header?.desktop?.account
-    ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.account))
-    : undefined;
-  if (Array.isArray(schema?.children)) {
-    schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
-  }
-  return schema;
-});
-
-const desktopCorporateMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-  return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.corporate) : undefined;
-});
-
-const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-  (menuSchema.value?.header?.mobile?.main || []).map((item: ExtendedMenuLinkType) => {
-    const menuLink: ExtendedMenuLinkType = getTranslatedMenuLink(item);
-
-    if (menuLink.id === "catalog") {
-      menuLink.children = catalogMenuItems.value;
+  function markLinkTree(
+    link?: ExtendedMenuLinkType,
+    currentRoute?: RouteLocationNormalizedLoaded,
+    type?: "pinned" | "category",
+  ): MarkedMenuLinkType | undefined {
+    if (!link) {
+      return;
     }
 
-    return menuLink;
-  }),
-);
+    function markRecursively(_link?: ExtendedMenuLinkType): MarkedMenuLinkType {
+      const children = _link?.children?.map(markRecursively) ?? [];
 
-const mobileCatalogMenuItem = computed<ExtendedMenuLinkType | undefined>(
-  () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || undefined,
-);
+      const isSelfActive = isActiveRoute(_link?.route ?? "", currentRoute as RouteLocationNormalizedLoaded);
+      const isChildActive = children.some((c) => c.isActive);
 
-const mobileAccountMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
-  if (!menuSchema.value) {
-    return undefined;
+      return {
+        ..._link,
+        children,
+        isActive: isSelfActive || isChildActive,
+        type,
+      };
+    }
+
+    return markRecursively(link);
   }
 
-  return getTranslatedMenuLink(menuSchema.value?.header?.mobile?.account);
-});
+  const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
+    (menuSchema.value?.header?.desktop?.main || [])
+      .map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item))
+      .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
+  );
 
-const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
-  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : undefined,
-);
+  const desktopAccountMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+    const schema = menuSchema.value?.header?.desktop?.account
+      ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.account))
+      : undefined;
+    if (Array.isArray(schema?.children)) {
+      schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+    }
+    return schema;
+  });
 
-const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
-  const matchedRouteNames = globals.router.currentRoute.value.matched
-    .map((item) => item.name)
-    .concat(matchingRouteName.value)
-    .filter(Boolean);
+  const desktopCorporateMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+    return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.corporate) : undefined;
+  });
 
-  let preSelectedLink: ExtendedMenuLinkType | undefined;
+  const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
+    (menuSchema.value?.header?.mobile?.main || []).map((item: ExtendedMenuLinkType) => {
+      const menuLink: ExtendedMenuLinkType = getTranslatedMenuLink(item);
 
-  if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
-    preSelectedLink = mobileCatalogMenuItem.value;
-  } else if (matchedRouteNames.includes("Account") && !matchedRouteNames.includes("Dashboard")) {
-    preSelectedLink = mobileAccountMenuItem.value;
-  } else if (matchedRouteNames.includes("Company")) {
-    preSelectedLink = mobileCorporateMenuItem.value;
-  }
+      if (menuLink.id === "catalog") {
+        menuLink.children = catalogMenuItems.value;
+      }
 
-  return preSelectedLink;
-});
+      return menuLink;
+    }),
+  );
 
-export function useNavigations() {
+  const mobileCatalogMenuItem = computed<ExtendedMenuLinkType | undefined>(
+    () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || undefined,
+  );
+
+  const mobileAccountMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
+    if (!menuSchema.value) {
+      return undefined;
+    }
+
+    return getTranslatedMenuLink(menuSchema.value?.header?.mobile?.account);
+  });
+
+  const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
+    menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : undefined,
+  );
+
+  const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
+    const matchedRouteNames = globals.router.currentRoute.value.matched
+      .map((item) => item.name)
+      .concat(matchingRouteName.value)
+      .filter(Boolean);
+
+    let preSelectedLink: ExtendedMenuLinkType | undefined;
+
+    if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
+      preSelectedLink = mobileCatalogMenuItem.value;
+    } else if (matchedRouteNames.includes("Account") && !matchedRouteNames.includes("Dashboard")) {
+      preSelectedLink = mobileAccountMenuItem.value;
+    } else if (matchedRouteNames.includes("Company")) {
+      preSelectedLink = mobileCorporateMenuItem.value;
+    }
+
+    return preSelectedLink;
+  });
+
   const { themeContext } = useThemeContext();
   const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
@@ -185,13 +185,6 @@ export function useNavigations() {
     }
   }
 
-  async function fetchMenus() {
-    loading.value = true;
-    menuSchema.value = menuData as MenuType;
-    await Promise.all([fetchCatalogMenu(), fetchFooterLinks(), fetchPinnedLinks()]);
-    loading.value = false;
-  }
-
   function setMatchingRouteName(value: string) {
     matchingRouteName.value = value;
   }
@@ -206,7 +199,6 @@ export function useNavigations() {
   }
 
   return {
-    fetchMenus,
     setMatchingRouteName,
     desktopMainMenuItems,
     desktopAccountMenuItems,
@@ -217,11 +209,19 @@ export function useNavigations() {
     mobileCorporateMenuItem,
     mobilePreSelectedMenuItem,
     matchingRouteName: readonly(matchingRouteName),
+
+    fetchCatalogMenu,
     catalogMenuItems: computed(() => catalogMenuItems.value),
+
+    fetchFooterLinks,
     footerLinks: computed(() => footerLinks.value),
+
+    fetchPinnedLinks,
     pinnedLinks: computed(() => pinnedLinks.value),
     markLinkTree,
 
     mergeMenuSchema,
   };
 }
+
+export const useNavigations = createGlobalState(_useNavigations);

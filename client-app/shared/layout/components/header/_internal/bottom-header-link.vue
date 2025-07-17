@@ -1,6 +1,7 @@
 <template>
   <router-link v-slot="{ isActive, href, navigate }" :to="link.route ?? ''" custom>
-    <a
+    <component
+      :is="link.route ? 'a' : 'button'"
       v-bind="$attrs"
       :href="href"
       :class="[
@@ -9,7 +10,7 @@
           : 'text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]',
       ]"
       class="flex flex-col items-center gap-0.5 px-3 text-xs tracking-wide"
-      @click="navigate"
+      @click="link.route ? navigate : undefined"
     >
       <span class="relative">
         <slot name="icon">
@@ -17,7 +18,15 @@
         </slot>
 
         <transition mode="out-in" name="scale">
-          <VcBadge v-if="count" class="absolute -right-3 -top-2 transition-transform" variant="outline" rounded>
+          <VcBadge
+            v-if="count"
+            class="absolute -right-3 -top-2 transition-transform"
+            variant="outline"
+            rounded
+            nowrap
+            size="sm"
+            max-width="none"
+          >
             {{ $n(count, { style: "decimal", notation: "compact" }) }}
           </VcBadge>
         </transition>
@@ -26,7 +35,7 @@
       <span>
         <slot />
       </span>
-    </a>
+    </component>
   </router-link>
 </template>
 

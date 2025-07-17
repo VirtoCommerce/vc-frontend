@@ -84,7 +84,7 @@ function showChildren(item?: MarkedMenuLinkType) {
     clearTimeout(switchTimeout);
   }
 
-  if (!item || activeItem.value?.id === item.id) {
+  if (!item || item.id && activeItem.value?.id === item.id) {
     return;
   }
 

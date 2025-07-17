@@ -413,7 +413,9 @@
         "enter_keyword_placeholder": "ストア全体を検索",
         "enter_keyword_placeholder_category": "{category} 内を検索",
         "scope_loading_label": "検索コンテキストを読み込み中",
-        "scope_remove_label": "削除: {label}"
+        "scope_remove_label": "削除: {label}",
+        "suggestions_and_history_label": "候補と履歴",
+        "search_label": "検索"
       },
       "language_selector": {
         "label": "言語:"
@@ -674,7 +676,7 @@
         }
       },
       "discount_badge": {
-        "off": "OFF"
+        "off": "-{discount}"
       },
       "branches_modal": {
         "title": "店舗を選択",

@@ -4,7 +4,6 @@
     "tsconfig.json": "tsconfig.*.json",
     "vite.config.*": "vitest.config.*",
     "package.json": ".npmrc, .yarnrc*, yarn*",
-    ".eslintrc.*": ".eslint*",
     ".prettierrc.*": ".prettier*",
     ".dependency-graph.cjs": ".dependency-cruiser.cjs"
   },

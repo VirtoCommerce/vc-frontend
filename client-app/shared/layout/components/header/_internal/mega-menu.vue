@@ -61,10 +61,6 @@ import { categoryToExtendedMenuLink } from "@/core/utilities";
 import { useCategory } from "@/shared/catalog";
 import Subcategories from "./subcategories.vue";
 
-interface IProps {}
-
-defineProps<IProps>();
-
 const MENU_PADDING_RIGHT = 20;
 
 const calculating = ref(false);
@@ -73,7 +69,7 @@ const menuRef = useTemplateRef<HTMLElement>("megaMenuElement");
 const visibleItemsCount = ref(1);
 
 const { width: menuRight } = useElementBounding(menuRef);
-const { catalogMenuItems, pinnedLinks: _pinnedLinks, markLinkTree } = useNavigations();
+const { catalogMenuItems, fetchPinnedLinks, pinnedLinks: _pinnedLinks, markLinkTree } = useNavigations();
 const { category: _category, fetchCategory, loading } = useCategory();
 const currentRoute = useRoute();
 
@@ -82,7 +78,6 @@ const pinnedLinks = computed(() => markLinkTree({ children: _pinnedLinks.value }
 const categoryLinks = computed(() => markLinkTree(_categoryLinks.value, currentRoute, "category"));
 
 const category = computed(() => ({
-  ..._category.value,
   children: pinnedLinks.value?.children?.concat(categoryLinks.value?.children ?? []),
 }));
 
@@ -143,11 +138,12 @@ watchDebounced(
   { debounce: 100, maxWait: 1000, immediate: true },
 );
 
-onMounted(async () => {
-  await fetchCategory({
+onMounted(() => {
+  void fetchCategory({
     maxLevel: 4,
     onlyActive: true,
   });
+  void fetchPinnedLinks();
 });
 </script>
 
