@@ -228,9 +228,7 @@ const showReorderButton = computed<boolean>(() => !!order.value && order.value.s
 const shipmentMethodName = computed<string>(() =>
   t(`common.methods.delivery_by_id.${shipment.value?.shipmentMethodCode}_${shipment.value?.shipmentMethodOption}`),
 );
-const paymentMethodName = computed<string>(() =>
-  t(`common.methods.payment_by_code.${payment.value?.paymentMethod?.code}`),
-);
+const paymentMethodName = computed(() => payment.value?.paymentMethod?.name);
 
 const shipToTitle = computed(() => {
   return shipmentType.value === "delivery"

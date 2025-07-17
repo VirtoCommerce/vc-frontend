@@ -18,7 +18,7 @@
 <script setup lang="ts">
 interface IProps {
   label: string;
-  value?: string | number | boolean | null | undefined;
+  value?: string | number | boolean | null;
   disabled?: boolean;
 }
 

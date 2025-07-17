@@ -283,12 +283,6 @@
       "store-manager": "商店经理"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "银行卡（Authorize.Net）",
-        "DefaultManualPaymentMethod": "手动",
-        "SkyflowPaymentMethod": "银行卡（Skyflow）",
-        "CyberSourcePaymentMethod": "银行卡（CyberSource）"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "固定费率（陆运）",
         "FixedRate_Air": "固定费率（空运）",
