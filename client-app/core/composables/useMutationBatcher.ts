@@ -89,7 +89,7 @@ export function useMutationBatcher<TData, TVariables extends object>(
 
   async function add(
     args: TVariables,
-    overrideOptions?: MutateOverrideOptions<TData> | undefined,
+    overrideOptions?: MutateOverrideOptions<TData>,
     fireAddHandler = true,
   ): Promise<FetchResult<TData> | null> {
     loading.value = true;
