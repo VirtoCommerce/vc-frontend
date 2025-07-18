@@ -1,5 +1,5 @@
 <template>
-  <div :data-component-id="componentId" :class="wrapperClasses">
+  <div class="slider-block" :data-component-id="componentId" :class="wrapperClasses">
     <div class="relative mx-auto w-full max-w-screen-xl px-5 md:px-12">
       <div v-if="title" class="mb-6 text-center text-2xl font-bold lg:text-5xl">
         {{ title }}
@@ -7,24 +7,21 @@
       <div v-if="subtitle" class="mb-7 text-center text-base">{{ subtitle }}</div>
       <div class="relative">
         <Swiper
-          :slides-per-view="1"
-          :space-between="1"
-          class="w-full"
-          :modules="modules"
-          :navigation="navigationOptions"
-        >
+                :slides-per-view="1"
+                :space-between="1"
+                class="w-full"
+                :modules="modules"
+                :navigation="navigationOptions">
           <SwiperSlide v-for="(item, index) in slides" :key="index" class="text-center">
             <component
-              :is="item.url ? getLinkTag(item.url) : 'div'"
-              class="vc-slider__image-wrap"
-              v-bind="getLinkAttr(item)"
-            >
+                       :is="item.url ? getLinkTag(item.url) : 'div'"
+                       class="vc-slider__image-wrap"
+                       v-bind="getLinkAttr(item)">
               <VcImage
-                :src="item.image"
-                :aria-label="item.title ?? $t('common.labels.slider_image')"
-                :lazy="index > 0"
-                class="vc-slider__image"
-              />
+                       :src="item.image"
+                       :aria-label="item.title ?? $t('common.labels.slider_image')"
+                       :lazy="index > 0"
+                       class="vc-slider__image" />
             </component>
             <div v-if="item.title" class="my-3 text-2xl font-bold uppercase">
               {{ item.title }}
@@ -145,8 +142,7 @@ function getLinkAttr(item: SlideType) {
   --navigation-offset: 0px;
 
   &__btn {
-    @apply absolute top-1/2 z-10 w-[var(--navigation-size)] h-[var(--navigation-size)]
-    flex items-center justify-center text-primary cursor-pointer;
+    @apply absolute top-1/2 z-10 w-[var(--navigation-size)] h-[var(--navigation-size)] flex items-center justify-center text-primary cursor-pointer;
 
     margin-top: calc(0px - (var(--navigation-size) / 2) - var(--navigation-offset));
 
@@ -173,6 +169,12 @@ function getLinkAttr(item: SlideType) {
 
   &__image {
     @apply w-full h-full object-cover object-left;
+  }
+}
+
+.slider-block {
+  &.bg-neutral-800 {
+    color: white;
   }
 }
 </style>

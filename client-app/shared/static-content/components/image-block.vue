@@ -1,16 +1,19 @@
 <template>
-  <div class="pb-16 pt-6 lg:py-24">
+  <div class="image-block pb-16 pt-6 lg:py-24" :class="background">
     <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
-      <img :src="model.image" :alt="model.alttext" />
+      <img v-if="image" :src="image" :alt="alttext" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  model: {
-    image: string;
-    alttext: string;
-  };
-}>();
+
+export interface IProps {
+  image: string;
+  alttext: string;
+  background?: string;
+}
+
+defineProps<IProps>();
+
 </script>
