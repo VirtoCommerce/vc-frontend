@@ -5,9 +5,9 @@
     <VcHeader />
 
     <!-- Main Content -->
-    <div id="main-content" class="main-layout__content">
+    <main id="main-content" class="main-layout__content">
       <slot />
-    </div>
+    </main>
 
     <VcFooter />
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <nav ref="megaMenuElement" class="mega-menu" role="navigation">
+  <nav ref="megaMenuElement" class="mega-menu">
     <VcPopover
       arrow-enabled
       placement="bottom-start"

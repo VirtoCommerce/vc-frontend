@@ -1,5 +1,5 @@
 <template>
-  <div ref="menuContainer" class="w-full columns-4 px-10 pt-3 xl:columns-5">
+  <nav ref="menuContainer" class="w-full columns-4 px-10 pt-3 xl:columns-5">
     <CatalogMenuItem
       v-for="(item, index) in items"
       :key="index"
@@ -11,7 +11,7 @@
       @keydown.esc="$emit('close')"
       @focusout="handleFocusOut"
     />
-  </div>
+  </nav>
 </template>
 
 <script setup lang="ts">
