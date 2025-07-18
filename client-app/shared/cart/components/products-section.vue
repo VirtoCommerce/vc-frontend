@@ -24,6 +24,7 @@
             @change:item-quantity="$emit('change:itemQuantity', $event)"
             @select:items="$emit('select:items', $event)"
             @remove:items="$emit('remove:items', $event)"
+            @save-for-later="$emit('saveForLater', $event)"
             @link-click="$emit('linkClick', $event)"
           />
         </div>
@@ -40,6 +41,7 @@
         @change:item-quantity="$emit('change:itemQuantity', $event)"
         @select:items="$emit('select:items', $event)"
         @remove:items="$emit('remove:items', $event)"
+        @save-for-later="$emit('saveForLater', $event)"
         @link-click="$emit('linkClick', $event)"
       />
     </template>
@@ -71,6 +73,7 @@ interface IEmits {
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "clear:cart"): void;
   (event: "linkClick", value: LineItemType | undefined): void;
+  (event: "saveForLater", value: string[]): void;
 }
 
 interface IProps {

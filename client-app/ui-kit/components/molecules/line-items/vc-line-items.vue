@@ -106,6 +106,18 @@
           </VcButton>
 
           <VcButton
+            v-if="saveableForLater"
+            class="vc-line-items__button vc-line-items__button--desktop"
+            color="secondary"
+            variant="outline"
+            size="xs"
+            :disabled="!selectedItemIds.length"
+            @click="saveForLater"
+          >
+            {{ $t("ui_kit.buttons.save_for_later") }}
+          </VcButton>
+
+          <VcButton
             class="vc-line-items__button vc-line-items__button--mobile"
             color="secondary"
             size="xs"
@@ -134,6 +146,7 @@ interface IEmits {
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "linkClick", value: PreparedLineItemType): void;
+  (event: "saveForLater", value: string[]): void;
 }
 
 interface IProps {
@@ -150,6 +163,7 @@ interface IProps {
   withSubtotal?: boolean;
   withHeader?: boolean;
   browserTarget?: BrowserTargetType;
+  saveableForLater?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -206,6 +220,10 @@ function removeSelectedItems() {
 
 function removeAllItems() {
   emit("remove:items", itemIds.value);
+}
+
+function saveForLater() {
+  emit("saveForLater", selectedItemIds.value);
 }
 
 watchEffect(() => {

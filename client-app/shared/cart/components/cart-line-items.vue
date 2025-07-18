@@ -12,8 +12,10 @@
     with-subtotal
     removable
     :selectable="selectable"
+    saveable-for-later
     @select:items="$emit('select:items', $event)"
     @remove:items="$emit('remove:items', $event)"
+    @save-for-later:items="$emit('saveForLater', $event)"
     @link-click="handleLinkClick($event)"
   >
     <template #titles>
@@ -99,6 +101,7 @@ interface IEmits {
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "linkClick", value: LineItemType | undefined): void;
+  (event: "saveForLater", value: string[]): void;
 }
 
 const emit = defineEmits<IEmits>();
