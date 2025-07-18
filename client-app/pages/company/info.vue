@@ -363,7 +363,7 @@ const {
   fetchOptions: fetchFileOptions,
   options: fileOptions,
   hasFailedFiles,
-} = useFiles(DEFAULT_COMPANY_FILES_SCOPE, undefined);
+} = useFiles(DEFAULT_COMPANY_FILES_SCOPE);
 const { whiteLabelingLogoUrl, fetchWhiteLabelingSettings, isOrganizationLogoUploaded } = useWhiteLabeling();
 const newLogoUrl = ref(isOrganizationLogoUploaded.value ? whiteLabelingLogoUrl.value : "");
 

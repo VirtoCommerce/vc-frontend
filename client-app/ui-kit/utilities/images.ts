@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-named-as-default
 import DOMPurify from "dompurify";
 import { Logger } from "@/core/utilities";
 

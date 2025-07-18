@@ -283,12 +283,6 @@
       "store-manager": "Gerente da Loja"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Cartão bancário (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Manual",
-        "SkyflowPaymentMethod": "Cartão bancário (Skyflow)",
-        "CyberSourcePaymentMethod": "Cartão bancário (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "Taxa Fixa (Terrestre)",
         "FixedRate_Air": "Taxa Fixa (Aérea)",
