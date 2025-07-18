@@ -29,4 +29,14 @@ fragment quoteLineItemFields on QuoteItemType {
       isInStock
     }
   }
+  configurationItems {
+    id
+    name
+    customText
+    type
+    files {
+      name
+      url
+    }
+  }
 }

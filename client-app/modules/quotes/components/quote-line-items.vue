@@ -44,6 +44,12 @@
           :name="item.id"
           @update:model-value="$emit('update:item', { itemId: item.id, quantity: $event })"
         />
+        <template #after>
+          <ConfigurationItems
+            v-if="item.configurationItems?.length"
+            :configuration-items="item.configurationItems"
+          />
+        </template>
       </VcLineItem>
     </template>
     <template #after-items>
@@ -60,6 +66,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { ConfigurationItems } from "@/shared/common";
 import type { MoneyType, QuoteItemType } from "../api/graphql/types";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
