@@ -1,14 +1,31 @@
 <template>
-  <ProductTitledBlock :title="model.title" icon="collection">
-    <div>content</div>
-    {{ variations }}
+  <ProductTitledBlock :title="model.title || 'Options'" icon="collection" class="options">
+    <template v-for="[key, property] in properties" :key="key">
+      <div class="options__label">{{ property.label }}</div>
+
+      <VcVariantPickerGroup>
+        <VcVariantPicker
+          v-for="option in property.values"
+          :key="option.label"
+          :model-value="isSelected(property.name, option.value) ? String(option.value) : undefined"
+          type="text"
+          :name="property.label"
+          :value="String(option.value)"
+          :is-available="!isInactive(property.name, option.value)"
+          class="options__picker"
+          size="xs"
+          @change="select(property.name, option.value)"
+        />
+      </VcVariantPickerGroup>
+    </template>
   </ProductTitledBlock>
 </template>
 
 <script setup lang="ts">
 import { toRef } from "vue";
-import { ProductTitledBlock } from "@/shared/catalog";
+import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import type { Product } from "@/core/api/graphql/types";
+import ProductTitledBlock from "@/shared/catalog/components/product-titled-block.vue";
 
 interface IProps {
   model: {
@@ -20,4 +37,14 @@ interface IProps {
 
 const props = defineProps<IProps>();
 const variations = toRef(props, "variations");
+
+const { properties, select, isSelected, isInactive } = useProductVariationProperties(variations);
 </script>
+
+<style lang="scss">
+.options {
+  &__label {
+    @apply text-sm font-bold;
+  }
+}
+</style>
