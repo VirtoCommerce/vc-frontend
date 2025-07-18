@@ -40,7 +40,9 @@ async function loadAllJsonFiles(): Promise<PageBuilderSchemaType> {
       const module = await jsonModules[path]();
       const name = path.split("/").pop()?.split(".")[0];
       if (name) {
-        result[jsonModulesName][name] = module.default;
+        if (!name.startsWith("__")) {
+          result[jsonModulesName][name] = module.default;
+        }
       } else {
         Logger.warn(`Could not load ${jsonModulesName} file: ${path}`);
       }
