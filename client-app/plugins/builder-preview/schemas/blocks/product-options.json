@@ -1,0 +1,10 @@
+{
+  "icon": "collection",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string"
+    }
+  ]
+}

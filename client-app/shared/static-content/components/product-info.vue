@@ -28,6 +28,8 @@
               :key="block.id || index"
               :model="block"
               :product="product"
+              :variations="variations"
+              :fetching-variations="fetchingVariations"
             />
           </template>
         </div>
@@ -57,6 +59,8 @@ import PurchasedBeforeBadge from "@/shared/catalog/components/purchased-before-b
 interface IProps {
   product: Product;
   model: IPageContent;
+  variations: Product[];
+  fetchingVariations?: boolean;
 }
 
 defineProps<IProps>();

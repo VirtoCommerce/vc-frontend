@@ -39,7 +39,9 @@
           :is="productInfoSection?.type"
           v-if="productInfoSection && !productInfoSection.hidden"
           :product="product"
+          :variations="variations"
           :model="productInfoSection"
+          :fetching-variations="fetchingVariations"
         />
 
         <component
@@ -123,7 +125,8 @@
 import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
-import _productTemplate from "@/config/product.json";
+import productTemplateDefault from "@/config/product-default.json";
+import productTemplateB2c from "@/config/product_b2c.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -152,6 +155,10 @@ import {
   useRecommendedProducts,
   useConfigurableProduct,
 } from "@/shared/catalog";
+import {
+  PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
+  PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
+} from "@/shared/catalog/constants/product";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import type { IPageTemplate } from "@/shared/static-content";
@@ -234,19 +241,39 @@ const seoUrl = computed(() =>
 );
 const canSetMeta = computed(() => props.allowSetMeta && productComponentAnchorIsVisible.value);
 
-const productTemplate = _productTemplate as IPageTemplate;
+const productTemplate = computed(() => {
+  if (
+    product.value?.properties?.find((property) => property.name === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)?.value ===
+    PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c
+  ) {
+    return productTemplateB2c as IPageTemplate;
+  }
+  return productTemplateDefault as IPageTemplate;
+});
 
-const productInfoSection = productTemplate?.content?.find((item) => item?.type === "product-info");
+const productInfoSection = computed(() =>
+  productTemplate.value?.content?.find((item) => item?.type === "product-info"),
+);
 
-const productDescriptionSection = productTemplate?.content?.find((item) => item?.type === "product-description");
+const productDescriptionSection = computed(() =>
+  productTemplate.value?.content?.find((item) => item?.type === "product-description"),
+);
 
-const productReviewsSection = productTemplate?.content?.find((item) => item?.type === "product-reviews");
+const productReviewsSection = computed(() =>
+  productTemplate.value?.content?.find((item) => item?.type === "product-reviews"),
+);
 
-const productVariationsBlock = productInfoSection?.blocks?.find((block) => block?.type === "product-variations");
+const productVariationsBlock = computed(() =>
+  productInfoSection.value?.blocks?.find((block) => block?.type === "product-variations"),
+);
 
-const relatedProductsSection = productTemplate?.content?.find((item) => item?.type === "related-products");
+const relatedProductsSection = computed(() =>
+  productTemplate.value?.content?.find((item) => item?.type === "related-products"),
+);
 
-const recommendedProductsSection = productTemplate?.content?.find((item) => item?.type === "recommended-products");
+const recommendedProductsSection = computed(() =>
+  productTemplate.value?.content?.find((item) => item?.type === "recommended-products"),
+);
 
 const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(product.value?.breadcrumbs));
 
@@ -327,12 +354,12 @@ watch(
       await fetchProductConfiguration();
     }
 
-    if (product.value?.associations?.totalCount && !relatedProductsSection?.hidden) {
+    if (product.value?.associations?.totalCount && !relatedProductsSection.value?.hidden) {
       await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
     }
 
-    const recommendedProductsBlocks = recommendedProductsSection?.blocks?.filter((block) => !!block.model) ?? [];
-    if (!recommendedProductsSection?.hidden && recommendedProductsSection?.blocks?.length) {
+    const recommendedProductsBlocks = recommendedProductsSection.value?.blocks?.filter((block) => !!block.model) ?? [];
+    if (!recommendedProductsSection.value?.hidden && recommendedProductsSection.value?.blocks?.length) {
       const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
         productId: productId.value,
         model: model as string,
@@ -340,7 +367,11 @@ watch(
       await fetchRecommendedProducts(paramsToFetch);
     }
 
-    if (product.value?.hasVariations && !productVariationsBlock?.hidden) {
+    const showVariations = productVariationsBlock.value && !productVariationsBlock.value?.hidden;
+    const optionsBlock = productInfoSection.value?.blocks?.find((block) => block?.type === "product-options");
+    const showOptions = optionsBlock && !optionsBlock?.hidden;
+
+    if (product.value?.hasVariations && (showVariations || showOptions)) {
       await fetchProducts(variationsSearchParams.value);
     }
   },
