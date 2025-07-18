@@ -7,8 +7,7 @@
       :title="$t('pages.cart.title')"
       image="basket.jpg"
       icon="outline-cart"
-      :breadcrumbs="breadcrumbs"
-    >
+      :breadcrumbs="breadcrumbs">
       <div class="mb-6 text-lg font-bold">
         {{ $t("pages.cart.empty_cart_description") }}
       </div>
@@ -78,15 +77,13 @@
           @remove:items="handleRemoveItems"
           @save-for-later:items="handleSaveForLater"
           @clear:cart="openClearCartModal"
-          @link-click="selectItemEvent"
-        />
+          @link-click="selectItemEvent" />
 
         <GiftsSection
           v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
           :gifts="availableExtendedGifts"
           class="mt-5"
-          @toggle:gift="toggleGift"
-        />
+          @toggle:gift="toggleGift" />
 
         <!-- Sections for single page checkout -->
         <template v-if="!$cfg.checkout_multistep_enabled">
@@ -97,11 +94,14 @@
           <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
         </template>
 
+        <CartForLater
+          :products="productsForLater"
+          class="mt-5" />
+
         <RecentlyBrowsedProducts
           v-if="recentlyBrowsedProducts.length"
           :products="recentlyBrowsedProducts"
-          class="mt-5"
-        />
+          class="mt-5" />
 
         <template #sidebar>
           <OrderSummary :cart="cart" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
@@ -117,15 +117,13 @@
                 class="mt-4"
                 @apply="applyCoupon"
                 @deny="removeCoupon"
-                @update:model-value="clearCouponValidationError"
-              />
+                @update:model-value="clearCouponValidationError" />
 
               <ProceedTo
                 v-if="$cfg.checkout_multistep_enabled"
                 :to="{ name: 'Checkout' }"
                 :disabled="hasOnlyUnselectedLineItems"
-                class="mt-4"
-              >
+                class="mt-4">
                 {{ $t("common.buttons.go_to_checkout") }}
               </ProceedTo>
 
@@ -139,8 +137,7 @@
                     size="sm"
                     variant="solid-light"
                     class="mt-4"
-                    icon
-                  >
+                    icon>
                     {{ $t("common.messages.fill_all_required") }}
                   </VcAlert>
                 </transition>
@@ -153,8 +150,7 @@
                   size="sm"
                   variant="solid-light"
                   class="mt-4"
-                  icon
-                >
+                  icon>
                   {{ $t("common.messages.something_went_wrong") }}
                 </VcAlert>
               </transition>
@@ -167,16 +163,14 @@
             :key="item.id"
             class="mt-5"
             @lock-cart="isCartLoked = true"
-            @unlock-cart="isCartLoked = false"
-          />
+            @unlock-cart="isCartLoked = false" />
         </template>
       </VcLayout>
 
       <transition name="slide-fade-bottom">
         <div
           v-if="!loading && cart?.items?.length"
-          class="fixed bottom-0 left-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.1),0px_0px_25px_-5px_rgba(0,0,0,0.2)] md:hidden print:hidden"
-        >
+          class="fixed bottom-0 left-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.1),0px_0px_25px_-5px_rgba(0,0,0,0.2)] md:hidden print:hidden">
           <div class="text-end text-base font-bold text-neutral-950">
             <span class="me-1">{{ $t("common.labels.total") }}:</span>
             <VcPriceDisplay v-if="cart.total" :value="cart.total" />
@@ -186,8 +180,7 @@
             v-if="$cfg.checkout_multistep_enabled"
             :to="{ name: 'Checkout' }"
             :disabled="hasOnlyUnselectedLineItems"
-            class="!mt-2"
-          >
+            class="!mt-2">
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
@@ -202,6 +195,7 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
+import { getSavedForLater } from "@/core/api/graphql/cart/queries/getSavedForLater";
 import { useBreadcrumbs, useAnalytics, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY, MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -218,6 +212,7 @@ import {
   useCheckout,
 } from "@/shared/checkout";
 import type { LineItemType, Product } from "@/core/api/graphql/types";
+import CartForLater from "@/shared/cart/components/cart-for-later.vue";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
@@ -266,6 +261,7 @@ usePageHead({
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
 const isCartLoked = ref(false);
+const productsForLater = ref<Product[]>([]);
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value);
@@ -327,6 +323,9 @@ void (async () => {
   const isXRecommendModuleEnabled = isEnabledXRecommend(XRECOMMEND_ENABLED_KEY);
   if (isAuthenticated.value && isXRecommendModuleEnabled) {
     recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
+  }
+  if (isAuthenticated.value) {
+    productsForLater.value = (await getSavedForLater())?.items?.map((x) => x.product!) || [];
   }
 })();
 </script>
