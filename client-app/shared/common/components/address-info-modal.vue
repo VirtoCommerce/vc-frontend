@@ -93,21 +93,18 @@ type PickupType = Pick<
   "address" | "contactPhone" | "contactEmail" | "workingHours" | "name" | "description"
 >;
 interface IProps {
-  //  Estimated Time of Arrival
+  //  Estimated Time of Arrival. Implement if needed.
   eta?: string;
   link?: string;
   pickupLocation: PickupType;
 }
 
+// Workaround for VcTable
+const tableItems = [{ label: "" }]
+
 const TRANSLATION_KEYS_ORIGIN = "pages.account.order_details.bopis";
 
 const TABLE_COLUMNS = [{ id: "label" }];
-
-// Minimal implementation: no table head and no separate mobile layout.
-// Extend as needed.
-const tableItems = computed(() => {
-  return [{ label: "eta" }, { label: "questions" }, { label: "address" }];
-});
 
 const address = computed(() => {
   return props.pickupLocation.address;
