@@ -21,7 +21,11 @@
         :disabled="!showTooltipOnColHover || !col.count"
       >
         <template #trigger>
-          <button type="button" class="vc-slider__button" @click="updateOnColumnClick && updateModel(col.value)">
+          <button
+            type="button"
+            class="vc-slider__button"
+            @click="onColumnClick({ value: [col.value[0], col.value[1]] })"
+          >
             <span class="vc-slider__col-line" :style="{ height: col.height }"></span>
           </button>
         </template>
@@ -35,29 +39,48 @@
     <div ref="sliderRef" class="vc-slider__slider"></div>
 
     <div class="vc-slider__inputs">
-      <VcInput v-model="start" size="sm" class="vc-slider__input" min="min" :max="max" :disabled="disabled" />
+      <VcInput
+        v-model="start"
+        size="sm"
+        class="vc-slider__input"
+        :disabled="disabled"
+        type="number"
+        @blur="handleInputBlur"
+      />
 
       <template v-if="!isNaN(end)">
         <b class="vc-slider__dash">&mdash;</b>
 
-        <VcInput v-model="end" size="sm" class="vc-slider__input" min="min" :max="max" :disabled="disabled" />
+        <VcInput
+          v-model="end"
+          size="sm"
+          class="vc-slider__input"
+          :disabled="disabled"
+          type="number"
+          @blur="handleInputBlur"
+        />
       </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { isNaN } from "lodash";
+import isEqual from "lodash/isEqual";
 import { create } from "nouislider";
 import { ref, onMounted, computed, toRefs, watch } from "vue";
 import type { API } from "nouislider";
 import "nouislider/dist/nouislider.css";
-import { isNaN } from "lodash";
 
-type RangeType = [number | null, number | null];
-type ColType = { count: number; value: RangeType };
+export type RangeType = [number, number] | [number];
+type ColRangeType = [null, number] | [number, number] | [number, null];
+export type ColType = { count: number; value: ColRangeType };
+
+interface IEmits {
+  (event: "change", value: RangeType): void;
+}
 
 interface IProps {
-  value: RangeType;
   min?: number;
   max: number;
   step?: number;
@@ -66,7 +89,10 @@ interface IProps {
   updateOnColumnClick?: boolean;
   showTooltipOnColHover?: boolean;
   disabled?: boolean;
+  value: RangeType;
 }
+
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   step: 1,
@@ -77,10 +103,15 @@ const props = withDefaults(defineProps<IProps>(), {
   showTooltipOnColHover: false,
 });
 
-const model = defineModel<IProps["value"]>("value");
-const { min, max, step, cols } = toRefs(props);
-const start = ref(model.value ? model.value[0] : min.value);
-const end = ref(model.value ? (model.value[1] ?? null) : max.value);
+const { value, min, max, step, cols } = toRefs(props);
+
+const start = ref<number>(0);
+const end = ref<number>();
+
+watch([value, min, max], ([valueProp, minProp, maxProp]) => {
+  start.value = Math.max(minProp, valueProp[0]);
+  end.value = typeof valueProp[1] === "number" ? Math.min(maxProp, valueProp[1]) : undefined;
+});
 
 const sliderRef = ref<HTMLElement | null>(null);
 let slider: API | null = null;
@@ -113,7 +144,7 @@ const normalizedCols = computed(() => {
     const _to = to && to < max.value ? to : max.value;
 
     return {
-      value: [_from, _to] as RangeType,
+      value: [_from, _to],
       count: column.count,
       height: `${Math.round((column.count / maxCount) * 100)}%`,
       position: {
@@ -124,29 +155,12 @@ const normalizedCols = computed(() => {
   });
 });
 
-function isRangesEqual(a?: RangeType, b?: RangeType) {
-  if (!a || !b) {
-    return false;
-  }
-
-  return a[0] === b[0] && a[1] === b[1];
-}
-
-function updateModel(range: RangeType, fromSlider = false) {
-  if (isRangesEqual(model.value, range)) {
-    return;
-  }
-
-  model.value = range;
-
-  if (!fromSlider && slider) {
-    slider.set(range);
+function handleInputBlur() {
+  const innerRange = (typeof end.value === "number" ? [start.value, end.value] : [start.value]) satisfies RangeType;
+  if (!isEqual(innerRange, props.value)) {
+    emit("change", innerRange);
   }
 }
-
-watch([start, end], ([v1, v2]) => {
-  updateModel([v1, v2]);
-});
 
 onMounted(() => {
   if (!sliderRef.value) {
@@ -154,18 +168,38 @@ onMounted(() => {
   }
 
   slider = create(sliderRef.value, {
-    start: model.value,
+    start:
+      typeof props.value[1] === "number"
+        ? [Math.min(props.value[0], props.min), Math.min(props.value[1], props.max)]
+        : [Math.min(props.value[0], props.min)],
     connect: true,
     step: step.value,
     range: { min: min.value, max: max.value },
   });
 
-  slider.on("update", (v) => {
+  slider.on("update", (v: (string | number)[]) => {
     start.value = +v[0];
     end.value = +v[1];
-    updateModel([+v[0], +v[1]], true);
+  });
+
+  // Listen for when user stops dragging the slider
+  slider.on("change", (v: (string | number)[]) => {
+    const range: RangeType = [+v[0], +v[1]];
+    start.value = range[0];
+    end.value = range[1];
+    emit("change", range);
   });
 });
+
+function onColumnClick(col: { value: [number, number] }): void {
+  if (!props.updateOnColumnClick) {
+    return;
+  }
+  start.value = col.value[0];
+  end.value = col.value[1];
+
+  emit("change", [start.value, end.value]);
+}
 </script>
 
 <style lang="scss">
@@ -245,7 +279,7 @@ onMounted(() => {
   }
 
   &__inputs {
-    @apply flex items-center gap-4 mt-5;
+    @apply flex items-center gap-2 mt-5;
   }
 
   &__input {

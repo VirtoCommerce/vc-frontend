@@ -25,6 +25,15 @@
       >
         <slot name="prepend" :loading="loading" />
 
+        <SliderFilter
+          v-if="priceFacet"
+          :mode="isHorizontal ? 'dropdown' : 'collapsable'"
+          :facet="priceFacet"
+          query-key="price"
+          show-tooltip-on-col-hover
+          @update:range="applyPriceRange"
+        />
+
         <template v-for="facet in filtersToShow" :key="facet.paramName">
           <FacetFilter
             :mode="isHorizontal ? 'dropdown' : 'collapsable'"
@@ -39,16 +48,14 @@
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  orientation: "vertical",
-});
 import { useBreakpoints, breakpointsTailwind, useElementBounding, watchDebounced } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { watch, shallowRef, ref, nextTick, computed } from "vue";
+import { getFilterExpressionFromFacetRange } from "@/core/utilities";
 import FacetFilter from "./facet-filter.vue";
 import type { FacetItemType } from "@/core/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
+import SliderFilter from "@/shared/catalog/components/product/slider-filter.vue";
 
 interface IEmits {
   (event: "change", value: ProductsFiltersType): void;
@@ -59,6 +66,11 @@ interface IProps {
   filters: ProductsFiltersType;
   orientation?: "vertical" | "horizontal";
 }
+
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  orientation: "vertical",
+});
 
 const facetFiltersContainer = shallowRef<HTMLDivElement | null>(null);
 
@@ -74,11 +86,15 @@ const isHorizontal = props.orientation === "horizontal";
 
 const filterCalculationInProgress = ref(false);
 const filtersCountToShow = ref(1);
-const filtersToShow = computed(() =>
-  props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value
+
+const filtersToShow = computed(() => {
+  return props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value
     ? localFilters.value.facets
-    : localFilters.value.facets.slice(0, filtersCountToShow.value),
-);
+    : localFilters.value.facets.slice(0, filtersCountToShow.value);
+});
+
+const priceFacet = computed(() => localFilters.value.facets.find((el) => el.paramName === "price"));
+
 const { right: containerRight } = useElementBounding(facetFiltersContainer);
 
 watchDebounced(
@@ -139,12 +155,30 @@ watch(
   { immediate: true },
 );
 
-function onFacetFilterChanged(facet: FacetItemType): void {
+function onFacetFilterChanged(facet: Pick<FacetItemType, "paramName" | "values">): void {
   const existingFacet = localFilters.value.facets.find((item) => item.paramName === facet.paramName);
   if (existingFacet) {
     existingFacet.values = facet.values;
     emit("change", localFilters.value);
   }
+}
+
+function applyPriceRange(range: [number, number]) {
+  onFacetFilterChanged({
+    paramName: "price",
+    values: [
+      {
+        label: "price",
+        count: 0,
+        from: range[0],
+        to: range[1],
+        selected: true,
+        includeFrom: true,
+        includeTo: true,
+        value: getFilterExpressionFromFacetRange({ from: range[0], to: range[1], includeFrom: true, includeTo: true })
+      }
+    ]
+  })
 }
 </script>
 

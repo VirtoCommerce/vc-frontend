@@ -13,6 +13,8 @@
     "product_filters_sorting_direction": "asc",
     "product_quantity_control": "button",
 
+    "price_filter_type": "slider",
+
     "vendor_enabled": true,
     "vendor_rating_enabled": true,
     "categories_limit": 499,
