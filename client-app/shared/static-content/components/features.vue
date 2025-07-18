@@ -1,5 +1,5 @@
 <template>
-  <div class="py-10 lg:py-24" :class="model.background">
+  <div class="features-block py-10 lg:py-24" :class="model.background">
     <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
       <VcTypography tag="h2" variant="h1" class="mb-6 text-center">
         {{ model.title }}
@@ -50,5 +50,11 @@ const classObject = computed(() => {
 <style scoped lang="scss">
 .vc-typography--variant--h1 {
   @apply normal-case;
+}
+
+.features-block {
+  &.bg-neutral-800 {
+    color: white;
+  }
 }
 </style>
