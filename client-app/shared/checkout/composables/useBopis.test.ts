@@ -350,10 +350,7 @@ describe("useBopis composable", () => {
       await onResult(newAddress);
       expect(updateShipment).toHaveBeenCalledWith({
         id: shipment.value?.id,
-        deliveryAddress: {
-          ...newAddress,
-          outerId: newAddress.id,
-        },
+        pickupLocationId: "address2",
       });
     });
 
@@ -382,10 +379,7 @@ describe("useBopis composable", () => {
       await onResult2(sampleAddress);
       expect(updateShipment).toHaveBeenCalledWith({
         id: undefined,
-        deliveryAddress: {
-          ...sampleAddress,
-          outerId: sampleAddress.id,
-        },
+        pickupLocationId: "address3",
       });
     });
   });

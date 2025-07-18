@@ -22,7 +22,6 @@ import type {
   InputPaymentType,
   MemberAddressType,
   PaymentMethodType,
-  ShippingMethodType,
 } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
@@ -200,15 +199,6 @@ export function _useCheckout() {
     return addresses.value.some((item) => isEqualAddresses(item, address));
   }
 
-  async function setShippingMethod(method: ShippingMethodType): Promise<void> {
-    await updateShipment({
-      id: shipment.value?.id,
-      price: method.price?.amount,
-      shipmentMethodCode: method.code,
-      shipmentMethodOption: method.optionName,
-    });
-  }
-
   async function setPaymentMethod(method: PaymentMethodType): Promise<void> {
     await updatePayment({
       id: payment.value?.id,
@@ -235,7 +225,12 @@ export function _useCheckout() {
     // Create at initialization to prevent duplication due to lack of id
     if (!allItemsAreDigital.value && !shipment.value?.shipmentMethodCode && !shipment.value?.shipmentMethodOption) {
       if (shippingMethodId && defaultShippingMethod) {
-        await setShippingMethod(defaultShippingMethod);
+        await updateShipment({
+          id: shipment.value?.id,
+          price: defaultShippingMethod.price.amount,
+          shipmentMethodCode: defaultShippingMethod.code,
+          shipmentMethodOption: defaultShippingMethod.optionName,
+        });
       } else if (!shipment.value) {
         await updateShipment({});
       }
@@ -508,7 +503,6 @@ export function _useCheckout() {
     initialize,
     onDeliveryAddressChange,
     onBillingAddressChange,
-    setShippingMethod,
     setPaymentMethod,
     createOrderFromCart,
     loading: readonly(loading),
