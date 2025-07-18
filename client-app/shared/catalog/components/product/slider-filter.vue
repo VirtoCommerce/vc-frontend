@@ -6,13 +6,14 @@
     collapsible
     :title="facet.label"
     collapsed
-    ><div class="mb-2 mt-8 px-3">
+    ><div>
       <VcSlider
         :value="sliderValue"
         :min="facetMin"
         :max="facetMax"
         :cols="sliderCols"
         show-tooltip-on-col-hover
+        cols-height="36px"
         @change="handleSliderChange"
       /></div
   ></VcWidget>

@@ -279,7 +279,7 @@ function onColumnClick(col: { value: [number, number] }): void {
   }
 
   &__inputs {
-    @apply flex items-center gap-4 mt-5;
+    @apply flex items-center gap-2 mt-5;
   }
 
   &__input {
