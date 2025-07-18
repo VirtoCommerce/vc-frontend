@@ -9,7 +9,6 @@
         'vc-widget--no-border': !border,
       },
     ]"
-    :aria-labelledby="ARIAIds.title"
   >
     <component
       :is="collapsible ? 'button' : 'div'"
@@ -52,7 +51,7 @@
 
     <div v-show="!_collapsed" class="vc-widget__slot-container">
       <slot name="default-container">
-        <div class="vc-widget__slot">
+        <div class="vc-widget__slot" :aria-labelledby="ARIAIds.title">
           <slot />
         </div>
       </slot>

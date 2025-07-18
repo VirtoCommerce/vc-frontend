@@ -12,12 +12,13 @@
           <td>
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.eta`) }}:</span>
           </td>
+
           <td>{{ eta }}</td>
         </tr>
 
         <tr
           v-if="pickupLocation.contactEmail || pickupLocation.contactPhone"
-          class="address-info-modal__table-row mb-4"
+          class="address-info-modal__table-row address-info-modal__table-row--spaced"
         >
           <td>
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.questions`) }}</span>
@@ -44,6 +45,7 @@
           <td class="min-w-20">
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.name`) }}:</span>
           </td>
+
           <td>{{ pickupLocation.name }}</td>
         </tr>
 
@@ -52,7 +54,9 @@
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.address`) }}:</span>
           </td>
 
-          <td><AddressLine :address="address"></AddressLine></td>
+          <td>
+            <AddressLine :address="address" />
+          </td>
         </tr>
 
         <tr v-if="pickupLocation.workingHours" class="address-info-modal__table-row">
@@ -70,6 +74,7 @@
         </tr>
       </template>
     </VcTable>
+
     <template #actions="{ close }">
       <GetDirectionsAction v-if="link" size="md" :link="link" />
 
@@ -133,6 +138,10 @@ const contactKey = computed(() => {
 
   &__table-row {
     @apply flex items-start gap-1;
+
+    &--spaced {
+      @apply mb-4;
+    }
   }
 
   &__link {
