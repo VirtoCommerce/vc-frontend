@@ -6,6 +6,8 @@
       "id": "widgetBackground",
       "label": "Background",
       "type": "object",
+      "tab": "Settings",
+      "visibility": "!this.model.background",
       "default": {
         "color": "#ffffff"
       },
