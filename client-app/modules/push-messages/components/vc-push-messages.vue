@@ -6,8 +6,8 @@
     arrow-enabled
     max-height="none"
   >
-    <template #trigger>
-      <slot name="trigger" />
+    <template #default="{ triggerProps }">
+      <slot name="trigger" :trigger-props="triggerProps" />
     </template>
 
     <template #content="{ close: closeMessages }">
@@ -32,8 +32,8 @@
                 placement="bottom-end"
                 width="9rem"
               >
-                <template #trigger>
-                  <VcButton size="sm" icon variant="no-background">
+                <template #trigger="{ triggerProps }">
+                  <VcButton size="sm" icon variant="no-background" v-bind="triggerProps">
                     <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
                   </VcButton>
                 </template>

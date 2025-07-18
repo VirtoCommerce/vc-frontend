@@ -20,7 +20,6 @@
       class="vc-select__container"
       width="100%"
       :disabled="!enabled"
-      disable-trigger-events
       :data-test-id="testIdDropdown"
       @toggle="toggled"
     >

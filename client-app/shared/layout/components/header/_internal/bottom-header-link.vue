@@ -1,5 +1,5 @@
 <template>
-  <router-link v-slot="{ isActive, href, navigate }" :to="link.route ?? ''" custom>
+  <router-link v-slot="{ isActive, href, navigate }" :to="link.route ?? ''" custom :tabindex="link.route ? 0 : undefined">
     <component
       :is="link.route ? 'a' : 'button'"
       v-bind="$attrs"

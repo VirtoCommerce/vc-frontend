@@ -5,14 +5,15 @@
       class="ship-to-selector__popover"
       arrow-enabled
       max-height="none"
-      :offset-options="12"
+      :offset-options="4"
     >
-      <template #trigger="{ opened }">
+      <template #default="{ opened, triggerProps }">
         <button
           class="ship-to-selector__trigger"
           type="button"
           data-test-id="ship-to-selector-button"
           :disabled="loading"
+          v-bind="triggerProps"
         >
           <VcIcon name="location-marker" size="xs" />
 
@@ -188,7 +189,7 @@ onMounted(() => {
   --vc-dialog-width: calc(100vw - 1rem);
   --vc-dialog-max-height: calc(100vh - 2.5rem);
 
-  @apply grow flex w-0 h-full text-[--header-top-text-color];
+  @apply grow flex min-w-0 h-full text-[--header-top-text-color];
 
   @media (min-width: theme("screens.sm")) {
     --vc-dialog-width: 25rem;
@@ -196,11 +197,11 @@ onMounted(() => {
   }
 
   &__popover {
-    @apply flex flex-col justify-center max-w-full h-full;
+    @apply flex items-stretch max-w-full h-full;
   }
 
   &__trigger {
-    @apply flex items-center max-w-full h-full gap-1 relative font-bold;
+    @apply flex items-center p-1 max-w-full h-full gap-1 relative font-bold;
 
     @media (min-width: theme("screens.lg")) {
       @apply font-normal;

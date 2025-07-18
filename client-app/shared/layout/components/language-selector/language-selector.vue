@@ -1,7 +1,12 @@
 <template>
   <VcDropdownMenu placement="bottom-end" class="language-selector">
-    <template #trigger="{ opened }">
-      <button type="button" class="language-selector__button" data-test-id="language-selector-button">
+    <template #trigger="{ opened, triggerProps }">
+      <button
+        type="button"
+        class="language-selector__button"
+        data-test-id="language-selector-button"
+        v-bind="triggerProps"
+      >
         <span class="language-selector__label">
           {{ $t("shared.layout.language_selector.label") }}
         </span>
@@ -80,10 +85,10 @@ function getCountryCode(language: ILanguage): string {
 
 <style lang="scss">
 .language-selector {
-  @apply h-full;
+  @apply flex h-full items-stretch;
 
   &__button {
-    @apply flex h-full items-center gap-3;
+    @apply flex h-full items-center gap-3 p-1;
 
     @media (min-width: theme("screens.lg")) {
       @apply gap-1.5;

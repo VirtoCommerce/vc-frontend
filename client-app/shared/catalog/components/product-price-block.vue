@@ -9,8 +9,11 @@
         <AddToCompareCatalog class="w-1/5 hover:bg-neutral-50" :product="product" :icon-size="20" />
 
         <VcPopover class="w-1/5" y-offset="20" trigger="click" z-index="3" @toggle="handleShareProductPopoverToggle">
-          <template #trigger>
-            <div class="flex cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50">
+          <template #default="{ triggerProps }">
+            <div
+              class="flex cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50"
+              v-bind="triggerProps"
+            >
               <VcIcon
                 name="share"
                 size="sm"

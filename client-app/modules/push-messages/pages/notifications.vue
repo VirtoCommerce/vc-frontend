@@ -10,12 +10,13 @@
       </VcTypography>
 
       <VcDropdownMenu placement="bottom-end" width="max-content">
-        <template #trigger>
+        <template #trigger="{ triggerProps }">
           <VcButton
             :aria-label="$t('common.buttons.toggle_dropdown')"
             icon="dots-vertical"
             variant="outline"
             size="sm"
+            v-bind="triggerProps"
           />
         </template>
 

@@ -79,12 +79,13 @@
     :dividers="false"
     data-facet-filter-dropdown
   >
-    <template #trigger="{ opened }">
+    <template #trigger="{ opened, triggerProps }">
       <VcButton
         :class="['facet-filter-dropdown__trigger', { 'facet-filter-dropdown__trigger--opened': opened }]"
         size="sm"
         :color="hasSelected ? 'accent' : 'secondary'"
         variant="outline"
+        v-bind="triggerProps"
       >
         {{ facet.label }}
 

@@ -12,8 +12,8 @@ const Template: StoryFn = (args) => ({
   setup: () => ({ args }),
   template: `
   <VcDropdownMenu v-bind="args">
-    <template #trigger>
-      <span>Trigger</span>
+    <template #trigger="{ triggerProps }">
+      <span v-bind="triggerProps">Trigger</span>
     </template>
 
     <template #content>
