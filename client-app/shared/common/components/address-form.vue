@@ -76,7 +76,6 @@
             :placeholder="$t('common.placeholders.select_country')"
             class="mb-4 w-full xl:w-7/12"
             required
-            autocomplete
           />
 
           <VcInput
