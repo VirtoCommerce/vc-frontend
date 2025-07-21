@@ -113,6 +113,7 @@
           :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]"
           :product="product"
           :variations="variations"
+          :template-layout="templateLayout"
         />
       </template>
     </VcLayout>
@@ -241,11 +242,13 @@ const seoUrl = computed(() =>
 );
 const canSetMeta = computed(() => props.allowSetMeta && productComponentAnchorIsVisible.value);
 
+const templateLayout = computed(() => {
+  return product.value?.properties?.find((property) => property.name === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
+    ?.value as string | undefined;
+});
+
 const productTemplate = computed(() => {
-  if (
-    product.value?.properties?.find((property) => property.name === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)?.value ===
-    PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c
-  ) {
+  if (templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c) {
     return productTemplateB2c as IPageTemplate;
   }
   return productTemplateDefault as IPageTemplate;

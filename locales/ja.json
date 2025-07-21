@@ -669,7 +669,8 @@
           }
         },
         "options": {
-          "title": "オプション"
+          "title": "オプション",
+          "select_to_proceed": "オプションを選択して続行"
         }
       },
       "discount_badge": {

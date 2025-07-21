@@ -669,7 +669,8 @@
           }
         },
         "options": {
-          "title": "选项"
+          "title": "选项",
+          "select_to_proceed": "选择选项以继续"
         }
       },
       "discount_badge": {

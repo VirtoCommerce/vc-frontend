@@ -669,7 +669,8 @@
           }
         },
         "options": {
-          "title": "Opções"
+          "title": "Opções",
+          "select_to_proceed": "Selecione as opções para continuar"
         }
       },
       "discount_badge": {

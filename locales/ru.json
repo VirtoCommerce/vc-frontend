@@ -669,7 +669,8 @@
           }
         },
         "options": {
-          "title": "Опции"
+          "title": "Опции",
+          "select_to_proceed": "Выберите параметры, чтобы продолжить"
         }
       },
       "discount_badge": {

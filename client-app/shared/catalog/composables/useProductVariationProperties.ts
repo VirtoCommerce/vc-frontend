@@ -1,3 +1,4 @@
+import { createSharedComposable } from "@vueuse/core";
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
@@ -119,7 +120,7 @@ function getDisplayLabel(property: Property, t: ComposerTranslation): string {
 }
 
 /** A composable function to manage the selection logic for product variation properties. */
-export function useProductVariationProperties(variations: Ref<readonly Product[]>) {
+export function _useProductVariationProperties(variations: Ref<readonly Product[]>) {
   const selectedProperties = ref<SelectedPropertiesMapType>(new Map());
 
   const { t } = useI18n();
@@ -209,3 +210,5 @@ export function useProductVariationProperties(variations: Ref<readonly Product[]
     isAvailable,
   };
 }
+
+export const useProductVariationProperties = createSharedComposable(_useProductVariationProperties);
