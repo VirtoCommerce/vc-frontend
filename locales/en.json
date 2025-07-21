@@ -1287,7 +1287,10 @@
       "title": "Cart",
       "empty_cart_description": "Your cart is empty",
       "empty_cart_search_text": "Use the search to find everything you need",
-      "recently_browsed_products": "Recently browsed"
+      "recently_browsed_products": "Recently browsed",
+      "save_for_later": "Save for later",
+      "saved_for_later": "Saved for later",
+      "add_to_cart": "@:common.buttons.add_to_cart"
     },
     "checkout": {
       "meta": {

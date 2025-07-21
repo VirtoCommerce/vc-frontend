@@ -9,8 +9,10 @@
         v-for="product in products"
         :key="product.id"
         :product="product"
+        :saved-for-later-list="savedForLaterList"
         :background="false"
-        @link-click="selectItemEvent(product)" />
+        @link-click="selectItemEvent(product)"
+        @add-to-cart="(lineItemId) => $emit('addToCart', lineItemId)" />
     </VcProductsGrid>
   </VcWidget>
 </template>
@@ -19,16 +21,25 @@
 import { computed, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics } from "@/core/composables/useAnalytics";
-import type { Product } from "@/core/api/graphql/types";
+import type { CartType, Product } from "@/core/api/graphql/types";
 import CartItemForLater from "@/shared/cart/components/cart-item-for-later.vue";
+
+interface IEmits {
+  (event: "linkClick", globalEvent: MouseEvent): void;
+  (event: "addToCart", lineItemId: string): void;
+}
+
+defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
 interface IProps {
+  savedForLaterList: CartType | undefined;
   products: Product[];
 }
 
 const products = toRef(props, "products");
+const savedForLaterList = toRef(props, "savedForLaterList");
 
 const listProperties = computed(() => ({
   item_list_id: "recently_browsed_products",

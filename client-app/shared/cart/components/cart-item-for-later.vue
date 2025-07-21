@@ -11,6 +11,11 @@
       :actual-price="price?.actual"
       :list-price="price?.list"
       single-line />
+
+    <VcProductButton
+v-if="cartLineItem?.id"
+      :button-text="$t('pages.cart.add_to_cart')"
+      @link-click="$emit('addToCart', cartLineItem!.id)" />
   </VcProductCard>
 </template>
 
@@ -18,15 +23,16 @@
 import { computed, ref, toRef, watch } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities";
-import { useShortCart } from "@/shared/cart";
-import type { Product } from "@/core/api/graphql/types";
+import type { CartType, Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
   (event: "linkClick", globalEvent: MouseEvent): void;
+  (event: "addToCart", lineItemId: string): void;
 }
 
 interface IProps {
+  savedForLaterList: CartType | undefined;
   product: Product;
 }
 
@@ -34,14 +40,14 @@ defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
-const { cart, } = useShortCart();
 const { themeContext } = useThemeContext();
 
 const product = toRef(props, "product");
+const savedForLaterList = toRef(props, "savedForLaterList");
 
 const price = computed(() => (product.value.hasVariations ? product.value.minVariationPrice : product.value.price));
 const link = computed<RouteLocationRaw>(() => getProductRoute(product.value.id, product.value.slug));
-const cartLineItem = computed(() => cart.value?.items.find((item) => item.productId === product.value.id));
+const cartLineItem = computed(() => savedForLaterList.value?.items.find((item) => item.product?.id === product.value.id));
 const countInCart = computed<number>(() => cartLineItem.value?.quantity || 0);
 
 const quantity = ref(getInitialQuantity());

@@ -60,6 +60,12 @@
         </div>
       </VcWidget>
 
+      <CartForLater
+        :products="productsForLater"
+        :saved-for-later-list="savedForLaterList"
+        class="mt-5"
+        @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" />
+
       <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" class="mt-5" />
     </template>
 
@@ -75,7 +81,7 @@
           @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
           @select:items="handleSelectItems"
           @remove:items="handleRemoveItems"
-          @save-for-later:items="handleSaveForLater"
+          @save-for-later="handleSaveForLater"
           @clear:cart="openClearCartModal"
           @link-click="selectItemEvent" />
 
@@ -96,6 +102,7 @@
 
         <CartForLater
           :products="productsForLater"
+          :saved-for-later-list="savedForLaterList"
           class="mt-5" />
 
         <RecentlyBrowsedProducts
@@ -192,13 +199,16 @@
 </template>
 
 <script setup lang="ts">
+import { useMutation } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { getSavedForLater } from "@/core/api/graphql/cart/queries/getSavedForLater";
+import {    MoveFromSavedForLaterDocument, MoveToSavedForLaterDocument } from "@/core/api/graphql/types";
 import { useBreadcrumbs, useAnalytics, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY, MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
@@ -211,7 +221,7 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
-import type { LineItemType, Product } from "@/core/api/graphql/types";
+import type {LineItemType, Product, CartType} from "@/core/api/graphql/types";
 import CartForLater from "@/shared/cart/components/cart-for-later.vue";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
@@ -247,6 +257,10 @@ const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, init
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
+const { storeId, userId } = globals;
+const { mutate: moveFromSavedForLater } = useMutation(MoveFromSavedForLaterDocument);
+const { mutate: moveToSavedForLater } = useMutation(MoveToSavedForLaterDocument);
+
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
 });
@@ -261,6 +275,7 @@ usePageHead({
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
 const isCartLoked = ref(false);
+const savedForLaterList = ref<CartType>();
 const productsForLater = ref<Product[]>([]);
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
@@ -289,10 +304,20 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
   }
 }
 
-function handleSaveForLater(itemIds: string[]) {
+async function handleSaveForLater(itemIds: string[]) {
   if (!itemIds?.length) {
     return;
   }
+
+  await moveToSavedForLater({ command: { cartId: cart.value!.id, storeId: storeId, userId: userId, lineItemIds: itemIds } });
+}
+
+async function handleMoveToCart(itemIds: string[]) {
+  if (!itemIds?.length) {
+    return;
+  }
+
+  await moveFromSavedForLater({ command: { cartId: cart.value!.id, storeId: storeId, userId: userId, lineItemIds: itemIds } });
 }
 
 function selectItemEvent(item: LineItemType | undefined): void {
@@ -325,7 +350,8 @@ void (async () => {
     recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
   }
   if (isAuthenticated.value) {
-    productsForLater.value = (await getSavedForLater())?.items?.map((x) => x.product!) || [];
+    savedForLaterList.value = await getSavedForLater();
+    productsForLater.value = savedForLaterList.value?.items?.map((x) => x.product!) || [];
   }
 })();
 </script>

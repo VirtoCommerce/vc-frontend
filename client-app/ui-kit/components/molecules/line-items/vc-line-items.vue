@@ -10,8 +10,7 @@
           :indeterminate="isSomeItemsSelected"
           class="vc-line-items__checkbox"
           test-id="vc-line-items-head-checkbox"
-          @change="($event) => selectAllItems($event as boolean)"
-        />
+          @change="($event) => selectAllItems($event as boolean)" />
 
         <div class="vc-line-items__product">
           {{ $t("ui_kit.labels.product") }}
@@ -24,8 +23,7 @@
             {
               'vc-line-items__properties--wide': !showPrice,
             },
-          ]"
-        >
+          ]">
           {{ $t("ui_kit.labels.properties") }}
         </div>
 
@@ -71,8 +69,7 @@
             :show-placed-price="item.showPlacedPrice"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
-            @link-click="$emit('linkClick', item)"
-          >
+            @link-click="$emit('linkClick', item)">
             <template #before>
               <slot name="before-content" v-bind="{ item }" />
             </template>
@@ -100,8 +97,7 @@
             variant="outline"
             size="xs"
             :disabled="!selectedItemIds.length"
-            @click="removeSelectedItems"
-          >
+            @click="removeSelectedItems">
             {{ $t("ui_kit.buttons.remove_selected") }}
           </VcButton>
 
@@ -112,9 +108,8 @@
             variant="outline"
             size="xs"
             :disabled="!selectedItemIds.length"
-            @click="saveForLater"
-          >
-            {{ $t("ui_kit.buttons.save_for_later") }}
+            @click="saveForLater">
+            {{ $t("pages.cart.save_for_later") }}
           </VcButton>
 
           <VcButton
@@ -122,8 +117,7 @@
             color="secondary"
             size="xs"
             variant="outline"
-            @click="removeAllItems"
-          >
+            @click="removeAllItems">
             {{ $t("ui_kit.buttons.remove_all") }}
           </VcButton>
         </template>
@@ -187,9 +181,9 @@ const hasTotal = computed(() => props.items.some((item) => item.extendedPrice));
 const subtotal = computed<number>(() =>
   hasTotal.value
     ? sumBy(
-        props.items.filter((item) => selectedItemIds.value.includes(item.id) && item.extendedPrice),
-        (item) => item.extendedPrice!.amount,
-      )
+      props.items.filter((item) => selectedItemIds.value.includes(item.id) && item.extendedPrice),
+      (item) => item.extendedPrice!.amount,
+    )
     : 0,
 );
 

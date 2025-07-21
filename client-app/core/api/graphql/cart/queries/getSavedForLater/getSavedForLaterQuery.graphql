@@ -16,6 +16,8 @@ query GetSavedForLater(
     type
     id
     items {
+      id
+      productId
       product {
         id
         price {

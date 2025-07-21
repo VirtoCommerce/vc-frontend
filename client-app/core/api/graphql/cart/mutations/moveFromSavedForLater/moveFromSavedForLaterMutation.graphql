@@ -1,0 +1,46 @@
+mutation MoveFromSavedForLater($command: InputSaveForLaterType!) {
+  moveFromSavedForLater(command: $command) {
+    cart {
+      name
+      type
+      id
+      items {
+        product {
+          id
+          price {
+            startDate
+            endDate
+            pricelistId
+            pricelistName
+            minQuantity
+          }
+          name
+          vendor {
+            name
+          }
+        }
+      }
+    }
+    list {
+      name
+      type
+      id
+      items {
+        product {
+          id
+          price {
+            startDate
+            endDate
+            pricelistId
+            pricelistName
+            minQuantity
+          }
+          name
+          vendor {
+            name
+          }
+        }
+      }
+    }
+  }
+}
