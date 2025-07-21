@@ -1,5 +1,5 @@
 <template>
-  <div
+  <header
     class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
   >
     <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
