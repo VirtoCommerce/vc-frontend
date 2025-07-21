@@ -1,7 +1,17 @@
 <template>
   <ProductTitledBlock :title="model.title || 'Options'" icon="collection" class="options">
     <div class="options__container">
-      <div v-for="[key, property] in properties" :key="key" class="options__item">
+      <div v-if="fetchingVariations" class="options__skeleton">
+        <div class="options__skeleton-item">
+          <div class="options__skeleton-item-label" />
+
+          <div class="options__skeleton-item-picker-group">
+            <div v-for="j in 3" :key="j" class="options__skeleton-item-picker" />
+          </div>
+        </div>
+      </div>
+
+      <div v-for="[key, property] in properties" v-else :key="key" class="options__item">
         <div class="options__label">{{ property.label }}</div>
 
         <VcVariantPickerGroup>
@@ -55,6 +65,34 @@ const { properties, select, isSelected, isInactive } = useProductVariationProper
 
   &__label {
     @apply text-sm font-bold;
+  }
+
+  &__skeleton {
+    @apply flex flex-col gap-5;
+  }
+
+  &__skeleton-item {
+    @apply flex flex-col gap-2;
+  }
+
+  &__skeleton-item-label {
+    @apply h-4.5 w-20 rounded-md bg-neutral-200 animate-pulse;
+  }
+
+  &__skeleton-item-picker-group {
+    @apply flex gap-2;
+  }
+
+  &__skeleton-item-picker {
+    @apply h-9 w-24 rounded-md bg-neutral-100 animate-pulse;
+
+    &:nth-child(2) {
+      @apply w-20;
+    }
+
+    &:nth-child(3) {
+      @apply w-32;
+    }
   }
 }
 </style>
