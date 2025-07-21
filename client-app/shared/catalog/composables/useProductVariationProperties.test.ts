@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ref, nextTick } from "vue";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
-import { useProductVariationProperties } from "./useProductVariationProperties";
+import type { useProductVariationProperties as useProductVariationPropertiesType } from "./useProductVariationProperties";
 import type { PrimitiveValueType } from "./useProductVariationProperties";
 import type { Product, Property } from "@/core/api/graphql/types";
 
@@ -104,6 +104,15 @@ vi.mock("vue-i18n", () => ({
 }));
 
 describe("useProductVariationProperties", () => {
+  let useProductVariationProperties: typeof useProductVariationPropertiesType;
+
+  beforeEach(async () => {
+    vi.resetModules();
+    // Dynamically import a fresh module for each test to reset the shared state
+    const module = await import("./useProductVariationProperties");
+    useProductVariationProperties = module.useProductVariationProperties;
+  });
+
   it("initializes correctly with variation properties", () => {
     const variations = ref(mockData.basic);
     const { properties } = useProductVariationProperties(variations);
