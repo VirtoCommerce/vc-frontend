@@ -55,7 +55,7 @@
       required
       :message="validationErrors.password"
       :error="!!validationErrors.password"
-      autocomplete="password"
+      autocomplete="current-password"
       test-id-input="sign-in-password-input"
     />
 

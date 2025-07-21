@@ -41,7 +41,7 @@
         </VcButton>
       </template>
       <template #append>
-        <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
+        <BarcodeScanner v-if="!searchPhrase" :aria-label="$t('shared.layout.search_bar.barcode_detector.title')" @scanned-code="onBarcodeScanned" />
 
         <VcButton
           :aria-label="$t('shared.layout.search_bar.search_button')"
