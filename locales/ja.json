@@ -667,6 +667,9 @@
             "predefined_prefix": "定義済み",
             "option_label": "オプション{0}: {1}"
           }
+        },
+        "options": {
+          "title": "オプション"
         }
       },
       "discount_badge": {

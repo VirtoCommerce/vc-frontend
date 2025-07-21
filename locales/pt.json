@@ -667,6 +667,9 @@
             "predefined_prefix": "Predefinido",
             "option_label": "Opção {0}: {1}"
           }
+        },
+        "options": {
+          "title": "Opções"
         }
       },
       "discount_badge": {

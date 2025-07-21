@@ -667,6 +667,9 @@
             "predefined_prefix": "Предопределенный",
             "option_label": "Опция {0}: {1}"
           }
+        },
+        "options": {
+          "title": "Опции"
         }
       },
       "discount_badge": {

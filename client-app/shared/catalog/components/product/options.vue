@@ -1,12 +1,16 @@
 <template>
-  <ProductTitledBlock :title="model.title || 'Options'" icon="collection" class="options">
+  <ProductTitledBlock
+    :title="model.title || $t('shared.catalog.product_details.options.title')"
+    icon="collection"
+    class="options"
+  >
     <div class="options__container">
       <div v-if="fetchingVariations" class="options__skeleton">
         <div class="options__skeleton-item">
           <div class="options__skeleton-item-label" />
 
           <div class="options__skeleton-item-picker-group">
-            <div v-for="j in 3" :key="j" class="options__skeleton-item-picker" />
+            <div v-for="i in 3" :key="i" class="options__skeleton-item-picker" />
           </div>
         </div>
       </div>
