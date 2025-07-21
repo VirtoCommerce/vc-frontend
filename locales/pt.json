@@ -300,7 +300,8 @@
           "logged_in_as": "logado como"
         },
         "bottom_header": {
-          "catalog_menu_button": "Catálogo"
+          "catalog_menu_button": "Catálogo",
+          "main_menu": "Menu principal"
         },
         "link_sign_in": "Entrar",
         "link_register_now": "Inscreva-se agora",
@@ -949,7 +950,7 @@
       },
       "sign_in_form_title": "Entrar",
       "main_banner_block": {
-        "message": "Podemos ajudá-lo a <br />tomar decisões<br />informadas e sábias",
+        "message": "Podemos ajudá-lo a{br}tomar decisões{br}informadas e sábias",
         "key_feature_1": "Orientado a resultados",
         "key_feature_2": "Confiável",
         "key_feature_3": "Fiável"

@@ -300,7 +300,8 @@
           "logged_in_as": "ログインユーザー:"
         },
         "bottom_header": {
-          "catalog_menu_button": "カタログ"
+          "catalog_menu_button": "カタログ",
+          "main_menu": "メインメニュー"
         },
         "link_sign_in": "ログイン",
         "link_register_now": "今すぐ登録",
@@ -949,7 +950,7 @@
       },
       "sign_in_form_title": "ログイン",
       "main_banner_block": {
-        "message": "賢明な判断のために<br />私たちが<br />サポートします",
+        "message": "賢明な判断のために{br}私たちが{br}サポートします",
         "key_feature_1": "結果重視",
         "key_feature_2": "信頼性",
         "key_feature_3": "安定性"

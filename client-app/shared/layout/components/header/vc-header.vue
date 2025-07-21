@@ -11,13 +11,13 @@
 
       <MegaMenu v-if="desktopMenuMode === DESKTOP_MENU_MODES.horizontal" class="border-y border-neutral-200" />
     </div>
+
+    <div class="hidden items-start justify-between print:flex">
+      <VcImage :src="logoUrl" :alt="$context.storeName" class="h-12" />
+
+      <Created />
+    </div>
   </template>
-
-  <div class="hidden items-start justify-between print:flex">
-    <VcImage :src="logoUrl" :alt="$context.storeName" class="h-12" />
-
-    <Created />
-  </div>
 </template>
 
 <script setup lang="ts">
