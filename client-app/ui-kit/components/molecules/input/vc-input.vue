@@ -13,10 +13,6 @@
       },
     ]"
     v-bind="attrs"
-    tabindex="-1"
-    role="button"
-    @keyup="handleContainerClick($event)"
-    @click="handleContainerClick($event)"
   >
     <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">
       {{ label }}
@@ -24,7 +20,7 @@
 
     <div class="vc-input__container">
       <div v-if="$slots.prepend" class="vc-input__decorator">
-        <slot name="prepend" />
+        <slot name="prepend" :focus-input="focusInput" />
       </div>
 
       <input
@@ -80,7 +76,7 @@
       </div>
 
       <div v-if="$slots.append" class="vc-input__decorator">
-        <slot name="append" />
+        <slot name="append" :focus-input="focusInput" />
       </div>
     </div>
 
@@ -168,21 +164,22 @@ const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ?
 
 function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
+  focusInput();
 }
 
-function handleContainerClick(event: Event) {
-  if (event instanceof KeyboardEvent && event.key === "Tab") {
-    return;
-  }
-
+function focusInput() {
   if (inputElement.value) {
     inputElement.value.focus();
+    setTimeout(() => {
+      const len = inputElement.value?.value.length ?? 0;
+      inputElement.value?.setSelectionRange(len, len);
+    }, 0);
   }
 }
 
 function clear() {
   model.value = undefined;
-  inputElement.value?.focus();
+  focusInput();
   emit("clear");
 }
 

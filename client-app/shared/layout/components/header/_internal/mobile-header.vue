@@ -1,5 +1,5 @@
 <template>
-  <div ref="headerElement" class="fixed z-40 w-full shadow-md print:hidden">
+  <header ref="headerElement" class="fixed z-40 w-full shadow-md print:hidden">
     <div class="relative z-[2] flex h-[2.125rem] items-center border-b bg-[--header-top-bg-color] px-5 py-1 text-xs">
       <ShipToSelector />
     </div>
@@ -111,7 +111,7 @@
         </button>
       </div>
     </div>
-  </div>
+  </header>
 
   <!-- Height placeholder for mobile header due to fixed position -->
   <div :style="placeholderStyle" class="h-14 print:hidden"></div>
