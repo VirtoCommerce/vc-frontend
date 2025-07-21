@@ -36,7 +36,7 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
     const offsetTop = maxOffsetTop.value;
     const offsetBottom = maxOffsetBottom.value;
 
-    if (sidebarHeight <= clientHeight - offsetTop) {
+    if (sidebarHeight <= clientHeight - offsetTop - offsetBottom || sidebarHeight >= contentHeight) {
       sidebarStyle.value = {};
       scrollOld = scrollTop;
       return;
