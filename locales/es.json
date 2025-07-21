@@ -300,7 +300,8 @@
           "logged_in_as": "conectado como"
         },
         "bottom_header": {
-          "catalog_menu_button": "Catálogo"
+          "catalog_menu_button": "Catálogo",
+          "main_menu": "Menú principal"
         },
         "link_sign_in": "Iniciar sesión",
         "link_register_now": "Regístrate ahora",
@@ -945,7 +946,7 @@
       },
       "sign_in_form_title": "Iniciar sesión",
       "main_banner_block": {
-        "message": "Podemos ayudarte a <br />tomar decisiones<br />informadas y sabias",
+        "message": "Podemos ayudarte a{br}tomar decisiones{br}informadas y sabias",
         "key_feature_1": "Orientado a resultados",
         "key_feature_2": "Confiable",
         "key_feature_3": "Fiable"

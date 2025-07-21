@@ -300,7 +300,8 @@
           "logged_in_as": "вход под именем"
         },
         "bottom_header": {
-          "catalog_menu_button": "Каталог"
+          "catalog_menu_button": "Каталог",
+          "main_menu": "Основное меню"
         },
         "link_sign_in": "Вход",
         "link_register_now": "Регистрация",
@@ -945,7 +946,7 @@
       },
       "sign_in_form_title": "Вход",
       "main_banner_block": {
-        "message": "Мы можем помочь вам <br />принимать обоснованные<br />и мудрые решения",
+        "message": "Мы можем помочь вам{br}принимать обоснованные{br}и мудрые решения",
         "key_feature_1": "Ориентированность на результат",
         "key_feature_2": "Доверенный",
         "key_feature_3": "Надежный"
