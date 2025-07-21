@@ -26,7 +26,7 @@
             type="text"
             :name="property.label"
             :value="String(option.value)"
-            :is-available="!isInactive(property.name, option.value)"
+            :is-available="isAvailable(property.name, option.value)"
             class="options__picker"
             size="xs"
             @change="select(property.name, option.value)"
@@ -54,7 +54,7 @@ interface IProps {
 const props = defineProps<IProps>();
 const variations = toRef(props, "variations");
 
-const { properties, select, isSelected, isInactive } = useProductVariationProperties(variations);
+const { properties, select, isSelected, isAvailable } = useProductVariationProperties(variations);
 </script>
 
 <style lang="scss">

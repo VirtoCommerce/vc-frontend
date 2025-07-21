@@ -170,13 +170,13 @@ export function useProductVariationProperties(variations: Ref<readonly Product[]
     return applicable.length === 1 ? applicable[0] : undefined;
   });
 
-  function isInactive(propertyName: string, value: PrimitiveValueType) {
+  function isAvailable(propertyName: string, value: PrimitiveValueType) {
     const selectionsWithoutCurrent = new Map(selectedProperties.value);
     selectionsWithoutCurrent.delete(propertyName);
 
     const possibleVariations = getApplicableVariations(variations.value, selectionsWithoutCurrent);
 
-    return !possibleVariations.some((variation) => isVariationCompatible(variation, propertyName, value));
+    return possibleVariations.some((variation) => isVariationCompatible(variation, propertyName, value));
   }
 
   function isSelected(propertyName: string, value: PrimitiveValueType) {
@@ -204,6 +204,6 @@ export function useProductVariationProperties(variations: Ref<readonly Product[]
     variationResult,
     select,
     isSelected,
-    isInactive,
+    isAvailable,
   };
 }

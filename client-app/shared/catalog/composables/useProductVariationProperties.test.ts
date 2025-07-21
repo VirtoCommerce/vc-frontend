@@ -132,13 +132,13 @@ describe("useProductVariationProperties", () => {
     expect(isSelected("Color", "Blue")).toBe(false);
   });
 
-  it("determines inactive state of properties correctly", () => {
+  it("determines available state of properties correctly", () => {
     const variations = ref(mockData.basic);
-    const { select, isInactive } = useProductVariationProperties(variations);
+    const { select, isAvailable } = useProductVariationProperties(variations);
 
     select("Color", "Blue");
-    expect(isInactive("Size", "L")).toBe(true);
-    expect(isInactive("Size", "M")).toBe(false);
+    expect(isAvailable("Size", "L")).toBe(false);
+    expect(isAvailable("Size", "M")).toBe(true);
   });
 
   it("auto-selects a property when only one choice remains", () => {
@@ -192,12 +192,12 @@ describe("useProductVariationProperties", () => {
 
   it("handles variations with different property counts", () => {
     const variations = ref(mockData.basic);
-    const { select, isSelected, isInactive } = useProductVariationProperties(variations);
+    const { select, isSelected, isAvailable } = useProductVariationProperties(variations);
 
     select("Material", "Cotton");
     expect(isSelected("Material", "Cotton")).toBe(true);
-    expect(isInactive("Color", "Red")).toBe(true);
-    expect(isInactive("Size", "M")).toBe(true);
+    expect(isAvailable("Color", "Red")).toBe(false);
+    expect(isAvailable("Size", "M")).toBe(false);
   });
 
   it("resets selections when the variations array changes", async () => {
@@ -298,15 +298,15 @@ describe("useProductVariationProperties", () => {
     dateSpy.mockRestore();
   });
 
-  it("does not mark any property as inactive when no selections are made", () => {
+  it("does not mark any property as available when no selections are made", () => {
     const variations = ref(mockData.basic);
-    const { isInactive } = useProductVariationProperties(variations);
+    const { isAvailable } = useProductVariationProperties(variations);
 
-    expect(isInactive("Color", "Red")).toBe(false);
-    expect(isInactive("Color", "Blue")).toBe(false);
-    expect(isInactive("Size", "M")).toBe(false);
-    expect(isInactive("Size", "L")).toBe(false);
-    expect(isInactive("Material", "Cotton")).toBe(false);
+    expect(isAvailable("Color", "Red")).toBe(true);
+    expect(isAvailable("Color", "Blue")).toBe(true);
+    expect(isAvailable("Size", "M")).toBe(true);
+    expect(isAvailable("Size", "L")).toBe(true);
+    expect(isAvailable("Material", "Cotton")).toBe(true);
   });
 
   it("handles properties with null, undefined or no name gracefully", () => {
