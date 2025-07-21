@@ -10,8 +10,3 @@ export type CategoryTreeItemType = ModifyType<
     code?: string;
   }
 >;
-
-export interface IMarkedCategory extends Category {
-  isActive?: boolean;
-  childCategories: IMarkedCategory[];
-}

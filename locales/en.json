@@ -283,12 +283,6 @@
       "store-manager": "Store manager"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Bank card (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Manual",
-        "SkyflowPaymentMethod": "Bank card (Skyflow)",
-        "CyberSourcePaymentMethod": "Bank card (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "Fixed Rate (Ground)",
         "FixedRate_Air": "Fixed Rate (Air)",
@@ -306,7 +300,8 @@
           "logged_in_as": "logged in as"
         },
         "bottom_header": {
-          "catalog_menu_button": "Catalog"
+          "catalog_menu_button": "Catalog",
+          "main_menu": "Main menu"
         },
         "link_sign_in": "Sign in",
         "link_register_now": "Sign up now",
@@ -951,7 +946,7 @@
       },
       "sign_in_form_title": "Sign in",
       "main_banner_block": {
-        "message": "We can help you <br />make informed<br />and wise decisions",
+        "message": "We can help you{br}make informed{br}and wise decisions",
         "key_feature_1": "Result oriented",
         "key_feature_2": "Trustworthy",
         "key_feature_3": "Reliable"

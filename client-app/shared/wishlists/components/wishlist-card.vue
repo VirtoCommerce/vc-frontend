@@ -8,7 +8,7 @@
         {{ list.name }}
       </router-link>
 
-      <VcBadge class="md:-ms-4 md:me-auto" variant="outline-dark" color="info" size="lg" rounded>
+      <VcBadge class="md:-ms-4 md:me-auto" variant="outline-dark" color="info" rounded>
         {{ list.itemsCount }}
       </VcBadge>
     </div>

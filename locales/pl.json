@@ -283,12 +283,6 @@
       "store-manager": "Menedżer sklepu"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Karta bankowa (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Ręczne",
-        "SkyflowPaymentMethod": "Karta bankowa (Skyflow)",
-        "CyberSourcePaymentMethod": "Karta bankowa (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "Stała cena (drogowa)",
         "FixedRate_Air": "Stała cena (lotnicza)",
@@ -306,7 +300,8 @@
           "logged_in_as": "zalogowany jako"
         },
         "bottom_header": {
-          "catalog_menu_button": "Katalog"
+          "catalog_menu_button": "Katalog",
+          "main_menu": "Menu główne"
         },
         "link_sign_in": "Zaloguj się",
         "link_register_now": "Zarejestruj się teraz",
@@ -951,7 +946,7 @@
       },
       "sign_in_form_title": "Zaloguj się",
       "main_banner_block": {
-        "message": "Możemy pomóc Ci <br />podejmować przemyślane<br />i mądre decyzje",
+        "message": "Możemy pomóc Ci{br}podejmować przemyślane{br}i mądre decyzje",
         "key_feature_1": "Skupiony na wynikach",
         "key_feature_2": "Wiarygodny",
         "key_feature_3": "Niezawodny"

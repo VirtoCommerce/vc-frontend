@@ -283,12 +283,6 @@
       "store-manager": "商店经理"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "银行卡（Authorize.Net）",
-        "DefaultManualPaymentMethod": "手动",
-        "SkyflowPaymentMethod": "银行卡（Skyflow）",
-        "CyberSourcePaymentMethod": "银行卡（CyberSource）"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "固定费率（陆运）",
         "FixedRate_Air": "固定费率（空运）",
@@ -306,7 +300,8 @@
           "logged_in_as": "已登录为"
         },
         "bottom_header": {
-          "catalog_menu_button": "目录"
+          "catalog_menu_button": "目录",
+          "main_menu": "主菜单"
         },
         "link_sign_in": "登录",
         "link_register_now": "立即注册",
@@ -951,7 +946,7 @@
       },
       "sign_in_form_title": "登录",
       "main_banner_block": {
-        "message": "我们可以帮助您 <br />做出明智的<br />决策",
+        "message": "我们可以帮助您{br}做出明智的{br}决策",
         "key_feature_1": "结果导向",
         "key_feature_2": "可信赖",
         "key_feature_3": "可靠"
