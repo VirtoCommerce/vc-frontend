@@ -94,7 +94,9 @@ function calculateNewSelections(
 
     const possibleVariationsAfterBase = getApplicableVariations(variations, baseSelections);
 
-    if (possibleVariationsAfterBase.some((v) => isVariationCompatible(v, propertyName, propertyValue))) {
+    if (
+      possibleVariationsAfterBase.some((variation) => isVariationCompatible(variation, propertyName, propertyValue))
+    ) {
       baseSelections.set(propertyName, propertyValue);
     }
   }
@@ -144,8 +146,8 @@ export function useProductVariationProperties(variations: Ref<readonly Product[]
         });
       }
 
-      const property = props.get(name)!;
-      if (!property.values.some((v) => v.value === value)) {
+      const property = props.get(name);
+      if (property && !property.values.some((v) => v.value === value)) {
         property.values.push({ value, label: getDisplayLabel(prop, t) });
       }
     }
