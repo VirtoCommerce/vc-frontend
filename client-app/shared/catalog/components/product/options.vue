@@ -1,23 +1,25 @@
 <template>
   <ProductTitledBlock :title="model.title || 'Options'" icon="collection" class="options">
-    <template v-for="[key, property] in properties" :key="key">
-      <div class="options__label">{{ property.label }}</div>
+    <div class="options__container">
+      <div v-for="[key, property] in properties" :key="key" class="options__item">
+        <div class="options__label">{{ property.label }}</div>
 
-      <VcVariantPickerGroup>
-        <VcVariantPicker
-          v-for="option in property.values"
-          :key="option.label"
-          :model-value="isSelected(property.name, option.value) ? String(option.value) : undefined"
-          type="text"
-          :name="property.label"
-          :value="String(option.value)"
-          :is-available="!isInactive(property.name, option.value)"
-          class="options__picker"
-          size="xs"
-          @change="select(property.name, option.value)"
-        />
-      </VcVariantPickerGroup>
-    </template>
+        <VcVariantPickerGroup>
+          <VcVariantPicker
+            v-for="option in property.values"
+            :key="option.label"
+            :model-value="isSelected(property.name, option.value) ? String(option.value) : undefined"
+            type="text"
+            :name="property.label"
+            :value="String(option.value)"
+            :is-available="!isInactive(property.name, option.value)"
+            class="options__picker"
+            size="xs"
+            @change="select(property.name, option.value)"
+          />
+        </VcVariantPickerGroup>
+      </div>
+    </div>
   </ProductTitledBlock>
 </template>
 
@@ -43,6 +45,14 @@ const { properties, select, isSelected, isInactive } = useProductVariationProper
 
 <style lang="scss">
 .options {
+  &__container {
+    @apply flex flex-col gap-5;
+  }
+
+  &__item {
+    @apply flex flex-col gap-2;
+  }
+
   &__label {
     @apply text-sm font-bold;
   }
