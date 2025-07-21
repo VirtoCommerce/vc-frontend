@@ -1,6 +1,9 @@
 {
   "news": {
-    "title-empty": "No news",
+    "empty-list": {
+      "title": "No news found",
+      "button": "@:common.buttons.continue_shopping"
+    },
     "links": {
       "to-list": "All news"
     }

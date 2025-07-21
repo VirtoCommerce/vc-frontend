@@ -1,6 +1,12 @@
 <template>
   <div class="news-articles">
-    <VcEmptyPage v-if="!loading && !newsArticles?.length" :title="$t('news.title-empty')" />
+    <VcEmptyView v-if="!loading && !newsArticles?.length" :text="$t('news.empty-list.title')" icon="outline-document">
+      <template #button>
+        <VcButton to="/">
+          {{ $t("news.empty-list.button") }}
+        </VcButton>
+      </template>
+    </VcEmptyView>
 
     <VcContainer v-else>
       <div v-if="loading" class="news-articles__grid">

@@ -1,6 +1,9 @@
 {
   "news": {
-    "title-empty": "ニュースはありません",
+    "empty-list": {
+      "title": "ニュースが見つかりませんでした",
+      "button": "@:common.buttons.continue_shopping"
+    },
     "links": {
       "to-list": "すべてのニュース"
     }

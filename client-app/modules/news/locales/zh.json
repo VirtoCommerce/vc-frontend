@@ -1,6 +1,9 @@
 {
   "news": {
-    "title-empty": "暂无消息",
+    "empty-list": {
+      "title": "未找到新闻",
+      "button": "@:common.buttons.continue_shopping"
+    },
     "links": {
       "to-list": "所有新闻"
     }
