@@ -1,5 +1,6 @@
 <template>
   <ProductTitledBlock
+    v-if="!model.hidden"
     :title="model.title || $t('shared.catalog.product_details.options.title')"
     icon="collection"
     class="options"
@@ -46,6 +47,7 @@ import ProductTitledBlock from "@/shared/catalog/components/product-titled-block
 interface IProps {
   model: {
     title: string;
+    hidden?: boolean;
   };
   variations: Product[];
   fetchingVariations?: boolean;
