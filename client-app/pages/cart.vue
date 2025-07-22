@@ -103,7 +103,8 @@
         <CartForLater
           :products="productsForLater"
           :saved-for-later-list="savedForLaterList"
-          class="mt-5" />
+          class="mt-5"
+          @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" />
 
         <RecentlyBrowsedProducts
           v-if="recentlyBrowsedProducts.length"
@@ -204,7 +205,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { getSavedForLater } from "@/core/api/graphql/cart/queries/getSavedForLater";
-import {    MoveFromSavedForLaterDocument, MoveToSavedForLaterDocument } from "@/core/api/graphql/types";
+import { MoveFromSavedForLaterDocument, MoveToSavedForLaterDocument } from "@/core/api/graphql/types";
 import { useBreadcrumbs, useAnalytics, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY, MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -221,7 +222,7 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
-import type {LineItemType, Product, CartType} from "@/core/api/graphql/types";
+import type { LineItemType, Product, CartType } from "@/core/api/graphql/types";
 import CartForLater from "@/shared/cart/components/cart-for-later.vue";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
@@ -257,7 +258,7 @@ const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, init
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
-const { storeId, userId } = globals;
+const { storeId, userId, cultureName, currencyCode } = globals;
 const { mutate: moveFromSavedForLater } = useMutation(MoveFromSavedForLaterDocument);
 const { mutate: moveToSavedForLater } = useMutation(MoveToSavedForLaterDocument);
 
@@ -309,7 +310,7 @@ async function handleSaveForLater(itemIds: string[]) {
     return;
   }
 
-  await moveToSavedForLater({ command: { cartId: cart.value!.id, storeId: storeId, userId: userId, lineItemIds: itemIds } });
+  await moveToSavedForLater({ command: { cartId: cart.value!.id, storeId: storeId, userId: userId, cultureName: cultureName, currencyCode: currencyCode, lineItemIds: itemIds } });
 }
 
 async function handleMoveToCart(itemIds: string[]) {
@@ -317,7 +318,7 @@ async function handleMoveToCart(itemIds: string[]) {
     return;
   }
 
-  await moveFromSavedForLater({ command: { cartId: cart.value!.id, storeId: storeId, userId: userId, lineItemIds: itemIds } });
+  await moveFromSavedForLater({ command: { cartId: cart.value!.id, storeId: storeId, userId: userId, cultureName: cultureName, currencyCode: currencyCode, lineItemIds: itemIds } });
 }
 
 function selectItemEvent(item: LineItemType | undefined): void {
