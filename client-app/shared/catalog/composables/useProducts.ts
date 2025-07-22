@@ -117,6 +117,7 @@ export function useProducts(
     inStock: localStorageInStock.value,
     purchasedBefore: localStoragePurchasedBefore.value,
     facets: [],
+    filters: []
   });
   const productFiltersSorted = computed(() => {
     return { ...productsFilters.value, facets: getSortedFacets(productsFilters.value.facets) };
@@ -225,6 +226,7 @@ export function useProducts(
     productsFilters.value = {
       ...newFilters,
       facets: getSortedFacets(newFilters.facets),
+      filters: newFilters.filters,
     };
   }
 
@@ -240,6 +242,7 @@ export function useProducts(
               facets: productsFilters.value.facets,
               inStock: productsFilters.value.inStock,
               purchasedBefore: productsFilters.value.purchasedBefore,
+              filters: productsFilters.value.filters,
             };
 
             updateProductsFilters(newFilters);
@@ -296,6 +299,7 @@ export function useProducts(
         term_facets = [],
         range_facets = [],
         totalCount = 0,
+        filters = []
       } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
 
       products.value = items;
@@ -318,6 +322,7 @@ export function useProducts(
           purchasedBefore: localStoragePurchasedBefore.value,
           branches: localStorageBranches.value.slice(),
           facets: getSortedFacets(facets.value),
+          filters
         };
       }
     } catch (e) {

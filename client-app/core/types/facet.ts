@@ -14,4 +14,8 @@ export type FacetItemType = {
   paramName: string;
   type: "terms" | "range";
   values: FacetValueItemType[];
+  statistics?: {
+    min?: number;
+    max?: number;
+  }
 };

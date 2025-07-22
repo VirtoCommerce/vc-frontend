@@ -162,6 +162,7 @@ export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItemType {
       to: facetRange.to,
       includeTo: facetRange.includeTo,
     })),
+    statistics: rangeFacet.statistics,
   };
 }
 

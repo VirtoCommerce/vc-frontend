@@ -1,6 +1,6 @@
 <template>
   <VcWidget
-    v-if="mode === 'collapsable'"
+    v-if="mode === 'collapsable' && typeof facetMin === 'number' && typeof facetMax === 'number'"
     class="facet-filter-widget"
     size="xs"
     collapsible
@@ -23,11 +23,13 @@
 import { computed, toRefs } from "vue";
 import { useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
-import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import type { SearchProductFilterRangeValue } from "@/core/api/graphql/types.ts";
+import type { FacetItemType } from "@/core/types";
 import type { ColType } from "@/ui-kit/components/molecules/slider/vc-slider.vue";
 
 interface IProps {
-  facet: Readonly<FacetItemType>;
+  facet: FacetItemType;
+  filterRange?: SearchProductFilterRangeValue[]
   queryKey: string;
   mode: "dropdown" | "collapsable";
 }
@@ -47,11 +49,11 @@ const facetsParam = useRouteQueryParam<string>(QueryParamName.Facets);
 
 // todo get from back
 const facetMin = computed(() => {
-  return getMinFromFacet(facet.value.values.at(0)) || 0
+  return typeof facet.value.statistics?.min === 'number' ? Math.floor(facet.value.statistics.min) : undefined
 });
 
 const facetMax = computed(() => {
-  return getMaxFromFacet(facet.value.values.at(-1)) || 999999
+  return typeof facet.value.statistics?.max === 'number' ? Math.ceil(facet.value.statistics.max) : undefined
 });
 
 const sliderValue = computed(() => {
@@ -80,13 +82,5 @@ function parsePriceRange(str: string) {
 
   const [, from, to] = match
   return [parseInt(from, 10), parseInt(to, 10)]
-}
-
-function getMinFromFacet(_facet?: FacetValueItemType) {
-  return _facet?.from || 0
-}
-
-function getMaxFromFacet(_facet?: FacetValueItemType) {
-  return typeof _facet?.to === 'number' ? _facet.to : _facet?.from
 }
 </script>

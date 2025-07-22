@@ -31,6 +31,7 @@
           :facet="priceFacet"
           query-key="price"
           show-tooltip-on-col-hover
+          :filter-range="priceFilterRange"
           @update:range="applyPriceRange"
         />
 
@@ -81,6 +82,7 @@ const localFilters = ref<ProductsFiltersType>({
   inStock: false,
   branches: [],
   purchasedBefore: false,
+  filters: []
 });
 const isHorizontal = props.orientation === "horizontal";
 
@@ -94,6 +96,10 @@ const filtersToShow = computed(() => {
 });
 
 const priceFacet = computed(() => localFilters.value.facets.find((el) => el.paramName === "price"));
+const priceFilterRange = computed(() => {
+  const priceFilter = localFilters.value.filters.find((el) => el.name === "price");
+  return priceFilter?.rangeValues || [];
+});
 
 const { right: containerRight } = useElementBounding(facetFiltersContainer);
 
@@ -152,6 +158,12 @@ watch(
 watch(
   () => props.filters.branches,
   (newValue) => (localFilters.value.branches = newValue.slice()),
+  { immediate: true },
+);
+
+watch(
+  () => props.filters.filters,
+  (newValue) => (localFilters.value.filters = newValue.slice()),
   { immediate: true },
 );
 
