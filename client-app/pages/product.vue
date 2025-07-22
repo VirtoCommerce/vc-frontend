@@ -169,6 +169,8 @@ const props = withDefaults(defineProps<IProps>(), {
   productId: "",
 });
 
+const B2C_VARIATIONS_ITEMS_PER_PAGE = 150;
+
 const ProductReviews = defineAsyncComponent(() => import("@/modules/customer-reviews/components/product-reviews.vue"));
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
@@ -213,13 +215,25 @@ const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 const { analytics } = useAnalytics();
 const { pushHistoricalEvent } = useHistoricalEvents();
 
+const templateLayout = computed(() => {
+  const layoutProperty = product.value?.properties?.find(
+    (property) => property.name === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
+  )?.value;
+
+  if (typeof layoutProperty === "string") {
+    return layoutProperty;
+  }
+
+  return undefined;
+});
+
 const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:product,variation`);
 const variationSortInfo = ref<ISortInfo>({
   column: "name",
   direction: SortDirection.Ascending,
 });
 
-const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
+const initialVariationsSearchParamsDefault = {
   page: 1,
   itemsPerPage: 50,
   sort: getSortingExpression(variationSortInfo.value),
@@ -228,6 +242,22 @@ const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
     getFilterExpressionForAvailableIn(productsFilters.value.branches),
     getFilterExpressionForInStock(productsFilters.value.inStock),
   ]),
+};
+
+const initialVariationsSearchParamsB2c = {
+  page: 1,
+  itemsPerPage: B2C_VARIATIONS_ITEMS_PER_PAGE,
+  filter: getFilterExpression([
+    variationsFilterExpression.value,
+    getFilterExpressionForAvailableIn([]),
+    getFilterExpressionForInStock(true),
+  ]),
+};
+
+const variationsSearchParams = ref<ProductsSearchParamsType>({
+  ...(templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c
+    ? initialVariationsSearchParamsB2c
+    : initialVariationsSearchParamsDefault),
 });
 
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
@@ -241,18 +271,6 @@ const seoUrl = computed(() =>
     : window.location.toString(),
 );
 const canSetMeta = computed(() => props.allowSetMeta && productComponentAnchorIsVisible.value);
-
-const templateLayout = computed(() => {
-  const layoutProperty = product.value?.properties?.find(
-    (property) => property.name === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
-  )?.value;
-
-  if (typeof layoutProperty === "string") {
-    return layoutProperty;
-  }
-
-  return undefined;
-});
 
 const productTemplate = computed(() => {
   if (templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c) {
@@ -382,6 +400,14 @@ watch(
     const showOptions = optionsBlock && !optionsBlock?.hidden;
 
     if (product.value?.hasVariations && (showVariations || showOptions)) {
+      if (templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c) {
+        variationsSearchParams.value = {
+          ...variationsSearchParams.value,
+          itemsPerPage: B2C_VARIATIONS_ITEMS_PER_PAGE,
+          sort: undefined,
+          filter: getFilterExpression([variationsFilterExpression.value, getFilterExpressionForInStock(true)]),
+        };
+      }
       await fetchProducts(variationsSearchParams.value);
     }
   },

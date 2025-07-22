@@ -28,8 +28,7 @@
               :key="block.id || index"
               :model="block"
               :product="product"
-              :variations="variations"
-              :fetching-variations="fetchingVariations"
+              v-bind="getBlockProperties(block)"
             />
           </template>
         </div>
@@ -63,7 +62,18 @@ interface IProps {
   fetchingVariations?: boolean;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
+
+function getBlockProperties(block: NonNullable<IPageContent["blocks"]>[number]) {
+  if (block.type === "product-options") {
+    return {
+      variations: props.variations,
+      fetchingVariations: props.fetchingVariations,
+    };
+  }
+
+  return {};
+}
 
 function handleCreateConfiguration() {
   const productConfigurationElement = document.getElementById("product-configuration-anchor");

@@ -2,6 +2,7 @@ import { createSharedComposable } from "@vueuse/core";
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
+import { globals } from "@/core/globals";
 import type { Product, Property } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import type { ComposerTranslation } from "vue-i18n";
@@ -122,6 +123,7 @@ function getDisplayLabel(property: Property, t: ComposerTranslation): string {
 /** A composable function to manage the selection logic for product variation properties. */
 export function _useProductVariationProperties(variations: Ref<readonly Product[]>) {
   const selectedProperties = ref<SelectedPropertiesMapType>(new Map());
+  const { cultureName } = globals;
 
   const { t } = useI18n();
 
@@ -130,7 +132,8 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
 
     const allVariationProps = variations.value
       .flatMap((variation) => variation.properties)
-      .filter((property) => property.propertyType === PropertyType.Variation);
+      .filter((property) => property.propertyType === PropertyType.Variation)
+      .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
 
     allVariationProps.forEach((prop) => {
       const { name, value, label } = prop;
@@ -151,6 +154,14 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
       if (property && !property.values.some((v) => v.value === value)) {
         property.values.push({ value, label: getDisplayLabel(prop, t) });
       }
+    });
+
+    props.forEach((property) => {
+      property.values.sort((a, b) =>
+        String(a.value).localeCompare(String(b.value), cultureName, {
+          numeric: true,
+        }),
+      );
     });
 
     return props;
