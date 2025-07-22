@@ -14,8 +14,8 @@
     @clear-all="clearAll"
     @view-all="$router.push({ name: 'Notifications' })"
   >
-    <template #trigger>
-      <slot name="trigger" :total-count="totalCount" :unread-count="unreadCount" />
+    <template #trigger="{ triggerProps }">
+      <slot name="trigger" :total-count="totalCount" :unread-count="unreadCount" :trigger-props="triggerProps" />
     </template>
 
     <template #items>

@@ -7,12 +7,12 @@
       :aria-label="$t('common.buttons.all_products')"
       role="menu"
     >
-      <template #trigger>
+      <template #default="{ triggerProps }">
         <button
           type="button"
           class="mega-menu__button"
-          tabindex="0"
           :disabled="loading"
+          v-bind="triggerProps"
           @keyup.arrow-down="focusMenuItem"
         >
           <VcLoader v-if="loading" class="mega-menu__loader" />
