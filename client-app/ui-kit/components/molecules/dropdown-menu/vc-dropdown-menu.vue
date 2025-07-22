@@ -64,6 +64,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
   --props-max-height: v-bind(props.maxHeight);
   --max-height: var(--vc-dropdown-menu-max-height, var(--props-max-height, 12rem));
+  --radius: var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem));
 
   @apply select-none;
 
@@ -88,18 +89,18 @@ const props = withDefaults(defineProps<IProps>(), {
   }
 
   &__list {
-    @apply max-h-[--max-height] w-full rounded bg-additional-50 shadow-xl;
+    @apply max-h-[--max-height] w-full rounded-[--radius] bg-additional-50 shadow-xl;
 
     #{$dividers} & {
       @apply divide-y divide-neutral-100;
     }
 
     & > *:first-child {
-      @apply rounded-t;
+      @apply rounded-t-[--radius];
     }
 
     & > *:last-child {
-      @apply rounded-b;
+      @apply rounded-b-[--radius];
     }
   }
 }

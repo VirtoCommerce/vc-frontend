@@ -118,8 +118,9 @@ watchEffect(() => {
   --border-color: var(--vc-widget-border-color, theme("colors.neutral.200"));
   --divide-color: var(--vc-widget-divide-color, var(--border-color));
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
+  --radius: var(--vc-widget-radius, var(--vc-radius, 0.5rem));
 
-  @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded divide-y divide-[--divide-color] shadow-md bg-center;
+  @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] shadow-md bg-center;
 
   @media (width < theme("screens.md")) {
     .vc-container & {
