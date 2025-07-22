@@ -226,7 +226,7 @@ describe("useProductVariationProperties", () => {
   });
 
   it("handles an empty variations array", () => {
-    const variations = ref<readonly Product[]>([]);
+    const variations = ref([]);
     const { properties, isCompleted, variationResult } = useProductVariationProperties(variations);
 
     expect(properties.value.size).toBe(0);
@@ -248,7 +248,7 @@ describe("useProductVariationProperties", () => {
           },
         ],
       },
-    ] as unknown as readonly Product[]);
+    ] as unknown as Product[]);
     const { properties, isCompleted } = useProductVariationProperties(variations);
 
     expect(properties.value.size).toBe(0);
