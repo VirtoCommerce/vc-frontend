@@ -31,7 +31,7 @@
           :facet="priceFacet"
           query-key="price"
           show-tooltip-on-col-hover
-          :filter-range="priceFilterRange"
+          :price-filters="priceFilterRange"
           @update:range="applyPriceRange"
         />
 
@@ -98,7 +98,7 @@ const filtersToShow = computed(() => {
 const priceFacet = computed(() => localFilters.value.facets.find((el) => el.paramName === "price"));
 const priceFilterRange = computed(() => {
   const priceFilter = localFilters.value.filters.find((el) => el.name === "price");
-  return priceFilter?.rangeValues || [];
+  return priceFilter ? [priceFilter] : [];
 });
 
 const { right: containerRight } = useElementBounding(facetFiltersContainer);
@@ -175,19 +175,21 @@ function onFacetFilterChanged(facet: Pick<FacetItemType, "paramName" | "values">
   }
 }
 
-function applyPriceRange(range: [number, number]) {
+function applyPriceRange(range: [number | null, number | null]) {
+  const from = typeof range[0] == 'number' ? range[0] : undefined;
+  const to = typeof range[1] == 'number' ? range[1] : undefined;
   onFacetFilterChanged({
     paramName: "price",
     values: [
       {
         label: "price",
         count: 0,
-        from: range[0],
-        to: range[1],
+        from,
+        to,
         selected: true,
         includeFrom: true,
         includeTo: true,
-        value: getFilterExpressionFromFacetRange({ from: range[0], to: range[1], includeFrom: true, includeTo: true })
+        value: getFilterExpressionFromFacetRange({ from, to, includeFrom: true, includeTo: true })
       }
     ]
   })

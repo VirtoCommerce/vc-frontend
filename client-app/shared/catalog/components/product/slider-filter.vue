@@ -1,6 +1,6 @@
 <template>
   <VcWidget
-    v-if="mode === 'collapsable' && typeof facetMin === 'number' && typeof facetMax === 'number'"
+    v-if="mode === 'collapsable' && typeof facetMin === 'number' && typeof facetMax === 'number' && sliderValue"
     class="facet-filter-widget"
     size="xs"
     collapsible
@@ -21,33 +21,31 @@
 
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
-import { useRouteQueryParam } from "@/core/composables";
-import { QueryParamName } from "@/core/enums";
-import type { SearchProductFilterRangeValue } from "@/core/api/graphql/types.ts";
+import { zeroPriceFilter } from "@/core/constants";
+import type { SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { FacetItemType } from "@/core/types";
 import type { ColType } from "@/ui-kit/components/molecules/slider/vc-slider.vue";
 
+type EmitValueType = [number, number] | [null, number] | [number, null] | [null, null];
+
 interface IProps {
   facet: FacetItemType;
-  filterRange?: SearchProductFilterRangeValue[]
+  // make sure only name price goes here
+  priceFilters?: SearchProductFilterResult[];
   queryKey: string;
   mode: "dropdown" | "collapsable";
 }
 
 interface IEmits {
-  (event: "update:range", value: [number, number]): void;
+  (event: "update:range", value: EmitValueType): void;
 }
 
 const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
-const { facet } = toRefs(props);
+const { facet, priceFilters } = toRefs(props);
 
-const facetsParam = useRouteQueryParam<string>(QueryParamName.Facets);
-
-
-// todo get from back
 const facetMin = computed(() => {
   return typeof facet.value.statistics?.min === 'number' ? Math.floor(facet.value.statistics.min) : undefined
 });
@@ -57,7 +55,25 @@ const facetMax = computed(() => {
 });
 
 const sliderValue = computed(() => {
-  return (parsePriceRange(facetsParam.value) || [facetMin.value, facetMax.value]) as [number, number];
+  if (typeof facetMin.value === "number" && typeof facetMax.value === "number") {
+    const range = getRangeFromFilter();
+
+    if (typeof range[0] === "number" && typeof range[1] === "number") {
+      return range;
+    }
+
+    if(typeof range[0] === "number") {
+      return [range[0], facetMax.value] as [number, number];
+    }
+
+    if(typeof range[1] === "number") {
+      return [facetMin.value, range[1]] as [number, number];
+    }
+
+    return [facetMin.value, facetMax.value] as [number, number];
+  }
+
+  return undefined
 });
 
 const sliderCols = computed<ColType[]>(() => {
@@ -72,15 +88,53 @@ const sliderCols = computed<ColType[]>(() => {
 });
 
 function handleSliderChange(value: [number, number] | [number]) {
-  emit("update:range", value.length === 2 ? value : [value[0], value[0]]);
+  const doubleValue = value.length === 2 ? value : [value[0], value[0]];
+  if (doubleValue[0] === facetMin.value && doubleValue[1] === facetMax.value) {
+    emit("update:range", [null, null]);
+    return;
+  }
+  if (doubleValue[0] === facetMin.value && doubleValue[1] !== facetMax.value) {
+    emit("update:range", [null, doubleValue[1]]);
+    return;
+  }
+  if (doubleValue[0] !== facetMin.value && doubleValue[1] === facetMax.value) {
+    emit("update:range", [doubleValue[0], null]);
+    return;
+  }
+
+  emit("update:range", [doubleValue[0], doubleValue[1]]);
 }
 
-function parsePriceRange(str: string) {
-  const match = RegExp(/"price":\[(\d+)\s+TO\s+(\d+)]/).exec(str)
+function getRangeFromFilter(): EmitValueType {
+  const filteredValues = priceFilters.value?.filter((value) => {
+    return !isZeroPriceFilter(value);
+  });
 
-  if (!match) return null
+  if (filteredValues?.length === 1 && filteredValues[0].rangeValues?.length === 1) {
+    const rangeValue = filteredValues[0].rangeValues[0];
+    return getBounceFromRange(rangeValue)
+  }
 
-  const [, from, to] = match
-  return [parseInt(from, 10), parseInt(to, 10)]
+  return [null, null]
+}
+
+function isZeroPriceFilter(value: SearchProductFilterResult) {
+  if(value.rangeValues?.length === 1) {
+    const range = value.rangeValues[0]
+    return (range.lower === zeroPriceFilter.lower && !range.upper && range.includeLowerBound === zeroPriceFilter.includeLowerBound && range.includeUpperBound === zeroPriceFilter.includeUpperBound);
+  }
+}
+
+function getBounceFromRange(rangeValue: SearchProductFilterRangeValue): EmitValueType {
+  const { lower, upper, includeLowerBound, includeUpperBound } = rangeValue;
+
+  const lowerNum = lower ? Number(lower)  : null;
+  const upperNum = upper ? Number(upper) : null;
+
+  if (includeLowerBound && includeUpperBound) {
+    return [typeof lowerNum === 'number' && isFinite(lowerNum) ? lowerNum : null, typeof upperNum === 'number' && isFinite(upperNum) ? upperNum : null]
+  }
+
+  return [null, null]
 }
 </script>
