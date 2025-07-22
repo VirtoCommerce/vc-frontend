@@ -243,8 +243,15 @@ const seoUrl = computed(() =>
 const canSetMeta = computed(() => props.allowSetMeta && productComponentAnchorIsVisible.value);
 
 const templateLayout = computed(() => {
-  return product.value?.properties?.find((property) => property.name === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
-    ?.value as string | undefined;
+  const layoutProperty = product.value?.properties?.find(
+    (property) => property.name === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
+  )?.value;
+
+  if (typeof layoutProperty === "string") {
+    return layoutProperty;
+  }
+
+  return undefined;
 });
 
 const productTemplate = computed(() => {
