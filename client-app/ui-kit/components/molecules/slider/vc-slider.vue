@@ -108,9 +108,19 @@ const { value, min, max, step, cols } = toRefs(props);
 const start = ref<number>(0);
 const end = ref<number>();
 
-watch([value, min, max], ([valueProp, minProp, maxProp]) => {
-  start.value = Math.max(minProp, valueProp[0]);
-  end.value = typeof valueProp[1] === "number" ? Math.min(maxProp, valueProp[1]) : undefined;
+watch([value, min, max], (newValue, oldValue) => {
+  if(newValue[1] !== oldValue[1] || newValue[2] !== oldValue[2]) {
+    if (slider) {
+      // Update the slider range
+      slider.updateOptions({
+        range: { min: newValue[1], max: newValue[2] },
+        start: getSliderStart(),
+      }, false);
+    }
+  }
+
+  start.value = Math.max(newValue[0][0], newValue[1]);
+  end.value = typeof newValue[0][1] === "number" ? Math.min(newValue[0][1], newValue[2]) : undefined;
 });
 
 const sliderRef = ref<HTMLElement | null>(null);
@@ -168,10 +178,7 @@ onMounted(() => {
   }
 
   slider = create(sliderRef.value, {
-    start:
-      typeof props.value[1] === "number"
-        ? [Math.min(props.value[0], props.min), Math.min(props.value[1], props.max)]
-        : [Math.min(props.value[0], props.min)],
+    start: getSliderStart(),
     connect: true,
     step: step.value,
     range: { min: min.value, max: max.value },
@@ -199,6 +206,12 @@ function onColumnClick(col: { value: [number, number] }): void {
   end.value = col.value[1];
 
   emit("change", [start.value, end.value]);
+}
+
+function getSliderStart(){
+  return typeof props.value[1] === "number"
+    ? [Math.min(props.value[0], props.min), Math.min(props.value[1], props.max)]
+    : [Math.min(props.value[0], props.min)]
 }
 </script>
 

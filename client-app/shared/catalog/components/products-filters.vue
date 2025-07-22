@@ -177,6 +177,7 @@ function onFacetFilterChanged(facet: Pick<FacetItemType, "paramName" | "values">
 function applyPriceRange(range: [number | null, number | null]) {
   const from = typeof range[0] == 'number' ? range[0] : undefined;
   const to = typeof range[1] == 'number' ? range[1] : undefined;
+  // todo gel all facets
   onFacetFilterChanged({
     paramName: "price",
     values: from === undefined && to === undefined ? [] : [
