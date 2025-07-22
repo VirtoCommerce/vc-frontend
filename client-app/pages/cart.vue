@@ -61,7 +61,6 @@
       </VcWidget>
 
       <CartForLater
-        :products="productsForLater"
         :saved-for-later-list="savedForLaterList"
         class="mt-5"
         @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" />
@@ -101,7 +100,6 @@
         </template>
 
         <CartForLater
-          :products="productsForLater"
           :saved-for-later-list="savedForLaterList"
           class="mt-5"
           @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" />
@@ -200,16 +198,15 @@
 </template>
 
 <script setup lang="ts">
-import { useMutation } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
+import { moveFromSavedForLater } from "@/core/api/graphql/cart/mutations/moveFromSavedForLater";
+import { moveToSavedForLater } from "@/core/api/graphql/cart/mutations/moveToSavedForLater";
 import { getSavedForLater } from "@/core/api/graphql/cart/queries/getSavedForLater";
-import { MoveFromSavedForLaterDocument, MoveToSavedForLaterDocument } from "@/core/api/graphql/types";
 import { useBreadcrumbs, useAnalytics, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY, MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
@@ -258,10 +255,6 @@ const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, init
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
-const { storeId, userId, cultureName, currencyCode } = globals;
-const { mutate: moveFromSavedForLater } = useMutation(MoveFromSavedForLaterDocument);
-const { mutate: moveToSavedForLater } = useMutation(MoveToSavedForLaterDocument);
-
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
 });
@@ -277,7 +270,6 @@ const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { na
 
 const isCartLoked = ref(false);
 const savedForLaterList = ref<CartType>();
-const productsForLater = ref<Product[]>([]);
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value);
@@ -310,7 +302,8 @@ async function handleSaveForLater(itemIds: string[]) {
     return;
   }
 
-  await moveToSavedForLater({ command: { cartId: cart.value!.id, storeId: storeId, userId: userId, cultureName: cultureName, currencyCode: currencyCode, lineItemIds: itemIds } });
+  const moveResult = await moveToSavedForLater(cart.value!.id, itemIds);
+  savedForLaterList.value = moveResult.list;
 }
 
 async function handleMoveToCart(itemIds: string[]) {
@@ -318,7 +311,8 @@ async function handleMoveToCart(itemIds: string[]) {
     return;
   }
 
-  await moveFromSavedForLater({ command: { cartId: cart.value!.id, storeId: storeId, userId: userId, cultureName: cultureName, currencyCode: currencyCode, lineItemIds: itemIds } });
+  const moveResult = await moveFromSavedForLater(cart.value!.id, itemIds);
+  savedForLaterList.value = moveResult.list;
 }
 
 function selectItemEvent(item: LineItemType | undefined): void {
@@ -352,7 +346,6 @@ void (async () => {
   }
   if (isAuthenticated.value) {
     savedForLaterList.value = await getSavedForLater();
-    productsForLater.value = savedForLaterList.value?.items?.map((x) => x.product!) || [];
   }
 })();
 </script>

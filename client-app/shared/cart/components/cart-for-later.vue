@@ -6,7 +6,7 @@
     size="lg">
     <VcProductsGrid short>
       <CartItemForLater
-        v-for="product in products"
+        v-for="product in savedForLaterList?.items.map((x) => x.product!)"
         :key="product.id"
         :product="product"
         :saved-for-later-list="savedForLaterList"
@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef, watch } from "vue";
+import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import type { CartType, Product } from "@/core/api/graphql/types";
@@ -35,10 +35,8 @@ const props = defineProps<IProps>();
 
 interface IProps {
   savedForLaterList: CartType | undefined;
-  products: Product[];
 }
 
-const products = toRef(props, "products");
 const savedForLaterList = toRef(props, "savedForLaterList");
 
 const listProperties = computed(() => ({
@@ -52,18 +50,4 @@ const { t } = useI18n();
 function selectItemEvent(item: Product) {
   analytics("selectItem", item, listProperties.value);
 }
-
-watch(
-  products,
-  (productsValue) => {
-    if (!productsValue?.length) {
-      return;
-    }
-
-    analytics("viewItemList", productsValue, listProperties.value);
-  },
-  {
-    immediate: true,
-  },
-);
 </script>

@@ -1,3 +1,5 @@
+#import "../../fragments/savedForLaterList.graphql"
+
 query GetSavedForLater(
   $storeId: String!
   $userId: String!
@@ -12,26 +14,6 @@ query GetSavedForLater(
     currencyCode: $currencyCode
     cultureName: $cultureName
   ) {
-    name
-    type
-    id
-    items {
-      id
-      productId
-      product {
-        id
-        price {
-          startDate
-          endDate
-          pricelistId
-          pricelistName
-          minQuantity
-        }
-        name
-        vendor {
-          name
-        }
-      }
-    }
+    ...savedForLaterList
   }
 }

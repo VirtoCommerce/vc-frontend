@@ -1,46 +1,13 @@
+#import "../../fragments/fullCart.graphql"
+#import "../../fragments/savedForLaterList.graphql"
+
 mutation MoveToSavedForLater($command: InputSaveForLaterType!) {
   moveToSavedForLater(command: $command) {
     cart {
-      name
-      type
-      id
-      items {
-        product {
-          id
-          price {
-            startDate
-            endDate
-            pricelistId
-            pricelistName
-            minQuantity
-          }
-          name
-          vendor {
-            name
-          }
-        }
-      }
+      ...fullCart
     }
     list {
-      name
-      type
-      id
-      items {
-        product {
-          id
-          price {
-            startDate
-            endDate
-            pricelistId
-            pricelistName
-            minQuantity
-          }
-          name
-          vendor {
-            name
-          }
-        }
-      }
+      ...savedForLaterList
     }
   }
 }
