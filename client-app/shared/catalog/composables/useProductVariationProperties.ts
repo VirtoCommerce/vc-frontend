@@ -40,17 +40,17 @@ function getApplicableVariations(variations: readonly Product[], selected: Selec
 /** From a list of variations, extracts all unique available property values, grouped by property name. */
 function getAvailablePropertyValues(variations: readonly Product[]): Map<string, PrimitiveValueType[]> {
   const available = new Map<string, Set<PrimitiveValueType>>();
-  for (const variation of variations) {
-    for (const prop of variation.properties) {
+  variations.forEach((variation) => {
+    variation.properties.forEach((prop) => {
       if (prop.propertyType !== PropertyType.Variation || !prop.name || prop.value === undefined) {
-        continue;
+        return;
       }
       if (!available.has(prop.name)) {
         available.set(prop.name, new Set());
       }
       available.get(prop.name)?.add(prop.value);
-    }
-  }
+    });
+  });
 
   return new Map(Array.from(available.entries(), ([name, values]) => [name, Array.from(values)]));
 }
@@ -88,9 +88,9 @@ function calculateNewSelections(
 
   baseSelections.set(name, value);
 
-  for (const [propertyName, propertyValue] of currentSelected.entries()) {
+  Array.from(currentSelected.entries()).forEach(([propertyName, propertyValue]) => {
     if (propertyName === name) {
-      continue;
+      return;
     }
 
     const possibleVariationsAfterBase = getApplicableVariations(variations, baseSelections);
@@ -100,7 +100,7 @@ function calculateNewSelections(
     ) {
       baseSelections.set(propertyName, propertyValue);
     }
-  }
+  });
 
   return runAutoSelection(variations, baseSelections);
 }
@@ -132,11 +132,11 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
       .flatMap((variation) => variation.properties)
       .filter((property) => property.propertyType === PropertyType.Variation);
 
-    for (const prop of allVariationProps) {
+    allVariationProps.forEach((prop) => {
       const { name, value, label } = prop;
 
       if (!name || value === undefined) {
-        continue;
+        return;
       }
 
       if (!props.has(name)) {
@@ -151,7 +151,8 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
       if (property && !property.values.some((v) => v.value === value)) {
         property.values.push({ value, label: getDisplayLabel(prop, t) });
       }
-    }
+    });
+
     return props;
   });
 
