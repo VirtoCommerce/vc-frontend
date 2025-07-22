@@ -112,6 +112,7 @@ function getRangeFromFilter(): EmitValueType {
 
   if (filteredValues?.length === 1 && filteredValues[0].rangeValues?.length === 1) {
     const rangeValue = filteredValues[0].rangeValues[0];
+
     return getBounceFromRange(rangeValue)
   }
 
