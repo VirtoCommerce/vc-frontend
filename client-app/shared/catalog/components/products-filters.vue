@@ -25,22 +25,15 @@
       >
         <slot name="prepend" :loading="loading" />
 
-        <SliderFilter
-          v-if="priceFacet"
-          :mode="isHorizontal ? 'dropdown' : 'collapsable'"
-          :facet="priceFacet"
-          query-key="price"
-          show-tooltip-on-col-hover
-          :price-filters="priceFilters"
-          @update:range="applyPriceRange"
-        />
-
         <template v-for="facet in filtersToShow" :key="facet.paramName">
-          <FacetFilter
+          <component
+            :is="getFacetFilterComponent(facet)"
             :mode="isHorizontal ? 'dropdown' : 'collapsable'"
             :facet="facet"
             :loading="loading"
+            :filters="getFiltersByParamName(facet.paramName)"
             @update:facet="onFacetFilterChanged"
+            @update:range="applyPriceRange"
           />
         </template>
       </div>
@@ -93,11 +86,6 @@ const filtersToShow = computed(() => {
   return props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value
     ? localFilters.value.facets
     : localFilters.value.facets.slice(0, filtersCountToShow.value);
-});
-
-const priceFacet = computed(() => localFilters.value.facets.find((el) => el.paramName === "price"));
-const priceFilters = computed(() => {
-  return localFilters.value.filters.filter((el) => el.name === "price");
 });
 
 const { right: containerRight } = useElementBounding(facetFiltersContainer);
@@ -193,6 +181,21 @@ function applyPriceRange(range: [number | null, number | null]) {
       }
     ]
   })
+}
+
+function getFacetFilterComponent(facet: FacetItemType) {
+  if (facetHasBounce(facet.statistics)) {
+    return SliderFilter;
+  }
+  return FacetFilter;
+}
+
+function facetHasBounce(statistics?: { min?: number, max?: number }) {
+  return typeof statistics?.min === "number" && typeof statistics?.max === "number";
+}
+
+function getFiltersByParamName(paramName: string) {
+  return localFilters.value.filters.filter((el) => el.name === paramName);
 }
 </script>
 

@@ -31,8 +31,7 @@ type EmitValueType = [number, number] | [null, number] | [number, null] | [null,
 interface IProps {
   facet: FacetItemType;
   // make sure only name price goes here
-  priceFilters?: SearchProductFilterResult[];
-  queryKey: string;
+  filters?: SearchProductFilterResult[];
   mode: "dropdown" | "collapsable";
 }
 
@@ -44,7 +43,7 @@ const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
-const { facet, priceFilters } = toRefs(props);
+const { facet, filters } = toRefs(props);
 
 const facetMin = computed(() => {
   return typeof facet.value.statistics?.min === 'number' ? Math.floor(facet.value.statistics.min) : undefined
@@ -106,7 +105,7 @@ function handleSliderChange(value: [number, number] | [number]) {
 }
 
 function getRangeFromFilter(): EmitValueType {
-  const filteredValues = priceFilters.value?.filter((value) => {
+  const filteredValues = filters.value?.filter((value) => {
     return !isZeroPriceFilter(value);
   });
 

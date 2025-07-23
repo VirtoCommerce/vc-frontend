@@ -270,8 +270,8 @@ export function useProducts(
     }
 
     facets.value = Array<FacetItemType>().concat(
-      termFacets.map(termFacetToCommonFacet),
       rangeFacets.map(rangeFacetToCommonFacet),
+      termFacets.map(termFacetToCommonFacet),
     );
   }
 
