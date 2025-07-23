@@ -14,7 +14,8 @@
 
     <VcProductButton
 v-if="cartLineItem?.id"
-      :button-text="$t('pages.cart.add_to_cart')"
+      icon="arrow-up"
+      :button-text="$t('pages.cart.move_to_cart')"
       @link-click="$emit('addToCart', cartLineItem!.id)" />
   </VcProductCard>
 </template>

@@ -10,8 +10,7 @@
         'vc-line-item--deleted': deleted,
       },
     ]"
-    @keydown="changeFocus"
-  >
+    @keydown="changeFocus">
     <div v-if="$slots.before" class="vc-line-item__before">
       <slot name="before" />
     </div>
@@ -23,8 +22,7 @@
         class="vc-line-item__checkbox"
         :name="$t('ui_kit.labels.toggle_vendor_select')"
         test-id="vc-line-item-checkbox"
-        @change="$emit('select', isSelected)"
-      />
+        @change="$emit('select', isSelected)" />
 
       <!--  IMAGE -->
       <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
@@ -36,19 +34,24 @@
             'vc-line-item__content--with-image': withImage,
             'vc-line-item__content--selectable': !withImage && selectable,
           },
-        ]"
-      >
-        <VcProductTitle
-          class="vc-line-item__name"
-          :disabled="disabled || deleted"
-          :to="route"
-          :title="name"
-          :target="browserTarget"
-          @click="$emit('linkClick')"
-        >
-          {{ name }}
-        </VcProductTitle>
-
+        ]">
+        <div style="display:flex;flex-direction: column;">
+          <VcProductTitle
+            class="vc-line-item__name"
+            :disabled="disabled || deleted"
+            :to="route"
+            :title="name"
+            :target="browserTarget"
+            @click="$emit('linkClick')">
+            {{ name }}
+          </VcProductTitle>
+          <CartItemActions
+            :disabled="disabled"
+            :removable="removable"
+            :saveable-for-later="saveableForLater"
+            @remove="$emit('remove')"
+            @save-for-later="$emit('saveForLater')" />
+        </div>
         <div
           v-if="withProperties || withPrice"
           :class="[
@@ -57,15 +60,13 @@
               'vc-line-item__properties--wide': !withPrice,
               'vc-line-item__properties--hide': !withProperties && withPrice,
             },
-          ]"
-        >
+          ]">
           <template v-if="withProperties">
             <VcProperty
               v-for="property in properties"
               :key="property.name"
               :label="property.label!"
-              :disabled="disabled || deleted"
-            >
+              :disabled="disabled || deleted">
               {{ property.value }}
             </VcProperty>
           </template>
@@ -78,8 +79,7 @@
             v-if="withPrice && !deleted"
             class="vc-line-item__property-price"
             :label="$t('ui_kit.labels.price_per_item')"
-            :disabled="disabled"
-          >
+            :disabled="disabled">
             <VcProductPrice :list-price="actualPrice || listPrice" :disabled="disabled" truncate />
           </VcProperty>
         </div>
@@ -90,8 +90,7 @@
           :list-price="listPrice"
           :actual-price="showPlacedPrice ? actualPrice : listPrice"
           :disabled="disabled"
-          align="end"
-        />
+          align="end" />
 
         <div class="vc-line-item__mobile-row">
           <div class="vc-line-item__slot">
@@ -105,8 +104,7 @@
             :actual-price="total"
             align="end"
             :disabled="disabled"
-            truncate
-          />
+            truncate />
         </div>
 
         <VcButton
@@ -118,8 +116,7 @@
           variant="no-background"
           icon="delete-thin"
           :disabled="disabled"
-          @click="$emit('remove')"
-        />
+          @click="$emit('remove')" />
       </div>
     </div>
 
@@ -133,11 +130,13 @@
 import { ref, watchEffect } from "vue";
 import type { Property, MoneyType, CommonVendor } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
+import CartItemActions from "@/shared/cart/components/cart-item-actions.vue";
 
 interface IEmits {
   (event: "remove"): void;
   (event: "select", value: boolean): void;
   (event: "linkClick"): void;
+  (event: "saveForLater"): void;
 }
 
 interface IProps {
@@ -152,6 +151,7 @@ interface IProps {
   selectable?: boolean;
   selected?: boolean;
   removable?: boolean;
+  saveableForLater?: boolean;
   disabled?: boolean;
   deleted?: boolean;
   withImage?: boolean;
@@ -356,7 +356,7 @@ watchEffect(() => {
   &__price {
     --vc-product-price-font-size: theme(fontSize.sm);
 
-    @container (width <= theme("containers.4xl")) {
+    @container (width <=theme("containers.4xl")) {
       @apply hidden #{!important};
     }
 
@@ -374,7 +374,7 @@ watchEffect(() => {
   &__mobile-row {
     @apply contents;
 
-    @container (width <= theme("containers.2xl")) {
+    @container (width <=theme("containers.2xl")) {
       @apply flex items-center gap-3 mt-3;
     }
   }
@@ -390,11 +390,9 @@ watchEffect(() => {
       @apply w-32;
     }
 
-    &:has(
-        .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
-        * .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
-        .vc-product-button
-      ) {
+    &:has(.vc-add-to-cart:not(.vc-add-to-cart--hide-button),
+      * .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
+      .vc-product-button) {
       @apply w-full;
 
       @container (width > theme("containers.md")) {
@@ -411,7 +409,7 @@ watchEffect(() => {
     }
 
     #{$deleted} & {
-      @container (width <= theme("containers.2xl")) {
+      @container (width <=theme("containers.2xl")) {
         @apply hidden;
       }
 
@@ -442,7 +440,7 @@ watchEffect(() => {
   &__remove-button {
     @apply shrink-0;
 
-    @container (width <= theme("containers.2xl")) {
+    @container (width <=theme("containers.2xl")) {
       @apply top-0.5 right-0.5 absolute #{!important};
     }
 

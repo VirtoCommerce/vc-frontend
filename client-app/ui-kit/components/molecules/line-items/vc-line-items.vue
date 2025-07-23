@@ -63,13 +63,15 @@
             :disabled="disabled"
             :deleted="item.deleted"
             :removable="removable"
+            :saveable-for-later="saveableForLater"
             :selectable="selectable"
             :selected="selectable && selectedItemIds?.includes(item.id)"
             :browser-target="browserTarget"
             :show-placed-price="item.showPlacedPrice"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
-            @link-click="$emit('linkClick', item)">
+            @link-click="$emit('linkClick', item)"
+            @save-for-later="() => saveForLaterSingle(item.id)">
             <template #before>
               <slot name="before-content" v-bind="{ item }" />
             </template>
@@ -109,7 +111,7 @@
             size="xs"
             :disabled="!selectedItemIds.length"
             @click="saveForLater">
-            {{ $t("pages.cart.save_for_later") }}
+            {{ $t("pages.cart.save_for_later_selected") }}
           </VcButton>
 
           <VcButton
@@ -214,6 +216,10 @@ function removeSelectedItems() {
 
 function removeAllItems() {
   emit("remove:items", itemIds.value);
+}
+
+function saveForLaterSingle(itemId: string) {
+  emit("saveForLater", [itemId]);
 }
 
 function saveForLater() {

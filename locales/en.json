@@ -1289,8 +1289,9 @@
       "empty_cart_search_text": "Use the search to find everything you need",
       "recently_browsed_products": "Recently browsed",
       "save_for_later": "Save for later",
+      "save_for_later_selected": "Save for later Selected",
       "saved_for_later": "Saved for later",
-      "add_to_cart": "@:common.buttons.add_to_cart"
+      "move_to_cart": "Move to cart"
     },
     "checkout": {
       "meta": {
