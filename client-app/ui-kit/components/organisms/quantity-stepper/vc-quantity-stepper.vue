@@ -1,5 +1,5 @@
 <template>
-  <div class="vc-quantity-stepper" data-test-id="quantity-stepper">
+  <div class="vc-quantity-stepper">
     <VcInput
       v-model.number="model"
       type="number"
