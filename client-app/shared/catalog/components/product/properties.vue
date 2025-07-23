@@ -59,22 +59,14 @@
       </VcWidget>
     </div>
   </ProductTitledBlock>
-
-  <div class="space-y-4 empty:hidden">
-    <!-- Vendor -->
-    <VcProperty v-if="showVendor" :label="$t('shared.catalog.product_details.vendor_label')" class="text-base">
-      <Vendor :vendor="product.vendor!" with-rating />
-    </VcProperty>
-  </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
-import { useThemeContext } from "@/core/composables";
 import { getPropertiesGroupedByName, getGroupedAndSortedProperties } from "@/core/utilities";
 import { PropertyValueTypes } from "@/modules/quotes/api/graphql/types";
-import { ProductTitledBlock, Vendor } from "@/shared/catalog";
+import { ProductTitledBlock } from "@/shared/catalog";
 import type { Product, Property } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -89,18 +81,12 @@ const props = defineProps<IProps>();
 
 const collapsedStates = ref<boolean[]>([]);
 
-const { themeContext } = useThemeContext();
-
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)),
 );
 
 const groupedProperties = computed(() => getGroupedAndSortedProperties(properties.value));
-
-const showVendor = computed(
-  () => themeContext.value?.settings?.vendor_enabled && !props.product.hasVariations && props.product.vendor,
-);
-const showPropertiesBlock = computed(() => !props.model.hidden && (properties.value.length || showVendor.value));
+const showPropertiesBlock = computed(() => !props.model.hidden && properties.value.length);
 
 const allExpanded = computed(() => collapsedStates.value.every((val) => val === false));
 

@@ -36,7 +36,7 @@
 
       {{ maxValue }}
 
-      <span v-if="reviewCount">({{ reviewCount }})</span>
+      <span v-if="reviewCount" class="vc-rating__count">({{ reviewCount }})</span>
     </div>
   </div>
 </template>
@@ -155,6 +155,10 @@ function setRating(value: number): void {
 
   &__value {
     @apply flex gap-px font-bold;
+  }
+
+  &__count {
+    @apply ms-0.5;
   }
 }
 </style>
