@@ -45,6 +45,7 @@
         class="vc-slider__input"
         :disabled="disabled"
         type="number"
+        @focus="handleStartInputFocus"
         @blur="handleInputBlur"
       />
 
@@ -57,6 +58,7 @@
           class="vc-slider__input"
           :disabled="disabled"
           type="number"
+          @focus="handleEndInputFocus"
           @blur="handleInputBlur"
         />
       </template>
@@ -107,6 +109,7 @@ const { value, min, max, step, cols } = toRefs(props);
 
 const start = ref<number>(0);
 const end = ref<number>();
+const isAnyInputFocused = ref<boolean>(false);
 
 watch([value, min, max], (newValue, oldValue) => {
   if(newValue[1] !== oldValue[1] || newValue[2] !== oldValue[2]) {
@@ -165,7 +168,27 @@ const normalizedCols = computed(() => {
   });
 });
 
+function handleStartInputFocus() {
+  isAnyInputFocused.value = true;
+}
+
+function handleEndInputFocus() {
+  isAnyInputFocused.value = true;
+}
+
 function handleInputBlur() {
+  // Use setTimeout to ensure focus state is updated before checking
+  isAnyInputFocused.value = false;
+
+  setTimeout(() => {
+    // Only apply constraints if no input is focused
+    if (!isAnyInputFocused.value) {
+      applyInputConstraints();
+    }
+  }, 0);
+}
+
+function applyInputConstraints() {
   let newStart = start.value;
   let newEnd = end.value;
 
