@@ -169,14 +169,8 @@ function handleInputBlur() {
   let newStart = start.value;
   let newEnd = end.value;
 
-  // Ensure minimum distance between handles equal to step
-  if (typeof newEnd === "number" && Math.abs(newEnd - newStart) < step.value) {
-    // If handles are too close, keep the start value and adjust end
-    newEnd = newStart + step.value;
-    if (newEnd > max.value) {
-      newEnd = max.value;
-      newStart = newEnd - step.value;
-    }
+  if (typeof newEnd === "number") {
+    [newStart, newEnd] = enforceMinimumDistance(newStart, newEnd);
   }
 
   const innerRange = (typeof newEnd === "number" ? [newStart, newEnd] : [newStart]) satisfies RangeType;
@@ -198,58 +192,14 @@ onMounted(() => {
   });
 
   slider.on("update", (v: (string | number)[]) => {
-    let newStart = +v[0];
-    let newEnd = +v[1];
-
-    // Ensure minimum distance between handles equal to step
-    if (typeof newEnd === "number" && Math.abs(newEnd - newStart) < step.value) {
-      // If handles are too close, adjust based on which handle was moved last
-      if (newStart === start.value) {
-        // End handle was moved, adjust start
-        newStart = newEnd - step.value;
-        if (newStart < min.value) {
-          newStart = min.value;
-          newEnd = newStart + step.value;
-        }
-      } else {
-        // Start handle was moved, adjust end
-        newEnd = newStart + step.value;
-        if (newEnd > max.value) {
-          newEnd = max.value;
-          newStart = newEnd - step.value;
-        }
-      }
-    }
-
+    const [newStart, newEnd] = enforceMinimumDistance(+v[0], +v[1], start.value);
     start.value = newStart;
     end.value = newEnd;
   });
 
   // Listen for when user stops dragging the slider
   slider.on("change", (v: (string | number)[]) => {
-    let newStart = +v[0];
-    let newEnd = +v[1];
-
-    // Ensure minimum distance between handles equal to step
-    if (typeof newEnd === "number" && Math.abs(newEnd - newStart) < step.value) {
-      // If handles are too close, adjust based on which handle was moved last
-      if (newStart === start.value) {
-        // End handle was moved, adjust start
-        newStart = newEnd - step.value;
-        if (newStart < min.value) {
-          newStart = min.value;
-          newEnd = newStart + step.value;
-        }
-      } else {
-        // Start handle was moved, adjust end
-        newEnd = newStart + step.value;
-        if (newEnd > max.value) {
-          newEnd = max.value;
-          newStart = newEnd - step.value;
-        }
-      }
-    }
-
+    const [newStart, newEnd] = enforceMinimumDistance(+v[0], +v[1], start.value);
     const range: RangeType = [newStart, newEnd];
     start.value = range[0];
     end.value = range[1];
@@ -262,22 +212,36 @@ function onColumnClick(col: { value: [number, number] }): void {
     return;
   }
 
-  let newStart = col.value[0];
-  let newEnd = col.value[1];
-
-  // Ensure minimum distance between handles equal to step
-  if (Math.abs(newEnd - newStart) < step.value) {
-    newEnd = newStart + step.value;
-    if (newEnd > max.value) {
-      newEnd = max.value;
-      newStart = newEnd - step.value;
-    }
-  }
+  const [newStart, newEnd] = enforceMinimumDistance(col.value[0], col.value[1]);
 
   start.value = newStart;
   end.value = newEnd;
 
   emit("change", [newStart, newEnd]);
+}
+
+function enforceMinimumDistance(startValue: number, endValue: number, previousStart?: number): [number, number] {
+  // Ensure minimum distance between handles equal to step
+  if (Math.abs(endValue - startValue) < step.value) {
+    // If handles are too close, adjust based on which handle was moved last
+    if (previousStart !== undefined && startValue === previousStart) {
+      // End handle was moved, adjust start
+      startValue = endValue - step.value;
+      if (startValue < min.value) {
+        startValue = min.value;
+        endValue = startValue + step.value;
+      }
+    } else {
+      // Start handle was moved, adjust end
+      endValue = startValue + step.value;
+      if (endValue > max.value) {
+        endValue = max.value;
+        startValue = endValue - step.value;
+      }
+    }
+  }
+
+  return [startValue, endValue];
 }
 
 function getSliderStart(){
