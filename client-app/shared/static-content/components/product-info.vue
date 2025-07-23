@@ -24,7 +24,7 @@
           <template v-for="(block, index) in model.blocks">
             <component
               :is="block.type"
-              v-if="block.type !== 'product-variations'"
+              v-if="shouldShowBlock(block)"
               :key="block.id || index"
               :model="block"
               :product="product"
@@ -55,14 +55,16 @@ import type { Product } from "@/core/api/graphql/types";
 import BadgesWrapper from "@/shared/catalog/components/badges-wrapper.vue";
 import PurchasedBeforeBadge from "@/shared/catalog/components/purchased-before-badge.vue";
 
+const props = defineProps<IProps>();
+
+const BLOCKS_TO_HIDE = ["product-variations"];
+
 interface IProps {
   product: Product;
   model: IPageContent;
   variations: Product[];
   fetchingVariations?: boolean;
 }
-
-const props = defineProps<IProps>();
 
 function getBlockProperties(block: NonNullable<IPageContent["blocks"]>[number]) {
   if (block.type === "product-options") {
@@ -80,6 +82,14 @@ function handleCreateConfiguration() {
   if (productConfigurationElement) {
     productConfigurationElement.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
   }
+}
+
+function shouldShowBlock(block: NonNullable<IPageContent["blocks"]>[number]) {
+  if (BLOCKS_TO_HIDE.includes(block.type ?? "")) {
+    return false;
+  }
+
+  return block.type === "product-options" && !props.product.hasVariations ? false : true;
 }
 </script>
 
