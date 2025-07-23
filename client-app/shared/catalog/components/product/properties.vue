@@ -89,6 +89,7 @@ import {
 } from "@/modules/customer-reviews/constants";
 import { PropertyValueTypes } from "@/modules/quotes/api/graphql/types";
 import { ProductTitledBlock, Vendor } from "@/shared/catalog";
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import type { Product, Property } from "@/core/api/graphql/types";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 
@@ -109,7 +110,9 @@ const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const properties = computed(() =>
-  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)),
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
+    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME) // TODO: replace it to filter props by system/private property when implemented
+    .slice(0, 3),
 );
 
 const groupedProperties = computed(() => getGroupedAndSortedProperties(properties.value));

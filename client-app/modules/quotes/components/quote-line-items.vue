@@ -60,6 +60,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import type { MoneyType, QuoteItemType } from "../api/graphql/types";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
@@ -105,7 +106,9 @@ function getTotalPrice(item: QuoteItemType) {
 }
 
 function getProperties(item: QuoteItemType) {
-  return Object.values(getPropertiesGroupedByName(item.product?.properties ?? [])).slice(0, PROPERTIES_COUNT_TO_SHOW);
+  return Object.values(getPropertiesGroupedByName(item.product?.properties ?? []))
+    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME) // TODO: replace it to filter props by system/private property when implemented
+    .slice(0, PROPERTIES_COUNT_TO_SHOW);
 }
 </script>
 
