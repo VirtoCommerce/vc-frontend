@@ -14,6 +14,7 @@
       :keyword-query-param="keywordQueryParam"
       :loading="fetchingProducts"
       :hide-controls="hideControls"
+      :prepared-filters="preparedFilters"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
       @apply-filters="applyFilters"
@@ -36,6 +37,8 @@
           :loading="fetchingProducts"
           class="category__product-filters"
           @change="applyFilters($event)"
+          @change:facets="applyFacetsOnly($event)"
+          @change:filters="applyFiltersOnly($event)"
         />
       </template>
 
@@ -134,6 +137,7 @@
         :sort-query-param="sortQueryParam"
         :loading="fetchingProducts || fetchingFacets"
         :filters="filtersToShow"
+        :prepared-filters="preparedFilters"
         :hide-sorting="hideSorting"
         :hide-all-filters="hideSidebar"
         :facets-to-hide="facetsToHide"
@@ -360,6 +364,8 @@ const {
   totalProductsCount,
 
   applyFilters: _applyFilters,
+  applyFiltersOnly,
+  applyFacetsOnly,
   fetchProducts: _fetchProducts,
   fetchMoreProducts,
   hideFiltersSidebar,

@@ -9,6 +9,7 @@
       v-if="localFilters"
       :keyword="keywordQueryParam"
       :filters="localFilters"
+      :prepared-filters="preparedFilters"
       :loading="loading || facetsLoading"
       @change="onProductsFiltersChange"
     >
@@ -100,6 +101,7 @@ import isEqual from "lodash/isEqual";
 import { watch, ref, computed } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
 import { useModal } from "@/shared/modal";
+import type { SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
@@ -122,6 +124,7 @@ interface IProps {
   keywordQueryParam?: string;
   popupSidebarFilters: ProductsFiltersType;
   isExistSelectedFacets: boolean;
+  preparedFilters: SearchProductFilterResult[];
 }
 
 const localFilters = ref<ProductsFiltersType>();

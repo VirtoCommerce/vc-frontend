@@ -3,6 +3,7 @@ import { globals } from "@/core/globals";
 import { isDateString } from "@/core/utilities/date";
 import type { FacetItemType, FacetValueItemType } from "../../types";
 import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/core/api/graphql/types";
+import type { SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { MaybeRef } from "@vueuse/core";
 
 /**
@@ -103,6 +104,42 @@ export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItemType[]>)
 }
 
 /**
+ * Generates a filter expression from prepared filters (SearchProductFilterResult array)
+ * @param filters - Array of SearchProductFilterResult objects
+ * @returns A string representing the combined filter expression from all filters
+ */
+export function generateFilterExpressionFromPreparedFilters(filters: SearchProductFilterResult[]): string {
+  const filterExpressions: string[] = [];
+
+  filters.forEach(filter => {
+    if (filter.termValues?.length) {
+      // Handle term filters
+      const escapedTerms = filter.termValues.map(term =>
+        term.value
+          .replace(/\\/g, "\\\\")
+          .replace(/"/g, '\\"')
+      );
+      filterExpressions.push(`"${filter.name}":"${escapedTerms.join('","')}"`);
+    } else if (filter.rangeValues?.length) {
+      // Handle range filters
+      const rangeExpressions = filter.rangeValues.map(range => {
+        const { lower, upper, includeLowerBound, includeUpperBound } = range;
+        const firstBracket = includeLowerBound ? "[" : "(";
+        const lastBracket = includeUpperBound ? "]" : ")";
+
+        const fromStr = lower ? `${lower} ` : "";
+        const toStr = upper ? ` ${upper}` : "";
+
+        return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
+      });
+      filterExpressions.push(`"${filter.name}":${rangeExpressions.join(",")}`);
+    }
+  });
+
+  return filterExpressions.join(" ");
+}
+
+/**
  * Generates a filter expression from a facet range
  * @param facetRange - Object containing range parameters (from, to, includeFrom, includeTo)
  * @returns A string representing the range filter expression
@@ -127,18 +164,20 @@ export function getFilterExpressionFromFacetRange(
  * @returns A FacetItemType object representing the converted term facet
  */
 export function termFacetToCommonFacet(termFacet: TermFacet): FacetItemType {
+  const facetValues = termFacet.terms
+    .map<FacetValueItemType>((facetTerm: FacetTermType) => ({
+      count: facetTerm.count,
+      label: getFacetLabel(facetTerm.label),
+      value: facetTerm.term,
+      selected: facetTerm.isSelected,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+
   return {
     type: "terms",
     label: termFacet.label,
     paramName: termFacet.name,
-    values: termFacet.terms
-      .map<FacetValueItemType>((facetTerm: FacetTermType) => ({
-        count: facetTerm.count,
-        label: getFacetLabel(facetTerm.label),
-        value: facetTerm.term,
-        selected: facetTerm.isSelected,
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label)),
+    values: facetValues,
   };
 }
 

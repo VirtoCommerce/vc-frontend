@@ -7,6 +7,7 @@
     <FiltersPopupSidebar
       :is-exist-selected-facets="hasSelectedFacets"
       :popup-sidebar-filters="productsFilters"
+      :prepared-filters="preparedFilters"
       :facets-loading="fetchingFacets"
       :is-mobile="isMobile"
       :is-visible="isFiltersSidebarVisible"
@@ -189,9 +190,10 @@ const {
   productsFilters,
   applyFilters: _applyFilters,
   hideFiltersSidebar,
-  removeFacetFilter: _removeFacetFilter,
+  removeFacetFilter: _removeFacetFilter,  
   resetFacetFilters: _resetFacetFilters,
   showFiltersSidebar,
+  preparedFilters,
 } = useProducts({
   withFacets: true,
   filtersDisplayOrder,

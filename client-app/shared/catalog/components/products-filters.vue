@@ -45,7 +45,6 @@
 import { useBreakpoints, breakpointsTailwind, useElementBounding, watchDebounced } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { watch, shallowRef, ref, nextTick, computed } from "vue";
-import { getFilterExpressionFromFacetRange } from "@/core/utilities";
 import FacetFilter from "./facet-filter.vue";
 import type { SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { FacetItemType } from "@/core/types";
@@ -54,6 +53,8 @@ import SliderFilter from "@/shared/catalog/components/product/slider-filter.vue"
 
 interface IEmits {
   (event: "change", value: ProductsFiltersType): void;
+  (event: "change:facets", value: FacetItemType[]): void;
+  (event: "change:filters", value: SearchProductFilterResult[]): void;
 }
 
 interface IProps {
@@ -154,29 +155,38 @@ function onFacetFilterChanged(facet: Pick<FacetItemType, "paramName" | "values">
   const existingFacet = localFilters.value.facets.find((item) => item.paramName === facet.paramName);
   if (existingFacet) {
     existingFacet.values = facet.values;
-    emit("change", localFilters.value);
+    // Emit only facets change
+    emit("change:facets", localFilters.value.facets);
   }
+}
+
+function onFilterChanged(newFilters: SearchProductFilterResult[]): void {
+  // Emit only filters change
+  emit("change:filters", newFilters);
 }
 
 function applyPriceRange(range: [number | null, number | null]) {
   const from = typeof range[0] == 'number' ? range[0] : undefined;
   const to = typeof range[1] == 'number' ? range[1] : undefined;
-  // todo gel all facets
-  onFacetFilterChanged({
-    paramName: "price",
-    values: from === undefined && to === undefined ? [] : [
-      {
-        label: "price",
-        count: 0,
-        from,
-        to,
-        selected: true,
-        includeFrom: true,
-        includeTo: true,
-        value: getFilterExpressionFromFacetRange({ from, to, includeFrom: true, includeTo: true })
-      }
-    ]
-  })
+
+  // Create a new filter object for the price range
+  const newFilter: SearchProductFilterResult = {
+    name: "price",
+    filterType: "Range",
+    rangeValues: from === undefined && to === undefined ? [] : [{
+      lower: from?.toString(),
+      upper: to?.toString(),
+      includeLowerBound: true,
+      includeUpperBound: true
+    }]
+  };
+
+  // Update only the filters array, keeping facets unchanged
+  const newFilters = from === undefined && to === undefined
+    ? props.preparedFilters.filter(f => f.name !== "price")
+    : [...props.preparedFilters.filter(f => f.name !== "price"), newFilter];
+
+  onFilterChanged(newFilters);
 }
 
 function getFacetFilterComponent(facet: FacetItemType) {
