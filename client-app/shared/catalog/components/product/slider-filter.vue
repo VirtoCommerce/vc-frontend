@@ -21,7 +21,6 @@
 
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
-import { zeroPriceFilter } from "@/core/constants";
 import type { SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { FacetItemType } from "@/core/types";
 import type { ColType } from "@/ui-kit/components/molecules/slider/vc-slider.vue";
@@ -105,24 +104,13 @@ function handleSliderChange(value: [number, number] | [number]) {
 }
 
 function getRangeFromFilter(): EmitValueType {
-  const filteredValues = filters.value?.filter((value) => {
-    return !isZeroPriceFilter(value);
-  });
-
-  if (filteredValues?.length === 1 && filteredValues[0].rangeValues?.length === 1) {
-    const rangeValue = filteredValues[0].rangeValues[0];
-
-    return getBounceFromRange(rangeValue)
+  // filters are already filtered to exclude zero price filters
+  if (filters.value?.length === 1 && filters.value[0].rangeValues?.length === 1) {
+    const rangeValue = filters.value[0].rangeValues[0];
+    return getBounceFromRange(rangeValue);
   }
 
-  return [null, null]
-}
-
-function isZeroPriceFilter(value: SearchProductFilterResult) {
-  if(value.rangeValues?.length === 1) {
-    const range = value.rangeValues[0]
-    return (range.lower === zeroPriceFilter.lower && !range.upper && range.includeLowerBound === zeroPriceFilter.includeLowerBound && range.includeUpperBound === zeroPriceFilter.includeUpperBound);
-  }
+  return [null, null];
 }
 
 function getBounceFromRange(rangeValue: SearchProductFilterRangeValue): EmitValueType {

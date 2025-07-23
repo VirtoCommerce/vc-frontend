@@ -32,6 +32,7 @@
         <ProductsFilters
           :keyword="keywordQueryParam"
           :filters="filtersToShow"
+          :prepared-filters="preparedFilters"
           :loading="fetchingProducts"
           class="category__product-filters"
           @change="applyFilters($event)"
@@ -353,6 +354,7 @@ const {
   pageHistory,
   products,
   productsFilters,
+  preparedFilters,
   searchQueryParam,
   sortQueryParam,
   totalProductsCount,

@@ -47,6 +47,7 @@ import { cloneDeep } from "lodash";
 import { watch, shallowRef, ref, nextTick, computed } from "vue";
 import { getFilterExpressionFromFacetRange } from "@/core/utilities";
 import FacetFilter from "./facet-filter.vue";
+import type { SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { FacetItemType } from "@/core/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import SliderFilter from "@/shared/catalog/components/product/slider-filter.vue";
@@ -59,6 +60,7 @@ interface IProps {
   loading?: boolean;
   filters: ProductsFiltersType;
   orientation?: "vertical" | "horizontal";
+  preparedFilters: SearchProductFilterResult[];
 }
 
 const emit = defineEmits<IEmits>();
@@ -148,12 +150,6 @@ watch(
   { immediate: true },
 );
 
-watch(
-  () => props.filters.filters,
-  (newValue) => (localFilters.value.filters = newValue.slice()),
-  { immediate: true },
-);
-
 function onFacetFilterChanged(facet: Pick<FacetItemType, "paramName" | "values">): void {
   const existingFacet = localFilters.value.facets.find((item) => item.paramName === facet.paramName);
   if (existingFacet) {
@@ -195,7 +191,7 @@ function facetHasBounce(statistics?: { min?: number, max?: number }) {
 }
 
 function getFiltersByParamName(paramName: string) {
-  return localFilters.value.filters.filter((el) => el.name === paramName);
+  return props.preparedFilters.filter((el) => el.name === paramName);
 }
 </script>
 

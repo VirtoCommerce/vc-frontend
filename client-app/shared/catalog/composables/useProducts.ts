@@ -7,9 +7,11 @@ import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import {
   FFC_LOCAL_STORAGE,
   IN_STOCK_PRODUCTS_LOCAL_STORAGE,
+  OUTLINE_FILTER_NAME,
   PAGE_LIMIT,
   PRODUCT_SORTING_LIST,
   PURCHASED_BEFORE_LOCAL_STORAGE,
+  zeroPriceFilter,
 } from "@/core/constants";
 import { QueryParamName, SortDirection } from "@/core/enums";
 import {
@@ -27,7 +29,7 @@ import type {
   ProductsFiltersType,
   ProductsSearchParamsType,
 } from "../types";
-import type { Product, RangeFacet, TermFacet } from "@/core/api/graphql/types";
+import type { Product, RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
@@ -409,6 +411,25 @@ export function useProducts(
     }
   }
 
+  function isZeroPriceFilter(value: SearchProductFilterResult): boolean {
+    if (value.rangeValues?.length === 1) {
+      const range = value.rangeValues[0];
+      return (
+        range.lower === zeroPriceFilter.lower &&
+        !range.upper &&
+        range.includeLowerBound === zeroPriceFilter.includeLowerBound &&
+        range.includeUpperBound === zeroPriceFilter.includeUpperBound
+      );
+    }
+    return false;
+  }
+
+    const preparedFilters = computed(() => {
+    return productsFilters.value.filters.filter((filter) =>
+      !isZeroPriceFilter(filter) && filter.name !== OUTLINE_FILTER_NAME
+    );
+  });
+
   async function resetCurrentPage() {
     updateCurrentPage(1);
     if (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore) {
@@ -432,6 +453,7 @@ export function useProducts(
     localStorageBranches,
     localStorageInStock,
     localStoragePurchasedBefore,
+    preparedFilters,
     pagesCount: readonly(pagesCount),
     products: computed(() => products.value),
     productsById,
