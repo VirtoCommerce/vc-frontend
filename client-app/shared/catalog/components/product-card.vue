@@ -1,5 +1,5 @@
 <template>
-  <VcProductCard :view-mode="viewMode" :data-product-id="product.id" border data-test-id="product-card-item">
+  <VcProductCard :view-mode="viewMode" :data-product-sku="product.code" border data-test-id="product-card-item">
     <template #media>
       <VcProductImage
         :images="viewMode === 'grid' ? product.images : []"

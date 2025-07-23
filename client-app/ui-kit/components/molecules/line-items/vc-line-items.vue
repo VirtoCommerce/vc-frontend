@@ -69,7 +69,7 @@
             :selected="selectable && selectedItemIds?.includes(item.id)"
             :browser-target="browserTarget"
             :show-placed-price="item.showPlacedPrice"
-            :data-product-id="item.productId"
+            :data-product-sku="item.sku"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
             @link-click="$emit('linkClick', item)"
