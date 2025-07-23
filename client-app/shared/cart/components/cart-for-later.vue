@@ -1,6 +1,6 @@
 <template>
   <VcWidget
-
+    v-if="savedForLaterList?.items?.length ?? 0 > 0"
     :title="$t('pages.cart.saved_for_later')"
     prepend-icon="cursor-click"
     size="lg">
