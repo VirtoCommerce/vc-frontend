@@ -24,13 +24,19 @@
       {{ product.name }}
     </VcTypography>
 
-    <div v-if="!product.hasVariations" class="mt-2 flex flex-wrap gap-5">
-      <VcCopyText :text="product.code" :notification="$t('pages.product.sku_copied_message')">
+    <div class="mt-2 flex flex-wrap gap-1 max-sm:justify-between sm:gap-6">
+      <VcCopyText
+        v-if="!product.hasVariations"
+        :text="product.code"
+        :notification="$t('pages.product.sku_copied_message')"
+      >
         <span class="text-base text-secondary-900">
           {{ $t("pages.product.sku_label") }}
           <span class="font-black">#{{ product.code }}</span>
         </span>
       </VcCopyText>
+
+      <ProductRating v-if="productReviewsEnabled && product.rating" :rating="product.rating" />
     </div>
 
     <VcLayout sidebar-position="right" sticky-sidebar class="mt-5">
@@ -155,6 +161,7 @@ import {
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import type { IPageTemplate } from "@/shared/static-content";
+import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
