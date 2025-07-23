@@ -1,6 +1,7 @@
 <template>
-  <router-link v-slot="{ isActive, href, navigate }" :to="link.route ?? ''" custom>
-    <a
+  <router-link v-slot="{ isActive, href, navigate }" :to="link.route ?? ''" custom :tabindex="link.route ? 0 : undefined">
+    <component
+      :is="link.route ? 'a' : 'button'"
       v-bind="$attrs"
       :href="href"
       :class="[
@@ -9,7 +10,7 @@
           : 'text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]',
       ]"
       class="flex flex-col items-center gap-0.5 px-3 text-xs tracking-wide"
-      @click="navigate"
+      @click="link.route ? navigate : undefined"
     >
       <span class="relative">
         <slot name="icon">
@@ -34,7 +35,7 @@
       <span>
         <slot />
       </span>
-    </a>
+    </component>
   </router-link>
 </template>
 

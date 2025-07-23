@@ -27,12 +27,13 @@
         width="15rem"
         z-index="3"
       >
-        <template #trigger>
+        <template #trigger="{ triggerProps }">
           <VcButton
             size="sm"
             variant="outline"
             prepend-icon="switch-vertical"
             class="category-horizontal-filters__sorting-trigger"
+            v-bind="triggerProps"
           >
             {{ $t("common.buttons.sort_by") }}
           </VcButton>

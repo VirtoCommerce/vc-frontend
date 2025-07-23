@@ -283,12 +283,6 @@
       "store-manager": "ストアマネージャー"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "クレジットカード (Authorize.Net)",
-        "DefaultManualPaymentMethod": "手動決済",
-        "SkyflowPaymentMethod": "クレジットカード (Skyflow)",
-        "CyberSourcePaymentMethod": "クレジットカード (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "固定料金 (地上)",
         "FixedRate_Air": "固定料金 (航空)",
@@ -306,7 +300,8 @@
           "logged_in_as": "ログインユーザー:"
         },
         "bottom_header": {
-          "catalog_menu_button": "カタログ"
+          "catalog_menu_button": "カタログ",
+          "main_menu": "メインメニュー"
         },
         "link_sign_in": "ログイン",
         "link_register_now": "今すぐ登録",
@@ -413,7 +408,9 @@
         "enter_keyword_placeholder": "ストア全体を検索",
         "enter_keyword_placeholder_category": "{category} 内を検索",
         "scope_loading_label": "検索コンテキストを読み込み中",
-        "scope_remove_label": "削除: {label}"
+        "scope_remove_label": "削除: {label}",
+        "suggestions_and_history_label": "候補と履歴",
+        "search_label": "検索"
       },
       "language_selector": {
         "label": "言語:"
@@ -949,7 +946,7 @@
       },
       "sign_in_form_title": "ログイン",
       "main_banner_block": {
-        "message": "賢明な判断のために<br />私たちが<br />サポートします",
+        "message": "賢明な判断のために{br}私たちが{br}サポートします",
         "key_feature_1": "結果重視",
         "key_feature_2": "信頼性",
         "key_feature_3": "安定性"

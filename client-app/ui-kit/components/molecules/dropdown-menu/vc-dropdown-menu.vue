@@ -12,12 +12,11 @@
     :offset-options="offsetOptions"
     :z-index="zIndex"
     :disabled="disabled"
-    :disable-trigger-events="disableTriggerEvents"
     @toggle="$emit('toggle', $event)"
   >
-    <template #trigger="{ toggle, open, close, opened }">
+    <template #default="{ toggle, open, close, opened, triggerProps }">
       <div class="vc-dropdown-menu__trigger">
-        <slot name="trigger" v-bind="{ toggle, open, close, opened }" />
+        <slot name="trigger" v-bind="{ toggle, open, close, opened, triggerProps }" />
       </div>
     </template>
 
@@ -42,7 +41,6 @@ interface IProps {
   disabled?: boolean;
   width?: string;
   zIndex?: number | string;
-  disableTriggerEvents?: boolean;
   dividers?: boolean;
 }
 
@@ -82,13 +80,13 @@ const props = withDefaults(defineProps<IProps>(), {
   &__trigger {
     @apply flex h-full w-full items-center cursor-pointer;
 
-    #{$disabled} & {
+    #{$disabled} & > * {
       @apply cursor-not-allowed;
     }
   }
 
   &__list {
-    @apply max-h-[--max-height] w-full rounded bg-additional-50 shadow-2xl;
+    @apply max-h-[--max-height] w-full rounded bg-additional-50 shadow-xl;
 
     #{$dividers} & {
       @apply divide-y divide-neutral-100;

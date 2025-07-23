@@ -30,6 +30,6 @@ export async function loadModuleLocale(i18n: I18n, moduleName: string): Promise<
       mergeLocales(i18n, FALLBACK_LOCALE, moduleFallbackMessages);
     }
   } catch (error) {
-    Logger.error(`Error loading the ${moduleName} module locale: "${locale}"`);
+    Logger.error(`Error loading the ${moduleName} module locale: "${locale}"`, error);
   }
 }

@@ -5,19 +5,14 @@
     </VcAlert>
 
     <template #actions="{ close }">
-      <div class="flex w-full flex-wrap items-center gap-3">
-        <div v-if="pages > 1" class="w-full sm:w-auto sm:grow">
-          <VcPagination
-            v-model:page="page"
-            class="flex justify-center sm:block"
-            :pages="Math.min(pages, PAGE_LIMIT)"
-            compact
-          />
+      <div class="flex w-full flex-col gap-3 md:flex-row md:items-center md:justify-end">
+        <div v-if="pages > 1" class="flex w-full min-w-0 flex-col items-center md:items-start">
+          <VcPagination v-model:page="page" :pages="Math.min(pages, PAGE_LIMIT)" compact />
 
           <VcInputDetails v-if="page >= PAGE_LIMIT" :message="$t('ui_kit.reach_limit.page_limit')" />
         </div>
 
-        <div class="flex w-full flex-wrap gap-3 max-xs:*:grow sm:ms-auto sm:w-auto">
+        <div class="flex gap-3 *:flex-1">
           <VcButton
             v-if="allowAddNewAddress && (!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization))"
             variant="outline"
@@ -46,7 +41,6 @@
           <VcButton
             no-wrap
             :disabled="!selectedAddress"
-            class="ms-auto sm:ms-3"
             min-width="8rem"
             @click="
               save();
