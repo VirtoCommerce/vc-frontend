@@ -1287,7 +1287,11 @@
       "title": "カート",
       "empty_cart_description": "カートが空です",
       "recently_browsed_products": "最近見た商品",
-      "empty_cart_search_text": "検索して必要なものを見つけましょう"
+      "empty_cart_search_text": "検索して必要なものを見つけましょう",
+      "save_for_later": "後で保存",
+      "save_for_later_selected": "後で保存 選択済み",
+      "saved_for_later": "後で保存",
+      "move_to_cart": "カートに入れる"
     },
     "checkout": {
       "meta": {

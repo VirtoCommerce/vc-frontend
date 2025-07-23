@@ -1287,7 +1287,11 @@
       "title": "Panier",
       "empty_cart_description": "Votre panier est vide",
       "recently_browsed_products": "Récemment consultés",
-      "empty_cart_search_text": "Utilisez la recherche pour trouver tout ce dont vous avez besoin"
+      "empty_cart_search_text": "Utilisez la recherche pour trouver tout ce dont vous avez besoin",
+      "save_for_later": "Enregistrer pour plus tard",
+      "save_for_later_selected": "Enregistré Sélectionné",
+      "saved_for_later": "Enregistré pour plus tard",
+      "move_to_cart": "Ajouter au panier"
     },
     "checkout": {
       "meta": {

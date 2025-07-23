@@ -1287,7 +1287,11 @@
       "title": "Carrinho",
       "empty_cart_description": "Seu carrinho está vazio",
       "recently_browsed_products": "Recentemente visualizados",
-      "empty_cart_search_text": "Use a pesquisa para encontrar tudo o que precisa"
+      "empty_cart_search_text": "Use a pesquisa para encontrar tudo o que precisa",
+      "save_for_later": "Salvar para mais tarde",
+      "save_for_later_selected": "Salvo para mais tarde Selecionados",
+      "saved_for_later": "Salvo para mais tarde",
+      "move_to_cart": "Mover para o carrinho"
     },
     "checkout": {
       "meta": {
