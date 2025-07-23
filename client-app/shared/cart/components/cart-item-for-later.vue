@@ -13,7 +13,7 @@
       single-line />
 
     <VcProductButton
-v-if="cartLineItem?.id"
+      v-if="cartLineItem?.id"
       icon="arrow-up"
       :button-text="$t('pages.cart.move_to_cart')"
       @link-click="$emit('addToCart', cartLineItem!.id)" />

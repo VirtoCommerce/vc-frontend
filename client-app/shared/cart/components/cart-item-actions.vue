@@ -1,7 +1,7 @@
 <template>
   <div class="cart-item-actions">
     <VcButton
-v-if="saveableForLater"
+      v-if="saveableForLater"
       class="cart-item-actions__button"
       color="secondary"
       size="xs"
@@ -13,7 +13,7 @@ v-if="saveableForLater"
     </VcButton>
 
     <VcButton
-v-if="removable"
+      v-if="removable"
       class="cart-item-actions__button"
       color="secondary"
       size="xs"
