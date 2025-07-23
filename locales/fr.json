@@ -625,6 +625,7 @@
         "description_block_title": "Description",
         "assets_block_title": "Fichiers",
         "vendor_label": "Fournisseur",
+        "all_vendor_products": "Tous les produits de fournisseur",
         "share_product_label": "Partager le produit",
         "create_configuration_button": "Créer configuration",
         "price_block": {

@@ -625,6 +625,7 @@
         "description_block_title": "描述",
         "assets_block_title": "文件",
         "vendor_label": "供应商",
+        "all_vendor_products": "所有供应商产品",
         "share_product_label": "分享产品",
         "create_configuration_button": "创建您的配置",
         "price_block": {
