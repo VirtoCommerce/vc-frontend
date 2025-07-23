@@ -23,6 +23,10 @@ query GetWishlists(
       scope
       modifiedDate
       itemsCount
+      items {
+        id
+        productId
+      }
     }
   }
 }

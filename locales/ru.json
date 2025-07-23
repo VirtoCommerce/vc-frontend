@@ -283,12 +283,6 @@
       "store-manager": "Менеджер магазина"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Банковская карта (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Вручную",
-        "SkyflowPaymentMethod": "Банковская карта (Skyflow)",
-        "CyberSourcePaymentMethod": "Банковская карта (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "Фиксированная ставка (наземный транспорт)",
         "FixedRate_Air": "Фиксированная ставка (воздушный транспорт)",
@@ -306,7 +300,8 @@
           "logged_in_as": "вход под именем"
         },
         "bottom_header": {
-          "catalog_menu_button": "Каталог"
+          "catalog_menu_button": "Каталог",
+          "main_menu": "Основное меню"
         },
         "link_sign_in": "Вход",
         "link_register_now": "Регистрация",
@@ -413,7 +408,9 @@
         "enter_keyword_placeholder": "Поиск по магазину",
         "enter_keyword_placeholder_category": "Искать в {category}",
         "scope_loading_label": "Загрузка контекста поиска",
-        "scope_remove_label": "Удалить: {label}"
+        "scope_remove_label": "Удалить: {label}",
+        "suggestions_and_history_label": "Предложения и история",
+        "search_label": "Поиск"
       },
       "language_selector": {
         "label": "Язык:"
@@ -949,7 +946,7 @@
       },
       "sign_in_form_title": "Вход",
       "main_banner_block": {
-        "message": "Мы можем помочь вам <br />принимать обоснованные<br />и мудрые решения",
+        "message": "Мы можем помочь вам{br}принимать обоснованные{br}и мудрые решения",
         "key_feature_1": "Ориентированность на результат",
         "key_feature_2": "Доверенный",
         "key_feature_3": "Надежный"

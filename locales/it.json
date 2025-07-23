@@ -283,12 +283,6 @@
       "store-manager": "Responsabile negozio"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Carta bancaria (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Manuale",
-        "SkyflowPaymentMethod": "Carta bancaria (Skyflow)",
-        "CyberSourcePaymentMethod": "Carta bancaria (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "Tariffa fissa (Terra)",
         "FixedRate_Air": "Tariffa fissa (Aria)",
@@ -306,7 +300,8 @@
           "logged_in_as": "connesso come"
         },
         "bottom_header": {
-          "catalog_menu_button": "Catalogo"
+          "catalog_menu_button": "Catalogo",
+          "main_menu": "Menu principale"
         },
         "link_sign_in": "Accedi",
         "link_register_now": "Iscriviti ora",
@@ -413,7 +408,9 @@
         "enter_keyword_placeholder": "Cerca nell'intero negozio",
         "enter_keyword_placeholder_category": "Cerca in {category}",
         "scope_loading_label": "Caricamento contesto di ricerca",
-        "scope_remove_label": "Rimuovi: {label}"
+        "scope_remove_label": "Rimuovi: {label}",
+        "suggestions_and_history_label": "Suggerimenti e cronologia",
+        "search_label": "Cerca"
       },
       "language_selector": {
         "label": "Lingua:"
@@ -949,7 +946,7 @@
       },
       "sign_in_form_title": "Accedi",
       "main_banner_block": {
-        "message": "Possiamo aiutarti a <br />prendere decisioni<br />informate e sagge",
+        "message": "Possiamo aiutarti a{br}prendere decisioni{br}informate e sagge",
         "key_feature_1": "Orientato ai risultati",
         "key_feature_2": "Affidabile",
         "key_feature_3": "Affidabile"

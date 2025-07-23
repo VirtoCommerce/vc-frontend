@@ -2,7 +2,7 @@
   <VcModal :title="$t('shared.wishlists.add_to_wishlists_modal.title')" max-width="50rem" is-mobile-fullscreen dividers>
     <div class="rounded border">
       <!-- Lists -->
-      <template v-if="!loadingProductWishlists && !loadingLists">
+      <template v-if="!loadingLists">
         <template v-if="listsWithProduct.length">
           <div class="bg-neutral-100 px-6 py-3 text-base font-bold leading-5 sm:py-2.5">
             {{ $t("shared.wishlists.add_to_wishlists_modal.already_in_the_lists") }}
@@ -18,6 +18,7 @@
                 model-value
                 :value="list.id"
                 :disabled="loading"
+                class="grow"
                 @update:model-value="listsRemoveUpdate(list.id || '', !!$event)"
               >
                 <span class="line-clamp-1 text-base">
@@ -25,7 +26,7 @@
                 </span>
               </VcCheckbox>
 
-              <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" />
+              <WishlistStatus v-if="isCorporateMember && list.scope" class="shrink-0" :scope="list.scope" />
             </li>
           </ul>
         </template>
@@ -74,7 +75,7 @@
         <VcCheckboxGroup v-model="selectedListsOtherIds">
           <transition-group name="list-input" tag="ul">
             <li v-for="list in listsOther" :key="list.id" class="flex justify-between px-6 pb-5 last:pb-5 sm:pb-4">
-              <VcCheckbox :value="list.id" :disabled="loading">
+              <VcCheckbox :value="list.id" :disabled="loading" class="grow">
                 <span
                   class="line-clamp-1 ps-0.5 text-base"
                   :class="{ 'text-neutral': !selectedListsOtherIds.includes(list.id!) }"
@@ -83,14 +84,14 @@
                 </span>
               </VcCheckbox>
 
-              <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" />
+              <WishlistStatus v-if="isCorporateMember && list.scope" class="shrink-0" :scope="list.scope" />
             </li>
           </transition-group>
         </VcCheckboxGroup>
       </template>
 
       <!-- Skeletons -->
-      <ul v-if="loadingProductWishlists || loadingLists">
+      <ul v-if="loadingLists">
         <li v-for="item in lists.length || 3" :key="item" class="flex h-14 px-6 py-4 even:bg-neutral-50">
           <div class="w-full bg-neutral-100"></div>
         </li>
@@ -125,7 +126,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useGetProductWishlistsQuery } from "@/core/api/graphql/catalog/queries/getProductWishlists";
 import { useAnalytics, useThemeContext } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { asyncForEach } from "@/core/utilities";
@@ -165,12 +165,6 @@ const {
 } = useWishlists({ autoRefetch: false });
 const notifications = useNotifications();
 const { analytics } = useAnalytics();
-const {
-  loading: loadingProductWishlists,
-  load: fetchProductWishlists,
-  refetch: refetchProductWishlists,
-  result: productWishlistsResult,
-} = useGetProductWishlistsQuery(product.value.id);
 const { themeContext } = useThemeContext();
 
 const loading = ref(false);
@@ -183,13 +177,11 @@ const listsLimit = themeContext.value?.settings?.wishlists_limit || DEFAULT_WISH
 const creationButtonDisabled = computed(() => lists.value.length + newLists.value.length >= listsLimit);
 
 const listsWithProduct = computed(() =>
-  lists.value.filter((list) => productWishlistsResult.value?.product?.wishlistIds.some((listId) => listId === list.id)),
+  lists.value.filter((list) => list.items?.some((item) => item.productId === product.value.id)),
 );
 
 const listsOther = computed(() => {
-  return lists.value.filter(
-    (list) => !productWishlistsResult.value?.product?.wishlistIds.some((listId) => listId === list.id),
-  );
+  return lists.value.filter((list) => !listsWithProduct.value.some((item) => item.id === list.id));
 });
 
 function listsRemoveUpdate(id: string, checked: boolean) {
@@ -284,9 +276,8 @@ async function save() {
   await createLists();
   await removeProductFromWishlists();
   await addToWishlistsFromListOther();
-  await refetchProductWishlists();
 
-  emit("result", !!productWishlistsResult.value?.product?.wishlistIds?.length);
+  emit("result", !!listsWithProduct.value.length);
 
   closeModal();
   loading.value = false;
@@ -299,7 +290,6 @@ async function save() {
 }
 
 onMounted(async () => {
-  await fetchProductWishlists();
   await fetchWishlists();
 });
 </script>
