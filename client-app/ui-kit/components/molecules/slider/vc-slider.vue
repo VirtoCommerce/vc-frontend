@@ -226,7 +226,11 @@ onMounted(() => {
     const range: RangeType = [newStart, newEnd];
     start.value = range[0];
     end.value = range[1];
-    emit("change", range);
+
+    // Only emit if values actually changed
+    if (!isEqual(range, props.value)) {
+      emit("change", range);
+    }
   });
 });
 
