@@ -8,7 +8,10 @@ v-if="saveableForLater"
       variant="solid-light"
       prepend-icon="bookmark"
       :disabled="disabled"
-      @click="$emit('saveForLater')">{{ $t("pages.cart.save_for_later_selected") }}</VcButton>
+      @click="$emit('saveForLater')">
+      {{ $t("pages.cart.save_for_later_selected") }}
+    </VcButton>
+
     <VcButton
 v-if="removable"
       class="cart-item-actions__button"
