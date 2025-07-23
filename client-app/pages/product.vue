@@ -219,6 +219,7 @@ const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
     variationsFilterExpression.value,
     getFilterExpressionForAvailableIn(productsFilters.value.branches),
     getFilterExpressionForInStock(productsFilters.value.inStock),
+    getFilterExpressionForPurchasedBefore(productsFilters.value.purchasedBefore),
   ]),
 });
 
@@ -294,6 +295,7 @@ async function removeFacetFilter(
     getFilterExpressionFromFacets(productsFilters.value.facets),
     getFilterExpressionForAvailableIn(productsFilters.value.branches),
     getFilterExpressionForInStock(productsFilters.value.inStock),
+    getFilterExpressionForPurchasedBefore(productsFilters.value.purchasedBefore),
   ]);
 
   await fetchProducts(variationsSearchParams.value);
@@ -303,7 +305,12 @@ async function resetFacetFilters(): Promise<void> {
   void _resetFacetFilters();
 
   variationsSearchParams.value.page = 1;
-  variationsSearchParams.value.filter = getFilterExpression([variationsFilterExpression.value]);
+  variationsSearchParams.value.filter = getFilterExpression([
+    variationsFilterExpression.value,
+    getFilterExpressionForAvailableIn(productsFilters.value.branches),
+    getFilterExpressionForInStock(productsFilters.value.inStock),
+    getFilterExpressionForPurchasedBefore(productsFilters.value.purchasedBefore),
+  ]);
 
   await fetchProducts(variationsSearchParams.value);
 }
