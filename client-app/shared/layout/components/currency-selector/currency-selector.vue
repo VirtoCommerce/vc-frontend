@@ -1,17 +1,22 @@
 <template>
-  <VcDropdownMenu placement="bottom-end" width="8rem" class="currency-selector">
+  <VcDropdownMenu
+    placement="bottom-end"
+    width="8rem"
+    class="currency-selector"
+    data-test-id="main-layout.top-header.currency-selector"
+  >
     <template #trigger="{ opened, triggerProps }">
       <button
         type="button"
         class="currency-selector__button"
-        data-test-id="currency-selector-button"
+        data-test-id="main-layout.top-header.currency-selector-button"
         v-bind="triggerProps"
       >
         <span class="currency-selector__label">
           {{ $t("shared.layout.currency_selector.label") }}
         </span>
 
-        <span class="currency-selector__text" data-test-id="current-currency-label">
+        <span class="currency-selector__text" data-test-id="main-layout.top-header.current-currency-label">
           {{ currentCurrency.code }}
         </span>
 
@@ -24,7 +29,8 @@
         v-for="item in supportedCurrencies"
         :key="item.code"
         :active="item.code === currentCurrency.code"
-        :data-test-id="`currency-selector-item-${item.code}`"
+        :data-test-currency-code="item.code"
+        data-test-id="main-layout.top-header.currency-selector-item"
         color="secondary"
         truncate
         @click="

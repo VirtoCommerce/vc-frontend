@@ -73,6 +73,7 @@
           :selected-item-ids="selectedItemIds"
           :validation-errors="cart.validationErrors"
           :disabled="changeItemQuantityBatchedOverflowed || selectionOverflowed"
+          data-test-id="cart.products-section"
           @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
           @select:items="handleSelectItems"
           @remove:items="handleRemoveItems"
@@ -123,6 +124,7 @@
                 v-if="$cfg.checkout_multistep_enabled"
                 :to="{ name: 'Checkout' }"
                 :disabled="hasOnlyUnselectedLineItems"
+                test-id="cart.checkout-button"
                 class="mt-4"
               >
                 {{ $t("common.buttons.go_to_checkout") }}

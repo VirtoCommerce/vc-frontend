@@ -1,5 +1,10 @@
 <template>
-  <VcWidget :title="$t('shared.checkout.shipping_details_section.title')" prepend-icon="truck" size="lg">
+  <VcWidget
+    :title="$t('shared.checkout.shipping_details_section.title')"
+    prepend-icon="truck"
+    size="lg"
+    data-test-id="checkout.shipping-details-section"
+  >
     <div class="flex flex-col flex-wrap gap-4 xs:flex-row xs:gap-y-6 lg:gap-8">
       <div v-if="hasBOPIS && !onlyOneDeliveryMethod">
         <VcLabel>
@@ -13,6 +18,7 @@
             icon="cube"
             :label="$t('shared.checkout.shipping_details_section.switchers.pickup')"
             :disabled="cartChanging"
+            data-test-id="checkout.shipping-details-section.pickup-switcher"
             @change="switchShippingOptions($event)"
           />
 
@@ -22,13 +28,14 @@
             icon="truck"
             :label="$t('shared.checkout.shipping_details_section.switchers.shipping')"
             :disabled="cartChanging"
+            data-test-id="checkout.shipping-details-section.shipping-switcher"
             @change="switchShippingOptions($event)"
           />
         </div>
       </div>
 
       <template v-if="mode === SHIPPING_OPTIONS.shipping">
-        <div class="grow">
+        <div class="grow" data-test-id="checkout.shipping-details-section.shipping-address-section">
           <VcLabel required>
             {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
           </VcLabel>
@@ -59,7 +66,7 @@
           item-size="lg"
           :class="hasBOPIS ? 'lg:w-3/12' : 'lg:w-4/12'"
           required
-          test-id-dropdown="shipping-method-select"
+          test-id-dropdown="checkout.shipping-details-section.shipping-method-selector"
           @change="(value) => setShippingMethod(value)"
         >
           <template #placeholder>
@@ -71,7 +78,7 @@
           </template>
 
           <template #selected="{ item }">
-            <div class="flex items-center gap-3 p-[0.688rem] text-sm">
+            <div class="flex items-center gap-3 p-[0.688rem] text-sm" :data-selected-shipping-method-id="item.id">
               <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
               {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
@@ -81,12 +88,12 @@
           <template #item="{ item }">
             <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
-            {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
+            <span :data-shipping-method-id="item.id">{{ $t(`common.methods.delivery_by_id.${item.id}`) }}</span>
           </template>
         </VcSelect>
       </template>
 
-      <div v-else class="grow">
+      <div v-else class="grow" data-test-id="checkout.shipping-details-section.pickup-point-section">
         <VcLabel required>
           {{ $t("shared.checkout.shipping_details_section.labels.pickup_point") }}
         </VcLabel>
