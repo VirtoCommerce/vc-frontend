@@ -106,8 +106,13 @@ export function getUrlSearchParam(param: string): string | null {
   return urlParams.get(param);
 }
 
-export function toCSV(data?: string[], delimiter = ", "): string {
-  return data?.join(delimiter)?.trim() ?? "";
+export function toCSV(parts?: (string | undefined | null)[], delimiter = ", "): string {
+  return (
+    parts
+      ?.map((part) => (typeof part === "string" ? part.trim() : ""))
+      .filter((part) => part !== "")
+      .join(delimiter) ?? ""
+  );
 }
 
 export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocationNormalizedLoaded) {

@@ -9,6 +9,7 @@
         },
       ]"
       :initial-focus="getActiveElement()"
+      :data-test-id="testId"
       @close="!isPersistent && close()"
     >
       <TransitionChild
@@ -44,9 +45,11 @@
                 </VcDialogHeader>
               </DialogTitle>
 
-              <VcDialogContent>
-                <slot :close="close" />
-              </VcDialogContent>
+              <DialogDescription>
+                <VcDialogContent>
+                  <slot :close="close" />
+                </VcDialogContent>
+              </DialogDescription>
 
               <VcDialogFooter v-if="!hideActions" @close="close">
                 <slot name="actions" :close="close" />
@@ -60,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from "@headlessui/vue";
+import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle, DialogDescription } from "@headlessui/vue";
 import { ref, watchSyncEffect } from "vue";
 
 interface IEmits {
@@ -77,6 +80,7 @@ interface IProps {
   maxWidth?: string;
   variant?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
   dividers?: boolean;
+  testId?: string;
 }
 
 defineOptions({

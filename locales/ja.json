@@ -1144,6 +1144,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "到着予定時刻",
+          "emailAndPhone": "{phone} にお電話いただくか、{email} にメールでお問い合わせください",
+          "emailOnly": "メール {email}",
+          "phoneOnly": "電話 {phone}",
+          "questions": "ご質問は？",
+          "address": "住所",
+          "pick_point_info": "受取場所情報",
+          "get_directions": "ルート検索",
+          "point_info": "ポイント情報",
+          "pickup_address": "受取住所",
+          "workingHours": "時間",
+          "name": "名前",
+          "instructions": "説明書"
         }
       },
       "order_payment": {
