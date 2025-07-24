@@ -111,7 +111,7 @@ function getTotalPrice(item: QuoteItemType) {
 
 function getProperties(item: QuoteItemType) {
   return Object.values(getPropertiesGroupedByName(item.product?.properties ?? []))
-    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME) // TODO: replace it to filter props by system/private property when implemented
+    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
     .slice(0, PROPERTIES_COUNT_TO_SHOW);
 }
 </script>

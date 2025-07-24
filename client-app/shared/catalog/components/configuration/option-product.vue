@@ -67,7 +67,7 @@ interface IEmits {
 
 function getProperties(properties: DeepReadonly<Property[]>) {
   return Object.values(getPropertiesGroupedByName(properties as Property[], PropertyType.Product))
-    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME) // TODO: replace it to filter props by system/private property when implemented
+    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
     .slice(0, PRODUCT_PROPERTY_LIMIT);
 }
 </script>

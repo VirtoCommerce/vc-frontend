@@ -111,7 +111,7 @@ const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
-    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME) // TODO: replace it to filter props by system/private property when implemented
+    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
     .slice(0, 3),
 );
 

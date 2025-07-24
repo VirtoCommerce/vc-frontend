@@ -67,7 +67,7 @@ const pageNumber = toRef(props, "pageNumber");
 function getProperties(variation: Product) {
   return Object.values(
     getPropertiesGroupedByName(sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
-  ).filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME); // TODO: replace it to filter props by system/private property when implemented
+  ).filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME);
 }
 
 function changePage(page: number): void {

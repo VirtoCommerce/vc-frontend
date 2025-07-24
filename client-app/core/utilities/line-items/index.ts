@@ -78,9 +78,7 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     inStockQuantity,
     route,
     deleted: !item.product,
-    properties: properties
-      .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME) // TODO: replace it to filter props by system/private property when implemented
-      .slice(0, 3),
+    properties: properties.filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME).slice(0, 3),
     countInCart,
     minQuantity: item.product?.minQuantity,
     maxQuantity: item.product?.maxQuantity ?? item.inStockQuantity ?? item.product?.availabilityData?.availableQuantity,
