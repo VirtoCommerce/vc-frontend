@@ -11,7 +11,6 @@
       {
         'vc-chip--disabled': disabled,
         'vc-chip--clickable': clickable,
-        'vc-chip--closable': closable,
         'vc-chip--rounded': rounded,
         'vc-chip--truncate': truncate,
         'vc-chip--nowrap': nowrap && !truncate,
@@ -19,7 +18,7 @@
     ]"
   >
     <span class="vc-chip__content">
-      <VcIcon v-if="icon" :color="_iconColor" :name="icon" class="vc-chip__icon" />
+      <VcIcon v-if="icon" :name="icon" class="vc-chip__icon" />
 
       <slot />
     </span>
@@ -39,8 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-
 interface IEmits {
   (event: "close"): void;
 }
@@ -62,17 +59,13 @@ interface IProps {
 
 defineEmits<IEmits>();
 
-const props = withDefaults(defineProps<IProps>(), {
+withDefaults(defineProps<IProps>(), {
   color: "primary",
   variant: "solid",
   size: "md",
   nowrap: true,
   iconColor: "",
 });
-
-const _iconColor = computed(() =>
-  props.variant === "solid" ? "--color-additional-50" : (props.iconColor ?? props.color),
-);
 </script>
 
 <style lang="scss">
@@ -85,8 +78,9 @@ const _iconColor = computed(() =>
 
   $truncate: "";
   $clickable: "";
+  $disabled: "";
 
-  @apply inline-flex justify-between max-w-full rounded-[--radius] border font-bold text-center px-[--padding-x] py-[--padding-y] text-neutral-800;
+  @apply inline-flex justify-between max-w-full rounded-[--radius] border font-bold text-center px-[--padding-x] py-0.5 text-neutral-800;
 
   &--clickable {
     $clickable: &;
@@ -104,37 +98,37 @@ const _iconColor = computed(() =>
     @apply rounded-full;
   }
 
+  &--disabled {
+    $disabled: &;
+  }
+
   &--size {
     &--xs {
       --vc-icon-size: 0.5rem;
-      --padding-y: 0;
-      --padding-x: 0.25rem;
+      --padding-x: 0.188rem;
 
-      @apply gap-1 text-[0.625rem]/[0.875rem];
+      @apply min-h-4 gap-1 text-[0.625rem]/[0.675rem];
     }
 
     &--sm {
       --vc-icon-size: 0.625rem;
-      --padding-y: 0.125rem;
-      --padding-x: 0.5rem;
+      --padding-x: 0.345rem;
 
-      @apply gap-1 text-xs/[1rem];
+      @apply min-h-[1.375rem] gap-1 text-xs/[0.75rem];
     }
 
     &--md {
       --vc-icon-size: 0.75rem;
-      --padding-y: 0.25rem;
-      --padding-x: 0.625rem;
+      --padding-x: 0.475rem;
 
-      @apply gap-1.5 text-sm/[1.125rem];
+      @apply min-h-6 gap-1.5 text-sm/[1.125rem];
     }
 
     &--lg {
       --vc-icon-size: 0.875rem;
-      --padding-y: 0.375rem;
-      --padding-x: 0.625rem;
+      --padding-x: 0.6rem;
 
-      @apply gap-1.5 text-sm/[1.25rem];
+      @apply min-h-8 gap-1.5 text-sm/[1.25rem];
     }
   }
 
@@ -187,13 +181,13 @@ const _iconColor = computed(() =>
       }
     }
 
-    &[class*="--#{$color}"] {
+    &[class*="--#{$color}"]:not(#{$disabled}) {
       --vc-icon-color: var(--icon-color, var(--color-#{$color}-500));
       --close-button-icon-color: var(--color-#{$color}-700);
     }
   }
 
-  &[class*="--solid--"] {
+  &[class*="--solid--"]:not(#{$disabled}) {
     --vc-icon-color: var(--icon-color, var(--color-additional-50));
     --close-button-icon-color: var(--color-additional-50);
 
@@ -225,12 +219,18 @@ const _iconColor = computed(() =>
 
   &:disabled,
   &--disabled {
+    --vc-icon-color: theme("colors.neutral.400");
+
     &[class*="--solid-"] {
       @apply bg-neutral-100 border-neutral-100 text-neutral-400;
     }
 
     &[class*="--outline-"] {
       @apply text-neutral-400 border-current;
+    }
+
+    &[class*="--outline-dark"] {
+      @apply bg-neutral-100;
     }
   }
 }

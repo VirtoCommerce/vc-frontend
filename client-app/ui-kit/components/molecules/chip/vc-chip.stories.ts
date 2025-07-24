@@ -73,14 +73,14 @@ Disabled.args = {
 
 export const Icon = Template.bind({});
 Icon.args = {
-  icon: "cog",
+  icon: "circle-solid",
 };
 
 export const IconInSlot: StoryFn = (args) => ({
   components: { VcChip, VcIcon },
   setup: () => ({ args }),
   template: `<VcChip v-bind="args">
-    <VcIcon name="cog" />
+    <VcIcon name="circle-solid" />
     <span>Chip text</span>
   </VcChip>`,
 });
@@ -110,6 +110,10 @@ export const AllStates: StoryFn = () => ({
           <VcChip v-for="color in colors" :size="size" :color="color" :variant="variant" icon="cog">
             Color: {{ color }}
           </VcChip>
+
+          <VcChip :size="size" :variant="variant" icon="cog" disabled>
+            Color: Disabled
+          </VcChip>
         </div>
       </div>
     </div>
@@ -124,6 +128,10 @@ export const AllStates: StoryFn = () => ({
         <div class="flex flex-wrap gap-2 items-center">
           <VcChip v-for="color in colors" :size="size" :color="color" :variant="variant" closable>
             Color: {{ color }}
+          </VcChip>
+
+          <VcChip :size="size" :variant="variant" icon="cog" disabled closable>
+            Color: Disabled
           </VcChip>
         </div>
       </div>
