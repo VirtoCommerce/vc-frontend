@@ -152,32 +152,19 @@
         @apply-sort="resetCurrentPage"
       />
       <!-- Filters chips -->
-      <div
-        v-if="
-          hasSelectedFacets ||
-          (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
-            $route.query.page &&
-            Number($route.query.page) > 1)
-        "
-        class="category__chips"
-      >
-        <template v-for="facet in productsFilters.facets">
-          <template v-if="!facetsToHide?.includes(facet.paramName)">
-            <template v-for="filterItem in facet.values">
+      <div class="category__chips">
+        <template v-for="filter in preparedFilters">
+          <template v-if="!facetsToHide?.includes(filter.name)">
+            <template v-for="filterItem in filter.termValues" :key="filter.name + filterItem.value">
               <VcChip
-                v-if="filterItem.selected"
-                :key="facet.paramName + filterItem.value"
                 color="secondary"
                 closable
                 truncate
                 @close="
-                  removeFacetFilter({
-                    paramName: facet.paramName,
-                    value: filterItem.value,
-                  })
+                  onCancelFilter(filter.name, filterItem.value)
                 "
               >
-                {{ filterItem.label }}
+                {{ filterItem.value }}
               </VcChip>
             </template>
           </template>
@@ -282,6 +269,7 @@ import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
 import type { Product } from "@/core/api/graphql/types";
+import type { SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
@@ -375,7 +363,7 @@ const {
   fetchMoreProducts,
   hideFiltersSidebar,
   openBranchesModal,
-  removeFacetFilter,
+
   resetFacetFilters,
   resetFilterKeyword,
   showFiltersSidebar,
@@ -487,6 +475,37 @@ const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 function applyFilters(newFilters: ProductsFiltersType): void {
   _applyFilters(newFilters);
+}
+
+function onCancelFilter(filterName: string, filterValue: string): void {
+  // Find the filter to update
+  const filterToUpdate = preparedFilters.value.find(filter => filter.name === filterName);
+
+  if (!filterToUpdate) {
+    return;
+  }
+
+  // Create a copy of preparedFilters to modify
+  const updatedFilters = preparedFilters.value.map(filter => {
+    if (filter.name === filterName) {
+      // Remove the specific filterValue from termValues
+      const updatedTermValues = filter.termValues?.filter(term => term?.value !== filterValue);
+
+      // If no termValues remain, return null to remove the filter entirely
+      if (!updatedTermValues || updatedTermValues.length === 0) {
+        return null;
+      }
+
+      // Return updated filter with remaining termValues
+      return {
+        ...filter,
+        termValues: updatedTermValues
+      };
+    }
+    return filter;
+  }).filter(Boolean) as SearchProductFilterResult[]; // Remove null values
+
+  applyFiltersOnly(updatedFilters);
 }
 
 async function changeProductsPage(pageNumber: number): Promise<void> {

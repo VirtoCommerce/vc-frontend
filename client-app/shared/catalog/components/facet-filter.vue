@@ -159,16 +159,18 @@
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef, toRef } from "vue";
+import type { SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 interface IEmits {
-  (event: "update:facet", facet: FacetItemType): void;
+  (event: "update:filter", filters: SearchProductFilterResult): void;
 }
 
 interface IProps {
   facet: FacetItemType;
   loading?: boolean;
   mode: "dropdown" | "collapsable";
+  filter?: SearchProductFilterResult;
 }
 
 const emit = defineEmits<IEmits>();
@@ -190,7 +192,36 @@ const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`))
 const facet = ref<FacetItemType>(cloneDeep(toRef(props, "facet").value));
 
 function changeFacetValues(): void {
-  emit("update:facet", facet.value);
+  // Get selected values from the local facet
+  const selectedValues = facet.value.values.filter(item => item.selected);
+
+  // Create the filter object based on facet type
+  const filter: SearchProductFilterResult = {
+    name: facet.value.paramName,
+    filterType: facet.value.type === "terms" ? "Terms" : "Range"
+  };
+
+  if (facet.value.type === "terms") {
+    // For term facets, create termValues array
+    if (selectedValues.length > 0) {
+      filter.termValues = selectedValues.map(item => ({
+        value: item.value
+      }));
+    }
+  } else if (facet.value.type === "range") {
+    // For range facets, create rangeValues array
+    if (selectedValues.length > 0) {
+      filter.rangeValues = selectedValues.map(item => ({
+        lower: item.from?.toString(),
+        upper: item.to?.toString(),
+        includeLowerBound: item.includeFrom ?? true,
+        includeUpperBound: item.includeTo ?? true
+      }));
+    }
+  }
+
+  // Emit the updated filter
+  emit("update:filter", filter);
 }
 
 function handleFacetItemClick(item: FacetValueItemType): void {
@@ -235,6 +266,8 @@ const hasFade = computed(
 );
 const selectedFiltersCount = computed(() => facet.value.values.filter((item) => item.selected)?.length);
 const hasSelected = computed(() => selectedFiltersCount.value > 0);
+
+
 </script>
 
 <style lang="scss">

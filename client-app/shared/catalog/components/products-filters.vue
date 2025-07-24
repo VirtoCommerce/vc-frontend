@@ -31,9 +31,9 @@
             :mode="isHorizontal ? 'dropdown' : 'collapsable'"
             :facet="facet"
             :loading="loading"
-            :filters="getFiltersByParamName(facet.paramName)"
-            @update:facet="onFacetFilterChanged"
-            @update:range="applyPriceRange"
+            :filter="getFiltersByParamName(facet.paramName)"
+            @update:filter="onFacetFilterChanged"
+            @update:range="applyRange($event, facet.paramName)"
           />
         </template>
       </div>
@@ -151,27 +151,27 @@ watch(
   { immediate: true },
 );
 
-function onFacetFilterChanged(facet: Pick<FacetItemType, "paramName" | "values">): void {
-  const existingFacet = localFilters.value.facets.find((item) => item.paramName === facet.paramName);
-  if (existingFacet) {
-    existingFacet.values = facet.values;
-    // Emit only facets change
-    emit("change:facets", localFilters.value.facets);
+function onFacetFilterChanged(newFilter: SearchProductFilterResult): void {
+  // Remove existing filter with the same name and add the new one
+  const updatedFilters = props.preparedFilters.filter(f => f.name !== newFilter.name);
+
+  // Only add the new filter if it has values (not empty)
+  if ((newFilter.termValues && newFilter.termValues.length > 0) ||
+      (newFilter.rangeValues && newFilter.rangeValues.length > 0)) {
+    updatedFilters.push(newFilter);
   }
-}
 
-function onFilterChanged(newFilters: SearchProductFilterResult[]): void {
   // Emit only filters change
-  emit("change:filters", newFilters);
+  emit("change:filters", updatedFilters);
 }
 
-function applyPriceRange(range: [number | null, number | null]) {
+function applyRange(range: [number | null, number | null], paramName: string) {
   const from = typeof range[0] == 'number' ? range[0] : undefined;
   const to = typeof range[1] == 'number' ? range[1] : undefined;
 
-  // Create a new filter object for the price range
+  // Create a new filter object for the range
   const newFilter: SearchProductFilterResult = {
-    name: "price",
+    name: paramName,
     filterType: "Range",
     rangeValues: from === undefined && to === undefined ? [] : [{
       lower: from?.toString(),
@@ -183,10 +183,10 @@ function applyPriceRange(range: [number | null, number | null]) {
 
   // Update only the filters array, keeping facets unchanged
   const newFilters = from === undefined && to === undefined
-    ? props.preparedFilters.filter(f => f.name !== "price")
-    : [...props.preparedFilters.filter(f => f.name !== "price"), newFilter];
+    ? props.preparedFilters.filter(f => f.name !== paramName)
+    : [...props.preparedFilters.filter(f => f.name !== paramName), newFilter];
 
-  onFilterChanged(newFilters);
+    emit("change:filters", newFilters);
 }
 
 function getFacetFilterComponent(facet: FacetItemType) {
@@ -201,7 +201,7 @@ function facetHasBounce(statistics?: { min?: number, max?: number }) {
 }
 
 function getFiltersByParamName(paramName: string) {
-  return props.preparedFilters.filter((el) => el.name === paramName);
+  return props.preparedFilters.find((el) => el.name === paramName);
 }
 </script>
 

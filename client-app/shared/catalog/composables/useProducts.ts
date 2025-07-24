@@ -16,7 +16,6 @@ import {
 } from "@/core/constants";
 import { QueryParamName, SortDirection } from "@/core/enums";
 import {
-  getFilterExpressionFromFacets,
   generateFilterExpressionFromPreparedFilters,
   Logger,
   rangeFacetToCommonFacet,
@@ -174,17 +173,12 @@ export function useProducts(
     isFiltersSidebarVisible.value = false;
   }
 
-    function applyFilters(newFilters: ProductsFiltersType): void {
-    const facetsFilterExpression: string = getFilterExpressionFromFacets(newFilters.facets);
-    const preparedFiltersExpression: string = generateFilterExpressionFromPreparedFilters(newFilters.filters);
+  function applyFilters(newFilters: ProductsFiltersType): void {
+    // Generate filter expression from filters only
+    const filterExpression: string = generateFilterExpressionFromPreparedFilters(newFilters.filters);
 
-    // Combine both facet and prepared filter expressions
-    const combinedFilterExpression = [facetsFilterExpression, preparedFiltersExpression]
-      .filter(Boolean)
-      .join(" ");
-
-    if (options?.useQueryParams && facetsQueryParam.value !== combinedFilterExpression) {
-      facetsQueryParam.value = combinedFilterExpression;
+    if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
+      facetsQueryParam.value = filterExpression;
     }
 
     if (localStorageInStock.value !== newFilters.inStock) {
@@ -202,23 +196,18 @@ export function useProducts(
     void resetCurrentPage();
   }
 
-    function applyFiltersOnly(newFilters: SearchProductFilterResult[]): void {
+  function applyFiltersOnly(newFilters: SearchProductFilterResult[]): void {
     // Update only the filters part of productsFilters
     productsFilters.value = {
       ...productsFilters.value,
       filters: newFilters
     };
 
-    // Generate filter expression and update query param
-    const facetsFilterExpression: string = getFilterExpressionFromFacets(productsFilters.value.facets);
-    const preparedFiltersExpression: string = generateFilterExpressionFromPreparedFilters(newFilters);
+    // Generate filter expression from filters only and update query param
+    const filterExpression: string = generateFilterExpressionFromPreparedFilters(newFilters);
 
-    const combinedFilterExpression = [facetsFilterExpression, preparedFiltersExpression]
-      .filter(Boolean)
-      .join(" ");
-
-    if (options?.useQueryParams && facetsQueryParam.value !== combinedFilterExpression) {
-      facetsQueryParam.value = combinedFilterExpression;
+    if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
+      facetsQueryParam.value = filterExpression;
     }
 
     void resetCurrentPage();
@@ -232,16 +221,11 @@ export function useProducts(
       filters: preparedFilters.value
     };
 
-    // Generate filter expression and update query param
-    const facetsFilterExpression: string = getFilterExpressionFromFacets(newFacets);
-    const preparedFiltersExpression: string = generateFilterExpressionFromPreparedFilters(productsFilters.value.filters);
+    // Generate filter expression from filters only and update query param
+    const filterExpression: string = generateFilterExpressionFromPreparedFilters(productsFilters.value.filters);
 
-    const combinedFilterExpression = [facetsFilterExpression, preparedFiltersExpression]
-      .filter(Boolean)
-      .join(" ");
-
-    if (options?.useQueryParams && facetsQueryParam.value !== combinedFilterExpression) {
-      facetsQueryParam.value = combinedFilterExpression;
+    if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
+      facetsQueryParam.value = filterExpression;
     }
 
     void resetCurrentPage();
@@ -254,14 +238,10 @@ export function useProducts(
     if (facetValue) {
       facetValue.selected = false;
 
-      const facetsFilterExpression: string = getFilterExpressionFromFacets(productsFilters.value.facets);
-      const preparedFiltersExpression: string = generateFilterExpressionFromPreparedFilters(productsFilters.value.filters);
+      // Generate filter expression from filters only
+      const filterExpression: string = generateFilterExpressionFromPreparedFilters(productsFilters.value.filters);
 
-      const combinedFilterExpression = [facetsFilterExpression, preparedFiltersExpression]
-        .filter(Boolean)
-        .join(" ");
-
-      facetsQueryParam.value = options?.useQueryParams ? combinedFilterExpression : "";
+      facetsQueryParam.value = options?.useQueryParams ? filterExpression : "";
       await new Promise((resolve) => setTimeout(resolve, 0));
       // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
 
