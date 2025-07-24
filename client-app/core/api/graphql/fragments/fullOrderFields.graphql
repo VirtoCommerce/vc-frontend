@@ -7,6 +7,7 @@ fragment fullOrderFields on CustomerOrderType {
   ...shortOrderFields
   comment
   purchaseOrderNumber
+  cancelReason
   currency {
     ...currency
   }
@@ -25,6 +26,37 @@ fragment fullOrderFields on CustomerOrderType {
     }
     deliveryAddress {
       ...orderAddressFields
+    }
+    pickupLocation {
+      id
+      name
+      description
+      geoLocation
+      deliveryDays
+      storageDays
+      contactEmail
+      contactPhone
+      workingHours
+      isActive
+      address {
+        id
+        key
+        name
+        organization
+        countryCode
+        countryName
+        city
+        postalCode
+        line1
+        line2
+        regionId
+        regionName
+        phone
+        email
+        outerId
+        description
+        addressType
+      }
     }
   }
   inPayments(first: 1, sort: "CreatedDate:desc") {

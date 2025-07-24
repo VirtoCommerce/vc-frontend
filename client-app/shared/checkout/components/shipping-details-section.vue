@@ -67,7 +67,7 @@
           :class="hasBOPIS ? 'lg:w-3/12' : 'lg:w-4/12'"
           required
           test-id-dropdown="checkout.shipping-details-section.shipping-method-selector"
-          @change="(value) => setShippingMethod(value)"
+          @change="onShipmentMethodChange"
         >
           <template #placeholder>
             <div class="flex items-center gap-3 p-[0.688rem] text-sm">
@@ -126,6 +126,7 @@ import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { useBopis, BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
 import { AddressSelection } from "@/shared/common";
+import type { ShippingMethodType } from "@/core/api/graphql/types.ts";
 
 interface IProps {
   disabled?: boolean;
@@ -140,8 +141,7 @@ const SHIPPING_OPTIONS = {
 
 type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
 
-const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod, billingAddressEqualsShipping } =
-  useCheckout();
+const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, billingAddressEqualsShipping } = useCheckout();
 
 const { availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
 const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
@@ -193,4 +193,13 @@ watch(
     immediate: true,
   },
 );
+
+function onShipmentMethodChange(method: ShippingMethodType) {
+  void updateShipment({
+    id: shipment.value?.id,
+    shipmentMethodCode: method.code,
+    shipmentMethodOption: method.optionName,
+    price: method.price.amount,
+  });
+}
 </script>
