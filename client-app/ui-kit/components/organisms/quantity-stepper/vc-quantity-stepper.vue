@@ -2,6 +2,7 @@
   <div class="vc-quantity-stepper">
     <VcInput
       v-model.number="model"
+      class="vc-quantity-stepper__input"
       type="number"
       :disabled="disabled"
       :readonly="readonly"
@@ -32,6 +33,7 @@
           :color="buttonsColor"
           :variant="buttonsVariant"
           :data-test-id="testIdDecrement"
+          class="vc-quantity-stepper__decrement"
           @click.stop="handleDecrement"
         />
       </template>
@@ -44,6 +46,7 @@
           :color="buttonsColor"
           :variant="buttonsVariant"
           :data-test-id="testIdIncrement"
+          class="vc-quantity-stepper__increment"
           @click.stop="handleIncrement"
         />
       </template>
