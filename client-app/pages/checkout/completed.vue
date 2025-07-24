@@ -5,7 +5,7 @@
     </VcTypography>
 
     <div class="sm:mt-3 lg:mt-8">
-      <div class="mb-4 font-bold">
+      <div class="mb-4 font-bold" :data-order-number="placedOrder?.number">
         {{ $t("pages.checkout_complete.subtitle", [placedOrder?.number]) }}
       </div>
 
