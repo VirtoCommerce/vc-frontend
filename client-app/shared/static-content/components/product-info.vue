@@ -89,7 +89,7 @@ function shouldShowBlock(block: NonNullable<IPageContent["blocks"]>[number]) {
     return false;
   }
 
-  return block.type === "product-options" && !props.product.hasVariations ? false : true;
+  return !(block.type === "product-options" && !props.product.hasVariations);
 }
 </script>
 
