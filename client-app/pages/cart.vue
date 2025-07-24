@@ -61,7 +61,7 @@
       </VcWidget>
 
       <CartForLater
-        v-if="savedForLaterList?.items?.length != 0"
+        v-if="savedForLaterList?.items?.length ?? 0 > 0"
         :saved-for-later-list="savedForLaterList"
         class="mt-5"
         @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" />
@@ -101,7 +101,7 @@
         </template>
 
         <CartForLater
-          v-if="savedForLaterList?.items?.length != 0"
+          v-if="savedForLaterList?.items?.length ?? 0 > 0"
           :saved-for-later-list="savedForLaterList"
           class="mt-5"
           @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" />
