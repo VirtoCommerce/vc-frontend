@@ -1288,9 +1288,8 @@
       "empty_cart_description": "Ваша корзина пуста",
       "recently_browsed_products": "Недавно просмотренные",
       "empty_cart_search_text": "Используйте поиск, чтобы найти всё необходимое",
-      "save_for_later": "Сохранить",
-      "save_for_later_selected": "Сохранено в избранном",
-      "saved_for_later": "Сохранено",
+      "save_for_later": "Сохранить на потом",
+      "saved_for_later": "Сохранено на потом",
       "move_to_cart": "В корзину"
     },
     "checkout": {

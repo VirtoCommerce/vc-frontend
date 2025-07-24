@@ -38,8 +38,6 @@
         <div v-if="showTotal" class="vc-line-items__total">
           {{ $t("ui_kit.labels.total") }}
         </div>
-
-        <div v-if="removable" class="vc-line-items__removable"></div>
       </div>
 
       <!-- table body -->
@@ -101,17 +99,6 @@
             :disabled="!selectedItemIds.length"
             @click="removeSelectedItems">
             {{ $t("ui_kit.buttons.remove_selected") }}
-          </VcButton>
-
-          <VcButton
-            v-if="saveableForLater"
-            class="vc-line-items__button vc-line-items__button--desktop"
-            color="secondary"
-            variant="outline"
-            size="xs"
-            :disabled="!selectedItemIds.length"
-            @click="saveForLater">
-            {{ $t("pages.cart.save_for_later_selected") }}
           </VcButton>
 
           <VcButton
@@ -222,10 +209,6 @@ function saveForLaterSingle(itemId: string) {
   emit("saveForLater", [itemId]);
 }
 
-function saveForLater() {
-  emit("saveForLater", selectedItemIds.value);
-}
-
 watchEffect(() => {
   slotWidth.value = slotElements.value[0] ? `${slotElements.value[0].clientWidth}px` : "";
 });
@@ -280,7 +263,7 @@ watchEffect(() => {
   }
 
   &__total {
-    @apply text-end;
+    @apply text-end mr-7;
 
     @container (width > theme("containers.2xl")) {
       @apply shrink-0 w-[6.5rem];
@@ -289,10 +272,6 @@ watchEffect(() => {
     @container (width > theme("containers.4xl")) {
       @apply w-[8.625rem];
     }
-  }
-
-  &__removable {
-    @apply w-7;
   }
 
   &__body {

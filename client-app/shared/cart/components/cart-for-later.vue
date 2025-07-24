@@ -1,7 +1,7 @@
 <template>
   <VcWidget
     :title="$t('pages.cart.saved_for_later')"
-    prepend-icon="cart"
+    prepend-icon="bookmark"
     size="lg">
     <VcProductsGrid short>
       <CartItemForLater

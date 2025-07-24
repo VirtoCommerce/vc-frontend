@@ -46,6 +46,7 @@
             {{ name }}
           </VcProductTitle>
           <CartItemActions
+            :selected="selected"
             :disabled="disabled"
             :removable="removable"
             :saveable-for-later="saveableForLater"
@@ -106,17 +107,6 @@
             :disabled="disabled"
             truncate />
         </div>
-
-        <VcButton
-          v-if="removable"
-          :aria-label="$t('ui_kit.buttons.remove_from_cart')"
-          class="vc-line-item__remove-button"
-          color="neutral"
-          size="sm"
-          variant="no-background"
-          icon="delete-thin"
-          :disabled="disabled"
-          @click="$emit('remove')" />
       </div>
     </div>
 

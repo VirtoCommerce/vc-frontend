@@ -5,11 +5,12 @@
       class="cart-item-actions__button"
       color="secondary"
       size="xs"
-      variant="solid-light"
+      icon-size="1.25rem"
       prepend-icon="bookmark"
+      :variant="selected ? 'no-border' : 'solid-light'"
       :disabled="disabled"
       @click="$emit('saveForLater')">
-      {{ $t("pages.cart.save_for_later_selected") }}
+      {{ $t("pages.cart.save_for_later") }}
     </VcButton>
 
     <VcButton
@@ -17,8 +18,9 @@
       class="cart-item-actions__button"
       color="secondary"
       size="xs"
-      variant="solid-light"
+      icon-size="1.25rem"
       icon="trash"
+      :variant="selected ? 'no-border' : 'solid-light'"
       :disabled="disabled"
       @click="$emit('remove')" />
   </div>
@@ -31,6 +33,7 @@ interface IEmits {
 }
 
 interface IProps {
+  selected?: boolean;
   removable?: boolean;
   saveableForLater?: boolean;
   disabled?: boolean;
@@ -44,7 +47,11 @@ defineProps<IProps>();
 <style lang="scss">
 .cart-item-actions {
   &__button {
-    @apply align-middle m-1;
+    @apply align-middle mt-2;
+
+    &:nth-child(2) {
+      @apply ml-2;
+    }
   }
 }
 </style>
