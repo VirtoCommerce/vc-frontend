@@ -1,4 +1,4 @@
-import type { OrderStatusCodeType } from "../enums/order-status.enum.js";
+import type { OrderStatusCodeType } from "../constants/order-status.js";
 
 export interface IOrderStatus {
   code: OrderStatusCodeType;
