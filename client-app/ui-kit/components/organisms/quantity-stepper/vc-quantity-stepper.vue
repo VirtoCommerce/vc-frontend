@@ -1,5 +1,5 @@
 <template>
-  <div class="vc-quantity-stepper" data-test-id="quantity-stepper">
+  <div class="vc-quantity-stepper">
     <VcInput
       v-model.number="model"
       type="number"
@@ -22,7 +22,6 @@
         'aria-valuemax': max,
         'aria-valuenow': model ?? '',
       }"
-      :data-test-id="testIdInput ?? 'quantity-stepper__input'"
     >
       <template v-if="!readonly" #prepend>
         <VcButton
@@ -31,7 +30,6 @@
           :loading="loading"
           :color="buttonsColor"
           :variant="buttonsVariant"
-          :data-test-id="testIdDecrement ?? 'quantity-stepper__decrement'"
           @click.stop="handleDecrement"
         />
       </template>
@@ -43,7 +41,6 @@
           :loading="loading"
           :color="buttonsColor"
           :variant="buttonsVariant"
-          :data-test-id="testIdIncrement ?? 'quantity-stepper__increment'"
           @click.stop="handleIncrement"
         />
       </template>
@@ -76,9 +73,6 @@ interface IProps {
   showEmptyDetails?: boolean;
   selectOnClick?: boolean;
   allowZero?: boolean;
-  testIdInput?: string;
-  testIdDecrement?: string;
-  testIdIncrement?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
