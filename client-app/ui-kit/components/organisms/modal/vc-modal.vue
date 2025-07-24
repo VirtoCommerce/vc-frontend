@@ -9,6 +9,7 @@
         },
       ]"
       :initial-focus="getActiveElement()"
+      :data-test-id="testId"
       @close="!isPersistent && close()"
     >
       <TransitionChild
@@ -77,6 +78,7 @@ interface IProps {
   maxWidth?: string;
   variant?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
   dividers?: boolean;
+  testId?: string;
 }
 
 defineOptions({

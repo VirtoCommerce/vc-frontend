@@ -113,7 +113,7 @@
           v-if="!hideViewModeSelector"
           v-model:mode="savedViewMode"
           class="category__view-mode"
-          data-test-id="category-view-switcher"
+          data-test-id="category-page.view-switcher"
         />
 
         <!-- In stock and branches -->

@@ -26,7 +26,11 @@
           },
         ]"
         :data-test-id="
-          savedViewMode === 'list' ? 'category-list-view' : savedViewMode === 'grid' ? 'category-grid-view' : ''
+          savedViewMode === 'list'
+            ? 'category-page.products-list-view'
+            : savedViewMode === 'grid'
+              ? 'category-page.products-grid-view'
+              : ''
         "
       >
         <template v-if="fetchingProducts">

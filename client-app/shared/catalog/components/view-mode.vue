@@ -4,7 +4,7 @@
       v-model="viewMode"
       value="grid"
       icon="grid"
-      data-test-id="grid-view-tab"
+      data-test-id="view-switcher.grid-view-tab"
       @change="$emit('update:mode', $event)"
     >
       <span class="view-mode__text">
@@ -16,7 +16,7 @@
       v-model="viewMode"
       value="list"
       icon="list"
-      data-test-id="list-view-tab"
+      data-test-id="view-switcher.list-view-tab"
       @change="$emit('update:mode', $event)"
     >
       <span class="view-mode__text">
