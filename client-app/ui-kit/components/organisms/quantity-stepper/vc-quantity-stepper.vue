@@ -22,7 +22,7 @@
         'aria-valuemax': max,
         'aria-valuenow': model ?? '',
       }"
-      :data-test-id="testIdInput ?? 'quantity-stepper__input'"
+      :data-test-id="testIdInput"
     >
       <template v-if="!readonly" #prepend>
         <VcButton
@@ -31,7 +31,7 @@
           :loading="loading"
           :color="buttonsColor"
           :variant="buttonsVariant"
-          :data-test-id="testIdDecrement ?? 'quantity-stepper__decrement'"
+          :data-test-id="testIdDecrement"
           @click.stop="handleDecrement"
         />
       </template>
@@ -43,7 +43,7 @@
           :loading="loading"
           :color="buttonsColor"
           :variant="buttonsVariant"
-          :data-test-id="testIdIncrement ?? 'quantity-stepper__increment'"
+          :data-test-id="testIdIncrement"
           @click.stop="handleIncrement"
         />
       </template>
