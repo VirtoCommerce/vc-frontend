@@ -1,43 +1,26 @@
+import { GetFullOrderDocument, GetShortOrderDocument } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
-import getFullOrderQuery from "./getFullOrderQuery.graphql";
-import getShortOrderQuery from "./getShortOrderQuery.graphql";
-import type { CustomerOrderType, Query, QueryOrderArgs } from "@/core/api/graphql/types";
-import type { DocumentNode } from "graphql";
+import type { GetFullOrderQueryVariables, GetShortOrderQueryVariables } from "@/core/api/graphql/types";
 
-export type GetOrderPayloadType = Omit<QueryOrderArgs, "cultureName">;
+export async function getFullOrder(payload: GetFullOrderQueryVariables) {
+  const { data } = await graphqlClient.query({
+    query: GetFullOrderDocument,
+    variables: {
+      ...payload,
+      cultureName: globals.cultureName,
+    },
+  });
 
-export enum GetOrderFeldsType {
-  Full,
-  Short,
+  return data.order;
 }
 
-export type GetOrderOptionsType = {
-  /** @default GetOrderFeldsType.Full */
-  fields?: GetOrderFeldsType;
-};
-
-export async function getOrder(
-  payload: GetOrderPayloadType,
-  options: GetOrderOptionsType = {},
-): Promise<CustomerOrderType> {
-  const { fields = GetOrderFeldsType.Full } = options;
-  const { cultureName } = globals;
-
-  let query: DocumentNode;
-  switch (fields) {
-    case GetOrderFeldsType.Full:
-      query = getFullOrderQuery;
-      break;
-    case GetOrderFeldsType.Short:
-      query = getShortOrderQuery;
-      break;
-  }
-  const { data } = await graphqlClient.query<Required<Pick<Query, "order">>, QueryOrderArgs>({
-    query,
+export async function getShortOrder(payload: GetShortOrderQueryVariables) {
+  const { data } = await graphqlClient.query({
+    query: GetShortOrderDocument,
     variables: {
-      cultureName,
       ...payload,
+      cultureName: globals.cultureName,
     },
   });
 
