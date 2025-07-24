@@ -38,7 +38,7 @@
             'vc-line-item__content--selectable': !withImage && selectable,
           },
         ]">
-        <div style="display:flex;flex-direction: column;">
+        <div class="vc-line-item__title-actions">
           <VcProductTitle
             class="vc-line-item__name"
             :disabled="disabled || deleted"
@@ -315,6 +315,10 @@ watchEffect(() => {
         @apply pr-0;
       }
     }
+  }
+
+  &__title-actions {
+    @apply flex flex-col;
   }
 
   &__properties {
