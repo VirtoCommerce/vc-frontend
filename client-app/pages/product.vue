@@ -158,7 +158,7 @@ import type { IPageTemplate } from "@/shared/static-content";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 
 useScriptTag(
-  "https://virtooz.vccom-dev-storefront.govirto.com/public/virto-assistant.js",
+  "https://virtooz.vcst-ai-storefront.govirto.com/public/virto-assistant.js",
   undefined,
   {
     crossOrigin: "anonymous",
