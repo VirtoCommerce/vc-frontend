@@ -76,9 +76,9 @@
     </VcTable>
 
     <template #actions="{ close }">
-      <GetDirectionsAction v-if="link" size="md" :link="link" />
+      <GetDirectionsAction v-if="link" class="address-info-modal__action" size="md" :link="link" />
 
-      <VcButton class="address-info-modal__action-ok" @click="close">
+      <VcButton class="address-info-modal__action" @click="close">
         {{ $t("common.buttons.ok") }}
       </VcButton>
     </template>
@@ -156,8 +156,8 @@ const contactKey = computed(() => {
     @apply font-bold;
   }
 
-  &__action-ok {
-    @apply ml-auto;
+  &__action {
+    @apply text-nowrap;
   }
 }
 </style>
