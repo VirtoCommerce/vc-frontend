@@ -25,6 +25,13 @@
             'category-products__list--grid': savedViewMode === 'grid',
           },
         ]"
+        :data-test-id="
+          savedViewMode === 'list'
+            ? 'category-page.products-list-view'
+            : savedViewMode === 'grid'
+              ? 'category-page.products-grid-view'
+              : ''
+        "
       >
         <template v-if="fetchingProducts">
           <component :is="skeletonComponent" v-for="i in itemsPerPage" :key="i" />

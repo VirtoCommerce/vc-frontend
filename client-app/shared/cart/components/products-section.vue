@@ -51,6 +51,7 @@
         size="sm"
         class="self-start"
         variant="outline"
+        data-test-id="cart.clear-button"
         @click="$emit('clear:cart')"
       >
         {{ $t("common.buttons.clear_cart") }}
