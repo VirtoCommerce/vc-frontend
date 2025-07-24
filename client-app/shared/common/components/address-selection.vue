@@ -9,7 +9,7 @@
     ]"
   >
     <template v-if="address">
-      <AddressLine class="vc-address-selection__address" :address="address" />
+      <AddressLine class="vc-address-selection__address" data-test-id="selected-address-label" :address="address" />
 
       <VcButton
         v-if="!readonly"

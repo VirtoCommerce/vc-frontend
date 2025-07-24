@@ -40,7 +40,7 @@
           :disabled="disabled"
           size="auto"
           required
-          test-id-dropdown="payment-method-select"
+          test-id-dropdown="checkout.payment-method-selector"
           @change="(value) => setPaymentMethod(value)"
         >
           <template #placeholder>
@@ -52,7 +52,7 @@
           </template>
 
           <template #selected="{ item }">
-            <div class="flex items-center gap-3 p-3 text-sm">
+            <div class="flex items-center gap-3 p-3 text-sm" :data-selected-payment-method-id="item.code">
               <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
               {{ item.name }}
@@ -62,7 +62,7 @@
           <template #item="{ item }">
             <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
-            {{ item.name }}
+            <span :data-payment-method-id="item.code">{{ item.name }}</span>
           </template>
         </VcSelect>
 
