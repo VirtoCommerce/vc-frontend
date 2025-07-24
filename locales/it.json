@@ -1144,6 +1144,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Tempo di Arrivo Stimato",
+          "emailAndPhone": "Chiama {phone} o scrivi a {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Chiama {phone}",
+          "questions": "Domande?",
+          "address": "Indirizzo",
+          "pick_point_info": "Info punto di ritiro",
+          "get_directions": "Ottieni indicazioni",
+          "point_info": "Informazioni",
+          "pickup_address": "Indirizzo di ritiro",
+          "workingHours": "Ore",
+          "name": "Nome",
+          "instructions": "Istruzioni"
         }
       },
       "order_payment": {

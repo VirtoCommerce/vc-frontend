@@ -10,7 +10,9 @@
         'vc-line-item--deleted': deleted,
       },
     ]"
-    @keydown="changeFocus">
+    data-test-id="line-item"
+    @keydown="changeFocus"
+  >
     <div v-if="$slots.before" class="vc-line-item__before">
       <slot name="before" />
     </div>
@@ -22,7 +24,8 @@
         class="vc-line-item__checkbox"
         :name="$t('ui_kit.labels.toggle_vendor_select')"
         test-id="vc-line-item-checkbox"
-        @change="$emit('select', isSelected)" />
+        @change="$emit('select', isSelected)"
+      />
 
       <!--  IMAGE -->
       <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
@@ -61,13 +64,15 @@
               'vc-line-item__properties--wide': !withPrice,
               'vc-line-item__properties--hide': !withProperties && withPrice,
             },
-          ]">
+          ]"
+        >
           <template v-if="withProperties">
             <VcProperty
               v-for="property in properties"
               :key="property.name"
               :label="property.label!"
-              :disabled="disabled || deleted">
+              :disabled="disabled || deleted"
+            >
               {{ property.value }}
             </VcProperty>
           </template>
@@ -80,7 +85,8 @@
             v-if="withPrice && !deleted"
             class="vc-line-item__property-price"
             :label="$t('ui_kit.labels.price_per_item')"
-            :disabled="disabled">
+            :disabled="disabled"
+          >
             <VcProductPrice :list-price="actualPrice || listPrice" :disabled="disabled" truncate />
           </VcProperty>
         </div>
@@ -91,7 +97,8 @@
           :list-price="listPrice"
           :actual-price="showPlacedPrice ? actualPrice : listPrice"
           :disabled="disabled"
-          align="end" />
+          align="end"
+        />
 
         <div class="vc-line-item__mobile-row">
           <div class="vc-line-item__slot">
@@ -105,7 +112,8 @@
             :actual-price="total"
             align="end"
             :disabled="disabled"
-            truncate />
+            truncate
+          />
         </div>
       </div>
     </div>
@@ -380,9 +388,11 @@ watchEffect(() => {
       @apply w-32;
     }
 
-    &:has(.vc-add-to-cart:not(.vc-add-to-cart--hide-button),
+    &:has(
+      .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
       * .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
-      .vc-product-button) {
+      .vc-product-button
+    ) {
       @apply w-full;
 
       @container (width > theme("containers.md")) {
@@ -399,7 +409,7 @@ watchEffect(() => {
     }
 
     #{$deleted} & {
-      @container (width <=theme("containers.2xl")) {
+      @container (width <= theme("containers.2xl")) {
         @apply hidden;
       }
 
@@ -430,7 +440,7 @@ watchEffect(() => {
   &__remove-button {
     @apply shrink-0;
 
-    @container (width <=theme("containers.2xl")) {
+    @container (width <= theme("containers.2xl")) {
       @apply top-0.5 right-0.5 absolute #{!important};
     }
 

@@ -7,7 +7,8 @@
       :title="$t('pages.cart.title')"
       image="basket.jpg"
       icon="outline-cart"
-      :breadcrumbs="breadcrumbs">
+      :breadcrumbs="breadcrumbs"
+    >
       <div class="mb-6 text-lg font-bold">
         {{ $t("pages.cart.empty_cart_description") }}
       </div>
@@ -78,18 +79,21 @@
           :selected-item-ids="selectedItemIds"
           :validation-errors="cart.validationErrors"
           :disabled="changeItemQuantityBatchedOverflowed || selectionOverflowed"
+          data-test-id="cart.products-section"
           @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
           @select:items="handleSelectItems"
           @remove:items="handleRemoveItems"
           @save-for-later="handleSaveForLater"
           @clear:cart="openClearCartModal"
-          @link-click="selectItemEvent" />
+          @link-click="selectItemEvent"
+        />
 
         <GiftsSection
           v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
           :gifts="availableExtendedGifts"
           class="mt-5"
-          @toggle:gift="toggleGift" />
+          @toggle:gift="toggleGift"
+        />
 
         <!-- Sections for single page checkout -->
         <template v-if="!$cfg.checkout_multistep_enabled">
@@ -109,7 +113,8 @@
         <RecentlyBrowsedProducts
           v-if="recentlyBrowsedProducts.length"
           :products="recentlyBrowsedProducts"
-          class="mt-5" />
+          class="mt-5"
+        />
 
         <template #sidebar>
           <OrderSummary :cart="cart" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
@@ -125,13 +130,16 @@
                 class="mt-4"
                 @apply="applyCoupon"
                 @deny="removeCoupon"
-                @update:model-value="clearCouponValidationError" />
+                @update:model-value="clearCouponValidationError"
+              />
 
               <ProceedTo
                 v-if="$cfg.checkout_multistep_enabled"
                 :to="{ name: 'Checkout' }"
                 :disabled="hasOnlyUnselectedLineItems"
-                class="mt-4">
+                test-id="cart.checkout-button"
+                class="mt-4"
+              >
                 {{ $t("common.buttons.go_to_checkout") }}
               </ProceedTo>
 
@@ -145,7 +153,8 @@
                     size="sm"
                     variant="solid-light"
                     class="mt-4"
-                    icon>
+                    icon
+                  >
                     {{ $t("common.messages.fill_all_required") }}
                   </VcAlert>
                 </transition>
@@ -158,7 +167,8 @@
                   size="sm"
                   variant="solid-light"
                   class="mt-4"
-                  icon>
+                  icon
+                >
                   {{ $t("common.messages.something_went_wrong") }}
                 </VcAlert>
               </transition>
@@ -171,14 +181,16 @@
             :key="item.id"
             class="mt-5"
             @lock-cart="isCartLoked = true"
-            @unlock-cart="isCartLoked = false" />
+            @unlock-cart="isCartLoked = false"
+          />
         </template>
       </VcLayout>
 
       <transition name="slide-fade-bottom">
         <div
           v-if="!loading && cart?.items?.length"
-          class="fixed bottom-0 left-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.1),0px_0px_25px_-5px_rgba(0,0,0,0.2)] md:hidden print:hidden">
+          class="fixed bottom-0 left-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.1),0px_0px_25px_-5px_rgba(0,0,0,0.2)] md:hidden print:hidden"
+        >
           <div class="text-end text-base font-bold text-neutral-950">
             <span class="me-1">{{ $t("common.labels.total") }}:</span>
             <VcPriceDisplay v-if="cart.total" :value="cart.total" />
@@ -188,7 +200,8 @@
             v-if="$cfg.checkout_multistep_enabled"
             :to="{ name: 'Checkout' }"
             :disabled="hasOnlyUnselectedLineItems"
-            class="!mt-2">
+            class="!mt-2"
+          >
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
