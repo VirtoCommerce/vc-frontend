@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
-import { useBreakpoints, useElementVisibility } from "@vueuse/core";
+import { useBreakpoints, useElementVisibility, useScriptTag } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
 import _productTemplate from "@/config/product.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
@@ -156,6 +156,15 @@ import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types"
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import type { IPageTemplate } from "@/shared/static-content";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
+
+useScriptTag(
+  "https://virtooz.vccom-dev-storefront.govirto.com/public/virto-assistant.js",
+  undefined,
+  {
+    crossOrigin: "anonymous",
+    type: "module",
+  },
+);
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
