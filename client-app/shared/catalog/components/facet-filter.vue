@@ -30,11 +30,11 @@
         >
           <template #prepend>
             <VcCheckbox
-              v-model="item.selected"
+              :model-value="isSelected(item)"
               tabindex="-1"
               size="xs"
               :disabled="loading"
-              @change="changeFacetValues"
+              @change="handleFacetItemClick(item)"
               @click.stop
             />
           </template>
@@ -122,7 +122,7 @@
           size="xs"
           color="secondary"
           truncate
-          :active="item.selected"
+          :active="isSelected(item)"
           :title="item.label"
           @click="
             handleFacetItemClick(item);
@@ -131,13 +131,10 @@
         >
           <template #prepend>
             <VcCheckbox
-              v-model="item.selected"
+              :model-value="isSelected(item)"
               size="xs"
               :disabled="loading"
-              @change="
-                changeFacetValues();
-                close();
-              "
+              @change="handleFacetItemClick(item)"
               @click.stop
             />
           </template>
@@ -159,7 +156,7 @@
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef, toRef } from "vue";
-import type { SearchProductFilterResult } from "@/core/api/graphql/types";
+import type { SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 interface IEmits {
@@ -191,46 +188,61 @@ const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`))
 
 const facet = ref<FacetItemType>(cloneDeep(toRef(props, "facet").value));
 
-function changeFacetValues(): void {
-  // Get selected values from the local facet
-  const selectedValues = facet.value.values.filter(item => item.selected);
+const selectedTerms = ref([] as string[]);
 
-  // Create the filter object based on facet type
-  const filter: SearchProductFilterResult = {
-    name: facet.value.paramName,
-    filterType: facet.value.type === "terms" ? "Terms" : "Range"
-  };
+const selectedRanges = ref([] as SearchProductFilterRangeValue[]);
 
+function handleFacetItemClick(item: FacetValueItemType): void {
   if (facet.value.type === "terms") {
-    // For term facets, create termValues array
-    if (selectedValues.length > 0) {
-      filter.termValues = selectedValues.map(item => ({
-        value: item.value
-      }));
-    }
-  } else if (facet.value.type === "range") {
-    // For range facets, create rangeValues array
-    if (selectedValues.length > 0) {
-      filter.rangeValues = selectedValues.map(item => ({
-        lower: item.from?.toString(),
-        upper: item.to?.toString(),
-        includeLowerBound: item.includeFrom ?? true,
-        includeUpperBound: item.includeTo ?? true
-      }));
+    const index = selectedTerms.value.findIndex(value => value === item.value);
+    if (index === -1) {
+      // Добавить объект
+      selectedTerms.value.push(item.value);
+    } else {
+      // Удалить объект
+      selectedTerms.value.splice(index, 1);
     }
   }
 
-  // Emit the updated filter
-  emit("update:filter", filter);
+  if (facet.value.type === "range") {
+    const index = selectedRanges.value.findIndex(value => {
+      return value.includeLowerBound === item.includeFrom &&
+        value.includeUpperBound === item.includeTo &&
+        areValuesEqual(item.from, value.lower) &&
+        areValuesEqual(item.to, value.upper);
+    })
+
+    console.log(index)
+
+    if(index === -1) {
+      selectedRanges.value.push({
+        includeLowerBound: item.includeFrom || false,
+        includeUpperBound: item.includeTo || false,
+        lower: numberToString(item.from),
+        upper: numberToString(item.to)
+      })
+    } else {
+      selectedRanges.value.splice(index, 1);
+    }
+  }
+
+  emit("update:filter", {
+    filterType: props.filter?.filterType || props.facet.type,
+    name: props.filter?.name || props.facet.paramName,
+    label: props.filter?.label || props.facet.label,
+    termValues: selectedTerms.value.map(value => ({ value })),
+    rangeValues: selectedRanges.value
+  });
 }
 
-function handleFacetItemClick(item: FacetValueItemType): void {
-  item.selected = !item.selected;
-  changeFacetValues();
+function numberToString(value?: number): string | undefined {
+  return typeof value === 'number' ? String(value) : undefined
 }
 
 watchEffect(() => {
   facet.value = cloneDeep(props.facet);
+  selectedTerms.value = props.filter?.termValues?.map(item => item.value) || [];
+  selectedRanges.value = props.filter?.rangeValues || [];
 });
 
 const isExpanded = ref(false);
@@ -267,7 +279,30 @@ const hasFade = computed(
 const selectedFiltersCount = computed(() => facet.value.values.filter((item) => item.selected)?.length);
 const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
+function isSelected(item: FacetValueItemType) {
+  if(props.facet.type === "terms") {
+    return selectedTerms.value.includes(item.value);
+  }
 
+  if(props.facet.type === "range") {
+    return selectedRanges.value.some(value => {
+      return value.includeLowerBound === item.includeFrom &&
+        value.includeUpperBound === item.includeTo &&
+        areValuesEqual(item.from, value.lower) &&
+        areValuesEqual(item.to, value.upper);
+    })
+  }
+}
+
+function areValuesEqual(
+  a: string | number | null | undefined,
+  b: string | number | null | undefined
+): boolean {
+  // assume null and undefined are equal
+  if (a == null && b == null) return true;
+
+  return String(a) === String(b);
+}
 </script>
 
 <style lang="scss">
