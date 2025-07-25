@@ -43,6 +43,7 @@ import { toRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import CountInCart from "../count-in-cart.vue";
 import InStock from "../in-stock.vue";
 import type { Product } from "@/core/api/graphql/types";
@@ -66,7 +67,7 @@ const pageNumber = toRef(props, "pageNumber");
 function getProperties(variation: Product) {
   return Object.values(
     getPropertiesGroupedByName(sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
-  );
+  ).filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME);
 }
 
 function changePage(page: number): void {

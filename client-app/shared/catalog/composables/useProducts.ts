@@ -90,6 +90,7 @@ export function useProducts(
     defaultValue: "",
   });
 
+  /** @deprecated use `searchQueryParam` instead */
   const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
     defaultValue: "",
   });
@@ -261,6 +262,7 @@ export function useProducts(
     void resetCurrentPage();
   }
 
+  /** @deprecated use `searchQueryParam` instead */
   function resetFilterKeyword(): void {
     keywordQueryParam.value = "";
   }
@@ -490,6 +492,7 @@ export function useProducts(
     hasSelectedFacets: computed(() => hasSelectedFacets()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
+    /** @deprecated use `searchQueryParam` instead */
     keywordQueryParam,
     localStorageBranches,
     localStorageInStock,
@@ -518,6 +521,7 @@ export function useProducts(
     openBranchesModal,
     removeFacetFilter,
     resetFacetFilters,
+    /** @deprecated use `searchQueryParam` instead */
     resetFilterKeyword,
     showFiltersSidebar,
     updateProductsFilters,

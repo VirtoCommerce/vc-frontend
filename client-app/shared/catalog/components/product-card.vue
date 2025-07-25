@@ -105,6 +105,7 @@ import {
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
 import { AddToCart } from "@/shared/cart";
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { useCustomProductComponents } from "@/shared/common/composables";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import { AddToCompareCatalog } from "@/shared/compare";
@@ -145,7 +146,9 @@ const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
 
 const properties = computed(() =>
-  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
+    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
+    .slice(0, 3),
 );
 
 const badgeSize = computed(() => {
