@@ -1,5 +1,5 @@
 <template>
-  <div :id="mapElementId" ref="mapContainer" class="size-full"></div>
+  <div :id="mapElementId" ref="mapContainer" class="google-map"></div>
   <slot />
 </template>
 
@@ -67,3 +67,9 @@ onBeforeUnmount(() => {
   listener?.remove();
 });
 </script>
+
+<style lang="scss">
+.google-map {
+  @apply size-full;
+}
+</style>
