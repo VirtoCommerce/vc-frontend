@@ -86,6 +86,7 @@ const sliderCols = computed<ColType[]>(() => {
 
 function handleSliderChange(value: [number, number] | [number]) {
   const doubleValue = value.length === 2 ? value : [value[0], value[0]];
+
   if (doubleValue[0] === facetMin.value && doubleValue[1] === facetMax.value) {
     applyRange([null, null]);
     return;
@@ -98,6 +99,7 @@ function handleSliderChange(value: [number, number] | [number]) {
     applyRange([doubleValue[0], null]);
   }
 
+  applyRange([doubleValue[0], doubleValue[1]]);
 }
 
 function getRangeFromFilter(): EmitValueType {
