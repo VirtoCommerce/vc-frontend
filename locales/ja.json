@@ -669,6 +669,10 @@
             "predefined_prefix": "定義済み",
             "option_label": "オプション{0}: {1}"
           }
+        },
+        "options": {
+          "title": "オプション",
+          "select_to_proceed": "オプションを選択して続行"
         }
       },
       "discount_badge": {

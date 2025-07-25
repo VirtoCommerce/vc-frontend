@@ -67,6 +67,7 @@ import { PropertyType } from "@/core/api/graphql/types";
 import { getPropertiesGroupedByName, getGroupedAndSortedProperties } from "@/core/utilities";
 import { PropertyValueTypes } from "@/modules/quotes/api/graphql/types";
 import { ProductTitledBlock } from "@/shared/catalog";
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import type { Product, Property } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -82,7 +83,9 @@ const props = defineProps<IProps>();
 const collapsedStates = ref<boolean[]>([]);
 
 const properties = computed(() =>
-  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)),
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
+    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
+    .slice(0, 3),
 );
 
 const groupedProperties = computed(() => getGroupedAndSortedProperties(properties.value));
