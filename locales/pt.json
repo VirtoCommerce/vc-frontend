@@ -625,6 +625,7 @@
         "description_block_title": "Descrição",
         "assets_block_title": "Arquivos",
         "vendor_label": "Fornecedor",
+        "all_vendor_products": "Todos Os Produtos Do Fornecedor",
         "share_product_label": "Compartilhar produto",
         "create_configuration_button": "Crie sua própria configuração",
         "price_block": {

@@ -625,6 +625,7 @@
         "description_block_title": "Описание",
         "assets_block_title": "Файлы",
         "vendor_label": "Поставщик",
+        "all_vendor_products": "Все Товары Поставщика",
         "share_product_label": "Поделиться товаром",
         "create_configuration_button": "Создайте свою конфигурацию",
         "price_block": {

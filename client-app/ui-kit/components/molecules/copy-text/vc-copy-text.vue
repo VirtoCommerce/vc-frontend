@@ -7,7 +7,7 @@
     <VcButton
       v-if="isSupported"
       :aria-label="$t('ui_kit.buttons.copy')"
-      size="xs"
+      size="xxs"
       variant="outline"
       icon="document-duplicate"
       color="secondary"
