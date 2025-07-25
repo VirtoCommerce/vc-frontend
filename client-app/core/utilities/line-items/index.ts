@@ -1,3 +1,4 @@
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { getProductRoute } from "../product";
 import { getPropertiesGroupedByName } from "../properties";
 import type { AnyLineItemType, VendorGroupType, VendorGroupByVendorIdType, PreparedLineItemType } from "../../types";
@@ -77,7 +78,7 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     inStockQuantity,
     route,
     deleted: !item.product,
-    properties: properties.slice(0, 3),
+    properties: properties.filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME).slice(0, 3),
     countInCart,
     minQuantity: item.product?.minQuantity,
     maxQuantity: item.product?.maxQuantity ?? item.inStockQuantity ?? item.product?.availabilityData?.availableQuantity,

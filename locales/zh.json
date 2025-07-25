@@ -669,6 +669,10 @@
             "predefined_prefix": "预定义",
             "option_label": "选项 {0}: {1}"
           }
+        },
+        "options": {
+          "title": "选项",
+          "select_to_proceed": "选择选项以继续"
         }
       },
       "discount_badge": {

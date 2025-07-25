@@ -1,7 +1,56 @@
 <template>
   <div class="space-y-6">
     <ProductPriceBlock :product="product">
-      <template v-if="product.hasVariations">
+      <template v-if="product.hasVariations && templateLayout === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c">
+        <div class="flex flex-wrap justify-between gap-x-2 text-base font-bold">
+          <span>
+            {{ $t("pages.product.price_label") }}
+          </span>
+
+          <span>
+            <VcItemPrice v-if="variationResult" :value="variationResult?.price" />
+
+            <VcTooltip v-else>
+              <template #trigger>
+                <span class="flex items-center gap-1 text-primary-500">
+                  <VcIcon name="information-circle" size="xs" />
+
+                  {{ $t("common.labels.not_available") }}
+                </span>
+              </template>
+
+              <template #content>
+                <span>
+                  {{ $t("shared.catalog.product_details.options.select_to_proceed") }}
+                </span>
+              </template>
+            </VcTooltip>
+          </span>
+        </div>
+
+        <div class="mt-4 print:hidden">
+          <AddToCart v-if="variationResult" :product="variationResult">
+            <InStock
+              :is-in-stock="variationResult.availabilityData?.isInStock"
+              :is-digital="isDigital"
+              :quantity="variationResult.availabilityData?.availableQuantity"
+            />
+
+            <CountInCart :product-id="variationResult.id" />
+          </AddToCart>
+
+          <VcButton
+            v-else
+            class="w-full cursor-not-allowed"
+            disabled
+            :title="$t('shared.catalog.product_details.options.select_to_proceed')"
+          >
+            {{ $t("ui_kit.buttons.add_to_cart") }}
+          </VcButton>
+        </div>
+      </template>
+
+      <template v-else-if="product.hasVariations">
         <div class="flex flex-wrap justify-between gap-x-2 text-base font-bold">
           <span>
             {{ $t("pages.product.variations_total_label") }}
@@ -66,6 +115,8 @@ import { useCurrency, useThemeContext } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { AddToCart, useShortCart } from "@/shared/cart";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
+import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES } from "@/shared/catalog/constants/product";
 import { useCustomProductComponents } from "@/shared/common/composables";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import CountInCart from "./count-in-cart.vue";
@@ -76,16 +127,19 @@ import type { MoneyType, PriceType, Product } from "@/core/api/graphql/types";
 interface IProps {
   product: Product;
   variations?: Product[];
+  templateLayout?: string;
 }
 
 const props = defineProps<IProps>();
 
 const product = toRef(props, "product");
+const variations = toRef(props, "variations");
 
 const { currentCurrency } = useCurrency();
 const { getItemsTotal } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
 const { getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
+const { variationResult } = useProductVariationProperties(computed(() => variations.value ?? []));
 const { themeContext } = useThemeContext();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
