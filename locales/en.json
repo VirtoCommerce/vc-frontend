@@ -625,6 +625,7 @@
         "description_block_title": "Description",
         "assets_block_title": "Files",
         "vendor_label": "Vendor",
+        "all_vendor_products": "All Vendor Products",
         "share_product_label": "Share product",
         "create_configuration_button": "Create your own configuration",
         "price_block": {
@@ -1148,6 +1149,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Estimated Time of Arrival",
+          "emailAndPhone": "Call {phone} or email {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Call {phone}",
+          "questions": "Questions?",
+          "workingHours": "Hours",
+          "name": "Name",
+          "instructions": "Instructions",
+          "address": "Address",
+          "pick_point_info": "Pick point info",
+          "get_directions": "Get directions",
+          "point_info": "Point info",
+          "pickup_address": "Pick-up address"
         }
       },
       "order_payment": {

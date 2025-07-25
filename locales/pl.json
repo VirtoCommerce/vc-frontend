@@ -625,6 +625,7 @@
         "description_block_title": "Opis",
         "assets_block_title": "Pliki",
         "vendor_label": "Sprzedawca",
+        "all_vendor_products": "Wszystkie Produkty Sprzedawcy",
         "share_product_label": "Udostępnij produkt",
         "create_configuration_button": "Utwórz własną konfigurację",
         "price_block": {
@@ -1148,6 +1149,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Szacowany czas dostawy",
+          "emailAndPhone": "Zadzwoń {phone} lub napisz na {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Zadzwoń {phone}",
+          "questions": "Pytania?",
+          "address": "Adres",
+          "pick_point_info": "Informacje o punkcie odbioru",
+          "get_directions": "Wyznacz trasę",
+          "point_info": "Punkt informacyjny",
+          "pickup_address": "Adres odbioru",
+          "workingHours": "Godziny",
+          "name": "Nazwa",
+          "instructions": "Instrukcje"
         }
       },
       "order_payment": {

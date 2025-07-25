@@ -625,6 +625,7 @@
         "description_block_title": "Descrição",
         "assets_block_title": "Arquivos",
         "vendor_label": "Fornecedor",
+        "all_vendor_products": "Todos Os Produtos Do Fornecedor",
         "share_product_label": "Compartilhar produto",
         "create_configuration_button": "Crie sua própria configuração",
         "price_block": {
@@ -1148,6 +1149,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Tempo Estimado de Chegada",
+          "emailAndPhone": "Ligue para {phone} ou envie um e-mail para {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Ligar para {phone}",
+          "questions": "Perguntas?",
+          "address": "Endereço",
+          "pick_point_info": "Informações do ponto de coleta",
+          "get_directions": "Obter direções",
+          "point_info": "Informações",
+          "pickup_address": "Endereço de retirada",
+          "workingHours": "Horas",
+          "name": "Nome",
+          "instructions": "Instruções"
         }
       },
       "order_payment": {

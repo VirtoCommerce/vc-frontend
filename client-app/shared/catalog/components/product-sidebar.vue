@@ -100,12 +100,18 @@
         </div>
       </template>
     </ProductPriceBlock>
+
+    <VcWidget v-if="showVendor && product.vendor" :title="$t('shared.catalog.product_details.vendor_label')" size="sm">
+      <div class="test-base text-center font-bold">
+        {{ product.vendor.name }}
+      </div>
+    </VcWidget>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, toRef } from "vue";
-import { useCurrency } from "@/core/composables";
+import { useCurrency, useThemeContext } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { AddToCart, useShortCart } from "@/shared/cart";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
@@ -134,8 +140,13 @@ const { getItemsTotal } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
 const { getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 const { variationResult } = useProductVariationProperties(computed(() => variations.value ?? []));
+const { themeContext } = useThemeContext();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
+
+const showVendor = computed(
+  () => themeContext.value?.settings?.vendor_enabled && !product.value.hasVariations && product.value.vendor,
+);
 
 const variationsCartTotalAmount = computed<number>(() => {
   if (!props.product) {

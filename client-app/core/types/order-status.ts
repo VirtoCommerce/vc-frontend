@@ -1,5 +1,7 @@
+import type { OrderStatusCodeType } from "../constants/order-status.js";
+
 export interface IOrderStatus {
-  code: string;
+  code: OrderStatusCodeType;
   color: VcChipColorType;
   variant: VcChipVariantType;
   icon?: string;
