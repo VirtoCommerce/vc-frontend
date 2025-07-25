@@ -625,6 +625,7 @@
         "description_block_title": "描述",
         "assets_block_title": "文件",
         "vendor_label": "供应商",
+        "all_vendor_products": "所有供应商产品",
         "share_product_label": "分享产品",
         "create_configuration_button": "创建您的配置",
         "price_block": {
@@ -668,6 +669,10 @@
             "predefined_prefix": "预定义",
             "option_label": "选项 {0}: {1}"
           }
+        },
+        "options": {
+          "title": "选项",
+          "select_to_proceed": "选择选项以继续"
         }
       },
       "discount_badge": {

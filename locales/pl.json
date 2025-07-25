@@ -625,6 +625,7 @@
         "description_block_title": "Opis",
         "assets_block_title": "Pliki",
         "vendor_label": "Sprzedawca",
+        "all_vendor_products": "Wszystkie Produkty Sprzedawcy",
         "share_product_label": "Udostępnij produkt",
         "create_configuration_button": "Utwórz własną konfigurację",
         "price_block": {
@@ -668,6 +669,10 @@
             "predefined_prefix": "Predefiniowane",
             "option_label": "Opcja {0}: {1}"
           }
+        },
+        "options": {
+          "title": "Opcje",
+          "select_to_proceed": "Wybierz opcje, aby kontynuować"
         }
       },
       "discount_badge": {

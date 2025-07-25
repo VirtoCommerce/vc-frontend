@@ -625,6 +625,7 @@
         "description_block_title": "商品説明",
         "assets_block_title": "ファイル",
         "vendor_label": "販売元",
+        "all_vendor_products": "販売元の全商品",
         "share_product_label": "商品をシェア",
         "create_configuration_button": "カスタム構成を作成",
         "price_block": {
@@ -668,6 +669,10 @@
             "predefined_prefix": "定義済み",
             "option_label": "オプション{0}: {1}"
           }
+        },
+        "options": {
+          "title": "オプション",
+          "select_to_proceed": "オプションを選択して続行"
         }
       },
       "discount_badge": {
