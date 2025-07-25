@@ -154,8 +154,7 @@
 
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
-import { cloneDeep } from "lodash";
-import { computed, ref, watchEffect, shallowRef, toRef } from "vue";
+import { computed, ref, shallowRef, toRef, watch } from "vue";
 import type { SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
@@ -173,6 +172,8 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
+const facet = toRef(props, 'facet');
+
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const SHOW_MORE_AMOUNT = 8;
@@ -184,9 +185,8 @@ const INNER_MARGIN = 0;
 const isMobile = breakpoints.smaller("lg");
 
 const MAX_HEIGHT = ITEM_HEIGHT * (MAX_ITEMS_VISIBLE + 1) + INNER_MARGIN;
-const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
 
-const facet = ref<FacetItemType>(cloneDeep(toRef(props, "facet").value));
+const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
 
 const selectedTerms = ref([] as string[]);
 
@@ -212,8 +212,6 @@ function handleFacetItemClick(item: FacetValueItemType): void {
         areValuesEqual(item.to, value.upper);
     })
 
-    console.log(index)
-
     if(index === -1) {
       selectedRanges.value.push({
         includeLowerBound: item.includeFrom || false,
@@ -227,9 +225,9 @@ function handleFacetItemClick(item: FacetValueItemType): void {
   }
 
   emit("update:filter", {
-    filterType: props.filter?.filterType || props.facet.type,
-    name: props.filter?.name || props.facet.paramName,
-    label: props.filter?.label || props.facet.label,
+    filterType: props.filter?.filterType || facet.value.type,
+    name: props.filter?.name || facet.value.paramName,
+    label: props.filter?.label || facet.value.label,
     termValues: selectedTerms.value.map(value => ({ value })),
     rangeValues: selectedRanges.value
   });
@@ -239,10 +237,9 @@ function numberToString(value?: number): string | undefined {
   return typeof value === 'number' ? String(value) : undefined
 }
 
-watchEffect(() => {
-  facet.value = cloneDeep(props.facet);
-  selectedTerms.value = props.filter?.termValues?.map(item => item.value) || [];
-  selectedRanges.value = props.filter?.rangeValues || [];
+watch(() => props.filter, (filter) => {
+  selectedTerms.value = filter?.termValues?.map(item => item.value) || [];
+  selectedRanges.value = filter?.rangeValues || [];
 });
 
 const isExpanded = ref(false);
@@ -280,11 +277,11 @@ const selectedFiltersCount = computed(() => facet.value.values.filter((item) => 
 const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
 function isSelected(item: FacetValueItemType) {
-  if(props.facet.type === "terms") {
+  if(facet.value.type === "terms") {
     return selectedTerms.value.includes(item.value);
   }
 
-  if(props.facet.type === "range") {
+  if(facet.value.type === "range") {
     return selectedRanges.value.some(value => {
       return value.includeLowerBound === item.includeFrom &&
         value.includeUpperBound === item.includeTo &&
