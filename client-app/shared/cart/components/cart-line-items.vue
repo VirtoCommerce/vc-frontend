@@ -39,7 +39,7 @@
         @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
       />
 
-      <div v-if="item.availabilityData?.isInStock" class="mt-0.5 text-center">
+      <div v-if="item.availabilityData?.isInStock" class="mt-2 text-center">
         <InStock
           :is-in-stock="item.availabilityData?.isInStock"
           :is-available="!item.deleted"

@@ -45,10 +45,7 @@
           @update:model-value="$emit('update:item', { itemId: item.id, quantity: $event })"
         />
         <template #after>
-          <ConfigurationItems
-            v-if="item.configurationItems?.length"
-            :configuration-items="item.configurationItems"
-          />
+          <ConfigurationItems v-if="item.configurationItems?.length" :configuration-items="item.configurationItems" />
         </template>
       </VcLineItem>
     </template>
@@ -66,6 +63,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { ConfigurationItems } from "@/shared/common";
 import type { MoneyType, QuoteItemType } from "../api/graphql/types";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
@@ -112,7 +110,9 @@ function getTotalPrice(item: QuoteItemType) {
 }
 
 function getProperties(item: QuoteItemType) {
-  return Object.values(getPropertiesGroupedByName(item.product?.properties ?? [])).slice(0, PROPERTIES_COUNT_TO_SHOW);
+  return Object.values(getPropertiesGroupedByName(item.product?.properties ?? []))
+    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
+    .slice(0, PROPERTIES_COUNT_TO_SHOW);
 }
 </script>
 

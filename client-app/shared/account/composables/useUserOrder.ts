@@ -1,39 +1,36 @@
 import { computed, ref, shallowRef } from "vue";
-import { addOrUpdateOrderPayment, getOrder } from "@/core/api/graphql";
-import { GetOrderFeldsType } from "@/core/api/graphql/orders/queries/getOrder";
+import { addOrUpdateOrderPayment, getShortOrder, getFullOrder } from "@/core/api/graphql";
 import { ProductType } from "@/core/enums";
 import { groupByVendor, Logger } from "@/core/utilities";
-import type { GetOrderPayloadType } from "@/core/api/graphql/orders/queries/getOrder";
 import type {
-  CustomerOrderType,
+  GetFullOrderQueryVariables,
+  GetShortOrderQueryVariables,
   InputAddOrUpdateOrderPaymentType,
-  OrderAddressType,
-  OrderLineItemType,
-  OrderShipmentType,
-  PaymentInType,
+  CustomerOrderType,
 } from "@/core/api/graphql/types";
-import type { VendorGroupType } from "@/core/types";
 
 const loading = ref(false);
-const order = shallowRef<CustomerOrderType | null>(null);
+const order = shallowRef<CustomerOrderType>();
 
-const giftItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => item.isGift));
-const orderItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => !item.isGift));
-const orderItemsGroupedByVendor = computed<VendorGroupType<OrderLineItemType>[]>(() => groupByVendor(orderItems.value));
-const allItemsAreDigital = computed<boolean>(
+const giftItems = computed(() => (order.value?.items || []).filter((item) => item.isGift));
+const orderItems = computed(() => (order.value?.items || []).filter((item) => !item.isGift));
+const orderItemsGroupedByVendor = computed(() => groupByVendor(orderItems.value));
+const allItemsAreDigital = computed(
   () => !!order.value?.items?.every((item) => item.productType === ProductType.Digital),
 );
-const shipment = computed<OrderShipmentType | undefined>(() => order.value?.shipments?.[0]);
-const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);
-const deliveryAddress = computed<OrderAddressType | undefined>(() => shipment.value?.deliveryAddress);
-const billingAddress = computed<OrderAddressType | undefined>(() => payment.value?.billingAddress);
+const shipment = computed(() => order.value?.shipments?.[0]);
+const payment = computed(() => order.value?.inPayments?.[0]);
+const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
+const pickupLocation = computed(() => shipment.value?.pickupLocation);
+
+const billingAddress = computed(() => payment.value?.billingAddress);
 
 export function useUserOrder() {
-  async function fetchShortOrder(payload: GetOrderPayloadType) {
+  async function fetchShortOrder(payload: GetShortOrderQueryVariables) {
     loading.value = true;
 
     try {
-      order.value = await getOrder(payload, { fields: GetOrderFeldsType.Short });
+      order.value = (await getShortOrder(payload)) as CustomerOrderType; // todo refactor and remove assertion
     } catch (e) {
       Logger.error(`${useUserOrder.name}.${fetchShortOrder.name}`, e);
       throw e;
@@ -42,11 +39,11 @@ export function useUserOrder() {
     }
   }
 
-  async function fetchFullOrder(payload: GetOrderPayloadType) {
+  async function fetchFullOrder(payload: GetFullOrderQueryVariables) {
     loading.value = true;
 
     try {
-      order.value = await getOrder(payload);
+      order.value = (await getFullOrder(payload)) as CustomerOrderType; // todo refactor and remove assertion
     } catch (e) {
       Logger.error(`${useUserOrder.name}.${fetchFullOrder.name}`, e);
       throw e;
@@ -56,7 +53,7 @@ export function useUserOrder() {
   }
 
   function clearOrder() {
-    order.value = null;
+    order.value = undefined;
   }
 
   async function addOrUpdatePayment(payload: InputAddOrUpdateOrderPaymentType, reloadOrder = true) {
@@ -84,6 +81,7 @@ export function useUserOrder() {
     orderItems,
     orderItemsGroupedByVendor,
     deliveryAddress,
+    pickupLocation,
     billingAddress,
     shipment,
     payment,

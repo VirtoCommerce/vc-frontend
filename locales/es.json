@@ -625,6 +625,7 @@
         "description_block_title": "Descripción",
         "assets_block_title": "Archivos",
         "vendor_label": "Vendedor",
+        "all_vendor_products": "Todos Los Productos Del Vendedor",
         "share_product_label": "Compartir producto",
         "create_configuration_button": "Crea tu propia configuración",
         "price_block": {
@@ -668,6 +669,10 @@
             "predefined_prefix": "Predefinido",
             "option_label": "Opción {0}: {1}"
           }
+        },
+        "options": {
+          "title": "Opciones",
+          "select_to_proceed": "Selecciona opciones para continuar"
         }
       },
       "discount_badge": {
@@ -1144,6 +1149,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Tiempo Estimado de Llegada",
+          "emailAndPhone": "Llama a {phone} o envía un correo a {email}",
+          "emailOnly": "Correo electrónico {email}",
+          "phoneOnly": "Llamar a {phone}",
+          "questions": "¿Preguntas?",
+          "address": "Dirección",
+          "pick_point_info": "Información del punto de recogida",
+          "get_directions": "Obtener indicaciones",
+          "point_info": "Información del punto",
+          "pickup_address": "Dirección de recogida",
+          "workingHours": "Horas",
+          "name": "Nombre",
+          "instructions": "Instrucciones"
         }
       },
       "order_payment": {
