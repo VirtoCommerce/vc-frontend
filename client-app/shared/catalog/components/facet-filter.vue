@@ -283,7 +283,7 @@ const hasFade = computed(
     (filtered.value.length > SHOW_MORE_AMOUNT + 1 && !isExpanded.value) ||
     (isAnchorAdded.value && !fadeVisibilityAnchorIsVisible.value),
 );
-const selectedFiltersCount = computed(() => facet.value.values.filter((item) => item.selected)?.length);
+const selectedFiltersCount = computed(() => facet.value.values.filter((item) => isSelected(item)).length);
 const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
 function isSelected(item: FacetValueItemType) {

@@ -46,13 +46,10 @@ import { cloneDeep } from "lodash";
 import { watch, shallowRef, ref, nextTick, computed } from "vue";
 import FacetFilter from "./facet-filter.vue";
 import type { SearchProductFilterResult } from "@/core/api/graphql/types";
-import type { FacetItemType } from "@/core/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import SliderFilter from "@/shared/catalog/components/product/slider-filter.vue";
 
 interface IEmits {
-  (event: "change", value: ProductsFiltersType): void;
-  (event: "change:facets", value: FacetItemType[]): void;
   (event: "change:filters", value: SearchProductFilterResult[]): void;
 }
 

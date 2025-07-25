@@ -36,8 +36,6 @@
           :prepared-filters="preparedFilters"
           :loading="fetchingProducts"
           class="category__product-filters"
-          @change="applyFilters($event)"
-          @change:facets="applyFacetsOnly($event)"
           @change:filters="applyFiltersOnly($event)"
         />
       </template>
@@ -153,18 +151,33 @@
       />
       <!-- Filters chips -->
       <div class="category__chips">
-        <template v-for="filter in preparedFilters">
-          <template v-if="!facetsToHide?.includes(filter.name)">
-            <template v-for="filterItem in filter.termValues" :key="filter.name + filterItem.value">
+        <template v-for="filterItem in preparedFilters">
+          <template v-if="!facetsToHide?.includes(filterItem.name)">
+            <!-- Term values -->
+            <template v-for="term in filterItem.termValues" :key="filterItem.name + 'term-' + term.value">
               <VcChip
                 color="secondary"
                 closable
                 truncate
                 @close="
-                  onCancelFilter(filter.name, filterItem.value)
+                  onCancelFilter(filterItem.name, term.value)
                 "
               >
-                {{ filterItem.value }}
+                {{ term.value }}
+              </VcChip>
+            </template>
+
+            <!-- Range values -->
+            <template v-for="range in filterItem.rangeValues" :key="filterItem.name + 'range-' + range.lower + '-' + range.upper">
+              <VcChip
+                color="secondary"
+                closable
+                truncate
+                @close="
+                  onCancelRangeFilter(filterItem.name, range)
+                "
+              >
+                {{ formatRangeValue(range) }}
               </VcChip>
             </template>
           </template>
@@ -269,7 +282,7 @@ import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
 import type { Product } from "@/core/api/graphql/types";
-import type { SearchProductFilterResult } from "@/core/api/graphql/types";
+import type { SearchProductFilterResult, SearchProductFilterRangeValue } from "@/core/api/graphql/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
@@ -358,7 +371,6 @@ const {
 
   applyFilters: _applyFilters,
   applyFiltersOnly,
-  applyFacetsOnly,
   fetchProducts: _fetchProducts,
   fetchMoreProducts,
   hideFiltersSidebar,
@@ -506,6 +518,57 @@ function onCancelFilter(filterName: string, filterValue: string): void {
   }).filter(Boolean) as SearchProductFilterResult[]; // Remove null values
 
   applyFiltersOnly(updatedFilters);
+}
+
+function onCancelRangeFilter(filterName: string, rangeToRemove: SearchProductFilterRangeValue): void {
+  // Find the filter to update
+  const filterToUpdate = preparedFilters.value.find(filter => filter.name === filterName);
+
+  if (!filterToUpdate) {
+    return;
+  }
+
+  // Create a copy of preparedFilters to modify
+  const updatedFilters = preparedFilters.value.map(filter => {
+    if (filter.name === filterName) {
+      // Remove the specific range from rangeValues
+      const updatedRangeValues = filter.rangeValues?.filter(range =>
+        !(range.includeLowerBound === rangeToRemove.includeLowerBound &&
+          range.includeUpperBound === rangeToRemove.includeUpperBound &&
+          range.lower === rangeToRemove.lower &&
+          range.upper === rangeToRemove.upper)
+      );
+
+      // If no rangeValues remain, return null to remove the filter entirely
+      if (!updatedRangeValues || updatedRangeValues.length === 0) {
+        return null;
+      }
+
+      // Return updated filter with remaining rangeValues
+      return {
+        ...filter,
+        rangeValues: updatedRangeValues
+      };
+    }
+    return filter;
+  }).filter(Boolean) as SearchProductFilterResult[]; // Remove null values
+
+  applyFiltersOnly(updatedFilters);
+}
+
+function formatRangeValue(range: SearchProductFilterRangeValue): string {
+  const lower = range.lower || '';
+  const upper = range.upper || '';
+
+  if (lower && upper) {
+    return `${lower} - ${upper}`;
+  } else if (lower) {
+    return `≥ ${lower}`;
+  } else if (upper) {
+    return `≤ ${upper}`;
+  }
+
+  return '';
 }
 
 async function changeProductsPage(pageNumber: number): Promise<void> {

@@ -1,5 +1,5 @@
 <template>
-  <Category allow-set-meta />
+  <Category allow-set-meta is-horizontal-filters />
 </template>
 
 <script setup lang="ts">
