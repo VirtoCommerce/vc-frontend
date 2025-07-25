@@ -625,6 +625,7 @@
         "description_block_title": "Descripción",
         "assets_block_title": "Archivos",
         "vendor_label": "Vendedor",
+        "all_vendor_products": "Todos Los Productos Del Vendedor",
         "share_product_label": "Compartir producto",
         "create_configuration_button": "Crea tu propia configuración",
         "price_block": {
@@ -668,6 +669,10 @@
             "predefined_prefix": "Predefinido",
             "option_label": "Opción {0}: {1}"
           }
+        },
+        "options": {
+          "title": "Opciones",
+          "select_to_proceed": "Selecciona opciones para continuar"
         }
       },
       "discount_badge": {

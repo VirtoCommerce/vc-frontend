@@ -86,6 +86,7 @@ const image = computed(() => (props.type === "image" ? props.value : ""));
   --props-color: v-bind(color);
   --color: var(--props-color, var(--vc-variant-picker-bg-color, theme("colors.additional.50")));
   --radius: var(--vc-variant-picker-radius, 0.5rem);
+  --strike-line-width: 2px;
 
   @apply inline-block;
 
@@ -179,9 +180,10 @@ const image = computed(() => (props.type === "image" ? props.value : ""));
         background: linear-gradient(
           -45deg,
           transparent var(--transparency),
-          var(--color-secondary-950) 49%,
-          var(--color-secondary-950) 51%,
-          transparent 51%
+          transparent var(--transparency) calc(50% - var(--strike-line-width) / 2),
+          var(--color-secondary-950) calc(50% - var(--strike-line-width) / 2),
+          var(--color-secondary-950) calc(50% + var(--strike-line-width) / 2),
+          transparent calc(50% + var(--strike-line-width) / 2)
         );
       }
     }
