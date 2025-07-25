@@ -27,7 +27,7 @@
 
         <template v-for="facet in filtersToShow" :key="facet.paramName">
           <component
-            :is="getFacetFilterComponent(facet)"
+            :is="facetHasBounce(facet.statistics) ? SliderFilter : FacetFilter"
             :mode="isHorizontal ? 'dropdown' : 'collapsable'"
             :facet="facet"
             :loading="loading"
@@ -187,13 +187,6 @@ function applyRange(range: [number | null, number | null], paramName: string) {
     : [...props.preparedFilters.filter(f => f.name !== paramName), newFilter];
 
     emit("change:filters", newFilters);
-}
-
-function getFacetFilterComponent(facet: FacetItemType) {
-  if (facetHasBounce(facet.statistics)) {
-    return SliderFilter;
-  }
-  return FacetFilter;
 }
 
 function facetHasBounce(statistics?: { min?: number, max?: number }) {
