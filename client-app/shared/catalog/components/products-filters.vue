@@ -29,11 +29,10 @@
           <component
             :is="facetHasBounce(facet.statistics) ? SliderFilter : FacetFilter"
             :mode="isHorizontal ? 'dropdown' : 'collapsable'"
-            :facet="facet"
             :loading="loading"
+            :facet="facet"
             :filter="getFiltersByParamName(facet.paramName)"
             @update:filter="onFacetFilterChanged"
-            @update:range="applyRange($event, facet.paramName)"
           />
         </template>
       </div>
@@ -152,41 +151,16 @@ watch(
 );
 
 function onFacetFilterChanged(newFilter: SearchProductFilterResult): void {
-  // Remove existing filter with the same name and add the new one
+  // Remove existing filter with the same name
   const updatedFilters = props.preparedFilters.filter(f => f.name !== newFilter.name);
 
-  // Only add the new filter if it has values (not empty)
+  // Only add the new filter if it is not empty
   if ((newFilter.termValues && newFilter.termValues.length > 0) ||
       (newFilter.rangeValues && newFilter.rangeValues.length > 0)) {
     updatedFilters.push(newFilter);
   }
 
-  // Emit only filters change
   emit("change:filters", updatedFilters);
-}
-
-function applyRange(range: [number | null, number | null], paramName: string) {
-  const from = typeof range[0] == 'number' ? range[0] : undefined;
-  const to = typeof range[1] == 'number' ? range[1] : undefined;
-
-  // Create a new filter object for the range
-  const newFilter: SearchProductFilterResult = {
-    name: paramName,
-    filterType: "Range",
-    rangeValues: from === undefined && to === undefined ? [] : [{
-      lower: from?.toString(),
-      upper: to?.toString(),
-      includeLowerBound: true,
-      includeUpperBound: true
-    }]
-  };
-
-  // Update only the filters array, keeping facets unchanged
-  const newFilters = from === undefined && to === undefined
-    ? props.preparedFilters.filter(f => f.name !== paramName)
-    : [...props.preparedFilters.filter(f => f.name !== paramName), newFilter];
-
-    emit("change:filters", newFilters);
 }
 
 function facetHasBounce(statistics?: { min?: number, max?: number }) {

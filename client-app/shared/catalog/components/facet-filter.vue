@@ -155,7 +155,11 @@
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, ref, shallowRef, toRef, watch } from "vue";
-import type { SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types";
+import type {
+  SearchProductFilterRangeValue,
+  SearchProductFilterResult,
+  SearchProductFilterValue
+} from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 interface IEmits {
@@ -225,9 +229,8 @@ function handleFacetItemClick(item: FacetValueItemType): void {
   }
 
   emit("update:filter", {
-    filterType: props.filter?.filterType || facet.value.type,
-    name: props.filter?.name || facet.value.paramName,
-    label: props.filter?.label || facet.value.label,
+    filterType: facet.value.type,
+    name: facet.value.paramName,
     termValues: selectedTerms.value.map(value => ({ value })),
     rangeValues: selectedRanges.value
   });
@@ -237,10 +240,17 @@ function numberToString(value?: number): string | undefined {
   return typeof value === 'number' ? String(value) : undefined
 }
 
-watch(() => props.filter, (filter) => {
-  selectedTerms.value = filter?.termValues?.map(item => item.value) || [];
-  selectedRanges.value = filter?.rangeValues || [];
-});
+watch(
+  () => [props.filter?.termValues, props.filter?.rangeValues] as const,
+  ([termValues, rangeValues]: readonly [
+      SearchProductFilterValue[] | undefined,
+      SearchProductFilterRangeValue[] | undefined
+  ]) => {
+    selectedTerms.value = termValues?.map(item => item.value) || [];
+    selectedRanges.value = rangeValues || [];
+  },
+  { immediate: true }
+);
 
 const isExpanded = ref(false);
 

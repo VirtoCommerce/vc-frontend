@@ -34,7 +34,7 @@ interface IProps {
 }
 
 interface IEmits {
-  (event: "update:range", value: EmitValueType): void;
+  (event: "update:filter", filters: SearchProductFilterResult): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -87,19 +87,17 @@ const sliderCols = computed<ColType[]>(() => {
 function handleSliderChange(value: [number, number] | [number]) {
   const doubleValue = value.length === 2 ? value : [value[0], value[0]];
   if (doubleValue[0] === facetMin.value && doubleValue[1] === facetMax.value) {
-    emit("update:range", [null, null]);
+    applyRange([null, null]);
     return;
   }
   if (doubleValue[0] === facetMin.value && doubleValue[1] !== facetMax.value) {
-    emit("update:range", [null, doubleValue[1]]);
+    applyRange([null, doubleValue[1]]);
     return;
   }
   if (doubleValue[0] !== facetMin.value && doubleValue[1] === facetMax.value) {
-    emit("update:range", [doubleValue[0], null]);
-    return;
+    applyRange([doubleValue[0], null]);
   }
 
-  emit("update:range", [doubleValue[0], doubleValue[1]]);
 }
 
 function getRangeFromFilter(): EmitValueType {
@@ -123,5 +121,23 @@ function getBounceFromRange(rangeValue: SearchProductFilterRangeValue): EmitValu
   }
 
   return [null, null]
+}
+
+function applyRange(range: [number | null, number | null]) {
+  const from = typeof range[0] == 'number' ? range[0] : undefined;
+  const to = typeof range[1] == 'number' ? range[1] : undefined;
+
+  const newFilter: SearchProductFilterResult = {
+    filterType: facet.value.type,
+    name: facet.value.paramName,
+    rangeValues: from === undefined && to === undefined ? [] : [{
+      lower: from?.toString(),
+      upper: to?.toString(),
+      includeLowerBound: true,
+      includeUpperBound: true
+    }]
+  };
+
+  emit("update:filter", newFilter);
 }
 </script>
