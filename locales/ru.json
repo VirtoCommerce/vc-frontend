@@ -625,6 +625,7 @@
         "description_block_title": "Описание",
         "assets_block_title": "Файлы",
         "vendor_label": "Поставщик",
+        "all_vendor_products": "Все Товары Поставщика",
         "share_product_label": "Поделиться товаром",
         "create_configuration_button": "Создайте свою конфигурацию",
         "price_block": {
@@ -668,6 +669,10 @@
             "predefined_prefix": "Предопределенный",
             "option_label": "Опция {0}: {1}"
           }
+        },
+        "options": {
+          "title": "Опции",
+          "select_to_proceed": "Выберите параметры, чтобы продолжить"
         }
       },
       "discount_badge": {
@@ -1144,6 +1149,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Ориентировочное время прибытия",
+          "emailAndPhone": "Позвоните по номеру {phone} или напишите на {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Позвонить {phone}",
+          "questions": "Вопросы?",
+          "address": "Адрес",
+          "pick_point_info": "Информация о пункте выдачи",
+          "get_directions": "Как добраться",
+          "point_info": "Информация",
+          "pickup_address": "Адрес самовывоза",
+          "workingHours": "Часы",
+          "name": "Имя",
+          "instructions": "Инструкции"
         }
       },
       "order_payment": {

@@ -8,11 +8,7 @@
   >
     <template v-if="reviews?.length">
       <div class="mb-4 lg:flex lg:justify-between">
-        <div v-if="productRating" class="flex">
-          <span class="mr-2 content-center">{{ $t("common.labels.rating") }}:</span>
-
-          <ProductRating :rating="productRating" class="font-bold" />
-        </div>
+        <ProductRating v-if="productRating" :rating="productRating" />
 
         <div v-if="reviews.length" class="max-lg:mt-3 lg:flex">
           <span class="mr-2 content-center font-bold max-lg:hidden">

@@ -10,6 +10,7 @@
         'vc-line-item--deleted': deleted,
       },
     ]"
+    data-test-id="line-item"
     @keydown="changeFocus"
   >
     <div v-if="$slots.before" class="vc-line-item__before">
@@ -117,6 +118,7 @@
           size="sm"
           variant="no-background"
           icon="delete-thin"
+          data-test-id="remove-item-button"
           :disabled="disabled"
           @click="$emit('remove')"
         />
@@ -391,10 +393,10 @@ watchEffect(() => {
     }
 
     &:has(
-        .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
-        * .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
-        .vc-product-button
-      ) {
+      .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
+      * .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
+      .vc-product-button
+    ) {
       @apply w-full;
 
       @container (width > theme("containers.md")) {
