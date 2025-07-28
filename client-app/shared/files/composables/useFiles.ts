@@ -81,6 +81,18 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
         if (newValue && files.value.length === 0) {
           files.value = [...unref(newValue)];
         }
+
+        // Update files that are already attached
+        newValue.forEach((file) => {
+          if (isAttachedFile(file)) {
+            const existingFile = files.value.find((f) => f.name === file.name);
+
+            if (existingFile) {
+              existingFile.status = "attached";
+              existingFile.url = file.url;
+            }
+          }
+        });
       },
       { immediate: true },
     );
