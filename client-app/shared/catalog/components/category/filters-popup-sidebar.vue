@@ -10,7 +10,7 @@
       :keyword="keywordQueryParam"
       :filters="localFilters"
       :loading="loading || facetsLoading"
-      @change="onProductsFiltersChange"
+      @change:filters="onProductsFiltersChange"
     >
       <template #prepend="{ loading: updatingFiltersState }">
         <div class="filters-popup-sidebar__container">
@@ -100,6 +100,7 @@ import isEqual from "lodash/isEqual";
 import { watch, ref, computed } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
 import { useModal } from "@/shared/modal";
+import type { SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
@@ -124,7 +125,13 @@ interface IProps {
   isExistSelectedFacets: boolean;
 }
 
-const localFilters = ref<ProductsFiltersType>();
+const localFilters = ref<ProductsFiltersType>({
+  filters: [],
+  facets: [],
+  branches: [],
+  inStock: false,
+  purchasedBefore: false
+});
 
 const beforeChangeFilterState = ref<ProductsFiltersType>();
 
@@ -164,8 +171,8 @@ const isPopupSidebarFilterDirty = computed(() => {
   return !isEqual(beforeChangeFilterState.value, localFilters.value);
 });
 
-function onProductsFiltersChange(payload: ProductsFiltersType) {
-  localFilters.value = cloneDeep(payload);
+function onProductsFiltersChange(payload: SearchProductFilterResult[]) {
+  localFilters.value.filters = cloneDeep(payload);
   emit("applyFilters", localFilters.value);
 }
 

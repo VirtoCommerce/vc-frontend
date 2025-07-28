@@ -29,7 +29,7 @@ import type {
   ProductsFiltersType,
   ProductsSearchParamsType,
 } from "../types";
-import type { Product, RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
+import type { Product, RangeFacet, TermFacet, SearchProductFilterResult, SearchProductFilterRangeValue } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
@@ -253,9 +253,7 @@ export function useProducts(
     await new Promise((resolve) => setTimeout(resolve, 0));
     // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
 
-    productsFilters.value.facets.forEach((filter) =>
-      filter.values.forEach((filterItem) => (filterItem.selected = false)),
-    );
+    productsFilters.value.filters = [];
 
     void resetCurrentPage();
   }
@@ -300,8 +298,49 @@ export function useProducts(
 
   function hasSelectedFacets(): boolean {
     return facets.value?.some((facet) =>
-      facet.values.some((value) => value.selected && !options.facetsToHide?.includes(facet.paramName)),
+      facet.values.some((value) => isFacetInFilter(facet, value) && !options.facetsToHide?.includes(facet.paramName)),
     );
+  }
+
+  function compareRange(
+    range: SearchProductFilterRangeValue,
+    includeFrom: boolean | undefined,
+    includeTo: boolean | undefined,
+    from: string | number | null | undefined,
+    to: string | number | null | undefined
+  ): boolean {
+    return range.includeLowerBound === (includeFrom || false) &&
+      range.includeUpperBound === (includeTo || false) &&
+      areValuesEqual(from, range.lower) &&
+      areValuesEqual(to, range.upper);
+  }
+
+  type ValueType = string | number | null | undefined;
+
+  function areValuesEqual(
+    a: ValueType,
+    b: ValueType
+  ): boolean {
+    // assume null and undefined are equal
+    if (a == null && b == null) return true;
+
+    return String(a) === String(b);
+  }
+
+  function isFacetInFilter(facet: FacetItemType, value: FacetValueItemType): boolean {
+    if (facet.type === "range") {
+      return productsFilters.value.filters.some((filter) =>
+        filter.name === facet.paramName &&
+        filter.rangeValues?.some((range) =>
+          compareRange(range, value.includeFrom, value.includeTo, value.from, value.to)
+        )
+      );
+    }
+    if (facet.type === "terms") {
+      return productsFilters.value.filters.some((filter) => filter.name === facet.paramName && filter.termValues?.some((term) => term.value === value.value));
+    }
+
+    return false;
   }
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
