@@ -90,8 +90,8 @@
       {
         "code": "Ready for pickup",
         "color": "success",
-        "variant": "outline",
-        "icon": "circle-solid"
+        "variant": "solid",
+        "icon": "cube"
       }
     ],
 
@@ -175,6 +175,7 @@
         "slugContent": 2,
         "internal": 3
       }
-    }
+    },
+    "graphql_operation_marking_enabled": true
   }
 }

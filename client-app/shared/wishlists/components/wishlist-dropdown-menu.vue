@@ -1,7 +1,7 @@
 <template>
   <VcDropdownMenu :y-offset="4" :x-offset="0" placement="bottom-end">
-    <template #trigger>
-      <VcButton icon="cog" color="secondary" variant="outline" size="xs" />
+    <template #trigger="{ triggerProps }">
+      <VcButton icon="cog" color="secondary" variant="outline" size="xs" v-bind="triggerProps" />
     </template>
 
     <template #content>

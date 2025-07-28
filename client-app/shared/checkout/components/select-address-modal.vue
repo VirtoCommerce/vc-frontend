@@ -5,7 +5,7 @@
     </VcAlert>
 
     <template #actions="{ close }">
-      <div class="flex w-full flex-col gap-3 md:flex-row md:items-center">
+      <div class="flex w-full flex-col gap-3 md:flex-row md:items-center md:justify-end">
         <div v-if="pages > 1" class="flex w-full min-w-0 flex-col items-center md:items-start">
           <VcPagination v-model:page="page" :pages="Math.min(pages, PAGE_LIMIT)" compact />
 

@@ -1,5 +1,5 @@
 <template>
-  <component :is="componentTag" v-bind="attrs" class="vc-link">
+  <component :is="componentTag" v-bind="attrs" class="vc-link" :tabindex="componentTag !== 'span' ? 0 : undefined">
     <slot />
   </component>
 </template>

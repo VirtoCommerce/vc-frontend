@@ -198,7 +198,7 @@
                     lazy
                   />
 
-                  <span>{{ $t(`common.methods.payment_by_code.${payment.paymentMethod.code}`) }}</span>
+                  <span>{{ payment.paymentMethod.name }}</span>
                 </template>
                 <template v-else>
                   <VcImage src="select-payment.svg" class="mr-3.5 inline-block size-10 object-center md:size-12" lazy />

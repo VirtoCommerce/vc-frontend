@@ -283,12 +283,6 @@
       "store-manager": "Gerente de la tienda"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Tarjeta bancaria (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Manual",
-        "SkyflowPaymentMethod": "Tarjeta bancaria (Skyflow)",
-        "CyberSourcePaymentMethod": "Tarjeta bancaria (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "Tarifa fija (terrestre)",
         "FixedRate_Air": "Tarifa fija (aérea)",
@@ -306,7 +300,8 @@
           "logged_in_as": "conectado como"
         },
         "bottom_header": {
-          "catalog_menu_button": "Catálogo"
+          "catalog_menu_button": "Catálogo",
+          "main_menu": "Menú principal"
         },
         "link_sign_in": "Iniciar sesión",
         "link_register_now": "Regístrate ahora",
@@ -630,6 +625,7 @@
         "description_block_title": "Descripción",
         "assets_block_title": "Archivos",
         "vendor_label": "Vendedor",
+        "all_vendor_products": "Todos Los Productos Del Vendedor",
         "share_product_label": "Compartir producto",
         "create_configuration_button": "Crea tu propia configuración",
         "price_block": {
@@ -673,6 +669,10 @@
             "predefined_prefix": "Predefinido",
             "option_label": "Opción {0}: {1}"
           }
+        },
+        "options": {
+          "title": "Opciones",
+          "select_to_proceed": "Selecciona opciones para continuar"
         }
       },
       "discount_badge": {
@@ -951,7 +951,7 @@
       },
       "sign_in_form_title": "Iniciar sesión",
       "main_banner_block": {
-        "message": "Podemos ayudarte a <br />tomar decisiones<br />informadas y sabias",
+        "message": "Podemos ayudarte a{br}tomar decisiones{br}informadas y sabias",
         "key_feature_1": "Orientado a resultados",
         "key_feature_2": "Confiable",
         "key_feature_3": "Fiable"
@@ -1149,6 +1149,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Tiempo Estimado de Llegada",
+          "emailAndPhone": "Llama a {phone} o envía un correo a {email}",
+          "emailOnly": "Correo electrónico {email}",
+          "phoneOnly": "Llamar a {phone}",
+          "questions": "¿Preguntas?",
+          "address": "Dirección",
+          "pick_point_info": "Información del punto de recogida",
+          "get_directions": "Obtener indicaciones",
+          "point_info": "Información del punto",
+          "pickup_address": "Dirección de recogida",
+          "workingHours": "Horas",
+          "name": "Nombre",
+          "instructions": "Instrucciones"
         }
       },
       "order_payment": {

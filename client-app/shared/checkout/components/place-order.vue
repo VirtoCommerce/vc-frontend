@@ -1,5 +1,9 @@
 <template>
-  <ProceedTo :disabled="hasOnlyUnselectedLineItems || !isValidCheckout" @click="createOrderFromCart">
+  <ProceedTo
+    :disabled="hasOnlyUnselectedLineItems || !isValidCheckout"
+    test-id="checkout.place-order-button"
+    @click="createOrderFromCart"
+  >
     {{ $t("common.buttons.place_order") }}
   </ProceedTo>
 </template>
