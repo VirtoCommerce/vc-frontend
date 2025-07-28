@@ -165,7 +165,7 @@ const iconName = computed<string>(() => {
   }
 
   &__content {
-    @apply grow flex flex-col justify-center;
+    @apply grow flex flex-col justify-center break-all;
 
     &:first-child {
       @apply ps-1;
