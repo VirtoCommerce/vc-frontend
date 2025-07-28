@@ -205,6 +205,20 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     selectedProperties.value = calculateNewSelections(propertyName, value, variations.value, selectedProperties.value);
   }
 
+  function getType(property: IProperty) {
+    return property.name === "Colour" ? "color" : "text";
+  }
+
+  function getTooltip(property: IProperty, option: IPropertyValue) {
+    const type = getType(property);
+
+    if (type === "color") {
+      return option.label;
+    }
+
+    return option.label;
+  }
+
   watch(
     variations,
     () => {
@@ -217,9 +231,13 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     properties,
     isCompleted,
     variationResult,
+
     select,
     isSelected,
     isAvailable,
+
+    getType,
+    getTooltip,
   };
 }
 
