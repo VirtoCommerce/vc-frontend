@@ -21,3 +21,4 @@ export const zeroPriceFilter: SearchProductFilterRangeValue = {
 export const OUTLINE_FILTER_NAME = "__outline";
 export const AVAILABILITY_FILTER_NAME = "availability";
 export const VENDOR_FULFILMENT_FILTER_NAME = "available_in";
+export const IS_PURCHASED_FILTER_NAME = "isPurchased";

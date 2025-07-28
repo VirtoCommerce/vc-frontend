@@ -10,7 +10,7 @@ import {
   IN_STOCK_PRODUCTS_LOCAL_STORAGE, OUTLINE_FILTER_NAME,
   PAGE_LIMIT,
   PRODUCT_SORTING_LIST,
-  PURCHASED_BEFORE_LOCAL_STORAGE, VENDOR_FULFILMENT_FILTER_NAME,
+  PURCHASED_BEFORE_LOCAL_STORAGE, VENDOR_FULFILMENT_FILTER_NAME, IS_PURCHASED_FILTER_NAME,
   zeroPriceFilter
 } from "@/core/constants";
 import { QueryParamName, SortDirection } from "@/core/enums";
@@ -506,7 +506,11 @@ export function useProducts(
 
   function prepareFilters(filters: SearchProductFilterResult[]) {
     return filters.filter((filter) =>
-      !isZeroPriceFilter(filter) && filter.name !== OUTLINE_FILTER_NAME && filter.name !== AVAILABILITY_FILTER_NAME && filter.name !== VENDOR_FULFILMENT_FILTER_NAME
+      !isZeroPriceFilter(filter) &&
+      filter.name !== OUTLINE_FILTER_NAME &&
+      filter.name !== AVAILABILITY_FILTER_NAME &&
+      filter.name !== VENDOR_FULFILMENT_FILTER_NAME &&
+      filter.name !== IS_PURCHASED_FILTER_NAME
     );
   }
 
