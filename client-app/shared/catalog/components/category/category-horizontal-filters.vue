@@ -4,9 +4,8 @@
     orientation="horizontal"
     :keyword="keywordQueryParam"
     :filters="filters"
-    :prepared-filters="preparedFilters"
     :loading="loading"
-    @change="$emit('applyFilters', $event)"
+    @change:filters="$emit('change:filters', $event)"
   >
     <template #prepend>
       <VcButton
@@ -87,7 +86,7 @@ withDefaults(defineProps<IProps>(), {
 });
 
 interface IEmits {
-  (event: "applyFilters", filters: ProductsFiltersType): void;
+  (event: "change:filters", filters: SearchProductFilterResult[]): void;
   (event: "applySort"): void;
   (event: "showPopupSidebar"): void;
 }
@@ -96,7 +95,6 @@ interface IProps {
   loading: boolean;
   keywordQueryParam: string;
   filters: ProductsFiltersType;
-  preparedFilters: SearchProductFilterResult[];
   hideSorting?: boolean;
   hideAllFilters?: boolean;
 }

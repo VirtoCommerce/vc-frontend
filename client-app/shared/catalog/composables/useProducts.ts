@@ -5,14 +5,13 @@ import { computed, readonly, ref } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import {
-  FFC_LOCAL_STORAGE,
-  IN_STOCK_PRODUCTS_LOCAL_STORAGE,
-  OUTLINE_FILTER_NAME,
   AVAILABILITY_FILTER_NAME,
+  FFC_LOCAL_STORAGE,
+  IN_STOCK_PRODUCTS_LOCAL_STORAGE, OUTLINE_FILTER_NAME,
   PAGE_LIMIT,
   PRODUCT_SORTING_LIST,
-  PURCHASED_BEFORE_LOCAL_STORAGE,
-  zeroPriceFilter,
+  PURCHASED_BEFORE_LOCAL_STORAGE, VENDOR_FULFILMENT_FILTER_NAME,
+  zeroPriceFilter
 } from "@/core/constants";
 import { QueryParamName, SortDirection } from "@/core/enums";
 import {
@@ -219,7 +218,6 @@ export function useProducts(
     productsFilters.value = {
       ...productsFilters.value,
       facets: newFacets,
-      filters: preparedFilters.value
     };
 
     // Generate filter expression from filters only and update query param
@@ -271,7 +269,7 @@ export function useProducts(
     productsFilters.value = {
       ...newFilters,
       facets: getSortedFacets(newFilters.facets),
-      filters: newFilters.filters,
+      filters: prepareFilters(newFilters.filters)
     };
   }
 
@@ -367,7 +365,7 @@ export function useProducts(
           purchasedBefore: localStoragePurchasedBefore.value,
           branches: localStorageBranches.value.slice(),
           facets: getSortedFacets(facets.value),
-          filters
+          filters: prepareFilters(filters),
         };
       }
     } catch (e) {
@@ -467,11 +465,11 @@ export function useProducts(
     return false;
   }
 
-    const preparedFilters = computed(() => {
-    return productsFilters.value.filters.filter((filter) =>
-      !isZeroPriceFilter(filter) && filter.name !== OUTLINE_FILTER_NAME && filter.name !== AVAILABILITY_FILTER_NAME
+  function prepareFilters(filters: SearchProductFilterResult[]) {
+    return filters.filter((filter) =>
+      !isZeroPriceFilter(filter) && filter.name !== OUTLINE_FILTER_NAME && filter.name !== AVAILABILITY_FILTER_NAME && filter.name !== VENDOR_FULFILMENT_FILTER_NAME
     );
-  });
+  }
 
   async function resetCurrentPage() {
     updateCurrentPage(1);
@@ -497,7 +495,6 @@ export function useProducts(
     localStorageBranches,
     localStorageInStock,
     localStoragePurchasedBefore,
-    preparedFilters,
     pagesCount: readonly(pagesCount),
     products: computed(() => products.value),
     productsById,

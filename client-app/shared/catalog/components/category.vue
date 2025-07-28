@@ -14,7 +14,6 @@
       :keyword-query-param="keywordQueryParam"
       :loading="fetchingProducts"
       :hide-controls="hideControls"
-      :prepared-filters="preparedFilters"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
       @apply-filters="applyFilters"
@@ -33,7 +32,6 @@
         <ProductsFilters
           :keyword="keywordQueryParam"
           :filters="filtersToShow"
-          :prepared-filters="preparedFilters"
           :loading="fetchingProducts"
           class="category__product-filters"
           @change:filters="applyFiltersOnly($event)"
@@ -140,18 +138,17 @@
         :sort-query-param="sortQueryParam"
         :loading="fetchingProducts || fetchingFacets"
         :filters="filtersToShow"
-        :prepared-filters="preparedFilters"
         :hide-sorting="hideSorting"
         :hide-all-filters="hideSidebar"
         :facets-to-hide="facetsToHide"
         @reset-facet-filters="resetFacetFilters"
-        @apply-filters="applyFilters"
+        @change:filters="applyFiltersOnly($event)"
         @show-popup-sidebar="showFiltersSidebar"
         @apply-sort="resetCurrentPage"
       />
       <!-- Filters chips -->
       <div class="category__chips">
-        <template v-for="filterItem in preparedFilters">
+        <template v-for="filterItem in productsFilters.filters">
           <template v-if="!facetsToHide?.includes(filterItem.name)">
             <!-- Term values -->
             <template v-for="term in filterItem.termValues" :key="filterItem.name + 'term-' + term.value">
@@ -364,7 +361,6 @@ const {
   pageHistory,
   products,
   productsFilters,
-  preparedFilters,
   searchQueryParam,
   sortQueryParam,
   totalProductsCount,
@@ -491,14 +487,14 @@ function applyFilters(newFilters: ProductsFiltersType): void {
 
 function onCancelFilter(filterName: string, filterValue: string): void {
   // Find the filter to update
-  const filterToUpdate = preparedFilters.value.find(filter => filter.name === filterName);
+  const filterToUpdate = productsFilters.value.filters.find(filter => filter.name === filterName);
 
   if (!filterToUpdate) {
     return;
   }
 
   // Create a copy of preparedFilters to modify
-  const updatedFilters = preparedFilters.value.map(filter => {
+  const updatedFilters = productsFilters.value.filters.map(filter => {
     if (filter.name === filterName) {
       // Remove the specific filterValue from termValues
       const updatedTermValues = filter.termValues?.filter(term => term?.value !== filterValue);
@@ -522,14 +518,14 @@ function onCancelFilter(filterName: string, filterValue: string): void {
 
 function onCancelRangeFilter(filterName: string, rangeToRemove: SearchProductFilterRangeValue): void {
   // Find the filter to update
-  const filterToUpdate = preparedFilters.value.find(filter => filter.name === filterName);
+  const filterToUpdate = productsFilters.value.filters.find(filter => filter.name === filterName);
 
   if (!filterToUpdate) {
     return;
   }
 
   // Create a copy of preparedFilters to modify
-  const updatedFilters = preparedFilters.value.map(filter => {
+  const updatedFilters = productsFilters.value.filters.map(filter => {
     if (filter.name === filterName) {
       // Remove the specific range from rangeValues
       const updatedRangeValues = filter.rangeValues?.filter(range =>

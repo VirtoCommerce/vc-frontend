@@ -57,7 +57,6 @@ interface IProps {
   loading?: boolean;
   filters: ProductsFiltersType;
   orientation?: "vertical" | "horizontal";
-  preparedFilters: SearchProductFilterResult[];
 }
 
 const emit = defineEmits<IEmits>();
@@ -149,7 +148,7 @@ watch(
 
 function onFacetFilterChanged(newFilter: SearchProductFilterResult): void {
   // Remove existing filter with the same name
-  const updatedFilters = props.preparedFilters.filter(f => f.name !== newFilter.name);
+  const updatedFilters = props.filters.filters.filter(f => f.name !== newFilter.name);
 
   // Only add the new filter if it is not empty
   if ((newFilter.termValues && newFilter.termValues.length > 0) ||
@@ -165,7 +164,7 @@ function facetHasBounce(statistics?: { min?: number, max?: number }) {
 }
 
 function getFiltersByParamName(paramName: string) {
-  return props.preparedFilters.find((el) => el.name === paramName);
+  return props.filters.filters.find((el) => el.name === paramName);
 }
 </script>
 
