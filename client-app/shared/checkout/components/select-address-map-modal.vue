@@ -270,11 +270,11 @@ $mapHeight: 523px;
 
 .select-address-map-modal {
   &__content {
-    @apply relative w-full flex flex-col lg:h-[#{$mapHeight}] lg:flex-row gap-5;
+    @apply relative w-full flex flex-col lg:h-[#{$mapHeight}] max-h-[calc(100vh-13rem)] lg:flex-row gap-5;
   }
 
   &__map {
-    @apply h-[#{$mapHeight}] size-full flex-grow rounded-lg overflow-hidden;
+    @apply h-[#{$mapHeight}] max-h-[calc((100vh-11rem)/2)] shrink-0 w-full flex-grow rounded-lg overflow-hidden lg:flex-shrink lg:max-h-none;
   }
 
   &__sidebar {
