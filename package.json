@@ -156,9 +156,9 @@
     "vite-plugin-checker": "^0.9.3",
     "vite-plugin-mkcert": "^1.17.8",
     "vitest": "^3.2.4",
-    "vue-component-type-helpers": "^2.2.12",
+    "vue-component-type-helpers": "^3.0.4",
     "vue-eslint-parser": "^10.2.0",
-    "vue-tsc": "^2.2.12"
+    "vue-tsc": "^3.0.4"
   },
   "resolutions": {
     "uri-js": "npm:uri-js-replace@^1.0.0"
