@@ -1,0 +1,11 @@
+{
+  "news": {
+    "empty-list": {
+      "title": "Nie znaleziono wiadomości",
+      "button": "@:common.buttons.continue_shopping"
+    },
+    "links": {
+      "to-list": "Wszystkie wiadomości"
+    }
+  }
+}
