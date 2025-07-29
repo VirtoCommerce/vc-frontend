@@ -42,8 +42,12 @@
       :max-quantity="product.maxQuantity"
       :pack-size="product.packSize"
       :count-in-cart="countInCart"
-      :disabled="changing"
-      :loading="changing"
+      :disabled="
+        $cfg.product_quantity_control === 'stepper' ? addToCartLoading || changeItemQuantityOverflowed : changing
+      "
+      :loading="
+        $cfg.product_quantity_control === 'stepper' ? addToCartLoading || changeItemQuantityOverflowed : changing
+      "
       show-empty-details
       :allow-zero="$cfg.product_quantity_control === 'stepper'"
       @update:cart-item-quantity="changeCartItemQuantity"
@@ -77,7 +81,8 @@ const props = defineProps<IProps>();
 
 const errorMessage = ref<string | undefined>();
 
-const { cart, addToCart, changeItemQuantity, changing } = useShortCart();
+const { cart, addToCart, changeItemQuantityBatched, changing, addToCartLoading, changeItemQuantityOverflowed } =
+  useShortCart();
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
 const { t } = useI18n();
@@ -112,7 +117,7 @@ function getInitialQuantity() {
 async function changeCartItemQuantity(qty: number) {
   if (cartLineItem.value && countInCart.value) {
     if (countInCart.value !== qty) {
-      await changeItemQuantity(cartLineItem.value.id, qty);
+      await changeItemQuantityBatched(cartLineItem.value.id, qty);
     }
   } else {
     await addToCart(product.value.id, qty);
