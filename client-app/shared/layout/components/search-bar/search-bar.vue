@@ -41,7 +41,11 @@
         </VcButton>
       </template>
       <template #append>
-        <BarcodeScanner v-if="!searchPhrase" :aria-label="$t('shared.layout.search_bar.barcode_detector.title')" @scanned-code="onBarcodeScanned" />
+        <BarcodeScanner
+          v-if="!searchPhrase"
+          :aria-label="$t('shared.layout.search_bar.barcode_detector.title')"
+          @scanned-code="onBarcodeScanned"
+        />
 
         <VcButton
           :aria-label="$t('shared.layout.search_bar.search_button')"
@@ -255,6 +259,8 @@ const searchHistoryQueries = computed(() => searchHistory.value?.searchHistory?.
 
 const searchDropdownElement = ref<HTMLElement | null>(null);
 
+const suppressNextShowDropdown = ref(false);
+
 const searchPhrase = ref("");
 const trimmedSearchPhrase = computed(() => {
   return searchPhrase.value.trim();
@@ -355,7 +361,11 @@ async function searchAndShowDropdownResults(): Promise<void> {
 
   await searchResults(params);
 
-  showSearchDropdown();
+  if (!suppressNextShowDropdown.value) {
+    showSearchDropdown();
+  }
+
+  suppressNextShowDropdown.value = false;
 
   /**
    * Send Google Analytics event for products.
@@ -397,6 +407,7 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
 
 function handleSearchAndSaveQuery() {
   void saveSearchQuery(trimmedSearchPhrase.value);
+  suppressNextShowDropdown.value = true;
 
   goToSearchResultsPage();
 }
