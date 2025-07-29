@@ -504,13 +504,20 @@ export function useProducts(
     return false;
   }
 
+  function isExcludedFilter(filter: SearchProductFilterResult): boolean {
+    const excludedFilterNames = [
+      OUTLINE_FILTER_NAME,
+      AVAILABILITY_FILTER_NAME,
+      VENDOR_FULFILMENT_FILTER_NAME,
+      IS_PURCHASED_FILTER_NAME,
+    ];
+
+    return excludedFilterNames.includes(filter.name);
+  }
+
   function prepareFilters(filters: SearchProductFilterResult[]) {
     return filters.filter((filter) =>
-      !isZeroPriceFilter(filter) &&
-      filter.name !== OUTLINE_FILTER_NAME &&
-      filter.name !== AVAILABILITY_FILTER_NAME &&
-      filter.name !== VENDOR_FULFILMENT_FILTER_NAME &&
-      filter.name !== IS_PURCHASED_FILTER_NAME
+      !isZeroPriceFilter(filter) && !isExcludedFilter(filter)
     );
   }
 
