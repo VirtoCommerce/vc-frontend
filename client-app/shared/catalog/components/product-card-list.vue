@@ -104,6 +104,7 @@
           shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
         "
         :product="product"
+        is-text-shown
         v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
       />
 

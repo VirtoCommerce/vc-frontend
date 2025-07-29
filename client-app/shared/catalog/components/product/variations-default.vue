@@ -16,7 +16,21 @@
         with-properties
         show-placed-price
       >
-        <AddToCart :product="variation">
+        <component
+          :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
+          v-if="
+            isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
+            shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, variation)
+          "
+          :product="variation"
+          is-text-shown
+          v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)" 
+        />
+        
+        <AddToCart 
+          v-else
+          :product="variation"
+        >
           <InStock
             :is-in-stock="variation.availabilityData.isInStock"
             :quantity="variation.availabilityData.availableQuantity"
@@ -44,6 +58,8 @@ import { PropertyType } from "@/core/api/graphql/types";
 import { getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
+import { useCustomProductComponents } from "@/shared/common/composables";
+import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import CountInCart from "../count-in-cart.vue";
 import InStock from "../in-stock.vue";
 import type { Product } from "@/core/api/graphql/types";
@@ -63,6 +79,8 @@ interface IProps {
 }
 
 const pageNumber = toRef(props, "pageNumber");
+
+const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 function getProperties(variation: Product) {
   return Object.values(
