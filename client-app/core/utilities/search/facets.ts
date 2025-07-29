@@ -108,7 +108,7 @@ export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItemType[]>)
  * @param filters - Array of SearchProductFilterResult objects
  * @returns A string representing the combined filter expression from all filters
  */
-export function generateFilterExpressionFromPreparedFilters(filters: SearchProductFilterResult[]): string {
+export function generateFilterExpressionFromFilters(filters: SearchProductFilterResult[]): string {
   const filterExpressions: string[] = [];
 
   filters.forEach(filter => {

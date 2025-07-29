@@ -142,7 +142,7 @@ import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
   buildBreadcrumbs,
-  getFilterExpressionFromFacets,
+  generateFilterExpressionFromFilters,
   getFilterExpression,
   getSortingExpression,
   getFilterExpressionForAvailableIn,
@@ -337,7 +337,7 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
   variationsSearchParams.value.page = 1;
   variationsSearchParams.value.filter = getFilterExpression([
     variationsFilterExpression.value,
-    getFilterExpressionFromFacets(newFilters.facets),
+    generateFilterExpressionFromFilters(newFilters.filters),
     getFilterExpressionForInStock(newFilters.inStock),
     getFilterExpressionForAvailableIn(newFilters.branches),
     getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
@@ -354,7 +354,7 @@ async function removeFacetFilter(
   variationsSearchParams.value.page = 1;
   variationsSearchParams.value.filter = getFilterExpression([
     variationsFilterExpression.value,
-    getFilterExpressionFromFacets(productsFilters.value.facets),
+    generateFilterExpressionFromFilters(productsFilters.value.filters),
     getFilterExpressionForAvailableIn(productsFilters.value.branches),
     getFilterExpressionForInStock(productsFilters.value.inStock),
     getFilterExpressionForPurchasedBefore(productsFilters.value.purchasedBefore),

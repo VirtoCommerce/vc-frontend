@@ -15,7 +15,7 @@ import {
 } from "@/core/constants";
 import { QueryParamName, SortDirection } from "@/core/enums";
 import {
-  generateFilterExpressionFromPreparedFilters,
+  generateFilterExpressionFromFilters,
   Logger,
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
@@ -175,7 +175,7 @@ export function useProducts(
 
   function applyFilters(newFilters: ProductsFiltersType): void {
     // Generate filter expression from filters only
-    const filterExpression: string = generateFilterExpressionFromPreparedFilters(newFilters.filters);
+    const filterExpression: string = generateFilterExpressionFromFilters(newFilters.filters);
 
     if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
       facetsQueryParam.value = filterExpression;
@@ -204,7 +204,7 @@ export function useProducts(
     };
 
     // Generate filter expression from filters only and update query param
-    const filterExpression: string = generateFilterExpressionFromPreparedFilters(newFilters);
+    const filterExpression: string = generateFilterExpressionFromFilters(newFilters);
 
     if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
       facetsQueryParam.value = filterExpression;
@@ -221,7 +221,7 @@ export function useProducts(
     };
 
     // Generate filter expression from filters only and update query param
-    const filterExpression: string = generateFilterExpressionFromPreparedFilters(productsFilters.value.filters);
+    const filterExpression: string = generateFilterExpressionFromFilters(productsFilters.value.filters);
 
     if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
       facetsQueryParam.value = filterExpression;
@@ -238,7 +238,7 @@ export function useProducts(
       facetValue.selected = false;
 
       // Generate filter expression from filters only
-      const filterExpression: string = generateFilterExpressionFromPreparedFilters(productsFilters.value.filters);
+      const filterExpression: string = generateFilterExpressionFromFilters(productsFilters.value.filters);
 
       facetsQueryParam.value = options?.useQueryParams ? filterExpression : "";
       await new Promise((resolve) => setTimeout(resolve, 0));
