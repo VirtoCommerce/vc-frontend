@@ -160,7 +160,7 @@
                   onCancelFilter(filterItem.name, term.value)
                 "
               >
-                {{ term.value }}
+                {{ term.label }}
               </VcChip>
             </template>
 
