@@ -1452,14 +1452,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@builder.io/sdk-vue@npm:^4.2.1":
-  version: 4.2.1
-  resolution: "@builder.io/sdk-vue@npm:4.2.1"
+"@builder.io/sdk-vue@npm:^4.2.3":
+  version: 4.2.3
+  resolution: "@builder.io/sdk-vue@npm:4.2.3"
   dependencies:
     isolated-vm: "npm:^5.0.0"
   peerDependencies:
     vue: ">= 3"
-  checksum: 10c0/225e815779aa2a33729278a73c76af8f9a2e6c80c080c8a116bd7ab45f1f7192f99b2364a87630bfa5a836114873668ef7d06851cc3bef1996bd8607f98ad7ec
+  checksum: 10c0/78efec50872d1fdbff40e2721b83091d33a481197ba9b49ecca9a0ad53a2fe3fe8b46a47d72b86dbb8ebb4338d469913de645e93b55ff1b6b4c93b7e0c6b6b62
   languageName: node
   linkType: hard
 
@@ -2622,13 +2622,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@googlemaps/markerclusterer@npm:^2.5.3":
-  version: 2.5.3
-  resolution: "@googlemaps/markerclusterer@npm:2.5.3"
+"@googlemaps/markerclusterer@npm:^2.6.2":
+  version: 2.6.2
+  resolution: "@googlemaps/markerclusterer@npm:2.6.2"
   dependencies:
-    fast-deep-equal: "npm:^3.1.3"
+    "@types/supercluster": "npm:^7.1.3"
+    fast-equals: "npm:^5.2.2"
     supercluster: "npm:^8.0.1"
-  checksum: 10c0/29954c8ad97f7cf0383dc5d4e1d04de4844cc527865cb3a75b73672f29e3087eb0a8a2a594fa75d968f6c40bc90f44ffbf0b1a478e7353eb81361aeff61c2602
+  checksum: 10c0/bfe4ffef9dc9f635fca93968d71b2019c936b46480e38dbfb885c3bed1589c9a353e428880a018f8fbc50c2cb16257c4822742d2e49f963dd9ff5d7ffe12f9cb
   languageName: node
   linkType: hard
 
@@ -4978,18 +4979,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^6.6.3":
-  version: 6.6.3
-  resolution: "@testing-library/jest-dom@npm:6.6.3"
+"@testing-library/jest-dom@npm:^6.6.4":
+  version: 6.6.4
+  resolution: "@testing-library/jest-dom@npm:6.6.4"
   dependencies:
     "@adobe/css-tools": "npm:^4.4.0"
     aria-query: "npm:^5.0.0"
-    chalk: "npm:^3.0.0"
     css.escape: "npm:^1.5.1"
     dom-accessibility-api: "npm:^0.6.3"
     lodash: "npm:^4.17.21"
+    picocolors: "npm:^1.1.1"
     redent: "npm:^3.0.0"
-  checksum: 10c0/5566b6c0b7b0709bc244aec3aa3dc9e5f4663e8fb2b99d8cd456fc07279e59db6076cbf798f9d3099a98fca7ef4cd50e4e1f4c4dec5a60a8fad8d24a638a5bf6
+  checksum: 10c0/cb73adf4910f654f6cc61cfb9a551efdffa04ef423bc7fbfd67a6d8aa31c6c6dc6363fe9db23a35fc7cb32ff1390e6e1c77575c2fa70d8b028a943af32bc214c
   languageName: node
   linkType: hard
 
@@ -5113,6 +5114,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/geojson@npm:*":
+  version: 7946.0.16
+  resolution: "@types/geojson@npm:7946.0.16"
+  checksum: 10c0/1ff24a288bd5860b766b073ead337d31d73bdc715e5b50a2cee5cb0af57a1ed02cc04ef295f5fa68dc40fe3e4f104dd31282b2b818a5ba3231bc1001ba084e3c
+  languageName: node
+  linkType: hard
+
 "@types/google.maps@npm:^3.58.1":
   version: 3.58.1
   resolution: "@types/google.maps@npm:3.58.1"
@@ -5182,12 +5190,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.16.0":
-  version: 22.16.0
-  resolution: "@types/node@npm:22.16.0"
+"@types/node@npm:^22.16.5":
+  version: 22.16.5
+  resolution: "@types/node@npm:22.16.5"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/6219b521062f6c38d4d85ebd25807bd7f2bc703a5acba24e2c6716938d9d6cefd6fafd7b5156f61580eb58a0d82e8921751b778655675389631d813e5f261c03
+  checksum: 10c0/93a245e96a01f4a6aa38475000070292a9299e17b95bc1fc8180c652fb3a62f9b3b9ec0b78f9fc6a78b9274d3dfce456e80c7bb68b5357c8f7dbf581df4408c1
   languageName: node
   linkType: hard
 
@@ -5195,6 +5203,15 @@ __metadata:
   version: 7.5.8
   resolution: "@types/semver@npm:7.5.8"
   checksum: 10c0/8663ff927234d1c5fcc04b33062cb2b9fcfbe0f5f351ed26c4d1e1581657deebd506b41ff7fdf89e787e3d33ce05854bc01686379b89e9c49b564c4cfa988efa
+  languageName: node
+  linkType: hard
+
+"@types/supercluster@npm:^7.1.3":
+  version: 7.1.3
+  resolution: "@types/supercluster@npm:7.1.3"
+  dependencies:
+    "@types/geojson": "npm:*"
+  checksum: 10c0/0d55dad98df0990fc38a7bb64dc23dda46014187c0d7638e6f2b6717ba8931b13e5b1d394789833a2ac822014c977ef64623dffd81a0bbf39e52c53c8183741f
   languageName: node
   linkType: hard
 
@@ -5432,15 +5449,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unhead/vue@npm:^2.0.11":
-  version: 2.0.11
-  resolution: "@unhead/vue@npm:2.0.11"
+"@unhead/vue@npm:^2.0.12":
+  version: 2.0.12
+  resolution: "@unhead/vue@npm:2.0.12"
   dependencies:
     hookable: "npm:^5.5.3"
-    unhead: "npm:2.0.11"
+    unhead: "npm:2.0.12"
   peerDependencies:
     vue: ">=3.5.13"
-  checksum: 10c0/e58d17c1f0d6abf8582a02fd92fb9848f8fef9c3c82a7d8e8bc87266e616e9ad0508cb045e125d736215018413db34d29a777a688d52ac06f21371eacc9f55e7
+  checksum: 10c0/ae4363d6d479ed3c50cceedd01ed40f5e2fbfe8cb8817edb862c14fa197ad483f58228fe22245828415330beb754ed23117f7686cf4b812b4093fae37c47d949
   languageName: node
   linkType: hard
 
@@ -9144,6 +9161,13 @@ __metadata:
   version: 3.1.3
   resolution: "fast-deep-equal@npm:3.1.3"
   checksum: 10c0/40dedc862eb8992c54579c66d914635afbec43350afbbe991235fdcb4e3a8d5af1b23ae7e79bef7d4882d0ecee06c3197488026998fb19f72dc95acff1d1b1d0
+  languageName: node
+  linkType: hard
+
+"fast-equals@npm:^5.2.2":
+  version: 5.2.2
+  resolution: "fast-equals@npm:5.2.2"
+  checksum: 10c0/2bfeac6317a8959a00e2134749323557e5df6dea3af24e4457297733eace8ce4313fcbca2cf4532f3a6792607461e80442cd8d3af148d5c2e4e98ad996d6e5b5
   languageName: node
   linkType: hard
 
@@ -15670,12 +15694,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unhead@npm:2.0.11":
-  version: 2.0.11
-  resolution: "unhead@npm:2.0.11"
+"unhead@npm:2.0.12":
+  version: 2.0.12
+  resolution: "unhead@npm:2.0.12"
   dependencies:
     hookable: "npm:^5.5.3"
-  checksum: 10c0/8a5af04ef3cb8ba83d8a7f572966bc096dd46c985ddf391ab6d50772f7f501606b887c8e5b4a85926b35030b6ad2808285ef206e186cc72609f096ad176cd7dd
+  checksum: 10c0/ba38e912efb2a518b48ec997d8ef0b39f1644633e520d50151a432113039c70054c097cbfe3b4c4b2fba9552ded6f500cb225bebf9d6887b5df747cec00d3944
   languageName: node
   linkType: hard
 
@@ -15931,13 +15955,13 @@ __metadata:
   resolution: "vc-theme-b2b-vue@workspace:."
   dependencies:
     "@apollo/client": "npm:^3.13.8"
-    "@builder.io/sdk-vue": "npm:^4.2.1"
+    "@builder.io/sdk-vue": "npm:^4.2.3"
     "@commitlint/cli": "npm:^19.8.1"
     "@commitlint/config-conventional": "npm:^19.8.1"
     "@floating-ui/vue": "npm:^1.1.7"
     "@google/generative-ai": "npm:^0.24.1"
     "@googlemaps/js-api-loader": "npm:^1.16.10"
-    "@googlemaps/markerclusterer": "npm:^2.5.3"
+    "@googlemaps/markerclusterer": "npm:^2.6.2"
     "@graphql-codegen/add": "npm:5.0.3"
     "@graphql-codegen/cli": "npm:5.0.7"
     "@graphql-codegen/introspection": "npm:4.0.3"
@@ -15961,7 +15985,7 @@ __metadata:
     "@storybook/vue3": "npm:8.6.14"
     "@storybook/vue3-vite": "npm:8.6.14"
     "@tailwindcss/container-queries": "npm:^0.1.1"
-    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/jest-dom": "npm:^6.6.4"
     "@testing-library/vue": "npm:^8.1.0"
     "@tsconfig/node22": "npm:^22.0.2"
     "@types/dompurify": "npm:^3.2.0"
@@ -15969,9 +15993,9 @@ __metadata:
     "@types/gtag.js": "npm:^0.0.20"
     "@types/jsdom": "npm:^21.1.7"
     "@types/lodash": "npm:^4.17.20"
-    "@types/node": "npm:^22.16.0"
+    "@types/node": "npm:^22.16.5"
     "@types/uuid": "npm:^9.0.8"
-    "@unhead/vue": "npm:^2.0.11"
+    "@unhead/vue": "npm:^2.0.12"
     "@vee-validate/rules": "npm:^4.15.1"
     "@vee-validate/yup": "npm:^4.15.1"
     "@virto-commerce/front-modules-hotjar": "npm:^1.0.6"
