@@ -73,7 +73,6 @@
       <VcButton
         class="filters-popup-sidebar__footer-btn"
         variant="outline"
-        :disabled="!isPopupSidebarFilterDirty"
         min-width="6.25rem"
         size="sm"
         @click="onCancel"
