@@ -1,22 +1,72 @@
 <template>
-  <VcWidget
-    v-if="mode === 'collapsable' && typeof facetMin === 'number' && typeof facetMax === 'number' && sliderValue"
-    class="facet-filter-widget"
-    size="xs"
-    collapsible
-    :title="facet.label"
-    collapsed
-    ><div>
-      <VcSlider
-        :value="sliderValue"
-        :min="facetMin"
-        :max="facetMax"
-        :cols="sliderCols"
-        show-tooltip-on-col-hover
-        cols-height="36px"
-        @change="handleSliderChange"
-      /></div
-  ></VcWidget>
+  <div v-if="typeof facetMin === 'number' && typeof facetMax === 'number' && sliderValue">
+    <VcWidget
+      v-if="mode === 'collapsable'"
+      class="facet-filter-widget"
+      size="xs"
+      collapsible
+      :title="facet.label"
+      collapsed
+      >
+      <div>
+        <VcSlider
+          :value="sliderValue"
+          :min="facetMin"
+          :max="facetMax"
+          :cols="sliderCols"
+          show-tooltip-on-col-hover
+          cols-height="36px"
+          @change="handleSliderChange"
+        />
+      </div>
+    </VcWidget>
+    <!-- Dropdown mode -->
+    <VcDropdownMenu
+      v-if="mode === 'dropdown'"
+      :offset-options="4"
+      class="slider-filter-dropdown"
+      z-index="10"
+      max-height="20rem"
+      width="15rem"
+      :dividers="false"
+    >
+      <template #trigger="{ opened, triggerProps }">
+        <VcButton
+          :class="['slider-filter-dropdown__trigger', { 'slider-filter-dropdown__trigger--opened': opened }]"
+          size="sm"
+          :color="hasSelected ? 'accent' : 'secondary'"
+          variant="outline"
+          v-bind="triggerProps"
+        >
+          {{ facet.label }}
+
+          <template #append>
+            <span class="slider-filter-dropdown__append">
+              <VcBadge v-if="hasSelected" size="sm" rounded color="info">
+                <!-- todo -->
+                selected
+              </VcBadge>
+
+              <VcIcon v-else name="chevron-down" class="slider-filter-dropdown__arrow" />
+            </span>
+          </template>
+        </VcButton>
+      </template>
+      <template #content>
+        <div class="slider-filter-dropdown__slider-wrapper">
+          <VcSlider
+            :value="sliderValue"
+            :min="facetMin"
+            :max="facetMax"
+            :cols="sliderCols"
+            show-tooltip-on-col-hover
+            cols-height="36px"
+            @change="handleSliderChange"
+          />
+        </div>
+      </template>
+    </VcDropdownMenu>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -84,6 +134,10 @@ const sliderCols = computed<ColType[]>(() => {
     });
 });
 
+const hasSelected = computed(() => {
+  return !!filter.value;
+})
+
 function handleSliderChange(value: [number, number] | [number]) {
   const doubleValue = value.length === 2 ? value : [value[0], value[0]];
 
@@ -103,7 +157,6 @@ function handleSliderChange(value: [number, number] | [number]) {
 }
 
 function getRangeFromFilter(): EmitValueType {
-  // filters are already filtered to exclude zero price filters
   if (filter.value?.rangeValues?.length === 1) {
     const rangeValue = filter.value.rangeValues[0];
     return getBounceFromRange(rangeValue);
@@ -143,3 +196,35 @@ function applyRange(range: [number | null, number | null]) {
   emit("update:filter", newFilter);
 }
 </script>
+
+<style lang="scss">
+.slider-filter-dropdown {
+$opened: "";
+
+  @apply shrink-0;
+
+  &__trigger {
+    width: max-content;
+
+    &--opened {
+    $opened: &;
+    }
+  }
+
+  &__append {
+    @apply ms-2;
+  }
+
+  &__arrow {
+    @apply transition-transform;
+
+    #{$opened} & {
+      @apply rotate-180;
+    }
+  }
+
+  &__slider-wrapper {
+    @apply p-4;
+  }
+}
+</style>

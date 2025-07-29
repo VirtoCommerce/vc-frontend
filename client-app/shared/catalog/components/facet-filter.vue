@@ -77,7 +77,6 @@
     max-height="20rem"
     width="15rem"
     :dividers="false"
-    data-facet-filter-dropdown
   >
     <template #trigger="{ opened, triggerProps }">
       <VcButton
