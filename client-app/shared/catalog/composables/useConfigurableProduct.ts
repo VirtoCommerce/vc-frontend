@@ -270,13 +270,16 @@ function _useConfigurableProduct(configurableProductId: string) {
   const { mutate: _changeCartConfiguredItem, loading: changeCartConfiguredItemLoading } = useMutation(
     ChangeCartConfiguredItemDocument,
   );
-  async function changeCartConfiguredItem(
+  const { add: batchedChangeCartConfiguredItem, overflowed: batchedChangeCartConfiguredItemOverflowed } =
+    useMutationBatcher(_changeCartConfiguredItem);
+  async function changeCartConfiguredItemFunction(
     lineItemId: string,
     quantity?: number,
     configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
+    mutation: typeof _changeCartConfiguredItem | typeof batchedChangeCartConfiguredItem = _changeCartConfiguredItem,
   ): Promise<ShortCartFragment | undefined> {
     try {
-      const result = await _changeCartConfiguredItem({
+      const result = await mutation({
         command: {
           lineItemId,
           userId,
@@ -293,6 +296,27 @@ function _useConfigurableProduct(configurableProductId: string) {
       Logger.error(`${useConfigurableProduct.name}.${changeCartConfiguredItem.name}`, e);
       throw e;
     }
+  }
+
+  async function changeCartConfiguredItem(
+    lineItemId: string,
+    quantity?: number,
+    configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
+  ) {
+    return changeCartConfiguredItemFunction(lineItemId, quantity, configurationSections, _changeCartConfiguredItem);
+  }
+
+  async function changeCartConfiguredItemBatched(
+    lineItemId: string,
+    quantity?: number,
+    configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
+  ) {
+    return changeCartConfiguredItemFunction(
+      lineItemId,
+      quantity,
+      configurationSections,
+      batchedChangeCartConfiguredItem,
+    );
   }
 
   function reset() {
@@ -374,8 +398,10 @@ function _useConfigurableProduct(configurableProductId: string) {
     fetchProductConfiguration,
     selectSectionValue,
     changeCartConfiguredItem,
+    changeCartConfiguredItemBatched,
     validateSections,
     loading: readonly(loading),
+    changeCartConfiguredItemOverflowed: batchedChangeCartConfiguredItemOverflowed,
     configuration: readonly(configuration),
     selectedConfiguration: readonly(selectedConfiguration),
     selectedConfigurationInput: readonly(selectedConfigurationInput),

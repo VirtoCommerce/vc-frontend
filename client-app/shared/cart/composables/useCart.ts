@@ -180,10 +180,19 @@ export function useShortCart() {
   const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } = useMutation(
     ChangeShortCartItemQuantityDocument,
   );
-  async function changeItemQuantity(lineItemId: string, quantity: number): Promise<ShortCartFragment | undefined> {
+  const {
+    add: changeItemQuantityBatchedMutation,
+    overflowed: changeItemQuantityBatchedOverflowed,
+    loading: changeItemQuantityBatchedLoading,
+  } = useMutationBatcher(_changeItemQuantity);
+  async function changeItemQuantityFunction(
+    lineItemId: string,
+    quantity: number,
+    mutation: typeof _changeItemQuantity | typeof changeItemQuantityBatchedMutation,
+  ): Promise<ShortCartFragment | undefined> {
     try {
       const lineItem = cart.value?.items.find((item) => item.id === lineItemId);
-      const result = await _changeItemQuantity({
+      const result = await mutation({
         command: { lineItemId, quantity, ...commonVariables },
         skipQuery: false,
       });
@@ -196,6 +205,15 @@ export function useShortCart() {
     } catch (err) {
       Logger.error(err as string);
     }
+  }
+  async function changeItemQuantity(lineItemId: string, quantity: number): Promise<ShortCartFragment | undefined> {
+    return changeItemQuantityFunction(lineItemId, quantity, _changeItemQuantity);
+  }
+  async function changeItemQuantityBatched(
+    lineItemId: string,
+    quantity: number,
+  ): Promise<ShortCartFragment | undefined> {
+    return changeItemQuantityFunction(lineItemId, quantity, changeItemQuantityBatchedMutation);
   }
 
   function getItemsTotal(productIds: string[]): number {
@@ -215,14 +233,19 @@ export function useShortCart() {
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
+    changeItemQuantityBatched,
     getItemsTotal,
     loading,
+    addToCartLoading,
+    changeItemQuantityLoading,
+    changeItemQuantityOverflowed: changeItemQuantityBatchedOverflowed,
     changing: computed(
       () =>
         addToCartLoading.value ||
         addItemsToCartLoading.value ||
         addBulkItemsToCartLoading.value ||
-        changeItemQuantityLoading.value,
+        changeItemQuantityLoading.value ||
+        changeItemQuantityBatchedLoading.value,
     ),
   };
 }

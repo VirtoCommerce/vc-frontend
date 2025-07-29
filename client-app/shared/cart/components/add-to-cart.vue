@@ -13,8 +13,8 @@
     :is-in-stock="product.availabilityData?.isInStock"
     :available-quantity="product.availabilityData?.availableQuantity"
     :message="errorMessage || notAvailableMessage"
-    :disabled="disabled"
-    :loading="loading"
+    :disabled="$cfg.product_quantity_control === 'stepper' ? disabledStepper : disabled"
+    :loading="$cfg.product_quantity_control === 'stepper' ? loadingStepper : loading"
     :show-empty-details="reservedSpace"
     validate-on-mount
     :timeout="DEFAULT_DEBOUNCE_IN_MS"
@@ -62,13 +62,13 @@ interface IProps {
 }
 
 const product = toRef(props, "product");
-const { cart, addToCart, changeItemQuantity } = useShortCart();
+const { cart, addToCart, changeItemQuantityBatched, addToCartLoading, changeItemQuantityOverflowed } = useShortCart();
 const { t } = useI18n();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 const {
   selectedConfigurationInput,
-  changeCartConfiguredItem,
+  changeCartConfiguredItemBatched,
   validateSections: validateConfigurableInput,
 } = useConfigurableProduct(product.value.id);
 const { trackAddItemToCart } = useAnalyticsUtils();
@@ -90,6 +90,10 @@ const defaultMinQuantity = computed<number>(() =>
 );
 const isConfigurable = computed<boolean>(() => "isConfigurable" in product.value && product.value.isConfigurable);
 const disabled = computed<boolean>(() => loading.value || !product.value.availabilityData?.isAvailable);
+const disabledStepper = computed<boolean>(
+  () => !product.value.availabilityData?.isAvailable || changeItemQuantityOverflowed.value || addToCartLoading.value,
+);
+const loadingStepper = computed<boolean>(() => changeItemQuantityOverflowed.value || addToCartLoading.value);
 const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
 const minQty = computed<number>(() => product.value.minQuantity || defaultMinQuantity.value);
 const maxQty = computed<number>(() =>
@@ -151,8 +155,8 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
   }
   if (mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value !== undefined) {
     return isConfigurable.value
-      ? await changeCartConfiguredItem(lineItem.id, enteredQuantity.value, selectedConfigurationInput.value)
-      : await changeItemQuantity(lineItem.id, enteredQuantity.value);
+      ? await changeCartConfiguredItemBatched(lineItem.id, enteredQuantity.value, selectedConfigurationInput.value)
+      : await changeItemQuantityBatched(lineItem.id, enteredQuantity.value);
   }
 
   const quantity = enteredQuantity.value || minQty.value;
