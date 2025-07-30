@@ -298,11 +298,17 @@ export function useUser() {
     try {
       loading.value = true;
 
-      return await _changePassword({
+      const result = await _changePassword({
         userId: payload.userId,
         oldPassword: payload.oldPassword,
         newPassword: payload.newPassword,
       });
+
+      if (result?.errors?.some((x) => x.code == "AccountLocked")) {
+        void broadcast.emit(userLockedEvent, undefined, TabsType.ALL);
+      }
+
+      return result;
     } catch (e) {
       Logger.error(`${useUser.name}.${resetPassword.name}`, e);
       return { succeeded: false };
