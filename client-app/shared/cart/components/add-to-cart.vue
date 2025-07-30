@@ -62,8 +62,13 @@ interface IProps {
 }
 
 const product = toRef(props, "product");
-const { cart, addToCartBatched, changeItemQuantityBatched, addToCartBatchedOverflowed, changeItemQuantityOverflowed } =
-  useShortCart();
+const {
+  cart,
+  addToCartBatched,
+  changeItemQuantityBatched,
+  addToCartBatchedOverflowed,
+  changeItemQuantityBatchedOverflowed,
+} = useShortCart();
 const { t } = useI18n();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
@@ -94,10 +99,12 @@ const disabled = computed<boolean>(() => loading.value || !product.value.availab
 const disabledStepper = computed<boolean>(
   () =>
     !product.value.availabilityData?.isAvailable ||
-    changeItemQuantityOverflowed.value ||
+    changeItemQuantityBatchedOverflowed.value ||
     addToCartBatchedOverflowed.value,
 );
-const loadingStepper = computed<boolean>(() => changeItemQuantityOverflowed.value || addToCartBatchedOverflowed.value);
+const loadingStepper = computed<boolean>(
+  () => changeItemQuantityBatchedOverflowed.value || addToCartBatchedOverflowed.value,
+);
 const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
 const minQty = computed<number>(() => product.value.minQuantity || defaultMinQuantity.value);
 const maxQty = computed<number>(() =>

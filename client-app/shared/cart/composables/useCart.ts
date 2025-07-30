@@ -210,7 +210,7 @@ export function useShortCart() {
     lineItemId: string,
     quantity: number,
     mutation: typeof _changeItemQuantity | typeof changeItemQuantityBatchedMutation,
-  ): Promise<ShortCartFragment | undefined> {
+  ) {
     try {
       const lineItem = cart.value?.items.find((item) => item.id === lineItemId);
       const result = await mutation({
@@ -227,13 +227,10 @@ export function useShortCart() {
       Logger.error(err as string);
     }
   }
-  async function changeItemQuantity(lineItemId: string, quantity: number): Promise<ShortCartFragment | undefined> {
+  async function changeItemQuantity(lineItemId: string, quantity: number) {
     return changeItemQuantityFunction(lineItemId, quantity, _changeItemQuantity);
   }
-  async function changeItemQuantityBatched(
-    lineItemId: string,
-    quantity: number,
-  ): Promise<ShortCartFragment | undefined> {
+  async function changeItemQuantityBatched(lineItemId: string, quantity: number) {
     return changeItemQuantityFunction(lineItemId, quantity, changeItemQuantityBatchedMutation);
   }
 
@@ -258,9 +255,8 @@ export function useShortCart() {
     changeItemQuantityBatched,
     getItemsTotal,
     loading,
-    changeItemQuantityLoading,
-    changeItemQuantityOverflowed: changeItemQuantityBatchedOverflowed,
     addToCartBatchedOverflowed,
+    changeItemQuantityBatchedOverflowed,
     changing: computed(
       () =>
         addToCartLoading.value ||

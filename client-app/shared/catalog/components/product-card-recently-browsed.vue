@@ -44,12 +44,12 @@
       :count-in-cart="countInCart"
       :disabled="
         $cfg.product_quantity_control === 'stepper'
-          ? addToCartBatchedOverflowed || changeItemQuantityOverflowed
+          ? addToCartBatchedOverflowed || changeItemQuantityBatchedOverflowed
           : changing
       "
       :loading="
         $cfg.product_quantity_control === 'stepper'
-          ? addToCartBatchedOverflowed || changeItemQuantityOverflowed
+          ? addToCartBatchedOverflowed || changeItemQuantityBatchedOverflowed
           : changing
       "
       show-empty-details
@@ -91,7 +91,7 @@ const {
   changeItemQuantityBatched,
   changing,
   addToCartBatchedOverflowed,
-  changeItemQuantityOverflowed,
+  changeItemQuantityBatchedOverflowed,
 } = useShortCart();
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
