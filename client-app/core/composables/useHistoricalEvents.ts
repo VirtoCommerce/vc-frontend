@@ -19,10 +19,40 @@ export function useHistoricalEvents() {
   const { hasModuleSettings, isEnabled } = useModuleSettings(MODULE_ID_XRECOMMEND);
   const { cart } = useShortCart();
 
-  function pushHistoricalEvent(payload: InputPushHistoricalEventType, sendUnauthenticated?: false): Promise<void> {
-    if (!hasModuleSettings.value || !isEnabled(XRECOMMEND_ENABLED_KEY)) {
-      return Promise.resolve();
+  const localSearchQueries = useSessionStorage<string[]>("search-queries", []);
+  const localSearchHistory = computed(() => ({
+    searchHistory: {
+      queries: localSearchQueries.value.slice(0, DEFAULT_SEARCH_HISTORY_MAX_COUNT),
+    },
+  }));
+
+  function saveSearchQueryLocal(payload: string) {
+    if (!payload) {
+      return;
     }
+
+    if (localSearchQueries.value.includes(payload)) {
+      const index = localSearchQueries.value.indexOf(payload);
+      localSearchQueries.value.splice(index, 1);
+      localSearchQueries.value.unshift(payload);
+    } else {
+      localSearchQueries.value.unshift(payload);
+    }
+  }
+
+  if (!hasModuleSettings.value || !isEnabled(XRECOMMEND_ENABLED_KEY)) {
+    return {
+      pushHistoricalEvent: () => Promise.resolve(),
+      saveSearchQuery: saveSearchQueryLocal,
+      useGetSearchHistoryQuery: () => ({
+        load: () => Promise.resolve(),
+        result: localSearchHistory,
+        loading: ref(false),
+      }),
+    };
+  }
+
+  function pushHistoricalEvent(payload: InputPushHistoricalEventType, sendUnauthenticated?: false): Promise<void> {
     if (sendUnauthenticated || isAuthenticated.value) {
       return pushHistoricalEventMutation({
         sessionId: cart.value?.id,
@@ -30,10 +60,9 @@ export function useHistoricalEvents() {
         ...payload,
       });
     }
+
     return Promise.resolve();
   }
-
-  const localSearchQueries = useSessionStorage<string[]>("search-queries", []);
 
   async function saveSearchQuery(payload: string) {
     if (!payload) {
@@ -49,17 +78,7 @@ export function useHistoricalEvents() {
         Logger.error("Error saving search query", error);
       }
     } else {
-      if (localSearchQueries.value.includes(payload)) {
-        const index = localSearchQueries.value.indexOf(payload);
-        localSearchQueries.value.splice(index, 1);
-        localSearchQueries.value.unshift(payload);
-      } else {
-        localSearchQueries.value.unshift(payload);
-      }
-
-      if (localSearchQueries.value.length > DEFAULT_SEARCH_HISTORY_MAX_COUNT) {
-        localSearchQueries.value.splice(DEFAULT_SEARCH_HISTORY_MAX_COUNT, 1);
-      }
+      saveSearchQueryLocal(payload);
     }
   }
 
@@ -69,11 +88,7 @@ export function useHistoricalEvents() {
     }
     return {
       load: () => Promise.resolve(),
-      result: computed(() => ({
-        searchHistory: {
-          queries: localSearchQueries.value.slice(0, DEFAULT_SEARCH_HISTORY_MAX_COUNT),
-        },
-      })),
+      result: localSearchHistory,
       loading: ref(false),
     };
   }
