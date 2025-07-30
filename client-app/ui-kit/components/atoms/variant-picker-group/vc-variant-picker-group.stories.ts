@@ -102,3 +102,6 @@ const TemplateShowMore: StoryFn = (args) => ({
 });
 
 export const ShowMoreButton = TemplateShowMore.bind({});
+ShowMoreButton.args = {
+  truncate: true,
+}

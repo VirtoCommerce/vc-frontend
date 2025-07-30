@@ -2,7 +2,7 @@
   <div ref="containerRef" class="vc-variant-picker-group" :data-test-id="testIdInput">
     <slot />
 
-    <div v-show="showButton && !expanded" ref="moreBtn" class="vc-variant-picker-group__button-wrapper">
+    <div v-if="truncate" v-show="showButton && !expanded" ref="moreBtn" class="vc-variant-picker-group__button-wrapper">
       <button type="button" class="vc-variant-picker-group__show-more" @click="expand">+{{ hiddenCount }}</button>
     </div>
   </div>
@@ -13,8 +13,9 @@ import { ref, onMounted, nextTick, onBeforeUnmount } from "vue";
 
 interface IProps {
   testIdInput?: string;
+  truncate?: boolean;
 }
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const containerRef = ref<HTMLElement | null>(null);
 const moreBtn = ref<HTMLButtonElement | null>(null);
@@ -43,7 +44,7 @@ const secondTop = () => {
 async function calculateVisible() {
   const btn = moreBtn.value;
 
-  if (!btn) {
+  if (!props.truncate || !btn) {
     return;
   }
 
