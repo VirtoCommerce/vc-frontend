@@ -42,9 +42,9 @@
     "fix-locales": "yarn precheck && vite-node scripts/fix-missing-locales.ts locales client-app/ui-kit/locales client-app/modules/**/locales"
   },
   "dependencies": {
-    "@apollo/client": "^3.13.8",
+    "@apollo/client": "^3.13.9",
     "@builder.io/sdk-vue": "^4.2.3",
-    "@floating-ui/vue": "^1.1.7",
+    "@floating-ui/vue": "^1.1.8",
     "@googlemaps/js-api-loader": "^1.16.10",
     "@googlemaps/markerclusterer": "^2.6.2",
     "@headlessui/vue": "^1.7.23",
