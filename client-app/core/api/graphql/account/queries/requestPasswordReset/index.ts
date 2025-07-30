@@ -13,7 +13,7 @@ export async function requestPasswordReset(payload: QueryRequestPasswordResetArg
     query: requestPasswordResetDocument,
     variables: {
       storeId,
-      languageCode: cultureName,
+      cultureName,
       ...payload,
     },
   });
