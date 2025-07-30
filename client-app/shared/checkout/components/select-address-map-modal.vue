@@ -267,7 +267,7 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 
 <style lang="scss">
 $mapHeight: 523px;
-$mapVerticalOffset: 13rem; // approximately value of modal header height + modal actions height + modal content paddings
+$mapVerticalOffset: 13rem; // approximate value of modal header height + modal actions height + modal content paddings
 
 .select-address-map-modal {
   &__content {
