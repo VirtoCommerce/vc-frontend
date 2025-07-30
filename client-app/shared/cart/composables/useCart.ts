@@ -94,16 +94,22 @@ export function useShortCart() {
   const { cart, refetch, loading } = useSharedShortCart();
   const { storeId, currencyCode, cultureName, userId } = globals;
   const commonVariables = { storeId, currencyCode, cultureName, userId };
-  const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
   const { analytics } = useAnalytics();
+  const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
+  const {
+    add: addToCartBatchedMutation,
+    overflowed: addToCartBatchedOverflowed,
+    loading: addToCartBatchedLoading,
+  } = useMutationBatcher(_addToCart);
 
-  async function addToCart(
+  async function addToCartFunction(
     productId: string,
     quantity: number,
     configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
-  ): Promise<ShortCartFragment | undefined> {
+    mutation: typeof _addToCart | typeof addToCartBatchedMutation = _addToCart,
+  ) {
     try {
-      const result = await _addToCart(
+      const result = await mutation(
         {
           command: {
             productId,
@@ -130,6 +136,21 @@ export function useShortCart() {
     } catch (err) {
       Logger.error(err as string);
     }
+  }
+
+  async function addToCart(
+    productId: string,
+    quantity: number,
+    configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
+  ) {
+    return addToCartFunction(productId, quantity, configurationSections, _addToCart);
+  }
+  async function addToCartBatched(
+    productId: string,
+    quantity: number,
+    configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
+  ) {
+    return addToCartFunction(productId, quantity, configurationSections, addToCartBatchedMutation);
   }
 
   const { mutate: _addItemsToCart, loading: addItemsToCartLoading } = useMutation(AddItemsCartDocument);
@@ -230,18 +251,20 @@ export function useShortCart() {
     cart,
     refetch,
     addToCart,
+    addToCartBatched,
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
     changeItemQuantityBatched,
     getItemsTotal,
     loading,
-    addToCartLoading,
     changeItemQuantityLoading,
     changeItemQuantityOverflowed: changeItemQuantityBatchedOverflowed,
+    addToCartBatchedOverflowed,
     changing: computed(
       () =>
         addToCartLoading.value ||
+        addToCartBatchedLoading.value ||
         addItemsToCartLoading.value ||
         addBulkItemsToCartLoading.value ||
         changeItemQuantityLoading.value ||

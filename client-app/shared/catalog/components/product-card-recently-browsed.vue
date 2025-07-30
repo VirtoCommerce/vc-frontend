@@ -43,10 +43,14 @@
       :pack-size="product.packSize"
       :count-in-cart="countInCart"
       :disabled="
-        $cfg.product_quantity_control === 'stepper' ? addToCartLoading || changeItemQuantityOverflowed : changing
+        $cfg.product_quantity_control === 'stepper'
+          ? addToCartBatchedOverflowed || changeItemQuantityOverflowed
+          : changing
       "
       :loading="
-        $cfg.product_quantity_control === 'stepper' ? addToCartLoading || changeItemQuantityOverflowed : changing
+        $cfg.product_quantity_control === 'stepper'
+          ? addToCartBatchedOverflowed || changeItemQuantityOverflowed
+          : changing
       "
       show-empty-details
       :allow-zero="$cfg.product_quantity_control === 'stepper'"
@@ -81,8 +85,14 @@ const props = defineProps<IProps>();
 
 const errorMessage = ref<string | undefined>();
 
-const { cart, addToCart, changeItemQuantityBatched, changing, addToCartLoading, changeItemQuantityOverflowed } =
-  useShortCart();
+const {
+  cart,
+  addToCartBatched,
+  changeItemQuantityBatched,
+  changing,
+  addToCartBatchedOverflowed,
+  changeItemQuantityOverflowed,
+} = useShortCart();
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
 const { t } = useI18n();
@@ -120,7 +130,7 @@ async function changeCartItemQuantity(qty: number) {
       await changeItemQuantityBatched(cartLineItem.value.id, qty);
     }
   } else {
-    await addToCart(product.value.id, qty);
+    await addToCartBatched(product.value.id, qty);
     trackAddItemToCart(product.value, qty, { source_block: "recently-browsed" });
     void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
   }

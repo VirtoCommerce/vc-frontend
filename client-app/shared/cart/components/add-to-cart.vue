@@ -62,7 +62,8 @@ interface IProps {
 }
 
 const product = toRef(props, "product");
-const { cart, addToCart, changeItemQuantityBatched, addToCartLoading, changeItemQuantityOverflowed } = useShortCart();
+const { cart, addToCartBatched, changeItemQuantityBatched, addToCartBatchedOverflowed, changeItemQuantityOverflowed } =
+  useShortCart();
 const { t } = useI18n();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
@@ -91,9 +92,12 @@ const defaultMinQuantity = computed<number>(() =>
 const isConfigurable = computed<boolean>(() => "isConfigurable" in product.value && product.value.isConfigurable);
 const disabled = computed<boolean>(() => loading.value || !product.value.availabilityData?.isAvailable);
 const disabledStepper = computed<boolean>(
-  () => !product.value.availabilityData?.isAvailable || changeItemQuantityOverflowed.value || addToCartLoading.value,
+  () =>
+    !product.value.availabilityData?.isAvailable ||
+    changeItemQuantityOverflowed.value ||
+    addToCartBatchedOverflowed.value,
 );
-const loadingStepper = computed<boolean>(() => changeItemQuantityOverflowed.value || addToCartLoading.value);
+const loadingStepper = computed<boolean>(() => changeItemQuantityOverflowed.value || addToCartBatchedOverflowed.value);
 const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
 const minQty = computed<number>(() => product.value.minQuantity || defaultMinQuantity.value);
 const maxQty = computed<number>(() =>
@@ -161,7 +165,7 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
 
   const quantity = enteredQuantity.value || minQty.value;
   const config = isConfigurable.value ? selectedConfigurationInput.value : undefined;
-  const updatedCart = await addToCart(product.value.id, quantity, config);
+  const updatedCart = await addToCartBatched(product.value.id, quantity, config);
 
   trackAddItemToCart(product.value, quantity);
   void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
