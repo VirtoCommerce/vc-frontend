@@ -70,7 +70,7 @@
 import { isNaN } from "lodash";
 import isEqual from "lodash/isEqual";
 import { create } from "nouislider";
-import { ref, onMounted, computed, toRefs, watch } from "vue";
+import { ref, onMounted, onUnmounted, computed, toRefs, watch } from "vue";
 import type { API } from "nouislider";
 import "nouislider/dist/nouislider.css";
 
@@ -230,6 +230,13 @@ onMounted(() => {
       emit("change", range);
     }
   });
+});
+
+onUnmounted(() => {
+  if (slider) {
+    slider.destroy();
+    slider = null;
+  }
 });
 
 function onColumnClick(col: { value: [number, number] }): void {
