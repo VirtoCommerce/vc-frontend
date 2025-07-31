@@ -192,6 +192,9 @@ function applyInputConstraints() {
 
   if (typeof newEnd === "number") {
     [newStart, newEnd] = enforceMinimumDistance(newStart, newEnd);
+
+    leftInput.value = newStart;
+    rightInput.value = newEnd;
   }
 
   const innerRange = (typeof newEnd === "number" ? [newStart, newEnd] : [newStart]) satisfies RangeType;
