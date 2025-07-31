@@ -59,6 +59,7 @@
             :max="facetMax"
             :cols="sliderCols"
             show-tooltip-on-col-hover
+            update-on-column-click
             cols-height="36px"
             @change="handleSliderChange"
           />

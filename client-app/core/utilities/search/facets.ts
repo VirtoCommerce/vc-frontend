@@ -2,8 +2,7 @@ import { unref } from "vue";
 import { globals } from "@/core/globals";
 import { isDateString } from "@/core/utilities/date";
 import type { FacetItemType, FacetValueItemType } from "../../types";
-import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/core/api/graphql/types";
-import type { SearchProductFilterResult } from "@/core/api/graphql/types";
+import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { MaybeRef } from "@vueuse/core";
 
 /**

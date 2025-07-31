@@ -259,6 +259,10 @@ function onColumnClick(col: { value: [number, number] }): void {
   leftInput.value = newStart;
   rightInput.value = newEnd;
 
+  slider?.updateOptions({
+      start: getSliderStart(newStart, newEnd),
+    }, false);
+
   emit("change", [newStart, newEnd]);
 }
 
@@ -317,10 +321,10 @@ function enforceMinimumDistance(startValue: number, endValue: number, previousSt
   return [startValue, endValue];
 }
 
-function getSliderStart(value1: number, value2?: number): [number, number] {
+function getSliderStart(value1: number, value2?: number): [number, number] | [number] {
   return typeof value2 === "number"
     ? [value1, value2]
-    : [value1, value1]
+    : [value1]
 }
 </script>
 
