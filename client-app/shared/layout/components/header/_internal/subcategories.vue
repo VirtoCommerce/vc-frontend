@@ -25,10 +25,10 @@
           role="menuitem"
           :to="child.route ?? '#'"
           :active="child.isActive"
-          @keyup.arrow-right="child.children?.length && focusMenuItem(child.children[0].id)"
-          @keyup.arrow-left="focusMenuItem(item.id)"
-          @keyup.arrow-up.stop="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
-          @keyup.arrow-down.stop="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
+          @keydown.arrow-right="child.children?.length && focusMenuItem(child.children[0].id)"
+          @keydown.arrow-left="focusMenuItem(item.id)"
+          @keydown.arrow-up.prevent="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
+          @keydown.arrow-down.prevent="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
           @click="$emit('close')"
           @focusin="showChildren(child)"
           @mouseover="showChildren(child)"
@@ -154,7 +154,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .subcategories {
-  @apply relative me-2.5 w-[15rem] max-h-[100%-2.5rem];
+  @apply relative me-2.5 py-px w-[15rem] max-h-[calc(100%-2.5rem)];
 
   @media (min-width: theme("screens.2xl")) {
     @apply w-[21.5rem];
@@ -162,6 +162,10 @@ onBeforeUnmount(() => {
 
   &:not(:first-child) {
     @apply ps-2.5 border-l border-secondary-200;
+
+    @media (min-width: theme("screens.2xl")) {
+      @apply w-[21.75rem];
+    }
   }
 
   &--slide {
@@ -193,7 +197,7 @@ onBeforeUnmount(() => {
     @apply flex-none w-[14.375rem];
 
     @media (min-width: theme("screens.2xl")) {
-      @apply w-[20.875rem];
+      @apply w-[20.5rem];
     }
   }
 
