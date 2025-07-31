@@ -114,10 +114,9 @@ const isAnyInputFocused = ref<boolean>(false);
 watch([value, min, max], ([newValue, newMin, newMax]) => {
 
   if (slider) {
-    // Update the slider range
     slider.updateOptions({
+      start: getSliderStart(newValue[0], newValue[1]),
       range: { min: newMin, max: newMax },
-      start: getSliderStart(),
     }, false);
   }
 
@@ -207,7 +206,7 @@ onMounted(() => {
   }
 
   slider = create(sliderRef.value, {
-    start: getSliderStart(),
+    start: getSliderStart(value.value[0], value.value[1]),
     connect: true,
     step: step.value,
     range: { min: min.value, max: max.value },
@@ -270,10 +269,10 @@ function enforceMinimumDistance(startValue: number, endValue: number, previousSt
   return [startValue, endValue];
 }
 
-function getSliderStart(){
-  return typeof props.value[1] === "number"
-    ? [props.min, props.max]
-    : [props.min]
+function getSliderStart(value1: number, value2?: number): [number, number] {
+  return typeof value2 === "number"
+    ? [value1, value2]
+    : [value1, value1]
 }
 </script>
 
