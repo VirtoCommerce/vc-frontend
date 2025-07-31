@@ -175,14 +175,16 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     return selectedProperties.value.size === properties.value.size;
   });
 
+  const applicableVariations = computed<Product[]>(() => {
+    return getApplicableVariations(variations.value, selectedProperties.value);
+  });
+
   const variationResult = computed<Product | undefined>(() => {
     if (!isCompleted.value) {
       return undefined;
     }
 
-    const applicable = getApplicableVariations(variations.value, selectedProperties.value);
-
-    return applicable.length === 1 ? applicable[0] : undefined;
+    return applicableVariations.value.length === 1 ? applicableVariations.value[0] : undefined;
   });
 
   function isAvailable(propertyName: string, value: PrimitiveValueType) {
@@ -231,6 +233,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     properties,
     isCompleted,
     variationResult,
+    applicableVariations,
 
     select,
     isSelected,
