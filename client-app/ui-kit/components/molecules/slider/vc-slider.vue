@@ -47,6 +47,7 @@
         type="number"
         @focus="handleStartInputFocus"
         @blur="handleInputBlur"
+        @keyup.enter="handleEnterKey"
       />
 
       <template v-if="!isNaN(rightInput)">
@@ -60,6 +61,7 @@
           type="number"
           @focus="handleEndInputFocus"
           @blur="handleInputBlur"
+          @keyup.enter="handleEnterKey"
         />
       </template>
     </div>
@@ -184,6 +186,11 @@ function handleInputBlur() {
       applyInputConstraints();
     }
   }, 0);
+}
+
+function handleEnterKey() {
+  // Apply constraints immediately when Enter is pressed
+  applyInputConstraints();
 }
 
 function applyInputConstraints() {
