@@ -154,6 +154,7 @@
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, ref, shallowRef, toRef, watch } from "vue";
+import { areStringOrNumberEqual } from "@/core/utilities";
 import type {
   SearchProductFilterRangeValue,
   SearchProductFilterResult,
@@ -211,8 +212,8 @@ function handleFacetItemClick(item: FacetValueItemType): void {
     const index = selectedRanges.value.findIndex(value => {
       return value.includeLowerBound === item.includeFrom &&
         value.includeUpperBound === item.includeTo &&
-        areValuesEqual(item.from, value.lower) &&
-        areValuesEqual(item.to, value.upper);
+        areStringOrNumberEqual(item.from, value.lower) &&
+        areStringOrNumberEqual(item.to, value.upper);
     })
 
     if(index === -1) {
@@ -294,20 +295,10 @@ function isSelected(item: FacetValueItemType) {
     return selectedRanges.value.some(value => {
       return value.includeLowerBound === item.includeFrom &&
         value.includeUpperBound === item.includeTo &&
-        areValuesEqual(item.from, value.lower) &&
-        areValuesEqual(item.to, value.upper);
+        areStringOrNumberEqual(item.from, value.lower) &&
+        areStringOrNumberEqual(item.to, value.upper);
     })
   }
-}
-
-function areValuesEqual(
-  a: string | number | null | undefined,
-  b: string | number | null | undefined
-): boolean {
-  // assume null and undefined are equal
-  if (a == null && b == null) return true;
-
-  return String(a) === String(b);
 }
 </script>
 

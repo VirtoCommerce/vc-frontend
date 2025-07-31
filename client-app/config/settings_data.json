@@ -13,7 +13,7 @@
     "product_filters_sorting_direction": "asc",
     "product_quantity_control": "stepper",
 
-    "price_filter_type": "slider",
+    "range_filter_type": "slider",
 
     "vendor_enabled": true,
     "vendor_rating_enabled": true,

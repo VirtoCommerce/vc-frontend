@@ -28,7 +28,7 @@
         <template v-for="facet in filtersToShow" :key="facet.paramName">
           <div data-facet-filter>
             <component
-              :is="facetHasBounce(facet.statistics) ? SliderFilter : FacetFilter"
+              :is="facetHasBounce(facet.statistics) && isSliderFilterEnabled() ? SliderFilter : FacetFilter"
               :mode="isHorizontal ? 'dropdown' : 'collapsable'"
               :loading="loading"
               :facet="facet"
@@ -46,6 +46,7 @@
 import { useElementBounding, watchDebounced } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { watch, shallowRef, ref, nextTick, computed } from "vue";
+import { useThemeContext } from "@/core/composables";
 import FacetFilter from "./facet-filter.vue";
 import type { SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
@@ -185,6 +186,12 @@ function facetHasBounce(statistics?: { min?: number, max?: number }) {
 
 function getFiltersByParamName(paramName: string) {
   return props.filters.filters.find((el) => el.name === paramName);
+}
+
+const { themeContext } = useThemeContext();
+
+function isSliderFilterEnabled() {
+  return themeContext.value.settings.range_filter_type === "slider";
 }
 </script>
 
