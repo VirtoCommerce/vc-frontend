@@ -43,8 +43,7 @@
           <template #append>
             <span class="slider-filter-dropdown__append">
               <VcBadge v-if="hasSelected" size="sm" rounded color="info">
-                <!-- todo -->
-                selected
+                1
               </VcBadge>
 
               <VcIcon v-else name="chevron-down" class="slider-filter-dropdown__arrow" />
