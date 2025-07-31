@@ -3905,6 +3905,7 @@ export type OrderPaymentMethodType = {
   isActive: Scalars['Boolean']['output'];
   isAvailableForPartial: Scalars['Boolean']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
+  /** Localized name of payment method. */
   name?: Maybe<Scalars['String']['output']>;
   paymentMethodGroupType: Scalars['Int']['output'];
   paymentMethodType: Scalars['Int']['output'];
@@ -4656,6 +4657,8 @@ export type ProductConnection = {
   edges?: Maybe<Array<Maybe<ProductEdge>>>;
   /** Filter facets */
   filter_facets: Array<FilterFacet>;
+  /** Parsed filters */
+  filters?: Maybe<Array<SearchProductFilterResult>>;
   /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<Product>>>;
   /** Information to aid in pagination. */
@@ -5297,6 +5300,7 @@ export type QueryProductsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   fuzzy?: InputMaybe<Scalars['Boolean']['input']>;
   fuzzyLevel?: InputMaybe<Scalars['Int']['input']>;
+  preserveUserQuery?: InputMaybe<Scalars['Boolean']['input']>;
   productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   query?: InputMaybe<Scalars['String']['input']>;
   selectedAddress?: InputMaybe<Scalars['String']['input']>;
@@ -5680,6 +5684,15 @@ export type RangeFacet = Facet & {
   name: Scalars['String']['output'];
   /** Ranges */
   ranges: Array<FacetRangeType>;
+  /** Statistics for the facet, such as min and max values across ranges. */
+  statistics?: Maybe<RangeFacetStatistics>;
+};
+
+export type RangeFacetStatistics = {
+  /** The maximum value in the range or across ranges. */
+  max?: Maybe<Scalars['Float']['output']>;
+  /** The minimum value in the range or across ranges. */
+  min?: Maybe<Scalars['Float']['output']>;
 };
 
 export type Rating = {
@@ -5789,6 +5802,42 @@ export type RoleType = {
 
 export type SearchHistoryResultType = {
   queries?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+};
+
+/** Represents a range value in a product search filter */
+export type SearchProductFilterRangeValue = {
+  /** Indicates if the starting bound is included in the range */
+  includeLowerBound: Scalars['Boolean']['output'];
+  /** Indicates if the ending bound is included in the range */
+  includeUpperBound: Scalars['Boolean']['output'];
+  /** The starting value of the range */
+  lower?: Maybe<Scalars['String']['output']>;
+  /** The ending value of the range */
+  upper?: Maybe<Scalars['String']['output']>;
+};
+
+/** Represents a filter result for product search */
+export type SearchProductFilterResult = {
+  /** The type of the filter, e.g., 'term' or 'range' */
+  filterType: Scalars['String']['output'];
+  /** Indicates whether the filter was generated automatically */
+  isGenerated: Scalars['Boolean']['output'];
+  /** Localized name of the filter (if available) */
+  label?: Maybe<Scalars['String']['output']>;
+  /** The name of the filter */
+  name: Scalars['String']['output'];
+  /** List of range values in the filter */
+  rangeValues?: Maybe<Array<Maybe<SearchProductFilterRangeValue>>>;
+  /** List of term values in the filter */
+  termValues?: Maybe<Array<Maybe<SearchProductFilterValue>>>;
+};
+
+/** Represents a term value in a product search filter */
+export type SearchProductFilterValue = {
+  /** The label of the term in the filter, used for display purposes */
+  label?: Maybe<Scalars['String']['output']>;
+  /** The value of the term in the filter */
+  value: Scalars['String']['output'];
 };
 
 export type SeoInfo = {
