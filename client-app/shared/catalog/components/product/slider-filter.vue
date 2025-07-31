@@ -145,12 +145,15 @@ function handleSliderChange(value: [number, number] | [number]) {
     applyRange([null, null]);
     return;
   }
+
   if (doubleValue[0] === facetMin.value && doubleValue[1] !== facetMax.value) {
     applyRange([null, doubleValue[1]]);
     return;
   }
+
   if (doubleValue[0] !== facetMin.value && doubleValue[1] === facetMax.value) {
     applyRange([doubleValue[0], null]);
+    return;
   }
 
   applyRange([doubleValue[0], doubleValue[1]]);

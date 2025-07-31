@@ -2,6 +2,7 @@ export type FacetValueItemType = {
   value: string;
   label: string;
   count?: number;
+  // @deprecated calculate this from filter
   selected: boolean;
   from?: number;
   includeFrom?: boolean;

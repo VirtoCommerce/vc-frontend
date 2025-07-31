@@ -111,19 +111,18 @@ const start = ref<number>(0);
 const end = ref<number>();
 const isAnyInputFocused = ref<boolean>(false);
 
-watch([value, min, max], (newValue, oldValue) => {
-  if(newValue[1] !== oldValue[1] || newValue[2] !== oldValue[2]) {
-    if (slider) {
-      // Update the slider range
-      slider.updateOptions({
-        range: { min: newValue[1], max: newValue[2] },
-        start: getSliderStart(),
-      }, false);
-    }
+watch([value, min, max], ([newValue, newMin, newMax]) => {
+
+  if (slider) {
+    // Update the slider range
+    slider.updateOptions({
+      range: { min: newMin, max: newMax },
+      start: getSliderStart(),
+    }, false);
   }
 
-  start.value = Math.max(newValue[0][0], newValue[1]);
-  end.value = typeof newValue[0][1] === "number" ? Math.min(newValue[0][1], newValue[2]) : undefined;
+  start.value = newValue[0];
+  end.value = typeof newValue[1] === "number" ? newValue[1] : undefined;
 });
 
 const sliderRef = ref<HTMLElement | null>(null);
@@ -273,8 +272,8 @@ function enforceMinimumDistance(startValue: number, endValue: number, previousSt
 
 function getSliderStart(){
   return typeof props.value[1] === "number"
-    ? [Math.min(props.value[0], props.min), Math.min(props.value[1], props.max)]
-    : [Math.min(props.value[0], props.min)]
+    ? [props.min, props.max]
+    : [props.min]
 }
 </script>
 
