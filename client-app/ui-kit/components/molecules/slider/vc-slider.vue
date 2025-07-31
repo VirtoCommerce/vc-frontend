@@ -253,6 +253,12 @@ function onColumnClick(col: { value: [number, number] }): void {
 }
 
 function enforceMinimumDistance(startValue: number, endValue: number, previousStart?: number): [number, number] {
+  // Handle case where start value is higher than end value
+  if (startValue > endValue) {
+    // Swap the values
+    [startValue, endValue] = [endValue, startValue];
+  }
+
   // Ensure minimum distance between handles equal to step
   if (Math.abs(endValue - startValue) < step.value) {
     // If handles are too close, adjust based on which handle was moved last
