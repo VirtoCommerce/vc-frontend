@@ -40,7 +40,7 @@
 
     <div class="vc-slider__inputs">
       <VcInput
-        v-model="start"
+        v-model="leftInput"
         size="sm"
         class="vc-slider__input"
         :disabled="disabled"
@@ -49,11 +49,11 @@
         @blur="handleInputBlur"
       />
 
-      <template v-if="!isNaN(end)">
+      <template v-if="!isNaN(rightInput)">
         <b class="vc-slider__dash">&mdash;</b>
 
         <VcInput
-          v-model="end"
+          v-model="rightInput"
           size="sm"
           class="vc-slider__input"
           :disabled="disabled"
@@ -107,8 +107,8 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { value, min, max, step, cols } = toRefs(props);
 
-const start = ref<number>(0);
-const end = ref<number>();
+const leftInput = ref<number>(0);
+const rightInput = ref<number>();
 const isAnyInputFocused = ref<boolean>(false);
 
 watch([value, min, max], ([newValue, newMin, newMax]) => {
@@ -121,8 +121,8 @@ watch([value, min, max], ([newValue, newMin, newMax]) => {
     }, false);
   }
 
-  start.value = newValue[0];
-  end.value = typeof newValue[1] === "number" ? newValue[1] : undefined;
+  leftInput.value = newValue[0];
+  rightInput.value = typeof newValue[1] === "number" ? newValue[1] : undefined;
 });
 
 const sliderRef = ref<HTMLElement | null>(null);
@@ -188,8 +188,8 @@ function handleInputBlur() {
 }
 
 function applyInputConstraints() {
-  let newStart = start.value;
-  let newEnd = end.value;
+  let newStart = leftInput.value;
+  let newEnd = rightInput.value;
 
   if (typeof newEnd === "number") {
     [newStart, newEnd] = enforceMinimumDistance(newStart, newEnd);
@@ -214,17 +214,17 @@ onMounted(() => {
   });
 
   slider.on("update", (v: (string | number)[]) => {
-    const [newStart, newEnd] = enforceMinimumDistance(+v[0], +v[1], start.value);
-    start.value = newStart;
-    end.value = newEnd;
+    const [newStart, newEnd] = enforceMinimumDistance(+v[0], +v[1], leftInput.value);
+    leftInput.value = newStart;
+    rightInput.value = newEnd;
   });
 
   // Listen for when user stops dragging the slider
   slider.on("change", (v: (string | number)[]) => {
-    const [newStart, newEnd] = enforceMinimumDistance(+v[0], +v[1], start.value);
+    const [newStart, newEnd] = enforceMinimumDistance(+v[0], +v[1], leftInput.value);
     const range: RangeType = [newStart, newEnd];
-    start.value = range[0];
-    end.value = range[1];
+    leftInput.value = range[0];
+    rightInput.value = range[1];
 
     // Only emit if values actually changed
     if (!isEqual(range, props.value)) {
@@ -240,8 +240,8 @@ function onColumnClick(col: { value: [number, number] }): void {
 
   const [newStart, newEnd] = enforceMinimumDistance(col.value[0], col.value[1]);
 
-  start.value = newStart;
-  end.value = newEnd;
+  leftInput.value = newStart;
+  rightInput.value = newEnd;
 
   emit("change", [newStart, newEnd]);
 }
