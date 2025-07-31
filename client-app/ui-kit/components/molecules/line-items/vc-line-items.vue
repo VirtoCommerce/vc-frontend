@@ -10,8 +10,7 @@
           :indeterminate="isSomeItemsSelected"
           class="vc-line-items__checkbox"
           test-id="vc-line-items-head-checkbox"
-          @change="($event) => selectAllItems($event as boolean)"
-        />
+          @change="($event) => selectAllItems($event as boolean)" />
 
         <div class="vc-line-items__product">
           {{ $t("ui_kit.labels.product") }}
@@ -24,8 +23,7 @@
             {
               'vc-line-items__properties--wide': !showPrice,
             },
-          ]"
-        >
+          ]">
           {{ $t("ui_kit.labels.properties") }}
         </div>
 
@@ -40,8 +38,6 @@
         <div v-if="showTotal" class="vc-line-items__total">
           {{ $t("ui_kit.labels.total") }}
         </div>
-
-        <div v-if="removable" class="vc-line-items__removable"></div>
       </div>
 
       <!-- table body -->
@@ -65,6 +61,7 @@
             :disabled="disabled"
             :deleted="item.deleted"
             :removable="removable"
+            :saveable-for-later="saveableForLater"
             :selectable="selectable"
             :selected="selectable && selectedItemIds?.includes(item.id)"
             :browser-target="browserTarget"
@@ -73,7 +70,7 @@
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
             @link-click="$emit('linkClick', item)"
-          >
+            @save-for-later="() => saveForLaterSingle(item.id)">
             <template #before>
               <slot name="before-content" v-bind="{ item }" />
             </template>
@@ -101,8 +98,7 @@
             variant="outline"
             size="xs"
             :disabled="!selectedItemIds.length"
-            @click="removeSelectedItems"
-          >
+            @click="removeSelectedItems">
             {{ $t("ui_kit.buttons.remove_selected") }}
           </VcButton>
 
@@ -111,8 +107,7 @@
             color="secondary"
             size="xs"
             variant="outline"
-            @click="removeAllItems"
-          >
+            @click="removeAllItems">
             {{ $t("ui_kit.buttons.remove_all") }}
           </VcButton>
         </template>
@@ -135,6 +130,7 @@ interface IEmits {
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "linkClick", value: PreparedLineItemType): void;
+  (event: "saveForLater", value: string[]): void;
 }
 
 interface IProps {
@@ -151,6 +147,7 @@ interface IProps {
   withSubtotal?: boolean;
   withHeader?: boolean;
   browserTarget?: BrowserTargetType;
+  saveableForLater?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -174,9 +171,9 @@ const hasTotal = computed(() => props.items.some((item) => item.extendedPrice));
 const subtotal = computed<number>(() =>
   hasTotal.value
     ? sumBy(
-        props.items.filter((item) => selectedItemIds.value.includes(item.id) && item.extendedPrice),
-        (item) => item.extendedPrice!.amount,
-      )
+      props.items.filter((item) => selectedItemIds.value.includes(item.id) && item.extendedPrice),
+      (item) => item.extendedPrice!.amount,
+    )
     : 0,
 );
 
@@ -207,6 +204,10 @@ function removeSelectedItems() {
 
 function removeAllItems() {
   emit("remove:items", itemIds.value);
+}
+
+function saveForLaterSingle(itemId: string) {
+  emit("saveForLater", [itemId]);
 }
 
 watchEffect(() => {
@@ -263,7 +264,7 @@ watchEffect(() => {
   }
 
   &__total {
-    @apply text-end;
+    @apply text-end mr-7;
 
     @container (width > theme("containers.2xl")) {
       @apply shrink-0 w-[6.5rem];
@@ -272,10 +273,6 @@ watchEffect(() => {
     @container (width > theme("containers.4xl")) {
       @apply w-[8.625rem];
     }
-  }
-
-  &__removable {
-    @apply w-7;
   }
 
   &__body {

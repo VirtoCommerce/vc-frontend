@@ -37,19 +37,25 @@
             'vc-line-item__content--with-image': withImage,
             'vc-line-item__content--selectable': !withImage && selectable,
           },
-        ]"
-      >
-        <VcProductTitle
-          class="vc-line-item__name"
-          :disabled="disabled || deleted"
-          :to="route"
-          :title="name"
-          :target="browserTarget"
-          @click="$emit('linkClick')"
-        >
-          {{ name }}
-        </VcProductTitle>
-
+        ]">
+        <div class="vc-line-item__title-actions">
+          <VcProductTitle
+            class="vc-line-item__name"
+            :disabled="disabled || deleted"
+            :to="route"
+            :title="name"
+            :target="browserTarget"
+            @click="$emit('linkClick')">
+            {{ name }}
+          </VcProductTitle>
+          <CartItemActions
+            :selected="selected"
+            :disabled="disabled"
+            :removable="removable"
+            :saveable-for-later="saveableForLater"
+            @remove="$emit('remove')"
+            @save-for-later="$emit('saveForLater')" />
+        </div>
         <div
           v-if="withProperties || withPrice"
           :class="[
@@ -109,19 +115,6 @@
             truncate
           />
         </div>
-
-        <VcButton
-          v-if="removable"
-          :aria-label="$t('ui_kit.buttons.remove_from_cart')"
-          class="vc-line-item__remove-button"
-          color="neutral"
-          size="sm"
-          variant="no-background"
-          icon="delete-thin"
-          data-test-id="remove-item-button"
-          :disabled="disabled"
-          @click="$emit('remove')"
-        />
       </div>
     </div>
 
@@ -135,11 +128,13 @@
 import { ref, watchEffect } from "vue";
 import type { Property, MoneyType, CommonVendor } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
+import CartItemActions from "@/shared/cart/components/cart-item-actions.vue";
 
 interface IEmits {
   (event: "remove"): void;
   (event: "select", value: boolean): void;
   (event: "linkClick"): void;
+  (event: "saveForLater"): void;
 }
 
 interface IProps {
@@ -154,6 +149,7 @@ interface IProps {
   selectable?: boolean;
   selected?: boolean;
   removable?: boolean;
+  saveableForLater?: boolean;
   disabled?: boolean;
   deleted?: boolean;
   withImage?: boolean;
@@ -321,6 +317,10 @@ watchEffect(() => {
     }
   }
 
+  &__title-actions {
+    @apply flex flex-col;
+  }
+
   &__properties {
     @apply flex-none mt-3;
 
@@ -358,7 +358,7 @@ watchEffect(() => {
   &__price {
     --vc-product-price-font-size: theme(fontSize.sm);
 
-    @container (width <= theme("containers.4xl")) {
+    @container (width <=theme("containers.4xl")) {
       @apply hidden #{!important};
     }
 
@@ -376,7 +376,7 @@ watchEffect(() => {
   &__mobile-row {
     @apply contents;
 
-    @container (width <= theme("containers.2xl")) {
+    @container (width <=theme("containers.2xl")) {
       @apply flex items-center gap-3 mt-3;
     }
   }
