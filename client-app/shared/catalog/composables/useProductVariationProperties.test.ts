@@ -339,4 +339,47 @@ describe("useProductVariationProperties", () => {
     expect(variationResult.value).toBeUndefined();
     expect(properties.value.size).toBeGreaterThan(0);
   });
+
+  it("initially returns all variations in applicableVariations", () => {
+    const variations = ref(mockData.basic);
+    const { applicableVariations } = useProductVariationProperties(variations);
+
+    expect(applicableVariations.value.length).toBe(mockData.basic.length);
+    expect(applicableVariations.value).toEqual(variations.value);
+  });
+
+  it("filters applicableVariations based on a single selection", () => {
+    const variations = ref(mockData.basic);
+    const { select, applicableVariations } = useProductVariationProperties(variations);
+
+    select("Color", "Red");
+
+    expect(applicableVariations.value.length).toBe(2);
+    const ids = applicableVariations.value.map((v) => v.id);
+    expect(ids).toEqual(expect.arrayContaining(["1", "2"]));
+  });
+
+  it("filters applicableVariations based on multiple selections", () => {
+    const variations = ref(mockData.basic);
+    const { select, applicableVariations } = useProductVariationProperties(variations);
+
+    select("Color", "Red");
+    select("Size", "M");
+
+    expect(applicableVariations.value.length).toBe(1);
+    expect(applicableVariations.value[0].id).toBe("1");
+  });
+
+  it("updates applicableVariations when an incompatible property is selected", () => {
+    const variations = ref(mockData.basic);
+    const { select, applicableVariations } = useProductVariationProperties(variations);
+
+    select("Size", "L");
+    expect(applicableVariations.value.length).toBe(1);
+    expect(applicableVariations.value[0].id).toBe("2");
+
+    select("Color", "Blue");
+    expect(applicableVariations.value.length).toBe(1);
+    expect(applicableVariations.value[0].id).toBe("3");
+  });
 });
