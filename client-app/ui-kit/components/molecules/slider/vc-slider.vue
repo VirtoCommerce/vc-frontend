@@ -252,30 +252,55 @@ function onColumnClick(col: { value: [number, number] }): void {
   emit("change", [newStart, newEnd]);
 }
 
-function enforceMinimumDistance(startValue: number, endValue: number, previousStart?: number): [number, number] {
-  // Handle case where start value is higher than end value
-  if (startValue > endValue) {
-    // Swap the values
-    [startValue, endValue] = [endValue, startValue];
-  }
+function clampValue(val: number): number {
+  return Math.max(min.value, Math.min(max.value, val));
+}
 
-  // Ensure minimum distance between handles equal to step
+function adjustForMinimumDistance(startValue: number, endValue: number, previousStart?: number): [number, number] {
   if (Math.abs(endValue - startValue) < step.value) {
-    // If handles are too close, adjust based on which handle was moved last
     if (previousStart !== undefined && startValue === previousStart) {
       // End handle was moved, adjust start
       startValue = endValue - step.value;
       if (startValue < min.value) {
         startValue = min.value;
-        endValue = startValue + step.value;
+        endValue = Math.min(max.value, startValue + step.value);
       }
     } else {
       // Start handle was moved, adjust end
       endValue = startValue + step.value;
       if (endValue > max.value) {
         endValue = max.value;
-        startValue = endValue - step.value;
+        startValue = Math.max(min.value, endValue - step.value);
       }
+    }
+  }
+  return [startValue, endValue];
+}
+
+function enforceMinimumDistance(startValue: number, endValue: number, previousStart?: number): [number, number] {
+  // Clamp values to min/max boundaries
+  startValue = clampValue(startValue);
+  endValue = clampValue(endValue);
+
+  // Handle case where start value is higher than end value
+  if (startValue > endValue) {
+    [startValue, endValue] = [endValue, startValue];
+  }
+
+  // Ensure minimum distance between handles
+  [startValue, endValue] = adjustForMinimumDistance(startValue, endValue, previousStart);
+
+  // Final validation to ensure minimum step distance
+  if (Math.abs(endValue - startValue) < step.value) {
+    if (endValue + step.value <= max.value) {
+      endValue = startValue + step.value;
+    } else if (startValue - step.value >= min.value) {
+      startValue = endValue - step.value;
+    } else {
+      // Fallback: center the range with minimum distance
+      const center = (min.value + max.value) / 2;
+      startValue = Math.max(min.value, center - step.value / 2);
+      endValue = Math.min(max.value, center + step.value / 2);
     }
   }
 
