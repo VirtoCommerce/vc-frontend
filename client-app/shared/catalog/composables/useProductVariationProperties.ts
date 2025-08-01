@@ -175,6 +175,10 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     return selectedProperties.value.size === properties.value.size;
   });
 
+  const hasSelected = computed<boolean>(() => {
+    return selectedProperties.value.size > 0;
+  });
+
   const applicableVariations = computed<Product[]>(() => {
     return getApplicableVariations(variations.value, selectedProperties.value);
   });
@@ -234,6 +238,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     isCompleted,
     variationResult,
     applicableVariations,
+    hasSelected,
 
     select,
     isSelected,
