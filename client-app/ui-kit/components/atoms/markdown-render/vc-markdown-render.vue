@@ -18,6 +18,8 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
 
 <style lang="scss">
 .vc-markdown-render {
+  --radius: var(--vc-markdown-render-radius, var(--vc-radius, 0.5rem));
+
   font-size: 1rem;
   line-height: 1.5;
 
@@ -158,7 +160,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
   blockquote {
     padding: 12px 24px;
     border-left: 4px solid theme("colors.neutral.400");
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
     background-color: theme("colors.neutral.100");
   }
 
@@ -168,12 +170,12 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
     font-size: 85%;
     line-height: 1.45;
     background-color: theme("colors.neutral.100");
-    border-radius: 4px;
+    border-radius: var(--radius);
   }
 
   code {
     background-color: theme("colors.neutral.100");
-    border-radius: 3px;
+    border-radius: var(--radius);
     font-family: monospace;
     padding: 0 3px;
   }
@@ -181,13 +183,13 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
   img {
     display: block;
     max-width: 100%;
-    border-radius: 4px;
+    border-radius: var(--radius);
     object-position: 50% 50%;
     object-fit: contain;
   }
 
   table {
-    @apply table-fixed overflow-hidden rounded border-separate border border-spacing-0 w-full text-base;
+    @apply table-fixed overflow-hidden rounded-[--radius] border-separate border border-spacing-0 w-full text-base;
 
     tr {
       @apply even:bg-neutral-50;
