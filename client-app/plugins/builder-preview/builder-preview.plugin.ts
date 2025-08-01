@@ -124,9 +124,6 @@ export default {
 
     window.addEventListener("message", async (event: MessageEvent<TransferDataType>) => {
       if (event.origin !== options.builderOrigin || event.data.source !== "builder") {
-        // note: it can be cause of some problems. investigate it.
-        // eslint-disable-next-line no-console
-        console.log("cancel message");
         return;
       }
 

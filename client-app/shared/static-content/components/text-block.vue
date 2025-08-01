@@ -1,7 +1,7 @@
 <template>
-  <div class="text-block pb-16 pt-6">
+  <div class="text-block pb-16 pt-6" :class="background">
     <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
-      <component :is="model.heading" class="mb-3 text-2xl">{{ model.title }}</component>
+      <component :is="heading" class="mb-3 text-2xl">{{ title }}</component>
       <div v-html-safe="contentValue" class="block-content text-lg"></div>
     </div>
   </div>
@@ -11,17 +11,16 @@
 import { computed } from "vue";
 
 export interface IProps {
-  model: {
-    heading: string;
-    title: string;
-    text: string | { html: string };
-  };
+  heading: string;
+  title: string;
+  background?: string;
+  text: string | { html: string };
 }
 
 const props = defineProps<IProps>();
 
 const contentValue = computed(() => {
-  return typeof props.model.text === "object" ? props.model.text?.html : props.model.text;
+  return typeof props.text === "object" ? props.text?.html : props.text;
 });
 </script>
 
@@ -31,13 +30,19 @@ const contentValue = computed(() => {
     p {
       margin-bottom: 1.5rem;
     }
+
     ul {
       list-style: disc inside;
       margin-bottom: 1.5rem;
     }
+
     a {
       font-weight: bold;
     }
+  }
+
+  &.bg-neutral-800 {
+    color: white;
   }
 }
 </style>
