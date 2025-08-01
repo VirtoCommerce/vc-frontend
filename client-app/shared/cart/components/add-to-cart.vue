@@ -84,30 +84,26 @@ const { themeContext } = useThemeContext();
 const loading = ref(false);
 const errorMessage = ref<string | undefined>();
 
-const notAvailableMessage = computed<string | undefined>(() => {
+const notAvailableMessage = computed(() => {
   if (!product.value.availabilityData?.isBuyable || !product.value.availabilityData?.isAvailable) {
     return t("validation_error.CART_PRODUCT_UNAVAILABLE");
   }
   return undefined;
 });
 
-const defaultMinQuantity = computed<number>(() =>
-  themeContext.value.settings.product_quantity_control === "button" ? 1 : 0,
-);
-const isConfigurable = computed<boolean>(() => "isConfigurable" in product.value && product.value.isConfigurable);
-const disabled = computed<boolean>(() => loading.value || !product.value.availabilityData?.isAvailable);
-const disabledStepper = computed<boolean>(
+const defaultMinQuantity = computed(() => (themeContext.value.settings.product_quantity_control === "button" ? 1 : 0));
+const isConfigurable = computed(() => "isConfigurable" in product.value && product.value.isConfigurable);
+const disabled = computed(() => loading.value || !product.value.availabilityData?.isAvailable);
+const disabledStepper = computed(
   () =>
     !product.value.availabilityData?.isAvailable ||
     changeItemQuantityBatchedOverflowed.value ||
     addToCartBatchedOverflowed.value,
 );
-const loadingStepper = computed<boolean>(
-  () => changeItemQuantityBatchedOverflowed.value || addToCartBatchedOverflowed.value,
-);
-const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
-const minQty = computed<number>(() => product.value.minQuantity || defaultMinQuantity.value);
-const maxQty = computed<number>(() =>
+const loadingStepper = computed(() => changeItemQuantityBatchedOverflowed.value || addToCartBatchedOverflowed.value);
+const countInCart = computed(() => getLineItem(cart.value?.items)?.quantity || 0);
+const minQty = computed(() => product.value.minQuantity || defaultMinQuantity.value);
+const maxQty = computed(() =>
   Math.min(
     product.value.availabilityData?.availableQuantity || LINE_ITEM_QUANTITY_LIMIT,
     isDefined(product.value.maxQuantity) && product.value.maxQuantity !== 0
