@@ -107,6 +107,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDebounceFn } from "@vueuse/core";
 import { isNaN, isEqual, uniqueId as getUniqueId } from "lodash";
 import { create } from "nouislider";
 import { ref, onMounted, onUnmounted, computed, toRefs, watch } from "vue";
@@ -143,6 +144,8 @@ const props = withDefaults(defineProps<IProps>(), {
   updateOnColumnClick: false,
   showTooltipOnColHover: false,
 });
+
+const DEFAULT_DEBOUNCE_IN_MS = 200;
 
 const { value, min, max, step, cols } = toRefs(props);
 
@@ -183,7 +186,7 @@ const normalizedCols = computed(() => {
       return from > min.value && from < max.value;
     }
 
-    return from && to && to > min.value && from < max.value;
+    return !!from && !!to && to > min.value && from < max.value;
   });
 
   const counts = allowedCols.map((column) => column.count);
@@ -266,8 +269,8 @@ onMounted(() => {
     rightInput.value = newEnd;
   });
 
-  // Listen for when user stops dragging the slider
-  slider.on("change", (v: (string | number)[]) => {
+  // Debounced version of the change handler for smoother updates
+  const debouncedChangeHandler = useDebounceFn((v: (string | number)[]) => {
     const [newStart, newEnd] = enforceMinimumDistance(+v[0], +v[1], leftInput.value);
     const range: RangeType = [newStart, newEnd];
     leftInput.value = range[0];
@@ -277,7 +280,10 @@ onMounted(() => {
     if (!isEqual(range, props.value)) {
       emit("change", range);
     }
-  });
+  }, DEFAULT_DEBOUNCE_IN_MS);
+
+  // Listen for slider changes with debouncing
+  slider.on("change", debouncedChangeHandler);
 });
 
 onUnmounted(() => {
