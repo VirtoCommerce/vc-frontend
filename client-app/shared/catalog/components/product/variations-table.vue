@@ -162,7 +162,7 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
-const { cart, addToCart, changeItemQuantity } = useShortCart();
+const { cart, addToCart, changeItemQuantityBatched } = useShortCart();
 const { localizedItemsErrors: serverValidationErrors, setErrors } =
   useErrorsTranslator<ValidationErrorType>("validation_error");
 const { trackAddItemToCart } = useAnalyticsUtils();
@@ -285,7 +285,7 @@ async function changeCart(variation: Product, quantity: number) {
   const lineItem = getLineItem(variation);
 
   if (lineItem) {
-    await changeItemQuantity(lineItem.id, quantity);
+    await changeItemQuantityBatched(lineItem.id, quantity);
   } else {
     await addToCart(variation.id, quantity);
     trackAddItemToCart(variation, quantity);
