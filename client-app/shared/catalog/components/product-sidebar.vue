@@ -102,7 +102,7 @@
     </ProductPriceBlock>
 
     <VcWidget v-if="showVendor && product.vendor" :title="$t('shared.catalog.product_details.vendor_label')" size="sm">
-      <div class="test-base text-center font-bold">
+      <div class="test-base text-center font-bold [word-break:break-word]">
         {{ product.vendor.name }}
       </div>
     </VcWidget>
