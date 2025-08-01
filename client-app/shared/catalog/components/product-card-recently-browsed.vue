@@ -43,7 +43,7 @@
       :pack-size="product.packSize"
       :count-in-cart="countInCart"
       :disabled="isQuantityControlDisabled"
-      :loading="isQuantityControlLoading"
+      :loading="isQuantityLoading"
       show-empty-details
       :allow-zero="$cfg.product_quantity_control === 'stepper'"
       @update:cart-item-quantity="changeCartItemQuantity"
@@ -96,14 +96,14 @@ const price = computed(() => (product.value.hasVariations ? product.value.minVar
 const link = computed<RouteLocationRaw>(() => getProductRoute(product.value.id, product.value.slug));
 const cartLineItem = computed(() => cart.value?.items.find((item) => item.productId === product.value.id));
 const countInCart = computed<number>(() => cartLineItem.value?.quantity || 0);
-const isQuantityControlLoading = computed(() => {
+const isQuantityLoading = computed(() => {
   if (themeContext.value.settings.product_quantity_control === "stepper") {
     return addToCartBatchedOverflowed.value || changeItemQuantityBatchedOverflowed.value;
   }
   return changing.value;
 });
 const isQuantityControlDisabled = computed(() => {
-  return isQuantityControlLoading.value;
+  return isQuantityLoading.value || !product.value.availabilityData?.isAvailable;
 });
 
 const notAvailableMessage = computed<string | undefined>(() => {
