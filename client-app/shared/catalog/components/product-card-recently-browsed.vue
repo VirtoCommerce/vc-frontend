@@ -60,7 +60,6 @@ import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { getProductRoute } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
 import type { Product } from "@/core/api/graphql/types";
-import type { RouteLocationRaw } from "vue-router";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 interface IEmits {
@@ -93,9 +92,9 @@ const { themeContext } = useThemeContext();
 const product = toRef(props, "product");
 
 const price = computed(() => (product.value.hasVariations ? product.value.minVariationPrice : product.value.price));
-const link = computed<RouteLocationRaw>(() => getProductRoute(product.value.id, product.value.slug));
+const link = computed(() => getProductRoute(product.value.id, product.value.slug));
 const cartLineItem = computed(() => cart.value?.items.find((item) => item.productId === product.value.id));
-const countInCart = computed<number>(() => cartLineItem.value?.quantity || 0);
+const countInCart = computed(() => cartLineItem.value?.quantity || 0);
 const isQuantityLoading = computed(() => {
   if (themeContext.value.settings.product_quantity_control === "stepper") {
     return addToCartBatchedOverflowed.value || changeItemQuantityBatchedOverflowed.value;
@@ -106,7 +105,7 @@ const isQuantityControlDisabled = computed(() => {
   return isQuantityLoading.value || !product.value.availabilityData?.isAvailable;
 });
 
-const notAvailableMessage = computed<string | undefined>(() => {
+const notAvailableMessage = computed(() => {
   if (!product.value.availabilityData?.isBuyable || !product.value.availabilityData?.isAvailable) {
     return t("validation_error.CART_PRODUCT_UNAVAILABLE");
   }
