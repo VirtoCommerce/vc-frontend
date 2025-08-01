@@ -512,7 +512,9 @@ function focusPrevNextItem(direction: "UP" | "DOWN", event: KeyboardEvent) {
   const nextIndex = (index + step + items.length) % items.length;
   const nextEl = items[nextIndex];
 
-  nextEl.focus();
+  if (nextEl) {
+    nextEl.focus();
+  }
 }
 
 const handleFocusOut = (event: FocusEvent) => {
