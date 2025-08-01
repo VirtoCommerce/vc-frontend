@@ -52,7 +52,7 @@ export function useHistoricalEvents() {
     };
   }
 
-  function pushHistoricalEvent(payload: InputPushHistoricalEventType, sendUnauthenticated?: false): Promise<void> {
+  function pushHistoricalEvent(payload: InputPushHistoricalEventType, sendUnauthenticated?: false) {
     if (sendUnauthenticated || isAuthenticated.value) {
       return pushHistoricalEventMutation({
         sessionId: cart.value?.id,
