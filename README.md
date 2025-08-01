@@ -296,6 +296,8 @@ You can easily adjust border-radius values for all components or on a per-compon
   - `--vc-widget-radius`
   - _etc._
 
+- **Recommended** maximum border-radius: 10px (0.625rem). Larger values may appear overly rounded and disrupt visual consistency.
+
 ```scss
 // client-app/assets/styles/_custom.scss
 
