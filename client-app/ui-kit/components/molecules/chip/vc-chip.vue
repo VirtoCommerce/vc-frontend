@@ -38,6 +38,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { getColorValue } from "@/ui-kit/utilities";
+
 interface IEmits {
   (event: "close"): void;
 }
@@ -59,18 +62,19 @@ interface IProps {
 
 defineEmits<IEmits>();
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   variant: "solid",
   size: "md",
   nowrap: true,
-  iconColor: "",
 });
+
+const _iconColor = computed(() => props.iconColor ? getColorValue(props.iconColor) : "");
 </script>
 
 <style lang="scss">
 .vc-chip {
-  --props-icon-color: v-bind(props.iconColor);
+  --props-icon-color: v-bind(_iconColor);
   --icon-color: var(--props-icon-color, var(--vc-chip-icon-color));
   --radius: var(--vc-chip-radius, var(--vc-radius, 0.5rem));
 

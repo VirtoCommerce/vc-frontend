@@ -85,6 +85,20 @@ export const IconInSlot: StoryFn = (args) => ({
   </VcChip>`,
 });
 
+export const IconColorPallette = Template.bind({});
+IconColorPallette.args = {
+  variant: "outline",
+  icon: "circle-solid",
+  iconColor: "secondary",
+};
+
+export const IconColorHEX = Template.bind({});
+IconColorHEX.args = {
+  variant: "outline",
+  icon: "circle-solid",
+  iconColor: "#ff0000",
+};
+
 export const Truncate: StoryFn = (args) => ({
   components: { VcChip },
   setup: () => ({ args }),
