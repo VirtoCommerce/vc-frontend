@@ -354,6 +354,7 @@ const {
   searchQueryParam,
   sortQueryParam,
   totalProductsCount,
+  preserveUserQueryQueryParam,
 
   applyFilters: _applyFilters,
   fetchProducts: _fetchProducts,
@@ -449,6 +450,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   ]
     .filter(Boolean)
     .join(" "),
+  preserveUserQuery: !!preserveUserQueryQueryParam.value,
 }));
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);

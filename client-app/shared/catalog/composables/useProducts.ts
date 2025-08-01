@@ -87,6 +87,10 @@ export function useProducts(
     defaultValue: "",
   });
 
+  const preserveUserQueryQueryParam = useRouteQueryParam<string>(QueryParamName.PreserveUserQuery, {
+    defaultValue: "",
+  });
+
   /** @deprecated use `searchQueryParam` instead */
   const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
     defaultValue: "",
@@ -200,6 +204,7 @@ export function useProducts(
       facetValue.selected = false;
       facetsQueryParam.value = options?.useQueryParams ? getFilterExpressionFromFacets(facets) : "";
       await new Promise((resolve) => setTimeout(resolve, 0));
+      preserveUserQuery();
       // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
 
       void resetCurrentPage();
@@ -209,6 +214,7 @@ export function useProducts(
   async function resetFacetFilters() {
     facetsQueryParam.value = "";
     await new Promise((resolve) => setTimeout(resolve, 0));
+    preserveUserQuery();
     // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
 
     productsFilters.value.facets.forEach((filter) =>
@@ -216,6 +222,10 @@ export function useProducts(
     );
 
     void resetCurrentPage();
+  }
+
+  function preserveUserQuery() {
+    preserveUserQueryQueryParam.value = "yes";
   }
 
   /** @deprecated use `searchQueryParam` instead */
@@ -436,6 +446,7 @@ export function useProducts(
     productsFilters: productFiltersSorted,
     searchQueryParam,
     sortQueryParam,
+    preserveUserQueryQueryParam,
     totalProductsCount: readonly(totalProductsCount),
 
     currentPage: readonly(currentPage),

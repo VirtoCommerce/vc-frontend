@@ -19,6 +19,7 @@ export async function searchProducts(
     productIds,
     selectedAddressId,
     selectedAddress,
+    preserveUserQuery,
   }: Partial<ProductsSearchParamsType>,
   options: {
     /** @default false */
@@ -62,6 +63,7 @@ export async function searchProducts(
       productIds,
       selectedAddressId,
       selectedAddress,
+      preserveUserQuery,
     },
   });
 

@@ -6,4 +6,5 @@ export enum QueryParamName {
   Keyword = "keyword",
   ItemsPerPage = "size",
   SearchPhrase = "q",
+  PreserveUserQuery = "preserveUserQuery",
 }
