@@ -81,7 +81,16 @@
       "page_limit": "No se pueden mostrar más resultados."
     },
     "slider": {
-      "tooltip": "{count} artículos"
+      "tooltip": "{count} artículos",
+      "aria_label": "Control deslizante de {min} a {max}",
+      "start_input_label": "Valor inicial (entre {min} y {max})",
+      "end_input_label": "Valor final (entre {min} y {max})",
+      "start_input_aria_label": "Valor inicial, rango de {min} a {max}",
+      "end_input_aria_label": "Valor final, rango de {min} a {max}",
+      "start_input_help": "Introduce un número entre {min} y {max}, tamaño de paso {step}",
+      "end_input_help": "Introduce un número entre {min} y {max}, tamaño de paso {step}",
+      "column_aria_label": "Columna con {count} artículos, rango de {from} a {to}",
+      "current_value_announcement": "Valor del control deslizante: {start} a {end}, rango {min} a {max}"
     }
   }
 }

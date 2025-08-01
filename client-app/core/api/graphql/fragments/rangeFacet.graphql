@@ -1,0 +1,17 @@
+fragment rangeFacet on RangeFacet {
+  name
+  label
+  ranges {
+    label
+    count
+    from
+    to
+    includeFrom
+    includeTo
+    isSelected
+  }
+  statistics {
+    min
+    max
+  }
+}

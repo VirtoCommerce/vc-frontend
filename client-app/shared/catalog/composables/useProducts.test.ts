@@ -435,54 +435,148 @@ describe("useProducts", () => {
 
   describe("facetsToHide property", () => {
     it("should not count hidden facets as selected in hasSelectedFacets", () => {
-      const { facets, hasSelectedFacets } = useProducts({ facetsToHide: ["hiddenFacet"] });
+      const { facets, hasSelectedFacets, updateProductsFilters } = useProducts({ facetsToHide: ["hiddenFacet"] });
+
+      // Set up facets
       facets.value = [
         {
           paramName: "hiddenFacet",
-          values: [{ value: "v1", selected: true }],
+          type: "terms",
+          label: "Hidden Facet",
+          values: [{ value: "v1", label: "Value 1", count: 1 }],
         },
       ] as unknown as FacetItemType[];
+
+      // Set up filters to make the facet appear selected
+      updateProductsFilters({
+        filters: [
+          {
+            name: "hiddenFacet",
+            filterType: "term",
+            termValues: [{ value: "v1", label: "Value 1" }],
+          },
+        ],
+        facets: [],
+        inStock: false,
+        branches: [],
+        purchasedBefore: false,
+      });
+
       expect(hasSelectedFacets.value).toBe(false);
     });
 
     it("should count visible facets as selected in hasSelectedFacets", () => {
-      const { facets, hasSelectedFacets } = useProducts({ facetsToHide: ["hiddenFacet"] });
+      const { facets, hasSelectedFacets, updateProductsFilters } = useProducts({ facetsToHide: ["hiddenFacet"] });
+
+      // Set up facets
       facets.value = [
         {
           paramName: "visibleFacet",
-          values: [{ value: "v1", selected: true }],
+          type: "terms",
+          label: "Visible Facet",
+          values: [{ value: "v1", label: "Value 1", count: 1 }],
         },
       ] as unknown as FacetItemType[];
+
+      // Set up filters to make the facet appear selected
+      updateProductsFilters({
+        filters: [
+          {
+            name: "visibleFacet",
+            filterType: "term",
+            termValues: [{ value: "v1", label: "Value 1" }],
+          },
+        ],
+        facets: [],
+        inStock: false,
+        branches: [],
+        purchasedBefore: false,
+      });
+
       expect(hasSelectedFacets.value).toBe(true);
     });
 
     it("should ignore hidden facets and count visible ones correctly", () => {
-      const { facets, hasSelectedFacets } = useProducts({ facetsToHide: ["hiddenFacet"] });
+      const { facets, hasSelectedFacets, updateProductsFilters } = useProducts({ facetsToHide: ["hiddenFacet"] });
+
+      // Set up facets
       facets.value = [
         {
           paramName: "hiddenFacet",
-          values: [{ value: "v1", selected: true }],
+          type: "terms",
+          label: "Hidden Facet",
+          values: [{ value: "v1", label: "Value 1", count: 1 }],
         },
         {
           paramName: "visibleFacet",
-          values: [{ value: "v2", selected: true }],
+          type: "terms",
+          label: "Visible Facet",
+          values: [{ value: "v2", label: "Value 2", count: 1 }],
         },
       ] as unknown as FacetItemType[];
+
+      // Set up filters to make both facets appear selected
+      updateProductsFilters({
+        filters: [
+          {
+            name: "hiddenFacet",
+            filterType: "term",
+            termValues: [{ value: "v1", label: "Value 1" }],
+          },
+          {
+            name: "visibleFacet",
+            filterType: "term",
+            termValues: [{ value: "v2", label: "Value 2" }],
+          },
+        ],
+        facets: [],
+        inStock: false,
+        branches: [],
+        purchasedBefore: false,
+      });
+
       expect(hasSelectedFacets.value).toBe(true);
     });
 
     it("should return false when all selected facets are hidden", () => {
-      const { facets, hasSelectedFacets } = useProducts({ facetsToHide: ["hiddenFacet", "anotherHidden"] });
+      const { facets, hasSelectedFacets, updateProductsFilters } = useProducts({ facetsToHide: ["hiddenFacet", "anotherHidden"] });
+
+      // Set up facets
       facets.value = [
         {
           paramName: "hiddenFacet",
-          values: [{ value: "v1", selected: true }],
+          type: "terms",
+          label: "Hidden Facet",
+          values: [{ value: "v1", label: "Value 1", count: 1 }],
         },
         {
           paramName: "anotherHidden",
-          values: [{ value: "v2", selected: true }],
+          type: "terms",
+          label: "Another Hidden Facet",
+          values: [{ value: "v2", label: "Value 2", count: 1 }],
         },
       ] as unknown as FacetItemType[];
+
+      // Set up filters to make both facets appear selected
+      updateProductsFilters({
+        filters: [
+          {
+            name: "hiddenFacet",
+            filterType: "term",
+            termValues: [{ value: "v1", label: "Value 1" }],
+          },
+          {
+            name: "anotherHidden",
+            filterType: "term",
+            termValues: [{ value: "v2", label: "Value 2" }],
+          },
+        ],
+        facets: [],
+        inStock: false,
+        branches: [],
+        purchasedBefore: false,
+      });
+
       expect(hasSelectedFacets.value).toBe(false);
     });
   });

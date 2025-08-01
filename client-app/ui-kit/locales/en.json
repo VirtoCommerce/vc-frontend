@@ -81,7 +81,16 @@
       "page_limit": "No more results could be shown."
     },
     "slider": {
-      "tooltip": "{count} items"
+      "tooltip": "{count} items",
+      "aria_label": "Range slider from {min} to {max}",
+      "start_input_label": "Start value (between {min} and {max})",
+      "end_input_label": "End value (between {min} and {max})",
+      "start_input_aria_label": "Start value input, range {min} to {max}",
+      "end_input_aria_label": "End value input, range {min} to {max}",
+      "start_input_help": "Enter a number between {min} and {max}, step size {step}",
+      "end_input_help": "Enter a number between {min} and {max}, step size {step}",
+      "column_aria_label": "Column with {count} items, range from {from} to {to}",
+      "current_value_announcement": "Slider value: {start} to {end}, range {min} to {max}"
     }
   }
 }

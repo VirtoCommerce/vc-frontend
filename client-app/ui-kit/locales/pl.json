@@ -81,7 +81,16 @@
       "page_limit": "Nie można wyświetlić więcej wyników."
     },
     "slider": {
-      "tooltip": "{count} przedmiotów"
+      "tooltip": "{count} przedmiotów",
+      "aria_label": "Suwak zakresu od {min} do {max}",
+      "start_input_label": "Wartość początkowa (od {min} do {max})",
+      "end_input_label": "Wartość końcowa (od {min} do {max})",
+      "start_input_aria_label": "Wprowadź wartość początkową, zakres od {min} do {max}",
+      "end_input_aria_label": "Wprowadź wartość końcową, zakres od {min} do {max}",
+      "start_input_help": "Wprowadź liczbę od {min} do {max}, krok {step}",
+      "end_input_help": "Wprowadź liczbę od {min} do {max}, krok {step}",
+      "column_aria_label": "Kolumna z {count} przedmiotami, zakres od {from} do {to}",
+      "current_value_announcement": "Wartość suwaka: {start} do {end}, zakres {min} do {max}"
     }
   }
 }

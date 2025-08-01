@@ -78,7 +78,6 @@ const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs
 
 const emitTriggerProps = computed(() => ({
   role: "button" as const,
-  tabindex: 0,
   "aria-haspopup": "dialog" as const,
   ariaExpanded: opened.value,
   onMouseenter: props.hover ? open : undefined,
