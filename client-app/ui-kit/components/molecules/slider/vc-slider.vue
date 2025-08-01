@@ -1,5 +1,5 @@
 <template>
-  <div class="vc-slider" role="group" :aria-label="$t('ui_kit.slider.aria_label', { min, max })">
+  <fieldset class="vc-slider" :aria-label="$t('ui_kit.slider.aria_label', { min, max })">
     <div v-if="cols.length > 1" class="vc-slider__cols" :style="colsHeight && { height: colsHeight }">
       <VcTooltip
         v-for="(col, i) in normalizedCols"
@@ -103,7 +103,7 @@
         max
       }) }}
     </div>
-  </div>
+  </fieldset>
 </template>
 
 <script setup lang="ts">
