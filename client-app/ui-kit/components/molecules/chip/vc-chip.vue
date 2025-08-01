@@ -79,13 +79,14 @@ const _iconColor = computed(() =>
 .vc-chip {
   --props-icon-color: v-bind(props.iconColor);
   --icon-color: var(--props-icon-color, var(--vc-chip-icon-color));
+  --radius: var(--vc-chip-radius, var(--vc-radius, 0.5rem));
 
   $colors: primary, secondary, success, info, warning, danger, neutral;
 
   $truncate: "";
   $clickable: "";
 
-  @apply inline-flex justify-between max-w-full rounded-sm border font-bold text-center px-[--padding-x] py-[--padding-y] text-neutral-800;
+  @apply inline-flex justify-between max-w-full rounded-[--radius] border font-bold text-center px-[--padding-x] py-[--padding-y] text-neutral-800;
 
   &--clickable {
     $clickable: &;

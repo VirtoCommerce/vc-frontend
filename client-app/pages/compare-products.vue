@@ -56,7 +56,7 @@
       <template #default-container>
         <div
           ref="cardsElement"
-          class="hide-scrollbar sticky top-[-7.5rem] z-10 max-w-full overflow-x-auto rounded-t bg-additional-50 shadow-lg lg:top-[-8.25rem] lg:ps-[9.6rem]"
+          class="hide-scrollbar sticky top-[-7.5rem] z-10 max-w-full overflow-x-auto rounded-t-[--radius] bg-additional-50 shadow-lg lg:top-[-8.25rem] lg:ps-[9.6rem]"
         >
           <!-- Product cards block -->
           <div class="float-left flex min-w-full gap-4.5 p-5">

@@ -5,6 +5,10 @@
 @include meta.load-css("deprecated");
 @include meta.load-css("colors");
 
+:root {
+  --vc-radius: 0.5rem;
+}
+
 @include meta.load-css("print");
 
 /* Use for custom themes only */

@@ -1,5 +1,3 @@
-@use "./colors.scss";
-
 @tailwind base;
 
 @layer base {
@@ -26,4 +24,8 @@ input[type="number"] {
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
+}
+
+:root {
+  --vc-radius: 0.5rem;
 }

@@ -79,10 +79,6 @@ withDefaults(defineProps<IProps>(), {
     }
   }
 
-  &__tooltip {
-    @apply w-48 rounded-sm bg-additional-50 py-1.5 px-3.5 text-xs text-neutral-800 shadow-md;
-  }
-
   &__counter {
     @apply text-right whitespace-nowrap;
   }
