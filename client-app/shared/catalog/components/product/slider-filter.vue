@@ -16,6 +16,7 @@
           :cols="sliderCols"
           show-tooltip-on-col-hover
           cols-height="36px"
+          update-on-column-click
           @change="handleSliderChange"
         />
       </div>

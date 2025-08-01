@@ -1,5 +1,5 @@
 <template>
-  <div class="vc-slider">
+  <div class="vc-slider" role="group" :aria-label="$t('ui_kit.slider.aria_label', { min, max })">
     <div v-if="cols.length > 1" class="vc-slider__cols" :style="colsHeight && { height: colsHeight }">
       <VcTooltip
         v-for="(col, i) in normalizedCols"
@@ -24,6 +24,7 @@
           <button
             type="button"
             class="vc-slider__button"
+            :aria-label="$t('ui_kit.slider.column_aria_label', { count: col.count, from: col.value[0], to: col.value[1] })"
             @click="onColumnClick({ value: [col.value[0], col.value[1]] })"
           >
             <span class="vc-slider__col-line" :style="{ height: col.height }"></span>
@@ -36,44 +37,80 @@
       </VcTooltip>
     </div>
 
-    <div ref="sliderRef" class="vc-slider__slider"></div>
+    <div
+      ref="sliderRef"
+      class="vc-slider__slider"
+    ></div>
 
     <div class="vc-slider__inputs">
+      <label :for="`slider-input-start-${uniqueId}`" class="sr-only">
+        {{ $t('ui_kit.slider.start_input_label', { min, max }) }}
+      </label>
       <VcInput
+        :id="`slider-input-start-${uniqueId}`"
         v-model="leftInput"
         size="sm"
         class="vc-slider__input"
         :disabled="disabled"
         type="number"
+        :min="min"
+        :max="max"
+        :step="step"
+        :aria-label="$t('ui_kit.slider.start_input_aria_label', { min, max })"
+        :aria-describedby="`slider-input-start-help-${uniqueId}`"
         @focus="handleStartInputFocus"
         @blur="handleInputBlur"
         @keyup.enter="handleEnterKey"
       />
+      <span :id="`slider-input-start-help-${uniqueId}`" class="sr-only">
+        {{ $t('ui_kit.slider.start_input_help', { min, max, step }) }}
+      </span>
 
       <template v-if="!isNaN(rightInput)">
-        <b class="vc-slider__dash">&mdash;</b>
+        <b class="vc-slider__dash" aria-hidden="true">&mdash;</b>
 
+        <label :for="`slider-input-end-${uniqueId}`" class="sr-only">
+          {{ $t('ui_kit.slider.end_input_label', { min, max }) }}
+        </label>
         <VcInput
+          :id="`slider-input-end-${uniqueId}`"
           v-model="rightInput"
           size="sm"
           class="vc-slider__input"
           :disabled="disabled"
           type="number"
+          :min="min"
+          :max="max"
+          :step="step"
+          :aria-label="$t('ui_kit.slider.end_input_aria_label', { min, max })"
+          :aria-describedby="`slider-input-end-help-${uniqueId}`"
           @focus="handleEndInputFocus"
           @blur="handleInputBlur"
           @keyup.enter="handleEnterKey"
         />
+        <span :id="`slider-input-end-help-${uniqueId}`" class="sr-only">
+          {{ $t('ui_kit.slider.end_input_help', { min, max, step }) }}
+        </span>
       </template>
+    </div>
+
+    <!-- Screen reader announcements -->
+    <div aria-live="polite" aria-atomic="true" class="sr-only">
+      {{ $t('ui_kit.slider.current_value_announcement', {
+        start: value[0],
+        end: typeof value[1] === 'number' ? value[1] : null,
+        min,
+        max
+      }) }}
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { isNaN } from "lodash";
-import isEqual from "lodash/isEqual";
+import { isNaN, isEqual, uniqueId as getUniqueId } from "lodash";
 import { create } from "nouislider";
 import { ref, onMounted, onUnmounted, computed, toRefs, watch } from "vue";
-import type { API } from "nouislider";
+import type { API } from "nouislider"
 import "nouislider/dist/nouislider.css";
 
 export type RangeType = [number, number] | [number];
@@ -112,6 +149,7 @@ const { value, min, max, step, cols } = toRefs(props);
 const leftInput = ref<number>(0);
 const rightInput = ref<number>();
 const isAnyInputFocused = ref<boolean>(false);
+const uniqueId = getUniqueId('slider');
 
 watch([value, min, max], ([newValue, newMin, newMax]) => {
 
@@ -392,6 +430,7 @@ function getSliderStart(value1: number, value2?: number): [number, number] | [nu
 
     .noUi-handle {
       @apply top-[calc(var(--handle-size)/-2.5)] right-[calc(var(--handle-size)/-2)] size-[--handle-size] rounded-full bg-additional-50 border-4 border-primary cursor-pointer;
+      @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
 
       &::before,
       &::after {
