@@ -1,5 +1,4 @@
 <template>
-  {{ enteredQuantity }} / {{ countInCart }}
   <QuantityControl
     :mode
     :model-value="enteredQuantity"
