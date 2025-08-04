@@ -52,9 +52,14 @@ const Template: StoryFn = (args) => ({
   components: { VcSlider },
   setup: () => {
     const model = ref(args.value);
-    return { args, model };
+
+    const handleChange = (newValue: [number, number] | [number]) => {
+      model.value = newValue;
+    };
+
+    return { args, model, handleChange };
   },
-  template: '<VcSlider v-bind="args" v-model="model" />',
+  template: '<VcSlider v-bind="args" :value="model" @change="handleChange" />',
 });
 
 export const Basic = Template.bind({});
