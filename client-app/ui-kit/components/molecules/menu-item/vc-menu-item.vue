@@ -211,7 +211,7 @@ onMounted(() => {
 
         &:focus,
         &:focus-visible {
-          @apply outline-[--focus-color] -outline-offset-1;
+          @apply outline-[--focus-color] -outline-offset-1 rounded;
         }
 
         &#{$active} {
