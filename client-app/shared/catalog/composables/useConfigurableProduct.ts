@@ -370,11 +370,37 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
+  function compareInputAndConfigurationItem(
+    input: ConfigurationSectionInput | DeepReadonly<ConfigurationSectionInput>,
+    item: {
+      id: string;
+      sectionId: string;
+      productId?: string;
+      customText?: string;
+      files?: { url: string }[];
+    },
+  ) {
+    switch (input.type) {
+      case CONFIGURABLE_SECTION_TYPES.product:
+        return isEqual(input.option, item.productId);
+      case CONFIGURABLE_SECTION_TYPES.text:
+        return input.customText === item.customText;
+      case CONFIGURABLE_SECTION_TYPES.file: {
+        const inputUrls = [...(input?.fileUrls ?? [])]?.sort((a, b) => a.localeCompare(b));
+        const itemUrls = [...(item.files?.map((file) => file.url) ?? [])]?.sort((a, b) => a.localeCompare(b));
+        return isEqual(inputUrls, itemUrls);
+      }
+      default:
+        return true;
+    }
+  }
+
   return {
     fetchProductConfiguration,
     selectSectionValue,
     changeCartConfiguredItem,
     validateSections,
+    compareInputAndConfigurationItem,
     loading: readonly(loading),
     configuration: readonly(configuration),
     selectedConfiguration: readonly(selectedConfiguration),

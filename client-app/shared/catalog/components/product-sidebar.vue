@@ -88,7 +88,7 @@
             :product="product"
             v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
           />
-          <AddToCart v-else :product="product">
+          <AddToCart v-else :product="product" mode="button">
             <InStock
               :is-in-stock="product.availabilityData?.isInStock"
               :is-digital="isDigital"
