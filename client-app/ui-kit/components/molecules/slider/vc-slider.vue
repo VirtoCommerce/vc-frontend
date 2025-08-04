@@ -46,6 +46,7 @@
       <label :for="`slider-input-start-${uniqueId}`" class="sr-only">
         {{ $t('ui_kit.slider.start_input_label', { min, max }) }}
       </label>
+
       <VcInput
         :id="`slider-input-start-${uniqueId}`"
         v-model="leftInput"
@@ -62,6 +63,7 @@
         @blur="handleInputBlur"
         @keyup.enter="handleEnterKey"
       />
+
       <span :id="`slider-input-start-help-${uniqueId}`" class="sr-only">
         {{ $t('ui_kit.slider.start_input_help', { min, max, step }) }}
       </span>
@@ -72,6 +74,7 @@
         <label :for="`slider-input-end-${uniqueId}`" class="sr-only">
           {{ $t('ui_kit.slider.end_input_label', { min, max }) }}
         </label>
+
         <VcInput
           :id="`slider-input-end-${uniqueId}`"
           v-model="rightInput"
@@ -88,6 +91,7 @@
           @blur="handleInputBlur"
           @keyup.enter="handleEnterKey"
         />
+
         <span :id="`slider-input-end-help-${uniqueId}`" class="sr-only">
           {{ $t('ui_kit.slider.end_input_help', { min, max, step }) }}
         </span>

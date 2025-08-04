@@ -1,8 +1,8 @@
 <template>
-  <div v-if="typeof facetMin === 'number' && typeof facetMax === 'number' && sliderValue">
+  <div v-if="typeof facetMin === 'number' && typeof facetMax === 'number' && sliderValue" class="slider-filter">
     <VcWidget
       v-if="mode === 'collapsable'"
-      class="facet-filter-widget"
+      class="slider-filter-widget"
       size="xs"
       collapsible
       :title="facet.label"
@@ -21,7 +21,7 @@
         />
       </div>
     </VcWidget>
-    <!-- Dropdown mode -->
+
     <VcDropdownMenu
       v-if="mode === 'dropdown'"
       :offset-options="4"
@@ -52,6 +52,7 @@
           </template>
         </VcButton>
       </template>
+
       <template #content>
         <div class="slider-filter-dropdown__slider-wrapper">
           <VcSlider
@@ -74,7 +75,6 @@
 import { computed, toRefs } from "vue";
 import type { SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { FacetItemType } from "@/core/types";
-import type { ColType } from "@/ui-kit/components/molecules/slider/vc-slider.vue";
 
 type EmitValueType = [number, number] | [null, number] | [number, null] | [null, null];
 
@@ -124,15 +124,31 @@ const sliderValue = computed(() => {
   return undefined
 });
 
-const sliderCols = computed<ColType[]>(() => {
+const sliderCols = computed(() => {
   return facet.value.values
-    .filter((item) => item.count !== undefined && item.from !== undefined && item.to !== undefined)
     .map((item) => {
+      const from = item.from ?? null;
+      const to = item.to ?? null;
+
+      // Create the correct union type based on which values are present
+      let value: [null, number] | [number, number] | [number, null];
+
+      if (from === null && to !== null) {
+        value = [null, to];
+      } else if (from !== null && to === null) {
+        value = [from, null];
+      } else if (from !== null && to !== null) {
+        value = [from, to];
+      } else {
+        // Skip items with no valid range
+        return null;
+      }
+
       return {
-        count: item.count!,
-        value: [item.from!, item.to!] as [number, number],
+        count: item.count ?? 0,
+        value,
       };
-    });
+    }).filter((item) => item !== null);
 });
 
 const hasSelected = computed(() => {

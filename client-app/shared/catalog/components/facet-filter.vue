@@ -200,10 +200,8 @@ function handleFacetItemClick(item: FacetValueItemType): void {
   if (facet.value.type === "terms") {
     const index = selectedTerms.value.findIndex(value => value === item.value);
     if (index === -1) {
-      // Добавить объект
       selectedTerms.value.push(item.value);
     } else {
-      // Удалить объект
       selectedTerms.value.splice(index, 1);
     }
   }
