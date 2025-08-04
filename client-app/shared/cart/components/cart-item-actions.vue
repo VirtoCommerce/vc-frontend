@@ -1,7 +1,7 @@
 <template>
   <div class="cart-item-actions">
     <VcButton
-      v-if="saveableForLater"
+      v-if="isAuthenticated && saveableForLater"
       class="cart-item-actions__button"
       color="secondary"
       size="xs"
@@ -27,6 +27,8 @@
 </template>
 
 <script setup lang="ts">
+import { useUser } from "@/shared/account";
+
 interface IEmits {
   (event: "remove"): void;
   (event: "saveForLater"): void;
@@ -42,6 +44,8 @@ interface IProps {
 defineEmits<IEmits>();
 
 defineProps<IProps>(); 
+
+const { isAuthenticated } = useUser();
 </script>
 
 <style lang="scss">
