@@ -13,8 +13,7 @@
       :hide-controls="hideControls"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
-      @apply-filters="applyFilters"
-    />
+      @apply-filters="applyFilters" />
 
     <VcLayout sticky-sidebar>
       <template v-if="!hideSidebar && !isMobile && !isHorizontalFilters" #sidebar>
@@ -23,16 +22,14 @@
           :category="currentCategory"
           :loading="!currentCategory && loadingCategory"
           class="category__selector"
-          :category-facets="categoryFacets"
-        />
+          :category-facets="categoryFacets" />
 
         <ProductsFilters
           :keyword="keywordQueryParam"
           :filters="filtersToShow"
           :loading="fetchingProducts"
           class="category__product-filters"
-          @change="applyFilters($event)"
-        />
+          @change="applyFilters($event)" />
       </template>
 
       <VcTypography tag="h1" class="category__title">
@@ -76,16 +73,14 @@
           {
             'category__filters--sticky': stickyMobileHeaderIsVisible,
           },
-        ]"
-      >
+        ]">
         <!-- Popup sidebar filters toggler -->
         <VcButton
           v-if="!hideSidebar"
           class="category__facets-button"
           icon="filter"
           size="sm"
-          @click="showFiltersSidebar"
-        />
+          @click="showFiltersSidebar" />
 
         <!-- Sorting -->
         <div v-if="!hideSorting && !isHorizontalFilters" class="category__sort">
@@ -101,8 +96,7 @@
             :items="translatedProductSortingList"
             class="category__sort-dropdown"
             size="sm"
-            @change="resetCurrentPage"
-          />
+            @change="resetCurrentPage" />
         </div>
 
         <!-- View options - horizontal view -->
@@ -110,8 +104,7 @@
           v-if="!hideViewModeSelector"
           v-model:mode="savedViewMode"
           class="category__view-mode"
-          data-test-id="category-page.view-switcher"
-        />
+          data-test-id="category-page.view-switcher" />
 
         <!-- In stock and branches -->
         <CategoryControls
@@ -123,8 +116,7 @@
           class="category__controls"
           @open-branches-modal="openBranchesModal"
           @apply-in-stock="resetCurrentPage"
-          @apply-purchased-before="resetCurrentPage"
-        />
+          @apply-purchased-before="resetCurrentPage" />
       </div>
 
       <!-- Horizontal filters -->
@@ -141,8 +133,7 @@
         @reset-facet-filters="resetFacetFilters"
         @apply-filters="applyFilters"
         @show-popup-sidebar="showFiltersSidebar"
-        @apply-sort="resetCurrentPage"
-      />
+        @apply-sort="resetCurrentPage" />
       <!-- Filters chips -->
       <div
         v-if="
@@ -151,8 +142,7 @@
             $route.query.page &&
             Number($route.query.page) > 1)
         "
-        class="category__chips"
-      >
+        class="category__chips">
         <template v-for="facet in productsFilters.facets">
           <template v-if="!facetsToHide?.includes(facet.paramName)">
             <template v-for="filterItem in facet.values">
@@ -167,8 +157,7 @@
                     paramName: facet.paramName,
                     value: filterItem.value,
                   })
-                "
-              >
+                  ">
                 {{ filterItem.label }}
               </VcChip>
             </template>
@@ -184,8 +173,7 @@
           color="secondary"
           variant="outline"
           clickable
-          @click="resetPage"
-        >
+          @click="resetPage">
           <span>{{ $t("common.buttons.reset_page") }}</span>
 
           <VcIcon name="reset" />
@@ -208,9 +196,8 @@
         :fetching-more-products="fetchingMoreProducts"
         :fetching-products="fetchingProducts"
         :fixed-products-count="fixedProductsCount"
-        :has-active-filters="
-          hasSelectedFacets || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
-        "
+        :has-active-filters="hasSelectedFacets || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
+          "
         :has-selected-facets="hasSelectedFacets"
         :items-per-page="itemsPerPage"
         :pages-count="pagesCount"
@@ -224,8 +211,7 @@
         @change-page="changeProductsPage"
         @reset-facet-filters="resetFacetFilters"
         @reset-filter-keyword="resetFilterKeyword"
-        @select-product="selectProduct"
-      />
+        @select-product="selectProduct" />
 
       <div class="category__products-bottom">
         <VcButton v-if="showButtonToDefaultView" color="primary" :to="{ query: { view: 'default' } }">
@@ -257,7 +243,7 @@ import {
   getFilterExpression,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForCategorySubtree,
-  getFilterExpressionForInStock,
+  getFilterExpressionForInStockVariations,
   getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
 } from "@/core/utilities";
@@ -443,7 +429,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   filter: [
     props.filter,
     facetsQueryParam.value,
-    getFilterExpressionForInStock(localStorageInStock.value),
+    getFilterExpressionForInStockVariations(localStorageInStock.value),
     getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
     getFilterExpressionForAvailableIn(localStorageBranches.value),
   ]
@@ -526,10 +512,10 @@ watch(
       const productFilter = catalog_empty_categories_enabled
         ? undefined
         : getFilterExpression([
-            getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
-            getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
-            getFilterExpressionForInStock(true),
-          ]);
+          getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
+          getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
+          getFilterExpressionForInStockVariations(true),
+        ]);
       await fetchCategory({
         categoryId,
         maxLevel: 1,

@@ -74,7 +74,7 @@ describe("getFilterExpressionForZeroPrice", () => {
 describe("getFilterExpressionForInStock", () => {
   it.each`
     value    | expected
-    ${true}  | ${"availability:InStock"}
+    ${true}  | ${"inStock:true"}
     ${false} | ${""}
   `("with value: $value -> $expected", ({ value, expected }) => {
     const result = getFilterExpressionForInStock(ref(value));
