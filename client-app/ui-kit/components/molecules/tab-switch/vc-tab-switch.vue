@@ -95,6 +95,7 @@ function onInput() {
   --color: var(--vc-props-color, var(--vc-tab-switch-color, theme("colors.primary.500")));
   --hover-color: var(--vc-props-hover-color, var(--vc-tab-switch-hover-color, theme("colors.accent.500")));
   --focus-color: rgb(from var(--color) r g b / 0.3);
+  --radius: var(--vc-tab-switch-radius, var(--vc-radius, 0.5rem));
 
   @apply inline-block text-neutral;
 
@@ -135,7 +136,7 @@ function onInput() {
   }
 
   &__button {
-    @apply flex gap-1.5 rounded-sm border border-transparent p-[--p] font-bold cursor-pointer select-none;
+    @apply flex gap-1.5 rounded-[--radius] border border-transparent p-[--p] font-bold cursor-pointer select-none;
 
     input:checked ~ & {
       @apply border-neutral-200 shadow-md text-neutral-950 bg-additional-50;
