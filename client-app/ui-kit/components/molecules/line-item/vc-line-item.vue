@@ -54,7 +54,6 @@
           <CartItemActions
             :selected="selected"
             :disabled="disabled"
-            :removable="removable"
             :saveable-for-later="saveableForLater"
             @save-for-later="$emit('saveForLater')" 
           />
