@@ -126,38 +126,35 @@ function onInput(value: number): void {
  */
 async function onChange() {
   const lineItem = getLineItem(cart.value?.items);
-  const addToCartMode = lineItem ? AddToCartModeType.Update : AddToCartModeType.Add;
+  const _mode = lineItem ? AddToCartModeType.Update : AddToCartModeType.Add;
 
   if (isConfigurable.value && !validateConfigurableInput()) {
-    displayErrorMessage(
-      addToCartMode,
-      t("shared.catalog.product_details.product_configuration.check_your_configuration"),
-    );
+    displayErrorMessage(_mode, t("shared.catalog.product_details.product_configuration.check_your_configuration"));
     return;
   }
 
   loading.value = true;
 
   try {
-    const updatedCart = await updateOrAddToCart(lineItem, addToCartMode);
+    const updatedCart = await updateOrAddToCart(lineItem, _mode);
 
-    if ((isConfigurable.value && addToCartMode === AddToCartModeType.Add) || enteredQuantity.value === 0) {
+    if ((isConfigurable.value && _mode === AddToCartModeType.Add) || enteredQuantity.value === 0) {
       loading.value = false;
       return;
     }
 
     const updatedLineItem = getLineItem(updatedCart?.items);
-    handleUpdateResult(updatedLineItem, addToCartMode);
+    handleUpdateResult(updatedLineItem, _mode);
   } finally {
     loading.value = false;
   }
 }
 
-async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, addToCartMode: AddToCartModeType) {
-  if (addToCartMode === AddToCartModeType.Update && enteredQuantity.value === undefined) {
+async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, _mode: AddToCartModeType) {
+  if (_mode === AddToCartModeType.Update && enteredQuantity.value === undefined) {
     return cart.value;
   }
-  if (addToCartMode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value !== undefined) {
+  if (_mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value !== undefined) {
     return isConfigurable.value
       ? await changeCartConfiguredItem(lineItem.id, enteredQuantity.value, selectedConfigurationInput.value)
       : await changeItemQuantity(lineItem.id, enteredQuantity.value);
@@ -173,20 +170,20 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, ad
   return updatedCart;
 }
 
-function handleUpdateResult(lineItem: ShortLineItemFragment | undefined, addToCartMode: AddToCartModeType) {
+function handleUpdateResult(lineItem: ShortLineItemFragment | undefined, _mode: AddToCartModeType) {
   if (!lineItem) {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
-    displayErrorMessage(addToCartMode, getValidationErrors());
+    displayErrorMessage(_mode, getValidationErrors());
     return;
   }
 
   emit("update:lineItem", clone(lineItem));
 }
 
-function displayErrorMessage(addToCartMode: AddToCartModeType, message: string) {
+function displayErrorMessage(_mode: AddToCartModeType, message: string) {
   notifications.error({
     text: t(
-      addToCartMode === AddToCartModeType.Update
+      _mode === AddToCartModeType.Update
         ? "common.messages.fail_to_change_quantity_in_cart"
         : "common.messages.fail_add_product_to_cart",
       { reason: message },
