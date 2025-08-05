@@ -5,12 +5,12 @@ import { computed, readonly, ref } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import {
-  AVAILABILITY_FILTER_NAME,
   FFC_LOCAL_STORAGE,
-  IN_STOCK_PRODUCTS_LOCAL_STORAGE, OUTLINE_FILTER_NAME,
+  IN_STOCK_PRODUCTS_LOCAL_STORAGE,
   PAGE_LIMIT,
   PRODUCT_SORTING_LIST,
-  PURCHASED_BEFORE_LOCAL_STORAGE, VENDOR_FULFILMENT_FILTER_NAME, IS_PURCHASED_FILTER_NAME,
+  PURCHASED_BEFORE_LOCAL_STORAGE,
+  EXCLUDED_FILTER_NAMES,
   zeroPriceFilter
 } from "@/core/constants";
 import { QueryParamName, SortDirection } from "@/core/enums";
@@ -462,14 +462,8 @@ export function useProducts(
   }
 
   function isExcludedFilter(filter: SearchProductFilterResult): boolean {
-    const excludedFilterNames = [
-      OUTLINE_FILTER_NAME,
-      AVAILABILITY_FILTER_NAME,
-      VENDOR_FULFILMENT_FILTER_NAME,
-      IS_PURCHASED_FILTER_NAME,
-    ];
 
-    return excludedFilterNames.includes(filter.name);
+    return EXCLUDED_FILTER_NAMES.includes(filter.name);
   }
 
   function prepareFilters(filters: SearchProductFilterResult[]) {
