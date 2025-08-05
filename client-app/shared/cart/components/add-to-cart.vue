@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
-import { computed, nextTick, ref, toRef, watch } from "vue";
+import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
@@ -93,19 +93,12 @@ const notAvailableMessage = computed<string | undefined>(() => {
   return undefined;
 });
 
-const configurableLineItemId = computed(() => route.query[LINE_ITEM_ID_URL_SEARCH_PARAM]);
+const configurableLineItemIdParam = computed(() => route.query[LINE_ITEM_ID_URL_SEARCH_PARAM]);
 const mode = computed(() => props.mode ?? themeContext.value.settings.product_quantity_control ?? "button");
 const defaultMinQuantity = computed(() => (mode.value === "button" ? 1 : 0));
 const isConfigurable = computed(() => "isConfigurable" in product.value && product.value.isConfigurable);
 const disabled = computed(() => loading.value || !product.value.availabilityData?.isAvailable);
-const countInCart = computed(() => {
-  // Explicitly depend on selectedConfigurationInput for configurable products
-  // This ensures countInCart recalculates when configuration changes
-  if (isConfigurable.value) {
-    selectedConfigurationInput.value; // Access to establish reactive dependency
-  }
-  return getLineItem(cart.value?.items)?.quantity || 0;
-});
+const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
 const minQty = computed(() => product.value.minQuantity || defaultMinQuantity.value);
 const maxQty = computed(() =>
   Math.min(
@@ -221,8 +214,8 @@ function getLineItem(items?: ShortLineItemFragment[]) {
     return items?.find((item) => item.productId === product.value.id);
   }
 
-  if (configurableLineItemId.value) {
-    return items?.find((item) => item.id === configurableLineItemId.value);
+  if (configurableLineItemIdParam.value) {
+    return items?.find((item) => item.id === configurableLineItemIdParam.value);
   }
 }
 
@@ -257,9 +250,4 @@ function onValidationUpdate(validation: { isValid: true } | { isValid: false; er
     errorMessage.value = undefined;
   }
 }
-
-watch(selectedConfigurationInput, async () => {
-  await nextTick();
-  enteredQuantity.value = countInCart.value || minQty.value;
-});
 </script>
