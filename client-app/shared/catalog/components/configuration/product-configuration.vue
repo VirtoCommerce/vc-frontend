@@ -135,11 +135,11 @@
 </template>
 
 <script setup lang="ts">
-import { toRef, watch } from "vue";
+import { computed, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
+import { useRoute } from "vue-router";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
-import { getUrlSearchParam } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
 import { SaveChangesModal } from "@/shared/common";
@@ -152,10 +152,10 @@ import OptionProduct from "./option-product.vue";
 import SectionTextFieldset from "./section-text-fieldset.vue";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
+import type { RouteLocationNormalized } from "vue-router";
 
 const props = defineProps<IProps>();
 
-const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 const NOTIFICATIONS_GROUP = "product-configuration";
 
 interface IProps {
@@ -178,11 +178,14 @@ const {
 
 const { openModal } = useModal();
 const notifications = useNotifications();
+const route = useRoute();
+
+const configurableLineItemId = computed(() => route.query[LINE_ITEM_ID_URL_SEARCH_PARAM]);
 
 watch(
   () => [isConfigurationChanged.value, validationErrors.value.size === 0, isDataUpdating.value],
   ([isChanged, isValid, isUpdating]) => {
-    if (isChanged && configurableLineItemId && isValid && !isUpdating) {
+    if (isChanged && configurableLineItemId.value && isValid && !isUpdating) {
       notifications.info({
         text: t("shared.catalog.product_details.product_configuration.changed_notification"),
         singleInGroup: true,
@@ -191,7 +194,11 @@ watch(
           text: t("common.buttons.save"),
           color: "accent",
           clickHandler() {
-            void changeCartConfiguredItem(configurableLineItemId, undefined, selectedConfigurationInput.value);
+            void changeCartConfiguredItem(
+              configurableLineItemId.value as string,
+              undefined,
+              selectedConfigurationInput.value,
+            );
           },
         },
       });
@@ -214,11 +221,14 @@ function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
     : t("shared.catalog.product_details.product_configuration.optional_no_selected");
 }
 
-async function canChangeRoute(): Promise<boolean> {
-  if (!configurableLineItemId) {
+async function canChangeRoute(to: RouteLocationNormalized, from: RouteLocationNormalized) {
+  if (!configurableLineItemId.value) {
     return true;
   }
   if (!isConfigurationChanged.value) {
+    return true;
+  }
+  if (isConfigurationChanged.value && to.path === from.path) {
     return true;
   }
   return await openSaveChangesModal();
@@ -245,8 +255,12 @@ async function openSaveChangesModal(): Promise<boolean> {
             });
             return;
           }
-          if (configurableLineItemId) {
-            await changeCartConfiguredItem(configurableLineItemId, undefined, selectedConfigurationInput.value);
+          if (configurableLineItemId.value) {
+            await changeCartConfiguredItem(
+              configurableLineItemId.value as string,
+              undefined,
+              selectedConfigurationInput.value,
+            );
           }
           resolve(true);
         },

@@ -24,6 +24,10 @@
     @update:validation="onValidationUpdate"
   >
     <slot />
+
+    <template #append>
+      <slot name="append" :on-change-handler="onChange" />
+    </template>
   </QuantityControl>
 </template>
 
@@ -32,12 +36,13 @@ import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, nextTick, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM, LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
-import { getUrlSearchParam, Logger } from "@/core/utilities";
+import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
@@ -66,7 +71,8 @@ const product = toRef(props, "product");
 const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { t } = useI18n();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
-const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
+const route = useRoute();
+const router = useRouter();
 const {
   selectedConfigurationInput,
   changeCartConfiguredItem,
@@ -87,6 +93,7 @@ const notAvailableMessage = computed<string | undefined>(() => {
   return undefined;
 });
 
+const configurableLineItemId = computed(() => route.query[LINE_ITEM_ID_URL_SEARCH_PARAM]);
 const mode = computed(() => props.mode ?? themeContext.value.settings.product_quantity_control ?? "button");
 const defaultMinQuantity = computed(() => (mode.value === "button" ? 1 : 0));
 const isConfigurable = computed(() => "isConfigurable" in product.value && product.value.isConfigurable);
@@ -137,6 +144,11 @@ async function onChange() {
 
   try {
     const updatedCart = await updateOrAddToCart(lineItem, _mode);
+
+    if (isConfigurable.value && _mode === AddToCartModeType.Add) {
+      const lineItemByMatchingConfiguration = getLineItemByMatchingConfiguration(updatedCart?.items);
+      void router.push({ query: { [LINE_ITEM_ID_URL_SEARCH_PARAM]: lineItemByMatchingConfiguration?.id } });
+    }
 
     if ((isConfigurable.value && _mode === AddToCartModeType.Add) || enteredQuantity.value === 0) {
       loading.value = false;
@@ -204,15 +216,17 @@ function getValidationErrors(): string {
   );
 }
 
-function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
+function getLineItem(items?: ShortLineItemFragment[]) {
   if (!isConfigurable.value) {
     return items?.find((item) => item.productId === product.value.id);
   }
 
-  if (configurableLineItemId) {
-    return items?.find((item) => item.id === configurableLineItemId);
+  if (configurableLineItemId.value) {
+    return items?.find((item) => item.id === configurableLineItemId.value);
   }
+}
 
+function getLineItemByMatchingConfiguration(items?: ShortLineItemFragment[]) {
   const lineItems = items?.filter((item) => item.productId === product.value.id);
 
   return lineItems?.find((item) => {
