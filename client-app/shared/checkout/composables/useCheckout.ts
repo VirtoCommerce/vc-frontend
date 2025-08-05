@@ -1,6 +1,6 @@
 import { createGlobalState, createSharedComposable, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
@@ -82,6 +82,7 @@ export function _useCheckout() {
     hasValidationErrors,
     allItemsAreDigital,
     updateShipment,
+    removeShipment,
     updatePayment,
     changeComment,
     updatePurchaseOrderNumber,
@@ -204,9 +205,33 @@ export function _useCheckout() {
     });
   }
 
-  function initialize() {
+  watch(allItemsAreDigital, async (value, previousValue) => {
+    // Update defaults if state changed not on initialization
+    if (previousValue !== undefined && value !== undefined && previousValue !== value) {
+      await setCheckoutDefaults();
+    }
+  });
+
+  async function setCheckoutDefaults(): Promise<void> {
+    if (allItemsAreDigital.value && shipment.value) {
+      await removeShipment(shipment.value.id);
+    }
+
+    // Create at initialization to prevent duplication due to lack of id
+    if (!allItemsAreDigital.value && !shipment.value) {
+      await updateShipment({});
+    }
+
+    if (!payment.value) {
+      await updatePayment({});
+    }
+  }
+
+  async function initialize(): Promise<void> {
     placedOrder.value = null;
     loading.value = true;
+
+    await setCheckoutDefaults();
 
     void fetchAddresses();
 
