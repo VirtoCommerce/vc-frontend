@@ -118,7 +118,7 @@ import { ref, onMounted, onUnmounted, computed, toRefs, watch } from "vue";
 import type { API } from "nouislider"
 import "nouislider/dist/nouislider.css";
 
-export type RangeType = [number, number] | [number];
+export type RangeType = [number, number];
 type ColRangeType = [null, number] | [number, number] | [number, null];
 export type ColType = { count: number; value: ColRangeType };
 
@@ -242,14 +242,13 @@ function applyInputConstraints() {
   let newStart = leftInput.value;
   let newEnd = rightInput.value;
 
-  if (typeof newEnd === "number") {
-    [newStart, newEnd] = enforceMinimumDistance(newStart, newEnd);
+  // Fallback to 0 if inputs are empty
+  [newStart, newEnd] = enforceMinimumDistance(newStart || 0, newEnd || 0);
 
-    leftInput.value = newStart;
-    rightInput.value = newEnd;
-  }
+  leftInput.value = newStart;
+  rightInput.value = newEnd;
 
-  const innerRange = (typeof newEnd === "number" ? [newStart, newEnd] : [newStart]) satisfies RangeType;
+  const innerRange = [newStart, newEnd] satisfies RangeType;
   if (!isEqual(innerRange, props.value)) {
     emit("change", innerRange);
   }
@@ -369,10 +368,8 @@ function enforceMinimumDistance(startValue: number, endValue: number, previousSt
   return [startValue, endValue];
 }
 
-function getSliderStart(value1: number, value2?: number): [number, number] | [number] {
-  return typeof value2 === "number"
-    ? [value1, value2]
-    : [value1]
+function getSliderStart(value1: number, value2: number): [number, number] {
+  return [value1, value2]
 }
 </script>
 

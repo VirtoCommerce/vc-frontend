@@ -52,8 +52,8 @@ const Template: StoryFn = (args) => ({
   components: { VcSlider },
   setup: () => {
     const model = ref(args.value);
+    const handleChange = (newValue: [number, number]) => {
 
-    const handleChange = (newValue: [number, number] | [number]) => {
       model.value = newValue;
     };
 
@@ -117,12 +117,4 @@ NoStartEndColumns.args = {
   max: 1200,
   showTooltipOnColHover: true,
   updateOnColumnClick: true,
-};
-
-export const OneSlider = Template.bind({});
-OneSlider.args = {
-  value: [1600],
-  min: 1300,
-  max: 3250,
-  step: 100,
 };
