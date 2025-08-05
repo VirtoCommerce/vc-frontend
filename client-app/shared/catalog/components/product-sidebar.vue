@@ -88,19 +88,11 @@
             :product="product"
             v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
           />
-          <AddToCart
-            v-else
-            :product="product"
-            mode="button"
-            :hide-button="product.isConfigurable && $route.query[LINE_ITEM_ID_URL_SEARCH_PARAM]"
-          >
-            <template
-              v-if="product.isConfigurable && $route.query[LINE_ITEM_ID_URL_SEARCH_PARAM]"
-              #append="{ onChangeHandler }"
-            >
+          <AddToCart v-else :product="product" mode="button" :hide-button="isExactConfigurationLineItemOpened">
+            <template v-if="isExactConfigurationLineItemOpened" #append="{ onChangeHandler }">
               <div class="flex gap-0.5">
                 <VcButton
-                  variant="outline"
+                  variant="solid-light"
                   color="primary"
                   :title="$t('common.buttons.update')"
                   @click="onChangeHandler"
@@ -109,7 +101,7 @@
                 </VcButton>
 
                 <VcButton
-                  variant="outline"
+                  variant="solid-light"
                   color="secondary"
                   :title="$t('common.buttons.add_new')"
                   @click="addNewConfiguration(onChangeHandler)"
@@ -141,7 +133,7 @@
 
 <script setup lang="ts">
 import { computed, toRef } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useCurrency, useThemeContext } from "@/core/composables";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { ProductType } from "@/core/enums";
@@ -168,6 +160,7 @@ const product = toRef(props, "product");
 const variations = toRef(props, "variations");
 
 const router = useRouter();
+const route = useRoute();
 const { currentCurrency } = useCurrency();
 const { getItemsTotal } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
@@ -200,6 +193,10 @@ const price = computed<PriceType | { actual: MoneyType; list: MoneyType } | unde
   }
   return props.product.price;
 });
+
+const isExactConfigurationLineItemOpened = computed(
+  () => product.value.isConfigurable && route.query[LINE_ITEM_ID_URL_SEARCH_PARAM],
+);
 
 async function addNewConfiguration(onChangeHandler: () => void) {
   await router.push({ query: { [LINE_ITEM_ID_URL_SEARCH_PARAM]: undefined } });

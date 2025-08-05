@@ -222,13 +222,7 @@ function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
 }
 
 async function canChangeRoute(to: RouteLocationNormalized, from: RouteLocationNormalized) {
-  if (!configurableLineItemId.value) {
-    return true;
-  }
-  if (!isConfigurationChanged.value) {
-    return true;
-  }
-  if (isConfigurationChanged.value && to.path === from.path) {
+  if (!configurableLineItemId.value || !isConfigurationChanged.value || to.path === from.path) {
     return true;
   }
   return await openSaveChangesModal();
