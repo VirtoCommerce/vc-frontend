@@ -461,11 +461,6 @@
       "forgot_password_form": {
         "error_alert": "パスワードリセット要求が無効です。"
       },
-      "checkout_default_success_modal": {
-        "title": "決済設定",
-        "message": "デフォルトの決済情報が更新されました。",
-        "ok_button": "@:common.buttons.ok"
-      },
       "invite_member_modal": {
         "title": "メンバー招待",
         "role_label": "権限",

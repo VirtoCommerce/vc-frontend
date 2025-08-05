@@ -461,11 +461,6 @@
       "forgot_password_form": {
         "error_alert": "Resultado inválido da solicitação de redefinição de senha. Por favor "
       },
-      "checkout_default_success_modal": {
-        "title": "Padrões de Checkout",
-        "message": "Detalhes padrão de checkout atualizados com sucesso.",
-        "ok_button": "@:common.buttons.ok"
-      },
       "invite_member_modal": {
         "title": "Convidar membro",
         "role_label": "Papel",

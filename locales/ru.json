@@ -461,11 +461,6 @@
       "forgot_password_form": {
         "error_alert": "Неверный результат запроса сброса пароля. Пожалуйста, "
       },
-      "checkout_default_success_modal": {
-        "title": "Настройки оформления заказа",
-        "message": "Настройки оформления заказа успешно обновлены",
-        "ok_button": "@:common.buttons.ok"
-      },
       "invite_member_modal": {
         "title": "Пригласить участника",
         "role_label": "Роль",

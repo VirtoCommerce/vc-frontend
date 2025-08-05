@@ -461,11 +461,6 @@
       "forgot_password_form": {
         "error_alert": "Ungültiges Ergebnis der Anfrage zum Zurücksetzen des Passworts. Bitte "
       },
-      "checkout_default_success_modal": {
-        "title": "Checkout-Einstellungen",
-        "message": "Standard-Checkout-Daten erfolgreich aktualisiert.",
-        "ok_button": "@:common.buttons.ok"
-      },
       "invite_member_modal": {
         "title": "Mitglied einladen",
         "role_label": "Rolle",

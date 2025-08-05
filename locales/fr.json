@@ -461,11 +461,6 @@
       "forgot_password_form": {
         "error_alert": "Résultat invalide de la demande de réinitialisation du mot de passe. Veuillez "
       },
-      "checkout_default_success_modal": {
-        "title": "Paramètres de commande",
-        "message": "Détails de commande par défaut mis à jour avec succès.",
-        "ok_button": "@:common.buttons.ok"
-      },
       "invite_member_modal": {
         "title": "Inviter un membre",
         "role_label": "Rôle",

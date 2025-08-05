@@ -461,11 +461,6 @@
       "forgot_password_form": {
         "error_alert": "重置密码请求的结果无效。请 "
       },
-      "checkout_default_success_modal": {
-        "title": "结账默认设置",
-        "message": "默认结账详情已成功更新。",
-        "ok_button": "@:common.buttons.ok"
-      },
       "invite_member_modal": {
         "title": "邀请成员",
         "role_label": "角色",

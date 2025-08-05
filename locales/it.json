@@ -461,11 +461,6 @@
       "forgot_password_form": {
         "error_alert": "Risultato non valido della richiesta di reimpostazione password. Per favore "
       },
-      "checkout_default_success_modal": {
-        "title": "Impostazioni predefinite del checkout",
-        "message": "Dettagli predefiniti del checkout aggiornati con successo.",
-        "ok_button": "@:common.buttons.ok"
-      },
       "invite_member_modal": {
         "title": "Invita membro",
         "role_label": "Ruolo",

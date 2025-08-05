@@ -461,11 +461,6 @@
       "forgot_password_form": {
         "error_alert": "Resultado inválido de la solicitud de restablecimiento de contraseña. Por favor "
       },
-      "checkout_default_success_modal": {
-        "title": "Configuraciones de pago",
-        "message": "Detalles de pago predeterminados actualizados con éxito.",
-        "ok_button": "@:common.buttons.ok"
-      },
       "invite_member_modal": {
         "title": "Invitar miembro",
         "role_label": "Rol",

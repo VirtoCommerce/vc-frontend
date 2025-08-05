@@ -461,11 +461,6 @@
       "forgot_password_form": {
         "error_alert": "Nieprawidłowy wynik żądania resetowania hasła. Proszę "
       },
-      "checkout_default_success_modal": {
-        "title": "Ustawienia domyślne kasy",
-        "message": "Domyślne szczegóły kasy zostały pomyślnie zaktualizowane.",
-        "ok_button": "@:common.buttons.ok"
-      },
       "invite_member_modal": {
         "title": "Zaproś członka",
         "role_label": "Rola",
