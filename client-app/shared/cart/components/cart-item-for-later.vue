@@ -1,13 +1,13 @@
 <template>
   <VcProductCard :background="false">
-    <VcProductImage :img-src="product.imgSrc" :alt="product.name" />
+    <VcProductImage :img-src="item.imageUrl" :alt="item.product!.name" />
 
-    <VcProductTitle lines-number="2" fix-height :to="link" :title="product.name" @click="$emit('linkClick', $event)">
-      {{ product.name }}
+    <VcProductTitle lines-number="2" fix-height :to="link" :title="item.product!.name" @click="$emit('linkClick', $event)">
+      {{ item.product!.name }}
     </VcProductTitle>
 
     <VcProductPrice
-      :with-from-label="product.hasVariations || product.isConfigurable"
+      :with-from-label="item.product!.hasVariations || item.product!.isConfigurable"
       :actual-price="price?.actual"
       :list-price="price?.list"
       single-line />
@@ -24,7 +24,7 @@
 import { computed, ref, toRef, watch } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities";
-import type { CartType, Product } from "@/core/api/graphql/types";
+import type { CartType, LineItemType } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -34,7 +34,7 @@ interface IEmits {
 
 interface IProps {
   savedForLaterList: CartType | undefined;
-  product: Product;
+  item: LineItemType;
 }
 
 defineEmits<IEmits>();
@@ -43,12 +43,12 @@ const props = defineProps<IProps>();
 
 const { themeContext } = useThemeContext();
 
-const product = toRef(props, "product");
+const item = toRef(props, "item");
 const savedForLaterList = toRef(props, "savedForLaterList");
 
-const price = computed(() => (product.value.hasVariations ? product.value.minVariationPrice : product.value.price));
-const link = computed<RouteLocationRaw>(() => getProductRoute(product.value.id, product.value.slug));
-const cartLineItem = computed(() => savedForLaterList.value?.items.find((item) => item.product?.id === product.value.id));
+const price = computed(() => (item.value.product!.hasVariations ? item.value.product!.minVariationPrice : item.value.product!.price));
+const link = computed<RouteLocationRaw>(() => getProductRoute(item.value.product!.id, item.value.product!.slug));
+const cartLineItem = computed(() => savedForLaterList.value?.items.find((x) => x.product!.id === item.value.product!.id));
 const countInCart = computed<number>(() => cartLineItem.value?.quantity || 0);
 
 const quantity = ref(getInitialQuantity());
@@ -60,10 +60,10 @@ function getInitialQuantity() {
   if (themeContext.value.settings.product_quantity_control === "stepper") {
     return 0;
   }
-  return product.value.minQuantity || 1;
+  return item.value.product!.minQuantity || 1;
 }
 
 watch(countInCart, (newCount) => {
-  quantity.value = newCount || product.value.minQuantity || 1;
+  quantity.value = newCount || item.value.product!.minQuantity || 1;
 });
 </script>

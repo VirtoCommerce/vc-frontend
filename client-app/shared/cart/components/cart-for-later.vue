@@ -5,12 +5,12 @@
     size="lg">
     <VcProductsGrid short>
       <CartItemForLater
-        v-for="product in savedForLaterList?.items.map((x) => x.product!)"
-        :key="product.id"
-        :product="product"
+        v-for="item in savedForLaterList?.items"
+        :key="item.product!.id"
+        :item="item"
         :saved-for-later-list="savedForLaterList"
         :background="false"
-        @link-click="selectItemEvent(product)"
+        @link-click="selectItemEvent(item.product!)"
         @add-to-cart="(lineItemId) => $emit('addToCart', lineItemId)" />
     </VcProductsGrid>
   </VcWidget>
