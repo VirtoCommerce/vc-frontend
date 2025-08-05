@@ -40,12 +40,6 @@ export type ChangePasswordType = {
   newPassword: string;
 };
 
-export type CheckoutDefaultsType = {
-  deliveryMethod?: string;
-  shippingMethodId?: string;
-  paymentMethodCode?: string;
-};
-
 export type UserPersonalDataType = {
   firstName: string;
   lastName: string;
