@@ -115,6 +115,19 @@
             truncate
           />
         </div>
+        
+        <VcButton
+          v-if="removable"
+          :aria-label="$t('ui_kit.buttons.remove_from_cart')"
+          class="vc-line-item__remove-button"
+          color="neutral"
+          size="sm"
+          variant="no-background"
+          icon="delete-thin"
+          data-test-id="remove-item-button"
+          :disabled="disabled"
+          @click="$emit('remove')"
+        />        
       </div>
     </div>
 

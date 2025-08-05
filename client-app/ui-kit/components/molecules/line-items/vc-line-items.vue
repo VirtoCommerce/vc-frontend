@@ -10,7 +10,8 @@
           :indeterminate="isSomeItemsSelected"
           class="vc-line-items__checkbox"
           test-id="vc-line-items-head-checkbox"
-          @change="($event) => selectAllItems($event as boolean)" />
+          @change="($event) => selectAllItems($event as boolean)" 
+        />
 
         <div class="vc-line-items__product">
           {{ $t("ui_kit.labels.product") }}
@@ -23,7 +24,8 @@
             {
               'vc-line-items__properties--wide': !showPrice,
             },
-          ]">
+          ]"
+        >
           {{ $t("ui_kit.labels.properties") }}
         </div>
 
@@ -38,6 +40,8 @@
         <div v-if="showTotal" class="vc-line-items__total">
           {{ $t("ui_kit.labels.total") }}
         </div>
+
+        <div v-if="removable" class="vc-line-items__removable"></div>
       </div>
 
       <!-- table body -->
@@ -98,7 +102,8 @@
             variant="outline"
             size="xs"
             :disabled="!selectedItemIds.length"
-            @click="removeSelectedItems">
+            @click="removeSelectedItems"
+          >
             {{ $t("ui_kit.buttons.remove_selected") }}
           </VcButton>
 
@@ -107,7 +112,8 @@
             color="secondary"
             size="xs"
             variant="outline"
-            @click="removeAllItems">
+            @click="removeAllItems"
+          >
             {{ $t("ui_kit.buttons.remove_all") }}
           </VcButton>
         </template>
@@ -264,7 +270,7 @@ watchEffect(() => {
   }
 
   &__total {
-    @apply text-end mr-7;
+    @apply text-end;
 
     @container (width > theme("containers.2xl")) {
       @apply shrink-0 w-[6.5rem];
@@ -275,6 +281,10 @@ watchEffect(() => {
     }
   }
 
+  &__removable {
+    @apply w-7;
+  }
+  
   &__body {
     @apply flex flex-col gap-4;
 

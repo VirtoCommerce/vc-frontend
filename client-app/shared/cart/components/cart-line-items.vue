@@ -37,14 +37,16 @@
         :disabled="disabled"
         :readonly="readonly"
         disable-validation
-        @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })" />
+        @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })" 
+      />
 
       <div v-if="item.availabilityData?.isInStock" class="mt-2 text-center">
         <InStock
           :is-in-stock="item.availabilityData?.isInStock"
           :is-available="!item.deleted"
           :quantity="item.availabilityData?.availableQuantity"
-          :is-digital="item.productType === ProductType.Digital" />
+          :is-digital="item.productType === ProductType.Digital" 
+        />
       </div>
     </template>
 
@@ -54,7 +56,8 @@
         :configuration-items="item.configurationItems"
         :line-item-id="item.id"
         allow-edit
-        :route="item.route" />
+        :route="item.route" 
+      />
 
       <div v-if="localizedItemsErrors[item.id]" class="flex flex-col gap-1">
         <VcAlert
@@ -63,7 +66,8 @@
           color="danger"
           size="sm"
           variant="outline-dark"
-          icon>
+          icon
+        >
           {{ validationError }}
         </VcAlert>
       </div>

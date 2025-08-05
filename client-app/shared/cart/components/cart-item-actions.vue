@@ -12,17 +12,6 @@
       @click="$emit('saveForLater')">
       {{ $t("pages.cart.save_for_later") }}
     </VcButton>
-
-    <VcButton
-      v-if="removable"
-      class="cart-item-actions__button"
-      color="secondary"
-      size="xs"
-      icon-size="1.25rem"
-      icon="trash"
-      :variant="selected ? 'no-border' : 'solid-light'"
-      :disabled="disabled"
-      @click="$emit('remove')" />
   </div>
 </template>
 
@@ -30,13 +19,11 @@
 import { useUser } from "@/shared/account";
 
 interface IEmits {
-  (event: "remove"): void;
   (event: "saveForLater"): void;
 }
 
 interface IProps {
   selected?: boolean;
-  removable?: boolean;
   saveableForLater?: boolean;
   disabled?: boolean;
 }
