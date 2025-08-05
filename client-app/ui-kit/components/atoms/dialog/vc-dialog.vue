@@ -30,8 +30,9 @@ const props = withDefaults(defineProps<IProps>(), {
   --props-max-height: v-bind(props.maxHeight);
   --w: var(--props-width, var(--vc-dialog-width, 100%));
   --max-h: var(--props-max-height, var(--vc-dialog-max-height, 100%));
+  --radius: var(--vc-dialog-radius, var(--vc-radius, 0.5rem));
 
-  @apply grid w-[--w] max-h-[--max-h] rounded-md bg-additional-50 shadow-lg transition-all text-start;
+  @apply grid w-[--w] max-h-[--max-h] rounded-[--radius] bg-additional-50 shadow-lg transition-all text-start;
 
   grid-template-areas:
     "vc-dialog-header"
