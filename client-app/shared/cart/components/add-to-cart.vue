@@ -74,6 +74,7 @@ const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error
 const route = useRoute();
 const router = useRouter();
 const {
+  selectedConfiguration,
   selectedConfigurationInput,
   changeCartConfiguredItem,
   compareInputAndConfigurationItem,
@@ -220,24 +221,30 @@ function getLineItem(items?: ShortLineItemFragment[]) {
 }
 
 function getLineItemByMatchingConfiguration(items?: ShortLineItemFragment[]) {
-  const lineItems = items?.filter((item) => item.productId === product.value.id);
+  const productLineItems = items?.filter((item) => item.productId === product.value.id);
 
-  return lineItems?.find((item) => {
+  return productLineItems?.find((item) => {
     if (item.configurationItems?.length !== selectedConfigurationInput.value.length) {
       return false;
     }
 
-    if (item.configurationItems?.length === 0 && selectedConfigurationInput.value.length === 0) {
+    if (item.configurationItems?.length) {
       return true;
     }
 
     return item.configurationItems?.every((itemConfiguration) => {
-      const selectedConfigurationItem = selectedConfigurationInput.value.find(
+      const selectedConfigurationInputItem = selectedConfigurationInput.value.find(
         (input) => input.sectionId === itemConfiguration.sectionId,
       );
 
-      return selectedConfigurationItem
-        ? compareInputAndConfigurationItem(selectedConfigurationItem, itemConfiguration)
+      const selectedConfigurationItem = selectedConfiguration.value?.[item.id];
+
+      if (enteredQuantity.value !== selectedConfigurationItem?.quantity) {
+        return false;
+      }
+
+      return selectedConfigurationInputItem
+        ? compareInputAndConfigurationItem(selectedConfigurationInputItem, itemConfiguration)
         : false;
     });
   });
