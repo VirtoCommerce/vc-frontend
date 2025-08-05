@@ -243,7 +243,6 @@
       "addresses": "地址",
       "orders": "订单",
       "lists": "清单",
-      "checkout_defaults": "结账默认设置",
       "list_details": "清单详情",
       "cart": "购物车",
       "company_info": "公司信息",
@@ -325,7 +324,6 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -431,7 +429,6 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
-          "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -1059,21 +1056,6 @@
         "edit_address_title": "编辑地址",
         "make_default_button": "设为默认",
         "no_addresses_img_alt": "无地址"
-      },
-      "checkout_defaults": {
-        "meta": {
-          "title": "@:pages.account.checkout_defaults.title"
-        },
-        "title": "结账默认设置",
-        "select_delivery_method_label": "首选配送方式",
-        "shipping_radio_label": "运输",
-        "pickup_radio_label": "自取",
-        "not_selected_placeholder": "@:common.placeholders.not_selected",
-        "update_button": "@:common.buttons.update",
-        "payment_method_label": "首选支付方式",
-        "payment_method_placeholder": "请选择您的首选支付方式",
-        "shipping_method_label": "首选运输方式",
-        "shipping_method_placeholder": "请选择您的首选运输方式"
       },
       "dashboard": {
         "meta": {

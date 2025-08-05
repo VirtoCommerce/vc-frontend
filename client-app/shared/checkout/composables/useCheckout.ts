@@ -1,6 +1,6 @@
 import { createGlobalState, createSharedComposable, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
-import { computed, readonly, ref, shallowRef, watch } from "vue";
+import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
@@ -8,7 +8,7 @@ import { useAnalytics, useHistoricalEvents, useThemeContext } from "@/core/compo
 import { AddressType, ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
-import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
+import { useUser, useUserAddresses } from "@/shared/account";
 import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
@@ -60,7 +60,6 @@ export function _useCheckout() {
   const { openModal, closeModal } = useModal();
   const router = useRouter();
   const { user, isAuthenticated, isCorporateMember } = useUser();
-  const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
   const {
     addresses: personalAddresses,
     fetchAddresses: fetchPersonalAddresses,
@@ -83,7 +82,6 @@ export function _useCheckout() {
     hasValidationErrors,
     allItemsAreDigital,
     updateShipment,
-    removeShipment,
     updatePayment,
     changeComment,
     updatePurchaseOrderNumber,
@@ -206,50 +204,9 @@ export function _useCheckout() {
     });
   }
 
-  watch(allItemsAreDigital, async (value, previousValue) => {
-    // Update defaults if state changed not on initialization
-    if (previousValue !== undefined && value !== undefined && previousValue !== value) {
-      await setCheckoutDefaults();
-    }
-  });
-
-  async function setCheckoutDefaults(): Promise<void> {
-    const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
-    const defaultShippingMethod = availableShippingMethods.value.find((item) => item.id === shippingMethodId);
-    const defaultPaymentMethod = availablePaymentMethods.value.find((item) => item.code === paymentMethodCode);
-
-    if (allItemsAreDigital.value && shipment.value) {
-      await removeShipment(shipment.value.id);
-    }
-
-    // Create at initialization to prevent duplication due to lack of id
-    if (!allItemsAreDigital.value && !shipment.value?.shipmentMethodCode && !shipment.value?.shipmentMethodOption) {
-      if (shippingMethodId && defaultShippingMethod) {
-        await updateShipment({
-          id: shipment.value?.id,
-          price: defaultShippingMethod.price.amount,
-          shipmentMethodCode: defaultShippingMethod.code,
-          shipmentMethodOption: defaultShippingMethod.optionName,
-        });
-      } else if (!shipment.value) {
-        await updateShipment({});
-      }
-    }
-
-    if (!payment.value?.paymentGatewayCode) {
-      if (paymentMethodCode && defaultPaymentMethod) {
-        await setPaymentMethod(defaultPaymentMethod);
-      } else if (!payment.value) {
-        await updatePayment({});
-      }
-    }
-  }
-
-  async function initialize(): Promise<void> {
+  function initialize() {
     placedOrder.value = null;
     loading.value = true;
-
-    await setCheckoutDefaults();
 
     void fetchAddresses();
 

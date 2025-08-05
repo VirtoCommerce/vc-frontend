@@ -243,7 +243,6 @@
       "addresses": "住所",
       "orders": "注文履歴",
       "lists": "リスト",
-      "checkout_defaults": "決済設定",
       "list_details": "リスト詳細",
       "cart": "カート",
       "company_info": "会社情報",
@@ -325,7 +324,6 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -431,7 +429,6 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
-          "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -1059,21 +1056,6 @@
         "edit_address_title": "住所を編集",
         "make_default_button": "既定に設定",
         "no_addresses_img_alt": "住所なし"
-      },
-      "checkout_defaults": {
-        "meta": {
-          "title": "@:pages.account.checkout_defaults.title"
-        },
-        "title": "既定の決済設定",
-        "select_delivery_method_label": "希望配送方法",
-        "shipping_radio_label": "配送",
-        "pickup_radio_label": "店頭受け取り",
-        "not_selected_placeholder": "@:common.placeholders.not_selected",
-        "update_button": "@:common.buttons.update",
-        "payment_method_label": "希望支払方法",
-        "payment_method_placeholder": "希望する支払方法を選択してください",
-        "shipping_method_label": "希望配送方法",
-        "shipping_method_placeholder": "希望する配送方法を選択してください"
       },
       "dashboard": {
         "meta": {

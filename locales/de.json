@@ -243,7 +243,6 @@
       "addresses": "Adressen",
       "orders": "Bestellungen",
       "lists": "Listen",
-      "checkout_defaults": "Checkout-Standardeinstellungen",
       "list_details": "Listendetails",
       "cart": "Warenkorb",
       "company_info": "Firmeninformationen",
@@ -325,7 +324,6 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -431,7 +429,6 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
-          "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -1059,21 +1056,6 @@
         "edit_address_title": "Adresse bearbeiten",
         "make_default_button": "Als Standard festlegen",
         "no_addresses_img_alt": "Keine Adressen"
-      },
-      "checkout_defaults": {
-        "meta": {
-          "title": "@:pages.account.checkout_defaults.title"
-        },
-        "title": "Standard beim Checkout",
-        "select_delivery_method_label": "Bevorzugte Liefermethode",
-        "shipping_radio_label": "Versand",
-        "pickup_radio_label": "Abholung",
-        "not_selected_placeholder": "@:common.placeholders.not_selected",
-        "update_button": "@:common.buttons.update",
-        "payment_method_label": "Bevorzugte Zahlungsmethode",
-        "payment_method_placeholder": "Bitte wählen Sie Ihre bevorzugte Zahlungsmethode",
-        "shipping_method_label": "Bevorzugte Versandmethode",
-        "shipping_method_placeholder": "Bitte wählen Sie Ihre bevorzugte Versandmethode"
       },
       "dashboard": {
         "meta": {
