@@ -28,12 +28,12 @@
       />
 
       
-      <div class="vc-line-item__img-actions">
+      <div class="vc-line-item__img-container">
         <!--  IMAGE -->
         <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
 
         <CartItemActions 
-          v-if="isMobile"
+          class="vc-line-item__img-actions"
           icons
           :selected="selected"
           :disabled="disabled"
@@ -51,7 +51,7 @@
           },
         ]"
       >
-        <div class="vc-line-item__name-actions">
+        <div class="vc-line-item__name-container">
           <VcProductTitle
             class="vc-line-item__name"
             :disabled="disabled || deleted"
@@ -64,7 +64,7 @@
           </VcProductTitle>
 
           <CartItemActions 
-            v-if="!isMobile"
+            class="vc-line-item__name-actions"
             :selected="selected"
             :disabled="disabled"
             :saveable-for-later="saveableForLater"
@@ -154,7 +154,6 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { ref, watchEffect } from "vue";
 import type { Property, MoneyType, CommonVendor } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
@@ -197,9 +196,6 @@ const props = withDefaults(defineProps<IProps>(), {
   properties: () => [],
   browserTarget: "_blank",
 });
-
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
 
 const isSelected = ref<boolean>(true);
 
@@ -301,6 +297,18 @@ watchEffect(() => {
     }
   }
 
+  &__img-container {
+    @apply flex flex-col shrink-0 size-16;
+
+    @container (width > theme("containers.2xl")) {
+      @apply size-12;
+    }
+
+    @container (width > theme("containers.4xl")) {
+      @apply size-16;
+    }
+  }
+
   &__img {
     @apply shrink-0 size-16 rounded border object-contain object-center; 
 
@@ -319,15 +327,9 @@ watchEffect(() => {
   }
 
   &__img-actions {
-    @apply flex flex-col shrink-0 size-16;
-
     @container (width > theme("containers.2xl")) {
-      @apply size-12;
-    }
-
-    @container (width > theme("containers.4xl")) {
-      @apply size-16;
-    }
+      @apply hidden;
+    }  
   }
 
   &__content {
@@ -346,11 +348,7 @@ watchEffect(() => {
     }
   }
 
-  &__name {
-    @apply text-sm;
-  }
-
-  &__name-actions {
+  &__name-container {
     @apply flex flex-col;
 
     @container (width > theme("containers.2xl")) {
@@ -363,6 +361,16 @@ watchEffect(() => {
       @container (width > theme("containers.2xl")) {
         @apply pr-0;
       }
+    }
+  }
+
+  &__name {
+    @apply text-sm;
+  }
+
+  &__name-actions {
+    @container (width <= theme("containers.2xl")) {
+      @apply hidden;
     }
   }
 

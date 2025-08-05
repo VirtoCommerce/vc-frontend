@@ -5,6 +5,7 @@
       class="cart-item-actions__button"
       color="secondary"
       size="xs"
+      truncate
       icon-size="1.25rem"
       :icon="icons ? 'bookmark' : null"
       :prepend-icon="!icons ? 'bookmark' : null"
