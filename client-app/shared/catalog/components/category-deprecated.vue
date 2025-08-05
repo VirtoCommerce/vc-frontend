@@ -1,5 +1,8 @@
 <template>
-  <div ref="categoryComponentAnchor" class="category">
+  <VcContainer ref="categoryComponentAnchor" class="category" style="overflow-anchor: none">
+    <!-- Breadcrumbs -->
+    <VcBreadcrumbs v-if="!hideBreadcrumbs" class="category__breadcrumbs" :items="breadcrumbs" />
+
     <!-- Popup sidebar for mobile and horizontal desktop view -->
     <FiltersPopupSidebar
       v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
@@ -106,12 +109,7 @@
         </div>
 
         <!-- View options - horizontal view -->
-        <ViewMode
-          v-if="!hideViewModeSelector"
-          v-model:mode="savedViewMode"
-          class="category__view-mode"
-          data-test-id="category-page.view-switcher"
-        />
+        <ViewMode v-if="!hideViewModeSelector" v-model:mode="savedViewMode" class="category__view-mode" />
 
         <!-- In stock and branches -->
         <CategoryControls
@@ -233,10 +231,14 @@
         </VcButton>
       </div>
     </VcLayout>
-  </div>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">
+// the component is deprecated. Use category.vue instead.
+// need to keep it for a while to avoid breaking changes on pages created with builder.io
+// https://www.builder.io/c/docs/custom-components-versioning
+
 import {
   computedEager,
   useBreakpoints,
@@ -246,14 +248,16 @@ import {
   whenever,
 } from "@vueuse/core";
 import omit from "lodash/omit";
-import { computed, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import { computed, onBeforeUnmount, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useAnalytics, useThemeContext } from "@/core/composables";
+import { useRoute } from "vue-router";
+import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { BREAKPOINTS, DEFAULT_PAGE_SIZE, IS_DEVELOPMENT, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { globals } from "@/core/globals";
 import {
+  buildBreadcrumbs,
   getFilterExpression,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForCategorySubtree,
@@ -263,6 +267,7 @@ import {
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
+import { useSlugInfo } from "@/shared/common";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
@@ -290,6 +295,7 @@ interface IProps {
   categoryId?: string;
   title?: string;
   hideTotal?: boolean;
+  hideBreadcrumbs?: boolean;
   hideSidebar?: boolean;
   hideControls?: boolean;
   hideSorting?: boolean;
@@ -403,8 +409,20 @@ const categoryListProperties = computed(() => ({
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
 
+const route = useRoute();
+const { objectType, slugInfo } = useSlugInfo(route.path.slice(1));
+
 useCategorySeo({ category: currentCategory, allowSetMeta, categoryComponentAnchorIsVisible });
 
+const breadcrumbs = useBreadcrumbs(() =>
+  objectType.value === "Catalog" && !!slugInfo.value?.entityInfo
+    ? [
+        {
+          title: slugInfo.value.entityInfo.pageTitle ?? slugInfo.value.entityInfo.semanticUrl,
+        },
+      ]
+    : buildBreadcrumbs(currentCategory.value?.breadcrumbs),
+);
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
 const { t } = useI18n();
@@ -603,7 +621,6 @@ function changeSearchBarScope(categoryId: string, label?: string) {
 
 onBeforeUnmount(() => {
   clearCategoryScope();
-  document.body.style.overflowAnchor = "auto";
 });
 
 function clearCategoryScope() {
@@ -611,9 +628,9 @@ function clearCategoryScope() {
   clearSearchResults();
 }
 
-onMounted(() => {
-  document.body.style.overflowAnchor = "none";
-});
+if (IS_DEVELOPMENT) {
+  console.warn("[DEPRECATED] category-deprecated.vue is deprecated. Use category.vue instead.");
+}
 </script>
 
 <style lang="scss">

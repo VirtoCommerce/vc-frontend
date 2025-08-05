@@ -96,6 +96,8 @@ const text = useVModel(props, "modelValue", emit);
   $noResize: "";
   $error: "";
 
+  --radius: var(--vc-textarea-radius, var(--vc-radius, 0.5rem));
+
   @apply flex flex-col text-neutral-950 font-normal;
 
   &--readonly {
@@ -119,7 +121,7 @@ const text = useVModel(props, "modelValue", emit);
   }
 
   &__input {
-    @apply p-3 w-full rounded border text-base bg-additional-50;
+    @apply p-3 w-full rounded-[--radius] border text-base bg-additional-50;
 
     #{$noResize} & {
       @apply resize-none;
