@@ -59,6 +59,7 @@
             @save-for-later="$emit('saveForLater')" 
           />
         </div>
+        
         <div
           v-if="withProperties || withPrice"
           :class="[
@@ -319,6 +320,10 @@ watchEffect(() => {
 
   &__name {
     @apply text-sm;
+  }
+
+  &__title-actions {
+    @apply flex flex-col;
 
     @container (width > theme("containers.2xl")) {
       @apply grow min-h-0;
@@ -331,10 +336,6 @@ watchEffect(() => {
         @apply pr-0;
       }
     }
-  }
-
-  &__title-actions {
-    @apply flex flex-col;
   }
 
   &__properties {
