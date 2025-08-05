@@ -37,7 +37,8 @@
             'vc-line-item__content--with-image': withImage,
             'vc-line-item__content--selectable': !withImage && selectable,
           },
-        ]">
+        ]"
+      >
         <div class="vc-line-item__title-actions">
           <VcProductTitle
             class="vc-line-item__name"
@@ -45,16 +46,18 @@
             :to="route"
             :title="name"
             :target="browserTarget"
-            @click="$emit('linkClick')">
+            @click="$emit('linkClick')"
+          >
             {{ name }}
           </VcProductTitle>
+
           <CartItemActions
             :selected="selected"
             :disabled="disabled"
             :removable="removable"
             :saveable-for-later="saveableForLater"
-            @remove="$emit('remove')"
-            @save-for-later="$emit('saveForLater')" />
+            @save-for-later="$emit('saveForLater')" 
+          />
         </div>
         <div
           v-if="withProperties || withPrice"
@@ -115,7 +118,7 @@
             truncate
           />
         </div>
-        
+
         <VcButton
           v-if="removable"
           :aria-label="$t('ui_kit.buttons.remove_from_cart')"
@@ -127,7 +130,7 @@
           data-test-id="remove-item-button"
           :disabled="disabled"
           @click="$emit('remove')"
-        />        
+        />
       </div>
     </div>
 

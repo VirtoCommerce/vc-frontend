@@ -16,7 +16,8 @@
     @select:items="$emit('select:items', $event)"
     @remove:items="$emit('remove:items', $event)"
     @save-for-later="$emit('saveForLater', $event)"
-    @link-click="handleLinkClick($event)">
+    @link-click="handleLinkClick($event)"
+  >
     <template #titles>
       <div class="text-center">
         {{ $t("common.labels.quantity") }}
@@ -37,7 +38,7 @@
         :disabled="disabled"
         :readonly="readonly"
         disable-validation
-        @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })" 
+        @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
       />
 
       <div v-if="item.availabilityData?.isInStock" class="mt-2 text-center">
@@ -45,7 +46,7 @@
           :is-in-stock="item.availabilityData?.isInStock"
           :is-available="!item.deleted"
           :quantity="item.availabilityData?.availableQuantity"
-          :is-digital="item.productType === ProductType.Digital" 
+          :is-digital="item.productType === ProductType.Digital"
         />
       </div>
     </template>
@@ -56,7 +57,7 @@
         :configuration-items="item.configurationItems"
         :line-item-id="item.id"
         allow-edit
-        :route="item.route" 
+        :route="item.route"
       />
 
       <div v-if="localizedItemsErrors[item.id]" class="flex flex-col gap-1">
