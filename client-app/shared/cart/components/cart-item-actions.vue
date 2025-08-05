@@ -6,11 +6,13 @@
       color="secondary"
       size="xs"
       icon-size="1.25rem"
-      prepend-icon="bookmark"
+      :icon="icons ? 'bookmark' : null"
+      :prepend-icon="!icons ? 'bookmark' : null"
       :variant="selected ? 'no-border' : 'solid-light'"
       :disabled="disabled"
-      @click="$emit('saveForLater')">
-      {{ $t("pages.cart.save_for_later") }}
+      @click="$emit('saveForLater')"
+    > 
+      <span v-if="!icons">{{ $t("pages.cart.save_for_later") }}</span>
     </VcButton>
   </div>
 </template>
@@ -26,6 +28,7 @@ interface IProps {
   selected?: boolean;
   saveableForLater?: boolean;
   disabled?: boolean;
+  icons?: boolean;
 }
 
 defineEmits<IEmits>();
@@ -38,11 +41,7 @@ const { isAuthenticated } = useUser();
 <style lang="scss">
 .cart-item-actions {
   &__button {
-    @apply align-middle mt-2;
-
-    &:nth-child(2) {
-      @apply ml-2;
-    }
+    @apply align-middle mt-2; 
   }
 }
 </style>

@@ -27,8 +27,20 @@
         @change="$emit('select', isSelected)"
       />
 
-      <!--  IMAGE -->
-      <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
+      
+      <div class="vc-line-item__img-actions">
+        <!--  IMAGE -->
+        <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
+
+        <CartItemActions 
+          v-if="isMobile"
+          icons
+          :selected="selected"
+          :disabled="disabled"
+          :saveable-for-later="saveableForLater"
+          @save-for-later="$emit('saveForLater')" 
+        />
+      </div>
 
       <div
         :class="[
@@ -39,7 +51,7 @@
           },
         ]"
       >
-        <div class="vc-line-item__title-actions">
+        <div class="vc-line-item__name-actions">
           <VcProductTitle
             class="vc-line-item__name"
             :disabled="disabled || deleted"
@@ -51,7 +63,8 @@
             {{ name }}
           </VcProductTitle>
 
-          <CartItemActions
+          <CartItemActions 
+            v-if="!isMobile"
             :selected="selected"
             :disabled="disabled"
             :saveable-for-later="saveableForLater"
@@ -141,6 +154,7 @@
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { ref, watchEffect } from "vue";
 import type { Property, MoneyType, CommonVendor } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
@@ -183,6 +197,9 @@ const props = withDefaults(defineProps<IProps>(), {
   properties: () => [],
   browserTarget: "_blank",
 });
+
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("lg");
 
 const isSelected = ref<boolean>(true);
 
@@ -285,7 +302,7 @@ watchEffect(() => {
   }
 
   &__img {
-    @apply shrink-0 size-16 rounded border object-contain object-center;
+    @apply shrink-0 size-16 rounded border object-contain object-center; 
 
     @container (width > theme("containers.2xl")) {
       @apply size-12;
@@ -298,6 +315,18 @@ watchEffect(() => {
     #{$disabled} &,
     #{$deleted} & {
       @apply opacity-50;
+    }
+  }
+
+  &__img-actions {
+    @apply flex flex-col shrink-0 size-16;
+
+    @container (width > theme("containers.2xl")) {
+      @apply size-12;
+    }
+
+    @container (width > theme("containers.4xl")) {
+      @apply size-16;
     }
   }
 
@@ -321,7 +350,7 @@ watchEffect(() => {
     @apply text-sm;
   }
 
-  &__title-actions {
+  &__name-actions {
     @apply flex flex-col;
 
     @container (width > theme("containers.2xl")) {
