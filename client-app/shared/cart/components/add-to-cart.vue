@@ -1,6 +1,6 @@
 <template>
   <QuantityControl
-    :mode="$cfg.product_quantity_control"
+    :mode
     :model-value="enteredQuantity"
     :name="product.id"
     :count-in-cart="countInCart"
@@ -18,12 +18,16 @@
     :show-empty-details="reservedSpace"
     validate-on-mount
     :timeout="DEFAULT_DEBOUNCE_IN_MS"
-    :allow-zero="$cfg.product_quantity_control === 'stepper'"
+    :allow-zero="mode === 'stepper'"
     @update:model-value="onInput"
     @update:cart-item-quantity="onChange"
     @update:validation="onValidationUpdate"
   >
     <slot />
+
+    <template #append>
+      <slot name="append" :on-change-handler="onChange" />
+    </template>
   </QuantityControl>
 </template>
 
@@ -32,12 +36,13 @@ import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM, LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
-import { getUrlSearchParam, Logger } from "@/core/utilities";
+import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
@@ -57,6 +62,7 @@ interface IEmits {
 }
 
 interface IProps {
+  mode?: "button" | "stepper";
   product: Product | VariationType;
   reservedSpace?: boolean;
 }
@@ -65,10 +71,13 @@ const product = toRef(props, "product");
 const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { t } = useI18n();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
-const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
+const route = useRoute();
+const router = useRouter();
 const {
+  selectedConfiguration,
   selectedConfigurationInput,
   changeCartConfiguredItem,
+  compareInputAndConfigurationItem,
   validateSections: validateConfigurableInput,
 } = useConfigurableProduct(product.value.id);
 const { trackAddItemToCart } = useAnalyticsUtils();
@@ -85,14 +94,14 @@ const notAvailableMessage = computed<string | undefined>(() => {
   return undefined;
 });
 
-const defaultMinQuantity = computed<number>(() =>
-  themeContext.value.settings.product_quantity_control === "button" ? 1 : 0,
-);
-const isConfigurable = computed<boolean>(() => "isConfigurable" in product.value && product.value.isConfigurable);
-const disabled = computed<boolean>(() => loading.value || !product.value.availabilityData?.isAvailable);
+const configurableLineItemIdParam = computed(() => route.query[LINE_ITEM_ID_URL_SEARCH_PARAM]);
+const mode = computed(() => props.mode ?? themeContext.value.settings.product_quantity_control ?? "button");
+const defaultMinQuantity = computed(() => (mode.value === "button" ? 1 : 0));
+const isConfigurable = computed(() => "isConfigurable" in product.value && product.value.isConfigurable);
+const disabled = computed(() => loading.value || !product.value.availabilityData?.isAvailable);
 const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
-const minQty = computed<number>(() => product.value.minQuantity || defaultMinQuantity.value);
-const maxQty = computed<number>(() =>
+const minQty = computed(() => product.value.minQuantity || defaultMinQuantity.value);
+const maxQty = computed(() =>
   Math.min(
     product.value.availabilityData?.availableQuantity || LINE_ITEM_QUANTITY_LIMIT,
     isDefined(product.value.maxQuantity) && product.value.maxQuantity !== 0
@@ -100,10 +109,7 @@ const maxQty = computed<number>(() =>
       : LINE_ITEM_QUANTITY_LIMIT,
   ),
 );
-const defaultQuantity =
-  themeContext.value.settings.product_quantity_control === "button"
-    ? countInCart.value || minQty.value
-    : countInCart.value;
+const defaultQuantity = mode.value === "button" ? countInCart.value || minQty.value : countInCart.value;
 const enteredQuantity = ref(!disabled.value ? defaultQuantity : undefined);
 
 function onInput(value: number): void {
@@ -121,35 +127,40 @@ function onInput(value: number): void {
  */
 async function onChange() {
   const lineItem = getLineItem(cart.value?.items);
-  const mode = lineItem ? AddToCartModeType.Update : AddToCartModeType.Add;
+  const _mode = lineItem ? AddToCartModeType.Update : AddToCartModeType.Add;
 
   if (isConfigurable.value && !validateConfigurableInput()) {
-    displayErrorMessage(mode, t("shared.catalog.product_details.product_configuration.check_your_configuration"));
+    displayErrorMessage(_mode, t("shared.catalog.product_details.product_configuration.check_your_configuration"));
     return;
   }
 
   loading.value = true;
 
   try {
-    const updatedCart = await updateOrAddToCart(lineItem, mode);
+    const updatedCart = await updateOrAddToCart(lineItem, _mode);
 
-    if ((isConfigurable.value && mode === AddToCartModeType.Add) || enteredQuantity.value === 0) {
+    if (isConfigurable.value && _mode === AddToCartModeType.Add) {
+      const lineItemByMatchingConfiguration = getLineItemByMatchingConfiguration(updatedCart?.items);
+      void router.push({ query: { [LINE_ITEM_ID_URL_SEARCH_PARAM]: lineItemByMatchingConfiguration?.id } });
+    }
+
+    if ((isConfigurable.value && _mode === AddToCartModeType.Add) || enteredQuantity.value === 0) {
       loading.value = false;
       return;
     }
 
     const updatedLineItem = getLineItem(updatedCart?.items);
-    handleUpdateResult(updatedLineItem, mode);
+    handleUpdateResult(updatedLineItem, _mode);
   } finally {
     loading.value = false;
   }
 }
 
-async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mode: AddToCartModeType) {
-  if (mode === AddToCartModeType.Update && enteredQuantity.value === undefined) {
+async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, _mode: AddToCartModeType) {
+  if (_mode === AddToCartModeType.Update && enteredQuantity.value === undefined) {
     return cart.value;
   }
-  if (mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value !== undefined) {
+  if (_mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value !== undefined) {
     return isConfigurable.value
       ? await changeCartConfiguredItem(lineItem.id, enteredQuantity.value, selectedConfigurationInput.value)
       : await changeItemQuantity(lineItem.id, enteredQuantity.value);
@@ -165,20 +176,20 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
   return updatedCart;
 }
 
-function handleUpdateResult(lineItem: ShortLineItemFragment | undefined, mode: AddToCartModeType) {
+function handleUpdateResult(lineItem: ShortLineItemFragment | undefined, _mode: AddToCartModeType) {
   if (!lineItem) {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
-    displayErrorMessage(mode, getValidationErrors());
+    displayErrorMessage(_mode, getValidationErrors());
     return;
   }
 
   emit("update:lineItem", clone(lineItem));
 }
 
-function displayErrorMessage(mode: AddToCartModeType, message: string) {
+function displayErrorMessage(_mode: AddToCartModeType, message: string) {
   notifications.error({
     text: t(
-      mode === AddToCartModeType.Update
+      _mode === AddToCartModeType.Update
         ? "common.messages.fail_to_change_quantity_in_cart"
         : "common.messages.fail_add_product_to_cart",
       { reason: message },
@@ -199,12 +210,44 @@ function getValidationErrors(): string {
   );
 }
 
-function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
-  if (isConfigurable.value) {
-    return configurableLineItemId ? items?.find((item) => item.id === configurableLineItemId) : undefined;
-  } else {
+function getLineItem(items?: ShortLineItemFragment[]) {
+  if (!isConfigurable.value) {
     return items?.find((item) => item.productId === product.value.id);
   }
+
+  if (configurableLineItemIdParam.value) {
+    return items?.find((item) => item.id === configurableLineItemIdParam.value);
+  }
+}
+
+function getLineItemByMatchingConfiguration(items?: ShortLineItemFragment[]) {
+  const productLineItems = items?.filter((item) => item.productId === product.value.id);
+
+  return productLineItems?.find((item) => {
+    if (item.configurationItems?.length !== selectedConfigurationInput.value.length) {
+      return false;
+    }
+
+    if (item.configurationItems?.length) {
+      return true;
+    }
+
+    return item.configurationItems?.every((itemConfiguration) => {
+      const selectedConfigurationInputItem = selectedConfigurationInput.value.find(
+        (input) => input.sectionId === itemConfiguration.sectionId,
+      );
+
+      const selectedConfigurationItem = selectedConfiguration.value?.[item.id];
+
+      if (enteredQuantity.value !== selectedConfigurationItem?.quantity) {
+        return false;
+      }
+
+      return selectedConfigurationInputItem
+        ? compareInputAndConfigurationItem(selectedConfigurationInputItem, itemConfiguration)
+        : false;
+    });
+  });
 }
 
 function onValidationUpdate(validation: { isValid: true } | { isValid: false; errorMessage: string }) {

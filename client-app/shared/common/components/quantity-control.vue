@@ -27,6 +27,10 @@
     @update:model-value="value = $event"
   >
     <slot />
+
+    <template #append>
+      <slot name="append" />
+    </template>
   </VcAddToCart>
 
   <VcQuantityStepper

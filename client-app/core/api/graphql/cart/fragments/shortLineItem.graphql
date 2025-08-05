@@ -8,4 +8,14 @@ fragment shortLineItem on LineItemType {
   extendedPrice {
     ...money
   }
+  configurationItems {
+    id
+    sectionId
+    type
+    productId
+    customText
+    files {
+      url
+    }
+  }
 }
