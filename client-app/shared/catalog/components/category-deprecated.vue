@@ -34,7 +34,7 @@
           :filters="filtersToShow"
           :loading="fetchingProducts"
           class="category__product-filters"
-          @change="applyFilters($event)"
+          @change:filters="applyFiltersOnly($event)"
         />
       </template>
 
@@ -137,37 +137,39 @@
         :hide-all-filters="hideSidebar"
         :facets-to-hide="facetsToHide"
         @reset-facet-filters="resetFacetFilters"
-        @apply-filters="applyFilters"
+        @change:filters="applyFiltersOnly($event)"
         @show-popup-sidebar="showFiltersSidebar"
         @apply-sort="resetCurrentPage"
       />
       <!-- Filters chips -->
-      <div
-        v-if="
-          hasSelectedFacets ||
-          (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
-            $route.query.page &&
-            Number($route.query.page) > 1)
-        "
-        class="category__chips"
-      >
-        <template v-for="facet in productsFilters.facets">
-          <template v-if="!facetsToHide?.includes(facet.paramName)">
-            <template v-for="filterItem in facet.values">
+      <div class="category__chips">
+        <template v-for="filterItem in productsFilters.filters">
+          <template v-if="!facetsToHide?.includes(filterItem.name)">
+            <!-- Term values -->
+            <template v-for="term in filterItem.termValues" :key="filterItem.name + 'term-' + term.value">
               <VcChip
-                v-if="filterItem.selected"
-                :key="facet.paramName + filterItem.value"
                 color="secondary"
                 closable
                 truncate
                 @close="
-                  removeFacetFilter({
-                    paramName: facet.paramName,
-                    value: filterItem.value,
-                  })
+                  onCancelFilter(filterItem.name, term.value)
                 "
               >
-                {{ filterItem.label }}
+                {{ term.label || term.value }}
+              </VcChip>
+            </template>
+
+            <!-- Range values -->
+            <template v-for="range in filterItem.rangeValues" :key="filterItem.name + 'range-' + range.lower + '-' + range.upper">
+              <VcChip
+                color="secondary"
+                closable
+                truncate
+                @close="
+                  onCancelRangeFilter(filterItem.name, range)
+                "
+              >
+                {{ formatRangeValue(range) }}
               </VcChip>
             </template>
           </template>
@@ -275,7 +277,7 @@ import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
-import type { Product } from "@/core/api/graphql/types";
+import type { Product, SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
@@ -360,13 +362,12 @@ const {
   searchQueryParam,
   sortQueryParam,
   totalProductsCount,
-
+  applyFiltersOnly,
   applyFilters: _applyFilters,
   fetchProducts: _fetchProducts,
   fetchMoreProducts,
   hideFiltersSidebar,
   openBranchesModal,
-  removeFacetFilter,
   resetFacetFilters,
   resetFilterKeyword,
   showFiltersSidebar,
@@ -473,6 +474,74 @@ const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 function applyFilters(newFilters: ProductsFiltersType): void {
   _applyFilters(newFilters);
+}
+
+function onCancelFilter(filterName: string, filterValue: string): void {
+  // Find the filter to update
+  const filterToUpdate = productsFilters.value.filters.find(filter => filter.name === filterName);
+  if (!filterToUpdate) {
+    return;
+  }
+  // Create a copy of preparedFilters to modify
+  const updatedFilters = productsFilters.value.filters.map(filter => {
+    if (filter.name === filterName) {
+      // Remove the specific filterValue from termValues
+      const updatedTermValues = filter.termValues?.filter(term => term?.value !== filterValue);
+      // If no termValues remain, return null to remove the filter entirely
+      if (!updatedTermValues || updatedTermValues.length === 0) {
+        return null;
+      }
+      // Return updated filter with remaining termValues
+      return {
+        ...filter,
+        termValues: updatedTermValues
+      };
+    }
+    return filter;
+  }).filter(Boolean) as SearchProductFilterResult[]; // Remove null values
+  applyFiltersOnly(updatedFilters);
+}
+function onCancelRangeFilter(filterName: string, rangeToRemove: SearchProductFilterRangeValue): void {
+  // Find the filter to update
+  const filterToUpdate = productsFilters.value.filters.find(filter => filter.name === filterName);
+  if (!filterToUpdate) {
+    return;
+  }
+  // Create a copy of preparedFilters to modify
+  const updatedFilters = productsFilters.value.filters.map(filter => {
+    if (filter.name === filterName) {
+      // Remove the specific range from rangeValues
+      const updatedRangeValues = filter.rangeValues?.filter(range =>
+        !(range.includeLowerBound === rangeToRemove.includeLowerBound &&
+          range.includeUpperBound === rangeToRemove.includeUpperBound &&
+          range.lower === rangeToRemove.lower &&
+          range.upper === rangeToRemove.upper)
+      );
+      // If no rangeValues remain, return null to remove the filter entirely
+      if (!updatedRangeValues || updatedRangeValues.length === 0) {
+        return null;
+      }
+      // Return updated filter with remaining rangeValues
+      return {
+        ...filter,
+        rangeValues: updatedRangeValues
+      };
+    }
+    return filter;
+  }).filter(Boolean) as SearchProductFilterResult[]; // Remove null values
+  applyFiltersOnly(updatedFilters);
+}
+function formatRangeValue(range: SearchProductFilterRangeValue): string {
+  const lower = range.lower || '';
+  const upper = range.upper || '';
+  if (lower && upper) {
+    return `${lower} - ${upper}`;
+  } else if (lower) {
+    return `≥ ${lower}`;
+  } else if (upper) {
+    return `≤ ${upper}`;
+  }
+  return '';
 }
 
 async function changeProductsPage(pageNumber: number): Promise<void> {
