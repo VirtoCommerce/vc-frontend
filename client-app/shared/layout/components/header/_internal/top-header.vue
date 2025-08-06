@@ -3,13 +3,15 @@
     class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
     data-test-id="main-layout.top-header"
   >
-    <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
+    <div class="flex max-w-[calc(50%-2.5rem)] items-center gap-3">
+      <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
 
-    <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
+      <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
 
-    <ShipToSelector />
+      <ShipToSelector />
+    </div>
 
-    <div class="ms-auto flex items-center">
+    <div class="relative ms-auto flex max-w-[calc(50%-2.5rem)] items-center">
       <!-- Call us block -->
       <div v-if="support_phone_number" class="flex items-center whitespace-nowrap">
         <VcIcon class="me-1.5 fill-primary" name="phone" size="sm" />
@@ -45,7 +47,7 @@
         <span class="mx-3 h-5 w-px bg-primary" />
 
         <!-- Account menu -->
-        <div ref="loginMenu" class="relative flex flex-row items-center gap-x-1">
+        <div ref="loginMenu" class="relative flex flex-row items-center gap-x-1 overflow-hidden">
           <!-- Operator -->
           <template v-if="operator">
             <span class="font-bold" data-test-id="main-layout.top-header.operator-name-label">
@@ -58,77 +60,87 @@
 
           <button
             type="button"
-            class="flex cursor-pointer items-center whitespace-nowrap p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
+            class="flex w-full cursor-pointer items-center whitespace-nowrap p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
             data-test-id="main-layout.top-header.account-menu-button"
             @click="loginMenuVisible = !loginMenuVisible"
           >
-            <span class="font-bold">
+            <span class="flex min-w-0 font-bold">
               <template v-if="isMultiOrganization">
-                <span data-test-id="main-layout.top-header.organization-name-label">{{ organization?.name }}</span> /
+                <span
+                  data-test-id="main-layout.top-header.organization-name-label"
+                  class="min-w-0 truncate"
+                  :title="organization?.name"
+                  >{{ organization?.name }}</span
+                >
+                /
               </template>
-              <span data-test-id="main-layout.top-header.customer-name-label">{{
-                user.contact?.fullName || user.userName
-              }}</span>
+
+              <span
+                data-test-id="main-layout.top-header.customer-name-label"
+                class="min-w-0 max-w-[50%] shrink-0 truncate"
+                :title="user.contact?.fullName || user.userName"
+                >{{ user.contact?.fullName || user.userName }}</span
+              >
             </span>
 
             <VcIcon
-              class="ms-1.5 fill-accent-200 [--vc-icon-size:1rem] lg:fill-primary lg:[--vc-icon-size:0.625rem]"
+              class="ms-1.5 shrink-0 fill-accent-200 [--vc-icon-size:1rem] lg:fill-primary lg:[--vc-icon-size:0.625rem]"
               :name="loginMenuVisible ? 'chevron-up' : 'chevron-down'"
             />
           </button>
+        </div>
 
-          <div
-            v-if="loginMenuVisible"
-            class="absolute right-0 top-full z-10 flex w-64 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
-            data-test-id="main-layout.top-header.account-menu"
-          >
-            <div class="flex max-w-full items-center justify-between p-3">
-              <router-link
-                to="/account/dashboard"
-                class="flex min-w-0 items-center gap-2 hover:text-primary"
-                data-test-id="main-layout.top-header.account-menu.dashboard-link"
-                @click="loginMenuVisible = false"
-              >
-                <VcIcon class="fill-primary" name="user-circle" />
+        <div
+          v-if="loginMenuVisible"
+          class="absolute right-0 top-full z-10 flex w-64 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
+          data-test-id="main-layout.top-header.account-menu"
+        >
+          <div class="flex max-w-full items-center justify-between p-3">
+            <router-link
+              to="/account/dashboard"
+              class="flex min-w-0 items-center gap-2 hover:text-primary"
+              data-test-id="main-layout.top-header.account-menu.dashboard-link"
+              @click="loginMenuVisible = false"
+            >
+              <VcIcon class="fill-primary" name="user-circle" />
 
-                <span class="truncate">
-                  {{ user.contact?.fullName }}
-                </span>
-              </router-link>
+              <span class="truncate">
+                {{ user.contact?.fullName }}
+              </span>
+            </router-link>
 
-              <VcButton
-                :title="$t('shared.layout.header.link_logout')"
-                class="ml-4"
-                variant="outline"
-                color="neutral"
-                size="xs"
-                data-test-id="main-layout.top-header.account-menu.sign-out-button"
-                icon
-                @click="signMeOut"
-              >
-                <VcIcon name="logout" />
-              </VcButton>
+            <VcButton
+              :title="$t('shared.layout.header.link_logout')"
+              class="ml-4"
+              variant="outline"
+              color="neutral"
+              size="xs"
+              data-test-id="main-layout.top-header.account-menu.sign-out-button"
+              icon
+              @click="signMeOut"
+            >
+              <VcIcon name="logout" />
+            </VcButton>
+          </div>
+
+          <div v-if="isMultiOrganization" class="border-t py-3">
+            <div class="px-3 py-1 text-xs text-neutral-600">
+              {{ $t("common.labels.organizations") }}
             </div>
 
-            <div v-if="isMultiOrganization" class="border-t py-3">
-              <div class="px-3 py-1 text-xs text-neutral-600">
-                {{ $t("common.labels.organizations") }}
-              </div>
-
-              <VcRadioButton
-                v-for="item in user.contact?.organizations?.items"
-                :key="item.id"
-                v-model="contactOrganizationId"
-                :label="item.name"
-                :value="item.id"
-                class="flex px-3 py-1 text-sm"
-                :max-lines="2"
-                :title="item.name"
-                word-break="break-word"
-                :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${item.name}`"
-                @change="selectOrganization"
-              />
-            </div>
+            <VcRadioButton
+              v-for="item in user.contact?.organizations?.items"
+              :key="item.id"
+              v-model="contactOrganizationId"
+              :label="item.name"
+              :value="item.id"
+              class="flex px-3 py-1 text-sm"
+              :max-lines="2"
+              :title="item.name"
+              word-break="break-word"
+              :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${item.name}`"
+              @change="selectOrganization"
+            />
           </div>
         </div>
       </template>
