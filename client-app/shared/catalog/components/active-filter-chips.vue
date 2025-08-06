@@ -102,7 +102,7 @@ function onCancelFilter(filterName: string, filterValue: string): void {
       };
     }
     return filter;
-  }).filter(Boolean) || []) as SearchProductFilterResult[]; // Remove null values
+  }).filter((filter) => filter !== null) || []) satisfies SearchProductFilterResult[]; // Remove null values
 
   emit("applyFilters", updatedFilters);
 }
@@ -138,7 +138,7 @@ function onCancelRangeFilter(filterName: string, rangeToRemove: SearchProductFil
       };
     }
     return filter;
-  }).filter(Boolean) || []) as SearchProductFilterResult[]; // Remove null values
+  }).filter((filter) => filter !== null) || []) satisfies SearchProductFilterResult[]; // Remove null values
 
   emit("applyFilters", updatedFilters);
 }
