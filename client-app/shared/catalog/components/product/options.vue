@@ -24,12 +24,13 @@
             v-for="option in property.values"
             :key="option.label"
             :model-value="isSelected(property.name, option.value) ? String(option.value) : undefined"
-            type="text"
+            :type="getType(property)"
             :name="property.label"
             :value="String(option.value)"
             :is-available="isAvailable(property.name, option.value)"
             class="options__picker"
             size="xs"
+            :tooltip="getTooltip(property, option)"
             @change="select(property.name, option.value)"
           />
         </VcVariantPickerGroup>
@@ -56,7 +57,7 @@ interface IProps {
 const props = defineProps<IProps>();
 const variations = toRef(props, "variations");
 
-const { properties, select, isSelected, isAvailable } = useProductVariationProperties(variations);
+const { properties, select, isSelected, isAvailable, getType, getTooltip } = useProductVariationProperties(variations);
 </script>
 
 <style lang="scss">
