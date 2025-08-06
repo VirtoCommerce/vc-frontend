@@ -362,13 +362,6 @@ useSeoMeta({
 });
 
 watch(
-  () => product.value?.hasVariations,
-  (hasVariations) => {
-    console.log("hasVariations", hasVariations);
-  },
-);
-
-watch(
   productId,
   async () => {
     await fetchProduct(productId.value);
