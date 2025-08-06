@@ -144,19 +144,19 @@
         @apply-sort="resetCurrentPage"
       />
       <ActiveFilterChips
-        v-if="hasSelectedFacets"
+        v-if="hasSelectedFacets || isResetPageButtonShown"
         :filters="productsFilters.filters"
         :facets-to-hide="facetsToHide"
-        @reset-filters="resetFacetFilters"
         @apply-filters="applyFiltersOnly"
       >
-        <template #prepend>
+        <template #actions>
+          <VcChip v-if="hasSelectedFacets" color="secondary" variant="outline" clickable @click="resetFacetFilters">
+            <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+            <VcIcon name="reset" />
+          </VcChip>
           <VcChip
-            v-if="
-            catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
-            $route.query.page &&
-            Number($route.query.page) > 1
-          "
+            v-if="isResetPageButtonShown"
             color="secondary"
             variant="outline"
             clickable
@@ -218,6 +218,7 @@ import {
 import omit from "lodash/omit";
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { useAnalytics, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
@@ -286,6 +287,14 @@ const { catalogId, currencyCode } = globals;
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
+
+const route = useRoute();
+
+const isResetPageButtonShown = computed(() => {
+  return catalogPaginationMode.value === CATALOG_PAGINATION_MODES.loadMore &&
+    route.query.page &&
+    Number(route.query.page) > 1
+})
 
 const catalogPaginationMode = computed(
   () => themeContext.value?.settings?.catalog_pagination_mode ?? CATALOG_PAGINATION_MODES.infiniteScroll,

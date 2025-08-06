@@ -32,13 +32,13 @@
       </template>
     </template>
 
-    <slot name="prepend" />
+    <slot name="actions">
+      <VcChip color="secondary" variant="outline" clickable @click="$emit('resetFilters')">
+        <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-    <VcChip color="secondary" variant="outline" clickable @click="$emit('resetFilters')">
-      <span>{{ $t("common.buttons.reset_filters") }}</span>
-
-      <VcIcon name="reset" />
-    </VcChip>
+        <VcIcon name="reset" />
+      </VcChip>
+    </slot>
   </div>
 </template>
 
