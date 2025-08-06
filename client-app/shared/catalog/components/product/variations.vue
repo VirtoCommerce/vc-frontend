@@ -52,31 +52,45 @@
         @reset-filters="$emit('resetFilters')"
       />
 
-    <VariationsDefault
-      v-if="isSmallScreen || (!isSmallScreen && !isTableView)"
-      :variations="variations"
-      :fetching="fetchingVariations"
-      :page-number="pageNumber"
-      :pages-count="pagesCount"
-      @change-page="changePage"
-    />
+         <!-- Loading skeleton -->
+     <div v-if="fetchingVariations && variations?.length === 0" class="variations__loading">
+       <div class="variations__loading-skeleton">
+         <div v-for="i in 6" :key="i" class="variations__loading-item">
+           <div class="variations__loading-image"></div>
+           <div class="variations__loading-content">
+             <div class="variations__loading-title"></div>
+             <div class="variations__loading-text"></div>
+             <div class="variations__loading-text"></div>
+           </div>
+         </div>
+       </div>
+     </div>
 
-    <VariationsTable
-      v-else
-      :variations="variations"
-      :sort="sort"
-      :fetching="fetchingVariations"
-      :page-number="pageNumber"
-      :pages-count="pagesCount"
-      @apply-sorting="applySorting"
-      @change-page="changePage"
-    />
+     <VariationsDefault
+       v-else-if="isSmallScreen || (!isSmallScreen && !isTableView)"
+       :variations="variations || []"
+       :fetching="fetchingVariations"
+       :page-number="pageNumber"
+       :pages-count="pagesCount"
+       @change-page="changePage"
+     />
 
-    <VcEmptyView
-      v-if="variations.length === 0 && !fetchingVariations"
-      :text="$t('shared.catalog.product_details.variations.no_results')"
-      icon="outline-stock"
-    />
+     <VariationsTable
+       v-else
+       :variations="variations || []"
+       :sort="sort"
+       :fetching="fetchingVariations"
+       :page-number="pageNumber"
+       :pages-count="pagesCount"
+       @apply-sorting="applySorting"
+       @change-page="changePage"
+     />
+
+     <VcEmptyView
+       v-if="variations?.length === 0 && !fetchingVariations"
+       :text="$t('shared.catalog.product_details.variations.no_results')"
+       icon="outline-stock"
+     />
   </VcWidget>
 </template>
 
@@ -102,7 +116,7 @@ interface IEmits {
 }
 
 interface IProps {
-  variations: Product[];
+  variations?: Product[];
   fetchingVariations: boolean;
   sort: ISortInfo;
   model: {
@@ -173,7 +187,7 @@ function handleKeyUp(event: KeyboardEvent) {
 watch(
   variations,
   (variationsValue) => {
-    if (!variationsValue.length) {
+    if (!variationsValue?.length) {
       return;
     }
 
@@ -186,32 +200,6 @@ watch(
   },
   { immediate: true },
 );
-
-// Prevent automatic scrolling when variations load
-let scrollPosition = 0;
-
-watch(
-  () => variations.value.length,
-  (newLength, oldLength) => {
-    if (oldLength === 0 && newLength > 0) {
-      // Store current scroll position before content loads
-      scrollPosition = window.scrollY;
-
-      // Prevent scroll jump when variations appear
-      setTimeout(() => {
-        window.scrollTo({
-          top: scrollPosition,
-          behavior: 'instant'
-        });
-      }, 0);
-    }
-  }
-);
-
-// Store scroll position when component mounts
-onMounted(() => {
-  scrollPosition = window.scrollY;
-});
 </script>
 
 <style lang="scss">
@@ -237,6 +225,34 @@ onMounted(() => {
 
   &__chips {
     @apply flex flex-wrap gap-x-3 gap-y-2 pb-6;
+  }
+
+  &__loading {
+    @apply space-y-4;
+  }
+
+  &__loading-skeleton {
+    @apply space-y-4;
+  }
+
+  &__loading-item {
+    @apply flex gap-4 p-4 border border-neutral-200 rounded-lg;
+  }
+
+  &__loading-image {
+    @apply w-16 h-16 bg-neutral-200 rounded animate-pulse;
+  }
+
+  &__loading-content {
+    @apply flex-1 space-y-2;
+  }
+
+  &__loading-title {
+    @apply h-4 bg-neutral-200 rounded animate-pulse;
+  }
+
+  &__loading-text {
+    @apply h-3 bg-neutral-200 rounded animate-pulse;
   }
 }
 </style>

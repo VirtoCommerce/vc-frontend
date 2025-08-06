@@ -74,7 +74,7 @@
 
         <component
           :is="productVariationsBlock?.type"
-          v-if="productVariationsBlock && !productVariationsBlock.hidden && product.hasVariations"
+          v-if="productVariationsBlock && !productVariationsBlock.hidden"
           :variations="variations"
           :sort="variationSortInfo"
           :model="productVariationsBlock"
