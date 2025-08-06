@@ -174,6 +174,7 @@ const attrs = computed(() => {
 .vc-button {
   --props-min-width: v-bind(props.minWidth);
   --props-icon-size: v-bind(props.iconSize);
+  --radius: var(--vc-button-radius, var(--vc-radius, 0.5rem));
   --min-w: var(--props-min-width, var(--vc-button-min-width));
 
   --vc-icon-size: var(--vc-button-icon-size, var(--props-icon-size, var(--line-height)));
@@ -190,7 +191,7 @@ const attrs = computed(() => {
   $loaderIcon: "";
   $noWrap: "";
 
-  @apply relative inline-block px-[--px] rounded border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
+  @apply relative inline-block px-[--px] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
 
   appearance: button;
 
