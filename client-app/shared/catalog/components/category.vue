@@ -510,12 +510,14 @@ function resetPage() {
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
-const { addScopeItem, removeScopeItemByType, preparingScope } = useSearchScore();
+const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
 
 watch(
   () => props.categoryId,
   async (categoryId) => {
     if (categoryId || props.isRoot) {
+      setQueryScope(searchQueryParam.value);
+
       if (categoryId) {
         preparingScope.value = true;
       }
@@ -558,7 +560,10 @@ watch(
   },
 );
 
-watch(searchQueryParam, resetCurrentPage);
+watch(searchQueryParam, (value) => {
+  setQueryScope(value);
+  resetCurrentPage();
+});
 
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
