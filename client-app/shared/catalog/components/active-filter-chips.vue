@@ -1,5 +1,5 @@
 <template>
-  <div class="category__chips">
+  <div class="active-filter-chips">
     <template v-for="filterItem in filters">
       <template v-if="!facetsToHide?.includes(filterItem.name)">
         <!-- Term values -->
@@ -145,6 +145,8 @@ function onCancelRangeFilter(filterName: string, rangeToRemove: SearchProductFil
 
 </script>
 
-<style scoped lang="scss">
-
+<style lang="scss">
+.active-filter-chips {
+    @apply flex mb-3 flex-wrap gap-2;
+}
 </style>

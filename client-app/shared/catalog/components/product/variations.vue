@@ -186,6 +186,32 @@ watch(
   },
   { immediate: true },
 );
+
+// Prevent automatic scrolling when variations load
+let scrollPosition = 0;
+
+watch(
+  () => variations.value.length,
+  (newLength, oldLength) => {
+    if (oldLength === 0 && newLength > 0) {
+      // Store current scroll position before content loads
+      scrollPosition = window.scrollY;
+
+      // Prevent scroll jump when variations appear
+      setTimeout(() => {
+        window.scrollTo({
+          top: scrollPosition,
+          behavior: 'instant'
+        });
+      }, 0);
+    }
+  }
+);
+
+// Store scroll position when component mounts
+onMounted(() => {
+  scrollPosition = window.scrollY;
+});
 </script>
 
 <style lang="scss">
