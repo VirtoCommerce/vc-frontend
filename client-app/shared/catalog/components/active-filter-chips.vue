@@ -85,7 +85,7 @@ function onCancelFilter(filterName: string, filterValue: string): void {
   }
 
   // Create a copy of preparedFilters to modify
-  const updatedFilters = (filters.value?.map(filter => {
+  const updatedFilters = filters.value?.map(filter => {
     if (filter.name === filterName) {
       // Remove the specific filterValue from termValues
       const updatedTermValues = filter.termValues?.filter(term => term?.value !== filterValue);
@@ -102,9 +102,9 @@ function onCancelFilter(filterName: string, filterValue: string): void {
       };
     }
     return filter;
-  }).filter((filter) => filter !== null) || []) satisfies SearchProductFilterResult[]; // Remove null values
+  }).filter((filter) => filter !== null); // Remove null values
 
-  emit("applyFilters", updatedFilters);
+  emit("applyFilters", updatedFilters || []);
 }
 
 function onCancelRangeFilter(filterName: string, rangeToRemove: SearchProductFilterRangeValue): void {
@@ -116,7 +116,7 @@ function onCancelRangeFilter(filterName: string, rangeToRemove: SearchProductFil
   }
 
   // Create a copy of preparedFilters to modify
-  const updatedFilters = (filters.value?.map(filter => {
+  const updatedFilters = filters.value?.map(filter => {
     if (filter.name === filterName) {
       // Remove the specific range from rangeValues
       const updatedRangeValues = filter.rangeValues?.filter(range =>
@@ -138,9 +138,9 @@ function onCancelRangeFilter(filterName: string, rangeToRemove: SearchProductFil
       };
     }
     return filter;
-  }).filter((filter) => filter !== null) || []) satisfies SearchProductFilterResult[]; // Remove null values
+  }).filter((filter) => filter !== null); // Remove null values
 
-  emit("applyFilters", updatedFilters);
+  emit("applyFilters", updatedFilters || []);
 }
 
 </script>
