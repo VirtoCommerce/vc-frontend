@@ -145,10 +145,12 @@ onMounted(async () => {
 
 <style lang="scss">
 .image-gallery {
+  --radius: var(--vc-image-gallery-radius, var(--vc-radius, 0.5rem));
+
   @apply select-none;
 
   &__images-container {
-    @apply relative border rounded aspect-square;
+    @apply relative border rounded-[--radius] aspect-square;
   }
 
   &__bg {
@@ -156,7 +158,7 @@ onMounted(async () => {
   }
 
   &__images {
-    @apply w-full h-full bg-additional-50 rounded duration-300 ease-linear;
+    @apply w-full h-full bg-additional-50 rounded-[--radius] duration-300 ease-linear;
 
     &:hover {
       @apply opacity-50;
@@ -164,7 +166,7 @@ onMounted(async () => {
   }
 
   &__img {
-    @apply relative w-full h-full rounded object-center object-contain cursor-zoom-in;
+    @apply relative w-full h-full rounded-[--radius] object-center object-contain cursor-zoom-in;
   }
 
   &__badges {
@@ -188,7 +190,7 @@ onMounted(async () => {
   }
 
   &__thumb-img {
-    @apply border rounded-sm w-full aspect-square object-center object-contain;
+    @apply border rounded-[--radius] w-full aspect-square object-center object-contain;
 
     &--active {
       @apply border-primary outline outline-1 outline-primary;

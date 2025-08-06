@@ -268,6 +268,46 @@ This command can be run locally to automatically fix missing translations in loc
 > [!CAUTION]
 > This is an experimental feature and may not work as expected.
 
+### Styles customization
+
+Component styles follow the BEM methodology. To avoid merge conflicts and keep your customizations centralized, **do not edit the core style files**. Instead, put all your overrides into the `client-app/assets/styles/_custom.scss` file.
+
+```scss
+// client-app/assets/styles/_custom.scss
+
+.vc-container {
+  &__bg {
+    background-color: red;
+  }
+}
+```
+
+## Configurable Border Radius
+
+You can easily adjust border-radius values for all components or on a per-component basis using CSS custom properties:
+
+- `--vc-radius`:
+  Sets the **global** border-radius for all components.
+  **Default:** `0.5rem` (8px)
+
+- Per-component overrides:
+  If you need a different radius for a specific component, you can override the global value by defining a custom property scoped to that component. For example:
+  - `--vc-button-radius`
+  - `--vc-widget-radius`
+  - _etc._
+
+```scss
+// client-app/assets/styles/_custom.scss
+
+:root {
+  // Change the global radius
+  --vc-radius: 0.25rem; // now 4px
+
+  // Override button radius only
+  --vc-button-radius: 0.75rem; // now 12px
+}
+```
+
 ### Troubleshooting
 
 If you encounter an error such as `dot command not found` on Windows, ensure that [Graphviz](https://graphviz.gitlab.io/download/) is installed on your system.
