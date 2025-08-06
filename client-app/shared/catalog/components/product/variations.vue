@@ -45,33 +45,12 @@
       </VcButton>
     </div>
 
-    <!-- Filters chips -->
-    <div v-if="hasSelectedFilters" class="variations__chips">
-      <template v-for="facet in productsFilters?.facets">
-        <template v-for="filterItem in facet.values">
-          <VcChip
-            v-if="filterItem.selected"
-            :key="facet.paramName + filterItem.value"
-            color="secondary"
-            closable
-            @close="
-              $emit('removeFacetFilter', {
-                paramName: facet.paramName,
-                value: filterItem.value,
-              })
-            "
-          >
-            {{ filterItem.label }}
-          </VcChip>
-        </template>
-      </template>
-
-      <VcChip color="secondary" variant="outline" clickable @click="$emit('resetFacetFilters')">
-        <span>{{ $t("common.buttons.reset_filters") }}</span>
-
-        <VcIcon name="reset" />
-      </VcChip>
-    </div>
+    <ActiveFilterChips
+        v-if="hasSelectedFilters"
+        :filters="productsFilters?.filters"
+        @apply-filters="applyFiltersOnly"
+        @reset-filters="$emit('resetFilters')"
+      />
 
     <VariationsDefault
       v-if="isSmallScreen || (!isSmallScreen && !isTableView)"
@@ -109,16 +88,17 @@ import { useAnalytics } from "@/core/composables";
 import { BREAKPOINTS } from "@/core/constants";
 import VariationsDefault from "./variations-default.vue";
 import VariationsTable from "./variations-table.vue";
-import type { Product } from "@/core/api/graphql/types";
-import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
+import type { Product, SearchProductFilterResult } from "@/core/api/graphql/types";
+import type { ISortInfo } from "@/core/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
+import ActiveFilterChips from "@/shared/catalog/components/active-filter-chips.vue";
 
 interface IEmits {
   (event: "applySorting", item: ISortInfo): void;
   (event: "changePage", pageNumber: number): void;
   (event: "showFilters"): void;
-  (event: "removeFacetFilter", payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">): void;
-  (event: "resetFacetFilters"): void;
+  (event: "resetFilters"): void;
+  (event: "applyFilters", value: ProductsFiltersType): void
 }
 
 interface IProps {
@@ -162,6 +142,18 @@ function applySorting(sortInfo: ISortInfo): void {
 
 function changePage(page: number): void {
   emit("changePage", page);
+}
+
+function applyFiltersOnly(newFilters: SearchProductFilterResult[]){
+
+  emit("applyFilters", {
+    ...props.productsFilters,
+    filters: newFilters,
+    facets: props.productsFilters?.facets || [],
+    inStock: props.productsFilters?.inStock || false,
+    purchasedBefore: props.productsFilters?.purchasedBefore || false,
+    branches: props.productsFilters?.branches || []
+  });
 }
 
 onMounted(() => {

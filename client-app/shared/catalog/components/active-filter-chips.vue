@@ -8,9 +8,7 @@
             color="secondary"
             closable
             truncate
-            @close="
-                  onCancelFilter(filterItem.name, term.value)
-                "
+            @close="onCancelFilter(filterItem.name, term.value)"
           >
             {{ term.label || term.value }}
           </VcChip>
@@ -53,7 +51,7 @@ interface IEmits {
 
 interface IProps {
   facetsToHide?: string[],
-  filters: SearchProductFilterResult[],
+  filters?: SearchProductFilterResult[],
 }
 
 const emit = defineEmits<IEmits>();
@@ -80,14 +78,14 @@ function formatRangeValue(range: SearchProductFilterRangeValue): string {
 
 function onCancelFilter(filterName: string, filterValue: string): void {
   // Find the filter to update
-  const filterToUpdate = filters.value.find(filter => filter.name === filterName);
+  const filterToUpdate = filters.value?.find(filter => filter.name === filterName);
 
   if (!filterToUpdate) {
     return;
   }
 
   // Create a copy of preparedFilters to modify
-  const updatedFilters = filters.value.map(filter => {
+  const updatedFilters = (filters.value?.map(filter => {
     if (filter.name === filterName) {
       // Remove the specific filterValue from termValues
       const updatedTermValues = filter.termValues?.filter(term => term?.value !== filterValue);
@@ -104,21 +102,21 @@ function onCancelFilter(filterName: string, filterValue: string): void {
       };
     }
     return filter;
-  }).filter(Boolean) as SearchProductFilterResult[]; // Remove null values
+  }).filter(Boolean) || []) as SearchProductFilterResult[]; // Remove null values
 
   emit("applyFilters", updatedFilters);
 }
 
 function onCancelRangeFilter(filterName: string, rangeToRemove: SearchProductFilterRangeValue): void {
   // Find the filter to update
-  const filterToUpdate = filters.value.find(filter => filter.name === filterName);
+  const filterToUpdate = filters.value?.find(filter => filter.name === filterName);
 
   if (!filterToUpdate) {
     return;
   }
 
   // Create a copy of preparedFilters to modify
-  const updatedFilters = filters.value.map(filter => {
+  const updatedFilters = (filters.value?.map(filter => {
     if (filter.name === filterName) {
       // Remove the specific range from rangeValues
       const updatedRangeValues = filter.rangeValues?.filter(range =>
@@ -140,7 +138,7 @@ function onCancelRangeFilter(filterName: string, rangeToRemove: SearchProductFil
       };
     }
     return filter;
-  }).filter(Boolean) as SearchProductFilterResult[]; // Remove null values
+  }).filter(Boolean) || []) as SearchProductFilterResult[]; // Remove null values
 
   emit("applyFilters", updatedFilters);
 }
