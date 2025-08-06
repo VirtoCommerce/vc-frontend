@@ -26,7 +26,6 @@
         test-id="vc-line-item-checkbox"
         @change="$emit('select', isSelected)"
       />
-
       
       <div class="vc-line-item__img-container">
         <!--  IMAGE -->
@@ -411,7 +410,7 @@ watchEffect(() => {
   &__price {
     --vc-product-price-font-size: theme(fontSize.sm);
 
-    @container (width <=theme("containers.4xl")) {
+    @container (width <= theme("containers.4xl")) {
       @apply hidden #{!important};
     }
 
@@ -429,7 +428,7 @@ watchEffect(() => {
   &__mobile-row {
     @apply contents;
 
-    @container (width <=theme("containers.2xl")) {
+    @container (width <= theme("containers.2xl")) {
       @apply flex items-center gap-3 mt-3;
     }
   }
