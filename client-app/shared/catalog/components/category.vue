@@ -155,6 +155,7 @@
 
             <VcIcon name="reset" />
           </VcChip>
+
           <VcChip
             v-if="isResetPageButtonShown"
             color="secondary"

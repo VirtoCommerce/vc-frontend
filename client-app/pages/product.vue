@@ -74,7 +74,7 @@
 
         <component
           :is="productVariationsBlock?.type"
-          v-if="productVariationsBlock && !productVariationsBlock.hidden"
+          v-if="productVariationsBlock && !productVariationsBlock.hidden && product.hasVariations"
           :variations="variations"
           :sort="variationSortInfo"
           :model="productVariationsBlock"
@@ -360,6 +360,13 @@ useSeoMeta({
   ogImage: () => (canSetMeta.value ? seoImageUrl.value : undefined),
   ogType: () => (canSetMeta.value ? "website" : undefined),
 });
+
+watch(
+  () => product.value?.hasVariations,
+  (hasVariations) => {
+    console.log("hasVariations", hasVariations);
+  },
+);
 
 watch(
   productId,
