@@ -292,7 +292,7 @@ const route = useRoute();
 
 const isResetPageButtonShown = computed(() => {
   return catalogPaginationMode.value === CATALOG_PAGINATION_MODES.loadMore &&
-    route.query.page &&
+    !!route.query.page &&
     Number(route.query.page) > 1
 })
 
