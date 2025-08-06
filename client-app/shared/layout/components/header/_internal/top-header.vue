@@ -1,9 +1,9 @@
 <template>
   <header
-    class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
+    class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-xs text-[--header-top-text-color] xl:gap-3 xl:px-11 xl:text-sm"
     data-test-id="main-layout.top-header"
   >
-    <div class="flex max-w-[calc(50%-2.5rem)] items-center gap-3">
+    <div class="flex min-w-0 shrink items-center gap-3">
       <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
 
       <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
@@ -11,10 +11,10 @@
       <ShipToSelector />
     </div>
 
-    <div class="relative ms-auto flex max-w-[calc(50%-2.5rem)] items-center">
+    <div class="relative ms-auto flex shrink-0 grow items-center">
       <!-- Call us block -->
       <div v-if="support_phone_number" class="flex items-center whitespace-nowrap">
-        <VcIcon class="me-1.5 fill-primary" name="phone" size="sm" />
+        <VcIcon class="me-1 fill-primary xl:me-1.5" name="phone" size="sm" />
 
         <span class="font-thin">
           {{ $t("shared.layout.header.top_header.call_us_label") }}
@@ -29,7 +29,7 @@
           {{ support_phone_number }}
         </a>
 
-        <span class="mx-3 h-5 w-px bg-primary" />
+        <span class="mx-1 h-5 w-px bg-primary xl:mx-3" />
       </div>
 
       <!-- Authorized menu items -->
@@ -38,13 +38,13 @@
           {{ $t("shared.layout.header.top_header.link_dashboard") }}
         </TopHeaderLink>
 
-        <span class="mx-2 size-1 rounded-full bg-primary" />
+        <span class="mx-1 size-1 rounded-full bg-primary xl:mx-2" />
 
         <TopHeaderLink to="/contacts" data-test-id="main-layout.top-header.contacts-link">
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
         </TopHeaderLink>
 
-        <span class="mx-3 h-5 w-px bg-primary" />
+        <span class="mx-1 h-5 w-px bg-primary xl:mx-3" />
 
         <!-- Account menu -->
         <div ref="loginMenu" class="relative flex flex-row items-center gap-x-1 overflow-hidden">
@@ -68,7 +68,7 @@
               <template v-if="isMultiOrganization">
                 <span
                   data-test-id="main-layout.top-header.organization-name-label"
-                  class="min-w-0 truncate"
+                  class="min-w-0 max-w-16 truncate xl:max-w-80"
                   :title="organization?.name"
                   >{{ organization?.name }}</span
                 >
@@ -77,7 +77,7 @@
 
               <span
                 data-test-id="main-layout.top-header.customer-name-label"
-                class="min-w-0 max-w-[50%] shrink-0 truncate"
+                class="min-w-0 max-w-16 shrink-0 truncate xl:max-w-80"
                 :title="user.contact?.fullName || user.userName"
                 >{{ user.contact?.fullName || user.userName }}</span
               >
@@ -92,7 +92,7 @@
 
         <div
           v-if="loginMenuVisible"
-          class="absolute right-0 top-full z-10 flex w-64 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
+          class="absolute right-0 top-full z-10 flex w-64 flex-col rounded-md bg-additional-50 text-sm text-additional-950 shadow-md"
           data-test-id="main-layout.top-header.account-menu"
         >
           <div class="flex max-w-full items-center justify-between p-3">
