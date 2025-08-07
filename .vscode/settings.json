@@ -10,7 +10,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
   },
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "eslint.useESLintClass": true,
   "files.associations": {
     "*.scss": "postcss"

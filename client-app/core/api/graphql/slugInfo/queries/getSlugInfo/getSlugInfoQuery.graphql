@@ -1,5 +1,5 @@
-query GetSlugInfo($slug: String, $storeId: String, $userId: String, $cultureName: String) {
-  slugInfo(slug: $slug, storeId: $storeId, userId: $userId, cultureName: $cultureName) {
+query GetSlugInfo($permalink: String, $storeId: String, $userId: String, $cultureName: String) {
+  slugInfo(permalink: $permalink, storeId: $storeId, userId: $userId, cultureName: $cultureName) {
     entityInfo {
       id
       isActive

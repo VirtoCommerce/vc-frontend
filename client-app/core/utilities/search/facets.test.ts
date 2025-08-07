@@ -9,10 +9,11 @@ import {
   getFilterExpressionForInStockVariations,
   getFilterExpressionForAvailableIn,
   getFilterExpressionFromFacets,
+  generateFilterExpressionFromFilters,
   termFacetToCommonFacet,
   rangeFacetToCommonFacet,
 } from "@/core/utilities";
-import type { RangeFacet, TermFacet } from "@/core/api/graphql/types";
+import type { RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { FacetItemType } from "@/core/types";
 
 describe("getFilterExpressionFromFacetRange", () => {
@@ -315,9 +316,321 @@ describe("rangeFacetToCommonFacet", () => {
       label: "Price",
       paramName: "price",
       values: [
-        { value: "[0 TO 100]", count: 5, label: "0-100", selected: true },
-        { value: "[100 TO 200]", count: 3, label: "100-200", selected: false },
+        { value: "[0 TO 100]",
+          count: 5,
+          label: "0-100",
+          selected: true,
+          from: 0,
+          to: 100,
+          includeFrom: true,
+          includeTo: true,
+        },
+        { value: "[100 TO 200]",
+          count: 3,
+          label: "100-200",
+          selected: false,
+          from: 100,
+          to: 200,
+          includeFrom: true,
+          includeTo: true,
+        },
       ],
     });
+  });
+});
+
+describe("generateFilterExpressionFromFilters", () => {
+  it("returns empty string for empty filters array", () => {
+    const filters: SearchProductFilterResult[] = [];
+    const result = generateFilterExpressionFromFilters(filters);
+    expect(result).toBe("");
+  });
+
+  it("handles term filters with single value", () => {
+    const filters: SearchProductFilterResult[] = [
+      {
+        name: "color",
+        filterType: "term",
+        termValues: [
+          {
+            value: "red",
+            label: "Red",
+          },
+        ],
+      },
+    ];
+    const result = generateFilterExpressionFromFilters(filters);
+    expect(result).toBe('"color":"red"');
+  });
+
+  it("handles term filters with multiple values", () => {
+    const filters: SearchProductFilterResult[] = [
+      {
+        name: "color",
+        filterType: "term",
+        termValues: [
+          {
+            value: "red",
+            label: "Red",
+          },
+          {
+            value: "blue",
+            label: "Blue",
+          },
+        ],
+      },
+    ];
+    const result = generateFilterExpressionFromFilters(filters);
+    expect(result).toBe('"color":"red","blue"');
+  });
+
+  it("handles range filters with single range", () => {
+    const filters: SearchProductFilterResult[] = [
+      {
+        name: "price",
+        filterType: "range",
+        rangeValues: [
+          {
+            lower: "0",
+            upper: "100",
+            includeLowerBound: true,
+            includeUpperBound: true,
+          },
+        ],
+      },
+    ];
+    const result = generateFilterExpressionFromFilters(filters);
+    expect(result).toBe('"price":[0 TO 100]');
+  });
+
+  it("handles range filters with multiple ranges", () => {
+    const filters: SearchProductFilterResult[] = [
+      {
+        name: "price",
+        filterType: "range",
+        rangeValues: [
+          {
+            lower: "0",
+            upper: "100",
+            includeLowerBound: true,
+            includeUpperBound: false,
+          },
+          {
+            lower: "200",
+            upper: "300",
+            includeLowerBound: false,
+            includeUpperBound: true,
+          },
+        ],
+      },
+    ];
+    const result = generateFilterExpressionFromFilters(filters);
+    expect(result).toBe('"price":[0 TO 100),(200 TO 300]');
+  });
+
+  it("handles range filters with open-ended ranges", () => {
+    const filters: SearchProductFilterResult[] = [
+      {
+        name: "price",
+        filterType: "range",
+        rangeValues: [
+          {
+            lower: "50",
+            upper: undefined,
+            includeLowerBound: true,
+            includeUpperBound: false,
+          },
+          {
+            lower: undefined,
+            upper: "100",
+            includeLowerBound: false,
+            includeUpperBound: true,
+          },
+        ],
+      },
+    ];
+    const result = generateFilterExpressionFromFilters(filters);
+    expect(result).toBe('"price":[50 TO),(TO 100]');
+  });
+
+  it("handles mixed term and range filters", () => {
+    const filters: SearchProductFilterResult[] = [
+      {
+        name: "color",
+        filterType: "term",
+        termValues: [
+          {
+            value: "red",
+            label: "Red",
+          },
+          {
+            value: "blue",
+            label: "Blue",
+          },
+        ],
+      },
+      {
+        name: "price",
+        filterType: "range",
+        rangeValues: [
+          {
+            lower: "0",
+            upper: "100",
+            includeLowerBound: true,
+            includeUpperBound: true,
+          },
+        ],
+      },
+    ];
+    const result = generateFilterExpressionFromFilters(filters);
+    expect(result).toBe('"color":"red","blue" "price":[0 TO 100]');
+  });
+
+  it("handles special characters in term values", () => {
+    const filters: SearchProductFilterResult[] = [
+      {
+        name: "description",
+        filterType: "term",
+        termValues: [
+          {
+            value: 'text with "quotes"',
+            label: "Text with quotes",
+          },
+          {
+            value: "text with \\backslashes\\",
+            label: "Text with backslashes",
+          },
+        ],
+      },
+    ];
+    const result = generateFilterExpressionFromFilters(filters);
+    expect(result).toBe('"description":"text with \\"quotes\\"","text with \\\\backslashes\\\\"');
+  });
+
+
+  it("handles filters with empty termValues and rangeValues", () => {
+    const filters: SearchProductFilterResult[] = [
+      {
+        name: "color",
+        filterType: "term",
+        termValues: [],
+      },
+      {
+        name: "price",
+        filterType: "range",
+        rangeValues: [],
+      },
+    ];
+    const result = generateFilterExpressionFromFilters(filters);
+    expect(result).toBe("");
+  });
+
+  it("handles filters with undefined termValues and rangeValues", () => {
+    const filters: SearchProductFilterResult[] = [
+      {
+        name: "color",
+        filterType: "term",
+        termValues: undefined,
+      },
+      {
+        name: "price",
+        filterType: "range",
+        rangeValues: undefined,
+      },
+    ];
+    const result = generateFilterExpressionFromFilters(filters);
+    expect(result).toBe("");
+  });
+
+  it("handles complex range filters with different bracket combinations", () => {
+    const filters: SearchProductFilterResult[] = [
+      {
+        name: "price",
+        filterType: "range",
+        rangeValues: [
+          {
+            lower: "0",
+            upper: "100",
+            includeLowerBound: true,
+            includeUpperBound: true,
+          },
+          {
+            lower: "100",
+            upper: "200",
+            includeLowerBound: false,
+            includeUpperBound: false,
+          },
+          {
+            lower: "200",
+            upper: "300",
+            includeLowerBound: true,
+            includeUpperBound: false,
+          },
+          {
+            lower: "300",
+            upper: "400",
+            includeLowerBound: false,
+            includeUpperBound: true,
+          },
+        ],
+      },
+    ];
+    const result = generateFilterExpressionFromFilters(filters);
+    expect(result).toBe('"price":[0 TO 100],(100 TO 200),[200 TO 300),(300 TO 400]');
+  });
+
+  it("handles multiple filters with different types", () => {
+    const filters: SearchProductFilterResult[] = [
+      {
+        name: "brand",
+        filterType: "term",
+        termValues: [
+          {
+            value: "Nike",
+            label: "Nike",
+          },
+        ],
+      },
+      {
+        name: "category",
+        filterType: "term",
+        termValues: [
+          {
+            value: "shoes",
+            label: "Shoes",
+          },
+          {
+            value: "sports",
+            label: "Sports",
+          },
+        ],
+      },
+      {
+        name: "price",
+        filterType: "range",
+        rangeValues: [
+          {
+            lower: "50",
+            upper: "200",
+            includeLowerBound: true,
+            includeUpperBound: false,
+          },
+        ],
+      },
+      {
+        name: "size",
+        filterType: "range",
+        rangeValues: [
+          {
+            lower: "7",
+            upper: "12",
+            includeLowerBound: true,
+            includeUpperBound: true,
+          },
+        ],
+      },
+    ];
+    const result = generateFilterExpressionFromFilters(filters);
+    expect(result).toBe('"brand":"Nike" "category":"shoes","sports" "price":[50 TO 200) "size":[7 TO 12]');
   });
 });

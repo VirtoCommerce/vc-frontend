@@ -1,3 +1,4 @@
+import type { SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { FacetItemType } from "@/core/types";
 
 export type ProductsSearchParamsType = {
@@ -16,6 +17,7 @@ export type ProductsSearchParamsType = {
 
 export type ProductsFiltersType = {
   facets: FacetItemType[];
+  filters: SearchProductFilterResult[];
   inStock: boolean;
   purchasedBefore: boolean;
   branches: string[];
