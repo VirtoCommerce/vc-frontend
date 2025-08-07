@@ -41,7 +41,7 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         type: "string",
         defaultValue: "<unset>",
         enum: ["<unset>", "grid", "list"],
-        helperText: "Fixing the View Mode",
+        helperText: "Switching the View Mode",
         showIf: `options.get('hideViewModeSelector') === false`,
       },
       {
@@ -243,8 +243,7 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
       {
         name: "filter",
         type: "string",
-        helperText:
-          "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter",
+        helperText: "Deprecated. Use the CategoryId property.",
       },
       {
         name: "countLimitation",

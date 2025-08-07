@@ -1,23 +1,22 @@
 <template>
-  <div class="py-10 lg:py-24" :class="background">
+  <div class="products-block py-10 lg:py-24" :class="background">
     <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
       <VcTypography tag="h2" variant="h1" class="mb-2 text-center lg:mb-4">
         {{ title }}
       </VcTypography>
 
-      <div class="text-center lg:text-lg">{{ subtitle }}</div>
+      <div class="mb-8 text-center lg:text-lg">{{ subtitle }}</div>
 
       <VcProductsGrid
-        :columns="{
-          default: 1,
-          xs: 2,
-          sm: 2,
-          md: Number(columnsAmountTablet),
-          lg: Number(columnsAmountDesktop),
-          xl: Number(columnsAmountDesktop),
-          '2xl': Number(columnsAmountDesktop),
-        }"
-      >
+                      :columns="{
+                        default: 1,
+                        xs: 2,
+                        sm: 2,
+                        md: Number(columnsAmountTablet),
+                        lg: Number(columnsAmountDesktop),
+                        xl: Number(columnsAmountDesktop),
+                        '2xl': Number(columnsAmountDesktop),
+                      }">
         <ProductCard v-for="item in products" :key="item.id" :card-type="cardType" :product="item" />
       </VcProductsGrid>
     </div>
@@ -62,5 +61,11 @@ watchEffect(async () => {
 <style scoped lang="scss">
 .vc-typography--variant--h1 {
   @apply normal-case;
+}
+
+.products-block {
+  &.bg-neutral-800 {
+    color: white;
+  }
 }
 </style>
