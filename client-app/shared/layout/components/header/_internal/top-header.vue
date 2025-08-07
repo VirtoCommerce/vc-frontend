@@ -60,11 +60,14 @@
 
           <button
             type="button"
+            :aria-label="$t('shared.layout.header.top_header.account_menu_label')"
+            aria-haspopup="true"
+            :aria-expanded="loginMenuVisible"
             class="flex w-full cursor-pointer items-center whitespace-nowrap p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
             data-test-id="main-layout.top-header.account-menu-button"
             @click="loginMenuVisible = !loginMenuVisible"
           >
-            <span class="flex min-w-0 font-bold">
+            <span class="hidden min-w-0 font-bold xl:inline">
               <template v-if="isMultiOrganization">
                 <span
                   data-test-id="main-layout.top-header.organization-name-label"
@@ -82,6 +85,8 @@
                 >{{ user.contact?.fullName || user.userName }}</span
               >
             </span>
+
+            <VcIcon class="fill-primary xl:hidden" name="user-circle" size="sm" />
 
             <VcIcon
               class="ms-1.5 shrink-0 fill-accent-200 [--vc-icon-size:1rem] lg:fill-primary lg:[--vc-icon-size:0.625rem]"
