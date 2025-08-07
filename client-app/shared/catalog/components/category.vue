@@ -13,7 +13,8 @@
       :hide-controls="hideControls"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
-      @apply-filters="applyFilters" />
+      @apply-filters="applyFilters" 
+    />
 
     <VcLayout sticky-sidebar>
       <template v-if="!hideSidebar && !isMobile && !isHorizontalFilters" #sidebar>
@@ -22,14 +23,16 @@
           :category="currentCategory"
           :loading="!currentCategory && loadingCategory"
           class="category__selector"
-          :category-facets="categoryFacets" />
+          :category-facets="categoryFacets" 
+        />
 
         <ProductsFilters
           :keyword="keywordQueryParam"
           :filters="filtersToShow"
           :loading="fetchingProducts"
           class="category__product-filters"
-          @change="applyFilters($event)" />
+          @change="applyFilters($event)" 
+        />
       </template>
 
       <VcTypography tag="h1" class="category__title">
@@ -80,7 +83,8 @@
           class="category__facets-button"
           icon="filter"
           size="sm"
-          @click="showFiltersSidebar" />
+          @click="showFiltersSidebar" 
+        />
 
         <!-- Sorting -->
         <div v-if="!hideSorting && !isHorizontalFilters" class="category__sort">
@@ -96,7 +100,8 @@
             :items="translatedProductSortingList"
             class="category__sort-dropdown"
             size="sm"
-            @change="resetCurrentPage" />
+            @change="resetCurrentPage" 
+          />
         </div>
 
         <!-- View options - horizontal view -->
@@ -104,7 +109,8 @@
           v-if="!hideViewModeSelector"
           v-model:mode="savedViewMode"
           class="category__view-mode"
-          data-test-id="category-page.view-switcher" />
+          data-test-id="category-page.view-switcher" 
+        />
 
         <!-- In stock and branches -->
         <CategoryControls
@@ -116,7 +122,8 @@
           class="category__controls"
           @open-branches-modal="openBranchesModal"
           @apply-in-stock="resetCurrentPage"
-          @apply-purchased-before="resetCurrentPage" />
+          @apply-purchased-before="resetCurrentPage" 
+        />
       </div>
 
       <!-- Horizontal filters -->
@@ -133,7 +140,8 @@
         @reset-facet-filters="resetFacetFilters"
         @apply-filters="applyFilters"
         @show-popup-sidebar="showFiltersSidebar"
-        @apply-sort="resetCurrentPage" />
+        @apply-sort="resetCurrentPage" 
+      />
       <!-- Filters chips -->
       <div
         v-if="
@@ -211,7 +219,8 @@
         @change-page="changeProductsPage"
         @reset-facet-filters="resetFacetFilters"
         @reset-filter-keyword="resetFilterKeyword"
-        @select-product="selectProduct" />
+        @select-product="selectProduct" 
+      />
 
       <div class="category__products-bottom">
         <VcButton v-if="showButtonToDefaultView" color="primary" :to="{ query: { view: 'default' } }">
