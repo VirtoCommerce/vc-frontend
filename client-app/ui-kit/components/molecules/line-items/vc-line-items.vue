@@ -182,9 +182,9 @@ const hasTotal = computed(() => props.items.some((item) => item.extendedPrice));
 const subtotal = computed<number>(() =>
   hasTotal.value
     ? sumBy(
-      props.items.filter((item) => selectedItemIds.value.includes(item.id) && item.extendedPrice),
-      (item) => item.extendedPrice!.amount,
-    )
+        props.items.filter((item) => selectedItemIds.value.includes(item.id) && item.extendedPrice),
+        (item) => item.extendedPrice!.amount,
+      )
     : 0,
 );
 
@@ -285,7 +285,7 @@ watchEffect(() => {
   &__removable {
     @apply w-7;
   }
-  
+
   &__body {
     @apply flex flex-col gap-4;
 
