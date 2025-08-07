@@ -102,8 +102,7 @@
 
           <BillingDetailsSection class="mt-5" />
 
-          <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" 
-        />
+          <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
         </template>
 
         <CartForLater

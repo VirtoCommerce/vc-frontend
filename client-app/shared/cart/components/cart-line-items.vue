@@ -14,7 +14,6 @@
     :selectable="selectable"
     @select:items="$emit('select:items', $event)"
     @remove:items="$emit('remove:items', $event)"
-    @save-for-later="$emit('saveForLater', $event)"
     @link-click="handleLinkClick($event)"
   >
     <template #titles>
