@@ -120,7 +120,7 @@ export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocatio
     return link === currentRoute.path;
   }
 
-  if (typeof link === "object" && link !== null) {
+  if (typeof link === "object") {
     if ("name" in link) {
       return (
         link.name === currentRoute.name &&
@@ -134,4 +134,14 @@ export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocatio
   }
 
   return false;
+}
+
+export function areStringOrNumberEqual(
+  a: string | number | null | undefined,
+  b: string | number | null | undefined
+): boolean {
+  // assume null and undefined are equal
+  if (a == null && b == null) return true;
+
+  return String(a) === String(b);
 }
