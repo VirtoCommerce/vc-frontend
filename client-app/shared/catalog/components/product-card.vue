@@ -78,7 +78,7 @@
       :to="link"
       :link-text="$t('pages.catalog.show_on_a_separate_page')"
       :link-to="link"
-      :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
+      :button-text="$t('pages.catalog.variations_button', [(product.variations?.filter(x => !productsFilters.inStock || x.availabilityData?.isInStock)?.length || 0) + 1])"
       :target="browserTarget || $cfg.details_browser_target || '_blank'"
       @link-click="$emit('linkClick', product, $event)"
     />
@@ -106,6 +106,7 @@ import {
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
 import { AddToCart } from "@/shared/cart";
+import { useProducts } from "@/shared/catalog";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { useCustomProductComponents } from "@/shared/common/composables";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
@@ -155,4 +156,6 @@ const properties = computed(() =>
 const badgeSize = computed(() => {
   return props.viewMode === "grid" ? "lg" : "md";
 });
+
+const { productsFilters } = useProducts();
 </script>
