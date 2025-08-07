@@ -10,7 +10,7 @@
           :indeterminate="isSomeItemsSelected"
           class="vc-line-items__checkbox"
           test-id="vc-line-items-head-checkbox"
-          @change="($event) => selectAllItems($event as boolean)" 
+          @change="($event) => selectAllItems($event as boolean)"
         />
 
         <div class="vc-line-items__product">
@@ -73,7 +73,7 @@
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
             @link-click="$emit('linkClick', item)"
-            @save-for-later="() => saveForLaterSingle(item.id)">
+          >
             <template #before>
               <slot name="before-content" v-bind="{ item }" />
             </template>
@@ -143,7 +143,6 @@ interface IEmits {
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "linkClick", value: PreparedLineItemType): void;
-  (event: "saveForLater", value: string[]): void;
 }
 
 interface IProps {
@@ -216,10 +215,6 @@ function removeSelectedItems() {
 
 function removeAllItems() {
   emit("remove:items", itemIds.value);
-}
-
-function saveForLaterSingle(itemId: string) {
-  emit("saveForLater", [itemId]);
 }
 
 watchEffect(() => {

@@ -30,8 +30,7 @@
       <div class="vc-line-item__img-container">
         <!--  IMAGE -->
         <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
-        
-        
+         
         <div class="vc-line-item__img-actions">
           <slot name="after-image" /> 
         </div>
@@ -153,7 +152,6 @@ interface IEmits {
   (event: "remove"): void;
   (event: "select", value: boolean): void;
   (event: "linkClick"): void;
-  (event: "saveForLater"): void;
 }
 
 interface IProps {
