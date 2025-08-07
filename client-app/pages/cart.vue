@@ -62,10 +62,11 @@
       </VcWidget>
 
       <CartForLater
-        v-if="savedForLaterList?.items?.length ?? 0 > 0"
+        v-if="savedForLaterList?.items?.length"
         :saved-for-later-list="savedForLaterList"
         class="mt-5"
-        @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" />
+        @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" 
+      />
 
       <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" class="mt-5" />
     </template>
@@ -101,14 +102,16 @@
 
           <BillingDetailsSection class="mt-5" />
 
-          <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
+          <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" 
+        />
         </template>
 
         <CartForLater
-          v-if="savedForLaterList?.items?.length ?? 0 > 0"
+          v-if="savedForLaterList?.items?.length"
           :saved-for-later-list="savedForLaterList"
           class="mt-5"
-          @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" />
+          @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" 
+        />
 
         <RecentlyBrowsedProducts
           v-if="recentlyBrowsedProducts.length"

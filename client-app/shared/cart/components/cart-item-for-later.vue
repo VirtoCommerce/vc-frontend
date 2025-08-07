@@ -1,21 +1,21 @@
 <template>
   <VcProductCard :background="false">
-    <VcProductImage :img-src="item.imageUrl" :alt="item.product!.name" />
+    <VcProductImage :img-src="item.imageUrl" :alt="item.product?.name" />
 
-    <VcProductTitle lines-number="2" fix-height :to="link" :title="item.product!.name" @click="$emit('linkClick', $event)">
-      {{ item.product!.name }}
+    <VcProductTitle lines-number="2" fix-height :to="link" :title="item.product?.name" @click="$emit('linkClick', $event)">
+      {{ item.product?.name }}
     </VcProductTitle>
 
     <VcProductPrice
-      :actual-price="item.product!.price?.actual"
-      :list-price="item.product!.price?.list"
+      :actual-price="item.product?.price?.actual"
+      :list-price="item.product?.price?.list"
       single-line />
 
     <VcProductButton
       v-if="item?.id"
       icon="arrow-up"
       :button-text="$t('pages.cart.move_to_cart')"
-      @link-click="$emit('addToCart', item!.id)" />
+      @link-click="$emit('addToCart', item.id)" />
   </VcProductCard>
 </template>
 
