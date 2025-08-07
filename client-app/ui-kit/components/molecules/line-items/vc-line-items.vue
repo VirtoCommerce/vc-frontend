@@ -65,7 +65,6 @@
             :disabled="disabled"
             :deleted="item.deleted"
             :removable="removable"
-            :saveable-for-later="saveableForLater"
             :selectable="selectable"
             :selected="selectable && selectedItemIds?.includes(item.id)"
             :browser-target="browserTarget"
@@ -87,6 +86,14 @@
 
             <template #after>
               <slot name="after-content" v-bind="{ item }" />
+            </template>
+
+            <template #after-image>
+              <slot name="after-image" v-bind="{ item }" />
+            </template>
+
+            <template #after-title>
+              <slot name="after-title" v-bind="{ item }" />
             </template>
           </VcLineItem>
         </slot>
@@ -153,7 +160,6 @@ interface IProps {
   withSubtotal?: boolean;
   withHeader?: boolean;
   browserTarget?: BrowserTargetType;
-  saveableForLater?: boolean;
 }
 
 const emit = defineEmits<IEmits>();

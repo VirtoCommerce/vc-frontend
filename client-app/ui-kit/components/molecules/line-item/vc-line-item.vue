@@ -30,15 +30,11 @@
       <div class="vc-line-item__img-container">
         <!--  IMAGE -->
         <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
-
-        <CartItemActions 
-          class="vc-line-item__img-actions"
-          icons
-          :selected="selected"
-          :disabled="disabled"
-          :saveable-for-later="saveableForLater"
-          @save-for-later="$emit('saveForLater')" 
-        />
+        
+        
+        <div class="vc-line-item__img-actions">
+          <slot name="after-image" /> 
+        </div>
       </div>
 
       <div
@@ -60,15 +56,11 @@
             @click="$emit('linkClick')"
           >
             {{ name }}
-          </VcProductTitle>
-
-          <CartItemActions 
-            class="vc-line-item__name-actions"
-            :selected="selected"
-            :disabled="disabled"
-            :saveable-for-later="saveableForLater"
-            @save-for-later="$emit('saveForLater')" 
-          />
+          </VcProductTitle> 
+          
+          <div class="vc-line-item__name-actions">
+            <slot name="after-title" /> 
+          </div>
         </div>
         
         <div
@@ -156,7 +148,6 @@
 import { ref, watchEffect } from "vue";
 import type { Property, MoneyType, CommonVendor } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
-import CartItemActions from "@/shared/cart/components/cart-item-actions.vue";
 
 interface IEmits {
   (event: "remove"): void;
@@ -177,7 +168,6 @@ interface IProps {
   selectable?: boolean;
   selected?: boolean;
   removable?: boolean;
-  saveableForLater?: boolean;
   disabled?: boolean;
   deleted?: boolean;
   withImage?: boolean;
