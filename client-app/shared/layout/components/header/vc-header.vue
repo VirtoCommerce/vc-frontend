@@ -9,7 +9,7 @@
     <div ref="stickyHeader" class="sticky top-0 z-20 shadow-md print:hidden">
       <BottomHeader :is-menu-shown="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
 
-      <MegaMenu v-if="desktopMenuMode === DESKTOP_MENU_MODES.horizontal" class="border-y border-neutral-200" />
+      <MegaMenu v-if="$context.storeSettings.anonymousUsersAllowed && desktopMenuMode === DESKTOP_MENU_MODES.horizontal" class="border-y border-neutral-200" />
     </div>
 
     <div class="hidden items-start justify-between print:flex">
