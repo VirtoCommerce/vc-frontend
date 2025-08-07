@@ -6,6 +6,7 @@
         'vc-modal',
         {
           'vc-modal--mobile-fullscreen': isMobileFullscreen,
+          'vc-modal--pinned-footer': pinnedFooter,
         },
       ]"
       :initial-focus="getActiveElement()"
@@ -36,7 +37,7 @@
           @after-leave="$emit('close')"
         >
           <DialogPanel class="vc-modal__dialog" :style="{ maxWidth }">
-            <VcDialog :dividers="dividers" :is-mobile-fullscreen="isMobileFullscreen">
+            <VcDialog class="vc-modal__dialog-content" :dividers="dividers" :is-mobile-fullscreen="isMobileFullscreen">
               <DialogTitle>
                 <VcDialogHeader :icon="icon" :color="variant" :closable="!isPersistent" @close="close">
                   <slot name="title">
@@ -45,7 +46,7 @@
                 </VcDialogHeader>
               </DialogTitle>
 
-              <DialogDescription>
+              <DialogDescription class="vc-modal__dialog-content-description">
                 <VcDialogContent>
                   <slot :close="close" />
                 </VcDialogContent>
@@ -81,6 +82,7 @@ interface IProps {
   variant?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
   dividers?: boolean;
   testId?: string;
+  pinnedFooter?: boolean;
 }
 
 defineOptions({
@@ -119,11 +121,16 @@ defineExpose({ close });
 <style lang="scss">
 .vc-modal {
   $mobileFullscreen: "";
+  $pinnedFooter: "";
 
   @apply fixed top-0 left-0 w-full h-full z-50;
 
   &--mobile-fullscreen {
     $mobileFullscreen: &;
+  }
+
+  &--pinned-footer {
+    $pinnedFooter: &;
   }
 
   &__backdrop {
@@ -151,6 +158,18 @@ defineExpose({ close });
           @apply max-h-full h-full p-0 rounded-none;
         }
       }
+    }
+  }
+
+  &__dialog-content {
+    #{$pinnedFooter} & {
+      @apply flex flex-col;
+    }
+  }
+
+  &__dialog-content-description {
+    #{$pinnedFooter} & {
+      @apply min-h-0 overflow-y-auto;
     }
   }
 }

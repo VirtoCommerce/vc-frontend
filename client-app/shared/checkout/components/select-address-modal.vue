@@ -4,7 +4,7 @@
     max-width="60rem"
     is-mobile-fullscreen
     dividers
-    class="select-address-modal"
+    pinned-footer
   >
     <VcAlert class="mb-4 lg:hidden" icon="check-circle" size="sm" variant="solid-light">
       {{ $t("shared.checkout.select_address_modal.message") }}
@@ -63,7 +63,7 @@
       </div>
     </template>
 
-    <div class="select-address-modal__table-wrapper rounded border">
+    <div class="rounded border">
       <VcTable
         :columns="columns"
         :items="paginatedAddresses"
@@ -315,13 +315,3 @@ watchEffect(() => {
   );
 });
 </script>
-
-<style lang="scss">
-$mapVerticalOffset: 13rem; // approximate value of modal header height + modal actions height + modal content paddings
-
-.select-address-modal {
-  &__table-wrapper {
-    @apply max-h-[calc(100vh-#{$mapVerticalOffset})] overflow-y-auto;
-  }
-}
-</style>
