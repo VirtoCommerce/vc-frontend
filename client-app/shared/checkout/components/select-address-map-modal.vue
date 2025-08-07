@@ -4,6 +4,7 @@
     max-width="72rem"
     is-mobile-fullscreen
     class="select-address-map-modal"
+    pinned-footer
   >
     <div class="select-address-map-modal__content">
       <GoogleMap
@@ -270,15 +271,14 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 
 <style lang="scss">
 $mapHeight: 523px;
-$mapVerticalOffset: 13rem; // approximate value of modal header height + modal actions height + modal content paddings
 
 .select-address-map-modal {
   &__content {
-    @apply relative w-full flex flex-col lg:h-[#{$mapHeight}] max-h-[calc(100vh-#{$mapVerticalOffset})] lg:flex-row gap-5;
+    @apply relative w-full flex flex-col lg:flex-row gap-5 min-h-0;
   }
 
   &__map {
-    @apply h-[#{$mapHeight}] max-h-[calc((100vh-#{$mapVerticalOffset})/2)] shrink-0 w-full flex-grow rounded-lg overflow-hidden lg:h-auto lg:flex-shrink lg:max-h-none;
+    @apply max-h-[50vh] lg:max-h-[#{$mapHeight}] shrink-0 w-full flex-grow rounded-lg overflow-hidden lg:h-auto lg:flex-shrink lg:max-h-none;
   }
 
   &__sidebar {

@@ -47,7 +47,7 @@
               </DialogTitle>
 
               <DialogDescription class="vc-modal__dialog-content-description">
-                <VcDialogContent>
+                <VcDialogContent class="vc-modal__dialog-content-description-content">
                   <slot :close="close" />
                 </VcDialogContent>
               </DialogDescription>
@@ -169,7 +169,13 @@ defineExpose({ close });
 
   &__dialog-content-description {
     #{$pinnedFooter} & {
-      @apply min-h-0 overflow-y-auto;
+      @apply min-h-0 flex flex-col;
+    }
+  }
+
+  &__dialog-content-description-content {
+    #{$pinnedFooter} & {
+      @apply flex flex-col min-h-0;
     }
   }
 }
