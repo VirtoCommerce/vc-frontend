@@ -11,7 +11,7 @@
       <ShipToSelector />
     </div>
 
-    <div class="relative ms-auto flex min-w-0 shrink-0 items-center">
+    <div class="ms-auto flex min-w-0 shrink-0 items-center">
       <!-- Call us block -->
       <div v-if="support_phone_number" class="flex items-center whitespace-nowrap">
         <VcIcon class="me-1.5 fill-primary" name="phone" size="sm" />
