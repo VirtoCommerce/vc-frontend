@@ -13,7 +13,7 @@
       :hide-controls="hideControls"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
-      @apply-filters="applyFilters" 
+      @apply-filters="applyFilters"
     />
 
     <VcLayout sticky-sidebar>
@@ -23,7 +23,7 @@
           :category="currentCategory"
           :loading="!currentCategory && loadingCategory"
           class="category__selector"
-          :category-facets="categoryFacets" 
+          :category-facets="categoryFacets"
         />
 
         <ProductsFilters
@@ -31,7 +31,7 @@
           :filters="filtersToShow"
           :loading="fetchingProducts"
           class="category__product-filters"
-          @change="applyFilters($event)" 
+          @change="applyFilters($event)"
         />
       </template>
 
@@ -83,7 +83,7 @@
           class="category__facets-button"
           icon="filter"
           size="sm"
-          @click="showFiltersSidebar" 
+          @click="showFiltersSidebar"
         />
 
         <!-- Sorting -->
@@ -100,7 +100,7 @@
             :items="translatedProductSortingList"
             class="category__sort-dropdown"
             size="sm"
-            @change="resetCurrentPage" 
+            @change="resetCurrentPage"
           />
         </div>
 
@@ -109,7 +109,7 @@
           v-if="!hideViewModeSelector"
           v-model:mode="savedViewMode"
           class="category__view-mode"
-          data-test-id="category-page.view-switcher" 
+          data-test-id="category-page.view-switcher"
         />
 
         <!-- In stock and branches -->
@@ -122,7 +122,7 @@
           class="category__controls"
           @open-branches-modal="openBranchesModal"
           @apply-in-stock="resetCurrentPage"
-          @apply-purchased-before="resetCurrentPage" 
+          @apply-purchased-before="resetCurrentPage"
         />
       </div>
 
@@ -140,7 +140,7 @@
         @reset-facet-filters="resetFacetFilters"
         @apply-filters="applyFilters"
         @show-popup-sidebar="showFiltersSidebar"
-        @apply-sort="resetCurrentPage" 
+        @apply-sort="resetCurrentPage"
       />
       <!-- Filters chips -->
       <div
@@ -219,7 +219,7 @@
         @change-page="changeProductsPage"
         @reset-facet-filters="resetFacetFilters"
         @reset-filter-keyword="resetFilterKeyword"
-        @select-product="selectProduct" 
+        @select-product="selectProduct"
       />
 
       <div class="category__products-bottom">
