@@ -297,7 +297,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "Contatos",
           "call_us_label": "Ligue para nós: ",
-          "logged_in_as": "logado como"
+          "logged_in_as": "logado como",
+          "account_menu_label": "Menu da conta"
         },
         "bottom_header": {
           "catalog_menu_button": "Catálogo",
