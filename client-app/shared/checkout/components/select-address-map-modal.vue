@@ -270,15 +270,13 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 </script>
 
 <style lang="scss">
-$mapHeight: 523px;
-
 .select-address-map-modal {
   &__content {
     @apply relative w-full flex flex-col lg:flex-row gap-5 min-h-0;
   }
 
   &__map {
-    @apply max-h-[50vh] lg:max-h-[#{$mapHeight}] shrink-0 w-full flex-grow rounded-lg overflow-hidden lg:h-auto lg:flex-shrink lg:max-h-none;
+    @apply h-auto min-h-[50vh] w-full rounded-lg lg:min-h-full;
   }
 
   &__sidebar {
