@@ -1,7 +1,7 @@
 #import "../../fragments/quoteAttachment.graphql"
-#import "../../fragments/money.graphql"
 #import "../../fragments/quoteLineItemFields.graphql"
 #import "../../fragments/quoteAddressFields.graphql"
+#import "../../../../core/api/graphql/common/fragments/money.graphql"
 
 query GetQuote($id: String, $storeId: String, $userId: String, $currencyCode: String, $cultureName: String) {
   quote(id: $id, storeId: $storeId, userId: $userId, currencyCode: $currencyCode, cultureName: $cultureName) {

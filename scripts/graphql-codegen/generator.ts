@@ -4,10 +4,12 @@ type ModuleType = {
   name: string;
   apiPath: string;
   schemaPath: string;
+  requiredCommonFragments?: string[]; // Specific core fragment files that module depends on
 };
 
 const core = {
   apiPath: "client-app/core/api/graphql",
+  commonFragmentsPath: "client-app/core/api/graphql/common/fragments",
   schemaPath: `${process.env.APP_BACKEND_URL}/graphql`,
 } as const;
 
@@ -28,6 +30,11 @@ const independentModules: ModuleType[] = [
     name: "Quotes",
     apiPath: "client-app/modules/quotes/api/graphql",
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/quote`,
+    // Include specific core fragments that quotes module uses
+    requiredCommonFragments: [
+      `${core.commonFragmentsPath}/money.graphql`,
+      `${core.commonFragmentsPath}/currency.graphql`,
+    ],
   },
   {
     name: "BackInStock",
@@ -124,7 +131,11 @@ async function runCodegen() {
           {
             schema: module.schemaPath,
             silent: true,
-            documents: addExtension(module.apiPath),
+            documents: [
+              addExtension(module.apiPath),
+              // Include specific required fragments for validation
+              ...(module.requiredCommonFragments || []),
+            ],
             generates: {
               [moduleTypesPath]: {
                 plugins: PLUGINS,
