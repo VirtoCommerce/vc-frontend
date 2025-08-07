@@ -87,6 +87,14 @@
             <template #after>
               <slot name="after-content" v-bind="{ item }" />
             </template>
+
+            <template #after-image>
+              <slot name="after-image" v-bind="{ item }" />
+            </template>
+
+            <template #after-title>
+              <slot name="after-title" v-bind="{ item }" />
+            </template>
           </VcLineItem>
         </slot>
       </div>

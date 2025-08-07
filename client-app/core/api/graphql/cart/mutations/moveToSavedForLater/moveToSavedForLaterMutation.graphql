@@ -1,0 +1,13 @@
+#import "../../fragments/fullCart.graphql"
+#import "../../fragments/savedForLaterList.graphql"
+
+mutation MoveToSavedForLater($command: InputSaveForLaterType!) {
+  moveToSavedForLater(command: $command) {
+    cart {
+      ...fullCart
+    }
+    list {
+      ...savedForLaterList
+    }
+  }
+}

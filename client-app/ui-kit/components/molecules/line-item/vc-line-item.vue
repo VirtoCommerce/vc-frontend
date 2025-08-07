@@ -26,9 +26,15 @@
         test-id="vc-line-item-checkbox"
         @change="$emit('select', isSelected)"
       />
-
-      <!--  IMAGE -->
-      <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
+      
+      <div class="vc-line-item__img-container">
+        <!--  IMAGE -->
+        <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
+         
+        <div class="vc-line-item__img-actions">
+          <slot name="after-image" /> 
+        </div>
+      </div>
 
       <div
         :class="[
@@ -39,17 +45,23 @@
           },
         ]"
       >
-        <VcProductTitle
-          class="vc-line-item__name"
-          :disabled="disabled || deleted"
-          :to="route"
-          :title="name"
-          :target="browserTarget"
-          @click="$emit('linkClick')"
-        >
-          {{ name }}
-        </VcProductTitle>
-
+        <div class="vc-line-item__name-container">
+          <VcProductTitle
+            class="vc-line-item__name"
+            :disabled="disabled || deleted"
+            :to="route"
+            :title="name"
+            :target="browserTarget"
+            @click="$emit('linkClick')"
+          >
+            {{ name }}
+          </VcProductTitle> 
+          
+          <div class="vc-line-item__name-actions">
+            <slot name="after-title" /> 
+          </div>
+        </div>
+        
         <div
           v-if="withProperties || withPrice"
           :class="[
@@ -272,8 +284,20 @@ watchEffect(() => {
     }
   }
 
+  &__img-container {
+    @apply flex flex-col shrink-0 size-16;
+
+    @container (width > theme("containers.2xl")) {
+      @apply size-12;
+    }
+
+    @container (width > theme("containers.4xl")) {
+      @apply size-16;
+    }
+  }
+
   &__img {
-    @apply shrink-0 size-16 rounded border object-contain object-center;
+    @apply shrink-0 size-16 rounded border object-contain object-center; 
 
     @container (width > theme("containers.2xl")) {
       @apply size-12;
@@ -287,6 +311,12 @@ watchEffect(() => {
     #{$deleted} & {
       @apply opacity-50;
     }
+  }
+
+  &__img-actions {
+    @container (width > theme("containers.2xl")) {
+      @apply hidden;
+    }  
   }
 
   &__content {
@@ -305,8 +335,8 @@ watchEffect(() => {
     }
   }
 
-  &__name {
-    @apply text-sm;
+  &__name-container {
+    @apply flex flex-col;
 
     @container (width > theme("containers.2xl")) {
       @apply grow min-h-0;
@@ -318,6 +348,16 @@ watchEffect(() => {
       @container (width > theme("containers.2xl")) {
         @apply pr-0;
       }
+    }
+  }
+
+  &__name {
+    @apply text-sm;
+  }
+
+  &__name-actions {
+    @container (width <= theme("containers.2xl")) {
+      @apply hidden;
     }
   }
 

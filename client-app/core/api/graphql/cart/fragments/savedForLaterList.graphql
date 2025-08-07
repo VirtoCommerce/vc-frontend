@@ -1,0 +1,11 @@
+#import "./savedForLaterLineItem.graphql"
+
+fragment savedForLaterList on CartType {
+  id
+  name
+  type
+  itemsQuantity
+  items {
+    ...savedForLaterLineItem
+  }
+}
