@@ -1,6 +1,6 @@
 <template>
   <header
-    class="flex h-10 items-center justify-between gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
+    class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
     data-test-id="main-layout.top-header"
   >
     <div class="flex min-w-0 shrink items-center gap-3">
