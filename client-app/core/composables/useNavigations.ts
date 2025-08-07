@@ -11,7 +11,7 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import {
   convertToExtendedMenuLink,
   getFilterExpressionForCategorySubtree,
-  getFilterExpressionForInStock,
+  getFilterExpressionForInStockVariations,
   getFilterExpressionForZeroPrice,
   Logger,
   categoryToExtendedMenuLink,
@@ -167,7 +167,7 @@ export function _useNavigations() {
           : [
               getFilterExpressionForCategorySubtree({ catalogId }),
               getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
-              getFilterExpressionForInStock(true),
+              getFilterExpressionForInStockVariations(true),
             ]
               .filter(Boolean)
               .join(" ");

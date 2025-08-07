@@ -8,9 +8,13 @@ export type ElementType = {
   id: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: DefineComponent<{ product: Product }, Record<string, any>, any>;
-  shouldRender?: (product: Product) => boolean;
+  shouldRender?: (product: Product, options?: ProductComponentOptions) => boolean;
   props?: Record<string, unknown>;
 };
+
+export type ProductComponentOptions = {
+  forceProductAsVariation: boolean;
+}
 
 function _useCustomProductComponents() {
   const customProductComponents = shallowRef<{ [key: string]: ElementType }>({});
@@ -31,9 +35,9 @@ function _useCustomProductComponents() {
     return customProductComponents.value[id] !== undefined;
   }
 
-  function shouldRenderComponent(id: string, product: Product) {
+  function shouldRenderComponent(id: string, product: Product, options?: ProductComponentOptions) {
     return typeof customProductComponents.value[id]?.shouldRender === "function"
-      ? customProductComponents.value[id]?.shouldRender(product)
+      ? customProductComponents.value[id]?.shouldRender(product, options)
       : true;
   }
 
