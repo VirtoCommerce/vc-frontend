@@ -23,6 +23,7 @@ query SearchProducts(
   $withImages: Boolean!
   $selectedAddressId: String
   $selectedAddress: String
+  $preserveUserQuery: Boolean
 ) {
   products(
     storeId: $storeId
@@ -39,6 +40,7 @@ query SearchProducts(
     productIds: $productIds
     selectedAddressId: $selectedAddressId
     selectedAddress: $selectedAddress
+    preserveUserQuery: $preserveUserQuery
   ) {
     totalCount
     items {
