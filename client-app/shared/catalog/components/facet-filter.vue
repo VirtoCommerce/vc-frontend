@@ -228,7 +228,6 @@ function handleFacetItemClick(item: FacetValueItemType): void {
 
   emit("update:filter", {
     filterType: facet.value.type,
-    isGenerated: false,
     name: facet.value.paramName,
     termValues: selectedTerms.value.map(value => ({ value, label: facet.value.values.find(el => el.value === value)?.label || value })),
     rangeValues: selectedRanges.value
