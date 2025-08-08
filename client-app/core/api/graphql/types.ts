@@ -5823,7 +5823,7 @@ export type SearchProductFilterResult = {
   /** The type of the filter, e.g., 'term' or 'range' */
   filterType: Scalars['String']['output'];
   /** Indicates whether the filter was generated automatically */
-  isGenerated: Scalars['Boolean']['output'];
+  isGenerated?: Scalars['Boolean']['output'];
   /** Localized name of the filter (if available) */
   label?: Maybe<Scalars['String']['output']>;
   /** The name of the filter */
