@@ -134,6 +134,9 @@ export function useShortCart() {
 
       return result?.data?.addItem;
     } catch (err) {
+      if (err instanceof ApolloError && err.networkError?.toString() === (AbortReason.Explicit as string)) {
+        return;
+      }
       Logger.error(err as string);
     }
   }
