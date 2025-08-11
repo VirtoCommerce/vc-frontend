@@ -234,7 +234,7 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
-import type { LineItemType, Product, CartType } from "@/core/api/graphql/types";
+import type { LineItemType, Product, SavedForLaterListFragment } from "@/core/api/graphql/types";
 import CartForLater from "@/shared/cart/components/cart-for-later.vue";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
@@ -284,7 +284,7 @@ usePageHead({
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
 const isCartLoked = ref(false);
-const savedForLaterList = ref<CartType>();
+const savedForLaterList = ref<SavedForLaterListFragment>();
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value);
@@ -313,21 +313,21 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
 }
 
 async function handleSaveForLater(itemIds: string[]) {
-  if (!itemIds?.length) {
+  if (!itemIds?.length || !cart.value?.id) {
     return;
   }
 
-  const moveResult = await moveToSavedForLater(cart.value!.id, itemIds);
-  savedForLaterList.value = moveResult.list;
+  const moveResult = await moveToSavedForLater(cart.value.id, itemIds);
+  savedForLaterList.value = moveResult?.list;
 }
 
 async function handleMoveToCart(itemIds: string[]) {
-  if (!itemIds?.length) {
+  if (!itemIds?.length || !cart.value?.id) {
     return;
   }
 
-  const moveResult = await moveFromSavedForLater(cart.value!.id, itemIds);
-  savedForLaterList.value = moveResult.list;
+  const moveResult = await moveFromSavedForLater(cart.value.id, itemIds);
+  savedForLaterList.value = moveResult?.list;
 }
 
 function selectItemEvent(item: LineItemType | undefined): void {

@@ -5,12 +5,12 @@
     size="lg">
     <VcProductsGrid short>
       <CartItemForLater
-        v-for="item in savedForLaterList?.items"
-        :key="item.product!.id"
+        v-for="(item, index) in savedForLaterList?.items"
+        :key="index"
         :item="item"
         :saved-for-later-list="savedForLaterList"
         :background="false"
-        @link-click="selectItemEvent(item.product!)"
+        @link-click="selectItemEvent(item.product)"
         @add-to-cart="(lineItemId) => $emit('addToCart', lineItemId)" />
     </VcProductsGrid>
   </VcWidget>
@@ -20,7 +20,7 @@
 import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics } from "@/core/composables/useAnalytics";
-import type { CartType, Product } from "@/core/api/graphql/types";
+import type { SavedForLaterListFragment, Product } from "@/core/api/graphql/types";
 import CartItemForLater from "@/shared/cart/components/cart-item-for-later.vue";
 
 interface IEmits {
@@ -33,7 +33,7 @@ defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 interface IProps {
-  savedForLaterList: CartType | undefined;
+  savedForLaterList: SavedForLaterListFragment | undefined;
 }
 
 const savedForLaterList = toRef(props, "savedForLaterList");
@@ -46,7 +46,11 @@ const listProperties = computed(() => ({
 const { analytics } = useAnalytics();
 const { t } = useI18n();
 
-function selectItemEvent(item: Product) {
-  analytics("selectItem", item, listProperties.value);
+function selectItemEvent(item?: Pick<SavedForLaterListFragment['items'][number], 'product'>) {
+  if(!item) {
+    return;
+  }
+
+  analytics("selectItem", item as Product, listProperties.value);
 }
 </script>

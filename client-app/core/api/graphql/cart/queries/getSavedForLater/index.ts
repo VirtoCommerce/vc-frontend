@@ -1,7 +1,6 @@
 import { graphqlClient } from "@/core/api/graphql/client";
 import { GetSavedForLaterDocument } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
-import type {CartType} from "@/core/api/graphql/types";
 
 export async function getSavedForLater() {
   const { storeId, userId, cultureName, currencyCode } = globals;
@@ -16,5 +15,5 @@ export async function getSavedForLater() {
     },
   });
 
-  return data?.getSavedForLater as CartType;
+  return data?.getSavedForLater;
 }

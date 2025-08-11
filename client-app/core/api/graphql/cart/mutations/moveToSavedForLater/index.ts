@@ -1,7 +1,6 @@
 import { useMutation } from "@vue/apollo-composable";
 import { MoveToSavedForLaterDocument } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
-import type { CartWithListType } from "@/core/api/graphql/types";
 
 export async function moveToSavedForLater(cartId: string, lineItemIds: string[]) {
   const { storeId, userId, cultureName, currencyCode } = globals;
@@ -19,5 +18,5 @@ export async function moveToSavedForLater(cartId: string, lineItemIds: string[])
     },
   });
 
-  return result?.data?.moveToSavedForLater as CartWithListType;
+  return result?.data?.moveToSavedForLater;
 }
