@@ -46,7 +46,7 @@ const listProperties = computed(() => ({
 const { analytics } = useAnalytics();
 const { t } = useI18n();
 
-function selectItemEvent(item?: Pick<SavedForLaterListFragment['items'][number], 'product'>) {
+function selectItemEvent(item?: SavedForLaterListFragment['items'][number]['product']) {
   if(!item) {
     return;
   }
