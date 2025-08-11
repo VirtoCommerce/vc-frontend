@@ -31,7 +31,7 @@
           :filters="filtersToShow"
           :loading="fetchingProducts"
           class="category__product-filters"
-          @change="applyFilters($event)"
+          @change:filters="applyFiltersOnly($event)"
         />
       </template>
 
@@ -139,64 +139,36 @@
         :hide-all-filters="hideSidebar"
         :facets-to-hide="facetsToHide"
         @reset-facet-filters="resetFacetFilters"
-        @apply-filters="applyFilters"
+        @change:filters="applyFiltersOnly($event)"
         @show-popup-sidebar="showFiltersSidebar"
         @apply-sort="resetCurrentPage"
       />
-      <!-- Filters chips -->
-      <div
-        v-if="
-          hasSelectedFacets ||
-          (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
-            $route.query.page &&
-            Number($route.query.page) > 1)
-        "
-        class="category__chips"
+      <ActiveFilterChips
+        v-if="hasSelectedFacets || isResetPageButtonShown"
+        :filters="productsFilters.filters"
+        :facets-to-hide="facetsToHide"
+        @apply-filters="applyFiltersOnly"
       >
-        <template v-for="facet in productsFilters.facets">
-          <template v-if="!facetsToHide?.includes(facet.paramName)">
-            <template v-for="filterItem in facet.values">
-              <VcChip
-                v-if="filterItem.selected"
-                :key="facet.paramName + filterItem.value"
-                color="secondary"
-                closable
-                truncate
-                @close="
-                  removeFacetFilter({
-                    paramName: facet.paramName,
-                    value: filterItem.value,
-                  })
-                "
-              >
-                {{ filterItem.label }}
-              </VcChip>
-            </template>
-          </template>
+        <template #actions>
+          <VcChip v-if="hasSelectedFacets" color="secondary" variant="outline" clickable @click="resetFacetFilters">
+            <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+            <VcIcon name="reset" />
+          </VcChip>
+
+          <VcChip
+            v-if="isResetPageButtonShown"
+            color="secondary"
+            variant="outline"
+            clickable
+            @click="resetPage"
+          >
+            <span>{{ $t("common.buttons.reset_page") }}</span>
+
+            <VcIcon name="reset" />
+          </VcChip>
         </template>
-
-        <VcChip
-          v-if="
-            catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
-            $route.query.page &&
-            Number($route.query.page) > 1
-          "
-          color="secondary"
-          variant="outline"
-          clickable
-          @click="resetPage"
-        >
-          <span>{{ $t("common.buttons.reset_page") }}</span>
-
-          <VcIcon name="reset" />
-        </VcChip>
-
-        <VcChip v-if="hasSelectedFacets" color="secondary" variant="outline" clickable @click="resetFacetFilters">
-          <span>{{ $t("common.buttons.reset_filters") }}</span>
-
-          <VcIcon name="reset" />
-        </VcChip>
-      </div>
+      </ActiveFilterChips>
 
       <div ref="categoryProductsAnchor" class="category__products-anchor"></div>
 
@@ -222,7 +194,6 @@
         :mode="catalogPaginationMode"
         class="category__products"
         @change-page="changeProductsPage"
-        @reset-facet-filters="resetFacetFilters"
         @reset-filter-keyword="resetFilterKeyword"
         @select-product="selectProduct"
       />
@@ -248,6 +219,7 @@ import {
 import omit from "lodash/omit";
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { useAnalytics, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
@@ -272,6 +244,7 @@ import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
+import ActiveFilterChips from "@/shared/catalog/components/active-filter-chips.vue";
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
 import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
@@ -316,6 +289,14 @@ const { catalogId, currencyCode } = globals;
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
 
+const route = useRoute();
+
+const isResetPageButtonShown = computed(() => {
+  return catalogPaginationMode.value === CATALOG_PAGINATION_MODES.loadMore &&
+    !!route.query.page &&
+    Number(route.query.page) > 1
+})
+
 const catalogPaginationMode = computed(
   () => themeContext.value?.settings?.catalog_pagination_mode ?? CATALOG_PAGINATION_MODES.infiniteScroll,
 );
@@ -354,13 +335,15 @@ const {
   searchQueryParam,
   sortQueryParam,
   totalProductsCount,
+  preserveUserQueryQueryParam,
 
   applyFilters: _applyFilters,
+  applyFiltersOnly,
   fetchProducts: _fetchProducts,
   fetchMoreProducts,
   hideFiltersSidebar,
   openBranchesModal,
-  removeFacetFilter,
+
   resetFacetFilters,
   resetFilterKeyword,
   showFiltersSidebar,
@@ -449,6 +432,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   ]
     .filter(Boolean)
     .join(" "),
+  preserveUserQuery: !!preserveUserQueryQueryParam.value,
 }));
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -709,10 +693,6 @@ onMounted(() => {
     @media (width < theme("screens.lg")) and (min-width: theme("screens.md")) {
       @apply order-last w-full;
     }
-  }
-
-  &__chips {
-    @apply flex mb-3 flex-wrap gap-2;
   }
 
   &__products-bottom {
