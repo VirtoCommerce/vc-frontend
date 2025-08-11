@@ -11,11 +11,9 @@
     with-total
     with-subtotal
     removable
-    saveable-for-later
     :selectable="selectable"
     @select:items="$emit('select:items', $event)"
     @remove:items="$emit('remove:items', $event)"
-    @save-for-later="$emit('saveForLater', $event)"
     @link-click="handleLinkClick($event)"
   >
     <template #titles>
@@ -73,6 +71,25 @@
         </VcAlert>
       </div>
     </template>
+
+    <template #after-image="{ item }"> 
+      <CartItemActions 
+        icons
+        saveable-for-later
+        :selected="sharedSelectedItemIds?.includes(item.id)"
+        :disabled="disabled"
+        @save-for-later="$emit('saveForLater', [item.id])" 
+      />
+    </template>
+
+    <template #after-title="{ item }">
+      <CartItemActions 
+        saveable-for-later
+        :selected="sharedSelectedItemIds?.includes(item.id)"
+        :disabled="disabled"
+        @save-for-later="$emit('saveForLater', [item.id])" 
+      />
+    </template>
   </VcLineItems>
 </template>
 
@@ -85,6 +102,7 @@ import { InStock } from "@/shared/catalog";
 import { ConfigurationItems } from "@/shared/common";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import CartItemActions from "@/shared/cart/components/cart-item-actions.vue";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 interface IProps {

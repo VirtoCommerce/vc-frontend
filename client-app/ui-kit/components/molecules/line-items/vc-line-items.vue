@@ -10,7 +10,7 @@
           :indeterminate="isSomeItemsSelected"
           class="vc-line-items__checkbox"
           test-id="vc-line-items-head-checkbox"
-          @change="($event) => selectAllItems($event as boolean)" 
+          @change="($event) => selectAllItems($event as boolean)"
         />
 
         <div class="vc-line-items__product">
@@ -65,7 +65,6 @@
             :disabled="disabled"
             :deleted="item.deleted"
             :removable="removable"
-            :saveable-for-later="saveableForLater"
             :selectable="selectable"
             :selected="selectable && selectedItemIds?.includes(item.id)"
             :browser-target="browserTarget"
@@ -74,7 +73,7 @@
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
             @link-click="$emit('linkClick', item)"
-            @save-for-later="() => saveForLaterSingle(item.id)">
+          >
             <template #before>
               <slot name="before-content" v-bind="{ item }" />
             </template>
@@ -87,6 +86,14 @@
 
             <template #after>
               <slot name="after-content" v-bind="{ item }" />
+            </template>
+
+            <template #after-image>
+              <slot name="after-image" v-bind="{ item }" />
+            </template>
+
+            <template #after-title>
+              <slot name="after-title" v-bind="{ item }" />
             </template>
           </VcLineItem>
         </slot>
@@ -136,7 +143,6 @@ interface IEmits {
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "linkClick", value: PreparedLineItemType): void;
-  (event: "saveForLater", value: string[]): void;
 }
 
 interface IProps {
@@ -153,7 +159,6 @@ interface IProps {
   withSubtotal?: boolean;
   withHeader?: boolean;
   browserTarget?: BrowserTargetType;
-  saveableForLater?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -177,9 +182,9 @@ const hasTotal = computed(() => props.items.some((item) => item.extendedPrice));
 const subtotal = computed<number>(() =>
   hasTotal.value
     ? sumBy(
-      props.items.filter((item) => selectedItemIds.value.includes(item.id) && item.extendedPrice),
-      (item) => item.extendedPrice!.amount,
-    )
+        props.items.filter((item) => selectedItemIds.value.includes(item.id) && item.extendedPrice),
+        (item) => item.extendedPrice!.amount,
+      )
     : 0,
 );
 
@@ -210,10 +215,6 @@ function removeSelectedItems() {
 
 function removeAllItems() {
   emit("remove:items", itemIds.value);
-}
-
-function saveForLaterSingle(itemId: string) {
-  emit("saveForLater", [itemId]);
 }
 
 watchEffect(() => {
@@ -284,7 +285,7 @@ watchEffect(() => {
   &__removable {
     @apply w-7;
   }
-  
+
   &__body {
     @apply flex flex-col gap-4;
 
