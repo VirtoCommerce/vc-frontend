@@ -81,7 +81,16 @@
       "page_limit": "Não é possível mostrar mais resultados."
     },
     "slider": {
-      "tooltip": "{count} itens"
+      "tooltip": "{count} itens",
+      "aria_label": "Slider de intervalo de {min} a {max}",
+      "start_input_label": "Valor inicial (entre {min} e {max})",
+      "end_input_label": "Valor final (entre {min} e {max})",
+      "start_input_aria_label": "Valor inicial, intervalo de {min} a {max}",
+      "end_input_aria_label": "Valor final, intervalo de {min} a {max}",
+      "start_input_help": "Insira um número entre {min} e {max}, incremento de {step}",
+      "end_input_help": "Insira um número entre {min} e {max}, incremento de {step}",
+      "column_aria_label": "Coluna com {count} itens, intervalo de {from} a {to}",
+      "current_value_announcement": "Valor do slider: {start} a {end}, intervalo {min} a {max}"
     }
   }
 }
