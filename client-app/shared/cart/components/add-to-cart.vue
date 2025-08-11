@@ -149,8 +149,7 @@ async function onChange() {
       return;
     }
 
-    const updatedLineItem = getLineItem(updatedCart?.items);
-    handleUpdateResult(updatedLineItem, mode);
+    handleUpdateResult(updatedCart, mode);
   } finally {
     loading.value = false;
   }
@@ -176,7 +175,13 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
   return updatedCart;
 }
 
-function handleUpdateResult(lineItem: ShortLineItemFragment | undefined, mode: AddToCartModeType) {
+function handleUpdateResult(_cart: Awaited<ReturnType<typeof updateOrAddToCart>>, mode: AddToCartModeType) {
+  if (!_cart) {
+    return;
+  }
+
+  const lineItem = getLineItem(_cart.items);
+
   if (!lineItem) {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
     displayErrorMessage(mode, getValidationErrors());
