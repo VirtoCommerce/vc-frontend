@@ -453,6 +453,7 @@ describe("useProducts", () => {
           {
             name: "hiddenFacet",
             filterType: "term",
+            isGenerated: false,
             termValues: [{ value: "v1", label: "Value 1" }],
           },
         ],
@@ -484,6 +485,7 @@ describe("useProducts", () => {
           {
             name: "visibleFacet",
             filterType: "term",
+            isGenerated: false,
             termValues: [{ value: "v1", label: "Value 1" }],
           },
         ],
@@ -521,11 +523,13 @@ describe("useProducts", () => {
           {
             name: "hiddenFacet",
             filterType: "term",
+            isGenerated: false,
             termValues: [{ value: "v1", label: "Value 1" }],
           },
           {
             name: "visibleFacet",
             filterType: "term",
+            isGenerated: false,
             termValues: [{ value: "v2", label: "Value 2" }],
           },
         ],
@@ -539,7 +543,9 @@ describe("useProducts", () => {
     });
 
     it("should return false when all selected facets are hidden", () => {
-      const { facets, hasSelectedFacets, updateProductsFilters } = useProducts({ facetsToHide: ["hiddenFacet", "anotherHidden"] });
+      const { facets, hasSelectedFacets, updateProductsFilters } = useProducts({
+        facetsToHide: ["hiddenFacet", "anotherHidden"],
+      });
 
       // Set up facets
       facets.value = [
@@ -563,11 +569,13 @@ describe("useProducts", () => {
           {
             name: "hiddenFacet",
             filterType: "term",
+            isGenerated: false,
             termValues: [{ value: "v1", label: "Value 1" }],
           },
           {
             name: "anotherHidden",
             filterType: "term",
+            isGenerated: false,
             termValues: [{ value: "v2", label: "Value 2" }],
           },
         ],
