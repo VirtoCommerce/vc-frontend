@@ -1284,7 +1284,10 @@
       "title": "Koszyk",
       "empty_cart_description": "Twój koszyk jest pusty",
       "recently_browsed_products": "Ostatnio przeglądane",
-      "empty_cart_search_text": "Użyj wyszukiwarki, aby znaleźć wszystko, czego potrzebujesz"
+      "empty_cart_search_text": "Użyj wyszukiwarki, aby znaleźć wszystko, czego potrzebujesz",
+      "save_for_later": "Zapisz na później",
+      "saved_for_later": "Zapisano na później",
+      "move_to_cart": "Przenieś do koszyka"
     },
     "checkout": {
       "meta": {

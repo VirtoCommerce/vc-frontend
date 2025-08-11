@@ -14,7 +14,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
       storeId,
       userId,
       cultureName,
-      slug: toValue(seoUrl),
+      permalink: toValue(seoUrl),
     };
   });
 
