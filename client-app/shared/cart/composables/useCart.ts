@@ -94,16 +94,22 @@ export function useShortCart() {
   const { cart, refetch, loading } = useSharedShortCart();
   const { storeId, currencyCode, cultureName, userId } = globals;
   const commonVariables = { storeId, currencyCode, cultureName, userId };
-  const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
   const { analytics } = useAnalytics();
+  const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
+  const {
+    add: addToCartBatchedMutation,
+    overflowed: addToCartBatchedOverflowed,
+    loading: addToCartBatchedLoading,
+  } = useMutationBatcher(_addToCart);
 
-  async function addToCart(
+  async function addToCartFunction(
     productId: string,
     quantity: number,
     configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
-  ): Promise<ShortCartFragment | undefined> {
+    mutation: typeof _addToCart | typeof addToCartBatchedMutation = _addToCart,
+  ) {
     try {
-      const result = await _addToCart(
+      const result = await mutation(
         {
           command: {
             productId,
@@ -128,8 +134,26 @@ export function useShortCart() {
 
       return result?.data?.addItem;
     } catch (err) {
+      if (err instanceof ApolloError && err.networkError?.toString() === (AbortReason.Explicit as string)) {
+        return;
+      }
       Logger.error(err as string);
     }
+  }
+
+  async function addToCart(
+    productId: string,
+    quantity: number,
+    configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
+  ) {
+    return addToCartFunction(productId, quantity, configurationSections, _addToCart);
+  }
+  async function addToCartBatched(
+    productId: string,
+    quantity: number,
+    configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
+  ) {
+    return addToCartFunction(productId, quantity, configurationSections, addToCartBatchedMutation);
   }
 
   const { mutate: _addItemsToCart, loading: addItemsToCartLoading } = useMutation(AddItemsCartDocument);
@@ -180,10 +204,19 @@ export function useShortCart() {
   const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } = useMutation(
     ChangeShortCartItemQuantityDocument,
   );
-  async function changeItemQuantity(lineItemId: string, quantity: number): Promise<ShortCartFragment | undefined> {
+  const {
+    add: changeItemQuantityBatchedMutation,
+    overflowed: changeItemQuantityBatchedOverflowed,
+    loading: changeItemQuantityBatchedLoading,
+  } = useMutationBatcher(_changeItemQuantity);
+  async function changeItemQuantityFunction(
+    lineItemId: string,
+    quantity: number,
+    mutation: typeof _changeItemQuantity | typeof changeItemQuantityBatchedMutation,
+  ) {
     try {
       const lineItem = cart.value?.items.find((item) => item.id === lineItemId);
-      const result = await _changeItemQuantity({
+      const result = await mutation({
         command: { lineItemId, quantity, ...commonVariables },
         skipQuery: false,
       });
@@ -196,6 +229,12 @@ export function useShortCart() {
     } catch (err) {
       Logger.error(err as string);
     }
+  }
+  async function changeItemQuantity(lineItemId: string, quantity: number) {
+    return changeItemQuantityFunction(lineItemId, quantity, _changeItemQuantity);
+  }
+  async function changeItemQuantityBatched(lineItemId: string, quantity: number) {
+    return changeItemQuantityFunction(lineItemId, quantity, changeItemQuantityBatchedMutation);
   }
 
   function getItemsTotal(productIds: string[]): number {
@@ -212,17 +251,23 @@ export function useShortCart() {
     cart,
     refetch,
     addToCart,
+    addToCartBatched,
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
+    changeItemQuantityBatched,
     getItemsTotal,
     loading,
+    addToCartBatchedOverflowed,
+    changeItemQuantityBatchedOverflowed,
     changing: computed(
       () =>
         addToCartLoading.value ||
+        addToCartBatchedLoading.value ||
         addItemsToCartLoading.value ||
         addBulkItemsToCartLoading.value ||
-        changeItemQuantityLoading.value,
+        changeItemQuantityLoading.value ||
+        changeItemQuantityBatchedLoading.value,
     ),
   };
 }

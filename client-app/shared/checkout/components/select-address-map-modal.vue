@@ -4,85 +4,89 @@
     max-width="72rem"
     is-mobile-fullscreen
     class="select-address-map-modal"
+    pinned-footer
   >
     <div class="select-address-map-modal__content">
-      <div class="select-address-map-modal__map">
-        <GoogleMap :api-key="apiKey" :map-id="MAP_ID" :options="{ disableDefaultUI: true }">
-          <GoogleMapMarkerClusterer :map-id="MAP_ID">
-            <template v-for="address in addresses" :key="address.id">
-              <GoogleMapMarker
-                v-if="getLatLng(address.geoLocation)"
-                :map-id="MAP_ID"
-                :position="getLatLng(address.geoLocation)!"
-                :pin-options="createPin()"
-                :title="address.name"
-                :is-active="selectedAddressId === address.id"
-                :active-pin-options="activePinOptions"
-              >
-                <div class="select-address-map-modal__info-window">
-                  <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
-                  <div class="select-address-map-modal__info-window-content">
-                    <dl>
-                      <dt>
-                        {{ $t("shared.checkout.select_bopis_modal.location_label") }}
-                      </dt>
+      <GoogleMap
+        :api-key="apiKey"
+        :map-id="MAP_ID"
+        :options="{ disableDefaultUI: true }"
+        class="select-address-map-modal__map"
+      >
+        <GoogleMapMarkerClusterer :map-id="MAP_ID">
+          <template v-for="address in addresses" :key="address.id">
+            <GoogleMapMarker
+              v-if="getLatLng(address.geoLocation)"
+              :map-id="MAP_ID"
+              :position="getLatLng(address.geoLocation)!"
+              :pin-options="createPin()"
+              :title="address.name"
+              :is-active="selectedAddressId === address.id"
+              :active-pin-options="activePinOptions"
+            >
+              <div class="select-address-map-modal__info-window">
+                <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
+                <div class="select-address-map-modal__info-window-content">
+                  <dl>
+                    <dt>
+                      {{ $t("shared.checkout.select_bopis_modal.location_label") }}
+                    </dt>
 
-                      <dd>{{ getAddressName(address) }}</dd>
+                    <dd>{{ getAddressName(address) }}</dd>
 
-                      <dt v-if="address.contactPhone">
-                        {{ $t("shared.checkout.select_bopis_modal.contact_phone_label") }}
-                      </dt>
+                    <dt v-if="address.contactPhone">
+                      {{ $t("shared.checkout.select_bopis_modal.contact_phone_label") }}
+                    </dt>
 
-                      <dd v-if="address.contactPhone">
-                        <a :href="`tel:${address.contactPhone}`">{{ address.contactPhone }}</a>
-                      </dd>
+                    <dd v-if="address.contactPhone">
+                      <a :href="`tel:${address.contactPhone}`">{{ address.contactPhone }}</a>
+                    </dd>
 
-                      <dt v-if="address.contactEmail">
-                        {{ $t("shared.checkout.select_bopis_modal.contact_email_label") }}
-                      </dt>
+                    <dt v-if="address.contactEmail">
+                      {{ $t("shared.checkout.select_bopis_modal.contact_email_label") }}
+                    </dt>
 
-                      <dd v-if="address.contactEmail">
-                        <a :href="`mailto:${address.contactEmail}`">{{ address.contactEmail }}</a>
-                      </dd>
+                    <dd v-if="address.contactEmail">
+                      <a :href="`mailto:${address.contactEmail}`">{{ address.contactEmail }}</a>
+                    </dd>
 
-                      <dt v-if="address.workingHours">
-                        {{ $t("shared.checkout.select_bopis_modal.working_hours_label") }}
-                      </dt>
+                    <dt v-if="address.workingHours">
+                      {{ $t("shared.checkout.select_bopis_modal.working_hours_label") }}
+                    </dt>
 
-                      <dd v-if="address.workingHours">
-                        <VcMarkdownRender
-                          class="select-address-map-modal__info-window-working-hours"
-                          :src="address.workingHours"
-                        />
-                      </dd>
+                    <dd v-if="address.workingHours">
+                      <VcMarkdownRender
+                        class="select-address-map-modal__info-window-working-hours"
+                        :src="address.workingHours"
+                      />
+                    </dd>
 
-                      <dt v-if="address.description">
-                        {{ $t("shared.checkout.select_bopis_modal.description_label") }}
-                      </dt>
+                    <dt v-if="address.description">
+                      {{ $t("shared.checkout.select_bopis_modal.description_label") }}
+                    </dt>
 
-                      <dd v-if="address.description">{{ address.description }}</dd>
-                    </dl>
-                  </div>
-
-                  <div class="select-address-map-modal__info-window-actions">
-                    <VcButton variant="no-background" color="secondary" size="xs" @click="closeInfoWindow">
-                      {{ $t("common.buttons.cancel") }}
-                    </VcButton>
-
-                    <VcButton
-                      size="xs"
-                      variant="outline"
-                      @click="selectHandler(address, { closeInfo: true, scrollToSelectedOnList: true })"
-                    >
-                      {{ $t("common.buttons.select") }}
-                    </VcButton>
-                  </div>
+                    <dd v-if="address.description">{{ address.description }}</dd>
+                  </dl>
                 </div>
-              </GoogleMapMarker>
-            </template>
-          </GoogleMapMarkerClusterer>
-        </GoogleMap>
-      </div>
+
+                <div class="select-address-map-modal__info-window-actions">
+                  <VcButton variant="no-background" color="secondary" size="xs" @click="closeInfoWindow">
+                    {{ $t("common.buttons.cancel") }}
+                  </VcButton>
+
+                  <VcButton
+                    size="xs"
+                    variant="outline"
+                    @click="selectHandler(address, { closeInfo: true, scrollToSelectedOnList: true })"
+                  >
+                    {{ $t("common.buttons.select") }}
+                  </VcButton>
+                </div>
+              </div>
+            </GoogleMapMarker>
+          </template>
+        </GoogleMapMarkerClusterer>
+      </GoogleMap>
 
       <div class="select-address-map-modal__sidebar">
         <ul class="select-address-map-modal__list">
@@ -266,15 +270,13 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 </script>
 
 <style lang="scss">
-$mapHeight: 523px;
-
 .select-address-map-modal {
   &__content {
-    @apply relative w-full flex flex-col lg:h-[#{$mapHeight}] lg:flex-row gap-5;
+    @apply relative w-full flex flex-col lg:flex-row gap-5 min-h-0;
   }
 
   &__map {
-    @apply h-[#{$mapHeight}] size-full flex-grow rounded-lg overflow-hidden;
+    @apply h-auto min-h-[50vh] w-full rounded-lg lg:min-h-full;
   }
 
   &__sidebar {
