@@ -10,6 +10,7 @@ import type { ComposerTranslation } from "vue-i18n";
 export type PrimitiveValueType = string | number | boolean | null;
 
 export interface IPropertyValue {
+  colorCode?: string;
   value: PrimitiveValueType;
   label: string;
 }
@@ -18,6 +19,7 @@ export interface IProperty {
   name: string;
   label: string;
   values: IPropertyValue[];
+  propertyValueType: PropertyValueTypes;
 }
 
 type SelectedPropertiesMapType = ReadonlyMap<string, PrimitiveValueType>;
@@ -136,7 +138,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
       .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
 
     allVariationProps.forEach((prop) => {
-      const { name, value, label } = prop;
+      const { name, value, label, colorCode, propertyValueType } = prop;
 
       if (!name || value === undefined) {
         return;
@@ -147,12 +149,13 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
           name,
           label: label,
           values: [],
+          propertyValueType,
         });
       }
 
       const property = props.get(name);
       if (property && !property.values.some((v) => v.value === value)) {
-        property.values.push({ value, label: getDisplayLabel(prop, t) });
+        property.values.push({ colorCode, value, label: getDisplayLabel(prop, t) });
       }
     });
 
@@ -211,14 +214,8 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     selectedProperties.value = calculateNewSelections(propertyName, value, variations.value, selectedProperties.value);
   }
 
-  function getType(property: IProperty) {
-    return property.name === "Colour" ? "color" : "text";
-  }
-
   function getTooltip(property: IProperty, option: IPropertyValue) {
-    const type = getType(property);
-
-    if (type === "color") {
+    if (property.propertyValueType === PropertyValueTypes.Color) {
       return option.label;
     }
 
@@ -244,7 +241,6 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     isSelected,
     isAvailable,
 
-    getType,
     getTooltip,
   };
 }
