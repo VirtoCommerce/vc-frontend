@@ -61,6 +61,13 @@
         </div>
       </VcWidget>
 
+      <CartForLater
+        v-if="savedForLaterList?.items?.length"
+        :saved-for-later-list="savedForLaterList"
+        class="mt-5"
+        @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" 
+      />
+
       <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" class="mt-5" />
     </template>
 
@@ -77,6 +84,7 @@
           @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
           @select:items="handleSelectItems"
           @remove:items="handleRemoveItems"
+          @save-for-later="handleSaveForLater"
           @clear:cart="openClearCartModal"
           @link-click="selectItemEvent"
         />
@@ -96,6 +104,13 @@
 
           <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
         </template>
+
+        <CartForLater
+          v-if="savedForLaterList?.items?.length"
+          :saved-for-later-list="savedForLaterList"
+          class="mt-5"
+          @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" 
+        />
 
         <RecentlyBrowsedProducts
           v-if="recentlyBrowsedProducts.length"
@@ -203,6 +218,9 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
+import { moveFromSavedForLater } from "@/core/api/graphql/cart/mutations/moveFromSavedForLater";
+import { moveToSavedForLater } from "@/core/api/graphql/cart/mutations/moveToSavedForLater";
+import { getSavedForLater } from "@/core/api/graphql/cart/queries/getSavedForLater";
 import { useBreadcrumbs, useAnalytics, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY, MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -218,7 +236,8 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
-import type { LineItemType, Product } from "@/core/api/graphql/types";
+import type { LineItemType, Product, SavedForLaterListFragment } from "@/core/api/graphql/types";
+import CartForLater from "@/shared/cart/components/cart-for-later.vue";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
@@ -267,6 +286,7 @@ usePageHead({
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
 const isCartLoked = ref(false);
+const savedForLaterList = ref<SavedForLaterListFragment>();
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value);
@@ -292,6 +312,24 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
   } else {
     selectCartItems(value.itemIds);
   }
+}
+
+async function handleSaveForLater(itemIds: string[]) {
+  if (!itemIds?.length || !cart.value?.id) {
+    return;
+  }
+
+  const moveResult = await moveToSavedForLater(cart.value.id, itemIds);
+  savedForLaterList.value = moveResult?.list;
+}
+
+async function handleMoveToCart(itemIds: string[]) {
+  if (!itemIds?.length || !cart.value?.id) {
+    return;
+  }
+
+  const moveResult = await moveFromSavedForLater(cart.value.id, itemIds);
+  savedForLaterList.value = moveResult?.list;
 }
 
 function selectItemEvent(item: LineItemType | undefined): void {
@@ -322,6 +360,9 @@ void (async () => {
   const isXRecommendModuleEnabled = isEnabledXRecommend(XRECOMMEND_ENABLED_KEY);
   if (isAuthenticated.value && isXRecommendModuleEnabled) {
     recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
+  }
+  if (isAuthenticated.value) {
+    savedForLaterList.value = await getSavedForLater();
   }
 })();
 </script>
