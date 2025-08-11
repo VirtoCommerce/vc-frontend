@@ -1,5 +1,11 @@
 <template>
-  <VcModal :title="$t('shared.checkout.select_address_modal.title')" max-width="60rem" is-mobile-fullscreen dividers>
+  <VcModal
+    :title="$t('shared.checkout.select_address_modal.title')"
+    max-width="60rem"
+    is-mobile-fullscreen
+    dividers
+    pinned-footer
+  >
     <VcAlert class="mb-4 lg:hidden" icon="check-circle" size="sm" variant="solid-light">
       {{ $t("shared.checkout.select_address_modal.message") }}
     </VcAlert>
