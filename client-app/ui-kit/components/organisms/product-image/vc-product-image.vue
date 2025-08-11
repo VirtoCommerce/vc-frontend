@@ -123,7 +123,9 @@ function slideChanged(swiper: SwiperInstance) {
   $carouselImg: "";
   $img: "";
 
-  @apply relative z-0 max-w-full aspect-square border border-neutral-200 rounded;
+  --radius: var(--vc-product-image-radius, var(--vc-radius, 0.5rem));
+
+  @apply relative z-0 max-w-full aspect-square border border-neutral-200 rounded-[--radius];
 
   &__carousel {
     @apply h-full w-full;
@@ -132,7 +134,7 @@ function slideChanged(swiper: SwiperInstance) {
   &__carousel-img {
     $carouselImg: &;
 
-    @apply w-full aspect-square select-none rounded object-contain object-center;
+    @apply w-full aspect-square select-none rounded-[--radius] object-contain object-center;
   }
 
   &__carousel-btn {
@@ -165,7 +167,7 @@ function slideChanged(swiper: SwiperInstance) {
 
   &__img {
     $img: &;
-    @apply w-full aspect-square rounded object-contain object-center;
+    @apply w-full aspect-square rounded-[--radius] object-contain object-center;
   }
 
   &__slot {

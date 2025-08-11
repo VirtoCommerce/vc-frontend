@@ -5,7 +5,7 @@
     :keyword="keywordQueryParam"
     :filters="filters"
     :loading="loading"
-    @change="$emit('applyFilters', $event)"
+    @change:filters="$emit('change:filters', $event)"
   >
     <template #prepend>
       <VcButton
@@ -75,6 +75,7 @@ import { useI18n } from "vue-i18n";
 import { useRouteQueryParam } from "@/core/composables";
 import { PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
+import type { SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 
@@ -85,7 +86,7 @@ withDefaults(defineProps<IProps>(), {
 });
 
 interface IEmits {
-  (event: "applyFilters", filters: ProductsFiltersType): void;
+  (event: "change:filters", filters: SearchProductFilterResult[]): void;
   (event: "applySort"): void;
   (event: "showPopupSidebar"): void;
 }

@@ -15,7 +15,7 @@
   @apply max-h-full overflow-y-auto;
 
   &__container {
-    @apply py-4 px-6;
+    @apply py-4 px-6 min-h-0 flex flex-col;
   }
 }
 </style>

@@ -88,8 +88,8 @@
           @apply-sorting="sortVariations"
           @change-page="changeVariationsPage"
           @show-filters="showFiltersSidebar"
-          @remove-facet-filter="removeFacetFilter"
-          @reset-facet-filters="resetFacetFilters"
+          @reset-filters="resetFacetFilters"
+          @apply-filters="applyFilters"
         />
 
         <component
@@ -142,7 +142,7 @@ import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
   buildBreadcrumbs,
-  getFilterExpressionFromFacets,
+  generateFilterExpressionFromFilters,
   getFilterExpression,
   getSortingExpression,
   getFilterExpressionForAvailableIn,
@@ -167,7 +167,7 @@ import {
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
 } from "@/shared/catalog/constants/product";
-import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
+import type { ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import type { IPageTemplate } from "@/shared/static-content";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
@@ -207,7 +207,6 @@ const {
   productsFilters,
   applyFilters: _applyFilters,
   hideFiltersSidebar,
-  removeFacetFilter: _removeFacetFilter,
   resetFacetFilters: _resetFacetFilters,
   showFiltersSidebar,
 } = useProducts({
@@ -339,7 +338,7 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
   variationsSearchParams.value.page = 1;
   variationsSearchParams.value.filter = getFilterExpression([
     variationsFilterExpression.value,
-    getFilterExpressionFromFacets(newFilters.facets),
+    generateFilterExpressionFromFilters(newFilters.filters),
     getFilterExpressionForInStock(newFilters.inStock),
     getFilterExpressionForAvailableIn(newFilters.branches),
     getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
@@ -348,35 +347,9 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
   await fetchProducts(variationsSearchParams.value);
 }
 
-async function removeFacetFilter(
-  payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">,
-): Promise<void> {
-  void _removeFacetFilter(payload);
-
-  variationsSearchParams.value.page = 1;
-  variationsSearchParams.value.filter = getFilterExpression([
-    variationsFilterExpression.value,
-    getFilterExpressionFromFacets(productsFilters.value.facets),
-    getFilterExpressionForAvailableIn(productsFilters.value.branches),
-    getFilterExpressionForInStock(productsFilters.value.inStock),
-    getFilterExpressionForPurchasedBefore(productsFilters.value.purchasedBefore),
-  ]);
-
-  await fetchProducts(variationsSearchParams.value);
-}
-
 async function resetFacetFilters(): Promise<void> {
-  void _resetFacetFilters();
-
-  variationsSearchParams.value.page = 1;
-  variationsSearchParams.value.filter = getFilterExpression([
-    variationsFilterExpression.value,
-    getFilterExpressionForAvailableIn(productsFilters.value.branches),
-    getFilterExpressionForInStock(productsFilters.value.inStock),
-    getFilterExpressionForPurchasedBefore(productsFilters.value.purchasedBefore),
-  ]);
-
-  await fetchProducts(variationsSearchParams.value);
+  await _resetFacetFilters();
+  void applyFilters(productsFilters.value);
 }
 
 useSeoMeta({

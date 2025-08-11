@@ -1,8 +1,5 @@
 <template>
-  <VcContainer ref="categoryComponentAnchor" class="category" style="overflow-anchor: none">
-    <!-- Breadcrumbs -->
-    <VcBreadcrumbs v-if="!hideBreadcrumbs" class="category__breadcrumbs" :items="breadcrumbs" />
-
+  <div ref="categoryComponentAnchor" class="category">
     <!-- Popup sidebar for mobile and horizontal desktop view -->
     <FiltersPopupSidebar
       v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
@@ -34,7 +31,7 @@
           :filters="filtersToShow"
           :loading="fetchingProducts"
           class="category__product-filters"
-          @change="applyFilters($event)"
+          @change:filters="applyFiltersOnly($event)"
         />
       </template>
 
@@ -142,64 +139,36 @@
         :hide-all-filters="hideSidebar"
         :facets-to-hide="facetsToHide"
         @reset-facet-filters="resetFacetFilters"
-        @apply-filters="applyFilters"
+        @change:filters="applyFiltersOnly($event)"
         @show-popup-sidebar="showFiltersSidebar"
         @apply-sort="resetCurrentPage"
       />
-      <!-- Filters chips -->
-      <div
-        v-if="
-          hasSelectedFacets ||
-          (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
-            $route.query.page &&
-            Number($route.query.page) > 1)
-        "
-        class="category__chips"
+      <ActiveFilterChips
+        v-if="hasSelectedFacets || isResetPageButtonShown"
+        :filters="productsFilters.filters"
+        :facets-to-hide="facetsToHide"
+        @apply-filters="applyFiltersOnly"
       >
-        <template v-for="facet in productsFilters.facets">
-          <template v-if="!facetsToHide?.includes(facet.paramName)">
-            <template v-for="filterItem in facet.values">
-              <VcChip
-                v-if="filterItem.selected"
-                :key="facet.paramName + filterItem.value"
-                color="secondary"
-                closable
-                truncate
-                @close="
-                  removeFacetFilter({
-                    paramName: facet.paramName,
-                    value: filterItem.value,
-                  })
-                "
-              >
-                {{ filterItem.label }}
-              </VcChip>
-            </template>
-          </template>
+        <template #actions>
+          <VcChip v-if="hasSelectedFacets" color="secondary" variant="outline" clickable @click="resetFacetFilters">
+            <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+            <VcIcon name="reset" />
+          </VcChip>
+
+          <VcChip
+            v-if="isResetPageButtonShown"
+            color="secondary"
+            variant="outline"
+            clickable
+            @click="resetPage"
+          >
+            <span>{{ $t("common.buttons.reset_page") }}</span>
+
+            <VcIcon name="reset" />
+          </VcChip>
         </template>
-
-        <VcChip
-          v-if="
-            catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore &&
-            $route.query.page &&
-            Number($route.query.page) > 1
-          "
-          color="secondary"
-          variant="outline"
-          clickable
-          @click="resetPage"
-        >
-          <span>{{ $t("common.buttons.reset_page") }}</span>
-
-          <VcIcon name="reset" />
-        </VcChip>
-
-        <VcChip v-if="hasSelectedFacets" color="secondary" variant="outline" clickable @click="resetFacetFilters">
-          <span>{{ $t("common.buttons.reset_filters") }}</span>
-
-          <VcIcon name="reset" />
-        </VcChip>
-      </div>
+      </ActiveFilterChips>
 
       <div ref="categoryProductsAnchor" class="category__products-anchor"></div>
 
@@ -225,7 +194,6 @@
         :mode="catalogPaginationMode"
         class="category__products"
         @change-page="changeProductsPage"
-        @reset-facet-filters="resetFacetFilters"
         @reset-filter-keyword="resetFilterKeyword"
         @select-product="selectProduct"
       />
@@ -236,7 +204,7 @@
         </VcButton>
       </div>
     </VcLayout>
-  </VcContainer>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -249,16 +217,15 @@ import {
   whenever,
 } from "@vueuse/core";
 import omit from "lodash/omit";
-import { computed, onBeforeUnmount, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
-import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
+import { useAnalytics, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { globals } from "@/core/globals";
 import {
-  buildBreadcrumbs,
   getFilterExpression,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForCategorySubtree,
@@ -268,7 +235,6 @@ import {
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
-import { useSlugInfo } from "@/shared/common";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
@@ -278,6 +244,7 @@ import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
+import ActiveFilterChips from "@/shared/catalog/components/active-filter-chips.vue";
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
 import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
@@ -296,7 +263,6 @@ interface IProps {
   categoryId?: string;
   title?: string;
   hideTotal?: boolean;
-  hideBreadcrumbs?: boolean;
   hideSidebar?: boolean;
   hideControls?: boolean;
   hideSorting?: boolean;
@@ -322,6 +288,14 @@ const { catalogId, currencyCode } = globals;
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
+
+const route = useRoute();
+
+const isResetPageButtonShown = computed(() => {
+  return catalogPaginationMode.value === CATALOG_PAGINATION_MODES.loadMore &&
+    !!route.query.page &&
+    Number(route.query.page) > 1
+})
 
 const catalogPaginationMode = computed(
   () => themeContext.value?.settings?.catalog_pagination_mode ?? CATALOG_PAGINATION_MODES.infiniteScroll,
@@ -363,11 +337,12 @@ const {
   totalProductsCount,
 
   applyFilters: _applyFilters,
+  applyFiltersOnly,
   fetchProducts: _fetchProducts,
   fetchMoreProducts,
   hideFiltersSidebar,
   openBranchesModal,
-  removeFacetFilter,
+
   resetFacetFilters,
   resetFilterKeyword,
   showFiltersSidebar,
@@ -410,25 +385,8 @@ const categoryListProperties = computed(() => ({
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
 
-const route = useRoute();
-const { objectType, slugInfo } = useSlugInfo(route.path.slice(1));
-
 useCategorySeo({ category: currentCategory, allowSetMeta, categoryComponentAnchorIsVisible });
 
-const breadcrumbs = useBreadcrumbs(() =>
-  buildBreadcrumbs(
-    objectType.value === "Catalog" && !!slugInfo.value?.entityInfo
-      ? [
-          {
-            itemId: slugInfo.value.entityInfo.id,
-            semanticUrl: slugInfo.value.entityInfo.semanticUrl,
-            title: slugInfo.value.entityInfo.pageTitle ?? slugInfo.value.entityInfo.semanticUrl,
-            typeName: objectType.value,
-          },
-        ]
-      : currentCategory.value?.breadcrumbs,
-  ),
-);
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
 const { t } = useI18n();
@@ -627,12 +585,17 @@ function changeSearchBarScope(categoryId: string, label?: string) {
 
 onBeforeUnmount(() => {
   clearCategoryScope();
+  document.body.style.overflowAnchor = "auto";
 });
 
 function clearCategoryScope() {
   removeScopeItemByType("category");
   clearSearchResults();
 }
+
+onMounted(() => {
+  document.body.style.overflowAnchor = "none";
+});
 </script>
 
 <style lang="scss">
@@ -723,10 +686,6 @@ function clearCategoryScope() {
     @media (width < theme("screens.lg")) and (min-width: theme("screens.md")) {
       @apply order-last w-full;
     }
-  }
-
-  &__chips {
-    @apply flex mb-3 flex-wrap gap-2;
   }
 
   &__products-bottom {
