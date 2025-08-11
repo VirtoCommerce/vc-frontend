@@ -304,7 +304,8 @@ describe("rangeFacetToCommonFacet", () => {
       label: "Price",
       paramName: "price",
       values: [
-        { value: "[0 TO 100]",
+        {
+          value: "[0 TO 100]",
           count: 5,
           label: "0-100",
           selected: true,
@@ -313,7 +314,8 @@ describe("rangeFacetToCommonFacet", () => {
           includeFrom: true,
           includeTo: true,
         },
-        { value: "[100 TO 200]",
+        {
+          value: "[100 TO 200]",
           count: 3,
           label: "100-200",
           selected: false,
@@ -339,6 +341,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "color",
         filterType: "term",
+        isGenerated: false,
         termValues: [
           {
             value: "red",
@@ -356,6 +359,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "color",
         filterType: "term",
+        isGenerated: false,
         termValues: [
           {
             value: "red",
@@ -377,6 +381,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "price",
         filterType: "range",
+        isGenerated: false,
         rangeValues: [
           {
             lower: "0",
@@ -396,6 +401,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "price",
         filterType: "range",
+        isGenerated: false,
         rangeValues: [
           {
             lower: "0",
@@ -421,6 +427,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "price",
         filterType: "range",
+        isGenerated: false,
         rangeValues: [
           {
             lower: "50",
@@ -446,6 +453,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "color",
         filterType: "term",
+        isGenerated: false,
         termValues: [
           {
             value: "red",
@@ -460,6 +468,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "price",
         filterType: "range",
+        isGenerated: false,
         rangeValues: [
           {
             lower: "0",
@@ -479,6 +488,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "description",
         filterType: "term",
+        isGenerated: false,
         termValues: [
           {
             value: 'text with "quotes"',
@@ -495,17 +505,18 @@ describe("generateFilterExpressionFromFilters", () => {
     expect(result).toBe('"description":"text with \\"quotes\\"","text with \\\\backslashes\\\\"');
   });
 
-
   it("handles filters with empty termValues and rangeValues", () => {
     const filters: SearchProductFilterResult[] = [
       {
         name: "color",
         filterType: "term",
+        isGenerated: false,
         termValues: [],
       },
       {
         name: "price",
         filterType: "range",
+        isGenerated: false,
         rangeValues: [],
       },
     ];
@@ -518,11 +529,13 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "color",
         filterType: "term",
+        isGenerated: false,
         termValues: undefined,
       },
       {
         name: "price",
         filterType: "range",
+        isGenerated: false,
         rangeValues: undefined,
       },
     ];
@@ -535,6 +548,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "price",
         filterType: "range",
+        isGenerated: false,
         rangeValues: [
           {
             lower: "0",
@@ -572,6 +586,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "brand",
         filterType: "term",
+        isGenerated: false,
         termValues: [
           {
             value: "Nike",
@@ -582,6 +597,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "category",
         filterType: "term",
+        isGenerated: false,
         termValues: [
           {
             value: "shoes",
@@ -596,6 +612,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "price",
         filterType: "range",
+        isGenerated: false,
         rangeValues: [
           {
             lower: "50",
@@ -608,6 +625,7 @@ describe("generateFilterExpressionFromFilters", () => {
       {
         name: "size",
         filterType: "range",
+        isGenerated: false,
         rangeValues: [
           {
             lower: "7",

@@ -7,7 +7,7 @@
       collapsible
       :title="facet.label"
       collapsed
-      >
+    >
       <div>
         <VcSlider
           :value="sliderValue"
@@ -43,9 +43,7 @@
 
           <template #append>
             <span class="slider-filter-dropdown__append">
-              <VcBadge v-if="hasSelected" size="sm" rounded color="info">
-                1
-              </VcBadge>
+              <VcBadge v-if="hasSelected" size="sm" rounded color="info"> 1 </VcBadge>
 
               <VcIcon v-else name="chevron-down" class="slider-filter-dropdown__arrow" />
             </span>
@@ -95,11 +93,11 @@ const props = defineProps<IProps>();
 const { facet, filter } = toRefs(props);
 
 const facetMin = computed(() => {
-  return typeof facet.value.statistics?.min === 'number' ? Math.floor(facet.value.statistics.min) : undefined
+  return typeof facet.value.statistics?.min === "number" ? Math.floor(facet.value.statistics.min) : undefined;
 });
 
 const facetMax = computed(() => {
-  return typeof facet.value.statistics?.max === 'number' ? Math.ceil(facet.value.statistics.max) : undefined
+  return typeof facet.value.statistics?.max === "number" ? Math.ceil(facet.value.statistics.max) : undefined;
 });
 
 const sliderValue = computed(() => {
@@ -110,18 +108,18 @@ const sliderValue = computed(() => {
       return range;
     }
 
-    if(typeof range[0] === "number") {
+    if (typeof range[0] === "number") {
       return [range[0], facetMax.value] as [number, number];
     }
 
-    if(typeof range[1] === "number") {
+    if (typeof range[1] === "number") {
       return [facetMin.value, range[1]] as [number, number];
     }
 
     return [facetMin.value, facetMax.value] as [number, number];
   }
 
-  return undefined
+  return undefined;
 });
 
 const sliderCols = computed(() => {
@@ -148,12 +146,13 @@ const sliderCols = computed(() => {
         count: item.count ?? 0,
         value,
       };
-    }).filter((item) => item !== null);
+    })
+    .filter((item) => item !== null);
 });
 
 const hasSelected = computed(() => {
   return !!filter.value;
-})
+});
 
 function handleSliderChange(value: [number, number] | [number]) {
   const doubleValue = value.length === 2 ? value : [value[0], value[0]];
@@ -188,29 +187,38 @@ function getRangeFromFilter(): EmitValueType {
 function getBounceFromRange(rangeValue: SearchProductFilterRangeValue): EmitValueType {
   const { lower, upper, includeLowerBound, includeUpperBound } = rangeValue;
 
-  const lowerNum = lower ? Number(lower)  : null;
+  const lowerNum = lower ? Number(lower) : null;
   const upperNum = upper ? Number(upper) : null;
 
   if (includeLowerBound && includeUpperBound) {
-    return [typeof lowerNum === 'number' && isFinite(lowerNum) ? lowerNum : null, typeof upperNum === 'number' && isFinite(upperNum) ? upperNum : null]
+    return [
+      typeof lowerNum === "number" && isFinite(lowerNum) ? lowerNum : null,
+      typeof upperNum === "number" && isFinite(upperNum) ? upperNum : null,
+    ];
   }
 
-  return [null, null]
+  return [null, null];
 }
 
 function applyRange(range: [number | null, number | null]) {
-  const from = typeof range[0] == 'number' ? range[0] : undefined;
-  const to = typeof range[1] == 'number' ? range[1] : undefined;
+  const from = typeof range[0] == "number" ? range[0] : undefined;
+  const to = typeof range[1] == "number" ? range[1] : undefined;
 
   const newFilter: SearchProductFilterResult = {
+    isGenerated: false,
     filterType: facet.value.type,
     name: facet.value.paramName,
-    rangeValues: from === undefined && to === undefined ? [] : [{
-      lower: from?.toString(),
-      upper: to?.toString(),
-      includeLowerBound: true,
-      includeUpperBound: true
-    }]
+    rangeValues:
+      from === undefined && to === undefined
+        ? []
+        : [
+            {
+              lower: from?.toString(),
+              upper: to?.toString(),
+              includeLowerBound: true,
+              includeUpperBound: true,
+            },
+          ],
   };
 
   emit("update:filter", newFilter);
@@ -219,7 +227,7 @@ function applyRange(range: [number | null, number | null]) {
 
 <style lang="scss">
 .slider-filter-dropdown {
-$opened: "";
+  $opened: "";
 
   @apply shrink-0;
 
@@ -227,7 +235,7 @@ $opened: "";
     width: max-content;
 
     &--opened {
-    $opened: &;
+      $opened: &;
     }
   }
 
