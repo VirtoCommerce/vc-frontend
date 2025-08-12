@@ -65,7 +65,7 @@
         v-if="savedForLaterList?.items?.length"
         :saved-for-later-list="savedForLaterList"
         class="mt-5"
-        @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" 
+        @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
       />
 
       <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" class="mt-5" />
@@ -109,7 +109,7 @@
           v-if="savedForLaterList?.items?.length"
           :saved-for-later-list="savedForLaterList"
           class="mt-5"
-          @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" 
+          @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
 
         <RecentlyBrowsedProducts
@@ -215,7 +215,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { moveFromSavedForLater } from "@/core/api/graphql/cart/mutations/moveFromSavedForLater";
@@ -242,6 +242,14 @@ import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
 
+interface IProps {
+  cartId?: string;
+}
+
+const props = defineProps<IProps>();
+
+const cartId = toRef(props, "cartId");
+
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { themeContext } = useThemeContext();
 const { analytics } = useAnalytics();
@@ -267,10 +275,10 @@ const {
   openClearCartModal,
   selectCartItems,
   unselectCartItems,
-} = useFullCart();
-const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
+} = useFullCart(cartId.value);
+const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout(cartId.value);
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
-  useCoupon();
+  useCoupon(cartId.value);
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
