@@ -9,7 +9,7 @@
     <div ref="stickyHeader" class="sticky top-0 z-20 shadow-md print:hidden">
       <BottomHeader :is-menu-shown="desktopMenuMode === DESKTOP_MENU_MODES.fullscreen" />
 
-      <MegaMenu v-if="$context.storeSettings.anonymousUsersAllowed && desktopMenuMode === DESKTOP_MENU_MODES.horizontal" class="border-y border-neutral-200" />
+      <MegaMenu v-if="isMegamenuShown" class="border-y border-neutral-200" />
     </div>
 
     <div class="hidden items-start justify-between print:flex">
@@ -25,6 +25,7 @@ import { useBreakpoints, useElementBounding, useCssVar } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useWhiteLabeling, useThemeContext } from "@/core/composables";
 import { BREAKPOINTS, DESKTOP_MENU_MODES } from "@/core/constants";
+import { useUser } from "@/shared/account";
 import Created from "../print/created.vue";
 import BottomHeader from "./_internal/bottom-header.vue";
 import MegaMenu from "./_internal/mega-menu.vue";
@@ -49,4 +50,10 @@ const desktopMenuMode = computed(() => themeContext.value?.settings?.desktop_men
 watch(headerHeight, (value) => {
   headerHeightVar.value = `${value + OFFSET_TOP}px`;
 });
+
+const { isAuthenticated } = useUser();
+
+const isMegamenuShown = computed(() => {
+  return desktopMenuMode.value === DESKTOP_MENU_MODES.horizontal && (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed)
+})
 </script>
