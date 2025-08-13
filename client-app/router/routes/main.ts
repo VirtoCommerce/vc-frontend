@@ -21,6 +21,7 @@ const Company = () => import("@/pages/company/index.vue");
 const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
 const Cart = () => import("@/pages/cart.vue");
+const CartShared = () => import("@/pages/cart-shared.vue");
 const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
 const Category = () => import("@/pages/category.vue");
@@ -70,7 +71,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   {
     path: "/cart-shared/:cartId",
     name: "CartShared",
-    component: Cart,
+    component: CartShared,
     props: (route) => ({ cartId: route.params.cartId }),
     meta: { layout: "Secure" },
   },
