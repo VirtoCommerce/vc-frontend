@@ -49,7 +49,7 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         type: "string",
         defaultValue: "vertical",
         enum: ["vertical", "horizontal"],
-        helperText: "Show filters vertically or horizontally",
+        helperText: "Show filters vertically or horizontally.",
       },
       {
         name: "filtersDisplayOrder",

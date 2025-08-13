@@ -81,7 +81,16 @@
       "page_limit": "Es konnten keine weiteren Ergebnisse angezeigt werden."
     },
     "slider": {
-      "tooltip": "{count} Artikel"
+      "tooltip": "{count} Artikel",
+      "aria_label": "Schieberegler von {min} bis {max}",
+      "start_input_label": "Startwert (zwischen {min} und {max})",
+      "end_input_label": "Endwert (zwischen {min} und {max})",
+      "start_input_aria_label": "Startwerteingabe, Bereich {min} bis {max}",
+      "end_input_aria_label": "Endwert-Eingabe, Bereich {min} bis {max}",
+      "start_input_help": "Gib eine Zahl zwischen {min} und {max} ein, Schrittweite {step}",
+      "end_input_help": "Gib eine Zahl zwischen {min} und {max} ein, Schrittweite {step}",
+      "column_aria_label": "Spalte mit {count} Artikeln, Bereich von {from} bis {to}",
+      "current_value_announcement": "Schiebereglerwert: {start} bis {end}, Bereich {min} bis {max}"
     }
   }
 }
