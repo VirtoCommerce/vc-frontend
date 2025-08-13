@@ -46,11 +46,9 @@
                 </VcDialogHeader>
               </DialogTitle>
 
-              <DialogDescription class="vc-modal__dialog-content-description">
-                <VcDialogContent class="vc-modal__dialog-content-description-content">
-                  <slot :close="close" />
-                </VcDialogContent>
-              </DialogDescription>
+              <VcDialogContent>
+                <slot :close="close" />
+              </VcDialogContent>
 
               <VcDialogFooter v-if="!hideActions" @close="close">
                 <slot name="actions" :close="close" />
@@ -64,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle, DialogDescription } from "@headlessui/vue";
+import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from "@headlessui/vue";
 import { ref, watchSyncEffect } from "vue";
 
 interface IEmits {
