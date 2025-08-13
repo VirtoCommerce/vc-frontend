@@ -272,16 +272,16 @@ export function useShortCart() {
   };
 }
 
-export function _useFullCart() {
+export function _useFullCart(cartId?: string) {
   const { openModal } = useModal();
   const { analytics } = useAnalytics();
   const { client, resolveClient } = useApolloClient();
   const { storeId, currencyCode, cultureName, userId } = globals;
-  const commonVariables = { storeId, currencyCode, cultureName, userId };
+  const commonVariables = { storeId, currencyCode, cultureName, userId, cartId };
   const notifications = useNotifications();
   const { t } = useI18n();
 
-  const { result: query, load, refetch, loading } = useGetFullCartQuery();
+  const { result: query, load, refetch, loading } = useGetFullCartQuery(cartId);
 
   const forceFetch = async () => (await load()) || (await refetch());
 

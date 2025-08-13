@@ -53,7 +53,7 @@ const useGlobalCheckout = createGlobalState(() => {
   };
 });
 
-export function _useCheckout() {
+export function _useCheckout(cartId?: string) {
   const { analytics } = useAnalytics();
   const { t } = useI18n();
   const notifications = useNotifications();
@@ -87,7 +87,7 @@ export function _useCheckout() {
     updatePayment,
     changeComment,
     updatePurchaseOrderNumber,
-  } = useFullCart();
+  } = useFullCart(cartId);
   const {
     loading,
     billingAddressEqualsShipping,

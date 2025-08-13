@@ -158,7 +158,7 @@ import { areStringOrNumberEqual } from "@/core/utilities";
 import type {
   SearchProductFilterRangeValue,
   SearchProductFilterResult,
-  SearchProductFilterValue
+  SearchProductFilterValue,
 } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
@@ -176,7 +176,7 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
-const facet = toRef(props, 'facet');
+const facet = toRef(props, "facet");
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
@@ -198,7 +198,7 @@ const selectedRanges = ref([] as SearchProductFilterRangeValue[]);
 
 function handleFacetItemClick(item: FacetValueItemType): void {
   if (facet.value.type === "terms") {
-    const index = selectedTerms.value.findIndex(value => value === item.value);
+    const index = selectedTerms.value.findIndex((value) => value === item.value);
     if (index === -1) {
       selectedTerms.value.push(item.value);
     } else {
@@ -207,47 +207,53 @@ function handleFacetItemClick(item: FacetValueItemType): void {
   }
 
   if (facet.value.type === "range") {
-    const index = selectedRanges.value.findIndex(value => {
-      return value.includeLowerBound === item.includeFrom &&
+    const index = selectedRanges.value.findIndex((value) => {
+      return (
+        value.includeLowerBound === item.includeFrom &&
         value.includeUpperBound === item.includeTo &&
         areStringOrNumberEqual(item.from, value.lower) &&
-        areStringOrNumberEqual(item.to, value.upper);
-    })
+        areStringOrNumberEqual(item.to, value.upper)
+      );
+    });
 
-    if(index === -1) {
+    if (index === -1) {
       selectedRanges.value.push({
         includeLowerBound: item.includeFrom || false,
         includeUpperBound: item.includeTo || false,
         lower: numberToString(item.from),
-        upper: numberToString(item.to)
-      })
+        upper: numberToString(item.to),
+      });
     } else {
       selectedRanges.value.splice(index, 1);
     }
   }
 
   emit("update:filter", {
+    isGenerated: false,
     filterType: facet.value.type,
     name: facet.value.paramName,
-    termValues: selectedTerms.value.map(value => ({ value, label: facet.value.values.find(el => el.value === value)?.label || value })),
-    rangeValues: selectedRanges.value
+    termValues: selectedTerms.value.map((value) => ({
+      value,
+      label: facet.value.values.find((el) => el.value === value)?.label || value,
+    })),
+    rangeValues: selectedRanges.value,
   });
 }
 
 function numberToString(value?: number): string | undefined {
-  return typeof value === 'number' ? String(value) : undefined
+  return typeof value === "number" ? String(value) : undefined;
 }
 
 watch(
   () => [props.filter?.termValues, props.filter?.rangeValues] as const,
   ([termValues, rangeValues]: readonly [
-      SearchProductFilterValue[] | undefined,
-      SearchProductFilterRangeValue[] | undefined
+    SearchProductFilterValue[] | undefined,
+    SearchProductFilterRangeValue[] | undefined,
   ]) => {
-    selectedTerms.value = termValues?.map(item => item.value) || [];
+    selectedTerms.value = termValues?.map((item) => item.value) || [];
     selectedRanges.value = rangeValues || [];
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const isExpanded = ref(false);
@@ -285,17 +291,19 @@ const selectedFiltersCount = computed(() => facet.value.values.filter((item) => 
 const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
 function isSelected(item: FacetValueItemType) {
-  if(facet.value.type === "terms") {
+  if (facet.value.type === "terms") {
     return selectedTerms.value.includes(item.value);
   }
 
-  if(facet.value.type === "range") {
-    return selectedRanges.value.some(value => {
-      return value.includeLowerBound === item.includeFrom &&
+  if (facet.value.type === "range") {
+    return selectedRanges.value.some((value) => {
+      return (
+        value.includeLowerBound === item.includeFrom &&
         value.includeUpperBound === item.includeTo &&
         areStringOrNumberEqual(item.from, value.lower) &&
-        areStringOrNumberEqual(item.to, value.upper);
-    })
+        areStringOrNumberEqual(item.to, value.upper)
+      );
+    });
   }
 }
 </script>

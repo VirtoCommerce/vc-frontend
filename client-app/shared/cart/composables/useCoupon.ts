@@ -6,9 +6,9 @@ import type { CouponType } from "@/core/api/graphql/types";
 const couponCode = ref("");
 const validationError = ref("");
 
-export function useCoupon() {
+export function useCoupon(cartId?: string) {
   const { t } = useI18n();
-  const { cart, validateCartCoupon, addCartCoupon, removeCartCoupon } = useFullCart();
+  const { cart, validateCartCoupon, addCartCoupon, removeCartCoupon } = useFullCart(cartId);
 
   const INVALID_COUPON_MESSAGE = t("common.messages.invalid_coupon");
 

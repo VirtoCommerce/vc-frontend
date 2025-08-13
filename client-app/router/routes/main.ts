@@ -21,6 +21,7 @@ const Company = () => import("@/pages/company/index.vue");
 const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
 const Cart = () => import("@/pages/cart.vue");
+const CartShared = () => import("@/pages/cart-shared.vue");
 const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
 const Category = () => import("@/pages/category.vue");
@@ -67,6 +68,13 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
   { path: "/cart", name: "Cart", component: Cart },
+  {
+    path: "/cart-shared/:cartId",
+    name: "CartShared",
+    component: CartShared,
+    props: (route) => ({ cartId: route.params.cartId }),
+    meta: { layout: "Secure" },
+  },
   { path: "/successful-registration", name: "Welcome", component: Welcome, meta: { public: true } },
   ...checkoutRoutes,
   { path: ROUTES.CATALOG.PATH, name: ROUTES.CATALOG.NAME, component: Catalog, props: true },
