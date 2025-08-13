@@ -16089,7 +16089,7 @@ __metadata:
     vite-plugin-checker: "npm:^0.9.3"
     vite-plugin-mkcert: "npm:^1.17.8"
     vitest: "npm:^3.2.4"
-    vue: "npm:^3.5.17"
+    vue: "npm:3.5.17"
     vue-component-type-helpers: "npm:^3.0.4"
     vue-eslint-parser: "npm:^10.2.0"
     vue-html-secure: "npm:^1.0.10"
@@ -16551,7 +16551,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:^3.5.17":
+"vue@npm:3.5.17":
   version: 3.5.17
   resolution: "vue@npm:3.5.17"
   dependencies:
