@@ -158,7 +158,7 @@
     "vitest": "^3.2.4",
     "vue-component-type-helpers": "^3.0.4",
     "vue-eslint-parser": "^10.2.0",
-    "vue-tsc": "^3.0.4"
+    "vue-tsc": "2.2.12"
   },
   "resolutions": {
     "uri-js": "npm:uri-js-replace@^1.0.0"
