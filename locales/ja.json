@@ -296,7 +296,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "お問い合わせ",
           "call_us_label": "お電話: ",
-          "logged_in_as": "ログインユーザー:"
+          "logged_in_as": "ログインユーザー:",
+          "account_menu_label": "アカウントメニュー"
         },
         "bottom_header": {
           "catalog_menu_button": "カタログ",

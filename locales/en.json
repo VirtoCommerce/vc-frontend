@@ -296,7 +296,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "Contacts",
           "call_us_label": "Call us: ",
-          "logged_in_as": "logged in as"
+          "logged_in_as": "logged in as",
+          "account_menu_label": "Account menu"
         },
         "bottom_header": {
           "catalog_menu_button": "Catalog",

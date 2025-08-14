@@ -3,13 +3,15 @@
     class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
     data-test-id="main-layout.top-header"
   >
-    <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
+    <div class="flex min-w-0 shrink items-center gap-3">
+      <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
 
-    <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
+      <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
 
-    <ShipToSelector />
+      <ShipToSelector />
+    </div>
 
-    <div class="ms-auto flex items-center">
+    <div class="ms-auto flex min-w-0 shrink-0 items-center">
       <!-- Call us block -->
       <div v-if="support_phone_number" class="flex items-center whitespace-nowrap">
         <VcIcon class="me-1.5 fill-primary" name="phone" size="sm" />
@@ -58,21 +60,36 @@
 
           <button
             type="button"
-            class="flex cursor-pointer items-center whitespace-nowrap p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
+            :aria-label="$t('shared.layout.header.top_header.account_menu_label')"
+            aria-haspopup="true"
+            :aria-expanded="loginMenuVisible"
+            class="flex w-full cursor-pointer items-center whitespace-nowrap p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
             data-test-id="main-layout.top-header.account-menu-button"
             @click="loginMenuVisible = !loginMenuVisible"
           >
-            <span class="font-bold">
+            <span class="hidden min-w-0 font-bold xl:inline">
               <template v-if="isMultiOrganization">
-                <span data-test-id="main-layout.top-header.organization-name-label">{{ organization?.name }}</span> /
+                <span
+                  data-test-id="main-layout.top-header.organization-name-label"
+                  class="min-w-0 truncate xl:max-w-80"
+                  :title="organization?.name"
+                  >{{ organization?.name }}</span
+                >
+                /
               </template>
-              <span data-test-id="main-layout.top-header.customer-name-label">{{
-                user.contact?.fullName || user.userName
-              }}</span>
+
+              <span
+                data-test-id="main-layout.top-header.customer-name-label"
+                class="min-w-0 shrink-0 truncate xl:max-w-80"
+                :title="user.contact?.fullName || user.userName"
+                >{{ user.contact?.fullName || user.userName }}</span
+              >
             </span>
 
+            <VcIcon class="fill-primary xl:hidden" name="user-circle" size="sm" />
+
             <VcIcon
-              class="ms-1.5 fill-accent-200 [--vc-icon-size:1rem] lg:fill-primary lg:[--vc-icon-size:0.625rem]"
+              class="ms-1.5 shrink-0 fill-accent-200 [--vc-icon-size:1rem] lg:fill-primary lg:[--vc-icon-size:0.625rem]"
               :name="loginMenuVisible ? 'chevron-up' : 'chevron-down'"
             />
           </button>
