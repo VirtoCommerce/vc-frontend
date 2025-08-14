@@ -1,10 +1,21 @@
 <template>
   <VcProductCard view-mode="list">
-    <router-link :to="link" class="contents" @click="$emit('linkClick', $event)">
-      <VcProductImage :img-src="product.imgSrc" :alt="product.name" size-suffix="sm" lazy />
-    </router-link>
+    <template #media>
+      <router-link :to="link" class="contents" @click="$emit('linkClick', $event)">
+        <VcProductImage :img-src="product.imgSrc" :alt="product.name" size-suffix="sm" lazy />
+      </router-link>
+    </template>
 
-    <VcProductTitle :lines-number="2" fix-height :to="link" :title="product.name" @click="$emit('linkClick', $event)">
+    <VcProductTitle
+      :lines-number="2"
+      fix-height
+      :to="link"
+      :title="product.name"
+      @click="$emit('linkClick', $event)"
+      @keyup.enter="$emit('linkClick', $event)"
+      @keydown.arrow-up.arrow-left="$emit('changeFocus', { direction: 'UP', event: $event })"
+      @keydown.arrow-down.arrow-right="$emit('changeFocus', { direction: 'DOWN', event: $event })"
+    >
       {{ product.name }}
     </VcProductTitle>
 
@@ -20,6 +31,7 @@ import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
   (eventName: "linkClick", globalEvent: PointerEvent): void;
+  (eventName: "changeFocus", value: { direction: "UP" | "DOWN"; event: KeyboardEvent }): void;
 }
 
 interface IProps {
