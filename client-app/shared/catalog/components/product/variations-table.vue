@@ -72,7 +72,19 @@
           </td>
 
           <td class="variations-table__col variations-table__col--quantity">
+            <component
+              :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
+              v-if="
+                isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
+                shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, variation, { forceProductAsVariation: true })
+              "
+              :product="variation"
+              :is-text-shown="false"
+              v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)" 
+            />
+
             <QuantityControl
+              v-else
               :mode="$cfg.product_quantity_control"
               :model-value="mappedLineItems[variation.id]?.quantity ?? 0"
               :name="variation.id"
@@ -133,6 +145,8 @@ import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
 import { getPropertyValue, getPropertiesGroupedByName } from "@/core/utilities";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useShortCart } from "@/shared/cart/composables";
+import { useCustomProductComponents } from "@/shared/common/composables";
+import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import CountInCart from "../count-in-cart.vue";
 import type { Product, ShortLineItemFragment, ValidationErrorType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
@@ -167,6 +181,8 @@ const { localizedItemsErrors: serverValidationErrors, setErrors } =
   useErrorsTranslator<ValidationErrorType>("validation_error");
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
+
+const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const clientValidation = ref<Record<string, { isValid: boolean; messages?: string[] }>>({});
 

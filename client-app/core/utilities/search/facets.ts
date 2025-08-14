@@ -38,7 +38,11 @@ export function getFilterExpressionForZeroPrice(value: MaybeRef<boolean>, curren
  * @returns A string representing the availability filter expression
  */
 export function getFilterExpressionForInStock(value: MaybeRef<boolean>): string {
-  return unref(value) ? "availability:InStock" : "";
+  return unref(value) ? "inStock:true" : "";
+}
+
+export function getFilterExpressionForInStockVariations(value: MaybeRef<boolean>): string {
+  return unref(value) ? "inStock_variations:true" : "";
 }
 
 /**
