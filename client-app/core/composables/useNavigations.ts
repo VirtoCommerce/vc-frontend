@@ -41,6 +41,8 @@ export function _useNavigations() {
       return;
     }
 
+    let index = 0;
+
     function markRecursively(_link?: ExtendedMenuLinkType): MarkedMenuLinkType {
       const children = _link?.children?.map(markRecursively) ?? [];
 
@@ -49,6 +51,7 @@ export function _useNavigations() {
 
       return {
         ..._link,
+        id: `${type}-${index++}`,
         children,
         isActive: isSelfActive || isChildActive,
         type,
