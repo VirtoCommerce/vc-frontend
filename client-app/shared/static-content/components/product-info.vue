@@ -2,7 +2,7 @@
   <VcWidget class="product-info" size="lg">
     <div class="product-info__container">
       <div class="product-info__side">
-        <ImageGallery :images="product.images">
+        <ImageGallery :images="firstApplicableVariation?.images ?? product.images">
           <template #badges>
             <BadgesWrapper size="lg">
               <PurchasedBeforeBadge v-if="product.isPurchased" size="lg" show-text />
@@ -49,7 +49,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed, toRef } from "vue";
 import { ImageGallery, DiscountBadge, ProductVideos } from "@/shared/catalog";
+import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import type { IPageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
 import BadgesWrapper from "@/shared/catalog/components/badges-wrapper.vue";
@@ -65,6 +67,14 @@ interface IProps {
   variations: Product[];
   fetchingVariations?: boolean;
 }
+
+const variations = toRef(props, "variations");
+
+const { applicableVariations } = useProductVariationProperties(variations);
+
+const firstApplicableVariation = computed(() => {
+  return applicableVariations.value[0];
+});
 
 function getBlockProperties(block: NonNullable<IPageContent["blocks"]>[number]) {
   if (block.type === "product-options") {
