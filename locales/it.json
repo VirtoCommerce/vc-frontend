@@ -297,7 +297,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "Contatti",
           "call_us_label": "Chiamaci: ",
-          "logged_in_as": "connesso come"
+          "logged_in_as": "connesso come",
+          "account_menu_label": "Menu account"
         },
         "bottom_header": {
           "catalog_menu_button": "Catalogo",
