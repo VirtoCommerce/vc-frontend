@@ -50,6 +50,7 @@
         required
         test-id-input="expiration-date-input"
         @input="input"
+        @keypress="checkForNumber($event)"
       />
 
       <VcInput
