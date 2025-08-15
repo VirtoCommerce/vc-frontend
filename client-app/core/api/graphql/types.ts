@@ -3790,6 +3790,35 @@ export type MutationsUpdateWishListItemsArgs = {
   command: InputUpdateWishlistItemsType;
 };
 
+export type NewsArticleContent = {
+  content?: Maybe<Scalars['String']['output']>;
+  contentPreview?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  publishDate?: Maybe<Scalars['DateTime']['output']>;
+  seoInfo: SeoInfo;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+/** A connection from an object to a list of objects of type `NewsArticleContent`. */
+export type NewsArticleContentConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<NewsArticleContentEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<NewsArticleContent>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `NewsArticleContent`. */
+export type NewsArticleContentEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<NewsArticleContent>;
+};
+
 export type OrderAddressType = {
   /** Address type */
   addressType?: Maybe<Scalars['Int']['output']>;
@@ -4898,6 +4927,8 @@ export type Query = {
   me?: Maybe<UserType>;
   menu?: Maybe<MenuLinkListType>;
   menus: Array<MenuLinkListType>;
+  newsArticle?: Maybe<NewsArticleContent>;
+  newsArticles?: Maybe<NewsArticleContentConnection>;
   order?: Maybe<CustomerOrderType>;
   orderLineItemStatuses?: Maybe<LocalizedSettingResponseType>;
   orderStatuses?: Maybe<LocalizedSettingResponseType>;
@@ -5174,6 +5205,24 @@ export type QueryMenusArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
+};
+
+
+export type QueryNewsArticleArgs = {
+  id: Scalars['String']['input'];
+  languageCode: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+};
+
+
+export type QueryNewsArticlesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  languageCode: Scalars['String']['input'];
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -5867,7 +5916,7 @@ export type SearchProductFilterResult = {
   /** The type of the filter, e.g., 'term' or 'range' */
   filterType: Scalars['String']['output'];
   /** Indicates whether the filter was generated automatically */
-  isGenerated?: Scalars['Boolean']['output'];
+  isGenerated: Scalars['Boolean']['output'];
   /** Localized name of the filter (if available) */
   label?: Maybe<Scalars['String']['output']>;
   /** The name of the filter */
