@@ -84,7 +84,9 @@ const iconName = computed<string>(() => {
   $sizeSm: "";
   $sizeMd: "";
 
-  @apply flex items-stretch border rounded;
+  --radius: var(--vc-alert-radius, var(--vc-radius, 0.5rem));
+
+  @apply flex items-stretch border rounded-[--radius];
 
   &--shadow {
     @apply shadow-lg;
@@ -163,7 +165,7 @@ const iconName = computed<string>(() => {
   }
 
   &__content {
-    @apply grow flex flex-col justify-center;
+    @apply grow flex flex-col justify-center [word-break:break-word];
 
     &:first-child {
       @apply ps-1;

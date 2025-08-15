@@ -297,7 +297,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "Contacts",
           "call_us_label": "Appelez-nous : ",
-          "logged_in_as": "connecté en tant que"
+          "logged_in_as": "connecté en tant que",
+          "account_menu_label": "Menu du compte"
         },
         "bottom_header": {
           "catalog_menu_button": "Catalogue",
@@ -625,6 +626,7 @@
         "description_block_title": "Description",
         "assets_block_title": "Fichiers",
         "vendor_label": "Fournisseur",
+        "all_vendor_products": "Tous Les Produits De Fournisseur",
         "share_product_label": "Partager le produit",
         "create_configuration_button": "Créer configuration",
         "price_block": {
@@ -668,6 +670,10 @@
             "predefined_prefix": "Prédéfini",
             "option_label": "Option {0} : {1}"
           }
+        },
+        "options": {
+          "title": "Options",
+          "select_to_proceed": "Sélectionnez des options pour continuer"
         }
       },
       "discount_badge": {
@@ -1144,6 +1150,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Date de livraison estimée",
+          "emailAndPhone": "Appelez le {phone} ou envoyez un e-mail à {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Appeler {phone}",
+          "questions": "Des questions ?",
+          "address": "Adresse",
+          "pick_point_info": "Infos point de collecte",
+          "get_directions": "Itinéraire",
+          "point_info": "Point d'info",
+          "pickup_address": "Adresse de retrait",
+          "workingHours": "Heures",
+          "name": "Nom",
+          "instructions": "Instructions"
         }
       },
       "order_payment": {
@@ -1287,7 +1308,10 @@
       "title": "Panier",
       "empty_cart_description": "Votre panier est vide",
       "recently_browsed_products": "Récemment consultés",
-      "empty_cart_search_text": "Utilisez la recherche pour trouver tout ce dont vous avez besoin"
+      "empty_cart_search_text": "Utilisez la recherche pour trouver tout ce dont vous avez besoin",
+      "save_for_later": "Enregistrer pour plus tard",
+      "saved_for_later": "Enregistré pour plus tard",
+      "move_to_cart": "Ajouter au panier"
     },
     "checkout": {
       "meta": {

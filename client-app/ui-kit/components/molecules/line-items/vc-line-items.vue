@@ -69,6 +69,7 @@
             :selected="selectable && selectedItemIds?.includes(item.id)"
             :browser-target="browserTarget"
             :show-placed-price="item.showPlacedPrice"
+            :data-product-sku="item.sku"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
             @link-click="$emit('linkClick', item)"
@@ -85,6 +86,14 @@
 
             <template #after>
               <slot name="after-content" v-bind="{ item }" />
+            </template>
+
+            <template #after-image>
+              <slot name="after-image" v-bind="{ item }" />
+            </template>
+
+            <template #after-title>
+              <slot name="after-title" v-bind="{ item }" />
             </template>
           </VcLineItem>
         </slot>

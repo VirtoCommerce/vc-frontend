@@ -297,7 +297,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "Kontakt",
           "call_us_label": "Zadzwoń do nas: ",
-          "logged_in_as": "zalogowany jako"
+          "logged_in_as": "zalogowany jako",
+          "account_menu_label": "Menu konta"
         },
         "bottom_header": {
           "catalog_menu_button": "Katalog",
@@ -625,6 +626,7 @@
         "description_block_title": "Opis",
         "assets_block_title": "Pliki",
         "vendor_label": "Sprzedawca",
+        "all_vendor_products": "Wszystkie Produkty Sprzedawcy",
         "share_product_label": "Udostępnij produkt",
         "create_configuration_button": "Utwórz własną konfigurację",
         "price_block": {
@@ -668,6 +670,10 @@
             "predefined_prefix": "Predefiniowane",
             "option_label": "Opcja {0}: {1}"
           }
+        },
+        "options": {
+          "title": "Opcje",
+          "select_to_proceed": "Wybierz opcje, aby kontynuować"
         }
       },
       "discount_badge": {
@@ -1144,6 +1150,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Szacowany czas dostawy",
+          "emailAndPhone": "Zadzwoń {phone} lub napisz na {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Zadzwoń {phone}",
+          "questions": "Pytania?",
+          "address": "Adres",
+          "pick_point_info": "Informacje o punkcie odbioru",
+          "get_directions": "Wyznacz trasę",
+          "point_info": "Punkt informacyjny",
+          "pickup_address": "Adres odbioru",
+          "workingHours": "Godziny",
+          "name": "Nazwa",
+          "instructions": "Instrukcje"
         }
       },
       "order_payment": {
@@ -1287,7 +1308,10 @@
       "title": "Koszyk",
       "empty_cart_description": "Twój koszyk jest pusty",
       "recently_browsed_products": "Ostatnio przeglądane",
-      "empty_cart_search_text": "Użyj wyszukiwarki, aby znaleźć wszystko, czego potrzebujesz"
+      "empty_cart_search_text": "Użyj wyszukiwarki, aby znaleźć wszystko, czego potrzebujesz",
+      "save_for_later": "Zapisz na później",
+      "saved_for_later": "Zapisano na później",
+      "move_to_cart": "Przenieś do koszyka"
     },
     "checkout": {
       "meta": {

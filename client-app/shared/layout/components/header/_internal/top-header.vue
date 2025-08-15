@@ -1,14 +1,17 @@
 <template>
   <header
     class="flex h-10 items-center gap-1 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:gap-3 xl:px-11"
+    data-test-id="main-layout.top-header"
   >
-    <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
+    <div class="flex min-w-0 shrink items-center gap-3">
+      <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
 
-    <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
+      <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
 
-    <ShipToSelector />
+      <ShipToSelector />
+    </div>
 
-    <div class="ms-auto flex items-center">
+    <div class="ms-auto flex min-w-0 shrink-0 items-center">
       <!-- Call us block -->
       <div v-if="support_phone_number" class="flex items-center whitespace-nowrap">
         <VcIcon class="me-1.5 fill-primary" name="phone" size="sm" />
@@ -31,13 +34,13 @@
 
       <!-- Authorized menu items -->
       <template v-if="isAuthenticated">
-        <TopHeaderLink to="/account/dashboard" data-test-id="dashboard-link">
+        <TopHeaderLink to="/account/dashboard" data-test-id="main-layout.top-header.dashboard-link">
           {{ $t("shared.layout.header.top_header.link_dashboard") }}
         </TopHeaderLink>
 
         <span class="mx-2 size-1 rounded-full bg-primary" />
 
-        <TopHeaderLink to="/contacts" data-test-id="contacts-link">
+        <TopHeaderLink to="/contacts" data-test-id="main-layout.top-header.contacts-link">
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
         </TopHeaderLink>
 
@@ -47,7 +50,7 @@
         <div ref="loginMenu" class="relative flex flex-row items-center gap-x-1">
           <!-- Operator -->
           <template v-if="operator">
-            <span class="font-bold" data-test-id="operator-name-label">
+            <span class="font-bold" data-test-id="main-layout.top-header.operator-name-label">
               {{ operator.contact?.fullName || operator.userName }}
             </span>
             <span class="text-neutral-400">
@@ -57,19 +60,36 @@
 
           <button
             type="button"
-            class="flex cursor-pointer items-center whitespace-nowrap p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
-            data-test-id="account-menu-button"
+            :aria-label="$t('shared.layout.header.top_header.account_menu_label')"
+            aria-haspopup="true"
+            :aria-expanded="loginMenuVisible"
+            class="flex w-full cursor-pointer items-center whitespace-nowrap p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
+            data-test-id="main-layout.top-header.account-menu-button"
             @click="loginMenuVisible = !loginMenuVisible"
           >
-            <span class="font-bold">
+            <span class="hidden min-w-0 font-bold xl:inline">
               <template v-if="isMultiOrganization">
-                <span data-test-id="organization-name-label">{{ organization?.name }}</span> /
+                <span
+                  data-test-id="main-layout.top-header.organization-name-label"
+                  class="min-w-0 truncate xl:max-w-80"
+                  :title="organization?.name"
+                  >{{ organization?.name }}</span
+                >
+                /
               </template>
-              <span data-test-id="customer-name-label">{{ user.contact?.fullName || user.userName }}</span>
+
+              <span
+                data-test-id="main-layout.top-header.customer-name-label"
+                class="min-w-0 shrink-0 truncate xl:max-w-80"
+                :title="user.contact?.fullName || user.userName"
+                >{{ user.contact?.fullName || user.userName }}</span
+              >
             </span>
 
+            <VcIcon class="fill-primary xl:hidden" name="user-circle" size="sm" />
+
             <VcIcon
-              class="ms-1.5 fill-accent-200 [--vc-icon-size:1rem] lg:fill-primary lg:[--vc-icon-size:0.625rem]"
+              class="ms-1.5 shrink-0 fill-accent-200 [--vc-icon-size:1rem] lg:fill-primary lg:[--vc-icon-size:0.625rem]"
               :name="loginMenuVisible ? 'chevron-up' : 'chevron-down'"
             />
           </button>
@@ -77,12 +97,13 @@
           <div
             v-if="loginMenuVisible"
             class="absolute right-0 top-full z-10 flex w-64 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
+            data-test-id="main-layout.top-header.account-menu"
           >
             <div class="flex max-w-full items-center justify-between p-3">
               <router-link
                 to="/account/dashboard"
                 class="flex min-w-0 items-center gap-2 hover:text-primary"
-                data-test-id="account-menu-dashboard-link"
+                data-test-id="main-layout.top-header.account-menu.dashboard-link"
                 @click="loginMenuVisible = false"
               >
                 <VcIcon class="fill-primary" name="user-circle" />
@@ -98,7 +119,7 @@
                 variant="outline"
                 color="neutral"
                 size="xs"
-                data-test-id="sign-out-button"
+                data-test-id="main-layout.top-header.account-menu.sign-out-button"
                 icon
                 @click="signMeOut"
               >
@@ -121,7 +142,7 @@
                 :max-lines="2"
                 :title="item.name"
                 word-break="break-word"
-                :data-test-id="`organization-selector-item-${item.name}`"
+                :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${item.name}`"
                 @change="selectOrganization"
               />
             </div>

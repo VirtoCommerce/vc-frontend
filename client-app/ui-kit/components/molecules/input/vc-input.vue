@@ -45,6 +45,8 @@
         :data-test-id="testIdInput"
         @keydown="keyDown($event)"
         @click.prevent.stop="inputClick()"
+        @blur="$emit('blur', $event)"
+        @focus="$emit('focus', $event)"
       />
 
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
@@ -124,6 +126,8 @@ defineOptions({
 
 const emit = defineEmits<{
   (event: "clear"): void;
+  (event: "blur", blurEvent: FocusEvent): void;
+  (event: "focus", focusEvent: FocusEvent): void;
 }>();
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -215,6 +219,9 @@ provide<VcInputContextType>("inputContext", {
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
   --focus-color: rgb(from var(--color) r g b / 0.3);
 
+  --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
+  --vc-button-radius: calc(var(--radius) - 2px);
+
   @apply flex flex-col;
 
   &--size {
@@ -258,7 +265,7 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__container {
-    @apply flex items-stretch p-0.5 border border-neutral-400 rounded bg-additional-50 select-none;
+    @apply flex items-stretch p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50 select-none;
 
     #{$sizeXs} & {
       @apply h-8 text-sm;

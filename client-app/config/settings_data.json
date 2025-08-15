@@ -11,7 +11,9 @@
     "product_compare_limit": 5,
     "product_filters_sorting": false,
     "product_filters_sorting_direction": "asc",
-    "product_quantity_control": "button",
+    "product_quantity_control": "stepper",
+
+    "range_filter_type": "slider",
 
     "vendor_enabled": true,
     "vendor_rating_enabled": true,
@@ -24,7 +26,7 @@
 
     "zero_price_product_enabled": false,
 
-    "checkout_multistep_enabled": true,
+    "checkout_multistep_enabled": false,
     "checkout_comment_enabled": true,
     "checkout_purchase_order_enabled": true,
     "checkout_coupon_enabled": true,
@@ -90,8 +92,8 @@
       {
         "code": "Ready for pickup",
         "color": "success",
-        "variant": "outline",
-        "icon": "circle-solid"
+        "variant": "solid",
+        "icon": "cube"
       }
     ],
 

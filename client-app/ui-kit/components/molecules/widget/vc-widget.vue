@@ -1,5 +1,5 @@
 <template>
-  <div
+  <section
     :class="[
       'vc-widget',
       `vc-widget--size--${size}`,
@@ -26,7 +26,7 @@
               </slot>
             </span>
 
-            <span class="vc-widget__title">
+            <span :id="ARIAIds.title" class="vc-widget__title">
               <slot name="title">
                 {{ title }}
               </slot>
@@ -51,7 +51,7 @@
 
     <div v-show="!_collapsed" class="vc-widget__slot-container">
       <slot name="default-container">
-        <div class="vc-widget__slot">
+        <div class="vc-widget__slot" :aria-labelledby="ARIAIds.title">
           <slot />
         </div>
       </slot>
@@ -64,11 +64,12 @@
         </div>
       </slot>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { uniqueId } from "lodash";
+import { computed, ref, watchEffect } from "vue";
 
 export interface IEmits {
   (event: "toggleCollapse", value: boolean): void;
@@ -95,6 +96,12 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const _collapsed = ref(false);
 
+const ARIAIds = computed(() => {
+  return {
+    title: props.title && uniqueId("title"),
+  };
+});
+
 function toggleCollapse() {
   if (props.collapsible) {
     _collapsed.value = !_collapsed.value;
@@ -118,8 +125,9 @@ watchEffect(() => {
   --border-color: var(--vc-widget-border-color, theme("colors.neutral.200"));
   --divide-color: var(--vc-widget-divide-color, var(--border-color));
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
+  --radius: var(--vc-widget-radius, var(--vc-radius, 0.5rem));
 
-  @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded divide-y divide-[--divide-color] shadow-md bg-center;
+  @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] shadow-md bg-center;
 
   @media (width < theme("screens.md")) {
     .vc-container & {

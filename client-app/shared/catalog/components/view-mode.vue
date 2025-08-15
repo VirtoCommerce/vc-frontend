@@ -1,12 +1,24 @@
 <template>
   <div class="view-mode" role="group">
-    <VcTabSwitch v-model="viewMode" value="grid" icon="grid" @change="$emit('update:mode', $event)">
+    <VcTabSwitch
+      v-model="viewMode"
+      value="grid"
+      icon="grid"
+      data-test-id="view-switcher.grid-view-tab"
+      @change="$emit('update:mode', $event)"
+    >
       <span class="view-mode__text">
         {{ $t("shared.catalog.view_mode.grid_label") }}
       </span>
     </VcTabSwitch>
 
-    <VcTabSwitch v-model="viewMode" value="list" icon="list" @change="$emit('update:mode', $event)">
+    <VcTabSwitch
+      v-model="viewMode"
+      value="list"
+      icon="list"
+      data-test-id="view-switcher.list-view-tab"
+      @change="$emit('update:mode', $event)"
+    >
       <span class="view-mode__text">
         {{ $t("shared.catalog.view_mode.list_label") }}
       </span>

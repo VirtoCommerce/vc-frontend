@@ -1,10 +1,14 @@
 <template>
-  <VcDropdownMenu placement="bottom-end" class="language-selector">
+  <VcDropdownMenu
+    placement="bottom-end"
+    class="language-selector"
+    data-test-id="main-layout.top-header.language-selector"
+  >
     <template #trigger="{ opened, triggerProps }">
       <button
         type="button"
         class="language-selector__button"
-        data-test-id="language-selector-button"
+        data-test-id="main-layout.top-header.language-selector-button"
         v-bind="triggerProps"
       >
         <span class="language-selector__label">
@@ -18,7 +22,7 @@
           lazy
         />
 
-        <span class="language-selector__text" data-test-id="current-language-label">
+        <span class="language-selector__text" data-test-id="main-layout.top-header.current-language-label">
           {{ currentLanguage.twoLetterLanguageName }}
         </span>
 
@@ -31,7 +35,8 @@
         v-for="item in supportedLanguages"
         :key="item.twoLetterLanguageName"
         :active="item.twoLetterLanguageName === currentLanguage.twoLetterLanguageName"
-        :data-test-id="`language-selector-item-${item.twoLetterLanguageName}`"
+        :data-test-culture-name="item.twoLetterLanguageName"
+        data-test-id="main-layout.top-header.language-selector-item"
         color="secondary"
         @click="
           select(item.twoLetterLanguageName);

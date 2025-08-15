@@ -77,6 +77,7 @@ onMounted(() => {
   $hasTitleAddToCartOnly: ":has(.vc-add-to-cart:first-child:nth-last-child(2)~.vc-product-title), &:has(.vc-product-title:first-child:nth-last-child(2)~.vc-add-to-cart)";
 
   --bg: var(--vc-product-card-bg-color, theme("colors.additional.50"));
+  --radius: var(--vc-product-card-radius, var(--vc-radius, 0.5rem));
 
   @apply @container;
 
@@ -101,7 +102,7 @@ onMounted(() => {
   }
 
   &--border {
-    @apply rounded border border-neutral-100 shadow-md;
+    @apply rounded-[--radius] border border-neutral-100 shadow-md;
 
     &:hover {
       @apply shadow-lg;

@@ -106,8 +106,13 @@ export function getUrlSearchParam(param: string): string | null {
   return urlParams.get(param);
 }
 
-export function toCSV(data?: string[], delimiter = ", "): string {
-  return data?.join(delimiter)?.trim() ?? "";
+export function toCSV(parts?: (string | undefined | null)[], delimiter = ", "): string {
+  return (
+    parts
+      ?.map((part) => (typeof part === "string" ? part.trim() : ""))
+      .filter((part) => part !== "")
+      .join(delimiter) ?? ""
+  );
 }
 
 export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocationNormalizedLoaded) {
@@ -115,7 +120,7 @@ export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocatio
     return link === currentRoute.path;
   }
 
-  if (typeof link === "object" && link !== null) {
+  if (typeof link === "object") {
     if ("name" in link) {
       return (
         link.name === currentRoute.name &&
@@ -129,4 +134,14 @@ export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocatio
   }
 
   return false;
+}
+
+export function areStringOrNumberEqual(
+  a: string | number | null | undefined,
+  b: string | number | null | undefined
+): boolean {
+  // assume null and undefined are equal
+  if (a == null && b == null) return true;
+
+  return String(a) === String(b);
 }

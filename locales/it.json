@@ -297,7 +297,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "Contatti",
           "call_us_label": "Chiamaci: ",
-          "logged_in_as": "connesso come"
+          "logged_in_as": "connesso come",
+          "account_menu_label": "Menu account"
         },
         "bottom_header": {
           "catalog_menu_button": "Catalogo",
@@ -625,6 +626,7 @@
         "description_block_title": "Descrizione",
         "assets_block_title": "File",
         "vendor_label": "Fornitore",
+        "all_vendor_products": "Tutti I Prodotti Del Fornitore",
         "share_product_label": "Condividi prodotto",
         "create_configuration_button": "Crea la tua configurazione",
         "price_block": {
@@ -668,6 +670,10 @@
             "predefined_prefix": "Predefinito",
             "option_label": "Opzione {0}: {1}"
           }
+        },
+        "options": {
+          "title": "Opzioni",
+          "select_to_proceed": "Seleziona le opzioni per procedere"
         }
       },
       "discount_badge": {
@@ -1144,6 +1150,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Tempo di Arrivo Stimato",
+          "emailAndPhone": "Chiama {phone} o scrivi a {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Chiama {phone}",
+          "questions": "Domande?",
+          "address": "Indirizzo",
+          "pick_point_info": "Info punto di ritiro",
+          "get_directions": "Ottieni indicazioni",
+          "point_info": "Informazioni",
+          "pickup_address": "Indirizzo di ritiro",
+          "workingHours": "Ore",
+          "name": "Nome",
+          "instructions": "Istruzioni"
         }
       },
       "order_payment": {
@@ -1287,7 +1308,10 @@
       "title": "Carrello",
       "empty_cart_description": "Il tuo carrello è vuoto",
       "recently_browsed_products": "Prodotti recentemente visualizzati",
-      "empty_cart_search_text": "Usa la ricerca per trovare tutto ciò di cui hai bisogno"
+      "empty_cart_search_text": "Usa la ricerca per trovare tutto ciò di cui hai bisogno",
+      "save_for_later": "Salva per dopo",
+      "saved_for_later": "Salvati per dopo",
+      "move_to_cart": "Aggiungi al carrello"
     },
     "checkout": {
       "meta": {
