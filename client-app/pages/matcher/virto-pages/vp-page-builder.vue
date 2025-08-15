@@ -2,25 +2,28 @@
   <div v-if="pageBuilderContent">
     <template v-for="item in pageBuilderContent.content">
       <component
-        :is="item.type"
-        v-if="!item.hidden"
-        :key="item.id"
-        v-bind="item"
-        :model="item"
-        :settings="pageBuilderContent.settings"
-      />
+                 :is="getBlockType(item.type)"
+                 v-if="!item.hidden"
+                 :key="item.id"
+                 v-bind="item"
+                 :model="item"
+                 :settings="pageBuilderContent.settings" />
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onBeforeMount, shallowRef } from "vue";
+import { getBlockType } from "@/plugins/builder-preview/block-mapping";
 
 interface IProps {
   content?: string;
 }
 
-type BlockType = { [key: string]: unknown };
+type BlockType = {
+  type: string;
+  [key: string]: unknown;
+};
 
 interface IPageBuilderContent {
   settings: BlockType;
@@ -53,4 +56,5 @@ function trySetContent() {
   pageBuilderContent.value = blocks;
   canShowContent.value = true;
 }
+
 </script>

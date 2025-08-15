@@ -71,9 +71,9 @@ export async function getRegisteredComponents(): Promise<PageBuilderSchemaType> 
         return result;
       } else if (Array.isArray(x) && x.length === 2 && typeof x[1] === "string" && typeof x[0] === "object") {
         // load settings by name and set type as component name
-        const [{ name }, filename] = x as [Component, string];
+        const [, filename] = x as [Component, string];
         const result = await loadFile(filename);
-        result.type = name ?? filename;
+        result.type = filename;
         return result;
       } else if (typeof x === "object" && "__name" in x) {
         // load settings by component name
