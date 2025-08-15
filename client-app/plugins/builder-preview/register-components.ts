@@ -89,7 +89,7 @@ export async function getRegisteredComponents(): Promise<PageBuilderSchemaType> 
           return {
             ...rest,
             name: rest.name ?? componentName,
-            type: componentName,
+            type: rest.type ?? componentName,
           };
         }
         return x;
@@ -99,12 +99,10 @@ export async function getRegisteredComponents(): Promise<PageBuilderSchemaType> 
   )) as PageBuilderDescriptorType[];
 
   for (const section of sectionsList) {
-    if (allSettings.sections[section.type]) {
-      allSettings.sections[section.type] = {
-        ...allSettings.sections[section.type],
-        ...section,
-      };
-    }
+    allSettings.sections[section.type] = {
+      ...allSettings.sections[section.type],
+      ...section,
+    };
   }
 
   return allSettings;
