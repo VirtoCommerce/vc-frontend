@@ -36,6 +36,7 @@
             class="min-w-32 basis-1/4"
             required
             test-id-input="expiration-date-input"
+            @keypress="checkForNumber($event)"
           />
 
           <div class="min-w-32 basis-1/4">
@@ -376,6 +377,13 @@ async function useDynamicScript(url: string, integrity?: string): Promise<void> 
 function removeScript() {
   if (scriptTag.value && scriptTag.value.parentNode) {
     scriptTag.value.parentNode.removeChild(scriptTag.value);
+  }
+}
+
+function checkForNumber(event: KeyboardEvent) {
+  const isNumber = /^\d$/.test(event.key);
+  if (!isNumber) {
+    event.preventDefault();
   }
 }
 
