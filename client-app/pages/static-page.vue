@@ -30,6 +30,7 @@ import { useElementVisibility } from "@vueuse/core";
 import { computed, shallowRef, unref } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePageTitle } from "@/core/composables/usePageTitle";
+import { getBlockType } from "@/plugins/builder-preview/block-mapping";
 import { useStaticPage } from "@/shared/static-content";
 
 const { staticPage: template } = useStaticPage();
@@ -55,16 +56,4 @@ useSeoMeta({
   ogType: () => (staticPageAnchorVisible.value ? "website" : undefined),
 });
 
-function getBlockType(type: string): string {
-  switch (type) {
-    case "text":
-      return "text-block";
-    case "image":
-      return "image-block";
-    case "title":
-      return "title-block";
-    default:
-      return type;
-  }
-}
 </script>

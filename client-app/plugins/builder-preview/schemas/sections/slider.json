@@ -39,6 +39,11 @@
           "label": "Text",
           "type": "string",
           "multiline": true
+        },
+        {
+          "id": "url",
+          "label": "Url",
+          "type": "string"
         }
       ]
     },

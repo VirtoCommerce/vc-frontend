@@ -37,8 +37,7 @@
           "id": "image",
           "label": "Image",
           "type": "images",
-          "multiple": false,
-          "uploadAssetsRequest": "inline"
+          "multiple": false
         }
       ]
     }

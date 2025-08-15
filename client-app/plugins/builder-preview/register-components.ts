@@ -40,7 +40,9 @@ async function loadAllJsonFiles(): Promise<PageBuilderSchemaType> {
       const module = await jsonModules[path]();
       const name = path.split("/").pop()?.split(".")[0];
       if (name) {
-        result[jsonModulesName][name] = module.default;
+        if (!name.startsWith("__")) {
+          result[jsonModulesName][name] = module.default;
+        }
       } else {
         Logger.warn(`Could not load ${jsonModulesName} file: ${path}`);
       }
@@ -69,9 +71,9 @@ export async function getRegisteredComponents(): Promise<PageBuilderSchemaType> 
         return result;
       } else if (Array.isArray(x) && x.length === 2 && typeof x[1] === "string" && typeof x[0] === "object") {
         // load settings by name and set type as component name
-        const [{ name }, filename] = x as [Component, string];
+        const [, filename] = x as [Component, string];
         const result = await loadFile(filename);
-        result.type = name ?? filename;
+        result.type = filename;
         return result;
       } else if (typeof x === "object" && "__name" in x) {
         // load settings by component name
@@ -87,7 +89,7 @@ export async function getRegisteredComponents(): Promise<PageBuilderSchemaType> 
           return {
             ...rest,
             name: rest.name ?? componentName,
-            type: componentName,
+            type: rest.type ?? componentName,
           };
         }
         return x;
@@ -97,12 +99,10 @@ export async function getRegisteredComponents(): Promise<PageBuilderSchemaType> 
   )) as PageBuilderDescriptorType[];
 
   for (const section of sectionsList) {
-    if (allSettings.sections[section.type]) {
-      allSettings.sections[section.type] = {
-        ...allSettings.sections[section.type],
-        ...section,
-      };
-    }
+    allSettings.sections[section.type] = {
+      ...allSettings.sections[section.type],
+      ...section,
+    };
   }
 
   return allSettings;
