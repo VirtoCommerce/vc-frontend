@@ -34,6 +34,7 @@ export function createRouter(options: { base: string }) {
       return next({
         name: ROUTES.SIGN_IN.NAME,
         // save current location to return to it after sign in
+        // todo detect path
         query: { returnUrl: to.fullPath },
       });
     }
