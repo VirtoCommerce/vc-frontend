@@ -145,3 +145,10 @@ export function areStringOrNumberEqual(
 
   return String(a) === String(b);
 }
+
+export function preventNonNumber(event: KeyboardEvent) {
+  const isNumber = /^\d$/.test(event.key);
+  if (!isNumber) {
+    event.preventDefault();
+  }
+}

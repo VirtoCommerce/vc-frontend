@@ -36,7 +36,7 @@
             class="min-w-32 basis-1/4"
             required
             test-id-input="expiration-date-input"
-            @keypress="checkForNumber($event)"
+            @keypress="preventNonNumber($event)"
           />
 
           <div class="min-w-32 basis-1/4">
@@ -76,7 +76,7 @@ import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables";
-import { Logger } from "@/core/utilities";
+import { Logger, preventNonNumber } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
@@ -377,13 +377,6 @@ async function useDynamicScript(url: string, integrity?: string): Promise<void> 
 function removeScript() {
   if (scriptTag.value && scriptTag.value.parentNode) {
     scriptTag.value.parentNode.removeChild(scriptTag.value);
-  }
-}
-
-function checkForNumber(event: KeyboardEvent) {
-  const isNumber = /^\d$/.test(event.key);
-  if (!isNumber) {
-    event.preventDefault();
   }
 }
 
