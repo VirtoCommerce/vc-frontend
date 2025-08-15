@@ -294,6 +294,9 @@ export default tseslint.config(
         },
       },
     },
+    rules: {
+      "sonarjs/assertions-in-tests": "off",
+    },
   },
 
   // Configuration for Storybook files
