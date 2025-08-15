@@ -36,6 +36,7 @@
             class="min-w-32 basis-1/4"
             required
             test-id-input="expiration-date-input"
+            @keypress="preventNonNumber($event)"
           />
 
           <div class="min-w-32 basis-1/4">
@@ -75,7 +76,7 @@ import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables";
-import { Logger } from "@/core/utilities";
+import { Logger, preventNonNumber } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
