@@ -1,13 +1,12 @@
+import { GetMenuDocument } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
-import queryDocument from "./getMenu.graphql";
-import type { MenuLinkType, Query, QueryMenuArgs } from "@/core/api/graphql/types";
 
-export async function getMenu(name: string): Promise<MenuLinkType[]> {
+export async function getMenu(name: string) {
   const { storeId, cultureName } = globals;
 
-  const { data } = await graphqlClient.query<Pick<Query, "menu">, QueryMenuArgs>({
-    query: queryDocument,
+  const { data } = await graphqlClient.query({
+    query: GetMenuDocument,
     variables: {
       storeId,
       cultureName,

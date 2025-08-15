@@ -19,6 +19,7 @@ import {
   isActiveRoute,
 } from "@/core/utilities";
 import { globals } from "../globals";
+import type { MenuLinkType } from "../api/graphql/types";
 import type { ExtendedMenuLinkType, MenuType, MarkedMenuLinkType } from "../types";
 import type { DeepPartial } from "utility-types";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
@@ -130,7 +131,7 @@ export function _useNavigations() {
 
   async function fetchFooterLinks() {
     try {
-      footerLinks.value = (await getMenu("footer-links")).map((item) => convertToExtendedMenuLink(item, false));
+      footerLinks.value = (await getMenu("footer-links")).map((item) => convertToExtendedMenuLink(item as MenuLinkType, false));
     } catch (e) {
       Logger.error(`${useNavigations.name}.${fetchFooterLinks.name}`, e);
     }
@@ -138,7 +139,7 @@ export function _useNavigations() {
 
   async function fetchPinnedLinks() {
     try {
-      pinnedLinks.value = (await getMenu("pinned-links")).map((item) => convertToExtendedMenuLink(item, false));
+      pinnedLinks.value = (await getMenu("pinned-links")).map((item) => convertToExtendedMenuLink(item as MenuLinkType, false));
     } catch (e) {
       Logger.error(`${useNavigations.name}.${fetchPinnedLinks.name}`, e);
     }
@@ -154,7 +155,7 @@ export function _useNavigations() {
       if (catalog_menu_link_list_name && typeof catalog_menu_link_list_name === "string") {
         // Use a list of links
         catalogMenuItems.value = (await getMenu(catalog_menu_link_list_name)).map((item) =>
-          convertToExtendedMenuLink(item, true),
+          convertToExtendedMenuLink(item as MenuLinkType, true),
         );
       } else {
         // Use the query `childCategories`, with `maxLevel` equal to 2
