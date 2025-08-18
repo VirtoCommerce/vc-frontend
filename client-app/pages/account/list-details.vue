@@ -135,6 +135,7 @@ import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem } from "@/core/utilities";
 import { Logger } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
@@ -389,7 +390,7 @@ async function buyNow() {
       return;
     }
 
-    void router.push({ name: "CartShared", params: { cartId: result.data.createCartFromWishlist.id } });
+    void router.push({ name: ROUTES.CART_ID.NAME, params: { cartId: result.data.createCartFromWishlist.id } });
   } catch (error) {
     Logger.error("Can't create cart from wishlist", error);
   }

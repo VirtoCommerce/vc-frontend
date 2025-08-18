@@ -23,6 +23,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { usePageHead, useThemeContext } from "@/core/composables";
+import { ROUTES } from "@/router/routes/constants";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
 
@@ -65,13 +66,13 @@ const steps = computed<IStepsItem[]>(() => {
   } else if (route.params.cartId) {
     result.push({
       icon: "arrow-left-bold",
-      route: { name: "CartShared", params: { cartId: route.params.cartId }, replace: true },
+      route: { name: ROUTES.CART_ID.NAME, params: { cartId: route.params.cartId }, replace: true },
       text: t("common.buttons.back_to_cart"),
     });
   } else {
     result.push({
       icon: "arrow-left-bold",
-      route: { name: "Cart", replace: true },
+      route: { name: ROUTES.CART.NAME, replace: true },
       text: t("common.buttons.back_to_cart"),
     });
   }

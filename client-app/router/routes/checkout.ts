@@ -1,3 +1,4 @@
+import { ROUTES } from "./constants";
 import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordName, RouteRecordRaw } from "vue-router";
 
 const Checkout = () => import("@/pages/checkout/index.vue");
@@ -68,15 +69,15 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     ],
     meta: { layout: "Secure" },
     beforeEnter(to, from, next) {
-      if (from.name === "Cart" || from.name === "CartShared") {
+      if (from.name === ROUTES.CART.NAME || from.name === ROUTES.CART_ID.NAME) {
         next();
       } else if (from.name === "CheckoutPaymentResult" && to.name === "CheckoutPayment") {
         next();
       } else {
         if (to.params.cartId) {
-          next({ name: "CartShared", params: { cartId: to.params.cartId }, replace: true });
+          next({ name: ROUTES.CART_ID.NAME, params: { cartId: to.params.cartId }, replace: true });
         } else {
-          next({ name: "Cart", replace: true });
+          next({ name: ROUTES.CART.NAME, replace: true });
         }
       }
     },

@@ -228,6 +228,7 @@ import { getSavedForLater } from "@/core/api/graphql/cart/queries/getSavedForLat
 import { useBreadcrumbs, useAnalytics, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY, MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
@@ -298,7 +299,7 @@ usePageHead({
   title: t("pages.cart.meta.title"),
 });
 
-const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
+const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: ROUTES.CART.NAME } }]);
 
 const isCartLocked = ref(false);
 const savedForLaterList = ref<SavedForLaterListFragment>();
