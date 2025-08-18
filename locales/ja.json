@@ -297,7 +297,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "お問い合わせ",
           "call_us_label": "お電話: ",
-          "logged_in_as": "ログインユーザー:"
+          "logged_in_as": "ログインユーザー:",
+          "account_menu_label": "アカウントメニュー"
         },
         "bottom_header": {
           "catalog_menu_button": "カタログ",
@@ -1307,7 +1308,10 @@
       "title": "カート",
       "empty_cart_description": "カートが空です",
       "recently_browsed_products": "最近見た商品",
-      "empty_cart_search_text": "検索して必要なものを見つけましょう"
+      "empty_cart_search_text": "検索して必要なものを見つけましょう",
+      "save_for_later": "後で保存",
+      "saved_for_later": "後で保存",
+      "move_to_cart": "カートに入れる"
     },
     "checkout": {
       "meta": {

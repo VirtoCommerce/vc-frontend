@@ -81,7 +81,16 @@
       "page_limit": "Aucun autre résultat ne peut être affiché."
     },
     "slider": {
-      "tooltip": "{count} articles"
+      "tooltip": "{count} articles",
+      "aria_label": "Curseur de plage de {min} à {max}",
+      "start_input_label": "Valeur de départ (entre {min} et {max})",
+      "end_input_label": "Valeur finale (entre {min} et {max})",
+      "start_input_aria_label": "Valeur de départ, plage de {min} à {max}",
+      "end_input_aria_label": "Valeur de fin, plage de {min} à {max}",
+      "start_input_help": "Entrez un nombre entre {min} et {max}, pas de {step}",
+      "end_input_help": "Entrez un nombre entre {min} et {max}, pas de {step}",
+      "column_aria_label": "Colonne avec {count} articles, de {from} à {to}",
+      "current_value_announcement": "Valeur du curseur : {start} à {end}, plage {min} à {max}"
     }
   }
 }
