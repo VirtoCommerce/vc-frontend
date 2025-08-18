@@ -1,5 +1,5 @@
 <template>
-  <VcButton :data-test-id="testId" :to :disabled="disabled" full-width class="mt-4 print:!hidden">
+  <VcButton :data-test-id="testId" :to="to" :disabled="disabled" full-width class="mt-4 print:!hidden">
     <slot />
   </VcButton>
 </template>

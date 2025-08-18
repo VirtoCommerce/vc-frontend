@@ -141,7 +141,7 @@
 
               <ProceedTo
                 v-if="$cfg.checkout_multistep_enabled"
-                :to="{ name: 'Checkout', params: { cartId: cartId } }"
+                :to="{ name: 'Checkout', params: { cartId } }"
                 :disabled="hasOnlyUnselectedLineItems"
                 test-id="cart.checkout-button"
                 class="mt-4"
@@ -204,7 +204,7 @@
 
           <ProceedTo
             v-if="$cfg.checkout_multistep_enabled"
-            :to="{ name: 'Checkout', params: { cartId: cartId } }"
+            :to="{ name: 'Checkout', params: { cartId } }"
             :disabled="hasOnlyUnselectedLineItems"
             class="!mt-2"
           >
@@ -377,10 +377,10 @@ void (async () => {
   }
 
   const isXRecommendModuleEnabled = isEnabledXRecommend(XRECOMMEND_ENABLED_KEY);
-  if (isAuthenticated.value && isXRecommendModuleEnabled) {
+  if (isAuthenticated.value && isXRecommendModuleEnabled && !shouldHide("recently-browsed-products")) {
     recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
   }
-  if (isAuthenticated.value) {
+  if (isAuthenticated.value && !shouldHide("cart-for-later")) {
     savedForLaterList.value = await getSavedForLater();
   }
 })();

@@ -33,12 +33,12 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: "/checkout",
+    path: "/checkout/:cartId?",
     name: "Checkout",
     component: Checkout,
     children: [
       {
-        path: ":cartId?/shipping",
+        path: "shipping",
         name: "Shipping",
         component: Shipping,
         beforeEnter(to, from, next) {
@@ -53,6 +53,7 @@ export const checkoutRoutes: RouteRecordRaw[] = [
         beforeEnter(to, from, next) {
           handleBeforeEnter(from, next, "CheckoutPayment", "Cart");
         },
+        props: (route) => ({ cartId: route.params.cartId }),
       },
       {
         path: "review",
@@ -72,7 +73,11 @@ export const checkoutRoutes: RouteRecordRaw[] = [
       } else if (from.name === "CheckoutPaymentResult" && to.name === "CheckoutPayment") {
         next();
       } else {
-        next({ name: "Cart", replace: true });
+        if (to.params.cartId) {
+          next({ name: "CartShared", params: { cartId: to.params.cartId }, replace: true });
+        } else {
+          next({ name: "Cart", replace: true });
+        }
       }
     },
   },

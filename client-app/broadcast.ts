@@ -59,17 +59,14 @@ export function setupBroadcastGlobalListeners() {
     }
   });
   on(cartReloadEvent, async () => {
-    console.log("cartReloadEvent");
     const route = router.currentRoute.value;
 
     if (route.matched.some((item) => item.name === "Checkout")) {
-      console.log("replacing");
       await router.replace({
         name: route.params.cartId ? "SharedCart" : "Cart",
         params: { cartId: route.params.cartId },
       });
     } else {
-      console.log("refetching");
       await client.refetchQueries({
         include: filterActiveQueryNames(client, [OperationNames.Query.GetFullCart, OperationNames.Query.GetShortCart]),
       });

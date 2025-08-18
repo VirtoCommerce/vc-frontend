@@ -199,16 +199,6 @@ watch(
   },
 );
 
-watch(
-  cartId,
-  () => {
-    console.log("cartId changed", cartId.value);
-  },
-  {
-    immediate: true,
-  },
-);
-
 function onShipmentMethodChange(method: ShippingMethodType) {
   void updateShipment({
     id: shipment.value?.id,
