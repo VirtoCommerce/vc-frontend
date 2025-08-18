@@ -1,4 +1,4 @@
-#import "../../../../core/api/graphql/common/fragments/money.graphql"
+#import "@/core/api/graphql/common/fragments/money.graphql"
 
 query GetQuotes(
   $storeId: String
