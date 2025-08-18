@@ -32,8 +32,8 @@ import { shouldUseActualPrice } from "@/ui-kit/utilities/price";
 import type { MoneyType } from "@/core/api/graphql/types";
 
 interface IProps {
-  actualPrice?: MoneyType;
-  listPrice?: MoneyType;
+  actualPrice?: Pick<MoneyType, 'amount' | 'formattedAmount'>;
+  listPrice?: Pick<MoneyType, 'amount' | 'formattedAmount'>;
   align?: "start" | "end";
   singleLine?: boolean;
   truncate?: boolean;

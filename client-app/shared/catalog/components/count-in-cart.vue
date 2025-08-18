@@ -9,7 +9,7 @@
   >
     <VcIcon name="cart" />
 
-    <span class="inline-block min-w-3 text-center">
+    <span class="inline-block min-w-3 text-center" data-test-id="count-in-cart-label">
       {{ countInCart }}
     </span>
   </VcChip>
