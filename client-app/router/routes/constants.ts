@@ -11,4 +11,8 @@ export const ROUTES = {
     NAME: "SignIn",
     PATH: "/sign-in",
   },
+  CHANGE_PASSWORD: {
+    NAME: "ChangePassword",
+    PATH: "/change-password",
+  },
 } as const;

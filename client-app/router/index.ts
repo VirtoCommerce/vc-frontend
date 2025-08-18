@@ -1,6 +1,6 @@
 import { createRouter as _createRouter, createWebHistory } from "vue-router";
 import { useThemeContext } from "@/core/composables";
-import { getReturnUrlValue } from "@/core/utilities";
+import { buildRedirectUrl, getReturnUrlValue } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
 import { mainRoutes } from "./routes";
@@ -23,7 +23,7 @@ export function createRouter(options: { base: string }) {
     },
   });
 
-  router.beforeEach((to, _from, next) => {
+  router.beforeEach((to, from, next) => {
     // Protecting routes
     const unauthorizedAccessIsDenied: boolean =
       !isAuthenticated.value &&
@@ -31,11 +31,12 @@ export function createRouter(options: { base: string }) {
       (to.meta.requiresAuth || !themeContext.value.storeSettings.anonymousUsersAllowed);
 
     if (unauthorizedAccessIsDenied) {
+      // save current location to return to it after sign in
+      const query = buildRedirectUrl(to) || {};
+
       return next({
         name: ROUTES.SIGN_IN.NAME,
-        // save current location to return to it after sign in
-        // todo detect path
-        query: { returnUrl: to.fullPath },
+        query,
       });
     }
 

@@ -1,22 +1,40 @@
 import uniqBy from "lodash/uniqBy";
-import type { RouteLocationRaw, RouteLocationNormalizedLoaded } from "vue-router";
+import type { RouteLocationRaw, RouteLocationNormalizedLoaded, RouteLocationNormalized } from "vue-router";
 
 export function getBaseUrl(supportedLocales: string[]): string {
   const localeInPath = location.pathname.split("/")[1];
   return supportedLocales.includes(localeInPath) ? `/${localeInPath}/` : "";
 }
 
+const RETURN_URL_KEYS = ["returnUrl", "ReturnUrl"] as const;
+
 export function getReturnUrlValue(): string | null {
   const { searchParams, origin, hostname } = new URL(location.href);
-  const returnUrl = searchParams.get("returnUrl") || searchParams.get("ReturnUrl");
 
-  if (returnUrl) {
-    const returnUrlObj = new URL(returnUrl, origin);
-    if (returnUrlObj.hostname === hostname) {
-      return returnUrl;
+  // Try each return URL key until we find one
+  for (const key of RETURN_URL_KEYS) {
+    const returnUrl = searchParams.get(key);
+    if (returnUrl) {
+      const returnUrlObj = new URL(returnUrl, origin);
+      if (returnUrlObj.hostname === hostname) {
+        return returnUrl;
+      }
     }
   }
+
   return null;
+}
+
+export function buildRedirectUrl(route: RouteLocationNormalized): { [key in typeof RETURN_URL_KEYS[0]]: string } | null {
+  if (route.matched.some(r => r.meta?.redirectable === false)) return null;
+
+  for (const key of RETURN_URL_KEYS) {
+    if (route.query && key in route.query) {
+      return null;
+    }
+  }
+
+  return { [RETURN_URL_KEYS[0]]: route.fullPath };
 }
 
 export function extractHostname(url: string) {

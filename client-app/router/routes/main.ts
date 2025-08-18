@@ -39,7 +39,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/confirm-invitation", name: "ConfirmInvitation", component: ConfirmInvitation, meta: { public: true } },
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword, meta: { public: true } },
   { path: "/reset-password", name: "ResetPassword", component: ResetPassword, meta: { public: true } },
-  { path: "/change-password", name: "ChangePassword", component: ChangePassword, meta: { public: false } },
+  { path: ROUTES.CHANGE_PASSWORD.PATH, name: ROUTES.CHANGE_PASSWORD.NAME, component: ChangePassword, meta: { public: false } },
   { path: "/set-password", name: "SetPassword", component: ResetPassword, meta: { public: true } },
   { path: "/blocked", name: "Blocked", component: BlockedPage, meta: { public: true } },
   { path: "/account/confirmemail", name: "ConfirmEmail", component: ConfirmEmail, meta: { public: true } },
