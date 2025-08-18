@@ -273,7 +273,8 @@
       "change_role": "Cambiar rol",
       "save_changes": "Guardar cambios",
       "password_expired": "La contraseña está a punto de expirar",
-      "error_details": "Detalles del error"
+      "error_details": "Detalles del error",
+      "buy_now": "Comprar ahora"
     },
     "roles": {
       "org-maintainer": "Mantenedor de la organización",

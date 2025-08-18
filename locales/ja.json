@@ -273,7 +273,8 @@
       "change_role": "権限変更",
       "save_changes": "変更を保存",
       "password_expired": "パスワード期限切れ",
-      "error_details": "エラー詳細"
+      "error_details": "エラー詳細",
+      "buy_now": "今すぐ購入"
     },
     "roles": {
       "org-maintainer": "組織管理者",

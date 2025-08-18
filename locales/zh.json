@@ -273,7 +273,8 @@
       "change_role": "更改角色",
       "save_changes": "保存更改",
       "password_expired": "密码即将过期",
-      "error_details": "错误详情"
+      "error_details": "错误详情",
+      "buy_now": "立即购买"
     },
     "roles": {
       "org-maintainer": "组织维护者",

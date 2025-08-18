@@ -273,7 +273,8 @@
       "change_role": "Сменить роль",
       "save_changes": "Сохранить изменения",
       "password_expired": "Пароль скоро истечет",
-      "error_details": "Детали ошибки"
+      "error_details": "Детали ошибки",
+      "buy_now": "Купить сейчас"
     },
     "roles": {
       "org-maintainer": "Администратор организации",
