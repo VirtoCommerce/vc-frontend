@@ -121,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, toRef, watch } from "vue";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { useBopis, BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
@@ -130,20 +130,25 @@ import type { ShippingMethodType } from "@/core/api/graphql/types.ts";
 
 interface IProps {
   disabled?: boolean;
+  cartId?: string;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const SHIPPING_OPTIONS = {
   pickup: "pickup",
   shipping: "shipping",
 } as const;
 
+const cartId = toRef(props, "cartId");
+
 type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
 
-const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, billingAddressEqualsShipping } = useCheckout();
+const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, billingAddressEqualsShipping } = useCheckout(
+  cartId.value,
+);
 
-const { availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
+const { availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart(cartId.value);
 const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
 
 const mode = ref<ShippingOptionType>(getDefaultMode());
@@ -188,6 +193,16 @@ watch(
       shipmentMethodOption: shippingMethod.optionName,
       price: shippingMethod.price?.amount,
     });
+  },
+  {
+    immediate: true,
+  },
+);
+
+watch(
+  cartId,
+  () => {
+    console.log("cartId changed", cartId.value);
   },
   {
     immediate: true,

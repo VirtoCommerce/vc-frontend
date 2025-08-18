@@ -282,6 +282,7 @@ export function useShortCart() {
 }
 
 export function _useFullCart(cartId?: string) {
+  console.trace("useFullCart", cartId);
   const { openModal } = useModal();
   const { analytics } = useAnalytics();
   const { client, resolveClient } = useApolloClient();

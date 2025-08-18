@@ -1,5 +1,11 @@
 <template>
-  <VcButton :data-test-id="testId" :to="to" :disabled="disabled" full-width class="mt-4 print:!hidden">
+  <VcButton
+    :data-test-id="testId"
+    :to="{ name: 'Shipping', params: { cartId: $route.params.cartId } }"
+    :disabled="disabled"
+    full-width
+    class="mt-4 print:!hidden"
+  >
     <slot />
   </VcButton>
 </template>

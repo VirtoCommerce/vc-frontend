@@ -28,9 +28,19 @@ import { useCheckout } from "@/shared/checkout";
 
 const router = useRouter();
 const route = useRoute();
+
+const routeParamCartId = computed(() =>
+  Array.isArray(route.params.cartId) ? route.params.cartId[0] : route.params.cartId,
+);
+
 const { t } = useI18n();
 const { themeContext } = useThemeContext();
-const { loading: loadingCart, changing: changingCart, allItemsAreDigital, forceFetch } = useFullCart();
+const {
+  loading: loadingCart,
+  changing: changingCart,
+  allItemsAreDigital,
+  forceFetch,
+} = useFullCart(routeParamCartId.value);
 const {
   loading: loadingCheckout,
   changing: changingCheckout,
@@ -51,6 +61,12 @@ const steps = computed<IStepsItem[]>(() => {
       icon: "arrow-left-bold",
       route: { name: "OrderDetails", params: { orderId: placedOrder.value.id }, replace: true },
       text: t("common.buttons.back_to_order_details"),
+    });
+  } else if (route.params.cartId) {
+    result.push({
+      icon: "arrow-left-bold",
+      route: { name: "CartShared", params: { cartId: route.params.cartId }, replace: true },
+      text: t("common.buttons.back_to_cart"),
     });
   } else {
     result.push({

@@ -1,6 +1,6 @@
 <template>
   <VcLayout sidebar-position="right" sticky-sidebar>
-    <ShippingDetailsSection />
+    <ShippingDetailsSection :cart-id="cartId" />
 
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
 
@@ -36,11 +36,21 @@
 </template>
 
 <script setup lang="ts">
+import { toRef } from "vue";
 import { useAnalytics } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ProceedTo, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-const { cart, shipment, selectedLineItems, hasValidationErrors } = useFullCart();
-const { comment, isValidShipment } = useCheckout();
+interface IProps {
+  cartId?: string;
+}
+
+const props = defineProps<IProps>();
+
+const cartId = toRef(props, "cartId");
+
+const { cart, shipment, selectedLineItems, hasValidationErrors } = useFullCart(cartId.value);
+const { comment, isValidShipment } = useCheckout(cartId.value);
+
 const { analytics } = useAnalytics();
 </script>
