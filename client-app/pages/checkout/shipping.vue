@@ -8,7 +8,7 @@
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" footnote>
         <template #footer>
           <ProceedTo
-            :to="{ name: 'Billing' }"
+            :to="{ name: 'Billing', params: { cartId: cartId } }"
             :disabled="!isValidShipment"
             test-id="checkout.billing-button"
             @click="

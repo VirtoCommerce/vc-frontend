@@ -141,7 +141,7 @@
 
               <ProceedTo
                 v-if="$cfg.checkout_multistep_enabled"
-                :to="{ name: 'Checkout' }"
+                :to="{ name: 'Checkout', params: { cartId: cartId } }"
                 :disabled="hasOnlyUnselectedLineItems"
                 test-id="cart.checkout-button"
                 class="mt-4"
@@ -204,7 +204,7 @@
 
           <ProceedTo
             v-if="$cfg.checkout_multistep_enabled"
-            :to="{ name: 'Checkout' }"
+            :to="{ name: 'Checkout', params: { cartId: cartId } }"
             :disabled="hasOnlyUnselectedLineItems"
             class="!mt-2"
           >
