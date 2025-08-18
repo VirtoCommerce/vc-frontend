@@ -28,6 +28,7 @@
 
           <VcButton
             :disabled="loading || !pagedListItems.length"
+            :loading="createCartFromWishlistLoading"
             size="sm"
             prepend-icon="cart-check"
             class="w-full md:order-last md:w-auto"
@@ -133,6 +134,7 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem } from "@/core/utilities";
+import { Logger } from "@/core/utilities";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
@@ -155,6 +157,7 @@ import type {
 import type { PreparedLineItemType } from "@/core/types";
 import type { RouteLocationNormalized } from "vue-router";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
+
 interface IProps {
   listId: string;
 }
@@ -176,6 +179,8 @@ const {
   addItemsToCart,
   addToCart,
   changeItemQuantity,
+  createCartFromWishlist,
+  createCartFromWishlistLoading,
 } = useShortCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { trackAddItemToCart, trackAddItemsToCart } = useAnalyticsUtils();
@@ -372,8 +377,19 @@ function selectItemEvent(item: Product | undefined): void {
   analytics("selectItem", item, wishlistListProperties.value);
 }
 
-function buyNow() {
-  void router.push({ name: "CartShared", params: { cartId: list.value?.id } });
+async function buyNow() {
+  if (!list.value?.id) {
+    return;
+  }
+
+  try {
+    const result = await createCartFromWishlist(list.value.id);
+    if (result?.data?.createCartFromWishlist?.id) {
+      void router.push({ name: "CartShared", params: { cartId: result.data.createCartFromWishlist.id } });
+    }
+  } catch (error) {
+    Logger.error("Can't create cart from wishlist", error);
+  }
 }
 
 onBeforeRouteLeave(canChangeRoute);

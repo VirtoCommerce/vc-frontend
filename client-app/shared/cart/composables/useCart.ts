@@ -32,6 +32,7 @@ import {
   SelectCartItemsDocument,
   UnselectCartItemsDocument,
   GetShortCartDocument,
+  CreateCartFromWishlistDocument,
 } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
@@ -247,6 +248,12 @@ export function useShortCart() {
     return sumBy(filteredItems, (x) => x.extendedPrice.amount);
   }
 
+  const { mutate: _createCartFromWishlist, loading: createCartFromWishlistLoading } =
+    useMutation(CreateCartFromWishlistDocument);
+  async function createCartFromWishlist(wishlistId: string) {
+    return await _createCartFromWishlist({ command: { listId: wishlistId } });
+  }
+
   return {
     cart,
     refetch,
@@ -257,9 +264,11 @@ export function useShortCart() {
     changeItemQuantity,
     changeItemQuantityBatched,
     getItemsTotal,
+    createCartFromWishlist,
     loading,
     addToCartBatchedOverflowed,
     changeItemQuantityBatchedOverflowed,
+    createCartFromWishlistLoading,
     changing: computed(
       () =>
         addToCartLoading.value ||
