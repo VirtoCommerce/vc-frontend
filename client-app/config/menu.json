@@ -216,7 +216,7 @@
           },
           {
             "route": {
-              "name": "ChangePassword"
+              "name": "ChangePasswordAccount"
             },
             "title": "shared.layout.header.mobile.account_menu.change_password",
             "icon": "pass",
