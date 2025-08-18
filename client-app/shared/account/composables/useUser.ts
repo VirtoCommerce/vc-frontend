@@ -1,4 +1,5 @@
 import { eagerComputed, useLocalStorage } from "@vueuse/core";
+import { createGlobalState } from "@vueuse/core";
 import { remove } from "lodash";
 import { computed, readonly, ref } from "vue";
 import {
@@ -46,26 +47,27 @@ import type {
   UserPersonalDataType,
 } from "@/shared/account";
 
-const loading = ref(false);
-const user = ref<UserType>();
-
-const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
-const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
-const organization = eagerComputed(
-  () =>
-    user.value?.contact?.organizations?.items?.find((item) => item.id === user.value?.contact?.organizationId) ?? null,
-);
-
-const allOrganizations = computed(() => user.value?.contact?.organizations?.items || []);
-
-const operator = computed(() => user.value?.operator ?? null);
 
 interface IPasswordExpirationEntry {
   userId: string;
   date: Date;
 }
 
-export function useUser() {
+export function _useUser() {
+  const loading = ref(false);
+  const user = ref<UserType>();
+
+  const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
+  const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
+  const organization = eagerComputed(
+    () =>
+      user.value?.contact?.organizations?.items?.find((item) => item.id === user.value?.contact?.organizationId) ?? null,
+  );
+
+  const allOrganizations = computed(() => user.value?.contact?.organizations?.items || []);
+
+  const operator = computed(() => user.value?.operator ?? null);
+
   const broadcast = useBroadcast();
   const { refresh } = useAuth();
   const { openModal, closeModal } = useModal();
@@ -404,3 +406,5 @@ export function useUser() {
     twoLetterContactLocale,
   };
 }
+
+export const useUser = createGlobalState(_useUser)

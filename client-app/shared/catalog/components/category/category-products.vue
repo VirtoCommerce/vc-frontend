@@ -139,7 +139,6 @@ interface IProps {
 }
 
 interface IEmits {
-  (event: "resetFacetFilters"): void;
   (event: "changePage", pageNumber: number): void;
   (event: "selectProduct", product: Product): void;
   (event: "resetFilterKeyword"): void;
