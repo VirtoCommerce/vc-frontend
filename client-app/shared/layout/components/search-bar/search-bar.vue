@@ -29,7 +29,7 @@
         />
 
         <VcButton
-          v-for="item in searchScope"
+          v-for="item in searchScopeData.searchScope"
           :key="item.id"
           class="search-bar__button"
           color="secondary"
@@ -225,7 +225,7 @@
 <script setup lang="ts">
 import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
 import { pickBy } from "lodash";
-import { computed, onMounted, ref, toValue } from "vue";
+import { computed, onMounted, ref, toValue, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
@@ -273,6 +273,7 @@ const {
   hideSearchDropdown,
   showSearchDropdown,
   searchResults,
+  clearSearchResults,
 } = useSearchBar();
 
 const { analytics } = useAnalytics();
@@ -322,7 +323,7 @@ const isExistResults = computed(
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
-const { searchScope, searchScopeFilterExpression, removeScopeItemById, isCategoryScope, preparingScope } =
+const { searchScopeData, searchScopeFilterExpression, removeScopeItemById, isCategoryScope, preparingScope } =
   useSearchScore();
 
 const { t } = useI18n();
@@ -334,7 +335,7 @@ const searchPlaceholder = computed(() => {
 });
 
 function getCategoriesNames() {
-  return toCSV(searchScope.value.filter((item) => item.type === "category").map((el) => el.label));
+  return toCSV(searchScopeData.value.searchScope.filter((item) => item.type === "category").map((el) => el.label));
 }
 
 function onScopeItemClick(itemId: string | number) {
@@ -538,6 +539,17 @@ const onBarcodeScanned = (value: string) => {
     goToSearchResultsPage();
   }
 };
+
+watch(
+  () => searchScopeData.value.queryScope,
+  (value) => {
+    if (value !== searchPhrase.value) {
+      searchPhrase.value = value;
+      clearSearchResults();
+    }
+  },
+  { deep: true },
+);
 </script>
 
 <style lang="scss">
