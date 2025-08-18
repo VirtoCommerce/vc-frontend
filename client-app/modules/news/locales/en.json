@@ -1,5 +1,6 @@
 {
   "news": {
+    "title": "Latest news",
     "empty-list": {
       "title": "No news found",
       "button": "@:common.buttons.continue_shopping"

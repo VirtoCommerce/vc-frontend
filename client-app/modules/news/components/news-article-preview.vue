@@ -13,6 +13,14 @@
     <router-link :to="articleRoute">
       <VcMarkdownRender :src="newsArticle.contentPreview ?? ''" class="news-article-preview__preview" />
     </router-link>
+
+    <div class="news-article-preview__tags">
+      <template v-for="tag in newsArticle.tags" :key="tag">
+        <VcChip color="secondary" variant="outline-dark" class="news-articles-preview__tags-tag">
+          {{ tag }}
+        </VcChip>
+      </template>
+    </div>
   </VcWidget>
 </template>
 
@@ -63,6 +71,14 @@ const newsArticle = toRef(props, "newsArticle");
 
   &__preview {
     @apply text-lg;
+  }
+
+  &__tags {
+    @apply mt-5;
+  }
+
+  &__tags-tag {
+    @apply mr-2;
   }
 }
 </style>
