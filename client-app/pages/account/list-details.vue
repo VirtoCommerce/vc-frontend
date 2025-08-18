@@ -384,9 +384,12 @@ async function buyNow() {
 
   try {
     const result = await createCartFromWishlist(list.value.id);
-    if (result?.data?.createCartFromWishlist?.id) {
-      void router.push({ name: "CartShared", params: { cartId: result.data.createCartFromWishlist.id } });
+    if (!result?.data?.createCartFromWishlist?.id) {
+      Logger.error("Can't create cart from wishlist", result);
+      return;
     }
+
+    void router.push({ name: "CartShared", params: { cartId: result.data.createCartFromWishlist.id } });
   } catch (error) {
     Logger.error("Can't create cart from wishlist", error);
   }
