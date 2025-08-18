@@ -319,6 +319,8 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
   $opened: "";
   $error: "";
 
+  --radius: var(--vc-select-radius, var(--vc-radius, 0.5rem));
+
   @apply flex flex-col;
 
   &--disabled {
@@ -346,7 +348,7 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
   }
 
   &__button {
-    @apply relative flex items-center w-full rounded border bg-additional-50 appearance-none text-left;
+    @apply relative flex items-center w-full rounded-[--radius] border bg-additional-50 appearance-none text-left;
 
     #{$disabled} &,
     &:disabled {
@@ -387,14 +389,6 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
     }
   }
 
-  &__clear {
-    @apply flex items-center h-full px-1 text-primary;
-
-    &:hover {
-      @apply text-primary-600;
-    }
-  }
-
   &__arrow {
     @apply flex items-center h-full pe-3 ps-1 text-neutral-900;
 
@@ -417,14 +411,6 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
     #{$readonly} & {
       @apply hidden;
     }
-  }
-
-  &__dropdown {
-    @apply z-10 overflow-hidden absolute mt-1 w-full bg-additional-50 rounded border border-neutral-100 shadow-lg;
-  }
-
-  &__list {
-    @apply overflow-auto max-h-60;
   }
 }
 </style>
