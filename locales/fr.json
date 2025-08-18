@@ -297,7 +297,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "Contacts",
           "call_us_label": "Appelez-nous : ",
-          "logged_in_as": "connecté en tant que"
+          "logged_in_as": "connecté en tant que",
+          "account_menu_label": "Menu du compte"
         },
         "bottom_header": {
           "catalog_menu_button": "Catalogue",
@@ -1307,7 +1308,10 @@
       "title": "Panier",
       "empty_cart_description": "Votre panier est vide",
       "recently_browsed_products": "Récemment consultés",
-      "empty_cart_search_text": "Utilisez la recherche pour trouver tout ce dont vous avez besoin"
+      "empty_cart_search_text": "Utilisez la recherche pour trouver tout ce dont vous avez besoin",
+      "save_for_later": "Enregistrer pour plus tard",
+      "saved_for_later": "Enregistré pour plus tard",
+      "move_to_cart": "Ajouter au panier"
     },
     "checkout": {
       "meta": {
