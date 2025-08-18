@@ -244,6 +244,8 @@ yarn generate:dependency-graph
 ```
 yarn generate:dependency-graph client-app/main.ts client-app/shared/account/components/checkout-default-success-modal.vue
 ```
+If command "dot" is missing - install graphviz on your OS
+
 The generated graph will also be saved in the `artifacts` folder.
 
 ## Localization
