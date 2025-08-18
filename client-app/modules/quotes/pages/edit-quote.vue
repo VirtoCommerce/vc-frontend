@@ -46,7 +46,7 @@
       <VcWidget :title="$t('quote_details.shipping_address')" prepend-icon="truck" size="lg">
         <VcLabel :required="isShippingAddressRequired">{{ $t("quote_details.shipping_address") }}</VcLabel>
 
-        <div :class="['mt-2.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
+        <div :class="['mt-2.5 rounded-[--vc-radius] border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
           <AddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="shippingAddress"
@@ -64,7 +64,7 @@
       <VcWidget :title="$t('quote_details.billing_address')" prepend-icon="cash" size="lg">
         <VcLabel required>{{ $t("quote_details.billing_address") }}</VcLabel>
 
-        <div :class="['mt-2.5 space-y-1.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
+        <div :class="['mt-2.5 space-y-1.5 rounded-[--vc-radius] border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
           <VcCheckbox
             :model-value="billingAddressEqualsShipping"
             :disabled="fetching || !shippingAddress"
