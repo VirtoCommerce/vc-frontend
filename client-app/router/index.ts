@@ -23,7 +23,7 @@ export function createRouter(options: { base: string }) {
     },
   });
 
-  router.beforeEach((to, from, next) => {
+  router.beforeEach((to, _, next) => {
     // Protecting routes
     const unauthorizedAccessIsDenied: boolean =
       !isAuthenticated.value &&
