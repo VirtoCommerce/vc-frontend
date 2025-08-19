@@ -154,7 +154,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .subcategories {
-  @apply relative me-2.5 py-px w-[15rem] max-h-[calc(100%-2.5rem)];
+  @apply relative me-2.5 py-px w-[15.75rem] max-h-[calc(100%-2.5rem)];
 
   @media (min-width: theme("screens.2xl")) {
     @apply w-[21.5rem];
