@@ -55,6 +55,14 @@ color="secondary" :variant="searchTag == tag ? 'solid' : 'outline-dark'" class="
           <NewsArticlePreview v-for="item in newsArticles" :key="item.id" :news-article="item" @tag:click="applyTag($event)" />
         </div>
       </div>
+
+      <VcPagination
+          v-if="searchPages > 1"
+          v-model:page="searchPage"
+          class="news-articles__pagination"
+          :pages="Math.min(searchPages, ARTICLES_MAX_PAGES)" 
+          @update:page="changeSearchPage"
+        />
     </VcContainer>
   </div>
 </template>
@@ -63,7 +71,7 @@ color="secondary" :variant="searchTag == tag ? 'solid' : 'outline-dark'" class="
 import { ref, onMounted, computed } from "vue";
 import { getNewsArticleTags } from "../api/graphql/queries/newsArticleTag";
 import { getNewsArticles } from "../api/graphql/queries/newsArticles";
-import { ARTICLES_PER_PAGE } from "../constants";
+import { ARTICLES_PER_PAGE, ARTICLES_MAX_PAGES, ARTICLE_TAGS_MAX } from "../constants";
 import type { NewsArticleContent } from "../api/graphql/types";
 import NewsArticlePreview from "@/modules/news/components/news-article-preview.vue";
 
@@ -73,6 +81,7 @@ const newsArticleTagsLoading = ref(false);
 const searchKeyword = ref("");
 const searchTag = ref("");
 const searchPage = ref(1);
+const searchPages = ref(1);
 const newsArticles = ref<NewsArticleContent[]>([]);
 
 const newsArticleTags = ref<string[]>([]);
@@ -85,13 +94,14 @@ async function applyKeyword() {
 }
 
 async function resetKeyword() {
-  searchPage.value = 1;
   searchKeyword.value = "";
+  searchPage.value = 1;
   await fetchNewsArticles();
 }
 
 async function applyTag(tag: string) {
   searchTag.value = tag;
+  searchPage.value = 1;
   await fetchNewsArticles();
 }
 
@@ -102,6 +112,12 @@ async function toggleTag(tag: string) {
   else {
     searchTag.value = tag;
   }
+  searchPage.value = 1;
+  await fetchNewsArticles();
+}
+
+async function changeSearchPage(page: number) {
+  searchPage.value = page; 
   await fetchNewsArticles();
 }
 
@@ -109,7 +125,7 @@ const fetchNewsArticleTags = async () => {
   newsArticleTagsLoading.value = true;
 
   const response = await getNewsArticleTags();
-  newsArticleTags.value = response ?? [];
+  newsArticleTags.value = response?.slice(0, ARTICLE_TAGS_MAX) ?? [];
 
   newsArticleTagsLoading.value = false;
 }
@@ -130,6 +146,8 @@ const fetchNewsArticles = async () => {
 
   const response = await getNewsArticles(query);
   newsArticles.value = response.items ?? [];
+  
+  searchPages.value = Math.ceil((response?.totalCount ?? 0) / ARTICLES_PER_PAGE);
 
   newsArticlesLoading.value = false;
 };
@@ -155,11 +173,15 @@ onMounted(async () => {
   }
 
   &__filter--tags-tag {
-    @apply mr-2;
+    @apply mr-2 mb-2;
   }
 
   &__filter--keyword {
     @apply w-full;
+  }
+  
+  &__pagination { 
+    @apply mt-5 flex justify-center ;
   }
 
   &__grid {

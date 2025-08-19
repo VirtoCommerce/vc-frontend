@@ -83,7 +83,7 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__tags-tag {
-    @apply mr-2;
+    @apply mr-2 mb-1; 
   }
 }
 </style>
