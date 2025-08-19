@@ -1,6 +1,7 @@
 import blackGold from './black-gold.json'
 import coffee from './coffee.json'
 import defaultPreset from './default.json'
+import jensen from './jensen.json'
 import mercury from './mercury.json'
 import purplePink from './purple-pink.json'
 import watermelon from './watermelon.json'
@@ -13,4 +14,5 @@ export const presets: Record<string, IThemeConfigPreset> = {
   ['purple-pink']: purplePink,
   watermelon: watermelon,
   coffee: coffee,
+  jensen: jensen,
 } as const;
