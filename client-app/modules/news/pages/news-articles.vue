@@ -198,10 +198,6 @@ onMounted(async () => {
     @media (min-width: theme("screens.md")) {
       @apply grid-cols-3 gap-3;
     }
-
-    @media (min-width: theme("screens.lg")) {
-      @apply grid-cols-4 gap-4;
-    }
   }
 }
 </style>
