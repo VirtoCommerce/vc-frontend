@@ -1,4 +1,4 @@
-#import "./money.graphql"
+#import "@/core/api/graphql/common/fragments/money.graphql"
 #import "./quoteProductProperty.graphql"
 
 fragment quoteLineItemFields on QuoteItemType {
