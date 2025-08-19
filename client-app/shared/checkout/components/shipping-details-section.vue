@@ -149,7 +149,7 @@ const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, billingAddress
 );
 
 const { availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart(cartId.value);
-const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
+const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis(cartId.value);
 
 const mode = ref<ShippingOptionType>(getDefaultMode());
 

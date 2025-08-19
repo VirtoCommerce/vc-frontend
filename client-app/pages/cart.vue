@@ -85,6 +85,7 @@
           :validation-errors="cart.validationErrors"
           :disabled="changeItemQuantityBatchedOverflowed || selectionOverflowed"
           data-test-id="cart.products-section"
+          :hide-controls="hideControls"
           @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
           @select:items="handleSelectItems"
           @remove:items="handleRemoveItems"
@@ -102,9 +103,9 @@
 
         <!-- Sections for single page checkout -->
         <template v-if="!$cfg.checkout_multistep_enabled">
-          <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
+          <ShippingDetailsSection v-if="!allItemsAreDigital" :cart-id="cartId" class="mt-5" />
 
-          <BillingDetailsSection class="mt-5" />
+          <BillingDetailsSection class="mt-5" :cart-id="cartId" />
 
           <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
         </template>
@@ -145,11 +146,12 @@
                 :disabled="hasOnlyUnselectedLineItems"
                 test-id="cart.checkout-button"
                 class="mt-4"
+                :cart-id="cartId"
               >
                 {{ $t("common.buttons.go_to_checkout") }}
               </ProceedTo>
 
-              <PlaceOrder v-else class="mt-4" />
+              <PlaceOrder v-else class="mt-4" :cart-id="cartId" />
 
               <template v-if="!$cfg.checkout_multistep_enabled">
                 <transition name="slide-fade-top" mode="out-in" appear>
@@ -207,11 +209,12 @@
             :to="{ name: 'Checkout', params: { cartId } }"
             :disabled="hasOnlyUnselectedLineItems"
             class="!mt-2"
+            :cart-id="cartId"
           >
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
-          <PlaceOrder v-else class="!mt-2" />
+          <PlaceOrder v-else class="!mt-2" :cart-id="cartId" />
         </div>
       </transition>
     </template>
@@ -252,6 +255,7 @@ interface IProps {
   blocksToHide?: string[];
   hideBreadcrumbs?: boolean;
   title?: string;
+  hideControls?: string[];
 }
 
 const props = defineProps<IProps>();

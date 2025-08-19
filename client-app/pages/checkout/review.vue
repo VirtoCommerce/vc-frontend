@@ -131,7 +131,7 @@
             />
           </transition>
 
-          <PlaceOrder />
+          <PlaceOrder :cart-id="cartId" />
 
           <transition name="slide-fade-top" mode="out-in" appear>
             <VcAlert v-show="hasValidationErrors" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
@@ -152,11 +152,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, toRef } from "vue";
 import { OrderLineItems } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
 import { AddressSelection, VendorName } from "@/shared/common";
+
+interface IProps {
+  cartId?: string;
+}
+
+const props = defineProps<IProps>();
+
+const cartId = toRef(props, "cartId");
 
 const {
   cart,
@@ -168,9 +176,9 @@ const {
   availablePaymentMethods,
   hasValidationErrors,
   allItemsAreDigital,
-} = useFullCart();
-const { comment, billingAddress, purchaseOrderNumber, isPurchaseOrderNumberEnabled } = useCheckout();
-const { couponCode } = useCoupon();
+} = useFullCart(cartId.value);
+const { comment, billingAddress, purchaseOrderNumber, isPurchaseOrderNumberEnabled } = useCheckout(cartId.value);
+const { couponCode } = useCoupon(cartId.value);
 
 const shippingMethodId = computed(
   () => shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,

@@ -11,7 +11,8 @@ export const cartRoutes: RouteRecordRaw[] = [
     component: Cart,
     props: (route) => ({
       cartId: route.params.cartId,
-      blocksToHide: ["quotes", "recently-browsed-products"],
+      blocksToHide: ["quotes", "recently-browsed-products", "cart-for-later"],
+      hideControls: ["save-for-later"],
       hideBreadcrumbs: true,
     }),
     meta: { layout: "Secure" },

@@ -11,6 +11,7 @@
             :to="{ name: 'Billing', params: { cartId } }"
             :disabled="!isValidShipment"
             test-id="checkout.billing-button"
+            :cart-id="cartId"
             @click="
               analytics('addShippingInfo', { ...cart!, items: selectedLineItems }, {}, shipment?.shipmentMethodOption)
             "

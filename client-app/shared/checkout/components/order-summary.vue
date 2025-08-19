@@ -109,7 +109,7 @@
 
 <script setup lang="ts">
 import { sumBy } from "lodash";
-import { computed, ref } from "vue";
+import { computed, ref, toRef } from "vue";
 import { useCurrency } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useFullCart } from "@/shared/cart";
@@ -134,10 +134,12 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const cart = toRef(props, "cart");
+
 const { currentLanguage } = useLanguages();
 const { currentCurrency } = useCurrency();
-const { changing: cartChanging } = useFullCart();
-const { changing: checkoutChanging } = useCheckout();
+const { changing: cartChanging } = useFullCart(cart.value?.id);
+const { changing: checkoutChanging } = useCheckout(cart.value?.id);
 
 const changing = computed(() => cartChanging.value || checkoutChanging.value);
 

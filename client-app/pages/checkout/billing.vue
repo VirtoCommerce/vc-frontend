@@ -1,6 +1,6 @@
 <template>
   <VcLayout sidebar-position="right" sticky-sidebar>
-    <BillingDetailsSection />
+    <BillingDetailsSection :cart-id="cartId" />
 
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
@@ -9,6 +9,7 @@
             :to="{ name: 'Review' }"
             :disabled="!isValidPayment"
             test-id="checkout.review-order-button"
+            :cart-id="cartId"
             @click="
               analytics('addPaymentInfo', { ...cart!, items: selectedLineItems }, {}, payment?.paymentGatewayCode)
             "
@@ -34,11 +35,20 @@
 </template>
 
 <script setup lang="ts">
+import { toRef } from "vue";
 import { useAnalytics } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, ProceedTo, useCheckout } from "@/shared/checkout";
 
-const { cart, payment, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart();
-const { isValidPayment } = useCheckout();
+const props = defineProps<IProps>();
+
+interface IProps {
+  cartId?: string;
+}
+
+const cartId = toRef(props, "cartId");
+
+const { cart, payment, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart(cartId.value);
+const { isValidPayment } = useCheckout(cartId.value);
 const { analytics } = useAnalytics();
 </script>

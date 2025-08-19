@@ -60,11 +60,13 @@ export const checkoutRoutes: RouteRecordRaw[] = [
         path: "review",
         name: "Review",
         component: Review,
+        props: (route) => ({ cartId: route.params.cartId }),
       },
       {
         path: "payment",
         name: "CheckoutPayment",
         component: Payment,
+        props: (route) => ({ cartId: route.params.cartId }),
       },
     ],
     meta: { layout: "Secure" },
