@@ -2,8 +2,9 @@ import { createGlobalState, useEventBus } from "@vueuse/core";
 import { computed, shallowRef } from "vue";
 import settingsData from "@/config/settings_data.json";
 import { getGetWhiteLabelingSettings } from "@/core/api/graphql/whiteLabeling/queries";
+import { IS_DEVELOPMENT } from "@/core/constants";
 import { WHITE_LABELING_FETCHED_SETTINGS_EVENT } from "@/core/constants/modules-events";
-import { Logger, convertToExtendedMenuLink } from "@/core/utilities";
+import { Logger, convertToExtendedMenuLink, extractHostname } from "@/core/utilities";
 import type { WhiteLabelingSettingsType } from "@/core/api/graphql/types";
 
 const whiteLabelingSettings = shallowRef<WhiteLabelingSettingsType>();
@@ -19,7 +20,7 @@ const { emit } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
 function _useWhiteLabeling() {
   async function fetchWhiteLabelingSettings(): Promise<void> {
     try {
-      fetchedSettings.value = await getGetWhiteLabelingSettings();
+      fetchedSettings.value = await getGetWhiteLabelingSettings(IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname);
     } catch (e) {
       Logger.error(`${_useWhiteLabeling.name}.${fetchWhiteLabelingSettings.name}`, e);
       throw e;

@@ -92,7 +92,7 @@ export default async () => {
   };
 
   const storePromise = getStore(
-    IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname,
+    IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname
   ) as Promise<StoreResponseType>;
 
   const [store] = await Promise.all([storePromise, fetchUser(), fallback.setMessage(), fetchWhiteLabelingSettings()]);
