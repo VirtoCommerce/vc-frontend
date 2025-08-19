@@ -73,12 +73,10 @@ export const checkoutRoutes: RouteRecordRaw[] = [
         next();
       } else if (from.name === "CheckoutPaymentResult" && to.name === "CheckoutPayment") {
         next();
+      } else if (to.params.cartId) {
+        next({ name: ROUTES.CART_ID.NAME, params: { cartId: to.params.cartId }, replace: true });
       } else {
-        if (to.params.cartId) {
-          next({ name: ROUTES.CART_ID.NAME, params: { cartId: to.params.cartId }, replace: true });
-        } else {
-          next({ name: ROUTES.CART.NAME, replace: true });
-        }
+        next({ name: ROUTES.CART.NAME, replace: true });
       }
     },
   },
