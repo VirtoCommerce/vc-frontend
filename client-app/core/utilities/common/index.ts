@@ -26,7 +26,9 @@ export function getReturnUrlValue(): string | null {
 }
 
 export function buildRedirectUrl(route: RouteLocationNormalized): { [key in typeof RETURN_URL_KEYS[0]]: string } | null {
-  if (route.matched.some(r => r.meta?.redirectable === false)) return null;
+  if (route.matched.some(r => r.meta?.redirectable === false)) {
+    return null;
+  }
 
   for (const key of RETURN_URL_KEYS) {
     if (route.query && key in route.query) {
