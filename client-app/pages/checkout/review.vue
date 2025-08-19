@@ -117,7 +117,13 @@
     <OrderCommentSection v-if="comment" :comment="comment" readonly class="mt-5" />
 
     <template #sidebar>
-      <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
+      <OrderSummary
+        :cart="cart!"
+        :cart-id="cartId"
+        :selected-items="selectedLineItems"
+        :no-shipping="allItemsAreDigital"
+        footnote
+      >
         <template #footer>
           <!-- Promotion code -->
           <transition name="slide-fade-top" mode="in-out" appear>

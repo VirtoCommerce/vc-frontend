@@ -124,4 +124,30 @@ describe("createSharedComposableByArgs", () => {
       result.stop();
     });
   });
+
+  describe("custom resolveKey", () => {
+    it("should use provided resolver to control sharing", () => {
+      let initCount = 0;
+      const useShared = createSharedComposableByArgs(
+        (params: { id: string; extra?: string }) => {
+          initCount += 1;
+          return { id: params.id, extra: params.extra ?? null };
+        },
+        ([params]) => params.id,
+      );
+
+      const a1 = withScope(() => useShared({ id: "A", extra: "1" }));
+      const a2 = withScope(() => useShared({ id: "A", extra: "2" }));
+      const b1 = withScope(() => useShared({ id: "B", extra: "1" }));
+
+      // resolver collapses by id, so A group shares, B is isolated
+      expect(initCount).toBe(2);
+      expect(a1.value).toBe(a2.value);
+      expect(a1.value).not.toBe(b1.value);
+
+      a1.stop();
+      a2.stop();
+      b1.stop();
+    });
+  });
 });

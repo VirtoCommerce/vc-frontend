@@ -513,4 +513,4 @@ export function _useCheckout(cartId?: string) {
   };
 }
 
-export const useCheckout = createSharedComposableByArgs(_useCheckout);
+export const useCheckout = createSharedComposableByArgs(_useCheckout, (args) => args?.[0] ?? "");

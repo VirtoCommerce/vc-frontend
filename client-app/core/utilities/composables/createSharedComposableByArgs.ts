@@ -7,6 +7,7 @@ import { createSharedComposable, tryOnScopeDispose } from "@vueuse/core";
  */
 export function createSharedComposableByArgs<Args extends unknown[], R>(
   composable: (...args: Args) => R,
+  resolveKey?: (args: Args) => string,
 ): (...args: Args) => R {
   interface IEntry {
     subscribers: number;
@@ -15,13 +16,16 @@ export function createSharedComposableByArgs<Args extends unknown[], R>(
 
   const entries = new Map<string, IEntry>();
 
-  const wrapped = (...args: Args): R => {
-    let key: string;
+  const defaultResolveKey = (args: Args): string => {
     try {
-      key = JSON.stringify(args);
+      return JSON.stringify(args);
     } catch {
-      key = String(args);
+      return String(args);
     }
+  };
+
+  const wrapped = (...args: Args): R => {
+    const key = (resolveKey ?? defaultResolveKey)(args);
     let entry = entries.get(key);
     if (!entry) {
       const factory: () => R = () => composable(...args);

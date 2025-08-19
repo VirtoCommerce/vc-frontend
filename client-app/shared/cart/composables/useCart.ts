@@ -695,4 +695,4 @@ export function _useFullCart(cartId?: string) {
   };
 }
 
-export const useFullCart = createSharedComposableByArgs(_useFullCart);
+export const useFullCart = createSharedComposableByArgs(_useFullCart, (args) => args?.[0] ?? "");

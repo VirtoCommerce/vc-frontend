@@ -5,7 +5,7 @@
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
 
     <template #sidebar>
-      <OrderSummary :cart="cart!" :selected-items="selectedLineItems" footnote>
+      <OrderSummary :cart="cart!" :cart-id="cartId" :selected-items="selectedLineItems" footnote>
         <template #footer>
           <ProceedTo
             :to="{ name: 'Billing', params: { cartId } }"

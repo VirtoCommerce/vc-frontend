@@ -130,16 +130,17 @@ interface IProps {
   selectedItems?: LineItemType[];
   noShipping?: boolean;
   footnote?: boolean;
+  cartId?: string;
 }
 
 const props = defineProps<IProps>();
 
-const cart = toRef(props, "cart");
+const cartId = toRef(props, "cartId");
 
 const { currentLanguage } = useLanguages();
 const { currentCurrency } = useCurrency();
-const { changing: cartChanging } = useFullCart(cart.value?.id);
-const { changing: checkoutChanging } = useCheckout(cart.value?.id);
+const { changing: cartChanging } = useFullCart(cartId.value);
+const { changing: checkoutChanging } = useCheckout(cartId.value);
 
 const changing = computed(() => cartChanging.value || checkoutChanging.value);
 

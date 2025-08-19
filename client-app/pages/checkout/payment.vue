@@ -43,13 +43,13 @@
     </VcWidget>
 
     <template #sidebar>
-      <OrderSummary :cart="placedOrder" :no-shipping="allOrderItemsAreDigital" />
+      <OrderSummary :cart-id="cartId" :cart="placedOrder" :no-shipping="allOrderItemsAreDigital" />
     </template>
   </VcLayout>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, toRef } from "vue";
 import { useRouter } from "vue-router";
 import { OrderSummary, useCheckout } from "@/shared/checkout";
 import { PaymentActionType, PaymentProcessingRedirection } from "@/shared/payment";
@@ -58,8 +58,16 @@ import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-p
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
 import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
 
+interface IProps {
+  cartId?: string;
+}
+
+const props = defineProps<IProps>();
+
+const cartId = toRef(props, "cartId");
+
 const router = useRouter();
-const { placedOrder, allOrderItemsAreDigital } = useCheckout();
+const { placedOrder, allOrderItemsAreDigital } = useCheckout(cartId.value);
 
 const payment = computed<PaymentInType | undefined>(() => placedOrder.value!.inPayments[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);

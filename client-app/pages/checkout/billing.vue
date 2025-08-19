@@ -3,7 +3,13 @@
     <BillingDetailsSection :cart-id="cartId" />
 
     <template #sidebar>
-      <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
+      <OrderSummary
+        :cart="cart!"
+        :cart-id="cartId"
+        :selected-items="selectedLineItems"
+        :no-shipping="allItemsAreDigital"
+        footnote
+      >
         <template #footer>
           <ProceedTo
             :to="{ name: 'Review' }"
