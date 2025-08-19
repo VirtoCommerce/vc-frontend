@@ -1,11 +1,17 @@
 <template>
-  <VcModal :title="$t('shared.checkout.select_address_modal.title')" max-width="60rem" is-mobile-fullscreen dividers>
+  <VcModal
+    :title="$t('shared.checkout.select_address_modal.title')"
+    max-width="60rem"
+    is-mobile-fullscreen
+    dividers
+    pinned-footer
+  >
     <VcAlert class="mb-4 lg:hidden" icon="check-circle" size="sm" variant="solid-light">
       {{ $t("shared.checkout.select_address_modal.message") }}
     </VcAlert>
 
     <template #actions="{ close }">
-      <div class="flex w-full flex-col gap-3 md:flex-row md:items-center">
+      <div class="flex w-full flex-col gap-3 md:flex-row md:items-center md:justify-end">
         <div v-if="pages > 1" class="flex w-full min-w-0 flex-col items-center md:items-start">
           <VcPagination v-model:page="page" :pages="Math.min(pages, PAGE_LIMIT)" compact />
 

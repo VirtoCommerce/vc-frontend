@@ -14,4 +14,35 @@ fragment shipment on ShipmentType {
   discountAmount {
     ...money
   }
+  pickupLocation {
+    id
+    name
+    description
+    geoLocation
+    deliveryDays
+    storageDays
+    contactEmail
+    contactPhone
+    workingHours
+    isActive
+    address {
+      id
+      key
+      name
+      organization
+      countryCode
+      countryName
+      city
+      postalCode
+      line1
+      line2
+      regionId
+      regionName
+      phone
+      email
+      outerId
+      description
+      addressType
+    }
+  }
 }

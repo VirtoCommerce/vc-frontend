@@ -25,7 +25,7 @@ export async function getLocales(
       fallbackMessages,
     };
   } catch (e) {
-    Logger.error(`Error loading the UI Kit locale: "${locale}"`);
+    Logger.error(`Error loading the UI Kit locale: "${locale}"`, e);
     return {
       messages: {},
       fallbackMessages: {},

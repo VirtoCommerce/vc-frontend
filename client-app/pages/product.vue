@@ -24,13 +24,19 @@
       {{ product.name }}
     </VcTypography>
 
-    <div v-if="!product.hasVariations" class="mt-2 flex flex-wrap gap-5">
-      <VcCopyText :text="product.code" :notification="$t('pages.product.sku_copied_message')">
+    <div class="mt-2 flex flex-wrap gap-1 max-sm:justify-between sm:gap-6">
+      <VcCopyText
+        v-if="!product.hasVariations"
+        :text="product.code"
+        :notification="$t('pages.product.sku_copied_message')"
+      >
         <span class="text-base text-secondary-900">
           {{ $t("pages.product.sku_label") }}
           <span class="font-black">#{{ product.code }}</span>
         </span>
       </VcCopyText>
+
+      <ProductRating v-if="productReviewsEnabled && product.rating" :rating="product.rating" />
     </div>
 
     <VcLayout sidebar-position="right" sticky-sidebar class="mt-5">
@@ -39,7 +45,9 @@
           :is="productInfoSection?.type"
           v-if="productInfoSection && !productInfoSection.hidden"
           :product="product"
+          :variations="variations"
           :model="productInfoSection"
+          :fetching-variations="fetchingVariations"
         />
 
         <component
@@ -80,8 +88,8 @@
           @apply-sorting="sortVariations"
           @change-page="changeVariationsPage"
           @show-filters="showFiltersSidebar"
-          @remove-facet-filter="removeFacetFilter"
-          @reset-facet-filters="resetFacetFilters"
+          @reset-filters="resetFacetFilters"
+          @apply-filters="applyFilters"
         />
 
         <component
@@ -111,6 +119,7 @@
           :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]"
           :product="product"
           :variations="variations"
+          :template-layout="templateLayout"
         />
       </template>
     </VcLayout>
@@ -123,7 +132,8 @@
 import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
-import _productTemplate from "@/config/product.json";
+import productTemplateDefault from "@/config/product-default.json";
+import productTemplateB2c from "@/config/product_b2c.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -132,7 +142,7 @@ import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
   buildBreadcrumbs,
-  getFilterExpressionFromFacets,
+  generateFilterExpressionFromFilters,
   getFilterExpression,
   getSortingExpression,
   getFilterExpressionForAvailableIn,
@@ -152,14 +162,21 @@ import {
   useRecommendedProducts,
   useConfigurableProduct,
 } from "@/shared/catalog";
-import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
+import {
+  PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
+  PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
+} from "@/shared/catalog/constants/product";
+import type { ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import type { IPageTemplate } from "@/shared/static-content";
+import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
 });
+
+const B2C_VARIATIONS_ITEMS_PER_PAGE = 150;
 
 const ProductReviews = defineAsyncComponent(() => import("@/modules/customer-reviews/components/product-reviews.vue"));
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
@@ -189,7 +206,6 @@ const {
   productsFilters,
   applyFilters: _applyFilters,
   hideFiltersSidebar,
-  removeFacetFilter: _removeFacetFilter,
   resetFacetFilters: _resetFacetFilters,
   showFiltersSidebar,
 } = useProducts({
@@ -205,13 +221,25 @@ const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 const { analytics } = useAnalytics();
 const { pushHistoricalEvent } = useHistoricalEvents();
 
+const templateLayout = computed(() => {
+  const layoutProperty = product.value?.properties?.find(
+    (property) => property.name === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
+  )?.value;
+
+  if (typeof layoutProperty === "string") {
+    return layoutProperty;
+  }
+
+  return undefined;
+});
+
 const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:product,variation`);
 const variationSortInfo = ref<ISortInfo>({
   column: "name",
   direction: SortDirection.Ascending,
 });
 
-const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
+const initialVariationsSearchParamsDefault = {
   page: 1,
   itemsPerPage: 50,
   sort: getSortingExpression(variationSortInfo.value),
@@ -219,7 +247,24 @@ const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
     variationsFilterExpression.value,
     getFilterExpressionForAvailableIn(productsFilters.value.branches),
     getFilterExpressionForInStock(productsFilters.value.inStock),
+    getFilterExpressionForPurchasedBefore(productsFilters.value.purchasedBefore),
   ]),
+};
+
+const initialVariationsSearchParamsB2c = {
+  page: 1,
+  itemsPerPage: B2C_VARIATIONS_ITEMS_PER_PAGE,
+  filter: getFilterExpression([
+    variationsFilterExpression.value,
+    getFilterExpressionForAvailableIn([]),
+    getFilterExpressionForInStock(true),
+  ]),
+};
+
+const variationsSearchParams = ref<ProductsSearchParamsType>({
+  ...(templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c
+    ? initialVariationsSearchParamsB2c
+    : initialVariationsSearchParamsDefault),
 });
 
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
@@ -234,19 +279,36 @@ const seoUrl = computed(() =>
 );
 const canSetMeta = computed(() => props.allowSetMeta && productComponentAnchorIsVisible.value);
 
-const productTemplate = _productTemplate as IPageTemplate;
+const productTemplate = computed(() => {
+  if (templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c) {
+    return productTemplateB2c as IPageTemplate;
+  }
+  return productTemplateDefault as IPageTemplate;
+});
 
-const productInfoSection = productTemplate?.content?.find((item) => item?.type === "product-info");
+const productInfoSection = computed(() =>
+  productTemplate.value?.content?.find((item) => item?.type === "product-info"),
+);
 
-const productDescriptionSection = productTemplate?.content?.find((item) => item?.type === "product-description");
+const productDescriptionSection = computed(() =>
+  productTemplate.value?.content?.find((item) => item?.type === "product-description"),
+);
 
-const productReviewsSection = productTemplate?.content?.find((item) => item?.type === "product-reviews");
+const productReviewsSection = computed(() =>
+  productTemplate.value?.content?.find((item) => item?.type === "product-reviews"),
+);
 
-const productVariationsBlock = productInfoSection?.blocks?.find((block) => block?.type === "product-variations");
+const productVariationsBlock = computed(() =>
+  productInfoSection.value?.blocks?.find((block) => block?.type === "product-variations"),
+);
 
-const relatedProductsSection = productTemplate?.content?.find((item) => item?.type === "related-products");
+const relatedProductsSection = computed(() =>
+  productTemplate.value?.content?.find((item) => item?.type === "related-products"),
+);
 
-const recommendedProductsSection = productTemplate?.content?.find((item) => item?.type === "recommended-products");
+const recommendedProductsSection = computed(() =>
+  productTemplate.value?.content?.find((item) => item?.type === "recommended-products"),
+);
 
 const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(product.value?.breadcrumbs));
 
@@ -274,7 +336,7 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
   variationsSearchParams.value.page = 1;
   variationsSearchParams.value.filter = getFilterExpression([
     variationsFilterExpression.value,
-    getFilterExpressionFromFacets(newFilters.facets),
+    generateFilterExpressionFromFilters(newFilters.filters),
     getFilterExpressionForInStock(newFilters.inStock),
     getFilterExpressionForAvailableIn(newFilters.branches),
     getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
@@ -283,29 +345,9 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
   await fetchProducts(variationsSearchParams.value);
 }
 
-async function removeFacetFilter(
-  payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">,
-): Promise<void> {
-  void _removeFacetFilter(payload);
-
-  variationsSearchParams.value.page = 1;
-  variationsSearchParams.value.filter = getFilterExpression([
-    variationsFilterExpression.value,
-    getFilterExpressionFromFacets(productsFilters.value.facets),
-    getFilterExpressionForAvailableIn(productsFilters.value.branches),
-    getFilterExpressionForInStock(productsFilters.value.inStock),
-  ]);
-
-  await fetchProducts(variationsSearchParams.value);
-}
-
 async function resetFacetFilters(): Promise<void> {
-  void _resetFacetFilters();
-
-  variationsSearchParams.value.page = 1;
-  variationsSearchParams.value.filter = getFilterExpression([variationsFilterExpression.value]);
-
-  await fetchProducts(variationsSearchParams.value);
+  await _resetFacetFilters();
+  void applyFilters(productsFilters.value);
 }
 
 useSeoMeta({
@@ -327,12 +369,12 @@ watch(
       await fetchProductConfiguration();
     }
 
-    if (product.value?.associations?.totalCount && !relatedProductsSection?.hidden) {
+    if (product.value?.associations?.totalCount && !relatedProductsSection.value?.hidden) {
       await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
     }
 
-    const recommendedProductsBlocks = recommendedProductsSection?.blocks?.filter((block) => !!block.model) ?? [];
-    if (!recommendedProductsSection?.hidden && recommendedProductsSection?.blocks?.length) {
+    const recommendedProductsBlocks = recommendedProductsSection.value?.blocks?.filter((block) => !!block.model) ?? [];
+    if (!recommendedProductsSection.value?.hidden && recommendedProductsSection.value?.blocks?.length) {
       const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
         productId: productId.value,
         model: model as string,
@@ -340,7 +382,19 @@ watch(
       await fetchRecommendedProducts(paramsToFetch);
     }
 
-    if (product.value?.hasVariations && !productVariationsBlock?.hidden) {
+    const showVariations = productVariationsBlock.value && !productVariationsBlock.value?.hidden;
+    const optionsBlock = productInfoSection.value?.blocks?.find((block) => block?.type === "product-options");
+    const showOptions = optionsBlock && !optionsBlock?.hidden;
+
+    if (product.value?.hasVariations && (showVariations || showOptions)) {
+      if (templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c) {
+        variationsSearchParams.value = {
+          ...variationsSearchParams.value,
+          itemsPerPage: B2C_VARIATIONS_ITEMS_PER_PAGE,
+          sort: undefined,
+          filter: getFilterExpression([variationsFilterExpression.value, getFilterExpressionForInStock(true)]),
+        };
+      }
       await fetchProducts(variationsSearchParams.value);
     }
   },

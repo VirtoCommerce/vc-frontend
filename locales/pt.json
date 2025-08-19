@@ -283,12 +283,6 @@
       "store-manager": "Gerente da Loja"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Cartão bancário (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Manual",
-        "SkyflowPaymentMethod": "Cartão bancário (Skyflow)",
-        "CyberSourcePaymentMethod": "Cartão bancário (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "Taxa Fixa (Terrestre)",
         "FixedRate_Air": "Taxa Fixa (Aérea)",
@@ -303,10 +297,12 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "Contatos",
           "call_us_label": "Ligue para nós: ",
-          "logged_in_as": "logado como"
+          "logged_in_as": "logado como",
+          "account_menu_label": "Menu da conta"
         },
         "bottom_header": {
-          "catalog_menu_button": "Catálogo"
+          "catalog_menu_button": "Catálogo",
+          "main_menu": "Menu principal"
         },
         "link_sign_in": "Entrar",
         "link_register_now": "Inscreva-se agora",
@@ -630,6 +626,7 @@
         "description_block_title": "Descrição",
         "assets_block_title": "Arquivos",
         "vendor_label": "Fornecedor",
+        "all_vendor_products": "Todos Os Produtos Do Fornecedor",
         "share_product_label": "Compartilhar produto",
         "create_configuration_button": "Crie sua própria configuração",
         "price_block": {
@@ -673,6 +670,10 @@
             "predefined_prefix": "Predefinido",
             "option_label": "Opção {0}: {1}"
           }
+        },
+        "options": {
+          "title": "Opções",
+          "select_to_proceed": "Selecione as opções para continuar"
         }
       },
       "discount_badge": {
@@ -951,7 +952,7 @@
       },
       "sign_in_form_title": "Entrar",
       "main_banner_block": {
-        "message": "Podemos ajudá-lo a <br />tomar decisões<br />informadas e sábias",
+        "message": "Podemos ajudá-lo a{br}tomar decisões{br}informadas e sábias",
         "key_feature_1": "Orientado a resultados",
         "key_feature_2": "Confiável",
         "key_feature_3": "Fiável"
@@ -1149,6 +1150,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Tempo Estimado de Chegada",
+          "emailAndPhone": "Ligue para {phone} ou envie um e-mail para {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Ligar para {phone}",
+          "questions": "Perguntas?",
+          "address": "Endereço",
+          "pick_point_info": "Informações do ponto de coleta",
+          "get_directions": "Obter direções",
+          "point_info": "Informações",
+          "pickup_address": "Endereço de retirada",
+          "workingHours": "Horas",
+          "name": "Nome",
+          "instructions": "Instruções"
         }
       },
       "order_payment": {
@@ -1292,7 +1308,10 @@
       "title": "Carrinho",
       "empty_cart_description": "Seu carrinho está vazio",
       "recently_browsed_products": "Recentemente visualizados",
-      "empty_cart_search_text": "Use a pesquisa para encontrar tudo o que precisa"
+      "empty_cart_search_text": "Use a pesquisa para encontrar tudo o que precisa",
+      "save_for_later": "Salvar para mais tarde",
+      "saved_for_later": "Salvo para mais tarde",
+      "move_to_cart": "Mover para o carrinho"
     },
     "checkout": {
       "meta": {

@@ -4,10 +4,12 @@ type ModuleType = {
   name: string;
   apiPath: string;
   schemaPath: string;
+  requiredCommonFragments?: string[]; // Specific core fragment files that module depends on
 };
 
 const core = {
   apiPath: "client-app/core/api/graphql",
+  commonFragmentsPath: "client-app/core/api/graphql/common/fragments",
   schemaPath: `${process.env.APP_BACKEND_URL}/graphql`,
 } as const;
 
@@ -28,11 +30,21 @@ const independentModules: ModuleType[] = [
     name: "Quotes",
     apiPath: "client-app/modules/quotes/api/graphql",
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/quote`,
+    // Include specific core fragments that quotes module uses
+    requiredCommonFragments: [
+      `${core.commonFragmentsPath}/money.graphql`,
+      `${core.commonFragmentsPath}/currency.graphql`,
+    ],
   },
   {
     name: "BackInStock",
     apiPath: "client-app/modules/back-in-stock/api/graphql",
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/back-in-stock`,
+  },
+  {
+    name: "News",
+    apiPath: "client-app/modules/news/api/graphql",
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/news`,
   },
   /* EXPERIMENTAL FEATURE
   {
@@ -89,7 +101,6 @@ const PLUGINS = [
 ];
 
 async function runCodegen() {
-  // eslint-disable-next-line no-console
   console.log("\nGenerate types for general modules:");
   const typesPath = `${core.apiPath}/types.ts`;
   await generate(
@@ -110,7 +121,6 @@ async function runCodegen() {
     },
     true,
   );
-  // eslint-disable-next-line no-console
   console.log(`Types for The Core have been generated in "${typesPath}\n`);
 
   await Promise.allSettled(
@@ -121,7 +131,11 @@ async function runCodegen() {
           {
             schema: module.schemaPath,
             silent: true,
-            documents: addExtension(module.apiPath),
+            documents: [
+              addExtension(module.apiPath),
+              // Include specific required fragments for validation
+              ...(module.requiredCommonFragments || []),
+            ],
             generates: {
               [moduleTypesPath]: {
                 plugins: PLUGINS,
@@ -131,10 +145,8 @@ async function runCodegen() {
           },
           true,
         );
-        // eslint-disable-next-line no-console
         console.log(`Types for "${module.name}" module have been generated in "${moduleTypesPath}"\n`);
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.error(`Error during types generation for "${module.name} module"\n`, err);
       }
     }),
@@ -142,7 +154,6 @@ async function runCodegen() {
 }
 
 runCodegen().catch((err) => {
-  // eslint-disable-next-line no-console
   console.error(err);
 });
 

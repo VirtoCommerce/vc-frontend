@@ -283,12 +283,6 @@
       "store-manager": "Store manager"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "Bank card (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Manual",
-        "SkyflowPaymentMethod": "Bank card (Skyflow)",
-        "CyberSourcePaymentMethod": "Bank card (CyberSource)"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "Fixed Rate (Ground)",
         "FixedRate_Air": "Fixed Rate (Air)",
@@ -303,10 +297,12 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "Contacts",
           "call_us_label": "Call us: ",
-          "logged_in_as": "logged in as"
+          "logged_in_as": "logged in as",
+          "account_menu_label": "Account menu"
         },
         "bottom_header": {
-          "catalog_menu_button": "Catalog"
+          "catalog_menu_button": "Catalog",
+          "main_menu": "Main menu"
         },
         "link_sign_in": "Sign in",
         "link_register_now": "Sign up now",
@@ -630,6 +626,7 @@
         "description_block_title": "Description",
         "assets_block_title": "Files",
         "vendor_label": "Vendor",
+        "all_vendor_products": "All Vendor Products",
         "share_product_label": "Share product",
         "create_configuration_button": "Create your own configuration",
         "price_block": {
@@ -673,6 +670,10 @@
             "predefined_prefix": "Predefined",
             "option_label": "Option {0}: {1}"
           }
+        },
+        "options": {
+          "title": "Options",
+          "select_to_proceed": "Select options to proceed"
         }
       },
       "discount_badge": {
@@ -951,7 +952,7 @@
       },
       "sign_in_form_title": "Sign in",
       "main_banner_block": {
-        "message": "We can help you <br />make informed<br />and wise decisions",
+        "message": "We can help you{br}make informed{br}and wise decisions",
         "key_feature_1": "Result oriented",
         "key_feature_2": "Trustworthy",
         "key_feature_3": "Reliable"
@@ -1149,6 +1150,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "Estimated Time of Arrival",
+          "emailAndPhone": "Call {phone} or email {email}",
+          "emailOnly": "Email {email}",
+          "phoneOnly": "Call {phone}",
+          "questions": "Questions?",
+          "workingHours": "Hours",
+          "name": "Name",
+          "instructions": "Instructions",
+          "address": "Address",
+          "pick_point_info": "Pick point info",
+          "get_directions": "Get directions",
+          "point_info": "Point info",
+          "pickup_address": "Pick-up address"
         }
       },
       "order_payment": {
@@ -1292,7 +1308,10 @@
       "title": "Cart",
       "empty_cart_description": "Your cart is empty",
       "empty_cart_search_text": "Use the search to find everything you need",
-      "recently_browsed_products": "Recently browsed"
+      "recently_browsed_products": "Recently browsed",
+      "save_for_later": "Save for later",
+      "saved_for_later": "Saved for later",
+      "move_to_cart": "Move to cart"
     },
     "checkout": {
       "meta": {

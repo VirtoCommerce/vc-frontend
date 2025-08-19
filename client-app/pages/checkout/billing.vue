@@ -8,6 +8,7 @@
           <ProceedTo
             :to="{ name: 'Review' }"
             :disabled="!isValidPayment"
+            test-id="checkout.review-order-button"
             @click="
               analytics('addPaymentInfo', { ...cart!, items: selectedLineItems }, {}, payment?.paymentGatewayCode)
             "

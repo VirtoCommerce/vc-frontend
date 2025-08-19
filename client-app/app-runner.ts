@@ -20,6 +20,7 @@ import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
+import { init as initNews } from "@/modules/news";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
@@ -64,7 +65,7 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { fetchUser, user, twoLetterContactLocale } = useUser();
+  const { fetchUser, user, twoLetterContactLocale, isAuthenticated } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
     detectLocale,
@@ -141,7 +142,9 @@ export default async () => {
   await fetchWhiteLabelingSettings();
   addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
 
-  void fetchCatalogMenu();
+  if(isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
+    void fetchCatalogMenu();
+  }
 
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
@@ -150,6 +153,7 @@ export default async () => {
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
   void initializeHotjar();
+  void initNews(router, i18n);
 
   // Plugins
   app.use(head);

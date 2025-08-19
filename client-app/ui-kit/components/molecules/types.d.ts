@@ -42,10 +42,12 @@ declare module "vue" {
     // @deprecated
     VcSelect: typeof Components.VcSelect;
     VcShape: typeof Components.VcShape;
+    VcSlider: typeof Components.VcSlider;
     VcSteps: typeof Components.VcSteps;
     VcTabSwitch: typeof Components.VcTabSwitch;
     VcTextarea: typeof Components.VcTextarea;
     VcRating: typeof Components.VcRating;
+    VcVariantPicker: typeof Components.VcVariantPicker;
     // @deprecated is deprecated, use VendorName instead
     VcVendor: typeof Components.VcVendor;
     VcWidget: typeof Components.VcWidget;

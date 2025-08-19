@@ -24,7 +24,7 @@
       >
         <VcImage :src="method.logoUrl" class="size-10 object-center" lazy />
         <div class="grow overflow-hidden text-ellipsis">
-          {{ $t(`common.methods.payment_by_code.${method.code}`) }}
+          {{ method.name }}
         </div>
         <div class="flex w-20 items-center justify-end lg:justify-center">
           <div

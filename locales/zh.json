@@ -283,12 +283,6 @@
       "store-manager": "商店经理"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "银行卡（Authorize.Net）",
-        "DefaultManualPaymentMethod": "手动",
-        "SkyflowPaymentMethod": "银行卡（Skyflow）",
-        "CyberSourcePaymentMethod": "银行卡（CyberSource）"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "固定费率（陆运）",
         "FixedRate_Air": "固定费率（空运）",
@@ -303,10 +297,12 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "联系方式",
           "call_us_label": "致电我们：",
-          "logged_in_as": "已登录为"
+          "logged_in_as": "已登录为",
+          "account_menu_label": "帐户菜单"
         },
         "bottom_header": {
-          "catalog_menu_button": "目录"
+          "catalog_menu_button": "目录",
+          "main_menu": "主菜单"
         },
         "link_sign_in": "登录",
         "link_register_now": "立即注册",
@@ -630,6 +626,7 @@
         "description_block_title": "描述",
         "assets_block_title": "文件",
         "vendor_label": "供应商",
+        "all_vendor_products": "所有供应商产品",
         "share_product_label": "分享产品",
         "create_configuration_button": "创建您的配置",
         "price_block": {
@@ -673,6 +670,10 @@
             "predefined_prefix": "预定义",
             "option_label": "选项 {0}: {1}"
           }
+        },
+        "options": {
+          "title": "选项",
+          "select_to_proceed": "选择选项以继续"
         }
       },
       "discount_badge": {
@@ -951,7 +952,7 @@
       },
       "sign_in_form_title": "登录",
       "main_banner_block": {
-        "message": "我们可以帮助您 <br />做出明智的<br />决策",
+        "message": "我们可以帮助您{br}做出明智的{br}决策",
         "key_feature_1": "结果导向",
         "key_feature_2": "可信赖",
         "key_feature_3": "可靠"
@@ -1149,6 +1150,21 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "预计到达时间",
+          "emailAndPhone": "致电 {phone} 或发送邮件至 {email}",
+          "emailOnly": "邮箱 {email}",
+          "phoneOnly": "致电 {phone}",
+          "questions": "有问题吗？",
+          "address": "地址",
+          "pick_point_info": "自提点信息",
+          "get_directions": "获取路线",
+          "point_info": "积分信息",
+          "pickup_address": "自提地址",
+          "workingHours": "小时",
+          "name": "名称",
+          "instructions": "说明"
         }
       },
       "order_payment": {
@@ -1292,7 +1308,10 @@
       "title": "购物车",
       "empty_cart_description": "您的购物车为空",
       "recently_browsed_products": "最近浏览的产品",
-      "empty_cart_search_text": "使用搜索，找到您需要的一切"
+      "empty_cart_search_text": "使用搜索，找到您需要的一切",
+      "save_for_later": "稍后保存",
+      "saved_for_later": "稍后购买",
+      "move_to_cart": "加入购物车"
     },
     "checkout": {
       "meta": {

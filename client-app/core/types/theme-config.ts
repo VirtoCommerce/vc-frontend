@@ -167,6 +167,7 @@ export interface IThemeConfigSettings {
   product_filters_sorting?: boolean;
   product_filters_sorting_direction?: SortDirection | string;
   product_quantity_control?: "stepper" | "button";
+  range_filter_type?: "slider" | "default";
   out_of_stock_order_enabled?: boolean;
   search_suggestions_category_enabled?: boolean;
   search_suggestions_category_limit?: number;
@@ -248,6 +249,8 @@ export interface IThemeConfigSettings {
       [key: string]: number;
     };
   };
+
+  graphql_operation_marking_enabled?: boolean;
 }
 
 export interface IThemeConfig {

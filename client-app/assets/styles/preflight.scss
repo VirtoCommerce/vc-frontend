@@ -8,6 +8,11 @@
 
   body {
     @apply text-[--body-text-color];
+
+    *:focus-visible,
+    *:focus {
+      @apply outline outline-2 outline-primary-500/30;
+    }
   }
 }
 

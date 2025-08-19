@@ -1,4 +1,4 @@
-#import "./money.graphql"
+#import "@/core/api/graphql/common/fragments/money.graphql"
 #import "./quoteProductProperty.graphql"
 
 fragment quoteLineItemFields on QuoteItemType {
@@ -27,6 +27,16 @@ fragment quoteLineItemFields on QuoteItemType {
     availabilityData {
       availableQuantity
       isInStock
+    }
+  }
+  configurationItems {
+    id
+    name
+    customText
+    type
+    files {
+      name
+      url
     }
   }
 }

@@ -110,14 +110,13 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── .editorconfig                    // Common editor settings to sync codestyle.
 ├── .env                             // Envfile to define different Environment Variables.
 ├── .env.local                       // Local envfile to override Environment Variables.
-├── .eslintignore                    // Ignore some files from ESlint.
-├── .eslintrc.cjs                    // ESlint configuration file.
 ├── .gitattributes                   // Set attributes to specified path in Git.
 ├── .gitignore                       // Ignore some files from Git.
 ├── .npmrc                           // Node.js package manager settings and Node.js restrictions
 ├── .prettierignore                  // Ignore some files from Prettier.
 ├── .prettierrc.json                 // Config for Prettier.
 ├── .yarnrc.yml                      // Yarn package manager configuration
+├── eslint.config.js                 // ESlint configuration file.
 ├── graphql-codegen
 |   └── generator.ts                 // Generate GraphQL types 
 ├── index.html                       // Vite Development entry point.
@@ -245,6 +244,8 @@ yarn generate:dependency-graph
 ```
 yarn generate:dependency-graph client-app/main.ts client-app/shared/account/components/checkout-default-success-modal.vue
 ```
+If command "dot" is missing - install graphviz on your OS
+
 The generated graph will also be saved in the `artifacts` folder.
 
 ## Localization
@@ -268,6 +269,46 @@ This command can be run locally to automatically fix missing translations in loc
 
 > [!CAUTION]
 > This is an experimental feature and may not work as expected.
+
+### Styles customization
+
+Component styles follow the BEM methodology. To avoid merge conflicts and keep your customizations centralized, **do not edit the core style files**. Instead, put all your overrides into the `client-app/assets/styles/_custom.scss` file.
+
+```scss
+// client-app/assets/styles/_custom.scss
+
+.vc-container {
+  &__bg {
+    background-color: red;
+  }
+}
+```
+
+## Configurable Border Radius
+
+You can easily adjust border-radius values for all components or on a per-component basis using CSS custom properties:
+
+- `--vc-radius`:
+  Sets the **global** border-radius for all components.
+  **Default:** `0.5rem` (8px)
+
+- Per-component overrides:
+  If you need a different radius for a specific component, you can override the global value by defining a custom property scoped to that component. For example:
+  - `--vc-button-radius`
+  - `--vc-widget-radius`
+  - _etc._
+
+```scss
+// client-app/assets/styles/_custom.scss
+
+:root {
+  // Change the global radius
+  --vc-radius: 0.25rem; // now 4px
+
+  // Override button radius only
+  --vc-button-radius: 0.75rem; // now 12px
+}
+```
 
 ### Troubleshooting
 
