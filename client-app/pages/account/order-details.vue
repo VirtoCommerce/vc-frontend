@@ -74,11 +74,7 @@
             <VcAlert
               v-if="order.cancelReason"
               class="mt-2.5"
-              :color="
-                String(order.status).toLowerCase() === String(OrderStatusCode.CANCELLED).toLowerCase()
-                  ? 'danger'
-                  : 'warning'
-              "
+              :color="String(order.status).toLowerCase() === String(OrderStatusCode.CANCELLED).toLowerCase() ? 'danger' : 'warning'"
               icon="exclamation-circle"
               variant="outline-dark"
             >
