@@ -1,4 +1,4 @@
-import { createGlobalState, createSharedComposable, useDebounceFn } from "@vueuse/core";
+import { createGlobalState, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -8,6 +8,7 @@ import { useAnalytics, useHistoricalEvents, useThemeContext } from "@/core/compo
 import { AddressType, ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
+import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
@@ -512,4 +513,4 @@ export function _useCheckout(cartId?: string) {
   };
 }
 
-export const useCheckout = createSharedComposable(_useCheckout);
+export const useCheckout = createSharedComposableByArgs(_useCheckout);

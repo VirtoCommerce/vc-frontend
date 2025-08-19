@@ -40,6 +40,7 @@ import { useSyncMutationBatchers } from "@/core/composables/useSyncMutationBatch
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { groupByVendor, Logger } from "@/core/utilities";
+import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import ClearCartModal from "../components/clear-cart-modal.vue";
@@ -694,4 +695,4 @@ export function _useFullCart(cartId?: string) {
   };
 }
 
-export const useFullCart = createSharedComposable(_useFullCart);
+export const useFullCart = createSharedComposableByArgs(_useFullCart);
