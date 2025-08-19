@@ -16,7 +16,7 @@
 
     <div class="news-article-preview__tags">
       <template v-for="tag in newsArticle.tags" :key="tag">
-        <VcChip color="secondary" variant="outline-dark" class="news-articles-preview__tags-tag">
+        <VcChip color="secondary" variant="outline-dark" class="news-article-preview__tags-tag" clickable @click="emit('tag:click', tag)">
           {{ tag }}
         </VcChip>
       </template>
@@ -36,8 +36,13 @@ import type { NewsArticleContent } from "../api/graphql/types";
 interface IProps {
   newsArticle: NewsArticleContent;
 }
+const emit = defineEmits<IEmits>();
+
 const props = defineProps<IProps>();
 
+interface IEmits {
+  (event: "tag:click", tag: string): void;
+}
 const { getSettingValue } = useModuleSettings(MODULE_ID);
 const useNewsPrefixInLinks = getSettingValue(USE_NEWS_PREFIX_IN_LINKS);
 

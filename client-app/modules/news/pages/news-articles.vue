@@ -9,7 +9,9 @@
         <div class="news-articles__filter">
           <div class="news-articles__filter--tags">
             <template v-for="tag in newsArticleTags" :key="tag">
-              <VcChip color="secondary" variant="outline-dark" class="news-articles__filter--tags-tag" clickable @click="applyTag(tag)">
+              <VcChip
+color="secondary" :variant="searchTag == tag ? 'solid' : 'outline-dark'" class="news-articles__filter--tags-tag" clickable
+                @click="toggleTag(tag)">
                 {{ tag }}
               </VcChip>
             </template>
@@ -50,7 +52,7 @@
         </div>
 
         <div v-if="!loading && newsArticles?.length" class="news-articles__grid">
-          <NewsArticlePreview v-for="item in newsArticles" :key="item.id" :news-article="item" />
+          <NewsArticlePreview v-for="item in newsArticles" :key="item.id" :news-article="item" @tag:click="applyTag($event)" />
         </div>
       </div>
     </VcContainer>
@@ -59,6 +61,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, computed } from "vue";
+import { getNewsArticleTags } from "../api/graphql/queries/newsArticleTag";
 import { getNewsArticles } from "../api/graphql/queries/newsArticles";
 import { ARTICLES_PER_PAGE } from "../constants";
 import type { NewsArticleContent } from "../api/graphql/types";
@@ -92,11 +95,21 @@ async function applyTag(tag: string) {
   await fetchNewsArticles();
 }
 
-const fetchNewsArticleTags = () => {
+async function toggleTag(tag: string) {
+  if (searchTag.value == tag) {
+    searchTag.value = "";
+  }
+  else {
+    searchTag.value = tag;
+  }
+  await fetchNewsArticles();
+}
+
+const fetchNewsArticleTags = async () => {
   newsArticleTagsLoading.value = true;
 
-  newsArticleTags.value.push('tag1');
-  newsArticleTags.value.push('tag2');
+  const response = await getNewsArticleTags();
+  newsArticleTags.value = response ?? [];
 
   newsArticleTagsLoading.value = false;
 }
