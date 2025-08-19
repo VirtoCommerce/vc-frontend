@@ -485,7 +485,16 @@ function trackViewSearchResults(): void {
 }
 
 function selectProduct(product: Product): void {
-  analytics("selectItem", product, categoryListProperties.value);
+  const baseProperties = searchQueryParam.value ? {
+    ...categoryListProperties.value,
+    item_list_id: "search_results",
+    item_list_name: `Search results for "${searchQueryParam.value}"`,
+    search_term: searchQueryParam.value,
+    result_position: products.value.indexOf(product) + 1,
+    total_results: totalProductsCount.value,
+  } : categoryListProperties.value;
+
+  analytics("selectItem", product, baseProperties);
 }
 
 function resetPage() {
@@ -552,7 +561,9 @@ watch(searchQueryParam, (value) => {
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
   () => {
-    void fetchProducts();
+    fetchProducts().catch((error: unknown) => {
+      console.error('Error fetching products:', error);
+    });
   },
   {
     debounce: 20,

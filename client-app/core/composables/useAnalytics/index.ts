@@ -11,15 +11,26 @@ function _useAnalytics() {
   }
 
   function analytics<E extends AnalyticsEventNameType>(event: E, ...args: AnalyticsEventMapType[E]): void {
-    if (IS_DEVELOPMENT) {
+    // Check if any tracker allows debug mode in development
+    const hasDebugEnabledTracker = Array.from(trackers).some(tracker =>
+      tracker.meta?.allowDebugInDevelopment === true
+    );
+
+    if (IS_DEVELOPMENT && !hasDebugEnabledTracker) {
       Logger.debug("useAnalytics, can't track event in development mode");
       return;
     }
+
     trackers.forEach((tracker) => {
       const handler = tracker.events[event];
       if (handler) {
         try {
-          void handler(...args);
+          const result = handler(...args);
+          if (result && typeof result.catch === 'function') {
+            result.catch((error: unknown) => {
+              Logger.error(`useAnalytics, async error in event: "${event}" in tracker ${tracker.meta?.name}.`, error);
+            });
+          }
         } catch (error) {
           Logger.error(`useAnalytics, error calling event: "${event}" in tracker ${tracker.meta?.name}.`, error);
         }

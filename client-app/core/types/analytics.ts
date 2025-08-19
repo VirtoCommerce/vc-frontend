@@ -29,7 +29,7 @@ export interface IBasicAnalyticsEventMap {
 
 export type AnalyticsEventMapType = keyof ICustomAnalyticsEventMap extends never
   ? IBasicAnalyticsEventMap
-  // eslint-disable-next-line sonarjs/no-useless-intersection
+
   : Omit<IBasicAnalyticsEventMap, keyof ICustomAnalyticsEventMap> & ICustomAnalyticsEventMap;
 
 export type AnalyticsEventNameType = keyof AnalyticsEventMapType;
@@ -41,6 +41,8 @@ export type ViewSearchResultsParamsAdditionalType = {
   visible_items?: { code: string }[];
   results_count?: number;
   results_page?: number;
+  zero_results?: boolean;
+  search_refinement?: boolean;
 };
 
 export type EventParamsType = Record<string, unknown>;
@@ -52,6 +54,7 @@ export type TrackerType = {
 
 export type TrackerMetaType = {
   name: string;
+  allowDebugInDevelopment?: boolean;
 };
 
 export type TrackerEventsType = Partial<{

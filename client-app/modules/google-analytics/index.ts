@@ -2,7 +2,6 @@ import { useScriptTag } from "@vueuse/core";
 import { useCurrency } from "@/core/composables";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { IS_DEVELOPMENT } from "@/core/constants";
 import { useUser } from "@/shared/account";
 import { MODULE_ID, GOOGLE_ANALYTICS_SETTINGS_MAPPING } from "./constants";
 import {
@@ -12,6 +11,8 @@ import {
 } from "./utils";
 import type { InitOptionsType } from "./types";
 
+// Set to true to enable analytics events in development mode
+// Set to false to only send events in production
 const DEBUG_MODE = true;
 const { currentCurrency } = useCurrency();
 const { isAuthenticated, user } = useUser();
@@ -23,7 +24,7 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
   const { getModuleSettings, hasModuleSettings } = useModuleSettings(MODULE_ID);
   const { trackId, isEnabled } = getModuleSettings(GOOGLE_ANALYTICS_SETTINGS_MAPPING);
 
-  if (!canUseDOM || !trackId || !hasModuleSettings || !isEnabled || IS_DEVELOPMENT) {
+  if (!canUseDOM || !trackId || !hasModuleSettings || !isEnabled) {
     return;
   }
   useScriptTag(`https://www.googletagmanager.com/gtag/js?id=${trackId}`);
@@ -32,6 +33,7 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
   addTracker({
     meta: {
       name: TRACKER_NAME,
+      allowDebugInDevelopment: DEBUG_MODE,
     },
     events: {
       ...events,
@@ -50,7 +52,7 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
   };
 
   const config = {
-    debugMode: DEBUG_MODE,
+    debug_mode: DEBUG_MODE,
     currency: currentCurrency.value.code,
     user_id: isAuthenticated.value ? user.value.id : undefined,
     ...extendConfig,

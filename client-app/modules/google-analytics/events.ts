@@ -51,6 +51,9 @@ export const events: TrackerEventsType = {
       currency: currencyCode,
       value: (item.price?.actual?.amount || 0) * (quantity ?? 1),
       items: [inputItem],
+      // GA4 standard parameters
+      item_list_id: params?.item_list_id,
+      item_list_name: params?.item_list_name,
     });
   },
 
@@ -62,7 +65,8 @@ export const events: TrackerEventsType = {
       currency: currencyCode,
       value: subtotal,
       items: inputItems,
-      items_count: inputItems.length,
+      // GA4 standard parameter name
+      number_of_items: inputItems.length,
     });
   },
 
@@ -83,7 +87,8 @@ export const events: TrackerEventsType = {
       currency: currencyCode,
       value: subtotal,
       items: inputItems,
-      items_count: inputItems.length,
+      // GA4 standard parameter name
+      number_of_items: inputItems.length,
     });
   },
 
@@ -93,7 +98,8 @@ export const events: TrackerEventsType = {
       currency: currencyCode,
       value: cart.total.amount,
       items: cart.items.map(lineItemToGtagItem),
-      items_count: cart.items.length,
+      // GA4 standard parameter name
+      number_of_items: cart.items.length,
     });
   },
 
@@ -103,7 +109,8 @@ export const events: TrackerEventsType = {
       currency: currencyCode,
       value: cart.total.amount,
       items: cart.items.map(lineItemToGtagItem),
-      items_count: cart.items.length,
+      // GA4 standard parameter name
+      number_of_items: cart.items.length,
     });
   },
 
@@ -114,7 +121,8 @@ export const events: TrackerEventsType = {
         currency: cart.currency.code,
         value: cart.total.amount,
         items: cart.items.map(lineItemToGtagItem),
-        items_count: cart.items.length,
+        // GA4 standard parameter name
+        number_of_items: cart.items.length,
         coupon: cart.coupons?.[0]?.code,
       });
     } catch (e) {
@@ -131,7 +139,8 @@ export const events: TrackerEventsType = {
         value: cart?.shippingPrice.amount,
         coupon: cart?.coupons?.[0]?.code,
         items: cart?.items.map(lineItemToGtagItem),
-        items_count: cart?.items.length,
+        // GA4 standard parameter name
+        number_of_items: cart?.items.length,
       });
     } catch (e) {
       Logger.error(DEBUG_PREFIX, "addShippingInfo", e);
@@ -147,7 +156,8 @@ export const events: TrackerEventsType = {
         value: cart?.total?.amount,
         coupon: cart?.coupons?.[0]?.code,
         items: cart?.items.map(lineItemToGtagItem),
-        items_count: cart?.items.length,
+        // GA4 standard parameter name
+        number_of_items: cart?.items.length,
       });
     } catch (e) {
       Logger.error(DEBUG_PREFIX, "addPaymentInfo", e);
@@ -165,7 +175,8 @@ export const events: TrackerEventsType = {
         shipping: order.shippingTotal?.amount,
         tax: order.taxTotal?.amount,
         items: order.items.map(lineItemToGtagItem),
-        items_count: order?.items?.length,
+        // GA4 standard parameter name
+        number_of_items: order?.items?.length,
       });
     } catch (e) {
       Logger.error(DEBUG_PREFIX, "purchase", e);
@@ -181,7 +192,8 @@ export const events: TrackerEventsType = {
         coupon: order.coupons?.[0],
         shipping: order.shippingTotal.amount,
         tax: order.taxTotal.amount,
-        items_count: order.items?.length,
+        // GA4 standard parameter name
+        number_of_items: order.items?.length,
       });
     } catch (e) {
       Logger.error(DEBUG_PREFIX, "placeOrder", e);
@@ -191,8 +203,10 @@ export const events: TrackerEventsType = {
   search(searchTerm, visibleItems = [], itemsCount = 0) {
     sendEvent("search", {
       search_term: searchTerm,
-      items_count: itemsCount,
+      number_of_items: itemsCount,
       visible_items: toCSV(visibleItems.map((el) => el.code)),
+      search_results_count: itemsCount,
+      search_type: "site_search",
     });
   },
 
@@ -200,11 +214,19 @@ export const events: TrackerEventsType = {
     sendEvent("view_search_results", {
       ...params,
       search_term: searchTerm,
-      visible_items: toCSV(params?.visible_items?.map((el) => el.code) ?? []),
-      results_count: params?.results_count,
+      items: params?.visible_items?.map((item, index) => ({
+        item_id: item.code,
+        item_name: (item as { name?: string }).name || item.code,
+        index: index
+      })) || [],
+      search_results_count: params?.results_count,
       results_page: params?.results_page,
+      zero_results: params?.results_count === 0,
+      search_refinement: params?.search_refinement || false,
     });
   },
+
+
 
   login(method, params) {
     sendEvent("login", {

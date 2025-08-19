@@ -400,11 +400,25 @@ async function searchAndShowDropdownResults(): Promise<void> {
    */
   if (products.value.length) {
     analytics("viewItemList", products.value, searchBarListProperties.value);
+  } else if (trimmedSearchPhrase.value) {
+    analytics("viewSearchResults", trimmedSearchPhrase.value, {
+      results_count: 0,
+      zero_results: true,
+    });
   }
 }
 
 function selectItemEvent(product: Product) {
-  analytics("selectItem", product, searchBarListProperties.value);
+  const enhancedProperties = {
+    ...searchBarListProperties.value,
+    item_list_id: "search_suggestions",
+    item_list_name: `Search suggestions for "${trimmedSearchPhrase.value}"`,
+    search_term: trimmedSearchPhrase.value,
+    result_position: products.value.indexOf(product) + 1,
+    total_results: total.value,
+  };
+
+  analytics("selectItem", product, enhancedProperties);
 }
 
 const facetsParam = useRouteQueryParam<string>(QueryParamName.Facets);
@@ -435,6 +449,7 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
 
 function handleSearchAndSaveQuery() {
   void saveSearchQuery(trimmedSearchPhrase.value);
+
   suppressNextShowDropdown.value = true;
 
   goToSearchResultsPage();
