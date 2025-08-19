@@ -1,17 +1,15 @@
 <template>
-  <VcWidget :title="newsArticle.title" class="news-article-preview">
-    <template #title>
-      <router-link :to="articleRoute">
-        <div class="news-article-preview__title">{{ newsArticle.title }}</div>
-      </router-link>
-
-      <div v-if="newsArticle.publishDate" class="news-article-preview__publish-date">
-        {{ $d(newsArticle.publishDate) }}
-      </div>
-    </template>
-
+  <VcWidget class="news-article-preview">
     <router-link :to="articleRoute">
       <VcMarkdownRender :src="newsArticle.contentPreview ?? ''" class="news-article-preview__preview" />
+    </router-link>
+
+    <div v-if="newsArticle.publishDate" class="news-article-preview__publish-date">
+      {{ $d(newsArticle.publishDate, "short") }}
+    </div>
+
+    <router-link :to="articleRoute">
+      <div class="news-article-preview__title">{{ newsArticle.title }}</div>
     </router-link>
 
     <div class="news-article-preview__tags">
@@ -67,11 +65,11 @@ const newsArticle = toRef(props, "newsArticle");
 <style lang="scss">
 .news-article-preview {
   &__title {
-    @apply text-left;
+    @apply m-3 text-left font-bold text-[--link-color]; 
   }
 
   &__publish-date {
-    @apply mt-3 text-right text-sm text-neutral;
+    @apply m-3 text-left text-sm text-neutral;
   }
 
   &__preview {
@@ -79,11 +77,15 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__tags {
-    @apply mt-5;
+    @apply m-3 mt-5;
   }
 
   &__tags-tag {
-    @apply mr-2 mb-1; 
+    @apply mr-2 mb-1;
   }
+}
+
+.vc-widget__slot{
+  @apply p-0;
 }
 </style>
