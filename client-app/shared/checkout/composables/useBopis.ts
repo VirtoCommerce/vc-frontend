@@ -12,8 +12,8 @@ export const BOPIS_CODE = "BuyOnlinePickupInStore";
 
 const ADDRESSES_FETCH_LIMIT = 999;
 
-export function useBopis(cartId?: string) {
-  const { availableShippingMethods, updateShipment, shipment } = useFullCart(cartId);
+export function useBopis() {
+  const { availableShippingMethods, updateShipment, shipment } = useFullCart();
   const { isEnabled, getSettingValue } = useModuleSettings(MODULE_ID_SHIPPING);
 
   const { result, loading, error, load } = getPickupLocations();

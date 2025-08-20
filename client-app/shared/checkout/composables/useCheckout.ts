@@ -2,7 +2,7 @@ import { createGlobalState, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
 import { useAnalytics, useHistoricalEvents, useThemeContext } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
@@ -54,9 +54,11 @@ const useGlobalCheckout = createGlobalState(() => {
   };
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function _useCheckout(cartId?: string) {
   const { analytics } = useAnalytics();
   const { t } = useI18n();
+  const route = useRoute();
   const notifications = useNotifications();
   const { openModal, closeModal } = useModal();
   const router = useRouter();
@@ -88,7 +90,7 @@ export function _useCheckout(cartId?: string) {
     updatePayment,
     changeComment,
     updatePurchaseOrderNumber,
-  } = useFullCart(cartId);
+  } = useFullCart();
   const {
     loading,
     billingAddressEqualsShipping,
@@ -483,6 +485,8 @@ export function _useCheckout(cartId?: string) {
     clearGlobalCheckoutState();
   }
 
+  watch(() => route.params.cartId, clearState);
+
   return {
     deliveryAddress,
     shipmentMethod,
@@ -513,4 +517,11 @@ export function _useCheckout(cartId?: string) {
   };
 }
 
-export const useCheckout = createSharedComposableByArgs(_useCheckout, (args) => args?.[0] ?? "");
+const useCheckoutShared = createSharedComposableByArgs(_useCheckout, (args) => args?.[0] ?? "");
+
+export function useCheckout() {
+  const route = useRoute();
+  const cartId = Array.isArray(route.params?.cartId) ? route.params?.cartId[0] : route.params?.cartId;
+
+  return useCheckoutShared(cartId);
+}
