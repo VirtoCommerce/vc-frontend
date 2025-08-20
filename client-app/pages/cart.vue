@@ -103,9 +103,9 @@
 
         <!-- Sections for single page checkout -->
         <template v-if="!$cfg.checkout_multistep_enabled">
-          <ShippingDetailsSection v-if="!allItemsAreDigital" :cart-id="cartId" class="mt-5" />
+          <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
 
-          <BillingDetailsSection class="mt-5" :cart-id="cartId" />
+          <BillingDetailsSection class="mt-5" />
 
           <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
         </template>
@@ -124,13 +124,7 @@
         />
 
         <template #sidebar>
-          <OrderSummary
-            :cart="cart"
-            :cart-id="cartId"
-            :selected-items="selectedLineItems"
-            :no-shipping="allItemsAreDigital"
-            footnote
-          >
+          <OrderSummary :cart="cart" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
             <template #footer>
               <!-- Promotion code -->
               <VcActionInput
@@ -148,16 +142,15 @@
 
               <ProceedTo
                 v-if="$cfg.checkout_multistep_enabled"
-                :to="{ name: 'Checkout', params: { cartId } }"
+                :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
                 :disabled="hasOnlyUnselectedLineItems"
                 test-id="cart.checkout-button"
                 class="mt-4"
-                :cart-id="cartId"
               >
                 {{ $t("common.buttons.go_to_checkout") }}
               </ProceedTo>
 
-              <PlaceOrder v-else class="mt-4" :cart-id="cartId" />
+              <PlaceOrder v-else class="mt-4" />
 
               <template v-if="!$cfg.checkout_multistep_enabled">
                 <transition name="slide-fade-top" mode="out-in" appear>
@@ -212,15 +205,14 @@
 
           <ProceedTo
             v-if="$cfg.checkout_multistep_enabled"
-            :to="{ name: 'Checkout', params: { cartId } }"
+            :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
             :disabled="hasOnlyUnselectedLineItems"
             class="!mt-2"
-            :cart-id="cartId"
           >
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
-          <PlaceOrder v-else class="!mt-2" :cart-id="cartId" />
+          <PlaceOrder v-else class="!mt-2" />
         </div>
       </transition>
     </template>
@@ -228,7 +220,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRef } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { moveFromSavedForLater } from "@/core/api/graphql/cart/mutations/moveFromSavedForLater";
@@ -257,7 +249,6 @@ import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
 
 interface IProps {
-  cartId?: string;
   blocksToHide?: string[];
   hideBreadcrumbs?: boolean;
   title?: string;
@@ -265,8 +256,6 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
-
-const cartId = toRef(props, "cartId");
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { themeContext } = useThemeContext();
@@ -293,10 +282,10 @@ const {
   openClearCartModal,
   selectCartItems,
   unselectCartItems,
-} = useFullCart(cartId.value);
-const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout(cartId.value);
+} = useFullCart();
+const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
-  useCoupon(cartId.value);
+  useCoupon();
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",

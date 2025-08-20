@@ -1,17 +1,16 @@
 <template>
   <VcLayout sidebar-position="right" sticky-sidebar>
-    <ShippingDetailsSection :cart-id="cartId" />
+    <ShippingDetailsSection />
 
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
 
     <template #sidebar>
-      <OrderSummary :cart="cart!" :cart-id="cartId" :selected-items="selectedLineItems" footnote>
+      <OrderSummary :cart="cart!" :selected-items="selectedLineItems" footnote>
         <template #footer>
           <ProceedTo
-            :to="{ name: 'Billing', params: { cartId } }"
+            :to="{ name: 'Billing' }"
             :disabled="!isValidShipment"
             test-id="checkout.billing-button"
-            :cart-id="cartId"
             @click="
               analytics('addShippingInfo', { ...cart!, items: selectedLineItems }, {}, shipment?.shipmentMethodOption)
             "
@@ -37,21 +36,11 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from "vue";
 import { useAnalytics } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ProceedTo, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-interface IProps {
-  cartId?: string;
-}
-
-const props = defineProps<IProps>();
-
-const cartId = toRef(props, "cartId");
-
-const { cart, shipment, selectedLineItems, hasValidationErrors } = useFullCart(cartId.value);
-const { comment, isValidShipment } = useCheckout(cartId.value);
-
+const { cart, shipment, selectedLineItems, hasValidationErrors } = useFullCart();
+const { comment, isValidShipment } = useCheckout();
 const { analytics } = useAnalytics();
 </script>

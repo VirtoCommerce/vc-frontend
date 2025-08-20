@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { usePageHead, useThemeContext } from "@/core/composables";
@@ -27,20 +27,12 @@ import { ROUTES } from "@/router/routes/constants";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
 
-interface IProps {
-  cartId?: string;
-}
-
-const props = defineProps<IProps>();
-
-const cartId = toRef(props, "cartId");
-
 const router = useRouter();
 const route = useRoute();
 
 const { t } = useI18n();
 const { themeContext } = useThemeContext();
-const { loading: loadingCart, changing: changingCart, allItemsAreDigital, forceFetch } = useFullCart(cartId.value);
+const { loading: loadingCart, changing: changingCart, allItemsAreDigital, forceFetch } = useFullCart();
 const {
   loading: loadingCheckout,
   changing: changingCheckout,
@@ -48,7 +40,7 @@ const {
   allOrderItemsAreDigital,
   canPayNow,
   initialize,
-} = useCheckout(cartId.value);
+} = useCheckout();
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value);
 const changing = computed(() => changingCart.value || changingCheckout.value);

@@ -117,13 +117,7 @@
     <OrderCommentSection v-if="comment" :comment="comment" readonly class="mt-5" />
 
     <template #sidebar>
-      <OrderSummary
-        :cart="cart!"
-        :cart-id="cartId"
-        :selected-items="selectedLineItems"
-        :no-shipping="allItemsAreDigital"
-        footnote
-      >
+      <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
           <!-- Promotion code -->
           <transition name="slide-fade-top" mode="in-out" appear>
@@ -137,7 +131,7 @@
             />
           </transition>
 
-          <PlaceOrder :cart-id="cartId" />
+          <PlaceOrder />
 
           <transition name="slide-fade-top" mode="out-in" appear>
             <VcAlert v-show="hasValidationErrors" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
@@ -158,19 +152,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from "vue";
+import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
 import { AddressSelection, VendorName } from "@/shared/common";
-
-interface IProps {
-  cartId?: string;
-}
-
-const props = defineProps<IProps>();
-
-const cartId = toRef(props, "cartId");
 
 const {
   cart,
@@ -182,9 +168,9 @@ const {
   availablePaymentMethods,
   hasValidationErrors,
   allItemsAreDigital,
-} = useFullCart(cartId.value);
-const { comment, billingAddress, purchaseOrderNumber, isPurchaseOrderNumberEnabled } = useCheckout(cartId.value);
-const { couponCode } = useCoupon(cartId.value);
+} = useFullCart();
+const { comment, billingAddress, purchaseOrderNumber, isPurchaseOrderNumberEnabled } = useCheckout();
+const { couponCode } = useCoupon();
 
 const shippingMethodId = computed(
   () => shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,

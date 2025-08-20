@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from "vue";
+import { computed } from "vue";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { AddressSelection } from "@/shared/common";
@@ -89,14 +89,11 @@ import { BOPIS_CODE } from "../composables/useBopis";
 
 interface IProps {
   disabled?: boolean;
-  cartId?: string;
 }
 
-const props = defineProps<IProps>();
+defineProps<IProps>();
 
-const cartId = toRef(props, "cartId");
-
-const { allItemsAreDigital, availablePaymentMethods, availableShippingMethods } = useFullCart(cartId.value);
+const { allItemsAreDigital, availablePaymentMethods, availableShippingMethods } = useFullCart();
 
 const isShippingMethodBopis = computed(() => {
   return (
@@ -114,5 +111,5 @@ const {
   setPaymentMethod,
   isPurchaseOrderNumberEnabled,
   purchaseOrderNumber,
-} = useCheckout(cartId.value);
+} = useCheckout();
 </script>
