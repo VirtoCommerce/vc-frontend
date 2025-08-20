@@ -2,7 +2,8 @@
   "news": {
     "list": {
       "title": "Последние новости",
-      "not-found": "Новостей не найдено"
+      "not-found": "Новостей не найдено",
+      "search-placeholder": "Поиск"
     },
     "details": {
       "written-by": "Автор:",

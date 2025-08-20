@@ -2,7 +2,8 @@
   "news": {
     "list": {
       "title": "Najnowsze wiadomości",
-      "not-found": "Brak wiadomości"
+      "not-found": "Brak wiadomości",
+      "search-placeholder": "Szukaj"
     },
     "details": {
       "written-by": "Autor:",

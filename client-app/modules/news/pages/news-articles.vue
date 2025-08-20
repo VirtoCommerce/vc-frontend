@@ -23,13 +23,12 @@ color="secondary" :variant="searchTag == tag ? 'solid' : 'outline-dark'" class="
             clearable
             class="news-articles__filter--keyword"
             :disabled="loading"
-            :placeholder="$t('pages.account.orders.search_placeholder')"
+            :placeholder="$t('news.list.search-placeholder')"
             @keydown.enter="applyKeyword"
             @clear="resetKeyword">
             <template #append>
               <VcButton
-                :disabled="loading"
-                :aria-label="$t('commmon.buttons.search_orders')"
+                :disabled="loading" 
                 icon="search"
                 icon-size="1.25rem"
                 @click="applyKeyword" />

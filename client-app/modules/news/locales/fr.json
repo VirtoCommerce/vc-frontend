@@ -2,7 +2,8 @@
   "news": {
     "list": {
       "title": "Dernières actualités",
-      "not-found": "Aucune actualité trouvée"
+      "not-found": "Aucune actualité trouvée",
+      "search-placeholder": "Rechercher"
     },
     "details": {
       "written-by": "Écrit par",
