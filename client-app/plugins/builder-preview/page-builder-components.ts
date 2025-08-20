@@ -16,6 +16,7 @@ export const PageBuilderComponents: PageBuilderComponentDescriptorType[] = [
     component: ImageBlock,
     icon: "image",
     displayField: "name",
+    type: "image", // if skip this property, the component name will be used
     settings: [
       {
         id: "image",
