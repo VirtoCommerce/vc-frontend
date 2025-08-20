@@ -37,25 +37,22 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     path: "/checkout/:cartId?",
     name: "Checkout",
     component: Checkout,
-    props: (route) => ({ cartId: route.params.cartId }),
     children: [
       {
         path: "shipping",
         name: "Shipping",
         component: Shipping,
         beforeEnter(to, from, next) {
-          handleBeforeEnter(from, next, "CheckoutPayment", "Cart");
+          handleBeforeEnter(from, next, "CheckoutPayment", to.params.cartId ? ROUTES.CART_ID.NAME : ROUTES.CART.NAME);
         },
-        props: (route) => ({ cartId: route.params.cartId }),
       },
       {
         path: "billing",
         name: "Billing",
         component: Billing,
         beforeEnter(to, from, next) {
-          handleBeforeEnter(from, next, "CheckoutPayment", "Cart");
+          handleBeforeEnter(from, next, "CheckoutPayment", to.params.cartId ? ROUTES.CART_ID.NAME : ROUTES.CART.NAME);
         },
-        props: (route) => ({ cartId: route.params.cartId }),
       },
       {
         path: "review",
