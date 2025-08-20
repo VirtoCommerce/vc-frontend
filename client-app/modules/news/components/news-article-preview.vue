@@ -34,13 +34,13 @@ import type { NewsArticleContent } from "../api/graphql/types";
 interface IProps {
   newsArticle: NewsArticleContent;
 }
-const emit = defineEmits<IEmits>();
-
-const props = defineProps<IProps>();
 
 interface IEmits {
   (event: "tag:click", tag: string): void;
 }
+
+const emit = defineEmits<IEmits>();
+const props = defineProps<IProps>();
 const { getSettingValue } = useModuleSettings(MODULE_ID);
 const useNewsPrefixInLinks = getSettingValue(USE_NEWS_PREFIX_IN_LINKS);
 

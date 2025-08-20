@@ -5,6 +5,8 @@
       "title": "No news found",
       "button": "@:common.buttons.continue_shopping"
     },
+    "written-by": "Written by",
+    "last-updated": "Last updated:",
     "links": {
       "to-list": "All news"
     }
