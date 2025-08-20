@@ -1,11 +1,15 @@
 {
   "news": {
-    "empty-list": {
-      "title": "Nie znaleziono wiadomości",
-      "button": "@:common.buttons.continue_shopping"
+    "list": {
+      "title": "Najnowsze wiadomości",
+      "not-found": "Brak wiadomości"
     },
-    "links": {
-      "to-list": "Wszystkie wiadomości"
+    "details": {
+      "written-by": "Autor:",
+      "last-updated": "Ostatnia aktualizacja:",
+      "breadcrumbs": {
+        "news": "Aktualności"
+      }
     }
   }
 }

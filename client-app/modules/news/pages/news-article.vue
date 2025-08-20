@@ -55,7 +55,7 @@ const seoUrl = computed(() => {
     : `${window.location.host}/${newsArticle.value?.seoInfo?.semanticUrl}`;
 });
 
-const breadcrumbs = useBreadcrumbs(() => [{ title: t("news.links.to-list"), route: "/news" }, { title: newsArticle.value?.title ?? "" }]);
+const breadcrumbs = useBreadcrumbs(() => [{ title: t("news.details.breadcrumbs.news"), route: "/news" }, { title: newsArticle.value?.title ?? "" }]);
 
 const fetchNewsArticle = async () => {
   loading.value = true;

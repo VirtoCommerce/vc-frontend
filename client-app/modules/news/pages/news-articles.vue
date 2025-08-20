@@ -2,7 +2,7 @@
   <div class="news-articles">
     <VcContainer>
       <VcTypography tag="h1" class="news-articles__title">
-        {{ $t("news.title") }}
+        {{ $t("news.list.title") }}
       </VcTypography>
 
       <PageToolbarBlock>
@@ -38,13 +38,7 @@ color="secondary" :variant="searchTag == tag ? 'solid' : 'outline-dark'" class="
         </div>
       </PageToolbarBlock>
 
-      <VcEmptyView v-if="!loading && !newsArticles?.length" :text="$t('news.empty-list.title')" icon="outline-document">
-        <template #button>
-          <VcButton to="/">
-            {{ $t("news.empty-list.button") }}
-          </VcButton>
-        </template>
-      </VcEmptyView>
+      <VcEmptyView v-if="!loading && !newsArticles?.length" :text="$t('news.list.not-found')" icon="outline-document" />
 
       <div v-else>
         <div v-if="loading" class="news-articles__grid">

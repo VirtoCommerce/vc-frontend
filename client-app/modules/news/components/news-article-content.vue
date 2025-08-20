@@ -14,14 +14,14 @@
     </div>
     <div v-if="newsArticle.author || newsArticle.publishDate" class="news-article-content__citation">
       <div v-if="newsArticle.author" class="news-article-content__citation-author">
-        <VcImage :src="newsArticle.author.iconUrl" :alt="$t('common.labels.product_review_image')" lazy class="news-article-content__citation-author-image" />
+        <VcImage v-if="newsArticle.author.iconUrl" :src="newsArticle.author.iconUrl" lazy class="news-article-content__citation-author-image" />
 
-        <span>{{ $t("news.written-by") }} <span class="news-article-content__citation-author-name">{{ newsArticle.author.name }}</span></span>
+        <span>{{ $t("news.details.written-by") }} <span class="news-article-content__citation-author-name">{{ newsArticle.author.name }}</span></span>
       </div>
 
       <div></div>
 
-      <div v-if="newsArticle.publishDate" class="news-article-content__citation-publish-date">{{ $t("news.last-updated") }} {{ $d(newsArticle.publishDate,
+      <div v-if="newsArticle.publishDate" class="news-article-content__citation-publish-date">{{ $t("news.details.last-updated") }} {{ $d(newsArticle.publishDate,
         "short")
       }}</div>
     </div>
