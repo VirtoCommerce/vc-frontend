@@ -10,7 +10,7 @@ function withScope<T>(fn: () => T): { value: T | undefined; stop: () => void } {
 
 describe("createSharedComposableByArgs", () => {
   describe("sharing behavior", () => {
-    it("should share the same instance for identical arguments across multiple scopes", () => {
+    it("should reuse the same instance for identical arguments across different callers", () => {
       let initCount = 0;
       const useShared = createSharedComposableByArgs((a: number, b: number) => {
         initCount += 1;
