@@ -47,8 +47,9 @@ withDefaults(defineProps<IProps>(), {
 
   --props-max-width: v-bind(maxWidth);
   --max-width: var(--props-max-width, var(--vc-badge-max-width, 100%));
+  --radius: var(--vc-badge-radius, var(--vc-radius, 0.5rem));
 
-  @apply flex-none inline-flex align-top min-h-[--size] min-w-[--size] max-w-[--max-width] border rounded-sm font-bold;
+  @apply flex-none inline-flex align-top min-h-[--size] min-w-[--size] max-w-[--max-width] border rounded-[--radius] font-bold;
 
   &--size {
     &--xs {
