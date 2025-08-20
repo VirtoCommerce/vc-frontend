@@ -65,7 +65,7 @@ const newsArticle = toRef(props, "newsArticle");
 <style lang="scss">
 .news-article-preview {
   &__title {
-    @apply m-3 text-left font-bold text-[--link-color]; 
+    @apply min-h-14 m-3 text-left font-bold text-[--link-color]; 
   }
 
   &__publish-date {
