@@ -4,6 +4,7 @@ import { createSharedComposable, computedEager } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge, intersection } from "lodash";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { AbortReason } from "@/core/api/common/enums";
 import {
   useGetShortCartQuery,
@@ -695,4 +696,11 @@ export function _useFullCart(cartId?: string) {
   };
 }
 
-export const useFullCart = createSharedComposableByArgs(_useFullCart, (args) => args?.[0] ?? "");
+const useFullCartShared = createSharedComposableByArgs(_useFullCart, (args) => args?.[0] ?? "");
+
+export function useFullCart() {
+  const route = useRoute();
+  const cartId = Array.isArray(route.params?.cartId) ? route.params?.cartId[0] : route.params?.cartId;
+
+  return useFullCartShared(cartId);
+}
