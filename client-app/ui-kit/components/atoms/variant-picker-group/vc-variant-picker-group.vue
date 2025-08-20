@@ -3,19 +3,28 @@
     <slot />
 
     <div v-if="truncate" v-show="showButton && !expanded" ref="moreBtn" class="vc-variant-picker-group__wrapper">
-      <button type="button" class="vc-variant-picker-group__button" @click="expand">+{{ hiddenCount }}</button>
+      <button
+        type="button"
+        class="vc-variant-picker-group__button"
+        :aria-expanded="expanded ? 'true' : 'false'"
+        :aria-label="$t('ui_kit.buttons.see_more')"
+        @click="expand"
+      >
+        +{{ hiddenCount }}
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { ref, onMounted, onBeforeUnmount, nextTick, watch, toRef } from "vue";
 
 interface IProps {
   truncate?: boolean;
 }
 
 const props = defineProps<IProps>();
+const truncate = toRef(props, "truncate");
 
 const containerRef = ref<HTMLElement | null>(null);
 const moreBtn = ref<HTMLElement | null>(null);
@@ -28,7 +37,7 @@ let ro: ResizeObserver | null = null;
 
 function getDirectItems(containerEl: HTMLElement): HTMLElement[] {
   return Array.from(containerEl.children).filter((item) => {
-    return item != moreBtn.value;
+    return !item.classList.contains("vc-variant-picker-group__wrapper");
   }) as HTMLElement[];
 }
 
@@ -71,11 +80,13 @@ function measureBtnWidthFor(btnWrapper: HTMLElement, count: number) {
   const prevText = label.textContent ?? "";
   const prevWidth = label.style.width;
   const prevDisplay = label.style.display;
-  const width = label.getBoundingClientRect().width;
 
   label.textContent = `+${count}`;
   label.style.width = "auto";
   label.style.display = "inline-block";
+
+  const width = label.getBoundingClientRect().width;
+
   label.textContent = prevText;
   label.style.width = prevWidth;
   label.style.display = prevDisplay;
@@ -85,6 +96,7 @@ function measureBtnWidthFor(btnWrapper: HTMLElement, count: number) {
     btnWrapper.style.display = "";
     btnWrapper.style.visibility = "";
   }
+
   return width;
 }
 
@@ -103,7 +115,7 @@ function spanForWidth(width: number, track: number, gap: number, maxCols: number
 }
 
 function measureAndLayout() {
-  if (!props.truncate || expanded.value) {
+  if (!truncate.value || expanded.value) {
     return;
   }
 
@@ -179,6 +191,10 @@ function expand() {
     n.classList.remove("hidden");
   }
 }
+
+watch(truncate, (val) => {
+  void nextTick().then(val ? measureAndLayout : expand);
+});
 
 onMounted(async () => {
   await nextTick();
