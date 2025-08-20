@@ -21,7 +21,7 @@
           {{ translate(error) }}
         </span>
         <!-- Keep the A tag to reinitialize the app -->
-        <a href="/change-password" class="text-sm font-bold text-accent-700 hover:text-accent">
+        <a :href="ROUTES.CHANGE_PASSWORD.PATH" class="text-sm font-bold text-accent-700 hover:text-accent">
           {{ $t("common.buttons.set_new_password") }}
         </a>
       </span>
@@ -101,6 +101,7 @@ import { object, string } from "yup";
 import { useAnalytics, useAuth, useErrorsTranslator } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
 import { Logger } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { useSignMeIn } from "@/shared/account/composables";
 import { ContactAdministratorLink } from "@/shared/common";
 import type { IdentityErrorType } from "@/core/api/graphql/types";

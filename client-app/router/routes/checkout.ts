@@ -25,12 +25,14 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     path: "/checkout/completed",
     name: "CheckoutCompleted",
     component: Completed,
+    meta: { redirectable: false }
   },
   {
     path: "/checkout/payment/:status(success|failure)",
     name: "CheckoutPaymentResult",
     component: PaymentResult,
     props: true,
+    meta: { redirectable: false }
   },
   {
     path: "/checkout",
@@ -64,7 +66,7 @@ export const checkoutRoutes: RouteRecordRaw[] = [
         component: Payment,
       },
     ],
-    meta: { layout: "Secure" },
+    meta: { layout: "Secure", redirectable: false },
     beforeEnter(to, from, next) {
       if (from.name === "Cart") {
         next();

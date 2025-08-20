@@ -13,7 +13,9 @@ import {
   uniqByLast,
   toCSV,
   areStringOrNumberEqual,
+  buildRedirectUrl,
 } from "./index";
+import type { RouteLocationNormalized } from "vue-router";
 
 describe("getBaseUrl", () => {
   const originalLocation = window.location;
@@ -481,5 +483,121 @@ describe("areStringOrNumberEqual", () => {
     expect(areStringOrNumberEqual("", "")).toBe(true);
     expect(areStringOrNumberEqual("", 0)).toBe(false);
     expect(areStringOrNumberEqual(0, "")).toBe(false);
+  });
+});
+
+describe("buildRedirectUrl", () => {
+  it("should return redirect URL when route is redirectable and no return URL keys exist", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }],
+      query: {},
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toEqual({ returnUrl: "/test/path" });
+  });
+
+  it("should return null when route has redirectable: false in meta", () => {
+    const route = {
+      matched: [{ meta: { redirectable: false } }],
+      query: {},
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toBeNull();
+  });
+
+  it("should return null when route has returnUrl in query", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }],
+      query: { returnUrl: "/some/path" },
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toBeNull();
+  });
+
+  it("should return null when route has ReturnUrl in query", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }],
+      query: { ReturnUrl: "/some/path" },
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toBeNull();
+  });
+
+  it("should return null when route has both returnUrl and ReturnUrl in query", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }],
+      query: { returnUrl: "/some/path", ReturnUrl: "/another/path" },
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toBeNull();
+  });
+
+  it("should return redirect URL when route has other query parameters but no return URL keys", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }],
+      query: { otherParam: "value", anotherParam: "value2" },
+      fullPath: "/test/path?otherParam=value&anotherParam=value2",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toEqual({ returnUrl: "/test/path?otherParam=value&anotherParam=value2" });
+  });
+
+  it("should return redirect URL when route has no meta redirectable property", () => {
+    const route = {
+      matched: [{ meta: {} }],
+      query: {},
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toEqual({ returnUrl: "/test/path" });
+  });
+
+  it("should return redirect URL when route has no meta property", () => {
+    const route = {
+      matched: [{}],
+      query: {},
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toEqual({ returnUrl: "/test/path" });
+  });
+
+  it("should return null when any matched route has redirectable: false", () => {
+    const route = {
+      matched: [
+        { meta: { redirectable: true } },
+        { meta: { redirectable: false } },
+        { meta: { redirectable: true } },
+      ],
+      query: {},
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toBeNull();
+  });
+
+  it("should handle route with complex fullPath including query and hash", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }],
+      query: {},
+      fullPath: "/test/path?param=value#section",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toEqual({ returnUrl: "/test/path?param=value#section" });
   });
 });
