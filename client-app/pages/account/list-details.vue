@@ -34,7 +34,7 @@
             class="w-full md:order-last md:w-auto"
             @click="buyNow"
           >
-            {{ $t("common.buttons.go_to_checkout") }}
+            {{ $t("common.buttons.buy_now") }}
           </VcButton>
 
           <VcButton
