@@ -10,7 +10,7 @@ import type { MaybeRefOrGetter } from "vue";
  * @param seoUrl path after domain without slash at the beginning
  **/
 export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
-  const slugOutlineStorage = useLocalStorage<string>(NAVIGATION_OUTLINE, "");
+  const navigationOutlineStorage = useLocalStorage<string>(NAVIGATION_OUTLINE, "");
   const { storeId, userId, cultureName } = globals;
   const variables = computed(() => {
     return {
@@ -106,7 +106,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     slugOutline,
     async (value) => {
       await nextTick();
-      slugOutlineStorage.value = value ?? "";
+      navigationOutlineStorage.value = value ?? "";
     },
     { immediate: true },
   );
