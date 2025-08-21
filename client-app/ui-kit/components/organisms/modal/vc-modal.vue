@@ -79,7 +79,6 @@ interface IProps {
   variant?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
   dividers?: boolean;
   testId?: string;
-  pinnedFooter?: boolean;
 }
 
 defineOptions({

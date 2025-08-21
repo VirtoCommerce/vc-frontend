@@ -4,7 +4,6 @@
     max-width="72rem"
     is-mobile-fullscreen
     class="select-address-map-modal"
-    pinned-footer
   >
     <div class="select-address-map-modal__content">
       <GoogleMap
