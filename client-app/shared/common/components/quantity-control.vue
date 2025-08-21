@@ -31,7 +31,7 @@
 
   <VcQuantityStepper
     v-else-if="mode === 'stepper'"
-    v-model="quantity"
+    v-model="stepperQuantity"
     :name="name"
     :loading="loading"
     :disabled="isDisabled"
@@ -127,7 +127,7 @@ const {
 
 const value = defineModel<number>({ default: 0 });
 
-const quantity = ref<number>(value.value || 0);
+const stepperQuantity = ref<number>(value.value || 0);
 
 const { isDisabled, isValid, errorMessage, validateFields } = useQuantityField({
   modelValue: value,
@@ -144,14 +144,14 @@ const { isDisabled, isValid, errorMessage, validateFields } = useQuantityField({
   allowZero: computed(() => mode.value === "stepper" && allowZero.value),
 });
 
-function applyPreValidationModifiers() {
-  if (quantity.value && quantity.value > LINE_ITEM_QUANTITY_LIMIT) {
-    quantity.value = Number(quantity.value.toString().slice(0, -1));
+function applyStepperPreValidationModifiers() {
+  if (stepperQuantity.value && stepperQuantity.value > LINE_ITEM_QUANTITY_LIMIT) {
+    stepperQuantity.value = Number(stepperQuantity.value.toString().slice(0, -1));
   }
 }
 
-const handleChange = debounce(async () => {
-  const newQuantity = Number(quantity.value);
+const handleStepperChange = debounce(async () => {
+  const newQuantity = Number(stepperQuantity.value);
 
   if (isNaN(newQuantity) || newQuantity === value.value) {
     return;
@@ -183,14 +183,14 @@ onMounted(async () => {
   }
 });
 
-watch(quantity, () => {
-  applyPreValidationModifiers();
-  void handleChange();
+watch(stepperQuantity, () => {
+  applyStepperPreValidationModifiers();
+  void handleStepperChange();
 });
 
 watch(value, () => {
-  quantity.value = value.value;
-  applyPreValidationModifiers();
+  stepperQuantity.value = value.value;
+  applyStepperPreValidationModifiers();
 });
 
 watchEffect(() => {
