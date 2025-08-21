@@ -382,6 +382,10 @@ async function buyNow() {
     return;
   }
 
+  if (isDirty.value) {
+    await openSaveChangesModal();
+  }
+
   try {
     const result = await createCartFromWishlist(list.value.id);
     if (!result?.data?.createCartFromWishlist?.id) {
