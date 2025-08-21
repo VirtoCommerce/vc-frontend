@@ -160,7 +160,7 @@
               @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
               @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
             >
-              <span v-html-safe="category.name" />
+              <span v-html-safe="category.name" class="break-normal" />
             </VcMenuItem>
           </ul>
         </template>
