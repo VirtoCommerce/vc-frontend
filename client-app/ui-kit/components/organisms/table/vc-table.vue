@@ -14,7 +14,7 @@
   </div>
 
   <!-- Desktop table view -->
-  <table v-else :class="['w-full text-left text-sm', isMobile ? 'table-fixed' : 'table-auto' ]">
+  <table v-else :class="['w-full text-left text-sm', isMobile ? 'table-fixed' : 'table-auto']">
     <caption v-if="description" class="sr-only">
       {{
         description
@@ -35,7 +35,7 @@
             <template v-if="column.sortable && sort">
               <button
                 type="button"
-                class="inline-flex items-center gap-1"
+                class="inline-flex items-center gap-2"
                 @click="
                   $emit('headerClick', {
                     column: column.id,
@@ -46,19 +46,9 @@
                 {{ column.title }}
 
                 <template v-if="sort.column === column.id">
-                  <VcIcon
-                    v-if="sort.direction === SortDirection.Descending"
-                    class="ms-1"
-                    name="chevron-up"
-                    size="xxs"
-                  />
+                  <VcIcon v-if="sort.direction === SortDirection.Descending" name="chevron-up" size="xxs" />
 
-                  <VcIcon
-                    v-else-if="sort.direction === SortDirection.Ascending"
-                    class="ms-1"
-                    name="chevron-down"
-                    size="xxs"
-                  />
+                  <VcIcon v-else-if="sort.direction === SortDirection.Ascending" name="chevron-down" size="xxs" />
                 </template>
               </button>
             </template>
@@ -182,6 +172,6 @@ function alignClass(align?: keyof typeof ALIGN_MAP): string {
     return ALIGN_MAP.left;
   }
 
-  return (ALIGN_MAP as Record<string, string>)[align] ?? ALIGN_MAP.left;
+  return ALIGN_MAP[align] ?? ALIGN_MAP.left;
 }
 </script>
