@@ -17,10 +17,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from "vue";
-import { useI18n } from "vue-i18n";
-import { useAnalytics } from "@/core/composables/useAnalytics";
-import type { SavedForLaterListFragment, Product } from "@/core/api/graphql/types";
+import { toRef } from "vue";
+import type { SavedForLaterListFragment } from "@/core/api/graphql/types";
 import CartItemForLater from "@/shared/cart/components/cart-item-for-later.vue";
 
 interface IEmits {
@@ -38,19 +36,11 @@ interface IProps {
 
 const savedForLaterList = toRef(props, "savedForLaterList");
 
-const listProperties = computed(() => ({
-  item_list_id: "recently_browsed_products",
-  item_list_name: t("pages.cart.recently_browsed_products"),
-}));
-
-const { analytics } = useAnalytics();
-const { t } = useI18n();
-
 function selectItemEvent(item?: SavedForLaterListFragment['items'][number]['product']) {
   if(!item) {
     return;
   }
 
-  analytics("selectItem", item as Product, listProperties.value);
+  // Analytics tracking is now handled automatically by the Analytics Beacon
 }
 </script>

@@ -220,7 +220,7 @@ import omit from "lodash/omit";
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
-import { useAnalytics, useThemeContext } from "@/core/composables";
+import { useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -242,7 +242,6 @@ import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
-import type { Product } from "@/core/api/graphql/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import ActiveFilterChips from "@/shared/catalog/components/active-filter-chips.vue";
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
@@ -359,7 +358,7 @@ const {
   facetsToHide: facetsToHide.value,
 });
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
-const { analytics } = useAnalytics();
+
 
 const { selectedAddress } = useShipToLocation();
 
@@ -376,12 +375,7 @@ const hideViewModeSelector = computed(() => {
   return props.viewMode && viewModes.includes(props.viewMode);
 });
 
-const categoryListProperties = computed(() => ({
-  item_list_id: `category_${currentCategory.value?.slug}_page_${currentPage.value}`,
-  item_list_name: `Category "${currentCategory.value?.name}" (page ${currentPage.value})`,
-  related_id: currentCategory.value?.id,
-  related_type: "category",
-}));
+
 
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
@@ -453,48 +447,20 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
     page: currentPage.value,
   });
 
-  /**
-   * Send Google Analytics event for products on next page.
-   */
-  analytics("viewItemList", products.value, categoryListProperties.value);
-
-  if (searchQueryParam.value) {
-    trackViewSearchResults();
-  }
+  // Analytics tracking is now handled automatically by the Analytics Beacon
 }
 
 async function fetchProducts(): Promise<void> {
   await _fetchProducts(searchParams.value);
 
-  /**
-   * Send Google Analytics event for products.
-   */
-  analytics("viewItemList", products.value, categoryListProperties.value);
-
-  if (searchQueryParam.value) {
-    trackViewSearchResults();
-  }
+  // Analytics tracking is now handled automatically by the Analytics Beacon
 }
 
-function trackViewSearchResults(): void {
-  analytics("viewSearchResults", searchQueryParam.value, {
-    visible_items: products.value.map((product) => ({ code: product.code })),
-    results_count: totalProductsCount.value,
-    results_page: currentPage.value,
-  });
-}
+// trackViewSearchResults function removed - handled by Analytics Beacon
 
-function selectProduct(product: Product): void {
-  const baseProperties = searchQueryParam.value ? {
-    ...categoryListProperties.value,
-    item_list_id: "search_results",
-    item_list_name: `Search results for "${searchQueryParam.value}"`,
-    search_term: searchQueryParam.value,
-    result_position: products.value.indexOf(product) + 1,
-    total_results: totalProductsCount.value,
-  } : categoryListProperties.value;
-
-  analytics("selectItem", product, baseProperties);
+function selectProduct(): void {
+  // Analytics tracking is now handled automatically by the Analytics Beacon
+  // The beacon will detect the click and extract product data from DOM attributes
 }
 
 function resetPage() {
@@ -555,15 +521,13 @@ watch(
 
 watch(searchQueryParam, (value) => {
   setQueryScope(value);
-  resetCurrentPage();
+  void resetCurrentPage();
 });
 
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
   () => {
-    fetchProducts().catch((error: unknown) => {
-      console.error('Error fetching products:', error);
-    });
+    void fetchProducts();
   },
   {
     debounce: 20,

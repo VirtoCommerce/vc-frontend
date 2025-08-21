@@ -179,7 +179,7 @@
               :product="product"
               @link-click="
                 hideSearchDropdown();
-                selectItemEvent(product);
+                selectItemEvent();
               "
               @change-focus="focusPrevNextItem($event.direction, $event.event)"
             />
@@ -228,7 +228,7 @@ import { pickBy } from "lodash";
 import { computed, onMounted, ref, toValue, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useCategoriesRoutes, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
@@ -243,7 +243,7 @@ import { highlightSearchText } from "@/shared/layout/utils";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import BarcodeScanner from "./barcode-scanner.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
-import type { Category, Product } from "@/core/api/graphql/types";
+import type { Category } from "@/core/api/graphql/types";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
@@ -276,7 +276,7 @@ const {
   clearSearchResults,
 } = useSearchBar();
 
-const { analytics } = useAnalytics();
+
 const router = useRouter();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
@@ -294,11 +294,7 @@ const trimmedSearchPhrase = computed(() => {
   return searchPhrase.value.trim();
 });
 
-const searchBarListProperties = computed(() => ({
-  search_term: trimmedSearchPhrase,
-  item_list_id: "search_bar",
-  item_list_name: `Search phrase '${trimmedSearchPhrase.value}'`,
-}));
+// searchBarListProperties removed - handled by Analytics Beacon
 
 const { bottom } = useElementBounding(searchBarElement);
 
@@ -398,27 +394,12 @@ async function searchAndShowDropdownResults(): Promise<void> {
   /**
    * Send Google Analytics event for products.
    */
-  if (products.value.length) {
-    analytics("viewItemList", products.value, searchBarListProperties.value);
-  } else if (trimmedSearchPhrase.value) {
-    analytics("viewSearchResults", trimmedSearchPhrase.value, {
-      results_count: 0,
-      zero_results: true,
-    });
-  }
+  // Analytics tracking is now handled automatically by the Analytics Beacon
 }
 
-function selectItemEvent(product: Product) {
-  const enhancedProperties = {
-    ...searchBarListProperties.value,
-    item_list_id: "search_suggestions",
-    item_list_name: `Search suggestions for "${trimmedSearchPhrase.value}"`,
-    search_term: trimmedSearchPhrase.value,
-    result_position: products.value.indexOf(product) + 1,
-    total_results: total.value,
-  };
-
-  analytics("selectItem", product, enhancedProperties);
+function selectItemEvent() {
+  // Analytics tracking is now handled automatically by the Analytics Beacon
+  // The beacon will detect the click and extract product data from DOM attributes
 }
 
 const facetsParam = useRouteQueryParam<string>(QueryParamName.Facets);
@@ -448,7 +429,11 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
 }
 
 function handleSearchAndSaveQuery() {
-  void saveSearchQuery(trimmedSearchPhrase.value);
+  try {
+    saveSearchQuery(trimmedSearchPhrase.value);
+  } catch {
+    // Handle save error silently
+  }
 
   suppressNextShowDropdown.value = true;
 
@@ -462,11 +447,11 @@ function handleSearchHistoryClick(query: string) {
 
 function goToSearchResultsPage() {
   hideSearchDropdown();
-  void router.push(getSearchRoute(trimmedSearchPhrase.value));
+  router.push(getSearchRoute(trimmedSearchPhrase.value)).catch(() => {
+    // Handle navigation error silently
+  });
 
-  if (trimmedSearchPhrase.value) {
-    analytics("search", trimmedSearchPhrase.value, products.value, total.value);
-  }
+  // Analytics tracking is now handled automatically by the Analytics Beacon
 }
 
 function reset() {

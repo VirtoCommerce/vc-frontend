@@ -65,7 +65,7 @@
         v-if="savedForLaterList?.items?.length"
         :saved-for-later-list="savedForLaterList"
         class="mt-5"
-        @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" 
+        @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
       />
 
       <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" class="mt-5" />
@@ -109,7 +109,7 @@
           v-if="savedForLaterList?.items?.length"
           :saved-for-later-list="savedForLaterList"
           class="mt-5"
-          @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" 
+          @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
 
         <RecentlyBrowsedProducts
@@ -221,7 +221,7 @@ import { recentlyBrowsed } from "@/core/api/graphql";
 import { moveFromSavedForLater } from "@/core/api/graphql/cart/mutations/moveFromSavedForLater";
 import { moveToSavedForLater } from "@/core/api/graphql/cart/mutations/moveToSavedForLater";
 import { getSavedForLater } from "@/core/api/graphql/cart/queries/getSavedForLater";
-import { useBreadcrumbs, useAnalytics, usePageHead, useThemeContext } from "@/core/composables";
+import { useBreadcrumbs, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY, MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { useUser } from "@/shared/account";
@@ -244,7 +244,7 @@ import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browse
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { themeContext } = useThemeContext();
-const { analytics } = useAnalytics();
+
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
 const {
@@ -300,10 +300,7 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
   /**
    * Send Google Analytics event for an item was removed from cart.
    */
-  analytics(
-    "removeItemsFromCart",
-    cart.value!.items.filter((item) => itemIds.includes(item.id)),
-  );
+  // Analytics tracking is now handled automatically by the Analytics Beacon
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
@@ -337,10 +334,7 @@ function selectItemEvent(item: LineItemType | undefined): void {
     return;
   }
 
-  analytics("selectItem", item, {
-    item_list_id: "cart",
-    item_list_name: t("pages.cart.title"),
-  });
+  // Analytics tracking is now handled automatically by the Analytics Beacon
 }
 
 void (async () => {
@@ -349,9 +343,7 @@ void (async () => {
   /**
    * Send a Google Analytics shopping cart view event.
    */
-  if (cart.value) {
-    analytics("viewCart", cart.value);
-  }
+  // Analytics tracking is now handled automatically by the Analytics Beacon
 
   if (!themeContext.value?.settings?.checkout_multistep_enabled) {
     await initialize();

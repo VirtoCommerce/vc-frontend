@@ -134,7 +134,7 @@ import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
 import productTemplateDefault from "@/config/product-default.json";
 import productTemplateB2c from "@/config/product_b2c.json";
-import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
+import { useBreadcrumbs, usePageTitle } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS } from "@/core/constants";
@@ -218,7 +218,7 @@ const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
-const { analytics } = useAnalytics();
+
 const { pushHistoricalEvent } = useHistoricalEvents();
 
 const templateLayout = computed(() => {
@@ -411,7 +411,7 @@ watch(
   fetchedProductId,
   () => {
     if (fetchedProductId.value && product.value) {
-      analytics("viewItem", product.value);
+      // Analytics tracking is now handled automatically by the Analytics Beacon
 
       void pushHistoricalEvent({
         eventType: "click",

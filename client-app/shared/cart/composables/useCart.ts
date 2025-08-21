@@ -33,7 +33,6 @@ import {
   UnselectCartItemsDocument,
   GetShortCartDocument,
 } from "@/core/api/graphql/types";
-import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
 import { useSyncMutationBatchers } from "@/core/composables/useSyncMutationBatchers";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
@@ -94,7 +93,7 @@ export function useShortCart() {
   const { cart, refetch, loading } = useSharedShortCart();
   const { storeId, currencyCode, cultureName, userId } = globals;
   const commonVariables = { storeId, currencyCode, cultureName, userId };
-  const { analytics } = useAnalytics();
+
   const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
   const {
     add: addToCartBatchedMutation,
@@ -215,15 +214,12 @@ export function useShortCart() {
     mutation: typeof _changeItemQuantity | typeof changeItemQuantityBatchedMutation,
   ) {
     try {
-      const lineItem = cart.value?.items.find((item) => item.id === lineItemId);
       const result = await mutation({
         command: { lineItemId, quantity, ...commonVariables },
         skipQuery: false,
       });
 
-      if (lineItem) {
-        analytics("updateCartItem", lineItem.sku, quantity, lineItem?.quantity);
-      }
+      // Analytics tracking is now handled automatically by the Analytics Beacon
 
       return result?.data?.changeCartItemQuantity;
     } catch (err) {
@@ -274,7 +270,7 @@ export function useShortCart() {
 
 export function _useFullCart() {
   const { openModal } = useModal();
-  const { analytics } = useAnalytics();
+
   const { client, resolveClient } = useApolloClient();
   const { storeId, currencyCode, cultureName, userId } = globals;
   const commonVariables = { storeId, currencyCode, cultureName, userId };
@@ -452,7 +448,6 @@ export function _useFullCart() {
   });
   async function changeItemQuantityBatched(lineItemId: string, quantity: number): Promise<void> {
     try {
-      const item = cart.value?.items.find((lineItem) => lineItem.id === lineItemId);
       await add({
         command: {
           cartItems: [{ lineItemId, quantity }],
@@ -460,9 +455,7 @@ export function _useFullCart() {
         },
       });
 
-      if (item) {
-        analytics("updateCartItem", item.sku, quantity, item.quantity);
-      }
+      // Analytics tracking is now handled automatically by the Analytics Beacon
     } catch (error) {
       if (error instanceof ApolloError && error.networkError?.toString() === (AbortReason.Explicit as string)) {
         return;
@@ -618,7 +611,7 @@ export function _useFullCart() {
       props: {
         async onResult() {
           await clearCart();
-          analytics("clearCart", cart.value!);
+          // Analytics tracking is now handled automatically by the Analytics Beacon
         },
       },
     });
