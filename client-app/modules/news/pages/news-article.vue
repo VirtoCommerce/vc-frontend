@@ -7,7 +7,7 @@
 
       <VcWidgetSkeleton v-if="loading" head size="lg" />
 
-      <NewsArticle v-if="!loading && newsArticle" :news-article="newsArticle" @tag:click="applyTag($event)" />
+      <NewsArticle v-if="!loading && newsArticle" :news-article="newsArticle" @tag:click="applyTag($event)" @author:click="applyAuthor($event)" />
     </VcContainer>
   </div>
 </template>
@@ -61,7 +61,11 @@ const breadcrumbs = useBreadcrumbs(() => [{ title: t("news.details.breadcrumbs.n
 const router = useRouter();
 
 function applyTag(tagToApply: string) {
-  void router.push({ name: ROUTES.ARTICLES.NAME, params: { tag: tagToApply } });
+  void router.push({ name: ROUTES.ARTICLES_BY_TAG.NAME, params: { tag: tagToApply } });
+}
+
+function applyAuthor(authroIdToApply: string) {
+  void router.push({ name: ROUTES.ARTICLES_BY_AUTHOR.NAME, params: { authorId: authroIdToApply } });
 }
 
 const fetchNewsArticle = async () => {

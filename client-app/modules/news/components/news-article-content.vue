@@ -16,7 +16,7 @@
       <div v-if="newsArticle.author" class="news-article-content__citation-author">
         <VcImage v-if="newsArticle.author.iconUrl" :src="newsArticle.author.iconUrl" lazy class="news-article-content__citation-author-image" />
 
-        <span>{{ $t("news.details.written-by") }} <span class="news-article-content__citation-author-name">{{ newsArticle.author.name }}</span></span>
+        <span>{{ $t("news.details.written-by") }} <span class="news-article-content__citation-author-name" @click="emit('author:click', newsArticle.author.id)">{{ newsArticle.author.name }}</span></span>
       </div>
 
       <div></div>
@@ -42,6 +42,7 @@ interface IProps {
 
 interface IEmits {
   (event: "tag:click", tag: string): void;
+  (event: "author:click", id: string): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -76,7 +77,7 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__citation-author-name {
-    @apply font-bold text-[--link-color];
+    @apply font-bold text-[--link-color] hover:text-[--link-hover-color] cursor-pointer;
   }
 
   &__citation-author-image {

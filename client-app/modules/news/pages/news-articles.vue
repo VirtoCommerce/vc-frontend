@@ -15,6 +15,9 @@
                 {{ newsArticleTag }}
               </VcChip>
             </template>
+            <VcChip
+v-if="authorId" color="secondary" variant="solid" class="news-articles__filter--tags-tag" clickable
+              @click="removeAuthorFilter()">{{ $t("news.list.written-by") }} {{ newsArticleAuthorName }}</VcChip>
           </div>
 
           <VcInput
@@ -62,24 +65,28 @@
 <script lang="ts" setup>
 import { ref, toRef, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
-import { getNewsArticleTags } from "../api/graphql/queries/newsArticleTag";
+import { getNewsArticleAuthor } from "../api/graphql/queries/newsArticleAuthor";
+import { getNewsArticleTags } from "../api/graphql/queries/newsArticleTags";
 import { getNewsArticles } from "../api/graphql/queries/newsArticles";
 import { ARTICLES_PER_PAGE, ARTICLES_MAX_PAGES, ARTICLE_TAGS_MAX } from "../constants";
 import { ROUTES } from "../routes/constants";
 import type { NewsArticleContent } from "../api/graphql/types";
-import NewsArticlePreview from "@/modules/news/components/news-article-preview.vue";
+import NewsArticlePreview from "@/modules/news/components/news-article-preview.vue"; 
 
 interface IProps {
   tag?: string;
+  authorId?: string;
 }
 
 const props = defineProps<IProps>();
 const tag = toRef(props, "tag");
+const authorId = toRef(props, "authorId");
 
 const newsArticlesLoading = ref(false);
-const newsArticleTagsLoading = ref(false);
+const newsArticleOptionsLoading = ref(false);
 
 const searchKeyword = ref("");
+const searchAuthorId = ref(authorId.value);
 const searchTag = ref(tag.value);
 const searchPage = ref(1);
 const searchPages = ref(1);
@@ -87,7 +94,9 @@ const newsArticles = ref<NewsArticleContent[]>([]);
 
 const newsArticleTags = ref<string[]>([]);
 
-const loading = computed(() => newsArticlesLoading.value || newsArticleTagsLoading.value);
+const newsArticleAuthorName = ref<string>("");
+
+const loading = computed(() => newsArticlesLoading.value || newsArticleOptionsLoading.value);
 
 const router = useRouter();
 
@@ -103,23 +112,44 @@ async function resetKeyword() {
 }
 
 async function applyTag(tagToApply: string) {
-  searchTag.value = tagToApply;
-  router.replace({ name: ROUTES.ARTICLES.NAME, params: { tag: tagToApply } });
+  searchTag.value = tagToApply; 
   searchPage.value = 1;
+  applyRoute();
   await fetchNewsArticles();
 }
 
 async function toggleTag(tagToToggle: string) {
   if (searchTag.value == tagToToggle) {
-    searchTag.value = "";
-    router.replace({ name: ROUTES.ARTICLES.NAME });
+    searchTag.value = ""; 
   }
   else {
-    searchTag.value = tagToToggle;
-    router.replace({ name: ROUTES.ARTICLES.NAME, params: { tag: tagToToggle } });
+    searchTag.value = tagToToggle; 
   }
   searchPage.value = 1;
+  applyRoute();
   await fetchNewsArticles();
+}
+
+async function removeAuthorFilter() {
+  searchAuthorId.value = ""; 
+  searchPage.value = 1;
+  applyRoute();
+  await fetchNewsArticles();
+}
+
+function applyRoute() {
+  if (searchAuthorId.value) {
+    if (searchTag.value) {
+      void router.replace({ name: ROUTES.ARTICLES_BY_AUTHOR.NAME, params: { authorId: searchAuthorId.value, tag: searchTag.value } });
+    } else {
+      void router.replace({ name: ROUTES.ARTICLES_BY_AUTHOR.NAME, params: { authorId: searchAuthorId.value } });
+    }
+  } else if (searchTag.value) { 
+    void router.replace({ name: ROUTES.ARTICLES_BY_TAG.NAME, params: { tag: searchTag.value } });
+  }
+  else { 
+    void router.replace({ name: ROUTES.ARTICLES.NAME });
+  }
 }
 
 async function changeSearchPage(page: number) {
@@ -127,13 +157,18 @@ async function changeSearchPage(page: number) {
   await fetchNewsArticles();
 }
 
-const fetchNewsArticleTags = async () => {
-  newsArticleTagsLoading.value = true;
+const fetchNewsArticleOptions = async () => {
+  newsArticleOptionsLoading.value = true;
 
-  const response = await getNewsArticleTags();
-  newsArticleTags.value = response?.slice(0, ARTICLE_TAGS_MAX) ?? [];
+  const tagsResponse = await getNewsArticleTags();
+  newsArticleTags.value = tagsResponse?.slice(0, ARTICLE_TAGS_MAX) ?? [];
 
-  newsArticleTagsLoading.value = false;
+  if (searchAuthorId.value) {
+    const authorResponse = await getNewsArticleAuthor(searchAuthorId.value);
+    newsArticleAuthorName.value = authorResponse?.name ?? "";
+  }
+
+  newsArticleOptionsLoading.value = false;
 }
 
 const fetchNewsArticles = async () => {
@@ -141,6 +176,8 @@ const fetchNewsArticles = async () => {
 
   const query = {
     keyword: searchKeyword.value,
+
+    authorId: searchAuthorId.value,
     tags: [] as string[],
 
     first: ARTICLES_PER_PAGE,
@@ -160,7 +197,7 @@ const fetchNewsArticles = async () => {
 
 onMounted(async () => {
   await fetchNewsArticles();
-  fetchNewsArticleTags();
+  fetchNewsArticleOptions();
 });
 </script>
 
