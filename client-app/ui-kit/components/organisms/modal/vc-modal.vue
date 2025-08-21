@@ -7,6 +7,7 @@
         {
           'vc-modal--mobile-fullscreen': isMobileFullscreen,
         },
+        $attrs.class,
       ]"
       :initial-focus="getActiveElement()"
       :data-test-id="testId"

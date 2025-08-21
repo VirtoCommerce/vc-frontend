@@ -275,7 +275,7 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
   }
 
   &__map {
-    @apply h-auto min-h-[50vh] w-full rounded-lg lg:min-h-full;
+    @apply h-[50vh] w-full rounded-lg lg:h-auto;
   }
 
   &__sidebar {
@@ -342,6 +342,10 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 
   &__marker-glyph {
     @apply fill-additional-50 size-7;
+  }
+
+  .vc-dialog-content__container {
+    @apply lg:h-full;
   }
 }
 </style>
