@@ -6,7 +6,6 @@
         'vc-modal',
         {
           'vc-modal--mobile-fullscreen': isMobileFullscreen,
-          'vc-modal--pinned-footer': pinnedFooter,
         },
       ]"
       :initial-focus="getActiveElement()"
@@ -37,20 +36,18 @@
           @after-leave="$emit('close')"
         >
           <DialogPanel class="vc-modal__dialog" :style="{ maxWidth }">
-            <VcDialog class="vc-modal__dialog-content" :dividers="dividers" :is-mobile-fullscreen="isMobileFullscreen">
-              <DialogTitle>
-                <VcDialogHeader :icon="icon" :color="variant" :closable="!isPersistent" @close="close">
+            <VcDialog :dividers="dividers" :is-mobile-fullscreen="isMobileFullscreen">
+              <VcDialogHeader :icon="icon" :color="variant" :closable="!isPersistent" @close="close">
+                <DialogTitle>
                   <slot name="title">
                     {{ title }}
                   </slot>
-                </VcDialogHeader>
-              </DialogTitle>
+                </DialogTitle>
+              </VcDialogHeader>
 
-              <DialogDescription class="vc-modal__dialog-content-description">
-                <VcDialogContent class="vc-modal__dialog-content-description-content">
-                  <slot :close="close" />
-                </VcDialogContent>
-              </DialogDescription>
+              <VcDialogContent>
+                <slot :close="close" />
+              </VcDialogContent>
 
               <VcDialogFooter v-if="!hideActions" @close="close">
                 <slot name="actions" :close="close" />
@@ -64,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle, DialogDescription } from "@headlessui/vue";
+import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from "@headlessui/vue";
 import { ref, watchSyncEffect } from "vue";
 
 interface IEmits {
@@ -121,16 +118,11 @@ defineExpose({ close });
 <style lang="scss">
 .vc-modal {
   $mobileFullscreen: "";
-  $pinnedFooter: "";
 
   @apply fixed top-0 left-0 w-full h-full z-50;
 
   &--mobile-fullscreen {
     $mobileFullscreen: &;
-  }
-
-  &--pinned-footer {
-    $pinnedFooter: &;
   }
 
   &__backdrop {
@@ -158,24 +150,6 @@ defineExpose({ close });
           @apply max-h-full h-full p-0 rounded-none;
         }
       }
-    }
-  }
-
-  &__dialog-content {
-    #{$pinnedFooter} & {
-      @apply flex flex-col;
-    }
-  }
-
-  &__dialog-content-description {
-    #{$pinnedFooter} & {
-      @apply min-h-0 flex flex-col;
-    }
-  }
-
-  &__dialog-content-description-content {
-    #{$pinnedFooter} & {
-      @apply flex flex-col min-h-0;
     }
   }
 }
