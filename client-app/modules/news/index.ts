@@ -14,9 +14,10 @@ const route: RouteRecordRaw = {
   path: `/${ROUTES.LINK_SEGMENT}`,
   children: [
     {
-      path: "",
+      path: ":tag?",
       name: ROUTES.ARTICLES.NAME,
       component: NewsArticles,
+      props: true,
     },
     {
       path: ":articleId",

@@ -8,11 +8,11 @@
       <PageToolbarBlock>
         <div class="news-articles__filter">
           <div class="news-articles__filter--tags">
-            <template v-for="tag in newsArticleTags" :key="tag">
+            <template v-for="newsArticleTag in newsArticleTags" :key="newsArticleTag">
               <VcChip
-color="secondary" :variant="searchTag == tag ? 'solid' : 'outline-dark'" class="news-articles__filter--tags-tag" clickable
-                @click="toggleTag(tag)">
-                {{ tag }}
+                color="secondary" :variant="searchTag == newsArticleTag ? 'solid' : 'outline-dark'" class="news-articles__filter--tags-tag" clickable
+                @click="toggleTag(newsArticleTag)">
+                {{ newsArticleTag }}
               </VcChip>
             </template>
           </div>
@@ -28,7 +28,7 @@ color="secondary" :variant="searchTag == tag ? 'solid' : 'outline-dark'" class="
             @clear="resetKeyword">
             <template #append>
               <VcButton
-                :disabled="loading" 
+                :disabled="loading"
                 icon="search"
                 icon-size="1.25rem"
                 @click="applyKeyword" />
@@ -50,29 +50,37 @@ color="secondary" :variant="searchTag == tag ? 'solid' : 'outline-dark'" class="
       </div>
 
       <VcPagination
-          v-if="searchPages > 1"
-          v-model:page="searchPage"
-          class="news-articles__pagination"
-          :pages="Math.min(searchPages, ARTICLES_MAX_PAGES)" 
-          @update:page="changeSearchPage"
-        />
+        v-if="searchPages > 1"
+        v-model:page="searchPage"
+        class="news-articles__pagination"
+        :pages="Math.min(searchPages, ARTICLES_MAX_PAGES)"
+        @update:page="changeSearchPage" />
     </VcContainer>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, toRef, onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
 import { getNewsArticleTags } from "../api/graphql/queries/newsArticleTag";
 import { getNewsArticles } from "../api/graphql/queries/newsArticles";
 import { ARTICLES_PER_PAGE, ARTICLES_MAX_PAGES, ARTICLE_TAGS_MAX } from "../constants";
+import { ROUTES } from "../routes/constants";
 import type { NewsArticleContent } from "../api/graphql/types";
 import NewsArticlePreview from "@/modules/news/components/news-article-preview.vue";
+
+interface IProps {
+  tag?: string;
+}
+
+const props = defineProps<IProps>();
+const tag = toRef(props, "tag");
 
 const newsArticlesLoading = ref(false);
 const newsArticleTagsLoading = ref(false);
 
 const searchKeyword = ref("");
-const searchTag = ref("");
+const searchTag = ref(tag.value);
 const searchPage = ref(1);
 const searchPages = ref(1);
 const newsArticles = ref<NewsArticleContent[]>([]);
@@ -80,6 +88,8 @@ const newsArticles = ref<NewsArticleContent[]>([]);
 const newsArticleTags = ref<string[]>([]);
 
 const loading = computed(() => newsArticlesLoading.value || newsArticleTagsLoading.value);
+
+const router = useRouter();
 
 async function applyKeyword() {
   searchPage.value = 1;
@@ -92,25 +102,28 @@ async function resetKeyword() {
   await fetchNewsArticles();
 }
 
-async function applyTag(tag: string) {
-  searchTag.value = tag;
+async function applyTag(tagToApply: string) {
+  searchTag.value = tagToApply;
+  router.replace({ name: ROUTES.ARTICLES.NAME, params: { tag: tagToApply } });
   searchPage.value = 1;
   await fetchNewsArticles();
 }
 
-async function toggleTag(tag: string) {
-  if (searchTag.value == tag) {
+async function toggleTag(tagToToggle: string) {
+  if (searchTag.value == tagToToggle) {
     searchTag.value = "";
+    router.replace({ name: ROUTES.ARTICLES.NAME });
   }
   else {
-    searchTag.value = tag;
+    searchTag.value = tagToToggle;
+    router.replace({ name: ROUTES.ARTICLES.NAME, params: { tag: tagToToggle } });
   }
   searchPage.value = 1;
   await fetchNewsArticles();
 }
 
 async function changeSearchPage(page: number) {
-  searchPage.value = page; 
+  searchPage.value = page;
   await fetchNewsArticles();
 }
 
@@ -139,7 +152,7 @@ const fetchNewsArticles = async () => {
 
   const response = await getNewsArticles(query);
   newsArticles.value = response.items ?? [];
-  
+
   searchPages.value = Math.ceil((response?.totalCount ?? 0) / ARTICLES_PER_PAGE);
 
   newsArticlesLoading.value = false;
@@ -172,9 +185,9 @@ onMounted(async () => {
   &__filter--keyword {
     @apply w-full;
   }
-  
-  &__pagination { 
-    @apply mt-5 flex justify-center ;
+
+  &__pagination {
+    @apply mt-5 flex justify-center;
   }
 
   &__grid {

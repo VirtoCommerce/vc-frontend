@@ -21,9 +21,10 @@
 
       <div></div>
 
-      <div v-if="newsArticle.publishDate" class="news-article-content__citation-publish-date">{{ $t("news.details.last-updated") }} {{ $d(newsArticle.publishDate,
-        "short")
-      }}</div>
+      <div v-if="newsArticle.publishDate" class="news-article-content__citation-publish-date">{{ $t("news.details.last-updated") }} {{
+        $d(newsArticle.publishDate,
+          "short")
+        }}</div>
     </div>
 
     <VcMarkdownRender :src="newsArticle.content ?? ''" class="news-article-content__content" />
@@ -50,9 +51,10 @@ const newsArticle = toRef(props, "newsArticle");
 
 <style lang="scss">
 .news-article-content {
-  &__title{
+  &__title {
     @apply text-lg font-bold;
   }
+
   &__preview {
     @apply text-center;
   }

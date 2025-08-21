@@ -2,12 +2,12 @@
   <div class="news-article">
     <Error404 v-if="!loading && !newsArticle" />
 
-    <VcContainer v-else> 
-      <VcBreadcrumbs class="mb-3" :items="breadcrumbs"  />
-      
+    <VcContainer v-else>
+      <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
+
       <VcWidgetSkeleton v-if="loading" head size="lg" />
 
-      <NewsArticle v-if="!loading && newsArticle" :news-article="newsArticle" />
+      <NewsArticle v-if="!loading && newsArticle" :news-article="newsArticle" @tag:click="applyTag($event)" />
     </VcContainer>
   </div>
 </template>
@@ -16,6 +16,7 @@
 import { useSeoMeta } from "@unhead/vue";
 import { computed, defineAsyncComponent, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { usePageTitle, useBreadcrumbs } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { getNewsArticle } from "../api/graphql/queries/newsArticle";
@@ -56,6 +57,12 @@ const seoUrl = computed(() => {
 });
 
 const breadcrumbs = useBreadcrumbs(() => [{ title: t("news.details.breadcrumbs.news"), route: "/news" }, { title: newsArticle.value?.title ?? "" }]);
+
+const router = useRouter();
+
+function applyTag(tagToApply: string) {
+  void router.push({ name: ROUTES.ARTICLES.NAME, params: { tag: tagToApply } });
+}
 
 const fetchNewsArticle = async () => {
   loading.value = true;
