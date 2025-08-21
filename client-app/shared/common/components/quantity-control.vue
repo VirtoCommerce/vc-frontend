@@ -188,6 +188,11 @@ watch(quantity, () => {
   void handleChange();
 });
 
+watch(value, () => {
+  quantity.value = value.value;
+  applyPreValidationModifiers();
+});
+
 watchEffect(() => {
   if (isValid.value) {
     emit("update:validation", { isValid: true });
