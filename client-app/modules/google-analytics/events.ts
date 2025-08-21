@@ -7,6 +7,78 @@ import type { TrackerEventsType } from "@/core/types/analytics";
 
 const { currencyCode } = globals;
 
+// Types for search context
+interface ISearchContext {
+  search_term: string;
+  timestamp: number;
+  results_count: number;
+  session_id: string;
+}
+
+interface IAttributionResult {
+  search_term?: string;
+  item_list_id?: string;
+  item_list_name?: string;
+  source_type: "search" | "browse";
+  search_session_id?: string;
+  time_since_search?: number;
+  attribution_method?: "session" | "referrer" | "default";
+}
+
+// Attribution utility function
+function getSearchAttribution(): IAttributionResult {
+  const ATTRIBUTION_WINDOW = 30 * 60 * 1000; // 30 minutes
+
+  try {
+    // Method 1: Check sessionStorage for recent search
+    const searchContextStr = sessionStorage.getItem('search_context');
+    if (searchContextStr) {
+      const searchContext = JSON.parse(searchContextStr) as ISearchContext;
+      const timeSinceSearch = Date.now() - searchContext.timestamp;
+
+      if (timeSinceSearch <= ATTRIBUTION_WINDOW) {
+        return {
+          search_term: searchContext.search_term,
+          item_list_id: "search_results",
+          item_list_name: `Search results for "${searchContext.search_term}"`,
+          source_type: "search",
+          search_session_id: searchContext.session_id,
+          time_since_search: Math.round(timeSinceSearch / 1000), // seconds
+          attribution_method: "session"
+        };
+      } else {
+        // Clear expired search context
+        sessionStorage.removeItem('search_context');
+      }
+    }
+
+    // Method 2: Fallback to referrer check
+    const referrer = document.referrer;
+    if (referrer) {
+      const referrerUrl = new URL(referrer);
+      const searchTerm = referrerUrl.searchParams.get('q');
+      if (searchTerm) {
+        return {
+          search_term: searchTerm,
+          item_list_id: "search_results",
+          item_list_name: `Search results for "${searchTerm}"`,
+          source_type: "search",
+          attribution_method: "referrer"
+        };
+      }
+    }
+  } catch (e) {
+    // Attribution detection failed, continue without attribution
+    Logger.warn(DEBUG_PREFIX, "Attribution detection failed:", e);
+  }
+
+  // Default: browse attribution
+  return {
+    source_type: "browse",
+    attribution_method: "default"
+  };
+}
+
 export const events: TrackerEventsType = {
   viewItemList(items, params) {
     sendEvent("view_item_list", {
@@ -26,11 +98,15 @@ export const events: TrackerEventsType = {
   },
 
   viewItem(item, params) {
+    const attribution = getSearchAttribution();
+
     sendEvent("view_item", {
       ...params,
       currency: currencyCode,
       value: item.price?.actual?.amount,
       items: [productToGtagItem(item)],
+      // Attribution parameters (automatically applied)
+      ...attribution
     });
   },
 
@@ -44,22 +120,28 @@ export const events: TrackerEventsType = {
   },
 
   addItemToCart(item, quantity, params) {
+    const attribution = getSearchAttribution();
     const inputItem = productToGtagItem(item);
     inputItem.quantity = quantity;
+
     sendEvent("add_to_cart", {
       ...params,
       currency: currencyCode,
       value: (item.price?.actual?.amount || 0) * (quantity ?? 1),
       items: [inputItem],
-      // GA4 standard parameters
-      item_list_id: params?.item_list_id,
-      item_list_name: params?.item_list_name,
+      // Attribution parameters (automatically applied, overrides manual params)
+      ...attribution,
+      // Manual params can still override if explicitly provided
+      ...(params?.item_list_id ? { item_list_id: params.item_list_id } : {}),
+      ...(params?.item_list_name ? { item_list_name: params.item_list_name } : {}),
     });
   },
 
   addItemsToCart(items, params) {
+    const attribution = getSearchAttribution();
     const subtotal: number = sumBy(items, (item) => item?.price?.actual?.amount);
     const inputItems = items.filter(Boolean).map((item) => productToGtagItem(item));
+
     sendEvent("add_to_cart", {
       ...params,
       currency: currencyCode,
@@ -67,6 +149,8 @@ export const events: TrackerEventsType = {
       items: inputItems,
       // GA4 standard parameter name
       number_of_items: inputItems.length,
+      // Attribution parameters (automatically applied)
+      ...attribution
     });
   },
 
@@ -80,8 +164,10 @@ export const events: TrackerEventsType = {
   },
 
   removeItemsFromCart(items, params) {
+    const attribution = getSearchAttribution();
     const subtotal: number = sumBy(items, (item) => item.extendedPrice?.amount);
     const inputItems = items.map(lineItemToGtagItem);
+
     sendEvent("remove_from_cart", {
       ...params,
       currency: currencyCode,
@@ -89,10 +175,14 @@ export const events: TrackerEventsType = {
       items: inputItems,
       // GA4 standard parameter name
       number_of_items: inputItems.length,
+      // Attribution parameters (automatically applied)
+      ...attribution
     });
   },
 
   viewCart(cart, params) {
+    const attribution = getSearchAttribution();
+
     sendEvent("view_cart", {
       ...params,
       currency: currencyCode,
@@ -100,10 +190,14 @@ export const events: TrackerEventsType = {
       items: cart.items.map(lineItemToGtagItem),
       // GA4 standard parameter name
       number_of_items: cart.items.length,
+      // Attribution parameters (automatically applied)
+      ...attribution
     });
   },
 
   clearCart(cart, params) {
+    const attribution = getSearchAttribution();
+
     sendEvent("clear_cart", {
       ...params,
       currency: currencyCode,
@@ -111,11 +205,15 @@ export const events: TrackerEventsType = {
       items: cart.items.map(lineItemToGtagItem),
       // GA4 standard parameter name
       number_of_items: cart.items.length,
+      // Attribution parameters (automatically applied)
+      ...attribution
     });
   },
 
   beginCheckout(cart, params) {
     try {
+      const attribution = getSearchAttribution();
+
       sendEvent("begin_checkout", {
         ...params,
         currency: cart.currency.code,
@@ -124,6 +222,8 @@ export const events: TrackerEventsType = {
         // GA4 standard parameter name
         number_of_items: cart.items.length,
         coupon: cart.coupons?.[0]?.code,
+        // Attribution parameters (automatically applied)
+        ...attribution
       });
     } catch (e) {
       Logger.error(DEBUG_PREFIX, "beginCheckout", e);
@@ -166,6 +266,8 @@ export const events: TrackerEventsType = {
 
   purchase(order, transactionId, params) {
     try {
+      const attribution = getSearchAttribution();
+
       sendEvent("purchase", {
         ...params,
         currency: order.currency?.code,
@@ -177,6 +279,8 @@ export const events: TrackerEventsType = {
         items: order.items.map(lineItemToGtagItem),
         // GA4 standard parameter name
         number_of_items: order?.items?.length,
+        // Attribution parameters (automatically applied)
+        ...attribution
       });
     } catch (e) {
       Logger.error(DEBUG_PREFIX, "purchase", e);
@@ -201,6 +305,21 @@ export const events: TrackerEventsType = {
   },
 
   search(searchTerm, visibleItems = [], itemsCount = 0) {
+    // Store search context with timestamp for attribution
+    const searchContext = {
+      search_term: searchTerm,
+      timestamp: Date.now(),
+      results_count: itemsCount,
+      session_id: crypto.randomUUID() // Unique search session
+    };
+
+    try {
+      sessionStorage.setItem('search_context', JSON.stringify(searchContext));
+    } catch (e) {
+      // Fallback if sessionStorage unavailable
+      Logger.warn(DEBUG_PREFIX, "Failed to store search context:", e);
+    }
+
     sendEvent("search", {
       search_term: searchTerm,
       number_of_items: itemsCount,

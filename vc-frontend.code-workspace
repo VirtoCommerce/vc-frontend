@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../analytics-beacon"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.scss": "postcss"
+		},
+		"i18n-ally.keystyle": "nested",
+		"terminal.integrated.profiles.windows": {
+			"PowerShell": {
+				"source": "PowerShell",
+				"icon": "terminal-powershell",
+				"args": [
+					"-ExecutionPolicy",
+					"RemoteSigned"
+				]
+			}
+		},
+		"typescript.tsdk": "./node_modules/typescript/lib"
+	}
+}
