@@ -1,5 +1,7 @@
-import { computed, readonly, toValue } from "vue";
+import { useLocalStorage } from "@vueuse/core";
+import { computed, nextTick, readonly, toValue, watch } from "vue";
 import { useGetPage, useGetPageDocument, useGetSlugInfo } from "@/core/api/graphql";
+import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import type { IPageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
@@ -8,6 +10,7 @@ import type { MaybeRefOrGetter } from "vue";
  * @param seoUrl path after domain without slash at the beginning
  **/
 export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
+  const slugOutlineStorage = useLocalStorage<string>(NAVIGATION_OUTLINE, "");
   const { storeId, userId, cultureName } = globals;
   const variables = computed(() => {
     return {
@@ -26,6 +29,8 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     }
     return result.value?.slugInfo;
   });
+
+  const slugOutline = computed(() => slugInfo.value?.entityInfo?.outline);
 
   const objectType = computed(() => {
     return slugInfo.value?.entityInfo?.objectType;
@@ -96,6 +101,15 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     const pageTemplate = data as IPageTemplate;
     return Array.isArray(pageTemplate?.content) && typeof pageTemplate?.settings === "object";
   }
+
+  watch(
+    slugOutline,
+    async (value) => {
+      await nextTick();
+      slugOutlineStorage.value = value ?? "";
+    },
+    { immediate: true },
+  );
 
   return {
     loading: computed(() => {
