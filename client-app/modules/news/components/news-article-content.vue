@@ -128,7 +128,7 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__citation-publish-date {
-    @apply mt-3 text-right text-sm text-neutral;
+    @apply text-right font-bold;
   }
 
   &__content {
