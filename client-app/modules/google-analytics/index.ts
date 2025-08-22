@@ -4,6 +4,7 @@ import { useAnalytics } from "@/core/composables/useAnalytics";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { IS_DEVELOPMENT } from "@/core/constants/environment";
 import { useUser } from "@/shared/account";
+// Analytics Beacon will be loaded as a script and available globally
 import { MODULE_ID, GOOGLE_ANALYTICS_SETTINGS_MAPPING } from "./constants";
 import {
   sendEvent as sendEventFunction,
@@ -12,11 +13,25 @@ import {
 } from "./utils";
 import type { InitOptionsType } from "./types";
 
-// Analytics Beacon Integration
+// Analytics Beacon global API
 declare global {
-  interface IWindow extends Window {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  interface Window {
     AnalyticsBeacon?: {
-      init: (config: Record<string, unknown>) => void;
+      version: string;
+      init(config: {
+        ga4MeasurementId: string;
+        debug?: boolean;
+        environment?: 'development' | 'staging' | 'production';
+        currency?: string;
+        businessType?: 'b2b' | 'b2c';
+        respectDnt?: boolean;
+        anonymizeIp?: boolean;
+      }): Promise<void>;
+      start(): void;
+      stop(): void;
+      destroy(): void;
+      getStatus(): Record<string, unknown>;
     };
   }
 }
@@ -29,6 +44,9 @@ const { isAuthenticated, user } = useUser();
 
 const canUseDOM = !!(typeof window !== "undefined" && window.document?.createElement);
 const TRACKER_NAME = "google-analytics";
+
+// Analytics Beacon status tracking
+let beaconInitialized = false;
 
 export async function init({ extendEvents, extendConfig, extendSet }: InitOptionsType = {}): Promise<void> {
   const { getModuleSettings, hasModuleSettings } = useModuleSettings(MODULE_ID);
@@ -58,7 +76,7 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
   window.gtag = function gtag() {
     // is not working with rest
     // eslint-disable-next-line prefer-rest-params
-    window.dataLayer.push(arguments);
+    window.dataLayer?.push(arguments);
   };
 
   const config = {
@@ -76,135 +94,98 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
 
   window.gtag("config", String(trackId), config);
 
-  // Initialize Analytics Beacon for automatic event detection
-  initAnalyticsBeacon(String(trackId));
+  // Initialize our new Analytics Beacon for automatic event detection
+  await initModernAnalyticsBeacon(String(trackId));
 }
 
 /**
- * Initialize the Analytics Beacon for automatic event detection
+ * Initialize Analytics Beacon for automatic event detection
  */
-function initAnalyticsBeacon(trackingId: string): void {
-  // Use development version in dev mode for live debugging
-  const scriptPath = IS_DEVELOPMENT
-    ? "http://localhost:8080/analytics-beacon.js"  // Served from root, not /dist/
-    : "/static/analytics-beacon.min.js";
-
-  if (DEBUG_MODE) {
-    // eslint-disable-next-line no-console
-    console.log(`[GA] Loading Analytics Beacon from: ${scriptPath}`);
+async function initModernAnalyticsBeacon(trackingId: string): Promise<void> {
+  if (beaconInitialized) {
+    logDebug('[GA] Analytics Beacon already initialized');
+    return;
   }
 
-  // Load the analytics beacon script
-  useScriptTag(scriptPath, () => {
-    // Script loaded, initialize the beacon
-    const windowWithBeacon = window as IWindow;
+  try {
+    logDebug('[GA] Loading Analytics Beacon script...');
+    await loadAndInitializeBeacon(trackingId);
+    beaconInitialized = true;
+  } catch (error) {
+    logError('[GA] Failed to initialize Analytics Beacon:', error);
+    beaconInitialized = false;
+  }
+}
 
-    if (windowWithBeacon.AnalyticsBeacon) {
-      windowWithBeacon.AnalyticsBeacon.init({
-        trackingId: trackingId,
-        debug: DEBUG_MODE,
-        confidenceThreshold: 0.7,
+/**
+ * Load script and initialize beacon
+ */
+async function loadAndInitializeBeacon(trackingId: string): Promise<void> {
+  // Use development server in dev mode for live debugging
+  const scriptUrl = IS_DEVELOPMENT
+    ? 'http://localhost:8080/analytics-beacon.js'  // Served from dev server root
+    : '/static/analytics-beacon.min.js';
 
-        // VirtoCommerce-specific selectors
-        selectors: {
-          search: {
-            forms: ['.search-bar'], // VirtoCommerce uses div.search-bar, not forms
-            inputs: ['input[type="search"]', '.search-bar__input', 'input[name="q"]', '.search-input'],
-            results: ['.search-results', '.product-list', '.category'],
-            resultItems: ['.product-card', '.product-item']
-          },
-          browse: {
-            results: ['.category-products', '.browse-results', '.product-listing', '.products-grid'],
-            items: ['.product-card', '.product-item', '.product-tile'],
-            categories: ['.breadcrumbs', '.category-title', '.page-title']
-          },
-          products: {
-            cards: ['.product-card', '.product-item', '.product-tile'],
-            details: ['.product-details', '.product-info'],
-            names: ['.product-name', '.product-title', 'h1'],
-            prices: ['.price', '.product-price', '.price-current'],
-            links: ['a[href*="/product"]', '.product-link']
-          },
-          cart: {
-            addButtons: ['.add-to-cart', '.btn-add-cart', 'button:contains("Add to Cart")'],
-            removeButtons: ['.remove-item', '.cart-remove'],
-            clearButtons: ['.clear-cart'],
-            cartPage: ['.cart-page', '.shopping-cart']
-          },
-          checkout: {
-            beginButtons: ['.checkout-btn', 'button:contains("Checkout")'],
-            steps: ['.checkout-step'],
-            forms: ['.checkout-form']
-          }
-        },
+  await loadAnalyticsBeaconScript(scriptUrl);
 
-                // VirtoCommerce-specific data extraction selectors
-        dataExtractionSelectors: {
-          resultsCount: [
-            '.category__products-count b',  // VirtoCommerce: <b class="mr-1">10</b>results
-            '.category__products-count',    // Fallback for whole element
-            '.results-count',
-            '.search-count',
-            '.product-count',
-            '[data-results-count]'
-          ],
-          breadcrumbs: [
-            '.breadcrumbs .active',
-            '.breadcrumb .current',
-            '.page-title h1',
-            '.category-title',
-            'h1'
-          ],
-          productItems: [
-            '.product-card',
-            '.product-item',
-            '.product-tile'
-          ],
-          productNames: [
-            '.product-title',
-            '.product-name',
-            'h3',
-            'h4'
-          ],
-          productPrices: [
-            '.price',
-            '.product-price',
-            '.price-current'
-          ],
-          categoryTitles: [
-            '.category-title',
-            '.page-title h1',
-            'h1'
-          ],
-          // Configure which selectors need content change detection for SPA
-          contentChangeDetection: [
-            '.category__products-count b',  // VirtoCommerce specific - most likely to have stale data
-            '.category__products-count',    // VirtoCommerce fallback
-            '.results-count',               // Generic selectors that might have stale data
-            '.search-count',
-            '.product-count'
-          ]
-        },
+  if (!window.AnalyticsBeacon) {
+    throw new Error('AnalyticsBeacon not available after script load');
+  }
 
-        // VirtoCommerce search parameter configuration
-        searchParams: ['q', 'query', 'search'], // VirtoCommerce search URL parameters
+  logDebug('[GA] Initializing Analytics Beacon version:', window.AnalyticsBeacon.version);
 
-        // Privacy settings
-        respectDoNotTrack: true,
-        anonymizeIp: true,
-        cookieConsent: false,
+  await window.AnalyticsBeacon.init({
+    ga4MeasurementId: trackingId,
+    debug: DEBUG_MODE,
+    environment: IS_DEVELOPMENT ? 'development' : 'production',
+    currency: currentCurrency.value.code,
+    businessType: 'b2c',
+    respectDnt: true,
+    anonymizeIp: true
+  });
 
-        // Rate limiting
-        maxEventsPerMinute: 100
-      });
+  window.AnalyticsBeacon.start();
+  logDebug('[GA] Analytics Beacon initialized successfully:', window.AnalyticsBeacon.getStatus());
+}
 
-      if (DEBUG_MODE) {
-        // eslint-disable-next-line no-console
-        console.log('[GA] Analytics Beacon initialized successfully');
-      }
-    } else if (DEBUG_MODE) {
-      // eslint-disable-next-line no-console
-      console.warn('[GA] Analytics Beacon not available after script load');
-    }
-  }, { defer: true });
+/**
+ * Load Analytics Beacon script dynamically
+ */
+function loadAnalyticsBeaconScript(scriptUrl: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = scriptUrl;
+    script.async = true;
+
+    script.onload = () => {
+      logDebug('[GA] Analytics Beacon script loaded successfully');
+      resolve();
+    };
+
+    script.onerror = () => {
+      reject(new Error(`Failed to load Analytics Beacon script: ${scriptUrl}`));
+    };
+
+    document.head.appendChild(script);
+  });
+}
+
+/**
+ * Debug logging helper
+ */
+function logDebug(message: string, ...args: unknown[]): void {
+  if (DEBUG_MODE) {
+    // eslint-disable-next-line no-console
+    console.log(message, ...args);
+  }
+}
+
+/**
+ * Error logging helper
+ */
+function logError(message: string, ...args: unknown[]): void {
+  if (DEBUG_MODE) {
+    // eslint-disable-next-line no-console
+    console.error(message, ...args);
+  }
 }

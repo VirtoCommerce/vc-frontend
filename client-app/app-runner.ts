@@ -155,6 +155,8 @@ export default async () => {
   void initializeHotjar();
   void initNews(router, i18n);
 
+    // Analytics Beacon is now handled by the Google Analytics module
+
   // Plugins
   app.use(head);
   app.use(i18n);
@@ -172,6 +174,8 @@ export default async () => {
   app.use(uiKit);
 
   app.use(applicationInsightsPlugin);
+
+  // Analytics Beacon initialization is handled by the Google Analytics module
 
   const builderOrigin = getEpParam();
   if (builderOrigin && isPageBuilderPreviewMode(builderOrigin)) {
