@@ -16,7 +16,10 @@
       <div v-if="newsArticle.author" class="news-article-content__citation-author">
         <VcImage v-if="newsArticle.author.iconUrl" :src="newsArticle.author.iconUrl" lazy class="news-article-content__citation-author-image" />
 
-        <span>{{ $t("news.details.written-by") }} <span class="news-article-content__citation-author-name" @click="emit('author:click', newsArticle.author.id)">{{ newsArticle.author.name }}</span></span>
+        <span>{{ $t("news.details.written-by") }} <span
+class="news-article-content__citation-author-name"
+            @click="emit('author:click', newsArticle.author.id)">{{
+              newsArticle.author.name }}</span></span>
       </div>
 
       <div></div>
@@ -24,7 +27,7 @@
       <div v-if="newsArticle.publishDate" class="news-article-content__citation-publish-date">{{ $t("news.details.last-updated") }} {{
         $d(newsArticle.publishDate,
           "short")
-        }}</div>
+      }}</div>
     </div>
 
     <VcMarkdownRender :src="newsArticle.content ?? ''" class="news-article-content__content" />
@@ -36,16 +39,17 @@ import { toRef } from "vue";
 import { VcMarkdownRender } from "@/ui-kit/components/atoms";
 import type { NewsArticleContent } from "../api/graphql/types";
 
-interface IProps {
-  newsArticle: NewsArticleContent;
-}
-
 interface IEmits {
   (event: "tag:click", tag: string): void;
   (event: "author:click", id: string): void;
 }
 
+interface IProps {
+  newsArticle: NewsArticleContent;
+}
+
 const emit = defineEmits<IEmits>();
+
 const props = defineProps<IProps>();
 const newsArticle = toRef(props, "newsArticle");
 </script>
@@ -91,9 +95,5 @@ const newsArticle = toRef(props, "newsArticle");
   &__content {
     @apply text-lg ml-5 mr-5;
   }
-}
-
-.vc-widget__slot {
-  @apply p-0;
 }
 </style>

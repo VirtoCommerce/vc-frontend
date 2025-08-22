@@ -16,7 +16,7 @@
               </VcChip>
             </template>
             <VcChip
-v-if="authorId" color="secondary" variant="solid" class="news-articles__filter--tags-tag" clickable
+              v-if="authorId" color="secondary" variant="solid" class="news-articles__filter--tags-tag" clickable
               @click="removeAuthorFilter()">{{ $t("news.list.written-by") }} {{ newsArticleAuthorName }}</VcChip>
           </div>
 
@@ -48,7 +48,9 @@ v-if="authorId" color="secondary" variant="solid" class="news-articles__filter--
         </div>
 
         <div v-if="!loading && newsArticles?.length" class="news-articles__grid">
-          <NewsArticlePreview v-for="item in newsArticles" :key="item.id" :news-article="item" @tag:click="applyTag($event)" />
+          <NewsArticlePreview
+v-for="item in newsArticles" :key="item.id" :news-article="item" @article:click="openArticle($event)"
+            @tag:click="applyTag($event)" />
         </div>
       </div>
 
@@ -65,13 +67,14 @@ v-if="authorId" color="secondary" variant="solid" class="news-articles__filter--
 <script lang="ts" setup>
 import { ref, toRef, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { getNewsArticleAuthor } from "../api/graphql/queries/newsArticleAuthor";
 import { getNewsArticleTags } from "../api/graphql/queries/newsArticleTags";
 import { getNewsArticles } from "../api/graphql/queries/newsArticles";
-import { ARTICLES_PER_PAGE, ARTICLES_MAX_PAGES, ARTICLE_TAGS_MAX } from "../constants";
+import { MODULE_ID, USE_NEWS_PREFIX_IN_LINKS, ARTICLES_PER_PAGE, ARTICLES_MAX_PAGES, ARTICLE_TAGS_MAX } from "../constants";
 import { ROUTES } from "../routes/constants";
 import type { NewsArticleContent } from "../api/graphql/types";
-import NewsArticlePreview from "@/modules/news/components/news-article-preview.vue"; 
+import NewsArticlePreview from "@/modules/news/components/news-article-preview.vue";
 
 interface IProps {
   tag?: string;
@@ -112,7 +115,7 @@ async function resetKeyword() {
 }
 
 async function applyTag(tagToApply: string) {
-  searchTag.value = tagToApply; 
+  searchTag.value = tagToApply;
   searchPage.value = 1;
   applyRoute();
   await fetchNewsArticles();
@@ -120,10 +123,10 @@ async function applyTag(tagToApply: string) {
 
 async function toggleTag(tagToToggle: string) {
   if (searchTag.value == tagToToggle) {
-    searchTag.value = ""; 
+    searchTag.value = "";
   }
   else {
-    searchTag.value = tagToToggle; 
+    searchTag.value = tagToToggle;
   }
   searchPage.value = 1;
   applyRoute();
@@ -131,7 +134,7 @@ async function toggleTag(tagToToggle: string) {
 }
 
 async function removeAuthorFilter() {
-  searchAuthorId.value = ""; 
+  searchAuthorId.value = "";
   searchPage.value = 1;
   applyRoute();
   await fetchNewsArticles();
@@ -144,11 +147,28 @@ function applyRoute() {
     } else {
       void router.replace({ name: ROUTES.ARTICLES_BY_AUTHOR.NAME, params: { authorId: searchAuthorId.value } });
     }
-  } else if (searchTag.value) { 
+  } else if (searchTag.value) {
     void router.replace({ name: ROUTES.ARTICLES_BY_TAG.NAME, params: { tag: searchTag.value } });
   }
-  else { 
+  else {
     void router.replace({ name: ROUTES.ARTICLES.NAME });
+  }
+}
+const { getSettingValue } = useModuleSettings(MODULE_ID);
+const useNewsPrefixInLinks = getSettingValue(USE_NEWS_PREFIX_IN_LINKS);
+
+function openArticle(newsArticle: NewsArticleContent) {
+  if (newsArticle.seoInfo.semanticUrl && newsArticle.seoInfo.semanticUrl != newsArticle.id) {
+    const path = useNewsPrefixInLinks
+      ? `/${ROUTES.LINK_SEGMENT}/${newsArticle.seoInfo.semanticUrl}`
+      : `/${newsArticle.seoInfo.semanticUrl}`
+    router.push({ path: path });
+  }
+  else {
+    router.push({
+      name: ROUTES.ARTICLE.NAME,
+      params: { articleId: newsArticle.id },
+    });
   }
 }
 
@@ -204,7 +224,7 @@ onMounted(async () => {
 <style lang="scss">
 .news-articles {
   &__title {
-    @apply mb-2;
+    @apply mb-5;
   }
 
   &__filter {
