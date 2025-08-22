@@ -73,7 +73,7 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__title {
-    @apply min-h-14 m-3 text-left font-bold text-[--link-color] hover:text-[--link-hover-color] cursor-pointer;
+    @apply m-3 text-left font-bold text-[--link-color] hover:text-[--link-hover-color] cursor-pointer;
   }
 
   &__publish-date {
