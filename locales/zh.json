@@ -78,7 +78,8 @@
       "reset_page": "重置页面",
       "show_less": "收起",
       "expand_all": "全部展开",
-      "all_products": "所有产品"
+      "all_products": "所有产品",
+      "buy_now": "立即购买"
     },
     "labels": {
       "actions": "操作",
@@ -273,7 +274,8 @@
       "change_role": "更改角色",
       "save_changes": "保存更改",
       "password_expired": "密码即将过期",
-      "error_details": "错误详情"
+      "error_details": "错误详情",
+      "buy_now": "立即购买"
     },
     "roles": {
       "org-maintainer": "组织维护者",
