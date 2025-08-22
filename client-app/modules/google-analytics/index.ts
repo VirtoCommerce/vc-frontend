@@ -86,7 +86,7 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
 function initAnalyticsBeacon(trackingId: string): void {
   // Use development version in dev mode for live debugging
   const scriptPath = IS_DEVELOPMENT
-    ? "http://localhost:8080/dist/analytics-beacon.js"
+    ? "http://localhost:8080/analytics-beacon.js"  // Served from root, not /dist/
     : "/static/analytics-beacon.min.js";
 
   if (DEBUG_MODE) {
@@ -108,10 +108,15 @@ function initAnalyticsBeacon(trackingId: string): void {
         // VirtoCommerce-specific selectors
         selectors: {
           search: {
-            forms: ['.search-form', 'form[action*="search"]'],
-            inputs: ['input[type="search"]', 'input[name="q"]', '.search-input'],
-            results: ['.search-results', '.product-list'],
+            forms: ['.search-bar'], // VirtoCommerce uses div.search-bar, not forms
+            inputs: ['input[type="search"]', '.search-bar__input', 'input[name="q"]', '.search-input'],
+            results: ['.search-results', '.product-list', '.category'],
             resultItems: ['.product-card', '.product-item']
+          },
+          browse: {
+            results: ['.category-products', '.browse-results', '.product-listing', '.products-grid'],
+            items: ['.product-card', '.product-item', '.product-tile'],
+            categories: ['.breadcrumbs', '.category-title', '.page-title']
           },
           products: {
             cards: ['.product-card', '.product-item', '.product-tile'],
@@ -132,6 +137,56 @@ function initAnalyticsBeacon(trackingId: string): void {
             forms: ['.checkout-form']
           }
         },
+
+                // VirtoCommerce-specific data extraction selectors
+        dataExtractionSelectors: {
+          resultsCount: [
+            '.category__products-count b',  // VirtoCommerce: <b class="mr-1">10</b>results
+            '.category__products-count',    // Fallback for whole element
+            '.results-count',
+            '.search-count',
+            '.product-count',
+            '[data-results-count]'
+          ],
+          breadcrumbs: [
+            '.breadcrumbs .active',
+            '.breadcrumb .current',
+            '.page-title h1',
+            '.category-title',
+            'h1'
+          ],
+          productItems: [
+            '.product-card',
+            '.product-item',
+            '.product-tile'
+          ],
+          productNames: [
+            '.product-title',
+            '.product-name',
+            'h3',
+            'h4'
+          ],
+          productPrices: [
+            '.price',
+            '.product-price',
+            '.price-current'
+          ],
+          categoryTitles: [
+            '.category-title',
+            '.page-title h1',
+            'h1'
+          ],
+          // Configure which selectors need content change detection for SPA
+          contentChangeDetection: [
+            '.category__products-count b',  // VirtoCommerce specific - most likely to have stale data
+            '.category__products-count',    // VirtoCommerce fallback
+            '.results-count',               // Generic selectors that might have stale data
+            '.search-count',
+            '.product-count'
+          ]
+        },
+
+
 
         // Privacy settings
         respectDoNotTrack: true,
