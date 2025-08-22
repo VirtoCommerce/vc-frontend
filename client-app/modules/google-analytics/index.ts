@@ -186,7 +186,8 @@ function initAnalyticsBeacon(trackingId: string): void {
           ]
         },
 
-
+        // VirtoCommerce search parameter configuration
+        searchParams: ['q', 'query', 'search'], // VirtoCommerce search URL parameters
 
         // Privacy settings
         respectDoNotTrack: true,
