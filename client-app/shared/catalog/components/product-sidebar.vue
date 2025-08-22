@@ -62,7 +62,7 @@
           </span>
         </div>
 
-        <VcButton class="mt-4 print:hidden" :to="{ name: 'Cart' }" full-width>
+        <VcButton class="mt-4 print:hidden" :to="{ name: ROUTES.CART.NAME }" full-width>
           {{ $t("pages.product.view_cart_button") }}
         </VcButton>
       </template>
@@ -113,6 +113,7 @@
 import { computed, toRef } from "vue";
 import { useCurrency, useThemeContext } from "@/core/composables";
 import { ProductType } from "@/core/enums";
+import { ROUTES } from "@/router/routes/constants";
 import { AddToCart, useShortCart } from "@/shared/cart";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";

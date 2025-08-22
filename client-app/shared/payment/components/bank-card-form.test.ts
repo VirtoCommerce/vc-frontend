@@ -124,16 +124,6 @@ describe("BankCardForm", () => {
         expect(input.value).toBe("1");
       });
 
-      it.skip("should not allow non-numeric input", async () => {
-        const input = getExpirationInput();
-
-        await fireEvent.update(input, "ab");
-        expect(input.value).toBe("");
-
-        await fireEvent.update(input, "12ab34");
-        expect(input.value).toBe("12 / 34");
-      });
-
       it("should limit input to 4 digits", async () => {
         const input = getExpirationInput();
 

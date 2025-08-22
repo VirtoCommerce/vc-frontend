@@ -4,6 +4,7 @@ import { createSharedComposable, computedEager } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge, intersection } from "lodash";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { AbortReason } from "@/core/api/common/enums";
 import {
   useGetShortCartQuery,
@@ -32,6 +33,7 @@ import {
   SelectCartItemsDocument,
   UnselectCartItemsDocument,
   GetShortCartDocument,
+  CreateCartFromWishlistDocument,
 } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
@@ -39,6 +41,7 @@ import { useSyncMutationBatchers } from "@/core/composables/useSyncMutationBatch
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { groupByVendor, Logger } from "@/core/utilities";
+import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import ClearCartModal from "../components/clear-cart-modal.vue";
@@ -226,6 +229,12 @@ export function useShortCart() {
     return sumBy(filteredItems, (x) => x.extendedPrice.amount);
   }
 
+  const { mutate: _createCartFromWishlist, loading: createCartFromWishlistLoading } =
+    useMutation(CreateCartFromWishlistDocument);
+  async function createCartFromWishlist(wishlistId: string) {
+    return await _createCartFromWishlist({ command: { listId: wishlistId } });
+  }
+
   return {
     cart,
     refetch,
@@ -235,9 +244,11 @@ export function useShortCart() {
     changeItemQuantity,
     changeItemQuantityBatched,
     getItemsTotal,
-    addToCartLoading,
+    createCartFromWishlist,
     loading,
+    addToCartLoading,
     changeItemQuantityBatchedOverflowed,
+    createCartFromWishlistLoading,
     changing: computed(
       () =>
         addToCartLoading.value ||
@@ -249,16 +260,16 @@ export function useShortCart() {
   };
 }
 
-export function _useFullCart() {
+export function _useFullCart(cartId?: string) {
   const { openModal } = useModal();
   const { analytics } = useAnalytics();
   const { client, resolveClient } = useApolloClient();
   const { storeId, currencyCode, cultureName, userId } = globals;
-  const commonVariables = { storeId, currencyCode, cultureName, userId };
+  const commonVariables = { storeId, currencyCode, cultureName, userId, cartId };
   const notifications = useNotifications();
   const { t } = useI18n();
 
-  const { result: query, load, refetch, loading } = useGetFullCartQuery();
+  const { result: query, load, refetch, loading } = useGetFullCartQuery(cartId);
 
   const forceFetch = async () => (await load()) || (await refetch());
 
@@ -662,4 +673,11 @@ export function _useFullCart() {
   };
 }
 
-export const useFullCart = createSharedComposable(_useFullCart);
+const useFullCartShared = createSharedComposableByArgs(_useFullCart, (args) => args?.[0] ?? "");
+
+export function useFullCart() {
+  const route = useRoute();
+  const cartId = Array.isArray(route.params?.cartId) ? route.params?.cartId[0] : route.params?.cartId;
+
+  return useFullCartShared(cartId);
+}
