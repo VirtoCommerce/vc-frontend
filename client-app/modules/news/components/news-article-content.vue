@@ -18,12 +18,12 @@
       </template>
     </div>
 
-    <div
+    <VcMarkdownRender
       v-if="newsArticle.contentPreview"
-      class="news-article-content__preview"
-    >
-      <VcMarkdownRender :src="newsArticle.contentPreview" />
-    </div>
+      :class="isImage(newsArticle.contentPreview) ? 'news-article-content__preview-image' : 'news-article-content__preview'"
+      :src="newsArticle.contentPreview"
+    />
+
     <div
       v-if="newsArticle.author || newsArticle.publishDate"
       class="news-article-content__citation"
@@ -40,10 +40,7 @@
         />
 
         <span>
-          <span>
-            {{ $t("news.details.written-by") }}
-          </span>
-
+          {{ $t("news.details.written-by") }} 
           <span
             class="news-article-content__citation-author-name"
             @click="emit('author:click', newsArticle.author.id)"
@@ -76,6 +73,7 @@
 >
 import { toRef } from "vue";
 import { VcMarkdownRender } from "@/ui-kit/components/atoms";
+import { isImage } from "../utilities";
 import type { NewsArticleContent } from "../api/graphql/types";
 
 interface IEmits {
@@ -100,7 +98,15 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__preview {
+    @apply ml-5 mr-5 text-lg text-left;
+  }
+
+  &__preview-image {
     @apply text-center;
+  }
+
+  &__preview-image img {
+    display: inline;
   }
 
   &__tags {

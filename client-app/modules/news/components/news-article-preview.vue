@@ -2,7 +2,7 @@
   <VcWidget class="news-article-preview">
     <VcMarkdownRender
       :src="newsArticle.listPreview ?? ''"
-      class="news-article-preview__preview"
+      :class="isImage(newsArticle.listPreview) ? 'news-article-preview__preview-image' : 'news-article-preview__preview'"
       @click="emit('article:click', newsArticle)"
     />
 
@@ -46,6 +46,7 @@
 import { toRef } from "vue";
 import { VcWidget } from "@/ui-kit/components";
 import { VcMarkdownRender } from "@/ui-kit/components/atoms";
+import { isImage } from "../utilities";
 import type { NewsArticleContent } from "../api/graphql/types";
 
 interface IEmits {
@@ -60,7 +61,7 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
-const newsArticle = toRef(props, "newsArticle"); 
+const newsArticle = toRef(props, "newsArticle");  
 </script>
 
 <style lang="scss">
@@ -69,7 +70,15 @@ const newsArticle = toRef(props, "newsArticle");
   --slot-p-t: 0;
 
   &__preview {
-    @apply cursor-pointer;
+    @apply m-3 text-left text-lg cursor-pointer;
+  }
+
+  &__preview-image {
+    @apply text-center;
+  }
+
+  &__preview-image img {
+    display: inline;
   }
 
   &__title {
@@ -78,10 +87,6 @@ const newsArticle = toRef(props, "newsArticle");
 
   &__publish-date {
     @apply m-3 text-left text-sm text-neutral;
-  }
-
-  &__preview {
-    @apply text-lg;
   }
 
   &__tags {
