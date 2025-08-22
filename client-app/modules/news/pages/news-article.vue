@@ -3,16 +3,31 @@
     <Error404 v-if="!loading && !newsArticle" />
 
     <VcContainer v-else>
-      <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
+      <VcBreadcrumbs
+        class="mb-3"
+        :items="breadcrumbs"
+      />
 
-      <VcWidgetSkeleton v-if="loading" head size="lg" />
+      <VcWidgetSkeleton
+        v-if="loading"
+        head
+        size="lg"
+      />
 
-      <NewsArticle v-if="!loading && newsArticle" :news-article="newsArticle" @tag:click="applyTag($event)" @author:click="applyAuthor($event)" />
+      <NewsArticle
+        v-if="!loading && newsArticle"
+        :news-article="newsArticle"
+        @tag:click="applyTag($event)"
+        @author:click="applyAuthor($event)"
+      />
     </VcContainer>
   </div>
 </template>
 
-<script lang="ts" setup>
+<script
+  lang="ts"
+  setup
+>
 import { useSeoMeta } from "@unhead/vue";
 import { computed, defineAsyncComponent, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";

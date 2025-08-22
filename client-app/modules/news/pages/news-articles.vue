@@ -1,23 +1,41 @@
 <template>
   <div class="news-articles">
     <VcContainer>
-      <VcTypography tag="h1" class="news-articles__title">
+      <VcTypography
+        tag="h1"
+        class="news-articles__title"
+      >
         {{ $t("news.list.title") }}
       </VcTypography>
 
       <PageToolbarBlock>
         <div class="news-articles__filter">
           <div class="news-articles__filter--tags">
-            <template v-for="newsArticleTag in newsArticleTags" :key="newsArticleTag">
+            <template
+              v-for="newsArticleTag in newsArticleTags"
+              :key="newsArticleTag"
+            >
               <VcChip
-                color="secondary" :variant="searchTag == newsArticleTag ? 'solid' : 'outline-dark'" class="news-articles__filter--tags-tag" clickable
-                @click="toggleTag(newsArticleTag)">
+                color="secondary"
+                :variant="searchTag == newsArticleTag ? 'solid' : 'outline-dark'"
+                class="news-articles__filter--tags-tag"
+                clickable
+                @click="toggleTag(newsArticleTag)"
+              >
                 {{ newsArticleTag }}
               </VcChip>
             </template>
+
             <VcChip
-              v-if="authorId" color="secondary" variant="solid" class="news-articles__filter--tags-tag" clickable
-              @click="removeAuthorFilter()">{{ $t("news.list.written-by") }} {{ newsArticleAuthorName }}</VcChip>
+              v-if="authorId"
+              color="secondary"
+              variant="solid"
+              class="news-articles__filter--tags-tag"
+              clickable
+              @click="removeAuthorFilter()"
+            >
+              {{ $t("news.list.written-by") }} {{ newsArticleAuthorName }}
+            </VcChip>
           </div>
 
           <VcInput
@@ -28,29 +46,50 @@
             :disabled="loading"
             :placeholder="$t('news.list.search-placeholder')"
             @keydown.enter="applyKeyword"
-            @clear="resetKeyword">
+            @clear="resetKeyword"
+          >
             <template #append>
               <VcButton
                 :disabled="loading"
                 icon="search"
                 icon-size="1.25rem"
-                @click="applyKeyword" />
+                @click="applyKeyword"
+              />
             </template>
           </VcInput>
         </div>
       </PageToolbarBlock>
 
-      <VcEmptyView v-if="!loading && !newsArticles?.length" :text="$t('news.list.not-found')" icon="outline-document" />
+      <VcEmptyView
+        v-if="!loading && !newsArticles?.length"
+        :text="$t('news.list.not-found')"
+        icon="outline-document"
+      />
 
       <div v-else>
-        <div v-if="loading" class="news-articles__grid">
-          <VcWidgetSkeleton v-for="i in 8" :key="i" head size="lg" />
+        <div
+          v-if="loading"
+          class="news-articles__grid"
+        >
+          <VcWidgetSkeleton
+            v-for="i in 8"
+            :key="i"
+            head
+            size="lg"
+          />
         </div>
 
-        <div v-if="!loading && newsArticles?.length" class="news-articles__grid">
+        <div
+          v-if="!loading && newsArticles?.length"
+          class="news-articles__grid"
+        >
           <NewsArticlePreview
-v-for="item in newsArticles" :key="item.id" :news-article="item" @article:click="openArticle($event)"
-            @tag:click="applyTag($event)" />
+            v-for="item in newsArticles"
+            :key="item.id"
+            :news-article="item"
+            @article:click="openArticle($event)"
+            @tag:click="applyTag($event)"
+          />
         </div>
       </div>
 
@@ -59,12 +98,16 @@ v-for="item in newsArticles" :key="item.id" :news-article="item" @article:click=
         v-model:page="searchPage"
         class="news-articles__pagination"
         :pages="Math.min(searchPages, ARTICLES_MAX_PAGES)"
-        @update:page="changeSearchPage" />
+        @update:page="changeSearchPage"
+      />
     </VcContainer>
   </div>
 </template>
 
-<script lang="ts" setup>
+<script
+  lang="ts"
+  setup
+>
 import { ref, toRef, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";

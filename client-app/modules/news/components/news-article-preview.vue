@@ -1,16 +1,37 @@
 <template>
   <VcWidget class="news-article-preview">
-    <VcMarkdownRender :src="newsArticle.contentPreview ?? ''" class="news-article-preview__preview" @click="emit('article:click', newsArticle)" />
+    <VcMarkdownRender
+      :src="newsArticle.contentPreview ?? ''"
+      class="news-article-preview__preview"
+      @click="emit('article:click', newsArticle)"
+    />
 
-    <div v-if="newsArticle.publishDate" class="news-article-preview__publish-date">
+    <div
+      v-if="newsArticle.publishDate"
+      class="news-article-preview__publish-date"
+    >
       {{ $d(newsArticle.publishDate, "short") }}
     </div>
 
-    <div class="news-article-preview__title" @click="emit('article:click', newsArticle)">{{ newsArticle.title }}</div>
+    <div
+      class="news-article-preview__title"
+      @click="emit('article:click', newsArticle)"
+    >
+      {{ newsArticle.title }}
+    </div>
 
     <div class="news-article-preview__tags">
-      <template v-for="tag in newsArticle.tags" :key="tag">
-        <VcChip color="secondary" variant="outline-dark" class="news-article-preview__tags-tag" clickable @click="emit('tag:click', tag)">
+      <template
+        v-for="tag in newsArticle.tags"
+        :key="tag"
+      >
+        <VcChip
+          color="secondary"
+          variant="outline-dark"
+          class="news-article-preview__tags-tag"
+          clickable
+          @click="emit('tag:click', tag)"
+        >
           {{ tag }}
         </VcChip>
       </template>
@@ -18,7 +39,10 @@
   </VcWidget>
 </template>
 
-<script lang="ts" setup>
+<script
+  lang="ts"
+  setup
+>
 import { toRef } from "vue";
 import { VcWidget } from "@/ui-kit/components";
 import { VcMarkdownRender } from "@/ui-kit/components/atoms";
@@ -41,8 +65,8 @@ const newsArticle = toRef(props, "newsArticle");
 
 <style lang="scss">
 .news-article-preview {
-  --p-x: 0; 
-  --slot-p-t: 0; 
+  --p-x: 0;
+  --slot-p-t: 0;
 
   &__preview {
     @apply cursor-pointer;
@@ -67,5 +91,5 @@ const newsArticle = toRef(props, "newsArticle");
   &__tags-tag {
     @apply mr-2 mb-1;
   }
-} 
+}
 </style>
