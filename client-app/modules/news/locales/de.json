@@ -3,7 +3,8 @@
     "list": {
       "title": "Neueste Nachrichten",
       "not-found": "Keine Nachrichten gefunden",
-      "search-placeholder": "Suche"
+      "search-placeholder": "Suche",
+      "written-by": "Geschrieben von"
     },
     "details": {
       "written-by": "Geschrieben von",

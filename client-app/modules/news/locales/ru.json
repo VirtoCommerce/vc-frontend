@@ -3,7 +3,8 @@
     "list": {
       "title": "Последние новости",
       "not-found": "Новостей не найдено",
-      "search-placeholder": "Поиск"
+      "search-placeholder": "Поиск",
+      "written-by": "Автор:"
     },
     "details": {
       "written-by": "Автор:",

@@ -3,7 +3,8 @@
     "list": {
       "title": "最新ニュース",
       "not-found": "ニュースはありません",
-      "search-placeholder": "検索"
+      "search-placeholder": "検索",
+      "written-by": "作成者:"
     },
     "details": {
       "written-by": "作成者:",

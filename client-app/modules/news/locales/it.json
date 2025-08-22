@@ -3,7 +3,8 @@
     "list": {
       "title": "Ultime notizie",
       "not-found": "Nessuna notizia trovata",
-      "search-placeholder": "Cerca"
+      "search-placeholder": "Cerca",
+      "written-by": "Scritto da"
     },
     "details": {
       "written-by": "Scritto da",
