@@ -25,6 +25,8 @@ query NewsArticles(
       publishDate
       contentPreview
       content
+      listTitle
+      listPreview
       tags
       author {
         id

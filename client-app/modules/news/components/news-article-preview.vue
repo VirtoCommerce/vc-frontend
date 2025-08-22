@@ -1,7 +1,7 @@
 <template>
   <VcWidget class="news-article-preview">
     <VcMarkdownRender
-      :src="newsArticle.contentPreview ?? ''"
+      :src="newsArticle.listPreview ?? ''"
       class="news-article-preview__preview"
       @click="emit('article:click', newsArticle)"
     />
@@ -17,7 +17,7 @@
       class="news-article-preview__title"
       @click="emit('article:click', newsArticle)"
     >
-      {{ newsArticle.title }}
+      {{ newsArticle.listTitle }}
     </div>
 
     <div class="news-article-preview__tags">
