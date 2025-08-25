@@ -53,7 +53,7 @@
           :readonly="readonly || !autocomplete"
           :error="error"
           truncate
-          autocomplete="none"
+          disable-autocomplete
           @keydown.down.prevent="next(-1)"
           @focus="open"
           @clear="clear"
