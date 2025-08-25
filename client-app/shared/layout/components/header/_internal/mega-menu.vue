@@ -12,6 +12,7 @@
           type="button"
           class="mega-menu__button"
           :disabled="loading"
+          tabindex="0"
           v-bind="triggerProps"
           @keyup.arrow-down="focusMenuItem"
         >
