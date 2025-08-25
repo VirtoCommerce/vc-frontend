@@ -246,6 +246,7 @@
           :pages="pages"
           :page="page"
           :description="$t('pages.company.members.meta.table_description')"
+          mobile-breakpoint="lg"
           @header-click="applySorting"
           @page-changed="changePage"
         >

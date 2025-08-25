@@ -124,7 +124,7 @@
           </template>
         </VcEmptyView>
 
-        <div v-else class="flex flex-col md:rounded md:border">
+        <div v-else class="flex flex-col lg:rounded lg:border">
           <VcTable
             :columns="columns"
             :description="$t('pages.company.info.meta.table_description')"
@@ -133,6 +133,7 @@
             :page="page"
             :pages="pages"
             :sort="sort"
+            mobile-breakpoint="lg"
             @header-click="applySorting"
             @page-changed="onPageChange"
           >

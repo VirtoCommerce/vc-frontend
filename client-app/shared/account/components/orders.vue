@@ -206,6 +206,7 @@
       :page="page"
       :hide-default-footer="!withPagination"
       :description="$t('pages.account.orders.meta.table_description')"
+      mobile-breakpoint="lg"
       @item-click="goToOrderDetails"
       @header-click="applySorting"
       @page-changed="changePage"
