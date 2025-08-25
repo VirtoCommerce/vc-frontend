@@ -68,6 +68,9 @@ query SearchProducts(
             ...money
           }
         }
+        availabilityData {
+          ...availabilityData
+        }
       }
       hasVariations
       slug
