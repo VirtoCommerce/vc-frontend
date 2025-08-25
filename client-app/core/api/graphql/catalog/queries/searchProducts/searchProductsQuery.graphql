@@ -24,6 +24,7 @@ query SearchProducts(
   $selectedAddressId: String
   $selectedAddress: String
   $preserveUserQuery: Boolean
+  $previousOutline: String
 ) {
   products(
     storeId: $storeId
@@ -41,6 +42,7 @@ query SearchProducts(
     selectedAddressId: $selectedAddressId
     selectedAddress: $selectedAddress
     preserveUserQuery: $preserveUserQuery
+    previousOutline: $previousOutline
   ) {
     totalCount
     items {
