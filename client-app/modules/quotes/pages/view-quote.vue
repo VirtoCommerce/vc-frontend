@@ -47,7 +47,7 @@
         prepend-icon="document-text"
         class="mt-5"
       >
-        <ul class="space-y-2 rounded border border-neutral-200 px-3 py-4">
+        <ul class="space-y-2 rounded-[--vc-radius] border border-neutral-200 px-3 py-4">
           <li v-for="(attachment, index) in quote.attachments" :key="index">
             <VcFile :file="getFile(attachment)" @download="onDownload" />
           </li>

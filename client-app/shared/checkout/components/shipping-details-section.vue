@@ -11,7 +11,7 @@
           {{ $t("shared.checkout.shipping_details_section.labels.delivery_option") }}
         </VcLabel>
 
-        <div class="flex min-h-18 items-center gap-2 rounded border p-4">
+        <div class="flex min-h-18 items-center gap-2 rounded-[--vc-radius] border p-4">
           <VcTabSwitch
             v-model="mode"
             :value="SHIPPING_OPTIONS.pickup"
@@ -42,7 +42,7 @@
 
           <div
             :class="[
-              'flex min-h-18 grow flex-col justify-center divide-y rounded border px-3 py-1.5',
+              'flex min-h-18 grow flex-col justify-center divide-y rounded-[--vc-radius] border px-3 py-1.5',
               {
                 'cursor-not-allowed bg-neutral-50': disabled,
               },
@@ -71,7 +71,7 @@
         >
           <template #placeholder>
             <div class="flex items-center gap-3 p-[0.688rem] text-sm">
-              <VcImage class="size-12 rounded-sm bg-neutral-100" src="select-shipping.svg" />
+              <VcImage class="size-12 rounded bg-neutral-100" src="select-shipping.svg" />
 
               {{ $t("common.placeholders.select_delivery_method") }}
             </div>
@@ -79,14 +79,14 @@
 
           <template #selected="{ item }">
             <div class="flex items-center gap-3 p-[0.688rem] text-sm" :data-selected-shipping-method-id="item.id">
-              <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
+              <VcImage class="size-12 rounded" :src="item.logoUrl" />
 
               {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
             </div>
           </template>
 
           <template #item="{ item }">
-            <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
+            <VcImage class="size-12 rounded" :src="item.logoUrl" />
 
             <span :data-shipping-method-id="item.id">{{ $t(`common.methods.delivery_by_id.${item.id}`) }}</span>
           </template>
@@ -100,7 +100,7 @@
 
         <div
           :class="[
-            'relative flex min-h-18 grow flex-col justify-center divide-y rounded border px-3 py-1.5',
+            'relative flex min-h-18 grow flex-col justify-center divide-y rounded-[--vc-radius] border px-3 py-1.5',
             {
               'cursor-not-allowed bg-neutral-50': disabled,
             },
