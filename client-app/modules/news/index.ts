@@ -16,7 +16,19 @@ const route: RouteRecordRaw = {
     {
       path: "",
       name: ROUTES.ARTICLES.NAME,
+      component: NewsArticles, 
+    },
+    {
+      path: "tag/:tag?",
+      name: ROUTES.ARTICLES_BY_TAG.NAME,
       component: NewsArticles,
+      props: true,
+    },
+    {
+      path: "author/:authorId/:tag?",
+      name: ROUTES.ARTICLES_BY_AUTHOR.NAME,
+      component: NewsArticles,
+      props: true,
     },
     {
       path: ":articleId",

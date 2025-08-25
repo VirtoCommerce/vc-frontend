@@ -1,11 +1,17 @@
 {
   "news": {
-    "empty-list": {
-      "title": "Новостей не найдено",
-      "button": "@:common.buttons.continue_shopping"
+    "list": {
+      "title": "Последние новости",
+      "not-found": "Новостей не найдено",
+      "search-placeholder": "Поиск",
+      "written-by": "Автор:"
     },
-    "links": {
-      "to-list": "Все новости"
+    "details": {
+      "written-by": "Автор:",
+      "last-updated": "Последнее обновление:",
+      "breadcrumbs": {
+        "news": "Новости"
+      }
     }
   }
 }
