@@ -76,14 +76,8 @@ const props = defineProps<IProps>();
 
 const errorMessage = ref<string | undefined>();
 
-const {
-  cart,
-  addToCartBatched,
-  changeItemQuantityBatched,
-  changing,
-  addToCartBatchedOverflowed,
-  changeItemQuantityBatchedOverflowed,
-} = useShortCart();
+const { cart, addToCart, changeItemQuantityBatched, changing, addToCartLoading, changeItemQuantityBatchedOverflowed } =
+  useShortCart();
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
 const { t } = useI18n();
@@ -97,7 +91,7 @@ const cartLineItem = computed(() => cart.value?.items.find((item) => item.produc
 const countInCart = computed(() => cartLineItem.value?.quantity || 0);
 const isQuantityLoading = computed(() => {
   if (themeContext.value.settings.product_quantity_control === "stepper") {
-    return addToCartBatchedOverflowed.value || changeItemQuantityBatchedOverflowed.value;
+    return addToCartLoading.value || changeItemQuantityBatchedOverflowed.value;
   }
   return changing.value;
 });
@@ -130,7 +124,7 @@ async function changeCartItemQuantity(qty: number) {
       await changeItemQuantityBatched(cartLineItem.value.id, qty);
     }
   } else {
-    await addToCartBatched(product.value.id, qty);
+    await addToCart(product.value.id, qty);
     trackAddItemToCart(product.value, qty, { source_block: "recently-browsed" });
     void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
   }
