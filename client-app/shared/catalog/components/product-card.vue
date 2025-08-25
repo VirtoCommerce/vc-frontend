@@ -78,7 +78,7 @@
       :to="link"
       :link-text="$t('pages.catalog.show_on_a_separate_page')"
       :link-to="link"
-      :button-text="$t('pages.catalog.variations_button', [(product.variations?.filter(x => !productsFilters.inStock || x.availabilityData?.isInStock)?.length || 0) + 1])"
+      :button-text="$t('pages.catalog.variations_button', [variationsCount])"
       :target="browserTarget || $cfg.details_browser_target || '_blank'"
       @link-click="$emit('linkClick', product, $event)"
     />
@@ -158,4 +158,16 @@ const badgeSize = computed(() => {
 });
 
 const { productsFilters } = useProducts();
+
+const variationsCount = computed(() => {
+  if (!productsFilters.value.inStock)
+    return (props.product.variations?.length || 0) + 1;
+
+  let result = 0;
+  if (props.product.availabilityData?.isInStock && props.product.availabilityData.isBuyable) {
+    result++;
+  }
+  result += props.product.variations?.filter(x => x.availabilityData?.isInStock && x.availabilityData?.isBuyable)?.length || 0;
+  return result;
+});
 </script>
