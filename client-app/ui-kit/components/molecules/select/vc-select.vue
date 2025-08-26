@@ -23,7 +23,7 @@
       :data-test-id="testIdDropdown"
       @toggle="toggled"
     >
-      <template #trigger="{ open, close, toggle }">
+      <template #trigger="{ open, toggle }">
         <div
           v-if="$slots.selected || $slots.placeholder"
           tabindex="0"
@@ -53,6 +53,7 @@
           :readonly="readonly || !autocomplete"
           :error="error"
           truncate
+          disable-autocomplete
           @keydown.down.prevent="next(-1)"
           @focus="open"
           @clear="clear"
@@ -64,7 +65,7 @@
               type="button"
               tabindex="-1"
               class="vc-select__arrow"
-              @click="handleArrowClick($event, close)"
+              @click="handleArrowClick($event, toggle)"
             >
               <VcIcon :name="isShown ? 'chevron-up' : 'chevron-down'" size="xs" />
             </button>
@@ -303,11 +304,9 @@ function clear() {
   }
 }
 
-function handleArrowClick(event: MouseEvent, close: () => void) {
-  if (isShown.value) {
-    event.stopPropagation();
-    close();
-  }
+function handleArrowClick(event: MouseEvent, toggle: () => void) {
+  event.stopPropagation();
+  toggle();
 }
 </script>
 

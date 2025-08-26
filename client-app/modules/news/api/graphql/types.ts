@@ -117,6 +117,7 @@ export type SeoInfo = {
   name?: Maybe<Scalars['String']['output']>;
   objectId: Scalars['String']['output'];
   objectType: Scalars['String']['output'];
+  outline?: Maybe<Scalars['String']['output']>;
   pageTitle?: Maybe<Scalars['String']['output']>;
   semanticUrl: Scalars['String']['output'];
   storeId?: Maybe<Scalars['String']['output']>;
