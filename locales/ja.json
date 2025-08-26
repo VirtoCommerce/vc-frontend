@@ -895,7 +895,15 @@
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Private list",
-        "make_shared": "Make shared"
+        "make_shared": "Make shared",
+        "sharing_scope_label": "共有オプション",
+        "sharing_scope_placeholder": "いずれか 1 つを選択してください",
+        "sharing_link_label": "リンク",
+        "sharing_scope": {
+          "Private": "プライベート",
+          "AnyoneAnonymous": "誰でも",
+          "Organization": "組織"
+        }
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",

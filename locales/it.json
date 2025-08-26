@@ -895,7 +895,15 @@
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Lista privata",
-        "make_shared": "Rendi condivisa"
+        "make_shared": "Rendi condivisa",
+        "sharing_scope_label": "Opzioni di condivisione",
+        "sharing_scope_placeholder": "Seleziona un'opzione",
+        "sharing_link_label": "Link",
+        "sharing_scope": {
+          "Private": "Privato",
+          "AnyoneAnonymous": "Chiunque",
+          "Organization": "Organizzazione"
+        }
       },
       "delete_wishlist_modal": {
         "title": "Conferma eliminazione",

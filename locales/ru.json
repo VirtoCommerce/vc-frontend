@@ -895,7 +895,15 @@
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Приватный список",
-        "make_shared": "Сделать общим"
+        "make_shared": "Сделать общим",
+        "sharing_scope_label": "Поделиться",
+        "sharing_scope_placeholder": "Пожалуйста, выберите один вариант",
+        "sharing_link_label": "Ссылка",
+        "sharing_scope": {
+          "Private": "Приватный",
+          "AnyoneAnonymous": "Кто угодно",
+          "Organization": "Организация"
+        }
       },
       "delete_wishlist_modal": {
         "title": "Подтвердить удаление",
