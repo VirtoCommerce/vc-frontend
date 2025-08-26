@@ -23,7 +23,7 @@
           <VcVariantPicker
             v-for="option in property.values"
             :key="option.label"
-            :model-value="isSelected(property.name, option.value) ? String(option.value) : undefined"
+            :model-value="isSelected(property.name, option.value) ? getValue(property, option) : undefined"
             :type="getType(property.propertyValueType)"
             :name="property.label"
             :value="getValue(property, option)"

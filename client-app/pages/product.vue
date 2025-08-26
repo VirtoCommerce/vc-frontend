@@ -21,7 +21,7 @@
     <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
 
     <VcTypography tag="h1">
-      {{ hasSelected ? applicableVariations[0].name : product.name }}
+      {{ selectedVariationName || product.name }}
     </VcTypography>
 
     <div class="mt-2 flex flex-wrap gap-1 max-sm:justify-between sm:gap-6">
@@ -215,13 +215,17 @@ const {
 });
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
-const { applicableVariations, hasSelected } = useProductVariationProperties(variations);
+const { applicableVariations } = useProductVariationProperties(variations);
 
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const { analytics } = useAnalytics();
 const { pushHistoricalEvent } = useHistoricalEvents();
+
+const selectedVariationName = computed(() => {
+  return applicableVariations.value.length === 1 ? applicableVariations.value[0].name : undefined;
+});
 
 const templateLayout = computed(() => {
   const layoutProperty = product.value?.properties?.find(
