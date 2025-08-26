@@ -6456,10 +6456,16 @@ export type WishlistEdge = {
 };
 
 export enum WishlistScopeType {
+  /** Anyone (anonymous) scope */
+  AnyoneAnonymous = 'AnyoneAnonymous',
+  /** Anyone (authorized) scope */
+  AnyoneAuthorized = 'AnyoneAuthorized',
   /** Organization scope */
   Organization = 'Organization',
   /** Private scope */
-  Private = 'Private'
+  Private = 'Private',
+  /** User scope */
+  User = 'User'
 }
 
 export type WishlistType = {
