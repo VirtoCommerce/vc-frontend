@@ -1,6 +1,7 @@
 <template>
   <div ref="categoryComponentAnchor" class="category">
     <Error404 v-if="isCategoryNotFound" />
+
     <template v-else>
       <!-- Popup sidebar for mobile and horizontal desktop view -->
       <FiltersPopupSidebar
