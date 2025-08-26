@@ -16,29 +16,18 @@ export function useCategory() {
     try {
       const data = await getCategory(payload);
 
-      if (data.category) {
-        category.value = {
-          ...data.category,
-          childCategories: data.childCategories.childCategories ?? [],
-          name: data.category?.name,
-          id: data.category?.id || catalogId,
-        };
-
-        return data;
-      } else {
-        resetState();
-      }
+      category.value = {
+        ...data.category,
+        childCategories: data.childCategories.childCategories ?? [],
+        name: data.category?.name,
+        id: data.category?.id || catalogId,
+      };
     } catch (e) {
       Logger.error(`${useCategory.name}.${fetchCategory.name}`, e);
       throw e;
     } finally {
       loading.value = false;
     }
-  }
-
-  function resetState() {
-    loading.value = false;
-    category.value = undefined;
   }
 
   return {
