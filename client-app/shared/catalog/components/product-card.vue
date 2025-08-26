@@ -59,7 +59,7 @@
       "
       :product="product"
       is-text-shown
-      v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)" 
+      v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
     />
 
     <VcProductButton
@@ -160,14 +160,18 @@ const badgeSize = computed(() => {
 const { productsFilters } = useProducts();
 
 const variationsCount = computed(() => {
-  if (!productsFilters.value.inStock)
+  if (!productsFilters.value.inStock) {
     return (props.product.variations?.length || 0) + 1;
+  }
 
   let result = 0;
   if (props.product.availabilityData?.isInStock && props.product.availabilityData.isBuyable) {
     result++;
   }
-  result += props.product.variations?.filter(x => x.availabilityData?.isInStock && x.availabilityData?.isBuyable)?.length || 0;
+  result +=
+    props.product.variations?.filter((x) => x.availabilityData?.isInStock && x.availabilityData?.isBuyable)?.length ||
+    0;
+
   return result;
 });
 </script>
