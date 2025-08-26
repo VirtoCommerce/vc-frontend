@@ -71,6 +71,25 @@
         </VcAlert>
       </div>
     </template>
+
+    <template #after-image="{ item }">
+      <CartItemActions
+        icons
+        :saveable-for-later="!hideControls?.includes('save-for-later')"
+        :selected="sharedSelectedItemIds?.includes(item.id)"
+        :disabled="disabled"
+        @save-for-later="$emit('saveForLater', [item.id])"
+      />
+    </template>
+
+    <template #after-title="{ item }">
+      <CartItemActions
+        :saveable-for-later="!hideControls?.includes('save-for-later')"
+        :selected="sharedSelectedItemIds?.includes(item.id)"
+        :disabled="disabled"
+        @save-for-later="$emit('saveForLater', [item.id])"
+      />
+    </template>
   </VcLineItems>
 </template>
 
@@ -83,6 +102,7 @@ import { InStock } from "@/shared/catalog";
 import { ConfigurationItems } from "@/shared/common";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import CartItemActions from "@/shared/cart/components/cart-item-actions.vue";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 interface IProps {
@@ -92,6 +112,7 @@ interface IProps {
   validationErrors?: ValidationErrorType[];
   selectable?: boolean;
   sharedSelectedItemIds?: string[];
+  hideControls?: string[];
 }
 
 interface IEmits {
@@ -99,6 +120,7 @@ interface IEmits {
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "linkClick", value: LineItemType | undefined): void;
+  (event: "saveForLater", value: string[]): void;
 }
 
 const emit = defineEmits<IEmits>();

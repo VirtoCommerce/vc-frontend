@@ -1,0 +1,104 @@
+{
+  "name": "FavoriteProducts",
+  "icon": "favorite",
+  "settings": [
+    {
+      "id": "widgetBackground",
+      "label": "Background",
+      "type": "object",
+      "tab": "Settings",
+      "visibility": "!this.model.background",
+      "default": {
+        "color": "#ffffff"
+      },
+      "element": [
+        {
+          "id": "color",
+          "label": "Background color",
+          "type": "color"
+        },
+        {
+          "id": "image",
+          "type": "images",
+          "multiple": false,
+          "inline": true
+        }
+      ]
+    },
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "object",
+      "default": {
+        "text": "Products Block"
+      },
+      "element": [
+        {
+          "id": "text",
+          "label": "Text",
+          "type": "string"
+        },
+        {
+          "id": "color",
+          "label": "Text color",
+          "type": "color"
+        }
+      ]
+    },
+    {
+      "id": "subtitle",
+      "label": "Subtitle",
+      "type": "object",
+      "default": {
+        "text": "Subtitle",
+        "color": "#81B87A"
+      },
+      "element": [
+        {
+          "id": "text",
+          "label": "Text",
+          "type": "string"
+        },
+        {
+          "id": "color",
+          "label": "Text color",
+          "type": "color"
+        }
+      ]
+    },
+    {
+      "id": "viewMode",
+      "label": "View mode",
+      "type": "select",
+      "default": "list",
+      "options": [
+        {
+          "label": "Grid",
+          "value": "grid"
+        },
+        {
+          "label": "List",
+          "value": "list"
+        }
+      ]
+    },
+    {
+      "id": "count",
+      "type": "number",
+      "default": 4,
+      "max": 12,
+      "label": "Cards amount"
+    },
+    {
+      "id": "query",
+      "label": "Keyword",
+      "type": "string"
+    },
+    {
+      "id": "filter",
+      "label": "Filter",
+      "type": "string",
+      "info": "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter"
+    }
+  ]
+}

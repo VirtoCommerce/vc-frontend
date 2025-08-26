@@ -16,7 +16,8 @@
       test-id-input="card-number-input"
       @update:model-value="updateValue($event)"
       @input="input"
-      @keypress="checkForNumber($event)"
+      @keypress="preventNonNumberKeyboard($event)"
+      @paste="preventNonNumberPaste($event)"
     />
 
     <VcInput
@@ -50,6 +51,8 @@
         required
         test-id-input="expiration-date-input"
         @input="input"
+        @keypress="preventNonNumberKeyboard($event)"
+        @paste="preventNonNumberPaste($event)"
       />
 
       <VcInput
@@ -73,7 +76,8 @@
         test-id-input="security-code-input"
         @input="input"
         @keyup.enter="$emit('submit')"
-        @keypress="checkForNumber($event)"
+        @keypress="preventNonNumberKeyboard($event)"
+        @paste="preventNonNumberPaste($event)"
       />
     </div>
   </form>
@@ -87,6 +91,7 @@ import { useForm } from "vee-validate";
 import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
+import { preventNonNumberKeyboard, preventNonNumberPaste } from "@/core/utilities";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 
 const emit = defineEmits<IEmits>();
@@ -197,13 +202,6 @@ function updateValue(value?: string): void {
 
 function input() {
   emit("update:modelValue", clone(values));
-}
-
-function checkForNumber(event: KeyboardEvent) {
-  const isNumber = /^\d$/.test(event.key);
-  if (!isNumber) {
-    event.preventDefault();
-  }
 }
 
 watch(

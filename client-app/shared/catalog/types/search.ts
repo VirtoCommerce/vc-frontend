@@ -13,6 +13,8 @@ export type ProductsSearchParamsType = {
   productIds?: string[];
   selectedAddressId?: string;
   selectedAddress?: string;
+  preserveUserQuery?: boolean;
+  previousOutline?: string;
 };
 
 export type ProductsFiltersType = {

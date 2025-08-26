@@ -62,7 +62,10 @@ export function setupBroadcastGlobalListeners() {
     const route = router.currentRoute.value;
 
     if (route.matched.some((item) => item.name === "Checkout")) {
-      await router.replace({ name: "Cart" });
+      await router.replace({
+        name: route.params.cartId ? "SharedCart" : "Cart",
+        params: { cartId: route.params.cartId },
+      });
     } else {
       await client.refetchQueries({
         include: filterActiveQueryNames(client, [OperationNames.Query.GetFullCart, OperationNames.Query.GetShortCart]),

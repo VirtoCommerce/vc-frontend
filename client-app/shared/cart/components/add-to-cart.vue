@@ -62,13 +62,8 @@ interface IProps {
 }
 
 const product = toRef(props, "product");
-const {
-  cart,
-  addToCartBatched,
-  changeItemQuantityBatched,
-  addToCartBatchedOverflowed,
-  changeItemQuantityBatchedOverflowed,
-} = useShortCart();
+const { cart, addToCart, changeItemQuantityBatched, addToCartLoading, changeItemQuantityBatchedOverflowed } =
+  useShortCart();
 const { t } = useI18n();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
@@ -96,11 +91,9 @@ const isConfigurable = computed(() => "isConfigurable" in product.value && produ
 const disabled = computed(() => loading.value || !product.value.availabilityData?.isAvailable);
 const disabledStepper = computed(
   () =>
-    !product.value.availabilityData?.isAvailable ||
-    changeItemQuantityBatchedOverflowed.value ||
-    addToCartBatchedOverflowed.value,
+    !product.value.availabilityData?.isAvailable || changeItemQuantityBatchedOverflowed.value || addToCartLoading.value,
 );
-const loadingStepper = computed(() => changeItemQuantityBatchedOverflowed.value || addToCartBatchedOverflowed.value);
+const loadingStepper = computed(() => changeItemQuantityBatchedOverflowed.value || addToCartLoading.value);
 const countInCart = computed(() => getLineItem(cart.value?.items)?.quantity || 0);
 const minQty = computed(() => product.value.minQuantity || defaultMinQuantity.value);
 const maxQty = computed(() =>
@@ -149,8 +142,7 @@ async function onChange() {
       return;
     }
 
-    const updatedLineItem = getLineItem(updatedCart?.items);
-    handleUpdateResult(updatedLineItem, mode);
+    handleUpdateResult(updatedCart, mode);
   } finally {
     loading.value = false;
   }
@@ -168,7 +160,7 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
 
   const quantity = enteredQuantity.value || minQty.value;
   const config = isConfigurable.value ? selectedConfigurationInput.value : undefined;
-  const updatedCart = await addToCartBatched(product.value.id, quantity, config);
+  const updatedCart = await addToCart(product.value.id, quantity, config);
 
   trackAddItemToCart(product.value, quantity);
   void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
@@ -176,7 +168,13 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
   return updatedCart;
 }
 
-function handleUpdateResult(lineItem: ShortLineItemFragment | undefined, mode: AddToCartModeType) {
+function handleUpdateResult(_cart: Awaited<ReturnType<typeof updateOrAddToCart>>, mode: AddToCartModeType) {
+  if (!_cart) {
+    return;
+  }
+
+  const lineItem = getLineItem(_cart.items);
+
   if (!lineItem) {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
     displayErrorMessage(mode, getValidationErrors());

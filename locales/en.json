@@ -78,7 +78,8 @@
       "scroll_to_top": "Scroll to top",
       "show_less": "Show less",
       "expand_all": "Expand all",
-      "all_products": "All products"
+      "all_products": "All products",
+      "buy_now": "Buy now"
     },
     "labels": {
       "actions": "Actions",
@@ -273,7 +274,8 @@
       "change_role": "Change role",
       "save_changes": "Save changes",
       "password_expired": "Password is about to expire",
-      "error_details": "Error details"
+      "error_details": "Error details",
+      "buy_now": "Buy now"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
@@ -297,7 +299,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "Contacts",
           "call_us_label": "Call us: ",
-          "logged_in_as": "logged in as"
+          "logged_in_as": "logged in as",
+          "account_menu_label": "Account menu"
         },
         "bottom_header": {
           "catalog_menu_button": "Catalog",
@@ -1307,7 +1310,10 @@
       "title": "Cart",
       "empty_cart_description": "Your cart is empty",
       "empty_cart_search_text": "Use the search to find everything you need",
-      "recently_browsed_products": "Recently browsed"
+      "recently_browsed_products": "Recently browsed",
+      "save_for_later": "Save for later",
+      "saved_for_later": "Saved for later",
+      "move_to_cart": "Move to cart"
     },
     "checkout": {
       "meta": {

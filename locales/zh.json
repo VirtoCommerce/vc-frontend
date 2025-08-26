@@ -78,7 +78,8 @@
       "reset_page": "重置页面",
       "show_less": "收起",
       "expand_all": "全部展开",
-      "all_products": "所有产品"
+      "all_products": "所有产品",
+      "buy_now": "立即购买"
     },
     "labels": {
       "actions": "操作",
@@ -273,7 +274,8 @@
       "change_role": "更改角色",
       "save_changes": "保存更改",
       "password_expired": "密码即将过期",
-      "error_details": "错误详情"
+      "error_details": "错误详情",
+      "buy_now": "立即购买"
     },
     "roles": {
       "org-maintainer": "组织维护者",
@@ -297,7 +299,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "联系方式",
           "call_us_label": "致电我们：",
-          "logged_in_as": "已登录为"
+          "logged_in_as": "已登录为",
+          "account_menu_label": "帐户菜单"
         },
         "bottom_header": {
           "catalog_menu_button": "目录",
@@ -1307,7 +1310,10 @@
       "title": "购物车",
       "empty_cart_description": "您的购物车为空",
       "recently_browsed_products": "最近浏览的产品",
-      "empty_cart_search_text": "使用搜索，找到您需要的一切"
+      "empty_cart_search_text": "使用搜索，找到您需要的一切",
+      "save_for_later": "稍后保存",
+      "saved_for_later": "稍后购买",
+      "move_to_cart": "加入购物车"
     },
     "checkout": {
       "meta": {

@@ -78,7 +78,8 @@
       "reset_page": "Сбросить страницу",
       "show_less": "Показать меньше",
       "expand_all": "Развернуть все",
-      "all_products": "Все продукты"
+      "all_products": "Все продукты",
+      "buy_now": "Купить сейчас"
     },
     "labels": {
       "actions": "Действия",
@@ -273,7 +274,8 @@
       "change_role": "Сменить роль",
       "save_changes": "Сохранить изменения",
       "password_expired": "Пароль скоро истечет",
-      "error_details": "Детали ошибки"
+      "error_details": "Детали ошибки",
+      "buy_now": "Купить сейчас"
     },
     "roles": {
       "org-maintainer": "Администратор организации",
@@ -297,7 +299,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "Контакты",
           "call_us_label": "Поддержка: ",
-          "logged_in_as": "вход под именем"
+          "logged_in_as": "вход под именем",
+          "account_menu_label": "Меню аккаунта"
         },
         "bottom_header": {
           "catalog_menu_button": "Каталог",
@@ -1307,7 +1310,10 @@
       "title": "Корзина",
       "empty_cart_description": "Ваша корзина пуста",
       "recently_browsed_products": "Недавно просмотренные",
-      "empty_cart_search_text": "Используйте поиск, чтобы найти всё необходимое"
+      "empty_cart_search_text": "Используйте поиск, чтобы найти всё необходимое",
+      "save_for_later": "Сохранить на потом",
+      "saved_for_later": "Сохранено на потом",
+      "move_to_cart": "В корзину"
     },
     "checkout": {
       "meta": {

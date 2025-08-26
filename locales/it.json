@@ -78,7 +78,8 @@
       "reset_page": "Resetta pagina",
       "show_less": "Mostra di meno",
       "expand_all": "Espandi tutto",
-      "all_products": "Tutti i prodotti"
+      "all_products": "Tutti i prodotti",
+      "buy_now": "Acquista ora"
     },
     "labels": {
       "actions": "Azioni",
@@ -273,7 +274,8 @@
       "change_role": "Cambia ruolo",
       "save_changes": "Salva modifiche",
       "password_expired": "La password sta per scadere",
-      "error_details": "Dettagli errore"
+      "error_details": "Dettagli errore",
+      "buy_now": "Acquista ora"
     },
     "roles": {
       "org-maintainer": "Manutentore organizzazione",
@@ -297,7 +299,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "Contatti",
           "call_us_label": "Chiamaci: ",
-          "logged_in_as": "connesso come"
+          "logged_in_as": "connesso come",
+          "account_menu_label": "Menu account"
         },
         "bottom_header": {
           "catalog_menu_button": "Catalogo",
@@ -1307,7 +1310,10 @@
       "title": "Carrello",
       "empty_cart_description": "Il tuo carrello è vuoto",
       "recently_browsed_products": "Prodotti recentemente visualizzati",
-      "empty_cart_search_text": "Usa la ricerca per trovare tutto ciò di cui hai bisogno"
+      "empty_cart_search_text": "Usa la ricerca per trovare tutto ciò di cui hai bisogno",
+      "save_for_later": "Salva per dopo",
+      "saved_for_later": "Salvati per dopo",
+      "move_to_cart": "Aggiungi al carrello"
     },
     "checkout": {
       "meta": {

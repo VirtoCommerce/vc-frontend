@@ -23,6 +23,8 @@ query SearchProducts(
   $withImages: Boolean!
   $selectedAddressId: String
   $selectedAddress: String
+  $preserveUserQuery: Boolean
+  $previousOutline: String
 ) {
   products(
     storeId: $storeId
@@ -39,6 +41,8 @@ query SearchProducts(
     productIds: $productIds
     selectedAddressId: $selectedAddressId
     selectedAddress: $selectedAddress
+    preserveUserQuery: $preserveUserQuery
+    previousOutline: $previousOutline
   ) {
     totalCount
     items {
@@ -65,6 +69,9 @@ query SearchProducts(
           actual {
             ...money
           }
+        }
+        availabilityData {
+          ...availabilityData
         }
       }
       hasVariations

@@ -14,6 +14,7 @@
       :to="linkTo"
       :target="to ? target : null"
       :title="title"
+      :tabindex="linkTo ? 0 : -1"
       class="vc-product-title__text"
       @click="$emit('click', $event)"
     >
@@ -58,10 +59,11 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
 
   --font-size: var(--vc-product-title-font-size);
   --lines-number: v-bind(linesNumber);
+  --text-color: var(--vc-product-title-text-color, theme("colors.neutral.950"));
   --link-color: var(--vc-product-title-link-color, theme("colors.accent.600"));
   --link-hover-color: var(--vc-product-title-link-hover-color, theme("colors.accent.700"));
 
-  @apply text-[length:var(--font-size)] font-bold line-clamp-[--lines-number];
+  @apply text-[length:var(--font-size)] font-bold;
 
   @apply leading-[1.17em] #{!important};
 
@@ -78,16 +80,15 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   }
 
   &__text {
-    color: var(--body-text-color);
+    @apply line-clamp-[--lines-number] text-[--text-color];
+
     word-wrap: break-word;
 
     #{$link}:not(#{$disabled}) & {
-      @apply cursor-pointer;
-
-      color: var(--link-color);
+      @apply text-[--link-color] cursor-pointer;
 
       &:hover {
-        color: var(--link-hover-color);
+        @apply text-[--link-hover-color];
       }
     }
 

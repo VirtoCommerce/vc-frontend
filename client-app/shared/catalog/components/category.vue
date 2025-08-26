@@ -229,7 +229,7 @@ import {
   getFilterExpression,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForCategorySubtree,
-  getFilterExpressionForInStock,
+  getFilterExpressionForInStockVariations,
   getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
 } from "@/core/utilities";
@@ -335,6 +335,7 @@ const {
   searchQueryParam,
   sortQueryParam,
   totalProductsCount,
+  preserveUserQueryQueryParam,
 
   applyFilters: _applyFilters,
   applyFiltersOnly,
@@ -425,12 +426,13 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   filter: [
     props.filter,
     facetsQueryParam.value,
-    getFilterExpressionForInStock(localStorageInStock.value),
+    getFilterExpressionForInStockVariations(localStorageInStock.value),
     getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
     getFilterExpressionForAvailableIn(localStorageBranches.value),
   ]
     .filter(Boolean)
     .join(" "),
+  preserveUserQuery: !!preserveUserQueryQueryParam.value,
 }));
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -492,12 +494,14 @@ function resetPage() {
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
-const { addScopeItem, removeScopeItemByType, preparingScope } = useSearchScore();
+const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
 
 watch(
   () => props.categoryId,
   async (categoryId) => {
     if (categoryId || props.isRoot) {
+      setQueryScope(searchQueryParam.value);
+
       if (categoryId) {
         preparingScope.value = true;
       }
@@ -510,7 +514,7 @@ watch(
         : getFilterExpression([
             getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
             getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
-            getFilterExpressionForInStock(true),
+            getFilterExpressionForInStockVariations(true),
           ]);
       await fetchCategory({
         categoryId,
@@ -540,7 +544,10 @@ watch(
   },
 );
 
-watch(searchQueryParam, resetCurrentPage);
+watch(searchQueryParam, (value) => {
+  setQueryScope(value);
+  resetCurrentPage();
+});
 
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
@@ -693,3 +700,4 @@ onMounted(() => {
   }
 }
 </style>
+

@@ -78,7 +78,8 @@
       "reset_page": "ページをリセット",
       "show_less": "折りたたむ",
       "expand_all": "すべて展開",
-      "all_products": "すべての商品"
+      "all_products": "すべての商品",
+      "buy_now": "今すぐ購入"
     },
     "labels": {
       "actions": "操作",
@@ -273,7 +274,8 @@
       "change_role": "権限変更",
       "save_changes": "変更を保存",
       "password_expired": "パスワード期限切れ",
-      "error_details": "エラー詳細"
+      "error_details": "エラー詳細",
+      "buy_now": "今すぐ購入"
     },
     "roles": {
       "org-maintainer": "組織管理者",
@@ -297,7 +299,8 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "お問い合わせ",
           "call_us_label": "お電話: ",
-          "logged_in_as": "ログインユーザー:"
+          "logged_in_as": "ログインユーザー:",
+          "account_menu_label": "アカウントメニュー"
         },
         "bottom_header": {
           "catalog_menu_button": "カタログ",
@@ -1307,7 +1310,10 @@
       "title": "カート",
       "empty_cart_description": "カートが空です",
       "recently_browsed_products": "最近見た商品",
-      "empty_cart_search_text": "検索して必要なものを見つけましょう"
+      "empty_cart_search_text": "検索して必要なものを見つけましょう",
+      "save_for_later": "後で保存",
+      "saved_for_later": "後で保存",
+      "move_to_cart": "カートに入れる"
     },
     "checkout": {
       "meta": {
