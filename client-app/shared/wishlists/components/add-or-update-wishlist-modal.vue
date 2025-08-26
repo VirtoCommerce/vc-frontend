@@ -105,7 +105,7 @@ const { t } = globals.i18n.global;
 
 const listName = computed<string | undefined>(() => props.list?.name);
 const listDescription = computed<string | undefined>(() => props.list?.description);
-const listSharingScope = computed<string | undefined>(() => props.list?.scope);
+const listSharingScope = computed<string | undefined>(() => props.list?.sharingSetting?.scope);
 
 const { loading, createWishlist, updateWishlist } = useWishlists();
 const { isCorporateMember } = useUser();
@@ -119,7 +119,7 @@ const listSharingScopes = computed(() => {
 });
 
 const listSharingScopeSupportsLink = computed(() => sharingScope.value == WishlistScopeType.AnyoneAnonymous || sharingScope.value == WishlistScopeType.Organization);
-const sharingKey = computed(() => /*todo props.list?.id ??*/ crypto.randomUUID());
+const sharingKey = computed(() => props.list?.sharingSetting?.id ?? crypto.randomUUID());
 const sharingLink = computed(() => `${window.location.href}/${sharingKey.value}`);
 
 const MAX_DESCRIPTION_LENGTH = 250;
