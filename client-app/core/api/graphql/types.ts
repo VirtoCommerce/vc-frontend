@@ -1878,6 +1878,8 @@ export type InputChangeWishlistType = {
   listName?: InputMaybe<Scalars['String']['input']>;
   /** List scope (private or organization) */
   scope?: InputMaybe<Scalars['String']['input']>;
+  /** Sharing key (URL argument) */
+  sharingKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputClearCartType = {
@@ -1923,6 +1925,8 @@ export type InputCloneWishlistType = {
   listName?: InputMaybe<Scalars['String']['input']>;
   /** List scope (private or organization) */
   scope?: InputMaybe<Scalars['String']['input']>;
+  /** Sharing key (URL argument) */
+  sharingKey?: InputMaybe<Scalars['String']['input']>;
   /** Store ID */
   storeId: Scalars['String']['input'];
   /** Owner ID */
@@ -2038,6 +2042,8 @@ export type InputCreateWishlistType = {
   listName?: InputMaybe<Scalars['String']['input']>;
   /** List scope (private or organization) */
   scope?: InputMaybe<Scalars['String']['input']>;
+  /** Sharing key (URL argument) */
+  sharingKey?: InputMaybe<Scalars['String']['input']>;
   /** Store ID */
   storeId: Scalars['String']['input'];
   /** Owner ID */
