@@ -233,7 +233,7 @@ import {
   getFilterExpression,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForCategorySubtree,
-  getFilterExpressionForInStock,
+  getFilterExpressionForInStockVariations,
   getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
 } from "@/core/utilities";
@@ -433,7 +433,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   filter: [
     props.filter,
     facetsQueryParam.value,
-    getFilterExpressionForInStock(localStorageInStock.value),
+    getFilterExpressionForInStockVariations(localStorageInStock.value),
     getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
     getFilterExpressionForAvailableIn(localStorageBranches.value),
   ]
@@ -523,7 +523,7 @@ watch(
         : getFilterExpression([
             getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
             getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
-            getFilterExpressionForInStock(true),
+            getFilterExpressionForInStockVariations(true),
           ]);
       const data = await fetchCategory({
         categoryId,
@@ -711,3 +711,4 @@ onMounted(() => {
   }
 }
 </style>
+
