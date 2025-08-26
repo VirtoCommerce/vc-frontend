@@ -220,7 +220,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { moveFromSavedForLater } from "@/core/api/graphql/cart/mutations/moveFromSavedForLater";
@@ -282,6 +282,8 @@ const {
   openClearCartModal,
   selectCartItems,
   unselectCartItems,
+  shipment,
+  payment,
 } = useFullCart();
 const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
@@ -299,6 +301,9 @@ usePageHead({
 });
 
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: ROUTES.CART.NAME } }]);
+
+const analyticsLastSentShippingOption = ref<string | undefined>();
+const analyticsLastSentPaymentCode = ref<string | undefined>();
 
 const isCartLocked = ref(false);
 const savedForLaterList = ref<SavedForLaterListFragment>();
@@ -361,6 +366,60 @@ function selectItemEvent(item: LineItemType | undefined): void {
 function shouldHide(id: string) {
   return props.blocksToHide?.includes(id);
 }
+
+// Emit add_shipping_info when shipping becomes valid or method changes
+watch(
+  [
+    () => themeContext.value?.settings?.checkout_multistep_enabled,
+    () => isValidShipment.value,
+    () => shipment.value?.shipmentMethodOption,
+  ],
+  () => {
+    if (themeContext.value?.settings?.checkout_multistep_enabled) {
+      return;
+    }
+    if (!cart.value || !isValidShipment.value) {
+      return;
+    }
+    const option = shipment.value?.shipmentMethodOption;
+    if (option && option !== analyticsLastSentShippingOption.value) {
+      analytics("addShippingInfo", { ...cart.value, items: selectedLineItems.value }, {}, option);
+      analyticsLastSentShippingOption.value = option;
+    }
+  },
+  { immediate: true },
+);
+
+// Emit add_payment_info when payment becomes valid or method changes
+watch(
+  [
+    () => themeContext.value?.settings?.checkout_multistep_enabled,
+    () => isValidPayment.value,
+    () => payment.value?.paymentGatewayCode,
+  ],
+  () => {
+    if (themeContext.value?.settings?.checkout_multistep_enabled) {
+      return;
+    }
+    if (!cart.value || !isValidPayment.value) {
+      return;
+    }
+    const code = payment.value?.paymentGatewayCode;
+    if (code && code !== analyticsLastSentPaymentCode.value) {
+      analytics("addPaymentInfo", { ...cart.value, items: selectedLineItems.value }, {}, code);
+      analyticsLastSentPaymentCode.value = code;
+    }
+  },
+  { immediate: true },
+);
+
+watch(
+  () => cart.value?.id,
+  () => {
+    analyticsLastSentShippingOption.value = undefined;
+    analyticsLastSentPaymentCode.value = undefined;
+  },
+);
 
 void (async () => {
   await forceFetch();
