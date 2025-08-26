@@ -1,10 +1,9 @@
 <template>
   <VcModal
-    :title="
-      isEditMode
+    :title="isEditMode
         ? $t('shared.wishlists.add_or_update_wishlist_modal.edit_mode_title')
         : $t('shared.wishlists.add_or_update_wishlist_modal.title')
-    "
+      "
     dividers
     is-mobile-fullscreen
   >
@@ -31,18 +30,50 @@
       />
 
       <div v-if="isCorporateMember">
-        <VcSwitch v-model="isShared" label-position="right">
-          {{ $t("shared.wishlists.add_or_update_wishlist_modal.make_shared") }}
-        </VcSwitch>
+        <VcSelect
+          v-model="sharingScope"
+          :label="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_scope_label')"
+          :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_scope_placeholder')"
+          :disabled="loading"
+          :items="listSharingScopes"
+          text-field="label"
+          value-field="id"
+        >
+        </VcSelect>
+
+        <VcInput
+          v-if="listSharingScopeSupportsLink"
+          v-model="sharingLink"
+          :label="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_link_label')"
+          readonly
+        >
+          <template #append>
+            <VcButton
+              color="secondary"
+              variant="outline"
+              icon="document-duplicate"
+              icon-size="1.25rem"
+            ></VcButton>
+          </template>
+        </VcInput>
       </div>
     </div>
 
     <template #actions="{ close }">
-      <VcButton color="secondary" variant="outline" @click="close">
+      <VcButton
+        color="secondary"
+        variant="outline"
+        @click="close"
+      >
         {{ $t("shared.wishlists.add_or_update_wishlist_modal.cancel_button") }}
       </VcButton>
 
-      <VcButton :loading="loading" :disabled="!canSave" class="ms-auto" @click="save(close)">
+      <VcButton
+        :loading="loading"
+        :disabled="!canSave"
+        class="ms-auto"
+        @click="save(close)"
+      >
         {{
           isEditMode
             ? $t("shared.wishlists.add_or_update_wishlist_modal.save_button")
@@ -57,8 +88,9 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
 import { computed } from "vue";
-import { bool, object, string } from "yup";
+import { object, string } from "yup";
 import { WishlistScopeType } from "@/core/api/graphql/types";
+import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account/composables";
 import { useWishlists } from "../composables/useWishlists";
 import type { WishlistType } from "@/core/api/graphql/types";
@@ -69,12 +101,26 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const { t } = globals.i18n.global;
+
 const listName = computed<string | undefined>(() => props.list?.name);
 const listDescription = computed<string | undefined>(() => props.list?.description);
-const listIsShared = computed<boolean>(() => props.list?.scope === WishlistScopeType.Organization);
+const listSharingScope = computed<string | undefined>(() => props.list?.scope);
 
 const { loading, createWishlist, updateWishlist } = useWishlists();
 const { isCorporateMember } = useUser();
+
+const listSharingScopes = computed(() => {
+  return [
+    { id: WishlistScopeType.Private, label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.Private}`) },
+    { id: WishlistScopeType.AnyoneAnonymous, label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.AnyoneAnonymous}`) },
+    { id: WishlistScopeType.Organization, label: t(`shared.wishlists.add_or_update_wishlist_modal.sharing_scope.${WishlistScopeType.Organization}`) },
+  ]
+});
+
+const listSharingScopeSupportsLink = computed(() => sharingScope.value == WishlistScopeType.AnyoneAnonymous || sharingScope.value == WishlistScopeType.Organization);
+const sharingKey = computed(() => /*todo props.list?.id ??*/ crypto.randomUUID());
+const sharingLink = computed(() => `${window.location.href}/${sharingKey.value}`);
 
 const MAX_DESCRIPTION_LENGTH = 250;
 
@@ -82,7 +128,7 @@ const validationSchema = toTypedSchema(
   object({
     name: string().required().max(25),
     description: string().max(MAX_DESCRIPTION_LENGTH),
-    isShared: bool(),
+    sharingScope: string().required(),
   }),
 );
 
@@ -91,14 +137,14 @@ const { errors, meta } = useForm({
   initialValues: {
     name: listName.value,
     description: listDescription.value ?? "",
-    isShared: listIsShared.value,
+    sharingScope: listSharingScope.value,
   },
   validateOnMount: true,
 });
 
 const { value: name } = useField<string | undefined>("name");
 const { value: description } = useField<string | undefined>("description");
-const { value: isShared } = useField<boolean | undefined>("isShared");
+const { value: sharingScope } = useField<string | undefined>("sharingScope");
 
 const isEditMode = computed<boolean>(() => !!props.list);
 const canSave = computed<boolean>(() => meta.value.dirty && meta.value.valid);
@@ -108,20 +154,20 @@ async function save(closeHandle: () => void): Promise<void> {
     return;
   }
 
-  const scope = isShared.value ? WishlistScopeType.Organization : WishlistScopeType.Private;
-
   if (isEditMode.value) {
     await updateWishlist({
       listId: props.list!.id,
       listName: name.value?.trim(),
       description: description.value?.trim(),
-      scope,
+      scope: sharingScope.value,
+      sharingKey: sharingKey.value
     });
   } else {
     await createWishlist({
       listName: name.value?.trim(),
       description: description.value?.trim(),
-      scope,
+      scope: sharingScope.value,
+      sharingKey: sharingKey.value
     });
   }
 

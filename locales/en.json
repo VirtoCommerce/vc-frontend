@@ -891,11 +891,19 @@
         "edit_mode_title": "List settings",
         "list_name_label": "List name",
         "list_name_placeholder": "Please enter name",
+        "sharing_scope_label": "Sharing options",
+        "sharing_scope_placeholder": "Please select one option",
+        "sharing_link_label": "Link",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Private list",
-        "make_shared": "Make shared"
+        "make_shared": "Make shared",
+        "sharing_scope": {
+          "Private": "Private",
+          "AnyoneAnonymous": "Anyone",
+          "Organization": "Organization"
+        }
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",
