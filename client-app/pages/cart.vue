@@ -367,21 +367,15 @@ function shouldHide(id: string) {
   return props.blocksToHide?.includes(id);
 }
 
-// Emit add_shipping_info when shipping becomes valid or method changes
 watch(
-  [
-    () => themeContext.value?.settings?.checkout_multistep_enabled,
-    () => isValidShipment.value,
-    () => shipment.value?.shipmentMethodOption,
-  ],
+  [() => isValidShipment.value, () => shipment.value?.shipmentMethodOption],
   () => {
-    if (themeContext.value?.settings?.checkout_multistep_enabled) {
+    if (themeContext.value?.settings?.checkout_multistep_enabled || !cart.value || !isValidShipment.value) {
       return;
     }
-    if (!cart.value || !isValidShipment.value) {
-      return;
-    }
+
     const option = shipment.value?.shipmentMethodOption;
+
     if (option && option !== analyticsLastSentShippingOption.value) {
       analytics("addShippingInfo", { ...cart.value, items: selectedLineItems.value }, {}, option);
       analyticsLastSentShippingOption.value = option;
@@ -390,21 +384,15 @@ watch(
   { immediate: true },
 );
 
-// Emit add_payment_info when payment becomes valid or method changes
 watch(
-  [
-    () => themeContext.value?.settings?.checkout_multistep_enabled,
-    () => isValidPayment.value,
-    () => payment.value?.paymentGatewayCode,
-  ],
+  [() => isValidPayment.value, () => payment.value?.paymentGatewayCode],
   () => {
-    if (themeContext.value?.settings?.checkout_multistep_enabled) {
+    if (themeContext.value?.settings?.checkout_multistep_enabled || !cart.value || !isValidPayment.value) {
       return;
     }
-    if (!cart.value || !isValidPayment.value) {
-      return;
-    }
+
     const code = payment.value?.paymentGatewayCode;
+
     if (code && code !== analyticsLastSentPaymentCode.value) {
       analytics("addPaymentInfo", { ...cart.value, items: selectedLineItems.value }, {}, code);
       analyticsLastSentPaymentCode.value = code;
