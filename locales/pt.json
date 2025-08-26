@@ -78,7 +78,8 @@
       "reset_page": "Redefinir página",
       "show_less": "Mostrar menos",
       "expand_all": "Expandir tudo",
-      "all_products": "Todos os produtos"
+      "all_products": "Todos os produtos",
+      "buy_now": "Comprar agora"
     },
     "labels": {
       "actions": "Ações",
@@ -273,7 +274,8 @@
       "change_role": "Alterar papel",
       "save_changes": "Salvar Alterações",
       "password_expired": "Senha está prestes a expirar",
-      "error_details": "Detalhes do erro"
+      "error_details": "Detalhes do erro",
+      "buy_now": "Comprar agora"
     },
     "roles": {
       "org-maintainer": "Mantenedor da Organização",
