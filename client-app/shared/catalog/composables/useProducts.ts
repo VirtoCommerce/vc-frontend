@@ -126,6 +126,7 @@ export function useProducts(
     facets: [],
     filters: [],
   });
+  const normalizedFacetsToHide = computed(() => options.facetsToHide?.map((facet) => facet.toLowerCase()));
   const productFiltersSorted = computed(() => {
     return { ...productsFilters.value, facets: getSortedFacets(productsFilters.value.facets) };
   });
@@ -308,10 +309,10 @@ export function useProducts(
 
   function hasSelectedFacets(): boolean {
     const filteredFacets = facets.value.filter(
-      (facet) => !options.facetsToHide?.includes(facet.paramName.toLowerCase()),
+      (facet) => !normalizedFacetsToHide.value?.includes(facet.paramName.toLowerCase()),
     );
     const filteredFilters = productsFilters.value.filters.filter(
-      (filter) => !options.facetsToHide?.includes(filter.name.toLowerCase()),
+      (filter) => !normalizedFacetsToHide.value?.includes(filter.name.toLowerCase()),
     );
     return !!filteredFacets.length && !!filteredFilters.length;
   }
