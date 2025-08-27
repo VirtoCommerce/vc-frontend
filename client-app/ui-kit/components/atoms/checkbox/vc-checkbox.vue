@@ -27,9 +27,17 @@
         @click="onClick"
       />
 
-      <span v-if="$slots.default" class="vc-checkbox__label">
-        <slot v-bind="{ checked: isChecked }" />
-      </span>
+      <VcTooltip v-if="$slots.default" v-bind="tooltipBindings">
+        <template #trigger>
+          <span class="vc-checkbox__label">
+            <slot v-bind="{ checked: isChecked }" />
+          </span>
+        </template>
+
+        <template #content>
+          <slot name="tooltip" :checked="isChecked" />
+        </template>
+      </VcTooltip>
     </label>
 
     <VcInputDetails
@@ -44,7 +52,7 @@
 
 <script setup lang="ts">
 import { includes } from "lodash";
-import { computed, inject } from "vue";
+import { computed, inject, useSlots } from "vue";
 
 interface IEmits {
   (event: "update:modelValue", value: boolean): void;
@@ -66,6 +74,11 @@ interface IProps {
   testId?: string;
   preventDefault?: boolean;
   tabindex?: string;
+  tooltip?: {
+    placement?: VcPopoverPlacementType;
+    width?: string;
+    disabled?: boolean;
+  };
 }
 
 const emit = defineEmits<IEmits>();
@@ -74,9 +87,15 @@ const props = withDefaults(defineProps<IProps>(), {
   modelValue: false,
   size: "md",
   labelPosition: "right",
+  tooltip: () => ({
+    placement: "bottom",
+    width: "12rem",
+    disabled: false,
+  }),
 });
 
 const groupContext = inject<VcCheckboxGroupContextType | null>("checkboxGroupContext", null);
+const slots = useSlots();
 
 const isChecked = computed(() => {
   if (groupContext && !props.modelValue) {
@@ -85,6 +104,12 @@ const isChecked = computed(() => {
     return props.modelValue;
   }
 });
+
+const tooltipBindings = computed(() => ({
+  placement: props.tooltip?.placement,
+  width: props.tooltip?.width,
+  disabled: props.tooltip?.disabled ?? !slots.tooltip,
+}));
 
 function handleChange() {
   if (props.disabled) {
@@ -154,7 +179,7 @@ function onClick(event: Event) {
   }
 
   &__container {
-    @apply flex items-start cursor-pointer;
+    @apply relative flex items-start cursor-pointer;
 
     #{$disabled} & {
       @apply cursor-not-allowed;
@@ -208,6 +233,10 @@ function onClick(event: Event) {
 
     #{$disabled} & {
       @apply opacity-60;
+    }
+
+    &::before {
+      @apply content-[''] absolute inset-0;
     }
   }
 
