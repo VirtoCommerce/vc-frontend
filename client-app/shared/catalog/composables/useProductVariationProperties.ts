@@ -211,10 +211,6 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
   }
 
   function getTooltip(property: IProperty, option: IPropertyValue) {
-    if (property.propertyValueType === PropertyValueTypes.Color) {
-      return option.label;
-    }
-
     return option.label;
   }
 
