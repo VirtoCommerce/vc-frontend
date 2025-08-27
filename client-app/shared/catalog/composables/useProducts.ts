@@ -11,7 +11,7 @@ import {
   PRODUCT_SORTING_LIST,
   PURCHASED_BEFORE_LOCAL_STORAGE,
   EXCLUDED_FILTER_NAMES,
-  zeroPriceFilter
+  zeroPriceFilter,
 } from "@/core/constants";
 import { QueryParamName, SortDirection } from "@/core/enums";
 import {
@@ -124,7 +124,7 @@ export function useProducts(
     inStock: localStorageInStock.value,
     purchasedBefore: localStoragePurchasedBefore.value,
     facets: [],
-    filters: []
+    filters: [],
   });
   const productFiltersSorted = computed(() => {
     return { ...productsFilters.value, facets: getSortedFacets(productsFilters.value.facets) };
@@ -204,7 +204,7 @@ export function useProducts(
     // Update only the filters part of productsFilters
     productsFilters.value = {
       ...productsFilters.value,
-      filters: newFilters
+      filters: newFilters,
     };
 
     // Generate filter expression from filters only and update query param
@@ -277,7 +277,7 @@ export function useProducts(
     productsFilters.value = {
       ...newFilters,
       facets: getSortedFacets(newFilters.facets),
-      filters: prepareFilters(newFilters.filters)
+      filters: prepareFilters(newFilters.filters),
     };
   }
 
@@ -307,7 +307,13 @@ export function useProducts(
   }
 
   function hasSelectedFacets(): boolean {
-    return !!facets.value?.some((facet) => !options.facetsToHide?.includes(facet.paramName)) && !!productsFilters.value.filters?.length;
+    const filteredFacets = facets.value.filter(
+      (facet) => !options.facetsToHide?.includes(facet.paramName.toLowerCase()),
+    );
+    const filteredFilters = productsFilters.value.filters.filter(
+      (filter) => !options.facetsToHide?.includes(filter.name.toLowerCase()),
+    );
+    return !!filteredFacets.length && !!filteredFilters.length;
   }
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
@@ -348,7 +354,7 @@ export function useProducts(
         term_facets = [],
         range_facets = [],
         totalCount = 0,
-        filters = []
+        filters = [],
       } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
 
       products.value = items;
@@ -472,14 +478,11 @@ export function useProducts(
   }
 
   function isExcludedFilter(filter: SearchProductFilterResult): boolean {
-
     return EXCLUDED_FILTER_NAMES.includes(filter.name);
   }
 
   function prepareFilters(filters: SearchProductFilterResult[]) {
-    return filters.filter((filter) =>
-      !isZeroPriceFilter(filter) && !isExcludedFilter(filter)
-    );
+    return filters.filter((filter) => !isZeroPriceFilter(filter) && !isExcludedFilter(filter));
   }
 
   async function resetCurrentPage() {
