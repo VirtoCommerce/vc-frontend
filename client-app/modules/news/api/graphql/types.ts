@@ -22,6 +22,7 @@ export type NewsArticleContent = {
   content?: Maybe<Scalars['String']['output']>;
   contentPreview?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
+  isArchived: Scalars['Boolean']['output'];
   publishDate?: Maybe<Scalars['DateTime']['output']>;
   seoInfo: SeoInfo;
   title?: Maybe<Scalars['String']['output']>;
@@ -92,6 +93,7 @@ export type SeoInfo = {
   name?: Maybe<Scalars['String']['output']>;
   objectId: Scalars['String']['output'];
   objectType: Scalars['String']['output'];
+  outline?: Maybe<Scalars['String']['output']>;
   pageTitle?: Maybe<Scalars['String']['output']>;
   semanticUrl: Scalars['String']['output'];
   storeId?: Maybe<Scalars['String']['output']>;
