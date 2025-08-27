@@ -903,7 +903,8 @@
           "Private": "プライベート",
           "AnyoneAnonymous": "誰でも",
           "Organization": "組織"
-        }
+        },
+        "clipboard_success": "リンクをコピーしました"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",

@@ -903,7 +903,8 @@
           "Private": "Privé(e)",
           "AnyoneAnonymous": "N'importe qui",
           "Organization": "Organisation"
-        }
+        },
+        "clipboard_success": "Lien copié"
       },
       "delete_wishlist_modal": {
         "title": "Confirmer la suppression",

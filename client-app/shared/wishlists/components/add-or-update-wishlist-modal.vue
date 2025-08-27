@@ -1,8 +1,8 @@
 <template>
   <VcModal
     :title="isEditMode
-        ? $t('shared.wishlists.add_or_update_wishlist_modal.edit_mode_title')
-        : $t('shared.wishlists.add_or_update_wishlist_modal.title')
+      ? $t('shared.wishlists.add_or_update_wishlist_modal.edit_mode_title')
+      : $t('shared.wishlists.add_or_update_wishlist_modal.title')
       "
     dividers
     is-mobile-fullscreen
@@ -29,7 +29,10 @@
         :max-length="MAX_DESCRIPTION_LENGTH"
       />
 
-      <div v-if="isCorporateMember" class="space-y-4">
+      <div
+        v-if="isCorporateMember"
+        class="space-y-4"
+      >
         <VcSelect
           v-model="sharingScope"
           :label="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_scope_label')"
@@ -49,10 +52,12 @@
         >
           <template #append>
             <VcButton
+              v-if="isClipboardSupported"
               color="secondary"
               variant="outline"
               icon="document-duplicate"
               icon-size="1.25rem"
+              @click="copySharingLink"
             ></VcButton>
           </template>
         </VcInput>
@@ -86,12 +91,14 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
+import { useClipboard } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
 import { computed } from "vue";
 import { object, string } from "yup";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account/composables";
+import { useNotifications } from "@/shared/notification";
 import { useWishlists } from "../composables/useWishlists";
 import type { WishlistType } from "@/core/api/graphql/types";
 
@@ -102,6 +109,9 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { t } = globals.i18n.global;
+
+const { copy: copyToClipboard, isSupported: isClipboardSupported } = useClipboard();
+const notifications = useNotifications();
 
 const listName = computed<string | undefined>(() => props.list?.name);
 const listDescription = computed<string | undefined>(() => props.list?.description);
@@ -120,7 +130,7 @@ const listSharingScopes = computed(() => {
 
 const listSharingScopeSupportsLink = computed(() => sharingScope.value == WishlistScopeType.AnyoneAnonymous || sharingScope.value == WishlistScopeType.Organization);
 const sharingKey = computed(() => props.list?.sharingSetting?.id ?? crypto.randomUUID());
-const sharingLink = computed(() => `${window.location.href}/${sharingKey.value}`);
+const sharingLink = computed(() => `${location.protocol}//${location.host}/shared-list/${sharingKey.value}`);
 
 const MAX_DESCRIPTION_LENGTH = 250;
 
@@ -137,7 +147,7 @@ const { errors, meta } = useForm({
   initialValues: {
     name: listName.value,
     description: listDescription.value ?? "",
-    sharingScope: listSharingScope.value?? WishlistScopeType.Private,
+    sharingScope: listSharingScope.value ?? WishlistScopeType.Private,
   },
   validateOnMount: true,
 });
@@ -173,4 +183,14 @@ async function save(closeHandle: () => void): Promise<void> {
 
   closeHandle();
 }
+
+async function copySharingLink() {
+  await copyToClipboard(sharingLink.value);
+
+  notifications.success({
+    text: t("shared.wishlists.add_or_update_wishlist_modal.clipboard_success"),
+    duration: 4000,
+    single: true,
+  });
+};
 </script>

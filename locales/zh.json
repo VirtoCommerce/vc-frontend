@@ -903,7 +903,8 @@
           "Private": "私密",
           "AnyoneAnonymous": "任何人",
           "Organization": "组织"
-        }
+        },
+        "clipboard_success": "链接已复制"
       },
       "delete_wishlist_modal": {
         "title": "确认删除",

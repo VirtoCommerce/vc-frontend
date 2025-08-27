@@ -903,7 +903,8 @@
           "Private": "Приватный",
           "AnyoneAnonymous": "Кто угодно",
           "Organization": "Организация"
-        }
+        },
+        "clipboard_success": "Ссылка скопирована"
       },
       "delete_wishlist_modal": {
         "title": "Подтвердить удаление",
