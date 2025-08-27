@@ -919,7 +919,8 @@
       },
       "status": {
         "shared": "共享",
-        "private": "私人"
+        "private": "私人",
+        "shared_with_me": "与我共享"
       }
     },
     "sorting": {

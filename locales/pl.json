@@ -919,7 +919,8 @@
       },
       "status": {
         "shared": "Współdzielona",
-        "private": "Prywatna"
+        "private": "Prywatna",
+        "shared_with_me": "Udostępnione mi"
       }
     },
     "sorting": {

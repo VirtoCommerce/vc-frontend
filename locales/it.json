@@ -919,7 +919,8 @@
       },
       "status": {
         "shared": "Condivisa",
-        "private": "Privata"
+        "private": "Privata",
+        "shared_with_me": "Condivisi con me"
       }
     },
     "sorting": {

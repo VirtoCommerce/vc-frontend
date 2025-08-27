@@ -919,7 +919,8 @@
       },
       "status": {
         "shared": "Общий",
-        "private": "Приватный"
+        "private": "Приватный",
+        "shared_with_me": "Со мной поделились"
       }
     },
     "sorting": {

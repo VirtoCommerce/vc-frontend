@@ -919,7 +919,8 @@
       },
       "status": {
         "shared": "Shared",
-        "private": "Private"
+        "private": "Private",
+        "shared_with_me": "共有"
       }
     },
     "sorting": {
