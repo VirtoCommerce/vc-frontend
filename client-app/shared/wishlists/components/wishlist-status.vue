@@ -8,20 +8,27 @@
       </span>
     </template>
 
-    <template v-else-if="scope === WishlistScopeType.Organization">
+    <template v-else>
       <VcIcon :size="16" class="fill-accent" name="users" />
 
       <span>
-        {{ $t("shared.wishlists.status.shared") }}
+        {{ isOwner ? $t("shared.wishlists.status.shared") : $t("shared.wishlists.status.shared_with_me")  }}
       </span>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { WishlistScopeType } from "@/core/api/graphql/types";
+import { globals } from "@/core/globals";
+
 interface IProps {
   scope: string;
+  createdBy: string;
 }
-defineProps<IProps>();
+const props = defineProps<IProps>();
+
+const { userName } = globals;
+const isOwner = computed(()=> props.createdBy == userName);
 </script>
