@@ -1,8 +1,7 @@
 <template>
   <teleport to="body">
-    <div
+    <section
       class="notifications-host"
-      role="region"
       :aria-label="$t('common.labels.notifications')"
       aria-live="polite"
     >
@@ -40,7 +39,7 @@
           </div>
         </VcAlert>
       </transition-group>
-    </div>
+    </section>
   </teleport>
 </template>
 
