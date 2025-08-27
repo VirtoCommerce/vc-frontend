@@ -108,7 +108,7 @@ const isChecked = computed(() => {
 const tooltipBindings = computed(() => ({
   placement: props.tooltip?.placement,
   width: props.tooltip?.width,
-  disabled: props.tooltip?.disabled ?? !slots.tooltip,
+  disabled: props.tooltip?.disabled || !slots.tooltip,
 }));
 
 function handleChange() {
