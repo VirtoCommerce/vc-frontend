@@ -18,4 +18,4 @@ export const zeroPriceFilter: SearchProductFilterRangeValue = {
 };
 
 // Internal filter name that should be excluded from UI. Example: category page or product with variations page.
-export const EXCLUDED_FILTER_NAMES = ["__outline", "availability", "available_in", "isPurchased", "productfamilyid", "is"];
+export const EXCLUDED_FILTER_NAMES = ["__outline", "availability", "inStock", "inStock_variations", "available_in", "isPurchased", "productfamilyid", "is"];
