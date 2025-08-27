@@ -789,8 +789,6 @@ export type Promotion = {
 
 /** Products attributes. */
 export type Property = {
-  /** Color code in CSS format. */
-  colorCode?: Maybe<Scalars['String']['output']>;
   /** The display order of the property. */
   displayOrder?: Maybe<Scalars['Int']['output']>;
   group?: Maybe<PropertyGroup>;
@@ -820,8 +818,6 @@ export type PropertyPropertyDictionaryItemsArgs = {
 
 /** Represents property dictionary item */
 export type PropertyDictionaryItem = {
-  /** Color code in CSS format. */
-  colorCode: Scalars['String']['output'];
   /** The unique ID of the property dictionary item. */
   id: Scalars['String']['output'];
   /** Value order. */
@@ -873,7 +869,6 @@ export enum PropertyType {
 /** The type of catalog property value. */
 export enum PropertyValueTypes {
   Boolean = 'BOOLEAN',
-  Color = 'COLOR',
   DateTime = 'DATE_TIME',
   GeoPoint = 'GEO_POINT',
   Html = 'HTML',
@@ -1108,6 +1103,7 @@ export type SeoInfo = {
   name?: Maybe<Scalars['String']['output']>;
   objectId: Scalars['String']['output'];
   objectType: Scalars['String']['output'];
+  outline?: Maybe<Scalars['String']['output']>;
   pageTitle?: Maybe<Scalars['String']['output']>;
   semanticUrl: Scalars['String']['output'];
   storeId?: Maybe<Scalars['String']['output']>;

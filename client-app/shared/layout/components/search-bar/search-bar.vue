@@ -95,7 +95,7 @@
                 <VcIcon name="history" size="md" />
               </template>
 
-              <span v-html-safe="highlightSearchText(query, trimmedSearchPhrase)" />
+              <span v-html-safe="highlightSearchText(query, trimmedSearchPhrase)" class="[word-break:break-word]" />
             </VcMenuItem>
 
             <VcMenuItem
@@ -110,7 +110,7 @@
               @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
               @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
             >
-              <span v-html-safe="suggestion.label" />
+              <span v-html-safe="suggestion.label" class="[word-break:break-word]" />
             </VcMenuItem>
           </ul>
         </template>
@@ -136,7 +136,7 @@
               @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
               @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
             >
-              <span v-html-safe="page.name" />
+              <span v-html-safe="page.name" class="[word-break:break-word]" />
             </VcMenuItem>
           </ul>
         </template>
@@ -160,7 +160,7 @@
               @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
               @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
             >
-              <span v-html-safe="category.name" />
+              <span v-html-safe="category.name" class="[word-break:break-word]" />
             </VcMenuItem>
           </ul>
         </template>
