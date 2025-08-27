@@ -37,6 +37,7 @@ import { computed, ref, shallowRef, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { ROUTES } from "@/router/routes/constants";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
 import { useBulkOrderExtensionPoints } from "@/shared/bulk-order/composables/useBulkOrderExtensionPoints";
 import { useShortCart } from "@/shared/cart";
@@ -99,12 +100,12 @@ async function addItems(items: InputNewBulkItemType[]) {
         errorItems: itemsWithErrors.value,
         async onConfirm(): Promise<void> {
           closeAddToCartSkuErrorsModal();
-          await router.push({ name: "Cart" });
+          await router.push({ name: ROUTES.CART.NAME });
         },
       },
     });
   } else {
-    await router.push({ name: "Cart" });
+    await router.push({ name: ROUTES.CART.NAME });
   }
 }
 

@@ -2,7 +2,7 @@
   <VcWidget :title="!isMobile ? $t('shared.bulk_order.manually.title') : undefined" size="md">
     <p class="text-sm">
       {{ $t("shared.bulk_order.manually.subtitle_message_start") }}
-      <router-link :to="{ name: 'Cart' }" class="text-[--link-color] hover:text-[--link-hover-color]">
+      <router-link :to="{ name: ROUTES.CART.NAME }" class="text-[--link-color] hover:text-[--link-hover-color]">
         {{ $t("shared.bulk_order.manually.cart_link") }}
       </router-link>
       {{ $t("shared.bulk_order.manually.subtitle_message_end") }}
@@ -63,6 +63,7 @@
 <script setup lang="ts">
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { computed, ref } from "vue";
+import { ROUTES } from "@/router/routes/constants";
 import { maxQuantity, validateQuantity } from "@/shared/bulk-order/utils";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";

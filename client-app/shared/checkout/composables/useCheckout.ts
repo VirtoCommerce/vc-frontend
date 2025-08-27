@@ -1,13 +1,14 @@
-import { createGlobalState, createSharedComposable, useDebounceFn } from "@vueuse/core";
+import { createGlobalState, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
 import { useAnalytics, useHistoricalEvents, useThemeContext } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
+import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
@@ -53,9 +54,11 @@ const useGlobalCheckout = createGlobalState(() => {
   };
 });
 
-export function _useCheckout() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function _useCheckout(cartId?: string) {
   const { analytics } = useAnalytics();
   const { t } = useI18n();
+  const route = useRoute();
   const notifications = useNotifications();
   const { openModal, closeModal } = useModal();
   const router = useRouter();
@@ -482,6 +485,8 @@ export function _useCheckout() {
     clearGlobalCheckoutState();
   }
 
+  watch(() => route.params.cartId, clearState);
+
   return {
     deliveryAddress,
     shipmentMethod,
@@ -512,4 +517,11 @@ export function _useCheckout() {
   };
 }
 
-export const useCheckout = createSharedComposable(_useCheckout);
+const useCheckoutShared = createSharedComposableByArgs(_useCheckout, (args) => args?.[0] ?? "");
+
+export function useCheckout() {
+  const route = useRoute();
+  const cartId = Array.isArray(route.params?.cartId) ? route.params?.cartId[0] : route.params?.cartId;
+
+  return useCheckoutShared(cartId);
+}

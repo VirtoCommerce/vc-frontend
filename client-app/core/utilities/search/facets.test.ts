@@ -6,6 +6,7 @@ import {
   getFilterExpressionForCategorySubtree,
   getFilterExpressionForZeroPrice,
   getFilterExpressionForInStock,
+  getFilterExpressionForInStockVariations,
   getFilterExpressionForAvailableIn,
   getFilterExpressionFromFacets,
   generateFilterExpressionFromFilters,
@@ -75,10 +76,21 @@ describe("getFilterExpressionForZeroPrice", () => {
 describe("getFilterExpressionForInStock", () => {
   it.each`
     value    | expected
-    ${true}  | ${"availability:InStock"}
+    ${true}  | ${"inStock:true"}
     ${false} | ${""}
   `("with value: $value -> $expected", ({ value, expected }) => {
     const result = getFilterExpressionForInStock(ref(value));
+    expect(result).toBe(expected);
+  });
+});
+
+describe("getFilterExpressionForInStockVariations", () => {
+  it.each`
+    value    | expected
+    ${true}  | ${"inStock_variations:true"}
+    ${false} | ${""}
+  `("with value: $value -> $expected", ({ value, expected }) => {
+    const result = getFilterExpressionForInStockVariations(ref(value));
     expect(result).toBe(expected);
   });
 });

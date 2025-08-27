@@ -55,7 +55,11 @@
 
             <component :is="item" v-for="(item, index) in customComponents" :key="index" class="px-1 py-2 xs:px-2" />
 
-            <router-link :to="{ name: 'Cart' }" :aria-label="$t('common.links.cart')" class="px-1 py-2 xs:px-2">
+            <router-link
+              :to="{ name: ROUTES.CART.NAME }"
+              :aria-label="$t('common.links.cart')"
+              class="px-1 py-2 xs:px-2"
+            >
               <span class="relative block">
                 <VcIcon class="fill-primary" name="cart" :size="28" />
 
@@ -151,6 +155,7 @@ import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import BarcodeScanner from "@/shared/layout/components/search-bar/barcode-scanner.vue";
+
 const router = useRouter();
 
 const { customComponents } = useCustomMobileHeaderComponents();
