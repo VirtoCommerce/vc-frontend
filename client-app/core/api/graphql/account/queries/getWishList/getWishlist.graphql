@@ -13,6 +13,7 @@ query GetWishlist($listId: String!, $cultureName: String) {
     sharingSetting {
       id
       scope
+      access
     }
   }
 }

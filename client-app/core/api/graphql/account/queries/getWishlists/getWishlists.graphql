@@ -30,6 +30,7 @@ query GetWishlists(
       sharingSetting {
         id
         scope
+        access
       }
     }
   }
