@@ -25,6 +25,7 @@ const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
 const Category = () => import("@/pages/category.vue");
 const Product = () => import("@/pages/product.vue");
+const SharedList = () => import("@/pages/shared-list.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
@@ -77,6 +78,7 @@ export const mainRoutes: RouteRecordRaw[] = [
     component: Product,
     props: (route) => ({ allowSetMeta: true, productId: route.params.productId }),
   },
+  { path: "/shared-list/:sharingKey", name: "SharedList", component: SharedList, props: true },
 
   /** NOTE: Always leave it last. */
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
