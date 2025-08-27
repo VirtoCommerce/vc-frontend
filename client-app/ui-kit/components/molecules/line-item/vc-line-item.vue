@@ -26,13 +26,13 @@
         test-id="vc-line-item-checkbox"
         @change="$emit('select', isSelected)"
       />
-      
+
       <div class="vc-line-item__img-container">
         <!--  IMAGE -->
         <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
-         
+
         <div class="vc-line-item__img-actions">
-          <slot name="after-image" /> 
+          <slot name="after-image" />
         </div>
       </div>
 
@@ -55,13 +55,13 @@
             @click="$emit('linkClick')"
           >
             {{ name }}
-          </VcProductTitle> 
-          
+          </VcProductTitle>
+
           <div class="vc-line-item__name-actions">
-            <slot name="after-title" /> 
+            <slot name="after-title" />
           </div>
         </div>
-        
+
         <div
           v-if="withProperties || withPrice"
           :class="[
@@ -222,7 +222,7 @@ watchEffect(() => {
 
   --bg-color: var(--color-additional-50);
 
-  @apply relative flex flex-col gap-2 p-3 rounded border shadow-md bg-[--bg-color];
+  @apply relative flex flex-col gap-2 p-3 rounded-[--vc-radius] border shadow-md bg-[--bg-color];
 
   @container (width > theme("containers.2xl")) {
     @apply p-4 rounded-none border-0 shadow-none;
@@ -297,7 +297,7 @@ watchEffect(() => {
   }
 
   &__img {
-    @apply shrink-0 size-16 rounded border object-contain object-center; 
+    @apply shrink-0 size-16 rounded-[--vc-radius] border object-contain object-center;
 
     @container (width > theme("containers.2xl")) {
       @apply size-12;
@@ -316,7 +316,7 @@ watchEffect(() => {
   &__img-actions {
     @container (width > theme("containers.2xl")) {
       @apply hidden;
-    }  
+    }
   }
 
   &__content {

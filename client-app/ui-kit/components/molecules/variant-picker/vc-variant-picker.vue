@@ -85,7 +85,7 @@ const image = computed(() => (props.type === "image" ? props.value : ""));
 
   --props-color: v-bind(color);
   --color: var(--props-color, var(--vc-variant-picker-bg-color, theme("colors.additional.50")));
-  --radius: var(--vc-variant-picker-radius, 0.5rem);
+  --radius: var(--vc-variant-picker-radius, var(--vc-radius, 0.5rem));
   --strike-line-width: 2px;
 
   @apply inline-block;

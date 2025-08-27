@@ -228,7 +228,7 @@ watchEffect(() => {
 
   &__container {
     @container (width > theme("containers.2xl")) {
-      @apply border rounded divide-y;
+      @apply border rounded-[--vc-radius] divide-y;
     }
   }
 
@@ -293,11 +293,11 @@ watchEffect(() => {
       @apply gap-0 space-y-0 divide-y;
 
       &:first-child {
-        @apply rounded-t;
+        @apply rounded-t-[inherit];
       }
 
       &:last-child {
-        @apply rounded-b;
+        @apply rounded-b-[inherit];
       }
     }
   }
