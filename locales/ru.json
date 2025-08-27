@@ -83,6 +83,7 @@
     },
     "labels": {
       "actions": "Действия",
+      "notifications": "Уведомления",
       "user_name": "Имя пользователя",
       "password": "Пароль",
       "confirm_password": "Подтвердите пароль",
