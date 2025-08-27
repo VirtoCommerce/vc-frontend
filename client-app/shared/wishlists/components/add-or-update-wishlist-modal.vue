@@ -29,7 +29,7 @@
         :max-length="MAX_DESCRIPTION_LENGTH"
       />
 
-      <div v-if="isCorporateMember">
+      <div v-if="isCorporateMember" class="space-y-4">
         <VcSelect
           v-model="sharingScope"
           :label="$t('shared.wishlists.add_or_update_wishlist_modal.sharing_scope_label')"
@@ -137,7 +137,7 @@ const { errors, meta } = useForm({
   initialValues: {
     name: listName.value,
     description: listDescription.value ?? "",
-    sharingScope: listSharingScope.value,
+    sharingScope: listSharingScope.value?? WishlistScopeType.Private,
   },
   validateOnMount: true,
 });

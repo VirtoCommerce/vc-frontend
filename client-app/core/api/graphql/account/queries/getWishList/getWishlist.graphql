@@ -14,7 +14,7 @@ query GetWishlist($listId: String!, $cultureName: String) {
       id
       scope
       access
-      createdBy
+      isOwner
     }
   }
 }

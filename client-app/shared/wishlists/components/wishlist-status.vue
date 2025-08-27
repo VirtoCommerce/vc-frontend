@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center gap-1.5">
-    <template v-if="scope === WishlistScopeType.Private">
+    <template v-if="sharingSetting.scope === WishlistScopeType.Private">
       <VcIcon :size="16" class="fill-secondary" name="lock-closed" />
 
       <span>
@@ -12,23 +12,19 @@
       <VcIcon :size="16" class="fill-accent" name="users" />
 
       <span>
-        {{ isOwner ? $t("shared.wishlists.status.shared") : $t("shared.wishlists.status.shared_with_me")  }}
+        {{ sharingSetting.isOwner ? $t("shared.wishlists.status.shared") : $t("shared.wishlists.status.shared_with_me")  }}
       </span>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { WishlistScopeType } from "@/core/api/graphql/types";
-import { globals } from "@/core/globals";
+import { WishlistScopeType  } from "@/core/api/graphql/types";
+import type {SharingSettingType} from "@/core/api/graphql/types";
 
 interface IProps {
-  scope: string;
-  createdBy: string;
+  sharingSetting: SharingSettingType; 
 }
-const props = defineProps<IProps>();
 
-const { userName } = globals;
-const isOwner = computed(()=> props.createdBy == userName);
+defineProps<IProps>(); 
 </script>

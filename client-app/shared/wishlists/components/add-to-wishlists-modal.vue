@@ -26,7 +26,7 @@
                 </span>
               </VcCheckbox>
 
-              <WishlistStatus v-if="isCorporateMember && list.sharingSetting" class="shrink-0" :created-by="list.sharingSetting.createdBy" :scope="list.sharingSetting.scope" />
+              <WishlistStatus v-if="isCorporateMember && list.sharingSetting" class="shrink-0" :sharing-setting="list.sharingSetting" />
             </li>
           </ul>
         </template>
@@ -84,7 +84,7 @@
                 </span>
               </VcCheckbox>
 
-              <WishlistStatus v-if="isCorporateMember && list.sharingSetting" class="shrink-0" :created-by="list.sharingSetting.createdBy" :scope="list.sharingSetting.scope" />
+              <WishlistStatus v-if="isCorporateMember && list.sharingSetting" class="shrink-0" :sharing-setting="list.sharingSetting" />
             </li>
           </transition-group>
         </VcCheckboxGroup>
