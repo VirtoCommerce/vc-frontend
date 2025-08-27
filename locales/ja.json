@@ -354,7 +354,8 @@
           "aria_labels": {
             "categories": "カテゴリー",
             "subcategories": "サブカテゴリー {category}",
-            "navigation": "ナビゲーション"
+            "navigation": "ナビゲーション",
+            "main_navigation": "メインナビゲーション"
           }
         }
       },

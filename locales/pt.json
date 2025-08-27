@@ -354,7 +354,8 @@
           "aria_labels": {
             "categories": "Categorias",
             "subcategories": "Subcategorias de {category}",
-            "navigation": "Navegação"
+            "navigation": "Navegação",
+            "main_navigation": "Navegação principal"
           }
         }
       },

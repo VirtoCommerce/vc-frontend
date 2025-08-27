@@ -354,7 +354,8 @@
           "aria_labels": {
             "categories": "类别",
             "subcategories": "子类 {category}",
-            "navigation": "导航"
+            "navigation": "导航",
+            "main_navigation": "主导航"
           }
         }
       },
