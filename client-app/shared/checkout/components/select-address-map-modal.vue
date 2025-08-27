@@ -3,8 +3,8 @@
     :title="$t('shared.checkout.select_bopis_modal.title')"
     max-width="72rem"
     is-mobile-fullscreen
+    is-full-height
     class="select-address-map-modal"
-    pinned-footer
   >
     <div class="select-address-map-modal__content">
       <GoogleMap
@@ -88,7 +88,7 @@
         </GoogleMapMarkerClusterer>
       </GoogleMap>
 
-      <div class="select-address-map-modal__sidebar">
+      <VcScrollbar vertical class="select-address-map-modal__sidebar">
         <ul class="select-address-map-modal__list">
           <li
             v-for="address in addresses"
@@ -111,7 +111,7 @@
             </VcRadioButton>
           </li>
         </ul>
-      </div>
+      </VcScrollbar>
     </div>
 
     <template #actions="{ close }">
@@ -272,23 +272,35 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 <style lang="scss">
 .select-address-map-modal {
   &__content {
-    @apply relative w-full flex flex-col lg:flex-row gap-5 min-h-0;
+    @apply relative flex flex-col gap-3 w-full h-full;
+
+    @media (min-width: theme("screens.md")) {
+      @apply flex-row;
+    }
   }
 
   &__map {
-    @apply h-auto min-h-[50vh] w-full rounded-lg lg:min-h-full;
+    @apply grow w-full;
+
+    @media (min-width: theme("screens.md")) {
+      @apply h-auto ps-0;
+    }
   }
 
   &__sidebar {
-    @apply min-w-56 max-h-full lg:order-first;
+    @apply shrink-0 min-w-56 max-h-[50%];
+
+    @media (min-width: theme("screens.md")) {
+      @apply order-first max-h-full pe-2.5;
+    }
   }
 
   &__list {
-    @apply flex flex-col gap-3 max-h-full overflow-y-auto;
+    @apply flex flex-col gap-3;
   }
 
   &__list-item {
-    @apply p-2.5 rounded border border-neutral-400;
+    @apply p-2.5 rounded-[--vc-radius] border border-neutral-400;
 
     &:has(:checked) {
       @apply bg-secondary-50;

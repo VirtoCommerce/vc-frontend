@@ -145,3 +145,21 @@ export function areStringOrNumberEqual(
 
   return String(a) === String(b);
 }
+
+export function preventNonNumberKeyboard(event: KeyboardEvent) {
+  const isNumber = /^\d$/.test(event.key);
+  if (!isNumber) {
+    event.preventDefault();
+  }
+}
+
+export function preventNonNumberPaste(event: ClipboardEvent) {
+  const text = event.clipboardData?.getData("text");
+  if (text) {
+    const isNumber = /^\d+$/.test(text);
+    console.warn('preventNonNumberPaste',{text,isNumber});
+    if (!isNumber) {
+      event.preventDefault();
+    }
+  }
+}

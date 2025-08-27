@@ -38,7 +38,7 @@
         :minlength="minlength"
         :maxlength="maxlength"
         :step="stepValue"
-        :autocomplete="autocomplete"
+        :autocomplete="computedAutocomplete"
         :aria-label="ariaLabel ?? label"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
@@ -118,6 +118,7 @@ export interface IProps {
   selectOnClick?: boolean;
   testIdInput?: string;
   aria?: Record<string, string | number | null>;
+  disableAutocomplete?: boolean;
 }
 
 defineOptions({
@@ -139,6 +140,14 @@ const props = withDefaults(defineProps<IProps>(), {
 const componentId = useComponentId("input");
 const listeners = useListeners();
 const attrs = useAttrsOnly();
+
+const computedAutocomplete = computed(() => {
+  if (props.disableAutocomplete) {
+    return "none";
+  }
+
+  return props.autocomplete;
+});
 
 const inputElement = ref<HTMLInputElement>();
 const inputType = computed(() => (props.type === "password" && isPasswordVisible.value ? "text" : props.type));
