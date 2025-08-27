@@ -91,6 +91,9 @@
       "end_input_help": "Wprowadź liczbę od {min} do {max}, krok {step}",
       "column_aria_label": "Kolumna z {count} przedmiotami, zakres od {from} do {to}",
       "current_value_announcement": "Wartość suwaka: {start} do {end}, zakres {min} do {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Nawigacja ścieżki"
     }
   }
 }
