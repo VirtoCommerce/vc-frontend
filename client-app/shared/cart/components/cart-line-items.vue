@@ -72,22 +72,22 @@
       </div>
     </template>
 
-    <template #after-image="{ item }"> 
-      <CartItemActions 
+    <template #after-image="{ item }">
+      <CartItemActions
         icons
-        saveable-for-later
+        :saveable-for-later="!hideControls?.includes('save-for-later')"
         :selected="sharedSelectedItemIds?.includes(item.id)"
         :disabled="disabled"
-        @save-for-later="$emit('saveForLater', [item.id])" 
+        @save-for-later="$emit('saveForLater', [item.id])"
       />
     </template>
 
     <template #after-title="{ item }">
-      <CartItemActions 
-        saveable-for-later
+      <CartItemActions
+        :saveable-for-later="!hideControls?.includes('save-for-later')"
         :selected="sharedSelectedItemIds?.includes(item.id)"
         :disabled="disabled"
-        @save-for-later="$emit('saveForLater', [item.id])" 
+        @save-for-later="$emit('saveForLater', [item.id])"
       />
     </template>
   </VcLineItems>
@@ -112,6 +112,7 @@ interface IProps {
   validationErrors?: ValidationErrorType[];
   selectable?: boolean;
   sharedSelectedItemIds?: string[];
+  hideControls?: string[];
 }
 
 interface IEmits {

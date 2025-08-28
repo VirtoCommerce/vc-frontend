@@ -75,7 +75,7 @@ onBeforeUnmount(() => {
   @apply size-full;
 
   &__container {
-    @apply size-full;
+    @apply size-full rounded-[--vc-radius] border border-secondary bg-secondary-50;
   }
 }
 </style>
