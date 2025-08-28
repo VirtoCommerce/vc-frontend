@@ -23,7 +23,7 @@
         class="h-9 text-lg"
         :actual-price="price?.actual"
         :list-price="price?.list"
-        :with-from-label="product.hasVariations || product.isConfigurable"
+        :with-from-label="product.hasVariations || (product.isConfigurable && !withConfiguration)"
       />
     </div>
 
@@ -77,6 +77,7 @@ interface IEmits {
 
 interface IProps {
   product: Product;
+  withConfiguration?: boolean;
 }
 
 defineEmits<IEmits>();

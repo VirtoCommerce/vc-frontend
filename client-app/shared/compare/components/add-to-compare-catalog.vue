@@ -26,7 +26,7 @@ const product = toRef(props, "product");
 
 const { t } = useI18n();
 const { isInCompareList: isInCompareListFn, addToCompareList, removeFromCompareList } = useCompareProducts();
-const { selectedConfigurationInput } = useConfigurableProduct(product.value.id);
+const { configuration, selectedConfiguration, selectedConfigurationInput } = useConfigurableProduct(product.value.id);
 
 const isInCompareList = computed(() =>
   isInCompareListFn(product.value, selectedConfigurationInput.value as ConfigurationSectionInput[]),
@@ -40,9 +40,17 @@ const tooltipText = computed<string>(() =>
 
 const toggle = () => {
   if (isInCompareList.value) {
-    removeFromCompareList(product.value);
+    removeFromCompareList(product.value, selectedConfigurationInput.value as ConfigurationSectionInput[]);
   } else {
-    addToCompareList(product.value, selectedConfigurationInput.value as ConfigurationSectionInput[]);
+    const properties = Object.entries(selectedConfiguration.value).map(([sectionId, _section]) => {
+      const section = configuration.value.find((s) => s.id === sectionId);
+      return {
+        id: sectionId,
+        label: section?.name ?? "",
+        value: _section?.selectedOptionTextValue ?? "",
+      };
+    });
+    addToCompareList(product.value, selectedConfigurationInput.value as ConfigurationSectionInput[], properties);
   }
 };
 </script>

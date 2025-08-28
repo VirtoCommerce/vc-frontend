@@ -1,6 +1,6 @@
 <template>
   <VcEmptyPage
-    v-if="!productsIds.length"
+    v-if="!productsIds.length && !configProductsToCompare.length"
     :breadcrumbs="breadcrumbs"
     :title="$t('pages.compare.empty_list.title')"
     icon="outline-compare"
@@ -31,7 +31,7 @@
 
         <i18n-t keypath="pages.compare.header_block.counter_message" scope="global" tag="span" class="mb-3 block">
           <template #productsNumber>
-            <strong>{{ productsIds.length }}</strong>
+            <strong>{{ productsIds.length + configProductsToCompare.length }}</strong>
           </template>
 
           <template #productsLimit>
@@ -61,11 +61,11 @@
           <!-- Product cards block -->
           <div class="float-left flex min-w-full gap-4.5 p-5">
             <ProductCardCompare
-              v-for="product in products"
+              v-for="product in productsToShow"
               :key="product.id"
               :product="product"
               class="w-[9.625rem] lg:w-[13.625rem]"
-              @remove="removeFromCompareList(product)"
+              @remove="removeFromCompareList(product, )"
               @link-click="selectItemEvent(product)"
             />
           </div>
@@ -99,18 +99,23 @@
 </template>
 
 <script setup lang="ts">
-import _ from "lodash";
+import { useMutation } from "@vue/apollo-composable";
+import pickBy from "lodash/pickBy";
+import uniq from "lodash/uniq";
+import uniqBy from "lodash/uniqBy";
 import { ref, computed, watch, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
+import { CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
 import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { getPropertyValue } from "@/core/utilities";
+import { globals } from "@/core/globals";
+import { getPropertyValue, Logger } from "@/core/utilities";
 import { ProductCardCompare, useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
 import { useModal } from "@/shared/modal";
 import { VcConfirmationModal } from "@/ui-kit/components";
-import type { Product } from "@/core/api/graphql/types";
+import type { CreateConfiguredLineItemMutation, Product } from "@/core/api/graphql/types";
 
 interface ICompareProductProperties {
   [key: string]: { label: string; values: string[] };
@@ -126,10 +131,14 @@ usePageHead({
   },
 });
 
+const { storeId, currencyCode, cultureName } = globals;
+
+const { mutate: createConfiguredLineItemMutation } = useMutation(CreateConfiguredLineItemDocument);
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { analytics } = useAnalytics();
 const { fetchProducts, products } = useProducts();
-const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
+const { clearCompareList, productsLimit, removeFromCompareList, productsIds, configProductsToCompare } =
+  useCompareProducts();
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.compare.links.compare_products") }]);
 const { openModal, closeModal } = useModal();
 
@@ -141,11 +150,70 @@ const showOnlyDifferences = ref(false);
 
 const properties = ref<ICompareProductProperties>({});
 
+const configProductsConfiguredItems = ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"][]>([]);
+
 const cardsElement = ref<HTMLElement | null>(null);
 const propertiesElement = ref<HTMLElement | null>(null);
 
+const productsToShow = computed(() => {
+  const result: Product[] = [];
+
+  const configProductsIds = configProductsToCompare.value.map((configProduct) => configProduct.productId);
+  const allProductsIds = [...productsIds.value, ...configProductsIds];
+
+  allProductsIds.forEach((productId, index) => {
+    const product = products.value.find((_product) => _product.id === productId);
+
+    if (product) {
+      const productBase = {
+        ...product,
+        properties: product.properties.map((prop) => ({
+          ...prop,
+          name: prop.name.toLowerCase(),
+        })), // Normalize names to make shown properties like "Brand" and "brand" the same
+      };
+
+      const configProductIndex = index - productsIds.value.length;
+      const configuredLineItem = configProductsConfiguredItems.value[configProductIndex];
+
+      if (configuredLineItem && product.price) {
+        const actualOverride = configuredLineItem.salePrice
+          ? {
+              ...product.price.actual,
+              amount: configuredLineItem.salePrice.amount,
+              formattedAmount: configuredLineItem.salePrice.formattedAmount,
+              formattedAmountWithoutCurrency: configuredLineItem.salePrice.formattedAmountWithoutCurrency,
+            }
+          : product.price.actual;
+
+        const listOverride = configuredLineItem.listPrice
+          ? {
+              ...product.price.list,
+              amount: configuredLineItem.listPrice.amount,
+              formattedAmount: configuredLineItem.listPrice.formattedAmount,
+              formattedAmountWithoutCurrency: configuredLineItem.listPrice.formattedAmountWithoutCurrency,
+            }
+          : product.price.list;
+
+        result.push({
+          ...productBase,
+          price: {
+            ...product.price,
+            actual: actualOverride,
+            list: listOverride,
+          },
+        });
+      } else {
+        result.push(productBase);
+      }
+    }
+  });
+
+  return result;
+});
+
 const propertiesDiffs = computed<ICompareProductProperties>(() => {
-  return _.pickBy(properties.value, (prop) => _.uniq(prop.values).length !== 1);
+  return pickBy(properties.value, (prop) => uniq(prop.values).length !== 1);
 });
 
 const compareProductsListProperties = computed(() => ({
@@ -154,9 +222,33 @@ const compareProductsListProperties = computed(() => ({
 }));
 
 async function refreshProducts() {
-  await fetchProducts({ productIds: productsIds.value });
+  const configProductsIds = configProductsToCompare.value.map((configProduct) => configProduct.productId);
+  const productIds = uniq([...productsIds.value, ...configProductsIds]);
 
-  getProperties();
+  try {
+    await fetchProducts({ productIds });
+
+    const configProductsConfiguredItemsResponses = await Promise.all(
+      configProductsToCompare.value.map((configProduct) =>
+        createConfiguredLineItemMutation({
+          command: {
+            configurableProductId: configProduct.productId,
+            configurationSections: configProduct.configurationSectionInput,
+            storeId,
+            currencyCode,
+            cultureName,
+          },
+        }),
+      ),
+    );
+    configProductsConfiguredItems.value = configProductsConfiguredItemsResponses.map(
+      (response) => response?.data?.createConfiguredLineItem,
+    );
+
+    getProperties();
+  } catch (e) {
+    Logger.error(refreshProducts.name, e);
+  }
 }
 
 function getProperties() {
@@ -166,24 +258,44 @@ function getProperties() {
     return;
   }
 
-  const propertiesCombined = _.flatten(_.map(products.value, "properties"));
-  const names = _.uniq(
+  const propertiesCombined = products.value.flatMap((product) => product.properties);
+  const propertiesNames = uniqBy(
     propertiesCombined.map((prop) => {
       return {
-        name: prop.name,
+        name: prop.name.toLowerCase(), // Normalize names to make shown properties like "Brand" and "brand" the same
         label: prop.label,
       };
     }),
+    "name",
   );
 
-  _.each(names, ({ name, label }) => {
+  const configurationProductsPropertiesName = uniq(
+    configProductsToCompare.value.flatMap((configProduct) => {
+      return configProduct.properties.map((prop) => prop.label);
+    }),
+  );
+
+  propertiesNames.forEach(({ name, label }) => {
     properties.value[name] = {
       label,
-      values: _.map(products.value, (product) => {
-        const property = _.find(product.properties, ["name", name]);
+      values: productsToShow.value.map((product) => {
+        const property = product.properties.find((prop) => prop.name === name);
 
         return property ? (getPropertyValue(property) ?? "\u2013") : "\u2013";
       }),
+    };
+  });
+
+  const regularProductsValuesOffset = Array.from({ length: productsIds.value.length }).fill("\u2013") as string[];
+
+  configurationProductsPropertiesName.forEach((propertyName) => {
+    const values = configProductsToCompare.value.map((configProduct) => {
+      return configProduct.properties.find((prop) => prop.label === propertyName)?.value ?? "\u2013";
+    });
+
+    properties.value[propertyName] = {
+      label: propertyName,
+      values: [...regularProductsValuesOffset, ...values],
     };
   });
 }

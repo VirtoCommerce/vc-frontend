@@ -10,9 +10,15 @@ const NOTIFICATIONS_GROUP = "compare-pruducts";
 const DEFAULT_MAX_PRODUCTS = 5;
 const NAME_MAX_LENGTH = 60;
 
+interface IConfigurationProperty {
+  label: string;
+  value: string;
+}
+
 interface IConfigProductToCompare {
   productId: string;
-  configurationSections: ConfigurationSectionInput[];
+  configurationSectionInput: ConfigurationSectionInput[];
+  properties: IConfigurationProperty[];
 }
 
 const productsIds = useLocalStorage<string[]>("productCompareListIds", []);
@@ -37,8 +43,10 @@ function removeFromCompareProductsConfigurableProduct(
   configurationSections?: ConfigurationSectionInput[],
 ) {
   const index = configProductsToCompare.value.findIndex(
-    (cp) => cp.productId === product.id && cp.configurationSections.every((s) => configurationSections?.includes(s)),
+    (cp) =>
+      cp.productId === product.id && cp.configurationSectionInput.every((s) => configurationSections?.includes(s)),
   );
+  console.log("index", index);
   if (index !== -1) {
     configProductsToCompare.value.splice(index, 1);
   }
@@ -46,14 +54,17 @@ function removeFromCompareProductsConfigurableProduct(
 
 function addToCompareProductsConfigurableProduct(
   product: Product,
-  configurationSections?: ConfigurationSectionInput[],
+  configurationSectionsInput?: ConfigurationSectionInput[],
+  properties?: IConfigurationProperty[],
 ) {
-  if (isInCompareList(product, configurationSections)) {
+  if (isInCompareList(product, configurationSectionsInput)) {
     return;
   }
+
   configProductsToCompare.value.push({
     productId: product.id,
-    configurationSections: configurationSections || [],
+    configurationSectionInput: configurationSectionsInput || [],
+    properties: properties || [],
   });
 }
 
@@ -67,7 +78,7 @@ function isInCompareList(product: Product, configurationSections?: Configuration
         configurationSections.every((section) => {
           return compareInputs(
             section,
-            configProduct.configurationSections.find((s) => s.sectionId === section.sectionId) || {
+            configProduct.configurationSectionInput.find((s) => s.sectionId === section.sectionId) || {
               sectionId: section.sectionId,
               type: "",
             },
@@ -84,7 +95,11 @@ export function useCompareProducts() {
   const notifications = useNotifications();
   const productsLimit = themeContext.value?.settings?.product_compare_limit || DEFAULT_MAX_PRODUCTS;
 
-  function addToCompareList(product: Product, configurationSections?: ConfigurationSectionInput[]) {
+  function addToCompareList(
+    product: Product,
+    configurationSections?: ConfigurationSectionInput[],
+    properties?: IConfigurationProperty[],
+  ) {
     if (productsIds.value.length + configProductsToCompare.value.length >= productsLimit) {
       notifications.warning({
         duration: 15000,
@@ -97,7 +112,7 @@ export function useCompareProducts() {
     }
 
     if (product.isConfigurable) {
-      addToCompareProductsConfigurableProduct(product, configurationSections);
+      addToCompareProductsConfigurableProduct(product, configurationSections, properties);
     } else {
       addToCompareProductsRegularProduct(product);
     }
