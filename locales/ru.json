@@ -21,6 +21,8 @@
       "allFilters": "Все фильтры",
       "filters": "Фильтры",
       "open_filters": "Открыть фильтры",
+      "switch_to_grid_view": "Переключить в сетку",
+      "switch_to_list_view": "Переключить в список",
       "back": "Назад",
       "reset": "Очистить",
       "register": "Регистрация",

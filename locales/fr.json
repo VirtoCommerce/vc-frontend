@@ -21,6 +21,8 @@
       "allFilters": "Tous les filtres",
       "filters": "Filtres",
       "open_filters": "Ouvrir les filtres",
+      "switch_to_grid_view": "Basculer en vue grille",
+      "switch_to_list_view": "Basculer en vue liste",
       "back": "Retour",
       "reset": "Réinitialiser",
       "register": "S'inscrire",
