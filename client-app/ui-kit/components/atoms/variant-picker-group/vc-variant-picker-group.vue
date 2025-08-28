@@ -24,6 +24,12 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
+
+const LAYOUT_CONFIG = {
+  POSITION_TOLERANCE: 2,
+  WRAPPER_CLASS: "vc-variant-picker-group__wrapper",
+  RESIZE_DEBOUNCE_MS: 100,
+} as const;
 const truncate = toRef(props, "truncate");
 
 const containerRef = ref<HTMLElement | null>(null);
@@ -34,10 +40,20 @@ const showButton = ref(false);
 const hiddenCount = ref(0);
 
 let ro: ResizeObserver | null = null;
+let resizeTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
+function debounce<T extends (...args: unknown[]) => void>(func: T, delay: number): T {
+  return ((...args: Parameters<T>) => {
+    if (resizeTimeoutId) {
+      clearTimeout(resizeTimeoutId);
+    }
+    resizeTimeoutId = setTimeout(() => func(...args), delay);
+  }) as T;
+}
 
 function getDirectItems(containerEl: HTMLElement): HTMLElement[] {
   return Array.from(containerEl.children).filter((item) => {
-    return !item.classList.contains("vc-variant-picker-group__wrapper");
+    return !item.classList.contains(LAYOUT_CONFIG.WRAPPER_CLASS);
   }) as HTMLElement[];
 }
 
@@ -54,12 +70,12 @@ function analyzeItemsLayout(items: HTMLElement[]) {
   for (const el of items) {
     const elementTop = el.offsetTop;
 
-    if (Math.abs(elementTop - firstTop) < 2) {
+    if (Math.abs(elementTop - firstTop) < LAYOUT_CONFIG.POSITION_TOLERANCE) {
       firstRowCount++;
     } else if (secondRowTop === null) {
       secondRowTop = elementTop;
       secondRowCount = 1;
-    } else if (Math.abs(elementTop - secondRowTop) < 2) {
+    } else if (Math.abs(elementTop - secondRowTop) < LAYOUT_CONFIG.POSITION_TOLERANCE) {
       secondRowCount++;
     } else {
       break;
@@ -157,12 +173,14 @@ watch(truncate, (val) => {
   void nextTick().then(val ? measureAndLayout : expand);
 });
 
+const debouncedMeasureAndLayout = debounce(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
+
 onMounted(async () => {
   await nextTick();
   measureAndLayout();
 
   ro = new ResizeObserver(() => {
-    measureAndLayout();
+    debouncedMeasureAndLayout();
   });
 
   if (containerRef.value) {
@@ -171,6 +189,11 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
+  if (resizeTimeoutId) {
+    clearTimeout(resizeTimeoutId);
+    resizeTimeoutId = null;
+  }
+
   if (ro && containerRef.value) {
     ro.unobserve(containerRef.value);
   }
