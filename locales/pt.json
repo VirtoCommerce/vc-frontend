@@ -244,7 +244,6 @@
       "addresses": "Endereços",
       "orders": "Pedidos",
       "lists": "Listas",
-      "checkout_defaults": "Padrões de Checkout",
       "list_details": "Detalhes da Lista",
       "cart": "Carrinho",
       "company_info": "Informações da Empresa",
@@ -328,7 +327,6 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -434,7 +432,6 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
-          "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -466,11 +463,6 @@
       },
       "forgot_password_form": {
         "error_alert": "Resultado inválido da solicitação de redefinição de senha. Por favor "
-      },
-      "checkout_default_success_modal": {
-        "title": "Padrões de Checkout",
-        "message": "Detalhes padrão de checkout atualizados com sucesso.",
-        "ok_button": "@:common.buttons.ok"
       },
       "invite_member_modal": {
         "title": "Convidar membro",
@@ -1062,21 +1054,6 @@
         "edit_address_title": "Editar endereço",
         "make_default_button": "Definir como padrão",
         "no_addresses_img_alt": "Sem endereços"
-      },
-      "checkout_defaults": {
-        "meta": {
-          "title": "@:pages.account.checkout_defaults.title"
-        },
-        "title": "Padrões de Checkout",
-        "select_delivery_method_label": "Método de entrega preferido",
-        "shipping_radio_label": "Envio",
-        "pickup_radio_label": "Retirada",
-        "not_selected_placeholder": "@:common.placeholders.not_selected",
-        "update_button": "@:common.buttons.update",
-        "payment_method_label": "Método de pagamento preferido",
-        "payment_method_placeholder": "Por favor, selecione seu método de pagamento preferido",
-        "shipping_method_label": "Método de envio preferido",
-        "shipping_method_placeholder": "Por favor, selecione seu método de envio preferido"
       },
       "dashboard": {
         "meta": {
