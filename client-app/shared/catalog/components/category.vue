@@ -84,6 +84,7 @@
           class="category__facets-button"
           icon="filter"
           size="sm"
+          :aria-label="$t('common.buttons.open_filters')"
           @click="showFiltersSidebar"
         />
 
