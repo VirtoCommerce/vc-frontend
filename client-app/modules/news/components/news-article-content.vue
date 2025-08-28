@@ -9,7 +9,7 @@
         <VcChip
           color="secondary"
           variant="outline-dark"
-          class="news-article-content__tags-tag"
+          class="news-article-content__tag"
           clickable
           @click="emit('tag:click', tag)"
         >
@@ -113,7 +113,7 @@ const newsArticle = toRef(props, "newsArticle");
     @apply mt-5 mb-10;
   }
 
-  &__tags-tag {
+  &__tag {
     @apply mr-2 mb-1;
   }
 

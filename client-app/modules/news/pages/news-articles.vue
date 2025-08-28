@@ -10,7 +10,7 @@
 
       <PageToolbarBlock>
         <div class="news-articles__filter">
-          <div class="news-articles__filter--tags">
+          <div class="news-articles__filter-tags">
             <template
               v-for="newsArticleTag in newsArticleTags"
               :key="newsArticleTag"
@@ -18,7 +18,7 @@
               <VcChip
                 color="secondary"
                 :variant="searchTag == newsArticleTag ? 'solid' : 'outline-dark'"
-                class="news-articles__filter--tags-tag"
+                class="news-articles__filter-tag"
                 clickable
                 @click="toggleTag(newsArticleTag)"
               >
@@ -30,7 +30,7 @@
               v-if="authorId"
               color="secondary"
               variant="solid"
-              class="news-articles__filter--tags-tag"
+              class="news-articles__filter-tag"
               clickable
               @click="removeAuthorFilter()"
             >
@@ -42,7 +42,7 @@
             v-model="searchKeyword"
             maxlength="64"
             clearable
-            class="news-articles__filter--keyword"
+            class="news-articles__filter-keyword"
             :disabled="loading"
             :placeholder="$t('news.list.search-placeholder')"
             @keydown.enter="applyKeyword"
@@ -274,15 +274,15 @@ onMounted(async () => {
     @apply mb-5;
   }
 
-  &__filter--tags {
+  &__filter-tags {
     @apply mb-5;
   }
 
-  &__filter--tags-tag {
+  &__filter-tag {
     @apply mr-2 mb-2;
   }
 
-  &__filter--keyword {
+  &__filter-keyword {
     @apply w-full;
   }
 
