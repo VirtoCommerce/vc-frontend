@@ -61,11 +61,11 @@
           <!-- Product cards block -->
           <div class="float-left flex min-w-full gap-4.5 p-5">
             <ProductCardCompare
-              v-for="product in productsToShow"
+              v-for="(product, index) in productsToShow"
               :key="product.id"
               :product="product"
               class="w-[9.625rem] lg:w-[13.625rem]"
-              @remove="removeFromCompareList(product, )"
+              @remove="removeFromCompareListHandler(product, index)"
               @link-click="selectItemEvent(product)"
             />
           </div>
@@ -336,6 +336,15 @@ function syncScroll(event: Event) {
 
 function selectItemEvent(product: Product) {
   analytics("selectItem", product, compareProductsListProperties.value);
+}
+
+function removeFromCompareListHandler(product: Product, index: number) {
+  if (product.isConfigurable) {
+    const configProductIndex = index - productsIds.value.length;
+    removeFromCompareList(product, configProductsToCompare.value[configProductIndex].configurationSectionInput);
+  } else {
+    removeFromCompareList(product);
+  }
 }
 
 /**
