@@ -4983,6 +4983,7 @@ export type Query = {
   requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
   role?: Maybe<RoleType>;
   searchHistory?: Maybe<SearchHistoryResultType>;
+  sharedWishlist?: Maybe<WishlistType>;
   shipmentStatuses?: Maybe<LocalizedSettingResponseType>;
   skyflowCards?: Maybe<SkyflowCardResponseType>;
   slugInfo?: Maybe<SlugInfoResponseType>;
@@ -5518,6 +5519,11 @@ export type QueryRoleArgs = {
 export type QuerySearchHistoryArgs = {
   maxCount: Scalars['Int']['input'];
   storeId: Scalars['String']['input'];
+};
+
+
+export type QuerySharedWishlistArgs = {
+  sharingKey: Scalars['String']['input'];
 };
 
 

@@ -130,7 +130,7 @@ const props = defineProps<IProps>();
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { analytics } = useAnalytics();
 const { t } = useI18n();
-const { listLoading, list, fetchWishList } = useWishlists();
+const { listLoading, list, fetchSharedWishList } = useWishlists();
 const {
   cart,
   addToCart,
@@ -224,7 +224,7 @@ function showResultModal(items: LineItemType[]) {
 }
 
 watchEffect(async () => {
-  await fetchWishList(props.sharingKey);
+  await fetchSharedWishList(props.sharingKey);
   page.value = 1;
   wishlistItems.value = cloneDeep(list.value?.items) ?? [];
 });
