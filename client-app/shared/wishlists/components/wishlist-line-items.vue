@@ -1,10 +1,10 @@
 <template>
   <VcLineItems
     :items="items"
+    :removable="editable ?? true"
     with-image
     with-properties
     with-price
-    removable
     @remove:items="$emit('remove:items', $event)"
   >
     <template #default />
@@ -27,14 +27,14 @@
         :disabled="pendingItems[item.id]"
         :deleted="item.deleted"
         :browser-target="$cfg.details_browser_target"
+        :removable="editable ?? true"
         with-image
         with-properties
         with-price
-        removable
         @remove="() => removeSingleItem(item.id)"
         @link-click="$emit('linkClick', item.product)"
       >
-        <div v-if="!item.deleted" ref="itemDefaultSlot" :style="{ width: itemDefaultSlotWidth }">
+        <div v-if="(editable ?? true) && !item.deleted" ref="itemDefaultSlot" :style="{ width: itemDefaultSlotWidth }">
           <VcProductButton
             v-if="item.isConfigurable"
             no-wrap
@@ -126,6 +126,7 @@ interface IEmits {
 interface IProps {
   items: PreparedLineItemType[];
   pendingItems?: Record<string, boolean>;
+  editable?: boolean;
 }
 
 const emit = defineEmits<IEmits>();

@@ -1,17 +1,12 @@
 <template>
   <VcContainer class="relative max-lg:pb-12">
-    <VcLoaderOverlay
-      :visible="isCartLocked"
-      fixed-spinner
-    />
-
     <VcTypography
+      v-if="list?.name"
       tag="h1"
       class="mb-5"
     >
-      {{ list?.name ?? $t("pages.cart.title") }}
+      {{ list.name }}
     </VcTypography>
-
 
     <div
       ref="listElement"
@@ -48,7 +43,7 @@
             <WishlistLineItems
               :items="pagedListItems"
               :pending-items="pendingItems"
-              @update:cart-item="addOrUpdateCartItem"
+              :editable="false"
               @link-click="selectItemEvent"
             />
 
@@ -104,14 +99,12 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { cloneDeep, keyBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
-import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
+import { useAnalytics, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem } from "@/core/utilities";
-import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
-import { useModal } from "@/shared/modal";
+import { useShortCart } from "@/shared/cart";
 import {
   useWishlists,
   WishlistLineItems,
@@ -119,7 +112,6 @@ import {
 } from "@/shared/wishlists";
 import type { LineItemType, Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
-import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
 
 interface IProps {
   sharingKey: string;
@@ -132,13 +124,8 @@ const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { listLoading, list, fetchSharedWishList } = useWishlists();
 const {
-  cart,
-  addToCart,
-  changeItemQuantity,
-} = useShortCart();
-const { trackAddItemToCart } = useAnalyticsUtils();
-const { pushHistoricalEvent } = useHistoricalEvents();
-const { openModal } = useModal();
+  cart, 
+} = useShortCart(); 
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
@@ -146,7 +133,7 @@ const { continue_shopping_link } = getModuleSettings({
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
-  title: t("pages.cart.meta.title"),
+  title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
 });
 
 const wishlistListProperties = computed(() => ({
@@ -155,9 +142,7 @@ const wishlistListProperties = computed(() => ({
   related_id: list.value?.id,
   related_type: "wishlist",
 }));
-const isMobile = breakpoints.smaller("lg");
-
-const isCartLocked = ref(false);
+const isMobile = breakpoints.smaller("lg"); 
 
 const listElement = ref<HTMLElement | undefined>();
 const pendingItems = ref<Record<string, boolean>>({});
@@ -173,55 +158,14 @@ const pagedListItems = computed<PreparedLineItemType[]>(() =>
   preparedLineItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
-
-
-
+ 
 function selectItemEvent(item: Product | undefined): void {
   if (!item) {
     return;
   }
 
   analytics("selectItem", item, wishlistListProperties.value);
-}
-
-async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number): Promise<void> {
-  const lineItem: LineItemType | undefined = wishlistItems.value.find(
-    (listItem) => listItem.productId === item.productId,
-  );
-
-  if (!lineItem?.product) {
-    return;
-  }
-
-  const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
-  if (pendingItems.value[lineItem.id]) {
-    return;
-  }
-  pendingItems.value[lineItem.id] = true;
-  if (itemInCart) {
-    if (itemInCart.quantity !== quantity) {
-      await changeItemQuantity(itemInCart.id, quantity);
-    }
-  } else {
-    await addToCart(lineItem.product.id, quantity);
-
-    trackAddItemToCart(lineItem.product, quantity);
-    void pushHistoricalEvent({ eventType: "addToCart", productId: lineItem.product.id });
-  }
-  pendingItems.value[lineItem.id] = false;
-
-  showResultModal([lineItem]);
-}
-
-function showResultModal(items: LineItemType[]) {
-  openModal({
-    component: AddBulkItemsToCartResultsModal,
-    props: {
-      listName: list.value?.name,
-      items: getItemsForAddBulkItemsToCartResultsModal(items, cart.value!),
-    },
-  });
-}
+}  
 
 watchEffect(async () => {
   await fetchSharedWishList(props.sharingKey);
