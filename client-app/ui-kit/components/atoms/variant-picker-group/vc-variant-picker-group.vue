@@ -47,15 +47,16 @@ const expanded = ref(false);
 const showButton = ref(false);
 const hiddenCount = ref(0);
 
-let ro: ResizeObserver | null = null;
-let resizeTimeoutId: ReturnType<typeof setTimeout> | null = null;
+let resizeObserver: ResizeObserver | null = null;
 
-function debounce<T extends (...args: unknown[]) => void>(func: T, delay: number): T {
+function createDebouncer<T extends (...args: unknown[]) => void>(func: T, delay: number): T {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
   return ((...args: Parameters<T>) => {
-    if (resizeTimeoutId) {
-      clearTimeout(resizeTimeoutId);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
     }
-    resizeTimeoutId = setTimeout(() => func(...args), delay);
+    timeoutId = setTimeout(() => func(...args), delay);
   }) as T;
 }
 
@@ -231,33 +232,28 @@ watch(truncate, (val) => {
   void nextTick().then(val ? measureAndLayout : expand);
 });
 
-const debouncedMeasureAndLayout = debounce(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
+const debouncedMeasureAndLayout = createDebouncer(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
 
 onMounted(async () => {
   await nextTick();
   measureAndLayout();
 
-  ro = new ResizeObserver(() => {
+  resizeObserver = new ResizeObserver(() => {
     debouncedMeasureAndLayout();
   });
 
   if (containerRef.value) {
-    ro.observe(containerRef.value);
+    resizeObserver.observe(containerRef.value);
   }
 });
 
 onBeforeUnmount(() => {
-  if (resizeTimeoutId) {
-    clearTimeout(resizeTimeoutId);
-    resizeTimeoutId = null;
+  if (resizeObserver && containerRef.value) {
+    resizeObserver.unobserve(containerRef.value);
   }
 
-  if (ro && containerRef.value) {
-    ro.unobserve(containerRef.value);
-  }
-
-  if (ro) {
-    ro.disconnect();
+  if (resizeObserver) {
+    resizeObserver.disconnect();
   }
 });
 </script>
