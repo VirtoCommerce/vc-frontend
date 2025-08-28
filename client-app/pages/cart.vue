@@ -83,7 +83,7 @@
           :items-grouped-by-vendor="lineItemsGroupedByVendor"
           :selected-item-ids="selectedItemIds"
           :validation-errors="cart.validationErrors"
-          :disabled="changeItemQuantityBatchedOverflowed || selectionOverflowed"
+          :disabled="changeItemQuantityBatchedOverflowed || moveToSavedForLaterOverflowed || selectionOverflowed"
           data-test-id="cart.products-section"
           :hide-controls="hideControls"
           @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
@@ -287,7 +287,13 @@ const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, init
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
-const { savedForLaterList, moveToSavedForLater, moveFromSavedForLater, getSavedForLater } = useSavedForLater();
+const { 
+  savedForLaterList, 
+  moveToSavedForLater, 
+  moveToSavedForLaterOverflowed, 
+  moveFromSavedForLater,  
+  getSavedForLater, 
+  loading: saveForLaterLoading } = useSavedForLater();
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
@@ -308,7 +314,7 @@ const analyticsLastSentPaymentCode = ref<string | undefined>();
 const isCartLocked = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
-const loading = computed(() => loadingCart.value || loadingCheckout.value);
+const loading = computed(() => loadingCart.value || loadingCheckout.value || saveForLaterLoading.value);
 const isShowIncompleteDataWarning = computed(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
 );
