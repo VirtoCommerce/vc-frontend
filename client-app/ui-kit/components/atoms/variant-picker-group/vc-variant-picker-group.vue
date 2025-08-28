@@ -91,6 +91,35 @@ function analyzeItemsLayout(items: HTMLElement[]) {
   };
 }
 
+function resetItemsVisibility(items: HTMLElement[]) {
+  const hiddenItems = items.filter(item => item.classList.contains(LAYOUT_CONFIG.HIDDEN_CLASS));
+  hiddenItems.forEach(item => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
+}
+
+function calculateVisibleItemsCount(layoutInfo: ReturnType<typeof analyzeItemsLayout>) {
+  let visibleItems = layoutInfo.visibleInLayout;
+
+  if (layoutInfo.secondRowCount > 0) {
+    visibleItems = layoutInfo.firstRowCount + Math.max(0, layoutInfo.secondRowCount - 1);
+  } else if (layoutInfo.firstRowCount > 1) {
+    visibleItems = Math.max(1, layoutInfo.firstRowCount - 1);
+  }
+
+  return visibleItems;
+}
+
+function updateButtonState(totalItems: number, visibleItems: number) {
+  const finalHidden = Math.max(0, totalItems - visibleItems);
+
+  if (finalHidden > 0) {
+    showButton.value = true;
+    hiddenCount.value = finalHidden;
+  } else {
+    showButton.value = false;
+    hiddenCount.value = 0;
+  }
+}
+
 function batchUpdateVisibility(items: HTMLElement[], visibleCount: number) {
   const itemsToShow: HTMLElement[] = [];
   const itemsToHide: HTMLElement[] = [];
@@ -132,8 +161,7 @@ function measureAndLayout() {
     return;
   }
 
-  const hiddenItems = items.filter(item => item.classList.contains(LAYOUT_CONFIG.HIDDEN_CLASS));
-  hiddenItems.forEach(item => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
+  resetItemsVisibility(items);
 
   const layoutInfo = analyzeItemsLayout(items);
 
@@ -143,24 +171,8 @@ function measureAndLayout() {
     return;
   }
 
-  let visibleItems = layoutInfo.visibleInLayout;
-
-  if (layoutInfo.secondRowCount > 0) {
-    visibleItems = layoutInfo.firstRowCount + Math.max(0, layoutInfo.secondRowCount - 1);
-  } else if (layoutInfo.firstRowCount > 1) {
-    visibleItems = Math.max(1, layoutInfo.firstRowCount - 1);
-  }
-
-  const finalHidden = Math.max(0, total - visibleItems);
-
-  if (finalHidden > 0) {
-    showButton.value = true;
-    hiddenCount.value = finalHidden;
-  } else {
-    showButton.value = false;
-    hiddenCount.value = 0;
-  }
-
+  const visibleItems = calculateVisibleItemsCount(layoutInfo);
+  updateButtonState(total, visibleItems);
   batchUpdateVisibility(items, visibleItems);
 }
 
@@ -174,8 +186,7 @@ function expand() {
   }
 
   const items = getDirectItems(el);
-  const hiddenItems = items.filter(item => item.classList.contains(LAYOUT_CONFIG.HIDDEN_CLASS));
-  hiddenItems.forEach(item => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
+  resetItemsVisibility(items);
 }
 
 watch(truncate, (val) => {
