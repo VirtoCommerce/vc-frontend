@@ -9,11 +9,11 @@
 </template>
 
 <script setup lang="ts">
-import { eagerComputed } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { useConfigurableProduct } from "@/shared/catalog/composables/useConfigurableProduct";
 import { useCompareProducts } from "../composables";
-import type { Product } from "@/core/api/graphql/types";
+import type { Product, ConfigurationSectionInput } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
@@ -22,10 +22,15 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { t } = useI18n();
-const { productsIds, addToCompareList, removeFromCompareList } = useCompareProducts();
+const product = toRef(props, "product");
 
-const isInCompareList = eagerComputed<boolean>(() => productsIds.value.includes(props.product.id));
+const { t } = useI18n();
+const { isInCompareList: isInCompareListFn, addToCompareList, removeFromCompareList } = useCompareProducts();
+const { selectedConfigurationInput } = useConfigurableProduct(product.value.id);
+
+const isInCompareList = computed(() =>
+  isInCompareListFn(product.value, selectedConfigurationInput.value as ConfigurationSectionInput[]),
+);
 
 const tooltipText = computed<string>(() =>
   isInCompareList.value
@@ -35,9 +40,9 @@ const tooltipText = computed<string>(() =>
 
 const toggle = () => {
   if (isInCompareList.value) {
-    removeFromCompareList(props.product);
+    removeFromCompareList(product.value);
   } else {
-    addToCompareList(props.product);
+    addToCompareList(product.value, selectedConfigurationInput.value as ConfigurationSectionInput[]);
   }
 };
 </script>

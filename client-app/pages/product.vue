@@ -92,13 +92,14 @@
           @apply-filters="applyFilters"
         />
 
-        <component
+        <!-- <component
           :is="relatedProductsSection?.type"
           v-if="relatedProductsSection && !relatedProductsSection.hidden"
           :related-products="relatedProducts"
           :product-id="productId"
           :product-name="product.name"
-        />
+        /> -->
+        {{ relatedProducts.length }}
 
         <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
           <component
