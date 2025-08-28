@@ -29,6 +29,7 @@ const LAYOUT_CONFIG = {
   POSITION_TOLERANCE: 2,
   WRAPPER_CLASS: "vc-variant-picker-group__wrapper",
   RESIZE_DEBOUNCE_MS: 100,
+  HIDDEN_CLASS: "hidden",
 } as const;
 const truncate = toRef(props, "truncate");
 
@@ -62,13 +63,14 @@ function analyzeItemsLayout(items: HTMLElement[]) {
     return { firstRowCount: 0, secondRowCount: 0, visibleInLayout: 0 };
   }
 
-  const firstTop = items[0].offsetTop;
+  const positions = items.map(el => el.offsetTop);
+  const firstTop = positions[0];
   let firstRowCount = 0;
   let secondRowCount = 0;
   let secondRowTop = null;
 
-  for (const el of items) {
-    const elementTop = el.offsetTop;
+  for (let i = 0; i < positions.length; i++) {
+    const elementTop = positions[i];
 
     if (Math.abs(elementTop - firstTop) < LAYOUT_CONFIG.POSITION_TOLERANCE) {
       firstRowCount++;
@@ -89,14 +91,24 @@ function analyzeItemsLayout(items: HTMLElement[]) {
   };
 }
 
-function applyVisibility(items: HTMLElement[], visibleCount: number) {
+function batchUpdateVisibility(items: HTMLElement[], visibleCount: number) {
+  const itemsToShow: HTMLElement[] = [];
+  const itemsToHide: HTMLElement[] = [];
+
   items.forEach((node, idx) => {
     if (!expanded.value && idx >= visibleCount) {
-      node.classList.add("hidden");
+      if (!node.classList.contains(LAYOUT_CONFIG.HIDDEN_CLASS)) {
+        itemsToHide.push(node);
+      }
     } else {
-      node.classList.remove("hidden");
+      if (node.classList.contains(LAYOUT_CONFIG.HIDDEN_CLASS)) {
+        itemsToShow.push(node);
+      }
     }
   });
+
+  itemsToShow.forEach(item => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
+  itemsToHide.forEach(item => item.classList.add(LAYOUT_CONFIG.HIDDEN_CLASS));
 }
 
 function measureAndLayout() {
@@ -120,9 +132,8 @@ function measureAndLayout() {
     return;
   }
 
-  for (const item of items) {
-    item.classList.remove("hidden");
-  }
+  const hiddenItems = items.filter(item => item.classList.contains(LAYOUT_CONFIG.HIDDEN_CLASS));
+  hiddenItems.forEach(item => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
 
   const layoutInfo = analyzeItemsLayout(items);
 
@@ -150,7 +161,7 @@ function measureAndLayout() {
     hiddenCount.value = 0;
   }
 
-  applyVisibility(items, visibleItems);
+  batchUpdateVisibility(items, visibleItems);
 }
 
 function expand() {
@@ -163,10 +174,8 @@ function expand() {
   }
 
   const items = getDirectItems(el);
-
-  for (const n of items) {
-    n.classList.remove("hidden");
-  }
+  const hiddenItems = items.filter(item => item.classList.contains(LAYOUT_CONFIG.HIDDEN_CLASS));
+  hiddenItems.forEach(item => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
 }
 
 watch(truncate, (val) => {
