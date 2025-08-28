@@ -18,11 +18,23 @@
           <VcButton
             :disabled="loading || !pagedListItems.length"
             size="sm"
+            variant="outline"
             prepend-icon="cart"
             class="w-full md:order-last md:w-auto"
             @click="addAllListItemsToCart"
           >
             {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
+          </VcButton>
+
+          <VcButton
+            :disabled="loading || !pagedListItems.length"
+            :loading="createCartFromWishlistLoading"
+            size="sm"
+            prepend-icon="cart-check"
+            class="w-full md:order-last md:w-auto"
+            @click="buyNow"
+          >
+            {{ $t("common.buttons.buy_now") }}
           </VcButton>
 
           <VcButton
@@ -115,13 +127,14 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { cloneDeep, isEqual, keyBy, pick } from "lodash";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from "vue-router";
 import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { prepareLineItem } from "@/core/utilities";
+import { prepareLineItem, Logger } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
@@ -144,6 +157,7 @@ import type {
 import type { PreparedLineItemType } from "@/core/types";
 import type { RouteLocationNormalized } from "vue-router";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
+
 interface IProps {
   listId: string;
 }
@@ -165,6 +179,8 @@ const {
   addItemsToCart,
   addToCart,
   changeItemQuantity,
+  createCartFromWishlist,
+  createCartFromWishlistLoading,
 } = useShortCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { trackAddItemToCart, trackAddItemsToCart } = useAnalyticsUtils();
@@ -173,6 +189,8 @@ const { pushHistoricalEvent } = useHistoricalEvents();
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
 });
+
+const router = useRouter();
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
@@ -357,6 +375,28 @@ function selectItemEvent(item: Product | undefined): void {
   }
 
   analytics("selectItem", item, wishlistListProperties.value);
+}
+
+async function buyNow() {
+  if (!list.value?.id) {
+    return;
+  }
+
+  if (isDirty.value) {
+    await openSaveChangesModal();
+  }
+
+  try {
+    const result = await createCartFromWishlist(list.value.id);
+    if (!result?.data?.createCartFromWishlist?.id) {
+      Logger.error("Can't create cart from wishlist", result);
+      return;
+    }
+
+    void router.push({ name: ROUTES.CART_ID.NAME, params: { cartId: result.data.createCartFromWishlist.id } });
+  } catch (error) {
+    Logger.error("Can't create cart from wishlist", error);
+  }
 }
 
 onBeforeRouteLeave(canChangeRoute);

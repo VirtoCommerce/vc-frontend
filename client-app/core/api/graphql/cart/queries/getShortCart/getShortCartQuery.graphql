@@ -1,7 +1,7 @@
 #import "../../fragments/shortCart.graphql"
 
-query GetShortCart($storeId: String!, $userId: String!, $currencyCode: String!, $cultureName: String) {
-  cart(storeId: $storeId, userId: $userId, currencyCode: $currencyCode, cultureName: $cultureName) {
+query GetShortCart($storeId: String!, $userId: String!, $currencyCode: String!, $cultureName: String, $cartId: String) {
+  cart(storeId: $storeId, userId: $userId, currencyCode: $currencyCode, cultureName: $cultureName, cartId: $cartId) {
     ...shortCart
   }
 }

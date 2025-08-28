@@ -137,7 +137,6 @@
         :filters="filtersToShow"
         :hide-sorting="hideSorting"
         :hide-all-filters="hideSidebar"
-        :facets-to-hide="facetsToHide"
         @reset-facet-filters="resetFacetFilters"
         @change:filters="applyFiltersOnly($event)"
         @show-popup-sidebar="showFiltersSidebar"
@@ -146,7 +145,7 @@
       <ActiveFilterChips
         v-if="hasSelectedFacets || isResetPageButtonShown"
         :filters="productsFilters.filters"
-        :facets-to-hide="facetsToHide"
+        :facets-to-hide="normalizedFacetsToHide"
         @apply-filters="applyFiltersOnly"
       >
         <template #actions>
@@ -156,13 +155,7 @@
             <VcIcon name="reset" />
           </VcChip>
 
-          <VcChip
-            v-if="isResetPageButtonShown"
-            color="secondary"
-            variant="outline"
-            clickable
-            @click="resetPage"
-          >
+          <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
             <span>{{ $t("common.buttons.reset_page") }}</span>
 
             <VcIcon name="reset" />
@@ -229,7 +222,7 @@ import {
   getFilterExpression,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForCategorySubtree,
-  getFilterExpressionForInStock,
+  getFilterExpressionForInStockVariations,
   getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
 } from "@/core/utilities";
@@ -291,11 +284,17 @@ const isMobile = breakpoints.smaller("md");
 
 const route = useRoute();
 
+const normalizedFacetsToHide = computed(() => {
+  return facetsToHide.value?.map((facet) => facet.toLowerCase());
+});
+
 const isResetPageButtonShown = computed(() => {
-  return catalogPaginationMode.value === CATALOG_PAGINATION_MODES.loadMore &&
+  return (
+    catalogPaginationMode.value === CATALOG_PAGINATION_MODES.loadMore &&
     !!route.query.page &&
     Number(route.query.page) > 1
-})
+  );
+});
 
 const catalogPaginationMode = computed(
   () => themeContext.value?.settings?.catalog_pagination_mode ?? CATALOG_PAGINATION_MODES.infiniteScroll,
@@ -308,7 +307,9 @@ const filtersToShow = computed(() => {
 
   return {
     ...productsFilters.value,
-    facets: productsFilters.value.facets.filter((facet) => !facetsToHide.value?.includes(facet.paramName)),
+    facets: productsFilters.value.facets.filter(
+      (facet) => !normalizedFacetsToHide.value?.includes(facet.paramName.toLowerCase()),
+    ),
   };
 });
 
@@ -356,7 +357,7 @@ const {
   useQueryParams: true,
   withFacets: true,
   catalogPaginationMode: catalogPaginationMode.value,
-  facetsToHide: facetsToHide.value,
+  facetsToHide: normalizedFacetsToHide.value,
 });
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();
@@ -426,7 +427,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   filter: [
     props.filter,
     facetsQueryParam.value,
-    getFilterExpressionForInStock(localStorageInStock.value),
+    getFilterExpressionForInStockVariations(localStorageInStock.value),
     getFilterExpressionForPurchasedBefore(localStoragePurchasedBefore.value),
     getFilterExpressionForAvailableIn(localStorageBranches.value),
   ]
@@ -494,12 +495,14 @@ function resetPage() {
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
-const { addScopeItem, removeScopeItemByType, preparingScope } = useSearchScore();
+const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
 
 watch(
   () => props.categoryId,
   async (categoryId) => {
     if (categoryId || props.isRoot) {
+      setQueryScope(searchQueryParam.value);
+
       if (categoryId) {
         preparingScope.value = true;
       }
@@ -512,7 +515,7 @@ watch(
         : getFilterExpression([
             getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
             getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
-            getFilterExpressionForInStock(true),
+            getFilterExpressionForInStockVariations(true),
           ]);
       await fetchCategory({
         categoryId,
@@ -542,7 +545,10 @@ watch(
   },
 );
 
-watch(searchQueryParam, resetCurrentPage);
+watch(searchQueryParam, (value) => {
+  setQueryScope(value);
+  resetCurrentPage();
+});
 
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
