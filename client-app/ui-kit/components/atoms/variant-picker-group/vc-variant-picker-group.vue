@@ -41,9 +41,9 @@ function getDirectItems(containerEl: HTMLElement): HTMLElement[] {
   }) as HTMLElement[];
 }
 
-function countItemsInTwoRows(items: HTMLElement[]) {
+function analyzeItemsLayout(items: HTMLElement[]) {
   if (items.length === 0) {
-    return { firstRow: 0, secondRow: 0, total: 0 };
+    return { firstRowCount: 0, secondRowCount: 0, visibleInLayout: 0 };
   }
 
   const firstTop = items[0].offsetTop;
@@ -67,9 +67,9 @@ function countItemsInTwoRows(items: HTMLElement[]) {
   }
 
   return {
-    firstRow: firstRowCount,
-    secondRow: secondRowCount,
-    total: firstRowCount + secondRowCount,
+    firstRowCount,
+    secondRowCount,
+    visibleInLayout: firstRowCount + secondRowCount,
   };
 }
 
@@ -108,20 +108,20 @@ function measureAndLayout() {
     item.classList.remove("hidden");
   }
 
-  const twoRowsInfo = countItemsInTwoRows(items);
+  const layoutInfo = analyzeItemsLayout(items);
 
-  if (total <= twoRowsInfo.total) {
+  if (total <= layoutInfo.visibleInLayout) {
     showButton.value = false;
     hiddenCount.value = 0;
     return;
   }
 
-  let visibleItems = twoRowsInfo.total;
+  let visibleItems = layoutInfo.visibleInLayout;
 
-  if (twoRowsInfo.secondRow > 0) {
-    visibleItems = twoRowsInfo.firstRow + Math.max(0, twoRowsInfo.secondRow - 1);
-  } else if (twoRowsInfo.firstRow > 1) {
-    visibleItems = Math.max(1, twoRowsInfo.firstRow - 1);
+  if (layoutInfo.secondRowCount > 0) {
+    visibleItems = layoutInfo.firstRowCount + Math.max(0, layoutInfo.secondRowCount - 1);
+  } else if (layoutInfo.firstRowCount > 1) {
+    visibleItems = Math.max(1, layoutInfo.firstRowCount - 1);
   }
 
   const finalHidden = Math.max(0, total - visibleItems);
