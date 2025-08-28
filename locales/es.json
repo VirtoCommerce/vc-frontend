@@ -244,7 +244,6 @@
       "addresses": "Direcciones",
       "orders": "Pedidos",
       "lists": "Listas",
-      "checkout_defaults": "Configuraciones de pago",
       "list_details": "Detalles de la lista",
       "cart": "Carrito",
       "company_info": "Información de la empresa",
@@ -328,7 +327,6 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -434,7 +432,6 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
-          "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -466,11 +463,6 @@
       },
       "forgot_password_form": {
         "error_alert": "Resultado inválido de la solicitud de restablecimiento de contraseña. Por favor "
-      },
-      "checkout_default_success_modal": {
-        "title": "Configuraciones de pago",
-        "message": "Detalles de pago predeterminados actualizados con éxito.",
-        "ok_button": "@:common.buttons.ok"
       },
       "invite_member_modal": {
         "title": "Invitar miembro",
@@ -1062,21 +1054,6 @@
         "edit_address_title": "Editar dirección",
         "make_default_button": "Establecer como predeterminada",
         "no_addresses_img_alt": "Sin direcciones"
-      },
-      "checkout_defaults": {
-        "meta": {
-          "title": "@:pages.account.checkout_defaults.title"
-        },
-        "title": "Configuraciones de pago",
-        "select_delivery_method_label": "Método de entrega preferido",
-        "shipping_radio_label": "Envío",
-        "pickup_radio_label": "Recoger",
-        "not_selected_placeholder": "@:common.placeholders.not_selected",
-        "update_button": "@:common.buttons.update",
-        "payment_method_label": "Método de pago preferido",
-        "payment_method_placeholder": "Por favor, selecciona tu método de pago preferido",
-        "shipping_method_label": "Método de envío preferido",
-        "shipping_method_placeholder": "Por favor, selecciona tu método de envío preferido"
       },
       "dashboard": {
         "meta": {
