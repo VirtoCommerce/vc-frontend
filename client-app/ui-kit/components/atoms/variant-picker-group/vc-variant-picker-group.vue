@@ -22,9 +22,12 @@ import { Logger } from "@/core/utilities";
 
 interface IProps {
   truncate?: boolean;
+  maxRows?: number;
 }
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  maxRows: 2,
+});
 
 const LAYOUT_CONFIG = {
   POSITION_TOLERANCE: 2,
@@ -33,8 +36,8 @@ const LAYOUT_CONFIG = {
   HIDDEN_CLASS: "hidden",
 } as const;
 
-
 const truncate = toRef(props, "truncate");
+const maxRows = toRef(props, "maxRows");
 
 const containerRef = ref(null);
 const moreBtn = ref(null);
@@ -62,8 +65,8 @@ function getDirectItems(containerEl: HTMLElement | null) {
   }
 
   try {
-    return Array.from(containerEl.children).filter((item) =>
-      item instanceof HTMLElement && !item.classList.contains(LAYOUT_CONFIG.WRAPPER_CLASS)
+    return Array.from(containerEl.children).filter(
+      (item) => item instanceof HTMLElement && !item.classList.contains(LAYOUT_CONFIG.WRAPPER_CLASS),
     ) as HTMLElement[];
   } catch (error) {
     Logger.error("VcVariantPickerGroup: Failed to get direct items", error);
@@ -73,39 +76,46 @@ function getDirectItems(containerEl: HTMLElement | null) {
 
 function analyzeItemsLayout(items: HTMLElement[]) {
   if (!Array.isArray(items) || items.length === 0) {
-    return { firstRowCount: 0, secondRowCount: 0, visibleInLayout: 0 };
+    return { rowCounts: [], visibleInLayout: 0 };
   }
 
   try {
-    const positions = items.map(el => el.offsetTop);
-    const firstTop = positions[0];
-    let firstRowCount = 0;
-    let secondRowCount = 0;
-    let secondRowTop = null;
+    const positions = items.map((el) => el.offsetTop);
+    const rowCounts: number[] = [];
+    const rowTops: number[] = [];
+    let totalVisible = 0;
 
     for (let i = 0; i < positions.length; i++) {
       const elementTop = positions[i];
+      let foundRow = false;
 
-      if (Math.abs(elementTop - firstTop) < LAYOUT_CONFIG.POSITION_TOLERANCE) {
-        firstRowCount++;
-      } else if (secondRowTop === null) {
-        secondRowTop = elementTop;
-        secondRowCount = 1;
-      } else if (Math.abs(elementTop - secondRowTop) < LAYOUT_CONFIG.POSITION_TOLERANCE) {
-        secondRowCount++;
-      } else {
-        break;
+      for (let rowIndex = 0; rowIndex < rowTops.length; rowIndex++) {
+        if (Math.abs(elementTop - rowTops[rowIndex]) < LAYOUT_CONFIG.POSITION_TOLERANCE) {
+          rowCounts[rowIndex]++;
+          totalVisible++;
+          foundRow = true;
+          break;
+        }
+      }
+
+      if (!foundRow) {
+        if (rowTops.length < maxRows.value) {
+          rowTops.push(elementTop);
+          rowCounts.push(1);
+          totalVisible++;
+        } else {
+          break;
+        }
       }
     }
 
     return {
-      firstRowCount,
-      secondRowCount,
-      visibleInLayout: firstRowCount + secondRowCount,
+      rowCounts,
+      visibleInLayout: totalVisible,
     };
   } catch (error) {
     Logger.error("VcVariantPickerGroup: Failed to analyze items layout", error);
-    return { firstRowCount: 0, secondRowCount: 0, visibleInLayout: 0 };
+    return { rowCounts: [], visibleInLayout: 0 };
   }
 }
 
@@ -114,26 +124,27 @@ function resetItemsVisibility(items: HTMLElement[]) {
     return;
   }
 
-  const hiddenItems = items.filter(item =>
-    item?.classList?.contains(LAYOUT_CONFIG.HIDDEN_CLASS)
-  );
-  hiddenItems.forEach(item => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
+  const hiddenItems = items.filter((item) => item?.classList?.contains(LAYOUT_CONFIG.HIDDEN_CLASS));
+  hiddenItems.forEach((item) => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
 }
 
 function calculateVisibleItemsCount(layoutInfo: ReturnType<typeof analyzeItemsLayout>) {
-  if (!layoutInfo || typeof layoutInfo.visibleInLayout !== 'number') {
+  if (!layoutInfo || typeof layoutInfo.visibleInLayout !== "number" || layoutInfo.rowCounts.length === 0) {
     return 0;
   }
 
-  if (layoutInfo.secondRowCount > 0) {
-    return layoutInfo.firstRowCount + Math.max(0, layoutInfo.secondRowCount - 1);
+  const { rowCounts } = layoutInfo;
+  let totalVisible = 0;
+
+  for (let i = 0; i < rowCounts.length; i++) {
+    if (i === rowCounts.length - 1) {
+      totalVisible += Math.max(0, rowCounts[i] - 1);
+    } else {
+      totalVisible += rowCounts[i];
+    }
   }
 
-  if (layoutInfo.firstRowCount > 1) {
-    return Math.max(1, layoutInfo.firstRowCount - 1);
-  }
-
-  return Math.max(0, layoutInfo.visibleInLayout);
+  return Math.max(0, totalVisible);
 }
 
 function updateButtonState(totalItems: number, visibleItems: number) {
@@ -149,7 +160,7 @@ function updateButtonState(totalItems: number, visibleItems: number) {
 }
 
 function batchUpdateVisibility(items: HTMLElement[], visibleCount: number) {
-  if (!Array.isArray(items) || typeof visibleCount !== 'number') {
+  if (!Array.isArray(items) || typeof visibleCount !== "number") {
     return;
   }
 
@@ -171,8 +182,8 @@ function batchUpdateVisibility(items: HTMLElement[], visibleCount: number) {
     }
   });
 
-  itemsToShow.forEach(item => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
-  itemsToHide.forEach(item => item.classList.add(LAYOUT_CONFIG.HIDDEN_CLASS));
+  itemsToShow.forEach((item) => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
+  itemsToHide.forEach((item) => item.classList.add(LAYOUT_CONFIG.HIDDEN_CLASS));
 }
 
 function measureAndLayout() {

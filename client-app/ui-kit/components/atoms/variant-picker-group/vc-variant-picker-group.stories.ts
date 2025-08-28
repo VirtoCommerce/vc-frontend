@@ -246,3 +246,15 @@ export const MixedTypes = TemplateMixedTypes.bind({});
 MixedTypes.args = {
   truncate: true,
 };
+
+export const OneRow = TemplateMixedWidths.bind({});
+OneRow.args = {
+  truncate: true,
+  maxRows: 1,
+};
+
+export const ThreeRows = TemplateShowMore.bind({});
+ThreeRows.args = {
+  truncate: true,
+  maxRows: 3,
+};
