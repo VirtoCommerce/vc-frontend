@@ -1,12 +1,15 @@
 #import "../../../fragments/wishlistLineItemFields.graphql"
+#import "../../../common/fragments/money.graphql"
 
 query GetSharedWishlist($sharingKey: String!) {
   sharedWishlist(sharingKey: $sharingKey) {
     name
     description
     scope
-    id
     modifiedDate
+    subTotal {
+      ...money
+    }
     items {
       ...wishlistLineItemFields
     }

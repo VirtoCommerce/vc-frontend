@@ -38,29 +38,50 @@
 
       <!-- List details -->
       <template v-else-if="!listLoading && !!list?.items?.length">
-        <VcWidget size="lg">
-          <div class="flex flex-col gap-6">
-            <WishlistLineItems
-              :items="pagedListItems"
-              :pending-items="pendingItems"
-              :editable="false"
-              @link-click="selectItemEvent"
-            />
+        <VcLayout
+          sidebar-position="right"
+          sticky-sidebar
+        >
+          <VcWidget size="lg">
+            <div class="flex flex-col gap-6">
+              <WishlistLineItems
+                :items="pagedListItems"
+                :pending-items="pendingItems"
+                :editable="false"
+                @link-click="selectItemEvent"
+              />
 
-            <p
-              v-if="page >= PAGE_LIMIT"
-              class="my-3 text-center"
-            >{{ $t("ui_kit.reach_limit.page_limit") }}</p>
+              <p
+                v-if="page >= PAGE_LIMIT"
+                class="my-3 text-center"
+              >{{ $t("ui_kit.reach_limit.page_limit") }}</p>
 
-            <VcPagination
-              v-if="pagesCount > 1"
-              v-model:page="page"
-              :pages="Math.min(pagesCount, PAGE_LIMIT)"
-              :scroll-target="listElement"
-              :scroll-offset="60"
-            />
-          </div>
-        </VcWidget>
+              <VcPagination
+                v-if="pagesCount > 1"
+                v-model:page="page"
+                :pages="Math.min(pagesCount, PAGE_LIMIT)"
+                :scroll-target="listElement"
+                :scroll-offset="60"
+              />
+            </div>
+          </VcWidget>
+          <template #sidebar>
+            <VcWidget
+              id="order-summary"
+              class="max-md:mt-5 print:break-inside-avoid"
+              :title="$t('common.titles.order_summary')"
+            >
+              <div class="relative">
+                <div class="flex justify-between text-base font-black">
+                  <span>{{ $t("common.labels.subtotal") }}</span>
+                  <span>
+                    <VcPriceDisplay :value="list.subTotal!" />
+                  </span>
+                </div>
+              </div>
+            </VcWidget>
+          </template>
+        </VcLayout>
       </template>
 
       <!-- Empty list -->
@@ -124,8 +145,8 @@ const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { listLoading, list, fetchSharedWishList } = useWishlists();
 const {
-  cart, 
-} = useShortCart(); 
+  cart,
+} = useShortCart();
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
@@ -142,7 +163,7 @@ const wishlistListProperties = computed(() => ({
   related_id: list.value?.id,
   related_type: "wishlist",
 }));
-const isMobile = breakpoints.smaller("lg"); 
+const isMobile = breakpoints.smaller("lg");
 
 const listElement = ref<HTMLElement | undefined>();
 const pendingItems = ref<Record<string, boolean>>({});
@@ -158,14 +179,14 @@ const pagedListItems = computed<PreparedLineItemType[]>(() =>
   preparedLineItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
- 
+
 function selectItemEvent(item: Product | undefined): void {
   if (!item) {
     return;
   }
 
   analytics("selectItem", item, wishlistListProperties.value);
-}  
+}
 
 watchEffect(async () => {
   await fetchSharedWishList(props.sharingKey);
