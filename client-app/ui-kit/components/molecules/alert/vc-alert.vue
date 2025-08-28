@@ -24,7 +24,7 @@
       <button
         type="button"
         class="vc-alert__close-button"
-        :aria-label="$t('ui_kit.buttons.close_alert')"
+        :aria-label="$t('ui_kit.accessibility.close_alert')"
         @click="$emit('close')"
       >
         <slot name="close-icon">

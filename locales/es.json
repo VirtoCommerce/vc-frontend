@@ -20,9 +20,6 @@
       "choose": "Elegir",
       "allFilters": "Todos los filtros",
       "filters": "Filtros",
-      "open_filters": "Abrir filtros",
-      "switch_to_grid_view": "Cambiar a vista cuadrícula",
-      "switch_to_list_view": "Cambiar a vista lista",
       "back": "Atrás",
       "reset": "Restablecer",
       "register": "Registrarse",
@@ -293,6 +290,11 @@
         "FixedRate_Air": "Tarifa fija (aérea)",
         "BuyOnlinePickupInStore_Pickup": "Recogida en tienda"
       }
+    },
+    "accessibility": {
+      "open_filters": "Abrir filtros",
+      "switch_to_grid_view": "Cambiar a vista cuadrícula",
+      "switch_to_list_view": "Cambiar a vista lista"
     }
   },
   "shared": {

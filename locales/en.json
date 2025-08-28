@@ -20,9 +20,6 @@
       "choose": "Choose",
       "allFilters": "All Filters",
       "filters": "Filters",
-      "open_filters": "Open filters",
-      "switch_to_grid_view": "Switch to grid view",
-      "switch_to_list_view": "Switch to list view",
       "back": "Back",
       "reset": "Reset",
       "register": "Register",
@@ -293,6 +290,11 @@
         "FixedRate_Air": "Fixed Rate (Air)",
         "BuyOnlinePickupInStore_Pickup": "Pickup in store"
       }
+    },
+    "accessibility": {
+      "open_filters": "Open filters",
+      "switch_to_grid_view": "Switch to grid view",
+      "switch_to_list_view": "Switch to list view"
     }
   },
   "shared": {

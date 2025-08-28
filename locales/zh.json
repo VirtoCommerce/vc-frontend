@@ -20,9 +20,6 @@
       "choose": "挑选",
       "allFilters": "所有过滤器",
       "filters": "过滤器",
-      "open_filters": "打开筛选器",
-      "switch_to_grid_view": "切换到网格视图",
-      "switch_to_list_view": "切换到列表视图",
       "back": "返回",
       "reset": "重置",
       "register": "注册",
@@ -293,6 +290,11 @@
         "FixedRate_Air": "固定费率（空运）",
         "BuyOnlinePickupInStore_Pickup": "门店自提"
       }
+    },
+    "accessibility": {
+      "open_filters": "打开筛选器",
+      "switch_to_grid_view": "切换到网格视图",
+      "switch_to_list_view": "切换到列表视图"
     }
   },
   "shared": {

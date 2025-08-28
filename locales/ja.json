@@ -20,9 +20,6 @@
       "choose": "選択",
       "allFilters": "全フィルター",
       "filters": "フィルター",
-      "open_filters": "フィルターを開く",
-      "switch_to_grid_view": "グリッド表示に切り替え",
-      "switch_to_list_view": "リスト表示に切り替え",
       "back": "戻る",
       "reset": "リセット",
       "register": "登録",
@@ -293,6 +290,11 @@
         "FixedRate_Air": "固定料金 (航空)",
         "BuyOnlinePickupInStore_Pickup": "店舗で受け取る"
       }
+    },
+    "accessibility": {
+      "open_filters": "フィルターを開く",
+      "switch_to_grid_view": "グリッド表示に切り替え",
+      "switch_to_list_view": "リスト表示に切り替え"
     }
   },
   "shared": {

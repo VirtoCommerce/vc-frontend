@@ -5,7 +5,6 @@
       "apply": "Aplicar",
       "cancel": "Cancelar",
       "close": "Cerrar",
-      "close_alert": "Cerrar alerta",
       "copy": "Copiar",
       "deny": "Denegar",
       "filters": "Filtros",
@@ -18,6 +17,9 @@
       "show_hide_password": "Mostrar/ocultar contraseña",
       "toggle_dropdown": "Alternar desplegable",
       "update_cart": "Actualizar carrito"
+    },
+    "accessibility": {
+      "close_alert": "Cerrar alerta"
     },
     "labels": {
       "not_available": "N/D",
