@@ -33,15 +33,11 @@ const LAYOUT_CONFIG = {
   HIDDEN_CLASS: "hidden",
 } as const;
 
-const EMPTY_LAYOUT = {
-  firstRowCount: 0,
-  secondRowCount: 0,
-  visibleInLayout: 0,
-} as const;
+
 const truncate = toRef(props, "truncate");
 
-const containerRef = ref<HTMLElement | null>(null);
-const moreBtn = ref<HTMLElement | null>(null);
+const containerRef = ref(null);
+const moreBtn = ref(null);
 
 const expanded = ref(false);
 const showButton = ref(false);
@@ -49,26 +45,26 @@ const hiddenCount = ref(0);
 
 let resizeObserver: ResizeObserver | null = null;
 
-function createDebouncer<T extends (...args: unknown[]) => void>(func: T, delay: number): T {
+function createDebouncer(func: () => void, delay: number) {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  return ((...args: Parameters<T>) => {
+  return () => {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
-    timeoutId = setTimeout(() => func(...args), delay);
-  }) as T;
+    timeoutId = setTimeout(func, delay);
+  };
 }
 
-function getDirectItems(containerEl: HTMLElement | null): HTMLElement[] {
+function getDirectItems(containerEl: HTMLElement | null) {
   if (!containerEl?.children) {
     return [];
   }
 
   try {
-    return Array.from(containerEl.children).filter((item) => {
-      return item instanceof HTMLElement && !item.classList.contains(LAYOUT_CONFIG.WRAPPER_CLASS);
-    }) as HTMLElement[];
+    return Array.from(containerEl.children).filter((item) =>
+      item instanceof HTMLElement && !item.classList.contains(LAYOUT_CONFIG.WRAPPER_CLASS)
+    ) as HTMLElement[];
   } catch (error) {
     Logger.error("VcVariantPickerGroup: Failed to get direct items", error);
     return [];
@@ -77,7 +73,7 @@ function getDirectItems(containerEl: HTMLElement | null): HTMLElement[] {
 
 function analyzeItemsLayout(items: HTMLElement[]) {
   if (!Array.isArray(items) || items.length === 0) {
-    return EMPTY_LAYOUT;
+    return { firstRowCount: 0, secondRowCount: 0, visibleInLayout: 0 };
   }
 
   try {
@@ -109,7 +105,7 @@ function analyzeItemsLayout(items: HTMLElement[]) {
     };
   } catch (error) {
     Logger.error("VcVariantPickerGroup: Failed to analyze items layout", error);
-    return EMPTY_LAYOUT;
+    return { firstRowCount: 0, secondRowCount: 0, visibleInLayout: 0 };
   }
 }
 
@@ -129,19 +125,19 @@ function calculateVisibleItemsCount(layoutInfo: ReturnType<typeof analyzeItemsLa
     return 0;
   }
 
-  let visibleItems = Math.max(0, layoutInfo.visibleInLayout);
-
   if (layoutInfo.secondRowCount > 0) {
-    visibleItems = layoutInfo.firstRowCount + Math.max(0, layoutInfo.secondRowCount - 1);
-  } else if (layoutInfo.firstRowCount > 1) {
-    visibleItems = Math.max(1, layoutInfo.firstRowCount - 1);
+    return layoutInfo.firstRowCount + Math.max(0, layoutInfo.secondRowCount - 1);
   }
 
-  return Math.max(0, visibleItems);
+  if (layoutInfo.firstRowCount > 1) {
+    return Math.max(1, layoutInfo.firstRowCount - 1);
+  }
+
+  return Math.max(0, layoutInfo.visibleInLayout);
 }
 
 function updateButtonState(totalItems: number, visibleItems: number) {
-  const finalHidden = Math.max(0, (totalItems || 0) - (visibleItems || 0));
+  const finalHidden = Math.max(0, totalItems - visibleItems);
 
   if (finalHidden > 0) {
     showButton.value = true;
