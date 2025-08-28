@@ -190,7 +190,7 @@ onBeforeUnmount(() => {
   }
 
   &__button {
-    @apply px-1.5 py-2 border border-neutral-200 rounded-xl text-xs font-bold whitespace-nowrap;
+    @apply px-1.5 py-2 min-w-8 border border-neutral-200 rounded-xl text-xs font-bold whitespace-nowrap;
   }
 }
 </style>
