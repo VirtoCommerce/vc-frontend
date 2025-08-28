@@ -41,77 +41,46 @@ function getDirectItems(containerEl: HTMLElement): HTMLElement[] {
   }) as HTMLElement[];
 }
 
-function countColumnsByRows(items: HTMLElement[]) {
+function countItemsInTwoRows(items: HTMLElement[]) {
   if (items.length === 0) {
-    return 1;
+    return { firstRow: 0, secondRow: 0, total: 0 };
   }
 
   const firstTop = items[0].offsetTop;
-  let cols = 0;
+  let firstRowCount = 0;
+  let secondRowCount = 0;
+  let secondRowTop = null;
 
   for (const el of items) {
-    if (Math.abs(el.offsetTop - firstTop) < 1) {
-      cols++;
+    const elementTop = el.offsetTop;
+
+    if (Math.abs(elementTop - firstTop) < 2) {
+      firstRowCount++;
+    } else if (secondRowTop === null) {
+      secondRowTop = elementTop;
+      secondRowCount = 1;
+    } else if (Math.abs(elementTop - secondRowTop) < 2) {
+      secondRowCount++;
     } else {
       break;
     }
   }
 
-  if (cols < 1) {
-    return 1;
-  }
-
-  return cols;
+  return {
+    firstRow: firstRowCount,
+    secondRow: secondRowCount,
+    total: firstRowCount + secondRowCount,
+  };
 }
 
-function measureBtnWidthFor(btnWrapper: HTMLElement, count: number) {
-  const label = btnWrapper.querySelector("button") || btnWrapper;
-
-  const wasHidden = getComputedStyle(btnWrapper).display === "none";
-
-  if (wasHidden) {
-    btnWrapper.style.visibility = "hidden";
-    btnWrapper.style.display = "block";
-  }
-
-  const prevGrid = btnWrapper.style.gridColumn;
-  btnWrapper.style.gridColumn = "span 1";
-
-  const prevText = label.textContent ?? "";
-  const prevWidth = label.style.width;
-  const prevDisplay = label.style.display;
-
-  label.textContent = `+${count}`;
-  label.style.width = "auto";
-  label.style.display = "inline-block";
-
-  const width = label.getBoundingClientRect().width;
-
-  label.textContent = prevText;
-  label.style.width = prevWidth;
-  label.style.display = prevDisplay;
-  btnWrapper.style.gridColumn = prevGrid;
-
-  if (wasHidden) {
-    btnWrapper.style.display = "";
-    btnWrapper.style.visibility = "";
-  }
-
-  return width;
-}
-
-function spanForWidth(width: number, track: number, gap: number, maxCols: number) {
-  const k = Math.ceil((width + gap) / (track + gap));
-
-  if (k < 1) {
-    return 1;
-  }
-
-  if (k > maxCols) {
-    return maxCols;
-  }
-
-  return k;
+function applyVisibility(items: HTMLElement[], visibleCount: number) {
+  items.forEach((node, idx) => {
+    if (!expanded.value && idx >= visibleCount) {
+      node.classList.add("hidden");
+    } else {
+      node.classList.remove("hidden");
+    }
+  });
 }
 
 function measureAndLayout() {
@@ -135,45 +104,37 @@ function measureAndLayout() {
     return;
   }
 
-  for (const i of items) {
-    i.classList.remove("hidden");
+  for (const item of items) {
+    item.classList.remove("hidden");
   }
 
-  btnEl.style.setProperty("--btn-span", "1");
+  const twoRowsInfo = countItemsInTwoRows(items);
 
-  const cs = getComputedStyle(container);
-  const colGap = parseFloat(cs.columnGap || cs.gap || "0");
+  if (total <= twoRowsInfo.total) {
+    showButton.value = false;
+    hiddenCount.value = 0;
+    return;
+  }
 
-  const columns = countColumnsByRows(items);
-  const trackWidth = items[0].getBoundingClientRect().width || 1;
+  let visibleItems = twoRowsInfo.total;
 
-  let tmpSpan = 1;
-  let visible = Math.min(total, columns + Math.max(0, columns - tmpSpan));
-  let tmpHidden = Math.max(0, total - visible);
+  if (twoRowsInfo.secondRow > 0) {
+    visibleItems = twoRowsInfo.firstRow + Math.max(0, twoRowsInfo.secondRow - 1);
+  } else if (twoRowsInfo.firstRow > 1) {
+    visibleItems = Math.max(1, twoRowsInfo.firstRow - 1);
+  }
 
-  const btnWidth = measureBtnWidthFor(btnEl, tmpHidden);
-  tmpSpan = spanForWidth(btnWidth, trackWidth, colGap, columns);
+  const finalHidden = Math.max(0, total - visibleItems);
 
-  visible = Math.min(total, columns + Math.max(0, columns - tmpSpan));
-  const finalHidden = Math.max(0, total - visible);
-
-  if (total > visible) {
+  if (finalHidden > 0) {
     showButton.value = true;
     hiddenCount.value = finalHidden;
-    btnEl.style.setProperty("--btn-span", String(tmpSpan));
   } else {
     showButton.value = false;
     hiddenCount.value = 0;
-    btnEl.style.setProperty("--btn-span", "1");
   }
 
-  items.forEach((node, idx) => {
-    if (!expanded.value && idx >= visible) {
-      node.classList.add("hidden");
-    } else {
-      node.classList.remove("hidden");
-    }
-  });
+  applyVisibility(items, visibleItems);
 }
 
 function expand() {
@@ -222,18 +183,14 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .vc-variant-picker-group {
-  @apply grid gap-2 items-stretch;
-
-  grid-template-columns: repeat(auto-fill, minmax(var(--cell-min, 120px), 1fr));
+  @apply flex flex-wrap gap-2;
 
   &__wrapper {
     @apply flex items-center;
-
-    grid-column: span var(--btn-span, 1);
   }
 
   &__button {
-    @apply px-1.5 py-2 border border-neutral-200 rounded-xl text-xs font-bold;
+    @apply px-1.5 py-2 border border-neutral-200 rounded-xl text-xs font-bold whitespace-nowrap;
   }
 }
 </style>
