@@ -1,16 +1,14 @@
+import { ApolloError } from "@apollo/client/core";
 import { useMutation } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
 import { ref, computed } from "vue";
+import { AbortReason } from "@/core/api/common/enums";
 import { getSavedForLater as getSavedForLaterQuery } from "@/core/api/graphql/cart/queries/getSavedForLater";
-import {
-  MoveToSavedForLaterDocument,
-  MoveFromSavedForLaterDocument
-  
-} from "@/core/api/graphql/types";
+import { MoveToSavedForLaterDocument, MoveFromSavedForLaterDocument } from "@/core/api/graphql/types";
 import { useMutationBatcher } from "@/core/composables/useMutationBatcher";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import type {SavedForLaterListFragment} from "@/core/api/graphql/types";
+import type { SavedForLaterListFragment } from "@/core/api/graphql/types";
 
 function _useSavedForLater() {
   const { storeId, currencyCode, cultureName, userId } = globals;
@@ -41,7 +39,10 @@ function _useSavedForLater() {
 
       savedForLaterList.value = moveResult?.data?.moveToSavedForLater?.list;
     } catch (err) {
-      Logger.error(err as string);
+      if (err instanceof ApolloError && err.networkError?.toString() === (AbortReason.Explicit as string)) {
+        return;
+      }
+      Logger.error(`useSavedForLater.${moveToSavedForLater.name}`, err);
     }
   }
 
@@ -69,12 +70,19 @@ function _useSavedForLater() {
 
       savedForLaterList.value = moveResult?.data?.moveFromSavedForLater?.list;
     } catch (err) {
-      Logger.error(err as string);
+      if (err instanceof ApolloError && err.networkError?.toString() === (AbortReason.Explicit as string)) {
+        return;
+      }
+      Logger.error(`useSavedForLater.${moveFromSavedForLater.name}`, err);
     }
   }
 
   async function getSavedForLater() {
-    savedForLaterList.value = await getSavedForLaterQuery();
+    try {
+      savedForLaterList.value = await getSavedForLaterQuery();
+    } catch (err) {
+      Logger.error(`useSavedForLater.${getSavedForLater.name}`, err);
+    }
   }
 
   return {
@@ -94,6 +102,6 @@ function _useSavedForLater() {
         _moveFromSavedForLaterBatchedLoading.value,
     ),
   };
-} 
+}
 
 export const useSavedForLater = createSharedComposable(_useSavedForLater);
