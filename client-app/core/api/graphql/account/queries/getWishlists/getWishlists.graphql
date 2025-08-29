@@ -27,6 +27,12 @@ query GetWishlists(
         id
         productId
       }
+      sharingSetting {
+        id
+        scope
+        access
+        isOwner
+      }
     }
   }
 }
