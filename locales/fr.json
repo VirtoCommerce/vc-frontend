@@ -83,6 +83,7 @@
     },
     "labels": {
       "actions": "Actions",
+      "notifications": "Notifications",
       "user_name": "Nom d'utilisateur",
       "password": "Mot de passe",
       "confirm_password": "Confirmer le mot de passe",
@@ -289,6 +290,11 @@
         "FixedRate_Air": "Tarif fixe (Air)",
         "BuyOnlinePickupInStore_Pickup": "Ramassage en magasin"
       }
+    },
+    "accessibility": {
+      "open_filters": "Ouvrir les filtres",
+      "switch_to_grid_view": "Basculer en vue grille",
+      "switch_to_list_view": "Basculer en vue liste"
     }
   },
   "shared": {
@@ -352,7 +358,8 @@
           "aria_labels": {
             "categories": "Catégories",
             "subcategories": "Sous-catégories de la catégorie {category}",
-            "navigation": "Navigation"
+            "navigation": "Navigation",
+            "main_navigation": "Navigation principale"
           }
         }
       },

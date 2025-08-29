@@ -18,6 +18,9 @@
       "toggle_dropdown": "ドロップダウンを切り替え",
       "update_cart": "カートを更新"
     },
+    "accessibility": {
+      "close_alert": "アラートを閉じる"
+    },
     "labels": {
       "not_available": "N/A",
       "price_per_item": "単価",
@@ -91,6 +94,9 @@
       "end_input_help": "{min}～{max}の範囲で、{step}刻みで入力してください",
       "column_aria_label": "{count}アイテムの列、範囲：{from}～{to}",
       "current_value_announcement": "スライダーの値: {start} から {end}、範囲 {min} から {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "パンくずナビゲーション"
     }
   }
 }

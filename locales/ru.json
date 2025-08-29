@@ -83,6 +83,7 @@
     },
     "labels": {
       "actions": "Действия",
+      "notifications": "Уведомления",
       "user_name": "Имя пользователя",
       "password": "Пароль",
       "confirm_password": "Подтвердите пароль",
@@ -289,6 +290,11 @@
         "FixedRate_Air": "Фиксированная ставка (воздушный транспорт)",
         "BuyOnlinePickupInStore_Pickup": "Самовывоз из магазина"
       }
+    },
+    "accessibility": {
+      "open_filters": "Открыть фильтры",
+      "switch_to_grid_view": "Переключить в сетку",
+      "switch_to_list_view": "Переключить в список"
     }
   },
   "shared": {
@@ -352,7 +358,8 @@
           "aria_labels": {
             "categories": "Категории",
             "subcategories": "Подкатегории {category}",
-            "navigation": "Навигация"
+            "navigation": "Навигация",
+            "main_navigation": "Основная навигация"
           }
         }
       },
