@@ -127,6 +127,8 @@ interface ICompareProductProperties {
   [key: string]: { label: string; values: string[] };
 }
 
+type ConfiguredLineItemType = CreateConfiguredLineItemMutation["createConfiguredLineItem"];
+
 const { t } = useI18n();
 
 usePageHead({
@@ -161,62 +163,11 @@ const configProductsConfiguredItems = ref<CreateConfiguredLineItemMutation["crea
 const cardsElement = ref<HTMLElement | null>(null);
 const propertiesElement = ref<HTMLElement | null>(null);
 
-const productsToShow = computed(() => {
-  const result: Product[] = [];
-
-  const configProductsIds = configProductsToCompare.value.map((configProduct) => configProduct.productId);
-  const allProductsIds = [...productsIds.value, ...configProductsIds];
-
-  allProductsIds.forEach((productId, index) => {
-    const product = products.value.find((_product) => _product.id === productId);
-
-    if (product) {
-      const productBase = {
-        ...product,
-        properties: product.properties.map((prop) => ({
-          ...prop,
-          name: prop.name.toLowerCase(),
-        })), // Normalize names to make shown properties like "Brand" and "brand" the same
-      };
-
-      const configProductIndex = index - productsIds.value.length;
-      const configuredLineItem = configProductsConfiguredItems.value[configProductIndex];
-
-      if (configuredLineItem && product.price) {
-        const actualOverride = configuredLineItem.salePrice
-          ? {
-              ...product.price.actual,
-              amount: configuredLineItem.salePrice.amount,
-              formattedAmount: configuredLineItem.salePrice.formattedAmount,
-              formattedAmountWithoutCurrency: configuredLineItem.salePrice.formattedAmountWithoutCurrency,
-            }
-          : product.price.actual;
-
-        const listOverride = configuredLineItem.listPrice
-          ? {
-              ...product.price.list,
-              amount: configuredLineItem.listPrice.amount,
-              formattedAmount: configuredLineItem.listPrice.formattedAmount,
-              formattedAmountWithoutCurrency: configuredLineItem.listPrice.formattedAmountWithoutCurrency,
-            }
-          : product.price.list;
-
-        result.push({
-          ...productBase,
-          price: {
-            ...product.price,
-            actual: actualOverride,
-            list: listOverride,
-          },
-        });
-      } else {
-        result.push(productBase);
-      }
-    }
-  });
-
-  return result;
-});
+const productsToShow = computed<Product[]>(() =>
+  getAllProductIdsToShow()
+    .map(buildProductForDisplay)
+    .filter((p): p is Product => p !== null),
+);
 
 const propertiesDiffs = computed<ICompareProductProperties>(() => {
   return pickBy(properties.value, (prop) => uniq(prop.values).length !== 1);
@@ -226,6 +177,70 @@ const compareProductsListProperties = computed(() => ({
   item_list_id: "compare_products",
   item_list_name: t("pages.compare.header_block.title"),
 }));
+
+function getAllProductIdsToShow(): string[] {
+  const configProductsIds = configProductsToCompare.value.map((configProduct) => configProduct.productId);
+  return [...productsIds.value, ...configProductsIds];
+}
+
+function normalizeProductProperties(product: Product): Product {
+  return {
+    ...product,
+    properties: product.properties.map((prop) => ({
+      ...prop,
+      name: prop.name.toLowerCase(),
+    })), // Normalize names to make shown properties like "Brand" and "brand" the same
+  };
+}
+
+function getConfiguredLineItemByIndex(index: number): ConfiguredLineItemType | undefined {
+  const configProductIndex = index - productsIds.value.length;
+  return configProductsConfiguredItems.value[configProductIndex];
+}
+
+function withConfiguredPrices(product: Product, configuredItem?: ConfiguredLineItemType): Product {
+  if (!configuredItem || !product.price) {
+    return product;
+  }
+
+  const actualOverride = configuredItem.salePrice
+    ? {
+        ...product.price.actual,
+        amount: configuredItem.salePrice.amount,
+        formattedAmount: configuredItem.salePrice.formattedAmount,
+        formattedAmountWithoutCurrency: configuredItem.salePrice.formattedAmountWithoutCurrency,
+      }
+    : product.price.actual;
+
+  const listOverride = configuredItem.listPrice
+    ? {
+        ...product.price.list,
+        amount: configuredItem.listPrice.amount,
+        formattedAmount: configuredItem.listPrice.formattedAmount,
+        formattedAmountWithoutCurrency: configuredItem.listPrice.formattedAmountWithoutCurrency,
+      }
+    : product.price.list;
+
+  return {
+    ...product,
+    price: {
+      ...product.price,
+      actual: actualOverride,
+      list: listOverride,
+    },
+  };
+}
+
+function buildProductForDisplay(productId: string, index: number): Product | null {
+  const product = products.value.find((_product) => _product.id === productId);
+  if (!product) {
+    return null;
+  }
+
+  const normalized = normalizeProductProperties(product);
+  const configuredItem = getConfiguredLineItemByIndex(index);
+  return withConfiguredPrices(normalized, configuredItem);
+}
 
 function getConfigurationProductByIndex(index: number) {
   const configProductIndex = index - productsIds.value.length;
