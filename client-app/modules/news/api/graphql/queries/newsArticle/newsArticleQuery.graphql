@@ -5,6 +5,12 @@ query NewsArticle($id: String!, $storeId: String!, $languageCode: String!) {
     publishDate
     content
     contentPreview
+    tags
+    author {
+      id
+      name
+      iconUrl
+    }
     seoInfo {
       pageTitle
       metaKeywords
