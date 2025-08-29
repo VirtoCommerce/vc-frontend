@@ -132,6 +132,7 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
   pendingItems: () => ({}),
+  editable: true,
 });
 
 const validationErrors = ref<ValidationErrorType[]>([]);
