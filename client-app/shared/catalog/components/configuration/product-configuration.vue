@@ -174,19 +174,23 @@ const configuration = toRef(props, "configuration");
 const configurableProductId = toRef(props, "productId");
 
 const configProductsToCompare = useLocalStorage<IConfigProductToCompare[]>(
-  CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE as string,
+  CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE,
   [],
 );
+
 const initialConfiguration = computed(() => {
   const configProduct = configProductsToCompare.value.find((cp) => cp.id === configurationId);
-  const result = [...(configProduct?.configurationSectionInput ?? [])].map((section) => {
+  if (!configProduct?.configurationSectionInput) {
+    return;
+  }
+
+  return configProduct.configurationSectionInput.map((section) => {
     return {
       ...section,
       ...section.option,
       id: section.sectionId,
     };
   });
-  return result;
 });
 
 const { t } = useI18n();
