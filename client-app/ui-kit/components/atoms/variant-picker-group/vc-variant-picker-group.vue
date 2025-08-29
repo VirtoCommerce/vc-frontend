@@ -2,11 +2,11 @@
   <div ref="containerRef" class="vc-variant-picker-group">
     <slot />
 
-    <div v-if="truncate" v-show="showButton && !expanded" ref="moreBtn" class="vc-variant-picker-group__wrapper">
+    <div v-if="truncate" v-show="isButtonVisible" ref="moreBtn" class="vc-variant-picker-group__wrapper">
       <button
         type="button"
         class="vc-variant-picker-group__button"
-        :aria-expanded="expanded ? 'true' : 'false'"
+        :aria-expanded="ariaExpandedValue"
         :aria-label="$t('ui_kit.buttons.see_more')"
         @click="expand"
       >
@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick, watch, toRef } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch, toRef } from "vue";
 import { Logger } from "@/core/utilities";
 
 interface IProps {
@@ -44,6 +44,14 @@ const moreBtn = ref<HTMLElement | null>(null);
 const expanded = ref(false);
 const showButton = ref(false);
 const hiddenCount = ref(0);
+
+const isButtonVisible = computed(() =>
+  truncate.value && !expanded.value && showButton.value
+);
+
+const ariaExpandedValue = computed(() =>
+  expanded.value ? "true" : "false"
+);
 
 let resizeObserver: ResizeObserver | null = null;
 
