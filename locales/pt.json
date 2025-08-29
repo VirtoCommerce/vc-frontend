@@ -83,6 +83,7 @@
     },
     "labels": {
       "actions": "Ações",
+      "notifications": "Notificações",
       "user_name": "Nome de usuário",
       "password": "Senha",
       "confirm_password": "Confirmar senha",

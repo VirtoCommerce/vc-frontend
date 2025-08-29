@@ -83,6 +83,7 @@
     },
     "labels": {
       "actions": "操作",
+      "notifications": "通知",
       "user_name": "用户名",
       "password": "密码",
       "confirm_password": "确认密码",
