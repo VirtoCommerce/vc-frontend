@@ -151,20 +151,9 @@ import OptionNone from "./option-none.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
 import SectionTextFieldset from "./section-text-fieldset.vue";
-import type { ConfigurationSectionInput, ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { IConfigProductToCompare } from "@/shared/compare/types";
 import type { DeepReadonly } from "vue";
-
-interface IConfigurationProperty {
-  label: string;
-  value: string;
-}
-
-interface IConfigProductToCompare {
-  id: string;
-  productId: string;
-  configurationSectionInput: ConfigurationSectionInput[];
-  properties: IConfigurationProperty[];
-}
 
 const props = defineProps<IProps>();
 

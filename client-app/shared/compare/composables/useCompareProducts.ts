@@ -5,55 +5,57 @@ import { useThemeContext } from "@/core/composables";
 import { truncate } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
+import type { IConfigurationProperty, IConfigProductToCompare } from "../types";
 import type { Product, ConfigurationSectionInput } from "@/core/api/graphql/types";
 
-const NOTIFICATIONS_GROUP = "compare-pruducts";
+const NOTIFICATIONS_GROUP = "compare-products";
 const DEFAULT_MAX_PRODUCTS = 5;
 const NAME_MAX_LENGTH = 60;
 
-interface IConfigurationProperty {
-  label: string;
-  value: string;
-}
+const LS_COMPARE_REGULAR_IDS = "productCompareListIds";
+const LS_COMPARE_CONFIG_PRODUCTS = "configProductsToCompare";
 
-interface IConfigProductToCompare {
-  id: string;
-  productId: string;
-  configurationSectionInput?: ConfigurationSectionInput[];
-  properties: IConfigurationProperty[];
-}
+const productsIds = useLocalStorage<string[]>(LS_COMPARE_REGULAR_IDS, []);
+const configProductsToCompare = useLocalStorage<IConfigProductToCompare[]>(LS_COMPARE_CONFIG_PRODUCTS, []);
 
-const productsIds = useLocalStorage<string[]>("productCompareListIds", []);
-const configProductsToCompare = useLocalStorage<IConfigProductToCompare[]>("configProductsToCompare", []);
-
-function addToCompareProductsRegularProduct(product: Product) {
+function addRegularProductToCompare(product: Product) {
   if (productsIds.value.includes(product.id)) {
     return;
   }
   productsIds.value.push(product.id);
 }
 
-function removeFromCompareProductsRegularProduct(product: Product) {
+function removeRegularProductFromCompare(product: Product) {
   const index = productsIds.value.indexOf(product.id);
   if (index !== -1) {
     productsIds.value.splice(index, 1);
   }
 }
 
-function removeFromCompareProductsConfigurableProduct(
-  product: Product,
-  configurationSections?: ConfigurationSectionInput[],
-) {
-  const index = configProductsToCompare.value.findIndex(
-    (cp) =>
-      cp.productId === product.id && cp.configurationSectionInput?.every((s) => configurationSections?.includes(s)),
-  );
+function removeConfiguredProductFromCompare(product: Product, configuration?: ConfigurationSectionInput[]) {
+  const { compareInputs } = useConfigurableProduct(product.id);
+
+  const index = configProductsToCompare.value.findIndex((configProduct) => {
+    if (configProduct.productId !== product.id) {
+      return false;
+    }
+
+    if (!configuration?.length || !configProduct.configurationSectionInput?.length) {
+      return false;
+    }
+
+    return configuration.every((section) => {
+      const matched = configProduct.configurationSectionInput?.find((s) => s.sectionId === section.sectionId);
+      return matched && compareInputs(section, matched);
+    });
+  });
+
   if (index !== -1) {
     configProductsToCompare.value.splice(index, 1);
   }
 }
 
-function addToCompareProductsConfigurableProduct(
+function addConfiguredProductToCompare(
   product: Product,
   configurationSectionsInput?: ConfigurationSectionInput[],
   properties?: IConfigurationProperty[],
@@ -70,21 +72,16 @@ function addToCompareProductsConfigurableProduct(
   });
 }
 
-function isInCompareList(product: Product, configurationSections?: ConfigurationSectionInput[]) {
+function isInCompareList(product: Product, configuration?: ConfigurationSectionInput[]) {
   const { compareInputs } = useConfigurableProduct(product.id);
 
-  if (product.isConfigurable && configurationSections) {
+  if (product.isConfigurable && configuration) {
     return configProductsToCompare.value.some((configProduct) => {
       return (
         configProduct.productId === product.id &&
-        configurationSections.every((section) => {
-          return compareInputs(
-            section,
-            configProduct.configurationSectionInput?.find((s) => s.sectionId === section.sectionId) || {
-              sectionId: section.sectionId,
-              type: "",
-            },
-          );
+        configuration.every((section) => {
+          const matched = configProduct.configurationSectionInput?.find((s) => s.sectionId === section.sectionId);
+          return matched && compareInputs(section, matched);
         })
       );
     });
@@ -114,9 +111,9 @@ export function useCompareProducts() {
     }
 
     if (product.isConfigurable && configurationSections?.length) {
-      addToCompareProductsConfigurableProduct(product, configurationSections, properties);
+      addConfiguredProductToCompare(product, configurationSections, properties);
     } else {
-      addToCompareProductsRegularProduct(product);
+      addRegularProductToCompare(product);
     }
 
     notifications.success({
@@ -139,9 +136,9 @@ export function useCompareProducts() {
 
   function removeFromCompareList(product: Product, configurationSections?: ConfigurationSectionInput[]) {
     if (product.isConfigurable && configurationSections?.length) {
-      removeFromCompareProductsConfigurableProduct(product, configurationSections);
+      removeConfiguredProductFromCompare(product, configurationSections);
     } else {
-      removeFromCompareProductsRegularProduct(product);
+      removeRegularProductFromCompare(product);
     }
 
     notifications.warning({

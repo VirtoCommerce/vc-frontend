@@ -109,7 +109,7 @@ import { useMutation } from "@vue/apollo-composable";
 import pickBy from "lodash/pickBy";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
 import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
@@ -157,6 +157,8 @@ const showOnlyDifferences = ref(false);
 const properties = ref<ICompareProductProperties>({});
 
 const configProductsConfiguredItems = ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"][]>([]);
+
+const EMPTY_VALUE_PLACEHOLDER = "\u2013";
 
 const cardsElement = ref<HTMLElement | null>(null);
 const propertiesElement = ref<HTMLElement | null>(null);
@@ -280,10 +282,14 @@ function getProperties() {
     "name",
   );
 
-  const configurationProductsPropertiesName = uniq(
+  const configurationProductsProperties = uniqBy(
     configProductsToCompare.value.flatMap((configProduct) => {
-      return configProduct.properties.map((prop) => prop.label);
+      return configProduct.properties.map((prop: { label: string }) => ({
+        key: prop.label,
+        label: prop.label,
+      }));
     }),
+    "key",
   );
 
   propertiesNames.forEach(({ name, label }) => {
@@ -292,20 +298,22 @@ function getProperties() {
       values: productsToShow.value.map((product) => {
         const property = product.properties.find((prop) => prop.name === name);
 
-        return property ? (getPropertyValue(property) ?? "\u2013") : "\u2013";
+        return property ? (getPropertyValue(property) ?? EMPTY_VALUE_PLACEHOLDER) : EMPTY_VALUE_PLACEHOLDER;
       }),
     };
   });
 
-  const regularProductsValuesOffset = Array.from({ length: productsIds.value.length }).fill("\u2013") as string[];
+  const regularProductsValuesOffset = Array.from({ length: productsIds.value.length }).fill(
+    EMPTY_VALUE_PLACEHOLDER,
+  ) as string[];
 
-  configurationProductsPropertiesName.forEach((propertyName) => {
+  configurationProductsProperties.forEach((propertyInfo) => {
     const values = configProductsToCompare.value.map((configProduct) => {
-      return configProduct.properties.find((prop) => prop.label === propertyName)?.value ?? "\u2013";
+      return configProduct.properties.find((prop) => prop.label === propertyInfo.key)?.value ?? EMPTY_VALUE_PLACEHOLDER;
     });
 
-    properties.value[propertyName] = {
-      label: propertyName,
+    properties.value[propertyInfo.key] = {
+      label: propertyInfo.label,
       values: [...regularProductsValuesOffset, ...values],
     };
   });
@@ -328,7 +336,7 @@ function openClearListModal() {
 }
 
 watch(
-  () => productsIds.value,
+  [() => productsIds.value, () => configProductsToCompare.value],
   async () => {
     await refreshProducts();
   },
@@ -378,6 +386,13 @@ onMounted(() => {
   if (cardsElement.value && propertiesElement.value) {
     cardsElement.value.addEventListener("scroll", syncScroll);
     propertiesElement.value.addEventListener("scroll", syncScroll);
+  }
+});
+
+onUnmounted(() => {
+  if (cardsElement.value && propertiesElement.value) {
+    cardsElement.value.removeEventListener("scroll", syncScroll);
+    propertiesElement.value.removeEventListener("scroll", syncScroll);
   }
 });
 </script>

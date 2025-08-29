@@ -92,12 +92,12 @@ const simpleLink = computed(() => getProductRoute(props.product.id, props.produc
 const link = computed<RouteLocationRaw>(() => {
   const route = getProductRoute(props.product.id, props.product.slug);
   if (typeof route === "string") {
-    return {
-      path: route,
-      query: {
-        configuration: props.queryString,
-      },
-    };
+    const query = props.queryString ? { configuration: props.queryString } : undefined;
+    return query ? { path: route, query } : { path: route };
+  }
+  if (props.queryString) {
+    const existingQuery = route.query ?? {};
+    return { ...route, query: { ...existingQuery, configuration: props.queryString } };
   }
   return route;
 });
