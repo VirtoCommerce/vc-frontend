@@ -38,8 +38,8 @@ const LAYOUT_CONFIG = {
 const truncate = toRef(props, "truncate");
 const maxRows = toRef(props, "maxRows");
 
-const containerRef = ref(null);
-const moreBtn = ref(null);
+const containerRef = ref<HTMLElement | null>(null);
+const moreBtn = ref<HTMLElement | null>(null);
 
 const expanded = ref(false);
 const showButton = ref(false);
@@ -171,7 +171,7 @@ function measureAndLayout() {
       layoutInfo = analyzeItemsLayout(items.filter((el, idx) => idx < visibleIdxLimit));
 
       if (layoutInfo.rowCounts.length <= maxRows.value) {
-        const btnEl = moreBtn.value as HTMLElement | null;
+        const btnEl = moreBtn.value;
 
         if (btnEl === null) {
           break;
