@@ -64,6 +64,7 @@
       <CartForLater
         v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
         :saved-for-later-list="savedForLaterList"
+        :loading="moveFromSavedForLaterOverflowed"
         class="mt-5"
         @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
       />
@@ -113,6 +114,7 @@
         <CartForLater
           v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
           :saved-for-later-list="savedForLaterList"
+          :loading="moveFromSavedForLaterOverflowed"
           class="mt-5"
           @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
@@ -292,6 +294,7 @@ const {
   moveToSavedForLater, 
   moveToSavedForLaterOverflowed, 
   moveFromSavedForLater,  
+  moveFromSavedForLaterOverflowed,
   getSavedForLater, 
   loading: saveForLaterLoading } = useSavedForLater();
 
