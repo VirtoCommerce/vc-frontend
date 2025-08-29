@@ -67,20 +67,7 @@
             </div>
           </VcWidget>
           <template #sidebar>
-            <VcWidget
-              id="order-summary"
-              class="max-md:mt-5 print:break-inside-avoid"
-              :title="$t('common.titles.order_summary')"
-            >
-              <div class="relative">
-                <div class="flex justify-between text-base font-black">
-                  <span>{{ $t("common.labels.subtotal") }}</span>
-                  <span>
-                    <VcPriceDisplay :value="list.subTotal!" />
-                  </span>
-                </div>
-              </div>
-            </VcWidget>
+            <WishlistSummary :list="list" />
           </template>
         </VcLayout>
       </template>
@@ -134,6 +121,7 @@ import {
 } from "@/shared/wishlists";
 import type { LineItemType, Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import WishlistSummary from "@/shared/wishlists/components/wishlist-summary.vue";
 
 const props = defineProps<IProps>();
 
