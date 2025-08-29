@@ -19,7 +19,7 @@ interface IConfigurationProperty {
 interface IConfigProductToCompare {
   id: string;
   productId: string;
-  configurationSectionInput: ConfigurationSectionInput[];
+  configurationSectionInput?: ConfigurationSectionInput[];
   properties: IConfigurationProperty[];
 }
 
@@ -46,9 +46,8 @@ function removeFromCompareProductsConfigurableProduct(
 ) {
   const index = configProductsToCompare.value.findIndex(
     (cp) =>
-      cp.productId === product.id && cp.configurationSectionInput.every((s) => configurationSections?.includes(s)),
+      cp.productId === product.id && cp.configurationSectionInput?.every((s) => configurationSections?.includes(s)),
   );
-  console.log("index", index);
   if (index !== -1) {
     configProductsToCompare.value.splice(index, 1);
   }
@@ -66,8 +65,8 @@ function addToCompareProductsConfigurableProduct(
   configProductsToCompare.value.push({
     id: uuidv4(),
     productId: product.id,
-    configurationSectionInput: configurationSectionsInput || [],
-    properties: properties || [],
+    configurationSectionInput: configurationSectionsInput,
+    properties: properties ?? [],
   });
 }
 
@@ -81,7 +80,7 @@ function isInCompareList(product: Product, configurationSections?: Configuration
         configurationSections.every((section) => {
           return compareInputs(
             section,
-            configProduct.configurationSectionInput.find((s) => s.sectionId === section.sectionId) || {
+            configProduct.configurationSectionInput?.find((s) => s.sectionId === section.sectionId) || {
               sectionId: section.sectionId,
               type: "",
             },
@@ -114,7 +113,7 @@ export function useCompareProducts() {
       return;
     }
 
-    if (product.isConfigurable) {
+    if (product.isConfigurable && configurationSections?.length) {
       addToCompareProductsConfigurableProduct(product, configurationSections, properties);
     } else {
       addToCompareProductsRegularProduct(product);
@@ -139,7 +138,7 @@ export function useCompareProducts() {
   }
 
   function removeFromCompareList(product: Product, configurationSections?: ConfigurationSectionInput[]) {
-    if (product.isConfigurable) {
+    if (product.isConfigurable && configurationSections?.length) {
       removeFromCompareProductsConfigurableProduct(product, configurationSections);
     } else {
       removeFromCompareProductsRegularProduct(product);

@@ -11,7 +11,7 @@
     <div class="flex grow flex-col justify-between gap-2">
       <VcProductTitle
         class="h-[3.125rem] text-sm"
-        :to="link"
+        :to="simpleLink"
         :title="product.name"
         :target="$cfg.details_browser_target"
         @click="$emit('linkClick', $event)"
@@ -86,6 +86,8 @@ defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
+
+const simpleLink = computed(() => getProductRoute(props.product.id, props.product.slug));
 
 const link = computed<RouteLocationRaw>(() => {
   const route = getProductRoute(props.product.id, props.product.slug);

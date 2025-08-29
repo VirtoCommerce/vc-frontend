@@ -65,7 +65,12 @@
               :key="product.id"
               :product="product"
               class="w-[9.625rem] lg:w-[13.625rem]"
-              :query-string="product.isConfigurable ? getCongigurationProductByIndex(index).id : ''"
+              :query-string="
+                product.isConfigurable && index >= productsIds.length
+                  ? getConfigurationProductByIndex(index).id
+                  : undefined
+              "
+              :with-configuration="index >= productsIds.length"
               @remove="removeFromCompareListHandler(product, index)"
               @link-click="selectItemEvent(product)"
             />
@@ -222,7 +227,7 @@ const compareProductsListProperties = computed(() => ({
   item_list_name: t("pages.compare.header_block.title"),
 }));
 
-function getCongigurationProductByIndex(index: number) {
+function getConfigurationProductByIndex(index: number) {
   const configProductIndex = index - productsIds.value.length;
   return configProductsToCompare.value[configProductIndex];
 }
@@ -345,7 +350,7 @@ function selectItemEvent(product: Product) {
 }
 
 function removeFromCompareListHandler(product: Product, index: number) {
-  if (product.isConfigurable) {
+  if (product.isConfigurable && index >= productsIds.value.length) {
     const configProductIndex = index - productsIds.value.length;
     removeFromCompareList(product, configProductsToCompare.value[configProductIndex].configurationSectionInput);
   } else {
