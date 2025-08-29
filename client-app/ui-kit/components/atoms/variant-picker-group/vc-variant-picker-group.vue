@@ -215,6 +215,10 @@ watch(truncate, (val) => {
   void nextTick().then(val ? measureAndLayout : expand);
 });
 
+watch(maxRows, () => {
+  void nextTick().then(measureAndLayout);
+});
+
 const debouncedMeasureAndLayout = createDebouncer(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
 
 onMounted(async () => {
