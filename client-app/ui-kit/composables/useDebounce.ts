@@ -1,4 +1,4 @@
-import { onBeforeUnmount } from "vue";
+import { onBeforeUnmount, getCurrentInstance } from "vue";
 
 export interface IDebounceOptions {
   immediate?: boolean;
@@ -42,9 +42,11 @@ export function useDebounce(func: () => void, delay: number, options: IDebounceO
     }, delay);
   };
 
-  onBeforeUnmount(() => {
-    cancel();
-  });
+  if (getCurrentInstance()) {
+    onBeforeUnmount(() => {
+      cancel();
+    });
+  }
 
   return {
     debouncedFunc,

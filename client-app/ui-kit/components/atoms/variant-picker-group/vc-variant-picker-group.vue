@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick, watch, toRef } from "vue";
 import { Logger } from "@/core/utilities";
-import { useDebounce, useResizeObserver } from "../../../composables";
+import { useDebounce, useResizeObserver } from "@/ui-kit/composables";
 
 interface IProps {
   truncate?: boolean;
@@ -47,8 +47,14 @@ const showButton = ref(false);
 const hiddenCount = ref(0);
 
 const isButtonVisible = computed(() => truncate.value && !expanded.value && showButton.value);
-
 const ariaExpandedValue = computed(() => (expanded.value ? "true" : "false"));
+
+const { debouncedFunc: debouncedMeasureAndLayout } = useDebounce(
+  () => measureAndLayout(),
+  LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS,
+);
+
+useResizeObserver(containerRef, debouncedMeasureAndLayout);
 
 function getDirectItems(containerEl: HTMLElement | null) {
   if (!containerEl?.children) {
@@ -175,28 +181,32 @@ function isButtonPositionValid(items: HTMLElement[], visibleIdxLimit: number): b
 }
 
 async function findOptimalVisibleCount(items: HTMLElement[], total: number): Promise<number> {
-  let visibleIdxLimit = total;
+  for (let visibleIdxLimit = total; visibleIdxLimit > 0; visibleIdxLimit--) {
+    const layoutInfo = analyzeItemsLayout(items.filter((_, idx) => idx < visibleIdxLimit));
 
-  while (true) {
-    const layoutInfo = analyzeItemsLayout(items.filter((el, idx) => idx < visibleIdxLimit));
+    const fits = layoutInfo.rowCounts.length <= maxRows.value;
+    const btnValid = fits && isButtonPositionValid(items, visibleIdxLimit);
 
-    if (layoutInfo.rowCounts.length <= maxRows.value) {
-      if (isButtonPositionValid(items, visibleIdxLimit)) {
-        break;
-      }
+    if (btnValid) {
+      return visibleIdxLimit;
     }
 
-    visibleIdxLimit--;
-
-    if (visibleIdxLimit <= 0) {
-      break;
-    }
-
-    items[visibleIdxLimit].style.display = "none";
+    items[visibleIdxLimit - 1].style.display = "none";
     await nextTick();
   }
 
-  return visibleIdxLimit;
+  return 0;
+}
+
+function expand() {
+  expanded.value = true;
+  showButton.value = false;
+
+  const el = containerRef.value;
+  if (!el) return;
+
+  const items = getDirectItems(el);
+  resetItemsVisibility(items);
 }
 
 async function performLayoutMeasurement(items: HTMLElement[], total: number): Promise<void> {
@@ -226,19 +236,6 @@ function measureAndLayout() {
   void nextTick().then(() => performLayoutMeasurement(items, total));
 }
 
-function expand() {
-  expanded.value = true;
-  showButton.value = false;
-
-  const el = containerRef.value;
-  if (el === null) {
-    return;
-  }
-
-  const items = getDirectItems(el);
-  resetItemsVisibility(items);
-}
-
 watch(truncate, (val) => {
   void nextTick().then(val ? measureAndLayout : expand);
 });
@@ -250,10 +247,6 @@ watch(maxRows, () => {
 onMounted(async () => {
   await nextTick();
   measureAndLayout();
-
-  const { debouncedFunc: debouncedMeasureAndLayout } = useDebounce(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
-
-  useResizeObserver(containerRef, debouncedMeasureAndLayout);
 });
 </script>
 
