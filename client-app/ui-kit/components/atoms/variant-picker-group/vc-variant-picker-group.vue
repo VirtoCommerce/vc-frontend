@@ -54,15 +54,24 @@ const ariaExpandedValue = computed(() =>
 );
 
 let resizeObserver: ResizeObserver | null = null;
+let debounceTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
+function cleanupResizeObserver() {
+  if (resizeObserver) {
+    if (containerRef.value) {
+      resizeObserver.unobserve(containerRef.value);
+    }
+    resizeObserver.disconnect();
+    resizeObserver = null;
+  }
+}
 
 function createDebouncer(func: () => void, delay: number) {
-  let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
   return () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
+    if (debounceTimeoutId) {
+      clearTimeout(debounceTimeoutId);
     }
-    timeoutId = setTimeout(func, delay);
+    debounceTimeoutId = setTimeout(func, delay);
   };
 }
 
@@ -212,11 +221,7 @@ function expand() {
   expanded.value = true;
   showButton.value = false;
 
-  if (resizeObserver && containerRef.value) {
-    resizeObserver.unobserve(containerRef.value);
-    resizeObserver.disconnect();
-    resizeObserver = null;
-  }
+  cleanupResizeObserver();
 
   const el = containerRef.value;
   if (el === null) {
@@ -251,12 +256,11 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  if (resizeObserver && containerRef.value) {
-    resizeObserver.unobserve(containerRef.value);
-  }
+  cleanupResizeObserver();
 
-  if (resizeObserver) {
-    resizeObserver.disconnect();
+  if (debounceTimeoutId) {
+    clearTimeout(debounceTimeoutId);
+    debounceTimeoutId = null;
   }
 });
 </script>
