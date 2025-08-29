@@ -1,5 +1,4 @@
 import { gql } from "graphql-tag";
-import { globals } from "@/core/globals";
 import { graphqlClient } from "../../client";
 import type { Query, QueryWhiteLabelingSettingsArgs } from "@/core/api/graphql/types";
 import type { DocumentNode } from "graphql";
@@ -21,12 +20,9 @@ function getFooterLinksTreeString(level: number): string {
 
 function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
   return gql`
-    query WhiteLabelingSettings($storeId: String, $userId: String, $cultureName: String, $organizationId: String) {
+    query WhiteLabelingSettings($domain: String) {
       whiteLabelingSettings(
-        storeId: $storeId
-        userId: $userId
-        cultureName: $cultureName
-        organizationId: $organizationId
+        domain: $domain
       ) {
         logoUrl
         secondaryLogoUrl
@@ -49,19 +45,14 @@ function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
   `;
 }
 
-export async function getGetWhiteLabelingSettings() {
-  const { storeId, userId, organizationId, cultureName } = globals;
-
+export async function getGetWhiteLabelingSettings(domain: string) {
   const { data } = await graphqlClient.query<
     Required<Pick<Query, "whiteLabelingSettings">>,
     QueryWhiteLabelingSettingsArgs
   >({
     query: getQueryDocument(FOOTER_LINKS_DEPTH),
     variables: {
-      storeId,
-      userId,
-      organizationId,
-      cultureName,
+      domain
     },
   });
 
