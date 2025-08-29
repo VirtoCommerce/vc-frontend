@@ -118,7 +118,7 @@
 >
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { cloneDeep, keyBy } from "lodash";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -134,11 +134,13 @@ import {
 import type { LineItemType, Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
+const props = defineProps<IProps>();
+
+const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
+
 interface IProps {
   sharingKey: string;
 }
-
-const props = defineProps<IProps>();
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { analytics } = useAnalytics();
