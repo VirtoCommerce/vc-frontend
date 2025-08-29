@@ -62,6 +62,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { CONFIGURATION_URL_SEARCH_PARAM } from "@/core/constants";
 import { ProductType } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
@@ -92,12 +93,12 @@ const simpleLink = computed(() => getProductRoute(props.product.id, props.produc
 const link = computed<RouteLocationRaw>(() => {
   const route = getProductRoute(props.product.id, props.product.slug);
   if (typeof route === "string") {
-    const query = props.queryString ? { configuration: props.queryString } : undefined;
+    const query = props.queryString ? { [CONFIGURATION_URL_SEARCH_PARAM]: props.queryString } : undefined;
     return query ? { path: route, query } : { path: route };
   }
   if (props.queryString) {
     const existingQuery = route.query ?? {};
-    return { ...route, query: { ...existingQuery, configuration: props.queryString } };
+    return { ...route, query: { ...existingQuery, [CONFIGURATION_URL_SEARCH_PARAM]: props.queryString } };
   }
   return route;
 });

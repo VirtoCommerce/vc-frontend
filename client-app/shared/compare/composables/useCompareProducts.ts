@@ -2,6 +2,7 @@ import { useLocalStorage } from "@vueuse/core";
 import { v4 as uuidv4 } from "uuid";
 import { computed } from "vue";
 import { useThemeContext } from "@/core/composables";
+import { CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE, PRODUCT_COMPARE_LIST_IDS_LOCAL_STORAGE } from "@/core/constants";
 import { truncate } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
@@ -12,11 +13,11 @@ const NOTIFICATIONS_GROUP = "compare-products";
 const DEFAULT_MAX_PRODUCTS = 5;
 const NAME_MAX_LENGTH = 60;
 
-const LS_COMPARE_REGULAR_IDS = "productCompareListIds";
-const LS_COMPARE_CONFIG_PRODUCTS = "configProductsToCompare";
-
-const productsIds = useLocalStorage<string[]>(LS_COMPARE_REGULAR_IDS, []);
-const configProductsToCompare = useLocalStorage<IConfigProductToCompare[]>(LS_COMPARE_CONFIG_PRODUCTS, []);
+const productsIds = useLocalStorage<string[]>(PRODUCT_COMPARE_LIST_IDS_LOCAL_STORAGE, []);
+const configProductsToCompare = useLocalStorage<IConfigProductToCompare[]>(
+  CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE,
+  [],
+);
 
 function addRegularProductToCompare(product: Product) {
   if (productsIds.value.includes(product.id)) {

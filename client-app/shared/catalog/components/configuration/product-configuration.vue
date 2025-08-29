@@ -139,7 +139,11 @@ import { useLocalStorage } from "@vueuse/core";
 import { computed, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
+import {
+  CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE,
+  LINE_ITEM_ID_URL_SEARCH_PARAM,
+  CONFIGURATION_URL_SEARCH_PARAM,
+} from "@/core/constants";
 import { getUrlSearchParam } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
@@ -158,7 +162,7 @@ import type { DeepReadonly } from "vue";
 const props = defineProps<IProps>();
 
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
-const configurationId = getUrlSearchParam("configuration"); // TODO: make a constant
+const configurationId = getUrlSearchParam(CONFIGURATION_URL_SEARCH_PARAM);
 const NOTIFICATIONS_GROUP = "product-configuration";
 
 interface IProps {
@@ -169,7 +173,10 @@ interface IProps {
 const configuration = toRef(props, "configuration");
 const configurableProductId = toRef(props, "productId");
 
-const configProductsToCompare = useLocalStorage<IConfigProductToCompare[]>("configProductsToCompare", []);
+const configProductsToCompare = useLocalStorage<IConfigProductToCompare[]>(
+  CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE as string,
+  [],
+);
 const initialConfiguration = computed(() => {
   const configProduct = configProductsToCompare.value.find((cp) => cp.id === configurationId);
   const result = [...(configProduct?.configurationSectionInput ?? [])].map((section) => {
