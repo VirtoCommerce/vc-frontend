@@ -271,52 +271,83 @@ function getProperties() {
     return;
   }
 
+  const normalizedPropertyNames = computeNormalizedPropertyNames();
+  const baseProperties = buildBasePropertiesMap(normalizedPropertyNames);
+  const configOnlyProperties = buildConfigurationPropertiesMap();
+
+  properties.value = {
+    ...baseProperties,
+    ...configOnlyProperties,
+  };
+}
+
+function computeNormalizedPropertyNames() {
   const propertiesCombined = products.value.flatMap((product) => product.properties);
-  const propertiesNames = uniqBy(
-    propertiesCombined.map((prop) => {
-      return {
-        name: prop.name.toLowerCase(), // Normalize names to make shown properties like "Brand" and "brand" the same
-        label: prop.label,
-      };
-    }),
+
+  return uniqBy(
+    propertiesCombined.map((prop) => ({
+      name: prop.name.toLowerCase(), // Normalize names to make shown properties like "Brand" and "brand" the same
+      label: prop.label,
+    })),
     "name",
   );
+}
 
-  const configurationProductsProperties = uniqBy(
+function computeConfigurationProductsProperties() {
+  return uniqBy(
     configProductsToCompare.value.flatMap((configProduct) => {
       return configProduct.properties.map((prop: { label: string }) => ({
-        key: prop.label,
+        name: prop.label,
         label: prop.label,
       }));
     }),
-    "key",
+    "name",
   );
+}
+
+function buildBasePropertiesMap(propertiesNames: { name: string; label: string }[]) {
+  const map: ICompareProductProperties = {};
 
   propertiesNames.forEach(({ name, label }) => {
-    properties.value[name] = {
+    map[name] = {
       label,
       values: productsToShow.value.map((product) => {
         const property = product.properties.find((prop) => prop.name === name);
-
         return property ? (getPropertyValue(property) ?? EMPTY_VALUE_PLACEHOLDER) : EMPTY_VALUE_PLACEHOLDER;
       }),
     };
   });
 
+  return map;
+}
+
+function buildConfigurationPropertiesMap() {
+  const configurationProductsProperties = computeConfigurationProductsProperties();
+
+  if (!configurationProductsProperties.length) {
+    return {};
+  }
+
+  const map: ICompareProductProperties = {};
   const regularProductsValuesOffset = Array.from({ length: productsIds.value.length }).fill(
     EMPTY_VALUE_PLACEHOLDER,
   ) as string[];
 
   configurationProductsProperties.forEach((propertyInfo) => {
     const values = configProductsToCompare.value.map((configProduct) => {
-      return configProduct.properties.find((prop) => prop.label === propertyInfo.key)?.value ?? EMPTY_VALUE_PLACEHOLDER;
+      return (
+        configProduct.properties.find((prop: { label: string; value?: string }) => prop.label === propertyInfo.name)
+          ?.value ?? EMPTY_VALUE_PLACEHOLDER
+      );
     });
 
-    properties.value[propertyInfo.key] = {
+    map[propertyInfo.name] = {
       label: propertyInfo.label,
       values: [...regularProductsValuesOffset, ...values],
     };
   });
+
+  return map;
 }
 
 function openClearListModal() {
