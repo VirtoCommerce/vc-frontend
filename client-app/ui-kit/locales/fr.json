@@ -18,6 +18,9 @@
       "toggle_dropdown": "Basculer le menu déroulant",
       "update_cart": "Mettre à jour le panier"
     },
+    "accessibility": {
+      "close_alert": "Fermer l'alerte"
+    },
     "labels": {
       "not_available": "N/A",
       "price_per_item": "Prix par article",
@@ -90,7 +93,10 @@
       "start_input_help": "Entrez un nombre entre {min} et {max}, pas de {step}",
       "end_input_help": "Entrez un nombre entre {min} et {max}, pas de {step}",
       "column_aria_label": "Colonne avec {count} articles, de {from} à {to}",
-      "current_value_announcement": "Valeur du curseur : {start} à {end}, plage {min} à {max}"
+      "current_value_announcement": "Valeur du curseur : {start} à {end}, plage {min} à {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Navigation fil d'Ariane"
     }
   }
 }

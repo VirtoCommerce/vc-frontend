@@ -1,6 +1,10 @@
 <template>
   <teleport to="body">
-    <div class="notifications-host">
+    <section
+      class="notifications-host"
+      :aria-label="$t('common.labels.notifications')"
+      aria-live="polite"
+    >
       <transition-group name="app-notifications" tag="div" class="notifications-host__wrapper">
         <VcAlert
           v-for="notification in stack"
@@ -35,7 +39,7 @@
           </div>
         </VcAlert>
       </transition-group>
-    </div>
+    </section>
   </teleport>
 </template>
 

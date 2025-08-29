@@ -18,6 +18,9 @@
       "toggle_dropdown": "Dropdown umschalten",
       "update_cart": "Warenkorb aktualisieren"
     },
+    "accessibility": {
+      "close_alert": "Benachrichtigung schließen"
+    },
     "labels": {
       "not_available": "N/V",
       "price_per_item": "Preis pro Artikel",
@@ -91,6 +94,9 @@
       "end_input_help": "Gib eine Zahl zwischen {min} und {max} ein, Schrittweite {step}",
       "column_aria_label": "Spalte mit {count} Artikeln, Bereich von {from} bis {to}",
       "current_value_announcement": "Schiebereglerwert: {start} bis {end}, Bereich {min} bis {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Breadcrumb-Navigation"
     }
   }
 }

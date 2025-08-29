@@ -21,7 +21,12 @@
     </div>
 
     <div v-if="closable">
-      <button type="button" class="vc-alert__close-button" @click="$emit('close')">
+      <button
+        type="button"
+        class="vc-alert__close-button"
+        :aria-label="$t('ui_kit.accessibility.close_alert')"
+        @click="$emit('close')"
+      >
         <slot name="close-icon">
           <VcIcon name="delete-2" />
         </slot>

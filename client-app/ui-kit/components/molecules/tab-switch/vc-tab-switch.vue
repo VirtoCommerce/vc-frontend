@@ -23,7 +23,7 @@
       @input="onInput"
     />
 
-    <button class="vc-tab-switch__button" type="button" tabindex="0" @click="onChange">
+    <button class="vc-tab-switch__button" type="button" tabindex="0" :aria-label="ariaLabel || label" @click="onChange">
       <slot name="icon" v-bind="{ checked, value, label }">
         <VcIcon v-if="icon" :name="icon" class="vc-tab-switch__icon" />
       </slot>
@@ -57,6 +57,7 @@ const props = withDefaults(
     disabled?: boolean;
     size?: "sm" | "md";
     labelPosition?: "start" | "end";
+    ariaLabel?: string;
   }>(),
   {
     size: "md",
