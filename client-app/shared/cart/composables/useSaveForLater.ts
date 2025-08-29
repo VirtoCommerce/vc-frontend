@@ -80,10 +80,7 @@ function _useSavedForLater() {
   async function getSavedForLater() {
     try {
       savedForLaterList.value = await getSavedForLaterQuery();
-    } catch (err) {
-      if (err instanceof ApolloError && err.networkError?.toString() === (AbortReason.Explicit as string)) {
-        return;
-      }
+    } catch (err) { 
       Logger.error(`useSavedForLater.${getSavedForLater.name}`, err);
     }
   }
