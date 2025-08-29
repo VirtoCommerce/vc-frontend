@@ -901,8 +901,8 @@
         "sharing_link_label": "Ссылка",
         "sharing_scope": {
           "Private": "Приватный",
-          "AnyoneAnonymous": "Кто угодно",
-          "Organization": "Организация"
+          "Organization": "Организация",
+          "AnyoneAnonymous": "Все (только чтение)"
         },
         "clipboard_success": "Ссылка скопирована"
       },

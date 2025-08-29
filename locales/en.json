@@ -901,8 +901,8 @@
         "make_shared": "Make shared",
         "sharing_scope": {
           "Private": "Private",
-          "AnyoneAnonymous": "Anyone",
-          "Organization": "Organization"
+          "Organization": "Organization",
+          "AnyoneAnonymous": "Anyone (readonly)"
         },
         "clipboard_success": "Link copied"
       },

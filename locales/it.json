@@ -901,8 +901,8 @@
         "sharing_link_label": "Link",
         "sharing_scope": {
           "Private": "Privato",
-          "AnyoneAnonymous": "Chiunque",
-          "Organization": "Organizzazione"
+          "Organization": "Organizzazione",
+          "AnyoneAnonymous": "Chiunque (sola lettura)"
         },
         "clipboard_success": "Link copiato"
       },

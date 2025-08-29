@@ -901,8 +901,8 @@
         "sharing_link_label": "链接",
         "sharing_scope": {
           "Private": "私密",
-          "AnyoneAnonymous": "任何人",
-          "Organization": "组织"
+          "Organization": "组织",
+          "AnyoneAnonymous": "任何人（只读）"
         },
         "clipboard_success": "链接已复制"
       },

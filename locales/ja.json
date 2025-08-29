@@ -901,8 +901,8 @@
         "sharing_link_label": "リンク",
         "sharing_scope": {
           "Private": "プライベート",
-          "AnyoneAnonymous": "誰でも",
-          "Organization": "組織"
+          "Organization": "組織",
+          "AnyoneAnonymous": "誰でも（閲覧専用）"
         },
         "clipboard_success": "リンクをコピーしました"
       },
