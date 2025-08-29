@@ -65,6 +65,7 @@
               :key="product.id"
               :product="product"
               class="w-[9.625rem] lg:w-[13.625rem]"
+              :query-string="product.isConfigurable ? getCongigurationProductByIndex(index).id : ''"
               @remove="removeFromCompareListHandler(product, index)"
               @link-click="selectItemEvent(product)"
             />
@@ -220,6 +221,11 @@ const compareProductsListProperties = computed(() => ({
   item_list_id: "compare_products",
   item_list_name: t("pages.compare.header_block.title"),
 }));
+
+function getCongigurationProductByIndex(index: number) {
+  const configProductIndex = index - productsIds.value.length;
+  return configProductsToCompare.value[configProductIndex];
+}
 
 async function refreshProducts() {
   const configProductsIds = configProductsToCompare.value.map((configProduct) => configProduct.productId);

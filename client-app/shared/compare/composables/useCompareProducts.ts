@@ -1,4 +1,5 @@
 import { useLocalStorage } from "@vueuse/core";
+import { v4 as uuidv4 } from "uuid";
 import { computed } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { truncate } from "@/core/utilities";
@@ -16,6 +17,7 @@ interface IConfigurationProperty {
 }
 
 interface IConfigProductToCompare {
+  id: string;
   productId: string;
   configurationSectionInput: ConfigurationSectionInput[];
   properties: IConfigurationProperty[];
@@ -62,6 +64,7 @@ function addToCompareProductsConfigurableProduct(
   }
 
   configProductsToCompare.value.push({
+    id: uuidv4(),
     productId: product.id,
     configurationSectionInput: configurationSectionsInput || [],
     properties: properties || [],

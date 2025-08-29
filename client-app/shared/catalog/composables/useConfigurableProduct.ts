@@ -400,6 +400,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     changeCartConfiguredItemBatched,
     validateSections,
     compareInputs,
+    updateWithPreselectedValues,
 
     loading: readonly(loading),
     changeCartConfiguredItemOverflowed: batchedChangeCartConfiguredItemOverflowed,

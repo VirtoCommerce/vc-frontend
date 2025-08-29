@@ -78,6 +78,7 @@ interface IEmits {
 interface IProps {
   product: Product;
   withConfiguration?: boolean;
+  queryString?: string;
 }
 
 defineEmits<IEmits>();
@@ -86,7 +87,18 @@ const props = defineProps<IProps>();
 
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
-const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
+const link = computed<RouteLocationRaw>(() => {
+  const route = getProductRoute(props.product.id, props.product.slug);
+  if (typeof route === "string") {
+    return {
+      path: route,
+      query: {
+        configuration: props.queryString,
+      },
+    };
+  }
+  return route;
+});
 
 const isDigital = computed(() => props.product.productType === ProductType.Digital);
 </script>

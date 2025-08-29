@@ -135,7 +135,8 @@
 </template>
 
 <script setup lang="ts">
-import { toRef, watch } from "vue";
+import { useLocalStorage } from "@vueuse/core";
+import { computed, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
@@ -150,12 +151,25 @@ import OptionNone from "./option-none.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
 import SectionTextFieldset from "./section-text-fieldset.vue";
-import type { ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { ConfigurationSectionInput, ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
+
+interface IConfigurationProperty {
+  label: string;
+  value: string;
+}
+
+interface IConfigProductToCompare {
+  id: string;
+  productId: string;
+  configurationSectionInput: ConfigurationSectionInput[];
+  properties: IConfigurationProperty[];
+}
 
 const props = defineProps<IProps>();
 
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
+const configurationId = getUrlSearchParam("configuration"); // TODO: make a constant
 const NOTIFICATIONS_GROUP = "product-configuration";
 
 interface IProps {
@@ -163,7 +177,21 @@ interface IProps {
   productId: string;
 }
 
+const configuration = toRef(props, "configuration");
 const configurableProductId = toRef(props, "productId");
+
+const configProductsToCompare = useLocalStorage<IConfigProductToCompare[]>("configProductsToCompare", []);
+const initialConfiguration = computed(() => {
+  const configProduct = configProductsToCompare.value.find((cp) => cp.id === configurationId);
+  const result = [...(configProduct?.configurationSectionInput ?? [])].map((section) => {
+    return {
+      ...section,
+      ...section.option,
+      id: section.sectionId,
+    };
+  });
+  return result;
+});
 
 const { t } = useI18n();
 const {
@@ -174,10 +202,19 @@ const {
   changeCartConfiguredItem,
   validationErrors,
   loading: isDataUpdating,
+  updateWithPreselectedValues,
 } = useConfigurableProduct(configurableProductId.value);
 
 const { openModal } = useModal();
 const notifications = useNotifications();
+
+watch(
+  configuration,
+  () => {
+    updateWithPreselectedValues(initialConfiguration.value);
+  },
+  { immediate: true },
+);
 
 watch(
   () => [isConfigurationChanged.value, validationErrors.value.size === 0, isDataUpdating.value],
