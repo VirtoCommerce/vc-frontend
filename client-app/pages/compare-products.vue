@@ -1,6 +1,6 @@
 <template>
   <VcEmptyPage
-    v-if="!productsIds.length && !configProductsToCompare.length"
+    v-if="!productsToShow.length"
     :breadcrumbs="breadcrumbs"
     :title="$t('pages.compare.empty_list.title')"
     icon="outline-compare"
@@ -31,7 +31,7 @@
 
         <i18n-t keypath="pages.compare.header_block.counter_message" scope="global" tag="span" class="mb-3 block">
           <template #productsNumber>
-            <strong>{{ productsIds.length + configProductsToCompare.length }}</strong>
+            <strong>{{ productsToShow.length }}</strong>
           </template>
 
           <template #productsLimit>
@@ -66,11 +66,9 @@
               :product="product"
               class="w-[9.625rem] lg:w-[13.625rem]"
               :query-string="
-                product.isConfigurable && index >= productsIds.length
-                  ? getConfigurationProductByIndex(index).id
-                  : undefined
+                isProductInConfigurableGroup(product, index) ? getConfigurationProductByIndex(index).id : undefined
               "
-              :with-configuration="index >= productsIds.length"
+              :with-configuration="isProductInConfigurableGroup(product, index)"
               @remove="removeFromCompareListHandler(product, index)"
               @link-click="selectItemEvent(product)"
             />
@@ -123,6 +121,8 @@ import { useModal } from "@/shared/modal";
 import { VcConfirmationModal } from "@/ui-kit/components";
 import type { CreateConfiguredLineItemMutation, Product } from "@/core/api/graphql/types";
 
+const EMPTY_VALUE_PLACEHOLDER = "\u2013";
+
 interface ICompareProductProperties {
   [key: string]: { label: string; values: string[] };
 }
@@ -157,8 +157,6 @@ const showOnlyDifferences = ref(false);
 const properties = ref<ICompareProductProperties>({});
 
 const configProductsConfiguredItems = ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"][]>([]);
-
-const EMPTY_VALUE_PLACEHOLDER = "\u2013";
 
 const cardsElement = ref<HTMLElement | null>(null);
 const propertiesElement = ref<HTMLElement | null>(null);
@@ -395,6 +393,10 @@ function removeFromCompareListHandler(product: Product, index: number) {
   } else {
     removeFromCompareList(product);
   }
+}
+
+function isProductInConfigurableGroup(product: Product, index: number) {
+  return product.isConfigurable && index >= productsIds.value.length;
 }
 
 /**
