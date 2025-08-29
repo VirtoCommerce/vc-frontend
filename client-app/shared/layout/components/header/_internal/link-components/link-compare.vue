@@ -1,5 +1,5 @@
 <template>
-  <BottomHeaderLink :link="item" :count="productsIds.length">
+  <BottomHeaderLink :link="item" :count="productsIds.length + configProductsToCompare.length">
     {{ item.title }}
   </BottomHeaderLink>
 </template>
@@ -10,5 +10,5 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 import BottomHeaderLink from "@/shared/layout/components/header/_internal/bottom-header-link.vue";
 defineProps<{ item: ExtendedMenuLinkType }>();
 
-const { productsIds } = useCompareProducts();
+const { productsIds, configProductsToCompare } = useCompareProducts();
 </script>
