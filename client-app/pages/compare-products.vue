@@ -163,10 +163,15 @@ const configProductsConfiguredItems = ref<CreateConfiguredLineItemMutation["crea
 const cardsElement = ref<HTMLElement | null>(null);
 const propertiesElement = ref<HTMLElement | null>(null);
 
-const productsToShow = computed<Product[]>(() =>
-  getAllProductIdsToShow()
-    .map(buildProductForDisplay)
-    .filter((p): p is Product => p !== null),
+const allProductIdsToShow = computed(() => {
+  const configProductsIds = configProductsToCompare.value.map((configProduct) => configProduct.productId);
+  return [...productsIds.value, ...configProductsIds];
+});
+
+const allProductIdsForFetch = computed(() => uniq(allProductIdsToShow.value));
+
+const productsToShow = computed(() =>
+  allProductIdsToShow.value.map(buildProductForDisplay).filter((p): p is Product => p !== null),
 );
 
 const propertiesDiffs = computed<ICompareProductProperties>(() => {
@@ -178,12 +183,7 @@ const compareProductsListProperties = computed(() => ({
   item_list_name: t("pages.compare.header_block.title"),
 }));
 
-function getAllProductIdsToShow(): string[] {
-  const configProductsIds = configProductsToCompare.value.map((configProduct) => configProduct.productId);
-  return [...productsIds.value, ...configProductsIds];
-}
-
-function normalizeProductProperties(product: Product): Product {
+function normalizeProductProperties(product: Product) {
   return {
     ...product,
     properties: product.properties.map((prop) => ({
@@ -193,7 +193,7 @@ function normalizeProductProperties(product: Product): Product {
   };
 }
 
-function getConfiguredLineItemByIndex(index: number): ConfiguredLineItemType | undefined {
+function getConfiguredLineItemByIndex(index: number) {
   const configProductIndex = index - productsIds.value.length;
   return configProductsConfiguredItems.value[configProductIndex];
 }
@@ -231,7 +231,7 @@ function withConfiguredPrices(product: Product, configuredItem?: ConfiguredLineI
   };
 }
 
-function buildProductForDisplay(productId: string, index: number): Product | null {
+function buildProductForDisplay(productId: string, index: number) {
   const product = products.value.find((_product) => _product.id === productId);
   if (!product) {
     return null;
@@ -247,12 +247,9 @@ function getConfigurationProductByIndex(index: number) {
   return configProductsToCompare.value[configProductIndex];
 }
 
-async function refreshProducts() {
-  const configProductsIds = configProductsToCompare.value.map((configProduct) => configProduct.productId);
-  const productIds = uniq([...productsIds.value, ...configProductsIds]);
-
+async function refreshProducts(): Promise<void> {
   try {
-    await fetchProducts({ productIds });
+    await fetchProducts({ productIds: allProductIdsForFetch.value });
 
     const configProductsConfiguredItemsResponses = await Promise.all(
       configProductsToCompare.value.map((configProduct) =>
@@ -380,7 +377,7 @@ function openClearListModal() {
 }
 
 watch(
-  [() => productsIds.value, () => configProductsToCompare.value],
+  allProductIdsToShow,
   async () => {
     await refreshProducts();
   },
