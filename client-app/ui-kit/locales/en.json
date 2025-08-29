@@ -91,6 +91,9 @@
       "end_input_help": "Enter a number between {min} and {max}, step size {step}",
       "column_aria_label": "Column with {count} items, range from {from} to {to}",
       "current_value_announcement": "Slider value: {start} to {end}, range {min} to {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Breadcrumbs navigation"
     }
   }
 }

@@ -91,6 +91,9 @@
       "end_input_help": "{min}～{max}の範囲で、{step}刻みで入力してください",
       "column_aria_label": "{count}アイテムの列、範囲：{from}～{to}",
       "current_value_announcement": "スライダーの値: {start} から {end}、範囲 {min} から {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "パンくずナビゲーション"
     }
   }
 }

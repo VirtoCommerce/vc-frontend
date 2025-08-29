@@ -91,6 +91,9 @@
       "end_input_help": "Inserisci un numero tra {min} e {max}, incremento {step}",
       "column_aria_label": "Colonna con {count} articoli, da {from} a {to}",
       "current_value_announcement": "Valore slider: {start} a {end}, intervallo {min} a {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Navigazione breadcrumb"
     }
   }
 }

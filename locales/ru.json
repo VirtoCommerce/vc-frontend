@@ -353,7 +353,8 @@
           "aria_labels": {
             "categories": "Категории",
             "subcategories": "Подкатегории {category}",
-            "navigation": "Навигация"
+            "navigation": "Навигация",
+            "main_navigation": "Основная навигация"
           }
         }
       },

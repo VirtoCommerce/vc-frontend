@@ -91,6 +91,9 @@
       "end_input_help": "Введите число от {min} до {max}, шаг {step}",
       "column_aria_label": "Столбец с {count} товарами, от {from} до {to}",
       "current_value_announcement": "Значение: {start} - {end}, диапазон {min} - {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Навигация хлебными крошками"
     }
   }
 }
