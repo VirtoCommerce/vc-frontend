@@ -76,46 +76,35 @@ function getDirectItems(containerEl: HTMLElement | null) {
 
 function analyzeItemsLayout(items: HTMLElement[]) {
   if (!Array.isArray(items) || items.length === 0) {
-    return { rowCounts: [], visibleInLayout: 0 };
+    return { rowCounts: [] };
   }
 
   try {
     const positions = items.map((el) => el.offsetTop);
     const rowCounts: number[] = [];
     const rowTops: number[] = [];
-    let totalVisible = 0;
 
-    for (let i = 0; i < positions.length; i++) {
-      const elementTop = positions[i];
-      let foundRow = false;
+    positions.forEach((elementTop) => {
+      let matched = false;
 
-      for (let rowIndex = 0; rowIndex < rowTops.length; rowIndex++) {
-        if (Math.abs(elementTop - rowTops[rowIndex]) < LAYOUT_CONFIG.POSITION_TOLERANCE) {
-          rowCounts[rowIndex]++;
-          totalVisible++;
-          foundRow = true;
+      for (let idx = 0; idx < rowTops.length; idx++) {
+        if (Math.abs(elementTop - rowTops[idx]) < LAYOUT_CONFIG.POSITION_TOLERANCE) {
+          rowCounts[idx]++;
+          matched = true;
           break;
         }
       }
 
-      if (!foundRow) {
-        if (rowTops.length < maxRows.value) {
-          rowTops.push(elementTop);
-          rowCounts.push(1);
-          totalVisible++;
-        } else {
-          break;
-        }
+      if (!matched) {
+        rowTops.push(elementTop);
+        rowCounts.push(1);
       }
-    }
+    });
 
-    return {
-      rowCounts,
-      visibleInLayout: totalVisible,
-    };
+    return { rowCounts };
   } catch (error) {
     Logger.error("VcVariantPickerGroup: Failed to analyze items layout", error);
-    return { rowCounts: [], visibleInLayout: 0 };
+    return { rowCounts: [] };
   }
 }
 
@@ -129,18 +118,18 @@ function resetItemsVisibility(items: HTMLElement[]) {
 }
 
 function calculateVisibleItemsCount(layoutInfo: ReturnType<typeof analyzeItemsLayout>) {
-  if (!layoutInfo || typeof layoutInfo.visibleInLayout !== "number" || layoutInfo.rowCounts.length === 0) {
+  if (!layoutInfo || layoutInfo.rowCounts.length === 0) {
     return 0;
   }
 
-  const { rowCounts } = layoutInfo;
+  const rowsToConsider = Math.min(layoutInfo.rowCounts.length, maxRows.value);
   let totalVisible = 0;
 
-  for (let i = 0; i < rowCounts.length; i++) {
-    if (i === rowCounts.length - 1) {
-      totalVisible += Math.max(0, rowCounts[i] - 1);
+  for (let i = 0; i < rowsToConsider; i++) {
+    if (i === rowsToConsider - 1) {
+      totalVisible += Math.max(0, layoutInfo.rowCounts[i] - 1);
     } else {
-      totalVisible += rowCounts[i];
+      totalVisible += layoutInfo.rowCounts[i];
     }
   }
 
@@ -192,9 +181,7 @@ function measureAndLayout() {
   }
 
   const container = containerRef.value;
-  const btnEl = moreBtn.value;
-
-  if (container === null || btnEl === null) {
+  if (container === null) {
     return;
   }
 
@@ -210,14 +197,14 @@ function measureAndLayout() {
   resetItemsVisibility(items);
 
   const layoutInfo = analyzeItemsLayout(items);
+  const visibleItems = calculateVisibleItemsCount(layoutInfo);
 
-  if (total <= layoutInfo.visibleInLayout) {
+  if (total <= visibleItems) {
     showButton.value = false;
     hiddenCount.value = 0;
     return;
   }
 
-  const visibleItems = calculateVisibleItemsCount(layoutInfo);
   updateButtonState(total, visibleItems);
   batchUpdateVisibility(items, visibleItems);
 }
