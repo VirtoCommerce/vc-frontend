@@ -54,7 +54,7 @@
             <VcButton
               v-if="isClipboardSupported"
               color="secondary"
-              variant="outline"
+              variant="solid-light"
               icon="document-duplicate"
               icon-size="1.25rem"
               @click="copySharingLink"
