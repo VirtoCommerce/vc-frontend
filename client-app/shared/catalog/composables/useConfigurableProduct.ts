@@ -1,5 +1,4 @@
 import { provideApolloClient, useMutation } from "@vue/apollo-composable";
-import isEqual from "lodash/isEqual";
 import { ref, readonly, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { apolloClient, getConfigurationItems, getProductConfiguration } from "@/core/api/graphql";
@@ -10,6 +9,7 @@ import { globals } from "@/core/globals";
 import { createSharedComposableByArgs, getUrlSearchParam, Logger } from "@/core/utilities";
 import { toCSV } from "@/core/utilities/common";
 import { useShortCart } from "@/shared/cart/composables";
+import { compareConfigurationInputs } from "@/shared/catalog/utilities/compareConfiguration";
 import { CONFIGURABLE_SECTION_TYPES } from "../constants/configurableProducts";
 import type {
   CartConfigurationItemFileType,
@@ -381,16 +381,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     input1: DeepReadonly<ConfigurationSectionInput>,
     input2: DeepReadonly<ConfigurationSectionInput>,
   ) {
-    switch (input1.type) {
-      case CONFIGURABLE_SECTION_TYPES.product:
-        return isEqual(input1.option, input2.option);
-      case CONFIGURABLE_SECTION_TYPES.text:
-        return input1.customText === input2.customText;
-      case CONFIGURABLE_SECTION_TYPES.file:
-        return isEqual(input1.fileUrls, input2.fileUrls);
-      default:
-        return true;
-    }
+    return compareConfigurationInputs(input1, input2);
   }
 
   return {

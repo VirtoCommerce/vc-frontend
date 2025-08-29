@@ -4,7 +4,7 @@ import { computed } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE, PRODUCT_COMPARE_LIST_IDS_LOCAL_STORAGE } from "@/core/constants";
 import { truncate } from "@/core/utilities";
-import { useConfigurableProduct } from "@/shared/catalog/composables";
+import { compareConfigurationInputs } from "@/shared/catalog/utilities/compareConfiguration";
 import { useNotifications } from "@/shared/notification";
 import type { IConfigurationProperty, IConfigProductToCompare } from "../types";
 import type { Product, ConfigurationSectionInput } from "@/core/api/graphql/types";
@@ -34,22 +34,7 @@ function removeRegularProductFromCompare(product: Product) {
 }
 
 function removeConfiguredProductFromCompare(product: Product, configuration?: ConfigurationSectionInput[]) {
-  const { compareInputs } = useConfigurableProduct(product.id);
-
-  const index = configProductsToCompare.value.findIndex((configProduct) => {
-    if (configProduct.productId !== product.id) {
-      return false;
-    }
-
-    if (!configuration?.length || !configProduct.configurationSectionInput?.length) {
-      return false;
-    }
-
-    return configuration.every((section) => {
-      const matched = configProduct.configurationSectionInput?.find((s) => s.sectionId === section.sectionId);
-      return matched && compareInputs(section, matched);
-    });
-  });
+  const index = findMatchingConfigProductIndex(product, configuration);
 
   if (index !== -1) {
     configProductsToCompare.value.splice(index, 1);
@@ -74,20 +59,31 @@ function addConfiguredProductToCompare(
 }
 
 function isInCompareList(product: Product, configuration?: ConfigurationSectionInput[]) {
-  const { compareInputs } = useConfigurableProduct(product.id);
-
   if (product.isConfigurable && configuration) {
-    return configProductsToCompare.value.some((configProduct) => {
-      return (
-        configProduct.productId === product.id &&
-        configuration.every((section) => {
-          const matched = configProduct.configurationSectionInput?.find((s) => s.sectionId === section.sectionId);
-          return matched && compareInputs(section, matched);
-        })
-      );
-    });
+    return findMatchingConfigProductIndex(product, configuration) !== -1;
   }
   return productsIds.value.includes(product.id);
+}
+
+function findMatchingConfigProductIndex(product: Product, configuration?: ConfigurationSectionInput[]) {
+  if (!configuration) {
+    return -1;
+  }
+
+  return configProductsToCompare.value.findIndex((configProduct) => {
+    if (configProduct.productId !== product.id) {
+      return false;
+    }
+
+    if (!configProduct.configurationSectionInput?.length) {
+      return false;
+    }
+
+    return configuration.every((section) => {
+      const matched = configProduct.configurationSectionInput?.find((s) => s.sectionId === section.sectionId);
+      return matched ? compareConfigurationInputs(section, matched) : false;
+    });
+  });
 }
 
 export function useCompareProducts() {

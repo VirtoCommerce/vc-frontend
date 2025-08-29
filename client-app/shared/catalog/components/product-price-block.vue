@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, ref, shallowRef, toRef } from "vue";
+import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { stringFormat } from "@/core/utilities";
@@ -97,8 +97,6 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
-
-const product = toRef(props, "product");
 
 const route = useRoute();
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -114,7 +112,7 @@ const shareProductPopoverShown = ref(false);
 const mailToLink = computed(
   () =>
     `mailto:?subject=${encodeURIComponent(
-      t("shared.catalog.product_details.price_block.product_email_title", [product.value?.name]),
+      t("shared.catalog.product_details.price_block.product_email_title", [props.product?.name]),
     )}&body=${encodeURIComponent(pageUrl.value)}`,
 );
 
