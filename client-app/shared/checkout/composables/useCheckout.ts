@@ -9,7 +9,7 @@ import { AddressType, ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { createSharedComposableByArgs } from "@/core/utilities/composables";
-import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
+import { useUser, useUserAddresses } from "@/shared/account";
 import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
@@ -63,7 +63,6 @@ export function _useCheckout(cartId?: string) {
   const { openModal, closeModal } = useModal();
   const router = useRouter();
   const { user, isAuthenticated, isCorporateMember } = useUser();
-  const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
   const {
     addresses: personalAddresses,
     fetchAddresses: fetchPersonalAddresses,
@@ -217,34 +216,17 @@ export function _useCheckout(cartId?: string) {
   });
 
   async function setCheckoutDefaults(): Promise<void> {
-    const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
-    const defaultShippingMethod = availableShippingMethods.value.find((item) => item.id === shippingMethodId);
-    const defaultPaymentMethod = availablePaymentMethods.value.find((item) => item.code === paymentMethodCode);
-
     if (allItemsAreDigital.value && shipment.value) {
       await removeShipment(shipment.value.id);
     }
 
     // Create at initialization to prevent duplication due to lack of id
-    if (!allItemsAreDigital.value && !shipment.value?.shipmentMethodCode && !shipment.value?.shipmentMethodOption) {
-      if (shippingMethodId && defaultShippingMethod) {
-        await updateShipment({
-          id: shipment.value?.id,
-          price: defaultShippingMethod.price.amount,
-          shipmentMethodCode: defaultShippingMethod.code,
-          shipmentMethodOption: defaultShippingMethod.optionName,
-        });
-      } else if (!shipment.value) {
-        await updateShipment({});
-      }
+    if (!allItemsAreDigital.value && !shipment.value) {
+      await updateShipment({});
     }
 
-    if (!payment.value?.paymentGatewayCode) {
-      if (paymentMethodCode && defaultPaymentMethod) {
-        await setPaymentMethod(defaultPaymentMethod);
-      } else if (!payment.value) {
-        await updatePayment({});
-      }
+    if (!payment.value) {
+      await updatePayment({});
     }
   }
 
