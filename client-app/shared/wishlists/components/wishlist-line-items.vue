@@ -1,7 +1,7 @@
 <template>
   <VcLineItems
     :items="items"
-    :removable="editable ?? true"
+    :removable="editable"
     with-image
     with-properties
     with-price
@@ -27,14 +27,14 @@
         :disabled="pendingItems[item.id]"
         :deleted="item.deleted"
         :browser-target="$cfg.details_browser_target"
-        :removable="editable ?? true"
+        :removable="editable"
         with-image
         with-properties
         with-price
         @remove="() => removeSingleItem(item.id)"
         @link-click="$emit('linkClick', item.product)"
       >
-        <div v-if="(editable ?? true) && !item.deleted" ref="itemDefaultSlot" :style="{ width: itemDefaultSlotWidth }">
+        <div v-if="editable && !item.deleted" ref="itemDefaultSlot" :style="{ width: itemDefaultSlotWidth }">
           <VcProductButton
             v-if="item.isConfigurable"
             no-wrap
