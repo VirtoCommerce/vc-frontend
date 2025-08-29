@@ -117,25 +117,6 @@ function resetItemsVisibility(items: HTMLElement[]) {
   hiddenItems.forEach((item) => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
 }
 
-function calculateVisibleItemsCount(layoutInfo: ReturnType<typeof analyzeItemsLayout>) {
-  if (!layoutInfo || layoutInfo.rowCounts.length === 0) {
-    return 0;
-  }
-
-  const rowsToConsider = Math.min(layoutInfo.rowCounts.length, maxRows.value);
-  let totalVisible = 0;
-
-  for (let i = 0; i < rowsToConsider; i++) {
-    if (i === rowsToConsider - 1) {
-      totalVisible += Math.max(0, layoutInfo.rowCounts[i] - 1);
-    } else {
-      totalVisible += layoutInfo.rowCounts[i];
-    }
-  }
-
-  return Math.max(0, totalVisible);
-}
-
 function updateButtonState(totalItems: number, visibleItems: number) {
   const finalHidden = Math.max(0, totalItems - visibleItems);
 
@@ -146,33 +127,6 @@ function updateButtonState(totalItems: number, visibleItems: number) {
     showButton.value = false;
     hiddenCount.value = 0;
   }
-}
-
-function batchUpdateVisibility(items: HTMLElement[], visibleCount: number) {
-  if (!Array.isArray(items) || typeof visibleCount !== "number") {
-    return;
-  }
-
-  const itemsToShow: HTMLElement[] = [];
-  const itemsToHide: HTMLElement[] = [];
-  const safeVisibleCount = Math.max(0, visibleCount);
-
-  items.forEach((node, idx) => {
-    if (!node?.classList) return;
-
-    if (!expanded.value && idx >= safeVisibleCount) {
-      if (!node.classList.contains(LAYOUT_CONFIG.HIDDEN_CLASS)) {
-        itemsToHide.push(node);
-      }
-    } else {
-      if (node.classList.contains(LAYOUT_CONFIG.HIDDEN_CLASS)) {
-        itemsToShow.push(node);
-      }
-    }
-  });
-
-  itemsToShow.forEach((item) => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
-  itemsToHide.forEach((item) => item.classList.add(LAYOUT_CONFIG.HIDDEN_CLASS));
 }
 
 function measureAndLayout() {
@@ -195,18 +149,53 @@ function measureAndLayout() {
   }
 
   resetItemsVisibility(items);
+  showButton.value = false;
 
-  const layoutInfo = analyzeItemsLayout(items);
-  const visibleItems = calculateVisibleItemsCount(layoutInfo);
+  void nextTick().then(async () => {
+    let layoutInfo = analyzeItemsLayout(items);
 
-  if (total <= visibleItems) {
-    showButton.value = false;
-    hiddenCount.value = 0;
-    return;
-  }
+    if (layoutInfo.rowCounts.length <= maxRows.value) {
+      showButton.value = false;
+      hiddenCount.value = 0;
+      return;
+    }
 
-  updateButtonState(total, visibleItems);
-  batchUpdateVisibility(items, visibleItems);
+    showButton.value = true;
+    await nextTick();
+
+    let visibleIdxLimit = total;
+
+    while (true) {
+      layoutInfo = analyzeItemsLayout(items.filter((el, idx) => idx < visibleIdxLimit));
+
+      if (layoutInfo.rowCounts.length <= maxRows.value) {
+        const btnEl = moreBtn.value as HTMLElement | null;
+
+        if (btnEl === null) {
+          break;
+        }
+
+        const lastIdx = visibleIdxLimit - 1;
+        const lastItemTop = lastIdx >= 0 ? items[lastIdx].offsetTop : btnEl.offsetTop;
+        const btnTop = btnEl.offsetTop;
+
+        if (Math.abs(btnTop - lastItemTop) < LAYOUT_CONFIG.POSITION_TOLERANCE) {
+          break;
+        }
+      }
+
+      visibleIdxLimit--;
+
+      if (visibleIdxLimit <= 0) {
+        break;
+      }
+
+      items[visibleIdxLimit].classList.add(LAYOUT_CONFIG.HIDDEN_CLASS);
+      await nextTick();
+    }
+
+    updateButtonState(total, visibleIdxLimit);
+  });
 }
 
 function expand() {
