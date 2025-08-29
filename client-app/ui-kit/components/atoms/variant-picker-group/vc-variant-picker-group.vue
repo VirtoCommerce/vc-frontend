@@ -33,8 +33,7 @@ const LAYOUT_CONFIG = {
   POSITION_TOLERANCE: 2,
   WRAPPER_CLASS: "vc-variant-picker-group__wrapper",
   RESIZE_DEBOUNCE_MS: 100,
-  HIDDEN_CLASS: "hidden",
-} as const;
+};
 
 const truncate = toRef(props, "truncate");
 const maxRows = toRef(props, "maxRows");
@@ -113,8 +112,11 @@ function resetItemsVisibility(items: HTMLElement[]) {
     return;
   }
 
-  const hiddenItems = items.filter((item) => item?.classList?.contains(LAYOUT_CONFIG.HIDDEN_CLASS));
-  hiddenItems.forEach((item) => item.classList.remove(LAYOUT_CONFIG.HIDDEN_CLASS));
+  items.forEach((item) => {
+    if (item.style.display === "none") {
+      item.style.display = "";
+    }
+  });
 }
 
 function updateButtonState(totalItems: number, visibleItems: number) {
@@ -190,7 +192,7 @@ function measureAndLayout() {
         break;
       }
 
-      items[visibleIdxLimit].classList.add(LAYOUT_CONFIG.HIDDEN_CLASS);
+      items[visibleIdxLimit].style.display = "none";
       await nextTick();
     }
 
@@ -201,8 +203,14 @@ function measureAndLayout() {
 function expand() {
   expanded.value = true;
   showButton.value = false;
-  const el = containerRef.value;
 
+  if (resizeObserver && containerRef.value) {
+    resizeObserver.unobserve(containerRef.value);
+    resizeObserver.disconnect();
+    resizeObserver = null;
+  }
+
+  const el = containerRef.value;
   if (el === null) {
     return;
   }
