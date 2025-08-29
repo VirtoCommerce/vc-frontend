@@ -18,6 +18,9 @@
       "toggle_dropdown": "Переключить выпадающее меню",
       "update_cart": "Обновить корзину"
     },
+    "accessibility": {
+      "close_alert": "Закрыть уведомление"
+    },
     "labels": {
       "not_available": "Н/Д",
       "price_per_item": "Цена за единицу",

@@ -18,6 +18,9 @@
       "toggle_dropdown": "Toggle dropdown",
       "update_cart": "Update cart"
     },
+    "accessibility": {
+      "close_alert": "Close alert"
+    },
     "labels": {
       "not_available": "N/A",
       "price_per_item": "Price per item",

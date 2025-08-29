@@ -18,6 +18,9 @@
       "toggle_dropdown": "Attiva/disattiva menu a tendina",
       "update_cart": "Aggiorna carrello"
     },
+    "accessibility": {
+      "close_alert": "Chiudi avviso"
+    },
     "labels": {
       "not_available": "N/D",
       "price_per_item": "Prezzo per articolo",

@@ -18,6 +18,9 @@
       "toggle_dropdown": "Basculer le menu déroulant",
       "update_cart": "Mettre à jour le panier"
     },
+    "accessibility": {
+      "close_alert": "Fermer l'alerte"
+    },
     "labels": {
       "not_available": "N/A",
       "price_per_item": "Prix par article",

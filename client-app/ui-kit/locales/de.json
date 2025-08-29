@@ -18,6 +18,9 @@
       "toggle_dropdown": "Dropdown umschalten",
       "update_cart": "Warenkorb aktualisieren"
     },
+    "accessibility": {
+      "close_alert": "Benachrichtigung schließen"
+    },
     "labels": {
       "not_available": "N/V",
       "price_per_item": "Preis pro Artikel",

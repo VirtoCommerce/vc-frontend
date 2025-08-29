@@ -18,6 +18,9 @@
       "toggle_dropdown": "切换下拉菜单",
       "update_cart": "更新购物车"
     },
+    "accessibility": {
+      "close_alert": "关闭提醒"
+    },
     "labels": {
       "not_available": "不可用",
       "price_per_item": "单价",

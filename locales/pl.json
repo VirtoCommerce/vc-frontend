@@ -290,6 +290,11 @@
         "FixedRate_Air": "Stała cena (lotnicza)",
         "BuyOnlinePickupInStore_Pickup": "Odbiór w sklepie"
       }
+    },
+    "accessibility": {
+      "open_filters": "Otwórz filtry",
+      "switch_to_grid_view": "Przełącz na widok siatki",
+      "switch_to_list_view": "Przełącz na widok listy"
     }
   },
   "shared": {

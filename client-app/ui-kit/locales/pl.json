@@ -18,6 +18,9 @@
       "toggle_dropdown": "Przełącz rozwijane",
       "update_cart": "Zaktualizuj koszyk"
     },
+    "accessibility": {
+      "close_alert": "Zamknij powiadomienie"
+    },
     "labels": {
       "not_available": "N/D",
       "price_per_item": "Cena za sztukę",

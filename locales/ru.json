@@ -290,6 +290,11 @@
         "FixedRate_Air": "Фиксированная ставка (воздушный транспорт)",
         "BuyOnlinePickupInStore_Pickup": "Самовывоз из магазина"
       }
+    },
+    "accessibility": {
+      "open_filters": "Открыть фильтры",
+      "switch_to_grid_view": "Переключить в сетку",
+      "switch_to_list_view": "Переключить в список"
     }
   },
   "shared": {

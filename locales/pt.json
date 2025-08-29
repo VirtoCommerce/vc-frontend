@@ -290,6 +290,11 @@
         "FixedRate_Air": "Taxa Fixa (Aérea)",
         "BuyOnlinePickupInStore_Pickup": "Recolher na loja"
       }
+    },
+    "accessibility": {
+      "open_filters": "Abrir filtros",
+      "switch_to_grid_view": "Mudar para vista em grade",
+      "switch_to_list_view": "Mudar para vista em lista"
     }
   },
   "shared": {
