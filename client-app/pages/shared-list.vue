@@ -48,6 +48,7 @@
                 :items="pagedListItems"
                 :pending-items="pendingItems"
                 :editable="false"
+                :navigatable="false"
                 @link-click="selectItemEvent"
               />
 

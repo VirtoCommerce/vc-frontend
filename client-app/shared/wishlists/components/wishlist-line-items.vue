@@ -19,7 +19,7 @@
         :key="item.id"
         :image-url="item.imageUrl"
         :name="item.name"
-        :route="item.route"
+        :route="navigatable ? item.route : undefined"
         :properties="item.properties"
         :list-price="item.listPrice"
         :actual-price="item.actualPrice"
@@ -38,14 +38,14 @@
           <VcProductButton
             v-if="item.isConfigurable"
             no-wrap
-            :to="item.route"
+            :to="navigatable ? item.route : undefined"
             :button-text="$t('pages.catalog.customize_button')"
             icon="cube-transparent"
             :target="$cfg.details_browser_target"
           />
           <VcProductButton
             v-else-if="item.hasVariations"
-            :to="item.route"
+            :to="navigatable ? item.route : undefined"
             :target="$cfg.details_browser_target"
             :button-text="$t('pages.catalog.variations_button', [(item.variations?.length || 0) + 1])"
           />
@@ -85,11 +85,11 @@
         </div>
 
         <template #after>
-          <VcAlert v-if="item.deleted" color="danger" size="sm" variant="outline-dark" icon>
+          <VcAlert v-if="editable && item.deleted" color="danger" size="sm" variant="outline-dark" icon>
             {{ $t("validation_error.CART_PRODUCT_UNAVAILABLE") }}
           </VcAlert>
 
-          <div v-if="validationErrors.length" class="flex flex-col gap-1">
+          <div v-if="editable && validationErrors.length" class="flex flex-col gap-1">
             <template v-for="(validationError, index) in validationErrors" :key="index">
               <VcAlert
                 v-if="validationError.objectId === item.id && !!validationError.errorMessage"
@@ -127,12 +127,14 @@ interface IProps {
   items: PreparedLineItemType[];
   pendingItems?: Record<string, boolean>;
   editable?: boolean;
+  navigatable?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
   pendingItems: () => ({}),
   editable: true,
+  navigatable: true,
 });
 
 const validationErrors = ref<ValidationErrorType[]>([]);
