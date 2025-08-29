@@ -17,8 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch, toRef } from "vue";
+import { ref, computed, onMounted, nextTick, watch, toRef } from "vue";
 import { Logger } from "@/core/utilities";
+import { useDebounce, useResizeObserver } from "../../../composables";
 
 interface IProps {
   truncate?: boolean;
@@ -45,35 +46,9 @@ const expanded = ref(false);
 const showButton = ref(false);
 const hiddenCount = ref(0);
 
-const isButtonVisible = computed(() =>
-  truncate.value && !expanded.value && showButton.value
-);
+const isButtonVisible = computed(() => truncate.value && !expanded.value && showButton.value);
 
-const ariaExpandedValue = computed(() =>
-  expanded.value ? "true" : "false"
-);
-
-let resizeObserver: ResizeObserver | null = null;
-let debounceTimeoutId: ReturnType<typeof setTimeout> | null = null;
-
-function cleanupResizeObserver() {
-  if (resizeObserver) {
-    if (containerRef.value) {
-      resizeObserver.unobserve(containerRef.value);
-    }
-    resizeObserver.disconnect();
-    resizeObserver = null;
-  }
-}
-
-function createDebouncer(func: () => void, delay: number) {
-  return () => {
-    if (debounceTimeoutId) {
-      clearTimeout(debounceTimeoutId);
-    }
-    debounceTimeoutId = setTimeout(func, delay);
-  };
-}
+const ariaExpandedValue = computed(() => (expanded.value ? "true" : "false"));
 
 function getDirectItems(containerEl: HTMLElement | null) {
   if (!containerEl?.children) {
@@ -148,14 +123,14 @@ function updateButtonState(totalItems: number, visibleItems: number) {
   }
 }
 
-function measureAndLayout() {
-  if (!truncate.value || expanded.value) {
-    return;
-  }
+function shouldPerformLayout(): boolean {
+  return truncate.value && !expanded.value;
+}
 
+function prepareLayoutItems(): { items: HTMLElement[]; total: number } | null {
   const container = containerRef.value;
   if (container === null) {
-    return;
+    return null;
   }
 
   const items = getDirectItems(container);
@@ -164,64 +139,96 @@ function measureAndLayout() {
   if (total === 0) {
     showButton.value = false;
     hiddenCount.value = 0;
-    return;
+    return null;
   }
 
   resetItemsVisibility(items);
   showButton.value = false;
 
-  void nextTick().then(async () => {
-    let layoutInfo = analyzeItemsLayout(items);
+  return { items, total };
+}
+
+function checkIfLayoutNeeded(items: HTMLElement[]): boolean {
+  const layoutInfo = analyzeItemsLayout(items);
+
+  if (layoutInfo.rowCounts.length <= maxRows.value) {
+    showButton.value = false;
+    hiddenCount.value = 0;
+    return false;
+  }
+
+  return true;
+}
+
+function isButtonPositionValid(items: HTMLElement[], visibleIdxLimit: number): boolean {
+  const btnEl = moreBtn.value;
+
+  if (btnEl === null) {
+    return true;
+  }
+
+  const lastIdx = visibleIdxLimit - 1;
+  const lastItemTop = lastIdx >= 0 ? items[lastIdx].offsetTop : btnEl.offsetTop;
+  const btnTop = btnEl.offsetTop;
+
+  return Math.abs(btnTop - lastItemTop) < LAYOUT_CONFIG.POSITION_TOLERANCE;
+}
+
+async function findOptimalVisibleCount(items: HTMLElement[], total: number): Promise<number> {
+  let visibleIdxLimit = total;
+
+  while (true) {
+    const layoutInfo = analyzeItemsLayout(items.filter((el, idx) => idx < visibleIdxLimit));
 
     if (layoutInfo.rowCounts.length <= maxRows.value) {
-      showButton.value = false;
-      hiddenCount.value = 0;
-      return;
-    }
-
-    showButton.value = true;
-    await nextTick();
-
-    let visibleIdxLimit = total;
-
-    while (true) {
-      layoutInfo = analyzeItemsLayout(items.filter((el, idx) => idx < visibleIdxLimit));
-
-      if (layoutInfo.rowCounts.length <= maxRows.value) {
-        const btnEl = moreBtn.value;
-
-        if (btnEl === null) {
-          break;
-        }
-
-        const lastIdx = visibleIdxLimit - 1;
-        const lastItemTop = lastIdx >= 0 ? items[lastIdx].offsetTop : btnEl.offsetTop;
-        const btnTop = btnEl.offsetTop;
-
-        if (Math.abs(btnTop - lastItemTop) < LAYOUT_CONFIG.POSITION_TOLERANCE) {
-          break;
-        }
-      }
-
-      visibleIdxLimit--;
-
-      if (visibleIdxLimit <= 0) {
+      if (isButtonPositionValid(items, visibleIdxLimit)) {
         break;
       }
-
-      items[visibleIdxLimit].style.display = "none";
-      await nextTick();
     }
 
-    updateButtonState(total, visibleIdxLimit);
-  });
+    visibleIdxLimit--;
+
+    if (visibleIdxLimit <= 0) {
+      break;
+    }
+
+    items[visibleIdxLimit].style.display = "none";
+    await nextTick();
+  }
+
+  return visibleIdxLimit;
+}
+
+async function performLayoutMeasurement(items: HTMLElement[], total: number): Promise<void> {
+  if (!checkIfLayoutNeeded(items)) {
+    return;
+  }
+
+  showButton.value = true;
+  await nextTick();
+
+  const visibleCount = await findOptimalVisibleCount(items, total);
+  updateButtonState(total, visibleCount);
+}
+
+function measureAndLayout() {
+  if (!shouldPerformLayout()) {
+    return;
+  }
+
+  const layoutData = prepareLayoutItems();
+  if (layoutData === null) {
+    return;
+  }
+
+  const { items, total } = layoutData;
+
+  void nextTick().then(() => performLayoutMeasurement(items, total));
 }
 
 function expand() {
   expanded.value = true;
   showButton.value = false;
-
-  cleanupResizeObserver();
 
   const el = containerRef.value;
   if (el === null) {
@@ -240,28 +247,13 @@ watch(maxRows, () => {
   void nextTick().then(measureAndLayout);
 });
 
-const debouncedMeasureAndLayout = createDebouncer(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
-
 onMounted(async () => {
   await nextTick();
   measureAndLayout();
 
-  resizeObserver = new ResizeObserver(() => {
-    debouncedMeasureAndLayout();
-  });
+  const { debouncedFunc: debouncedMeasureAndLayout } = useDebounce(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
 
-  if (containerRef.value) {
-    resizeObserver.observe(containerRef.value);
-  }
-});
-
-onBeforeUnmount(() => {
-  cleanupResizeObserver();
-
-  if (debounceTimeoutId) {
-    clearTimeout(debounceTimeoutId);
-    debounceTimeoutId = null;
-  }
+  useResizeObserver(containerRef, debouncedMeasureAndLayout);
 });
 </script>
 
