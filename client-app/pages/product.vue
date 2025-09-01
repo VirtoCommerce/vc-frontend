@@ -62,6 +62,7 @@
           v-if="product.isConfigurable && configuration?.length"
           :product-id="productId"
           :configuration="configuration"
+          :initial-configuration="initialConfiguration"
         />
 
         <KeepAlive>
@@ -130,14 +131,15 @@
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
-import { useBreakpoints, useElementVisibility } from "@vueuse/core";
+import { useBreakpoints, useElementVisibility, useLocalStorage } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
 import productTemplateDefault from "@/config/product-default.json";
 import productTemplateB2c from "@/config/product_b2c.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { BREAKPOINTS } from "@/core/constants";
+import { BREAKPOINTS, LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE } from "@/core/constants";
+import { CONFIGURATION_URL_SEARCH_PARAM } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
@@ -149,6 +151,7 @@ import {
   getFilterExpressionForInStock,
   getFilterExpressionForPurchasedBefore,
 } from "@/core/utilities";
+import { getUrlSearchParam } from "@/core/utilities";
 import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
@@ -167,7 +170,12 @@ import {
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
 } from "@/shared/catalog/constants/product";
 import type { ISortInfo } from "@/core/types";
-import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
+import type {
+  FiltersDisplayOrderType,
+  LocalConfigurationType,
+  ProductsFiltersType,
+  ProductsSearchParamsType,
+} from "@/shared/catalog";
 import type { IPageTemplate } from "@/shared/static-content";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
@@ -186,6 +194,8 @@ interface IProps {
   allowSetMeta?: boolean;
   filtersDisplayOrder?: FiltersDisplayOrderType;
 }
+
+const configurationId = getUrlSearchParam(CONFIGURATION_URL_SEARCH_PARAM);
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("lg");
@@ -220,6 +230,16 @@ const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const { analytics } = useAnalytics();
 const { pushHistoricalEvent } = useHistoricalEvents();
+
+const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
+  LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
+  [],
+);
+
+const initialConfiguration = computed(() => {
+  const configurationLocal = localProductConfigurations.value.find((config) => config.localId === configurationId);
+  return configurationLocal?.configuration;
+});
 
 const templateLayout = computed(() => {
   const layoutProperty = product.value?.properties?.find(

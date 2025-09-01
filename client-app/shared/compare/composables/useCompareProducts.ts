@@ -2,12 +2,17 @@ import { useLocalStorage } from "@vueuse/core";
 import { v4 as uuidv4 } from "uuid";
 import { computed } from "vue";
 import { useThemeContext } from "@/core/composables";
-import { CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE, PRODUCT_COMPARE_LIST_IDS_LOCAL_STORAGE } from "@/core/constants";
+import {
+  CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE,
+  PRODUCT_COMPARE_LIST_IDS_LOCAL_STORAGE,
+  LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
+} from "@/core/constants";
 import { truncate } from "@/core/utilities";
 import { compareConfigurationInputs } from "@/shared/catalog/utilities/compareConfiguration";
 import { useNotifications } from "@/shared/notification";
 import type { IConfigurationProperty, IConfigProductToCompare } from "../types";
 import type { Product, ConfigurationSectionInput } from "@/core/api/graphql/types";
+import type { LocalConfigurationType } from "@/shared/catalog/types";
 
 const NOTIFICATIONS_GROUP = "compare-products";
 const DEFAULT_MAX_PRODUCTS = 5;
@@ -16,6 +21,10 @@ const NAME_MAX_LENGTH = 60;
 const productsIds = useLocalStorage<string[]>(PRODUCT_COMPARE_LIST_IDS_LOCAL_STORAGE, []);
 const configProductsToCompare = useLocalStorage<IConfigProductToCompare[]>(
   CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE,
+  [],
+);
+const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
+  LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
   [],
 );
 
@@ -35,9 +44,17 @@ function removeRegularProductFromCompare(product: Product) {
 
 function removeConfiguredProductFromCompare(product: Product, configuration?: ConfigurationSectionInput[]) {
   const index = findMatchingConfigProductIndex(product, configuration);
+  const configurationLocalId = localProductConfigurations.value[index].localId;
 
   if (index !== -1) {
     configProductsToCompare.value.splice(index, 1);
+  }
+
+  const configurationIndex = localProductConfigurations.value.findIndex(
+    (config) => config.localId === configurationLocalId,
+  );
+  if (configurationIndex !== -1) {
+    localProductConfigurations.value.splice(configurationIndex, 1);
   }
 }
 
@@ -50,12 +67,25 @@ function addConfiguredProductToCompare(
     return;
   }
 
+  const localId = uuidv4();
+
   configProductsToCompare.value.push({
-    id: uuidv4(),
+    localId,
     productId: product.id,
     configurationSectionInput: configurationSectionsInput,
     properties: properties ?? [],
   });
+
+  if (configurationSectionsInput) {
+    localProductConfigurations.value.push({
+      localId,
+      configuration: configurationSectionsInput.map((section) => ({
+        ...section,
+        ...section.option,
+        id: section.sectionId,
+      })),
+    });
+  }
 }
 
 function isInCompareList(product: Product, configuration?: ConfigurationSectionInput[]) {

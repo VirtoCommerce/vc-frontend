@@ -135,15 +135,10 @@
 </template>
 
 <script setup lang="ts">
-import { useLocalStorage } from "@vueuse/core";
-import { computed, toRef, watch } from "vue";
+import { toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import {
-  CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE,
-  LINE_ITEM_ID_URL_SEARCH_PARAM,
-  CONFIGURATION_URL_SEARCH_PARAM,
-} from "@/core/constants";
+import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { getUrlSearchParam } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
@@ -155,43 +150,22 @@ import OptionNone from "./option-none.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
 import SectionTextFieldset from "./section-text-fieldset.vue";
-import type { ConfigurationSectionType } from "@/core/api/graphql/types";
-import type { IConfigProductToCompare } from "@/shared/compare/types";
+import type { CartConfigurationItemType, ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
 const props = defineProps<IProps>();
 
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
-const configurationId = getUrlSearchParam(CONFIGURATION_URL_SEARCH_PARAM);
 const NOTIFICATIONS_GROUP = "product-configuration";
 
 interface IProps {
   configuration: DeepReadonly<ConfigurationSectionType[]>;
   productId: string;
+  initialConfiguration?: CartConfigurationItemType[];
 }
 
 const configuration = toRef(props, "configuration");
 const configurableProductId = toRef(props, "productId");
-
-const configProductsToCompare = useLocalStorage<IConfigProductToCompare[]>(
-  CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE,
-  [],
-);
-
-const initialConfiguration = computed(() => {
-  const configProduct = configProductsToCompare.value.find((cp) => cp.id === configurationId);
-  if (!configProduct?.configurationSectionInput) {
-    return;
-  }
-
-  return configProduct.configurationSectionInput.map((section) => {
-    return {
-      ...section,
-      ...section.option,
-      id: section.sectionId,
-    };
-  });
-});
 
 const { t } = useI18n();
 const {
@@ -211,7 +185,7 @@ const notifications = useNotifications();
 watch(
   configuration,
   () => {
-    updateWithPreselectedValues(initialConfiguration.value);
+    updateWithPreselectedValues(props.initialConfiguration);
   },
   { immediate: true },
 );

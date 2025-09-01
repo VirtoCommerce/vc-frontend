@@ -6,7 +6,7 @@ export interface IConfigurationProperty {
 }
 
 export interface IConfigProductToCompare {
-  id: string;
+  localId: string;
   productId: string;
   configurationSectionInput?: ConfigurationSectionInput[];
   properties: IConfigurationProperty[];

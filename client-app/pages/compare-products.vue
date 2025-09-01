@@ -278,7 +278,7 @@ function getProperties() {
     return;
   }
 
-  const normalizedPropertyNames = computeNormalizedPropertyNames();
+  const normalizedPropertyNames = computeNormalizedPropertyNames(); // Normalize names to make shown properties like "Brand" and "brand" the same
   const baseProperties = buildBasePropertiesMap(normalizedPropertyNames);
   const configOnlyProperties = buildConfigurationPropertiesMap();
 
@@ -293,7 +293,7 @@ function computeNormalizedPropertyNames() {
 
   return uniqBy(
     propertiesCombined.map((prop) => ({
-      name: prop.name.toLowerCase(), // Normalize names to make shown properties like "Brand" and "brand" the same
+      name: prop.name.toLowerCase(),
       label: prop.label,
     })),
     "name",
@@ -396,9 +396,12 @@ function selectItemEvent(product: Product) {
 }
 
 function handleRemoveFromCompareList(product: Product, index: number) {
-  if (product.isConfigurable && index >= productsIds.value.length) {
+  const isInConfigurableGroup = product.isConfigurable && index >= productsIds.value.length;
+
+  if (isInConfigurableGroup) {
     const configProductIndex = index - productsIds.value.length;
-    removeFromCompareList(product, configProductsToCompare.value[configProductIndex].configurationSectionInput);
+    const configurationSectionInput = configProductsToCompare.value[configProductIndex].configurationSectionInput;
+    removeFromCompareList(product, configurationSectionInput);
   } else {
     removeFromCompareList(product);
   }
@@ -406,7 +409,7 @@ function handleRemoveFromCompareList(product: Product, index: number) {
 
 function getConfigurationId(product: Product, index: number) {
   const isInConfigurableGroup = product.isConfigurable && index >= productsIds.value.length;
-  return isInConfigurableGroup ? getConfigurationProductByIndex(index).id : undefined;
+  return isInConfigurableGroup ? getConfigurationProductByIndex(index).localId : undefined;
 }
 
 /**
