@@ -11,6 +11,7 @@ import { getPropertyValue, Logger } from "@/core/utilities";
 import { useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
 import type { IConfigProductToCompare } from "../types";
+import type { MoneyType } from "@/core/api/graphql/types";
 import type { CreateConfiguredLineItemMutation, Product } from "@/core/api/graphql/types";
 
 const EMPTY_VALUE_PLACEHOLDER = "–";
@@ -69,35 +70,36 @@ export function useCompareProductsPage() {
     return configProductsConfiguredItems.value[configProductIndex];
   }
 
+  function applyPriceOverride(
+    originalPrice: MoneyType,
+    overridePrice?: {
+      amount: number;
+      formattedAmount: string;
+      formattedAmountWithoutCurrency: string;
+    },
+  ): MoneyType {
+    if (!overridePrice) {
+      return originalPrice;
+    }
+    return {
+      ...originalPrice,
+      amount: overridePrice.amount,
+      formattedAmount: overridePrice.formattedAmount,
+      formattedAmountWithoutCurrency: overridePrice.formattedAmountWithoutCurrency,
+    };
+  }
+
   function withConfiguredPrices(product: Product, configuredItem?: ConfiguredLineItemType): Product {
     if (!configuredItem || !product.price) {
       return product;
     }
 
-    const actualOverride = configuredItem.salePrice
-      ? {
-          ...product.price.actual,
-          amount: configuredItem.salePrice.amount,
-          formattedAmount: configuredItem.salePrice.formattedAmount,
-          formattedAmountWithoutCurrency: configuredItem.salePrice.formattedAmountWithoutCurrency,
-        }
-      : product.price.actual;
-
-    const listOverride = configuredItem.listPrice
-      ? {
-          ...product.price.list,
-          amount: configuredItem.listPrice.amount,
-          formattedAmount: configuredItem.listPrice.formattedAmount,
-          formattedAmountWithoutCurrency: configuredItem.listPrice.formattedAmountWithoutCurrency,
-        }
-      : product.price.list;
-
     return {
       ...product,
       price: {
         ...product.price,
-        actual: actualOverride,
-        list: listOverride,
+        actual: applyPriceOverride(product.price.actual, configuredItem.salePrice),
+        list: applyPriceOverride(product.price.list, configuredItem.listPrice),
       },
     };
   }
