@@ -1,7 +1,7 @@
 <template>
   <div class="active-filter-chips">
     <template v-for="filterItem in filters">
-      <template v-if="!facetsToHide?.includes(filterItem.name)">
+      <template v-if="!facetsToHide?.includes(filterItem.name.toLowerCase())">
         <!-- Term values -->
         <template v-for="term in filterItem.termValues" :key="filterItem.name + 'term-' + term.value">
           <VcChip

@@ -133,6 +133,7 @@
             :page="page"
             :pages="pages"
             :sort="sort"
+            mobile-breakpoint="lg"
             @header-click="applySorting"
             @page-changed="onPageChange"
           >

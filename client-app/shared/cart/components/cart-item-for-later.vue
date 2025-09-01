@@ -15,6 +15,7 @@
       v-if="item.id"
       icon="arrow-up"
       :button-text="$t('pages.cart.move_to_cart')"
+      :loading="loading"
       @link-click="$emit('addToCart', item.id)" />
   </VcProductCard>
 </template>
@@ -33,6 +34,7 @@ interface IEmits {
 interface IProps {
   savedForLaterList: SavedForLaterListFragment | undefined;
   item: SavedForLaterLineItemFragment;
+  loading?: boolean;
 }
 
 defineEmits<IEmits>();

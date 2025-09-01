@@ -58,10 +58,12 @@
         </span>
 
         <sup v-if="!fetchingProducts && !hideTotal && !fixedProductsCount" class="category__products-count">
-          <b class="mr-1">{{ $n(totalProductsCount, "decimal") }}</b>
+          <b class="me-1">{{ $n(totalProductsCount, "decimal") }}</b>
+
           <template v-if="currentCategory && searchQueryParam">
             {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
           </template>
+
           <template v-else>
             {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
           </template>
@@ -84,6 +86,7 @@
           class="category__facets-button"
           icon="filter"
           size="sm"
+          :aria-label="$t('common.accessibility.open_filters')"
           @click="showFiltersSidebar"
         />
 
@@ -137,7 +140,6 @@
         :filters="filtersToShow"
         :hide-sorting="hideSorting"
         :hide-all-filters="hideSidebar"
-        :facets-to-hide="facetsToHide"
         @reset-facet-filters="resetFacetFilters"
         @change:filters="applyFiltersOnly($event)"
         @show-popup-sidebar="showFiltersSidebar"
@@ -146,7 +148,7 @@
       <ActiveFilterChips
         v-if="hasSelectedFacets || isResetPageButtonShown"
         :filters="productsFilters.filters"
-        :facets-to-hide="facetsToHide"
+        :facets-to-hide="normalizedFacetsToHide"
         @apply-filters="applyFiltersOnly"
       >
         <template #actions>
@@ -156,13 +158,7 @@
             <VcIcon name="reset" />
           </VcChip>
 
-          <VcChip
-            v-if="isResetPageButtonShown"
-            color="secondary"
-            variant="outline"
-            clickable
-            @click="resetPage"
-          >
+          <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
             <span>{{ $t("common.buttons.reset_page") }}</span>
 
             <VcIcon name="reset" />
@@ -291,11 +287,17 @@ const isMobile = breakpoints.smaller("md");
 
 const route = useRoute();
 
+const normalizedFacetsToHide = computed(() => {
+  return facetsToHide.value?.map((facet) => facet.toLowerCase());
+});
+
 const isResetPageButtonShown = computed(() => {
-  return catalogPaginationMode.value === CATALOG_PAGINATION_MODES.loadMore &&
+  return (
+    catalogPaginationMode.value === CATALOG_PAGINATION_MODES.loadMore &&
     !!route.query.page &&
     Number(route.query.page) > 1
-})
+  );
+});
 
 const catalogPaginationMode = computed(
   () => themeContext.value?.settings?.catalog_pagination_mode ?? CATALOG_PAGINATION_MODES.infiniteScroll,
@@ -308,7 +310,9 @@ const filtersToShow = computed(() => {
 
   return {
     ...productsFilters.value,
-    facets: productsFilters.value.facets.filter((facet) => !facetsToHide.value?.includes(facet.paramName)),
+    facets: productsFilters.value.facets.filter(
+      (facet) => !normalizedFacetsToHide.value?.includes(facet.paramName.toLowerCase()),
+    ),
   };
 });
 
@@ -356,7 +360,7 @@ const {
   useQueryParams: true,
   withFacets: true,
   catalogPaginationMode: catalogPaginationMode.value,
-  facetsToHide: facetsToHide.value,
+  facetsToHide: normalizedFacetsToHide.value,
 });
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();
@@ -700,4 +704,3 @@ onMounted(() => {
   }
 }
 </style>
-

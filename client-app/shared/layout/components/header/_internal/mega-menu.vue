@@ -1,5 +1,9 @@
 <template>
-  <nav ref="megaMenuElement" class="mega-menu">
+  <nav
+    ref="megaMenuElement"
+    class="mega-menu"
+    :aria-label="$t('shared.layout.header.mega_menu.aria_labels.main_navigation')"
+  >
     <VcPopover
       arrow-enabled
       placement="bottom-start"
