@@ -3,22 +3,7 @@ import { graphqlClient } from "../../client";
 import type { Query, QueryWhiteLabelingSettingsArgs } from "@/core/api/graphql/types";
 import type { DocumentNode } from "graphql";
 
-const FOOTER_LINKS_DEPTH = 1;
-
-function getFooterLinksTreeString(level: number): string {
-  return level > 0
-    ? `
-      childItems {
-        title
-        url
-        priority
-        ${getFooterLinksTreeString(level - 1)}
-      }
-    `
-    : "";
-}
-
-function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
+function getQueryDocument(): DocumentNode {
   return gql`
     query WhiteLabelingSettings($domain: String) {
       whiteLabelingSettings(
@@ -34,6 +19,47 @@ function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
           sizes
           href
         }
+      }
+    }
+  `;
+}
+
+const FOOTER_LINKS_DEPTH = 1;
+
+function getFooterLinksTreeString(level: number): string {
+  return level > 0
+    ? `
+      childItems {
+        title
+        url
+        priority
+        ${getFooterLinksTreeString(level - 1)}
+      }
+    `
+    : "";
+}
+
+export async function getGetWhiteLabelingSettings(domain: string) {
+  const { data } = await graphqlClient.query<
+    Required<Pick<Query, "whiteLabelingSettings">>,
+    QueryWhiteLabelingSettingsArgs
+  >({
+    query: getQueryDocument(),
+    variables: {
+      domain
+    },
+  });
+
+  return data.whiteLabelingSettings;
+}
+
+function getFooterLinksDocument(maxLevelFooterLinks: number): DocumentNode {
+  return gql`
+    query WhiteLabelingSettings($domain: String, $cultureName: String) {
+      whiteLabelingSettings(
+        domain: $domain,
+        cultureName: $cultureName
+      ) {
         footerLinks {
           title
           url
@@ -45,14 +71,15 @@ function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
   `;
 }
 
-export async function getGetWhiteLabelingSettings(domain: string) {
+export async function getFooterLinks(domain: string, cultureName: string) {
   const { data } = await graphqlClient.query<
     Required<Pick<Query, "whiteLabelingSettings">>,
     QueryWhiteLabelingSettingsArgs
   >({
-    query: getQueryDocument(FOOTER_LINKS_DEPTH),
+    query: getFooterLinksDocument(FOOTER_LINKS_DEPTH),
     variables: {
-      domain
+      domain,
+      cultureName
     },
   });
 

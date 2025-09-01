@@ -81,7 +81,7 @@ export default async () => {
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
-  const { MODULE_KEYS: WHITE_LABELING_MODULE_KEYS, themePresetName, fetchWhiteLabelingSettings, applyWhiteLabelingSettings } = useWhiteLabeling();
+  const { MODULE_KEYS: WHITE_LABELING_MODULE_KEYS, themePresetName, fetchWhiteLabelingSettings, applyWhiteLabelingSettings, fetchAndApplyFooterLinks } = useWhiteLabeling();
 
   const fallback = {
     locale: FALLBACK_LOCALE,
@@ -143,6 +143,7 @@ export default async () => {
   const { isEnabled } = useModuleSettings(WHITE_LABELING_MODULE_KEYS.ID);
 
   if(isEnabled(WHITE_LABELING_MODULE_KEYS.ENABLE_STATE)) {
+    void fetchAndApplyFooterLinks(currentLanguage.value.cultureName);
     applyWhiteLabelingSettings();
   }
 
