@@ -58,10 +58,12 @@
         </span>
 
         <sup v-if="!fetchingProducts && !hideTotal && !fixedProductsCount" class="category__products-count">
-          <b class="mr-1">{{ $n(totalProductsCount, "decimal") }}</b>
+          <b class="me-1">{{ $n(totalProductsCount, "decimal") }}</b>
+
           <template v-if="currentCategory && searchQueryParam">
             {{ $t("pages.catalog.products_found_message_search", totalProductsCount) }}
           </template>
+
           <template v-else>
             {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
           </template>
@@ -84,6 +86,7 @@
           class="category__facets-button"
           icon="filter"
           size="sm"
+          :aria-label="$t('common.accessibility.open_filters')"
           @click="showFiltersSidebar"
         />
 
