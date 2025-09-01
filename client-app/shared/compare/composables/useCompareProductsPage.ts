@@ -11,8 +11,7 @@ import { getPropertyValue, Logger } from "@/core/utilities";
 import { useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
 import type { IConfigProductToCompare } from "../types";
-import type { MoneyType } from "@/core/api/graphql/types";
-import type { CreateConfiguredLineItemMutation, Product } from "@/core/api/graphql/types";
+import type { CreateConfiguredLineItemMutation, Product, MoneyType } from "@/core/api/graphql/types";
 
 const EMPTY_VALUE_PLACEHOLDER = "–";
 

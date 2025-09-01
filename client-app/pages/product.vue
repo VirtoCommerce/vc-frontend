@@ -138,8 +138,11 @@ import productTemplateB2c from "@/config/product_b2c.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { BREAKPOINTS, LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE } from "@/core/constants";
-import { CONFIGURATION_URL_SEARCH_PARAM } from "@/core/constants";
+import {
+  BREAKPOINTS,
+  LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
+  CONFIGURATION_URL_SEARCH_PARAM,
+} from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
@@ -150,8 +153,8 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
   getFilterExpressionForPurchasedBefore,
+  getUrlSearchParam,
 } from "@/core/utilities";
-import { getUrlSearchParam } from "@/core/utilities";
 import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
