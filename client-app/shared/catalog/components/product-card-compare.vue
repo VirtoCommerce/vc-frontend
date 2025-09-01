@@ -23,7 +23,7 @@
         class="h-9 text-lg"
         :actual-price="price?.actual"
         :list-price="price?.list"
-        :with-from-label="product.hasVariations || (product.isConfigurable && !withConfiguration)"
+        :with-from-label="product.hasVariations || (product.isConfigurable && !configurationId)"
       />
     </div>
 
@@ -78,8 +78,7 @@ interface IEmits {
 
 interface IProps {
   product: Product;
-  withConfiguration?: boolean;
-  queryString?: string;
+  configurationId?: string;
 }
 
 defineEmits<IEmits>();
@@ -93,12 +92,12 @@ const simpleLink = computed(() => getProductRoute(props.product.id, props.produc
 const link = computed<RouteLocationRaw>(() => {
   const route = getProductRoute(props.product.id, props.product.slug);
   if (typeof route === "string") {
-    const query = props.queryString ? { [CONFIGURATION_URL_SEARCH_PARAM]: props.queryString } : undefined;
+    const query = props.configurationId ? { [CONFIGURATION_URL_SEARCH_PARAM]: props.configurationId } : undefined;
     return query ? { path: route, query } : { path: route };
   }
-  if (props.queryString) {
+  if (props.configurationId) {
     const existingQuery = route.query ?? {};
-    return { ...route, query: { ...existingQuery, [CONFIGURATION_URL_SEARCH_PARAM]: props.queryString } };
+    return { ...route, query: { ...existingQuery, [CONFIGURATION_URL_SEARCH_PARAM]: props.configurationId } };
   }
   return route;
 });

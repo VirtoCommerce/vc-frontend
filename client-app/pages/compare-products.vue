@@ -65,11 +65,8 @@
               :key="product.id"
               :product="product"
               class="w-[9.625rem] lg:w-[13.625rem]"
-              :query-string="
-                isProductInConfigurableGroup(product, index) ? getConfigurationProductByIndex(index).id : undefined
-              "
-              :with-configuration="isProductInConfigurableGroup(product, index)"
-              @remove="removeFromCompareListHandler(product, index)"
+              :configuration-id="getConfigurationId(product, index)"
+              @remove="handleRemoveFromCompareList(product, index)"
               @link-click="selectItemEvent(product)"
             />
           </div>
@@ -398,7 +395,7 @@ function selectItemEvent(product: Product) {
   analytics("selectItem", product, compareProductsListProperties.value);
 }
 
-function removeFromCompareListHandler(product: Product, index: number) {
+function handleRemoveFromCompareList(product: Product, index: number) {
   if (product.isConfigurable && index >= productsIds.value.length) {
     const configProductIndex = index - productsIds.value.length;
     removeFromCompareList(product, configProductsToCompare.value[configProductIndex].configurationSectionInput);
@@ -407,8 +404,9 @@ function removeFromCompareListHandler(product: Product, index: number) {
   }
 }
 
-function isProductInConfigurableGroup(product: Product, index: number) {
-  return product.isConfigurable && index >= productsIds.value.length;
+function getConfigurationId(product: Product, index: number) {
+  const isInConfigurableGroup = product.isConfigurable && index >= productsIds.value.length;
+  return isInConfigurableGroup ? getConfigurationProductByIndex(index).id : undefined;
 }
 
 /**
