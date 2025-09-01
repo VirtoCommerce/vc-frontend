@@ -57,12 +57,12 @@
         />
 
         <div v-else class="p-3 lg:p-6">
-          <div class="divide-y rounded border empty:hidden">
+          <div class="divide-y rounded-[--vc-radius] border empty:hidden">
             <PushMessage
               v-for="item in items"
               :key="item.id"
               size="lg"
-              class="first:rounded-t last:rounded-b"
+              class="first:rounded-t-[inherit] last:rounded-b-[inherit]"
               :push-message="item"
             />
           </div>

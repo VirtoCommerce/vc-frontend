@@ -4,6 +4,7 @@
     :placement="placement"
     :strategy="strategy"
     :hover="hover"
+    :disabled="disabled"
     :offset-options="offsetOptions"
     :flip-options="flipOptions"
     :shift-options="shiftOptions"
@@ -32,6 +33,7 @@ export interface IProps {
   flipOptions?: VcTooltipFlipOptionsType;
   offsetOptions?: VcTooltipOffsetOptionsType;
   shiftOptions?: VcTooltipShiftOptionsType;
+  disabled?: boolean;
   hover?: boolean;
   width?: string;
 }

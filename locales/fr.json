@@ -83,6 +83,7 @@
     },
     "labels": {
       "actions": "Actions",
+      "notifications": "Notifications",
       "user_name": "Nom d'utilisateur",
       "password": "Mot de passe",
       "confirm_password": "Confirmer le mot de passe",
@@ -244,7 +245,6 @@
       "addresses": "Adresses",
       "orders": "Commandes",
       "lists": "Listes",
-      "checkout_defaults": "Paramètres de paiement",
       "list_details": "Détails de la liste",
       "cart": "Panier",
       "company_info": "Informations sur l'entreprise",
@@ -290,6 +290,11 @@
         "FixedRate_Air": "Tarif fixe (Air)",
         "BuyOnlinePickupInStore_Pickup": "Ramassage en magasin"
       }
+    },
+    "accessibility": {
+      "open_filters": "Ouvrir les filtres",
+      "switch_to_grid_view": "Basculer en vue grille",
+      "switch_to_list_view": "Basculer en vue liste"
     }
   },
   "shared": {
@@ -328,7 +333,6 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -354,7 +358,8 @@
           "aria_labels": {
             "categories": "Catégories",
             "subcategories": "Sous-catégories de la catégorie {category}",
-            "navigation": "Navigation"
+            "navigation": "Navigation",
+            "main_navigation": "Navigation principale"
           }
         }
       },
@@ -434,7 +439,6 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
-          "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -466,11 +470,6 @@
       },
       "forgot_password_form": {
         "error_alert": "Résultat invalide de la demande de réinitialisation du mot de passe. Veuillez "
-      },
-      "checkout_default_success_modal": {
-        "title": "Paramètres de commande",
-        "message": "Détails de commande par défaut mis à jour avec succès.",
-        "ok_button": "@:common.buttons.ok"
       },
       "invite_member_modal": {
         "title": "Inviter un membre",
@@ -1072,21 +1071,6 @@
         "edit_address_title": "Modifier l'adresse",
         "make_default_button": "Définir par défaut",
         "no_addresses_img_alt": "Aucune adresse"
-      },
-      "checkout_defaults": {
-        "meta": {
-          "title": "@:pages.account.checkout_defaults.title"
-        },
-        "title": "Paramètres par défaut de la commande",
-        "select_delivery_method_label": "Méthode de livraison préférée",
-        "shipping_radio_label": "Expédition",
-        "pickup_radio_label": "Retrait",
-        "not_selected_placeholder": "@:common.placeholders.not_selected",
-        "update_button": "@:common.buttons.update",
-        "payment_method_label": "Méthode de paiement préférée",
-        "payment_method_placeholder": "Veuillez sélectionner votre méthode de paiement préférée",
-        "shipping_method_label": "Méthode d'expédition préférée",
-        "shipping_method_placeholder": "Veuillez sélectionner votre méthode d'expédition préférée"
       },
       "dashboard": {
         "meta": {
