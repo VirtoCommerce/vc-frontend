@@ -9,7 +9,7 @@ import { globals } from "@/core/globals";
 import { createSharedComposableByArgs, getUrlSearchParam, Logger } from "@/core/utilities";
 import { toCSV } from "@/core/utilities/common";
 import { useShortCart } from "@/shared/cart/composables";
-import { compareConfigurationInputs } from "@/shared/catalog/utilities/compareConfiguration";
+import { compareConfigurationInputs } from "@/shared/catalog/utilities/configurations";
 import { CONFIGURABLE_SECTION_TYPES } from "../constants/configurableProducts";
 import type {
   CartConfigurationItemFileType,
@@ -69,7 +69,7 @@ function _useConfigurableProduct(configurableProductId: string) {
       return true;
     }
     return initialSelectedConfigurationInput.value.some(
-      (section, i) => !compareInputs(section, selectedConfigurationInput.value[i]),
+      (section, i) => !compareConfigurationInputs(section, selectedConfigurationInput.value[i]),
     );
   });
 
@@ -375,13 +375,6 @@ function _useConfigurableProduct(configurableProductId: string) {
           : undefined,
       fileUrls: value.files?.map((file) => file.url),
     };
-  }
-
-  function compareInputs(
-    input1: DeepReadonly<ConfigurationSectionInput>,
-    input2: DeepReadonly<ConfigurationSectionInput>,
-  ) {
-    return compareConfigurationInputs(input1, input2);
   }
 
   return {

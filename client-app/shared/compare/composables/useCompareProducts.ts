@@ -8,7 +8,7 @@ import {
   LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
 } from "@/core/constants";
 import { truncate } from "@/core/utilities";
-import { compareConfigurationInputs } from "@/shared/catalog/utilities/compareConfiguration";
+import { compareConfigurationInputs } from "@/shared/catalog/utilities/configurations";
 import { useNotifications } from "@/shared/notification";
 import type { IConfigurationProperty, IConfigProductToCompare } from "../types";
 import type { Product, ConfigurationSectionInput } from "@/core/api/graphql/types";

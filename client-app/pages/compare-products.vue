@@ -149,10 +149,9 @@ function openClearListModal() {
     component: VcConfirmationModal,
     props: {
       variant: "danger",
-      title: t("shared/compare.clear_list_modal.title"),
-      text: t("shared/compare.clear_list_modal.message"),
-      icon: "none",
-      onConfirm: () => {
+      title: t("shared.compare.clear_list_modal.title"),
+      text: t("shared.compare.clear_list_modal.message"),
+      onConfirm() {
         clearCompareList();
         closeModal();
       },
