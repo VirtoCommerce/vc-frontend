@@ -6,6 +6,7 @@
 @include meta.load-css("colors");
 
 :root {
+  //Recommended maximum border-radius: 10px (0.625rem)
   --vc-radius: 0.5rem;
 }
 
