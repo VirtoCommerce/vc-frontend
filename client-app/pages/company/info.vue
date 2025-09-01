@@ -580,6 +580,7 @@ async function onAddFiles(items: INewFile[]) {
 async function onRemoveFiles() {
   void removeFiles(files.value);
   await updateLogo(organizationId.value, "");
+  await fetchWhiteLabelingSettings();
   applyWhiteLabelingSettings();
 
   notifications.warning({
