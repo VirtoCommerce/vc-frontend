@@ -390,7 +390,6 @@ function _useConfigurableProduct(configurableProductId: string) {
     changeCartConfiguredItem,
     changeCartConfiguredItemBatched,
     validateSections,
-    compareInputs,
     updateWithPreselectedValues,
 
     loading: readonly(loading),

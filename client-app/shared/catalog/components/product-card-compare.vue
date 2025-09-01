@@ -91,15 +91,20 @@ const simpleLink = computed(() => getProductRoute(props.product.id, props.produc
 
 const link = computed<RouteLocationRaw>(() => {
   const route = getProductRoute(props.product.id, props.product.slug);
-  if (typeof route === "string") {
-    const query = props.configurationId ? { [CONFIGURATION_URL_SEARCH_PARAM]: props.configurationId } : undefined;
-    return query ? { path: route, query } : { path: route };
+
+  if (!props.configurationId) {
+    return route;
   }
-  if (props.configurationId) {
-    const existingQuery = route.query ?? {};
-    return { ...route, query: { ...existingQuery, [CONFIGURATION_URL_SEARCH_PARAM]: props.configurationId } };
-  }
-  return route;
+
+  const routeAsObject = typeof route === "string" ? { path: route } : route;
+
+  return {
+    ...routeAsObject,
+    query: {
+      ...routeAsObject.query,
+      [CONFIGURATION_URL_SEARCH_PARAM]: props.configurationId,
+    },
+  };
 });
 
 const isDigital = computed(() => props.product.productType === ProductType.Digital);

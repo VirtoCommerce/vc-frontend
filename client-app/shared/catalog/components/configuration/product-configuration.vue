@@ -164,7 +164,7 @@ interface IProps {
   initialConfiguration?: CartConfigurationItemType[];
 }
 
-const configuration = toRef(props, "configuration");
+const initialConfiguration = toRef(props, "initialConfiguration");
 const configurableProductId = toRef(props, "productId");
 
 const { t } = useI18n();
@@ -183,9 +183,9 @@ const { openModal } = useModal();
 const notifications = useNotifications();
 
 watch(
-  configuration,
+  initialConfiguration,
   () => {
-    updateWithPreselectedValues(props.initialConfiguration);
+    updateWithPreselectedValues(initialConfiguration.value);
   },
   { immediate: true },
 );
