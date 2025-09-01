@@ -595,7 +595,11 @@ async function onRemoveFiles() {
 
 async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: string) {
   if (addressId) {
-    isFavoriteAddress ? await removeAddressFromFavorite(addressId) : await addAddressToFavorite(addressId);
+    if(isFavoriteAddress) {
+      await removeAddressFromFavorite(addressId);
+    } else {
+      await addAddressToFavorite(addressId);
+    }
   }
 }
 
