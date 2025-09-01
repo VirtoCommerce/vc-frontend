@@ -51,7 +51,7 @@
             >
               <template v-if="newLogoUrl" #custom="{ openFilePicker }">
                 <div class="flex items-center gap-3">
-                  <div class="flex h-17 grow items-center justify-center rounded border p-2 xs:max-w-56">
+                  <div class="flex h-17 grow items-center justify-center rounded-[--vc-radius] border p-2 xs:max-w-56">
                     <VcImage
                       :alt="$t('pages.company.info.labels.company_logo')"
                       :src="newLogoUrl"
@@ -124,7 +124,7 @@
           </template>
         </VcEmptyView>
 
-        <div v-else class="flex flex-col lg:rounded lg:border">
+        <div v-else class="flex flex-col md:rounded-[--vc-radius] md:border">
           <VcTable
             :columns="columns"
             :description="$t('pages.company.info.meta.table_description')"
@@ -138,7 +138,7 @@
             @page-changed="onPageChange"
           >
             <template #mobile-item="{ item }">
-              <div class="relative mb-3 flex items-start rounded border px-3.5 py-4 last:mb-0">
+              <div class="relative mb-3 flex items-start rounded-[--vc-radius] border px-3.5 py-4 last:mb-0">
                 <div class="grow space-y-2.5 pe-2">
                   <div>
                     <div class="mb-1 flex gap-1 empty:hidden">
@@ -212,7 +212,7 @@
               <div
                 v-for="i in paginatedAddresses.length"
                 :key="i"
-                class="relative mb-3 flex items-start rounded border px-3.5 py-4 last:mb-0"
+                class="relative mb-3 flex items-start rounded-[--vc-radius] border px-3.5 py-4 last:mb-0"
               >
                 <div class="grow space-y-2.5 pe-2">
                   <div>
