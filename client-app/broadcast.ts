@@ -89,7 +89,7 @@ export function setupBroadcastGlobalListeners() {
   on(graphqlErrorEvent, (error) => {
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
-      group: "GraphqlError",
+      group: "GenericError",
       singleInGroup: true,
       text: t("common.messages.something_went_wrong"),
     });
@@ -99,7 +99,7 @@ export function setupBroadcastGlobalListeners() {
   on(unhandledErrorEvent, () => {
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
-      group: "UnhandledError",
+      group: "GenericError",
       singleInGroup: true,
       text: t("common.messages.unhandled_error"),
     });
