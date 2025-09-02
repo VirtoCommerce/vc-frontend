@@ -1,22 +1,22 @@
 <template>
-  <VcContainer class="relative max-lg:pb-12">
+  <VcContainer class="shared-list">
     <VcTypography
       v-if="list?.name"
       tag="h1"
-      class="mb-5"
+      class="shared-list__name"
     >
       {{ list.name }}
     </VcTypography>
 
     <div
       ref="listElement"
-      class="mt-5 w-full"
+      class="shared-list__content"
     >
       <!-- Skeletons -->
       <template v-if="listLoading">
         <div
           v-if="isMobile"
-          class="grid grid-cols-2 gap-x-4 gap-y-6"
+          class="shared-list__skeleton-mobile"
         >
           <ProductSkeletonGrid
             v-for="i in actualPageRowsCount"
@@ -26,12 +26,12 @@
 
         <div
           v-else
-          class="flex flex-col rounded border bg-additional-50 shadow-sm"
+          class="shared-list__skeleton-desktop"
         >
           <WishlistProductItemSkeleton
             v-for="i in actualPageRowsCount"
             :key="i"
-            class="even:bg-neutral-50"
+            class="shared-list__skeleton-desktop-item"
           />
         </div>
       </template>
@@ -43,7 +43,7 @@
           sticky-sidebar
         >
           <VcWidget size="lg">
-            <div class="flex flex-col gap-6">
+            <div class="shared-list__items">
               <WishlistLineItems
                 :items="pagedListItems"
                 :pending-items="pendingItems"
@@ -54,7 +54,7 @@
 
               <p
                 v-if="page >= PAGE_LIMIT"
-                class="my-3 text-center"
+                class="shared-list__page-limit"
               >{{ $t("ui_kit.reach_limit.page_limit") }}</p>
 
               <VcPagination
@@ -199,3 +199,37 @@ watchEffect(() => {
   }
 });
 </script>
+
+<style lang="scss">
+.shared-list {
+  @apply relative max-lg:pb-12;
+
+  &__name {
+    @apply mb-5;
+  }
+
+  &__content {
+    @apply mt-5 w-full;
+  }
+
+  &__skeleton-mobile {
+    @apply grid grid-cols-2 gap-x-4 gap-y-6;
+  }
+
+  &__skeleton-desktop {
+    @apply flex flex-col rounded border bg-additional-50 shadow-sm;
+  }
+
+  &__skeleton-desktop-item {
+    @apply even:bg-neutral-50;
+  }
+
+  &__items {
+    @apply flex flex-col gap-6;
+  }
+
+  &__page-limit{
+    @apply my-3 text-center;
+  }
+}
+</style>
