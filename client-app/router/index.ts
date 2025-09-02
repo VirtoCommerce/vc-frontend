@@ -1,7 +1,9 @@
 import { createRouter as _createRouter, createWebHistory } from "vue-router";
 import { useThemeContext } from "@/core/composables";
+import { globals } from "@/core/globals";
 import { getReturnUrlValue } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
+import { resolveLocalizedRedirect, withLocalizedAliases } from "@/router/routes/localization";
 import { useUser } from "@/shared/account";
 import { mainRoutes } from "./routes";
 import type { RouteRecordName } from "vue-router";
@@ -12,7 +14,7 @@ export function createRouter(options: { base: string }) {
   const { themeContext } = useThemeContext();
 
   const router = _createRouter({
-    routes: mainRoutes,
+    routes: withLocalizedAliases(mainRoutes),
     history: createWebHistory(base),
     scrollBehavior(to, from, savedPosition) {
       if (to.path !== from.path) {
@@ -24,6 +26,16 @@ export function createRouter(options: { base: string }) {
   });
 
   router.beforeEach((to, _from, next) => {
+    // Normalize generic paths to current-locale paths (e.g., "/cart" -> "/carrinho") while preserving the visible URL
+    // Only rewrite when navigating via named routes or plain paths that match a localized mapping
+    const twoLetterFromCulture = globals.cultureName?.slice(0, 2);
+    const currentLocale = twoLetterFromCulture ?? themeContext.value.defaultLanguage.twoLetterLanguageName;
+
+    const redirect = resolveLocalizedRedirect(to, currentLocale);
+    if (redirect) {
+      return next(redirect);
+    }
+
     // Protecting routes
     const unauthorizedAccessIsDenied: boolean =
       !isAuthenticated.value &&
