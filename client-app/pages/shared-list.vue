@@ -66,6 +66,7 @@
               />
             </div>
           </VcWidget>
+          
           <template #sidebar>
             <WishlistSummary :list="list" />
           </template>
