@@ -17,8 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDebounceFn } from "@vueuse/core";
-import { useResizeObserver } from "@vueuse/core";
+import { useDebounceFn, useResizeObserver } from "@vueuse/core";
 import { ref, computed, onMounted, nextTick, watch, toRef } from "vue";
 import { Logger } from "@/core/utilities";
 
@@ -191,7 +190,9 @@ function expand() {
   showButton.value = false;
 
   const el = containerRef.value;
-  if (!el) return;
+  if (!el) {
+    return;
+  }
 
   const items = getDirectItems(el);
   resetItemsVisibility(items);
