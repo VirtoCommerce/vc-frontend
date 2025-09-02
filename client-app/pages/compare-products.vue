@@ -1,6 +1,6 @@
 <template>
   <VcEmptyPage
-    v-if="!productsToShow.length"
+    v-if="!hasProducts"
     :breadcrumbs="breadcrumbs"
     :title="$t('pages.compare.empty_list.title')"
     icon="outline-compare"
@@ -31,7 +31,7 @@
 
         <i18n-t keypath="pages.compare.header_block.counter_message" scope="global" tag="span" class="mb-3 block">
           <template #productsNumber>
-            <strong>{{ productsToShow.length }}</strong>
+            <strong>{{ productsCount }}</strong>
           </template>
 
           <template #productsLimit>
@@ -52,7 +52,7 @@
     </div>
 
     <!-- Main block -->
-    <VcWidget size="lg">
+    <VcWidget v-if="productsToShow.length" size="lg">
       <template #default-container>
         <div
           ref="cardsElement"
@@ -96,6 +96,8 @@
         </div>
       </template>
     </VcWidget>
+
+    <VcLoader v-else />
   </VcContainer>
 </template>
 
@@ -124,7 +126,9 @@ usePageHead({
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { clearCompareList, productsLimit } = useCompareProducts();
 const {
+  hasProducts,
   productsToShow,
+  productsCount,
   properties,
   propertiesDiffs,
   showOnlyDifferences,

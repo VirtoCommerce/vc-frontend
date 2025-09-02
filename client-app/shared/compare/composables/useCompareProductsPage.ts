@@ -277,6 +277,8 @@ export function useCompareProductsPage() {
   );
 
   return {
+    hasProducts: computed(() => allProductIdsToShow.value.length > 0),
+    productsCount: computed(() => allProductIdsToShow.value.length),
     productsToShow,
     properties,
     propertiesDiffs,
