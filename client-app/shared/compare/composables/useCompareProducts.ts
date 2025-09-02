@@ -89,7 +89,7 @@ function addConfiguredProductToCompare(
 }
 
 function isInCompareList(product: Product, configuration?: ConfigurationSectionInput[]) {
-  if (product.isConfigurable && configuration) {
+  if (product.isConfigurable && configuration?.length) {
     return findMatchingConfigProductIndex(product, configuration) !== -1;
   }
   return productsIds.value.includes(product.id);
