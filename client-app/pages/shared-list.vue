@@ -66,7 +66,7 @@
               />
             </div>
           </VcWidget>
-          
+
           <template #sidebar>
             <WishlistSummary :list="list" />
           </template>
@@ -115,6 +115,7 @@ import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
+import { ProductSkeletonGrid } from "@/shared/catalog";
 import {
   useWishlists,
   WishlistLineItems,
