@@ -15,8 +15,11 @@
       </div>
 
       <div
+        role="button"
+        tabindex="0"
         class="news-article-preview__title"
         @click="emit('article:click', newsArticle)"
+        @keyup.enter="emit('article:click', newsArticle)"
       >
         {{ newsArticle.listTitle }}
       </div>
@@ -67,13 +70,13 @@ const newsArticle = toRef(props, "newsArticle");
 </script>
 
 <style lang="scss">
-.news-article-preview { 
+.news-article-preview {
   &__preview {
     @apply m-3 text-start text-lg cursor-pointer;
   }
 
   &__preview-image {
-    @apply text-center;
+    @apply text-center cursor-pointer;
   }
 
   &__preview-image img {

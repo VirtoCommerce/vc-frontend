@@ -200,15 +200,15 @@ function applyRoute() {
 const { getSettingValue } = useModuleSettings(MODULE_ID);
 const useNewsPrefixInLinks = getSettingValue(USE_NEWS_PREFIX_IN_LINKS);
 
-function openArticle(newsArticle: NewsArticleContent) {
+async function openArticle(newsArticle: NewsArticleContent) {
   if (newsArticle.seoInfo.semanticUrl && newsArticle.seoInfo.semanticUrl != newsArticle.id) {
     const path = useNewsPrefixInLinks
       ? `/${ROUTES.LINK_SEGMENT}/${newsArticle.seoInfo.semanticUrl}`
       : `/${newsArticle.seoInfo.semanticUrl}`
-    router.push({ path: path });
+    await router.push({ path: path });
   }
   else {
-    router.push({
+    await router.push({
       name: ROUTES.ARTICLE.NAME,
       params: { articleId: newsArticle.id },
     });
@@ -260,7 +260,7 @@ const fetchNewsArticles = async () => {
 
 onMounted(async () => {
   await fetchNewsArticles();
-  fetchNewsArticleOptions();
+  await fetchNewsArticleOptions();
 });
 </script>
 
