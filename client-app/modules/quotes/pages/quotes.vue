@@ -146,7 +146,7 @@
             <tr
               v-for="quote in quotes"
               :key="quote.id"
-              class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+              class="cursor-pointer last:rounded-b-[--vc-radius] even:bg-neutral-50 hover:bg-neutral-200"
               @click="goToQuoteDetails(quote)"
             >
               <td class="overflow-hidden text-ellipsis p-5">
