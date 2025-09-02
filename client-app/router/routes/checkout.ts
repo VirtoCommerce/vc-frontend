@@ -1,3 +1,4 @@
+import { ROUTES } from "./constants";
 import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordName, RouteRecordRaw } from "vue-router";
 
 const Checkout = () => import("@/pages/checkout/index.vue");
@@ -33,7 +34,7 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: "/checkout",
+    path: "/checkout/:cartId?",
     name: "Checkout",
     component: Checkout,
     children: [
@@ -42,7 +43,7 @@ export const checkoutRoutes: RouteRecordRaw[] = [
         name: "Shipping",
         component: Shipping,
         beforeEnter(to, from, next) {
-          handleBeforeEnter(from, next, "CheckoutPayment", "Cart");
+          handleBeforeEnter(from, next, "CheckoutPayment", to.params.cartId ? ROUTES.CART_ID.NAME : ROUTES.CART.NAME);
         },
       },
       {
@@ -50,28 +51,32 @@ export const checkoutRoutes: RouteRecordRaw[] = [
         name: "Billing",
         component: Billing,
         beforeEnter(to, from, next) {
-          handleBeforeEnter(from, next, "CheckoutPayment", "Cart");
+          handleBeforeEnter(from, next, "CheckoutPayment", to.params.cartId ? ROUTES.CART_ID.NAME : ROUTES.CART.NAME);
         },
       },
       {
         path: "review",
         name: "Review",
         component: Review,
+        props: (route) => ({ cartId: route.params.cartId }),
       },
       {
         path: "payment",
         name: "CheckoutPayment",
         component: Payment,
+        props: (route) => ({ cartId: route.params.cartId }),
       },
     ],
     meta: { layout: "Secure" },
     beforeEnter(to, from, next) {
-      if (from.name === "Cart") {
+      if (from.name === ROUTES.CART.NAME || from.name === ROUTES.CART_ID.NAME) {
         next();
       } else if (from.name === "CheckoutPaymentResult" && to.name === "CheckoutPayment") {
         next();
+      } else if (to.params.cartId) {
+        next({ name: ROUTES.CART_ID.NAME, params: { cartId: to.params.cartId }, replace: true });
       } else {
-        next({ name: "Cart", replace: true });
+        next({ name: ROUTES.CART.NAME, replace: true });
       }
     },
   },

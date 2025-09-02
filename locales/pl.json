@@ -78,10 +78,12 @@
       "reset_page": "Resetuj stronę",
       "show_less": "Pokaż mniej",
       "expand_all": "Rozwiń wszystko",
-      "all_products": "Wszystkie produkty"
+      "all_products": "Wszystkie produkty",
+      "buy_now": "Kup teraz"
     },
     "labels": {
       "actions": "Akcje",
+      "notifications": "Powiadomienia",
       "user_name": "Nazwa użytkownika",
       "password": "Hasło",
       "confirm_password": "Potwierdź hasło",
@@ -243,7 +245,6 @@
       "addresses": "Adresy",
       "orders": "Zamówienia",
       "lists": "Listy",
-      "checkout_defaults": "Ustawienia domyślne kasy",
       "list_details": "Szczegóły listy",
       "cart": "Koszyk",
       "company_info": "Informacje o firmie",
@@ -273,7 +274,8 @@
       "change_role": "Zmień rolę",
       "save_changes": "Zapisz zmiany",
       "password_expired": "Hasło wkrótce wygaśnie",
-      "error_details": "Szczegóły błędu"
+      "error_details": "Szczegóły błędu",
+      "buy_now": "Kup teraz"
     },
     "roles": {
       "org-maintainer": "Utrzymujący organizację",
@@ -288,6 +290,11 @@
         "FixedRate_Air": "Stała cena (lotnicza)",
         "BuyOnlinePickupInStore_Pickup": "Odbiór w sklepie"
       }
+    },
+    "accessibility": {
+      "open_filters": "Otwórz filtry",
+      "switch_to_grid_view": "Przełącz na widok siatki",
+      "switch_to_list_view": "Przełącz na widok listy"
     }
   },
   "shared": {
@@ -326,7 +333,6 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -352,7 +358,8 @@
           "aria_labels": {
             "categories": "Kategorie",
             "subcategories": "Podkategorie {category}",
-            "navigation": "Navigacja"
+            "navigation": "Navigacja",
+            "main_navigation": "Główna nawigacja"
           }
         }
       },
@@ -432,7 +439,6 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
-          "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -464,11 +470,6 @@
       },
       "forgot_password_form": {
         "error_alert": "Nieprawidłowy wynik żądania resetowania hasła. Proszę "
-      },
-      "checkout_default_success_modal": {
-        "title": "Ustawienia domyślne kasy",
-        "message": "Domyślne szczegóły kasy zostały pomyślnie zaktualizowane.",
-        "ok_button": "@:common.buttons.ok"
       },
       "invite_member_modal": {
         "title": "Zaproś członka",
@@ -1060,21 +1061,6 @@
         "edit_address_title": "Edytuj adres",
         "make_default_button": "Ustaw jako domyślny",
         "no_addresses_img_alt": "Brak adresów"
-      },
-      "checkout_defaults": {
-        "meta": {
-          "title": "@:pages.account.checkout_defaults.title"
-        },
-        "title": "Ustawienia domyślne kasy",
-        "select_delivery_method_label": "Preferowana metoda dostawy",
-        "shipping_radio_label": "Wysyłka",
-        "pickup_radio_label": "Odbiór",
-        "not_selected_placeholder": "@:common.placeholders.not_selected",
-        "update_button": "@:common.buttons.update",
-        "payment_method_label": "Preferowana metoda płatności",
-        "payment_method_placeholder": "Proszę wybrać preferowaną metodę płatności",
-        "shipping_method_label": "Preferowana metoda wysyłki",
-        "shipping_method_placeholder": "Proszę wybrać preferowaną metodę wysyłki"
       },
       "dashboard": {
         "meta": {

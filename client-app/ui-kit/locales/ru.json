@@ -18,6 +18,9 @@
       "toggle_dropdown": "Переключить выпадающее меню",
       "update_cart": "Обновить корзину"
     },
+    "accessibility": {
+      "close_alert": "Закрыть уведомление"
+    },
     "labels": {
       "not_available": "Н/Д",
       "price_per_item": "Цена за единицу",
@@ -91,6 +94,9 @@
       "end_input_help": "Введите число от {min} до {max}, шаг {step}",
       "column_aria_label": "Столбец с {count} товарами, от {from} до {to}",
       "current_value_announcement": "Значение: {start} - {end}, диапазон {min} - {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Навигация хлебными крошками"
     }
   }
 }

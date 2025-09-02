@@ -43,40 +43,18 @@
     </VcPopupSidebar>
 
     <div class="flex flex-col items-center gap-3 lg:flex-row">
-      <div v-if="isOrganizationMaintainer" class="flex h-9 gap-2">
-        <button
-          :class="[
-            orderScope === 'organization'
-              ? 'cursor-auto bg-additional-50 text-neutral-700 hover:shadow-md'
-              : 'text-primary hover:text-primary-600',
-          ]"
-          class="flex rounded p-2"
-          size="xs"
-          type="button"
-          @click="toggleOrdersScope('organization')"
-        >
-          <VcIcon class="size-5" name="case" />
-          <span class="ms-1.5 text-base font-bold">
+      <div v-if="isOrganizationMaintainer" class="flex gap-2">
+        <VcTabSwitch v-model="orderScope" value="organization" icon="case" @change="toggleOrdersScope('organization')">
+          <span class="view-mode__text">
             {{ $t("common.buttons.all_orders") }}
           </span>
-        </button>
+        </VcTabSwitch>
 
-        <button
-          :class="[
-            orderScope === 'private'
-              ? 'cursor-auto bg-additional-50 text-neutral-700 hover:shadow-md'
-              : 'text-primary hover:text-primary-600',
-          ]"
-          class="flex rounded p-2"
-          size="xs"
-          type="button"
-          @click="toggleOrdersScope('private')"
-        >
-          <VcIcon class="size-5" name="user" />
-          <span class="ms-1.5 text-base font-bold">
+        <VcTabSwitch v-model="orderScope" value="private" icon="user" @change="toggleOrdersScope('private')">
+          <span class="view-mode__text">
             {{ $t("common.buttons.my_orders") }}
           </span>
-        </button>
+        </VcTabSwitch>
       </div>
 
       <!-- Page Toolbar -->
@@ -195,7 +173,10 @@
   <!-- Content block -->
   <div
     v-else
-    :class="['flex flex-col bg-additional-50 shadow-sm', { 'max-md:-mx-6 lg:rounded lg:border': withSearch }]"
+    :class="[
+      'flex flex-col bg-additional-50 shadow-sm',
+      { 'max-md:-mx-6 lg:rounded-[--vc-radius] lg:border': withSearch },
+    ]"
   >
     <VcTable
       :loading="ordersLoading"
@@ -206,6 +187,7 @@
       :page="page"
       :hide-default-footer="!withPagination"
       :description="$t('pages.account.orders.meta.table_description')"
+      mobile-breakpoint="lg"
       @item-click="goToOrderDetails"
       @header-click="applySorting"
       @page-changed="changePage"

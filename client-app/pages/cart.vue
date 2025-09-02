@@ -4,10 +4,10 @@
 
     <VcEmptyPage
       v-else
-      :title="$t('pages.cart.title')"
+      :title="title ?? $t('pages.cart.title')"
       image="basket.jpg"
       icon="outline-cart"
-      :breadcrumbs="breadcrumbs"
+      :breadcrumbs="hideBreadcrumbs ? [] : breadcrumbs"
     >
       <div class="mb-6 text-lg font-bold">
         {{ $t("pages.cart.empty_cart_description") }}
@@ -30,12 +30,12 @@
   </template>
 
   <VcContainer v-else class="relative max-lg:pb-12">
-    <VcLoaderOverlay :visible="isCartLoked" fixed-spinner />
+    <VcLoaderOverlay :visible="isCartLocked" fixed-spinner />
 
-    <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
+    <VcBreadcrumbs v-if="!hideBreadcrumbs" :items="breadcrumbs" class="max-lg:hidden" />
 
     <VcTypography tag="h1" class="mb-5">
-      {{ $t("pages.cart.title") }}
+      {{ title ?? $t("pages.cart.title") }}
     </VcTypography>
 
     <template v-if="!cart?.items?.length">
@@ -62,13 +62,18 @@
       </VcWidget>
 
       <CartForLater
-        v-if="savedForLaterList?.items?.length"
+        v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
         :saved-for-later-list="savedForLaterList"
+        :loading="moveFromSavedForLaterOverflowed"
         class="mt-5"
-        @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" 
+        @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
       />
 
-      <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" class="mt-5" />
+      <RecentlyBrowsedProducts
+        v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
+        :products="recentlyBrowsedProducts"
+        class="mt-5"
+      />
     </template>
 
     <template v-else>
@@ -79,8 +84,9 @@
           :items-grouped-by-vendor="lineItemsGroupedByVendor"
           :selected-item-ids="selectedItemIds"
           :validation-errors="cart.validationErrors"
-          :disabled="changeItemQuantityBatchedOverflowed || selectionOverflowed"
+          :disabled="changeItemQuantityBatchedOverflowed || moveToSavedForLaterOverflowed || selectionOverflowed"
           data-test-id="cart.products-section"
+          :hide-controls="hideControls"
           @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
           @select:items="handleSelectItems"
           @remove:items="handleRemoveItems"
@@ -106,14 +112,15 @@
         </template>
 
         <CartForLater
-          v-if="savedForLaterList?.items?.length"
+          v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
           :saved-for-later-list="savedForLaterList"
+          :loading="moveFromSavedForLaterOverflowed"
           class="mt-5"
-          @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])" 
+          @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
 
         <RecentlyBrowsedProducts
-          v-if="recentlyBrowsedProducts.length"
+          v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
           :products="recentlyBrowsedProducts"
           class="mt-5"
         />
@@ -137,7 +144,7 @@
 
               <ProceedTo
                 v-if="$cfg.checkout_multistep_enabled"
-                :to="{ name: 'Checkout' }"
+                :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
                 :disabled="hasOnlyUnselectedLineItems"
                 test-id="cart.checkout-button"
                 class="mt-4"
@@ -179,11 +186,11 @@
 
           <component
             :is="item.element"
-            v-for="item in sidebarWidgets"
+            v-for="item in sidebarWidgets.filter((item) => !shouldHide(item.id))"
             :key="item.id"
             class="mt-5"
-            @lock-cart="isCartLoked = true"
-            @unlock-cart="isCartLoked = false"
+            @lock-cart="isCartLocked = true"
+            @unlock-cart="isCartLocked = false"
           />
         </template>
       </VcLayout>
@@ -200,7 +207,7 @@
 
           <ProceedTo
             v-if="$cfg.checkout_multistep_enabled"
-            :to="{ name: 'Checkout' }"
+            :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
             :disabled="hasOnlyUnselectedLineItems"
             class="!mt-2"
           >
@@ -215,18 +222,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
-import { moveFromSavedForLater } from "@/core/api/graphql/cart/mutations/moveFromSavedForLater";
-import { moveToSavedForLater } from "@/core/api/graphql/cart/mutations/moveToSavedForLater";
-import { getSavedForLater } from "@/core/api/graphql/cart/queries/getSavedForLater";
 import { useBreadcrumbs, useAnalytics, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY, MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
+import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
 import {
   BillingDetailsSection,
   OrderCommentSection,
@@ -236,11 +242,20 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
-import type { LineItemType, Product, SavedForLaterListFragment } from "@/core/api/graphql/types";
+import type { LineItemType, Product } from "@/core/api/graphql/types";
 import CartForLater from "@/shared/cart/components/cart-for-later.vue";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
+
+interface IProps {
+  blocksToHide?: string[];
+  hideBreadcrumbs?: boolean;
+  title?: string;
+  hideControls?: string[];
+}
+
+const props = defineProps<IProps>();
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { themeContext } = useThemeContext();
@@ -267,10 +282,21 @@ const {
   openClearCartModal,
   selectCartItems,
   unselectCartItems,
+  shipment,
+  payment,
 } = useFullCart();
 const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
+
+const { 
+  savedForLaterList, 
+  moveToSavedForLater, 
+  moveToSavedForLaterOverflowed, 
+  moveFromSavedForLater,  
+  moveFromSavedForLaterOverflowed,
+  getSavedForLater, 
+  loading: saveForLaterLoading } = useSavedForLater();
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
@@ -283,13 +309,15 @@ usePageHead({
   title: t("pages.cart.meta.title"),
 });
 
-const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
+const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: ROUTES.CART.NAME } }]);
 
-const isCartLoked = ref(false);
-const savedForLaterList = ref<SavedForLaterListFragment>();
+const analyticsLastSentShippingOption = ref<string | undefined>();
+const analyticsLastSentPaymentCode = ref<string | undefined>();
+
+const isCartLocked = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
-const loading = computed(() => loadingCart.value || loadingCheckout.value);
+const loading = computed(() => loadingCart.value || loadingCheckout.value || saveForLaterLoading.value);
 const isShowIncompleteDataWarning = computed(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
 );
@@ -319,8 +347,7 @@ async function handleSaveForLater(itemIds: string[]) {
     return;
   }
 
-  const moveResult = await moveToSavedForLater(cart.value.id, itemIds);
-  savedForLaterList.value = moveResult?.list;
+  await moveToSavedForLater(cart.value.id, itemIds);
 }
 
 async function handleMoveToCart(itemIds: string[]) {
@@ -328,8 +355,7 @@ async function handleMoveToCart(itemIds: string[]) {
     return;
   }
 
-  const moveResult = await moveFromSavedForLater(cart.value.id, itemIds);
-  savedForLaterList.value = moveResult?.list;
+  await moveFromSavedForLater(cart.value.id, itemIds);
 }
 
 function selectItemEvent(item: LineItemType | undefined): void {
@@ -342,6 +368,52 @@ function selectItemEvent(item: LineItemType | undefined): void {
     item_list_name: t("pages.cart.title"),
   });
 }
+
+function shouldHide(id: string) {
+  return props.blocksToHide?.includes(id);
+}
+
+watch(
+  [() => isValidShipment.value, () => shipment.value?.shipmentMethodOption],
+  () => {
+    if (themeContext.value?.settings?.checkout_multistep_enabled || !cart.value || !isValidShipment.value) {
+      return;
+    }
+
+    const option = shipment.value?.shipmentMethodOption;
+
+    if (option && option !== analyticsLastSentShippingOption.value) {
+      analytics("addShippingInfo", { ...cart.value, items: selectedLineItems.value }, {}, option);
+      analyticsLastSentShippingOption.value = option;
+    }
+  },
+  { immediate: true },
+);
+
+watch(
+  [() => isValidPayment.value, () => payment.value?.paymentGatewayCode],
+  () => {
+    if (themeContext.value?.settings?.checkout_multistep_enabled || !cart.value || !isValidPayment.value) {
+      return;
+    }
+
+    const code = payment.value?.paymentGatewayCode;
+
+    if (code && code !== analyticsLastSentPaymentCode.value) {
+      analytics("addPaymentInfo", { ...cart.value, items: selectedLineItems.value }, {}, code);
+      analyticsLastSentPaymentCode.value = code;
+    }
+  },
+  { immediate: true },
+);
+
+watch(
+  () => cart.value?.id,
+  () => {
+    analyticsLastSentShippingOption.value = undefined;
+    analyticsLastSentPaymentCode.value = undefined;
+  },
+);
 
 void (async () => {
   await forceFetch();
@@ -358,11 +430,11 @@ void (async () => {
   }
 
   const isXRecommendModuleEnabled = isEnabledXRecommend(XRECOMMEND_ENABLED_KEY);
-  if (isAuthenticated.value && isXRecommendModuleEnabled) {
+  if (isAuthenticated.value && isXRecommendModuleEnabled && !shouldHide("recently-browsed-products")) {
     recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
   }
-  if (isAuthenticated.value) {
-    savedForLaterList.value = await getSavedForLater();
+  if (isAuthenticated.value && !shouldHide("cart-for-later")) {
+    await getSavedForLater();
   }
 })();
 </script>

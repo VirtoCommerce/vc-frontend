@@ -108,6 +108,8 @@ function addFiles(items: File[]) {
 
 <style lang="scss">
 .vc-file-picker {
+  --radius: var(--vc-file-picker-radius, var(--vc-radius, 0.5rem));
+
   &--disabled {
     @apply opacity-40 pointer-events-none;
   }
@@ -121,7 +123,7 @@ function addFiles(items: File[]) {
   }
 
   &__drop-area {
-    @apply flex-1 flex flex-col min-h-17 justify-center items-center gap-2 w-full rounded border border-dashed border-secondary-200 p-4 bg-secondary-50;
+    @apply flex-1 flex flex-col min-h-17 justify-center items-center gap-2 w-full rounded-[--radius] border border-dashed border-secondary-200 p-4 bg-secondary-50;
   }
 
   &__droppable {
