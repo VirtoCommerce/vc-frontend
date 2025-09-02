@@ -1,5 +1,10 @@
 <template>
-  <div :class="['vc-dialog-header', `vc-dialog-header--color--${color}`]">
+  <div
+:class="[
+    'vc-dialog-header',
+    `vc-dialog-header--color--${color}`,
+    `vc-dialog-header--size--${sizeStr}`,
+  ]">
     <slot name="main">
       <div class="vc-dialog-header__main">
         <div v-if="icon" class="vc-dialog-header__icon">
@@ -25,6 +30,9 @@
 </template>
 
 <script setup lang="ts">
+import { inject, ref, computed } from "vue";
+import { vcDialogKey } from "../../atoms/dialog/vc-dialog-context";
+
 export interface IEmits {
   (event: "close"): void;
 }
@@ -33,13 +41,17 @@ export interface IProps {
   color?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
   icon?: string;
   closable?: boolean;
+  size?: VcDialogSizeType;
 }
 
 defineEmits<IEmits>();
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   color: "info",
   closable: true,
 });
+
+const dialogContext = inject(vcDialogKey, { size: ref("md") });
+const sizeStr = computed(() => props.size ?? dialogContext.size.value);
 </script>
 
 <style lang="scss">
@@ -73,6 +85,21 @@ withDefaults(defineProps<IProps>(), {
 
   &__close {
     @apply flex-none flex items-center justify-center size-[4.25rem] text-secondary;
+  }
+
+  /* Size modifiers */
+  &--size {
+    &--xs {
+      /* TODO: header paddings / font sizes for xs */
+    }
+
+    &--sm {
+      /* TODO: header paddings / font sizes for sm */
+    }
+
+    &--md {
+      /* default styles already apply */
+    }
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="vc-dialog-footer">
+  <div :class="['vc-dialog-footer', `vc-dialog-footer--size--${sizeStr}`]">
     <slot name="container">
       <div class="vc-dialog-footer__container">
         <slot>
@@ -13,11 +13,17 @@
 </template>
 
 <script setup lang="ts">
+import { inject, ref, computed } from "vue";
+import { vcDialogKey } from "../../atoms/dialog/vc-dialog-context";
+
 interface IEmits {
   (event: "close"): void;
 }
 
 defineEmits<IEmits>();
+
+const dialogContext = inject(vcDialogKey, { size: ref("md") });
+const sizeStr = computed(() => dialogContext.size.value);
 </script>
 
 <style lang="scss">
@@ -45,6 +51,20 @@ defineEmits<IEmits>();
       &:first-child:not(:last-child) {
         @apply me-auto;
       }
+    }
+  }
+
+  /* Size modifiers */
+  &--size {
+    &--xs {
+      /* TODO: footer paddings / button stack for xs */
+    }
+
+    &--sm {
+      /* TODO: footer paddings / button stack for sm */
+    }
+
+    &--md {
     }
   }
 }
