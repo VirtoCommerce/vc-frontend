@@ -20,7 +20,17 @@ const { emit } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
 
 const currentDomain = IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname;
 
+/**
+ * Independent composable.
+ * Does not rely on global context.
+ */
 function _useWhiteLabeling() {
+  /**
+   * Applies previously fetched white labeling settings.
+   *
+   * @remarks
+   * - Use only after {@link fetchWhiteLabelingSettings}.
+   */
   async function fetchWhiteLabelingSettings(): Promise<void> {
     try {
       fetchedSettings.value = await getGetWhiteLabelingSettings(currentDomain);
@@ -30,6 +40,13 @@ function _useWhiteLabeling() {
     }
   }
 
+  /**
+   * Fetches and stores white labeling settings.
+   *
+   * @remarks
+   * - Not for standalone use; must be followed by {@link applyWhiteLabelingSettings}.
+   * - Purpose: load settings in parallel during app initialization.
+   */
   function applyWhiteLabelingSettings() {
     if(fetchedSettings.value) {
       whiteLabelingSettings.value = fetchedSettings.value;
@@ -39,11 +56,20 @@ function _useWhiteLabeling() {
     }
   }
 
+  /**
+   * Fetches and applies footer links.
+   *
+   * @param cultureName - Locale in 4-character format (e.g., "en-US").
+   *
+   * @remarks
+   * - Asynchronous method.
+   * - Locale-dependent.
+   */
   async function fetchAndApplyFooterLinks(cultureName: string) {
     try {
       footerLinks.value = (await getFooterLinks(currentDomain, cultureName))?.footerLinks;
     } catch (e) {
-      Logger.error(`${_useWhiteLabeling.name}.${fetchWhiteLabelingSettings.name}`, e);
+      Logger.error(`${_useWhiteLabeling.name}.${fetchAndApplyFooterLinks.name}`, e);
       throw e;
     }
   }
