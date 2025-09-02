@@ -106,7 +106,8 @@
   lang="ts"
 >
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { cloneDeep, keyBy } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+import keyBy from "lodash/keyBy";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics, usePageHead } from "@/core/composables";

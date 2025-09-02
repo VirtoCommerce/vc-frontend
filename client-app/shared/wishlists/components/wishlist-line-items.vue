@@ -85,7 +85,7 @@
         </div>
 
         <template #after>
-          <VcAlert v-if="editable && item.deleted" color="danger" size="sm" variant="outline-dark" icon>
+          <VcAlert v-if="item.deleted" color="danger" size="sm" variant="outline-dark" icon>
             {{ $t("validation_error.CART_PRODUCT_UNAVAILABLE") }}
           </VcAlert>
 

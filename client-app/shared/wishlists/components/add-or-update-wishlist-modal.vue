@@ -94,9 +94,9 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { useClipboard } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import { WishlistScopeType } from "@/core/api/graphql/types";
-import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account/composables";
 import { useNotifications } from "@/shared/notification";
 import { useWishlists } from "../composables/useWishlists";
@@ -108,7 +108,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { t } = globals.i18n.global;
+const { t } = useI18n();
 
 const { copy: copyToClipboard, isSupported: isClipboardSupported } = useClipboard();
 const notifications = useNotifications();
