@@ -21,7 +21,7 @@
     <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
 
     <VcTypography tag="h1">
-      {{ product.name }}
+      {{ selectedVariationName || product.name }}
     </VcTypography>
 
     <div class="mt-2 flex flex-wrap gap-1 max-sm:justify-between sm:gap-6">
@@ -168,6 +168,7 @@ import {
   useRecommendedProducts,
   useConfigurableProduct,
 } from "@/shared/catalog";
+import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import {
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
@@ -227,6 +228,7 @@ const {
 });
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
+const { applicableVariations } = useProductVariationProperties(variations);
 
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
@@ -242,6 +244,10 @@ const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
 const initialConfiguration = computed(() => {
   const configurationLocal = localProductConfigurations.value.find((config) => config.localId === configurationId);
   return configurationLocal?.configuration;
+});
+
+const selectedVariationName = computed(() => {
+  return applicableVariations.value.length === 1 ? applicableVariations.value[0].name : undefined;
 });
 
 const templateLayout = computed(() => {
