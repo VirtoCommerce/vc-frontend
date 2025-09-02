@@ -8,6 +8,7 @@ import {
   LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
 } from "@/core/constants";
 import { truncate } from "@/core/utilities";
+import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
 import { compareConfigurationInputs } from "@/shared/catalog/utilities/configurations";
 import { useNotifications } from "@/shared/notification";
 import type { IConfigurationProperty, IConfigProductToCompare } from "../types";
@@ -68,18 +69,21 @@ function addConfiguredProductToCompare(
   }
 
   const localId = uuidv4();
+  const configurationSectionsInputWithoutFiles = configurationSectionsInput?.filter(
+    (section) => section.type !== CONFIGURABLE_SECTION_TYPES.file,
+  );
 
   configProductsToCompare.value.push({
     localId,
     productId: product.id,
-    configurationSectionInput: configurationSectionsInput,
+    configurationSectionInput: configurationSectionsInputWithoutFiles,
     properties: properties ?? [],
   });
 
-  if (configurationSectionsInput) {
+  if (configurationSectionsInputWithoutFiles) {
     localProductConfigurations.value.push({
       localId,
-      configuration: configurationSectionsInput.map((section) => ({
+      configuration: configurationSectionsInputWithoutFiles.map((section) => ({
         ...section,
         ...section.option,
         id: section.sectionId,
