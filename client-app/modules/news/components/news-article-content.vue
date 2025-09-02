@@ -41,15 +41,14 @@
 
         <span>
           {{ $t("news.details.written-by") }}
-          <span
-            role="button"
-            tabindex="0"
+          <button
             class="news-article-content__citation-author-name"
+            type="button"
             @click="emit('author:click', newsArticle.author.id)"
             @keyup.enter="emit('author:click', newsArticle.author.id)"
-          >{{
-            newsArticle.author.name }}
-          </span>
+          >
+            {{ newsArticle.author.name }}
+          </button>
         </span>
       </div>
 

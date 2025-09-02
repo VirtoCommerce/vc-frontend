@@ -14,15 +14,14 @@
         {{ $d(newsArticle.publishDate, "short") }}
       </div>
 
-      <div
-        role="button"
-        tabindex="0"
+      <button
         class="news-article-preview__title"
+        type="button"
         @click="emit('article:click', newsArticle)"
         @keyup.enter="emit('article:click', newsArticle)"
       >
         {{ newsArticle.listTitle }}
-      </div>
+      </button>
 
       <div class="news-article-preview__tags">
         <template
@@ -84,7 +83,7 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__title {
-    @apply m-3 text-start font-bold text-[--link-color] hover:text-[--link-hover-color] cursor-pointer;
+    @apply ms-3 me-3 text-start font-bold text-[--link-color] hover:text-[--link-hover-color] cursor-pointer;
   }
 
   &__publish-date {
