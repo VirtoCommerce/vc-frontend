@@ -214,9 +214,6 @@ function _useConfigurableProduct(configurableProductId: string) {
       const preselectedValues = await getPreselectedValues();
       updateWithDefaultValues();
       updateWithPreselectedValues(preselectedValues);
-
-      initialSelectedConfigurationInput.value = selectedConfigurationInput.value;
-      void createConfiguredLineItem();
     } catch (e) {
       Logger.error(`${useConfigurableProduct.name}.${fetchProductConfiguration.name}`, e);
       throw e;
@@ -359,6 +356,9 @@ function _useConfigurableProduct(configurableProductId: string) {
         changeSelectionValue(value);
       }
     });
+
+    initialSelectedConfigurationInput.value = selectedConfigurationInput.value;
+    void createConfiguredLineItem();
   }
 
   function preselectedValueToInputSection(value: SectionValueType): ConfigurationSectionInput {

@@ -135,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef, watch } from "vue";
+import { nextTick, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
@@ -184,7 +184,8 @@ const notifications = useNotifications();
 
 watch(
   initialConfiguration,
-  () => {
+  async () => {
+    await nextTick();
     updateWithPreselectedValues(initialConfiguration.value);
   },
   { immediate: true },
