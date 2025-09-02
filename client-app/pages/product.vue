@@ -169,6 +169,7 @@ import {
   useConfigurableProduct,
 } from "@/shared/catalog";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
+import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
 import {
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
@@ -243,7 +244,7 @@ const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
 
 const initialConfiguration = computed(() => {
   const configurationLocal = localProductConfigurations.value.find((config) => config.localId === configurationId);
-  return configurationLocal?.configuration;
+  return configurationLocal?.configuration.filter((config) => config.type !== CONFIGURABLE_SECTION_TYPES.file);
 });
 
 const selectedVariationName = computed(() => {
