@@ -279,7 +279,7 @@ onMounted(async () => {
   }
 
   &__filter-tag {
-    @apply mr-2 mb-2;
+    @apply me-2 mb-2;
   }
 
   &__filter-keyword {

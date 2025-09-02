@@ -98,7 +98,7 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__preview {
-    @apply ml-5 mr-5 text-lg text-left;
+    @apply ms-5 me-5 text-lg text-start;
   }
 
   &__preview-image {
@@ -106,7 +106,7 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__preview-image img {
-    display: inline;
+    @apply inline;
   }
 
   &__tags {
@@ -114,7 +114,7 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__tag {
-    @apply mr-2 mb-1;
+    @apply me-2 mb-1;
   }
 
   &__citation {
@@ -130,7 +130,7 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__citation-author-image {
-    @apply mr-4 h-12 rounded-full;
+    @apply me-4 h-12 rounded-full;
   }
 
   &__citation-publish-date {
@@ -138,7 +138,7 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__content {
-    @apply text-lg ml-5 mr-5;
+    @apply text-lg ms-5 me-5;
   }
 }
 </style>

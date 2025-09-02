@@ -1,41 +1,43 @@
 <template>
   <VcWidget class="news-article-preview">
-    <VcMarkdownRender
-      :src="newsArticle.listPreview ?? ''"
-      :class="isImage(newsArticle.listPreview) ? 'news-article-preview__preview-image' : 'news-article-preview__preview'"
-      @click="emit('article:click', newsArticle)"
-    />
+    <template #default-container>
+      <VcMarkdownRender
+        :src="newsArticle.listPreview ?? ''"
+        :class="isImage(newsArticle.listPreview) ? 'news-article-preview__preview-image' : 'news-article-preview__preview'"
+        @click="emit('article:click', newsArticle)"
+      />
 
-    <div
-      v-if="newsArticle.publishDate"
-      class="news-article-preview__publish-date"
-    >
-      {{ $d(newsArticle.publishDate, "short") }}
-    </div>
-
-    <div
-      class="news-article-preview__title"
-      @click="emit('article:click', newsArticle)"
-    >
-      {{ newsArticle.listTitle }}
-    </div>
-
-    <div class="news-article-preview__tags">
-      <template
-        v-for="tag in newsArticle.tags"
-        :key="tag"
+      <div
+        v-if="newsArticle.publishDate"
+        class="news-article-preview__publish-date"
       >
-        <VcChip
-          color="secondary"
-          variant="outline-dark"
-          class="news-article-preview__tag"
-          clickable
-          @click="emit('tag:click', tag)"
+        {{ $d(newsArticle.publishDate, "short") }}
+      </div>
+
+      <div
+        class="news-article-preview__title"
+        @click="emit('article:click', newsArticle)"
+      >
+        {{ newsArticle.listTitle }}
+      </div>
+
+      <div class="news-article-preview__tags">
+        <template
+          v-for="tag in newsArticle.tags"
+          :key="tag"
         >
-          {{ tag }}
-        </VcChip>
-      </template>
-    </div>
+          <VcChip
+            color="secondary"
+            variant="outline-dark"
+            class="news-article-preview__tag"
+            clickable
+            @click="emit('tag:click', tag)"
+          >
+            {{ tag }}
+          </VcChip>
+        </template>
+      </div>
+    </template>
   </VcWidget>
 </template>
 
@@ -65,12 +67,9 @@ const newsArticle = toRef(props, "newsArticle");
 </script>
 
 <style lang="scss">
-.news-article-preview {
-  --p-x: 0;
-  --slot-p-t: 0;
-
+.news-article-preview { 
   &__preview {
-    @apply m-3 text-left text-lg cursor-pointer;
+    @apply m-3 text-start text-lg cursor-pointer;
   }
 
   &__preview-image {
@@ -78,15 +77,15 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__preview-image img {
-    display: inline;
+    @apply inline;
   }
 
   &__title {
-    @apply m-3 text-left font-bold text-[--link-color] hover:text-[--link-hover-color] cursor-pointer;
+    @apply m-3 text-start font-bold text-[--link-color] hover:text-[--link-hover-color] cursor-pointer;
   }
 
   &__publish-date {
-    @apply m-3 text-left text-sm text-neutral;
+    @apply m-3 text-start text-sm text-neutral;
   }
 
   &__tags {
@@ -94,7 +93,7 @@ const newsArticle = toRef(props, "newsArticle");
   }
 
   &__tag {
-    @apply mr-2 mb-1;
+    @apply me-2 mb-1;
   }
 }
 </style>

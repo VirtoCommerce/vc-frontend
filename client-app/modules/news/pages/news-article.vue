@@ -4,7 +4,7 @@
 
     <VcContainer v-else>
       <VcBreadcrumbs
-        class="mb-3"
+        class="news-article__breadcrumbs"
         :items="breadcrumbs"
       />
 
@@ -15,7 +15,7 @@
       />
 
       <NewsArticle
-        v-if="!loading && newsArticle"
+        v-else-if="newsArticle"
         :news-article="newsArticle"
         @tag:click="applyTag($event)"
         @author:click="applyAuthor($event)"
@@ -104,3 +104,11 @@ useSeoMeta({
 
 watchEffect(fetchNewsArticle);
 </script>
+
+<style lang="scss">
+.news-article {
+  &__breadcrumbs {
+    @apply mb-3;
+  }
+}
+</style>
