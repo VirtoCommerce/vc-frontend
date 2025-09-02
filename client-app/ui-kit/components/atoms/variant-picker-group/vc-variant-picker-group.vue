@@ -71,35 +71,25 @@ function getDirectItems(containerEl: HTMLElement | null) {
 
 function analyzeItemsLayout(items: HTMLElement[]) {
   if (!Array.isArray(items) || items.length === 0) {
-    return { rowCounts: [] };
+    return { rowCount: 0 };
   }
 
   try {
     const positions = items.map((el) => el.offsetTop);
-    const rowCounts: number[] = [];
     const rowTops: number[] = [];
 
     positions.forEach((elementTop) => {
-      let matched = false;
+      const hasMatch = rowTops.some((top) => Math.abs(elementTop - top) < LAYOUT_CONFIG.POSITION_TOLERANCE);
 
-      for (let idx = 0; idx < rowTops.length; idx++) {
-        if (Math.abs(elementTop - rowTops[idx]) < LAYOUT_CONFIG.POSITION_TOLERANCE) {
-          rowCounts[idx]++;
-          matched = true;
-          break;
-        }
-      }
-
-      if (!matched) {
+      if (!hasMatch) {
         rowTops.push(elementTop);
-        rowCounts.push(1);
       }
     });
 
-    return { rowCounts };
+    return { rowCount: rowTops.length };
   } catch (error) {
     Logger.error("VcVariantPickerGroup: Failed to analyze items layout", error);
-    return { rowCounts: [] };
+    return { rowCount: 0 };
   }
 }
 
@@ -153,9 +143,9 @@ function prepareLayoutItems(): { items: HTMLElement[]; total: number } | null {
 }
 
 function checkIfLayoutNeeded(items: HTMLElement[]): boolean {
-  const layoutInfo = analyzeItemsLayout(items);
+  const { rowCount } = analyzeItemsLayout(items);
 
-  if (layoutInfo.rowCounts.length <= maxRows.value) {
+  if (rowCount <= maxRows.value) {
     showButton.value = false;
     hiddenCount.value = 0;
     return false;
@@ -180,9 +170,9 @@ function isButtonPositionValid(items: HTMLElement[], visibleIdxLimit: number): b
 
 async function findOptimalVisibleCount(items: HTMLElement[], total: number): Promise<number> {
   for (let visibleIdxLimit = total; visibleIdxLimit > 0; visibleIdxLimit--) {
-    const layoutInfo = analyzeItemsLayout(items.filter((_, idx) => idx < visibleIdxLimit));
+    const { rowCount } = analyzeItemsLayout(items.filter((_, idx) => idx < visibleIdxLimit));
 
-    const fits = layoutInfo.rowCounts.length <= maxRows.value;
+    const fits = rowCount <= maxRows.value;
     const btnValid = fits && isButtonPositionValid(items, visibleIdxLimit);
 
     if (btnValid) {
