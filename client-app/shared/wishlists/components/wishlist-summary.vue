@@ -9,8 +9,8 @@
         {{ $t("common.labels.subtotal") }}
       </span>
 
-      <span>
-        <VcPriceDisplay :value="list.subTotal!" />
+      <span v-if="list.subTotal">
+        <VcPriceDisplay :value="list.subTotal" />
       </span>
     </div>
   </VcWidget>

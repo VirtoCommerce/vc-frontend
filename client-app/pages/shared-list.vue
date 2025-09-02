@@ -191,14 +191,14 @@ watchEffect(async () => {
 /**
  * Send Google Analytics event for related products.
  */
+//TODO: #Q do we need GA here?
 watchEffect(() => {
-  const items = list.value?.items
-    ?.map((item) => item.product!)
-    // filtering of deleted products
-    .filter(Boolean);
+  const itemsWithProduct = list.value?.items
+    ?.map((item) => item.product)
+    .filter((prod) : prod is Product => !!prod);
 
-  if (items?.length) {
-    analytics("viewItemList", items, wishlistListProperties.value);
+  if (itemsWithProduct?.length) {
+    analytics("viewItemList", itemsWithProduct, wishlistListProperties.value);
   }
 });
 </script>
