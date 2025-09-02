@@ -90,6 +90,7 @@ export function setupBroadcastGlobalListeners() {
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
       group: "GraphqlError",
+      singleInGroup: true,
       text: t("common.messages.something_went_wrong"),
     });
 
@@ -120,8 +121,9 @@ export function setupBroadcastGlobalListeners() {
 
   on(dataChangedEvent, () => {
     notifications.warning({
+      group: "DataChanged",
+      singleInGroup: true,
       text: t("common.messages.data_changed"),
-      single: true,
     });
   });
 }
