@@ -50,10 +50,7 @@ const hiddenCount = ref(0);
 const isButtonVisible = computed(() => truncate.value && !expanded.value && showButton.value);
 const ariaExpandedValue = computed(() => (expanded.value ? "true" : "false"));
 
-const debouncedMeasureAndLayout = useDebounceFn(
-  measureAndLayout,
-  LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS,
-);
+const debouncedMeasureAndLayout = useDebounceFn(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
 
 useResizeObserver(containerRef, debouncedMeasureAndLayout);
 
@@ -222,7 +219,7 @@ async function performLayoutMeasurement(items: HTMLElement[], total: number): Pr
   updateButtonState(total, visibleCount);
 }
 
-function measureAndLayout() {
+async function measureAndLayout() {
   if (!shouldPerformLayout()) {
     return;
   }
@@ -234,20 +231,28 @@ function measureAndLayout() {
 
   const { items, total } = layoutData;
 
-  void nextTick().then(() => performLayoutMeasurement(items, total));
+  await nextTick();
+  await performLayoutMeasurement(items, total);
 }
 
-watch(truncate, (val) => {
-  void nextTick().then(val ? measureAndLayout : expand);
+watch(truncate, async (val) => {
+  await nextTick();
+
+  if (val) {
+    await measureAndLayout();
+  } else {
+    expand();
+  }
 });
 
-watch(maxRows, () => {
-  void nextTick().then(measureAndLayout);
+watch(maxRows, async () => {
+  await nextTick();
+  await measureAndLayout();
 });
 
 onMounted(async () => {
   await nextTick();
-  measureAndLayout();
+  await measureAndLayout();
 });
 </script>
 
