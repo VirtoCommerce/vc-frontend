@@ -17,9 +17,10 @@
 </template>
 
 <script setup lang="ts">
+import { useDebounceFn } from "@vueuse/core";
+import { useResizeObserver } from "@vueuse/core";
 import { ref, computed, onMounted, nextTick, watch, toRef } from "vue";
 import { Logger } from "@/core/utilities";
-import { useDebounce, useResizeObserver } from "@/ui-kit/composables";
 
 interface IProps {
   truncate?: boolean;
@@ -49,8 +50,8 @@ const hiddenCount = ref(0);
 const isButtonVisible = computed(() => truncate.value && !expanded.value && showButton.value);
 const ariaExpandedValue = computed(() => (expanded.value ? "true" : "false"));
 
-const { debouncedFunc: debouncedMeasureAndLayout } = useDebounce(
-  () => measureAndLayout(),
+const debouncedMeasureAndLayout = useDebounceFn(
+  measureAndLayout,
   LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS,
 );
 
