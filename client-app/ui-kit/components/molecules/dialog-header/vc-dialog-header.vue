@@ -108,7 +108,9 @@ const sizeStr = computed(() => props.size ?? dialogContext.size.value);
   }
 
   &__close {
-    @apply flex-none flex items-center justify-center size-[--min-h] text-secondary;
+    --vc-icon-color: theme("colors.secondary.600");
+
+    @apply flex-none flex items-center justify-center size-[--min-h];
   }
 }
 </style>
