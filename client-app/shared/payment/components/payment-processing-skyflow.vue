@@ -136,9 +136,9 @@ const { themeContext } = useThemeContext();
 const notifications = useNotifications();
 
 const loading = ref(false);
-const cardContainer = ref(null);
+const cardContainer = ref<HTMLElement | string>("");
 const root = ref(null);
-const cvvOnlyContainer = ref(null);
+const cvvOnlyContainer = ref<HTMLElement | string>("");
 const saveCreditCard = ref(false);
 const selectedSkyflowCard = ref<{ cardNumber: string; cardExpiration?: string; skyflowId: string }>();
 
@@ -192,21 +192,21 @@ const globalStyles = {
 const baseInputStyles = {
   fontFamily: globalStyles.fontFamily,
   fontStyle: "normal",
-  fontWeight: 400,
+  fontWeight: "400",
   fontSize: "0.9375rem",
   lineHeight: "1",
   borderRadius: "3px",
   border: `1px solid ${globalStyles.borderColor}`,
-  "&:focus": {
-    border: "1px solid transparent",
-    outline: `4px solid ${globalStyles.focusOutlineColor}`,
-  },
+  //"&:focus": {
+  //  border: "1px solid transparent",
+  //  outline: `4px solid ${globalStyles.focusOutlineColor}`,
+  //},
 };
 
 const baseLabelStyles = {
   fontFamily: globalStyles.fontFamily,
   fontSize: "0.9375rem",
-  fontWeight: 700,
+  fontWeight: "700",
   lineHeight: "1.25rem",
   marginBottom: "0.125rem",
 };
@@ -214,11 +214,11 @@ const baseLabelStyles = {
 const baseErrorStyles = {
   fontFamily: globalStyles.fontFamily,
   fontSize: "0.75rem",
-  color: globalStyles.errorColor,
+  color: globalStyles.errorColor ?? "red",
   textTransform: "lowercase",
-  "&::first-letter": {
-    textTransform: "uppercase",
-  },
+  //"&::first-letter": {
+  //  textTransform: "uppercase",
+  //},
 };
 // end styles
 
@@ -282,7 +282,7 @@ async function initNewCardForm(): Promise<void> {
     },
   };
 
-  const container = skyflowClient.container(Skyflow.ContainerType.COMPOSABLE, containerOptions) as ComposableContainer;
+  const container = skyflowClient.container(Skyflow.ContainerType.COMPOSABLE, containerOptions);
 
   container.on(Skyflow.EventName.SUBMIT, () => {
     if (!hasInvalid.value) {
@@ -308,7 +308,7 @@ async function initNewCardForm(): Promise<void> {
     labelStyles: {
       base: baseLabelStyles,
       requiredAsterisk: {
-        color: errorColor,
+        color: errorColor ?? "red",
       },
       global,
     },
@@ -413,7 +413,7 @@ async function initCvvForm() {
 
   const { global, errorColor } = globalStyles;
 
-  const container = skyflowClient.container(Skyflow.ContainerType.COLLECT) as CollectContainer;
+  const container = skyflowClient.container(Skyflow.ContainerType.COLLECT);
 
   const collectStylesOptions = {
     inputStyles: {
@@ -432,7 +432,7 @@ async function initCvvForm() {
         marginLeft: "4px",
       },
       requiredAsterisk: {
-        color: errorColor,
+        color: errorColor ?? "red",
       },
       global,
     },
