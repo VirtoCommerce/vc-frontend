@@ -8,7 +8,7 @@
     <slot name="main">
       <div class="vc-dialog-header__main">
         <div v-if="icon" class="vc-dialog-header__icon">
-          <VcIcon :name="icon" size="sm" />
+          <VcIcon :name="icon" />
         </div>
 
         <div class="vc-dialog-header__title">
@@ -24,7 +24,7 @@
       :aria-label="$t('ui_kit.buttons.close')"
       @click="$emit('close')"
     >
-      <VcIcon name="delete-thin" :size="16" />
+      <VcIcon name="delete-thin" />
     </button>
   </div>
 </template>
@@ -38,13 +38,14 @@ export interface IEmits {
 }
 
 export interface IProps {
-  color?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
+  color?: VcMainColorType;
   icon?: string;
   closable?: boolean;
   size?: VcDialogSizeType;
 }
 
 defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
   color: "info",
   closable: true,
@@ -58,6 +59,8 @@ const sizeStr = computed(() => props.size ?? dialogContext.size.value);
 .vc-dialog-header {
   $colors: primary, secondary, success, info, warning, danger, neutral, accent;
 
+  --vc-icon-size: calc(var(--icon-size) / 2);
+
   grid-area: vc-dialog-header;
 
   @apply flex;
@@ -65,41 +68,47 @@ const sizeStr = computed(() => props.size ?? dialogContext.size.value);
   &--color {
     @each $color in $colors {
       &--#{$color} {
-        --icon-color: var(--color-#{$color}-500);
+        --vc-icon-color: var(--color-#{$color}-500);
         --icon-bg-color: var(--color-#{$color}-50);
       }
     }
   }
 
-  &__main {
-    @apply flex-grow flex flex-col justify-center gap-3 py-3 px-6 min-h-[4.25rem];
-  }
-
-  &__icon {
-    @apply flex-none flex items-center justify-center size-10 bg-[--icon-bg-color] rounded-full text-[--icon-color];
-  }
-
-  &__title {
-    @apply text-xl font-bold;
-  }
-
-  &__close {
-    @apply flex-none flex items-center justify-center size-[4.25rem] text-secondary;
-  }
-
-  /* Size modifiers */
   &--size {
     &--xs {
-      /* TODO: header paddings / font sizes for xs */
+      --min-h: 3.25rem;
+      --icon-size: 2rem;
+      --font-size: 1rem;
     }
 
     &--sm {
-      /* TODO: header paddings / font sizes for sm */
+      --min-h: 3.5rem;
+      --icon-size: 2rem;
+      --font-size: 1.125rem;
     }
 
     &--md {
-      /* default styles already apply */
+      --min-h: 4.25rem;
+      --icon-size: 2.5rem;
+      --font-size: 1.25rem;
     }
+  }
+
+  &__main {
+    @apply flex-grow flex flex-col justify-center gap-3 py-3 px-6 min-h-[--min-h];
+  }
+
+  &__icon {
+
+    @apply flex-none flex items-center justify-center size-[--icon-size] bg-[--icon-bg-color] rounded-full;
+  }
+
+  &__title {
+    @apply text-[length:var(--font-size)] font-bold;
+  }
+
+  &__close {
+    @apply flex-none flex items-center justify-center size-[--min-h] text-secondary;
   }
 }
 </style>

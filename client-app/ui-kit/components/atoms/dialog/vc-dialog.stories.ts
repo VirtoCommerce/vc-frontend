@@ -2,9 +2,23 @@ import { VcDialog } from "..";
 import { VcDialogHeader, VcDialogContent, VcDialogFooter } from "../../molecules";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
+const SIZES = ["xs", "sm", "md"];
+
 export default {
   title: "Components/Atoms/VcDialog",
   component: VcDialog,
+  argTypes: {
+    size: {
+      control: "select",
+      options: SIZES,
+      type: { name: "string", required: false },
+      table: {
+        type: {
+          summary: SIZES.join(" | "),
+        },
+      },
+    },
+  },
 } as Meta<typeof VcDialog>;
 
 const Template: StoryFn = (args) => ({
@@ -39,3 +53,6 @@ const TemplateIcon: StoryFn = (args) => ({
 });
 
 export const Icon = TemplateIcon.bind({});
+Icon.args = {
+  icon: "check",
+};
