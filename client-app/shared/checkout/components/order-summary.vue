@@ -113,6 +113,7 @@ import { computed, ref } from "vue";
 import { useCurrency } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useFullCart } from "@/shared/cart";
+import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
 import { useCheckout } from "@/shared/checkout/composables";
 import type {
   OrderShipmentType,
@@ -138,8 +139,9 @@ const { currentLanguage } = useLanguages();
 const { currentCurrency } = useCurrency();
 const { changing: cartChanging } = useFullCart();
 const { changing: checkoutChanging } = useCheckout();
+const { loading: savedForLaterLoading } = useSavedForLater();
 
-const changing = computed(() => cartChanging.value || checkoutChanging.value);
+const changing = computed(() => cartChanging.value || checkoutChanging.value || savedForLaterLoading.value);
 
 const discountsCollapsed = ref(true);
 

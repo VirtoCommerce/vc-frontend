@@ -83,6 +83,7 @@
     },
     "labels": {
       "actions": "Azioni",
+      "notifications": "Notifiche",
       "user_name": "Nome utente",
       "password": "Password",
       "confirm_password": "Conferma password",
@@ -289,6 +290,11 @@
         "FixedRate_Air": "Tariffa fissa (Aria)",
         "BuyOnlinePickupInStore_Pickup": "Ritiro in negozio"
       }
+    },
+    "accessibility": {
+      "open_filters": "Apri filtri",
+      "switch_to_grid_view": "Passa alla vista griglia",
+      "switch_to_list_view": "Passa alla vista elenco"
     }
   },
   "shared": {
@@ -352,7 +358,8 @@
           "aria_labels": {
             "categories": "Categorie",
             "subcategories": "Sottocategorie di {category}",
-            "navigation": "Navigazione"
+            "navigation": "Navigazione",
+            "main_navigation": "Navigazione principale"
           }
         }
       },

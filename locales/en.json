@@ -83,6 +83,7 @@
     },
     "labels": {
       "actions": "Actions",
+      "notifications": "Notifications",
       "user_name": "Username",
       "password": "Password",
       "confirm_password": "Confirm password",
@@ -289,6 +290,11 @@
         "FixedRate_Air": "Fixed Rate (Air)",
         "BuyOnlinePickupInStore_Pickup": "Pickup in store"
       }
+    },
+    "accessibility": {
+      "open_filters": "Open filters",
+      "switch_to_grid_view": "Switch to grid view",
+      "switch_to_list_view": "Switch to list view"
     }
   },
   "shared": {
@@ -352,7 +358,8 @@
           "aria_labels": {
             "categories": "Categories",
             "subcategories": "Subcategories of {category}",
-            "navigation": "Navigation"
+            "navigation": "Navigation",
+            "main_navigation": "Main navigation"
           }
         }
       },
