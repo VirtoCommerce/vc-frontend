@@ -1,5 +1,12 @@
 <template>
-  <div ref="categoryComponentAnchor" class="category">
+  <div
+    ref="categoryComponentAnchor"
+    class="category"
+    :data-name="!categoryId && !isRoot && searchParams.keyword ? 'search-page' : 'category-page'"
+    :data-search-term="searchParams.keyword"
+    :data-category-name="currentCategory?.name"
+    :data-total-results="totalProductsCount"
+  >
     <!-- Popup sidebar for mobile and horizontal desktop view -->
     <FiltersPopupSidebar
       v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
@@ -101,6 +108,8 @@
             :items="translatedProductSortingList"
             class="category__sort-dropdown"
             size="sm"
+            data-name="sort-selector"
+            :data-sort-type="sortQueryParam"
             @change="resetCurrentPage"
           />
         </div>
@@ -193,6 +202,9 @@
         :search-params="searchParams"
         :mode="catalogPaginationMode"
         class="category__products"
+        data-name="search-results"
+        :data-list-id="!categoryId && !isRoot && searchParams.keyword ? 'search_results' : 'category_results'"
+        :data-search-term="searchParams.keyword"
         @change-page="changeProductsPage"
         @reset-filter-keyword="resetFilterKeyword"
         @select-product="selectProduct"

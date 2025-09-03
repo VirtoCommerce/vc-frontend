@@ -1,5 +1,5 @@
 <template>
-  <div ref="searchBarElement" class="search-bar">
+  <div ref="searchBarElement" class="search-bar" data-name="search-bar">
     <VcInput
       v-model="searchPhrase"
       type="search"
@@ -7,6 +7,8 @@
       class="search-bar__input"
       :clearable="!!searchPhrase"
       :placeholder="searchPlaceholder"
+      data-name="search-input"
+      :data-search-term="trimmedSearchPhrase"
       @clear="reset"
       @keyup.enter="handleSearchAndSaveQuery"
       @keyup.esc="hideSearchDropdown"
@@ -55,6 +57,8 @@
           icon="search"
           icon-size="1.25rem"
           :loading="loading"
+          data-name="search-submit"
+          :data-search-term="trimmedSearchPhrase"
           @click="handleSearchAndSaveQuery"
         />
       </template>
@@ -106,6 +110,8 @@
               tag="li"
               truncate
               color="secondary"
+              data-name="search-suggestion"
+              :data-suggestion-text="suggestion.text"
               @click="hideSearchDropdown"
               @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
               @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
@@ -156,6 +162,9 @@
               tag="li"
               role="menuitem"
               color="secondary"
+              data-name="category-link"
+              :data-category-name="category.name"
+              :data-category-id="category.id"
               @click="hideSearchDropdown"
               @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
               @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"

@@ -22,6 +22,7 @@
     :message="message"
     :validate-on-mount="validateOnMount"
     data-test-id="add-to-cart-component"
+    v-bind="$attrs"
     @update:cart-item-quantity="emit('update:cartItemQuantity', $event)"
     @update:validation="emit('update:validation', $event)"
     @update:model-value="value = $event"
@@ -44,6 +45,7 @@
     :message="errorMessage"
     :step="packSize"
     :allow-zero="allowZero"
+    v-bind="$attrs"
   >
     <slot />
   </VcQuantityStepper>
@@ -54,6 +56,29 @@ import debounce from "lodash/debounce";
 import { computed, nextTick, onMounted, ref, toRefs, watch, watchEffect } from "vue";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants/line-items";
 import { useQuantityField } from "@/ui-kit/composables/useQuantityField";
+
+// Disable automatic attribute inheritance so we can manually control it with v-bind="$attrs"
+defineOptions({
+  inheritAttrs: false
+});
+
+const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  mode: "button",
+  disabled: false,
+  isActive: true,
+  isAvailable: true,
+  isBuyable: true,
+  isInStock: true,
+  hideButton: false,
+  readonly: false,
+  timeout: 0,
+  size: "sm",
+  showEmptyDetails: false,
+  allowZero: false,
+  emitUpdateOnStepperChange: true,
+});
 
 interface IEmits {
   "update:cartItemQuantity": [quantity: number];
@@ -87,24 +112,6 @@ interface IProps {
   emitUpdateOnStepperChange?: boolean;
   disableValidation?: boolean;
 }
-
-const emit = defineEmits<IEmits>();
-
-const props = withDefaults(defineProps<IProps>(), {
-  mode: "button",
-  disabled: false,
-  isActive: true,
-  isAvailable: true,
-  isBuyable: true,
-  isInStock: true,
-  hideButton: false,
-  readonly: false,
-  timeout: 0,
-  size: "sm",
-  showEmptyDetails: false,
-  allowZero: false,
-  emitUpdateOnStepperChange: true,
-});
 
 const {
   timeout,

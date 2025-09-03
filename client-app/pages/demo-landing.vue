@@ -124,7 +124,7 @@
             '2xl': 4,
           }"
         >
-          <ProductCard v-for="(item, index) in products" :key="index" :product="item" lazy />
+          <ProductCard v-for="(item, index) in products" :key="index" :product="item" :index="index" lazy />
         </VcProductsGrid>
       </div>
     </div>

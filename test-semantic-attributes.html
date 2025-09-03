@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Semantic Attributes - VirtoCommerce</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .product-card { border: 1px solid #ccc; padding: 15px; margin: 10px; background: #f9f9f9; }
+        .search-bar { margin: 20px 0; padding: 10px; border: 1px solid #ddd; }
+        button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+        .semantic { background-color: #e8f5e8; }
+        .legacy { background-color: #fff3cd; }
+        .log { background: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; margin: 10px 0; font-family: monospace; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>VirtoCommerce Semantic Data Attributes Test</h1>
+
+    <div class="search-bar semantic" data-name="search-bar">
+        <h2>Search Bar (Semantic)</h2>
+        <input
+            type="search"
+            placeholder="Search products..."
+            data-name="search-input"
+            data-search-term=""
+        />
+        <button
+            data-name="search-submit"
+            data-search-term="laptop"
+        >Search</button>
+    </div>
+
+    <div class="search-results semantic"
+         data-name="search-results"
+         data-list-id="search_results"
+         data-search-term="laptop"
+    >
+        <h2>Search Results (Semantic)</h2>
+
+        <div class="product-card semantic"
+             data-name="product-card"
+             data-product-sku="LAPTOP-DELL-001"
+             data-product-id="12345"
+             data-product-name="Dell Inspiron 15 3000 Series"
+             data-product-category="Laptops"
+             data-product-price="599.99"
+             data-currency="USD"
+             data-product-url="/products/dell-inspiron-15"
+        >
+            <h3>Dell Inspiron 15 3000 Series</h3>
+            <p>Price: $599.99</p>
+
+            <a href="/products/dell-inspiron-15"
+               data-name="product-link">View Product Details</a>
+
+            <button
+                data-name="add-to-cart"
+                data-quantity="1"
+            >Add to Cart</button>
+
+            <button
+                data-name="add-to-wishlist"
+            >♡ Wishlist</button>
+        </div>
+
+        <div class="product-card semantic"
+             data-name="product-card"
+             data-product-sku="LAPTOP-HP-002"
+             data-product-id="12346"
+             data-product-name="HP Pavilion x360"
+             data-product-category="Laptops"
+             data-product-price="749.99"
+             data-currency="USD"
+             data-product-url="/products/hp-pavilion-x360"
+        >
+            <h3>HP Pavilion x360</h3>
+            <p>Price: $749.99</p>
+
+            <a href="/products/hp-pavilion-x360"
+               data-name="product-link">View Product Details</a>
+
+            <button
+                data-name="add-to-cart"
+                data-quantity="1"
+            >Add to Cart</button>
+
+            <button
+                data-name="add-to-wishlist"
+            >♡ Wishlist</button>
+        </div>
+    </div>
+
+    <div class="legacy">
+        <h2>Legacy Fallback Examples</h2>
+
+        <div class="product-card">
+            <h3>MacBook Pro (Legacy)</h3>
+            <p>Price: $1299.99</p>
+
+            <a href="/products/macbook-pro"
+               data-sku="LAPTOP-APPLE-003"
+               title="MacBook Pro 13 inch">View Product</a>
+
+            <button
+                class="add-to-cart-btn"
+                data-sku="LAPTOP-APPLE-003"
+                title="MacBook Pro 13 inch"
+            >Add to Cart (Legacy)</button>
+        </div>
+    </div>
+
+    <div class="log" id="eventLog">
+        Event log will appear here...
+    </div>
+
+    <script src="../analytics-beacon/analytics-beacon.js"></script>
+    <script>
+        // Initialize Analytics Beacon with debug enabled
+        window.AnalyticsBeacon.init({
+            debug: true,
+            analytics: {
+                ga4: {
+                    enabled: true,
+                    measurementId: 'G-TEST123456',
+                    debug: true
+                }
+            },
+            privacy: {
+                enableConsentMode: false
+            },
+            selectors: {
+                detection: {
+                    priority: ['semantic', 'legacy'],
+                    semantic: {
+                        namedElements: '[data-name]',
+                        searchPages: '[data-name="search-page"]',
+                        productCards: '[data-name="product-card"]',
+                        searchResults: '[data-name="search-results"]'
+                    },
+                    legacy: {
+                        addToCartButtons: '[data-add-to-cart], .add-to-cart-btn, .vc-add-to-cart',
+                        productLinks: 'a[href*="/product"], a[href*="/item"]'
+                    }
+                },
+                semanticAttributes: {
+                    elementName: 'data-name',
+                    productId: 'data-product-id',
+                    productSku: 'data-product-sku',
+                    productName: 'data-product-name',
+                    productCategory: 'data-product-category',
+                    productPrice: 'data-product-price',
+                    currency: 'data-currency',
+                    quantity: 'data-quantity',
+                    searchTerm: 'data-search-term',
+                    listId: 'data-list-id'
+                },
+                legacyAttributes: {
+                    productId: ['data-product-sku', 'data-sku', 'data-id'],
+                    productName: ['title', 'data-name']
+                }
+            }
+        });
+
+        // Enhanced logging
+        const originalConsole = {
+            debug: console.debug,
+            info: console.info,
+            warn: console.warn,
+            error: console.error
+        };
+
+        const logElement = document.getElementById('eventLog');
+
+        function logToScreen(level, prefix, message, ...args) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logLine = `[${timestamp}] ${level.toUpperCase()} ${prefix} ${message}`;
+
+            logElement.textContent += logLine + '\n';
+            if (args.length > 0) {
+                logElement.textContent += JSON.stringify(args, null, 2) + '\n';
+            }
+            logElement.textContent += '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+
+            // Call original console method
+            originalConsole[level](prefix, message, ...args);
+        }
+
+        // Override console methods to log to screen
+        console.debug = (prefix, message, ...args) => {
+            if (prefix === '[UniversalDetector]') {
+                logToScreen('debug', prefix, message, ...args);
+            } else {
+                originalConsole.debug(prefix, message, ...args);
+            }
+        };
+
+        console.info = (prefix, message, ...args) => {
+            if (prefix === '[UniversalDetector]') {
+                logToScreen('info', prefix, message, ...args);
+            } else {
+                originalConsole.info(prefix, message, ...args);
+            }
+        };
+
+        console.warn = (prefix, message, ...args) => {
+            if (prefix === '[UniversalDetector]') {
+                logToScreen('warn', prefix, message, ...args);
+            } else {
+                originalConsole.warn(prefix, message, ...args);
+            }
+        };
+
+        console.error = (prefix, message, ...args) => {
+            if (prefix === '[UniversalDetector]') {
+                logToScreen('error', prefix, message, ...args);
+            } else {
+                originalConsole.error(prefix, message, ...args);
+            }
+        };
+
+        logElement.textContent = 'Analytics Beacon initialized with semantic-first approach.\nTry clicking on products, add to cart buttons, or links below!\n\n';
+    </script>
+</body>
+</html>

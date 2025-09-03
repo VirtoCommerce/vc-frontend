@@ -19,6 +19,13 @@
     validate-on-mount
     :timeout="DEFAULT_DEBOUNCE_IN_MS"
     :allow-zero="$cfg.product_quantity_control === 'stepper'"
+    data-name="add-to-cart"
+    :data-product-id="product.id"
+    :data-product-sku="'code' in product ? product.code : undefined"
+    :data-product-name="product.name"
+    :data-quantity="enteredQuantity"
+    :data-product-price="'price' in product ? product.price?.actual?.amount : undefined"
+    :data-currency="'price' in product ? product.price?.actual?.currency?.code : undefined"
     @update:model-value="onInput"
     @update:cart-item-quantity="onChange"
     @update:validation="onValidationUpdate"

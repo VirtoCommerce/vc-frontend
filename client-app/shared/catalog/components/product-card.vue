@@ -1,5 +1,18 @@
 <template>
-  <VcProductCard :view-mode="viewMode" :data-product-sku="product.code" border data-test-id="product-card">
+  <VcProductCard
+    :view-mode="viewMode"
+    :data-product-sku="product.code"
+    :data-product-id="product.id"
+    :data-product-name="product.name"
+    :data-product-category="product.category?.name"
+    :data-product-price="product.price?.actual?.amount"
+    :data-currency="product.price?.actual?.currency?.code"
+    :data-product-url="link"
+    :data-list-position="index !== undefined ? index + 1 : undefined"
+    data-name="product-card"
+    border
+    data-test-id="product-card"
+  >
     <template #media>
       <VcProductImage
         :images="viewMode === 'grid' ? product.images : []"
@@ -7,6 +20,7 @@
         :alt="product.name"
         :lazy="lazy"
         :to="link"
+        data-name="product-link"
       >
         <BadgesWrapper>
           <PurchasedBeforeBadge v-if="product.isPurchased" :size="badgeSize" square />
@@ -19,13 +33,13 @@
         :direction="viewMode === 'grid' ? 'vertical' : 'horizontal'"
         :with-background="viewMode === 'grid'"
       >
-        <AddToList :product="product" />
+        <AddToList :product="product" data-name="add-to-wishlist" />
 
-        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
+        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" data-name="add-to-compare" />
       </VcProductActions>
     </template>
 
-    <VcProductTitle :title="product.name" :to="link" lines-number="2" fix-height />
+    <VcProductTitle :title="product.name" :to="link" lines-number="2" fix-height data-name="product-link" />
 
     <VcProductVendor v-if="$cfg.vendor_enabled">
       {{ product.vendor?.name }}
@@ -82,7 +96,7 @@
       @link-click="$emit('linkClick', product, $event)"
     />
 
-    <AddToCart v-else :product="product" :reserved-space="viewMode === 'grid'">
+    <AddToCart v-else :product="product" :reserved-space="viewMode === 'grid'" data-name="add-to-cart">
       <InStock
         :is-in-stock="product.availabilityData?.isInStock"
         :is-digital="product.productType === ProductType.Digital"
@@ -129,6 +143,7 @@ interface IProps {
   browserTarget?: BrowserTargetType;
   cardType?: "full" | "short";
   lazy?: boolean;
+  index?: number;
 }
 
 defineEmits<IEmits>();

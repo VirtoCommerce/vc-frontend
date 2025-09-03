@@ -18,7 +18,7 @@
           '2xl': Number(columnsAmountDesktop),
         }"
       >
-        <ProductCard v-for="item in products" :key="item.id" :card-type="cardType" :product="item" />
+        <ProductCard v-for="(item, index) in products" :key="item.id" :card-type="cardType" :product="item" :index="index" />
       </VcProductsGrid>
     </div>
   </div>

@@ -18,6 +18,22 @@ export interface IAnalyticsBeaconOptions {
   environment?: 'development' | 'staging' | 'production';
   currency?: string;
   businessType?: 'b2b' | 'b2c';
+
+  // Enhanced content detection
+  customContentDetectors?: {
+    product?: () => boolean;
+    category?: () => boolean;
+    searchResults?: () => boolean;
+  };
+
+  // SPA timing options
+  enablePolling?: boolean;
+  pollingInterval?: number;
+  enableInputTracking?: boolean;
+
+  // Privacy settings
+  respectDnt?: boolean;
+  anonymizeIp?: boolean;
 }
 
 /**
@@ -36,7 +52,8 @@ const analyticsBeaconPlugin = {
 
     // Add global properties for manual tracking
     app.config.globalProperties.$analyticsBeacon = {
-      getStatus: () => window.AnalyticsBeacon?.getStatus() || null,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+      getStatus: () => (window.AnalyticsBeacon as any)?.getStatus() || null,
       isReady: () => !!window.AnalyticsBeacon,
       initialize: () => initializeAnalyticsBeacon(options)
     };
@@ -90,16 +107,34 @@ export async function initializeAnalyticsBeacon(options: IAnalyticsBeaconOptions
       throw new Error('Analytics Beacon script failed to load');
     }
 
-    // Initialize the beacon
-    await window.AnalyticsBeacon.init({
+    // Initialize the beacon with VirtoCommerce-specific config
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+    await (window.AnalyticsBeacon as any).init({
       ga4MeasurementId: options.ga4MeasurementId,
       debug: options.debug ?? (options.environment !== 'production'),
       environment: options.environment || 'development',
       currency: options.currency || 'USD',
-      businessType: options.businessType || 'b2c'
+      businessType: options.businessType || 'b2c',
+
+      // Content detection - use custom if provided, otherwise default VirtoCommerce
+      customContentDetectors: options.customContentDetectors || {
+        searchResults: () => document.querySelector('[data-name="search-results"]') != null,
+        category: () => document.querySelector('[data-name="category-page"]') != null,
+        product: () => document.querySelector('[data-name="product-details"]') != null
+      },
+
+      // SPA timing options - use provided values or sensible defaults
+      enablePolling: options.enablePolling ?? true,
+      pollingInterval: options.pollingInterval ?? 500,
+      enableInputTracking: options.enableInputTracking ?? true,
+
+      // Privacy settings
+      respectDnt: options.respectDnt,
+      anonymizeIp: options.anonymizeIp
     });
 
-    window.AnalyticsBeacon.start();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+    (window.AnalyticsBeacon as any).start();
     isBeaconInitialized = true;
     return true;
   } catch (error) {

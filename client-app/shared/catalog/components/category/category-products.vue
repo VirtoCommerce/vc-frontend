@@ -45,6 +45,7 @@
             :view-mode="savedViewMode"
             :lazy="index >= lazyCardsCount"
             :product="item"
+            :index="(pageNumber - 1) * itemsPerPage + index"
             :browser-target="$cfg.details_browser_target"
             :card-type="cardType"
             @link-click="sendGASelectItemEvent"
