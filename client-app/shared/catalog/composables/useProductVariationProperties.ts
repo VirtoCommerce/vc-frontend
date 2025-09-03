@@ -13,6 +13,7 @@ export interface IPropertyValue {
   colorCode?: string;
   value: PrimitiveValueType;
   label: string;
+  displayOrder?: number;
 }
 
 export interface IProperty {
@@ -138,7 +139,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
       .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
 
     allVariationProps.forEach((prop) => {
-      const { name, value, label, colorCode, propertyValueType } = prop;
+      const { name, value, label, colorCode, propertyValueType, valueDisplayOrder } = prop;
 
       if (!name || value === undefined) {
         return;
@@ -155,16 +156,25 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
 
       const property = props.get(name);
       if (property && !property.values.some((v) => v.value === value)) {
-        property.values.push({ colorCode, value, label: getDisplayLabel(prop, t) });
+        property.values.push({
+          colorCode,
+          value,
+          label: getDisplayLabel(prop, t),
+          displayOrder: valueDisplayOrder,
+        });
       }
     });
 
     props.forEach((property) => {
-      property.values.sort((a, b) =>
-        String(a.value).localeCompare(String(b.value), cultureName, {
+      property.values.sort((a, b) => {
+        if (a.displayOrder !== undefined && b.displayOrder !== undefined) {
+          return a.displayOrder - b.displayOrder;
+        }
+
+        return String(a.value).localeCompare(String(b.value), cultureName, {
           numeric: true,
-        }),
-      );
+        });
+      });
     });
 
     return props;

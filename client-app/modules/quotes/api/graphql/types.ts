@@ -789,8 +789,6 @@ export type Promotion = {
 
 /** Products attributes. */
 export type Property = {
-  /** Color code in CSS format. */
-  colorCode?: Maybe<Scalars['String']['output']>;
   /** The display order of the property. */
   displayOrder?: Maybe<Scalars['Int']['output']>;
   group?: Maybe<PropertyGroup>;
@@ -808,6 +806,8 @@ export type Property = {
   /** ValueType of the property. */
   propertyValueType: PropertyValueTypes;
   value?: Maybe<Scalars['PropertyValue']['output']>;
+  /** The display order of the value. */
+  valueDisplayOrder?: Maybe<Scalars['Int']['output']>;
   valueId?: Maybe<Scalars['String']['output']>;
 };
 
@@ -820,8 +820,6 @@ export type PropertyPropertyDictionaryItemsArgs = {
 
 /** Represents property dictionary item */
 export type PropertyDictionaryItem = {
-  /** Color code in CSS format. */
-  colorCode: Scalars['String']['output'];
   /** The unique ID of the property dictionary item. */
   id: Scalars['String']['output'];
   /** Value order. */
@@ -873,7 +871,6 @@ export enum PropertyType {
 /** The type of catalog property value. */
 export enum PropertyValueTypes {
   Boolean = 'BOOLEAN',
-  Color = 'COLOR',
   DateTime = 'DATE_TIME',
   GeoPoint = 'GEO_POINT',
   Html = 'HTML',
