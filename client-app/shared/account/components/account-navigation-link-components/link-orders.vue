@@ -4,7 +4,7 @@
       <div
         v-for="facet in statusFacet?.items"
         :key="facet.term"
-        class="flex items-center space-x-1 overflow-hidden text-ellipsis px-3 text-sm"
+        class="flex items-center gap-1 px-3 text-sm"
       >
         <VcIcon class="flex-none fill-primary" size="xs" name="minus" />
 
