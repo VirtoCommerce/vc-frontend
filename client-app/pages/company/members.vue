@@ -104,7 +104,7 @@
           ref="filtersDropdownElement"
           class="absolute right-0 z-[1] mt-2 w-[27.5rem]"
         >
-          <VcDialog dividers>
+          <VcDialog dividers size="xs">
             <VcDialogHeader @close="hideFilters">
               {{ $t("pages.company.members.filters") }}
             </VcDialogHeader>
@@ -124,7 +124,6 @@
               <VcButton
                 :disabled="!numberOfFacetsApplied && !isFacetsDirty"
                 color="secondary"
-                size="sm"
                 variant="outline"
                 min-width="6.25rem"
                 @click="
@@ -137,7 +136,6 @@
 
               <VcButton
                 :disabled="!numberOfFacetsApplied && !isFacetsDirty"
-                size="sm"
                 variant="outline"
                 min-width="6.25rem"
                 @click="hideFilters()"
@@ -147,7 +145,6 @@
 
               <VcButton
                 :disabled="!isFacetsDirty"
-                size="sm"
                 min-width="6.25rem"
                 @click="
                   applyFilters();
