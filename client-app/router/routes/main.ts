@@ -30,18 +30,18 @@ const Welcome = () => import("@/pages/welcome.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
-  { path: "/auth/callback", name: "AuthCallback", component: callback, meta: { public: true } },
-  { path: "/403", name: "NoAccess", component: Error403, meta: { public: true } },
-  { path: "/404", name: "NotFound", component: Error404, meta: { public: true } },
-  { path: "/500", name: "InternalError", component: Error500, meta: { public: true } },
+  { path: "/auth/callback", name: "AuthCallback", component: callback, meta: { public: true, redirectable: false } },
+  { path: "/403", name: "NoAccess", component: Error403, meta: { public: true, redirectable: false } },
+  { path: "/404", name: "NotFound", component: Error404, meta: { public: true, redirectable: false } },
+  { path: "/500", name: "InternalError", component: Error500, meta: { public: false, redirectable: false } },
   { path: ROUTES.SIGN_IN.PATH, name: ROUTES.SIGN_IN.NAME, component: SingInPage, meta: { public: true } },
   { path: "/sign-up", name: "SignUp", component: SignUpPage, meta: { public: true } },
   { path: "/confirm-invitation", name: "ConfirmInvitation", component: ConfirmInvitation, meta: { public: true } },
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword, meta: { public: true } },
   { path: "/reset-password", name: "ResetPassword", component: ResetPassword, meta: { public: true } },
-  { path: "/change-password", name: "ChangePassword", component: ChangePassword, meta: { public: false } },
+  { path: ROUTES.CHANGE_PASSWORD.PATH, name: ROUTES.CHANGE_PASSWORD.NAME, component: ChangePassword, meta: { public: false, redirectable: false } },
   { path: "/set-password", name: "SetPassword", component: ResetPassword, meta: { public: true } },
-  { path: "/blocked", name: "Blocked", component: BlockedPage, meta: { public: true } },
+  { path: "/blocked", name: "Blocked", component: BlockedPage, meta: { public: true, redirectable: false } },
   { path: "/account/confirmemail", name: "ConfirmEmail", component: ConfirmEmail, meta: { public: true } },
   {
     path: "/account",

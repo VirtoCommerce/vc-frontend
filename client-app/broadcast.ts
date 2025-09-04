@@ -5,7 +5,7 @@ import { OperationNames } from "@/core/api/graphql/types";
 import { useThemeContext } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
-import { getReturnUrlValue } from "@/core/utilities";
+import { buildRedirectUrl, getReturnUrlValue } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSignMeOut, useUser } from "@/shared/account";
 import {
@@ -80,16 +80,16 @@ export function setupBroadcastGlobalListeners() {
       return;
     }
 
-    const { hash, pathname, search } = location;
-
-    if (pathname !== ROUTES.SIGN_IN.PATH) {
-      location.href = `${ROUTES.SIGN_IN.PATH}?returnUrl=${pathname + search + hash}`;
+    const query = buildRedirectUrl(router.currentRoute.value);
+    if (query && router.currentRoute.value.name !== ROUTES.SIGN_IN.NAME) {
+      void router.push({ name: ROUTES.SIGN_IN.NAME, query });
     }
   });
   on(graphqlErrorEvent, (error) => {
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
-      group: "GraphqlError",
+      group: "GenericError",
+      singleInGroup: true,
       text: t("common.messages.something_went_wrong"),
     });
 
@@ -98,7 +98,7 @@ export function setupBroadcastGlobalListeners() {
   on(unhandledErrorEvent, () => {
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
-      group: "UnhandledError",
+      group: "GenericError",
       singleInGroup: true,
       text: t("common.messages.unhandled_error"),
     });
@@ -112,16 +112,18 @@ export function setupBroadcastGlobalListeners() {
   });
 
   on(passwordExpiredEvent, () => {
-    const { hash, pathname, search } = location;
-    if (pathname !== "/change-password") {
-      location.href = `/change-password?returnUrl=${pathname + search + hash}`;
+    const query = buildRedirectUrl(router.currentRoute.value);
+
+    if (query && router.currentRoute.value.name !== ROUTES.CHANGE_PASSWORD.NAME) {
+      void router.push({ name: ROUTES.CHANGE_PASSWORD.NAME, query });
     }
   });
 
   on(dataChangedEvent, () => {
     notifications.warning({
+      group: "DataChanged",
+      singleInGroup: true,
       text: t("common.messages.data_changed"),
-      single: true,
     });
   });
 }
