@@ -2928,6 +2928,14 @@ export type LocalizedSettingResponseType = {
   items?: Maybe<Array<Maybe<KeyValueType>>>;
 };
 
+/** Represents the result of a loyalty balance operation. */
+export type LoyaltyBalanceResult = {
+  /** The current balance of the loyalty account. */
+  currentBalance: Scalars['Decimal']['output'];
+  /** The resulting balance after applying the operation. */
+  resultBalance: Scalars['Decimal']['output'];
+};
+
 /** A connection from an object to a list of objects of type `MemberAddress`. */
 export type MemberAddressConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -4795,6 +4803,8 @@ export type Property = {
   /** ValueType of the property. */
   propertyValueType: PropertyValueTypes;
   value?: Maybe<Scalars['PropertyValue']['output']>;
+  /** The display order of the value. */
+  valueDisplayOrder?: Maybe<Scalars['Int']['output']>;
   valueId?: Maybe<Scalars['String']['output']>;
 };
 
@@ -4945,6 +4955,7 @@ export type Query = {
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
   fulfillmentCenters?: Maybe<FulfillmentCenterConnection>;
   getSavedForLater?: Maybe<CartType>;
+  loyaltyBalance?: Maybe<LoyaltyBalanceResult>;
   me?: Maybe<UserType>;
   menu?: Maybe<MenuLinkListType>;
   menus: Array<MenuLinkListType>;
@@ -5207,6 +5218,12 @@ export type QueryGetSavedForLaterArgs = {
   organizationId?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
+};
+
+
+export type QueryLoyaltyBalanceArgs = {
+  orderId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
