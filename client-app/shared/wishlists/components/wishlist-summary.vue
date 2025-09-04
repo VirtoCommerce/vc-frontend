@@ -1,9 +1,5 @@
 <template>
-  <VcWidget
-    id="list-summary"
-    class="list-summary"
-    :title="$t('common.titles.order_summary')"
-  >
+  <VcWidget id="list-summary" class="list-summary" :title="$t('common.titles.order_summary')">
     <div class="list-summary__content">
       <span>
         {{ $t("common.labels.subtotal") }}
@@ -16,17 +12,14 @@
   </VcWidget>
 </template>
 
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
 import type { WishlistType } from "@/core/api/graphql/types";
 
 interface IProps {
   list: WishlistType;
 }
 
-defineProps<IProps>(); 
+defineProps<IProps>();
 </script>
 
 <style lang="scss">

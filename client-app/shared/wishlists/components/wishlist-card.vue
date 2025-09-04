@@ -1,5 +1,7 @@
 <template>
-  <div class="relative rounded-[--vc-radius] bg-additional-50 p-4 text-sm shadow-md md:flex md:items-center md:gap-6 md:px-5">
+  <div
+    class="relative rounded-[--vc-radius] bg-additional-50 p-4 text-sm shadow-md md:flex md:items-center md:gap-6 md:px-5"
+  >
     <div class="flex items-center gap-2 pe-10 md:contents">
       <router-link
         :to="{ name: 'ListDetails', params: { listId: list.id } }"
@@ -20,7 +22,11 @@
         {{ $t("shared.wishlists.list_card.saved") }}: <b>{{ $d(list.modifiedDate) }}</b>
       </div>
 
-      <WishlistStatus v-if="isCorporateMember && list.sharingSetting" :sharing-setting="list.sharingSetting" class="ms-auto md:ms-0" />
+      <WishlistStatus
+        v-if="isCorporateMember && list.sharingSetting"
+        :sharing-setting="list.sharingSetting"
+        class="ms-auto md:ms-0"
+      />
     </div>
 
     <div class="absolute right-4 top-4 md:relative md:right-auto md:top-auto">
@@ -34,11 +40,11 @@
 </template>
 
 <script setup lang="ts">
-import { WishlistAccessType  } from "@/core/api/graphql/types";
+import { WishlistAccessType } from "@/core/api/graphql/types";
 import { useUser } from "@/shared/account/composables";
 import WishlistDropdownMenu from "./wishlist-dropdown-menu.vue";
 import WishlistStatus from "./wishlist-status.vue";
-import type {WishlistType} from "@/core/api/graphql/types";
+import type { WishlistType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "settings"): void;

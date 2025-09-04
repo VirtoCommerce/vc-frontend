@@ -12,7 +12,11 @@
       <VcIcon :size="16" class="fill-accent" name="users" />
 
       <span>
-        {{ sharingSetting.isOwner || sharingSetting.scope === WishlistScopeType.Organization ? $t("shared.wishlists.status.shared") : $t("shared.wishlists.status.shared_with_me")  }}
+        {{
+          sharingSetting.isOwner || sharingSetting.scope === WishlistScopeType.Organization
+            ? $t("shared.wishlists.status.shared")
+            : $t("shared.wishlists.status.shared_with_me")
+        }}
       </span>
     </template>
   </div>
@@ -20,11 +24,11 @@
 
 <script setup lang="ts">
 import { WishlistScopeType } from "@/core/api/graphql/types";
-import type {SharingSettingType} from "@/core/api/graphql/types";
+import type { SharingSettingType } from "@/core/api/graphql/types";
 
 interface IProps {
   sharingSetting: SharingSettingType;
 }
 
-defineProps<IProps>(); 
+defineProps<IProps>();
 </script>

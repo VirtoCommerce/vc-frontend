@@ -1,33 +1,17 @@
 <template>
   <VcContainer class="shared-list">
-    <VcTypography
-      v-if="list?.name"
-      tag="h1"
-      class="shared-list__name"
-    >
+    <VcTypography v-if="list?.name" tag="h1" class="shared-list__name">
       {{ list.name }}
     </VcTypography>
 
-    <div
-      ref="listElement"
-      class="shared-list__content"
-    >
+    <div ref="listElement" class="shared-list__content">
       <!-- Skeletons -->
       <template v-if="listLoading">
-        <div
-          v-if="isMobile"
-          class="shared-list__skeleton-mobile"
-        >
-          <ProductSkeletonGrid
-            v-for="i in actualPageRowsCount"
-            :key="i"
-          />
+        <div v-if="isMobile" class="shared-list__skeleton-mobile">
+          <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
         </div>
 
-        <div
-          v-else
-          class="shared-list__skeleton-desktop"
-        >
+        <div v-else class="shared-list__skeleton-desktop">
           <WishlistProductItemSkeleton
             v-for="i in actualPageRowsCount"
             :key="i"
@@ -38,10 +22,7 @@
 
       <!-- List details -->
       <template v-else-if="!listLoading && !!list?.items?.length">
-        <VcLayout
-          sidebar-position="right"
-          sticky-sidebar
-        >
+        <VcLayout sidebar-position="right" sticky-sidebar>
           <VcWidget size="lg">
             <div class="shared-list__items">
               <WishlistLineItems
@@ -52,10 +33,7 @@
                 @link-click="selectItemEvent"
               />
 
-              <p
-                v-if="page >= PAGE_LIMIT"
-                class="shared-list__page-limit"
-              >{{ $t("ui_kit.reach_limit.page_limit") }}</p>
+              <p v-if="page >= PAGE_LIMIT" class="shared-list__page-limit">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
 
               <VcPagination
                 v-if="pagesCount > 1"
@@ -80,17 +58,11 @@
         icon="outline-lists"
       >
         <template #button>
-          <VcButton
-            v-if="!!continue_shopping_link"
-            :external-link="continue_shopping_link"
-          >
+          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
             {{ $t("shared.wishlists.list_details.empty_list_button") }}
           </VcButton>
 
-          <VcButton
-            v-else
-            to="/"
-          >
+          <VcButton v-else to="/">
             {{ $t("shared.wishlists.list_details.empty_list_button") }}
           </VcButton>
         </template>
@@ -101,10 +73,7 @@
   </VcContainer>
 </template>
 
-<script
-  setup
-  lang="ts"
->
+<script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import cloneDeep from "lodash/cloneDeep";
 import keyBy from "lodash/keyBy";
@@ -117,11 +86,7 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
-import {
-  useWishlists,
-  WishlistLineItems,
-  WishlistProductItemSkeleton,
-} from "@/shared/wishlists";
+import { useWishlists, WishlistLineItems, WishlistProductItemSkeleton } from "@/shared/wishlists";
 import type { LineItemType, Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 import WishlistSummary from "@/shared/wishlists/components/wishlist-summary.vue";
@@ -138,9 +103,7 @@ const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { listLoading, list, fetchSharedWishList } = useWishlists();
-const {
-  cart,
-} = useShortCart();
+const { cart } = useShortCart();
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
@@ -191,11 +154,8 @@ watchEffect(async () => {
 /**
  * Send Google Analytics event for related products.
  */
-//TODO: #Q do we need GA here?
 watchEffect(() => {
-  const itemsWithProduct = list.value?.items
-    ?.map((item) => item.product)
-    .filter((prod) : prod is Product => !!prod);
+  const itemsWithProduct = list.value?.items?.map((item) => item.product).filter((prod): prod is Product => !!prod);
 
   if (itemsWithProduct?.length) {
     analytics("viewItemList", itemsWithProduct, wishlistListProperties.value);
@@ -231,7 +191,7 @@ watchEffect(() => {
     @apply flex flex-col gap-6;
   }
 
-  &__page-limit{
+  &__page-limit {
     @apply my-3 text-center;
   }
 }
