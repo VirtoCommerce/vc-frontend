@@ -1,6 +1,6 @@
 <template>
   <ProductTitledBlock
-    v-if="!model.hidden"
+    v-if="!model.hidden && (properties.size > 0 || fetchingVariations)"
     :title="model.title || $t('shared.catalog.product_details.options.title')"
     icon="collection"
     class="options"
