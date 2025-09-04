@@ -6,6 +6,7 @@
     :type="componentTag === 'button' ? type : null"
     :disabled="!enabled"
     :title="title"
+    :aria-label="ariaLabel || title"
     :class="[
       'vc-button group',
       `vc-button--size--${_size}`,
@@ -81,6 +82,7 @@ interface IProps {
   appendIcon?: string;
   icon?: boolean | string;
   title?: string;
+  ariaLabel?: string;
   truncate?: boolean;
   fullWidth?: boolean;
   noWrap?: boolean;
@@ -168,6 +170,8 @@ const attrs = computed(() => {
 
   return attributes;
 });
+
+
 </script>
 
 <style lang="scss">

@@ -10,6 +10,7 @@
         :item="item"
         :saved-for-later-list="savedForLaterList"
         :background="false"
+        :loading="loading"
         @link-click="selectItemEvent(item.product)"
         @add-to-cart="(lineItemId) => $emit('addToCart', lineItemId)" />
     </VcProductsGrid>
@@ -34,6 +35,7 @@ const props = defineProps<IProps>();
 
 interface IProps {
   savedForLaterList: SavedForLaterListFragment | undefined;
+  loading?: boolean;
 }
 
 const savedForLaterList = toRef(props, "savedForLaterList");

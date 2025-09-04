@@ -4,6 +4,8 @@
       v-model="viewMode"
       value="grid"
       icon="grid"
+      :label="$t('shared.catalog.view_mode.grid_label')"
+      :aria-label="$t('common.accessibility.switch_to_grid_view')"
       data-test-id="view-switcher.grid-view-tab"
       @change="$emit('update:mode', $event)"
     >
@@ -16,6 +18,8 @@
       v-model="viewMode"
       value="list"
       icon="list"
+      :label="$t('shared.catalog.view_mode.list_label')"
+      :aria-label="$t('common.accessibility.switch_to_list_view')"
       data-test-id="view-switcher.list-view-tab"
       @change="$emit('update:mode', $event)"
     >
