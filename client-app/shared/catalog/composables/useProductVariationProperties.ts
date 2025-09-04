@@ -167,7 +167,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
 
     props.forEach((property) => {
       property.values.sort((a, b) => {
-        if (a.displayOrder !== undefined && b.displayOrder !== undefined) {
+        if (a.displayOrder !== undefined && b.displayOrder !== undefined && a.displayOrder !== b.displayOrder) {
           return a.displayOrder - b.displayOrder;
         }
 
