@@ -1,6 +1,6 @@
 <template>
   <ProductTitledBlock
-    v-if="!model.hidden && (properties.size > 0 || fetchingVariations)"
+    v-if="isBlockVisible"
     :title="model.title || $t('shared.catalog.product_details.options.title')"
     icon="collection"
     class="options"
@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from "vue";
+import { computed, toRef } from "vue";
 import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import type { Product } from "@/core/api/graphql/types";
@@ -58,6 +58,9 @@ interface IProps {
 
 const props = defineProps<IProps>();
 const variations = toRef(props, "variations");
+const fetchingVariations = toRef(props, "fetchingVariations");
+
+const isBlockVisible = computed(() => !props.model.hidden && (properties.value.size > 0 || fetchingVariations.value));
 
 const { properties, select, isSelected, isAvailable, getTooltip } = useProductVariationProperties(variations);
 
