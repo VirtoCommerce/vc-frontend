@@ -1,12 +1,13 @@
 <template>
   <div>
-    <VcButton @click="onPay">Pay</VcButton>
+    <VcButton @click="onPay">Pay with points</VcButton>
     <p>your amount {{ amount }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
+import { authorizePayment } from "@/core/api/graphql";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 
 
@@ -22,6 +23,22 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
+async function makePayment() {
+  const {
+    isSuccess,
+    errorMessage = "",
+  } = await authorizePayment({
+    orderId: props.order.id,
+    paymentId: props.order.inPayments[0].id,
+  });
+
+  if (isSuccess) {
+    emit('success')
+  } else {
+    emit('fail', errorMessage)
+  }
+}
+
 onMounted(() => {
   console.log(props.order)
 })
@@ -31,8 +48,7 @@ const amount = computed(() => {
   return 10000
 })
 
-function onPay() {
-  console.log('payed')
-  emit('success')
+async function onPay() {
+  await makePayment()
 }
 </script>
