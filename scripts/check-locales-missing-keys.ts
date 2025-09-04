@@ -23,7 +23,7 @@ function getAllKeys(obj: LocaleDataType, parentKey: string = ""): string[] {
   Object.keys(obj).forEach((key) => {
     const fullKey = parentKey ? `${parentKey}.${key}` : key;
     const value = obj[key];
-    if (typeof value === "object" && value !== null) {
+    if (typeof value === "object") {
       keys = keys.concat(getAllKeys(value, fullKey));
     } else if (typeof value === "string") {
       keys.push(fullKey);
@@ -86,11 +86,28 @@ function getLocaleFolders(patterns: string[]): string[] {
 }
 
 // @description: This script checks if all keys in the locales are presented.
-// @usage: yarn check-locales -- path/to/locales_folder path/to/**/locales
+// @usage: yarn check-locales --source en.json -- path/to/locales_folder path/to/**/locales
 export function main(): MissingKeyType[] {
   const args = process.argv.slice(2);
 
-  const patterns = args.length > 0 ? args : ["locales"]; // Default to 'locales' if no argument is provided
+  // Find the source file argument
+  const sourceFileIndex = args.indexOf("--source");
+  let sourceFileName: string;
+  let patterns: string[];
+
+  if (sourceFileIndex !== -1 && args.length > sourceFileIndex + 1) {
+    sourceFileName = args[sourceFileIndex + 1];
+    // Remove --source and its value from args
+    patterns = args.filter((_, index) => index !== sourceFileIndex && index !== sourceFileIndex + 1);
+  } else {
+    console.error("Error: Please specify a source file using --source <filename>");
+    console.error(`Example usage: yarn check-locales --source en.json "locales" "client-app/**/locales"`);
+    return [];
+  }
+
+  if (patterns.length === 0) {
+    patterns = ["locales"]; // Default to 'locales' if no argument is provided
+  }
 
   const localeFolders = getLocaleFolders(patterns);
 
@@ -102,32 +119,24 @@ export function main(): MissingKeyType[] {
     }
 
     const files = getJsonFiles(localeFolder);
-    if (files.length === 0) {
+    if (files.length < 2) {
+      return;
+    }
+
+    if (!files.includes(sourceFileName)) {
+      console.warn(`Warning: Source file "${sourceFileName}" not found in "${localeFolder}". Skipping.`);
       return;
     }
 
     const localeData = loadLocaleData(files, localeFolder);
+    const baseKeys = getAllKeys(localeData[sourceFileName]);
 
-    // Get all keys for each locale
-    const localeKeys: { [key: string]: string[] } = {};
-    Object.keys(localeData).forEach((file) => {
-      localeKeys[file] = getAllKeys(localeData[file]);
-    });
-
-    // Compare keys between each pair of locale files
-    Object.keys(localeKeys).forEach((baseFile) => {
-      Object.keys(localeKeys).forEach((compareFile) => {
-        if (baseFile !== compareFile) {
-          const newMissingKeys = compareKeys(
-            localeKeys[baseFile],
-            localeKeys[compareFile],
-            baseFile,
-            compareFile,
-            localeFolder,
-          );
-          missingKeys.push(...newMissingKeys);
-        }
-      });
+    Object.keys(localeData).forEach((compareFile) => {
+      if (compareFile !== sourceFileName) {
+        const keysToCompare = getAllKeys(localeData[compareFile]);
+        const newMissingKeys = compareKeys(baseKeys, keysToCompare, sourceFileName, compareFile, localeFolder);
+        missingKeys.push(...newMissingKeys);
+      }
     });
   });
 
