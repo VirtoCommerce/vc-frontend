@@ -21,47 +21,49 @@ function generateBatchPrompt(
   targetLanguage: string,
 ) {
   const example = JSON.stringify(["Texto traducido 1", "Texto traducido 2"], null, 0);
-  return [
-    `Translate each item's "text" from ${originLanguage} to ${targetLanguage}. Use its "key" as contextual information (i18n path) to choose the most appropriate translation.`,
-    "Rules:",
-    "- Preserve original formatting, punctuation, and placeholders (e.g., @:key, @:{'key'}).",
-    "- Keep line breaks exactly as in the source strings.",
-    "- Prefer the shortest natural translation that preserves meaning in the given context.",
-    "- Use commonly accepted phrasing for the e-commerce domain.",
-    "- Return ONLY a valid JSON array of strings, in the same order, with no extra text.",
-    "",
-    `Input JSON array of items: ${JSON.stringify(items)}`,
-    "",
-    `Return format example (do not include comments): ${example}`,
-  ].join("\n");
+  return `Translate each item's "text" from ${originLanguage} to ${targetLanguage}. Use its "key" as contextual information (i18n path) to choose the most appropriate translation.
+Rules:
+- Preserve original formatting, punctuation, and placeholders (e.g., @:key, @:{'key'}).
+- Keep line breaks exactly as in the source strings.
+- Prefer the shortest natural translation that preserves meaning in the given context.
+- Use commonly accepted phrasing for the e-commerce domain.
+- Return ONLY a valid JSON array of strings, in the same order, with no extra text.
+
+Input JSON array of items: ${JSON.stringify(items)}
+
+Return format example (do not include comments): ${example}`;
+}
+
+function parseStringArray(jsonString: string): string[] | null {
+  try {
+    const parsed: unknown = JSON.parse(jsonString);
+    if (Array.isArray(parsed) && parsed.every((item) => typeof item === "string")) {
+      return parsed;
+    }
+  } catch {
+    // Not a valid JSON, ignore and return null
+  }
+  return null;
 }
 
 function tryParseJsonArray(text: string): string[] {
-  // Remove code fences if present and trim
   const cleaned = text.trim().replace(/^```(?:json)?\n?/i, "").replace(/```$/i, "").trim();
-  // Try direct parse
-  try {
-    const parsedUnknown: unknown = JSON.parse(cleaned);
-    if (Array.isArray(parsedUnknown) && parsedUnknown.every((x) => typeof x === "string")) {
-      return parsedUnknown;
-    }
-  } catch {
-    void 0; // ignore and try fallback
+
+  const directParseResult = parseStringArray(cleaned);
+  if (directParseResult) {
+    return directParseResult;
   }
-  // Fallback: extract the largest JSON array substring
+
   const start = cleaned.indexOf("[");
   const end = cleaned.lastIndexOf("]");
-  if (start !== -1 && end !== -1 && end > start) {
+  if (start !== -1 && end > start) {
     const candidate = cleaned.slice(start, end + 1);
-    try {
-      const parsedUnknown: unknown = JSON.parse(candidate);
-      if (Array.isArray(parsedUnknown) && parsedUnknown.every((x) => typeof x === "string")) {
-        return parsedUnknown;
-      }
-    } catch {
-      void 0; // ignore and fall through to error
+    const fallbackParseResult = parseStringArray(candidate);
+    if (fallbackParseResult) {
+      return fallbackParseResult;
     }
   }
+
   throw new Error("Failed to parse batch translation JSON output");
 }
 

@@ -2,6 +2,13 @@ import fs from "fs";
 import path from "path";
 import groupBy from "lodash/groupBy.js";
 import { main as getMissingKeys } from "./check-locales-missing-keys.js";
+import {
+  buildTranslationsMap,
+  collectMissingLeaves,
+  getLanguageFromFilename,
+  prepareBatchInput,
+  rebuildFromSource,
+} from "./locale-utils.js";
 import { translateBatch } from "./translator.js";
 import type { LocaleDataType, MissingKeyType } from "./check-locales-missing-keys.js";
 
@@ -12,95 +19,6 @@ const DELAY_BETWEEN_REQUESTS_MS = Number.parseInt(process.env.FIX_LOCALES_DELAY_
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-type LocaleNodeType = LocaleDataType | string;
-
-type LeafType = { keyPath: string; sourceText: string };
-
-function shouldTranslate(text: string) {
-  return !text.startsWith("@:") && !text.startsWith("@:{");
-}
-
-function isLocaleDataType(value: unknown): value is LocaleDataType {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function getLanguageFromFilename(filename: string): string {
-  return filename.split(".")[0];
-}
-
-function collectMissingLeaves(
-  node: LocaleNodeType,
-  parentPath: string,
-  missingKeySet: Set<string>,
-  acc: LeafType[],
-): void {
-  if (typeof node === "string") {
-    const keyPath = parentPath;
-    if (missingKeySet.has(keyPath)) {
-      acc.push({ keyPath, sourceText: node });
-    }
-    return;
-  }
-  for (const key of Object.keys(node)) {
-    const nextPath = parentPath ? `${parentPath}.${key}` : key;
-    collectMissingLeaves(node[key] as LocaleNodeType, nextPath, missingKeySet, acc);
-  }
-}
-
-function prepareBatchInput(leaves: LeafType[]): { texts: string[]; contexts: string[] } {
-  const texts: string[] = [];
-  const contexts: string[] = [];
-  for (const leaf of leaves) {
-    if (shouldTranslate(leaf.sourceText)) {
-      texts.push(leaf.sourceText);
-      contexts.push(leaf.keyPath);
-    }
-  }
-  return { texts, contexts };
-}
-
-function buildTranslationsMap(leaves: LeafType[], translated: string[]): Map<string, string> {
-  const map = new Map<string, string>();
-  let t = 0;
-  for (const { keyPath, sourceText } of leaves) {
-    if (shouldTranslate(sourceText)) {
-      map.set(keyPath, translated[t]);
-      t += 1;
-    } else {
-      map.set(keyPath, sourceText);
-    }
-  }
-  return map;
-}
-
-async function rebuildFromSource(
-  sourceNode: LocaleNodeType,
-  targetNode: LocaleNodeType | undefined,
-  parentPath: string,
-  missingKeySet: Set<string>,
-  translationsMap: Map<string, string>,
-): Promise<LocaleNodeType> {
-  if (typeof sourceNode === "string") {
-    const keyPath = parentPath;
-    if (missingKeySet.has(keyPath)) {
-      return translationsMap.get(keyPath) ?? sourceNode;
-    }
-    if (typeof targetNode === "string") {
-      return targetNode;
-    }
-    return sourceNode;
-  }
-
-  const result: LocaleDataType = {};
-  for (const key of Object.keys(sourceNode)) {
-    const nextPath = parentPath ? `${parentPath}.${key}` : key;
-    const sourceChild = sourceNode[key] as LocaleNodeType;
-    const targetChild = isLocaleDataType(targetNode) ? (targetNode[key] as LocaleNodeType | undefined) : undefined;
-    result[key] = await rebuildFromSource(sourceChild, targetChild, nextPath, missingKeySet, translationsMap);
-  }
-  return result;
 }
 
 async function processTargetFile(targetFilePath: string, keysToFix: MissingKeyType[]): Promise<void> {
@@ -117,8 +35,7 @@ async function processTargetFile(targetFilePath: string, keysToFix: MissingKeyTy
 
   const missingKeySet = new Set(keysToFix.map((x) => x.key));
 
-  const leavesInSourceOrder: LeafType[] = [];
-  collectMissingLeaves(originFileContent, "", missingKeySet, leavesInSourceOrder);
+  const leavesInSourceOrder = collectMissingLeaves(originFileContent, "", missingKeySet);
 
   const { texts: textsForTranslation, contexts } = prepareBatchInput(leavesInSourceOrder);
 
@@ -163,17 +80,18 @@ export async function fixLocales() {
 
   console.log(`\n---\n${PREFIX} Found ${missingKeys.length} missing keys, translating...`);
 
-  const entries = Object.entries(groupedByTargetFile);
-  for (let i = 0; i < entries.length; i += 1) {
-    const [targetFilePath, keysToFix] = entries[i];
+  let isFirst = true;
+  for (const [targetFilePath, keysToFix] of Object.entries(groupedByTargetFile)) {
+    if (!isFirst && DELAY_BETWEEN_REQUESTS_MS > 0) {
+      await delay(DELAY_BETWEEN_REQUESTS_MS);
+    }
+    isFirst = false;
+
     try {
       await processTargetFile(targetFilePath, keysToFix);
     } catch {
       console.warn(`${PREFIX} ❌ Error processing ${targetFilePath}.`);
       console.warn("try again. Check api limits if restarting doesn't help.");
-    }
-    if (i < entries.length - 1 && DELAY_BETWEEN_REQUESTS_MS > 0) {
-      await delay(DELAY_BETWEEN_REQUESTS_MS);
     }
   }
 
