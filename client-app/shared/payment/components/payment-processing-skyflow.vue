@@ -197,10 +197,6 @@ const baseInputStyles = {
   lineHeight: "1",
   borderRadius: "3px",
   border: `1px solid ${globalStyles.borderColor}`,
-  //"&:focus": {
-  //  border: "1px solid transparent",
-  //  outline: `4px solid ${globalStyles.focusOutlineColor}`,
-  //},
 };
 
 const baseLabelStyles = {
@@ -215,10 +211,6 @@ const baseErrorStyles = {
   fontFamily: globalStyles.fontFamily,
   fontSize: "0.75rem",
   color: globalStyles.errorColor ?? "red",
-  textTransform: "lowercase",
-  //"&::first-letter": {
-  //  textTransform: "uppercase",
-  //},
 };
 // end styles
 
