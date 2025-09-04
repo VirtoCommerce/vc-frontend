@@ -75,6 +75,7 @@
             :label="$t('common.labels.country')"
             :placeholder="$t('common.placeholders.select_country')"
             class="mb-4 w-full xl:w-7/12"
+            autocomplete
             required
           />
 

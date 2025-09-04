@@ -1,5 +1,5 @@
 <template>
-  <nav class="vc-breadcrumbs">
+  <nav class="vc-breadcrumbs" :aria-label="$t('ui_kit.breadcrumbs.aria_label')">
     <ol class="vc-breadcrumbs__list">
       <template v-for="(item, i) in items" :key="i">
         <template v-if="i < items.length - 1">

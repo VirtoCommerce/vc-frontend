@@ -87,7 +87,7 @@
 import { useBreakpoints } from "@vueuse/core";
 import { Pagination, Navigation, Thumbs } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { ref, onMounted, computed, getCurrentInstance } from "vue";
+import { ref, onMounted, computed, getCurrentInstance, watch, toRef } from "vue";
 import { BREAKPOINTS } from "@/core/constants";
 import { extractNumberFromString } from "@/core/utilities";
 import type { ImageType } from "@/core/api/graphql/types";
@@ -104,6 +104,8 @@ const props = withDefaults(defineProps<IProps>(), {
 const componentId = `image-gallery_${getCurrentInstance()!.uid}`;
 
 const THUMBS_PER_VIEW = 4;
+
+const images = toRef(props, "images");
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isDesktop = breakpoints.greaterOrEqual("xl");
@@ -130,6 +132,18 @@ const showPagination = computed(() => !isDesktop.value && props.images?.length >
 function setActiveIndex() {
   activeIndex.value = imagesSwiper.value?.realIndex ?? 0;
 }
+
+watch(
+  images,
+  () => {
+    if (imagesSwiper.value) {
+      imagesSwiper.value.slideTo(0);
+    }
+  },
+  {
+    deep: true,
+  },
+);
 
 onMounted(async () => {
   // Dynamic import is required to avoid SSR errors

@@ -1,5 +1,6 @@
 import { ROUTES } from "@/router/routes/constants";
 import { accountRoutes } from "./account";
+import { cartRoutes } from "./cart";
 import { checkoutRoutes } from "./checkout";
 import { corporateRoutes } from "./company";
 import type { RouteRecordRaw } from "vue-router";
@@ -20,7 +21,6 @@ const Account = () => import("@/pages/account/index.vue");
 const Company = () => import("@/pages/company/index.vue");
 const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
-const Cart = () => import("@/pages/cart.vue");
 const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
 const Category = () => import("@/pages/category.vue");
@@ -66,8 +66,8 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: ROUTES.SEARCH.PATH, name: ROUTES.SEARCH.NAME, component: Search },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
-  { path: "/cart", name: "Cart", component: Cart },
   { path: "/successful-registration", name: "Welcome", component: Welcome, meta: { public: true } },
+  ...cartRoutes,
   ...checkoutRoutes,
   { path: ROUTES.CATALOG.PATH, name: ROUTES.CATALOG.NAME, component: Catalog, props: true },
   { path: "/category/:categoryId", name: "Category", component: Category, props: true },

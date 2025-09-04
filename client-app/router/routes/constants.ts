@@ -11,6 +11,14 @@ export const ROUTES = {
     NAME: "SignIn",
     PATH: "/sign-in",
   },
+  CART: {
+    NAME: "Cart",
+    PATH: "/cart",
+  },
+  CART_ID: {
+    NAME: "CartId",
+    PATH: "/cart/:cartId",
+  },
   CHANGE_PASSWORD: {
     NAME: "ChangePassword",
     PATH: "/change-password",

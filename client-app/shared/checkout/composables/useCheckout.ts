@@ -1,14 +1,15 @@
-import { createGlobalState, createSharedComposable, useDebounceFn } from "@vueuse/core";
+import { createGlobalState, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
 import { useAnalytics, useHistoricalEvents, useThemeContext } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
-import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
+import { createSharedComposableByArgs } from "@/core/utilities/composables";
+import { useUser, useUserAddresses } from "@/shared/account";
 import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
@@ -53,14 +54,15 @@ const useGlobalCheckout = createGlobalState(() => {
   };
 });
 
-export function _useCheckout() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function _useCheckout(cartId?: string) {
   const { analytics } = useAnalytics();
   const { t } = useI18n();
+  const route = useRoute();
   const notifications = useNotifications();
   const { openModal, closeModal } = useModal();
   const router = useRouter();
   const { user, isAuthenticated, isCorporateMember } = useUser();
-  const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
   const {
     addresses: personalAddresses,
     fetchAddresses: fetchPersonalAddresses,
@@ -214,34 +216,17 @@ export function _useCheckout() {
   });
 
   async function setCheckoutDefaults(): Promise<void> {
-    const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
-    const defaultShippingMethod = availableShippingMethods.value.find((item) => item.id === shippingMethodId);
-    const defaultPaymentMethod = availablePaymentMethods.value.find((item) => item.code === paymentMethodCode);
-
     if (allItemsAreDigital.value && shipment.value) {
       await removeShipment(shipment.value.id);
     }
 
     // Create at initialization to prevent duplication due to lack of id
-    if (!allItemsAreDigital.value && !shipment.value?.shipmentMethodCode && !shipment.value?.shipmentMethodOption) {
-      if (shippingMethodId && defaultShippingMethod) {
-        await updateShipment({
-          id: shipment.value?.id,
-          price: defaultShippingMethod.price.amount,
-          shipmentMethodCode: defaultShippingMethod.code,
-          shipmentMethodOption: defaultShippingMethod.optionName,
-        });
-      } else if (!shipment.value) {
-        await updateShipment({});
-      }
+    if (!allItemsAreDigital.value && !shipment.value) {
+      await updateShipment({});
     }
 
-    if (!payment.value?.paymentGatewayCode) {
-      if (paymentMethodCode && defaultPaymentMethod) {
-        await setPaymentMethod(defaultPaymentMethod);
-      } else if (!payment.value) {
-        await updatePayment({});
-      }
+    if (!payment.value) {
+      await updatePayment({});
     }
   }
 
@@ -482,6 +467,8 @@ export function _useCheckout() {
     clearGlobalCheckoutState();
   }
 
+  watch(() => route.params.cartId, clearState);
+
   return {
     deliveryAddress,
     shipmentMethod,
@@ -512,4 +499,11 @@ export function _useCheckout() {
   };
 }
 
-export const useCheckout = createSharedComposable(_useCheckout);
+const useCheckoutShared = createSharedComposableByArgs(_useCheckout, (args) => args?.[0] ?? "");
+
+export function useCheckout() {
+  const route = useRoute();
+  const cartId = Array.isArray(route.params?.cartId) ? route.params?.cartId[0] : route.params?.cartId;
+
+  return useCheckoutShared(cartId);
+}

@@ -78,10 +78,12 @@
       "reset_page": "Resetta pagina",
       "show_less": "Mostra di meno",
       "expand_all": "Espandi tutto",
-      "all_products": "Tutti i prodotti"
+      "all_products": "Tutti i prodotti",
+      "buy_now": "Acquista ora"
     },
     "labels": {
       "actions": "Azioni",
+      "notifications": "Notifiche",
       "user_name": "Nome utente",
       "password": "Password",
       "confirm_password": "Conferma password",
@@ -243,7 +245,6 @@
       "addresses": "Indirizzi",
       "orders": "Ordini",
       "lists": "Liste",
-      "checkout_defaults": "Impostazioni predefinite del checkout",
       "list_details": "Dettagli lista",
       "cart": "Carrello",
       "company_info": "Informazioni azienda",
@@ -273,7 +274,8 @@
       "change_role": "Cambia ruolo",
       "save_changes": "Salva modifiche",
       "password_expired": "La password sta per scadere",
-      "error_details": "Dettagli errore"
+      "error_details": "Dettagli errore",
+      "buy_now": "Acquista ora"
     },
     "roles": {
       "org-maintainer": "Manutentore organizzazione",
@@ -288,6 +290,11 @@
         "FixedRate_Air": "Tariffa fissa (Aria)",
         "BuyOnlinePickupInStore_Pickup": "Ritiro in negozio"
       }
+    },
+    "accessibility": {
+      "open_filters": "Apri filtri",
+      "switch_to_grid_view": "Passa alla vista griglia",
+      "switch_to_list_view": "Passa alla vista elenco"
     }
   },
   "shared": {
@@ -326,7 +333,6 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -352,7 +358,8 @@
           "aria_labels": {
             "categories": "Categorie",
             "subcategories": "Sottocategorie di {category}",
-            "navigation": "Navigazione"
+            "navigation": "Navigazione",
+            "main_navigation": "Navigazione principale"
           }
         }
       },
@@ -432,7 +439,6 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
-          "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -464,11 +470,6 @@
       },
       "forgot_password_form": {
         "error_alert": "Risultato non valido della richiesta di reimpostazione password. Per favore "
-      },
-      "checkout_default_success_modal": {
-        "title": "Impostazioni predefinite del checkout",
-        "message": "Dettagli predefiniti del checkout aggiornati con successo.",
-        "ok_button": "@:common.buttons.ok"
       },
       "invite_member_modal": {
         "title": "Invita membro",
@@ -1060,21 +1061,6 @@
         "edit_address_title": "Modifica indirizzo",
         "make_default_button": "Imposta come predefinito",
         "no_addresses_img_alt": "Nessun indirizzo"
-      },
-      "checkout_defaults": {
-        "meta": {
-          "title": "@:pages.account.checkout_defaults.title"
-        },
-        "title": "Impostazioni predefinite del checkout",
-        "select_delivery_method_label": "Metodo di consegna preferito",
-        "shipping_radio_label": "Spedizione",
-        "pickup_radio_label": "Ritiro",
-        "not_selected_placeholder": "@:common.placeholders.not_selected",
-        "update_button": "@:common.buttons.update",
-        "payment_method_label": "Metodo di pagamento preferito",
-        "payment_method_placeholder": "Seleziona il tuo metodo di pagamento preferito",
-        "shipping_method_label": "Metodo di spedizione preferito",
-        "shipping_method_placeholder": "Seleziona il tuo metodo di spedizione preferito"
       },
       "dashboard": {
         "meta": {

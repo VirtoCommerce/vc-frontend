@@ -1,5 +1,9 @@
 <template>
-  <nav ref="megaMenuElement" class="mega-menu">
+  <nav
+    ref="megaMenuElement"
+    class="mega-menu"
+    :aria-label="$t('shared.layout.header.mega_menu.aria_labels.main_navigation')"
+  >
     <VcPopover
       arrow-enabled
       placement="bottom-start"
@@ -12,6 +16,7 @@
           type="button"
           class="mega-menu__button"
           :disabled="loading"
+          tabindex="0"
           v-bind="triggerProps"
           @keyup.arrow-down="focusMenuItem"
         >
@@ -149,14 +154,14 @@ onMounted(() => {
 
 <style lang="scss">
 .mega-menu {
-  @apply flex gap-4 h-10 bg-[--header-bottom-bg-color] px-5 xl:px-12;
+  @apply flex items-center h-10 bg-[--header-bottom-bg-color] px-5 xl:px-12;
 
   &__popover {
     @apply flex items-stretch;
   }
 
   &__button {
-    @apply flex items-center p-1 h-full gap-2 text-sm text-[--header-bottom-link-color] font-bold whitespace-nowrap border-none rounded;
+    @apply flex items-center me-2.5 p-1.5 gap-2 text-sm text-[--header-bottom-link-color] font-bold whitespace-nowrap border-none rounded-[--vc-radius];
 
     &:hover {
       @apply text-[--header-bottom-link-hover-color];
@@ -176,7 +181,7 @@ onMounted(() => {
   }
 
   &__divider {
-    @apply self-center h-5 w-px bg-secondary-200;
+    @apply self-center me-4 h-5 w-px bg-secondary-200;
   }
 
   &__nav {
@@ -192,7 +197,7 @@ onMounted(() => {
   }
 
   &__content {
-    @apply flex min-w-0 max-h-[calc(100vh-11.5rem)] ps-2.5 py-5 bg-[--header-bottom-bg-color] rounded shadow-lg;
+    @apply flex min-w-0 max-h-[calc(100vh-11.5rem)] ps-2.5 py-5 bg-[--header-bottom-bg-color] rounded-[--vc-radius] shadow-lg;
   }
 }
 </style>

@@ -23,13 +23,14 @@
           <VcVariantPicker
             v-for="option in property.values"
             :key="option.label"
-            :model-value="isSelected(property.name, option.value) ? String(option.value) : undefined"
-            type="text"
+            :model-value="isSelected(property.name, option.value) ? getValue(property, option) : undefined"
+            :type="getType(property.propertyValueType)"
             :name="property.label"
-            :value="String(option.value)"
+            :value="getValue(property, option)"
             :is-available="isAvailable(property.name, option.value)"
             class="options__picker"
             size="xs"
+            :tooltip="getTooltip(property, option)"
             @change="select(property.name, option.value)"
           />
         </VcVariantPickerGroup>
@@ -40,8 +41,10 @@
 
 <script setup lang="ts">
 import { toRef } from "vue";
+import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import type { Product } from "@/core/api/graphql/types";
+import type { IProperty, IPropertyValue } from "@/shared/catalog/composables/useProductVariationProperties";
 import ProductTitledBlock from "@/shared/catalog/components/product-titled-block.vue";
 
 interface IProps {
@@ -56,7 +59,17 @@ interface IProps {
 const props = defineProps<IProps>();
 const variations = toRef(props, "variations");
 
-const { properties, select, isSelected, isAvailable } = useProductVariationProperties(variations);
+const { properties, select, isSelected, isAvailable, getTooltip } = useProductVariationProperties(variations);
+
+function getType(propertyValueType: PropertyValueTypes) {
+  return propertyValueType === PropertyValueTypes.Color ? "color" : "text";
+}
+
+function getValue(property: IProperty, option: IPropertyValue) {
+  return property.propertyValueType === PropertyValueTypes.Color
+    ? (option.colorCode ?? String(option.value))
+    : String(option.value);
+}
 </script>
 
 <style lang="scss">

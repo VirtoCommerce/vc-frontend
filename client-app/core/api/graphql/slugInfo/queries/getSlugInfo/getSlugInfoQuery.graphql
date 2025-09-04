@@ -10,6 +10,7 @@ query GetSlugInfo($permalink: String, $storeId: String, $userId: String, $cultur
       metaDescription
       metaKeywords
       pageTitle
+      outline
     }
     redirectUrl
   }

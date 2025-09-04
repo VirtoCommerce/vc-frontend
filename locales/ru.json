@@ -78,10 +78,12 @@
       "reset_page": "Сбросить страницу",
       "show_less": "Показать меньше",
       "expand_all": "Развернуть все",
-      "all_products": "Все продукты"
+      "all_products": "Все продукты",
+      "buy_now": "Купить сейчас"
     },
     "labels": {
       "actions": "Действия",
+      "notifications": "Уведомления",
       "user_name": "Имя пользователя",
       "password": "Пароль",
       "confirm_password": "Подтвердите пароль",
@@ -243,7 +245,6 @@
       "addresses": "Адреса",
       "orders": "Заказы",
       "lists": "Списки",
-      "checkout_defaults": "Настройки оформления заказа",
       "list_details": "Детали списка",
       "cart": "Корзина",
       "company_info": "Информация о компании",
@@ -273,7 +274,8 @@
       "change_role": "Сменить роль",
       "save_changes": "Сохранить изменения",
       "password_expired": "Пароль скоро истечет",
-      "error_details": "Детали ошибки"
+      "error_details": "Детали ошибки",
+      "buy_now": "Купить сейчас"
     },
     "roles": {
       "org-maintainer": "Администратор организации",
@@ -288,6 +290,11 @@
         "FixedRate_Air": "Фиксированная ставка (воздушный транспорт)",
         "BuyOnlinePickupInStore_Pickup": "Самовывоз из магазина"
       }
+    },
+    "accessibility": {
+      "open_filters": "Открыть фильтры",
+      "switch_to_grid_view": "Переключить в сетку",
+      "switch_to_list_view": "Переключить в список"
     }
   },
   "shared": {
@@ -326,7 +333,6 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -352,7 +358,8 @@
           "aria_labels": {
             "categories": "Категории",
             "subcategories": "Подкатегории {category}",
-            "navigation": "Навигация"
+            "navigation": "Навигация",
+            "main_navigation": "Основная навигация"
           }
         }
       },
@@ -432,7 +439,6 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
-          "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -464,11 +470,6 @@
       },
       "forgot_password_form": {
         "error_alert": "Неверный результат запроса сброса пароля. Пожалуйста, "
-      },
-      "checkout_default_success_modal": {
-        "title": "Настройки оформления заказа",
-        "message": "Настройки оформления заказа успешно обновлены",
-        "ok_button": "@:common.buttons.ok"
       },
       "invite_member_modal": {
         "title": "Пригласить участника",
@@ -1060,21 +1061,6 @@
         "edit_address_title": "Редактировать адрес",
         "make_default_button": "Установить по умолчанию",
         "no_addresses_img_alt": "Нет адресов"
-      },
-      "checkout_defaults": {
-        "meta": {
-          "title": "@:pages.account.checkout_defaults.title"
-        },
-        "title": "Настройки оформления заказа",
-        "select_delivery_method_label": "Предпочтительный способ доставки",
-        "shipping_radio_label": "Доставка",
-        "pickup_radio_label": "Самовывоз",
-        "not_selected_placeholder": "@:common.placeholders.not_selected",
-        "update_button": "@:common.buttons.update",
-        "payment_method_label": "Предпочтительный способ оплаты",
-        "payment_method_placeholder": "Пожалуйста, выберите предпочтительный способ оплаты",
-        "shipping_method_label": "Предпочтительный способ доставки",
-        "shipping_method_placeholder": "Пожалуйста, выберите предпочтительный способ доставки"
       },
       "dashboard": {
         "meta": {

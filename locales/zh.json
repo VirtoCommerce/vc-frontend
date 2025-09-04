@@ -78,10 +78,12 @@
       "reset_page": "重置页面",
       "show_less": "收起",
       "expand_all": "全部展开",
-      "all_products": "所有产品"
+      "all_products": "所有产品",
+      "buy_now": "立即购买"
     },
     "labels": {
       "actions": "操作",
+      "notifications": "通知",
       "user_name": "用户名",
       "password": "密码",
       "confirm_password": "确认密码",
@@ -243,7 +245,6 @@
       "addresses": "地址",
       "orders": "订单",
       "lists": "清单",
-      "checkout_defaults": "结账默认设置",
       "list_details": "清单详情",
       "cart": "购物车",
       "company_info": "公司信息",
@@ -273,7 +274,8 @@
       "change_role": "更改角色",
       "save_changes": "保存更改",
       "password_expired": "密码即将过期",
-      "error_details": "错误详情"
+      "error_details": "错误详情",
+      "buy_now": "立即购买"
     },
     "roles": {
       "org-maintainer": "组织维护者",
@@ -288,6 +290,11 @@
         "FixedRate_Air": "固定费率（空运）",
         "BuyOnlinePickupInStore_Pickup": "门店自提"
       }
+    },
+    "accessibility": {
+      "open_filters": "打开筛选器",
+      "switch_to_grid_view": "切换到网格视图",
+      "switch_to_list_view": "切换到列表视图"
     }
   },
   "shared": {
@@ -326,7 +333,6 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -352,7 +358,8 @@
           "aria_labels": {
             "categories": "类别",
             "subcategories": "子类 {category}",
-            "navigation": "导航"
+            "navigation": "导航",
+            "main_navigation": "主导航"
           }
         }
       },
@@ -432,7 +439,6 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
-          "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -464,11 +470,6 @@
       },
       "forgot_password_form": {
         "error_alert": "重置密码请求的结果无效。请 "
-      },
-      "checkout_default_success_modal": {
-        "title": "结账默认设置",
-        "message": "默认结账详情已成功更新。",
-        "ok_button": "@:common.buttons.ok"
       },
       "invite_member_modal": {
         "title": "邀请成员",
@@ -1060,21 +1061,6 @@
         "edit_address_title": "编辑地址",
         "make_default_button": "设为默认",
         "no_addresses_img_alt": "无地址"
-      },
-      "checkout_defaults": {
-        "meta": {
-          "title": "@:pages.account.checkout_defaults.title"
-        },
-        "title": "结账默认设置",
-        "select_delivery_method_label": "首选配送方式",
-        "shipping_radio_label": "运输",
-        "pickup_radio_label": "自取",
-        "not_selected_placeholder": "@:common.placeholders.not_selected",
-        "update_button": "@:common.buttons.update",
-        "payment_method_label": "首选支付方式",
-        "payment_method_placeholder": "请选择您的首选支付方式",
-        "shipping_method_label": "首选运输方式",
-        "shipping_method_placeholder": "请选择您的首选运输方式"
       },
       "dashboard": {
         "meta": {
