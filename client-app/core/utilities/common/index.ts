@@ -138,7 +138,7 @@ export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocatio
 
 export function areStringOrNumberEqual(
   a: string | number | null | undefined,
-  b: string | number | null | undefined
+  b: string | number | null | undefined,
 ): boolean {
   // assume null and undefined are equal
   if (a == null && b == null) return true;
@@ -157,7 +157,7 @@ export function preventNonNumberPaste(event: ClipboardEvent) {
   const text = event.clipboardData?.getData("text");
   if (text) {
     const isNumber = /^\d+$/.test(text);
-    console.warn('preventNonNumberPaste',{text,isNumber});
+    console.warn("preventNonNumberPaste", { text, isNumber });
     if (!isNumber) {
       event.preventDefault();
     }

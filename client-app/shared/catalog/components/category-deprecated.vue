@@ -155,13 +155,7 @@
             <VcIcon name="reset" />
           </VcChip>
 
-          <VcChip
-            v-if="isResetPageButtonShown"
-            color="secondary"
-            variant="outline"
-            clickable
-            @click="resetPage"
-          >
+          <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
             <span>{{ $t("common.buttons.reset_page") }}</span>
 
             <VcIcon name="reset" />
@@ -299,10 +293,12 @@ const isMobile = breakpoints.smaller("md");
 const route = useRoute();
 
 const isResetPageButtonShown = computed(() => {
-  return catalogPaginationMode.value === CATALOG_PAGINATION_MODES.loadMore &&
+  return (
+    catalogPaginationMode.value === CATALOG_PAGINATION_MODES.loadMore &&
     !!route.query.page &&
     Number(route.query.page) > 1
-})
+  );
+});
 
 const catalogPaginationMode = computed(
   () => themeContext.value?.settings?.catalog_pagination_mode ?? CATALOG_PAGINATION_MODES.infiniteScroll,

@@ -74,7 +74,7 @@ const localFilters = ref<ProductsFiltersType>({
   inStock: false,
   branches: [],
   purchasedBefore: false,
-  filters: []
+  filters: [],
 });
 const isHorizontal = props.orientation === "horizontal";
 
@@ -84,7 +84,7 @@ const filtersCountToShow = ref(1);
 const filtersToShow = computed(() => {
   return props.orientation === "horizontal"
     ? localFilters.value.facets.slice(0, filtersCountToShow.value)
-    : localFilters.value.facets
+    : localFilters.value.facets;
 });
 
 const { right: containerRight } = useElementBounding(facetFiltersContainer);
@@ -169,18 +169,20 @@ watch(
 
 function onFacetFilterChanged(newFilter: SearchProductFilterResult): void {
   // Remove existing filter with the same name
-  const updatedFilters = props.filters.filters.filter(f => f.name !== newFilter.name);
+  const updatedFilters = props.filters.filters.filter((f) => f.name !== newFilter.name);
 
   // Only add the new filter if it is not empty
-  if ((newFilter.termValues && newFilter.termValues.length > 0) ||
-      (newFilter.rangeValues && newFilter.rangeValues.length > 0)) {
+  if (
+    (newFilter.termValues && newFilter.termValues.length > 0) ||
+    (newFilter.rangeValues && newFilter.rangeValues.length > 0)
+  ) {
     updatedFilters.push(newFilter);
   }
 
   emit("change:filters", updatedFilters);
 }
 
-function facetHasBounce(statistics?: { min?: number, max?: number }) {
+function facetHasBounce(statistics?: { min?: number; max?: number }) {
   return typeof statistics?.min === "number" && typeof statistics?.max === "number";
 }
 

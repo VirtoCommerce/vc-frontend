@@ -64,7 +64,12 @@
       <VcWidget :title="$t('quote_details.billing_address')" prepend-icon="cash" size="lg">
         <VcLabel required>{{ $t("quote_details.billing_address") }}</VcLabel>
 
-        <div :class="['mt-2.5 space-y-1.5 rounded-[--vc-radius] border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
+        <div
+          :class="[
+            'mt-2.5 space-y-1.5 rounded-[--vc-radius] border p-5',
+            { 'cursor-not-allowed bg-neutral-50': fetching },
+          ]"
+        >
           <VcCheckbox
             :model-value="billingAddressEqualsShipping"
             :disabled="fetching || !shippingAddress"

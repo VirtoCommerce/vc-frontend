@@ -16,7 +16,6 @@ export interface IProps {
 }
 
 defineProps<IProps>();
-
 </script>
 
 <style lang="scss">
