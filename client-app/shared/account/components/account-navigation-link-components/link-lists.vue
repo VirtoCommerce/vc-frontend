@@ -4,7 +4,7 @@
       <div
         v-for="list in lists"
         :key="list.id"
-        class="ml-4 flex items-center space-x-2 overflow-hidden text-ellipsis px-3 text-sm"
+        class="flex items-center gap-2 px-3 text-sm"
       >
         <VcIcon class="flex-none fill-primary" size="xs" name="minus" />
 
