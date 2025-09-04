@@ -3,11 +3,12 @@ import path from "path";
 import groupBy from "lodash/groupBy.js";
 import { main as getMissingKeys } from "./check-locales-missing-keys.js";
 import { translateBatch } from "./translator.js";
-import type { LocaleDataType } from "./check-locales-missing-keys.js";
+import type { LocaleDataType, MissingKeyType } from "./check-locales-missing-keys.js";
 
 const PREFIX = "[FIX_LOCALES_UTILITY]";
 
-const DELAY_BETWEEN_REQUESTS_MS = 4000;
+const DEFAULT_DELAY_MS = 4000;
+const DELAY_BETWEEN_REQUESTS_MS = Number.parseInt(process.env.FIX_LOCALES_DELAY_MS ?? "", 10) || DEFAULT_DELAY_MS;
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -23,6 +24,10 @@ function shouldTranslate(text: string) {
 
 function isLocaleDataType(value: unknown): value is LocaleDataType {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function getLanguageFromFilename(filename: string): string {
+  return filename.split(".")[0];
 }
 
 function collectMissingLeaves(
@@ -98,18 +103,15 @@ async function rebuildFromSource(
   return result;
 }
 
-async function processTargetFile(
-  targetFilePath: string,
-  keysToFix: Array<{ originFile: string; localeFolder: string; key: string }>,
-): Promise<void> {
+async function processTargetFile(targetFilePath: string, keysToFix: MissingKeyType[]): Promise<void> {
   const { originFile, localeFolder } = keysToFix[0];
   const originFilePath = path.join(localeFolder, originFile);
 
   const originFileContent = JSON.parse(await fs.promises.readFile(originFilePath, "utf-8")) as LocaleDataType;
   const targetFileContent = JSON.parse(await fs.promises.readFile(targetFilePath, "utf-8")) as LocaleDataType;
 
-  const originLanguage = originFile.split(".")[0];
-  const targetLanguage = path.basename(targetFilePath).split(".")[0];
+  const originLanguage = getLanguageFromFilename(originFile);
+  const targetLanguage = getLanguageFromFilename(path.basename(targetFilePath));
 
   console.log(`\n---\n${PREFIX} Processing ${targetFilePath}`);
 
@@ -126,14 +128,16 @@ async function processTargetFile(
   }
 
   const translationsMap = buildTranslationsMap(leavesInSourceOrder, translatedTexts);
-  const translationsMapToLog = Array.from(translationsMap.entries()).reduce((acc: Record<string, { [key: string]: string }>, [key, value]) => {
-    acc[key] = { [`${originLanguage} -> ${targetLanguage}`]: value };
-    return acc;
-  }, {});
+
+  const translationsMapToLog = Array.from(translationsMap.entries()).reduce(
+    (acc: Record<string, { [key: string]: string }>, [key, value]) => {
+      acc[key] = { [`${originLanguage} -> ${targetLanguage}`]: value };
+      return acc;
+    },
+    {},
+  );
 
   console.table(translationsMapToLog);
-
-
 
   const rebuilt = await rebuildFromSource(
     originFileContent,
@@ -154,6 +158,7 @@ export async function fixLocales() {
     console.log(`${PREFIX} No missing keys found`);
     return;
   }
+
   const groupedByTargetFile = groupBy(missingKeys, (item) => path.join(item.localeFolder, item.targetFile));
 
   console.log(`\n---\n${PREFIX} Found ${missingKeys.length} missing keys, translating...`);
@@ -162,16 +167,12 @@ export async function fixLocales() {
   for (let i = 0; i < entries.length; i += 1) {
     const [targetFilePath, keysToFix] = entries[i];
     try {
-      await processTargetFile(targetFilePath, keysToFix as Array<{
-        originFile: string;
-        localeFolder: string;
-        key: string;
-      }>);
+      await processTargetFile(targetFilePath, keysToFix);
     } catch {
       console.warn(`${PREFIX} ❌ Error processing ${targetFilePath}.`);
       console.warn("try again. Check api limits if restarting doesn't help.");
     }
-    if (i < entries.length - 1) {
+    if (i < entries.length - 1 && DELAY_BETWEEN_REQUESTS_MS > 0) {
       await delay(DELAY_BETWEEN_REQUESTS_MS);
     }
   }
