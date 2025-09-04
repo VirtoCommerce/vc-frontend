@@ -19,11 +19,11 @@
 </template>
 
 <script setup lang="ts">
-import { WishlistScopeType  } from "@/core/api/graphql/types";
+import { WishlistScopeType } from "@/core/api/graphql/types";
 import type {SharingSettingType} from "@/core/api/graphql/types";
 
 interface IProps {
-  sharingSetting: SharingSettingType; 
+  sharingSetting: SharingSettingType;
 }
 
 defineProps<IProps>(); 

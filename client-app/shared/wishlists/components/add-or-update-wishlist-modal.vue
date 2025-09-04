@@ -58,7 +58,7 @@
               icon="document-duplicate"
               icon-size="1.25rem"
               @click="copySharingLink"
-            ></VcButton>
+            />
           </template>
         </VcInput>
       </div>
@@ -89,18 +89,21 @@
   </VcModal>
 </template>
 
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+>
 import { toTypedSchema } from "@vee-validate/yup";
 import { useClipboard } from "@vueuse/core";
 import { useField, useForm } from "vee-validate";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
-import { WishlistScopeType } from "@/core/api/graphql/types";
+import { WishlistScopeType  } from "@/core/api/graphql/types";
 import { useUser } from "@/shared/account/composables";
 import { useNotifications } from "@/shared/notification";
 import { useWishlists } from "../composables/useWishlists";
-import type { WishlistType } from "@/core/api/graphql/types";
+import type {WishlistType} from "@/core/api/graphql/types";
 
 interface IProps {
   list?: WishlistType;

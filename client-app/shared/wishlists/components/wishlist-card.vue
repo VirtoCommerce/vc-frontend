@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import {  WishlistAccessType } from "@/core/api/graphql/types";
+import { WishlistAccessType  } from "@/core/api/graphql/types";
 import { useUser } from "@/shared/account/composables";
 import WishlistDropdownMenu from "./wishlist-dropdown-menu.vue";
 import WishlistStatus from "./wishlist-status.vue";
@@ -42,7 +42,7 @@ import type {WishlistType} from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "settings"): void;
-  (event: "remove"): void; 
+  (event: "remove"): void;
 }
 
 interface IProps {
