@@ -13,12 +13,7 @@ export type MissingKeyType = {
   localeFolder: string;
 };
 
-function loadJson(filePath: string): LocaleDataType {
-  const data = fs.readFileSync(filePath, "utf-8");
-  return JSON.parse(data) as LocaleDataType;
-}
-
-function getAllKeys(obj: LocaleDataType, parentKey: string = ""): string[] {
+export function getAllKeys(obj: LocaleDataType, parentKey: string = ""): string[] {
   let keys: string[] = [];
   Object.keys(obj).forEach((key) => {
     const fullKey = parentKey ? `${parentKey}.${key}` : key;
@@ -30,6 +25,11 @@ function getAllKeys(obj: LocaleDataType, parentKey: string = ""): string[] {
     }
   });
   return keys;
+}
+
+function loadJson(filePath: string): LocaleDataType {
+  const data = fs.readFileSync(filePath, "utf-8");
+  return JSON.parse(data) as LocaleDataType;
 }
 
 function compareKeys(
