@@ -1,6 +1,6 @@
 <template>
   <VcContainer>
-    <VcBreadcrumbs class="mb-2.5 md:mb-4" :items="breadcrumbs" />
+    <VcBreadcrumbs v-if="currentCategory?.breadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
     <Category :category-id="categoryId" allow-set-meta />
   </VcContainer>
