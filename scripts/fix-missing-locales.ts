@@ -1,91 +1,102 @@
 import fs from "fs";
 import path from "path";
-import get from "lodash/get.js";
-import set from "lodash/set.js";
+import groupBy from "lodash/groupBy.js";
 import { main as getMissingKeys } from "./check-locales-missing-keys.js";
-import { translate } from "./translator.js";
-import type { LocaleDataType } from "./check-locales-missing-keys.js";
+import {
+  buildNewLocaleContent,
+  buildTranslationsMap,
+  createLeavesFromKeys,
+  getLanguageFromFilename,
+  prepareBatchInput,
+} from "./locale-utils.js";
+import { translateBatch } from "./translator.js";
+import type { MissingKeyType, LocaleDataType } from "./check-locales-missing-keys.js";
 
 const PREFIX = "[FIX_LOCALES_UTILITY]";
-const DELAY_BETWEEN_TRANSLATIONS_MS = 4000;
 
-function shouldTranslate(text: string) {
-  return !text.startsWith("@:") && !text.startsWith("@:{");
+const DEFAULT_DELAY_MS = 4000;
+const DELAY_BETWEEN_REQUESTS_MS = Number.parseInt(process.env.FIX_LOCALES_DELAY_MS ?? "", 10) || DEFAULT_DELAY_MS;
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function processTargetFile(targetFilePath: string, keysToFix: MissingKeyType[]): Promise<void> {
+  const { originFile, localeFolder } = keysToFix[0];
+  const originFilePath = path.join(localeFolder, originFile);
+
+  const [originFileContent, targetFileContent] = (await Promise.all([
+    fs.promises.readFile(originFilePath, "utf-8").then(JSON.parse),
+    fs.promises.readFile(targetFilePath, "utf-8").then(JSON.parse),
+  ])) as [LocaleDataType, LocaleDataType];
+
+  const originLanguage = getLanguageFromFilename(originFile);
+  const targetLanguage = getLanguageFromFilename(path.basename(targetFilePath));
+
+  const leavesInSourceOrder = createLeavesFromKeys(keysToFix, originFileContent);
+  const itemsForTranslation = prepareBatchInput(leavesInSourceOrder);
+
+  let translatedTexts: string[] = [];
+  if (itemsForTranslation.length > 0) {
+    translatedTexts = await translateBatch(itemsForTranslation, originLanguage, targetLanguage);
+  }
+
+  const translationsMap = buildTranslationsMap(leavesInSourceOrder, translatedTexts);
+
+  const translationsMapToLog = Array.from(translationsMap.entries()).reduce(
+    (acc: Record<string, { [key: string]: string }>, [key, { sourceText, translatedText }]) => {
+      acc[key] = {
+        [originLanguage]: sourceText,
+        [targetLanguage]: translatedText,
+      };
+      return acc;
+    },
+    {},
+  );
+
+  console.table(translationsMapToLog);
+
+  const missingKeySet = new Set(keysToFix.map((k) => k.key));
+  const rebuilt = buildNewLocaleContent(originFileContent, targetFileContent, translationsMap, missingKeySet);
+
+  await fs.promises.writeFile(targetFilePath, JSON.stringify(rebuilt, null, 2));
 }
 
 export async function fixLocales() {
+  const startTimeMs = Date.now();
   const missingKeys = getMissingKeys();
   if (missingKeys.length === 0) {
     console.log(`${PREFIX} No missing keys found`);
     return;
   }
-  const allNeededFiles = missingKeys.reduce((acc, { originFile, targetFile, localeFolder }) => {
-    acc.add(path.join(localeFolder, originFile));
-    acc.add(path.join(localeFolder, targetFile));
-    return acc;
-  }, new Set<string>());
 
-  const fileContents: Record<string, LocaleDataType> = {};
-  try {
-    await Promise.all(
-      [...allNeededFiles].map(async (filename) => {
-        const fileData = await fs.promises.readFile(filename, "utf-8");
-        fileContents[filename] = JSON.parse(fileData) as LocaleDataType;
-      }),
-    );
-  } catch (error) {
-    console.error(`${PREFIX} Error reading files:`, error, "try again..");
-    return;
-  }
+  const groupedByTargetFile = groupBy(missingKeys, (item) => path.join(item.localeFolder, item.targetFile));
 
   console.log(`\n---\n${PREFIX} Found ${missingKeys.length} missing keys, translating...`);
 
-  for (const [index, { key, originFile, targetFile, localeFolder }] of missingKeys.entries()) {
+  let index = 0;
+  const total = Object.entries(groupedByTargetFile).length;
+  for (const [targetFilePath, keysToFix] of Object.entries(groupedByTargetFile)) {
+    if (index > 0 && DELAY_BETWEEN_REQUESTS_MS > 0) {
+      await delay(DELAY_BETWEEN_REQUESTS_MS);
+    }
+
+    console.log(`\n---\nProcessing ${targetFilePath} (${index + 1}/${total})`);
+
     try {
-      const originFilePath = path.join(localeFolder, originFile);
-      const targetFilePath = path.join(localeFolder, targetFile);
-
-      const originFileContent = get(fileContents, originFilePath);
-      const targetFileContent = get(fileContents, targetFilePath);
-
-      const originString = get(originFileContent, key) as string;
-      const originLanguage = originFile.split(".")[0];
-      const targetLanguage = targetFile.split(".")[0];
-
-      const translatedString = shouldTranslate(originString)
-        ? await translate(originString, originLanguage, targetLanguage)
-        : originString;
-
-      const tableRow = `${key} (${index + 1}/${missingKeys.length})`;
-      console.table({
-        [originLanguage]: { [tableRow]: originString },
-        [targetLanguage]: { [tableRow]: translatedString },
-      });
-
-      set(targetFileContent, key, translatedString);
-      if (shouldTranslate(originString)) {
-        await new Promise((resolve) => setTimeout(resolve, DELAY_BETWEEN_TRANSLATIONS_MS)); // delay to avoid API rate limits
-      }
-    } catch (error) {
-      console.error(
-        `${PREFIX} Error translating ${key}:`,
-        error,
-        "try again. Check api limits if restarting doesn't help.",
-      );
-      return;
+      await processTargetFile(targetFilePath, keysToFix);
+      console.log(`🟢 Successfully updated ${targetFilePath} (${index + 1}/${total})`);
+    } catch {
+      console.warn(`❌ Error processing ${targetFilePath}.`);
+      console.warn("try again. Check api limits if restarting doesn't help.");
+    } finally {
+      index += 1;
     }
   }
 
-  try {
-    await Promise.all(
-      [...allNeededFiles].map(async (filename) => {
-        await fs.promises.writeFile(filename, JSON.stringify(fileContents[filename], null, 2));
-      }),
-    );
-    console.log(`${PREFIX} Translation completed successfully\n---\n`);
-  } catch (error) {
-    console.error(`${PREFIX} Error writing files:`, error, "check results and run script again if needed.");
-  }
+  console.log('\n✅ Translation completed successfully\n');
+  const elapsedSeconds = ((Date.now() - startTimeMs) / 1000).toFixed(1);
+  console.log(`🕐 Took ${elapsedSeconds}s in total\n---\n`);
 }
 
 void fixLocales();
