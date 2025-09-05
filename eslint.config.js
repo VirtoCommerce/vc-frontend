@@ -1,6 +1,6 @@
 import js from "@eslint/js";
-import prettier from "eslint-config-prettier";
 import importPlugin from "eslint-plugin-import";
+import prettierPlugin from "eslint-plugin-prettier/recommended";
 import sonarjs from "eslint-plugin-sonarjs";
 import sortExportAll from "eslint-plugin-sort-export-all";
 import sortExports from "eslint-plugin-sort-exports";
@@ -367,5 +367,5 @@ export default tseslint.config(
   },
 
   // Prettier must be last
-  prettier,
+  prettierPlugin,
 );

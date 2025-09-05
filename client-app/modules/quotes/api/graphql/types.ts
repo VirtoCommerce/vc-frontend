@@ -808,6 +808,8 @@ export type Property = {
   /** ValueType of the property. */
   propertyValueType: PropertyValueTypes;
   value?: Maybe<Scalars['PropertyValue']['output']>;
+  /** The display order of the value. */
+  valueDisplayOrder?: Maybe<Scalars['Int']['output']>;
   valueId?: Maybe<Scalars['String']['output']>;
 };
 

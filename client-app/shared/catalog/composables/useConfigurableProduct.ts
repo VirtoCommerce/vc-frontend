@@ -1,6 +1,4 @@
 import { provideApolloClient, useMutation } from "@vue/apollo-composable";
-import { createSharedComposable } from "@vueuse/core";
-import isEqual from "lodash/isEqual";
 import { ref, readonly, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { apolloClient, getConfigurationItems, getProductConfiguration } from "@/core/api/graphql";
@@ -8,9 +6,10 @@ import { ChangeCartConfiguredItemDocument, CreateConfiguredLineItemDocument } fr
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { globals } from "@/core/globals";
-import { getUrlSearchParam, Logger } from "@/core/utilities";
+import { createSharedComposableByArgs, getUrlSearchParam, Logger } from "@/core/utilities";
 import { toCSV } from "@/core/utilities/common";
 import { useShortCart } from "@/shared/cart/composables";
+import { compareConfigurationInputs } from "@/shared/catalog/utilities/configurations";
 import { CONFIGURABLE_SECTION_TYPES } from "../constants/configurableProducts";
 import type {
   CartConfigurationItemFileType,
@@ -70,7 +69,7 @@ function _useConfigurableProduct(configurableProductId: string) {
       return true;
     }
     return initialSelectedConfigurationInput.value.some(
-      (section, i) => !compareInputs(section, selectedConfigurationInput.value[i]),
+      (section, i) => !compareConfigurationInputs(section, selectedConfigurationInput.value[i]),
     );
   });
 
@@ -215,9 +214,6 @@ function _useConfigurableProduct(configurableProductId: string) {
       const preselectedValues = await getPreselectedValues();
       updateWithDefaultValues();
       updateWithPreselectedValues(preselectedValues);
-
-      initialSelectedConfigurationInput.value = selectedConfigurationInput.value;
-      void createConfiguredLineItem();
     } catch (e) {
       Logger.error(`${useConfigurableProduct.name}.${fetchProductConfiguration.name}`, e);
       throw e;
@@ -360,6 +356,9 @@ function _useConfigurableProduct(configurableProductId: string) {
         changeSelectionValue(value);
       }
     });
+
+    initialSelectedConfigurationInput.value = selectedConfigurationInput.value;
+    void createConfiguredLineItem();
   }
 
   function preselectedValueToInputSection(value: SectionValueType): ConfigurationSectionInput {
@@ -378,28 +377,14 @@ function _useConfigurableProduct(configurableProductId: string) {
     };
   }
 
-  function compareInputs(
-    input1: DeepReadonly<ConfigurationSectionInput>,
-    input2: DeepReadonly<ConfigurationSectionInput>,
-  ) {
-    switch (input1.type) {
-      case CONFIGURABLE_SECTION_TYPES.product:
-        return isEqual(input1.option, input2.option);
-      case CONFIGURABLE_SECTION_TYPES.text:
-        return input1.customText === input2.customText;
-      case CONFIGURABLE_SECTION_TYPES.file:
-        return isEqual(input1.fileUrls, input2.fileUrls);
-      default:
-        return true;
-    }
-  }
-
   return {
     fetchProductConfiguration,
     selectSectionValue,
     changeCartConfiguredItem,
     changeCartConfiguredItemBatched,
     validateSections,
+    updateWithPreselectedValues,
+
     loading: readonly(loading),
     changeCartConfiguredItemOverflowed: batchedChangeCartConfiguredItemOverflowed,
     configuration: readonly(configuration),
@@ -411,4 +396,4 @@ function _useConfigurableProduct(configurableProductId: string) {
   };
 }
 
-export const useConfigurableProduct = createSharedComposable(_useConfigurableProduct);
+export const useConfigurableProduct = createSharedComposableByArgs(_useConfigurableProduct);

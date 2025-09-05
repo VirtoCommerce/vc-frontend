@@ -11,7 +11,7 @@
     <div class="flex grow flex-col justify-between gap-2">
       <VcProductTitle
         class="h-[3.125rem] text-sm"
-        :to="link"
+        :to="simpleLink"
         :title="product.name"
         :target="$cfg.details_browser_target"
         @click="$emit('linkClick', $event)"
@@ -23,7 +23,7 @@
         class="h-9 text-lg"
         :actual-price="price?.actual"
         :list-price="price?.list"
-        :with-from-label="product.hasVariations || product.isConfigurable"
+        :with-from-label="product.hasVariations || (product.isConfigurable && !configurationId)"
       />
     </div>
 
@@ -62,6 +62,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { CONFIGURATION_URL_SEARCH_PARAM } from "@/core/constants";
 import { ProductType } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
@@ -77,6 +78,7 @@ interface IEmits {
 
 interface IProps {
   product: Product;
+  configurationId?: string;
 }
 
 defineEmits<IEmits>();
@@ -85,7 +87,25 @@ const props = defineProps<IProps>();
 
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
-const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
+const simpleLink = computed(() => getProductRoute(props.product.id, props.product.slug));
+
+const link = computed<RouteLocationRaw>(() => {
+  const route = getProductRoute(props.product.id, props.product.slug);
+
+  if (!props.configurationId) {
+    return route;
+  }
+
+  const routeAsObject = typeof route === "string" ? { path: route } : route;
+
+  return {
+    ...routeAsObject,
+    query: {
+      ...routeAsObject.query,
+      [CONFIGURATION_URL_SEARCH_PARAM]: props.configurationId,
+    },
+  };
+});
 
 const isDigital = computed(() => props.product.productType === ProductType.Digital);
 </script>
