@@ -1,4 +1,7 @@
-import type { LocaleDataType } from "./check-locales-missing-keys.js";
+import get from "lodash/get.js";
+import set from "lodash/set.js";
+import type { LocaleDataType, MissingKeyType } from "./check-locales-missing-keys.js";
+import type { BatchItemType } from "./translator.js";
 
 export type LocaleNodeType = LocaleDataType | string;
 export type LeafType = { keyPath: string; sourceText: string };
@@ -15,72 +18,73 @@ export function getLanguageFromFilename(filename: string): string {
   return filename.split(".")[0];
 }
 
-export function collectMissingLeaves(
-  node: LocaleNodeType,
-  parentPath: string,
-  missingKeySet: Set<string>,
-): LeafType[] {
+export function getLeafPaths(node: LocaleNodeType, parentPath = ""): string[] {
   if (typeof node === "string") {
-    const keyPath = parentPath;
-    return missingKeySet.has(keyPath) ? [{ keyPath, sourceText: node }] : [];
+    return [parentPath];
   }
 
   return Object.keys(node).flatMap((key) => {
     const nextPath = parentPath ? `${parentPath}.${key}` : key;
-    return collectMissingLeaves(node[key] as LocaleNodeType, nextPath, missingKeySet);
+    return getLeafPaths(node[key] as LocaleNodeType, nextPath);
   });
 }
 
-export function prepareBatchInput(leaves: LeafType[]): { texts: string[]; contexts: string[] } {
-  const texts: string[] = [];
-  const contexts: string[] = [];
-  for (const leaf of leaves) {
-    if (shouldTranslate(leaf.sourceText)) {
-      texts.push(leaf.sourceText);
-      contexts.push(leaf.keyPath);
-    }
-  }
-  return { texts, contexts };
+export function createLeavesFromKeys(
+  keysToFix: MissingKeyType[],
+  originFileContent: LocaleDataType,
+): LeafType[] {
+  return keysToFix
+    .map(({ key }) => ({
+      keyPath: key,
+      sourceText: get(originFileContent, key) as string,
+    }))
+    .filter(({ sourceText }) => typeof sourceText === "string");
 }
 
-export function buildTranslationsMap(leaves: LeafType[], translated: string[]): Map<string, string> {
-  const map = new Map<string, string>();
+export function prepareBatchInput(leaves: LeafType[]): BatchItemType[] {
+  const items: BatchItemType[] = [];
+  for (const leaf of leaves) {
+    if (shouldTranslate(leaf.sourceText)) {
+      items.push({ key: leaf.keyPath, text: leaf.sourceText });
+    }
+  }
+  return items;
+}
+
+export function buildTranslationsMap(
+  leaves: LeafType[],
+  translated: string[],
+): Map<string, { sourceText: string; translatedText: string }> {
+  const map = new Map<string, { sourceText: string; translatedText: string }>();
   let t = 0;
   for (const { keyPath, sourceText } of leaves) {
     if (shouldTranslate(sourceText)) {
-      map.set(keyPath, translated[t]);
+      map.set(keyPath, { sourceText, translatedText: translated[t] });
       t += 1;
     } else {
-      map.set(keyPath, sourceText);
+      map.set(keyPath, { sourceText, translatedText: sourceText });
     }
   }
   return map;
 }
 
-export async function rebuildFromSource(
-  sourceNode: LocaleNodeType,
-  targetNode: LocaleNodeType | undefined,
-  parentPath: string,
+export function buildNewLocaleContent(
+  originContent: LocaleDataType,
+  targetContent: LocaleDataType,
+  translationsMap: Map<string, { sourceText: string; translatedText: string }>,
   missingKeySet: Set<string>,
-  translationsMap: Map<string, string>,
-): Promise<LocaleNodeType> {
-  if (typeof sourceNode === "string") {
-    const keyPath = parentPath;
-    if (missingKeySet.has(keyPath)) {
-      return translationsMap.get(keyPath) ?? sourceNode;
-    }
-    if (typeof targetNode === "string") {
-      return targetNode;
-    }
-    return sourceNode;
-  }
+): LocaleDataType {
+  const rebuilt = {};
+  const allSourceLeafPaths = getLeafPaths(originContent, "");
 
-  const result: LocaleDataType = {};
-  for (const key of Object.keys(sourceNode)) {
-    const nextPath = parentPath ? `${parentPath}.${key}` : key;
-    const sourceChild = sourceNode[key] as LocaleNodeType;
-    const targetChild = isLocaleDataType(targetNode) ? (targetNode[key] as LocaleNodeType | undefined) : undefined;
-    result[key] = await rebuildFromSource(sourceChild, targetChild, nextPath, missingKeySet, translationsMap);
+  for (const keyPath of allSourceLeafPaths) {
+    const value = missingKeySet.has(keyPath)
+      ? translationsMap.get(keyPath)?.translatedText
+      : get(targetContent, keyPath);
+
+    if (value !== undefined) {
+      set(rebuilt, keyPath, value);
+    }
   }
-  return result;
+  return rebuilt as LocaleDataType;
 }

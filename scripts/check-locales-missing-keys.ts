@@ -13,7 +13,7 @@ export type MissingKeyType = {
   localeFolder: string;
 };
 
-export function getAllKeys(obj: LocaleDataType, parentKey: string = ""): string[] {
+function getAllKeys(obj: LocaleDataType, parentKey: string = ""): string[] {
   let keys: string[] = [];
   Object.keys(obj).forEach((key) => {
     const fullKey = parentKey ? `${parentKey}.${key}` : key;
@@ -52,8 +52,7 @@ function compareKeys(
 function validateLocaleFolder(localeFolder: string): boolean {
   if (!fs.existsSync(localeFolder)) {
     console.warn(`Warning: The specified directory "${localeFolder}" does not exist.`);
-    console.warn(`Please provide a valid directory path. Example usage:`);
-    console.warn(`yarn run check-locales -- path/to/your/locales`);
+    console.warn(`Please provide a valid directory path.`);
     return false;
   }
   return true;

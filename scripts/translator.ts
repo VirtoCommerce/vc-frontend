@@ -23,7 +23,7 @@ const model = genAI.getGenerativeModel({
   },
 });
 
-type BatchItemType = { key: string; text: string };
+export type BatchItemType = { key: string; text: string };
 
 function generateBatchPrompt(
   items: BatchItemType[],
@@ -72,23 +72,19 @@ function tryParseJsonArray(text: string): string[] {
 }
 
 export async function translateBatch(
-  texts: string[],
-  contexts: string[],
+  items: BatchItemType[],
   originLanguage: string,
   targetLanguage: string,
 ): Promise<string[]> {
-  if (texts.length === 0) {
+  if (items.length === 0) {
     return [];
   }
-  if (texts.length !== contexts.length) {
-    throw new Error(`translateBatch: contexts length ${contexts.length} does not match texts length ${texts.length}`);
-  }
-  const items: BatchItemType[] = texts.map((text, index) => ({ key: contexts[index], text }));
+
   const response = await model.generateContent(generateBatchPrompt(items, originLanguage, targetLanguage));
   const raw = response.response.text();
   const parsed = tryParseJsonArray(raw);
-  if (parsed.length !== texts.length) {
-    throw new Error(`Batch translation length mismatch: expected ${texts.length}, got ${parsed.length}`);
+  if (parsed.length !== items.length) {
+    throw new Error(`Batch translation length mismatch: expected ${items.length}, got ${parsed.length}`);
   }
   return parsed;
 }
