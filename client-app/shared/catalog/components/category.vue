@@ -49,16 +49,16 @@
           <span v-else-if="!currentCategory && loadingCategory" class="category__title-skeleton"> &nbsp; </span>
 
           <span v-else-if="title">
-          {{ title }}
-        </span>
+            {{ title }}
+          </span>
 
           <span v-else-if="currentCategory && searchQueryParam">
-          {{ $t("pages.catalog.search_in_category", { keyword: searchQueryParam, category: currentCategory.name }) }}
-        </span>
+            {{ $t("pages.catalog.search_in_category", { keyword: searchQueryParam, category: currentCategory.name }) }}
+          </span>
 
           <span v-else>
-          {{ currentCategory?.name }}
-        </span>
+            {{ currentCategory?.name }}
+          </span>
 
           <sup v-if="!fetchingProducts && !hideTotal && !fixedProductsCount" class="category__products-count">
             <b class="me-1">{{ $n(totalProductsCount, "decimal") }}</b>
@@ -77,11 +77,11 @@
 
         <div
           :class="[
-          'category__filters',
-          {
-            'category__filters--sticky': stickyMobileHeaderIsVisible,
-          },
-        ]"
+            'category__filters',
+            {
+              'category__filters--sticky': stickyMobileHeaderIsVisible,
+            },
+          ]"
         >
           <!-- Popup sidebar filters toggler -->
           <VcButton
@@ -89,7 +89,8 @@
             class="category__facets-button"
             icon="filter"
             size="sm"
-            :aria-label="$t('common.accessibility.open_filters')"@click="showFiltersSidebar"
+            :aria-label="$t('common.accessibility.open_filters')"
+            @click="showFiltersSidebar"
           />
 
           <!-- Sorting -->
@@ -142,7 +143,6 @@
           :filters="filtersToShow"
           :hide-sorting="hideSorting"
           :hide-all-filters="hideSidebar"
-
           @reset-facet-filters="resetFacetFilters"
           @change:filters="applyFiltersOnly($event)"
           @show-popup-sidebar="showFiltersSidebar"
@@ -161,13 +161,7 @@
               <VcIcon name="reset" />
             </VcChip>
 
-            <VcChip
-              v-if="isResetPageButtonShown"
-              color="secondary"
-              variant="outline"
-              clickable
-              @click="resetPage"
-            >
+            <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
               <span>{{ $t("common.buttons.reset_page") }}</span>
 
               <VcIcon name="reset" />
@@ -177,7 +171,6 @@
 
         <div ref="categoryProductsAnchor" class="category__products-anchor"></div>
 
-
         <CategoryProducts
           :card-type="cardType"
           :columns-amount-desktop="columnsAmountDesktop"
@@ -186,8 +179,8 @@
           :fetching-products="fetchingProducts"
           :fixed-products-count="fixedProductsCount"
           :has-active-filters="
-          hasSelectedFacets || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
-        "
+            hasSelectedFacets || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
+          "
           :has-selected-facets="hasSelectedFacets"
           :items-per-page="itemsPerPage"
           :pages-count="pagesCount"
@@ -542,7 +535,9 @@ watch(
         productFilter,
       });
 
-      isCategoryNotFound.value = !data?.category;
+      if (!props.isRoot) {
+        isCategoryNotFound.value = !data;
+      }
 
       preparingScope.value = false;
     }
