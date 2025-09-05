@@ -33,8 +33,6 @@ async function processTargetFile(targetFilePath: string, keysToFix: MissingKeyTy
   const originLanguage = getLanguageFromFilename(originFile);
   const targetLanguage = getLanguageFromFilename(path.basename(targetFilePath));
 
-  console.log(`\n---\n${PREFIX} Processing ${targetFilePath}`);
-
   const leavesInSourceOrder = createLeavesFromKeys(keysToFix, originFileContent);
   const itemsForTranslation = prepareBatchInput(leavesInSourceOrder);
 
@@ -62,7 +60,6 @@ async function processTargetFile(targetFilePath: string, keysToFix: MissingKeyTy
   const rebuilt = buildNewLocaleContent(originFileContent, targetFileContent, translationsMap, missingKeySet);
 
   await fs.promises.writeFile(targetFilePath, JSON.stringify(rebuilt, null, 2));
-  console.log(`${PREFIX} 🟢 Successfully updated ${targetFilePath}`);
 }
 
 export async function fixLocales() {
@@ -77,24 +74,29 @@ export async function fixLocales() {
 
   console.log(`\n---\n${PREFIX} Found ${missingKeys.length} missing keys, translating...`);
 
-  let isFirst = true;
+  let index = 0;
+  const total = Object.entries(groupedByTargetFile).length;
   for (const [targetFilePath, keysToFix] of Object.entries(groupedByTargetFile)) {
-    if (!isFirst && DELAY_BETWEEN_REQUESTS_MS > 0) {
+    if (index > 0 && DELAY_BETWEEN_REQUESTS_MS > 0) {
       await delay(DELAY_BETWEEN_REQUESTS_MS);
     }
-    isFirst = false;
+
+    console.log(`\n---\nProcessing ${targetFilePath} (${index + 1}/${total})`);
 
     try {
       await processTargetFile(targetFilePath, keysToFix);
+      console.log(`🟢 Successfully updated ${targetFilePath} (${index + 1}/${total})`);
     } catch {
-      console.warn(`${PREFIX} ❌ Error processing ${targetFilePath}.`);
+      console.warn(`❌ Error processing ${targetFilePath}.`);
       console.warn("try again. Check api limits if restarting doesn't help.");
+    } finally {
+      index += 1;
     }
   }
 
-  console.log(`\n${PREFIX} ✅ Translation completed successfully\n`);
+  console.log('\n✅ Translation completed successfully\n');
   const elapsedSeconds = ((Date.now() - startTimeMs) / 1000).toFixed(1);
-  console.log(`${PREFIX} 🕐 Took ${elapsedSeconds}s in total\n---\n`);
+  console.log(`🕐 Took ${elapsedSeconds}s in total\n---\n`);
 }
 
 void fixLocales();

@@ -7,7 +7,7 @@ const modelName = process.env.FIX_LOCALES_MODEL_NAME || DEFAULT_MODEL_NAME;
 const temperature = Number.parseFloat(process.env.FIX_LOCALES_TEMPERATURE ?? "invalid");
 const finalTemperature = !Number.isNaN(temperature) ? temperature : DEFAULT_TEMPERATURE;
 
-console.log(`[TRANSLATOR_CONFIG] Using model: "${modelName}", temperature: ${finalTemperature}`);
+console.log(`⚙ Using model: "${modelName}", temperature: ${finalTemperature}`);
 
 const SYSTEM_INSTRUCTION = `You are a professional translator specializing in e-commerce localization.
 Your translations must be short, concise, and use commonly accepted e-commerce terminology.
