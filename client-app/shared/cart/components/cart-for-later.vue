@@ -1,8 +1,5 @@
 <template>
-  <VcWidget
-    :title="$t('pages.cart.saved_for_later')"
-    prepend-icon="bookmark"
-    size="lg">
+  <VcWidget :title="$t('pages.cart.saved_for_later')" prepend-icon="bookmark" size="lg">
     <VcProductsGrid short>
       <CartItemForLater
         v-for="(item, index) in savedForLaterList?.items"
@@ -12,7 +9,8 @@
         :background="false"
         :loading="loading"
         @link-click="selectItemEvent(item.product)"
-        @add-to-cart="(lineItemId) => $emit('addToCart', lineItemId)" />
+        @add-to-cart="(lineItemId) => $emit('addToCart', lineItemId)"
+      />
     </VcProductsGrid>
   </VcWidget>
 </template>
@@ -48,8 +46,8 @@ const listProperties = computed(() => ({
 const { analytics } = useAnalytics();
 const { t } = useI18n();
 
-function selectItemEvent(item?: SavedForLaterListFragment['items'][number]['product']) {
-  if(!item) {
+function selectItemEvent(item?: SavedForLaterListFragment["items"][number]["product"]) {
+  if (!item) {
     return;
   }
 

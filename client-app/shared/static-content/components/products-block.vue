@@ -8,15 +8,16 @@
       <div class="mb-8 text-center lg:text-lg">{{ subtitle }}</div>
 
       <VcProductsGrid
-                      :columns="{
-                        default: 1,
-                        xs: 2,
-                        sm: 2,
-                        md: Number(columnsAmountTablet),
-                        lg: Number(columnsAmountDesktop),
-                        xl: Number(columnsAmountDesktop),
-                        '2xl': Number(columnsAmountDesktop),
-                      }">
+        :columns="{
+          default: 1,
+          xs: 2,
+          sm: 2,
+          md: Number(columnsAmountTablet),
+          lg: Number(columnsAmountDesktop),
+          xl: Number(columnsAmountDesktop),
+          '2xl': Number(columnsAmountDesktop),
+        }"
+      >
         <ProductCard v-for="item in products" :key="item.id" :card-type="cardType" :product="item" />
       </VcProductsGrid>
     </div>

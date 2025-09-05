@@ -18,7 +18,9 @@ const MODULE_KEYS = {
 
 const { emit } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
 
-const currentDomain = IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname;
+const currentDomain = IS_DEVELOPMENT
+  ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
+  : window.location.hostname;
 
 /**
  * Independent composable.
@@ -48,7 +50,7 @@ function _useWhiteLabeling() {
    * - Purpose: load settings in parallel during app initialization.
    */
   function applyWhiteLabelingSettings() {
-    if(fetchedSettings.value) {
+    if (fetchedSettings.value) {
       whiteLabelingSettings.value = fetchedSettings.value;
       fetchedSettings.value = undefined;
 
@@ -84,9 +86,7 @@ function _useWhiteLabeling() {
     secondaryLogoUrl: computed(
       () => whiteLabelingSettings.value?.secondaryLogoUrl ?? settingsData.settings.logo_inverted_image,
     ),
-    footerLinks: computed(() =>
-      footerLinks.value?.map((item) => convertToExtendedMenuLink(item)),
-    ),
+    footerLinks: computed(() => footerLinks.value?.map((item) => convertToExtendedMenuLink(item))),
     favIcons: computed(() => whiteLabelingSettings.value?.favicons),
     themePresetName: computed(() => whiteLabelingSettings.value?.themePresetName),
     whiteLabelingLogoUrl: computed(() => whiteLabelingSettings.value?.logoUrl),

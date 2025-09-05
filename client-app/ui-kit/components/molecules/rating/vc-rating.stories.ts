@@ -32,7 +32,7 @@ export default {
 } as Meta<typeof VcRating>;
 
 const Template: StoryFn = (args) => ({
-  components: { VcRating},
+  components: { VcRating },
   setup: () => ({ args }),
   template: '<VcRating v-bind="args" />',
 });
@@ -45,7 +45,7 @@ Basic.args = {
 export const Label = Template.bind({});
 Label.args = {
   value: 4.5,
-  label: "Rating"
+  label: "Rating",
 };
 
 export const Full = Template.bind({});

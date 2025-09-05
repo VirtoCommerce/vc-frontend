@@ -2,7 +2,13 @@ import { unref } from "vue";
 import { globals } from "@/core/globals";
 import { isDateString } from "@/core/utilities/date";
 import type { FacetItemType, FacetValueItemType } from "../../types";
-import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
+import type {
+  FacetRangeType,
+  FacetTermType,
+  RangeFacet,
+  TermFacet,
+  SearchProductFilterResult,
+} from "@/core/api/graphql/types";
 import type { MaybeRef } from "@vueuse/core";
 
 /**
@@ -114,18 +120,14 @@ export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItemType[]>)
 export function generateFilterExpressionFromFilters(filters: SearchProductFilterResult[]): string {
   const filterExpressions: string[] = [];
 
-  filters.forEach(filter => {
+  filters.forEach((filter) => {
     if (filter.termValues?.length) {
       // Handle term filters
-      const escapedTerms = filter.termValues.map(term =>
-        term.value
-          .replace(/\\/g, "\\\\")
-          .replace(/"/g, '\\"')
-      );
+      const escapedTerms = filter.termValues.map((term) => term.value.replace(/\\/g, "\\\\").replace(/"/g, '\\"'));
       filterExpressions.push(`"${filter.name}":"${escapedTerms.join('","')}"`);
     } else if (filter.rangeValues?.length) {
       // Handle range filters
-      const rangeExpressions = filter.rangeValues.map(range => {
+      const rangeExpressions = filter.rangeValues.map((range) => {
         const { lower, upper, includeLowerBound, includeUpperBound } = range;
         const firstBracket = includeLowerBound ? "[" : "(";
         const lastBracket = includeUpperBound ? "]" : ")";

@@ -20,7 +20,6 @@
 </template>
 
 <script setup lang="ts">
-
 export interface IProps {
   background?: string;
   title?: string;
@@ -40,13 +39,11 @@ defineProps<IProps>();
   }
 
   &.bg-neutral-800 {
-
     .title,
     .subtitle,
     .checkbox-text {
       color: white;
     }
-
   }
 }
 </style>

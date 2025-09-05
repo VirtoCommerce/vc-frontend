@@ -55,5 +55,4 @@ useSeoMeta({
   ogDescription: () => (staticPageAnchorVisible.value ? template.value?.settings?.seoInfo?.metaDescription : undefined),
   ogType: () => (staticPageAnchorVisible.value ? "website" : undefined),
 });
-
 </script>

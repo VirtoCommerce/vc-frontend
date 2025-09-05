@@ -1,10 +1,6 @@
 <template>
   <teleport to="body">
-    <section
-      class="notifications-host"
-      :aria-label="$t('common.labels.notifications')"
-      aria-live="polite"
-    >
+    <section class="notifications-host" :aria-label="$t('common.labels.notifications')" aria-live="polite">
       <transition-group name="app-notifications" tag="div" class="notifications-host__wrapper">
         <VcAlert
           v-for="notification in stack"

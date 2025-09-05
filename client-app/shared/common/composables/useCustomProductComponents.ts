@@ -14,7 +14,7 @@ export type ElementType = {
 
 export type ProductComponentOptions = {
   forceProductAsVariation: boolean;
-}
+};
 
 function _useCustomProductComponents() {
   const customProductComponents = shallowRef<{ [key: string]: ElementType }>({});

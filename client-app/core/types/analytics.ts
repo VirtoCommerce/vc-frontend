@@ -29,8 +29,8 @@ export interface IBasicAnalyticsEventMap {
 
 export type AnalyticsEventMapType = keyof ICustomAnalyticsEventMap extends never
   ? IBasicAnalyticsEventMap
-  // eslint-disable-next-line sonarjs/no-useless-intersection
-  : Omit<IBasicAnalyticsEventMap, keyof ICustomAnalyticsEventMap> & ICustomAnalyticsEventMap;
+  :  
+    Omit<IBasicAnalyticsEventMap, keyof ICustomAnalyticsEventMap> & ICustomAnalyticsEventMap;
 
 export type AnalyticsEventNameType = keyof AnalyticsEventMapType;
 

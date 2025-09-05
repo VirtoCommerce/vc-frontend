@@ -365,7 +365,8 @@ const {
   options: fileOptions,
   hasFailedFiles,
 } = useFiles(DEFAULT_COMPANY_FILES_SCOPE);
-const { whiteLabelingLogoUrl, fetchWhiteLabelingSettings, isOrganizationLogoUploaded, applyWhiteLabelingSettings } = useWhiteLabeling();
+const { whiteLabelingLogoUrl, fetchWhiteLabelingSettings, isOrganizationLogoUploaded, applyWhiteLabelingSettings } =
+  useWhiteLabeling();
 const newLogoUrl = ref(isOrganizationLogoUploaded.value ? whiteLabelingLogoUrl.value : "");
 
 usePageHead({
@@ -595,7 +596,7 @@ async function onRemoveFiles() {
 
 async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: string) {
   if (addressId) {
-    if(isFavoriteAddress) {
+    if (isFavoriteAddress) {
       await removeAddressFromFavorite(addressId);
     } else {
       await addAddressToFavorite(addressId);

@@ -289,14 +289,15 @@ const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, init
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
-const { 
-  savedForLaterList, 
-  moveToSavedForLater, 
-  moveToSavedForLaterOverflowed, 
-  moveFromSavedForLater,  
+const {
+  savedForLaterList,
+  moveToSavedForLater,
+  moveToSavedForLaterOverflowed,
+  moveFromSavedForLater,
   moveFromSavedForLaterOverflowed,
-  getSavedForLater, 
-  loading: saveForLaterLoading } = useSavedForLater();
+  getSavedForLater,
+  loading: saveForLaterLoading,
+} = useSavedForLater();
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",

@@ -46,51 +46,51 @@
     </div>
 
     <ActiveFilterChips
-        v-if="hasSelectedFilters"
-        :filters="productsFilters?.filters"
-        @apply-filters="applyFiltersOnly"
-        @reset-filters="$emit('resetFilters')"
-      />
+      v-if="hasSelectedFilters"
+      :filters="productsFilters?.filters"
+      @apply-filters="applyFiltersOnly"
+      @reset-filters="$emit('resetFilters')"
+    />
 
-         <!-- Loading skeleton -->
-     <div v-if="fetchingVariations && variations?.length === 0" class="variations__loading">
-       <div class="variations__loading-skeleton">
-         <div v-for="i in 6" :key="i" class="variations__loading-item">
-           <div class="variations__loading-image"></div>
-           <div class="variations__loading-content">
-             <div class="variations__loading-title"></div>
-             <div class="variations__loading-text"></div>
-             <div class="variations__loading-text"></div>
-           </div>
-         </div>
-       </div>
-     </div>
+    <!-- Loading skeleton -->
+    <div v-if="fetchingVariations && variations?.length === 0" class="variations__loading">
+      <div class="variations__loading-skeleton">
+        <div v-for="i in 6" :key="i" class="variations__loading-item">
+          <div class="variations__loading-image"></div>
+          <div class="variations__loading-content">
+            <div class="variations__loading-title"></div>
+            <div class="variations__loading-text"></div>
+            <div class="variations__loading-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-     <VariationsDefault
-       v-else-if="isSmallScreen || (!isSmallScreen && !isTableView)"
-       :variations="variations || []"
-       :fetching="fetchingVariations"
-       :page-number="pageNumber"
-       :pages-count="pagesCount"
-       @change-page="changePage"
-     />
+    <VariationsDefault
+      v-else-if="isSmallScreen || (!isSmallScreen && !isTableView)"
+      :variations="variations || []"
+      :fetching="fetchingVariations"
+      :page-number="pageNumber"
+      :pages-count="pagesCount"
+      @change-page="changePage"
+    />
 
-     <VariationsTable
-       v-else
-       :variations="variations || []"
-       :sort="sort"
-       :fetching="fetchingVariations"
-       :page-number="pageNumber"
-       :pages-count="pagesCount"
-       @apply-sorting="applySorting"
-       @change-page="changePage"
-     />
+    <VariationsTable
+      v-else
+      :variations="variations || []"
+      :sort="sort"
+      :fetching="fetchingVariations"
+      :page-number="pageNumber"
+      :pages-count="pagesCount"
+      @apply-sorting="applySorting"
+      @change-page="changePage"
+    />
 
-     <VcEmptyView
-       v-if="variations?.length === 0 && !fetchingVariations"
-       :text="$t('shared.catalog.product_details.variations.no_results')"
-       icon="outline-stock"
-     />
+    <VcEmptyView
+      v-if="variations?.length === 0 && !fetchingVariations"
+      :text="$t('shared.catalog.product_details.variations.no_results')"
+      icon="outline-stock"
+    />
   </VcWidget>
 </template>
 
@@ -112,7 +112,7 @@ interface IEmits {
   (event: "changePage", pageNumber: number): void;
   (event: "showFilters"): void;
   (event: "resetFilters"): void;
-  (event: "applyFilters", value: ProductsFiltersType): void
+  (event: "applyFilters", value: ProductsFiltersType): void;
 }
 
 interface IProps {
@@ -158,15 +158,14 @@ function changePage(page: number): void {
   emit("changePage", page);
 }
 
-function applyFiltersOnly(newFilters: SearchProductFilterResult[]){
-
+function applyFiltersOnly(newFilters: SearchProductFilterResult[]) {
   emit("applyFilters", {
     ...props.productsFilters,
     filters: newFilters,
     facets: props.productsFilters?.facets || [],
     inStock: props.productsFilters?.inStock || false,
     purchasedBefore: props.productsFilters?.purchasedBefore || false,
-    branches: props.productsFilters?.branches || []
+    branches: props.productsFilters?.branches || [],
   });
 }
 
