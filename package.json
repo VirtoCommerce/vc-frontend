@@ -128,6 +128,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-sonarjs": "^3.0.4",
     "eslint-plugin-sort-export-all": "^2.1.0",
     "eslint-plugin-sort-exports": "^0.9.1",
