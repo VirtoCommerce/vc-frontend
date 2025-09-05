@@ -1,6 +1,14 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const MODEL_NAME = "gemini-2.0-flash";
+const DEFAULT_MODEL_NAME = "gemini-2.0-flash";
+const DEFAULT_TEMPERATURE = 0.0;
+
+const modelName = process.env.FIX_LOCALES_MODEL_NAME || DEFAULT_MODEL_NAME;
+const temperature = Number.parseFloat(process.env.FIX_LOCALES_TEMPERATURE ?? "invalid");
+const finalTemperature = !Number.isNaN(temperature) ? temperature : DEFAULT_TEMPERATURE;
+
+console.log(`[TRANSLATOR_CONFIG] Using model: "${modelName}", temperature: ${finalTemperature}`);
+
 const SYSTEM_INSTRUCTION = `You are a professional translator specializing in e-commerce localization.
 Your translations must be short, concise, and use commonly accepted e-commerce terminology.
 Preserve all original formatting, punctuation, placeholders (e.g., @:key, i18n interpolation), and line breaks exactly as in the source strings.
@@ -8,10 +16,10 @@ Your output must strictly follow the format requested in the user prompt, withou
 
 const genAI = new GoogleGenerativeAI(process.env.APP_GEMINI_API_KEY as string);
 const model = genAI.getGenerativeModel({
-  model: MODEL_NAME,
+  model: modelName,
   systemInstruction: SYSTEM_INSTRUCTION,
   generationConfig: {
-    temperature: 0.0, // disable randomness
+    temperature: finalTemperature,
   },
 });
 
