@@ -16,7 +16,7 @@ export function useCategory() {
     try {
       const data = await getCategory(payload);
 
-      if (data.category) {
+      if (data) {
         category.value = {
           ...data.category,
           childCategories: data.childCategories.childCategories ?? [],
