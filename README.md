@@ -252,7 +252,7 @@ The generated graph will also be saved in the `artifacts` folder.
 ### Check for missing locale keys
 
 ```
-yarn check-locales -- path/to/locales_folder path/to/**/locales
+yarn check-locales --source en.json -- path/to/locales_folder path/to/**/locales
 ```
 The command is used to ensure that all locale files have consistent keys across different languages. This helps in maintaining uniformity and avoiding missing translations.
 
@@ -260,12 +260,17 @@ The script will output warnings for any missing keys in the locale files. Review
 
 ### Fix Missing Locales
 ```
-yarn fix-locales -- path/to/locales_folder path/to/\*\*/locales
+yarn fix-locales --source en.json -- path/to/locales_folder path/to/**/locales
 ```
 This command can be run locally to automatically fix missing translations in locale files by using AI translation. It analyzes all locale files, identifies missing keys, and translates the missing content from the source language to the target language and updates locale files accordingly. 
 
 > [!IMPORTANT]
 > This command requires the `APP_GEMINI_API_KEY` environment variable to be set. You can obtain this API key from the [Google AI Studio](https://aistudio.google.com/app/apikey) website.
+
+You can also override the default translation model, temperature, and inter-file request delay via environment variables:
+- `FIX_LOCALES_MODEL_NAME` (default: "gemini-2.0-flash")
+- `FIX_LOCALES_TEMPERATURE` (default: 0.0)
+- `FIX_LOCALES_DELAY_MS` (default: 4000)
 
 > [!CAUTION]
 > This is an experimental feature and may not work as expected.
