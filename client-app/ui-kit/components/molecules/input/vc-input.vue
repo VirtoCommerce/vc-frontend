@@ -112,7 +112,7 @@ export interface IProps {
   center?: boolean;
   truncate?: boolean;
   type?: "text" | "password" | "number" | "email" | "search" | "date";
-  size?: "xs" | "sm" | "md" | "auto";
+  size?: VcInputSizeType;
   clearable?: boolean;
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;

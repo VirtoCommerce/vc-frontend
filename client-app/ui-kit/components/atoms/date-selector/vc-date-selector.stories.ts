@@ -1,6 +1,8 @@
 import { VcDateSelector } from "..";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
+const SIZES = ["xs", "sm", "md", "auto"];
+
 export default {
   title: "Components/Atoms/VcDateSelector",
   component: VcDateSelector,
@@ -12,6 +14,16 @@ export default {
     disabled: {
       control: "boolean",
       table: { type: { summary: "boolean" } },
+    },
+    size: {
+      control: "radio",
+      options: SIZES,
+      type: { name: "string", required: false },
+      table: {
+        type: {
+          summary: SIZES.join(" | "),
+        },
+      },
     },
     // deprecated props (kept for documentation)
     isRequired: {
@@ -48,6 +60,7 @@ export default {
     modelValue: undefined,
     required: false,
     disabled: false,
+    size: "md",
     min: undefined,
     max: undefined,
     errorMessage: "",

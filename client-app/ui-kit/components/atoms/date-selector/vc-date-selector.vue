@@ -10,7 +10,7 @@
     :max="max"
     :error="!!errorMessage"
     :message="errorMessage"
-    size="md"
+    :size="size"
   >
     <template #append="{ focusInput }">
       <VcButton
@@ -50,6 +50,7 @@ interface IProps {
   disabled?: boolean;
   modelValue?: string;
   errorMessage?: string;
+  size?: VcInputSizeType;
   min?: string;
   max?: string;
 }
