@@ -208,7 +208,7 @@ const productId = toRef(props, "productId");
 const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
 
 const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
-const { fetchProductConfiguration, configuration } = useConfigurableProduct(productId.value);
+const { fetchProductConfiguration, configuration } = useConfigurableProduct(productId);
 const {
   fetchingProducts: fetchingVariations,
   products: variations,

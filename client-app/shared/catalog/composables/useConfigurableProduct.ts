@@ -1,5 +1,5 @@
 import { provideApolloClient, useMutation } from "@vue/apollo-composable";
-import { ref, readonly, computed } from "vue";
+import { ref, readonly, computed, unref } from "vue";
 import { useI18n } from "vue-i18n";
 import { apolloClient, getConfigurationItems, getProductConfiguration } from "@/core/api/graphql";
 import { ChangeCartConfiguredItemDocument, CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
@@ -19,7 +19,7 @@ import type {
   CreateConfiguredLineItemMutation,
   ShortCartFragment,
 } from "@/core/api/graphql/types";
-import type { DeepReadonly } from "vue";
+import type { DeepReadonly, MaybeRef } from "vue";
 
 type SectionValueType = Omit<CartConfigurationItemType, "id">;
 
@@ -49,7 +49,7 @@ provideApolloClient(apolloClient);
  * @returns {Readonly<ComputedRef<boolean>>} isConfigurationChanged - Readonly computed ref indicating if the configuration has changed.
  * @returns {Readonly<ComputedRef<Map<string, string>>>} validationErrors - Readonly computed ref of the validation errors.
  */
-function _useConfigurableProduct(configurableProductId: string) {
+function _useConfigurableProduct(configurableProductId: MaybeRef<string | undefined>) {
   const fetching = ref(false);
   const creating = ref(false);
   const configuration = ref<ConfigurationSectionType[]>([]);
@@ -98,7 +98,11 @@ function _useConfigurableProduct(configurableProductId: string) {
     const index = selectedConfigurationValue.value?.findIndex((section) => section.sectionId === payload.sectionId);
     if (index !== -1) {
       const newValue = [...selectedConfigurationValue.value];
-      isEmptyValue(payload.sectionId, payload) ? newValue.splice(index, 1) : newValue.splice(index, 1, payload);
+      if (isEmptyValue(payload.sectionId, payload)) {
+        newValue.splice(index, 1);
+      } else {
+        newValue.splice(index, 1, payload);
+      }
       selectedConfigurationValue.value = newValue;
     } else {
       selectedConfigurationValue.value = [...selectedConfigurationValue.value, payload];
@@ -121,6 +125,7 @@ function _useConfigurableProduct(configurableProductId: string) {
       case CONFIGURABLE_SECTION_TYPES.file:
         return toCSV(section.files?.map((file) => file.name) ?? []);
       default:
+        return undefined;
     }
   }
 
@@ -208,7 +213,12 @@ function _useConfigurableProduct(configurableProductId: string) {
     reset();
     fetching.value = true;
     try {
-      const data = await getProductConfiguration(configurableProductId);
+      const id = unref(configurableProductId);
+      if (!id) {
+        configuration.value = [];
+        return;
+      }
+      const data = await getProductConfiguration(id);
       configuration.value = (data?.configurationSections as ConfigurationSectionType[]) ?? [];
 
       const preselectedValues = await getPreselectedValues();
@@ -234,7 +244,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     try {
       const result = await batchedCreateConfiguredLineItem({
         command: {
-          configurableProductId,
+          configurableProductId: unref(configurableProductId) as string,
           configurationSections: selectedConfigurationInput.value,
           cultureName,
           currencyCode,
@@ -396,4 +406,6 @@ function _useConfigurableProduct(configurableProductId: string) {
   };
 }
 
-export const useConfigurableProduct = createSharedComposableByArgs(_useConfigurableProduct);
+export const useConfigurableProduct = createSharedComposableByArgs(_useConfigurableProduct, (args) =>
+  String(unref(args[0]) ?? ""),
+);
