@@ -111,7 +111,7 @@ export interface IProps {
   maxlength?: string | number;
   center?: boolean;
   truncate?: boolean;
-  type?: "text" | "password" | "number" | "email" | "search";
+  type?: "text" | "password" | "number" | "email" | "search" | "date";
   size?: "xs" | "sm" | "md" | "auto";
   clearable?: boolean;
   browserTooltip?: "enabled" | "disabled";
@@ -120,6 +120,8 @@ export interface IProps {
   aria?: Record<string, string | number | null>;
   disableAutocomplete?: boolean;
 }
+
+const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 defineOptions({
   inheritAttrs: false,
@@ -164,8 +166,8 @@ const model = defineModel<T>({
 
 const _size = computed(() => props.size);
 
-const minValue = computed(() => (props.type === "number" ? props.min : undefined));
-const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
+const minValue = computed(() => (LIMITED_TYPES.includes(props.type) ? props.min : undefined));
+const maxValue = computed(() => (LIMITED_TYPES.includes(props.type) ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
 
 const isPasswordVisible = ref<boolean>(false);
