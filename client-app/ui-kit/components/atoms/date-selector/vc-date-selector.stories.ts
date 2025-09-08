@@ -25,7 +25,19 @@ export default {
         },
       },
     },
-    // deprecated props (kept for documentation)
+    min: {
+      control: "date",
+      table: { type: { summary: "string" } },
+    },
+    max: {
+      control: "date",
+      table: { type: { summary: "string" } },
+    },
+    errorMessage: {
+      control: "text",
+      table: { type: { summary: "string" } },
+    },
+    // deprecated props
     isRequired: {
       control: false,
       description: "DEPRECATED: use `required` instead",
@@ -41,18 +53,6 @@ export default {
         category: "Deprecated",
         type: { summary: "boolean" },
       },
-    },
-    min: {
-      control: "date",
-      table: { type: { summary: "string" } },
-    },
-    max: {
-      control: "date",
-      table: { type: { summary: "string" } },
-    },
-    errorMessage: {
-      control: "text",
-      table: { type: { summary: "string" } },
     },
   },
   args: {
