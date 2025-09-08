@@ -1,6 +1,5 @@
 <template>
   <VcInput
-    :id="componentId"
     v-model="dateOnly"
     :label="label"
     :name="name"
@@ -12,14 +11,23 @@
     :error="!!errorMessage"
     :message="errorMessage"
     size="md"
-  />
+  >
+    <template #append="{ focusInput }">
+      <VcButton
+        type="button"
+        variant="no-background"
+        icon="calendar"
+        :disabled="disabledComputed"
+        @click.stop="openCalendar(focusInput)"
+      />
+    </template>
+  </VcInput>
 </template>
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
-import { useComponentId } from "@/ui-kit/composables";
 import { Logger } from "@/core/utilities/logger";
-import { computed } from "vue";
+import { computed, getCurrentInstance } from "vue";
 
 interface IEmits {
   (e: "update:modelValue", value: string | undefined): void;
@@ -49,19 +57,35 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
-const componentId = useComponentId("input");
 const dateOnly = useVModel(props, "modelValue", emit);
 
 const requiredComputed = computed(() => props.required ?? props.isRequired);
 const disabledComputed = computed(() => props.disabled ?? props.isDisabled);
 
 if (import.meta.env.DEV) {
-  if (props.isRequired !== undefined) {
+  const vnodeProps = getCurrentInstance()?.vnode.props ?? {};
+
+  if ("isRequired" in vnodeProps) {
     Logger.warn("VcDateSelector: 'isRequired' prop is deprecated, use 'required' instead.");
   }
 
-  if (props.isDisabled !== undefined) {
+  if ("isDisabled" in vnodeProps) {
     Logger.warn("VcDateSelector: 'isDisabled' prop is deprecated, use 'disabled' instead.");
+  }
+}
+
+function openCalendar(focusInput: () => void): void {
+  focusInput();
+  const el = document.activeElement as HTMLInputElement | null;
+
+  if (!el || el.type !== "date") {
+    return;
+  }
+
+  if (typeof (el as any).showPicker === "function") {
+    (el as any).showPicker();
+  } else {
+    el.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   }
 }
 </script>

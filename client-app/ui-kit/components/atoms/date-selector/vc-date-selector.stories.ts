@@ -13,6 +13,23 @@ export default {
       control: "boolean",
       table: { type: { summary: "boolean" } },
     },
+    // deprecated props (kept for documentation)
+    isRequired: {
+      control: false,
+      description: "DEPRECATED: use `required` instead",
+      table: {
+        category: "Deprecated",
+        type: { summary: "boolean" },
+      },
+    },
+    isDisabled: {
+      control: false,
+      description: "DEPRECATED: use `disabled` instead",
+      table: {
+        category: "Deprecated",
+        type: { summary: "boolean" },
+      },
+    },
     min: {
       control: "date",
       table: { type: { summary: "string" } },
@@ -56,8 +73,8 @@ Disabled.args = {
 
 export const WithMinMax = Template.bind({});
 WithMinMax.args = {
-  min: new Date(Date.now() - 86_400_000).toISOString().slice(0, 10),
-  max: new Date(Date.now() + 86_400_000).toISOString().slice(0, 10),
+  min: "2025-09-01",
+  max: "2025-09-20",
 };
 
 export const ErrorState = Template.bind({});

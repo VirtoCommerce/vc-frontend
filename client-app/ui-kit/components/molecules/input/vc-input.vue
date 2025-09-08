@@ -44,7 +44,7 @@
         class="vc-input__input"
         :data-test-id="testIdInput"
         @keydown="keyDown($event)"
-        @click.prevent.stop="inputClick()"
+        @click.stop="inputClick"
         @blur="$emit('blur', $event)"
         @focus="$emit('focus', $event)"
       />
@@ -182,8 +182,10 @@ function focusInput() {
   if (inputElement.value) {
     inputElement.value.focus();
     setTimeout(() => {
-      const len = inputElement.value?.value.length ?? 0;
-      inputElement.value?.setSelectionRange(len, len);
+      if (inputElement.value?.type !== "date") {
+        const len = inputElement.value?.value.length ?? 0;
+        inputElement.value?.setSelectionRange(len, len);
+      }
     }, 0);
   }
 }
@@ -318,10 +320,14 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__input {
-    @apply relative m-px px-2 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
+    @apply relative m-px px-2 bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none;
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;
+    }
+
+    &::-webkit-calendar-picker-indicator {
+      @apply hidden;
     }
 
     &:autofill {
