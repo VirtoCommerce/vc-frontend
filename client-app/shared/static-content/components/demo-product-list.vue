@@ -8,10 +8,11 @@
       <template v-for="(item, index) in products" :key="index">
         <div v-if="item.product" class="flex w-48 flex-col">
           <VcImage
-                   :src="item.product.imgSrc"
-                   :alt="item.product.name"
-                   size-suffix="md"
-                   class="size-full select-none space-x-4 rounded object-cover object-center" />
+            :src="item.product.imgSrc"
+            :alt="item.product.name"
+            size-suffix="md"
+            class="size-full select-none space-x-4 rounded object-cover object-center"
+          />
           <div class="flex flex-row space-x-4">
             <div class="grow truncate">{{ item.product.name }}</div>
             <div class="whitespace-nowrap">{{ item.product.prices[0].list.formattedAmount }}</div>

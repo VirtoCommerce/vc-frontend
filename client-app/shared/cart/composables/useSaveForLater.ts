@@ -80,7 +80,7 @@ function _useSavedForLater() {
   async function getSavedForLater() {
     try {
       savedForLaterList.value = await getSavedForLaterQuery();
-    } catch (err) { 
+    } catch (err) {
       Logger.error(`useSavedForLater.${getSavedForLater.name}`, err);
     }
   }

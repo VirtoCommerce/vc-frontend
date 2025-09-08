@@ -54,6 +54,9 @@ watch(headerHeight, (value) => {
 const { isAuthenticated } = useUser();
 
 const isMegamenuShown = computed(() => {
-  return desktopMenuMode.value === DESKTOP_MENU_MODES.horizontal && (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed)
-})
+  return (
+    desktopMenuMode.value === DESKTOP_MENU_MODES.horizontal &&
+    (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed)
+  );
+});
 </script>

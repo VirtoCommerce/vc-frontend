@@ -1,9 +1,13 @@
 <template>
   <VcContainer>
     <VcWidget
-              size="lg"
-              :class="background"
-              :style="{ backgroundColor: !background ? widgetBackground?.color : null, backgroundImage: `url(${widgetBackground?.image})` }">
+      size="lg"
+      :class="background"
+      :style="{
+        backgroundColor: !background ? widgetBackground?.color : null,
+        backgroundImage: `url(${widgetBackground?.image})`,
+      }"
+    >
       <template v-if="title" #header>
         <VcTypography tag="h3">
           <span :style="{ color: title?.color }">{{ title?.text }}</span>
@@ -25,10 +29,11 @@
           </VcProductVendor>
 
           <VcProductPrice
-                          v-if="item.hasVariations"
-                          with-from-label
-                          :actual-price="item.minVariationPrice?.actual"
-                          :list-price="item.minVariationPrice?.list" />
+            v-if="item.hasVariations"
+            with-from-label
+            :actual-price="item.minVariationPrice?.actual"
+            :list-price="item.minVariationPrice?.list"
+          />
 
           <VcProductPrice v-else :actual-price="item.price.actual" :list-price="item.price.list" />
         </VcProductCard>
