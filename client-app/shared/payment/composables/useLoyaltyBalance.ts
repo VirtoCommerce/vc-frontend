@@ -1,15 +1,18 @@
-import { computed, readonly } from "vue";
 import { useGetLoyaltyBalance } from "@/core/api/graphql";
-import type { MaybeRefOrGetter } from "@vueuse/core";
-import type { GetLoyaltyBalanceQueryVariables } from "@/core/api/graphql/types";
+import { Logger } from "@/core/utilities";
 
-export function useLoyaltyBalance(payload: MaybeRefOrGetter<GetLoyaltyBalanceQueryVariables>) {
-  const { loading, result, load, refetch } = useGetLoyaltyBalance(payload);
+export function useLoyaltyBalance() {
+  async function getLoyaltyBalance(orderId: string) {
+    try {
+      return await useGetLoyaltyBalance(orderId);
+    } catch (e) {
+      Logger.error(`${useLoyaltyBalance.name}.${getLoyaltyBalance.name}`, e);
+      throw e;
+    }
+  }
 
   return {
-    loading: readonly(loading),
-    currentBalance: computed(() => result.value?.loyaltyBalance?.currentBalance),
-    resultBalance: computed(() => result.value?.loyaltyBalance?.resultBalance),
-    loadLoyaltyBalance: async () => (await load()) || (await refetch()),
+    getLoyaltyBalance,
   };
 }
+

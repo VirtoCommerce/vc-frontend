@@ -1,32 +1,31 @@
 <template>
-  <div v-if="!loading && (!resultBalance || resultBalance < 0)">
-    <p class="font-bold text-danger md:text-left">
-      {{ $t("shared.payment.loyalty.errors.insufficient_points", { currentBalance: currentBalance }) }}   
-    </p>
+  <div v-if="!loading">
+    <p class="md:py-3 md:text-left">{{ $t("shared.payment.loyalty.text", { currentBalance: currentBalance }) }}</p>
 
-    <VcButton 
-      @click="fail">{{ $t("shared.payment.loyalty.okay_button") }}</VcButton>
-  </div>
+    <VcButton
+v-if="resultBalance && resultBalance >= 0" 
+      :loading="loading"
+      @click="onPay">
+      {{ $t("shared.payment.loyalty.pay_now_button") }}
+    </VcButton>
 
-  <div v-else-if="!loading && (resultBalance && resultBalance > 0)">
-    <p class="md:py-3 md:text-left">{{ $t("shared.payment.loyalty.text", { currentBalance: currentBalance, resultBalance: resultBalance }) }}</p>
-    <VcButton 
-      @click="onPay"
-      :loading="paymentLoading"
-      class="flex-1 md:order-first md:flex-none"
-      >{{ $t("shared.payment.loyalty.pay_now_button") }}</VcButton>
+    <VcButton
+v-else-if="resultBalance && resultBalance < 0"
+      @click="fail">
+      {{ $t("shared.payment.loyalty.okay_button") }}
+    </VcButton>
   </div>
 
   <!-- Loader -->
-  <VcLoaderWithText v-else-if="loading" />
+  <VcLoaderWithText v-else />
 </template>
 
 <script setup lang="ts">
 
 import { onMounted, ref } from "vue";
 import { authorizePayment } from "@/core/api/graphql";
-import { useLoyaltyBalance } from "@/shared/payment";
 import { Logger } from "@/core/utilities";
+import { useLoyaltyBalance } from "@/shared/payment";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -38,13 +37,15 @@ interface IEmits {
   (event: "fail", message?: string | null): void;
 }
 
-const paymentLoading = ref(false);
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
-const { loading, currentBalance, resultBalance, loadLoyaltyBalance } = useLoyaltyBalance({ orderId: props.order.id });
+const loading = ref(false);
+const resultBalance = ref<number>();
+const currentBalance = ref<number>();
+const { getLoyaltyBalance } = useLoyaltyBalance();
 
 async function makePayment() {
-  paymentLoading.value = true;
+  loading.value = true;
 
   const {
     isSuccess,
@@ -54,7 +55,7 @@ async function makePayment() {
     paymentId: props.order.inPayments[0].id,
   });
 
-  paymentLoading.value = false;
+  loading.value = false;
 
   if (isSuccess) {
     emit('success')
@@ -65,7 +66,13 @@ async function makePayment() {
 
 onMounted(async () => {
   try {
-    await loadLoyaltyBalance();
+    loading.value = true;
+
+    var loyaltyBalanceResult = await getLoyaltyBalance(props.order.id);
+    currentBalance.value = loyaltyBalanceResult?.currentBalance;
+    resultBalance.value = loyaltyBalanceResult?.resultBalance;
+
+    loading.value = false;
   } catch (e) {
     Logger.error(onMounted.name, e);
   }
