@@ -49,7 +49,7 @@ provideApolloClient(apolloClient);
  * @returns {Readonly<ComputedRef<boolean>>} isConfigurationChanged - Readonly computed ref indicating if the configuration has changed.
  * @returns {Readonly<ComputedRef<Map<string, string>>>} validationErrors - Readonly computed ref of the validation errors.
  */
-function _useConfigurableProduct(configurableProductId: MaybeRef<string | undefined>) {
+function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
   const fetching = ref(false);
   const creating = ref(false);
   const configuration = ref<ConfigurationSectionType[]>([]);
@@ -98,11 +98,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string | undefi
     const index = selectedConfigurationValue.value?.findIndex((section) => section.sectionId === payload.sectionId);
     if (index !== -1) {
       const newValue = [...selectedConfigurationValue.value];
-      if (isEmptyValue(payload.sectionId, payload)) {
-        newValue.splice(index, 1);
-      } else {
-        newValue.splice(index, 1, payload);
-      }
+      isEmptyValue(payload.sectionId, payload) ? newValue.splice(index, 1) : newValue.splice(index, 1, payload);
       selectedConfigurationValue.value = newValue;
     } else {
       selectedConfigurationValue.value = [...selectedConfigurationValue.value, payload];
@@ -214,10 +210,6 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string | undefi
     fetching.value = true;
     try {
       const id = unref(configurableProductId);
-      if (!id) {
-        configuration.value = [];
-        return;
-      }
       const data = await getProductConfiguration(id);
       configuration.value = (data?.configurationSections as ConfigurationSectionType[]) ?? [];
 
@@ -244,7 +236,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string | undefi
     try {
       const result = await batchedCreateConfiguredLineItem({
         command: {
-          configurableProductId: unref(configurableProductId) as string,
+          configurableProductId: unref(configurableProductId),
           configurationSections: selectedConfigurationInput.value,
           cultureName,
           currencyCode,
@@ -406,6 +398,4 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string | undefi
   };
 }
 
-export const useConfigurableProduct = createSharedComposableByArgs(_useConfigurableProduct, (args) =>
-  String(unref(args[0]) ?? ""),
-);
+export const useConfigurableProduct = createSharedComposableByArgs(_useConfigurableProduct, (args) => unref(args[0]));
