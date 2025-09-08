@@ -209,8 +209,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     reset();
     fetching.value = true;
     try {
-      const id = unref(configurableProductId);
-      const data = await getProductConfiguration(id);
+      const data = await getProductConfiguration(unref(configurableProductId));
       configuration.value = (data?.configurationSections as ConfigurationSectionType[]) ?? [];
 
       const preselectedValues = await getPreselectedValues();
