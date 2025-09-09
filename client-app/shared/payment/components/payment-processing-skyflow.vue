@@ -7,7 +7,7 @@
         :items="creditCards"
         size="auto"
         item-size="lg"
-        class="lg:w-2/5"
+        class="mb-4 lg:w-2/5"
         @change="(value) => selectSkyflowCard(value)"
       >
         <template #placeholder>
@@ -42,9 +42,10 @@
       </VcSelect>
 
       <div v-show="!addNewCardSelected">
-        <div v-if="isSavedCardCvvRequired && selectedSkyflowCard" class="-ml-1 mt-4 h-20">
-          <div v-show="cvvCollectorStatus.ready" ref="cvvOnlyContainer"></div>
-          <div v-if="!cvvCollectorStatus.ready" class="ml-1">
+        <div v-if="isSavedCardCvvRequired && selectedSkyflowCard">
+          <div v-show="cvvCollectorStatus.ready" ref="cvvOnlyContainer" class="-mx-1"></div>
+
+          <div v-if="!cvvCollectorStatus.ready" class="ms-1 h-20">
             <VcLoaderWithText />
           </div>
         </div>
@@ -423,11 +424,18 @@ async function initCvvForm() {
 
   const collectStylesOptions = {
     inputStyles: {
-      base: baseInputStyles,
+      base: {
+        ...baseInputStyles,
+        width: "6rem",
+        margin: "0 0.25rem",
+      },
       global,
     },
     labelStyles: {
-      base: baseLabelStyles,
+      base: {
+        ...baseLabelStyles,
+        margin: "0 0.25rem",
+      },
       requiredAsterisk: {
         color: errorColor,
       },
