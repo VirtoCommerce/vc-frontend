@@ -103,5 +103,12 @@ query GetProduct(
       permalink
       brandPropertyName
     }
+    pickupLocations {
+      name
+      address
+      shipmentType
+      shipmentHours
+      availableQuantity
+    }
   }
 }
