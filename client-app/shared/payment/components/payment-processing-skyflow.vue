@@ -63,11 +63,9 @@
     </template>
 
     <div v-show="(newCardFormInitialized && !skyflowCards?.length) || addNewCardSelected">
-      <div class="flex flex-col xl:flex-row">
-        <div ref="cardContainer" class="-mx-1 w-full max-w-2xl"></div>
-      </div>
+      <div ref="cardContainer" class="-mx-1 w-full max-w-2xl"></div>
 
-      <div class="mt-6">
+      <div class="mt-6 flex">
         <VcCheckbox v-model="saveCreditCard">
           {{ $t("common.labels.save_card_for_future_payments") }}
         </VcCheckbox>
@@ -281,6 +279,7 @@ async function initNewCardForm(): Promise<void> {
         gap: "24px",
         margin: "4px 0",
         padding: "0 4px",
+        flexDirection: "column",
       },
     },
     errorTextStyles: {
@@ -316,7 +315,7 @@ async function initNewCardForm(): Promise<void> {
     labelStyles: {
       base: baseLabelStyles,
       requiredAsterisk: {
-        color: errorColor ?? "red",
+        color: errorColor,
       },
     },
   };
@@ -434,12 +433,12 @@ async function initCvvForm() {
         ...baseLabelStyles,
       },
       requiredAsterisk: {
-        color: errorColor ?? "red",
+        color: errorColor,
       },
       global,
     },
     errorTextStyles: {
-      base: baseErrorStyles,
+      base: { ...baseErrorStyles },
       global,
     },
   };
