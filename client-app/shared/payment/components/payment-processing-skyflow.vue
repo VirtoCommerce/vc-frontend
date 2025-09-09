@@ -64,15 +64,13 @@
 
     <div v-show="(newCardFormInitialized && !skyflowCards?.length) || addNewCardSelected">
       <div class="flex flex-col xl:flex-row">
-        <div ref="cardContainer" class="md:w-2/3"></div>
+        <div ref="cardContainer" class="-mx-1 w-full max-w-2xl"></div>
       </div>
 
-      <div class="mt-6 flex items-center">
-        <div class="shrink">
-          <VcCheckbox v-model="saveCreditCard">
-            {{ $t("common.labels.save_card_for_future_payments") }}
-          </VcCheckbox>
-        </div>
+      <div class="mt-6">
+        <VcCheckbox v-model="saveCreditCard">
+          {{ $t("common.labels.save_card_for_future_payments") }}
+        </VcCheckbox>
       </div>
 
       <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
@@ -227,6 +225,7 @@ const baseErrorStyles = {
   fontSize: "0.625rem",
   color: globalStyles.errorColor,
   padding: "0 4px",
+  minHeight: "0.75rem",
 };
 // end styles
 
