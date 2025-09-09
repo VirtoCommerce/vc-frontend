@@ -164,7 +164,11 @@ export default async () => {
   void initModuleBackInStock(router, i18n);
   void initCustomerReviews(i18n);
   void initializePurchaseRequests(router, i18n);
-  void initializeGoogleAnalytics();
+  void initializeGoogleAnalytics({
+    extendConfig: {
+      language: currentLanguage.value.cultureName,
+    },
+  });
   void initializeHotjar();
   void initNews(router, i18n);
 
