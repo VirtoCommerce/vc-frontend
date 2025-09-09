@@ -190,6 +190,7 @@ const globalStyles = {
   primaryColor: useCssVar("--color-primary-500").value || "#eb9016",
   errorColor: useCssVar("--color-danger-500").value || "#d71919",
   borderColor: useCssVar("--color-neutral-400").value || "#a3a3a3",
+  invalidBorder: `1px solid ${useCssVar("--color-danger-500").value || "#d71919"}`,
   backgroundColor: useCssVar("--color-additional-50").value || "#ffffff",
   borderRadius: vcInputRadius || defaultRadius || "0.5rem",
   focusBorder: "1px solid transparent",
@@ -301,6 +302,9 @@ async function initNewCardForm(): Promise<void> {
     inputStyles: {
       base: {
         ...baseInputStyles,
+      },
+      invalid: {
+        border: globalStyles.invalidBorder,
       },
       cardIcon: {
         position: "absolute",
