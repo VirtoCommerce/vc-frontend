@@ -216,6 +216,7 @@ const baseLabelStyles = {
   fontWeight: "700",
   lineHeight: "1.25rem",
   marginBottom: "0.125rem",
+  color: globalStyles.textColor,
 };
 
 const baseErrorStyles = {
