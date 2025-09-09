@@ -430,9 +430,7 @@ async function initCvvForm() {
       global,
     },
     labelStyles: {
-      base: {
-        ...baseLabelStyles,
-      },
+      base: baseLabelStyles,
       requiredAsterisk: {
         color: errorColor,
       },
