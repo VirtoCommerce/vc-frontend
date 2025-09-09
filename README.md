@@ -177,8 +177,9 @@ yarn -v
 `Yarn` should be of version **4.1.0** or greater, not 1.XX.
 
 ### Install dependencies
+Use `--immutable` flag to ensure that the dependencies are installed with the correct version.
 ```bash
-yarn install
+yarn install --immutable
 ```
 
 ### Build
