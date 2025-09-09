@@ -1,5 +1,5 @@
 <template>
-  <div ref="root">
+  <div>
     <template v-if="skyflowCards?.length">
       <VcSelect
         :model-value="selectedSkyflowCard"
@@ -137,7 +137,6 @@ const notifications = useNotifications();
 
 const loading = ref(false);
 const cardContainer = ref<HTMLElement | string>("");
-const root = ref(null);
 const cvvOnlyContainer = ref<HTMLElement | string>("");
 const saveCreditCard = ref(false);
 const selectedSkyflowCard = ref<{ cardNumber: string; cardExpiration?: string; skyflowId: string }>();
@@ -178,30 +177,43 @@ let skyflowClient: Skyflow,
   cvvCollector: CollectContainer | null,
   cvvElement: CollectElement | null;
 
+const vcInputRadius = useCssVar("--vc-input-radius").value;
+const defaultRadius = useCssVar("--vc-radius").value;
+
 // styles for CVV only and for NEW CARD
 const globalStyles = {
   global: {
     "@use": 'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&display=swap")',
   },
   fontFamily: "Lato, sans-serif",
-  errorColor: useCssVar("--color-danger-500", root).value,
-  borderColor: useCssVar("--color-neutral-200", root).value,
-  focusOutlineColor: useCssVar("--color-primary-200", root).value,
+  errorColor: useCssVar("--color-danger-500").value,
+  borderColor: useCssVar("--color-neutral-400").value || "#d1d5db",
+  backgroundColor: useCssVar("--color-additional-50").value || "#f9fafb",
+  borderRadius: vcInputRadius || defaultRadius || "0.5rem",
+  focusBorder: "1px solid transparent",
+  focusShadow: `0 0 0 3px rgb(from ${useCssVar("--color-primary-500").value} r g b / 0.3)`,
+  textColor: useCssVar("--body-text-color").value || "#1f2937",
 };
 
 const baseInputStyles = {
   fontFamily: globalStyles.fontFamily,
   fontStyle: "normal",
   fontWeight: "400",
-  fontSize: "0.9375rem",
-  lineHeight: "1",
-  borderRadius: "3px",
+  fontSize: "1rem",
+  lineHeight: "1.25rem",
+  backgroundColor: globalStyles.backgroundColor,
+  borderRadius: globalStyles.borderRadius,
   border: `1px solid ${globalStyles.borderColor}`,
+  textSecurity: "none",
+  textIndent: "initial",
+  "&:focus": `border: ${globalStyles.focusBorder}; box-shadow: ${globalStyles.focusShadow}`,
+  padding: "0.75rem",
+  color: globalStyles.textColor,
 };
 
 const baseLabelStyles = {
   fontFamily: globalStyles.fontFamily,
-  fontSize: "0.9375rem",
+  fontSize: "1rem",
   fontWeight: "700",
   lineHeight: "1.25rem",
   marginBottom: "0.125rem",
@@ -286,28 +298,25 @@ async function initNewCardForm(): Promise<void> {
     inputStyles: {
       base: {
         ...baseInputStyles,
-        textSecurity: "none",
-        textIndent: "initial",
-        padding: "0.75rem",
       },
       cardIcon: {
         position: "absolute",
-        left: "8px",
-        bottom: "calc(50% - 12px)",
+        left: "12px",
+        bottom: "calc(50% - 14px)",
+        width: "28px",
+        height: "28px",
       },
-      global,
     },
     labelStyles: {
       base: baseLabelStyles,
       requiredAsterisk: {
         color: errorColor ?? "red",
       },
-      global,
     },
   };
 
   const cardNameStyles = cloneDeep(collectStylesOptions);
-  cardNameStyles.inputStyles.base.textIndent = "42px";
+  cardNameStyles.inputStyles.base.textIndent = "36px";
 
   const cardName = container.create(
     {
@@ -411,17 +420,12 @@ async function initCvvForm() {
     inputStyles: {
       base: {
         ...baseInputStyles,
-        textSecurity: "disc",
-        width: "6.2rem",
-        margin: "4px",
-        padding: "0.6rem",
       },
       global,
     },
     labelStyles: {
       base: {
         ...baseLabelStyles,
-        marginLeft: "4px",
       },
       requiredAsterisk: {
         color: errorColor ?? "red",
