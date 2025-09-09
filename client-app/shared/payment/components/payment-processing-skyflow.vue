@@ -187,16 +187,18 @@ const globalStyles = {
       'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&subset=cyrillic&display=swap")',
   },
   fontFamily: "Lato, sans-serif",
-  errorColor: useCssVar("--color-danger-500").value,
-  borderColor: useCssVar("--color-neutral-400").value || "#d1d5db",
-  backgroundColor: useCssVar("--color-additional-50").value || "#f9fafb",
+  primaryColor: useCssVar("--color-primary-500").value || "#eb9016",
+  errorColor: useCssVar("--color-danger-500").value || "#d71919",
+  borderColor: useCssVar("--color-neutral-400").value || "#a3a3a3",
+  backgroundColor: useCssVar("--color-additional-50").value || "#ffffff",
   borderRadius: vcInputRadius || defaultRadius || "0.5rem",
   focusBorder: "1px solid transparent",
-  focusShadow: `0 0 0 3px rgb(from ${useCssVar("--color-primary-500").value} r g b / 0.3)`,
+  focusShadow: `0 0 0 3px rgb(from ${useCssVar("--color-primary-500").value || "#eb9016"} r g b / 0.3)`,
   textColor: useCssVar("--body-text-color").value || "#1f2937",
 };
 
 const baseInputStyles = {
+  fontFamily: globalStyles.fontFamily,
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "1rem",
@@ -212,6 +214,7 @@ const baseInputStyles = {
 };
 
 const baseLabelStyles = {
+  fontFamily: globalStyles.fontFamily,
   fontSize: "1rem",
   fontWeight: "700",
   lineHeight: "1.25rem",
@@ -219,8 +222,10 @@ const baseLabelStyles = {
 };
 
 const baseErrorStyles = {
-  fontSize: "0.75rem",
-  color: globalStyles.errorColor ?? "red",
+  fontFamily: globalStyles.fontFamily,
+  fontSize: "0.625rem",
+  color: globalStyles.errorColor,
+  padding: "0 4px",
 };
 // end styles
 
