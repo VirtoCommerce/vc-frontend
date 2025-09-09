@@ -423,9 +423,7 @@ async function initCvvForm() {
 
   const collectStylesOptions = {
     inputStyles: {
-      base: {
-        ...baseInputStyles,
-      },
+      base: baseInputStyles,
       global,
     },
     labelStyles: {
@@ -436,7 +434,7 @@ async function initCvvForm() {
       global,
     },
     errorTextStyles: {
-      base: { ...baseErrorStyles },
+      base: baseErrorStyles,
       global,
     },
   };
