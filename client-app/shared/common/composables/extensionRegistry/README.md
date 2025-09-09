@@ -1,19 +1,20 @@
 # ExtensionPoint system — quick reference
 
-### Purpose  
-1. Plug extra Vue components into fixed UI slots without touching core code.  
+### Purpose
+
+1. Plug extra Vue components into fixed UI slots without touching core code.
 2. Add new extension points anywhere in the app quickly.
 
 ---
 
-## Core pieces  
+## Core pieces
 
-| Item | Description |
-|------|-------------|
-| **`useExtensionRegistry()`** | Global store + API |
-| **`ExtensionPoint`** | Placeholder component  to render registered extension; renders default slot for each unregistered entry  |
-| **`ExtensionPointList`** | Placeholder component to render multiple registered extensions; accepts optional `names` array; renders default slot for each unregistered entry |
-| **`$canRenderExtensionPoint`** | Global helper that evaluates `condition` |
+| Item                           | Description                                                                                                                                      |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **`useExtensionRegistry()`**   | Global store + API                                                                                                                               |
+| **`ExtensionPoint`**           | Placeholder component to render registered extension; renders default slot for each unregistered entry                                           |
+| **`ExtensionPointList`**       | Placeholder component to render multiple registered extensions; accepts optional `names` array; renders default slot for each unregistered entry |
+| **`$canRenderExtensionPoint`** | Global helper that evaluates `condition`                                                                                                         |
 
 ---
 
@@ -30,7 +31,7 @@
      ```ts
      export const EXTENSION_NAMES = merge({}, INITIAL_EXTENSION_NAMES, {
        myCategory: {
-         myExtension: 'my-extension',
+         myExtension: "my-extension",
        },
      });
      ```
@@ -47,21 +48,17 @@
 
 1. Import and register your extension:
    ```ts
-   import { useExtensionRegistry } from '@/shared/common/composables/useExtensionRegistry';
-   import { EXTENSION_NAMES } from '@/shared/common/constants/extensionPointsNames.ts';
+   import { useExtensionRegistry } from "@/shared/common/composables/useExtensionRegistry";
+   import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames.ts";
    const { register } = useExtensionRegistry();
-   register(
-     'productCard',
-     EXTENSION_NAMES.productCard.cardButton,
-     { component: MyComponent }
-   );
+   register("productCard", EXTENSION_NAMES.productCard.cardButton, { component: MyComponent });
    ```
 2. (Optional) Unregister on cleanup:
    ```ts
-   import { onUnmounted } from 'vue';
+   import { onUnmounted } from "vue";
    const { unregister } = useExtensionRegistry();
    onUnmounted(() => {
-     unregister('myCategory', 'myExtension');
+     unregister("myCategory", "myExtension");
    });
    ```
 3. Your registered components will then be automatically rendered at the corresponding extension points in the core app.
@@ -69,14 +66,11 @@
 > **Recommendation**
 >
 > For consistent extension identifiers and to avoid typos, import the `EXTENSION_NAMES` constant from `@/shared/common/constants/extensionPointsNames.ts` and use its properties:
+>
 > ```ts
-> import { EXTENSION_NAMES } from '@/shared/common/constants/extensionPointsNames.ts';
+> import { EXTENSION_NAMES } from "@/shared/common/constants/extensionPointsNames.ts";
 > const { register } = useExtensionRegistry();
-> register(
->   'productCard',
->   EXTENSION_NAMES.productCard.cardButton,
->   { component: MyComponent }
-> );
+> register("productCard", EXTENSION_NAMES.productCard.cardButton, { component: MyComponent });
 > ```
 
 > [!TIP]

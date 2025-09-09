@@ -170,8 +170,6 @@ const attrs = computed(() => {
 
   return attributes;
 });
-
-
 </script>
 
 <style lang="scss">

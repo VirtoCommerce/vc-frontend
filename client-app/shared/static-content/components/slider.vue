@@ -7,21 +7,24 @@
       <div v-if="subtitle" class="mb-7 text-center text-base">{{ subtitle }}</div>
       <div class="relative">
         <Swiper
-                :slides-per-view="1"
-                :space-between="1"
-                class="w-full"
-                :modules="modules"
-                :navigation="navigationOptions">
+          :slides-per-view="1"
+          :space-between="1"
+          class="w-full"
+          :modules="modules"
+          :navigation="navigationOptions"
+        >
           <SwiperSlide v-for="(item, index) in slides" :key="index" class="text-center">
             <component
-                       :is="item.url ? getLinkTag(item.url) : 'div'"
-                       class="vc-slider__image-wrap"
-                       v-bind="getLinkAttr(item)">
+              :is="item.url ? getLinkTag(item.url) : 'div'"
+              class="vc-slider__image-wrap"
+              v-bind="getLinkAttr(item)"
+            >
               <VcImage
-                       :src="item.image"
-                       :aria-label="item.title ?? $t('common.labels.slider_image')"
-                       :lazy="index > 0"
-                       class="vc-slider__image" />
+                :src="item.image"
+                :aria-label="item.title ?? $t('common.labels.slider_image')"
+                :lazy="index > 0"
+                class="vc-slider__image"
+              />
             </component>
             <div v-if="item.title" class="my-3 text-2xl font-bold uppercase">
               {{ item.title }}

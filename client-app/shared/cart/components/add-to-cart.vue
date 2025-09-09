@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
-import { computed, ref, toRef } from "vue";
+import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
@@ -104,11 +104,12 @@ const maxQty = computed(() =>
       : LINE_ITEM_QUANTITY_LIMIT,
   ),
 );
-const defaultQuantity =
+const defaultQuantity = computed(() =>
   themeContext.value.settings.product_quantity_control === "button"
     ? countInCart.value || minQty.value
-    : countInCart.value;
-const enteredQuantity = ref(!disabled.value ? defaultQuantity : undefined);
+    : countInCart.value,
+);
+const enteredQuantity = ref(!disabled.value ? defaultQuantity.value : undefined);
 
 function onInput(value: number): void {
   if (!Number.isFinite(value)) {
@@ -223,4 +224,11 @@ function onValidationUpdate(validation: { isValid: true } | { isValid: false; er
     errorMessage.value = undefined;
   }
 }
+
+watch(
+  () => product.value.id,
+  () => {
+    enteredQuantity.value = !disabled.value ? defaultQuantity.value : undefined;
+  },
+);
 </script>
