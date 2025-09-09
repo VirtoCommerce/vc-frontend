@@ -183,7 +183,8 @@ const defaultRadius = useCssVar("--vc-radius").value;
 // styles for CVV only and for NEW CARD
 const globalStyles = {
   global: {
-    "@use": 'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&display=swap")',
+    "@import":
+      'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&subset=cyrillic&display=swap")',
   },
   fontFamily: "Lato, sans-serif",
   errorColor: useCssVar("--color-danger-500").value,
@@ -196,7 +197,6 @@ const globalStyles = {
 };
 
 const baseInputStyles = {
-  fontFamily: globalStyles.fontFamily,
   fontStyle: "normal",
   fontWeight: "400",
   fontSize: "1rem",
@@ -212,7 +212,6 @@ const baseInputStyles = {
 };
 
 const baseLabelStyles = {
-  fontFamily: globalStyles.fontFamily,
   fontSize: "1rem",
   fontWeight: "700",
   lineHeight: "1.25rem",
@@ -220,7 +219,6 @@ const baseLabelStyles = {
 };
 
 const baseErrorStyles = {
-  fontFamily: globalStyles.fontFamily,
   fontSize: "0.75rem",
   color: globalStyles.errorColor ?? "red",
 };
