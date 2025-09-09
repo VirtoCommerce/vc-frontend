@@ -18,5 +18,5 @@ export type FacetItemType = {
   statistics?: {
     min?: number;
     max?: number;
-  }
+  };
 };

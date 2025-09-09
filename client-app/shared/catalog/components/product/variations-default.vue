@@ -20,17 +20,16 @@
           :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
           v-if="
             isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-            shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, variation, { forceProductAsVariation: true })
+            shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, variation, {
+              forceProductAsVariation: true,
+            })
           "
           :product="variation"
           is-text-shown
-          v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)" 
+          v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
         />
-        
-        <AddToCart 
-          v-else
-          :product="variation"
-        >
+
+        <AddToCart v-else :product="variation">
           <InStock
             :is-in-stock="variation.availabilityData.isInStock"
             :quantity="variation.availabilityData.availableQuantity"

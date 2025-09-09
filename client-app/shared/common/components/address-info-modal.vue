@@ -105,7 +105,7 @@ interface IProps {
 }
 
 // Workaround for VcTable
-const tableItems = [{ label: "" }]
+const tableItems = [{ label: "" }];
 
 const TRANSLATION_KEYS_ORIGIN = "pages.account.order_details.bopis";
 

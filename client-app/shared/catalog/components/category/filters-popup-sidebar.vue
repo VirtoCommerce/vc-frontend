@@ -129,7 +129,7 @@ const localFilters = ref<ProductsFiltersType>({
   facets: [],
   branches: [],
   inStock: false,
-  purchasedBefore: false
+  purchasedBefore: false,
 });
 
 const beforeChangeFilterState = ref<ProductsFiltersType>();
