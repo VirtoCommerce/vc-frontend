@@ -804,7 +804,7 @@
     "payment": {
       "bank_card_form": {
         "number_label": "Kartennummer",
-        "cardholder_name_label": "Name des Karteninhabers",
+        "cardholder_name_label": "Name des karteninhabers",
         "expiration_date_label": "Ablaufdatum",
         "expiration_date_placeholder": "MM / JJ",
         "month_label": "Monat",

@@ -803,15 +803,15 @@
     },
     "payment": {
       "bank_card_form": {
-        "number_label": "Card Number",
-        "cardholder_name_label": "Cardholder Name",
-        "expiration_date_label": "Expiration Date",
+        "number_label": "Card number",
+        "cardholder_name_label": "Cardholder name",
+        "expiration_date_label": "Expiration date",
         "expiration_date_placeholder": "MM / YY",
         "month_label": "Month",
         "month_placeholder": "MM",
         "year_label": "Year",
         "year_placeholder": "YY",
-        "security_code_label": "Security Code",
+        "security_code_label": "Security code",
         "expiration_date_placeholder_extended": "MM / YYYY",
         "errors": {
           "month": "有効な有効期限月を入力してください",
