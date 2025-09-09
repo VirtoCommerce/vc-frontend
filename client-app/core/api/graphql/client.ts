@@ -10,7 +10,9 @@ export const graphqlClient = new ApolloClient({
   ...options,
   link,
 
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    addTypename: false,
+  }),
 
   queryDeduplication: false,
 
