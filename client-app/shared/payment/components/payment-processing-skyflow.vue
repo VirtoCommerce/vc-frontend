@@ -429,6 +429,9 @@ async function initCvvForm() {
         width: "6rem",
         margin: "0 0.25rem",
       },
+      invalid: {
+        border: globalStyles.invalidBorder,
+      },
       global,
     },
     labelStyles: {
