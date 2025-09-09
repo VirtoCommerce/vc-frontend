@@ -280,7 +280,6 @@ async function initNewCardForm(): Promise<void> {
         gap: "24px",
         margin: "4px 0",
         padding: "0 4px",
-        flexDirection: "column",
       },
     },
     errorTextStyles: {
