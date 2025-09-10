@@ -251,22 +251,26 @@ The generated graph will also be saved in the `artifacts` folder.
 
 ## Localization
 ### Check for missing locale keys
-
 ```
-yarn check-locales -- path/to/locales_folder path/to/**/locales
+yarn check-locales --source en.json -- path/to/locales_folder path/to/**/locales
 ```
-The command is used to ensure that all locale files have consistent keys across different languages. This helps in maintaining uniformity and avoiding missing translations.
+The command checks for missing keys in locale files by comparing them against a single source-of-truth file (e.g., `en.json`), specified with the `--source` argument. This ensures that all other language files have the same keys as the source file, helping to maintain consistency and avoid missing translations.
 
 The script will output warnings for any missing keys in the locale files. Review these warnings to ensure all necessary translations are present. Also added to the CI pipeline.
 
 ### Fix Missing Locales
 ```
-yarn fix-locales -- path/to/locales_folder path/to/\*\*/locales
+yarn fix-locales --source en.json -- path/to/locales_folder path/to/**/locales
 ```
-This command can be run locally to automatically fix missing translations in locale files by using AI translation. It analyzes all locale files, identifies missing keys, and translates the missing content from the source language to the target language and updates locale files accordingly. 
+This command automatically fixes missing translations by comparing other locale files against a single source-of-truth file (e.g., `en.json`), specified with the `--source` argument. It identifies missing keys, uses an AI to translate them from the source language, and updates the files accordingly.
 
 > [!IMPORTANT]
 > This command requires the `APP_GEMINI_API_KEY` environment variable to be set. You can obtain this API key from the [Google AI Studio](https://aistudio.google.com/app/apikey) website.
+
+You can also override the default translation model, temperature, and inter-file request delay via environment variables:
+- `FIX_LOCALES_MODEL_NAME` (default: "gemini-2.0-flash")
+- `FIX_LOCALES_TEMPERATURE` (default: 0.0)
+- `FIX_LOCALES_DELAY_MS` (default: 4000)
 
 > [!CAUTION]
 > This is an experimental feature and may not work as expected.
