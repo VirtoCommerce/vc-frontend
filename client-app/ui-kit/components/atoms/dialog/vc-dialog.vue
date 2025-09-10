@@ -26,8 +26,8 @@ const props = withDefaults(defineProps<IProps>(), {
 
 <style lang="scss">
 .vc-dialog {
-  --props-width: v-bind(props.width);
-  --props-max-height: v-bind(props.maxHeight);
+  --props-width: v-bind(props.width || "unset");
+  --props-max-height: v-bind(props.maxHeight || "unset");
   --w: var(--props-width, var(--vc-dialog-width, 100%));
   --max-h: var(--props-max-height, var(--vc-dialog-max-height, 100%));
   --radius: var(--vc-dialog-radius, var(--vc-radius, 0.5rem));

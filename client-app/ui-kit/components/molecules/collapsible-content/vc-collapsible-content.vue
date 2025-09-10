@@ -68,7 +68,7 @@ watch(showAll, (value: boolean) => {
 
 <style lang="scss">
 .vc-collapsible-content {
-  --props-max-height: v-bind("props.maxHeight");
+  --props-max-height: v-bind(props.maxHeight || "unset");
   --max-height: var(--props-max-height, var(--vc-collapsible-content-max-height));
 
   &__wrapper {

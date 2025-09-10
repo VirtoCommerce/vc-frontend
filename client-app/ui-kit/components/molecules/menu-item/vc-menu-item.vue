@@ -136,7 +136,7 @@ onMounted(() => {
 
 <style lang="scss">
 .vc-menu-item {
-  --props-max-lines: v-bind(maxLines);
+  --props-max-lines: v-bind(maxLines || "unset");
   --max-lines: var(--props-max-lines, 2);
 
   $colors: primary, secondary, success, info, warning, danger, neutral;

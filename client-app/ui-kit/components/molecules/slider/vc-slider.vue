@@ -384,7 +384,7 @@ function getSliderStart(value1: number, value2: number): [number, number] {
   $hoverable: "";
   $clickable: "";
 
-  --props-cols-height: v-bind(colsHeight);
+  --props-cols-height: v-bind(colsHeight || "unset");
   --cols-height: var(--vc-slider-cols-height, var(--props-cols-height, 2rem));
   --handle-size: 1.125rem;
 

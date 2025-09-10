@@ -60,7 +60,7 @@ const props = withDefaults(defineProps<IProps>(), {
   $disabled: "";
   $dividers: "";
 
-  --props-max-height: v-bind(props.maxHeight);
+  --props-max-height: v-bind(props.maxHeight || "unset");
   --max-height: var(--vc-dropdown-menu-max-height, var(--props-max-height, 12rem));
   --radius: var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem));
 

@@ -34,8 +34,8 @@ const props = withDefaults(defineProps<IProps>(), {
 
 <style lang="scss">
 .vc-composite-shape {
-  --props-size: v-bind(props.size);
-  --props-icon-size: v-bind(props.iconSize);
+  --props-size: v-bind(props.size || "unset");
+  --props-icon-size: v-bind(props.iconSize || "unset");
 
   --size: var(--props-size, var(--vc-composite-shape-size, 15rem));
   --icon-size: var(--props-icon-size, var(--vc-composite-shape-icon-size, 26.5%));

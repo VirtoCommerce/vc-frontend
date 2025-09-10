@@ -90,8 +90,8 @@ function onInput() {
   $end: "";
   $checked: "";
 
-  --vc-props-color: v-bind(_color);
-  --vc-props-hover-color: v-bind(_hoverColor);
+  --vc-props-color: v-bind(_color || "unset");
+  --vc-props-hover-color: v-bind(_hoverColor || "unset");
 
   --color: var(--vc-props-color, var(--vc-tab-switch-color, theme("colors.primary.500")));
   --hover-color: var(--vc-props-hover-color, var(--vc-tab-switch-hover-color, theme("colors.accent.500")));

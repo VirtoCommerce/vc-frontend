@@ -47,7 +47,7 @@ watch(
 
 <style lang="scss">
 .vc-icon {
-  --props-color: v-bind(_color);
+  --props-color: v-bind(_color || "unset");
 
   --size: var(--vc-icon-size, 1.5rem);
   --color: var(--props-color, var(--vc-icon-color, currentColor));

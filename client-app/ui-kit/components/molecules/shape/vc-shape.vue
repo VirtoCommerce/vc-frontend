@@ -41,9 +41,9 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
 
 <style lang="scss">
 .vc-shape {
-  --props-size: v-bind(props.size);
-  --props-bg-color: v-bind(_bgColor);
-  --props-icon-color: v-bind(_iconColor);
+  --props-size: v-bind(props.size || "unset");
+  --props-bg-color: v-bind(_bgColor || "unset");
+  --props-icon-color: v-bind(_iconColor || "unset");
 
   --size: var(--props-size, var(--vc-shape-size, 2.5rem));
   --bg-color: var(--props-bg-color, var(--vc-shape-bg-color, theme("colors.secondary.500")));

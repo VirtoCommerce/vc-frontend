@@ -83,7 +83,7 @@ const image = computed(() => (props.type === "image" ? props.value : ""));
   $active: "";
   $unavailable: "";
 
-  --props-color: v-bind(color);
+  --props-color: v-bind(color || "unset");
   --color: var(--props-color, var(--vc-variant-picker-bg-color, theme("colors.additional.50")));
   --radius: var(--vc-variant-picker-radius, var(--vc-radius, 0.5rem));
   --strike-line-width: 2px;

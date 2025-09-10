@@ -45,7 +45,7 @@ withDefaults(defineProps<IProps>(), {
   $truncate: "";
   $square: "";
 
-  --props-max-width: v-bind(maxWidth);
+  --props-max-width: v-bind(maxWidth || "unset");
   --max-width: var(--props-max-width, var(--vc-badge-max-width, 100%));
   --radius: var(--vc-badge-radius, var(--vc-radius, 0.5rem));
 

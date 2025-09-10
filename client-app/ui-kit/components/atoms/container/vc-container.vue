@@ -40,8 +40,8 @@ const _bgColor = computed(() => getColorValue(props.bgColor));
 
 <style lang="scss">
 .vc-container {
-  --props-max-width: v-bind(props.maxWidth);
-  --props-bg-color: v-bind(_bgColor);
+  --props-max-width: v-bind(props.maxWidth || "unset");
+  --props-bg-color: v-bind(_bgColor || "unset");
 
   --max-width: var(--props-max-width, var(--vc-container-max-width, 87.75rem));
   --bg-color: var(--props-bg-color, var(--vc-container-bg-color, theme("colors.neutral.50")));

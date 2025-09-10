@@ -46,10 +46,10 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
   $horizontal: "";
   $disabled: "";
 
-  --props-track-color: v-bind(_trackColor);
+  --props-track-color: v-bind(_trackColor || "unset");
   --track-color: var(--vc-scrollbar-track-color, var(--props-track-color, theme("colors.neutral.100")));
 
-  --props-thumb-color: v-bind(_thumbColor);
+  --props-thumb-color: v-bind(_thumbColor || "unset");
   --thumb-color: var(--vc-scrollbar-thumb-color, var(--props-thumb-color, theme("colors.neutral.400")));
 
   overflow: unset;

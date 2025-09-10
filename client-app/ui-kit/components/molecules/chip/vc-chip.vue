@@ -74,7 +74,7 @@ const _iconColor = computed(() => (props.iconColor ? getColorValue(props.iconCol
 
 <style lang="scss">
 .vc-chip {
-  --props-icon-color: v-bind(_iconColor);
+  --props-icon-color: v-bind(_iconColor || "unset");
   --icon-color: var(--props-icon-color, var(--vc-chip-icon-color));
   --radius: var(--vc-chip-radius, var(--vc-radius, 0.5rem));
 
