@@ -18,7 +18,7 @@ function getAllKeys(obj: LocaleDataType, parentKey: string = ""): string[] {
   Object.keys(obj).forEach((key) => {
     const fullKey = parentKey ? `${parentKey}.${key}` : key;
     const value = obj[key];
-    if (typeof value === "object") {
+    if (typeof value === "object" && value != null) {
       keys = keys.concat(getAllKeys(value, fullKey));
     } else if (typeof value === "string") {
       keys.push(fullKey);
