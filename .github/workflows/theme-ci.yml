@@ -37,7 +37,7 @@ jobs:
       RELEASE_STATUS: 'false'
     outputs:
       artifactUrl: '${{ steps.artifactUrl.outputs.download_url }}'
-      # jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
+      jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
 
     steps:
 
