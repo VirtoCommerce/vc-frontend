@@ -803,7 +803,7 @@
     },
     "payment": {
       "bank_card_form": {
-        "number_label": "Card Number",
+        "number_label": "Card number",
         "cardholder_name_label": "Cardholder name",
         "expiration_date_label": "Expiration date",
         "expiration_date_placeholder": "MM / YY",

@@ -803,15 +803,15 @@
     },
     "payment": {
       "bank_card_form": {
-        "number_label": "Número do Cartão",
-        "cardholder_name_label": "Nome do Titular",
-        "expiration_date_label": "Data de Validade",
+        "number_label": "Número do cartão",
+        "cardholder_name_label": "Nome do titular",
+        "expiration_date_label": "Data de validade",
         "expiration_date_placeholder": "MM / AA",
         "month_label": "Mês",
         "month_placeholder": "MM",
         "year_label": "Ano",
         "year_placeholder": "AA",
-        "security_code_label": "Código de Segurança",
+        "security_code_label": "Código de segurança",
         "expiration_date_placeholder_extended": "MM/AAAA",
         "errors": {
           "month": "Por favor, forneça um mês de validade válido",

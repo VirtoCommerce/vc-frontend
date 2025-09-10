@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "2.30.0",
+  "version": "2.31.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -68,7 +68,7 @@
     "marked": "^13.0.3",
     "maska": "^2.1.11",
     "nouislider": "^15.8.1",
-    "skyflow-js": "^1.38.2",
+    "skyflow-js": "2.4.3",
     "swiper": "11.2.10",
     "tw-elements": "^1.1.0",
     "utility-types": "^3.11.0",
