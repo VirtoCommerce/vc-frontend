@@ -187,10 +187,12 @@ jobs:
           name: ${{ steps.image.outputs.prefix }}
           draft: false
           prerelease: false
-          body: ${{ steps.changelog.outputs.changelog }}
+          # body: ${{ steps.changelog.outputs.changelog }}
+          body: "[Comparable environment configuration](https://github.com/VirtoCommerce/vc-deploy-dev/releases/tag/v${{ steps.image.outputs.prefix }}_vc-frontend)"
           tag_name: ${{ steps.image.outputs.prefix }}
           files: artifacts/${{ steps.blobRelease.outputs.blobId }}
           target_commitish: ${{ github.ref_name }}
+          generate_release_notes: true
 
       - name: Set artifactUrl value
         id: artifactUrl
