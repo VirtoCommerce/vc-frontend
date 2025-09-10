@@ -175,15 +175,15 @@ jobs:
         id: artifactUrl
         run: |
           if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
-            # Only try to parse JSON if the output exists and is not empty
-            if [ -n "${{ steps.create_release.outputs.assets }}" ]; then
-              echo "download_url=${{ fromJSON(steps.create_release.outputs.assets)[0].browser_download_url }}" >> $GITHUB_OUTPUT
+            download_url=$(echo '${{ steps.create_release.outputs.assets }}' | jq -r '.[0].browser_download_url // empty')
+            if [ -n "$download_url" ]; then
+              echo "download_url=$download_url" >> $GITHUB_OUTPUT
             else
               echo "download_url=" >> $GITHUB_OUTPUT
             fi
           else
             echo "download_url=${{ steps.blobRelease.outputs.packageUrl }}" >> $GITHUB_OUTPUT
-          fi;
+          fi
 
       - name: Parse Jira Keys from All Commits
         uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
