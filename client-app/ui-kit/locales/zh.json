@@ -19,7 +19,9 @@
       "update_cart": "更新购物车"
     },
     "accessibility": {
-      "close_alert": "关闭提醒"
+      "close_alert": "关闭提醒",
+      "variant_picker_group": "商品变体选项",
+      "show_more_button": "查看更多 {count} 个选项"
     },
     "labels": {
       "not_available": "不可用",
@@ -97,9 +99,6 @@
     },
     "breadcrumbs": {
       "aria_label": "面包屑导航"
-    },
-    "variant_picker_group": {
-      "aria_label": "商品变体选项"
     }
   }
 }

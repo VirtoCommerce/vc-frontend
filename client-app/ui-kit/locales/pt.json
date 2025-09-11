@@ -19,7 +19,9 @@
       "update_cart": "Atualizar carrinho"
     },
     "accessibility": {
-      "close_alert": "Fechar alerta"
+      "close_alert": "Fechar alerta",
+      "variant_picker_group": "Opções de variantes",
+      "show_more_button": "Ver mais {count} opções"
     },
     "labels": {
       "not_available": "N/D",
@@ -97,9 +99,6 @@
     },
     "breadcrumbs": {
       "aria_label": "Navegação de trilha"
-    },
-    "variant_picker_group": {
-      "aria_label": "Opções de variantes"
     }
   }
 }

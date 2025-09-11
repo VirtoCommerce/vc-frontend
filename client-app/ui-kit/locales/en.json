@@ -19,7 +19,9 @@
       "update_cart": "Update cart"
     },
     "accessibility": {
-      "close_alert": "Close alert"
+      "close_alert": "Close alert",
+      "variant_picker_group": "Variant options",
+      "show_more_button": "See {count} more options"
     },
     "labels": {
       "not_available": "N/A",
@@ -97,9 +99,6 @@
     },
     "breadcrumbs": {
       "aria_label": "Breadcrumbs navigation"
-    },
-    "variant_picker_group": {
-      "aria_label": "Variant options"
     }
   }
 }

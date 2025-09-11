@@ -19,7 +19,9 @@
       "update_cart": "カートを更新"
     },
     "accessibility": {
-      "close_alert": "アラートを閉じる"
+      "close_alert": "アラートを閉じる",
+      "variant_picker_group": "バリアントの選択",
+      "show_more_button": "さらに {count} 件のオプションを表示"
     },
     "labels": {
       "not_available": "N/A",
@@ -97,9 +99,6 @@
     },
     "breadcrumbs": {
       "aria_label": "パンくずナビゲーション"
-    },
-    "variant_picker_group": {
-      "aria_label": "バリアントの選択"
     }
   }
 }

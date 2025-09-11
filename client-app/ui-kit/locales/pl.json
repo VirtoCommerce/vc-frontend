@@ -19,7 +19,9 @@
       "update_cart": "Zaktualizuj koszyk"
     },
     "accessibility": {
-      "close_alert": "Zamknij powiadomienie"
+      "close_alert": "Zamknij powiadomienie",
+      "variant_picker_group": "Warianty produktu",
+      "show_more_button": "Zobacz jeszcze {count} wariantów"
     },
     "labels": {
       "not_available": "N/D",
@@ -97,9 +99,6 @@
     },
     "breadcrumbs": {
       "aria_label": "Nawigacja okruszkowa"
-    },
-    "variant_picker_group": {
-      "aria_label": "Warianty produktu"
     }
   }
 }
