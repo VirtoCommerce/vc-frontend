@@ -5,12 +5,17 @@
     role="radiogroup"
     :aria-label="ariaLabelValue"
     tabindex="0"
-    @keydown="onKeydown"
+    @keydown.tab.prevent="navigateBy($event.shiftKey ? 'prev' : 'next', $event.target)"
+    @keydown.right.prevent="navigateBy('next', $event.target)"
+    @keydown.down.prevent="navigateBy('next', $event.target)"
+    @keydown.left.prevent="navigateBy('prev', $event.target)"
+    @keydown.up.prevent="navigateBy('prev', $event.target)"
   >
     <slot />
 
     <div v-if="truncate" v-show="isButtonVisible" ref="moreBtn" class="vc-variant-picker-group__wrapper">
       <button
+        ref="moreBtnEl"
         type="button"
         class="vc-variant-picker-group__button"
         :aria-expanded="ariaExpandedValue"
@@ -52,6 +57,7 @@ const { t } = useI18n();
 const ariaLabelValue = computed(() => props.ariaLabel ?? t("ui_kit.variant_picker_group.aria_label"));
 const containerRef = ref<HTMLElement | null>(null);
 const moreBtn = ref<HTMLElement | null>(null);
+const moreBtnEl = ref<HTMLButtonElement | null>(null);
 
 const expanded = ref(false);
 const showButton = ref(false);
@@ -279,52 +285,82 @@ function findCurrentItemIndex(targetElement: HTMLElement, precomputedItems?: HTM
   return items.findIndex((el) => el.contains(targetElement));
 }
 
-function onKeydown(event: KeyboardEvent): void {
-  if (event.key !== "Tab") {
-    return;
-  }
+// reserved for possible reuse; currently not referenced directly
+// function focusShowMoreButton(): void {
+//   const buttonEl = moreBtnEl.value;
+//   if (!buttonEl) {
+//     return;
+//   }
+//   buttonEl.focus();
+// }
 
-  const target = event.target as HTMLElement | null;
-  if (target === null) {
-    return;
-  }
+interface INavContext {
+  container: HTMLElement;
+  items: HTMLElement[];
+  currentIndex: number;
+  moreButton: HTMLButtonElement | null;
+  isShowMoreVisible: boolean;
+}
 
+function getNavContext(from: EventTarget | null): INavContext | null {
+  const target = from as HTMLElement | null;
   const container = containerRef.value;
-  if (container === null) {
+
+  if (!target || !container || !container.contains(target)) {
+    return null;
+  }
+
+  const items = getGroupItems(container, true);
+  const currentIndex = findCurrentItemIndex(target, items);
+
+  return {
+    container,
+    items,
+    currentIndex,
+    moreButton: moreBtnEl.value,
+    isShowMoreVisible: isButtonVisible.value,
+  };
+}
+
+function navigateBy(direction: "next" | "prev", from: EventTarget | null): void {
+  const ctx = getNavContext(from);
+
+  if (ctx === null) {
     return;
   }
 
-  if (!container.contains(target)) {
-    return;
-  }
+  const { items, currentIndex, moreButton, isShowMoreVisible } = ctx;
 
-  const isShiftPressed = event.shiftKey;
-  const moreButton = moreBtn.value;
-
-  if (moreButton && moreButton.contains(target)) {
-    if (isShiftPressed) {
-      const itemsFromButton = getGroupItems(container, true);
-      if (itemsFromButton.length > 0) {
-        event.preventDefault();
-        focusPickerAtIndex(itemsFromButton.length - 1);
+  const wrap = moreBtn.value;
+  if (wrap && wrap.contains(from as Node)) {
+    if (direction === "prev") {
+      if (items.length > 0) {
+        focusPickerAtIndex(items.length - 1);
       }
     }
 
     return;
   }
-  const items = getGroupItems(container, true);
-  const currentIndex = findCurrentItemIndex(target, items);
+
   if (currentIndex === -1) {
     return;
   }
 
-  const nextIndex = isShiftPressed ? currentIndex - 1 : currentIndex + 1;
+  const offset = direction === "next" ? 1 : -1;
+  const nextIndex = currentIndex + offset;
 
-  if (nextIndex < 0 || nextIndex >= items.length) {
+  if (nextIndex < 0) {
     return;
   }
 
-  event.preventDefault();
+  if (nextIndex >= items.length) {
+    if (direction === "next" && isShowMoreVisible && moreButton) {
+      moreButton.focus();
+    }
+
+    return;
+  }
+
   focusPickerAtIndex(nextIndex);
 }
 
