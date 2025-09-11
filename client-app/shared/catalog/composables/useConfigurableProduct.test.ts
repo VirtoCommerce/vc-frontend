@@ -40,7 +40,8 @@ vi.mock("@/core/api/graphql", async () => {
   };
 });
 
-vi.mock("@/core/utilities", () => ({
+vi.mock("@/core/utilities", async (importOriginal) => ({
+  ...(await importOriginal()),
   Logger: { error: vi.fn(), debug: vi.fn() },
   getUrlSearchParam: mocks.getUrlSearchParamMock,
 }));

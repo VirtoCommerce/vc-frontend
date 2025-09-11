@@ -1,22 +1,26 @@
 <template>
-  <VcProductCard  v-if="item.product" :background="false">
+  <VcProductCard v-if="item.product" :background="false">
     <VcProductImage :img-src="item.imageUrl" :alt="item.product.name" />
 
-    <VcProductTitle lines-number="2" fix-height :to="link" :title="item.product.name" @click="$emit('linkClick', $event)">
+    <VcProductTitle
+      lines-number="2"
+      fix-height
+      :to="link"
+      :title="item.product.name"
+      @click="$emit('linkClick', $event)"
+    >
       {{ item.product.name }}
     </VcProductTitle>
 
-    <VcProductPrice
-      :actual-price="item.product.price.actual"
-      :list-price="item.product.price.list"
-      single-line />
+    <VcProductPrice :actual-price="item.product.price.actual" :list-price="item.product.price.list" single-line />
 
     <VcProductButton
       v-if="item.id"
       icon="arrow-up"
       :button-text="$t('pages.cart.move_to_cart')"
       :loading="loading"
-      @link-click="$emit('addToCart', item.id)" />
+      @link-click="$emit('addToCart', item.id)"
+    />
   </VcProductCard>
 </template>
 
@@ -43,5 +47,7 @@ const props = defineProps<IProps>();
 
 const item = toRef(props, "item");
 
-const link = computed<RouteLocationRaw | undefined>(() => item.value.product && getProductRoute(item.value.product.id, item.value.product.slug));
+const link = computed<RouteLocationRaw | undefined>(
+  () => item.value.product && getProductRoute(item.value.product.id, item.value.product.slug),
+);
 </script>
