@@ -20,7 +20,7 @@
         class="vc-variant-picker-group__button"
         tabindex="0"
         :aria-expanded="ariaExpandedValue"
-        :aria-label="$t('ui_kit.buttons.see_more')"
+        :aria-label="buttonAriaLabel"
         @click="expand"
       >
         +{{ hiddenCount }}
@@ -54,7 +54,8 @@ const truncate = toRef(props, "truncate");
 const maxRows = toRef(props, "maxRows");
 const { t } = useI18n();
 
-const ariaLabelValue = computed(() => props.ariaLabel ?? t("ui_kit.variant_picker_group.aria_label"));
+const ariaLabelValue = computed(() => props.ariaLabel ?? t("ui_kit.accessibility.variant_picker_group"));
+const buttonAriaLabel = computed(() => t("ui_kit.accessibility.show_more_button", { count: hiddenCount.value }));
 const containerRef = ref<HTMLElement | null>(null);
 const moreBtnWrapper = ref<HTMLElement | null>(null);
 const moreBtnEl = ref<HTMLButtonElement | null>(null);
