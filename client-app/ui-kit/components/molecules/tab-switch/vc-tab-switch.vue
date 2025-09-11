@@ -70,8 +70,8 @@ const model = defineModel<T>();
 const componentId = useComponentId("input");
 
 const checked = computed(() => model.value === props.value);
-const _color = computed(() => (props.color ? getColorValue(props.color) : undefined));
-const _hoverColor = computed(() => (props.hoverColor ? getColorValue(props.hoverColor) : undefined));
+const _color = computed(() => getColorValue(props.color));
+const _hoverColor = computed(() => getColorValue(props.hoverColor));
 
 function onChange() {
   emit("change", props.value);

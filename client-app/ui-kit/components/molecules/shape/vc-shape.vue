@@ -32,8 +32,8 @@ const style = computed(() => ({
   maskImage: iconUrl.value ? `url("${iconUrl.value}")` : "none",
 }));
 
-const _bgColor = computed(() => (props.bgColor ? getColorValue(props.bgColor) : undefined));
-const _iconColor = computed(() => (props.iconColor ? getColorValue(props.iconColor) : undefined));
+const _bgColor = computed(() => getColorValue(props.bgColor));
+const _iconColor = computed(() => getColorValue(props.iconColor));
 </script>
 
 <style lang="scss">

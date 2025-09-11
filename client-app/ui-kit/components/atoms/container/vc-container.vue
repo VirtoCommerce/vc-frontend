@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<IProps>(), {
   hasBgImage: true,
 });
 
-const _bgColor = computed(() => (props.bgColor ? getColorValue(props.bgColor) : undefined));
+const _bgColor = computed(() => getColorValue(props.bgColor));
 </script>
 
 <style lang="scss">

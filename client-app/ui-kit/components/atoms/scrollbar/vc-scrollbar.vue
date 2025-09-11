@@ -34,8 +34,8 @@ const props = withDefaults(defineProps<IProps>(), {
   tag: "div",
 });
 
-const _trackColor = computed(() => (props.trackColor ? getColorValue(props.trackColor) : undefined));
-const _thumbColor = computed(() => (props.thumbColor ? getColorValue(props.thumbColor) : undefined));
+const _trackColor = computed(() => getColorValue(props.trackColor));
+const _thumbColor = computed(() => getColorValue(props.thumbColor));
 </script>
 
 <style lang="scss">

@@ -46,7 +46,7 @@ const _variant = computed(() => {
   return "base";
 });
 
-const _color = computed(() => (props.color ? getColorValue(props.color) : undefined));
+const _color = computed(() => getColorValue(props.color));
 </script>
 
 <style lang="scss">
