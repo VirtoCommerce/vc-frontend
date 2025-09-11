@@ -2936,6 +2936,49 @@ export type LoyaltyBalanceResult = {
   resultBalance: Scalars['Decimal']['output'];
 };
 
+/** Represents a log entry for a loyalty program operation. */
+export type LoyaltyOperationLog = {
+  /** The amount involved in the operation. */
+  amount: Scalars['Decimal']['output'];
+  /** The date and time when the log entry was created. */
+  createdDate: Scalars['DateTime']['output'];
+  /** The unique identifier of the log entry. */
+  id: Scalars['String']['output'];
+  object?: Maybe<LoyaltyOperationLogObject>;
+  /** The type of operation (e.g., Earned, Redeemed). */
+  operationType: Scalars['String']['output'];
+};
+
+/** A connection from an object to a list of objects of type `LoyaltyOperationLog`. */
+export type LoyaltyOperationLogConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<LoyaltyOperationLogEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<LoyaltyOperationLog>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `LoyaltyOperationLog`. */
+export type LoyaltyOperationLogEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<LoyaltyOperationLog>;
+};
+
+/** Represents the object associated with a loyalty program operation log entry. */
+export type LoyaltyOperationLogObject = {
+  /** The identifier of the order associated with the operation, if applicable. */
+  orderId?: Maybe<Scalars['String']['output']>;
+  /** The number of the order associated with the operation, if applicable. */
+  orderNumber?: Maybe<Scalars['String']['output']>;
+  /** The type of the object associated with the operation. */
+  type: Scalars['String']['output'];
+};
+
 /** A connection from an object to a list of objects of type `MemberAddress`. */
 export type MemberAddressConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -4956,6 +4999,7 @@ export type Query = {
   fulfillmentCenters?: Maybe<FulfillmentCenterConnection>;
   getSavedForLater?: Maybe<CartType>;
   loyaltyBalance?: Maybe<LoyaltyBalanceResult>;
+  loyaltyPointsHistory?: Maybe<LoyaltyOperationLogConnection>;
   me?: Maybe<UserType>;
   menu?: Maybe<MenuLinkListType>;
   menus: Array<MenuLinkListType>;
@@ -5223,6 +5267,16 @@ export type QueryGetSavedForLaterArgs = {
 
 export type QueryLoyaltyBalanceArgs = {
   orderId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryLoyaltyPointsHistoryArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  operationType?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 

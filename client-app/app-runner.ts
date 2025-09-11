@@ -21,6 +21,7 @@ import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
+import { init as initLoyalty } from "@/modules/loyalty";
 import { init as initNews } from "@/modules/news";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
@@ -142,14 +143,14 @@ export default async () => {
 
   const { isEnabled } = useModuleSettings(WHITE_LABELING_MODULE_KEYS.ID);
 
-  if(isEnabled(WHITE_LABELING_MODULE_KEYS.ENABLE_STATE)) {
+  if (isEnabled(WHITE_LABELING_MODULE_KEYS.ENABLE_STATE)) {
     void fetchAndApplyFooterLinks(currentLanguage.value.cultureName);
     applyWhiteLabelingSettings();
   }
 
   addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
 
-  if(isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
+  if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
     void fetchCatalogMenu();
   }
 
@@ -161,6 +162,7 @@ export default async () => {
   void initializeGoogleAnalytics();
   void initializeHotjar();
   void initNews(router, i18n);
+  void initLoyalty(router, i18n);
 
   // Plugins
   app.use(head);

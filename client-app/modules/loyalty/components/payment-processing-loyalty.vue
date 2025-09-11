@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading">
+  <div v-if="!balanceLoading">
     <p class="md:py-3 md:text-left">{{ $t("shared.payment.loyalty.text", { currentBalance: currentBalance }) }}</p>
 
     <VcButton
@@ -24,8 +24,7 @@ v-else-if="resultBalance && resultBalance < 0"
 
 import { onMounted, ref } from "vue";
 import { authorizePayment } from "@/core/api/graphql";
-import { Logger } from "@/core/utilities";
-import { useLoyaltyBalance } from "@/shared/payment";
+import { useLoyaltyBalance } from "../composables/useLoyaltyBalance";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -40,9 +39,12 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 const loading = ref(false);
-const resultBalance = ref<number>();
-const currentBalance = ref<number>();
-const { getLoyaltyBalance } = useLoyaltyBalance();
+const { 
+  fetchLoyaltyBalance,
+  loading: balanceLoading,
+  currentBalance,
+  resultBalance 
+} = useLoyaltyBalance();
 
 async function makePayment() {
   loading.value = true;
@@ -65,17 +67,7 @@ async function makePayment() {
 }
 
 onMounted(async () => {
-  try {
-    loading.value = true;
-
-    var loyaltyBalanceResult = await getLoyaltyBalance(props.order.id);
-    currentBalance.value = loyaltyBalanceResult?.currentBalance;
-    resultBalance.value = loyaltyBalanceResult?.resultBalance;
-
-    loading.value = false;
-  } catch (e) {
-    Logger.error(onMounted.name, e);
-  }
+  await fetchLoyaltyBalance(props.order.id);
 })
 
 async function onPay() {

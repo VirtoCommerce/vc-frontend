@@ -1,0 +1,20 @@
+{
+  "loyalty": {
+    "points-history": {
+      "meta": {
+        "title": "Points history"
+      },
+      "current-balance": "Balance: {currentBalance}",
+      "operation": "Operation",
+      "operation-type": "Type",
+      "date": "Date",
+      "amount": "Amount"
+    },
+    "list_details": {
+      "empty_list": "Your list is empty"
+    },
+    "navigation": {
+      "route_name": "Points history"
+    }
+  }
+}

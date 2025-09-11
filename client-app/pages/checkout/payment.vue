@@ -55,14 +55,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { OrderSummary, useCheckout } from "@/shared/checkout";
 import { PaymentActionType, PaymentProcessingRedirection } from "@/shared/payment";
 import type { PaymentInType } from "@/core/api/graphql/types";
+import PaymentProcessingLoyalty from "@/modules/loyalty/components/payment-processing-loyalty.vue";
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
-import PaymentProcessingLoyalty from "@/shared/payment/components/payment-processing-loyalty.vue";
 import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
 
 const router = useRouter();
@@ -71,10 +71,6 @@ const { placedOrder, allOrderItemsAreDigital } = useCheckout();
 const payment = computed<PaymentInType | undefined>(() => placedOrder.value!.inPayments[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
 const paymentTypeName = computed<string | undefined>(() => payment.value?.paymentMethod?.typeName);
-
-watch(paymentMethodType, (v) => {
-  console.log(v)
-})
 
 async function onPaymentResult(success: boolean) {
   await router.replace({
