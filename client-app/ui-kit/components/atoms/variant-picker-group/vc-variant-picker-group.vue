@@ -63,17 +63,23 @@ const ariaExpandedValue = computed(() => (expanded.value ? "true" : "false"));
 const debouncedMeasureAndLayout = useDebounceFn(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
 
 useResizeObserver(containerRef, debouncedMeasureAndLayout);
-function getDirectItems(containerEl: HTMLElement | null) {
+function getGroupItems(containerEl: HTMLElement | null, onlyVisible = false): HTMLElement[] {
   if (!containerEl?.children) {
     return [];
   }
 
   try {
-    return Array.from(containerEl.children).filter(
+    const directItems = Array.from(containerEl.children).filter(
       (item) => item instanceof HTMLElement && !item.classList.contains(LAYOUT_CONFIG.WRAPPER_CLASS),
     ) as HTMLElement[];
+
+    if (!onlyVisible) {
+      return directItems;
+    }
+
+    return directItems.filter((el) => el.style.display !== "none");
   } catch (error) {
-    Logger.error("VcVariantPickerGroup: Failed to get direct items", error);
+    Logger.error("VcVariantPickerGroup: Failed to get items", error);
     return [];
   }
 }
@@ -136,7 +142,7 @@ function prepareLayoutItems(): { items: HTMLElement[]; total: number } | null {
     return null;
   }
 
-  const items = getDirectItems(container);
+  const items = getGroupItems(container);
   const total = items.length;
 
   if (total === 0) {
@@ -204,7 +210,7 @@ function expand() {
     return;
   }
 
-  const items = getDirectItems(el);
+  const items = getGroupItems(el);
   resetItemsVisibility(items);
 
   const firstNewIndex = visibleItemsCount.value;
@@ -245,18 +251,13 @@ async function measureAndLayout() {
   await performLayoutMeasurement(items, total);
 }
 
-function getVisibleItems(containerEl: HTMLElement): HTMLElement[] {
-  const allItems = getDirectItems(containerEl);
-  return allItems.filter((el) => el.style.display !== "none");
-}
-
 function focusPickerAtIndex(index: number): void {
   const container = containerRef.value;
   if (container === null) {
     return;
   }
 
-  const items = getVisibleItems(container);
+  const items = getGroupItems(container, true);
   const target = items[index] as HTMLElement | undefined;
   if (!target) {
     return;
@@ -274,7 +275,7 @@ function findCurrentItemIndex(targetElement: HTMLElement, precomputedItems?: HTM
     return -1;
   }
 
-  const items = precomputedItems ?? getVisibleItems(container);
+  const items = precomputedItems ?? getGroupItems(container, true);
   return items.findIndex((el) => el.contains(targetElement));
 }
 
@@ -302,7 +303,7 @@ function onKeydown(event: KeyboardEvent): void {
 
   if (moreButton && moreButton.contains(target)) {
     if (isShiftPressed) {
-      const itemsFromButton = getVisibleItems(container);
+      const itemsFromButton = getGroupItems(container, true);
       if (itemsFromButton.length > 0) {
         event.preventDefault();
         focusPickerAtIndex(itemsFromButton.length - 1);
@@ -311,7 +312,7 @@ function onKeydown(event: KeyboardEvent): void {
 
     return;
   }
-  const items = getVisibleItems(container);
+  const items = getGroupItems(container, true);
   const currentIndex = findCurrentItemIndex(target, items);
   if (currentIndex === -1) {
     return;
