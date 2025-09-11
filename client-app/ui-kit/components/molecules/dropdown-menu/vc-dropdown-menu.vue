@@ -48,7 +48,6 @@ defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   placement: "bottom-start",
-  maxHeight: "",
   offsetOptions: 4,
   width: "auto",
   dividers: true,
@@ -60,7 +59,7 @@ const props = withDefaults(defineProps<IProps>(), {
   $disabled: "";
   $dividers: "";
 
-  --props-max-height: v-bind(props.maxHeight || "unset");
+  --props-max-height: v-bind(props.maxHeight);
   --max-height: var(--vc-dropdown-menu-max-height, var(--props-max-height, 12rem));
   --radius: var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem));
 

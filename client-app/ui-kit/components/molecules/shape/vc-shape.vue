@@ -21,9 +21,6 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   mask: "polygon",
-  size: "",
-  iconColor: "",
-  bgColor: "",
   img: "",
 });
 
@@ -35,15 +32,15 @@ const style = computed(() => ({
   maskImage: iconUrl.value ? `url("${iconUrl.value}")` : "none",
 }));
 
-const _bgColor = computed(() => getColorValue(props.bgColor));
-const _iconColor = computed(() => getColorValue(props.iconColor));
+const _bgColor = computed(() => (props.bgColor ? getColorValue(props.bgColor) : undefined));
+const _iconColor = computed(() => (props.iconColor ? getColorValue(props.iconColor) : undefined));
 </script>
 
 <style lang="scss">
 .vc-shape {
-  --props-size: v-bind(props.size || "unset");
-  --props-bg-color: v-bind(_bgColor || "unset");
-  --props-icon-color: v-bind(_iconColor || "unset");
+  --props-size: v-bind(props.size);
+  --props-bg-color: v-bind(_bgColor);
+  --props-icon-color: v-bind(_iconColor);
 
   --size: var(--props-size, var(--vc-shape-size, 2.5rem));
   --bg-color: var(--props-bg-color, var(--vc-shape-bg-color, theme("colors.secondary.500")));

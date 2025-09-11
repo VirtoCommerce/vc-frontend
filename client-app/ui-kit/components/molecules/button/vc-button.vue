@@ -104,9 +104,7 @@ const props = withDefaults(defineProps<IProps>(), {
   truncate: false,
   fullWidth: false,
   noWrap: false,
-  minWidth: "",
   tag: "",
-  iconSize: "",
 });
 
 const inputContext = inject<VcInputContextType | null>("inputContext", null);
@@ -174,8 +172,8 @@ const attrs = computed(() => {
 
 <style lang="scss">
 .vc-button {
-  --props-min-width: v-bind(props.minWidth || "unset");
-  --props-icon-size: v-bind(props.iconSize || "unset");
+  --props-min-width: v-bind(props.minWidth);
+  --props-icon-size: v-bind(props.iconSize);
   --radius: var(--vc-button-radius, var(--vc-radius, 0.5rem));
   --min-w: var(--props-min-width, var(--vc-button-min-width));
 

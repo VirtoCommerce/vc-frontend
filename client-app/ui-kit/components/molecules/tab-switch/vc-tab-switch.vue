@@ -62,8 +62,6 @@ const props = withDefaults(
   {
     size: "md",
     labelPosition: "end",
-    color: "",
-    hoverColor: "",
   },
 );
 
@@ -72,8 +70,8 @@ const model = defineModel<T>();
 const componentId = useComponentId("input");
 
 const checked = computed(() => model.value === props.value);
-const _color = computed(() => getColorValue(props.color));
-const _hoverColor = computed(() => getColorValue(props.hoverColor));
+const _color = computed(() => (props.color ? getColorValue(props.color) : undefined));
+const _hoverColor = computed(() => (props.hoverColor ? getColorValue(props.hoverColor) : undefined));
 
 function onChange() {
   emit("change", props.value);
@@ -90,8 +88,8 @@ function onInput() {
   $end: "";
   $checked: "";
 
-  --vc-props-color: v-bind(_color || "unset");
-  --vc-props-hover-color: v-bind(_hoverColor || "unset");
+  --vc-props-color: v-bind(_color);
+  --vc-props-hover-color: v-bind(_hoverColor);
 
   --color: var(--vc-props-color, var(--vc-tab-switch-color, theme("colors.primary.500")));
   --hover-color: var(--vc-props-hover-color, var(--vc-tab-switch-hover-color, theme("colors.accent.500")));

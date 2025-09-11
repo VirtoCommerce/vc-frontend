@@ -32,12 +32,10 @@ const props = withDefaults(defineProps<IProps>(), {
   horizontal: false,
   disabled: false,
   tag: "div",
-  trackColor: "",
-  thumbColor: "",
 });
 
-const _trackColor = computed(() => getColorValue(props.trackColor));
-const _thumbColor = computed(() => getColorValue(props.thumbColor));
+const _trackColor = computed(() => (props.trackColor ? getColorValue(props.trackColor) : undefined));
+const _thumbColor = computed(() => (props.thumbColor ? getColorValue(props.thumbColor) : undefined));
 </script>
 
 <style lang="scss">
@@ -46,10 +44,10 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
   $horizontal: "";
   $disabled: "";
 
-  --props-track-color: v-bind(_trackColor || "unset");
+  --props-track-color: v-bind(_trackColor);
   --track-color: var(--vc-scrollbar-track-color, var(--props-track-color, theme("colors.neutral.100")));
 
-  --props-thumb-color: v-bind(_thumbColor || "unset");
+  --props-thumb-color: v-bind(_thumbColor);
   --thumb-color: var(--vc-scrollbar-thumb-color, var(--props-thumb-color, theme("colors.neutral.400")));
 
   overflow: unset;

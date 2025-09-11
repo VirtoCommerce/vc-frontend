@@ -73,7 +73,6 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   clickable: true,
-  maxLines: "",
 });
 
 const currentElement = ref<HTMLElement>();
@@ -136,7 +135,7 @@ onMounted(() => {
 
 <style lang="scss">
 .vc-menu-item {
-  --props-max-lines: v-bind(maxLines || "unset");
+  --props-max-lines: v-bind(maxLines);
   --max-lines: var(--props-max-lines, 2);
 
   $colors: primary, secondary, success, info, warning, danger, neutral;

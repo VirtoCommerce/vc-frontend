@@ -69,12 +69,12 @@ const props = withDefaults(defineProps<IProps>(), {
   nowrap: true,
 });
 
-const _iconColor = computed(() => (props.iconColor ? getColorValue(props.iconColor) : ""));
+const _iconColor = computed(() => (props.iconColor ? getColorValue(props.iconColor) : undefined));
 </script>
 
 <style lang="scss">
 .vc-chip {
-  --props-icon-color: v-bind(_iconColor || "unset");
+  --props-icon-color: v-bind(_iconColor);
   --icon-color: var(--props-icon-color, var(--vc-chip-icon-color));
   --radius: var(--vc-chip-radius, var(--vc-radius, 0.5rem));
 

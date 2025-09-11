@@ -18,16 +18,13 @@ interface IProps {
   maxHeight?: string;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
-  width: "",
-  maxHeight: "",
-});
+const props = defineProps<IProps>();
 </script>
 
 <style lang="scss">
 .vc-dialog {
-  --props-width: v-bind(props.width || "unset");
-  --props-max-height: v-bind(props.maxHeight || "unset");
+  --props-width: v-bind(props.width);
+  --props-max-height: v-bind(props.maxHeight);
   --w: var(--props-width, var(--vc-dialog-width, 100%));
   --max-h: var(--props-max-height, var(--vc-dialog-max-height, 100%));
   --radius: var(--vc-dialog-radius, var(--vc-radius, 0.5rem));

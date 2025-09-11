@@ -30,10 +30,6 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   tag: "p",
   align: "left",
-  fontSize: "",
-  fontWeight: "",
-  textTransform: "",
-  color: "",
 });
 
 const isHeader = computed(() => /^(h[1-6])$/.test(props.tag));
@@ -50,15 +46,15 @@ const _variant = computed(() => {
   return "base";
 });
 
-const _color = computed(() => getColorValue(props.color));
+const _color = computed(() => (props.color ? getColorValue(props.color) : undefined));
 </script>
 
 <style lang="scss">
 .vc-typography {
-  --props-font-size: v-bind(props.fontSize || "unset");
-  --props-font-weight: v-bind(props.fontWeight || "unset");
-  --props-text-transform: v-bind(props.textTransform || "unset");
-  --props-color: v-bind(_color || "unset");
+  --props-font-size: v-bind(props.fontSize);
+  --props-font-weight: v-bind(props.fontWeight);
+  --props-text-transform: v-bind(props.textTransform);
+  --props-color: v-bind(_color);
 
   --font-size: var(--props-font-size, var(--vc-typography-font-size));
   --font-weight: var(--props-font-weight, var(--vc-typography-font-weight));

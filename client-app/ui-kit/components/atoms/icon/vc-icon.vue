@@ -30,7 +30,7 @@ const style = computed(() =>
 
 const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--size--${props.size}` : ""));
 
-const _color = computed(() => getColorValue(props.color));
+const _color = computed(() => (props.color ? getColorValue(props.color) : undefined));
 
 async function loadIcon(name?: string) {
   icon.value = await loadIconRaw(name);
@@ -47,7 +47,7 @@ watch(
 
 <style lang="scss">
 .vc-icon {
-  --props-color: v-bind(_color || "unset");
+  --props-color: v-bind(_color);
 
   --size: var(--vc-icon-size, 1.5rem);
   --color: var(--props-color, var(--vc-icon-color, currentColor));

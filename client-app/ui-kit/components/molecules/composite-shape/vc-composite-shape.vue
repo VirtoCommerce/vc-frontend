@@ -26,16 +26,14 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  size: "",
-  iconSize: "",
   iconBgColor: "",
 });
 </script>
 
 <style lang="scss">
 .vc-composite-shape {
-  --props-size: v-bind(props.size || "unset");
-  --props-icon-size: v-bind(props.iconSize || "unset");
+  --props-size: v-bind(props.size);
+  --props-icon-size: v-bind(props.iconSize);
 
   --size: var(--props-size, var(--vc-composite-shape-size, 15rem));
   --icon-size: var(--props-icon-size, var(--vc-composite-shape-icon-size, 26.5%));

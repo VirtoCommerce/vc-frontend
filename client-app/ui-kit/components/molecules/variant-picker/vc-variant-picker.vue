@@ -73,7 +73,7 @@ const model = defineModel<IProps["value"]>();
 
 const checked = computed(() => model.value === props.value);
 
-const color = computed(() => (props.type === "color" ? getColorValue(props.value) : ""));
+const color = computed(() => (props.type === "color" && props.value ? getColorValue(props.value) : undefined));
 const image = computed(() => (props.type === "image" ? props.value : ""));
 </script>
 
@@ -83,7 +83,7 @@ const image = computed(() => (props.type === "image" ? props.value : ""));
   $active: "";
   $unavailable: "";
 
-  --props-color: v-bind(color || "unset");
+  --props-color: v-bind(color);
   --color: var(--props-color, var(--vc-variant-picker-bg-color, theme("colors.additional.50")));
   --radius: var(--vc-variant-picker-radius, var(--vc-radius, 0.5rem));
   --strike-line-width: 2px;

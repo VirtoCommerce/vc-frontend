@@ -86,8 +86,8 @@ const checked = computed(() => model.value === props.value);
   $left: "";
   $right: "";
 
-  --props-max-lines: v-bind(props.maxLines || "unset");
-  --props-word-break: v-bind(props.wordBreak || "unset");
+  --props-max-lines: v-bind(props.maxLines);
+  --props-word-break: v-bind(props.wordBreak);
 
   --base-color: var(--vc-radio-button-base-color, var(--color-primary-500));
   --focus-color: rgb(from var(--base-color) r g b / 0.3);

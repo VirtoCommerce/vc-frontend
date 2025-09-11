@@ -30,18 +30,16 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  maxWidth: "",
-  bgColor: "",
   hasBgImage: true,
 });
 
-const _bgColor = computed(() => getColorValue(props.bgColor));
+const _bgColor = computed(() => (props.bgColor ? getColorValue(props.bgColor) : undefined));
 </script>
 
 <style lang="scss">
 .vc-container {
-  --props-max-width: v-bind(props.maxWidth || "unset");
-  --props-bg-color: v-bind(_bgColor || "unset");
+  --props-max-width: v-bind(props.maxWidth);
+  --props-bg-color: v-bind(_bgColor);
 
   --max-width: var(--props-max-width, var(--vc-container-max-width, 87.75rem));
   --bg-color: var(--props-bg-color, var(--vc-container-bg-color, theme("colors.neutral.50")));
