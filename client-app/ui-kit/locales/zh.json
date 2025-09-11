@@ -97,6 +97,9 @@
     },
     "breadcrumbs": {
       "aria_label": "面包屑导航"
+    },
+    "variant_picker_group": {
+      "aria_label": "商品变体选项"
     }
   }
 }

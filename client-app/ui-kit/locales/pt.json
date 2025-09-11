@@ -96,7 +96,10 @@
       "current_value_announcement": "Valor do slider: {start} a {end}, intervalo {min} a {max}"
     },
     "breadcrumbs": {
-      "aria_label": "Navegação breadcrumb"
+      "aria_label": "Navegação de trilha"
+    },
+    "variant_picker_group": {
+      "aria_label": "Opções de variantes"
     }
   }
 }

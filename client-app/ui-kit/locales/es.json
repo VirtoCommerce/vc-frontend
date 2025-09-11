@@ -97,6 +97,9 @@
     },
     "breadcrumbs": {
       "aria_label": "Navegación de migas de pan"
+    },
+    "variant_picker_group": {
+      "aria_label": "Opciones de variantes"
     }
   }
 }

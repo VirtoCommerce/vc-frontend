@@ -96,7 +96,10 @@
       "current_value_announcement": "Wartość suwaka: {start} do {end}, zakres {min} do {max}"
     },
     "breadcrumbs": {
-      "aria_label": "Nawigacja ścieżki"
+      "aria_label": "Nawigacja okruszkowa"
+    },
+    "variant_picker_group": {
+      "aria_label": "Warianty produktu"
     }
   }
 }

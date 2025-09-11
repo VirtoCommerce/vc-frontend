@@ -97,6 +97,9 @@
     },
     "breadcrumbs": {
       "aria_label": "Breadcrumbs navigation"
+    },
+    "variant_picker_group": {
+      "aria_label": "Variant options"
     }
   }
 }

@@ -1,5 +1,12 @@
 <template>
-  <div ref="containerRef" class="vc-variant-picker-group">
+  <div
+    ref="containerRef"
+    class="vc-variant-picker-group"
+    role="radiogroup"
+    :aria-label="ariaLabelValue"
+    tabindex="0"
+    @keydown="onKeydown"
+  >
     <slot />
 
     <div v-if="truncate" v-show="isButtonVisible" ref="moreBtn" class="vc-variant-picker-group__wrapper">
@@ -19,11 +26,13 @@
 <script setup lang="ts">
 import { useDebounceFn, useResizeObserver } from "@vueuse/core";
 import { ref, computed, onMounted, nextTick, watch, toRef } from "vue";
+import { useI18n } from "vue-i18n";
 import { Logger } from "@/core/utilities";
 
 interface IProps {
   truncate?: boolean;
   maxRows?: number;
+  ariaLabel?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -38,21 +47,22 @@ const LAYOUT_CONFIG = {
 
 const truncate = toRef(props, "truncate");
 const maxRows = toRef(props, "maxRows");
+const { t } = useI18n();
 
+const ariaLabelValue = computed(() => props.ariaLabel ?? t("ui_kit.variant_picker_group.aria_label"));
 const containerRef = ref<HTMLElement | null>(null);
 const moreBtn = ref<HTMLElement | null>(null);
 
 const expanded = ref(false);
 const showButton = ref(false);
 const hiddenCount = ref(0);
-
+const visibleItemsCount = ref(0);
 const isButtonVisible = computed(() => truncate.value && !expanded.value && showButton.value);
 const ariaExpandedValue = computed(() => (expanded.value ? "true" : "false"));
 
 const debouncedMeasureAndLayout = useDebounceFn(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
 
 useResizeObserver(containerRef, debouncedMeasureAndLayout);
-
 function getDirectItems(containerEl: HTMLElement | null) {
   if (!containerEl?.children) {
     return [];
@@ -196,6 +206,14 @@ function expand() {
 
   const items = getDirectItems(el);
   resetItemsVisibility(items);
+
+  const firstNewIndex = visibleItemsCount.value;
+
+  nextTick()
+    .then(() => {
+      focusPickerAtIndex(firstNewIndex);
+    })
+    .catch(() => {});
 }
 
 async function performLayoutMeasurement(items: HTMLElement[], total: number): Promise<void> {
@@ -207,6 +225,7 @@ async function performLayoutMeasurement(items: HTMLElement[], total: number): Pr
   await nextTick();
 
   const visibleCount = await findOptimalVisibleCount(items, total);
+  visibleItemsCount.value = visibleCount;
   updateButtonState(total, visibleCount);
 }
 
@@ -224,6 +243,88 @@ async function measureAndLayout() {
 
   await nextTick();
   await performLayoutMeasurement(items, total);
+}
+
+function getVisibleItems(containerEl: HTMLElement): HTMLElement[] {
+  const allItems = getDirectItems(containerEl);
+  return allItems.filter((el) => el.style.display !== "none");
+}
+
+function focusPickerAtIndex(index: number): void {
+  const container = containerRef.value;
+  if (container === null) {
+    return;
+  }
+
+  const items = getVisibleItems(container);
+  const target = items[index] as HTMLElement | undefined;
+  if (!target) {
+    return;
+  }
+
+  const input = target.querySelector<HTMLInputElement>("input.vc-variant-picker__input");
+  if (input) {
+    input.focus();
+  }
+}
+
+function findCurrentItemIndex(targetElement: HTMLElement, precomputedItems?: HTMLElement[]): number {
+  const container = containerRef.value;
+  if (container === null) {
+    return -1;
+  }
+
+  const items = precomputedItems ?? getVisibleItems(container);
+  return items.findIndex((el) => el.contains(targetElement));
+}
+
+function onKeydown(event: KeyboardEvent): void {
+  if (event.key !== "Tab") {
+    return;
+  }
+
+  const target = event.target as HTMLElement | null;
+  if (target === null) {
+    return;
+  }
+
+  const container = containerRef.value;
+  if (container === null) {
+    return;
+  }
+
+  if (!container.contains(target)) {
+    return;
+  }
+
+  const isShiftPressed = event.shiftKey;
+  const moreButton = moreBtn.value;
+
+  if (moreButton && moreButton.contains(target)) {
+    if (isShiftPressed) {
+      const itemsFromButton = getVisibleItems(container);
+      if (itemsFromButton.length > 0) {
+        event.preventDefault();
+        focusPickerAtIndex(itemsFromButton.length - 1);
+      }
+    }
+
+    return;
+  }
+  const items = getVisibleItems(container);
+  const currentIndex = findCurrentItemIndex(target, items);
+  if (currentIndex === -1) {
+    return;
+  }
+
+  const nextIndex = isShiftPressed ? currentIndex - 1 : currentIndex + 1;
+
+  if (nextIndex < 0 || nextIndex >= items.length) {
+    return;
+  }
+
+  event.preventDefault();
+  focusPickerAtIndex(nextIndex);
 }
 
 watch(truncate, async (val) => {

@@ -97,6 +97,9 @@
     },
     "breadcrumbs": {
       "aria_label": "Navigation fil d'Ariane"
+    },
+    "variant_picker_group": {
+      "aria_label": "Options de variantes"
     }
   }
 }

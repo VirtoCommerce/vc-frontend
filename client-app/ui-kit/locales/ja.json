@@ -97,6 +97,9 @@
     },
     "breadcrumbs": {
       "aria_label": "パンくずナビゲーション"
+    },
+    "variant_picker_group": {
+      "aria_label": "バリアントの選択"
     }
   }
 }

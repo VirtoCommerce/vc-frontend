@@ -97,6 +97,9 @@
     },
     "breadcrumbs": {
       "aria_label": "Breadcrumb-Navigation"
+    },
+    "variant_picker_group": {
+      "aria_label": "Produktvarianten"
     }
   }
 }
