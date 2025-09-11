@@ -11,30 +11,37 @@
     ]"
   >
     <label class="vc-variant-picker__container">
-      <input
-        v-model="model"
-        class="vc-variant-picker__input"
-        type="radio"
-        :aria-label="name"
-        :name="name"
-        :value="value"
-        :checked="checked"
-        :aria-checked="checked"
-        :data-test-id="testId"
-        tabindex="0"
-        @keydown.enter.prevent="onActivate"
-        @keydown.space.prevent="onActivate"
-        @change="emit('change', value)"
-        @input="emit('input', value)"
-      />
-
       <span v-if="type === 'color'" class="vc-variant-picker__color" />
 
-      <VcImage v-else-if="type === 'image'" :src="image" class="vc-variant-picker__img" />
+      <VcImage v-else-if="type === 'image'" :src="image" :alt="value" class="vc-variant-picker__img" />
 
       <span v-else class="vc-variant-picker__text">
         {{ value }}
       </span>
+
+      <VcTooltip :disabled="!tooltip && !$slots.tooltip" class="vc-variant-picker__tooltip">
+        <template #default="{ triggerProps }">
+          <input
+            v-model="model"
+            class="vc-variant-picker__input"
+            type="radio"
+            :aria-label="tooltip ?? value"
+            :name="name"
+            :value="value"
+            :data-test-id="testId"
+            :tabindex="tabindex ?? '0'"
+            v-bind="triggerProps"
+            @keydown.enter.prevent="onActivate"
+            @keydown.space.prevent="onActivate"
+            @change="emit('change', value)"
+            @input="emit('input', value)"
+          />
+        </template>
+
+        <template #content>
+          <slot name="tooltip">{{ tooltip }}</slot>
+        </template>
+      </VcTooltip>
     </label>
   </div>
 </template>
@@ -171,7 +178,7 @@ function onActivate(): void {
     }
 
     &:focus-within {
-      box-shadow: 0 0 0 2px rgb(from var(--color-primary-500) r g b / 0.3);
+      box-shadow: 0 0 0 2px rgb(from var(--color-primary-500) r g b / 0.5);
     }
 
     #{$active} & {
@@ -198,8 +205,12 @@ function onActivate(): void {
     }
   }
 
+  &__tooltip {
+    @apply absolute inset-0 block;
+  }
+
   &__input {
-    @apply sr-only;
+    @apply absolute inset-0 opacity-0;
   }
 
   &__color {

@@ -79,7 +79,7 @@ const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs
 const emitTriggerProps = computed(() => ({
   role: "button" as const,
   "aria-haspopup": "dialog" as const,
-  ariaExpanded: opened.value,
+  "aria-expanded": opened.value,
   onMouseenter: props.hover ? open : undefined,
   onMouseleave: props.hover ? close : undefined,
   onFocusin: props.hover ? open : undefined,
@@ -153,7 +153,7 @@ watch(opened, (value: boolean) => emit("toggle", value));
   $popper: "";
 
   &__trigger {
-    @apply max-w-full;
+    @apply max-w-full size-full;
   }
 
   &__popper {
