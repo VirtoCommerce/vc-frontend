@@ -285,15 +285,6 @@ function findCurrentItemIndex(targetElement: HTMLElement, precomputedItems?: HTM
   return items.findIndex((el) => el.contains(targetElement));
 }
 
-// reserved for possible reuse; currently not referenced directly
-// function focusShowMoreButton(): void {
-//   const buttonEl = moreBtnEl.value;
-//   if (!buttonEl) {
-//     return;
-//   }
-//   buttonEl.focus();
-// }
-
 interface INavContext {
   container: HTMLElement;
   items: HTMLElement[];
