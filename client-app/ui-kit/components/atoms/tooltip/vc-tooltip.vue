@@ -10,7 +10,11 @@
     :shift-options="shiftOptions"
     :width="width"
   >
-    <template #trigger>
+    <template v-if="$slots.default" #default="{ opened, triggerProps }">
+      <slot :opened="opened" :trigger-props="triggerProps" />
+    </template>
+
+    <template v-else-if="$slots.trigger" #trigger>
       <slot name="trigger" />
     </template>
 
