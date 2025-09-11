@@ -13,7 +13,7 @@
   >
     <slot />
 
-    <div v-if="truncate" v-show="isButtonVisible" ref="moreBtn" class="vc-variant-picker-group__wrapper">
+    <div v-if="truncate" v-show="isButtonVisible" ref="moreBtnWrapper" class="vc-variant-picker-group__wrapper">
       <button
         ref="moreBtnEl"
         type="button"
@@ -46,7 +46,6 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const LAYOUT_CONFIG = {
   POSITION_TOLERANCE: 2,
-  WRAPPER_CLASS: "vc-variant-picker-group__wrapper",
   RESIZE_DEBOUNCE_MS: 100,
 };
 
@@ -56,7 +55,7 @@ const { t } = useI18n();
 
 const ariaLabelValue = computed(() => props.ariaLabel ?? t("ui_kit.variant_picker_group.aria_label"));
 const containerRef = ref<HTMLElement | null>(null);
-const moreBtn = ref<HTMLElement | null>(null);
+const moreBtnWrapper = ref<HTMLElement | null>(null);
 const moreBtnEl = ref<HTMLButtonElement | null>(null);
 
 const expanded = ref(false);
@@ -75,8 +74,9 @@ function getGroupItems(containerEl: HTMLElement | null, onlyVisible = false): HT
   }
 
   try {
+    const wrapperEl = moreBtnWrapper.value;
     const directItems = Array.from(containerEl.children).filter(
-      (item) => item instanceof HTMLElement && !item.classList.contains(LAYOUT_CONFIG.WRAPPER_CLASS),
+      (item) => item instanceof HTMLElement && item !== wrapperEl,
     ) as HTMLElement[];
 
     if (!onlyVisible) {
@@ -176,7 +176,7 @@ function checkIfLayoutNeeded(items: HTMLElement[]): boolean {
 }
 
 function isButtonPositionValid(items: HTMLElement[], visibleIdxLimit: number): boolean {
-  const btnEl = moreBtn.value;
+  const btnEl = moreBtnWrapper.value;
 
   if (btnEl === null) {
     return true;
@@ -331,8 +331,8 @@ function navigateBy(direction: "next" | "prev", from: EventTarget | null): void 
 
   const { items, currentIndex, moreButton, isShowMoreVisible } = ctx;
 
-  const wrap = moreBtn.value;
-  if (wrap && wrap.contains(from as Node)) {
+  const wrap = moreBtnWrapper.value;
+  if (wrap && from instanceof Node && wrap.contains(from)) {
     if (direction === "prev") {
       if (items.length > 0) {
         focusPickerAtIndex(items.length - 1);
