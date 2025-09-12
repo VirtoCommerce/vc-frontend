@@ -209,7 +209,7 @@ async function findOptimalVisibleCount(items: HTMLElement[], total: number): Pro
   return 0;
 }
 
-function expand() {
+async function expand(): Promise<void> {
   expanded.value = true;
   showButton.value = false;
 
@@ -223,11 +223,9 @@ function expand() {
 
   const firstNewIndex = visibleItemsCount.value;
 
-  nextTick()
-    .then(() => {
-      focusPickerAtIndex(firstNewIndex);
-    })
-    .catch(() => {});
+  await nextTick();
+  await nextTick();
+  focusPickerAtIndex(firstNewIndex);
 }
 
 async function performLayoutMeasurement(items: HTMLElement[], total: number): Promise<void> {
@@ -324,37 +322,30 @@ function navigateBy(direction: "next" | "prev", from: EventTarget | null): void 
 
   const { items, currentIndex, moreButton, isShowMoreVisible } = ctx;
 
-  const wrap = moreBtnWrapper.value;
-  if (wrap && from instanceof Node && wrap.contains(from)) {
-    if (direction === "prev") {
-      if (items.length > 0) {
-        focusPickerAtIndex(items.length - 1);
-      }
+  const isFromShowMore = from instanceof Node && moreBtnWrapper.value?.contains(from);
+  if (isFromShowMore) {
+    if (direction === "prev" && items.length > 0) {
+      focusPickerAtIndex(items.length - 1);
     }
 
     return;
   }
 
-  if (currentIndex === -1) {
+  if (currentIndex < 0) {
     return;
   }
 
-  const offset = direction === "next" ? 1 : -1;
-  const nextIndex = currentIndex + offset;
+  const delta = direction === "next" ? 1 : -1;
+  const nextIndex = currentIndex + delta;
 
-  if (nextIndex < 0) {
+  if (nextIndex >= 0 && nextIndex < items.length) {
+    focusPickerAtIndex(nextIndex);
     return;
   }
 
-  if (nextIndex >= items.length) {
-    if (direction === "next" && isShowMoreVisible && moreButton) {
-      moreButton.focus();
-    }
-
-    return;
+  if (direction === "next" && isShowMoreVisible && moreButton) {
+    moreButton.focus();
   }
-
-  focusPickerAtIndex(nextIndex);
 }
 
 function onTabKey(event: KeyboardEvent): void {
@@ -387,7 +378,7 @@ watch(truncate, (enabled) => {
     return;
   }
 
-  expand();
+  void expand();
 });
 
 watch(maxRows, async () => {
