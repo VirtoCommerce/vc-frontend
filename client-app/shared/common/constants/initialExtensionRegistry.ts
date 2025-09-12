@@ -41,4 +41,6 @@ export const initialExtensionRegistry: ExtensionRegistryStateType = {
   mobileHeader: {},
   productCard: {},
   productPage: {},
+  paymentPage: {},
+  orderPaymentPage: {},
 };

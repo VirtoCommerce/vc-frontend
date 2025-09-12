@@ -1,0 +1,32 @@
+{
+  "loyalty": {
+    "points-history": {
+      "meta": {
+        "title": "Histórico de pontos"
+      },
+      "current-balance": "Saldo: {currentBalance}",
+      "operation": "Operação",
+      "operation-type": "Tipo",
+      "date": "Data",
+      "amount": "Valor",
+      "redeemed": "Resgatado",
+      "earned": "Ganho",
+      "registration": "Registro"
+    },
+    "list_details": {
+      "empty_list": "Sua lista está vazia"
+    },
+    "navigation": {
+      "route_name": "Histórico de pontos"
+    },
+    "payment": {
+      "loyalty": {
+        "pay_now_button": "Prosseguir",
+        "text": "Você está tentando pagar o pedido usando pontos. Seu saldo atual é de {currentBalance} pontos.",
+        "errors": {
+          "insufficient_points": "Não é possível fazer o pedido devido a saldo insuficiente de pontos. Seu saldo atual é de {currentBalance} pontos."
+        }
+      }
+    }
+  }
+}

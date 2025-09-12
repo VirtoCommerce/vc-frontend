@@ -1,0 +1,16 @@
+query GetLoyaltyPointsHistory($sort: String, $after: String, $first: Int, $operationType: String) {
+  loyaltyPointsHistory(sort: $sort, after: $after, first: $first, operationType: $operationType) {
+    totalCount
+    items {
+      id
+      object {
+        type
+        orderId
+        orderNumber
+      }
+      operationType
+      amount
+      createdDate
+    }
+  }
+}
