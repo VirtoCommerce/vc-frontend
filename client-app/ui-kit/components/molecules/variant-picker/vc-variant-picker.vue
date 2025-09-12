@@ -187,7 +187,7 @@ function onActivate(): void {
 
     #{$unavailable} & {
       &::before {
-        @apply content-[""] absolute inset-0.5 rounded-[inherit] bg-additional-50/60;
+        @apply content-[""] absolute inset-px rounded-[inherit] bg-additional-50/60;
       }
 
       &::after {
@@ -210,7 +210,7 @@ function onActivate(): void {
   }
 
   &__input {
-    @apply absolute inset-0 opacity-0;
+    @apply z-[1] absolute inset-0 opacity-0;
   }
 
   &__color {
