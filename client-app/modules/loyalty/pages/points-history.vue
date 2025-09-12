@@ -31,12 +31,12 @@
                 </span>
 
                 <span class="overflow-hidden text-ellipsis pr-4 font-black">
-                    {{ itemData.item?.object?.type == "CustomerOrder" ? itemData.item.object?.orderNumber : itemData.item.object?.type }}
+                  {{ getOperation(itemData.item) }}
                 </span>
               </div>
 
               <div class="flex flex-col items-end justify-center">
-                {{ itemData.item?.operationType }}
+                {{ getOperationType(itemData.item) }}
               </div>
 
               <div class="flex flex-col">
@@ -101,11 +101,11 @@
               class="cursor-default even:bg-neutral-50 hover:bg-neutral-200"
             >
               <td class="overflow-hidden text-ellipsis p-5">
-                {{ log.object?.type == "CustomerOrder" ? log.object?.orderNumber : log.object?.type }}
+                {{ getOperation(log) }}
               </td>
 
               <td class="overflow-hidden text-ellipsis p-5">
-                {{ log.operationType }}
+                {{ getOperationType(log) }}
               </td>
 
               <td class="overflow-hidden text-ellipsis p-5">
@@ -153,6 +153,8 @@ import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useLoyaltyBalance } from "../composables/useLoyaltyBalance";
 import { useLoyaltyPointsHistory } from "../composables/useLoyaltyPointsHistory";
+import { CUSTOMER_ORDER_OBJECT_TYPE, REGISTRATION_OBJECT_TYPE, REDEEMED_OPERATION, EARNED_OPERATION } from "../constants";
+import type { LoyaltyOperationLog } from "../api/graphql/types";
 
 const { t } = useI18n();
 
@@ -183,6 +185,30 @@ async function changePage(newPage: number) {
   page.value = newPage;
   window.scroll({ top: 0, behavior: "smooth" });
   await fetchHistory();
+}
+
+function getOperation(log: LoyaltyOperationLog) {
+  if (log.object?.type === CUSTOMER_ORDER_OBJECT_TYPE) {
+    return log.object.orderNumber;
+  }
+
+  if (log.object?.type == REGISTRATION_OBJECT_TYPE) {
+    return t("loyalty.points-history.registration");
+  }
+
+  return log.object?.type;
+}
+
+function getOperationType(log: LoyaltyOperationLog) {
+  if (log.operationType === REDEEMED_OPERATION) {
+    return t("loyalty.points-history.redeemed");
+  }
+
+  if (log.operationType === EARNED_OPERATION ) {
+    return t("loyalty.points-history.earned");
+  }
+  
+  return log.operationType;
 }
 
 onMounted(async () => {

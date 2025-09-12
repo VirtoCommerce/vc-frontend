@@ -1,0 +1,32 @@
+{
+  "loyalty": {
+    "points-history": {
+      "meta": {
+        "title": "История баллов"
+      },
+      "current-balance": "Баланс: {currentBalance}",
+      "operation": "Операция",
+      "operation-type": "Тип",
+      "date": "Дата",
+      "amount": "Сумма",
+      "redeemed": "Потрачено",
+      "earned": "Заработано",
+      "registration": "Регистрация"
+    },
+    "list_details": {
+      "empty_list": "Ваш список пуст"
+    },
+    "navigation": {
+      "route_name": "История баллов"
+    },
+    "payment": {
+      "loyalty": {
+        "pay_now_button": "Продолжить",
+        "text": "Вы пытаетесь оплатить заказ баллами. Ваш текущий баланс: {currentBalance} баллов.",
+        "errors": {
+          "insufficient_points": "Невозможно оформить заказ из-за недостаточного количества баллов. Ваш текущий баланс: {currentBalance} баллов."
+        }
+      }
+    }
+  }
+}
