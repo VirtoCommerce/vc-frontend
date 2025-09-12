@@ -6,9 +6,7 @@ import type { DocumentNode } from "graphql";
 function getQueryDocument(): DocumentNode {
   return gql`
     query WhiteLabelingSettings($domain: String) {
-      whiteLabelingSettings(
-        domain: $domain
-      ) {
+      whiteLabelingSettings(domain: $domain) {
         logoUrl
         secondaryLogoUrl
         themePresetName
@@ -46,7 +44,7 @@ export async function getGetWhiteLabelingSettings(domain: string) {
   >({
     query: getQueryDocument(),
     variables: {
-      domain
+      domain,
     },
   });
 
@@ -79,7 +77,7 @@ export async function getFooterLinks(domain: string, cultureName: string) {
     query: getFooterLinksDocument(FOOTER_LINKS_DEPTH),
     variables: {
       domain,
-      cultureName
+      cultureName,
     },
   });
 

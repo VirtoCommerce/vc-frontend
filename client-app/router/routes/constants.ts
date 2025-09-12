@@ -19,4 +19,8 @@ export const ROUTES = {
     NAME: "CartId",
     PATH: "/cart/:cartId",
   },
+  CHANGE_PASSWORD: {
+    NAME: "ChangePassword",
+    PATH: "/change-password",
+  },
 } as const;
