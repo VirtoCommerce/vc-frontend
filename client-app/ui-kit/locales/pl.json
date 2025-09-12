@@ -19,7 +19,9 @@
       "update_cart": "Zaktualizuj koszyk"
     },
     "accessibility": {
-      "close_alert": "Zamknij powiadomienie"
+      "close_alert": "Zamknij powiadomienie",
+      "increase_quantity": "Zwiększ ilość",
+      "decrease_quantity": "Zmniejsz ilość"
     },
     "labels": {
       "not_available": "N/D",

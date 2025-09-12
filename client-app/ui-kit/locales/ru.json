@@ -19,7 +19,9 @@
       "update_cart": "Обновить корзину"
     },
     "accessibility": {
-      "close_alert": "Закрыть уведомление"
+      "close_alert": "Закрыть уведомление",
+      "increase_quantity": "Увеличить количество",
+      "decrease_quantity": "Уменьшить количество"
     },
     "labels": {
       "not_available": "Н/Д",

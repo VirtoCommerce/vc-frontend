@@ -28,6 +28,7 @@
       <template v-if="!readonly" #prepend>
         <VcButton
           icon="minus"
+          :aria-label="$t('ui_kit.accessibility.decrease_quantity')"
           :disabled="isDecrementDisabled"
           :loading="loading"
           :color="buttonsColor"
@@ -41,6 +42,7 @@
       <template v-if="!readonly" #append>
         <VcButton
           icon="plus"
+          :aria-label="$t('ui_kit.accessibility.increase_quantity')"
           :disabled="isIncrementDisabled"
           :loading="loading"
           :color="buttonsColor"

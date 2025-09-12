@@ -19,7 +19,9 @@
       "update_cart": "カートを更新"
     },
     "accessibility": {
-      "close_alert": "アラートを閉じる"
+      "close_alert": "アラートを閉じる",
+      "increase_quantity": "数量を増やす",
+      "decrease_quantity": "数量を減らす"
     },
     "labels": {
       "not_available": "N/A",
