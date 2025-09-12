@@ -26,7 +26,7 @@ const menuItems: DeepPartial<MenuType> = {
                 children: [
                     {
                         id: "points-history",
-                        route: { name: "PointsHistory" },
+                        route: { name: route.name },
                         title: "loyalty.navigation.route_name",
                         icon: "star",
                         priority: 200,
@@ -39,7 +39,7 @@ const menuItems: DeepPartial<MenuType> = {
                 children: [
                     {
                         id: "points-history",
-                        route: { name: "PointsHistory" },
+                        route: { name: route.name },
                         title: "loyalty.navigation.route_name",
                         icon: "star",
                         priority: 200,
@@ -52,11 +52,9 @@ const menuItems: DeepPartial<MenuType> = {
 
 export function init(router: Router, i18n: I18n) {
     const { isAuthenticated } = useUser();
-    if (isEnabled(ENABLED_KEY)) {
+    if (isAuthenticated.value && isEnabled(ENABLED_KEY)) {
         router.addRoute("Account", route);
         void loadModuleLocale(i18n, "loyalty");
-    }
-    if (isAuthenticated.value && isEnabled(ENABLED_KEY)) {
         mergeMenuSchema(menuItems);
     }
 }

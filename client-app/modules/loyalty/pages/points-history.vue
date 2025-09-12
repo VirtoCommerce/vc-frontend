@@ -212,7 +212,6 @@ function getOperationType(log: LoyaltyOperationLog) {
 }
 
 onMounted(async () => {
-    await fetchHistory();
-    await fetchLoyaltyBalance();
+    await Promise.all([ fetchHistory(), fetchLoyaltyBalance() ]);
 });
 </script>
