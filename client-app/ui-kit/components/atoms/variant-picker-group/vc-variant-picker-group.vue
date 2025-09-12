@@ -264,7 +264,7 @@ function focusPickerAtIndex(index: number): void {
   }
 
   const items = getGroupItems(container, true);
-  const target = items[index] as HTMLElement | undefined;
+  const target = items[index];
   if (!target) {
     return;
   }
@@ -294,15 +294,17 @@ interface INavContext {
 }
 
 function getNavContext(from: EventTarget | null): INavContext | null {
-  const target = from as HTMLElement | null;
-  const container = containerRef.value;
+  if (!(from instanceof HTMLElement)) {
+    return null;
+  }
 
-  if (!target || !container || !container.contains(target)) {
+  const container = containerRef.value;
+  if (!container || !container.contains(from)) {
     return null;
   }
 
   const items = getGroupItems(container, true);
-  const currentIndex = findCurrentItemIndex(target, items);
+  const currentIndex = findCurrentItemIndex(from, items);
 
   return {
     container,

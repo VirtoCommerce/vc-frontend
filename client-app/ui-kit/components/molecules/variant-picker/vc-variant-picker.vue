@@ -62,7 +62,7 @@ interface IProps {
   name?: string;
   isAvailable?: boolean;
   tooltip?: string;
-  tabindex?: string;
+  tabindex?: string | number;
   testId?: string;
 }
 
