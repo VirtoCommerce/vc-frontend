@@ -13,9 +13,9 @@
   >
     <slot />
 
-    <div v-if="truncate" v-show="isButtonVisible" ref="moreBtnWrapper" class="vc-variant-picker-group__wrapper">
+    <div v-if="truncate" v-show="isButtonVisible" ref="buttonWrapperRef" class="vc-variant-picker-group__wrapper">
       <button
-        ref="moreBtnEl"
+        ref="buttonRef"
         type="button"
         class="vc-variant-picker-group__button"
         tabindex="0"
@@ -57,8 +57,8 @@ const { t } = useI18n();
 const ariaLabelValue = computed(() => props.ariaLabel ?? t("ui_kit.accessibility.variant_picker_group"));
 const buttonAriaLabel = computed(() => t("ui_kit.accessibility.show_more_button", { count: hiddenCount.value }));
 const containerRef = ref<HTMLElement | null>(null);
-const moreBtnWrapper = ref<HTMLElement | null>(null);
-const moreBtnEl = ref<HTMLButtonElement | null>(null);
+const buttonWrapperRef = ref<HTMLElement | null>(null);
+const buttonRef = ref<HTMLButtonElement | null>(null);
 
 const expanded = ref(false);
 const showButton = ref(false);
@@ -76,7 +76,7 @@ function getGroupItems(containerEl: HTMLElement | null, onlyVisible = false): HT
   }
 
   try {
-    const wrapperEl = moreBtnWrapper.value;
+    const wrapperEl = buttonWrapperRef.value;
     const directItems = Array.from(containerEl.children).filter(
       (item) => item instanceof HTMLElement && item !== wrapperEl,
     ) as HTMLElement[];
@@ -178,15 +178,15 @@ function checkIfLayoutNeeded(items: HTMLElement[]): boolean {
 }
 
 function isButtonPositionValid(items: HTMLElement[], visibleIdxLimit: number): boolean {
-  const btnEl = moreBtnWrapper.value;
+  const buttonEl = buttonWrapperRef.value;
 
-  if (btnEl === null) {
+  if (buttonEl === null) {
     return true;
   }
 
   const lastIdx = visibleIdxLimit - 1;
-  const lastItemTop = lastIdx >= 0 ? items[lastIdx].offsetTop : btnEl.offsetTop;
-  const btnTop = btnEl.offsetTop;
+  const lastItemTop = lastIdx >= 0 ? items[lastIdx].offsetTop : buttonEl.offsetTop;
+  const btnTop = buttonEl.offsetTop;
 
   return Math.abs(btnTop - lastItemTop) < LAYOUT_CONFIG.POSITION_TOLERANCE;
 }
@@ -289,8 +289,7 @@ interface INavContext {
   container: HTMLElement;
   items: HTMLElement[];
   currentIndex: number;
-  moreButton: HTMLButtonElement | null;
-  isShowMoreVisible: boolean;
+  button: HTMLButtonElement | null;
 }
 
 function getNavContext(from: EventTarget | null): INavContext | null {
@@ -310,8 +309,7 @@ function getNavContext(from: EventTarget | null): INavContext | null {
     container,
     items,
     currentIndex,
-    moreButton: moreBtnEl.value,
-    isShowMoreVisible: isButtonVisible.value,
+    button: buttonRef.value,
   };
 }
 
@@ -322,10 +320,10 @@ function navigateBy(direction: "next" | "prev", from: EventTarget | null): void 
     return;
   }
 
-  const { items, currentIndex, moreButton, isShowMoreVisible } = ctx;
+  const { items, currentIndex, button } = ctx;
 
-  const isFromShowMore = from instanceof Node && moreBtnWrapper.value?.contains(from);
-  if (isFromShowMore) {
+  const isFromButton = from instanceof Node && buttonWrapperRef.value?.contains(from);
+  if (isFromButton) {
     if (direction === "prev" && items.length > 0) {
       focusPickerAtIndex(items.length - 1);
     }
@@ -345,8 +343,8 @@ function navigateBy(direction: "next" | "prev", from: EventTarget | null): void 
     return;
   }
 
-  if (direction === "next" && isShowMoreVisible && moreButton) {
-    moreButton.focus();
+  if (direction === "next" && isButtonVisible.value && button) {
+    button.focus();
   }
 }
 
@@ -359,13 +357,13 @@ function onTabKey(event: KeyboardEvent): void {
 
   const isShift = event.shiftKey;
   const from = event.target;
-  const isFromShowMore = from instanceof Node && moreBtnWrapper.value?.contains(from);
+  const isFromButton = from instanceof Node && buttonWrapperRef.value?.contains(from);
 
-  const { items, currentIndex, isShowMoreVisible } = ctx;
+  const { items, currentIndex } = ctx;
   const isFirst = currentIndex === 0;
-  const isLast = currentIndex === items.length - 1 && !isShowMoreVisible;
+  const isLast = currentIndex === items.length - 1 && !isButtonVisible.value;
 
-  if ((isShift && isFirst) || (!isShift && (isFromShowMore || isLast))) {
+  if ((isShift && isFirst) || (!isShift && (isFromButton || isLast))) {
     return;
   }
 
@@ -382,12 +380,12 @@ watch(truncate, (enabled) => {
   void expand();
 });
 
-watch(maxRows, async () => {
-  await measureAndLayout();
+watch(maxRows, () => {
+  void measureAndLayout();
 });
 
-onMounted(async () => {
-  await measureAndLayout();
+onMounted(() => {
+  void measureAndLayout();
 });
 </script>
 
