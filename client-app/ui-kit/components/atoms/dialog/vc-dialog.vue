@@ -18,10 +18,7 @@ interface IProps {
   maxHeight?: string;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
-  width: "",
-  maxHeight: "",
-});
+const props = defineProps<IProps>();
 </script>
 
 <style lang="scss">

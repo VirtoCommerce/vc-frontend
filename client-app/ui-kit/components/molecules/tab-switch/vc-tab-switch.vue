@@ -62,8 +62,6 @@ const props = withDefaults(
   {
     size: "md",
     labelPosition: "end",
-    color: "",
-    hoverColor: "",
   },
 );
 

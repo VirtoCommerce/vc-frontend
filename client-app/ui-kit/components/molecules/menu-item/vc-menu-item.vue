@@ -73,7 +73,6 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   clickable: true,
-  maxLines: "",
 });
 
 const currentElement = ref<HTMLElement>();

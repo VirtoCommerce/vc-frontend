@@ -73,7 +73,7 @@ const model = defineModel<IProps["value"]>();
 
 const checked = computed(() => model.value === props.value);
 
-const color = computed(() => (props.type === "color" ? getColorValue(props.value) : ""));
+const color = computed(() => (props.type === "color" ? getColorValue(props.value) : undefined));
 const image = computed(() => (props.type === "image" ? props.value : ""));
 </script>
 
