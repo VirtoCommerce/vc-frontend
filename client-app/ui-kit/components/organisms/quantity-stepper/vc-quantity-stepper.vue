@@ -4,6 +4,7 @@
       v-model.number="model"
       class="vc-quantity-stepper__input"
       type="number"
+      :aria-label="$t('ui_kit.labels.product_quantity')"
       :disabled="disabled"
       :readonly="readonly"
       :loading="loading"
