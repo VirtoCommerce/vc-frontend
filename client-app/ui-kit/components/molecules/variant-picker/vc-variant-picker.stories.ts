@@ -60,6 +60,32 @@ Tooltip.args = {
   isAvailable: true,
 };
 
+export const TooltipSlotWithImage: StoryFn = (args) => ({
+  components: { VcVariantPicker },
+  setup: () => ({ args }),
+  template: `
+    <div class="p-6">
+      <VcVariantPicker v-bind="args">
+        <template #tooltip>
+          <div class="flex items-center gap-2 max-w-64 font-normal">
+            <VcImage :src="args.value" alt="Variant preview" class="size-12 rounded-md object-cover" />
+            <div>
+              <div class="font-bold">Variant preview</div>
+              <div class="text-xs text-neutral-600">This tooltip content comes from the slot and can include any markup.</div>
+            </div>
+          </div>
+        </template>
+      </VcVariantPicker>
+    </div>
+  `,
+});
+
+TooltipSlotWithImage.args = {
+  type: "image",
+  value: "product-example-1.webp",
+  isAvailable: true,
+};
+
 export const Text = Template.bind({});
 Text.args = {
   type: "text",

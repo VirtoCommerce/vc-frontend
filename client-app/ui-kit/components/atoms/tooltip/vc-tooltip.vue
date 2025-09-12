@@ -9,13 +9,24 @@
     :flip-options="flipOptions"
     :shift-options="shiftOptions"
     :width="width"
+    role="tooltip"
+    :enable-teleport="enableTeleport"
+    :teleport-selector="teleportSelector"
   >
-    <template #trigger>
+    <template v-if="$slots.default" #default="{ opened, triggerProps }">
+      <slot
+        :opened="opened"
+        :trigger-props="{ ...triggerProps, 'aria-describedby': tooltipContentId }"
+        :tooltip-id="tooltipContentId"
+      />
+    </template>
+
+    <template v-else-if="$slots.trigger" #trigger>
       <slot name="trigger" />
     </template>
 
     <template #content>
-      <div class="vc-tooltip__content">
+      <div :id="tooltipContentId" class="vc-tooltip__content">
         <slot name="content" />
       </div>
     </template>
@@ -23,6 +34,7 @@
 </template>
 
 <script setup lang="ts">
+import { useComponentId } from "@/ui-kit/composables";
 export interface IEmits {
   (event: "shown", isShown: boolean): void;
 }
@@ -36,6 +48,8 @@ export interface IProps {
   disabled?: boolean;
   hover?: boolean;
   width?: string;
+  enableTeleport?: boolean;
+  teleportSelector?: string;
 }
 
 defineEmits<IEmits>();
@@ -46,6 +60,8 @@ withDefaults(defineProps<IProps>(), {
   hover: true,
   width: "max-content",
 });
+
+const tooltipContentId = useComponentId("vc-tooltip");
 </script>
 
 <style lang="scss">
