@@ -271,3 +271,30 @@ ThreeRows.args = {
   maxRows: 3,
   name: "three-rows",
 };
+
+const TemplateTooltips: StoryFn = (args) => ({
+  components: { VcVariantPickerGroup, VcVariantPicker },
+  setup: () => {
+    const model = ref();
+    return { args, model };
+  },
+  template: `<VcVariantPickerGroup v-bind="args">
+    <VcVariantPicker v-model="model" :name="args.name" type="color" value="red" is-available tooltip="Red" />
+    <VcVariantPicker v-model="model" :name="args.name" type="image" value="product-example-1.webp" is-available>
+      <template #tooltip>
+        <span>Image 1</span>
+      </template>
+    </VcVariantPicker>
+    <VcVariantPicker v-model="model" :name="args.name" type="text" value="XL" tooltip="Extra Large" />
+    <VcVariantPicker v-model="model" :name="args.name" type="color" value="blue">
+      <template #tooltip>
+        <span>Custom Blue</span>
+      </template>
+    </VcVariantPicker>
+  </VcVariantPickerGroup>`,
+});
+
+export const Tooltips = TemplateTooltips.bind({});
+Tooltips.args = {
+  name: "tooltips",
+};
