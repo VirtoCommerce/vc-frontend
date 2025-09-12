@@ -356,15 +356,14 @@ function onTabKey(event: KeyboardEvent): void {
   }
 
   const isShift = event.shiftKey;
-
-  const isOnShowMore = moreBtnWrapper.value?.contains(event.target as Node) ?? false;
+  const from = event.target;
+  const isFromShowMore = from instanceof Node && moreBtnWrapper.value?.contains(from);
 
   const { items, currentIndex, isShowMoreVisible } = ctx;
+  const isFirst = currentIndex === 0;
+  const isLast = currentIndex === items.length - 1 && !isShowMoreVisible;
 
-  if (
-    (isShift && currentIndex === 0) ||
-    (!isShift && (isOnShowMore || (currentIndex === items.length - 1 && !isShowMoreVisible)))
-  ) {
+  if ((isShift && isFirst) || (!isShift && (isFromShowMore || isLast))) {
     return;
   }
 
