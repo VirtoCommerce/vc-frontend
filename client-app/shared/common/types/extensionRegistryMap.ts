@@ -1,4 +1,4 @@
-import type { Product } from "@/core/api/graphql/types";
+import type { CustomerOrderType, Product } from "@/core/api/graphql/types";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { Component } from "vue";
 
@@ -26,4 +26,6 @@ export type ExtensionCategoryMapType = {
     (product: Product) => boolean
   >;
   productPage: ExtensionEntryType<{ product?: Product }, (product: Product) => boolean>;
+  paymentPage: ExtensionEntryType<{ order: CustomerOrderType, paymentTypeName: string }, ({order, paymentTypeName}: {order: CustomerOrderType, paymentTypeName: string}) => boolean>;
+  orderPaymentPage: ExtensionEntryType<{ order: CustomerOrderType, paymentTypeName: string }, ({order, paymentTypeName}: {order: CustomerOrderType, paymentTypeName: string}) => boolean>;
 };

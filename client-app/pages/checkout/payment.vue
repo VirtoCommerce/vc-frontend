@@ -38,9 +38,11 @@
             @success="onPaymentResult(true)"
             @fail="onPaymentResult(false)"
           />
-          <PaymentProcessingLoyalty
-            v-else-if="paymentTypeName === 'LoyaltyPaymentMethod'"
+          <ExtensionPointList
+            v-else-if="paymentTypeName && $canRenderExtensionPoint('paymentPage', 'payment-methods', { order: placedOrder, paymentTypeName: paymentTypeName })"
+            category="paymentPage"
             :order="placedOrder"
+            :payment-type-name="paymentTypeName"
             @success="onPaymentResult(true)"
             @fail="onPaymentResult(false)"
           />
@@ -60,7 +62,6 @@ import { useRouter } from "vue-router";
 import { OrderSummary, useCheckout } from "@/shared/checkout";
 import { PaymentActionType, PaymentProcessingRedirection } from "@/shared/payment";
 import type { PaymentInType } from "@/core/api/graphql/types";
-import PaymentProcessingLoyalty from "@/modules/loyalty/components/payment-processing-loyalty.vue";
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
 import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";

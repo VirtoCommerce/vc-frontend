@@ -7,3 +7,4 @@ export const CUSTOMER_ORDER_OBJECT_TYPE = "CustomerOrder";
 export const REGISTRATION_OBJECT_TYPE = "Registration";
 export const REDEEMED_OPERATION = "Redeemed";
 export const EARNED_OPERATION = "Earned";
+export const LOYALTY_PAYMENT_TYPE_NAME = "LoyaltyPaymentMethod";
