@@ -7,8 +7,8 @@
       size="xs"
       truncate
       icon-size="1.25rem"
-      :icon="icons ? 'bookmark' : null"
-      :prepend-icon="!icons ? 'bookmark' : null"
+      :icon="icons ? 'bookmark-solid' : null"
+      :prepend-icon="!icons ? 'bookmark-solid' : null"
       :variant="selected ? 'no-border' : 'solid-light'"
       :disabled="disabled"
       @click="$emit('saveForLater')"
