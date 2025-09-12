@@ -1,22 +1,33 @@
 <template>
-  <VcLabel v-if="label" :for-id="componentId" :required="isRequired" :error="!!errorMessage">
-    {{ label }}
-  </VcLabel>
-
-  <input
-    :id="componentId"
+  <VcInput
     v-model="dateOnly"
-    :disabled="isDisabled"
+    :label="label"
     :name="name"
-    class="box-border h-11 w-full min-w-0 appearance-none rounded-[--vc-radius] border border-neutral-300 bg-additional-50 p-3 text-base leading-none outline-none focus:border-neutral-400"
     type="date"
-  />
-  <div v-if="errorMessage" class="text-xs text-danger">{{ errorMessage }}</div>
+    :disabled="disabledComputed"
+    :required="requiredComputed"
+    :min="min"
+    :max="max"
+    :error="!!errorMessage"
+    :message="errorMessage"
+    :size="size"
+  >
+    <template #append="{ focusInput }">
+      <VcButton
+        type="button"
+        variant="no-background"
+        icon="calendar"
+        :disabled="disabledComputed"
+        @click.stop="openCalendar(focusInput)"
+      />
+    </template>
+  </VcInput>
 </template>
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
-import { useComponentId } from "@/ui-kit/composables";
+import { Logger } from "@/core/utilities/logger";
+import { computed, getCurrentInstance } from "vue";
 
 interface IEmits {
   (e: "update:modelValue", value: string | undefined): void;
@@ -25,15 +36,57 @@ interface IEmits {
 interface IProps {
   label?: string;
   name?: string;
+  /**
+   * @deprecated use `required` instead
+   */
   isRequired?: boolean;
+
+  /**
+   * @deprecated use `disabled` instead
+   */
   isDisabled?: boolean;
+
+  required?: boolean;
+  disabled?: boolean;
   modelValue?: string;
   errorMessage?: string;
+  size?: VcInputSizeType;
+  min?: string;
+  max?: string;
 }
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
-const componentId = useComponentId("input");
 const dateOnly = useVModel(props, "modelValue", emit);
+
+const requiredComputed = computed(() => props.required ?? props.isRequired);
+const disabledComputed = computed(() => props.disabled ?? props.isDisabled);
+
+if (import.meta.env.DEV) {
+  const vnodeProps = getCurrentInstance()?.vnode.props ?? {};
+
+  if ("isRequired" in vnodeProps) {
+    Logger.warn("VcDateSelector: 'isRequired' prop is deprecated, use 'required' instead.");
+  }
+
+  if ("isDisabled" in vnodeProps) {
+    Logger.warn("VcDateSelector: 'isDisabled' prop is deprecated, use 'disabled' instead.");
+  }
+}
+
+function openCalendar(focusInput: () => void): void {
+  focusInput();
+  const el = document.activeElement as HTMLInputElement | null;
+
+  if (!el || el.type !== "date") {
+    return;
+  }
+
+  if (typeof (el as any).showPicker === "function") {
+    (el as any).showPicker();
+  } else {
+    el.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  }
+}
 </script>
