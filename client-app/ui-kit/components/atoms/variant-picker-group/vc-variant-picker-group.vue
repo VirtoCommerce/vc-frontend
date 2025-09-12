@@ -5,7 +5,7 @@
     role="radiogroup"
     :aria-label="ariaLabelValue"
     tabindex="-1"
-    @keydown.tab.prevent="navigateBy($event.shiftKey ? 'prev' : 'next', $event.target)"
+    @keydown.tab="onTabKey"
     @keydown.right.prevent="navigateBy('next', $event.target)"
     @keydown.down.prevent="navigateBy('next', $event.target)"
     @keydown.left.prevent="navigateBy('prev', $event.target)"
@@ -355,6 +355,30 @@ function navigateBy(direction: "next" | "prev", from: EventTarget | null): void 
   }
 
   focusPickerAtIndex(nextIndex);
+}
+
+function onTabKey(event: KeyboardEvent): void {
+  const ctx = getNavContext(event.target);
+
+  if (ctx === null) {
+    return;
+  }
+
+  const isShift = event.shiftKey;
+
+  const isOnShowMore = moreBtnWrapper.value?.contains(event.target as Node) ?? false;
+
+  const { items, currentIndex, isShowMoreVisible } = ctx;
+
+  if (
+    (isShift && currentIndex === 0) ||
+    (!isShift && (isOnShowMore || (currentIndex === items.length - 1 && !isShowMoreVisible)))
+  ) {
+    return;
+  }
+
+  event.preventDefault();
+  navigateBy(isShift ? "prev" : "next", event.target);
 }
 
 watch(truncate, async (val) => {
