@@ -15,6 +15,15 @@
     },
     "navigation": {
       "route_name": "Points history"
+    },
+    "payment": {
+      "loyalty": {
+        "pay_now_button": "Proceed",
+        "text": "You're attempting pay for the order using points. Your current balance is {currentBalance} points.",
+        "errors": {
+          "insufficient_points": "Can't place the order due to insufficient points balance. Your current balance is {currentBalance} points."
+        }
+      }
     }
   }
 }

@@ -850,13 +850,6 @@
           "missing_link": "Redirect link is missing",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
         }
-      },
-      "loyalty": {
-        "text": "You're attempting pay for the order using points. Your current balance is {currentBalance} points.",
-        "pay_now_button": "Proceed",
-        "errors": {
-          "insufficient_points": "Can't place the order due to insufficient points balance. Your current balance is {currentBalance} points."
-        }
       }
     },
     "wishlists": {

@@ -1,18 +1,18 @@
 <template>
   <div v-if="!balanceLoading">
-    <p class="md:py-3 md:text-left">{{ $t("shared.payment.loyalty.text", { currentBalance: currentBalance }) }}</p>
+    <p class="md:py-3 md:text-left">{{ $t("loyalty.payment.loyalty.text", { currentBalance: currentBalance }) }}</p>
 
     <VcButton
 v-if="resultBalance && resultBalance >= 0" 
       :loading="loading"
       @click="onPay">
-      {{ $t("shared.payment.loyalty.pay_now_button") }}
+      {{ $t("loyalty.payment.loyalty.pay_now_button") }}
     </VcButton>
 
     <VcButton
 v-else-if="resultBalance && resultBalance < 0"
       @click="fail">
-      {{ $t("shared.payment.loyalty.okay_button") }}
+      {{ $t("loyalty.payment.loyalty.okay_button") }}
     </VcButton>
   </div>
 
