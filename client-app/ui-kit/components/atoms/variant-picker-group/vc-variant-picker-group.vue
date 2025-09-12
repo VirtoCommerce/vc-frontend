@@ -318,7 +318,7 @@ function getNavContext(from: EventTarget | null): INavContext | null {
 function navigateBy(direction: "next" | "prev", from: EventTarget | null): void {
   const ctx = getNavContext(from);
 
-  if (ctx === null) {
+  if (!ctx) {
     return;
   }
 
@@ -381,23 +381,20 @@ function onTabKey(event: KeyboardEvent): void {
   navigateBy(isShift ? "prev" : "next", event.target);
 }
 
-watch(truncate, async (val) => {
-  await nextTick();
-
-  if (val) {
-    await measureAndLayout();
-  } else {
-    expand();
+watch(truncate, (enabled) => {
+  if (enabled) {
+    void measureAndLayout();
+    return;
   }
+
+  expand();
 });
 
 watch(maxRows, async () => {
-  await nextTick();
   await measureAndLayout();
 });
 
 onMounted(async () => {
-  await nextTick();
   await measureAndLayout();
 });
 </script>
