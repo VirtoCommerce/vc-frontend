@@ -10,6 +10,8 @@
     :shift-options="shiftOptions"
     :width="width"
     role="tooltip"
+    :enable-teleport="enableTeleport"
+    :teleport-selector="teleportSelector"
   >
     <template v-if="$slots.default" #default="{ opened, triggerProps }">
       <slot
@@ -46,6 +48,8 @@ export interface IProps {
   disabled?: boolean;
   hover?: boolean;
   width?: string;
+  enableTeleport?: boolean;
+  teleportSelector?: string;
 }
 
 defineEmits<IEmits>();
