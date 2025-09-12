@@ -130,9 +130,11 @@
 </template>
 
 <script setup lang="ts">
+import { ApolloError } from "@apollo/client/core";
 import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility, useLocalStorage } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
+import { useRouter } from "vue-router";
 import productTemplateDefault from "@/config/product-default.json";
 import productTemplateB2c from "@/config/product_b2c.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
@@ -159,6 +161,7 @@ import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
+import { ROUTES } from "@/router/routes/constants";
 import {
   useProduct,
   useRelatedProducts,
@@ -187,6 +190,8 @@ import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-po
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
 });
+
+const router = useRouter();
 
 const B2C_VARIATIONS_ITEMS_PER_PAGE = 150;
 
@@ -395,7 +400,7 @@ watch(
   async () => {
     await fetchProduct(productId.value);
     if (product.value?.isConfigurable) {
-      await fetchProductConfiguration();
+      await tryFetchProductConfiguration();
     }
 
     if (product.value?.associations?.totalCount && !relatedProductsSection.value?.hidden) {
@@ -429,6 +434,17 @@ watch(
   },
   { immediate: true },
 );
+
+async function tryFetchProductConfiguration() {
+  try {
+    await fetchProductConfiguration();
+  } catch (e) {
+    // Redirect to sign-in page if logged out on configurable product with lineItemId in URL
+    if(e instanceof ApolloError && e.graphQLErrors.length) {
+      void router.replace({ name: ROUTES.SIGN_IN.NAME })
+    }
+  }
+}
 
 /**
  * Send Google Analytics event and historical event for product.
