@@ -39,7 +39,13 @@
             @fail="onPaymentResult(false)"
           />
           <ExtensionPointList
-            v-else-if="paymentTypeName && $canRenderExtensionPoint('paymentPage', 'payment-methods', { order: placedOrder, paymentTypeName: paymentTypeName })"
+            v-else-if="
+              paymentTypeName &&
+              $canRenderExtensionPoint('paymentPage', 'payment-methods', {
+                order: placedOrder,
+                paymentTypeName: paymentTypeName,
+              })
+            "
             category="paymentPage"
             :order="placedOrder"
             :payment-type-name="paymentTypeName"
