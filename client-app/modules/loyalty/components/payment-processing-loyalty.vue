@@ -12,7 +12,7 @@ v-if="resultBalance && resultBalance >= 0"
     <VcButton
 v-else-if="resultBalance && resultBalance < 0"
       @click="fail">
-      {{ $t("loyalty.payment.loyalty.okay_button") }}
+      {{ $t("loyalty.payment.loyalty.pay_now_button") }}
     </VcButton>
   </div>
 
