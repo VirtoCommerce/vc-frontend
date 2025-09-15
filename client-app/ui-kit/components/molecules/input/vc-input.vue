@@ -327,8 +327,13 @@ provide<VcInputContextType>("inputContext", {
       @apply appearance-none;
     }
 
-    &::-webkit-calendar-picker-indicator {
+    &::-webkit-calendar-picker-indicator,
+    &::-moz-calendar-picker-indicator {
       @apply hidden;
+    }
+
+    &[type="date"] {
+      appearance: textfield;
     }
 
     &:autofill {
