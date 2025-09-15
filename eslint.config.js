@@ -18,6 +18,7 @@ const tsconfigs = {
   node: "./tsconfig.node.json",
   storybook: "./tsconfig.storybook.json",
   vitest: "./tsconfig.vitest.json",
+  examples: "./tsconfig.examples.json",
 };
 
 export default tseslint.config(
@@ -338,6 +339,24 @@ export default tseslint.config(
     },
     rules: {
       "no-console": "off",
+    },
+  },
+
+  // Type-aware configuration for examples files
+  {
+    files: ["examples/**/*.ts", "examples/**/*.vue"],
+    languageOptions: {
+      parserOptions: {
+        project: tsconfigs.examples,
+        tsconfigRootDir,
+      },
+    },
+    settings: {
+      "import/resolver": {
+        typescript: {
+          project: tsconfigs.examples,
+        },
+      },
     },
   },
 
