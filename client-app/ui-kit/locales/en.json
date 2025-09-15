@@ -21,7 +21,7 @@
     "accessibility": {
       "close_alert": "Close alert",
       "variant_picker_group": "Variant options",
-      "show_more_button": "See {count} more options"
+      "show_more_button": "See more options ({count})"
     },
     "labels": {
       "not_available": "N/A",

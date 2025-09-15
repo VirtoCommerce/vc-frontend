@@ -21,7 +21,7 @@
     "accessibility": {
       "close_alert": "关闭提醒",
       "variant_picker_group": "商品变体选项",
-      "show_more_button": "查看更多 {count} 个选项"
+      "show_more_button": "查看更多选项（{count}）"
     },
     "labels": {
       "not_available": "不可用",

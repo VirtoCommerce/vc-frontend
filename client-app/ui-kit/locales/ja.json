@@ -21,7 +21,7 @@
     "accessibility": {
       "close_alert": "アラートを閉じる",
       "variant_picker_group": "バリアントの選択",
-      "show_more_button": "さらに {count} 件のオプションを表示"
+      "show_more_button": "さらにオプションを表示（{count}）"
     },
     "labels": {
       "not_available": "N/A",

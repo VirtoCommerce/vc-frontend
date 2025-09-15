@@ -21,7 +21,7 @@
     "accessibility": {
       "close_alert": "Закрыть уведомление",
       "variant_picker_group": "Варианты товара",
-      "show_more_button": "Показать ещё {count} вариантов"
+      "show_more_button": "Показать ещё варианты ({count})"
     },
     "labels": {
       "not_available": "Н/Д",
