@@ -21,6 +21,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { authorizePayment } from "@/core/api/graphql";
 import { useLoyaltyBalance } from "../composables/useLoyaltyBalance";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
@@ -36,6 +37,7 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
+const { t } = useI18n();
 const loading = ref(false);
 const { fetchLoyaltyBalance, loading: balanceLoading, currentBalance, resultBalance } = useLoyaltyBalance();
 
@@ -65,6 +67,6 @@ async function onPay() {
 }
 
 function fail() {
-  emit("fail", "Insufficient points balance");
+  emit("fail", t("loyalty.payment.loyalty.errors.insufficient_points", { currentBalance: currentBalance }));
 }
 </script>
