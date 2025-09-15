@@ -4,7 +4,11 @@ export function isMainColorType(value: string): value is VcMainColorType {
   return MAIN_COLORS.includes(value as VcMainColorType);
 }
 
-export function getColorValue(color: string): string {
+export function getColorValue(color: string | undefined): string | undefined {
+  if (!color) {
+    return;
+  }
+
   if (isValidCssVariableName(color)) {
     return `var(${color})`;
   } else if (isMainColorType(color)) {
@@ -12,8 +16,6 @@ export function getColorValue(color: string): string {
   } else if (isValidColor(color)) {
     return color;
   }
-
-  return "";
 }
 
 export function isValidCssVariableName(value: string): boolean {

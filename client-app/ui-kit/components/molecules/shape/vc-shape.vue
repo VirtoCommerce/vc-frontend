@@ -21,9 +21,6 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   mask: "polygon",
-  size: "",
-  iconColor: "",
-  bgColor: "",
   img: "",
 });
 
