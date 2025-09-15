@@ -466,10 +466,14 @@ watch(
 );
 
 watch(
-  () => lineItemId,
+  () => [lineItemId, cart],
   () => {
+    if (!cart.value || !lineItemId) {
+      return;
+    }
+
     const isExist = checkLineItemId();
-    if (lineItemId && !isExist) {
+    if (!isExist) {
       void router.replace({ ...route, query: { ...route.query, [LINE_ITEM_ID_URL_SEARCH_PARAM]: undefined } });
     }
   },
