@@ -134,7 +134,9 @@ export function _useNavigations() {
 
   async function fetchFooterLinks() {
     try {
-      footerLinks.value = (await getMenu("footer-links")).map((item) => convertToExtendedMenuLink(item as MenuLinkType, false));
+      footerLinks.value = (await getMenu("footer-links")).map((item) =>
+        convertToExtendedMenuLink(item as MenuLinkType, false),
+      );
     } catch (e) {
       Logger.error(`${useNavigations.name}.${fetchFooterLinks.name}`, e);
     }
@@ -142,7 +144,9 @@ export function _useNavigations() {
 
   async function fetchPinnedLinks() {
     try {
-      pinnedLinks.value = (await getMenu("pinned-links")).map((item) => convertToExtendedMenuLink(item as MenuLinkType, false));
+      pinnedLinks.value = (await getMenu("pinned-links")).map((item) =>
+        convertToExtendedMenuLink(item as MenuLinkType, false),
+      );
     } catch (e) {
       Logger.error(`${useNavigations.name}.${fetchPinnedLinks.name}`, e);
     }

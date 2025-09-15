@@ -34,7 +34,6 @@ withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   variant: "solid",
-  maxWidth: "",
 });
 </script>
 
