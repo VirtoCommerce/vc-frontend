@@ -693,6 +693,10 @@
         "ok_button": "Ok",
         "no_results": "No results found",
         "reset_search_button": "Reset search"
+      },
+      "shipment_options": {
+        "title": "Shipment options",
+        "in_store": "In-Store Pickup"
       }
     },
     "checkout": {

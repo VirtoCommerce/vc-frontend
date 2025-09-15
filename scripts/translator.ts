@@ -14,7 +14,7 @@ Your translations must be short, concise, and use commonly accepted e-commerce t
 Preserve all original formatting, punctuation, placeholders (e.g., @:key, i18n interpolation), and line breaks exactly as in the source strings.
 Your output must strictly follow the format requested in the user prompt, without any additional commentary, explanations, or markdown fences.`;
 
-const genAI = new GoogleGenerativeAI(process.env.APP_GEMINI_API_KEY as string);
+const genAI = new GoogleGenerativeAI("AIzaSyA-IQGZNK7bqWiujLynMGdDJnx-TZGeUaw" as string);
 const model = genAI.getGenerativeModel({
   model: modelName,
   systemInstruction: SYSTEM_INSTRUCTION,
@@ -25,11 +25,7 @@ const model = genAI.getGenerativeModel({
 
 export type BatchItemType = { key: string; text: string };
 
-function generateBatchPrompt(
-  items: BatchItemType[],
-  originLanguage: string,
-  targetLanguage: string,
-) {
+function generateBatchPrompt(items: BatchItemType[], originLanguage: string, targetLanguage: string) {
   const example = JSON.stringify(["Texto traducido 1", "Texto traducido 2"]);
   return `Translate each item's "text" from ${originLanguage} to ${targetLanguage}, using its "key" for context.
 Return a valid JSON array of strings in the same order as the input.
@@ -51,7 +47,11 @@ function parseStringArray(jsonString: string): string[] | null {
 }
 
 function tryParseJsonArray(text: string): string[] {
-  const cleaned = text.trim().replace(/^```(?:json)?\n?/i, "").replace(/```$/i, "").trim();
+  const cleaned = text
+    .trim()
+    .replace(/^```(?:json)?\n?/i, "")
+    .replace(/```$/i, "")
+    .trim();
 
   const directParseResult = parseStringArray(cleaned);
   if (directParseResult) {
