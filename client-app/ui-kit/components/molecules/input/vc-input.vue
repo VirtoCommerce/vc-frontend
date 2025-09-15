@@ -121,8 +121,6 @@ export interface IProps {
   disableAutocomplete?: boolean;
 }
 
-const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
-
 defineOptions({
   inheritAttrs: false,
 });
@@ -138,6 +136,8 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   browserTooltip: "disabled",
 });
+
+const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 const componentId = useComponentId("input");
 const listeners = useListeners();
@@ -200,8 +200,9 @@ function clear() {
 function keyDown(event: KeyboardEvent) {
   if (props.type === "number") {
     const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight)/;
-
-    return !event.key.match(allowedCharacter) && event.preventDefault();
+    if (!allowedCharacter.test(event.key)) {
+      event.preventDefault();
+    }
   }
 }
 
