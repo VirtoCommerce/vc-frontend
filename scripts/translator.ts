@@ -14,7 +14,7 @@ Your translations must be short, concise, and use commonly accepted e-commerce t
 Preserve all original formatting, punctuation, placeholders (e.g., @:key, i18n interpolation), and line breaks exactly as in the source strings.
 Your output must strictly follow the format requested in the user prompt, without any additional commentary, explanations, or markdown fences.`;
 
-const genAI = new GoogleGenerativeAI("AIzaSyA-IQGZNK7bqWiujLynMGdDJnx-TZGeUaw" as string);
+const genAI = new GoogleGenerativeAI(process.env.APP_GEMINI_API_KEY as string);
 const model = genAI.getGenerativeModel({
   model: modelName,
   systemInstruction: SYSTEM_INSTRUCTION,
