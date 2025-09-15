@@ -145,7 +145,6 @@ const props = withDefaults(defineProps<IProps>(), {
   step: 1,
   min: 0,
   cols: () => [],
-  colsHeight: "",
   updateOnColumnClick: false,
   showTooltipOnColHover: false,
 });
@@ -384,7 +383,7 @@ function getSliderStart(value1: number, value2: number): [number, number] {
   $hoverable: "";
   $clickable: "";
 
-  --props-cols-height: v-bind(colsHeight);
+  --props-cols-height: v-bind(props.colsHeight);
   --cols-height: var(--vc-slider-cols-height, var(--props-cols-height, 2rem));
   --handle-size: 1.125rem;
 

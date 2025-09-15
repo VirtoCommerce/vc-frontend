@@ -48,7 +48,6 @@ defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   placement: "bottom-start",
-  maxHeight: "",
   offsetOptions: 4,
   width: "auto",
   dividers: true,
