@@ -82,10 +82,10 @@ const image = computed(() => (props.type === "image" ? props.value : ""));
 function onActivate(): void {
   if (model.value !== props.value) {
     model.value = props.value;
-  }
 
-  emit("input", props.value);
-  emit("change", props.value);
+    emit("input", props.value);
+    emit("change", props.value);
+  }
 }
 </script>
 
