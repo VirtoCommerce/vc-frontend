@@ -22,9 +22,9 @@
     "payment": {
       "loyalty": {
         "pay_now_button": "進む",
-        "text": "ポイントを使用して注文の支払いを行おうとしています。現在の残高は {currentBalance} ポイントです。",
+        "text": "ポイントを使用して注文の支払いを行おうとしています。現在のポイント残高は {currentBalance} です。",
         "errors": {
-          "insufficient_points": "ポイント残高が不足しているため、注文を行うことができません。現在の残高は {currentBalance} ポイントです。"
+          "insufficient_points": "ポイント残高が不足しているため、注文を行うことができません。現在のポイント残高は {currentBalance} です。"
         }
       }
     }

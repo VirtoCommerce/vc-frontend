@@ -22,9 +22,9 @@
     "payment": {
       "loyalty": {
         "pay_now_button": "继续",
-        "text": "您正在尝试使用积分支付订单。您当前的余额是 {currentBalance} 积分。",
+        "text": "您正在尝试使用积分支付订单。您当前的积分余额是 {currentBalance}。",
         "errors": {
-          "insufficient_points": "由于积分余额不足，无法下单。您当前的余额是 {currentBalance} 积分。"
+          "insufficient_points": "由于积分余额不足，无法下单。您当前的积分余额是 {currentBalance}。"
         }
       }
     }

@@ -22,9 +22,9 @@
     "payment": {
       "loyalty": {
         "pay_now_button": "Fortfahren",
-        "text": "Sie versuchen, die Bestellung mit Punkten zu bezahlen. Ihr aktuelles Guthaben beträgt {currentBalance} Punkte.",
+        "text": "Sie versuchen, die Bestellung mit Punkten zu bezahlen. Ihr aktuelles Punktesaldo beträgt {currentBalance}.",
         "errors": {
-          "insufficient_points": "Die Bestellung kann aufgrund unzureichender Punkte nicht aufgegeben werden. Ihr aktuelles Guthaben beträgt {currentBalance} Punkte."
+          "insufficient_points": "Die Bestellung kann aufgrund unzureichender Punkte nicht aufgegeben werden. Ihr aktuelles Punktesaldo beträgt {currentBalance}."
         }
       }
     }
