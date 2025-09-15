@@ -30,10 +30,6 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   tag: "p",
   align: "left",
-  fontSize: "",
-  fontWeight: "",
-  textTransform: "",
-  color: "",
 });
 
 const isHeader = computed(() => /^(h[1-6])$/.test(props.tag));

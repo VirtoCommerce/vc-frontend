@@ -1,26 +1,8 @@
 import { gql } from "graphql-tag";
+import { globals } from "@/core/globals";
 import { graphqlClient } from "../../client";
 import type { Query, QueryWhiteLabelingSettingsArgs } from "@/core/api/graphql/types";
 import type { DocumentNode } from "graphql";
-
-function getQueryDocument(): DocumentNode {
-  return gql`
-    query WhiteLabelingSettings($domain: String) {
-      whiteLabelingSettings(domain: $domain) {
-        logoUrl
-        secondaryLogoUrl
-        themePresetName
-        isOrganizationLogoUploaded
-        favicons {
-          rel
-          type
-          sizes
-          href
-        }
-      }
-    }
-  `;
-}
 
 const FOOTER_LINKS_DEPTH = 1;
 
@@ -37,27 +19,25 @@ function getFooterLinksTreeString(level: number): string {
     : "";
 }
 
-export async function getGetWhiteLabelingSettings(domain: string) {
-  const { data } = await graphqlClient.query<
-    Required<Pick<Query, "whiteLabelingSettings">>,
-    QueryWhiteLabelingSettingsArgs
-  >({
-    query: getQueryDocument(),
-    variables: {
-      domain,
-    },
-  });
-
-  return data.whiteLabelingSettings;
-}
-
-function getFooterLinksDocument(maxLevelFooterLinks: number): DocumentNode {
+function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
   return gql`
-    query WhiteLabelingSettings($domain: String, $cultureName: String) {
+    query WhiteLabelingSettings($storeId: String, $userId: String, $cultureName: String, $organizationId: String) {
       whiteLabelingSettings(
-        domain: $domain,
+        storeId: $storeId
+        userId: $userId
         cultureName: $cultureName
+        organizationId: $organizationId
       ) {
+        logoUrl
+        secondaryLogoUrl
+        themePresetName
+        isOrganizationLogoUploaded
+        favicons {
+          rel
+          type
+          sizes
+          href
+        }
         footerLinks {
           title
           url
@@ -69,14 +49,18 @@ function getFooterLinksDocument(maxLevelFooterLinks: number): DocumentNode {
   `;
 }
 
-export async function getFooterLinks(domain: string, cultureName: string) {
+export async function getGetWhiteLabelingSettings() {
+  const { storeId, userId, organizationId, cultureName } = globals;
+
   const { data } = await graphqlClient.query<
     Required<Pick<Query, "whiteLabelingSettings">>,
     QueryWhiteLabelingSettingsArgs
   >({
-    query: getFooterLinksDocument(FOOTER_LINKS_DEPTH),
+    query: getQueryDocument(FOOTER_LINKS_DEPTH),
     variables: {
-      domain,
+      storeId,
+      userId,
+      organizationId,
       cultureName,
     },
   });

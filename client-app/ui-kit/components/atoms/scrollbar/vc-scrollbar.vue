@@ -32,8 +32,6 @@ const props = withDefaults(defineProps<IProps>(), {
   horizontal: false,
   disabled: false,
   tag: "div",
-  trackColor: "",
-  thumbColor: "",
 });
 
 const _trackColor = computed(() => getColorValue(props.trackColor));
