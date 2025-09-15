@@ -22,7 +22,7 @@
     "payment": {
       "loyalty": {
         "pay_now_button": "Prosseguir",
-        "text": "Você está tentando pagar o pedido usando pontos. SO seu saldo atual de pontos é {currentBalance}.",
+        "text": "Você está tentando pagar o pedido usando pontos. O seu saldo atual de pontos é {currentBalance}.",
         "errors": {
           "insufficient_points": "Não é possível fazer o pedido devido a saldo insuficiente de pontos. O seu saldo atual de pontos é {currentBalance}."
         }
