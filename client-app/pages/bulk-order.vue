@@ -6,12 +6,18 @@
       {{ $t("pages.bulk_order.title") }}
     </VcTypography>
 
-    <VcTabs v-model="activeTab" :items="tabs" text-field="label" value-field="id" class="mb-5">
-      <template #item="{ item, isActive }">
-        <VcIcon class="me-1" :class="{ 'fill-primary-500': !isActive }" :name="item['icon']" />
-        <span>{{ item["label"] }}</span>
-      </template>
-    </VcTabs>
+    <div class="mb-5 flex gap-1">
+      <VcTabSwitch
+        v-for="tab in tabs"
+        :key="tab.id"
+        v-model="activeTab"
+        :value="tab.id"
+        :label="String(tab.label)"
+        :icon="tab.icon"
+        name="bulk-order-tabs"
+        @change="activeTab = $event"
+      />
+    </div>
 
     <div v-for="tab in additionalTabs" :key="tab.id">
       <component :is="tab.element" :class="{ hidden: activeTab !== tab.id }" />

@@ -25,6 +25,8 @@
 </template>
 
 <script setup lang="ts" generic="T extends ItemType | string | number, U extends string | number">
+import { Logger } from "@/core/utilities";
+
 export type ItemType = {
   [key: string | number]: unknown;
 };
@@ -82,4 +84,6 @@ function select(item: T) {
 function isItemObject(item: unknown): item is ItemType {
   return typeof item === "object" && item !== null;
 }
+
+Logger.warn("[UIKit][warn] VcTabs is deprecated, use VcTabSwitch instead.");
 </script>
