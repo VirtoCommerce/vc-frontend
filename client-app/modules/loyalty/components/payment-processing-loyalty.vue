@@ -3,15 +3,14 @@
     <p class="md:py-3 md:text-left">{{ $t("loyalty.payment.loyalty.text", { currentBalance: currentBalance }) }}</p>
 
     <VcButton
-v-if="resultBalance && resultBalance >= 0" 
+      v-if="resultBalance !== null && resultBalance !== undefined && resultBalance >= 0"
       :loading="loading"
-      @click="onPay">
+      @click="onPay"
+    >
       {{ $t("loyalty.payment.loyalty.pay_now_button") }}
     </VcButton>
 
-    <VcButton
-v-else-if="resultBalance && resultBalance < 0"
-      @click="fail">
+    <VcButton v-else-if="resultBalance !== null && resultBalance !== undefined && resultBalance < 0" @click="fail">
       {{ $t("loyalty.payment.loyalty.pay_now_button") }}
     </VcButton>
   </div>
@@ -21,7 +20,6 @@ v-else-if="resultBalance && resultBalance < 0"
 </template>
 
 <script setup lang="ts">
-
 import { onMounted, ref } from "vue";
 import { authorizePayment } from "@/core/api/graphql";
 import { useLoyaltyBalance } from "../composables/useLoyaltyBalance";
@@ -39,20 +37,12 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 const loading = ref(false);
-const { 
-  fetchLoyaltyBalance,
-  loading: balanceLoading,
-  currentBalance,
-  resultBalance 
-} = useLoyaltyBalance();
+const { fetchLoyaltyBalance, loading: balanceLoading, currentBalance, resultBalance } = useLoyaltyBalance();
 
 async function makePayment() {
   loading.value = true;
 
-  const {
-    isSuccess,
-    errorMessage = "",
-  } = await authorizePayment({
+  const { isSuccess, errorMessage = "" } = await authorizePayment({
     orderId: props.order.id,
     paymentId: props.order.inPayments[0].id,
   });
@@ -60,21 +50,21 @@ async function makePayment() {
   loading.value = false;
 
   if (isSuccess) {
-    emit('success')
+    emit("success");
   } else {
-    emit('fail', errorMessage)
+    emit("fail", errorMessage);
   }
 }
 
 onMounted(async () => {
   await fetchLoyaltyBalance(props.order.id);
-})
+});
 
 async function onPay() {
-  await makePayment()
+  await makePayment();
 }
 
 function fail() {
-  emit('fail', "Insufficient points balance")
+  emit("fail", "Insufficient points balance");
 }
 </script>
