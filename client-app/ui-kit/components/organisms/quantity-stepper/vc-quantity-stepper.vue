@@ -24,6 +24,7 @@
         'aria-valuenow': model ?? '',
       }"
       :data-test-id="testIdInput"
+      @blur="normalize"
     >
       <template v-if="!readonly" #prepend>
         <VcButton
@@ -155,6 +156,13 @@ function handleIncrement() {
 
 function update(value: number) {
   model.value = value;
+}
+
+function normalize() {
+  if (model.value === 0) {
+    model.value = undefined;
+    update(0);
+  }
 }
 </script>
 
