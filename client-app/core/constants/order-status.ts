@@ -9,4 +9,4 @@ export const OrderStatusCode = {
   READY_FOR_PICKUP: "Ready for pickup",
 } as const;
 
-export type OrderStatusCodeType = typeof  OrderStatusCode[keyof typeof OrderStatusCode];
+export type OrderStatusCodeType = (typeof OrderStatusCode)[keyof typeof OrderStatusCode];

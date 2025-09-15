@@ -3,6 +3,7 @@ import { useCurrency } from "@/core/composables";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { IS_DEVELOPMENT } from "@/core/constants";
+import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { MODULE_ID, GOOGLE_ANALYTICS_SETTINGS_MAPPING } from "./constants";
 import {
@@ -53,6 +54,7 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
     debugMode: DEBUG_MODE,
     currency: currentCurrency.value.code,
     user_id: isAuthenticated.value ? user.value.id : undefined,
+    language: globals.cultureName,
     ...extendConfig,
   };
 

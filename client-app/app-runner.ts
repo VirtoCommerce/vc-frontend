@@ -5,7 +5,6 @@ import { apolloClient, getStore } from "@/core/api/graphql";
 import { useCurrency, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import {
@@ -81,7 +80,7 @@ export default async () => {
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
-  const { MODULE_KEYS: WHITE_LABELING_MODULE_KEYS, themePresetName, fetchWhiteLabelingSettings, applyWhiteLabelingSettings, fetchAndApplyFooterLinks } = useWhiteLabeling();
+  const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
   const fallback = {
     locale: FALLBACK_LOCALE,
@@ -92,10 +91,10 @@ export default async () => {
   };
 
   const storePromise = getStore(
-    IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname
+    IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname,
   ) as Promise<StoreResponseType>;
 
-  const [store] = await Promise.all([storePromise, fetchUser(), fallback.setMessage(), fetchWhiteLabelingSettings()]);
+  const [store] = await Promise.all([storePromise, fetchUser(), fallback.setMessage()]);
 
   if (!store) {
     alert("Related store not found. Please contact your site administrator.");
@@ -140,16 +139,10 @@ export default async () => {
    * Other settings
    */
 
-  const { isEnabled } = useModuleSettings(WHITE_LABELING_MODULE_KEYS.ID);
-
-  if(isEnabled(WHITE_LABELING_MODULE_KEYS.ENABLE_STATE)) {
-    void fetchAndApplyFooterLinks(currentLanguage.value.cultureName);
-    applyWhiteLabelingSettings();
-  }
-
+  await fetchWhiteLabelingSettings();
   addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
 
-  if(isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
+  if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
     void fetchCatalogMenu();
   }
 
