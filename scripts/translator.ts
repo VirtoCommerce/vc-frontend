@@ -25,7 +25,11 @@ const model = genAI.getGenerativeModel({
 
 export type BatchItemType = { key: string; text: string };
 
-function generateBatchPrompt(items: BatchItemType[], originLanguage: string, targetLanguage: string) {
+function generateBatchPrompt(
+  items: BatchItemType[],
+  originLanguage: string,
+  targetLanguage: string,
+) {
   const example = JSON.stringify(["Texto traducido 1", "Texto traducido 2"]);
   return `Translate each item's "text" from ${originLanguage} to ${targetLanguage}, using its "key" for context.
 Return a valid JSON array of strings in the same order as the input.
@@ -47,11 +51,7 @@ function parseStringArray(jsonString: string): string[] | null {
 }
 
 function tryParseJsonArray(text: string): string[] {
-  const cleaned = text
-    .trim()
-    .replace(/^```(?:json)?\n?/i, "")
-    .replace(/```$/i, "")
-    .trim();
+  const cleaned = text.trim().replace(/^```(?:json)?\n?/i, "").replace(/```$/i, "").trim();
 
   const directParseResult = parseStringArray(cleaned);
   if (directParseResult) {
