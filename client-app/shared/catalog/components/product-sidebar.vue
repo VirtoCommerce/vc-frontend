@@ -106,22 +106,6 @@
         {{ product.vendor.name }}
       </div>
     </VcWidget>
-
-    <VcWidget title="Shipment options">
-      <div v-for="pickupLocation in product.pickupLocations" :key="pickupLocation.name" class="mt-2 rounded border p-2">
-        <div>
-          {{ pickupLocation.name }}
-        </div>
-
-        <div>
-          {{ pickupLocation.address }}
-        </div>
-
-        <div>
-          {{ pickupLocation.shipmentHours }}
-        </div>
-      </div>
-    </VcWidget>
   </div>
 </template>
 

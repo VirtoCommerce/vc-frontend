@@ -122,6 +122,12 @@
           :variations="variations"
           :template-layout="templateLayout"
         />
+
+        <ProductPickupLocations
+          v-if="productPickupLocations"
+          :loading="productPickupLocationsLoading"
+          :pickup-locations="productPickupLocations"
+        />
       </template>
     </VcLayout>
   </VcContainer>
@@ -167,6 +173,7 @@ import {
   useProducts,
   useRecommendedProducts,
   useConfigurableProduct,
+  useProductPickupLocations,
 } from "@/shared/catalog";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import {
@@ -183,6 +190,7 @@ import type {
 import type { IPageTemplate } from "@/shared/static-content";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
+import ProductPickupLocations from "@/shared/catalog/components/product-pickup-locations.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
@@ -235,6 +243,9 @@ const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const { analytics } = useAnalytics();
 const { pushHistoricalEvent } = useHistoricalEvents();
+
+const { productPickupLocations, fetchProductPickupLocations, productPickupLocationsLoading } =
+  useProductPickupLocations();
 
 const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
   LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
@@ -425,6 +436,10 @@ watch(
         };
       }
       await fetchProducts(variationsSearchParams.value);
+    }
+
+    if (product.value) {
+      await fetchProductPickupLocations(productId.value);
     }
   },
   { immediate: true },
