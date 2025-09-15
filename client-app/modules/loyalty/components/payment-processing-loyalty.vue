@@ -67,6 +67,6 @@ async function onPay() {
 }
 
 function fail() {
-  emit("fail", t("loyalty.payment.loyalty.errors.insufficient_points", { currentBalance: currentBalance }));
+  emit("fail", t("loyalty.payment.loyalty.errors.insufficient_points", { currentBalance: currentBalance.value }));
 }
 </script>
