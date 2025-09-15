@@ -26,8 +26,8 @@
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
-import { Logger } from "@/core/utilities/logger";
 import { computed, getCurrentInstance } from "vue";
+import { Logger } from "@/core/utilities/logger";
 
 interface IEmits {
   (e: "update:modelValue", value: string | undefined): void;
@@ -83,8 +83,8 @@ function openCalendar(focusInput: () => void): void {
     return;
   }
 
-  if (typeof (el as any).showPicker === "function") {
-    (el as any).showPicker();
+  if (typeof el.showPicker === "function") {
+    el.showPicker();
   } else {
     el.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   }
