@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { calculateStepper, checkIfOperationIsAllowed } from "@/ui-kit/utilities/quantity-stepper";
 
 interface IProps {
@@ -92,6 +92,7 @@ const props = withDefaults(defineProps<IProps>(), {
   allowZero: true,
 });
 
+const lastNonEmptyValue = ref<number | undefined>(undefined);
 const min = computed(() => props.min ?? (props.allowZero ? 0 : 1));
 
 const model = defineModel<IProps["value"]>();
@@ -159,11 +160,25 @@ function update(value: number) {
 }
 
 function normalize() {
+  if (model.value === undefined && lastNonEmptyValue.value !== undefined) {
+    update(lastNonEmptyValue.value);
+  }
+
   if (model.value === 0) {
     model.value = undefined;
     update(0);
   }
 }
+
+watch(
+  model,
+  () => {
+    if (model.value !== undefined && model.value !== lastNonEmptyValue.value) {
+      lastNonEmptyValue.value = model.value;
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">
