@@ -10,6 +10,7 @@
       <VcTabSwitch
         v-for="tab in tabs"
         :key="tab.id"
+        :model-value="activeTab"
         :value="tab.id"
         :label="toValue(tab.label)"
         :icon="tab.icon"
