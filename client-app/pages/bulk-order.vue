@@ -10,9 +10,8 @@
       <VcTabSwitch
         v-for="tab in tabs"
         :key="tab.id"
-        v-model="activeTab"
         :value="tab.id"
-        :label="String(tab.label)"
+        :label="toValue(tab.label)"
         :icon="tab.icon"
         name="bulk-order-tabs"
         @change="activeTab = $event"
