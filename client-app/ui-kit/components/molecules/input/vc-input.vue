@@ -42,6 +42,7 @@
         :aria-label="ariaLabel ?? label"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
+        :tabindex="tabindex"
         :data-test-id="testIdInput"
         @keydown="keyDown($event)"
         @click.prevent.stop="inputClick()"
@@ -119,6 +120,7 @@ export interface IProps {
   testIdInput?: string;
   aria?: Record<string, string | number | null>;
   disableAutocomplete?: boolean;
+  tabindex?: string | number;
 }
 
 defineOptions({
@@ -135,6 +137,7 @@ const props = withDefaults(defineProps<IProps>(), {
   type: "text",
   size: "md",
   browserTooltip: "disabled",
+  tabindex: 0,
 });
 
 const componentId = useComponentId("input");
