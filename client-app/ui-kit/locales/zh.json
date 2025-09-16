@@ -19,7 +19,10 @@
       "update_cart": "更新购物车"
     },
     "accessibility": {
-      "close_alert": "关闭提醒"
+      "close_alert": "关闭提醒",
+      "product_quantity": "产品数量",
+      "decrease_quantity": "减少数量",
+      "increase_quantity": "增加数量"
     },
     "labels": {
       "not_available": "不可用",

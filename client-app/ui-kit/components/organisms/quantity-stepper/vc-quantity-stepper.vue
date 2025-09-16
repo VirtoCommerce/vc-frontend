@@ -17,6 +17,7 @@
       :max="max"
       center
       :select-on-click="selectOnClick"
+      :aria-label="ariaLabel || t('ui_kit.accessibility.product_quantity')"
       :aria="{
         role: 'spinbutton',
         'aria-valuemin': min,
@@ -28,6 +29,7 @@
       <template v-if="!readonly" #prepend>
         <VcButton
           icon="minus"
+          :aria-label="t('ui_kit.accessibility.decrease_quantity')"
           :disabled="isDecrementDisabled"
           :loading="loading"
           :color="buttonsColor"
@@ -41,6 +43,7 @@
       <template v-if="!readonly" #append>
         <VcButton
           icon="plus"
+          :aria-label="t('ui_kit.accessibility.increase_quantity')"
           :disabled="isIncrementDisabled"
           :loading="loading"
           :color="buttonsColor"
@@ -60,6 +63,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { calculateStepper, checkIfOperationIsAllowed } from "@/ui-kit/utilities/quantity-stepper";
 
 interface IProps {
@@ -73,6 +77,7 @@ interface IProps {
   error?: boolean;
   message?: string;
   readonly?: boolean;
+  ariaLabel?: string;
   buttonsColor?: VcButtonColorType;
   buttonsVariant?: VcButtonVariantType;
   size?: "sm" | "md";
@@ -90,6 +95,8 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "sm",
   allowZero: true,
 });
+
+const { t } = useI18n();
 
 const min = computed(() => props.min ?? (props.allowZero ? 0 : 1));
 

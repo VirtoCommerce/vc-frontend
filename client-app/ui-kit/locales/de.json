@@ -19,7 +19,10 @@
       "update_cart": "Warenkorb aktualisieren"
     },
     "accessibility": {
-      "close_alert": "Benachrichtigung schließen"
+      "close_alert": "Benachrichtigung schließen",
+      "product_quantity": "Produktmenge",
+      "decrease_quantity": "Menge verringern",
+      "increase_quantity": "Menge erhöhen"
     },
     "labels": {
       "not_available": "N/V",
