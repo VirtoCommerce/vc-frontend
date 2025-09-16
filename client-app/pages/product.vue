@@ -124,7 +124,7 @@
         />
 
         <ProductPickupLocations
-          v-if="productPickupLocations"
+          v-if="productPickupLocations?.length > 0"
           :loading="productPickupLocationsLoading"
           :pickup-locations="productPickupLocations"
         />
