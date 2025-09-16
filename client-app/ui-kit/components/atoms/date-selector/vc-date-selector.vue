@@ -6,10 +6,10 @@
     type="date"
     :disabled="disabledComputed"
     :required="requiredComputed"
-    :min="min"
-    :max="max"
-    :error="!!errorMessage"
-    :message="errorMessage"
+    :min="normalizedMin"
+    :max="normalizedMax"
+    :error="!!computedErrorMessage"
+    :message="computedErrorMessage"
     :size="size"
   >
     <template #append="{ focusInput }">
@@ -18,6 +18,7 @@
         variant="no-background"
         icon="calendar"
         :disabled="disabledComputed"
+        :aria-label="$t('ui_kit.accessibility.open_calendar')"
         @click.stop="openCalendar(focusInput)"
       />
     </template>
@@ -27,7 +28,8 @@
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
 import { computed, getCurrentInstance } from "vue";
-import { Logger } from "@/core/utilities/logger";
+import { useI18n } from "vue-i18n";
+import { toDateOnlyString } from "@/ui-kit/utilities/date";
 
 interface IEmits {
   (e: "update:modelValue", value: string | undefined): void;
@@ -58,20 +60,50 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
+const { t } = useI18n();
 const dateOnly = useVModel(props, "modelValue", emit);
 
 const requiredComputed = computed(() => props.required ?? props.isRequired);
 const disabledComputed = computed(() => props.disabled ?? props.isDisabled);
 
+const normalizedMin = computed(() => toDateOnlyString(props.min));
+const normalizedMax = computed(() => toDateOnlyString(props.max));
+
+/**
+ * Safari and Firefox don't enforce min/max validation on manual date input.
+ * This provides consistent cross-browser validation.
+ */
+const computedErrorMessage = computed(() => {
+  if (props.errorMessage) {
+    return props.errorMessage;
+  }
+
+  if (!dateOnly.value || (!normalizedMin.value && !normalizedMax.value)) {
+    return undefined;
+  }
+
+  const selectedDate = dateOnly.value;
+
+  if (normalizedMin.value && selectedDate < normalizedMin.value) {
+    return t("ui_kit.date_selector.min_date_error", { min: normalizedMin.value });
+  }
+
+  if (normalizedMax.value && selectedDate > normalizedMax.value) {
+    return t("ui_kit.date_selector.max_date_error", { max: normalizedMax.value });
+  }
+
+  return undefined;
+});
+
 if (import.meta.env.DEV) {
   const vnodeProps = getCurrentInstance()?.vnode.props ?? {};
 
   if ("isRequired" in vnodeProps) {
-    Logger.warn("VcDateSelector: 'isRequired' prop is deprecated, use 'required' instead.");
+    console.warn("VcDateSelector: 'isRequired' prop is deprecated, use 'required' instead.");
   }
 
   if ("isDisabled" in vnodeProps) {
-    Logger.warn("VcDateSelector: 'isDisabled' prop is deprecated, use 'disabled' instead.");
+    console.warn("VcDateSelector: 'isDisabled' prop is deprecated, use 'disabled' instead.");
   }
 }
 
