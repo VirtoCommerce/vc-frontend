@@ -1,13 +1,26 @@
 <template>
-  <div ref="containerRef" class="vc-variant-picker-group">
+  <div
+    ref="containerRef"
+    class="vc-variant-picker-group"
+    role="radiogroup"
+    :aria-label="ariaLabelValue"
+    tabindex="-1"
+    @keydown.tab="onTabKey"
+    @keydown.right.prevent="navigateBy('next', $event.target)"
+    @keydown.down.prevent="navigateBy('next', $event.target)"
+    @keydown.left.prevent="navigateBy('prev', $event.target)"
+    @keydown.up.prevent="navigateBy('prev', $event.target)"
+  >
     <slot />
 
-    <div v-if="truncate" v-show="isButtonVisible" ref="moreBtn" class="vc-variant-picker-group__wrapper">
+    <div v-if="truncate" v-show="isButtonVisible" ref="buttonWrapperRef" class="vc-variant-picker-group__wrapper">
       <button
+        ref="buttonRef"
         type="button"
         class="vc-variant-picker-group__button"
+        tabindex="0"
         :aria-expanded="ariaExpandedValue"
-        :aria-label="$t('ui_kit.buttons.see_more')"
+        :aria-label="buttonAriaLabel"
         @click="expand"
       >
         +{{ hiddenCount }}
@@ -19,11 +32,13 @@
 <script setup lang="ts">
 import { useDebounceFn, useResizeObserver } from "@vueuse/core";
 import { ref, computed, onMounted, nextTick, watch, toRef } from "vue";
+import { useI18n } from "vue-i18n";
 import { Logger } from "@/core/utilities";
 
 interface IProps {
   truncate?: boolean;
   maxRows?: number;
+  ariaLabel?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -32,38 +47,47 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const LAYOUT_CONFIG = {
   POSITION_TOLERANCE: 2,
-  WRAPPER_CLASS: "vc-variant-picker-group__wrapper",
   RESIZE_DEBOUNCE_MS: 100,
 };
 
 const truncate = toRef(props, "truncate");
 const maxRows = toRef(props, "maxRows");
+const { t } = useI18n();
 
+const ariaLabelValue = computed(() => props.ariaLabel ?? t("ui_kit.accessibility.variant_picker_group"));
+const buttonAriaLabel = computed(() => t("ui_kit.accessibility.show_more_button", { count: hiddenCount.value }));
 const containerRef = ref<HTMLElement | null>(null);
-const moreBtn = ref<HTMLElement | null>(null);
+const buttonWrapperRef = ref<HTMLElement | null>(null);
+const buttonRef = ref<HTMLButtonElement | null>(null);
 
 const expanded = ref(false);
 const showButton = ref(false);
 const hiddenCount = ref(0);
-
+const visibleItemsCount = ref(0);
 const isButtonVisible = computed(() => truncate.value && !expanded.value && showButton.value);
 const ariaExpandedValue = computed(() => (expanded.value ? "true" : "false"));
 
 const debouncedMeasureAndLayout = useDebounceFn(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
 
 useResizeObserver(containerRef, debouncedMeasureAndLayout);
-
-function getDirectItems(containerEl: HTMLElement | null) {
+function getGroupItems(containerEl: HTMLElement | null, onlyVisible = false): HTMLElement[] {
   if (!containerEl?.children) {
     return [];
   }
 
   try {
-    return Array.from(containerEl.children).filter(
-      (item) => item instanceof HTMLElement && !item.classList.contains(LAYOUT_CONFIG.WRAPPER_CLASS),
+    const wrapperEl = buttonWrapperRef.value;
+    const directItems = Array.from(containerEl.children).filter(
+      (item) => item instanceof HTMLElement && item !== wrapperEl,
     ) as HTMLElement[];
+
+    if (!onlyVisible) {
+      return directItems;
+    }
+
+    return directItems.filter((el) => el.style.display !== "none");
   } catch (error) {
-    Logger.error("VcVariantPickerGroup: Failed to get direct items", error);
+    Logger.error("VcVariantPickerGroup: Failed to get items", error);
     return [];
   }
 }
@@ -126,7 +150,7 @@ function prepareLayoutItems(): { items: HTMLElement[]; total: number } | null {
     return null;
   }
 
-  const items = getDirectItems(container);
+  const items = getGroupItems(container);
   const total = items.length;
 
   if (total === 0) {
@@ -154,15 +178,15 @@ function checkIfLayoutNeeded(items: HTMLElement[]): boolean {
 }
 
 function isButtonPositionValid(items: HTMLElement[], visibleIdxLimit: number): boolean {
-  const btnEl = moreBtn.value;
+  const buttonEl = buttonWrapperRef.value;
 
-  if (btnEl === null) {
+  if (buttonEl === null) {
     return true;
   }
 
   const lastIdx = visibleIdxLimit - 1;
-  const lastItemTop = lastIdx >= 0 ? items[lastIdx].offsetTop : btnEl.offsetTop;
-  const btnTop = btnEl.offsetTop;
+  const lastItemTop = lastIdx >= 0 ? items[lastIdx].offsetTop : buttonEl.offsetTop;
+  const btnTop = buttonEl.offsetTop;
 
   return Math.abs(btnTop - lastItemTop) < LAYOUT_CONFIG.POSITION_TOLERANCE;
 }
@@ -185,7 +209,7 @@ async function findOptimalVisibleCount(items: HTMLElement[], total: number): Pro
   return 0;
 }
 
-function expand() {
+async function expand(): Promise<void> {
   expanded.value = true;
   showButton.value = false;
 
@@ -194,8 +218,14 @@ function expand() {
     return;
   }
 
-  const items = getDirectItems(el);
+  const items = getGroupItems(el);
   resetItemsVisibility(items);
+
+  const firstNewIndex = visibleItemsCount.value;
+
+  await nextTick();
+  await nextTick();
+  focusPickerAtIndex(firstNewIndex);
 }
 
 async function performLayoutMeasurement(items: HTMLElement[], total: number): Promise<void> {
@@ -207,6 +237,7 @@ async function performLayoutMeasurement(items: HTMLElement[], total: number): Pr
   await nextTick();
 
   const visibleCount = await findOptimalVisibleCount(items, total);
+  visibleItemsCount.value = visibleCount;
   updateButtonState(total, visibleCount);
 }
 
@@ -226,24 +257,135 @@ async function measureAndLayout() {
   await performLayoutMeasurement(items, total);
 }
 
-watch(truncate, async (val) => {
-  await nextTick();
-
-  if (val) {
-    await measureAndLayout();
-  } else {
-    expand();
+function focusPickerAtIndex(index: number): void {
+  const container = containerRef.value;
+  if (container === null) {
+    return;
   }
+
+  const items = getGroupItems(container, true);
+  const target = items[index];
+  if (!target) {
+    return;
+  }
+
+  const input = target.querySelector<HTMLInputElement>("input.vc-variant-picker__input");
+  if (input) {
+    input.focus();
+  }
+}
+
+function findCurrentItemIndex(targetElement: HTMLElement, precomputedItems?: HTMLElement[]): number {
+  const container = containerRef.value;
+  if (container === null) {
+    return -1;
+  }
+
+  const items = precomputedItems ?? getGroupItems(container, true);
+  return items.findIndex((el) => el.contains(targetElement));
+}
+
+interface INavContext {
+  container: HTMLElement;
+  items: HTMLElement[];
+  currentIndex: number;
+  button: HTMLButtonElement | null;
+}
+
+function getNavContext(from: EventTarget | null): INavContext | null {
+  if (!(from instanceof HTMLElement)) {
+    return null;
+  }
+
+  const container = containerRef.value;
+  if (!container || !container.contains(from)) {
+    return null;
+  }
+
+  const items = getGroupItems(container, true);
+  const currentIndex = findCurrentItemIndex(from, items);
+
+  return {
+    container,
+    items,
+    currentIndex,
+    button: buttonRef.value,
+  };
+}
+
+function navigateBy(direction: "next" | "prev", from: EventTarget | null): void {
+  const ctx = getNavContext(from);
+
+  if (!ctx) {
+    return;
+  }
+
+  const { items, currentIndex, button } = ctx;
+
+  const isFromButton = from instanceof Node && buttonWrapperRef.value?.contains(from);
+  if (isFromButton) {
+    if (direction === "prev" && items.length > 0) {
+      focusPickerAtIndex(items.length - 1);
+    }
+
+    return;
+  }
+
+  if (currentIndex < 0) {
+    return;
+  }
+
+  const delta = direction === "next" ? 1 : -1;
+  const nextIndex = currentIndex + delta;
+
+  if (nextIndex >= 0 && nextIndex < items.length) {
+    focusPickerAtIndex(nextIndex);
+    return;
+  }
+
+  if (direction === "next" && isButtonVisible.value && button) {
+    button.focus();
+  }
+}
+
+function onTabKey(event: KeyboardEvent): void {
+  const ctx = getNavContext(event.target);
+
+  if (ctx === null) {
+    return;
+  }
+
+  const isShift = event.shiftKey;
+  const from = event.target;
+  const isFromButton = from instanceof Node && buttonWrapperRef.value?.contains(from);
+
+  const { items, currentIndex } = ctx;
+  const isFirst = currentIndex === 0;
+  const isLast = currentIndex === items.length - 1 && !isButtonVisible.value;
+
+  if ((isShift && isFirst) || (!isShift && (isFromButton || isLast))) {
+    return;
+  }
+
+  event.preventDefault();
+  navigateBy(isShift ? "prev" : "next", event.target);
+}
+
+watch(truncate, (enabled) => {
+  if (enabled) {
+    void measureAndLayout();
+    return;
+  }
+
+  void expand();
 });
 
-watch(maxRows, async () => {
-  await nextTick();
-  await measureAndLayout();
+watch(maxRows, () => {
+  void measureAndLayout();
 });
 
-onMounted(async () => {
-  await nextTick();
-  await measureAndLayout();
+onMounted(() => {
+  void measureAndLayout();
 });
 </script>
 
