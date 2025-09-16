@@ -19,7 +19,12 @@
       "update_cart": "Zaktualizuj koszyk"
     },
     "accessibility": {
-      "close_alert": "Zamknij powiadomienie"
+      "close_alert": "Zamknij powiadomienie",
+      "open_calendar": "Otwórz kalendarz"
+    },
+    "date_selector": {
+      "min_date_error": "Data musi być nie wcześniejsza niż {min}",
+      "max_date_error": "Data musi być nie późniejsza niż {max}"
     },
     "labels": {
       "not_available": "N/D",

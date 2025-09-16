@@ -19,7 +19,12 @@
       "update_cart": "Update cart"
     },
     "accessibility": {
-      "close_alert": "Close alert"
+      "close_alert": "Close alert",
+      "open_calendar": "Open calendar"
+    },
+    "date_selector": {
+      "min_date_error": "Date must be on or after {min}",
+      "max_date_error": "Date must be on or before {max}"
     },
     "labels": {
       "not_available": "N/A",

@@ -19,7 +19,12 @@
       "update_cart": "カートを更新"
     },
     "accessibility": {
-      "close_alert": "アラートを閉じる"
+      "close_alert": "アラートを閉じる",
+      "open_calendar": "カレンダーを開く"
+    },
+    "date_selector": {
+      "min_date_error": "日付は{min}以降である必要があります",
+      "max_date_error": "日付は{max}以前である必要があります"
     },
     "labels": {
       "not_available": "N/A",
