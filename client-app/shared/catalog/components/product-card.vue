@@ -45,8 +45,8 @@
     </VcProductProperties>
 
     <VcProductPrice
-      :actual-price="product.minVariationPrice?.actual ?? product.price.actual"
-      :list-price="product.minVariationPrice?.list ?? product.price.list"
+      :actual-price="actualPrice"
+      :list-price="listPrice"
       :with-from-label="product.hasVariations"
       :single-line="viewMode === 'grid'"
     />
@@ -96,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, toRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { ProductType } from "@/core/enums";
@@ -140,12 +140,25 @@ const props = withDefaults(defineProps<IProps>(), {
   browserTarget: "_blank",
 });
 
+const product = toRef(props, "product");
+
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
+
+const actualPrice = computed(() =>
+  product.value.hasVariations
+    ? (product.value.minVariationPrice?.actual ?? product.value.price.actual)
+    : product.value.price.actual,
+);
+const listPrice = computed(() =>
+  product.value.hasVariations
+    ? (product.value.minVariationPrice?.list ?? product.value.price.list)
+    : product.value.price.list,
+);
 
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
