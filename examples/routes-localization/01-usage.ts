@@ -1,5 +1,5 @@
 import { useRouter } from "vue-router";
-import { useThemeContext } from "@/core/composables";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import { globals } from "@/core/globals";
 import { resolveLocalizedRedirect } from "./localization.helpers";
 

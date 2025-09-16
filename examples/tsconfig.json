@@ -1,16 +1,16 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "include": ["examples/**/*", "client-app/**/*"],
+  "include": ["**/*", "../*.d.ts", "../client-app/**/*.d.ts"],
   "compilerOptions": {
-    "composite": true,
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.examples.tsbuildinfo",
     "target": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["node", "jsdom"],
-    "baseUrl": ".",
+    "baseUrl": "..",
+    "module": "es2022",
     "moduleResolution": "bundler",
+    "skipLibCheck": true,
     "paths": {
-      "@/*": ["./client-app/*"]
+      "@/*": ["client-app/*"]
     }
   }
 }

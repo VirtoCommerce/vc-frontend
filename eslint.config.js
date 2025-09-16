@@ -18,7 +18,7 @@ const tsconfigs = {
   node: "./tsconfig.node.json",
   storybook: "./tsconfig.storybook.json",
   vitest: "./tsconfig.vitest.json",
-  examples: "./tsconfig.examples.json",
+  examples: "./examples/tsconfig.json",
 };
 
 export default tseslint.config(
