@@ -26,8 +26,6 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  size: "",
-  iconSize: "",
   iconBgColor: "",
 });
 </script>

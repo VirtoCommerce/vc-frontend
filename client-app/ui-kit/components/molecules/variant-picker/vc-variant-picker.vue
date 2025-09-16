@@ -73,7 +73,7 @@ const model = defineModel<IProps["value"]>();
 
 const checked = computed(() => model.value === props.value);
 
-const color = computed(() => (props.type === "color" ? getColorValue(props.value) : ""));
+const color = computed(() => (props.type === "color" ? getColorValue(props.value) : undefined));
 const image = computed(() => (props.type === "image" ? props.value : ""));
 </script>
 
@@ -150,7 +150,7 @@ const image = computed(() => (props.type === "image" ? props.value : ""));
   }
 
   &__container {
-    @apply relative flex items-stretch py-0.5
+    @apply relative flex items-stretch justify-center py-0.5
     min-h-[--size] min-w-[--size]
     bg-cover bg-center bg-no-repeat bg-additional-50
     rounded-[--radius] cursor-pointer px-[--px];
@@ -202,7 +202,7 @@ const image = computed(() => (props.type === "image" ? props.value : ""));
   }
 
   &__text {
-    @apply flex items-center text-accent-600 font-bold;
+    @apply flex items-center text-accent-600 text-center font-bold;
   }
 }
 </style>
