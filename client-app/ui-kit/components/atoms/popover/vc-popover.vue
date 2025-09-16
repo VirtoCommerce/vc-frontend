@@ -11,6 +11,7 @@
     <teleport :to="teleportSelector" :disabled="!enableTeleport">
       <div
         v-if="$slots.content && !disabled"
+        :id="contentId"
         ref="floating"
         :style="{ zIndex, display, width, ...floatingStyles }"
         class="vc-popover__content"
@@ -37,6 +38,7 @@
 import { flip, offset, shift, useFloating, autoUpdate, arrow } from "@floating-ui/vue";
 import { onClickOutside } from "@vueuse/core";
 import { ref, toRefs, computed, watch } from "vue";
+import { useComponentId } from "@/ui-kit/composables";
 
 interface IEmits {
   (event: "toggle", value: boolean): void;
@@ -74,12 +76,14 @@ const opened = ref(false);
 const reference = ref<HTMLElement | null>(null);
 const floating = ref<HTMLElement | null>(null);
 const floatingArrow = ref<Element | null>(null);
+const contentId = useComponentId("vc-popover");
 const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs(props);
 
 const emitTriggerProps = computed(() => ({
   role: "button" as const,
   "aria-haspopup": "dialog" as const,
-  ariaExpanded: opened.value,
+  "aria-expanded": opened.value,
+  "aria-controls": opened.value ? contentId : undefined,
   onMouseenter: props.hover ? open : undefined,
   onMouseleave: props.hover ? close : undefined,
   onFocusin: props.hover ? open : undefined,
@@ -153,7 +157,7 @@ watch(opened, (value: boolean) => emit("toggle", value));
   $popper: "";
 
   &__trigger {
-    @apply max-w-full;
+    @apply max-w-full size-full;
   }
 
   &__popper {
