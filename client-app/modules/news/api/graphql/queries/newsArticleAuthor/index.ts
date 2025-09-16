@@ -1,8 +1,8 @@
-import { graphqlClient } from "@/core/api/graphql/client"; 
-import { NewsArticleAuthorDocument  } from "../../types";
-import type {  Query, NewsArticleAuthor, QueryNewsArticleAuthorArgs } from "../../types";
+import { graphqlClient } from "@/core/api/graphql/client";
+import { NewsArticleAuthorDocument } from "../../types";
+import type { Query, NewsArticleAuthor, QueryNewsArticleAuthorArgs } from "../../types";
 
-export async function getNewsArticleAuthor(authorId: string): Promise<NewsArticleAuthor> { 
+export async function getNewsArticleAuthor(authorId: string): Promise<NewsArticleAuthor | undefined> {
   const { data } = await graphqlClient.query<Required<Pick<Query, "newsArticleAuthor">>, QueryNewsArticleAuthorArgs>({
     query: NewsArticleAuthorDocument,
     variables: {
@@ -10,5 +10,5 @@ export async function getNewsArticleAuthor(authorId: string): Promise<NewsArticl
     },
   });
 
-  return data.newsArticleAuthor;
+  return data?.newsArticleAuthor;
 }

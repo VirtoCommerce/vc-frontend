@@ -3,7 +3,7 @@ import { globals } from "@/core/globals";
 import { NewsArticleTagsDocument } from "../../types";
 import type { QueryNewsArticleTagsArgs, Query } from "../../types";
 
-export async function getNewsArticleTags(): Promise<string[]> {
+export async function getNewsArticleTags(): Promise<string[] | undefined> {
   const { cultureName } = globals;
 
   const { data } = await graphqlClient.query<Required<Pick<Query, "newsArticleTags">>, QueryNewsArticleTagsArgs>({
@@ -13,5 +13,5 @@ export async function getNewsArticleTags(): Promise<string[]> {
     },
   });
 
-  return data.newsArticleTags;
+  return data?.newsArticleTags;
 }
