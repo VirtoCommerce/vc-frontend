@@ -4,7 +4,7 @@ import type { Meta, StoryFn } from "@storybook/vue3";
 const SIZES = ["xs", "sm", "md", "auto"];
 
 export default {
-  title: "Components/Atoms/VcDateSelector",
+  title: "Components/Molecules/VcDateSelector",
   component: VcDateSelector,
   argTypes: {
     label: {
