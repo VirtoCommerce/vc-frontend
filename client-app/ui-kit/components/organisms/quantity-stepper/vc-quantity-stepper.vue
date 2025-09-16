@@ -1,6 +1,7 @@
 <template>
   <div class="vc-quantity-stepper">
     <VcInput
+      ref="vcInputRef"
       v-model.number="model"
       class="vc-quantity-stepper__input"
       type="number"
@@ -60,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 import { calculateStepper, checkIfOperationIsAllowed } from "@/ui-kit/utilities/quantity-stepper";
 
 interface IProps {
@@ -94,6 +95,8 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const lastNonEmptyValue = ref<number | undefined>(undefined);
 const min = computed(() => props.min ?? (props.allowZero ? 0 : 1));
+
+const vcInputRef = useTemplateRef("vcInputRef");
 
 const model = defineModel<IProps["value"]>();
 
@@ -164,9 +167,8 @@ function normalize() {
     update(lastNonEmptyValue.value);
   }
 
-  if (model.value === 0) {
-    model.value = undefined;
-    update(0);
+  if (model.value === 0 && vcInputRef?.value?.inputElement) {
+    vcInputRef.value.inputElement.value = "0";
   }
 }
 
