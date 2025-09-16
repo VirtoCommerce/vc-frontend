@@ -105,12 +105,12 @@ import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
-import { AddToCart } from "@/shared/cart";
-import { useProducts } from "@/shared/catalog";
+import { AddToCart } from "@/shared/cart/components";
+import { useProducts } from "@/shared/catalog/composables/useProducts";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
-import { useCustomProductComponents } from "@/shared/common/composables";
+import { useCustomProductComponents } from "@/shared/common/composables/useCustomProductComponents";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
-import { AddToCompareCatalog } from "@/shared/compare";
+import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
 import BadgesWrapper from "./badges-wrapper.vue";
 import CountInCart from "./count-in-cart.vue";
