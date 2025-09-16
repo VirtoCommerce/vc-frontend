@@ -4,7 +4,7 @@
       v-model.number="model"
       class="vc-quantity-stepper__input"
       type="number"
-      :aria-label="$t('ui_kit.labels.product_quantity')"
+      :aria-label="inputAriaLabel"
       :disabled="disabled"
       :readonly="readonly"
       :loading="loading"
@@ -63,6 +63,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { calculateStepper, checkIfOperationIsAllowed } from "@/ui-kit/utilities/quantity-stepper";
 
 interface IProps {
@@ -70,6 +71,7 @@ interface IProps {
   value?: number;
   loading?: boolean;
   disabled?: boolean;
+  ariaLabel?: string;
   step?: number;
   min?: number;
   max?: number;
@@ -97,6 +99,9 @@ const props = withDefaults(defineProps<IProps>(), {
 const min = computed(() => props.min ?? (props.allowZero ? 0 : 1));
 
 const model = defineModel<IProps["value"]>();
+
+const { t } = useI18n();
+const inputAriaLabel = computed<string>(() => props.ariaLabel ?? t("ui_kit.labels.product_quantity"));
 
 const isDecrementDisabled = computed(
   () =>
