@@ -242,7 +242,7 @@ const { pushHistoricalEvent } = useHistoricalEvents();
 
 const router = useRouter();
 const route = useRoute();
-const { cart } = useShortCart();
+const { cart, loading: loadingCart } = useShortCart();
 
 const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
   LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
@@ -466,9 +466,9 @@ watch(
 );
 
 watch(
-  () => [lineItemId, cart],
+  [() => lineItemId, cart, loadingCart],
   () => {
-    if (!cart.value || !lineItemId) {
+    if (loadingCart.value && !(cart.value && lineItemId)) {
       return;
     }
 
