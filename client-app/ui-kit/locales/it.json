@@ -19,7 +19,9 @@
       "update_cart": "Aggiorna carrello"
     },
     "accessibility": {
-      "close_alert": "Chiudi avviso"
+      "close_alert": "Chiudi avviso",
+      "variant_picker_group": "Opzioni di variante",
+      "show_more_button": "Vedi altre opzioni ({count})"
     },
     "labels": {
       "not_available": "N/D",
