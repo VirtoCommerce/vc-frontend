@@ -23,6 +23,8 @@
       "product_quantity": "Количество товара",
       "decrease_quantity": "Уменьшить количество",
       "increase_quantity": "Увеличить количество"
+      "variant_picker_group": "Варианты товара",
+      "show_more_button": "Показать ещё варианты ({count})"
     },
     "labels": {
       "not_available": "Н/Д",

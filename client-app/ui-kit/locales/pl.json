@@ -23,6 +23,8 @@
       "product_quantity": "Ilość produktu",
       "decrease_quantity": "Zmniejsz ilość",
       "increase_quantity": "Zwiększ ilość"
+      "variant_picker_group": "Warianty produktu",
+      "show_more_button": "Pokaż więcej wariantów ({count})"
     },
     "labels": {
       "not_available": "N/D",
@@ -99,7 +101,7 @@
       "current_value_announcement": "Wartość suwaka: {start} do {end}, zakres {min} do {max}"
     },
     "breadcrumbs": {
-      "aria_label": "Nawigacja ścieżki"
+      "aria_label": "Nawigacja okruszkowa"
     }
   }
 }

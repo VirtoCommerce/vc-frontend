@@ -23,6 +23,8 @@
       "product_quantity": "製品数量",
       "decrease_quantity": "数量を減らす",
       "increase_quantity": "数量を増やす"
+      "variant_picker_group": "バリアントの選択",
+      "show_more_button": "さらにオプションを表示（{count}）"
     },
     "labels": {
       "not_available": "N/A",

@@ -23,6 +23,8 @@
       "product_quantity": "Cantidad del producto",
       "decrease_quantity": "Disminuir cantidad",
       "increase_quantity": "Aumentar cantidad"
+      "variant_picker_group": "Opciones de variantes",
+      "show_more_button": "Ver más opciones ({count})"
     },
     "labels": {
       "not_available": "N/D",

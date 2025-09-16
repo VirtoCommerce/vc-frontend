@@ -23,6 +23,8 @@
       "product_quantity": "产品数量",
       "decrease_quantity": "减少数量",
       "increase_quantity": "增加数量"
+      "variant_picker_group": "商品变体选项",
+      "show_more_button": "查看更多选项（{count}）"
     },
     "labels": {
       "not_available": "不可用",
