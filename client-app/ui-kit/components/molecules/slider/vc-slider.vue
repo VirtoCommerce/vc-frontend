@@ -24,7 +24,9 @@
           <button
             type="button"
             class="vc-slider__button"
-            :aria-label="$t('ui_kit.slider.column_aria_label', { count: col.count, from: col.value[0], to: col.value[1] })"
+            :aria-label="
+              $t('ui_kit.slider.column_aria_label', { count: col.count, from: col.value[0], to: col.value[1] })
+            "
             @click="onColumnClick({ value: [col.value[0], col.value[1]] })"
           >
             <span class="vc-slider__col-line" :style="{ height: col.height }"></span>
@@ -37,14 +39,11 @@
       </VcTooltip>
     </div>
 
-    <div
-      ref="sliderRef"
-      class="vc-slider__slider"
-    ></div>
+    <div ref="sliderRef" class="vc-slider__slider"></div>
 
     <div class="vc-slider__inputs">
       <label :for="`slider-input-start-${uniqueId}`" class="sr-only">
-        {{ $t('ui_kit.slider.start_input_label', { min, max }) }}
+        {{ $t("ui_kit.slider.start_input_label", { min, max }) }}
       </label>
 
       <VcInput
@@ -65,14 +64,14 @@
       />
 
       <span :id="`slider-input-start-help-${uniqueId}`" class="sr-only">
-        {{ $t('ui_kit.slider.start_input_help', { min, max, step }) }}
+        {{ $t("ui_kit.slider.start_input_help", { min, max, step }) }}
       </span>
 
       <template v-if="!isNaN(rightInput)">
         <b class="vc-slider__dash" aria-hidden="true">&mdash;</b>
 
         <label :for="`slider-input-end-${uniqueId}`" class="sr-only">
-          {{ $t('ui_kit.slider.end_input_label', { min, max }) }}
+          {{ $t("ui_kit.slider.end_input_label", { min, max }) }}
         </label>
 
         <VcInput
@@ -93,19 +92,21 @@
         />
 
         <span :id="`slider-input-end-help-${uniqueId}`" class="sr-only">
-          {{ $t('ui_kit.slider.end_input_help', { min, max, step }) }}
+          {{ $t("ui_kit.slider.end_input_help", { min, max, step }) }}
         </span>
       </template>
     </div>
 
     <!-- Screen reader announcements -->
     <div aria-live="polite" aria-atomic="true" class="sr-only">
-      {{ $t('ui_kit.slider.current_value_announcement', {
-        start: value[0],
-        end: typeof value[1] === 'number' ? value[1] : null,
-        min,
-        max
-      }) }}
+      {{
+        $t("ui_kit.slider.current_value_announcement", {
+          start: value[0],
+          end: typeof value[1] === "number" ? value[1] : null,
+          min,
+          max,
+        })
+      }}
     </div>
   </fieldset>
 </template>
@@ -115,7 +116,7 @@ import { useDebounceFn } from "@vueuse/core";
 import { isNaN, isEqual, uniqueId as getUniqueId } from "lodash";
 import { create } from "nouislider";
 import { ref, onMounted, onUnmounted, computed, toRefs, watch } from "vue";
-import type { API } from "nouislider"
+import type { API } from "nouislider";
 import "nouislider/dist/nouislider.css";
 
 export type RangeType = [number, number];
@@ -144,7 +145,6 @@ const props = withDefaults(defineProps<IProps>(), {
   step: 1,
   min: 0,
   cols: () => [],
-  colsHeight: "",
   updateOnColumnClick: false,
   showTooltipOnColHover: false,
 });
@@ -156,15 +156,17 @@ const { value, min, max, step, cols } = toRefs(props);
 const leftInput = ref<number>(0);
 const rightInput = ref<number>();
 const isAnyInputFocused = ref<boolean>(false);
-const uniqueId = getUniqueId('slider');
+const uniqueId = getUniqueId("slider");
 
 watch([value, min, max], ([newValue, newMin, newMax]) => {
-
   if (slider) {
-    slider.updateOptions({
-      start: getSliderStart(newValue[0], newValue[1]),
-      range: { min: newMin, max: newMax },
-    }, false);
+    slider.updateOptions(
+      {
+        start: getSliderStart(newValue[0], newValue[1]),
+        range: { min: newMin, max: newMax },
+      },
+      false,
+    );
   }
 
   leftInput.value = newValue[0];
@@ -306,9 +308,12 @@ function onColumnClick(col: { value: [number, number] }): void {
   leftInput.value = newStart;
   rightInput.value = newEnd;
 
-  slider?.updateOptions({
+  slider?.updateOptions(
+    {
       start: getSliderStart(newStart, newEnd),
-    }, false);
+    },
+    false,
+  );
 
   emit("change", [newStart, newEnd]);
 }
@@ -369,7 +374,7 @@ function enforceMinimumDistance(startValue: number, endValue: number, previousSt
 }
 
 function getSliderStart(value1: number, value2: number): [number, number] {
-  return [value1, value2]
+  return [value1, value2];
 }
 </script>
 
@@ -378,7 +383,7 @@ function getSliderStart(value1: number, value2: number): [number, number] {
   $hoverable: "";
   $clickable: "";
 
-  --props-cols-height: v-bind(colsHeight);
+  --props-cols-height: v-bind(props.colsHeight);
   --cols-height: var(--vc-slider-cols-height, var(--props-cols-height, 2rem));
   --handle-size: 1.125rem;
 

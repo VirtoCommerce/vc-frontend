@@ -19,7 +19,9 @@
       "update_cart": "Atualizar carrinho"
     },
     "accessibility": {
-      "close_alert": "Fechar alerta"
+      "close_alert": "Fechar alerta",
+      "variant_picker_group": "Opções de variantes",
+      "show_more_button": "Ver mais opções ({count})"
     },
     "labels": {
       "not_available": "N/D",
@@ -96,7 +98,7 @@
       "current_value_announcement": "Valor do slider: {start} a {end}, intervalo {min} a {max}"
     },
     "breadcrumbs": {
-      "aria_label": "Navegação breadcrumb"
+      "aria_label": "Navegação de trilha"
     }
   }
 }

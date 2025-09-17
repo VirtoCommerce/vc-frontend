@@ -7,7 +7,6 @@
 </template>
 
 <script setup lang="ts">
-
 export interface IProps {
   image: string;
   alttext: string;
@@ -15,5 +14,4 @@ export interface IProps {
 }
 
 defineProps<IProps>();
-
 </script>

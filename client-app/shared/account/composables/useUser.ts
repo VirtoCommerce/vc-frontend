@@ -47,7 +47,6 @@ import type {
   UserPersonalDataType,
 } from "@/shared/account";
 
-
 interface IPasswordExpirationEntry {
   userId: string;
   date: Date;
@@ -61,7 +60,8 @@ export function _useUser() {
   const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
   const organization = eagerComputed(
     () =>
-      user.value?.contact?.organizations?.items?.find((item) => item.id === user.value?.contact?.organizationId) ?? null,
+      user.value?.contact?.organizations?.items?.find((item) => item.id === user.value?.contact?.organizationId) ??
+      null,
   );
 
   const allOrganizations = computed(() => user.value?.contact?.organizations?.items || []);
@@ -407,4 +407,4 @@ export function _useUser() {
   };
 }
 
-export const useUser = createGlobalState(_useUser)
+export const useUser = createGlobalState(_useUser);

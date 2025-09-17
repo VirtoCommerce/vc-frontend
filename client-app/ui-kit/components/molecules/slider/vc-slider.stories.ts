@@ -53,7 +53,6 @@ const Template: StoryFn = (args) => ({
   setup: () => {
     const model = ref(args.value);
     const handleChange = (newValue: [number, number]) => {
-
       model.value = newValue;
     };
 

@@ -19,7 +19,9 @@
       "update_cart": "Mettre à jour le panier"
     },
     "accessibility": {
-      "close_alert": "Fermer l'alerte"
+      "close_alert": "Fermer l'alerte",
+      "variant_picker_group": "Options de variantes",
+      "show_more_button": "Voir plus d’options ({count})"
     },
     "labels": {
       "not_available": "N/A",

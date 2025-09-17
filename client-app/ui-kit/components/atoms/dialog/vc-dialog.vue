@@ -24,8 +24,6 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  width: "",
-  maxHeight: "",
   size: "md",
 });
 
