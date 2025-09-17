@@ -6,7 +6,7 @@
         <template v-for="term in filterItem.termValues" :key="filterItem.name + 'term-' + term.value">
           <VcChip color="secondary" closable truncate @close="onCancelFilter(filterItem.name, term.value)">
             {{ formatFilterLabel(filterItem) }}
-            {{ term.label ? getFormattedLabel(term.label) : getFormattedLabel(term.value) }}
+            {{ getFormattedLabel(term.label ?? term.value) }}
           </VcChip>
         </template>
 
