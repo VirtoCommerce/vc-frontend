@@ -3,16 +3,9 @@
     <Error404 v-if="!loading && !newsArticle" />
 
     <VcContainer v-else>
-      <VcBreadcrumbs
-        class="news-article__breadcrumbs"
-        :items="breadcrumbs"
-      />
+      <VcBreadcrumbs class="news-article__breadcrumbs" :items="breadcrumbs" />
 
-      <VcWidgetSkeleton
-        v-if="loading"
-        head
-        size="lg"
-      />
+      <VcWidgetSkeleton v-if="loading" head size="lg" />
 
       <NewsArticle
         v-else-if="newsArticle"
@@ -24,10 +17,7 @@
   </div>
 </template>
 
-<script
-  lang="ts"
-  setup
->
+<script lang="ts" setup>
 import { useSeoMeta } from "@unhead/vue";
 import { computed, defineAsyncComponent, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
@@ -71,7 +61,10 @@ const seoUrl = computed(() => {
     : `${window.location.host}/${newsArticle.value?.seoInfo?.semanticUrl}`;
 });
 
-const breadcrumbs = useBreadcrumbs(() => [{ title: t("news.details.breadcrumbs.news"), route: "/news" }, { title: "" }]);
+const breadcrumbs = useBreadcrumbs(() => [
+  { title: t("news.details.breadcrumbs.news"), route: "/news" },
+  { title: seoTitle.value ?? "" },
+]);
 
 const router = useRouter();
 
