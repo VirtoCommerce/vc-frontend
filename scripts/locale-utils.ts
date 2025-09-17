@@ -1,5 +1,5 @@
-import get from "lodash/get.js";
-import set from "lodash/set.js";
+import get from "lodash/get";
+import setWith from "lodash/setWith";
 import type { LocaleDataType, MissingKeyType } from "./check-locales-missing-keys.js";
 import type { BatchItemType } from "./translator.js";
 
@@ -29,10 +29,7 @@ export function getLeafPaths(node: LocaleNodeType, parentPath = ""): string[] {
   });
 }
 
-export function createLeavesFromKeys(
-  keysToFix: MissingKeyType[],
-  originFileContent: LocaleDataType,
-): LeafType[] {
+export function createLeavesFromKeys(keysToFix: MissingKeyType[], originFileContent: LocaleDataType): LeafType[] {
   return keysToFix
     .map(({ key }) => ({
       keyPath: key,
@@ -83,7 +80,7 @@ export function buildNewLocaleContent(
       : get(targetContent, keyPath);
 
     if (value !== undefined) {
-      set(rebuilt, keyPath, value);
+      setWith(rebuilt, keyPath, value, Object);
     }
   }
   return rebuilt as LocaleDataType;
