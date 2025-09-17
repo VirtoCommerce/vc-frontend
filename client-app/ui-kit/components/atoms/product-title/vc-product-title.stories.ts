@@ -1,5 +1,5 @@
 import { VcProductTitle } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const TARGETS = ["_blank", "_self"];
 

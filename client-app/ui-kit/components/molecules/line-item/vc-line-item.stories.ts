@@ -1,7 +1,7 @@
 import { VcLineItem } from "..";
 import { VcAlert } from "../..";
 import { preparedLineItemMock2 as lineItem } from "../../../mocks/line-item.mock";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 export default {
   title: "Components/Molecules/VcLineItem",

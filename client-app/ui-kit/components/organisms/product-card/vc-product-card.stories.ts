@@ -2,7 +2,7 @@ import { getMoney } from "@/ui-kit/mocks";
 import { VcProductCard, VcProductImage, VcAddToCart, VcQuantityStepper } from "..";
 import { VcProductVendor, VcProductProperties, VcProductTitle, VcProductActions, VcRadioButton } from "../../atoms";
 import { VcChip, VcProductPrice, VcProductActionsButton } from "../../molecules";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const VIEW_MODES = ["grid", "list", "item"];
 

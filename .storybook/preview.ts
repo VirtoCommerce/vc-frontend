@@ -1,4 +1,4 @@
-import { setup } from "@storybook/vue3";
+import { setup } from "@storybook/vue3-vite";
 import { vueRouter } from "storybook-vue3-router";
 import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
@@ -6,7 +6,7 @@ import { uiKit } from "../client-app/ui-kit";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
 import type { IThemeConfigPreset } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
-import type { Preview } from "@storybook/vue3";
+import type { Preview } from "@storybook/vue3-vite";
 
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
