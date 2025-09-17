@@ -238,14 +238,14 @@ const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
 const { applicableVariations } = useProductVariationProperties(variations);
 
+const { productPickupLocations, fetchProductPickupLocations, productPickupLocationsLoading } =
+  useProductPickupLocations();
+
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const { analytics } = useAnalytics();
 const { pushHistoricalEvent } = useHistoricalEvents();
-
-const { productPickupLocations, fetchProductPickupLocations, productPickupLocationsLoading } =
-  useProductPickupLocations();
 
 const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
   LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
