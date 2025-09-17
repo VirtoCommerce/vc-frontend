@@ -2,10 +2,7 @@
   <div class="news-article-content">
     <div class="news-article-content__title">{{ newsArticle.title }}</div>
     <div class="news-article-content__tags">
-      <template
-        v-for="tag in newsArticle.tags"
-        :key="tag"
-      >
+      <template v-for="tag in newsArticle.tags" :key="tag">
         <VcChip
           color="secondary"
           variant="outline-dark"
@@ -20,18 +17,14 @@
 
     <VcMarkdownRender
       v-if="newsArticle.contentPreview"
-      :class="isImage(newsArticle.contentPreview) ? 'news-article-content__preview-image' : 'news-article-content__preview'"
+      :class="
+        isImage(newsArticle.contentPreview) ? 'news-article-content__preview-image' : 'news-article-content__preview'
+      "
       :src="newsArticle.contentPreview"
     />
 
-    <div
-      v-if="newsArticle.author || newsArticle.publishDate"
-      class="news-article-content__citation"
-    >
-      <div
-        v-if="newsArticle.author"
-        class="news-article-content__citation-author"
-      >
+    <div v-if="newsArticle.author || newsArticle.publishDate" class="news-article-content__citation">
+      <div v-if="newsArticle.author" class="news-article-content__citation-author">
         <VcImage
           v-if="newsArticle.author.iconUrl"
           :src="newsArticle.author.iconUrl"
@@ -54,25 +47,16 @@
 
       <div></div>
 
-      <div
-        v-if="newsArticle.publishDate"
-        class="news-article-content__citation-publish-date"
-      >
+      <div v-if="newsArticle.publishDate" class="news-article-content__citation-publish-date">
         {{ $t("news.details.last-updated") }} {{ $d(newsArticle.publishDate, "short") }}
       </div>
     </div>
 
-    <VcMarkdownRender
-      :src="newsArticle.content ?? ''"
-      class="news-article-content__content"
-    />
+    <VcMarkdownRender :src="newsArticle.content ?? ''" class="news-article-content__content" />
   </div>
 </template>
 
-<script
-  lang="ts"
-  setup
->
+<script lang="ts" setup>
 import { toRef } from "vue";
 import { VcMarkdownRender } from "@/ui-kit/components/atoms";
 import { isImage } from "../utilities";

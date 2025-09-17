@@ -3,14 +3,13 @@
     <template #default-container>
       <VcMarkdownRender
         :src="newsArticle.listPreview ?? ''"
-        :class="isImage(newsArticle.listPreview) ? 'news-article-preview__preview-image' : 'news-article-preview__preview'"
+        :class="
+          isImage(newsArticle.listPreview) ? 'news-article-preview__preview-image' : 'news-article-preview__preview'
+        "
         @click="emit('article:click', newsArticle)"
       />
 
-      <div
-        v-if="newsArticle.publishDate"
-        class="news-article-preview__publish-date"
-      >
+      <div v-if="newsArticle.publishDate" class="news-article-preview__publish-date">
         {{ $d(newsArticle.publishDate, "short") }}
       </div>
 
@@ -24,10 +23,7 @@
       </button>
 
       <div class="news-article-preview__tags">
-        <template
-          v-for="tag in newsArticle.tags"
-          :key="tag"
-        >
+        <template v-for="tag in newsArticle.tags" :key="tag">
           <VcChip
             color="secondary"
             variant="outline-dark"
@@ -43,10 +39,7 @@
   </VcWidget>
 </template>
 
-<script
-  lang="ts"
-  setup
->
+<script lang="ts" setup>
 import { toRef } from "vue";
 import { VcWidget } from "@/ui-kit/components";
 import { VcMarkdownRender } from "@/ui-kit/components/atoms";
@@ -65,7 +58,7 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
-const newsArticle = toRef(props, "newsArticle");  
+const newsArticle = toRef(props, "newsArticle");
 </script>
 
 <style lang="scss">
