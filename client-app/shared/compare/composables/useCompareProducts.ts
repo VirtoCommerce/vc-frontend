@@ -1,7 +1,7 @@
 import { useLocalStorage } from "@vueuse/core";
 import { v4 as uuidv4 } from "uuid";
 import { computed } from "vue";
-import { useThemeContext } from "@/core/composables";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import {
   CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE,
   PRODUCT_COMPARE_LIST_IDS_LOCAL_STORAGE,
