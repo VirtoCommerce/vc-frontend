@@ -1,6 +1,6 @@
 <template>
   <div class="active-filter-chips">
-    <template v-for="filterItem in filters">
+    <template v-for="filterItem in formattedFilters">
       <template v-if="!facetsToHide?.includes(filterItem.name.toLowerCase())">
         <!-- Term values -->
         <template v-for="term in filterItem.termValues" :key="filterItem.name + 'term-' + term.value">
@@ -15,7 +15,7 @@
           :key="filterItem.name + 'range-' + range.lower + '-' + range.upper"
         >
           <VcChip color="secondary" closable truncate @close="onCancelRangeFilter(filterItem.name, range)">
-            {{ formatRangeValue(range) }}
+            {{ `${formatFilterLabel(filterItem)}${formatRangeValue(range)}` }}
           </VcChip>
         </template>
       </template>
@@ -32,7 +32,8 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs } from "vue";
+import { toRefs, computed } from "vue";
+import { getFormattedLabel } from "@/core/utilities";
 import type { SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 
 interface IEmits {
@@ -50,6 +51,26 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { filters } = toRefs(props);
+
+const formattedFilters = computed(() => {
+  return filters.value?.map((filter) => {
+    return {
+      ...filter,
+      termValues: filter.termValues?.map((term) => ({
+        ...term,
+        label: `${formatFilterLabel(filter)}${term.label ?? getFormattedLabel(term.value)}`,
+      })),
+    };
+  });
+});
+
+function formatFilterLabel(filter: SearchProductFilterResult): string {
+  if (!filter.label) {
+    return "";
+  }
+
+  return `${filter.label}: `;
+}
 
 function formatRangeValue(range: SearchProductFilterRangeValue): string {
   const lower = range.lower || "";
