@@ -1,5 +1,5 @@
-import get from "lodash/get";
-import setWith from "lodash/setWith";
+import get from "lodash/get.js";
+import setWith from "lodash/setWith.js";
 import type { LocaleDataType, MissingKeyType } from "./check-locales-missing-keys.js";
 import type { BatchItemType } from "./translator.js";
 
