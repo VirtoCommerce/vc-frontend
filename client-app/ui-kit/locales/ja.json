@@ -20,7 +20,9 @@
     },
     "accessibility": {
       "close_alert": "アラートを閉じる",
-      "open_calendar": "カレンダーを開く"
+      "open_calendar": "カレンダーを開く",
+      "variant_picker_group": "バリアントの選択",
+      "show_more_button": "さらにオプションを表示（{count}）"
     },
     "date_selector": {
       "min_date_error": "日付は{min}以降である必要があります",

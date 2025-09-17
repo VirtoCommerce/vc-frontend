@@ -20,7 +20,9 @@
     },
     "accessibility": {
       "close_alert": "Benachrichtigung schließen",
-      "open_calendar": "Kalender öffnen"
+      "open_calendar": "Kalender öffnen",
+      "variant_picker_group": "Produktvarianten",
+      "show_more_button": "Weitere Varianten anzeigen ({count})"
     },
     "date_selector": {
       "min_date_error": "Datum muss am oder nach {min} liegen",

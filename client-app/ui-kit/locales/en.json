@@ -20,7 +20,9 @@
     },
     "accessibility": {
       "close_alert": "Close alert",
-      "open_calendar": "Open calendar"
+      "open_calendar": "Open calendar",
+      "variant_picker_group": "Variant options",
+      "show_more_button": "See more options ({count})"
     },
     "date_selector": {
       "min_date_error": "Date must be on or after {min}",

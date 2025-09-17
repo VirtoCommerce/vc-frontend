@@ -20,7 +20,9 @@
     },
     "accessibility": {
       "close_alert": "Закрыть уведомление",
-      "open_calendar": "Открыть календарь"
+      "open_calendar": "Открыть календарь",
+      "variant_picker_group": "Варианты товара",
+      "show_more_button": "Показать ещё варианты ({count})"
     },
     "date_selector": {
       "min_date_error": "Дата должна быть не ранее {min}",

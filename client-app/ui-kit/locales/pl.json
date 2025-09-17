@@ -20,7 +20,9 @@
     },
     "accessibility": {
       "close_alert": "Zamknij powiadomienie",
-      "open_calendar": "Otwórz kalendarz"
+      "open_calendar": "Otwórz kalendarz",
+      "variant_picker_group": "Warianty produktu",
+      "show_more_button": "Pokaż więcej wariantów ({count})"
     },
     "date_selector": {
       "min_date_error": "Data musi być nie wcześniejsza niż {min}",
@@ -101,7 +103,7 @@
       "current_value_announcement": "Wartość suwaka: {start} do {end}, zakres {min} do {max}"
     },
     "breadcrumbs": {
-      "aria_label": "Nawigacja ścieżki"
+      "aria_label": "Nawigacja okruszkowa"
     }
   }
 }

@@ -30,8 +30,6 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  maxWidth: "",
-  bgColor: "",
   hasBgImage: true,
 });
 

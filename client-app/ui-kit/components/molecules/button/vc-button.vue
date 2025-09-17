@@ -104,9 +104,7 @@ const props = withDefaults(defineProps<IProps>(), {
   truncate: false,
   fullWidth: false,
   noWrap: false,
-  minWidth: "",
   tag: "",
-  iconSize: "",
 });
 
 const inputContext = inject<VcInputContextType | null>("inputContext", null);

@@ -20,7 +20,9 @@
     },
     "accessibility": {
       "close_alert": "Fechar alerta",
-      "open_calendar": "Abrir calendário"
+      "open_calendar": "Abrir calendário",
+      "variant_picker_group": "Opções de variantes",
+      "show_more_button": "Ver mais opções ({count})"
     },
     "date_selector": {
       "min_date_error": "A data deve ser igual ou posterior a {min}",
@@ -101,7 +103,7 @@
       "current_value_announcement": "Valor do slider: {start} a {end}, intervalo {min} a {max}"
     },
     "breadcrumbs": {
-      "aria_label": "Navegação breadcrumb"
+      "aria_label": "Navegação de trilha"
     }
   }
 }

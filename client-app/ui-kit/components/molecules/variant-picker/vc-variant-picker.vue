@@ -1,5 +1,5 @@
 <template>
-  <VcTooltip
+  <div
     :class="[
       'vc-variant-picker',
       `vc-variant-picker--size--${size}`,
@@ -9,39 +9,41 @@
         'vc-variant-picker--square': type !== 'text',
       },
     ]"
-    :disabled="!tooltip && !$slots.tooltip"
   >
-    <template #trigger>
-      <label class="vc-variant-picker__container">
-        <input
-          v-model="model"
-          class="vc-variant-picker__input"
-          type="radio"
-          :name="name"
-          :value="value"
-          :checked="checked"
-          :aria-checked="checked"
-          :data-test-id="testIdInput"
-          @change="emit('change', value)"
-          @input="emit('input', value)"
-        />
+    <label class="vc-variant-picker__container">
+      <span v-if="type === 'color'" class="vc-variant-picker__color" />
 
-        <span v-if="type === 'color'" class="vc-variant-picker__color" />
+      <VcImage v-else-if="type === 'image'" :src="image" :alt="value" class="vc-variant-picker__img" />
 
-        <VcImage v-else-if="type === 'image'" :src="image" class="vc-variant-picker__img" />
+      <span v-else class="vc-variant-picker__text">
+        {{ value }}
+      </span>
 
-        <span v-else class="vc-variant-picker__text">
-          {{ value }}
-        </span>
-      </label>
-    </template>
+      <VcTooltip :disabled="!tooltip && !$slots.tooltip" class="vc-variant-picker__tooltip">
+        <template #default="{ triggerProps }">
+          <input
+            v-model="model"
+            class="vc-variant-picker__input"
+            type="radio"
+            :aria-label="tooltip ?? value"
+            :name="name"
+            :value="value"
+            :data-test-id="testId"
+            :tabindex="tabindex ?? '0'"
+            v-bind="triggerProps"
+            @keydown.enter.prevent="onActivate"
+            @keydown.space.prevent="onActivate"
+            @change="emit('change', value)"
+            @input="emit('input', value)"
+          />
+        </template>
 
-    <template v-if="tooltip || $slots.tooltip" #content>
-      <slot name="tooltip" v-bind="{ checked, value }">
-        {{ tooltip }}
-      </slot>
-    </template>
-  </VcTooltip>
+        <template #content>
+          <slot name="tooltip">{{ tooltip }}</slot>
+        </template>
+      </VcTooltip>
+    </label>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -60,7 +62,8 @@ interface IProps {
   name?: string;
   isAvailable?: boolean;
   tooltip?: string;
-  testIdInput?: string;
+  tabindex?: string | number;
+  testId?: string;
 }
 
 const emit = defineEmits<IEmits>();
@@ -73,8 +76,17 @@ const model = defineModel<IProps["value"]>();
 
 const checked = computed(() => model.value === props.value);
 
-const color = computed(() => (props.type === "color" ? getColorValue(props.value) : ""));
+const color = computed(() => (props.type === "color" ? getColorValue(props.value) : undefined));
 const image = computed(() => (props.type === "image" ? props.value : ""));
+
+function onActivate(): void {
+  if (model.value !== props.value) {
+    model.value = props.value;
+
+    emit("input", props.value);
+    emit("change", props.value);
+  }
+}
 </script>
 
 <style lang="scss">
@@ -165,13 +177,17 @@ const image = computed(() => (props.type === "image" ? props.value : ""));
       box-shadow: 0 0 0 1px var(--color-neutral-400);
     }
 
+    &:focus-within {
+      box-shadow: 0 0 0 2px rgb(from var(--color-primary-500) r g b / 0.5);
+    }
+
     #{$active} & {
       box-shadow: 0 0 0 2px var(--color-primary-500);
     }
 
     #{$unavailable} & {
       &::before {
-        @apply content-[""] absolute inset-0 rounded-[inherit] bg-additional-50/60;
+        @apply content-[""] absolute inset-px rounded-[inherit] bg-additional-50/60;
       }
 
       &::after {
@@ -189,8 +205,12 @@ const image = computed(() => (props.type === "image" ? props.value : ""));
     }
   }
 
+  &__tooltip {
+    @apply absolute inset-0 block;
+  }
+
   &__input {
-    @apply hidden;
+    @apply z-[1] absolute inset-0 opacity-0;
   }
 
   &__color {

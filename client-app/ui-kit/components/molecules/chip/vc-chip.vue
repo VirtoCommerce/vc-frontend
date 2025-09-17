@@ -69,7 +69,7 @@ const props = withDefaults(defineProps<IProps>(), {
   nowrap: true,
 });
 
-const _iconColor = computed(() => (props.iconColor ? getColorValue(props.iconColor) : ""));
+const _iconColor = computed(() => getColorValue(props.iconColor));
 </script>
 
 <style lang="scss">
