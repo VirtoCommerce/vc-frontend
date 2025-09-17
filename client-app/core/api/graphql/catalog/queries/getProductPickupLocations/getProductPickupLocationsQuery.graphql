@@ -18,7 +18,9 @@ query GetProductPickupLocations(
   ) {
     totalCount
     items {
+      id
       name
+      geoLocation
       address
       availabilityType
       availableQuantity

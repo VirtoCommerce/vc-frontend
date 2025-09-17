@@ -10,12 +10,13 @@
           {{ $t("shared.catalog.shipment_options.in_store") }}
         </div>
 
-        <div v-for="pickupLocation in pickupLocations" :key="pickupLocation.name" class="pickup-locations__option">
+        <div v-for="pickupLocation in pickupLocations" :key="pickupLocation.id" class="pickup-locations__option">
           <div class="pickup-locations__option-name">
             {{ pickupLocation.name }}
           </div>
 
           <div
+            v-if="pickupLocation.note"
             :class="[
               'pickup-locations__option-note',
               {
