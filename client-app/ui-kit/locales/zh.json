@@ -22,7 +22,7 @@
       "close_alert": "关闭提醒",
       "product_quantity": "产品数量",
       "decrease_quantity": "减少数量",
-      "increase_quantity": "增加数量"
+      "increase_quantity": "增加数量",
       "variant_picker_group": "商品变体选项",
       "show_more_button": "查看更多选项（{count}）"
     },
@@ -54,11 +54,11 @@
         "max": "最大订单 {0} 件",
         "min_max": "订单从 {0} 到 {1} 件",
         "min_not_available": "最小订单 {0} 件库存不足",
+        "exact_qty": "您可以订购 {0} 件商品",
         "out_of_stock": "缺货",
         "positive_number": "值必须是正数",
         "integer_number": "值必须是整数",
-        "pack_size": "按 {0} 的包装订购",
-        "exact_qty": "您可以订购 {0} 件商品"
+        "pack_size": "按 {0} 的包装订购"
       }
     },
     "pagination": {

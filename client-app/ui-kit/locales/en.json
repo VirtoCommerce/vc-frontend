@@ -22,7 +22,7 @@
       "close_alert": "Close alert",
       "product_quantity": "Product quantity",
       "decrease_quantity": "Decrease quantity",
-      "increase_quantity": "Increase quantity"
+      "increase_quantity": "Increase quantity",
       "variant_picker_group": "Variant options",
       "show_more_button": "See more options ({count})"
     },
