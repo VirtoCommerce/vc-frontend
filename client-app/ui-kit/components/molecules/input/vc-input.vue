@@ -85,7 +85,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends string | number | null">
-import { provide, computed, ref } from "vue";
+import { provide, computed, ref, useTemplateRef } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
 export interface IProps {
@@ -149,8 +149,10 @@ const computedAutocomplete = computed(() => {
   return props.autocomplete;
 });
 
-const inputElement = ref<HTMLInputElement>();
+const inputElement = useTemplateRef("inputElement");
 const inputType = computed(() => (props.type === "password" && isPasswordVisible.value ? "text" : props.type));
+
+defineExpose({ inputElement });
 
 const model = defineModel<T>({
   set(value) {
