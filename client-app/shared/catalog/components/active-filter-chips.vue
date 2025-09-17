@@ -5,8 +5,7 @@
         <!-- Term values -->
         <template v-for="term in filterItem.termValues" :key="filterItem.name + 'term-' + term.value">
           <VcChip color="secondary" closable truncate @close="onCancelFilter(filterItem.name, term.value)">
-            {{ formatFilterLabel(filterItem.label) }}
-            {{ getFormattedLabel(term.label ?? term.value) }}
+            {{ `${formatFilterLabel(filterItem.label)}${getFormattedLabel(term.label || term.value)}` }}
           </VcChip>
         </template>
 
@@ -16,8 +15,7 @@
           :key="filterItem.name + 'range-' + range.lower + '-' + range.upper"
         >
           <VcChip color="secondary" closable truncate @close="onCancelRangeFilter(filterItem.name, range)">
-            {{ formatFilterLabel(filterItem.label) }}
-            {{ formatRangeValue(range) }}
+            {{ `${formatFilterLabel(filterItem.label)}${formatRangeValue(range)}` }}
           </VcChip>
         </template>
       </template>
