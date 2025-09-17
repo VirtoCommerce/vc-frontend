@@ -3,15 +3,16 @@
     <Error404 v-if="!loading && !newsArticle" />
 
     <VcContainer v-else>
-      <div class="news-article__back-link">
-        <router-link :to="{ name: ROUTES.ARTICLES.NAME }">
-          {{ $t("news.links.to-list") }}
-        </router-link>
-      </div>
+      <VcBreadcrumbs class="news-article__breadcrumbs" :items="breadcrumbs" />
 
       <VcWidgetSkeleton v-if="loading" head size="lg" />
 
-      <NewsArticle v-if="!loading && newsArticle" :news-article="newsArticle" />
+      <NewsArticle
+        v-else-if="newsArticle"
+        :news-article="newsArticle"
+        @tag:click="applyTag($event)"
+        @author:click="applyAuthor($event)"
+      />
     </VcContainer>
   </div>
 </template>
@@ -19,7 +20,9 @@
 <script lang="ts" setup>
 import { useSeoMeta } from "@unhead/vue";
 import { computed, defineAsyncComponent, ref, watchEffect } from "vue";
-import { usePageTitle } from "@/core/composables";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { usePageTitle, useBreadcrumbs } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { getNewsArticle } from "../api/graphql/queries/newsArticle";
 import { MODULE_ID, USE_NEWS_PREFIX_IN_LINKS } from "../constants";
@@ -34,6 +37,9 @@ const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 interface IProps {
   articleId: string;
 }
+
+const { t } = useI18n();
+
 const loading = ref(false);
 const newsArticle = ref<NewsArticleContent>();
 
@@ -54,6 +60,21 @@ const seoUrl = computed(() => {
     ? `${window.location.host}/${ROUTES.LINK_SEGMENT}/${newsArticle.value?.seoInfo?.semanticUrl}`
     : `${window.location.host}/${newsArticle.value?.seoInfo?.semanticUrl}`;
 });
+
+const breadcrumbs = useBreadcrumbs(() => [
+  { title: t("news.details.breadcrumbs.news"), route: "/news" },
+  { title: seoTitle.value ?? "" },
+]);
+
+const router = useRouter();
+
+function applyTag(tagToApply: string) {
+  void router.push({ name: ROUTES.ARTICLES_BY_TAG.NAME, params: { tag: tagToApply } });
+}
+
+function applyAuthor(authroIdToApply: string) {
+  void router.push({ name: ROUTES.ARTICLES_BY_AUTHOR.NAME, params: { authorId: authroIdToApply } });
+}
 
 const fetchNewsArticle = async () => {
   loading.value = true;
@@ -79,12 +100,8 @@ watchEffect(fetchNewsArticle);
 
 <style lang="scss">
 .news-article {
-  &__back-link {
-    @apply mb-2.5 text-[--link-color] hover:text-[--link-hover-color];
-
-    @media (min-width: theme("screens.md")) {
-      @apply mb-4;
-    }
+  &__breadcrumbs {
+    @apply mb-3;
   }
 }
 </style>
