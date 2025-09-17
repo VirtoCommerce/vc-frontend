@@ -5,7 +5,7 @@
         <!-- Term values -->
         <template v-for="term in filterItem.termValues" :key="filterItem.name + 'term-' + term.value">
           <VcChip color="secondary" closable truncate @close="onCancelFilter(filterItem.name, term.value)">
-            {{ formatFilterLabel(filterItem) }}
+            {{ formatFilterLabel(filterItem.label) }}
             {{ getFormattedLabel(term.label ?? term.value) }}
           </VcChip>
         </template>
@@ -16,7 +16,7 @@
           :key="filterItem.name + 'range-' + range.lower + '-' + range.upper"
         >
           <VcChip color="secondary" closable truncate @close="onCancelRangeFilter(filterItem.name, range)">
-            {{ formatFilterLabel(filterItem) }}
+            {{ formatFilterLabel(filterItem.label) }}
             {{ formatRangeValue(range) }}
           </VcChip>
         </template>
@@ -54,12 +54,8 @@ const props = defineProps<IProps>();
 
 const { filters } = toRefs(props);
 
-function formatFilterLabel(filter: SearchProductFilterResult): string {
-  if (!filter.label) {
-    return "";
-  }
-
-  return `${filter.label}: `;
+function formatFilterLabel(filterLabel: string | undefined) {
+  return filterLabel ? `${filterLabel}: ` : "";
 }
 
 function formatRangeValue(range: SearchProductFilterRangeValue): string {
