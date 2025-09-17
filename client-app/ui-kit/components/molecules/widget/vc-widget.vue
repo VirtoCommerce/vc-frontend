@@ -38,10 +38,9 @@
                   v-if="collapsible"
                   :class="['vc-widget__append-icon', { 'vc-widget__append-icon--rotate': _collapsed }]"
                   name="chevron-up"
-                  size="sm"
                 />
 
-                <VcIcon v-else-if="appendIcon" class="vc-widget__append-icon" :name="appendIcon" size="sm" />
+                <VcIcon v-else-if="appendIcon" class="vc-widget__append-icon" :name="appendIcon" />
               </slot>
             </span>
           </slot>
@@ -141,26 +140,27 @@ watchEffect(() => {
 
   &--size {
     &--xs {
-      --header-min-height: 2.5rem;
-      --header-gap: theme("gap.[1.5]");
+      --header-gap: theme("gap.2");
+      --header-p-y: theme("padding.3");
       --title-text: theme("fontSize.sm");
-      --title-min-h: 1.625rem;
+      --title-min-h: 1.75rem;
+      --icon-size: 1rem;
       --slot-p-t: theme("padding.4");
     }
 
     &--sm {
-      --header-min-height: 2.75rem;
       --header-gap: theme("gap.2");
+      --header-p-y: theme("padding.3");
       --title-text: theme("fontSize.base");
-      --title-min-h: 1.875rem;
+      --title-min-h: 2rem;
       --slot-p-t: theme("padding.4");
     }
 
     &--md {
-      --header-min-height: 3.25rem;
       --header-gap: theme("gap.2");
-      --title-text: theme("fontSize.xl");
-      --title-min-h: 2.125rem;
+      --header-p-y: theme("padding.3");
+      --title-text: theme("fontSize.lg");
+      --title-min-h: 2.25rem;
       --slot-p-t: theme("padding.4");
 
       @media (min-width: theme("screens.lg")) {
@@ -171,10 +171,10 @@ watchEffect(() => {
     &--lg {
       $sizeLG: &;
 
-      --header-min-height: 4rem;
-      --header-gap: theme("gap.2");
+      --header-gap: theme("gap[2.5]");
+      --header-p-y: theme("padding.4");
       --title-text: theme("fontSize.xl");
-      --title-min-h: 2.75rem;
+      --title-min-h: 2.5rem;
       --slot-p-t: theme("padding[3.5]");
 
       @apply divide-none;
@@ -213,15 +213,11 @@ watchEffect(() => {
   &__header {
     --vc-hexagon-icon-size: var(--title-min-h);
 
-    @apply flex items-center gap-[--header-gap] px-[--p-x] py-1 w-full min-h-[--header-min-height];
-
-    #{$sizeLG} & {
-      @apply items-end;
-    }
+    @apply flex items-center gap-[--header-gap] px-[--p-x] py-[--header-p-y] w-full;
   }
 
   &__prepend-append {
-    --vc-icon-size: 1.25rem;
+    --vc-icon-size: var(--icon-size, 1.25rem);
 
     @apply flex-none flex items-center min-h-[--title-min-h];
   }
