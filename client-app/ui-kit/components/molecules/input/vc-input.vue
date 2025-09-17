@@ -327,7 +327,10 @@ provide<VcInputContextType>("inputContext", {
       @apply appearance-none;
     }
 
-    &::-webkit-calendar-picker-indicator,
+    &::-webkit-calendar-picker-indicator {
+      @apply hidden;
+    }
+
     &::-moz-calendar-picker-indicator {
       @apply hidden;
     }
