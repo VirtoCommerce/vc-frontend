@@ -94,9 +94,7 @@ function toggleValue(): void {
       model.value = [...currentValue, props.value];
     }
   } else {
-    if (model.value !== props.value) {
-      model.value = props.value;
-    }
+    model.value = props.value;
   }
 }
 </script>
