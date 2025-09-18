@@ -1,68 +1,94 @@
 <template>
-  <VcWidget :title="newsArticle.title" class="news-article-preview">
-    <template #title>
-      <router-link :to="articleRoute">
-        <div class="news-article-preview__title">{{ newsArticle.title }}</div>
-      </router-link>
+  <VcWidget class="news-article-preview">
+    <template #default-container>
+      <VcMarkdownRender
+        :src="newsArticle.listPreview ?? ''"
+        :class="
+          isImage(newsArticle.listPreview) ? 'news-article-preview__preview-image' : 'news-article-preview__preview'
+        "
+        @click="emit('article:click', newsArticle)"
+      />
 
       <div v-if="newsArticle.publishDate" class="news-article-preview__publish-date">
-        {{ $d(newsArticle.publishDate) }}
+        {{ $d(newsArticle.publishDate, "short") }}
+      </div>
+
+      <button
+        class="news-article-preview__title"
+        type="button"
+        @click="emit('article:click', newsArticle)"
+        @keyup.enter="emit('article:click', newsArticle)"
+      >
+        {{ newsArticle.listTitle }}
+      </button>
+
+      <div class="news-article-preview__tags">
+        <template v-for="tag in newsArticle.tags" :key="tag">
+          <VcChip
+            color="secondary"
+            variant="outline-dark"
+            class="news-article-preview__tag"
+            clickable
+            @click="emit('tag:click', tag)"
+          >
+            {{ tag }}
+          </VcChip>
+        </template>
       </div>
     </template>
-
-    <router-link :to="articleRoute">
-      <VcMarkdownRender :src="newsArticle.contentPreview ?? ''" class="news-article-preview__preview" />
-    </router-link>
   </VcWidget>
 </template>
 
 <script lang="ts" setup>
-import { computed, toRef } from "vue";
-import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { toRef } from "vue";
 import { VcWidget } from "@/ui-kit/components";
 import { VcMarkdownRender } from "@/ui-kit/components/atoms";
-import { MODULE_ID, USE_NEWS_PREFIX_IN_LINKS } from "../constants";
-import { ROUTES } from "../routes/constants";
+import { isImage } from "../utilities";
 import type { NewsArticleContent } from "../api/graphql/types";
+
+interface IEmits {
+  (event: "tag:click", tag: string): void;
+  (event: "article:click", newsArticle: NewsArticleContent): void;
+}
 
 interface IProps {
   newsArticle: NewsArticleContent;
 }
+
+const emit = defineEmits<IEmits>();
+
 const props = defineProps<IProps>();
-
-const { getSettingValue } = useModuleSettings(MODULE_ID);
-const useNewsPrefixInLinks = getSettingValue(USE_NEWS_PREFIX_IN_LINKS);
-
-const articleRoute = computed(() => {
-  if (newsArticle.value?.seoInfo?.semanticUrl && newsArticle.value?.seoInfo?.semanticUrl != newsArticle.value?.id) {
-    return {
-      path: useNewsPrefixInLinks
-        ? `/${ROUTES.LINK_SEGMENT}/${newsArticle.value?.seoInfo?.semanticUrl}`
-        : `/${newsArticle.value?.seoInfo?.semanticUrl}`,
-    };
-  }
-
-  return {
-    name: ROUTES.ARTICLE.NAME,
-    params: { articleId: newsArticle.value?.id },
-  };
-});
-
 const newsArticle = toRef(props, "newsArticle");
 </script>
 
 <style lang="scss">
 .news-article-preview {
+  &__preview {
+    @apply m-3 text-start text-lg cursor-pointer;
+  }
+
+  &__preview-image {
+    @apply text-center cursor-pointer;
+  }
+
+  &__preview-image img {
+    @apply inline;
+  }
+
   &__title {
-    @apply text-left;
+    @apply ms-3 me-3 text-start font-bold text-[--link-color] hover:text-[--link-hover-color] cursor-pointer;
   }
 
   &__publish-date {
-    @apply mt-3 text-right text-sm text-neutral;
+    @apply m-3 text-start text-sm text-neutral;
   }
 
-  &__preview {
-    @apply text-lg;
+  &__tags {
+    @apply m-3 mt-5;
+  }
+
+  &__tag {
+    @apply me-2 mb-1;
   }
 }
 </style>
