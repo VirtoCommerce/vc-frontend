@@ -1,5 +1,5 @@
 import { setup } from "@storybook/vue3-vite";
-import { vueRouter } from "storybook-vue3-router";
+// import { vueRouter } from "storybook-vue3-router";
 import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
@@ -15,8 +15,6 @@ const DEFAULT_LOCALE = "en";
 const DEFAULT_CURRENCY = "USD";
 
 const i18n: I18n = createI18n(DEFAULT_LOCALE, DEFAULT_CURRENCY);
-
-setGlobals({ i18n });
 
 async function configureThemeSettings() {
   const module = (await import(`@/assets/presets/default.json`)) as {
@@ -39,17 +37,29 @@ function configureI18N() {
   i18n.global.setLocaleMessage(DEFAULT_LOCALE, UI_KIT_DEFAULT_MESSAGE);
 }
 
-setup(async (app) => {
-  await configureThemeSettings();
-  configureI18N();
+setGlobals({ i18n });
+configureI18N();
 
-  app.use(i18n);
-  app.use(uiKit);
+configureThemeSettings().catch(() => {
+  // eslint-disable-next-line no-console
+  console.error("Storybook theme setup error:");
+});
+
+setup((app) => {
+  if (!app || typeof app.use !== "function") {
+    return;
+  }
+
+  try {
+    app.use(i18n);
+    app.use(uiKit);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("Storybook Vue setup error:", error);
+  }
 });
 
 const preview: Preview = {
-  decorators: [vueRouter()],
-
   parameters: {
     controls: {
       matchers: {
