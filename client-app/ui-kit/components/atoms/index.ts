@@ -35,6 +35,7 @@ export { default as VcRadioButton } from "./radio-button/vc-radio-button.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-button.vue";
 export { default as VcScrollbar } from "./scrollbar/vc-scrollbar.vue";
 export { default as VcSwitch } from "./switch/vc-switch.vue";
+/** @deprecated VcTabs is deprecated, use VcTabSwitch instead. */
 export { default as VcTabs } from "./tabs/vc-tabs.vue";
 export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";

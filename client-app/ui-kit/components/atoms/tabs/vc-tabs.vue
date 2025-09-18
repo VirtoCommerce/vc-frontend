@@ -82,4 +82,6 @@ function select(item: T) {
 function isItemObject(item: unknown): item is ItemType {
   return typeof item === "object" && item !== null;
 }
+
+console.warn("[UIKit][warn] VcTabs is deprecated, use VcTabSwitch instead.");
 </script>
