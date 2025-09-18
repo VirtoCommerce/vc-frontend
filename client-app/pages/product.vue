@@ -133,6 +133,7 @@
 import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility, useLocalStorage } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import productTemplateDefault from "@/config/product-default.json";
 import productTemplateB2c from "@/config/product_b2c.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
@@ -142,6 +143,7 @@ import {
   BREAKPOINTS,
   LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
   CONFIGURATION_URL_SEARCH_PARAM,
+  LINE_ITEM_ID_URL_SEARCH_PARAM,
 } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -159,6 +161,7 @@ import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
+import { useShortCart } from "@/shared/cart";
 import {
   useProduct,
   useRelatedProducts,
@@ -200,6 +203,7 @@ interface IProps {
 }
 
 const configurationId = getUrlSearchParam(CONFIGURATION_URL_SEARCH_PARAM);
+const lineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("lg");
@@ -235,6 +239,10 @@ const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const { analytics } = useAnalytics();
 const { pushHistoricalEvent } = useHistoricalEvents();
+
+const router = useRouter();
+const route = useRoute();
+const { cart, loading: loadingCart } = useShortCart();
 
 const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
   LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
@@ -379,6 +387,11 @@ async function resetFacetFilters(): Promise<void> {
   void applyFilters(productsFilters.value);
 }
 
+function checkLineItemId() {
+  const cartItems = cart.value?.items;
+  return cartItems?.some((item) => item.id === lineItemId);
+}
+
 useSeoMeta({
   title: () => (canSetMeta.value ? pageTitle.value : undefined),
   keywords: () => (canSetMeta.value ? seoKeywords.value : undefined),
@@ -447,6 +460,21 @@ watch(
         productId: product.value.id,
         storeId: globals.storeId,
       });
+    }
+  },
+  { immediate: true },
+);
+
+watch(
+  [() => lineItemId, cart, loadingCart],
+  () => {
+    if (loadingCart.value && !(cart.value && lineItemId)) {
+      return;
+    }
+
+    const isExist = checkLineItemId();
+    if (!isExist) {
+      void router.replace({ ...route, query: { ...route.query, [LINE_ITEM_ID_URL_SEARCH_PARAM]: undefined } });
     }
   },
   { immediate: true },
