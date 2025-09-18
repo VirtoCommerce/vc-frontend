@@ -187,19 +187,15 @@ watch(
 
     if (
       !isAuthenticated.value &&
-      !!shipment.value &&
       !!shippingMethod &&
       !!selectedAddress.value &&
-      !shipment.value.deliveryAddress &&
+      !shipment.value?.deliveryAddress &&
       newMode === SHIPPING_OPTIONS.shipping
       // anonymous user without delivery address and shipping method is selected and address in header is set
     ) {
       // apply selected address to shipment
       void updateShipment({
         id: shipment.value?.id,
-        shipmentMethodCode: shippingMethod.code,
-        shipmentMethodOption: shippingMethod.optionName,
-        price: shippingMethod.price?.amount,
         deliveryAddress: omit(selectedAddress.value, ["isDefault", "isFavorite"]),
       });
 
