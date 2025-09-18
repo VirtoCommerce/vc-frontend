@@ -25,6 +25,7 @@
       "register": "Registrati",
       "reset_password": "Reimposta password",
       "reset_filters": "Reimposta filtri",
+      "reset_page": "Resetta pagina",
       "add_to_cart": "Aggiungi al carrello",
       "apply": "Applica",
       "send": "Invia",
@@ -75,7 +76,6 @@
       "all_orders": "Tutti gli ordini",
       "my_orders": "I miei ordini",
       "scroll_to_top": "Torna su",
-      "reset_page": "Resetta pagina",
       "show_less": "Mostra di meno",
       "expand_all": "Espandi tutto",
       "all_products": "Tutti i prodotti",
@@ -349,10 +349,10 @@
         },
         "ship_to_selector": {
           "add_new": "Aggiungi nuovo",
+          "add_new_address": "Aggiungi nuovo indirizzo",
           "search": "Cerca",
           "select_address": "Seleziona indirizzo",
-          "title": "Spedire a:",
-          "add_new_address": "Aggiungi nuovo indirizzo"
+          "title": "Spedire a:"
         },
         "mega_menu": {
           "aria_labels": {
@@ -398,26 +398,26 @@
         "categories_label": "Categorie",
         "products_label": "Prodotti",
         "pages_label": "Pagine",
-        "suggestions_label": "Suggerimenti",
+        "suggestions_and_history_label": "Suggerimenti e cronologia",
         "no_results": "La tua ricerca {keyword} non ha prodotto risultati",
+        "enter_keyword_placeholder": "Cerca nell'intero negozio",
+        "enter_keyword_placeholder_category": "Cerca in {category}",
         "search_button": "Cerca",
         "view_all_results_button": "Visualizza tutti i {total} risultati",
+        "scope_loading_label": "Caricamento contesto di ricerca",
+        "scope_remove_label": "Rimuovi: {label}",
         "barcode_detector": {
           "title": "Scansione codice a barre",
           "description": "Per procedere, abilita la fotocamera per scansionare il codice a barre sul prodotto. Questo ci aiuterà a identificare rapidamente l'articolo e fornirti le informazioni necessarie.",
+          "browse": "Sfoglia file",
+          "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "Nessun codice a barre rilevato nell'immagine",
             "wrong_format": "Formato file non supportato",
             "no_file": "Nessun file caricato"
-          },
-          "browse": "Sfoglia file",
-          "cancel": "@:common.buttons.cancel"
+          }
         },
-        "enter_keyword_placeholder": "Cerca nell'intero negozio",
-        "enter_keyword_placeholder_category": "Cerca in {category}",
-        "scope_loading_label": "Caricamento contesto di ricerca",
-        "scope_remove_label": "Rimuovi: {label}",
-        "suggestions_and_history_label": "Suggerimenti e cronologia",
+        "suggestions_label": "Suggerimenti",
         "search_label": "Cerca"
       },
       "language_selector": {
@@ -680,6 +680,9 @@
       "discount_badge": {
         "off": "-{discount}"
       },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
+      },
       "branches_modal": {
         "title": "Seleziona filiale",
         "all_branches": "Tutte le filiali",
@@ -690,9 +693,6 @@
         "ok_button": "Ok",
         "no_results": "Nessun risultato trovato",
         "reset_search_button": "Reimposta ricerca"
-      },
-      "purchased_before_badge": {
-        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -807,15 +807,16 @@
         "cardholder_name_label": "Nome del titolare",
         "expiration_date_label": "Data di scadenza",
         "expiration_date_placeholder": "MM / AA",
+        "expiration_date_placeholder_extended": "MM / AAAA",
         "month_label": "Mese",
         "month_placeholder": "MM",
         "year_label": "Anno",
         "year_placeholder": "AA",
         "security_code_label": "Codice di sicurezza",
-        "expiration_date_placeholder_extended": "MM / AAAA",
         "errors": {
           "month": "Inserisci un mese di scadenza valido",
-          "year": "Inserisci un anno di scadenza valido"
+          "year": "Inserisci un anno di scadenza valido",
+          "security_code": "Codice di sicurezza non valido."
         },
         "user_error_message": "Impossibile inizializzare il pagamento. Riprova più tardi o usa un altro metodo di pagamento",
         "payment_unavailable": "Metodo di pagamento non disponibile. Riprova più tardi."
@@ -1153,14 +1154,14 @@
           "emailOnly": "Email {email}",
           "phoneOnly": "Chiama {phone}",
           "questions": "Domande?",
+          "workingHours": "Ore",
+          "name": "Nome",
+          "instructions": "Istruzioni",
           "address": "Indirizzo",
           "pick_point_info": "Info punto di ritiro",
           "get_directions": "Ottieni indicazioni",
           "point_info": "Informazioni",
-          "pickup_address": "Indirizzo di ritiro",
-          "workingHours": "Ore",
-          "name": "Nome",
-          "instructions": "Istruzioni"
+          "pickup_address": "Indirizzo di ritiro"
         }
       },
       "order_payment": {
@@ -1303,8 +1304,8 @@
       },
       "title": "Carrello",
       "empty_cart_description": "Il tuo carrello è vuoto",
-      "recently_browsed_products": "Prodotti recentemente visualizzati",
       "empty_cart_search_text": "Usa la ricerca per trovare tutto ciò di cui hai bisogno",
+      "recently_browsed_products": "Prodotti recentemente visualizzati",
       "save_for_later": "Salva per dopo",
       "saved_for_later": "Salvati per dopo",
       "move_to_cart": "Aggiungi al carrello"
@@ -1334,6 +1335,11 @@
         "checkbox_label": "Mostra disponibile",
         "tooltip_text": "Seleziona per mostrare solo i prodotti disponibili"
       },
+      "purchased_before_filter_card": {
+        "title": "Acquistato in precedenza",
+        "checkbox_label": "Acquistato in precedenza",
+        "tooltip_text": "Seleziona per mostrare solo i prodotti acquistati in precedenza"
+      },
       "branch_availability_filter_card": {
         "title": "Disponibilità filiale",
         "available_in": "Disponibile presso {0}",
@@ -1341,6 +1347,8 @@
         "select_branch_text": "Seleziona una filiale di ritiro per vedere i prodotti disponibili ora"
       },
       "products_found_message": "risultato | risultati",
+      "products_found_message_search": "risultato trovato | risultati trovati",
+      "search_in_category": "Cerca \"{keyword}\" in {category}",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
@@ -1356,14 +1364,7 @@
       "products_icon": "Icona prodotto",
       "show_all_results": "Mostra tutti i risultati",
       "load_previous_page": "Carica la pagina precedente",
-      "load_next_page": "Carica la pagina successiva",
-      "purchased_before_filter_card": {
-        "title": "Acquistato in precedenza",
-        "tooltip_text": "Seleziona per mostrare solo i prodotti acquistati in precedenza",
-        "checkbox_label": "Acquistato in precedenza"
-      },
-      "search_in_category": "Cerca \"{keyword}\" in {category}",
-      "products_found_message_search": "risultato trovato | risultati trovati"
+      "load_next_page": "Carica la pagina successiva"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1400,12 +1401,12 @@
       "meta": {
         "title": "Cerca: {0}"
       },
+      "title": "Cerca",
       "header": "La tua ricerca per {keyword} ha restituito i seguenti risultati",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "La tua ricerca <strong>{0}</strong> non ha prodotto risultati",
-      "home_button": "@:common.buttons.home",
-      "title": "Cerca"
+      "home_button": "@:common.buttons.home"
     },
     "bulk_order": {
       "meta": {
@@ -1522,10 +1523,10 @@
       "message": "@:common.messages.blocked"
     },
     "brands": {
-      "search": "Cerca",
-      "button_all": "Tutto",
       "top_brands_title": "Marchi principali",
       "title": "Marchi",
+      "search": "Cerca",
+      "button_all": "Tutto",
       "no_results": "Nessun risultato trovato"
     },
     "brand": {

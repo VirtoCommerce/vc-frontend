@@ -815,7 +815,8 @@
         "security_code_label": "Security code",
         "errors": {
           "month": "Please provide a valid expiration month",
-          "year": "Please provide a valid expiration year"
+          "year": "Please provide a valid expiration year",
+          "security_code": "Invalid Security code."
         },
         "user_error_message": "Can't initialize payment. Please try again later or use another payment method",
         "payment_unavailable": "Payment method is unavailable. Please try again later"
