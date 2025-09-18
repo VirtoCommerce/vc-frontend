@@ -32,3 +32,8 @@ const Template: StoryFn = (args) => ({
 });
 
 export const Basic = Template.bind({});
+Basic.args = {
+  buttonText: "Button Text",
+  linkText: "Link text",
+  linkTo: "#",
+};

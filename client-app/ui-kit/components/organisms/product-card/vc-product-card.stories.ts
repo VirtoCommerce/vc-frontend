@@ -1,7 +1,14 @@
 import { getMoney } from "@/ui-kit/mocks";
 import { VcProductCard, VcProductImage, VcAddToCart, VcQuantityStepper } from "..";
-import { VcProductVendor, VcProductProperties, VcProductTitle, VcProductActions, VcRadioButton } from "../../atoms";
-import { VcChip, VcProductPrice, VcProductActionsButton } from "../../molecules";
+import {
+  VcProductVendor,
+  VcProductProperties,
+  VcProductTitle,
+  VcProductActions,
+  VcRadioButton,
+  VcProperty,
+} from "../../atoms";
+import { VcChip, VcProductPrice, VcProductActionsButton, VcProductTotal } from "../../molecules";
 import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const VIEW_MODES = ["grid", "list", "item"];
@@ -19,6 +26,14 @@ export default {
           summary: VIEW_MODES.join(" | "),
         },
       },
+    },
+    background: {
+      control: "boolean",
+      type: { name: "boolean", required: false },
+    },
+    border: {
+      control: "boolean",
+      type: { name: "boolean", required: false },
     },
   },
 } as Meta<typeof VcProductCard>;
@@ -76,7 +91,7 @@ const actionsButton = {
 };
 
 const BasicTemplate: StoryFn = (args) => ({
-  components: { VcProductCard },
+  components: { VcProductCard, VcProductTitle },
   setup: () => ({ args, title }),
   template: `<VcProductCard v-bind="args">
     <VcProductTitle v-bind="title">Product title Product title</VcProductTitle>
@@ -86,7 +101,7 @@ const BasicTemplate: StoryFn = (args) => ({
 export const Basic = BasicTemplate.bind({});
 
 const ImageTemplate: StoryFn = (args) => ({
-  components: { VcProductCard, VcProductImage },
+  components: { VcProductCard, VcProductImage, VcProductTitle },
   setup: () => ({ args, title, image }),
   template: `<VcProductCard v-bind="args">
     <VcProductImage v-bind="image" />
@@ -98,7 +113,7 @@ const ImageTemplate: StoryFn = (args) => ({
 export const Image = ImageTemplate.bind({});
 
 const ImageVendorTemplate: StoryFn = (args) => ({
-  components: { VcProductCard, VcProductImage, VcProductVendor },
+  components: { VcProductCard, VcProductImage, VcProductVendor, VcProductTitle },
   setup: () => ({ args, title, image }),
   template: `<VcProductCard v-bind="args">
     <VcProductImage v-bind="image" />
@@ -110,7 +125,7 @@ const ImageVendorTemplate: StoryFn = (args) => ({
 export const ImageVendor = ImageVendorTemplate.bind({});
 
 const ImageVendorPropertiesTemplate: StoryFn = (args) => ({
-  components: { VcProductCard, VcProductImage, VcProductVendor, VcProductProperties },
+  components: { VcProductCard, VcProductImage, VcProductVendor, VcProductProperties, VcProductTitle, VcProperty },
   setup: () => ({ args, title, image }),
   template: `<VcProductCard v-bind="args">
     <VcProductImage v-bind="image" />
@@ -177,6 +192,8 @@ const FullTemplate: StoryFn = (args) => ({
     VcProductTitle,
     VcProductVendor,
     VcProductProperties,
+    VcProperty,
+    VcProductPrice,
     VcAddToCart,
     VcChip,
   },
@@ -226,6 +243,8 @@ const FullGridTemplateRecommended: StoryFn = (args) => ({
     VcProductTitle,
     VcProductVendor,
     VcProductProperties,
+    VcProperty,
+    VcProductPrice,
     VcAddToCart,
     VcChip,
   },
@@ -273,6 +292,8 @@ const FullListTemplateRecommended: StoryFn = (args) => ({
     VcProductTitle,
     VcProductVendor,
     VcProductProperties,
+    VcProperty,
+    VcProductPrice,
     VcAddToCart,
     VcChip,
   },
@@ -320,6 +341,9 @@ const LineItemTemplate: StoryFn = (args) => ({
     VcProductTitle,
     VcProductVendor,
     VcProductProperties,
+    VcProperty,
+    VcProductPrice,
+    VcProductTotal,
     VcAddToCart,
     VcChip,
     VcRadioButton,
@@ -328,7 +352,7 @@ const LineItemTemplate: StoryFn = (args) => ({
   template: `<VcProductCard v-bind="args">
     <template #media>
       <VcProductImage v-bind="image" />
-      <VcRadioButton />
+      <VcRadioButton value="option1" />
     </template>
 
     <VcProductTitle v-bind="{ ...title, linesNumber: 3}">Product title Product title</VcProductTitle>
@@ -364,6 +388,8 @@ const FullListQuantityStepperTemplate: StoryFn = (args) => ({
     VcProductTitle,
     VcProductVendor,
     VcProductProperties,
+    VcProperty,
+    VcProductPrice,
     VcQuantityStepper,
     VcChip,
   },
@@ -416,6 +442,9 @@ const LineItemQuantityStepperTemplate: StoryFn = (args) => ({
     VcProductTitle,
     VcProductVendor,
     VcProductProperties,
+    VcProperty,
+    VcProductPrice,
+    VcProductTotal,
     VcQuantityStepper,
     VcChip,
     VcRadioButton,
@@ -424,7 +453,7 @@ const LineItemQuantityStepperTemplate: StoryFn = (args) => ({
   template: `<VcProductCard v-bind="args">
     <template #media>
       <VcProductImage v-bind="image" />
-      <VcRadioButton />
+      <VcRadioButton value="option1" />
     </template>
 
     <VcProductTitle v-bind="{ ...title, linesNumber: 3}">Product title Product title</VcProductTitle>

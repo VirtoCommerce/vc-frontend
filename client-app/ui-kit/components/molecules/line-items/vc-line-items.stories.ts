@@ -1,5 +1,6 @@
-import { VcLineItems } from "..";
+import { VcLineItems, VcChip } from "..";
 import { preparedLineItemMock1, preparedLineItemMock2 } from "../../../mocks/line-item.mock";
+import { VcAddToCart } from "../../organisms";
 import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 export default {
@@ -19,7 +20,7 @@ const Template: StoryFn = (args) => ({
 });
 
 const TemplateQuantity: StoryFn = (args) => ({
-  components: { VcLineItems },
+  components: { VcLineItems, VcChip },
   setup: () => ({ args }),
   template: `<VcLineItems v-bind="args">
     <template #titles>
@@ -35,7 +36,7 @@ const TemplateQuantity: StoryFn = (args) => ({
 });
 
 const TemplateAddToCart: StoryFn = (args) => ({
-  components: { VcLineItems },
+  components: { VcLineItems, VcAddToCart },
   setup: () => ({ args }),
   template: `<VcLineItems v-bind="args">
     <template #default="{ item }">
