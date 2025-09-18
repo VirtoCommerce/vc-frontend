@@ -371,7 +371,9 @@ export function _useUser() {
       () => user.value?.contact?.organizations?.items && user.value?.contact?.organizations?.items?.length > 1,
     ),
     isOrganizationMaintainer: computed(
-      () => user.value?.roles?.some((role) => role.name === ORGANIZATION_MAINTAINER.name) ?? false,
+      () =>
+        user.value?.roles?.some((role) => role.name.toLowerCase() === ORGANIZATION_MAINTAINER.name.toLowerCase()) ??
+        false,
     ),
     organization,
     allOrganizations,

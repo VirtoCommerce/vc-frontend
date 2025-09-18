@@ -25,6 +25,7 @@
       "register": "S'inscrire",
       "reset_password": "Réinitialiser le mot de passe",
       "reset_filters": "Réinitialiser les filtres",
+      "reset_page": "Réinitialiser la page",
       "add_to_cart": "Ajouter au panier",
       "apply": "Appliquer",
       "send": "Envoyer",
@@ -75,7 +76,6 @@
       "all_orders": "Toutes les commandes",
       "my_orders": "Mes commandes",
       "scroll_to_top": "Haut de page",
-      "reset_page": "Réinitialiser la page",
       "show_less": "Afficher moins",
       "expand_all": "Tout développer",
       "all_products": "Tous les produits",
@@ -349,10 +349,10 @@
         },
         "ship_to_selector": {
           "add_new": "Ajouter",
+          "add_new_address": "Ajouter une adresse",
           "search": "Rechercher",
           "select_address": "Sélectionner l'adresse",
-          "title": "Livraison à:",
-          "add_new_address": "Ajouter une adresse"
+          "title": "Livraison à:"
         },
         "mega_menu": {
           "aria_labels": {
@@ -398,26 +398,26 @@
         "categories_label": "Catégories",
         "products_label": "Produits",
         "pages_label": "Pages",
-        "suggestions_label": "Suggestions",
+        "suggestions_and_history_label": "Suggestions et historique",
         "no_results": "Votre requête {keyword} n'a retourné aucun résultat",
+        "enter_keyword_placeholder": "Rechercher dans toute la boutique",
+        "enter_keyword_placeholder_category": "Rechercher dans {category}",
         "search_button": "Rechercher",
         "view_all_results_button": "Voir tous les {total} résultats",
+        "scope_loading_label": "Chargement du contexte de recherche",
+        "scope_remove_label": "Supprimer : {label}",
         "barcode_detector": {
           "title": "Scan du code-barres",
           "description": "Pour continuer, veuillez activer votre caméra pour scanner le code-barres sur le produit. Cela nous aidera à identifier rapidement l'article et à vous fournir les informations nécessaires.",
+          "browse": "Parcourir les fichiers",
+          "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "Aucun code-barres détecté dans l'image",
             "wrong_format": "Format de fichier non pris en charge",
             "no_file": "Aucun fichier n'a été téléchargé"
-          },
-          "browse": "Parcourir les fichiers",
-          "cancel": "@:common.buttons.cancel"
+          }
         },
-        "enter_keyword_placeholder": "Rechercher dans toute la boutique",
-        "enter_keyword_placeholder_category": "Rechercher dans {category}",
-        "scope_loading_label": "Chargement du contexte de recherche",
-        "scope_remove_label": "Supprimer : {label}",
-        "suggestions_and_history_label": "Suggestions et historique",
+        "suggestions_label": "Suggestions",
         "search_label": "Rechercher"
       },
       "language_selector": {
@@ -680,6 +680,9 @@
       "discount_badge": {
         "off": "-{discount}"
       },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
+      },
       "branches_modal": {
         "title": "Sélectionner une branche",
         "all_branches": "Toutes les branches",
@@ -811,15 +814,16 @@
         "cardholder_name_label": "Nom du titulaire de la carte",
         "expiration_date_label": "Date d'expiration",
         "expiration_date_placeholder": "MM / AA",
+        "expiration_date_placeholder_extended": "MM / AAAA",
         "month_label": "Mois",
         "month_placeholder": "MM",
         "year_label": "Année",
         "year_placeholder": "AA",
         "security_code_label": "Code de sécurité",
-        "expiration_date_placeholder_extended": "MM / AAAA",
         "errors": {
           "month": "Veuillez indiquer un mois d'expiration valide",
-          "year": "Veuillez indiquer une année d'expiration valide"
+          "year": "Veuillez indiquer une année d'expiration valide",
+          "security_code": "Code de sécurité incorrect."
         },
         "user_error_message": "Impossible d'initialiser le paiement. Veuillez réessayer plus tard ou utiliser un autre mode de paiement",
         "payment_unavailable": "Le mode de paiement est indisponible. Veuillez réessayer plus tard."
@@ -1147,14 +1151,14 @@
           "emailOnly": "Email {email}",
           "phoneOnly": "Appeler {phone}",
           "questions": "Des questions ?",
+          "workingHours": "Heures",
+          "name": "Nom",
+          "instructions": "Instructions",
           "address": "Adresse",
           "pick_point_info": "Infos point de collecte",
           "get_directions": "Itinéraire",
           "point_info": "Point d'info",
-          "pickup_address": "Adresse de retrait",
-          "workingHours": "Heures",
-          "name": "Nom",
-          "instructions": "Instructions"
+          "pickup_address": "Adresse de retrait"
         }
       },
       "order_payment": {
@@ -1297,8 +1301,8 @@
       },
       "title": "Panier",
       "empty_cart_description": "Votre panier est vide",
-      "recently_browsed_products": "Récemment consultés",
       "empty_cart_search_text": "Utilisez la recherche pour trouver tout ce dont vous avez besoin",
+      "recently_browsed_products": "Récemment consultés",
       "save_for_later": "Enregistrer pour plus tard",
       "saved_for_later": "Enregistré pour plus tard",
       "move_to_cart": "Ajouter au panier"
@@ -1328,6 +1332,11 @@
         "checkbox_label": "Afficher en stock",
         "tooltip_text": "Sélectionnez pour n'afficher que les produits en stock"
       },
+      "purchased_before_filter_card": {
+        "title": "Déjà acheté",
+        "checkbox_label": "Déjà acheté",
+        "tooltip_text": "Afficher uniquement les produits achetés avant"
+      },
       "branch_availability_filter_card": {
         "title": "Disponibilité en magasin",
         "available_in": "Disponible à {0}",
@@ -1335,6 +1344,8 @@
         "select_branch_text": "Sélectionnez une succursale de retrait pour voir les produits actuellement en stock"
       },
       "products_found_message": "résultat | résultats",
+      "products_found_message_search": "résultat trouvé | résultats trouvés",
+      "search_in_category": "Rechercher « {keyword} » dans {category}",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
@@ -1350,14 +1361,7 @@
       "products_icon": "Icône du produit",
       "show_all_results": "Afficher tous les résultats",
       "load_previous_page": "Charger la page précédente",
-      "load_next_page": "Charger la page suivante",
-      "purchased_before_filter_card": {
-        "title": "Déjà acheté",
-        "tooltip_text": "Afficher uniquement les produits achetés avant",
-        "checkbox_label": "Déjà acheté"
-      },
-      "search_in_category": "Rechercher « {keyword} » dans {category}",
-      "products_found_message_search": "résultat trouvé | résultats trouvés"
+      "load_next_page": "Charger la page suivante"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1394,12 +1398,12 @@
       "meta": {
         "title": "Recherche : {0}"
       },
+      "title": "Rechercher",
       "header": "Votre recherche pour {keyword} a donné les résultats suivants",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Votre requête <strong>{0}</strong> n'a donné aucun résultat",
-      "home_button": "@:common.buttons.home",
-      "title": "Rechercher"
+      "home_button": "@:common.buttons.home"
     },
     "bulk_order": {
       "meta": {
@@ -1516,10 +1520,10 @@
       "message": "@:common.messages.blocked"
     },
     "brands": {
-      "search": "Rechercher",
-      "button_all": "Tout",
       "top_brands_title": "Meilleures marques",
       "title": "Marques",
+      "search": "Rechercher",
+      "button_all": "Tout",
       "no_results": "Aucun résultat trouvé"
     },
     "brand": {
