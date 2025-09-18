@@ -1,5 +1,5 @@
 import { setup } from "@storybook/vue3-vite";
-// import { vueRouter } from "storybook-vue3-router";
+import { vueRouter } from "storybook-vue3-router";
 import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
@@ -60,6 +60,8 @@ setup((app) => {
 });
 
 const preview: Preview = {
+  decorators: [vueRouter()],
+
   parameters: {
     controls: {
       matchers: {
