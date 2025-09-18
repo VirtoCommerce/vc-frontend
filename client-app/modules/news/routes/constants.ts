@@ -1,7 +1,12 @@
 export const ROUTES = {
   ARTICLES: {
-    NAME: "NewsArticles",
-    PATH: "/news",
+    NAME: "NewsArticles", 
+  },
+  ARTICLES_BY_AUTHOR: {
+    NAME: "NewsArticlesByAuthor", 
+  },
+  ARTICLES_BY_TAG: {
+    NAME: "NewsArticlesByTag", 
   },
   ARTICLE: {
     NAME: "NewsArticle",
