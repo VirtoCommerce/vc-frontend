@@ -87,7 +87,7 @@ import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { stringFormat } from "@/core/utilities";
-import { AddToCompareCatalog } from "@/shared/compare";
+import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
 import { VcIcon } from "@/ui-kit/components";
 import type { Product } from "@/core/api/graphql/types";

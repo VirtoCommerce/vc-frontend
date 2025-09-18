@@ -1,11 +1,17 @@
 {
   "news": {
-    "empty-list": {
-      "title": "ニュースが見つかりませんでした",
-      "button": "@:common.buttons.continue_shopping"
+    "list": {
+      "title": "最新ニュース",
+      "not-found": "ニュースはありません",
+      "search-placeholder": "検索",
+      "written-by": "作成者:"
     },
-    "links": {
-      "to-list": "すべてのニュース"
+    "details": {
+      "written-by": "作成者:",
+      "last-updated": "最終更新：",
+      "breadcrumbs": {
+        "news": "ニュース"
+      }
     }
   }
 }
