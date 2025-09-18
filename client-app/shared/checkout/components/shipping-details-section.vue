@@ -121,11 +121,14 @@
 </template>
 
 <script setup lang="ts">
+import omit from "lodash/omit";
 import { computed, ref, watch } from "vue";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { useBopis, BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
 import { AddressSelection } from "@/shared/common";
+import { useShipToLocation } from "@/shared/ship-to-location/composables/useShipToLocation";
 import type { ShippingMethodType } from "@/core/api/graphql/types.ts";
 
 interface IProps {
@@ -145,6 +148,9 @@ const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, billingAddress
 
 const { availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
 const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
+
+const { isAuthenticated } = useUser();
+const { selectedAddress } = useShipToLocation();
 
 const mode = ref<ShippingOptionType>(getDefaultMode());
 
@@ -166,12 +172,38 @@ function getDefaultMode() {
 }
 
 watch(
-  mode,
-  (newMode, previousMode) => {
+  [mode, shipment],
+  ([newMode], [previousMode, previousShipment]) => {
+    if (newMode === previousMode && !!previousShipment) {
+      // trigger watch only if mode changed or shipment just has been initialized
+      return;
+    }
+
     const shippingMethod = newMode === SHIPPING_OPTIONS.pickup ? bopisMethod.value : shippingMethods.value[0];
 
     if (shippingMethod?.code === BOPIS_CODE) {
       billingAddressEqualsShipping.value = false;
+    }
+
+    if (
+      !isAuthenticated.value &&
+      !!shipment.value &&
+      !!shippingMethod &&
+      !!selectedAddress.value &&
+      !shipment.value.deliveryAddress &&
+      newMode === SHIPPING_OPTIONS.shipping
+      // anonymous user without delivery address and shipping method is selected and address in header is set
+    ) {
+      // apply selected address to shipment
+      void updateShipment({
+        id: shipment.value?.id,
+        shipmentMethodCode: shippingMethod.code,
+        shipmentMethodOption: shippingMethod.optionName,
+        price: shippingMethod.price?.amount,
+        deliveryAddress: omit(selectedAddress.value, ["isDefault", "isFavorite"]),
+      });
+
+      return;
     }
 
     if (
