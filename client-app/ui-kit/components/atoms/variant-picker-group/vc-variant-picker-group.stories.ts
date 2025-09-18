@@ -298,3 +298,49 @@ export const Tooltips = TemplateTooltips.bind({});
 Tooltips.args = {
   name: "tooltips",
 };
+
+const TemplateMultiselect: StoryFn = (args) => ({
+  components: { VcVariantPickerGroup, VcVariantPicker },
+  setup: () => {
+    const selectedValues = ref<string[]>([]);
+
+    return {
+      args,
+      selectedValues,
+    };
+  },
+  template: `
+    <div>
+      <div class="mb-4">
+        <strong>Selected values: </strong>
+        <span v-if="selectedValues.length === 0" class="text-gray-500">Nothing selected</span>
+        <span v-else class="text-blue-600">{{ selectedValues.join(', ') }}</span>
+      </div>
+      <VcVariantPickerGroup v-bind="args">
+          <VcVariantPicker
+            v-model="selectedValues"
+            value="red"
+            is-available
+          />
+          <VcVariantPicker
+            v-model="selectedValues"
+            value="blue"
+            is-available
+          />
+          <VcVariantPicker
+            v-model="selectedValues"
+            value="green"
+          />
+          <VcVariantPicker
+            v-model="selectedValues"
+            value="yellow"
+          />
+      </VcVariantPickerGroup>
+    </div>
+  `,
+});
+
+export const Multiselect = TemplateMultiselect.bind({});
+Multiselect.args = {
+  name: "multiselect",
+};

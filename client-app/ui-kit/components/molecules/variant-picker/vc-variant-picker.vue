@@ -22,19 +22,18 @@
       <VcTooltip :disabled="!tooltip && !$slots.tooltip" class="vc-variant-picker__tooltip">
         <template #default="{ triggerProps }">
           <input
-            v-model="model"
+            :checked="checked"
             class="vc-variant-picker__input"
-            type="radio"
+            :type="multiple ? 'checkbox' : 'radio'"
             :aria-label="tooltip ?? value"
             :name="name"
             :value="value"
             :data-test-id="testId"
             :tabindex="tabindex ?? '0'"
             v-bind="triggerProps"
-            @keydown.enter.prevent="onActivate"
-            @keydown.space.prevent="onActivate"
-            @change="emit('change', value)"
-            @input="emit('input', value)"
+            @keydown.enter.prevent="toggleValue"
+            @keydown.space.prevent="toggleValue"
+            @click="toggleValue"
           />
         </template>
 
@@ -50,13 +49,9 @@
 import { computed } from "vue";
 import { getColorValue } from "@/ui-kit/utilities";
 
-interface IEmits {
-  (e: "change", value: string): void;
-  (e: "input", value: string): void;
-}
-
 interface IProps {
   type?: VcVariantPickerType;
+  modelValue?: string | string[];
   value: string;
   size?: VcVariantPickerSizeType;
   name?: string;
@@ -66,25 +61,42 @@ interface IProps {
   testId?: string;
 }
 
-const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   type: "color",
   size: "md",
+  multiple: false,
 });
 
-const model = defineModel<IProps["value"]>();
+const model = defineModel<IProps["modelValue"]>();
 
-const checked = computed(() => model.value === props.value);
+const multiple = computed(() => Array.isArray(model.value));
+const checked = computed(() => {
+  if (multiple.value) {
+    return Array.isArray(model.value) && model.value.includes(props.value);
+  } else {
+    return model.value === props.value;
+  }
+});
 
 const color = computed(() => (props.type === "color" ? getColorValue(props.value) : undefined));
 const image = computed(() => (props.type === "image" ? props.value : ""));
 
-function onActivate(): void {
-  if (model.value !== props.value) {
-    model.value = props.value;
+function toggleValue(): void {
+  if (multiple.value) {
+    const currentValue = Array.isArray(model.value) ? model.value : [];
+    const index = currentValue.indexOf(props.value);
 
-    emit("input", props.value);
-    emit("change", props.value);
+    if (index > -1) {
+      const newValue = [...currentValue];
+      newValue.splice(index, 1);
+      model.value = newValue;
+    } else {
+      model.value = [...currentValue, props.value];
+    }
+  } else {
+    if (model.value !== props.value) {
+      model.value = props.value;
+    }
   }
 }
 </script>
