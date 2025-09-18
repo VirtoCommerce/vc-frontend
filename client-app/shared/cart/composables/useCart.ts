@@ -45,6 +45,7 @@ import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import ClearCartModal from "../components/clear-cart-modal.vue";
+import { EXTENDED_DEBOUNCE_IN_MS } from "../constants";
 import { CartValidationErrors } from "../enums";
 import type {
   InputNewBulkItemType,
@@ -437,6 +438,7 @@ export function _useFullCart(cartId?: string) {
     loading: changeItemsQuantityLoading,
   } = useMutationBatcher(_changeItemsQuantity, {
     mergeStrategy: getMergeStrategyUniqueBy("lineItemId"),
+    debounce: EXTENDED_DEBOUNCE_IN_MS,
   });
   async function changeItemQuantityBatched(lineItemId: string, quantity: number): Promise<void> {
     try {

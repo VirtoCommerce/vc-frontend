@@ -92,6 +92,8 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── config
 |   ├── menu.json
 |   └── settings_data.json
+|
+├── examples                         // Code snippets and examples for different use cases.
 |   
 ├── locales                          // Locale files used to provide translated content.
 |   └──...

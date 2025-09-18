@@ -82,7 +82,7 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   &__text {
     @apply line-clamp-[--lines-number] text-[--text-color];
 
-    word-wrap: break-word;
+    word-break: break-word;
 
     #{$link}:not(#{$disabled}) & {
       @apply text-[--link-color] cursor-pointer;

@@ -8,8 +8,8 @@ import { CreateConfiguredLineItemDocument } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { getPropertyValue, Logger } from "@/core/utilities";
-import { useProducts } from "@/shared/catalog";
-import { useCompareProducts } from "@/shared/compare";
+import { useProducts } from "@/shared/catalog/composables/useProducts";
+import { useCompareProducts } from "@/shared/compare/composables/useCompareProducts";
 import type { IConfigProductToCompare } from "../types";
 import type { CreateConfiguredLineItemMutation, Product, MoneyType } from "@/core/api/graphql/types";
 
