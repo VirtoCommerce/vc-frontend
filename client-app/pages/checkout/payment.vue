@@ -38,6 +38,20 @@
             @success="onPaymentResult(true)"
             @fail="onPaymentResult(false)"
           />
+          <ExtensionPointList
+            v-else-if="
+              paymentTypeName &&
+              $canRenderExtensionPoint('paymentPage', 'payment-methods', {
+                order: placedOrder,
+                paymentTypeName: paymentTypeName,
+              })
+            "
+            category="paymentPage"
+            :order="placedOrder"
+            :payment-type-name="paymentTypeName"
+            @success="onPaymentResult(true)"
+            @fail="onPaymentResult(false)"
+          />
         </div>
       </template>
     </VcWidget>

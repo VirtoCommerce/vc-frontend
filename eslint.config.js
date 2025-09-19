@@ -1,4 +1,5 @@
 import js from "@eslint/js";
+import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
 import importPlugin from "eslint-plugin-import";
 import prettierPlugin from "eslint-plugin-prettier/recommended";
 import sonarjs from "eslint-plugin-sonarjs";
@@ -6,7 +7,6 @@ import sortExportAll from "eslint-plugin-sort-export-all";
 import sortExports from "eslint-plugin-sort-exports";
 import storybook from "eslint-plugin-storybook";
 import tailwindcss from "eslint-plugin-tailwindcss";
-import vue from "eslint-plugin-vue";
 import vuejsAccessibility from "eslint-plugin-vuejs-accessibility";
 import globals from "globals";
 import tseslint from "typescript-eslint";
@@ -18,9 +18,10 @@ const tsconfigs = {
   node: "./tsconfig.node.json",
   storybook: "./tsconfig.storybook.json",
   vitest: "./tsconfig.vitest.json",
+  examples: "./examples/tsconfig.json",
 };
 
-export default tseslint.config(
+export default defineConfigWithVueTs(
   {
     ignores: [
       "**/node_modules/",
@@ -50,8 +51,7 @@ export default tseslint.config(
   ...storybook.configs["flat/recommended"],
   ...vuejsAccessibility.configs["flat/recommended"],
   ...tailwindcss.configs["flat/recommended"],
-  ...tseslint.configs.recommendedTypeChecked,
-  ...vue.configs["flat/recommended"],
+  vueTsConfigs.recommended,
 
   // General configuration for all files
   {
@@ -338,6 +338,24 @@ export default tseslint.config(
     },
     rules: {
       "no-console": "off",
+    },
+  },
+
+  // Type-aware configuration for examples files
+  {
+    files: ["examples/**/*.ts", "examples/**/*.vue"],
+    languageOptions: {
+      parserOptions: {
+        project: tsconfigs.examples,
+        tsconfigRootDir,
+      },
+    },
+    settings: {
+      "import/resolver": {
+        typescript: {
+          project: tsconfigs.examples,
+        },
+      },
     },
   },
 

@@ -1,6 +1,7 @@
 <template>
   <div class="vc-quantity-stepper">
     <VcInput
+      ref="vcInputRef"
       v-model.number="model"
       class="vc-quantity-stepper__input"
       type="number"
@@ -17,6 +18,7 @@
       :max="max"
       center
       :select-on-click="selectOnClick"
+      :aria-label="ariaLabel || $t('ui_kit.accessibility.product_quantity')"
       :aria="{
         role: 'spinbutton',
         'aria-valuemin': min,
@@ -24,10 +26,12 @@
         'aria-valuenow': model ?? '',
       }"
       :data-test-id="testIdInput"
+      @blur="normalize"
     >
       <template v-if="!readonly" #prepend>
         <VcButton
           icon="minus"
+          :aria-label="$t('ui_kit.accessibility.decrease_quantity')"
           :disabled="isDecrementDisabled"
           :loading="loading"
           :color="buttonsColor"
@@ -41,6 +45,7 @@
       <template v-if="!readonly" #append>
         <VcButton
           icon="plus"
+          :aria-label="$t('ui_kit.accessibility.increase_quantity')"
           :disabled="isIncrementDisabled"
           :loading="loading"
           :color="buttonsColor"
@@ -59,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 import { calculateStepper, checkIfOperationIsAllowed } from "@/ui-kit/utilities/quantity-stepper";
 
 interface IProps {
@@ -73,6 +78,7 @@ interface IProps {
   error?: boolean;
   message?: string;
   readonly?: boolean;
+  ariaLabel?: string;
   buttonsColor?: VcButtonColorType;
   buttonsVariant?: VcButtonVariantType;
   size?: "sm" | "md";
@@ -91,7 +97,10 @@ const props = withDefaults(defineProps<IProps>(), {
   allowZero: true,
 });
 
+const lastNonEmptyValue = ref<number | undefined>(undefined);
 const min = computed(() => props.min ?? (props.allowZero ? 0 : 1));
+
+const vcInputRef = useTemplateRef("vcInputRef");
 
 const model = defineModel<IProps["value"]>();
 
@@ -156,6 +165,26 @@ function handleIncrement() {
 function update(value: number) {
   model.value = value;
 }
+
+function normalize() {
+  if (model.value === undefined && lastNonEmptyValue.value !== undefined) {
+    update(lastNonEmptyValue.value);
+  }
+
+  if (model.value === 0 && vcInputRef?.value?.inputElement) {
+    vcInputRef.value.inputElement.value = "0";
+  }
+}
+
+watch(
+  model,
+  () => {
+    if (model.value !== undefined && model.value !== lastNonEmptyValue.value) {
+      lastNonEmptyValue.value = model.value;
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">
