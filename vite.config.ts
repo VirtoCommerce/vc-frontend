@@ -113,7 +113,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
     css: {
       preprocessorOptions: {
         scss: {
-          api: "modern-compiler",
           quietDeps: true,
         },
       },
