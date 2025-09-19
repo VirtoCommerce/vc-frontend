@@ -294,7 +294,9 @@
     "accessibility": {
       "open_filters": "打开筛选器",
       "switch_to_grid_view": "切换到网格视图",
-      "switch_to_list_view": "切换到列表视图"
+      "switch_to_list_view": "切换到列表视图",
+      "no_image": "没有可用图片",
+      "image": "图片"
     }
   },
   "shared": {

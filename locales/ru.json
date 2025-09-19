@@ -294,7 +294,9 @@
     "accessibility": {
       "open_filters": "Открыть фильтры",
       "switch_to_grid_view": "Переключить в сетку",
-      "switch_to_list_view": "Переключить в список"
+      "switch_to_list_view": "Переключить в список",
+      "no_image": "Изображение недоступно",
+      "image": "Изображение"
     }
   },
   "shared": {
