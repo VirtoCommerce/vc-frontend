@@ -3,6 +3,7 @@ import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
+import { createStorybookRouter } from "./router";
 import type { IThemeConfigPreset } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3-vite";
@@ -14,6 +15,7 @@ const DEFAULT_LOCALE = "en";
 const DEFAULT_CURRENCY = "USD";
 
 const i18n: I18n = createI18n(DEFAULT_LOCALE, DEFAULT_CURRENCY);
+const router = createStorybookRouter();
 
 async function configureThemeSettings() {
   const module = (await import(`@/assets/presets/default.json`)) as {
@@ -44,6 +46,7 @@ setup((app) => {
   }
 
   try {
+    app.use(router);
     app.use(i18n);
     app.use(uiKit);
   } catch (error) {
@@ -74,7 +77,6 @@ const preview: Preview = {
       },
     },
   },
-
   tags: ["autodocs"],
 };
 
