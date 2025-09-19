@@ -8,10 +8,13 @@ import { MoveToSavedForLaterDocument, MoveFromSavedForLaterDocument } from "@/co
 import { useMutationBatcher } from "@/core/composables/useMutationBatcher";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
+import { useFullCart } from "@/shared/cart";
 import type { SavedForLaterListFragment } from "@/core/api/graphql/types";
 
 function _useSavedForLater() {
   const { storeId, currencyCode, cultureName, userId } = globals;
+
+  const { cart } = useFullCart();
 
   const savedForLaterList = ref<SavedForLaterListFragment>();
 
@@ -26,16 +29,29 @@ function _useSavedForLater() {
 
   async function moveToSavedForLater(cartId: string, itemIds: string[]) {
     try {
-      const moveResult = await _moveToSavedForLaterBatched({
-        command: {
-          storeId,
-          userId,
-          cultureName,
-          currencyCode,
-          cartId,
-          lineItemIds: itemIds,
+      const moveResult = await _moveToSavedForLaterBatched(
+        {
+          command: {
+            storeId,
+            userId,
+            cultureName,
+            currencyCode,
+            cartId,
+            lineItemIds: itemIds,
+          },
         },
-      });
+        {
+          optimisticResponse: {
+            moveToSavedForLater: {
+              cart: {
+                ...cart.value!,
+                items: cart.value!.items.filter((item) => !itemIds.includes(item.id)),
+              },
+              list: savedForLaterList.value,
+            },
+          },
+        },
+      );
 
       savedForLaterList.value = moveResult?.data?.moveToSavedForLater?.list;
     } catch (err) {
@@ -57,16 +73,29 @@ function _useSavedForLater() {
 
   async function moveFromSavedForLater(cartId: string, itemIds: string[]) {
     try {
-      const moveResult = await _moveFromSavedForLaterBatched({
-        command: {
-          storeId,
-          userId,
-          cultureName,
-          currencyCode,
-          cartId,
-          lineItemIds: itemIds,
+      const moveResult = await _moveFromSavedForLaterBatched(
+        {
+          command: {
+            storeId,
+            userId,
+            cultureName,
+            currencyCode,
+            cartId,
+            lineItemIds: itemIds,
+          },
         },
-      });
+        {
+          optimisticResponse: {
+            moveFromSavedForLater: {
+              cart: cart.value,
+              list: {
+                ...savedForLaterList.value!,
+                items: savedForLaterList.value!.items.filter((item) => !itemIds.includes(item.id)),
+              },
+            },
+          },
+        },
+      );
 
       savedForLaterList.value = moveResult?.data?.moveFromSavedForLater?.list;
     } catch (err) {
