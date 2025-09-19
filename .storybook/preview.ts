@@ -1,5 +1,4 @@
 import { setup } from "@storybook/vue3-vite";
-import { vueRouter } from "storybook-vue3-router";
 import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
@@ -38,12 +37,6 @@ function configureI18N() {
 }
 
 setGlobals({ i18n });
-configureI18N();
-
-configureThemeSettings().catch(() => {
-  // eslint-disable-next-line no-console
-  console.error("Storybook theme setup error:");
-});
 
 setup((app) => {
   if (!app || typeof app.use !== "function") {
@@ -57,11 +50,16 @@ setup((app) => {
     // eslint-disable-next-line no-console
     console.error("Storybook Vue setup error:", error);
   }
+
+  configureThemeSettings().catch(() => {
+    // eslint-disable-next-line no-console
+    console.error("Storybook theme setup error:");
+  });
+
+  configureI18N();
 });
 
 const preview: Preview = {
-  decorators: [vueRouter()],
-
   parameters: {
     controls: {
       matchers: {
