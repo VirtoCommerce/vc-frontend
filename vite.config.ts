@@ -74,7 +74,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
       // https://vue-i18n.intlify.dev/guide/advanced/optimization.html#reduce-bundle-size-with-feature-build-flags
       __VUE_I18N_FULL_INSTALL__: true,
       __VUE_I18N_LEGACY_API__: false,
-      "process.env.NODE_ENV": isServe ? process.env.NODE_ENV : JSON.stringify("production"),
     },
     build: {
       target: browserslistToEsbuild(),
