@@ -50,10 +50,10 @@ export default defineConfig(({ command, mode }): UserConfig => {
         ? checker({
             enableBuild: false,
             typescript: true,
-            // vueTsc: {
-            //   root: __dirname,
-            //   tsconfigPath: "tsconfig.app.json",
-            // },
+            vueTsc: {
+              root: __dirname,
+              tsconfigPath: "tsconfig.app.json",
+            },
           })
         : undefined,
       process.env.GENERATE_BUNDLE_MAP
