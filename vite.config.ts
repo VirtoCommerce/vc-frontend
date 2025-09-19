@@ -51,8 +51,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
             enableBuild: false,
             typescript: true,
             vueTsc: {
-              root: __dirname,
-              tsconfigPath: "tsconfig.app.json",
+              tsconfigPath: path.resolve(__dirname, "tsconfig.app.json"),
             },
           })
         : undefined,
