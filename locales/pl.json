@@ -25,6 +25,7 @@
       "register": "Zarejestruj się",
       "reset_password": "Resetuj hasło",
       "reset_filters": "Resetuj filtry",
+      "reset_page": "Resetuj stronę",
       "add_to_cart": "Dodaj do koszyka",
       "apply": "Zastosuj",
       "send": "Wyślij",
@@ -75,7 +76,6 @@
       "all_orders": "Wszystkie zamówienia",
       "my_orders": "Moje zamówienia",
       "scroll_to_top": "Przewiń do góry",
-      "reset_page": "Resetuj stronę",
       "show_less": "Pokaż mniej",
       "expand_all": "Rozwiń wszystko",
       "all_products": "Wszystkie produkty",
@@ -351,10 +351,10 @@
         },
         "ship_to_selector": {
           "add_new": "Dodaj nowy",
+          "add_new_address": "Dodaj nowy adres",
           "search": "Szukaj",
           "select_address": "Wybierz adres",
-          "title": "Wyślij do:",
-          "add_new_address": "Dodaj nowy adres"
+          "title": "Wyślij do:"
         },
         "mega_menu": {
           "aria_labels": {
@@ -400,26 +400,26 @@
         "categories_label": "Kategorie",
         "products_label": "Produkty",
         "pages_label": "Strony",
-        "suggestions_label": "Sugestie",
+        "suggestions_and_history_label": "Sugestie i historia",
         "no_results": "Twoje zapytanie {keyword} nie zwróciło żadnych wyników",
+        "enter_keyword_placeholder": "Szukaj w całym sklepie",
+        "enter_keyword_placeholder_category": "Szukaj w {category}",
         "search_button": "Szukaj",
         "view_all_results_button": "Zobacz wszystkie {total} wyniki",
+        "scope_loading_label": "Ładowanie kontekstu wyszukiwania",
+        "scope_remove_label": "Usuń: {label}",
         "barcode_detector": {
           "title": "Skanowanie kodu kreskowego",
           "description": "Aby kontynuować, włącz kamerę, aby zeskanować kod kreskowy na produkcie. Pomoże nam to szybko zidentyfikować przedmiot i dostarczyć niezbędne informacje.",
+          "browse": "Przeglądaj pliki",
+          "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "Nie wykryto kodów kreskowych na obrazie",
             "wrong_format": "Nieobsługiwany format pliku",
             "no_file": "Nie przesłano pliku"
-          },
-          "browse": "Przeglądaj pliki",
-          "cancel": "@:common.buttons.cancel"
+          }
         },
-        "enter_keyword_placeholder": "Szukaj w całym sklepie",
-        "enter_keyword_placeholder_category": "Szukaj w {category}",
-        "scope_loading_label": "Ładowanie kontekstu wyszukiwania",
-        "scope_remove_label": "Usuń: {label}",
-        "suggestions_and_history_label": "Sugestie i historia",
+        "suggestions_label": "Sugestie",
         "search_label": "Szukaj"
       },
       "language_selector": {
@@ -682,6 +682,9 @@
       "discount_badge": {
         "off": "-{discount}"
       },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
+      },
       "branches_modal": {
         "title": "Wybierz oddział",
         "all_branches": "Wszystkie oddziały",
@@ -692,9 +695,6 @@
         "ok_button": "OK",
         "no_results": "Nie znaleziono wyników",
         "reset_search_button": "Resetuj wyszukiwanie"
-      },
-      "purchased_before_badge": {
-        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -809,15 +809,16 @@
         "cardholder_name_label": "Imię i nazwisko posiadacza karty",
         "expiration_date_label": "Data ważności",
         "expiration_date_placeholder": "MM / RR",
+        "expiration_date_placeholder_extended": "MM /RRRR",
         "month_label": "Miesiąc",
         "month_placeholder": "MM",
         "year_label": "Rok",
         "year_placeholder": "RR",
         "security_code_label": "Kod bezpieczeństwa",
-        "expiration_date_placeholder_extended": "MM /RRRR",
         "errors": {
           "month": "Podaj prawidłowy miesiąc ważności",
-          "year": "Podaj prawidłowy rok ważności"
+          "year": "Podaj prawidłowy rok ważności",
+          "security_code": "Nieprawidłowy kod zabezpieczający."
         },
         "user_error_message": "Nie można zainicjować płatności. Spróbuj ponownie później lub użyj innej metody płatności",
         "payment_unavailable": "Metoda płatności jest niedostępna. Spróbuj ponownie później."
@@ -1145,14 +1146,14 @@
           "emailOnly": "Email {email}",
           "phoneOnly": "Zadzwoń {phone}",
           "questions": "Pytania?",
+          "workingHours": "Godziny",
+          "name": "Nazwa",
+          "instructions": "Instrukcje",
           "address": "Adres",
           "pick_point_info": "Informacje o punkcie odbioru",
           "get_directions": "Wyznacz trasę",
           "point_info": "Punkt informacyjny",
-          "pickup_address": "Adres odbioru",
-          "workingHours": "Godziny",
-          "name": "Nazwa",
-          "instructions": "Instrukcje"
+          "pickup_address": "Adres odbioru"
         }
       },
       "order_payment": {
@@ -1295,8 +1296,8 @@
       },
       "title": "Koszyk",
       "empty_cart_description": "Twój koszyk jest pusty",
-      "recently_browsed_products": "Ostatnio przeglądane",
       "empty_cart_search_text": "Użyj wyszukiwarki, aby znaleźć wszystko, czego potrzebujesz",
+      "recently_browsed_products": "Ostatnio przeglądane",
       "save_for_later": "Zapisz na później",
       "saved_for_later": "Zapisano na później",
       "move_to_cart": "Przenieś do koszyka"
@@ -1326,6 +1327,11 @@
         "checkbox_label": "Pokaż dostępne",
         "tooltip_text": "Wybierz, aby pokazać tylko produkty dostępne w magazynie"
       },
+      "purchased_before_filter_card": {
+        "title": "Kupione wcześniej",
+        "checkbox_label": "Kupione wcześniej",
+        "tooltip_text": "Wybierz, aby wyświetlić tylko produkty zakupione wcześniej"
+      },
       "branch_availability_filter_card": {
         "title": "Dostępność w oddziale",
         "available_in": "Dostępne w {0}",
@@ -1333,6 +1339,8 @@
         "select_branch_text": "Wybierz oddział odbioru, aby zobaczyć produkty dostępne teraz w magazynie"
       },
       "products_found_message": "wynik | wyniki",
+      "products_found_message_search": "znaleziono wynik | znaleziono wyników",
+      "search_in_category": "Szukaj \"{keyword}\" w {category}",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
@@ -1348,14 +1356,7 @@
       "products_icon": "Ikona produktu",
       "show_all_results": "Pokaż wszystkie wyniki",
       "load_previous_page": "Załaduj poprzednią stronę",
-      "load_next_page": "Załaduj następną stronę",
-      "purchased_before_filter_card": {
-        "title": "Kupione wcześniej",
-        "tooltip_text": "Wybierz, aby wyświetlić tylko produkty zakupione wcześniej",
-        "checkbox_label": "Kupione wcześniej"
-      },
-      "search_in_category": "Szukaj \"{keyword}\" w {category}",
-      "products_found_message_search": "znaleziono wynik | znaleziono wyników"
+      "load_next_page": "Załaduj następną stronę"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1392,12 +1393,12 @@
       "meta": {
         "title": "Szukaj: {0}"
       },
+      "title": "Szukaj",
       "header": "Twoje wyszukiwanie {keyword} zwróciło następujące wyniki",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Twoje zapytanie <strong>{0}</strong> nie zwróciło żadnych wyników",
-      "home_button": "@:common.buttons.home",
-      "title": "Szukaj"
+      "home_button": "@:common.buttons.home"
     },
     "bulk_order": {
       "meta": {
@@ -1514,10 +1515,10 @@
       "message": "@:common.messages.blocked"
     },
     "brands": {
-      "search": "Szukaj",
-      "button_all": "Wszystkie",
       "top_brands_title": "Najlepsze marki",
       "title": "Marki",
+      "search": "Szukaj",
+      "button_all": "Wszystkie",
       "no_results": "Brak wyników"
     },
     "brand": {

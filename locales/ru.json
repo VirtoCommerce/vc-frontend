@@ -25,6 +25,7 @@
       "register": "Регистрация",
       "reset_password": "Сбросить пароль",
       "reset_filters": "Сбросить фильтры",
+      "reset_page": "Сбросить страницу",
       "add_to_cart": "В корзину",
       "apply": "Применить",
       "send": "Отправить",
@@ -75,7 +76,6 @@
       "all_orders": "Все заказы",
       "my_orders": "Мои заказы",
       "scroll_to_top": "Прокрутить вверх",
-      "reset_page": "Сбросить страницу",
       "show_less": "Показать меньше",
       "expand_all": "Развернуть все",
       "all_products": "Все продукты",
@@ -351,10 +351,10 @@
         },
         "ship_to_selector": {
           "add_new": "Добавить новый",
+          "add_new_address": "Добавить новый адрес",
           "search": "Поиск",
           "select_address": "Выберите адрес",
-          "title": "Доставка в:",
-          "add_new_address": "Добавить новый адрес"
+          "title": "Доставка в:"
         },
         "mega_menu": {
           "aria_labels": {
@@ -400,26 +400,26 @@
         "categories_label": "Категории",
         "products_label": "Товары",
         "pages_label": "Страницы",
-        "suggestions_label": "Предложения",
+        "suggestions_and_history_label": "Предложения и история",
         "no_results": "По вашему запросу {keyword} ничего не найдено",
+        "enter_keyword_placeholder": "Поиск по магазину",
+        "enter_keyword_placeholder_category": "Искать в {category}",
         "search_button": "Искать",
         "view_all_results_button": "Просмотреть все результаты ({total})",
+        "scope_loading_label": "Загрузка контекста поиска",
+        "scope_remove_label": "Удалить: {label}",
         "barcode_detector": {
           "title": "Сканирование штрихкода",
           "description": "Чтобы продолжить, включите камеру для сканирования штрихкода на товаре. Это поможет нам быстро идентифицировать товар и предоставить вам необходимую информацию.",
+          "browse": "Обзор файлов",
+          "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "Штрихкоды на изображении не обнаружены",
             "wrong_format": "Неподдерживаемый формат файла",
             "no_file": "Файл не загружен"
-          },
-          "browse": "Обзор файлов",
-          "cancel": "@:common.buttons.cancel"
+          }
         },
-        "enter_keyword_placeholder": "Поиск по магазину",
-        "enter_keyword_placeholder_category": "Искать в {category}",
-        "scope_loading_label": "Загрузка контекста поиска",
-        "scope_remove_label": "Удалить: {label}",
-        "suggestions_and_history_label": "Предложения и история",
+        "suggestions_label": "Предложения",
         "search_label": "Поиск"
       },
       "language_selector": {
@@ -682,6 +682,9 @@
       "discount_badge": {
         "off": "-{discount}"
       },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
+      },
       "branches_modal": {
         "title": "Выбрать филиал",
         "all_branches": "Все филиалы",
@@ -692,9 +695,6 @@
         "ok_button": "ОК",
         "no_results": "Результатов не найдено",
         "reset_search_button": "Очистить поиск"
-      },
-      "purchased_before_badge": {
-        "title": "@:pages.catalog.purchased_before_filter_card.title"
       }
     },
     "checkout": {
@@ -809,15 +809,16 @@
         "cardholder_name_label": "Имя владельца карты",
         "expiration_date_label": "Срок действия",
         "expiration_date_placeholder": "ММ / ГГ",
+        "expiration_date_placeholder_extended": "MM / ГГГГ",
         "month_label": "Месяц",
         "month_placeholder": "ММ",
         "year_label": "Год",
         "year_placeholder": "ГГ",
         "security_code_label": "Код безопасности",
-        "expiration_date_placeholder_extended": "MM / ГГГГ",
         "errors": {
           "month": "Укажите действительный месяц истечения срока действия",
-          "year": "Укажите действительный год окончания срока действия"
+          "year": "Укажите действительный год окончания срока действия",
+          "security_code": "Недействительный код безопасности."
         },
         "user_error_message": "Не удалось инициализировать платёж. Попробуйте позже или выберите другой способ оплаты",
         "payment_unavailable": "Способ оплаты недоступен. Повторите попытку позже."
@@ -1145,14 +1146,14 @@
           "emailOnly": "Email {email}",
           "phoneOnly": "Позвонить {phone}",
           "questions": "Вопросы?",
+          "workingHours": "Часы",
+          "name": "Имя",
+          "instructions": "Инструкции",
           "address": "Адрес",
           "pick_point_info": "Информация о пункте выдачи",
           "get_directions": "Как добраться",
           "point_info": "Информация",
-          "pickup_address": "Адрес самовывоза",
-          "workingHours": "Часы",
-          "name": "Имя",
-          "instructions": "Инструкции"
+          "pickup_address": "Адрес самовывоза"
         }
       },
       "order_payment": {
@@ -1295,8 +1296,8 @@
       },
       "title": "Корзина",
       "empty_cart_description": "Ваша корзина пуста",
-      "recently_browsed_products": "Недавно просмотренные",
       "empty_cart_search_text": "Используйте поиск, чтобы найти всё необходимое",
+      "recently_browsed_products": "Недавно просмотренные",
       "save_for_later": "Сохранить на потом",
       "saved_for_later": "Сохранено на потом",
       "move_to_cart": "В корзину"
@@ -1326,6 +1327,11 @@
         "checkbox_label": "Только товары в наличии",
         "tooltip_text": "Выберите, чтобы увидеть только товары в наличии"
       },
+      "purchased_before_filter_card": {
+        "title": "Куплено ранее",
+        "checkbox_label": "Куплено ранее",
+        "tooltip_text": "Показывать только товары, купленные ранее"
+      },
       "branch_availability_filter_card": {
         "title": "Наличие в филиалах",
         "available_in": "Выбрать {0}",
@@ -1333,6 +1339,8 @@
         "select_branch_text": "Выберите филиал, чтобы увидеть товары в наличии"
       },
       "products_found_message": "результат | результатов",
+      "products_found_message_search": "результат найден | результата найдено",
+      "search_in_category": "Поиск \"{keyword}\" в {category}",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
@@ -1348,14 +1356,7 @@
       "products_icon": "Иконка товара",
       "show_all_results": "Показать все результаты",
       "load_previous_page": "Загрузить предыдущую страницу",
-      "load_next_page": "Загрузить следующую страницу",
-      "purchased_before_filter_card": {
-        "title": "Куплено ранее",
-        "tooltip_text": "Показывать только товары, купленные ранее",
-        "checkbox_label": "Куплено ранее"
-      },
-      "search_in_category": "Поиск \"{keyword}\" в {category}",
-      "products_found_message_search": "результат найден | результата найдено"
+      "load_next_page": "Загрузить следующую страницу"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1392,12 +1393,12 @@
       "meta": {
         "title": "Поиск: {0}"
       },
+      "title": "Поиск",
       "header": "Ваш поиск {keyword} вернул следующее",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Ваш запрос <strong>{0}</strong> не дал результатов",
-      "home_button": "@:common.buttons.home",
-      "title": "Поиск"
+      "home_button": "@:common.buttons.home"
     },
     "bulk_order": {
       "meta": {
@@ -1514,10 +1515,10 @@
       "message": "@:common.messages.blocked"
     },
     "brands": {
-      "search": "Поиск",
-      "button_all": "Все",
       "top_brands_title": "Топ бренды",
       "title": "Бренды",
+      "search": "Поиск",
+      "button_all": "Все",
       "no_results": "Ничего не найдено"
     },
     "brand": {
