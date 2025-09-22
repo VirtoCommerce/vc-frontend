@@ -53,7 +53,13 @@ const props = defineProps<IProps>();
 const { filters } = toRefs(props);
 
 function formatFilterLabel(filterLabel: string | undefined) {
-  return filterLabel ? `${filterLabel}: ` : "";
+  const trimmedFilterLabel = filterLabel?.trim();
+
+  if (!trimmedFilterLabel || trimmedFilterLabel.startsWith("_")) {
+    return "";
+  }
+
+  return `${trimmedFilterLabel}: `;
 }
 
 function formatRangeValue(range: SearchProductFilterRangeValue): string {
