@@ -267,6 +267,21 @@
                     @success="success = true"
                     @fail="failure = true"
                   />
+
+                  <ExtensionPointList
+                    v-else-if="
+                      paymentMethodCode &&
+                      $canRenderExtensionPoint('orderPaymentPage', 'payment-methods', {
+                        order: order,
+                        paymentTypeName: paymentMethodCode,
+                      })
+                    "
+                    category="orderPaymentPage"
+                    :order="order"
+                    :payment-type-name="paymentMethodCode"
+                    @success="success = true"
+                    @fail="failure = true"
+                  />
                 </template>
 
                 <template v-else>

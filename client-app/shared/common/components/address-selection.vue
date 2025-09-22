@@ -26,14 +26,20 @@
 
     <p v-else class="vc-address-selection__no-address">
       {{ $t("common.prefixes.please") }}
+
       <button
+        v-if="!readonly"
         data-test-id="select-address-button"
         type="button"
         class="vc-address-selection__link"
-        @click="!readonly && $emit('change')"
+        @click="$emit('change')"
       >
         {{ placeholder || $t("common.placeholders.select_address") }}
       </button>
+
+      <template v-else>
+        {{ placeholder || $t("common.placeholders.select_address") }}
+      </template>
     </p>
   </div>
 </template>
