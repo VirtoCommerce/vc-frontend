@@ -46,13 +46,16 @@ function _useExtensionRegistry() {
     category: C,
     name: N,
   ) {
-    return entries.value[category]?.[name]?.component !== undefined;
+    return Boolean(entries.value[category]?.[name]?.component);
   }
 
-  function canRender<C extends ExtensionCategoryType, N extends string>(
+  type ConditionParamType<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]> =
+    NonNullable<ExtensionRegistryStateType[C][N]["condition"]> extends (arg: infer P) => boolean ? P : unknown;
+
+  function canRender<C extends ExtensionCategoryType, N extends keyof ExtensionRegistryStateType[C]>(
     category: C,
     name: N,
-    parameter: Parameters<NonNullable<ExtensionRegistryStateType[C][N]["condition"]>>[0],
+    parameter: ConditionParamType<C, N>,
   ): boolean {
     if (!isRegistered(category, name)) {
       return false;
@@ -62,9 +65,12 @@ function _useExtensionRegistry() {
 
     if (condition && typeof condition === "function") {
       try {
-        return condition(parameter);
+        return (condition as (arg: ConditionParamType<C, N>) => boolean)(parameter);
       } catch (error) {
-        Logger.error(`useExtensionRegistry: Error in condition for component "${category}/${name}"`, error);
+        Logger.error(
+          `useExtensionRegistry: Error in condition for component "${String(category)}/${String(name)}"`,
+          error,
+        );
         return false;
       }
     }
