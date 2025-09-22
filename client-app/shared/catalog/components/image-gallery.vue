@@ -28,7 +28,7 @@
             <VcImage
               class="image-gallery__img"
               :src="image.url"
-              :alt="image.name"
+              :alt="image.name ?? `${$t('common.accessibility.image')} ${i + 1}`"
               :data-te-img="image.url"
               size-suffix="md"
               lazy
@@ -38,7 +38,7 @@
       </template>
 
       <!-- no-image -->
-      <VcImage v-else class="image-gallery__img" />
+      <VcImage v-else class="image-gallery__img" :alt="$t('common.accessibility.no_image')" />
 
       <div class="image-gallery__badges">
         <slot name="badges" />
@@ -72,6 +72,7 @@
               },
             ]"
             :src="image.url"
+            :alt="image.name ?? `${$t('common.accessibility.image')} ${index + 1}`"
             size-suffix="sm"
             lazy
           />

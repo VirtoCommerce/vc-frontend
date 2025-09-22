@@ -1,0 +1,32 @@
+{
+  "loyalty": {
+    "points-history": {
+      "meta": {
+        "title": "Historia punktów"
+      },
+      "current-balance": "Saldo: {currentBalance}",
+      "operation": "Operacja",
+      "operation-type": "Typ",
+      "date": "Data",
+      "amount": "Kwota",
+      "redeemed": "Wykorzystane",
+      "earned": "Zdobyte",
+      "registration": "Rejestracja"
+    },
+    "list_details": {
+      "empty_list": "Twoja lista jest pusta"
+    },
+    "navigation": {
+      "route_name": "Historia punktów"
+    },
+    "payment": {
+      "loyalty": {
+        "pay_now_button": "Kontynuuj",
+        "text": "Próbujesz zapłacić za zamówienie punktami. Twój aktualny saldo punktów wynosi {currentBalance}.",
+        "errors": {
+          "insufficient_points": "Nie można złożyć zamówienia z powodu niewystarczającego salda punktów. Twój aktualny saldo punktów wynosi {currentBalance}."
+        }
+      }
+    }
+  }
+}
