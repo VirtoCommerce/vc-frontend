@@ -37,13 +37,7 @@
     :disabled="isDisabled"
     :readonly="readonly"
     :min="minQuantity"
-    :max="
-      availableQuantity && maxQuantity
-        ? Math.min(maxQuantity, availableQuantity)
-        : availableQuantity
-          ? availableQuantity
-          : maxQuantity
-    "
+    :max="maxStepperQuantity"
     :size="size"
     :show-empty-details="showEmptyDetails"
     :error="!isValid"
@@ -134,6 +128,16 @@ const {
 const value = defineModel<number>({ default: 0 });
 
 const stepperQuantity = ref<number>(value.value || 0);
+
+const maxStepperQuantity = computed(() => {
+  if (availableQuantity.value && maxQuantity.value) {
+    return Math.min(maxQuantity.value, availableQuantity.value);
+  } else if (maxQuantity.value) {
+    return maxQuantity.value;
+  } else if (availableQuantity.value) {
+    return availableQuantity.value;
+  }
+});
 
 const { isDisabled, isValid, errorMessage, validateFields } = useQuantityField({
   modelValue: value,
