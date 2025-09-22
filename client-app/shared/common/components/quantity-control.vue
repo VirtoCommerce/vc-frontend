@@ -37,7 +37,13 @@
     :disabled="isDisabled"
     :readonly="readonly"
     :min="minQuantity"
-    :max="maxQuantity || availableQuantity"
+    :max="
+      availableQuantity && maxQuantity
+        ? Math.min(maxQuantity, availableQuantity)
+        : availableQuantity
+          ? availableQuantity
+          : maxQuantity
+    "
     :size="size"
     :show-empty-details="showEmptyDetails"
     :error="!isValid"
