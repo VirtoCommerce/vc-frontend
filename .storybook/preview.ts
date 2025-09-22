@@ -1,9 +1,11 @@
 import { setup } from "@storybook/vue3-vite";
+import { useThemeContext } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
 import { createStorybookRouter } from "./router";
+import type { StoreResponseType } from "../client-app/core/api/graphql/types";
 import type { IThemeConfigPreset } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3-vite";
@@ -16,6 +18,60 @@ const DEFAULT_CURRENCY = "USD";
 
 const i18n: I18n = createI18n(DEFAULT_LOCALE, DEFAULT_CURRENCY);
 const router = createStorybookRouter();
+
+// Remove this after refactoring the VcImage component
+const { setThemeContext } = useThemeContext();
+setThemeContext({
+  storeId: "storybook",
+  storeName: "Storybook",
+  catalogId: "storybook",
+  storeUrl: "https://storybook.example.com",
+  defaultLanguage: {
+    twoLetterLanguageName: "en",
+    threeLetterLanguageName: "eng",
+    cultureName: "en-US",
+    nativeName: "English",
+    twoLetterRegionName: "US",
+    threeLetterRegionName: "USA",
+    isInvariant: false,
+  },
+  defaultCurrency: {
+    code: "USD",
+    symbol: "$",
+    cultureName: "en-US",
+    englishName: "US Dollar",
+    exchangeRate: 1,
+    isInvariant: false,
+  },
+  availableLanguages: [],
+  availableCurrencies: [],
+  graphQLSettings: { keepAliveInterval: 30 },
+  settings: {
+    image_thumbnails_enabled: true,
+    image_thumbnails_suffixes: { sm: "sm", md: "md", lg: "lg" },
+    anonymousUsersAllowed: true,
+    modules: [],
+    authenticationTypes: [],
+    createAnonymousOrderEnabled: true,
+    defaultSelectedForCheckout: true,
+    emailVerificationEnabled: false,
+    emailVerificationRequired: false,
+    environmentName: "storybook",
+    passwordRequirements: {
+      requireLowercase: false,
+      requireUppercase: false,
+      requireDigit: false,
+      requiredLength: 6,
+      requiredUniqueChars: 0,
+      requireNonAlphanumeric: false,
+    },
+    seoLinkType: "short",
+    subscriptionEnabled: false,
+    taxCalculationEnabled: false,
+    isSpa: true,
+    quotesEnabled: false,
+  },
+} as StoreResponseType);
 
 async function configureThemeSettings() {
   const module = (await import(`@/assets/presets/default.json`)) as {
