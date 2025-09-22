@@ -4,6 +4,9 @@ export { default as ChangePasswordForm } from "./change-password-form.vue";
 export { default as CreditCard } from "./credit-card.vue";
 export { default as CreditCardSkeleton } from "./credit-card-skeleton.vue";
 export { default as ForgotPasswordForm } from "./forgot-password-form.vue";
+/// TEST MODAL DIALOG WITH WIDGET
+export { default as ModalDialogWithWidget } from "./modal-dialog-with-widget.vue";
+/// !TEST MODAL DIALOG WITH WIDGET
 export { default as OrderLineItems } from "./order-line-items.vue";
 export { default as OrderStatus } from "./order-status.vue";
 export { default as Orders } from "./orders.vue";

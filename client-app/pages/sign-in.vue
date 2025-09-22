@@ -27,13 +27,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from "vue";
+import { computed, onMounted, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useThemeContext } from "@/core/composables";
-import { SignInForm } from "@/shared/account";
+import { SignInForm, ModalDialogWithWidget } from "@/shared/account";
+import { useModal } from "@/shared/modal";
 
 // eslint-disable-next-line sonarjs/no-hardcoded-passwords
 const PASSWORD_AUTHENTICATION_TYPE = "Password";
+
+const { openModal } = useModal();
 
 const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/components/identity-providers.vue"));
 
@@ -56,6 +59,13 @@ const { t } = useI18n();
 
 usePageHead({
   title: t("pages.sign_in.meta.title"),
+});
+
+onMounted(() => {
+  // IOS scroll issue
+  openModal({
+    component: ModalDialogWithWidget,
+  });
 });
 </script>
 
