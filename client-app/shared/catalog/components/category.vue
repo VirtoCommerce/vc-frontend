@@ -192,7 +192,7 @@
           :mode="catalogPaginationMode"
           class="category__products"
           @change-page="changeProductsPage"
-          @reset-filter-keyword="resetFilterKeyword"
+          @reset-filter-keyword="handleResetFilterKeyword"
           @select-product="selectProduct"
         />
 
@@ -501,6 +501,11 @@ function selectProduct(product: Product): void {
 function resetPage() {
   void resetCurrentPage();
   void fetchProducts();
+}
+
+function handleResetFilterKeyword() {
+  resetFilterKeyword();
+  resetFacetFilters();
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
