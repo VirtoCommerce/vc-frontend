@@ -133,7 +133,7 @@ const broadcast = useBroadcast();
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
+const isMobile = breakpoints.smaller("md");
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
@@ -209,7 +209,11 @@ watchEffect(fetchProductsAndSubscriptions);
 <style lang="scss">
 .back-in-stock-subscriptions {
   &__toolbar {
-    @apply mt-2  flex flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5;
+    @apply mt-2 flex flex-row items-center gap-x-2;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply flex-row-reverse gap-x-5;
+    }
   }
 
   &__keyword-input {
