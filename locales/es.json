@@ -1364,10 +1364,10 @@
       "variations_total_label": "Total en tu carrito:",
       "view_cart_button": "Ver carrito",
       "recommended_products": {
-        "related-products_section_title": "Productos relacionados con este artículo",
+        "related-products_section_title": "Recomendado para ti",
         "bought-together_section_title": "Clientes compraron juntos"
       },
-      "related_product_section_title": "Productos relacionados",
+      "related_product_section_title": "Productos relacionados con este artículo",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {
