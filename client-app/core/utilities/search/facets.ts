@@ -1,6 +1,5 @@
 import { unref } from "vue";
-import { globals } from "@/core/globals";
-import { isDateString } from "@/core/utilities/date";
+import { getFormattedLabel } from "./common";
 import type { FacetItemType, FacetValueItemType } from "../../types";
 import type {
   FacetRangeType,
@@ -172,7 +171,7 @@ export function termFacetToCommonFacet(termFacet: TermFacet): FacetItemType {
   const facetValues = termFacet.terms
     .map<FacetValueItemType>((facetTerm: FacetTermType) => ({
       count: facetTerm.count,
-      label: getFacetLabel(facetTerm.label),
+      label: getFormattedLabel(facetTerm.label),
       value: facetTerm.term,
       selected: facetTerm.isSelected,
     }))
@@ -198,7 +197,7 @@ export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItemType {
     paramName: rangeFacet.name,
     values: rangeFacet.ranges.map<FacetValueItemType>((facetRange: FacetRangeType) => ({
       count: facetRange.count,
-      label: getFacetLabel(facetRange.label),
+      label: getFormattedLabel(facetRange.label),
       value: getFilterExpressionFromFacetRange(facetRange),
       selected: facetRange.isSelected,
       from: facetRange.from,
@@ -208,26 +207,4 @@ export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItemType {
     })),
     statistics: rangeFacet.statistics,
   };
-}
-
-/**
- * Formats a facet label based on its type
- * @param label - The label to format
- * @returns A formatted string representing the facet label
- */
-function getFacetLabel(label: string): string {
-  const { d, t } = globals.i18n.global;
-
-  if (isDateString(label)) {
-    return d(new Date(label));
-  }
-
-  switch (label.toLowerCase()) {
-    case "true":
-      return t("common.labels.true_property");
-    case "false":
-      return t("common.labels.false_property");
-    default:
-      return label;
-  }
 }

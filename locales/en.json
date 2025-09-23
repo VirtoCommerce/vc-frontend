@@ -294,7 +294,9 @@
     "accessibility": {
       "open_filters": "Open filters",
       "switch_to_grid_view": "Switch to grid view",
-      "switch_to_list_view": "Switch to list view"
+      "switch_to_list_view": "Switch to list view",
+      "no_image": "No image available",
+      "image": "Image"
     }
   },
   "shared": {
@@ -815,7 +817,8 @@
         "security_code_label": "Security code",
         "errors": {
           "month": "Please provide a valid expiration month",
-          "year": "Please provide a valid expiration year"
+          "year": "Please provide a valid expiration year",
+          "security_code": "Invalid Security code."
         },
         "user_error_message": "Can't initialize payment. Please try again later or use another payment method",
         "payment_unavailable": "Payment method is unavailable. Please try again later"

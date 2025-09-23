@@ -5,7 +5,7 @@
         <!-- Term values -->
         <template v-for="term in filterItem.termValues" :key="filterItem.name + 'term-' + term.value">
           <VcChip color="secondary" closable truncate @close="onCancelFilter(filterItem.name, term.value)">
-            {{ term.label || term.value }}
+            {{ `${formatFilterLabel(filterItem.label)}${getFormattedLabel(term.label || term.value)}` }}
           </VcChip>
         </template>
 
@@ -15,7 +15,7 @@
           :key="filterItem.name + 'range-' + range.lower + '-' + range.upper"
         >
           <VcChip color="secondary" closable truncate @close="onCancelRangeFilter(filterItem.name, range)">
-            {{ formatRangeValue(range) }}
+            {{ `${formatFilterLabel(filterItem.label)}${formatRangeValue(range)}` }}
           </VcChip>
         </template>
       </template>
@@ -33,6 +33,7 @@
 
 <script setup lang="ts">
 import { toRefs } from "vue";
+import { getFormattedLabel } from "@/core/utilities";
 import type { SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 
 interface IEmits {
@@ -50,6 +51,16 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { filters } = toRefs(props);
+
+function formatFilterLabel(filterLabel: string | undefined) {
+  const trimmedFilterLabel = filterLabel?.trim();
+
+  if (!trimmedFilterLabel || trimmedFilterLabel.startsWith("_")) {
+    return "";
+  }
+
+  return `${trimmedFilterLabel}: `;
+}
 
 function formatRangeValue(range: SearchProductFilterRangeValue): string {
   const lower = range.lower || "";

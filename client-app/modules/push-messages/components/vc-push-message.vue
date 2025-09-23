@@ -60,7 +60,7 @@ withDefaults(defineProps<IProps>(), {
 
   &--size {
     &--md {
-      @apply ps-3 pe-1 py-2;
+      @apply ps-2 pe-1 py-2;
     }
 
     &--lg {
@@ -75,7 +75,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__badge {
-    @apply mt-1.5 invisible;
+    @apply mt-1 invisible;
 
     #{$unread} & {
       @apply visible;

@@ -88,7 +88,7 @@
 
               <div class="text-sm font-bold">
                 <span v-if="isCorporateAddresses">
-                  {{ getformattedAddress(item) }}
+                  {{ getFormattedAddress(item) }}
                 </span>
 
                 <span v-else>{{ item.firstName }} {{ item.lastName }}</span>
@@ -100,7 +100,7 @@
                 </span>
 
                 <span v-else>
-                  {{ getformattedAddress(item) }}
+                  {{ getFormattedAddress(item) }}
                 </span>
               </div>
 
@@ -158,7 +158,7 @@
                 />
 
                 <span v-if="isCorporateAddresses">
-                  {{ getformattedAddress(item) }}
+                  {{ getFormattedAddress(item) }}
                 </span>
 
                 <span v-else> {{ item.firstName }} {{ item.lastName }} </span>
@@ -171,7 +171,7 @@
               </span>
 
               <span v-else class="line-clamp-2">
-                {{ getformattedAddress(item) }}
+                {{ getFormattedAddress(item) }}
               </span>
             </td>
 
@@ -277,8 +277,8 @@ const columns = computed<ITableColumn[]>(() => {
   return cols;
 });
 
-function getformattedAddress(address: AnyAddressType): string {
-  if (!props.isCorporateAddresses || !address) {
+function getFormattedAddress(address: AnyAddressType): string {
+  if (!address) {
     return "";
   }
 

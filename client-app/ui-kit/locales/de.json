@@ -21,6 +21,9 @@
     "accessibility": {
       "close_alert": "Benachrichtigung schließen",
       "open_calendar": "Kalender öffnen",
+      "product_quantity": "Produktmenge",
+      "decrease_quantity": "Menge verringern",
+      "increase_quantity": "Menge erhöhen",
       "variant_picker_group": "Produktvarianten",
       "show_more_button": "Weitere Varianten anzeigen ({count})"
     },
@@ -56,11 +59,11 @@
         "max": "Maximale Bestellung {0} Artikel(n)",
         "min_max": "Bestellen Sie von {0} bis {1} Artikel(n)",
         "min_not_available": "Minimale Bestellung von {0} Artikel(n) ist nicht auf Lager",
+        "exact_qty": "Du kannst {0} Artikel bestellen",
         "out_of_stock": "Nicht auf Lager",
         "positive_number": "Der Wert muss eine positive Zahl sein",
         "integer_number": "Der Wert muss eine ganze Zahl sein",
-        "pack_size": "Bestellen in Packungen von {0}",
-        "exact_qty": "Du kannst {0} Artikel bestellen"
+        "pack_size": "Bestellen in Packungen von {0}"
       }
     },
     "pagination": {

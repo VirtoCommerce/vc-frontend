@@ -6,12 +6,11 @@ import type { NewsArticleContentConnection, QueryNewsArticlesArgs, Query } from 
 export async function getNewsArticles(
   payload: Omit<QueryNewsArticlesArgs, "userId" | "storeId" | "languageCode">,
 ): Promise<NewsArticleContentConnection> {
-  const { userId, storeId, cultureName } = globals;
+  const { storeId, cultureName } = globals;
 
   const { data } = await graphqlClient.query<Required<Pick<Query, "newsArticles">>, QueryNewsArticlesArgs>({
     query: NewsArticlesDocument,
     variables: {
-      userId,
       storeId,
       languageCode: cultureName,
       ...payload,
