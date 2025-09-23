@@ -323,7 +323,7 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__input {
-    @apply relative m-px px-2 bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none;
+    @apply relative m-px px-2 bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;
@@ -338,7 +338,7 @@ provide<VcInputContextType>("inputContext", {
     }
 
     &[type="date"] {
-      appearance: textfield;
+      clip-path: inset(0 40px 0 0);
     }
 
     &:autofill {
