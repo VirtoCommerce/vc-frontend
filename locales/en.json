@@ -18,7 +18,7 @@
       "continue_shopping": "Continue shopping",
       "select": "Select",
       "choose": "Choose",
-      "allFilters": "All Filters",
+      "allFilters": "All filters",
       "filters": "Filters",
       "back": "Back",
       "reset": "Reset",
@@ -149,7 +149,7 @@
       "default_currency": "Default currency",
       "organizations": "Organizations",
       "my_organizations": "My organizations",
-      "select_product": "Please select a product",
+      "select_product": "Select a product",
       "sort_by_date": "Sort by date",
       "ascending": "Ascending",
       "descending": "Descending",
@@ -176,7 +176,7 @@
     "messages": {
       "product_out_of_stock": "Out of stock",
       "required_field": "This field is required",
-      "email_is_not_correct": "Please enter a valid email address, e.g. johndoe{'@'}gmail.com",
+      "email_is_not_correct": "Enter a valid email address, e.g. johndoe{'@'}gmail.com",
       "email_not_unique": "This email is already registered with us",
       "max_length": "This field must not contain more than {max} characters",
       "creating_order_error": "Error when creating an order",
@@ -190,16 +190,16 @@
       "min_value": "The minimum value is {value}",
       "empty_wish_list": "There are no items in the list",
       "not_defined": "Undefined",
-      "invalid_coupon": "This code does not match any active coupons. Please double-check that everything is correct and try again.",
-      "fill_all_required": "Please complete all required information to proceed.",
-      "something_went_wrong": "Oops! Something went wrong. Please double-check that everything is correct and try again.",
+      "invalid_coupon": "This code does not match any active coupons. Double-check that everything is correct and try again.",
+      "fill_all_required": "Complete all required information to proceed.",
+      "something_went_wrong": "Oops! Something went wrong. Double-check that everything is correct and try again.",
       "checkout_pricing_warning": "Availability, shipping, tax and promotions are not final until you complete your order.",
       "wishlists_available_for_authorized": "Wishlists are available only for authenticated users",
       "no_addresses": "You do not have any addresses yet",
       "confirm_delete_address": "Are you sure you want to delete this address?",
       "save_changes": "Would you like to save changes?",
       "address_deletion_successful": "Address has been successfully deleted",
-      "cart_contains_deleted_products": "Cart contains products that cannot be purchased any more. Please remove those products and try again.",
+      "cart_contains_deleted_products": "Cart contains products that cannot be purchased any more. Remove those products and try again.",
       "fail_add_product_to_cart": "Sorry, this product cannot be added to cart. {reason}",
       "fail_to_change_quantity_in_cart": "Sorry, can't update product quantity in cart. {reason}",
       "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
@@ -208,14 +208,14 @@
       "passwords_do_not_match": "The password fields must have matching values",
       "password_new_same_old": "Your current password and new password must be different",
       "blocked": "You have been blocked. You can not reach any information or create the order. For more details please ",
-      "password_about_expire": "Your password is about to expire in {value} day(s). Please set a new password in profile",
+      "password_about_expire": "Your password is about to expire in {value} day(s). Set a new password in profile",
       "password_expired": "Your password is expired",
-      "data_changed": "The data has been modified on one of the other tabs. Please refresh the page to display the latest data.",
+      "data_changed": "The data has been modified on one of the other tabs. Refresh the page to display the latest data.",
       "logo_changed": "Logo was successfully changed.",
       "logo_deleted": "Logo was deleted."
     },
     "placeholders": {
-      "enter_value": "Please enter a value",
+      "enter_value": "Enter a value",
       "not_selected": "Not selected",
       "select_address": "Select an address",
       "select_country": "Select your country",
@@ -265,7 +265,7 @@
       "shipping_address": "Shipping address",
       "order_comment": "Order comment",
       "order_data": "Order data",
-      "review_order": "Please review your order",
+      "review_order": "Review your order",
       "new_address": "New address",
       "edit_address": "Edit address",
       "addresses": "Addresses",
@@ -410,7 +410,7 @@
         "scope_remove_label": "Remove: {label}",
         "barcode_detector": {
           "title": "Barcode scan",
-          "description": "To proceed, please enable your camera to scan the barcode on the product. This will help us quickly identify the item and provide you with the necessary information.",
+          "description": "To proceed, enable your camera to scan the barcode on the product. This will help us quickly identify the item and provide you with the necessary information.",
           "browse": "Browse files",
           "cancel": "@:common.buttons.cancel",
           "errors": {
@@ -458,16 +458,16 @@
       "sign_in_form": {
         "remember_me_label": "Remember me",
         "forgot_password_link": "Forgot your password?",
-        "login_button": "Log in",
+        "login_button": "Sign in",
         "registration_button": "Sign up",
         "errors": {
-          "login_failed": "Login attempt failed. Please check your credentials",
-          "email_verification_is_required": "Email verification required. Please verify your email address",
+          "login_failed": "Login attempt failed. Check your credentials",
+          "email_verification_is_required": "Email verification required. Verify your email address",
           "user_is_temporary_locked_out": "Your account has been temporarily locked. Please try again later.",
           "user_is_locked_out": "@:common.messages.blocked",
           "user_cannot_login_in_store": "Access denied. You cannot sign in to the current store",
           "password_expired": "@:common.messages.password_expired",
-          "user_not_found": "User not found. Please ensure you've entered the correct information"
+          "user_not_found": "User not found. Ensure you've entered the correct information"
         }
       },
       "forgot_password_form": {
@@ -571,7 +571,7 @@
         "errors": {
           "in_cart": "in Cart",
           "already_in_cart_message": "{0} has already been added to the cart",
-          "enter_correct_number_message": "Please enter a valid number",
+          "enter_correct_number_message": "Enter a valid number",
           "min": "Min order {0} item(s)",
           "max": "Max order {0} item(s)",
           "min_max": "Order from {0} to {1} item(s)",
@@ -629,13 +629,13 @@
         "description_block_title": "Description",
         "assets_block_title": "Files",
         "vendor_label": "Vendor",
-        "all_vendor_products": "All Vendor Products",
+        "all_vendor_products": "All vendor products",
         "share_product_label": "Share product",
         "create_configuration_button": "Create your own configuration",
         "price_block": {
           "title": "Price and delivery",
           "add_to_list_button": "Add to list",
-          "product_email_title": "Please have a look at the product: {0}"
+          "product_email_title": "Have a look at the product: {0}"
         },
         "variations": {
           "title": "Product variations",
@@ -686,7 +686,7 @@
         "title": "@:pages.catalog.purchased_before_filter_card.title"
       },
       "branches_modal": {
-        "title": "Select Branch",
+        "title": "Select branch",
         "all_branches": "All branches",
         "search_input_placeholder": "Search by address and name",
         "selected_branches": "Selected branches",
@@ -795,7 +795,7 @@
       "add_to_cart_sku_errors_modal": {
         "title": "Add to cart SKU errors",
         "common_message": "There were several issues while adding items to the cart",
-        "duplicate_skus_message": "Duplicate SKUs detected. Please check the items for the relevant SKUs to add to cart.",
+        "duplicate_skus_message": "Duplicate SKUs detected. Check the items for the relevant SKUs to add to cart.",
         "content": {
           "sku": "SKU",
           "products": "Products",
@@ -816,9 +816,9 @@
         "year_placeholder": "YY",
         "security_code_label": "Security code",
         "errors": {
-          "month": "Please provide a valid expiration month",
-          "year": "Please provide a valid expiration year",
-          "security_code": "Invalid Security code."
+          "month": "Provide a valid expiration month",
+          "year": "Provide a valid expiration year",
+          "security_code": "Invalid security code."
         },
         "user_error_message": "Can't initialize payment. Please try again later or use another payment method",
         "payment_unavailable": "Payment method is unavailable. Please try again later"
@@ -830,12 +830,12 @@
         "processing_personal_data_text": "and agree that we may process your personal data as per our",
         "pay_now_button": "Pay now",
         "errors": {
-          "number": "Please provide a valid credit card number",
-          "month": "Please provide a valid expiration month",
-          "year": "Please provide a valid expiration year",
+          "number": "Provide a valid credit card number",
+          "month": "Provide a valid expiration month",
+          "year": "Provide a valid expiration year",
           "expiration_date": "Expiration date must be in the future",
-          "security_code": "Please provide a valid security code",
-          "cardholder_name": "Please provide a valid cardholder name",
+          "security_code": "Provide a valid security code",
+          "cardholder_name": "Provide a valid cardholder name",
           "incorrect_payment_method": "Incorrect payment method"
         }
       },
@@ -843,7 +843,7 @@
         "pay_now_button": "Pay now"
       },
       "manual": {
-        "text": "The payment method you selected does not support online payment. Please select another method or "
+        "text": "The payment method you selected does not support online payment. Select another method or "
       },
       "redirection": {
         "text": "After you click <strong>{0}</strong>, you will be redirected to the third-party payment service",
@@ -892,7 +892,7 @@
         "title": "New List",
         "edit_mode_title": "List settings",
         "list_name_label": "List name",
-        "list_name_placeholder": "Please enter name",
+        "list_name_placeholder": "Enter name",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
@@ -991,7 +991,7 @@
       "header": "Reset your password",
       "enter_new_password_message": "Enter your new password",
       "success_message": "Your password has been reset successfully",
-      "log_in_button": "Log in"
+      "log_in_button": "Sign in"
     },
     "set_password": {
       "meta": {
@@ -1141,7 +1141,7 @@
           "subtotal": "@:common.labels.subtotal"
         },
         "bopis": {
-          "eta": "Estimated Time of Arrival",
+          "eta": "Estimated time of arrival",
           "emailAndPhone": "Call {phone} or email {email}",
           "emailOnly": "Email {email}",
           "phoneOnly": "Call {phone}",
