@@ -14,7 +14,7 @@ import {
   EXCLUDED_FILTER_NAMES,
   zeroPriceFilter,
 } from "@/core/constants";
-import { MODULE_ID_INTENT_SEARCH, INTENT_SEARCH_ENABLED_KEY } from "@/core/constants/modules";
+import { INTENT_SEARCH_MODULE_ID, INTENT_SEARCH_ENABLED_KEY } from "@/core/constants/modules";
 import { QueryParamName, SortDirection } from "@/core/enums";
 import {
   generateFilterExpressionFromFilters,
@@ -61,7 +61,7 @@ export function useProducts(
     catalogPaginationMode = CATALOG_PAGINATION_MODES.infiniteScroll,
   } = options;
   const { openModal } = useModal();
-  const { isEnabled } = useModuleSettings(MODULE_ID_INTENT_SEARCH);
+  const { isEnabled } = useModuleSettings(INTENT_SEARCH_MODULE_ID);
   const isIntentSearchEnabled = isEnabled(INTENT_SEARCH_ENABLED_KEY);
 
   const { isPurchasedBeforeEnabled } = usePurchasedBefore();
