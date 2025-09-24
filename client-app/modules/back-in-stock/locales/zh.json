@@ -12,7 +12,7 @@
     },
     "messages": {
       "click_to_receive_alert": "点击接收提醒",
-      "notify_me_when_in_stock": "到货通知我",
+      "stock_alert": "库存提醒",
       "you_are_subscribed": "您已订阅！我们会在商品重新上市时通知您。",
       "you_will_be_notified": "您将收到通知"
     },
