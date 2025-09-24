@@ -1,0 +1,32 @@
+{
+  "loyalty": {
+    "points-history": {
+      "meta": {
+        "title": "积分记录"
+      },
+      "current-balance": "余额: {currentBalance}",
+      "operation": "操作",
+      "operation-type": "类型",
+      "date": "日期",
+      "amount": "金额",
+      "redeemed": "已兑换",
+      "earned": "已获得",
+      "registration": "注册"
+    },
+    "list_details": {
+      "empty_list": "您的列表为空"
+    },
+    "navigation": {
+      "route_name": "积分记录"
+    },
+    "payment": {
+      "loyalty": {
+        "pay_now_button": "继续",
+        "text": "您正在尝试使用积分支付订单。您当前的积分余额是 {currentBalance}。",
+        "errors": {
+          "insufficient_points": "由于积分余额不足，无法下单。您当前的积分余额是 {currentBalance}。"
+        }
+      }
+    }
+  }
+}

@@ -294,7 +294,9 @@
     "accessibility": {
       "open_filters": "Abrir filtros",
       "switch_to_grid_view": "Cambiar a vista cuadrícula",
-      "switch_to_list_view": "Cambiar a vista lista"
+      "switch_to_list_view": "Cambiar a vista lista",
+      "no_image": "Imagen no disponible",
+      "image": "Imagen"
     }
   },
   "shared": {

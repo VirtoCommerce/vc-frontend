@@ -12,7 +12,7 @@
     },
     "messages": {
       "click_to_receive_alert": "Click to receive an alert",
-      "notify_me_when_in_stock": "Notify me when in stock",
+      "stock_alert": "Stock alert",
       "you_are_subscribed": "You’re subscribed! We’ll let you know when it’s back in stock.",
       "you_will_be_notified": "You'll be notified"
     },
