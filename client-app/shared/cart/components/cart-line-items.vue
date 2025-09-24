@@ -30,6 +30,9 @@
         :pack-size="item.packSize"
         :count-in-cart="item.countInCart"
         :available-quantity="item.availabilityData?.availableQuantity"
+        :is-in-stock="item.availabilityData?.isInStock"
+        :is-buyable="item.availabilityData?.isBuyable"
+        :is-available="item.availabilityData?.isAvailable"
         hide-button
         :model-value="item.quantity"
         :name="item.id"

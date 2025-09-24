@@ -254,7 +254,7 @@ const columns = computed<ITableColumn[]>(() => [
     id: "quantity",
     title: t("shared.catalog.product_details.variations.columns.quantity"),
     align: "center",
-    classes: "min-w-32 w-32",
+    classes: "min-w-[10.25rem] w-[10.25rem]",
   },
 ]);
 

@@ -1,0 +1,6 @@
+query GetLoyaltyBalance($userId: String, $orderId: String) {
+  loyaltyBalance(userId: $userId, orderId: $orderId) {
+    currentBalance
+    resultBalance
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "loyalty": {
+    "points-history": {
+      "meta": {
+        "title": "Historique des points"
+      },
+      "current-balance": "Solde : {currentBalance}",
+      "operation": "Opération",
+      "operation-type": "Type",
+      "date": "Date",
+      "amount": "Montant",
+      "redeemed": "Utilisés",
+      "earned": "Gagnés",
+      "registration": "Inscription"
+    },
+    "list_details": {
+      "empty_list": "Votre liste est vide"
+    },
+    "navigation": {
+      "route_name": "Historique des points"
+    },
+    "payment": {
+      "loyalty": {
+        "pay_now_button": "Continuer",
+        "text": "Vous essayez de payer la commande avec des points. Votre solde de points actuel est de {currentBalance}.",
+        "errors": {
+          "insufficient_points": "Impossible de passer la commande en raison d’un solde de points insuffisant. Votre solde de points actuel est de {currentBalance}."
+        }
+      }
+    }
+  }
+}
