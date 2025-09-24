@@ -254,6 +254,7 @@ export function useProducts(
 
   async function preserveUserQuery() {
     if (!isIntentSearchEnabled) {
+      preserveUserQueryQueryParam.value = "";
       return;
     }
 
