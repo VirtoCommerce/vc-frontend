@@ -178,7 +178,7 @@ export function useProducts(
     isFiltersSidebarVisible.value = false;
   }
 
-  function applyFilters(newFilters: ProductsFiltersType): void {
+  async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
     // Generate filter expression from filters only
     const filterExpression: string = generateFilterExpressionFromFilters(newFilters.filters);
 
@@ -198,10 +198,13 @@ export function useProducts(
       localStoragePurchasedBefore.value = newFilters.purchasedBefore;
     }
 
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    preserveUserQuery();
+
     void resetCurrentPage();
   }
 
-  function applyFiltersOnly(newFilters: SearchProductFilterResult[]): void {
+  async function applyFiltersOnly(newFilters: SearchProductFilterResult[]): Promise<void> {
     // Update only the filters part of productsFilters
     productsFilters.value = {
       ...productsFilters.value,
@@ -214,6 +217,9 @@ export function useProducts(
     if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
       facetsQueryParam.value = filterExpression;
     }
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    preserveUserQuery();
 
     void resetCurrentPage();
   }
