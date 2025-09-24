@@ -152,12 +152,6 @@ describe("useBopis composable", () => {
       expect(addresses.value).toEqual([]);
     });
 
-    /*it("should return empty addresses array if result does not contain addresses", () => {
-      resultRef.value = {};
-      const { addresses } = useBopis();
-      expect(addresses.value).toEqual([]);
-    });*/
-
     it("should expose loading state", () => {
       loadingRef.value = true;
       const { loading } = useBopis();
