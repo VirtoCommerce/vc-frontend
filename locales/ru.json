@@ -696,9 +696,6 @@
         "no_results": "Результатов не найдено",
         "reset_search_button": "Очистить поиск"
       },
-      "purchased_before_badge": {
-        "title": "@:pages.catalog.purchased_before_filter_card.title"
-      },
       "shipment_options": {
         "title": "Варианты доставки",
         "in_store": "Самовывоз из магазина"
@@ -1160,7 +1157,8 @@
           "pick_point_info": "Информация о пункте выдачи",
           "get_directions": "Как добраться",
           "point_info": "Информация",
-          "pickup_address": "Адрес самовывоза"
+          "pickup_address": "Адрес самовывоза",
+          "availability": "Доступность"
         }
       },
       "order_payment": {

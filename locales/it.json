@@ -696,9 +696,6 @@
         "no_results": "Nessun risultato trovato",
         "reset_search_button": "Reimposta ricerca"
       },
-      "purchased_before_badge": {
-        "title": "@:pages.catalog.purchased_before_filter_card.title"
-      },
       "shipment_options": {
         "title": "Opzioni di spedizione",
         "in_store": "Ritiro in negozio"
@@ -1160,7 +1157,8 @@
           "pick_point_info": "Info punto di ritiro",
           "get_directions": "Ottieni indicazioni",
           "point_info": "Informazioni",
-          "pickup_address": "Indirizzo di ritiro"
+          "pickup_address": "Indirizzo di ritiro",
+          "availability": "Disponibilità"
         }
       },
       "order_payment": {

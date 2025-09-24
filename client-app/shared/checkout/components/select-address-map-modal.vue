@@ -109,7 +109,6 @@
               size="sm"
               @change="selectHandler(address, { scrollToSelectedOnMap: true })"
             >
-              {{ selectedAddressId }} =? {{ address.id }}
               <div class="flex flex-col">
                 <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
 

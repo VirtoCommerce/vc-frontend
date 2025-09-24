@@ -696,9 +696,6 @@
         "no_results": "未找到结果",
         "reset_search_button": "重置搜索"
       },
-      "purchased_before_badge": {
-        "title": "@:pages.catalog.purchased_before_filter_card.title"
-      },
       "shipment_options": {
         "title": "配送选项",
         "in_store": "门店自提"
@@ -1160,7 +1157,8 @@
           "pick_point_info": "自提点信息",
           "get_directions": "获取路线",
           "point_info": "积分信息",
-          "pickup_address": "自提地址"
+          "pickup_address": "自提地址",
+          "availability": "可用性"
         }
       },
       "order_payment": {
