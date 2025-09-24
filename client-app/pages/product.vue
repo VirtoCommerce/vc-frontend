@@ -124,9 +124,9 @@
         />
 
         <ProductPickupLocations
-          v-if="productPickupLocations?.length > 0"
-          :loading="productPickupLocationsLoading"
-          :pickup-locations="productPickupLocations"
+          v-if="pickupLocations?.length > 0"
+          :loading="pickupLocationsLoading"
+          :pickup-locations="pickupLocations"
         />
       </template>
     </VcLayout>
@@ -242,8 +242,7 @@ const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
 const { applicableVariations } = useProductVariationProperties(variations);
 
-const { productPickupLocations, fetchProductPickupLocations, productPickupLocationsLoading } =
-  useProductPickupLocations();
+const { pickupLocations, fetchPickupLocations, pickupLocationsLoading } = useProductPickupLocations();
 
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
@@ -452,7 +451,7 @@ watch(
     }
 
     if (product.value) {
-      await fetchProductPickupLocations(productId.value);
+      await fetchPickupLocations(productId.value);
     }
   },
   { immediate: true },

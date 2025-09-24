@@ -1,16 +1,16 @@
-query GetProductPickupLocations(
+query GetCartPickupLocations(
   $storeId: String!
   $cultureName: String!
-  $productId: String!
+  $cartId: String!
   $keyword: String
   $first: Int
   $after: String
   $sort: String
 ) {
-  productPickupLocations(
+  cartPickupLocations(
     storeId: $storeId
     cultureName: $cultureName
-    productId: $productId
+    cartId: $cartId
     keyword: $keyword
     first: $first
     after: $after

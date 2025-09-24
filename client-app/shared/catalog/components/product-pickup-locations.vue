@@ -16,7 +16,7 @@
           </div>
 
           <div
-            v-if="pickupLocation.note"
+            v-if="pickupLocation.availabilityNote"
             :class="[
               'pickup-locations__option-note',
               {
@@ -29,7 +29,7 @@
               },
             ]"
           >
-            {{ pickupLocation.note }}
+            {{ pickupLocation.availabilityNote }}
           </div>
         </div>
       </div>
