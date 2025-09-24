@@ -9,12 +9,12 @@
     :title="
       isProductSubscriptionActive(product.id)
         ? $t('back_in_stock.messages.you_will_be_notified')
-        : $t('back_in_stock.messages.notify_me_when_in_stock')
+        : $t('back_in_stock.messages.stock_alert')
     "
     :button-text="
       isProductSubscriptionActive(product.id)
         ? $t('back_in_stock.messages.you_will_be_notified')
-        : $t('back_in_stock.messages.notify_me_when_in_stock')
+        : $t('back_in_stock.messages.stock_alert')
     "
     link-icon="information-circle"
     :link-text="isTextShown ? $t('back_in_stock.messages.click_to_receive_alert') : ''"
