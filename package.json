@@ -153,7 +153,7 @@
     "tailwindcss": "^3.4.17",
     "typescript": "5.9.2",
     "typescript-eslint": "^8.44.1",
-    "vite": "^7.1.6",
+    "vite": "^7.1.7",
     "vite-node": "^3.2.4",
     "vite-plugin-checker": "^0.10.3",
     "vite-plugin-mkcert": "^1.17.8",
