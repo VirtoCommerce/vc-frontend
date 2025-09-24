@@ -6,29 +6,27 @@
       {{ $t("back_in_stock.subscriptions.meta.title") }}
     </VcTypography>
 
-    <PageToolbarBlock :stick="stickyMobileHeaderIsVisible" class="back-in-stock-subscriptions__toolbar" shadow>
-      <VcInput
-        v-model="keywordInput"
-        :disabled="allLoading"
-        :placeholder="$t('back_in_stock.subscriptions.search_placeholder')"
-        maxlength="64"
-        clearable
-        class="back-in-stock-subscriptions__keyword-input"
-        @keydown.enter="applyKeyword"
-        @clear="resetKeyword"
-      >
-        <template #append>
-          <VcButton
-            :aria-label="$t('back_in_stock.subscriptions.search_button')"
-            :title="$t('back_in_stock.subscriptions.search_button')"
-            :disabled="allLoading"
-            icon="search"
-            icon-size="1.25rem"
-            @click="applyKeyword"
-          />
-        </template>
-      </VcInput>
-    </PageToolbarBlock>
+    <VcInput
+      v-model="keywordInput"
+      :disabled="allLoading"
+      :placeholder="$t('back_in_stock.subscriptions.search_placeholder')"
+      maxlength="64"
+      clearable
+      class="back-in-stock-subscriptions__keyword-input"
+      @keydown.enter="applyKeyword"
+      @clear="resetKeyword"
+    >
+      <template #append>
+        <VcButton
+          :aria-label="$t('back_in_stock.subscriptions.search_button')"
+          :title="$t('back_in_stock.subscriptions.search_button')"
+          :disabled="allLoading"
+          icon="search"
+          icon-size="1.25rem"
+          @click="applyKeyword"
+        />
+      </template>
+    </VcInput>
 
     <div ref="listElement">
       <template v-if="allLoading">
@@ -92,9 +90,9 @@
 </template>
 
 <script lang="ts" setup>
-import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import keyBy from "lodash/keyBy";
-import { computed, ref, watchEffect, shallowRef } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -102,7 +100,6 @@ import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ProductType } from "@/core/enums";
 import { prepareLineItemForProduct } from "@/core/utilities";
-import { PageToolbarBlock } from "@/shared/account";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, AddToCart } from "@/shared/cart";
 import { InStock, CountInCart, useProducts, ProductSkeletonList } from "@/shared/catalog";
@@ -140,9 +137,6 @@ const { continue_shopping_link } = getModuleSettings({
 });
 
 const listElement = ref<HTMLElement | undefined>();
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
-const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const keywordInput = ref("");
 const keyword = ref("");
@@ -196,6 +190,7 @@ function openDeleteProductModal(ids: string[]): void {
         if (hasPagination && isLastPageWithOneItem) {
           pagination.value.page -= 1;
         }
+        // eslint-disable-next-line sonarjs/void-use
         void broadcast.emit(dataChangedEvent);
         void fetchProductsAndSubscriptions();
       },
@@ -208,16 +203,8 @@ watchEffect(fetchProductsAndSubscriptions);
 
 <style lang="scss">
 .back-in-stock-subscriptions {
-  &__toolbar {
-    @apply mt-2 flex flex-row items-center gap-x-2;
-
-    @media (min-width: theme("screens.lg")) {
-      @apply flex-row-reverse gap-x-5;
-    }
-  }
-
   &__keyword-input {
-    @apply w-full;
+    @apply mt-2 w-full;
   }
 
   &__list {
