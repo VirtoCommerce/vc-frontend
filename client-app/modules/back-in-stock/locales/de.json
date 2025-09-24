@@ -12,7 +12,7 @@
     },
     "messages": {
       "click_to_receive_alert": "Klicken Sie hier für eine Benachrichtigung",
-      "notify_me_when_in_stock": "Benachrichtige mich bei Verfügbarkeit",
+      "stock_alert": "Lager-Alarm",
       "you_are_subscribed": "Sie sind angemeldet! Wir benachrichtigen Sie, sobald der Artikel wieder verfügbar ist.",
       "you_will_be_notified": "Sie werden benachrichtigt"
     },

@@ -12,7 +12,7 @@
     },
     "messages": {
       "click_to_receive_alert": "クリックして通知を受け取る",
-      "notify_me_when_in_stock": "入荷時に通知する",
+      "stock_alert": "在庫通知",
       "you_are_subscribed": "購読ありがとうございます！在庫が復活したらお知らせします。",
       "you_will_be_notified": "通知します"
     },
