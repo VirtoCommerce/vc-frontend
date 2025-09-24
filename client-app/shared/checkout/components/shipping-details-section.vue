@@ -107,12 +107,11 @@
           ]"
         >
           <VcLoaderOverlay v-if="isLoadingBopisAddresses" />
-
           <AddressSelection
-            :disabled="isLoadingBopisAddresses || disabled"
+            :disabled="!cart || isLoadingBopisAddresses || disabled"
             :address="deliveryAddress"
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_pickup_point')"
-            @change="openSelectAddressModal"
+            @change="openSelectAddressModal(cart!.id)"
           />
         </div>
       </div>
@@ -143,7 +142,7 @@ type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
 
 const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, billingAddressEqualsShipping } = useCheckout();
 
-const { availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
+const { cart, availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
 const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
 
 const mode = ref<ShippingOptionType>(getDefaultMode());

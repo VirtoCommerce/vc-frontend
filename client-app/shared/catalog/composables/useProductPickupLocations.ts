@@ -1,19 +1,17 @@
 import { ref } from "vue";
 import { getProductPickupLocations } from "@/core/api/graphql/catalog";
 import { Logger } from "@/core/utilities";
-import type { ProductPickupLocation } from "@/core/api/graphql/types";
+import type { ProductPickupLocation, QueryProductPickupLocationsArgs } from "@/core/api/graphql/types";
 
 export function useProductPickupLocations() {
-  const MAX_LOCATIONS_COUNT = 5;
-
   const pickupLocationsLoading = ref(false);
 
   const pickupLocations = ref<ProductPickupLocation[]>([]);
 
-  async function fetchPickupLocations(productId: string) {
+  async function fetchPickupLocations(payload: Omit<QueryProductPickupLocationsArgs, "storeId" | "cultureName">) {
     pickupLocationsLoading.value = true;
     try {
-      const data = await getProductPickupLocations({ productId, first: MAX_LOCATIONS_COUNT });
+      const data = await getProductPickupLocations(payload);
       pickupLocations.value = data.items ?? [];
     } catch (e) {
       Logger.error(`${useProductPickupLocations.name}.${fetchPickupLocations.name}`, e);

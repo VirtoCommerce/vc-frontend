@@ -451,7 +451,7 @@ watch(
     }
 
     if (product.value) {
-      await fetchPickupLocations(productId.value);
+      await fetchPickupLocations({ productId: productId.value, first: 5 });
     }
   },
   { immediate: true },
