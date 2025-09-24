@@ -20,7 +20,14 @@ query GetCartPickupLocations(
     items {
       id
       name
+      description
+      contactEmail
+      contactPhone
+      workingHours
       geoLocation
+      availabilityType
+      availableQuantity
+      availabilityNote
       address {
         id
         line1
@@ -32,9 +39,6 @@ query GetCartPickupLocations(
         postalCode
         phone
       }
-      availabilityType
-      availableQuantity
-      availabilityNote
     }
   }
 }

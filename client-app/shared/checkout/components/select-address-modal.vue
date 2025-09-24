@@ -119,6 +119,11 @@
                   {{ item.email }}
                 </span>
               </div>
+
+              <PickupAvailabilityInfo
+                :availability-type="item.availabilityType"
+                :availability-note="item.availabilityNote"
+              />
             </div>
 
             <div class="w-10 flex-none text-center">
@@ -189,6 +194,13 @@
               </span>
             </td>
 
+            <td class="truncate px-4 py-3.5">
+              <PickupAvailabilityInfo
+                :availability-type="item.availabilityType"
+                :availability-note="item.availabilityNote"
+              />
+            </td>
+
             <td class="h-[3.75rem] py-2.5 text-center">
               <VcIcon v-if="item.id === selectedAddress?.id" class="fill-success" name="check-circle" />
 
@@ -221,14 +233,16 @@ import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
+import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
+import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
 interface IProps {
   currentAddress?: AnyAddressType;
   addresses?: AnyAddressType[];
   isCorporateAddresses: boolean;
   allowAddNewAddress?: boolean;
-  omitFieldsOnCompare?: (keyof AnyAddressType)[];
+  omitFieldsOnCompare?: (keyof MemberAddressType)[];
 }
 
 interface IEmits {
@@ -264,6 +278,7 @@ const columns = computed<ITableColumn[]>(() => {
         { id: "name", title: t("common.labels.address") },
         { id: "description", title: t("common.labels.description") },
         { id: "countryName", title: t("common.labels.country"), classes: "w-40" },
+        { id: "availability", title: t("pages.account.order_details.bopis.availability") },
         { id: "id", title: t("common.labels.active_address"), align: "center", classes: "w-40" },
       ]
     : [
@@ -271,6 +286,7 @@ const columns = computed<ITableColumn[]>(() => {
         { id: "name", title: t("common.labels.address") },
         { id: "phone", title: t("common.labels.phone") },
         { id: "email", title: t("common.labels.email") },
+        { id: "availability", title: t("pages.account.order_details.bopis.availability") },
         { id: "id", title: t("common.labels.active_address"), align: "center" },
       ];
 

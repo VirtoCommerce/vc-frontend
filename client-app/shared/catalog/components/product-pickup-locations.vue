@@ -15,22 +15,10 @@
             {{ pickupLocation.name }}
           </div>
 
-          <div
-            v-if="pickupLocation.availabilityNote"
-            :class="[
-              'pickup-locations__option-note',
-              {
-                'pickup-locations__option-note--today':
-                  pickupLocation.availabilityType === ProductPickupAvailabilityType.Today,
-                'pickup-locations__option-note--transfer':
-                  pickupLocation.availabilityType === ProductPickupAvailabilityType.Transfer,
-                'pickup-locations__option-note--global-transfer':
-                  pickupLocation.availabilityType === ProductPickupAvailabilityType.GlobalTransfer,
-              },
-            ]"
-          >
-            {{ pickupLocation.availabilityNote }}
-          </div>
+          <PickupAvalablityInfo
+            :availability-type="pickupLocation.availabilityType"
+            :availability-note="pickupLocation.availabilityNote"
+          />
         </div>
       </div>
     </div>
@@ -38,8 +26,8 @@
 </template>
 
 <script setup lang="ts">
-import { ProductPickupAvailabilityType } from "@/core/api/graphql/types";
 import type { ProductPickupLocation } from "@/core/api/graphql/types";
+import PickupAvalablityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
 interface IProps {
   pickupLocations?: ProductPickupLocation[];
@@ -67,22 +55,6 @@ defineProps<IProps>();
 
   &__option-name {
     @apply font-bold text-sm;
-  }
-
-  &__option-note {
-    @apply font-bold text-sm;
-
-    &--today {
-      @apply text-success;
-    }
-
-    &--transfer {
-      @apply text-accent;
-    }
-
-    &--global-transfer {
-      @apply text-accent;
-    }
   }
 }
 </style>

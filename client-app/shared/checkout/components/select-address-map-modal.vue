@@ -26,6 +26,12 @@
             >
               <div class="select-address-map-modal__info-window">
                 <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
+                <div>
+                  <PickupAvailabilityInfo
+                    :availability-type="address.availabilityType"
+                    :availability-note="address.availabilityNote"
+                  />
+                </div>
                 <div class="select-address-map-modal__info-window-content">
                   <dl>
                     <dt>
@@ -103,10 +109,17 @@
               size="sm"
               @change="selectHandler(address, { scrollToSelectedOnMap: true })"
             >
+              {{ selectedAddressId }} =? {{ address.id }}
               <div class="flex flex-col">
                 <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
 
                 <p class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</p>
+
+                <PickupAvailabilityInfo
+                  class="select-address-map-modal__radio-button-pickup-availability"
+                  :availability-type="address.availabilityType"
+                  :availability-note="address.availabilityNote"
+                />
               </div>
             </VcRadioButton>
           </li>
@@ -137,12 +150,14 @@ import { Logger } from "@/core/utilities/logger";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
 import { getColorValue } from "@/ui-kit/utilities/css";
-import type { GetPickupLocationsQuery } from "@/core/api/graphql/types";
+import type { GetCartPickupLocationsQuery } from "@/core/api/graphql/types";
 import GoogleMapMarkerClusterer from "@/shared/common/components/google-maps/google-map-marker-clusterer.vue";
 import GoogleMapMarker from "@/shared/common/components/google-maps/google-map-marker.vue";
 import GoogleMap from "@/shared/common/components/google-maps/google-map.vue";
+import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
-type PickupLocationType = NonNullable<NonNullable<GetPickupLocationsQuery["pickupLocations"]>["items"]>[number];
+//TODO: refactoring, extract and use one type for all addresses
+type PickupLocationType = NonNullable<NonNullable<GetCartPickupLocationsQuery["cartPickupLocations"]>["items"]>[number];
 
 const emit = defineEmits<IEmits>();
 
@@ -315,6 +330,10 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
     }
 
     &-address {
+      @apply text-xs font-normal;
+    }
+
+    &-pickup-availability {
       @apply text-xs font-normal;
     }
   }

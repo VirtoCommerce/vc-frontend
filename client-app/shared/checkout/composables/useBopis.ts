@@ -66,7 +66,7 @@ export function useBopis() {
         apiKey: isBopisMapEnabled.value ? bopisMapApiKey.value : undefined,
         currentAddress: {
           ...shipment.value?.deliveryAddress,
-          id: shipment.value?.deliveryAddress?.outerId,
+          id: shipment.value?.deliveryAddress?.outerId ?? shipment.value?.deliveryAddress?.id,
         },
         omitFieldsOnCompare: [
           "outerId",
@@ -78,6 +78,7 @@ export function useBopis() {
           "regionName",
           "email",
           "addressType",
+          "description",
         ],
         isCorporateAddresses: true,
         allowAddNewAddress: false,
