@@ -1,0 +1,32 @@
+{
+  "loyalty": {
+    "points-history": {
+      "meta": {
+        "title": "Punkteverlauf"
+      },
+      "current-balance": "Kontostand: {currentBalance}",
+      "operation": "Vorgang",
+      "operation-type": "Art",
+      "date": "Datum",
+      "amount": "Betrag",
+      "redeemed": "Eingelöst",
+      "earned": "Verdient",
+      "registration": "Registrierung"
+    },
+    "list_details": {
+      "empty_list": "Ihre Liste ist leer"
+    },
+    "navigation": {
+      "route_name": "Punkteverlauf"
+    },
+    "payment": {
+      "loyalty": {
+        "pay_now_button": "Fortfahren",
+        "text": "Sie versuchen, die Bestellung mit Punkten zu bezahlen. Ihr aktuelles Punktesaldo beträgt {currentBalance}.",
+        "errors": {
+          "insufficient_points": "Die Bestellung kann aufgrund unzureichender Punkte nicht aufgegeben werden. Ihr aktuelles Punktesaldo beträgt {currentBalance}."
+        }
+      }
+    }
+  }
+}

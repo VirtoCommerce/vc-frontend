@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "2.31.0",
+  "version": "2.32.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -54,6 +54,7 @@
     "@vee-validate/yup": "^4.15.1",
     "@virto-commerce/front-modules-hotjar": "^1.0.6",
     "@vue/apollo-composable": "^4.2.2",
+    "@vue/eslint-config-typescript": "^14.6.0",
     "@vueuse/components": "^13.9.0",
     "@vueuse/core": "^13.9.0",
     "@vueuse/integrations": "^13.9.0",

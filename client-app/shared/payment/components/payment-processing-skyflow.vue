@@ -111,6 +111,12 @@ import type CollectElement from "skyflow-js/types/core/external/collect/collect-
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
 import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
 
+const emit = defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
+
+const CVV_REGEX = "^[0-9]{3,4}$";
+
 interface IProps {
   order: CustomerOrderType;
 }
@@ -119,9 +125,6 @@ interface IEmits {
   (event: "success"): void;
   (event: "fail", message?: string | null): void;
 }
-
-const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
 
 type FieldsType = { [key: string]: string };
 
@@ -234,7 +237,7 @@ type ElementType =
   | typeof Skyflow.ElementType.CARD_NUMBER
   | typeof Skyflow.ElementType.CARDHOLDER_NAME
   | typeof Skyflow.ElementType.EXPIRATION_DATE
-  | typeof Skyflow.ElementType.CVV;
+  | typeof Skyflow.ElementType.INPUT_FIELD;
 
 const newCardFormElementsStatus = ref<{
   [key in ElementType]: {
@@ -245,7 +248,7 @@ const newCardFormElementsStatus = ref<{
   [Skyflow.ElementType.CARD_NUMBER]: { valid: false, ready: false },
   [Skyflow.ElementType.CARDHOLDER_NAME]: { valid: false, ready: false },
   [Skyflow.ElementType.EXPIRATION_DATE]: { valid: false, ready: false },
-  [Skyflow.ElementType.CVV]: { valid: false, ready: false },
+  [Skyflow.ElementType.INPUT_FIELD]: { valid: false, ready: false },
 });
 
 function updateValidationStatus({ elementType, isValid }: { elementType: ElementType; isValid: boolean }) {
@@ -376,10 +379,21 @@ async function initNewCardForm(): Promise<void> {
       ...cvvStyles,
       placeholder: "111",
       label: t("shared.payment.bank_card_form.security_code_label"),
-      type: Skyflow.ElementType.CVV,
+      type: Skyflow.ElementType.INPUT_FIELD,
+      validations: [
+        {
+          type: Skyflow.ValidationRuleType.REGEX_MATCH_RULE,
+          params: {
+            regex: CVV_REGEX,
+            error: t("shared.payment.bank_card_form.errors.security_code"),
+          },
+        },
+      ],
     },
     {
       required: true,
+      masking: true,
+      format: "XXXX",
     },
   );
 
@@ -457,10 +471,21 @@ async function initCvvForm() {
       ...collectStylesOptions,
       placeholder: "111",
       label: t("shared.payment.bank_card_form.security_code_label"),
-      type: Skyflow.ElementType.CVV,
+      type: Skyflow.ElementType.INPUT_FIELD,
+      validations: [
+        {
+          type: Skyflow.ValidationRuleType.REGEX_MATCH_RULE,
+          params: {
+            regex: CVV_REGEX,
+            error: t("shared.payment.bank_card_form.errors.security_code"),
+          },
+        },
+      ],
     },
     {
       required: true,
+      masking: true,
+      format: "XXXX",
     },
   );
 

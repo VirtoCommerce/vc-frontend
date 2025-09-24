@@ -13,7 +13,7 @@ import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useConfigurableProduct } from "@/shared/catalog/composables/useConfigurableProduct";
 import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
-import { useCompareProducts } from "../composables";
+import { useCompareProducts } from "../composables/useCompareProducts";
 import type { Product, ConfigurationSectionInput } from "@/core/api/graphql/types";
 
 interface IProps {

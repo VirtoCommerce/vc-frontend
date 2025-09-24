@@ -20,8 +20,11 @@
     },
     "accessibility": {
       "close_alert": "アラートを閉じる",
+      "product_quantity": "製品数量",
+      "decrease_quantity": "数量を減らす",
       "increase_quantity": "数量を増やす",
-      "decrease_quantity": "数量を減らす"
+      "variant_picker_group": "バリアントの選択",
+      "show_more_button": "さらにオプションを表示（{count}）"
     },
     "labels": {
       "not_available": "N/A",
@@ -51,11 +54,11 @@
         "max": "最大注文 {0} 個",
         "min_max": "{0} から {1} 個の注文",
         "min_not_available": "最小注文 {0} 個は在庫がありません",
+        "exact_qty": "{0}点を注文できます",
         "out_of_stock": "在庫切れ",
         "positive_number": "値は正の数でなければなりません",
         "integer_number": "値は整数でなければなりません",
-        "pack_size": "{0} のパックで注文",
-        "exact_qty": "{0}点を注文できます"
+        "pack_size": "{0} のパックで注文"
       }
     },
     "pagination": {

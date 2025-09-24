@@ -20,8 +20,11 @@
     },
     "accessibility": {
       "close_alert": "Close alert",
+      "product_quantity": "Product quantity",
+      "decrease_quantity": "Decrease quantity",
       "increase_quantity": "Increase quantity",
-      "decrease_quantity": "Decrease quantity"
+      "variant_picker_group": "Variant options",
+      "show_more_button": "See more options ({count})"
     },
     "labels": {
       "not_available": "N/A",

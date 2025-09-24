@@ -46,6 +46,11 @@ const independentModules: ModuleType[] = [
     apiPath: "client-app/modules/news/api/graphql",
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/news`,
   },
+  {
+    name: "Loyalty",
+    apiPath: "client-app/modules/loyalty/api/graphql",
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/loyalty`,
+  }
   /* EXPERIMENTAL FEATURE
   {
     name: "PurchaseRequests",
