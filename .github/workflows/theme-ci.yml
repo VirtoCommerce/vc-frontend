@@ -55,15 +55,15 @@ jobs:
       #   run: |
       #     echo "RELEASE_STATUS=true" >> $GITHUB_ENV
 
-      # - uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      # - name: Get Image Version
-      #   uses: VirtoCommerce/vc-github-actions/get-image-version@master
-      #   with:
-      #     projectType: theme
-      #   id: image
+      - name: Get Image Version
+        uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        with:
+          projectType: theme
+        id: image
 
       # - name: Get changelog
       #   id: changelog
@@ -226,11 +226,11 @@ jobs:
         with:
           ghRepository: ${{ github.repository }}
           jiraCustomFieldId: 'customfield_10297' # 'customfield_10297' corresponds to 'Theme release' field
-          jiraCustomFieldValue: 'Test release'
-          # client-id: '${{ secrets.JIRA_USER }}'
-          # client-secret: '${{ secrets.JIRA_TOKEN }}'
-          client-id: '${{ secrets.CLIENT_ID }}'
-          client-secret: '${{ secrets.CLIENT_SECRET }}'
+          jiraCustomFieldValue: "${{ steps.image.outputs.prefix }}"
+          client-id: '${{ secrets.JIRA_USER }}'
+          client-secret: '${{ secrets.JIRA_TOKEN }}'
+          # client-id: '${{ secrets.CLIENT_ID }}'
+          # client-secret: '${{ secrets.CLIENT_SECRET }}'
 
   # ui-auto-tests:
   #   needs: 'ci'
