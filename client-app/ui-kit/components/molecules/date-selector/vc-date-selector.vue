@@ -99,10 +99,12 @@ if (import.meta.env.DEV) {
   const vnodeProps = getCurrentInstance()?.vnode.props ?? {};
 
   if ("isRequired" in vnodeProps) {
+    // eslint-disable-next-line no-console
     console.warn("VcDateSelector: 'isRequired' prop is deprecated, use 'required' instead.");
   }
 
   if ("isDisabled" in vnodeProps) {
+    // eslint-disable-next-line no-console
     console.warn("VcDateSelector: 'isDisabled' prop is deprecated, use 'disabled' instead.");
   }
 }
@@ -115,10 +117,16 @@ function openCalendar(focusInput: () => void): void {
     return;
   }
 
-  if (typeof el.showPicker === "function") {
-    el.showPicker();
-  } else {
-    el.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-  }
+  /**
+   * Workaround for multiple date inputs in Firefox: delay ensures picker opens on first click when switching.
+   * Do not remove without testing in Firefox (especially  on MacOS).
+   */
+  setTimeout(() => {
+    if (typeof el.showPicker === "function") {
+      el.showPicker();
+    } else {
+      el.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    }
+  }, 100);
 }
 </script>
