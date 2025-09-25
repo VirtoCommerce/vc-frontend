@@ -4,6 +4,7 @@ import isEqual from "lodash/isEqual";
 import { computed, readonly, ref } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import {
   FFC_LOCAL_STORAGE,
   IN_STOCK_PRODUCTS_LOCAL_STORAGE,
@@ -13,6 +14,7 @@ import {
   EXCLUDED_FILTER_NAMES,
   zeroPriceFilter,
 } from "@/core/constants";
+import { INTENT_SEARCH_MODULE_ID, INTENT_SEARCH_ENABLED_KEY } from "@/core/constants/modules";
 import { QueryParamName, SortDirection } from "@/core/enums";
 import {
   generateFilterExpressionFromFilters,
@@ -30,7 +32,7 @@ import type {
   ProductsSearchParamsType,
 } from "../types";
 import type { Product, RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
-import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import type { FacetItemType } from "@/core/types";
 import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
@@ -59,6 +61,8 @@ export function useProducts(
     catalogPaginationMode = CATALOG_PAGINATION_MODES.infiniteScroll,
   } = options;
   const { openModal } = useModal();
+  const { isEnabled } = useModuleSettings(INTENT_SEARCH_MODULE_ID);
+  const isIntentSearchEnabled = isEnabled(INTENT_SEARCH_ENABLED_KEY);
 
   const { isPurchasedBeforeEnabled } = usePurchasedBefore();
 
@@ -198,8 +202,7 @@ export function useProducts(
       localStoragePurchasedBefore.value = newFilters.purchasedBefore;
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    preserveUserQuery();
+    await preserveUserQuery();
 
     void resetCurrentPage();
   }
@@ -218,8 +221,7 @@ export function useProducts(
       facetsQueryParam.value = filterExpression;
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    preserveUserQuery();
+    await preserveUserQuery();
 
     void resetCurrentPage();
   }
@@ -241,37 +243,23 @@ export function useProducts(
     void resetCurrentPage();
   }
 
-  async function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {
-    const facet = productsFilters.value.facets.find((item) => item.paramName === payload.paramName);
-    const facetValue = facet?.values.find((item) => item.value === payload.value);
-
-    if (facetValue) {
-      facetValue.selected = false;
-
-      // Generate filter expression from filters only
-      const filterExpression: string = generateFilterExpressionFromFilters(productsFilters.value.filters);
-
-      facetsQueryParam.value = options?.useQueryParams ? filterExpression : "";
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      preserveUserQuery();
-      // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
-
-      void resetCurrentPage();
-    }
-  }
-
   async function resetFacetFilters() {
     facetsQueryParam.value = "";
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    preserveUserQuery();
-    // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
+    await preserveUserQuery();
 
     productsFilters.value.filters = [];
 
     void resetCurrentPage();
   }
 
-  function preserveUserQuery() {
+  async function preserveUserQuery() {
+    if (!isIntentSearchEnabled) {
+      preserveUserQueryQueryParam.value = "";
+      return;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
     preserveUserQueryQueryParam.value = "yes";
   }
 
@@ -538,7 +526,6 @@ export function useProducts(
     fetchProducts,
     hideFiltersSidebar,
     openBranchesModal,
-    removeFacetFilter,
     resetFacetFilters,
     /** @deprecated use `searchQueryParam` instead */
     resetFilterKeyword,
