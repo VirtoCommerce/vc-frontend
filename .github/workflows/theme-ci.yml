@@ -35,8 +35,6 @@ jobs:
       VERSION_SUFFIX: ''
       BUILD_STATE: 'failed'
       RELEASE_STATUS: 'false'
-      JIRA_USER: ${{secrets.CLIENT_ID}}
-      JIRA_TOKEN: ${{secrets.CLIENT_SECRET}}
     # outputs:
     #   artifactUrl: '${{ steps.artifactUrl.outputs.download_url }}'
     #   jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
@@ -229,6 +227,8 @@ jobs:
           ghRepository: ${{ github.repository }}
           jiraCustomFieldId: 'customfield_10016'
           jiraCustomFieldValue: 123
+          client-id: '${{ secrets.CLIENT_ID }}'
+          client-secret: '${{ secrets.CLIENT_SECRET }}'
 
   # ui-auto-tests:
   #   needs: 'ci'
