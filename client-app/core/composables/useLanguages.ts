@@ -2,6 +2,7 @@ import { useLocalStorage } from "@vueuse/core";
 import { merge } from "lodash";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -10,13 +11,14 @@ import type { Composer, LocaleMessageValue } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
 
-const pinedLocale = useLocalStorage<string | null>("pinedLocale", null);
+const pinnedLocale = useLocalStorage<string | null>("pinnedLocale", null);
 
 const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
 const defaultLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
+
 const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
 const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
-const URL_LOCALE_REGEX = /^\/([a-z]{2})(\/|$)/;
+const supportedCultures = computed<string[]>(() => supportedLanguages.value.map((item) => item.cultureName));
 
 const currentLanguage = ref<ILanguage>();
 
@@ -33,6 +35,7 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
 
 async function initLocale(i18n: I18n, locale: string): Promise<void> {
   currentLanguage.value = supportedLanguages.value.find((x) => x.twoLetterLanguageName === locale);
+  console.log("initLocale", locale);
 
   let messages = i18n.global.getLocaleMessage(locale);
 
@@ -56,47 +59,25 @@ async function initLocale(i18n: I18n, locale: string): Promise<void> {
   document.documentElement.setAttribute("lang", locale);
 }
 
-function getLocaleFromUrl(): string | undefined {
-  return window.location.pathname.match(URL_LOCALE_REGEX)?.[1];
-}
-
 function removeLocaleFromUrl() {
-  const fullPath = window.location.pathname + window.location.search + window.location.hash;
-
-  const newUrl = getUrlWithoutLocale(fullPath);
-  if (fullPath !== newUrl) {
-    history.pushState(null, "", newUrl);
-  }
-}
-
-function getUrlWithoutLocale(fullPath: string): string {
-  const locale = fullPath.match(URL_LOCALE_REGEX)?.[1];
-
-  if (locale && isLocaleSupported(locale)) {
-    return fullPath.replace(URL_LOCALE_REGEX, "/");
-  }
-
-  return fullPath;
+  // const fullPath = window.location.pathname + window.location.search + window.location.hash;
+  // const newUrl = getUrlWithoutLocale(fullPath);
+  // if (fullPath !== newUrl) {
+  //   history.pushState(null, "", newUrl);
+  // }
+  // TODO: Implement
 }
 
 function pinLocale(locale: string) {
-  pinedLocale.value = locale;
+  pinnedLocale.value = locale;
 }
 
 function unpinLocale() {
-  pinedLocale.value = null;
+  pinnedLocale.value = null;
 }
 
 function isLocaleSupported(locale: string): boolean {
   return supportedLocales.value.includes(locale);
-}
-
-function detectLocale(locales: unknown[]): string {
-  const stringLocales = locales
-    .filter((locale): locale is string => typeof locale === "string" && locale.length === 2)
-    .filter(isLocaleSupported);
-
-  return stringLocales[0] || defaultLocale.value;
 }
 
 function mergeLocales(i18n: I18n, locale: string, messages: LocaleMessageValue) {
@@ -106,8 +87,26 @@ function mergeLocales(i18n: I18n, locale: string, messages: LocaleMessageValue) 
 }
 
 export function useLanguages() {
+  const { twoLetterContactLocale } = useUser();
+
+  function resolveLocale(localeFromRoute: string | undefined) {
+    if (localeFromRoute && isLocaleSupported(localeFromRoute)) {
+      return localeFromRoute;
+    }
+
+    if (pinnedLocale.value && isLocaleSupported(pinnedLocale.value)) {
+      return pinnedLocale.value;
+    }
+
+    if (twoLetterContactLocale.value && isLocaleSupported(twoLetterContactLocale.value)) {
+      return twoLetterContactLocale.value;
+    }
+
+    return defaultLocale.value;
+  }
+
   return {
-    pinedLocale,
+    pinnedLocale,
     defaultLanguage,
     defaultLocale,
     supportedLanguages,
@@ -127,8 +126,7 @@ export function useLanguages() {
     pinLocale,
     unpinLocale,
     removeLocaleFromUrl,
-    detectLocale,
-    getLocaleFromUrl,
+    resolveLocale,
     mergeLocales,
   };
 }

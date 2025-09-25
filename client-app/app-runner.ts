@@ -15,7 +15,7 @@ import {
   extensionPointsPlugin,
   permissionsPlugin,
 } from "@/core/plugins";
-import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
+import { extractHostname, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
@@ -35,6 +35,7 @@ import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
+import { RouterLinkWrapper } from "./shared/router/components/router-link-wrapper";
 import type { StoreResponseType } from "./core/api/graphql/types";
 
 // eslint-disable-next-line no-restricted-exports
@@ -66,18 +67,9 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { fetchUser, user, twoLetterContactLocale, isAuthenticated } = useUser();
+  const { fetchUser, user, isAuthenticated } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
-  const {
-    detectLocale,
-    currentLanguage,
-    supportedLocales,
-    initLocale,
-    fetchLocaleMessages,
-    getLocaleFromUrl,
-    pinedLocale,
-    mergeLocales,
-  } = useLanguages();
+  const { resolveLocale, currentLanguage, initLocale, fetchLocaleMessages, mergeLocales } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
@@ -104,20 +96,17 @@ export default async () => {
 
   setThemeContext(store);
 
-  // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
-  const twoLetterAppLocale = detectLocale([
-    pinedLocale.value,
-    twoLetterContactLocale.value,
-    getLocaleFromUrl(),
-    themeContext.value.defaultLanguage.twoLetterLanguageName,
-  ]);
-
   /**
    * Creating plugin instances
    */
+  const router = createRouter();
+  app.use(router);
+  await router.isReady();
+
   const head = createHead();
+
+  const twoLetterAppLocale = resolveLocale(router.currentRoute.value.params.locale as string);
   const i18n = createI18n(twoLetterAppLocale, currentCurrency.value.code, fallback);
-  const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
   await initLocale(i18n, twoLetterAppLocale);
 
@@ -160,7 +149,6 @@ export default async () => {
   // Plugins
   app.use(head);
   app.use(i18n);
-  app.use(router);
   app.use(permissionsPlugin);
   app.use(extensionPointsPlugin);
   app.use(contextPlugin, themeContext.value);
@@ -198,6 +186,9 @@ export default async () => {
 
   // Register Page builder product components globally
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
+
+  // Register a transparent wrapper for RouterLink that can modify the `to` prop
+  app.component("RouterLink", RouterLinkWrapper);
 
   await router.isReady();
 

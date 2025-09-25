@@ -23,20 +23,20 @@ function handleBeforeEnter(
 }
 export const checkoutRoutes: RouteRecordRaw[] = [
   {
-    path: "/checkout/completed",
+    path: "checkout/completed",
     name: "CheckoutCompleted",
     component: Completed,
     meta: { redirectable: false }
   },
   {
-    path: "/checkout/payment/:status(success|failure)",
+    path: "checkout/payment/:status(success|failure)",
     name: "CheckoutPaymentResult",
     component: PaymentResult,
     props: true,
     meta: { redirectable: false }
   },
   {
-    path: "/checkout/:cartId?",
+    path: "checkout/:cartId?",
     name: "Checkout",
     component: Checkout,
     children: [

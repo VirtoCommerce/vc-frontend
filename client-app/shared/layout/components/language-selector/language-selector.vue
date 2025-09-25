@@ -65,11 +65,11 @@ import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { getFlagIconUrl } from "@/ui-kit/utilities";
 import type { ILanguage } from "@/core/types";
 
-const { pinedLocale, supportedLanguages, pinLocale, removeLocaleFromUrl, currentLanguage } = useLanguages();
+const { pinnedLocale, supportedLanguages, pinLocale, removeLocaleFromUrl, currentLanguage } = useLanguages();
 const broadcast = useBroadcast();
 
 function select(locale: string) {
-  if (locale !== pinedLocale.value) {
+  if (locale !== pinnedLocale.value) {
     pinLocale(locale);
     removeLocaleFromUrl();
 

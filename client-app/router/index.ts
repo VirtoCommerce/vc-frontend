@@ -6,7 +6,7 @@ import { useUser } from "@/shared/account";
 import { mainRoutes } from "./routes";
 import type { RouteRecordName } from "vue-router";
 
-export function createRouter(options: { base: string }) {
+export function createRouter(options: { base?: string } = {}) {
   const { base } = options;
   const { isAuthenticated, organization } = useUser();
   const { themeContext } = useThemeContext();

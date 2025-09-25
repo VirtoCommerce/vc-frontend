@@ -1,26 +1,26 @@
 export const ROUTES = {
   CATALOG: {
     NAME: "Catalog",
-    PATH: "/catalog",
+    PATH: "catalog",
   },
   SEARCH: {
     NAME: "Search",
-    PATH: "/search",
+    PATH: "search",
   },
   SIGN_IN: {
     NAME: "SignIn",
-    PATH: "/sign-in",
+    PATH: "sign-in",
   },
   CART: {
     NAME: "Cart",
-    PATH: "/cart",
+    PATH: "cart",
   },
   CART_ID: {
     NAME: "CartId",
-    PATH: "/cart/:cartId",
+    PATH: "cart/:cartId",
   },
   CHANGE_PASSWORD: {
     NAME: "ChangePassword",
-    PATH: "/change-password",
+    PATH: "change-password",
   },
 } as const;

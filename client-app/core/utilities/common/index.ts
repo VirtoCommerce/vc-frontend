@@ -1,11 +1,6 @@
 import uniqBy from "lodash/uniqBy";
 import type { RouteLocationRaw, RouteLocationNormalizedLoaded, RouteLocationNormalized } from "vue-router";
 
-export function getBaseUrl(supportedLocales: string[]): string {
-  const localeInPath = location.pathname.split("/")[1];
-  return supportedLocales.includes(localeInPath) ? `/${localeInPath}/` : "";
-}
-
 const RETURN_URL_KEYS = ["returnUrl", "ReturnUrl"] as const;
 
 export function getReturnUrlValue(): string | null {
