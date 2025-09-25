@@ -20,7 +20,7 @@ const Template: StoryFn = (args) => ({
 });
 
 const TemplateQuantity: StoryFn = (args) => ({
-  components: { VcLineItems, VcChip },
+  components: { VcLineItems, VcChip, VcAddToCart },
   setup: () => ({ args }),
   template: `<VcLineItems v-bind="args">
     <template #titles>
