@@ -224,7 +224,7 @@ jobs:
 
       - name: Update Jira Tasks
         # if: ${{ github.ref == 'refs/heads/master' }}
-        uses: VirtoCommerce/vc-github-actions/update-jira-task@VCST-3944 #master
+        uses: VirtoCommerce/vc-github-actions/update-jira-keys-release@VCST-3944 #master
         with:
           ghRepository: ${{ github.repository }}
           jiraCustomFieldId: 'customfield_10016'
