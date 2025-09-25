@@ -338,7 +338,9 @@ provide<VcInputContextType>("inputContext", {
     }
 
     &[type="date"] {
-      clip-path: inset(0 40px 0 0);
+      @apply -me-8;
+
+      clip-path: inset(0 2rem 0 0);
     }
 
     &:autofill {
