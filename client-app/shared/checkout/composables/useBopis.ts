@@ -66,7 +66,7 @@ export function useBopis() {
         apiKey: isBopisMapEnabled.value ? bopisMapApiKey.value : undefined,
         currentAddress: {
           ...shipment.value?.deliveryAddress,
-          id: shipment.value?.deliveryAddress?.outerId ?? shipment.value?.pickupLocation?.id,
+          id: shipment.value?.pickupLocation?.id,
         },
         omitFieldsOnCompare: [
           "outerId",
