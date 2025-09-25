@@ -9,18 +9,21 @@ import type { I18n } from "@/i18n";
 import type { LocaleMessage } from "@intlify/core-base";
 import type { Composer, LocaleMessageValue } from "vue-i18n";
 
+const currentLanguage = ref<ILanguage>();
+
 const { themeContext } = useThemeContext();
 
 const pinnedLocale = useLocalStorage<string | null>("pinnedLocale", null);
 
 const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
 const defaultLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
+const defaultCulture = computed<string>(() => defaultLanguage.value.cultureName);
 
 const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
 const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
 const supportedCultures = computed<string[]>(() => supportedLanguages.value.map((item) => item.cultureName));
 
-const currentLanguage = ref<ILanguage>();
+const isDefaultLanguageInUse = computed<boolean>(() => currentLanguage.value?.cultureName === defaultCulture.value);
 
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json");
@@ -120,6 +123,8 @@ export function useLanguages() {
         throw new Error("currentLanguage is read only.");
       },
     }),
+    isDefaultLanguageInUse,
+
     initLocale,
     fetchLocaleMessages,
 

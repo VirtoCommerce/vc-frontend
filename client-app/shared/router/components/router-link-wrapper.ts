@@ -1,6 +1,7 @@
 import { defineComponent, h, toRef } from "vue";
 import { RouterLink } from "vue-router";
 import { useLanguages } from "@/core/composables/useLanguages";
+import { updateRouteWithLocale } from "@/core/utilities/localization";
 import type { Slots } from "vue";
 import type { ComponentProps } from "vue-component-type-helpers";
 import type { RouteLocationAsRelativeGeneric } from "vue-router";
@@ -17,17 +18,12 @@ export const RouterLinkWrapper = defineComponent({
 
     const to = toRef(props, "to");
 
-    const newTo =
-      typeof to.value === "string"
-        ? { path: to.value, params: { locale: language } }
-        : { ...to.value, params: { ...(to.value as RouteLocationAsRelativeGeneric).params, locale: language } };
-
     return () =>
       h(
         RouterLink,
         {
           ...props,
-          to: newTo,
+          to: updateRouteWithLocale(to.value, language),
         },
         slots,
       );
