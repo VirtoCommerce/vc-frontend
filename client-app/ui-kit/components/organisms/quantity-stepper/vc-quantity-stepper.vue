@@ -19,7 +19,6 @@
       :max="max"
       center
       :select-on-click="selectOnClick"
-      :aria-label="ariaLabel || $t('ui_kit.accessibility.product_quantity')"
       :aria="{
         role: 'spinbutton',
         'aria-valuemin': min,
