@@ -227,10 +227,10 @@ jobs:
           ghRepository: ${{ github.repository }}
           jiraCustomFieldId: 'customfield_10297' # 'customfield_10297' corresponds to 'Theme release' field
           jiraCustomFieldValue: 'Test release'
-          client-id: '${{ secrets.JIRA_USER }}'
-          client-secret: '${{ secrets.JIRA_TOKEN }}'
-          # client-id: '${{ secrets.CLIENT_ID }}'
-          # client-secret: '${{ secrets.CLIENT_SECRET }}'
+          # client-id: '${{ secrets.JIRA_USER }}'
+          # client-secret: '${{ secrets.JIRA_TOKEN }}'
+          client-id: '${{ secrets.CLIENT_ID }}'
+          client-secret: '${{ secrets.CLIENT_SECRET }}'
 
   # ui-auto-tests:
   #   needs: 'ci'
