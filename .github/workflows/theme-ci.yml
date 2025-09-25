@@ -225,8 +225,8 @@ jobs:
         uses: VirtoCommerce/vc-github-actions/update-jira-keys-release@VCST-3944 #master
         with:
           ghRepository: ${{ github.repository }}
-          jiraCustomFieldId: 'customfield_10016'
-          jiraCustomFieldValue: 123
+          jiraCustomFieldId: 'customfield_10297' # 'customfield_10297' corresponds to 'Theme release' field
+          jiraCustomFieldValue: 'Test release'
           client-id: '${{ secrets.JIRA_USER }}'
           client-secret: '${{ secrets.JIRA_TOKEN }}'
           # client-id: '${{ secrets.CLIENT_ID }}'
