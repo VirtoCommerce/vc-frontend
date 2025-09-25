@@ -27,9 +27,9 @@
         @change="$emit('select', isSelected)"
       />
 
-      <div class="vc-line-item__img-container">
+      <div v-if="$slots['after-image'] || withImage" class="vc-line-item__img-container">
         <!--  IMAGE -->
-        <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
+        <VcImage class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
 
         <div class="vc-line-item__img-actions">
           <slot name="after-image" />
