@@ -28,6 +28,8 @@
                 <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
                 <div>
                   <PickupAvailabilityInfo
+                    icon
+                    icon-size="sm"
                     :availability-type="address.availabilityType"
                     :availability-note="address.availabilityNote"
                   />
@@ -116,6 +118,8 @@
 
                 <PickupAvailabilityInfo
                   class="select-address-map-modal__radio-button-pickup-availability"
+                  icon
+                  icon-size="xs"
                   :availability-type="address.availabilityType"
                   :availability-note="address.availabilityNote"
                 />
@@ -155,7 +159,6 @@ import GoogleMapMarker from "@/shared/common/components/google-maps/google-map-m
 import GoogleMap from "@/shared/common/components/google-maps/google-map.vue";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
-//TODO: refactoring, extract and use one type for all addresses
 type PickupLocationType = NonNullable<NonNullable<GetCartPickupLocationsQuery["cartPickupLocations"]>["items"]>[number];
 
 const emit = defineEmits<IEmits>();

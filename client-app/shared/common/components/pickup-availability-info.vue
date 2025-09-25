@@ -10,6 +10,7 @@
       },
     ]"
   >
+    <VcIcon v-if="icon" name="truck" :size="iconSize" />
     {{ availabilityNote }}
   </div>
 </template>
@@ -20,6 +21,9 @@ import { ProductPickupAvailabilityType } from "@/core/api/graphql/types";
 interface IProps {
   availabilityType?: string;
   availabilityNote?: string;
+
+  icon?: boolean;
+  iconSize?: VcIconSizeType;
 }
 
 defineProps<IProps>();
