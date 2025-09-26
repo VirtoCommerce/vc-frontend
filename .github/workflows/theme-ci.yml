@@ -220,9 +220,9 @@ jobs:
       #   run: |
       #     echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
-      - name: Update Jira Tasks
+      - name: Update Jira Tasks with Release Number
         # if: ${{ github.ref == 'refs/heads/master' }}
-        uses: VirtoCommerce/vc-github-actions/update-jira-keys-release@VCST-3944 #master
+        uses: VirtoCommerce/vc-github-actions/update-jira-tasks-with-release-number@VCST-3944 #master
         with:
           ghRepository: ${{ github.repository }}
           jiraCustomFieldId: 'customfield_10297' # 'customfield_10297' corresponds to 'Theme release' field
