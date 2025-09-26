@@ -1,0 +1,32 @@
+{
+  "loyalty": {
+    "points-history": {
+      "meta": {
+        "title": "Poänghistorik"
+      },
+      "current-balance": "Saldo: {currentBalance}",
+      "operation": "Operation",
+      "operation-type": "Typ",
+      "date": "Datum",
+      "amount": "Belopp",
+      "redeemed": "Inlösta",
+      "earned": "Intjänade",
+      "registration": "Registrering"
+    },
+    "list_details": {
+      "empty_list": "Din lista är tom"
+    },
+    "navigation": {
+      "route_name": "Poänghistorik"
+    },
+    "payment": {
+      "loyalty": {
+        "pay_now_button": "Fortsätt",
+        "text": "Du försöker betala för beställningen med poäng. Din nuvarande poängsaldo är {currentBalance}",
+        "errors": {
+          "insufficient_points": "Kan inte genomföra beställningen på grund av otillräckligt poängsaldo. Din nuvarande poängsaldo är {currentBalance}"
+        }
+      }
+    }
+  }
+}
