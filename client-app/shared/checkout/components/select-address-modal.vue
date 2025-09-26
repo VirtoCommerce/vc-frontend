@@ -121,6 +121,7 @@
               </div>
 
               <PickupAvailabilityInfo
+                v-if="showAvailablility"
                 :availability-type="item.availabilityType"
                 :availability-note="item.availabilityNote"
               />
@@ -194,7 +195,7 @@
               </span>
             </td>
 
-            <td class="truncate px-4 py-3.5">
+            <td v-if="showAvailablility" class="truncate px-4 py-3.5">
               <PickupAvailabilityInfo
                 :availability-type="item.availabilityType"
                 :availability-note="item.availabilityNote"
@@ -213,7 +214,7 @@
 
         <template #desktop-empty>
           <tr>
-            <td colspan="4">
+            <td :colspan="showAvailablility ? 5 : 4">
               <div class="flex items-center p-5">
                 <span class="text-base">
                   {{ $t("shared.checkout.select_address_modal.no_addresses_message") }}
@@ -242,6 +243,7 @@ interface IProps {
   addresses?: AnyAddressType[];
   isCorporateAddresses: boolean;
   allowAddNewAddress?: boolean;
+  showAvailablility?: boolean;
   omitFieldsOnCompare?: (keyof MemberAddressType)[];
 }
 
@@ -255,6 +257,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   addresses: () => [],
   allowAddNewAddress: true,
+  showAvailablility: false,
   omitFieldsOnCompare: () => [],
 });
 
@@ -278,7 +281,6 @@ const columns = computed<ITableColumn[]>(() => {
         { id: "name", title: t("common.labels.address") },
         { id: "description", title: t("common.labels.description") },
         { id: "countryName", title: t("common.labels.country"), classes: "w-40" },
-        { id: "availability", title: t("pages.account.order_details.bopis.availability") },
         { id: "id", title: t("common.labels.active_address"), align: "center", classes: "w-40" },
       ]
     : [
@@ -286,9 +288,12 @@ const columns = computed<ITableColumn[]>(() => {
         { id: "name", title: t("common.labels.address") },
         { id: "phone", title: t("common.labels.phone") },
         { id: "email", title: t("common.labels.email") },
-        { id: "availability", title: t("pages.account.order_details.bopis.availability") },
         { id: "id", title: t("common.labels.active_address"), align: "center" },
       ];
+
+  if (props.showAvailablility) {
+    cols.splice(cols.length - 1, 0, { id: "availability", title: t("pages.account.order_details.bopis.availability") });
+  }
 
   return cols;
 });

@@ -34,6 +34,9 @@ export function useBopis() {
       ...(isBopisMapEnabled.value ? pickupInStoreAddress : {}),
       ...pickupInStoreAddress.address,
       description: isBopisMapEnabled.value ? pickupInStoreAddress.description : pickupInStoreAddress.name,
+      availabilityType: pickupInStoreAddress.availabilityType,
+      availabilityNote: pickupInStoreAddress.availabilityNote,
+      availableQuantity: pickupInStoreAddress.availableQuantity,
     })),
   );
 
@@ -82,6 +85,7 @@ export function useBopis() {
         ],
         isCorporateAddresses: true,
         allowAddNewAddress: false,
+        showAvailablility: true,
 
         onResult: async (addressOrAddressId: AnyAddressType | string) => {
           if (typeof addressOrAddressId === "string") {
