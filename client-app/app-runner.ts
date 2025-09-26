@@ -35,7 +35,6 @@ import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
-import { RouterLinkWrapper } from "./shared/router/components/router-link-wrapper";
 import type { StoreResponseType } from "./core/api/graphql/types";
 
 // eslint-disable-next-line no-restricted-exports
