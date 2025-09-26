@@ -897,7 +897,16 @@
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Приватный список",
-        "make_shared": "Сделать общим"
+        "make_shared": "Сделать общим",
+        "sharing_scope_label": "Поделиться",
+        "sharing_scope_placeholder": "Пожалуйста, выберите один вариант",
+        "sharing_link_label": "Ссылка",
+        "sharing_scope": {
+          "Private": "Приватный",
+          "Organization": "Организация",
+          "AnyoneAnonymous": "Все (только чтение)"
+        },
+        "clipboard_success": "Ссылка скопирована"
       },
       "delete_wishlist_modal": {
         "title": "Подтвердить удаление",
@@ -913,7 +922,8 @@
       },
       "status": {
         "shared": "Общий",
-        "private": "Приватный"
+        "private": "Приватный",
+        "shared_with_me": "Со мной поделились"
       }
     },
     "sorting": {
