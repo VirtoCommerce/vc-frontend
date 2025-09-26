@@ -124,7 +124,7 @@
         />
 
         <ProductPickupLocations
-          v-if="pickupLocations?.length > 0"
+          v-if="xPickupEnabled && pickupLocations?.length > 0"
           :loading="pickupLocationsLoading"
           :pickup-locations="pickupLocations"
         />
@@ -183,6 +183,7 @@ import {
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
 } from "@/shared/catalog/constants/product";
+import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
 import type { ISortInfo } from "@/core/types";
 import type {
   FiltersDisplayOrderType,
@@ -246,6 +247,7 @@ const { pickupLocations, fetchPickupLocations, pickupLocationsLoading } = usePro
 
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
+const { xPickupEnabled } = useXPickup();
 
 const { analytics } = useAnalytics();
 const { pushHistoricalEvent } = useHistoricalEvents();
@@ -450,7 +452,7 @@ watch(
       await fetchProducts(variationsSearchParams.value);
     }
 
-    if (product.value) {
+    if (xPickupEnabled.value && product.value) {
       await fetchPickupLocations({ productId: productId.value, first: 5 });
     }
   },
