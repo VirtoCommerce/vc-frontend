@@ -105,10 +105,10 @@ export default async () => {
 
   const head = createHead();
 
-  const twoLetterAppLocale = resolveLocale(router.currentRoute.value.params.locale as string);
-  const i18n = createI18n(twoLetterAppLocale, currentCurrency.value.code, fallback);
+  const cultureName = resolveLocale(router.currentRoute.value.params.locale as string);
+  const i18n = createI18n(cultureName, currentCurrency.value.code, fallback);
 
-  await initLocale(i18n, twoLetterAppLocale, router);
+  await initLocale(i18n, cultureName, router);
 
   /**
    * Setting global variables

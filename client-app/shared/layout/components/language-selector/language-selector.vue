@@ -33,13 +33,13 @@
     <template #content="{ close }">
       <VcMenuItem
         v-for="item in supportedLanguages"
-        :key="item.twoLetterLanguageName"
-        :active="item.twoLetterLanguageName === currentLanguage.twoLetterLanguageName"
-        :data-test-culture-name="item.twoLetterLanguageName"
+        :key="item.cultureName"
+        :active="item.cultureName === currentLanguage.cultureName"
+        :data-test-culture-name="item.cultureName"
         data-test-id="main-layout.top-header.language-selector-item"
         color="secondary"
         @click="
-          select(item.twoLetterLanguageName);
+          select(item.cultureName);
           close();
         "
       >
@@ -59,6 +59,7 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { languageToCountryMap } from "@/core/constants";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
@@ -67,11 +68,13 @@ import type { ILanguage } from "@/core/types";
 
 const { pinnedLocale, supportedLanguages, pinLocale, removeLocaleFromUrl, currentLanguage } = useLanguages();
 const broadcast = useBroadcast();
+const router = useRouter();
 
-function select(locale: string) {
+async function select(locale: string) {
   if (locale !== pinnedLocale.value) {
     pinLocale(locale);
-    removeLocaleFromUrl();
+
+    await removeLocaleFromUrl(router);
 
     void broadcast.emit(dataChangedEvent);
 

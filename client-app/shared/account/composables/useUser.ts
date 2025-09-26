@@ -72,6 +72,7 @@ export function _useUser() {
   const { refresh } = useAuth();
   const { openModal, closeModal } = useModal();
   const twoLetterContactLocale = computed(() => user.value?.contact?.defaultLanguage?.split("-")[0]);
+  const contactCultureName = computed(() => user.value?.contact?.defaultLanguage);
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
@@ -406,6 +407,7 @@ export function _useUser() {
       },
     }),
     twoLetterContactLocale,
+    contactCultureName,
   };
 }
 

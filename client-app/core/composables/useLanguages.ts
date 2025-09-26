@@ -26,6 +26,13 @@ const supportedLanguages = computed(() => themeContext.value.availableLanguages)
 const supportedLocales = computed(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
 const supportedCultures = computed(() => supportedLanguages.value.map((item) => item.cultureName));
 
+// const languagesMapping = computed(() => {
+//   return supportedLanguages.value.reduce((acc, item) => {
+//     acc[item.cul] = item.cultureName;
+//     return acc;
+//   }, {} as Record<string, string>);
+// });
+
 const isDefaultLanguageInUse = computed(() => {
   return !!currentLanguage.value && currentLanguage.value?.cultureName === defaultStoreCulture.value;
 });
@@ -53,6 +60,10 @@ function isLocaleSupported(locale: string): boolean {
   return supportedLocales.value.includes(locale);
 }
 
+function isCultureSupported(cultureName: string): boolean {
+  return supportedCultures.value.includes(cultureName);
+}
+
 function mergeLocales(i18n: I18n, locale: string, messages: LocaleMessageValue) {
   const existingMessages = i18n.global.getLocaleMessage(locale);
 
@@ -60,40 +71,52 @@ function mergeLocales(i18n: I18n, locale: string, messages: LocaleMessageValue) 
 }
 
 export function useLanguages() {
-  const { twoLetterContactLocale } = useUser();
+  const { contactCultureName } = useUser();
+  const router = useRouter();
 
-  function resolveLocale(localeFromRoute: string | undefined) {
-    if (localeFromRoute && isLocaleSupported(localeFromRoute)) {
-      return localeFromRoute;
+  function resolveLocale(localeOrCultureNameFromRoute: string | undefined) {
+    if (
+      localeOrCultureNameFromRoute &&
+      (isCultureSupported(localeOrCultureNameFromRoute) || isLocaleSupported(localeOrCultureNameFromRoute))
+    ) {
+      return localeOrCultureNameFromRoute;
     }
 
-    if (pinnedLocale.value && isLocaleSupported(pinnedLocale.value)) {
+    if (pinnedLocale.value && isCultureSupported(pinnedLocale.value)) {
       return pinnedLocale.value;
     }
 
-    if (twoLetterContactLocale.value && isLocaleSupported(twoLetterContactLocale.value)) {
-      return twoLetterContactLocale.value;
+    if (contactCultureName.value && isCultureSupported(contactCultureName.value)) {
+      return contactCultureName.value;
     }
 
-    return defaultStoreLocale.value;
+    return defaultStoreCulture.value;
   }
 
-  async function initLocale(i18n: I18n, locale: string, router?: Router) {
-    currentLanguage.value = supportedLanguages.value.find((x) => x.twoLetterLanguageName === locale);
-    await nextTick();
+  async function initLocale(i18n: I18n, localeOrCultureName: string, routerInstance?: Router) {
+    console.log("init localeOrCultureName", localeOrCultureName);
+    currentLanguage.value = supportedLanguages.value.find(
+      (x) => x.cultureName === localeOrCultureName || x.twoLetterLanguageName === localeOrCultureName,
+    );
 
-    if (isDefaultLanguageInUse.value) {
-      void removeLocaleFromUrl(router);
+    if (!currentLanguage.value) {
+      throw new Error(`Language ${localeOrCultureName} not found`);
     }
 
-    let messages = i18n.global.getLocaleMessage(locale);
+    if (!isDefaultLanguageInUse.value) {
+      void addLocaleToUrl(currentLanguage.value?.cultureName, routerInstance);
+    } else {
+      void removeLocaleFromUrl(routerInstance);
+    }
+
+    let messages = i18n.global.getLocaleMessage(currentLanguage.value?.twoLetterLanguageName);
 
     if (!Object.keys(messages).length) {
-      messages = await fetchLocaleMessages(locale);
-      i18n.global.setLocaleMessage(locale, messages);
+      messages = await fetchLocaleMessages(currentLanguage.value?.twoLetterLanguageName);
+      i18n.global.setLocaleMessage(currentLanguage.value?.twoLetterLanguageName, messages);
     }
 
-    (i18n.global as unknown as Composer).locale.value = locale;
+    (i18n.global as unknown as Composer).locale.value = currentLanguage.value?.twoLetterLanguageName;
 
     setLocaleForYup({
       mixed: {
@@ -105,15 +128,17 @@ export function useLanguages() {
       },
     });
 
-    document.documentElement.setAttribute("lang", locale);
+    document.documentElement.setAttribute("lang", currentLanguage.value?.twoLetterLanguageName);
   }
 
-  async function removeLocaleFromUrl(router?: Router) {
-    if (!router) {
-      router = useRouter();
-    }
+  async function removeLocaleFromUrl(routerInstance?: Router) {
+    const currentRouter = routerInstance ?? router;
+    await currentRouter?.replace(updateRouteWithLocale(currentRouter?.currentRoute?.value, ""));
+  }
 
-    await router?.replace(updateRouteWithLocale(router?.currentRoute?.value, ""));
+  async function addLocaleToUrl(locale: string, routerInstance?: Router) {
+    const currentRouter = routerInstance ?? router;
+    await currentRouter?.replace(updateRouteWithLocale(currentRouter?.currentRoute?.value, locale));
   }
 
   return {
