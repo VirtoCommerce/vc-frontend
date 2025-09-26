@@ -108,7 +108,7 @@ export default async () => {
   const twoLetterAppLocale = resolveLocale(router.currentRoute.value.params.locale as string);
   const i18n = createI18n(twoLetterAppLocale, currentCurrency.value.code, fallback);
 
-  await initLocale(i18n, twoLetterAppLocale);
+  await initLocale(i18n, twoLetterAppLocale, router);
 
   /**
    * Setting global variables
@@ -188,7 +188,8 @@ export default async () => {
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
 
   // Register a transparent wrapper for RouterLink that can modify the `to` prop
-  app.component("RouterLink", RouterLinkWrapper);
+  // app.component("RouterLink", RouterLinkWrapper);
+  // TODO: remove this and component itself
 
   await router.isReady();
 
