@@ -26,7 +26,11 @@
                 </span>
               </VcCheckbox>
 
-              <WishlistStatus v-if="isCorporateMember && list.scope" class="shrink-0" :scope="list.scope" />
+              <WishlistStatus
+                v-if="isCorporateMember && list.sharingSetting"
+                class="shrink-0"
+                :sharing-setting="list.sharingSetting"
+              />
             </li>
           </ul>
         </template>
@@ -84,7 +88,11 @@
                 </span>
               </VcCheckbox>
 
-              <WishlistStatus v-if="isCorporateMember && list.scope" class="shrink-0" :scope="list.scope" />
+              <WishlistStatus
+                v-if="isCorporateMember && list.sharingSetting"
+                class="shrink-0"
+                :sharing-setting="list.sharingSetting"
+              />
             </li>
           </transition-group>
         </VcCheckboxGroup>

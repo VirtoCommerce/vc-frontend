@@ -901,7 +901,16 @@
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "私人清单",
-        "make_shared": "设为共享"
+        "make_shared": "设为共享",
+        "sharing_scope_label": "分享选项",
+        "sharing_scope_placeholder": "请选择一个选项",
+        "sharing_link_label": "链接",
+        "sharing_scope": {
+          "Private": "私密",
+          "Organization": "组织",
+          "AnyoneAnonymous": "任何人（只读）"
+        },
+        "clipboard_success": "链接已复制"
       },
       "delete_wishlist_modal": {
         "title": "确认删除",
@@ -917,7 +926,8 @@
       },
       "status": {
         "shared": "共享",
-        "private": "私人"
+        "private": "私人",
+        "shared_with_me": "与我共享"
       }
     },
     "sorting": {
