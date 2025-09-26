@@ -1,0 +1,107 @@
+{
+  "ui_kit": {
+    "buttons": {
+      "add_to_cart": "Legg til i handlekurven",
+      "apply": "Bruk",
+      "cancel": "Avbryt",
+      "close": "Lukk",
+      "copy": "Kopier",
+      "deny": "Nekt",
+      "filters": "Filtre",
+      "ok": "OK",
+      "remove_all": "Fjern alle",
+      "remove_from_cart": "Fjern fra handlekurven",
+      "remove_selected": "Fjern valgte",
+      "see_more": "Se mer",
+      "see_less": "Se mindre",
+      "show_hide_password": "Vis/skjul passord",
+      "toggle_dropdown": "Veksle nedtrekksmeny",
+      "update_cart": "Oppdater handlekurv"
+    },
+    "accessibility": {
+      "close_alert": "Lukk varsel",
+      "product_quantity": "Produktantall",
+      "decrease_quantity": "Reduser antall",
+      "increase_quantity": "Øk antall",
+      "variant_picker_group": "Variantalternativer",
+      "show_more_button": "Se flere alternativer ({count})"
+    },
+    "labels": {
+      "not_available": "Ikke tilgjengelig",
+      "price_per_item": "Pris per enhet",
+      "product": "Produkt",
+      "product_quantity": "Produktantall",
+      "properties": "Egenskaper",
+      "subtotal": "Delsum",
+      "toggle_vendor_select": "Veksle leverandørvalg",
+      "total": "Totalt",
+      "vendor": "Leverandør"
+    },
+    "suffixes": {
+      "from": "Fra",
+      "per_item": " per enhet"
+    },
+    "messages": {
+      "loading_text": "Laster...",
+      "no_results": "Ingen resultater funnet"
+    },
+    "add_to_cart": {
+      "errors": {
+        "in_cart": "i handlekurven",
+        "already_in_cart_message": "{0} er allerede lagt til i handlekurven",
+        "enter_correct_number_message": "Vennligst skriv inn et gyldig nummer",
+        "min": "Minimumsbestilling {0} enhet(er)",
+        "max": "Maksimumsbestilling {0} enhet(er)",
+        "min_max": "Bestill fra {0} til {1} enhet(er)",
+        "min_not_available": "Minimumsbestilling {0} enhet(er) er ikke tilgjengelig på lager",
+        "exact_qty": "Du kan bestille {0} enhet(er)",
+        "out_of_stock": "Utsolgt",
+        "positive_number": "Verdien må være et positivt tall",
+        "integer_number": "Verdien må være et heltall",
+        "pack_size": "Bestill i pakker med {0}"
+      }
+    },
+    "pagination": {
+      "previous": "Forrige",
+      "next": "Neste"
+    },
+    "select": {
+      "items_selected": "{0} elementer valgt"
+    },
+    "file": {
+      "progress": "{percent} ferdig",
+      "uploaded": "Opplasting fullført"
+    },
+    "file_uploader": {
+      "drag_and_drop": "Dra og slipp filen her eller",
+      "browse": "Bla gjennom filene dine",
+      "requirements": "Filene som kan lastes opp er i formatene {formats}. Hver fil må ikke overskride {fileSize}. Maksimum {maxFileCount} filer tillatt.",
+      "any_format": "alle",
+      "errors": {
+        "fix_to_continue": "Rett opp feil ved opplasting av filer for å fortsette.",
+        "has_max_file_count": "Du har lastet opp maksimum antall filer. Flere opplastinger er ikke mulig.",
+        "tried_more_than_max_file_count": "Du prøvde å laste opp flere filer enn det maksimale antallet tillatt."
+      }
+    },
+    "reach_limit": {
+      "end_list": "Du har nådd slutten av listen.",
+      "page_limit_filters": "Ingen flere resultater. Prøv å endre filtrene.",
+      "page_limit": "Ingen flere resultater kan vises."
+    },
+    "slider": {
+      "tooltip": "{count} elementer",
+      "aria_label": "Skyveknapp fra {min} til {max}",
+      "start_input_label": "Startverdi (mellom {min} og {max})",
+      "end_input_label": "Sluttverdi (mellom {min} og {max})",
+      "start_input_aria_label": "Inndata for startverdi, område {min} til {max}",
+      "end_input_aria_label": "Inndata for sluttverdi, område {min} til {max}",
+      "start_input_help": "Skriv inn et tall mellom {min} og {max}, trinnstørrelse {step}",
+      "end_input_help": "Skriv inn et tall mellom {min} og {max}, trinnstørrelse {step}",
+      "column_aria_label": "Kolonne med {count} elementer, område fra {from} til {to}",
+      "current_value_announcement": "Skyveknappverdi: {start} til {end}, område {min} til {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Navigasjon for brødsmuler"
+    }
+  }
+}
