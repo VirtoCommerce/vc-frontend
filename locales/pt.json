@@ -1371,7 +1371,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku copiado com sucesso",
-      "variations_total_label": "Total no seu carrinho:",
+      "variations_total_label": "Total no carrinho:",
       "view_cart_button": "Ver carrinho",
       "recommended_products": {
         "related-products_section_title": "Produtos relacionados a este item",

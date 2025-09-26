@@ -1371,7 +1371,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku successfully copied",
-      "variations_total_label": "Total in your cart:",
+      "variations_total_label": "Total in cart:",
       "view_cart_button": "View cart",
       "recommended_products": {
         "related-products_section_title": "Products related to this item",
