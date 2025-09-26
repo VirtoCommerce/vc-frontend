@@ -187,12 +187,6 @@ export default async () => {
   // Register Page builder product components globally
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
 
-  // Register a transparent wrapper for RouterLink that can modify the `to` prop
-  // app.component("RouterLink", RouterLinkWrapper);
-  // TODO: remove this and component itself
-
-  await router.isReady();
-
   app.config.warnHandler = (msg, _, trace) => {
     // to remove builder.io warnings
     if (consoleIgnoredErrors.some((err) => msg.includes(err) && trace.includes(BUILDER_IO_TRACE_MARKER))) {

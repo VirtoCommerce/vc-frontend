@@ -1,6 +1,6 @@
 import { useLocalStorage } from "@vueuse/core";
 import { merge } from "lodash";
-import { computed, nextTick, ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { setLocale as setLocaleForYup } from "yup";
 import { useUser } from "@/shared/account/composables/useUser";
@@ -25,13 +25,6 @@ const defaultStoreCulture = computed(() => defaultStoreLanguage.value.cultureNam
 const supportedLanguages = computed(() => themeContext.value.availableLanguages);
 const supportedLocales = computed(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
 const supportedCultures = computed(() => supportedLanguages.value.map((item) => item.cultureName));
-
-// const languagesMapping = computed(() => {
-//   return supportedLanguages.value.reduce((acc, item) => {
-//     acc[item.cul] = item.cultureName;
-//     return acc;
-//   }, {} as Record<string, string>);
-// });
 
 const isDefaultLanguageInUse = computed(() => {
   return !!currentLanguage.value && currentLanguage.value?.cultureName === defaultStoreCulture.value;
