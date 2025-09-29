@@ -58,7 +58,7 @@
 
           <!-- todo: extract a component for price and use it here -->
           <span class="text-[--price-color]">
-            {{ currentCurrency.symbol }}{{ variationsCartTotalAmount.toFixed(2) }}
+            {{ $n(variationsCartTotalAmount, "currency") }}
           </span>
         </div>
 
@@ -111,7 +111,7 @@
 
 <script setup lang="ts">
 import { computed, toRef } from "vue";
-import { useCurrency, useThemeContext } from "@/core/composables";
+import { useThemeContext } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
 import { AddToCart, useShortCart } from "@/shared/cart";
@@ -136,7 +136,6 @@ const props = defineProps<IProps>();
 const product = toRef(props, "product");
 const variations = toRef(props, "variations");
 
-const { currentCurrency } = useCurrency();
 const { getItemsTotal } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
 const { getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps } = useCustomProductComponents();

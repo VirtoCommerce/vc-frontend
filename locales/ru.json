@@ -294,7 +294,9 @@
     "accessibility": {
       "open_filters": "Открыть фильтры",
       "switch_to_grid_view": "Переключить в сетку",
-      "switch_to_list_view": "Переключить в список"
+      "switch_to_list_view": "Переключить в список",
+      "no_image": "Изображение недоступно",
+      "image": "Изображение"
     }
   },
   "shared": {
@@ -895,7 +897,16 @@
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Приватный список",
-        "make_shared": "Сделать общим"
+        "make_shared": "Сделать общим",
+        "sharing_scope_label": "Поделиться",
+        "sharing_scope_placeholder": "Пожалуйста, выберите один вариант",
+        "sharing_link_label": "Ссылка",
+        "sharing_scope": {
+          "Private": "Приватный",
+          "Organization": "Организация",
+          "AnyoneAnonymous": "Все (только чтение)"
+        },
+        "clipboard_success": "Ссылка скопирована"
       },
       "delete_wishlist_modal": {
         "title": "Подтвердить удаление",
@@ -911,7 +922,8 @@
       },
       "status": {
         "shared": "Общий",
-        "private": "Приватный"
+        "private": "Приватный",
+        "shared_with_me": "Со мной поделились"
       }
     },
     "sorting": {
@@ -1359,7 +1371,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku успешно скопирован",
-      "variations_total_label": "Всего в вашей корзине:",
+      "variations_total_label": "Всего в корзине:",
       "view_cart_button": "В корзину",
       "recommended_products": {
         "related-products_section_title": "Сопутствующие товары",

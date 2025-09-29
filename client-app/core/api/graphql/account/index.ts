@@ -25,6 +25,7 @@ export * from "./queries/checkEmailUniqueness";
 export * from "./queries/checkUsernameUniqueness";
 export * from "./queries/getMe";
 export * from "./queries/getMyAddresses";
+export * from "./queries/getSharedWishList";
 export * from "./queries/getWishList";
 export * from "./queries/getWishlists";
 export * from "./queries/requestPasswordReset";

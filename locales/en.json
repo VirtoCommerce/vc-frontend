@@ -294,7 +294,9 @@
     "accessibility": {
       "open_filters": "Open filters",
       "switch_to_grid_view": "Switch to grid view",
-      "switch_to_list_view": "Switch to list view"
+      "switch_to_list_view": "Switch to list view",
+      "no_image": "No image available",
+      "image": "Image"
     }
   },
   "shared": {
@@ -891,11 +893,20 @@
         "edit_mode_title": "List settings",
         "list_name_label": "List name",
         "list_name_placeholder": "Please enter name",
+        "sharing_scope_label": "Sharing options",
+        "sharing_scope_placeholder": "Please select one option",
+        "sharing_link_label": "Link",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Private list",
-        "make_shared": "Make shared"
+        "make_shared": "Make shared",
+        "sharing_scope": {
+          "Private": "Private",
+          "Organization": "Organization",
+          "AnyoneAnonymous": "Anyone (readonly)"
+        },
+        "clipboard_success": "Link copied"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",
@@ -911,7 +922,8 @@
       },
       "status": {
         "shared": "Shared",
-        "private": "Private"
+        "private": "Private",
+        "shared_with_me": "Shared with me"
       }
     },
     "sorting": {
@@ -1359,7 +1371,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku successfully copied",
-      "variations_total_label": "Total in your cart:",
+      "variations_total_label": "Total in cart:",
       "view_cart_button": "View cart",
       "recommended_products": {
         "related-products_section_title": "Products related to this item",

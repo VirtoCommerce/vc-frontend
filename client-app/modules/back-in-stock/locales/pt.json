@@ -12,7 +12,7 @@
     },
     "messages": {
       "click_to_receive_alert": "Clique para receber um alerta",
-      "notify_me_when_in_stock": "Avise-me quando estiver em estoque",
+      "stock_alert": "Alerta stock",
       "you_are_subscribed": "Você está inscrito! Avisaremos quando voltar ao estoque.",
       "you_will_be_notified": "Você será notificado"
     },
