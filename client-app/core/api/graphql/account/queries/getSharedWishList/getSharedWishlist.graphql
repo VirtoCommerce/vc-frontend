@@ -1,11 +1,15 @@
 #import "../../../fragments/wishlistLineItemFields.graphql"
+#import "../../../common/fragments/money.graphql"
 
-mutation ChangeWishlist($command: InputChangeWishlistType!) {
-  changeWishlist(command: $command) {
-    id
+query GetSharedWishlist($sharingKey: String!) {
+  sharedWishlist(sharingKey: $sharingKey) {
     name
     description
     scope
+    modifiedDate
+    subTotal {
+      ...money
+    }
     items {
       ...wishlistLineItemFields
     }
