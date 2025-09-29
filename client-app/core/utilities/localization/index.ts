@@ -1,3 +1,4 @@
+import type { ILanguage } from "@/core/types/language";
 import type { RouteLocationAsRelativeGeneric, RouteLocationRaw } from "vue-router";
 
 export function updateRouteWithLocale(route: RouteLocationRaw, locale?: string | null) {
@@ -19,4 +20,16 @@ export function updateRouteWithLocale(route: RouteLocationRaw, locale?: string |
       locale: locale ?? "",
     },
   };
+}
+
+export function tryShortLocale(localeOrCultureName: string, supportedLanguages: ILanguage[]) {
+  const twoLetterLanguageName = localeOrCultureName.slice(0, 2);
+
+  const matchLanguages = supportedLanguages.filter(
+    (language) => language.twoLetterLanguageName === twoLetterLanguageName,
+  );
+
+  const isUnique = matchLanguages.length === 1;
+
+  return isUnique ? twoLetterLanguageName : localeOrCultureName;
 }

@@ -4,7 +4,7 @@ import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { setLocale as setLocaleForYup } from "yup";
 import { useUser } from "@/shared/account/composables/useUser";
-import { updateRouteWithLocale } from "../utilities/localization";
+import { updateRouteWithLocale, tryShortLocale } from "../utilities/localization";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -19,7 +19,6 @@ const { themeContext } = useThemeContext();
 const pinnedLocale = useLocalStorage<string | null>("pinnedLocale", null);
 
 const defaultStoreLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
-const defaultStoreLocale = computed(() => defaultStoreLanguage.value.twoLetterLanguageName);
 const defaultStoreCulture = computed(() => defaultStoreLanguage.value.cultureName);
 
 const supportedLanguages = computed(() => themeContext.value.availableLanguages);
@@ -36,6 +35,8 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
 
   if (locales[path]) {
     return locales[path]();
+  } else if (locale.length > 2 && locales[path.slice(0, 2)]) {
+    return locales[path.slice(0, 2)](); // try get short locale as a fallback (e.g. en-US -> en)
   }
 
   return import("../../../locales/en.json");
@@ -87,7 +88,6 @@ export function useLanguages() {
   }
 
   async function initLocale(i18n: I18n, localeOrCultureName: string, routerInstance?: Router) {
-    console.log("init localeOrCultureName", localeOrCultureName);
     currentLanguage.value = supportedLanguages.value.find(
       (x) => x.cultureName === localeOrCultureName || x.twoLetterLanguageName === localeOrCultureName,
     );
@@ -96,20 +96,22 @@ export function useLanguages() {
       throw new Error(`Language ${localeOrCultureName} not found`);
     }
 
+    const maybeShortLocale = tryShortLocale(localeOrCultureName, supportedLanguages.value);
+
     if (!isDefaultLanguageInUse.value) {
-      void addLocaleToUrl(currentLanguage.value?.cultureName, routerInstance);
+      void addLocaleToUrl(maybeShortLocale, routerInstance);
     } else {
       void removeLocaleFromUrl(routerInstance);
     }
 
-    let messages = i18n.global.getLocaleMessage(currentLanguage.value?.twoLetterLanguageName);
+    let messages = i18n.global.getLocaleMessage(maybeShortLocale);
 
     if (!Object.keys(messages).length) {
-      messages = await fetchLocaleMessages(currentLanguage.value?.twoLetterLanguageName);
-      i18n.global.setLocaleMessage(currentLanguage.value?.twoLetterLanguageName, messages);
+      messages = await fetchLocaleMessages(maybeShortLocale);
+      i18n.global.setLocaleMessage(maybeShortLocale, messages);
     }
 
-    (i18n.global as unknown as Composer).locale.value = currentLanguage.value?.twoLetterLanguageName;
+    (i18n.global as unknown as Composer).locale.value = maybeShortLocale;
 
     setLocaleForYup({
       mixed: {
@@ -121,7 +123,7 @@ export function useLanguages() {
       },
     });
 
-    document.documentElement.setAttribute("lang", currentLanguage.value?.twoLetterLanguageName);
+    document.documentElement.setAttribute("lang", maybeShortLocale);
   }
 
   async function removeLocaleFromUrl(routerInstance?: Router) {
@@ -137,7 +139,6 @@ export function useLanguages() {
   return {
     pinnedLocale,
     defaultLanguage: defaultStoreLanguage,
-    defaultLocale: defaultStoreLocale,
     supportedLanguages,
     supportedLocales,
     currentLanguage: computed({

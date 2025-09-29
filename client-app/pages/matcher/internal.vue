@@ -18,12 +18,14 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 defineProps<IProps>();
 
-const pages = {
-  "/": defineAsyncComponent(() => import("@/pages/home.vue")),
-  "/demo-landing": defineAsyncComponent(() => import("@/pages/demo-landing.vue")),
-} as const;
-
 const route = useRoute();
+
+const localeParam = route.params.locale as string;
+
+const pages = {
+  [`/${localeParam}`]: defineAsyncComponent(() => import("@/pages/home.vue")),
+  [`/${localeParam}/demo-landing`]: defineAsyncComponent(() => import("@/pages/demo-landing.vue")),
+} as const;
 
 const page = computed(() => {
   if (Object.keys(pages).includes(route.path)) {
