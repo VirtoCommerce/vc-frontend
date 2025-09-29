@@ -1,5 +1,5 @@
 import { resolve } from "path";
-import { loadConfigFromFile, mergeConfig, splitVendorChunkPlugin } from "vite";
+import { loadConfigFromFile, mergeConfig } from "vite";
 import type { StorybookConfig } from "@storybook/vue3-vite";
 
 const storybookConfig: StorybookConfig = {
@@ -34,12 +34,20 @@ const storybookConfig: StorybookConfig = {
     return mergeConfig(storybookViteConfig, {
       mode: "development",
       envPrefix: config.envPrefix,
-      plugins: [splitVendorChunkPlugin()],
       resolve: config.resolve,
       define: config.define,
       build: {
         cssCodeSplit: false,
         reportCompressedSize: false,
+        rollupOptions: {
+          output: {
+            manualChunks(id: string) {
+              if (id.includes("node_modules")) {
+                return "vendor";
+              }
+            },
+          },
+        },
       },
       optimizeDeps: config.optimizeDeps,
     });

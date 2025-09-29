@@ -22,14 +22,16 @@
         {{ $t("shared.wishlists.list_card.saved") }}: <b>{{ $d(list.modifiedDate) }}</b>
       </div>
 
-      <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" class="ms-auto md:ms-0" />
+      <WishlistStatus
+        v-if="isCorporateMember && list.sharingSetting"
+        :sharing-setting="list.sharingSetting"
+        class="ms-auto md:ms-0"
+      />
     </div>
 
     <div class="absolute right-4 top-4 md:relative md:right-auto md:top-auto">
       <WishlistDropdownMenu
-        :current-scope="list.scope"
-        :is-corporate-member="isCorporateMember"
-        @set-scope="$emit('setScope', $event)"
+        v-if="list.sharingSetting?.access === WishlistAccessType.Write"
         @edit="$emit('settings')"
         @remove="$emit('remove')"
       />
@@ -38,15 +40,15 @@
 </template>
 
 <script setup lang="ts">
+import { WishlistAccessType } from "@/core/api/graphql/types";
 import { useUser } from "@/shared/account/composables";
 import WishlistDropdownMenu from "./wishlist-dropdown-menu.vue";
 import WishlistStatus from "./wishlist-status.vue";
-import type { WishlistScopeType, WishlistType } from "@/core/api/graphql/types";
+import type { WishlistType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "settings"): void;
   (event: "remove"): void;
-  (event: "setScope", scope: WishlistScopeType): void;
 }
 
 interface IProps {
