@@ -104,7 +104,7 @@ export default async () => {
 
   const head = createHead();
 
-  const cultureName = resolveLocale(router.currentRoute.value.params.locale as string);
+  const cultureName = await resolveLocale(router.currentRoute.value.params.locale as string, router);
   const i18n = createI18n(cultureName, currentCurrency.value.code, fallback);
 
   await initLocale(i18n, cultureName, router);

@@ -23,4 +23,8 @@ export const ROUTES = {
     NAME: "ChangePassword",
     PATH: "change-password",
   },
+  NOT_FOUND: {
+    NAME: "NotFound",
+    PATH: "404",
+  },
 } as const;

@@ -33,3 +33,22 @@ export function tryShortLocale(localeOrCultureName: string, supportedLanguages: 
 
   return isUnique ? twoLetterLanguageName : localeOrCultureName;
 }
+
+/**
+ * Matches: language[-region]
+ *
+ * language: 2–3 lowercase letters (ISO 639 codes, e.g. en, fr, ru)
+ * region:   2 uppercase letters (ISO 3166, e.g. US, BR, PT, CN)
+ *           or 3 digits (UN M.49, e.g. 001, 419)
+ *
+ * Notes:
+ * - The outer parentheses are escaped (( ... \\)\\) in the pattern string
+ *   as required by Vue Router: https://router.vuejs.org/guide/essentials/route-matching-syntax
+ *
+ * Examples:
+ *   /en
+ *   /fr
+ *   /pt-BR
+ *   /zh-419
+ */
+export const languageTagRegexPattern = "[a-z]{2,3}(?:-(?:[A-Z]{2}|\\d{3}\\)\\)?";

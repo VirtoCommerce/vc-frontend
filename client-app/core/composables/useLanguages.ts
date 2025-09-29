@@ -3,6 +3,7 @@ import { merge } from "lodash";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { setLocale as setLocaleForYup } from "yup";
+import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import { updateRouteWithLocale, tryShortLocale } from "../utilities/localization";
 import { useThemeContext } from "./useThemeContext";
@@ -68,12 +69,14 @@ export function useLanguages() {
   const { contactCultureName } = useUser();
   const router = useRouter();
 
-  function resolveLocale(localeOrCultureNameFromRoute: string | undefined) {
-    if (
-      localeOrCultureNameFromRoute &&
-      (isCultureSupported(localeOrCultureNameFromRoute) || isLocaleSupported(localeOrCultureNameFromRoute))
-    ) {
-      return localeOrCultureNameFromRoute;
+  async function resolveLocale(localeOrCultureNameFromRoute: string | undefined, routerInstance?: Router) {
+    if (localeOrCultureNameFromRoute) {
+      if (isCultureSupported(localeOrCultureNameFromRoute) || isLocaleSupported(localeOrCultureNameFromRoute)) {
+        return localeOrCultureNameFromRoute;
+      }
+      console.log("redirecting to 404", routerInstance);
+      await routerInstance?.replace({ name: ROUTES.NOT_FOUND.NAME });
+      return defaultStoreCulture.value;
     }
 
     if (pinnedLocale.value && isCultureSupported(pinnedLocale.value)) {
