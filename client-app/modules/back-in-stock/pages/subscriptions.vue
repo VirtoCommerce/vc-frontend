@@ -1,7 +1,5 @@
 <template>
   <div class="back-in-stock-subscriptions">
-    <BackButtonInHeader v-if="isMobile" @click="$router.back" />
-
     <VcTypography tag="h1" class="back-in-stock-subscriptions__title">
       {{ $t("back_in_stock.subscriptions.meta.title") }}
     </VcTypography>
@@ -90,7 +88,6 @@
 </template>
 
 <script lang="ts" setup>
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import keyBy from "lodash/keyBy";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
@@ -103,7 +100,6 @@ import { prepareLineItemForProduct } from "@/core/utilities";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, AddToCart } from "@/shared/cart";
 import { InStock, CountInCart, useProducts, ProductSkeletonList } from "@/shared/catalog";
-import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import { DeactivateBackInStockSubscriptionModal, BackInStockNotifyButton } from "../components";
 import { useBackInStockSubscriptions } from "../composables";
@@ -128,9 +124,6 @@ const { fetchProducts, products, fetchingProducts } = useProducts();
 const { loading: cartLoading, cart } = useShortCart();
 const broadcast = useBroadcast();
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
-
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("md");
 
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
