@@ -1,6 +1,6 @@
 import { VcMenuItem } from "..";
 import { VcIcon } from "../../atoms";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger"];
@@ -47,7 +47,7 @@ Active.args = {
 
 export const Link = Template.bind({});
 Link.args = {
-  to: "/link",
+  to: "/some/link",
 };
 
 export const ExternalLink = Template.bind({});
@@ -84,6 +84,40 @@ export const Truncate: StoryFn = (args) => ({
 Truncate.args = {
   truncate: true,
 };
+
+export const RouterNavigation: StoryFn = () => ({
+  components: { VcMenuItem },
+  setup: () => ({}),
+  template: `
+    <div class="space-y-4 p-6">
+      <h2 class="text-xl font-bold">Router Navigation Test</h2>
+      <p class="text-gray-600">Click the menu items below to test navigation:</p>
+
+      <div class="space-y-2">
+        <VcMenuItem to="/some/link" color="primary" size="md">
+          Some Link
+        </VcMenuItem>
+        <VcMenuItem to="/catalog" color="secondary" size="md">
+          Catalog
+        </VcMenuItem>
+        <VcMenuItem to="/product/123" color="info" size="md">
+          Product #123
+        </VcMenuItem>
+        <VcMenuItem to="/nonexistent" color="warning" size="md">
+          Non-existent Page
+        </VcMenuItem>
+        <VcMenuItem external-link="https://example.com" color="neutral" size="md">
+          External Link
+        </VcMenuItem>
+      </div>
+
+      <div class="mt-6 p-4 bg-gray-100 rounded">
+        <h3 class="font-semibold mb-2">Current URL:</h3>
+        <code class="text-sm">{{ $route.path }}</code>
+      </div>
+    </div>
+  `,
+});
 
 export const AllStates: StoryFn = () => ({
   components: { VcMenuItem },

@@ -1,5 +1,5 @@
 import { VcSelect } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md"];
 const ITEM_SIZES = ["xs", "sm", "md", "lg"];

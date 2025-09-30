@@ -20,11 +20,16 @@
     },
     "accessibility": {
       "close_alert": "アラートを閉じる",
+      "open_calendar": "カレンダーを開く",
       "product_quantity": "製品数量",
       "decrease_quantity": "数量を減らす",
       "increase_quantity": "数量を増やす",
       "variant_picker_group": "バリアントの選択",
       "show_more_button": "さらにオプションを表示（{count}）"
+    },
+    "date_selector": {
+      "min_date_error": "日付は{min}以降である必要があります",
+      "max_date_error": "日付は{max}以前である必要があります"
     },
     "labels": {
       "not_available": "N/A",

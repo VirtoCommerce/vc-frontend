@@ -1,6 +1,6 @@
 import { VcProductActions } from "..";
 import { VcProductActionsButton } from "../../molecules";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 export default {
   title: "Components/Atoms/VcProductActions",

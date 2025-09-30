@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { VcQuantityStepper } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["sm", "md"];
 

@@ -44,7 +44,7 @@
         class="vc-input__input"
         :data-test-id="testIdInput"
         @keydown="keyDown($event)"
-        @click.prevent.stop="inputClick()"
+        @click.stop="inputClick"
         @blur="$emit('blur', $event)"
         @focus="$emit('focus', $event)"
       />
@@ -111,8 +111,8 @@ export interface IProps {
   maxlength?: string | number;
   center?: boolean;
   truncate?: boolean;
-  type?: "text" | "password" | "number" | "email" | "search";
-  size?: "xs" | "sm" | "md" | "auto";
+  type?: "text" | "password" | "number" | "email" | "search" | "date";
+  size?: VcInputSizeType;
   clearable?: boolean;
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
@@ -136,6 +136,8 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   browserTooltip: "disabled",
 });
+
+const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 const componentId = useComponentId("input");
 const listeners = useListeners();
@@ -166,8 +168,8 @@ const model = defineModel<T>({
 
 const _size = computed(() => props.size);
 
-const minValue = computed(() => (props.type === "number" ? props.min : undefined));
-const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
+const minValue = computed(() => (LIMITED_TYPES.includes(props.type) ? props.min : undefined));
+const maxValue = computed(() => (LIMITED_TYPES.includes(props.type) ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
 
 const isPasswordVisible = ref<boolean>(false);
@@ -182,8 +184,10 @@ function focusInput() {
   if (inputElement.value) {
     inputElement.value.focus();
     setTimeout(() => {
-      const len = inputElement.value?.value.length ?? 0;
-      inputElement.value?.setSelectionRange(len, len);
+      if (inputElement.value?.type !== "date") {
+        const len = inputElement.value?.value.length ?? 0;
+        inputElement.value?.setSelectionRange(len, len);
+      }
     }, 0);
   }
 }
@@ -198,8 +202,9 @@ function clear() {
 function keyDown(event: KeyboardEvent) {
   if (props.type === "number") {
     const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight)/;
-
-    return !event.key.match(allowedCharacter) && event.preventDefault();
+    if (!allowedCharacter.test(event.key)) {
+      event.preventDefault();
+    }
   }
 }
 
@@ -318,10 +323,24 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__input {
-    @apply relative m-px px-2 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
+    @apply relative m-px px-2 bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;
+    }
+
+    &::-webkit-calendar-picker-indicator {
+      @apply hidden;
+    }
+
+    &::-moz-calendar-picker-indicator {
+      @apply hidden;
+    }
+
+    &[type="date"] {
+      @apply -me-8;
+
+      clip-path: inset(0 2rem 0 0);
     }
 
     &:autofill {

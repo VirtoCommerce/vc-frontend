@@ -20,11 +20,16 @@
     },
     "accessibility": {
       "close_alert": "Benachrichtigung schließen",
+      "open_calendar": "Kalender öffnen",
       "product_quantity": "Produktmenge",
       "decrease_quantity": "Menge verringern",
       "increase_quantity": "Menge erhöhen",
       "variant_picker_group": "Produktvarianten",
       "show_more_button": "Weitere Varianten anzeigen ({count})"
+    },
+    "date_selector": {
+      "min_date_error": "Datum muss am oder nach {min} liegen",
+      "max_date_error": "Datum muss am oder vor {max} liegen"
     },
     "labels": {
       "not_available": "N/V",
