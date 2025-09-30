@@ -282,7 +282,7 @@ module.exports = {
         lg: "0 6px 15px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 4px 6px -4px rgb(from var(--color-additional-950) r g b / 0.1)",
         xl: "0 8px 25px 0 rgb(from var(--color-additional-950) r g b / 0.1), 0 8px 10px -6px rgb(from var(--color-additional-950) r g b / 0.1)",
         "2xl": "0 10px 50px 0 rgb(from var(--color-additional-950) r g b / 0.25)",
-        "inner": "inset 0 2px 4px 0 rgb(from var(--color-additional-950) r g b / 0.05)",
+        inner: "inset 0 2px 4px 0 rgb(from var(--color-additional-950) r g b / 0.05)",
       },
 
       maxHeight: {

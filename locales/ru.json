@@ -1374,10 +1374,10 @@
       "variations_total_label": "Всего в корзине:",
       "view_cart_button": "В корзину",
       "recommended_products": {
-        "related-products_section_title": "Сопутствующие товары",
+        "related-products_section_title": "Рекомендуем для вас",
         "bought-together_section_title": "Также покупают вместе"
       },
-      "related_product_section_title": "Связанные товары",
+      "related_product_section_title": "Сопутствующие товары",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {

@@ -1,5 +1,5 @@
 import { VcAlert } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const COLORS = ["info", "success", "warning", "danger"];
 const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];

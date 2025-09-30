@@ -20,11 +20,16 @@
     },
     "accessibility": {
       "close_alert": "关闭提醒",
+      "open_calendar": "打开日历",
       "product_quantity": "产品数量",
       "decrease_quantity": "减少数量",
       "increase_quantity": "增加数量",
       "variant_picker_group": "商品变体选项",
       "show_more_button": "查看更多选项（{count}）"
+    },
+    "date_selector": {
+      "min_date_error": "日期必须在{min}或之后",
+      "max_date_error": "日期必须在{max}或之前"
     },
     "labels": {
       "not_available": "不可用",
