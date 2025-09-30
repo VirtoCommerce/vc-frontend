@@ -1,4 +1,3 @@
-import { languageTagRegexPattern } from "@/core/utilities/localization";
 import { ROUTES } from "@/router/routes/constants";
 import { accountRoutes } from "./account";
 import { cartRoutes } from "./cart";
@@ -32,7 +31,7 @@ const Matcher = () => import("@/pages/matcher/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
   {
-    path: "/:locale(" + languageTagRegexPattern + ")?",
+    path: "/:locale?",
     children: [
       {
         path: "auth/callback",

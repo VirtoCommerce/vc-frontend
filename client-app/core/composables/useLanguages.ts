@@ -3,7 +3,6 @@ import { merge } from "lodash";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { setLocale as setLocaleForYup } from "yup";
-import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import { updateRouteWithLocale, tryShortLocale } from "../utilities/localization";
 import { useThemeContext } from "./useThemeContext";
@@ -69,13 +68,12 @@ export function useLanguages() {
   const { contactCultureName } = useUser();
   const router = useRouter();
 
-  async function resolveLocale(localeOrCultureNameFromRoute: string | undefined, routerInstance?: Router) {
+  function resolveLocale(localeOrCultureNameFromRoute: string | undefined) {
     if (localeOrCultureNameFromRoute) {
       if (isCultureSupported(localeOrCultureNameFromRoute) || isLocaleSupported(localeOrCultureNameFromRoute)) {
         return localeOrCultureNameFromRoute;
       }
-      console.log("redirecting to 404", routerInstance);
-      await routerInstance?.replace({ name: ROUTES.NOT_FOUND.NAME });
+
       return defaultStoreCulture.value;
     }
 
@@ -102,7 +100,7 @@ export function useLanguages() {
     const maybeShortLocale = tryShortLocale(localeOrCultureName, supportedLanguages.value);
 
     if (!isDefaultLanguageInUse.value) {
-      void addLocaleToUrl(maybeShortLocale, routerInstance);
+      void changeLocaleInUrl(maybeShortLocale, routerInstance);
     } else {
       void removeLocaleFromUrl(routerInstance);
     }
@@ -130,12 +128,15 @@ export function useLanguages() {
   }
 
   async function removeLocaleFromUrl(routerInstance?: Router) {
-    const currentRouter = routerInstance ?? router;
-    await currentRouter?.replace(updateRouteWithLocale(currentRouter?.currentRoute?.value, ""));
+    await changeLocaleInUrl("", routerInstance);
   }
 
-  async function addLocaleToUrl(locale: string, routerInstance?: Router) {
+  async function changeLocaleInUrl(locale: string, routerInstance?: Router) {
     const currentRouter = routerInstance ?? router;
+    if (currentRouter?.currentRoute?.value.params.locale === locale) {
+      return;
+    }
+
     await currentRouter?.replace(updateRouteWithLocale(currentRouter?.currentRoute?.value, locale));
   }
 
@@ -161,7 +162,10 @@ export function useLanguages() {
     pinLocale,
     unpinLocale,
     removeLocaleFromUrl,
+    changeLocaleInUrl,
     resolveLocale,
     mergeLocales,
+    isLocaleSupported,
+    isCultureSupported,
   };
 }

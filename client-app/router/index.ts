@@ -1,5 +1,6 @@
 import { createRouter as _createRouter, createWebHistory } from "vue-router";
 import { useThemeContext } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { buildRedirectUrl, getReturnUrlValue } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
@@ -10,6 +11,7 @@ export function createRouter(options: { base?: string } = {}) {
   const { base } = options;
   const { isAuthenticated, organization } = useUser();
   const { themeContext } = useThemeContext();
+  const { isLocaleSupported, isCultureSupported } = useLanguages();
 
   const router = _createRouter({
     routes: mainRoutes,
@@ -23,7 +25,7 @@ export function createRouter(options: { base?: string } = {}) {
     },
   });
 
-  router.beforeEach((to, _, next) => {
+  router.beforeEach((to) => {
     // Protecting routes
     const unauthorizedAccessIsDenied: boolean =
       !isAuthenticated.value &&
@@ -34,15 +36,15 @@ export function createRouter(options: { base?: string } = {}) {
       // save current location to return to it after sign in
       const query = buildRedirectUrl(to) || {};
 
-      return next({
+      return {
         name: ROUTES.SIGN_IN.NAME,
         query,
-      });
+      };
     }
 
     // Protecting company routes
     if (to.meta.requiresOrganization && !organization.value) {
-      return next({ name: "Account" });
+      return { name: "Account" };
     }
 
     // Make Dashboard the default Home page for authorized users
@@ -59,10 +61,23 @@ export function createRouter(options: { base?: string } = {}) {
       ).includes(to.name)
     ) {
       const returnUrl = getReturnUrlValue() || { name: ROUTES.CATALOG.NAME };
-      return next(returnUrl);
+      return returnUrl;
     }
 
-    return next();
+    return true;
+  });
+
+  router.beforeResolve((to) => {
+    const localeOrCultureName = to.params.locale as string;
+    if (!localeOrCultureName) {
+      return true;
+    }
+
+    if (!isLocaleSupported(localeOrCultureName) && !isCultureSupported(localeOrCultureName)) {
+      return { name: ROUTES.NOT_FOUND.NAME };
+    }
+
+    return true;
   });
 
   return router;

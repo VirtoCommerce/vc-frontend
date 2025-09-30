@@ -62,11 +62,12 @@
 import { useRouter } from "vue-router";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { languageToCountryMap } from "@/core/constants";
+import { tryShortLocale } from "@/core/utilities/localization";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { getFlagIconUrl } from "@/ui-kit/utilities";
 import type { ILanguage } from "@/core/types";
 
-const { pinnedLocale, supportedLanguages, pinLocale, removeLocaleFromUrl, currentLanguage } = useLanguages();
+const { pinnedLocale, supportedLanguages, pinLocale, changeLocaleInUrl, currentLanguage } = useLanguages();
 const broadcast = useBroadcast();
 const router = useRouter();
 
@@ -74,7 +75,8 @@ async function select(locale: string) {
   if (locale !== pinnedLocale.value) {
     pinLocale(locale);
 
-    await removeLocaleFromUrl(router);
+    const maybeShortLocale = tryShortLocale(locale, supportedLanguages.value);
+    await changeLocaleInUrl(maybeShortLocale, router);
 
     void broadcast.emit(dataChangedEvent);
 
