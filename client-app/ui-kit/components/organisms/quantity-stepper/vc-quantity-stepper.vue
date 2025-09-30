@@ -27,7 +27,8 @@
       }"
       :data-test-id="testIdInput"
       @blur="normalize"
-      @keydown="handleKeyDown"
+      @keydown.up.prevent="() => handleArrowKey('increment')"
+      @keydown.down.prevent="() => handleArrowKey('decrement')"
     >
       <template v-if="!readonly" #prepend>
         <VcButton
@@ -182,14 +183,14 @@ function normalize() {
   }
 }
 
-function handleKeyDown(event: KeyboardEvent) {
-  if (event.key !== "ArrowUp" && event.key !== "ArrowDown") {
+function handleArrowKey(direction: "increment" | "decrement") {
+  if (props.readonly || props.disabled) {
     return;
   }
 
-  event.preventDefault();
+  const isDisabled = direction === "increment" ? isIncrementDisabled.value : isDecrementDisabled.value;
 
-  if (props.readonly || props.disabled) {
+  if (isDisabled) {
     return;
   }
 
@@ -198,11 +199,9 @@ function handleKeyDown(event: KeyboardEvent) {
     return;
   }
 
-  if (event.key === "ArrowUp" && !isIncrementDisabled.value) {
+  if (direction === "increment") {
     handleIncrement();
-  }
-
-  if (event.key === "ArrowDown" && !isDecrementDisabled.value) {
+  } else {
     handleDecrement();
   }
 }
