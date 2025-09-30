@@ -102,7 +102,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const lastNonEmptyValue = ref<number | undefined>(undefined);
 const min = computed(() => props.min ?? (props.allowZero ? 0 : 1));
 
-const vcInputRef = useTemplateRef("vcInputRef");
+const vcInputRef = useTemplateRef<{ inputElement: HTMLInputElement | undefined }>("vcInputRef");
 
 const model = defineModel<IProps["value"]>();
 
@@ -176,7 +176,7 @@ function normalize() {
     update(lastNonEmptyValue.value);
   }
 
-  if (model.value === 0 && vcInputRef?.value?.inputElement) {
+  if (model.value === 0 && vcInputRef.value?.inputElement) {
     vcInputRef.value.inputElement.value = "0";
   }
 }
