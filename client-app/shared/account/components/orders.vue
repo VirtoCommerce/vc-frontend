@@ -57,12 +57,7 @@
         </VcTabSwitch>
       </div>
 
-      <!-- Page Toolbar -->
-      <PageToolbarBlock
-        :stick="false"
-        class="flex grow flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5"
-        shadow
-      >
+      <div class="flex grow flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5">
         <div class="relative">
           <VcButton
             ref="filtersButtonElement"
@@ -124,7 +119,7 @@
             </template>
           </VcInput>
         </div>
-      </PageToolbarBlock>
+      </div>
     </div>
 
     <!-- Filters chips -->
@@ -188,7 +183,6 @@
       :hide-default-footer="!withPagination"
       :description="$t('pages.account.orders.meta.table_description')"
       mobile-breakpoint="lg"
-      @item-click="goToOrderDetails"
       @header-click="applySorting"
       @page-changed="changePage"
     >
@@ -370,7 +364,6 @@ import DateFilterSelect from "./date-filter-select.vue";
 import MobileOrdersFilter from "./mobile-orders-filter.vue";
 import OrderStatus from "./order-status.vue";
 import OrdersFilter from "./orders-filter.vue";
-import PageToolbarBlock from "./page-toolbar-block.vue";
 import type { OrderScopeType, OrdersFilterChipsItemType } from "../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { DateFilterType, ISortInfo } from "@/core/types";
