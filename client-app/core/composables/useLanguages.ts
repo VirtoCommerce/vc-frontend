@@ -23,6 +23,16 @@ const defaultStoreCulture = computed(() => defaultStoreLanguage.value.cultureNam
 
 const supportedLanguages = computed(() => themeContext.value.availableLanguages);
 const supportedLocales = computed(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
+const supportedLocalesWithShortAliases = computed(() =>
+  supportedLanguages.value.reduce((acc, item) => {
+    acc.push(item.cultureName);
+    const maybeShortLocale = tryShortLocale(item.cultureName, supportedLanguages.value);
+    if (maybeShortLocale !== item.cultureName) {
+      acc.push(maybeShortLocale);
+    }
+    return acc;
+  }, [] as string[]),
+);
 const supportedCultures = computed(() => supportedLanguages.value.map((item) => item.cultureName));
 
 const isDefaultLanguageInUse = computed(() => {
@@ -145,6 +155,7 @@ export function useLanguages() {
     defaultLanguage: defaultStoreLanguage,
     supportedLanguages,
     supportedLocales,
+    supportedLocalesWithShortAliases,
     currentLanguage: computed({
       get() {
         return currentLanguage.value || defaultStoreLanguage.value;

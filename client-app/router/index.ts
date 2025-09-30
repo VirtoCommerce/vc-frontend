@@ -1,20 +1,18 @@
 import { createRouter as _createRouter, createWebHistory } from "vue-router";
 import { useThemeContext } from "@/core/composables";
-import { useLanguages } from "@/core/composables/useLanguages";
 import { buildRedirectUrl, getReturnUrlValue } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
-import { mainRoutes } from "./routes";
+import { getMainRoutes } from "./routes";
 import type { RouteRecordName } from "vue-router";
 
-export function createRouter(options: { base?: string } = {}) {
-  const { base } = options;
+export function createRouter(options: { base?: string; supportedLocales?: string[] } = {}) {
+  const { base, supportedLocales = [] } = options;
   const { isAuthenticated, organization } = useUser();
   const { themeContext } = useThemeContext();
-  const { isLocaleSupported, isCultureSupported } = useLanguages();
 
   const router = _createRouter({
-    routes: mainRoutes,
+    routes: getMainRoutes(supportedLocales),
     history: createWebHistory(base),
     scrollBehavior(to, from, savedPosition) {
       if (to.path !== from.path) {
@@ -62,19 +60,6 @@ export function createRouter(options: { base?: string } = {}) {
     ) {
       const returnUrl = getReturnUrlValue() || { name: ROUTES.CATALOG.NAME };
       return returnUrl;
-    }
-
-    return true;
-  });
-
-  router.beforeResolve((to) => {
-    const localeOrCultureName = to.params.locale as string;
-    if (!localeOrCultureName) {
-      return true;
-    }
-
-    if (!isLocaleSupported(localeOrCultureName) && !isCultureSupported(localeOrCultureName)) {
-      return { name: ROUTES.NOT_FOUND.NAME };
     }
 
     return true;

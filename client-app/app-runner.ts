@@ -68,7 +68,14 @@ export default async () => {
 
   const { fetchUser, user, isAuthenticated } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
-  const { resolveLocale, currentLanguage, initLocale, fetchLocaleMessages, mergeLocales } = useLanguages();
+  const {
+    resolveLocale,
+    currentLanguage,
+    initLocale,
+    fetchLocaleMessages,
+    mergeLocales,
+    supportedLocalesWithShortAliases,
+  } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
@@ -98,7 +105,7 @@ export default async () => {
   /**
    * Creating plugin instances
    */
-  const router = createRouter();
+  const router = createRouter({ supportedLocales: supportedLocalesWithShortAliases.value });
   app.use(router);
   await router.isReady();
 
