@@ -27,6 +27,7 @@
       }"
       :data-test-id="testIdInput"
       @blur="normalize"
+      @keydown="handleKeyDown"
     >
       <template v-if="!readonly" #prepend>
         <VcButton
@@ -178,6 +179,31 @@ function normalize() {
 
   if (model.value === 0 && vcInputRef.value?.inputElement) {
     vcInputRef.value.inputElement.value = "0";
+  }
+}
+
+function handleKeyDown(event: KeyboardEvent) {
+  if (event.key !== "ArrowUp" && event.key !== "ArrowDown") {
+    return;
+  }
+
+  event.preventDefault();
+
+  if (props.readonly || props.disabled) {
+    return;
+  }
+
+  if (model.value === undefined) {
+    model.value = min.value;
+    return;
+  }
+
+  if (event.key === "ArrowUp" && !isIncrementDisabled.value) {
+    handleIncrement();
+  }
+
+  if (event.key === "ArrowDown" && !isDecrementDisabled.value) {
+    handleDecrement();
   }
 }
 

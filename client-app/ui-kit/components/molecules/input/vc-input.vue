@@ -204,7 +204,7 @@ function clear() {
 // Workaround to fix Safari bug
 function keyDown(event: KeyboardEvent) {
   if (props.type === "number") {
-    const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight)/;
+    const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight|ArrowUp|ArrowDown)/;
     if (!allowedCharacter.test(event.key)) {
       event.preventDefault();
     }
