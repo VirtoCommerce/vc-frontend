@@ -96,6 +96,7 @@ const props = withDefaults(defineProps<IProps>(), {
   max: Number.MAX_SAFE_INTEGER,
   size: "sm",
   allowZero: true,
+  buttonsColor: "primary",
 });
 
 const lastNonEmptyValue = ref<number | undefined>(undefined);

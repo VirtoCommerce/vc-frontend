@@ -30,7 +30,6 @@
         v-for="list in lists"
         :key="list.id"
         :list="list"
-        @set-scope="setScope(list.id, $event)"
         @settings="openListSettingsModal(list)"
         @remove="openDeleteListModal(list)"
       />
@@ -61,12 +60,12 @@ import {
   WishlistCard,
   WishlistCardSkeleton,
 } from "@/shared/wishlists";
-import type { WishlistScopeType, WishlistType } from "@/core/api/graphql/types";
+import type { WishlistType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const { openModal } = useModal();
-const { loading, lists, fetchWishlists, updateWishlist } = useWishlists();
+const { loading, lists, fetchWishlists } = useWishlists();
 
 usePageHead({
   title: t("pages.account.lists.meta.title"),
@@ -104,10 +103,6 @@ function openDeleteListModal(list: WishlistType) {
       list,
     },
   });
-}
-
-function setScope(listId: string, scope: WishlistScopeType) {
-  void updateWishlist({ listId, scope });
 }
 
 void fetchWishlists();

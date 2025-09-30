@@ -1,5 +1,6 @@
 import { VcBadge } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import VcIcon from "../icon/vc-icon.vue";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger"];
@@ -80,7 +81,7 @@ Truncate.args = {
 };
 
 export const WithIcon: StoryFn = (args) => ({
-  components: { VcBadge },
+  components: { VcBadge, VcIcon },
   setup: () => ({ args }),
   template: `<VcBadge v-bind="args">
     <VcIcon name="round-check" />
@@ -89,7 +90,7 @@ export const WithIcon: StoryFn = (args) => ({
 });
 
 export const WithIcons: StoryFn = (args) => ({
-  components: { VcBadge },
+  components: { VcBadge, VcIcon },
   setup: () => ({ args }),
   template: `<VcBadge v-bind="args">
     <VcIcon name="round-check" />
@@ -99,7 +100,7 @@ export const WithIcons: StoryFn = (args) => ({
 });
 
 export const OnlyIcon: StoryFn = (args) => ({
-  components: { VcBadge },
+  components: { VcBadge, VcIcon },
   setup: () => ({ args }),
   template: `<VcBadge v-bind="args">
     <VcIcon name="fire" />
@@ -115,7 +116,7 @@ export const Dot: StoryFn = () => ({
 });
 
 export const AllStates: StoryFn = () => ({
-  components: { VcBadge },
+  components: { VcBadge, VcIcon },
   setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
   template: `<div class="space-y-6">
     <div v-for="size in sizes" class="space-y-6">
