@@ -1,5 +1,5 @@
 import { VcTabSwitch } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["sm", "md"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "accent", "warning", "danger"];

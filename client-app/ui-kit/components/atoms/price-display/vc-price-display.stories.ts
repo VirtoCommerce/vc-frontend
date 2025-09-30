@@ -1,6 +1,6 @@
 import { getMoney } from "@/ui-kit/mocks";
 import { VcPriceDisplay } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 export default {
   title: "Components/Atoms/VcPriceDisplay",

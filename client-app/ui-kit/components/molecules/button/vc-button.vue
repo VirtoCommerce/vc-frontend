@@ -111,7 +111,6 @@ const props = withDefaults(defineProps<IProps>(), {
 const inputContext = inject<VcInputContextType | null>("inputContext", null);
 const dialogContext = inject(vcDialogKey, { size: ref("md") });
 
-
 const _size = computed(() => {
   if (props.size) {
     return props.size;

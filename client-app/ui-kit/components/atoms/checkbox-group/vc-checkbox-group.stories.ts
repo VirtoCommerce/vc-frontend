@@ -1,5 +1,5 @@
 import { VcCheckbox, VcCheckboxGroup } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 export default {
   title: "Components/Atoms/VcCheckboxGroup",
