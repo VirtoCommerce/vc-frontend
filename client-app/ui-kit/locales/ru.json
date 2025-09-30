@@ -20,11 +20,16 @@
     },
     "accessibility": {
       "close_alert": "Закрыть уведомление",
+      "open_calendar": "Открыть календарь",
       "product_quantity": "Количество товара",
       "decrease_quantity": "Уменьшить количество",
       "increase_quantity": "Увеличить количество",
       "variant_picker_group": "Варианты товара",
       "show_more_button": "Показать ещё варианты ({count})"
+    },
+    "date_selector": {
+      "min_date_error": "Дата должна быть не ранее {min}",
+      "max_date_error": "Дата должна быть не позднее {max}"
     },
     "labels": {
       "not_available": "Н/Д",

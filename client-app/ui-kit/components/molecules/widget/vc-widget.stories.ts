@@ -1,5 +1,6 @@
 import { VcWidget } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import { VcIcon } from "../../atoms";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md", "lg"];
 
@@ -69,7 +70,7 @@ Collapsed.args = {
 };
 
 export const CollapsibleCustomIcon: StoryFn = (args) => ({
-  components: { VcWidget },
+  components: { VcWidget, VcIcon },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
     Widget text
@@ -85,7 +86,7 @@ CollapsibleCustomIcon.args = {
 };
 
 export const PrependSlot: StoryFn = (args) => ({
-  components: { VcWidget },
+  components: { VcWidget, VcIcon },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
     <template #prepend>
@@ -118,7 +119,7 @@ AppendSlot.args = {
 };
 
 export const HeaderSlot: StoryFn = (args) => ({
-  components: { VcWidget },
+  components: { VcWidget, VcIcon },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
     <template #header>Header text</template>

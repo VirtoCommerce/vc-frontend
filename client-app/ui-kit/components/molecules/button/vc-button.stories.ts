@@ -1,6 +1,6 @@
 import { VcButton } from "..";
 import { VcIcon } from "../../atoms";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xxs", "xs", "sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
@@ -150,7 +150,39 @@ Link.args = {
 export const ExternalLink = Template.bind({});
 ExternalLink.args = {
   externalLink: "https://virtocommerce.com",
+  target: "_blank",
 };
+
+export const RouterNavigation: StoryFn = () => ({
+  components: { VcButton },
+  setup: () => ({}),
+  template: `
+    <div class="space-y-4 p-6">
+      <h2 class="text-xl font-bold">Router Navigation Test</h2>
+      <p class="text-gray-600">Click the buttons below to test navigation:</p>
+
+      <div class="flex flex-wrap gap-3">
+        <VcButton to="/some/link" color="secondary" variant="outline">
+          Some Link
+        </VcButton>
+        <VcButton to="/catalog" color="info" variant="solid">
+          Catalog
+        </VcButton>
+        <VcButton to="/product/123" color="success" variant="outline">
+          Product #123
+        </VcButton>
+        <VcButton to="/nonexistent" color="warning" variant="solid">
+          Non-existent Page
+        </VcButton>
+      </div>
+
+      <div class="mt-6 p-4 bg-gray-100 rounded">
+        <h3 class="font-semibold mb-2">Current URL:</h3>
+        <code class="text-sm">{{ $route.path }}</code>
+      </div>
+    </div>
+  `,
+});
 
 export const Loading = Template.bind({});
 Loading.args = {

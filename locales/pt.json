@@ -897,7 +897,16 @@
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Lista privada",
-        "make_shared": "Tornar compartilhada"
+        "make_shared": "Tornar compartilhada",
+        "sharing_scope_label": "Opções de compartilhamento",
+        "sharing_scope_placeholder": "Por favor, selecione uma opção",
+        "sharing_link_label": "Link",
+        "sharing_scope": {
+          "Private": "Privado",
+          "Organization": "Organização",
+          "AnyoneAnonymous": "Qualquer pessoa (somente leitura)"
+        },
+        "clipboard_success": "Link copiado"
       },
       "delete_wishlist_modal": {
         "title": "Confirmar Exclusão",
@@ -913,7 +922,8 @@
       },
       "status": {
         "shared": "Compartilhada",
-        "private": "Privada"
+        "private": "Privada",
+        "shared_with_me": "Compartilhado comigo"
       }
     },
     "sorting": {
@@ -1361,13 +1371,13 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku copiado com sucesso",
-      "variations_total_label": "Total no seu carrinho:",
+      "variations_total_label": "Total no carrinho:",
       "view_cart_button": "Ver carrinho",
       "recommended_products": {
-        "related-products_section_title": "Produtos relacionados a este item",
+        "related-products_section_title": "Recomendado para você",
         "bought-together_section_title": "Clientes compraram juntos"
       },
-      "related_product_section_title": "Produtos relacionados",
+      "related_product_section_title": "Produtos relacionados a este item",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {

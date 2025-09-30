@@ -1,6 +1,6 @@
 import { getMoney } from "@/ui-kit/mocks";
 import { VcLineItemPrice } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 export default {
   title: "Components/Molecules/VcLineItemPrice",

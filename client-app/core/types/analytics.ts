@@ -29,12 +29,16 @@ export interface IBasicAnalyticsEventMap {
 
 export type AnalyticsEventMapType = keyof ICustomAnalyticsEventMap extends never
   ? IBasicAnalyticsEventMap
-  :  
-    Omit<IBasicAnalyticsEventMap, keyof ICustomAnalyticsEventMap> & ICustomAnalyticsEventMap;
+  : Omit<IBasicAnalyticsEventMap, keyof ICustomAnalyticsEventMap> & ICustomAnalyticsEventMap;
 
 export type AnalyticsEventNameType = keyof AnalyticsEventMapType;
 
-export type AddToCartParamsAdditionalType = { source_route?: string; source_block?: string; search_terms?: string };
+export type AddToCartParamsAdditionalType = {
+  source_route?: string;
+  source_block?: string;
+  search_terms?: string;
+  search_term?: string;
+};
 export type LoginParamsAdditionalType = { errors?: string; success?: boolean };
 export type SignUpParamsAdditionalType = { type?: string; errors?: string; success?: boolean };
 export type ViewSearchResultsParamsAdditionalType = {

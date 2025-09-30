@@ -1,6 +1,6 @@
 import { VcDropdownMenu, VcMenuItem } from "..";
 import { VcIcon } from "../../atoms";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 export default {
   title: "Components/Molecules/VcDropdownMenu",

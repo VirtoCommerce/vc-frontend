@@ -62,14 +62,7 @@
       </template>
     </VcPopupSidebar>
 
-    <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
-
-    <!-- Page Toolbar -->
-    <PageToolbarBlock
-      :stick="stickyMobileHeaderIsVisible"
-      class="-my-3.5 flex flex-row items-center gap-x-2 py-3.5 lg:flex-row-reverse lg:gap-x-5"
-      shadow
-    >
+    <div class="flex flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5">
       <div class="relative">
         <VcButton
           ref="filtersButtonElement"
@@ -180,7 +173,7 @@
           </template>
         </VcInput>
       </div>
-    </PageToolbarBlock>
+    </div>
 
     <!-- Filters chips -->
     <div v-if="numberOfFacetsApplied" class="hidden flex-wrap gap-x-3 gap-y-2 lg:flex">
@@ -352,7 +345,7 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, computedEager, onClickOutside, useBreakpoints, useElementVisibility } from "@vueuse/core";
+import { breakpointsTailwind, computedEager, onClickOutside, useBreakpoints } from "@vueuse/core";
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
@@ -361,7 +354,7 @@ import { B2B_ROLES } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
-import { PageToolbarBlock, useUser } from "@/shared/account";
+import { useUser } from "@/shared/account";
 import { FacetItem } from "@/shared/common";
 import {
   EditCustomerRoleModal,
@@ -429,10 +422,6 @@ const localKeyword = ref("");
 const filtersVisible = ref(false);
 const filtersButtonElement = shallowRef<HTMLElement | null>(null);
 const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
-
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
-const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
 
@@ -612,7 +601,7 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
         } else {
           notifications.error({
             ...notification,
-            // eslint-disable-next-line @typescript-eslint/no-base-to-string
+
             text: t("common.messages.role_update_failed", [result?.errors?.join(" ")]),
           });
         }
