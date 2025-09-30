@@ -1,12 +1,14 @@
-import { setup } from "@storybook/vue3";
-import { vueRouter } from "storybook-vue3-router";
+import { setup } from "@storybook/vue3-vite";
+import { useThemeContext } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
+import { createStorybookRouter } from "./router";
+import type { StoreResponseType } from "../client-app/core/api/graphql/types";
 import type { IThemeConfigPreset } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
-import type { Preview } from "@storybook/vue3";
+import type { Preview } from "@storybook/vue3-vite";
 
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
@@ -15,8 +17,61 @@ const DEFAULT_LOCALE = "en";
 const DEFAULT_CURRENCY = "USD";
 
 const i18n: I18n = createI18n(DEFAULT_LOCALE, DEFAULT_CURRENCY);
+const router = createStorybookRouter();
 
-setGlobals({ i18n });
+// Remove this after refactoring the VcImage component
+const { setThemeContext } = useThemeContext();
+setThemeContext({
+  storeId: "storybook",
+  storeName: "Storybook",
+  catalogId: "storybook",
+  storeUrl: "https://storybook.example.com",
+  defaultLanguage: {
+    twoLetterLanguageName: "en",
+    threeLetterLanguageName: "eng",
+    cultureName: "en-US",
+    nativeName: "English",
+    twoLetterRegionName: "US",
+    threeLetterRegionName: "USA",
+    isInvariant: false,
+  },
+  defaultCurrency: {
+    code: "USD",
+    symbol: "$",
+    cultureName: "en-US",
+    englishName: "US Dollar",
+    exchangeRate: 1,
+    isInvariant: false,
+  },
+  availableLanguages: [],
+  availableCurrencies: [],
+  graphQLSettings: { keepAliveInterval: 30 },
+  settings: {
+    image_thumbnails_enabled: true,
+    image_thumbnails_suffixes: { sm: "sm", md: "md", lg: "lg" },
+    anonymousUsersAllowed: true,
+    modules: [],
+    authenticationTypes: [],
+    createAnonymousOrderEnabled: true,
+    defaultSelectedForCheckout: true,
+    emailVerificationEnabled: false,
+    emailVerificationRequired: false,
+    environmentName: "storybook",
+    passwordRequirements: {
+      requireLowercase: false,
+      requireUppercase: false,
+      requireDigit: false,
+      requiredLength: 6,
+      requiredUniqueChars: 0,
+      requireNonAlphanumeric: false,
+    },
+    seoLinkType: "short",
+    subscriptionEnabled: false,
+    taxCalculationEnabled: false,
+    isSpa: true,
+    quotesEnabled: false,
+  },
+} as StoreResponseType);
 
 async function configureThemeSettings() {
   const module = (await import(`@/assets/presets/default.json`)) as {
@@ -39,17 +94,31 @@ function configureI18N() {
   i18n.global.setLocaleMessage(DEFAULT_LOCALE, UI_KIT_DEFAULT_MESSAGE);
 }
 
-setup(async (app) => {
-  await configureThemeSettings();
-  configureI18N();
+setGlobals({ i18n });
 
-  app.use(i18n);
-  app.use(uiKit);
+setup((app) => {
+  if (!app || typeof app.use !== "function") {
+    return;
+  }
+
+  try {
+    app.use(router);
+    app.use(i18n);
+    app.use(uiKit);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("Storybook Vue setup error:", error);
+  }
+
+  configureThemeSettings().catch(() => {
+    // eslint-disable-next-line no-console
+    console.error("Storybook theme setup error:");
+  });
+
+  configureI18N();
 });
 
 const preview: Preview = {
-  decorators: [vueRouter()],
-
   parameters: {
     controls: {
       matchers: {
@@ -64,7 +133,6 @@ const preview: Preview = {
       },
     },
   },
-
   tags: ["autodocs"],
 };
 

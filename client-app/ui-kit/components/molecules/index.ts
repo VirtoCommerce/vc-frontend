@@ -6,6 +6,7 @@ export { default as VcChip } from "./chip/vc-chip.vue";
 export { default as VcCollapsibleContent } from "./collapsible-content/vc-collapsible-content.vue";
 export { default as VcCompositeShape } from "./composite-shape/vc-composite-shape.vue";
 export { default as VcCopyText } from "./copy-text/vc-copy-text.vue";
+export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue";
 export { default as VcDialogContent } from "./dialog-content/vc-dialog-content.vue";
 export { default as VcDialogFooter } from "./dialog-footer/vc-dialog-footer.vue";
 export { default as VcDialogHeader } from "./dialog-header/vc-dialog-header.vue";

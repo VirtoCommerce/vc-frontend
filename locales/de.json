@@ -1374,10 +1374,10 @@
       "variations_total_label": "Im Warenkorb insgesamt:",
       "view_cart_button": "Warenkorb ansehen",
       "recommended_products": {
-        "related-products_section_title": "Produkte, die mit diesem Artikel verwandt sind",
+        "related-products_section_title": "Empfohlen für Sie",
         "bought-together_section_title": "Kunden kauften zusammen"
       },
-      "related_product_section_title": "Verwandte Produkte",
+      "related_product_section_title": "Produkte, die mit diesem Artikel verwandt sind",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {

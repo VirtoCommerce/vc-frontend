@@ -1,10 +1,5 @@
 <template>
-  <div
-:class="[
-    'vc-dialog-header',
-    `vc-dialog-header--color--${color}`,
-    `vc-dialog-header--size--${sizeStr}`,
-  ]">
+  <div :class="['vc-dialog-header', `vc-dialog-header--color--${color}`, `vc-dialog-header--size--${sizeStr}`]">
     <slot name="main">
       <div class="vc-dialog-header__main">
         <div v-if="icon" class="vc-dialog-header__icon">
@@ -99,7 +94,6 @@ const sizeStr = computed(() => props.size ?? dialogContext.size.value);
   }
 
   &__icon {
-
     @apply flex-none flex items-center justify-center size-[--icon-size] bg-[--icon-bg-color] rounded-full;
   }
 

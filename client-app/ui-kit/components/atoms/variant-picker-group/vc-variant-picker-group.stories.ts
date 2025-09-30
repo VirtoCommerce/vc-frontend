@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { VcVariantPickerGroup } from "..";
 import { VcVariantPicker } from "../../molecules";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 export default {
   title: "Components/Atoms/VcVariantPickerGroup",

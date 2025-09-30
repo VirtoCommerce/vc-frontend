@@ -1374,10 +1374,10 @@
       "variations_total_label": "您的购物车中的总计：",
       "view_cart_button": "查看购物车",
       "recommended_products": {
-        "related-products_section_title": "与此商品相关的产品",
+        "related-products_section_title": "为您推荐",
         "bought-together_section_title": "顾客一起购买的产品"
       },
-      "related_product_section_title": "相关产品",
+      "related_product_section_title": "与此商品相关的产品",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {
