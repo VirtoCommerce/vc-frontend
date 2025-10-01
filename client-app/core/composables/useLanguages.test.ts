@@ -193,9 +193,9 @@ describe("useLanguages", () => {
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
       languages.removeLocaleFromUrl();
-      expect(window.location.pathname).toBe("/cart");
-      expect(window.location.search).toBe("?x=1");
-      expect(window.location.hash).toBe("#sec");
+      expect(location.pathname).toBe("/cart");
+      expect(location.search).toBe("?x=1");
+      expect(location.hash).toBe("#sec");
     });
 
     it("removeLocaleFromUrl strips full locale prefix and preserves query/hash", async () => {
@@ -203,9 +203,9 @@ describe("useLanguages", () => {
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
       languages.removeLocaleFromUrl();
-      expect(window.location.pathname).toBe("/cart");
-      expect(window.location.search).toBe("?x=1");
-      expect(window.location.hash).toBe("#sec");
+      expect(location.pathname).toBe("/cart");
+      expect(location.search).toBe("?x=1");
+      expect(location.hash).toBe("#sec");
     });
 
     it("removeLocaleFromUrl does nothing when no locale is present", async () => {
@@ -213,9 +213,9 @@ describe("useLanguages", () => {
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
       languages.removeLocaleFromUrl();
-      expect(window.location.pathname).toBe("/cart");
-      expect(window.location.search).toBe("?x=1");
-      expect(window.location.hash).toBe("#sec");
+      expect(location.pathname).toBe("/cart");
+      expect(location.search).toBe("?x=1");
+      expect(location.hash).toBe("#sec");
     });
 
     it("removeLocaleFromUrl does nothing when no supported locale is present", async () => {
@@ -223,9 +223,9 @@ describe("useLanguages", () => {
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
       languages.removeLocaleFromUrl();
-      expect(window.location.pathname).toBe("/ru-RU/cart");
-      expect(window.location.search).toBe("?x=1");
-      expect(window.location.hash).toBe("#sec");
+      expect(location.pathname).toBe("/ru-RU/cart");
+      expect(location.search).toBe("?x=1");
+      expect(location.hash).toBe("#sec");
     });
 
     it("updateLocalizedUrl updates URL with permalink like '/bonjour'", async () => {
@@ -233,9 +233,9 @@ describe("useLanguages", () => {
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
       languages.updateLocalizedUrl("/bonjour");
-      expect(window.location.pathname).toBe("/fr/bonjour");
-      expect(window.location.search).toBe("?x=1");
-      expect(window.location.hash).toBe("#sec");
+      expect(location.pathname).toBe("/fr/bonjour");
+      expect(location.search).toBe("?x=1");
+      expect(location.hash).toBe("#sec");
     });
 
     it("updateLocalizedUrl updates URL with permalink like 'bonjour'", async () => {
@@ -243,9 +243,9 @@ describe("useLanguages", () => {
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
       languages.updateLocalizedUrl("bonjour");
-      expect(window.location.pathname).toBe("/fr/bonjour");
-      expect(window.location.search).toBe("?x=1");
-      expect(window.location.hash).toBe("#sec");
+      expect(location.pathname).toBe("/fr/bonjour");
+      expect(location.search).toBe("?x=1");
+      expect(location.hash).toBe("#sec");
     });
 
     it("updateLocalizedUrl does nothing when permalink is falsy", async () => {
@@ -253,9 +253,9 @@ describe("useLanguages", () => {
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
       languages.updateLocalizedUrl("");
-      expect(window.location.pathname).toBe("/fr/cart");
-      expect(window.location.search).toBe("?x=1");
-      expect(window.location.hash).toBe("#sec");
+      expect(location.pathname).toBe("/fr/cart");
+      expect(location.search).toBe("?x=1");
+      expect(location.hash).toBe("#sec");
     });
   });
 
@@ -307,7 +307,7 @@ describe("useLanguages", () => {
       expect(i18n.global.locale.value).toBe("en-US");
       expect(document.documentElement.getAttribute("lang")).toBe("en-US");
       expect(setLocaleForYup).toHaveBeenCalledTimes(1);
-      expect(window.location.pathname).toBe("/cart");
+      expect(location.pathname).toBe("/cart");
     });
   });
 
