@@ -18,14 +18,10 @@ const defaultStoreCulture = computed<string>(() => defaultLanguage.value.culture
 
 const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
 const supportedLocalesWithShortAliases = computed(() =>
-  supportedLanguages.value.reduce((acc, item) => {
-    acc.push(item.cultureName);
-    const maybeShortLocale = tryShortLocale(item.cultureName, supportedLanguages.value);
-    if (maybeShortLocale !== item.cultureName) {
-      acc.push(maybeShortLocale);
-    }
-    return acc;
-  }, [] as string[]),
+  supportedLanguages.value.flatMap((language) => {
+    const shortLocale = tryShortLocale(language.cultureName, supportedLanguages.value);
+    return shortLocale !== language.cultureName ? [language.cultureName, shortLocale] : [language.cultureName];
+  }),
 );
 
 const URL_LOCALE_REGEX = computed(
@@ -44,7 +40,7 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   if (locales[path]) {
     return locales[path]();
   } else if (locale.length > 2 && locales[shortPath]) {
-    return locales[shortPath](); // try get short locale as a fallback (e.g. en-US -> en)
+    return locales[shortPath](); // try get short locale as a fallback (e.g. en-US.json -> en.json)
   }
 
   return import(`${localesPathPrefix}/en.json`);
@@ -76,7 +72,7 @@ async function initLocale(i18n: I18n, locale: string): Promise<void> {
 }
 
 function getLocaleFromUrl(): string | undefined {
-  return window.location.pathname.match(URL_LOCALE_REGEX.value)?.groups?.locale;
+  return URL_LOCALE_REGEX.value.exec(window.location.pathname)?.groups?.locale;
 }
 
 function removeLocaleFromUrl() {
@@ -89,7 +85,7 @@ function removeLocaleFromUrl() {
 }
 
 function getUrlWithoutLocale(fullPath: string): string {
-  const locale = fullPath.match(URL_LOCALE_REGEX.value)?.groups?.locale;
+  const locale = URL_LOCALE_REGEX.value.exec(fullPath)?.groups?.locale;
 
   if (locale) {
     return fullPath.replace(URL_LOCALE_REGEX.value, "/");
