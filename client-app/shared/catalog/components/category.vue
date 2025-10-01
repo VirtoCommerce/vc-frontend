@@ -220,6 +220,7 @@ import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallo
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useAnalytics, useThemeContext } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -370,6 +371,7 @@ const {
 });
 const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();
+const { updateLocalizedUrl } = useLanguages();
 
 const { selectedAddress } = useShipToLocation();
 
@@ -545,6 +547,8 @@ watch(
       }
 
       preparingScope.value = false;
+
+      updateLocalizedUrl(data?.category?.slug);
     }
   },
   { immediate: true },

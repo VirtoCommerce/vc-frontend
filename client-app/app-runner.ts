@@ -68,8 +68,14 @@ export default async () => {
 
   const { fetchUser, user, isAuthenticated } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
-  const { currentLanguage, initLocale, fetchLocaleMessages, mergeLocales, resolveLocale, currentMaybeShortLocale } =
-    useLanguages();
+  const {
+    currentLanguage,
+    initLocale,
+    fetchLocaleMessages,
+    mergeLocalesMessages,
+    resolveLocale,
+    currentMaybeShortLocale,
+  } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
@@ -155,9 +161,9 @@ export default async () => {
   app.use(configPlugin, themeContext.value);
 
   const UIKitMessages = await getUIKitLocales(FALLBACK_LOCALE, currentLanguage.value?.twoLetterLanguageName);
-  mergeLocales(i18n, currentLanguage.value?.twoLetterLanguageName, UIKitMessages.messages);
+  mergeLocalesMessages(i18n, currentLanguage.value?.twoLetterLanguageName, UIKitMessages.messages);
   if (currentLanguage.value?.twoLetterLanguageName !== FALLBACK_LOCALE) {
-    mergeLocales(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
+    mergeLocalesMessages(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
   }
   app.use(uiKit);
 

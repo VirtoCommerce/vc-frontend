@@ -138,6 +138,7 @@ import productTemplateDefault from "@/config/product-default.json";
 import productTemplateB2c from "@/config/product_b2c.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import {
   BREAKPOINTS,
@@ -243,6 +244,7 @@ const { pushHistoricalEvent } = useHistoricalEvents();
 const router = useRouter();
 const route = useRoute();
 const { cart, loading: loadingCart } = useShortCart();
+const { updateLocalizedUrl } = useLanguages();
 
 const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
   LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
@@ -439,6 +441,8 @@ watch(
       }
       await fetchProducts(variationsSearchParams.value);
     }
+
+    updateLocalizedUrl(product.value?.slug);
   },
   { immediate: true },
 );

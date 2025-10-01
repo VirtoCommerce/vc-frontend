@@ -125,7 +125,7 @@ function unpinLocale() {
   pinnedLocale.value = null;
 }
 
-function mergeLocales(i18n: I18n, locale: string, messages: LocaleMessageValue) {
+function mergeLocalesMessages(i18n: I18n, locale: string, messages: LocaleMessageValue) {
   const existingMessages = i18n.global.getLocaleMessage(locale);
 
   i18n.global.setLocaleMessage(locale, merge({}, existingMessages, messages));
@@ -156,6 +156,23 @@ export function useLanguages() {
     return defaultStoreCulture.value;
   }
 
+  function updateLocalizedUrl(permalink?: string) {
+    if (!permalink) {
+      return;
+    }
+
+    const localeFromUrl = getLocaleFromUrl();
+    const normalizedPermalink = permalink.startsWith("/") ? permalink : `/${permalink}`;
+    const permalinkWithLocale = localeFromUrl ? `/${localeFromUrl}${normalizedPermalink}` : normalizedPermalink;
+
+    console.log("permalink", permalink);
+    console.log("localeFromUrl", localeFromUrl);
+    console.log("normalizedPermalink", normalizedPermalink);
+    console.log("permalinkWithLocale", permalinkWithLocale);
+
+    window.history.pushState(window.history.state, "", `${permalinkWithLocale}${location.search}${location.hash}`);
+  }
+
   return {
     pinnedLocale,
     defaultLanguage,
@@ -172,13 +189,15 @@ export function useLanguages() {
     }),
 
     initLocale,
+    resolveLocale,
     fetchLocaleMessages,
+    mergeLocalesMessages,
 
     pinLocale,
     unpinLocale,
-    removeLocaleFromUrl,
-    mergeLocales,
-    resolveLocale,
+
     getLocaleFromUrl,
+    removeLocaleFromUrl,
+    updateLocalizedUrl,
   };
 }
