@@ -32,10 +32,28 @@ const hoisted = vi.hoisted(() => {
     threeLetterRegionName: "DEU",
   };
 
+  const ptBR: ILanguage = {
+    cultureName: "pt-BR",
+    nativeName: "Português (Brasil)",
+    threeLetterLanguageName: "por",
+    twoLetterLanguageName: "pt",
+    twoLetterRegionName: "BR",
+    threeLetterRegionName: "BRA",
+  };
+
+  const ptPT: ILanguage = {
+    cultureName: "pt-PT",
+    nativeName: "Português (Portugal)",
+    threeLetterLanguageName: "por",
+    twoLetterLanguageName: "pt",
+    twoLetterRegionName: "PT",
+    threeLetterRegionName: "PRT",
+  };
+
   const themeContext = {
     value: {
       defaultLanguage: enUS,
-      availableLanguages: [enUS, frFR, deDE],
+      availableLanguages: [enUS, frFR, deDE, ptBR, ptPT],
     },
   };
 
@@ -43,7 +61,7 @@ const hoisted = vi.hoisted(() => {
   const pinnedLocale = { value: null as string | null };
 
   return {
-    langs: { enUS, frFR, deDE },
+    langs: { enUS, frFR, deDE, ptBR, ptPT },
     state: { themeContext, contactCultureName, pinnedLocale },
   };
 });
@@ -84,7 +102,13 @@ describe("useLanguages", () => {
     // Reset default language and available languages if modified by a test
     hoisted.state.themeContext.value = {
       defaultLanguage: hoisted.langs.enUS,
-      availableLanguages: [hoisted.langs.enUS, hoisted.langs.frFR, hoisted.langs.deDE],
+      availableLanguages: [
+        hoisted.langs.enUS,
+        hoisted.langs.frFR,
+        hoisted.langs.deDE,
+        hoisted.langs.ptBR,
+        hoisted.langs.ptPT,
+      ],
     };
     document.documentElement.lang = "";
   });
@@ -232,6 +256,38 @@ describe("useLanguages", () => {
       expect(window.location.pathname).toBe("/fr/cart");
       expect(window.location.search).toBe("?x=1");
       expect(window.location.hash).toBe("#sec");
+    });
+  });
+
+  describe("URL short alias disambiguation", () => {
+    it("does not match 'pt' when both pt-BR and pt-PT are available fallback to default language", async () => {
+      navigateTo("/pt/cart");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+
+      expect(languages.getLocaleFromUrl()).toBeUndefined();
+      expect(languages.resolveLocale()).toBe("en-US");
+    });
+
+    it("matches full locales 'pt-BR' and 'pt-PT' when both are available", async () => {
+      navigateTo("/pt-BR/cart");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      expect(languages.getLocaleFromUrl()).toBe("pt-BR");
+      expect(languages.resolveLocale()).toBe("pt-BR");
+
+      navigateTo("/pt-PT/cart");
+      expect(languages.getLocaleFromUrl()).toBe("pt-PT");
+      expect(languages.resolveLocale()).toBe("pt-PT");
+    });
+
+    it("accepts 'fr' short alias when only fr-FR exists for that language", async () => {
+      navigateTo("/fr/cart");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+
+      expect(languages.getLocaleFromUrl()).toBe("fr");
+      expect(languages.resolveLocale()).toBe("fr-FR");
     });
   });
 
