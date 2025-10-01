@@ -14,11 +14,9 @@ const { themeContext } = useThemeContext();
 const pinnedLocale = useLocalStorage<string | null>("pinnedLocale", null);
 
 const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
-const defaultStoreLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
 const defaultStoreCulture = computed<string>(() => defaultLanguage.value.cultureName);
 
 const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
-const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
 const supportedLocalesWithShortAliases = computed(() =>
   supportedLanguages.value.reduce((acc, item) => {
     acc.push(item.cultureName);
@@ -37,10 +35,11 @@ const URL_LOCALE_REGEX = computed(
 const currentLanguage = ref<ILanguage>();
 
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
-  const localesPathPrefix = "../../../locales/";
-  const locales = import.meta.glob<boolean, string, LocaleMessage>(`${localesPathPrefix}/*.json`);
-  const path = `${localesPathPrefix}${locale}.json`;
-  const shortPath = `${localesPathPrefix}${locale.slice(0, 2)}.json`;
+  const localesPathPrefix = "../../../locales";
+
+  const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json"); // can't use variables in import.meta.glob
+  const path = `${localesPathPrefix}/${locale}.json`;
+  const shortPath = `${localesPathPrefix}/${locale.slice(0, 2)}.json`;
 
   if (locales[path]) {
     return locales[path]();
@@ -48,7 +47,7 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
     return locales[shortPath](); // try get short locale as a fallback (e.g. en-US -> en)
   }
 
-  return import(`${localesPathPrefix}en.json`);
+  return import(`${localesPathPrefix}/en.json`);
 }
 
 async function initLocale(i18n: I18n, locale: string): Promise<void> {
@@ -90,9 +89,9 @@ function removeLocaleFromUrl() {
 }
 
 function getUrlWithoutLocale(fullPath: string): string {
-  const locale = fullPath.match(URL_LOCALE_REGEX.value)?.[1];
+  const locale = fullPath.match(URL_LOCALE_REGEX.value)?.groups?.locale;
 
-  if (locale && isLocaleSupported(locale)) {
+  if (locale) {
     return fullPath.replace(URL_LOCALE_REGEX.value, "/");
   }
 
@@ -105,10 +104,6 @@ function pinLocale(locale: string) {
 
 function unpinLocale() {
   pinnedLocale.value = null;
-}
-
-function isLocaleSupported(locale: string): boolean {
-  return supportedLocales.value.includes(locale);
 }
 
 function mergeLocales(i18n: I18n, locale: string, messages: LocaleMessageValue) {
@@ -149,10 +144,7 @@ export function useLanguages() {
   return {
     pinnedLocale,
     defaultLanguage,
-    defaultLocale: defaultStoreLocale,
     supportedLanguages,
-    supportedLocales,
-    supportedLocalesWithShortAliases,
     currentLanguage: computed({
       get() {
         return currentLanguage.value || defaultLanguage.value;
@@ -162,6 +154,7 @@ export function useLanguages() {
         throw new Error("currentLanguage is read only.");
       },
     }),
+
     initLocale,
     fetchLocaleMessages,
 
