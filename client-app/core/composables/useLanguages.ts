@@ -13,8 +13,8 @@ const { themeContext } = useThemeContext();
 
 const pinnedLocale = useLocalStorage<string | null>("pinnedLocale", null);
 
-const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
-const defaultStoreCulture = computed<string>(() => defaultLanguage.value.cultureName);
+const defaultStoreLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
+const defaultStoreCulture = computed<string>(() => defaultStoreLanguage.value.cultureName);
 
 const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
 const supportedCultureNames = computed(() => supportedLanguages.value.map((language) => language.cultureName));
@@ -25,7 +25,7 @@ const supportedLocalesWithShortAliases = computed(() =>
   }),
 );
 
-const URL_LOCALE_REGEX = computed(
+const supportedLocalesRegex = computed(
   () => new RegExp(`^/(?<locale>${supportedLocalesWithShortAliases.value.join("|")})(/|$)`, "i"),
 );
 
@@ -82,10 +82,9 @@ async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
   });
 
   const localeFromUrl = getLocaleFromUrl();
-  const maybeShortLocale = tryShortLocale(cultureName);
-  const isDefault = defaultLanguage.value.cultureName === cultureName;
+  const isDefault = defaultStoreLanguage.value.cultureName === cultureName;
 
-  if ((localeFromUrl && maybeShortLocale !== localeFromUrl) || isDefault) {
+  if ((localeFromUrl && currentMaybeShortLocale.value !== localeFromUrl) || isDefault) {
     // remove a full locale from the url beforehand in order to avoid case like /fr-FR -> /fr/-FR (when language has short alias)
     // remove the default locale e.g. en-US from the url - /en-US/cart -> /cart
     window.history.pushState(null, "", location.href.replace(new RegExp(`/${localeFromUrl}`), ""));
@@ -95,7 +94,7 @@ async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
 }
 
 function getLocaleFromUrl(): string | undefined {
-  return URL_LOCALE_REGEX.value.exec(window.location.pathname)?.groups?.locale;
+  return supportedLocalesRegex.value.exec(window.location.pathname)?.groups?.locale;
 }
 
 function removeLocaleFromUrl() {
@@ -108,10 +107,10 @@ function removeLocaleFromUrl() {
 }
 
 function getUrlWithoutLocale(fullPath: string): string {
-  const locale = URL_LOCALE_REGEX.value.exec(fullPath)?.groups?.locale;
+  const locale = supportedLocalesRegex.value.exec(fullPath)?.groups?.locale;
 
   if (locale) {
-    return fullPath.replace(URL_LOCALE_REGEX.value, "/");
+    return fullPath.replace(supportedLocalesRegex.value, "/");
   }
 
   return fullPath;
@@ -165,22 +164,18 @@ export function useLanguages() {
     const normalizedPermalink = permalink.startsWith("/") ? permalink : `/${permalink}`;
     const permalinkWithLocale = localeFromUrl ? `/${localeFromUrl}${normalizedPermalink}` : normalizedPermalink;
 
-    console.log("permalink", permalink);
-    console.log("localeFromUrl", localeFromUrl);
-    console.log("normalizedPermalink", normalizedPermalink);
-    console.log("permalinkWithLocale", permalinkWithLocale);
-
     window.history.pushState(window.history.state, "", `${permalinkWithLocale}${location.search}${location.hash}`);
   }
 
   return {
     pinnedLocale,
-    defaultLanguage,
+    defaultStoreLanguage,
+    defaultStoreCulture,
     supportedLanguages,
     currentMaybeShortLocale,
     currentLanguage: computed({
       get() {
-        return currentLanguage.value || defaultLanguage.value;
+        return currentLanguage.value || defaultStoreLanguage.value;
       },
 
       set() {

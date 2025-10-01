@@ -70,11 +70,12 @@ export default async () => {
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
     currentLanguage,
+    currentMaybeShortLocale,
+    defaultStoreCulture,
     initLocale,
     fetchLocaleMessages,
     mergeLocalesMessages,
     resolveLocale,
-    currentMaybeShortLocale,
   } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
@@ -108,12 +109,12 @@ export default async () => {
   const head = createHead();
 
   const currentCultureName = resolveLocale();
-  const isDefault = themeContext.value.defaultLanguage.cultureName === currentCultureName;
+  const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
 
   const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback);
   await initLocale(i18n, currentCultureName);
 
-  const router = createRouter({ base: isDefault ? "" : currentMaybeShortLocale.value });
+  const router = createRouter({ base: isDefaultLocaleInUse ? "" : currentMaybeShortLocale.value });
 
   /**
    * Setting global variables
