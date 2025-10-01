@@ -68,6 +68,16 @@ async function initLocale(i18n: I18n, locale: string): Promise<void> {
     },
   });
 
+  const localeFromUrl = getLocaleFromUrl();
+  const maybeShortLocale = tryShortLocale(locale, supportedLanguages.value);
+  const isDefault = defaultLanguage.value.cultureName === locale;
+
+  if ((localeFromUrl && maybeShortLocale !== localeFromUrl) || isDefault) {
+    // remove a full locale from the url beforehand in order to avoid case like /fr-FR -> /fr/-FR (when language has short alias)
+    // remove the default locale e.g. en-US from the url - /en-US/cart -> /cart
+    window.history.pushState(null, "", location.href.replace(new RegExp(`/${localeFromUrl}`), ""));
+  }
+
   document.documentElement.setAttribute("lang", locale);
 }
 

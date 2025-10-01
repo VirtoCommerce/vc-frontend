@@ -69,15 +69,8 @@ export default async () => {
 
   const { fetchUser, user, isAuthenticated, contactCultureName } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
-  const {
-    currentLanguage,
-    initLocale,
-    fetchLocaleMessages,
-    mergeLocales,
-    resolveLocale,
-    getLocaleFromUrl,
-    supportedLanguages,
-  } = useLanguages();
+  const { currentLanguage, initLocale, fetchLocaleMessages, mergeLocales, resolveLocale, supportedLanguages } =
+    useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
@@ -109,21 +102,14 @@ export default async () => {
    */
   const head = createHead();
 
-  const localeFromUrl = getLocaleFromUrl();
-  const cultureName = resolveLocale({ urlLocale: localeFromUrl, contactLocale: contactCultureName.value });
+  const cultureName = resolveLocale({ contactLocale: contactCultureName.value });
   const maybeShortLocale = tryShortLocale(cultureName, supportedLanguages.value);
   const isDefault = themeContext.value.defaultLanguage.cultureName === cultureName;
 
-  if ((localeFromUrl && maybeShortLocale !== localeFromUrl) || isDefault) {
-    // remove a full locale e.g. fr-FR from the url in case there is a short alias like fr to avoid the url be /fr/-FR in the browser
-    // remove the default locale e.g. en-US from the url in case it is the default locale
-    window.history.pushState(null, "", location.href.replace(new RegExp(`/${localeFromUrl}`), ""));
-  }
-
-  const router = createRouter({ base: isDefault ? "" : maybeShortLocale });
-
   const i18n = createI18n(cultureName, currentCurrency.value.code, fallback);
   await initLocale(i18n, cultureName);
+
+  const router = createRouter({ base: isDefault ? "" : maybeShortLocale });
 
   /**
    * Setting global variables
