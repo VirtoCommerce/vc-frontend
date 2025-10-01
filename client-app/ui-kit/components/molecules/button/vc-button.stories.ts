@@ -210,6 +210,23 @@ Truncate.args = {
   prependIcon: "save-v2",
 };
 
+export const AllVariants: StoryFn = (args) => ({
+  components: { VcButton },
+  setup: () => ({ variants: VARIANTS, args }),
+  template: `<div class="space-y-8">
+      <div class="space-y-1" v-for="variant in variants">
+          <VcButton v-bind="args" :variant="variant">
+            {{ variant }}
+          </VcButton>
+      </div>
+  </div>
+  `,
+});
+AllVariants.args = {
+  size: "md",
+  color: "primary",
+};
+
 export const AllStates: StoryFn = () => ({
   components: { VcButton },
   setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
