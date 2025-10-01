@@ -37,9 +37,10 @@ const URL_LOCALE_REGEX = computed(
 const currentLanguage = ref<ILanguage>();
 
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
-  const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json");
-  const path = `../../../locales/${locale}.json`;
-  const shortPath = `../../../locales/${locale.slice(0, 2)}.json`;
+  const localesPathPrefix = "../../../locales/";
+  const locales = import.meta.glob<boolean, string, LocaleMessage>(`${localesPathPrefix}/*.json`);
+  const path = `${localesPathPrefix}${locale}.json`;
+  const shortPath = `${localesPathPrefix}${locale.slice(0, 2)}.json`;
 
   if (locales[path]) {
     return locales[path]();
@@ -47,19 +48,16 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
     return locales[shortPath](); // try get short locale as a fallback (e.g. en-US -> en)
   }
 
-  return import("../../../locales/en.json");
+  return import(`${localesPathPrefix}en.json`);
 }
 
 async function initLocale(i18n: I18n, locale: string): Promise<void> {
   currentLanguage.value = supportedLanguages.value.find((x) => x.cultureName === locale);
-  console.log("[useLanguages] initLocale currentLanguage", currentLanguage.value);
 
   let messages = i18n.global.getLocaleMessage(locale);
 
   if (!Object.keys(messages).length) {
-    console.log("[useLanguages] initLocale fetchLocaleMessages", locale);
     messages = await fetchLocaleMessages(locale);
-    console.log("[useLanguages] initLocale messages", messages);
     i18n.global.setLocaleMessage(locale, messages);
   }
 
