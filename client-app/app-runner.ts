@@ -35,7 +35,6 @@ import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
-import { tryShortLocale } from "./core/utilities/localization";
 import type { StoreResponseType } from "./core/api/graphql/types";
 
 // eslint-disable-next-line no-restricted-exports
@@ -67,9 +66,9 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { fetchUser, user, isAuthenticated, contactCultureName } = useUser();
+  const { fetchUser, user, isAuthenticated } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
-  const { currentLanguage, initLocale, fetchLocaleMessages, mergeLocales, resolveLocale, supportedLanguages } =
+  const { currentLanguage, initLocale, fetchLocaleMessages, mergeLocales, resolveLocale, currentMaybeShortLocale } =
     useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
@@ -102,14 +101,13 @@ export default async () => {
    */
   const head = createHead();
 
-  const cultureName = resolveLocale({ contactLocale: contactCultureName.value });
-  const maybeShortLocale = tryShortLocale(cultureName, supportedLanguages.value);
-  const isDefault = themeContext.value.defaultLanguage.cultureName === cultureName;
+  const currentCultureName = resolveLocale();
+  const isDefault = themeContext.value.defaultLanguage.cultureName === currentCultureName;
 
-  const i18n = createI18n(cultureName, currentCurrency.value.code, fallback);
-  await initLocale(i18n, cultureName);
+  const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback);
+  await initLocale(i18n, currentCultureName);
 
-  const router = createRouter({ base: isDefault ? "" : maybeShortLocale });
+  const router = createRouter({ base: isDefault ? "" : currentMaybeShortLocale.value });
 
   /**
    * Setting global variables

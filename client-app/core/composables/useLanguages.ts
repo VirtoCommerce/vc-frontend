@@ -2,7 +2,7 @@ import { useLocalStorage } from "@vueuse/core";
 import { merge } from "lodash";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
-import { tryShortLocale } from "@/core/utilities/localization";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -17,9 +17,10 @@ const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLang
 const defaultStoreCulture = computed<string>(() => defaultLanguage.value.cultureName);
 
 const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
+const supportedCultureNames = computed(() => supportedLanguages.value.map((language) => language.cultureName));
 const supportedLocalesWithShortAliases = computed(() =>
   supportedLanguages.value.flatMap((language) => {
-    const shortLocale = tryShortLocale(language.cultureName, supportedLanguages.value);
+    const shortLocale = tryShortLocale(language.cultureName);
     return shortLocale !== language.cultureName ? [language.cultureName, shortLocale] : [language.cultureName];
   }),
 );
@@ -29,6 +30,18 @@ const URL_LOCALE_REGEX = computed(
 );
 
 const currentLanguage = ref<ILanguage>();
+const currentMaybeShortLocale = computed(() => {
+  return tryShortLocale(currentLanguage.value?.cultureName ?? "");
+});
+
+function tryShortLocale(localeOrCultureName: string) {
+  const twoLetterLanguageName = localeOrCultureName.slice(0, 2);
+
+  return supportedLanguages.value.filter((language) => language.twoLetterLanguageName === twoLetterLanguageName)
+    .length === 1
+    ? twoLetterLanguageName
+    : localeOrCultureName;
+}
 
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   const localesPathPrefix = "../../../locales";
@@ -46,17 +59,17 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   return import(`${localesPathPrefix}/en.json`);
 }
 
-async function initLocale(i18n: I18n, locale: string): Promise<void> {
-  currentLanguage.value = supportedLanguages.value.find((x) => x.cultureName === locale);
+async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
+  currentLanguage.value = supportedLanguages.value.find((x) => x.cultureName === cultureName);
 
-  let messages = i18n.global.getLocaleMessage(locale);
+  let messages = i18n.global.getLocaleMessage(cultureName);
 
   if (!Object.keys(messages).length) {
-    messages = await fetchLocaleMessages(locale);
-    i18n.global.setLocaleMessage(locale, messages);
+    messages = await fetchLocaleMessages(cultureName);
+    i18n.global.setLocaleMessage(cultureName, messages);
   }
 
-  (i18n.global as unknown as Composer).locale.value = locale;
+  (i18n.global as unknown as Composer).locale.value = cultureName;
 
   setLocaleForYup({
     mixed: {
@@ -69,8 +82,8 @@ async function initLocale(i18n: I18n, locale: string): Promise<void> {
   });
 
   const localeFromUrl = getLocaleFromUrl();
-  const maybeShortLocale = tryShortLocale(locale, supportedLanguages.value);
-  const isDefault = defaultLanguage.value.cultureName === locale;
+  const maybeShortLocale = tryShortLocale(cultureName);
+  const isDefault = defaultLanguage.value.cultureName === cultureName;
 
   if ((localeFromUrl && maybeShortLocale !== localeFromUrl) || isDefault) {
     // remove a full locale from the url beforehand in order to avoid case like /fr-FR -> /fr/-FR (when language has short alias)
@@ -78,7 +91,7 @@ async function initLocale(i18n: I18n, locale: string): Promise<void> {
     window.history.pushState(null, "", location.href.replace(new RegExp(`/${localeFromUrl}`), ""));
   }
 
-  document.documentElement.setAttribute("lang", locale);
+  document.documentElement.setAttribute("lang", cultureName);
 }
 
 function getLocaleFromUrl(): string | undefined {
@@ -118,14 +131,12 @@ function mergeLocales(i18n: I18n, locale: string, messages: LocaleMessageValue) 
   i18n.global.setLocaleMessage(locale, merge({}, existingMessages, messages));
 }
 
-function resolveLocale({
-  urlLocale,
-  contactLocale,
-}: {
-  urlLocale?: string;
-  contactLocale?: string;
-} = {}) {
-  if (urlLocale && supportedLocalesWithShortAliases.value.includes(urlLocale)) {
+export function useLanguages() {
+  const { contactCultureName } = useUser();
+
+  function resolveLocale() {
+    const urlLocale = getLocaleFromUrl();
+
     const urlCultureName = supportedLanguages.value.find(
       (x) => x.cultureName === urlLocale || x.twoLetterLanguageName === urlLocale,
     )?.cultureName;
@@ -133,24 +144,23 @@ function resolveLocale({
     if (urlCultureName) {
       return urlCultureName;
     }
+
+    if (pinnedLocale.value && supportedCultureNames.value.includes(pinnedLocale.value)) {
+      return pinnedLocale.value;
+    }
+
+    if (contactCultureName.value && supportedCultureNames.value.includes(contactCultureName.value)) {
+      return contactCultureName.value;
+    }
+
+    return defaultStoreCulture.value;
   }
 
-  if (pinnedLocale.value && supportedLocalesWithShortAliases.value.includes(pinnedLocale.value)) {
-    return pinnedLocale.value;
-  }
-
-  if (contactLocale && supportedLocalesWithShortAliases.value.includes(contactLocale)) {
-    return contactLocale;
-  }
-
-  return defaultStoreCulture.value;
-}
-
-export function useLanguages() {
   return {
     pinnedLocale,
     defaultLanguage,
     supportedLanguages,
+    currentMaybeShortLocale,
     currentLanguage: computed({
       get() {
         return currentLanguage.value || defaultLanguage.value;
