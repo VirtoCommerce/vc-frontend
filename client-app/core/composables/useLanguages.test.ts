@@ -83,7 +83,7 @@ vi.mock("yup", () => ({
 }));
 
 function navigateTo(url: string): void {
-  window.history.pushState(null, "", url);
+  history.pushState(null, "", url);
 }
 
 async function importComposable() {

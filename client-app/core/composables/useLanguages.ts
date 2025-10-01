@@ -89,18 +89,18 @@ async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
   if ((localeFromUrl && currentMaybeShortLocale.value !== localeFromUrl) || isDefault) {
     // remove a full locale from the url beforehand in order to avoid case like /fr-FR -> /fr/-FR (when language has short alias)
     // remove the default locale e.g. en-US from the url - /en-US/cart -> /cart
-    window.history.pushState(null, "", location.href.replace(new RegExp(`/${localeFromUrl}`), ""));
+    history.pushState(null, "", location.href.replace(new RegExp(`/${localeFromUrl}`), ""));
   }
 
   document.documentElement.setAttribute("lang", cultureName);
 }
 
 function getLocaleFromUrl(): string | undefined {
-  return supportedLocalesRegex.value.exec(window.location.pathname)?.groups?.locale;
+  return supportedLocalesRegex.value.exec(location.pathname)?.groups?.locale;
 }
 
 function removeLocaleFromUrl() {
-  const fullPath = window.location.pathname + window.location.search + window.location.hash;
+  const fullPath = location.pathname + location.search + location.hash;
 
   const newUrl = getUrlWithoutLocale(fullPath);
   if (fullPath !== newUrl) {
@@ -166,7 +166,7 @@ export function useLanguages() {
     const normalizedPermalink = permalink.startsWith("/") ? permalink : `/${permalink}`;
     const permalinkWithLocale = localeFromUrl ? `/${localeFromUrl}${normalizedPermalink}` : normalizedPermalink;
 
-    window.history.pushState(window.history.state, "", `${permalinkWithLocale}${location.search}${location.hash}`);
+    history.pushState(history.state, "", `${permalinkWithLocale}${location.search}${location.hash}`);
   }
 
   return {
