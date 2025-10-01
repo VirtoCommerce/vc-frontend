@@ -1,18 +1,11 @@
 import { resolve } from "path";
-import { loadConfigFromFile, mergeConfig, splitVendorChunkPlugin } from "vite";
+import { loadConfigFromFile, mergeConfig } from "vite";
 import type { StorybookConfig } from "@storybook/vue3-vite";
 
 const storybookConfig: StorybookConfig = {
   stories: ["../client-app/**/*.stories.ts"],
   staticDirs: [{ from: "../storybook-styles/dist", to: "/assets" }],
-  addons: [
-    "@storybook/addon-viewport",
-    "@storybook/addon-links",
-    "@storybook/addon-essentials",
-    "@storybook/addon-actions",
-    "@storybook/addon-a11y",
-    "@storybook/addon-interactions",
-  ],
+  addons: ["@storybook/addon-links", "@storybook/addon-a11y", "@storybook/addon-docs"],
   framework: {
     name: "@storybook/vue3-vite",
     options: {},
@@ -34,12 +27,20 @@ const storybookConfig: StorybookConfig = {
     return mergeConfig(storybookViteConfig, {
       mode: "development",
       envPrefix: config.envPrefix,
-      plugins: [splitVendorChunkPlugin()],
       resolve: config.resolve,
       define: config.define,
       build: {
         cssCodeSplit: false,
         reportCompressedSize: false,
+        rollupOptions: {
+          output: {
+            manualChunks(id: string) {
+              if (id.includes("node_modules")) {
+                return "vendor";
+              }
+            },
+          },
+        },
       },
       optimizeDeps: config.optimizeDeps,
     });

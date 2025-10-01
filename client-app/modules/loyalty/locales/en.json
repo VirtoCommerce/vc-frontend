@@ -1,0 +1,32 @@
+{
+  "loyalty": {
+    "points-history": {
+      "meta": {
+        "title": "Points history"
+      },
+      "current-balance": "Balance: {currentBalance}",
+      "operation": "Operation",
+      "operation-type": "Type",
+      "date": "Date",
+      "amount": "Amount",
+      "redeemed": "Redeemed",
+      "earned": "Earned",
+      "registration": "Registration"
+    },
+    "list_details": {
+      "empty_list": "Your list is empty"
+    },
+    "navigation": {
+      "route_name": "Points history"
+    },
+    "payment": {
+      "loyalty": {
+        "pay_now_button": "Proceed",
+        "text": "You're attempting to pay for the order using points. Your current points balance is {currentBalance}",
+        "errors": {
+          "insufficient_points": "Can't place the order due to insufficient points balance. Your current points balance is {currentBalance}"
+        }
+      }
+    }
+  }
+}

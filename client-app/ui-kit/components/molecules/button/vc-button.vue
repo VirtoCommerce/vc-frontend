@@ -56,7 +56,8 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { computed, inject } from "vue";
+import { computed, inject, ref } from "vue";
+import { vcDialogKey } from "../../atoms/dialog/vc-dialog-context";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -108,6 +109,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const inputContext = inject<VcInputContextType | null>("inputContext", null);
+const dialogContext = inject(vcDialogKey, { size: ref("md") });
 
 const _size = computed(() => {
   if (props.size) {
@@ -115,6 +117,7 @@ const _size = computed(() => {
   }
 
   const inputSize = inputContext?.size.value;
+  const dialogSize = dialogContext?.size.value;
 
   if (inputSize) {
     if (inputSize === "xs") {
@@ -126,6 +129,10 @@ const _size = computed(() => {
     }
 
     return "sm";
+  }
+
+  if (dialogSize) {
+    return dialogSize;
   }
 
   return "md";

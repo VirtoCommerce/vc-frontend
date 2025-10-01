@@ -1,0 +1,32 @@
+{
+  "loyalty": {
+    "points-history": {
+      "meta": {
+        "title": "ポイント履歴"
+      },
+      "current-balance": "残高: {currentBalance}",
+      "operation": "操作",
+      "operation-type": "種類",
+      "date": "日付",
+      "amount": "金額",
+      "redeemed": "利用済み",
+      "earned": "獲得済み",
+      "registration": "登録"
+    },
+    "list_details": {
+      "empty_list": "リストは空です"
+    },
+    "navigation": {
+      "route_name": "ポイント履歴"
+    },
+    "payment": {
+      "loyalty": {
+        "pay_now_button": "進む",
+        "text": "ポイントを使用して注文の支払いを行おうとしています。現在のポイント残高は {currentBalance} です。",
+        "errors": {
+          "insufficient_points": "ポイント残高が不足しているため、注文を行うことができません。現在のポイント残高は {currentBalance} です。"
+        }
+      }
+    }
+  }
+}

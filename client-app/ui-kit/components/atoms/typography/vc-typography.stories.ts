@@ -1,5 +1,5 @@
 import { VcTypography } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const VARIANTS = ["h1", "h2", "h3", "h4", "h5", "h6", "base"];
 

@@ -20,8 +20,16 @@
     },
     "accessibility": {
       "close_alert": "Zamknij powiadomienie",
+      "open_calendar": "Otwórz kalendarz",
+      "product_quantity": "Ilość produktu",
+      "decrease_quantity": "Zmniejsz ilość",
+      "increase_quantity": "Zwiększ ilość",
       "variant_picker_group": "Warianty produktu",
       "show_more_button": "Pokaż więcej wariantów ({count})"
+    },
+    "date_selector": {
+      "min_date_error": "Data musi być nie wcześniejsza niż {min}",
+      "max_date_error": "Data musi być nie późniejsza niż {max}"
     },
     "labels": {
       "not_available": "N/D",
@@ -51,11 +59,11 @@
         "max": "Maksymalne zamówienie {0} sztuk(i)",
         "min_max": "Zamów od {0} do {1} sztuk(i)",
         "min_not_available": "Minimalne zamówienie {0} sztuk(i) nie jest dostępne w magazynie",
+        "exact_qty": "Możesz zamówić {0} przedmiot(ów)",
         "out_of_stock": "Brak w magazynie",
         "positive_number": "Wartość musi być liczbą dodatnią",
         "integer_number": "Wartość musi być liczbą całkowitą",
-        "pack_size": "Zamów w paczkach po {0}",
-        "exact_qty": "Możesz zamówić {0} przedmiot(ów)"
+        "pack_size": "Zamów w paczkach po {0}"
       }
     },
     "pagination": {

@@ -12,37 +12,26 @@
       </VcButton>
     </div>
 
-    <div ref="stickyMobileHeaderAnchor" class="-mt-5" />
-
-    <!-- Page toolbar -->
-    <PageToolbarBlock
-      :stick="stickyMobileHeaderIsVisible"
-      class="flex flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5"
-      shadow
+    <VcInput
+      v-model="keyword"
+      :disabled="fetching"
+      :placeholder="$t('quotes.search_placeholder')"
+      clearable
+      maxlength="64"
+      class="w-full"
+      @keydown.enter="applyKeyword"
+      @clear="resetKeyword"
     >
-      <div class="flex grow">
-        <VcInput
-          v-model="keyword"
+      <template #append>
+        <VcButton
+          :aria-label="$t('quotes.search_quote_requests')"
           :disabled="fetching"
-          :placeholder="$t('quotes.search_placeholder')"
-          clearable
-          maxlength="64"
-          class="w-full"
-          @keydown.enter="applyKeyword"
-          @clear="resetKeyword"
-        >
-          <template #append>
-            <VcButton
-              :aria-label="$t('quotes.search_quote_requests')"
-              :disabled="fetching"
-              icon="search"
-              icon-size="1.25rem"
-              @click="applyKeyword"
-            />
-          </template>
-        </VcInput>
-      </div>
-    </PageToolbarBlock>
+          icon="search"
+          icon-size="1.25rem"
+          @click="applyKeyword"
+        />
+      </template>
+    </VcInput>
 
     <!-- Empty view -->
     <VcEmptyView
@@ -182,15 +171,13 @@
 
 <script setup lang="ts">
 import { useMutation } from "@vue/apollo-composable";
-import { useBreakpoints, breakpointsTailwind, useElementVisibility } from "@vueuse/core";
-import { computed, ref, shallowRef, watch } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useRouteQueryParam, usePageHead, useThemeContext } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
-import { PageToolbarBlock } from "@/shared/account";
 import { CreateQuoteDocument } from "../api/graphql/types";
 import QuoteStatus from "../components/quote-status.vue";
 import { useUserQuotes } from "../useUserQuotes";
@@ -199,7 +186,6 @@ import type { ISortInfo } from "@/core/types";
 const { t } = useI18n();
 const { themeContext } = useThemeContext();
 const router = useRouter();
-const breakpoints = useBreakpoints(breakpointsTailwind);
 const { storeId, userId, currencyCode, cultureName } = globals;
 usePageHead({
   title: t("quotes.meta.title"),
@@ -207,12 +193,6 @@ usePageHead({
 
 const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
 const { mutate: createQuote } = useMutation(CreateQuoteDocument);
-
-const isMobile = breakpoints.smaller("lg");
-
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
-const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: "createdDate:desc",

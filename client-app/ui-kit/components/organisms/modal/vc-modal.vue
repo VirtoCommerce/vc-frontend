@@ -155,7 +155,7 @@ defineExpose({ close });
 
         & > .vc-dialog,
         & > .vc-dialog .vc-dialog-content__container {
-          @apply max-h-full h-full p-0 rounded-none;
+          @apply max-h-full h-full rounded-none;
         }
       }
     }

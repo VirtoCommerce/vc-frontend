@@ -1,6 +1,6 @@
 <template>
   <div v-if="order">
-    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
+    <BackButtonInHeader v-if="isMobile" @click="$router.push({ name: 'Orders' })" />
 
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
 
