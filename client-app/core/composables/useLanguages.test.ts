@@ -150,7 +150,21 @@ describe("useLanguages", () => {
       expect(languages.getLocaleFromUrl()).toBe("fr");
     });
 
-    it("removeLocaleFromUrl strips locale prefix and preserves query/hash", async () => {
+    it("getLocaleFromUrl returns undefined when no locale is present", async () => {
+      navigateTo("/cart");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      expect(languages.getLocaleFromUrl()).toBeUndefined();
+    });
+
+    it("getLocaleFromUrl returns undefined when no supported locale is present", async () => {
+      navigateTo("/ru-RU/cart");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      expect(languages.getLocaleFromUrl()).toBeUndefined();
+    });
+
+    it("removeLocaleFromUrl strips short alias locale prefix and preserves query/hash", async () => {
       navigateTo("/fr/cart?x=1#sec");
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
@@ -160,22 +174,64 @@ describe("useLanguages", () => {
       expect(window.location.hash).toBe("#sec");
     });
 
-    it("updateLocalizedUrl prefixes permalink with current URL locale", async () => {
-      navigateTo("/fr/cart?x=1#sec");
+    it("removeLocaleFromUrl strips full locale prefix and preserves query/hash", async () => {
+      navigateTo("/fr-FR/cart?x=1#sec");
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
-      languages.updateLocalizedUrl("/category");
-      expect(window.location.pathname).toBe("/fr/category");
+      languages.removeLocaleFromUrl();
+      expect(window.location.pathname).toBe("/cart");
+      expect(window.location.search).toBe("?x=1");
+      expect(window.location.hash).toBe("#sec");
+    });
+
+    it("removeLocaleFromUrl does nothing when no locale is present", async () => {
+      navigateTo("/cart?x=1#sec");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      languages.removeLocaleFromUrl();
+      expect(window.location.pathname).toBe("/cart");
+      expect(window.location.search).toBe("?x=1");
+      expect(window.location.hash).toBe("#sec");
+    });
+
+    it("removeLocaleFromUrl does nothing when no supported locale is present", async () => {
+      navigateTo("/ru-RU/cart?x=1#sec");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      languages.removeLocaleFromUrl();
+      expect(window.location.pathname).toBe("/ru-RU/cart");
+      expect(window.location.search).toBe("?x=1");
+      expect(window.location.hash).toBe("#sec");
+    });
+
+    it("updateLocalizedUrl updates URL with permalink like '/bonjour'", async () => {
+      navigateTo("/fr/hello?x=1#sec");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      languages.updateLocalizedUrl("/bonjour");
+      expect(window.location.pathname).toBe("/fr/bonjour");
+      expect(window.location.search).toBe("?x=1");
+      expect(window.location.hash).toBe("#sec");
+    });
+
+    it("updateLocalizedUrl updates URL with permalink like 'bonjour'", async () => {
+      navigateTo("/fr/hello?x=1#sec");
+      const { useLanguages } = await importComposable();
+      const languages = useLanguages();
+      languages.updateLocalizedUrl("bonjour");
+      expect(window.location.pathname).toBe("/fr/bonjour");
       expect(window.location.search).toBe("?x=1");
       expect(window.location.hash).toBe("#sec");
     });
 
     it("updateLocalizedUrl does nothing when permalink is falsy", async () => {
-      navigateTo("/fr/cart");
+      navigateTo("/fr/cart?x=1#sec");
       const { useLanguages } = await importComposable();
       const languages = useLanguages();
       languages.updateLocalizedUrl("");
       expect(window.location.pathname).toBe("/fr/cart");
+      expect(window.location.search).toBe("?x=1");
+      expect(window.location.hash).toBe("#sec");
     });
   });
 
