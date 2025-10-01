@@ -2,6 +2,7 @@ import { useLocalStorage } from "@vueuse/core";
 import { merge } from "lodash";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
+import { tryShortLocale } from "@/core/utilities/localization";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -10,34 +11,55 @@ import type { Composer, LocaleMessageValue } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
 
-const pinedLocale = useLocalStorage<string | null>("pinedLocale", null);
+const pinnedLocale = useLocalStorage<string | null>("pinnedLocale", null);
 
 const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
-const defaultLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
+const defaultStoreLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
+const defaultStoreCulture = computed<string>(() => defaultLanguage.value.cultureName);
+
 const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
 const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
-const URL_LOCALE_REGEX = /^\/([a-z]{2})(\/|$)/;
+const supportedLocalesWithShortAliases = computed(() =>
+  supportedLanguages.value.reduce((acc, item) => {
+    acc.push(item.cultureName);
+    const maybeShortLocale = tryShortLocale(item.cultureName, supportedLanguages.value);
+    if (maybeShortLocale !== item.cultureName) {
+      acc.push(maybeShortLocale);
+    }
+    return acc;
+  }, [] as string[]),
+);
+
+const URL_LOCALE_REGEX = computed(
+  () => new RegExp(`^/(?<locale>${supportedLocalesWithShortAliases.value.join("|")})(/|$)`, "i"),
+);
 
 const currentLanguage = ref<ILanguage>();
 
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json");
   const path = `../../../locales/${locale}.json`;
+  const shortPath = `../../../locales/${locale.slice(0, 2)}.json`;
 
   if (locales[path]) {
     return locales[path]();
+  } else if (locale.length > 2 && locales[shortPath]) {
+    return locales[shortPath](); // try get short locale as a fallback (e.g. en-US -> en)
   }
 
   return import("../../../locales/en.json");
 }
 
 async function initLocale(i18n: I18n, locale: string): Promise<void> {
-  currentLanguage.value = supportedLanguages.value.find((x) => x.twoLetterLanguageName === locale);
+  currentLanguage.value = supportedLanguages.value.find((x) => x.cultureName === locale);
+  console.log("[useLanguages] initLocale currentLanguage", currentLanguage.value);
 
   let messages = i18n.global.getLocaleMessage(locale);
 
   if (!Object.keys(messages).length) {
+    console.log("[useLanguages] initLocale fetchLocaleMessages", locale);
     messages = await fetchLocaleMessages(locale);
+    console.log("[useLanguages] initLocale messages", messages);
     i18n.global.setLocaleMessage(locale, messages);
   }
 
@@ -57,7 +79,7 @@ async function initLocale(i18n: I18n, locale: string): Promise<void> {
 }
 
 function getLocaleFromUrl(): string | undefined {
-  return window.location.pathname.match(URL_LOCALE_REGEX)?.[1];
+  return window.location.pathname.match(URL_LOCALE_REGEX.value)?.groups?.locale;
 }
 
 function removeLocaleFromUrl() {
@@ -70,33 +92,25 @@ function removeLocaleFromUrl() {
 }
 
 function getUrlWithoutLocale(fullPath: string): string {
-  const locale = fullPath.match(URL_LOCALE_REGEX)?.[1];
+  const locale = fullPath.match(URL_LOCALE_REGEX.value)?.[1];
 
   if (locale && isLocaleSupported(locale)) {
-    return fullPath.replace(URL_LOCALE_REGEX, "/");
+    return fullPath.replace(URL_LOCALE_REGEX.value, "/");
   }
 
   return fullPath;
 }
 
 function pinLocale(locale: string) {
-  pinedLocale.value = locale;
+  pinnedLocale.value = locale;
 }
 
 function unpinLocale() {
-  pinedLocale.value = null;
+  pinnedLocale.value = null;
 }
 
 function isLocaleSupported(locale: string): boolean {
   return supportedLocales.value.includes(locale);
-}
-
-function detectLocale(locales: unknown[]): string {
-  const stringLocales = locales
-    .filter((locale): locale is string => typeof locale === "string" && locale.length === 2)
-    .filter(isLocaleSupported);
-
-  return stringLocales[0] || defaultLocale.value;
 }
 
 function mergeLocales(i18n: I18n, locale: string, messages: LocaleMessageValue) {
@@ -105,13 +119,42 @@ function mergeLocales(i18n: I18n, locale: string, messages: LocaleMessageValue) 
   i18n.global.setLocaleMessage(locale, merge({}, existingMessages, messages));
 }
 
+function resolveLocale({
+  urlLocale,
+  contactLocale,
+}: {
+  urlLocale?: string;
+  contactLocale?: string;
+} = {}) {
+  if (urlLocale && supportedLocalesWithShortAliases.value.includes(urlLocale)) {
+    const urlCultureName = supportedLanguages.value.find(
+      (x) => x.cultureName === urlLocale || x.twoLetterLanguageName === urlLocale,
+    )?.cultureName;
+
+    if (urlCultureName) {
+      return urlCultureName;
+    }
+  }
+
+  if (pinnedLocale.value && supportedLocalesWithShortAliases.value.includes(pinnedLocale.value)) {
+    return pinnedLocale.value;
+  }
+
+  if (contactLocale && supportedLocalesWithShortAliases.value.includes(contactLocale)) {
+    return contactLocale;
+  }
+
+  return defaultStoreCulture.value;
+}
+
 export function useLanguages() {
   return {
-    pinedLocale,
+    pinnedLocale,
     defaultLanguage,
-    defaultLocale,
+    defaultLocale: defaultStoreLocale,
     supportedLanguages,
     supportedLocales,
+    supportedLocalesWithShortAliases,
     currentLanguage: computed({
       get() {
         return currentLanguage.value || defaultLanguage.value;
@@ -127,8 +170,8 @@ export function useLanguages() {
     pinLocale,
     unpinLocale,
     removeLocaleFromUrl,
-    detectLocale,
-    getLocaleFromUrl,
     mergeLocales,
+    resolveLocale,
+    getLocaleFromUrl,
   };
 }

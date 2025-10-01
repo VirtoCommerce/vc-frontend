@@ -33,13 +33,13 @@
     <template #content="{ close }">
       <VcMenuItem
         v-for="item in supportedLanguages"
-        :key="item.twoLetterLanguageName"
-        :active="item.twoLetterLanguageName === currentLanguage.twoLetterLanguageName"
-        :data-test-culture-name="item.twoLetterLanguageName"
+        :key="item.cultureName"
+        :active="item.cultureName === currentLanguage.cultureName"
+        :data-test-culture-name="item.cultureName"
         data-test-id="main-layout.top-header.language-selector-item"
         color="secondary"
         @click="
-          select(item.twoLetterLanguageName);
+          select(item.cultureName);
           close();
         "
       >
@@ -65,11 +65,11 @@ import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { getFlagIconUrl } from "@/ui-kit/utilities";
 import type { ILanguage } from "@/core/types";
 
-const { pinedLocale, supportedLanguages, pinLocale, removeLocaleFromUrl, currentLanguage } = useLanguages();
+const { pinnedLocale, supportedLanguages, pinLocale, removeLocaleFromUrl, currentLanguage } = useLanguages();
 const broadcast = useBroadcast();
 
 function select(locale: string) {
-  if (locale !== pinedLocale.value) {
+  if (locale !== pinnedLocale.value) {
     pinLocale(locale);
     removeLocaleFromUrl();
 

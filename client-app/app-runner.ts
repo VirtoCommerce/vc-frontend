@@ -15,7 +15,7 @@ import {
   extensionPointsPlugin,
   permissionsPlugin,
 } from "@/core/plugins";
-import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
+import { extractHostname, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
@@ -35,6 +35,7 @@ import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
+import { tryShortLocale } from "./core/utilities/localization";
 import type { StoreResponseType } from "./core/api/graphql/types";
 
 // eslint-disable-next-line no-restricted-exports
@@ -66,17 +67,16 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { fetchUser, user, twoLetterContactLocale, isAuthenticated } = useUser();
+  const { fetchUser, user, isAuthenticated, contactCultureName } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
-    detectLocale,
     currentLanguage,
-    supportedLocales,
     initLocale,
     fetchLocaleMessages,
-    getLocaleFromUrl,
-    pinedLocale,
     mergeLocales,
+    resolveLocale,
+    getLocaleFromUrl,
+    supportedLanguages,
   } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
@@ -104,22 +104,26 @@ export default async () => {
 
   setThemeContext(store);
 
-  // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
-  const twoLetterAppLocale = detectLocale([
-    pinedLocale.value,
-    twoLetterContactLocale.value,
-    getLocaleFromUrl(),
-    themeContext.value.defaultLanguage.twoLetterLanguageName,
-  ]);
-
   /**
    * Creating plugin instances
    */
   const head = createHead();
-  const i18n = createI18n(twoLetterAppLocale, currentCurrency.value.code, fallback);
-  const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
-  await initLocale(i18n, twoLetterAppLocale);
+  const localeFromUrl = getLocaleFromUrl();
+  const cultureName = resolveLocale({ urlLocale: localeFromUrl, contactLocale: contactCultureName.value });
+  const maybeShortLocale = tryShortLocale(cultureName, supportedLanguages.value);
+  const isDefault = themeContext.value.defaultLanguage.cultureName === cultureName;
+
+  if ((localeFromUrl && maybeShortLocale !== localeFromUrl) || isDefault) {
+    // remove a full locale e.g. fr-FR from the url in case there is a short alias like fr to avoid the url be /fr/-FR in the browser
+    // remove the default locale e.g. en-US from the url in case it is the default locale
+    window.history.pushState(null, "", location.href.replace(new RegExp(`/${localeFromUrl}`), ""));
+  }
+
+  const router = createRouter({ base: isDefault ? "" : maybeShortLocale });
+
+  const i18n = createI18n(cultureName, currentCurrency.value.code, fallback);
+  await initLocale(i18n, cultureName);
 
   /**
    * Setting global variables
