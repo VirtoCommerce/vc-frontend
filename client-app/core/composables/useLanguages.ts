@@ -20,8 +20,10 @@ const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availa
 const supportedCultureNames = computed(() => supportedLanguages.value.map((language) => language.cultureName));
 const supportedLocalesWithShortAliases = computed(() =>
   supportedLanguages.value.flatMap((language) => {
-    const shortLocale = tryShortLocale(language.cultureName);
-    return shortLocale !== language.cultureName ? [language.cultureName, shortLocale] : [language.cultureName];
+    const maybeShortLocale = tryShortLocale(language.cultureName);
+    return maybeShortLocale === language.cultureName
+      ? [language.cultureName]
+      : [language.cultureName, maybeShortLocale];
   }),
 );
 

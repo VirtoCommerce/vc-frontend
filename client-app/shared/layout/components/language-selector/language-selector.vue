@@ -69,15 +69,16 @@ const { supportedLanguages, pinLocale, removeLocaleFromUrl, currentLanguage } = 
 const broadcast = useBroadcast();
 
 function select(cultureName: string) {
-  if (cultureName !== currentLanguage.value?.cultureName) {
+  if (cultureName === currentLanguage.value?.cultureName) {
     pinLocale(cultureName);
+  } else {
+    pinLocale(cultureName);
+
     removeLocaleFromUrl();
 
     void broadcast.emit(dataChangedEvent);
 
     void location.reload();
-  } else {
-    pinLocale(cultureName);
   }
 }
 
