@@ -118,13 +118,13 @@ watchEffect(() => {
   $self: &;
   $collapsed: "";
 
-  $sizeLG: "";
-
   --p-x: theme("padding.4");
   --border-color: var(--vc-widget-border-color, theme("colors.neutral.200"));
   --divide-color: var(--vc-widget-divide-color, var(--border-color));
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
   --radius: var(--vc-widget-radius, var(--vc-radius, 0.5rem));
+  --header-gap: theme("gap.2");
+  --icon-size: 1.25rem;
 
   @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] shadow-md bg-center;
 
@@ -140,28 +140,22 @@ watchEffect(() => {
 
   &--size {
     &--xs {
-      --header-gap: theme("gap.2");
-      --header-p-y: theme("padding.3");
+      --header-min-h: 3.25rem;
       --title-text: theme("fontSize.sm");
-      --title-min-h: 1.75rem;
       --icon-size: 1rem;
-      --slot-p-t: theme("padding.4");
+      --shape-size: 1.75rem;
     }
 
     &--sm {
-      --header-gap: theme("gap.2");
-      --header-p-y: theme("padding.3");
+      --header-min-h: 3.5rem;
       --title-text: theme("fontSize.base");
-      --title-min-h: 2rem;
-      --slot-p-t: theme("padding.4");
+      --shape-size: 2rem;
     }
 
     &--md {
-      --header-gap: theme("gap.2");
-      --header-p-y: theme("padding.3");
+      --header-min-h: 3.25rem;
       --title-text: theme("fontSize.lg");
-      --title-min-h: 2.25rem;
-      --slot-p-t: theme("padding.4");
+      --shape-size: 2.25rem;
 
       @media (min-width: theme("screens.lg")) {
         --p-x: theme("padding.6");
@@ -169,13 +163,10 @@ watchEffect(() => {
     }
 
     &--lg {
-      $sizeLG: &;
-
+      --header-min-h: 4.5rem;
       --header-gap: theme("gap[2.5]");
-      --header-p-y: theme("padding.4");
       --title-text: theme("fontSize.xl");
-      --title-min-h: 2.5rem;
-      --slot-p-t: theme("padding[3.5]");
+      --shape-size: 2.5rem;
 
       @apply divide-none;
 
@@ -211,29 +202,22 @@ watchEffect(() => {
   }
 
   &__header {
-    --vc-hexagon-icon-size: var(--title-min-h);
-
-    @apply flex items-center gap-[--header-gap] px-[--p-x] py-[--header-p-y] w-full;
+    @apply flex items-center gap-[--header-gap] min-h-[--header-min-h] px-[--p-x] py-1 w-full;
   }
 
   &__prepend-append {
-    --vc-icon-size: var(--icon-size, 1.25rem);
+    --vc-shape-size: var(--shape-size);
+    --vc-icon-size: var(--icon-size);
 
-    @apply flex-none flex items-center min-h-[--title-min-h];
+    @apply flex-none flex items-center;
   }
 
   &__title {
-    @apply flex flex-col justify-center min-h-[--title-min-h] min-w-0 grow text-[length:--title-text] font-bold uppercase break-words;
+    @apply flex flex-col justify-center min-w-0 grow text-[length:--title-text] font-bold uppercase break-words;
   }
 
   &__slot {
-    @apply pt-[--slot-p-t] pb-5 px-[--p-x];
-
-    *:first-child > & {
-      #{$sizeLG} & {
-        --slot-p-t: theme("padding.5");
-      }
-    }
+    @apply pt-4 pb-5 px-[--p-x];
   }
 
   &__append-icon {
