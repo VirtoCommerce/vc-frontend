@@ -1,4 +1,4 @@
-import { useLocalStorage } from "@vueuse/core";
+import { useLocalStorage, useSessionStorage } from "@vueuse/core";
 import { merge } from "lodash";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
@@ -12,6 +12,10 @@ import type { Composer, LocaleMessageValue } from "vue-i18n";
 const { themeContext } = useThemeContext();
 
 const pinnedLocale = useLocalStorage<string | null>("pinnedLocale", null);
+const previousCultureSlug = useSessionStorage<{ cultureName: string; slug: string }>("previousCultureSlug", {
+  cultureName: "",
+  slug: "",
+});
 
 const defaultStoreLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
 const defaultStoreCulture = computed<string>(() => defaultStoreLanguage.value.cultureName);
@@ -174,6 +178,7 @@ export function useLanguages() {
     defaultStoreLanguage,
     defaultStoreCulture,
     supportedLanguages,
+    previousCultureSlug,
     currentMaybeShortLocale,
     currentLanguage: computed({
       get() {
@@ -194,6 +199,7 @@ export function useLanguages() {
     unpinLocale,
 
     getLocaleFromUrl,
+    getUrlWithoutLocale,
     removeLocaleFromUrl,
     updateLocalizedUrl,
   };
