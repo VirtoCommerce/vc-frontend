@@ -48,7 +48,7 @@ function tryShortLocale(localeOrCultureName: string) {
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   const localesPathPrefix = "../../../locales";
 
-  const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json"); // can't use variables in import.meta.glob
+  const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json"); // can't use variables in import
   const path = `${localesPathPrefix}/${locale}.json`;
   const shortPath = `${localesPathPrefix}/${locale.slice(0, 2)}.json`;
 
@@ -58,7 +58,7 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
     return locales[shortPath](); // try get short locale as a fallback (e.g. en-US.json -> en.json)
   }
 
-  return import(`${localesPathPrefix}/en.json`);
+  return import("../../../locales/en.json"); // can't use variables in import
 }
 
 async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
@@ -158,6 +158,7 @@ export function useLanguages() {
   }
 
   function updateLocalizedUrl(permalink?: string) {
+    console.log("updateLocalizedUrl", permalink);
     if (!permalink) {
       return;
     }

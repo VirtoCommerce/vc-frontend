@@ -71,7 +71,6 @@ export function _useUser() {
   const broadcast = useBroadcast();
   const { refresh } = useAuth();
   const { openModal, closeModal } = useModal();
-  const twoLetterContactLocale = computed(() => user.value?.contact?.defaultLanguage?.split("-")[0]);
   const contactCultureName = computed(() => user.value?.contact?.defaultLanguage);
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
@@ -406,7 +405,6 @@ export function _useUser() {
         throw new Error("User change is not available.");
       },
     }),
-    twoLetterContactLocale,
     contactCultureName,
   };
 }
