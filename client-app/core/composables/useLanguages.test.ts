@@ -59,10 +59,13 @@ const hoisted = vi.hoisted(() => {
 
   const contactCultureName = { value: undefined as string | undefined };
   const pinnedLocale = { value: null as string | null };
+  const previousCultureSlug = {
+    value: { cultureName: "", slug: "" } as { cultureName: string; slug: string },
+  };
 
   return {
     langs: { enUS, frFR, deDE, ptBR, ptPT },
-    state: { themeContext, contactCultureName, pinnedLocale },
+    state: { themeContext, contactCultureName, pinnedLocale, previousCultureSlug },
   };
 });
 
@@ -76,6 +79,7 @@ vi.mock("./useThemeContext", () => ({
 
 vi.mock("@vueuse/core", () => ({
   useLocalStorage: () => hoisted.state.pinnedLocale,
+  useSessionStorage: () => hoisted.state.previousCultureSlug,
 }));
 
 vi.mock("yup", () => ({
@@ -98,6 +102,7 @@ describe("useLanguages", () => {
     vi.clearAllMocks();
     hoisted.state.pinnedLocale.value = null;
     hoisted.state.contactCultureName.value = undefined;
+    hoisted.state.previousCultureSlug.value = { cultureName: "", slug: "" };
     navigateTo("/");
     // Reset default language and available languages if modified by a test
     hoisted.state.themeContext.value = {
