@@ -253,7 +253,7 @@ The generated graph will also be saved in the `artifacts` folder.
 
 ## Localization
 ### Language Flow
-- Locale selection checks the URL first (full culture like `fr-FR` or an unambiguous short alias such as `fr`), then your "pinned" locale - your last choice saved in localStorage, then your account’s preferred culture, and finally the store default.
+- Locale selection checks the URL first - using the supported languages list to tell real locale segments from ordinary path parts (full culture like `fr-FR` or an unambiguous short alias such as `fr`), then your “pinned” locale - your last choice saved in localStorage, then your account’s preferred culture, and finally the store default.
 
 - When a locale is chosen, useLanguages.initLocale lazy-loads its translation file (`xx-YY.json`; if missing it falls back to `xx.json`, then to `en.json`), wires it into Vue I18n and Yup, updates the `<html lang>` tag, and rewrites the URL so default or mismatched locale segments vanish.
 
