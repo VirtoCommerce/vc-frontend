@@ -1379,10 +1379,10 @@
       "variations_total_label": "Total in cart:",
       "view_cart_button": "View cart",
       "recommended_products": {
-        "related-products_section_title": "Products related to this item",
+        "related-products_section_title": "Recommended For You",
         "bought-together_section_title": "Customers bought together"
       },
-      "related_product_section_title": "Related products",
+      "related_product_section_title": "Products related to this item",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {

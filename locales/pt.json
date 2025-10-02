@@ -1379,10 +1379,10 @@
       "variations_total_label": "Total no carrinho:",
       "view_cart_button": "Ver carrinho",
       "recommended_products": {
-        "related-products_section_title": "Produtos relacionados a este item",
+        "related-products_section_title": "Recomendado para você",
         "bought-together_section_title": "Clientes compraram juntos"
       },
-      "related_product_section_title": "Produtos relacionados",
+      "related_product_section_title": "Produtos relacionados a este item",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {

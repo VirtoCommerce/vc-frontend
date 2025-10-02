@@ -1,7 +1,7 @@
-import { VcLineItem } from "..";
-import { VcAlert } from "../..";
+import { VcLineItem, VcAlert } from "..";
 import { preparedLineItemMock2 as lineItem } from "../../../mocks/line-item.mock";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import { VcAddToCart } from "../../organisms";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 export default {
   title: "Components/Molecules/VcLineItem",
@@ -72,7 +72,7 @@ DeletedProduct.args = {
 };
 
 export const AddToCart: StoryFn = (args) => ({
-  components: { VcLineItem },
+  components: { VcLineItem, VcAddToCart },
   setup: () => ({ args }),
   template: `<VcLineItem v-bind="args">
     <VcAddToCart
@@ -90,7 +90,7 @@ AddToCart.args = {
 };
 
 export const QuantityInput: StoryFn = (args) => ({
-  components: { VcLineItem },
+  components: { VcLineItem, VcAddToCart },
   setup: () => ({ args }),
   template: `<VcLineItem v-bind="args">
     <VcAddToCart hide-button />
