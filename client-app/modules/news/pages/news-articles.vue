@@ -1,81 +1,77 @@
 <template>
-  <div class="news-articles">
-    <VcContainer>
-      <VcTypography tag="h1" class="news-articles__title">
-        {{ $t("news.list.title") }}
-      </VcTypography>
+  <VcContainer class="news-articles">
+    <VcTypography tag="h1" class="news-articles__title">
+      {{ $t("news.list.title") }}
+    </VcTypography>
 
-      <PageToolbarBlock>
-        <div class="news-articles__filter">
-          <div class="news-articles__filter-tags">
-            <template v-for="newsArticleTag in newsArticleTags" :key="newsArticleTag">
-              <VcChip
-                color="secondary"
-                :variant="searchTag == newsArticleTag ? 'solid' : 'outline-dark'"
-                class="news-articles__filter-tag"
-                clickable
-                @click="toggleTag(newsArticleTag)"
-              >
-                {{ newsArticleTag }}
-              </VcChip>
-            </template>
-
-            <VcChip
-              v-if="authorId"
-              color="secondary"
-              variant="solid"
-              class="news-articles__filter-tag"
-              clickable
-              @click="removeAuthorFilter()"
-            >
-              {{ $t("news.list.written-by") }} {{ newsArticleAuthorName }}
-            </VcChip>
-          </div>
-
-          <VcInput
-            v-model="searchKeyword"
-            maxlength="64"
-            clearable
-            class="news-articles__filter-keyword"
-            :disabled="loading"
-            :placeholder="$t('news.list.search-placeholder')"
-            @keydown.enter="applyKeyword"
-            @clear="resetKeyword"
+    <div class="news-articles__filter">
+      <div class="news-articles__filter-tags">
+        <template v-for="newsArticleTag in newsArticleTags" :key="newsArticleTag">
+          <VcChip
+            color="secondary"
+            :variant="searchTag == newsArticleTag ? 'solid' : 'outline-dark'"
+            class="news-articles__filter-tag"
+            clickable
+            @click="toggleTag(newsArticleTag)"
           >
-            <template #append>
-              <VcButton :disabled="loading" icon="search" icon-size="1.25rem" @click="applyKeyword" />
-            </template>
-          </VcInput>
-        </div>
-      </PageToolbarBlock>
+            {{ newsArticleTag }}
+          </VcChip>
+        </template>
 
-      <VcEmptyView v-if="!loading && !newsArticles?.length" :text="$t('news.list.not-found')" icon="outline-document" />
-
-      <div v-else>
-        <div v-if="loading" class="news-articles__grid">
-          <VcWidgetSkeleton v-for="i in 8" :key="i" head size="lg" />
-        </div>
-
-        <div v-if="!loading && newsArticles?.length" class="news-articles__grid">
-          <NewsArticlePreview
-            v-for="item in newsArticles"
-            :key="item.id"
-            :news-article="item"
-            @article:click="openArticle($event)"
-            @tag:click="applyTag($event)"
-          />
-        </div>
+        <VcChip
+          v-if="authorId"
+          color="secondary"
+          variant="solid"
+          class="news-articles__filter-tag"
+          clickable
+          @click="removeAuthorFilter()"
+        >
+          {{ $t("news.list.written-by") }} {{ newsArticleAuthorName }}
+        </VcChip>
       </div>
 
-      <VcPagination
-        v-if="searchPages > 1"
-        v-model:page="searchPage"
-        class="news-articles__pagination"
-        :pages="Math.min(searchPages, ARTICLES_MAX_PAGES)"
-        @update:page="changeSearchPage"
-      />
-    </VcContainer>
-  </div>
+      <VcInput
+        v-model="searchKeyword"
+        maxlength="64"
+        clearable
+        class="news-articles__filter-keyword"
+        :disabled="loading"
+        :placeholder="$t('news.list.search-placeholder')"
+        @keydown.enter="applyKeyword"
+        @clear="resetKeyword"
+      >
+        <template #append>
+          <VcButton :disabled="loading" icon="search" icon-size="1.25rem" @click="applyKeyword" />
+        </template>
+      </VcInput>
+    </div>
+
+    <VcEmptyView v-if="!loading && !newsArticles?.length" :text="$t('news.list.not-found')" icon="outline-document" />
+
+    <div v-else>
+      <div v-if="loading" class="news-articles__grid">
+        <VcWidgetSkeleton v-for="i in 8" :key="i" head size="lg" />
+      </div>
+
+      <div v-if="!loading && newsArticles?.length" class="news-articles__grid">
+        <NewsArticlePreview
+          v-for="item in newsArticles"
+          :key="item.id"
+          :news-article="item"
+          @article:click="openArticle($event)"
+          @tag:click="applyTag($event)"
+        />
+      </div>
+    </div>
+
+    <VcPagination
+      v-if="searchPages > 1"
+      v-model:page="searchPage"
+      class="news-articles__pagination"
+      :pages="Math.min(searchPages, ARTICLES_MAX_PAGES)"
+      @update:page="changeSearchPage"
+    />
+  </VcContainer>
 </template>
 
 <script lang="ts" setup>

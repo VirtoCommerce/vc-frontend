@@ -6,7 +6,12 @@ import type { Meta, StoryFn } from "@storybook/vue3-vite";
 export default {
   title: "Components/Atoms/VcVariantPickerGroup",
   component: VcVariantPickerGroup,
-  argTypes: {},
+  argTypes: {
+    selectedValues: {
+      control: "object",
+      description: "Selected value (string) or array of selected values (string[])",
+    },
+  },
 } as Meta<typeof VcVariantPickerGroup>;
 
 const Template: StoryFn = (args) => ({
@@ -67,6 +72,64 @@ const TemplateText: StoryFn = (args) => ({
 export const Texts = TemplateText.bind({});
 Texts.args = {
   name: "text",
+};
+
+const TemplateMultiselect: StoryFn = (args) => ({
+  components: { VcVariantPickerGroup, VcVariantPicker },
+  setup: () => {
+    const selectedValues = ref<string | string[]>(args.selectedValues || []);
+
+    return {
+      args,
+      selectedValues,
+    };
+  },
+  template: `
+    <div>
+      <div class="mb-4">
+        <strong>Selected values: </strong>
+        <span v-if="Array.isArray(selectedValues) && selectedValues.length === 0" class="text-gray-500">Nothing selected</span>
+        <span v-else-if="Array.isArray(selectedValues)" class="text-blue-600">{{ selectedValues.join(', ') }}</span>
+        <span v-else class="text-blue-600">{{ selectedValues }}</span>
+      </div>
+      <VcVariantPickerGroup v-bind="args">
+        <VcVariantPicker
+          v-model="selectedValues"
+          :name="args.name"
+          value="red"
+          is-available
+        />
+        <VcVariantPicker
+          v-model="selectedValues"
+          :name="args.name"
+          value="blue"
+          is-available
+        />
+        <VcVariantPicker
+          v-model="selectedValues"
+          :name="args.name"
+          value="green"
+        />
+        <VcVariantPicker
+          v-model="selectedValues"
+          :name="args.name"
+          value="yellow"
+        />
+      </VcVariantPickerGroup>
+    </div>
+  `,
+});
+
+export const Multiselect = TemplateMultiselect.bind({});
+Multiselect.args = {
+  name: "multiselect",
+  selectedValues: [],
+};
+
+export const SingleSelect = TemplateMultiselect.bind({});
+SingleSelect.args = {
+  name: "single-select",
+  selectedValues: "red",
 };
 
 const TemplateShowMore: StoryFn = (args) => ({
