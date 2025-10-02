@@ -4,6 +4,7 @@ import { useGetPage, useGetPageDocument, useGetSlugInfo } from "@/core/api/graph
 import { useLanguages } from "@/core/composables/useLanguages";
 import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { globals } from "@/core/globals";
+import { safeDecode } from "@/core/utilities/common";
 import type { IPageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -16,8 +17,12 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
   const navigationOutlineStorage = useLocalStorage<string>(NAVIGATION_OUTLINE, "");
   const { storeId, userId, cultureName: currentCultureName } = globals;
 
+  const previousCultureSlugDecoded = computed(() => {
+    return safeDecode(previousCultureSlug.value?.slug);
+  });
+
   const cultureName = computed(() => {
-    return previousCultureSlug.value?.slug === toValue(seoUrl)
+    return previousCultureSlugDecoded.value === toValue(seoUrl)
       ? previousCultureSlug.value?.cultureName
       : currentCultureName;
   });
@@ -27,7 +32,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
       storeId,
       userId,
       cultureName: cultureName.value,
-      permalink: toValue(seoUrl),
+      permalink: rawSeoUrl.value,
     };
   });
 

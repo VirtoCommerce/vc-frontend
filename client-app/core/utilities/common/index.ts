@@ -180,3 +180,15 @@ export function preventNonNumberPaste(event: ClipboardEvent) {
     }
   }
 }
+
+export function safeDecode(input: string) {
+  try {
+    return decodeURIComponent(input);
+  } catch {
+    try {
+      return decodeURI(input);
+    } catch {
+      return input;
+    }
+  }
+}
