@@ -158,7 +158,6 @@ export function useLanguages() {
   }
 
   function updateLocalizedUrl(permalink?: string) {
-    console.log("updateLocalizedUrl", permalink);
     if (!permalink) {
       return;
     }
