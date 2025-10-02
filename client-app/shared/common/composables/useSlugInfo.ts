@@ -32,7 +32,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
       storeId,
       userId,
       cultureName: cultureName.value,
-      permalink: rawSeoUrl.value,
+      permalink: toValue(seoUrl),
     };
   });
 
