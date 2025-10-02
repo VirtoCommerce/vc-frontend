@@ -252,6 +252,17 @@ If command "dot" is missing - install graphviz on your OS
 The generated graph will also be saved in the `artifacts` folder.
 
 ## Localization
+### Language Flow
+- Locale selection checks the URL first (full culture like `fr-FR` or an unambiguous short alias such as `fr`), then your "pinned" locale - your last choice saved in localStorage, then your account’s preferred culture, and finally the store default.
+
+- When a locale is chosen, useLanguages.initLocale lazy-loads its translation file (`xx-YY.json`; if missing it falls back to `xx.json`, then to `en.json`), wires it into Vue I18n and Yup, updates the `<html lang>` tag, and rewrites the URL so default or mismatched locale segments vanish.
+
+- Switching via the header selector stores the new culture, captures the exact slug and culture you were on at that moment (previousCultureSlug in session storage), strips any stale locale prefix from the URL, broadcasts a data refresh, and reloads so the whole app restarts in the new language.
+
+- After that reload, useSlugInfo notices previousCultureSlug; while you stay on the same path it asks the backend for slug data using the recorded culture, so `/hello` is resolved with `en-US` instead of the new `fr-FR`, preventing empty responses before the localized slug is known.
+
+- When product, category, brand, or CMS data brings back a localized permalink (updateLocalizedUrl in those page modules), it uses history.pushState to refresh the browser address with the localized path - keeping locale prefix, query string, and hash - so users see the correct URL without triggering router navigation or extra data fetching.
+
 ### Check for missing locale keys
 ```
 yarn check-locales --source en.json -- path/to/locales_folder path/to/**/locales
