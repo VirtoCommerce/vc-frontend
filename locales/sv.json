@@ -695,6 +695,10 @@
         "ok_button": "OK",
         "no_results": "Inga resultat hittades",
         "reset_search_button": "Återställ sökning"
+      },
+      "shipment_options": {
+        "title": "Leveransalternativ",
+        "in_store": "Hämta i butik"
       }
     },
     "checkout": {
@@ -1163,7 +1167,8 @@
           "pick_point_info": "Upphämtningsplatsinfo",
           "get_directions": "Få vägbeskrivning",
           "point_info": "Platsinfo",
-          "pickup_address": "Upphämtningsadress"
+          "pickup_address": "Upphämtningsadress",
+          "availability": "Tillgänglighet"
         }
       },
       "order_payment": {

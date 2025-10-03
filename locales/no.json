@@ -695,6 +695,10 @@
         "ok_button": "OK",
         "no_results": "Ingen resultater funnet",
         "reset_search_button": "Tilbakestill søk"
+      },
+      "shipment_options": {
+        "title": "Forsendelsesalternativer",
+        "in_store": "Henting i butikk"
       }
     },
     "checkout": {
@@ -1163,7 +1167,8 @@
           "pick_point_info": "Hentepunktinformasjon",
           "get_directions": "Hent veibeskrivelse",
           "point_info": "Punktinformasjon",
-          "pickup_address": "Henteadresse"
+          "pickup_address": "Henteadresse",
+          "availability": "Tilgjengelighet"
         }
       },
       "order_payment": {
