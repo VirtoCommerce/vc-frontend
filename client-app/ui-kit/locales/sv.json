@@ -1,0 +1,112 @@
+{
+  "ui_kit": {
+    "buttons": {
+      "add_to_cart": "Lägg till i kundvagnen",
+      "apply": "Tillämpa",
+      "cancel": "Avbryt",
+      "close": "Stäng",
+      "copy": "Kopiera",
+      "deny": "Neka",
+      "filters": "Filter",
+      "ok": "OK",
+      "remove_all": "Ta bort alla",
+      "remove_from_cart": "Ta bort från kundvagnen",
+      "remove_selected": "Ta bort valda",
+      "see_more": "Visa mer",
+      "see_less": "Visa mindre",
+      "show_hide_password": "Visa/dölj lösenord",
+      "toggle_dropdown": "Växla rullgardinsmeny",
+      "update_cart": "Uppdater kundvagn"
+    },
+    "accessibility": {
+      "close_alert": "Stäng varning",
+      "open_calendar": "Öppna kalender",
+      "product_quantity": "Produktantal",
+      "decrease_quantity": "Minska antal",
+      "increase_quantity": "Öka antal",
+      "variant_picker_group": "Variantalternativ",
+      "show_more_button": "Visa fler alternativ ({count})"
+    },
+    "date_selector": {
+      "min_date_error": "Datum måste vara på eller efter {min}",
+      "max_date_error": "Datum måste vara på eller före {max}"
+    },
+    "labels": {
+      "not_available": "Ej tillgänglig",
+      "price_per_item": "Pris per enhet",
+      "product": "Produkt",
+      "product_quantity": "Produktantal",
+      "properties": "Egenskaper",
+      "subtotal": "Delsumma",
+      "toggle_vendor_select": "Växla leverantörsval",
+      "total": "Totalt",
+      "vendor": "Leverantör"
+    },
+    "suffixes": {
+      "from": "Från",
+      "per_item": " per enhet"
+    },
+    "messages": {
+      "loading_text": "Laddar...",
+      "no_results": "Inga resultat hittades"
+    },
+    "add_to_cart": {
+      "errors": {
+        "in_cart": "i kundvagnen",
+        "already_in_cart_message": "{0} har redan lagts till i kundvagnen",
+        "enter_correct_number_message": "Vänligen ange ett giltigt nummer",
+        "min": "Minsta beställning {0} enhet(er)",
+        "max": "Maximal beställning {0} enhet(er)",
+        "min_max": "Beställ från {0} till {1} enhet(er)",
+        "min_not_available": "Minsta beställning {0} enhet(er) är inte tillgänglig i lager",
+        "exact_qty": "Du kan beställa {0} enhet(er)",
+        "out_of_stock": "Slut i lager",
+        "positive_number": "Värdet måste vara ett positivt tal",
+        "integer_number": "Värdet måste vara ett heltal",
+        "pack_size": "Beställ i förpackningar om {0}"
+      }
+    },
+    "pagination": {
+      "previous": "Föregående",
+      "next": "Nästa"
+    },
+    "select": {
+      "items_selected": "{0} objekt valda"
+    },
+    "file": {
+      "progress": "{percent} klart",
+      "uploaded": "Uppladdning slutförd"
+    },
+    "file_uploader": {
+      "drag_and_drop": "Dra och släpp filen här eller",
+      "browse": "Bläddra bland dina filer",
+      "requirements": "Filer som kan laddas upp är i formaten {formats}. Varje fil får inte överstiga {fileSize}. Max {maxFileCount} filer tillåts.",
+      "any_format": "alla",
+      "errors": {
+        "fix_to_continue": "Åtgärda fel vid filuppladdning för att fortsätta.",
+        "has_max_file_count": "Du har laddat upp maximalt antal filer. Ytterligare uppladdningar är inte möjliga.",
+        "tried_more_than_max_file_count": "Du försökte ladda upp fler filer än det maximalt tillåtna antalet."
+      }
+    },
+    "reach_limit": {
+      "end_list": "Du har nått slutet av listan.",
+      "page_limit_filters": "Inga fler resultat. Försök ändra filtren.",
+      "page_limit": "Inga fler resultat kan visas."
+    },
+    "slider": {
+      "tooltip": "{count} objekt",
+      "aria_label": "Skjutreglage från {min} till {max}",
+      "start_input_label": "Startvärde (mellan {min} och {max})",
+      "end_input_label": "Slutvärde (mellan {min} och {max})",
+      "start_input_aria_label": "Inmatning för startvärde, intervall {min} till {max}",
+      "end_input_aria_label": "Inmatning för slutvärde, intervall {min} till {max}",
+      "start_input_help": "Ange ett tal mellan {min} och {max}, steglängd {step}",
+      "end_input_help": "Ange ett tal mellan {min} och {max}, steglängd {step}",
+      "column_aria_label": "Kolumn med {count} objekt, intervall från {from} till {to}",
+      "current_value_announcement": "Skjutreglagevärde: {start} till {end}, intervall {min} till {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Navigering för brödsmulor"
+    }
+  }
+}

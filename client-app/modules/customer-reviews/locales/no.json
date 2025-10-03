@@ -1,0 +1,24 @@
+{
+  "common": {
+    "buttons": {
+      "leave_feedback": "Gi tilbakemelding"
+    },
+    "labels": {
+      "feedback": "Tilbakemelding",
+      "rating": "Vurdering",
+      "rate_product": "Vurder produkt",
+      "item_as_described_by_vendor": "Stemmer produktet med leverandørens beskrivelse?",
+      "product_review_image": "Bilde for produktvurdering"
+    },
+    "messages": {
+      "thanks_for_feedback": "Tilbakemeldingen din er sendt og venter på bekreftelse. Takk!"
+    }
+  },
+  "validation_errors": {
+    "INVALID_ENTITY_TYPE": "Vurderinger kan kun gis for produkter.",
+    "PRODUCT_MUST_BE_PURCHASED": "Bare brukere som har kjøpt produktet kan gi en vurdering.",
+    "DUPLICATE_REVIEW": "Brukeren har allerede gitt en vurdering for dette produktet.",
+    "INVALID_RATING": "Vurderingen må være i området fra 1 til 5.",
+    "REVIEW_IS_EMPTY": "Feltet 'Vurdering' må fylles ut."
+  }
+}
