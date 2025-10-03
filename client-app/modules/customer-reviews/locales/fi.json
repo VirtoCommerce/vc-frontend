@@ -1,0 +1,24 @@
+{
+  "common": {
+    "buttons": {
+      "leave_feedback": "Jätä palautetta"
+    },
+    "labels": {
+      "feedback": "Palaute",
+      "rating": "Arvosana",
+      "rate_product": "Arvostele tuote",
+      "item_as_described_by_vendor": "Tuote vastasi myyjän kuvausta?",
+      "product_review_image": "Tuotearvostelun kuva"
+    },
+    "messages": {
+      "thanks_for_feedback": "Palautteesi on lähetetty onnistuneesti ja odottaa vahvistusta. Kiitos!"
+    }
+  },
+  "validation_errors": {
+    "INVALID_ENTITY_TYPE": "Arvosteluja voi jättää vain tuotteille.",
+    "PRODUCT_MUST_BE_PURCHASED": "Vain tuotteen ostaneet käyttäjät voivat jättää arvostelun.",
+    "DUPLICATE_REVIEW": "Käyttäjä on jo jättänyt arvostelun tälle tuotteelle.",
+    "INVALID_RATING": "Arvosanan tulee olla välillä 1–5.",
+    "REVIEW_IS_EMPTY": "Kenttä 'Arvostelu' on täytettävä."
+  }
+}

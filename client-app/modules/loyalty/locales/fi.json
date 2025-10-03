@@ -1,0 +1,32 @@
+{
+  "loyalty": {
+    "points-history": {
+      "meta": {
+        "title": "Pistehistoria"
+      },
+      "current-balance": "Saldo: {currentBalance}",
+      "operation": "Toimenpide",
+      "operation-type": "Tyyppi",
+      "date": "Päivämäärä",
+      "amount": "Määrä",
+      "redeemed": "Lunastettu",
+      "earned": "Ansaittu",
+      "registration": "Rekisteröityminen"
+    },
+    "list_details": {
+      "empty_list": "Listasi on tyhjä"
+    },
+    "navigation": {
+      "route_name": "Pistehistoria"
+    },
+    "payment": {
+      "loyalty": {
+        "pay_now_button": "Jatka",
+        "text": "Yrität maksaa tilauksen pisteillä. Nykyinen pisteesi saldo on {currentBalance}",
+        "errors": {
+          "insufficient_points": "Tilausta ei voida tehdä, koska pistesaldo on riittämätön. Nykyinen pisteesi saldo on {currentBalance}"
+        }
+      }
+    }
+  }
+}
