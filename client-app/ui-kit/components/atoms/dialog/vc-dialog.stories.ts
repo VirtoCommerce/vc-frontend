@@ -1,6 +1,6 @@
 import { VcDialog } from "..";
 import { VcDialogHeader, VcDialogContent, VcDialogFooter } from "../../molecules";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md"];
 

@@ -1,5 +1,5 @@
 import { VcWidgetSkeleton } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md", "lg"];
 
