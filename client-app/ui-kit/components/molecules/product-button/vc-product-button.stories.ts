@@ -1,5 +1,5 @@
 import { VcProductButton } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md"];
 
@@ -32,3 +32,8 @@ const Template: StoryFn = (args) => ({
 });
 
 export const Basic = Template.bind({});
+Basic.args = {
+  buttonText: "Button Text",
+  linkText: "Link text",
+  linkTo: "/some/link",
+};

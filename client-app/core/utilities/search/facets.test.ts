@@ -33,7 +33,6 @@ describe("getFilterExpressionFromFacetRange", () => {
   `(
     "{from: $from, to: $to, includeFrom: $includeFrom, includeTo: $includeTo} -> $expectedString",
     ({ from, to, includeFrom, includeTo, expectedString }) => {
-      /* eslint-disable @typescript-eslint/no-unsafe-assignment */
       const facetRange = {
         from,
         to,
@@ -67,7 +66,6 @@ describe("getFilterExpressionForZeroPrice", () => {
     ${true}  | ${"USD"}     | ${""}
     ${false} | ${"USD"}     | ${"price.USD:(0 TO)"}
   `("with value: $value, currencyCode: $currencyCode -> $expected", ({ value, currencyCode, expected }) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const result = getFilterExpressionForZeroPrice(ref(value), currencyCode);
     expect(result).toBe(expected);
   });
@@ -167,7 +165,7 @@ describe("termFacetToCommonFacet", () => {
               return date.toISOString().split("T")[0];
             },
             t: (key: string) => {
-              // Handle specific translation keys used in getFacetLabel
+              // Handle specific translation keys used in getFormattedLabel
               switch (key) {
                 case "common.labels.true_property":
                   return "Yes";

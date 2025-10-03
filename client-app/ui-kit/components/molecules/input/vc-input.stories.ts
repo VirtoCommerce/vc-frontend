@@ -1,5 +1,5 @@
-import { VcInput } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import { VcInput, VcButton } from "..";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md"];
 const TYPES = ["text", "password", "number"];
@@ -56,7 +56,7 @@ const Template: StoryFn = (args) => ({
 });
 
 const withButtonTemplate: StoryFn = (args) => ({
-  components: { VcInput },
+  components: { VcInput, VcButton },
   setup: () => ({ args }),
   template: `<VcInput v-bind="args" v-model="args.modelValue">
     <template #append>

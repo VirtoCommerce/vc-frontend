@@ -20,8 +20,16 @@
     },
     "accessibility": {
       "close_alert": "Close alert",
+      "open_calendar": "Open calendar",
+      "product_quantity": "Product quantity",
+      "decrease_quantity": "Decrease quantity",
+      "increase_quantity": "Increase quantity",
       "variant_picker_group": "Variant options",
       "show_more_button": "See more options ({count})"
+    },
+    "date_selector": {
+      "min_date_error": "Date must be on or after {min}",
+      "max_date_error": "Date must be on or before {max}"
     },
     "labels": {
       "not_available": "N/A",

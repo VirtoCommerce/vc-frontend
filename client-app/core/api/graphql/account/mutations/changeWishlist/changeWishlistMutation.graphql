@@ -9,5 +9,11 @@ mutation ChangeWishlist($command: InputChangeWishlistType!) {
     items {
       ...wishlistLineItemFields
     }
+    sharingSetting {
+      id
+      scope
+      access
+      isOwner
+    }
   }
 }

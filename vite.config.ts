@@ -3,7 +3,7 @@ import graphqlImport from "@rollup/plugin-graphql";
 import vue from "@vitejs/plugin-vue";
 import browserslistToEsbuild from "browserslist-to-esbuild";
 import { visualizer } from "rollup-plugin-visualizer";
-import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import { checker } from "vite-plugin-checker";
 import mkcertImport from "vite-plugin-mkcert";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
@@ -55,7 +55,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
             },
           })
         : undefined,
-      splitVendorChunkPlugin(),
       process.env.GENERATE_BUNDLE_MAP
         ? (visualizer({
             filename: path.resolve(__dirname, "artifacts/bundle-map.html"),
@@ -80,6 +79,15 @@ export default defineConfig(({ command, mode }): UserConfig => {
       target: browserslistToEsbuild(),
       emptyOutDir: true,
       sourcemap: true,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes("node_modules")) {
+              return "vendor";
+            }
+          },
+        },
+      },
     },
     optimizeDeps: {
       exclude: ["swiper/vue", "swiper/types"],
@@ -105,7 +113,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
     css: {
       preprocessorOptions: {
         scss: {
-          api: "modern-compiler",
           quietDeps: true,
         },
       },
