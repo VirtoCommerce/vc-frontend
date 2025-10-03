@@ -75,7 +75,7 @@ setThemeContext({
 } as StoreResponseType);
 
 async function configureThemeSettings() {
-  const module = (await import(`@/assets/presets/default.json`)) as {
+  const module = (await import(`@/assets/presets/coffee.json`)) as {
     default: IThemeConfigPreset;
   };
   const preset = module.default;
