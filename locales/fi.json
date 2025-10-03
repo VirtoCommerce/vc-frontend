@@ -893,11 +893,20 @@
         "edit_mode_title": "Listan asetukset",
         "list_name_label": "Listan nimi",
         "list_name_placeholder": "Syötä nimi",
+        "sharing_scope_label": "Jakovaihtoehdot",
+        "sharing_scope_placeholder": "Valitse yksi vaihtoehto",
+        "sharing_link_label": "Linkki",
         "create_button": "Luo lista",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Yksityinen lista",
-        "make_shared": "Tee jaetuksi"
+        "make_shared": "Tee jaetuksi",
+        "sharing_scope": {
+          "Private": "Yksityinen",
+          "Organization": "Organisaatio",
+          "AnyoneAnonymous": "Kuka tahansa (vain luku)"
+        },
+        "clipboard_success": "Linkki kopioitu"
       },
       "delete_wishlist_modal": {
         "title": "Vahvista poisto",
@@ -913,7 +922,8 @@
       },
       "status": {
         "shared": "Jaettu",
-        "private": "Yksityinen"
+        "private": "Yksityinen",
+        "shared_with_me": "Jaettu kanssani"
       }
     },
     "sorting": {

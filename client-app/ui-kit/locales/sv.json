@@ -20,11 +20,16 @@
     },
     "accessibility": {
       "close_alert": "Stäng varning",
+      "open_calendar": "Öppna kalender",
       "product_quantity": "Produktantal",
       "decrease_quantity": "Minska antal",
       "increase_quantity": "Öka antal",
       "variant_picker_group": "Variantalternativ",
       "show_more_button": "Visa fler alternativ ({count})"
+    },
+    "date_selector": {
+      "min_date_error": "Datum måste vara på eller efter {min}",
+      "max_date_error": "Datum måste vara på eller före {max}"
     },
     "labels": {
       "not_available": "Ej tillgänglig",

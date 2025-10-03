@@ -893,11 +893,20 @@
         "edit_mode_title": "Listinställningar",
         "list_name_label": "Listnamn",
         "list_name_placeholder": "Ange namn",
+        "sharing_scope_label": "Delningsalternativ",
+        "sharing_scope_placeholder": "Välj ett alternativ",
+        "sharing_link_label": "Länk",
         "create_button": "Skapa lista",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Privat lista",
-        "make_shared": "Gör delad"
+        "make_shared": "Gör delad",
+        "sharing_scope": {
+          "Private": "Privat",
+          "Organization": "Organisation",
+          "AnyoneAnonymous": "Alla (endast läsning)"
+        },
+        "clipboard_success": "Länk kopierad"
       },
       "delete_wishlist_modal": {
         "title": "Bekräfta radering",
@@ -913,7 +922,8 @@
       },
       "status": {
         "shared": "Delad",
-        "private": "Privat"
+        "private": "Privat",
+        "shared_with_me": "Delad med mig"
       }
     },
     "sorting": {

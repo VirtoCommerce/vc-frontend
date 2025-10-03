@@ -893,11 +893,20 @@
         "edit_mode_title": "Listeinnstillinger",
         "list_name_label": "Listenavn",
         "list_name_placeholder": "Skriv inn navn",
+        "sharing_scope_label": "Delingsalternativer",
+        "sharing_scope_placeholder": "Vennligst velg ett alternativ",
+        "sharing_link_label": "Lenke",
         "create_button": "Opprett liste",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Privat liste",
-        "make_shared": "Gjør delt"
+        "make_shared": "Gjør delt",
+        "sharing_scope": {
+          "Private": "Privat",
+          "Organization": "Organisasjon",
+          "AnyoneAnonymous": "Hvem som helst (skrivebeskyttet)"
+        },
+        "clipboard_success": "Lenke kopiert"
       },
       "delete_wishlist_modal": {
         "title": "Bekreft sletting",
@@ -913,7 +922,8 @@
       },
       "status": {
         "shared": "Delt",
-        "private": "Privat"
+        "private": "Privat",
+        "shared_with_me": "Delt med meg"
       }
     },
     "sorting": {

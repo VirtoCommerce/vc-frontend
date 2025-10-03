@@ -20,11 +20,16 @@
     },
     "accessibility": {
       "close_alert": "Sulje hälytys",
+      "open_calendar": "Avaa kalenteri",
       "product_quantity": "Tuotteen määrä",
       "decrease_quantity": "Vähennä määrää",
       "increase_quantity": "Lisää määrää",
       "variant_picker_group": "Variantrivaihtoehdot",
       "show_more_button": "Näytä lisää vaihtoehtoja ({count})"
+    },
+    "date_selector": {
+      "min_date_error": "Päivämäärän on oltava vähintään {min}",
+      "max_date_error": "Päivämäärän on oltava enintään {max}"
     },
     "labels": {
       "not_available": "Ei saatavilla",
