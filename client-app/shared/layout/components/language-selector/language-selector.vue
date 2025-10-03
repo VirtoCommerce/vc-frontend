@@ -83,8 +83,6 @@ function select(cultureName: string) {
   };
 
   if (cultureName !== currentLanguage.value?.cultureName) {
-    pinLocale(cultureName);
-
     removeLocaleFromUrl();
 
     void broadcast.emit(dataChangedEvent);
