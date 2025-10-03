@@ -4,6 +4,7 @@
       'vc-widget',
       `vc-widget--size--${size}`,
       {
+        'vc-widget--collapsible': collapsible,
         'vc-widget--collapsed': _collapsed,
         'vc-widget--no-shadow': !shadow,
         'vc-widget--no-border': !border,
@@ -116,6 +117,7 @@ watchEffect(() => {
 <style lang="scss">
 .vc-widget {
   $self: &;
+  $collapsible: "";
   $collapsed: "";
 
   --p-x: theme("padding.4");
@@ -138,22 +140,26 @@ watchEffect(() => {
     }
   }
 
+  &--collapsible {
+    $collapsible: &;
+  }
+
   &--size {
     &--xs {
-      --header-min-h: 3.25rem;
+      --header-min-h: 3.125rem;
       --title-text: theme("fontSize.sm");
       --icon-size: 1rem;
       --shape-size: 1.75rem;
     }
 
     &--sm {
-      --header-min-h: 3.5rem;
+      --header-min-h: 3.375rem;
       --title-text: theme("fontSize.base");
       --shape-size: 2rem;
     }
 
     &--md {
-      --header-min-h: 3.25rem;
+      --header-min-h: 3.125rem;
       --title-text: theme("fontSize.lg");
       --shape-size: 2.25rem;
 
@@ -163,15 +169,17 @@ watchEffect(() => {
     }
 
     &--lg {
-      --header-min-h: 4.5rem;
+      --header-min-h: 4.375rem;
       --header-gap: theme("gap[2.5]");
       --title-text: theme("fontSize.xl");
       --shape-size: 2.5rem;
 
-      @apply divide-none;
-
       @media (min-width: theme("screens.lg")) {
         --p-x: theme("padding.7");
+      }
+
+      &:not(#{$collapsible}) {
+        @apply divide-none;
       }
     }
   }
