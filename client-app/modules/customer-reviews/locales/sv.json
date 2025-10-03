@@ -1,0 +1,24 @@
+{
+  "common": {
+    "buttons": {
+      "leave_feedback": "Lämna feedback"
+    },
+    "labels": {
+      "feedback": "Feedback",
+      "rating": "Betyg",
+      "rate_product": "Betygsätt produkt",
+      "item_as_described_by_vendor": "Produkten överensstämmer med leverantörens beskrivning?",
+      "product_review_image": "Bild för produktrecension"
+    },
+    "messages": {
+      "thanks_for_feedback": "Din feedback har skickats in framgångsrikt och väntar på bekräftelse. Tack!"
+    }
+  },
+  "validation_errors": {
+    "INVALID_ENTITY_TYPE": "Recensioner kan endast lämnas för produkter.",
+    "PRODUCT_MUST_BE_PURCHASED": "Endast användare som har köpt produkten kan lämna en recension.",
+    "DUPLICATE_REVIEW": "Användaren har redan lämnat en recension för denna produkt.",
+    "INVALID_RATING": "Betyget ska vara i intervallet 1 till 5.",
+    "REVIEW_IS_EMPTY": "Fältet 'Recension' måste fyllas i."
+  }
+}
