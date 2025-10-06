@@ -1,0 +1,47 @@
+{
+  "purchase_requests": {
+    "meta": {
+      "title": "purchase_requests.title",
+      "table_description": "liste over innkjøpsforespørsler"
+    },
+    "title": "Innkjøpsforespørsler",
+    "no_purchase_requests_message": "Det er ingen innkjøpsforespørsler ennå",
+    "no_purchase_requests_img_alt": "Ingen bestillinger",
+    "purchase_request_number_label": "Innkjøpsforespørselens nummer",
+    "date_label": "@:common.labels.date",
+    "menu": {
+      "link": {
+        "title": "Innkjøpsforespørsler"
+      }
+    }
+  },
+  "purchase_request": {
+    "title": "Innkjøpsforespørsel #{0}",
+    "failed_or_used_description": "Vi beklager, men vi kunne ikke opprette innkjøpsforespørselen, eller du har allerede brukt den til å opprette en bestilling",
+    "try_again": "Prøv igjen",
+    "files_section": {
+      "title": "Filer"
+    },
+    "from_file": {
+      "title": "Last opp fil",
+      "upload": {
+        "message": "Last opp bilder av dokumenter, skjermbilder eller håndskrevne notater for å hente data til en ny bestilling.",
+        "examples": {
+          "title": "Eksempler",
+          "alt": "Eksempler"
+        }
+      },
+      "processing": {
+        "message": "Du kan laste opp bildefiler eller PDF-filer med produktlister i hvilket som helst format for rask bestilling av varer",
+        "loading_message": "Gjenkjenner det opplastede dokumentet...",
+        "cancel": "@:common.buttons.cancel"
+      }
+    },
+    "go_to_quote": "Fortsett til tilbud"
+  },
+  "pages": {
+    "bulk_order": {
+      "from_file_tab": "Fra fil"
+    }
+  }
+}
