@@ -96,7 +96,15 @@ const imageSizeSuffix = computed(() => {
 const { title: pageTitle } = usePageTitle(brand.value?.name);
 
 const breadcrumbs = useBreadcrumbs(() => [
-  { title: t("pages.brands.title"), route: "/brands" },
+  {
+    title: t("pages.brands.title"),
+    route: (() => {
+      const permalink = brand.value?.permalink ?? "";
+      const cleanPermalink = permalink.startsWith("/") ? permalink.slice(1) : permalink;
+      const brandSegment = cleanPermalink.split("/")[0];
+      return `/${brandSegment}`;
+    })(),
+  },
   { title: brand.value?.name ?? "" },
 ]);
 
