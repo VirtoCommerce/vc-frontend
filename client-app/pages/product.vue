@@ -415,6 +415,8 @@ useSeoMeta({
   ogType: () => (canSetMeta.value ? "website" : undefined),
 });
 
+const MAX_VISIBLE_PICKUP_LOCATIONS_COUNT = 5;
+
 watch(
   productId,
   async () => {
@@ -453,7 +455,7 @@ watch(
     }
 
     if (xPickupEnabled.value && product.value) {
-      await fetchPickupLocations({ productId: productId.value, first: 5 });
+      await fetchPickupLocations({ productId: productId.value, first: MAX_VISIBLE_PICKUP_LOCATIONS_COUNT });
     }
   },
   { immediate: true },
