@@ -26,14 +26,14 @@
             >
               <div class="select-address-map-modal__info-window">
                 <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
-                <div>
-                  <PickupAvailabilityInfo
-                    show-icon
-                    icon-size="sm"
-                    :availability-type="address.availabilityType"
-                    :availability-note="address.availabilityNote"
-                  />
-                </div>
+
+                <PickupAvailabilityInfo
+                  show-icon
+                  icon-size="sm"
+                  :availability-type="address.availabilityType"
+                  :availability-note="address.availabilityNote"
+                />
+
                 <div class="select-address-map-modal__info-window-content">
                   <dl>
                     <dt>
