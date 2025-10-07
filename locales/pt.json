@@ -1168,6 +1168,7 @@
           "get_directions": "Obter direções",
           "point_info": "Informações",
           "pickup_address": "Endereço de retirada",
+          "cart_pickup_points_not_found": "Não foi possível encontrar nenhum ponto de recolha para os produtos no seu carrinho",
           "availability": "Disponibilidade"
         }
       },

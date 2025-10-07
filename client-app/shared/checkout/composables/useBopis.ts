@@ -1,4 +1,5 @@
 import { computed, defineAsyncComponent } from "vue";
+import { useI18n } from "vue-i18n";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BOPIS_MAP_API_KEY, BOPIS_MAP_ENABLED_KEY, MODULE_ID_SHIPPING } from "@/core/constants/modules";
 import { useCartPickupLocations, useFullCart } from "@/shared/cart/composables";
@@ -11,6 +12,8 @@ export const BOPIS_CODE = "BuyOnlinePickupInStore";
 const ADDRESSES_FETCH_LIMIT = 999;
 
 export function useBopis() {
+  const { t } = useI18n();
+
   const { availableShippingMethods, updateShipment, shipment } = useFullCart();
   const { isEnabled, getSettingValue } = useModuleSettings(MODULE_ID_SHIPPING);
 
@@ -86,6 +89,7 @@ export function useBopis() {
         isCorporateAddresses: true,
         allowAddNewAddress: false,
         showAvailability: true,
+        emptyText: t("pages.account.order_details.bopis.cart_pickup_points_not_found"),
 
         onResult: async (addressOrAddressId: AnyAddressType | string) => {
           if (typeof addressOrAddressId === "string") {

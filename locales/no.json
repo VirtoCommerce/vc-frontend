@@ -1168,6 +1168,7 @@
           "get_directions": "Hent veibeskrivelse",
           "point_info": "Punktinformasjon",
           "pickup_address": "Henteadresse",
+          "cart_pickup_points_not_found": "Vi fant ingen hentepunkter for produktene i handlekurven din",
           "availability": "Tilgjengelighet"
         }
       },

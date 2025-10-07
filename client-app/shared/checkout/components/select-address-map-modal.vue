@@ -3,10 +3,10 @@
     :title="$t('shared.checkout.select_bopis_modal.title')"
     max-width="72rem"
     is-mobile-fullscreen
-    is-full-height
+    :is-full-height="!!addresses.length"
     class="select-address-map-modal"
   >
-    <div class="select-address-map-modal__content">
+    <div v-if="addresses.length" class="select-address-map-modal__content">
       <GoogleMap
         :api-key="apiKey"
         :map-id="MAP_ID"
@@ -129,6 +129,8 @@
         </ul>
       </VcScrollbar>
     </div>
+
+    <div v-else>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found") }}</div>
 
     <template #actions="{ close }">
       <div class="select-address-map-modal__actions">

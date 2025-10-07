@@ -1168,6 +1168,7 @@
           "get_directions": "Få vägbeskrivning",
           "point_info": "Platsinfo",
           "pickup_address": "Upphämtningsadress",
+          "cart_pickup_points_not_found": "Vi kunde inte hitta några upphämtningsställen för produkterna i din varukorg",
           "availability": "Tillgänglighet"
         }
       },

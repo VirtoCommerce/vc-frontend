@@ -142,7 +142,7 @@
 
         <template #mobile-empty>
           <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
-            {{ $t("shared.checkout.select_address_modal.no_addresses_message") }}
+            {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
           </div>
         </template>
 
@@ -217,7 +217,7 @@
             <td :colspan="showAvailability ? 5 : 4">
               <div class="flex items-center p-5">
                 <span class="text-base">
-                  {{ $t("shared.checkout.select_address_modal.no_addresses_message") }}
+                  {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
                 </span>
               </div>
             </td>
@@ -244,6 +244,7 @@ interface IProps {
   isCorporateAddresses: boolean;
   allowAddNewAddress?: boolean;
   showAvailability?: boolean;
+  emptyText?: string;
   omitFieldsOnCompare?: (keyof MemberAddressType)[];
 }
 
