@@ -207,6 +207,7 @@
           : $t('pages.company.members.no_members_message')
       "
       icon="outline-order"
+      :with-search="!!keyword || !!filter"
     >
       <template #button>
         <VcButton v-if="keyword || filter" prepent-icon="reset" @click="resetFiltersWithKeyword">

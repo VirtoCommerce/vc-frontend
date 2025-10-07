@@ -11,7 +11,11 @@
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
     "search_placeholder": "Enter keyword...",
-    "no_results_message": "No results found",
+    "no_quote_message": "There are no quote requests yet",
+    "no_results_message": "There are no results found",
+    "buttons": {
+      "reset_search": "Reset search"
+    },
     "request_quote_button": "Request Quote",
     "search_quote_requests": "Search quote requests",
     "reset_search": "Reset search",

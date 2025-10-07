@@ -36,9 +36,16 @@
     <!-- Empty view -->
     <VcEmptyView
       v-if="!fetching && !quotes.length"
-      :text="$t(!!keyword ? 'quotes.no_results_message' : 'quotes.no_quotes_message')"
+      :text="$t(!!keyword ? 'quotes.no_results_message' : 'quotes.no_quote_message')"
       icon="outline-quotes"
-    />
+      :with-search="!!keyword"
+    >
+      <template #button>
+        <VcButton v-if="keyword" prepend-icon="reset" @click="resetKeyword">
+          {{ $t("quotes.buttons.reset_search") }}
+        </VcButton>
+      </template>
+    </VcEmptyView>
 
     <!-- Content block -->
     <VcWidget v-else size="lg">

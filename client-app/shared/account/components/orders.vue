@@ -147,6 +147,7 @@
         : $t('pages.account.orders.no_orders_message')
     "
     icon="outline-order"
+    :with-search="!!keyword || !isFilterEmpty"
   >
     <template #button>
       <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">

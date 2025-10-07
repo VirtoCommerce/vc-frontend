@@ -188,8 +188,8 @@
           :page-history="pageHistory"
           :products="products"
           :saved-view-mode="savedViewMode"
-          :search-params="searchParams"
           :mode="catalogPaginationMode"
+          :keyword="searchParams.keyword"
           class="category__products"
           @change-page="changeProductsPage"
           @reset-filter-keyword="handleResetFilterKeyword"
@@ -355,7 +355,7 @@ const {
   openBranchesModal,
 
   resetFacetFilters,
-  resetFilterKeyword,
+  resetSearchKeyword,
   showFiltersSidebar,
 
   currentPage,
@@ -504,7 +504,7 @@ function resetPage() {
 }
 
 function handleResetFilterKeyword() {
-  resetFilterKeyword();
+  resetSearchKeyword();
   resetFacetFilters();
 }
 

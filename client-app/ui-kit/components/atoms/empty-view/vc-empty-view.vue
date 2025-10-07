@@ -1,7 +1,8 @@
 <template>
   <div class="vc-empty-view">
     <slot name="icon">
-      <div class="vc-empty-view__icon">
+      <div v-if="withSearch" v-html="nothingFoundImgRaw" />
+      <div v-else class="vc-empty-view__icon">
         <VcIcon :name="icon" />
       </div>
     </slot>
@@ -19,9 +20,12 @@
 </template>
 
 <script setup lang="ts">
+import nothingFoundImgRaw from "@/ui-kit/images/nothing-found.svg?raw";
+
 interface IProp {
   text?: string;
   icon?: string;
+  withSearch?: boolean;
 }
 
 withDefaults(defineProps<IProp>(), {

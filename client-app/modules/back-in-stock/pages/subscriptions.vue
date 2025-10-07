@@ -72,15 +72,28 @@
         />
       </template>
 
-      <VcEmptyView v-else-if="!allLoading" :text="$t('back_in_stock.list_details.empty_list')" icon="outline-lists">
+      <VcEmptyView
+        v-else-if="!allLoading"
+        :text="
+          keyword ? $t('back_in_stock.list_details.no_results_message') : $t('back_in_stock.list_details.empty_list')
+        "
+        icon="outline-lists"
+        :with-search="!!keyword"
+      >
         <template #button>
-          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
-            {{ $t("back_in_stock.list_details.empty_list_button") }}
+          <VcButton v-if="keyword" prepend-icon="reset" @click="resetKeyword">
+            {{ $t("pages.account.orders.buttons.reset_search") }}
           </VcButton>
 
-          <VcButton v-else to="/">
-            {{ $t("back_in_stock.list_details.empty_list_button") }}
-          </VcButton>
+          <template v-else>
+            <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+              {{ $t("back_in_stock.list_details.empty_list_button") }}
+            </VcButton>
+
+            <VcButton v-else to="/">
+              {{ $t("back_in_stock.list_details.empty_list_button") }}
+            </VcButton>
+          </template>
         </template>
       </VcEmptyView>
     </div>

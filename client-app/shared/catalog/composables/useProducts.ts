@@ -268,6 +268,10 @@ export function useProducts(
     keywordQueryParam.value = "";
   }
 
+  function resetSearchKeyword(): void {
+    searchQueryParam.value = "";
+  }
+
   function updateProductsFilters(newFilters: ProductsFiltersType): void {
     productsFilters.value = {
       ...newFilters,
@@ -529,6 +533,7 @@ export function useProducts(
     resetFacetFilters,
     /** @deprecated use `searchQueryParam` instead */
     resetFilterKeyword,
+    resetSearchKeyword,
     showFiltersSidebar,
     updateProductsFilters,
   };
