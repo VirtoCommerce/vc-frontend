@@ -1,0 +1,69 @@
+{
+  "quotes": {
+    "meta": {
+      "title": "@:quotes.title",
+      "table_description": "forespurte tilbud"
+    },
+    "title": "Tilbudsforespørsler",
+    "no_quotes_message": "Det er ingen tilbudsforespørsler ennå",
+    "quote_number_label": "Tilbudsnummer",
+    "date_label": "@:common.labels.date",
+    "status_label": "@:common.labels.status",
+    "total_label": "@:common.labels.total",
+    "search_placeholder": "Skriv inn nøkkelord...",
+    "no_results_message": "Ingen resultater funnet",
+    "request_quote_button": "Be om tilbud",
+    "search_quote_requests": "Søk i tilbudsforespørsler",
+    "reset_search": "Tilbakestill søk",
+    "cart_widget": {
+      "quote_request_hint": "Du kan be om varer i handlekurven din gjennom en spesiell tjeneste",
+      "create_quote_button": "Legg til handlekurvens varer i tilbudet",
+      "title": "Tilbudsforespørsel"
+    },
+    "navigation": {
+      "route_name": "Tilbudsforespørsler"
+    },
+    "errors": {
+      "creating_quote_error": "Feil ved oppretting av tilbud"
+    }
+  },
+  "quote_details": {
+    "quote_request_comment": "Kommentar til tilbudsforespørsel",
+    "title": "Tilbudsforespørsel #{0}",
+    "comment": "Kommentar",
+    "comment_field_label": "Har du noen generelle bemerkninger til denne tilbudsforespørselen?",
+    "products": "Produkter",
+    "shipping_address": "Leveringsadresse",
+    "billing_address": "Fakturaadresse",
+    "save_changes": "@:common.buttons.save_changes",
+    "submit": "@:common.buttons.submit",
+    "no_address_message": "Du har ikke angitt en adresse. Vennligst spesifiser en.",
+    "same_as_shipping_address": "Samme som leveringsadresse",
+    "quote_summary": "Tilbudsoversikt",
+    "quote_data": "Tilbudsdata",
+    "subTotal": "@:common.labels.subtotal",
+    "discountTotal": "@:common.labels.discount",
+    "shippingTotal": "@:common.labels.shipping_cost",
+    "taxTotal": "@:common.labels.tax",
+    "total": "@:common.labels.total",
+    "created": "@:common.labels.created",
+    "status": "@:common.labels.status",
+    "no_items_message": "Tilbudsforespørselen har ingen varer",
+    "save_changes_notification_success": "Tilbudsforespørselen er lagret",
+    "select_shipping_address": "Velg en leveringsadresse",
+    "select_billing_address": "Velg en fakturaadresse",
+    "files": "Filer",
+    "line_items": {
+      "product": "@:common.labels.product",
+      "properties": "@:common.labels.properties",
+      "price_per_item": "@:common.labels.price_per_item",
+      "quantity": "@:common.labels.quantity",
+      "total": "@:common.labels.total",
+      "subtotal": "@:common.labels.subtotal"
+    },
+    "error": {
+      "approve": "Tilbudet kan ikke godkjennes",
+      "decline": "Tilbudet kan ikke avslås"
+    }
+  }
+}

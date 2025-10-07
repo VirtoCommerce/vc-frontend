@@ -1,0 +1,31 @@
+{
+  "back_in_stock": {
+    "deactivate_modal": {
+      "cancel_button": "@:common.buttons.cancel",
+      "delete_button": "@:common.buttons.delete",
+      "message": "Oletko varma, että haluat peruuttaa tilauksen \"{productName}\" varastossa-ilmoituksista?",
+      "title": "Vahvista poisto"
+    },
+    "list_details": {
+      "empty_list": "Listasi on tyhjä",
+      "empty_list_button": "Jatka selaamista"
+    },
+    "messages": {
+      "click_to_receive_alert": "Napsauta saadaksesi hälytyksen",
+      "stock_alert": "Varastohälytys",
+      "you_are_subscribed": "Olet tilannut! Ilmoitamme sinulle, kun tuote on jälleen varastossa.",
+      "you_will_be_notified": "Sinulle ilmoitetaan"
+    },
+    "navigation": {
+      "route_name": "Takaisin varastossa -lista"
+    },
+    "subscriptions": {
+      "meta": {
+        "title": "Takaisin varastossa -lista"
+      },
+      "reset_search": "Nollaa haku",
+      "search_button": "Hae",
+      "search_placeholder": "Käyttäjähaku"
+    }
+  }
+}
