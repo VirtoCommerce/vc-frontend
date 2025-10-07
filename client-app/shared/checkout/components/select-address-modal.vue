@@ -121,7 +121,7 @@
               </div>
 
               <PickupAvailabilityInfo
-                v-if="showAvailablility"
+                v-if="showAvailability"
                 :availability-type="item.availabilityType"
                 :availability-note="item.availabilityNote"
               />
@@ -195,7 +195,7 @@
               </span>
             </td>
 
-            <td v-if="showAvailablility" class="truncate px-4 py-3.5">
+            <td v-if="showAvailability" class="truncate px-4 py-3.5">
               <PickupAvailabilityInfo
                 :availability-type="item.availabilityType"
                 :availability-note="item.availabilityNote"
@@ -214,7 +214,7 @@
 
         <template #desktop-empty>
           <tr>
-            <td :colspan="showAvailablility ? 5 : 4">
+            <td :colspan="showAvailability ? 5 : 4">
               <div class="flex items-center p-5">
                 <span class="text-base">
                   {{ $t("shared.checkout.select_address_modal.no_addresses_message") }}
@@ -243,7 +243,7 @@ interface IProps {
   addresses?: AnyAddressType[];
   isCorporateAddresses: boolean;
   allowAddNewAddress?: boolean;
-  showAvailablility?: boolean;
+  showAvailability?: boolean;
   omitFieldsOnCompare?: (keyof MemberAddressType)[];
 }
 
@@ -257,7 +257,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   addresses: () => [],
   allowAddNewAddress: true,
-  showAvailablility: false,
+  showAvailability: false,
   omitFieldsOnCompare: () => [],
 });
 
@@ -291,7 +291,7 @@ const columns = computed<ITableColumn[]>(() => {
         { id: "id", title: t("common.labels.active_address"), align: "center" },
       ];
 
-  if (props.showAvailablility) {
+  if (props.showAvailability) {
     cols.splice(cols.length - 1, 0, { id: "availability", title: t("pages.account.order_details.bopis.availability") });
   }
 

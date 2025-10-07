@@ -85,7 +85,7 @@ export function useBopis() {
         ],
         isCorporateAddresses: true,
         allowAddNewAddress: false,
-        showAvailablility: true,
+        showAvailability: true,
 
         onResult: async (addressOrAddressId: AnyAddressType | string) => {
           if (typeof addressOrAddressId === "string") {

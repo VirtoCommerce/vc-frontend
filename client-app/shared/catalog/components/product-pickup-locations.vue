@@ -15,7 +15,7 @@
             {{ pickupLocation.name }}
           </div>
 
-          <PickupAvalablityInfo
+          <PickupAvailabilityInfo
             :availability-type="pickupLocation.availabilityType"
             :availability-note="pickupLocation.availabilityNote"
           />
@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import type { ProductPickupLocation } from "@/core/api/graphql/types";
-import PickupAvalablityInfo from "@/shared/common/components/pickup-availability-info.vue";
+import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
 interface IProps {
   pickupLocations?: ProductPickupLocation[];
