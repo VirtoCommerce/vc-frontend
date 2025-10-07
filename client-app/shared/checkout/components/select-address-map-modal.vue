@@ -28,7 +28,7 @@
                 <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
                 <div>
                   <PickupAvailabilityInfo
-                    icon
+                    show-icon
                     icon-size="sm"
                     :availability-type="address.availabilityType"
                     :availability-note="address.availabilityNote"
@@ -118,7 +118,7 @@
 
                 <PickupAvailabilityInfo
                   class="select-address-map-modal__radio-button-pickup-availability"
-                  icon
+                  show-icon
                   icon-size="xs"
                   :availability-type="address.availabilityType"
                   :availability-note="address.availabilityNote"

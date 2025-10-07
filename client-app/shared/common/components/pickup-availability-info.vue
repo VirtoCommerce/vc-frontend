@@ -10,7 +10,7 @@
       },
     ]"
   >
-    <VcIcon v-if="icon" name="truck" :size="iconSize" />
+    <VcIcon v-if="showIcon" name="truck" :size="iconSize" />
     {{ availabilityNote }}
   </div>
 </template>
@@ -22,7 +22,7 @@ interface IProps {
   availabilityType?: string;
   availabilityNote?: string;
 
-  icon?: boolean;
+  showIcon?: boolean;
   iconSize?: VcIconSizeType;
 }
 
