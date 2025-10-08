@@ -6,7 +6,7 @@
     prepend-icon="cube"
     size="lg"
   >
-    <VcProductsGrid v-if="lg" short :columns="{ default: 2, xs: 3, sm: 4, md: 3 }">
+    <VcProductsGrid v-if="lg" short :columns="{ default: 2, xs: 3, sm: 4 }">
       <ProductCardRelated
         v-for="(item, index) in relatedProducts"
         :key="index"
@@ -61,12 +61,12 @@ const lg = breakpoints.smaller("lg");
 const xlScreenWidth = extractNumberFromString(BREAKPOINTS.xl);
 
 const relatedProductsCarouselOptions: ICarouselOptions = {
-  slidesPerView: 4,
-  slidesPerGroup: 4,
+  slidesPerView: 5,
+  slidesPerGroup: 5,
   breakpoints: {
     [xlScreenWidth]: {
-      slidesPerView: 5,
-      slidesPerGroup: 5,
+      slidesPerView: 6,
+      slidesPerGroup: 6,
     },
   },
 };

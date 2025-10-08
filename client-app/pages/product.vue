@@ -40,7 +40,7 @@
     </div>
 
     <VcLayout sidebar-position="right" sticky-sidebar class="mt-5">
-      <div class="space-y-5 xl:space-y-7">
+      <div class="space-y-5 xl:space-y-6">
         <component
           :is="productInfoSection?.type"
           v-if="productInfoSection && !productInfoSection.hidden"
@@ -110,7 +110,7 @@
       :related-products="relatedProducts"
       :product-id="productId"
       :product-name="product.name"
-      class="mt-5 xl:mt-7"
+      class="mt-5 xl:mt-6"
     />
 
     <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
@@ -123,7 +123,7 @@
         :model="model"
         :product-id="productId"
         :product-name="product.name"
-        class="mt-5 xl:mt-7"
+        class="mt-5 xl:mt-6"
       />
     </template>
   </VcContainer>
