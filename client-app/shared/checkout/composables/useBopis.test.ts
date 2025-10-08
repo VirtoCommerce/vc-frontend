@@ -45,6 +45,12 @@ vi.mock("@/core/composables/useModuleSettings", () => ({
   useModuleSettings: vi.fn(),
 }));
 
+vi.mock("vue-i18n", () => ({
+  useI18n: () => ({
+    t: (key: string) => (key === "common.links.home" ? "Home" : key),
+  }),
+}));
+
 // Import the mocked functions for later configuration
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useCartPickupLocations, useFullCart } from "@/shared/cart/composables";
