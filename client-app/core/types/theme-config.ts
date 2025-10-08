@@ -116,8 +116,8 @@ export interface IThemeConfigPreset {
 
   color_price?: string;
 
-  color_hexagon_icon_bg?: string;
-  color_hexagon_icon?: string;
+  color_shape_icon_bg?: string;
+  color_shape_icon?: string;
 
   color_header_top_bg?: string;
   color_header_top_text?: string;
