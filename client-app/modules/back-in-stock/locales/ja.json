@@ -8,6 +8,7 @@
     },
     "list_details": {
       "empty_list": "リストが空です",
+      "no_results_message": "結果が見つかりません",
       "empty_list_button": "閲覧を続ける"
     },
     "messages": {

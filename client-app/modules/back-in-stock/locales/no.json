@@ -8,6 +8,7 @@
     },
     "list_details": {
       "empty_list": "Listen din er tom",
+      "no_results_message": "Ingen resultater funnet",
       "empty_list_button": "Fortsett å bla"
     },
     "messages": {

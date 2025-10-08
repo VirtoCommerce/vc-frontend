@@ -11,7 +11,11 @@
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
     "search_placeholder": "Wpisz słowo kluczowe...",
+    "no_quote_message": "Nie ma jeszcze żądań ofert",
     "no_results_message": "Nie znaleziono wyników",
+    "buttons": {
+      "reset_search": "Zresetuj wyszukiwanie"
+    },
     "request_quote_button": "Poproś o Ofertę",
     "search_quote_requests": "Szukaj żądań ofert",
     "reset_search": "Zresetuj wyszukiwanie",

@@ -11,7 +11,11 @@
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
     "search_placeholder": "Syötä avainsana...",
+    "no_quote_message": "Tarjouspyyntöjä ei ole vielä",
     "no_results_message": "Ei tuloksia",
+    "buttons": {
+      "reset_search": "Nollaa haku"
+    },
     "request_quote_button": "Pyydä tarjous",
     "search_quote_requests": "Hae tarjouspyyntöjä",
     "reset_search": "Nollaa haku",

@@ -11,7 +11,11 @@
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
     "search_placeholder": "Ingrese palabra clave...",
+    "no_quote_message": "No hay solicitudes de cotización aún",
     "no_results_message": "No se encontraron resultados",
+    "buttons": {
+      "reset_search": "Restablecer búsqueda"
+    },
     "request_quote_button": "Solicitar Cotización",
     "search_quote_requests": "Buscar solicitudes de cotización",
     "reset_search": "Restablecer búsqueda",
