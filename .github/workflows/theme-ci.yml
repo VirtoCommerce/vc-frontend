@@ -234,7 +234,8 @@ jobs:
       vctestingRepoBranch: 'vcst-4059' #'dev'
       frontendZipUrl: ${{ needs.ci.outputs.artifactUrl }}
     secrets:
-      envPAT: ${{ secrets.REPO_TOKEN }}   
+      envPAT: ${{ secrets.REPO_TOKEN }}
+      testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
 
   # ui-auto-tests:
   #   needs: 'ci'
