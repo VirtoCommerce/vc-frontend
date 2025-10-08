@@ -1168,7 +1168,7 @@
           "get_directions": "Zur Route",
           "point_info": "Info-Punkt",
           "pickup_address": "Abholadresse",
-          "cart_pickup_points_not_found": "Wir konnten keine Abholpunkte für die Produkte in Ihrem Warenkorb finden",
+          "cart_pickup_points_not_found": "Für diese Produkte sind keine Abholpunkte verfügbar. Wählen Sie eine andere Versandart.",
           "availability": "Verfügbarkeit"
         }
       },

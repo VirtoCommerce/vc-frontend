@@ -1168,7 +1168,7 @@
           "get_directions": "ルート検索",
           "point_info": "ポイント情報",
           "pickup_address": "受取住所",
-          "cart_pickup_points_not_found": "カート内の商品に対応する受取場所が見つかりませんでした",
+          "cart_pickup_points_not_found": "この商品を受け取り可能な店舗がありません。別の配送方法を選択してください",
           "availability": "在庫状況"
         }
       },

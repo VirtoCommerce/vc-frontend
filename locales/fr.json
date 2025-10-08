@@ -1168,7 +1168,7 @@
           "get_directions": "Itinéraire",
           "point_info": "Point d'info",
           "pickup_address": "Adresse de retrait",
-          "cart_pickup_points_not_found": "Nous n'avons trouvé aucun point de retrait pour les produits de votre panier",
+          "cart_pickup_points_not_found": "Aucun point de collecte n'est disponible pour ces produits. Veuillez sélectionner un autre mode de livraison.",
           "availability": "Disponibilité"
         }
       },
