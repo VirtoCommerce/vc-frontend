@@ -109,13 +109,13 @@
 
   "color_empty_list_icon": "#e31e24",
 
-  "color_mobile_menu_bg": "#c12a2d",
+  "color_mobile_menu_bg": "#27282b  ",
   "color_mobile_menu_text": "#ffffff",
-  "color_mobile_menu_link": "#d1d1d1",
+  "color_mobile_menu_link": "#bee1b2",
   "color_mobile_menu_link_active": "#ffffff",
-  "color_mobile_menu_icon": "#a1a1a1",
-  "color_mobile_menu_icon_active": "#005dd6",
-  "color_mobile_menu_navigation": "#005dd6",
+  "color_mobile_menu_icon": "#7fc568",
+  "color_mobile_menu_icon_active": "#e15695",
+  "color_mobile_menu_navigation": "#e15695",
   "color_mobile_active_control": "#757575",
 
   "color_mobile_search_bar_bg": "#2e2e2e",
@@ -131,6 +131,7 @@
   "color_header_bottom_link": "#ffffff",
   "color_header_bottom_link_hover": "#d1d1d1",
   "color_header_bottom_link_active": "#d1d1d1",
+  "color_header_bottom_link_icon": "#ffffff",
 
   "color_footer_top_bg": "#2e2e2e",
   "color_footer_top_text": "#ffffff",
@@ -143,6 +144,7 @@
   "color_footer_bottom_link": "#ebebeb",
   "color_footer_bottom_link_hover": "#ffffff",
   "color_footer_bottom_link_active": "#f5f5f5",
+
 
   "color_price": "#171717"
 }

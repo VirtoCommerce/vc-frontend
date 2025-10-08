@@ -129,6 +129,7 @@ export interface IThemeConfigPreset {
   color_header_bottom_link?: string;
   color_header_bottom_link_hover?: string;
   color_header_bottom_link_active?: string;
+  color_header_bottom_link_icon?: string;
 
   color_footer_top_bg?: string;
   color_footer_top_text?: string;
