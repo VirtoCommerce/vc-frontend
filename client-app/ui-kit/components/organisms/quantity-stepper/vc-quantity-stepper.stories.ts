@@ -1,12 +1,20 @@
-import { ref } from "vue";
 import { VcQuantityStepper } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["sm", "md"];
 
-export default {
+const meta: Meta<typeof VcQuantityStepper> = {
   title: "Components/Organisms/VcQuantityStepper",
   component: VcQuantityStepper,
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `
+    <VcQuantityStepper
+      v-bind="args"
+      v-model="localValue"
+    />
+  `,
+  }),
   argTypes: {
     /**
      * Docs:
@@ -24,52 +32,48 @@ export default {
       },
     },
   },
-} as Meta<typeof VcQuantityStepper>;
+};
 
-const Template: StoryFn = (args) => ({
-  components: { VcQuantityStepper },
-  setup: () => {
-    const localValue = ref(args.value ?? 0);
-    return { args, localValue };
+export default meta;
+type StoryType = StoryObj<typeof meta>;
+
+export const Basic: StoryType = {
+  args: {},
+};
+
+export const MinMax: StoryType = {
+  args: {
+    min: 3,
+    max: 10,
+    value: 3,
   },
-  template: `
-    <VcQuantityStepper
-      v-bind="args"
-      v-model="localValue"
-    />
-  `,
-});
-
-export const Basic = Template.bind({});
-
-export const MinMax = Template.bind({});
-MinMax.args = {
-  min: 3,
-  max: 10,
-  value: 3,
 };
 
-export const Disabled = Template.bind({});
-Disabled.args = {
-  disabled: true,
-  value: 0,
+export const Disabled: StoryType = {
+  args: {
+    disabled: true,
+    value: 0,
+  },
 };
 
-export const Readonly = Template.bind({});
-Readonly.args = {
-  readonly: true,
-  value: 5,
+export const Readonly: StoryType = {
+  args: {
+    readonly: true,
+    value: 5,
+  },
 };
 
-export const Errored = Template.bind({});
-Errored.args = {
-  error: true,
-  message: "Error message",
-  value: 5,
+export const Errored: StoryType = {
+  args: {
+    error: true,
+    message: "Error message",
+    value: 5,
+  },
 };
 
-export const SelectOnClick = Template.bind({});
-SelectOnClick.args = {
-  selectOnClick: true,
-  value: 5,
+export const SelectOnClick: StoryType = {
+  args: {
+    selectOnClick: true,
+    value: 5,
+  },
 };
