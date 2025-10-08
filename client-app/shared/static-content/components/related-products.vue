@@ -59,6 +59,7 @@ const { analytics } = useAnalytics();
 const lg = breakpoints.smaller("lg");
 
 const xlScreenWidth = extractNumberFromString(BREAKPOINTS.xl);
+const xxlScreenWidth = extractNumberFromString(BREAKPOINTS["2xl"]);
 
 const relatedProductsCarouselOptions: ICarouselOptions = {
   slidesPerView: 5,
@@ -67,6 +68,10 @@ const relatedProductsCarouselOptions: ICarouselOptions = {
     [xlScreenWidth]: {
       slidesPerView: 6,
       slidesPerGroup: 6,
+    },
+    [xxlScreenWidth]: {
+      slidesPerView: 7,
+      slidesPerGroup: 7,
     },
   },
 };
