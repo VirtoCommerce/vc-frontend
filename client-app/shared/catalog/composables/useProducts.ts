@@ -343,7 +343,7 @@ export function useProducts(
       updateCurrentPage(Number(searchParams.page));
     }
 
-    const actualWithZeroPrice = withZeroPriceMain !== undefined ? withZeroPriceMain : withZeroPrice;
+    const actualWithZeroPrice = withZeroPriceMain ?? withZeroPrice;
 
     try {
       const {
