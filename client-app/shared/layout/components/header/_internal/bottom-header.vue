@@ -12,7 +12,7 @@
       <template v-if="organization">
         <div class="hidden h-6 w-0.5 bg-primary xl:block"></div>
 
-        <div class="hidden max-w-36 text-base italic leading-[18px] text-neutral-800 xl:line-clamp-2">
+        <div class="hidden max-w-36 text-base italic leading-[18px] text-[--header-top-text-color] xl:line-clamp-2">
           {{ organization?.name }}
         </div>
       </template>
