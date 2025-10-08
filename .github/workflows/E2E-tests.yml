@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
   push:
     branches:
-      [master, dev, VCST-4078]
-    # paths-ignore:
-    #   - '.idea'
-    #   - '.vscode'
-    #   - 'README.md'
-    #   - 'LICENSE'
+      [master, dev]
+    paths-ignore:
+      - '.idea'
+      - '.vscode'
+      - 'README.md'
+      - 'LICENSE'
   pull_request:
     paths-ignore:
       - '.idea'
@@ -219,7 +219,7 @@ jobs:
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
-  ui-auto-tests:
+  ui-e2e-auto-tests:
     needs: 'ci'
     if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push') && (needs.ci.outputs.run-e2e == 'true')) ||
         (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request') }}
