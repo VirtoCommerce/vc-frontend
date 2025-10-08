@@ -557,7 +557,7 @@ watch(
   @apply relative flex grow items-stretch;
 
   &__input {
-    @apply w-full;
+    @apply w-full text-neutral-800;
   }
 
   &__button {
