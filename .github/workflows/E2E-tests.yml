@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      [master, dev]
+      [master, dev, VCST-4078]
     paths-ignore:
       - '.idea'
       - '.vscode'
@@ -221,8 +221,8 @@ jobs:
 
   ui-e2e-auto-tests:
     needs: 'ci'
-    if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push') && (needs.ci.outputs.run-e2e == 'true')) ||
-        (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request') }}
+    # if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push') && (needs.ci.outputs.run-e2e == 'true')) ||
+    #     (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request') }}
     uses: VirtoCommerce/.github/.github/workflows/ui-autotests.yml@VCST-4078 #v3.800.17  
     with:
       installModules: 'true'
