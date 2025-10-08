@@ -92,27 +92,6 @@
           @reset-filters="resetFacetFilters"
           @apply-filters="applyFilters"
         />
-
-        <component
-          :is="relatedProductsSection?.type"
-          v-if="relatedProductsSection && !relatedProductsSection.hidden"
-          :related-products="relatedProducts"
-          :product-id="productId"
-          :product-name="product.name"
-        />
-
-        <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
-          <component
-            :is="recommendedProductsSection?.type"
-            v-for="{ model, id } in recommendedProductsSection.blocks"
-            :key="id"
-            :recommended-products="recommendedProducts[model as string]"
-            :title="$t(`pages.product.recommended_products.${model}_section_title`)"
-            :model="model"
-            :product-id="productId"
-            :product-name="product.name"
-          />
-        </template>
       </div>
 
       <template #sidebar>
@@ -124,6 +103,29 @@
         />
       </template>
     </VcLayout>
+
+    <component
+      :is="relatedProductsSection?.type"
+      v-if="relatedProductsSection && !relatedProductsSection.hidden"
+      :related-products="relatedProducts"
+      :product-id="productId"
+      :product-name="product.name"
+      class="mt-5 xl:mt-7"
+    />
+
+    <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
+      <component
+        :is="recommendedProductsSection?.type"
+        v-for="{ model, id } in recommendedProductsSection.blocks"
+        :key="id"
+        :recommended-products="recommendedProducts[model as string]"
+        :title="$t(`pages.product.recommended_products.${model}_section_title`)"
+        :model="model"
+        :product-id="productId"
+        :product-name="product.name"
+        class="mt-5 xl:mt-7"
+      />
+    </template>
   </VcContainer>
 
   <Error404 v-else-if="!fetchingProduct && productTemplate" />
