@@ -1,0 +1,236 @@
+name: Theme CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      [master, dev]
+    paths-ignore:
+      - '.idea'
+      - '.vscode'
+      - 'README.md'
+      - 'LICENSE'
+  pull_request:
+    paths-ignore:
+      - '.idea'
+      - '.vscode'
+      - 'README.md'
+      - 'LICENSE'
+
+jobs:
+  ci:
+    if: ${{ github.actor != 'dependabot[bot]' &&
+         (github.event.pull_request.head.repo.full_name == github.repository ||
+         github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
+    runs-on: ubuntu-latest
+    env:
+      FORCE_COLOR: true
+      CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
+      CLIENT_ID: ${{secrets.CLIENT_ID}}
+      CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
+      SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+      GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+      BLOB_SAS: ${{ secrets.BLOB_TOKEN }}
+      VERSION: ''
+      VERSION_SUFFIX: ''
+      BUILD_STATE: 'failed'
+      RELEASE_STATUS: 'false'
+    outputs:
+      artifactUrl: '${{ steps.artifactUrl.outputs.download_url }}'
+      jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
+
+    steps:
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4.2.0
+        with:
+          node-version: '22'
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+
+      - name: Set RELEASE_STATUS
+        if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
+        run: |
+          echo "RELEASE_STATUS=true" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Image Version
+        uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        with:
+          projectType: theme
+        id: image
+
+      - name: Get changelog
+        id: changelog
+        uses: VirtoCommerce/vc-github-actions/changelog-generator@master
+
+      - name: Set release VERSION_SUFFIX
+        run: |
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}" >> $GITHUB_ENV
+
+      - name: Set release-alpha VERSION_SUFFIX
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.fullSuffix }}" >> $GITHUB_ENV
+
+      - name: Set PR VERSION_SUFFIX
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}-${{ steps.image.outputs.SHA }}" >> $GITHUB_ENV
+
+      - name: Set VERSION
+        run: |
+          echo "VERSION=${{ steps.image.outputs.prefix }}${{ env.VERSION_SUFFIX && '-' || '' }}${{ env.VERSION_SUFFIX }}" >> $GITHUB_ENV
+
+      - name: Update package.json Version
+        run: |
+          yarn version ${{ env.VERSION }}
+
+      - name: Install dependencies
+        run: |
+          yarn install
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v5.3.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Check Locales
+        run: |
+          set -o pipefail
+          yarn check-locales 2>&1 | tee check-locales.log
+          if grep -q "Warning:" check-locales.log; then
+            echo "Locale check completed with warnings."
+            exit 1
+          fi
+
+      - name: Build
+        run: |
+          yarn build
+
+      - name: Unit Tests with Coverage
+        run: |
+          yarn test:coverage
+
+      - name: Upload Coverage Report
+        uses:  actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage
+
+      - name: Typing Tests
+        run: |
+          yarn test:typing --run
+
+      - name: BUILD_STATE::successful
+        if: success()
+        run: echo "BUILD_STATE=successful" >> $GITHUB_ENV
+
+      - name: Add files to zip
+        run: |
+          mkdir -p ./tmp/default
+          mkdir ./artifacts
+          mv ./dist/* ./tmp/default
+          cd ./tmp
+          zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./default
+
+      - name: Publish to Blob
+        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
+        id: blobRelease
+        uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
+        with:
+          blobSAS: ${{ secrets.BLOB_TOKEN }}
+          blobUrl: ${{ vars.BLOB_URL }}
+
+      - name: Add link to PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: VirtoCommerce/vc-github-actions/publish-artifact-link@master
+        with:
+          artifactUrl: ${{ steps.blobRelease.outputs.packageUrl }}
+          repoOrg: ${{ github.repository_owner }}
+          downloadComment: 'Artifact URL:'
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        id: create_release
+        if: ${{ github.ref == 'refs/heads/master' }}
+        with:
+          make_latest: true
+          name: ${{ steps.image.outputs.prefix }}
+          draft: false
+          prerelease: false
+          body: "[Compatible environment configuration](https://github.com/VirtoCommerce/vc-deploy-dev/releases/tag/v${{ steps.image.outputs.prefix }}_vc-frontend)"
+          tag_name: ${{ steps.image.outputs.prefix }}
+          files: artifacts/${{ steps.blobRelease.outputs.blobId }}
+          target_commitish: ${{ github.ref_name }}
+          generate_release_notes: true
+
+      - name: Set artifactUrl value
+        id: artifactUrl
+        run: |
+          if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
+            download_url=$(echo '${{ steps.create_release.outputs.assets }}' | jq -r '.[0].browser_download_url // empty')
+            if [ -n "$download_url" ]; then
+              echo "download_url=$download_url" >> $GITHUB_OUTPUT
+            else
+              echo "download_url=" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "download_url=${{ steps.blobRelease.outputs.packageUrl }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Parse Jira Keys from All Commits
+        uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
+        if: always()
+        id: jira_keys
+        with:
+          release: ${{ env.RELEASE_STATUS }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Build Info to Jira
+        if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
+        id: push_build_info_to_jira
+        uses: VirtoCommerce/jira-upload-build-info@master
+        with:
+          cloud-instance-base-url: '${{ secrets.CLOUD_INSTANCE_BASE_URL }}'
+          client-id: '${{ secrets.CLIENT_ID }}'
+          client-secret: '${{ secrets.CLIENT_SECRET }}'
+          pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
+          build-number: ${{ github.run_number }}
+          build-display-name: 'Workflow: ${{ github.workflow }} (#${{ github.run_number }})'
+          build-state: '${{ env.BUILD_STATE }}'
+          build-url: '${{github.event.repository.url}}/actions/runs/${{github.run_id}}'
+          update-sequence-number: '${{ github.run_id }}'
+          last-updated: '${{github.event.head_commit.timestamp}}'
+          issue-keys: '${{ steps.jira_keys.outputs.jira-keys }}'
+          commit-id: '${{ github.sha }}'
+          repo-url: '${{ github.event.repository.url }}'
+          build-ref-url: '${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}'
+
+      - name: Confirm Jira Build Output
+        if: success()
+        run: |
+          echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
+
+  ui-auto-tests:
+    needs: 'ci'
+    if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
+      (github.base_ref == 'dev') && (github.event_name == 'pull_request') || 
+      (github.event_name == 'workflow_dispatch') }}
+    uses: VirtoCommerce/.github/.github/workflows/e2e-autotests.yml@VCST-4078 #v3.800.13 
+    with:
+      installModules: 'true'
+      installCustomModule: 'false'
+      platformDockerTag: 'linux-latest'
+      frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
+    secrets:
+      envPAT: ${{ secrets.REPO_TOKEN }}
+
+
