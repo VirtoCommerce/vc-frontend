@@ -325,7 +325,7 @@ export function useProducts(
     );
   }
 
-  async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>, withZeroPriceMain?: boolean) {
+  async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>, withZeroPriceOverride?: boolean) {
     const searchParams = {
       ..._searchParams,
       page:
@@ -343,7 +343,7 @@ export function useProducts(
       updateCurrentPage(Number(searchParams.page));
     }
 
-    const actualWithZeroPrice = withZeroPriceMain ?? withZeroPrice;
+    const actualWithZeroPrice = withZeroPriceOverride ?? withZeroPrice;
 
     try {
       const {

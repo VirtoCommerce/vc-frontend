@@ -9,12 +9,7 @@
 
           <span>
             <VcItemPrice
-              v-if="
-                variationResult &&
-                variationResult.price &&
-                variationResult.price.actual &&
-                variationResult.price.actual.amount > 0
-              "
+              v-if="variationResult && variationResult.price?.actual?.amount > 0"
               :value="variationResult?.price"
             />
             <VcTooltip v-else>
@@ -39,15 +34,7 @@
         </div>
 
         <div class="mt-4 print:hidden">
-          <AddToCart
-            v-if="
-              variationResult &&
-              variationResult.price &&
-              variationResult.price.actual &&
-              variationResult.price.actual.amount > 0
-            "
-            :product="variationResult"
-          >
+          <AddToCart v-if="variationResult && variationResult.price?.actual?.amount > 0" :product="variationResult">
             <InStock
               :is-in-stock="variationResult.availabilityData?.isInStock"
               :is-digital="isDigital"
