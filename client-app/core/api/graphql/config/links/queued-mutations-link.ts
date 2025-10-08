@@ -45,6 +45,7 @@ interface IOperationState<TVars extends Record<string, unknown>> {
 export function createQueuedMutationsLink<TVars extends Record<string, unknown> = Record<string, unknown>>(
   config: IQueueConfig<TVars>,
 ): ApolloLink {
+  console.log("config", config);
   const targets = new Set(config.targets);
   const debounceMs = config.debounceMs ?? 300;
   const policy: QueuePolicyType = config.policy ?? "replace";
@@ -150,12 +151,14 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
   const pendingExecuteBundles = new Map<string, { variables: TVars; items: IPendingItem<TVars>[] }>();
 
   return new ApolloLink((operation, forward) => {
+    console.log("operation", operation);
     if (!isMutation(operation) || !targets.has(operation.operationName)) {
       return forward(operation);
     }
 
     return new Observable((observer) => {
       const opName = operation.operationName;
+      console.log("opName", opName);
 
       const next = (value: unknown) => observer.next(value as never);
       const complete = () => observer.complete();
@@ -228,5 +231,6 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
 }
 
 export const queuedMutationsLink = createQueuedMutationsLink({
-  targets: [],
+  targets: ["UpdateShortCartItemQuantity"],
+  debounceMs: 1000,
 });

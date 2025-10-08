@@ -83,7 +83,7 @@
       @link-click="$emit('linkClick', product, $event)"
     />
 
-    <AddToCart v-else :product="product" :reserved-space="viewMode === 'grid'">
+    <AddToCartSimple v-else :product="product" :reserved-space="viewMode === 'grid'">
       <InStock
         :is-in-stock="product.availabilityData?.isInStock"
         :is-digital="product.productType === ProductType.Digital"
@@ -91,7 +91,7 @@
       />
 
       <CountInCart :product-id="product.id" />
-    </AddToCart>
+    </AddToCartSimple>
   </VcProductCard>
 </template>
 
@@ -105,7 +105,6 @@ import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
-import { AddToCart } from "@/shared/cart/components";
 import { useProducts } from "@/shared/catalog/composables/useProducts";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { useCustomProductComponents } from "@/shared/common/composables/useCustomProductComponents";
@@ -119,6 +118,7 @@ import InStock from "./in-stock.vue";
 import PurchasedBeforeBadge from "./purchased-before-badge.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { BrowserTargetType } from "@/core/types";
+import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 
 interface IEmits {
   (eventName: "linkClick", product: Product, globalEvent: MouseEvent): void;

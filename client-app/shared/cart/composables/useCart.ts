@@ -34,6 +34,7 @@ import {
   UnselectCartItemsDocument,
   GetShortCartDocument,
   CreateCartFromWishlistDocument,
+  UpdateShortCartItemQuantityDocument,
 } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
@@ -220,6 +221,15 @@ export function useShortCart() {
     return changeItemQuantityFunction(lineItemId, quantity, changeItemQuantityBatchedMutation);
   }
 
+  const { mutate: updateItemCartQuantityMutation, loading: updateItemCartQuantityLoading } = useMutation(
+    UpdateShortCartItemQuantityDocument,
+  );
+  function updateItemCartQuantity(productId: string, quantity: number) {
+    return updateItemCartQuantityMutation({
+      command: { items: [{ productId, quantity }], ...commonVariables },
+    });
+  }
+
   function getItemsTotal(productIds: string[]): number {
     if (!cart.value?.items.length) {
       return 0;
@@ -250,13 +260,15 @@ export function useShortCart() {
     addToCartLoading,
     changeItemQuantityBatchedOverflowed,
     createCartFromWishlistLoading,
+    updateItemCartQuantity,
     changing: computed(
       () =>
         addToCartLoading.value ||
         addItemsToCartLoading.value ||
         addBulkItemsToCartLoading.value ||
         changeItemQuantityLoading.value ||
-        changeItemQuantityBatchedLoading.value,
+        changeItemQuantityBatchedLoading.value ||
+        updateItemCartQuantityLoading.value,
     ),
   };
 }

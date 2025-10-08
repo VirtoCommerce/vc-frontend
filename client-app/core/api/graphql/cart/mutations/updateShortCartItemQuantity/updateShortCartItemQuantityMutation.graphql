@@ -1,0 +1,11 @@
+mutation UpdateShortCartItemQuantity($command: InputUpdateCartQuantity!) {
+  updateCartQuantity(command: $command) {
+    id
+    itemsCount
+    items {
+      id
+      productId
+      quantity
+    }
+  }
+}
