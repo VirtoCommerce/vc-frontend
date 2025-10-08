@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
   push:
     branches:
-      [master, dev]
-    paths-ignore:
-      - '.idea'
-      - '.vscode'
-      - 'README.md'
-      - 'LICENSE'
+      [master, dev, VCST-4078]
+    # paths-ignore:
+    #   - '.idea'
+    #   - '.vscode'
+    #   - 'README.md'
+    #   - 'LICENSE'
   pull_request:
     paths-ignore:
       - '.idea'
