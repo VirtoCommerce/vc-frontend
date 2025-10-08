@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "Options",
-          "select_to_proceed": "Sélectionnez des options pour continuer"
+          "select_to_proceed": "Sélectionnez des options pour continuer",
+          "price_unavailable": "Le produit ne peut pas être acheté dans la devise sélectionnée"
         }
       },
       "discount_badge": {

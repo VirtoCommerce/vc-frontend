@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "Vaihtoehdot",
-          "select_to_proceed": "Valitse vaihtoehdot jatkaaksesi"
+          "select_to_proceed": "Valitse vaihtoehdot jatkaaksesi",
+          "price_unavailable": "Tuotetta ei voi ostaa valitussa valuutassa"
         }
       },
       "discount_badge": {
