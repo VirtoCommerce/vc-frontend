@@ -178,8 +178,6 @@ const attrs = computed(() => {
 </script>
 
 <style lang="scss">
-@use "sass:color";
-
 .vc-button {
   --props-min-width: v-bind(props.minWidth);
   --props-icon-size: v-bind(props.iconSize);
