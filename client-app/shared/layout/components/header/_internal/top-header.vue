@@ -4,9 +4,15 @@
     data-test-id="main-layout.top-header"
   >
     <div class="flex min-w-0 shrink items-center gap-3">
-      <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
+      <LanguageSelector
+        v-if="$context.availableLanguages && $context.availableLanguages.length > 1"
+        class="flex-none"
+      />
 
-      <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
+      <CurrencySelector
+        v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1"
+        class="h-full flex-none"
+      />
 
       <ShipToSelector />
     </div>
