@@ -8,7 +8,11 @@
   >
     <div class="vc-layout__container">
       <!-- Sidebar first when on the left -->
-      <aside v-if="$slots.sidebar && sidebarPosition === 'left'" class="vc-layout__sidebar-container">
+      <aside
+        v-if="$slots.sidebar && sidebarPosition === 'left'"
+        class="vc-layout__sidebar-container"
+        :aria-label="sidebarLabel"
+      >
         <div
           ref="sidebar"
           class="vc-layout__sidebar"
@@ -27,7 +31,11 @@
       </div>
 
       <!-- Sidebar last when on the right -->
-      <aside v-if="$slots.sidebar && sidebarPosition === 'right'" class="vc-layout__sidebar-container">
+      <aside
+        v-if="$slots.sidebar && sidebarPosition === 'right'"
+        class="vc-layout__sidebar-container"
+        :aria-label="sidebarLabel"
+      >
         <div
           ref="sidebar"
           class="vc-layout__sidebar"
@@ -43,21 +51,27 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { BREAKPOINTS } from "@/core/constants";
 import { useStickySidebar } from "../../../composables/useStickySidebar";
 
 interface IProps {
   sidebarPosition?: "left" | "right";
   stickySidebar?: boolean;
+  sidebarAriaLabel?: string;
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   sidebarPosition: "left",
 });
 
+const { t } = useI18n();
+
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
+
+const sidebarLabel = computed(() => props.sidebarAriaLabel || t("ui_kit.accessibility.sidebar"));
 
 const sidebar = ref<HTMLElement | null>(null);
 const content = ref<HTMLElement | null>(null);
