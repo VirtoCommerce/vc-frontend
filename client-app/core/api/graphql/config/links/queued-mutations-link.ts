@@ -12,10 +12,8 @@ type MergeVariablesFnType<TVars extends Record<string, unknown> = Record<string,
 
 export type QueuePolicyType = "replace" | "concat" | "custom";
 
-export interface IQueueConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
-  // Operation names to manage. If empty, nothing is intercepted.
-  targets: string[];
-  // Debounce in ms per operation kind.
+export interface IQueueTargetConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
+  // Debounce in ms for this operation name
   debounceMs?: number;
   // Queueing behavior on subsequent calls while one is in-flight.
   policy?: QueuePolicyType;
@@ -23,6 +21,12 @@ export interface IQueueConfig<TVars extends Record<string, unknown> = Record<str
   customMerge?: (currentQueued: TVars | null, next: TVars, operationName: string) => TVars | null;
   // How to merge variables for "replace" (keep last) and "concat" (append) flows.
   mergeVariables?: MergeVariablesFnType<TVars>;
+}
+
+export interface IQueueConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
+  // Operation names to manage. If empty, nothing is intercepted.
+  // Per-target overrides only.
+  targets: Array<{ name: string; config?: IQueueTargetConfig<TVars> }>;
 }
 
 interface IPendingItem<TVars extends Record<string, unknown>> {
@@ -45,10 +49,30 @@ interface IOperationState<TVars extends Record<string, unknown>> {
 export function createQueuedMutationsLink<TVars extends Record<string, unknown> = Record<string, unknown>>(
   config: IQueueConfig<TVars>,
 ): ApolloLink {
-  const targets = new Set(config.targets);
-  const debounceMs = config.debounceMs ?? 300;
-  const policy: QueuePolicyType = config.policy ?? "replace";
-  const merge: MergeVariablesFnType<TVars> = config.mergeVariables ?? ((a, b) => defaultMergeVariables(a, b));
+  const targetConfigMap = new Map<string, IQueueTargetConfig<TVars>>();
+  for (const t of config.targets) {
+    targetConfigMap.set(t.name, t.config ?? {});
+  }
+
+  const targets = new Set<string>(Array.from(targetConfigMap.keys()));
+
+  function getEffectiveConfig(
+    opName: string,
+  ): Required<Pick<IQueueTargetConfig<TVars>, "debounceMs" | "policy" | "mergeVariables">> &
+    Pick<IQueueTargetConfig<TVars>, "customMerge"> {
+    const perTarget = targetConfigMap.get(opName) ?? {};
+    const effectiveDebounce = perTarget.debounceMs ?? 300;
+    const effectivePolicy: QueuePolicyType = perTarget.policy ?? "replace";
+    const effectiveCustomMerge = perTarget.customMerge;
+    const effectiveMerge: MergeVariablesFnType<TVars> =
+      perTarget.mergeVariables ?? ((a, b) => defaultMergeVariables(a, b));
+    return {
+      debounceMs: effectiveDebounce,
+      policy: effectivePolicy,
+      customMerge: effectiveCustomMerge,
+      mergeVariables: effectiveMerge,
+    };
+  }
 
   const stateByOperation = new Map<string, IOperationState<TVars>>();
 
@@ -69,6 +93,7 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     if (state.timer) {
       clearTimeout(state.timer);
     }
+    const { debounceMs } = getEffectiveConfig(opName);
     state.timer = setTimeout(() => {
       void flush(opName).catch(() => undefined);
     }, debounceMs);
@@ -93,15 +118,16 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     error: (r?: unknown) => void,
   ) {
     const state = getState(opName);
+    const { policy, customMerge, debounceMs } = getEffectiveConfig(opName);
 
     // apply policy
     if (policy === "replace") {
       setReplaceQueue(state, variables, next, complete, error);
     } else if (policy === "concat") {
       state.queue.push({ variables, next, complete, error });
-    } else if (policy === "custom" && config.customMerge) {
+    } else if (policy === "custom" && customMerge) {
       const lastVars = state.queue.length ? state.queue[state.queue.length - 1].variables : null;
-      const merged = config.customMerge(lastVars, variables, opName);
+      const merged = customMerge(lastVars, variables, opName);
       if (merged) {
         state.queue.push({ variables: merged, next, complete, error });
       } else {
@@ -133,8 +159,9 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     }
     const items = state.queue.slice();
     // merge all queued variables into a single payload for one mutation call
+    const { mergeVariables } = getEffectiveConfig(opName);
     const mergedVariables = items.reduce<TVars>(
-      (acc, cur, idx) => (idx === 0 ? cur.variables : merge(acc, cur.variables, opName)),
+      (acc, cur, idx) => (idx === 0 ? cur.variables : mergeVariables(acc, cur.variables, opName)),
       {} as TVars,
     );
     state.queue = [];
@@ -154,13 +181,10 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
       return forward(operation);
     }
 
-    console.log("operation", operation);
-
     return new Observable((observer) => {
       const opName = operation.operationName;
 
       const next = (value: unknown) => {
-        console.log("next", value);
         observer.next(value as never);
       };
       const complete = () => observer.complete();
@@ -233,6 +257,5 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
 }
 
 export const queuedMutationsLink = createQueuedMutationsLink({
-  targets: ["UpdateShortCartItemQuantity"],
-  debounceMs: 1000,
+  targets: [{ name: "UpdateShortCartItemQuantity", config: { debounceMs: 1000 } }],
 });

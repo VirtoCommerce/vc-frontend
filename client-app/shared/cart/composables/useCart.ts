@@ -292,8 +292,6 @@ export function useShortCart() {
         const byProductId = new Map(updated.items.map((i) => [i.productId, i] as const));
 
         const seenProducts = new Set(currentCart.items.map((li) => li.productId));
-        // console.log("existing", existing);
-        // console.log("currentCart.items", currentCart.items);
         const nextItems = currentCart.items
           .map((li) => {
             const upd = byId.get(li.id) ?? byProductId.get(li.productId);
