@@ -1266,7 +1266,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Сотрудники компании",
-        "search_placeholder": "Поиск пользователей",
+        "search_placeholder": "По имени, роли или email",
         "no_members_img_alt": "Нет сотрудников",
         "no_members_message": "Сотрудников пока нет",
         "no_results_message": "Результаты не найдены",

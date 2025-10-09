@@ -1266,7 +1266,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Företagsmedlemmar",
-        "search_placeholder": "Sök efter användare",
+        "search_placeholder": "Sök efter namn, roll eller e-post",
         "no_members_img_alt": "Inga medlemmar",
         "no_members_message": "Det finns inga medlemmar ännu",
         "no_results_message": "Inga resultat hittades",

@@ -1266,7 +1266,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "会社メンバー",
-        "search_placeholder": "ユーザーを検索",
+        "search_placeholder": "名前、役割、メールで検索",
         "no_members_img_alt": "メンバーなし",
         "no_members_message": "メンバーが登録されていません",
         "no_results_message": "該当する結果が見つかりません",

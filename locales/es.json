@@ -1266,7 +1266,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Miembros de la empresa",
-        "search_placeholder": "Buscar usuarios",
+        "search_placeholder": "Buscar por nombre, rol o correo",
         "no_members_img_alt": "Sin miembros",
         "no_members_message": "Aún no hay miembros",
         "no_results_message": "No se encontraron resultados",

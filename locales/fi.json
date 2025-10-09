@@ -1266,7 +1266,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Yrityksen jäsenet",
-        "search_placeholder": "Hae käyttäjiä",
+        "search_placeholder": "Hae nimellä, roolilla tai sähköpostilla",
         "no_members_img_alt": "Ei jäseniä",
         "no_members_message": "Jäseniä ei ole vielä",
         "no_results_message": "Tuloksia ei löytynyt",
