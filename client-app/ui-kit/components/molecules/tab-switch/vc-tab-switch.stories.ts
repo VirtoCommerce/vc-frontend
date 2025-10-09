@@ -1,11 +1,11 @@
 import { VcTabSwitch } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["sm", "md"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "accent", "warning", "danger"];
 const LABEL = ["left", "right"];
 
-export default {
+const meta: Meta<typeof VcTabSwitch> = {
   title: "Components/Molecules/VcTabSwitch",
   component: VcTabSwitch,
   argTypes: {
@@ -40,58 +40,65 @@ export default {
       },
     },
   },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcTabSwitch v-bind="args" />',
+  }),
 } as Meta<typeof VcTabSwitch>;
 
-const Template: StoryFn = (args) => ({
-  components: { VcTabSwitch },
-  setup: () => ({ args }),
-  template: '<VcTabSwitch v-bind="args" />',
-});
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
-export const Basic = Template.bind({});
-Basic.args = {
-  icon: "grid",
-  label: "Grid",
-  value: "value",
+export const Basic: StoryType = {
+  args: {
+    icon: "grid",
+    label: "Grid",
+    value: "value",
+  },
 };
 
-export const Checked = Template.bind({});
-Checked.args = {
-  ...Basic.args,
-  modelValue: "value",
+export const Checked: StoryType = {
+  args: {
+    icon: "grid",
+    label: "Grid",
+    value: "value",
+    modelValue: "value",
+  },
 };
 
-export const ColorProps = Template.bind({});
-ColorProps.args = {
-  ...Basic.args,
-  color: "success",
-  hoverColor: "info",
-  modelValue: "value",
+export const ColorProps: StoryType = {
+  args: {
+    ...Basic.args,
+    color: "success",
+    hoverColor: "info",
+  },
 };
 
-export const RGBA_HEXColorProps = Template.bind({});
-RGBA_HEXColorProps.args = {
-  ...Basic.args,
-  color: "rgba(255, 99, 71, 0.8)",
-  hoverColor: "#0055CC",
-  modelValue: "value",
+export const RGBA_HEXColorProps: StoryType = {
+  args: {
+    ...Basic.args,
+    color: "rgba(255, 99, 71, 0.8)",
+    hoverColor: "#0055CC",
+  },
 };
 
-export const ColorCSSVariables = Template.bind({});
-ColorCSSVariables.args = {
-  ...Basic.args,
-  modelValue: "value",
-  class: "[--vc-tab-switch-color:#0055CC] [--vc-tab-switch-hover-color:rgba(255,99,71,0.8)]",
+export const ColorCSSVariables: StoryType = {
+  args: {
+    ...Basic.args,
+    class: "[--vc-tab-switch-color:#0055CC] [--vc-tab-switch-hover-color:rgba(255,99,71,0.8)]",
+  },
 };
 
-export const LabelPosition = Template.bind({});
-LabelPosition.args = {
-  ...Basic.args,
-  labelPosition: "start",
+export const LabelPosition: StoryType = {
+  args: {
+    ...Basic.args,
+    labelPosition: "start",
+  },
 };
 
-export const Disabled = Template.bind({});
-Disabled.args = {
-  ...Basic.args,
-  disabled: true,
+export const Disabled: StoryType = {
+  args: {
+    ...Basic.args,
+    disabled: true,
+  },
 };
