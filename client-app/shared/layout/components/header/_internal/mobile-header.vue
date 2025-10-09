@@ -22,7 +22,7 @@
               class="h-full pe-3 ps-5 sm:pe-5"
               @click="mobileMenuVisible = true"
             >
-              <VcIcon class="fill-additional-50" name="menu" :size="32" />
+              <VcIcon class="fill-[--header-bottom-link-icon-color]" name="menu" :size="32" />
             </button>
 
             <router-link :to="$context.settings.default_return_url ?? '/'">
@@ -41,7 +41,7 @@
               class="px-1 py-2 xs:px-2"
               :href="`tel:${support_phone_number}`"
             >
-              <VcIcon class="fill-additional-50" name="phone" :size="28" />
+              <VcIcon class="fill-[--header-bottom-link-icon-color]" name="phone" :size="28" />
             </a>
 
             <button
@@ -50,7 +50,7 @@
               class="px-1 py-2 xs:px-2"
               @click="toggleSearchBar"
             >
-              <VcIcon class="fill-additional-50" name="search" :size="28" />
+              <VcIcon class="fill-[--header-bottom-link-icon-color]" name="search" :size="28" />
             </button>
 
             <component :is="item" v-for="(item, index) in customComponents" :key="index" class="px-1 py-2 xs:px-2" />
@@ -61,7 +61,7 @@
               class="px-1 py-2 xs:px-2"
             >
               <span class="relative block">
-                <VcIcon class="fill-additional-50" name="cart" :size="28" />
+                <VcIcon class="fill-[--header-bottom-link-icon-color]" name="cart" :size="28" />
 
                 <transition
                   mode="out-in"
@@ -111,7 +111,7 @@
         <VcButton :to="searchPhrase && searchPageLink" icon="search" />
 
         <button type="button" class="-mr-2 ml-2 h-11 appearance-none px-3" @click="hideSearchBar">
-          <VcIcon name="delete-thin" class="fill-additional-50" />
+          <VcIcon name="delete-thin" class="fill-[--header-bottom-link-icon-color]" />
         </button>
       </div>
     </div>
