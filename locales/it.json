@@ -1117,7 +1117,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Inserisci parola chiave...",
+        "search_placeholder": "Cerca per numero, nome o altri dati",
         "title": "Ordini",
         "order_number_label": "Numero ordine",
         "purchase_number_label": "Ordine d'acquisto",

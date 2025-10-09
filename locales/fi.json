@@ -1117,7 +1117,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Syötä avainsanoja...",
+        "search_placeholder": "Hae numerolla, nimellä tai muilla tiedoilla",
         "title": "Tilaukset",
         "order_number_label": "Tilausnumero",
         "purchase_number_label": "Ostotilaus",

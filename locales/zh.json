@@ -1117,7 +1117,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "输入关键词...",
+        "search_placeholder": "按号码、姓名或其他数据搜索",
         "title": "订单",
         "order_number_label": "订单编号",
         "purchase_number_label": "采购订单",

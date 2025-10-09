@@ -1117,7 +1117,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Skriv inn nøkkelord...",
+        "search_placeholder": "Søk etter nummer, navn eller andre data",
         "title": "Bestillinger",
         "order_number_label": "Bestillingsnummer",
         "purchase_number_label": "Innkjøpsordre",
