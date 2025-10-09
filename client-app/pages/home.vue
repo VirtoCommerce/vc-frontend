@@ -68,7 +68,7 @@
     </section>
 
     <!-- CTA -->
-    <section class="bg-primary py-6 lg:py-10">
+    <section class="bg-primary-700 py-6 lg:py-10">
       <div class="container mx-auto flex flex-col items-center space-y-2 px-6 md:px-12 lg:flex-row lg:space-x-10">
         <h2 class="whitespace-nowrap text-3xl font-black uppercase text-additional-50">
           {{ $t("pages.home.subscription_block.subscribe_now") }}
