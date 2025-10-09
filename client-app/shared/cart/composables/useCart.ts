@@ -223,10 +223,134 @@ export function useShortCart() {
 
   const { mutate: updateItemCartQuantityMutation, loading: updateItemCartQuantityLoading } = useMutation(
     UpdateShortCartItemQuantityDocument,
+    {
+      optimisticResponse: (vars, { IGNORE }) => {
+        const itemsInput = vars.command?.items;
+        if (!Array.isArray(itemsInput) || itemsInput.length === 0) {
+          return IGNORE;
+        }
+        const updatesByProductId = new Map(itemsInput.map((i) => [i.productId, i.quantity] as const));
+        const baseItemsRaw = cart.value?.items ?? [];
+        // Filter out malformed cache entries that may appear during rapid updates
+        const baseItems = baseItemsRaw.filter(
+          (li) =>
+            typeof (li as unknown as { id?: unknown }).id === "string" &&
+            typeof (li as unknown as { productId?: unknown }).productId === "string" &&
+            typeof (li as unknown as { quantity?: unknown }).quantity === "number",
+        );
+        if (baseItems.length === 0) {
+          return IGNORE;
+        }
+        const itemsResult = baseItems
+          .map((li) => {
+            const nextQty = updatesByProductId.get(li.productId);
+            if (nextQty === undefined) {
+              return { __typename: "LineItemType", id: li.id, productId: li.productId, quantity: li.quantity };
+            }
+            if (nextQty <= 0) {
+              return null;
+            }
+            return { __typename: "LineItemType", id: li.id, productId: li.productId, quantity: nextQty };
+          })
+          .filter((x) => x !== null) as {
+          __typename: "LineItemType";
+          id: string;
+          productId: string;
+          quantity: number;
+        }[];
+
+        // Keep optimistic payload minimal and schema-compliant
+        const itemsQuantity = itemsResult.reduce((acc, li) => acc + (li.quantity ?? 0), 0);
+
+        return {
+          updateCartQuantity: {
+            __typename: "CartType",
+            id: cart.value?.id ?? "",
+            itemsCount: itemsResult.length,
+            itemsQuantity,
+            items: itemsResult,
+          },
+        };
+      },
+      update: (cache, { data }) => {
+        const updated = data?.updateCartQuantity;
+        if (!updated) {
+          return;
+        }
+
+        const existing = cache.readQuery<{ cart?: ShortCartFragment | null }>({
+          query: GetShortCartDocument,
+          variables: commonVariables,
+        });
+        const currentCart = existing?.cart;
+        if (!currentCart) {
+          return;
+        }
+
+        // Build a quick lookup for returned updates by id and productId
+        const byId = new Map(updated.items.map((i) => [i.id, i] as const));
+        const byProductId = new Map(updated.items.map((i) => [i.productId, i] as const));
+
+        const seenProducts = new Set(currentCart.items.map((li) => li.productId));
+        // console.log("existing", existing);
+        // console.log("currentCart.items", currentCart.items);
+        const nextItems = currentCart.items
+          .map((li) => {
+            const upd = byId.get(li.id) ?? byProductId.get(li.productId);
+            if (!upd) {
+              return li;
+            }
+            if (upd.quantity <= 0) {
+              return null;
+            }
+            return { ...li, quantity: upd.quantity } as typeof li;
+          })
+          .filter((x): x is NonNullable<typeof x> => !!x);
+
+        // Add newly introduced products with minimal optimistic fields
+        for (const upd of updated.items) {
+          if (upd.quantity > 0 && !seenProducts.has(upd.productId)) {
+            const template = currentCart.items[0]?.extendedPrice;
+            nextItems.push({
+              __typename: "LineItemType",
+              id: upd.id || `optimistic-${upd.productId}`,
+              sku: "",
+              productId: upd.productId,
+              quantity: upd.quantity,
+              extendedPrice: template ?? {
+                __typename: "MoneyType",
+                amount: 0,
+                formattedAmount: "",
+                formattedAmountWithoutCurrency: "",
+                currency: {
+                  __typename: "CurrencyType",
+                  code: globals.currencyCode,
+                  symbol: "",
+                },
+              },
+            } as (typeof currentCart.items)[number]);
+          }
+        }
+
+        const nextItemsQuantity = nextItems.reduce((acc, li) => (li.quantity ? acc + li.quantity : acc), 0);
+
+        cache.writeQuery({
+          query: GetShortCartDocument,
+          variables: commonVariables,
+          data: {
+            cart: {
+              ...currentCart,
+              items: nextItems,
+              itemsQuantity: nextItemsQuantity,
+            },
+          },
+        });
+      },
+    },
   );
   function updateItemCartQuantity(productId: string, quantity: number) {
     return updateItemCartQuantityMutation({
-      command: { items: [{ productId, quantity }], ...commonVariables },
+      command: { items: [{ productId, quantity }], ...commonVariables, cartId: cart.value?.id },
     });
   }
 

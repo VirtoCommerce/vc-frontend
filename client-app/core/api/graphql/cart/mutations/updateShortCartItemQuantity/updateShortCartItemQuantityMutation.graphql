@@ -2,6 +2,7 @@ mutation UpdateShortCartItemQuantity($command: InputUpdateCartQuantity!) {
   updateCartQuantity(command: $command) {
     id
     itemsCount
+    itemsQuantity
     items {
       id
       productId

@@ -35,7 +35,6 @@ import { useHistoricalEvents } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
-import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
 import type { Product, ShortLineItemFragment, VariationType } from "@/core/api/graphql/types";
@@ -99,9 +98,7 @@ async function onChange() {
   loading.value = true;
 
   try {
-    const updatedCart = await updateOrAddToCart(product.value.id, enteredQuantity.value);
-
-    handleUpdateResult(updatedCart);
+    await updateOrAddToCart(product.value.id, enteredQuantity.value);
   } finally {
     loading.value = false;
   }
@@ -112,24 +109,10 @@ async function updateOrAddToCart(productId: string, qty?: number) {
     return cart.value;
   }
 
-  const updatedCart = await updateItemCartQuantity(productId, qty);
+  await updateItemCartQuantity(productId, qty);
 
   trackAddItemToCart(product.value, qty);
   void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
-
-  return updatedCart;
-}
-
-function handleUpdateResult(_cart: Awaited<ReturnType<typeof updateOrAddToCart>>) {
-  if (!_cart) {
-    return;
-  }
-
-  const lineItem = getLineItem(_cart.items);
-
-  if (!lineItem) {
-    Logger.error(onChange.name, 'The variable "lineItem" must be defined');
-  }
 }
 
 function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
