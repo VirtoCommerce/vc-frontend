@@ -2,6 +2,7 @@
 import { ApolloLink, Observable } from "@apollo/client/core";
 import { AbortReason } from "@/core/api/common/enums";
 import { isMutation, defaultMergeVariables } from "./utils";
+import type { UpdateShortCartItemQuantityMutationVariables } from "@/core/api/graphql/types";
 import type { DefaultContext } from "@apollo/client/core";
 
 type MergeQueuedFnType<TVars extends Record<string, unknown> = Record<string, unknown>> = (a: TVars, b: TVars) => TVars;
@@ -19,8 +20,7 @@ export interface IQueueTargetConfig<TVars extends Record<string, unknown> = Reco
 }
 
 export interface IQueueConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
-  // Operation names to manage. If empty, nothing is intercepted.
-  // Per-target overrides only.
+  // Operation names and configs to manage. If empty, nothing is intercepted.
   targets: Array<{ name: string; config?: IQueueTargetConfig<TVars> }>;
 }
 
@@ -218,22 +218,26 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
   });
 }
 
+const updateShortCartItemQuantityConfig: IQueueTargetConfig<UpdateShortCartItemQuantityMutationVariables> = {
+  debounceMs: 1000,
+  mergeQueued: (a, b) => {
+    const prevItems = a.command?.items ?? [];
+    const newItems = b.command?.items ?? [];
+    const nonOverlappingPrevItems = prevItems.filter(
+      (item) => !newItems.some((newItem) => newItem?.productId === item?.productId),
+    );
+    return {
+      ...a,
+      command: { ...a.command, items: [...nonOverlappingPrevItems, ...newItems] },
+    };
+  },
+};
+
 export const queuedMutationsLink = createQueuedMutationsLink({
   targets: [
     {
       name: "UpdateShortCartItemQuantity",
-      config: {
-        debounceMs: 2000,
-        mergeQueued: (a, b) => {
-          const prevItems = a.command?.items ?? [];
-          const newItems = b.command?.items ?? [];
-          const nonOverlappingPrevItems = prevItems.filter(
-            (item) => !newItems.some((newItem) => newItem.productId === item.productId),
-          );
-
-          return { ...a, command: { ...a.command, items: [...nonOverlappingPrevItems, ...newItems] } };
-        },
-      },
+      config: updateShortCartItemQuantityConfig,
     },
   ],
 });
