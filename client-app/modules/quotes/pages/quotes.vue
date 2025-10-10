@@ -38,7 +38,7 @@
       v-if="!fetching && !quotes.length"
       :text="$t(!!keyword ? 'quotes.no_results_message' : 'quotes.no_quote_message')"
       icon="outline-quotes"
-      :with-search="!!keyword"
+      :variant="!!keyword ? 'search' : 'empty'"
     >
       <template #button>
         <VcButton v-if="keyword" prepend-icon="reset" @click="resetKeyword">

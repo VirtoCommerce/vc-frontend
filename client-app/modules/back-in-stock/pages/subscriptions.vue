@@ -78,22 +78,20 @@
           keyword ? $t('back_in_stock.list_details.no_results_message') : $t('back_in_stock.list_details.empty_list')
         "
         icon="outline-lists"
-        :with-search="!!keyword"
+        :variant="!!keyword ? 'search' : 'empty'"
       >
         <template #button>
           <VcButton v-if="keyword" prepend-icon="reset" @click="resetKeyword">
             {{ $t("pages.account.orders.buttons.reset_search") }}
           </VcButton>
 
-          <template v-else>
-            <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
-              {{ $t("back_in_stock.list_details.empty_list_button") }}
-            </VcButton>
+          <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+            {{ $t("back_in_stock.list_details.empty_list_button") }}
+          </VcButton>
 
-            <VcButton v-else to="/">
-              {{ $t("back_in_stock.list_details.empty_list_button") }}
-            </VcButton>
-          </template>
+          <VcButton v-else to="/">
+            {{ $t("back_in_stock.list_details.empty_list_button") }}
+          </VcButton>
         </template>
       </VcEmptyView>
     </div>

@@ -147,22 +147,20 @@
         : $t('pages.account.orders.no_orders_message')
     "
     icon="outline-order"
-    :with-search="!!keyword || !isFilterEmpty"
+    :variant="!!keyword || !isFilterEmpty ? 'search' : 'empty'"
   >
     <template #button>
       <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
         {{ $t("pages.account.orders.buttons.reset_search") }}
       </VcButton>
 
-      <template v-else>
-        <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
-          {{ $t("pages.account.orders.buttons.no_orders") }}
-        </VcButton>
+      <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+        {{ $t("pages.account.orders.buttons.no_orders") }}
+      </VcButton>
 
-        <VcButton v-else to="/">
-          {{ $t("pages.account.orders.buttons.no_orders") }}
-        </VcButton>
-      </template>
+      <VcButton v-else to="/">
+        {{ $t("pages.account.orders.buttons.no_orders") }}
+      </VcButton>
     </template>
   </VcEmptyView>
 

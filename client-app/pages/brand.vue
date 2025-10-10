@@ -42,7 +42,7 @@
       />
     </VcContainer>
 
-    <VcEmptyView v-if="!loading && !brand" :text="$t('pages.brands.no_results')" />
+    <VcEmptyView v-if="!loading && !brand" :text="$t('pages.brands.no_results')" icon="outline-stock" />
   </div>
 </template>
 
