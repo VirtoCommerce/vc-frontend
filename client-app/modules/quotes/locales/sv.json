@@ -10,7 +10,7 @@
     "date_label": "@:common.labels.date",
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
-    "search_placeholder": "Ange nyckelord...",
+    "search_placeholder": "Sök efter nummer eller status",
     "no_quote_message": "Det finns inga offertförfrågningar ännu",
     "no_results_message": "Inga resultat hittades",
     "buttons": {

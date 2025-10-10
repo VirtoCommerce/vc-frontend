@@ -10,7 +10,7 @@
     "date_label": "@:common.labels.date",
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
-    "search_placeholder": "Enter keyword...",
+    "search_placeholder": "Search by number or status",
     "no_quote_message": "There are no quote requests yet",
     "no_results_message": "There are no results found",
     "buttons": {

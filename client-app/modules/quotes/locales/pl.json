@@ -10,7 +10,7 @@
     "date_label": "@:common.labels.date",
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
-    "search_placeholder": "Wpisz słowo kluczowe...",
+    "search_placeholder": "Szukaj po numerze lub statusie",
     "no_quote_message": "Nie ma jeszcze żądań ofert",
     "no_results_message": "Nie znaleziono wyników",
     "buttons": {
