@@ -1,6 +1,7 @@
-/* eslint-disable sonarjs/no-nested-functions */
+/* eslint-disable sonarjs/no-nested-functions */ //TODO: Remove this eslint rule
 import { ApolloLink, Observable } from "@apollo/client/core";
 import { AbortReason } from "@/core/api/common/enums";
+import { useQueuedMutations } from "@/core/composables/useQueuedMutations";
 import { isMutation, defaultMergeVariables } from "./utils";
 import type { UpdateShortCartItemQuantityMutationVariables } from "@/core/api/graphql/types";
 import type { DefaultContext } from "@apollo/client/core";
@@ -68,6 +69,7 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
   }
 
   const stateByOperation = new Map<string, IOperationState<TVars>>();
+  const { setQueuedTotal } = useQueuedMutations();
 
   function getState(opName: string): IOperationState<TVars> {
     let state = stateByOperation.get(opName);
@@ -102,6 +104,7 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     const state = getState(opName);
     const { debounceMs } = resolvedConfigMap.get(opName)!;
     state.queue.push({ variables, next, complete, error });
+    setQueuedTotal(Array.from(stateByOperation.values()).reduce((acc, s) => acc + s.queue.length, 0));
 
     // debounce scheduling
     if (state.timer) {
@@ -127,6 +130,7 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
       {} as TVars,
     );
     state.queue = [];
+    setQueuedTotal(Array.from(stateByOperation.values()).reduce((acc, s) => acc + s.queue.length, 0));
     state.inFlight = true;
     state.abortController = new AbortController();
 
