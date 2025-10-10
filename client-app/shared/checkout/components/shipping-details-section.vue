@@ -174,26 +174,40 @@ function getDefaultMode() {
 watch(
   [mode, shipment],
   ([newMode], [previousMode, previousShipment]) => {
-    if (newMode === previousMode && !!previousShipment) {
+    const isSameMode = newMode === previousMode;
+    const shipmentInitialized = !!previousShipment;
+
+    if (isSameMode && shipmentInitialized) {
       // trigger watch only if mode changed or shipment just has been initialized
       return;
     }
 
     const shippingMethod = newMode === SHIPPING_OPTIONS.pickup ? bopisMethod.value : shippingMethods.value[0];
+    const hasSelectedShippingMethod = !!shippingMethod;
 
-    if (shippingMethod?.code === BOPIS_CODE) {
+    if (!hasSelectedShippingMethod) {
+      return;
+    }
+
+    const isBopis = shippingMethod?.code === BOPIS_CODE;
+
+    if (isBopis) {
       billingAddressEqualsShipping.value = false;
     }
 
+    const isAnonymous = !isAuthenticated.value;
+    const hasSelectedDeliveryAddress = !!selectedAddress.value;
+    const hasShipmentDeliveryAddress = !!shipment.value?.deliveryAddress;
+    const isShippingMode = newMode === SHIPPING_OPTIONS.shipping;
+    const hasToApplySelectedAddress = !hasShipmentDeliveryAddress || previousMode !== newMode;
+
     if (
-      !isAuthenticated.value &&
-      !!shippingMethod &&
-      !!selectedAddress.value &&
-      (!shipment.value?.deliveryAddress || previousMode !== newMode) &&
-      newMode === SHIPPING_OPTIONS.shipping
-      // anonymous user without delivery address and shipping method is selected and address in header is set
+      isAnonymous &&
+      hasSelectedShippingMethod &&
+      hasSelectedDeliveryAddress &&
+      isShippingMode &&
+      hasToApplySelectedAddress
     ) {
-      // apply selected address to shipment
       void updateShipment({
         id: shipment.value?.id,
         deliveryAddress: omit(selectedAddress.value, ["isDefault", "isFavorite"]),
@@ -205,11 +219,9 @@ watch(
       return;
     }
 
-    if (
-      !shippingMethod ||
-      shippingMethod.code === shipment.value?.shipmentMethodCode ||
-      (!previousMode && shippingMethod.code !== BOPIS_CODE)
-    ) {
+    const isSameShippingMethod = shippingMethod?.code === shipment.value?.shipmentMethodCode;
+
+    if (isSameShippingMethod) {
       return;
     }
 
