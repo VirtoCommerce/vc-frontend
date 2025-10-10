@@ -10,7 +10,7 @@
     "date_label": "@:common.labels.date",
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
-    "search_placeholder": "キーワードを入力...",
+    "search_placeholder": "番号またはステータスで検索",
     "no_results_message": "結果が見つかりません",
     "request_quote_button": "見積もりをリクエスト",
     "search_quote_requests": "見積もりリクエストを検索",
