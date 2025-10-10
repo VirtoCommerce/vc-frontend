@@ -695,6 +695,10 @@
         "ok_button": "Ok",
         "no_results": "Keine Ergebnisse gefunden",
         "reset_search_button": "Suche zurücksetzen"
+      },
+      "shipment_options": {
+        "title": "Versandoptionen",
+        "in_store": "Abholung im Geschäft"
       }
     },
     "checkout": {
@@ -1163,7 +1167,9 @@
           "pick_point_info": "Abholpunkt-Info",
           "get_directions": "Zur Route",
           "point_info": "Info-Punkt",
-          "pickup_address": "Abholadresse"
+          "pickup_address": "Abholadresse",
+          "cart_pickup_points_not_found": "Für diese Produkte sind keine Abholpunkte verfügbar. Wählen Sie eine andere Versandart.",
+          "availability": "Verfügbarkeit"
         }
       },
       "order_payment": {

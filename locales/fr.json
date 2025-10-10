@@ -695,6 +695,10 @@
         "ok_button": "Ok",
         "no_results": "Aucun résultat trouvé",
         "reset_search_button": "Réinitialiser la recherche"
+      },
+      "shipment_options": {
+        "title": "Options de livraison",
+        "in_store": "Ramassage en magasin"
       }
     },
     "checkout": {
@@ -1163,7 +1167,9 @@
           "pick_point_info": "Infos point de collecte",
           "get_directions": "Itinéraire",
           "point_info": "Point d'info",
-          "pickup_address": "Adresse de retrait"
+          "pickup_address": "Adresse de retrait",
+          "cart_pickup_points_not_found": "Aucun point de collecte n'est disponible pour ces produits. Veuillez sélectionner un autre mode de livraison.",
+          "availability": "Disponibilité"
         }
       },
       "order_payment": {

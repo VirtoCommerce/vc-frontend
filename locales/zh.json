@@ -695,6 +695,10 @@
         "ok_button": "确定",
         "no_results": "未找到结果",
         "reset_search_button": "重置搜索"
+      },
+      "shipment_options": {
+        "title": "配送选项",
+        "in_store": "门店自提"
       }
     },
     "checkout": {
@@ -1163,7 +1167,9 @@
           "pick_point_info": "自提点信息",
           "get_directions": "获取路线",
           "point_info": "积分信息",
-          "pickup_address": "自提地址"
+          "pickup_address": "自提地址",
+          "cart_pickup_points_not_found": "此商品无适用的自提点。请选择其他配送方式",
+          "availability": "可用性"
         }
       },
       "order_payment": {
