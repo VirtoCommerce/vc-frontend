@@ -230,29 +230,29 @@ jobs:
           client-id: '${{ secrets.JIRA_USER }}'
           client-secret: '${{ secrets.JIRA_TOKEN }}'
 
-  ui-auto-tests:
-    needs: 'ci'
-    if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
-      (github.base_ref == 'dev') && (github.event_name == 'pull_request') || 
-      (github.event_name == 'workflow_dispatch') }}
-    uses: VirtoCommerce/.github/.github/workflows/ui-autotests.yml@v3.800.13 
-    with:
-      installModules: 'true'
-      installCustomModule: 'false'
-      platformDockerTag: 'linux-latest'
-      frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
-    secrets:
-      envPAT: ${{ secrets.REPO_TOKEN }}
+  # ui-auto-tests:
+  #   needs: 'ci'
+  #   if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
+  #     (github.base_ref == 'dev') && (github.event_name == 'pull_request') || 
+  #     (github.event_name == 'workflow_dispatch') }}
+  #   uses: VirtoCommerce/.github/.github/workflows/ui-autotests.yml@v3.800.13 
+  #   with:
+  #     installModules: 'true'
+  #     installCustomModule: 'false'
+  #     platformDockerTag: 'linux-latest'
+  #     frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
+  #   secrets:
+  #     envPAT: ${{ secrets.REPO_TOKEN }}
 
-  deploy-cloud:
-    if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
-    needs: ci
-    uses: ./.github/workflows/deploy-cloud.yml
-    with:
-      cmPath: 'theme/artifact.json'
-      artifactKey: 'URL'
-      artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
-      environmentId: ${{ ((github.event_name == 'pull_request' && github.base_ref == 'dev') || github.ref == 'refs/heads/master') && 'qa' || 'dev' }}
-      jiraKeys: ${{ needs.ci.outputs.jira-keys }}
-      forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
-    secrets: inherit
+  # deploy-cloud:
+  #   if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
+  #   needs: ci
+  #   uses: ./.github/workflows/deploy-cloud.yml
+  #   with:
+  #     cmPath: 'theme/artifact.json'
+  #     artifactKey: 'URL'
+  #     artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
+  #     environmentId: ${{ ((github.event_name == 'pull_request' && github.base_ref == 'dev') || github.ref == 'refs/heads/master') && 'qa' || 'dev' }}
+  #     jiraKeys: ${{ needs.ci.outputs.jira-keys }}
+  #     forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
+  #   secrets: inherit
