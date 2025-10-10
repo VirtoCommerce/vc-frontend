@@ -38,7 +38,7 @@
                 <VcIcon
                   v-if="collapsible"
                   :class="['vc-widget__append-icon', { 'vc-widget__append-icon--rotate': _collapsed }]"
-                  name="chevron-up"
+                  name="chevron-up-thin"
                 />
 
                 <VcIcon v-else-if="appendIcon" class="vc-widget__append-icon" :name="appendIcon" />
@@ -126,7 +126,6 @@ watchEffect(() => {
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
   --radius: var(--vc-widget-radius, var(--vc-radius, 0.5rem));
   --header-gap: theme("gap.2");
-  --icon-size: 1.25rem;
 
   @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] shadow-md bg-center;
 
@@ -146,24 +145,26 @@ watchEffect(() => {
 
   &--size {
     &--xs {
-      --header-min-h: 3.125rem;
+      --header-min-h: 2.375rem;
       --title-text: theme("fontSize.sm");
-      --icon-size: 1rem;
+      --icon-size: 0.875rem;
       --shape-size: 1.75rem;
     }
 
     &--sm {
-      --header-min-h: 3.375rem;
+      --header-min-h: 2.875rem;
       --title-text: theme("fontSize.base");
+      --icon-size: 1rem;
       --shape-size: 2rem;
     }
 
     &--md {
       --header-min-h: 3.125rem;
       --title-text: theme("fontSize.lg");
+      --icon-size: 1.25rem;
       --shape-size: 2.25rem;
 
-      @media (min-width: theme("screens.lg")) {
+      @media (min-width: theme("screens.sm")) {
         --p-x: theme("padding.6");
       }
     }
@@ -172,9 +173,10 @@ watchEffect(() => {
       --header-min-h: 4.375rem;
       --header-gap: theme("gap[2.5]");
       --title-text: theme("fontSize.xl");
+      --icon-size: 1.25rem;
       --shape-size: 2.5rem;
 
-      @media (min-width: theme("screens.lg")) {
+      @media (min-width: theme("screens.sm")) {
         --p-x: theme("padding.7");
       }
 
