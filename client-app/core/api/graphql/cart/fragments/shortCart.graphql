@@ -1,6 +1,5 @@
 #import "./cartId.graphql"
 #import "./shortLineItem.graphql"
-#import "./validationError.graphql"
 
 fragment shortCart on CartType {
   ...cartId

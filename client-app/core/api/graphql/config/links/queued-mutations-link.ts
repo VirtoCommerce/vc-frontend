@@ -1,26 +1,21 @@
 /* eslint-disable sonarjs/no-nested-functions */
-import { ApolloLink, Observable, ApolloError } from "@apollo/client/core";
+import { ApolloLink, Observable } from "@apollo/client/core";
 import { AbortReason } from "@/core/api/common/enums";
 import { isMutation, defaultMergeVariables } from "./utils";
 import type { DefaultContext } from "@apollo/client/core";
 
-type MergeVariablesFnType<TVars extends Record<string, unknown> = Record<string, unknown>> = (
-  a: TVars,
-  b: TVars,
-  operationName: string,
-) => TVars;
-
-export type QueuePolicyType = "replace" | "concat" | "custom";
+type MergeQueuedFnType<TVars extends Record<string, unknown> = Record<string, unknown>> = (a: TVars, b: TVars) => TVars;
 
 export interface IQueueTargetConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
   // Debounce in ms for this operation name
   debounceMs?: number;
-  // Queueing behavior on subsequent calls while one is in-flight.
-  policy?: QueuePolicyType;
-  // Custom handler when policy === "custom"; return merged variables to enqueue or null to drop.
-  customMerge?: (currentQueued: TVars | null, next: TVars, operationName: string) => TVars | null;
-  // How to merge variables for "replace" (keep last) and "concat" (append) flows.
-  mergeVariables?: MergeVariablesFnType<TVars>;
+  /**
+   * Called on flush to combine queued payloads into one.
+   * @param a - The first variable to merge.
+   * @param b - The second variable to merge.
+   * @returns The merged variables.
+   */
+  mergeQueued?: MergeQueuedFnType<TVars>;
 }
 
 export interface IQueueConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
@@ -40,7 +35,7 @@ interface IOperationState<TVars extends Record<string, unknown>> {
   inFlight: boolean;
   // debounce timer id
   timer: ReturnType<typeof setTimeout> | null;
-  // single pending item storage (for replace) or array (for concat/custom)
+  // queued items to merge and send as one
   queue: IPendingItem<TVars>[];
   // abort controller per in-flight network call
   abortController: AbortController | null;
@@ -56,22 +51,20 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
 
   const targets = new Set<string>(Array.from(targetConfigMap.keys()));
 
-  function getEffectiveConfig(
-    opName: string,
-  ): Required<Pick<IQueueTargetConfig<TVars>, "debounceMs" | "policy" | "mergeVariables">> &
-    Pick<IQueueTargetConfig<TVars>, "customMerge"> {
-    const perTarget = targetConfigMap.get(opName) ?? {};
-    const effectiveDebounce = perTarget.debounceMs ?? 300;
-    const effectivePolicy: QueuePolicyType = perTarget.policy ?? "replace";
-    const effectiveCustomMerge = perTarget.customMerge;
-    const effectiveMerge: MergeVariablesFnType<TVars> =
-      perTarget.mergeVariables ?? ((a, b) => defaultMergeVariables(a, b));
-    return {
-      debounceMs: effectiveDebounce,
-      policy: effectivePolicy,
-      customMerge: effectiveCustomMerge,
-      mergeVariables: effectiveMerge,
-    };
+  // Pre-resolve per-target configs once (no common/global config layer exists)
+  const resolvedConfigMap = new Map<
+    string,
+    Required<Pick<IQueueTargetConfig<TVars>, "debounceMs">> & {
+      mergeQueued: MergeQueuedFnType<TVars>;
+    }
+  >();
+  for (const [name, cfg] of targetConfigMap.entries()) {
+    const resolvedReduce: MergeQueuedFnType<TVars> =
+      (cfg.mergeQueued as MergeQueuedFnType<TVars>) ?? ((a, b) => defaultMergeVariables(a, b));
+    resolvedConfigMap.set(name, {
+      debounceMs: cfg.debounceMs ?? 300,
+      mergeQueued: resolvedReduce,
+    });
   }
 
   const stateByOperation = new Map<string, IOperationState<TVars>>();
@@ -93,21 +86,10 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     if (state.timer) {
       clearTimeout(state.timer);
     }
-    const { debounceMs } = getEffectiveConfig(opName);
+    const { debounceMs } = resolvedConfigMap.get(opName)!;
     state.timer = setTimeout(() => {
       void flush(opName).catch(() => undefined);
     }, debounceMs);
-  }
-
-  function setReplaceQueue(
-    state: IOperationState<TVars>,
-    variables: TVars,
-    next: (v: unknown) => void,
-    complete: () => void,
-    error: (r?: unknown) => void,
-  ) {
-    state.queue.forEach((item) => item.error(new ApolloError({ networkError: new Error(AbortReason.Explicit) })));
-    state.queue = [{ variables, next, complete, error }];
   }
 
   function enqueue(
@@ -118,28 +100,8 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     error: (r?: unknown) => void,
   ) {
     const state = getState(opName);
-    const { policy, customMerge, debounceMs } = getEffectiveConfig(opName);
-
-    // apply policy
-    if (policy === "replace") {
-      setReplaceQueue(state, variables, next, complete, error);
-    } else if (policy === "concat") {
-      state.queue.push({ variables, next, complete, error });
-    } else if (policy === "custom" && customMerge) {
-      const lastVars = state.queue.length ? state.queue[state.queue.length - 1].variables : null;
-      const merged = customMerge(lastVars, variables, opName);
-      if (merged) {
-        state.queue.push({ variables: merged, next, complete, error });
-      } else {
-        // dropped by custom logic
-        next(null);
-        complete();
-        return;
-      }
-    } else {
-      // fallback to replace
-      setReplaceQueue(state, variables, next, complete, error);
-    }
+    const { debounceMs } = resolvedConfigMap.get(opName)!;
+    state.queue.push({ variables, next, complete, error });
 
     // debounce scheduling
     if (state.timer) {
@@ -159,9 +121,9 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     }
     const items = state.queue.slice();
     // merge all queued variables into a single payload for one mutation call
-    const { mergeVariables } = getEffectiveConfig(opName);
+    const { mergeQueued } = resolvedConfigMap.get(opName)!;
     const mergedVariables = items.reduce<TVars>(
-      (acc, cur, idx) => (idx === 0 ? cur.variables : mergeVariables(acc, cur.variables, opName)),
+      (acc, cur, idx) => (idx === 0 ? cur.variables : mergeQueued(acc, cur.variables)),
       {} as TVars,
     );
     state.queue = [];
@@ -257,5 +219,21 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
 }
 
 export const queuedMutationsLink = createQueuedMutationsLink({
-  targets: [{ name: "UpdateShortCartItemQuantity", config: { debounceMs: 1000 } }],
+  targets: [
+    {
+      name: "UpdateShortCartItemQuantity",
+      config: {
+        debounceMs: 2000,
+        mergeQueued: (a, b) => {
+          const prevItems = a.command?.items ?? [];
+          const newItems = b.command?.items ?? [];
+          const nonOverlappingPrevItems = prevItems.filter(
+            (item) => !newItems.some((newItem) => newItem.productId === item.productId),
+          );
+
+          return { ...a, command: { ...a.command, items: [...nonOverlappingPrevItems, ...newItems] } };
+        },
+      },
+    },
+  ],
 });

@@ -226,6 +226,7 @@ export function useShortCart() {
     {
       optimisticResponse: (vars, { IGNORE }) => {
         const itemsInput = vars.command?.items;
+
         if (!Array.isArray(itemsInput) || itemsInput.length === 0) {
           return IGNORE;
         }
@@ -233,27 +234,45 @@ export function useShortCart() {
         const updatesByProductId = new Map(itemsInput.map((i) => [i.productId, i.quantity] as const));
         const baseItems = cart.value?.items ?? [];
 
-        if (baseItems.length === 0) {
-          return IGNORE;
+        // Start from existing items and apply updates/removals
+        const itemsResult: { __typename: "LineItemType"; id: string; productId: string; quantity: number }[] = [];
+
+        for (const lineItem of baseItems) {
+          const nextQty = updatesByProductId.get(lineItem.productId);
+          if (nextQty === undefined) {
+            itemsResult.push({
+              __typename: "LineItemType",
+              id: lineItem.id,
+              productId: lineItem.productId,
+              quantity: lineItem.quantity,
+            });
+            continue;
+          }
+          if (nextQty > 0) {
+            itemsResult.push({
+              __typename: "LineItemType",
+              id: lineItem.id,
+              productId: lineItem.productId,
+              quantity: nextQty,
+            });
+          }
         }
 
-        const itemsResult = baseItems
-          .map((li) => {
-            const nextQty = updatesByProductId.get(li.productId);
-            if (nextQty === undefined) {
-              return { __typename: "LineItemType", id: li.id, productId: li.productId, quantity: li.quantity };
-            }
-            if (nextQty <= 0) {
-              return null;
-            }
-            return { __typename: "LineItemType", id: li.id, productId: li.productId, quantity: nextQty };
-          })
-          .filter((x) => x !== null) as {
-          __typename: "LineItemType";
-          id: string;
-          productId: string;
-          quantity: number;
-        }[];
+        // Add new items for products that were not in the cart
+        for (const [productId, qty] of updatesByProductId) {
+          if (qty <= 0) {
+            continue;
+          }
+          const exists = baseItems.some((li) => li.productId === productId);
+          if (!exists) {
+            const newItem = generateCacheIdIfNew<{ id?: string; productId: string; quantity: number }>(
+              { id: "optimistic-" + productId, productId, quantity: qty },
+              "LineItemType",
+            ) as { __typename: "LineItemType"; id: string; productId: string; quantity: number };
+
+            itemsResult.push(newItem);
+          }
+        }
 
         // Keep optimistic payload minimal and schema-compliant
         const itemsQuantity = itemsResult.reduce((acc, li) => acc + (li.quantity ?? 0), 0);
@@ -262,7 +281,6 @@ export function useShortCart() {
           updateCartQuantity: {
             __typename: "CartType",
             id: cart.value?.id ?? "",
-            itemsCount: itemsResult.length,
             itemsQuantity,
             items: itemsResult,
           },
