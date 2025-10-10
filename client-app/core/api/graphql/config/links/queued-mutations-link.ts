@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-nested-functions */ //TODO: Remove this eslint rule
 import { ApolloLink, Observable } from "@apollo/client/core";
 import { AbortReason } from "@/core/api/common/enums";
 import { useQueuedMutations } from "@/core/composables/useQueuedMutations";
@@ -8,8 +7,8 @@ import type { DefaultContext } from "@apollo/client/core";
 
 type MergeQueuedFnType<TVars extends Record<string, unknown> = Record<string, unknown>> = (a: TVars, b: TVars) => TVars;
 
-export interface IQueueTargetConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
-  // Debounce in ms for this operation name
+interface IQueueTargetConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
+  /** Debounce in ms for this operation name */
   debounceMs?: number;
   /**
    * Called on flush to combine queued payloads into one.
@@ -20,8 +19,7 @@ export interface IQueueTargetConfig<TVars extends Record<string, unknown> = Reco
   mergeQueued?: MergeQueuedFnType<TVars>;
 }
 
-export interface IQueueConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
-  // Operation names and configs to manage. If empty, nothing is intercepted.
+interface IQueueConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
   targets: Array<{ name: string; config?: IQueueTargetConfig<TVars> }>;
 }
 
@@ -34,11 +32,8 @@ interface IPendingItem<TVars extends Record<string, unknown>> {
 
 interface IOperationState<TVars extends Record<string, unknown>> {
   inFlight: boolean;
-  // debounce timer id
   timer: ReturnType<typeof setTimeout> | null;
-  // queued items to merge and send as one
   queue: IPendingItem<TVars>[];
-  // abort controller per in-flight network call
   abortController: AbortController | null;
 }
 
@@ -80,7 +75,19 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     return state;
   }
 
-  function reschedule(opName: string) {
+  function computeTotalQueued(): number {
+    return Array.from(stateByOperation.values()).reduce((acc, s) => acc + s.queue.length, 0);
+  }
+
+  function updateQueuedTotal(): void {
+    setQueuedTotal(computeTotalQueued());
+  }
+
+  function getResolvedConfig(opName: string) {
+    return resolvedConfigMap.get(opName)!;
+  }
+
+  function scheduleNextFlush(opName: string): void {
     const state = getState(opName);
     if (state.queue.length === 0) {
       return;
@@ -88,7 +95,7 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     if (state.timer) {
       clearTimeout(state.timer);
     }
-    const { debounceMs } = resolvedConfigMap.get(opName)!;
+    const { debounceMs } = getResolvedConfig(opName);
     state.timer = setTimeout(() => {
       void flush(opName).catch(() => undefined);
     }, debounceMs);
@@ -100,47 +107,119 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     next: (v: unknown) => void,
     complete: () => void,
     error: (r?: unknown) => void,
-  ) {
+  ): void {
     const state = getState(opName);
-    const { debounceMs } = resolvedConfigMap.get(opName)!;
     state.queue.push({ variables, next, complete, error });
-    setQueuedTotal(Array.from(stateByOperation.values()).reduce((acc, s) => acc + s.queue.length, 0));
-
-    // debounce scheduling
-    if (state.timer) {
-      clearTimeout(state.timer);
-    }
-    state.timer = setTimeout(() => {
-      void flush(opName).catch(() => {
-        /* errors are delivered via observer */
-      });
-    }, debounceMs);
+    updateQueuedTotal();
+    scheduleNextFlush(opName);
   }
 
-  async function flush(opName: string) {
+  function mergeQueuedVariables(opName: string, items: IPendingItem<TVars>[]): TVars {
+    const { mergeQueued } = getResolvedConfig(opName);
+    return items.reduce<TVars>(
+      (acc, cur, idx) => (idx === 0 ? cur.variables : mergeQueued(acc, cur.variables)),
+      {} as TVars,
+    );
+  }
+
+  async function flush(opName: string): Promise<void> {
     const state = getState(opName);
     if (state.inFlight || state.queue.length === 0) {
       return;
     }
     const items = state.queue.slice();
-    // merge all queued variables into a single payload for one mutation call
-    const { mergeQueued } = resolvedConfigMap.get(opName)!;
-    const mergedVariables = items.reduce<TVars>(
-      (acc, cur, idx) => (idx === 0 ? cur.variables : mergeQueued(acc, cur.variables)),
-      {} as TVars,
-    );
+    const mergedVariables = mergeQueuedVariables(opName, items);
     state.queue = [];
-    setQueuedTotal(Array.from(stateByOperation.values()).reduce((acc, s) => acc + s.queue.length, 0));
+    updateQueuedTotal();
     state.inFlight = true;
     state.abortController = new AbortController();
 
-    // Execution is per operation through returned ApolloLink request implementation
-    // We will fan-out results to all queued observers
+    // Signal execution to the link request cycle
     pendingExecuteBundles.set(opName, { variables: mergedVariables, items });
   }
 
   // This map allows us to connect the scheduled flush with the actual Apollo forward call cycle.
   const pendingExecuteBundles = new Map<string, { variables: TVars; items: IPendingItem<TVars>[] }>();
+
+  function executeBundle(
+    opName: string,
+    operation: Parameters<ApolloLink["request"]>[0],
+    forward: NonNullable<Parameters<ApolloLink["request"]>[1]>,
+    bundle: { variables: TVars; items: IPendingItem<TVars>[] },
+  ): () => void {
+    const { variables: mergedVariables, items } = bundle;
+    const stateNow = getState(opName);
+    operation.setContext((prev: DefaultContext & { fetchOptions?: RequestInit }) => ({
+      ...prev,
+      fetchOptions: { ...(prev?.fetchOptions ?? {}), signal: stateNow.abortController?.signal },
+    }));
+    operation.variables = mergedVariables;
+
+    const sub = forward(operation).subscribe({
+      next: (result) => {
+        stateNow.inFlight = false;
+        stateNow.abortController = null;
+        for (const i of items) {
+          i.next(result);
+          i.complete();
+        }
+        scheduleNextFlush(opName);
+      },
+      error: (err) => {
+        stateNow.inFlight = false;
+        stateNow.abortController = null;
+        for (const i of items) {
+          i.error(err);
+        }
+      },
+    });
+
+    return () => {
+      sub.unsubscribe();
+      if (stateNow.timer) {
+        clearTimeout(stateNow.timer);
+        stateNow.timer = null;
+      }
+      if (stateNow.inFlight) {
+        stateNow.abortController?.abort(AbortReason.Explicit);
+      }
+    };
+  }
+
+  function startBundlePolling(
+    opName: string,
+    operation: Parameters<ApolloLink["request"]>[0],
+    forward: Parameters<ApolloLink["request"]>[1],
+  ): () => void {
+    let teardown: (() => void) | null = null;
+    const interval = setInterval(() => {
+      const bundle = pendingExecuteBundles.get(opName);
+      const currentState = getState(opName);
+      if (!bundle || currentState.inFlight !== true) {
+        return;
+      }
+      pendingExecuteBundles.delete(opName);
+      clearInterval(interval);
+      if (!forward) {
+        // No next link to forward to – fail fast and notify observers
+        currentState.inFlight = false;
+        currentState.abortController = null;
+        for (const i of bundle.items) {
+          i.error(new Error("No next link available to execute the queued mutation"));
+        }
+        return;
+      }
+      teardown = executeBundle(opName, operation, forward, bundle);
+    }, 10);
+
+    return () => {
+      clearInterval(interval);
+      if (teardown) {
+        teardown();
+        teardown = null;
+      }
+    };
+  }
 
   return new ApolloLink((operation, forward) => {
     if (!isMutation(operation) || !targets.has(operation.operationName)) {
@@ -150,73 +229,18 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     return new Observable((observer) => {
       const opName = operation.operationName;
 
-      const next = (value: unknown) => {
-        observer.next(value as never);
-      };
+      const next = (value: unknown) => observer.next(value as never);
       const complete = () => observer.complete();
       const error = (reason?: unknown) => observer.error(reason);
 
       enqueue(opName, operation.variables as TVars, next, complete, error);
 
       // Poll for execution signal; minimal coupling to Apollo internal scheduling.
-      let teardown: (() => void) | null = null;
-      const interval = setInterval(() => {
-        const bundle = pendingExecuteBundles.get(opName);
-        const currentState = getState(opName);
-        if (!bundle || currentState.inFlight !== true) {
-          return;
-        }
-        // consume and execute once
-        pendingExecuteBundles.delete(opName);
-        clearInterval(interval);
+      const stop = startBundlePolling(opName, operation, forward);
 
-        // prepare and forward
-        const { variables: mergedVariables, items } = bundle;
-        const stateNow = getState(opName);
-        operation.setContext((prev: DefaultContext & { fetchOptions?: RequestInit }) => ({
-          ...prev,
-          fetchOptions: { ...(prev?.fetchOptions ?? {}), signal: stateNow.abortController?.signal },
-        }));
-        operation.variables = mergedVariables;
-
-        const sub = forward(operation).subscribe({
-          next: (result) => {
-            stateNow.inFlight = false;
-            stateNow.abortController = null;
-            for (const i of items) {
-              i.next(result);
-              i.complete();
-            }
-            reschedule(opName);
-          },
-          error: (err) => {
-            stateNow.inFlight = false;
-            stateNow.abortController = null;
-            for (const i of items) {
-              i.error(err);
-            }
-          },
-        });
-
-        teardown = () => {
-          sub.unsubscribe();
-          if (stateNow.timer) {
-            clearTimeout(stateNow.timer);
-            stateNow.timer = null;
-          }
-          if (stateNow.inFlight) {
-            stateNow.abortController?.abort(AbortReason.Explicit);
-          }
-        };
-      }, 10);
-
-      // teardown if observer unsubscribes before interval fires
+      // teardown if observer unsubscribes before interval fires or after execution
       return () => {
-        clearInterval(interval);
-        if (teardown) {
-          teardown();
-          teardown = null;
-        }
+        stop();
       };
     });
   });
