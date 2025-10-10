@@ -1121,7 +1121,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Enter keyword...",
+        "search_placeholder": "Search by number, name or other data",
         "title": "Orders",
         "order_number_label": "Order number",
         "purchase_number_label": "Purchase order",
@@ -1272,7 +1272,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Company members",
-        "search_placeholder": "Search for users",
+        "search_placeholder": "Search by name, role or email",
         "no_members_img_alt": "No members",
         "no_members_message": "There are no members yet",
         "no_results_message": "No results found",

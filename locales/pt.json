@@ -1121,7 +1121,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Digite palavra-chave...",
+        "search_placeholder": "Pesquisar por número, nome ou outros dados",
         "title": "Pedidos",
         "order_number_label": "Número do pedido",
         "purchase_number_label": "Número do pedido de compra",
@@ -1272,7 +1272,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Membros da Empresa",
-        "search_placeholder": "Pesquisar usuários",
+        "search_placeholder": "Pesquisar por nome, função ou e-mail",
         "no_members_img_alt": "Sem membros",
         "no_members_message": "Ainda não há membros",
         "no_results_message": "Nenhum resultado encontrado",
