@@ -31,6 +31,6 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { cart } = useShortCart();
 
-const lineItemInCart = computed(() => cart.value?.items.find((item) => item.productId === props.productId));
+const lineItemInCart = computed(() => cart.value?.items?.find((item) => item.productId === props.productId));
 const countInCart = eagerComputed<number>(() => lineItemInCart.value?.quantity ?? 0);
 </script>
