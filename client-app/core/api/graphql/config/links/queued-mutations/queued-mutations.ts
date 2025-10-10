@@ -1,67 +1,36 @@
 import { ApolloLink, Observable } from "@apollo/client/core";
 import { AbortReason } from "@/core/api/common/enums";
 import { useQueuedMutations } from "@/core/composables/useQueuedMutations";
-import { isMutation, defaultMergeVariables } from "./utils";
+import { isMutation, defaultMergeVariables } from "../utils";
+import type { IQueueConfig, IQueueTargetConfig, IOperationState, IPendingItem } from "./types";
 import type { UpdateShortCartItemQuantityMutationVariables } from "@/core/api/graphql/types";
 import type { DefaultContext } from "@apollo/client/core";
 
-type MergeQueuedFnType<TVars extends Record<string, unknown> = Record<string, unknown>> = (a: TVars, b: TVars) => TVars;
+const DEFAULT_DEBOUNCE_MS = 300;
 
-interface IQueueTargetConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
-  /** Debounce in ms for this operation name */
-  debounceMs?: number;
-  /**
-   * Called on flush to combine queued payloads into one.
-   * @param a - The first variable to merge.
-   * @param b - The second variable to merge.
-   * @returns The merged variables.
-   */
-  mergeQueued?: MergeQueuedFnType<TVars>;
-}
-
-interface IQueueConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
-  targets: Array<{ name: string; config?: IQueueTargetConfig<TVars> }>;
-}
-
-interface IPendingItem<TVars extends Record<string, unknown>> {
-  variables: TVars;
-  next: (value: unknown) => void;
-  complete: () => void;
-  error: (reason?: unknown) => void;
-}
-
-interface IOperationState<TVars extends Record<string, unknown>> {
-  inFlight: boolean;
-  timer: ReturnType<typeof setTimeout> | null;
-  queue: IPendingItem<TVars>[];
-  abortController: AbortController | null;
-}
-
+/**
+ * Creates a queued mutations link.
+ * @param config @link{IQueueConfig} - The configuration for the queued mutations link.
+ */
 export function createQueuedMutationsLink<TVars extends Record<string, unknown> = Record<string, unknown>>(
   config: IQueueConfig<TVars>,
 ): ApolloLink {
-  const targetConfigMap = new Map<string, IQueueTargetConfig<TVars>>();
-  for (const t of config.targets) {
-    targetConfigMap.set(t.name, t.config ?? {});
-  }
+  const targetConfigMap = new Map<string, IQueueTargetConfig<TVars>>(
+    config.targets.map((t) => [t.name, t.config ?? {}]),
+  );
 
   const targets = new Set<string>(Array.from(targetConfigMap.keys()));
 
   // Pre-resolve per-target configs once (no common/global config layer exists)
-  const resolvedConfigMap = new Map<
-    string,
-    Required<Pick<IQueueTargetConfig<TVars>, "debounceMs">> & {
-      mergeQueued: MergeQueuedFnType<TVars>;
-    }
-  >();
-  for (const [name, cfg] of targetConfigMap.entries()) {
-    const resolvedReduce: MergeQueuedFnType<TVars> =
-      (cfg.mergeQueued as MergeQueuedFnType<TVars>) ?? ((a, b) => defaultMergeVariables(a, b));
-    resolvedConfigMap.set(name, {
-      debounceMs: cfg.debounceMs ?? 300,
-      mergeQueued: resolvedReduce,
-    });
-  }
+  const resolvedConfigMap = new Map<string, Required<IQueueTargetConfig<TVars>>>(
+    config.targets.map((t) => [
+      t.name,
+      {
+        debounceMs: t.config?.debounceMs ?? DEFAULT_DEBOUNCE_MS,
+        mergeQueued: t.config?.mergeQueued ?? ((a, b) => defaultMergeVariables(a, b)),
+      },
+    ]),
+  );
 
   const stateByOperation = new Map<string, IOperationState<TVars>>();
   const { setQueuedTotal } = useQueuedMutations();
