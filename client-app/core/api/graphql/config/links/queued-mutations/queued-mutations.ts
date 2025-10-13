@@ -39,7 +39,14 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
       return state;
     }
 
-    const newState = { inFlight: false, timer: null, queue: [], abortController: null };
+    const newState: IOperationState<TVars> = {
+      inFlight: false,
+      timer: null,
+      queue: [],
+      abortController: null,
+      operation: null,
+      forward: null,
+    };
     stateByOperation.set(opName, newState);
 
     return newState;
@@ -77,7 +84,7 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
     const { debounceMs } = getTargetConfig(opName);
 
     state.timer = setTimeout(() => {
-      void flush(opName);
+      flush(opName);
     }, debounceMs);
   }
 
@@ -103,10 +110,14 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
     );
   }
 
-  async function flush(opName: string) {
+  function flush(opName: string): void {
     const state = getState(opName);
 
     if (state.inFlight || state.queue.length === 0) {
+      return;
+    }
+
+    if (!state.operation || !state.forward) {
       return;
     }
 
@@ -119,31 +130,18 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
 
     updateQueuedTotal();
 
-    pendingExecuteBundles.set(opName, { variables: mergedVariables, items });
-  }
-
-  // This map allows us to connect the scheduled flush with the actual Apollo forward call cycle.
-  const pendingExecuteBundles = new Map<string, { variables: TVars; items: IPendingItem<TVars>[] }>();
-
-  function executeBundle(
-    opName: string,
-    operation: Parameters<ApolloLink["request"]>[0],
-    forward: NonNullable<Parameters<ApolloLink["request"]>[1]>,
-    bundle: { variables: TVars; items: IPendingItem<TVars>[] },
-  ): () => void {
-    const { variables: mergedVariables, items } = bundle;
-    const stateNow = getState(opName);
-
-    operation.setContext((prev: DefaultContext & { fetchOptions?: RequestInit }) => ({
+    // Set up the operation with merged variables and abort signal
+    state.operation.setContext((prev: DefaultContext & { fetchOptions?: RequestInit }) => ({
       ...prev,
-      fetchOptions: { ...(prev?.fetchOptions ?? {}), signal: stateNow.abortController?.signal },
+      fetchOptions: { ...(prev?.fetchOptions ?? {}), signal: state.abortController?.signal },
     }));
-    operation.variables = mergedVariables;
+    state.operation.variables = mergedVariables;
 
-    const subscription = forward(operation).subscribe({
+    // Execute the merged mutation
+    state.forward(state.operation).subscribe({
       next: (result) => {
-        stateNow.inFlight = false;
-        stateNow.abortController = null;
+        state.inFlight = false;
+        state.abortController = null;
 
         for (const item of items) {
           item.next(result);
@@ -152,68 +150,14 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
         scheduleNextFlush(opName);
       },
       error: (err) => {
-        stateNow.inFlight = false;
-        stateNow.abortController = null;
+        state.inFlight = false;
+        state.abortController = null;
         for (const item of items) {
           item.error(err);
         }
+        scheduleNextFlush(opName);
       },
     });
-
-    return () => {
-      subscription.unsubscribe();
-
-      if (stateNow.timer) {
-        clearTimeout(stateNow.timer);
-        stateNow.timer = null;
-      }
-
-      if (stateNow.inFlight) {
-        stateNow.abortController?.abort(AbortReason.Explicit);
-      }
-    };
-  }
-
-  function startBundlePolling(
-    opName: string,
-    operation: Parameters<ApolloLink["request"]>[0],
-    forward: Parameters<ApolloLink["request"]>[1],
-  ): () => void {
-    let teardown: (() => void) | null = null;
-
-    const interval = setInterval(() => {
-      const bundle = pendingExecuteBundles.get(opName);
-      const currentState = getState(opName);
-
-      if (!bundle || currentState.inFlight !== true) {
-        return;
-      }
-
-      pendingExecuteBundles.delete(opName);
-
-      clearInterval(interval);
-
-      if (!forward) {
-        // No next link to forward to – fail fast and notify observers
-        currentState.inFlight = false;
-        currentState.abortController = null;
-        for (const i of bundle.items) {
-          i.error(new Error("No next link available to execute the queued mutation"));
-        }
-        return;
-      }
-
-      teardown = executeBundle(opName, operation, forward, bundle);
-    }, 10);
-
-    return () => {
-      clearInterval(interval);
-
-      if (teardown) {
-        teardown();
-        teardown = null;
-      }
-    };
   }
 
   return new ApolloLink((operation, forward) => {
@@ -223,6 +167,13 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
 
     return new Observable((observer) => {
       const opName = operation.operationName;
+      const state = getState(opName);
+
+      // Store operation and forward for the first call or when not in flight
+      if (!state.operation || !state.inFlight) {
+        state.operation = operation;
+        state.forward = forward;
+      }
 
       const next = (value: unknown) => observer.next(value as never);
       const complete = () => observer.complete();
@@ -230,12 +181,18 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
 
       enqueue(opName, operation.variables as TVars, next, complete, error);
 
-      // Poll for execution signal; minimal coupling to Apollo internal scheduling.
-      const stop = startBundlePolling(opName, operation, forward);
-
-      // teardown if observer unsubscribes before interval fires or after execution
+      // Cleanup function
       return () => {
-        stop();
+        if (state.timer) {
+          clearTimeout(state.timer);
+          state.timer = null;
+        }
+
+        if (state.inFlight) {
+          state.abortController?.abort(AbortReason.Explicit);
+          state.abortController = null;
+          state.inFlight = false;
+        }
       };
     });
   });

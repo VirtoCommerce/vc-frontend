@@ -1,3 +1,5 @@
+import type { ApolloLink } from "@apollo/client/core";
+
 type MergeQueuedFnType<TVars extends Record<string, unknown> = Record<string, unknown>> = (a: TVars, b: TVars) => TVars;
 
 export interface IQueueTargetConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
@@ -29,4 +31,6 @@ export interface IOperationState<TVars extends Record<string, unknown>> {
   timer: ReturnType<typeof setTimeout> | null;
   queue: IPendingItem<TVars>[];
   abortController: AbortController | null;
+  operation: Parameters<ApolloLink["request"]>[0] | null;
+  forward: Parameters<ApolloLink["request"]>[1] | null;
 }
