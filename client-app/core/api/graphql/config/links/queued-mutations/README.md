@@ -14,14 +14,14 @@ Batches multiple identical mutations into a single network request, making your 
 When you call a mutation (e.g., `updateCartItemQuantity()`), Apollo Client passes it through the link chain. The queued mutations link intercepts operations matching its configured targets.
 
 #### 2. Apollo Observable Created
-The link returns an **Apollo Observable** - a lazy, cancellable stream that represents the eventual result. Each mutation call creates its own observer with three callbacks:
+The link returns an **Apollo Observable** - a lazy, cancellable stream that represents the eventual result. Each mutation call provides an observer object with three methods:
 - `next(result)` - receives the mutation result
 - `complete()` - signals successful completion
 - `error(err)` - handles failures
 
 #### 3. Observer Enqueued
 Instead of immediately forwarding the mutation to the network, the link:
-- Stores the observer in the operation's state
+- Stores the observer directly in the operation's state queue
 - Merges the new variables with any existing queued variables using the custom `mergeQueued` function
 - Increments the global `queuedTotal` counter
 - Schedules a flush after the debounce period
@@ -52,14 +52,14 @@ The link:
 #### 7. Response Handling
 When the server responds:
 - Sets `inFlight = false`
-- Notifies **all queued observers** with the result by calling their `next()` and `complete()` callbacks
+- Notifies **all queued observers** with the result by calling their `next()` and `complete()` methods
 - Each original caller receives the same response
 - Schedules the next flush if new mutations arrived during the request
 
 #### 8. Error Handling
 On network errors:
 - Sets `inFlight = false`
-- Calls `error(err)` on all queued observers
+- Calls the `error()` method on all queued observers
 - Each caller can handle the error independently
 - Schedules the next flush for any new mutations
 
@@ -108,7 +108,7 @@ createQueuedMutationsLink({
 
 Each operation maintains:
 - `inFlight`: Boolean tracking active network request
-- `observers`: Array of callers waiting for response
+- `observers`: Array of observer objects (each with `next`, `complete`, `error` methods) waiting for response
 - `mergedVariables`: Accumulated variables from all queued calls
 - `abortController`: Handles request cancellation
 

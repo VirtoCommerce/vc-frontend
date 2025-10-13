@@ -2,7 +2,7 @@ import { ApolloLink, Observable } from "@apollo/client/core";
 import { AbortReason } from "@/core/api/common/enums";
 import { useQueuedMutations } from "@/core/composables/useQueuedMutations";
 import { isMutation, defaultMergeVariables } from "../utils";
-import type { IQueueConfig, IQueueTargetConfig, IOperationState } from "./types";
+import type { IQueueConfig, IQueueTargetConfig, IOperationState, IObserver } from "./types";
 import type { UpdateShortCartItemQuantityMutationVariables } from "@/core/api/graphql/types";
 import type { DefaultContext } from "@apollo/client/core";
 
@@ -89,20 +89,12 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
     }, debounceMs);
   }
 
-  function enqueue(
-    opName: string,
-    variables: TVars,
-    next: (value: unknown) => void,
-    complete: () => void,
-    error: (reason?: unknown) => void,
-  ): void {
+  function enqueue(opName: string, variables: TVars, observer: IObserver): void {
     const state = getState(opName);
     const { mergeQueued } = getTargetConfig(opName);
 
-    // Add observer
-    state.observers.push({ next, complete, error });
+    state.observers.push(observer);
 
-    // Merge variables immediately
     state.mergedVariables = state.mergedVariables ? mergeQueued(state.mergedVariables, variables) : variables;
 
     updateQueuedTotal();
@@ -176,11 +168,7 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
         state.forward = forward;
       }
 
-      const next = (value: unknown) => observer.next(value as never);
-      const complete = () => observer.complete();
-      const error = (reason?: unknown) => observer.error(reason);
-
-      enqueue(opName, operation.variables as TVars, next, complete, error);
+      enqueue(opName, operation.variables as TVars, observer as IObserver);
 
       // Cleanup function
       return () => {
