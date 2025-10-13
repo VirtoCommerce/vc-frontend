@@ -696,6 +696,10 @@
         "ok_button": "确定",
         "no_results": "未找到结果",
         "reset_search_button": "重置搜索"
+      },
+      "shipment_options": {
+        "title": "配送选项",
+        "in_store": "门店自提"
       }
     },
     "checkout": {
@@ -1118,7 +1122,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "输入关键词...",
+        "search_placeholder": "按号码、姓名或其他数据搜索",
         "title": "订单",
         "order_number_label": "订单编号",
         "purchase_number_label": "采购订单",
@@ -1164,7 +1168,9 @@
           "pick_point_info": "自提点信息",
           "get_directions": "获取路线",
           "point_info": "积分信息",
-          "pickup_address": "自提地址"
+          "pickup_address": "自提地址",
+          "cart_pickup_points_not_found": "此商品无适用的自提点。请选择其他配送方式",
+          "availability": "可用性"
         }
       },
       "order_payment": {
@@ -1267,7 +1273,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "公司成员",
-        "search_placeholder": "搜索用户",
+        "search_placeholder": "按姓名、角色或电子邮件搜索",
         "no_members_img_alt": "无成员",
         "no_members_message": "尚无成员",
         "no_results_message": "未找到结果",

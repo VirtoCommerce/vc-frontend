@@ -696,6 +696,10 @@
         "ok_button": "Ok",
         "no_results": "Nessun risultato trovato",
         "reset_search_button": "Reimposta ricerca"
+      },
+      "shipment_options": {
+        "title": "Opzioni di spedizione",
+        "in_store": "Ritiro in negozio"
       }
     },
     "checkout": {
@@ -1118,7 +1122,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Inserisci parola chiave...",
+        "search_placeholder": "Cerca per numero, nome o altri dati",
         "title": "Ordini",
         "order_number_label": "Numero ordine",
         "purchase_number_label": "Ordine d'acquisto",
@@ -1164,7 +1168,9 @@
           "pick_point_info": "Info punto di ritiro",
           "get_directions": "Ottieni indicazioni",
           "point_info": "Informazioni",
-          "pickup_address": "Indirizzo di ritiro"
+          "pickup_address": "Indirizzo di ritiro",
+          "cart_pickup_points_not_found": "Non ci sono punti di ritiro disponibili per questi prodotti. Seleziona un altro metodo di spedizione",
+          "availability": "Disponibilità"
         }
       },
       "order_payment": {
@@ -1267,7 +1273,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Membri azienda",
-        "search_placeholder": "Cerca utenti",
+        "search_placeholder": "Cerca per nome, ruolo o e-mail",
         "no_members_img_alt": "Nessun membro",
         "no_members_message": "Non ci sono ancora membri",
         "no_results_message": "Nessun risultato trovato",

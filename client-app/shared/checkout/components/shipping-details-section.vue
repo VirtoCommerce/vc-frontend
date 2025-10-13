@@ -6,7 +6,7 @@
     data-test-id="checkout.shipping-details-section"
   >
     <div class="flex flex-col flex-wrap gap-4 xs:flex-row xs:gap-y-6 lg:gap-8">
-      <div v-if="hasBOPIS && !onlyOneDeliveryMethod">
+      <div v-if="xPickupEnabled && hasBOPIS && !onlyOneDeliveryMethod">
         <VcLabel>
           {{ $t("shared.checkout.shipping_details_section.labels.delivery_option") }}
         </VcLabel>
@@ -64,7 +64,7 @@
           :disabled="disabled"
           size="auto"
           item-size="lg"
-          :class="hasBOPIS ? 'lg:w-3/12' : 'lg:w-4/12'"
+          :class="xPickupEnabled && hasBOPIS ? 'lg:w-3/12' : 'lg:w-4/12'"
           required
           test-id-dropdown="checkout.shipping-details-section.shipping-method-selector"
           @change="onShipmentMethodChange"
@@ -107,12 +107,11 @@
           ]"
         >
           <VcLoaderOverlay v-if="isLoadingBopisAddresses" />
-
           <AddressSelection
-            :disabled="isLoadingBopisAddresses || disabled"
+            :disabled="!cart || isLoadingBopisAddresses || disabled"
             :address="deliveryAddress"
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_pickup_point')"
-            @change="openSelectAddressModal"
+            @change="openSelectAddressModal(cart!.id)"
           />
         </div>
       </div>
@@ -126,6 +125,7 @@ import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { useBopis, BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
 import { AddressSelection } from "@/shared/common";
+import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
 import type { ShippingMethodType } from "@/core/api/graphql/types.ts";
 
 interface IProps {
@@ -143,8 +143,9 @@ type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
 
 const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, billingAddressEqualsShipping } = useCheckout();
 
-const { availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
+const { cart, availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
 const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
+const { xPickupEnabled } = useXPickup();
 
 const mode = ref<ShippingOptionType>(getDefaultMode());
 
