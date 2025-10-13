@@ -5,7 +5,7 @@ const VARIANTS = ["empty", "search"];
 const ICONS = ["", "outline-stock", "outline-order", "outline-list"];
 
 export default {
-  title: "Components/Atoms/VcEmptyView",
+  title: "Components/Molecules/VcEmptyView",
   component: VcEmptyView,
   argTypes: {
     variant: {

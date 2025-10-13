@@ -1,7 +1,7 @@
 <template>
   <div class="vc-empty-view">
     <slot name="icon">
-      <div v-if="variant === 'search'" class="vc-empty-view__icon" v-html="nothingFoundImgRaw" />
+      <div v-if="variant === 'search'" class="vc-empty-view__icon--search" v-html="nothingFoundImgRaw" />
       <VcIcon v-else-if="variant === 'empty' && icon" class="vc-empty-view__icon" :name="icon" />
     </slot>
 
@@ -36,10 +36,12 @@ withDefaults(defineProps<IProp>(), {
   @apply flex grow flex-col items-center gap-4 py-20 px-6 text-center md:gap-5;
 
   &__icon {
-    @apply w-[9.75rem];
-
     --vc-icon-size: 5.375rem;
     --vc-icon-color: theme("colors.primary.500");
+
+    &--search {
+      @apply size-[9.75rem];
+    }
   }
 
   &__text {
