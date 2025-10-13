@@ -10,4 +10,7 @@ fragment shortCart on CartType {
   shipments {
     id
   }
+  validationErrors {
+    ...validationError
+  }
 }

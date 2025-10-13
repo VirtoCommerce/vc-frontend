@@ -51,7 +51,7 @@ import { CartValidationErrors } from "../enums";
 import type {
   InputNewBulkItemType,
   InputNewCartItemType,
-  ShortCartWithValidationFragment,
+  ShortCartFragment,
   CartType,
   InputPaymentType,
   InputShipmentType,
@@ -141,7 +141,7 @@ export function useShortCart() {
   }
 
   const { mutate: _addItemsToCart, loading: addItemsToCartLoading } = useMutation(AddItemsCartDocument);
-  async function addItemsToCart(items: InputNewCartItemType[]): Promise<ShortCartWithValidationFragment | undefined> {
+  async function addItemsToCart(items: InputNewCartItemType[]): Promise<ShortCartFragment | undefined> {
     const result = await _addItemsToCart(
       { command: { cartItems: items, ...commonVariables } },
       {

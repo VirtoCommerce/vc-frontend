@@ -32,17 +32,18 @@ import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHistoricalEvents } from "@/core/composables";
+import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM, LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
+import { ValidationErrorObjectType } from "@/core/enums";
 import { getUrlSearchParam, Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
 import { AddToCartModeType } from "@/ui-kit/enums";
 import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
-import type { Product, ShortLineItemFragment, VariationType } from "@/core/api/graphql/types";
+import type { Product, ShortLineItemFragment, VariationType, ValidationErrorType } from "@/core/api/graphql/types";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 const emit = defineEmits<IEmits>();
@@ -64,6 +65,7 @@ const product = toRef(props, "product");
 const { cart, addToCart, changeItemQuantityBatched, addToCartLoading, changeItemQuantityBatchedOverflowed } =
   useShortCart();
 const { t } = useI18n();
+const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 const {
   selectedConfigurationInput,
@@ -141,7 +143,7 @@ async function onChange() {
       return;
     }
 
-    handleUpdateResult(updatedCart);
+    handleUpdateResult(updatedCart, mode);
   } finally {
     loading.value = false;
   }
@@ -167,7 +169,7 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
   return updatedCart;
 }
 
-function handleUpdateResult(_cart: Awaited<ReturnType<typeof updateOrAddToCart>>) {
+function handleUpdateResult(_cart: Awaited<ReturnType<typeof updateOrAddToCart>>, mode: AddToCartModeType) {
   if (!_cart) {
     return;
   }
@@ -176,6 +178,7 @@ function handleUpdateResult(_cart: Awaited<ReturnType<typeof updateOrAddToCart>>
 
   if (!lineItem) {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
+    displayErrorMessage(mode, getValidationErrors());
     return;
   }
 
@@ -193,6 +196,17 @@ function displayErrorMessage(mode: AddToCartModeType, message: string) {
     duration: 4000,
     single: true,
   });
+}
+
+function getValidationErrors(): string {
+  return (
+    cart.value?.validationErrors
+      ?.filter(
+        (error) => error.objectId === product.value.id && error.objectType === ValidationErrorObjectType.CatalogProduct,
+      )
+      .map(translate)
+      .join(" ") || ""
+  );
 }
 
 function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
