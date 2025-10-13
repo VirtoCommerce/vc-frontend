@@ -228,8 +228,6 @@ jobs:
     with:
       installModules: 'false'
       installCustomModule: 'true'
-      # customModuleId:  ${{ needs.ci.outputs.moduleId }}
-      # customModuleUrl:  ${{ needs.ci.outputs.artifactUrl }}
       runTests: 'true'
       vctestingRepoBranch: 'dev'
       frontendZipUrl: ${{ needs.ci.outputs.artifactUrl }}
