@@ -19,8 +19,7 @@ export interface IQueueConfig<TVars extends Record<string, unknown> = Record<str
   targets: Array<{ name: string; config?: IQueueTargetConfig<TVars> }>;
 }
 
-export interface IPendingItem<TVars extends Record<string, unknown>> {
-  variables: TVars;
+export interface IObserver {
   next: (value: unknown) => void;
   complete: () => void;
   error: (reason?: unknown) => void;
@@ -29,7 +28,8 @@ export interface IPendingItem<TVars extends Record<string, unknown>> {
 export interface IOperationState<TVars extends Record<string, unknown>> {
   inFlight: boolean;
   timer: ReturnType<typeof setTimeout> | null;
-  queue: IPendingItem<TVars>[];
+  mergedVariables: TVars | null;
+  observers: IObserver[];
   abortController: AbortController | null;
   operation: Parameters<ApolloLink["request"]>[0] | null;
   forward: Parameters<ApolloLink["request"]>[1] | null;

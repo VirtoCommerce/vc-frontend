@@ -2,7 +2,7 @@ import { ApolloLink, Observable } from "@apollo/client/core";
 import { AbortReason } from "@/core/api/common/enums";
 import { useQueuedMutations } from "@/core/composables/useQueuedMutations";
 import { isMutation, defaultMergeVariables } from "../utils";
-import type { IQueueConfig, IQueueTargetConfig, IOperationState, IPendingItem } from "./types";
+import type { IQueueConfig, IQueueTargetConfig, IOperationState } from "./types";
 import type { UpdateShortCartItemQuantityMutationVariables } from "@/core/api/graphql/types";
 import type { DefaultContext } from "@apollo/client/core";
 
@@ -42,7 +42,8 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
     const newState: IOperationState<TVars> = {
       inFlight: false,
       timer: null,
-      queue: [],
+      mergedVariables: null,
+      observers: [],
       abortController: null,
       operation: null,
       forward: null,
@@ -53,7 +54,7 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
   }
 
   function computeTotalQueued(): number {
-    return Array.from(stateByOperation.values()).reduce((acc, s) => acc + s.queue.length, 0);
+    return Array.from(stateByOperation.values()).reduce((acc, s) => acc + s.observers.length, 0);
   }
 
   function updateQueuedTotal(): void {
@@ -73,7 +74,7 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
   function scheduleNextFlush(opName: string): void {
     const state = getState(opName);
 
-    if (state.queue.length === 0) {
+    if (state.observers.length === 0) {
       return;
     }
 
@@ -96,24 +97,22 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
     error: (reason?: unknown) => void,
   ): void {
     const state = getState(opName);
-    state.queue.push({ variables, next, complete, error });
-    updateQueuedTotal();
-    scheduleNextFlush(opName);
-  }
-
-  function mergeQueuedVariables(opName: string, items: IPendingItem<TVars>[]): TVars {
     const { mergeQueued } = getTargetConfig(opName);
 
-    return items.reduce<TVars>(
-      (acc, current, index) => (index === 0 ? current.variables : mergeQueued(acc, current.variables)),
-      {} as TVars,
-    );
+    // Add observer
+    state.observers.push({ next, complete, error });
+
+    // Merge variables immediately
+    state.mergedVariables = state.mergedVariables ? mergeQueued(state.mergedVariables, variables) : variables;
+
+    updateQueuedTotal();
+    scheduleNextFlush(opName);
   }
 
   function flush(opName: string): void {
     const state = getState(opName);
 
-    if (state.inFlight || state.queue.length === 0) {
+    if (state.inFlight || state.observers.length === 0 || !state.mergedVariables) {
       return;
     }
 
@@ -121,10 +120,12 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
       return;
     }
 
-    const items = state.queue.slice();
-    const mergedVariables = mergeQueuedVariables(opName, items);
+    const observers = state.observers.slice();
+    const mergedVariables = state.mergedVariables;
 
-    state.queue = [];
+    // Clear state for next batch
+    state.observers = [];
+    state.mergedVariables = null;
     state.inFlight = true;
     state.abortController = new AbortController();
 
@@ -143,17 +144,17 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
         state.inFlight = false;
         state.abortController = null;
 
-        for (const item of items) {
-          item.next(result);
-          item.complete();
+        for (const observer of observers) {
+          observer.next(result);
+          observer.complete();
         }
         scheduleNextFlush(opName);
       },
       error: (err) => {
         state.inFlight = false;
         state.abortController = null;
-        for (const item of items) {
-          item.error(err);
+        for (const observer of observers) {
+          observer.error(err);
         }
         scheduleNextFlush(opName);
       },
