@@ -10,24 +10,21 @@ const DEFAULT_DEBOUNCE_MS = 300;
 
 /**
  * Creates a queued mutations link.
+ * @description Imagine user adds 5 items of product A to cart, then adds 3 items of product B to cart, then changes quantity of product A to 2. The link will merge the variables and send only one network request to the server.
+ * Further actions happening while network request is in flight + debounce time are queued and will be merged with the next network request.
  * @param config @link{IQueueConfig} - The configuration for the queued mutations link.
  */
-export function createQueuedMutationsLink<TVars extends Record<string, unknown> = Record<string, unknown>>(
+export function createQueuedMutationsLink<TVars extends Record<string, unknown>>(
   config: IQueueConfig<TVars>,
 ): ApolloLink {
-  const targetConfigMap = new Map<string, IQueueTargetConfig<TVars>>(
-    config.targets.map((t) => [t.name, t.config ?? {}]),
-  );
+  const targets = new Set<string>(Array.from(config.targets.map((t) => t.name)));
 
-  const targets = new Set<string>(Array.from(targetConfigMap.keys()));
-
-  // Pre-resolve per-target configs once (no common/global config layer exists)
-  const resolvedConfigMap = new Map<string, Required<IQueueTargetConfig<TVars>>>(
-    config.targets.map((t) => [
-      t.name,
+  const targetConfigMap = new Map<string, Required<IQueueTargetConfig<TVars>>>(
+    config.targets.map((target) => [
+      target.name,
       {
-        debounceMs: t.config?.debounceMs ?? DEFAULT_DEBOUNCE_MS,
-        mergeQueued: t.config?.mergeQueued ?? ((a, b) => defaultMergeVariables(a, b)),
+        debounceMs: target.config?.debounceMs ?? DEFAULT_DEBOUNCE_MS,
+        mergeQueued: target.config?.mergeQueued ?? ((a, b) => defaultMergeVariables(a, b)),
       },
     ]),
   );
@@ -36,12 +33,16 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
   const { setQueuedTotal } = useQueuedMutations();
 
   function getState(opName: string): IOperationState<TVars> {
-    let state = stateByOperation.get(opName);
-    if (!state) {
-      state = { inFlight: false, timer: null, queue: [], abortController: null };
-      stateByOperation.set(opName, state);
+    const state = stateByOperation.get(opName);
+
+    if (state) {
+      return state;
     }
-    return state;
+
+    const newState = { inFlight: false, timer: null, queue: [], abortController: null };
+    stateByOperation.set(opName, newState);
+
+    return newState;
   }
 
   function computeTotalQueued(): number {
@@ -52,30 +53,40 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     setQueuedTotal(computeTotalQueued());
   }
 
-  function getResolvedConfig(opName: string) {
-    return resolvedConfigMap.get(opName)!;
+  function getTargetConfig(opName: string) {
+    const _config = targetConfigMap.get(opName);
+
+    if (!_config) {
+      throw new Error(`Target config not found for operation ${opName}`);
+    }
+
+    return _config;
   }
 
   function scheduleNextFlush(opName: string): void {
     const state = getState(opName);
+
     if (state.queue.length === 0) {
       return;
     }
+
     if (state.timer) {
       clearTimeout(state.timer);
     }
-    const { debounceMs } = getResolvedConfig(opName);
+
+    const { debounceMs } = getTargetConfig(opName);
+
     state.timer = setTimeout(() => {
-      void flush(opName).catch(() => undefined);
+      void flush(opName);
     }, debounceMs);
   }
 
   function enqueue(
     opName: string,
     variables: TVars,
-    next: (v: unknown) => void,
+    next: (value: unknown) => void,
     complete: () => void,
-    error: (r?: unknown) => void,
+    error: (reason?: unknown) => void,
   ): void {
     const state = getState(opName);
     state.queue.push({ variables, next, complete, error });
@@ -84,26 +95,30 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
   }
 
   function mergeQueuedVariables(opName: string, items: IPendingItem<TVars>[]): TVars {
-    const { mergeQueued } = getResolvedConfig(opName);
+    const { mergeQueued } = getTargetConfig(opName);
+
     return items.reduce<TVars>(
-      (acc, cur, idx) => (idx === 0 ? cur.variables : mergeQueued(acc, cur.variables)),
+      (acc, current, index) => (index === 0 ? current.variables : mergeQueued(acc, current.variables)),
       {} as TVars,
     );
   }
 
-  async function flush(opName: string): Promise<void> {
+  async function flush(opName: string) {
     const state = getState(opName);
+
     if (state.inFlight || state.queue.length === 0) {
       return;
     }
+
     const items = state.queue.slice();
     const mergedVariables = mergeQueuedVariables(opName, items);
+
     state.queue = [];
-    updateQueuedTotal();
     state.inFlight = true;
     state.abortController = new AbortController();
 
-    // Signal execution to the link request cycle
+    updateQueuedTotal();
+
     pendingExecuteBundles.set(opName, { variables: mergedVariables, items });
   }
 
@@ -118,37 +133,41 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
   ): () => void {
     const { variables: mergedVariables, items } = bundle;
     const stateNow = getState(opName);
+
     operation.setContext((prev: DefaultContext & { fetchOptions?: RequestInit }) => ({
       ...prev,
       fetchOptions: { ...(prev?.fetchOptions ?? {}), signal: stateNow.abortController?.signal },
     }));
     operation.variables = mergedVariables;
 
-    const sub = forward(operation).subscribe({
+    const subscription = forward(operation).subscribe({
       next: (result) => {
         stateNow.inFlight = false;
         stateNow.abortController = null;
-        for (const i of items) {
-          i.next(result);
-          i.complete();
+
+        for (const item of items) {
+          item.next(result);
+          item.complete();
         }
         scheduleNextFlush(opName);
       },
       error: (err) => {
         stateNow.inFlight = false;
         stateNow.abortController = null;
-        for (const i of items) {
-          i.error(err);
+        for (const item of items) {
+          item.error(err);
         }
       },
     });
 
     return () => {
-      sub.unsubscribe();
+      subscription.unsubscribe();
+
       if (stateNow.timer) {
         clearTimeout(stateNow.timer);
         stateNow.timer = null;
       }
+
       if (stateNow.inFlight) {
         stateNow.abortController?.abort(AbortReason.Explicit);
       }
@@ -161,14 +180,19 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
     forward: Parameters<ApolloLink["request"]>[1],
   ): () => void {
     let teardown: (() => void) | null = null;
+
     const interval = setInterval(() => {
       const bundle = pendingExecuteBundles.get(opName);
       const currentState = getState(opName);
+
       if (!bundle || currentState.inFlight !== true) {
         return;
       }
+
       pendingExecuteBundles.delete(opName);
+
       clearInterval(interval);
+
       if (!forward) {
         // No next link to forward to – fail fast and notify observers
         currentState.inFlight = false;
@@ -178,11 +202,13 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown> 
         }
         return;
       }
+
       teardown = executeBundle(opName, operation, forward, bundle);
     }, 10);
 
     return () => {
       clearInterval(interval);
+
       if (teardown) {
         teardown();
         teardown = null;
