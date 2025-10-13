@@ -72,6 +72,8 @@ export function handleOptimisticResponseUpdateCartQuantity(
       id: cart.id ?? "",
       itemsQuantity,
       items: itemsResult,
+      shipments: cart.shipments,
+      validationErrors: cart.validationErrors,
     },
   };
 }
