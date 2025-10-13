@@ -4,6 +4,7 @@ import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
+import { a11yConfig } from "./a11y-config";
 import { createStorybookRouter } from "./router";
 import type { StoreResponseType } from "../client-app/core/api/graphql/types";
 import type { IThemeConfigPreset } from "../client-app/core/types";
@@ -74,7 +75,7 @@ setThemeContext({
 } as StoreResponseType);
 
 async function configureThemeSettings() {
-  const module = (await import(`@/assets/presets/default.json`)) as {
+  const module = (await import(`@/assets/presets/coffee.json`)) as {
     default: IThemeConfigPreset;
   };
   const preset = module.default;
@@ -132,6 +133,7 @@ const preview: Preview = {
         order: ["*", "Components", ["Atoms", "Molecules", "Organisms", "Templates", "Pages"]],
       },
     },
+    a11y: a11yConfig,
   },
   tags: ["autodocs"],
 };
