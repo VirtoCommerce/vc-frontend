@@ -53,12 +53,11 @@
       <template v-else-if="product.hasVariations">
         <div class="flex flex-wrap justify-between gap-x-2 text-base font-bold">
           <span>
-            {{ $t("pages.product.variations_total_label") }}
+            {{ $t("pages.product.variations_in_cart_label") }}
           </span>
 
-          <!-- todo: extract a component for price and use it here -->
           <span class="text-[--price-color]">
-            {{ $n(variationsCartTotalAmount, "currency") }}
+            {{ variationsInCartQty }}
           </span>
         </div>
 
@@ -114,7 +113,8 @@ import { computed, toRef } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
-import { AddToCart, useShortCart } from "@/shared/cart";
+import { AddToCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart/composables";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES } from "@/shared/catalog/constants/product";
@@ -136,7 +136,7 @@ const props = defineProps<IProps>();
 const product = toRef(props, "product");
 const variations = toRef(props, "variations");
 
-const { getItemsTotal } = useShortCart();
+const { cart } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
 const { getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 const { variationResult } = useProductVariationProperties(computed(() => variations.value ?? []));
@@ -148,14 +148,15 @@ const showVendor = computed(
   () => themeContext.value?.settings?.vendor_enabled && !product.value.hasVariations && product.value.vendor,
 );
 
-const variationsCartTotalAmount = computed<number>(() => {
+const variationsInCartQty = computed<number>(() => {
   if (!props.product) {
     return 0;
   }
 
   const variationsIds = props.variations?.map((variation) => variation.id) ?? [];
+  const variationsInCart = cart.value?.items.filter((item) => variationsIds.includes(item.productId));
 
-  return getItemsTotal(variationsIds);
+  return variationsInCart?.length ?? 0;
 });
 
 const price = computed<PriceType | { actual: MoneyType; list: MoneyType } | undefined>(() => {

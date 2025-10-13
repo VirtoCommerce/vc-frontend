@@ -212,7 +212,8 @@
       "password_expired": "Salasanasi on vanhentunut",
       "data_changed": "Tiedot ovat muuttuneet toisella välilehdellä. Päivitä sivu nähdäksesi viimeisimmät tiedot.",
       "logo_changed": "Logo on vaihdettu onnistuneesti.",
-      "logo_deleted": "Logo on poistettu."
+      "logo_deleted": "Logo on poistettu.",
+      "pending_operations_leaving_page_confirmation": "Osa toimintoja on vielä käynnissä. Haluatko varmasti poistua tältä sivulta? Tallentamattomat muutokset saattavat kadota."
     },
     "placeholders": {
       "enter_value": "Syötä arvo",
@@ -1371,7 +1372,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku kopioitu onnistuneesti",
-      "variations_total_label": "Yhteensä ostoskorissasi:",
+      "variations_in_cart_label": "Variantit ostoskorissa:",
       "view_cart_button": "Näytä ostoskori",
       "recommended_products": {
         "related-products_section_title": "Tähän tuotteeseen liittyvät tuotteet",

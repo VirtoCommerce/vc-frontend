@@ -1,7 +1,7 @@
 import { ApolloError, gql } from "@apollo/client/core";
 import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import { createSharedComposable, computedEager } from "@vueuse/core";
-import { sumBy, difference, keyBy, merge, intersection } from "lodash";
+import { difference, keyBy, merge, intersection } from "lodash";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
@@ -294,16 +294,6 @@ export function useShortCart() {
     });
   }
 
-  function getItemsTotal(productIds: string[]): number {
-    if (!cart.value?.items.length) {
-      return 0;
-    }
-
-    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId));
-
-    return sumBy(filteredItems, (x) => x.extendedPrice.amount);
-  }
-
   const { mutate: _createCartFromWishlist, loading: createCartFromWishlistLoading } =
     useMutation(CreateCartFromWishlistDocument);
   async function createCartFromWishlist(wishlistId: string) {
@@ -318,7 +308,6 @@ export function useShortCart() {
     addBulkItemsToCart,
     changeItemQuantity,
     changeItemQuantityBatched,
-    getItemsTotal,
     createCartFromWishlist,
     loading,
     addToCartLoading,
