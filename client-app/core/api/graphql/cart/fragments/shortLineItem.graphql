@@ -1,6 +1,6 @@
 fragment shortLineItem on LineItemType {
   id
+  sku
   quantity
   productId
-  sku
 }

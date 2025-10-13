@@ -87,7 +87,7 @@ const product = toRef(props, "product");
 
 const price = computed(() => (product.value.hasVariations ? product.value.minVariationPrice : product.value.price));
 const link = computed(() => getProductRoute(product.value.id, product.value.slug));
-const cartLineItem = computed(() => cart.value?.items?.find((item) => item.productId === product.value.id));
+const cartLineItem = computed(() => cart.value?.items.find((item) => item.productId === product.value.id));
 const countInCart = computed(() => cartLineItem.value?.quantity || 0);
 const isQuantityLoading = computed(() => {
   if (themeContext.value.settings.product_quantity_control === "stepper") {
