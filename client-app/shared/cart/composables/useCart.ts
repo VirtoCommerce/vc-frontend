@@ -12,6 +12,7 @@ import {
   useValidateCouponQuery,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
+import { handleOptimisticResponseUpdateCartQuantity } from "@/core/api/graphql/config/links/utils";
 import {
   AddBulkItemsCartDocument,
   AddCouponDocument,
@@ -231,77 +232,7 @@ export function useShortCart() {
           return IGNORE;
         }
 
-        const updatesByProductId = new Map(itemsInput.map((i) => [i.productId, i.quantity] as const));
-        const baseItems = cart.value?.items ?? [];
-
-        // Start from existing items and apply updates/removals
-        const itemsResult: {
-          __typename: "LineItemType";
-          id: string;
-          productId: string;
-          quantity: number;
-          sku: string;
-        }[] = [];
-
-        for (const lineItem of baseItems) {
-          const nextQty = updatesByProductId.get(lineItem.productId);
-          if (nextQty === undefined) {
-            itemsResult.push({
-              __typename: "LineItemType",
-              id: lineItem.id,
-              productId: lineItem.productId,
-              quantity: lineItem.quantity,
-              sku: lineItem.sku ?? "",
-            });
-            continue;
-          }
-          if (nextQty > 0) {
-            itemsResult.push({
-              __typename: "LineItemType",
-              id: lineItem.id,
-              productId: lineItem.productId,
-              quantity: nextQty,
-              sku: lineItem.sku ?? "",
-            });
-          }
-        }
-
-        // Add new items for products that were not in the cart
-        for (const [productId, qty] of updatesByProductId) {
-          if (qty <= 0) {
-            continue;
-          }
-          const exists = baseItems.some((li) => li.productId === productId);
-          if (!exists) {
-            const inferredSku = baseItems.find((li) => li.productId === productId)?.sku ?? productId;
-            const newItem = generateCacheIdIfNew<{
-              id?: string;
-              productId: string;
-              quantity: number;
-              sku: string;
-            }>({ id: "optimistic-" + productId, productId, quantity: qty, sku: inferredSku }, "LineItemType") as {
-              __typename: "LineItemType";
-              id: string;
-              productId: string;
-              quantity: number;
-              sku: string;
-            };
-
-            itemsResult.push(newItem);
-          }
-        }
-
-        // Keep optimistic payload minimal and schema-compliant
-        const itemsQuantity = itemsResult.reduce((acc, li) => acc + (li.quantity ?? 0), 0);
-
-        return {
-          updateCartQuantity: {
-            __typename: "CartType",
-            id: cart.value?.id ?? "",
-            itemsQuantity,
-            items: itemsResult,
-          },
-        };
+        return handleOptimisticResponseUpdateCartQuantity(cart.value as CartType, itemsInput);
       },
     },
   );

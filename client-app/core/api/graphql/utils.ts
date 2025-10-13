@@ -44,10 +44,10 @@ export function filterActiveQueryNames<TCacheShape = any>(
   return intersection(activeQueryNames, queryNames);
 }
 
-export function generateCacheIdIfNew<T extends { id?: string } | undefined>(
+export function generateCacheIdIfNew<T extends (Record<string, unknown> & { id?: string }) | undefined>(
   data: T,
   __typename: string,
-): T | undefined {
+): (T & { id: string }) | undefined {
   if (isDefined(data)) {
     return {
       ...data,
