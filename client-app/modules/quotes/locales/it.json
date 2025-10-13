@@ -10,7 +10,7 @@
     "date_label": "@:common.labels.date",
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
-    "search_placeholder": "Inserisci parola chiave...",
+    "search_placeholder": "Cerca per numero o stato",
     "no_results_message": "Nessun risultato trovato",
     "request_quote_button": "Richiedi Preventivo",
     "search_quote_requests": "Cerca richieste di preventivo",
