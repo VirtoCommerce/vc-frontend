@@ -138,7 +138,7 @@
 
 <script setup lang="ts">
 import { flatten, sortBy, uniqBy } from "lodash";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
@@ -179,8 +179,7 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { cart, addToCart, changeItemQuantityBatched } = useShortCart();
-const { localizedItemsErrors: serverValidationErrors, setErrors } =
-  useErrorsTranslator<ValidationErrorType>("validation_error");
+const { localizedItemsErrors: serverValidationErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
 
@@ -326,12 +325,6 @@ function handleClientValidation(id: string, validation: { isValid: true } | { is
     clientValidation.value[id] = { isValid: true };
   }
 }
-
-watchEffect(() => {
-  if (cart.value?.validationErrors) {
-    setErrors(cart.value?.validationErrors);
-  }
-});
 </script>
 
 <style lang="scss">

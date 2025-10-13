@@ -1,10 +1,10 @@
 import { ValidationErrorObjectType } from "@/core/enums";
-import type { ShortCartFragment, LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
+import type { ShortCartWithValidationFragment, LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
 import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart";
 
 export function getItemsForAddBulkItemsToCartResultsModal(
   inputItems: OrderLineItemType[] | LineItemType[],
-  cart: ShortCartFragment,
+  cart: ShortCartWithValidationFragment,
 ): ItemForAddBulkItemsToCartResultsModalType[] {
   return inputItems.map<ItemForAddBulkItemsToCartResultsModalType>((item) => ({
     productExists: !!item.product,

@@ -1,0 +1,16 @@
+#import "./cartId.graphql"
+#import "./shortLineItem.graphql"
+
+fragment shortCartWithValidation on CartType {
+  ...cartId
+  itemsQuantity
+  items {
+    ...shortLineItem
+  }
+  shipments {
+    id
+  }
+  validationErrors {
+    ...validationError
+  }
+}

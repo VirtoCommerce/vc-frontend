@@ -51,7 +51,7 @@ import { CartValidationErrors } from "../enums";
 import type {
   InputNewBulkItemType,
   InputNewCartItemType,
-  ShortCartFragment,
+  ShortCartWithValidationFragment,
   CartType,
   InputPaymentType,
   InputShipmentType,
@@ -141,7 +141,7 @@ export function useShortCart() {
   }
 
   const { mutate: _addItemsToCart, loading: addItemsToCartLoading } = useMutation(AddItemsCartDocument);
-  async function addItemsToCart(items: InputNewCartItemType[]): Promise<ShortCartFragment | undefined> {
+  async function addItemsToCart(items: InputNewCartItemType[]): Promise<ShortCartWithValidationFragment | undefined> {
     const result = await _addItemsToCart(
       { command: { cartItems: items, ...commonVariables } },
       {
@@ -235,7 +235,13 @@ export function useShortCart() {
         const baseItems = cart.value?.items ?? [];
 
         // Start from existing items and apply updates/removals
-        const itemsResult: { __typename: "LineItemType"; id: string; productId: string; quantity: number }[] = [];
+        const itemsResult: {
+          __typename: "LineItemType";
+          id: string;
+          productId: string;
+          quantity: number;
+          sku: string;
+        }[] = [];
 
         for (const lineItem of baseItems) {
           const nextQty = updatesByProductId.get(lineItem.productId);
@@ -245,6 +251,7 @@ export function useShortCart() {
               id: lineItem.id,
               productId: lineItem.productId,
               quantity: lineItem.quantity,
+              sku: lineItem.sku ?? "",
             });
             continue;
           }
@@ -254,6 +261,7 @@ export function useShortCart() {
               id: lineItem.id,
               productId: lineItem.productId,
               quantity: nextQty,
+              sku: lineItem.sku ?? "",
             });
           }
         }
@@ -265,10 +273,19 @@ export function useShortCart() {
           }
           const exists = baseItems.some((li) => li.productId === productId);
           if (!exists) {
-            const newItem = generateCacheIdIfNew<{ id?: string; productId: string; quantity: number }>(
-              { id: "optimistic-" + productId, productId, quantity: qty },
-              "LineItemType",
-            ) as { __typename: "LineItemType"; id: string; productId: string; quantity: number };
+            const inferredSku = baseItems.find((li) => li.productId === productId)?.sku ?? productId;
+            const newItem = generateCacheIdIfNew<{
+              id?: string;
+              productId: string;
+              quantity: number;
+              sku: string;
+            }>({ id: "optimistic-" + productId, productId, quantity: qty, sku: inferredSku }, "LineItemType") as {
+              __typename: "LineItemType";
+              id: string;
+              productId: string;
+              quantity: number;
+              sku: string;
+            };
 
             itemsResult.push(newItem);
           }

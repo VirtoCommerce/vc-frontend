@@ -1,7 +1,7 @@
-#import "../../fragments/shortCart.graphql"
+#import "../../fragments/shortCartWithValidation.graphql"
 
 mutation AddItemsCart($command: InputAddItemsType!) {
   addItemsCart(command: $command) {
-    ...shortCart
+    ...shortCartWithValidation
   }
 }
