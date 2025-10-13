@@ -1,0 +1,28 @@
+query GetProductPickupLocations(
+  $storeId: String!
+  $cultureName: String!
+  $productId: String!
+  $keyword: String
+  $first: Int
+  $after: String
+  $sort: String
+) {
+  productPickupLocations(
+    storeId: $storeId
+    cultureName: $cultureName
+    productId: $productId
+    keyword: $keyword
+    first: $first
+    after: $after
+    sort: $sort
+  ) {
+    totalCount
+    items {
+      id
+      name
+      availabilityType
+      availableQuantity
+      availabilityNote
+    }
+  }
+}
