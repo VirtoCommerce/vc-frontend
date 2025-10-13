@@ -6,7 +6,7 @@ import type { IQueueConfig, IQueueTargetConfig, IOperationState } from "./types"
 import type { UpdateShortCartItemQuantityMutationVariables } from "@/core/api/graphql/types";
 import type { DefaultContext } from "@apollo/client/core";
 
-const DEFAULT_DEBOUNCE_MS = 300;
+const DEFAULT_DEBOUNCE_MS = 1000;
 
 /**
  * Creates a queued mutations link.
