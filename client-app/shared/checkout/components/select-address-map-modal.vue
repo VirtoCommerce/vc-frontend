@@ -13,7 +13,7 @@
           :items="countries"
           text-field="label"
           value-field="term"
-          placeholder="Country"
+          :placeholder="$t('common.labels.country')"
           class="w-44"
           @change="applyFilters"
         />
@@ -22,7 +22,7 @@
           :items="regions"
           text-field="label"
           value-field="term"
-          placeholder="Region"
+          :placeholder="$t('common.labels.region')"
           class="w-44"
           @change="applyFilters"
         />
@@ -31,11 +31,11 @@
           :items="cities"
           text-field="label"
           value-field="term"
-          placeholder="City"
+          :placeholder="$t('common.labels.city')"
           class="w-44"
           @change="applyFilters"
         />
-        <VcInput v-model="keyword" placeholder="Search" class="grow" @keyup.enter="applyFilters" />
+        <VcInput v-model="keyword" :placeholder="$t('common.labels.search')" class="grow" @keyup.enter="applyFilters" />
         <VcButton icon="search" @click="applyFilters" />
       </div>
       <div class="select-address-map-modal__content">
