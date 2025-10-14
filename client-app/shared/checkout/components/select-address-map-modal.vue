@@ -329,6 +329,17 @@ watch(
     if (newMarkers.length > 0 && !selectedAddressId.value) {
       zoomToMarkers();
     }
+    if (selectedAddressId.value) {
+      const address = addresses.value.find(({ id }) => id === selectedAddressId.value);
+      if (!address) {
+        zoomToMarkers();
+      } else if (address.geoLocation) {
+        const latLng = getLatLng(address.geoLocation);
+        if (latLng) {
+          zoomToLatLng(latLng);
+        }
+      }
+    }
   },
   {
     immediate: true,
