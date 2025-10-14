@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "Opzioni",
-          "select_to_proceed": "Seleziona le opzioni per procedere"
+          "select_to_proceed": "Seleziona le opzioni per procedere",
+          "price_unavailable": "Il prodotto non può essere acquistato nella valuta selezionata"
         }
       },
       "discount_badge": {
@@ -1121,7 +1122,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Inserisci parola chiave...",
+        "search_placeholder": "Cerca per numero, nome o altri dati",
         "title": "Ordini",
         "order_number_label": "Numero ordine",
         "purchase_number_label": "Ordine d'acquisto",
@@ -1272,7 +1273,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Membri azienda",
-        "search_placeholder": "Cerca utenti",
+        "search_placeholder": "Cerca per nome, ruolo o e-mail",
         "no_members_img_alt": "Nessun membro",
         "no_members_message": "Non ci sono ancora membri",
         "no_results_message": "Nessun risultato trovato",

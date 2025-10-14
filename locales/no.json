@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "Alternativer",
-          "select_to_proceed": "Velg alternativer for å fortsette"
+          "select_to_proceed": "Velg alternativer for å fortsette",
+          "price_unavailable": "Produktet kan ikke kjøpes i valgt valuta"
         }
       },
       "discount_badge": {
@@ -1121,7 +1122,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Skriv inn nøkkelord...",
+        "search_placeholder": "Søk etter nummer, navn eller andre data",
         "title": "Bestillinger",
         "order_number_label": "Bestillingsnummer",
         "purchase_number_label": "Innkjøpsordre",
@@ -1272,7 +1273,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Bedriftsmedlemmer",
-        "search_placeholder": "Søk etter brukere",
+        "search_placeholder": "Søk etter navn, rolle eller e-post",
         "no_members_img_alt": "Ingen medlemmer",
         "no_members_message": "Ingen medlemmer ennå",
         "no_results_message": "Ingen resultater funnet",

@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "选项",
-          "select_to_proceed": "选择选项以继续"
+          "select_to_proceed": "选择选项以继续",
+          "price_unavailable": "该商品无法使用所选货币购买"
         }
       },
       "discount_badge": {
@@ -1121,7 +1122,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "输入关键词...",
+        "search_placeholder": "按号码、姓名或其他数据搜索",
         "title": "订单",
         "order_number_label": "订单编号",
         "purchase_number_label": "采购订单",
@@ -1272,7 +1273,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "公司成员",
-        "search_placeholder": "搜索用户",
+        "search_placeholder": "按姓名、角色或电子邮件搜索",
         "no_members_img_alt": "无成员",
         "no_members_message": "尚无成员",
         "no_results_message": "未找到结果",
