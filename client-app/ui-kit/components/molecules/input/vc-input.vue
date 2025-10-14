@@ -42,6 +42,7 @@
         :aria-label="ariaLabel ?? label"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
+        :tabindex="tabindex"
         :data-test-id="testIdInput"
         @keydown="keyDown($event)"
         @click.stop="inputClick"
@@ -119,6 +120,7 @@ export interface IProps {
   testIdInput?: string;
   aria?: Record<string, string | number | null>;
   disableAutocomplete?: boolean;
+  tabindex?: string | number;
 }
 
 defineOptions({
@@ -135,6 +137,7 @@ const props = withDefaults(defineProps<IProps>(), {
   type: "text",
   size: "md",
   browserTooltip: "disabled",
+  tabindex: 0,
 });
 
 const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
@@ -201,7 +204,7 @@ function clear() {
 // Workaround to fix Safari bug
 function keyDown(event: KeyboardEvent) {
   if (props.type === "number") {
-    const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight)/;
+    const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight|ArrowUp|ArrowDown)/;
     if (!allowedCharacter.test(event.key)) {
       event.preventDefault();
     }
