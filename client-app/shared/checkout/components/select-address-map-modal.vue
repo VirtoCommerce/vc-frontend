@@ -44,6 +44,7 @@
           :map-id="MAP_ID"
           :options="{ disableDefaultUI: true }"
           class="select-address-map-modal__map"
+          :key="addressesKey"
         >
           <GoogleMapMarkerClusterer :map-id="MAP_ID">
             <template v-for="address in addresses" :key="address.id">
@@ -203,6 +204,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const addresses = toRef(props, "addresses");
+const addressesKey = computed(() => addresses.value.map((a) => a.id).join("-"));
 const currentAddress = toRef(props, "currentAddress");
 const selectedAddressId = ref<string | undefined>(currentAddress.value?.id);
 const changed = computed(() => selectedAddressId.value !== currentAddress.value?.id);

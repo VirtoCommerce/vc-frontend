@@ -48,7 +48,7 @@ const unwatch = watch(
       unwatch();
     }
   },
-  { immediate: true },
+  { immediate: false },
 );
 
 watch(
