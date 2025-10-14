@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "Optionen",
-          "select_to_proceed": "Optionen auswählen, um fortzufahren"
+          "select_to_proceed": "Optionen auswählen, um fortzufahren",
+          "price_unavailable": "Das Produkt kann in der ausgewählten Währung nicht gekauft werden"
         }
       },
       "discount_badge": {
@@ -695,6 +696,10 @@
         "ok_button": "Ok",
         "no_results": "Keine Ergebnisse gefunden",
         "reset_search_button": "Suche zurücksetzen"
+      },
+      "shipment_options": {
+        "title": "Versandoptionen",
+        "in_store": "Abholung im Geschäft"
       }
     },
     "checkout": {
@@ -1117,7 +1122,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Stichwort eingeben...",
+        "search_placeholder": "Nach Nummer, Name oder anderen Daten",
         "title": "Bestellungen",
         "order_number_label": "Bestellnummer",
         "purchase_number_label": "Einkaufsbestellung",
@@ -1163,7 +1168,9 @@
           "pick_point_info": "Abholpunkt-Info",
           "get_directions": "Zur Route",
           "point_info": "Info-Punkt",
-          "pickup_address": "Abholadresse"
+          "pickup_address": "Abholadresse",
+          "cart_pickup_points_not_found": "Für diese Produkte sind keine Abholpunkte verfügbar. Wählen Sie eine andere Versandart.",
+          "availability": "Verfügbarkeit"
         }
       },
       "order_payment": {
@@ -1266,7 +1273,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Unternehmensmitglieder",
-        "search_placeholder": "Nach Benutzern suchen",
+        "search_placeholder": "Nach Name, Rolle oder E-Mail",
         "no_members_img_alt": "Keine Mitglieder",
         "no_members_message": "Es gibt noch keine Mitglieder",
         "no_results_message": "Keine Ergebnisse gefunden",

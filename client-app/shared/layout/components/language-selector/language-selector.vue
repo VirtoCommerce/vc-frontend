@@ -116,7 +116,7 @@ function getCountryCode(language: ILanguage): string {
     @apply hidden;
 
     @media (min-width: theme("screens.lg")) {
-      @apply block text-sm;
+      @apply block text-sm whitespace-nowrap;
     }
   }
 

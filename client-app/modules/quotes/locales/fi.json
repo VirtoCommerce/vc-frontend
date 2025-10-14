@@ -1,0 +1,69 @@
+{
+  "quotes": {
+    "meta": {
+      "title": "@:quotes.title",
+      "table_description": "pyydetyt tarjoukset"
+    },
+    "title": "Tarjouspyynnöt",
+    "no_quotes_message": "Tarjouspyyntöjä ei ole vielä",
+    "quote_number_label": "Tarjousnumero",
+    "date_label": "@:common.labels.date",
+    "status_label": "@:common.labels.status",
+    "total_label": "@:common.labels.total",
+    "search_placeholder": "Hae numerolla tai tilalla",
+    "no_results_message": "Ei tuloksia",
+    "request_quote_button": "Pyydä tarjous",
+    "search_quote_requests": "Hae tarjouspyyntöjä",
+    "reset_search": "Nollaa haku",
+    "cart_widget": {
+      "quote_request_hint": "Voit pyytää ostoskorissasi olevia tuotteita erikoispalvelun kautta",
+      "create_quote_button": "Lisää ostoskorin tuotteet tarjoukseen",
+      "title": "Tarjouspyyntö"
+    },
+    "navigation": {
+      "route_name": "Tarjouspyynnöt"
+    },
+    "errors": {
+      "creating_quote_error": "Virhe tarjouksen luomisessa"
+    }
+  },
+  "quote_details": {
+    "quote_request_comment": "Tarjouspyynnön kommentti",
+    "title": "Tarjouspyyntö #{0}",
+    "comment": "Kommentti",
+    "comment_field_label": "Onko sinulla yleistä huomautettavaa tästä tarjouspyynnöstä?",
+    "products": "Tuotteet",
+    "shipping_address": "Toimitusosoite",
+    "billing_address": "Laskutusosoite",
+    "save_changes": "@:common.buttons.save_changes",
+    "submit": "@:common.buttons.submit",
+    "no_address_message": "Et ole asettanut osoitetta. Määritä osoite.",
+    "same_as_shipping_address": "Sama kuin toimitusosoite",
+    "quote_summary": "Tarjouksen yhteenveto",
+    "quote_data": "Tarjouksen tiedot",
+    "subTotal": "@:common.labels.subtotal",
+    "discountTotal": "@:common.labels.discount",
+    "shippingTotal": "@:common.labels.shipping_cost",
+    "taxTotal": "@:common.labels.tax",
+    "total": "@:common.labels.total",
+    "created": "@:common.labels.created",
+    "status": "@:common.labels.status",
+    "no_items_message": "Tarjouspyynnöllä ei ole kohteita",
+    "save_changes_notification_success": "Tarjouspyyntö on tallennettu onnistuneesti",
+    "select_shipping_address": "Valitse toimitusosoite",
+    "select_billing_address": "Valitse laskutusosoite",
+    "files": "Tiedostot",
+    "line_items": {
+      "product": "@:common.labels.product",
+      "properties": "@:common.labels.properties",
+      "price_per_item": "@:common.labels.price_per_item",
+      "quantity": "@:common.labels.quantity",
+      "total": "@:common.labels.total",
+      "subtotal": "@:common.labels.subtotal"
+    },
+    "error": {
+      "approve": "Tarjousta ei voida hyväksyä",
+      "decline": "Tarjousta ei voida hylätä"
+    }
+  }
+}

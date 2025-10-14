@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "Опции",
-          "select_to_proceed": "Выберите параметры, чтобы продолжить"
+          "select_to_proceed": "Выберите параметры, чтобы продолжить",
+          "price_unavailable": "Товар нельзя купить в выбранной валюте"
         }
       },
       "discount_badge": {
@@ -695,6 +696,10 @@
         "ok_button": "ОК",
         "no_results": "Результатов не найдено",
         "reset_search_button": "Очистить поиск"
+      },
+      "shipment_options": {
+        "title": "Варианты доставки",
+        "in_store": "Самовывоз из магазина"
       }
     },
     "checkout": {
@@ -1117,7 +1122,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Введите ключевое слово...",
+        "search_placeholder": "По номеру, имени или другим данным",
         "title": "Заказы",
         "order_number_label": "Номер заказа",
         "purchase_number_label": "Номер закупки",
@@ -1163,7 +1168,9 @@
           "pick_point_info": "Информация о пункте выдачи",
           "get_directions": "Как добраться",
           "point_info": "Информация",
-          "pickup_address": "Адрес самовывоза"
+          "pickup_address": "Адрес самовывоза",
+          "cart_pickup_points_not_found": "Для этих товаров нет доступных пунктов выдачи. Выберите другой способ доставки",
+          "availability": "Доступность"
         }
       },
       "order_payment": {
@@ -1266,7 +1273,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Сотрудники компании",
-        "search_placeholder": "Поиск пользователей",
+        "search_placeholder": "По имени, роли или email",
         "no_members_img_alt": "Нет сотрудников",
         "no_members_message": "Сотрудников пока нет",
         "no_results_message": "Результаты не найдены",

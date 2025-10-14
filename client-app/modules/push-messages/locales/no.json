@@ -1,0 +1,20 @@
+{
+  "push_messages": {
+    "title": "Varsler",
+    "menu_item_name": "Varsler",
+    "empty_list": "Du har ingen nye varsler for øyeblikket",
+    "options": {
+      "make_all_as_read": "Merk alle som lest",
+      "make_all_as_unread": "Merk alle som ulest"
+    },
+    "empty": {
+      "title": "Ingen nye varsler akkurat nå.",
+      "description": "Hold deg oppdatert for oppdateringer og viktige meldinger."
+    },
+    "clear_all": "Fjern alle",
+    "view_all": "Vis alle varsler",
+    "show_unread_only": "Vis kun uleste",
+    "mark_as_read": "Merk som lest",
+    "mark_as_unread": "Merk som ulest"
+  }
+}

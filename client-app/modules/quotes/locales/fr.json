@@ -10,7 +10,7 @@
     "date_label": "@:common.labels.date",
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
-    "search_placeholder": "Entrez un mot-clé...",
+    "search_placeholder": "Rechercher par numéro ou statut",
     "no_results_message": "Aucun résultat trouvé",
     "request_quote_button": "Demander un Devis",
     "search_quote_requests": "Rechercher des demandes de devis",
