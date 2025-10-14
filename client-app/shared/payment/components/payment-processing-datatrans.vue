@@ -248,7 +248,6 @@ async function initPayment() {
       return;
     }
     await finalizeOnBackend(uppTransactionId);
-    emit("success");
     return;
   }
 
@@ -304,7 +303,6 @@ function initForm(tx: string) {
 
     // without 3-D Secure, finalize payment right now on the backend
     await finalizeOnBackend(transactionId);
-    emit("success");
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
