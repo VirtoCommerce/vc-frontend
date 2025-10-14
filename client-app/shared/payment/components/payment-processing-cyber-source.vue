@@ -375,8 +375,8 @@ async function useDynamicScript(url: string, integrity?: string): Promise<void> 
 }
 
 function removeScript() {
-  if (scriptTag.value && scriptTag.value.parentNode) {
-    scriptTag.value.parentNode.removeChild(scriptTag.value);
+  if (scriptTag.value) {
+    scriptTag.value.remove();
   }
 }
 
