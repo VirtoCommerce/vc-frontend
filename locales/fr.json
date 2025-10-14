@@ -820,6 +820,7 @@
         "year_label": "Année",
         "year_placeholder": "AA",
         "security_code_label": "Code de sécurité",
+        "pay_now_button": "Payer maintenant",
         "errors": {
           "month": "Veuillez indiquer un mois d'expiration valide",
           "year": "Veuillez indiquer une année d'expiration valide",
@@ -833,7 +834,6 @@
         "privacy_policy_link": "Politique de confidentialité",
         "accept_terms_text": "En passant une commande, vous acceptez les termes de notre",
         "processing_personal_data_text": "et vous acceptez que nous puissions traiter vos données personnelles conformément à notre",
-        "pay_now_button": "Payer maintenant",
         "errors": {
           "number": "Veuillez fournir un numéro de carte de crédit valide",
           "month": "Veuillez fournir un mois d'expiration valide",
