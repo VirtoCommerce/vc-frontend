@@ -844,15 +844,11 @@
           "incorrect_payment_method": "Méthode de paiement incorrecte"
         }
       },
-      "skyflow": {
-        "pay_now_button": "Payer maintenant"
-      },
       "manual": {
         "text": "La méthode de paiement que vous avez sélectionnée ne prend pas en charge le paiement en ligne. Veuillez sélectionner une autre méthode ou "
       },
       "redirection": {
         "text": "Après avoir cliqué sur <strong>{0}</strong>, vous serez redirigé vers le service de paiement tiers",
-        "pay_now_button": "Payer maintenant",
         "try_again_button": "Réessayer",
         "errors": {
           "missing_link": "Le lien de redirection est manquant",

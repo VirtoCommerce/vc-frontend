@@ -16,7 +16,7 @@
       class="mt-3 w-full md:mt-12 md:w-auto"
       @click="redirect"
     >
-      {{ $t("shared.payment.redirection.pay_now_button") }}
+      {{ $t("shared.payment.bank_card_form.pay_now_button") }}
     </VcButton>
   </div>
 

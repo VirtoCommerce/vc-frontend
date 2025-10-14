@@ -820,6 +820,7 @@
         "year_label": "年",
         "year_placeholder": "YY",
         "security_code_label": "安全码",
+        "pay_now_button": "立即支付",
         "errors": {
           "month": "请选择有效的月份",
           "year": "请输入有效的年份",
@@ -833,7 +834,6 @@
         "privacy_policy_link": "隐私政策",
         "accept_terms_text": "通过下订单，您接受我们的条款",
         "processing_personal_data_text": "并同意我们可以按照我们的",
-        "pay_now_button": "立即支付",
         "errors": {
           "number": "请提供有效的信用卡号码",
           "month": "请提供有效的到期月份",
@@ -844,15 +844,11 @@
           "incorrect_payment_method": "支付方式不正确"
         }
       },
-      "skyflow": {
-        "pay_now_button": "立即支付"
-      },
       "manual": {
         "text": "您选择的支付方式不支持在线支付。请选择另一种方式或 "
       },
       "redirection": {
         "text": "点击 <strong>{0}</strong> 后，您将被重定向到第三方支付服务",
-        "pay_now_button": "立即支付",
         "try_again_button": "再试一次",
         "errors": {
           "missing_link": "重定向链接缺失",

@@ -70,7 +70,7 @@
       data-test-id="pay-now-button"
       @click="sendPaymentData"
     >
-      {{ $t("shared.payment.authorize_net.pay_now_button") }}
+      {{ $t("shared.payment.bank_card_form.pay_now_button") }}
     </VcButton>
   </div>
 </template>

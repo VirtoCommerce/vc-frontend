@@ -820,6 +820,7 @@
         "year_label": "Vuosi",
         "year_placeholder": "VV",
         "security_code_label": "Turvakoodi",
+        "pay_now_button": "Maksa nyt",
         "errors": {
           "month": "Syötä kelvollinen viimeinen voimassaolokuukausi",
           "year": "Syötä kelvollinen viimeinen voimassaolovuosi",
@@ -833,7 +834,6 @@
         "privacy_policy_link": "Tietosuojakäytäntö",
         "accept_terms_text": "Tilaamalla hyväksyt ehdot",
         "processing_personal_data_text": "ja suostut siihen, että voimme käsitellä henkilötietojasi",
-        "pay_now_button": "Maksa nyt",
         "errors": {
           "number": "Syötä kelvollinen luottokortin numero",
           "month": "Syötä kelvollinen viimeinen voimassaolokuukausi",
@@ -844,15 +844,11 @@
           "incorrect_payment_method": "Virheellinen maksutapa"
         }
       },
-      "skyflow": {
-        "pay_now_button": "Maksa nyt"
-      },
       "manual": {
         "text": "Valittu maksutapa ei tue verkkomaksuja. Valitse toinen tapa tai "
       },
       "redirection": {
         "text": "Kun napsautat <strong>{0}</strong>, sinut ohjataan kolmannen osapuolen maksupalveluun",
-        "pay_now_button": "Maksa nyt",
         "try_again_button": "Yritä uudelleen",
         "errors": {
           "missing_link": "Uudelleenohjauslinkki puuttuu",

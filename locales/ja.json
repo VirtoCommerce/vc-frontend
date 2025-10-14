@@ -820,6 +820,7 @@
         "year_label": "Year",
         "year_placeholder": "YY",
         "security_code_label": "Security code",
+        "pay_now_button": "Pay Now",
         "errors": {
           "month": "有効な有効期限月を入力してください",
           "year": "有効な有効期限の年を入力してください",
@@ -833,7 +834,6 @@
         "privacy_policy_link": "Privacy Policy",
         "accept_terms_text": "By placing an order, you accept the terms of our",
         "processing_personal_data_text": "and agree that we may process your personal data as per our",
-        "pay_now_button": "Pay Now",
         "errors": {
           "number": "Please provide a valid credit card number",
           "month": "Please provide a valid expiration month",
@@ -844,15 +844,11 @@
           "incorrect_payment_method": "Incorrect payment method"
         }
       },
-      "skyflow": {
-        "pay_now_button": "Pay Now"
-      },
       "manual": {
         "text": "The payment method you selected does not support online payment. Please select another method or "
       },
       "redirection": {
         "text": "After you click <strong>{0}</strong>, you will be redirected to the third-party payment service",
-        "pay_now_button": "Pay Now",
         "try_again_button": "Try Again",
         "errors": {
           "missing_link": "Redirect link is missing",

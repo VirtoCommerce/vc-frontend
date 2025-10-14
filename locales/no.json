@@ -820,6 +820,7 @@
         "year_label": "År",
         "year_placeholder": "ÅÅ",
         "security_code_label": "Sikkerhetskode",
+        "pay_now_button": "Betal nå",
         "errors": {
           "month": "Skriv inn en gyldig utløpsmåned",
           "year": "Skriv inn et gyldig utløpsår",
@@ -833,7 +834,6 @@
         "privacy_policy_link": "Personvernerklæring",
         "accept_terms_text": "Ved å bestille godtar du vilkårene",
         "processing_personal_data_text": "og samtykker til at vi kan behandle dine personopplysninger",
-        "pay_now_button": "Betal nå",
         "errors": {
           "number": "Skriv inn et gyldig kredittkortnummer",
           "month": "Skriv inn en gyldig utløpsmåned",
@@ -844,15 +844,11 @@
           "incorrect_payment_method": "Ugyldig betalingsmetode"
         }
       },
-      "skyflow": {
-        "pay_now_button": "Betal nå"
-      },
       "manual": {
         "text": "Den valgte betalingsmetoden støtter ikke nettbetalinger. Velg en annen metode eller "
       },
       "redirection": {
         "text": "Når du klikker på <strong>{0}</strong>, blir du omdirigert til en tredjeparts betalingstjeneste",
-        "pay_now_button": "Betal nå",
         "try_again_button": "Prøv igjen",
         "errors": {
           "missing_link": "Omdirigeringslenke mangler",

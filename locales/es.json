@@ -820,6 +820,7 @@
         "year_label": "Año",
         "year_placeholder": "AA",
         "security_code_label": "Código de seguridad",
+        "pay_now_button": "Pagar ahora",
         "errors": {
           "month": "Por favor, proporciona un mes de vencimiento válido",
           "year": "Por favor, proporcione un año de vencimiento válido",
@@ -833,7 +834,6 @@
         "privacy_policy_link": "Política de privacidad",
         "accept_terms_text": "Al realizar un pedido, aceptas los términos de nuestro",
         "processing_personal_data_text": "y aceptas que podamos procesar tus datos personales según nuestra",
-        "pay_now_button": "Pagar ahora",
         "errors": {
           "number": "Por favor, proporciona un número de tarjeta de crédito válido",
           "month": "Por favor, proporciona un mes de expiración válido",
@@ -844,15 +844,11 @@
           "incorrect_payment_method": "Método de pago incorrecto"
         }
       },
-      "skyflow": {
-        "pay_now_button": "Pagar ahora"
-      },
       "manual": {
         "text": "El método de pago que seleccionaste no admite pago en línea. Por favor, selecciona otro método o "
       },
       "redirection": {
         "text": "Después de hacer clic en <strong>{0}</strong>, serás redirigido al servicio de pago de terceros",
-        "pay_now_button": "Pagar ahora",
         "try_again_button": "Inténtalo de nuevo",
         "errors": {
           "missing_link": "Falta el enlace de redirección",

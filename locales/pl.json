@@ -820,6 +820,7 @@
         "year_label": "Rok",
         "year_placeholder": "RR",
         "security_code_label": "Kod bezpieczeństwa",
+        "pay_now_button": "Zapłać teraz",
         "errors": {
           "month": "Podaj prawidłowy miesiąc ważności",
           "year": "Podaj prawidłowy rok ważności",
@@ -833,7 +834,6 @@
         "privacy_policy_link": "Polityka prywatności",
         "accept_terms_text": "Składając zamówienie, akceptujesz warunki naszej",
         "processing_personal_data_text": "i zgadzasz się, że możemy przetwarzać Twoje dane osobowe zgodnie z naszą",
-        "pay_now_button": "Zapłać teraz",
         "errors": {
           "number": "Proszę podać prawidłowy numer karty kredytowej",
           "month": "Proszę podać prawidłowy miesiąc ważności",
@@ -844,15 +844,11 @@
           "incorrect_payment_method": "Nieprawidłowa metoda płatności"
         }
       },
-      "skyflow": {
-        "pay_now_button": "Zapłać teraz"
-      },
       "manual": {
         "text": "Wybrana metoda płatności nie obsługuje płatności online. Proszę wybrać inną metodę lub "
       },
       "redirection": {
         "text": "Po kliknięciu <strong>{0}</strong> zostaniesz przekierowany do zewnętrznego serwisu płatności",
-        "pay_now_button": "Zapłać teraz",
         "try_again_button": "Spróbuj ponownie",
         "errors": {
           "missing_link": "Brakuje linku przekierowującego",

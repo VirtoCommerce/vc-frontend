@@ -820,6 +820,7 @@
         "year_label": "År",
         "year_placeholder": "ÅÅ",
         "security_code_label": "Säkerhetskod",
+        "pay_now_button": "Betala nu",
         "errors": {
           "month": "Ange en giltig utgångsmånad",
           "year": "Ange ett giltigt utgångsår",
@@ -833,7 +834,6 @@
         "privacy_policy_link": "Integritetspolicy",
         "accept_terms_text": "Genom att lägga en beställning accepterar du villkoren i vårt",
         "processing_personal_data_text": "och samtycker till att vi kan behandla dina personuppgifter enligt vår",
-        "pay_now_button": "Betala nu",
         "errors": {
           "number": "Ange ett giltigt kreditkortsnummer",
           "month": "Ange en giltig utgångsmånad",
@@ -844,15 +844,11 @@
           "incorrect_payment_method": "Felaktig betalningsmetod"
         }
       },
-      "skyflow": {
-        "pay_now_button": "Betala nu"
-      },
       "manual": {
         "text": "Den valda betalningsmetoden stöder inte onlinebetalning. Välj en annan metod eller "
       },
       "redirection": {
         "text": "Efter att du klickar på <strong>{0}</strong>, kommer du att omdirigeras till tredjepartsbetalningstjänsten",
-        "pay_now_button": "Betala nu",
         "try_again_button": "Försök igen",
         "errors": {
           "missing_link": "Omdirigeringslänk saknas",
