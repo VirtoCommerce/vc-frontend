@@ -199,7 +199,7 @@ const {
 });
 
 const isValidBankCard = computed(() => {
-  return validationResult && !validationResult.value?.hasErrors;
+  return !validationResult.value?.hasErrors;
 });
 
 const [cardholderName] = defineField("cardholderName");
