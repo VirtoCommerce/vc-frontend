@@ -45,7 +45,7 @@
             :view-mode="savedViewMode"
             :lazy="index >= lazyCardsCount"
             :product="item"
-            :browser-target="$cfg.details_browser_target"
+            :browser-target="browserTarget"
             :card-type="cardType"
             @link-click="sendGASelectItemEvent"
           />
@@ -102,7 +102,7 @@
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
 import { toRef, computed } from "vue";
-import { useRouteQueryParam } from "@/core/composables";
+import { useBrowserTarget, useRouteQueryParam } from "@/core/composables";
 import { PAGE_LIMIT, BREAKPOINTS, DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { ProductCard, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog/components";
@@ -143,6 +143,8 @@ interface IEmits {
   (event: "selectProduct", product: Product): void;
   (event: "resetFilterKeyword"): void;
 }
+
+const { browserTarget } = useBrowserTarget();
 
 const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
   defaultValue: "",

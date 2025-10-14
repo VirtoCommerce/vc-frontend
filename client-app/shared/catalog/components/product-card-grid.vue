@@ -181,7 +181,7 @@
       :link-to="link"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
-      :target="browserTarget || $cfg.details_browser_target || '_blank'"
+      :target="browserTarget || browserTarget"
       @link-click="$emit('linkClick', $event)"
     />
 
@@ -191,7 +191,7 @@
       :link-text="$t('pages.catalog.show_on_a_separate_page')"
       :link-to="link"
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
-      :target="browserTarget || $cfg.details_browser_target || '_blank'"
+      :target="browserTarget || browserTarget"
       @link-click="$emit('linkClick', $event)"
     />
 
@@ -227,7 +227,7 @@ import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
-import type { BrowserTargetType } from "@/core/types";
+import type { BrowserTargetType } from "@/core/enums";
 import type { Swiper as SwiperInstance } from "swiper/types";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
