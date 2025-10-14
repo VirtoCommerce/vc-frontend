@@ -6,8 +6,8 @@
     :is-full-height="!!addresses.length"
     class="select-address-map-modal"
   >
-    <div v-if="addresses.length" class="select-address-map-modal__content">
-      <div class="mb-3 flex items-center gap-2">
+    <div v-if="addresses.length" class="select-address-map-modal__container">
+      <div class="select-address-map-modal__filters">
         <VcSelect
           v-model="selectedCountry"
           :items="countries"
@@ -38,127 +38,129 @@
         <VcInput v-model="keyword" placeholder="Search" class="grow" @keyup.enter="applyFilters" />
         <VcButton icon="search" @click="applyFilters" />
       </div>
-      <GoogleMap
-        :api-key="apiKey"
-        :map-id="MAP_ID"
-        :options="{ disableDefaultUI: true }"
-        class="select-address-map-modal__map"
-      >
-        <GoogleMapMarkerClusterer :map-id="MAP_ID">
-          <template v-for="address in addresses" :key="address.id">
-            <GoogleMapMarker
-              v-if="getLatLng(address.geoLocation)"
-              :map-id="MAP_ID"
-              :position="getLatLng(address.geoLocation)!"
-              :pin-options="createPin()"
-              :title="address.name"
-              :is-active="selectedAddressId === address.id"
-              :active-pin-options="activePinOptions"
-            >
-              <div class="select-address-map-modal__info-window">
-                <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
+      <div class="select-address-map-modal__content">
+        <GoogleMap
+          :api-key="apiKey"
+          :map-id="MAP_ID"
+          :options="{ disableDefaultUI: true }"
+          class="select-address-map-modal__map"
+        >
+          <GoogleMapMarkerClusterer :map-id="MAP_ID">
+            <template v-for="address in addresses" :key="address.id">
+              <GoogleMapMarker
+                v-if="getLatLng(address.geoLocation)"
+                :map-id="MAP_ID"
+                :position="getLatLng(address.geoLocation)!"
+                :pin-options="createPin()"
+                :title="address.name"
+                :is-active="selectedAddressId === address.id"
+                :active-pin-options="activePinOptions"
+              >
+                <div class="select-address-map-modal__info-window">
+                  <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
 
-                <PickupAvailabilityInfo
-                  show-icon
-                  icon-size="sm"
-                  :availability-type="address.availabilityType"
-                  :availability-note="address.availabilityNote"
-                />
+                  <PickupAvailabilityInfo
+                    show-icon
+                    icon-size="sm"
+                    :availability-type="address.availabilityType"
+                    :availability-note="address.availabilityNote"
+                  />
 
-                <div class="select-address-map-modal__info-window-content">
-                  <dl>
-                    <dt>
-                      {{ $t("shared.checkout.select_bopis_modal.location_label") }}
-                    </dt>
+                  <div class="select-address-map-modal__info-window-content">
+                    <dl>
+                      <dt>
+                        {{ $t("shared.checkout.select_bopis_modal.location_label") }}
+                      </dt>
 
-                    <dd>{{ getAddressName(address) }}</dd>
+                      <dd>{{ getAddressName(address) }}</dd>
 
-                    <dt v-if="address.contactPhone">
-                      {{ $t("shared.checkout.select_bopis_modal.contact_phone_label") }}
-                    </dt>
+                      <dt v-if="address.contactPhone">
+                        {{ $t("shared.checkout.select_bopis_modal.contact_phone_label") }}
+                      </dt>
 
-                    <dd v-if="address.contactPhone">
-                      <a :href="`tel:${address.contactPhone}`">{{ address.contactPhone }}</a>
-                    </dd>
+                      <dd v-if="address.contactPhone">
+                        <a :href="`tel:${address.contactPhone}`">{{ address.contactPhone }}</a>
+                      </dd>
 
-                    <dt v-if="address.contactEmail">
-                      {{ $t("shared.checkout.select_bopis_modal.contact_email_label") }}
-                    </dt>
+                      <dt v-if="address.contactEmail">
+                        {{ $t("shared.checkout.select_bopis_modal.contact_email_label") }}
+                      </dt>
 
-                    <dd v-if="address.contactEmail">
-                      <a :href="`mailto:${address.contactEmail}`">{{ address.contactEmail }}</a>
-                    </dd>
+                      <dd v-if="address.contactEmail">
+                        <a :href="`mailto:${address.contactEmail}`">{{ address.contactEmail }}</a>
+                      </dd>
 
-                    <dt v-if="address.workingHours">
-                      {{ $t("shared.checkout.select_bopis_modal.working_hours_label") }}
-                    </dt>
+                      <dt v-if="address.workingHours">
+                        {{ $t("shared.checkout.select_bopis_modal.working_hours_label") }}
+                      </dt>
 
-                    <dd v-if="address.workingHours">
-                      <VcMarkdownRender
-                        class="select-address-map-modal__info-window-working-hours"
-                        :src="address.workingHours"
-                      />
-                    </dd>
+                      <dd v-if="address.workingHours">
+                        <VcMarkdownRender
+                          class="select-address-map-modal__info-window-working-hours"
+                          :src="address.workingHours"
+                        />
+                      </dd>
 
-                    <dt v-if="address.description">
-                      {{ $t("shared.checkout.select_bopis_modal.description_label") }}
-                    </dt>
+                      <dt v-if="address.description">
+                        {{ $t("shared.checkout.select_bopis_modal.description_label") }}
+                      </dt>
 
-                    <dd v-if="address.description">{{ address.description }}</dd>
-                  </dl>
+                      <dd v-if="address.description">{{ address.description }}</dd>
+                    </dl>
+                  </div>
+
+                  <div class="select-address-map-modal__info-window-actions">
+                    <VcButton variant="no-background" color="secondary" size="xs" @click="closeInfoWindow">
+                      {{ $t("common.buttons.cancel") }}
+                    </VcButton>
+
+                    <VcButton
+                      size="xs"
+                      variant="outline"
+                      @click="selectHandler(address, { closeInfo: true, scrollToSelectedOnList: true })"
+                    >
+                      {{ $t("common.buttons.select") }}
+                    </VcButton>
+                  </div>
                 </div>
+              </GoogleMapMarker>
+            </template>
+          </GoogleMapMarkerClusterer>
+        </GoogleMap>
 
-                <div class="select-address-map-modal__info-window-actions">
-                  <VcButton variant="no-background" color="secondary" size="xs" @click="closeInfoWindow">
-                    {{ $t("common.buttons.cancel") }}
-                  </VcButton>
-
-                  <VcButton
-                    size="xs"
-                    variant="outline"
-                    @click="selectHandler(address, { closeInfo: true, scrollToSelectedOnList: true })"
-                  >
-                    {{ $t("common.buttons.select") }}
-                  </VcButton>
-                </div>
-              </div>
-            </GoogleMapMarker>
-          </template>
-        </GoogleMapMarkerClusterer>
-      </GoogleMap>
-
-      <VcScrollbar vertical class="select-address-map-modal__sidebar">
-        <ul class="select-address-map-modal__list">
-          <li
-            v-for="address in addresses"
-            :key="address.id"
-            :data-address-id="address.id"
-            class="select-address-map-modal__list-item"
-          >
-            <VcRadioButton
-              v-model="selectedAddressId"
-              :value="address.id"
-              class="select-address-map-modal__radio-button"
-              size="sm"
-              @change="selectHandler(address, { scrollToSelectedOnMap: true })"
+        <VcScrollbar vertical class="select-address-map-modal__sidebar">
+          <ul class="select-address-map-modal__list">
+            <li
+              v-for="address in addresses"
+              :key="address.id"
+              :data-address-id="address.id"
+              class="select-address-map-modal__list-item"
             >
-              <div class="flex flex-col">
-                <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
+              <VcRadioButton
+                v-model="selectedAddressId"
+                :value="address.id"
+                class="select-address-map-modal__radio-button"
+                size="sm"
+                @change="selectHandler(address, { scrollToSelectedOnMap: true })"
+              >
+                <div class="flex flex-col">
+                  <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
 
-                <p class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</p>
+                  <p class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</p>
 
-                <PickupAvailabilityInfo
-                  class="select-address-map-modal__radio-button-pickup-availability"
-                  show-icon
-                  icon-size="xs"
-                  :availability-type="address.availabilityType"
-                  :availability-note="address.availabilityNote"
-                />
-              </div>
-            </VcRadioButton>
-          </li>
-        </ul>
-      </VcScrollbar>
+                  <PickupAvailabilityInfo
+                    class="select-address-map-modal__radio-button-pickup-availability"
+                    show-icon
+                    icon-size="xs"
+                    :availability-type="address.availabilityType"
+                    :availability-note="address.availabilityNote"
+                  />
+                </div>
+              </VcRadioButton>
+            </li>
+          </ul>
+        </VcScrollbar>
+      </div>
     </div>
 
     <div v-else>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found") }}</div>
@@ -349,8 +351,16 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 
 <style lang="scss">
 .select-address-map-modal {
+  &__container {
+    @apply flex flex-col h-full;
+  }
+
+  &__filters {
+    @apply flex items-center gap-2 py-3;
+  }
+
   &__content {
-    @apply relative flex flex-col gap-3 w-full h-full;
+    @apply relative flex flex-col gap-3 w-full flex-1;
 
     @media (min-width: theme("screens.md")) {
       @apply flex-row;
