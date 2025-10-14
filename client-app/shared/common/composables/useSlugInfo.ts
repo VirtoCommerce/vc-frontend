@@ -1,8 +1,10 @@
 import { useLocalStorage } from "@vueuse/core";
 import { computed, nextTick, readonly, toValue, watch } from "vue";
 import { useGetPage, useGetPageDocument, useGetSlugInfo } from "@/core/api/graphql";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { globals } from "@/core/globals";
+import { safeDecode } from "@/core/utilities/common";
 import type { IPageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -10,13 +12,26 @@ import type { MaybeRefOrGetter } from "vue";
  * @param seoUrl path after domain without slash at the beginning
  **/
 export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
+  const { previousCultureSlug } = useLanguages();
+
   const navigationOutlineStorage = useLocalStorage<string>(NAVIGATION_OUTLINE, "");
-  const { storeId, userId, cultureName } = globals;
+  const { storeId, userId, cultureName: currentCultureName } = globals;
+
+  const previousCultureSlugDecoded = computed(() => {
+    return safeDecode(previousCultureSlug.value?.slug);
+  });
+
+  const cultureName = computed(() => {
+    return previousCultureSlugDecoded.value === toValue(seoUrl)
+      ? previousCultureSlug.value?.cultureName
+      : currentCultureName;
+  });
+
   const variables = computed(() => {
     return {
       storeId,
       userId,
-      cultureName,
+      cultureName: cultureName.value,
       permalink: toValue(seoUrl),
     };
   });
@@ -55,7 +70,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
   });
 
   const getPageParams = computed(() => {
-    return { id: slugInfo?.value?.entityInfo?.objectId || "?", cultureName, storeId };
+    return { id: slugInfo?.value?.entityInfo?.objectId || "?", cultureName: currentCultureName, storeId };
   });
 
   const {
