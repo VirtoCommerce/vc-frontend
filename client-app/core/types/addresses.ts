@@ -15,4 +15,9 @@ export type AnyAddressType = {
   postalCode?: string;
   regionId?: string;
   regionName?: string;
+  name?: string;
+  geoLocation?: string;
+  workingHours?: string;
+  availabilityNote?: string;
+  availabilityType?: string;
 };

@@ -1,0 +1,44 @@
+query GetCartPickupLocations(
+  $storeId: String!
+  $cultureName: String!
+  $cartId: String!
+  $keyword: String
+  $first: Int
+  $after: String
+  $sort: String
+) {
+  cartPickupLocations(
+    storeId: $storeId
+    cultureName: $cultureName
+    cartId: $cartId
+    keyword: $keyword
+    first: $first
+    after: $after
+    sort: $sort
+  ) {
+    totalCount
+    items {
+      id
+      name
+      description
+      contactEmail
+      contactPhone
+      workingHours
+      geoLocation
+      availabilityType
+      availableQuantity
+      availabilityNote
+      address {
+        id
+        line1
+        line2
+        city
+        countryName
+        countryCode
+        regionId
+        postalCode
+        phone
+      }
+    }
+  }
+}
