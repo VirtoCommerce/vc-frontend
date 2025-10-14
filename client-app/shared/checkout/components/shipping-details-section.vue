@@ -120,11 +120,14 @@
 </template>
 
 <script setup lang="ts">
+import omit from "lodash/omit";
 import { computed, ref, watch } from "vue";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { useBopis, BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
 import { AddressSelection } from "@/shared/common";
+import { useShipToLocation } from "@/shared/ship-to-location/composables/useShipToLocation";
 import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
 import type { ShippingMethodType } from "@/core/api/graphql/types.ts";
 
@@ -147,6 +150,9 @@ const { cart, availableShippingMethods, updateShipment, shipment, changing: cart
 const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
 const { xPickupEnabled } = useXPickup();
 
+const { isAuthenticated } = useUser();
+const { selectedAddress } = useShipToLocation();
+
 const mode = ref<ShippingOptionType>(getDefaultMode());
 
 const onlyOneDeliveryMethod = computed(() => availableShippingMethods.value.length === 1);
@@ -167,19 +173,56 @@ function getDefaultMode() {
 }
 
 watch(
-  mode,
-  (newMode, previousMode) => {
-    const shippingMethod = newMode === SHIPPING_OPTIONS.pickup ? bopisMethod.value : shippingMethods.value[0];
+  [mode, shipment],
+  ([newMode], [previousMode, previousShipment]) => {
+    const isSameMode = newMode === previousMode;
+    const shipmentInitialized = !!previousShipment;
 
-    if (shippingMethod?.code === BOPIS_CODE) {
+    if (isSameMode && shipmentInitialized) {
+      // trigger watch only if mode changed or shipment just has been initialized
+      return;
+    }
+
+    const shippingMethod = newMode === SHIPPING_OPTIONS.pickup ? bopisMethod.value : shippingMethods.value[0];
+    const hasSelectedShippingMethod = !!shippingMethod;
+
+    if (!hasSelectedShippingMethod) {
+      return;
+    }
+
+    const isBopis = shippingMethod?.code === BOPIS_CODE;
+
+    if (isBopis) {
       billingAddressEqualsShipping.value = false;
     }
 
+    const isAnonymous = !isAuthenticated.value;
+    const hasSelectedDeliveryAddress = !!selectedAddress.value;
+    const hasShipmentDeliveryAddress = !!shipment.value?.deliveryAddress;
+    const isShippingMode = newMode === SHIPPING_OPTIONS.shipping;
+    const hasToApplySelectedAddress = !hasShipmentDeliveryAddress || previousMode !== newMode;
+
     if (
-      !shippingMethod ||
-      shippingMethod.code === shipment.value?.shipmentMethodCode ||
-      (!previousMode && shippingMethod.code !== BOPIS_CODE)
+      isAnonymous &&
+      hasSelectedShippingMethod &&
+      hasSelectedDeliveryAddress &&
+      isShippingMode &&
+      hasToApplySelectedAddress
     ) {
+      void updateShipment({
+        id: shipment.value?.id,
+        deliveryAddress: omit(selectedAddress.value, ["isDefault", "isFavorite"]),
+        shipmentMethodCode: shippingMethod.code,
+        shipmentMethodOption: shippingMethod.optionName,
+        price: shippingMethod.price?.amount,
+      });
+
+      return;
+    }
+
+    const isSameShippingMethod = shippingMethod?.code === shipment.value?.shipmentMethodCode;
+
+    if (isSameShippingMethod) {
       return;
     }
 

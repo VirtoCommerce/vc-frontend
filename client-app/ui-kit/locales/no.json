@@ -25,7 +25,8 @@
       "decrease_quantity": "Reduser antall",
       "increase_quantity": "Øk antall",
       "variant_picker_group": "Variantalternativer",
-      "show_more_button": "Se flere alternativer ({count})"
+      "show_more_button": "Se flere alternativer ({count})",
+      "sidebar": "Sidebjælke"
     },
     "date_selector": {
       "min_date_error": "Datoen må være på eller etter {min}",
