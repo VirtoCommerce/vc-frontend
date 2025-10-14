@@ -100,8 +100,7 @@ import { computed, toRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { ProductType } from "@/core/enums";
-import { BrowserTargetType } from "@/core/enums";
+import { BrowserTargetType, ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
