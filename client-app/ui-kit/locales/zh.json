@@ -25,7 +25,8 @@
       "decrease_quantity": "减少数量",
       "increase_quantity": "增加数量",
       "variant_picker_group": "商品变体选项",
-      "show_more_button": "查看更多选项（{count}）"
+      "show_more_button": "查看更多选项（{count}）",
+      "sidebar": "侧边栏"
     },
     "date_selector": {
       "min_date_error": "日期必须在{min}或之后",
