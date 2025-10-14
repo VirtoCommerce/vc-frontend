@@ -7,6 +7,37 @@
     class="select-address-map-modal"
   >
     <div v-if="addresses.length" class="select-address-map-modal__content">
+      <div class="mb-3 flex items-center gap-2">
+        <VcSelect
+          v-model="selectedCountry"
+          :items="countries"
+          text-field="label"
+          value-field="term"
+          placeholder="Country"
+          class="w-44"
+          @change="applyFilters"
+        />
+        <VcSelect
+          v-model="selectedRegion"
+          :items="regions"
+          text-field="label"
+          value-field="term"
+          placeholder="Region"
+          class="w-44"
+          @change="applyFilters"
+        />
+        <VcSelect
+          v-model="selectedCity"
+          :items="cities"
+          text-field="label"
+          value-field="term"
+          placeholder="City"
+          class="w-44"
+          @change="applyFilters"
+        />
+        <VcInput v-model="keyword" placeholder="Search" class="grow" @keyup.enter="applyFilters" />
+        <VcButton icon="search" @click="applyFilters" />
+      </div>
       <GoogleMap
         :api-key="apiKey"
         :map-id="MAP_ID"
@@ -155,7 +186,7 @@ import { Logger } from "@/core/utilities/logger";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
 import { getColorValue } from "@/ui-kit/utilities/css";
-import type { GetCartPickupLocationsQuery } from "@/core/api/graphql/types";
+import type { GetCartPickupLocationsQuery, TermFacet } from "@/core/api/graphql/types";
 import GoogleMapMarkerClusterer from "@/shared/common/components/google-maps/google-map-marker-clusterer.vue";
 import GoogleMapMarker from "@/shared/common/components/google-maps/google-map-marker.vue";
 import GoogleMap from "@/shared/common/components/google-maps/google-map.vue";
@@ -184,6 +215,8 @@ interface IProps {
   addresses?: PickupLocationType[];
   apiKey: string;
   currentAddress?: { id: string };
+  facets?: TermFacet[];
+  onFilterChange?: (payload: { keyword?: string; filter?: string }) => void;
 }
 
 interface IEmits {
@@ -212,6 +245,32 @@ function createPin() {
     glyph: cloneElement(cube),
     scale: 1.5,
   };
+}
+
+const keyword = ref<string>("");
+const selectedCountry = ref<string | undefined>();
+const selectedRegion = ref<string | undefined>();
+const selectedCity = ref<string | undefined>();
+
+const countries = computed(() => props.facets?.find((f) => f.name === "address_countryname")?.terms ?? []);
+const regions = computed(() => props.facets?.find((f) => f.name === "address_regionname")?.terms ?? []);
+const cities = computed(() => props.facets?.find((f) => f.name === "address_city")?.terms ?? []);
+
+function buildFilter(): string | undefined {
+  if (selectedCity.value) {
+    return `address_city:"${selectedCity.value}"`;
+  }
+  if (selectedRegion.value) {
+    return `address_regionname:"${selectedRegion.value}"`;
+  }
+  if (selectedCountry.value) {
+    return `address_countryname:"${selectedCountry.value}"`;
+  }
+  return undefined;
+}
+
+function applyFilters() {
+  props.onFilterChange?.({ keyword: keyword.value || undefined, filter: buildFilter() });
 }
 
 function getLatLng(location: string | undefined) {

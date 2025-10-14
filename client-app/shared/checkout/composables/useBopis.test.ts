@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ref } from "vue";
-
 interface IAddress {
   id: string;
   [key: string]: unknown;
@@ -94,6 +93,7 @@ describe("useBopis composable", () => {
       fetchPickupLocations: vi.fn(),
       pickupLocations: resultRef,
       pickupLocationsLoading: loadingRef,
+      termFacets: ref(undefined),
     });
 
     // Setup useFullCart mock

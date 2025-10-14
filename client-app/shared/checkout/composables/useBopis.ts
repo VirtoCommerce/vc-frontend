@@ -17,7 +17,7 @@ export function useBopis() {
   const { availableShippingMethods, updateShipment, shipment } = useFullCart();
   const { isEnabled, getSettingValue } = useModuleSettings(MODULE_ID_SHIPPING);
 
-  const { pickupLocations, fetchPickupLocations, pickupLocationsLoading } = useCartPickupLocations();
+  const { pickupLocations, fetchPickupLocations, pickupLocationsLoading, termFacets } = useCartPickupLocations();
 
   const addresses = computed<ProductPickupLocation[]>(() => (pickupLocations.value as ProductPickupLocation[]) ?? []);
 
@@ -46,23 +46,31 @@ export function useBopis() {
   async function fetchAddresses({
     cartId,
     keyword,
+    filter,
+    facet,
     sort,
     first,
     after,
   }: {
     cartId: string;
     keyword?: string;
+    filter?: string;
+    facet?: string;
     sort?: string;
     first?: number;
     after?: string;
   }) {
-    await fetchPickupLocations({ cartId, keyword, sort, first, after });
+    await fetchPickupLocations({ cartId, keyword, filter, facet, sort, first, after });
   }
 
   const { openModal } = useModal();
 
   async function openSelectAddressModal(cartId: string) {
-    await fetchAddresses({ cartId, first: ADDRESSES_FETCH_LIMIT });
+    await fetchAddresses({
+      cartId,
+      first: ADDRESSES_FETCH_LIMIT,
+      facet: "address_countryname address_city address_regionname",
+    });
 
     openModal({
       component: modalComponent.value,
@@ -73,6 +81,16 @@ export function useBopis() {
         currentAddress: {
           ...shipment.value?.deliveryAddress,
           id: shipment.value?.pickupLocation?.id,
+        },
+        facets: termFacets.value,
+        async onFilterChange({ keyword, filter }: { keyword?: string; filter?: string }) {
+          await fetchAddresses({
+            cartId,
+            first: ADDRESSES_FETCH_LIMIT,
+            keyword,
+            filter,
+            facet: "address_countryname address_city address_regionname",
+          });
         },
         omitFieldsOnCompare: [
           "outerId",

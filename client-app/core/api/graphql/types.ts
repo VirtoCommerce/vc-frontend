@@ -4909,6 +4909,8 @@ export type ProductPickupLocationConnection = {
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
+  /** Term facets for filtering */
+  term_facets?: Maybe<Array<TermFacet>>;
 };
 
 /** An edge in a connection from an object to another object of type `ProductPickupLocation`. */
@@ -5219,6 +5221,8 @@ export type QueryCartPickupLocationsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   cartId: Scalars['String']['input'];
   cultureName: Scalars['String']['input'];
+  facet?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
