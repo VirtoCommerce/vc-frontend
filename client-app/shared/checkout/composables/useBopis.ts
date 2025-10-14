@@ -76,13 +76,13 @@ export function useBopis() {
       component: modalComponent.value,
 
       props: {
-        addresses: normalizedAddresses.value,
+        addresses: normalizedAddresses,
         apiKey: isBopisMapEnabled.value ? bopisMapApiKey.value : undefined,
         currentAddress: {
           ...shipment.value?.deliveryAddress,
           id: shipment.value?.pickupLocation?.id,
         },
-        facets: termFacets.value,
+        facets: termFacets,
         async onFilterChange({ keyword, filter }: { keyword?: string; filter?: string }) {
           await fetchAddresses({
             cartId,

@@ -100,16 +100,12 @@ function init() {
   }
 }
 
-const unwatch = watch(
-  map,
-  () => {
-    if (map.value && !marker.value) {
-      init();
-      unwatch();
-    }
-  },
-  { immediate: true },
-);
+const unwatch = watch(map, () => {
+  if (map.value && !marker.value) {
+    init();
+    unwatch();
+  }
+});
 
 watch(
   isActive,
