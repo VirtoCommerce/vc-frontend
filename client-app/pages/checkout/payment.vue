@@ -38,6 +38,12 @@
             @success="onPaymentResult(true)"
             @fail="onPaymentResult(false)"
           />
+          <PaymentProcessingDatatrans
+            v-else-if="paymentTypeName === 'DatatransPaymentMethod'"
+            :order="placedOrder"
+            @success="onPaymentResult(true)"
+            @fail="onPaymentResult(false)"
+          />
           <ExtensionPointList
             v-else-if="
               paymentTypeName &&
@@ -70,6 +76,7 @@ import { PaymentActionType, PaymentProcessingRedirection } from "@/shared/paymen
 import type { PaymentInType } from "@/core/api/graphql/types";
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
+import PaymentProcessingDatatrans from "@/shared/payment/components/payment-processing-datatrans.vue";
 import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
 
 const router = useRouter();
