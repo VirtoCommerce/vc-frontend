@@ -677,7 +677,8 @@
         },
         "options": {
           "title": "Opcje",
-          "select_to_proceed": "Wybierz opcje, aby kontynuować"
+          "select_to_proceed": "Wybierz opcje, aby kontynuować",
+          "price_unavailable": "Produkt nie może być kupiony w wybranej walucie"
         }
       },
       "discount_badge": {
@@ -696,6 +697,10 @@
         "ok_button": "OK",
         "no_results": "Nie znaleziono wyników",
         "reset_search_button": "Resetuj wyszukiwanie"
+      },
+      "shipment_options": {
+        "title": "Opcje dostawy",
+        "in_store": "Odbiór osobisty"
       }
     },
     "checkout": {
@@ -1118,7 +1123,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Wprowadź słowo kluczowe...",
+        "search_placeholder": "Szukaj po numerze, nazwisku lub innych danych",
         "title": "Zamówienia",
         "order_number_label": "Numer zamówienia",
         "purchase_number_label": "Numer zamówienia",
@@ -1164,7 +1169,9 @@
           "pick_point_info": "Informacje o punkcie odbioru",
           "get_directions": "Wyznacz trasę",
           "point_info": "Punkt informacyjny",
-          "pickup_address": "Adres odbioru"
+          "pickup_address": "Adres odbioru",
+          "cart_pickup_points_not_found": "Brak dostępnych punktów odbioru dla tych produktów. Wybierz inną metodę wysyłki",
+          "availability": "Dostępność"
         }
       },
       "order_payment": {
@@ -1267,7 +1274,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Członkowie firmy",
-        "search_placeholder": "Szukaj użytkowników",
+        "search_placeholder": "Szukaj po imieniu, roli lub e-mail",
         "no_members_img_alt": "Brak członków",
         "no_members_message": "Nie ma jeszcze członków",
         "no_results_message": "Nie znaleziono wyników",

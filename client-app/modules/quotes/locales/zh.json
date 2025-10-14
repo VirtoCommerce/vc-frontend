@@ -10,7 +10,7 @@
     "date_label": "@:common.labels.date",
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
-    "search_placeholder": "输入关键词...",
+    "search_placeholder": "按号码或状态搜索",
     "no_results_message": "未找到结果",
     "request_quote_button": "请求报价",
     "search_quote_requests": "搜索报价请求",

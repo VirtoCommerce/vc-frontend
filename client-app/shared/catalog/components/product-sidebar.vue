@@ -8,8 +8,10 @@
           </span>
 
           <span>
-            <VcItemPrice v-if="variationResult" :value="variationResult?.price" />
-
+            <VcItemPrice
+              v-if="variationResult && variationResult.price?.actual?.amount > 0"
+              :value="variationResult?.price"
+            />
             <VcTooltip v-else>
               <template #trigger>
                 <span class="flex items-center gap-1 text-primary-500">
@@ -20,7 +22,10 @@
               </template>
 
               <template #content>
-                <span>
+                <span v-if="variationResult">
+                  {{ $t("shared.catalog.product_details.options.price_unavailable") }}
+                </span>
+                <span v-else>
                   {{ $t("shared.catalog.product_details.options.select_to_proceed") }}
                 </span>
               </template>
@@ -29,7 +34,7 @@
         </div>
 
         <div class="mt-4 print:hidden">
-          <AddToCart v-if="variationResult" :product="variationResult">
+          <AddToCart v-if="variationResult && variationResult.price?.actual?.amount > 0" :product="variationResult">
             <InStock
               :is-in-stock="variationResult.availabilityData?.isInStock"
               :is-digital="isDigital"
@@ -39,14 +44,19 @@
             <CountInCart :product-id="variationResult.id" />
           </AddToCart>
 
-          <VcButton
-            v-else
-            class="w-full cursor-not-allowed"
-            disabled
-            :title="$t('shared.catalog.product_details.options.select_to_proceed')"
-          >
-            {{ $t("ui_kit.buttons.add_to_cart") }}
-          </VcButton>
+          <div v-else>
+            <VcButton
+              class="w-full cursor-not-allowed"
+              disabled
+              :title="$t('shared.catalog.product_details.options.select_to_proceed')"
+            >
+              {{ $t("ui_kit.buttons.add_to_cart") }}
+            </VcButton>
+
+            <VcAlert v-if="variationResult" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
+              {{ $t("shared.catalog.product_details.options.price_unavailable") }}
+            </VcAlert>
+          </div>
         </div>
       </template>
 
@@ -124,6 +134,7 @@ import CountInCart from "./count-in-cart.vue";
 import InStock from "./in-stock.vue";
 import ProductPriceBlock from "./product-price-block.vue";
 import type { MoneyType, PriceType, Product } from "@/core/api/graphql/types";
+import VcAlert from "@/ui-kit/components/molecules/alert/vc-alert.vue";
 
 interface IProps {
   product: Product;
