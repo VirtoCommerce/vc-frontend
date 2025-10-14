@@ -1,7 +1,8 @@
-import { useLocalStorage } from "@vueuse/core";
+import { useLocalStorage, useSessionStorage } from "@vueuse/core";
 import { merge } from "lodash";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -10,38 +11,71 @@ import type { Composer, LocaleMessageValue } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
 
-const pinedLocale = useLocalStorage<string | null>("pinedLocale", null);
+const pinnedLocale = useLocalStorage<string | null>("pinnedLocale", null);
+const previousCultureSlug = useSessionStorage<{ cultureName: string; slug: string }>("previousCultureSlug", {
+  cultureName: "",
+  slug: "",
+});
 
-const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
-const defaultLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
+const defaultStoreLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
+const defaultStoreCulture = computed<string>(() => defaultStoreLanguage.value.cultureName);
+
 const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
-const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
-const URL_LOCALE_REGEX = /^\/([a-z]{2})(\/|$)/;
+const supportedCultureNames = computed(() => supportedLanguages.value.map((language) => language.cultureName));
+const supportedLocalesWithShortAliases = computed(() =>
+  supportedLanguages.value.flatMap((language) => {
+    const maybeShortLocale = tryShortLocale(language.cultureName);
+    return maybeShortLocale === language.cultureName
+      ? [language.cultureName]
+      : [language.cultureName, maybeShortLocale];
+  }),
+);
+
+const supportedLocalesRegex = computed(
+  () => new RegExp(`^/(?<locale>${supportedLocalesWithShortAliases.value.join("|")})(/|$)`, "i"),
+);
 
 const currentLanguage = ref<ILanguage>();
+const currentMaybeShortLocale = computed(() => {
+  return tryShortLocale(currentLanguage.value?.cultureName ?? "");
+});
+
+function tryShortLocale(localeOrCultureName: string) {
+  const twoLetterLanguageName = localeOrCultureName.slice(0, 2);
+
+  return supportedLanguages.value.filter((language) => language.twoLetterLanguageName === twoLetterLanguageName)
+    .length === 1
+    ? twoLetterLanguageName
+    : localeOrCultureName;
+}
 
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
-  const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json");
-  const path = `../../../locales/${locale}.json`;
+  const localesPathPrefix = "../../../locales";
+
+  const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json"); // can't use variables in import
+  const path = `${localesPathPrefix}/${locale}.json`;
+  const shortPath = `${localesPathPrefix}/${locale.slice(0, 2)}.json`;
 
   if (locales[path]) {
     return locales[path]();
+  } else if (locale.length > 2 && locales[shortPath]) {
+    return locales[shortPath](); // try get short locale as a fallback (e.g. en-US.json -> en.json)
   }
 
-  return import("../../../locales/en.json");
+  return import("../../../locales/en.json"); // can't use variables in import
 }
 
-async function initLocale(i18n: I18n, locale: string): Promise<void> {
-  currentLanguage.value = supportedLanguages.value.find((x) => x.twoLetterLanguageName === locale);
+async function initLocale(i18n: I18n, cultureName: string): Promise<void> {
+  currentLanguage.value = supportedLanguages.value.find((x) => x.cultureName === cultureName);
 
-  let messages = i18n.global.getLocaleMessage(locale);
+  let messages = i18n.global.getLocaleMessage(cultureName);
 
   if (!Object.keys(messages).length) {
-    messages = await fetchLocaleMessages(locale);
-    i18n.global.setLocaleMessage(locale, messages);
+    messages = await fetchLocaleMessages(cultureName);
+    i18n.global.setLocaleMessage(cultureName, messages);
   }
 
-  (i18n.global as unknown as Composer).locale.value = locale;
+  (i18n.global as unknown as Composer).locale.value = cultureName;
 
   setLocaleForYup({
     mixed: {
@@ -53,15 +87,24 @@ async function initLocale(i18n: I18n, locale: string): Promise<void> {
     },
   });
 
-  document.documentElement.setAttribute("lang", locale);
+  const localeFromUrl = getLocaleFromUrl();
+  const isDefault = defaultStoreLanguage.value.cultureName === cultureName;
+
+  if ((localeFromUrl && currentMaybeShortLocale.value !== localeFromUrl) || isDefault) {
+    // remove a full locale from the url beforehand in order to avoid case like /fr-FR -> /fr/-FR (when language has short alias)
+    // remove the default locale e.g. en-US from the url - /en-US/cart -> /cart
+    history.pushState(null, "", location.href.replace(new RegExp(`/${localeFromUrl}`), ""));
+  }
+
+  document.documentElement.setAttribute("lang", cultureName);
 }
 
 function getLocaleFromUrl(): string | undefined {
-  return window.location.pathname.match(URL_LOCALE_REGEX)?.[1];
+  return supportedLocalesRegex.value.exec(location.pathname)?.groups?.locale;
 }
 
 function removeLocaleFromUrl() {
-  const fullPath = window.location.pathname + window.location.search + window.location.hash;
+  const fullPath = location.pathname + location.search + location.hash;
 
   const newUrl = getUrlWithoutLocale(fullPath);
   if (fullPath !== newUrl) {
@@ -70,65 +113,94 @@ function removeLocaleFromUrl() {
 }
 
 function getUrlWithoutLocale(fullPath: string): string {
-  const locale = fullPath.match(URL_LOCALE_REGEX)?.[1];
+  const locale = supportedLocalesRegex.value.exec(fullPath)?.groups?.locale;
 
-  if (locale && isLocaleSupported(locale)) {
-    return fullPath.replace(URL_LOCALE_REGEX, "/");
+  if (locale) {
+    return fullPath.replace(supportedLocalesRegex.value, "/");
   }
 
   return fullPath;
 }
 
 function pinLocale(locale: string) {
-  pinedLocale.value = locale;
+  pinnedLocale.value = locale;
 }
 
 function unpinLocale() {
-  pinedLocale.value = null;
+  pinnedLocale.value = null;
 }
 
-function isLocaleSupported(locale: string): boolean {
-  return supportedLocales.value.includes(locale);
-}
-
-function detectLocale(locales: unknown[]): string {
-  const stringLocales = locales
-    .filter((locale): locale is string => typeof locale === "string" && locale.length === 2)
-    .filter(isLocaleSupported);
-
-  return stringLocales[0] || defaultLocale.value;
-}
-
-function mergeLocales(i18n: I18n, locale: string, messages: LocaleMessageValue) {
+function mergeLocalesMessages(i18n: I18n, locale: string, messages: LocaleMessageValue) {
   const existingMessages = i18n.global.getLocaleMessage(locale);
 
   i18n.global.setLocaleMessage(locale, merge({}, existingMessages, messages));
 }
 
 export function useLanguages() {
+  const { contactCultureName } = useUser();
+
+  function resolveLocale() {
+    const urlLocale = getLocaleFromUrl();
+
+    const urlCultureName = supportedLanguages.value.find(
+      (x) => x.cultureName === urlLocale || x.twoLetterLanguageName === urlLocale,
+    )?.cultureName;
+
+    if (urlCultureName) {
+      return urlCultureName;
+    }
+
+    if (pinnedLocale.value && supportedCultureNames.value.includes(pinnedLocale.value)) {
+      return pinnedLocale.value;
+    }
+
+    if (contactCultureName.value && supportedCultureNames.value.includes(contactCultureName.value)) {
+      return contactCultureName.value;
+    }
+
+    return defaultStoreCulture.value;
+  }
+
+  function updateLocalizedUrl(permalink?: string) {
+    if (!permalink) {
+      return;
+    }
+
+    const localeFromUrl = getLocaleFromUrl();
+    const normalizedPermalink = permalink.startsWith("/") ? permalink : `/${permalink}`;
+    const permalinkWithLocale = localeFromUrl ? `/${localeFromUrl}${normalizedPermalink}` : normalizedPermalink;
+
+    history.pushState(history.state, "", `${permalinkWithLocale}${location.search}${location.hash}`);
+  }
+
   return {
-    pinedLocale,
-    defaultLanguage,
-    defaultLocale,
+    pinnedLocale,
+    defaultStoreLanguage,
+    defaultStoreCulture,
     supportedLanguages,
-    supportedLocales,
+    previousCultureSlug,
+    currentMaybeShortLocale,
     currentLanguage: computed({
       get() {
-        return currentLanguage.value || defaultLanguage.value;
+        return currentLanguage.value || defaultStoreLanguage.value;
       },
 
       set() {
         throw new Error("currentLanguage is read only.");
       },
     }),
+
     initLocale,
+    resolveLocale,
     fetchLocaleMessages,
+    mergeLocalesMessages,
 
     pinLocale,
     unpinLocale,
-    removeLocaleFromUrl,
-    detectLocale,
+
     getLocaleFromUrl,
-    mergeLocales,
+    getUrlWithoutLocale,
+    removeLocaleFromUrl,
+    updateLocalizedUrl,
   };
 }

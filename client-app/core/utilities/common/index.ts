@@ -1,11 +1,6 @@
 import uniqBy from "lodash/uniqBy";
 import type { RouteLocationRaw, RouteLocationNormalizedLoaded, RouteLocationNormalized } from "vue-router";
 
-export function getBaseUrl(supportedLocales: string[]): string {
-  const localeInPath = location.pathname.split("/")[1];
-  return supportedLocales.includes(localeInPath) ? `/${localeInPath}/` : "";
-}
-
 const RETURN_URL_KEYS = ["returnUrl", "ReturnUrl"] as const;
 
 export function getReturnUrlValue(): string | null {
@@ -25,8 +20,10 @@ export function getReturnUrlValue(): string | null {
   return null;
 }
 
-export function buildRedirectUrl(route: RouteLocationNormalized): { [key in typeof RETURN_URL_KEYS[0]]: string } | null {
-  if (route.matched.some(r => r.meta?.redirectable === false)) {
+export function buildRedirectUrl(
+  route: RouteLocationNormalized,
+): { [key in (typeof RETURN_URL_KEYS)[0]]: string } | null {
+  if (route.matched.some((r) => r.meta?.redirectable === false)) {
     return null;
   }
 
@@ -180,6 +177,18 @@ export function preventNonNumberPaste(event: ClipboardEvent) {
     console.warn("preventNonNumberPaste", { text, isNumber });
     if (!isNumber) {
       event.preventDefault();
+    }
+  }
+}
+
+export function safeDecode(input: string) {
+  try {
+    return decodeURIComponent(input);
+  } catch {
+    try {
+      return decodeURI(input);
+    } catch {
+      return input;
     }
   }
 }
