@@ -82,7 +82,7 @@ const defaultQuantity = computed(() =>
     ? countInCart.value || minQty.value
     : countInCart.value,
 );
-const enteredQuantity = ref(!disabled.value ? defaultQuantity.value : undefined);
+const enteredQuantity = ref(disabled.value ? undefined : defaultQuantity.value);
 
 function onInput(value: number): void {
   if (!Number.isFinite(value)) {
@@ -130,7 +130,7 @@ function onValidationUpdate(validation: { isValid: true } | { isValid: false; er
 watch(
   () => product.value.id,
   () => {
-    enteredQuantity.value = !disabled.value ? defaultQuantity.value : undefined;
+    enteredQuantity.value = disabled.value ? undefined : defaultQuantity.value;
   },
 );
 </script>

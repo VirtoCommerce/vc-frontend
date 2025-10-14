@@ -126,7 +126,7 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
     // Set up the operation with merged variables and abort signal
     state.operation.setContext((prev: DefaultContext & { fetchOptions?: RequestInit }) => ({
       ...prev,
-      fetchOptions: { ...(prev?.fetchOptions ?? {}), signal: state.abortController?.signal },
+      fetchOptions: { ...prev?.fetchOptions, signal: state.abortController?.signal },
     }));
     state.operation.variables = mergedVariables;
 
