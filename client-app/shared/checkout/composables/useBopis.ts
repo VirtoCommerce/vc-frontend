@@ -9,7 +9,7 @@ import type { AnyAddressType } from "@/core/types";
 
 export const BOPIS_CODE = "BuyOnlinePickupInStore";
 
-const ADDRESSES_FETCH_LIMIT = 20;
+const ADDRESSES_FETCH_LIMIT = 50;
 
 export function useBopis() {
   const { t } = useI18n();
