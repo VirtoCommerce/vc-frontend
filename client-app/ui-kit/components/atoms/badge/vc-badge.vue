@@ -39,7 +39,7 @@ withDefaults(defineProps<IProps>(), {
 
 <style lang="scss">
 .vc-badge {
-  $colors: primary, secondary, neutral, info, success, warning, danger;
+  $colors: primary, secondary, neutral, info, success, warning, danger, accent;
 
   $truncate: "";
   $square: "";
@@ -48,7 +48,7 @@ withDefaults(defineProps<IProps>(), {
   --max-width: var(--props-max-width, var(--vc-badge-max-width, 100%));
   --radius: var(--vc-badge-radius, var(--vc-radius, 0.5rem));
 
-  @apply flex-none inline-flex align-top min-h-[--size] min-w-[--size] max-w-[--max-width] border rounded-[--radius] font-bold;
+  @apply flex-none inline-flex align-top min-h-[--size] min-w-[--size] max-w-[--max-width] border rounded-[--radius] font-bold bg-[--bg-color] border-[--border-color] text-[--text-color];
 
   &--size {
     &--xs {
@@ -116,33 +116,30 @@ withDefaults(defineProps<IProps>(), {
 
   @each $color in $colors {
     &--solid--#{$color} {
-      @apply bg-[color:var(--color-#{$color}-500)]
-      border-[color:var(--color-#{$color}-500)]
-      text-additional-50;
+      --bg-color: var(--color-#{$color}-500);
+      --border-color: var(--color-#{$color}-500);
+      --text-color: var(--color-additional-50);
     }
 
     &--solid-light--#{$color} {
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
+      --text-color: var(--color-#{$color}-800);
       --vc-icon-color: var(--color-#{$color}-700);
-
-      @apply bg-[color:var(--color-#{$color}-100)]
-      border-[color:var(--color-#{$color}-100)]
-      text-[color:var(--color-#{$color}-800)];
     }
 
     &--outline--#{$color} {
+      --bg-color: var(--color-additional-50);
+      --border-color: var(--color-#{$color}-500);
+      --text-color: var(--color-#{$color}-800);
       --vc-icon-color: var(--color-#{$color}-700);
-
-      @apply bg-additional-50
-      border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-#{$color}-800)];
     }
 
     &--outline-dark--#{$color} {
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-500);
+      --text-color: var(--color-#{$color}-800);
       --vc-icon-color: var(--color-#{$color}-700);
-
-      @apply bg-[color:var(--color-#{$color}-100)]
-      border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-#{$color}-800)];
     }
   }
 

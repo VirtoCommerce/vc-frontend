@@ -3,7 +3,7 @@ import VcIcon from "../icon/vc-icon.vue";
 import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md", "lg"];
-const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger"];
+const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
 const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];
 
 export default {
