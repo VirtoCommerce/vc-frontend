@@ -100,6 +100,7 @@ describe("useBopis composable", () => {
       filterCity: ref(""),
       filterApplied: ref(false),
       buildFilter: vi.fn(),
+      resetFilter: vi.fn(),
     });
 
     // Setup useFullCart mock

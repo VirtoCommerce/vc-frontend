@@ -15,7 +15,7 @@
           value-field="term"
           :placeholder="$t('common.labels.country')"
           class="w-44"
-          @change="applyFilters"
+          @change="applyFilter"
         />
         <VcSelect
           v-model="filterRegion"
@@ -24,7 +24,7 @@
           value-field="term"
           :placeholder="$t('common.labels.region')"
           class="w-44"
-          @change="applyFilters"
+          @change="applyFilter"
         />
         <VcSelect
           v-model="filterCity"
@@ -33,16 +33,16 @@
           value-field="term"
           :placeholder="$t('common.labels.city')"
           class="w-44"
-          @change="applyFilters"
+          @change="applyFilter"
         />
         <VcInput
           v-model="filterKeyword"
           :placeholder="$t('common.labels.search')"
           class="grow"
           clearable
-          @keyup.enter="applyFilters"
+          @keyup.enter="applyFilter"
         />
-        <VcButton icon="search" @click="applyFilters" />
+        <VcButton icon="search" @click="applyFilter" />
       </div>
       <div class="select-address-map-modal__content">
         <GoogleMap
@@ -168,7 +168,7 @@
           </ul>
           <div v-else class="select-address-map-modal__not-found">
             <span>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}</span>
-            <VcButton prepend-icon="reset" @click="resetFilters">
+            <VcButton prepend-icon="reset" @click="resetFilter">
               {{ $t("pages.account.orders.buttons.reset_search") }}
             </VcButton>
           </div>
@@ -263,21 +263,25 @@ function createPin() {
   };
 }
 
-const { filterOptions, filterKeyword, filterCountry, filterRegion, filterCity, filterApplied, buildFilter } =
-  useCartPickupLocations();
+const {
+  filterOptions,
+  filterKeyword,
+  filterCountry,
+  filterRegion,
+  filterCity,
+  filterApplied,
+  buildFilter,
+  resetFilter: resetFilterInternal,
+} = useCartPickupLocations();
 
-function applyFilters() {
+function applyFilter() {
   filterApplied.value = true;
   props.onFilterChange?.({ keyword: filterKeyword.value || undefined, filter: buildFilter() });
 }
 
-function resetFilters() {
-  filterKeyword.value = "";
-  filterCountry.value = undefined;
-  filterRegion.value = undefined;
-  filterCity.value = undefined;
-
-  applyFilters();
+function resetFilter() {
+  resetFilterInternal();
+  applyFilter();
 }
 
 function getLatLng(location: string | undefined) {

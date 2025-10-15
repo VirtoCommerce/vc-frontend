@@ -55,6 +55,13 @@ export function _useCartPickupLocations() {
     return undefined;
   }
 
+  function resetFilter() {
+    filterKeyword.value = "";
+    filterCountry.value = undefined;
+    filterRegion.value = undefined;
+    filterCity.value = undefined;
+  }
+
   async function fetchPickupLocations(
     payload: Omit<QueryCartPickupLocationsArgs, "storeId" | "cultureName" | "facet">,
   ) {
@@ -86,6 +93,7 @@ export function _useCartPickupLocations() {
     filterCity,
     filterApplied,
     buildFilter,
+    resetFilter,
   };
 }
 

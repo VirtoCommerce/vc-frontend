@@ -65,7 +65,7 @@
         value-field="term"
         :placeholder="$t('common.labels.country')"
         class="w-44"
-        @change="applyFilters"
+        @change="applyFilter"
       />
       <VcSelect
         v-model="filterRegion"
@@ -74,7 +74,7 @@
         value-field="term"
         :placeholder="$t('common.labels.region')"
         class="w-44"
-        @change="applyFilters"
+        @change="applyFilter"
       />
       <VcSelect
         v-model="filterCity"
@@ -83,16 +83,16 @@
         value-field="term"
         :placeholder="$t('common.labels.city')"
         class="w-44"
-        @change="applyFilters"
+        @change="applyFilter"
       />
       <VcInput
         v-model="filterKeyword"
         :placeholder="$t('common.labels.search')"
         class="grow"
         clearable
-        @keyup.enter="applyFilters"
+        @keyup.enter="applyFilter"
       />
-      <VcButton icon="search" @click="applyFilters" />
+      <VcButton icon="search" @click="applyFilter" />
     </div>
 
     <div class="rounded border">
@@ -182,7 +182,7 @@
           <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
             {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
           </div>
-          <VcButton v-if="showFilters" prepend-icon="reset" @click="resetFilters">
+          <VcButton v-if="showFilters" prepend-icon="reset" @click="resetFilter">
             {{ $t("pages.account.orders.buttons.reset_search") }}
           </VcButton>
         </template>
@@ -260,7 +260,7 @@
                 <span class="text-base">
                   {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
                 </span>
-                <VcButton v-if="showFilters" class="mt-5" prepend-icon="reset" @click="resetFilters">
+                <VcButton v-if="showFilters" class="mt-5" prepend-icon="reset" @click="resetFilter">
                   {{ $t("pages.account.orders.buttons.reset_search") }}
                 </VcButton>
               </div>
@@ -322,20 +322,17 @@ const {
   filterCity,
   filterApplied,
   buildFilter,
+  resetFilter: resetFilterInternal,
 } = useCartPickupLocations();
 
-function applyFilters() {
+function applyFilter() {
   filterApplied.value = true;
   props.onFilterChange?.({ keyword: filterKeyword.value || undefined, filter: buildFilter() });
 }
 
-function resetFilters() {
-  filterKeyword.value = "";
-  filterCountry.value = undefined;
-  filterRegion.value = undefined;
-  filterCity.value = undefined;
-
-  applyFilters();
+function resetFilter() {
+  resetFilterInternal();
+  applyFilter();
 }
 
 const selectedAddress = ref<AnyAddressType>();
