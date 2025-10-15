@@ -1171,6 +1171,7 @@
           "pickup_address": "Upphämtningsadress",
           "cart_pickup_points_not_found": "Det finns inga tillgängliga upphämtningsställen för dessa produkter. Välj en annan leveransmetod.",
           "cart_pickup_points_not_found_by_filter": "Hittade inga upphämtningsställen.",
+          "cart_pickup_points_reset_search": "Återställ sökning",
           "availability": "Tillgänglighet"
         }
       },

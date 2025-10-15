@@ -1171,6 +1171,7 @@
           "pickup_address": "Nouto-osoite",
           "cart_pickup_points_not_found": "Näille tuotteille ei ole noutopisteitä. Valitse toinen toimitustapa.",
           "cart_pickup_points_not_found_by_filter": "Noutopisteitä ei löytynyt.",
+          "cart_pickup_points_reset_search": "Nollaa haku",
           "availability": "Saatavuus"
         }
       },

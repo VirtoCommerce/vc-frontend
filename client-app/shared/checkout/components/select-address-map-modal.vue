@@ -167,7 +167,10 @@
             </li>
           </ul>
           <div v-else class="select-address-map-modal__not-found">
-            {{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}
+            <span>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}</span>
+            <VcButton prepend-icon="reset" @click="resetFilters">
+              {{ $t("pages.account.orders.buttons.reset_search") }}
+            </VcButton>
           </div>
         </VcScrollbar>
       </div>
@@ -287,6 +290,15 @@ function buildFilter(): string | undefined {
 function applyFilters() {
   filterApplied.value = true;
   props.onFilterChange?.({ keyword: keyword.value || undefined, filter: buildFilter() });
+}
+
+function resetFilters() {
+  keyword.value = "";
+  selectedCountry.value = undefined;
+  selectedRegion.value = undefined;
+  selectedCity.value = undefined;
+
+  applyFilters();
 }
 
 function getLatLng(location: string | undefined) {
