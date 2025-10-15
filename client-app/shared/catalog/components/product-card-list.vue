@@ -31,7 +31,7 @@
       <template #trigger>
         <router-link
           :to="link"
-          :target="browserTarget"
+          :target="browserTarget || browserTargetFromSetting"
           class="vc-product-card-list__name w-full grow text-sm font-black text-[--link-color] hover:text-[--link-hover-color] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
@@ -114,7 +114,7 @@
         :link-to="link"
         :button-text="$t('pages.catalog.customize_button')"
         icon="cube-transparent"
-        :target="browserTarget || _browserTarget"
+        :target="browserTarget || browserTargetFromSetting"
         @link-click="$emit('linkClick', $event)"
       />
 
@@ -124,7 +124,7 @@
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
         :link-to="link"
         :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
-        :target="browserTarget || _browserTarget"
+        :target="browserTarget || browserTargetFromSetting"
         @link-click="$emit('linkClick', $event)"
       />
 
@@ -178,7 +178,7 @@ interface IProps {
 
 console.warn("ProductCardList is deprecated. Use VcProductCard or ProductCard instead.");
 
-const { browserTarget: _browserTarget } = useBrowserTarget();
+const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
 
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 

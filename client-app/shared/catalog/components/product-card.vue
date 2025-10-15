@@ -69,7 +69,7 @@
       :link-to="getProductRoute(product.id, product.slug)"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
-      :target="browserTarget || _browserTarget"
+      :target="browserTarget || browserTargetFromSetting"
       @link-click="$emit('linkClick', product, $event)"
     />
 
@@ -79,7 +79,7 @@
       :link-text="$t('pages.catalog.show_on_a_separate_page')"
       :link-to="link"
       :button-text="$t('pages.catalog.variations_button', [variationsCount])"
-      :target="browserTarget || _browserTarget"
+      :target="browserTarget || browserTargetFromSetting"
       @link-click="$emit('linkClick', product, $event)"
     />
 
@@ -142,7 +142,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const product = toRef(props, "product");
 
-const { browserTarget: _browserTarget } = useBrowserTarget();
+const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
 
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 

@@ -98,7 +98,7 @@
         <template #trigger>
           <router-link
             :to="link"
-            :target="browserTarget"
+            :target="browserTarget || browserTargetFromSetting"
             class="my-px line-clamp-2 h-11 cursor-pointer text-lg font-black text-[--link-color] hover:text-[--link-hover-color] lg:h-9 lg:text-sm"
             @click="$emit('linkClick', $event)"
           >
@@ -181,7 +181,7 @@
       :link-to="link"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
-      :target="browserTarget || browserTarget"
+      :target="browserTarget || browserTargetFromSetting"
       @link-click="$emit('linkClick', $event)"
     />
 
@@ -191,7 +191,7 @@
       :link-text="$t('pages.catalog.show_on_a_separate_page')"
       :link-to="link"
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
-      :target="browserTarget || browserTarget"
+      :target="browserTarget || browserTargetFromSetting"
       @link-click="$emit('linkClick', $event)"
     />
 
@@ -216,6 +216,7 @@ import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, ref } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
+import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { useCustomProductComponents } from "@/shared/common/composables";
@@ -230,6 +231,7 @@ import type { Product } from "@/core/api/graphql/types";
 import type { BrowserTargetType } from "@/core/enums";
 import type { Swiper as SwiperInstance } from "swiper/types";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
+
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -245,6 +247,8 @@ interface IProps {
 }
 
 console.warn("ProductCardGrid is deprecated. Use VcProductCard or ProductCard instead.");
+
+const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
 
 const swiperInstance = ref<SwiperInstance>();
 const swiperBulletsState = ref<boolean[]>([true, false, false]);
