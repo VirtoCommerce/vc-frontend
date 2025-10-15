@@ -3,10 +3,10 @@
     :title="$t('shared.checkout.select_bopis_modal.title')"
     max-width="72rem"
     is-mobile-fullscreen
-    is-full-height
+    :is-full-height="!!addresses.length"
     class="select-address-map-modal"
   >
-    <div class="select-address-map-modal__content">
+    <div v-if="addresses.length" class="select-address-map-modal__content">
       <GoogleMap
         :api-key="apiKey"
         :map-id="MAP_ID"
@@ -26,6 +26,14 @@
             >
               <div class="select-address-map-modal__info-window">
                 <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
+
+                <PickupAvailabilityInfo
+                  show-icon
+                  icon-size="sm"
+                  :availability-type="address.availabilityType"
+                  :availability-note="address.availabilityNote"
+                />
+
                 <div class="select-address-map-modal__info-window-content">
                   <dl>
                     <dt>
@@ -107,12 +115,22 @@
                 <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
 
                 <p class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</p>
+
+                <PickupAvailabilityInfo
+                  class="select-address-map-modal__radio-button-pickup-availability"
+                  show-icon
+                  icon-size="xs"
+                  :availability-type="address.availabilityType"
+                  :availability-note="address.availabilityNote"
+                />
               </div>
             </VcRadioButton>
           </li>
         </ul>
       </VcScrollbar>
     </div>
+
+    <div v-else>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found") }}</div>
 
     <template #actions="{ close }">
       <div class="select-address-map-modal__actions">
@@ -137,12 +155,13 @@ import { Logger } from "@/core/utilities/logger";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
 import { getColorValue } from "@/ui-kit/utilities/css";
-import type { GetPickupLocationsQuery } from "@/core/api/graphql/types";
+import type { GetCartPickupLocationsQuery } from "@/core/api/graphql/types";
 import GoogleMapMarkerClusterer from "@/shared/common/components/google-maps/google-map-marker-clusterer.vue";
 import GoogleMapMarker from "@/shared/common/components/google-maps/google-map-marker.vue";
 import GoogleMap from "@/shared/common/components/google-maps/google-map.vue";
+import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
-type PickupLocationType = NonNullable<NonNullable<GetPickupLocationsQuery["pickupLocations"]>["items"]>[number];
+type PickupLocationType = NonNullable<NonNullable<GetCartPickupLocationsQuery["cartPickupLocations"]>["items"]>[number];
 
 const emit = defineEmits<IEmits>();
 
@@ -315,6 +334,10 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
     }
 
     &-address {
+      @apply text-xs font-normal;
+    }
+
+    &-pickup-availability {
       @apply text-xs font-normal;
     }
   }

@@ -332,7 +332,7 @@ export function useProducts(
     );
   }
 
-  async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>) {
+  async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>, withZeroPriceOverride?: boolean) {
     const searchParams = {
       ..._searchParams,
       page:
@@ -350,6 +350,8 @@ export function useProducts(
       updateCurrentPage(Number(searchParams.page));
     }
 
+    const actualWithZeroPrice = withZeroPriceOverride ?? withZeroPrice;
+
     try {
       const {
         items = [],
@@ -357,7 +359,7 @@ export function useProducts(
         range_facets = [],
         totalCount = 0,
         filters = [],
-      } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
+      } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice: actualWithZeroPrice });
 
       products.value = items;
       totalProductsCount.value = totalCount;

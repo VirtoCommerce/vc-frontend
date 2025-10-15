@@ -119,6 +119,12 @@
                   {{ item.email }}
                 </span>
               </div>
+
+              <PickupAvailabilityInfo
+                v-if="showAvailability"
+                :availability-type="item.availabilityType"
+                :availability-note="item.availabilityNote"
+              />
             </div>
 
             <div class="w-10 flex-none text-center">
@@ -136,7 +142,7 @@
 
         <template #mobile-empty>
           <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
-            {{ $t("shared.checkout.select_address_modal.no_addresses_message") }}
+            {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
           </div>
         </template>
 
@@ -189,6 +195,13 @@
               </span>
             </td>
 
+            <td v-if="showAvailability" class="truncate px-4 py-3.5">
+              <PickupAvailabilityInfo
+                :availability-type="item.availabilityType"
+                :availability-note="item.availabilityNote"
+              />
+            </td>
+
             <td class="h-[3.75rem] py-2.5 text-center">
               <VcIcon v-if="item.id === selectedAddress?.id" class="fill-success" name="check-circle" />
 
@@ -201,10 +214,10 @@
 
         <template #desktop-empty>
           <tr>
-            <td colspan="4">
+            <td :colspan="showAvailability ? 5 : 4">
               <div class="flex items-center p-5">
                 <span class="text-base">
-                  {{ $t("shared.checkout.select_address_modal.no_addresses_message") }}
+                  {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
                 </span>
               </div>
             </td>
@@ -221,14 +234,18 @@ import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
+import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
+import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
 interface IProps {
   currentAddress?: AnyAddressType;
   addresses?: AnyAddressType[];
   isCorporateAddresses: boolean;
   allowAddNewAddress?: boolean;
-  omitFieldsOnCompare?: (keyof AnyAddressType)[];
+  showAvailability?: boolean;
+  emptyText?: string;
+  omitFieldsOnCompare?: (keyof MemberAddressType)[];
 }
 
 interface IEmits {
@@ -241,6 +258,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   addresses: () => [],
   allowAddNewAddress: true,
+  showAvailability: false,
   omitFieldsOnCompare: () => [],
 });
 
@@ -273,6 +291,10 @@ const columns = computed<ITableColumn[]>(() => {
         { id: "email", title: t("common.labels.email") },
         { id: "id", title: t("common.labels.active_address"), align: "center" },
       ];
+
+  if (props.showAvailability) {
+    cols.splice(cols.length - 1, 0, { id: "availability", title: t("pages.account.order_details.bopis.availability") });
+  }
 
   return cols;
 });

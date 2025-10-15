@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "Alternativer",
-          "select_to_proceed": "Velg alternativer for å fortsette"
+          "select_to_proceed": "Velg alternativer for å fortsette",
+          "price_unavailable": "Produktet kan ikke kjøpes i valgt valuta"
         }
       },
       "discount_badge": {
@@ -695,6 +696,10 @@
         "ok_button": "OK",
         "no_results": "Ingen resultater funnet",
         "reset_search_button": "Tilbakestill søk"
+      },
+      "shipment_options": {
+        "title": "Forsendelsesalternativer",
+        "in_store": "Henting i butikk"
       }
     },
     "checkout": {
@@ -1163,7 +1168,9 @@
           "pick_point_info": "Hentepunktinformasjon",
           "get_directions": "Hent veibeskrivelse",
           "point_info": "Punktinformasjon",
-          "pickup_address": "Henteadresse"
+          "pickup_address": "Henteadresse",
+          "cart_pickup_points_not_found": "Det finnes ingen tilgjengelige hentepunkter for disse produktene. Velg en annen forsendelsesmetode",
+          "availability": "Tilgjengelighet"
         }
       },
       "order_payment": {

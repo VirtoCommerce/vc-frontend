@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "Опции",
-          "select_to_proceed": "Выберите параметры, чтобы продолжить"
+          "select_to_proceed": "Выберите параметры, чтобы продолжить",
+          "price_unavailable": "Товар нельзя купить в выбранной валюте"
         }
       },
       "discount_badge": {
@@ -695,6 +696,10 @@
         "ok_button": "ОК",
         "no_results": "Результатов не найдено",
         "reset_search_button": "Очистить поиск"
+      },
+      "shipment_options": {
+        "title": "Варианты доставки",
+        "in_store": "Самовывоз из магазина"
       }
     },
     "checkout": {
@@ -1163,7 +1168,9 @@
           "pick_point_info": "Информация о пункте выдачи",
           "get_directions": "Как добраться",
           "point_info": "Информация",
-          "pickup_address": "Адрес самовывоза"
+          "pickup_address": "Адрес самовывоза",
+          "cart_pickup_points_not_found": "Для этих товаров нет доступных пунктов выдачи. Выберите другой способ доставки",
+          "availability": "Доступность"
         }
       },
       "order_payment": {

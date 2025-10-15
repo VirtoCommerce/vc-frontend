@@ -15,7 +15,7 @@ import {
   extensionPointsPlugin,
   permissionsPlugin,
 } from "@/core/plugins";
-import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
+import { extractHostname, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
@@ -66,17 +66,16 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { fetchUser, user, twoLetterContactLocale, isAuthenticated } = useUser();
+  const { fetchUser, user, isAuthenticated } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
-    detectLocale,
     currentLanguage,
-    supportedLocales,
+    currentMaybeShortLocale,
+    defaultStoreCulture,
     initLocale,
     fetchLocaleMessages,
-    getLocaleFromUrl,
-    pinedLocale,
-    mergeLocales,
+    mergeLocalesMessages,
+    resolveLocale,
   } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
@@ -104,22 +103,18 @@ export default async () => {
 
   setThemeContext(store);
 
-  // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
-  const twoLetterAppLocale = detectLocale([
-    pinedLocale.value,
-    twoLetterContactLocale.value,
-    getLocaleFromUrl(),
-    themeContext.value.defaultLanguage.twoLetterLanguageName,
-  ]);
-
   /**
    * Creating plugin instances
    */
   const head = createHead();
-  const i18n = createI18n(twoLetterAppLocale, currentCurrency.value.code, fallback);
-  const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
-  await initLocale(i18n, twoLetterAppLocale);
+  const currentCultureName = resolveLocale();
+  const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
+
+  const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback);
+  await initLocale(i18n, currentCultureName);
+
+  const router = createRouter({ base: isDefaultLocaleInUse ? "" : currentMaybeShortLocale.value });
 
   /**
    * Setting global variables
@@ -167,9 +162,9 @@ export default async () => {
   app.use(configPlugin, themeContext.value);
 
   const UIKitMessages = await getUIKitLocales(FALLBACK_LOCALE, currentLanguage.value?.twoLetterLanguageName);
-  mergeLocales(i18n, currentLanguage.value?.twoLetterLanguageName, UIKitMessages.messages);
+  mergeLocalesMessages(i18n, currentLanguage.value?.twoLetterLanguageName, UIKitMessages.messages);
   if (currentLanguage.value?.twoLetterLanguageName !== FALLBACK_LOCALE) {
-    mergeLocales(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
+    mergeLocalesMessages(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
   }
   app.use(uiKit);
 

@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "Opcje",
-          "select_to_proceed": "Wybierz opcje, aby kontynuować"
+          "select_to_proceed": "Wybierz opcje, aby kontynuować",
+          "price_unavailable": "Produkt nie może być kupiony w wybranej walucie"
         }
       },
       "discount_badge": {
@@ -695,6 +696,10 @@
         "ok_button": "OK",
         "no_results": "Nie znaleziono wyników",
         "reset_search_button": "Resetuj wyszukiwanie"
+      },
+      "shipment_options": {
+        "title": "Opcje dostawy",
+        "in_store": "Odbiór osobisty"
       }
     },
     "checkout": {
@@ -1163,7 +1168,9 @@
           "pick_point_info": "Informacje o punkcie odbioru",
           "get_directions": "Wyznacz trasę",
           "point_info": "Punkt informacyjny",
-          "pickup_address": "Adres odbioru"
+          "pickup_address": "Adres odbioru",
+          "cart_pickup_points_not_found": "Brak dostępnych punktów odbioru dla tych produktów. Wybierz inną metodę wysyłki",
+          "availability": "Dostępność"
         }
       },
       "order_payment": {

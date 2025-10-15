@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "Vaihtoehdot",
-          "select_to_proceed": "Valitse vaihtoehdot jatkaaksesi"
+          "select_to_proceed": "Valitse vaihtoehdot jatkaaksesi",
+          "price_unavailable": "Tuotetta ei voi ostaa valitussa valuutassa"
         }
       },
       "discount_badge": {
@@ -695,6 +696,10 @@
         "ok_button": "OK",
         "no_results": "Tuloksia ei löytynyt",
         "reset_search_button": "Nollaa haku"
+      },
+      "shipment_options": {
+        "title": "Toimitusvaihtoehdot",
+        "in_store": "Nouto myymälästä"
       }
     },
     "checkout": {
@@ -1163,7 +1168,9 @@
           "pick_point_info": "Noutopisteen tiedot",
           "get_directions": "Hae reittiohjeet",
           "point_info": "Pistetiedot",
-          "pickup_address": "Nouto-osoite"
+          "pickup_address": "Nouto-osoite",
+          "cart_pickup_points_not_found": "Näille tuotteille ei ole noutopisteitä. Valitse toinen toimitustapa",
+          "availability": "Saatavuus"
         }
       },
       "order_payment": {
