@@ -1169,7 +1169,8 @@
           "get_directions": "Get directions",
           "point_info": "Point info",
           "pickup_address": "Pick-up address",
-          "cart_pickup_points_not_found": "There are no available pickup points for these products. Select another shipping method",
+          "cart_pickup_points_not_found": "There are no available pickup points for these products. Select another shipping method.",
+          "cart_pickup_points_not_found_by_filter": "Pickup points not found.",
           "availability": "Availability"
         }
       },

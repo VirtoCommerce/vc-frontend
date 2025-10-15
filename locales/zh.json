@@ -1170,6 +1170,7 @@
           "point_info": "积分信息",
           "pickup_address": "自提地址",
           "cart_pickup_points_not_found": "此商品无适用的自提点。请选择其他配送方式",
+          "cart_pickup_points_not_found_by_filter": "未找到自提点。",
           "availability": "可用性"
         }
       },

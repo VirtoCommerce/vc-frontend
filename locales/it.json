@@ -1169,7 +1169,8 @@
           "get_directions": "Ottieni indicazioni",
           "point_info": "Informazioni",
           "pickup_address": "Indirizzo di ritiro",
-          "cart_pickup_points_not_found": "Non ci sono punti di ritiro disponibili per questi prodotti. Seleziona un altro metodo di spedizione",
+          "cart_pickup_points_not_found": "Non ci sono punti di ritiro disponibili per questi prodotti. Seleziona un altro metodo di spedizione.",
+          "cart_pickup_points_not_found_by_filter": "Punti di ritiro non trovati.",
           "availability": "Disponibilità"
         }
       },

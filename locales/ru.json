@@ -1169,7 +1169,8 @@
           "get_directions": "Как добраться",
           "point_info": "Информация",
           "pickup_address": "Адрес самовывоза",
-          "cart_pickup_points_not_found": "Для этих товаров нет доступных пунктов выдачи. Выберите другой способ доставки",
+          "cart_pickup_points_not_found": "Для этих товаров нет доступных пунктов выдачи. Выберите другой способ доставки.",
+          "cart_pickup_points_not_found_by_filter": "Пункты выдачи не найдены.",
           "availability": "Доступность"
         }
       },

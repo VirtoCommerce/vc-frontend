@@ -1169,7 +1169,8 @@
           "get_directions": "Hae reittiohjeet",
           "point_info": "Pistetiedot",
           "pickup_address": "Nouto-osoite",
-          "cart_pickup_points_not_found": "Näille tuotteille ei ole noutopisteitä. Valitse toinen toimitustapa",
+          "cart_pickup_points_not_found": "Näille tuotteille ei ole noutopisteitä. Valitse toinen toimitustapa.",
+          "cart_pickup_points_not_found_by_filter": "Noutopisteitä ei löytynyt.",
           "availability": "Saatavuus"
         }
       },

@@ -3,10 +3,10 @@
     :title="$t('shared.checkout.select_bopis_modal.title')"
     max-width="72rem"
     is-mobile-fullscreen
-    :is-full-height="!!addresses.length"
+    :is-full-height="!!addresses.length || filterApplied"
     class="select-address-map-modal"
   >
-    <div v-if="addresses.length" class="select-address-map-modal__container">
+    <div v-if="addresses.length || filterApplied" class="select-address-map-modal__container">
       <div class="select-address-map-modal__filters">
         <VcSelect
           v-model="selectedCountry"
@@ -35,7 +35,13 @@
           class="w-44"
           @change="applyFilters"
         />
-        <VcInput v-model="keyword" :placeholder="$t('common.labels.search')" class="grow" @keyup.enter="applyFilters" />
+        <VcInput
+          v-model="keyword"
+          :placeholder="$t('common.labels.search')"
+          class="grow"
+          clearable
+          @keyup.enter="applyFilters"
+        />
         <VcButton icon="search" @click="applyFilters" />
       </div>
       <div class="select-address-map-modal__content">
@@ -130,7 +136,7 @@
         </GoogleMap>
 
         <VcScrollbar vertical class="select-address-map-modal__sidebar">
-          <ul class="select-address-map-modal__list">
+          <ul v-if="addresses.length" class="select-address-map-modal__list">
             <li
               v-for="address in addresses"
               :key="address.id"
@@ -160,6 +166,9 @@
               </VcRadioButton>
             </li>
           </ul>
+          <div v-else class="select-address-map-modal__not-found">
+            {{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}
+          </div>
         </VcScrollbar>
       </div>
     </div>
@@ -256,6 +265,8 @@ const selectedCountry = ref<string | undefined>();
 const selectedRegion = ref<string | undefined>();
 const selectedCity = ref<string | undefined>();
 
+const filterApplied = ref(false);
+
 const countries = computed(() => props.facets?.find((f) => f.name === "address_countryname")?.terms ?? []);
 const regions = computed(() => props.facets?.find((f) => f.name === "address_regionname")?.terms ?? []);
 const cities = computed(() => props.facets?.find((f) => f.name === "address_city")?.terms ?? []);
@@ -274,6 +285,7 @@ function buildFilter(): string | undefined {
 }
 
 function applyFilters() {
+  filterApplied.value = true;
   props.onFilterChange?.({ keyword: keyword.value || undefined, filter: buildFilter() });
 }
 
@@ -422,6 +434,10 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
     &-pickup-availability {
       @apply text-xs font-normal;
     }
+  }
+
+  &__not-found {
+    @apply flex flex-col gap-3 w-60;
   }
 
   &__actions {
