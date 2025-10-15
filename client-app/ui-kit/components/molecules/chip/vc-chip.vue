@@ -1,8 +1,9 @@
 <template>
   <component
-    :is="clickable ? 'button' : 'span'"
-    :disabled="disabled"
+    :is="componentTag"
+    v-bind="rootAttrs"
     :draggable="draggable && !disabled"
+    :data-test-id="dataTestId"
     :class="[
       'vc-chip',
       `vc-chip--size--${size}`,
@@ -42,8 +43,10 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { getColorValue } from "@/ui-kit/utilities";
+import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
+  (event: "click"): void;
   (event: "close"): void;
 }
 
@@ -61,6 +64,11 @@ interface IProps {
   nowrap?: boolean;
   icon?: string;
   iconColor?: string;
+  tabindex?: string | number;
+  dataTestId?: string;
+  to?: RouteLocationRaw | null;
+  externalLink?: string;
+  target?: "_self" | "_blank";
 }
 
 defineEmits<IEmits>();
@@ -70,9 +78,53 @@ const props = withDefaults(defineProps<IProps>(), {
   variant: "solid",
   size: "md",
   nowrap: true,
+  tabindex: 0,
+  to: null,
 });
 
 const { t } = useI18n();
+
+const isRouterLink = computed(() => !!props.to && props.clickable && !props.disabled);
+const isExternalLink = computed(() => !!props.externalLink && props.clickable && !props.disabled);
+
+const componentTag = computed<string>(() => {
+  if (isRouterLink.value) {
+    return "router-link";
+  }
+
+  if (isExternalLink.value) {
+    return "a";
+  }
+
+  return props.clickable ? "button" : "span";
+});
+
+const rootAttrs = computed<Record<string, unknown>>(() => {
+  if (componentTag.value === "button") {
+    return {
+      type: "button",
+      disabled: props.disabled,
+      tabindex: props.tabindex,
+    };
+  }
+
+  if (componentTag.value === "router-link") {
+    return {
+      to: props.to,
+      tabindex: props.tabindex,
+    };
+  }
+
+  if (componentTag.value === "a") {
+    return {
+      href: props.externalLink,
+      target: props.target,
+      tabindex: props.tabindex,
+    };
+  }
+
+  return {};
+});
 
 const closeAriaLabel = computed(() => props.closeButtonAriaLabel ?? t("ui_kit.accessibility.close_chip"));
 
@@ -84,7 +136,7 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
   --props-icon-color: v-bind(_iconColor);
   --icon-color: var(--props-icon-color, var(--vc-chip-icon-color));
   --radius: var(--vc-chip-radius, var(--vc-radius, 0.5rem));
-  /* Default colors (can be overridden by variants below) */
+
   --bg-color: var(--color-additional-50);
   --border-color: var(--color-additional-50);
   --text-color: var(--color-neutral-800);
@@ -99,6 +151,10 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
 
   &--clickable {
     $clickable: &;
+
+    &:focus {
+      @apply ring-[3px] ring-[--focus-color];
+    }
   }
 
   &--truncate {
@@ -155,10 +211,13 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     &--solid--#{$color} {
       --bg-color: var(--color-#{$color}-500);
       --border-color: var(--color-#{$color}-500);
+      --main-icon-color: var(--color-additional-50);
+      --close-button-icon-color: var(--color-additional-50);
       --text-color: var(--color-additional-50);
 
       &[class*="--warning"] {
-        --text-color: var(--color-warning-900);
+        --text-color: var(--color-warning-950);
+        --close-button-icon-color: var(--color-warning-950);
       }
 
       &#{$clickable}:hover {
@@ -170,7 +229,8 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     &--solid-light--#{$color} {
       --bg-color: var(--color-#{$color}-50);
       --border-color: var(--color-#{$color}-50);
-      /* текст в оригинале остается var(--text-color) (neutral), не меняем */
+      --main-icon-color: var(--color-#{$color}-500);
+      --close-button-icon-color: var(--color-#{$color}-700);
 
       &#{$clickable}:hover {
         --bg-color: var(--color-#{$color}-100);
@@ -180,6 +240,8 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
 
     &--outline--#{$color} {
       --border-color: var(--color-#{$color}-500);
+      --main-icon-color: var(--color-#{$color}-500);
+      --close-button-icon-color: var(--color-#{$color}-700);
 
       &#{$clickable}:hover {
         --bg-color: var(--color-#{$color}-50);
@@ -189,6 +251,8 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     &--outline-dark--#{$color} {
       --bg-color: var(--color-#{$color}-50);
       --border-color: var(--color-#{$color}-500);
+      --main-icon-color: var(--color-#{$color}-500);
+      --close-button-icon-color: var(--color-#{$color}-700);
 
       &#{$clickable}:hover {
         --bg-color: var(--color-#{$color}-100);
@@ -196,25 +260,12 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     }
 
     &--color--#{$color} {
-      &#{$clickable} {
-        &:focus {
-          @apply ring-[3px] ring-[--color-#{$color}-100];
-        }
-      }
+      --focus-color: var(--color-#{$color}-100);
     }
-
-    &[class*="--#{$color}"]:not(#{$disabled}) {
-      --vc-icon-color: var(--icon-color, var(--color-#{$color}-500));
-      --close-button-icon-color: var(--color-#{$color}-700);
-    }
-  }
-
-  &[class*="--solid--"]:not(#{$disabled}) {
-    --vc-icon-color: var(--icon-color, var(--text-color));
-    --close-button-icon-color: var(--color-additional-50);
   }
 
   &__content {
+    --vc-icon-color: var(--icon-color, var(--main-icon-color));
     --vc-icon-size: var(--icon-size);
 
     @apply grow flex items-center justify-center gap-[inherit] max-w-full;
@@ -229,13 +280,22 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     --vc-icon-size: var(--close-button-icon-size);
     --vc-icon-color: var(--close-button-icon-color);
 
-    @apply self-stretch flex items-center ps-1 pe-[--padding-x] -ms-1 -me-[--padding-x] py-[--padding-y] -my-[--padding-y] rounded-r-[inherit];
+    @apply self-stretch flex items-center ps-1 pe-[--padding-x] -ms-1 -me-[--padding-x] py-[--padding-y] -my-[--padding-y] rounded;
+
+    &:focus {
+      @apply outline-none ring-[3px] ring-[--focus-color];
+    }
+
+    &:disabled {
+      @apply cursor-not-allowed;
+    }
   }
 
   &:disabled,
-  &--disabled {
-    --vc-icon-color: theme("colors.neutral.400");
-    --text-color: var(--color-neutral-600);
+  &#{$disabled} {
+    --main-icon-color: theme("colors.neutral.400");
+    --text-color: theme("colors.neutral.600");
+    --close-button-icon-color: theme("colors.neutral.400");
 
     @apply cursor-not-allowed;
 
