@@ -123,7 +123,7 @@
 import { computed, ref, watch } from "vue";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
-import { useBopis, BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
+import { BOPIS_CODE, useBopis } from "@/shared/checkout/composables/useBopis";
 import { AddressSelection } from "@/shared/common";
 import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
 import type { ShippingMethodType } from "@/core/api/graphql/types.ts";
