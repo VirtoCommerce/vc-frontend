@@ -39,6 +39,7 @@ import type { StoreResponseType } from "./core/api/graphql/types";
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
+  console.time("app-runner");
   const appSelector = "#app";
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
 
@@ -67,7 +68,7 @@ export default async () => {
   app.use(authPlugin);
 
   const { fetchUser, user, isAuthenticated } = useUser();
-  const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
+  const { themeContext, setThemeContext } = useThemeContext();
   const {
     currentLanguage,
     currentMaybeShortLocale,
@@ -80,7 +81,7 @@ export default async () => {
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
-  const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
+  const { fetchWhiteLabelingSettings } = useWhiteLabeling();
 
   const fallback = {
     locale: FALLBACK_LOCALE,
@@ -102,6 +103,8 @@ export default async () => {
   }
 
   setThemeContext(store);
+
+  void fetchWhiteLabelingSettings();
 
   /**
    * Creating plugin instances
@@ -134,9 +137,6 @@ export default async () => {
   /**
    * Other settings
    */
-
-  await fetchWhiteLabelingSettings();
-  addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
 
   if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
     void fetchCatalogMenu();
@@ -194,7 +194,10 @@ export default async () => {
   // Register Page builder product components globally
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
 
-  await router.isReady();
+  const optimizedPaths = ["/"];
+  if (!optimizedPaths.includes(router.currentRoute.value.path)) {
+    await router.isReady();
+  }
 
   app.config.warnHandler = (msg, _, trace) => {
     // to remove builder.io warnings
@@ -206,4 +209,5 @@ export default async () => {
   };
 
   app.mount(appElement);
+  console.timeEnd("app-runner");
 };
