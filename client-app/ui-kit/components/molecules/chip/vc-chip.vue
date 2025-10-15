@@ -28,6 +28,7 @@
       :disabled="disabled"
       type="button"
       class="vc-chip__close-button"
+      :aria-label="closeAriaLabel"
       @click.stop="disabled ? null : $emit('close')"
     >
       <slot name="close-icon">
@@ -39,6 +40,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { getColorValue } from "@/ui-kit/utilities";
 
 interface IEmits {
@@ -51,6 +53,7 @@ interface IProps {
   size?: VcChipSizeType;
   clickable?: boolean;
   closable?: boolean;
+  closeButtonAriaLabel?: string;
   disabled?: boolean;
   draggable?: boolean;
   rounded?: boolean;
@@ -69,6 +72,10 @@ const props = withDefaults(defineProps<IProps>(), {
   nowrap: true,
 });
 
+const { t } = useI18n();
+
+const closeAriaLabel = computed(() => props.closeButtonAriaLabel ?? t("ui_kit.accessibility.close_chip"));
+
 const _iconColor = computed(() => getColorValue(props.iconColor));
 </script>
 
@@ -77,6 +84,10 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
   --props-icon-color: v-bind(_iconColor);
   --icon-color: var(--props-icon-color, var(--vc-chip-icon-color));
   --radius: var(--vc-chip-radius, var(--vc-radius, 0.5rem));
+  /* Default colors (can be overridden by variants below) */
+  --bg-color: var(--color-additional-50);
+  --border-color: var(--color-additional-50);
+  --text-color: var(--color-neutral-800);
 
   $colors: primary, secondary, success, info, warning, danger, neutral;
 
@@ -84,7 +95,7 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
   $clickable: "";
   $disabled: "";
 
-  @apply inline-flex justify-between max-w-full rounded-[--radius] border font-bold text-center px-[--padding-x] py-0.5 text-neutral-800;
+  @apply inline-flex justify-between max-w-full rounded-[--radius] border font-bold text-center px-[--padding-x] py-0.5 text-[--text-color] bg-[--bg-color] border-[--border-color];
 
   &--clickable {
     $clickable: &;
@@ -108,28 +119,32 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
 
   &--size {
     &--xs {
-      --vc-icon-size: 0.5rem;
+      --icon-size: 0.5rem;
+      --close-button-icon-size: 0.35rem;
       --padding-x: 0.188rem;
 
       @apply min-h-4 gap-1 text-[0.625rem]/[0.675rem];
     }
 
     &--sm {
-      --vc-icon-size: 0.625rem;
+      --icon-size: 0.625rem;
+      --close-button-icon-size: 0.5rem;
       --padding-x: 0.345rem;
 
       @apply min-h-[1.375rem] gap-1 text-xs/[0.75rem];
     }
 
     &--md {
-      --vc-icon-size: 0.75rem;
+      --icon-size: 0.75rem;
+      --close-button-icon-size: 0.56rem;
       --padding-x: 0.475rem;
 
       @apply min-h-6 gap-1.5 text-sm/[1.125rem];
     }
 
     &--lg {
-      --vc-icon-size: 0.875rem;
+      --icon-size: 0.875rem;
+      --close-button-icon-size: 0.7rem;
       --padding-x: 0.6rem;
 
       @apply min-h-8 gap-1.5 text-sm/[1.25rem];
@@ -138,42 +153,45 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
 
   @each $color in $colors {
     &--solid--#{$color} {
-      @apply bg-[--color-#{$color}-500] border-[--color-#{$color}-500];
+      --bg-color: var(--color-#{$color}-500);
+      --border-color: var(--color-#{$color}-500);
+      --text-color: var(--color-additional-50);
 
-      &#{$clickable} {
-        &:hover {
-          @apply bg-[--color-#{$color}-700] border-[--color-#{$color}-700];
-        }
+      &[class*="--warning"] {
+        --text-color: var(--color-warning-900);
+      }
+
+      &#{$clickable}:hover {
+        --bg-color: var(--color-#{$color}-700);
+        --border-color: var(--color-#{$color}-700);
       }
     }
 
     &--solid-light--#{$color} {
-      @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-50];
+      --bg-color: var(--color-#{$color}-50);
+      --border-color: var(--color-#{$color}-50);
+      /* текст в оригинале остается var(--text-color) (neutral), не меняем */
 
-      &#{$clickable} {
-        &:hover {
-          @apply bg-[--color-#{$color}-100];
-        }
+      &#{$clickable}:hover {
+        --bg-color: var(--color-#{$color}-100);
+        --border-color: var(--color-#{$color}-100);
       }
     }
 
     &--outline--#{$color} {
-      @apply border-[--color-#{$color}-500];
+      --border-color: var(--color-#{$color}-500);
 
-      &#{$clickable} {
-        &:hover {
-          @apply bg-[--color-#{$color}-50];
-        }
+      &#{$clickable}:hover {
+        --bg-color: var(--color-#{$color}-50);
       }
     }
 
     &--outline-dark--#{$color} {
-      @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-500];
+      --bg-color: var(--color-#{$color}-50);
+      --border-color: var(--color-#{$color}-500);
 
-      &#{$clickable} {
-        &:hover {
-          @apply bg-[--color-#{$color}-100];
-        }
+      &#{$clickable}:hover {
+        --bg-color: var(--color-#{$color}-100);
       }
     }
 
@@ -192,17 +210,13 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
   }
 
   &[class*="--solid--"]:not(#{$disabled}) {
-    --vc-icon-color: var(--icon-color, var(--color-additional-50));
+    --vc-icon-color: var(--icon-color, var(--text-color));
     --close-button-icon-color: var(--color-additional-50);
-
-    @apply text-additional-50;
-  }
-
-  &[class*="--outline--"] {
-    @apply bg-additional-50;
   }
 
   &__content {
+    --vc-icon-size: var(--icon-size);
+
     @apply grow flex items-center justify-center gap-[inherit] max-w-full;
 
     #{$truncate} &,
@@ -212,29 +226,31 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
   }
 
   &__close-button {
+    --vc-icon-size: var(--close-button-icon-size);
     --vc-icon-color: var(--close-button-icon-color);
 
     @apply self-stretch flex items-center ps-1 pe-[--padding-x] -ms-1 -me-[--padding-x] py-[--padding-y] -my-[--padding-y] rounded-r-[inherit];
   }
 
-  .vc-icon {
-    @apply flex-none;
-  }
-
   &:disabled,
   &--disabled {
     --vc-icon-color: theme("colors.neutral.400");
+    --text-color: var(--color-neutral-600);
+
+    @apply cursor-not-allowed;
 
     &[class*="--solid-"] {
-      @apply bg-neutral-100 border-neutral-100 text-neutral-400;
+      --bg-color: var(--color-neutral-100);
+      --border-color: var(--color-neutral-100);
     }
 
     &[class*="--outline-"] {
-      @apply text-neutral-400 border-current;
+      --border-color: var(--color-neutral-200);
     }
 
     &[class*="--outline-dark"] {
-      @apply bg-neutral-100;
+      --bg-color: var(--color-neutral-50);
+      --border-color: var(--color-neutral-200);
     }
   }
 }

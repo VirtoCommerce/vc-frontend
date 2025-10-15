@@ -108,12 +108,10 @@ export const AllVariants: StoryType = {
   render: (args) => ({
     components: { VcChip },
     setup: () => ({ variants: VARIANTS, args }),
-    template: `<div class="space-y-8">
-      <div class="space-y-1" v-for="variant in variants">
-        <VcChip v-bind="args" :variant="variant" icon="cog">
-          {{ variant }}
-        </VcChip>
-      </div>
+    template: `<div class="flex flex-col items-start gap-3">
+      <VcChip v-bind="args" v-for="variant in variants" :variant="variant" icon="circle-solid" closable>
+        {{ variant }}
+      </VcChip>
     </div>`,
   }),
 };
@@ -130,11 +128,11 @@ export const AllStates: StoryType = {
           <div class="text-base">Variant: <b>{{ variant }}</b></div>
 
           <div class="flex flex-wrap gap-2 items-center">
-            <VcChip v-for="color in colors" :size="size" :color="color" :variant="variant" icon="cog">
+            <VcChip v-for="color in colors" :size="size" :color="color" :variant="variant" icon="circle-solid">
               Color: {{ color }}
             </VcChip>
 
-            <VcChip :size="size" :variant="variant" icon="cog" disabled>
+            <VcChip :size="size" :variant="variant" icon="circle-solid" disabled>
               Color: Disabled
             </VcChip>
           </div>
@@ -152,7 +150,7 @@ export const AllStates: StoryType = {
               Color: {{ color }}
             </VcChip>
 
-            <VcChip :size="size" :variant="variant" icon="cog" disabled closable>
+            <VcChip :size="size" :variant="variant" icon="circle-solid" disabled closable>
               Color: Disabled
             </VcChip>
           </div>
