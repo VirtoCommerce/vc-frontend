@@ -244,6 +244,9 @@ export function useProducts(
   }
 
   async function resetFacetFilters() {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
+
     facetsQueryParam.value = "";
     await preserveUserQuery();
 
@@ -266,6 +269,10 @@ export function useProducts(
   /** @deprecated use `searchQueryParam` instead */
   function resetFilterKeyword(): void {
     keywordQueryParam.value = "";
+  }
+
+  function resetSearchKeyword(): void {
+    searchQueryParam.value = "";
   }
 
   function updateProductsFilters(newFilters: ProductsFiltersType): void {
@@ -531,6 +538,7 @@ export function useProducts(
     resetFacetFilters,
     /** @deprecated use `searchQueryParam` instead */
     resetFilterKeyword,
+    resetSearchKeyword,
     showFiltersSidebar,
     updateProductsFilters,
   };
