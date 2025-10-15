@@ -1171,6 +1171,7 @@
           "pickup_address": "受取住所",
           "cart_pickup_points_not_found": "この商品を受け取り可能な店舗がありません。別の配送方法を選択してください",
           "cart_pickup_points_not_found_by_filter": "該当する受取場所が見つかりませんでした。",
+          "cart_pickup_points_reset_search": "検索をリセット",
           "availability": "在庫状況"
         }
       },
