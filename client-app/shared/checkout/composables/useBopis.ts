@@ -17,7 +17,8 @@ export function useBopis() {
   const { availableShippingMethods, updateShipment, shipment } = useFullCart();
   const { isEnabled, getSettingValue } = useModuleSettings(MODULE_ID_SHIPPING);
 
-  const { pickupLocations, fetchPickupLocations, pickupLocationsLoading, termFacets } = useCartPickupLocations();
+  const { pickupLocations, fetchPickupLocations, pickupLocationsLoading, pickupLocationsFilterOptions } =
+    useCartPickupLocations();
 
   const addresses = computed<ProductPickupLocation[]>(() => (pickupLocations.value as ProductPickupLocation[]) ?? []);
 
@@ -82,7 +83,7 @@ export function useBopis() {
           ...shipment.value?.deliveryAddress,
           id: shipment.value?.pickupLocation?.id,
         },
-        facets: termFacets,
+        filterOptions: pickupLocationsFilterOptions,
         async onFilterChange({ keyword, filter }: { keyword?: string; filter?: string }) {
           await fetchAddresses({
             cartId,

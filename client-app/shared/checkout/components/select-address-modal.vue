@@ -1,11 +1,5 @@
 <template>
-  <VcModal
-    :title="$t('shared.checkout.select_address_modal.title')"
-    max-width="60rem"
-    is-mobile-fullscreen
-    dividers
-    test-id="select-address-modal"
-  >
+  <VcModal :title="$t('shared.checkout.select_address_modal.title')" max-width="60rem" is-mobile-fullscreen dividers>
     <VcAlert class="mb-4 lg:hidden" icon="check-circle" size="sm" variant="solid-light">
       {{ $t("shared.checkout.select_address_modal.message") }}
     </VcAlert>
@@ -39,7 +33,6 @@
             color="secondary"
             variant="outline"
             class="flex-none max-md:!hidden"
-            data-test-id="close-button"
             @click="close"
           >
             {{ $t("shared.checkout.select_address_modal.cancel_button") }}
@@ -49,7 +42,6 @@
             no-wrap
             :disabled="!selectedAddress"
             min-width="8rem"
-            data-test-id="confirm-button"
             @click="
               save();
               close();
@@ -68,7 +60,7 @@
     <div v-if="showFilters" class="flex items-center gap-2 pb-3">
       <VcSelect
         v-model="selectedCountry"
-        :items="countries"
+        :items="filterOptions?.countries ?? []"
         text-field="label"
         value-field="term"
         :placeholder="$t('common.labels.country')"
@@ -77,7 +69,7 @@
       />
       <VcSelect
         v-model="selectedRegion"
-        :items="regions"
+        :items="filterOptions?.regions ?? []"
         text-field="label"
         value-field="term"
         :placeholder="$t('common.labels.region')"
@@ -86,7 +78,7 @@
       />
       <VcSelect
         v-model="selectedCity"
-        :items="cities"
+        :items="filterOptions?.cities ?? []"
         text-field="label"
         value-field="term"
         :placeholder="$t('common.labels.city')"
@@ -282,12 +274,13 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, ref, watchEffect } from "vue";
+import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
-import type { MemberAddressType, TermFacet } from "@/core/api/graphql/types";
+import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
+import type { PickupLocationsFilterOptionsType } from "@/shared/cart";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
 interface IProps {
@@ -299,7 +292,7 @@ interface IProps {
   emptyText?: string;
   omitFieldsOnCompare?: (keyof MemberAddressType)[];
   showFilters?: boolean;
-  facets?: TermFacet[];
+  filterOptions?: PickupLocationsFilterOptionsType;
   onFilterChange?: (payload: { keyword?: string; filter?: string }) => void;
 }
 
@@ -328,10 +321,6 @@ const selectedRegion = ref<string | undefined>();
 const selectedCity = ref<string | undefined>();
 
 const filterApplied = ref(false);
-
-const countries = computed(() => props.facets?.find((f) => f.name === "address_countryname")?.terms ?? []);
-const regions = computed(() => props.facets?.find((f) => f.name === "address_regionname")?.terms ?? []);
-const cities = computed(() => props.facets?.find((f) => f.name === "address_city")?.terms ?? []);
 
 function buildFilter(): string | undefined {
   if (selectedCity.value) {

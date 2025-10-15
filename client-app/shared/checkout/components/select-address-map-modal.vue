@@ -10,7 +10,7 @@
       <div class="select-address-map-modal__filters">
         <VcSelect
           v-model="selectedCountry"
-          :items="countries"
+          :items="filterOptions?.countries ?? []"
           text-field="label"
           value-field="term"
           :placeholder="$t('common.labels.country')"
@@ -19,7 +19,7 @@
         />
         <VcSelect
           v-model="selectedRegion"
-          :items="regions"
+          :items="filterOptions?.regions ?? []"
           text-field="label"
           value-field="term"
           :placeholder="$t('common.labels.region')"
@@ -28,7 +28,7 @@
         />
         <VcSelect
           v-model="selectedCity"
-          :items="cities"
+          :items="filterOptions?.cities ?? []"
           text-field="label"
           value-field="term"
           :placeholder="$t('common.labels.city')"
@@ -201,7 +201,8 @@ import { Logger } from "@/core/utilities/logger";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
 import { getColorValue } from "@/ui-kit/utilities/css";
-import type { GetCartPickupLocationsQuery, TermFacet } from "@/core/api/graphql/types";
+import type { GetCartPickupLocationsQuery } from "@/core/api/graphql/types";
+import type { PickupLocationsFilterOptionsType } from "@/shared/cart";
 import GoogleMapMarkerClusterer from "@/shared/common/components/google-maps/google-map-marker-clusterer.vue";
 import GoogleMapMarker from "@/shared/common/components/google-maps/google-map-marker.vue";
 import GoogleMap from "@/shared/common/components/google-maps/google-map.vue";
@@ -231,7 +232,7 @@ interface IProps {
   addresses?: PickupLocationType[];
   apiKey: string;
   currentAddress?: { id: string };
-  facets?: TermFacet[];
+  filterOptions?: PickupLocationsFilterOptionsType;
   onFilterChange?: (payload: { keyword?: string; filter?: string }) => void;
 }
 
@@ -269,10 +270,6 @@ const selectedRegion = ref<string | undefined>();
 const selectedCity = ref<string | undefined>();
 
 const filterApplied = ref(false);
-
-const countries = computed(() => props.facets?.find((f) => f.name === "address_countryname")?.terms ?? []);
-const regions = computed(() => props.facets?.find((f) => f.name === "address_regionname")?.terms ?? []);
-const cities = computed(() => props.facets?.find((f) => f.name === "address_city")?.terms ?? []);
 
 function buildFilter(): string | undefined {
   if (selectedCity.value) {
