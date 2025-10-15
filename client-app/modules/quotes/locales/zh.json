@@ -11,7 +11,11 @@
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
     "search_placeholder": "按号码或状态搜索",
+    "no_quote_message": "尚无报价请求",
     "no_results_message": "未找到结果",
+    "buttons": {
+      "reset_search": "重置搜索"
+    },
     "request_quote_button": "请求报价",
     "search_quote_requests": "搜索报价请求",
     "reset_search": "重置搜索",

@@ -8,6 +8,7 @@
     },
     "list_details": {
       "empty_list": "Din lista är tom",
+      "no_results_message": "Inga resultat hittades",
       "empty_list_button": "Fortsätt bläddra"
     },
     "messages": {

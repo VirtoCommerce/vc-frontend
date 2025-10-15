@@ -11,7 +11,11 @@
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
     "search_placeholder": "番号またはステータスで検索",
+    "no_quote_message": "まだ見積もりリクエストはありません",
     "no_results_message": "結果が見つかりません",
+    "buttons": {
+      "reset_search": "検索をリセット"
+    },
     "request_quote_button": "見積もりをリクエスト",
     "search_quote_requests": "見積もりリクエストを検索",
     "reset_search": "検索をリセット",
