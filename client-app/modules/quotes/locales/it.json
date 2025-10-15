@@ -11,7 +11,11 @@
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
     "search_placeholder": "Cerca per numero o stato",
+    "no_quote_message": "Non ci sono ancora richieste di preventivo",
     "no_results_message": "Nessun risultato trovato",
+    "buttons": {
+      "reset_search": "Reimposta ricerca"
+    },
     "request_quote_button": "Richiedi Preventivo",
     "search_quote_requests": "Cerca richieste di preventivo",
     "reset_search": "Reimposta ricerca",

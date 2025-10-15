@@ -1,5 +1,11 @@
 <template>
-  <VcModal :title="$t('shared.checkout.select_address_modal.title')" max-width="60rem" is-mobile-fullscreen dividers>
+  <VcModal
+    :title="$t('shared.checkout.select_address_modal.title')"
+    max-width="60rem"
+    is-mobile-fullscreen
+    dividers
+    test-id="select-address-modal"
+  >
     <VcAlert class="mb-4 lg:hidden" icon="check-circle" size="sm" variant="solid-light">
       {{ $t("shared.checkout.select_address_modal.message") }}
     </VcAlert>
@@ -33,6 +39,7 @@
             color="secondary"
             variant="outline"
             class="flex-none max-md:!hidden"
+            data-test-id="close-button"
             @click="close"
           >
             {{ $t("shared.checkout.select_address_modal.cancel_button") }}
@@ -42,6 +49,7 @@
             no-wrap
             :disabled="!selectedAddress"
             min-width="8rem"
+            data-test-id="confirm-button"
             @click="
               save();
               close();
@@ -274,7 +282,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, watchEffect, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";

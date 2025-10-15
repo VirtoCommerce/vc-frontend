@@ -1133,7 +1133,7 @@
         "total_label": "@:common.labels.total",
         "no_orders_img_alt": "No orders",
         "no_orders_message": "There are no orders yet",
-        "no_results_message": "No results found",
+        "no_results_message": "There are no results found",
         "buttons": {
           "no_orders": "Continue browsing",
           "reset_search": "Reset search"
@@ -1278,7 +1278,7 @@
         "search_placeholder": "Search by name, role or email",
         "no_members_img_alt": "No members",
         "no_members_message": "There are no members yet",
-        "no_results_message": "No results found",
+        "no_results_message": "There are no results found",
         "invite_sent": "Invite sent",
         "filters": "Members filters",
         "labels": {
@@ -1369,7 +1369,7 @@
       "customize_button": "Customize",
       "show_on_a_separate_page": "Show on a separate page",
       "no_products_message": "There are no products in this category",
-      "no_products_filtered_message": "No results found",
+      "no_products_filtered_message": "There are no results found",
       "no_facet_found_message": "No results",
       "no_products_button": "Reset search",
       "products_icon": "Product icon",
