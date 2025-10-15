@@ -297,7 +297,7 @@ function initForm(tx: string) {
 
     if (redirect) {
       // 3-D Secure challenge: redirecting browser
-      window.location.href = redirect;
+      globalThis.location.href = redirect;
       return;
     }
 

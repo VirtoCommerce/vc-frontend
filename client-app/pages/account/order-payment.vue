@@ -382,9 +382,9 @@ const paymentMethodType = computed<number | undefined>(() => payment.value?.paym
 const paymentMethodCode = computed<string | undefined>(() => payment.value?.paymentMethod?.code);
 
 function tryAgain() {
-  const url = new URL(window.location.href);
+  const url = new URL(globalThis.location.href);
   url.search = "";
-  window.history.replaceState({}, document.title, url.toString());
+  globalThis.history.replaceState({}, document.title, url.toString());
   location.reload();
 }
 
