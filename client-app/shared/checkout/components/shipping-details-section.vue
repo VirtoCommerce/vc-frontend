@@ -125,7 +125,7 @@ import { computed, ref, watch } from "vue";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
-import { useBopis, BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
+import { BOPIS_CODE, useBopis } from "@/shared/checkout/composables/useBopis";
 import { AddressSelection } from "@/shared/common";
 import { useShipToLocation } from "@/shared/ship-to-location/composables/useShipToLocation";
 import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
