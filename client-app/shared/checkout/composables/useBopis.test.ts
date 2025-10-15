@@ -93,7 +93,7 @@ describe("useBopis composable", () => {
       fetchPickupLocations: vi.fn(),
       pickupLocations: resultRef,
       pickupLocationsLoading: loadingRef,
-      pickupLocationsFilterOptions: computed(() => ({ countries: [], regions: [], cities: [] })),
+      filterOptions: computed(() => ({ countries: [], regions: [], cities: [] })),
       filterKeyword: ref(""),
       filterCountry: ref(""),
       filterRegion: ref(""),

@@ -26,7 +26,7 @@ export function _useCartPickupLocations() {
   const pickupLocations = ref<ProductPickupLocation[]>([]);
   const termFacets = ref<TermFacet[] | undefined>();
 
-  const pickupLocationsFilterOptions = computed(
+  const filterOptions = computed(
     () =>
       ({
         countries: termFacets.value?.find((f) => f.name === COUNTRY_NAME_FACET)?.terms ?? [],
@@ -79,7 +79,7 @@ export function _useCartPickupLocations() {
     pickupLocations,
     fetchPickupLocations,
 
-    pickupLocationsFilterOptions,
+    filterOptions,
     filterKeyword,
     filterCountry,
     filterRegion,

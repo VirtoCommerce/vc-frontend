@@ -263,15 +263,8 @@ function createPin() {
   };
 }
 
-const {
-  pickupLocationsFilterOptions: filterOptions,
-  filterKeyword,
-  filterCountry,
-  filterRegion,
-  filterCity,
-  filterApplied,
-  buildFilter,
-} = useCartPickupLocations();
+const { filterOptions, filterKeyword, filterCountry, filterRegion, filterCity, filterApplied, buildFilter } =
+  useCartPickupLocations();
 
 function applyFilters() {
   filterApplied.value = true;

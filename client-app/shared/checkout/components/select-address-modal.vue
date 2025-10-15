@@ -315,7 +315,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
 const {
-  pickupLocationsFilterOptions: filterOptions,
+  filterOptions: filterOptions,
   filterKeyword,
   filterCountry,
   filterRegion,
