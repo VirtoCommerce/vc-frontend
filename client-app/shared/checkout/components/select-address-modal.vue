@@ -59,7 +59,7 @@
 
     <div v-if="showFilters" class="flex items-center gap-2 pb-3">
       <VcSelect
-        v-model="selectedCountry"
+        v-model="filterCountry"
         :items="filterOptions?.countries ?? []"
         text-field="label"
         value-field="term"
@@ -68,7 +68,7 @@
         @change="applyFilters"
       />
       <VcSelect
-        v-model="selectedRegion"
+        v-model="filterRegion"
         :items="filterOptions?.regions ?? []"
         text-field="label"
         value-field="term"
@@ -77,7 +77,7 @@
         @change="applyFilters"
       />
       <VcSelect
-        v-model="selectedCity"
+        v-model="filterCity"
         :items="filterOptions?.cities ?? []"
         text-field="label"
         value-field="term"
@@ -86,7 +86,7 @@
         @change="applyFilters"
       />
       <VcInput
-        v-model="keyword"
+        v-model="filterKeyword"
         :placeholder="$t('common.labels.search')"
         class="grow"
         clearable
@@ -278,9 +278,9 @@ import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
+import { useCartPickupLocations } from "@/shared/cart";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
-import type { PickupLocationsFilterOptionsType } from "@/shared/cart";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
 interface IProps {
@@ -292,7 +292,6 @@ interface IProps {
   emptyText?: string;
   omitFieldsOnCompare?: (keyof MemberAddressType)[];
   showFilters?: boolean;
-  filterOptions?: PickupLocationsFilterOptionsType;
   onFilterChange?: (payload: { keyword?: string; filter?: string }) => void;
 }
 
@@ -315,36 +314,26 @@ const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
-const keyword = ref<string>("");
-const selectedCountry = ref<string | undefined>();
-const selectedRegion = ref<string | undefined>();
-const selectedCity = ref<string | undefined>();
-
-const filterApplied = ref(false);
-
-function buildFilter(): string | undefined {
-  if (selectedCity.value) {
-    return `address_city:"${selectedCity.value}"`;
-  }
-  if (selectedRegion.value) {
-    return `address_regionname:"${selectedRegion.value}"`;
-  }
-  if (selectedCountry.value) {
-    return `address_countryname:"${selectedCountry.value}"`;
-  }
-  return undefined;
-}
+const {
+  pickupLocationsFilterOptions: filterOptions,
+  filterKeyword,
+  filterCountry,
+  filterRegion,
+  filterCity,
+  filterApplied,
+  buildFilter,
+} = useCartPickupLocations();
 
 function applyFilters() {
   filterApplied.value = true;
-  props.onFilterChange?.({ keyword: keyword.value || undefined, filter: buildFilter() });
+  props.onFilterChange?.({ keyword: filterKeyword.value || undefined, filter: buildFilter() });
 }
 
 function resetFilters() {
-  keyword.value = "";
-  selectedCountry.value = undefined;
-  selectedRegion.value = undefined;
-  selectedCity.value = undefined;
+  filterKeyword.value = "";
+  filterCountry.value = undefined;
+  filterRegion.value = undefined;
+  filterCity.value = undefined;
 
   applyFilters();
 }

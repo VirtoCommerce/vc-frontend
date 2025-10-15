@@ -56,14 +56,12 @@ import { useCartPickupLocations, useFullCart } from "@/shared/cart/composables";
 import { useModal } from "@/shared/modal";
 import { useBopis, BOPIS_CODE } from "./useBopis";
 import type { ProductPickupLocation } from "@/core/api/graphql/types";
-import type { PickupLocationsFilterOptionsType } from "@/shared/cart/composables";
 import type { Ref, ComputedRef } from "vue";
 
 describe("useBopis composable", () => {
   // Define variables with appropriate types
   let resultRef: Ref<ProductPickupLocation[]>;
   let loadingRef: Ref<boolean>;
-  let filterOptions: ComputedRef<PickupLocationsFilterOptionsType>;
   let availableShippingMethods: Ref<IShippingMethod[]>;
   let shipment: Ref<IShipment | null>;
   let updateShipment: ReturnType<typeof vi.fn>;
@@ -76,7 +74,6 @@ describe("useBopis composable", () => {
     // Initialize reactive refs
     resultRef = ref([]);
     loadingRef = ref(false);
-    filterOptions = computed(() => ({ countries: [], regions: [], cities: [] }));
 
     // Setup useModuleSettings mock
     isEnabled = vi.fn().mockReturnValue(false);
@@ -96,7 +93,13 @@ describe("useBopis composable", () => {
       fetchPickupLocations: vi.fn(),
       pickupLocations: resultRef,
       pickupLocationsLoading: loadingRef,
-      pickupLocationsFilterOptions: filterOptions,
+      pickupLocationsFilterOptions: computed(() => ({ countries: [], regions: [], cities: [] })),
+      filterKeyword: ref(""),
+      filterCountry: ref(""),
+      filterRegion: ref(""),
+      filterCity: ref(""),
+      filterApplied: ref(false),
+      buildFilter: vi.fn(),
     });
 
     // Setup useFullCart mock

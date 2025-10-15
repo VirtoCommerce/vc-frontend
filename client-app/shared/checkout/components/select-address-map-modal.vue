@@ -9,7 +9,7 @@
     <div v-if="addresses.length || filterApplied" class="select-address-map-modal__container">
       <div class="select-address-map-modal__filters">
         <VcSelect
-          v-model="selectedCountry"
+          v-model="filterCountry"
           :items="filterOptions?.countries ?? []"
           text-field="label"
           value-field="term"
@@ -18,7 +18,7 @@
           @change="applyFilters"
         />
         <VcSelect
-          v-model="selectedRegion"
+          v-model="filterRegion"
           :items="filterOptions?.regions ?? []"
           text-field="label"
           value-field="term"
@@ -27,7 +27,7 @@
           @change="applyFilters"
         />
         <VcSelect
-          v-model="selectedCity"
+          v-model="filterCity"
           :items="filterOptions?.cities ?? []"
           text-field="label"
           value-field="term"
@@ -36,7 +36,7 @@
           @change="applyFilters"
         />
         <VcInput
-          v-model="keyword"
+          v-model="filterKeyword"
           :placeholder="$t('common.labels.search')"
           class="grow"
           clearable
@@ -198,11 +198,11 @@ import { computed, ref, toRef, watch } from "vue";
 import { getAddressName } from "@/core/utilities/address";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
 import { Logger } from "@/core/utilities/logger";
+import { useCartPickupLocations } from "@/shared/cart";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
 import { getColorValue } from "@/ui-kit/utilities/css";
 import type { GetCartPickupLocationsQuery } from "@/core/api/graphql/types";
-import type { PickupLocationsFilterOptionsType } from "@/shared/cart";
 import GoogleMapMarkerClusterer from "@/shared/common/components/google-maps/google-map-marker-clusterer.vue";
 import GoogleMapMarker from "@/shared/common/components/google-maps/google-map-marker.vue";
 import GoogleMap from "@/shared/common/components/google-maps/google-map.vue";
@@ -232,7 +232,6 @@ interface IProps {
   addresses?: PickupLocationType[];
   apiKey: string;
   currentAddress?: { id: string };
-  filterOptions?: PickupLocationsFilterOptionsType;
   onFilterChange?: (payload: { keyword?: string; filter?: string }) => void;
 }
 
@@ -264,36 +263,26 @@ function createPin() {
   };
 }
 
-const keyword = ref<string>("");
-const selectedCountry = ref<string | undefined>();
-const selectedRegion = ref<string | undefined>();
-const selectedCity = ref<string | undefined>();
-
-const filterApplied = ref(false);
-
-function buildFilter(): string | undefined {
-  if (selectedCity.value) {
-    return `address_city:"${selectedCity.value}"`;
-  }
-  if (selectedRegion.value) {
-    return `address_regionname:"${selectedRegion.value}"`;
-  }
-  if (selectedCountry.value) {
-    return `address_countryname:"${selectedCountry.value}"`;
-  }
-  return undefined;
-}
+const {
+  pickupLocationsFilterOptions: filterOptions,
+  filterKeyword,
+  filterCountry,
+  filterRegion,
+  filterCity,
+  filterApplied,
+  buildFilter,
+} = useCartPickupLocations();
 
 function applyFilters() {
   filterApplied.value = true;
-  props.onFilterChange?.({ keyword: keyword.value || undefined, filter: buildFilter() });
+  props.onFilterChange?.({ keyword: filterKeyword.value || undefined, filter: buildFilter() });
 }
 
 function resetFilters() {
-  keyword.value = "";
-  selectedCountry.value = undefined;
-  selectedRegion.value = undefined;
-  selectedCity.value = undefined;
+  filterKeyword.value = "";
+  filterCountry.value = undefined;
+  filterRegion.value = undefined;
+  filterCity.value = undefined;
 
   applyFilters();
 }
