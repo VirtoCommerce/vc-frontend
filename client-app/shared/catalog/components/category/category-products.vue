@@ -89,7 +89,7 @@
           : $t('pages.catalog.no_products_message')
       "
       icon="outline-stock"
-      :variant="!!keyword ? 'search' : 'empty'"
+      :variant="hasActiveFilters || keyword ? 'search' : 'empty'"
     >
       <template v-if="hasSelectedFacets || keyword" #button>
         <VcButton prepend-icon="reset" @click="$emit('resetFilterKeyword')">
