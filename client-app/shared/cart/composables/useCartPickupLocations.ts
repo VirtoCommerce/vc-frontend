@@ -10,6 +10,10 @@ import type {
   FacetTermType,
 } from "@/core/api/graphql/types";
 
+const COUNTRY_NAME_FACET = "address_countryname";
+const REGION_NAME_FACET = "address_regionname";
+const CITY_FACET = "address_city";
+
 export type PickupLocationsFilterOptionsType = {
   countries: FacetTermType[];
   regions: FacetTermType[];
@@ -25,9 +29,9 @@ export function _useCartPickupLocations() {
   const pickupLocationsFilterOptions = computed(
     () =>
       ({
-        countries: termFacets.value?.find((f) => f.name === "address_countryname")?.terms ?? [],
-        regions: termFacets.value?.find((f) => f.name === "address_regionname")?.terms ?? [],
-        cities: termFacets.value?.find((f) => f.name === "address_city")?.terms ?? [],
+        countries: termFacets.value?.find((f) => f.name === COUNTRY_NAME_FACET)?.terms ?? [],
+        regions: termFacets.value?.find((f) => f.name === REGION_NAME_FACET)?.terms ?? [],
+        cities: termFacets.value?.find((f) => f.name === CITY_FACET)?.terms ?? [],
       }) as PickupLocationsFilterOptionsType,
   );
 
@@ -40,21 +44,26 @@ export function _useCartPickupLocations() {
 
   function buildFilter(): string | undefined {
     if (filterCity.value) {
-      return `address_city:"${filterCity.value}"`;
+      return `${CITY_FACET}:"${filterCity.value}"`;
     }
     if (filterRegion.value) {
-      return `address_regionname:"${filterRegion.value}"`;
+      return `${REGION_NAME_FACET}:"${filterRegion.value}"`;
     }
     if (filterCountry.value) {
-      return `address_countryname:"${filterCountry.value}"`;
+      return `${COUNTRY_NAME_FACET}:"${filterCountry.value}"`;
     }
     return undefined;
   }
 
-  async function fetchPickupLocations(payload: Omit<QueryCartPickupLocationsArgs, "storeId" | "cultureName">) {
+  async function fetchPickupLocations(
+    payload: Omit<QueryCartPickupLocationsArgs, "storeId" | "cultureName" | "facet">,
+  ) {
     pickupLocationsLoading.value = true;
     try {
-      const data: ProductPickupLocationConnection = await getCartPickupLocations(payload);
+      const data: ProductPickupLocationConnection = await getCartPickupLocations({
+        facet: `${COUNTRY_NAME_FACET} ${REGION_NAME_FACET} ${CITY_FACET}`,
+        ...payload,
+      });
       pickupLocations.value = data.items ?? [];
       termFacets.value =
         (data as ProductPickupLocationConnection & { term_facets?: TermFacet[] }).term_facets ?? undefined;

@@ -47,7 +47,6 @@ export function useBopis() {
     cartId,
     keyword,
     filter,
-    facet,
     sort,
     first,
     after,
@@ -55,12 +54,11 @@ export function useBopis() {
     cartId: string;
     keyword?: string;
     filter?: string;
-    facet?: string;
     sort?: string;
     first?: number;
     after?: string;
   }) {
-    await fetchPickupLocations({ cartId, keyword, filter, facet, sort, first, after });
+    await fetchPickupLocations({ cartId, keyword, filter, sort, first, after });
   }
 
   const { openModal } = useModal();
@@ -69,7 +67,6 @@ export function useBopis() {
     await fetchAddresses({
       cartId,
       first: ADDRESSES_FETCH_LIMIT,
-      facet: "address_countryname address_city address_regionname",
     });
 
     openModal({
@@ -88,7 +85,6 @@ export function useBopis() {
             first: ADDRESSES_FETCH_LIMIT,
             keyword,
             filter,
-            facet: "address_countryname address_city address_regionname",
           });
         },
         omitFieldsOnCompare: [
