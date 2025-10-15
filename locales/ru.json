@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "Опции",
-          "select_to_proceed": "Выберите параметры, чтобы продолжить"
+          "select_to_proceed": "Выберите параметры, чтобы продолжить",
+          "price_unavailable": "Товар нельзя купить в выбранной валюте"
         }
       },
       "discount_badge": {

@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "オプション",
-          "select_to_proceed": "オプションを選択して続行"
+          "select_to_proceed": "オプションを選択して続行",
+          "price_unavailable": "この商品は選択した通貨では購入できません"
         }
       },
       "discount_badge": {

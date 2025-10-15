@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "Alternativ",
-          "select_to_proceed": "Välj alternativ för att fortsätta"
+          "select_to_proceed": "Välj alternativ för att fortsätta",
+          "price_unavailable": "Produkten kan inte köpas i vald valuta"
         }
       },
       "discount_badge": {

@@ -676,7 +676,8 @@
         },
         "options": {
           "title": "选项",
-          "select_to_proceed": "选择选项以继续"
+          "select_to_proceed": "选择选项以继续",
+          "price_unavailable": "该商品无法使用所选货币购买"
         }
       },
       "discount_badge": {
