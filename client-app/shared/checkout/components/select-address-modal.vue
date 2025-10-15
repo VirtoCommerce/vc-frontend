@@ -57,6 +57,44 @@
       </div>
     </template>
 
+    <div v-if="showFilters" class="flex items-center gap-2 pb-3">
+      <VcSelect
+        v-model="selectedCountry"
+        :items="countries"
+        text-field="label"
+        value-field="term"
+        :placeholder="$t('common.labels.country')"
+        class="w-44"
+        @change="applyFilters"
+      />
+      <VcSelect
+        v-model="selectedRegion"
+        :items="regions"
+        text-field="label"
+        value-field="term"
+        :placeholder="$t('common.labels.region')"
+        class="w-44"
+        @change="applyFilters"
+      />
+      <VcSelect
+        v-model="selectedCity"
+        :items="cities"
+        text-field="label"
+        value-field="term"
+        :placeholder="$t('common.labels.city')"
+        class="w-44"
+        @change="applyFilters"
+      />
+      <VcInput
+        v-model="keyword"
+        :placeholder="$t('common.labels.search')"
+        class="grow"
+        clearable
+        @keyup.enter="applyFilters"
+      />
+      <VcButton icon="search" @click="applyFilters" />
+    </div>
+
     <div class="rounded border">
       <VcTable
         :columns="columns"
@@ -144,6 +182,9 @@
           <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
             {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
           </div>
+          <VcButton v-if="showFilters" prepend-icon="reset" @click="resetFilters">
+            {{ $t("pages.account.orders.buttons.reset_search") }}
+          </VcButton>
         </template>
 
         <template #desktop-item="{ item }">
@@ -215,10 +256,13 @@
         <template #desktop-empty>
           <tr>
             <td :colspan="showAvailability ? 5 : 4">
-              <div class="flex items-center p-5">
+              <div class="flex flex-col items-center p-5">
                 <span class="text-base">
                   {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
                 </span>
+                <VcButton v-if="showFilters" class="mt-5" prepend-icon="reset" @click="resetFilters">
+                  {{ $t("pages.account.orders.buttons.reset_search") }}
+                </VcButton>
               </div>
             </td>
           </tr>
@@ -234,7 +278,7 @@ import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
-import type { MemberAddressType } from "@/core/api/graphql/types";
+import type { MemberAddressType, TermFacet } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
@@ -246,6 +290,9 @@ interface IProps {
   showAvailability?: boolean;
   emptyText?: string;
   omitFieldsOnCompare?: (keyof MemberAddressType)[];
+  showFilters?: boolean;
+  facets?: TermFacet[];
+  onFilterChange?: (payload: { keyword?: string; filter?: string }) => void;
 }
 
 interface IEmits {
@@ -259,12 +306,51 @@ const props = withDefaults(defineProps<IProps>(), {
   addresses: () => [],
   allowAddNewAddress: true,
   showAvailability: false,
+  showFilters: false,
   omitFieldsOnCompare: () => [],
 });
 
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
+
+const keyword = ref<string>("");
+const selectedCountry = ref<string | undefined>();
+const selectedRegion = ref<string | undefined>();
+const selectedCity = ref<string | undefined>();
+
+const filterApplied = ref(false);
+
+const countries = computed(() => props.facets?.find((f) => f.name === "address_countryname")?.terms ?? []);
+const regions = computed(() => props.facets?.find((f) => f.name === "address_regionname")?.terms ?? []);
+const cities = computed(() => props.facets?.find((f) => f.name === "address_city")?.terms ?? []);
+
+function buildFilter(): string | undefined {
+  if (selectedCity.value) {
+    return `address_city:"${selectedCity.value}"`;
+  }
+  if (selectedRegion.value) {
+    return `address_regionname:"${selectedRegion.value}"`;
+  }
+  if (selectedCountry.value) {
+    return `address_countryname:"${selectedCountry.value}"`;
+  }
+  return undefined;
+}
+
+function applyFilters() {
+  filterApplied.value = true;
+  props.onFilterChange?.({ keyword: keyword.value || undefined, filter: buildFilter() });
+}
+
+function resetFilters() {
+  keyword.value = "";
+  selectedCountry.value = undefined;
+  selectedRegion.value = undefined;
+  selectedCity.value = undefined;
+
+  applyFilters();
+}
 
 const selectedAddress = ref<AnyAddressType>();
 const page = ref(1);

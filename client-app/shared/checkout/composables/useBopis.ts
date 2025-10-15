@@ -9,7 +9,7 @@ import type { AnyAddressType } from "@/core/types";
 
 export const BOPIS_CODE = "BuyOnlinePickupInStore";
 
-const ADDRESSES_FETCH_LIMIT = 999;
+const ADDRESSES_FETCH_LIMIT = 20;
 
 export function useBopis() {
   const { t } = useI18n();
@@ -107,6 +107,7 @@ export function useBopis() {
         isCorporateAddresses: true,
         allowAddNewAddress: false,
         showAvailability: true,
+        showFilters: true,
         emptyText: t("pages.account.order_details.bopis.cart_pickup_points_not_found"),
 
         onResult: async (addressOrAddressId: AnyAddressType | string) => {
