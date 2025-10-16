@@ -315,7 +315,7 @@ export function useProducts(
     const filteredFilters = productsFilters.value.filters.filter(
       (filter) => !normalizedFacetsToHide.value?.includes(filter.name.toLowerCase()),
     );
-    return !!filteredFacets.length && !!filteredFilters.length;
+    return !!filteredFacets.length || !!filteredFilters.length;
   }
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
