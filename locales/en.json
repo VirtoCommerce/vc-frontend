@@ -212,7 +212,8 @@
       "password_expired": "Your password is expired",
       "data_changed": "The data has been modified on one of the other tabs. Refresh the page to display the latest data.",
       "logo_changed": "Logo was successfully changed.",
-      "logo_deleted": "Logo was deleted."
+      "logo_deleted": "Logo was deleted.",
+      "pending_operations_leaving_page_confirmation": "Some operations are still in progress. Are you sure you want to leave this page? Unsaved changes may be lost."
     },
     "placeholders": {
       "enter_value": "Enter a value",
@@ -1133,7 +1134,7 @@
         "total_label": "@:common.labels.total",
         "no_orders_img_alt": "No orders",
         "no_orders_message": "There are no orders yet",
-        "no_results_message": "No results found",
+        "no_results_message": "There are no results found",
         "buttons": {
           "no_orders": "Continue browsing",
           "reset_search": "Reset search"
@@ -1276,7 +1277,7 @@
         "search_placeholder": "Search by name, role or email",
         "no_members_img_alt": "No members",
         "no_members_message": "There are no members yet",
-        "no_results_message": "No results found",
+        "no_results_message": "There are no results found",
         "invite_sent": "Invite sent",
         "filters": "Members filters",
         "labels": {
@@ -1367,7 +1368,7 @@
       "customize_button": "Customize",
       "show_on_a_separate_page": "Show on a separate page",
       "no_products_message": "There are no products in this category",
-      "no_products_filtered_message": "No results found",
+      "no_products_filtered_message": "There are no results found",
       "no_facet_found_message": "No results",
       "no_products_button": "Reset search",
       "products_icon": "Product icon",
@@ -1378,7 +1379,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku successfully copied",
-      "variations_total_label": "Total in cart:",
+      "variations_in_cart_label": "Variations in cart:",
       "view_cart_button": "View cart",
       "recommended_products": {
         "related-products_section_title": "Recommended For You",
