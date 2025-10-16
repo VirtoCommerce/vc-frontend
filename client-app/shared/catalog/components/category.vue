@@ -20,7 +20,7 @@
       />
 
       <VcLayout sticky-sidebar>
-        <template v-if="!hideSidebar && !isMobile && !isHorizontalFilters && !emptyViewSearchOnly" #sidebar>
+        <template v-if="isSidebarVisible" #sidebar>
           <CategorySelector
             v-if="categoryId || isRoot"
             :category="currentCategory"
@@ -64,10 +64,7 @@
             {{ currentCategory?.name }}
           </span>
 
-          <sup
-            v-if="!fetchingProducts && !hideTotal && !fixedProductsCount && !emptyViewSearchOnly"
-            class="category__products-count"
-          >
+          <sup v-if="showProductsCount" class="category__products-count">
             <b class="me-1">{{ $n(totalProductsCount, "decimal") }}</b>
 
             <template v-if="currentCategory && searchQueryParam">
@@ -413,6 +410,13 @@ const emptyViewSearchOnly = computed(() => {
 });
 const hideAllControls = computed(() => {
   return emptyViewSearchOnly.value;
+});
+
+const isSidebarVisible = computed(() => {
+  return !props.hideSidebar && !isMobile.value && !isHorizontalFilters.value && !emptyViewSearchOnly.value;
+});
+const showProductsCount = computed(() => {
+  return !fetchingProducts.value && !props.hideTotal && !props.fixedProductsCount && !emptyViewSearchOnly.value;
 });
 
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
