@@ -212,7 +212,8 @@
       "password_expired": "Passordet ditt har utløpt",
       "data_changed": "Data har endret seg i en annen fane. Oppdater siden for å se de nyeste dataene.",
       "logo_changed": "Logoen er endret.",
-      "logo_deleted": "Logoen er slettet."
+      "logo_deleted": "Logoen er slettet.",
+      "pending_operations_leaving_page_confirmation": "Noen operasjoner er fortsatt i gang. Er du sikker på at du vil forlate denne siden? Endringer som ikke er lagret kan gå tapt."
     },
     "placeholders": {
       "enter_value": "Skriv inn verdi",
@@ -1380,7 +1381,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku kopiert",
-      "variations_total_label": "Totalt i handlekurven din:",
+      "variations_in_cart_label": "Varianter i handlekurv:",
       "view_cart_button": "Vis handlekurv",
       "recommended_products": {
         "related-products_section_title": "Produkter relatert til dette produktet",

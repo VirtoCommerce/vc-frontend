@@ -212,7 +212,8 @@
       "password_expired": "Ditt lösenord har upphört",
       "data_changed": "Data har ändrats på en av de andra flikarna. Uppdatera sidan för att visa de senaste uppgifterna.",
       "logo_changed": "Logotypen har ändrats framgångsrikt.",
-      "logo_deleted": "Logotypen har raderats."
+      "logo_deleted": "Logotypen har raderats.",
+      "pending_operations_leaving_page_confirmation": "Vissa åtgärder pågår fortfarande. Vill du verkligen lämna den här sidan? Ändringar som inte sparats kan gå förlorade."
     },
     "placeholders": {
       "enter_value": "Ange ett värde",
@@ -1380,7 +1381,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku kopierades framgångsrikt",
-      "variations_total_label": "Totalt i din kundvagn:",
+      "variations_in_cart_label": "Varianter i varukorgen:",
       "view_cart_button": "Visa kundvagn",
       "recommended_products": {
         "related-products_section_title": "Produkter relaterade till denna artikel",

@@ -212,7 +212,8 @@
       "password_expired": "パスワードが期限切れです",
       "data_changed": "他のタブのいずれかでデータが変更されました。現在のデータを表示するには、ページを更新してください。",
       "logo_changed": "ロゴが正常に変更されました。",
-      "logo_deleted": "ロゴが削除されました。"
+      "logo_deleted": "ロゴが削除されました。",
+      "pending_operations_leaving_page_confirmation": "いくつかの操作がまだ進行中です。このページから移動してもよろしいですか？保存されていない変更は失われる可能性があります。"
     },
     "placeholders": {
       "enter_value": "入力してください",
@@ -898,14 +899,14 @@
         "edit_mode_title": "List Settings",
         "list_name_label": "List name",
         "list_name_placeholder": "Please enter name",
+        "sharing_scope_label": "共有オプション",
+        "sharing_scope_placeholder": "いずれか 1 つを選択してください",
+        "sharing_link_label": "リンク",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Private list",
         "make_shared": "Make shared",
-        "sharing_scope_label": "共有オプション",
-        "sharing_scope_placeholder": "いずれか 1 つを選択してください",
-        "sharing_link_label": "リンク",
         "sharing_scope": {
           "Private": "プライベート",
           "Organization": "組織",
@@ -1380,7 +1381,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.skuをコピーしました",
-      "variations_total_label": "カート内の合計：",
+      "variations_in_cart_label": "カート内のバリエーション：",
       "view_cart_button": "カートを見る",
       "recommended_products": {
         "related-products_section_title": "おすすめ商品",

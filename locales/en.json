@@ -212,7 +212,8 @@
       "password_expired": "Your password is expired",
       "data_changed": "The data has been modified on one of the other tabs. Refresh the page to display the latest data.",
       "logo_changed": "Logo was successfully changed.",
-      "logo_deleted": "Logo was deleted."
+      "logo_deleted": "Logo was deleted.",
+      "pending_operations_leaving_page_confirmation": "Some operations are still in progress. Are you sure you want to leave this page? Unsaved changes may be lost."
     },
     "placeholders": {
       "enter_value": "Enter a value",
@@ -1380,7 +1381,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku successfully copied",
-      "variations_total_label": "Total in cart:",
+      "variations_in_cart_label": "Variations in cart:",
       "view_cart_button": "View cart",
       "recommended_products": {
         "related-products_section_title": "Recommended For You",
