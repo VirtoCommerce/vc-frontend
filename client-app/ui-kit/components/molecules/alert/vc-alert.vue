@@ -10,9 +10,11 @@
       },
     ]"
   >
-    <slot name="main-icon">
-      <VcIcon v-if="icon" :name="iconName" class="vc-alert__icon" />
-    </slot>
+    <div v-if="icon || $slots['main-icon']" class="vc-alert__icon">
+      <slot name="main-icon">
+        <VcIcon :name="iconName" />
+      </slot>
+    </div>
 
     <div class="vc-alert__content">
       <div v-if="title" class="vc-alert__title">{{ title }}</div>
@@ -90,7 +92,7 @@ const iconName = computed<string>(() => {
   --radius: var(--vc-alert-radius, var(--vc-radius, 0.5rem));
   --close-button-icon-color: var(--color-neutral-900);
 
-  @apply flex items-stretch border rounded-[--radius] bg-[--bg-color] border-[--border-color] text-[--text-color];
+  @apply flex items-start border rounded-[--radius] bg-[--bg-color] border-[--border-color] text-[--text-color];
 
   &--shadow {
     @apply shadow-lg;
@@ -100,13 +102,13 @@ const iconName = computed<string>(() => {
     &--sm {
       --icon-size: 1.125rem;
 
-      @apply ps-[0.438rem] pe-[0.625rem] py-[0.313rem] min-h-[1.875rem] text-xs/[0.875rem];
+      @apply ps-[0.438rem] pe-[0.625rem] py-[0.313rem] text-xs/[0.875rem];
     }
 
     &--md {
       --icon-size: 1.25rem;
 
-      @apply p-[0.688rem] min-h-[2.75rem] text-sm/[1.125rem];
+      @apply p-[0.688rem] text-sm/[1.125rem];
     }
   }
 
@@ -167,11 +169,11 @@ const iconName = computed<string>(() => {
     --vc-icon-size: var(--icon-size);
     --vc-icon-color: var(--icon-color);
 
-    @apply shrink-0 mt-0.5 me-2;
+    @apply shrink-0 me-2;
   }
 
   &__content {
-    @apply grow flex flex-col justify-center [word-break:break-word];
+    @apply grow self-center flex flex-col justify-center [word-break:break-word];
 
     &:first-child {
       @apply ps-1;
@@ -190,7 +192,7 @@ const iconName = computed<string>(() => {
     --vc-icon-size: 0.875rem;
     --vc-icon-color: currentColor;
 
-    @apply flex items-center justify-center -mt-1 -me-2 size-7;
+    @apply flex items-center justify-center -my-1 -me-2 size-7;
   }
 }
 </style>
