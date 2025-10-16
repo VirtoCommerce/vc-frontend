@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, shallowRef, toRefs, watch, ref, useSlots, computed } from "vue";
+import { onBeforeUnmount, shallowRef, toRefs, watch, ref, useSlots, computed, nextTick } from "vue";
 import { Logger } from "@/core/utilities";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 
@@ -100,12 +100,17 @@ function init() {
   }
 }
 
-const unwatch = watch(map, () => {
-  if (map.value && !marker.value) {
-    init();
-    unwatch();
-  }
-});
+const unwatch = watch(
+  map,
+  async () => {
+    if (map.value && !marker.value) {
+      init();
+      await nextTick();
+      unwatch();
+    }
+  },
+  { immediate: true },
+);
 
 watch(
   isActive,

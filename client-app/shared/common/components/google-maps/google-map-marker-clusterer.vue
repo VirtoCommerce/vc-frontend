@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import { onBeforeUnmount, toRefs, watch } from "vue";
+import { onBeforeUnmount, toRefs, watch, nextTick } from "vue";
 import { Logger } from "@/core/utilities";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 import type { MarkerClustererOptions } from "@googlemaps/markerclusterer";
@@ -42,13 +42,14 @@ function createMarkerClusterer() {
 
 const unwatch = watch(
   map,
-  () => {
+  async () => {
     if (map.value) {
       createMarkerClusterer();
+      await nextTick();
       unwatch();
     }
   },
-  { immediate: false },
+  { immediate: true },
 );
 
 watch(
