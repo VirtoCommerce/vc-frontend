@@ -102,6 +102,15 @@
             "priority": 50
           },
           {
+            "id": "saved-for-later",
+            "route": {
+              "name": "SavedForLater"
+            },
+            "title": "shared.layout.header.mobile.account_menu.saved_for_later",
+            "icon": "list-v2",
+            "priority": 55
+          },
+          {
             "id": "lists",
             "route": {
               "name": "Lists"
@@ -235,6 +244,14 @@
             "title": "shared.layout.header.mobile.account_menu.orders",
             "icon": "clipboard-list",
             "priority": 40
+          },
+          {
+            "route": {
+              "name": "SavedForLater"
+            },
+            "title": "shared.layout.header.mobile.account_menu.saved_for_later",
+            "icon": "list-v2",
+            "priority": 45
           },
           {
             "route": {

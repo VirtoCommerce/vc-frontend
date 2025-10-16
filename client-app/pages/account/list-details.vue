@@ -49,6 +49,7 @@
           </VcButton>
 
           <VcButton
+            v-if="!hideSettings"
             :disabled="loading || !list"
             size="sm"
             variant="outline"
@@ -160,6 +161,7 @@ import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-it
 
 interface IProps {
   listId: string;
+  hideSettings?: boolean;
 }
 
 const props = defineProps<IProps>();

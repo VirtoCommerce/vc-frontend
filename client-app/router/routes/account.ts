@@ -10,6 +10,7 @@ const OrderDetails = () => import("@/pages/account/order-details.vue");
 const OrderPayment = () => import("@/pages/account/order-payment.vue");
 const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
+const SavedForLaterDetails = () => import("@/pages/account/saved-for-later-details.vue");
 const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
 const Impersonate = () => import("@/pages/account/impersonate.vue");
 
@@ -55,6 +56,10 @@ export const accountRoutes: RouteRecordRaw[] = [
         meta: { hideLeftSidebar: true },
       },
     ],
+  },
+  {
+    path: "saved-for-later",
+    children: [{ path: "", name: "SavedForLater", component: SavedForLaterDetails }],
   },
   {
     path: "lists",
