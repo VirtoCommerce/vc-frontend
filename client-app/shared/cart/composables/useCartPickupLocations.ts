@@ -6,7 +6,6 @@ import type {
   ProductPickupLocation,
   QueryCartPickupLocationsArgs,
   TermFacet,
-  ProductPickupLocationConnection,
   FacetTermType,
 } from "@/core/api/graphql/types";
 
@@ -67,13 +66,12 @@ export function _useCartPickupLocations() {
   ) {
     pickupLocationsLoading.value = true;
     try {
-      const data: ProductPickupLocationConnection = await getCartPickupLocations({
+      const data = await getCartPickupLocations({
         facet: `${COUNTRY_NAME_FACET} ${REGION_NAME_FACET} ${CITY_FACET}`,
         ...payload,
       });
       pickupLocations.value = data.items ?? [];
-      termFacets.value =
-        (data as ProductPickupLocationConnection & { term_facets?: TermFacet[] }).term_facets ?? undefined;
+      termFacets.value = data.term_facets ?? undefined;
     } catch (e) {
       Logger.error(`${useCartPickupLocations.name}.${fetchPickupLocations.name}`, e);
       throw e;
