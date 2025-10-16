@@ -229,7 +229,7 @@ jobs:
       installModules: 'false'
       installCustomModule: 'true'
       runTests: 'true'
-      vctestingRepoBranch: 'vcst-4059' #'dev'
+      vctestingRepoBranch: 'dev'
       frontendZipUrl: ${{ needs.ci.outputs.artifactUrl }}
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
