@@ -91,12 +91,13 @@
       <VcInput
         v-model="filterKeyword"
         :placeholder="$t('common.labels.search')"
+        :aria-label="$t('common.labels.search')"
         class="grow"
         clearable
         @keyup.enter="applyFilter"
       />
 
-      <VcButton icon="search" @click="applyFilter" />
+      <VcButton icon="search" :aria-label="$t('common.labels.search')" @click="applyFilter" />
     </div>
 
     <div class="rounded border">
@@ -184,11 +185,15 @@
 
         <template #mobile-empty>
           <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
-            {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
+            <span>{{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}</span>
+
+            <VcButton
+              v-if="showFilters"
+              icon="reset"
+              @click="resetFilter"
+              :aria-label="$t('pages.account.order_details.bopis.cart_pickup_points_reset_search')"
+            />
           </div>
-          <VcButton v-if="showFilters" prepend-icon="reset" @click="resetFilter">
-            {{ $t("pages.account.orders.buttons.reset_search") }}
-          </VcButton>
         </template>
 
         <template #desktop-item="{ item }">
@@ -265,8 +270,14 @@
                   {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
                 </span>
 
-                <VcButton v-if="showFilters" class="mt-5" prepend-icon="reset" @click="resetFilter">
-                  {{ $t("pages.account.orders.buttons.reset_search") }}
+                <VcButton
+                  v-if="showFilters"
+                  class="mt-5"
+                  prepend-icon="reset"
+                  @click="resetFilter"
+                  :aria-label="$t('pages.account.order_details.bopis.cart_pickup_points_reset_search')"
+                >
+                  {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
                 </VcButton>
               </div>
             </td>

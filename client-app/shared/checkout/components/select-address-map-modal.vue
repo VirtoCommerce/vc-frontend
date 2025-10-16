@@ -41,12 +41,13 @@
         <VcInput
           v-model="filterKeyword"
           :placeholder="$t('common.labels.search')"
+          :aria-label="$t('common.labels.search')"
           class="grow"
           clearable
           @keyup.enter="applyFilter"
         />
 
-        <VcButton icon="search" @click="applyFilter" />
+        <VcButton icon="search" :aria-label="$t('common.labels.search')" @click="applyFilter" />
       </div>
       <div class="select-address-map-modal__content">
         <GoogleMap
@@ -173,8 +174,12 @@
           <div v-else class="select-address-map-modal__not-found">
             <span>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}</span>
 
-            <VcButton prepend-icon="reset" @click="resetFilter">
-              {{ $t("pages.account.orders.buttons.reset_search") }}
+            <VcButton
+              prepend-icon="reset"
+              @click="resetFilter"
+              :aria-label="$t('pages.account.order_details.bopis.cart_pickup_points_reset_search')"
+            >
+              {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
             </VcButton>
           </div>
         </VcScrollbar>
