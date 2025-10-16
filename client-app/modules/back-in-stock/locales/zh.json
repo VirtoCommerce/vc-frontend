@@ -8,6 +8,7 @@
     },
     "list_details": {
       "empty_list": "您的列表为空",
+      "no_results_message": "未找到结果",
       "empty_list_button": "继续浏览"
     },
     "messages": {
