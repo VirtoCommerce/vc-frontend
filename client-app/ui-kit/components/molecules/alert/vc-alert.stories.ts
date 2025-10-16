@@ -1,4 +1,5 @@
 import { VcAlert } from "..";
+import { VcIcon } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const COLORS = ["info", "success", "warning", "danger"];
@@ -51,40 +52,78 @@ export default {
 
 type StoryType = StoryObj<typeof VcAlert>;
 
-export const Basic: StoryType = {
-  args: {},
+// 1. Basic examples
+export const Basic: StoryType = { args: {} };
+
+export const WithTitle: StoryType = { args: { title: "Alert" } };
+
+// 2. Variants
+export const VariantSolidLight: StoryType = {
+  args: { variant: "solid-light" },
 };
 
-export const Title: StoryType = {
-  args: {
-    title: "Alert",
-  },
+export const VariantOutline: StoryType = { args: { variant: "outline" } };
+
+export const VariantOutlineDark: StoryType = {
+  args: { variant: "outline-dark" },
 };
 
-export const Outline: StoryType = {
-  args: {
-    variant: "outline",
-  },
+// 3. Sizes
+export const SizeSm: StoryType = { args: { size: "sm" } };
+
+// 4. Colors
+export const ColorInfo: StoryType = { args: { color: "info" } };
+
+export const ColorSuccess: StoryType = { args: { color: "success" } };
+
+export const ColorWarning: StoryType = { args: { color: "warning" } };
+
+export const ColorDanger: StoryType = { args: { color: "danger" } };
+
+// 5. Icons
+export const IconAuto: StoryType = { args: { icon: true } };
+
+export const IconCustom: StoryType = {
+  args: { icon: "cog" },
 };
 
-export const Icon: StoryType = {
-  args: {
-    icon: true,
-  },
+export const SlotMainIcon: StoryType = {
+  args: { icon: false },
+  render: (args) => ({
+    components: { VcAlert, VcIcon },
+    setup: () => ({ args }),
+    template: `<VcAlert v-bind="args">
+      <template #main-icon>
+        <VcIcon name="cart" />
+      </template>
+      Custom main icon via slot
+    </VcAlert>`,
+  }),
 };
 
-export const Shadow: StoryType = {
-  args: {
-    shadow: true,
-  },
+export const SlotCloseIcon: StoryType = {
+  args: { closable: true },
+  render: (args) => ({
+    components: { VcAlert, VcIcon },
+    setup: () => ({ args }),
+    template: `<VcAlert v-bind="args">
+      <template #close-icon>
+        <VcIcon name="delete" />
+      </template>
+      Custom close icon via slot
+    </VcAlert>`,
+  }),
 };
+
+// 6. Shadow & Closable
+export const WithShadow: StoryType = { args: { shadow: true } };
 
 export const Closable: StoryType = {
-  args: {
-    closable: true,
-  },
+  args: { closable: true },
+  parameters: { actions: { handles: ["close"] } },
 };
 
+// 7. Kitchen sink
 export const AllStates: StoryType = {
   render: () => ({
     components: { VcAlert },
@@ -92,10 +131,8 @@ export const AllStates: StoryType = {
     template: `<div class="space-y-6">
       <div v-for="size in sizes" class="space-y-6">
         <div class="text-sm font-bold border-b">Size: {{ size }}</div>
-
         <div class="flex flex-wrap gap-1 items-center" v-for="variant in variants">
           <div class="w-32 text-xs">Variant: <b>{{ variant }}</b></div>
-
           <div class="grow space-y-1">
             <VcAlert v-for="color in colors" :color="color" :variant="variant" :size="size" icon closable>
               Color: {{ color }}
