@@ -17,6 +17,7 @@
           class="w-44"
           @change="applyFilter"
         />
+
         <VcSelect
           v-model="filterRegion"
           :items="filterOptions?.regions ?? []"
@@ -26,6 +27,7 @@
           class="w-44"
           @change="applyFilter"
         />
+
         <VcSelect
           v-model="filterCity"
           :items="filterOptions?.cities ?? []"
@@ -35,6 +37,7 @@
           class="w-44"
           @change="applyFilter"
         />
+
         <VcInput
           v-model="filterKeyword"
           :placeholder="$t('common.labels.search')"
@@ -42,6 +45,7 @@
           clearable
           @keyup.enter="applyFilter"
         />
+
         <VcButton icon="search" @click="applyFilter" />
       </div>
       <div class="select-address-map-modal__content">
@@ -168,6 +172,7 @@
           </ul>
           <div v-else class="select-address-map-modal__not-found">
             <span>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}</span>
+
             <VcButton prepend-icon="reset" @click="resetFilter">
               {{ $t("pages.account.orders.buttons.reset_search") }}
             </VcButton>

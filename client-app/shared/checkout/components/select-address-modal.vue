@@ -67,6 +67,7 @@
         class="w-44"
         @change="applyFilter"
       />
+
       <VcSelect
         v-model="filterRegion"
         :items="filterOptions?.regions ?? []"
@@ -76,6 +77,7 @@
         class="w-44"
         @change="applyFilter"
       />
+
       <VcSelect
         v-model="filterCity"
         :items="filterOptions?.cities ?? []"
@@ -85,6 +87,7 @@
         class="w-44"
         @change="applyFilter"
       />
+
       <VcInput
         v-model="filterKeyword"
         :placeholder="$t('common.labels.search')"
@@ -92,6 +95,7 @@
         clearable
         @keyup.enter="applyFilter"
       />
+
       <VcButton icon="search" @click="applyFilter" />
     </div>
 
@@ -260,6 +264,7 @@
                 <span class="text-base">
                   {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
                 </span>
+
                 <VcButton v-if="showFilters" class="mt-5" prepend-icon="reset" @click="resetFilter">
                   {{ $t("pages.account.orders.buttons.reset_search") }}
                 </VcButton>
