@@ -155,13 +155,19 @@
           />
 
           <ActiveFilterChips
-            v-if="hasSelectedFacets || isResetPageButtonShown"
+            v-if="hasSelectedFilters || isResetPageButtonShown"
             :filters="productsFilters.filters"
             :facets-to-hide="normalizedFacetsToHide"
             @apply-filters="applyFiltersOnly"
           >
             <template #actions>
-              <VcChip v-if="hasSelectedFacets" color="secondary" variant="outline" clickable @click="resetFacetFilters">
+              <VcChip
+                v-if="hasSelectedFilters"
+                color="secondary"
+                variant="outline"
+                clickable
+                @click="resetFacetFilters"
+              >
                 <span>{{ $t("common.buttons.reset_filters") }}</span>
 
                 <VcIcon name="reset" />
@@ -186,9 +192,9 @@
           :fetching-products="fetchingProducts"
           :fixed-products-count="fixedProductsCount"
           :has-active-filters="
-            hasSelectedFacets || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
+            hasSelectedFilters || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
           "
-          :has-selected-facets="hasSelectedFacets"
+          :has-selected-facets="hasSelectedFilters"
           :items-per-page="itemsPerPage"
           :pages-count="pagesCount"
           :page-number="currentPage"
@@ -341,6 +347,7 @@ const {
   fetchingProducts,
   fetchingFacets,
   hasSelectedFacets,
+  hasSelectedFilters,
   isFiltersSidebarVisible,
   keywordQueryParam,
   localStorageBranches,
@@ -403,7 +410,7 @@ const categoryListProperties = computed(() => ({
 }));
 
 const filteredOnlyBySearch = computed(() => {
-  return !hasSelectedFacets.value && searchQueryParam.value;
+  return !hasSelectedFilters.value && !!searchQueryParam.value;
 });
 const emptyViewSearchOnly = computed(() => {
   return filteredOnlyBySearch.value && products.value.length === 0 && !fetchingProducts.value;

@@ -315,7 +315,11 @@ export function useProducts(
     const filteredFilters = productsFilters.value.filters.filter(
       (filter) => !normalizedFacetsToHide.value?.includes(filter.name.toLowerCase()),
     );
-    return !!filteredFacets.length || !!filteredFilters.length;
+    return !!filteredFacets.length && !!filteredFilters.length;
+  }
+
+  function hasSelectedFilters(): boolean {
+    return !!productsFilters.value.filters.length;
   }
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
@@ -506,6 +510,7 @@ export function useProducts(
     fetchingMoreProducts: readonly(fetchingMoreProducts),
     fetchingProducts: readonly(fetchingProducts),
     hasSelectedFacets: computed(() => hasSelectedFacets()),
+    hasSelectedFilters: computed(() => hasSelectedFilters()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
     /** @deprecated use `searchQueryParam` instead */
