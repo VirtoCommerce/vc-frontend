@@ -118,7 +118,14 @@ withDefaults(defineProps<IProps>(), {
     &--solid--#{$color} {
       --bg-color: var(--color-#{$color}-500);
       --border-color: var(--color-#{$color}-500);
-      --text-color: var(--color-additional-50);
+
+      &:not([class*="--warning"]) {
+        --text-color: var(--color-additional-50);
+      }
+
+      &[class*="--warning"] {
+        --text-color: var(--color-neutral-900);
+      }
     }
 
     &--solid-light--#{$color} {
@@ -131,8 +138,15 @@ withDefaults(defineProps<IProps>(), {
     &--outline--#{$color} {
       --bg-color: var(--color-additional-50);
       --border-color: var(--color-#{$color}-500);
-      --text-color: var(--color-#{$color}-800);
       --vc-icon-color: var(--color-#{$color}-700);
+
+      &:not([class*="--warning"]) {
+        --text-color: var(--color-#{$color}-500);
+      }
+
+      &[class*="--warning"] {
+        --text-color: var(--color-warning-700);
+      }
     }
 
     &--outline-dark--#{$color} {
