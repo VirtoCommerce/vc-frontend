@@ -28,7 +28,7 @@
         @click="$emit('close')"
       >
         <slot name="close-icon">
-          <VcIcon name="delete-2" />
+          <VcIcon name="delete-thin" />
         </slot>
       </button>
     </div>
@@ -86,12 +86,11 @@ const iconName = computed<string>(() => {
 <style lang="scss">
 .vc-alert {
   $colors: success, warning, danger, info;
-  $sizeSm: "";
-  $sizeMd: "";
 
   --radius: var(--vc-alert-radius, var(--vc-radius, 0.5rem));
+  --close-button-icon-color: var(--color-neutral-900);
 
-  @apply flex items-stretch border rounded-[--radius];
+  @apply flex items-stretch border rounded-[--radius] bg-[--bg-color] border-[--border-color] text-[--text-color];
 
   &--shadow {
     @apply shadow-lg;
@@ -99,74 +98,76 @@ const iconName = computed<string>(() => {
 
   &--size {
     &--sm {
-      $sizeSm: &;
+      --icon-size: 1.125rem;
 
-      @apply px-[0.438rem] py-[0.313rem] min-h-[1.875rem] text-xs/[0.875rem];
+      @apply ps-[0.438rem] pe-[0.625rem] py-[0.313rem] min-h-[1.875rem] text-xs/[0.875rem];
     }
 
     &--md {
-      $sizeMd: &;
+      --icon-size: 1.25rem;
 
       @apply p-[0.688rem] min-h-[2.75rem] text-sm/[1.125rem];
     }
   }
 
   &--solid {
-    @apply text-additional-50;
+    --text-color: var(--color-additional-50);
+    --icon-color: var(--color-additional-50);
 
     @each $color in $colors {
       &--#{$color} {
-        @apply bg-[--color-#{$color}-500] border-[--color-#{$color}-500];
+        --bg-color: var(--color-#{$color}-500);
+        --border-color: var(--color-#{$color}-500);
       }
+    }
+
+    &--warning {
+      --text-color: var(--color-neutral-900);
+      --icon-color: var(--color-warning-50);
     }
   }
 
   &--solid-light {
-    @apply text-neutral-900;
+    --text-color: var(--color-neutral-900);
 
     @each $color in $colors {
       &--#{$color} {
-        --vc-icon-color: var(--color-#{$color}-500);
-
-        @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-50];
+        --bg-color: var(--color-#{$color}-50);
+        --border-color: var(--color-#{$color}-50);
+        --icon-color: var(--color-#{$color}-500);
       }
     }
   }
 
   &--outline {
-    @apply bg-additional-50 text-neutral-900;
+    --bg-color: var(--color-additional-50);
+    --text-color: var(--color-neutral-900);
 
     @each $color in $colors {
       &--#{$color} {
-        --vc-icon-color: var(--color-#{$color}-500);
-
-        @apply border-[--color-#{$color}-500];
+        --icon-color: var(--color-#{$color}-500);
+        --border-color: var(--color-#{$color}-500);
       }
     }
   }
 
   &--outline-dark {
-    @apply text-neutral-900;
+    --text-color: var(--color-neutral-900);
 
     @each $color in $colors {
       &--#{$color} {
-        --vc-icon-color: var(--color-#{$color}-500);
-
-        @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-500];
+        --bg-color: var(--color-#{$color}-50);
+        --border-color: var(--color-#{$color}-500);
+        --icon-color: var(--color-#{$color}-500);
       }
     }
   }
 
   &__icon {
-    @apply shrink-0 me-2;
+    --vc-icon-size: var(--icon-size);
+    --vc-icon-color: var(--icon-color);
 
-    #{$sizeSm} & {
-      --vc-icon-size: 1.125rem;
-    }
-
-    #{$sizeMd} & {
-      --vc-icon-size: 1.25rem;
-    }
+    @apply shrink-0 mt-0.5 me-2;
   }
 
   &__content {
@@ -186,17 +187,10 @@ const iconName = computed<string>(() => {
   }
 
   &__close-button {
+    --vc-icon-size: 0.875rem;
     --vc-icon-color: currentColor;
 
-    #{$sizeSm} & {
-      --vc-icon-size: 1rem;
-
-      @apply p-px;
-    }
-
-    #{$sizeMd} & {
-      --vc-icon-size: 1.25rem;
-    }
+    @apply flex items-center justify-center -mt-1 -me-2 size-7;
   }
 }
 </style>
