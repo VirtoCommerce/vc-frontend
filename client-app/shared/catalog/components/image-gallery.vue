@@ -26,7 +26,7 @@
         >
           <SwiperSlide v-for="(image, i) in images" :key="image.url || i">
             <VcImage
-              class="image-gallery__img"
+              :class="['image-gallery__img', { 'image-gallery__img--active': activeIndex === i }]"
               :src="image.url"
               :alt="image.name ?? `${$t('common.accessibility.image')} ${i + 1}`"
               :data-te-img="image.url"
@@ -51,6 +51,7 @@
       <VcNavButton :label="$t('common.buttons.previous')" size="xs" direction="left" data-nav-prev />
 
       <Swiper
+        ref="thumbsElement"
         class="image-gallery__thumbs"
         :slides-per-view="THUMBS_PER_VIEW"
         :slides-per-group="THUMBS_PER_VIEW"
@@ -62,6 +63,11 @@
         :loop="showThumbs && images.length > THUMBS_PER_VIEW"
         watch-slides-progress
         @swiper="setThumbsSwiper"
+        tabindex="0"
+        role="button"
+        @keydown.enter.prevent="openLightbox"
+        @keydown.arrow-left.prevent="navigateToPrevious"
+        @keydown.arrow-right.prevent="navigateToNext"
       >
         <SwiperSlide v-for="(image, index) in images" :key="index" class="image-gallery__thumb">
           <VcImage
@@ -132,6 +138,25 @@ const showPagination = computed(() => !isDesktop.value && props.images?.length >
 
 function setActiveIndex() {
   activeIndex.value = imagesSwiper.value?.realIndex ?? 0;
+}
+
+function navigateToPrevious() {
+  if (imagesSwiper.value && imagesSwiper.value.allowSlidePrev) {
+    imagesSwiper.value.slidePrev();
+  }
+}
+
+function navigateToNext() {
+  if (imagesSwiper.value && imagesSwiper.value.allowSlideNext) {
+    imagesSwiper.value.slideNext();
+  }
+}
+
+function openLightbox() {
+  const currentImage = document.querySelector(".image-gallery__img--active") as HTMLElement;
+  if (currentImage) {
+    currentImage.click();
+  }
 }
 
 watch(
