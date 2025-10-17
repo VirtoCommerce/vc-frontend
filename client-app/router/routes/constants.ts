@@ -25,6 +25,5 @@ export const ROUTES = {
   },
   SAVED_FOR_LATER: {
     NAME: "SavedForLater",
-    PATH: "/account/saved-for-later",
   },
 } as const;

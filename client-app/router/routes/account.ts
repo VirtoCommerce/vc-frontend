@@ -1,3 +1,4 @@
+import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
 import type { RouteRecordRaw } from "vue-router";
 
@@ -59,7 +60,7 @@ export const accountRoutes: RouteRecordRaw[] = [
   },
   {
     path: "saved-for-later",
-    children: [{ path: "", name: "SavedForLater", component: SavedForLaterDetails }],
+    children: [{ path: "", name: ROUTES.SAVED_FOR_LATER.NAME, component: SavedForLaterDetails }],
   },
   {
     path: "lists",
