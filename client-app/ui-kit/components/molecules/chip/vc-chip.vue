@@ -1,7 +1,6 @@
 <template>
-  <component
-    :is="componentTag"
-    v-bind="rootAttrs"
+  <span
+    role="group"
     :draggable="draggable && !disabled"
     :data-test-id="dataTestId"
     :class="[
@@ -12,17 +11,18 @@
       {
         'vc-chip--disabled': disabled,
         'vc-chip--clickable': clickable,
+        'vc-chip--closable': closable,
         'vc-chip--rounded': rounded,
         'vc-chip--truncate': truncate,
         'vc-chip--nowrap': nowrap && !truncate,
       },
     ]"
   >
-    <span class="vc-chip__content">
+    <component :is="componentTag" v-bind="rootAttrs" class="vc-chip__content">
       <VcIcon v-if="icon" :name="icon" class="vc-chip__icon" />
 
       <slot />
-    </span>
+    </component>
 
     <button
       v-if="closable"
@@ -36,7 +36,7 @@
         <VcIcon name="delete-2" />
       </slot>
     </button>
-  </component>
+  </span>
 </template>
 
 <script setup lang="ts">
@@ -141,20 +141,17 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
   --border-color: var(--color-additional-50);
   --text-color: var(--color-neutral-800);
 
-  $colors: primary, secondary, success, info, warning, danger, neutral;
+  $colors: primary, secondary, success, info, warning, danger, neutral, accent;
 
   $truncate: "";
   $clickable: "";
+  $closable: "";
   $disabled: "";
 
-  @apply inline-flex justify-between max-w-full rounded-[--radius] border font-bold text-center px-[--padding-x] py-0.5 text-[--text-color] bg-[--bg-color] border-[--border-color];
+  @apply relative inline-flex max-w-full rounded-[--radius];
 
-  &--clickable {
-    $clickable: &;
-
-    &:focus {
-      @apply ring-[3px] ring-[--focus-color];
-    }
+  &--closable {
+    $closable: &;
   }
 
   &--truncate {
@@ -260,7 +257,7 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     }
 
     &--color--#{$color} {
-      --focus-color: var(--color-#{$color}-100);
+      --focus-color: rgb(from var(--color-#{$color}-500) r g b / 0.4);
     }
   }
 
@@ -268,11 +265,22 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     --vc-icon-color: var(--icon-color, var(--main-icon-color));
     --vc-icon-size: var(--icon-size);
 
-    @apply grow flex items-center justify-center gap-[inherit] max-w-full;
+    @apply grow flex items-center justify-center gap-[inherit] max-w-full px-[--padding-x] py-0.5 rounded-[inherit] bg-[--bg-color] border border-[--border-color] font-bold text-center text-[--text-color];
+
+    #{$closable} & {
+      @apply pe-[calc(var(--padding-x)*2+var(--close-button-icon-size))];
+    }
 
     #{$truncate} &,
     #{$truncate} & > * {
       @apply truncate;
+    }
+
+    #{$clickable} & {
+      &:focus,
+      &:focus-visible {
+        @apply outline outline-[--focus-color];
+      }
     }
   }
 
@@ -280,14 +288,15 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     --vc-icon-size: var(--close-button-icon-size);
     --vc-icon-color: var(--close-button-icon-color);
 
-    @apply self-stretch flex items-center ps-1 pe-[--padding-x] -ms-1 -me-[--padding-x] py-[--padding-y] -my-[--padding-y] rounded;
-
-    &:focus {
-      @apply outline-none ring-[3px] ring-[--focus-color];
-    }
+    @apply self-stretch absolute inset-y-0 right-0 flex items-center justify-center px-[--padding-x] rounded-[inherit];
 
     &:disabled {
       @apply cursor-not-allowed;
+    }
+
+    &:focus,
+    &:focus-visible {
+      @apply outline outline-[--focus-color];
     }
   }
 
