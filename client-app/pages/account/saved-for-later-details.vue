@@ -1,6 +1,7 @@
 <template>
+  <VcLoaderOverlay :visible="saveForLaterLoading" fixed-spinner />
+
   <ListDetails v-if="savedForLaterListId" :list-id="savedForLaterListId" hide-settings />
-  <div v-if="!saveForLaterLoading && !savedForLaterListId">Not found</div>
 </template>
 
 <script lang="ts" setup>

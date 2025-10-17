@@ -23,4 +23,8 @@ export const ROUTES = {
     NAME: "ChangePassword",
     PATH: "/change-password",
   },
+  SAVED_FOR_LATER: {
+    NAME: "SavedForLater",
+    PATH: "/account/saved-for-later",
+  },
 } as const;
