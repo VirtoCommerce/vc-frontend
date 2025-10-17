@@ -1320,6 +1320,7 @@
       "recently_browsed_products": "最近見た商品",
       "save_for_later": "後で保存",
       "saved_for_later": "後で保存",
+      "saved_for_later_not_found": "後で保存した商品はありません",
       "move_to_cart": "カートに入れる"
     },
     "checkout": {

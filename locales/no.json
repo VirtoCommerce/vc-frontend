@@ -1320,6 +1320,7 @@
       "recently_browsed_products": "Nylig bladd gjennom",
       "save_for_later": "Lagre til senere",
       "saved_for_later": "Lagret til senere",
+      "saved_for_later_not_found": "Du har ikke lagret noen produkter for senere",
       "move_to_cart": "Flytt til handlekurv"
     },
     "checkout": {

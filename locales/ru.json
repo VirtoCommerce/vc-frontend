@@ -1320,6 +1320,7 @@
       "recently_browsed_products": "Недавно просмотренные",
       "save_for_later": "Сохранить на потом",
       "saved_for_later": "Сохранено на потом",
+      "saved_for_later_not_found": "Вы не сохранили ни одного товара на потом",
       "move_to_cart": "В корзину"
     },
     "checkout": {

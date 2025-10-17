@@ -1320,6 +1320,7 @@
       "recently_browsed_products": "Recently browsed",
       "save_for_later": "Save for later",
       "saved_for_later": "Saved for later",
+      "saved_for_later_not_found": "You haven't saved any products for later",
       "move_to_cart": "Move to cart"
     },
     "checkout": {

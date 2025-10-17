@@ -1320,6 +1320,7 @@
       "recently_browsed_products": "Viimeksi selatut",
       "save_for_later": "Tallenna myöhempää käyttöä varten",
       "saved_for_later": "Tallennettu myöhempää käyttöä varten",
+      "saved_for_later_not_found": "Et ole tallentanut tuotteita myöhempää varten",
       "move_to_cart": "Siirrä ostoskoriin"
     },
     "checkout": {

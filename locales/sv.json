@@ -1320,6 +1320,7 @@
       "recently_browsed_products": "Nyligen bläddrade",
       "save_for_later": "Spara till senare",
       "saved_for_later": "Sparad till senare",
+      "saved_for_later_not_found": "Du har inte sparat några produkter för senare",
       "move_to_cart": "Flytta till kundvagn"
     },
     "checkout": {
