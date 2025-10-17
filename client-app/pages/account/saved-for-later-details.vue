@@ -1,7 +1,7 @@
 <template>
   <VcLoaderOverlay :visible="saveForLaterLoading" fixed-spinner />
 
-  <ListDetails v-if="savedForLaterListId" :list-id="savedForLaterListId" hide-settings />
+  <ListDetails v-if="savedForLaterListId && !savedForLaterListIsEmpty" :list-id="savedForLaterListId" hide-settings />
 
   <div v-else-if="!saveForLaterLoading">
     <VcTypography tag="h1">
@@ -18,6 +18,7 @@ import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
 import ListDetails from "./list-details.vue";
 
 const savedForLaterListId = computed(() => savedForLaterList.value?.id);
+const savedForLaterListIsEmpty = computed(() => !savedForLaterList.value?.items?.length);
 
 const { savedForLaterList, loading: saveForLaterLoading, getSavedForLater } = useSavedForLater();
 
