@@ -71,6 +71,7 @@ export const ColorProps: StoryType = {
     ...Basic.args,
     color: "success",
     hoverColor: "info",
+    modelValue: "value",
   },
 };
 
@@ -79,6 +80,7 @@ export const RGBA_HEXColorProps: StoryType = {
     ...Basic.args,
     color: "rgba(255, 99, 71, 0.8)",
     hoverColor: "#0055CC",
+    modelValue: "value",
   },
 };
 
@@ -86,6 +88,7 @@ export const ColorCSSVariables: StoryType = {
   args: {
     ...Basic.args,
     class: "[--vc-tab-switch-color:#0055CC] [--vc-tab-switch-hover-color:rgba(255,99,71,0.8)]",
+    modelValue: "value",
   },
 };
 
