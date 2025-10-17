@@ -6,7 +6,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
+import { useLanguages } from "@/core/composables/useLanguages";
 import VPBuilderIO from "@/pages/matcher/virto-pages/vp-builder-io.vue";
 import VPPageBuilder from "@/pages/matcher/virto-pages/vp-page-builder.vue";
 
@@ -22,5 +23,15 @@ const isBulderIOContent = computed(() => {
 
 const isPageBuilderContent = computed(() => {
   return props.pageDocument?.source === "page-builder";
+});
+
+const permalink = computed(() => {
+  return props.pageDocument?.permalink;
+});
+
+const { updateLocalizedUrl } = useLanguages();
+
+watch(permalink, () => {
+  updateLocalizedUrl(permalink.value);
 });
 </script>

@@ -152,7 +152,7 @@
                 {{ $t("common.buttons.go_to_checkout") }}
               </ProceedTo>
 
-              <PlaceOrder v-else class="mt-4" />
+              <PlaceOrder data-test-id="checkout-single-page.place-order-button" v-else class="mt-4" />
 
               <template v-if="!$cfg.checkout_multistep_enabled">
                 <transition name="slide-fade-top" mode="out-in" appear>
@@ -214,7 +214,7 @@
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
-          <PlaceOrder v-else class="!mt-2" />
+          <PlaceOrder data-test-id="checkout-multi-step.place-order-button" v-else class="!mt-2" />
         </div>
       </transition>
     </template>
@@ -225,12 +225,12 @@
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
-import { useBreadcrumbs, useAnalytics, usePageHead, useThemeContext } from "@/core/composables";
+import { useAnalytics, useBreadcrumbs, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY, MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { MODULE_ID_XRECOMMEND, MODULE_XAPI_KEYS, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
-import { useFullCart, useCoupon } from "@/shared/cart";
+import { useCoupon, useFullCart } from "@/shared/cart";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
 import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
 import {
