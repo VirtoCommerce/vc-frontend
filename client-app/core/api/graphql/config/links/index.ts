@@ -6,6 +6,7 @@ import { cartLink } from "@/core/api/graphql/cart/links";
 import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
 import { httpLink } from "./http";
 import { operationTypeLink } from "./operation-type-link";
+import { queuedMutationsLink } from "./queued-mutations/queued-mutations";
 import { timeoutLink } from "./timeout";
 import { wsLink } from "./ws";
 
@@ -28,6 +29,7 @@ const sharedLink = from([
 export const link = from([
   sharedLink,
   // Add conditional links here
+  queuedMutationsLink,
   cartLink,
   // Send only subscriptions through web sockets
   split(

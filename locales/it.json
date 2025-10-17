@@ -212,7 +212,8 @@
       "password_expired": "La tua password è scaduta",
       "data_changed": "I dati sono stati modificati in uno degli altri tab. Per favore, aggiorna la pagina per visualizzare i dati correnti.",
       "logo_changed": "Il logo è stato modificato con successo.",
-      "logo_deleted": "Il logo è stato eliminato."
+      "logo_deleted": "Il logo è stato eliminato.",
+      "pending_operations_leaving_page_confirmation": "Alcune operazioni sono ancora in corso. Vuoi veramente lasciare questa pagina? Le modifiche non salvate potrebbero andare perse."
     },
     "placeholders": {
       "enter_value": "Inserisci un valore",
@@ -898,14 +899,14 @@
         "edit_mode_title": "Impostazioni lista",
         "list_name_label": "Nome lista",
         "list_name_placeholder": "Inserisci il nome",
+        "sharing_scope_label": "Opzioni di condivisione",
+        "sharing_scope_placeholder": "Seleziona un'opzione",
+        "sharing_link_label": "Link",
         "create_button": "Crea lista",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Lista privata",
         "make_shared": "Rendi condivisa",
-        "sharing_scope_label": "Opzioni di condivisione",
-        "sharing_scope_placeholder": "Seleziona un'opzione",
-        "sharing_link_label": "Link",
         "sharing_scope": {
           "Private": "Privato",
           "Organization": "Organizzazione",
@@ -1378,7 +1379,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku copiato con successo",
-      "variations_total_label": "Totale nel carrello:",
+      "variations_in_cart_label": "Varianti nel carrello:",
       "view_cart_button": "Visualizza carrello",
       "recommended_products": {
         "related-products_section_title": "Consigliato per te",
