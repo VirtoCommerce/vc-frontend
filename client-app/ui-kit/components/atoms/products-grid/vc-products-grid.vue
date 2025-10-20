@@ -13,13 +13,8 @@
       </template>
     </div>
 
-    <div class="vc-products-grid__show-more">
-      <VcButton
-        v-if="short && shortShowMoreVisible && shortRowsStep > 0"
-        variant="outline"
-        append-icon="arrow-down"
-        @click="shortRows += shortRowsStep"
-      >
+    <div v-if="short && shortShowMoreVisible && maxShowingRows > showingRows" class="vc-products-grid__show-more">
+      <VcButton variant="no-border" append-icon="chevron-down" @click="showMoreRows()">
         {{ $t("common.buttons.show_more") }}
       </VcButton>
     </div>
@@ -33,21 +28,22 @@ import { BREAKPOINTS } from "@/core/constants";
 import type { BreakpointsType } from "@/core/constants";
 import type { VNode } from "vue";
 
+const props = defineProps<IProps>();
+
 interface IProps {
   short?: boolean;
   shortShowMoreVisible?: boolean;
   columns?: Partial<Record<"default" | BreakpointsType, number>>;
 }
 
-const props = defineProps<IProps>();
+const MIN_COLS_COUNT = 2;
+const showingRows = ref(0);
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const slots = useSlots();
 
-const shortRows = ref(1);
-
 const cols = computed(() => ({
-  default: props.columns?.default ?? 2,
+  default: props.columns?.default ?? MIN_COLS_COUNT,
   xs: props.columns?.xs ?? 3,
   sm: props.columns?.sm ?? 4,
   md: props.columns?.md ?? 4,
@@ -59,13 +55,18 @@ const cols = computed(() => ({
 const currentBreakpoint = computed(() => breakpoints.active().value ?? "default");
 
 const visibleChildren = computed(() => {
-  const itemsCount = (colCount.value === 2 || colCount.value == null ? 4 : colCount.value) * (shortRows.value ?? 1);
-  return props.short ? (rawChildren.value as VNode[]).slice(0, itemsCount) : rawChildren.value;
+  if (!props.short) {
+    return rawChildren.value;
+  }
+
+  const itemsCount = colCount.value * actualShowingRows.value;
+
+  return (rawChildren.value as VNode[]).slice(0, itemsCount);
 });
 
 const colCount = computed(() => {
   const bp = currentBreakpoint.value as "default" | BreakpointsType;
-  return cols.value[bp];
+  return cols.value[bp] ?? MIN_COLS_COUNT;
 });
 
 const rawChildren = computed(() => {
@@ -73,15 +74,21 @@ const rawChildren = computed(() => {
   return slotRaw[0]?.type === Symbol.for("v-fgt") ? (slotRaw[0].children ?? []) : slotRaw;
 });
 
-const maxShortRows = computed(() => {
+const minShowingRows = computed(() => (colCount.value < 4 ? 2 : 1));
+
+const maxShowingRows = computed(() => {
   if (!rawChildren.value) {
-    return 1;
+    return minShowingRows.value;
   }
 
   return Math.ceil((rawChildren.value as VNode[]).length / colCount.value);
 });
 
-const shortRowsStep = computed(() => Math.min(2, maxShortRows.value - shortRows.value));
+const actualShowingRows = computed(() => Math.max(showingRows.value, minShowingRows.value));
+
+const showMoreRows = function () {
+  showingRows.value = actualShowingRows.value + 2;
+};
 </script>
 
 <style lang="scss">
@@ -125,7 +132,7 @@ const shortRowsStep = computed(() => Math.min(2, maxShortRows.value - shortRows.
   }
 
   &__show-more {
-    @apply text-center;
+    @apply border-t pt-5 text-center;
   }
 }
 </style>
