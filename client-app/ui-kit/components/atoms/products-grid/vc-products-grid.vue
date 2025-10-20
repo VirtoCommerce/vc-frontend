@@ -13,7 +13,7 @@
       </template>
     </div>
 
-    <div v-if="short && shortShowMoreVisible && maxShowingRows > showingRows" class="vc-products-grid__show-more">
+    <div v-if="short && shortShowMoreVisible && showingRows < maxShowingRows" class="vc-products-grid__show-more">
       <VcButton variant="no-border" append-icon="chevron-down" @click="showMoreRows()">
         {{ $t("common.buttons.show_more") }}
       </VcButton>
