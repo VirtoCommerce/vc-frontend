@@ -181,8 +181,8 @@ import { useMutation } from "@vue/apollo-composable";
 import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { useRouteQueryParam, usePageHead, useThemeContext } from "@/core/composables";
-import { QueryParamName } from "@/core/enums";
+import { useRouteQueryParam, usePageHead, useBrowserTarget } from "@/core/composables";
+import { BrowserTargetType, QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Sort } from "@/core/types";
 import { CreateQuoteDocument } from "../api/graphql/types";
@@ -191,12 +191,13 @@ import { useUserQuotes } from "../useUserQuotes";
 import type { ISortInfo } from "@/core/types";
 
 const { t } = useI18n();
-const { themeContext } = useThemeContext();
 const router = useRouter();
 const { storeId, userId, currencyCode, cultureName } = globals;
 usePageHead({
   title: t("quotes.meta.title"),
 });
+
+const { browserTarget } = useBrowserTarget();
 
 const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
 const { mutate: createQuote } = useMutation(CreateQuoteDocument);
@@ -239,7 +240,7 @@ function goToQuoteDetails(payload: { id: string; status?: string }): void {
   const pathName: string = payload.status === "Draft" ? "EditQuote" : "ViewQuote";
   const quoteRoute = router.resolve({ name: pathName, params: { quoteId: payload.id } });
 
-  if (themeContext.value.settings?.details_browser_target === "_blank") {
+  if (browserTarget.value === BrowserTargetType.BLANK) {
     window.open(quoteRoute.fullPath, "_blank")!.focus();
   } else {
     window.location.href = quoteRoute.fullPath;
