@@ -1,6 +1,6 @@
 <template>
   <VcWidget :title="$t('pages.cart.saved_for_later')" prepend-icon="bookmark" size="lg">
-    <VcProductsGrid short>
+    <VcProductsGrid short shortShowMoreVisible>
       <CartItemForLater
         v-for="(item, index) in savedForLaterList?.items"
         :key="index"
