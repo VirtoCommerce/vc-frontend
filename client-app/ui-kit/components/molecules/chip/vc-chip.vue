@@ -18,7 +18,13 @@
       },
     ]"
   >
-    <component :is="componentTag" v-bind="rootAttrs" class="vc-chip__content">
+    <component
+      :is="componentTag"
+      v-bind="rootAttrs"
+      class="vc-chip__content"
+      :disabled="clickable && disabled"
+      @click="clickable && !disabled ? $emit('click') : null"
+    >
       <VcIcon v-if="icon" :name="icon" class="vc-chip__icon" />
 
       <slot />
@@ -30,7 +36,7 @@
       type="button"
       class="vc-chip__close-button"
       :aria-label="closeAriaLabel"
-      @click.stop="disabled ? null : $emit('close')"
+      @click.stop="$emit('close')"
     >
       <slot name="close-icon">
         <VcIcon name="delete-2" />
@@ -143,6 +149,7 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
 
   $colors: primary, secondary, success, info, warning, danger, neutral, accent;
 
+  $self: &;
   $v-solid: "";
   $v-solid-light: "";
   $v-outline: "";
@@ -151,6 +158,7 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
   $clickable: "";
   $closable: "";
   $disabled: "";
+  $contentEl: "";
 
   @apply relative inline-flex max-w-full min-h-[--min-h] rounded-[--radius];
 
@@ -229,61 +237,9 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     }
   }
 
-  @each $color in $colors {
-    &--color--#{$color} {
-      --focus-color: rgb(from var(--color-#{$color}-500) r g b / 0.4);
-
-      &#{$v-solid} {
-        --bg-color: var(--color-#{$color}-500);
-        --border-color: var(--color-#{$color}-500);
-
-        &#{$clickable}:hover {
-          --bg-color: var(--color-#{$color}-700);
-          --border-color: var(--color-#{$color}-700);
-        }
-      }
-
-      &#{$v-solid-light} {
-        --bg-color: var(--color-#{$color}-50);
-        --border-color: var(--color-#{$color}-50);
-        --main-icon-color: var(--color-#{$color}-500);
-        --close-button-icon-color: var(--color-#{$color}-700);
-
-        &#{$clickable}:hover {
-          --bg-color: var(--color-#{$color}-100);
-          --border-color: var(--color-#{$color}-100);
-        }
-      }
-
-      &#{$v-outline} {
-        --border-color: var(--color-#{$color}-500);
-        --main-icon-color: var(--color-#{$color}-500);
-        --close-button-icon-color: var(--color-#{$color}-700);
-
-        &#{$clickable}:hover {
-          --bg-color: var(--color-#{$color}-50);
-        }
-      }
-
-      &#{$v-outline-dark} {
-        --bg-color: var(--color-#{$color}-50);
-        --border-color: var(--color-#{$color}-500);
-        --main-icon-color: var(--color-#{$color}-500);
-        --close-button-icon-color: var(--color-#{$color}-700);
-
-        &#{$clickable}:hover {
-          --bg-color: var(--color-#{$color}-100);
-        }
-      }
-    }
-  }
-
-  &--color--warning#{$v-solid} {
-    --text-color: var(--color-warning-950);
-    --close-button-icon-color: var(--color-warning-950);
-  }
-
   &__content {
+    $contentEl: &;
+
     --vc-icon-color: var(--icon-color, var(--main-icon-color));
     --vc-icon-size: var(--icon-size);
 
@@ -297,13 +253,60 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     #{$truncate} & > * {
       @apply truncate;
     }
+  }
 
-    #{$clickable} & {
-      &:focus,
-      &:focus-visible {
-        @apply outline outline-[--focus-color];
+  @each $color in $colors {
+    &--color--#{$color} {
+      --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.4);
+
+      &#{$v-solid} {
+        --bg-color: var(--color-#{$color}-500);
+        --border-color: var(--color-#{$color}-500);
+
+        &#{$clickable} #{$contentEl}:hover {
+          --bg-color: var(--color-#{$color}-700);
+          --border-color: var(--color-#{$color}-700);
+        }
+      }
+
+      &#{$v-solid-light} {
+        --bg-color: var(--color-#{$color}-50);
+        --border-color: var(--color-#{$color}-50);
+        --main-icon-color: var(--color-#{$color}-500);
+        --close-button-icon-color: var(--color-#{$color}-700);
+
+        &#{$clickable} #{$contentEl}:hover {
+          --bg-color: var(--color-#{$color}-100);
+          --border-color: var(--color-#{$color}-100);
+        }
+      }
+
+      &#{$v-outline} {
+        --border-color: var(--color-#{$color}-500);
+        --main-icon-color: var(--color-#{$color}-500);
+        --close-button-icon-color: var(--color-#{$color}-700);
+
+        &#{$clickable} #{$contentEl}:hover {
+          --bg-color: var(--color-#{$color}-50);
+        }
+      }
+
+      &#{$v-outline-dark} {
+        --bg-color: var(--color-#{$color}-50);
+        --border-color: var(--color-#{$color}-500);
+        --main-icon-color: var(--color-#{$color}-500);
+        --close-button-icon-color: var(--color-#{$color}-700);
+
+        &#{$clickable} #{$contentEl}:hover {
+          --bg-color: var(--color-#{$color}-100);
+        }
       }
     }
+  }
+
+  &--color--warning#{$v-solid} {
+    --text-color: var(--color-warning-950);
+    --close-button-icon-color: var(--color-warning-950);
   }
 
   &__close-button {
@@ -312,13 +315,16 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
 
     @apply self-stretch absolute inset-y-0 right-0 flex items-center justify-center size-[--min-h] rounded-[inherit];
 
-    &:disabled {
-      @apply cursor-not-allowed;
+    .vc-icon {
+      @apply transition-transform duration-200 ease-in-out;
     }
 
-    &:focus,
-    &:focus-visible {
-      @apply outline outline-[--focus-color];
+    &:hover .vc-icon {
+      @apply rotate-90;
+    }
+
+    &:disabled {
+      @apply cursor-not-allowed;
     }
   }
 
