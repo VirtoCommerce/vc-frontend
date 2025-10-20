@@ -4,7 +4,7 @@
     :items="normalizedItems"
     :removable="!readonly"
     :readonly="readonly"
-    :browser-target="$cfg.details_browser_target"
+    :browser-target="browserTarget"
     with-image
     with-properties
     with-price
@@ -63,6 +63,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { useBrowserTarget } from "@/core/composables";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { ConfigurationItems } from "@/shared/common";
@@ -84,6 +85,7 @@ interface IProps {
 }
 
 const { n } = useI18n();
+const { browserTarget } = useBrowserTarget();
 
 const normalizedItems = computed(() => {
   return props.items?.map((item) => ({
