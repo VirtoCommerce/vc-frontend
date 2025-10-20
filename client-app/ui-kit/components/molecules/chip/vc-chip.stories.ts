@@ -3,7 +3,7 @@ import { VcIcon } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["sm", "md", "lg"];
-const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger"];
+const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
 const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];
 
 export default {
@@ -96,6 +96,80 @@ export const Truncate: StoryType = {
     setup: () => ({ args }),
     template: `<VcChip v-bind="args" class="w-36">
       <span>Long long long Chip text</span>
+    </VcChip>`,
+  }),
+};
+
+export const RouterLink: StoryType = {
+  args: {
+    clickable: true,
+    to: "/",
+    icon: "link",
+  },
+};
+
+export const ExternalLink: StoryType = {
+  args: {
+    clickable: true,
+    externalLink: "https://example.com",
+    target: "_blank",
+    icon: "external-link",
+  },
+};
+
+export const WithActions: StoryType = {
+  args: {
+    closable: true,
+    clickable: true,
+  },
+  render: (args) => ({
+    components: { VcChip },
+    setup: () => ({
+      args,
+      handleClick: () => console.log("click event fired"),
+      handleClose: () => console.log("close event fired"),
+    }),
+    template: `<VcChip v-bind="args" @click="handleClick" @close="handleClose">
+      Chip with actions
+    </VcChip>`,
+  }),
+};
+
+export const Draggable: StoryType = {
+  args: {
+    draggable: true,
+  },
+};
+
+export const ClosableClickable: StoryType = {
+  args: {
+    closable: true,
+    clickable: true,
+  },
+};
+
+export const DisabledClosable: StoryType = {
+  args: {
+    disabled: true,
+    closable: true,
+  },
+};
+
+export const CustomCloseIcon: StoryType = {
+  args: {
+    closable: true,
+  },
+  render: (args) => ({
+    components: { VcChip, VcIcon },
+    setup: () => ({
+      args,
+      handleClose: () => console.log("close event fired with custom icon"),
+    }),
+    template: `<VcChip v-bind="args" @close="handleClose">
+      Custom close
+      <template #close-icon>
+        <VcIcon name="delete" />
+      </template>
     </VcChip>`,
   }),
 };
