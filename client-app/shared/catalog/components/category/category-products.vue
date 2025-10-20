@@ -45,7 +45,7 @@
             :view-mode="savedViewMode"
             :lazy="index >= lazyCardsCount"
             :product="item"
-            :browser-target="$cfg.details_browser_target"
+            :browser-target="browserTarget"
             :card-type="cardType"
             @link-click="sendGASelectItemEvent"
           />
@@ -103,6 +103,7 @@
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
 import { toRef, computed } from "vue";
+import { useBrowserTarget } from "@/core/composables";
 import { PAGE_LIMIT, BREAKPOINTS, DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { ProductCard, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog/components";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
@@ -143,6 +144,8 @@ interface IEmits {
   (event: "selectProduct", product: Product): void;
   (event: "resetFilterKeyword"): void;
 }
+
+const { browserTarget } = useBrowserTarget();
 
 function loadPreviousPage() {
   emit("changePage", minVisitedPage.value - 1);
