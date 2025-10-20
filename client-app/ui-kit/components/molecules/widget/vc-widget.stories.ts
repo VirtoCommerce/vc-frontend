@@ -1,10 +1,9 @@
 import { VcWidget } from "..";
-import { VcIcon } from "../../atoms";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md", "lg"];
 
-export default {
+const meta: Meta<typeof VcWidget> = {
   title: "Components/Molecules/VcWidget",
   component: VcWidget,
   argTypes: {
@@ -19,91 +18,101 @@ export default {
       },
     },
   },
-} as Meta<typeof VcWidget>;
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcWidget v-bind="args">Widget text</VcWidget>',
+  }),
+};
 
-const Template: StoryFn = (args) => ({
-  components: { VcWidget },
+export default meta;
+type StoryType = StoryObj<typeof meta>;
+
+const renderWidget = (template: string) => (args: Record<string, unknown>) => ({
   setup: () => ({ args }),
-  template: '<VcWidget v-bind="args">Widget text</VcWidget>',
+  template,
 });
 
-export const Basic = Template.bind({});
+export const Basic: StoryType = {};
 
-export const NoShadow = Template.bind({});
-NoShadow.args = {
-  shadow: false,
+export const NoShadow: StoryType = {
+  args: {
+    shadow: false,
+  },
 };
 
-export const NoBorder = Template.bind({});
-NoBorder.args = {
-  border: false,
+export const NoBorder: StoryType = {
+  args: {
+    border: false,
+  },
 };
 
-export const Title = Template.bind({});
-Title.args = {
-  title: "Widget title",
+export const Title: StoryType = {
+  args: {
+    title: "Widget title",
+  },
 };
 
-export const PrependIcon = Template.bind({});
-PrependIcon.args = {
-  title: "Widget title",
-  prependIcon: "academic-cap",
+export const PrependIcon: StoryType = {
+  args: {
+    title: "Widget title",
+    prependIcon: "academic-cap",
+  },
 };
 
-export const AppendIcon = Template.bind({});
-AppendIcon.args = {
-  title: "Widget title",
-  appendIcon: "check-circle",
+export const AppendIcon: StoryType = {
+  args: {
+    title: "Widget title",
+    appendIcon: "check-circle",
+  },
 };
 
-export const Collapsible = Template.bind({});
-Collapsible.args = {
-  title: "Widget title",
-  collapsible: true,
+export const Collapsible: StoryType = {
+  args: {
+    title: "Widget title",
+    collapsible: true,
+  },
 };
 
-export const Collapsed = Template.bind({});
-Collapsed.args = {
-  title: "Widget title",
-  collapsible: true,
-  collapsed: true,
+export const Collapsed: StoryType = {
+  args: {
+    title: "Widget title",
+    collapsible: true,
+    collapsed: true,
+  },
 };
 
-export const CollapsibleCustomIcon: StoryFn = (args) => ({
-  components: { VcWidget, VcIcon },
-  setup: () => ({ args }),
-  template: `<VcWidget v-bind="args">
+export const CollapsibleCustomIcon: StoryType = {
+  args: {
+    title: "Widget title",
+    collapsible: true,
+  },
+  render: renderWidget(`<VcWidget v-bind="args">
     Widget text
 
     <template #append="{ collapsed }">
       <VcIcon :name="collapsed ? 'arrow-down' : 'arrow-up'" />
     </template>
-  </VcWidget>`,
-});
-CollapsibleCustomIcon.args = {
-  title: "Widget title",
-  collapsible: true,
+  </VcWidget>`),
 };
 
-export const PrependSlot: StoryFn = (args) => ({
-  components: { VcWidget, VcIcon },
-  setup: () => ({ args }),
-  template: `<VcWidget v-bind="args">
+export const PrependSlot: StoryType = {
+  args: {
+    title: "Widget title",
+  },
+  render: renderWidget(`<VcWidget v-bind="args">
     <template #prepend>
       <VcIcon class="fill-danger" name="cake" size="sm" />
     </template>
 
     Widget text
-  </VcWidget>`,
-});
-PrependSlot.args = {
-  title: "Widget title",
+  </VcWidget>`),
 };
 
-export const AppendSlot: StoryFn = (args) => ({
-  components: { VcWidget },
-  setup: () => ({ args }),
-  template: `<VcWidget v-bind="args">
+export const AppendSlot: StoryType = {
+  args: {
+    title: "Widget title",
+  },
+  render: renderWidget(`<VcWidget v-bind="args">
     Widget text
 
     <template #append>
@@ -112,26 +121,19 @@ export const AppendSlot: StoryFn = (args) => ({
         <VcIcon class="fill-accent-600" name="arrow-right" size="xs" />
       </span>
     </template>
-  </VcWidget>`,
-});
-AppendSlot.args = {
-  title: "Widget title",
+  </VcWidget>`),
 };
 
-export const HeaderSlot: StoryFn = (args) => ({
-  components: { VcWidget, VcIcon },
-  setup: () => ({ args }),
-  template: `<VcWidget v-bind="args">
+export const HeaderSlot: StoryType = {
+  render: renderWidget(`<VcWidget v-bind="args">
     <template #header>Header text</template>
 
     Widget text
-  </VcWidget>`,
-});
+  </VcWidget>`),
+};
 
-export const HeaderContainerSlot: StoryFn = (args) => ({
-  components: { VcWidget },
-  setup: () => ({ args }),
-  template: `<VcWidget v-bind="args">
+export const HeaderContainerSlot: StoryType = {
+  render: renderWidget(`<VcWidget v-bind="args">
     <template #header-container>
       <div class="p-4 bg-info text-additional-50">
         Header Container
@@ -139,13 +141,11 @@ export const HeaderContainerSlot: StoryFn = (args) => ({
     </template>
 
     Widget text
-  </VcWidget>`,
-});
+  </VcWidget>`),
+};
 
-export const DefaultContainerSlot: StoryFn = (args) => ({
-  components: { VcWidget },
-  setup: () => ({ args }),
-  template: `<VcWidget v-bind="args">
+export const DefaultContainerSlot: StoryType = {
+  render: renderWidget(`<VcWidget v-bind="args">
     <template #default-container>
       <div class="py-1 px-3 bg-neutral-100">
         Default Container
@@ -156,23 +156,19 @@ export const DefaultContainerSlot: StoryFn = (args) => ({
         <div class="grow-[2] py-1 px-3">Text</div>
       </div>
     </template>
-  </VcWidget>`,
-});
+  </VcWidget>`),
+};
 
-export const FooterSlot: StoryFn = (args) => ({
-  components: { VcWidget },
-  setup: () => ({ args }),
-  template: `<VcWidget v-bind="args">
+export const FooterSlot: StoryType = {
+  render: renderWidget(`<VcWidget v-bind="args">
     Widget text
 
     <template #footer>Footer text</template>
-  </VcWidget>`,
-});
+  </VcWidget>`),
+};
 
-export const FooterContainerSlot: StoryFn = (args) => ({
-  components: { VcWidget },
-  setup: () => ({ args }),
-  template: `<VcWidget v-bind="args">
+export const FooterContainerSlot: StoryType = {
+  render: renderWidget(`<VcWidget v-bind="args">
     Widget text
 
     <template #footer-container>
@@ -182,5 +178,5 @@ export const FooterContainerSlot: StoryFn = (args) => ({
         <div class="grow p-2 text-center rounded-br bg-success-100">Text 3</div>
       </div>
     </template>
-  </VcWidget>`,
-});
+  </VcWidget>`),
+};

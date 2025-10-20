@@ -1,4 +1,5 @@
 export * from "./address-type.enum";
+export * from "./browser-window-target";
 export * from "./content-type.enum";
 export * from "./date-filter-ids.enum";
 export * from "./identity-errors.enum";

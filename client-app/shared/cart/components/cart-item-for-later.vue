@@ -6,6 +6,7 @@
       lines-number="2"
       fix-height
       :to="link"
+      :target="browserTarget"
       :title="item.product.name"
       @click="$emit('linkClick', $event)"
     >
@@ -26,6 +27,7 @@
 
 <script setup lang="ts">
 import { computed, toRef } from "vue";
+import { useBrowserTarget } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities";
 import type { SavedForLaterListFragment, SavedForLaterLineItemFragment } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
@@ -46,6 +48,8 @@ defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const item = toRef(props, "item");
+
+const { browserTarget } = useBrowserTarget();
 
 const link = computed<RouteLocationRaw | undefined>(
   () => item.value.product && getProductRoute(item.value.product.id, item.value.product.slug),
