@@ -36,6 +36,7 @@ import {
   GetShortCartDocument,
   CreateCartFromWishlistDocument,
   UpdateShortCartItemQuantityDocument,
+  ShortCartFragmentDoc,
 } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
@@ -225,10 +226,32 @@ export function useShortCart() {
   const { mutate: updateItemCartQuantityMutation, loading: updateItemCartQuantityLoading } = useMutation(
     UpdateShortCartItemQuantityDocument,
     {
+      update: (cache, { data }) => {
+        const currentCart = cart.value
+          ? cache.readFragment<CartType>({
+              fragment: ShortCartFragmentDoc,
+              id: cache.identify(cart.value),
+            })
+          : undefined;
+
+        if (data?.updateCartQuantity) {
+          const cartData = {
+            ...data.updateCartQuantity,
+            shipments: currentCart?.shipments ?? [],
+            validationErrors: currentCart?.validationErrors ?? [],
+          };
+
+          cache.writeQuery({
+            query: GetShortCartDocument,
+            data: { cart: cartData },
+            variables: commonVariables,
+          });
+        }
+      },
       optimisticResponse: (vars, { IGNORE }) => {
         const itemsInput = vars.command?.items;
 
-        if (!Array.isArray(itemsInput) || itemsInput.length === 0) {
+        if (!Array.isArray(itemsInput) || itemsInput.length === 0 || !cart.value) {
           return IGNORE;
         }
 
