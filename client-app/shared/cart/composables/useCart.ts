@@ -233,6 +233,7 @@ export function useShortCart() {
               id: cache.identify(cart.value),
             })
           : undefined;
+
         if (data?.updateCartQuantity) {
           const cartData = {
             ...data.updateCartQuantity,
