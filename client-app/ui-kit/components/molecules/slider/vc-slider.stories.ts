@@ -1,14 +1,9 @@
 import { ref } from "vue";
 import { VcSlider } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { ColType } from "./vc-slider.vue";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-export default {
-  title: "Components/Molecules/VcSlider",
-  component: VcSlider,
-  argTypes: {},
-} as Meta<typeof VcSlider>;
-
-const similarWidthCol = [
+const similarWidthCol: ColType[] = [
   { count: 7, value: [400, 500] },
   { count: 77, value: [500, 600] },
   { count: 70, value: [600, 700] },
@@ -17,7 +12,7 @@ const similarWidthCol = [
   { count: 39, value: [1000, 1100] },
 ];
 
-const manyCols = [
+const manyCols: ColType[] = [
   { count: 30, value: [null, 10] },
   { count: 62, value: [10, 20] },
   { count: 132, value: [20, 40] },
@@ -39,7 +34,7 @@ const manyCols = [
   { count: 124, value: [2500, null] },
 ];
 
-const noStartEndCols = [
+const noStartEndCols: ColType[] = [
   { count: 30, value: [null, 100] },
   { count: 62, value: [100, 200] },
   { count: 132, value: [200, 400] },
@@ -48,72 +43,85 @@ const noStartEndCols = [
   { count: 180, value: [1000, null] },
 ];
 
-const Template: StoryFn = (args) => ({
-  components: { VcSlider },
-  setup: () => {
-    const model = ref(args.value);
-    const handleChange = (newValue: [number, number]) => {
-      model.value = newValue;
-    };
+const meta: Meta<typeof VcSlider> = {
+  title: "Components/Molecules/VcSlider",
+  component: VcSlider,
+  argTypes: {},
+  render: (args) => ({
+    setup: () => {
+      const model = ref(args.value);
+      const handleChange = (newValue: [number, number]) => {
+        model.value = newValue;
+      };
 
-    return { args, model, handleChange };
+      return { args, model, handleChange };
+    },
+    template: '<VcSlider v-bind="args" :value="model" @change="handleChange" />',
+  }),
+};
+
+export default meta;
+type StoryType = StoryObj<typeof meta>;
+
+export const Basic: StoryType = {
+  args: {
+    value: [160, 240],
+    min: 120,
+    max: 500,
   },
-  template: '<VcSlider v-bind="args" :value="model" @change="handleChange" />',
-});
-
-export const Basic = Template.bind({});
-Basic.args = {
-  value: [160, 240],
-  min: 120,
-  max: 500,
 };
 
-export const Cols = Template.bind({});
-Cols.args = {
-  value: [500, 800],
-  min: 100,
-  max: 900,
-  cols: manyCols,
+export const Cols: StoryType = {
+  args: {
+    value: [500, 800],
+    min: 100,
+    max: 900,
+    cols: manyCols,
+  },
 };
 
-export const WithTooltip = Template.bind({});
-WithTooltip.args = {
-  value: [400, 1100],
-  min: 470,
-  max: 1300,
-  colsHeight: "5rem",
-  cols: similarWidthCol,
-  showTooltipOnColHover: true,
+export const WithTooltip: StoryType = {
+  args: {
+    value: [400, 1100],
+    min: 470,
+    max: 1300,
+    colsHeight: "5rem",
+    cols: similarWidthCol,
+    showTooltipOnColHover: true,
+  },
 };
 
-export const UpdateOnColumnClick = Template.bind({});
-UpdateOnColumnClick.args = {
-  value: [450, 800],
-  min: 450,
-  max: 1100,
-  cols: similarWidthCol,
-  showTooltipOnColHover: true,
-  updateOnColumnClick: true,
+export const UpdateOnColumnClick: StoryType = {
+  args: {
+    value: [450, 800],
+    min: 450,
+    max: 1100,
+    cols: similarWidthCol,
+    showTooltipOnColHover: true,
+    updateOnColumnClick: true,
+  },
 };
 
-export const UpdateOnColumnClickManyDifferentColumns = Template.bind({});
-UpdateOnColumnClickManyDifferentColumns.args = {
-  value: [0, 500],
-  colsHeight: "5rem",
-  cols: manyCols,
-  min: 150,
-  max: 3500,
-  showTooltipOnColHover: true,
-  updateOnColumnClick: true,
+export const UpdateOnColumnClickManyDifferentColumns: StoryType = {
+  args: {
+    value: [0, 500],
+    colsHeight: "5rem",
+    cols: manyCols,
+    min: 150,
+    max: 3500,
+    showTooltipOnColHover: true,
+    updateOnColumnClick: true,
+  },
 };
 
-export const NoStartEndColumns = Template.bind({});
-NoStartEndColumns.args = {
-  value: [0, 500],
-  colsHeight: "5rem",
-  cols: noStartEndCols,
-  min: 0,
-  max: 1200,
-  showTooltipOnColHover: true,
-  updateOnColumnClick: true,
+export const NoStartEndColumns: StoryType = {
+  args: {
+    value: [0, 500],
+    colsHeight: "5rem",
+    cols: noStartEndCols,
+    min: 0,
+    max: 1200,
+    showTooltipOnColHover: true,
+    updateOnColumnClick: true,
+  },
 };

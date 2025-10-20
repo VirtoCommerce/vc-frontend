@@ -69,7 +69,7 @@
       :link-to="getProductRoute(product.id, product.slug)"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
-      :target="browserTarget || $cfg.details_browser_target || '_blank'"
+      :target="browserTarget || browserTargetFromSetting"
       @link-click="$emit('linkClick', product, $event)"
     />
 
@@ -79,7 +79,7 @@
       :link-text="$t('pages.catalog.show_on_a_separate_page')"
       :link-to="link"
       :button-text="$t('pages.catalog.variations_button', [variationsCount])"
-      :target="browserTarget || $cfg.details_browser_target || '_blank'"
+      :target="browserTarget || browserTargetFromSetting"
       @link-click="$emit('linkClick', product, $event)"
     />
 
@@ -98,8 +98,9 @@
 <script setup lang="ts">
 import { computed, toRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
+import { useBrowserTarget } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { ProductType } from "@/core/enums";
+import { BrowserTargetType, ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
@@ -117,7 +118,6 @@ import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
 import PurchasedBeforeBadge from "./purchased-before-badge.vue";
 import type { Product } from "@/core/api/graphql/types";
-import type { BrowserTargetType } from "@/core/types";
 import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 
 interface IEmits {
@@ -137,10 +137,12 @@ defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   viewMode: "grid",
-  browserTarget: "_blank",
+  browserTarget: BrowserTargetType.BLANK,
 });
 
 const product = toRef(props, "product");
+
+const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
 
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 

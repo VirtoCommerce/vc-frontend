@@ -26,7 +26,7 @@
         :total="item.extendedPrice"
         :disabled="pendingItems[item.id]"
         :deleted="item.deleted"
-        :browser-target="$cfg.details_browser_target"
+        :browser-target="browserTarget"
         :removable="editable"
         with-image
         with-properties
@@ -41,12 +41,12 @@
             :to="navigatable ? item.route : undefined"
             :button-text="$t('pages.catalog.customize_button')"
             icon="cube-transparent"
-            :target="$cfg.details_browser_target"
+            :target="browserTarget"
           />
           <VcProductButton
             v-else-if="item.hasVariations"
             :to="navigatable ? item.route : undefined"
-            :target="$cfg.details_browser_target"
+            :target="browserTarget"
             :button-text="$t('pages.catalog.variations_button', [(item.variations?.length || 0) + 1])"
           />
           <VcAddToCart
@@ -110,6 +110,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import type { Product, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
@@ -136,6 +137,8 @@ withDefaults(defineProps<IProps>(), {
   editable: true,
   navigatable: true,
 });
+
+const { browserTarget } = useBrowserTarget();
 
 const validationErrors = ref<ValidationErrorType[]>([]);
 const itemDefaultSlot = ref<HTMLElement[] | null>(null);
