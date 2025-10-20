@@ -212,7 +212,8 @@
       "password_expired": "Ditt lösenord har upphört",
       "data_changed": "Data har ändrats på en av de andra flikarna. Uppdatera sidan för att visa de senaste uppgifterna.",
       "logo_changed": "Logotypen har ändrats framgångsrikt.",
-      "logo_deleted": "Logotypen har raderats."
+      "logo_deleted": "Logotypen har raderats.",
+      "pending_operations_leaving_page_confirmation": "Vissa åtgärder pågår fortfarande. Vill du verkligen lämna den här sidan? Ändringar som inte sparats kan gå förlorade."
     },
     "placeholders": {
       "enter_value": "Ange ett värde",
@@ -676,7 +677,8 @@
         },
         "options": {
           "title": "Alternativ",
-          "select_to_proceed": "Välj alternativ för att fortsätta"
+          "select_to_proceed": "Välj alternativ för att fortsätta",
+          "price_unavailable": "Produkten kan inte köpas i vald valuta"
         }
       },
       "discount_badge": {
@@ -695,6 +697,10 @@
         "ok_button": "OK",
         "no_results": "Inga resultat hittades",
         "reset_search_button": "Återställ sökning"
+      },
+      "shipment_options": {
+        "title": "Leveransalternativ",
+        "in_store": "Hämta i butik"
       }
     },
     "checkout": {
@@ -1117,7 +1123,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Ange nyckelord...",
+        "search_placeholder": "Sök efter nummer, namn eller andra uppgifter",
         "title": "Beställningar",
         "order_number_label": "Beställningsnummer",
         "purchase_number_label": "Inköpsorder",
@@ -1163,7 +1169,9 @@
           "pick_point_info": "Upphämtningsplatsinfo",
           "get_directions": "Få vägbeskrivning",
           "point_info": "Platsinfo",
-          "pickup_address": "Upphämtningsadress"
+          "pickup_address": "Upphämtningsadress",
+          "cart_pickup_points_not_found": "Det finns inga tillgängliga upphämtningsställen för dessa produkter. Välj en annan leveransmetod",
+          "availability": "Tillgänglighet"
         }
       },
       "order_payment": {
@@ -1266,7 +1274,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Företagsmedlemmar",
-        "search_placeholder": "Sök efter användare",
+        "search_placeholder": "Sök efter namn, roll eller e-post",
         "no_members_img_alt": "Inga medlemmar",
         "no_members_message": "Det finns inga medlemmar ännu",
         "no_results_message": "Inga resultat hittades",
@@ -1371,7 +1379,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku kopierades framgångsrikt",
-      "variations_total_label": "Totalt i din kundvagn:",
+      "variations_in_cart_label": "Varianter i varukorgen:",
       "view_cart_button": "Visa kundvagn",
       "recommended_products": {
         "related-products_section_title": "Produkter relaterade till denna artikel",

@@ -40,7 +40,7 @@
     </div>
 
     <VcLayout sidebar-position="right" sticky-sidebar class="mt-5">
-      <div class="space-y-5 xl:space-y-7">
+      <div class="space-y-5 xl:space-y-6">
         <component
           :is="productInfoSection?.type"
           v-if="productInfoSection && !productInfoSection.hidden"
@@ -92,27 +92,6 @@
           @reset-filters="resetFacetFilters"
           @apply-filters="applyFilters"
         />
-
-        <component
-          :is="relatedProductsSection?.type"
-          v-if="relatedProductsSection && !relatedProductsSection.hidden"
-          :related-products="relatedProducts"
-          :product-id="productId"
-          :product-name="product.name"
-        />
-
-        <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
-          <component
-            :is="recommendedProductsSection?.type"
-            v-for="{ model, id } in recommendedProductsSection.blocks"
-            :key="id"
-            :recommended-products="recommendedProducts[model as string]"
-            :title="$t(`pages.product.recommended_products.${model}_section_title`)"
-            :model="model"
-            :product-id="productId"
-            :product-name="product.name"
-          />
-        </template>
       </div>
 
       <template #sidebar>
@@ -122,8 +101,37 @@
           :variations="variations"
           :template-layout="templateLayout"
         />
+
+        <ProductPickupLocations
+          v-if="xPickupEnabled && pickupLocations?.length > 0"
+          :loading="pickupLocationsLoading"
+          :pickup-locations="pickupLocations"
+        />
       </template>
     </VcLayout>
+
+    <component
+      :is="relatedProductsSection?.type"
+      v-if="relatedProductsSection && !relatedProductsSection.hidden"
+      :related-products="relatedProducts"
+      :product-id="productId"
+      :product-name="product.name"
+      class="mt-5 xl:mt-6"
+    />
+
+    <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
+      <component
+        :is="recommendedProductsSection?.type"
+        v-for="{ model, id } in recommendedProductsSection.blocks"
+        :key="id"
+        :recommended-products="recommendedProducts[model as string]"
+        :title="$t(`pages.product.recommended_products.${model}_section_title`)"
+        :model="model"
+        :product-id="productId"
+        :product-name="product.name"
+        class="mt-5 xl:mt-6"
+      />
+    </template>
   </VcContainer>
 
   <Error404 v-else-if="!fetchingProduct && productTemplate" />
@@ -138,6 +146,7 @@ import productTemplateDefault from "@/config/product-default.json";
 import productTemplateB2c from "@/config/product_b2c.json";
 import { useBreadcrumbs, useAnalytics, usePageTitle } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import {
   BREAKPOINTS,
@@ -170,12 +179,14 @@ import {
   useProducts,
   useRecommendedProducts,
   useConfigurableProduct,
+  useProductPickupLocations,
 } from "@/shared/catalog";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import {
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
 } from "@/shared/catalog/constants/product";
+import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
 import type { ISortInfo } from "@/core/types";
 import type {
   FiltersDisplayOrderType,
@@ -186,6 +197,7 @@ import type {
 import type { IPageTemplate } from "@/shared/static-content";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
+import ProductPickupLocations from "@/shared/catalog/components/product-pickup-locations.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
@@ -234,8 +246,11 @@ const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
 const { applicableVariations } = useProductVariationProperties(variations);
 
+const { pickupLocations, fetchPickupLocations, pickupLocationsLoading } = useProductPickupLocations();
+
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
+const { xPickupEnabled } = useXPickup();
 
 const { analytics } = useAnalytics();
 const { pushHistoricalEvent } = useHistoricalEvents();
@@ -243,6 +258,7 @@ const { pushHistoricalEvent } = useHistoricalEvents();
 const router = useRouter();
 const route = useRoute();
 const { cart, loading: loadingCart } = useShortCart();
+const { updateLocalizedUrl } = useLanguages();
 
 const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
   LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
@@ -298,10 +314,10 @@ const initialVariationsSearchParamsB2c = {
   ]),
 };
 
+const isB2cLayout = computed(() => templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c);
+
 const variationsSearchParams = ref<ProductsSearchParamsType>({
-  ...(templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c
-    ? initialVariationsSearchParamsB2c
-    : initialVariationsSearchParamsDefault),
+  ...(isB2cLayout.value ? initialVariationsSearchParamsB2c : initialVariationsSearchParamsDefault),
 });
 
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
@@ -317,7 +333,7 @@ const seoUrl = computed(() =>
 const canSetMeta = computed(() => props.allowSetMeta && productComponentAnchorIsVisible.value);
 
 const productTemplate = computed(() => {
-  if (templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c) {
+  if (isB2cLayout.value) {
     return productTemplateB2c as IPageTemplate;
   }
   return productTemplateDefault as IPageTemplate;
@@ -358,13 +374,13 @@ async function sortVariations(sortInfo: ISortInfo): Promise<void> {
   variationsSearchParams.value.page = 1;
   variationsSearchParams.value.sort = getSortingExpression(sortInfo);
 
-  await fetchProducts(variationsSearchParams.value);
+  await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
 }
 
 async function changeVariationsPage(pageNumber: number): Promise<void> {
   variationsSearchParams.value.page = pageNumber;
 
-  await fetchProducts(variationsSearchParams.value);
+  await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
 }
 
 async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
@@ -379,7 +395,7 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
     getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
   ]);
 
-  await fetchProducts(variationsSearchParams.value);
+  await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
 }
 
 async function resetFacetFilters(): Promise<void> {
@@ -402,6 +418,8 @@ useSeoMeta({
   ogImage: () => (canSetMeta.value ? seoImageUrl.value : undefined),
   ogType: () => (canSetMeta.value ? "website" : undefined),
 });
+
+const MAX_VISIBLE_PICKUP_LOCATIONS_COUNT = 5;
 
 watch(
   productId,
@@ -437,8 +455,14 @@ watch(
           filter: getFilterExpression([variationsFilterExpression.value, getFilterExpressionForInStock(true)]),
         };
       }
-      await fetchProducts(variationsSearchParams.value);
+      await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
     }
+
+    if (xPickupEnabled.value && product.value) {
+      await fetchPickupLocations({ productId: productId.value, first: MAX_VISIBLE_PICKUP_LOCATIONS_COUNT });
+    }
+
+    updateLocalizedUrl(product.value?.slug);
   },
   { immediate: true },
 );

@@ -212,7 +212,8 @@
       "password_expired": "Salasanasi on vanhentunut",
       "data_changed": "Tiedot ovat muuttuneet toisella välilehdellä. Päivitä sivu nähdäksesi viimeisimmät tiedot.",
       "logo_changed": "Logo on vaihdettu onnistuneesti.",
-      "logo_deleted": "Logo on poistettu."
+      "logo_deleted": "Logo on poistettu.",
+      "pending_operations_leaving_page_confirmation": "Osa toimintoja on vielä käynnissä. Haluatko varmasti poistua tältä sivulta? Tallentamattomat muutokset saattavat kadota."
     },
     "placeholders": {
       "enter_value": "Syötä arvo",
@@ -676,7 +677,8 @@
         },
         "options": {
           "title": "Vaihtoehdot",
-          "select_to_proceed": "Valitse vaihtoehdot jatkaaksesi"
+          "select_to_proceed": "Valitse vaihtoehdot jatkaaksesi",
+          "price_unavailable": "Tuotetta ei voi ostaa valitussa valuutassa"
         }
       },
       "discount_badge": {
@@ -695,6 +697,10 @@
         "ok_button": "OK",
         "no_results": "Tuloksia ei löytynyt",
         "reset_search_button": "Nollaa haku"
+      },
+      "shipment_options": {
+        "title": "Toimitusvaihtoehdot",
+        "in_store": "Nouto myymälästä"
       }
     },
     "checkout": {
@@ -1117,7 +1123,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Syötä avainsanoja...",
+        "search_placeholder": "Hae numerolla, nimellä tai muilla tiedoilla",
         "title": "Tilaukset",
         "order_number_label": "Tilausnumero",
         "purchase_number_label": "Ostotilaus",
@@ -1163,7 +1169,9 @@
           "pick_point_info": "Noutopisteen tiedot",
           "get_directions": "Hae reittiohjeet",
           "point_info": "Pistetiedot",
-          "pickup_address": "Nouto-osoite"
+          "pickup_address": "Nouto-osoite",
+          "cart_pickup_points_not_found": "Näille tuotteille ei ole noutopisteitä. Valitse toinen toimitustapa",
+          "availability": "Saatavuus"
         }
       },
       "order_payment": {
@@ -1266,7 +1274,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Yrityksen jäsenet",
-        "search_placeholder": "Hae käyttäjiä",
+        "search_placeholder": "Hae nimellä, roolilla tai sähköpostilla",
         "no_members_img_alt": "Ei jäseniä",
         "no_members_message": "Jäseniä ei ole vielä",
         "no_results_message": "Tuloksia ei löytynyt",
@@ -1371,7 +1379,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku kopioitu onnistuneesti",
-      "variations_total_label": "Yhteensä ostoskorissasi:",
+      "variations_in_cart_label": "Variantit ostoskorissa:",
       "view_cart_button": "Näytä ostoskori",
       "recommended_products": {
         "related-products_section_title": "Tähän tuotteeseen liittyvät tuotteet",

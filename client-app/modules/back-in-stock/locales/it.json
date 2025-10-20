@@ -8,6 +8,7 @@
     },
     "list_details": {
       "empty_list": "Il tuo elenco è vuoto",
+      "no_results_message": "Nessun risultato trovato",
       "empty_list_button": "Continua a sfogliare"
     },
     "messages": {
@@ -25,7 +26,7 @@
       },
       "reset_search": "Reimposta ricerca",
       "search_button": "Cerca",
-      "search_placeholder": "Ricerca utente"
+      "search_placeholder": "Cerca per nome prodotto"
     }
   }
 }

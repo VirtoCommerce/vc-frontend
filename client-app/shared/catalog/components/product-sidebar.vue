@@ -8,8 +8,10 @@
           </span>
 
           <span>
-            <VcItemPrice v-if="variationResult" :value="variationResult?.price" />
-
+            <VcItemPrice
+              v-if="variationResult && variationResult.price?.actual?.amount > 0"
+              :value="variationResult?.price"
+            />
             <VcTooltip v-else>
               <template #trigger>
                 <span class="flex items-center gap-1 text-primary-500">
@@ -20,7 +22,10 @@
               </template>
 
               <template #content>
-                <span>
+                <span v-if="variationResult">
+                  {{ $t("shared.catalog.product_details.options.price_unavailable") }}
+                </span>
+                <span v-else>
                   {{ $t("shared.catalog.product_details.options.select_to_proceed") }}
                 </span>
               </template>
@@ -29,7 +34,7 @@
         </div>
 
         <div class="mt-4 print:hidden">
-          <AddToCart v-if="variationResult" :product="variationResult">
+          <AddToCart v-if="variationResult && variationResult.price?.actual?.amount > 0" :product="variationResult">
             <InStock
               :is-in-stock="variationResult.availabilityData?.isInStock"
               :is-digital="isDigital"
@@ -39,26 +44,30 @@
             <CountInCart :product-id="variationResult.id" />
           </AddToCart>
 
-          <VcButton
-            v-else
-            class="w-full cursor-not-allowed"
-            disabled
-            :title="$t('shared.catalog.product_details.options.select_to_proceed')"
-          >
-            {{ $t("ui_kit.buttons.add_to_cart") }}
-          </VcButton>
+          <div v-else>
+            <VcButton
+              class="w-full cursor-not-allowed"
+              disabled
+              :title="$t('shared.catalog.product_details.options.select_to_proceed')"
+            >
+              {{ $t("ui_kit.buttons.add_to_cart") }}
+            </VcButton>
+
+            <VcAlert v-if="variationResult" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
+              {{ $t("shared.catalog.product_details.options.price_unavailable") }}
+            </VcAlert>
+          </div>
         </div>
       </template>
 
       <template v-else-if="product.hasVariations">
         <div class="flex flex-wrap justify-between gap-x-2 text-base font-bold">
           <span>
-            {{ $t("pages.product.variations_total_label") }}
+            {{ $t("pages.product.variations_in_cart_label") }}
           </span>
 
-          <!-- todo: extract a component for price and use it here -->
           <span class="text-[--price-color]">
-            {{ $n(variationsCartTotalAmount, "currency") }}
+            {{ variationsInCartQty }}
           </span>
         </div>
 
@@ -114,7 +123,8 @@ import { computed, toRef } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
-import { AddToCart, useShortCart } from "@/shared/cart";
+import { AddToCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart/composables";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES } from "@/shared/catalog/constants/product";
@@ -124,6 +134,7 @@ import CountInCart from "./count-in-cart.vue";
 import InStock from "./in-stock.vue";
 import ProductPriceBlock from "./product-price-block.vue";
 import type { MoneyType, PriceType, Product } from "@/core/api/graphql/types";
+import VcAlert from "@/ui-kit/components/molecules/alert/vc-alert.vue";
 
 interface IProps {
   product: Product;
@@ -136,7 +147,7 @@ const props = defineProps<IProps>();
 const product = toRef(props, "product");
 const variations = toRef(props, "variations");
 
-const { getItemsTotal } = useShortCart();
+const { cart } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
 const { getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 const { variationResult } = useProductVariationProperties(computed(() => variations.value ?? []));
@@ -148,14 +159,15 @@ const showVendor = computed(
   () => themeContext.value?.settings?.vendor_enabled && !product.value.hasVariations && product.value.vendor,
 );
 
-const variationsCartTotalAmount = computed<number>(() => {
+const variationsInCartQty = computed<number>(() => {
   if (!props.product) {
     return 0;
   }
 
   const variationsIds = props.variations?.map((variation) => variation.id) ?? [];
+  const variationsInCart = cart.value?.items.filter((item) => variationsIds.includes(item.productId));
 
-  return getItemsTotal(variationsIds);
+  return variationsInCart?.length ?? 0;
 });
 
 const price = computed<PriceType | { actual: MoneyType; list: MoneyType } | undefined>(() => {

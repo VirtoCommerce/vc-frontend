@@ -17,7 +17,7 @@ import { useSlugInfo } from "@/shared/common";
 import Category from "@/shared/catalog/components/category.vue";
 
 const route = useRoute();
-const { seoInfo } = useSlugInfo(route.path.slice(1));
+const { seoInfo, slugInfo } = useSlugInfo(route.path.slice(1));
 
 const { i18n } = globals;
 
@@ -32,8 +32,6 @@ useSeoMeta({
   ogTitle: () => pageTitle.value,
   ogDescription: () => seoInfo?.value?.metaDescription,
 });
-
-const { slugInfo } = useSlugInfo(route.path.slice(1));
 
 const breadcrumbs = useBreadcrumbs(() => [
   {

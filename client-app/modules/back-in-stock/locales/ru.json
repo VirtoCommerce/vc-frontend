@@ -8,6 +8,7 @@
     },
     "list_details": {
       "empty_list": "Список ожидаемых товаров пуст",
+      "no_results_message": "Результаты не найдены",
       "empty_list_button": "Продолжить покупки"
     },
     "messages": {
@@ -25,7 +26,7 @@
       },
       "reset_search": "Сбросить поиск",
       "search_button": "Поиск",
-      "search_placeholder": "Поиск"
+      "search_placeholder": "По названию товара"
     }
   }
 }

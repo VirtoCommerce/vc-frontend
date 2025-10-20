@@ -212,7 +212,8 @@
       "password_expired": "您的密码已过期",
       "data_changed": "数据在其他标签中被修改。请刷新页面以显示当前数据。",
       "logo_changed": "标志已成功更改。",
-      "logo_deleted": "标志已被删除。"
+      "logo_deleted": "标志已被删除。",
+      "pending_operations_leaving_page_confirmation": "某些操作仍在进行中。确定要离开此页面吗？未保存的更改可能会丢失。"
     },
     "placeholders": {
       "enter_value": "请输入值",
@@ -676,7 +677,8 @@
         },
         "options": {
           "title": "选项",
-          "select_to_proceed": "选择选项以继续"
+          "select_to_proceed": "选择选项以继续",
+          "price_unavailable": "该商品无法使用所选货币购买"
         }
       },
       "discount_badge": {
@@ -695,6 +697,10 @@
         "ok_button": "确定",
         "no_results": "未找到结果",
         "reset_search_button": "重置搜索"
+      },
+      "shipment_options": {
+        "title": "配送选项",
+        "in_store": "门店自提"
       }
     },
     "checkout": {
@@ -893,14 +899,14 @@
         "edit_mode_title": "清单设置",
         "list_name_label": "清单名称",
         "list_name_placeholder": "请输入名称",
+        "sharing_scope_label": "分享选项",
+        "sharing_scope_placeholder": "请选择一个选项",
+        "sharing_link_label": "链接",
         "create_button": "创建清单",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "私人清单",
         "make_shared": "设为共享",
-        "sharing_scope_label": "分享选项",
-        "sharing_scope_placeholder": "请选择一个选项",
-        "sharing_link_label": "链接",
         "sharing_scope": {
           "Private": "私密",
           "Organization": "组织",
@@ -1117,7 +1123,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "输入关键词...",
+        "search_placeholder": "按号码、姓名或其他数据搜索",
         "title": "订单",
         "order_number_label": "订单编号",
         "purchase_number_label": "采购订单",
@@ -1163,7 +1169,9 @@
           "pick_point_info": "自提点信息",
           "get_directions": "获取路线",
           "point_info": "积分信息",
-          "pickup_address": "自提地址"
+          "pickup_address": "自提地址",
+          "cart_pickup_points_not_found": "此商品无适用的自提点。请选择其他配送方式",
+          "availability": "可用性"
         }
       },
       "order_payment": {
@@ -1266,7 +1274,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "公司成员",
-        "search_placeholder": "搜索用户",
+        "search_placeholder": "按姓名、角色或电子邮件搜索",
         "no_members_img_alt": "无成员",
         "no_members_message": "尚无成员",
         "no_results_message": "未找到结果",
@@ -1371,7 +1379,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku 已成功复制",
-      "variations_total_label": "您的购物车中的总计：",
+      "variations_in_cart_label": "购物车中的商品属性：",
       "view_cart_button": "查看购物车",
       "recommended_products": {
         "related-products_section_title": "为您推荐",

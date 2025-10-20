@@ -302,6 +302,25 @@ export const Truncate: StoryType = {
   }),
 };
 
+export const AllVariants: StoryType = {
+  args: {
+    size: "md",
+    color: "primary",
+  },
+  render: (args) => ({
+    components: { VcButton },
+    setup: () => ({ variants: VARIANTS, args }),
+    template: `<div class="space-y-8">
+      <div class="space-y-1" v-for="variant in variants">
+        <VcButton v-bind="args" :variant="variant">
+          {{ variant }}
+        </VcButton>
+      </div>
+    </div>
+    `,
+  }),
+};
+
 export const AllStates: StoryType = {
   render: () => ({
     components: { VcButton },

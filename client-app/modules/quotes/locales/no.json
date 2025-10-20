@@ -10,8 +10,12 @@
     "date_label": "@:common.labels.date",
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
-    "search_placeholder": "Skriv inn nøkkelord...",
+    "search_placeholder": "Søk etter nummer eller status",
+    "no_quote_message": "Det er ingen tilbudsforespørsler ennå",
     "no_results_message": "Ingen resultater funnet",
+    "buttons": {
+      "reset_search": "Tilbakestill søk"
+    },
     "request_quote_button": "Be om tilbud",
     "search_quote_requests": "Søk i tilbudsforespørsler",
     "reset_search": "Tilbakestill søk",
