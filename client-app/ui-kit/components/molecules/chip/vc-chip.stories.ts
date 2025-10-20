@@ -2,7 +2,7 @@ import { VcChip } from "..";
 import { VcIcon } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-const SIZES = ["xs", "sm", "md", "lg"];
+const SIZES = ["sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger"];
 const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];
 

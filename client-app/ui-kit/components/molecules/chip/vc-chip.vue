@@ -7,7 +7,7 @@
       'vc-chip',
       `vc-chip--size--${size}`,
       `vc-chip--color--${color}`,
-      `vc-chip--${variant}--${color}`,
+      `vc-chip--variant--${variant}`,
       {
         'vc-chip--disabled': disabled,
         'vc-chip--clickable': clickable,
@@ -143,12 +143,16 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
 
   $colors: primary, secondary, success, info, warning, danger, neutral, accent;
 
+  $v-solid: "";
+  $v-solid-light: "";
+  $v-outline: "";
+  $v-outline-dark: "";
   $truncate: "";
   $clickable: "";
   $closable: "";
   $disabled: "";
 
-  @apply relative inline-flex max-w-full rounded-[--radius];
+  @apply relative inline-flex max-w-full min-h-[--min-h] rounded-[--radius];
 
   &--closable {
     $closable: &;
@@ -170,95 +174,113 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     $disabled: &;
   }
 
+  &--clickable:not(#{$disabled}) {
+    $clickable: &;
+  }
+
   &--size {
-    &--xs {
-      --icon-size: 0.5rem;
-      --close-button-icon-size: 0.35rem;
-      --padding-x: 0.188rem;
-
-      @apply min-h-4 gap-1 text-[0.625rem]/[0.675rem];
-    }
-
     &--sm {
       --icon-size: 0.625rem;
       --close-button-icon-size: 0.5rem;
-      --padding-x: 0.345rem;
+      --padding-x: 0.438rem;
+      --min-h: 1.5rem;
 
-      @apply min-h-[1.375rem] gap-1 text-xs/[0.75rem];
+      @apply gap-1.5 text-xs/[0.75rem];
     }
 
     &--md {
       --icon-size: 0.75rem;
-      --close-button-icon-size: 0.56rem;
-      --padding-x: 0.475rem;
+      --close-button-icon-size: 0.6rem;
+      --padding-x: 0.438rem;
+      --min-h: 1.75rem;
 
-      @apply min-h-6 gap-1.5 text-sm/[1.125rem];
+      @apply gap-1.5 text-sm/[1.125rem];
     }
 
     &--lg {
       --icon-size: 0.875rem;
       --close-button-icon-size: 0.7rem;
-      --padding-x: 0.6rem;
+      --padding-x: 0.563rem;
+      --min-h: 2rem;
 
-      @apply min-h-8 gap-1.5 text-sm/[1.25rem];
+      @apply gap-2 text-sm/[1.25rem];
+    }
+  }
+
+  &--variant {
+    &--solid {
+      $v-solid: &;
+
+      --main-icon-color: var(--color-additional-50);
+      --close-button-icon-color: var(--color-additional-50);
+      --text-color: var(--color-additional-50);
+    }
+
+    &--solid-light {
+      $v-solid-light: &;
+    }
+
+    &--outline {
+      $v-outline: &;
+    }
+
+    &--outline-dark {
+      $v-outline-dark: &;
     }
   }
 
   @each $color in $colors {
-    &--solid--#{$color} {
-      --bg-color: var(--color-#{$color}-500);
-      --border-color: var(--color-#{$color}-500);
-      --main-icon-color: var(--color-additional-50);
-      --close-button-icon-color: var(--color-additional-50);
-      --text-color: var(--color-additional-50);
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-950);
-        --close-button-icon-color: var(--color-warning-950);
-      }
-
-      &#{$clickable}:hover {
-        --bg-color: var(--color-#{$color}-700);
-        --border-color: var(--color-#{$color}-700);
-      }
-    }
-
-    &--solid-light--#{$color} {
-      --bg-color: var(--color-#{$color}-50);
-      --border-color: var(--color-#{$color}-50);
-      --main-icon-color: var(--color-#{$color}-500);
-      --close-button-icon-color: var(--color-#{$color}-700);
-
-      &#{$clickable}:hover {
-        --bg-color: var(--color-#{$color}-100);
-        --border-color: var(--color-#{$color}-100);
-      }
-    }
-
-    &--outline--#{$color} {
-      --border-color: var(--color-#{$color}-500);
-      --main-icon-color: var(--color-#{$color}-500);
-      --close-button-icon-color: var(--color-#{$color}-700);
-
-      &#{$clickable}:hover {
-        --bg-color: var(--color-#{$color}-50);
-      }
-    }
-
-    &--outline-dark--#{$color} {
-      --bg-color: var(--color-#{$color}-50);
-      --border-color: var(--color-#{$color}-500);
-      --main-icon-color: var(--color-#{$color}-500);
-      --close-button-icon-color: var(--color-#{$color}-700);
-
-      &#{$clickable}:hover {
-        --bg-color: var(--color-#{$color}-100);
-      }
-    }
-
     &--color--#{$color} {
       --focus-color: rgb(from var(--color-#{$color}-500) r g b / 0.4);
+
+      &#{$v-solid} {
+        --bg-color: var(--color-#{$color}-500);
+        --border-color: var(--color-#{$color}-500);
+
+        &#{$clickable}:hover {
+          --bg-color: var(--color-#{$color}-700);
+          --border-color: var(--color-#{$color}-700);
+        }
+      }
+
+      &#{$v-solid-light} {
+        --bg-color: var(--color-#{$color}-50);
+        --border-color: var(--color-#{$color}-50);
+        --main-icon-color: var(--color-#{$color}-500);
+        --close-button-icon-color: var(--color-#{$color}-700);
+
+        &#{$clickable}:hover {
+          --bg-color: var(--color-#{$color}-100);
+          --border-color: var(--color-#{$color}-100);
+        }
+      }
+
+      &#{$v-outline} {
+        --border-color: var(--color-#{$color}-500);
+        --main-icon-color: var(--color-#{$color}-500);
+        --close-button-icon-color: var(--color-#{$color}-700);
+
+        &#{$clickable}:hover {
+          --bg-color: var(--color-#{$color}-50);
+        }
+      }
+
+      &#{$v-outline-dark} {
+        --bg-color: var(--color-#{$color}-50);
+        --border-color: var(--color-#{$color}-500);
+        --main-icon-color: var(--color-#{$color}-500);
+        --close-button-icon-color: var(--color-#{$color}-700);
+
+        &#{$clickable}:hover {
+          --bg-color: var(--color-#{$color}-100);
+        }
+      }
     }
+  }
+
+  &--color--warning#{$v-solid} {
+    --text-color: var(--color-warning-950);
+    --close-button-icon-color: var(--color-warning-950);
   }
 
   &__content {
@@ -268,7 +290,7 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     @apply grow flex items-center justify-center gap-[inherit] max-w-full px-[--padding-x] py-0.5 rounded-[inherit] bg-[--bg-color] border border-[--border-color] font-bold text-center text-[--text-color];
 
     #{$closable} & {
-      @apply pe-[calc(var(--padding-x)*2+var(--close-button-icon-size))];
+      @apply pe-[--min-h];
     }
 
     #{$truncate} &,
@@ -288,7 +310,7 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
     --vc-icon-size: var(--close-button-icon-size);
     --vc-icon-color: var(--close-button-icon-color);
 
-    @apply self-stretch absolute inset-y-0 right-0 flex items-center justify-center px-[--padding-x] rounded-[inherit];
+    @apply self-stretch absolute inset-y-0 right-0 flex items-center justify-center size-[--min-h] rounded-[inherit];
 
     &:disabled {
       @apply cursor-not-allowed;
@@ -302,23 +324,20 @@ const _iconColor = computed(() => getColorValue(props.iconColor));
 
   &:disabled,
   &#{$disabled} {
+    --bg-color: var(--color-neutral-50);
+    --border-color: var(--color-neutral-100);
     --main-icon-color: theme("colors.neutral.400");
-    --text-color: theme("colors.neutral.600");
+    --text-color: theme("colors.neutral.500");
     --close-button-icon-color: theme("colors.neutral.400");
 
     @apply cursor-not-allowed;
 
-    &[class*="--solid-"] {
-      --bg-color: var(--color-neutral-100);
-      --border-color: var(--color-neutral-100);
-    }
-
-    &[class*="--outline-"] {
+    &#{$v-outline} {
+      --bg-color: var(--color-additional-50);
       --border-color: var(--color-neutral-200);
     }
 
-    &[class*="--outline-dark"] {
-      --bg-color: var(--color-neutral-50);
+    &#{$v-outline-dark} {
       --border-color: var(--color-neutral-200);
     }
   }
