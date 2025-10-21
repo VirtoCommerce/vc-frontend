@@ -185,15 +185,14 @@ watch(
     const checkoutInitializedValue = currentValue[2];
     const [previousMode, previousShipment] = previousValue;
 
-    if (!checkoutInitializedValue) {
+    if (!checkoutInitializedValue || !previousShipment) {
       return;
     }
 
     const isSameMode = newMode === previousMode;
-    const shipmentInitialized = !!previousShipment;
 
-    if (isSameMode && shipmentInitialized) {
-      // trigger watch only if mode changed or shipment just has been initialized
+    if (isSameMode) {
+      // trigger watch only if mode changed
       return;
     }
 
