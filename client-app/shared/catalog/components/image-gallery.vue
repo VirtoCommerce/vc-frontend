@@ -180,6 +180,10 @@ onMounted(async () => {
     Lightbox: unknown;
   };
   initTE({ Lightbox });
+
+  document.body.addEventListener("close.te.lightbox", () => {
+    console.log("Lightbox closed");
+  });
 });
 </script>
 
