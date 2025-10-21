@@ -1,6 +1,5 @@
 <template>
   <span
-    role="group"
     :draggable="draggable && !disabled"
     :data-test-id="dataTestId"
     :class="[
