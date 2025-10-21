@@ -144,7 +144,13 @@ const SHIPPING_OPTIONS = {
 
 type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
 
-const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, billingAddressEqualsShipping } = useCheckout();
+const {
+  deliveryAddress,
+  shipmentMethod,
+  onDeliveryAddressChange,
+  billingAddressEqualsShipping,
+  initialized: checkoutInitialized,
+} = useCheckout();
 
 const { cart, availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
 const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
@@ -173,8 +179,16 @@ function getDefaultMode() {
 }
 
 watch(
-  [mode, shipment],
-  ([newMode], [previousMode, previousShipment]) => {
+  [mode, shipment, checkoutInitialized],
+  (currentValue, previousValue) => {
+    const newMode = currentValue[0];
+    const checkoutInitializedValue = currentValue[2];
+    const [previousMode, previousShipment] = previousValue;
+
+    if (!checkoutInitializedValue) {
+      return;
+    }
+
     const isSameMode = newMode === previousMode;
     const shipmentInitialized = !!previousShipment;
 
