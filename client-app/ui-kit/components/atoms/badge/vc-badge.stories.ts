@@ -172,14 +172,14 @@ export const AllStates: StoryObj = {
           <div class="space-y-2">
             <div class="flex justify-around flex-wrap gap-1">
               <VcBadge v-for="color in colors" :size="size" :color="color" :variant="variant">
-                <VcIcon name="fire" />
+                <VcIcon name="cloud" />
                 Color: {{ color }}
               </VcBadge>
             </div>
 
             <div class="flex justify-around flex-wrap gap-1">
               <VcBadge v-for="color in colors" :size="size" :color="color" :variant="variant" rounded>
-                <VcIcon name="fire" />
+                <VcIcon name="cloud" />
                 Color: {{ color }}
               </VcBadge>
             </div>
@@ -198,13 +198,13 @@ export const AllStates: StoryObj = {
 
             <div class="flex justify-around flex-wrap gap-1">
               <VcBadge v-for="color in colors" :size="size" :color="color" :variant="variant" square>
-                <VcIcon name="fire" />
+                <VcIcon name="cloud" />
               </VcBadge>
             </div>
 
             <div class="flex justify-around flex-wrap gap-1">
               <VcBadge v-for="color in colors" :size="size" :color="color" :variant="variant" square rounded>
-                <VcIcon name="fire" />
+                <VcIcon name="cloud" />
               </VcBadge>
             </div>
 

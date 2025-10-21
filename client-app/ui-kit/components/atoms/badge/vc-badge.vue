@@ -48,14 +48,14 @@ withDefaults(defineProps<IProps>(), {
   --max-width: var(--props-max-width, var(--vc-badge-max-width, 100%));
   --radius: var(--vc-badge-radius, var(--vc-radius, 0.5rem));
 
-  @apply flex-none inline-flex align-top min-h-[--size] min-w-[--size] max-w-[--max-width] border rounded-[--radius] font-bold bg-[--bg-color] border-[--border-color] text-[--text-color];
+  @apply flex-none inline-flex min-h-[--size] min-w-[--size] max-w-[--max-width] border rounded-[--radius] font-bold bg-[--bg-color] border-[--border-color] text-[--text-color];
 
   &--size {
     &--xs {
       --size: 1rem;
       --vc-icon-size: 0.625rem;
 
-      @apply gap-1 px-0.5 text-xxs;
+      @apply gap-1 px-[0.188rem] text-xxs/[1];
 
       &--dot {
         @apply size-1.5;
@@ -66,7 +66,7 @@ withDefaults(defineProps<IProps>(), {
       --size: 1.125rem;
       --vc-icon-size: 0.75rem;
 
-      @apply gap-1.5 px-0.5 text-xs/[1.2];
+      @apply gap-1 px-[0.188rem] text-xs/[1.2];
 
       &--dot {
         @apply size-2;
@@ -158,11 +158,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__content {
-    @apply grow gap-[inherit] text-center self-center [word-break:break-word];
-
-    &:has(.vc-icon) {
-      @apply flex items-center;
-    }
+    @apply grow flex gap-[inherit] items-center text-center self-center [word-break:break-word];
 
     &:not(:has(.vc-icon:first-child)) {
       @apply ps-0.5;
