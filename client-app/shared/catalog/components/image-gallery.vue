@@ -51,7 +51,6 @@
       <VcNavButton :label="$t('common.buttons.previous')" size="xs" direction="left" data-nav-prev />
 
       <Swiper
-        ref="thumbsElement"
         class="image-gallery__thumbs"
         :slides-per-view="THUMBS_PER_VIEW"
         :slides-per-group="THUMBS_PER_VIEW"
@@ -94,7 +93,7 @@
 import { useBreakpoints } from "@vueuse/core";
 import { Pagination, Navigation, Thumbs } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { ref, onMounted, computed, getCurrentInstance, watch, toRef } from "vue";
+import { ref, onMounted, computed, getCurrentInstance, watch, toRef, onUnmounted } from "vue";
 import { BREAKPOINTS } from "@/core/constants";
 import { extractNumberFromString } from "@/core/utilities";
 import type { ImageType } from "@/core/api/graphql/types";
@@ -130,6 +129,8 @@ const setThumbsSwiper = (swiper: SwiperCore) => {
   thumbsSwiper.value = swiper;
 };
 
+const focusedElementBeforeLightbox = ref<boolean>(false);
+
 const modules = [Pagination, Navigation, Thumbs];
 
 const showThumbs = computed(() => isDesktop.value && props.images?.length > 1);
@@ -154,6 +155,7 @@ function navigateToNext() {
 
 function openLightbox() {
   const currentImage = document.querySelector(".image-gallery__img--active") as HTMLElement;
+  focusedElementBeforeLightbox.value = true;
   if (currentImage) {
     currentImage.click();
   }
@@ -171,6 +173,15 @@ watch(
   },
 );
 
+function handleLightboxClose() {
+  if (focusedElementBeforeLightbox.value) {
+    const thumbs = document.querySelector(".image-gallery__thumbs") as HTMLElement;
+    thumbs.focus();
+  }
+
+  focusedElementBeforeLightbox.value = false;
+}
+
 onMounted(async () => {
   // Dynamic import is required to avoid SSR errors
   // SSR is used to generate routes.json
@@ -181,9 +192,11 @@ onMounted(async () => {
   };
   initTE({ Lightbox });
 
-  document.body.addEventListener("close.te.lightbox", () => {
-    console.log("Lightbox closed");
-  });
+  document.body.addEventListener("close.te.lightbox", handleLightboxClose);
+});
+
+onUnmounted(() => {
+  document.body.removeEventListener("close.te.lightbox", handleLightboxClose);
 });
 </script>
 
