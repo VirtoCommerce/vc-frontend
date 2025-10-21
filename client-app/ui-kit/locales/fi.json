@@ -1,0 +1,113 @@
+{
+  "ui_kit": {
+    "buttons": {
+      "add_to_cart": "Lisää ostoskoriin",
+      "apply": "Käytä",
+      "cancel": "Peruuta",
+      "close": "Sulje",
+      "copy": "Kopioi",
+      "deny": "Hylkää",
+      "filters": "Suodattimet",
+      "ok": "OK",
+      "remove_all": "Poista kaikki",
+      "remove_from_cart": "Poista ostoskorista",
+      "remove_selected": "Poista valitut",
+      "see_more": "Näytä lisää",
+      "see_less": "Näytä vähemmän",
+      "show_hide_password": "Näytä/piilota salasana",
+      "toggle_dropdown": "Avaa/sulje pudotusvalikko",
+      "update_cart": "Päivitä ostoskori"
+    },
+    "accessibility": {
+      "close_alert": "Sulje hälytys",
+      "open_calendar": "Avaa kalenteri",
+      "product_quantity": "Tuotteen määrä",
+      "decrease_quantity": "Vähennä määrää",
+      "increase_quantity": "Lisää määrää",
+      "variant_picker_group": "Variantrivaihtoehdot",
+      "show_more_button": "Näytä lisää vaihtoehtoja ({count})",
+      "sidebar": "Sivupalkki"
+    },
+    "date_selector": {
+      "min_date_error": "Päivämäärän on oltava vähintään {min}",
+      "max_date_error": "Päivämäärän on oltava enintään {max}"
+    },
+    "labels": {
+      "not_available": "Ei saatavilla",
+      "price_per_item": "Hinta per tuote",
+      "product": "Tuote",
+      "product_quantity": "Tuotteen määrä",
+      "properties": "Ominaisuudet",
+      "subtotal": "Välisumma",
+      "toggle_vendor_select": "Avaa/sulje myyjän valinta",
+      "total": "Yhteensä",
+      "vendor": "Myyjä"
+    },
+    "suffixes": {
+      "from": "Alkaen",
+      "per_item": " per tuote"
+    },
+    "messages": {
+      "loading_text": "Ladataan...",
+      "no_results": "Ei tuloksia"
+    },
+    "add_to_cart": {
+      "errors": {
+        "in_cart": "ostoskorissa",
+        "already_in_cart_message": "{0} on jo lisätty ostoskoriin",
+        "enter_correct_number_message": "Syötä kelvollinen numero",
+        "min": "Vähimmäistilaus {0} kpl",
+        "max": "Enimmäistilaus {0} kpl",
+        "min_max": "Tilaus {0} - {1} kpl",
+        "min_not_available": "Vähimmäistilaus {0} kpl ei ole saatavilla varastossa",
+        "exact_qty": "Voit tilata {0} kpl",
+        "out_of_stock": "Loppu varastosta",
+        "positive_number": "Arvon on oltava positiivinen numero",
+        "integer_number": "Arvon on oltava kokonaisluku",
+        "pack_size": "Tilaa {0} kpl paketeissa"
+      }
+    },
+    "pagination": {
+      "previous": "Edellinen",
+      "next": "Seuraava"
+    },
+    "select": {
+      "items_selected": "{0} kohdetta valittu"
+    },
+    "file": {
+      "progress": "{percent} valmis",
+      "uploaded": "Lataus valmis"
+    },
+    "file_uploader": {
+      "drag_and_drop": "Vedä ja pudota tiedosto tähän tai",
+      "browse": "Selaa tiedostojasi",
+      "requirements": "Ladattavissa olevat tiedostot ovat muodossa {formats}. Yksittäisen tiedoston koko ei saa ylittää {fileSize}. Enintään {maxFileCount} tiedostoa sallittu.",
+      "any_format": "mikä tahansa",
+      "errors": {
+        "fix_to_continue": "Korjaa tiedostojen latausvirheet jatkaaksesi.",
+        "has_max_file_count": "Olet ladannut enimmäismäärän tiedostoja. Lisälataukset eivät ole mahdollisia.",
+        "tried_more_than_max_file_count": "Yritit ladata enemmän tiedostoja kuin sallittu enimmäismäärä."
+      }
+    },
+    "reach_limit": {
+      "end_list": "Olet saavuttanut listan lopun.",
+      "page_limit_filters": "Ei enempää tuloksia. Kokeile muuttaa suodattimia.",
+      "page_limit": "Ei enempää tuloksia näytettävissä."
+    },
+    "slider": {
+      "tooltip": "{count} kohdetta",
+      "aria_label": "Liukusäädin alueella {min} - {max}",
+      "start_input_label": "Alkuarvo (välillä {min} ja {max})",
+      "end_input_label": "Loppuarvo (välillä {min} ja {max})",
+      "start_input_aria_label": "Alkuarvon syöttö, alue {min} - {max}",
+      "end_input_aria_label": "Loppuarvon syöttö, alue {min} - {max}",
+      "start_input_help": "Syötä numero välillä {min} ja {max}, askelkoko {step}",
+      "end_input_help": "Syötä numero välillä {min} ja {max}, askelkoko {step}",
+      "column_aria_label": "Sarake, jossa {count} kohdetta, alue {from} - {to}",
+      "current_value_announcement": "Liukusäätimen arvo: {start} - {end}, alue {min} - {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Murupolun navigointi"
+    }
+  }
+}

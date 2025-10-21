@@ -10,8 +10,12 @@
     "date_label": "@:common.labels.date",
     "status_label": "@:common.labels.status",
     "total_label": "@:common.labels.total",
-    "search_placeholder": "Entrez un mot-clé...",
+    "search_placeholder": "Rechercher par numéro ou statut",
+    "no_quote_message": "Il n'y a pas encore de demandes de devis",
     "no_results_message": "Aucun résultat trouvé",
+    "buttons": {
+      "reset_search": "Réinitialiser la recherche"
+    },
     "request_quote_button": "Demander un Devis",
     "search_quote_requests": "Rechercher des demandes de devis",
     "reset_search": "Réinitialiser la recherche",

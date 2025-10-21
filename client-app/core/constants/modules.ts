@@ -20,3 +20,9 @@ export const MODULE_XAPI_KEYS = {
 export const MODULE_ID_SHIPPING = "VirtoCommerce.Shipping";
 export const BOPIS_MAP_ENABLED_KEY = "Shipping.Bopis.GoogleMaps.Enabled";
 export const BOPIS_MAP_API_KEY = "Shipping.Bopis.GoogleMaps.ApiKey";
+
+export const MODULE_ID_XPICKUP = "VirtoCommerce.XPickup";
+export const XPICKUP_ENABLED_KEY = "XPickup.Enabled";
+
+export const INTENT_SEARCH_MODULE_ID = "VirtoCommerce.IntentSearch";
+export const INTENT_SEARCH_ENABLED_KEY = "IntentSearch.Enabled";

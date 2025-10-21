@@ -1,10 +1,10 @@
 <template>
   <VcLineItems
     :items="items"
+    :removable="editable"
     with-image
     with-properties
     with-price
-    removable
     @remove:items="$emit('remove:items', $event)"
   >
     <template #default />
@@ -19,34 +19,34 @@
         :key="item.id"
         :image-url="item.imageUrl"
         :name="item.name"
-        :route="item.route"
+        :route="navigatable ? item.route : undefined"
         :properties="item.properties"
         :list-price="item.listPrice"
         :actual-price="item.actualPrice"
         :total="item.extendedPrice"
         :disabled="pendingItems[item.id]"
         :deleted="item.deleted"
-        :browser-target="$cfg.details_browser_target"
+        :browser-target="browserTarget"
+        :removable="editable"
         with-image
         with-properties
         with-price
-        removable
         @remove="() => removeSingleItem(item.id)"
         @link-click="$emit('linkClick', item.product)"
       >
-        <div v-if="!item.deleted" ref="itemDefaultSlot" :style="{ width: itemDefaultSlotWidth }">
+        <div v-if="editable && !item.deleted" ref="itemDefaultSlot" :style="{ width: itemDefaultSlotWidth }">
           <VcProductButton
             v-if="item.isConfigurable"
             no-wrap
-            :to="item.route"
+            :to="navigatable ? item.route : undefined"
             :button-text="$t('pages.catalog.customize_button')"
             icon="cube-transparent"
-            :target="$cfg.details_browser_target"
+            :target="browserTarget"
           />
           <VcProductButton
             v-else-if="item.hasVariations"
-            :to="item.route"
-            :target="$cfg.details_browser_target"
+            :to="navigatable ? item.route : undefined"
+            :target="browserTarget"
             :button-text="$t('pages.catalog.variations_button', [(item.variations?.length || 0) + 1])"
           />
           <VcAddToCart
@@ -89,7 +89,7 @@
             {{ $t("validation_error.CART_PRODUCT_UNAVAILABLE") }}
           </VcAlert>
 
-          <div v-if="validationErrors.length" class="flex flex-col gap-1">
+          <div v-if="editable && validationErrors.length" class="flex flex-col gap-1">
             <template v-for="(validationError, index) in validationErrors" :key="index">
               <VcAlert
                 v-if="validationError.objectId === item.id && !!validationError.errorMessage"
@@ -110,6 +110,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import type { Product, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
@@ -126,12 +127,18 @@ interface IEmits {
 interface IProps {
   items: PreparedLineItemType[];
   pendingItems?: Record<string, boolean>;
+  editable?: boolean;
+  navigatable?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
   pendingItems: () => ({}),
+  editable: true,
+  navigatable: true,
 });
+
+const { browserTarget } = useBrowserTarget();
 
 const validationErrors = ref<ValidationErrorType[]>([]);
 const itemDefaultSlot = ref<HTMLElement[] | null>(null);

@@ -20,7 +20,6 @@
     "allowSyntheticDefaultImports": true,
     "paths": {
       "@/*": ["./client-app/*"]
-    },
-    "types": ["@types/gtag.js", "@types/google.maps"]
+    }
   }
 }

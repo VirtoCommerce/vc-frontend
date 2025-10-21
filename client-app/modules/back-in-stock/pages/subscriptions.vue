@@ -1,34 +1,30 @@
 <template>
   <div class="back-in-stock-subscriptions">
-    <BackButtonInHeader v-if="isMobile" @click="$router.back" />
-
     <VcTypography tag="h1" class="back-in-stock-subscriptions__title">
       {{ $t("back_in_stock.subscriptions.meta.title") }}
     </VcTypography>
 
-    <PageToolbarBlock :stick="stickyMobileHeaderIsVisible" class="back-in-stock-subscriptions__toolbar" shadow>
-      <VcInput
-        v-model="keywordInput"
-        :disabled="allLoading"
-        :placeholder="$t('back_in_stock.subscriptions.search_placeholder')"
-        maxlength="64"
-        clearable
-        class="back-in-stock-subscriptions__keyword-input"
-        @keydown.enter="applyKeyword"
-        @clear="resetKeyword"
-      >
-        <template #append>
-          <VcButton
-            :aria-label="$t('back_in_stock.subscriptions.search_button')"
-            :title="$t('back_in_stock.subscriptions.search_button')"
-            :disabled="allLoading"
-            icon="search"
-            icon-size="1.25rem"
-            @click="applyKeyword"
-          />
-        </template>
-      </VcInput>
-    </PageToolbarBlock>
+    <VcInput
+      v-model="keywordInput"
+      :disabled="allLoading"
+      :placeholder="$t('back_in_stock.subscriptions.search_placeholder')"
+      maxlength="64"
+      clearable
+      class="back-in-stock-subscriptions__keyword-input"
+      @keydown.enter="applyKeyword"
+      @clear="resetKeyword"
+    >
+      <template #append>
+        <VcButton
+          :aria-label="$t('back_in_stock.subscriptions.search_button')"
+          :title="$t('back_in_stock.subscriptions.search_button')"
+          :disabled="allLoading"
+          icon="search"
+          icon-size="1.25rem"
+          @click="applyKeyword"
+        />
+      </template>
+    </VcInput>
 
     <div ref="listElement">
       <template v-if="allLoading">
@@ -76,9 +72,20 @@
         />
       </template>
 
-      <VcEmptyView v-else-if="!allLoading" :text="$t('back_in_stock.list_details.empty_list')" icon="outline-lists">
+      <VcEmptyView
+        v-else-if="!allLoading"
+        :text="
+          keyword ? $t('back_in_stock.list_details.no_results_message') : $t('back_in_stock.list_details.empty_list')
+        "
+        icon="outline-lists"
+        :variant="!!keyword ? 'search' : 'empty'"
+      >
         <template #button>
-          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+          <VcButton v-if="keyword" prepend-icon="reset" @click="resetKeyword">
+            {{ $t("pages.account.orders.buttons.reset_search") }}
+          </VcButton>
+
+          <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
             {{ $t("back_in_stock.list_details.empty_list_button") }}
           </VcButton>
 
@@ -92,9 +99,8 @@
 </template>
 
 <script lang="ts" setup>
-import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import keyBy from "lodash/keyBy";
-import { computed, ref, watchEffect, shallowRef } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -102,11 +108,9 @@ import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ProductType } from "@/core/enums";
 import { prepareLineItemForProduct } from "@/core/utilities";
-import { PageToolbarBlock } from "@/shared/account";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, AddToCart } from "@/shared/cart";
 import { InStock, CountInCart, useProducts, ProductSkeletonList } from "@/shared/catalog";
-import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import { DeactivateBackInStockSubscriptionModal, BackInStockNotifyButton } from "../components";
 import { useBackInStockSubscriptions } from "../composables";
@@ -132,17 +136,11 @@ const { loading: cartLoading, cart } = useShortCart();
 const broadcast = useBroadcast();
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
-
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
 });
 
 const listElement = ref<HTMLElement | undefined>();
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
-const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const keywordInput = ref("");
 const keyword = ref("");
@@ -196,6 +194,7 @@ function openDeleteProductModal(ids: string[]): void {
         if (hasPagination && isLastPageWithOneItem) {
           pagination.value.page -= 1;
         }
+        // eslint-disable-next-line sonarjs/void-use
         void broadcast.emit(dataChangedEvent);
         void fetchProductsAndSubscriptions();
       },
@@ -208,12 +207,8 @@ watchEffect(fetchProductsAndSubscriptions);
 
 <style lang="scss">
 .back-in-stock-subscriptions {
-  &__toolbar {
-    @apply mt-2  flex flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5;
-  }
-
   &__keyword-input {
-    @apply w-full;
+    @apply mt-2 w-full;
   }
 
   &__list {

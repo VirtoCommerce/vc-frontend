@@ -2,6 +2,7 @@ export * from "./useBrands";
 export * from "./useCategory";
 export * from "./useConfigurableProduct";
 export * from "./useProduct";
+export * from "./useProductPickupLocations";
 export * from "./useProducts";
 export * from "./usePurchasedBefore";
 export * from "./useRecommendedProducts";

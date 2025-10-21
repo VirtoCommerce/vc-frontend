@@ -212,7 +212,8 @@
       "password_expired": "Срок действия пароля истек",
       "data_changed": "Данные были изменены на одной из других вкладок. Обновите страницу, чтобы отобразить последние данные.",
       "logo_changed": "Логотип успешно изменен.",
-      "logo_deleted": "Логотип удален."
+      "logo_deleted": "Логотип удален.",
+      "pending_operations_leaving_page_confirmation": "Некоторые операции еще выполняются. Вы уверены, что хотите покинуть эту страницу? Несохраненные изменения могут быть потеряны."
     },
     "placeholders": {
       "enter_value": "Введите значение",
@@ -676,7 +677,8 @@
         },
         "options": {
           "title": "Опции",
-          "select_to_proceed": "Выберите параметры, чтобы продолжить"
+          "select_to_proceed": "Выберите параметры, чтобы продолжить",
+          "price_unavailable": "Товар нельзя купить в выбранной валюте"
         }
       },
       "discount_badge": {
@@ -695,6 +697,10 @@
         "ok_button": "ОК",
         "no_results": "Результатов не найдено",
         "reset_search_button": "Очистить поиск"
+      },
+      "shipment_options": {
+        "title": "Варианты доставки",
+        "in_store": "Самовывоз из магазина"
       }
     },
     "checkout": {
@@ -893,11 +899,20 @@
         "edit_mode_title": "Настройки списка",
         "list_name_label": "Название списка",
         "list_name_placeholder": "Пожалуйста, введите название",
+        "sharing_scope_label": "Поделиться",
+        "sharing_scope_placeholder": "Пожалуйста, выберите один вариант",
+        "sharing_link_label": "Ссылка",
         "create_button": "Создать список",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Приватный список",
-        "make_shared": "Сделать общим"
+        "make_shared": "Сделать общим",
+        "sharing_scope": {
+          "Private": "Приватный",
+          "Organization": "Организация",
+          "AnyoneAnonymous": "Все (только чтение)"
+        },
+        "clipboard_success": "Ссылка скопирована"
       },
       "delete_wishlist_modal": {
         "title": "Подтвердить удаление",
@@ -913,7 +928,8 @@
       },
       "status": {
         "shared": "Общий",
-        "private": "Приватный"
+        "private": "Приватный",
+        "shared_with_me": "Со мной поделились"
       }
     },
     "sorting": {
@@ -1107,7 +1123,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Введите ключевое слово...",
+        "search_placeholder": "По номеру, имени или другим данным",
         "title": "Заказы",
         "order_number_label": "Номер заказа",
         "purchase_number_label": "Номер закупки",
@@ -1153,7 +1169,9 @@
           "pick_point_info": "Информация о пункте выдачи",
           "get_directions": "Как добраться",
           "point_info": "Информация",
-          "pickup_address": "Адрес самовывоза"
+          "pickup_address": "Адрес самовывоза",
+          "cart_pickup_points_not_found": "Для этих товаров нет доступных пунктов выдачи. Выберите другой способ доставки",
+          "availability": "Доступность"
         }
       },
       "order_payment": {
@@ -1256,7 +1274,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Сотрудники компании",
-        "search_placeholder": "Поиск пользователей",
+        "search_placeholder": "По имени, роли или email",
         "no_members_img_alt": "Нет сотрудников",
         "no_members_message": "Сотрудников пока нет",
         "no_results_message": "Результаты не найдены",
@@ -1361,13 +1379,13 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku успешно скопирован",
-      "variations_total_label": "Всего в вашей корзине:",
+      "variations_in_cart_label": "Варианты в корзине:",
       "view_cart_button": "В корзину",
       "recommended_products": {
-        "related-products_section_title": "Сопутствующие товары",
+        "related-products_section_title": "Рекомендуем для вас",
         "bought-together_section_title": "Также покупают вместе"
       },
-      "related_product_section_title": "Связанные товары",
+      "related_product_section_title": "Сопутствующие товары",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {

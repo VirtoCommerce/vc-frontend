@@ -17,4 +17,7 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+// eslint-disable-next-line no-console
+console.warn("[PageToolbarBlock] This component is deprecated. Consider using a custom implementation.");
 </script>

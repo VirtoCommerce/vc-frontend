@@ -20,11 +20,17 @@
     },
     "accessibility": {
       "close_alert": "Fermer l'alerte",
+      "open_calendar": "Ouvrir le calendrier",
       "product_quantity": "Quantité du produit",
       "decrease_quantity": "Diminuer la quantité",
       "increase_quantity": "Augmenter la quantité",
       "variant_picker_group": "Options de variantes",
-      "show_more_button": "Voir plus d’options ({count})"
+      "show_more_button": "Voir plus d'options ({count})",
+      "sidebar": "Barre latérale"
+    },
+    "date_selector": {
+      "min_date_error": "La date doit être à partir du {min}",
+      "max_date_error": "La date doit être au plus tard le {max}"
     },
     "labels": {
       "not_available": "N/A",

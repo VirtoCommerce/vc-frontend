@@ -212,7 +212,8 @@
       "password_expired": "La tua password è scaduta",
       "data_changed": "I dati sono stati modificati in uno degli altri tab. Per favore, aggiorna la pagina per visualizzare i dati correnti.",
       "logo_changed": "Il logo è stato modificato con successo.",
-      "logo_deleted": "Il logo è stato eliminato."
+      "logo_deleted": "Il logo è stato eliminato.",
+      "pending_operations_leaving_page_confirmation": "Alcune operazioni sono ancora in corso. Vuoi veramente lasciare questa pagina? Le modifiche non salvate potrebbero andare perse."
     },
     "placeholders": {
       "enter_value": "Inserisci un valore",
@@ -676,7 +677,8 @@
         },
         "options": {
           "title": "Opzioni",
-          "select_to_proceed": "Seleziona le opzioni per procedere"
+          "select_to_proceed": "Seleziona le opzioni per procedere",
+          "price_unavailable": "Il prodotto non può essere acquistato nella valuta selezionata"
         }
       },
       "discount_badge": {
@@ -695,6 +697,10 @@
         "ok_button": "Ok",
         "no_results": "Nessun risultato trovato",
         "reset_search_button": "Reimposta ricerca"
+      },
+      "shipment_options": {
+        "title": "Opzioni di spedizione",
+        "in_store": "Ritiro in negozio"
       }
     },
     "checkout": {
@@ -893,11 +899,20 @@
         "edit_mode_title": "Impostazioni lista",
         "list_name_label": "Nome lista",
         "list_name_placeholder": "Inserisci il nome",
+        "sharing_scope_label": "Opzioni di condivisione",
+        "sharing_scope_placeholder": "Seleziona un'opzione",
+        "sharing_link_label": "Link",
         "create_button": "Crea lista",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Lista privata",
-        "make_shared": "Rendi condivisa"
+        "make_shared": "Rendi condivisa",
+        "sharing_scope": {
+          "Private": "Privato",
+          "Organization": "Organizzazione",
+          "AnyoneAnonymous": "Chiunque (sola lettura)"
+        },
+        "clipboard_success": "Link copiato"
       },
       "delete_wishlist_modal": {
         "title": "Conferma eliminazione",
@@ -913,7 +928,8 @@
       },
       "status": {
         "shared": "Condivisa",
-        "private": "Privata"
+        "private": "Privata",
+        "shared_with_me": "Condivisi con me"
       }
     },
     "sorting": {
@@ -1107,7 +1123,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Inserisci parola chiave...",
+        "search_placeholder": "Cerca per numero, nome o altri dati",
         "title": "Ordini",
         "order_number_label": "Numero ordine",
         "purchase_number_label": "Ordine d'acquisto",
@@ -1153,7 +1169,9 @@
           "pick_point_info": "Info punto di ritiro",
           "get_directions": "Ottieni indicazioni",
           "point_info": "Informazioni",
-          "pickup_address": "Indirizzo di ritiro"
+          "pickup_address": "Indirizzo di ritiro",
+          "cart_pickup_points_not_found": "Non ci sono punti di ritiro disponibili per questi prodotti. Seleziona un altro metodo di spedizione",
+          "availability": "Disponibilità"
         }
       },
       "order_payment": {
@@ -1256,7 +1274,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Membri azienda",
-        "search_placeholder": "Cerca utenti",
+        "search_placeholder": "Cerca per nome, ruolo o e-mail",
         "no_members_img_alt": "Nessun membro",
         "no_members_message": "Non ci sono ancora membri",
         "no_results_message": "Nessun risultato trovato",
@@ -1361,13 +1379,13 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku copiato con successo",
-      "variations_total_label": "Totale nel tuo carrello:",
+      "variations_in_cart_label": "Varianti nel carrello:",
       "view_cart_button": "Visualizza carrello",
       "recommended_products": {
-        "related-products_section_title": "Prodotti correlati a questo articolo",
+        "related-products_section_title": "Consigliato per te",
         "bought-together_section_title": "Acquistati insieme dai clienti"
       },
-      "related_product_section_title": "Prodotti correlati",
+      "related_product_section_title": "Prodotti correlati a questo articolo",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {

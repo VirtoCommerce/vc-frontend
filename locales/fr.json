@@ -212,7 +212,8 @@
       "password_expired": "Votre mot de passe a expiré",
       "data_changed": "Les données ont été modifiées dans l'un des autres onglets. Veuillez actualiser la page pour afficher les données actuelles.",
       "logo_changed": "Le logo a été changé avec succès.",
-      "logo_deleted": "Le logo a été supprimé."
+      "logo_deleted": "Le logo a été supprimé.",
+      "pending_operations_leaving_page_confirmation": "Certaines opérations sont toujours en cours. Êtes-vous sûr de vouloir quitter cette page ? Les modifications non enregistrées pourraient être perdues."
     },
     "placeholders": {
       "enter_value": "Veuillez entrer une valeur",
@@ -676,7 +677,8 @@
         },
         "options": {
           "title": "Options",
-          "select_to_proceed": "Sélectionnez des options pour continuer"
+          "select_to_proceed": "Sélectionnez des options pour continuer",
+          "price_unavailable": "Le produit ne peut pas être acheté dans la devise sélectionnée"
         }
       },
       "discount_badge": {
@@ -695,6 +697,10 @@
         "ok_button": "Ok",
         "no_results": "Aucun résultat trouvé",
         "reset_search_button": "Réinitialiser la recherche"
+      },
+      "shipment_options": {
+        "title": "Options de livraison",
+        "in_store": "Ramassage en magasin"
       }
     },
     "checkout": {
@@ -893,11 +899,20 @@
         "edit_mode_title": "Paramètres de la liste",
         "list_name_label": "Nom de la liste",
         "list_name_placeholder": "Veuillez entrer le nom",
+        "sharing_scope_label": "Options de partage",
+        "sharing_scope_placeholder": "Veuillez choisir une option",
+        "sharing_link_label": "Lien",
         "create_button": "Créer une liste",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Liste privée",
-        "make_shared": "Rendre partagé"
+        "make_shared": "Rendre partagé",
+        "sharing_scope": {
+          "Private": "Privé(e)",
+          "Organization": "Organisation",
+          "AnyoneAnonymous": "Tout le monde (lecture seule)"
+        },
+        "clipboard_success": "Lien copié"
       },
       "delete_wishlist_modal": {
         "title": "Confirmer la suppression",
@@ -913,7 +928,8 @@
       },
       "status": {
         "shared": "Partagé",
-        "private": "Privé"
+        "private": "Privé",
+        "shared_with_me": "Partagés avec moi"
       }
     },
     "sorting": {
@@ -1107,7 +1123,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Entrez un mot-clé...",
+        "search_placeholder": "Rechercher par numéro, nom ou autres données",
         "title": "Commandes",
         "order_number_label": "Numéro de commande",
         "purchase_number_label": "Numéro de commande d'achat",
@@ -1153,7 +1169,9 @@
           "pick_point_info": "Infos point de collecte",
           "get_directions": "Itinéraire",
           "point_info": "Point d'info",
-          "pickup_address": "Adresse de retrait"
+          "pickup_address": "Adresse de retrait",
+          "cart_pickup_points_not_found": "Aucun point de collecte n'est disponible pour ces produits. Veuillez sélectionner un autre mode de livraison.",
+          "availability": "Disponibilité"
         }
       },
       "order_payment": {
@@ -1256,7 +1274,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Membres de l'entreprise",
-        "search_placeholder": "Rechercher des utilisateurs",
+        "search_placeholder": "Rechercher par nom, rôle ou e-mail",
         "no_members_img_alt": "Aucun membre",
         "no_members_message": "Il n'y a pas encore de membres",
         "no_results_message": "Aucun résultat trouvé",
@@ -1361,13 +1379,13 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku copié avec succès",
-      "variations_total_label": "Total dans votre panier :",
+      "variations_in_cart_label": "Variantes dans le panier :",
       "view_cart_button": "Voir le panier",
       "recommended_products": {
-        "related-products_section_title": "Produits associés à cet article",
+        "related-products_section_title": "Recommandé pour vous",
         "bought-together_section_title": "Les clients ont acheté ensemble"
       },
-      "related_product_section_title": "Produits liés",
+      "related_product_section_title": "Produits associés à cet article",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {

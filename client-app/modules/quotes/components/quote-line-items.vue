@@ -4,7 +4,7 @@
     :items="normalizedItems"
     :removable="!readonly"
     :readonly="readonly"
-    :browser-target="$cfg.details_browser_target"
+    :browser-target="browserTarget"
     with-image
     with-properties
     with-price
@@ -12,13 +12,20 @@
     with-subtotal
   >
     <template #titles>
-      <div class="text-center">
+      <div class="w-32 text-center">
         {{ $t("common.labels.quantity") }}
       </div>
     </template>
 
     <template #line-items>
+      <div v-if="!items?.length" class="quote-line-items__no-items">
+        <VcAlert color="warning" size="sm" variant="outline-dark" icon>
+          {{ $t("quote_details.no_items_message") }}
+        </VcAlert>
+      </div>
+
       <VcLineItem
+        v-else
         v-for="item in normalizedItems"
         :key="item.id"
         :image-url="item.imageUrl"
@@ -44,17 +51,11 @@
           :name="item.id"
           @update:model-value="$emit('update:item', { itemId: item.id, quantity: $event })"
         />
+
         <template #after>
           <ConfigurationItems v-if="item.configurationItems?.length" :configuration-items="item.configurationItems" />
         </template>
       </VcLineItem>
-    </template>
-    <template #after-items>
-      <div v-if="!items?.length" class="quote-line-items__no-items">
-        <VcAlert color="warning" size="sm" variant="outline-dark" icon>
-          {{ $t("quote_details.no_items_message") }}
-        </VcAlert>
-      </div>
     </template>
   </VcLineItems>
 </template>
@@ -62,6 +63,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { useBrowserTarget } from "@/core/composables";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { ConfigurationItems } from "@/shared/common";
@@ -83,6 +85,7 @@ interface IProps {
 }
 
 const { n } = useI18n();
+const { browserTarget } = useBrowserTarget();
 
 const normalizedItems = computed(() => {
   return props.items?.map((item) => ({
@@ -118,12 +121,8 @@ function getProperties(item: QuoteItemType) {
 
 <style lang="scss">
 .quote-line-items {
-  &__quantity {
-    @apply ml-5;
-  }
-
   &__no-items {
-    @apply border-x p-3;
+    @apply p-3;
   }
 }
 </style>

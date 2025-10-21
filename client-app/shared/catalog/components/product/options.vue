@@ -31,7 +31,7 @@
             class="options__picker"
             size="xs"
             :tooltip="getTooltip(property, option)"
-            @change="select(property.name, option.value)"
+            @update:model-value="select(property.name, option.value)"
           />
         </VcVariantPickerGroup>
       </div>

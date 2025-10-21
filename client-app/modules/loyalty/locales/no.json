@@ -1,0 +1,32 @@
+{
+  "loyalty": {
+    "points-history": {
+      "meta": {
+        "title": "Poenghistorikk"
+      },
+      "current-balance": "Saldo: {currentBalance}",
+      "operation": "Operasjon",
+      "operation-type": "Type",
+      "date": "Dato",
+      "amount": "Beløp",
+      "redeemed": "Innløst",
+      "earned": "Opptjent",
+      "registration": "Registrering"
+    },
+    "list_details": {
+      "empty_list": "Listen din er tom"
+    },
+    "navigation": {
+      "route_name": "Poenghistorikk"
+    },
+    "payment": {
+      "loyalty": {
+        "pay_now_button": "Fortsett",
+        "text": "Du prøver å betale for bestillingen med poeng. Din nåværende poengsaldo er {currentBalance}",
+        "errors": {
+          "insufficient_points": "Kan ikke gjennomføre bestillingen på grunn av utilstrekkelig poengsaldo. Din nåværende poengsaldo er {currentBalance}"
+        }
+      }
+    }
+  }
+}

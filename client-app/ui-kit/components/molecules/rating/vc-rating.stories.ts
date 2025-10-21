@@ -1,10 +1,10 @@
 import { VcRating } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const MODES = ["mini", "full"];
 const SIZES = ["xs", "sm", "md"];
 
-export default {
+const meta: Meta<typeof VcRating> = {
   title: "Components/Molecules/VcRating",
   component: VcRating,
   argTypes: {
@@ -29,33 +29,38 @@ export default {
       },
     },
   },
-} as Meta<typeof VcRating>;
-
-const Template: StoryFn = (args) => ({
-  components: { VcRating },
-  setup: () => ({ args }),
-  template: '<VcRating v-bind="args" />',
-});
-
-export const Basic = Template.bind({});
-Basic.args = {
-  value: 4.5,
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcRating v-bind="args" />',
+  }),
 };
 
-export const Label = Template.bind({});
-Label.args = {
-  value: 4.5,
-  label: "Rating",
+export default meta;
+type StoryType = StoryObj<typeof meta>;
+
+export const Basic: StoryType = {
+  args: {
+    value: 4.5,
+  },
 };
 
-export const Full = Template.bind({});
-Full.args = {
-  mode: "full",
+export const Label: StoryType = {
+  args: {
+    value: 4.5,
+    label: "Rating",
+  },
 };
 
-export const FullReadOnly = Template.bind({});
-FullReadOnly.args = {
-  value: 4.5,
-  mode: "full",
-  readOnly: true,
+export const Full: StoryType = {
+  args: {
+    mode: "full",
+  },
+};
+
+export const FullReadOnly: StoryType = {
+  args: {
+    value: 4.5,
+    mode: "full",
+    readOnly: true,
+  },
 };

@@ -11,7 +11,7 @@
       "ok": "OK",
       "remove_all": "Remove all",
       "remove_from_cart": "Remove from cart",
-      "remove_selected": "Remove Selected",
+      "remove_selected": "Remove selected",
       "see_more": "See more",
       "see_less": "See less",
       "show_hide_password": "Show/hide password",
@@ -20,11 +20,17 @@
     },
     "accessibility": {
       "close_alert": "Close alert",
+      "open_calendar": "Open calendar",
       "product_quantity": "Product quantity",
       "decrease_quantity": "Decrease quantity",
       "increase_quantity": "Increase quantity",
       "variant_picker_group": "Variant options",
-      "show_more_button": "See more options ({count})"
+      "show_more_button": "See more options ({count})",
+      "sidebar": "Sidebar"
+    },
+    "date_selector": {
+      "min_date_error": "Date must be on or after {min}",
+      "max_date_error": "Date must be on or before {max}"
     },
     "labels": {
       "not_available": "N/A",
@@ -79,7 +85,7 @@
       "any_format": "any",
       "errors": {
         "fix_to_continue": "Fix file upload errors to continue.",
-        "has_max_file_count": "You have uploaded the maximum number of files possible. Futher uploads are not possible.",
+        "has_max_file_count": "You have uploaded the maximum number of files possible. Further uploads are not possible.",
         "tried_more_than_max_file_count": "You tried to upload more than maximum number of files allowed."
       }
     },

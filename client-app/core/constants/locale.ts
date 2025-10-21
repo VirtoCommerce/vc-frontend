@@ -55,6 +55,7 @@ export const languageToCountryMap: Record<string, string> = {
   pa: "in",
   pl: "pl",
   pt: "pt",
+  "pt-br": "br",
   ro: "ro",
   ru: "ru",
   si: "lk",

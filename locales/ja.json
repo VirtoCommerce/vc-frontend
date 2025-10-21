@@ -212,7 +212,8 @@
       "password_expired": "パスワードが期限切れです",
       "data_changed": "他のタブのいずれかでデータが変更されました。現在のデータを表示するには、ページを更新してください。",
       "logo_changed": "ロゴが正常に変更されました。",
-      "logo_deleted": "ロゴが削除されました。"
+      "logo_deleted": "ロゴが削除されました。",
+      "pending_operations_leaving_page_confirmation": "いくつかの操作がまだ進行中です。このページから移動してもよろしいですか？保存されていない変更は失われる可能性があります。"
     },
     "placeholders": {
       "enter_value": "入力してください",
@@ -676,7 +677,8 @@
         },
         "options": {
           "title": "オプション",
-          "select_to_proceed": "オプションを選択して続行"
+          "select_to_proceed": "オプションを選択して続行",
+          "price_unavailable": "この商品は選択した通貨では購入できません"
         }
       },
       "discount_badge": {
@@ -695,6 +697,10 @@
         "ok_button": "OK",
         "no_results": "該当する店舗がありません",
         "reset_search_button": "検索をリセット"
+      },
+      "shipment_options": {
+        "title": "配送オプション",
+        "in_store": "店舗受取"
       }
     },
     "checkout": {
@@ -893,11 +899,20 @@
         "edit_mode_title": "List Settings",
         "list_name_label": "List name",
         "list_name_placeholder": "Please enter name",
+        "sharing_scope_label": "共有オプション",
+        "sharing_scope_placeholder": "いずれか 1 つを選択してください",
+        "sharing_link_label": "リンク",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Private list",
-        "make_shared": "Make shared"
+        "make_shared": "Make shared",
+        "sharing_scope": {
+          "Private": "プライベート",
+          "Organization": "組織",
+          "AnyoneAnonymous": "誰でも（閲覧専用）"
+        },
+        "clipboard_success": "リンクをコピーしました"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",
@@ -913,7 +928,8 @@
       },
       "status": {
         "shared": "Shared",
-        "private": "Private"
+        "private": "Private",
+        "shared_with_me": "共有"
       }
     },
     "sorting": {
@@ -1107,7 +1123,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "キーワードを入力...",
+        "search_placeholder": "番号、名前、その他で検索",
         "title": "注文履歴",
         "order_number_label": "注文番号",
         "purchase_number_label": "発注番号",
@@ -1153,7 +1169,9 @@
           "pick_point_info": "受取場所情報",
           "get_directions": "ルート検索",
           "point_info": "ポイント情報",
-          "pickup_address": "受取住所"
+          "pickup_address": "受取住所",
+          "cart_pickup_points_not_found": "この商品を受け取り可能な店舗がありません。別の配送方法を選択してください",
+          "availability": "在庫状況"
         }
       },
       "order_payment": {
@@ -1256,7 +1274,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "会社メンバー",
-        "search_placeholder": "ユーザーを検索",
+        "search_placeholder": "名前、役割、メールで検索",
         "no_members_img_alt": "メンバーなし",
         "no_members_message": "メンバーが登録されていません",
         "no_results_message": "該当する結果が見つかりません",
@@ -1361,13 +1379,13 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.skuをコピーしました",
-      "variations_total_label": "カート内の合計：",
+      "variations_in_cart_label": "カート内のバリエーション：",
       "view_cart_button": "カートを見る",
       "recommended_products": {
-        "related-products_section_title": "関連商品",
+        "related-products_section_title": "おすすめ商品",
         "bought-together_section_title": "よく一緒に購入される商品"
       },
-      "related_product_section_title": "関連商品",
+      "related_product_section_title": "この商品に関連する商品",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {

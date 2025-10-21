@@ -7,6 +7,7 @@
     :disabled="!enabled"
     :title="title"
     :aria-label="ariaLabel || title"
+    :tabindex="tabindex"
     :class="[
       'vc-button group',
       `vc-button--size--${_size}`,
@@ -91,6 +92,7 @@ interface IProps {
   tag?: string;
   iconSize?: string;
   square?: boolean;
+  tabindex?: string | number;
 }
 
 defineEmits<IEmits>();
@@ -106,11 +108,11 @@ const props = withDefaults(defineProps<IProps>(), {
   fullWidth: false,
   noWrap: false,
   tag: "",
+  tabindex: 0,
 });
 
 const inputContext = inject<VcInputContextType | null>("inputContext", null);
 const dialogContext = inject(vcDialogKey, { size: ref("md") });
-
 
 const _size = computed(() => {
   if (props.size) {
@@ -310,11 +312,19 @@ const attrs = computed(() => {
     &--solid--#{$color} {
       --bg-color: var(--color-#{$color}-500);
       --border-color: var(--color-#{$color}-500);
-      --text-color: var(--color-additional-50);
+
+      &:not([class*="--warning"]) {
+        --text-color: var(--color-additional-50);
+      }
+
+      &[class*="--warning"] {
+        --text-color: var(--color-warning-900);
+      }
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-700);
-        --border-color: var(--color-#{$color}-700);
+        --bg-color: var(--color-#{$color}-600);
+        --border-color: var(--color-#{$color}-600);
+        --text-color: var(--color-additional-50);
       }
 
       & #{$loaderIcon} {
@@ -326,7 +336,14 @@ const attrs = computed(() => {
     &--no-border--#{$color} {
       --bg-color: var(--color-additional-50);
       --border-color: var(--color-additional-50);
-      --text-color: var(--color-#{$color}-500);
+
+      &:not([class*="--warning"]) {
+        --text-color: var(--color-#{$color}-500);
+      }
+
+      &[class*="--warning"] {
+        --text-color: var(--color-warning-700);
+      }
 
       &:hover:not(#{$loading}, #{$disabled}) {
         --bg-color: var(--color-#{$color}-100);
@@ -335,37 +352,49 @@ const attrs = computed(() => {
       }
     }
 
-    &--outline {
-      &--#{$color} {
-        --bg-color: var(--color-additional-50);
-        --border-color: currentColor;
-        --text-color: var(--color-#{$color}-500);
+    &--outline--#{$color} {
+      --bg-color: var(--color-additional-50);
+      --border-color: var(--color-#{$color}-500);
 
-        &:hover:not(#{$loading}, #{$disabled}) {
-          --text-color: var(--color-#{$color}-700);
-        }
+      &:not([class*="--warning"]) {
+        --text-color: var(--color-#{$color}-500);
+      }
+
+      &[class*="--warning"] {
+        --text-color: var(--color-warning-700);
+      }
+
+      &:hover:not(#{$loading}, #{$disabled}) {
+        --text-color: var(--color-#{$color}-600);
       }
     }
 
     &--no-background--#{$color} {
       --bg-color: transparent;
       --border-color: transparent;
-      --text-color: var(--color-#{$color}-500);
+
+      &:not([class*="--warning"]) {
+        --text-color: var(--color-#{$color}-500);
+      }
+
+      &[class*="--warning"] {
+        --text-color: var(--color-warning-700);
+      }
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        --text-color: var(--color-#{$color}-700);
+        --text-color: var(--color-#{$color}-600);
       }
     }
 
     &--solid-light--#{$color} {
-      --bg-color: var(--color-#{$color}-50);
-      --border-color: var(--color-#{$color}-50);
-      --text-color: var(--color-#{$color}-500);
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
+      --text-color: var(--color-#{$color}-800);
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-100);
-        --border-color: var(--color-#{$color}-100);
-        --text-color: var(--color-#{$color}-600);
+        --bg-color: var(--color-#{$color}-50);
+        --border-color: var(--color-#{$color}-50);
+        --text-color: var(--color-#{$color}-700);
       }
 
       & #{$loaderIcon} {
