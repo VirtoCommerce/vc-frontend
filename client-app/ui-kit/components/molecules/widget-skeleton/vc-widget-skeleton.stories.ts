@@ -1,9 +1,9 @@
 import { VcWidgetSkeleton } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md", "lg"];
 
-export default {
+const meta: Meta<typeof VcWidgetSkeleton> = {
   title: "Components/Molecules/VcWidgetSkeleton",
   component: VcWidgetSkeleton,
   argTypes: {
@@ -18,43 +18,47 @@ export default {
       },
     },
   },
-} as Meta<typeof VcWidgetSkeleton>;
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcWidgetSkeleton v-bind="args" />',
+  }),
+};
 
-const Template: StoryFn = (args) => ({
-  components: { VcWidgetSkeleton },
+export default meta;
+type StoryType = StoryObj<typeof meta>;
+
+const renderSkeleton = (template: string) => (args: Record<string, unknown>) => ({
   setup: () => ({ args }),
-  template: '<VcWidgetSkeleton v-bind="args" />',
+  template,
 });
 
-export const Basic = Template.bind({});
+export const Basic: StoryType = {};
 
-export const Head = Template.bind({});
-Head.args = {
-  head: true,
+export const Head: StoryType = {
+  args: {
+    head: true,
+  },
 };
 
-export const Foot = Template.bind({});
-Foot.args = {
-  foot: true,
+export const Foot: StoryType = {
+  args: {
+    foot: true,
+  },
 };
 
-export const HeaderSlot: StoryFn = (args) => ({
-  components: { VcWidgetSkeleton },
-  setup: () => ({ args }),
-  template: `<VcWidgetSkeleton v-bind="args">
+export const HeaderSlot: StoryType = {
+  render: renderSkeleton(`<VcWidgetSkeleton v-bind="args">
     <template #header>
       <div class="w-full flex gap-4 items-center">
         <div class="flex-none h-8 w-8 rounded-full"></div>
         <div class="flex-none w-52"></div>
       </div>
     </template>
-  </VcWidgetSkeleton>`,
-});
+  </VcWidgetSkeleton>`),
+};
 
-export const DefaultSlot: StoryFn = (args) => ({
-  components: { VcWidgetSkeleton },
-  setup: () => ({ args }),
-  template: `<VcWidgetSkeleton v-bind="args">
+export const DefaultSlot: StoryType = {
+  render: renderSkeleton(`<VcWidgetSkeleton v-bind="args">
     <div class="flex gap-4 mb-3">
       <div class="flex-none h-10 w-10 rounded-full"></div>
 
@@ -65,26 +69,22 @@ export const DefaultSlot: StoryFn = (args) => ({
       </div>
     </div>
     <div v-for="i in [1, 2, 3, 4, 5]"></div>
-  </VcWidgetSkeleton>`,
-});
+  </VcWidgetSkeleton>`),
+};
 
-export const FooterSlot: StoryFn = (args) => ({
-  components: { VcWidgetSkeleton },
-  setup: () => ({ args }),
-  template: `<VcWidgetSkeleton v-bind="args">
+export const FooterSlot: StoryType = {
+  render: renderSkeleton(`<VcWidgetSkeleton v-bind="args">
     <template #footer>
       <div class="w-full flex gap-4 items-center">
         <div class="flex-none h-8 w-8 rounded-full"></div>
         <div class="flex-none w-52"></div>
       </div>
     </template>
-  </VcWidgetSkeleton>`,
-});
+  </VcWidgetSkeleton>`),
+};
 
-export const HeaderContainerSlot: StoryFn = (args) => ({
-  components: { VcWidgetSkeleton },
-  setup: () => ({ args }),
-  template: `<VcWidgetSkeleton v-bind="args">
+export const HeaderContainerSlot: StoryType = {
+  render: renderSkeleton(`<VcWidgetSkeleton v-bind="args">
     <template #header-container>
       <div class="flex divide-x">
         <div class="p-1">
@@ -98,25 +98,21 @@ export const HeaderContainerSlot: StoryFn = (args) => ({
         </div>
       </div>
     </template>
-  </VcWidgetSkeleton>`,
-});
+  </VcWidgetSkeleton>`),
+};
 
-export const DefaultContainerSlot: StoryFn = (args) => ({
-  components: { VcWidgetSkeleton },
-  setup: () => ({ args }),
-  template: `<VcWidgetSkeleton v-bind="args">
+export const DefaultContainerSlot: StoryType = {
+  render: renderSkeleton(`<VcWidgetSkeleton v-bind="args">
     <template #default-container>
       <div class="p-1">
         <div class="h-52 w-full"></div>
       </div>
     </template>
-  </VcWidgetSkeleton>`,
-});
+  </VcWidgetSkeleton>`),
+};
 
-export const FooterContainerSlot: StoryFn = (args) => ({
-  components: { VcWidgetSkeleton },
-  setup: () => ({ args }),
-  template: `<VcWidgetSkeleton v-bind="args">
+export const FooterContainerSlot: StoryType = {
+  render: renderSkeleton(`<VcWidgetSkeleton v-bind="args">
     <template #footer-container>
       <div class="flex divide-x">
         <div class="p-1">
@@ -130,5 +126,5 @@ export const FooterContainerSlot: StoryFn = (args) => ({
         </div>
       </div>
     </template>
-  </VcWidgetSkeleton>`,
-});
+  </VcWidgetSkeleton>`),
+};

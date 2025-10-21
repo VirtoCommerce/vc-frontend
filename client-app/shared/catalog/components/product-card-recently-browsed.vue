@@ -2,7 +2,14 @@
   <VcProductCard :background="false">
     <VcProductImage :img-src="product.imgSrc" :alt="product.name" />
 
-    <VcProductTitle lines-number="2" fix-height :to="link" :title="product.name" @click="$emit('linkClick', $event)">
+    <VcProductTitle
+      lines-number="2"
+      fix-height
+      :to="link"
+      :title="product.name"
+      :target="browserTarget"
+      @click="$emit('linkClick', $event)"
+    >
       {{ product.name }}
     </VcProductTitle>
 
@@ -18,13 +25,13 @@
       :to="link"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
-      target="_blank"
+      :target="browserTarget"
     />
 
     <VcProductButton
       v-else-if="product.hasVariations"
       :to="link"
-      target="_blank"
+      :target="browserTarget"
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
     />
 
@@ -55,7 +62,7 @@
 <script setup lang="ts">
 import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHistoricalEvents, useThemeContext } from "@/core/composables";
+import { useHistoricalEvents, useThemeContext, useBrowserTarget } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { getProductRoute } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
@@ -82,6 +89,7 @@ const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
 const { t } = useI18n();
 const { themeContext } = useThemeContext();
+const { browserTarget } = useBrowserTarget();
 
 const product = toRef(props, "product");
 

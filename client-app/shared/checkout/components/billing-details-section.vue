@@ -1,5 +1,10 @@
 <template>
-  <VcWidget :title="$t('shared.checkout.billing_details_section.title')" prepend-icon="cash" size="lg">
+  <VcWidget
+    :title="$t('shared.checkout.billing_details_section.title')"
+    prepend-icon="cash"
+    size="lg"
+    data-test-id="checkout.payment-details-section"
+  >
     <div class="flex flex-col gap-6 lg:flex-row lg:gap-8">
       <div class="lg:w-3/5">
         <VcLabel required>

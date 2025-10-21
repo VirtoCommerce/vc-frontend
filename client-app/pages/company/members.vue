@@ -207,21 +207,20 @@
           : $t('pages.company.members.no_members_message')
       "
       icon="outline-order"
+      :variant="!!keyword || !!filter ? 'search' : 'empty'"
     >
       <template #button>
         <VcButton v-if="keyword || filter" prepent-icon="reset" @click="resetFiltersWithKeyword">
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
 
-        <template v-else>
-          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
-            {{ $t("pages.company.members.buttons.no_members") }}
-          </VcButton>
+        <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+          {{ $t("pages.company.members.buttons.no_members") }}
+        </VcButton>
 
-          <VcButton v-else to="/">
-            {{ $t("pages.company.members.buttons.no_members") }}
-          </VcButton>
-        </template>
+        <VcButton v-else to="/">
+          {{ $t("pages.company.members.buttons.no_members") }}
+        </VcButton>
       </template>
     </VcEmptyView>
 
