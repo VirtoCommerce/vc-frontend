@@ -13,7 +13,7 @@
         class="h-[3.125rem] text-sm"
         :to="simpleLink"
         :title="product.name"
-        :target="$cfg.details_browser_target"
+        :target="browserTarget"
         @click="$emit('linkClick', $event)"
       >
         {{ product.name }}
@@ -34,13 +34,13 @@
         :to="link"
         :button-text="$t('pages.catalog.customize_button')"
         icon="cube-transparent"
-        :target="$cfg.details_browser_target"
+        :target="browserTarget"
       />
       <VcProductButton
         v-else-if="product.hasVariations"
         class="mb-4"
         :to="link"
-        :target="$cfg.details_browser_target"
+        :target="browserTarget"
         variant="outline"
         :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
       />
@@ -62,6 +62,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useBrowserTarget } from "@/core/composables";
 import { CONFIGURATION_URL_SEARCH_PARAM } from "@/core/constants";
 import { ProductType } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities";
@@ -84,6 +85,8 @@ interface IProps {
 defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
+
+const { browserTarget } = useBrowserTarget();
 
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 

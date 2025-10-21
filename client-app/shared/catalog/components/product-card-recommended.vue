@@ -2,7 +2,14 @@
   <VcProductCard :background="false">
     <VcProductImage :img-src="product.imgSrc" :alt="product.name" />
 
-    <VcProductTitle lines-number="2" fix-height :to="link" :title="product.name" @click="$emit('linkClick', $event)">
+    <VcProductTitle
+      lines-number="2"
+      fix-height
+      :to="link"
+      :title="product.name"
+      :target="browserTarget"
+      @click="$emit('linkClick', $event)"
+    >
       {{ product.name }}
     </VcProductTitle>
 
@@ -19,6 +26,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useBrowserTarget } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities";
 import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
@@ -34,6 +42,8 @@ interface IProps {
 defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
+
+const { browserTarget } = useBrowserTarget();
 
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
