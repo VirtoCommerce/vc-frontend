@@ -103,7 +103,7 @@
         />
 
         <!-- Sections for single page checkout -->
-        <template v-if="!$cfg.checkout_multistep_enabled">
+        <template v-if="!$cfg.checkout_multistep_enabled" && !loading>
           <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
 
           <BillingDetailsSection class="mt-5" />
