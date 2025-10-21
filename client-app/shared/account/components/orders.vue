@@ -497,7 +497,6 @@ function handleOrdersDateFilterChange(dateFilterType: DateFilterType): void {
 
 function goToOrderDetails(order: CustomerOrderType): void {
   const orderRoute = router.resolve({ name: "OrderDetails", params: { orderId: order.id } });
-  console.log(JSON.stringify(orderRoute, null, 2));
 
   if (browserTarget.value === BrowserTargetType.BLANK) {
     window.open(orderRoute.href, "_blank")!.focus();
