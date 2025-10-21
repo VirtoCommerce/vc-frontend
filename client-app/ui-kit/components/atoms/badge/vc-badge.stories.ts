@@ -83,14 +83,23 @@ export const Truncate: StoryObj = {
   args: {
     truncate: true,
   },
-  render: renderTemplate('<VcBadge class="w-32" v-bind="args">Long long long long badge text</VcBadge>'),
+  render: renderTemplate(`
+    <div class="flex gap-4">
+      <VcBadge class="w-32" v-bind="args">Long long long long badge text</VcBadge>
+
+      <VcBadge class="w-32" v-bind="args">
+        <VcIcon name="round-check" />
+        <span>Long long long long badge text</span>
+      </VcBadge>
+    </div>
+  `),
 };
 
 export const Nowrap: StoryObj = {
   args: {
     nowrap: true,
   },
-  render: renderTemplate('<VcBadge class="w-32" v-bind="args">Long long long long badge text</VcBadge>'),
+  render: renderTemplate('<VcBadge v-bind="args">Long long long long badge text</VcBadge>'),
 };
 
 export const MaxWidth: StoryObj = {

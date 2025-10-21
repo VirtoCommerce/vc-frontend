@@ -48,14 +48,15 @@ withDefaults(defineProps<IProps>(), {
   --max-width: var(--props-max-width, var(--vc-badge-max-width, 100%));
   --radius: var(--vc-badge-radius, var(--vc-radius, 0.5rem));
 
-  @apply flex-none inline-flex min-h-[--size] min-w-[--size] max-w-[--max-width] border rounded-[--radius] font-bold bg-[--bg-color] border-[--border-color] text-[--text-color];
+  @apply flex-none inline-flex align-middle min-h-[--size] min-w-[--size] max-w-[--max-width] border rounded-[--radius] font-bold bg-[--bg-color] border-[--border-color] text-[--text-color];
 
   &--size {
     &--xs {
       --size: 1rem;
       --vc-icon-size: 0.625rem;
+      --gap: 0.25rem;
 
-      @apply gap-1 px-[0.188rem] text-xxs/[1];
+      @apply px-[0.188rem] text-xxs/[1];
 
       &--dot {
         @apply size-1.5;
@@ -65,8 +66,9 @@ withDefaults(defineProps<IProps>(), {
     &--sm {
       --size: 1.125rem;
       --vc-icon-size: 0.75rem;
+      --gap: 0.25rem;
 
-      @apply gap-1 px-[0.188rem] text-xs/[1.2];
+      @apply px-[0.188rem] text-xs/[1.2];
 
       &--dot {
         @apply size-2;
@@ -76,8 +78,9 @@ withDefaults(defineProps<IProps>(), {
     &--md {
       --size: 1.375rem;
       --vc-icon-size: 0.875rem;
+      --gap: 0.375rem;
 
-      @apply gap-1.5 px-1 text-sm/[1.2];
+      @apply px-1 text-sm/[1.2];
 
       &--dot {
         @apply size-2.5;
@@ -87,8 +90,9 @@ withDefaults(defineProps<IProps>(), {
     &--lg {
       --size: 1.625rem;
       --vc-icon-size: 1rem;
+      --gap: 0.375rem;
 
-      @apply gap-1.5 px-1 text-base/[1.25];
+      @apply px-1 text-base/[1.25];
 
       &--dot {
         @apply size-3;
@@ -158,7 +162,11 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__content {
-    @apply grow flex gap-[inherit] items-center text-center self-center [word-break:break-word];
+    @apply grow text-center self-center [word-break:break-word];
+
+    &:has(.vc-icon) {
+      @apply flex items-center gap-[--gap];
+    }
 
     &:not(:has(.vc-icon:first-child)) {
       @apply ps-0.5;
@@ -168,9 +176,8 @@ withDefaults(defineProps<IProps>(), {
       @apply pe-0.5;
     }
 
-    #{$truncate} &,
-    #{$truncate} & * {
-      @apply truncate;
+    #{$truncate} & {
+      @apply min-w-0 max-w-full truncate;
     }
 
     #{$square} & {
@@ -178,7 +185,7 @@ withDefaults(defineProps<IProps>(), {
     }
 
     & > * {
-      @apply text-left;
+      @apply text-start;
 
       #{$truncate} & {
         @apply truncate;
