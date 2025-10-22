@@ -9,7 +9,7 @@
         <Swiper
           class="image-gallery__images"
           tabindex="0"
-          id="swiper-image"
+          :id="swiperId"
           :modules="modules"
           :thumbs="{ swiper: thumbsSwiper }"
           :breakpoints="{
@@ -25,7 +25,7 @@
           data-te-lightbox-init
           @swiper="setImagesSwiper"
           @slide-change="setActiveIndex"
-          @keydown.enter.prevent="openLightbox('swiper-image')"
+          @keydown.enter.prevent="openLightbox(swiperId)"
         >
           <SwiperSlide v-for="(image, i) in images" :key="image.url || i">
             <VcImage
@@ -54,10 +54,10 @@
       data-nav-pagination
       size="sm"
       tabindex="0"
-      id="pagination-carousel"
+      :id="paginationId"
       @keydown.arrow-left.prevent="navigateToPrevious"
       @keydown.arrow-right.prevent="navigateToNext"
-      @keydown.enter.prevent="openLightbox('pagination-carousel')"
+      @keydown.enter.prevent="openLightbox(paginationId)"
     />
 
     <div v-show="showThumbs" class="image-gallery__thumbs-container">
@@ -77,10 +77,10 @@
         @swiper="setThumbsSwiper"
         tabindex="0"
         role="button"
-        id="thumbs-carousel"
+        :id="thumbsId"
         @keydown.arrow-left.prevent="navigateToPrevious"
         @keydown.arrow-right.prevent="navigateToNext"
-        @keydown.enter.prevent="openLightbox('thumbs-carousel')"
+        @keydown.enter.prevent="openLightbox(thumbsId)"
       >
         <SwiperSlide v-for="(image, index) in images" :key="index" class="image-gallery__thumb">
           <VcImage
@@ -122,6 +122,9 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const componentId = `image-gallery_${getCurrentInstance()!.uid}`;
+const swiperId = `swiper_${getCurrentInstance()!.uid}`;
+const paginationId = `pagination_${getCurrentInstance()!.uid}`;
+const thumbsId = `thumbs_${getCurrentInstance()!.uid}`;
 
 const THUMBS_PER_VIEW = 4;
 
