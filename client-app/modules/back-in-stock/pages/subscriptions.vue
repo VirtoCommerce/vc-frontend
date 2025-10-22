@@ -31,7 +31,7 @@
         <ProductSkeletonList v-for="index in actualItemsCount" :key="index" />
       </template>
 
-      <template v-if="subscriptionsProducts.length">
+      <template v-else-if="subscriptionsProducts.length">
         <VcLineItems
           class="back-in-stock-subscriptions__list"
           :items="preparedLineItems"
