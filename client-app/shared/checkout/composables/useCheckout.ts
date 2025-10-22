@@ -30,6 +30,7 @@ import SelectAddressModal from "@/shared/checkout/components/select-address-moda
 
 const useGlobalCheckout = createGlobalState(() => {
   const loading = ref(false);
+  const initialized = ref(false);
   const billingAddressEqualsShipping = ref(true);
   const placedOrder = shallowRef<CustomerOrderType | null>(null);
 
@@ -50,6 +51,7 @@ const useGlobalCheckout = createGlobalState(() => {
     _comment,
     purchaseOrderNumberChanging,
     _purchaseOrderNumber,
+    initialized,
     clearState,
   };
 });
@@ -99,6 +101,7 @@ export function _useCheckout(cartId?: string) {
     purchaseOrderNumberChanging,
     _purchaseOrderNumber,
     clearState: clearGlobalCheckoutState,
+    initialized,
   } = useGlobalCheckout();
   const { themeContext } = useThemeContext();
   const { pushHistoricalEvent } = useHistoricalEvents();
@@ -231,6 +234,7 @@ export function _useCheckout(cartId?: string) {
   }
 
   async function initialize(): Promise<void> {
+    initialized.value = false;
     placedOrder.value = null;
     loading.value = true;
 
@@ -241,6 +245,7 @@ export function _useCheckout(cartId?: string) {
     analytics("beginCheckout", { ...cart.value!, items: selectedLineItems.value });
 
     loading.value = false;
+    initialized.value = true;
   }
 
   async function updateBillingOrDeliveryAddress(
@@ -495,6 +500,7 @@ export function _useCheckout(cartId?: string) {
     loading: readonly(loading),
     changing: computed(() => commentChanging.value || purchaseOrderNumberChanging.value),
     placedOrder: computed(() => placedOrder.value),
+    initialized: readonly(initialized),
     allOrderItemsAreDigital,
   };
 }

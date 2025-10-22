@@ -1332,7 +1332,7 @@ export type FulfillmentCenterAddressType = {
   /** Phone */
   phone?: Maybe<Scalars['String']['output']>;
   /** Postal code */
-  postalCode: Scalars['String']['output'];
+  postalCode?: Maybe<Scalars['String']['output']>;
   /** Region id */
   regionId?: Maybe<Scalars['String']['output']>;
   /** Region name */
@@ -3886,13 +3886,23 @@ export type MutationsUpdateWishListItemsArgs = {
   command: InputUpdateWishlistItemsType;
 };
 
+export type NewsArticleAuthor = {
+  iconUrl?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 export type NewsArticleContent = {
+  author?: Maybe<NewsArticleAuthor>;
   content?: Maybe<Scalars['String']['output']>;
   contentPreview?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   isArchived: Scalars['Boolean']['output'];
+  listPreview?: Maybe<Scalars['String']['output']>;
+  listTitle?: Maybe<Scalars['String']['output']>;
   publishDate?: Maybe<Scalars['DateTime']['output']>;
   seoInfo: SeoInfo;
+  tags?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   title?: Maybe<Scalars['String']['output']>;
 };
 
@@ -5129,6 +5139,8 @@ export type Query = {
   menu?: Maybe<MenuLinkListType>;
   menus: Array<MenuLinkListType>;
   newsArticle?: Maybe<NewsArticleContent>;
+  newsArticleAuthor?: Maybe<NewsArticleAuthor>;
+  newsArticleTags?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   newsArticles?: Maybe<NewsArticleContentConnection>;
   order?: Maybe<CustomerOrderType>;
   orderLineItemStatuses?: Maybe<LocalizedSettingResponseType>;
@@ -5445,13 +5457,25 @@ export type QueryNewsArticleArgs = {
 };
 
 
+export type QueryNewsArticleAuthorArgs = {
+  authorId: Scalars['String']['input'];
+};
+
+
+export type QueryNewsArticleTagsArgs = {
+  languageCode: Scalars['String']['input'];
+};
+
+
 export type QueryNewsArticlesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
+  authorId?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   languageCode: Scalars['String']['input'];
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -7556,7 +7580,7 @@ export type GetFulfillmentCenterQueryVariables = Exact<{
 }>;
 
 
-export type GetFulfillmentCenterQuery = { fulfillmentCenter?: { id: string, name?: string, description?: string, shortDescription?: string, address?: { city?: string, countryCode?: string, countryName?: string, line1?: string, line2?: string, postalCode: string, zip?: string, phone?: string } } };
+export type GetFulfillmentCenterQuery = { fulfillmentCenter?: { id: string, name?: string, description?: string, shortDescription?: string, address?: { city?: string, countryCode?: string, countryName?: string, line1?: string, line2?: string, postalCode?: string, zip?: string, phone?: string } } };
 
 export type GetFulfillmentCentersQueryVariables = Exact<{
   after?: InputMaybe<Scalars['String']['input']>;
@@ -7568,7 +7592,7 @@ export type GetFulfillmentCentersQueryVariables = Exact<{
 }>;
 
 
-export type GetFulfillmentCentersQuery = { fulfillmentCenters?: { items?: Array<{ id: string, name?: string, description?: string, shortDescription?: string, address?: { city?: string, countryCode?: string, countryName?: string, line1?: string, line2?: string, postalCode: string, zip?: string, phone?: string } }> } };
+export type GetFulfillmentCentersQuery = { fulfillmentCenters?: { items?: Array<{ id: string, name?: string, description?: string, shortDescription?: string, address?: { city?: string, countryCode?: string, countryName?: string, line1?: string, line2?: string, postalCode?: string, zip?: string, phone?: string } }> } };
 
 export type AddOrUpdateOrderPaymentMutationVariables = Exact<{
   command: InputAddOrUpdateOrderPaymentType;
