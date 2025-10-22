@@ -168,7 +168,7 @@ function navigateToNext() {
 }
 
 function openLightbox(id: string) {
-  const currentImage = document.querySelector(".image-gallery__img--active") as HTMLElement;
+  const currentImage = document.querySelector(`#${componentId} .image-gallery__img--active`) as HTMLElement;
   focusedElementBeforeLightboxId.value = id;
   if (currentImage) {
     currentImage.click();
@@ -189,8 +189,12 @@ watch(
 
 function handleLightboxClose() {
   if (focusedElementBeforeLightboxId.value) {
-    const focusedElementBeforeLightbox = document.getElementById(focusedElementBeforeLightboxId.value) as HTMLElement;
-    focusedElementBeforeLightbox.focus();
+    const focusedElementBeforeLightbox = document.querySelector(
+      `#${componentId} #${focusedElementBeforeLightboxId.value}`,
+    ) as HTMLElement;
+    if (focusedElementBeforeLightbox) {
+      focusedElementBeforeLightbox.focus();
+    }
   }
 
   focusedElementBeforeLightboxId.value = null;
