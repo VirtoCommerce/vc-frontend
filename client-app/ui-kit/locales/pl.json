@@ -25,7 +25,8 @@
       "decrease_quantity": "Zmniejsz ilość",
       "increase_quantity": "Zwiększ ilość",
       "variant_picker_group": "Warianty produktu",
-      "show_more_button": "Pokaż więcej wariantów ({count})"
+      "show_more_button": "Pokaż więcej wariantów ({count})",
+      "sidebar": "Panel boczny"
     },
     "date_selector": {
       "min_date_error": "Data musi być nie wcześniejsza niż {min}",

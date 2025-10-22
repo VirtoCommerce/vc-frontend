@@ -15,7 +15,7 @@
       </div>
 
       <!-- Language block -->
-      <LanguageSelector v-if="supportedLocales.length > 1" />
+      <LanguageSelector v-if="supportedLanguages.length > 1" />
 
       <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
         <VcIcon name="delete-thin" class="fill-[--mobile-menu-navigation-color]" :size="22" />
@@ -90,7 +90,7 @@ defineEmits<IEmits>();
 
 const { t } = useI18n();
 
-const { supportedLocales } = useLanguages();
+const { supportedLanguages } = useLanguages();
 const { isAuthenticated, organization, isCorporateMember, isMultiOrganization } = useUser();
 const { mobilePreSelectedMenuItem } = useNavigations();
 const homeMenuItem = computed<ExtendedMenuLinkType>(() =>

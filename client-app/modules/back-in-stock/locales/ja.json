@@ -8,6 +8,7 @@
     },
     "list_details": {
       "empty_list": "リストが空です",
+      "no_results_message": "結果が見つかりません",
       "empty_list_button": "閲覧を続ける"
     },
     "messages": {
@@ -25,7 +26,7 @@
       },
       "reset_search": "検索をリセット",
       "search_button": "検索",
-      "search_placeholder": "ユーザー検索"
+      "search_placeholder": "商品名で検索"
     }
   }
 }

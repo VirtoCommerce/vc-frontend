@@ -147,21 +147,20 @@
         : $t('pages.account.orders.no_orders_message')
     "
     icon="outline-order"
+    :variant="!!keyword || !isFilterEmpty ? 'search' : 'empty'"
   >
     <template #button>
       <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
         {{ $t("pages.account.orders.buttons.reset_search") }}
       </VcButton>
 
-      <template v-else>
-        <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
-          {{ $t("pages.account.orders.buttons.no_orders") }}
-        </VcButton>
+      <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+        {{ $t("pages.account.orders.buttons.no_orders") }}
+      </VcButton>
 
-        <VcButton v-else to="/">
-          {{ $t("pages.account.orders.buttons.no_orders") }}
-        </VcButton>
-      </template>
+      <VcButton v-else to="/">
+        {{ $t("pages.account.orders.buttons.no_orders") }}
+      </VcButton>
     </template>
   </VcEmptyView>
 
@@ -349,12 +348,12 @@ import { breakpointsTailwind, useBreakpoints, onClickOutside, useLocalStorage } 
 import { computed, onMounted, ref, shallowRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { useBrowserTarget } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { usePageHead } from "@/core/composables/usePageHead";
-import { useThemeContext } from "@/core/composables/useThemeContext";
 import { CUSTOMER_NAME_FACET_NAME, DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { SortDirection } from "@/core/enums";
+import { BrowserTargetType, SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { toDateISOString } from "@/core/utilities";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
@@ -379,7 +378,7 @@ const props = withDefaults(defineProps<IProps>(), { itemsPerPage: DEFAULT_ORDERS
 const { itemsPerPage } = toRefs(props);
 
 const { t } = useI18n();
-const { themeContext } = useThemeContext();
+const { browserTarget } = useBrowserTarget();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const {
@@ -499,10 +498,10 @@ function handleOrdersDateFilterChange(dateFilterType: DateFilterType): void {
 function goToOrderDetails(order: CustomerOrderType): void {
   const orderRoute = router.resolve({ name: "OrderDetails", params: { orderId: order.id } });
 
-  if (themeContext.value.settings.details_browser_target === "_blank") {
-    window.open(orderRoute.fullPath, "_blank")!.focus();
+  if (browserTarget.value === BrowserTargetType.BLANK) {
+    window.open(orderRoute.href, "_blank")!.focus();
   } else {
-    window.location.href = orderRoute.fullPath;
+    window.location.href = orderRoute.href;
   }
 }
 

@@ -8,6 +8,7 @@
     },
     "list_details": {
       "empty_list": "Listasi on tyhjä",
+      "no_results_message": "Tuloksia ei löytynyt",
       "empty_list_button": "Jatka selaamista"
     },
     "messages": {
@@ -25,7 +26,7 @@
       },
       "reset_search": "Nollaa haku",
       "search_button": "Hae",
-      "search_placeholder": "Käyttäjähaku"
+      "search_placeholder": "Hae tuotteen nimellä"
     }
   }
 }

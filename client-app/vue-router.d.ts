@@ -31,6 +31,6 @@ declare module "vue-router" {
     hideRightSidebar?: boolean;
 
     /**  Whether this route can be saved as returnUrl (default: true) */
-    redirectable?: bollean;
+    redirectable?: boolean;
   }
 }

@@ -212,7 +212,8 @@
       "password_expired": "Ihr Passwort ist abgelaufen",
       "data_changed": "Die Daten wurden in einem der anderen Tabs geändert. Bitte aktualisieren Sie die Seite, um die aktuellen Daten anzuzeigen.",
       "logo_changed": "Das Logo wurde erfolgreich geändert.",
-      "logo_deleted": "Das Logo wurde gelöscht."
+      "logo_deleted": "Das Logo wurde gelöscht.",
+      "pending_operations_leaving_page_confirmation": "Einige Vorgänge sind noch in Bearbeitung. Möchten Sie diese Seite wirklich verlassen? Nicht gespeicherte Änderungen gehen möglicherweise verloren."
     },
     "placeholders": {
       "enter_value": "Bitte geben Sie einen Wert ein",
@@ -676,7 +677,8 @@
         },
         "options": {
           "title": "Optionen",
-          "select_to_proceed": "Optionen auswählen, um fortzufahren"
+          "select_to_proceed": "Optionen auswählen, um fortzufahren",
+          "price_unavailable": "Das Produkt kann in der ausgewählten Währung nicht gekauft werden"
         }
       },
       "discount_badge": {
@@ -695,6 +697,10 @@
         "ok_button": "Ok",
         "no_results": "Keine Ergebnisse gefunden",
         "reset_search_button": "Suche zurücksetzen"
+      },
+      "shipment_options": {
+        "title": "Versandoptionen",
+        "in_store": "Abholung im Geschäft"
       }
     },
     "checkout": {
@@ -893,14 +899,14 @@
         "edit_mode_title": "Listen Einstellungen",
         "list_name_label": "Listenname",
         "list_name_placeholder": "Bitte Namen eingeben",
+        "sharing_scope_label": "Teilen-Optionen",
+        "sharing_scope_placeholder": "Bitte wähle eine Option",
+        "sharing_link_label": "Link",
         "create_button": "Liste erstellen",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Private Liste",
         "make_shared": "Teilen",
-        "sharing_scope_label": "Teilen-Optionen",
-        "sharing_scope_placeholder": "Bitte wähle eine Option",
-        "sharing_link_label": "Link",
         "sharing_scope": {
           "Private": "Privat",
           "Organization": "Organisation",
@@ -1117,7 +1123,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Stichwort eingeben...",
+        "search_placeholder": "Nach Nummer, Name oder anderen Daten",
         "title": "Bestellungen",
         "order_number_label": "Bestellnummer",
         "purchase_number_label": "Einkaufsbestellung",
@@ -1163,7 +1169,9 @@
           "pick_point_info": "Abholpunkt-Info",
           "get_directions": "Zur Route",
           "point_info": "Info-Punkt",
-          "pickup_address": "Abholadresse"
+          "pickup_address": "Abholadresse",
+          "cart_pickup_points_not_found": "Für diese Produkte sind keine Abholpunkte verfügbar. Wählen Sie eine andere Versandart.",
+          "availability": "Verfügbarkeit"
         }
       },
       "order_payment": {
@@ -1266,7 +1274,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Unternehmensmitglieder",
-        "search_placeholder": "Nach Benutzern suchen",
+        "search_placeholder": "Nach Name, Rolle oder E-Mail",
         "no_members_img_alt": "Keine Mitglieder",
         "no_members_message": "Es gibt noch keine Mitglieder",
         "no_results_message": "Keine Ergebnisse gefunden",
@@ -1371,7 +1379,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku erfolgreich kopiert",
-      "variations_total_label": "Im Warenkorb insgesamt:",
+      "variations_in_cart_label": "Variationen im Warenkorb:",
       "view_cart_button": "Warenkorb ansehen",
       "recommended_products": {
         "related-products_section_title": "Empfohlen für Sie",

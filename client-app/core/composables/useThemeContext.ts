@@ -4,6 +4,7 @@ import { computed, ref } from "vue";
 import { presets } from "@/assets/presets";
 import settingsData from "@/config/settings_data.json";
 import { IS_DEVELOPMENT } from "../constants";
+import { BrowserTargetType } from "../enums";
 import type { StoreResponseType } from "../api/graphql/types";
 import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
 
@@ -48,7 +49,9 @@ function _useThemeContext() {
     const data = cloneDeep(settingsData) as IThemeConfig;
 
     if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
-      data.settings.details_browser_target = "_self";
+      data.settings.details_browser_target = BrowserTargetType.SELF;
+      data.settings.product_page_browser_target = BrowserTargetType.SELF;
+      data.settings.cart_page_browser_target = BrowserTargetType.SELF;
     }
 
     return data;

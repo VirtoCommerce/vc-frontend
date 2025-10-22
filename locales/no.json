@@ -212,7 +212,8 @@
       "password_expired": "Passordet ditt har utløpt",
       "data_changed": "Data har endret seg i en annen fane. Oppdater siden for å se de nyeste dataene.",
       "logo_changed": "Logoen er endret.",
-      "logo_deleted": "Logoen er slettet."
+      "logo_deleted": "Logoen er slettet.",
+      "pending_operations_leaving_page_confirmation": "Noen operasjoner er fortsatt i gang. Er du sikker på at du vil forlate denne siden? Endringer som ikke er lagret kan gå tapt."
     },
     "placeholders": {
       "enter_value": "Skriv inn verdi",
@@ -676,7 +677,8 @@
         },
         "options": {
           "title": "Alternativer",
-          "select_to_proceed": "Velg alternativer for å fortsette"
+          "select_to_proceed": "Velg alternativer for å fortsette",
+          "price_unavailable": "Produktet kan ikke kjøpes i valgt valuta"
         }
       },
       "discount_badge": {
@@ -695,6 +697,10 @@
         "ok_button": "OK",
         "no_results": "Ingen resultater funnet",
         "reset_search_button": "Tilbakestill søk"
+      },
+      "shipment_options": {
+        "title": "Forsendelsesalternativer",
+        "in_store": "Henting i butikk"
       }
     },
     "checkout": {
@@ -1117,7 +1123,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "Skriv inn nøkkelord...",
+        "search_placeholder": "Søk etter nummer, navn eller andre data",
         "title": "Bestillinger",
         "order_number_label": "Bestillingsnummer",
         "purchase_number_label": "Innkjøpsordre",
@@ -1163,7 +1169,9 @@
           "pick_point_info": "Hentepunktinformasjon",
           "get_directions": "Hent veibeskrivelse",
           "point_info": "Punktinformasjon",
-          "pickup_address": "Henteadresse"
+          "pickup_address": "Henteadresse",
+          "cart_pickup_points_not_found": "Det finnes ingen tilgjengelige hentepunkter for disse produktene. Velg en annen forsendelsesmetode",
+          "availability": "Tilgjengelighet"
         }
       },
       "order_payment": {
@@ -1266,7 +1274,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "Bedriftsmedlemmer",
-        "search_placeholder": "Søk etter brukere",
+        "search_placeholder": "Søk etter navn, rolle eller e-post",
         "no_members_img_alt": "Ingen medlemmer",
         "no_members_message": "Ingen medlemmer ennå",
         "no_results_message": "Ingen resultater funnet",
@@ -1371,7 +1379,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku kopiert",
-      "variations_total_label": "Totalt i handlekurven din:",
+      "variations_in_cart_label": "Varianter i handlekurv:",
       "view_cart_button": "Vis handlekurv",
       "recommended_products": {
         "related-products_section_title": "Produkter relatert til dette produktet",

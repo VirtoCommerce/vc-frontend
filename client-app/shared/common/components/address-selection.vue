@@ -18,6 +18,7 @@
         icon
         size="xs"
         class="vc-address-selection__button"
+        data-test-id="select-address-button"
         @click="$emit('change')"
       >
         <VcIcon name="edit" size="xs" />

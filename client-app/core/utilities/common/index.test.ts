@@ -1,6 +1,5 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 import {
-  getBaseUrl,
   getReturnUrlValue,
   extractHostname,
   truncate,
@@ -16,48 +15,6 @@ import {
   buildRedirectUrl,
 } from "./index";
 import type { RouteLocationNormalized } from "vue-router";
-
-describe("getBaseUrl", () => {
-  const originalLocation = window.location;
-
-  afterEach(() => {
-    // Restore the original location after each test
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      value: originalLocation,
-    });
-  });
-
-  it("should return base URL with locale when locale is in pathname", () => {
-    const supportedLocales = ["en", "fr", "de"];
-
-    // Mock location.pathname
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      value: {
-        pathname: "/en/some/path",
-      },
-    });
-
-    const result = getBaseUrl(supportedLocales);
-    expect(result).toBe("/en/");
-  });
-
-  it("should return empty string when locale is not in pathname", () => {
-    const supportedLocales = ["en", "fr", "de"];
-
-    // Mock location.pathname
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      value: {
-        pathname: "/some/path",
-      },
-    });
-
-    const result = getBaseUrl(supportedLocales);
-    expect(result).toBe("");
-  });
-});
 
 describe("getReturnUrlValue", () => {
   const originalLocation = window.location;
@@ -577,11 +534,7 @@ describe("buildRedirectUrl", () => {
 
   it("should return null when any matched route has redirectable: false", () => {
     const route = {
-      matched: [
-        { meta: { redirectable: true } },
-        { meta: { redirectable: false } },
-        { meta: { redirectable: true } },
-      ],
+      matched: [{ meta: { redirectable: true } }, { meta: { redirectable: false } }, { meta: { redirectable: true } }],
       query: {},
       fullPath: "/test/path",
     } as unknown as RouteLocationNormalized;
