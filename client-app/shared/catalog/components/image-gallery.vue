@@ -8,6 +8,8 @@
 
         <Swiper
           class="image-gallery__images"
+          tabindex="0"
+          id="swiper-image"
           :modules="modules"
           :thumbs="{ swiper: thumbsSwiper }"
           :breakpoints="{
@@ -23,6 +25,7 @@
           data-te-lightbox-init
           @swiper="setImagesSwiper"
           @slide-change="setActiveIndex"
+          @keydown.enter.prevent="openLightbox('swiper-image')"
         >
           <SwiperSlide v-for="(image, i) in images" :key="image.url || i">
             <VcImage
@@ -45,7 +48,17 @@
       </div>
     </div>
 
-    <VcCarouselPagination v-if="showPagination" class="image-gallery__pagination" data-nav-pagination size="sm" />
+    <VcCarouselPagination
+      v-if="showPagination"
+      class="image-gallery__pagination"
+      data-nav-pagination
+      size="sm"
+      tabindex="0"
+      id="pagination-carousel"
+      @keydown.arrow-left.prevent="navigateToPrevious"
+      @keydown.arrow-right.prevent="navigateToNext"
+      @keydown.enter.prevent="openLightbox('pagination-carousel')"
+    />
 
     <div v-show="showThumbs" class="image-gallery__thumbs-container">
       <VcNavButton :label="$t('common.buttons.previous')" size="xs" direction="left" data-nav-prev />
@@ -64,9 +77,10 @@
         @swiper="setThumbsSwiper"
         tabindex="0"
         role="button"
-        @keydown.enter.prevent="openLightbox"
+        id="thumbs-carousel"
         @keydown.arrow-left.prevent="navigateToPrevious"
         @keydown.arrow-right.prevent="navigateToNext"
+        @keydown.enter.prevent="openLightbox('thumbs-carousel')"
       >
         <SwiperSlide v-for="(image, index) in images" :key="index" class="image-gallery__thumb">
           <VcImage
@@ -129,7 +143,7 @@ const setThumbsSwiper = (swiper: SwiperCore) => {
   thumbsSwiper.value = swiper;
 };
 
-const focusedElementBeforeLightbox = ref<boolean>(false);
+const focusedElementBeforeLightboxId = ref<string | null>(null);
 
 const modules = [Pagination, Navigation, Thumbs];
 
@@ -153,9 +167,9 @@ function navigateToNext() {
   }
 }
 
-function openLightbox() {
+function openLightbox(id: string) {
   const currentImage = document.querySelector(".image-gallery__img--active") as HTMLElement;
-  focusedElementBeforeLightbox.value = true;
+  focusedElementBeforeLightboxId.value = id;
   if (currentImage) {
     currentImage.click();
   }
@@ -174,12 +188,12 @@ watch(
 );
 
 function handleLightboxClose() {
-  if (focusedElementBeforeLightbox.value) {
-    const thumbs = document.querySelector(".image-gallery__thumbs") as HTMLElement;
-    thumbs.focus();
+  if (focusedElementBeforeLightboxId.value) {
+    const focusedElementBeforeLightbox = document.getElementById(focusedElementBeforeLightboxId.value) as HTMLElement;
+    focusedElementBeforeLightbox.focus();
   }
 
-  focusedElementBeforeLightbox.value = false;
+  focusedElementBeforeLightboxId.value = null;
 }
 
 onMounted(async () => {
