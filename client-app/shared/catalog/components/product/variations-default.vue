@@ -10,7 +10,7 @@
         :list-price="variation.price.list"
         :actual-price="variation.price.actual"
         :vendor="$cfg.vendor_enabled ? variation.vendor : undefined"
-        :browser-target="$cfg.details_browser_target"
+        :browser-target="browserTarget"
         with-image
         with-price
         with-properties
@@ -54,6 +54,7 @@
 import { sortBy } from "lodash";
 import { toRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
+import { useBrowserTarget } from "@/core/composables";
 import { getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
@@ -78,6 +79,8 @@ interface IProps {
 }
 
 const pageNumber = toRef(props, "pageNumber");
+
+const { browserTarget } = useBrowserTarget();
 
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 

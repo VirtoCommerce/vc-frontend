@@ -212,7 +212,8 @@
       "password_expired": "Срок действия пароля истек",
       "data_changed": "Данные были изменены на одной из других вкладок. Обновите страницу, чтобы отобразить последние данные.",
       "logo_changed": "Логотип успешно изменен.",
-      "logo_deleted": "Логотип удален."
+      "logo_deleted": "Логотип удален.",
+      "pending_operations_leaving_page_confirmation": "Некоторые операции еще выполняются. Вы уверены, что хотите покинуть эту страницу? Несохраненные изменения могут быть потеряны."
     },
     "placeholders": {
       "enter_value": "Введите значение",
@@ -894,14 +895,14 @@
         "edit_mode_title": "Настройки списка",
         "list_name_label": "Название списка",
         "list_name_placeholder": "Пожалуйста, введите название",
+        "sharing_scope_label": "Поделиться",
+        "sharing_scope_placeholder": "Пожалуйста, выберите один вариант",
+        "sharing_link_label": "Ссылка",
         "create_button": "Создать список",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Приватный список",
         "make_shared": "Сделать общим",
-        "sharing_scope_label": "Поделиться",
-        "sharing_scope_placeholder": "Пожалуйста, выберите один вариант",
-        "sharing_link_label": "Ссылка",
         "sharing_scope": {
           "Private": "Приватный",
           "Organization": "Организация",
@@ -1374,7 +1375,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku успешно скопирован",
-      "variations_total_label": "Всего в корзине:",
+      "variations_in_cart_label": "Варианты в корзине:",
       "view_cart_button": "В корзину",
       "recommended_products": {
         "related-products_section_title": "Рекомендуем для вас",

@@ -15,11 +15,13 @@
 <script setup lang="ts">
 import { useHead } from "@unhead/vue";
 import { markRaw, onMounted, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import favicon16 from "@/assets/icons/favicon-16x16.png";
 import favicon32 from "@/assets/icons/favicon-32x32.png";
 import faviconSVG from "@/assets/icons/favicon.svg";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
+import { useQueuedMutations } from "@/core/composables/useQueuedMutations";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { ModalHost } from "@/shared/modal";
 import { NotificationsHost } from "@/shared/notification";
@@ -33,6 +35,8 @@ const route = useRoute();
 const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { favIcons } = useWhiteLabeling();
+const { initRouteGuard } = useQueuedMutations();
+const i18n = useI18n();
 
 // If favIcons.value is an empty array, the default favicon from index.html will be used.
 // The favicon will also NOT be updated in PWA mode (in manifest.json).
@@ -77,7 +81,10 @@ router.beforeEach((to) => {
   }
 });
 
-onMounted(setupBroadcastGlobalListeners);
+onMounted(() => {
+  setupBroadcastGlobalListeners();
+  initRouteGuard(router, i18n);
+});
 </script>
 
 <style lang="scss">
