@@ -31,7 +31,7 @@
       <template #trigger>
         <router-link
           :to="link"
-          :target="browserTarget"
+          :target="browserTarget || browserTargetFromSetting"
           class="vc-product-card-list__name w-full grow text-sm font-black text-[--link-color] hover:text-[--link-hover-color] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
@@ -114,7 +114,7 @@
         :link-to="link"
         :button-text="$t('pages.catalog.customize_button')"
         icon="cube-transparent"
-        :target="browserTarget || $cfg.details_browser_target || '_blank'"
+        :target="browserTarget || browserTargetFromSetting"
         @link-click="$emit('linkClick', $event)"
       />
 
@@ -124,7 +124,7 @@
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
         :link-to="link"
         :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
-        :target="browserTarget || $cfg.details_browser_target || '_blank'"
+        :target="browserTarget || browserTargetFromSetting"
         @link-click="$emit('linkClick', $event)"
       />
 
@@ -148,6 +148,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
+import { useBrowserTarget } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { useCustomProductComponents } from "@/shared/common/composables";
@@ -159,7 +160,7 @@ import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
-import type { BrowserTargetType } from "@/core/types";
+import type { BrowserTargetType } from "@/core/enums";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
@@ -176,6 +177,8 @@ interface IProps {
 }
 
 console.warn("ProductCardList is deprecated. Use VcProductCard or ProductCard instead.");
+
+const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
 
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 

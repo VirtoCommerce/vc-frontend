@@ -4,7 +4,7 @@
     :shared-selected-item-ids="sharedSelectedItemIds"
     :disabled="disabled"
     :readonly="readonly"
-    :browser-target="$cfg.details_browser_target"
+    :browser-target="browserTarget"
     with-image
     with-properties
     with-price
@@ -98,7 +98,7 @@
 
 <script setup lang="ts">
 import { computed, toRef, watchEffect } from "vue";
-import { useErrorsTranslator } from "@/core/composables";
+import { useBrowserTarget, useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
@@ -135,6 +135,8 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const validationErrors = toRef(props, "validationErrors");
+
+const { browserTarget } = useBrowserTarget();
 
 const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
 
