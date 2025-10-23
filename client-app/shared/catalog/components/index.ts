@@ -15,6 +15,7 @@ export { default as ProductCardRecentlyBrowsed } from "./product-card-recently-b
 export { default as ProductCardRecommended } from "./product-card-recommended.vue";
 export { default as ProductCardRelated } from "./product-card-related.vue";
 export { default as ProductConfiguration } from "./configuration/product-configuration.vue";
+export { default as ProductPrice } from "./product-price.vue";
 export { default as ProductPriceBlock } from "./product-price-block.vue";
 export { default as ProductProperty } from "./product-property.vue";
 export { default as ProductSidebar } from "./product-sidebar.vue";
