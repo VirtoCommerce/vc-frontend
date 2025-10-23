@@ -1,6 +1,8 @@
 {
   "current": "default",
   "settings": {
+    "cart_page_browser_target": "_blank",
+    "product_page_browser_target": "_self",
     "details_browser_target": "_blank",
 
     "files_enabled": true,

@@ -124,9 +124,9 @@ import omit from "lodash/omit";
 import { computed, ref, watch } from "vue";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useFullCart } from "@/shared/cart";
-import { useCheckout } from "@/shared/checkout/composables";
 import { BOPIS_CODE, useBopis } from "@/shared/checkout/composables/useBopis";
-import { AddressSelection } from "@/shared/common";
+import { useCheckout } from "@/shared/checkout/composables/useCheckout";
+import { AddressSelection } from "@/shared/common/components";
 import { useShipToLocation } from "@/shared/ship-to-location/composables/useShipToLocation";
 import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
 import type { ShippingMethodType } from "@/core/api/graphql/types.ts";
@@ -144,7 +144,13 @@ const SHIPPING_OPTIONS = {
 
 type ShippingOptionType = keyof typeof SHIPPING_OPTIONS;
 
-const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, billingAddressEqualsShipping } = useCheckout();
+const {
+  deliveryAddress,
+  shipmentMethod,
+  onDeliveryAddressChange,
+  billingAddressEqualsShipping,
+  initialized: checkoutInitialized,
+} = useCheckout();
 
 const { cart, availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
 const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
@@ -173,13 +179,20 @@ function getDefaultMode() {
 }
 
 watch(
-  [mode, shipment],
-  ([newMode], [previousMode, previousShipment]) => {
-    const isSameMode = newMode === previousMode;
-    const shipmentInitialized = !!previousShipment;
+  [mode, shipment, checkoutInitialized],
+  (currentValue, previousValue) => {
+    const newMode = currentValue[0];
+    const checkoutInitializedValue = currentValue[2];
+    const [previousMode, previousShipment] = previousValue;
 
-    if (isSameMode && shipmentInitialized) {
-      // trigger watch only if mode changed or shipment just has been initialized
+    if (!checkoutInitializedValue || !previousShipment) {
+      return;
+    }
+
+    const isSameMode = newMode === previousMode;
+
+    if (isSameMode) {
+      // trigger watch only if mode changed
       return;
     }
 

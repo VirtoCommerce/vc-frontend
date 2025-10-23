@@ -19,8 +19,7 @@ export function toServerError(
   networkError: NetworkError | undefined,
   graphQLErrors: ReadonlyArray<GraphQLFormattedError> | undefined,
 ): ServerError | undefined {
-  const isExplicitlyAborted =
-    networkError?.toString() === (AbortReason.Explicit as string) || networkError?.toString().includes("AbortError");
+  const isExplicitlyAborted = networkError?.toString().includes(AbortReason.Explicit);
   if ((networkError && !isExplicitlyAborted) || hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled)) {
     return ServerError.Unhandled;
   }
@@ -45,10 +44,10 @@ export function filterActiveQueryNames<TCacheShape = any>(
   return intersection(activeQueryNames, queryNames);
 }
 
-export function generateCacheIdIfNew<T extends { id?: string } | undefined>(
+export function generateCacheIdIfNew<T extends (Record<string, unknown> & { id?: string }) | undefined>(
   data: T,
   __typename: string,
-): T | undefined {
+): (T & { id: string }) | undefined {
   if (isDefined(data)) {
     return {
       ...data,

@@ -212,7 +212,8 @@
       "password_expired": "您的密码已过期",
       "data_changed": "数据在其他标签中被修改。请刷新页面以显示当前数据。",
       "logo_changed": "标志已成功更改。",
-      "logo_deleted": "标志已被删除。"
+      "logo_deleted": "标志已被删除。",
+      "pending_operations_leaving_page_confirmation": "某些操作仍在进行中。确定要离开此页面吗？未保存的更改可能会丢失。"
     },
     "placeholders": {
       "enter_value": "请输入值",
@@ -1378,7 +1379,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku 已成功复制",
-      "variations_total_label": "您的购物车中的总计：",
+      "variations_in_cart_label": "购物车中的商品属性：",
       "view_cart_button": "查看购物车",
       "recommended_products": {
         "related-products_section_title": "为您推荐",

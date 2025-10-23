@@ -1,34 +1,38 @@
 import { VcProductActionsButton } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-export default {
+const meta: Meta<typeof VcProductActionsButton> = {
   title: "Components/Molecules/VcProductActionsButton",
   component: VcProductActionsButton,
-} as Meta<typeof VcProductActionsButton>;
-
-const Template: StoryFn = (args) => ({
-  components: { VcProductActionsButton },
-  setup: () => ({ args }),
-  template: '<VcProductActionsButton v-bind="args" />',
-});
-
-export const Basic = Template.bind({});
-
-export const Active = Template.bind({});
-Active.args = {
-  icon: "compare",
-  active: true,
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcProductActionsButton v-bind="args" />',
+  }),
 };
 
-export const ActiveColor = Template.bind({});
-ActiveColor.args = {
-  active: true,
-  color: "danger",
+export default meta;
+type StoryType = StoryObj<typeof meta>;
+
+export const Basic: StoryType = {};
+
+export const Active: StoryType = {
+  args: {
+    icon: "compare",
+    active: true,
+  },
 };
 
-export const IconSize = Template.bind({});
-IconSize.args = {
-  active: true,
-  color: "danger",
-  iconSize: "xs",
+export const ActiveColor: StoryType = {
+  args: {
+    active: true,
+    color: "danger",
+  },
+};
+
+export const IconSize: StoryType = {
+  args: {
+    active: true,
+    color: "danger",
+    iconSize: "xs",
+  },
 };

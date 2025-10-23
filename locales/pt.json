@@ -212,7 +212,8 @@
       "password_expired": "Sua senha expirou",
       "data_changed": "Os dados foram alterados em um dos outros tabs. Por favor, atualize a página para exibir os dados atuais.",
       "logo_changed": "O logotipo foi alterado com sucesso.",
-      "logo_deleted": "O logotipo foi excluído."
+      "logo_deleted": "O logotipo foi excluído.",
+      "pending_operations_leaving_page_confirmation": "Algumas operações ainda estão em andamento. Tem certeza de que deseja sair desta página? As alterações não salvas podem ser perdidas."
     },
     "placeholders": {
       "enter_value": "Por favor, insira um valor",
@@ -1378,7 +1379,7 @@
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku copiado com sucesso",
-      "variations_total_label": "Total no carrinho:",
+      "variations_in_cart_label": "Variações no carrinho:",
       "view_cart_button": "Ver carrinho",
       "recommended_products": {
         "related-products_section_title": "Recomendado para você",
