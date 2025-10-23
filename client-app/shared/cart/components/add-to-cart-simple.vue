@@ -35,6 +35,7 @@ import { useHistoricalEvents } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
+import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
 import type { Product, ShortLineItemFragment, VariationType } from "@/core/api/graphql/types";
@@ -109,7 +110,11 @@ async function updateOrAddToCart(productId: string, qty?: number) {
     return cart.value;
   }
 
-  await updateItemCartQuantity(productId, qty);
+  try {
+    await updateItemCartQuantity(productId, qty);
+  } catch (e) {
+    Logger.error("Error updating item quantity in add to cart simple component", e);
+  }
 
   trackAddItemToCart(product.value, qty);
   void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
