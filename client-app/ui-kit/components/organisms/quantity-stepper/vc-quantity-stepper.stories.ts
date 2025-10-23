@@ -1,3 +1,4 @@
+import { ref } from "vue";
 import { VcQuantityStepper } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
@@ -6,21 +7,7 @@ const SIZES = ["sm", "md"];
 const meta: Meta<typeof VcQuantityStepper> = {
   title: "Components/Organisms/VcQuantityStepper",
   component: VcQuantityStepper,
-  render: (args) => ({
-    setup: () => ({ args }),
-    template: `
-    <VcQuantityStepper
-      v-bind="args"
-      v-model="localValue"
-    />
-  `,
-  }),
   argTypes: {
-    /**
-     * Docs:
-     *  https://storybook.js.org/docs/vue/essentials/controls#annotation
-     *  https://storybook.js.org/docs/vue/api/argtypes#manual-specification
-     */
     size: {
       control: "radio",
       options: SIZES,
@@ -32,6 +19,18 @@ const meta: Meta<typeof VcQuantityStepper> = {
       },
     },
   },
+  render: (args) => ({
+    setup: () => {
+      const localValue = ref(args.value ?? 0);
+      return { args, localValue };
+    },
+    template: `
+    <VcQuantityStepper
+      v-bind="args"
+      v-model="localValue"
+    />
+  `,
+  }),
 };
 
 export default meta;
@@ -69,6 +68,11 @@ export const Errored: StoryType = {
     message: "Error message",
     value: 5,
   },
+  decorators: [
+    () => ({
+      template: '<div id="popover-host"></div><story />',
+    }),
+  ],
 };
 
 export const SelectOnClick: StoryType = {
