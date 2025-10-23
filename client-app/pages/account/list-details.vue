@@ -7,12 +7,12 @@
     <div class="flex flex-col">
       <!-- Title block -->
       <div class="contents md:flex md:flex-wrap md:items-center md:justify-between md:gap-3">
-        <VcTypography v-if="list?.name" tag="h1" truncate>
-          {{ list.name }}
+        <VcTypography v-if="actualListName" tag="h1" truncate>
+          {{ actualListName }}
         </VcTypography>
 
         <!-- Title skeleton -->
-        <div v-else class="w-2/3 bg-neutral-200 text-3xl md:w-1/3">&nbsp;</div>
+        <div v-else class="w-2/3 bg-neutral-200 text-3xl md:w-1/3">{{ props.listName ?? "&nbsp;" }}</div>
 
         <div class="order-last mt-8 flex flex-wrap gap-3 md:ms-0 md:mt-0 md:shrink-0 lg:my-0">
           <VcButton
@@ -64,15 +64,7 @@
 
       <div ref="listElement" class="mt-5 w-full">
         <!-- Skeletons -->
-        <template v-if="listLoading">
-          <div v-if="isMobile" class="grid grid-cols-2 gap-x-4 gap-y-6">
-            <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
-          </div>
-
-          <div v-else class="flex flex-col rounded border bg-additional-50 shadow-sm">
-            <WishlistProductItemSkeleton v-for="i in actualPageRowsCount" :key="i" class="even:bg-neutral-50" />
-          </div>
-        </template>
+        <WishlistProductsSkeleton v-if="listLoading" :itemsCount="actualPageRowsCount" />
 
         <!-- List details -->
         <template v-else-if="!listLoading && !!list?.items?.length">
@@ -138,7 +130,6 @@ import { prepareLineItem, Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
-import { ProductSkeletonGrid } from "@/shared/catalog";
 import { SaveChangesModal } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
@@ -147,7 +138,7 @@ import {
   AddOrUpdateWishlistModal,
   DeleteWishlistProductModal,
   WishlistLineItems,
-  WishlistProductItemSkeleton,
+  WishlistProductsSkeleton,
 } from "@/shared/wishlists";
 import type {
   InputUpdateWishlistItemsType,
@@ -162,9 +153,12 @@ import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-it
 interface IProps {
   listId: string;
   hideSettings?: boolean;
+  listName?: string;
 }
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  listName: undefined,
+});
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
@@ -225,6 +219,8 @@ const wishlistListProperties = computed(() => ({
   related_id: list.value?.id,
   related_type: "wishlist",
 }));
+
+const actualListName = computed(() => props.listName ?? list.value?.name);
 
 const isMobile = breakpoints.smaller("lg");
 

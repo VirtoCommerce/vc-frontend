@@ -1,9 +1,24 @@
 <template>
-  <VcLoaderOverlay :visible="saveForLaterLoading" fixed-spinner />
+  <template v-if="saveForLaterLoading">
+    <div class="contents md:flex md:flex-wrap md:items-center md:justify-between md:gap-3">
+      <VcTypography tag="h1">
+        {{ $t("pages.cart.saved_for_later") }}
+      </VcTypography>
+    </div>
 
-  <ListDetails v-if="savedForLaterListId && !savedForLaterListIsEmpty" :list-id="savedForLaterListId" hide-settings />
+    <div class="mt-5 w-full">
+      <WishlistProductsSkeleton :itemsCount="6" :list-name="$t('pages.cart.saved_for_later')" />
+    </div>
+  </template>
 
-  <div v-else-if="!saveForLaterLoading">
+  <ListDetails
+    v-else-if="savedForLaterListId && !savedForLaterListIsEmpty"
+    :list-id="savedForLaterListId"
+    :list-name="$t('pages.cart.saved_for_later')"
+    hide-settings
+  />
+
+  <div v-else>
     <VcTypography tag="h1">
       {{ $t("pages.cart.saved_for_later") }}
     </VcTypography>
@@ -15,6 +30,7 @@
 <script lang="ts" setup>
 import { computed, onMounted } from "vue";
 import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
+import { WishlistProductsSkeleton } from "@/shared/wishlists";
 import ListDetails from "./list-details.vue";
 
 const savedForLaterListId = computed(() => savedForLaterList.value?.id);
