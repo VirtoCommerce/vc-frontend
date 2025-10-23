@@ -64,7 +64,6 @@
       <CartForLater
         v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
         :saved-for-later-list="savedForLaterList"
-        :loading="moveFromSavedForLaterOverflowed"
         class="mt-5"
         @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
       />
@@ -84,7 +83,7 @@
           :items-grouped-by-vendor="lineItemsGroupedByVendor"
           :selected-item-ids="selectedItemIds"
           :validation-errors="cart.validationErrors"
-          :disabled="changeItemQuantityBatchedOverflowed || moveToSavedForLaterOverflowed || selectionOverflowed"
+          :disabled="changeItemQuantityBatchedOverflowed || selectionOverflowed"
           data-test-id="cart.products-section"
           :hide-controls="hideControls"
           @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
@@ -114,7 +113,6 @@
         <CartForLater
           v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
           :saved-for-later-list="savedForLaterList"
-          :loading="moveFromSavedForLaterOverflowed"
           class="mt-5"
           @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
@@ -292,9 +290,7 @@ const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeC
 const {
   savedForLaterList,
   moveToSavedForLater,
-  moveToSavedForLaterOverflowed,
   moveFromSavedForLater,
-  moveFromSavedForLaterOverflowed,
   getSavedForLater,
   loading: saveForLaterLoading,
 } = useSavedForLater();
