@@ -97,17 +97,15 @@
 
 <script setup lang="ts">
 import { flatten, sortBy, uniqBy } from "lodash";
-import { computed, watchEffect } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
-import { useErrorsTranslator } from "@/core/composables";
 import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
 import { getPropertyValue, getPropertiesGroupedByName } from "@/core/utilities";
-import { useShortCart } from "@/shared/cart/composables";
 import { useCustomProductComponents } from "@/shared/common/composables";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import CountInCart from "../count-in-cart.vue";
-import type { Product, ValidationErrorType } from "@/core/api/graphql/types";
+import type { Product } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 
@@ -135,8 +133,6 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
-const { cart } = useShortCart();
-const { setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
 
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
@@ -230,12 +226,6 @@ function applySorting(sortInfo: ISortInfo): void {
 function changePage(page: number): void {
   emit("changePage", page);
 }
-
-watchEffect(() => {
-  if (cart.value?.validationErrors) {
-    setErrors(cart.value?.validationErrors);
-  }
-});
 </script>
 
 <style lang="scss">

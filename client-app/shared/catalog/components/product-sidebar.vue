@@ -34,27 +34,19 @@
         </div>
 
         <div class="mt-4 print:hidden">
-          <template v-if="variationResult && variationResult.price?.actual?.amount > 0">
-            <AddToCart v-if="product.isConfigurable" :product="variationResult">
-              <InStock
-                :is-in-stock="variationResult.availabilityData?.isInStock"
-                :is-digital="isDigital"
-                :quantity="variationResult.availabilityData?.availableQuantity"
-              />
+          <component
+            v-if="variationResult && variationResult.price?.actual?.amount > 0"
+            :is="product.isConfigurable ? AddToCart : AddToCartSimple"
+            :product="variationResult"
+          >
+            <InStock
+              :is-in-stock="variationResult.availabilityData?.isInStock"
+              :is-digital="isDigital"
+              :quantity="variationResult.availabilityData?.availableQuantity"
+            />
 
-              <CountInCart :product-id="variationResult.id" />
-            </AddToCart>
-
-            <AddToCartSimple v-else :product="variationResult">
-              <InStock
-                :is-in-stock="variationResult.availabilityData?.isInStock"
-                :is-digital="isDigital"
-                :quantity="variationResult.availabilityData?.availableQuantity"
-              />
-
-              <CountInCart :product-id="variationResult.id" />
-            </AddToCartSimple>
-          </template>
+            <CountInCart :product-id="variationResult.id" />
+          </component>
 
           <div v-else>
             <VcButton
@@ -110,27 +102,15 @@
             v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
           />
 
-          <template v-else>
-            <AddToCart v-if="product.isConfigurable" :product="product">
-              <InStock
-                :is-in-stock="product.availabilityData?.isInStock"
-                :is-digital="isDigital"
-                :quantity="product.availabilityData?.availableQuantity"
-              />
+          <component v-else :is="product.isConfigurable ? AddToCart : AddToCartSimple" :product="product">
+            <InStock
+              :is-in-stock="product.availabilityData?.isInStock"
+              :is-digital="isDigital"
+              :quantity="product.availabilityData?.availableQuantity"
+            />
 
-              <CountInCart :product-id="product.id" />
-            </AddToCart>
-
-            <AddToCartSimple v-else :product="product">
-              <InStock
-                :is-in-stock="product.availabilityData?.isInStock"
-                :is-digital="isDigital"
-                :quantity="product.availabilityData?.availableQuantity"
-              />
-
-              <CountInCart :product-id="product.id" />
-            </AddToCartSimple>
-          </template>
+            <CountInCart :product-id="product.id" />
+          </component>
         </div>
       </template>
     </ProductPriceBlock>
