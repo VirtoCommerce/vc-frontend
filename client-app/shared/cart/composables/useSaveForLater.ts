@@ -43,7 +43,7 @@ function _useSavedForLater() {
       optimisticResponse(vars, { IGNORE }) {
         const movedItemIds = vars.command?.lineItemIds;
 
-        if (!movedItemIds.length || !cart.value || !savedForLaterList.value) {
+        if (!movedItemIds?.length || !cart.value || !savedForLaterList.value) {
           return IGNORE;
         }
 
@@ -86,7 +86,7 @@ function _useSavedForLater() {
       optimisticResponse(vars, { IGNORE }) {
         const movedItemIds = vars.command?.lineItemIds;
 
-        if (!movedItemIds.length || !cart.value || !savedForLaterList.value) {
+        if (!movedItemIds?.length || !cart.value || !savedForLaterList.value) {
           return IGNORE;
         }
 
