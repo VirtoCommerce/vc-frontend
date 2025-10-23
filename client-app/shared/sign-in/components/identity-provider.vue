@@ -1,7 +1,7 @@
 <template>
   <VcButton class="identity-provider" variant="outline" color="secondary" @click="$emit('signIn')">
     <template #prepend>
-      <VcImage class="identity-provider__icon" :alt="text" :src="icon" />
+      <VcImage class="identity-provider__icon" alt="" :src="icon" />
     </template>
     {{ text }}
   </VcButton>

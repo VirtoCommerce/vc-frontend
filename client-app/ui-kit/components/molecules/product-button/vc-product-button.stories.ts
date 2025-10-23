@@ -1,17 +1,12 @@
 import { VcProductButton } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md"];
 
-export default {
+const meta: Meta<typeof VcProductButton> = {
   title: "Components/Organisms/VcProductButton",
   component: VcProductButton,
   argTypes: {
-    /**
-     * Docs:
-     *  https://storybook.js.org/docs/vue/essentials/controls#annotation
-     *  https://storybook.js.org/docs/vue/api/argtypes#manual-specification
-     */
     size: {
       control: "radio",
       options: SIZES,
@@ -23,17 +18,19 @@ export default {
       },
     },
   },
-} as Meta<typeof VcProductButton>;
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcProductButton v-bind="args" />',
+  }),
+};
 
-const Template: StoryFn = (args) => ({
-  components: { VcProductButton },
-  setup: () => ({ args }),
-  template: '<VcProductButton v-bind="args" />',
-});
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
-export const Basic = Template.bind({});
-Basic.args = {
-  buttonText: "Button Text",
-  linkText: "Link text",
-  linkTo: "/some/link",
+export const Basic: StoryType = {
+  args: {
+    buttonText: "Button Text",
+    linkText: "Link text",
+    linkTo: "/some/link",
+  },
 };
