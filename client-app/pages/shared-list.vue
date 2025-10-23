@@ -72,6 +72,7 @@ import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
+import { WishlistProductsSkeleton } from "@/shared/wishlists";
 import { useWishlists, WishlistLineItems } from "@/shared/wishlists";
 import type { LineItemType, Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
