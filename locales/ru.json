@@ -562,6 +562,12 @@
           "remove": "Удалить из сравнения"
         }
       },
+      "notifications": {
+        "limit_reached": "Можно сравнить не более {productsLimit} товаров",
+        "added_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> добавлен в список сравнения <span class=\"hidden lg:inline\">(осталось товаров - {itemsLeft})</span>",
+        "removed_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> был удален из списка сравнения",
+        "compare_button": "Сравнить"
+      },
       "clear_list_modal": {
         "title": "Подтвердить удаление",
         "message": "Вы подтверждаете удаление всех товаров из списка?"

@@ -562,6 +562,12 @@
           "remove": "Fjern fra sammenligning"
         }
       },
+      "notifications": {
+        "limit_reached": "Bare {productsLimit} produkter kan sammenlignes",
+        "added_html": "Produktet <span class=\"hidden lg:inline\">«<strong>{productName}</strong>»</span> er lagt til sammenligningslisten <span class=\"hidden lg:inline\">(antall igjen – {itemsLeft})</span>",
+        "removed_html": "Produktet <span class=\"hidden lg:inline\">«<strong>{productName}</strong>»</span> er fjernet fra sammenligningslisten",
+        "compare_button": "Sammenlign"
+      },
       "clear_list_modal": {
         "title": "Bekreft tømming",
         "message": "Bekrefter du at alle produkter fjernes fra sammenligningslisten?"
