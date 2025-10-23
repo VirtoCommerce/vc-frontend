@@ -12,38 +12,28 @@
         <component :is="child" />
       </template>
     </div>
-
-    <div v-if="short && shortShowMoreVisible && showingRows < maxShowingRows" class="vc-products-grid__show-more">
-      <VcButton variant="no-border" append-icon="chevron-down" @click="showMoreRows()">
-        {{ $t("common.buttons.show_more") }}
-      </VcButton>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { computed, useSlots, ref } from "vue";
+import { computed, useSlots } from "vue";
 import { BREAKPOINTS } from "@/core/constants";
 import type { BreakpointsType } from "@/core/constants";
 import type { VNode } from "vue";
 
-const props = defineProps<IProps>();
-
 interface IProps {
   short?: boolean;
-  shortShowMoreVisible?: boolean;
   columns?: Partial<Record<"default" | BreakpointsType, number>>;
 }
 
-const MIN_COLS_COUNT = 2;
-const showingRows = ref(0);
+const props = defineProps<IProps>();
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const slots = useSlots();
 
 const cols = computed(() => ({
-  default: props.columns?.default ?? MIN_COLS_COUNT,
+  default: props.columns?.default ?? 2,
   xs: props.columns?.xs ?? 3,
   sm: props.columns?.sm ?? 4,
   md: props.columns?.md ?? 4,
@@ -55,40 +45,16 @@ const cols = computed(() => ({
 const currentBreakpoint = computed(() => breakpoints.active().value ?? "default");
 
 const visibleChildren = computed(() => {
-  if (!props.short) {
-    return rawChildren.value;
-  }
-
-  const itemsCount = colCount.value * actualShowingRows.value;
-
-  return (rawChildren.value as VNode[]).slice(0, itemsCount);
-});
-
-const colCount = computed(() => {
   const bp = currentBreakpoint.value as "default" | BreakpointsType;
-  return cols.value[bp] ?? MIN_COLS_COUNT;
-});
 
-const rawChildren = computed(() => {
+  const colCount = cols.value[bp];
+  const count = colCount === 2 || colCount == null ? 4 : colCount;
+
   const slotRaw = slots.default?.() ?? [];
-  return slotRaw[0]?.type === Symbol.for("v-fgt") ? (slotRaw[0].children ?? []) : slotRaw;
+  const rawChildren = slotRaw[0]?.type === Symbol.for("v-fgt") ? (slotRaw[0].children ?? []) : slotRaw;
+
+  return props.short ? (rawChildren as VNode[]).slice(0, count) : rawChildren;
 });
-
-const minShowingRows = computed(() => (colCount.value < 4 ? 2 : 1));
-
-const maxShowingRows = computed(() => {
-  if (!rawChildren.value) {
-    return minShowingRows.value;
-  }
-
-  return Math.ceil((rawChildren.value as VNode[]).length / colCount.value);
-});
-
-const actualShowingRows = computed(() => Math.max(showingRows.value, minShowingRows.value));
-
-const showMoreRows = function () {
-  showingRows.value = actualShowingRows.value + 2;
-};
 </script>
 
 <style lang="scss">
@@ -129,10 +95,6 @@ const showMoreRows = function () {
     @media (min-width: theme("screens.2xl")) {
       --cols: v-bind(cols[ "2xl"]);
     }
-  }
-
-  &__show-more {
-    @apply border-t pt-5 text-center;
   }
 }
 </style>
