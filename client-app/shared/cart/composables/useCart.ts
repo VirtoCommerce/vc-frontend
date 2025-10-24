@@ -229,6 +229,7 @@ export function useShortCart() {
       update: (cache, { data }) => {
         const currentCart = cart.value
           ? cache.readFragment<CartType>({
+              fragmentName: "shortCart",
               fragment: ShortCartFragmentDoc,
               id: cache.identify(cart.value),
             })
