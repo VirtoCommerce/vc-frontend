@@ -1,13 +1,6 @@
 <template>
   <!-- Collapsable mode -->
-  <VcWidget
-    v-if="mode === 'collapsable'"
-    class="facet-filter-widget"
-    size="xs"
-    collapsible
-    :title="facet.label"
-    collapsed
-  >
+  <VcWidget v-if="mode === 'collapsable'" class="facet-filter-widget" size="xs" collapsible collapsed>
     <template #default-container>
       <div v-if="searchFieldVisible" class="facet-filter-widget__search">
         <VcInput
