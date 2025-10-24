@@ -231,7 +231,7 @@ import {
 import omit from "lodash/omit";
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAnalytics, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -257,6 +257,7 @@ import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
+import type { RouteLocationRaw } from "vue-router";
 import ActiveFilterChips from "@/shared/catalog/components/active-filter-chips.vue";
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
@@ -306,6 +307,7 @@ const isMobile = breakpoints.smaller("md");
 const isCategoryNotFound = ref(false);
 
 const route = useRoute();
+const router = useRouter();
 
 const normalizedFacetsToHide = computed(() => {
   return facetsToHide.value?.map((facet) => facet.toLowerCase());
@@ -537,8 +539,33 @@ function resetPage() {
 }
 
 function handleResetFilterKeyword() {
+  const back = router.options.history.state?.back;
+
+  if (!back) {
+    resetSearchKeyword();
+    return;
+  }
+
+  if (isRouteLocationRaw(back)) {
+    const previousResolvedRoute = router.resolve(back);
+    if (previousResolvedRoute.matched.length > 0) {
+      void router.push(previousResolvedRoute);
+      return;
+    }
+  }
+
   resetSearchKeyword();
-  resetFacetFilters();
+}
+
+function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
+  if (typeof value === "string") {
+    return true;
+  }
+  if (typeof value === "object" && value !== null) {
+    const record = value as Record<string, unknown>;
+    return "path" in record || "name" in record;
+  }
+  return false;
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
