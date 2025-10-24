@@ -1,10 +1,10 @@
 <template>
-  <div v-if="isMobile" class="skeleton-mobile">
-    <ProductSkeletonGrid v-for="i in itemsCount" :key="i" />
+  <div v-if="isMobile" class="wishlist-products-skeleton wishlist-products-skeleton--mobile">
+    <ProductSkeletonGrid v-for="i in itemsCount" :key="i" class="wishlist-products-skeleton__item" />
   </div>
 
-  <div v-else class="skeleton-desktop">
-    <WishlistProductItemSkeleton v-for="i in itemsCount" :key="i" class="skeleton-desktop__item" />
+  <div v-else class="wishlist-products-skeleton wishlist-products-skeleton--desktop">
+    <WishlistProductItemSkeleton v-for="i in itemsCount" :key="i" class="wishlist-products-skeleton__item" />
   </div>
 </template>
 
@@ -25,14 +25,16 @@ const isMobile = breakpoints.smaller("lg");
 </script>
 
 <style lang="scss">
-.skeleton-mobile {
-  @apply grid grid-cols-2 gap-x-4 gap-y-6;
-}
+.wishlist-products-skeleton {
+  &--mobile {
+    @apply grid grid-cols-2 gap-x-4 gap-y-6;
+  }
 
-.skeleton-desktop {
-  @apply flex flex-col rounded border bg-additional-50 shadow-sm;
+  &--desktop {
+    @apply flex flex-col rounded border bg-additional-50 shadow-sm;
+  }
 
-  &__item {
+  &--desktop &__item {
     @apply even:bg-neutral-50;
   }
 }
