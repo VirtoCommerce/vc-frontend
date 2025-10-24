@@ -7,7 +7,7 @@
     </div>
 
     <div class="mt-5 w-full">
-      <WishlistProductsSkeleton :itemsCount="6" :list-name="$t('pages.cart.saved_for_later')" />
+      <WishlistProductsSkeleton :itemsCount="6" />
     </div>
   </template>
 
