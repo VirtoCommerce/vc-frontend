@@ -241,9 +241,9 @@ function goToQuoteDetails(payload: { id: string; status?: string }): void {
   const quoteRoute = router.resolve({ name: pathName, params: { quoteId: payload.id } });
 
   if (browserTarget.value === BrowserTargetType.BLANK) {
-    window.open(quoteRoute.fullPath, "_blank")!.focus();
+    window.open(quoteRoute.href, "_blank")!.focus();
   } else {
-    window.location.href = quoteRoute.fullPath;
+    window.location.href = quoteRoute.href;
   }
 }
 
