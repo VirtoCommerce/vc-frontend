@@ -1,6 +1,8 @@
 <template>
-  <VcWidget :title="$t(`shared.catalog.product_details.price_block.title`)">
-    <slot />
+  <VcWidget :title="widgetTitle">
+    <template #default>
+      <slot />
+    </template>
 
     <template #footer-container>
       <div class="flex select-none divide-x print:hidden">
@@ -104,10 +106,17 @@ const { t } = useI18n();
 
 const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
 
-const isMobile = breakpoints.smaller("lg");
+const isMobile = breakpoints.smaller("md");
+
+const shareProductPopoverShown = ref(false);
+
+const widgetTitle = computed(() => {
+  return isMobile.value
+    ? t("shared.catalog.product_details.price_block.mobile_title")
+    : t("shared.catalog.product_details.price_block.title");
+});
 
 const pageUrl = computed(() => location.origin + route.path);
-const shareProductPopoverShown = ref(false);
 
 const mailToLink = computed(
   () =>

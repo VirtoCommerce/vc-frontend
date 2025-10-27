@@ -1,21 +1,19 @@
 <template>
-  <div class="space-y-6">
-    <ProductPriceBlock :product="product">
-      <slot />
-    </ProductPriceBlock>
-
-    <VcWidget v-if="showVendor && product.vendor" :title="$t('shared.catalog.product_details.vendor_label')" size="sm">
-      <div class="test-base text-center font-bold [word-break:break-word]">
-        {{ product.vendor.name }}
-      </div>
-    </VcWidget>
-  </div>
+  <VcWidget
+    v-if="showVendor && product.vendor"
+    :title="$t('shared.catalog.product_details.vendor_label')"
+    size="sm"
+    :class="{ 'print:hidden': product.hasVariations }"
+  >
+    <div class="test-base text-center font-bold [word-break:break-word]">
+      {{ product.vendor.name }}
+    </div>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">
 import { computed, toRef } from "vue";
 import { useThemeContext } from "@/core/composables";
-import ProductPriceBlock from "./product-price-block.vue";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {

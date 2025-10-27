@@ -95,15 +95,22 @@
         </div>
 
         <template #sidebar>
-          <ProductSidebar :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]" :product="product">
-            <ProductPrice :product="product" :variations="variations" :template-layout="templateLayout" />
-          </ProductSidebar>
+          <ProductPriceBlock
+            :product="product"
+            :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]"
+            :title="$t(`shared.catalog.product_details.price_block.title`)"
+          >
+            <ProductPrice
+              v-if="!isMobile"
+              :product="product"
+              :variations="variations"
+              :template-layout="templateLayout"
+            />
+          </ProductPriceBlock>
 
-          <ProductPickupLocations
-            v-if="xPickupEnabled && pickupLocations?.length > 0"
-            :loading="pickupLocationsLoading"
-            :pickup-locations="pickupLocations"
-          />
+          <ProductVendor :class="['mt-5', { 'print:hidden': product.hasVariations }]" :product="product" />
+
+          <ProductPickupLocations :loading="pickupLocationsLoading" :pickup-locations="pickupLocations" class="mt-5" />
         </template>
       </VcLayout>
 
@@ -131,7 +138,7 @@
       </template>
     </VcContainer>
 
-    <FloatingBar>
+    <FloatingBar v-if="isMobile">
       <ProductPrice :product="product" :variations="variations" :template-layout="templateLayout" />
     </FloatingBar>
   </template>
@@ -176,7 +183,7 @@ import { useShortCart } from "@/shared/cart";
 import {
   useProduct,
   useRelatedProducts,
-  ProductSidebar,
+  ProductVendor,
   ProductPrice,
   ProductConfiguration,
   useProducts,
@@ -202,6 +209,7 @@ import type { IPageTemplate } from "@/shared/static-content";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 import ProductPickupLocations from "@/shared/catalog/components/product-pickup-locations.vue";
+import ProductPriceBlock from "@/shared/catalog/components/product-price-block.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
@@ -222,7 +230,7 @@ const configurationId = getUrlSearchParam(CONFIGURATION_URL_SEARCH_PARAM);
 const lineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
-const isMobile = breakpoints.smaller("lg");
+const isMobile = breakpoints.smaller("md");
 
 const productId = toRef(props, "productId");
 const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");

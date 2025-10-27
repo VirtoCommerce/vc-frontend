@@ -18,10 +18,10 @@ export { default as ProductConfiguration } from "./configuration/product-configu
 export { default as ProductPrice } from "./product-price.vue";
 export { default as ProductPriceBlock } from "./product-price-block.vue";
 export { default as ProductProperty } from "./product-property.vue";
-export { default as ProductSidebar } from "./product-sidebar.vue";
 export { default as ProductSkeletonGrid } from "./product-skeleton-grid.vue";
 export { default as ProductSkeletonList } from "./product-skeleton-list.vue";
 export { default as ProductTitledBlock } from "./product-titled-block.vue";
+export { default as ProductVendor } from "./product-vendor.vue";
 export { default as ProductVideos } from "./product-videos.vue";
 export { default as VariationProperty } from "./variation-property.vue";
 export { default as Vendor } from "./vendor.vue";
