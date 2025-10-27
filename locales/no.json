@@ -635,6 +635,7 @@
         "create_configuration_button": "Lag din egen konfigurasjon",
         "price_block": {
           "title": "Pris og levering",
+          "mobile_title": "Del og mer",
           "add_to_list_button": "Legg til i liste",
           "product_email_title": "Se produkt: {0}"
         },

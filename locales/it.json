@@ -635,6 +635,7 @@
         "create_configuration_button": "Crea la tua configurazione",
         "price_block": {
           "title": "Prezzo e consegna",
+          "mobile_title": "Condividi e altro",
           "add_to_list_button": "Aggiungi alla lista",
           "product_email_title": "Dai un'occhiata al prodotto: {0}"
         },

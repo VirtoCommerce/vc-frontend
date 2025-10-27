@@ -635,6 +635,7 @@
         "create_configuration_button": "Luo oma kokoonpano",
         "price_block": {
           "title": "Hinta ja toimitus",
+          "mobile_title": "Jaa ja lisää",
           "add_to_list_button": "Lisää listaan",
           "product_email_title": "Katso tuote: {0}"
         },

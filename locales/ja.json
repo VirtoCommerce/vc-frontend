@@ -635,6 +635,7 @@
         "create_configuration_button": "カスタム構成を作成",
         "price_block": {
           "title": "価格・配送",
+          "mobile_title": "共有・操作",
           "add_to_list_button": "リストに追加",
           "product_email_title": "この商品をご確認ください：{0}"
         },

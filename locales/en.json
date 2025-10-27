@@ -635,6 +635,7 @@
         "create_configuration_button": "Create your own configuration",
         "price_block": {
           "title": "Price and delivery",
+          "mobile_title": "Share & Actions",
           "add_to_list_button": "Add to list",
           "product_email_title": "Have a look at the product: {0}"
         },
