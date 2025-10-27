@@ -6,6 +6,7 @@ export { default as DiscountBadge } from "./discount-badge.vue";
 export { default as FacetFilter } from "./facet-filter.vue";
 export { default as ImageGallery } from "./image-gallery.vue";
 export { default as InStock } from "./in-stock.vue";
+export { default as Price } from "./price.vue";
 export { default as ProductCard } from "./product-card.vue";
 export { default as ProductCardCompare } from "./product-card-compare.vue";
 // @deprecated Use VcProductCard or ProductCard instead.
