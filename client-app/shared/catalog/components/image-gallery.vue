@@ -76,7 +76,6 @@
         watch-slides-progress
         @swiper="setThumbsSwiper"
         tabindex="0"
-        role="button"
         :id="thumbsId"
         @keydown.arrow-left.prevent="navigateToPrevious"
         @keydown.arrow-right.prevent="navigateToNext"
