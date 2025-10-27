@@ -105,7 +105,12 @@
 
           <ProductVendor :class="['mt-5', { 'print:hidden': product.hasVariations }]" :product="product" />
 
-          <ProductPickupLocations :loading="pickupLocationsLoading" :pickup-locations="pickupLocations" class="mt-5" />
+          <ProductPickupLocations
+            v-if="xPickupEnabled && pickupLocations?.length > 0"
+            :loading="pickupLocationsLoading"
+            :pickup-locations="pickupLocations"
+            class="mt-5"
+          />
         </template>
       </VcLayout>
 
