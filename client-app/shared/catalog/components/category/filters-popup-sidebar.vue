@@ -97,7 +97,7 @@
 <script setup lang="ts">
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
-import { watch, ref, computed, nextTick, getCurrentInstance } from "vue";
+import { watch, ref, computed, nextTick, getCurrentInstance, onMounted, onUnmounted } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
 import { useModal } from "@/shared/modal";
 import type { SearchProductFilterResult } from "@/core/api/graphql/types.ts";
@@ -166,10 +166,7 @@ watch(
     if (visible) {
       beforeChangeFilterState.value = cloneDeep(props.popupSidebarFilters);
       await nextTick();
-      document.addEventListener("keydown", handleKeydown);
       focusFirstElement();
-    } else {
-      document.removeEventListener("keydown", handleKeydown);
     }
   },
 );
@@ -237,6 +234,14 @@ function openBranchesModal() {
     },
   });
 }
+
+onMounted(() => {
+  document.addEventListener("keydown", handleKeydown);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("keydown", handleKeydown);
+});
 </script>
 
 <style lang="scss">
