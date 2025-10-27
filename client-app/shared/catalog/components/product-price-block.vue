@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, shallowRef, toRef } from "vue";
+import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { stringFormat } from "@/core/utilities";
@@ -107,8 +107,6 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const route = useRoute();
 const { t } = useI18n();
-
-const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
 
 const shareProductPopoverShown = ref(false);
 const isMobile = toRef(props, "isMobile");
@@ -138,9 +136,5 @@ function print() {
 
 function handleShareProductPopoverToggle(isShown: boolean): void {
   shareProductPopoverShown.value = isShown;
-
-  if (isMobile.value && isShown && divUnderSharedPopover.value) {
-    divUnderSharedPopover.value.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
-  }
 }
 </script>
