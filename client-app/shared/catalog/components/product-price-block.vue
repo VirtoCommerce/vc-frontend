@@ -1,6 +1,8 @@
 <template>
   <VcWidget :title="widgetTitle">
-    <ProductPrice v-if="!isMobile" :product="product" :variations="variations" :template-layout="templateLayout" />
+    <template v-if="!isMobile" #default>
+      <ProductPrice :product="product" :variations="variations" :template-layout="templateLayout" />
+    </template>
 
     <template #footer-container>
       <div class="flex select-none divide-x print:hidden">
