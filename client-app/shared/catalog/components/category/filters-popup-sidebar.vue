@@ -7,6 +7,7 @@
   >
     <ProductsFilters
       v-if="localFilters"
+      :id="productsFiltersId"
       :keyword="keywordQueryParam"
       :filters="localFilters"
       :loading="loading || facetsLoading"
@@ -96,7 +97,7 @@
 <script setup lang="ts">
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
-import { watch, ref, computed } from "vue";
+import { watch, ref, computed, nextTick, getCurrentInstance } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
 import { useModal } from "@/shared/modal";
 import type { SearchProductFilterResult } from "@/core/api/graphql/types.ts";
@@ -123,6 +124,8 @@ interface IProps {
   popupSidebarFilters: ProductsFiltersType;
   isExistSelectedFacets: boolean;
 }
+
+const productsFiltersId = `products-filters_${getCurrentInstance()!.uid}`;
 
 const localFilters = ref<ProductsFiltersType>({
   filters: [],
@@ -159,9 +162,14 @@ watch(
 
 watch(
   () => props.isVisible,
-  (visible) => {
+  async (visible) => {
     if (visible) {
       beforeChangeFilterState.value = cloneDeep(props.popupSidebarFilters);
+      await nextTick();
+      document.addEventListener("keydown", handleKeydown);
+      focusFirstElement();
+    } else {
+      document.removeEventListener("keydown", handleKeydown);
     }
   },
 );
@@ -194,6 +202,22 @@ function onApply() {
   }
 
   emit("hidePopupSidebar");
+}
+
+function focusFirstElement() {
+  const firstFocusableElement = document
+    .getElementById(productsFiltersId)
+    ?.querySelector("input:not(:disabled), button:not(:disabled)");
+  if (firstFocusableElement && firstFocusableElement instanceof HTMLElement) {
+    firstFocusableElement.focus();
+  }
+}
+
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === "Escape" && props.isVisible) {
+    event.preventDefault();
+    onCancel();
+  }
 }
 
 const { openModal } = useModal();
