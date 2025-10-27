@@ -5,7 +5,7 @@
         {{ $t("pages.product.price_label") }}
       </div>
 
-      <Price v-if="variationResult && variationResult.price?.actual?.amount > 0" :value="price" />
+      <Price v-if="variationResult && variationResult.price?.actual?.amount > 0" :value="variationResult.price" />
 
       <VcTooltip v-else>
         <template #trigger>
