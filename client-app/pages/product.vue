@@ -98,15 +98,10 @@
           <ProductPriceBlock
             :product="product"
             :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]"
-            :title="$t(`shared.catalog.product_details.price_block.title`)"
-          >
-            <ProductPrice
-              v-if="!isMobile"
-              :product="product"
-              :variations="variations"
-              :template-layout="templateLayout"
-            />
-          </ProductPriceBlock>
+            :is-mobile="isMobile"
+            :template-layout="templateLayout"
+            :variations="variations"
+          />
 
           <ProductVendor :class="['mt-5', { 'print:hidden': product.hasVariations }]" :product="product" />
 

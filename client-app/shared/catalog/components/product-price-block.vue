@@ -1,8 +1,6 @@
 <template>
   <VcWidget :title="widgetTitle">
-    <template #default>
-      <slot />
-    </template>
+    <ProductPrice v-if="!isMobile" :product="product" :variations="variations" :template-layout="templateLayout" />
 
     <template #footer-container>
       <div class="flex select-none divide-x print:hidden">
@@ -84,31 +82,34 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, ref, shallowRef } from "vue";
+import { computed, ref, shallowRef, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { stringFormat } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
 import { VcIcon } from "@/ui-kit/components";
+import ProductPrice from "./product-price.vue";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
+  isMobile?: boolean;
+  variations?: Product[];
+  templateLayout?: string;
 }
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  isMobile: false,
+});
 
 const route = useRoute();
-const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
 
 const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
 
-const isMobile = breakpoints.smaller("md");
-
 const shareProductPopoverShown = ref(false);
+const isMobile = toRef(props, "isMobile");
 
 const widgetTitle = computed(() => {
   return isMobile.value
