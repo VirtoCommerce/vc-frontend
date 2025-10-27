@@ -1,10 +1,10 @@
 import { VcNavButton } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md"];
 const DIRECTIONS = ["right", "left", "up", "down"];
 
-export default {
+const meta: Meta<typeof VcNavButton> = {
   title: "Components/Molecules/VcNavButton",
   component: VcNavButton,
   argTypes: {
@@ -29,32 +29,37 @@ export default {
       },
     },
   },
-} as Meta<typeof VcNavButton>;
-
-const Template: StoryFn = (args) => ({
-  components: { VcNavButton },
-  setup: () => ({ args }),
-  template: '<VcNavButton v-bind="args" />',
-});
-
-export const Basic = Template.bind({});
-
-export const Left = Template.bind({});
-Left.args = {
-  direction: "left",
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcNavButton v-bind="args" />',
+  }),
 };
 
-export const Right = Template.bind({});
-Right.args = {
-  direction: "right",
+export default meta;
+type StoryType = StoryObj<typeof meta>;
+
+export const Basic: StoryType = {};
+
+export const Left: StoryType = {
+  args: {
+    direction: "left",
+  },
 };
 
-export const Up = Template.bind({});
-Up.args = {
-  direction: "up",
+export const Right: StoryType = {
+  args: {
+    direction: "right",
+  },
 };
 
-export const Down = Template.bind({});
-Down.args = {
-  direction: "down",
+export const Up: StoryType = {
+  args: {
+    direction: "up",
+  },
+};
+
+export const Down: StoryType = {
+  args: {
+    direction: "down",
+  },
 };
