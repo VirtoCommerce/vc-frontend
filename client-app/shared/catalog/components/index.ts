@@ -1,3 +1,4 @@
+/** @deprecated CarouselProductCard is deprecated and should not be used. */
 export { default as CarouselProductCard } from "./carousel-product-card.vue";
 export { default as CategorySelector } from "./category-selector.vue";
 export { default as CountInCart } from "./count-in-cart.vue";
