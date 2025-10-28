@@ -26,16 +26,22 @@ const isMobile = breakpoints.smaller("lg");
 
 <style lang="scss">
 .wishlist-products-skeleton {
+  $desktop: "";
+
   &--mobile {
     @apply grid grid-cols-2 gap-x-4 gap-y-6;
   }
 
   &--desktop {
     @apply flex flex-col rounded border bg-additional-50 shadow-sm;
+
+    $desktop: &;
   }
 
-  &--desktop &__item {
-    @apply even:bg-neutral-50;
+  &__item {
+    #{$desktop} & {
+      @apply even:bg-neutral-50;
+    }
   }
 }
 </style>
