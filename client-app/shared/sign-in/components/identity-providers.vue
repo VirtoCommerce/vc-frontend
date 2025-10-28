@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineAsyncComponent } from "vue";
+import { defineAsyncComponent } from "vue";
 import { Logger } from "@/core/utilities";
 import type { Component } from "vue";
 

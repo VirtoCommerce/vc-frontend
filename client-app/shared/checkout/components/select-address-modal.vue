@@ -198,6 +198,7 @@
 
         <template #desktop-item="{ item }">
           <tr
+            :data-test-id="`customer-address-${item.id}`"
             :class="[
               'group border-b last:border-none hover:bg-secondary-50',
               { 'cursor-pointer': item.id !== selectedAddress?.id },
