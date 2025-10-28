@@ -26,7 +26,8 @@
       "increase_quantity": "Lisää määrää",
       "variant_picker_group": "Variantrivaihtoehdot",
       "show_more_button": "Näytä lisää vaihtoehtoja ({count})",
-      "sidebar": "Sivupalkki"
+      "sidebar": "Sivupaneeli",
+      "close_chip": "Sulje merkki"
     },
     "date_selector": {
       "min_date_error": "Päivämäärän on oltava vähintään {min}",

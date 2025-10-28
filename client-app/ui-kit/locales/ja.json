@@ -26,7 +26,8 @@
       "increase_quantity": "数量を増やす",
       "variant_picker_group": "バリアントの選択",
       "show_more_button": "さらにオプションを表示（{count}）",
-      "sidebar": "サイドバー"
+      "sidebar": "サイドバー",
+      "close_chip": "チップを閉じる"
     },
     "date_selector": {
       "min_date_error": "日付は{min}以降である必要があります",
