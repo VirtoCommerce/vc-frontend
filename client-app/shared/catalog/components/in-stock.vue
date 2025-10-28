@@ -45,7 +45,7 @@ interface IProps {
   isAvailable?: boolean;
   isDigital?: boolean;
   quantity?: number | null;
-  size?: "xs" | "sm" | "md" | "lg";
+  size?: VcChipSizeType;
   textEnabled?: boolean;
 }
 

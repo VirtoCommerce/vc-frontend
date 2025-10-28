@@ -26,7 +26,8 @@
       "increase_quantity": "Increase quantity",
       "variant_picker_group": "Variant options",
       "show_more_button": "See more options ({count})",
-      "sidebar": "Sidebar"
+      "sidebar": "Sidebar",
+      "close_chip": "Close chip"
     },
     "date_selector": {
       "min_date_error": "Date must be on or after {min}",
