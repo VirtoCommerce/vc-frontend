@@ -33,10 +33,10 @@ import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
 import { WishlistProductsSkeleton } from "@/shared/wishlists";
 import ListDetails from "./list-details.vue";
 
+const { savedForLaterList, loading: saveForLaterLoading, getSavedForLater } = useSavedForLater();
+
 const savedForLaterListId = computed(() => savedForLaterList.value?.id);
 const savedForLaterListIsEmpty = computed(() => !savedForLaterList.value?.items?.length);
-
-const { savedForLaterList, loading: saveForLaterLoading, getSavedForLater } = useSavedForLater();
 
 onMounted(() => {
   void getSavedForLater();
