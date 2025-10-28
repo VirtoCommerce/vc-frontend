@@ -26,7 +26,8 @@
       "increase_quantity": "Öka antal",
       "variant_picker_group": "Variantalternativ",
       "show_more_button": "Visa fler alternativ ({count})",
-      "sidebar": "Sidofält"
+      "sidebar": "Sidopanel",
+      "close_chip": "Stäng chip"
     },
     "date_selector": {
       "min_date_error": "Datum måste vara på eller efter {min}",
