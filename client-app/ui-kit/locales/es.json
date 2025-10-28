@@ -26,7 +26,8 @@
       "increase_quantity": "Aumentar cantidad",
       "variant_picker_group": "Opciones de variantes",
       "show_more_button": "Ver más opciones ({count})",
-      "sidebar": "Barra lateral"
+      "sidebar": "Barra lateral",
+      "close_chip": "Cerrar chip"
     },
     "date_selector": {
       "min_date_error": "La fecha debe ser igual o posterior al {min}",

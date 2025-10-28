@@ -26,7 +26,8 @@
       "increase_quantity": "增加数量",
       "variant_picker_group": "商品变体选项",
       "show_more_button": "查看更多选项（{count}）",
-      "sidebar": "侧边栏"
+      "sidebar": "侧边栏",
+      "close_chip": "关闭标签"
     },
     "date_selector": {
       "min_date_error": "日期必须在{min}或之后",
