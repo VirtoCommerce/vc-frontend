@@ -12,6 +12,7 @@
           :label="$t('common.labels.first_name')"
           class="mb-4"
           required
+          test-id-input="first-name"
           :maxlength="64"
         />
 
@@ -23,6 +24,7 @@
           :label="$t('common.labels.last_name')"
           class="mb-4"
           required
+          test-id-input="last-name"
           :maxlength="64"
         />
 
@@ -34,6 +36,7 @@
           :required="requiredEmail"
           :label="$t('common.labels.email')"
           class="mb-4"
+          test-id-input="email"
           :maxlength="64"
         />
 
@@ -45,6 +48,7 @@
           :required="requiredPhone"
           :label="$t('common.labels.phone')"
           class="mb-4"
+          test-id-input="phone"
           :maxlength="64"
         />
       </div>
@@ -61,6 +65,7 @@
           :disabled="disabled"
           :label="$t('common.labels.description')"
           class="mb-4"
+          test-id-input="description"
           :maxlength="128"
         />
 
@@ -77,6 +82,7 @@
             class="mb-4 w-full xl:w-7/12"
             autocomplete
             required
+            test-id-dropdown="country"
           />
 
           <VcInput
@@ -87,6 +93,7 @@
             :label="$t('common.labels.zip_or_postal_code')"
             class="order-3 mb-4 xl:order-none xl:ml-4 xl:w-4/12 xl:grow"
             required
+            test-id-input="postal-code"
             :maxlength="32"
           />
 
@@ -102,6 +109,7 @@
             :placeholder="$t('common.placeholders.select_region')"
             class="order-2 mb-4 xl:order-none xl:w-5/12"
             autocomplete
+            test-id-dropdown="region"
           />
 
           <VcInput
@@ -111,6 +119,7 @@
             :disabled="disabled"
             :label="$t('common.labels.city')"
             class="order-4 mb-4 xl:order-none xl:ml-4 xl:grow"
+            test-id-input="city"
             :required="requiredCity"
             :maxlength="128"
           />
@@ -124,6 +133,7 @@
           :label="$t('common.labels.address_line1')"
           class="mb-4"
           required
+          test-id-input="line-1"
           :maxlength="128"
         />
 
@@ -134,6 +144,7 @@
           :disabled="disabled"
           :label="$t('common.labels.address_line2')"
           class="mb-4"
+          test-id-input="line-2"
           :maxlength="128"
         />
       </div>
