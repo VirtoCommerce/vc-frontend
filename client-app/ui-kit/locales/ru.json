@@ -26,7 +26,8 @@
       "increase_quantity": "Увеличить количество",
       "variant_picker_group": "Варианты товара",
       "show_more_button": "Показать ещё варианты ({count})",
-      "sidebar": "Боковая панель"
+      "sidebar": "Боковая панель",
+      "close_chip": "Закрыть чип"
     },
     "date_selector": {
       "min_date_error": "Дата должна быть не ранее {min}",

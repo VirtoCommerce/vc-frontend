@@ -2,9 +2,11 @@
 
 @layer base {
   body {
-    *:focus-visible,
-    *:focus {
-      @apply outline-2 outline-primary-500/50;
+    --outline-color: rgb(from var(--color-primary-500) r g b / 0.4);
+
+    *:focus,
+    *:focus-visible {
+      @apply outline outline-2 outline-[--outline-color];
     }
   }
 }
