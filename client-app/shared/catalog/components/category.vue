@@ -237,6 +237,7 @@ import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
   getFilterExpression,
@@ -246,6 +247,7 @@ import {
   getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
 } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
@@ -308,6 +310,8 @@ const isCategoryNotFound = ref(false);
 
 const route = useRoute();
 const router = useRouter();
+
+const { isCategoryScope } = useSearchScore();
 
 const normalizedFacetsToHide = computed(() => {
   return facetsToHide.value?.map((facet) => facet.toLowerCase());
@@ -538,23 +542,29 @@ function resetPage() {
   void fetchProducts();
 }
 
-function handleResetFilterKeyword() {
+async function handleResetFilterKeyword() {
   const back = router.options.history.state?.back;
 
-  if (!back) {
-    resetSearchKeyword();
+  resetSearchKeyword();
+
+  if (!back || !isRouteLocationRaw(back)) {
     return;
   }
 
-  if (isRouteLocationRaw(back)) {
-    const previousResolvedRoute = router.resolve(back);
-    if (previousResolvedRoute.matched.length > 0) {
-      void router.push(previousResolvedRoute);
-      return;
-    }
+  const previousResolvedRoute = router.resolve(back);
+
+  if (previousResolvedRoute.matched.length <= 0) {
+    return;
   }
 
-  resetSearchKeyword();
+  if (isCategoryScope.value) {
+    void router.push(previousResolvedRoute);
+  } else {
+    const catalogQuery = router.currentRoute.value.name === ROUTES.SEARCH.NAME ? router.currentRoute.value.query : {};
+    const catalogQueryWithoutSearch = omit(catalogQuery, [QueryParamName.SearchPhrase]);
+
+    void router.push({ name: ROUTES.CATALOG.NAME, query: catalogQueryWithoutSearch });
+  }
 }
 
 function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
