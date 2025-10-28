@@ -40,7 +40,7 @@
         />
       </div>
 
-      <VcButton id="variations-filters-button" variant="outline" @click="$emit('showFilters')">
+      <VcButton :id="`${productId}-variations-filters-button`" variant="outline" @click="$emit('showFilters')">
         {{ $t("common.buttons.filters") }}
       </VcButton>
     </div>

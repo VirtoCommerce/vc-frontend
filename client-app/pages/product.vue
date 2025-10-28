@@ -405,7 +405,7 @@ async function resetFacetFilters(): Promise<void> {
 
 function hideFiltersSidebar(): void {
   _hideFiltersSidebar();
-  const variationsFiltersButton = document.getElementById("variations-filters-button");
+  const variationsFiltersButton = document.getElementById(`${productId.value}-variations-filters-button`);
   if (variationsFiltersButton) {
     variationsFiltersButton.focus();
   }

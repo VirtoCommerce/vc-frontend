@@ -97,9 +97,10 @@
 <script setup lang="ts">
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
-import { watch, ref, computed, nextTick, getCurrentInstance, onMounted, onUnmounted } from "vue";
+import { watch, ref, computed, nextTick, onMounted, onUnmounted } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
 import { useModal } from "@/shared/modal";
+import { useComponentId } from "@/ui-kit/composables";
 import type { SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
@@ -125,7 +126,7 @@ interface IProps {
   isExistSelectedFacets: boolean;
 }
 
-const productsFiltersId = `products-filters_${getCurrentInstance()!.uid}`;
+const productsFiltersId = useComponentId("products-filters");
 
 const localFilters = ref<ProductsFiltersType>({
   filters: [],
@@ -213,7 +214,7 @@ function focusFirstElement() {
 function handleKeydown(event: KeyboardEvent) {
   if (event.key === "Escape" && props.isVisible) {
     event.preventDefault();
-    onCancel();
+    emit("hidePopupSidebar");
   }
 }
 
