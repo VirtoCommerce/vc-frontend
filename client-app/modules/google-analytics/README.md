@@ -1,6 +1,6 @@
 # Google Analytics Module
 
-A module that implements Google Analytics 4 tracking for the application.
+A module that implements Google Analytics 4 tracking and Google Tag Manager integration for the application.
 
 ## Basic Usage
 
@@ -12,6 +12,38 @@ import { init as initGoogleAnalytics } from "@/modules/google-analytics";
 
 await initGoogleAnalytics();
 ```
+
+## Google Tag Manager Integration
+
+The module supports Google Tag Manager (GTM) integration alongside Google Analytics 4. When both GTM Container ID and GA4 Measurement ID are configured, GTM will be loaded first to ensure proper event sequencing.
+
+### Configuration
+
+Configure the following settings in the Virto Commerce backend:
+
+- **EnableTracking**: Enable/disable tracking (applies to both GTM and GA4)
+- **GTMContainerId**: Your Google Tag Manager Container ID (e.g., `GTM-XXXXXXX`)
+- **MeasurementId**: Your Google Analytics 4 Measurement ID (e.g., `G-XXXXXXXXXX`)
+
+### Load Order
+
+1. If `GTMContainerId` is configured, GTM scripts are loaded first
+2. If `MeasurementId` is configured, GA4 scripts are loaded after GTM
+3. Both can work independently or together
+
+The GTM implementation follows Google's best practices:
+- GTM script is injected in the `<head>` section
+- GTM noscript fallback is injected at the beginning of the `<body>` section
+- `dataLayer` is properly initialized before GTM loads
+
+### Event Handling
+
+The module automatically sends ecommerce events regardless of whether you use:
+- **GTM Only**: Events are pushed directly to `dataLayer` for GTM to capture
+- **GA4 Only**: Events are sent via `gtag()` API
+- **Both GTM + GA4**: Events are sent via `gtag()` which pushes to `dataLayer`, allowing both systems to track
+
+This ensures your ecommerce events are always captured when tracking is enabled.
 
 ## Extending Events
 
