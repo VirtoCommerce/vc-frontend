@@ -1,5 +1,5 @@
 <template>
-  <template v-if="!cart?.items?.length && !recentlyBrowsedProducts?.length">
+  <template v-if="!cart?.items?.length && !savedForLaterList?.items?.length && !recentlyBrowsedProducts?.length">
     <VcLoaderOverlay v-if="loading" no-bg />
 
     <VcEmptyPage
