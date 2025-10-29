@@ -1413,6 +1413,7 @@
       },
       "title": "Sök",
       "header": "Din sökning efter {keyword} gav följande resultat",
+      "header_empty": "Tyvärr, din sökning efter \"{keyword}\" gav inga resultat",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Din sökning efter <strong>{0}</strong> gav inga resultat",
