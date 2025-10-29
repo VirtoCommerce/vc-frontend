@@ -1,5 +1,5 @@
 import { ApolloError } from "@apollo/client/core";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useMutation, useLazyQuery } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
 import { computed } from "vue";
 import { AbortReason } from "@/core/api/common/enums";
@@ -20,10 +20,10 @@ function _useSavedForLater() {
   const savedForLaterList = computed(() => _savedForLaterQueryResult.value?.getSavedForLater);
 
   const {
-    refetch: getSavedForLater,
+    load: getSavedForLater,
     loading: _getSavedForLaterLoading,
     result: _savedForLaterQueryResult,
-  } = useQuery(
+  } = useLazyQuery(
     GetSavedForLaterDocument,
     {
       storeId,
