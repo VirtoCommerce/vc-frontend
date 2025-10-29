@@ -150,6 +150,7 @@ import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
 import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import type { StyleValue } from "vue";
@@ -172,17 +173,29 @@ const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
 const { saveSearchQuery } = useHistoricalEvents();
+const { isCategoryScope } = useSearchScore();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
 );
 
-const searchPageLink = computed<RouteLocationRaw>(() => ({
-  name: ROUTES.SEARCH.NAME,
-  query: {
-    [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
-  },
-}));
+const searchPageLink = computed<RouteLocationRaw>(() => {
+  if (isCategoryScope.value) {
+    return {
+      path: router.currentRoute.value.path,
+      query: {
+        [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
+      },
+    };
+  } else {
+    return {
+      name: ROUTES.SEARCH.NAME,
+      query: {
+        [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
+      },
+    };
+  }
+});
 
 function reset() {
   searchPhrase.value = "";
