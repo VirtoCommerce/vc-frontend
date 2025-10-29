@@ -1415,6 +1415,7 @@
       },
       "title": "Haku",
       "header": "Hakusi {keyword} tuotti seuraavat tulokset",
+      "header_empty": "Hakusanasi, hakusi \"{keyword}\" -haulla ei löytynyt yhtään tulosta",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Hakusi <strong>{0}</strong> ei tuottanut tuloksia",

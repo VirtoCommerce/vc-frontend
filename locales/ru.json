@@ -1415,6 +1415,7 @@
       },
       "title": "Поиск",
       "header": "Ваш поиск {keyword} вернул следующее",
+      "header_empty": "К сожалению, поиск по запросу «{keyword}» не дал результатов",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Ваш запрос <strong>{0}</strong> не дал результатов",
