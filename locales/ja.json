@@ -168,7 +168,8 @@
       "orders": "注文",
       "order": "注文",
       "customer": "顧客",
-      "summary": "概要"
+      "summary": "概要",
+      "random_product": "おすすめ商品"
     },
     "prefixes": {
       "please": "お願いします",
@@ -218,7 +219,8 @@
       "logo_changed": "ロゴが正常に変更されました。",
       "logo_deleted": "ロゴが削除されました。",
       "pending_operations_leaving_page_confirmation": "いくつかの操作がまだ進行中です。このページから移動してもよろしいですか？保存されていない変更は失われる可能性があります。",
-      "mock_data_description": "これはデモンストレーション用のモックデータです。"
+      "mock_data_description": "これはデモンストレーション用のモックデータです。",
+      "no_data": "データがありません"
     },
     "placeholders": {
       "enter_value": "入力してください",

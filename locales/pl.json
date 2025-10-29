@@ -168,7 +168,8 @@
       "orders": "Zamówienia",
       "order": "Zamówienie",
       "customer": "Klient",
-      "summary": "Podsumowanie"
+      "summary": "Podsumowanie",
+      "random_product": "Losowy produkt"
     },
     "prefixes": {
       "please": "Proszę",
@@ -218,7 +219,8 @@
       "logo_changed": "Logo zostało pomyślnie zmienione.",
       "logo_deleted": "Logo zostało usunięte.",
       "pending_operations_leaving_page_confirmation": "Niektóre operacje są w toku. Czy na pewno chcesz opuścić tę stronę? Niezapisane zmiany mogą zostać utracone.",
-      "mock_data_description": "To są dane testowe służące do demonstracji."
+      "mock_data_description": "To są dane testowe służące do demonstracji.",
+      "no_data": "Brak danych"
     },
     "placeholders": {
       "enter_value": "Proszę wprowadzić wartość",

@@ -168,7 +168,8 @@
       "orders": "Beställningar",
       "order": "Order",
       "customer": "Kund",
-      "summary": "Sammanfattning"
+      "summary": "Sammanfattning",
+      "random_product": "Slumpmässig produkt"
     },
     "prefixes": {
       "please": "Vänligen",
@@ -218,7 +219,8 @@
       "logo_changed": "Logotypen har ändrats framgångsrikt.",
       "logo_deleted": "Logotypen har raderats.",
       "pending_operations_leaving_page_confirmation": "Vissa åtgärder pågår fortfarande. Vill du verkligen lämna den här sidan? Ändringar som inte sparats kan gå förlorade.",
-      "mock_data_description": "Detta är testdata för demonstrationsändamål."
+      "mock_data_description": "Detta är testdata för demonstrationsändamål.",
+      "no_data": "Ingen data"
     },
     "placeholders": {
       "enter_value": "Ange ett värde",

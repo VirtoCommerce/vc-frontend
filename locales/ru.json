@@ -168,7 +168,8 @@
       "orders": "Заказы",
       "order": "Заказ",
       "customer": "Клиент",
-      "summary": "Обзор"
+      "summary": "Обзор",
+      "random_product": "Случайный товар"
     },
     "prefixes": {
       "please": "Пожалуйста",
@@ -218,7 +219,8 @@
       "logo_changed": "Логотип успешно изменен.",
       "logo_deleted": "Логотип удален.",
       "pending_operations_leaving_page_confirmation": "Некоторые операции еще выполняются. Вы уверены, что хотите покинуть эту страницу? Несохраненные изменения могут быть потеряны.",
-      "mock_data_description": "Это демонстрационные данные."
+      "mock_data_description": "Это демонстрационные данные.",
+      "no_data": "Нет данных"
     },
     "placeholders": {
       "enter_value": "Введите значение",

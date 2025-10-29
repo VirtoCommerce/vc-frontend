@@ -168,7 +168,8 @@
       "orders": "Bestellungen",
       "order": "Bestellung",
       "customer": "Kunde",
-      "summary": "Zusammenfassung"
+      "summary": "Zusammenfassung",
+      "random_product": "Zufälliges Produkt"
     },
     "prefixes": {
       "please": "Bitte",
@@ -218,7 +219,8 @@
       "logo_changed": "Das Logo wurde erfolgreich geändert.",
       "logo_deleted": "Das Logo wurde gelöscht.",
       "pending_operations_leaving_page_confirmation": "Einige Vorgänge sind noch in Bearbeitung. Möchten Sie diese Seite wirklich verlassen? Nicht gespeicherte Änderungen gehen möglicherweise verloren.",
-      "mock_data_description": "Dies sind Testdaten für Demonstrationszwecke."
+      "mock_data_description": "Dies sind Testdaten für Demonstrationszwecke.",
+      "no_data": "Keine Daten"
     },
     "placeholders": {
       "enter_value": "Bitte geben Sie einen Wert ein",

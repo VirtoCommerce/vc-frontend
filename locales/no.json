@@ -168,7 +168,8 @@
       "orders": "Bestillinger",
       "order": "Bestilling",
       "customer": "Kunde",
-      "summary": "Sammendrag"
+      "summary": "Sammendrag",
+      "random_product": "Tilfeldig produkt"
     },
     "prefixes": {
       "please": "Vennligst",
@@ -218,7 +219,8 @@
       "logo_changed": "Logoen er endret.",
       "logo_deleted": "Logoen er slettet.",
       "pending_operations_leaving_page_confirmation": "Noen operasjoner er fortsatt i gang. Er du sikker på at du vil forlate denne siden? Endringer som ikke er lagret kan gå tapt.",
-      "mock_data_description": "Dette er eksempeldata for demonstrasjonsformål."
+      "mock_data_description": "Dette er eksempeldata for demonstrasjonsformål.",
+      "no_data": "Ingen data"
     },
     "placeholders": {
       "enter_value": "Skriv inn verdi",

@@ -168,7 +168,8 @@
       "orders": "订单",
       "order": "订单",
       "customer": "客户",
-      "summary": "概要"
+      "summary": "概要",
+      "random_product": "随机产品"
     },
     "prefixes": {
       "please": "请",
@@ -218,7 +219,8 @@
       "logo_changed": "标志已成功更改。",
       "logo_deleted": "标志已被删除。",
       "pending_operations_leaving_page_confirmation": "某些操作仍在进行中。确定要离开此页面吗？未保存的更改可能会丢失。",
-      "mock_data_description": "这是用于演示目的的模拟数据。"
+      "mock_data_description": "这是用于演示目的的模拟数据。",
+      "no_data": "无数据"
     },
     "placeholders": {
       "enter_value": "请输入值",

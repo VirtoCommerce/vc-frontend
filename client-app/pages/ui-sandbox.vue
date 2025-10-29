@@ -19,6 +19,40 @@
 
       <template #sidebar>
         <div class="mt-4 flex flex-col gap-4 md:mt-0">
+          <VcWidget :title="$t('common.labels.random_product')">
+            <div class="flex items-start gap-3">
+              <template v-if="productLoading">
+                <VcLoader />
+              </template>
+
+              <template v-else-if="productError">
+                <VcAlert color="danger" size="sm" variant="solid-light">{{ productError }}</VcAlert>
+              </template>
+
+              <template v-else-if="product">
+                <router-link
+                  :to="{ name: 'Product', params: { productId: product.id } }"
+                  class="flex min-w-0 items-start gap-3"
+                >
+                  <VcImage
+                    :src="product.imgSrc || product.images?.[0]?.url"
+                    class="size-16 flex-none rounded object-cover"
+                  />
+                  <div class="min-w-0 flex-1">
+                    <VcTypography tag="div" class="block truncate font-bold">{{ product.name }}</VcTypography>
+                    <VcProductPrice :actual-price="product.price?.actual" :list-price="product.price?.list" />
+                  </div>
+                </router-link>
+              </template>
+
+              <template v-else>
+                <VcTypography tag="div" class="text-xs text-neutral-600">
+                  {{ $t("common.messages.no_data") }}
+                </VcTypography>
+              </template>
+            </div>
+          </VcWidget>
+
           <VcWidget :title="$t('common.labels.summary')">
             <div class="flex flex-col gap-3">
               <VcLabel>{{ $t("common.labels.price") }}</VcLabel>
@@ -45,8 +79,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRandomProduct } from "@/shared/catalog/composables/useRandomProduct";
 
 const { n, t } = useI18n();
 
@@ -64,6 +99,12 @@ const items = [
 ];
 
 const sidebarTotal = computed(() => items.reduce((acc, it) => acc + it.total, 0));
+
+const { product, loading: productLoading, error: productError, load: loadRandom } = useRandomProduct();
+
+onMounted(() => {
+  void loadRandom();
+});
 
 function onBuy() {
   // mock handler

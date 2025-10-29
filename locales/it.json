@@ -168,7 +168,8 @@
       "orders": "Ordini",
       "order": "Ordine",
       "customer": "Cliente",
-      "summary": "Riepilogo"
+      "summary": "Riepilogo",
+      "random_product": "Prodotto casuale"
     },
     "prefixes": {
       "please": "Per favore",
@@ -218,7 +219,8 @@
       "logo_changed": "Il logo è stato modificato con successo.",
       "logo_deleted": "Il logo è stato eliminato.",
       "pending_operations_leaving_page_confirmation": "Alcune operazioni sono ancora in corso. Vuoi veramente lasciare questa pagina? Le modifiche non salvate potrebbero andare perse.",
-      "mock_data_description": "Questi sono dati fittizi a scopo dimostrativo."
+      "mock_data_description": "Questi sono dati fittizi a scopo dimostrativo.",
+      "no_data": "Nessun dato"
     },
     "placeholders": {
       "enter_value": "Inserisci un valore",

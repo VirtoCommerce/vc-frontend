@@ -168,7 +168,8 @@
       "orders": "Tilaukset",
       "order": "Tilaus",
       "customer": "Asiakas",
-      "summary": "Yhteenveto"
+      "summary": "Yhteenveto",
+      "random_product": "Satunnainen tuote"
     },
     "prefixes": {
       "please": "Ole hyvä",
@@ -218,7 +219,8 @@
       "logo_changed": "Logo on vaihdettu onnistuneesti.",
       "logo_deleted": "Logo on poistettu.",
       "pending_operations_leaving_page_confirmation": "Osa toimintoja on vielä käynnissä. Haluatko varmasti poistua tältä sivulta? Tallentamattomat muutokset saattavat kadota.",
-      "mock_data_description": "Nämä ovat mallitietoja esittelytarkoituksiin."
+      "mock_data_description": "Nämä ovat mallitietoja esittelytarkoituksiin.",
+      "no_data": "Ei tietoja"
     },
     "placeholders": {
       "enter_value": "Syötä arvo",
