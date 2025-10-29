@@ -36,7 +36,7 @@
           </td>
 
           <td class="variations-table__col variations-table__col--in-stock">
-            <VcChip
+            <VcBadge
               v-if="variation.availabilityData?.isInStock"
               color="success"
               size="xs"
@@ -52,9 +52,9 @@
               <template v-else>
                 {{ $t("common.labels.in_stock") }}
               </template>
-            </VcChip>
+            </VcBadge>
 
-            <VcChip
+            <VcBadge
               v-else
               size="xs"
               variant="outline-dark"
@@ -64,7 +64,7 @@
               rounded
             >
               0
-            </VcChip>
+            </VcBadge>
           </td>
 
           <td class="variations-table__col variations-table__col--price">
