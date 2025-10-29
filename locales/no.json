@@ -164,7 +164,10 @@
       "buyer_name": "Kjøpers navn",
       "other": "Annet",
       "vendor_name": "Leverandør: {name}",
-      "not_available": "Ikke tilgjengelig"
+      "not_available": "Ikke tilgjengelig",
+      "orders": "Bestillinger",
+      "order": "Bestilling",
+      "customer": "Kunde"
     },
     "prefixes": {
       "please": "Vennligst",
@@ -213,7 +216,8 @@
       "data_changed": "Data har endret seg i en annen fane. Oppdater siden for å se de nyeste dataene.",
       "logo_changed": "Logoen er endret.",
       "logo_deleted": "Logoen er slettet.",
-      "pending_operations_leaving_page_confirmation": "Noen operasjoner er fortsatt i gang. Er du sikker på at du vil forlate denne siden? Endringer som ikke er lagret kan gå tapt."
+      "pending_operations_leaving_page_confirmation": "Noen operasjoner er fortsatt i gang. Er du sikker på at du vil forlate denne siden? Endringer som ikke er lagret kan gå tapt.",
+      "mock_data_description": "Dette er eksempeldata for demonstrasjonsformål."
     },
     "placeholders": {
       "enter_value": "Skriv inn verdi",

@@ -164,7 +164,10 @@
       "buyer_name": "Ostajan nimi",
       "other": "Muu",
       "vendor_name": "Toimittaja: {name}",
-      "not_available": "Ei saatavilla"
+      "not_available": "Ei saatavilla",
+      "orders": "Tilaukset",
+      "order": "Tilaus",
+      "customer": "Asiakas"
     },
     "prefixes": {
       "please": "Ole hyvä",
@@ -213,7 +216,8 @@
       "data_changed": "Tiedot ovat muuttuneet toisella välilehdellä. Päivitä sivu nähdäksesi viimeisimmät tiedot.",
       "logo_changed": "Logo on vaihdettu onnistuneesti.",
       "logo_deleted": "Logo on poistettu.",
-      "pending_operations_leaving_page_confirmation": "Osa toimintoja on vielä käynnissä. Haluatko varmasti poistua tältä sivulta? Tallentamattomat muutokset saattavat kadota."
+      "pending_operations_leaving_page_confirmation": "Osa toimintoja on vielä käynnissä. Haluatko varmasti poistua tältä sivulta? Tallentamattomat muutokset saattavat kadota.",
+      "mock_data_description": "Nämä ovat mallitietoja esittelytarkoituksiin."
     },
     "placeholders": {
       "enter_value": "Syötä arvo",

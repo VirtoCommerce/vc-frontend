@@ -164,7 +164,10 @@
       "buyer_name": "Köparens namn",
       "other": "Övrigt",
       "vendor_name": "Leverantör: {name}",
-      "not_available": "Ej tillgänglig"
+      "not_available": "Ej tillgänglig",
+      "orders": "Beställningar",
+      "order": "Order",
+      "customer": "Kund"
     },
     "prefixes": {
       "please": "Vänligen",
@@ -213,7 +216,8 @@
       "data_changed": "Data har ändrats på en av de andra flikarna. Uppdatera sidan för att visa de senaste uppgifterna.",
       "logo_changed": "Logotypen har ändrats framgångsrikt.",
       "logo_deleted": "Logotypen har raderats.",
-      "pending_operations_leaving_page_confirmation": "Vissa åtgärder pågår fortfarande. Vill du verkligen lämna den här sidan? Ändringar som inte sparats kan gå förlorade."
+      "pending_operations_leaving_page_confirmation": "Vissa åtgärder pågår fortfarande. Vill du verkligen lämna den här sidan? Ändringar som inte sparats kan gå förlorade.",
+      "mock_data_description": "Detta är testdata för demonstrationsändamål."
     },
     "placeholders": {
       "enter_value": "Ange ett värde",

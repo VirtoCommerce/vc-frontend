@@ -164,7 +164,10 @@
       "buyer_name": "Name des Käufers",
       "other": "Andere",
       "vendor_name": "Anbieter: {name}",
-      "not_available": "N/V"
+      "not_available": "N/V",
+      "orders": "Bestellungen",
+      "order": "Bestellung",
+      "customer": "Kunde"
     },
     "prefixes": {
       "please": "Bitte",
@@ -213,7 +216,8 @@
       "data_changed": "Die Daten wurden in einem der anderen Tabs geändert. Bitte aktualisieren Sie die Seite, um die aktuellen Daten anzuzeigen.",
       "logo_changed": "Das Logo wurde erfolgreich geändert.",
       "logo_deleted": "Das Logo wurde gelöscht.",
-      "pending_operations_leaving_page_confirmation": "Einige Vorgänge sind noch in Bearbeitung. Möchten Sie diese Seite wirklich verlassen? Nicht gespeicherte Änderungen gehen möglicherweise verloren."
+      "pending_operations_leaving_page_confirmation": "Einige Vorgänge sind noch in Bearbeitung. Möchten Sie diese Seite wirklich verlassen? Nicht gespeicherte Änderungen gehen möglicherweise verloren.",
+      "mock_data_description": "Dies sind Testdaten für Demonstrationszwecke."
     },
     "placeholders": {
       "enter_value": "Bitte geben Sie einen Wert ein",

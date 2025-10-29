@@ -164,7 +164,10 @@
       "buyer_name": "購入者名",
       "other": "その他",
       "vendor_name": "ベンダー: {name}",
-      "not_available": "N/A"
+      "not_available": "N/A",
+      "orders": "注文",
+      "order": "注文",
+      "customer": "顧客"
     },
     "prefixes": {
       "please": "お願いします",
@@ -213,7 +216,8 @@
       "data_changed": "他のタブのいずれかでデータが変更されました。現在のデータを表示するには、ページを更新してください。",
       "logo_changed": "ロゴが正常に変更されました。",
       "logo_deleted": "ロゴが削除されました。",
-      "pending_operations_leaving_page_confirmation": "いくつかの操作がまだ進行中です。このページから移動してもよろしいですか？保存されていない変更は失われる可能性があります。"
+      "pending_operations_leaving_page_confirmation": "いくつかの操作がまだ進行中です。このページから移動してもよろしいですか？保存されていない変更は失われる可能性があります。",
+      "mock_data_description": "これはデモンストレーション用のモックデータです。"
     },
     "placeholders": {
       "enter_value": "入力してください",

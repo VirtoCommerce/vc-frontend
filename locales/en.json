@@ -164,7 +164,10 @@
       "buyer_name": "Buyer name",
       "other": "Other",
       "vendor_name": "Vendor: {name}",
-      "not_available": "N/A"
+      "not_available": "N/A",
+      "orders": "Orders",
+      "order": "Order",
+      "customer": "Customer"
     },
     "prefixes": {
       "please": "Please",
@@ -213,7 +216,8 @@
       "data_changed": "The data has been modified on one of the other tabs. Refresh the page to display the latest data.",
       "logo_changed": "Logo was successfully changed.",
       "logo_deleted": "Logo was deleted.",
-      "pending_operations_leaving_page_confirmation": "Some operations are still in progress. Are you sure you want to leave this page? Unsaved changes may be lost."
+      "pending_operations_leaving_page_confirmation": "Some operations are still in progress. Are you sure you want to leave this page? Unsaved changes may be lost.",
+      "mock_data_description": "This is mock data for demonstration purposes."
     },
     "placeholders": {
       "enter_value": "Enter a value",
