@@ -318,6 +318,10 @@ export function useProducts(
     return !!filteredFacets.length && !!filteredFilters.length;
   }
 
+  function hasSelectedFilters(): boolean {
+    return !!productsFilters.value.filters.length;
+  }
+
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
     if (themeContext.value?.settings?.product_filters_sorting) {
       const ascDirection = themeContext.value?.settings?.product_filters_sorting_direction === SortDirection.Ascending;
@@ -506,6 +510,7 @@ export function useProducts(
     fetchingMoreProducts: readonly(fetchingMoreProducts),
     fetchingProducts: readonly(fetchingProducts),
     hasSelectedFacets: computed(() => hasSelectedFacets()),
+    hasSelectedFilters: computed(() => hasSelectedFilters()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
     /** @deprecated use `searchQueryParam` instead */
