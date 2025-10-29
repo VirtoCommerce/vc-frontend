@@ -447,7 +447,13 @@ function handleSearchHistoryClick(query: string) {
 
 function goToSearchResultsPage() {
   hideSearchDropdown();
-  void router.push(getSearchRoute(trimmedSearchPhrase.value));
+  const ifAlreadySearch = !!router.currentRoute.value.query[QueryParamName.SearchPhrase];
+
+  if (ifAlreadySearch) {
+    void router.replace(getSearchRoute(trimmedSearchPhrase.value));
+  } else {
+    void router.push(getSearchRoute(trimmedSearchPhrase.value));
+  }
 
   if (trimmedSearchPhrase.value) {
     analytics("search", trimmedSearchPhrase.value, products.value, total.value);
