@@ -27,7 +27,7 @@
           <VcInput
             v-model="expirationDate"
             v-maska
-            data-maska="## / ####"
+            data-maska="## / ##"
             :label="labels.expirationDate"
             :placeholder="labels.datePlaceholder"
             :message="expirationDateErrors"
@@ -98,16 +98,30 @@ declare class SecureFields {
     transactionId: string,
     options: {
       cardNumber: string;
-      cvv: string;
+      cvv: {
+        placeholderElementId: string;
+        inputType: string;
+      };
     },
   ): void;
 
   submit(params: { expm: string; expy: string }): void;
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  on(event: "ready" | "success" | "error" | "validate" | "change" | "blur" | "focus", callback: Function): void;
-
+  on(event: "ready", callback: () => void): void;
+  on(event: "success", callback: (arg: ISecureFieldsInitResult) => Promise<void>): void;
+  on(event: "error", callback: (arg: IFieldError) => Promise<void>): void;
+  on(event: "validate" | "change", callback: (arg: IValidateEvent & IValidateEventArg) => void): void;
   setPlaceholder(field: "cardNumber" | "cvv", placeholder: string): void;
+}
+
+interface IValidateEventArg {
+  event: {
+    field: "cardNumber" | "cvv";
+    type: string;
+  };
+}
+
+interface IFieldError {
+  error: string;
 }
 
 interface IValidateEvent {
@@ -155,7 +169,7 @@ const labels = computed(() => {
     cardholderName: t("shared.payment.bank_card_form.cardholder_name_label"),
     expirationDate: t("shared.payment.bank_card_form.expiration_date_label"),
     yearLabel: t("shared.payment.bank_card_form.year_label"),
-    datePlaceholder: t("shared.payment.bank_card_form.expiration_date_placeholder_extended"),
+    datePlaceholder: t("shared.payment.bank_card_form.expiration_date_placeholder"),
     monthLabel: t("shared.payment.bank_card_form.month_label"),
     securityCode: t("shared.payment.bank_card_form.security_code_label"),
   };
@@ -175,8 +189,8 @@ const validationSchema = toTypedSchema(
     year: yup.string().when("month", ([month], schema) => {
       return monthYupSchema.isValidSync(month)
         ? schema
-            .length(4)
-            .matches(/^2[0-1]\d\d$/, t("shared.payment.bank_card_form.errors.year"))
+            .length(2)
+            .matches(/^\d\d$/, t("shared.payment.bank_card_form.errors.year"))
             .label(labels.value.yearLabel)
         : schema;
     }),
@@ -199,7 +213,7 @@ const {
 });
 
 const isValidBankCard = computed(() => {
-  return validationResult.value !== null && !validationResult.value.hasErrors && expirationDateErrors.value === "";
+  return !validationResult.value.hasErrors && expirationDateErrors.value === "";
 });
 
 const [cardholderName] = defineField("cardholderName");
@@ -218,7 +232,17 @@ const expirationDate = computed({
   },
 });
 
-const validationResult = ref<IValidateEvent | null>(null);
+const validationResult = ref<IValidateEvent>({
+  fields: {
+    cardNumber: {
+      valid: true,
+    },
+    cvv: {
+      valid: true,
+    },
+  },
+  hasErrors: false,
+});
 const hideForm = ref(true);
 
 const expirationDateErrors = computed<string>(() =>
@@ -228,7 +252,7 @@ const expirationDateErrors = computed<string>(() =>
 function sendPaymentData() {
   secureFields.submit({
     expm: formValues.month!,
-    expy: formValues.year!.slice(-2),
+    expy: formValues.year!,
   });
 }
 
@@ -276,7 +300,10 @@ function initForm(tx: string) {
   secureFields = new SecureFields();
   secureFields.init(tx, {
     cardNumber: "cardNumberPlaceholder",
-    cvv: "cvvPlaceholder",
+    cvv: {
+      placeholderElementId: "cvvPlaceholder",
+      inputType: "password",
+    },
   });
 
   secureFields.on("ready", () => {
@@ -284,12 +311,18 @@ function initForm(tx: string) {
     secureFields.setPlaceholder("cvv", t("shared.payment.bank_card_form.security_code_label"));
   });
 
-  secureFields.on("validate", (event: IValidateEvent) => {
-    validationResult.value = event;
+  secureFields.on("validate", (event: IValidateEvent & IValidateEventArg) => {
+    const result = { ...validationResult.value };
+    result.fields[event.event.field] = event.fields[event.event.field];
+    result.hasErrors = event.hasErrors;
+    validationResult.value = result;
   });
 
-  secureFields.on("change", function (event: IValidateEvent) {
-    validationResult.value = event;
+  secureFields.on("change", function (event: IValidateEvent & IValidateEventArg) {
+    const result = { ...validationResult.value };
+    result.fields[event.event.field] = event.fields[event.event.field];
+    result.hasErrors = event.hasErrors;
+    validationResult.value = result;
   });
 
   secureFields.on("success", async (data: ISecureFieldsInitResult) => {
@@ -305,8 +338,7 @@ function initForm(tx: string) {
     await finalizeOnBackend(transactionId);
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  secureFields.on("error", async (data: any) => {
+  secureFields.on("error", async (data: IFieldError) => {
     Logger.error("Datatrans SecureFields error", data);
     emit("fail");
   });
