@@ -62,14 +62,14 @@
       </VcWidget>
 
       <CartForLater
-        v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
+        v-if="!shouldHideSavedForLater && savedForLaterList?.items?.length"
         :saved-for-later-list="savedForLaterList"
         class="mt-5"
         @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
       />
 
       <RecentlyBrowsedProducts
-        v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
+        v-if="recentlyBrowsedProducts.length && !shouldHideRecentlyBrowsed"
         :products="recentlyBrowsedProducts"
         class="mt-5"
       />
@@ -111,14 +111,14 @@
         </template>
 
         <CartForLater
-          v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
+          v-if="!shouldHideSavedForLater && savedForLaterList?.items?.length"
           :saved-for-later-list="savedForLaterList"
           class="mt-5"
           @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
 
         <RecentlyBrowsedProducts
-          v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
+          v-if="recentlyBrowsedProducts.length && !shouldHideRecentlyBrowsed"
           :products="recentlyBrowsedProducts"
           class="mt-5"
         />
@@ -366,6 +366,10 @@ function selectItemEvent(item: LineItemType | undefined): void {
   });
 }
 
+const shouldHideSavedForLater = computed(() => !isAuthenticated.value || shouldHide("cart-for-later"));
+
+const shouldHideRecentlyBrowsed = computed(() => shouldHide("recently-browsed-products"));
+
 function shouldHide(id: string) {
   return props.blocksToHide?.includes(id);
 }
@@ -427,10 +431,10 @@ void (async () => {
   }
 
   const isXRecommendModuleEnabled = isEnabledXRecommend(XRECOMMEND_ENABLED_KEY);
-  if (isAuthenticated.value && isXRecommendModuleEnabled && !shouldHide("recently-browsed-products")) {
+  if (isAuthenticated.value && isXRecommendModuleEnabled && !shouldHideRecentlyBrowsed.value) {
     recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
   }
-  if (isAuthenticated.value && !shouldHide("cart-for-later")) {
+  if (!shouldHideSavedForLater.value) {
     await getSavedForLater();
   }
 })();
