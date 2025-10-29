@@ -211,7 +211,8 @@ function onBarcodeScanned(value: string) {
 function handleSearch() {
   if (searchPhrase.value) {
     void saveSearchQuery(searchPhrase.value);
-    void router.push(searchPageLink.value);
+
+    void router.replace(searchPageLink.value);
   }
 }
 

@@ -543,9 +543,9 @@ function resetPage() {
 }
 
 async function handleResetFilterKeyword() {
-  const back = router.options.history.state?.back;
-
   resetSearchKeyword();
+
+  const back = router.options.history.state?.back;
 
   if (!back || !isRouteLocationRaw(back)) {
     return;
@@ -558,12 +558,15 @@ async function handleResetFilterKeyword() {
   }
 
   if (isCategoryScope.value) {
-    void router.push(previousResolvedRoute);
+    void router.replace({
+      ...previousResolvedRoute,
+      query: omit(previousResolvedRoute.query, QueryParamName.SearchPhrase),
+    });
   } else {
     const catalogQuery = router.currentRoute.value.name === ROUTES.SEARCH.NAME ? router.currentRoute.value.query : {};
-    const catalogQueryWithoutSearch = omit(catalogQuery, [QueryParamName.SearchPhrase]);
+    const catalogQueryWithoutSearch = omit(catalogQuery, QueryParamName.SearchPhrase);
 
-    void router.push({ name: ROUTES.CATALOG.NAME, query: catalogQueryWithoutSearch });
+    void router.replace({ name: ROUTES.CATALOG.NAME, query: catalogQueryWithoutSearch });
   }
 }
 
