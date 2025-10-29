@@ -1,6 +1,6 @@
 <template>
   <VcModal :title="$t('shared.wishlists.add_to_wishlists_modal.title')" max-width="50rem" is-mobile-fullscreen dividers>
-    <div class="rounded border">
+    <div class="rounded border" id="add-to-wishlists-modal">
       <!-- Lists -->
       <template v-if="!loadingLists">
         <template v-if="listsWithProduct.length">
@@ -134,7 +134,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useAnalytics, useThemeContext } from "@/core/composables";
+import { useAnalytics, useThemeContext, useFocusManagement } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { asyncForEach } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables";
@@ -158,6 +158,10 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const product = toRef(props, "product");
+
+const { focusFirst } = useFocusManagement({
+  container: "#add-to-wishlists-modal",
+});
 
 const { d, t } = useI18n();
 const { closeModal } = useModal();
@@ -299,6 +303,7 @@ async function save() {
 
 onMounted(async () => {
   await fetchWishlists();
+  focusFirst();
 });
 </script>
 
