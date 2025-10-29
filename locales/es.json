@@ -1413,6 +1413,7 @@
       },
       "title": "Buscar",
       "header": "Tu búsqueda de {keyword} devolvió lo siguiente",
+      "header_empty": "Lo sentimos, su búsqueda de \"{keyword}\" no produjo ningún resultado",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Tu consulta <strong>{0}</strong> no devolvió ningún resultado",
