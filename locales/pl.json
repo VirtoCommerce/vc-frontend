@@ -1416,6 +1416,7 @@
       },
       "title": "Szukaj",
       "header": "Twoje wyszukiwanie {keyword} zwróciło następujące wyniki",
+      "header_empty": "Przepraszamy, wyszukiwanie frazy „{keyword}” nie przyniosło żadnych wyników",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Twoje zapytanie <strong>{0}</strong> nie zwróciło żadnych wyników",

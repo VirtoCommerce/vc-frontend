@@ -1416,6 +1416,7 @@
       },
       "title": "搜索",
       "header": "您搜索的 {keyword} 返回了以下结果",
+      "header_empty": "抱歉，您搜索“{keyword}”未找到任何结果",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "您的 <strong>{0}</strong> 查询未返回任何结果",

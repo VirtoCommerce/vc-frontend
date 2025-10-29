@@ -1416,6 +1416,7 @@
       },
       "title": "Suche",
       "header": "Ihre Suche nach {keyword} ergab Folgendes",
+      "header_empty": "Ihre Suche nach „{keyword}“ ergab leider keine Ergebnisse",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Ihre <strong>{0}</strong>-Abfrage ergab keine Ergebnisse",

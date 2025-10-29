@@ -1416,6 +1416,7 @@
       },
       "title": "Cerca",
       "header": "La tua ricerca per {keyword} ha restituito i seguenti risultati",
+      "header_empty": "Siamo spiacenti, la ricerca di \"{keyword}\" non ha prodotto risultati",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "La tua ricerca <strong>{0}</strong> non ha prodotto risultati",

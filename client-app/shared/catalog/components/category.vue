@@ -20,7 +20,7 @@
       />
 
       <VcLayout sticky-sidebar>
-        <template v-if="!hideSidebar && !isMobile && !isHorizontalFilters" #sidebar>
+        <template v-if="isSidebarVisible" #sidebar>
           <CategorySelector
             v-if="categoryId || isRoot"
             :category="currentCategory"
@@ -39,7 +39,11 @@
         </template>
 
         <VcTypography tag="h1" class="category__title">
-          <i18n-t v-if="!categoryId && !isRoot && searchParams.keyword" keypath="pages.search.header" tag="span">
+          <i18n-t
+            v-if="!categoryId && !isRoot && searchParams.keyword"
+            :keypath="emptyViewSearchOnly ? 'pages.search.header_empty' : 'pages.search.header'"
+            tag="span"
+          >
             <template #keyword>
               <strong>{{ searchParams.keyword }}</strong>
             </template>
@@ -60,7 +64,7 @@
             {{ currentCategory?.name }}
           </span>
 
-          <sup v-if="!fetchingProducts && !hideTotal && !fixedProductsCount" class="category__products-count">
+          <sup v-if="showProductsCount" class="category__products-count">
             <b class="me-1">{{ $n(totalProductsCount, "decimal") }}</b>
 
             <template v-if="currentCategory && searchQueryParam">
@@ -75,99 +79,108 @@
 
         <div ref="stickyMobileHeaderAnchor" class="category__header-anchor"></div>
 
-        <div
-          :class="[
-            'category__filters',
-            {
-              'category__filters--sticky': stickyMobileHeaderIsVisible,
-            },
-          ]"
-        >
-          <!-- Popup sidebar filters toggler -->
-          <VcButton
-            v-if="!hideSidebar"
-            class="category__facets-button"
-            icon="filter"
-            size="sm"
-            :aria-label="$t('common.accessibility.open_filters')"
-            @click="showFiltersSidebar"
-          />
-
-          <!-- Sorting -->
-          <div v-if="!hideSorting && !isHorizontalFilters" class="category__sort">
-            <VcLabel class="category__sort-label">
-              {{ $t("pages.catalog.sort_by_label") }}
-            </VcLabel>
-
-            <VcSelect
-              v-model="sortQueryParam"
-              text-field="name"
-              value-field="id"
-              :disabled="fetchingProducts"
-              :items="translatedProductSortingList"
-              class="category__sort-dropdown"
+        <template v-if="!hideAllControls">
+          <div
+            :class="[
+              'category__filters',
+              {
+                'category__filters--sticky': stickyMobileHeaderIsVisible,
+              },
+            ]"
+          >
+            <!-- Popup sidebar filters toggler -->
+            <VcButton
+              v-if="!hideSidebar"
+              class="category__facets-button"
+              icon="filter"
               size="sm"
-              @change="resetCurrentPage"
+              :aria-label="$t('common.accessibility.open_filters')"
+              @click="showFiltersSidebar"
+            />
+
+            <!-- Sorting -->
+            <div v-if="!hideSorting && !isHorizontalFilters" class="category__sort">
+              <VcLabel class="category__sort-label">
+                {{ $t("pages.catalog.sort_by_label") }}
+              </VcLabel>
+
+              <VcSelect
+                v-model="sortQueryParam"
+                text-field="name"
+                value-field="id"
+                :disabled="fetchingProducts"
+                :items="translatedProductSortingList"
+                class="category__sort-dropdown"
+                size="sm"
+                @change="resetCurrentPage"
+              />
+            </div>
+
+            <!-- View options - horizontal view -->
+            <ViewMode
+              v-if="!hideViewModeSelector"
+              v-model:mode="savedViewMode"
+              class="category__view-mode"
+              data-test-id="category-page.view-switcher"
+            />
+
+            <!-- In stock and branches -->
+            <CategoryControls
+              v-if="!hideControls && !isMobile && !isHorizontalFilters"
+              v-model="localStorageInStock"
+              v-model:purchased-before="localStoragePurchasedBefore"
+              :loading="fetchingProducts"
+              :saved-branches="localStorageBranches"
+              class="category__controls"
+              @open-branches-modal="openBranchesModal"
+              @apply-in-stock="resetCurrentPage"
+              @apply-purchased-before="resetCurrentPage"
             />
           </div>
 
-          <!-- View options - horizontal view -->
-          <ViewMode
-            v-if="!hideViewModeSelector"
-            v-model:mode="savedViewMode"
-            class="category__view-mode"
-            data-test-id="category-page.view-switcher"
+          <!-- Horizontal filters -->
+          <CategoryHorizontalFilters
+            v-if="isHorizontalFilters && !isMobile"
+            :facets-loading="fetchingFacets"
+            :keyword-query-param="keywordQueryParam"
+            :sort-query-param="sortQueryParam"
+            :loading="fetchingProducts || fetchingFacets"
+            :filters="filtersToShow"
+            :hide-sorting="hideSorting"
+            :hide-all-filters="hideSidebar"
+            @reset-facet-filters="resetFacetFilters"
+            @change:filters="applyFiltersOnly($event)"
+            @show-popup-sidebar="showFiltersSidebar"
+            @apply-sort="resetCurrentPage"
           />
 
-          <!-- In stock and branches -->
-          <CategoryControls
-            v-if="!hideControls && !isMobile && !isHorizontalFilters"
-            v-model="localStorageInStock"
-            v-model:purchased-before="localStoragePurchasedBefore"
-            :loading="fetchingProducts"
-            :saved-branches="localStorageBranches"
-            class="category__controls"
-            @open-branches-modal="openBranchesModal"
-            @apply-in-stock="resetCurrentPage"
-            @apply-purchased-before="resetCurrentPage"
-          />
-        </div>
+          <ActiveFilterChips
+            v-if="hasSelectedFilters || isResetPageButtonShown"
+            :filters="productsFilters.filters"
+            :facets-to-hide="normalizedFacetsToHide"
+            @apply-filters="applyFiltersOnly"
+          >
+            <template #actions>
+              <VcChip
+                v-if="hasSelectedFilters"
+                color="secondary"
+                variant="outline"
+                clickable
+                @click="resetFacetFilters"
+              >
+                <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-        <!-- Horizontal filters -->
-        <CategoryHorizontalFilters
-          v-if="isHorizontalFilters && !isMobile"
-          :facets-loading="fetchingFacets"
-          :keyword-query-param="keywordQueryParam"
-          :sort-query-param="sortQueryParam"
-          :loading="fetchingProducts || fetchingFacets"
-          :filters="filtersToShow"
-          :hide-sorting="hideSorting"
-          :hide-all-filters="hideSidebar"
-          @reset-facet-filters="resetFacetFilters"
-          @change:filters="applyFiltersOnly($event)"
-          @show-popup-sidebar="showFiltersSidebar"
-          @apply-sort="resetCurrentPage"
-        />
-        <ActiveFilterChips
-          v-if="hasSelectedFacets || isResetPageButtonShown"
-          :filters="productsFilters.filters"
-          :facets-to-hide="normalizedFacetsToHide"
-          @apply-filters="applyFiltersOnly"
-        >
-          <template #actions>
-            <VcChip v-if="hasSelectedFacets" color="secondary" variant="outline" clickable @click="resetFacetFilters">
-              <span>{{ $t("common.buttons.reset_filters") }}</span>
+                <VcIcon name="reset" />
+              </VcChip>
 
-              <VcIcon name="reset" />
-            </VcChip>
+              <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
+                <span>{{ $t("common.buttons.reset_page") }}</span>
 
-            <VcChip v-if="isResetPageButtonShown" color="secondary" variant="outline" clickable @click="resetPage">
-              <span>{{ $t("common.buttons.reset_page") }}</span>
-
-              <VcIcon name="reset" />
-            </VcChip>
-          </template>
-        </ActiveFilterChips>
+                <VcIcon name="reset" />
+              </VcChip>
+            </template>
+          </ActiveFilterChips>
+        </template>
 
         <div ref="categoryProductsAnchor" class="category__products-anchor"></div>
 
@@ -179,9 +192,9 @@
           :fetching-products="fetchingProducts"
           :fixed-products-count="fixedProductsCount"
           :has-active-filters="
-            hasSelectedFacets || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
+            hasSelectedFilters || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
           "
-          :has-selected-facets="hasSelectedFacets"
+          :has-selected-facets="hasSelectedFilters"
           :items-per-page="itemsPerPage"
           :pages-count="pagesCount"
           :page-number="currentPage"
@@ -218,12 +231,13 @@ import {
 import omit from "lodash/omit";
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAnalytics, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
   getFilterExpression,
@@ -233,6 +247,7 @@ import {
   getFilterExpressionForPurchasedBefore,
   getFilterExpressionForZeroPrice,
 } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
@@ -244,6 +259,7 @@ import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
+import type { RouteLocationRaw } from "vue-router";
 import ActiveFilterChips from "@/shared/catalog/components/active-filter-chips.vue";
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
@@ -293,6 +309,9 @@ const isMobile = breakpoints.smaller("md");
 const isCategoryNotFound = ref(false);
 
 const route = useRoute();
+const router = useRouter();
+
+const { isCategoryScope } = useSearchScore();
 
 const normalizedFacetsToHide = computed(() => {
   return facetsToHide.value?.map((facet) => facet.toLowerCase());
@@ -334,6 +353,7 @@ const {
   fetchingProducts,
   fetchingFacets,
   hasSelectedFacets,
+  hasSelectedFilters,
   isFiltersSidebarVisible,
   keywordQueryParam,
   localStorageBranches,
@@ -394,6 +414,23 @@ const categoryListProperties = computed(() => ({
   related_id: currentCategory.value?.id,
   related_type: "category",
 }));
+
+const filteredOnlyBySearch = computed(() => {
+  return !hasSelectedFilters.value && !!searchQueryParam.value;
+});
+const emptyViewSearchOnly = computed(() => {
+  return filteredOnlyBySearch.value && products.value.length === 0 && !fetchingProducts.value;
+});
+const hideAllControls = computed(() => {
+  return emptyViewSearchOnly.value;
+});
+
+const isSidebarVisible = computed(() => {
+  return !props.hideSidebar && !isMobile.value && !isHorizontalFilters.value && !emptyViewSearchOnly.value;
+});
+const showProductsCount = computed(() => {
+  return !fetchingProducts.value && !props.hideTotal && !props.fixedProductsCount && !emptyViewSearchOnly.value;
+});
 
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
@@ -505,9 +542,43 @@ function resetPage() {
   void fetchProducts();
 }
 
-function handleResetFilterKeyword() {
+async function handleResetFilterKeyword() {
   resetSearchKeyword();
-  resetFacetFilters();
+
+  const back = router.options.history.state?.back;
+
+  if (!back || !isRouteLocationRaw(back)) {
+    return;
+  }
+
+  const previousResolvedRoute = router.resolve(back);
+
+  if (previousResolvedRoute.matched.length <= 0) {
+    return;
+  }
+
+  if (isCategoryScope.value) {
+    void router.replace({
+      ...previousResolvedRoute,
+      query: omit(previousResolvedRoute.query, QueryParamName.SearchPhrase),
+    });
+  } else {
+    const catalogQuery = router.currentRoute.value.name === ROUTES.SEARCH.NAME ? router.currentRoute.value.query : {};
+    const catalogQueryWithoutSearch = omit(catalogQuery, QueryParamName.SearchPhrase);
+
+    void router.replace({ name: ROUTES.CATALOG.NAME, query: catalogQueryWithoutSearch });
+  }
+}
+
+function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
+  if (typeof value === "string") {
+    return true;
+  }
+  if (typeof value === "object" && value !== null) {
+    const record = value as Record<string, unknown>;
+    return "path" in record || "name" in record;
+  }
+  return false;
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
