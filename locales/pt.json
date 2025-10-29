@@ -167,7 +167,8 @@
       "not_available": "N/D",
       "orders": "Encomendas",
       "order": "Encomenda",
-      "customer": "Cliente"
+      "customer": "Cliente",
+      "summary": "Resumo"
     },
     "prefixes": {
       "please": "Por favor",

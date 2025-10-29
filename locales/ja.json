@@ -167,7 +167,8 @@
       "not_available": "N/A",
       "orders": "注文",
       "order": "注文",
-      "customer": "顧客"
+      "customer": "顧客",
+      "summary": "概要"
     },
     "prefixes": {
       "please": "お願いします",

@@ -19,7 +19,7 @@
 
       <template #sidebar>
         <div class="mt-4 flex flex-col gap-4 md:mt-0">
-          <VcWidget title="Summary">
+          <VcWidget :title="$t('common.labels.summary')">
             <div class="flex flex-col gap-3">
               <VcLabel>{{ $t("common.labels.price") }}</VcLabel>
 

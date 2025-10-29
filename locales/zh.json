@@ -167,7 +167,8 @@
       "not_available": "不可用",
       "orders": "订单",
       "order": "订单",
-      "customer": "客户"
+      "customer": "客户",
+      "summary": "概要"
     },
     "prefixes": {
       "please": "请",

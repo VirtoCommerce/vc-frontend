@@ -167,7 +167,8 @@
       "not_available": "Н/Д",
       "orders": "Заказы",
       "order": "Заказ",
-      "customer": "Клиент"
+      "customer": "Клиент",
+      "summary": "Обзор"
     },
     "prefixes": {
       "please": "Пожалуйста",

@@ -167,7 +167,8 @@
       "not_available": "Ej tillgänglig",
       "orders": "Beställningar",
       "order": "Order",
-      "customer": "Kund"
+      "customer": "Kund",
+      "summary": "Sammanfattning"
     },
     "prefixes": {
       "please": "Vänligen",

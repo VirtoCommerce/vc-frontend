@@ -167,7 +167,8 @@
       "not_available": "Ei saatavilla",
       "orders": "Tilaukset",
       "order": "Tilaus",
-      "customer": "Asiakas"
+      "customer": "Asiakas",
+      "summary": "Yhteenveto"
     },
     "prefixes": {
       "please": "Ole hyvä",
