@@ -238,6 +238,8 @@ export default async () => {
   // Register Page builder product components globally
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
 
+  await router.isReady();
+
   app.config.warnHandler = (msg, _, trace) => {
     // to remove builder.io warnings
     if (consoleIgnoredErrors.some((err) => msg.includes(err) && trace.includes(BUILDER_IO_TRACE_MARKER))) {
