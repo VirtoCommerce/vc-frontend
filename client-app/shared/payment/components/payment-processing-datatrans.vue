@@ -259,7 +259,7 @@ const validationResult = ref<IValidateEvent>({
       valid: true,
     },
   },
-  hasErrors: false,
+  hasErrors: true,
 });
 const hideForm = ref(true);
 
