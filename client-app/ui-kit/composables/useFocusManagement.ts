@@ -1,5 +1,5 @@
 import { onMounted, nextTick, toValue } from "vue";
-import { focusFirstElement } from "@/core/utilities/focus";
+import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import type { MaybeRefOrGetter } from "vue";
 
 export interface IUseFocusManagementOptions {

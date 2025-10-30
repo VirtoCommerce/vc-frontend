@@ -1,4 +1,5 @@
-export const FOCUSABLE_SELECTOR = "input:not(:disabled), button:not(:disabled)";
+export const FOCUSABLE_SELECTOR =
+  "input:not(:disabled):not(.vc-dialog-header__close), button:not(:disabled):not(.vc-dialog-header__close)";
 
 export function findFirstFocusableElement(container: HTMLElement | string): HTMLElement | null {
   const element = typeof container === "string" ? document.querySelector(container) : container;

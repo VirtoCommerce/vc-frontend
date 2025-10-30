@@ -6,7 +6,6 @@ export * from "./useCategoriesRoutes";
 export * from "./useCountries";
 export * from "./useCurrency";
 export * from "./useErrorsTranslator";
-export * from "./useFocusManagement";
 export * from "./useHistoricalEvents";
 export * from "./useImpersonate";
 export * from "./useMutationBatcher";

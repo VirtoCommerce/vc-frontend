@@ -134,12 +134,13 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useAnalytics, useThemeContext, useFocusManagement } from "@/core/composables";
+import { useAnalytics, useThemeContext } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { asyncForEach } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
+import { useFocusManagement } from "@/ui-kit/composables";
 import { useWishlists } from "../composables";
 import type { Product as ProductType } from "@/core/api/graphql/types";
 import type { IWishlistInput } from "@/shared/wishlists/types";
