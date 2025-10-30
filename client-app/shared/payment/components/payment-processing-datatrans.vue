@@ -1,5 +1,5 @@
 <template>
-  <div ref="root" class="form-group" v-if="!hideForm">
+  <div class="form-group" v-if="!hideForm">
     <div class="flex flex-col xl:flex-row">
       <div class="xl:w-2/3">
         <div>
@@ -10,6 +10,7 @@
             class="datatrans-input-wrap form-control"
             :class="{ invalid: !validationResult?.fields?.cardNumber?.valid }"
           ></div>
+
           <div
             v-if="!validationResult?.fields?.cardNumber?.valid"
             class="vc-input-details vc-input-details--hide-empty vc-input-details--error"
@@ -58,6 +59,7 @@
               class="form-control datatrans-input-wrap"
               :class="{ invalid: !validationResult?.fields?.cvv?.valid }"
             ></div>
+
             <div
               v-if="!validationResult?.fields?.cvv?.valid"
               class="vc-input-details vc-input-details--hide-empty vc-input-details--error"
@@ -104,6 +106,12 @@ import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
+
+const emit = defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
+
+const SECURE_3D_SUCCESS_STATUS = "Y";
 
 declare class SecureFields {
   constructor();
@@ -154,10 +162,6 @@ interface ISecureFieldsInitResult {
   redirect: string;
   transactionId: string;
 }
-
-const emit = defineEmits<IEmits>();
-
-const props = defineProps<IProps>();
 
 let secureFields: SecureFields;
 
@@ -284,9 +288,9 @@ async function initPayment() {
   const status3d = params.get("status_3d");
   if (uppTransactionId) {
     // return from 3-D Secure, need to finalize payment on the backend
-    if (status3d !== "Y") {
+    if (status3d !== SECURE_3D_SUCCESS_STATUS) {
       showError(t("shared.payment.bank_card_form.user_error_message"));
-      emit("fail", "3-D Secure authentication failed");
+      emit("fail");
       return;
     }
     await finalizeOnBackend(uppTransactionId);
@@ -388,8 +392,6 @@ async function finalizeOnBackend(transactionId: string) {
     loading.value = false;
   }
 }
-
-const root = ref(null);
 
 function getValue(publicParameters?: KeyValueType[], key?: string) {
   return publicParameters?.find((x) => x.key === key)?.value;
