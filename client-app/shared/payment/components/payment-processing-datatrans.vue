@@ -41,8 +41,8 @@
             :disabled="disabled"
             name="expirationDate"
             autocomplete="off"
-            minlength="9"
-            maxlength="9"
+            minlength="7"
+            maxlength="7"
             class="min-w-32 basis-1/4"
             required
             test-id-input="expiration-date-input"
