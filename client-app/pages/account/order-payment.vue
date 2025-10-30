@@ -247,7 +247,7 @@
                   <PaymentProcessingManual v-if="paymentMethodCode === 'DefaultManualPaymentMethod'" />
 
                   <PaymentProcessingAuthorizeNet
-                    v-if="paymentMethodCode === 'AuthorizeNetPaymentMethod'"
+                    v-else-if="paymentMethodCode === 'AuthorizeNetPaymentMethod'"
                     :order="order"
                     :disabled="loading"
                     @success="success = true"
@@ -255,14 +255,14 @@
                   />
 
                   <PaymentProcessingSkyflow
-                    v-if="paymentMethodCode === 'SkyflowPaymentMethod'"
+                    v-else-if="paymentMethodCode === 'SkyflowPaymentMethod'"
                     :order="order"
                     @success="success = true"
                     @fail="failure = true"
                   />
 
                   <PaymentProcessingCyberSource
-                    v-if="paymentMethodCode === 'CyberSourcePaymentMethod'"
+                    v-else-if="paymentMethodCode === 'CyberSourcePaymentMethod'"
                     :order="order"
                     @success="success = true"
                     @fail="failure = true"
