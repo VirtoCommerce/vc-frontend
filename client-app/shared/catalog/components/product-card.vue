@@ -25,7 +25,13 @@
       </VcProductActions>
     </template>
 
-    <VcProductTitle :title="product.name" :to="link" lines-number="2" fix-height />
+    <VcProductTitle
+      :title="product.name"
+      :to="link"
+      lines-number="2"
+      fix-height
+      @click="$emit('linkClick', product, $event)"
+    />
 
     <VcProductVendor v-if="$cfg.vendor_enabled">
       {{ product.vendor?.name }}

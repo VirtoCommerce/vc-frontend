@@ -1406,6 +1406,7 @@
       },
       "title": "Søk",
       "header": "Søket ditt etter {keyword} ga følgende resultater",
+      "header_empty": "Beklager, søket ditt etter «{keyword}» ga ingen resultater",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Søket ditt etter <strong>{0}</strong> ga ingen resultater",
