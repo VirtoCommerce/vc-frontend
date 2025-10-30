@@ -26,24 +26,28 @@
             @success="onPaymentResult(true)"
             @fail="onPaymentResult(false)"
           />
+
           <PaymentProcessingSkyflow
             v-else-if="paymentTypeName === 'SkyflowPaymentMethod'"
             :order="placedOrder"
             @success="onPaymentResult(true)"
             @fail="onPaymentResult(false)"
           />
+
           <PaymentProcessingCyberSource
             v-else-if="paymentTypeName === 'CyberSourcePaymentMethod'"
             :order="placedOrder"
             @success="onPaymentResult(true)"
             @fail="onPaymentResult(false)"
           />
+
           <PaymentProcessingDatatrans
             v-else-if="paymentTypeName === 'DatatransPaymentMethod'"
             :order="placedOrder"
             @success="onPaymentResult(true)"
             @fail="onPaymentResult(false)"
           />
+
           <ExtensionPointList
             v-else-if="
               paymentTypeName &&
