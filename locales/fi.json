@@ -79,7 +79,8 @@
       "show_less": "Näytä vähemmän",
       "expand_all": "Laajenna kaikki",
       "all_products": "Kaikki tuotteet",
-      "buy_now": "Osta nyt"
+      "buy_now": "Osta nyt",
+      "see_all": "Katso kaikki"
     },
     "labels": {
       "actions": "Toiminnot",
@@ -335,6 +336,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Tallessa myöhempää varten",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -1310,6 +1312,7 @@
       "recently_browsed_products": "Viimeksi selatut",
       "save_for_later": "Tallenna myöhempää käyttöä varten",
       "saved_for_later": "Tallennettu myöhempää käyttöä varten",
+      "saved_for_later_not_found": "Et ole tallentanut tuotteita myöhempää varten",
       "move_to_cart": "Siirrä ostoskoriin"
     },
     "checkout": {

@@ -79,7 +79,8 @@
       "show_less": "收起",
       "expand_all": "全部展开",
       "all_products": "所有产品",
-      "buy_now": "立即购买"
+      "buy_now": "立即购买",
+      "see_all": "查看全部"
     },
     "labels": {
       "actions": "操作",
@@ -335,6 +336,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "稍后保存",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -1310,6 +1312,7 @@
       "recently_browsed_products": "最近浏览的产品",
       "save_for_later": "稍后保存",
       "saved_for_later": "稍后购买",
+      "saved_for_later_not_found": "您还没有保存任何商品以供稍后购买",
       "move_to_cart": "加入购物车"
     },
     "checkout": {

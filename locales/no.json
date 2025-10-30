@@ -79,7 +79,8 @@
       "show_less": "Vis mindre",
       "expand_all": "Utvid alle",
       "all_products": "Alle produkter",
-      "buy_now": "Kjøp nå"
+      "buy_now": "Kjøp nå",
+      "see_all": "Se alle"
     },
     "labels": {
       "actions": "Handlinger",
@@ -335,6 +336,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Lagret til senere",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -1310,6 +1312,7 @@
       "recently_browsed_products": "Nylig bladd gjennom",
       "save_for_later": "Lagre til senere",
       "saved_for_later": "Lagret til senere",
+      "saved_for_later_not_found": "Du har ikke lagret noen produkter for senere",
       "move_to_cart": "Flytt til handlekurv"
     },
     "checkout": {
