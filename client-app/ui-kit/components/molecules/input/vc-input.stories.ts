@@ -1,12 +1,13 @@
 import { VcInput, VcButton } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md"];
 const TYPES = ["text", "password", "number"];
 
-export default {
+const meta: Meta = {
   title: "Components/Molecules/VcInput",
-  component: VcInput,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: VcInput as any,
   argTypes: {
     /**
      * Docs:
@@ -47,72 +48,81 @@ export default {
     type: "text",
     size: "md",
   },
-} as Meta<typeof VcInput>;
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcInput v-bind="args" v-model="args.modelValue" />',
+  }),
+};
 
-const Template: StoryFn = (args) => ({
-  components: { VcInput },
-  setup: () => ({ args }),
-  template: '<VcInput v-bind="args" v-model="args.modelValue" />',
-});
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
-const withButtonTemplate: StoryFn = (args) => ({
-  components: { VcInput, VcButton },
-  setup: () => ({ args }),
-  template: `<VcInput v-bind="args" v-model="args.modelValue">
-    <template #append>
-      <VcButton truncate>Add to cart</VcButton>
-    </template>
-  </VcInput>`,
-});
-
-export const Basic = Template.bind({});
-
-export const Common = Template.bind({});
-Common.args = {
+const commonArgs = {
   label: "Label",
   placeholder: "Placeholder",
   message: "Hint message",
 };
 
-export const Required = Template.bind({});
-Required.args = {
-  ...Common.args,
-  required: true,
+export const Basic: StoryType = {};
+
+export const Common: StoryType = {
+  args: commonArgs,
 };
 
-export const ErrorState = Template.bind({});
-ErrorState.args = {
-  ...Required.args,
-  error: true,
-  message: "Error message",
+export const Required: StoryType = {
+  args: {
+    ...commonArgs,
+    required: true,
+  },
 };
 
-export const TypePassword = Template.bind({});
-TypePassword.args = {
-  ...Common.args,
-  autocomplete: "password",
-  type: "password",
+export const ErrorState: StoryType = {
+  args: {
+    ...commonArgs,
+    required: true,
+    error: true,
+    message: "Error message",
+  },
 };
 
-export const Clearable = Template.bind({});
-Clearable.args = {
-  ...Common.args,
-  clearable: true,
+export const TypePassword: StoryType = {
+  args: {
+    ...commonArgs,
+    autocomplete: "password",
+    type: "password",
+  },
 };
 
-export const Disabled = Template.bind({});
-Disabled.args = {
-  ...Common.args,
-  disabled: true,
+export const Clearable: StoryType = {
+  args: {
+    ...commonArgs,
+    clearable: true,
+  },
 };
 
-export const Center = Template.bind({});
-Center.args = {
-  ...Common.args,
-  center: true,
+export const Disabled: StoryType = {
+  args: {
+    ...commonArgs,
+    disabled: true,
+  },
 };
 
-export const WithButton = withButtonTemplate.bind({});
-WithButton.args = {
-  ...Common.args,
+export const Center: StoryType = {
+  args: {
+    ...commonArgs,
+    center: true,
+  },
+};
+
+export const WithButton: StoryType = {
+  args: commonArgs,
+  render: (args) => ({
+    components: { VcInput, VcButton },
+    setup: () => ({ args }),
+    template: `<VcInput v-bind="args" v-model="args.modelValue">
+      <template #append>
+        <VcButton truncate>Add to cart</VcButton>
+      </template>
+    </VcInput>`,
+  }),
 };

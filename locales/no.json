@@ -79,7 +79,8 @@
       "show_less": "Vis mindre",
       "expand_all": "Utvid alle",
       "all_products": "Alle produkter",
-      "buy_now": "Kjøp nå"
+      "buy_now": "Kjøp nå",
+      "see_all": "Se alle"
     },
     "labels": {
       "actions": "Handlinger",
@@ -335,6 +336,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Lagret til senere",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -821,10 +823,14 @@
         "year_label": "År",
         "year_placeholder": "ÅÅ",
         "security_code_label": "Sikkerhetskode",
+        "pay_now_button": "Betal nå",
         "errors": {
+          "card_number": "Skriv inn et gyldig kredittkortnummer",
           "month": "Skriv inn en gyldig utløpsmåned",
           "year": "Skriv inn et gyldig utløpsår",
-          "security_code": "Ugyldig sikkerhetskode."
+          "expiration_date": "Utløpsdatoen må være i fremtiden",
+          "security_code": "Skriv inn en gyldig sikkerhetskode",
+          "cardholder_name": "Skriv inn et gyldig kortinnehavernavn"
         },
         "user_error_message": "Betalingen kan ikke startes. Prøv igjen senere eller bruk en annen betalingsmetode",
         "payment_unavailable": "Betalingsmetoden er ikke tilgjengelig. Prøv igjen senere"
@@ -834,27 +840,15 @@
         "privacy_policy_link": "Personvernerklæring",
         "accept_terms_text": "Ved å bestille godtar du vilkårene",
         "processing_personal_data_text": "og samtykker til at vi kan behandle dine personopplysninger",
-        "pay_now_button": "Betal nå",
         "errors": {
-          "number": "Skriv inn et gyldig kredittkortnummer",
-          "month": "Skriv inn en gyldig utløpsmåned",
-          "year": "Skriv inn et gyldig utløpsår",
-          "expiration_date": "Utløpsdatoen må være i fremtiden",
-          "security_code": "Skriv inn en gyldig sikkerhetskode",
-          "cardholder_name": "Skriv inn et gyldig kortinnehavernavn",
           "incorrect_payment_method": "Ugyldig betalingsmetode"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Betal nå"
       },
       "manual": {
         "text": "Den valgte betalingsmetoden støtter ikke nettbetalinger. Velg en annen metode eller "
       },
       "redirection": {
         "text": "Når du klikker på <strong>{0}</strong>, blir du omdirigert til en tredjeparts betalingstjeneste",
-        "pay_now_button": "Betal nå",
-        "try_again_button": "Prøv igjen",
         "errors": {
           "missing_link": "Omdirigeringslenke mangler",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1318,6 +1312,7 @@
       "recently_browsed_products": "Nylig bladd gjennom",
       "save_for_later": "Lagre til senere",
       "saved_for_later": "Lagret til senere",
+      "saved_for_later_not_found": "Du har ikke lagret noen produkter for senere",
       "move_to_cart": "Flytt til handlekurv"
     },
     "checkout": {

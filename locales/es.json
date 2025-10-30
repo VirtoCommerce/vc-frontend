@@ -79,7 +79,8 @@
       "show_less": "Mostrar menos",
       "expand_all": "Expandir todo",
       "all_products": "Todos los productos",
-      "buy_now": "Comprar ahora"
+      "buy_now": "Comprar ahora",
+      "see_all": "Ver todo"
     },
     "labels": {
       "actions": "Acciones",
@@ -335,6 +336,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Guardado para más tarde",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -821,10 +823,14 @@
         "year_label": "Año",
         "year_placeholder": "AA",
         "security_code_label": "Código de seguridad",
+        "pay_now_button": "Pagar ahora",
         "errors": {
+          "card_number": "Por favor, proporciona un número de tarjeta de crédito válido",
           "month": "Por favor, proporciona un mes de vencimiento válido",
           "year": "Por favor, proporcione un año de vencimiento válido",
-          "security_code": "Código de seguridad no válido."
+          "expiration_date": "La fecha de expiración debe ser en el futuro",
+          "security_code": "Por favor, proporciona un código de seguridad válido",
+          "cardholder_name": "Por favor, proporciona un nombre de titular de tarjeta válido"
         },
         "user_error_message": "No se pudo inicializar el pago. Inténtalo de nuevo más tarde o usa otro método de pago",
         "payment_unavailable": "El método de pago no está disponible. Inténtalo de nuevo más tarde."
@@ -834,27 +840,15 @@
         "privacy_policy_link": "Política de privacidad",
         "accept_terms_text": "Al realizar un pedido, aceptas los términos de nuestro",
         "processing_personal_data_text": "y aceptas que podamos procesar tus datos personales según nuestra",
-        "pay_now_button": "Pagar ahora",
         "errors": {
-          "number": "Por favor, proporciona un número de tarjeta de crédito válido",
-          "month": "Por favor, proporciona un mes de expiración válido",
-          "year": "Por favor, proporciona un año de expiración válido",
-          "expiration_date": "La fecha de expiración debe ser en el futuro",
-          "security_code": "Por favor, proporciona un código de seguridad válido",
-          "cardholder_name": "Por favor, proporciona un nombre de titular de tarjeta válido",
           "incorrect_payment_method": "Método de pago incorrecto"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Pagar ahora"
       },
       "manual": {
         "text": "El método de pago que seleccionaste no admite pago en línea. Por favor, selecciona otro método o "
       },
       "redirection": {
         "text": "Después de hacer clic en <strong>{0}</strong>, serás redirigido al servicio de pago de terceros",
-        "pay_now_button": "Pagar ahora",
-        "try_again_button": "Inténtalo de nuevo",
         "errors": {
           "missing_link": "Falta el enlace de redirección",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1318,6 +1312,7 @@
       "recently_browsed_products": "Visto recientemente",
       "save_for_later": "Guardar para más tarde",
       "saved_for_later": "Guardado para más tarde",
+      "saved_for_later_not_found": "No has guardado ningún producto para más tarde",
       "move_to_cart": "Mover al carrito"
     },
     "checkout": {
