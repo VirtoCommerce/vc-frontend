@@ -35,6 +35,8 @@ const supportedLocalesRegex = computed(
   () => new RegExp(`^/(?<locale>${supportedLocalesWithShortAliases.value.join("|")})(/|$)`, "i"),
 );
 
+const possibleLocaleRegex = computed(() => new RegExp(`^/?([a-z]{2}(?:-[A-Z]{2})?)(/|$)`, "i"));
+
 const currentLanguage = ref<ILanguage>();
 const currentMaybeShortLocale = computed(() => {
   return tryShortLocale(currentLanguage.value?.cultureName ?? "");
@@ -103,6 +105,12 @@ function getLocaleFromUrl(): string | undefined {
   return supportedLocalesRegex.value.exec(location.pathname)?.groups?.locale;
 }
 
+function getPossibleLocaleFromUrl(fullPath?: string): string | undefined {
+  const path = fullPath ?? location.pathname;
+  const match = path.match(possibleLocaleRegex.value);
+  return match ? match[1] : undefined;
+}
+
 function removeLocaleFromUrl() {
   const fullPath = location.pathname + location.search + location.hash;
 
@@ -119,6 +127,18 @@ function getUrlWithoutLocale(fullPath: string): string {
     return fullPath.replace(supportedLocalesRegex.value, "/");
   }
 
+  return fullPath;
+}
+
+function getUrlWithoutPossibleLocale(fullPath: string): string {
+  const path = fullPath;
+  const match = path.match(possibleLocaleRegex.value);
+  if (match) {
+    const idxToSlice = match[0].length;
+    let result = path.slice(idxToSlice);
+    if (!result.startsWith("/")) result = "/" + result;
+    return result === "/" ? result : result.replace(/\/+/g, "/");
+  }
   return fullPath;
 }
 
@@ -161,6 +181,20 @@ export function useLanguages() {
     return defaultStoreCulture.value;
   }
 
+  // Only try resolving possible locale by Url or pinnedLocale since it's all we have before sending the combined pageContext request
+  function resolvePossibleLocale(fullPath: string) {
+    const locale = getPossibleLocaleFromUrl(fullPath);
+    if (locale) {
+      return locale;
+    }
+
+    if (pinnedLocale.value) {
+      return pinnedLocale.value;
+    }
+
+    return undefined;
+  }
+
   function updateLocalizedUrl(permalink?: string) {
     if (!permalink) {
       return;
@@ -199,8 +233,11 @@ export function useLanguages() {
     unpinLocale,
 
     getLocaleFromUrl,
+    getPossibleLocaleFromUrl,
     getUrlWithoutLocale,
+    getUrlWithoutPossibleLocale,
     removeLocaleFromUrl,
     updateLocalizedUrl,
+    resolvePossibleLocale,
   };
 }

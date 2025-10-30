@@ -34,6 +34,13 @@ function _useWhiteLabeling() {
     }
   }
 
+  function setWhiteLabelingSettings(payload?: WhiteLabelingSettingsType) {
+    if (moduleEnabled.value) {
+      whiteLabelingSettings.value = payload;
+      emit(whiteLabelingSettings.value);
+    }
+  }
+
   return {
     logoUrl: computed(() => whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image),
     secondaryLogoUrl: computed(
@@ -45,6 +52,7 @@ function _useWhiteLabeling() {
     favIcons: computed(() => whiteLabelingSettings.value?.favicons),
     themePresetName: computed(() => whiteLabelingSettings.value?.themePresetName),
     fetchWhiteLabelingSettings,
+    setWhiteLabelingSettings,
     whiteLabelingLogoUrl: computed(() => whiteLabelingSettings.value?.logoUrl),
     isOrganizationLogoUploaded: computed(() => whiteLabelingSettings.value?.isOrganizationLogoUploaded),
   };
