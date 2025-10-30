@@ -1,12 +1,12 @@
 <template>
   <VcWidget :title="$t('pages.cart.saved_for_later')" prepend-icon="bookmark" size="lg" class="cart-for-later">
-    <VcProductsGrid>
-      <template v-slot:append>
-        <VcButton variant="outline" :to="{ name: ROUTES.SAVED_FOR_LATER.NAME }" size="sm">
-          {{ $t("common.buttons.see_all") }}
-        </VcButton>
-      </template>
+    <template v-slot:append>
+      <VcButton variant="outline" :to="{ name: ROUTES.SAVED_FOR_LATER.NAME }" size="sm">
+        {{ $t("common.buttons.see_all") }}
+      </VcButton>
+    </template>
 
+    <VcProductsGrid>
       <CartItemForLater
         v-for="(item, index) in visibleItems"
         :key="index"
