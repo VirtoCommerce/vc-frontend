@@ -821,10 +821,14 @@
         "year_label": "Ano",
         "year_placeholder": "AA",
         "security_code_label": "Código de segurança",
+        "pay_now_button": "Pagar Agora",
         "errors": {
+          "card_number": "Por favor, forneça um número de cartão de crédito válido",
           "month": "Por favor, forneça um mês de validade válido",
           "year": "Por favor, forneça um ano de validade válido",
-          "security_code": "Código de segurança inválido."
+          "expiration_date": "A data de validade deve estar no futuro",
+          "security_code": "Por favor, forneça um código de segurança válido",
+          "cardholder_name": "Por favor, forneça um nome de titular válido"
         },
         "user_error_message": "Não foi possível inicializar o pagamento. Tente novamente mais tarde ou use outro método de pagamento",
         "payment_unavailable": "O método de pagamento não está disponível. Tente novamente mais tarde"
@@ -834,27 +838,15 @@
         "privacy_policy_link": "Política de Privacidade",
         "accept_terms_text": "Ao fazer um pedido, você aceita os termos de nosso",
         "processing_personal_data_text": "e concorda que podemos processar seus dados pessoais de acordo com nossa",
-        "pay_now_button": "Pagar Agora",
         "errors": {
-          "number": "Por favor, forneça um número de cartão de crédito válido",
-          "month": "Por favor, forneça um mês de validade válido",
-          "year": "Por favor, forneça um ano de validade válido",
-          "expiration_date": "A data de validade deve estar no futuro",
-          "security_code": "Por favor, forneça um código de segurança válido",
-          "cardholder_name": "Por favor, forneça um nome de titular válido",
           "incorrect_payment_method": "Método de pagamento incorreto"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Pagar Agora"
       },
       "manual": {
         "text": "O método de pagamento que você selecionou não suporta pagamento online. Por favor, selecione outro método ou "
       },
       "redirection": {
         "text": "Após clicar em <strong>{0}</strong>, você será redirecionado para o serviço de pagamento de terceiros",
-        "pay_now_button": "Pagar Agora",
-        "try_again_button": "Tentar Novamente",
         "errors": {
           "missing_link": "O link de redirecionamento está ausente",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
