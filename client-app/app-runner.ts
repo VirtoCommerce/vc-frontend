@@ -95,12 +95,16 @@ export default async () => {
 
   // get initialization query parameters
   const tempRouter = createRouter({ base: "" });
-  const initialRoute = tempRouter.resolve(window.location.pathname + window.location.search + window.location.hash);
+  const initialRoute = tempRouter.resolve(
+    globalThis.location.pathname + globalThis.location.search + globalThis.location.hash,
+  );
   let permalink = initialRoute.path;
   const possibleCultureName = resolvePossibleLocale(permalink);
   permalink = getPermalink(permalink, getUrlWithoutPossibleLocale);
 
-  const domain = IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname;
+  const domain = IS_DEVELOPMENT
+    ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
+    : globalThis.location.hostname;
   const userId = savedUserId.value;
 
   const getPageContextPromise = getPageContext({

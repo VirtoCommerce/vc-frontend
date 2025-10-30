@@ -35,7 +35,7 @@ const supportedLocalesRegex = computed(
   () => new RegExp(`^/(?<locale>${supportedLocalesWithShortAliases.value.join("|")})(/|$)`, "i"),
 );
 
-const possibleLocaleRegex = computed(() => new RegExp(`^/?([a-z]{2}(?:-[A-Z]{2})?)(/|$)`, "i"));
+const possibleLocaleRegex = computed(() => /^\/?([a-z]{2}(?:-[A-Z]{2})?)(\/|$)/i);
 
 const currentLanguage = ref<ILanguage>();
 const currentMaybeShortLocale = computed(() => {
@@ -107,7 +107,7 @@ function getLocaleFromUrl(): string | undefined {
 
 function getPossibleLocaleFromUrl(fullPath?: string): string | undefined {
   const path = fullPath ?? location.pathname;
-  const match = path.match(possibleLocaleRegex.value);
+  const match = possibleLocaleRegex.value.exec(path);
   return match ? match[1] : undefined;
 }
 
@@ -132,12 +132,12 @@ function getUrlWithoutLocale(fullPath: string): string {
 
 function getUrlWithoutPossibleLocale(fullPath: string): string {
   const path = fullPath;
-  const match = path.match(possibleLocaleRegex.value);
+  const match = possibleLocaleRegex.value.exec(path);
   if (match) {
     const idxToSlice = match[0].length;
     let result = path.slice(idxToSlice);
     if (!result.startsWith("/")) result = "/" + result;
-    return result === "/" ? result : result.replace(/\/+/g, "/");
+    return result === "/" ? result : result.replaceAll(/\/+/g, "/");
   }
   return fullPath;
 }
