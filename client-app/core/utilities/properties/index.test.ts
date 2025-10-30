@@ -364,5 +364,60 @@ describe("Properties Utilities", () => {
       expect(result[0].group?.id).toBe("group2");
       expect(result[1].group?.id).toBe("group1");
     });
+
+    it("should use defaultGroup for properties without group when valid groups exist", () => {
+      const group1: PropertyGroup = { id: "group1", name: "Group 1", displayOrder: 1, description: "" };
+
+      const properties: Property[] = [
+        {
+          id: "1",
+          name: "prop1",
+          label: "Property 1",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Catalog,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: "Value 1",
+          group: group1,
+        },
+        {
+          id: "2",
+          name: "prop2",
+          label: "Property 2",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Catalog,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: "Value 2",
+        },
+        {
+          id: "3",
+          name: "prop3",
+          label: "Property 3",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Catalog,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: "Value 3",
+          group: { id: "", name: "Empty ID Group", displayOrder: 0, description: "" },
+        },
+      ];
+
+      const result = getGroupedAndSortedProperties(properties);
+      expect(result).toHaveLength(2);
+
+      const defaultGroupResult = result.find((item) => item.group?.id === "ungrouped");
+      expect(defaultGroupResult).toBeDefined();
+      expect(defaultGroupResult?.group?.id).toBe("ungrouped");
+      expect(defaultGroupResult?.group?.name).toBe("Other");
+      expect(defaultGroupResult?.group?.displayOrder).toBe(Infinity);
+      expect(defaultGroupResult?.properties).toHaveLength(2);
+      expect(defaultGroupResult?.properties.map((p) => p.id)).toEqual(["2", "3"]);
+
+      const group1Result = result.find((item) => item.group?.id === "group1");
+      expect(group1Result).toBeDefined();
+      expect(group1Result?.properties).toHaveLength(1);
+      expect(group1Result?.properties[0].id).toBe("1");
+    });
   });
 });
