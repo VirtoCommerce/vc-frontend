@@ -1,18 +1,12 @@
 <template>
-  <div
-    ref="dropdownElement"
-    class="search-bar-dropdown"
-    :style="dropdownStyle"
-    data-dropdown
-    @focusout="handleFocusOut"
-  >
+  <div ref="dropdownElement" class="search-dropdown" :style="dropdownStyle" data-dropdown @focusout="handleFocusOut">
     <!-- Search history and suggestions -->
     <template v-if="(searchHistoryQueries.length && !searchHistoryLoading) || (suggestions.length && !loading)">
-      <header class="search-bar-dropdown__head">
+      <header class="search-dropdown__head">
         {{ $t("shared.layout.search_bar.suggestions_and_history_label") }}
       </header>
 
-      <ul class="search-bar-dropdown__list">
+      <ul class="search-dropdown__list">
         <VcMenuItem
           v-for="query in searchHistoryQueries"
           :key="query"
@@ -52,11 +46,11 @@
 
     <!-- Pages -->
     <template v-if="pages.length">
-      <header class="search-bar-dropdown__head">
+      <header class="search-dropdown__head">
         {{ $t("shared.layout.search_bar.pages_label") }}
       </header>
 
-      <ul class="search-bar-dropdown__grid">
+      <ul class="search-dropdown__grid">
         <VcMenuItem
           v-for="(page, index) in pages"
           :key="index"
@@ -77,11 +71,11 @@
 
     <!-- Categories -->
     <template v-if="categories.length">
-      <header class="search-bar-dropdown__head">
+      <header class="search-dropdown__head">
         {{ $t("shared.layout.search_bar.categories_label") }}
       </header>
 
-      <ul v-for="(column, index) in categoriesColumns" :key="index" class="search-bar-dropdown__grid">
+      <ul v-for="(column, index) in categoriesColumns" :key="index" class="search-dropdown__grid">
         <VcMenuItem
           v-for="category in column"
           :key="category.name"
@@ -100,11 +94,11 @@
 
     <!-- Products -->
     <template v-if="products.length">
-      <header class="search-bar-dropdown__head">
+      <header class="search-dropdown__head">
         {{ $t("shared.layout.search_bar.products_label") }}
       </header>
 
-      <div class="search-bar-dropdown__products">
+      <div class="search-dropdown__products">
         <SearchBarProductCard
           v-for="product in products"
           :key="product.id"
@@ -119,7 +113,7 @@
     </template>
 
     <!-- Actions -->
-    <div v-if="total" class="search-bar-dropdown__actions">
+    <div v-if="total" class="search-dropdown__actions">
       <VcButton
         size="sm"
         tabindex="0"
@@ -133,11 +127,11 @@
 
     <!-- Not found -->
     <template v-if="!searchInProgress && !isExistResults && searchPhrase">
-      <header class="search-bar-dropdown__head">
+      <header class="search-dropdown__head">
         {{ $t("shared.layout.search_bar.search_label") }}
       </header>
 
-      <div class="search-bar-dropdown__not-found">
+      <div class="search-dropdown__not-found">
         <VcIcon name="search-not-found" size="md" />
 
         <i18n-t keypath="shared.layout.search_bar.no_results" tag="div">
@@ -201,7 +195,7 @@ defineExpose({
 </script>
 
 <style lang="scss">
-.search-bar-dropdown {
+.search-dropdown {
   @apply absolute left-0 top-[3.45rem] z-20 flex w-full min-w-[640px] max-w-[100vw] flex-col overflow-y-auto rounded bg-additional-50 shadow-lg;
 
   &__head {
