@@ -1406,6 +1406,7 @@
       },
       "title": "検索",
       "header": "「{keyword}」の検索結果",
+      "header_empty": "申し訳ありません。「{keyword}」の検索では、何も結果がありませんでした",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "「<strong>{0}</strong>」に一致する結果が見つかりませんでした",
