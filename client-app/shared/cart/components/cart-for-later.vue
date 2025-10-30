@@ -1,6 +1,12 @@
 <template>
   <VcWidget :title="$t('pages.cart.saved_for_later')" prepend-icon="bookmark" size="lg" class="cart-for-later">
     <VcProductsGrid>
+      <template v-slot:append>
+        <VcButton variant="outline" :to="{ name: ROUTES.SAVED_FOR_LATER.NAME }" size="sm">
+          {{ $t("common.buttons.see_all") }}
+        </VcButton>
+      </template>
+
       <CartItemForLater
         v-for="(item, index) in visibleItems"
         :key="index"
@@ -25,6 +31,7 @@
 import { computed, toRef, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics } from "@/core/composables/useAnalytics";
+import { ROUTES } from "@/router/routes/constants";
 import type { SavedForLaterListFragment, Product } from "@/core/api/graphql/types";
 import CartItemForLater from "@/shared/cart/components/cart-item-for-later.vue";
 
