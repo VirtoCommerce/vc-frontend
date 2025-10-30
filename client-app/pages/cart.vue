@@ -340,19 +340,19 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
 }
 
 async function handleSaveForLater(itemIds: string[]) {
-  if (!itemIds?.length || !cart.value?.id) {
+  if (!itemIds?.length) {
     return;
   }
 
-  await moveToSavedForLater(cart.value.id, itemIds);
+  await moveToSavedForLater(itemIds);
 }
 
 async function handleMoveToCart(itemIds: string[]) {
-  if (!itemIds?.length || !cart.value?.id) {
+  if (!itemIds?.length) {
     return;
   }
 
-  await moveFromSavedForLater(cart.value.id, itemIds);
+  await moveFromSavedForLater(itemIds);
 }
 
 function selectItemEvent(item: LineItemType | undefined): void {

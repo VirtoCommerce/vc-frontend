@@ -60,7 +60,11 @@ function _useSavedForLater() {
     },
   );
 
-  async function moveToSavedForLater(cartId: string, itemIds: string[]) {
+  async function moveToSavedForLater(itemIds: string[]) {
+    if (!cart.value) {
+      return;
+    }
+
     try {
       await _moveToSavedForLater({
         command: {
@@ -68,7 +72,7 @@ function _useSavedForLater() {
           userId,
           cultureName,
           currencyCode,
-          cartId,
+          cartId: cart.value.id,
           lineItemIds: itemIds,
         },
       });
@@ -103,7 +107,11 @@ function _useSavedForLater() {
     },
   );
 
-  async function moveFromSavedForLater(cartId: string, itemIds: string[]) {
+  async function moveFromSavedForLater(itemIds: string[]) {
+    if (!cart.value) {
+      return;
+    }
+
     try {
       await _moveFromSavedForLater({
         command: {
@@ -111,7 +119,7 @@ function _useSavedForLater() {
           userId,
           cultureName,
           currencyCode,
-          cartId,
+          cartId: cart.value.id,
           lineItemIds: itemIds,
         },
       });
