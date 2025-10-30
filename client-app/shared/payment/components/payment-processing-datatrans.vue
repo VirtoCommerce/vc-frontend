@@ -10,6 +10,12 @@
             class="datatrans-input-wrap form-control"
             :class="{ invalid: !validationResult?.fields?.cardNumber?.valid }"
           ></div>
+          <div
+            v-if="!validationResult?.fields?.cardNumber?.valid"
+            class="vc-input-details vc-input-details--hide-empty vc-input-details--error"
+          >
+            <div class="vc-input-details__message">{{ $t("shared.payment.bank_card_form.errors.card_number") }}</div>
+          </div>
         </div>
 
         <VcInput
@@ -52,6 +58,14 @@
               class="form-control datatrans-input-wrap"
               :class="{ invalid: !validationResult?.fields?.cvv?.valid }"
             ></div>
+            <div
+              v-if="!validationResult?.fields?.cvv?.valid"
+              class="vc-input-details vc-input-details--hide-empty vc-input-details--error"
+            >
+              <div class="vc-input-details__message">
+                {{ $t("shared.payment.bank_card_form.errors.security_code") }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -184,7 +198,11 @@ const monthYupSchema = yup
 
 const validationSchema = toTypedSchema(
   yup.object({
-    cardholderName: yup.string().required().max(64).label(labels.value.cardholderName),
+    cardholderName: yup
+      .string()
+      .required(t("shared.payment.bank_card_form.errors.cardholder_name"))
+      .max(64)
+      .label(labels.value.cardholderName),
     month: monthYupSchema,
     year: yup.string().when("month", ([month], schema) => {
       return monthYupSchema.isValidSync(month)
