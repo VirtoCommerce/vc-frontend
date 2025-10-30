@@ -231,7 +231,7 @@ const {
 });
 
 const isValidBankCard = computed(() => {
-  return !validationResult.value.hasErrors && expirationDateErrors.value === "";
+  return !loading.value && !validationResult.value.hasErrors && expirationDateErrors.value === "";
 });
 
 const [cardholderName] = defineField("cardholderName");
