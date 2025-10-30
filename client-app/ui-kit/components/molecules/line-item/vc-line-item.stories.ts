@@ -1,9 +1,9 @@
 import { VcLineItem, VcAlert } from "..";
 import { preparedLineItemMock2 as lineItem } from "../../../mocks/line-item.mock";
 import { VcAddToCart } from "../../organisms";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-export default {
+const meta: Meta<typeof VcLineItem> = {
   title: "Components/Molecules/VcLineItem",
   component: VcLineItem,
   argTypes: {
@@ -14,16 +14,16 @@ export default {
     disabled: false,
     deleted: false,
   },
-} as Meta<typeof VcLineItem>;
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcLineItem v-bind="args" />',
+  }),
+};
 
-const Template: StoryFn = (args) => ({
-  components: { VcLineItem },
-  setup: () => ({ args }),
-  template: '<VcLineItem v-bind="args" />',
-});
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
-export const Basic = Template.bind({});
-Basic.args = {
+const basicArgs = {
   imageUrl: lineItem.imageUrl,
   name: lineItem.name,
   route: lineItem.route,
@@ -33,69 +33,80 @@ Basic.args = {
   total: lineItem.extendedPrice,
 };
 
-export const Selectable = Template.bind({});
-Selectable.args = {
-  ...Basic.args,
-  selectable: true,
-  removable: true,
+export const Basic: StoryType = {
+  args: basicArgs,
 };
 
-export const Removable = Template.bind({});
-Removable.args = {
-  ...Basic.args,
-  removable: true,
+export const Selectable: StoryType = {
+  args: {
+    ...basicArgs,
+    selectable: true,
+    removable: true,
+  },
 };
 
-export const Disabled = Template.bind({});
-Disabled.args = {
-  ...Basic.args,
-  selectable: true,
-  removable: true,
-  disabled: true,
+export const Removable: StoryType = {
+  args: {
+    ...basicArgs,
+    removable: true,
+  },
 };
 
-export const DeletedProduct: StoryFn = (args) => ({
-  components: { VcLineItem, VcAlert },
-  setup: () => ({ args }),
-  template: `<VcLineItem v-bind="args">
-    <template #after>
-      <VcAlert color="danger" size="sm" variant="outline-dark" icon>
-        Validation error
-      </VcAlert>
-    </template>
-  </VcLineItem>`,
-});
-DeletedProduct.args = {
-  ...Basic.args,
-  removable: true,
-  deleted: true,
+export const Disabled: StoryType = {
+  args: {
+    ...basicArgs,
+    selectable: true,
+    removable: true,
+    disabled: true,
+  },
 };
 
-export const AddToCart: StoryFn = (args) => ({
-  components: { VcLineItem, VcAddToCart },
-  setup: () => ({ args }),
-  template: `<VcLineItem v-bind="args">
-    <VcAddToCart
-      is-active
-      is-available
-      is-buyable
-      is-in-stock
-      :available-quantity="999999"
-    />
-  </VcLineItem>`,
-});
-AddToCart.args = {
-  ...Basic.args,
-  removable: true,
+export const DeletedProduct: StoryType = {
+  args: {
+    ...basicArgs,
+    removable: true,
+    deleted: true,
+  },
+  render: (args) => ({
+    components: { VcLineItem, VcAlert },
+    setup: () => ({ args }),
+    template: `<VcLineItem v-bind="args">
+      <template #after>
+        <VcAlert color="danger" size="sm" variant="outline-dark" icon>
+          Validation error
+        </VcAlert>
+      </template>
+    </VcLineItem>`,
+  }),
 };
 
-export const QuantityInput: StoryFn = (args) => ({
-  components: { VcLineItem, VcAddToCart },
-  setup: () => ({ args }),
-  template: `<VcLineItem v-bind="args">
-    <VcAddToCart hide-button />
-  </VcLineItem>`,
-});
-QuantityInput.args = {
-  ...Basic.args,
+export const AddToCart: StoryType = {
+  args: {
+    ...basicArgs,
+    removable: true,
+  },
+  render: (args) => ({
+    components: { VcLineItem, VcAddToCart },
+    setup: () => ({ args }),
+    template: `<VcLineItem v-bind="args">
+      <VcAddToCart
+        is-active
+        is-available
+        is-buyable
+        is-in-stock
+        :available-quantity="999999"
+      />
+    </VcLineItem>`,
+  }),
+};
+
+export const QuantityInput: StoryType = {
+  args: basicArgs,
+  render: (args) => ({
+    components: { VcLineItem, VcAddToCart },
+    setup: () => ({ args }),
+    template: `<VcLineItem v-bind="args">
+      <VcAddToCart hide-button />
+    </VcLineItem>`,
+  }),
 };

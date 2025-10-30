@@ -823,10 +823,14 @@
         "year_label": "Vuosi",
         "year_placeholder": "VV",
         "security_code_label": "Turvakoodi",
+        "pay_now_button": "Maksa nyt",
         "errors": {
+          "card_number": "Syötä kelvollinen luottokortin numero",
           "month": "Syötä kelvollinen viimeinen voimassaolokuukausi",
           "year": "Syötä kelvollinen viimeinen voimassaolovuosi",
-          "security_code": "Virheellinen turvakoodi."
+          "expiration_date": "Viimeisen voimassaolopäivän on oltava tulevaisuudessa",
+          "security_code": "Syötä kelvollinen turvakoodi",
+          "cardholder_name": "Syötä kelvollinen kortinhaltijan nimi"
         },
         "user_error_message": "Maksua ei voi aloittaa. Yritä uudelleen myöhemmin tai käytä toista maksutapaa",
         "payment_unavailable": "Maksutapa ei ole saatavilla. Yritä uudelleen myöhemmin"
@@ -836,27 +840,15 @@
         "privacy_policy_link": "Tietosuojakäytäntö",
         "accept_terms_text": "Tilaamalla hyväksyt ehdot",
         "processing_personal_data_text": "ja suostut siihen, että voimme käsitellä henkilötietojasi",
-        "pay_now_button": "Maksa nyt",
         "errors": {
-          "number": "Syötä kelvollinen luottokortin numero",
-          "month": "Syötä kelvollinen viimeinen voimassaolokuukausi",
-          "year": "Syötä kelvollinen viimeinen voimassaolovuosi",
-          "expiration_date": "Viimeisen voimassaolopäivän on oltava tulevaisuudessa",
-          "security_code": "Syötä kelvollinen turvakoodi",
-          "cardholder_name": "Syötä kelvollinen kortinhaltijan nimi",
           "incorrect_payment_method": "Virheellinen maksutapa"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Maksa nyt"
       },
       "manual": {
         "text": "Valittu maksutapa ei tue verkkomaksuja. Valitse toinen tapa tai "
       },
       "redirection": {
         "text": "Kun napsautat <strong>{0}</strong>, sinut ohjataan kolmannen osapuolen maksupalveluun",
-        "pay_now_button": "Maksa nyt",
-        "try_again_button": "Yritä uudelleen",
         "errors": {
           "missing_link": "Uudelleenohjauslinkki puuttuu",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"

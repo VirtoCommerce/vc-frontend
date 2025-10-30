@@ -11,6 +11,7 @@ import vuejsAccessibility from "eslint-plugin-vuejs-accessibility";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import vueParser from "vue-eslint-parser";
+import vcstRules from "./eslint-rules/index.js";
 
 const tsconfigRootDir = import.meta.dirname;
 const tsconfigs = {
@@ -74,6 +75,7 @@ export default defineConfigWithVueTs(
       "sort-exports": sortExports,
       tailwindcss,
       "vuejs-accessibility": vuejsAccessibility,
+      "@vcst": vcstRules,
     },
     rules: {
       // General rules
@@ -364,6 +366,7 @@ export default defineConfigWithVueTs(
     files: ["**/*.vue"],
     rules: {
       "no-undef": "off",
+      "@vcst/padding-line-between-sibling-tags": "warn",
     },
   },
   {
