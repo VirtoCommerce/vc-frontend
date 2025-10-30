@@ -60,164 +60,30 @@
       </template>
     </VcInput>
 
-    <!-- Dropdown -->
     <transition name="slide-fade-top">
-      <div
+      <SearchDropdown
         v-if="searchDropdownVisible"
-        ref="searchDropdownElement"
-        class="search-bar__dropdown"
-        :style="searchDropdownStyle"
-        data-dropdown
-        @focusout="handleFocusOut"
-      >
-        <!-- Results and history -->
-        <!-- Search history and suggestions -->
-        <template v-if="(searchHistoryQueries.length && !searchHistoryLoading) || (suggestions.length && !loading)">
-          <header class="search-bar__head">
-            {{ $t("shared.layout.search_bar.suggestions_and_history_label") }}
-          </header>
-
-          <ul class="search-bar__list">
-            <VcMenuItem
-              v-for="query in searchHistoryQueries"
-              :key="query"
-              role="menuitem"
-              :label="query"
-              tag="li"
-              truncate
-              nowrap
-              color="secondary"
-              @click="handleSearchHistoryClick(query)"
-              @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
-              @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
-            >
-              <template #prepend>
-                <VcIcon name="history" size="md" />
-              </template>
-
-              <span v-html-safe="highlightSearchText(query, trimmedSearchPhrase)" class="[word-break:break-word]" />
-            </VcMenuItem>
-
-            <VcMenuItem
-              v-for="suggestion in suggestions"
-              :key="suggestion.text"
-              :to="getSearchRoute(suggestion.text)"
-              role="menuitem"
-              tag="li"
-              truncate
-              color="secondary"
-              @click="hideSearchDropdown"
-              @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
-              @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
-            >
-              <span v-html-safe="suggestion.label" class="[word-break:break-word]" />
-            </VcMenuItem>
-          </ul>
-        </template>
-        <!-- Search history and suggestions end -->
-
-        <!-- Pages -->
-        <template v-if="pages.length">
-          <header class="search-bar__head">
-            {{ $t("shared.layout.search_bar.pages_label") }}
-          </header>
-
-          <ul class="search-bar__grid">
-            <VcMenuItem
-              v-for="(page, index) in pages"
-              :key="index"
-              class="w-full"
-              role="menuitem"
-              :to="page.permalink"
-              tag="li"
-              size="xs"
-              color="secondary"
-              @click="hideSearchDropdown"
-              @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
-              @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
-            >
-              <span v-html-safe="page.name" class="[word-break:break-word]" />
-            </VcMenuItem>
-          </ul>
-        </template>
-        <!-- Pages end -->
-
-        <!-- Categories -->
-        <template v-if="categories.length">
-          <header class="search-bar__head">
-            {{ $t("shared.layout.search_bar.categories_label") }}
-          </header>
-
-          <ul v-for="(column, index) in categoriesColumns" :key="index" class="search-bar__grid">
-            <VcMenuItem
-              v-for="category in column"
-              :key="category.name"
-              :to="categoriesRoutes[category.id]"
-              tag="li"
-              role="menuitem"
-              color="secondary"
-              @click="hideSearchDropdown"
-              @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
-              @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
-            >
-              <span v-html-safe="category.name" class="[word-break:break-word]" />
-            </VcMenuItem>
-          </ul>
-        </template>
-        <!-- Categories end -->
-
-        <!-- Products -->
-        <template v-if="products.length">
-          <header class="search-bar__head">
-            {{ $t("shared.layout.search_bar.products_label") }}
-          </header>
-
-          <div class="search-bar__products">
-            <SearchBarProductCard
-              v-for="product in products"
-              :key="product.id"
-              :product="product"
-              @link-click="
-                hideSearchDropdown();
-                selectItemEvent(product);
-              "
-              @change-focus="focusPrevNextItem($event.direction, $event.event)"
-            />
-          </div>
-        </template>
-        <!-- Products end -->
-
-        <!-- Actions -->
-        <div v-if="total" class="search-bar__actions">
-          <VcButton
-            size="sm"
-            tabindex="0"
-            @click="handleSearchAndSaveQuery"
-            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
-            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
-          >
-            {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
-          </VcButton>
-        </div>
-        <!-- Results and history end -->
-
-        <!-- Not found -->
-        <template v-if="!searchInProgress && !isExistResults && trimmedSearchPhrase">
-          <header class="search-bar__head">
-            {{ $t("shared.layout.search_bar.search_label") }}
-          </header>
-
-          <div class="search-bar__not-found">
-            <VcIcon name="search-not-found" size="md" />
-
-            <i18n-t keypath="shared.layout.search_bar.no_results" tag="div">
-              <template #keyword>
-                <strong>{{ trimmedSearchPhrase }}</strong>
-              </template>
-            </i18n-t>
-          </div>
-        </template>
-      </div>
+        :dropdown-style="searchDropdownStyle"
+        :search-history-queries="searchHistoryQueries"
+        :search-history-loading="searchHistoryLoading"
+        :suggestions="suggestions"
+        :loading="loading"
+        :pages="pages"
+        :categories="categories"
+        :categories-columns="categoriesColumns"
+        :categories-routes="categoriesRoutes"
+        :products="products"
+        :total="total"
+        :search-in-progress="searchInProgress"
+        :is-exist-results="isExistResults"
+        :search-phrase="trimmedSearchPhrase"
+        :get-search-route="getSearchRoute"
+        @hide="hideSearchDropdown"
+        @search="handleSearchAndSaveQuery"
+        @history-click="handleSearchHistoryClick"
+        @product-select="selectItemEvent"
+        @focus-change="focusPrevNextItem"
+      />
     </transition>
   </div>
 </template>
@@ -239,9 +105,8 @@ import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice,
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
-import { highlightSearchText } from "@/shared/layout/utils";
-import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import BarcodeScanner from "./barcode-scanner.vue";
+import SearchDropdown from "./search-dropdown.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category, Product } from "@/core/api/graphql/types";
 import type { StyleValue } from "vue";
@@ -285,8 +150,6 @@ const { result: searchHistory, load: loadSearchHistory, loading: searchHistoryLo
 
 const searchHistoryQueries = computed(() => searchHistory.value?.searchHistory?.queries ?? []);
 
-const searchDropdownElement = ref<HTMLElement | null>(null);
-
 const suppressNextShowDropdown = ref(false);
 
 const searchPhrase = ref("");
@@ -318,7 +181,7 @@ const categoriesColumns = computed<Array<Category[]>>(() => {
 });
 
 const isExistResults = computed(
-  () => categories.value.length || products.value.length || suggestions.value.length || pages.value.length,
+  () => !!(categories.value.length || products.value.length || suggestions.value.length || pages.value.length),
 );
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -524,13 +387,6 @@ function focusPrevNextItem(direction: "UP" | "DOWN", event: KeyboardEvent) {
   }
 }
 
-const handleFocusOut = (event: FocusEvent) => {
-  // if focus moved outside of the dropdown, close the dropdown
-  if (!searchDropdownElement.value?.contains(event.relatedTarget as Node)) {
-    hideSearchDropdown();
-  }
-};
-
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
 
 onMounted(() => {
@@ -568,36 +424,6 @@ watch(
 
   &__button {
     @apply ms-1;
-  }
-
-  &__dropdown {
-    @apply absolute left-0 top-[3.45rem] z-20 flex w-full min-w-[640px] max-w-[100vw] flex-col overflow-y-auto rounded bg-additional-50 shadow-lg;
-  }
-
-  &__head {
-    @apply bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral-600;
-  }
-
-  &__list {
-    @apply px-2 py-3;
-  }
-
-  &__grid {
-    @apply grid grid-cols-4 gap-2 px-2 py-3;
-  }
-
-  &__products {
-    @apply grid grid-cols-2 gap-y-0.5 p-3;
-  }
-
-  &__actions {
-    @apply sticky bottom-0 mt-4 border-t border-neutral-100 bg-additional-50 px-5 py-3;
-  }
-
-  &__not-found {
-    --vc-icon-color: theme("colors.primary.500");
-
-    @apply flex items-center gap-1.5 px-4 py-6 text-sm text-neutral-500;
   }
 }
 </style>
