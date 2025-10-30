@@ -847,7 +847,6 @@
       },
       "redirection": {
         "text": "Kun napsautat <strong>{0}</strong>, sinut ohjataan kolmannen osapuolen maksupalveluun",
-        "try_again_button": "Yritä uudelleen",
         "errors": {
           "missing_link": "Uudelleenohjauslinkki puuttuu",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"

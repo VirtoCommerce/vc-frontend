@@ -847,7 +847,6 @@
       },
       "redirection": {
         "text": "Po kliknięciu <strong>{0}</strong> zostaniesz przekierowany do zewnętrznego serwisu płatności",
-        "try_again_button": "Spróbuj ponownie",
         "errors": {
           "missing_link": "Brakuje linku przekierowującego",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"

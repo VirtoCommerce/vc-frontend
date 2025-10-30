@@ -847,7 +847,6 @@
       },
       "redirection": {
         "text": "点击 <strong>{0}</strong> 后，您将被重定向到第三方支付服务",
-        "try_again_button": "再试一次",
         "errors": {
           "missing_link": "重定向链接缺失",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"

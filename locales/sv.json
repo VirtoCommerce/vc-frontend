@@ -847,7 +847,6 @@
       },
       "redirection": {
         "text": "Efter att du klickar på <strong>{0}</strong>, kommer du att omdirigeras till tredjepartsbetalningstjänsten",
-        "try_again_button": "Försök igen",
         "errors": {
           "missing_link": "Omdirigeringslänk saknas",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"

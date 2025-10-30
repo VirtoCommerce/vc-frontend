@@ -847,7 +847,6 @@
       },
       "redirection": {
         "text": "Após clicar em <strong>{0}</strong>, você será redirecionado para o serviço de pagamento de terceiros",
-        "try_again_button": "Tentar Novamente",
         "errors": {
           "missing_link": "O link de redirecionamento está ausente",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"

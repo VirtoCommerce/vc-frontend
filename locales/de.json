@@ -847,7 +847,6 @@
       },
       "redirection": {
         "text": "Nachdem Sie auf <strong>{0}</strong> geklickt haben, werden Sie zum Zahlungsdienstleister weitergeleitet",
-        "try_again_button": "Erneut versuchen",
         "errors": {
           "missing_link": "Weiterleitungslink fehlt",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
