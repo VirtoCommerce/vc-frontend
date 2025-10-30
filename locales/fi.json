@@ -823,9 +823,12 @@
         "security_code_label": "Turvakoodi",
         "pay_now_button": "Maksa nyt",
         "errors": {
+          "card_number": "Syötä kelvollinen luottokortin numero",
           "month": "Syötä kelvollinen viimeinen voimassaolokuukausi",
           "year": "Syötä kelvollinen viimeinen voimassaolovuosi",
-          "security_code": "Virheellinen turvakoodi."
+          "expiration_date": "Viimeisen voimassaolopäivän on oltava tulevaisuudessa",
+          "security_code": "Syötä kelvollinen turvakoodi",
+          "cardholder_name": "Syötä kelvollinen kortinhaltijan nimi"
         },
         "user_error_message": "Maksua ei voi aloittaa. Yritä uudelleen myöhemmin tai käytä toista maksutapaa",
         "payment_unavailable": "Maksutapa ei ole saatavilla. Yritä uudelleen myöhemmin"
@@ -836,12 +839,6 @@
         "accept_terms_text": "Tilaamalla hyväksyt ehdot",
         "processing_personal_data_text": "ja suostut siihen, että voimme käsitellä henkilötietojasi",
         "errors": {
-          "number": "Syötä kelvollinen luottokortin numero",
-          "month": "Syötä kelvollinen viimeinen voimassaolokuukausi",
-          "year": "Syötä kelvollinen viimeinen voimassaolovuosi",
-          "expiration_date": "Viimeisen voimassaolopäivän on oltava tulevaisuudessa",
-          "security_code": "Syötä kelvollinen turvakoodi",
-          "cardholder_name": "Syötä kelvollinen kortinhaltijan nimi",
           "incorrect_payment_method": "Virheellinen maksutapa"
         }
       },

@@ -823,9 +823,12 @@
         "security_code_label": "Sikkerhetskode",
         "pay_now_button": "Betal nå",
         "errors": {
+          "card_number": "Skriv inn et gyldig kredittkortnummer",
           "month": "Skriv inn en gyldig utløpsmåned",
           "year": "Skriv inn et gyldig utløpsår",
-          "security_code": "Ugyldig sikkerhetskode."
+          "expiration_date": "Utløpsdatoen må være i fremtiden",
+          "security_code": "Skriv inn en gyldig sikkerhetskode",
+          "cardholder_name": "Skriv inn et gyldig kortinnehavernavn"
         },
         "user_error_message": "Betalingen kan ikke startes. Prøv igjen senere eller bruk en annen betalingsmetode",
         "payment_unavailable": "Betalingsmetoden er ikke tilgjengelig. Prøv igjen senere"
@@ -836,12 +839,6 @@
         "accept_terms_text": "Ved å bestille godtar du vilkårene",
         "processing_personal_data_text": "og samtykker til at vi kan behandle dine personopplysninger",
         "errors": {
-          "number": "Skriv inn et gyldig kredittkortnummer",
-          "month": "Skriv inn en gyldig utløpsmåned",
-          "year": "Skriv inn et gyldig utløpsår",
-          "expiration_date": "Utløpsdatoen må være i fremtiden",
-          "security_code": "Skriv inn en gyldig sikkerhetskode",
-          "cardholder_name": "Skriv inn et gyldig kortinnehavernavn",
           "incorrect_payment_method": "Ugyldig betalingsmetode"
         }
       },

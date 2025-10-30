@@ -823,9 +823,12 @@
         "security_code_label": "Säkerhetskod",
         "pay_now_button": "Betala nu",
         "errors": {
+          "card_number": "Ange ett giltigt kreditkortsnummer",
           "month": "Ange en giltig utgångsmånad",
           "year": "Ange ett giltigt utgångsår",
-          "security_code": "Ogiltig säkerhetskod."
+          "expiration_date": "Utgångsdatumet måste vara i framtiden",
+          "security_code": "Ange en giltig säkerhetskod",
+          "cardholder_name": "Ange ett giltigt kortinnehavarnamn"
         },
         "user_error_message": "Kan inte initiera betalning. Vänligen försök igen senare eller använd en annan betalningsmetod",
         "payment_unavailable": "Betalningsmetoden är inte tillgänglig. Vänligen försök igen senare"
@@ -836,12 +839,6 @@
         "accept_terms_text": "Genom att lägga en beställning accepterar du villkoren i vårt",
         "processing_personal_data_text": "och samtycker till att vi kan behandla dina personuppgifter enligt vår",
         "errors": {
-          "number": "Ange ett giltigt kreditkortsnummer",
-          "month": "Ange en giltig utgångsmånad",
-          "year": "Ange ett giltigt utgångsår",
-          "expiration_date": "Utgångsdatumet måste vara i framtiden",
-          "security_code": "Ange en giltig säkerhetskod",
-          "cardholder_name": "Ange ett giltigt kortinnehavarnamn",
           "incorrect_payment_method": "Felaktig betalningsmetod"
         }
       },

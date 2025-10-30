@@ -823,9 +823,12 @@
         "security_code_label": "Kod bezpieczeństwa",
         "pay_now_button": "Zapłać teraz",
         "errors": {
-          "month": "Podaj prawidłowy miesiąc ważności",
-          "year": "Podaj prawidłowy rok ważności",
-          "security_code": "Nieprawidłowy kod zabezpieczający."
+          "card_number": "Proszę podać prawidłowy numer karty kredytowej",
+          "month": "Proszę podać prawidłowy miesiąc ważności",
+          "year": "Proszę podać prawidłowy rok ważności",
+          "expiration_date": "Data ważności musi być w przyszłości",
+          "security_code": "Proszę podać prawidłowy kod bezpieczeństwa",
+          "cardholder_name": "Proszę podać prawidłowe imię i nazwisko posiadacza karty"
         },
         "user_error_message": "Nie można zainicjować płatności. Spróbuj ponownie później lub użyj innej metody płatności",
         "payment_unavailable": "Metoda płatności jest niedostępna. Spróbuj ponownie później."
@@ -836,12 +839,6 @@
         "accept_terms_text": "Składając zamówienie, akceptujesz warunki naszej",
         "processing_personal_data_text": "i zgadzasz się, że możemy przetwarzać Twoje dane osobowe zgodnie z naszą",
         "errors": {
-          "number": "Proszę podać prawidłowy numer karty kredytowej",
-          "month": "Proszę podać prawidłowy miesiąc ważności",
-          "year": "Proszę podać prawidłowy rok ważności",
-          "expiration_date": "Data ważności musi być w przyszłości",
-          "security_code": "Proszę podać prawidłowy kod bezpieczeństwa",
-          "cardholder_name": "Proszę podać prawidłowe imię i nazwisko posiadacza karty",
           "incorrect_payment_method": "Nieprawidłowa metoda płatności"
         }
       },

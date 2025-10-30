@@ -139,7 +139,7 @@ const monthYupSchema = yup
   .string()
   .required()
   .length(2)
-  .matches(/^(0?[1-9]|1[0-2])$/, t("shared.payment.authorize_net.errors.month"))
+  .matches(/^(0?[1-9]|1[0-2])$/, t("shared.payment.bank_card_form.errors.month"))
   .label(labels.value.monthLabel);
 
 const validationSchema = toTypedSchema(

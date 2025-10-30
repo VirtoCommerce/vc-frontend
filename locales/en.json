@@ -823,9 +823,12 @@
         "security_code_label": "Security code",
         "pay_now_button": "Pay now",
         "errors": {
+          "card_number": "Provide a valid credit card number",
           "month": "Provide a valid expiration month",
           "year": "Provide a valid expiration year",
-          "security_code": "Invalid security code."
+          "expiration_date": "Expiration date must be in the future",
+          "security_code": "Provide a valid security code",
+          "cardholder_name": "Provide a valid cardholder name"
         },
         "user_error_message": "Can't initialize payment. Please try again later or use another payment method",
         "payment_unavailable": "Payment method is unavailable. Please try again later"
@@ -836,12 +839,6 @@
         "accept_terms_text": "By placing an order, you accept the terms of our",
         "processing_personal_data_text": "and agree that we may process your personal data as per our",
         "errors": {
-          "number": "Provide a valid credit card number",
-          "month": "Provide a valid expiration month",
-          "year": "Provide a valid expiration year",
-          "expiration_date": "Expiration date must be in the future",
-          "security_code": "Provide a valid security code",
-          "cardholder_name": "Provide a valid cardholder name",
           "incorrect_payment_method": "Incorrect payment method"
         }
       },

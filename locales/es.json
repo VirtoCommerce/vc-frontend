@@ -823,9 +823,12 @@
         "security_code_label": "Código de seguridad",
         "pay_now_button": "Pagar ahora",
         "errors": {
+          "card_number": "Por favor, proporciona un número de tarjeta de crédito válido",
           "month": "Por favor, proporciona un mes de vencimiento válido",
           "year": "Por favor, proporcione un año de vencimiento válido",
-          "security_code": "Código de seguridad no válido."
+          "expiration_date": "La fecha de expiración debe ser en el futuro",
+          "security_code": "Por favor, proporciona un código de seguridad válido",
+          "cardholder_name": "Por favor, proporciona un nombre de titular de tarjeta válido"
         },
         "user_error_message": "No se pudo inicializar el pago. Inténtalo de nuevo más tarde o usa otro método de pago",
         "payment_unavailable": "El método de pago no está disponible. Inténtalo de nuevo más tarde."
@@ -836,12 +839,6 @@
         "accept_terms_text": "Al realizar un pedido, aceptas los términos de nuestro",
         "processing_personal_data_text": "y aceptas que podamos procesar tus datos personales según nuestra",
         "errors": {
-          "number": "Por favor, proporciona un número de tarjeta de crédito válido",
-          "month": "Por favor, proporciona un mes de expiración válido",
-          "year": "Por favor, proporciona un año de expiración válido",
-          "expiration_date": "La fecha de expiración debe ser en el futuro",
-          "security_code": "Por favor, proporciona un código de seguridad válido",
-          "cardholder_name": "Por favor, proporciona un nombre de titular de tarjeta válido",
           "incorrect_payment_method": "Método de pago incorrecto"
         }
       },

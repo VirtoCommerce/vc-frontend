@@ -823,9 +823,12 @@
         "security_code_label": "Code de sécurité",
         "pay_now_button": "Payer maintenant",
         "errors": {
-          "month": "Veuillez indiquer un mois d'expiration valide",
-          "year": "Veuillez indiquer une année d'expiration valide",
-          "security_code": "Code de sécurité incorrect."
+          "card_number": "Veuillez fournir un numéro de carte de crédit valide",
+          "month": "Veuillez fournir un mois d'expiration valide",
+          "year": "Veuillez fournir une année d'expiration valide",
+          "expiration_date": "La date d'expiration doit être dans le futur",
+          "security_code": "Veuillez fournir un code de sécurité valide",
+          "cardholder_name": "Veuillez fournir un nom de titulaire de carte valide"
         },
         "user_error_message": "Impossible d'initialiser le paiement. Veuillez réessayer plus tard ou utiliser un autre mode de paiement",
         "payment_unavailable": "Le mode de paiement est indisponible. Veuillez réessayer plus tard."
@@ -836,12 +839,6 @@
         "accept_terms_text": "En passant une commande, vous acceptez les termes de notre",
         "processing_personal_data_text": "et vous acceptez que nous puissions traiter vos données personnelles conformément à notre",
         "errors": {
-          "number": "Veuillez fournir un numéro de carte de crédit valide",
-          "month": "Veuillez fournir un mois d'expiration valide",
-          "year": "Veuillez fournir une année d'expiration valide",
-          "expiration_date": "La date d'expiration doit être dans le futur",
-          "security_code": "Veuillez fournir un code de sécurité valide",
-          "cardholder_name": "Veuillez fournir un nom de titulaire de carte valide",
           "incorrect_payment_method": "Méthode de paiement incorrecte"
         }
       },
