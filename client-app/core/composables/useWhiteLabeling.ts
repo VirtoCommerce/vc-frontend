@@ -21,6 +21,13 @@ const moduleEnabled = computed(
 
 const { emit } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
 
+function setWhiteLabelingSettings(payload?: WhiteLabelingSettingsType) {
+  if (moduleEnabled.value) {
+    whiteLabelingSettings.value = payload;
+    emit(whiteLabelingSettings.value);
+  }
+}
+
 function _useWhiteLabeling() {
   async function fetchWhiteLabelingSettings(): Promise<void> {
     if (moduleEnabled.value) {
@@ -31,13 +38,6 @@ function _useWhiteLabeling() {
         Logger.error(`${_useWhiteLabeling.name}.${fetchWhiteLabelingSettings.name}`, e);
         throw e;
       }
-    }
-  }
-
-  function setWhiteLabelingSettings(payload?: WhiteLabelingSettingsType) {
-    if (moduleEnabled.value) {
-      whiteLabelingSettings.value = payload;
-      emit(whiteLabelingSettings.value);
     }
   }
 
