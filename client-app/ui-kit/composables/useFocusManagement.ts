@@ -16,7 +16,9 @@ export function useFocusManagement(options: IUseFocusManagementOptions = {}): IU
   const { container: initialContainer, autoFocus = false, focusDelay = 0 } = options;
 
   function getContainer(): HTMLElement | null {
-    if (!initialContainer) return null;
+    if (!initialContainer) {
+      return null;
+    }
 
     const containerValue = toValue(initialContainer);
 
