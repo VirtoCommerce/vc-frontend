@@ -79,7 +79,8 @@
       "show_less": "折りたたむ",
       "expand_all": "すべて展開",
       "all_products": "すべての商品",
-      "buy_now": "今すぐ購入"
+      "buy_now": "今すぐ購入",
+      "see_all": "すべてを見る"
     },
     "labels": {
       "actions": "操作",
@@ -335,6 +336,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "後で保存",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -822,10 +824,14 @@
         "year_label": "Year",
         "year_placeholder": "YY",
         "security_code_label": "Security code",
+        "pay_now_button": "Pay Now",
         "errors": {
+          "card_number": "有効なカード番号を入力してください",
           "month": "有効な有効期限月を入力してください",
           "year": "有効な有効期限の年を入力してください",
-          "security_code": "セキュリティコードが無効です。"
+          "expiration_date": "有効な有効期限を入力してください",
+          "security_code": "セキュリティコードが無効です。",
+          "cardholder_name": "カード名義人の名前を入力してください"
         },
         "user_error_message": "決済を開始できません。後でやり直すか、別の支払い方法をご利用ください",
         "payment_unavailable": "お支払い方法をご利用いただけません。しばらくしてからもう一度お試しください"
@@ -835,27 +841,15 @@
         "privacy_policy_link": "Privacy Policy",
         "accept_terms_text": "By placing an order, you accept the terms of our",
         "processing_personal_data_text": "and agree that we may process your personal data as per our",
-        "pay_now_button": "Pay Now",
         "errors": {
-          "number": "Please provide a valid credit card number",
-          "month": "Please provide a valid expiration month",
-          "year": "Please provide a valid expiration year",
-          "expiration_date": "Expiration date must be in the future",
-          "security_code": "Please provide a valid security code",
-          "cardholder_name": "Please provide a valid cardholder name",
           "incorrect_payment_method": "Incorrect payment method"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Pay Now"
       },
       "manual": {
         "text": "The payment method you selected does not support online payment. Please select another method or "
       },
       "redirection": {
         "text": "After you click <strong>{0}</strong>, you will be redirected to the third-party payment service",
-        "pay_now_button": "Pay Now",
-        "try_again_button": "Try Again",
         "errors": {
           "missing_link": "Redirect link is missing",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1319,6 +1313,7 @@
       "recently_browsed_products": "最近見た商品",
       "save_for_later": "後で保存",
       "saved_for_later": "後で保存",
+      "saved_for_later_not_found": "後で保存した商品はありません",
       "move_to_cart": "カートに入れる"
     },
     "checkout": {
@@ -1414,6 +1409,7 @@
       },
       "title": "検索",
       "header": "「{keyword}」の検索結果",
+      "header_empty": "申し訳ありません。「{keyword}」の検索では、何も結果がありませんでした",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "「<strong>{0}</strong>」に一致する結果が見つかりませんでした",

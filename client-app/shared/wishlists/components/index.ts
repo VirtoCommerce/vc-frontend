@@ -8,3 +8,5 @@ export { default as WishlistCard } from "./wishlist-card.vue";
 export { default as WishlistCardSkeleton } from "./wishlist-card-skeleton.vue";
 export { default as WishlistLineItems } from "./wishlist-line-items.vue";
 export { default as WishlistProductItemSkeleton } from "./wishlist-product-item-skeleton.vue";
+export { default as WishlistProductsSkeleton } from "./wishlist-products-skeleton.vue";
+export { default as WishlistSummary } from "./wishlist-summary.vue";

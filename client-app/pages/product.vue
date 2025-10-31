@@ -247,7 +247,7 @@ const {
   isFiltersSidebarVisible,
   productsFilters,
   applyFilters: _applyFilters,
-  hideFiltersSidebar,
+  hideFiltersSidebar: _hideFiltersSidebar,
   resetFacetFilters: _resetFacetFilters,
   showFiltersSidebar,
 } = useProducts({
@@ -413,6 +413,14 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
 async function resetFacetFilters(): Promise<void> {
   await _resetFacetFilters();
   void applyFilters(productsFilters.value);
+}
+
+function hideFiltersSidebar(): void {
+  _hideFiltersSidebar();
+  const variationsFiltersButton = document.getElementById(`${productId.value}-variations-filters-button`);
+  if (variationsFiltersButton) {
+    variationsFiltersButton.focus();
+  }
 }
 
 function checkLineItemId() {

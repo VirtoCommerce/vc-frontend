@@ -44,7 +44,7 @@
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
     />
 
-    <AddToCart v-else :product="product" reserved-space />
+    <AddToCartSimple v-else :product="product" reserved-space />
   </VcProductCard>
 </template>
 
@@ -52,11 +52,11 @@
 import { computed } from "vue";
 import { useBrowserTarget } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities";
-import { AddToCart } from "@/shared/cart";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
+import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 
 interface IEmits {
   (event: "linkClick", globalEvent: MouseEvent): void;

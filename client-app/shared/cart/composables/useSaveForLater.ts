@@ -77,11 +77,15 @@ function _useSavedForLater() {
     }
   }
 
+  const _getSavedForLaterLoading = ref(false);
   async function getSavedForLater() {
     try {
+      _getSavedForLaterLoading.value = true;
       savedForLaterList.value = await getSavedForLaterQuery();
     } catch (err) {
       Logger.error(`useSavedForLater.${getSavedForLater.name}`, err);
+    } finally {
+      _getSavedForLaterLoading.value = false;
     }
   }
 
@@ -99,7 +103,8 @@ function _useSavedForLater() {
         _moveToSavedForLaterLoading.value ||
         _moveToSavedForLaterBatchedLoading.value ||
         _moveFromSavedForLaterLoading.value ||
-        _moveFromSavedForLaterBatchedLoading.value,
+        _moveFromSavedForLaterBatchedLoading.value ||
+        _getSavedForLaterLoading.value,
     ),
   };
 }
