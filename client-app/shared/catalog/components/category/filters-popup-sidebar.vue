@@ -100,7 +100,7 @@ import isEqual from "lodash/isEqual";
 import { watch, ref, computed, nextTick, onMounted, onUnmounted } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
 import { useModal } from "@/shared/modal";
-import { useComponentId } from "@/ui-kit/composables";
+import { useComponentId, useFocusManagement } from "@/ui-kit/composables";
 import type { SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
@@ -127,6 +127,10 @@ interface IProps {
 }
 
 const productsFiltersId = useComponentId("products-filters");
+
+const { focusFirst } = useFocusManagement({
+  container: `#${productsFiltersId}`,
+});
 
 const localFilters = ref<ProductsFiltersType>({
   filters: [],
@@ -167,7 +171,7 @@ watch(
     if (visible) {
       beforeChangeFilterState.value = cloneDeep(props.popupSidebarFilters);
       await nextTick();
-      focusFirstElement();
+      focusFirst();
     }
   },
 );
@@ -200,15 +204,6 @@ function onApply() {
   }
 
   emit("hidePopupSidebar");
-}
-
-function focusFirstElement() {
-  const firstFocusableElement = document
-    .getElementById(productsFiltersId)
-    ?.querySelector("input:not(:disabled), button:not(:disabled)");
-  if (firstFocusableElement && firstFocusableElement instanceof HTMLElement) {
-    firstFocusableElement.focus();
-  }
 }
 
 function handleKeydown(event: KeyboardEvent) {

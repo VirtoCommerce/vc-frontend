@@ -162,7 +162,6 @@ const product = toRef(props, "product");
 
 const { focusFirst } = useFocusManagement({
   container: "#add-to-wishlists-modal",
-  autoFocus: false,
 });
 
 const { d, t } = useI18n();
