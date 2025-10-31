@@ -33,6 +33,7 @@ const componentId = useComponentId("dialog");
 
 useFocusManagement({
   container: `#${componentId}`,
+  autoFocus: true,
 });
 
 const sizeRef = toRef(props, "size");

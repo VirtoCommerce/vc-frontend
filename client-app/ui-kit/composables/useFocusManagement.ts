@@ -13,7 +13,7 @@ export interface IUseFocusManagementReturn {
 }
 
 export function useFocusManagement(options: IUseFocusManagementOptions = {}): IUseFocusManagementReturn {
-  const { container: initialContainer, autoFocus = true, focusDelay = 0 } = options;
+  const { container: initialContainer, autoFocus = false, focusDelay = 0 } = options;
 
   function getContainer(): HTMLElement | null {
     if (!initialContainer) return null;
@@ -33,7 +33,9 @@ export function useFocusManagement(options: IUseFocusManagementOptions = {}): IU
 
   function focusFirst(): boolean {
     const containerElement = getContainer();
-    if (!containerElement) return false;
+    if (!containerElement) {
+      return false;
+    }
 
     return focusFirstElement(containerElement);
   }

@@ -16,6 +16,7 @@
       v-if="closable"
       type="button"
       class="vc-dialog-header__close"
+      data-skip-autofocus
       :aria-label="$t('ui_kit.buttons.close')"
       @click="$emit('close')"
     >
