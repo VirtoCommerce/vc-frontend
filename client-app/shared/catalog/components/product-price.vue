@@ -29,7 +29,11 @@
     </div>
 
     <div class="mt-4 print:hidden">
-      <AddToCart v-if="variationResult && variationResult.price?.actual?.amount > 0" :product="variationResult">
+      <component
+        v-if="variationResult && variationResult.price?.actual?.amount > 0"
+        :is="product.isConfigurable ? AddToCart : AddToCartSimple"
+        :product="variationResult"
+      >
         <InStock
           :is-in-stock="variationResult.availabilityData?.isInStock"
           :is-digital="isDigital"
@@ -37,7 +41,7 @@
         />
 
         <CountInCart :product-id="variationResult.id" />
-      </AddToCart>
+      </component>
 
       <div v-else>
         <VcButton
@@ -91,7 +95,7 @@
         v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
       />
 
-      <AddToCart v-else :product="product">
+      <component v-else :is="product.isConfigurable ? AddToCart : AddToCartSimple" :product="product">
         <InStock
           :is-in-stock="product.availabilityData?.isInStock"
           :is-digital="isDigital"
@@ -99,7 +103,7 @@
         />
 
         <CountInCart :product-id="product.id" />
-      </AddToCart>
+      </component>
     </div>
   </template>
 </template>
@@ -119,6 +123,7 @@ import CountInCart from "./count-in-cart.vue";
 import InStock from "./in-stock.vue";
 import Price from "./price.vue";
 import type { MoneyType, PriceType, Product } from "@/core/api/graphql/types";
+import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 import VcAlert from "@/ui-kit/components/molecules/alert/vc-alert.vue";
 
 interface IProps {
