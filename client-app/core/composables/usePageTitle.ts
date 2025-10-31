@@ -1,5 +1,4 @@
-import { computedEager } from "@vueuse/core";
-import { unref } from "vue";
+import { unref, computed } from "vue";
 import { useEnvironmentName } from "@/core/composables/useEnvironmentName";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -29,7 +28,7 @@ export function usePageTitle(title?: MaybeRef<string | string[] | undefined>) {
 
   const { storeName } = themeContext.value;
 
-  const builtTitle = computedEager(() => {
+  const builtTitle = computed(() => {
     if (!title) {
       return "";
     }

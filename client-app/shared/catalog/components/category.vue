@@ -220,14 +220,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  computedEager,
-  useBreakpoints,
-  useElementVisibility,
-  useLocalStorage,
-  watchDebounced,
-  whenever,
-} from "@vueuse/core";
+import { useBreakpoints, useElementVisibility, useLocalStorage, watchDebounced, whenever } from "@vueuse/core";
 import omit from "lodash/omit";
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -466,7 +459,7 @@ function getSelectedAddressArgs(): {
   };
 }
 
-const searchParams = computedEager<ProductsSearchParamsType>(() => ({
+const searchParams = computed<ProductsSearchParamsType>(() => ({
   ...getSelectedAddressArgs(),
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
