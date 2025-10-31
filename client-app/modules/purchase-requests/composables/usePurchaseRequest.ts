@@ -46,9 +46,13 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
   } = useUserQuote();
 
   async function fetchItems() {
+    const { storeId, cultureName, currencyCode, userId } = globals;
     if (purchaseRequest.value?.quoteId) {
       await fetchQuote({
-        ...globals,
+        storeId,
+        cultureName,
+        currencyCode,
+        userId,
         id: purchaseRequest.value.quoteId,
       });
     }
