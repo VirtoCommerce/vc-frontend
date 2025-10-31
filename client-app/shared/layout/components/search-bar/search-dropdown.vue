@@ -1,128 +1,132 @@
 <template>
   <div ref="dropdownElement" class="search-dropdown" :style="dropdownStyle" data-dropdown @focusout="handleFocusOut">
-    <!-- Search history and suggestions -->
-    <template v-if="(searchHistoryQueries.length && !searchHistoryLoading) || (suggestions.length && !loading)">
-      <header class="search-dropdown__head">
-        {{ $t("shared.layout.search_bar.suggestions_and_history_label") }}
-      </header>
+    <div class="search-dropdown__sidebar">
+      <!-- Search history and suggestions -->
+      <template v-if="(searchHistoryQueries.length && !searchHistoryLoading) || (suggestions.length && !loading)">
+        <header class="search-dropdown__head">
+          {{ $t("shared.layout.search_bar.suggestions_and_history_label") }}
+        </header>
 
-      <ul class="search-dropdown__list">
-        <VcMenuItem
-          v-for="query in searchHistoryQueries"
-          :key="query"
-          role="menuitem"
-          :label="query"
-          tag="li"
-          truncate
-          nowrap
-          color="secondary"
-          @click="$emit('historyClick', query)"
+        <ul class="search-dropdown__list">
+          <VcMenuItem
+            v-for="query in searchHistoryQueries"
+            :key="query"
+            role="menuitem"
+            :label="query"
+            tag="li"
+            truncate
+            nowrap
+            color="secondary"
+            @click="$emit('historyClick', query)"
+            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
+            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
+          >
+            <template #prepend>
+              <VcIcon name="history" size="md" />
+            </template>
+
+            <span v-html-safe="highlightSearchText(query, searchPhrase)" class="[word-break:break-word]" />
+          </VcMenuItem>
+
+          <VcMenuItem
+            v-for="suggestion in suggestions"
+            :key="suggestion.text"
+            :to="getSearchRoute(suggestion.text)"
+            role="menuitem"
+            tag="li"
+            truncate
+            color="secondary"
+            @click="$emit('hide')"
+            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
+            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
+          >
+            <span v-html-safe="suggestion.label" class="[word-break:break-word]" />
+          </VcMenuItem>
+        </ul>
+      </template>
+
+      <!-- Pages -->
+      <template v-if="pages.length">
+        <header class="search-dropdown__head">
+          {{ $t("shared.layout.search_bar.pages_label") }}
+        </header>
+
+        <ul class="search-dropdown__grid">
+          <VcMenuItem
+            v-for="(page, index) in pages"
+            :key="index"
+            class="w-full"
+            role="menuitem"
+            :to="page.permalink"
+            tag="li"
+            size="xs"
+            color="secondary"
+            @click="$emit('hide')"
+            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
+            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
+          >
+            <span v-html-safe="page.name" class="[word-break:break-word]" />
+          </VcMenuItem>
+        </ul>
+      </template>
+
+      <!-- Categories -->
+      <template v-if="categories.length">
+        <header class="search-dropdown__head">
+          {{ $t("shared.layout.search_bar.categories_label") }}
+        </header>
+
+        <ul v-for="(column, index) in categoriesColumns" :key="index" class="search-dropdown__grid">
+          <VcMenuItem
+            v-for="category in column"
+            :key="category.name"
+            :to="categoriesRoutes[category.id]"
+            tag="li"
+            role="menuitem"
+            color="secondary"
+            @click="$emit('hide')"
+            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
+            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
+          >
+            <span v-html-safe="category.name" class="[word-break:break-word]" />
+          </VcMenuItem>
+        </ul>
+      </template>
+    </div>
+
+    <div class="search-dropdown__content">
+      <!-- Products -->
+      <template v-if="products.length">
+        <header class="search-dropdown__head">
+          {{ $t("shared.layout.search_bar.products_label") }}
+        </header>
+
+        <div class="search-dropdown__products">
+          <SearchBarProductCard
+            v-for="product in products"
+            :key="product.id"
+            :product="product"
+            @link-click="
+              $emit('hide');
+              $emit('productSelect', product);
+            "
+            @changeFocus="$emit('focusChange', $event.direction, $event.event)"
+          />
+        </div>
+      </template>
+
+      <!-- Actions -->
+      <div v-if="total" class="search-dropdown__actions">
+        <VcButton
+          size="sm"
+          tabindex="0"
+          @click="$emit('search')"
           @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
           @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
         >
-          <template #prepend>
-            <VcIcon name="history" size="md" />
-          </template>
-
-          <span v-html-safe="highlightSearchText(query, searchPhrase)" class="[word-break:break-word]" />
-        </VcMenuItem>
-
-        <VcMenuItem
-          v-for="suggestion in suggestions"
-          :key="suggestion.text"
-          :to="getSearchRoute(suggestion.text)"
-          role="menuitem"
-          tag="li"
-          truncate
-          color="secondary"
-          @click="$emit('hide')"
-          @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
-          @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
-        >
-          <span v-html-safe="suggestion.label" class="[word-break:break-word]" />
-        </VcMenuItem>
-      </ul>
-    </template>
-
-    <!-- Pages -->
-    <template v-if="pages.length">
-      <header class="search-dropdown__head">
-        {{ $t("shared.layout.search_bar.pages_label") }}
-      </header>
-
-      <ul class="search-dropdown__grid">
-        <VcMenuItem
-          v-for="(page, index) in pages"
-          :key="index"
-          class="w-full"
-          role="menuitem"
-          :to="page.permalink"
-          tag="li"
-          size="xs"
-          color="secondary"
-          @click="$emit('hide')"
-          @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
-          @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
-        >
-          <span v-html-safe="page.name" class="[word-break:break-word]" />
-        </VcMenuItem>
-      </ul>
-    </template>
-
-    <!-- Categories -->
-    <template v-if="categories.length">
-      <header class="search-dropdown__head">
-        {{ $t("shared.layout.search_bar.categories_label") }}
-      </header>
-
-      <ul v-for="(column, index) in categoriesColumns" :key="index" class="search-dropdown__grid">
-        <VcMenuItem
-          v-for="category in column"
-          :key="category.name"
-          :to="categoriesRoutes[category.id]"
-          tag="li"
-          role="menuitem"
-          color="secondary"
-          @click="$emit('hide')"
-          @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
-          @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
-        >
-          <span v-html-safe="category.name" class="[word-break:break-word]" />
-        </VcMenuItem>
-      </ul>
-    </template>
-
-    <!-- Products -->
-    <template v-if="products.length">
-      <header class="search-dropdown__head">
-        {{ $t("shared.layout.search_bar.products_label") }}
-      </header>
-
-      <div class="search-dropdown__products">
-        <SearchBarProductCard
-          v-for="product in products"
-          :key="product.id"
-          :product="product"
-          @link-click="
-            $emit('hide');
-            $emit('productSelect', product);
-          "
-          @changeFocus="$emit('focusChange', $event.direction, $event.event)"
-        />
+          {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
+        </VcButton>
       </div>
-    </template>
-
-    <!-- Actions -->
-    <div v-if="total" class="search-dropdown__actions">
-      <VcButton
-        size="sm"
-        tabindex="0"
-        @click="$emit('search')"
-        @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
-        @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
-      >
-        {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
-      </VcButton>
     </div>
 
     <!-- Not found -->
@@ -196,7 +200,15 @@ defineExpose({
 
 <style lang="scss">
 .search-dropdown {
-  @apply absolute left-0 top-[3.45rem] z-20 flex w-full min-w-[640px] max-w-[100vw] flex-col overflow-y-auto rounded bg-additional-50 shadow-lg;
+  @apply z-20 bg-additional-50;
+
+  @media (width < theme("screens.md")) {
+    @apply fixed top-16 inset-x-0 bottom-0;
+  }
+
+  @media (min-width: theme("screens.md")) {
+    @apply absolute left-0 top-[3.45rem] flex w-full min-w-[640px] max-w-[100vw] overflow-y-auto rounded-[--vc-radius] shadow-lg;
+  }
 
   &__head {
     @apply bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral-600;
