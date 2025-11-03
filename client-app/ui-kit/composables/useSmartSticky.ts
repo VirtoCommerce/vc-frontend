@@ -25,7 +25,6 @@ interface ISmartStickyOptions {
 }
 
 interface IDimensions {
-  translate: number;
   topSpacing: number;
   bottomSpacing: number;
   elementHeight: number;
@@ -55,9 +54,9 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   const isActive = ref(false);
   const isStuckTop = ref(false);
   const isStuckBottom = ref(false);
+  const translate = ref(0);
 
   const dimensions = ref<IDimensions>({
-    translate: 0,
     topSpacing: 0,
     bottomSpacing: 0,
     elementHeight: 0,
@@ -81,7 +80,11 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       return window.pageYOffset || document.documentElement.scrollTop;
     }
 
-    return (scrollEl as HTMLElement).scrollTop;
+    if (scrollEl instanceof HTMLElement) {
+      return scrollEl.scrollTop;
+    }
+
+    return 0;
   }
 
   function parseCssValue(value: string): number {
@@ -300,7 +303,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
           top: `${dims.topSpacing}px`,
           bottom: "auto",
         };
-        dims.translate = elementTop - containerTop;
+        translate.value = elementTop - containerTop;
         break;
       }
 
@@ -312,7 +315,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
           top: "auto",
           bottom: `${dims.bottomSpacing}px`,
         };
-        dims.translate = elementTop - containerTop;
+        translate.value = elementTop - containerTop;
         break;
       }
 
@@ -321,7 +324,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
         style.value = {
           ...baseStyle,
           position: "absolute",
-          top: `${dims.translate}px`,
+          top: `${translate.value}px`,
           bottom: "auto",
         };
         break;
@@ -337,7 +340,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
           top: `${bottomTop}px`,
           bottom: "auto",
         };
-        dims.translate = bottomTop;
+        translate.value = bottomTop;
         break;
       }
 
@@ -347,7 +350,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
         style.value = {
           position: "static",
         };
-        dims.translate = 0;
+        translate.value = 0;
         break;
       }
     }
@@ -361,35 +364,41 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     isActive.value = false;
     isStuckTop.value = false;
     isStuckBottom.value = false;
-    dimensions.value.translate = 0;
+    translate.value = 0;
   }
 
   const update = useThrottleFn(calculatePosition, throttleDelay);
   const updateImmediate = calculatePosition;
 
-  function destroy() {
-    const scrollEl = toValue(scrollContainer);
-
-    if (scrollEl === window) {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    } else {
-      (scrollEl as HTMLElement).removeEventListener("scroll", update);
-    }
-
-    resetPosition();
-  }
-
-  onMounted(() => {
+  function attachListeners() {
     const scrollEl = toValue(scrollContainer);
 
     if (scrollEl === window) {
       window.addEventListener("scroll", update, { passive: true });
       window.addEventListener("resize", update);
-    } else {
-      (scrollEl as HTMLElement).addEventListener("scroll", update, { passive: true });
+    } else if (scrollEl instanceof HTMLElement) {
+      scrollEl.addEventListener("scroll", update, { passive: true });
     }
+  }
 
+  function detachListeners() {
+    const scrollEl = toValue(scrollContainer);
+
+    if (scrollEl === window) {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    } else if (scrollEl instanceof HTMLElement) {
+      scrollEl.removeEventListener("scroll", update);
+    }
+  }
+
+  function destroy() {
+    detachListeners();
+    resetPosition();
+  }
+
+  onMounted(() => {
+    attachListeners();
     void update();
   });
 
