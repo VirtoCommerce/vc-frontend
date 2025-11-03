@@ -36,6 +36,20 @@ interface IDimensions {
   lastViewportTop: number;
 }
 
+interface IAffixTypeParams {
+  isTaller: boolean;
+  isScrollingDown: boolean;
+  isScrollingUp: boolean;
+  containerTop: number;
+  containerBottom: number;
+  viewportTop: number;
+  viewportHeight: number;
+  elementHeight: number;
+  elementTop: number;
+  topSpacing: number;
+  bottomSpacing: number;
+}
+
 const BOUNDING_OPTIONS = { windowResize: true, immediate: true };
 
 const DEFAULT_THROTTLE_DELAY = 50;
@@ -110,6 +124,47 @@ function checkScrollingUp(
 
   if (elementTop <= containerTop) {
     return AFFIX_TYPES.STATIC;
+  }
+
+  return AFFIX_TYPES.ABSOLUTE;
+}
+
+function getAffixType(params: IAffixTypeParams): AffixType {
+  const {
+    isTaller,
+    isScrollingDown,
+    isScrollingUp,
+    containerTop,
+    containerBottom,
+    viewportTop,
+    viewportHeight,
+    elementHeight,
+    elementTop,
+    topSpacing,
+    bottomSpacing,
+  } = params;
+
+  const viewportBottom = viewportTop + viewportHeight;
+  const elementBottom = elementTop + elementHeight;
+
+  if (!isTaller) {
+    return checkShortElement(viewportTop, topSpacing, containerTop, elementHeight, containerBottom);
+  }
+
+  if (elementTop < containerTop) {
+    return AFFIX_TYPES.STATIC;
+  }
+
+  if (elementBottom > containerBottom) {
+    return AFFIX_TYPES.STATIC_BOTTOM;
+  }
+
+  if (isScrollingDown) {
+    return checkScrollingDown(elementBottom, viewportBottom, bottomSpacing, elementHeight, containerBottom);
+  }
+
+  if (isScrollingUp) {
+    return checkScrollingUp(elementTop, viewportTop, topSpacing, containerTop);
   }
 
   return AFFIX_TYPES.ABSOLUTE;
@@ -215,8 +270,8 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     const isScrollingDown = viewportTop > dims.lastViewportTop;
     const isScrollingUp = viewportTop < dims.lastViewportTop;
 
-    const affixType = getAffixType(
-      isElementTallerThanViewport,
+    const affixType = getAffixType({
+      isTaller: isElementTallerThanViewport,
       isScrollingDown,
       isScrollingUp,
       containerTop,
@@ -227,7 +282,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       elementTop,
       topSpacing,
       bottomSpacing,
-    );
+    });
 
     applyStyles(affixType, dims, elementTop, containerTop);
 
@@ -236,45 +291,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     isActive.value = affixType !== AFFIX_TYPES.STATIC;
 
     dims.lastViewportTop = viewportTop;
-  }
-
-  function getAffixType(
-    isTaller: boolean,
-    isScrollingDown: boolean,
-    isScrollingUp: boolean,
-    containerTop: number,
-    containerBottom: number,
-    viewportTop: number,
-    viewportHeight: number,
-    elementHeight: number,
-    elementTop: number,
-    topSpacing: number,
-    bottomSpacing: number,
-  ): AffixType {
-    const viewportBottom = viewportTop + viewportHeight;
-    const elementBottom = elementTop + elementHeight;
-
-    if (!isTaller) {
-      return checkShortElement(viewportTop, topSpacing, containerTop, elementHeight, containerBottom);
-    }
-
-    if (elementTop < containerTop) {
-      return AFFIX_TYPES.STATIC;
-    }
-
-    if (elementBottom > containerBottom) {
-      return AFFIX_TYPES.STATIC_BOTTOM;
-    }
-
-    if (isScrollingDown) {
-      return checkScrollingDown(elementBottom, viewportBottom, bottomSpacing, elementHeight, containerBottom);
-    }
-
-    if (isScrollingUp) {
-      return checkScrollingUp(elementTop, viewportTop, topSpacing, containerTop);
-    }
-
-    return AFFIX_TYPES.ABSOLUTE;
   }
 
   function applyStyles(affixType: AffixType, dims: IDimensions, elementTop: number, containerTop: number) {
