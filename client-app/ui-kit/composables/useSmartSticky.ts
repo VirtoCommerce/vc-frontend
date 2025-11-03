@@ -70,8 +70,8 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     lastViewportTop: 0,
   });
 
-  const { height: containerHeight } = useElementBounding(container, BOUNDING_OPTIONS);
-  const { height: stickyHeight } = useElementBounding(stickyElement, BOUNDING_OPTIONS);
+  const boundingContainer = useElementBounding(container, BOUNDING_OPTIONS);
+  const boundingSticky = useElementBounding(stickyElement, BOUNDING_OPTIONS);
 
   const isEnabled = computed(() => toValue(enabled));
 
@@ -105,13 +105,11 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     dimensions.value.viewportHeight = window.innerHeight;
     dimensions.value.viewportTop = getScrollPosition();
 
-    const containerRect = containerEl.getBoundingClientRect();
-    dimensions.value.containerTop = containerRect.top + dimensions.value.viewportTop;
-    dimensions.value.containerHeight = containerRect.height;
+    dimensions.value.containerTop = boundingContainer.top.value + dimensions.value.viewportTop;
+    dimensions.value.containerHeight = boundingContainer.height.value;
 
-    const stickyRect = element.getBoundingClientRect();
-    dimensions.value.elementHeight = stickyRect.height;
-    dimensions.value.elementWidth = stickyRect.width;
+    dimensions.value.elementHeight = boundingSticky.height.value;
+    dimensions.value.elementWidth = boundingSticky.width.value;
 
     const computedStyle = getComputedStyle(element);
     const topVar = computedStyle.getPropertyValue(topOffsetVar).trim();
@@ -148,8 +146,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     } = dims;
 
     const containerBottom = cTop + cHeight;
-    const elementRect = element.getBoundingClientRect();
-    const elementTop = elementRect.top + vTop;
+    const elementTop = boundingSticky.top.value + vTop;
 
     const isElementTallerThanViewport = eHeight + tSpacing + bSpacing > vHeight;
 
@@ -408,7 +405,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     destroy();
   });
 
-  watch([stickyHeight, containerHeight], updateImmediate);
+  watch([boundingSticky.height, boundingContainer.height], updateImmediate);
 
   watch(isEnabled, (value) => {
     if (value) {
