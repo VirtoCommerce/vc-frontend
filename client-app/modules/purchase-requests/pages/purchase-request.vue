@@ -18,7 +18,7 @@
       </template>
     </VcEmptyView>
 
-    <VcLayout v-else sidebar-position="right" sticky-sidebar>
+    <VcLayout v-else sidebar-position="right" sticky>
       <VcWidget :title="$t('purchase_request.files_section.title')" prepend-icon="document-add" size="lg">
         <VcFileUploader
           class="h-full"

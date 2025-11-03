@@ -77,7 +77,7 @@
     </template>
 
     <template v-else>
-      <VcLayout sidebar-position="right" sticky-sidebar>
+      <VcLayout sidebar-position="right" sticky>
         <ProductsSection
           :grouped="!!$cfg.line_items_group_by_vendor_enabled"
           :items="cart.items"

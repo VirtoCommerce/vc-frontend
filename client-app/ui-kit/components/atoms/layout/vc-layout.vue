@@ -3,7 +3,7 @@
     :class="[
       'vc-layout',
       `vc-layout--sidebar-position--${sidebarPosition}`,
-      { 'vc-layout--sticky-sidebar': stickySidebar },
+      { 'vc-layout--sticky': sticky },
     ]"
   >
     <div ref="container" class="vc-layout__container">
@@ -48,7 +48,7 @@ import { useSmartSticky } from "../../../composables/useSmartSticky";
 
 interface IProps {
   sidebarPosition?: "left" | "right";
-  stickySidebar?: boolean;
+  sticky?: boolean;
   sidebarAriaLabel?: string;
 }
 
@@ -70,36 +70,27 @@ const content = ref<HTMLElement | null>(null);
 const { height: sidebarHeight } = useElementBounding(sidebar);
 const { height: contentHeight } = useElementBounding(content);
 
-const shouldStickSidebar = computed(() => {
-  if (!props.stickySidebar || isMobile.value) {
-    return false;
-  }
+const isStickyEnabled = computed(() => props.sticky && !isMobile.value);
 
-  return sidebarHeight.value <= contentHeight.value;
-});
+const shouldStickSidebar = computed(() => isStickyEnabled.value && sidebarHeight.value <= contentHeight.value);
+const shouldStickContent = computed(() => isStickyEnabled.value && contentHeight.value < sidebarHeight.value);
 
-const shouldStickContent = computed(() => {
-  if (!props.stickySidebar || isMobile.value) {
-    return false;
-  }
-
-  return contentHeight.value < sidebarHeight.value;
-});
-
-const { style: sidebarStyle } = useSmartSticky({
+const stickyOptions = {
   container,
-  stickyElement: sidebar,
-  enabled: shouldStickSidebar,
   topOffsetVar: "--sticky-offset-top",
   bottomOffsetVar: "--sticky-offset-bottom",
+};
+
+const { style: sidebarStyle } = useSmartSticky({
+  ...stickyOptions,
+  stickyElement: sidebar,
+  enabled: shouldStickSidebar,
 });
 
 const { style: contentStyle } = useSmartSticky({
-  container,
+  ...stickyOptions,
   stickyElement: content,
   enabled: shouldStickContent,
-  topOffsetVar: "--sticky-offset-top",
-  bottomOffsetVar: "--sticky-offset-bottom",
 });
 </script>
 
@@ -107,7 +98,7 @@ const { style: contentStyle } = useSmartSticky({
 .vc-layout {
   $left: "";
   $right: "";
-  $stickySidebar: "";
+  $sticky: "";
 
   // useSmartSticky require "px"
   --sticky-offset-top: var(--vc-layout-sidebar-offset-top, 0px);
@@ -123,8 +114,8 @@ const { style: contentStyle } = useSmartSticky({
     }
   }
 
-  &--sticky-sidebar {
-    $stickySidebar: &;
+  &--sticky {
+    $sticky: &;
   }
 
   &__container {
