@@ -1,4 +1,4 @@
-import { useElementBounding, useThrottleFn } from "@vueuse/core";
+import { useCssVar, useElementBounding, useThrottleFn } from "@vueuse/core";
 import { computed, onBeforeUnmount, onMounted, ref, toValue, watch } from "vue";
 import type { CSSProperties, MaybeRefOrGetter } from "vue";
 
@@ -53,16 +53,6 @@ interface IAffixTypeParams {
 const BOUNDING_OPTIONS = { windowResize: true, immediate: true };
 
 const DEFAULT_THROTTLE_DELAY = 50;
-
-/**
- * Parses positive pixel values from CSS custom properties.
- * Supports only simple numeric values (e.g., "10px", "5.5").
- * Does not support calc(), var(), negative values, or non-px units.
- */
-function parseCssValue(value: string): number {
-  const match = /(\d+(?:\.\d+)?)/.exec(value);
-  return match ? Number(match[0]) : 0;
-}
 
 function checkShortElement(
   viewportTop: number,
@@ -203,6 +193,13 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   const boundingContainer = useElementBounding(container, BOUNDING_OPTIONS);
   const boundingSticky = useElementBounding(stickyElement, BOUNDING_OPTIONS);
 
+  const stickyElementResolved = computed(() => toValue(stickyElement));
+  const topOffsetCssVar = useCssVar(topOffsetVar, stickyElementResolved);
+  const bottomOffsetCssVar = useCssVar(bottomOffsetVar, stickyElementResolved);
+
+  const topSpacingResolved = computed(() => parseFloat(topOffsetCssVar.value ?? "0") || 0);
+  const bottomSpacingResolved = computed(() => parseFloat(bottomOffsetCssVar.value ?? "0") || 0);
+
   const isEnabled = computed(() => toValue(enabled));
 
   function getScrollPosition(): number {
@@ -235,12 +232,8 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     dimensions.value.elementHeight = boundingSticky.height.value;
     dimensions.value.elementWidth = boundingSticky.width.value;
 
-    const computedStyle = getComputedStyle(element);
-    const topVar = computedStyle.getPropertyValue(topOffsetVar).trim();
-    const bottomVar = computedStyle.getPropertyValue(bottomOffsetVar).trim();
-
-    dimensions.value.topSpacing = topVar ? parseCssValue(topVar) : 0;
-    dimensions.value.bottomSpacing = bottomVar ? parseCssValue(bottomVar) : 0;
+    dimensions.value.topSpacing = topSpacingResolved.value;
+    dimensions.value.bottomSpacing = bottomSpacingResolved.value;
   }
 
   function calculatePosition() {

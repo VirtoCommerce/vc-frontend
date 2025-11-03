@@ -1,11 +1,5 @@
 <template>
-  <div
-    :class="[
-      'vc-layout',
-      `vc-layout--sidebar-position--${sidebarPosition}`,
-      { 'vc-layout--sticky': sticky },
-    ]"
-  >
+  <div :class="['vc-layout', `vc-layout--sidebar-position--${sidebarPosition}`, { 'vc-layout--sticky': sticky }]">
     <div ref="container" class="vc-layout__container">
       <!-- Sidebar first when on the left -->
       <aside
