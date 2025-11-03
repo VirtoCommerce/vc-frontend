@@ -20,7 +20,7 @@
 
       <!-- Single content block -->
       <div class="vc-layout__content-container">
-        <div class="vc-layout__content" data-test-id="content">
+        <div ref="content" class="vc-layout__content" :style="contentStyle" data-test-id="content">
           <slot />
         </div>
       </div>
@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints } from "@vueuse/core";
+import { useBreakpoints, useElementBounding } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { BREAKPOINTS } from "@/core/constants";
@@ -65,11 +65,39 @@ const sidebarLabel = computed(() => props.sidebarAriaLabel || t("ui_kit.accessib
 
 const container = ref<HTMLElement | null>(null);
 const sidebar = ref<HTMLElement | null>(null);
+const content = ref<HTMLElement | null>(null);
+
+const { height: sidebarHeight } = useElementBounding(sidebar);
+const { height: contentHeight } = useElementBounding(content);
+
+const shouldStickSidebar = computed(() => {
+  if (!props.stickySidebar || isMobile.value) {
+    return false;
+  }
+
+  return sidebarHeight.value <= contentHeight.value;
+});
+
+const shouldStickContent = computed(() => {
+  if (!props.stickySidebar || isMobile.value) {
+    return false;
+  }
+
+  return contentHeight.value < sidebarHeight.value;
+});
 
 const { style: sidebarStyle } = useSmartSticky({
   container,
   stickyElement: sidebar,
-  enabled: computed(() => props.stickySidebar && !isMobile.value),
+  enabled: shouldStickSidebar,
+  topOffsetVar: "--sticky-offset-top",
+  bottomOffsetVar: "--sticky-offset-bottom",
+});
+
+const { style: contentStyle } = useSmartSticky({
+  container,
+  stickyElement: content,
+  enabled: shouldStickContent,
   topOffsetVar: "--sticky-offset-top",
   bottomOffsetVar: "--sticky-offset-bottom",
 });
@@ -173,10 +201,11 @@ const { style: sidebarStyle } = useSmartSticky({
   }
 
   &__content-container {
-    @apply contents;
+    @apply relative contents transition-[position] duration-300;
 
     @media (min-width: theme("screens.md")) {
-      @apply block w-0 flex-grow;
+      @apply flex items-start w-0 flex-grow;
+      overflow-anchor: none;
     }
   }
 
@@ -184,7 +213,7 @@ const { style: sidebarStyle } = useSmartSticky({
     @apply contents;
 
     @media (min-width: theme("screens.md")) {
-      @apply block;
+      @apply block w-full transition-shadow duration-200;
     }
 
     & > * {
