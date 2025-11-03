@@ -6,26 +6,21 @@
       { 'vc-layout--sticky-sidebar': stickySidebar },
     ]"
   >
-    <div class="vc-layout__container">
+    <div ref="container" class="vc-layout__container">
       <!-- Sidebar first when on the left -->
       <aside
         v-if="$slots.sidebar && sidebarPosition === 'left'"
         class="vc-layout__sidebar-container"
         :aria-label="sidebarLabel"
       >
-        <div
-          ref="sidebar"
-          class="vc-layout__sidebar"
-          :style="stickySidebar && !isMobile ? sidebarStyle : {}"
-          data-test-id="sidebar"
-        >
+        <div ref="sidebar" class="vc-layout__sidebar" :style="sidebarStyle" data-test-id="sidebar">
           <slot name="sidebar" />
         </div>
       </aside>
 
       <!-- Single content block -->
       <div class="vc-layout__content-container">
-        <div ref="content" class="vc-layout__content" data-test-id="content">
+        <div class="vc-layout__content" data-test-id="content">
           <slot />
         </div>
       </div>
@@ -39,7 +34,12 @@
         <div
           ref="sidebar"
           class="vc-layout__sidebar"
-          :style="stickySidebar && !isMobile ? sidebarStyle : {}"
+          :style="sidebarStyle"
+          :class="{
+            'vc-layout__sidebar--stuck-top': isStuckTop,
+            'vc-layout__sidebar--stuck-bottom': isStuckBottom,
+            'vc-layout__sidebar--active': isStickyActive,
+          }"
           data-test-id="sidebar"
         >
           <slot name="sidebar" />
@@ -54,7 +54,7 @@ import { useBreakpoints } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { BREAKPOINTS } from "@/core/constants";
-import { useStickySidebar } from "../../../composables/useStickySidebar";
+import { useSmartSticky } from "../../../composables/useSmartSticky";
 
 interface IProps {
   sidebarPosition?: "left" | "right";
@@ -73,12 +73,26 @@ const isMobile = breakpoints.smaller("md");
 
 const sidebarLabel = computed(() => props.sidebarAriaLabel || t("ui_kit.accessibility.sidebar"));
 
+const container = ref<HTMLElement | null>(null);
 const sidebar = ref<HTMLElement | null>(null);
-const content = ref<HTMLElement | null>(null);
 
-const { sidebarStyle } = useStickySidebar({
-  content,
-  sidebar,
+const {
+  style: sidebarStyle,
+  isStuckTop,
+  isStuckBottom,
+  isActive: isStickyActive,
+} = useSmartSticky({
+  container,
+  stickyElement: sidebar,
+  enabled: computed(() => props.stickySidebar && !isMobile.value),
+  topOffsetVar: "--sticky-offset-top",
+  bottomOffsetVar: "--sticky-offset-bottom",
+});
+
+defineExpose({
+  isStuckTop,
+  isStuckBottom,
+  isStickyActive,
 });
 </script>
 
@@ -88,9 +102,9 @@ const { sidebarStyle } = useStickySidebar({
   $right: "";
   $stickySidebar: "";
 
-  //useStickySidebar requires "px"
-  --sidebar-offset-top: var(--vc-layout-sidebar-offset-top);
-  --sidebar-offset-bottom: var(--vc-layout-sidebar-offset-bottom, 20px);
+  // useSmartSticky require "px"
+  --sticky-offset-top: var(--vc-layout-sidebar-offset-top, 0px);
+  --sticky-offset-bottom: var(--vc-layout-sidebar-offset-bottom, 20px);
 
   &--sidebar-position {
     &--left {
@@ -151,17 +165,11 @@ const { sidebarStyle } = useStickySidebar({
     @apply contents;
 
     @media (min-width: theme("screens.md")) {
-      @apply block;
+      @apply block transition-shadow duration-200;
     }
 
     & > * {
       @apply order-[2];
-    }
-
-    #{$stickySidebar} & {
-      @media (min-width: theme("screens.md")) {
-        @apply sticky top-[--sidebar-offset-top] bottom-[--sidebar-offset-bottom];
-      }
     }
 
     #{$left} & {
