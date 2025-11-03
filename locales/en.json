@@ -79,7 +79,8 @@
       "show_less": "Show less",
       "expand_all": "Expand all",
       "all_products": "All products",
-      "buy_now": "Buy now"
+      "buy_now": "Buy now",
+      "see_all": "See all"
     },
     "labels": {
       "actions": "Actions",
@@ -335,6 +336,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Saved for later",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -821,10 +823,14 @@
         "year_label": "Year",
         "year_placeholder": "YY",
         "security_code_label": "Security code",
+        "pay_now_button": "Pay now",
         "errors": {
+          "card_number": "Provide a valid credit card number",
           "month": "Provide a valid expiration month",
           "year": "Provide a valid expiration year",
-          "security_code": "Invalid security code."
+          "expiration_date": "Expiration date must be in the future",
+          "security_code": "Provide a valid security code",
+          "cardholder_name": "Provide a valid cardholder name"
         },
         "user_error_message": "Can't initialize payment. Please try again later or use another payment method",
         "payment_unavailable": "Payment method is unavailable. Please try again later"
@@ -834,27 +840,15 @@
         "privacy_policy_link": "Privacy policy",
         "accept_terms_text": "By placing an order, you accept the terms of our",
         "processing_personal_data_text": "and agree that we may process your personal data as per our",
-        "pay_now_button": "Pay now",
         "errors": {
-          "number": "Provide a valid credit card number",
-          "month": "Provide a valid expiration month",
-          "year": "Provide a valid expiration year",
-          "expiration_date": "Expiration date must be in the future",
-          "security_code": "Provide a valid security code",
-          "cardholder_name": "Provide a valid cardholder name",
           "incorrect_payment_method": "Incorrect payment method"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Pay now"
       },
       "manual": {
         "text": "The payment method you selected does not support online payment. Select another method or "
       },
       "redirection": {
         "text": "After you click <strong>{0}</strong>, you will be redirected to the third-party payment service",
-        "pay_now_button": "Pay now",
-        "try_again_button": "Try again",
         "errors": {
           "missing_link": "Redirect link is missing",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1318,6 +1312,7 @@
       "recently_browsed_products": "Recently browsed",
       "save_for_later": "Save for later",
       "saved_for_later": "Saved for later",
+      "saved_for_later_not_found": "You haven't saved any products for later",
       "move_to_cart": "Move to cart"
     },
     "checkout": {

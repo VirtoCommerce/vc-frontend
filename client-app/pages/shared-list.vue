@@ -6,19 +6,7 @@
 
     <div ref="listElement" class="shared-list__content">
       <!-- Skeletons -->
-      <template v-if="listLoading">
-        <div v-if="isMobile" class="shared-list__skeleton-mobile">
-          <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
-        </div>
-
-        <div v-else class="shared-list__skeleton-desktop">
-          <WishlistProductItemSkeleton
-            v-for="i in actualPageRowsCount"
-            :key="i"
-            class="shared-list__skeleton-desktop-item"
-          />
-        </div>
-      </template>
+      <WishlistProductsSkeleton v-if="listLoading" :itemsCount="actualPageRowsCount" />
 
       <!-- List details -->
       <template v-else-if="!listLoading && !!list?.items?.length">
@@ -74,7 +62,6 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import cloneDeep from "lodash/cloneDeep";
 import keyBy from "lodash/keyBy";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
@@ -85,11 +72,9 @@ import { PAGE_LIMIT } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { prepareLineItem } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
-import { ProductSkeletonGrid } from "@/shared/catalog";
-import { useWishlists, WishlistLineItems, WishlistProductItemSkeleton } from "@/shared/wishlists";
+import { useWishlists, WishlistLineItems, WishlistProductsSkeleton, WishlistSummary } from "@/shared/wishlists";
 import type { LineItemType, Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
-import WishlistSummary from "@/shared/wishlists/components/wishlist-summary.vue";
 
 const props = defineProps<IProps>();
 
@@ -108,7 +93,6 @@ const { cart } = useShortCart();
 const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
 });
-const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
@@ -120,7 +104,6 @@ const wishlistListProperties = computed(() => ({
   related_id: list.value?.id,
   related_type: "wishlist",
 }));
-const isMobile = breakpoints.smaller("lg");
 
 const listElement = ref<HTMLElement | undefined>();
 const pendingItems = ref<Record<string, boolean>>({});
@@ -173,18 +156,6 @@ watchEffect(() => {
 
   &__content {
     @apply mt-5 w-full;
-  }
-
-  &__skeleton-mobile {
-    @apply grid grid-cols-2 gap-x-4 gap-y-6;
-  }
-
-  &__skeleton-desktop {
-    @apply flex flex-col rounded border bg-additional-50 shadow-sm;
-  }
-
-  &__skeleton-desktop-item {
-    @apply even:bg-neutral-50;
   }
 
   &__items {
