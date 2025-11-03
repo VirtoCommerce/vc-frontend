@@ -38,11 +38,13 @@ interface IDimensions {
 
 const BOUNDING_OPTIONS = { windowResize: true, immediate: true };
 
+const DEFAULT_THROTTLE_DELAY = 50;
+
 export function useSmartSticky(options: ISmartStickyOptions) {
   const {
     container,
     stickyElement,
-    throttleDelay = 50,
+    throttleDelay = DEFAULT_THROTTLE_DELAY,
     topOffsetVar = "--sticky-offset-top",
     bottomOffsetVar = "--sticky-offset-bottom",
     enabled = true,
@@ -408,13 +410,12 @@ export function useSmartSticky(options: ISmartStickyOptions) {
 
   watch([stickyHeight, containerHeight], updateImmediate);
 
-  watch(isEnabled, (newValue) => {
-    if (newValue) {
+  watch(isEnabled, (value) => {
+    if (value) {
       void update();
-      return;
+    } else {
+      resetPosition();
     }
-
-    resetPosition();
   });
 
   return {
