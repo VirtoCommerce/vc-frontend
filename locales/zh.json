@@ -1370,7 +1370,8 @@
       "products_icon": "产品图标",
       "show_all_results": "显示所有结果",
       "load_previous_page": "加载上一页",
-      "load_next_page": "加载下一页"
+      "load_next_page": "加载下一页",
+      "available_variations": "{0} 个可用变体"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

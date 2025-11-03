@@ -1370,7 +1370,8 @@
       "products_icon": "Produktikon",
       "show_all_results": "Vis alle resultater",
       "load_previous_page": "Last inn forrige side",
-      "load_next_page": "Last inn neste side"
+      "load_next_page": "Last inn neste side",
+      "available_variations": "{0} tilgjengelige varianter"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

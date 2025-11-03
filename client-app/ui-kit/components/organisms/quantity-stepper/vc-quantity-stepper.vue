@@ -228,19 +228,17 @@ watch(
   }
 
   @at-root .vc-product-card {
-    #{$self} {
+    > .vc-product-card__wrapper #{$self} {
       grid-area: add-to-cart;
     }
 
     &--view-mode {
-      &--grid {
-        #{$self} {
-          @apply mt-3 order-7;
-        }
+      &--grid > .vc-product-card__wrapper #{$self} {
+        @apply mt-3 order-7;
       }
 
       &--list {
-        #{$self} {
+        > .vc-product-card__wrapper #{$self} {
           @apply mt-3;
 
           @container (min-width: theme("containers.sm")) {
@@ -258,7 +256,7 @@ watch(
       }
 
       &--item {
-        #{$self} {
+        > .vc-product-card__wrapper #{$self} {
           @apply mt-3 w-32 self-start;
 
           @container (min-width: theme("containers.xl")) {

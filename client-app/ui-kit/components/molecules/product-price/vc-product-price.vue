@@ -106,19 +106,19 @@ defineProps<IProps>();
   }
 
   @at-root .vc-product-card {
-    #{$self} {
+    > .vc-product-card__wrapper #{$self} {
       grid-area: price;
     }
 
     &--view-mode {
-      &--grid #{$self} {
+      &--grid > .vc-product-card__wrapper #{$self} {
         --font-size: theme("fontSize.lg");
 
         @apply mt-3 order-6;
       }
 
       &--list {
-        #{$self} {
+        > .vc-product-card__wrapper #{$self} {
           --font-size: theme("fontSize.lg");
 
           @container (max-width: theme("containers.xl")) {
@@ -148,7 +148,7 @@ defineProps<IProps>();
       }
 
       &--item {
-        #{$self} {
+        > .vc-product-card__wrapper #{$self} {
           @apply hidden;
 
           @container (min-width: theme("containers.4xl")) {
@@ -158,7 +158,7 @@ defineProps<IProps>();
           }
         }
 
-        .vc-product-total #{$self} {
+        .vc-product-total > .vc-product-card__wrapper #{$self} {
           --font-size: theme("fontSize.base");
 
           @apply flex;

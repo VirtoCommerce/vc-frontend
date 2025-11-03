@@ -80,7 +80,7 @@
             :sort="variationSortInfo"
             :model="productVariationsBlock"
             :fetching-variations="fetchingVariations"
-            :page-number="variationsSearchParams.page"
+            :page-number="variationsPageNumber"
             :pages-count="variationsPagesCount"
             :products-filters="productsFilters"
             :has-selected-filters="hasSelectedFacets"
@@ -169,10 +169,10 @@ import {
   buildBreadcrumbs,
   generateFilterExpressionFromFilters,
   getFilterExpression,
-  getSortingExpression,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
   getFilterExpressionForPurchasedBefore,
+  getSortingExpression,
   getUrlSearchParam,
 } from "@/core/utilities";
 import {
@@ -190,6 +190,7 @@ import {
   useRecommendedProducts,
   useConfigurableProduct,
   useProductPickupLocations,
+  useProductVariations,
 } from "@/shared/catalog";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import {
@@ -199,12 +200,7 @@ import {
 import { FloatingBar } from "@/shared/common";
 import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
 import type { ISortInfo } from "@/core/types";
-import type {
-  FiltersDisplayOrderType,
-  LocalConfigurationType,
-  ProductsFiltersType,
-  ProductsSearchParamsType,
-} from "@/shared/catalog";
+import type { FiltersDisplayOrderType, LocalConfigurationType, ProductsFiltersType } from "@/shared/catalog";
 import type { IPageTemplate } from "@/shared/static-content";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
@@ -298,38 +294,43 @@ const templateLayout = computed(() => {
   return undefined;
 });
 
-const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:product,variation`);
 const variationSortInfo = ref<ISortInfo>({
   column: "name",
   direction: SortDirection.Ascending,
 });
 
-const initialVariationsSearchParamsDefault = {
-  page: 1,
-  itemsPerPage: 50,
-  sort: getSortingExpression(variationSortInfo.value),
-  filter: getFilterExpression([
+const isB2cLayout = computed(() => templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c);
+
+const variationsItemsPerPage = computed(() => (isB2cLayout.value ? B2C_VARIATIONS_ITEMS_PER_PAGE : 50));
+
+const variationsSort = computed(() => (isB2cLayout.value ? undefined : getSortingExpression(variationSortInfo.value)));
+
+const variationsFilterExpression = computed(() => `productfamilyid:${productId.value} is:product,variation`);
+
+const variationsFilterBuilder = () => {
+  if (isB2cLayout.value) {
+    return getFilterExpression([
+      variationsFilterExpression.value,
+      getFilterExpressionForAvailableIn([]),
+      getFilterExpressionForInStock(true),
+    ]);
+  }
+
+  return getFilterExpression([
     variationsFilterExpression.value,
     getFilterExpressionForAvailableIn(productsFilters.value.branches),
     getFilterExpressionForInStock(productsFilters.value.inStock),
     getFilterExpressionForPurchasedBefore(productsFilters.value.purchasedBefore),
-  ]),
+  ]);
 };
 
-const initialVariationsSearchParamsB2c = {
-  page: 1,
-  itemsPerPage: B2C_VARIATIONS_ITEMS_PER_PAGE,
-  filter: getFilterExpression([
-    variationsFilterExpression.value,
-    getFilterExpressionForAvailableIn([]),
-    getFilterExpressionForInStock(true),
-  ]),
-};
-
-const isB2cLayout = computed(() => templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c);
-
-const variationsSearchParams = ref<ProductsSearchParamsType>({
-  ...(isB2cLayout.value ? initialVariationsSearchParamsB2c : initialVariationsSearchParamsDefault),
+const { variationsSearchParams, variationsPageNumber, updateSearchParams } = useProductVariations({
+  productsFilters,
+  itemsPerPage: variationsItemsPerPage,
+  sort: variationsSort,
+  variationsFilterExpression,
+  customFilterBuilder: variationsFilterBuilder,
+  customFilterBuilderDeps: [isB2cLayout, productsFilters],
 });
 
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
@@ -382,30 +383,31 @@ const productComponentAnchorIsVisible = useElementVisibility(productComponentAnc
 
 async function sortVariations(sortInfo: ISortInfo): Promise<void> {
   variationSortInfo.value = sortInfo;
-
-  variationsSearchParams.value.page = 1;
-  variationsSearchParams.value.sort = getSortingExpression(sortInfo);
+  variationsPageNumber.value = 1;
 
   await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
 }
 
 async function changeVariationsPage(pageNumber: number): Promise<void> {
-  variationsSearchParams.value.page = pageNumber;
+  variationsPageNumber.value = pageNumber;
 
   await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
 }
 
 async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
-  _applyFilters(newFilters);
+  await _applyFilters(newFilters);
 
-  variationsSearchParams.value.page = 1;
-  variationsSearchParams.value.filter = getFilterExpression([
-    variationsFilterExpression.value,
-    generateFilterExpressionFromFilters(newFilters.filters),
-    getFilterExpressionForInStock(newFilters.inStock),
-    getFilterExpressionForAvailableIn(newFilters.branches),
-    getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
-  ]);
+  variationsPageNumber.value = 1;
+
+  updateSearchParams({
+    filter: getFilterExpression([
+      variationsFilterExpression.value,
+      generateFilterExpressionFromFilters(newFilters.filters),
+      getFilterExpressionForInStock(newFilters.inStock),
+      getFilterExpressionForAvailableIn(newFilters.branches),
+      getFilterExpressionForPurchasedBefore(newFilters.purchasedBefore),
+    ]),
+  });
 
   await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
 }
@@ -467,14 +469,6 @@ watch(
     const showOptions = optionsBlock && !optionsBlock?.hidden;
 
     if (product.value?.hasVariations && (showVariations || showOptions)) {
-      if (templateLayout.value === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c) {
-        variationsSearchParams.value = {
-          ...variationsSearchParams.value,
-          itemsPerPage: B2C_VARIATIONS_ITEMS_PER_PAGE,
-          sort: undefined,
-          filter: getFilterExpression([variationsFilterExpression.value, getFilterExpressionForInStock(true)]),
-        };
-      }
       await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
     }
 

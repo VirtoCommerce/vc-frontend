@@ -20,22 +20,33 @@
         <slot />
       </div>
     </div>
+
+    <div v-if="viewMode === 'list' && isDesktop" v-show="isExpanded" class="vc-product-card__variants-wrapper">
+      <slot name="expanded-content" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useBreakpoints } from "@vueuse/core";
 import { useTemplateRef, onMounted } from "vue";
+import { BREAKPOINTS } from "@/core/constants";
 
 export interface IProps {
   viewMode?: "grid" | "list" | "item";
   background?: boolean;
   border?: boolean;
+  isExpanded?: boolean;
 }
 
 withDefaults(defineProps<IProps>(), {
   viewMode: "grid",
   background: true,
+  isExpanded: false,
 });
+
+const breakpoints = useBreakpoints(BREAKPOINTS);
+const isDesktop = breakpoints.greaterOrEqual("lg");
 
 const media = useTemplateRef("media");
 const content = useTemplateRef("content");
@@ -297,6 +308,10 @@ onMounted(() => {
 
   &__expander {
     @apply grow order-5;
+  }
+
+  &__variants-wrapper {
+    @apply border-t border-neutral-200 p-6 pt-4;
   }
 }
 </style>

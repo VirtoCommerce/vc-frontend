@@ -1370,7 +1370,8 @@
       "products_icon": "Icono de producto",
       "show_all_results": "Mostrar todos los resultados",
       "load_previous_page": "Cargar página anterior",
-      "load_next_page": "Cargar página siguiente"
+      "load_next_page": "Cargar página siguiente",
+      "available_variations": "{0} variaciones disponibles"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

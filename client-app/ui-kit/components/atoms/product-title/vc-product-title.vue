@@ -100,19 +100,19 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   }
 
   @at-root .vc-product-card {
-    #{$self} {
+    > .vc-product-card__wrapper #{$self} {
       grid-area: title;
 
       @apply text-sm;
     }
 
     &--view-mode {
-      &--grid #{$self} {
+      &--grid > .vc-product-card__wrapper #{$self} {
         @apply order-2;
       }
 
       &--list {
-        #{$self} {
+        > .vc-product-card__wrapper #{$self} {
           @apply self-end;
 
           &:only-child {
@@ -121,25 +121,27 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
         }
 
         @container (min-width: theme("containers.xl")) {
-          &:not(:has(.vc-product-vendor, .vc-product-action)) #{$self} {
+          &:not(:has(.vc-product-vendor, .vc-product-action)) > .vc-product-card__wrapper #{$self} {
             @apply self-center;
           }
         }
       }
 
       &--item {
-        #{$self} {
+        > .vc-product-card__wrapper #{$self} {
           @apply self-center;
         }
 
-        &:has(.vc-product-vendor) #{$self} {
+        &:has(.vc-product-vendor) > .vc-product-card__wrapper #{$self} {
           @apply self-end;
         }
 
         @container (min-width: theme("containers.2xl")) {
-          @apply self-end;
+          > .vc-product-card__wrapper #{$self} {
+            @apply self-end;
+          }
 
-          &:not(:has(.vc-product-vendor)) #{$self} {
+          &:not(:has(.vc-product-vendor)) > .vc-product-card__wrapper #{$self} {
             @apply self-center;
           }
         }

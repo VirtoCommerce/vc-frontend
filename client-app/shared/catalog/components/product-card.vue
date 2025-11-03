@@ -1,5 +1,11 @@
 <template>
-  <VcProductCard :view-mode="viewMode" :data-product-sku="product.code" border data-test-id="product-card">
+  <VcProductCard
+    :is-expanded="isExpanded"
+    :view-mode="viewMode"
+    :data-product-sku="product.code"
+    border
+    data-test-id="product-card"
+  >
     <template #media>
       <VcProductImage
         :images="viewMode === 'grid' ? product.images : []"
@@ -80,7 +86,18 @@
     />
 
     <VcProductButton
-      v-else-if="product.hasVariations"
+      v-else-if="product.hasVariations && viewMode === 'list' && isDesktop"
+      :link-text="$t('pages.catalog.show_on_a_separate_page')"
+      :link-to="link"
+      :button-text="$t('pages.catalog.variations_button', [variationsCount])"
+      :target="browserTarget || browserTargetFromSetting"
+      :append-icon="isExpanded ? 'chevron-up' : 'chevron-down'"
+      :loading="fetchingVariations"
+      @link-click="handleVariationsClick"
+    />
+
+    <VcProductButton
+      v-else-if="product.hasVariations && (viewMode !== 'list' || !isDesktop)"
       :to="link"
       :link-text="$t('pages.catalog.show_on_a_separate_page')"
       :link-to="link"
@@ -98,20 +115,42 @@
 
       <CountInCart :product-id="product.id" />
     </AddToCartSimple>
+
+    <template #expanded-content>
+      <div v-if="fetchingVariations && (!variations || variations.length === 0)" class="flex justify-center py-8">
+        <VcLoader />
+      </div>
+
+      <div v-else>
+        <VcTypography tag="h5" class="pb-3 leading-5" text-transform="none">
+          {{ $t("pages.catalog.available_variations", [variationsCount]) }}
+        </VcTypography>
+
+        <VariationsDefault
+          :variations="variations ?? []"
+          :page-number="variationsPageNumber"
+          :pages-count="variationsPagesCount"
+          @change-page="changeVariationsPage"
+        />
+      </div>
+    </template>
   </VcProductCard>
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from "vue";
+import { useBreakpoints } from "@vueuse/core";
+import { computed, toRef, ref, watch } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { BREAKPOINTS } from "@/core/constants";
 import { BrowserTargetType, ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
+import { useProductVariations } from "@/shared/catalog/composables/useProductVariations";
 import { useProducts } from "@/shared/catalog/composables/useProducts";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { useCustomProductComponents } from "@/shared/common/composables/useCustomProductComponents";
@@ -122,6 +161,7 @@ import BadgesWrapper from "./badges-wrapper.vue";
 import CountInCart from "./count-in-cart.vue";
 import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
+import VariationsDefault from "./product/variations-default.vue";
 import PurchasedBeforeBadge from "./purchased-before-badge.vue";
 import type { Product } from "@/core/api/graphql/types";
 import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
@@ -147,15 +187,20 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const product = toRef(props, "product");
+const isExpanded = ref(false);
 
 const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
+const breakpoints = useBreakpoints(BREAKPOINTS);
+const isDesktop = breakpoints.greaterOrEqual("lg");
 
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
-const link = computed(() => getProductRoute(props.product.id, props.product.slug));
+const productId = computed(() => product.value.id);
+
+const link = computed(() => getProductRoute(productId.value, props.product.slug));
 
 const actualPrice = computed(() =>
   product.value.hasVariations
@@ -178,7 +223,51 @@ const badgeSize = computed(() => {
   return props.viewMode === "grid" ? "lg" : "md";
 });
 
-const { productsFilters } = useProducts();
+const {
+  products: variations,
+  pagesCount: variationsPagesCount,
+  productsFilters,
+  fetchingProducts: fetchingVariations,
+  fetchProducts: fetchVariationsProducts,
+} = useProducts({
+  initialFetchingState: false,
+});
+
+const variationsLoaded = ref(false);
+
+const variationsFilterExpression = computed(() => `productfamilyid:${productId.value} is:product,variation`);
+
+const { variationsSearchParams, variationsPageNumber, resetVariationsParams } = useProductVariations({
+  productsFilters,
+  variationsFilterExpression,
+});
+
+async function loadVariations() {
+  if (!variationsLoaded.value) {
+    await fetchVariationsProducts(variationsSearchParams.value);
+    variationsLoaded.value = true;
+  }
+}
+
+async function changeVariationsPage(pageNumber: number) {
+  variationsPageNumber.value = pageNumber;
+  await fetchVariationsProducts(variationsSearchParams.value);
+}
+
+async function handleVariationsClick() {
+  isExpanded.value = !isExpanded.value;
+  if (isExpanded.value && !variationsLoaded.value) {
+    await loadVariations();
+  }
+}
+
+watch(productId, () => {
+  variationsLoaded.value = false;
+  resetVariationsParams();
+  if (isExpanded.value) {
+    void loadVariations();
+  }
+});
 
 const variationsCount = computed(() => {
   if (!productsFilters.value.inStock) {
