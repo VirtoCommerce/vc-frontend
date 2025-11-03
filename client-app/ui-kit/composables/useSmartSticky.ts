@@ -1,8 +1,18 @@
-import { useElementBounding, useResizeObserver, useThrottleFn } from "@vueuse/core";
+import { useElementBounding, useThrottleFn } from "@vueuse/core";
 import { computed, onBeforeUnmount, onMounted, ref, toValue, watch } from "vue";
 import type { CSSProperties, MaybeRefOrGetter } from "vue";
 
 type StickyModeType = "static" | "fixed" | "absolute";
+
+const AFFIX_TYPES = {
+  FIXED_TOP: "FIXED_TOP",
+  FIXED_BOTTOM: "FIXED_BOTTOM",
+  ABSOLUTE: "ABSOLUTE",
+  STATIC_BOTTOM: "STATIC_BOTTOM",
+  STATIC: "STATIC",
+} as const;
+
+type AffixType = (typeof AFFIX_TYPES)[keyof typeof AFFIX_TYPES];
 
 interface ISmartStickyOptions {
   container: MaybeRefOrGetter<HTMLElement | null>;
@@ -14,31 +24,17 @@ interface ISmartStickyOptions {
   scrollContainer?: MaybeRefOrGetter<HTMLElement | Window>;
 }
 
-interface ISmartStickyState {
-  mode: StickyModeType;
-  distanceFromTop: number;
-  distanceFromBottom: number;
-  topPosition: number;
-  bottomPosition: number;
-  isStuckTop: boolean;
-  isStuckBottom: boolean;
-  isActive: boolean;
-}
-
 interface IDimensions {
   translate: number;
   topSpacing: number;
-  lastTopSpacing: number;
   bottomSpacing: number;
-  lastBottomSpacing: number;
-  sidebarHeight: number;
-  sidebarWidth: number;
+  elementHeight: number;
+  elementWidth: number;
   containerTop: number;
   containerHeight: number;
   viewportHeight: number;
   viewportTop: number;
   lastViewportTop: number;
-  lastViewportHeight: number;
 }
 
 const BOUNDING_OPTIONS = { windowResize: true, immediate: true };
@@ -63,17 +59,14 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   const dimensions = ref<IDimensions>({
     translate: 0,
     topSpacing: 0,
-    lastTopSpacing: 0,
     bottomSpacing: 0,
-    lastBottomSpacing: 0,
-    sidebarHeight: 0,
-    sidebarWidth: 0,
+    elementHeight: 0,
+    elementWidth: 0,
     containerTop: 0,
     containerHeight: 0,
     viewportHeight: 0,
     viewportTop: 0,
     lastViewportTop: 0,
-    lastViewportHeight: 0,
   });
 
   const { height: containerHeight } = useElementBounding(container, BOUNDING_OPTIONS);
@@ -98,26 +91,22 @@ export function useSmartSticky(options: ISmartStickyOptions) {
 
   function updateDimensions() {
     const element = toValue(stickyElement);
+    const containerEl = toValue(container);
 
-    if (!element) {
+    if (!element || !containerEl) {
       return;
     }
 
-    const viewport = window;
-    const containerEl = toValue(container);
-
-    dimensions.value.viewportHeight = viewport.innerHeight;
+    dimensions.value.viewportHeight = window.innerHeight;
     dimensions.value.viewportTop = getScrollPosition();
 
-    if (containerEl) {
-      const containerRect = containerEl.getBoundingClientRect();
-      dimensions.value.containerTop = containerRect.top + dimensions.value.viewportTop;
-      dimensions.value.containerHeight = containerRect.height;
-    }
+    const containerRect = containerEl.getBoundingClientRect();
+    dimensions.value.containerTop = containerRect.top + dimensions.value.viewportTop;
+    dimensions.value.containerHeight = containerRect.height;
 
     const stickyRect = element.getBoundingClientRect();
-    dimensions.value.sidebarHeight = stickyRect.height;
-    dimensions.value.sidebarWidth = stickyRect.width;
+    dimensions.value.elementHeight = stickyRect.height;
+    dimensions.value.elementWidth = stickyRect.width;
 
     const computedStyle = getComputedStyle(element);
     const topVar = computedStyle.getPropertyValue(topOffsetVar).trim();
@@ -146,7 +135,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     const {
       containerTop: cTop,
       containerHeight: cHeight,
-      sidebarHeight: sHeight,
+      elementHeight: eHeight,
       viewportHeight: vHeight,
       viewportTop: vTop,
       topSpacing: tSpacing,
@@ -155,210 +144,204 @@ export function useSmartSticky(options: ISmartStickyOptions) {
 
     const containerBottom = cTop + cHeight;
     const elementRect = element.getBoundingClientRect();
-    const sidebarTop = elementRect.top + vTop;
+    const elementTop = elementRect.top + vTop;
 
-    const isSidebarTallerThanViewport = sHeight + tSpacing + bSpacing > vHeight;
+    const isElementTallerThanViewport = eHeight + tSpacing + bSpacing > vHeight;
 
     const isScrollingDown = vTop > dims.lastViewportTop;
     const isScrollingUp = vTop < dims.lastViewportTop;
 
     const affixType = getAffixType(
-      isSidebarTallerThanViewport,
+      isElementTallerThanViewport,
       isScrollingDown,
       isScrollingUp,
       cTop,
       containerBottom,
       vTop,
       vHeight,
-      sHeight,
-      sidebarTop,
+      eHeight,
+      elementTop,
       tSpacing,
       bSpacing,
     );
 
-    applyStyles(affixType, dims, sidebarTop, cTop);
+    applyStyles(affixType, dims, elementTop, cTop);
 
-    isStuckTop.value = affixType === "FIXED_TOP";
-    isStuckBottom.value = affixType === "FIXED_BOTTOM";
-    isActive.value = affixType !== "STATIC";
+    isStuckTop.value = affixType === AFFIX_TYPES.FIXED_TOP;
+    isStuckBottom.value = affixType === AFFIX_TYPES.FIXED_BOTTOM;
+    isActive.value = affixType !== AFFIX_TYPES.STATIC;
 
     dims.lastViewportTop = vTop;
-    dims.lastViewportHeight = vHeight;
-    dims.lastTopSpacing = tSpacing;
-    dims.lastBottomSpacing = bSpacing;
   }
 
-  function checkShortSidebar(
+  function checkShortElement(
     viewportTop: number,
-    elTopSpacing: number,
-    elContainerTop: number,
-    sidebarHeight: number,
-    elContainerBottom: number,
-  ): string {
-    if (viewportTop + elTopSpacing < elContainerTop) {
-      return "STATIC";
+    topSpacing: number,
+    containerTop: number,
+    elementHeight: number,
+    containerBottom: number,
+  ): AffixType {
+    if (viewportTop + topSpacing < containerTop) {
+      return AFFIX_TYPES.STATIC;
     }
 
-    if (viewportTop + elTopSpacing + sidebarHeight <= elContainerBottom) {
-      return "FIXED_TOP";
+    if (viewportTop + topSpacing + elementHeight <= containerBottom) {
+      return AFFIX_TYPES.FIXED_TOP;
     }
 
-    return "STATIC_BOTTOM";
+    return AFFIX_TYPES.STATIC_BOTTOM;
   }
 
   function checkScrollingDown(
-    sidebarBottom: number,
+    elementBottom: number,
     viewportBottom: number,
-    elBottomSpacing: number,
-    sidebarHeight: number,
-    elContainerBottom: number,
-  ): string {
-    if (sidebarBottom <= viewportBottom - elBottomSpacing) {
-      const wouldBeBottom = viewportBottom - elBottomSpacing - sidebarHeight;
+    bottomSpacing: number,
+    elementHeight: number,
+    containerBottom: number,
+  ): AffixType {
+    if (elementBottom <= viewportBottom - bottomSpacing) {
+      const wouldBeBottom = viewportBottom - bottomSpacing - elementHeight;
 
-      if (wouldBeBottom + sidebarHeight <= elContainerBottom) {
-        return "FIXED_BOTTOM";
+      if (wouldBeBottom + elementHeight <= containerBottom) {
+        return AFFIX_TYPES.FIXED_BOTTOM;
       }
 
-      return "STATIC_BOTTOM";
+      return AFFIX_TYPES.STATIC_BOTTOM;
     }
 
-    if (sidebarBottom >= elContainerBottom) {
-      return "STATIC_BOTTOM";
+    if (elementBottom >= containerBottom) {
+      return AFFIX_TYPES.STATIC_BOTTOM;
     }
 
-    return "ABSOLUTE";
+    return AFFIX_TYPES.ABSOLUTE;
   }
 
   function checkScrollingUp(
-    sidebarTop: number,
+    elementTop: number,
     viewportTop: number,
-    elTopSpacing: number,
-    elContainerTop: number,
-  ): string {
-    if (sidebarTop >= viewportTop + elTopSpacing) {
-      const wouldBeTop = viewportTop + elTopSpacing;
+    topSpacing: number,
+    containerTop: number,
+  ): AffixType {
+    if (elementTop >= viewportTop + topSpacing) {
+      const wouldBeTop = viewportTop + topSpacing;
 
-      if (wouldBeTop >= elContainerTop) {
-        return "FIXED_TOP";
+      if (wouldBeTop >= containerTop) {
+        return AFFIX_TYPES.FIXED_TOP;
       }
 
-      return "STATIC";
+      return AFFIX_TYPES.STATIC;
     }
 
-    if (sidebarTop <= elContainerTop) {
-      return "STATIC";
+    if (elementTop <= containerTop) {
+      return AFFIX_TYPES.STATIC;
     }
 
-    return "ABSOLUTE";
+    return AFFIX_TYPES.ABSOLUTE;
   }
 
   function getAffixType(
     isTaller: boolean,
     isScrollingDown: boolean,
     isScrollingUp: boolean,
-    elContainerTop: number,
-    elContainerBottom: number,
+    containerTop: number,
+    containerBottom: number,
     viewportTop: number,
     viewportHeight: number,
-    sidebarHeight: number,
-    sidebarTop: number,
-    elTopSpacing: number,
-    elBottomSpacing: number,
-  ): string {
+    elementHeight: number,
+    elementTop: number,
+    topSpacing: number,
+    bottomSpacing: number,
+  ): AffixType {
     const viewportBottom = viewportTop + viewportHeight;
-    const sidebarBottom = sidebarTop + sidebarHeight;
+    const elementBottom = elementTop + elementHeight;
 
     if (!isTaller) {
-      return checkShortSidebar(viewportTop, elTopSpacing, elContainerTop, sidebarHeight, elContainerBottom);
+      return checkShortElement(viewportTop, topSpacing, containerTop, elementHeight, containerBottom);
     }
 
-    if (sidebarTop < elContainerTop) {
-      return "STATIC";
+    if (elementTop < containerTop) {
+      return AFFIX_TYPES.STATIC;
     }
 
-    if (sidebarBottom > elContainerBottom) {
-      return "STATIC_BOTTOM";
+    if (elementBottom > containerBottom) {
+      return AFFIX_TYPES.STATIC_BOTTOM;
     }
 
     if (isScrollingDown) {
-      return checkScrollingDown(sidebarBottom, viewportBottom, elBottomSpacing, sidebarHeight, elContainerBottom);
+      return checkScrollingDown(elementBottom, viewportBottom, bottomSpacing, elementHeight, containerBottom);
     }
 
     if (isScrollingUp) {
-      return checkScrollingUp(sidebarTop, viewportTop, elTopSpacing, elContainerTop);
+      return checkScrollingUp(elementTop, viewportTop, topSpacing, containerTop);
     }
 
-    return "ABSOLUTE";
+    return AFFIX_TYPES.ABSOLUTE;
   }
 
-  function applyStyles(affixType: string, dims: IDimensions, sidebarTop: number, containerTop: number) {
+  function applyStyles(affixType: AffixType, dims: IDimensions, elementTop: number, containerTop: number) {
     const element = toValue(stickyElement);
 
     if (!element) {
       return;
     }
 
+    const baseStyle = {
+      left: "auto",
+      right: "auto",
+      width: `${dims.elementWidth}px`,
+    };
+
     switch (affixType) {
-      case "FIXED_TOP": {
+      case AFFIX_TYPES.FIXED_TOP: {
         mode.value = "fixed";
         style.value = {
+          ...baseStyle,
           position: "fixed",
           top: `${dims.topSpacing}px`,
-          left: "auto",
-          right: "auto",
           bottom: "auto",
-          width: `${dims.sidebarWidth}px`,
         };
-        dims.translate = sidebarTop - containerTop;
+        dims.translate = elementTop - containerTop;
         break;
       }
 
-      case "FIXED_BOTTOM": {
+      case AFFIX_TYPES.FIXED_BOTTOM: {
         mode.value = "fixed";
         style.value = {
+          ...baseStyle,
           position: "fixed",
           top: "auto",
-          left: "auto",
-          right: "auto",
           bottom: `${dims.bottomSpacing}px`,
-          width: `${dims.sidebarWidth}px`,
         };
-        dims.translate = sidebarTop - containerTop;
+        dims.translate = elementTop - containerTop;
         break;
       }
 
-      case "ABSOLUTE": {
+      case AFFIX_TYPES.ABSOLUTE: {
         mode.value = "absolute";
-
         style.value = {
+          ...baseStyle,
           position: "absolute",
           top: `${dims.translate}px`,
-          left: "auto",
-          right: "auto",
           bottom: "auto",
-          width: `${dims.sidebarWidth}px`,
         };
         break;
       }
 
-      case "STATIC_BOTTOM": {
+      case AFFIX_TYPES.STATIC_BOTTOM: {
         mode.value = "absolute";
-        const bottomTop = dims.containerHeight - dims.sidebarHeight;
+        const bottomTop = dims.containerHeight - dims.elementHeight;
 
         style.value = {
+          ...baseStyle,
           position: "absolute",
           top: `${bottomTop}px`,
-          left: "auto",
-          right: "auto",
           bottom: "auto",
-          width: `${dims.sidebarWidth}px`,
         };
         dims.translate = bottomTop;
         break;
       }
 
-      case "STATIC":
+      case AFFIX_TYPES.STATIC:
       default: {
         mode.value = "static";
         style.value = {
@@ -425,20 +408,8 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     resetPosition();
   });
 
-  const state = computed<ISmartStickyState>(() => ({
-    mode: mode.value,
-    distanceFromTop: dimensions.value.containerTop - dimensions.value.viewportTop,
-    distanceFromBottom: dimensions.value.containerTop + dimensions.value.containerHeight - dimensions.value.viewportTop,
-    topPosition: dimensions.value.viewportTop,
-    bottomPosition: dimensions.value.viewportTop + dimensions.value.viewportHeight,
-    isStuckTop: isStuckTop.value,
-    isStuckBottom: isStuckBottom.value,
-    isActive: isActive.value,
-  }));
-
   return {
     style,
-    state,
     mode,
     isActive,
     isStuckTop,
