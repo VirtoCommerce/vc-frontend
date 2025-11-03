@@ -40,6 +40,81 @@ const BOUNDING_OPTIONS = { windowResize: true, immediate: true };
 
 const DEFAULT_THROTTLE_DELAY = 50;
 
+/**
+ * Parses positive pixel values from CSS custom properties.
+ * Supports only simple numeric values (e.g., "10px", "5.5").
+ * Does not support calc(), var(), negative values, or non-px units.
+ */
+function parseCssValue(value: string): number {
+  const match = /(\d+(?:\.\d+)?)/.exec(value);
+  return match ? Number(match[0]) : 0;
+}
+
+function checkShortElement(
+  viewportTop: number,
+  topSpacing: number,
+  containerTop: number,
+  elementHeight: number,
+  containerBottom: number,
+): AffixType {
+  if (viewportTop + topSpacing < containerTop) {
+    return AFFIX_TYPES.STATIC;
+  }
+
+  if (viewportTop + topSpacing + elementHeight <= containerBottom) {
+    return AFFIX_TYPES.FIXED_TOP;
+  }
+
+  return AFFIX_TYPES.STATIC_BOTTOM;
+}
+
+function checkScrollingDown(
+  elementBottom: number,
+  viewportBottom: number,
+  bottomSpacing: number,
+  elementHeight: number,
+  containerBottom: number,
+): AffixType {
+  if (elementBottom <= viewportBottom - bottomSpacing) {
+    const wouldBeBottom = viewportBottom - bottomSpacing - elementHeight;
+
+    if (wouldBeBottom + elementHeight <= containerBottom) {
+      return AFFIX_TYPES.FIXED_BOTTOM;
+    }
+
+    return AFFIX_TYPES.STATIC_BOTTOM;
+  }
+
+  if (elementBottom >= containerBottom) {
+    return AFFIX_TYPES.STATIC_BOTTOM;
+  }
+
+  return AFFIX_TYPES.ABSOLUTE;
+}
+
+function checkScrollingUp(
+  elementTop: number,
+  viewportTop: number,
+  topSpacing: number,
+  containerTop: number,
+): AffixType {
+  if (elementTop >= viewportTop + topSpacing) {
+    const wouldBeTop = viewportTop + topSpacing;
+
+    if (wouldBeTop >= containerTop) {
+      return AFFIX_TYPES.FIXED_TOP;
+    }
+
+    return AFFIX_TYPES.STATIC;
+  }
+
+  if (elementTop <= containerTop) {
+    return AFFIX_TYPES.STATIC;
+  }
+
+  return AFFIX_TYPES.ABSOLUTE;
+}
+
 export function useSmartSticky(options: ISmartStickyOptions) {
   const {
     container,
@@ -48,7 +123,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     topOffsetVar = "--sticky-offset-top",
     bottomOffsetVar = "--sticky-offset-bottom",
     enabled = true,
-    scrollContainer = window,
+    scrollContainer = globalThis.window,
   } = options;
 
   const style = ref<CSSProperties>({});
@@ -78,8 +153,8 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   function getScrollPosition(): number {
     const scrollEl = toValue(scrollContainer);
 
-    if (scrollEl === window) {
-      return window.pageYOffset || document.documentElement.scrollTop;
+    if (scrollEl === globalThis.window) {
+      return globalThis.window.pageYOffset || document.documentElement.scrollTop;
     }
 
     if (scrollEl instanceof HTMLElement) {
@@ -89,16 +164,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     return 0;
   }
 
-  /**
-   * Parses positive pixel values from CSS custom properties.
-   * Supports only simple numeric values (e.g., "10px", "5.5").
-   * Does not support calc(), var(), negative values, or non-px units.
-   */
-  function parseCssValue(value: string): number {
-    const match = /(\d+(?:\.\d+)?)/.exec(value);
-    return match ? Number(match[0]) : 0;
-  }
-
   function updateDimensions() {
     const element = toValue(stickyElement);
 
@@ -106,7 +171,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       return;
     }
 
-    dimensions.value.viewportHeight = window.innerHeight;
+    dimensions.value.viewportHeight = globalThis.window.innerHeight;
     dimensions.value.viewportTop = getScrollPosition();
 
     dimensions.value.containerTop = boundingContainer.top.value + dimensions.value.viewportTop;
@@ -171,71 +236,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     isActive.value = affixType !== AFFIX_TYPES.STATIC;
 
     dims.lastViewportTop = viewportTop;
-  }
-
-  function checkShortElement(
-    viewportTop: number,
-    topSpacing: number,
-    containerTop: number,
-    elementHeight: number,
-    containerBottom: number,
-  ): AffixType {
-    if (viewportTop + topSpacing < containerTop) {
-      return AFFIX_TYPES.STATIC;
-    }
-
-    if (viewportTop + topSpacing + elementHeight <= containerBottom) {
-      return AFFIX_TYPES.FIXED_TOP;
-    }
-
-    return AFFIX_TYPES.STATIC_BOTTOM;
-  }
-
-  function checkScrollingDown(
-    elementBottom: number,
-    viewportBottom: number,
-    bottomSpacing: number,
-    elementHeight: number,
-    containerBottom: number,
-  ): AffixType {
-    if (elementBottom <= viewportBottom - bottomSpacing) {
-      const wouldBeBottom = viewportBottom - bottomSpacing - elementHeight;
-
-      if (wouldBeBottom + elementHeight <= containerBottom) {
-        return AFFIX_TYPES.FIXED_BOTTOM;
-      }
-
-      return AFFIX_TYPES.STATIC_BOTTOM;
-    }
-
-    if (elementBottom >= containerBottom) {
-      return AFFIX_TYPES.STATIC_BOTTOM;
-    }
-
-    return AFFIX_TYPES.ABSOLUTE;
-  }
-
-  function checkScrollingUp(
-    elementTop: number,
-    viewportTop: number,
-    topSpacing: number,
-    containerTop: number,
-  ): AffixType {
-    if (elementTop >= viewportTop + topSpacing) {
-      const wouldBeTop = viewportTop + topSpacing;
-
-      if (wouldBeTop >= containerTop) {
-        return AFFIX_TYPES.FIXED_TOP;
-      }
-
-      return AFFIX_TYPES.STATIC;
-    }
-
-    if (elementTop <= containerTop) {
-      return AFFIX_TYPES.STATIC;
-    }
-
-    return AFFIX_TYPES.ABSOLUTE;
   }
 
   function getAffixType(
@@ -369,9 +369,9 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   function attachListeners() {
     const scrollEl = toValue(scrollContainer);
 
-    if (scrollEl === window) {
-      window.addEventListener("scroll", update, { passive: true });
-      window.addEventListener("resize", update);
+    if (scrollEl === globalThis.window) {
+      globalThis.window.addEventListener("scroll", update, { passive: true });
+      globalThis.window.addEventListener("resize", update);
     } else if (scrollEl instanceof HTMLElement) {
       scrollEl.addEventListener("scroll", update, { passive: true });
     }
@@ -380,9 +380,9 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   function detachListeners() {
     const scrollEl = toValue(scrollContainer);
 
-    if (scrollEl === window) {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+    if (scrollEl === globalThis.window) {
+      globalThis.window.removeEventListener("scroll", update);
+      globalThis.window.removeEventListener("resize", update);
     } else if (scrollEl instanceof HTMLElement) {
       scrollEl.removeEventListener("scroll", update);
     }
