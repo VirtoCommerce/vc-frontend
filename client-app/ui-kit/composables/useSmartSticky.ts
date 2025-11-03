@@ -134,45 +134,38 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     updateDimensions();
 
     const dims = dimensions.value;
-    const {
-      containerTop: cTop,
-      containerHeight: cHeight,
-      elementHeight: eHeight,
-      viewportHeight: vHeight,
-      viewportTop: vTop,
-      topSpacing: tSpacing,
-      bottomSpacing: bSpacing,
-    } = dims;
+    const { containerTop, containerHeight, elementHeight, viewportHeight, viewportTop, topSpacing, bottomSpacing } =
+      dims;
 
-    const containerBottom = cTop + cHeight;
-    const elementTop = boundingSticky.top.value + vTop;
+    const containerBottom = containerTop + containerHeight;
+    const elementTop = boundingSticky.top.value + viewportTop;
 
-    const isElementTallerThanViewport = eHeight + tSpacing + bSpacing > vHeight;
+    const isElementTallerThanViewport = elementHeight + topSpacing + bottomSpacing > viewportHeight;
 
-    const isScrollingDown = vTop > dims.lastViewportTop;
-    const isScrollingUp = vTop < dims.lastViewportTop;
+    const isScrollingDown = viewportTop > dims.lastViewportTop;
+    const isScrollingUp = viewportTop < dims.lastViewportTop;
 
     const affixType = getAffixType(
       isElementTallerThanViewport,
       isScrollingDown,
       isScrollingUp,
-      cTop,
+      containerTop,
       containerBottom,
-      vTop,
-      vHeight,
-      eHeight,
+      viewportTop,
+      viewportHeight,
+      elementHeight,
       elementTop,
-      tSpacing,
-      bSpacing,
+      topSpacing,
+      bottomSpacing,
     );
 
-    applyStyles(affixType, dims, elementTop, cTop);
+    applyStyles(affixType, dims, elementTop, containerTop);
 
     isStuckTop.value = affixType === AFFIX_TYPES.FIXED_TOP;
     isStuckBottom.value = affixType === AFFIX_TYPES.FIXED_BOTTOM;
     isActive.value = affixType !== AFFIX_TYPES.STATIC;
 
-    dims.lastViewportTop = vTop;
+    dims.lastViewportTop = viewportTop;
   }
 
   function checkShortElement(
