@@ -96,9 +96,8 @@ export function useSmartSticky(options: ISmartStickyOptions) {
 
   function updateDimensions() {
     const element = toValue(stickyElement);
-    const containerEl = toValue(container);
 
-    if (!element || !containerEl) {
+    if (!element || !toValue(container)) {
       return;
     }
 
