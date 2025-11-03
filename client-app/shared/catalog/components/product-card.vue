@@ -90,7 +90,6 @@
       :link-text="$t('pages.catalog.show_on_a_separate_page')"
       :link-to="link"
       :button-text="$t('pages.catalog.variations_button', [variationsCount])"
-      :target="browserTarget || browserTargetFromSetting"
       :append-icon="isExpanded ? 'chevron-up' : 'chevron-down'"
       :loading="fetchingVariations"
       @link-click="handleVariationsClick"
