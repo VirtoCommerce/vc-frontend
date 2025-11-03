@@ -89,6 +89,11 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     return 0;
   }
 
+  /**
+   * Parses positive pixel values from CSS custom properties.
+   * Supports only simple numeric values (e.g., "10px", "5.5").
+   * Does not support calc(), var(), negative values, or non-px units.
+   */
   function parseCssValue(value: string): number {
     const match = /(\d+(?:\.\d+)?)/.exec(value);
     return match ? Number(match[0]) : 0;
@@ -400,6 +405,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   watch([boundingSticky.height, boundingContainer.height], updateImmediate);
 
   watch(isEnabled, (value) => {
+    // eslint-disable-next-line
     if (value) {
       void update();
     } else {
