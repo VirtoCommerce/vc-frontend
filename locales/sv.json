@@ -1371,7 +1371,7 @@
       "show_all_results": "Visa alla resultat",
       "load_previous_page": "Ladda föregående sida",
       "load_next_page": "Ladda nästa sida",
-      "available_variations": "{0} tillgängliga varianter"
+      "available_variations": "Inga tillgängliga varianter | 1 tillgänglig variant | {count} tillgängliga varianter"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

@@ -1371,7 +1371,7 @@
       "show_all_results": "Показать все результаты",
       "load_previous_page": "Загрузить предыдущую страницу",
       "load_next_page": "Загрузить следующую страницу",
-      "available_variations": "{0} доступных вариантов"
+      "available_variations": "Нет доступных вариантов | 1 доступный вариант | {count} доступных вариантов"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

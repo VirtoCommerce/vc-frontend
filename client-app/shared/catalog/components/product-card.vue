@@ -123,7 +123,7 @@
 
       <div v-else>
         <VcTypography tag="h5" class="pb-3 leading-5" text-transform="none">
-          {{ $t("pages.catalog.available_variations", [variationsCount]) }}
+          {{ $t("pages.catalog.available_variations", variationsCount) }}
         </VcTypography>
 
         <VariationsDefault

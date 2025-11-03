@@ -1371,7 +1371,7 @@
       "show_all_results": "Mostra tutti i risultati",
       "load_previous_page": "Carica la pagina precedente",
       "load_next_page": "Carica la pagina successiva",
-      "available_variations": "{0} varianti disponibili"
+      "available_variations": "Nessuna variazione disponibile | 1 variazione disponibile | {count} variazioni disponibili"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

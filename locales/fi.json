@@ -1371,7 +1371,7 @@
       "show_all_results": "Näytä kaikki tulokset",
       "load_previous_page": "Lataa edellinen sivu",
       "load_next_page": "Lataa seuraava sivu",
-      "available_variations": "{0} saatavilla olevaa muunnelmaa"
+      "available_variations": "Ei saatavilla olevia versioita | 1 saatavilla oleva versio | {count} saatavilla olevaa versiota"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

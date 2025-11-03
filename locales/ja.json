@@ -1371,7 +1371,7 @@
       "show_all_results": "すべての結果を表示",
       "load_previous_page": "前のページを読み込む",
       "load_next_page": "次のページを読み込む",
-      "available_variations": "{0} 個の利用可能なバリエーション"
+      "available_variations": "利用可能なバリエーションはありません | 1つの利用可能なバリエーション | {count}個の利用可能なバリエーション"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
