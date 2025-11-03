@@ -51,7 +51,7 @@
           />
 
           <component
-            :is="productDescriptionSection && 'type' in productDescriptionSection ? productDescriptionSection.type : ''"
+            :is="productDescriptionSection?.type"
             v-if="productDescriptionSection && !productDescriptionSection.hidden"
             :product="product"
             :model="productDescriptionSection"
