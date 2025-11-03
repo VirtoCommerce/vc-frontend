@@ -382,6 +382,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   }
 
   const update = useThrottleFn(calculatePosition, throttleDelay);
+  const updateImmediate = calculatePosition;
 
   function destroy() {
     const scrollEl = toValue(scrollContainer);
@@ -406,44 +407,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       (scrollEl as HTMLElement).addEventListener("scroll", update, { passive: true });
     }
 
-    const element = toValue(stickyElement);
-    const containerEl = toValue(container);
-
-    if (element) {
-      useResizeObserver(element, update);
-    }
-
-    if (containerEl) {
-      useResizeObserver(containerEl, update);
-
-      let mutationTimeout: ReturnType<typeof setTimeout> | null = null;
-      const mutationObserver = new MutationObserver(() => {
-        if (mutationTimeout) {
-          clearTimeout(mutationTimeout);
-        }
-
-        mutationTimeout = setTimeout(() => {
-          void update();
-          mutationTimeout = null;
-        }, 50);
-      });
-
-      mutationObserver.observe(containerEl, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ["style", "class"],
-      });
-
-      onBeforeUnmount(() => {
-        mutationObserver.disconnect();
-
-        if (mutationTimeout) {
-          clearTimeout(mutationTimeout);
-        }
-      });
-    }
-
     void update();
   });
 
@@ -451,7 +414,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     destroy();
   });
 
-  watch([stickyHeight, containerHeight], update);
+  watch([stickyHeight, containerHeight], updateImmediate);
 
   watch(isEnabled, (newValue) => {
     if (newValue) {
