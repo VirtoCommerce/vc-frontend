@@ -31,17 +31,7 @@
         class="vc-layout__sidebar-container"
         :aria-label="sidebarLabel"
       >
-        <div
-          ref="sidebar"
-          class="vc-layout__sidebar"
-          :style="sidebarStyle"
-          :class="{
-            'vc-layout__sidebar--stuck-top': isStuckTop,
-            'vc-layout__sidebar--stuck-bottom': isStuckBottom,
-            'vc-layout__sidebar--active': isStickyActive,
-          }"
-          data-test-id="sidebar"
-        >
+        <div ref="sidebar" class="vc-layout__sidebar" :style="sidebarStyle" data-test-id="sidebar">
           <slot name="sidebar" />
         </div>
       </aside>
@@ -76,23 +66,12 @@ const sidebarLabel = computed(() => props.sidebarAriaLabel || t("ui_kit.accessib
 const container = ref<HTMLElement | null>(null);
 const sidebar = ref<HTMLElement | null>(null);
 
-const {
-  style: sidebarStyle,
-  isStuckTop,
-  isStuckBottom,
-  isActive: isStickyActive,
-} = useSmartSticky({
+const { style: sidebarStyle } = useSmartSticky({
   container,
   stickyElement: sidebar,
   enabled: computed(() => props.stickySidebar && !isMobile.value),
   topOffsetVar: "--sticky-offset-top",
   bottomOffsetVar: "--sticky-offset-bottom",
-});
-
-defineExpose({
-  isStuckTop,
-  isStuckBottom,
-  isStickyActive,
 });
 </script>
 

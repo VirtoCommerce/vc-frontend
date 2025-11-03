@@ -127,75 +127,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     dimensions.value.bottomSpacing = bottomVar ? parseCssValue(bottomVar) : 0;
   }
 
-  function adjustTranslateForAbsolute(
-    dims: IDimensions,
-    sidebarTop: number,
-    cTop: number,
-    cHeight: number,
-    sHeight: number,
-    containerBottom: number,
-  ) {
-    if (sidebarTop < cTop) {
-      dims.translate = 0;
-    } else if (sidebarTop + sHeight > containerBottom) {
-      dims.translate = Math.max(0, cHeight - sHeight);
-    } else {
-      dims.translate = sidebarTop - cTop;
-    }
-  }
-
-  function adjustTranslateForFixed(
-    dims: IDimensions,
-    vTop: number,
-    vHeight: number,
-    bSpacing: number,
-    tSpacing: number,
-    sHeight: number,
-    cTop: number,
-    cHeight: number,
-    containerBottom: number,
-  ) {
-    if (isStuckBottom.value) {
-      const fixedBottomPos = vTop + vHeight - bSpacing - sHeight;
-
-      if (fixedBottomPos < cTop) {
-        dims.translate = 0;
-      } else if (fixedBottomPos + sHeight > containerBottom) {
-        dims.translate = Math.max(0, cHeight - sHeight);
-      }
-    } else if (isStuckTop.value) {
-      const fixedTopPos = vTop + tSpacing;
-
-      if (fixedTopPos < cTop) {
-        dims.translate = 0;
-      } else if (fixedTopPos + sHeight > containerBottom) {
-        dims.translate = Math.max(0, cHeight - sHeight);
-      }
-    }
-  }
-
-  function handleNoScroll(
-    dims: IDimensions,
-    element: HTMLElement,
-    vTop: number,
-    vHeight: number,
-    bSpacing: number,
-    tSpacing: number,
-    cTop: number,
-    cHeight: number,
-    sHeight: number,
-  ) {
-    const containerBottom = cTop + cHeight;
-    const elementRect = element.getBoundingClientRect();
-    const sidebarTop = elementRect.top + vTop;
-
-    if (mode.value === "absolute") {
-      adjustTranslateForAbsolute(dims, sidebarTop, cTop, cHeight, sHeight, containerBottom);
-    } else if (mode.value === "fixed") {
-      adjustTranslateForFixed(dims, vTop, vHeight, bSpacing, tSpacing, sHeight, cTop, cHeight, containerBottom);
-    }
-  }
-
   function calculatePosition() {
     if (!isEnabled.value) {
       resetPosition();
@@ -230,11 +161,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
 
     const isScrollingDown = vTop > dims.lastViewportTop;
     const isScrollingUp = vTop < dims.lastViewportTop;
-    const didNotScroll = vTop === dims.lastViewportTop;
-
-    if (didNotScroll) {
-      handleNoScroll(dims, element, vTop, vHeight, bSpacing, tSpacing, cTop, cHeight, sHeight);
-    }
 
     const affixType = getAffixType(
       isSidebarTallerThanViewport,
