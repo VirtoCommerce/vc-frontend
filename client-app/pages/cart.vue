@@ -78,53 +78,51 @@
 
     <template v-else>
       <VcLayout sidebar-position="right" sticky-sidebar>
-        <ProductsSection
-          :grouped="!!$cfg.line_items_group_by_vendor_enabled"
-          :items="cart.items"
-          :items-grouped-by-vendor="lineItemsGroupedByVendor"
-          :selected-item-ids="selectedItemIds"
-          :validation-errors="cart.validationErrors"
-          :disabled="changeItemQuantityBatchedOverflowed || moveToSavedForLaterOverflowed || selectionOverflowed"
-          data-test-id="cart.products-section"
-          :hide-controls="hideControls"
-          @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
-          @select:items="handleSelectItems"
-          @remove:items="handleRemoveItems"
-          @save-for-later="handleSaveForLater"
-          @clear:cart="openClearCartModal"
-          @link-click="selectItemEvent"
-        />
+        <div class="flex flex-col gap-5">
+          <ProductsSection
+            :grouped="!!$cfg.line_items_group_by_vendor_enabled"
+            :items="cart.items"
+            :items-grouped-by-vendor="lineItemsGroupedByVendor"
+            :selected-item-ids="selectedItemIds"
+            :validation-errors="cart.validationErrors"
+            :disabled="changeItemQuantityBatchedOverflowed || moveToSavedForLaterOverflowed || selectionOverflowed"
+            data-test-id="cart.products-section"
+            :hide-controls="hideControls"
+            @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
+            @select:items="handleSelectItems"
+            @remove:items="handleRemoveItems"
+            @save-for-later="handleSaveForLater"
+            @clear:cart="openClearCartModal"
+            @link-click="selectItemEvent"
+          />
 
-        <GiftsSection
-          v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
-          :gifts="availableExtendedGifts"
-          class="mt-5"
-          @toggle:gift="toggleGift"
-        />
+          <GiftsSection
+            v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
+            :gifts="availableExtendedGifts"
+            @toggle:gift="toggleGift"
+          />
 
-        <!-- Sections for single page checkout -->
-        <template v-if="!$cfg.checkout_multistep_enabled">
-          <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
+          <!-- Sections for single page checkout -->
+          <template v-if="!$cfg.checkout_multistep_enabled">
+            <ShippingDetailsSection v-if="!allItemsAreDigital" />
 
-          <BillingDetailsSection class="mt-5" />
+            <BillingDetailsSection :cart="cart" />
 
-          <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
-        </template>
+            <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
+          </template>
 
-        <CartForLater
-          v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
-          :saved-for-later-list="savedForLaterList"
-          :loading="moveFromSavedForLaterOverflowed"
-          class="mt-5"
-          @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
-        />
+          <CartForLater
+            v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
+            :saved-for-later-list="savedForLaterList"
+            :loading="moveFromSavedForLaterOverflowed"
+            @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
+          />
 
-        <RecentlyBrowsedProducts
-          v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
-          :products="recentlyBrowsedProducts"
-          class="mt-5"
-        />
-
+          <RecentlyBrowsedProducts
+            v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
+            :products="recentlyBrowsedProducts"
+          />
+        </div>
         <template #sidebar>
           <OrderSummary :cart="cart" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
             <template #footer>

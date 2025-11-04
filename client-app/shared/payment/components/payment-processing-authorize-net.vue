@@ -19,7 +19,7 @@
       <CardLabels class="mt-5" />
     </div>
 
-    <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
+    <div v-if="!hidePaymentButton" class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
       <PaymentPolicies />
 
       <VcButton
@@ -48,6 +48,7 @@ import { Logger } from "@/core/utilities";
 import { useAuthorizeNet } from "@/shared/payment/composables/useAuthorizeNet";
 import { PaymentActionType } from "@/shared/payment/types";
 import PaymentPolicies from "./payment-policies.vue";
+import type { IPaymentMethodExpose } from "./types";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 import BankCardForm from "@/shared/payment/components/bank-card-form.vue";
@@ -59,8 +60,9 @@ interface IEmits {
 }
 
 interface IProps {
-  order: CustomerOrderType;
+  order?: CustomerOrderType;
   disabled?: boolean;
+  hidePaymentButton?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -97,8 +99,8 @@ async function initPayment() {
     publicParameters = [],
     errorMessage = "",
   } = await initializePayment({
-    orderId: props.order.id,
-    paymentId: props.order.inPayments[0].id,
+    orderId: props.order?.id,
+    paymentId: props.order?.inPayments[0].id || "todo: fix it",
   });
 
   if (paymentActionType !== PaymentActionType[PaymentActionType.PreparedForm]) {
@@ -154,7 +156,7 @@ async function pay(opaqueData: Accept.OpaqueData) {
   const {
     id: orderId,
     inPayments: [{ id: paymentId }],
-  } = props.order;
+  } = props.order || { inPayments: [{ id: "" }] }; // TODO: fix it
 
   const { isSuccess, errorMessage } = await sendOpaqueData({ orderId, paymentId, opaqueData });
 
@@ -164,7 +166,7 @@ async function pay(opaqueData: Accept.OpaqueData) {
     /**
      * Send Google Analytics purchase event.
      */
-    analytics("purchase", props.order);
+    analytics("purchase", props.order || ({} as CustomerOrderType)); // TODO: fix it
   } else {
     emit("fail", errorMessage);
   }
@@ -192,10 +194,12 @@ function sendPaymentData() {
   });
 }
 
-defineExpose({
+defineExpose<IPaymentMethodExpose>({
   loading,
   initialized,
   isValidBankCard,
+  authorizePayment: pay,
+  initializePayment: initPayment,
 });
 
 onMounted(async () => {

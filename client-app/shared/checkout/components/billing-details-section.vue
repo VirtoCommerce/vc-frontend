@@ -83,6 +83,14 @@
       </div>
     </div>
   </VcWidget>
+  <VcWidget
+    v-if="paymentMethod && billingAddress"
+    :title="$t('shared.checkout.billing_details_section.title')"
+    prepend-icon="cash"
+    size="lg"
+  >
+    <Payment hide-payment-button :cart="cart" />
+  </VcWidget>
 </template>
 
 <script setup lang="ts">
@@ -91,9 +99,12 @@ import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { AddressSelection } from "@/shared/common";
 import { BOPIS_CODE } from "../composables/useBopis";
+import type { CartType } from "@/core/api/graphql/types";
+import Payment from "@/shared/payment/components/payment.vue";
 
 interface IProps {
   disabled?: boolean;
+  cart?: CartType;
 }
 
 defineProps<IProps>();

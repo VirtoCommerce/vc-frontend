@@ -1,6 +1,6 @@
 <template>
   <VcLayout sidebar-position="right" sticky-sidebar>
-    <BillingDetailsSection />
+    <BillingDetailsSection :cart="cart" />
 
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
