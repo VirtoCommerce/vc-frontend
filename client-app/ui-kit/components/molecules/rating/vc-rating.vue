@@ -9,6 +9,7 @@
         :key="i"
         type="button"
         class="vc-rating__button"
+        :role="!isDisabledSelection ? 'radio' : undefined"
         :disabled="isDisabledSelection"
         :aria-label="getButtonAriaLabel(i)"
         :aria-checked="isButtonChecked(i)"
