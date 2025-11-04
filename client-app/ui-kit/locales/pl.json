@@ -109,6 +109,12 @@
     },
     "breadcrumbs": {
       "aria_label": "Nawigacja okruszkowa"
+    },
+    "rating": {
+      "default_aria_label": "Ocena",
+      "rating_label": "Ocena {value} na {maxValue}",
+      "read_only_button_aria_label": "Ocena {value} na {maxValue}, niedostępna do wyboru",
+      "set_rating_aria_label": "Ustaw ocenę na {value} z {maxValue}"
     }
   }
 }

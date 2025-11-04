@@ -109,6 +109,12 @@
     },
     "breadcrumbs": {
       "aria_label": "Navigering för brödsmulor"
+    },
+    "rating": {
+      "default_aria_label": "Betyg",
+      "rating_label": "Betyg {value} av {maxValue}",
+      "read_only_button_aria_label": "Betyg {value} av {maxValue}, inte tillgängligt för val",
+      "set_rating_aria_label": "Ställ in betyg till {value} av {maxValue}"
     }
   }
 }

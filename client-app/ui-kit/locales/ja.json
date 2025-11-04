@@ -109,6 +109,12 @@
     },
     "breadcrumbs": {
       "aria_label": "パンくずナビゲーション"
+    },
+    "rating": {
+      "default_aria_label": "評価",
+      "rating_label": "評価：{value}/{maxValue}",
+      "read_only_button_aria_label": "評価：{value}/{maxValue}、選択はできません",
+      "set_rating_aria_label": "評価を{value}/{maxValue}に設定"
     }
   }
 }

@@ -64,3 +64,102 @@ export const FullReadOnly: StoryType = {
     readOnly: true,
   },
 };
+
+export const FullWithLabel: StoryType = {
+  args: {
+    mode: "full",
+    label: "Rating",
+  },
+};
+
+export const MiniWithLabel: StoryType = {
+  args: {
+    mode: "mini",
+    label: "Rating",
+  },
+};
+
+export const MiniReadOnly: StoryType = {
+  args: {
+    mode: "mini",
+    value: 4.5,
+    readOnly: true,
+  },
+};
+
+export const WithReviewCount: StoryType = {
+  args: {
+    value: 4.5,
+    reviewCount: 123,
+  },
+};
+
+export const WithoutText: StoryType = {
+  args: {
+    value: 4.5,
+    withText: false,
+  },
+};
+
+export const HalfRating: StoryType = {
+  args: {
+    value: 4.5,
+    mode: "full",
+    readOnly: true,
+  },
+};
+
+export const ZeroRating: StoryType = {
+  args: {
+    value: 0,
+    mode: "full",
+    readOnly: true,
+  },
+};
+
+export const FullRating: StoryType = {
+  args: {
+    value: 5,
+    mode: "full",
+    readOnly: true,
+  },
+};
+
+export const SizeXS: StoryType = {
+  args: {
+    value: 4.5,
+    size: "xs",
+  },
+};
+
+export const SizeSM: StoryType = {
+  args: {
+    value: 4.5,
+    size: "sm",
+  },
+};
+
+export const SizeMD: StoryType = {
+  args: {
+    value: 4.5,
+    size: "md",
+  },
+};
+
+export const CustomMaxValue: StoryType = {
+  args: {
+    value: 7,
+    maxValue: 10,
+    mode: "full",
+    readOnly: true,
+  },
+};
+
+export const FullWithReviewCount: StoryType = {
+  args: {
+    value: 4.5,
+    mode: "full",
+    reviewCount: 42,
+    readOnly: true,
+  },
+};

@@ -109,6 +109,12 @@
     },
     "breadcrumbs": {
       "aria_label": "Navigazione breadcrumb"
+    },
+    "rating": {
+      "default_aria_label": "Valutazione",
+      "rating_label": "Valutazione {value} su {maxValue}",
+      "read_only_button_aria_label": "Valutazione {value} su {maxValue}, non disponibile per la selezione",
+      "set_rating_aria_label": "Imposta valutazione a {value} su {maxValue}"
     }
   }
 }

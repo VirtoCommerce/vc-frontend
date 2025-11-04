@@ -109,6 +109,12 @@
     },
     "breadcrumbs": {
       "aria_label": "Navigation fil d'Ariane"
+    },
+    "rating": {
+      "default_aria_label": "Évaluation",
+      "rating_label": "Évaluation {value} sur {maxValue}",
+      "read_only_button_aria_label": "Évaluation {value} sur {maxValue}, non disponible pour la sélection",
+      "set_rating_aria_label": "Définir l’évaluation à {value} sur {maxValue}"
     }
   }
 }
