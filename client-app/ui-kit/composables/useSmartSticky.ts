@@ -414,7 +414,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   watch([boundingSticky.height, boundingContainer.height], updateImmediate);
 
   watch(isEnabled, (value) => {
-    // eslint-disable-next-line
+    // eslint-disable-next-line sonarjs/no-selector-parameter
     if (value) {
       void update();
     } else {
