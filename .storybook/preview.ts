@@ -74,20 +74,35 @@ setThemeContext({
   },
 } as StoreResponseType);
 
-async function configureThemeSettings() {
-  const module = (await import(`@/assets/presets/coffee.json`)) as {
-    default: IThemeConfigPreset;
-  };
-  const preset = module.default;
+// List of available theme presets
+const PRESETS = ["default", "coffee", "black-gold", "mercury", "purple-pink", "watermelon"] as const;
+type PresetNameType = (typeof PRESETS)[number];
 
-  if (preset) {
-    const styleElement = document.createElement("style");
-    styleElement.innerText = ":root {";
-    Object.entries(preset).forEach(([key, value]) => {
-      styleElement.innerText += `--${key.replace(/_/g, "-")}: ${value};`;
-    });
-    styleElement.innerText += "}";
-    document.head.prepend(styleElement);
+let currentStyleElement: HTMLStyleElement | null = null;
+
+async function configureThemeSettings(presetName: PresetNameType = "default") {
+  try {
+    const module = (await import(`@/assets/presets/${presetName}.json`)) as {
+      default: IThemeConfigPreset;
+    };
+    const preset = module.default;
+
+    if (preset) {
+      if (currentStyleElement && currentStyleElement.parentNode) {
+        currentStyleElement.parentNode.removeChild(currentStyleElement);
+      }
+
+      currentStyleElement = document.createElement("style");
+      currentStyleElement.innerText = ":root {";
+      Object.entries(preset).forEach(([key, value]) => {
+        currentStyleElement!.innerText += `--${key.replace(/_/g, "-")}: ${value};`;
+      });
+      currentStyleElement.innerText += "}";
+      document.head.prepend(currentStyleElement);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`Failed to load preset "${presetName}":`, error);
   }
 }
 
@@ -120,6 +135,24 @@ setup((app) => {
 });
 
 const preview: Preview = {
+  globalTypes: {
+    themePreset: {
+      description: "Select theme preset",
+      defaultValue: "default",
+      toolbar: {
+        title: "Theme preset",
+        icon: "paintbrush",
+        items: PRESETS.map((preset) => ({
+          value: preset,
+          title: preset.charAt(0).toUpperCase() + preset.slice(1).replace(/-/g, " "),
+        })),
+        dynamicTitle: true,
+      },
+    },
+  },
+  initialGlobals: {
+    themePreset: "default",
+  },
   parameters: {
     controls: {
       matchers: {
@@ -135,6 +168,18 @@ const preview: Preview = {
     },
     a11y: a11yConfig,
   },
+  decorators: [
+    (story, context) => {
+      const presetName = context.globals.themePreset as PresetNameType;
+
+      configureThemeSettings(presetName).catch(() => {
+        // eslint-disable-next-line no-console
+        console.error("Storybook theme setup error");
+      });
+
+      return story();
+    },
+  ],
   tags: ["autodocs"],
 };
 
