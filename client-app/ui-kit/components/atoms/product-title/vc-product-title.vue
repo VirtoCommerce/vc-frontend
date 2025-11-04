@@ -100,19 +100,21 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   }
 
   @at-root .vc-product-card {
-    > .vc-product-card__wrapper #{$self} {
+    $wrapperSelector: "> .vc-product-card__wrapper #{$self}";
+
+    #{$wrapperSelector} {
       grid-area: title;
 
       @apply text-sm;
     }
 
     &--view-mode {
-      &--grid > .vc-product-card__wrapper #{$self} {
+      &--grid #{$wrapperSelector} {
         @apply order-2;
       }
 
       &--list {
-        > .vc-product-card__wrapper #{$self} {
+        #{$wrapperSelector} {
           @apply self-end;
 
           &:only-child {
@@ -121,27 +123,27 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
         }
 
         @container (min-width: theme("containers.xl")) {
-          &:not(:has(.vc-product-vendor, .vc-product-action)) > .vc-product-card__wrapper #{$self} {
+          &:not(:has(.vc-product-vendor, .vc-product-action)) #{$wrapperSelector} {
             @apply self-center;
           }
         }
       }
 
       &--item {
-        > .vc-product-card__wrapper #{$self} {
+        #{$wrapperSelector} {
           @apply self-center;
         }
 
-        &:has(.vc-product-vendor) > .vc-product-card__wrapper #{$self} {
+        &:has(.vc-product-vendor) #{$wrapperSelector} {
           @apply self-end;
         }
 
         @container (min-width: theme("containers.2xl")) {
-          > .vc-product-card__wrapper #{$self} {
+          #{$wrapperSelector} {
             @apply self-end;
           }
 
-          &:not(:has(.vc-product-vendor)) > .vc-product-card__wrapper #{$self} {
+          &:not(:has(.vc-product-vendor)) #{$wrapperSelector} {
             @apply self-center;
           }
         }

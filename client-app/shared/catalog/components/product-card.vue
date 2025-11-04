@@ -1,11 +1,5 @@
 <template>
-  <VcProductCard
-    :is-expanded="isExpanded"
-    :view-mode="viewMode"
-    :data-product-sku="product.code"
-    border
-    data-test-id="product-card"
-  >
+  <VcProductCard :view-mode="viewMode" :data-product-sku="product.code" border data-test-id="product-card">
     <template #media>
       <VcProductImage
         :images="viewMode === 'grid' ? product.images : []"
@@ -86,7 +80,8 @@
     />
 
     <VcProductButton
-      v-else-if="product.hasVariations && viewMode === 'list' && isDesktop"
+      v-if="product.hasVariations"
+      :class="['product-card__variations-button', `product-card__variations-button--${viewMode}`]"
       :link-text="$t('pages.catalog.show_on_a_separate_page')"
       :link-to="link"
       :button-text="$t('pages.catalog.variations_button', [variationsCount])"
@@ -96,7 +91,8 @@
     />
 
     <VcProductButton
-      v-else-if="product.hasVariations && (viewMode !== 'list' || !isDesktop)"
+      v-if="product.hasVariations"
+      :class="['product-card__variations-link-button', `product-card__variations-link-button--${viewMode}`]"
       :to="link"
       :link-text="$t('pages.catalog.show_on_a_separate_page')"
       :link-to="link"
@@ -105,7 +101,7 @@
       @link-click="$emit('linkClick', product, $event)"
     />
 
-    <AddToCartSimple v-else :product="product" :reserved-space="viewMode === 'grid'">
+    <AddToCartSimple v-if="!product.hasVariations" :product="product" :reserved-space="viewMode === 'grid'">
       <InStock
         :is-in-stock="product.availabilityData?.isInStock"
         :is-digital="product.productType === ProductType.Digital"
@@ -116,33 +112,37 @@
     </AddToCartSimple>
 
     <template #expanded-content>
-      <div v-if="fetchingVariations && (!variations || variations.length === 0)" class="flex justify-center py-8">
-        <VcLoader />
-      </div>
+      <div
+        v-if="viewMode === 'list'"
+        v-show="isExpanded"
+        :class="['product-card__variants-wrapper', `product-card__variants-wrapper--${viewMode}`]"
+      >
+        <div v-if="fetchingVariations && (!variations || variations.length === 0)" class="flex justify-center py-8">
+          <VcLoader />
+        </div>
 
-      <div v-else>
-        <VcTypography tag="h5" class="pb-3 leading-5" text-transform="none">
-          {{ $t("pages.catalog.available_variations", variationsCount) }}
-        </VcTypography>
+        <div v-else>
+          <VcTypography tag="h5" class="pb-3 leading-5" text-transform="none">
+            {{ $t("pages.catalog.available_variations", variationsCount) }}
+          </VcTypography>
 
-        <VariationsDefault
-          :variations="variations ?? []"
-          :page-number="variationsPageNumber"
-          :pages-count="variationsPagesCount"
-          @change-page="changeVariationsPage"
-        />
+          <VariationsDefault
+            :variations="variations ?? []"
+            :page-number="variationsPageNumber"
+            :pages-count="variationsPagesCount"
+            @change-page="changeVariationsPage"
+          />
+        </div>
       </div>
     </template>
   </VcProductCard>
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints } from "@vueuse/core";
 import { computed, toRef, ref, watch } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { BREAKPOINTS } from "@/core/constants";
 import { BrowserTargetType, ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import {
@@ -189,8 +189,6 @@ const product = toRef(props, "product");
 const isExpanded = ref(false);
 
 const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
-const breakpoints = useBreakpoints(BREAKPOINTS);
-const isDesktop = breakpoints.greaterOrEqual("lg");
 
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
@@ -284,3 +282,35 @@ const variationsCount = computed(() => {
   return result;
 });
 </script>
+
+<style scoped lang="scss">
+.product-card__variations-button {
+  @apply hidden;
+
+  &--list {
+    @container (min-width: theme("containers.xl")) {
+      @apply block;
+    }
+  }
+}
+
+.product-card__variations-link-button {
+  @apply block;
+
+  &--list {
+    @container (min-width: theme("containers.xl")) {
+      @apply hidden;
+    }
+  }
+}
+
+.product-card__variants-wrapper {
+  @apply border-t border-neutral-200 p-6 pt-4 hidden;
+
+  &--list {
+    @container (min-width: theme("containers.xl")) {
+      @apply block;
+    }
+  }
+}
+</style>

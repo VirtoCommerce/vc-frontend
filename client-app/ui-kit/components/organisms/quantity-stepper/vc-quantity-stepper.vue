@@ -228,17 +228,19 @@ watch(
   }
 
   @at-root .vc-product-card {
-    > .vc-product-card__wrapper #{$self} {
+    $wrapperSelector: "> .vc-product-card__wrapper #{$self}";
+
+    #{$wrapperSelector} {
       grid-area: add-to-cart;
     }
 
     &--view-mode {
-      &--grid > .vc-product-card__wrapper #{$self} {
+      &--grid #{$wrapperSelector} {
         @apply mt-3 order-7;
       }
 
       &--list {
-        > .vc-product-card__wrapper #{$self} {
+        #{$wrapperSelector} {
           @apply mt-3;
 
           @container (min-width: theme("containers.sm")) {
@@ -256,7 +258,7 @@ watch(
       }
 
       &--item {
-        > .vc-product-card__wrapper #{$self} {
+        #{$wrapperSelector} {
           @apply mt-3 w-32 self-start;
 
           @container (min-width: theme("containers.xl")) {

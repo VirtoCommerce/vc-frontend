@@ -106,19 +106,21 @@ defineProps<IProps>();
   }
 
   @at-root .vc-product-card {
-    > .vc-product-card__wrapper #{$self} {
+    $wrapperSelector: "> .vc-product-card__wrapper #{$self}";
+
+    #{$wrapperSelector} {
       grid-area: price;
     }
 
     &--view-mode {
-      &--grid > .vc-product-card__wrapper #{$self} {
+      &--grid #{$wrapperSelector} {
         --font-size: theme("fontSize.lg");
 
         @apply mt-3 order-6;
       }
 
       &--list {
-        > .vc-product-card__wrapper #{$self} {
+        #{$wrapperSelector} {
           --font-size: theme("fontSize.lg");
 
           @container (max-width: theme("containers.xl")) {
@@ -148,7 +150,7 @@ defineProps<IProps>();
       }
 
       &--item {
-        > .vc-product-card__wrapper #{$self} {
+        #{$wrapperSelector} {
           @apply hidden;
 
           @container (min-width: theme("containers.4xl")) {
@@ -158,7 +160,7 @@ defineProps<IProps>();
           }
         }
 
-        .vc-product-total > .vc-product-card__wrapper #{$self} {
+        .vc-product-total #{$wrapperSelector} {
           --font-size: theme("fontSize.base");
 
           @apply flex;
