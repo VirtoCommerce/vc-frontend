@@ -26,8 +26,6 @@ export interface IUseProductVariationsOptions {
 export interface IUseProductVariationsReturn {
   /** Search params for variations (writable computed) */
   variationsSearchParams: Ref<ProductsSearchParamsType>;
-  /** Current page number */
-  variationsPageNumber: Ref<number>;
   /** Reset variations params when product changes */
   resetVariationsParams: () => void;
   /** Update search params with new filters (for manual updates) */
@@ -60,12 +58,10 @@ export function useProductVariations(options: IUseProductVariationsOptions): IUs
     sortRef = sort;
   }
 
-  const variationsPageNumber = ref(1);
-
   const variationsFilterExpressionRef =
     typeof variationsFilterExpression === "string" ? ref(variationsFilterExpression) : variationsFilterExpression;
 
-  function buildSearchParams(): ProductsSearchParamsType {
+  function buildSearchParams(page: number = 1): ProductsSearchParamsType {
     const filterExpression = customFilterBuilder
       ? customFilterBuilder()
       : getFilterExpression([
@@ -76,7 +72,7 @@ export function useProductVariations(options: IUseProductVariationsOptions): IUs
         ]);
 
     return {
-      page: variationsPageNumber.value,
+      page,
       itemsPerPage: itemsPerPageRef.value,
       sort: sortRef.value ?? undefined,
       filter: filterExpression,
@@ -85,24 +81,21 @@ export function useProductVariations(options: IUseProductVariationsOptions): IUs
 
   const variationsSearchParams = ref<ProductsSearchParamsType>(buildSearchParams());
 
-  const watchDeps: WatchSource[] = [
-    variationsPageNumber,
-    variationsFilterExpressionRef,
-    productsFilters,
-    itemsPerPageRef,
-    sortRef,
-  ];
+  const watchDeps: WatchSource[] = [variationsFilterExpressionRef, productsFilters, itemsPerPageRef, sortRef];
 
   if (customFilterBuilder && customFilterBuilderDeps) {
     watchDeps.push(...customFilterBuilderDeps);
   }
 
   watch(watchDeps, () => {
-    variationsSearchParams.value = buildSearchParams();
+    variationsSearchParams.value = buildSearchParams(variationsSearchParams.value?.page);
   });
 
   function resetVariationsParams(): void {
-    variationsPageNumber.value = 1;
+    variationsSearchParams.value = {
+      ...variationsSearchParams.value,
+      page: 1,
+    };
   }
 
   function updateSearchParams(updates: Partial<ProductsSearchParamsType>): void {
@@ -114,7 +107,6 @@ export function useProductVariations(options: IUseProductVariationsOptions): IUs
 
   return {
     variationsSearchParams,
-    variationsPageNumber,
     resetVariationsParams,
     updateSearchParams,
   };

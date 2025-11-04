@@ -234,10 +234,12 @@ const variationsLoaded = ref(false);
 
 const variationsFilterExpression = computed(() => `productfamilyid:${productId.value} is:product,variation`);
 
-const { variationsSearchParams, variationsPageNumber, resetVariationsParams } = useProductVariations({
+const { variationsSearchParams, resetVariationsParams, updateSearchParams } = useProductVariations({
   productsFilters,
   variationsFilterExpression,
 });
+
+const variationsPageNumber = computed(() => variationsSearchParams.value.page ?? 1);
 
 async function loadVariations() {
   if (!variationsLoaded.value) {
@@ -247,7 +249,7 @@ async function loadVariations() {
 }
 
 async function changeVariationsPage(pageNumber: number) {
-  variationsPageNumber.value = pageNumber;
+  updateSearchParams({ page: pageNumber });
   await fetchVariationsProducts(variationsSearchParams.value);
 }
 

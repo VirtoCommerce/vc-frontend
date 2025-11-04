@@ -39,12 +39,11 @@ describe("useProductVariations", () => {
   describe("initialization and default values", () => {
     it("should initialize with default values", () => {
       const variationsFilterExpression = ref("productfamilyid:123 is:product,variation");
-      const { variationsSearchParams, variationsPageNumber } = useProductVariations({
+      const { variationsSearchParams } = useProductVariations({
         productsFilters,
         variationsFilterExpression,
       });
 
-      expect(variationsPageNumber.value).toBe(1);
       expect(variationsSearchParams.value.page).toBe(1);
       expect(variationsSearchParams.value.itemsPerPage).toBe(50);
       expect(variationsSearchParams.value.sort).toBeUndefined();
@@ -104,20 +103,41 @@ describe("useProductVariations", () => {
     });
   });
 
-  describe("reactivity - variationsPageNumber", () => {
-    it("should update variationsSearchParams when variationsPageNumber changes", async () => {
+  describe("page management", () => {
+    it("should update page through updateSearchParams", () => {
       const variationsFilterExpression = ref("productfamilyid:123 is:product,variation");
-      const { variationsSearchParams, variationsPageNumber } = useProductVariations({
+      const { variationsSearchParams, updateSearchParams } = useProductVariations({
         productsFilters,
         variationsFilterExpression,
       });
 
       expect(variationsSearchParams.value.page).toBe(1);
 
-      variationsPageNumber.value = 2;
-      await nextTick();
+      updateSearchParams({ page: 2 });
 
       expect(variationsSearchParams.value.page).toBe(2);
+    });
+
+    it("should preserve page when watcher rebuilds params", async () => {
+      const variationsFilterExpression = ref("productfamilyid:123 is:product,variation");
+      const { variationsSearchParams, updateSearchParams } = useProductVariations({
+        productsFilters,
+        variationsFilterExpression,
+      });
+
+      // Set page to 3
+      updateSearchParams({ page: 3 });
+      expect(variationsSearchParams.value.page).toBe(3);
+
+      // Trigger watcher by changing productsFilters
+      productsFilters.value = {
+        ...productsFilters.value,
+        inStock: true,
+      };
+      await nextTick();
+
+      // Page should be preserved
+      expect(variationsSearchParams.value.page).toBe(3);
     });
   });
 
@@ -360,18 +380,18 @@ describe("useProductVariations", () => {
   });
 
   describe("resetVariationsParams", () => {
-    it("should reset variationsPageNumber to 1", () => {
+    it("should reset page to 1", () => {
       const variationsFilterExpression = ref("productfamilyid:123 is:product,variation");
-      const { variationsPageNumber, resetVariationsParams } = useProductVariations({
+      const { variationsSearchParams, resetVariationsParams, updateSearchParams } = useProductVariations({
         productsFilters,
         variationsFilterExpression,
       });
 
-      variationsPageNumber.value = 5;
-      expect(variationsPageNumber.value).toBe(5);
+      updateSearchParams({ page: 5 });
+      expect(variationsSearchParams.value.page).toBe(5);
 
       resetVariationsParams();
-      expect(variationsPageNumber.value).toBe(1);
+      expect(variationsSearchParams.value.page).toBe(1);
     });
   });
 

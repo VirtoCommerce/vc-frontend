@@ -308,23 +308,30 @@ const variationsSort = computed(() => (isB2cLayout.value ? undefined : getSortin
 const variationsFilterExpression = computed(() => `productfamilyid:${productId.value} is:product,variation`);
 
 const variationsFilterBuilder = () => {
+  const baseFilters = [variationsFilterExpression.value];
+
+  const facetFilters = generateFilterExpressionFromFilters(productsFilters.value.filters);
+  if (facetFilters) {
+    baseFilters.push(facetFilters);
+  }
+
   if (isB2cLayout.value) {
     return getFilterExpression([
-      variationsFilterExpression.value,
+      ...baseFilters,
       getFilterExpressionForAvailableIn([]),
       getFilterExpressionForInStock(true),
     ]);
   }
 
   return getFilterExpression([
-    variationsFilterExpression.value,
+    ...baseFilters,
     getFilterExpressionForAvailableIn(productsFilters.value.branches),
     getFilterExpressionForInStock(productsFilters.value.inStock),
     getFilterExpressionForPurchasedBefore(productsFilters.value.purchasedBefore),
   ]);
 };
 
-const { variationsSearchParams, variationsPageNumber, updateSearchParams } = useProductVariations({
+const { variationsSearchParams, updateSearchParams } = useProductVariations({
   productsFilters,
   itemsPerPage: variationsItemsPerPage,
   sort: variationsSort,
@@ -332,6 +339,8 @@ const { variationsSearchParams, variationsPageNumber, updateSearchParams } = use
   customFilterBuilder: variationsFilterBuilder,
   customFilterBuilderDeps: [isB2cLayout, productsFilters],
 });
+
+const variationsPageNumber = computed(() => variationsSearchParams.value.page ?? 1);
 
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
 const { title: pageTitle } = usePageTitle(seoTitle);
@@ -383,13 +392,14 @@ const productComponentAnchorIsVisible = useElementVisibility(productComponentAnc
 
 async function sortVariations(sortInfo: ISortInfo): Promise<void> {
   variationSortInfo.value = sortInfo;
-  variationsPageNumber.value = 1;
+
+  updateSearchParams({ page: 1 });
 
   await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
 }
 
 async function changeVariationsPage(pageNumber: number): Promise<void> {
-  variationsPageNumber.value = pageNumber;
+  updateSearchParams({ page: pageNumber });
 
   await fetchProducts(variationsSearchParams.value, isB2cLayout.value);
 }
@@ -397,9 +407,8 @@ async function changeVariationsPage(pageNumber: number): Promise<void> {
 async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
   await _applyFilters(newFilters);
 
-  variationsPageNumber.value = 1;
-
   updateSearchParams({
+    page: 1,
     filter: getFilterExpression([
       variationsFilterExpression.value,
       generateFilterExpressionFromFilters(newFilters.filters),
