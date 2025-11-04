@@ -197,8 +197,8 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   const topOffsetCssVar = useCssVar(topOffsetVar, stickyElementResolved);
   const bottomOffsetCssVar = useCssVar(bottomOffsetVar, stickyElementResolved);
 
-  const topSpacingResolved = computed(() => parseFloat(topOffsetCssVar.value ?? "0") || 0);
-  const bottomSpacingResolved = computed(() => parseFloat(bottomOffsetCssVar.value ?? "0") || 0);
+  const topSpacingResolved = computed(() => Number.parseFloat(topOffsetCssVar.value ?? "0") || 0);
+  const bottomSpacingResolved = computed(() => Number.parseFloat(bottomOffsetCssVar.value ?? "0") || 0);
 
   const isEnabled = computed(() => toValue(enabled));
 
