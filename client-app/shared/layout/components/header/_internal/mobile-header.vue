@@ -91,29 +91,39 @@
       <!-- endregion Default slot -->
 
       <!-- region Mobile Search Bar -->
-      <div v-show="searchBarVisible" class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
-        <VcInput
-          v-model="searchPhrase"
-          type="search"
-          maxlength="64"
-          :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
-          class="mr-4 grow"
-          :clearable="!!searchPhrase"
-          no-border
-          @clear="reset"
-          @keydown.enter="handleSearch"
-        >
-          <template #append>
-            <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
-          </template>
-        </VcInput>
+      <transition name="slide-fade-top">
+        <div v-if="searchBarVisible" class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
+          <div class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
+            <VcInput
+              v-model="searchPhrase"
+              type="search"
+              maxlength="64"
+              :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
+              class="mr-4 grow"
+              :clearable="!!searchPhrase"
+              no-border
+              @clear="reset"
+              @keydown.enter="handleSearch"
+            >
+              <template #append>
+                <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
+              </template>
+            </VcInput>
 
-        <VcButton :to="searchPhrase && searchPageLink" icon="search" />
+            <VcButton icon="search" @click="handleSearch" />
 
-        <button type="button" class="-mr-2 ml-2 h-11 appearance-none px-3" @click="hideSearchBar">
-          <VcIcon name="delete-thin" class="fill-additional-50" />
-        </button>
-      </div>
+            <button type="button" class="-mr-2 ml-2 h-11 appearance-none px-3" @click="hideSearchBar">
+              <VcIcon name="delete-thin" class="fill-additional-50" />
+            </button>
+          </div>
+
+          <SearchDropdown
+            :search-phrase="searchPhrase"
+            @hide="handleSearchDropdownHide"
+            @product-select="handleProductSelect"
+          />
+        </div>
+      </transition>
     </div>
   </header>
 
@@ -139,9 +149,7 @@
 <script setup lang="ts">
 import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
 import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
 import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
-import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
@@ -150,73 +158,71 @@ import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
 import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
-import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { ShipToSelector } from "@/shared/ship-to-location";
+import BarcodeScanner from "../search-bar/barcode-scanner.vue";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
+import SearchDropdown from "./search-dropdown.vue";
 import type { StyleValue } from "vue";
-import type { RouteLocationRaw } from "vue-router";
-import BarcodeScanner from "@/shared/layout/components/search-bar/barcode-scanner.vue";
-
-const router = useRouter();
 
 const { customComponents } = useCustomMobileHeaderComponents();
+
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
+
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
-const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
+const { searchBarVisible, toggleSearchBar, hideSearchBar, showSearchDropdown, hideSearchDropdown } = useSearchBar();
+
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
-const { saveSearchQuery } = useHistoricalEvents();
-const { isCategoryScope } = useSearchScore();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
 );
 
-const searchPageLink = computed<RouteLocationRaw>(() => {
-  if (isCategoryScope.value) {
-    return {
-      path: router.currentRoute.value.path,
-      query: {
-        [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
-      },
-    };
-  } else {
-    return {
-      name: ROUTES.SEARCH.NAME,
-      query: {
-        [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
-      },
-    };
-  }
-});
-
 function reset() {
   searchPhrase.value = "";
+  hideSearchDropdown();
 }
 
 function onBarcodeScanned(value: string) {
   if (value) {
     searchPhrase.value = value;
-    void router.push(searchPageLink.value);
   }
 }
 
 function handleSearch() {
-  if (searchPhrase.value) {
-    void saveSearchQuery(searchPhrase.value);
-
-    void router.replace(searchPageLink.value);
+  if (searchPhrase.value.trim()) {
+    showSearchDropdown();
   }
+}
+
+function handleSearchDropdownHide() {
+  hideSearchBar();
+  hideSearchDropdown();
+}
+
+function handleProductSelect() {
+  hideSearchBar();
+  hideSearchDropdown();
 }
 
 syncRefs(mobileMenuVisible, useScrollLock(document.body));
 
-whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
+whenever(
+  searchBarVisible,
+  () => {
+    searchPhrase.value = searchPhraseInUrl.value ?? "";
+
+    if (searchPhrase.value.trim()) {
+      showSearchDropdown();
+    }
+  },
+  { immediate: true },
+);
 </script>

@@ -78,7 +78,7 @@ import { computed, nextTick, ref, shallowRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
-import { SearchBar } from "@/shared/layout";
+import SearchBar from "../search-bar/search-bar.vue";
 import { useCustomHeaderLinkComponents } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
