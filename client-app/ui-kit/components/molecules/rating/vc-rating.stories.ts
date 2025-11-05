@@ -44,19 +44,6 @@ export const Basic: StoryType = {
   },
 };
 
-export const Label: StoryType = {
-  args: {
-    value: 4.5,
-    label: "Rating",
-  },
-};
-
-export const Full: StoryType = {
-  args: {
-    mode: "full",
-  },
-};
-
 export const FullReadOnly: StoryType = {
   args: {
     value: 4.5,
@@ -76,14 +63,6 @@ export const MiniWithLabel: StoryType = {
   args: {
     mode: "mini",
     label: "Rating",
-  },
-};
-
-export const MiniReadOnly: StoryType = {
-  args: {
-    mode: "mini",
-    value: 4.5,
-    readOnly: true,
   },
 };
 

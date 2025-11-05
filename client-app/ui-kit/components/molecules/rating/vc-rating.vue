@@ -3,17 +3,14 @@
     <span v-if="label" class="vc-rating__label">{{ label }}:</span>
     <span v-else class="sr-only">{{ currentRatingText }}</span>
 
-    <div class="vc-rating__shapes" role="radiogroup" :aria-label="groupAriaLabel">
+    <div class="vc-rating__shapes" role="group" :aria-label="groupAriaLabel">
       <button
         v-for="i in mode === 'mini' ? 1 : maxValue"
         :key="i"
         type="button"
         class="vc-rating__button"
-        :role="!isDisabledSelection ? 'radio' : undefined"
         :disabled="isDisabledSelection"
         :aria-label="getButtonAriaLabel(i)"
-        :aria-checked="isButtonChecked(i)"
-        :aria-disabled="isDisabledSelection ? 'true' : undefined"
         :tabindex="isDisabledSelection ? undefined : 0"
         @click="setRating(i)"
         @focus="handleMouseOver(i)"
@@ -136,15 +133,6 @@ function getButtonAriaLabel(index: number): string {
     return t("ui_kit.rating.read_only_button_aria_label", { value: index, maxValue: props.maxValue });
   }
   return t("ui_kit.rating.set_rating_aria_label", { value: index, maxValue: props.maxValue });
-}
-
-function isButtonChecked(index: number): boolean | undefined {
-  if (isDisabledSelection.value) {
-    return undefined;
-  }
-  const rating = selectedRating.value ?? props.value;
-  const currentRating = Math.round(rating);
-  return index === currentRating;
 }
 </script>
 
