@@ -142,3 +142,11 @@ export const FullWithReviewCount: StoryType = {
     readOnly: true,
   },
 };
+
+export const CustomButtonAriaLabel: StoryType = {
+  args: {
+    value: 4.5,
+    mode: "full",
+    buttonAriaLabel: (index: number) => `Custom rating ${index}`,
+  },
+};
