@@ -79,7 +79,8 @@
       "show_less": "Weniger anzeigen",
       "expand_all": "Alle ausklappen",
       "all_products": "Alle Produkte",
-      "buy_now": "Jetzt kaufen"
+      "buy_now": "Jetzt kaufen",
+      "see_all": "Alle anzeigen"
     },
     "labels": {
       "actions": "Aktionen",
@@ -335,6 +336,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Für später gespeichert",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -821,10 +823,14 @@
         "year_label": "Jahr",
         "year_placeholder": "JJ",
         "security_code_label": "Sicherheitscode",
+        "pay_now_button": "Jetzt bezahlen",
         "errors": {
+          "card_number": "Bitte geben Sie eine gültige Kreditkartennummer an",
           "month": "Bitte geben Sie einen gültigen Ablaufmonat an",
           "year": "Bitte geben Sie ein gültiges Ablaufjahr an",
-          "security_code": "Ungültiger Sicherheitscode."
+          "expiration_date": "Das Ablaufdatum muss in der Zukunft liegen",
+          "security_code": "Bitte geben Sie einen gültigen Sicherheitscode an",
+          "cardholder_name": "Bitte geben Sie einen gültigen Namen des Karteninhabers an"
         },
         "user_error_message": "Zahlung konnte nicht initialisiert werden. Bitte versuchen Sie es später noch einmal oder wählen Sie eine andere Zahlungsmethode.",
         "payment_unavailable": "Zahlungsmethode ist nicht verfügbar. Bitte versuche es später noch einmal."
@@ -834,27 +840,15 @@
         "privacy_policy_link": "Datenschutzrichtlinie",
         "accept_terms_text": "Durch die Aufgabe einer Bestellung akzeptieren Sie die Bedingungen unserer",
         "processing_personal_data_text": "und stimmen zu, dass wir Ihre personenbezogenen Daten gemäß unserer",
-        "pay_now_button": "Jetzt bezahlen",
         "errors": {
-          "number": "Bitte geben Sie eine gültige Kreditkartennummer an",
-          "month": "Bitte geben Sie einen gültigen Ablaufmonat an",
-          "year": "Bitte geben Sie ein gültiges Ablaufjahr an",
-          "expiration_date": "Das Ablaufdatum muss in der Zukunft liegen",
-          "security_code": "Bitte geben Sie einen gültigen Sicherheitscode an",
-          "cardholder_name": "Bitte geben Sie einen gültigen Namen des Karteninhabers an",
           "incorrect_payment_method": "Ungültige Zahlungsmethode"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Jetzt bezahlen"
       },
       "manual": {
         "text": "Die von Ihnen ausgewählte Zahlungsmethode unterstützt keine Online-Zahlung. Bitte wählen Sie eine andere Methode oder "
       },
       "redirection": {
         "text": "Nachdem Sie auf <strong>{0}</strong> geklickt haben, werden Sie zum Zahlungsdienstleister weitergeleitet",
-        "pay_now_button": "Jetzt bezahlen",
-        "try_again_button": "Erneut versuchen",
         "errors": {
           "missing_link": "Weiterleitungslink fehlt",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1318,6 +1312,7 @@
       "recently_browsed_products": "Kürzlich angesehen",
       "save_for_later": "Für später speichern",
       "saved_for_later": "Für später gespeichert",
+      "saved_for_later_not_found": "Sie haben noch keine Produkte für später gespeichert",
       "move_to_cart": "In den Warenkorb"
     },
     "checkout": {

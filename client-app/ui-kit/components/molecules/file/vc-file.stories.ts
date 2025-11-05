@@ -1,106 +1,119 @@
 import { VcFile } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-export default {
+const meta: Meta<typeof VcFile> = {
   title: "Components/Molecules/VcFile",
   component: VcFile,
-} as Meta<typeof VcFile>;
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcFile v-bind="args" />',
+  }),
+};
 
-const Template: StoryFn = (args) => ({
-  components: { VcFile },
-  setup: () => ({ args }),
-  template: '<VcFile v-bind="args" />',
-});
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
-export const Basic = Template.bind({});
-Basic.args = {
-  file: {
-    name: "Image.png",
-    size: 111122233,
-    contentType: "image/png",
-    status: "new",
-    file: new File([], "Image.png"),
+export const Basic: StoryType = {
+  args: {
+    file: {
+      name: "Image.png",
+      size: 111122233,
+      contentType: "image/png",
+      status: "new",
+      file: new File([], "Image.png"),
+      progress: 0,
+    },
   },
 };
 
-export const Uploading = Template.bind({});
-Uploading.args = {
-  file: {
-    name: "FileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImage.png",
-    size: 11122233,
-    contentType: "application/pdf",
-    progress: 45,
-    status: "uploading",
-    file: new File(
-      [],
-      "FileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImage.png",
-    ),
+export const Uploading: StoryType = {
+  args: {
+    file: {
+      name: "FileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImage.png",
+      size: 11122233,
+      contentType: "application/pdf",
+      progress: 45,
+      status: "uploading",
+      file: new File(
+        [],
+        "FileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImage.png",
+      ),
+    },
   },
 };
 
-export const Uploaded = Template.bind({});
-Uploaded.args = {
-  file: {
-    name: "Image.png",
-    size: 111122233,
-    contentType: "image/png",
-    status: "uploaded",
-    progress: 100,
-    url: "https://via.placeholder.com/150",
+export const Uploaded: StoryType = {
+  args: {
+    file: {
+      name: "Image.png",
+      size: 111122233,
+      contentType: "image/png",
+      status: "uploaded",
+      progress: 100,
+      url: "https://via.placeholder.com/150",
+      id: "uploaded-file-id",
+      file: new File([], "Image.png"),
+    },
   },
 };
 
-export const Failed = Template.bind({});
-Failed.args = {
-  file: {
-    name: "Archive.zip",
-    size: 16155533,
-    contentType: "application/zip",
-    status: "error",
-    errorMessage:
-      "Error message long long long long long error message stringstringstringstringstringstringstringstringstringstringstringstringstringstringstringstringstringstringstringstringstring",
-    file: new File([], "Archive.zip"),
+export const Failed: StoryType = {
+  args: {
+    file: {
+      name: "Archive.zip",
+      size: 16155533,
+      contentType: "application/zip",
+      status: "error",
+      errorMessage:
+        "Error message long long long long long error message stringstringstringstringstringstringstringstringstringstringstringstringstringstringstringstringstringstringstringstringstring",
+      file: new File([], "Archive.zip"),
+    },
   },
 };
 
-export const Attached = Template.bind({});
-Attached.args = {
-  file: {
-    name: "Image.png",
-    size: 111122233,
-    contentType: "image/png",
-    status: "attached",
-    url: "https://via.placeholder.com/150",
+export const Attached: StoryType = {
+  args: {
+    file: {
+      name: "Image.png",
+      size: 111122233,
+      contentType: "image/png",
+      status: "attached",
+      url: "https://via.placeholder.com/150",
+    },
   },
 };
 
-export const Removable = Template.bind({});
-Removable.args = {
-  file: {
-    name: "FileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImage.png",
-    size: 111122233,
-    contentType: "image/png",
-    status: "new",
-    file: new File(
-      [],
-      "FileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImage.png",
-    ),
+export const Removable: StoryType = {
+  args: {
+    file: {
+      name: "FileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImage.png",
+      size: 111122233,
+      contentType: "image/png",
+      status: "new",
+      file: new File(
+        [],
+        "FileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImage.png",
+      ),
+      progress: 0,
+    },
+    removable: true,
   },
-  removable: true,
 };
 
-export const RemovableReloadable = Template.bind({});
-RemovableReloadable.args = {
-  file: {
-    name: "FileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImage.png",
-    size: 111122233,
-    contentType: "image/png",
-    status: "new",
-    file: new File(
-      [],
-      "FileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImage.png",
-    ),
+export const RemovableReloadable: StoryType = {
+  args: {
+    file: {
+      name: "FileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImage.png",
+      size: 111122233,
+      contentType: "image/png",
+      status: "new",
+      file: new File(
+        [],
+        "FileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImageFileWithVeryLongNameImage.png",
+      ),
+      progress: 0,
+    },
+    removable: true,
+    reloadable: true,
   },
-  removable: true,
-  reloadable: true,
 };
