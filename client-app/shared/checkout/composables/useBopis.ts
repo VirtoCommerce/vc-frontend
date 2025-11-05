@@ -1,4 +1,4 @@
-import { computed, defineAsyncComponent } from "vue";
+import { computed, defineAsyncComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BOPIS_MAP_API_KEY, BOPIS_MAP_ENABLED_KEY, MODULE_ID_SHIPPING } from "@/core/constants/modules";
@@ -32,6 +32,8 @@ export function useBopis() {
       : defineAsyncComponent(() => import("@/shared/checkout/components/select-address-modal.vue")),
   );
 
+  const modalOpening = ref(false);
+
   const normalizedAddresses = computed<AnyAddressType[]>(() =>
     addresses.value.map((pickupInStoreAddress) => ({
       ...(isBopisMapEnabled.value ? pickupInStoreAddress : {}),
@@ -64,11 +66,18 @@ export function useBopis() {
   const { openModal } = useModal();
 
   async function openSelectAddressModal(cartId: string) {
+    modalOpening.value = true;
+
     resetFilter();
-    await fetchAddresses({
-      cartId,
-      first: ADDRESSES_FETCH_LIMIT,
-    });
+
+    try {
+      await fetchAddresses({
+        cartId,
+        first: ADDRESSES_FETCH_LIMIT,
+      });
+    } finally {
+      modalOpening.value = false;
+    }
 
     openModal({
       component: modalComponent.value,
@@ -136,6 +145,7 @@ export function useBopis() {
 
     loading: pickupLocationsLoading,
 
+    modalOpening,
     openSelectAddressModal,
   };
 }
