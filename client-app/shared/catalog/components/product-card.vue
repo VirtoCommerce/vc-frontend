@@ -1,5 +1,11 @@
 <template>
-  <VcProductCard :view-mode="viewMode" :data-product-sku="product.code" border data-test-id="product-card">
+  <VcProductCard
+    :view-mode="viewMode"
+    :data-product-sku="product.code"
+    border
+    data-test-id="product-card"
+    class="product-card"
+  >
     <template #media>
       <VcProductImage
         :images="viewMode === 'grid' ? product.images : []"
@@ -117,12 +123,15 @@
         v-show="isExpanded"
         :class="['product-card__variants-wrapper', `product-card__variants-wrapper--${viewMode}`]"
       >
-        <div v-if="fetchingVariations && (!variations || variations.length === 0)" class="flex justify-center py-8">
+        <div
+          v-if="fetchingVariations && (!variations || variations.length === 0)"
+          class="product-card__variants-loader"
+        >
           <VcLoader />
         </div>
 
         <div v-else>
-          <VcTypography tag="h5" class="pb-3 leading-5" text-transform="none">
+          <VcTypography tag="h5" class="product-card__variants-title" text-transform="none">
             {{ $t("pages.catalog.available_variations", variationsCount) }}
           </VcTypography>
 
@@ -139,7 +148,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef, ref, watch } from "vue";
+import { computed, toRef, ref } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -234,7 +243,7 @@ const variationsLoaded = ref(false);
 
 const variationsFilterExpression = computed(() => `productfamilyid:${productId.value} is:product,variation`);
 
-const { variationsSearchParams, resetVariationsParams, updateSearchParams } = useProductVariations({
+const { variationsSearchParams, updateSearchParams } = useProductVariations({
   productsFilters,
   variationsFilterExpression,
 });
@@ -260,14 +269,6 @@ async function handleVariationsClick() {
   }
 }
 
-watch(productId, () => {
-  variationsLoaded.value = false;
-  resetVariationsParams();
-  if (isExpanded.value) {
-    void loadVariations();
-  }
-});
-
 const variationsCount = computed(() => {
   if (!productsFilters.value.inStock) {
     return (props.product.variations?.length || 0) + 1;
@@ -286,33 +287,43 @@ const variationsCount = computed(() => {
 </script>
 
 <style scoped lang="scss">
-.product-card__variations-button {
-  @apply hidden;
+.product-card {
+  &__variations-button {
+    @apply hidden;
 
-  &--list {
-    @container (min-width: theme("containers.xl")) {
-      @apply block;
+    &--list {
+      @container (min-width: theme("containers.xl")) {
+        @apply block;
+      }
     }
   }
-}
 
-.product-card__variations-link-button {
-  @apply block;
+  &__variations-link-button {
+    @apply block;
 
-  &--list {
-    @container (min-width: theme("containers.xl")) {
-      @apply hidden;
+    &--list {
+      @container (min-width: theme("containers.xl")) {
+        @apply hidden;
+      }
     }
   }
-}
 
-.product-card__variants-wrapper {
-  @apply border-t border-neutral-200 p-6 pt-4 hidden;
+  &__variants-wrapper {
+    @apply border-t border-neutral-200 p-6 pt-4 hidden;
 
-  &--list {
-    @container (min-width: theme("containers.xl")) {
-      @apply block;
+    &--list {
+      @container (min-width: theme("containers.xl")) {
+        @apply block;
+      }
     }
+  }
+
+  &__variants-loader {
+    @apply flex justify-center py-8;
+  }
+
+  &__variants-title {
+    @apply pb-3 leading-5;
   }
 }
 </style>
