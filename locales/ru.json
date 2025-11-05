@@ -79,7 +79,8 @@
       "show_less": "Показать меньше",
       "expand_all": "Развернуть все",
       "all_products": "Все продукты",
-      "buy_now": "Купить сейчас"
+      "buy_now": "Купить сейчас",
+      "see_all": "Смотреть все"
     },
     "labels": {
       "actions": "Действия",
@@ -335,6 +336,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Отложено",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -827,10 +829,14 @@
         "year_label": "Год",
         "year_placeholder": "ГГ",
         "security_code_label": "Код безопасности",
+        "pay_now_button": "Оплатить сейчас",
         "errors": {
-          "month": "Укажите действительный месяц истечения срока действия",
-          "year": "Укажите действительный год окончания срока действия",
-          "security_code": "Недействительный код безопасности."
+          "card_number": "Введите корректный номер кредитной карты",
+          "month": "Введите корректный месяц оконччания срока действия",
+          "year": "Введите корректный год окончания срока действия",
+          "expiration_date": "Дата истечения срока действия должна быть в будущем",
+          "security_code": "Введите корректный код безопасности",
+          "cardholder_name": "Введите корректное имя владельца карты"
         },
         "user_error_message": "Не удалось инициализировать платёж. Попробуйте позже или выберите другой способ оплаты",
         "payment_unavailable": "Способ оплаты недоступен. Повторите попытку позже."
@@ -840,27 +846,15 @@
         "privacy_policy_link": "Политике конфиденциальности",
         "accept_terms_text": "Размещая заказ, вы принимаете условия нашего",
         "processing_personal_data_text": "и соглашаетесь на обработку ваших персональных данных согласно нашей",
-        "pay_now_button": "Оплатить сейчас",
         "errors": {
-          "number": "Введите корректный номер кредитной карты",
-          "month": "Введите корректный месяц оконччания срока действия",
-          "year": "Введите корректный год окончания срока действия",
-          "expiration_date": "Дата истечения срока действия должна быть в будущем",
-          "security_code": "Введите корректный код безопасности",
-          "cardholder_name": "Введите корректное имя владельца карты",
           "incorrect_payment_method": "Некорректный способ оплаты"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Оплатить сейчас"
       },
       "manual": {
         "text": "Выбранный вами способ оплаты не поддерживает онлайн-платежи. Пожалуйста, выберите другой способ или "
       },
       "redirection": {
         "text": "После нажатия <strong>{0}</strong> вы будете перенаправлены на сторонний платежный сервис",
-        "pay_now_button": "Оплатить сейчас",
-        "try_again_button": "Попробовать снова",
         "errors": {
           "missing_link": "Ссылка для перенаправления отсутствует",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1324,6 +1318,7 @@
       "recently_browsed_products": "Недавно просмотренные",
       "save_for_later": "Сохранить на потом",
       "saved_for_later": "Сохранено на потом",
+      "saved_for_later_not_found": "Вы не сохранили ни одного товара на потом",
       "move_to_cart": "В корзину"
     },
     "checkout": {
@@ -1419,6 +1414,7 @@
       },
       "title": "Поиск",
       "header": "Ваш поиск {keyword} вернул следующее",
+      "header_empty": "К сожалению, поиск по запросу «{keyword}» не дал результатов",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Ваш запрос <strong>{0}</strong> не дал результатов",

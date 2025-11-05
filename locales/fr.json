@@ -79,7 +79,8 @@
       "show_less": "Afficher moins",
       "expand_all": "Tout développer",
       "all_products": "Tous les produits",
-      "buy_now": "Acheter"
+      "buy_now": "Acheter",
+      "see_all": "Voir tout"
     },
     "labels": {
       "actions": "Actions",
@@ -335,6 +336,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Enregistré pour plus tard",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -827,10 +829,14 @@
         "year_label": "Année",
         "year_placeholder": "AA",
         "security_code_label": "Code de sécurité",
+        "pay_now_button": "Payer maintenant",
         "errors": {
-          "month": "Veuillez indiquer un mois d'expiration valide",
-          "year": "Veuillez indiquer une année d'expiration valide",
-          "security_code": "Code de sécurité incorrect."
+          "card_number": "Veuillez fournir un numéro de carte de crédit valide",
+          "month": "Veuillez fournir un mois d'expiration valide",
+          "year": "Veuillez fournir une année d'expiration valide",
+          "expiration_date": "La date d'expiration doit être dans le futur",
+          "security_code": "Veuillez fournir un code de sécurité valide",
+          "cardholder_name": "Veuillez fournir un nom de titulaire de carte valide"
         },
         "user_error_message": "Impossible d'initialiser le paiement. Veuillez réessayer plus tard ou utiliser un autre mode de paiement",
         "payment_unavailable": "Le mode de paiement est indisponible. Veuillez réessayer plus tard."
@@ -840,27 +846,15 @@
         "privacy_policy_link": "Politique de confidentialité",
         "accept_terms_text": "En passant une commande, vous acceptez les termes de notre",
         "processing_personal_data_text": "et vous acceptez que nous puissions traiter vos données personnelles conformément à notre",
-        "pay_now_button": "Payer maintenant",
         "errors": {
-          "number": "Veuillez fournir un numéro de carte de crédit valide",
-          "month": "Veuillez fournir un mois d'expiration valide",
-          "year": "Veuillez fournir une année d'expiration valide",
-          "expiration_date": "La date d'expiration doit être dans le futur",
-          "security_code": "Veuillez fournir un code de sécurité valide",
-          "cardholder_name": "Veuillez fournir un nom de titulaire de carte valide",
           "incorrect_payment_method": "Méthode de paiement incorrecte"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Payer maintenant"
       },
       "manual": {
         "text": "La méthode de paiement que vous avez sélectionnée ne prend pas en charge le paiement en ligne. Veuillez sélectionner une autre méthode ou "
       },
       "redirection": {
         "text": "Après avoir cliqué sur <strong>{0}</strong>, vous serez redirigé vers le service de paiement tiers",
-        "pay_now_button": "Payer maintenant",
-        "try_again_button": "Réessayer",
         "errors": {
           "missing_link": "Le lien de redirection est manquant",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1324,6 +1318,7 @@
       "recently_browsed_products": "Récemment consultés",
       "save_for_later": "Enregistrer pour plus tard",
       "saved_for_later": "Enregistré pour plus tard",
+      "saved_for_later_not_found": "Vous n'avez enregistré aucun produit pour plus tard",
       "move_to_cart": "Ajouter au panier"
     },
     "checkout": {
@@ -1419,6 +1414,7 @@
       },
       "title": "Rechercher",
       "header": "Votre recherche pour {keyword} a donné les résultats suivants",
+      "header_empty": "Désolé, votre recherche pour « {keyword} » n’a renvoyé aucun résultat",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Votre requête <strong>{0}</strong> n'a donné aucun résultat",

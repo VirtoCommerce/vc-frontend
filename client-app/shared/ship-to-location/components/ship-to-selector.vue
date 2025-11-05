@@ -6,24 +6,24 @@
       arrow-enabled
       max-height="none"
       :offset-options="4"
+      data-test-id="ship-to-selector"
     >
       <template #default="{ opened, triggerProps }">
-        <button
-          class="ship-to-selector__trigger"
-          type="button"
-          data-test-id="ship-to-selector-button"
-          :disabled="loading"
-          v-bind="triggerProps"
-        >
+        <button class="ship-to-selector__trigger" type="button" :disabled="loading" v-bind="triggerProps">
           <VcIcon name="location-marker" size="xs" />
 
           <VcLoaderOverlay v-if="loading" no-bg />
 
           <span class="ship-to-selector__label">{{ $t("shared.layout.header.ship_to_selector.title") }}</span>
 
-          <AddressLine v-if="selectedAddress" :address="selectedAddress" class="ship-to-selector__selected" />
+          <AddressLine
+            v-if="selectedAddress"
+            :address="selectedAddress"
+            class="ship-to-selector__selected"
+            data-test-id="selected-address-label"
+          />
 
-          <span v-else class="ship-to-selector__placeholder">
+          <span v-else class="ship-to-selector__placeholder" data-test-id="select-address-label">
             {{ $t("shared.layout.header.ship_to_selector.select_address") }}
           </span>
 
@@ -74,7 +74,7 @@
                 <VcLoader />
               </div>
 
-              <div v-else class="ship-to-selector__items">
+              <div v-else class="ship-to-selector__items" data-test-id="shipping-addresses-list">
                 <button
                   v-for="address in addresses"
                   :key="address.id"
@@ -89,6 +89,7 @@
                     selectAddress(address);
                     close();
                   "
+                  :data-test-id="`address-${address.id}`"
                 >
                   <VcIcon
                     name="whishlist"
@@ -120,7 +121,13 @@
       </template>
     </VcPopover>
 
-    <button v-else type="button" class="ship-to-selector__trigger" @click="openAddOrUpdateAddressModal()">
+    <button
+      v-else
+      type="button"
+      class="ship-to-selector__trigger"
+      data-test-id="add-shipping-address-button"
+      @click="openAddOrUpdateAddressModal()"
+    >
       <VcIcon name="location-marker" size="xs" />
 
       <span class="ship-to-selector__label">{{ $t("shared.layout.header.ship_to_selector.title") }}</span>
@@ -133,7 +140,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { XApiPermissions } from "@/core/enums";
 import { useUser } from "@/shared/account";
 import { AddressLine } from "@/shared/common";

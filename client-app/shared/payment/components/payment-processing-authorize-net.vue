@@ -29,7 +29,7 @@
         data-test-id="pay-now-button"
         @click="sendPaymentData"
       >
-        {{ $t("shared.payment.authorize_net.pay_now_button") }}
+        {{ $t("shared.payment.bank_card_form.pay_now_button") }}
       </VcButton>
     </div>
   </div>
@@ -118,27 +118,27 @@ function showErrors(messages: Accept.Message[]) {
   messages.forEach(({ code, text }) => {
     switch (code) {
       case "E_WC_05":
-        bankCardErrors.value.number = t("shared.payment.authorize_net.errors.number");
+        bankCardErrors.value.number = t("shared.payment.bank_card_form.errors.card_number");
         break;
 
       case "E_WC_06":
-        bankCardErrors.value.month = t("shared.payment.authorize_net.errors.month");
+        bankCardErrors.value.month = t("shared.payment.bank_card_form.errors.month");
         break;
 
       case "E_WC_07":
-        bankCardErrors.value.year = t("shared.payment.authorize_net.errors.year");
+        bankCardErrors.value.year = t("shared.payment.bank_card_form.errors.year");
         break;
 
       case "E_WC_08":
-        bankCardErrors.value.year = t("shared.payment.authorize_net.errors.expiration_date");
+        bankCardErrors.value.year = t("shared.payment.bank_card_form.errors.expiration_date");
         break;
 
       case "E_WC_15":
-        bankCardErrors.value.securityCode = t("shared.payment.authorize_net.errors.security_code");
+        bankCardErrors.value.securityCode = t("shared.payment.bank_card_form.errors.security_code");
         break;
 
       case "E_WC_17":
-        bankCardErrors.value.cardholderName = t("shared.payment.authorize_net.errors.cardholder_name");
+        bankCardErrors.value.cardholderName = t("shared.payment.bank_card_form.errors.cardholder_name");
         break;
 
       default:
