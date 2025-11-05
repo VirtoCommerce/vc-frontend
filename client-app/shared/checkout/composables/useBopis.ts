@@ -17,7 +17,7 @@ export function useBopis() {
   const { availableShippingMethods, updateShipment, shipment } = useFullCart();
   const { isEnabled, getSettingValue } = useModuleSettings(MODULE_ID_SHIPPING);
 
-  const { pickupLocations, fetchPickupLocations, pickupLocationsLoading } = useCartPickupLocations();
+  const { pickupLocations, fetchPickupLocations, pickupLocationsLoading, resetFilter } = useCartPickupLocations();
 
   const addresses = computed<ProductPickupLocation[]>(() => (pickupLocations.value as ProductPickupLocation[]) ?? []);
 
@@ -64,6 +64,7 @@ export function useBopis() {
   const { openModal } = useModal();
 
   async function openSelectAddressModal(cartId: string) {
+    resetFilter();
     await fetchAddresses({
       cartId,
       first: ADDRESSES_FETCH_LIMIT,
