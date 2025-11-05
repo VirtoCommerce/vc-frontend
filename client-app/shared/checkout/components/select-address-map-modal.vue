@@ -390,7 +390,7 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
   }
 
   &__content {
-    @apply relative flex flex-col gap-3 w-full flex-1;
+    @apply relative flex flex-col gap-3 w-full flex-1 max-h-[90%];
 
     @media (min-width: theme("screens.md")) {
       @apply flex-row;
