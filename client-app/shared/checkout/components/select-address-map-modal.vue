@@ -15,6 +15,7 @@
           value-field="term"
           :placeholder="$t('common.labels.country')"
           class="w-44"
+          :disabled="pickupLocationsLoading"
           @change="applyFilter"
         />
 
@@ -25,6 +26,7 @@
           value-field="term"
           :placeholder="$t('common.labels.region')"
           class="w-44"
+          :disabled="pickupLocationsLoading"
           @change="applyFilter"
         />
 
@@ -35,6 +37,7 @@
           value-field="term"
           :placeholder="$t('common.labels.city')"
           class="w-44"
+          :disabled="pickupLocationsLoading"
           @change="applyFilter"
         />
 
@@ -44,12 +47,20 @@
           :aria-label="$t('common.labels.search')"
           class="grow"
           clearable
+          :disabled="pickupLocationsLoading"
           @keyup.enter="applyFilter"
         />
 
-        <VcButton icon="search" :aria-label="$t('common.labels.search')" @click="applyFilter" />
+        <VcButton
+          icon="search"
+          :aria-label="$t('common.labels.search')"
+          @click="applyFilter"
+          :disabled="pickupLocationsLoading"
+        />
       </div>
       <div class="select-address-map-modal__content">
+        <VcLoaderOverlay v-if="pickupLocationsLoading" />
+
         <GoogleMap
           :api-key="apiKey"
           :map-id="MAP_ID"
@@ -282,6 +293,7 @@ const {
   filterApplied,
   buildFilter,
   resetFilter: resetFilterInternal,
+  pickupLocationsLoading,
 } = useCartPickupLocations();
 
 function applyFilter() {

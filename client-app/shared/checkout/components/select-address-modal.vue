@@ -73,6 +73,7 @@
         value-field="term"
         :placeholder="$t('common.labels.country')"
         class="w-44"
+        :disabled="pickupLocationsLoading"
         @change="applyFilter"
       />
 
@@ -83,6 +84,7 @@
         value-field="term"
         :placeholder="$t('common.labels.region')"
         class="w-44"
+        :disabled="pickupLocationsLoading"
         @change="applyFilter"
       />
 
@@ -93,6 +95,7 @@
         value-field="term"
         :placeholder="$t('common.labels.city')"
         class="w-44"
+        :disabled="pickupLocationsLoading"
         @change="applyFilter"
       />
 
@@ -102,10 +105,16 @@
         :aria-label="$t('common.labels.search')"
         class="grow"
         clearable
+        :disabled="pickupLocationsLoading"
         @keyup.enter="applyFilter"
       />
 
-      <VcButton icon="search" :aria-label="$t('common.labels.search')" @click="applyFilter" />
+      <VcButton
+        icon="search"
+        :aria-label="$t('common.labels.search')"
+        @click="applyFilter"
+        :disabled="pickupLocationsLoading"
+      />
     </div>
 
     <div class="rounded border">
@@ -113,6 +122,7 @@
         :columns="columns"
         :items="paginatedAddresses"
         :description="$t('shared.checkout.select_address_modal.meta.table_description')"
+        :loading="pickupLocationsLoading"
         @page-changed="onPageChange"
       >
         <template #mobile-item="{ item }">
@@ -348,6 +358,7 @@ const {
   filterApplied,
   buildFilter,
   resetFilter: resetFilterInternal,
+  pickupLocationsLoading,
 } = useCartPickupLocations();
 
 function applyFilter() {
