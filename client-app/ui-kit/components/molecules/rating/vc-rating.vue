@@ -62,7 +62,6 @@ interface IProps {
   maxValue?: number;
   withText?: boolean;
   label?: string;
-  ariaLabel?: string;
   buttonAriaLabel?: (index: number) => string;
 }
 
