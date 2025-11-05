@@ -59,6 +59,8 @@
           variant="no-background"
           class="vc-input__clear"
           :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+          @keydown.enter.stop.prevent
+          @keyup.enter.stop.prevent="clear"
           @click.stop="clear"
         />
       </div>
