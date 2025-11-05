@@ -111,7 +111,6 @@
       "aria_label": "面包屑导航"
     },
     "rating": {
-      "default_aria_label": "评分",
       "rating_label": "评分 {value}，满分 {maxValue}",
       "read_only_button_aria_label": "评分 {value}，满分 {maxValue}，不可选择",
       "set_rating_aria_label": "将评分设置为 {value}，满分 {maxValue}"

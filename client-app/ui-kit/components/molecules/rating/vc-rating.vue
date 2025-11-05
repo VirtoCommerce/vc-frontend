@@ -3,7 +3,7 @@
     <span v-if="label" class="vc-rating__label">{{ label }}:</span>
     <span v-else class="sr-only">{{ currentRatingText }}</span>
 
-    <div class="vc-rating__shapes" role="group" :aria-label="groupAriaLabel">
+    <div class="vc-rating__shapes">
       <button
         v-for="i in mode === 'mini' ? 1 : maxValue"
         :key="i"
@@ -81,10 +81,6 @@ const { t } = useI18n();
 const selectedRating = ref<number | null>(null);
 
 const isDisabledSelection = computed(() => props.readOnly || props.mode === "mini");
-
-const groupAriaLabel = computed(() => {
-  return props.ariaLabel ?? props.label ?? t("ui_kit.rating.default_aria_label");
-});
 
 const currentRatingText = computed(() => {
   const rating = selectedRating.value ?? props.value;

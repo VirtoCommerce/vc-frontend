@@ -111,7 +111,6 @@
       "aria_label": "Breadcrumbs navigation"
     },
     "rating": {
-      "default_aria_label": "Rating",
       "rating_label": "Rating {value} out of {maxValue}",
       "read_only_button_aria_label": "Rating {value} out of {maxValue}, not available for selection",
       "set_rating_aria_label": "Set rating to {value} out of {maxValue}"
