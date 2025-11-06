@@ -404,11 +404,11 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 <style lang="scss">
 .select-address-map-modal {
   &__container {
-    @apply flex flex-col h-full;
+    @apply flex flex-col h-full pt-0;
   }
 
   &__filters {
-    @apply flex flex-col items-center gap-2 py-3;
+    @apply flex flex-col items-center gap-2 pb-3;
 
     @media (min-width: theme("screens.md")) {
       @apply flex-row;
