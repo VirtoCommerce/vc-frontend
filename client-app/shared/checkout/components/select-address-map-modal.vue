@@ -49,14 +49,16 @@
           clearable
           :disabled="pickupLocationsLoading"
           @keyup.enter="applyFilter"
-        />
-
-        <VcButton
-          icon="search"
-          :aria-label="$t('common.labels.search')"
-          @click="applyFilter"
-          :disabled="pickupLocationsLoading"
-        />
+        >
+          <template #append>
+            <VcButton
+              icon="search"
+              :aria-label="$t('common.labels.search')"
+              @click="applyFilter"
+              :disabled="pickupLocationsLoading"
+            />
+          </template>
+        </VcInput>
       </div>
       <div class="select-address-map-modal__content">
         <VcLoaderOverlay v-if="pickupLocationsLoading" />
