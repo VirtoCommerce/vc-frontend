@@ -17,7 +17,8 @@ export function useBopis() {
   const { availableShippingMethods, updateShipment, shipment } = useFullCart();
   const { isEnabled, getSettingValue } = useModuleSettings(MODULE_ID_SHIPPING);
 
-  const { pickupLocations, fetchPickupLocations, pickupLocationsLoading, resetFilter } = useCartPickupLocations();
+  const { pickupLocations, fetchPickupLocations, pickupLocationsLoading, filterKeyword, buildFilter, resetFilter } =
+    useCartPickupLocations();
 
   const addresses = computed<ProductPickupLocation[]>(() => (pickupLocations.value as ProductPickupLocation[]) ?? []);
 
@@ -89,14 +90,6 @@ export function useBopis() {
           ...shipment.value?.deliveryAddress,
           id: shipment.value?.pickupLocation?.id,
         },
-        async onFilterChange({ keyword, filter }: { keyword?: string; filter?: string }) {
-          await fetchAddresses({
-            cartId,
-            first: ADDRESSES_FETCH_LIMIT,
-            keyword,
-            filter,
-          });
-        },
         omitFieldsOnCompare: [
           "outerId",
           "firstName",
@@ -115,6 +108,14 @@ export function useBopis() {
         showFilters: true,
         emptyText: t("pages.account.order_details.bopis.cart_pickup_points_not_found"),
 
+        onFilterChange: async () => {
+          await fetchAddresses({
+            cartId,
+            first: ADDRESSES_FETCH_LIMIT,
+            keyword: filterKeyword.value,
+            filter: buildFilter(),
+          });
+        },
         onResult: async (addressOrAddressId: AnyAddressType | string) => {
           if (typeof addressOrAddressId === "string") {
             const item = addresses.value.find(({ id }) => id === addressOrAddressId);

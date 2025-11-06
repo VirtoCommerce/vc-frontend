@@ -336,12 +336,12 @@ interface IProps {
   emptyText?: string;
   omitFieldsOnCompare?: (keyof MemberAddressType)[];
   showFilters?: boolean;
-  onFilterChange?: (payload: { keyword?: string; filter?: string }) => void;
 }
 
 interface IEmits {
   (event: "result", value: AnyAddressType): void;
   (event: "addNewAddress"): void;
+  (event: "filterChange"): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -365,14 +365,13 @@ const {
   filterRegion,
   filterCity,
   filterApplied,
-  buildFilter,
   resetFilter: resetFilterInternal,
   pickupLocationsLoading,
 } = useCartPickupLocations();
 
 function applyFilter() {
   filterApplied.value = true;
-  props.onFilterChange?.({ keyword: filterKeyword.value || undefined, filter: buildFilter() });
+  emit("filterChange");
 }
 
 function resetFilter() {

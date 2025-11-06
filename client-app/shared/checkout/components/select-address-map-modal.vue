@@ -263,11 +263,11 @@ interface IProps {
   addresses?: PickupLocationType[];
   apiKey: string;
   currentAddress?: { id: string };
-  onFilterChange?: (payload: { keyword?: string; filter?: string }) => void;
 }
 
 interface IEmits {
-  result: [string];
+  (event: "result", value: string): void;
+  (event: "filterChange"): void;
 }
 
 const pinColor = getColorValue("primary");
@@ -301,14 +301,13 @@ const {
   filterRegion,
   filterCity,
   filterApplied,
-  buildFilter,
   resetFilter: resetFilterInternal,
   pickupLocationsLoading,
 } = useCartPickupLocations();
 
 function applyFilter() {
   filterApplied.value = true;
-  props.onFilterChange?.({ keyword: filterKeyword.value || undefined, filter: buildFilter() });
+  emit("filterChange");
 }
 
 function resetFilter() {
