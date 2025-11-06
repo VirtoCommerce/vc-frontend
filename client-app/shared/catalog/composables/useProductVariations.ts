@@ -1,4 +1,4 @@
-import { ref, watch } from "vue";
+import { ref, toRef, watch } from "vue";
 import {
   getFilterExpression,
   getFilterExpressionForAvailableIn,
@@ -47,19 +47,9 @@ export function useProductVariations(options: IUseProductVariationsOptions): IUs
     customFilterBuilderDeps,
   } = options;
 
-  const itemsPerPageRef = typeof itemsPerPage === "number" ? ref(itemsPerPage) : itemsPerPage;
-
-  let sortRef: Ref<string | undefined>;
-  if (sort === undefined) {
-    sortRef = ref(undefined);
-  } else if (typeof sort === "string") {
-    sortRef = ref(sort);
-  } else {
-    sortRef = sort;
-  }
-
-  const variationsFilterExpressionRef =
-    typeof variationsFilterExpression === "string" ? ref(variationsFilterExpression) : variationsFilterExpression;
+  const itemsPerPageRef = toRef(itemsPerPage);
+  const sortRef = toRef(sort);
+  const variationsFilterExpressionRef = toRef(variationsFilterExpression);
 
   function buildSearchParams(page: number = 1): ProductsSearchParamsType {
     const filterExpression = customFilterBuilder

@@ -4,7 +4,7 @@
     :data-product-sku="product.code"
     border
     data-test-id="product-card"
-    class="product-card"
+    :class="['product-card', `product-card--${viewMode}`]"
   >
     <template #media>
       <VcProductImage
@@ -85,29 +85,29 @@
       @link-click="$emit('linkClick', product, $event)"
     />
 
-    <VcProductButton
-      v-if="product.hasVariations"
-      :class="['product-card__variations-button', `product-card__variations-button--${viewMode}`]"
-      :link-text="$t('pages.catalog.show_on_a_separate_page')"
-      :link-to="link"
-      :button-text="$t('pages.catalog.variations_button', [variationsCount])"
-      :append-icon="isExpanded ? 'chevron-up' : 'chevron-down'"
-      :loading="fetchingVariations"
-      @link-click="handleVariationsClick"
-    />
+    <template v-else-if="product.hasVariations">
+      <VcProductButton
+        class="product-card__variations-button"
+        :link-text="$t('pages.catalog.show_on_a_separate_page')"
+        :link-to="link"
+        :button-text="$t('pages.catalog.variations_button', [variationsCount])"
+        :append-icon="isExpanded ? 'chevron-up' : 'chevron-down'"
+        :loading="fetchingVariations"
+        @link-click="handleVariationsClick"
+      />
 
-    <VcProductButton
-      v-if="product.hasVariations"
-      :class="['product-card__variations-link-button', `product-card__variations-link-button--${viewMode}`]"
-      :to="link"
-      :link-text="$t('pages.catalog.show_on_a_separate_page')"
-      :link-to="link"
-      :button-text="$t('pages.catalog.variations_button', [variationsCount])"
-      :target="browserTarget || browserTargetFromSetting"
-      @link-click="$emit('linkClick', product, $event)"
-    />
+      <VcProductButton
+        class="product-card__variations-link-button"
+        :to="link"
+        :link-text="$t('pages.catalog.show_on_a_separate_page')"
+        :link-to="link"
+        :button-text="$t('pages.catalog.variations_button', [variationsCount])"
+        :target="browserTarget || browserTargetFromSetting"
+        @link-click="$emit('linkClick', product, $event)"
+      />
+    </template>
 
-    <AddToCartSimple v-if="!product.hasVariations" :product="product" :reserved-space="viewMode === 'grid'">
+    <AddToCartSimple v-else :product="product" :reserved-space="viewMode === 'grid'">
       <InStock
         :is-in-stock="product.availabilityData?.isInStock"
         :is-digital="product.productType === ProductType.Digital"
@@ -117,12 +117,8 @@
       <CountInCart :product-id="product.id" />
     </AddToCartSimple>
 
-    <template #expanded-content>
-      <div
-        v-if="viewMode === 'list'"
-        v-show="isExpanded"
-        :class="['product-card__variants-wrapper', `product-card__variants-wrapper--${viewMode}`]"
-      >
+    <template v-if="viewMode === 'list'" #expanded-content>
+      <div v-show="isExpanded" class="product-card__variants-wrapper">
         <div
           v-if="fetchingVariations && (!variations || variations.length === 0)"
           class="product-card__variants-loader"
@@ -130,7 +126,7 @@
           <VcLoader />
         </div>
 
-        <div v-else>
+        <template v-else>
           <VcTypography tag="h5" class="product-card__variants-title" text-transform="none">
             {{ $t("pages.catalog.available_variations", variationsCount) }}
           </VcTypography>
@@ -141,7 +137,7 @@
             :pages-count="variationsPagesCount"
             @change-page="changeVariationsPage"
           />
-        </div>
+        </template>
       </div>
     </template>
   </VcProductCard>
@@ -290,29 +286,31 @@ const variationsCount = computed(() => {
 .product-card {
   &__variations-button {
     @apply hidden;
-
-    &--list {
-      @container (min-width: theme("containers.xl")) {
-        @apply block;
-      }
-    }
   }
 
   &__variations-link-button {
     @apply block;
-
-    &--list {
-      @container (min-width: theme("containers.xl")) {
-        @apply hidden;
-      }
-    }
   }
 
   &__variants-wrapper {
     @apply border-t border-neutral-200 p-6 pt-4 hidden;
+  }
 
-    &--list {
-      @container (min-width: theme("containers.xl")) {
+  &--list {
+    .product-card__variations-button {
+      @container (min-width: theme("containers.3xl")) {
+        @apply block;
+      }
+    }
+
+    .product-card__variations-link-button {
+      @container (min-width: theme("containers.3xl")) {
+        @apply hidden;
+      }
+    }
+
+    .product-card__variants-wrapper {
+      @container (min-width: theme("containers.3xl")) {
         @apply block;
       }
     }
