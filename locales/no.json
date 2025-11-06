@@ -105,7 +105,7 @@
       "total": "Totalt",
       "compare": "Sammenlign",
       "price": "Pris",
-      "product_price": "Din pris",
+      "product_price": "Pris",
       "subtotal": "Delsum",
       "discount": "Rabatt",
       "line_items": "Produkter",
@@ -643,6 +643,7 @@
         "create_configuration_button": "Lag din egen konfigurasjon",
         "price_block": {
           "title": "Pris og levering",
+          "mobile_title": "Del og mer",
           "add_to_list_button": "Legg til i liste",
           "product_email_title": "Se produkt: {0}"
         },

@@ -105,7 +105,7 @@
       "total": "Totalt",
       "compare": "Jämför",
       "price": "Pris",
-      "product_price": "Ditt pris",
+      "product_price": "Pris",
       "subtotal": "Delsumma",
       "discount": "Rabatt",
       "line_items": "Artiklar",
@@ -643,6 +643,7 @@
         "create_configuration_button": "Skapa din egen konfiguration",
         "price_block": {
           "title": "Pris och leverans",
+          "mobile_title": "Dela och mer",
           "add_to_list_button": "Lägg till i lista",
           "product_email_title": "Ta en titt på produkten: {0}"
         },

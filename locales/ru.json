@@ -105,7 +105,7 @@
       "total": "Итого",
       "compare": "Сравнить",
       "price": "Цена",
-      "product_price": "Ваша цена",
+      "product_price": "Цена",
       "subtotal": "Промежуточный итог",
       "discount": "Скидка",
       "line_items": "Позиции",
@@ -643,6 +643,7 @@
         "create_configuration_button": "Создайте свою конфигурацию",
         "price_block": {
           "title": "Цена и доставка",
+          "mobile_title": "Опции и действия",
           "add_to_list_button": "Добавить в список",
           "product_email_title": "Пожалуйста, ознакомьтесь с товаром: {0}"
         },
