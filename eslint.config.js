@@ -185,6 +185,7 @@ export default defineConfigWithVueTs(
       "vue/padding-lines-in-component-definition": "warn",
       "vue/prefer-define-options": "warn",
       "vue/require-emit-validator": "warn",
+      "vue/padding-line-between-tags": ["error", [{ blankLine: "always", prev: "*", next: "*" }]],
       "vuejs-accessibility/click-events-have-key-events": "warn",
       "vuejs-accessibility/no-static-element-interactions": "warn",
 
