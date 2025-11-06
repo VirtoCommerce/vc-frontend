@@ -105,7 +105,7 @@
       "total": "总计",
       "compare": "比较",
       "price": "价格",
-      "product_price": "您的价格",
+      "product_price": "价格",
       "subtotal": "小计",
       "discount": "折扣",
       "line_items": "商品项",
@@ -637,6 +637,7 @@
         "create_configuration_button": "创建您的配置",
         "price_block": {
           "title": "价格与运输",
+          "mobile_title": "分享与更多",
           "add_to_list_button": "添加到清单",
           "product_email_title": "请查看产品：{0}"
         },

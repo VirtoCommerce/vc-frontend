@@ -18,6 +18,7 @@ export { default as VcFile } from "./file/vc-file.vue";
 export { default as VcFilePicker } from "./file-picker/vc-file-picker.vue";
 export { default as VcFileUploader } from "./file-uploader/vc-file-uploader.vue";
 export { default as VcInput } from "./input/vc-input.vue";
+/** @deprecated VcItemPrice is deprecated and should not be used. */
 export { default as VcItemPrice } from "./item-price/vc-item-price.vue";
 export { default as VcItemPriceCatalog } from "./item-price-catalog/vc-item-price-catalog.vue";
 export { default as VcLineItem } from "./line-item/vc-line-item.vue";
