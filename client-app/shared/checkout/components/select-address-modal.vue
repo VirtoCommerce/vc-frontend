@@ -65,16 +65,16 @@
       </div>
     </template>
 
-    <div v-if="showFilters" class="flex items-center gap-2 pb-3">
+    <div v-if="showFilters" class="select-address-modal__filters">
       <VcSelect
         v-model="filterCountry"
         :items="filterOptions?.countries ?? []"
         text-field="label"
         value-field="term"
+        class="select-address-modal__filter-select"
         autocomplete
         clearable
         :placeholder="$t('common.labels.country')"
-        class="w-44"
         :disabled="pickupLocationsLoading"
         @change="applyFilter"
       />
@@ -84,10 +84,10 @@
         :items="filterOptions?.regions ?? []"
         text-field="label"
         value-field="term"
+        class="select-address-modal__filter-select"
         autocomplete
         clearable
         :placeholder="$t('common.labels.region')"
-        class="w-44"
         :disabled="pickupLocationsLoading"
         @change="applyFilter"
       />
@@ -97,10 +97,10 @@
         :items="filterOptions?.cities ?? []"
         text-field="label"
         value-field="term"
+        class="select-address-modal__filter-select"
         autocomplete
         clearable
         :placeholder="$t('common.labels.city')"
-        class="w-44"
         :disabled="pickupLocationsLoading"
         @change="applyFilter"
       />
@@ -109,7 +109,7 @@
         v-model="filterKeyword"
         :placeholder="$t('common.labels.search')"
         :aria-label="$t('common.labels.search')"
-        class="grow"
+        class="select-address-modal__filter-keyword"
         clearable
         :disabled="pickupLocationsLoading"
         @keyup.enter="applyFilter"
@@ -151,6 +151,7 @@
                   color="success"
                 >
                   <VcIcon name="check" />
+
                   <span>{{ $t("common.labels.active_address") }}</span>
                 </VcBadge>
               </div>
@@ -444,3 +445,31 @@ watchEffect(() => {
   );
 });
 </script>
+
+<style lang="scss">
+.select-address-modal {
+  &__filters {
+    @apply flex flex-col items-center gap-2 pb-3;
+
+    @media (min-width: theme("screens.md")) {
+      @apply flex-row;
+    }
+  }
+
+  &__filter-select {
+    @apply w-full;
+
+    @media (min-width: theme("screens.md")) {
+      @apply w-auto;
+    }
+  }
+
+  &__filter-keyword {
+    @apply grow w-full;
+
+    @media (min-width: theme("screens.md")) {
+      @apply w-auto;
+    }
+  }
+}
+</style>

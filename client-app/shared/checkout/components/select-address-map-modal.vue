@@ -13,10 +13,10 @@
           :items="filterOptions?.countries ?? []"
           text-field="label"
           value-field="term"
+          class="select-address-map-modal__filter-select"
           autocomplete
           clearable
           :placeholder="$t('common.labels.country')"
-          class="w-44"
           :disabled="pickupLocationsLoading"
           @change="applyFilter"
         />
@@ -26,10 +26,10 @@
           :items="filterOptions?.regions ?? []"
           text-field="label"
           value-field="term"
+          class="select-address-map-modal__filter-select"
           autocomplete
           clearable
           :placeholder="$t('common.labels.region')"
-          class="w-44"
           :disabled="pickupLocationsLoading"
           @change="applyFilter"
         />
@@ -39,10 +39,10 @@
           :items="filterOptions?.cities ?? []"
           text-field="label"
           value-field="term"
+          class="select-address-map-modal__filter-select"
           autocomplete
           clearable
           :placeholder="$t('common.labels.city')"
-          class="w-44"
           :disabled="pickupLocationsLoading"
           @change="applyFilter"
         />
@@ -51,7 +51,7 @@
           v-model="filterKeyword"
           :placeholder="$t('common.labels.search')"
           :aria-label="$t('common.labels.search')"
-          class="grow"
+          class="select-address-map-modal__filter-keyword"
           clearable
           :disabled="pickupLocationsLoading"
           @keyup.enter="applyFilter"
@@ -66,6 +66,7 @@
           </template>
         </VcInput>
       </div>
+
       <div class="select-address-map-modal__content">
         <VcLoaderOverlay v-if="pickupLocationsLoading" />
 
@@ -190,6 +191,7 @@
               </VcRadioButton>
             </li>
           </ul>
+
           <div v-else class="select-address-map-modal__not-found">
             <span>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}</span>
 
@@ -406,14 +408,34 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
   }
 
   &__filters {
-    @apply flex items-center gap-2 py-3;
-  }
-
-  &__content {
-    @apply relative flex flex-col gap-3 w-full flex-1 max-h-[90%];
+    @apply flex flex-col items-center gap-2 py-3;
 
     @media (min-width: theme("screens.md")) {
       @apply flex-row;
+    }
+  }
+
+  &__filter-select {
+    @apply w-full;
+
+    @media (min-width: theme("screens.md")) {
+      @apply w-auto;
+    }
+  }
+
+  &__filter-keyword {
+    @apply grow w-full;
+
+    @media (min-width: theme("screens.md")) {
+      @apply w-auto;
+    }
+  }
+
+  &__content {
+    @apply relative flex flex-col gap-3 w-full flex-1 max-h-[65%];
+
+    @media (min-width: theme("screens.md")) {
+      @apply flex-row max-h-[90%];
     }
   }
 
@@ -426,7 +448,7 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
   }
 
   &__sidebar {
-    @apply shrink-0 min-w-56 max-h-[50%];
+    @apply shrink-0 min-w-56 max-h-[40%];
 
     @media (min-width: theme("screens.md")) {
       @apply order-first max-h-full pe-2.5;
