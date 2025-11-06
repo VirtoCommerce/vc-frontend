@@ -39,8 +39,6 @@ defineProps<IProps>();
 
 <style lang="scss">
 .pickup-locations {
-  @apply mt-7;
-
   &__group {
     @apply flex flex-row gap-x-3 items-start border rounded p-3;
   }
