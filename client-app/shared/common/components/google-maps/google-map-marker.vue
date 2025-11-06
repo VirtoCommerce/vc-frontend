@@ -70,6 +70,10 @@ function openInfoWindow() {
     return;
   }
 
+  if (isInfoWindowOpen.value) {
+    return;
+  }
+
   isInfoWindowOpen.value = false;
 
   infoWindow.value?.setContent(`<div id="${ACTIVE_INFO_WINDOW_CONTENT_ID}"></div>`);
