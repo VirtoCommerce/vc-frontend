@@ -71,6 +71,8 @@
         :items="filterOptions?.countries ?? []"
         text-field="label"
         value-field="term"
+        autocomplete
+        clearable
         :placeholder="$t('common.labels.country')"
         class="w-44"
         :disabled="pickupLocationsLoading"
@@ -82,6 +84,8 @@
         :items="filterOptions?.regions ?? []"
         text-field="label"
         value-field="term"
+        autocomplete
+        clearable
         :placeholder="$t('common.labels.region')"
         class="w-44"
         :disabled="pickupLocationsLoading"
@@ -93,6 +97,8 @@
         :items="filterOptions?.cities ?? []"
         text-field="label"
         value-field="term"
+        autocomplete
+        clearable
         :placeholder="$t('common.labels.city')"
         class="w-44"
         :disabled="pickupLocationsLoading"
