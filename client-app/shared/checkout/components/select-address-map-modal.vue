@@ -117,19 +117,17 @@
                 size="sm"
                 @change="selectHandler(address, { scrollToSelectedOnMap: true })"
               >
-                <div class="flex flex-col">
-                  <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
+                <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
 
-                  <p class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</p>
+                <p class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</p>
 
-                  <PickupAvailabilityInfo
-                    class="select-address-map-modal__radio-button-pickup-availability"
-                    show-icon
-                    icon-size="xs"
-                    :availability-type="address.availabilityType"
-                    :availability-note="address.availabilityNote"
-                  />
-                </div>
+                <PickupAvailabilityInfo
+                  class="select-address-map-modal__radio-button-pickup-availability"
+                  show-icon
+                  icon-size="xs"
+                  :availability-type="address.availabilityType"
+                  :availability-note="address.availabilityNote"
+                />
               </VcRadioButton>
             </li>
           </ul>
