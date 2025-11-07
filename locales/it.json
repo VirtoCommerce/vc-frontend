@@ -105,7 +105,7 @@
       "total": "Totale",
       "compare": "Confronta",
       "price": "Prezzo",
-      "product_price": "Il tuo prezzo",
+      "product_price": "Prezzo",
       "subtotal": "Subtotale",
       "discount": "Sconto",
       "line_items": "Articoli",
@@ -637,6 +637,7 @@
         "create_configuration_button": "Crea la tua configurazione",
         "price_block": {
           "title": "Prezzo e consegna",
+          "mobile_title": "Condividi e altro",
           "add_to_list_button": "Aggiungi alla lista",
           "product_email_title": "Dai un'occhiata al prodotto: {0}"
         },

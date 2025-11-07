@@ -180,3 +180,24 @@ export const FooterContainerSlot: StoryType = {
     </template>
   </VcWidget>`),
 };
+
+export const HeaderOnly: StoryType = {
+  args: {
+    title: "Widget title",
+  },
+  render: renderWidget(`<VcWidget v-bind="args" />`),
+};
+
+export const FooterOnly: StoryType = {
+  render: renderWidget(`<VcWidget>
+    <template #footer>Footer text</template>
+  </VcWidget>`),
+};
+
+export const HeaderFooterOnly: StoryType = {
+  render: renderWidget(`<VcWidget>
+    <template #header>Header text</template>
+
+    <template #footer>Footer text</template>
+  </VcWidget>`),
+};
