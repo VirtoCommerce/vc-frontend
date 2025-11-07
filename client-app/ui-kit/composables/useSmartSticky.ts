@@ -2,8 +2,6 @@ import { useCssVar, useElementBounding, useThrottleFn } from "@vueuse/core";
 import { computed, onBeforeUnmount, onMounted, ref, toValue, watch } from "vue";
 import type { CSSProperties, MaybeRefOrGetter } from "vue";
 
-type StickyModeType = "static" | "fixed" | "absolute";
-
 const AFFIX_TYPES = {
   FIXED_TOP: "FIXED_TOP",
   FIXED_BOTTOM: "FIXED_BOTTOM",
@@ -174,7 +172,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   } = options;
 
   const style = ref<CSSProperties>({});
-  const mode = ref<StickyModeType>("static");
   const isActive = ref(false);
   const isStuckTop = ref(false);
   const isStuckBottom = ref(false);
@@ -303,7 +300,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
 
     switch (affixType) {
       case AFFIX_TYPES.FIXED_TOP: {
-        mode.value = "fixed";
         style.value = {
           ...baseStyle,
           position: "sticky",
@@ -315,7 +311,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       }
 
       case AFFIX_TYPES.STATIC: {
-        mode.value = "static";
         style.value = {
           ...baseStyle,
           position: "sticky",
@@ -327,7 +322,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       }
 
       case AFFIX_TYPES.FIXED_BOTTOM: {
-        mode.value = "fixed";
         style.value = {
           ...baseStyle,
           position: "sticky",
@@ -340,7 +334,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       }
 
       case AFFIX_TYPES.STATIC_BOTTOM: {
-        mode.value = "absolute";
         style.value = {
           ...baseStyle,
           position: "sticky",
@@ -353,7 +346,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       }
 
       case AFFIX_TYPES.ABSOLUTE: {
-        mode.value = "absolute";
         style.value = {
           ...baseStyle,
           position: "absolute",
@@ -366,7 +358,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   }
 
   function resetPosition() {
-    mode.value = "static";
     style.value = {
       position: "static",
     };
@@ -428,7 +419,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
 
   return {
     style,
-    mode,
     isActive,
     isStuckTop,
     isStuckBottom,
