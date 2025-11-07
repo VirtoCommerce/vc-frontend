@@ -9,10 +9,6 @@ export { default as InStock } from "./in-stock.vue";
 export { default as Price } from "./price.vue";
 export { default as ProductCard } from "./product-card.vue";
 export { default as ProductCardCompare } from "./product-card-compare.vue";
-// @deprecated Use VcProductCard or ProductCard instead.
-export { default as ProductCardGrid } from "./product-card-grid.vue";
-// @deprecated Use VcProductCard or ProductCard instead.
-export { default as ProductCardList } from "./product-card-list.vue";
 export { default as ProductCardRecentlyBrowsed } from "./product-card-recently-browsed.vue";
 export { default as ProductCardRecommended } from "./product-card-recommended.vue";
 export { default as ProductCardRelated } from "./product-card-related.vue";
