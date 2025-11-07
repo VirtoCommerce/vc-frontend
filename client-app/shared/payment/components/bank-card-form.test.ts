@@ -23,7 +23,7 @@ vi.mock("vue-i18n", () => {
 
 const EXPIRATION_FIELD_LABEL = "shared.payment.bank_card_form.expiration_date_label";
 const ERROR_MESSAGES = {
-  MONTH: "shared.payment.authorize_net.errors.month",
+  MONTH: "shared.payment.bank_card_form.errors.month",
   MONTH_INCOMPLETE: "shared.payment.bank_card_form.month_label must be exactly 2 characters",
   YEAR_INCOMPLETE: "shared.payment.bank_card_form.year_label must be exactly 2 characters",
 } as const;

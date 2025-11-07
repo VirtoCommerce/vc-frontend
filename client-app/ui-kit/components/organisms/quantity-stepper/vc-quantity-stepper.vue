@@ -5,6 +5,7 @@
       v-model.number="model"
       class="vc-quantity-stepper__input"
       type="number"
+      :aria-label="inputAriaLabel"
       :disabled="disabled"
       :readonly="readonly"
       :loading="loading"
@@ -18,7 +19,6 @@
       :max="max"
       center
       :select-on-click="selectOnClick"
-      :aria-label="ariaLabel || $t('ui_kit.accessibility.product_quantity')"
       :aria="{
         role: 'spinbutton',
         'aria-valuemin': min,
@@ -27,6 +27,8 @@
       }"
       :data-test-id="testIdInput"
       @blur="normalize"
+      @keydown.up.prevent="() => handleArrowKey('increment')"
+      @keydown.down.prevent="() => handleArrowKey('decrement')"
     >
       <template v-if="!readonly" #prepend>
         <VcButton
@@ -65,6 +67,7 @@
 
 <script setup lang="ts">
 import { computed, ref, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { calculateStepper, checkIfOperationIsAllowed } from "@/ui-kit/utilities/quantity-stepper";
 
 interface IProps {
@@ -72,13 +75,13 @@ interface IProps {
   value?: number;
   loading?: boolean;
   disabled?: boolean;
+  ariaLabel?: string;
   step?: number;
   min?: number;
   max?: number;
   error?: boolean;
   message?: string;
   readonly?: boolean;
-  ariaLabel?: string;
   buttonsColor?: VcButtonColorType;
   buttonsVariant?: VcButtonVariantType;
   size?: "sm" | "md";
@@ -101,9 +104,12 @@ const props = withDefaults(defineProps<IProps>(), {
 const lastNonEmptyValue = ref<number | undefined>(undefined);
 const min = computed(() => props.min ?? (props.allowZero ? 0 : 1));
 
-const vcInputRef = useTemplateRef("vcInputRef");
+const vcInputRef = useTemplateRef<{ inputElement: HTMLInputElement | undefined }>("vcInputRef");
 
 const model = defineModel<IProps["value"]>();
+
+const { t } = useI18n();
+const inputAriaLabel = computed<string>(() => props.ariaLabel ?? t("ui_kit.labels.product_quantity"));
 
 const isDecrementDisabled = computed(
   () =>
@@ -172,8 +178,31 @@ function normalize() {
     update(lastNonEmptyValue.value);
   }
 
-  if (model.value === 0 && vcInputRef?.value?.inputElement) {
+  if (model.value === 0 && vcInputRef.value?.inputElement) {
     vcInputRef.value.inputElement.value = "0";
+  }
+}
+
+function handleArrowKey(direction: "increment" | "decrement") {
+  if (props.readonly || props.disabled) {
+    return;
+  }
+
+  const isDisabled = direction === "increment" ? isIncrementDisabled.value : isDecrementDisabled.value;
+
+  if (isDisabled) {
+    return;
+  }
+
+  if (model.value === undefined) {
+    model.value = min.value;
+    return;
+  }
+
+  if (direction === "increment") {
+    handleIncrement();
+  } else {
+    handleDecrement();
   }
 }
 

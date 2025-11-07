@@ -42,17 +42,18 @@
       />
     </VcContainer>
 
-    <VcEmptyView v-if="!loading && !brand" :text="$t('pages.brands.no_results')" />
+    <VcEmptyView v-if="!loading && !brand" :text="$t('pages.brands.no_results')" icon="outline-stock" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import { computed, toRef } from "vue";
+import { computed, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGetBrand } from "@/core/api/graphql/catalog";
 import { useBreadcrumbs, usePageTitle } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { getFilterExpressionForBrand } from "@/core/utilities/search/facets";
 import Category from "@/shared/catalog/components/category.vue";
 
@@ -69,6 +70,8 @@ const filterExpression = computed(() => {
 });
 
 const { t } = useI18n();
+
+const { updateLocalizedUrl } = useLanguages();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
@@ -118,6 +121,14 @@ useSeoMeta({
   ogImage: brand?.value?.logoUrl,
   ogType: "website",
 });
+
+watch(
+  brand,
+  () => {
+    updateLocalizedUrl(brand.value?.permalink);
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">

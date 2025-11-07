@@ -1,5 +1,4 @@
 export * from "./addresses";
-export * from "./browser-window-target";
 export * from "./category-tree";
 export * from "./change-wishlist-payload";
 export * from "./connect-token-response";

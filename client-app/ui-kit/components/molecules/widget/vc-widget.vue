@@ -4,6 +4,7 @@
       'vc-widget',
       `vc-widget--size--${size}`,
       {
+        'vc-widget--collapsible': collapsible,
         'vc-widget--collapsed': _collapsed,
         'vc-widget--no-shadow': !shadow,
         'vc-widget--no-border': !border,
@@ -37,11 +38,10 @@
                 <VcIcon
                   v-if="collapsible"
                   :class="['vc-widget__append-icon', { 'vc-widget__append-icon--rotate': _collapsed }]"
-                  name="chevron-up"
-                  size="sm"
+                  name="chevron-up-thin"
                 />
 
-                <VcIcon v-else-if="appendIcon" class="vc-widget__append-icon" :name="appendIcon" size="sm" />
+                <VcIcon v-else-if="appendIcon" class="vc-widget__append-icon" :name="appendIcon" />
               </slot>
             </span>
           </slot>
@@ -49,9 +49,9 @@
       </slot>
     </component>
 
-    <div v-show="!_collapsed" class="vc-widget__slot-container">
+    <div v-show="!_collapsed" v-if="$slots.default || $slots['default-container']" class="vc-widget__slot-container">
       <slot name="default-container">
-        <div class="vc-widget__slot" :aria-labelledby="ARIAIds.title">
+        <div v-if="$slots.default" class="vc-widget__slot" :aria-labelledby="ARIAIds.title">
           <slot />
         </div>
       </slot>
@@ -117,15 +117,15 @@ watchEffect(() => {
 <style lang="scss">
 .vc-widget {
   $self: &;
+  $collapsible: "";
   $collapsed: "";
-
-  $sizeLG: "";
 
   --p-x: theme("padding.4");
   --border-color: var(--vc-widget-border-color, theme("colors.neutral.200"));
   --divide-color: var(--vc-widget-divide-color, var(--border-color));
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
   --radius: var(--vc-widget-radius, var(--vc-radius, 0.5rem));
+  --header-gap: theme("gap.2");
 
   @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] shadow-md bg-center;
 
@@ -139,48 +139,49 @@ watchEffect(() => {
     }
   }
 
+  &--collapsible {
+    $collapsible: &;
+  }
+
   &--size {
     &--xs {
-      --header-min-height: 2.5rem;
-      --header-gap: theme("gap.[1.5]");
+      --header-min-h: 2.375rem;
       --title-text: theme("fontSize.sm");
-      --title-min-h: 1.625rem;
-      --slot-p-t: theme("padding.4");
+      --icon-size: 0.875rem;
+      --shape-size: 1.75rem;
     }
 
     &--sm {
-      --header-min-height: 2.75rem;
-      --header-gap: theme("gap.2");
+      --header-min-h: 2.875rem;
       --title-text: theme("fontSize.base");
-      --title-min-h: 1.875rem;
-      --slot-p-t: theme("padding.4");
+      --icon-size: 1rem;
+      --shape-size: 2rem;
     }
 
     &--md {
-      --header-min-height: 3.25rem;
-      --header-gap: theme("gap.2");
-      --title-text: theme("fontSize.xl");
-      --title-min-h: 2.125rem;
-      --slot-p-t: theme("padding.4");
+      --header-min-h: 3.125rem;
+      --title-text: theme("fontSize.lg");
+      --icon-size: 1.25rem;
+      --shape-size: 2.25rem;
 
-      @media (min-width: theme("screens.lg")) {
+      @media (min-width: theme("screens.sm")) {
         --p-x: theme("padding.6");
       }
     }
 
     &--lg {
-      $sizeLG: &;
-
-      --header-min-height: 4rem;
-      --header-gap: theme("gap.2");
+      --header-min-h: 4.375rem;
+      --header-gap: theme("gap[2.5]");
       --title-text: theme("fontSize.xl");
-      --title-min-h: 2.75rem;
-      --slot-p-t: theme("padding[3.5]");
+      --icon-size: 1.25rem;
+      --shape-size: 2.5rem;
 
-      @apply divide-none;
-
-      @media (min-width: theme("screens.lg")) {
+      @media (min-width: theme("screens.sm")) {
         --p-x: theme("padding.7");
+      }
+
+      &:not(#{$collapsible}) {
+        @apply divide-none;
       }
     }
   }
@@ -211,33 +212,22 @@ watchEffect(() => {
   }
 
   &__header {
-    --vc-hexagon-icon-size: var(--title-min-h);
-
-    @apply flex items-center gap-[--header-gap] px-[--p-x] py-1 w-full min-h-[--header-min-height];
-
-    #{$sizeLG} & {
-      @apply items-end;
-    }
+    @apply flex items-center gap-[--header-gap] min-h-[--header-min-h] px-[--p-x] py-1 w-full;
   }
 
   &__prepend-append {
-    --vc-icon-size: 1.25rem;
+    --vc-shape-size: var(--shape-size);
+    --vc-icon-size: var(--icon-size);
 
-    @apply flex-none flex items-center min-h-[--title-min-h];
+    @apply flex-none flex items-center;
   }
 
   &__title {
-    @apply flex flex-col justify-center min-h-[--title-min-h] min-w-0 grow text-[length:--title-text] font-bold uppercase break-words;
+    @apply flex flex-col justify-center min-w-0 grow text-[length:--title-text] font-bold uppercase break-words;
   }
 
   &__slot {
-    @apply pt-[--slot-p-t] pb-5 px-[--p-x];
-
-    *:first-child > & {
-      #{$sizeLG} & {
-        --slot-p-t: theme("padding.5");
-      }
-    }
+    @apply pt-4 pb-5 px-[--p-x] empty:hidden;
   }
 
   &__append-icon {

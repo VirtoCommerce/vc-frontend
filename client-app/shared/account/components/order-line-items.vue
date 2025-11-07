@@ -1,7 +1,7 @@
 <template>
   <VcLineItems
     :items="preparedLineItems"
-    :browser-target="$cfg.details_browser_target"
+    :browser-target="browserTarget"
     with-image
     with-properties
     with-price
@@ -32,9 +32,11 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useBrowserTarget } from "@/core/composables";
 import { prepareLineItems } from "@/core/utilities";
 import { ConfigurationItems } from "@/shared/common";
 import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
+
 interface IProps {
   items?: OrderLineItemType[] | LineItemType[];
 }
@@ -42,6 +44,8 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
+
+const { browserTarget } = useBrowserTarget();
 
 const preparedLineItems = computed(() => prepareLineItems(props.items));
 </script>

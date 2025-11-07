@@ -31,7 +31,7 @@
         <ProductSkeletonList v-for="index in actualItemsCount" :key="index" />
       </template>
 
-      <template v-if="subscriptionsProducts.length">
+      <template v-else-if="subscriptionsProducts.length">
         <VcLineItems
           class="back-in-stock-subscriptions__list"
           :items="preparedLineItems"
@@ -72,9 +72,20 @@
         />
       </template>
 
-      <VcEmptyView v-else-if="!allLoading" :text="$t('back_in_stock.list_details.empty_list')" icon="outline-lists">
+      <VcEmptyView
+        v-else-if="!allLoading"
+        :text="
+          keyword ? $t('back_in_stock.list_details.no_results_message') : $t('back_in_stock.list_details.empty_list')
+        "
+        icon="outline-lists"
+        :variant="!!keyword ? 'search' : 'empty'"
+      >
         <template #button>
-          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+          <VcButton v-if="keyword" prepend-icon="reset" @click="resetKeyword">
+            {{ $t("pages.account.orders.buttons.reset_search") }}
+          </VcButton>
+
+          <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
             {{ $t("back_in_stock.list_details.empty_list_button") }}
           </VcButton>
 

@@ -45,7 +45,7 @@
             :view-mode="savedViewMode"
             :lazy="index >= lazyCardsCount"
             :product="item"
-            :browser-target="$cfg.details_browser_target"
+            :browser-target="browserTarget"
             :card-type="cardType"
             @link-click="sendGASelectItemEvent"
           />
@@ -84,13 +84,14 @@
     <VcEmptyView
       v-else
       :text="
-        hasActiveFilters || keywordQueryParam
+        hasActiveFilters || keyword
           ? $t('pages.catalog.no_products_filtered_message')
           : $t('pages.catalog.no_products_message')
       "
       icon="outline-stock"
+      :variant="hasActiveFilters || keyword ? 'search' : 'empty'"
     >
-      <template v-if="hasSelectedFacets || keywordQueryParam" #button>
+      <template v-if="hasSelectedFacets || keyword" #button>
         <VcButton prepend-icon="reset" @click="$emit('resetFilterKeyword')">
           {{ $t("pages.catalog.no_products_button") }}
         </VcButton>
@@ -102,9 +103,8 @@
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
 import { toRef, computed } from "vue";
-import { useRouteQueryParam } from "@/core/composables";
+import { useBrowserTarget } from "@/core/composables";
 import { PAGE_LIMIT, BREAKPOINTS, DEFAULT_PAGE_SIZE } from "@/core/constants";
-import { QueryParamName } from "@/core/enums";
 import { ProductCard, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog/components";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import type { Product } from "@/core/api/graphql/types";
@@ -129,6 +129,7 @@ interface IProps {
   fixedProductsCount?: number;
   hasActiveFilters: boolean;
   hasSelectedFacets: boolean;
+  keyword?: string;
   itemsPerPage?: number;
   pagesCount: number;
   pageHistory: Readonly<number[]>;
@@ -144,9 +145,7 @@ interface IEmits {
   (event: "resetFilterKeyword"): void;
 }
 
-const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
-  defaultValue: "",
-});
+const { browserTarget } = useBrowserTarget();
 
 function loadPreviousPage() {
   emit("changePage", minVisitedPage.value - 1);

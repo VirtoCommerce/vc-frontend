@@ -25,7 +25,9 @@
       "decrease_quantity": "Diminuer la quantité",
       "increase_quantity": "Augmenter la quantité",
       "variant_picker_group": "Options de variantes",
-      "show_more_button": "Voir plus d'options ({count})"
+      "show_more_button": "Voir plus d'options ({count})",
+      "sidebar": "Barre latérale",
+      "close_chip": "Fermer le chip"
     },
     "date_selector": {
       "min_date_error": "La date doit être à partir du {min}",

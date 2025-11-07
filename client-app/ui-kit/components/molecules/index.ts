@@ -12,11 +12,13 @@ export { default as VcDialogFooter } from "./dialog-footer/vc-dialog-footer.vue"
 export { default as VcDialogHeader } from "./dialog-header/vc-dialog-header.vue";
 export { default as VcDropdownMenu } from "./dropdown-menu/vc-dropdown-menu.vue";
 export { default as VcEmptyPage } from "./empty-page/vc-empty-page.vue";
+export { default as VcEmptyView } from "./empty-view/vc-empty-view.vue";
 export { default as VcExpansionPanel } from "./expansion-panel/vc-expansion-panel.vue";
 export { default as VcFile } from "./file/vc-file.vue";
 export { default as VcFilePicker } from "./file-picker/vc-file-picker.vue";
 export { default as VcFileUploader } from "./file-uploader/vc-file-uploader.vue";
 export { default as VcInput } from "./input/vc-input.vue";
+/** @deprecated VcItemPrice is deprecated and should not be used. */
 export { default as VcItemPrice } from "./item-price/vc-item-price.vue";
 export { default as VcItemPriceCatalog } from "./item-price-catalog/vc-item-price-catalog.vue";
 export { default as VcLineItem } from "./line-item/vc-line-item.vue";

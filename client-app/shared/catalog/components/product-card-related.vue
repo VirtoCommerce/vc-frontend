@@ -15,7 +15,7 @@
       fix-height
       :to="link"
       :title="product.name"
-      :target="linkTarget"
+      :target="browserTarget"
       @click="$emit('linkClick', $event)"
     >
       {{ product.name }}
@@ -33,30 +33,30 @@
       :to="link"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
-      :target="linkTarget"
+      :target="browserTarget"
     />
 
     <VcProductButton
       v-else-if="product.hasVariations"
       :to="link"
-      :target="linkTarget"
+      :target="browserTarget"
       variant="outline"
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
     />
 
-    <AddToCart v-else :product="product" reserved-space />
+    <AddToCartSimple v-else :product="product" reserved-space />
   </VcProductCard>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useThemeContext } from "@/core/composables/useThemeContext";
+import { useBrowserTarget } from "@/core/composables";
 import { getProductRoute } from "@/core/utilities";
-import { AddToCart } from "@/shared/cart";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
+import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 
 interface IEmits {
   (event: "linkClick", globalEvent: MouseEvent): void;
@@ -74,9 +74,5 @@ const price = computed(() => (props.product.hasVariations ? props.product.minVar
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 
-const { themeContext } = useThemeContext();
-
-const linkTarget = computed(() => {
-  return themeContext.value.settings.details_browser_target || "_blank";
-});
+const { browserTarget } = useBrowserTarget();
 </script>

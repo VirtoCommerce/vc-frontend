@@ -8,6 +8,7 @@
     },
     "list_details": {
       "empty_list": "Tu lista está vacía",
+      "no_results_message": "No se encontraron resultados",
       "empty_list_button": "Continuar navegando"
     },
     "messages": {

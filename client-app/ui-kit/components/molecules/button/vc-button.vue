@@ -7,6 +7,7 @@
     :disabled="!enabled"
     :title="title"
     :aria-label="ariaLabel || title"
+    :tabindex="tabindex"
     :class="[
       'vc-button group',
       `vc-button--size--${_size}`,
@@ -91,6 +92,7 @@ interface IProps {
   tag?: string;
   iconSize?: string;
   square?: boolean;
+  tabindex?: string | number;
 }
 
 defineEmits<IEmits>();
@@ -106,6 +108,7 @@ const props = withDefaults(defineProps<IProps>(), {
   fullWidth: false,
   noWrap: false,
   tag: "",
+  tabindex: 0,
 });
 
 const inputContext = inject<VcInputContextType | null>("inputContext", null);
