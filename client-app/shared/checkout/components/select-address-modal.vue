@@ -371,6 +371,7 @@ const {
 
 function applyFilter() {
   filterApplied.value = true;
+  page.value = 1;
   emit("filterChange");
 }
 
