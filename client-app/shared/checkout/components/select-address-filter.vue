@@ -129,8 +129,7 @@ function removeFilterCity(value: string) {
 
 <style lang="scss">
 .select-address-filter {
-  @apply flex flex-row items-center gap-2 pt-0 pb-3;
-  overflow-x: auto;
+  @apply flex flex-row items-center gap-2 pt-0 pb-3 overflow-x-auto;
 
   &__filter-keyword {
     @apply grow w-full min-w-[10rem];
@@ -142,6 +141,10 @@ function removeFilterCity(value: string) {
 }
 
 .select-address-applied-filter {
-  @apply flex flex-row flex-wrap gap-2 pb-3;
+  @apply hidden;
+
+  @media (min-width: theme("screens.md")) {
+    @apply flex flex-row flex-wrap gap-2 pb-3;
+  }
 }
 </style>
