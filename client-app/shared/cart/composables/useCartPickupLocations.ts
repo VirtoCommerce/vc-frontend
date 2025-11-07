@@ -1,5 +1,5 @@
 import { createSharedComposable } from "@vueuse/core";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { getCartPickupLocations } from "@/core/api/graphql/cart";
 import { Logger, termFacetToCommonFacet } from "@/core/utilities";
@@ -26,7 +26,11 @@ export function _useCartPickupLocations() {
   const filterCities = ref<string[]>([]);
   const filterKeyword = ref<string>("");
 
-  const filterApplied = ref(false);
+  const filterSelectsAreEmpty = computed(
+    () => !(filterCountries.value.length || filterRegions.value.length || filterCities.value.length),
+  );
+
+  const filterIsApplied = ref(false);
 
   function buildFilter(): string | undefined {
     const resultItems = [];
@@ -42,15 +46,15 @@ export function _useCartPickupLocations() {
     if (filterCountries.value?.length) {
       resultItems.push(`${COUNTRY_NAME_FACET}:"${filterCountries.value.join('","')}"`);
     }
-
+    console.warn("buildFilter", resultItems);
     return resultItems.join(" ");
   }
 
-  function resetFilter() {
-    filterKeyword.value = "";
+  function clearFilter() {
     filterCountries.value = [];
     filterRegions.value = [];
     filterCities.value = [];
+    filterKeyword.value = "";
   }
 
   async function fetchPickupLocations(
@@ -97,13 +101,15 @@ export function _useCartPickupLocations() {
     filterOptionsRegions,
     filterOptionsCities,
 
-    filterKeyword,
     filterCountries,
     filterRegions,
     filterCities,
-    filterApplied,
+    filterKeyword,
+
+    filterSelectsAreEmpty,
+    filterIsApplied,
     buildFilter,
-    resetFilter,
+    clearFilter,
   };
 }
 

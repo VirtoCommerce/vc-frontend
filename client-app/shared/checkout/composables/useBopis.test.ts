@@ -101,9 +101,10 @@ describe("useBopis composable", () => {
       filterCountries: ref([]),
       filterRegions: ref([]),
       filterCities: ref([]),
-      filterApplied: ref(false),
+      filterIsApplied: ref(false),
+      filterSelectsAreEmpty: ref(false) as unknown as ComputedRef<boolean>,
       buildFilter: vi.fn(),
-      resetFilter: vi.fn(),
+      clearFilter: vi.fn(),
     });
 
     // Setup useFullCart mock

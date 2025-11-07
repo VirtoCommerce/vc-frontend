@@ -3,10 +3,10 @@
     :title="$t('shared.checkout.select_bopis_modal.title')"
     max-width="72rem"
     is-mobile-fullscreen
-    :is-full-height="!!addresses.length || filterApplied"
+    :is-full-height="!!addresses.length || filterIsApplied"
     class="select-address-map-modal"
   >
-    <div v-if="addresses.length || filterApplied" class="select-address-map-modal__container">
+    <div v-if="addresses.length || filterIsApplied" class="select-address-map-modal__container">
       <SelectAddressFilter @applyFilter="applyFilter" />
 
       <div class="select-address-map-modal__content">
@@ -231,15 +231,15 @@ function createPin() {
   };
 }
 
-const { filterApplied, resetFilter: resetFilterInternal, pickupLocationsLoading } = useCartPickupLocations();
+const { filterIsApplied, clearFilter, pickupLocationsLoading } = useCartPickupLocations();
 
 function applyFilter() {
-  filterApplied.value = true;
+  filterIsApplied.value = true;
   emit("filterChange");
 }
 
 function resetFilter() {
-  resetFilterInternal();
+  clearFilter();
   applyFilter();
 }
 

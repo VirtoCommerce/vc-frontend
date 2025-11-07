@@ -36,6 +36,32 @@
       </template>
     </VcInput>
   </div>
+
+  <div v-if="!filterSelectsAreEmpty" class="select-address-applied-filter">
+    <template v-for="value in filterCountries" :key="value">
+      <VcChip color="secondary" closable @close="removeFilterCountry(value)">
+        {{ value }}
+      </VcChip>
+    </template>
+
+    <template v-for="value in filterRegions" :key="value">
+      <VcChip color="secondary" closable @close="removeFilterRegion(value)">
+        {{ value }}
+      </VcChip>
+    </template>
+
+    <template v-for="value in filterCities" :key="value">
+      <VcChip color="secondary" closable @close="removeFilterCity(value)">
+        {{ value }}
+      </VcChip>
+    </template>
+
+    <VcChip color="secondary" variant="outline" clickable @click="resetFilter">
+      <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+      <VcIcon name="reset" />
+    </VcChip>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -53,10 +79,14 @@ const {
   filterOptionsCountries,
   filterOptionsRegions,
   filterOptionsCities,
-  filterKeyword,
+
   filterCountries,
   filterRegions,
   filterCities,
+  filterKeyword,
+
+  filterSelectsAreEmpty,
+  clearFilter,
   pickupLocationsLoading,
 } = useCartPickupLocations();
 
@@ -64,20 +94,42 @@ function applyFilter(changedFilter?: FacetFilterChangeType) {
   if (changedFilter?.name === COUNTRY_NAME_FACET) {
     filterCountries.value = changedFilter.termValues?.map((x) => x.value) ?? [];
   }
+
   if (changedFilter?.name === REGION_NAME_FACET) {
     filterRegions.value = changedFilter.termValues?.map((x) => x.value) ?? [];
   }
+
   if (changedFilter?.name === CITY_FACET) {
     filterCities.value = changedFilter.termValues?.map((x) => x.value) ?? [];
   }
 
   emit("applyFilter");
 }
+
+function resetFilter() {
+  clearFilter();
+  emit("applyFilter");
+}
+
+function removeFilterCountry(value: string) {
+  filterCountries.value = filterCountries.value.filter((x) => x !== value);
+  emit("applyFilter");
+}
+
+function removeFilterRegion(value: string) {
+  filterRegions.value = filterRegions.value.filter((x) => x !== value);
+  emit("applyFilter");
+}
+
+function removeFilterCity(value: string) {
+  filterCities.value = filterCities.value.filter((x) => x !== value);
+  emit("applyFilter");
+}
 </script>
 
 <style lang="scss">
 .select-address-filter {
-  @apply flex flex-col items-center gap-2 pt-0 pb-5;
+  @apply flex flex-col items-center gap-2 pt-0 pb-3;
 
   @media (min-width: theme("screens.md")) {
     @apply flex-row;
@@ -90,5 +142,9 @@ function applyFilter(changedFilter?: FacetFilterChangeType) {
       @apply w-auto;
     }
   }
+}
+
+.select-address-applied-filter {
+  @apply flex flex-row gap-2 pb-3;
 }
 </style>

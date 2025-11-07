@@ -295,16 +295,16 @@ const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
-const { filterApplied, resetFilter: resetFilterInternal, pickupLocationsLoading } = useCartPickupLocations();
+const { filterIsApplied, clearFilter, pickupLocationsLoading } = useCartPickupLocations();
 
 function applyFilter() {
-  filterApplied.value = true;
+  filterIsApplied.value = true;
   page.value = 1;
   emit("filterChange");
 }
 
 function resetFilter() {
-  resetFilterInternal();
+  clearFilter();
   applyFilter();
 }
 
