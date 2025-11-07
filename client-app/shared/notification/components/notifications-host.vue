@@ -28,8 +28,7 @@
               class="notifications-host__button"
               size="xs"
               @click="
-                notification.button?.clickHandler ? notification.button.clickHandler(notification.id!, $event) : null;
-                notification.button?.autoClose ? close(notification.id!) : null;
+                notification.button?.clickHandler ? notification.button.clickHandler(notification.id!, $event) : null
               "
             >
               <span v-if="notification.button.html" v-html-safe="notification.button.html" />

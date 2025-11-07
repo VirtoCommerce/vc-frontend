@@ -205,6 +205,7 @@
       "fail_add_product_to_cart": "抱歉，无法将此商品加入购物车。{reason}",
       "fail_to_change_quantity_in_cart": "抱歉，无法更新购物车中的商品数量。{reason}",
       "unhandled_error": "抱歉给您带来不便。我们的服务器目前遇到技术问题。请稍后再试。",
+      "report_sent_successfully": "谢谢！您的报告已成功发送。我们会查看的。",
       "role_update_successful": "客户角色已成功更新。",
       "role_update_failed": "更新角色时发生错误：{0}",
       "passwords_do_not_match": "密码字段的值必须匹配。",

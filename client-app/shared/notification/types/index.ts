@@ -10,7 +10,6 @@ export type NotificationCustomButtonType = {
   variant?: "solid" | "outline" | "no-border" | "no-background";
   to?: RouteLocationRaw;
   clickHandler?: (notificationId: string, event: Event) => void;
-  autoClose?: boolean;
 };
 
 export interface INotification {

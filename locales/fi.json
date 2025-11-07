@@ -205,6 +205,7 @@
       "fail_add_product_to_cart": "Valitettavasti tätä tuotetta ei voi lisätä ostoskoriin. {reason}",
       "fail_to_change_quantity_in_cart": "Valitettavasti tuotteen määrää ei voi päivittää ostoskorissa. {reason}",
       "unhandled_error": "Pahoittelut häiriöstä. Palvelimellamme on tällä hetkellä teknisiä ongelmia. Yritä uudelleen myöhemmin.",
+      "report_sent_successfully": "Kiitos! Raporttisi on lähetetty onnistuneesti. Tarkastelemme sitä.",
       "role_update_successful": "Käyttäjärooli on päivitetty onnistuneesti",
       "role_update_failed": "Virhe roolin päivityksessä: {0}",
       "passwords_do_not_match": "Salasanakenttien arvot eivät täsmää",

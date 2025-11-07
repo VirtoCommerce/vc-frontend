@@ -205,6 +205,7 @@
       "fail_add_product_to_cart": "Tyvärr, denna produkt kan inte läggas till i kundvagnen. {reason}",
       "fail_to_change_quantity_in_cart": "Tyvärr, kan inte uppdatera produktantal i kundvagnen. {reason}",
       "unhandled_error": "Ursäkta besväret. Vår server upplever för närvarande tekniska problem. Vänligen försök igen senare.",
+      "report_sent_successfully": "Tack! Din rapport har skickats framgångsrikt. Vi kommer att titta på det.",
       "role_update_successful": "Kundrollen har uppdaterats framgångsrikt",
       "role_update_failed": "Fel uppstod vid uppdatering av rollen: {0}",
       "passwords_do_not_match": "Lösenordsfälten måste ha matchande värden",

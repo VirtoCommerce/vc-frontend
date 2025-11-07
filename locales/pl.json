@@ -205,6 +205,7 @@
       "fail_add_product_to_cart": "Przepraszamy, nie można dodać tego produktu do koszyka. {reason}",
       "fail_to_change_quantity_in_cart": "Przepraszamy, nie można zaktualizować ilości produktu w koszyku. {reason}",
       "unhandled_error": "Przepraszamy za niedogodności. Nasz serwer obecnie doświadcza problemów technicznych. Proszę spróbować ponownie później.",
+      "report_sent_successfully": "Dziękujemy! Twój raport został pomyślnie wysłany. Zajmiemy się tym.",
       "role_update_successful": "Rola klienta została pomyślnie zaktualizowana.",
       "role_update_failed": "Wystąpiły błędy podczas aktualizacji roli: {0}",
       "passwords_do_not_match": "Pola hasła muszą mieć dopasowane wartości.",

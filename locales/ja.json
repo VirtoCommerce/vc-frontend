@@ -205,6 +205,7 @@
       "fail_add_product_to_cart": "カートに追加できません: {reason}",
       "fail_to_change_quantity_in_cart": "数量を変更できません: {reason}",
       "unhandled_error": "システムエラーが発生しました",
+      "report_sent_successfully": "ありがとうございます！レポートが正常に送信されました。確認いたします。",
       "role_update_successful": "権限を更新しました",
       "role_update_failed": "権限の更新に失敗: {0}",
       "passwords_do_not_match": "パスワードが一致しません",

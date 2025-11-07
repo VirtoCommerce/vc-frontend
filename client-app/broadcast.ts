@@ -24,7 +24,7 @@ import {
   dataChangedEvent,
 } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
-import type { INotification } from "@/shared/notification";
+import type { INotification, NotificationCustomButtonType } from "@/shared/notification";
 
 let installed = false;
 
@@ -45,6 +45,25 @@ export function setupBroadcastGlobalListeners() {
   const { signMeOut } = useSignMeOut({ reloadPage: false });
   const { themeContext } = useThemeContext();
   const { report } = useSupportReports();
+
+  function createReportButton(error: unknown): NotificationCustomButtonType {
+    return {
+      text: t("common.buttons.report_a_problem"),
+      color: "secondary",
+      variant: "outline",
+      clickHandler: (notificationId: string) => {
+        report({ error: error });
+
+        notifications.update(notificationId, {
+          duration: 5000,
+          type: "success",
+          text: t("common.messages.report_sent_successfully"),
+          variant: "solid",
+          button: undefined,
+        });
+      },
+    };
+  }
 
   on(pageReloadEvent, () => location.reload());
   on(reloadAndOpenMainPage, () => {
@@ -97,15 +116,7 @@ export function setupBroadcastGlobalListeners() {
     };
 
     if (error) {
-      notification.button = {
-        text: t("common.buttons.report_a_problem"),
-        color: "secondary",
-        variant: "outline",
-        autoClose: true,
-        clickHandler: () => {
-          report({ error: error });
-        },
-      };
+      notification.button = createReportButton(error);
     }
 
     notifications.error({
@@ -125,9 +136,15 @@ export function setupBroadcastGlobalListeners() {
         text: t("common.buttons.report_a_problem"),
         color: "secondary",
         variant: "outline",
-        autoClose: true,
-        clickHandler: () => {
+        clickHandler: (notificationId: string) => {
           report({ error: error });
+          notifications.update(notificationId, {
+            duration: 5000,
+            type: "success",
+            text: t("common.messages.report_sent_successfully"),
+            variant: "solid",
+            button: undefined,
+          });
         },
       };
     }

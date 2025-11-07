@@ -205,6 +205,7 @@
       "fail_add_product_to_cart": "Sorry, this product cannot be added to cart. {reason}",
       "fail_to_change_quantity_in_cart": "Sorry, can't update product quantity in cart. {reason}",
       "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
+      "report_sent_successfully": "Thank you! Your report has been sent successfully. We'll look into it.",
       "role_update_successful": "The customer role has been updated successfully",
       "role_update_failed": "Errors occurred during the role updating: {0}",
       "passwords_do_not_match": "The password fields must have matching values",

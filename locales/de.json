@@ -205,6 +205,7 @@
       "fail_add_product_to_cart": "Entschuldigung, dieses Produkt kann nicht zum Warenkorb hinzugefügt werden. {reason}",
       "fail_to_change_quantity_in_cart": "Entschuldigung, die Produktmenge im Warenkorb kann nicht aktualisiert werden. {reason}",
       "unhandled_error": "Entschuldigen Sie die Unannehmlichkeiten. Unser Server hat derzeit technische Probleme. Bitte versuchen Sie es später erneut.",
+      "report_sent_successfully": "Vielen Dank! Ihr Bericht wurde erfolgreich gesendet. Wir werden uns darum kümmern.",
       "role_update_successful": "Die Kundenrolle wurde erfolgreich aktualisiert.",
       "role_update_failed": "Es sind Fehler bei der Aktualisierung der Rolle aufgetreten: {0}",
       "passwords_do_not_match": "Die Passwortfelder müssen übereinstimmende Werte haben.",

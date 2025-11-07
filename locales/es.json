@@ -205,6 +205,7 @@
       "fail_add_product_to_cart": "Lo sentimos, este producto no se puede añadir al carrito. {reason}",
       "fail_to_change_quantity_in_cart": "Lo sentimos, no se puede actualizar la cantidad del producto en el carrito. {reason}",
       "unhandled_error": "Disculpa las molestias. Nuestro servidor está experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.",
+      "report_sent_successfully": "¡Gracias! Tu informe ha sido enviado con éxito. Lo revisaremos.",
       "role_update_successful": "El rol del cliente se ha actualizado con éxito.",
       "role_update_failed": "Se produjeron errores durante la actualización del rol: {0}",
       "passwords_do_not_match": "Los campos de contraseña deben tener valores coincidentes.",
