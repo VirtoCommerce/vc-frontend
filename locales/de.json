@@ -194,7 +194,7 @@
       "not_defined": "Nicht definiert",
       "invalid_coupon": "Dieser Code entspricht keinem aktiven Gutschein. Bitte überprüfen Sie alles und versuchen Sie es erneut.",
       "fill_all_required": "Bitte füllen Sie alle erforderlichen Felder aus, um fortzufahren.",
-      "something_went_wrong": "Hoppla! Etwas ist schiefgelaufen. Bitte überprüfen Sie alles und versuchen Sie es erneut.",
+      "something_went_wrong": "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
       "checkout_pricing_warning": "Verfügbarkeit, Versand, Steuern und Aktionen sind erst endgültig, wenn Sie Ihre Bestellung abschließen.",
       "wishlists_available_for_authorized": "Wunschlisten sind nur für authentifizierte Benutzer verfügbar",
       "no_addresses": "Sie haben noch keine Adressen",

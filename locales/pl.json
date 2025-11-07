@@ -194,7 +194,7 @@
       "not_defined": "Niezdefiniowany",
       "invalid_coupon": "Ten kod nie odpowiada żadnym aktywnym kuponom. Proszę sprawdzić, czy wszystko jest poprawne i spróbować ponownie.",
       "fill_all_required": "Proszę wypełnić wszystkie wymagane informacje, aby kontynuować.",
-      "something_went_wrong": "Ups! Coś poszło nie tak. Proszę sprawdzić, czy wszystko jest poprawne i spróbować ponownie.",
+      "something_went_wrong": "Coś poszło nie tak. Proszę spróbować ponownie później.",
       "checkout_pricing_warning": "Dostępność, wysyłka, podatek i promocje nie są ostateczne, dopóki nie ukończysz zamówienia.",
       "wishlists_available_for_authorized": "Listy życzeń są dostępne tylko dla uwierzytelnionych użytkowników",
       "no_addresses": "Nie masz żadnych adresów",

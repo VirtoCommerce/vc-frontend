@@ -194,7 +194,7 @@
       "not_defined": "Määrittelemätön",
       "invalid_coupon": "Tämä koodi ei vastaa yhtään aktiivista kuponkia. Tarkista, että kaikki on oikein, ja yritä uudelleen.",
       "fill_all_required": "Täytä kaikki pakolliset tiedot jatkaaksesi.",
-      "something_went_wrong": "Hups! Jotain meni pieleen. Tarkista, että kaikki on oikein, ja yritä uudelleen.",
+      "something_went_wrong": "Jotain meni pieleen. Yritä myöhemmin uudelleen.",
       "checkout_pricing_warning": "Saatavuus, toimitus, verot ja kampanjat eivät ole lopullisia ennen kuin olet viimeistellyt tilauksesi.",
       "wishlists_available_for_authorized": "Toivelistat ovat saatavilla vain todennetuille käyttäjille",
       "no_addresses": "Sinulla ei ole vielä osoitteita",

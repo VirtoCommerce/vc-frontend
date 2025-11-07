@@ -194,7 +194,7 @@
       "not_defined": "Undefined",
       "invalid_coupon": "This code does not match any active coupons. Double-check that everything is correct and try again.",
       "fill_all_required": "Complete all required information to proceed.",
-      "something_went_wrong": "Oops! Something went wrong. Double-check that everything is correct and try again.",
+      "something_went_wrong": "Something went wrong. Please try again later.",
       "checkout_pricing_warning": "Availability, shipping, tax and promotions are not final until you complete your order.",
       "wishlists_available_for_authorized": "Wishlists are available only for authenticated users",
       "no_addresses": "You do not have any addresses yet",

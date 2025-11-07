@@ -101,6 +101,7 @@ export function setupBroadcastGlobalListeners() {
         text: t("common.buttons.report_a_problem"),
         color: "secondary",
         variant: "outline",
+        autoClose: true,
         clickHandler: () => {
           report({ error: error });
         },
@@ -124,6 +125,7 @@ export function setupBroadcastGlobalListeners() {
         text: t("common.buttons.report_a_problem"),
         color: "secondary",
         variant: "outline",
+        autoClose: true,
         clickHandler: () => {
           report({ error: error });
         },

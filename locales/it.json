@@ -194,7 +194,7 @@
       "not_defined": "Non definito",
       "invalid_coupon": "Questo codice non corrisponde a nessun coupon attivo. Controlla che tutto sia corretto e riprova.",
       "fill_all_required": "Completa tutte le informazioni richieste per procedere.",
-      "something_went_wrong": "Oops! Qualcosa è andato storto. Controlla che tutto sia corretto e riprova.",
+      "something_went_wrong": "Qualcosa è andato storto. Per favore, riprova più tardi.",
       "checkout_pricing_warning": "Disponibilità, spedizione, tasse e promozioni non sono definitive fino al completamento dell'ordine.",
       "wishlists_available_for_authorized": "Le liste dei desideri sono disponibili solo per gli utenti autenticati",
       "no_addresses": "Non hai ancora nessun indirizzo",

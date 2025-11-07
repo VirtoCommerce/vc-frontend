@@ -194,7 +194,7 @@
       "not_defined": "未定义",
       "invalid_coupon": "此代码不匹配任何活动优惠券。请仔细检查后再试。",
       "fill_all_required": "请完成所有必填信息以继续。",
-      "something_went_wrong": "糟糕！出了点问题。请仔细检查后再试。",
+      "something_went_wrong": "出了点问题。请稍后再试。",
       "checkout_pricing_warning": "在您完成订单之前，库存、运输、税费和促销信息尚未最终确定。",
       "wishlists_available_for_authorized": "愿望清单仅对已认证用户可用",
       "no_addresses": "您尚未有任何地址",

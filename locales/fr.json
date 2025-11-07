@@ -194,7 +194,7 @@
       "not_defined": "Indéfini",
       "invalid_coupon": "Ce code ne correspond à aucun coupon actif. Veuillez vérifier que tout est correct et réessayez.",
       "fill_all_required": "Veuillez compléter toutes les informations requises pour continuer.",
-      "something_went_wrong": "Oups ! Quelque chose s'est mal passé. Veuillez vérifier que tout est correct et réessayez.",
+      "something_went_wrong": "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
       "checkout_pricing_warning": "La disponibilité, l'expédition, les taxes et les promotions ne sont pas définitives tant que vous n'avez pas complété votre commande.",
       "wishlists_available_for_authorized": "Les listes de souhaits ne sont disponibles que pour les utilisateurs authentifiés",
       "no_addresses": "Vous n'avez pas encore d'adresses",

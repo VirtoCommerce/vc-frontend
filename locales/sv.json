@@ -194,7 +194,7 @@
       "not_defined": "Odefinierat",
       "invalid_coupon": "Denna kod matchar inte någon aktiv kupong. Kontrollera att allt är korrekt och försök igen.",
       "fill_all_required": "Fyll i all obligatorisk information för att fortsätta.",
-      "something_went_wrong": "Oj! Något gick fel. Kontrollera att allt är korrekt och försök igen.",
+      "something_went_wrong": "Något gick fel. Vänligen försök igen senare.",
       "checkout_pricing_warning": "Tillgänglighet, frakt, skatt och kampanjer är inte definitiva förrän du slutför din beställning.",
       "wishlists_available_for_authorized": "Önskelistor är endast tillgängliga för autentiserade användare",
       "no_addresses": "Du har inga adresser ännu",
