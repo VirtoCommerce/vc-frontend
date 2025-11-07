@@ -284,32 +284,36 @@ const variationsCount = computed(() => {
 
 <style scoped lang="scss">
 .product-card {
-  &__variations-button {
-    @apply hidden;
-  }
-
-  &__variations-link-button {
-    @apply block;
-  }
-
-  &__variants-wrapper {
-    @apply border-t border-neutral-200 p-6 pt-4 hidden;
-  }
+  $list: "";
 
   &--list {
-    .product-card__variations-button {
+    $list: &;
+  }
+
+  &__variation-button {
+    @apply hidden;
+
+    #{$list} & {
       @container (min-width: theme("containers.3xl")) {
         @apply block;
       }
     }
+  }
 
-    .product-card__variations-link-button {
+  &__variations-link-button {
+    @apply block;
+
+    #{$list} & {
       @container (min-width: theme("containers.3xl")) {
         @apply hidden;
       }
     }
+  }
 
-    .product-card__variants-wrapper {
+  &__variants-wrapper {
+    @apply border-t border-neutral-200 p-6 pt-4 hidden;
+
+    #{$list} & {
       @container (min-width: theme("containers.3xl")) {
         @apply block;
       }
