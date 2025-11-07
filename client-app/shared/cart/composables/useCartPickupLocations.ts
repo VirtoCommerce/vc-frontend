@@ -35,30 +35,29 @@ export function _useCartPickupLocations() {
   );
 
   const filterKeyword = ref<string>("");
-  const filterCountry = ref<string | undefined>();
-  const filterRegion = ref<string | undefined>();
-  const filterCity = ref<string | undefined>();
+  const filterCountries = ref<FacetTermType[]>([]);
+  const filterRegions = ref<FacetTermType[]>([]);
+  const filterCities = ref<FacetTermType[]>([]);
 
   const filterApplied = ref(false);
-
   function buildFilter(): string | undefined {
-    if (filterCity.value) {
-      return `${CITY_FACET}:"${filterCity.value}"`;
+    if (filterCities.value?.length) {
+      return `${CITY_FACET}:"${filterCities.value.map((x) => x.term).join('","')}"`;
     }
-    if (filterRegion.value) {
-      return `${REGION_NAME_FACET}:"${filterRegion.value}"`;
+    if (filterRegions.value?.length) {
+      return `${REGION_NAME_FACET}:"${filterRegions.value.map((x) => x.term).join('","')}"`;
     }
-    if (filterCountry.value) {
-      return `${COUNTRY_NAME_FACET}:"${filterCountry.value}"`;
+    if (filterCountries.value?.length) {
+      return `${COUNTRY_NAME_FACET}:"${filterCountries.value.map((x) => x.term).join('","')}"`;
     }
     return undefined;
   }
 
   function resetFilter() {
     filterKeyword.value = "";
-    filterCountry.value = undefined;
-    filterRegion.value = undefined;
-    filterCity.value = undefined;
+    filterCountries.value = [];
+    filterRegions.value = [];
+    filterCities.value = [];
   }
 
   async function fetchPickupLocations(
@@ -86,9 +85,9 @@ export function _useCartPickupLocations() {
 
     filterOptions,
     filterKeyword,
-    filterCountry,
-    filterRegion,
-    filterCity,
+    filterCountries,
+    filterRegions,
+    filterCities,
     filterApplied,
     buildFilter,
     resetFilter,

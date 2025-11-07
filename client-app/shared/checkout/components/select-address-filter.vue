@@ -1,7 +1,7 @@
 <template>
   <div class="select-address-filter">
     <VcSelect
-      v-model="filterCountry"
+      v-model="filterCountries"
       :items="filterOptions?.countries ?? []"
       text-field="label"
       value-field="term"
@@ -15,7 +15,7 @@
     />
 
     <VcSelect
-      v-model="filterRegion"
+      v-model="filterRegions"
       :items="filterOptions?.regions ?? []"
       text-field="label"
       value-field="term"
@@ -29,7 +29,7 @@
     />
 
     <VcSelect
-      v-model="filterCity"
+      v-model="filterCities"
       :items="filterOptions?.cities ?? []"
       text-field="label"
       value-field="term"
@@ -72,7 +72,7 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 
-const { filterOptions, filterKeyword, filterCountry, filterRegion, filterCity, pickupLocationsLoading } =
+const { filterOptions, filterKeyword, filterCountries, filterRegions, filterCities, pickupLocationsLoading } =
   useCartPickupLocations();
 
 function applyFilter() {
