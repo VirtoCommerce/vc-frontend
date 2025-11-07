@@ -29,16 +29,21 @@ export function _useCartPickupLocations() {
   const filterApplied = ref(false);
 
   function buildFilter(): string | undefined {
+    const resultItems = [];
+
     if (filterCities.value?.length) {
-      return `${CITY_FACET}:"${filterCities.value.join('","')}"`;
+      resultItems.push(`${CITY_FACET}:"${filterCities.value.join('","')}"`);
     }
+
     if (filterRegions.value?.length) {
-      return `${REGION_NAME_FACET}:"${filterRegions.value.join('","')}"`;
+      resultItems.push(`${REGION_NAME_FACET}:"${filterRegions.value.join('","')}"`);
     }
+
     if (filterCountries.value?.length) {
-      return `${COUNTRY_NAME_FACET}:"${filterCountries.value.join('","')}"`;
+      resultItems.push(`${COUNTRY_NAME_FACET}:"${filterCountries.value.join('","')}"`);
     }
-    return undefined;
+
+    return resultItems.join(" ");
   }
 
   function resetFilter() {
