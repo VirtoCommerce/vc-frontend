@@ -298,60 +298,55 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       width: `${dims.elementWidth}px`,
     };
 
+    const stickyTopStyle: CSSProperties = {
+      ...baseStyle,
+      position: "sticky",
+      top: `${dims.topSpacing}px`,
+      bottom: "auto",
+    };
+
+    const stickyBottomStyle: CSSProperties = {
+      ...baseStyle,
+      position: "sticky",
+      top: "auto",
+      bottom: `${dims.bottomSpacing}px`,
+      alignSelf: "flex-end",
+    };
+
+    const absoluteStyle: CSSProperties = {
+      ...baseStyle,
+      position: "absolute",
+      top: `${translate.value}px`,
+      bottom: "auto",
+    };
+
     switch (affixType) {
       case AFFIX_TYPES.FIXED_TOP: {
-        style.value = {
-          ...baseStyle,
-          position: "sticky",
-          top: `${dims.topSpacing}px`,
-          bottom: "auto",
-        };
+        style.value = stickyTopStyle;
         translate.value = elementTop - containerTop;
         break;
       }
 
       case AFFIX_TYPES.STATIC: {
-        style.value = {
-          ...baseStyle,
-          position: "sticky",
-          top: `${dims.topSpacing}px`,
-          bottom: "auto",
-        };
+        style.value = stickyTopStyle;
         translate.value = 0;
         break;
       }
 
       case AFFIX_TYPES.FIXED_BOTTOM: {
-        style.value = {
-          ...baseStyle,
-          position: "sticky",
-          top: "auto",
-          bottom: `${dims.bottomSpacing}px`,
-          alignSelf: "flex-end",
-        };
+        style.value = stickyBottomStyle;
         translate.value = elementTop - containerTop;
         break;
       }
 
       case AFFIX_TYPES.STATIC_BOTTOM: {
-        style.value = {
-          ...baseStyle,
-          position: "sticky",
-          top: "auto",
-          bottom: `${dims.bottomSpacing}px`,
-          alignSelf: "flex-end",
-        };
+        style.value = stickyBottomStyle;
         translate.value = dims.containerHeight - dims.elementHeight;
         break;
       }
 
       case AFFIX_TYPES.ABSOLUTE: {
-        style.value = {
-          ...baseStyle,
-          position: "absolute",
-          top: `${translate.value}px`,
-          bottom: "auto",
-        };
+        style.value = absoluteStyle;
         break;
       }
     }
