@@ -75,12 +75,12 @@ import { useForm } from "vee-validate";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { initializePayment, authorizePayment } from "@/core/api/graphql";
+import { initializePayment, authorizePayment, initializeCartPayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables";
 import { Logger, preventNonNumberKeyboard, preventNonNumberPaste } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import PaymentPolicies from "./payment-policies.vue";
-import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
+import type { CartType, CustomerOrderType, KeyValueType, PaymentType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
 
@@ -90,7 +90,10 @@ interface IEmits {
 }
 
 interface IProps {
-  order: CustomerOrderType;
+  hidePaymentButton?: boolean;
+  order?: CustomerOrderType;
+  payment?: PaymentType; // can it be PaymentInType?
+  cart?: CartType;
   disabled?: boolean;
 }
 
@@ -218,7 +221,7 @@ const expirationDateErrors = computed<string>(() =>
 );
 
 async function sendPaymentData() {
-  if (!isValidBankCard.value) {
+  if (!isValidBankCard.value || !props.order) {
     return;
   }
   loading.value = true;
@@ -268,16 +271,31 @@ async function createToken(options: Record<string, unknown>): Promise<string> {
 }
 
 onMounted(async () => {
-  await initPayment();
+  if (props.order) {
+    await initPayment(props.order);
+  } else if (props.payment) {
+    await initCartPayment(props.payment);
+  }
 });
 
-async function initPayment() {
+async function initPayment(order: CustomerOrderType) {
   loading.value = true;
   const { publicParameters } = await initializePayment({
-    orderId: props.order.id,
-    paymentId: props.order.inPayments[0].id,
+    orderId: order.id,
+    paymentId: order.inPayments[0].id,
   });
+  await initPostProcess(publicParameters);
+}
 
+async function initCartPayment(payment: PaymentType) {
+  loading.value = true;
+  const { publicParameters } = await initializeCartPayment({
+    paymentId: payment.id,
+  });
+  await initPostProcess(publicParameters);
+}
+
+async function initPostProcess(publicParameters?: KeyValueType[]) {
   const scriptUrl = getValue(publicParameters, "clientScript");
 
   if (!publicParameters || !scriptUrl) {

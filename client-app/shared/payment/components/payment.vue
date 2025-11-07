@@ -1,14 +1,22 @@
 <template>
   <div class="p-5 md:p-6">
-    <!-- <PaymentProcessingAuthorizeNet
+    <PaymentProcessingCyberSource
       :order="order"
+      :cart="cart"
+      :hide-payment-button="hidePaymentButton"
+      :disabled="disabled"
+      :payment="payment"
+      @success="onPaymentSuccess()"
+      @fail="onPaymentFail()"
+    />
+    <!-- <PaymentProcessingAuthorizeNet
+      v-if="paymentTypeName === 'AuthorizeNetPaymentMethod'"
       :hide-payment-button="hidePaymentButton"
       @success="onPaymentSuccess()"
       @fail="onPaymentFail()"
-    /> -->
-    <!-- <PaymentProcessingSkyflow
+    />
+    <PaymentProcessingSkyflow
       v-else-if="paymentTypeName === 'SkyflowPaymentMethod'"
-      :order="placedOrder"
       @success="onPaymentResult(true)"
       @fail="onPaymentResult(false)"
     />
@@ -17,18 +25,15 @@
       :order="placedOrder"
       @success="onPaymentResult(true)"
       @fail="onPaymentResult(false)"
-    /> -->
+    />
     <PaymentProcessingDatatrans
-      v-if="paymentTypeName === 'DatatransPaymentMethod'"
+      v-else-if="paymentTypeName === 'DatatransPaymentMethod'"
       ref="datatrans"
       :order="order"
       @success="onPaymentSuccess()"
       @fail="onPaymentFail()"
     />
-    <div>
-      {{ props }}
-    </div>
-    <!-- <ExtensionPointList
+    <ExtensionPointList
       v-else-if="
         paymentTypeName &&
         $canRenderExtensionPoint('paymentPage', 'payment-methods', {
@@ -46,14 +51,18 @@
 </template>
 
 <script setup lang="ts">
+import { hide } from "@floating-ui/vue";
 import { computed, onMounted, useTemplateRef, watch } from "vue";
-import PaymentProcessingDatatrans from "./payment-processing-datatrans.vue";
-import type { CartType, CustomerOrderType, PaymentInType } from "@/core/api/graphql/types";
+import type { CartType, CustomerOrderType, PaymentType } from "@/core/api/graphql/types";
+import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
+// import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
+// import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
+// import PaymentProcessingDatatrans from "@/shared/payment/components/payment-processing-datatrans.vue";
 
 interface IProps {
   hidePaymentButton?: boolean;
   order?: CustomerOrderType;
-  payment?: PaymentInType;
+  payment?: PaymentType;
   cart?: CartType;
   disabled?: boolean;
 }
@@ -66,9 +75,7 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
-const datatrans = useTemplateRef<typeof PaymentProcessingDatatrans>("datatrans");
-
-console.log(datatrans);
+// const datatrans = useTemplateRef<typeof PaymentProcessingDatatrans>("datatrans");
 
 const currentPayment = computed<PaymentInType | undefined>(() => {
   return props.payment || props.order?.inPayments[0]; // todo: take from cart?  || props.cart?.payments[0];

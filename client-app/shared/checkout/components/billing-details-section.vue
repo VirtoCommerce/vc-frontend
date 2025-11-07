@@ -84,11 +84,12 @@
     </div>
   </VcWidget>
   <VcWidget
-    v-if="paymentMethod && billingAddress"
+    v-if="paymentMethod && !paymentMethod.allowCartPayment && billingAddress"
     :title="$t('shared.checkout.billing_details_section.title')"
     prepend-icon="cash"
     size="lg"
   >
+    <div>{{ paymentMethod }}</div>
     <Payment hide-payment-button :cart="cart" />
   </VcWidget>
 </template>
