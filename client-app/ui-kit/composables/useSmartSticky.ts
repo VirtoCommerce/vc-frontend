@@ -304,7 +304,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
         mode.value = "fixed";
         style.value = {
           ...baseStyle,
-          position: "fixed",
+          position: "sticky",
           top: `${dims.topSpacing}px`,
           bottom: "auto",
         };
@@ -316,9 +316,10 @@ export function useSmartSticky(options: ISmartStickyOptions) {
         mode.value = "fixed";
         style.value = {
           ...baseStyle,
-          position: "fixed",
+          position: "sticky",
           top: "auto",
           bottom: `${dims.bottomSpacing}px`,
+          alignSelf: "flex-end",
         };
         translate.value = elementTop - containerTop;
         break;
@@ -337,15 +338,14 @@ export function useSmartSticky(options: ISmartStickyOptions) {
 
       case AFFIX_TYPES.STATIC_BOTTOM: {
         mode.value = "absolute";
-        const bottomTop = dims.containerHeight - dims.elementHeight;
-
         style.value = {
           ...baseStyle,
-          position: "absolute",
-          top: `${bottomTop}px`,
-          bottom: "auto",
+          position: "sticky",
+          top: "auto",
+          bottom: `${dims.bottomSpacing}px`,
+          alignSelf: "flex-end",
         };
-        translate.value = bottomTop;
+        translate.value = dims.containerHeight - dims.elementHeight;
         break;
       }
 
@@ -353,7 +353,10 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       default: {
         mode.value = "static";
         style.value = {
-          position: "static",
+          ...baseStyle,
+          position: "sticky",
+          top: `${dims.topSpacing}px`,
+          bottom: "auto",
         };
         translate.value = 0;
         break;
