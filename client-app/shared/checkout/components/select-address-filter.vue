@@ -20,6 +20,7 @@
       v-model="filterKeyword"
       :placeholder="$t('common.labels.search')"
       :aria-label="$t('common.labels.search')"
+      size="sm"
       class="select-address-filter__filter-keyword"
       clearable
       :disabled="pickupLocationsLoading"
@@ -76,7 +77,7 @@ function applyFilter(changedFilter?: FacetFilterChangeType) {
 
 <style lang="scss">
 .select-address-filter {
-  @apply flex flex-col items-center gap-2 pb-3;
+  @apply flex flex-col items-center gap-2 pt-0 pb-5;
 
   @media (min-width: theme("screens.md")) {
     @apply flex-row;
