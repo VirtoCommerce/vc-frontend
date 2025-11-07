@@ -1,46 +1,20 @@
 <template>
   <div class="select-address-filter">
-    <VcSelect
-      v-model="filterCountries"
-      :items="filterOptions?.countries ?? []"
-      text-field="label"
-      value-field="term"
-      class="select-address-filter__filter-select"
-      multiple
-      autocomplete
-      clearable
-      :placeholder="$t('common.labels.country')"
-      :disabled="pickupLocationsLoading"
-      @change="applyFilter"
+    <FacetFilter
+      v-if="filterOptionsCountries"
+      :facet="filterOptionsCountries"
+      mode="dropdown"
+      @update:filter="applyFilter"
     />
 
-    <VcSelect
-      v-model="filterRegions"
-      :items="filterOptions?.regions ?? []"
-      text-field="label"
-      value-field="term"
-      class="select-address-filter__filter-select"
-      multiple
-      autocomplete
-      clearable
-      :placeholder="$t('common.labels.region')"
-      :disabled="pickupLocationsLoading"
-      @change="applyFilter"
+    <FacetFilter
+      v-if="filterOptionsRegions"
+      :facet="filterOptionsRegions"
+      mode="dropdown"
+      @update:filter="applyFilter"
     />
 
-    <VcSelect
-      v-model="filterCities"
-      :items="filterOptions?.cities ?? []"
-      text-field="label"
-      value-field="term"
-      class="select-address-filter__filter-select"
-      multiple
-      autocomplete
-      clearable
-      :placeholder="$t('common.labels.city')"
-      :disabled="pickupLocationsLoading"
-      @change="applyFilter"
-    />
+    <FacetFilter v-if="filterOptionsCities" :facet="filterOptionsCities" mode="dropdown" @update:filter="applyFilter" />
 
     <VcInput
       v-model="filterKeyword"
@@ -64,7 +38,9 @@
 </template>
 
 <script setup lang="ts">
-import { useCartPickupLocations } from "@/shared/cart";
+import { CITY_FACET, COUNTRY_NAME_FACET, REGION_NAME_FACET, useCartPickupLocations } from "@/shared/cart";
+import { FacetFilter } from "@/shared/catalog";
+import type { FacetFilterChangeType } from "@/core/types";
 
 interface IEmits {
   (event: "applyFilter"): void;
@@ -72,10 +48,28 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 
-const { filterOptions, filterKeyword, filterCountries, filterRegions, filterCities, pickupLocationsLoading } =
-  useCartPickupLocations();
+const {
+  filterOptionsCountries,
+  filterOptionsRegions,
+  filterOptionsCities,
+  filterKeyword,
+  filterCountries,
+  filterRegions,
+  filterCities,
+  pickupLocationsLoading,
+} = useCartPickupLocations();
 
-function applyFilter() {
+function applyFilter(changedFilter?: FacetFilterChangeType) {
+  if (changedFilter?.name === COUNTRY_NAME_FACET) {
+    filterCountries.value = changedFilter.termValues?.map((x) => x.value) ?? [];
+  }
+  if (changedFilter?.name === REGION_NAME_FACET) {
+    filterRegions.value = changedFilter.termValues?.map((x) => x.value) ?? [];
+  }
+  if (changedFilter?.name === CITY_FACET) {
+    filterCities.value = changedFilter.termValues?.map((x) => x.value) ?? [];
+  }
+
   emit("applyFilter");
 }
 </script>
@@ -86,14 +80,6 @@ function applyFilter() {
 
   @media (min-width: theme("screens.md")) {
     @apply flex-row;
-  }
-
-  &__filter-select {
-    @apply w-full;
-
-    @media (min-width: theme("screens.md")) {
-      @apply w-auto;
-    }
   }
 
   &__filter-keyword {

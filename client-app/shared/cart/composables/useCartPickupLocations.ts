@@ -1,54 +1,42 @@
 import { createSharedComposable } from "@vueuse/core";
-import { ref, computed } from "vue";
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { getCartPickupLocations } from "@/core/api/graphql/cart";
-import { Logger } from "@/core/utilities";
-import type {
-  ProductPickupLocation,
-  QueryCartPickupLocationsArgs,
-  TermFacet,
-  FacetTermType,
-} from "@/core/api/graphql/types";
+import { Logger, termFacetToCommonFacet } from "@/core/utilities";
+import type { ProductPickupLocation, QueryCartPickupLocationsArgs } from "@/core/api/graphql/types";
+import type { FacetItemType } from "@/core/types";
 
-const COUNTRY_NAME_FACET = "address_countryname";
-const REGION_NAME_FACET = "address_regionname";
-const CITY_FACET = "address_city";
-
-export type PickupLocationsFilterOptionsType = {
-  countries: FacetTermType[];
-  regions: FacetTermType[];
-  cities: FacetTermType[];
-};
+export const COUNTRY_NAME_FACET = "address_countryname";
+export const REGION_NAME_FACET = "address_regionname";
+export const CITY_FACET = "address_city";
 
 export function _useCartPickupLocations() {
+  const { t } = useI18n();
+
   const pickupLocationsLoading = ref(false);
 
   const pickupLocations = ref<ProductPickupLocation[]>([]);
-  const termFacets = ref<TermFacet[] | undefined>();
 
-  const filterOptions = computed(
-    () =>
-      ({
-        countries: termFacets.value?.find((f) => f.name === COUNTRY_NAME_FACET)?.terms ?? [],
-        regions: termFacets.value?.find((f) => f.name === REGION_NAME_FACET)?.terms ?? [],
-        cities: termFacets.value?.find((f) => f.name === CITY_FACET)?.terms ?? [],
-      }) as PickupLocationsFilterOptionsType,
-  );
+  const filterOptionsCountries = ref<FacetItemType>();
+  const filterOptionsRegions = ref<FacetItemType>();
+  const filterOptionsCities = ref<FacetItemType>();
 
+  const filterCountries = ref<string[]>([]);
+  const filterRegions = ref<string[]>([]);
+  const filterCities = ref<string[]>([]);
   const filterKeyword = ref<string>("");
-  const filterCountries = ref<FacetTermType[]>([]);
-  const filterRegions = ref<FacetTermType[]>([]);
-  const filterCities = ref<FacetTermType[]>([]);
 
   const filterApplied = ref(false);
+
   function buildFilter(): string | undefined {
     if (filterCities.value?.length) {
-      return `${CITY_FACET}:"${filterCities.value.map((x) => x.term).join('","')}"`;
+      return `${CITY_FACET}:"${filterCities.value.join('","')}"`;
     }
     if (filterRegions.value?.length) {
-      return `${REGION_NAME_FACET}:"${filterRegions.value.map((x) => x.term).join('","')}"`;
+      return `${REGION_NAME_FACET}:"${filterRegions.value.join('","')}"`;
     }
     if (filterCountries.value?.length) {
-      return `${COUNTRY_NAME_FACET}:"${filterCountries.value.map((x) => x.term).join('","')}"`;
+      return `${COUNTRY_NAME_FACET}:"${filterCountries.value.join('","')}"`;
     }
     return undefined;
   }
@@ -70,7 +58,24 @@ export function _useCartPickupLocations() {
         ...payload,
       });
       pickupLocations.value = data.items ?? [];
-      termFacets.value = data.term_facets ?? undefined;
+
+      const termFacetCounties = data.term_facets?.find((f) => f.name === COUNTRY_NAME_FACET);
+      if (termFacetCounties) {
+        filterOptionsCountries.value = termFacetToCommonFacet(termFacetCounties);
+        filterOptionsCountries.value.label = t("common.labels.country");
+      }
+
+      const termFacetRegions = data.term_facets?.find((f) => f.name === REGION_NAME_FACET);
+      if (termFacetRegions) {
+        filterOptionsRegions.value = termFacetToCommonFacet(termFacetRegions);
+        filterOptionsRegions.value.label = t("common.labels.region");
+      }
+
+      const termFacetCities = data.term_facets?.find((f) => f.name === CITY_FACET);
+      if (termFacetCities) {
+        filterOptionsCities.value = termFacetToCommonFacet(termFacetCities);
+        filterOptionsCities.value.label = t("common.labels.city");
+      }
     } catch (e) {
       Logger.error(`${useCartPickupLocations.name}.${fetchPickupLocations.name}`, e);
       throw e;
@@ -83,7 +88,10 @@ export function _useCartPickupLocations() {
     pickupLocations,
     fetchPickupLocations,
 
-    filterOptions,
+    filterOptionsCountries,
+    filterOptionsRegions,
+    filterOptionsCities,
+
     filterKeyword,
     filterCountries,
     filterRegions,
