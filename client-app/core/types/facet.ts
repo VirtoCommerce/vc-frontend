@@ -21,7 +21,7 @@ export type FacetItemType = {
   };
 };
 
-export type FacetFilterChangeType = {
+export type FacetFilterType = {
   filterType: string;
   isGenerated: boolean;
   label?: string;

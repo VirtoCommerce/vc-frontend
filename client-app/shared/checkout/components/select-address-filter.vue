@@ -3,6 +3,7 @@
     <FacetFilter
       v-if="filterOptionsCountries"
       :facet="filterOptionsCountries"
+      :filter="filterCountries"
       mode="dropdown"
       @update:filter="applyFilter"
     />
@@ -10,11 +11,18 @@
     <FacetFilter
       v-if="filterOptionsRegions"
       :facet="filterOptionsRegions"
+      :filter="filterRegions"
       mode="dropdown"
       @update:filter="applyFilter"
     />
 
-    <FacetFilter v-if="filterOptionsCities" :facet="filterOptionsCities" mode="dropdown" @update:filter="applyFilter" />
+    <FacetFilter
+      v-if="filterOptionsCities"
+      :facet="filterOptionsCities"
+      :filter="filterCities"
+      mode="dropdown"
+      @update:filter="applyFilter"
+    />
 
     <VcInput
       v-model="filterKeyword"
@@ -38,21 +46,21 @@
   </div>
 
   <div v-if="!filterSelectsAreEmpty" class="select-address-applied-filter">
-    <template v-for="value in filterCountries" :key="value">
-      <VcChip color="secondary" closable @close="removeFilterCountry(value)">
-        {{ value }}
+    <template v-for="value in filterCountries?.termValues" :key="value">
+      <VcChip color="secondary" closable @close="removeFilterCountry(value.value)">
+        {{ value.value }}
       </VcChip>
     </template>
 
-    <template v-for="value in filterRegions" :key="value">
-      <VcChip color="secondary" closable @close="removeFilterRegion(value)">
-        {{ value }}
+    <template v-for="value in filterRegions?.termValues" :key="value">
+      <VcChip color="secondary" closable @close="removeFilterRegion(value.value)">
+        {{ value.value }}
       </VcChip>
     </template>
 
-    <template v-for="value in filterCities" :key="value">
-      <VcChip color="secondary" closable @close="removeFilterCity(value)">
-        {{ value }}
+    <template v-for="value in filterCities?.termValues" :key="value">
+      <VcChip color="secondary" closable @close="removeFilterCity(value.value)">
+        {{ value.value }}
       </VcChip>
     </template>
 
@@ -67,7 +75,7 @@
 <script setup lang="ts">
 import { CITY_FACET, COUNTRY_NAME_FACET, REGION_NAME_FACET, useCartPickupLocations } from "@/shared/cart";
 import { FacetFilter } from "@/shared/catalog";
-import type { FacetFilterChangeType } from "@/core/types";
+import type { FacetFilterType } from "@/core/types";
 
 interface IEmits {
   (event: "applyFilter"): void;
@@ -90,17 +98,17 @@ const {
   pickupLocationsLoading,
 } = useCartPickupLocations();
 
-function applyFilter(changedFilter?: FacetFilterChangeType) {
+function applyFilter(changedFilter?: FacetFilterType) {
   if (changedFilter?.name === COUNTRY_NAME_FACET) {
-    filterCountries.value = changedFilter.termValues?.map((x) => x.value) ?? [];
+    filterCountries.value = changedFilter;
   }
 
   if (changedFilter?.name === REGION_NAME_FACET) {
-    filterRegions.value = changedFilter.termValues?.map((x) => x.value) ?? [];
+    filterRegions.value = changedFilter;
   }
 
   if (changedFilter?.name === CITY_FACET) {
-    filterCities.value = changedFilter.termValues?.map((x) => x.value) ?? [];
+    filterCities.value = changedFilter;
   }
 
   emit("applyFilter");
@@ -112,17 +120,23 @@ function resetFilter() {
 }
 
 function removeFilterCountry(value: string) {
-  filterCountries.value = filterCountries.value.filter((x) => x !== value);
+  if (filterCountries.value?.termValues?.length) {
+    filterCountries.value.termValues = filterCountries.value.termValues.filter((x) => x.value !== value);
+  }
   emit("applyFilter");
 }
 
 function removeFilterRegion(value: string) {
-  filterRegions.value = filterRegions.value.filter((x) => x !== value);
+  if (filterRegions.value?.termValues?.length) {
+    filterRegions.value.termValues = filterRegions.value.termValues.filter((x) => x.value !== value);
+  }
   emit("applyFilter");
 }
 
 function removeFilterCity(value: string) {
-  filterCities.value = filterCities.value.filter((x) => x !== value);
+  if (filterCities.value?.termValues?.length) {
+    filterCities.value.termValues = filterCities.value.termValues.filter((x) => x.value !== value);
+  }
   emit("applyFilter");
 }
 </script>

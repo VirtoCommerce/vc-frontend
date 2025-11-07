@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { getCartPickupLocations } from "@/core/api/graphql/cart";
 import { Logger, termFacetToCommonFacet } from "@/core/utilities";
 import type { ProductPickupLocation, QueryCartPickupLocationsArgs } from "@/core/api/graphql/types";
-import type { FacetItemType } from "@/core/types";
+import type { FacetFilterType, FacetItemType } from "@/core/types";
 
 export const COUNTRY_NAME_FACET = "address_countryname";
 export const REGION_NAME_FACET = "address_regionname";
@@ -21,13 +21,18 @@ export function _useCartPickupLocations() {
   const filterOptionsRegions = ref<FacetItemType>();
   const filterOptionsCities = ref<FacetItemType>();
 
-  const filterCountries = ref<string[]>([]);
-  const filterRegions = ref<string[]>([]);
-  const filterCities = ref<string[]>([]);
+  const filterCountries = ref<FacetFilterType>();
+  const filterRegions = ref<FacetFilterType>();
+  const filterCities = ref<FacetFilterType>();
   const filterKeyword = ref<string>("");
 
   const filterSelectsAreEmpty = computed(
-    () => !(filterCountries.value.length || filterRegions.value.length || filterCities.value.length),
+    () =>
+      !(
+        filterCountries.value?.termValues?.length ||
+        filterRegions.value?.termValues?.length ||
+        filterCities.value?.termValues?.length
+      ),
   );
 
   const filterIsApplied = ref(false);
@@ -35,25 +40,25 @@ export function _useCartPickupLocations() {
   function buildFilter(): string | undefined {
     const resultItems = [];
 
-    if (filterCities.value?.length) {
-      resultItems.push(`${CITY_FACET}:"${filterCities.value.join('","')}"`);
+    if (filterCities.value?.termValues?.length) {
+      resultItems.push(`${CITY_FACET}:"${filterCities.value.termValues.map((x) => x.value).join('","')}"`);
     }
 
-    if (filterRegions.value?.length) {
-      resultItems.push(`${REGION_NAME_FACET}:"${filterRegions.value.join('","')}"`);
+    if (filterRegions.value?.termValues?.length) {
+      resultItems.push(`${REGION_NAME_FACET}:"${filterRegions.value.termValues.map((x) => x.value).join('","')}"`);
     }
 
-    if (filterCountries.value?.length) {
-      resultItems.push(`${COUNTRY_NAME_FACET}:"${filterCountries.value.join('","')}"`);
+    if (filterCountries.value?.termValues?.length) {
+      resultItems.push(`${COUNTRY_NAME_FACET}:"${filterCountries.value.termValues.map((x) => x.value).join('","')}"`);
     }
-    console.warn("buildFilter", resultItems);
+
     return resultItems.join(" ");
   }
 
   function clearFilter() {
-    filterCountries.value = [];
-    filterRegions.value = [];
-    filterCities.value = [];
+    filterCountries.value = undefined;
+    filterRegions.value = undefined;
+    filterCities.value = undefined;
     filterKeyword.value = "";
   }
 
