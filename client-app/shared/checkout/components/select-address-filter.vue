@@ -6,6 +6,7 @@
       text-field="label"
       value-field="term"
       class="select-address-filter__filter-select"
+      multiple
       autocomplete
       clearable
       :placeholder="$t('common.labels.country')"
@@ -19,6 +20,7 @@
       text-field="label"
       value-field="term"
       class="select-address-filter__filter-select"
+      multiple
       autocomplete
       clearable
       :placeholder="$t('common.labels.region')"
@@ -32,6 +34,7 @@
       text-field="label"
       value-field="term"
       class="select-address-filter__filter-select"
+      multiple
       autocomplete
       clearable
       :placeholder="$t('common.labels.city')"
