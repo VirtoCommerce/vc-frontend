@@ -14,6 +14,10 @@ const AFFIX_TYPES = {
 
 type AffixType = (typeof AFFIX_TYPES)[keyof typeof AFFIX_TYPES];
 
+const DEFAULT_TOP_OFFSET_VAR = "--sticky-offset-top";
+const DEFAULT_BOTTOM_OFFSET_VAR = "--sticky-offset-bottom";
+const DEFAULT_THROTTLE_DELAY = 50;
+
 interface ISmartStickyOptions {
   container: MaybeRefOrGetter<HTMLElement | null>;
   stickyElement: MaybeRefOrGetter<HTMLElement | null>;
@@ -51,8 +55,6 @@ interface IAffixTypeParams {
 }
 
 const BOUNDING_OPTIONS = { windowResize: true, immediate: true };
-
-const DEFAULT_THROTTLE_DELAY = 50;
 
 function checkShortElement(
   viewportTop: number,
@@ -165,8 +167,8 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     container,
     stickyElement,
     throttleDelay = DEFAULT_THROTTLE_DELAY,
-    topOffsetVar = "--sticky-offset-top",
-    bottomOffsetVar = "--sticky-offset-bottom",
+    topOffsetVar = DEFAULT_TOP_OFFSET_VAR,
+    bottomOffsetVar = DEFAULT_BOTTOM_OFFSET_VAR,
     enabled = true,
     scrollContainer = globalThis.window,
   } = options;
@@ -190,8 +192,8 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     lastViewportTop: 0,
   });
 
-  const boundingContainer = useElementBounding(container, BOUNDING_OPTIONS);
-  const boundingSticky = useElementBounding(stickyElement, BOUNDING_OPTIONS);
+  const containerBounding = useElementBounding(container, BOUNDING_OPTIONS);
+  const elementBounding = useElementBounding(stickyElement, BOUNDING_OPTIONS);
 
   const stickyElementResolved = computed(() => toValue(stickyElement));
   const topOffsetCssVar = useCssVar(topOffsetVar, stickyElementResolved);
@@ -226,11 +228,11 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     dimensions.value.viewportHeight = globalThis.window.innerHeight;
     dimensions.value.viewportTop = getScrollPosition();
 
-    dimensions.value.containerTop = boundingContainer.top.value + dimensions.value.viewportTop;
-    dimensions.value.containerHeight = boundingContainer.height.value;
+    dimensions.value.containerTop = containerBounding.top.value + dimensions.value.viewportTop;
+    dimensions.value.containerHeight = containerBounding.height.value;
 
-    dimensions.value.elementHeight = boundingSticky.height.value;
-    dimensions.value.elementWidth = boundingSticky.width.value;
+    dimensions.value.elementHeight = elementBounding.height.value;
+    dimensions.value.elementWidth = elementBounding.width.value;
 
     dimensions.value.topSpacing = topSpacingResolved.value;
     dimensions.value.bottomSpacing = bottomSpacingResolved.value;
@@ -256,7 +258,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       dims;
 
     const containerBottom = containerTop + containerHeight;
-    const elementTop = boundingSticky.top.value + viewportTop;
+    const elementTop = elementBounding.top.value + viewportTop;
 
     const isElementTallerThanViewport = elementHeight + topSpacing + bottomSpacing > viewportHeight;
 
@@ -293,7 +295,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       return;
     }
 
-    const baseStyle = {
+    const baseStyle: CSSProperties = {
       left: "auto",
       right: "auto",
       width: `${dims.elementWidth}px`,
@@ -312,6 +314,18 @@ export function useSmartSticky(options: ISmartStickyOptions) {
         break;
       }
 
+      case AFFIX_TYPES.STATIC: {
+        mode.value = "static";
+        style.value = {
+          ...baseStyle,
+          position: "sticky",
+          top: `${dims.topSpacing}px`,
+          bottom: "auto",
+        };
+        translate.value = 0;
+        break;
+      }
+
       case AFFIX_TYPES.FIXED_BOTTOM: {
         mode.value = "fixed";
         style.value = {
@@ -322,17 +336,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
           alignSelf: "flex-end",
         };
         translate.value = elementTop - containerTop;
-        break;
-      }
-
-      case AFFIX_TYPES.ABSOLUTE: {
-        mode.value = "absolute";
-        style.value = {
-          ...baseStyle,
-          position: "absolute",
-          top: `${translate.value}px`,
-          bottom: "auto",
-        };
         break;
       }
 
@@ -349,16 +352,14 @@ export function useSmartSticky(options: ISmartStickyOptions) {
         break;
       }
 
-      case AFFIX_TYPES.STATIC:
-      default: {
-        mode.value = "static";
+      case AFFIX_TYPES.ABSOLUTE: {
+        mode.value = "absolute";
         style.value = {
           ...baseStyle,
-          position: "sticky",
-          top: `${dims.topSpacing}px`,
+          position: "absolute",
+          top: `${translate.value}px`,
           bottom: "auto",
         };
-        translate.value = 0;
         break;
       }
     }
@@ -414,7 +415,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     destroy();
   });
 
-  watch([boundingSticky.height, boundingContainer.height], updateImmediate);
+  watch([elementBounding.height, containerBounding.height], updateImmediate);
 
   watch(isEnabled, (value) => {
     // eslint-disable-next-line sonarjs/no-selector-parameter
