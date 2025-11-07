@@ -1,28 +1,30 @@
 <template>
   <div class="select-address-filter">
-    <FacetFilter
-      v-if="filterOptionsCountries"
-      :facet="filterOptionsCountries"
-      :filter="filterCountries"
-      mode="dropdown"
-      @update:filter="applyFilter"
-    />
+    <div class="select-address-filter__filter-group">
+      <FacetFilter
+        v-if="filterOptionsCountries"
+        :facet="filterOptionsCountries"
+        :filter="filterCountries"
+        mode="dropdown"
+        @update:filter="applyFilter"
+      />
 
-    <FacetFilter
-      v-if="filterOptionsRegions"
-      :facet="filterOptionsRegions"
-      :filter="filterRegions"
-      mode="dropdown"
-      @update:filter="applyFilter"
-    />
+      <FacetFilter
+        v-if="filterOptionsRegions"
+        :facet="filterOptionsRegions"
+        :filter="filterRegions"
+        mode="dropdown"
+        @update:filter="applyFilter"
+      />
 
-    <FacetFilter
-      v-if="filterOptionsCities"
-      :facet="filterOptionsCities"
-      :filter="filterCities"
-      mode="dropdown"
-      @update:filter="applyFilter"
-    />
+      <FacetFilter
+        v-if="filterOptionsCities"
+        :facet="filterOptionsCities"
+        :filter="filterCities"
+        mode="dropdown"
+        @update:filter="applyFilter"
+      />
+    </div>
 
     <VcInput
       v-model="filterKeyword"
@@ -45,7 +47,7 @@
     </VcInput>
   </div>
 
-  <div v-if="!filterSelectsAreEmpty" class="select-address-applied-filter">
+  <div v-if="!filterSelectsAreEmpty" class="select-address-filter__applied-filter">
     <template v-for="value in filterCountries?.termValues" :key="value">
       <VcChip color="secondary" closable @close="removeFilterCountry(value.value)">
         {{ value.value }}
@@ -143,7 +145,11 @@ function removeFilterCity(value: string) {
 
 <style lang="scss">
 .select-address-filter {
-  @apply flex flex-row items-center gap-2 pt-0 pb-3 overflow-x-auto;
+  @apply flex flex-row items-center flex-wrap gap-2 pt-0 pb-3;
+
+  &__filter-group {
+    @apply flex flex-row items-center gap-2 overflow-x-auto;
+  }
 
   &__filter-keyword {
     @apply grow w-full min-w-[10rem];
@@ -152,13 +158,13 @@ function removeFilterCity(value: string) {
       @apply w-auto;
     }
   }
-}
 
-.select-address-applied-filter {
-  @apply hidden;
+  &__applied-filter {
+    @apply hidden;
 
-  @media (min-width: theme("screens.md")) {
-    @apply flex flex-row flex-wrap gap-2 pb-3;
+    @media (min-width: theme("screens.md")) {
+      @apply flex flex-row flex-wrap gap-2 pb-3;
+    }
   }
 }
 </style>
