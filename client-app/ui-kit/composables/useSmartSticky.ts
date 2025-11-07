@@ -206,7 +206,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     const scrollEl = toValue(scrollContainer);
 
     if (scrollEl === globalThis.window) {
-      return globalThis.window.pageYOffset || document.documentElement.scrollTop;
+      return globalThis.window.scrollY || document.documentElement.scrollTop;
     }
 
     if (scrollEl instanceof HTMLElement) {

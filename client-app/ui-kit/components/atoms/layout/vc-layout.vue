@@ -94,7 +94,7 @@ const { style: contentStyle } = useSmartSticky({
   $right: "";
   $sticky: "";
 
-  // useSmartSticky require "px"
+  // useSmartSticky requires "px"
   --sticky-offset-top: var(--vc-layout-sidebar-offset-top, 0px);
   --sticky-offset-bottom: var(--vc-layout-sidebar-offset-bottom, 20px);
 
