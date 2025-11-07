@@ -65,65 +65,7 @@
       </div>
     </template>
 
-    <div v-if="showFilters" class="select-address-modal__filters">
-      <VcSelect
-        v-model="filterCountry"
-        :items="filterOptions?.countries ?? []"
-        text-field="label"
-        value-field="term"
-        class="select-address-modal__filter-select"
-        autocomplete
-        clearable
-        :placeholder="$t('common.labels.country')"
-        :disabled="pickupLocationsLoading"
-        @change="applyFilter"
-      />
-
-      <VcSelect
-        v-model="filterRegion"
-        :items="filterOptions?.regions ?? []"
-        text-field="label"
-        value-field="term"
-        class="select-address-modal__filter-select"
-        autocomplete
-        clearable
-        :placeholder="$t('common.labels.region')"
-        :disabled="pickupLocationsLoading"
-        @change="applyFilter"
-      />
-
-      <VcSelect
-        v-model="filterCity"
-        :items="filterOptions?.cities ?? []"
-        text-field="label"
-        value-field="term"
-        class="select-address-modal__filter-select"
-        autocomplete
-        clearable
-        :placeholder="$t('common.labels.city')"
-        :disabled="pickupLocationsLoading"
-        @change="applyFilter"
-      />
-
-      <VcInput
-        v-model="filterKeyword"
-        :placeholder="$t('common.labels.search')"
-        :aria-label="$t('common.labels.search')"
-        class="select-address-modal__filter-keyword"
-        clearable
-        :disabled="pickupLocationsLoading"
-        @keyup.enter="applyFilter"
-      >
-        <template #append>
-          <VcButton
-            icon="search"
-            :aria-label="$t('common.labels.search')"
-            @click="applyFilter"
-            :disabled="pickupLocationsLoading"
-          />
-        </template>
-      </VcInput>
-    </div>
+    <SelectAddressFilter v-if="showFilters" @applyFilter="applyFilter" />
 
     <div class="rounded border">
       <VcTable
@@ -323,6 +265,7 @@ import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
 import { useCartPickupLocations } from "@/shared/cart";
+import { SelectAddressFilter } from "@/shared/checkout";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
@@ -358,16 +301,7 @@ const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
-const {
-  filterOptions,
-  filterKeyword,
-  filterCountry,
-  filterRegion,
-  filterCity,
-  filterApplied,
-  resetFilter: resetFilterInternal,
-  pickupLocationsLoading,
-} = useCartPickupLocations();
+const { filterApplied, resetFilter: resetFilterInternal, pickupLocationsLoading } = useCartPickupLocations();
 
 function applyFilter() {
   filterApplied.value = true;
@@ -445,31 +379,3 @@ watchEffect(() => {
   );
 });
 </script>
-
-<style lang="scss">
-.select-address-modal {
-  &__filters {
-    @apply flex flex-col items-center gap-2 pb-3;
-
-    @media (min-width: theme("screens.md")) {
-      @apply flex-row;
-    }
-  }
-
-  &__filter-select {
-    @apply w-full;
-
-    @media (min-width: theme("screens.md")) {
-      @apply w-auto;
-    }
-  }
-
-  &__filter-keyword {
-    @apply grow w-full;
-
-    @media (min-width: theme("screens.md")) {
-      @apply w-auto;
-    }
-  }
-}
-</style>

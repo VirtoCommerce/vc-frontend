@@ -7,65 +7,7 @@
     class="select-address-map-modal"
   >
     <div v-if="addresses.length || filterApplied" class="select-address-map-modal__container">
-      <div class="select-address-map-modal__filters">
-        <VcSelect
-          v-model="filterCountry"
-          :items="filterOptions?.countries ?? []"
-          text-field="label"
-          value-field="term"
-          class="select-address-map-modal__filter-select"
-          autocomplete
-          clearable
-          :placeholder="$t('common.labels.country')"
-          :disabled="pickupLocationsLoading"
-          @change="applyFilter"
-        />
-
-        <VcSelect
-          v-model="filterRegion"
-          :items="filterOptions?.regions ?? []"
-          text-field="label"
-          value-field="term"
-          class="select-address-map-modal__filter-select"
-          autocomplete
-          clearable
-          :placeholder="$t('common.labels.region')"
-          :disabled="pickupLocationsLoading"
-          @change="applyFilter"
-        />
-
-        <VcSelect
-          v-model="filterCity"
-          :items="filterOptions?.cities ?? []"
-          text-field="label"
-          value-field="term"
-          class="select-address-map-modal__filter-select"
-          autocomplete
-          clearable
-          :placeholder="$t('common.labels.city')"
-          :disabled="pickupLocationsLoading"
-          @change="applyFilter"
-        />
-
-        <VcInput
-          v-model="filterKeyword"
-          :placeholder="$t('common.labels.search')"
-          :aria-label="$t('common.labels.search')"
-          class="select-address-map-modal__filter-keyword"
-          clearable
-          :disabled="pickupLocationsLoading"
-          @keyup.enter="applyFilter"
-        >
-          <template #append>
-            <VcButton
-              icon="search"
-              :aria-label="$t('common.labels.search')"
-              @click="applyFilter"
-              :disabled="pickupLocationsLoading"
-            />
-          </template>
-        </VcInput>
-      </div>
+      <SelectAddressFilter @applyFilter="applyFilter" />
 
       <div class="select-address-map-modal__content">
         <VcLoaderOverlay v-if="pickupLocationsLoading" />
@@ -230,6 +172,7 @@ import { getAddressName } from "@/core/utilities/address";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
 import { Logger } from "@/core/utilities/logger";
 import { useCartPickupLocations } from "@/shared/cart";
+import { SelectAddressFilter } from "@/shared/checkout";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
 import { getColorValue } from "@/ui-kit/utilities/css";
@@ -294,16 +237,7 @@ function createPin() {
   };
 }
 
-const {
-  filterOptions,
-  filterKeyword,
-  filterCountry,
-  filterRegion,
-  filterCity,
-  filterApplied,
-  resetFilter: resetFilterInternal,
-  pickupLocationsLoading,
-} = useCartPickupLocations();
+const { filterApplied, resetFilter: resetFilterInternal, pickupLocationsLoading } = useCartPickupLocations();
 
 function applyFilter() {
   filterApplied.value = true;
@@ -404,30 +338,6 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 .select-address-map-modal {
   &__container {
     @apply flex flex-col h-full pt-0;
-  }
-
-  &__filters {
-    @apply flex flex-col items-center gap-2 pb-3;
-
-    @media (min-width: theme("screens.md")) {
-      @apply flex-row;
-    }
-  }
-
-  &__filter-select {
-    @apply w-full;
-
-    @media (min-width: theme("screens.md")) {
-      @apply w-auto;
-    }
-  }
-
-  &__filter-keyword {
-    @apply grow w-full;
-
-    @media (min-width: theme("screens.md")) {
-      @apply w-auto;
-    }
   }
 
   &__content {
