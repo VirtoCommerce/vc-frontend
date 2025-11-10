@@ -3,7 +3,7 @@
     class="filters-popup-sidebar"
     :is-visible="isVisible"
     :title="isMobile ? $t('common.buttons.filters') : $t('common.buttons.allFilters')"
-    @hide="$emit('hidePopupSidebar')"
+    @hide="onCancel"
   >
     <ProductsFilters
       v-if="localFilters"
@@ -182,7 +182,7 @@ function onProductsFiltersChange(payload: SearchProductFilterResult[]) {
 }
 
 function onCancel() {
-  if (beforeChangeFilterState.value) {
+  if (isPopupSidebarFilterDirty.value && beforeChangeFilterState.value) {
     emit("applyFilters", cloneDeep(beforeChangeFilterState.value));
   }
 
