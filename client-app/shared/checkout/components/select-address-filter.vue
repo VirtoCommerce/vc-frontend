@@ -24,6 +24,18 @@
         mode="dropdown"
         @update:filter="applyFilter"
       />
+
+      <VcButton
+        v-if="!filterSelectsAreEmpty"
+        size="sm"
+        color="secondary"
+        variant="outline"
+        no-wrap
+        class="select-address-filter__clear-filter-mobile"
+        @click="resetFilter"
+      >
+        {{ $t("common.buttons.reset_filters") }}
+      </VcButton>
     </div>
 
     <VcInput
@@ -156,6 +168,12 @@ function removeFilterCity(value: string) {
 
     @media (min-width: theme("screens.md")) {
       @apply w-auto;
+    }
+  }
+
+  &__clear-filter-mobile {
+    @media (min-width: theme("screens.md")) {
+      @apply hidden;
     }
   }
 
