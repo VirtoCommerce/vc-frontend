@@ -75,26 +75,18 @@ import { useForm } from "vee-validate";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { initializePayment, authorizePayment, initializeCartPayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables";
 import { Logger, preventNonNumberKeyboard, preventNonNumberPaste } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import PaymentPolicies from "./payment-policies.vue";
-import type { CartType, CustomerOrderType, KeyValueType, PaymentType } from "@/core/api/graphql/types";
+import type { IPaymentMethodParameters } from "./types";
+import type { KeyValueType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
 
 interface IEmits {
   (event: "success"): void;
   (event: "fail", message?: string | null): void;
-}
-
-interface IProps {
-  hidePaymentButton?: boolean;
-  order?: CustomerOrderType;
-  payment?: PaymentType; // can it be PaymentInType?
-  cart?: CartType;
-  disabled?: boolean;
 }
 
 interface IField {
@@ -122,7 +114,7 @@ interface IFlex {
 
 const emit = defineEmits<IEmits>();
 
-const props = defineProps<IProps>();
+const props = defineProps<IPaymentMethodParameters>();
 
 declare let Flex: FlexConstructorType;
 
@@ -233,9 +225,11 @@ async function sendPaymentData() {
       expirationYear: formValues.year,
     });
 
-    const { isSuccess } = await authorizePayment({
-      orderId: props.order.id,
-      paymentId: props.order.inPayments[0].id,
+    if (props.authorizePayment === undefined) {
+      throw new Error("authorizePayment function is not provided");
+    }
+
+    const { isSuccess } = await props.authorizePayment({
       parameters: [
         {
           key: "token",
@@ -271,27 +265,15 @@ async function createToken(options: Record<string, unknown>): Promise<string> {
 }
 
 onMounted(async () => {
-  if (props.order) {
-    await initPayment(props.order);
-  } else if (props.payment) {
-    await initCartPayment(props.payment);
-  }
+  await initPayment();
 });
 
-async function initPayment(order: CustomerOrderType) {
+async function initPayment() {
+  if (props.initPayment === undefined) {
+    throw new Error("initPayment function is not provided");
+  }
   loading.value = true;
-  const { publicParameters } = await initializePayment({
-    orderId: order.id,
-    paymentId: order.inPayments[0].id,
-  });
-  await initPostProcess(publicParameters);
-}
-
-async function initCartPayment(payment: PaymentType) {
-  loading.value = true;
-  const { publicParameters } = await initializeCartPayment({
-    paymentId: payment.id,
-  });
+  const { publicParameters } = await props.initPayment();
   await initPostProcess(publicParameters);
 }
 

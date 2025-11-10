@@ -48,7 +48,6 @@ import { Logger } from "@/core/utilities";
 import { useAuthorizeNet } from "@/shared/payment/composables/useAuthorizeNet";
 import { PaymentActionType } from "@/shared/payment/types";
 import PaymentPolicies from "./payment-policies.vue";
-import type { IPaymentMethodExpose } from "./types";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 import BankCardForm from "@/shared/payment/components/bank-card-form.vue";
@@ -193,14 +192,6 @@ function sendPaymentData() {
     loading.value = false;
   });
 }
-
-defineExpose<IPaymentMethodExpose>({
-  loading,
-  initialized,
-  isValidBankCard,
-  authorizePayment: pay,
-  initializePayment: initPayment,
-});
 
 onMounted(async () => {
   await initPayment();

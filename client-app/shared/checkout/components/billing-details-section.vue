@@ -84,13 +84,12 @@
     </div>
   </VcWidget>
   <VcWidget
-    v-if="paymentMethod && !paymentMethod.allowCartPayment && billingAddress"
+    v-if="paymentMethod && paymentMethod.allowCartPayment && currentPaymentMethod && billingAddress"
     :title="$t('shared.checkout.billing_details_section.title')"
     prepend-icon="cash"
     size="lg"
   >
-    <div>{{ paymentMethod }}</div>
-    <Payment hide-payment-button :cart="cart" />
+    <Payment hide-payment-button :cart="cart" :payment="currentPaymentMethod" />
   </VcWidget>
 </template>
 
@@ -108,7 +107,7 @@ interface IProps {
   cart?: CartType;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const { allItemsAreDigital, availablePaymentMethods, availableShippingMethods } = useFullCart();
 
@@ -117,6 +116,11 @@ const isShippingMethodBopis = computed(() => {
     shipmentMethod.value?.code === BOPIS_CODE ||
     (availableShippingMethods.value.length === 1 && availableShippingMethods.value[0].code === BOPIS_CODE)
   );
+});
+
+const currentPaymentMethod = computed(() => {
+  const cart = props.cart!;
+  return cart.payments && cart.payments.length > 0 ? cart.payments[0] : null;
 });
 
 const {
