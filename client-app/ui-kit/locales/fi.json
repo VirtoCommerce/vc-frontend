@@ -109,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Murupolun navigointi"
+    },
+    "rating": {
+      "rating_label": "Luokitus {value} / {maxValue}",
+      "read_only_button_aria_label": "Luokitus {value} / {maxValue}, ei valittavissa",
+      "set_rating_aria_label": "Aseta luokitukseksi {value} / {maxValue}"
     }
   }
 }
