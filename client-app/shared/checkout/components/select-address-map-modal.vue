@@ -3,115 +3,175 @@
     :title="$t('shared.checkout.select_bopis_modal.title')"
     max-width="72rem"
     is-mobile-fullscreen
-    :is-full-height="!!addresses.length"
+    :is-full-height="!!addresses.length || filterIsApplied"
     class="select-address-map-modal"
   >
-    <div v-if="addresses.length" class="select-address-map-modal__content">
-      <GoogleMap
-        :api-key="apiKey"
-        :map-id="MAP_ID"
-        :options="{ disableDefaultUI: true }"
-        class="select-address-map-modal__map"
-      >
-        <GoogleMapMarkerClusterer :map-id="MAP_ID">
-          <template v-for="address in addresses" :key="address.id">
-            <GoogleMapMarker
-              v-if="getLatLng(address.geoLocation)"
-              :map-id="MAP_ID"
-              :position="getLatLng(address.geoLocation)!"
-              :pin-options="createPin()"
-              :title="address.name"
-              :is-active="selectedAddressId === address.id"
-              :active-pin-options="activePinOptions"
-            >
-              <div class="select-address-map-modal__info-window">
-                <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
+    <div v-if="addresses.length || filterIsApplied" class="select-address-map-modal__container">
+      <SelectAddressFilter @applyFilter="applyFilter" />
 
-                <PickupAvailabilityInfo
-                  show-icon
-                  icon-size="sm"
-                  :availability-type="address.availabilityType"
-                  :availability-note="address.availabilityNote"
+      <div class="select-address-map-modal__content">
+        <VcLoaderOverlay v-if="pickupLocationsLoading" />
+
+        <GoogleMap
+          :api-key="apiKey"
+          :map-id="MAP_ID"
+          :options="{ disableDefaultUI: true }"
+          class="select-address-map-modal__map"
+          :key="addressesKey"
+        >
+          <GoogleMapMarkerClusterer :map-id="MAP_ID">
+            <template v-for="address in addresses" :key="address.id">
+              <GoogleMapMarker
+                v-if="getLatLng(address.geoLocation)"
+                :map-id="MAP_ID"
+                :position="getLatLng(address.geoLocation)!"
+                :pin-options="createPin()"
+                :title="address.name"
+                :is-active="selectedAddressId === address.id"
+                :active-pin-options="activePinOptions"
+                @click="(args) => markerClickHandler(args, address)"
+              >
+                <div class="select-address-map-modal__info-window">
+                  <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
+
+                  <PickupAvailabilityInfo
+                    show-icon
+                    icon-size="sm"
+                    :availability-type="address.availabilityType"
+                    :availability-note="address.availabilityNote"
+                  />
+
+                  <div class="select-address-map-modal__info-window-content">
+                    <dl>
+                      <dt>
+                        {{ $t("shared.checkout.select_bopis_modal.location_label") }}
+                      </dt>
+
+                      <dd>{{ getAddressName(address) }}</dd>
+
+                      <dt v-if="address.contactPhone">
+                        {{ $t("shared.checkout.select_bopis_modal.contact_phone_label") }}
+                      </dt>
+
+                      <dd v-if="address.contactPhone">
+                        <a :href="`tel:${address.contactPhone}`">{{ address.contactPhone }}</a>
+                      </dd>
+
+                      <dt v-if="address.contactEmail">
+                        {{ $t("shared.checkout.select_bopis_modal.contact_email_label") }}
+                      </dt>
+
+                      <dd v-if="address.contactEmail">
+                        <a :href="`mailto:${address.contactEmail}`">{{ address.contactEmail }}</a>
+                      </dd>
+
+                      <dt v-if="address.workingHours">
+                        {{ $t("shared.checkout.select_bopis_modal.working_hours_label") }}
+                      </dt>
+
+                      <dd v-if="address.workingHours">
+                        <VcMarkdownRender
+                          class="select-address-map-modal__info-window-working-hours"
+                          :src="address.workingHours"
+                        />
+                      </dd>
+
+                      <dt v-if="address.description">
+                        {{ $t("shared.checkout.select_bopis_modal.description_label") }}
+                      </dt>
+
+                      <dd v-if="address.description">{{ address.description }}</dd>
+                    </dl>
+                  </div>
+
+                  <div class="select-address-map-modal__info-window-actions">
+                    <VcButton variant="no-background" color="secondary" size="xs" @click="closeInfoWindow">
+                      {{ $t("common.buttons.cancel") }}
+                    </VcButton>
+
+                    <VcButton
+                      size="xs"
+                      variant="outline"
+                      @click="selectHandler(address, { closeInfo: true, scrollToSelectedOnList: true })"
+                    >
+                      {{ $t("common.buttons.select") }}
+                    </VcButton>
+                  </div>
+                </div>
+              </GoogleMapMarker>
+            </template>
+          </GoogleMapMarkerClusterer>
+        </GoogleMap>
+
+        <div v-if="isMobile && selectedAddress" class="select-address-map-modal__info-window-mobile">
+          <h3 class="select-address-map-modal__info-window-mobile-title">{{ selectedAddress.name }}</h3>
+
+          <PickupAvailabilityInfo
+            show-icon
+            icon-size="sm"
+            :availability-type="selectedAddress.availabilityType"
+            :availability-note="selectedAddress.availabilityNote"
+          />
+
+          <div class="select-address-map-modal__info-window-mobile-content">
+            <dl>
+              <dt>
+                {{ $t("shared.checkout.select_bopis_modal.location_label") }}
+              </dt>
+
+              <dd>{{ getAddressName(selectedAddress) }}</dd>
+
+              <dt v-if="selectedAddress.contactPhone">
+                {{ $t("shared.checkout.select_bopis_modal.contact_phone_label") }}
+              </dt>
+
+              <dd v-if="selectedAddress.contactPhone">
+                <a :href="`tel:${selectedAddress.contactPhone}`">{{ selectedAddress.contactPhone }}</a>
+              </dd>
+
+              <dt v-if="selectedAddress.contactEmail">
+                {{ $t("shared.checkout.select_bopis_modal.contact_email_label") }}
+              </dt>
+
+              <dd v-if="selectedAddress.contactEmail">
+                <a :href="`mailto:${selectedAddress.contactEmail}`">{{ selectedAddress.contactEmail }}</a>
+              </dd>
+
+              <dt v-if="selectedAddress.workingHours">
+                {{ $t("shared.checkout.select_bopis_modal.working_hours_label") }}
+              </dt>
+
+              <dd v-if="selectedAddress.workingHours">
+                <VcMarkdownRender
+                  class="select-address-map-modal__info-window-mobile-working-hours"
+                  :src="selectedAddress.workingHours"
                 />
+              </dd>
 
-                <div class="select-address-map-modal__info-window-content">
-                  <dl>
-                    <dt>
-                      {{ $t("shared.checkout.select_bopis_modal.location_label") }}
-                    </dt>
+              <dt v-if="selectedAddress.description">
+                {{ $t("shared.checkout.select_bopis_modal.description_label") }}
+              </dt>
 
-                    <dd>{{ getAddressName(address) }}</dd>
+              <dd v-if="selectedAddress.description">{{ selectedAddress.description }}</dd>
+            </dl>
+          </div>
+        </div>
 
-                    <dt v-if="address.contactPhone">
-                      {{ $t("shared.checkout.select_bopis_modal.contact_phone_label") }}
-                    </dt>
-
-                    <dd v-if="address.contactPhone">
-                      <a :href="`tel:${address.contactPhone}`">{{ address.contactPhone }}</a>
-                    </dd>
-
-                    <dt v-if="address.contactEmail">
-                      {{ $t("shared.checkout.select_bopis_modal.contact_email_label") }}
-                    </dt>
-
-                    <dd v-if="address.contactEmail">
-                      <a :href="`mailto:${address.contactEmail}`">{{ address.contactEmail }}</a>
-                    </dd>
-
-                    <dt v-if="address.workingHours">
-                      {{ $t("shared.checkout.select_bopis_modal.working_hours_label") }}
-                    </dt>
-
-                    <dd v-if="address.workingHours">
-                      <VcMarkdownRender
-                        class="select-address-map-modal__info-window-working-hours"
-                        :src="address.workingHours"
-                      />
-                    </dd>
-
-                    <dt v-if="address.description">
-                      {{ $t("shared.checkout.select_bopis_modal.description_label") }}
-                    </dt>
-
-                    <dd v-if="address.description">{{ address.description }}</dd>
-                  </dl>
-                </div>
-
-                <div class="select-address-map-modal__info-window-actions">
-                  <VcButton variant="no-background" color="secondary" size="xs" @click="closeInfoWindow">
-                    {{ $t("common.buttons.cancel") }}
-                  </VcButton>
-
-                  <VcButton
-                    size="xs"
-                    variant="outline"
-                    @click="selectHandler(address, { closeInfo: true, scrollToSelectedOnList: true })"
-                  >
-                    {{ $t("common.buttons.select") }}
-                  </VcButton>
-                </div>
-              </div>
-            </GoogleMapMarker>
-          </template>
-        </GoogleMapMarkerClusterer>
-      </GoogleMap>
-
-      <VcScrollbar vertical class="select-address-map-modal__sidebar">
-        <ul class="select-address-map-modal__list">
-          <li
-            v-for="address in addresses"
-            :key="address.id"
-            :data-address-id="address.id"
-            class="select-address-map-modal__list-item"
-          >
-            <VcRadioButton
-              v-model="selectedAddressId"
-              :value="address.id"
-              class="select-address-map-modal__radio-button"
-              size="sm"
-              @change="selectHandler(address, { scrollToSelectedOnMap: true })"
+        <VcScrollbar vertical class="select-address-map-modal__sidebar">
+          <ul v-if="addresses.length" class="select-address-map-modal__list">
+            <li
+              v-for="address in addresses"
+              :key="address.id"
+              :data-address-id="address.id"
+              class="select-address-map-modal__list-item"
             >
-              <div class="flex flex-col">
+              <VcRadioButton
+                v-model="selectedAddressId"
+                :value="address.id"
+                class="select-address-map-modal__radio-button"
+                size="sm"
+                @change="selectHandler(address, { scrollToSelectedOnMap: true })"
+              >
                 <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
 
                 <p class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</p>
@@ -123,11 +183,19 @@
                   :availability-type="address.availabilityType"
                   :availability-note="address.availabilityNote"
                 />
-              </div>
-            </VcRadioButton>
-          </li>
-        </ul>
-      </VcScrollbar>
+              </VcRadioButton>
+            </li>
+          </ul>
+
+          <div v-else class="select-address-map-modal__not-found">
+            <span>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}</span>
+
+            <VcButton prepend-icon="reset" @click="resetFilter">
+              {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
+            </VcButton>
+          </div>
+        </VcScrollbar>
+      </div>
     </div>
 
     <div v-else>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found") }}</div>
@@ -152,6 +220,8 @@ import { computed, ref, toRef, watch } from "vue";
 import { getAddressName } from "@/core/utilities/address";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
 import { Logger } from "@/core/utilities/logger";
+import { useCartPickupLocations } from "@/shared/cart";
+import { SelectAddressFilter } from "@/shared/checkout";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
 import { getColorValue } from "@/ui-kit/utilities/css";
@@ -170,15 +240,18 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const addresses = toRef(props, "addresses");
+const addressesKey = computed(() => addresses.value.map((a) => a.id).join("-"));
 const currentAddress = toRef(props, "currentAddress");
 const selectedAddressId = ref<string | undefined>(currentAddress.value?.id);
 const changed = computed(() => selectedAddressId.value !== currentAddress.value?.id);
+
+const selectedAddress = computed(() => addresses.value.find((x) => x.id == selectedAddressId.value));
 
 const MAP_ID = "select-bopis-map-modal";
 
 const { zoomToMarkers, markers, zoomToLatLng, closeInfoWindow, map } = useGoogleMaps(MAP_ID);
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
+const isMobile = breakpoints.smaller("md");
 
 interface IProps {
   addresses?: PickupLocationType[];
@@ -187,7 +260,8 @@ interface IProps {
 }
 
 interface IEmits {
-  result: [string];
+  (event: "result", value: string): void;
+  (event: "filterChange"): void;
 }
 
 const pinColor = getColorValue("primary");
@@ -214,12 +288,31 @@ function createPin() {
   };
 }
 
+const { filterIsApplied, clearFilter, pickupLocationsLoading } = useCartPickupLocations();
+
+function applyFilter() {
+  filterIsApplied.value = true;
+  emit("filterChange");
+}
+
+function resetFilter() {
+  clearFilter();
+  applyFilter();
+}
+
 function getLatLng(location: string | undefined) {
   try {
     return geoLocationStringToLatLng(location);
   } catch (error) {
     Logger.warn("Failed to parse geo location", error);
     return null;
+  }
+}
+
+function markerClickHandler(args: { cancelled: boolean }, address: PickupLocationType) {
+  if (isMobile.value) {
+    args.cancelled = true;
+    selectHandler(address);
   }
 }
 
@@ -266,6 +359,17 @@ watch(
     if (newMarkers.length > 0 && !selectedAddressId.value) {
       zoomToMarkers();
     }
+    if (selectedAddressId.value) {
+      const address = addresses.value.find(({ id }) => id === selectedAddressId.value);
+      if (!address) {
+        zoomToMarkers();
+      } else if (address.geoLocation) {
+        const latLng = getLatLng(address.geoLocation);
+        if (latLng) {
+          zoomToLatLng(latLng);
+        }
+      }
+    }
   },
   {
     immediate: true,
@@ -290,8 +394,12 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 
 <style lang="scss">
 .select-address-map-modal {
+  &__container {
+    @apply flex flex-col h-full pt-0;
+  }
+
   &__content {
-    @apply relative flex flex-col gap-3 w-full h-full;
+    @apply relative flex flex-col gap-3 w-full flex-1 max-h-[90%];
 
     @media (min-width: theme("screens.md")) {
       @apply flex-row;
@@ -307,7 +415,7 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
   }
 
   &__sidebar {
-    @apply shrink-0 min-w-56 max-h-[50%];
+    @apply shrink-0 min-w-56 max-h-[40%];
 
     @media (min-width: theme("screens.md")) {
       @apply order-first max-h-full pe-2.5;
@@ -340,6 +448,10 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
     &-pickup-availability {
       @apply text-xs font-normal;
     }
+  }
+
+  &__not-found {
+    @apply flex flex-col gap-3 w-60;
   }
 
   &__actions {
@@ -378,6 +490,45 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 
   &__marker-glyph {
     @apply fill-additional-50 size-7;
+  }
+
+  &__info-window-mobile {
+    @apply flex flex-col gap-2 bg-neutral-200 font-lato w-full px-5 h-[50%] mt-[-30%];
+    z-index: 10;
+
+    &::before {
+      @apply bg-neutral-200;
+      -webkit-clip-path: polygon(0 100%, 50% 0, 100% 100%);
+      clip-path: polygon(0 100%, 50% 0, 100% 100%);
+      content: "";
+      margin-left: calc(50% - 12.5px);
+      top: -12px;
+      position: relative;
+      height: 12px;
+      width: 25px;
+    }
+  }
+
+  &__info-window-mobile-title {
+    @apply text-xs font-bold;
+  }
+
+  &__info-window-mobile-content {
+    dl {
+      @apply flex flex-col gap-1.5;
+    }
+
+    dt {
+      @apply text-xxs font-bold break-words;
+    }
+
+    dd {
+      @apply text-xxs font-normal text-neutral-600 break-words;
+    }
+  }
+
+  &__info-window-mobile-working-hours {
+    @apply text-xxs;
   }
 }
 </style>

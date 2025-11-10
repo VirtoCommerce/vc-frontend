@@ -32,7 +32,7 @@ interface IProps {
 }
 
 interface IEmits {
-  click: [];
+  (event: "click", args: { cancelled: boolean }): void;
 }
 
 const ACTIVE_INFO_WINDOW_CONTENT_ID = `active-info-window-content-${mapId.value}`;
@@ -70,6 +70,10 @@ function openInfoWindow() {
     return;
   }
 
+  if (isInfoWindowOpen.value) {
+    return;
+  }
+
   isInfoWindowOpen.value = false;
 
   infoWindow.value?.setContent(`<div id="${ACTIVE_INFO_WINDOW_CONTENT_ID}"></div>`);
@@ -89,8 +93,13 @@ function init() {
   }
 
   listener = marker.value?.addListener("gmp-click", () => {
-    emit("click");
-    openInfoWindow();
+    const clickArgs = { cancelled: false };
+
+    emit("click", clickArgs);
+
+    if (!clickArgs.cancelled) {
+      openInfoWindow();
+    }
   });
 
   if (infoWindow.value) {
@@ -108,7 +117,7 @@ const unwatch = watch(
       unwatch();
     }
   },
-  { immediate: true },
+  { immediate: false }, //Using nextTick instead of immediate: false causes the markers to lose reactivity and not render
 );
 
 watch(

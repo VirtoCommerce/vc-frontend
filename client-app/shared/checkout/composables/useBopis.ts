@@ -1,4 +1,4 @@
-import { computed, defineAsyncComponent } from "vue";
+import { computed, defineAsyncComponent, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BOPIS_MAP_API_KEY, BOPIS_MAP_ENABLED_KEY, MODULE_ID_SHIPPING } from "@/core/constants/modules";
@@ -9,7 +9,7 @@ import type { AnyAddressType } from "@/core/types";
 
 export const BOPIS_CODE = "BuyOnlinePickupInStore";
 
-const ADDRESSES_FETCH_LIMIT = 999;
+const ADDRESSES_FETCH_LIMIT = 50;
 
 export function useBopis() {
   const { t } = useI18n();
@@ -17,7 +17,8 @@ export function useBopis() {
   const { availableShippingMethods, updateShipment, shipment } = useFullCart();
   const { isEnabled, getSettingValue } = useModuleSettings(MODULE_ID_SHIPPING);
 
-  const { pickupLocations, fetchPickupLocations, pickupLocationsLoading } = useCartPickupLocations();
+  const { pickupLocations, fetchPickupLocations, pickupLocationsLoading, filterKeyword, buildFilter, clearFilter } =
+    useCartPickupLocations();
 
   const addresses = computed<ProductPickupLocation[]>(() => (pickupLocations.value as ProductPickupLocation[]) ?? []);
 
@@ -31,6 +32,8 @@ export function useBopis() {
       ? defineAsyncComponent(() => import("@/shared/checkout/components/select-address-map-modal.vue"))
       : defineAsyncComponent(() => import("@/shared/checkout/components/select-address-modal.vue")),
   );
+
+  const modalOpening = ref(false);
 
   const normalizedAddresses = computed<AnyAddressType[]>(() =>
     addresses.value.map((pickupInStoreAddress) => ({
@@ -46,29 +49,42 @@ export function useBopis() {
   async function fetchAddresses({
     cartId,
     keyword,
+    filter,
     sort,
     first,
     after,
   }: {
     cartId: string;
     keyword?: string;
+    filter?: string;
     sort?: string;
     first?: number;
     after?: string;
   }) {
-    await fetchPickupLocations({ cartId, keyword, sort, first, after });
+    await fetchPickupLocations({ cartId, keyword, filter, sort, first, after });
   }
 
   const { openModal } = useModal();
 
   async function openSelectAddressModal(cartId: string) {
-    await fetchAddresses({ cartId, first: ADDRESSES_FETCH_LIMIT });
+    modalOpening.value = true;
+
+    clearFilter();
+
+    try {
+      await fetchAddresses({
+        cartId,
+        first: ADDRESSES_FETCH_LIMIT,
+      });
+    } finally {
+      modalOpening.value = false;
+    }
 
     openModal({
       component: modalComponent.value,
 
       props: {
-        addresses: normalizedAddresses.value,
+        addresses: normalizedAddresses,
         apiKey: isBopisMapEnabled.value ? bopisMapApiKey.value : undefined,
         currentAddress: {
           ...shipment.value?.deliveryAddress,
@@ -89,8 +105,17 @@ export function useBopis() {
         isCorporateAddresses: true,
         allowAddNewAddress: false,
         showAvailability: true,
+        showFilters: true,
         emptyText: t("pages.account.order_details.bopis.cart_pickup_points_not_found"),
 
+        onFilterChange: async () => {
+          await fetchAddresses({
+            cartId,
+            first: ADDRESSES_FETCH_LIMIT,
+            keyword: filterKeyword.value,
+            filter: buildFilter(),
+          });
+        },
         onResult: async (addressOrAddressId: AnyAddressType | string) => {
           if (typeof addressOrAddressId === "string") {
             const item = addresses.value.find(({ id }) => id === addressOrAddressId);
@@ -121,6 +146,7 @@ export function useBopis() {
 
     loading: pickupLocationsLoading,
 
+    modalOpening,
     openSelectAddressModal,
   };
 }
