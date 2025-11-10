@@ -77,18 +77,39 @@ export function _useCartPickupLocations() {
       if (termFacetCounties) {
         filterOptionsCountries.value = termFacetToCommonFacet(termFacetCounties);
         filterOptionsCountries.value.label = t("common.labels.country");
+      } else {
+        filterOptionsCountries.value = {
+          type: "terms",
+          paramName: COUNTRY_NAME_FACET,
+          values: [],
+          label: t("common.labels.country"),
+        };
       }
 
       const termFacetRegions = data.term_facets?.find((f) => f.name === REGION_NAME_FACET);
       if (termFacetRegions) {
         filterOptionsRegions.value = termFacetToCommonFacet(termFacetRegions);
         filterOptionsRegions.value.label = t("common.labels.region");
+      } else {
+        filterOptionsRegions.value = {
+          type: "terms",
+          paramName: REGION_NAME_FACET,
+          values: [],
+          label: t("common.labels.region"),
+        };
       }
 
       const termFacetCities = data.term_facets?.find((f) => f.name === CITY_FACET);
       if (termFacetCities) {
         filterOptionsCities.value = termFacetToCommonFacet(termFacetCities);
         filterOptionsCities.value.label = t("common.labels.city");
+      } else {
+        filterOptionsCities.value = {
+          type: "terms",
+          paramName: CITY_FACET,
+          values: [],
+          label: t("common.labels.city"),
+        };
       }
     } catch (e) {
       Logger.error(`${useCartPickupLocations.name}.${fetchPickupLocations.name}`, e);

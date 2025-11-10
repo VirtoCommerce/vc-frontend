@@ -5,6 +5,7 @@
         v-if="filterOptionsCountries"
         :facet="filterOptionsCountries"
         :filter="filterCountries"
+        :disabled="!filterOptionsCountries.values?.length"
         mode="dropdown"
         @update:filter="applyFilter"
       />
@@ -13,6 +14,7 @@
         v-if="filterOptionsRegions"
         :facet="filterOptionsRegions"
         :filter="filterRegions"
+        :disabled="!filterOptionsRegions.values?.length"
         mode="dropdown"
         @update:filter="applyFilter"
       />
@@ -21,6 +23,7 @@
         v-if="filterOptionsCities"
         :facet="filterOptionsCities"
         :filter="filterCities"
+        :disabled="!filterOptionsCities.values?.length"
         mode="dropdown"
         @update:filter="applyFilter"
       />
