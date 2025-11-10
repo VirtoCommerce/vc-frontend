@@ -185,17 +185,15 @@ const notifications = useNotifications();
 function handleItemsFocusIn(event: FocusEvent) {
   const target = event.target as HTMLElement;
   const itemsContainer = event.currentTarget as HTMLElement;
-
+  const relatedTarget = event.relatedTarget as HTMLElement | null;
   if (!itemsContainer) return;
 
-  const relatedTarget = event.relatedTarget as HTMLElement | null;
   const isFocusFromOutside = !relatedTarget || !itemsContainer.contains(relatedTarget);
+  if (!isFocusFromOutside || !itemsContainer.contains(target)) return;
 
-  if (isFocusFromOutside && itemsContainer.contains(target)) {
-    const radioInput = itemsContainer.querySelector('input[type="radio"]:checked');
-    if (radioInput instanceof HTMLInputElement && target !== radioInput && !radioInput.contains(target)) {
-      radioInput.focus();
-    }
+  const radioInput = itemsContainer.querySelector('input[type="radio"]:checked');
+  if (radioInput instanceof HTMLInputElement && target !== radioInput) {
+    radioInput.focus();
   }
 }
 
