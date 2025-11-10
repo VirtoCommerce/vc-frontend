@@ -29,6 +29,7 @@
                 :title="address.name"
                 :is-active="selectedAddressId === address.id"
                 :active-pin-options="activePinOptions"
+                @click="(args) => markerClickHandler(args, address)"
               >
                 <div class="select-address-map-modal__info-window">
                   <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
@@ -101,6 +102,60 @@
             </template>
           </GoogleMapMarkerClusterer>
         </GoogleMap>
+
+        <div v-if="isMobile && selectedAddress" class="select-address-map-modal__info-window-mobile">
+          <h3 class="select-address-map-modal__info-window-mobile-title">{{ selectedAddress.name }}</h3>
+
+          <PickupAvailabilityInfo
+            show-icon
+            icon-size="sm"
+            :availability-type="selectedAddress.availabilityType"
+            :availability-note="selectedAddress.availabilityNote"
+          />
+
+          <div class="select-address-map-modal__info-window-mobile-content">
+            <dl>
+              <dt>
+                {{ $t("shared.checkout.select_bopis_modal.location_label") }}
+              </dt>
+
+              <dd>{{ getAddressName(selectedAddress) }}</dd>
+
+              <dt v-if="selectedAddress.contactPhone">
+                {{ $t("shared.checkout.select_bopis_modal.contact_phone_label") }}
+              </dt>
+
+              <dd v-if="selectedAddress.contactPhone">
+                <a :href="`tel:${selectedAddress.contactPhone}`">{{ selectedAddress.contactPhone }}</a>
+              </dd>
+
+              <dt v-if="selectedAddress.contactEmail">
+                {{ $t("shared.checkout.select_bopis_modal.contact_email_label") }}
+              </dt>
+
+              <dd v-if="selectedAddress.contactEmail">
+                <a :href="`mailto:${selectedAddress.contactEmail}`">{{ selectedAddress.contactEmail }}</a>
+              </dd>
+
+              <dt v-if="selectedAddress.workingHours">
+                {{ $t("shared.checkout.select_bopis_modal.working_hours_label") }}
+              </dt>
+
+              <dd v-if="selectedAddress.workingHours">
+                <VcMarkdownRender
+                  class="select-address-map-modal__info-window-mobile-working-hours"
+                  :src="selectedAddress.workingHours"
+                />
+              </dd>
+
+              <dt v-if="selectedAddress.description">
+                {{ $t("shared.checkout.select_bopis_modal.description_label") }}
+              </dt>
+
+              <dd v-if="selectedAddress.description">{{ selectedAddress.description }}</dd>
+            </dl>
+          </div>
+        </div>
 
         <VcScrollbar vertical class="select-address-map-modal__sidebar">
           <ul v-if="addresses.length" class="select-address-map-modal__list">
@@ -190,11 +245,13 @@ const currentAddress = toRef(props, "currentAddress");
 const selectedAddressId = ref<string | undefined>(currentAddress.value?.id);
 const changed = computed(() => selectedAddressId.value !== currentAddress.value?.id);
 
+const selectedAddress = computed(() => addresses.value.find((x) => x.id == selectedAddressId.value));
+
 const MAP_ID = "select-bopis-map-modal";
 
 const { zoomToMarkers, markers, zoomToLatLng, closeInfoWindow, map } = useGoogleMaps(MAP_ID);
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
+const isMobile = breakpoints.smaller("md");
 
 interface IProps {
   addresses?: PickupLocationType[];
@@ -249,6 +306,13 @@ function getLatLng(location: string | undefined) {
   } catch (error) {
     Logger.warn("Failed to parse geo location", error);
     return null;
+  }
+}
+
+function markerClickHandler(args: { cancelled: boolean }, address: PickupLocationType) {
+  if (isMobile.value) {
+    args.cancelled = true;
+    selectHandler(address);
   }
 }
 
@@ -426,6 +490,45 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 
   &__marker-glyph {
     @apply fill-additional-50 size-7;
+  }
+
+  &__info-window-mobile {
+    @apply flex flex-col gap-2 bg-neutral-200 font-lato w-full px-5 h-[50%] mt-[-30%];
+    z-index: 10;
+
+    &::before {
+      @apply bg-neutral-200;
+      -webkit-clip-path: polygon(0 100%, 50% 0, 100% 100%);
+      clip-path: polygon(0 100%, 50% 0, 100% 100%);
+      content: "";
+      margin-left: calc(50% - 12.5px);
+      top: -12px;
+      position: relative;
+      height: 12px;
+      width: 25px;
+    }
+  }
+
+  &__info-window-mobile-title {
+    @apply text-xs font-bold;
+  }
+
+  &__info-window-mobile-content {
+    dl {
+      @apply flex flex-col gap-1.5;
+    }
+
+    dt {
+      @apply text-xxs font-bold break-words;
+    }
+
+    dd {
+      @apply text-xxs font-normal text-neutral-600 break-words;
+    }
+  }
+
+  &__info-window-mobile-working-hours {
+    @apply text-xxs;
   }
 }
 </style>

@@ -32,7 +32,7 @@ interface IProps {
 }
 
 interface IEmits {
-  click: [];
+  (event: "click", args: { cancelled: boolean }): void;
 }
 
 const ACTIVE_INFO_WINDOW_CONTENT_ID = `active-info-window-content-${mapId.value}`;
@@ -93,8 +93,13 @@ function init() {
   }
 
   listener = marker.value?.addListener("gmp-click", () => {
-    emit("click");
-    openInfoWindow();
+    const clickArgs = { cancelled: false };
+
+    emit("click", clickArgs);
+
+    if (!clickArgs.cancelled) {
+      openInfoWindow();
+    }
   });
 
   if (infoWindow.value) {
