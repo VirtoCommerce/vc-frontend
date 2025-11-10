@@ -5,5 +5,6 @@ export { default as AddressSelection } from "./address-selection.vue";
 export { default as ConfigurationItems } from "./configuration-items.vue";
 export { default as ContactAdministratorLink } from "./contact-administrator-link.vue";
 export { default as FacetItem } from "./facet-item.vue";
+export { default as FloatingBar } from "./floating-bar.vue";
 export { default as SaveChangesModal } from "./save-changes-modal.vue";
 export { default as VendorName } from "./vendor-name.vue";

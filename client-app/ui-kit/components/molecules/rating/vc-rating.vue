@@ -1,6 +1,7 @@
 <template>
   <div :class="['vc-rating', `vc-rating--mode--${mode}`, `vc-rating--size--${size}`]">
     <span v-if="label" class="vc-rating__label">{{ label }}:</span>
+    <span v-else class="sr-only">{{ currentRatingText }}</span>
 
     <div class="vc-rating__shapes">
       <button
@@ -8,7 +9,9 @@
         :key="i"
         type="button"
         class="vc-rating__button"
-        :disabled="readOnly || mode === 'mini'"
+        :disabled="isDisabledSelection"
+        :aria-label="getButtonAriaLabel(i)"
+        :tabindex="isDisabledSelection ? undefined : 0"
         @click="setRating(i)"
         @focus="handleMouseOver(i)"
         @blur="handleMouseOver(null)"
@@ -42,7 +45,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { MAX_RATING } from "@/ui-kit/constants";
 
 interface IEmits {
@@ -58,6 +62,7 @@ interface IProps {
   maxValue?: number;
   withText?: boolean;
   label?: string;
+  buttonAriaLabel?: (index: number) => string;
 }
 
 const emit = defineEmits<IEmits>();
@@ -70,7 +75,16 @@ const props = withDefaults(defineProps<IProps>(), {
   maxValue: MAX_RATING,
 });
 
+const { t } = useI18n();
+
 const selectedRating = ref<number | null>(null);
+
+const isDisabledSelection = computed(() => props.readOnly || props.mode === "mini");
+
+const currentRatingText = computed(() => {
+  const rating = selectedRating.value ?? props.value;
+  return t("ui_kit.rating.rating_label", { value: rating, maxValue: props.maxValue });
+});
 
 function isHalf(index: number): boolean {
   const rating = selectedRating.value ?? props.value;
@@ -101,6 +115,19 @@ function setRating(value: number): void {
     return;
   }
   emit("setRating", value);
+}
+
+function getButtonAriaLabel(index: number): string {
+  if (props.buttonAriaLabel) {
+    return props.buttonAriaLabel(index);
+  }
+  if (props.mode === "mini") {
+    return t("ui_kit.rating.rating_label", { value: props.value, maxValue: props.maxValue });
+  }
+  if (props.readOnly) {
+    return t("ui_kit.rating.read_only_button_aria_label", { value: index, maxValue: props.maxValue });
+  }
+  return t("ui_kit.rating.set_rating_aria_label", { value: index, maxValue: props.maxValue });
 }
 </script>
 
