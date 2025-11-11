@@ -165,7 +165,8 @@
       "buyer_name": "Имя покупателя",
       "other": "Другое",
       "vendor_name": "Поставщик: {name}",
-      "not_available": "Н/Д"
+      "not_available": "Н/Д",
+      "product_reviews": "Отзывы о товаре"
     },
     "prefixes": {
       "please": "Пожалуйста",

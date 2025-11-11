@@ -165,7 +165,8 @@
       "buyer_name": "买方姓名",
       "other": "其他",
       "vendor_name": "供应商: {name}",
-      "not_available": "不可用"
+      "not_available": "不可用",
+      "product_reviews": "商品评论"
     },
     "prefixes": {
       "please": "请",

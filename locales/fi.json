@@ -165,7 +165,8 @@
       "buyer_name": "Ostajan nimi",
       "other": "Muu",
       "vendor_name": "Toimittaja: {name}",
-      "not_available": "Ei saatavilla"
+      "not_available": "Ei saatavilla",
+      "product_reviews": "Tuotearvostelut"
     },
     "prefixes": {
       "please": "Ole hyvä",

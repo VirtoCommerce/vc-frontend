@@ -30,7 +30,7 @@
         </div>
       </div>
 
-      <div class="divide-y rounded border">
+      <section class="divide-y rounded border" :aria-label="$t('common.labels.product_reviews')">
         <article v-for="review in reviews" :key="review.id" class="space-y-2 p-4">
           <div class="flex items-start justify-between gap-2">
             <div>
@@ -91,7 +91,7 @@
             />
           </div>
         </article>
-      </div>
+      </section>
 
       <div class="mb-6 mt-5 justify-end text-center sm:flex sm:flex-wrap sm:items-center sm:gap-3">
         <VcButton
