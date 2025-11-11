@@ -22,12 +22,30 @@ const TRACKER_NAME = "google-analytics";
 
 export async function init({ extendEvents, extendConfig, extendSet }: InitOptionsType = {}): Promise<void> {
   const { getModuleSettings, hasModuleSettings } = useModuleSettings(MODULE_ID);
-  const { trackId, isEnabled } = getModuleSettings(GOOGLE_ANALYTICS_SETTINGS_MAPPING);
+  const { trackId, isEnabled, gtmContainerId } = getModuleSettings(GOOGLE_ANALYTICS_SETTINGS_MAPPING);
 
-  if (!canUseDOM || !trackId || !hasModuleSettings || !isEnabled || IS_DEVELOPMENT) {
+  if (!canUseDOM || !hasModuleSettings || !isEnabled || IS_DEVELOPMENT) {
     return;
   }
-  useScriptTag(`https://www.googletagmanager.com/gtag/js?id=${trackId}`);
+
+  // Initialize dataLayer for GTM/GA4
+  window.dataLayer = window.dataLayer || [];
+
+  window.gtag = function gtag() {
+    // is not working with rest
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer.push(arguments);
+  };
+
+  // Initialize GTM if GTMContainerId is provided (loaded before GA4)
+  if (gtmContainerId) {
+    window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+
+    // Inject GTM head script
+    useScriptTag(`https://www.googletagmanager.com/gtm.js?id=${gtmContainerId}`);
+  }
+
+  // Register analytics event tracker (works for both GTM-only and GA4)
   const { addTracker } = useAnalytics();
   const { events } = await import("./events");
   addTracker({
@@ -43,26 +61,25 @@ export async function init({ extendEvents, extendConfig, extendSet }: InitOption
       }),
     },
   });
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag() {
-    // is not working with rest
-    // eslint-disable-next-line prefer-rest-params
-    window.dataLayer.push(arguments);
-  };
 
-  const config = {
-    debugMode: DEBUG_MODE,
-    currency: currentCurrency.value.code,
-    user_id: isAuthenticated.value ? user.value.id : undefined,
-    language: globals.cultureName,
-    ...extendConfig,
-  };
+  // Initialize GA4 if trackId is provided
+  if (trackId) {
+    useScriptTag(`https://www.googletagmanager.com/gtag/js?id=${trackId}`);
 
-  window.gtag("js", new Date());
+    const config = {
+      debugMode: DEBUG_MODE,
+      currency: currentCurrency.value.code,
+      user_id: isAuthenticated.value ? user.value.id : undefined,
+      language: globals.cultureName,
+      ...extendConfig,
+    };
 
-  if (extendSet) {
-    window.gtag("set", extendSet);
+    window.gtag("js", new Date());
+
+    if (extendSet) {
+      window.gtag("set", extendSet);
+    }
+
+    window.gtag("config", String(trackId), config);
   }
-
-  window.gtag("config", String(trackId), config);
 }
