@@ -72,7 +72,6 @@
                 }"
                 wrapper-class="items-center"
                 class="mx-0 w-full p-1"
-                tabindex="0"
                 data-te-lightbox-init
               >
                 <SwiperSlide v-for="(image, index) in review.images" :key="index" class="cursor-pointer p-2">
