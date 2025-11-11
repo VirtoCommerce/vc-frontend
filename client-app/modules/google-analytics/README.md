@@ -33,7 +33,6 @@ Configure the following settings in the Virto Commerce backend:
 
 The GTM implementation follows Google's best practices:
 - GTM script is injected in the `<head>` section
-- GTM noscript fallback is injected at the beginning of the `<body>` section
 - `dataLayer` is properly initialized before GTM loads
 
 ### Event Handling
