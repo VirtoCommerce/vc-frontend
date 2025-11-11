@@ -564,6 +564,12 @@
           "remove": "Remove from Compare"
         }
       },
+      "notifications": {
+        "limit_reached": "Only {productsLimit} products can be compared",
+        "added_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> is added to compare list <span class=\"hidden lg:inline\">(items left - {itemsLeft})</span>",
+        "removed_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> was removed from the compare list",
+        "compare_button": "Compare"
+      },
       "clear_list_modal": {
         "title": "Confirm clear",
         "message": "Do you confirm the removal of all products from the compare list?"
