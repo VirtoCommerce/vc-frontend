@@ -9,7 +9,8 @@ import type { AnyAddressType } from "@/core/types";
 
 export const BOPIS_CODE = "BuyOnlinePickupInStore";
 
-const ADDRESSES_FETCH_LIMIT = 50;
+const ADDRESSES_FETCH_MAP_LIMIT = 50;
+const ADDRESSES_FETCH_LIST_LIMIT = 200;
 
 export function useBopis() {
   const { t } = useI18n();
@@ -32,6 +33,8 @@ export function useBopis() {
       ? defineAsyncComponent(() => import("@/shared/checkout/components/select-address-map-modal.vue"))
       : defineAsyncComponent(() => import("@/shared/checkout/components/select-address-modal.vue")),
   );
+
+  const fetchLimit = computed(() => (isBopisMapEnabled.value ? ADDRESSES_FETCH_MAP_LIMIT : ADDRESSES_FETCH_LIST_LIMIT));
 
   const modalOpening = ref(false);
 
@@ -74,7 +77,7 @@ export function useBopis() {
     try {
       await fetchAddresses({
         cartId,
-        first: ADDRESSES_FETCH_LIMIT,
+        first: fetchLimit.value,
       });
     } finally {
       modalOpening.value = false;
@@ -111,7 +114,7 @@ export function useBopis() {
         onFilterChange: async () => {
           await fetchAddresses({
             cartId,
-            first: ADDRESSES_FETCH_LIMIT,
+            first: fetchLimit.value,
             keyword: filterKeyword.value,
             filter: buildFilter(),
           });
