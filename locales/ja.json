@@ -564,6 +564,12 @@
           "remove": "比較リストから削除"
         }
       },
+      "notifications": {
+        "limit_reached": "{productsLimit}個の商品のみ比較できます",
+        "added_html": "商品<span class=\"hidden lg:inline\">「<strong>{productName}</strong>」</span>を比較リストに追加しました<span class=\"hidden lg:inline\">（残り{itemsLeft}個）</span>",
+        "removed_html": "商品<span class=\"hidden lg:inline\">「<strong>{productName}</strong>」</span>を比較リストから削除しました",
+        "compare_button": "比較"
+      },
       "clear_list_modal": {
         "title": "クリアの確認",
         "message": "比較リストから全ての商品を削除しますか？"

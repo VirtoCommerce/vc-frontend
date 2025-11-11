@@ -3,5 +3,6 @@ export * from "./date";
 export * from "./file";
 export * from "./file-requirements";
 export * from "./file-size";
+export * from "./focus";
 export * from "./images";
 export * from "./price";

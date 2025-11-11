@@ -564,6 +564,12 @@
           "remove": "Vom Vergleich entfernen"
         }
       },
+      "notifications": {
+        "limit_reached": "Es können nur {productsLimit} Produkte verglichen werden",
+        "added_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde der Vergleichsliste hinzugefügt <span class=\"hidden lg:inline\">(verbleibende Artikel - {itemsLeft})</span>",
+        "removed_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde aus der Vergleichsliste entfernt",
+        "compare_button": "Vergleichen"
+      },
       "clear_list_modal": {
         "title": "Löschung bestätigen",
         "message": "Bestätigen Sie die Entfernung aller Produkte aus der Vergleichsliste?"

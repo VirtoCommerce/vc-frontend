@@ -564,6 +564,12 @@
           "remove": "Poista vertailusta"
         }
       },
+      "notifications": {
+        "limit_reached": "Vain {productsLimit} tuotetta voidaan vertailla",
+        "added_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> on lisätty vertailulistalle <span class=\"hidden lg:inline\">(jäljellä {itemsLeft} tuotetta)</span>",
+        "removed_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> on poistettu vertailulistalta",
+        "compare_button": "Vertaile"
+      },
       "clear_list_modal": {
         "title": "Vahvista tyhjennys",
         "message": "Vahvistatko, että kaikki tuotteet poistetaan vertailulistalta?"
