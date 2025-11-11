@@ -1,6 +1,7 @@
 <template>
   <div :class="['vc-rating', `vc-rating--mode--${mode}`, `vc-rating--size--${size}`]">
     <span v-if="label" class="vc-rating__label">{{ label }}:</span>
+
     <span v-else class="sr-only">{{ currentRatingText }}</span>
 
     <div class="vc-rating__shapes">
