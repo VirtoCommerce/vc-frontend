@@ -1171,7 +1171,9 @@
           "get_directions": "Hent veibeskrivelse",
           "point_info": "Punktinformasjon",
           "pickup_address": "Henteadresse",
-          "cart_pickup_points_not_found": "Det finnes ingen tilgjengelige hentepunkter for disse produktene. Velg en annen forsendelsesmetode",
+          "cart_pickup_points_not_found": "Det finnes ingen tilgjengelige hentepunkter for disse produktene. Velg en annen forsendelsesmetode.",
+          "cart_pickup_points_not_found_by_filter": "Ingen hentepunkter funnet.",
+          "cart_pickup_points_reset_search": "Tilbakestill søk",
           "availability": "Tilgjengelighet"
         }
       },

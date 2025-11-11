@@ -1171,7 +1171,9 @@
           "get_directions": "Obter direções",
           "point_info": "Informações",
           "pickup_address": "Endereço de retirada",
-          "cart_pickup_points_not_found": "Não há pontos de recolha disponíveis para estes produtos. Selecione outro método de envio",
+          "cart_pickup_points_not_found": "Não há pontos de recolha disponíveis para estes produtos. Selecione outro método de envio.",
+          "cart_pickup_points_not_found_by_filter": "Locais de recolha não encontrados.",
+          "cart_pickup_points_reset_search": "Resetar pesquisa",
           "availability": "Disponibilidade"
         }
       },
