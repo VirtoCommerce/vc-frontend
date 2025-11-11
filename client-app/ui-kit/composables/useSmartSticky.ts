@@ -215,7 +215,7 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     return 0;
   }
 
-  function updateDimensions() {
+  function updateDimensions(useDirectValues = false) {
     const element = toValue(stickyElement);
 
     if (!element || !toValue(container)) {
@@ -225,17 +225,33 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     dimensions.value.viewportHeight = globalThis.window.innerHeight;
     dimensions.value.viewportTop = getScrollPosition();
 
-    dimensions.value.containerTop = containerBounding.top.value + dimensions.value.viewportTop;
-    dimensions.value.containerHeight = containerBounding.height.value;
+    const containerEl = toValue(container);
+    if (!containerEl) {
+      return;
+    }
 
-    dimensions.value.elementHeight = elementBounding.height.value;
-    dimensions.value.elementWidth = elementBounding.width.value;
+    if (useDirectValues) {
+      const containerRect = containerEl.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
+
+      dimensions.value.containerTop = containerRect.top + dimensions.value.viewportTop;
+      dimensions.value.containerHeight = containerRect.height;
+
+      dimensions.value.elementHeight = elementRect.height;
+      dimensions.value.elementWidth = elementRect.width;
+    } else {
+      dimensions.value.containerTop = containerBounding.top.value + dimensions.value.viewportTop;
+      dimensions.value.containerHeight = containerBounding.height.value;
+
+      dimensions.value.elementHeight = elementBounding.height.value;
+      dimensions.value.elementWidth = elementBounding.width.value;
+    }
 
     dimensions.value.topSpacing = topSpacingResolved.value;
     dimensions.value.bottomSpacing = bottomSpacingResolved.value;
   }
 
-  function calculatePosition() {
+  function calculatePosition(useDirectValues = false) {
     if (!isEnabled.value) {
       resetPosition();
       return;
@@ -248,14 +264,16 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       return;
     }
 
-    updateDimensions();
+    updateDimensions(useDirectValues);
 
     const dims = dimensions.value;
     const { containerTop, containerHeight, elementHeight, viewportHeight, viewportTop, topSpacing, bottomSpacing } =
       dims;
 
     const containerBottom = containerTop + containerHeight;
-    const elementTop = elementBounding.top.value + viewportTop;
+    const elementTop = useDirectValues
+      ? element.getBoundingClientRect().top + viewportTop
+      : elementBounding.top.value + viewportTop;
 
     const isElementTallerThanViewport = elementHeight + topSpacing + bottomSpacing > viewportHeight;
 
@@ -362,8 +380,11 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     translate.value = 0;
   }
 
-  const update = useThrottleFn(calculatePosition, throttleDelay);
-  const updateImmediate = calculatePosition;
+  const update = useThrottleFn(() => calculatePosition(false), throttleDelay);
+  const updateImmediate = () => calculatePosition(false);
+  const updateImmediateWithDirectValues = () => calculatePosition(true);
+
+  let resizeObserver: ResizeObserver | null = null;
 
   function attachListeners() {
     const scrollEl = toValue(scrollContainer);
@@ -373,6 +394,18 @@ export function useSmartSticky(options: ISmartStickyOptions) {
       globalThis.window.addEventListener("resize", update);
     } else if (scrollEl instanceof HTMLElement) {
       scrollEl.addEventListener("scroll", update, { passive: true });
+    }
+
+    const element = toValue(stickyElement);
+    const containerEl = toValue(container);
+
+    if (element && containerEl) {
+      resizeObserver = new ResizeObserver(() => {
+        updateImmediateWithDirectValues();
+      });
+
+      resizeObserver.observe(element);
+      resizeObserver.observe(containerEl);
     }
   }
 
@@ -385,6 +418,11 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     } else if (scrollEl instanceof HTMLElement) {
       scrollEl.removeEventListener("scroll", update);
     }
+
+    if (resizeObserver) {
+      resizeObserver.disconnect();
+      resizeObserver = null;
+    }
   }
 
   function destroy() {
@@ -395,6 +433,14 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   onMounted(() => {
     attachListeners();
     void update();
+  });
+
+  watch([stickyElement, container], () => {
+    if (resizeObserver) {
+      resizeObserver.disconnect();
+      resizeObserver = null;
+    }
+    attachListeners();
   });
 
   onBeforeUnmount(() => {
