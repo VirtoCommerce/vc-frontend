@@ -109,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Навигация хлебными крошками"
+    },
+    "rating": {
+      "rating_label": "Рейтинг: {value} из {maxValue}",
+      "read_only_button_aria_label": "Рейтинг: {value} из {maxValue}, недоступно для выбора",
+      "set_rating_aria_label": "Установить рейтинг {value} из {maxValue}"
     }
   }
 }

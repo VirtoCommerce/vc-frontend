@@ -1,5 +1,6 @@
 <template>
   <div
+    :id="componentId"
     :class="[
       'vc-dialog',
       `vc-dialog--size--${props.size}`,
@@ -14,6 +15,7 @@
 
 <script setup lang="ts">
 import { provide, toRef } from "vue";
+import { useComponentId, useFocusManagement } from "@/ui-kit/composables";
 import { vcDialogKey } from "./vc-dialog-context";
 
 interface IProps {
@@ -25,6 +27,13 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
+});
+
+const componentId = useComponentId("dialog");
+
+useFocusManagement({
+  container: `#${componentId}`,
+  autoFocus: true,
 });
 
 const sizeRef = toRef(props, "size");
