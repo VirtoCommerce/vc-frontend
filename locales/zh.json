@@ -566,6 +566,12 @@
           "remove": "从比较中移除"
         }
       },
+      "notifications": {
+        "limit_reached": "最多可以比较 {productsLimit} 件商品",
+        "added_html": "商品 <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> 已添加到比较列表 <span class=\"hidden lg:inline\">（剩余 {itemsLeft} 件）</span>",
+        "removed_html": "商品 <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> 已从比较列表中移除",
+        "compare_button": "比较"
+      },
       "clear_list_modal": {
         "title": "确认清空",
         "message": "您确认要从比较列表中移除所有商品吗？"
@@ -1168,6 +1174,8 @@
           "point_info": "积分信息",
           "pickup_address": "自提地址",
           "cart_pickup_points_not_found": "此商品无适用的自提点。请选择其他配送方式",
+          "cart_pickup_points_not_found_by_filter": "未找到自提点。",
+          "cart_pickup_points_reset_search": "重置搜索",
           "availability": "可用性"
         }
       },
