@@ -220,15 +220,15 @@ jobs:
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
       - name: Update Jira Tasks with Release Number
-        # if: ${{ github.ref == 'refs/heads/master' }}
+        if: ${{ github.ref == 'refs/heads/master' }}
         uses: VirtoCommerce/vc-github-actions/update-jira-tasks-with-release-number@master
         with:
           ghRepository: ${{ github.repository }}
-          ghReleaseTag: '2.34.0' #${{ steps.image.outputs.prefix }}
+          ghReleaseTag: ${{ steps.image.outputs.prefix }}
           jiraCustomFieldId: 'customfield_10297' # 'customfield_10297' corresponds to 'Theme release' field
-          jiraCustomFieldValue: '2.34.0' #"${{ steps.image.outputs.prefix }}"
-          client-id: '${{ secrets.CLIENT_ID }}' #'${{ secrets.JIRA_USER }}'
-          client-secret: '${{ secrets.CLIENT_SECRET }}' #'${{ secrets.JIRA_TOKEN }}'
+          jiraCustomFieldValue: "${{ steps.image.outputs.prefix }}"
+          client-id: '${{ secrets.JIRA_USER }}'
+          client-secret: '${{ secrets.JIRA_TOKEN }}'
 
 
   ui-e2e-auto-tests:
