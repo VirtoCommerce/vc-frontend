@@ -106,7 +106,7 @@
             },
           ]"
         >
-          <VcLoaderOverlay v-if="isLoadingBopisAddresses" />
+          <VcLoaderOverlay v-if="isLoadingBopisAddresses && isOpeningBopisAddresses" />
           <AddressSelection
             :disabled="!cart || isLoadingBopisAddresses || disabled"
             :address="deliveryAddress"
@@ -153,7 +153,13 @@ const {
 } = useCheckout();
 
 const { cart, availableShippingMethods, updateShipment, shipment, changing: cartChanging } = useFullCart();
-const { hasBOPIS, openSelectAddressModal, loading: isLoadingBopisAddresses, bopisMethod } = useBopis();
+const {
+  hasBOPIS,
+  openSelectAddressModal,
+  loading: isLoadingBopisAddresses,
+  modalOpening: isOpeningBopisAddresses,
+  bopisMethod,
+} = useBopis();
 const { xPickupEnabled } = useXPickup();
 
 const { isAuthenticated } = useUser();

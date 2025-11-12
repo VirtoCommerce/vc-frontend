@@ -1,6 +1,7 @@
 import { useLocalStorage } from "@vueuse/core";
 import { v4 as uuidv4 } from "uuid";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import {
   CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE,
@@ -124,6 +125,7 @@ export function useCompareProducts() {
   const { themeContext } = useThemeContext();
   const notifications = useNotifications();
   const productsLimit = themeContext.value?.settings?.product_compare_limit || DEFAULT_MAX_PRODUCTS;
+  const { t } = useI18n();
 
   function addToCompareList(
     product: Product,
@@ -135,7 +137,7 @@ export function useCompareProducts() {
         duration: 15000,
         group: NOTIFICATIONS_GROUP,
         singleInGroup: true,
-        text: `Only ${productsLimit} products can be compared`,
+        text: t("shared.compare.notifications.limit_reached", { productsLimit }),
       });
 
       return;
@@ -151,12 +153,12 @@ export function useCompareProducts() {
       duration: 15000,
       group: NOTIFICATIONS_GROUP,
       singleInGroup: true,
-      html:
-        `Product <span class="hidden lg:inline">“<strong>${truncate(product.name, NAME_MAX_LENGTH)}</strong>”</span> ` +
-        `is added to compare list ` +
-        `<span class="hidden lg:inline">(${productsLimit - productsIds.value.length - configProductsToCompare.value.length} items left)</span>`,
+      html: t("shared.compare.notifications.added_html", {
+        productName: truncate(product.name, NAME_MAX_LENGTH),
+        itemsLeft: productsLimit - productsIds.value.length - configProductsToCompare.value.length,
+      }),
       button: {
-        text: "Compare",
+        text: t("shared.compare.notifications.compare_button"),
         to: { path: "/compare" },
         clickHandler() {
           notifications.clear(NOTIFICATIONS_GROUP);
@@ -176,9 +178,9 @@ export function useCompareProducts() {
       duration: 15000,
       group: NOTIFICATIONS_GROUP,
       singleInGroup: true,
-      html:
-        `Product <span class="hidden lg:inline">“<strong>${truncate(product.name, NAME_MAX_LENGTH)}</strong>”</span> ` +
-        `was removed from the compare list`,
+      html: t("shared.compare.notifications.removed_html", {
+        productName: truncate(product.name, NAME_MAX_LENGTH),
+      }),
     });
   }
 

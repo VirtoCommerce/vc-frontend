@@ -94,6 +94,17 @@ describe("useBopis composable", () => {
       fetchPickupLocations: vi.fn(),
       pickupLocations: resultRef,
       pickupLocationsLoading: loadingRef,
+      filterOptionsCountries: ref(),
+      filterOptionsRegions: ref(),
+      filterOptionsCities: ref(),
+      filterKeyword: ref(""),
+      filterCountries: ref(),
+      filterRegions: ref(),
+      filterCities: ref(),
+      filterIsApplied: ref(false),
+      filterSelectsAreEmpty: ref(false) as unknown as ComputedRef<boolean>,
+      buildFilter: vi.fn(),
+      clearFilter: vi.fn(),
     });
 
     // Setup useFullCart mock

@@ -564,6 +564,12 @@
           "remove": "Rimuovi dal confronto"
         }
       },
+      "notifications": {
+        "limit_reached": "È possibile confrontare solo {productsLimit} prodotti",
+        "added_html": "Prodotto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> aggiunto alla lista di confronto <span class=\"hidden lg:inline\">(elementi rimanenti - {itemsLeft})</span>",
+        "removed_html": "Prodotto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> rimosso dalla lista di confronto",
+        "compare_button": "Confronta"
+      },
       "clear_list_modal": {
         "title": "Conferma cancellazione",
         "message": "Confermi la rimozione di tutti i prodotti dalla lista di confronto?"
@@ -1165,7 +1171,9 @@
           "get_directions": "Ottieni indicazioni",
           "point_info": "Informazioni",
           "pickup_address": "Indirizzo di ritiro",
-          "cart_pickup_points_not_found": "Non ci sono punti di ritiro disponibili per questi prodotti. Seleziona un altro metodo di spedizione",
+          "cart_pickup_points_not_found": "Non ci sono punti di ritiro disponibili per questi prodotti. Seleziona un altro metodo di spedizione.",
+          "cart_pickup_points_not_found_by_filter": "Punti di ritiro non trovati.",
+          "cart_pickup_points_reset_search": "Reimposta ricerca",
           "availability": "Disponibilità"
         }
       },
