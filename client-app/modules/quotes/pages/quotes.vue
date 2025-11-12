@@ -8,6 +8,7 @@
 
       <VcButton size="sm" variant="outline" prepend-icon="plus" @click="requestQuote">
         <span class="hidden sm:inline">{{ $t("quotes.request_quote_button") }}</span>
+
         <span class="sm:hidden">{{ $t("quotes.request_quote_button") }}</span>
       </VcButton>
     </div>
@@ -58,6 +59,7 @@
           :pages="pages"
           :page="page"
           :description="$t('quotes.meta.table_description')"
+          :skeleton-rows="itemsPerPage"
           @item-click="goToQuoteDetails"
           @header-click="applySorting"
           @page-changed="changePage"
@@ -106,38 +108,6 @@
             </button>
           </template>
 
-          <template #mobile-skeleton>
-            <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.quote_number_label") }}
-                </span>
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.date_label") }}
-                </span>
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.total_label") }}
-                </span>
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.status_label") }}
-                </span>
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-            </div>
-          </template>
-
           <template #desktop-body>
             <tr
               v-for="quote in quotes"
@@ -159,14 +129,6 @@
 
               <td class="overflow-hidden text-ellipsis p-5 text-right">
                 {{ quote.totals?.grandTotalInclTax?.formattedAmount }}
-              </td>
-            </tr>
-          </template>
-
-          <template #desktop-skeleton>
-            <tr v-for="i in itemsPerPage" :key="i" class="even:bg-neutral-50">
-              <td v-for="column in columns" :key="column.id" class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
               </td>
             </tr>
           </template>

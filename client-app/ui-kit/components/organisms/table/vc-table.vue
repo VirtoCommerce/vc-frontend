@@ -3,7 +3,18 @@
     <!-- Mobile table view -->
     <div v-if="isMobile && $slots['mobile-item']" class="vc-table__mobile">
       <!-- Mobile skeleton view -->
-      <slot v-if="loading" name="mobile-skeleton" />
+      <template v-if="loading">
+        <slot name="mobile-skeleton">
+          <!-- Default mobile skeleton template -->
+          <div v-for="row in skeletonRows" :key="row" class="vc-table__mobile-skeleton-card">
+            <div v-for="block in 4" :key="block" class="vc-table__mobile-skeleton-block">
+              <div class="vc-table__mobile-skeleton-label" />
+
+              <div class="vc-table__mobile-skeleton-item" />
+            </div>
+          </div>
+        </slot>
+      </template>
 
       <!-- Mobile empty view -->
       <slot v-else-if="!items.length" name="mobile-empty" />
@@ -74,7 +85,23 @@
 
       <!-- Desktop skeleton view -->
       <tbody v-if="loading" class="vc-table__body">
-        <slot name="desktop-skeleton" />
+        <slot name="desktop-skeleton">
+          <!-- Default skeleton template -->
+          <tr v-for="row in skeletonRows" :key="row" class="vc-table__row vc-table__row--skeleton">
+            <td
+              v-for="column in columns"
+              :key="column.id"
+              :class="[
+                'vc-table__cell',
+                'vc-table__cell--skeleton',
+                `vc-table__cell--align--${column.align ?? 'left'}`,
+                column.classes,
+              ]"
+            >
+              <div class="vc-table__skeleton-item" />
+            </td>
+          </tr>
+        </slot>
       </tbody>
 
       <!-- Desktop empty view -->
@@ -116,8 +143,10 @@
 <script setup lang="ts" generic="T extends ItemType">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
-import { PAGE_LIMIT } from "@/ui-kit/constants";
-import { SortDirection } from "@/ui-kit/enums";
+import { PAGE_LIMIT } from "@/core/constants";
+import { SortDirection } from "@/core/enums";
+import type { BreakpointsType } from "@/core/constants";
+import type { ISortInfo } from "@/core/types";
 
 export type ItemType = {
   id?: string | number;
@@ -142,6 +171,7 @@ const props = withDefaults(
     description?: string;
     pageLimit?: number | null;
     mobileBreakpoint?: "none" | BreakpointsType;
+    skeletonRows?: number;
   }>(),
   {
     columns: () => [],
@@ -150,11 +180,21 @@ const props = withDefaults(
     page: 0,
     pageLimit: PAGE_LIMIT,
     mobileBreakpoint: "md",
+    skeletonRows: 5,
   },
 );
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = computed(() => props.mobileBreakpoint !== "none" && breakpoints.smaller(props.mobileBreakpoint).value);
+const isMobile = computed(() => {
+  if (props.mobileBreakpoint === "none") {
+    return false;
+  }
+  if (props.mobileBreakpoint === "xs") {
+    return true;
+  }
+  const breakpoint: "sm" | "md" | "lg" | "xl" | "2xl" = props.mobileBreakpoint;
+  return breakpoints.smaller(breakpoint).value;
+});
 
 function onPageUpdate(newPage: number) {
   emit("pageChanged", newPage);
@@ -191,6 +231,12 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
     @apply border-b border-neutral-200;
   }
 
+  &__row {
+    &--skeleton {
+      @apply even:bg-neutral-50;
+    }
+  }
+
   &__cell {
     &--head {
       @apply px-4 py-2 font-bold;
@@ -198,6 +244,10 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
 
     &--sortable {
       @apply cursor-pointer;
+    }
+
+    &--skeleton {
+      @apply px-4 py-3;
     }
 
     &--align {
@@ -213,6 +263,10 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
         @apply text-end;
       }
     }
+  }
+
+  &__skeleton-item {
+    @apply h-6 animate-pulse bg-neutral-200;
   }
 
   &__sort-button {
@@ -233,6 +287,22 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
 
   &__page-limit-message {
     @apply mb-3 text-center;
+  }
+
+  &__mobile-skeleton-card {
+    @apply grid grid-cols-2 gap-4 border-b border-neutral-200 p-6;
+  }
+
+  &__mobile-skeleton-block {
+    @apply flex flex-col gap-1;
+  }
+
+  &__mobile-skeleton-label {
+    @apply h-3.5 w-20 animate-pulse bg-neutral-200;
+  }
+
+  &__mobile-skeleton-item {
+    @apply h-5 animate-pulse bg-neutral-200;
   }
 }
 </style>

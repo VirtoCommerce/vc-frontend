@@ -8,7 +8,7 @@
       <div v-if="!balanceLoading">
         {{ $t("loyalty.points-history.current-balance", { currentBalance: currentBalance }) }}
       </div>
-  </div>
+    </div>
 
     <VcWidget size="lg">
       <template #default-container>
@@ -21,10 +21,13 @@
           :page="page"
           :hide-default-footer="false"
           mobile-breakpoint="lg"
+          :skeleton-rows="itemsPerPage"
           @page-changed="changePage"
         >
           <template #mobile-item="itemData">
-            <div class="grid w-full cursor-pointer appearance-none grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left">
+            <div
+              class="grid w-full cursor-pointer appearance-none grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
+            >
               <div class="flex flex-col">
                 <span class="text-sm text-neutral-400">
                   {{ $t("loyalty.points-history.operation") }}
@@ -58,48 +61,11 @@
                   {{ itemData.item?.amount }}
                 </span>
               </div>
-
-            </div>
-          </template>
-        
-          <template #mobile-skeleton>
-            <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("loyalty.points-history.operation") }}
-                </span>
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("loyalty.points-history.operation-type") }}
-                </span>
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("loyalty.points-history.date") }}
-                </span>
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("loyalty.points-history.amount") }}
-                </span>
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
             </div>
           </template>
 
           <template #desktop-body>
-            <tr
-              v-for="log in historyLogs"
-              :key="log.id"
-              class="cursor-default even:bg-neutral-50 hover:bg-neutral-200"
-            >
+            <tr v-for="log in historyLogs" :key="log.id" class="cursor-default even:bg-neutral-50 hover:bg-neutral-200">
               <td class="overflow-hidden text-ellipsis p-5">
                 {{ getOperation(log) }}
               </td>
@@ -118,49 +84,33 @@
             </tr>
           </template>
 
-          <template #desktop-skeleton>
-            <tr v-for="i in itemsPerPage" :key="i" class="even:bg-neutral-50">
-              <td class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-
-              <td class="w-4/12 p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-
-              <td class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-
-              <td class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-            </tr>
-          </template>
-
           <template #page-limit-message>
             {{ $t("ui_kit.reach_limit.page_limit_filters") }}
           </template>
         </VcTable>
-    </template>
+      </template>
     </VcWidget>
-</div>
+  </div>
 </template>
 
 <script setup lang="ts">
-
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useLoyaltyBalance } from "../composables/useLoyaltyBalance";
 import { useLoyaltyPointsHistory } from "../composables/useLoyaltyPointsHistory";
-import { CUSTOMER_ORDER_OBJECT_TYPE, REGISTRATION_OBJECT_TYPE, REDEEMED_OPERATION, EARNED_OPERATION } from "../constants";
+import {
+  CUSTOMER_ORDER_OBJECT_TYPE,
+  REGISTRATION_OBJECT_TYPE,
+  REDEEMED_OPERATION,
+  EARNED_OPERATION,
+} from "../constants";
 import type { LoyaltyOperationLog } from "../api/graphql/types";
 
 const { t } = useI18n();
 
 const columns = computed<ITableColumn[]>(() => [
   { id: "operation", title: t("loyalty.points-history.operation"), sortable: false },
-  { id: "operationType", title: t("loyalty.points-history.operation-type"), sortable: false  },
+  { id: "operationType", title: t("loyalty.points-history.operation-type"), sortable: false },
   { id: "createdDate", title: t("loyalty.points-history.date"), sortable: false, classes: "!px-3" },
   { id: "amount", title: t("loyalty.points-history.amount"), sortable: false, align: "right" },
 ]);
@@ -175,11 +125,7 @@ const {
   page,
 } = useLoyaltyPointsHistory();
 
-const {
-  fetchLoyaltyBalance,
-  loading: balanceLoading,
-  currentBalance,
-} = useLoyaltyBalance();
+const { fetchLoyaltyBalance, loading: balanceLoading, currentBalance } = useLoyaltyBalance();
 
 async function changePage(newPage: number) {
   page.value = newPage;
@@ -204,14 +150,14 @@ function getOperationType(log: LoyaltyOperationLog) {
     return t("loyalty.points-history.redeemed");
   }
 
-  if (log.operationType === EARNED_OPERATION ) {
+  if (log.operationType === EARNED_OPERATION) {
     return t("loyalty.points-history.earned");
   }
-  
+
   return log.operationType;
 }
 
 onMounted(async () => {
-    await Promise.all([ fetchHistory(), fetchLoyaltyBalance() ]);
+  await Promise.all([fetchHistory(), fetchLoyaltyBalance()]);
 });
 </script>

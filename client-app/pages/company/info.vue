@@ -108,6 +108,7 @@
             @click="openAddOrUpdateCompanyAddressModal()"
           >
             <span class="sm:hidden">{{ $t("pages.company.info.buttons.add_new_address_mobile") }}</span>
+
             <span class="hidden sm:inline">{{ $t("pages.company.info.buttons.add_new_address") }}</span>
           </VcButton>
         </div>
@@ -134,6 +135,7 @@
             :pages="pages"
             :sort="sort"
             mobile-breakpoint="lg"
+            :skeleton-rows="itemsPerPage"
             @header-click="applySorting"
             @page-changed="onPageChange"
           >
@@ -144,11 +146,13 @@
                     <div class="mb-1 flex gap-1 empty:hidden">
                       <VcBadge v-if="item.isDefault" color="info" rounded size="sm" variant="outline-dark">
                         <VcIcon name="apply" />
+
                         <span>{{ $t("pages.company.info.labels.default") }}</span>
                       </VcBadge>
 
                       <VcBadge v-if="item.isFavorite" rounded size="sm" variant="outline-dark">
                         <VcIcon name="whishlist" />
+
                         <span>{{ $t("pages.company.info.labels.favorite") }}</span>
                       </VcBadge>
                     </div>
@@ -159,7 +163,9 @@
 
                     <div class="text-sm font-bold text-neutral-950">
                       <span>{{ item.line1 }}</span>
+
                       <template v-if="item.city">, {{ item.city }}</template>
+
                       <template v-if="item.regionName">, {{ item.regionName }}</template>
                     </div>
                   </div>
@@ -208,42 +214,6 @@
               </div>
             </template>
 
-            <template #mobile-skeleton>
-              <div
-                v-for="i in paginatedAddresses.length"
-                :key="i"
-                class="relative mb-3 flex items-start rounded-[--vc-radius] border px-3.5 py-4 last:mb-0"
-              >
-                <div class="grow space-y-2.5 pe-2">
-                  <div>
-                    <div class="mb-0.5 flex items-center gap-1 text-xs text-neutral">
-                      {{ $t("pages.company.info.labels.address") }}
-                    </div>
-
-                    <div class="h-4.5 animate-pulse bg-neutral-200"></div>
-                  </div>
-
-                  <div class="flex">
-                    <div class="w-1/2 pe-2">
-                      <div class="mb-0.5 text-xs text-neutral">
-                        {{ $t("pages.company.info.labels.zip") }}
-                      </div>
-
-                      <div class="h-4.5 animate-pulse bg-neutral-200"></div>
-                    </div>
-
-                    <div class="w-1/2 ps-2">
-                      <div class="mb-0.5 text-xs text-neutral">
-                        {{ $t("pages.company.info.labels.country") }}
-                      </div>
-
-                      <div class="h-4.5 animate-pulse bg-neutral-200"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-
             <template #desktop-body>
               <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-neutral-50">
                 <td class="px-4 py-3 text-center">
@@ -275,7 +245,9 @@
 
                 <td class="px-5 py-3">
                   <span>{{ address.line1 }}</span>
+
                   <template v-if="address.city">, {{ address.city }}</template>
+
                   <template v-if="address.regionName">, {{ address.regionName }}</template>
                 </td>
 
@@ -306,14 +278,6 @@
                     @edit="openAddOrUpdateCompanyAddressModal(address)"
                     @toggle-favorite="toggleFavoriteAddress(address.isFavorite, address.id)"
                   />
-                </td>
-              </tr>
-            </template>
-
-            <template #desktop-skeleton>
-              <tr v-for="i in paginatedAddresses.length" :key="i" class="even:bg-neutral-50">
-                <td v-for="column in columns.length" :key="column" class="px-5 py-4">
-                  <div class="h-4.5 animate-pulse bg-neutral-200"></div>
                 </td>
               </tr>
             </template>

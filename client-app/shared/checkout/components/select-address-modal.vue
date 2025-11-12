@@ -90,6 +90,7 @@
                   color="success"
                 >
                   <VcIcon name="check" />
+
                   <span>{{ $t("common.labels.active_address") }}</span>
                 </VcBadge>
               </div>
