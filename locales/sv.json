@@ -565,6 +565,12 @@
           "remove": "Ta bort från jämförelse"
         }
       },
+      "notifications": {
+        "limit_reached": "Endast {productsLimit} produkter kan jämföras",
+        "added_html": "Produkten <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> har lagts till i jämförelselistan <span class=\"hidden lg:inline\">(antal kvar - {itemsLeft})</span>",
+        "removed_html": "Produkten <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> har tagits bort från jämförelselistan",
+        "compare_button": "Jämför"
+      },
       "clear_list_modal": {
         "title": "Bekräfta rensning",
         "message": "Bekräftar du att alla produkter ska tas bort från jämförelselistan?"
@@ -1166,7 +1172,9 @@
           "get_directions": "Få vägbeskrivning",
           "point_info": "Platsinfo",
           "pickup_address": "Upphämtningsadress",
-          "cart_pickup_points_not_found": "Det finns inga tillgängliga upphämtningsställen för dessa produkter. Välj en annan leveransmetod",
+          "cart_pickup_points_not_found": "Det finns inga tillgängliga upphämtningsställen för dessa produkter. Välj en annan leveransmetod.",
+          "cart_pickup_points_not_found_by_filter": "Hittade inga upphämtningsställen.",
+          "cart_pickup_points_reset_search": "Återställ sökning",
           "availability": "Tillgänglighet"
         }
       },
