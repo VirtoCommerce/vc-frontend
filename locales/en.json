@@ -704,7 +704,8 @@
         "clear_selection": "Clear selection",
         "cancel_button": "Cancel",
         "ok_button": "Ok",
-        "no_results": "No results found",
+        "no_results": "There are no results found",
+        "no_branches": "There are no branches found",
         "reset_search_button": "Reset search"
       },
       "shipment_options": {
