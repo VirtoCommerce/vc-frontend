@@ -705,6 +705,7 @@
         "cancel_button": "Anuluj",
         "ok_button": "OK",
         "no_results": "Nie znaleziono wyników",
+        "no_branches": "Nie znaleziono oddziałów",
         "reset_search_button": "Resetuj wyszukiwanie"
       },
       "shipment_options": {

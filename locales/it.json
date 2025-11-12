@@ -705,6 +705,7 @@
         "cancel_button": "Annulla",
         "ok_button": "Ok",
         "no_results": "Nessun risultato trovato",
+        "no_branches": "Nessuna filiale trovata",
         "reset_search_button": "Reimposta ricerca"
       },
       "shipment_options": {

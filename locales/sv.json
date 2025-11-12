@@ -705,6 +705,7 @@
         "cancel_button": "Avbryt",
         "ok_button": "OK",
         "no_results": "Inga resultat hittades",
+        "no_branches": "Inga filialer hittades",
         "reset_search_button": "Återställ sökning"
       },
       "shipment_options": {

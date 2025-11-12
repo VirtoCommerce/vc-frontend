@@ -705,6 +705,7 @@
         "cancel_button": "Peruuta",
         "ok_button": "OK",
         "no_results": "Tuloksia ei löytynyt",
+        "no_branches": "Toimipisteitä ei löytynyt",
         "reset_search_button": "Nollaa haku"
       },
       "shipment_options": {
