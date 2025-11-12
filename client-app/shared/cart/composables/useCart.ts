@@ -1,7 +1,7 @@
 import { ApolloError, gql } from "@apollo/client/core";
 import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import { createSharedComposable, computedEager } from "@vueuse/core";
-import { sumBy, difference, keyBy, merge, intersection } from "lodash";
+import { difference, keyBy, merge, intersection } from "lodash";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
@@ -12,6 +12,7 @@ import {
   useValidateCouponQuery,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
+import { handleOptimisticResponseUpdateCartQuantity } from "@/core/api/graphql/config/links/utils";
 import {
   AddBulkItemsCartDocument,
   AddCouponDocument,
@@ -34,6 +35,8 @@ import {
   UnselectCartItemsDocument,
   GetShortCartDocument,
   CreateCartFromWishlistDocument,
+  UpdateShortCartItemQuantityDocument,
+  ShortCartFragmentDoc,
 } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
@@ -45,6 +48,7 @@ import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import ClearCartModal from "../components/clear-cart-modal.vue";
+import { EXTENDED_DEBOUNCE_IN_MS } from "../constants";
 import { CartValidationErrors } from "../enums";
 import type {
   InputNewBulkItemType,
@@ -219,14 +223,47 @@ export function useShortCart() {
     return changeItemQuantityFunction(lineItemId, quantity, changeItemQuantityBatchedMutation);
   }
 
-  function getItemsTotal(productIds: string[]): number {
-    if (!cart.value?.items.length) {
-      return 0;
-    }
+  const { mutate: updateItemCartQuantityMutation, loading: updateItemCartQuantityLoading } = useMutation(
+    UpdateShortCartItemQuantityDocument,
+    {
+      update: (cache, { data }) => {
+        const currentCart = cart.value
+          ? cache.readFragment<CartType>({
+              fragmentName: "shortCart",
+              fragment: ShortCartFragmentDoc,
+              id: cache.identify(cart.value),
+            })
+          : undefined;
 
-    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId));
+        if (data?.updateCartQuantity) {
+          const cartData = {
+            ...data.updateCartQuantity,
+            shipments: currentCart?.shipments ?? [],
+            validationErrors: currentCart?.validationErrors ?? [],
+          };
 
-    return sumBy(filteredItems, (x) => x.extendedPrice.amount);
+          cache.writeQuery({
+            query: GetShortCartDocument,
+            data: { cart: cartData },
+            variables: commonVariables,
+          });
+        }
+      },
+      optimisticResponse: (vars, { IGNORE }) => {
+        const itemsInput = vars.command?.items;
+
+        if (!Array.isArray(itemsInput) || itemsInput.length === 0 || !cart.value) {
+          return IGNORE;
+        }
+
+        return handleOptimisticResponseUpdateCartQuantity(cart.value as CartType, itemsInput);
+      },
+    },
+  );
+  function updateItemCartQuantity(productId: string, quantity: number) {
+    return updateItemCartQuantityMutation({
+      command: { items: [{ productId, quantity }], ...commonVariables, cartId: cart.value?.id },
+    });
   }
 
   const { mutate: _createCartFromWishlist, loading: createCartFromWishlistLoading } =
@@ -243,19 +280,20 @@ export function useShortCart() {
     addBulkItemsToCart,
     changeItemQuantity,
     changeItemQuantityBatched,
-    getItemsTotal,
     createCartFromWishlist,
     loading,
     addToCartLoading,
     changeItemQuantityBatchedOverflowed,
     createCartFromWishlistLoading,
+    updateItemCartQuantity,
     changing: computed(
       () =>
         addToCartLoading.value ||
         addItemsToCartLoading.value ||
         addBulkItemsToCartLoading.value ||
         changeItemQuantityLoading.value ||
-        changeItemQuantityBatchedLoading.value,
+        changeItemQuantityBatchedLoading.value ||
+        updateItemCartQuantityLoading.value,
     ),
   };
 }
@@ -437,6 +475,7 @@ export function _useFullCart(cartId?: string) {
     loading: changeItemsQuantityLoading,
   } = useMutationBatcher(_changeItemsQuantity, {
     mergeStrategy: getMergeStrategyUniqueBy("lineItemId"),
+    debounce: EXTENDED_DEBOUNCE_IN_MS,
   });
   async function changeItemQuantityBatched(lineItemId: string, quantity: number): Promise<void> {
     try {

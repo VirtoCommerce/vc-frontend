@@ -1,7 +1,9 @@
 query NewsArticles(
   $storeId: String!
   $languageCode: String!
-  $userId: String
+  $keyword: String
+  $tags: [String!]
+  $authorId: String
   $first: Int
   $after: String
   $sort: String
@@ -9,7 +11,9 @@ query NewsArticles(
   newsArticles(
     storeId: $storeId
     languageCode: $languageCode
-    userId: $userId
+    keyword: $keyword
+    tags: $tags
+    authorId: $authorId
     first: $first
     after: $after
     sort: $sort
@@ -19,8 +23,16 @@ query NewsArticles(
       id
       title
       publishDate
-      content
       contentPreview
+      content
+      listTitle
+      listPreview
+      tags
+      author {
+        id
+        name
+        iconUrl
+      }
       seoInfo {
         semanticUrl
       }

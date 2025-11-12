@@ -96,6 +96,12 @@ const facetsParam = useRouteQueryParam<string>(QueryParamName.Facets);
 const sortParam = useRouteQueryParam<string>(QueryParamName.Sort);
 
 const locationQuery = computed(() => {
+  const hasToKeepQuery = !!searchParam.value;
+
+  if (!hasToKeepQuery) {
+    return {};
+  }
+
   return pickBy(
     {
       [QueryParamName.SearchPhrase]: toValue(searchParam),

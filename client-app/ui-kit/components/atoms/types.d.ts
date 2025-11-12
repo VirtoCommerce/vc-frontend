@@ -13,7 +13,6 @@ declare module "vue" {
     VcCheckbox: typeof Components.VcCheckbox;
     VcCheckboxGroup: typeof Components.VcCheckboxGroup;
     VcContainer: typeof Components.VcContainer;
-    VcDateSelector: typeof Components.VcDateSelector;
     VcDialog: typeof Components.VcDialog;
     VcEmptyView: typeof Components.VcEmptyView;
     VcExpansionPanels: typeof Components.VcExpansionPanels;
@@ -40,6 +39,7 @@ declare module "vue" {
     VcRadioButton: typeof Components.VcRadioButton;
     VcScrollTopButton: typeof Components.VcScrollTopButton;
     VcSwitch: typeof Components.VcSwitch;
+    /** @deprecated VcTabs is deprecated, use VcTabSwitch instead. */
     VcTabs: typeof Components.VcTabs;
     VcTooltip: typeof Components.VcTooltip;
     VcTotalDisplay: typeof Components.VcTotalDisplay;

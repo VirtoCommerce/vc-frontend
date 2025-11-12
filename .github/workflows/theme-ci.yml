@@ -156,35 +156,34 @@ jobs:
           repoOrg: ${{ github.repository_owner }}
           downloadComment: 'Artifact URL:'
 
-      - name: Create Release
-        if: ${{ github.ref == 'refs/heads/master' }}
+      - name: Release
+        uses: softprops/action-gh-release@v2
         id: create_release
-        uses: actions/create-release@v1
+        if: ${{ github.ref == 'refs/heads/master' }}
         with:
-          tag_name: ${{ steps.image.outputs.prefix }}
-          release_name: ${{ steps.image.outputs.prefix }}
+          make_latest: true
+          name: ${{ steps.image.outputs.prefix }}
           draft: false
           prerelease: false
-          body: ${{ steps.changelog.outputs.changelog }}
-
-      - name: Upload Release Asset
-        if: ${{ github.ref == 'refs/heads/master' }}
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/${{ steps.blobRelease.outputs.blobId }}
-          asset_name: ${{ steps.blobRelease.outputs.blobId }}
-          asset_content_type: application/zip
+          body: "[Compatible environment configuration](https://github.com/VirtoCommerce/vc-deploy-dev/releases/tag/v${{ steps.image.outputs.prefix }}_vc-frontend)"
+          tag_name: ${{ steps.image.outputs.prefix }}
+          files: artifacts/${{ steps.blobRelease.outputs.blobId }}
+          target_commitish: ${{ github.ref_name }}
+          generate_release_notes: true
 
       - name: Set artifactUrl value
         id: artifactUrl
         run: |
           if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
-            echo "download_url=${{ steps.upload-release-asset.outputs.browser_download_url }}" >> $GITHUB_OUTPUT
+            download_url=$(echo '${{ steps.create_release.outputs.assets }}' | jq -r '.[0].browser_download_url // empty')
+            if [ -n "$download_url" ]; then
+              echo "download_url=$download_url" >> $GITHUB_OUTPUT
+            else
+              echo "download_url=" >> $GITHUB_OUTPUT
+            fi
           else
             echo "download_url=${{ steps.blobRelease.outputs.packageUrl }}" >> $GITHUB_OUTPUT
-          fi;
+          fi
 
       - name: Parse Jira Keys from All Commits
         uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
@@ -231,12 +230,28 @@ jobs:
           client-id: '${{ secrets.JIRA_USER }}'
           client-secret: '${{ secrets.JIRA_TOKEN }}'
 
+
+  ui-e2e-auto-tests:
+    needs: 'ci'
+    if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
+        (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request') }}
+    uses: VirtoCommerce/.github/.github/workflows/e2e-autotests.yml@v3.800.18
+    with:
+      installModules: 'false'
+      installCustomModule: 'true'
+      runTests: 'true'
+      vctestingRepoBranch: 'dev'
+      frontendZipUrl: ${{ needs.ci.outputs.artifactUrl }}
+    secrets:
+      envPAT: ${{ secrets.REPO_TOKEN }}
+      testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
+
   ui-auto-tests:
     needs: 'ci'
     if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
       (github.base_ref == 'dev') && (github.event_name == 'pull_request') || 
       (github.event_name == 'workflow_dispatch') }}
-    uses: VirtoCommerce/.github/.github/workflows/ui-autotests.yml@v3.800.13 
+    uses: VirtoCommerce/.github/.github/workflows/ui-autotests.yml@v3.800.17
     with:
       installModules: 'true'
       installCustomModule: 'false'
@@ -244,6 +259,7 @@ jobs:
       frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
+      testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
 
   deploy-cloud:
     if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}

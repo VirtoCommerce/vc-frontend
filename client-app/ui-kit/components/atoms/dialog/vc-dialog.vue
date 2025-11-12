@@ -1,7 +1,9 @@
 <template>
   <div
+    :id="componentId"
     :class="[
       'vc-dialog',
+      `vc-dialog--size--${props.size}`,
       {
         'vc-dialog--dividers': dividers,
       },
@@ -12,16 +14,30 @@
 </template>
 
 <script setup lang="ts">
+import { provide, toRef } from "vue";
+import { useComponentId, useFocusManagement } from "@/ui-kit/composables";
+import { vcDialogKey } from "./vc-dialog-context";
+
 interface IProps {
   dividers?: boolean;
   width?: string;
   maxHeight?: string;
+  size?: VcDialogSizeType;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  width: "",
-  maxHeight: "",
+  size: "md",
 });
+
+const componentId = useComponentId("dialog");
+
+useFocusManagement({
+  container: `#${componentId}`,
+  autoFocus: true,
+});
+
+const sizeRef = toRef(props, "size");
+provide(vcDialogKey, { size: sizeRef });
 </script>
 
 <style lang="scss">

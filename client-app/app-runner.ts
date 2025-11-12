@@ -5,7 +5,6 @@ import { apolloClient, getStore } from "@/core/api/graphql";
 import { useCurrency, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import {
@@ -16,11 +15,12 @@ import {
   extensionPointsPlugin,
   permissionsPlugin,
 } from "@/core/plugins";
-import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
+import { extractHostname, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
+import { init as initLoyalty } from "@/modules/loyalty";
 import { init as initNews } from "@/modules/news";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
@@ -66,28 +66,21 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { fetchUser, user, twoLetterContactLocale, isAuthenticated } = useUser();
+  const { fetchUser, user, isAuthenticated } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
-    detectLocale,
     currentLanguage,
-    supportedLocales,
+    currentMaybeShortLocale,
+    defaultStoreCulture,
     initLocale,
     fetchLocaleMessages,
-    getLocaleFromUrl,
-    pinedLocale,
-    mergeLocales,
+    mergeLocalesMessages,
+    resolveLocale,
   } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
-  const {
-    MODULE_KEYS: WHITE_LABELING_MODULE_KEYS,
-    themePresetName,
-    fetchWhiteLabelingSettings,
-    applyWhiteLabelingSettings,
-    fetchAndApplyFooterLinks,
-  } = useWhiteLabeling();
+  const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
   const fallback = {
     locale: FALLBACK_LOCALE,
@@ -101,7 +94,7 @@ export default async () => {
     IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname,
   ) as Promise<StoreResponseType>;
 
-  const [store] = await Promise.all([storePromise, fetchUser(), fallback.setMessage(), fetchWhiteLabelingSettings()]);
+  const [store] = await Promise.all([storePromise, fetchUser(), fallback.setMessage()]);
 
   if (!store) {
     alert("Related store not found. Please contact your site administrator.");
@@ -110,22 +103,18 @@ export default async () => {
 
   setThemeContext(store);
 
-  // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
-  const twoLetterAppLocale = detectLocale([
-    pinedLocale.value,
-    twoLetterContactLocale.value,
-    getLocaleFromUrl(),
-    themeContext.value.defaultLanguage.twoLetterLanguageName,
-  ]);
-
   /**
    * Creating plugin instances
    */
   const head = createHead();
-  const i18n = createI18n(twoLetterAppLocale, currentCurrency.value.code, fallback);
-  const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
-  await initLocale(i18n, twoLetterAppLocale);
+  const currentCultureName = resolveLocale();
+  const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
+
+  const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback);
+  await initLocale(i18n, currentCultureName);
+
+  const router = createRouter({ base: isDefaultLocaleInUse ? "" : currentMaybeShortLocale.value });
 
   /**
    * Setting global variables
@@ -146,13 +135,7 @@ export default async () => {
    * Other settings
    */
 
-  const { isEnabled } = useModuleSettings(WHITE_LABELING_MODULE_KEYS.ID);
-
-  if (isEnabled(WHITE_LABELING_MODULE_KEYS.ENABLE_STATE)) {
-    void fetchAndApplyFooterLinks(currentLanguage.value.cultureName);
-    applyWhiteLabelingSettings();
-  }
-
+  await fetchWhiteLabelingSettings();
   addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
 
   if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
@@ -167,6 +150,7 @@ export default async () => {
   void initializeGoogleAnalytics();
   void initializeHotjar();
   void initNews(router, i18n);
+  void initLoyalty(router, i18n);
 
   // Plugins
   app.use(head);
@@ -178,9 +162,9 @@ export default async () => {
   app.use(configPlugin, themeContext.value);
 
   const UIKitMessages = await getUIKitLocales(FALLBACK_LOCALE, currentLanguage.value?.twoLetterLanguageName);
-  mergeLocales(i18n, currentLanguage.value?.twoLetterLanguageName, UIKitMessages.messages);
+  mergeLocalesMessages(i18n, currentLanguage.value?.twoLetterLanguageName, UIKitMessages.messages);
   if (currentLanguage.value?.twoLetterLanguageName !== FALLBACK_LOCALE) {
-    mergeLocales(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
+    mergeLocalesMessages(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
   }
   app.use(uiKit);
 

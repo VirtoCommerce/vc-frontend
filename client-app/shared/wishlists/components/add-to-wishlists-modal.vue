@@ -1,6 +1,6 @@
 <template>
   <VcModal :title="$t('shared.wishlists.add_to_wishlists_modal.title')" max-width="50rem" is-mobile-fullscreen dividers>
-    <div class="rounded border">
+    <div class="rounded border" id="add-to-wishlists-modal">
       <!-- Lists -->
       <template v-if="!loadingLists">
         <template v-if="listsWithProduct.length">
@@ -26,7 +26,11 @@
                 </span>
               </VcCheckbox>
 
-              <WishlistStatus v-if="isCorporateMember && list.scope" class="shrink-0" :scope="list.scope" />
+              <WishlistStatus
+                v-if="isCorporateMember && list.sharingSetting"
+                class="shrink-0"
+                :sharing-setting="list.sharingSetting"
+              />
             </li>
           </ul>
         </template>
@@ -84,7 +88,11 @@
                 </span>
               </VcCheckbox>
 
-              <WishlistStatus v-if="isCorporateMember && list.scope" class="shrink-0" :scope="list.scope" />
+              <WishlistStatus
+                v-if="isCorporateMember && list.sharingSetting"
+                class="shrink-0"
+                :sharing-setting="list.sharingSetting"
+              />
             </li>
           </transition-group>
         </VcCheckboxGroup>
@@ -132,6 +140,7 @@ import { asyncForEach } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
+import { useFocusManagement } from "@/ui-kit/composables";
 import { useWishlists } from "../composables";
 import type { Product as ProductType } from "@/core/api/graphql/types";
 import type { IWishlistInput } from "@/shared/wishlists/types";
@@ -150,6 +159,10 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const product = toRef(props, "product");
+
+const { focusFirst } = useFocusManagement({
+  container: "#add-to-wishlists-modal",
+});
 
 const { d, t } = useI18n();
 const { closeModal } = useModal();
@@ -291,6 +304,7 @@ async function save() {
 
 onMounted(async () => {
   await fetchWishlists();
+  focusFirst();
 });
 </script>
 

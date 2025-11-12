@@ -4,6 +4,7 @@ import isEqual from "lodash/isEqual";
 import { computed, readonly, ref } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import {
   FFC_LOCAL_STORAGE,
   IN_STOCK_PRODUCTS_LOCAL_STORAGE,
@@ -13,6 +14,7 @@ import {
   EXCLUDED_FILTER_NAMES,
   zeroPriceFilter,
 } from "@/core/constants";
+import { INTENT_SEARCH_MODULE_ID, INTENT_SEARCH_ENABLED_KEY } from "@/core/constants/modules";
 import { QueryParamName, SortDirection } from "@/core/enums";
 import {
   generateFilterExpressionFromFilters,
@@ -30,7 +32,7 @@ import type {
   ProductsSearchParamsType,
 } from "../types";
 import type { Product, RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
-import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import type { FacetItemType } from "@/core/types";
 import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
@@ -59,6 +61,8 @@ export function useProducts(
     catalogPaginationMode = CATALOG_PAGINATION_MODES.infiniteScroll,
   } = options;
   const { openModal } = useModal();
+  const { isEnabled } = useModuleSettings(INTENT_SEARCH_MODULE_ID);
+  const isIntentSearchEnabled = isEnabled(INTENT_SEARCH_ENABLED_KEY);
 
   const { isPurchasedBeforeEnabled } = usePurchasedBefore();
 
@@ -178,7 +182,7 @@ export function useProducts(
     isFiltersSidebarVisible.value = false;
   }
 
-  function applyFilters(newFilters: ProductsFiltersType): void {
+  async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
     // Generate filter expression from filters only
     const filterExpression: string = generateFilterExpressionFromFilters(newFilters.filters);
 
@@ -198,10 +202,12 @@ export function useProducts(
       localStoragePurchasedBefore.value = newFilters.purchasedBefore;
     }
 
+    await preserveUserQuery();
+
     void resetCurrentPage();
   }
 
-  function applyFiltersOnly(newFilters: SearchProductFilterResult[]): void {
+  async function applyFiltersOnly(newFilters: SearchProductFilterResult[]): Promise<void> {
     // Update only the filters part of productsFilters
     productsFilters.value = {
       ...productsFilters.value,
@@ -214,6 +220,8 @@ export function useProducts(
     if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
       facetsQueryParam.value = filterExpression;
     }
+
+    await preserveUserQuery();
 
     void resetCurrentPage();
   }
@@ -235,43 +243,36 @@ export function useProducts(
     void resetCurrentPage();
   }
 
-  async function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {
-    const facet = productsFilters.value.facets.find((item) => item.paramName === payload.paramName);
-    const facetValue = facet?.values.find((item) => item.value === payload.value);
-
-    if (facetValue) {
-      facetValue.selected = false;
-
-      // Generate filter expression from filters only
-      const filterExpression: string = generateFilterExpressionFromFilters(productsFilters.value.filters);
-
-      facetsQueryParam.value = options?.useQueryParams ? filterExpression : "";
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      preserveUserQuery();
-      // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
-
-      void resetCurrentPage();
-    }
-  }
-
   async function resetFacetFilters() {
-    facetsQueryParam.value = "";
     await new Promise((resolve) => setTimeout(resolve, 0));
-    preserveUserQuery();
     // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
+
+    facetsQueryParam.value = "";
+    await preserveUserQuery();
 
     productsFilters.value.filters = [];
 
     void resetCurrentPage();
   }
 
-  function preserveUserQuery() {
+  async function preserveUserQuery() {
+    if (!isIntentSearchEnabled) {
+      preserveUserQueryQueryParam.value = "";
+      return;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
     preserveUserQueryQueryParam.value = "yes";
   }
 
   /** @deprecated use `searchQueryParam` instead */
   function resetFilterKeyword(): void {
     keywordQueryParam.value = "";
+  }
+
+  function resetSearchKeyword(): void {
+    searchQueryParam.value = "";
   }
 
   function updateProductsFilters(newFilters: ProductsFiltersType): void {
@@ -317,6 +318,10 @@ export function useProducts(
     return !!filteredFacets.length && !!filteredFilters.length;
   }
 
+  function hasSelectedFilters(): boolean {
+    return !!productsFilters.value.filters.length;
+  }
+
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
     if (themeContext.value?.settings?.product_filters_sorting) {
       const ascDirection = themeContext.value?.settings?.product_filters_sorting_direction === SortDirection.Ascending;
@@ -331,7 +336,7 @@ export function useProducts(
     );
   }
 
-  async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>) {
+  async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>, withZeroPriceOverride?: boolean) {
     const searchParams = {
       ..._searchParams,
       page:
@@ -349,6 +354,8 @@ export function useProducts(
       updateCurrentPage(Number(searchParams.page));
     }
 
+    const actualWithZeroPrice = withZeroPriceOverride ?? withZeroPrice;
+
     try {
       const {
         items = [],
@@ -356,7 +363,7 @@ export function useProducts(
         range_facets = [],
         totalCount = 0,
         filters = [],
-      } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
+      } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice: actualWithZeroPrice });
 
       products.value = items;
       totalProductsCount.value = totalCount;
@@ -503,6 +510,7 @@ export function useProducts(
     fetchingMoreProducts: readonly(fetchingMoreProducts),
     fetchingProducts: readonly(fetchingProducts),
     hasSelectedFacets: computed(() => hasSelectedFacets()),
+    hasSelectedFilters: computed(() => hasSelectedFilters()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
     /** @deprecated use `searchQueryParam` instead */
@@ -532,10 +540,10 @@ export function useProducts(
     fetchProducts,
     hideFiltersSidebar,
     openBranchesModal,
-    removeFacetFilter,
     resetFacetFilters,
     /** @deprecated use `searchQueryParam` instead */
     resetFilterKeyword,
+    resetSearchKeyword,
     showFiltersSidebar,
     updateProductsFilters,
   };

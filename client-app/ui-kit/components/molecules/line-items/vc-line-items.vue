@@ -33,7 +33,7 @@
           {{ $t("ui_kit.labels.price_per_item") }}
         </div>
 
-        <div v-if="$slots.default" class="vc-line-items__slot" :style="{ width: slotWidth }">
+        <div v-if="$slots.titles" class="vc-line-items__slot" :style="{ width: slotWidth }">
           <slot name="titles" />
         </div>
 

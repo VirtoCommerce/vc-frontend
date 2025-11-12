@@ -1,23 +1,12 @@
 import { VcAddToCart } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-const SIZES = ["xs", "sm", "md"];
-const TYPES = ["text", "password", "number"];
+const SIZES = ["sm", "md"];
 
-export default {
+const meta: Meta<typeof VcAddToCart> = {
   title: "Components/Organisms/VcAddToCart",
   component: VcAddToCart,
   argTypes: {
-    /**
-     * Docs:
-     *  https://storybook.js.org/docs/vue/essentials/controls#annotation
-     *  https://storybook.js.org/docs/vue/api/argtypes#manual-specification
-     */
-    type: {
-      control: "radio",
-      options: TYPES,
-      table: { type: { summary: TYPES.join(" | ") } },
-    },
     size: {
       control: "radio",
       options: SIZES,
@@ -28,31 +17,60 @@ export default {
         },
       },
     },
-    min: { table: { type: { summary: "string|number" } } },
-    max: { table: { type: { summary: "string|number" } } },
-    step: { table: { type: { summary: "string|number" } } },
-    minlength: { table: { type: { summary: "string|number" } } },
-    maxlength: { table: { type: { summary: "string|number" } } },
-    modelValue: { table: { type: { summary: "string|number" } } },
+    modelValue: { table: { type: { summary: "number" } } },
+    loading: { control: "boolean" },
+    disabled: { control: "boolean" },
+    readonly: { control: "boolean" },
+    hideButton: { control: "boolean" },
   },
   args: {
     readonly: false,
     disabled: false,
-    required: false,
-    noBorder: false,
-    center: false,
-    hidePasswordSwitcher: false,
-    error: false,
-    showEmptyDetails: false,
-    type: "text",
+    loading: false,
+    isActive: true,
+    hideButton: false,
     size: "md",
+    modelValue: 1,
   },
-} as Meta<typeof VcAddToCart>;
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcAddToCart v-bind="args" v-model="args.modelValue" />',
+  }),
+};
 
-const Template: StoryFn = (args) => ({
-  components: { VcAddToCart },
-  setup: () => ({ args }),
-  template: '<VcAddToCart v-bind="args" v-model="args.modelValue" />',
-});
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
-export const Basic = Template.bind({});
+export const Basic: StoryType = {};
+
+export const Loading: StoryType = {
+  args: {
+    loading: true,
+  },
+};
+
+export const Disabled: StoryType = {
+  args: {
+    disabled: true,
+  },
+};
+
+export const OutOfStock: StoryType = {
+  args: {
+    isInStock: false,
+    isAvailable: false,
+  },
+};
+
+export const WithError: StoryType = {
+  args: {
+    error: true,
+    message: "Error message",
+  },
+};
+
+export const HideButton: StoryType = {
+  args: {
+    hideButton: true,
+  },
+};

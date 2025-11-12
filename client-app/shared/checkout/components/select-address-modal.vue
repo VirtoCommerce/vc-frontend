@@ -1,5 +1,11 @@
 <template>
-  <VcModal :title="$t('shared.checkout.select_address_modal.title')" max-width="60rem" is-mobile-fullscreen dividers>
+  <VcModal
+    :title="$t('shared.checkout.select_address_modal.title')"
+    max-width="60rem"
+    is-mobile-fullscreen
+    dividers
+    test-id="select-address-modal"
+  >
     <VcAlert class="mb-4 lg:hidden" icon="check-circle" size="sm" variant="solid-light">
       {{ $t("shared.checkout.select_address_modal.message") }}
     </VcAlert>
@@ -33,6 +39,7 @@
             color="secondary"
             variant="outline"
             class="flex-none max-md:!hidden"
+            data-test-id="close-button"
             @click="close"
           >
             {{ $t("shared.checkout.select_address_modal.cancel_button") }}
@@ -42,6 +49,7 @@
             no-wrap
             :disabled="!selectedAddress"
             min-width="8rem"
+            data-test-id="confirm-button"
             @click="
               save();
               close();
@@ -57,11 +65,14 @@
       </div>
     </template>
 
+    <SelectAddressFilter v-if="showFilters" @applyFilter="applyFilter" />
+
     <div class="rounded border">
       <VcTable
         :columns="columns"
         :items="paginatedAddresses"
         :description="$t('shared.checkout.select_address_modal.meta.table_description')"
+        :loading="pickupLocationsLoading"
         @page-changed="onPageChange"
       >
         <template #mobile-item="{ item }">
@@ -82,13 +93,14 @@
                   color="success"
                 >
                   <VcIcon name="check" />
+
                   <span>{{ $t("common.labels.active_address") }}</span>
                 </VcBadge>
               </div>
 
               <div class="text-sm font-bold">
                 <span v-if="isCorporateAddresses">
-                  {{ getformattedAddress(item) }}
+                  {{ getFormattedAddress(item) }}
                 </span>
 
                 <span v-else>{{ item.firstName }} {{ item.lastName }}</span>
@@ -100,7 +112,7 @@
                 </span>
 
                 <span v-else>
-                  {{ getformattedAddress(item) }}
+                  {{ getFormattedAddress(item) }}
                 </span>
               </div>
 
@@ -119,6 +131,12 @@
                   {{ item.email }}
                 </span>
               </div>
+
+              <PickupAvailabilityInfo
+                v-if="showAvailability"
+                :availability-type="item.availabilityType"
+                :availability-note="item.availabilityNote"
+              />
             </div>
 
             <div class="w-10 flex-none text-center">
@@ -136,12 +154,20 @@
 
         <template #mobile-empty>
           <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
-            {{ $t("shared.checkout.select_address_modal.no_addresses_message") }}
+            <span>{{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}</span>
+
+            <VcButton
+              v-if="showFilters"
+              icon="reset"
+              @click="resetFilter"
+              :aria-label="$t('pages.account.order_details.bopis.cart_pickup_points_reset_search')"
+            />
           </div>
         </template>
 
         <template #desktop-item="{ item }">
           <tr
+            :data-test-id="`customer-address-${item.id}`"
             :class="[
               'group border-b last:border-none hover:bg-secondary-50',
               { 'cursor-pointer': item.id !== selectedAddress?.id },
@@ -158,7 +184,7 @@
                 />
 
                 <span v-if="isCorporateAddresses">
-                  {{ getformattedAddress(item) }}
+                  {{ getFormattedAddress(item) }}
                 </span>
 
                 <span v-else> {{ item.firstName }} {{ item.lastName }} </span>
@@ -171,7 +197,7 @@
               </span>
 
               <span v-else class="line-clamp-2">
-                {{ getformattedAddress(item) }}
+                {{ getFormattedAddress(item) }}
               </span>
             </td>
 
@@ -189,6 +215,13 @@
               </span>
             </td>
 
+            <td v-if="showAvailability" class="truncate px-4 py-3.5">
+              <PickupAvailabilityInfo
+                :availability-type="item.availabilityType"
+                :availability-note="item.availabilityNote"
+              />
+            </td>
+
             <td class="h-[3.75rem] py-2.5 text-center">
               <VcIcon v-if="item.id === selectedAddress?.id" class="fill-success" name="check-circle" />
 
@@ -201,11 +234,15 @@
 
         <template #desktop-empty>
           <tr>
-            <td colspan="4">
-              <div class="flex items-center p-5">
+            <td :colspan="showAvailability ? 5 : 4">
+              <div class="flex flex-col items-center p-5">
                 <span class="text-base">
-                  {{ $t("shared.checkout.select_address_modal.no_addresses_message") }}
+                  {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
                 </span>
+
+                <VcButton v-if="showFilters" class="mt-5" prepend-icon="reset" @click="resetFilter">
+                  {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
+                </VcButton>
               </div>
             </td>
           </tr>
@@ -221,19 +258,27 @@ import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
+import { useCartPickupLocations } from "@/shared/cart";
+import { SelectAddressFilter } from "@/shared/checkout";
+import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
+import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
 interface IProps {
   currentAddress?: AnyAddressType;
   addresses?: AnyAddressType[];
   isCorporateAddresses: boolean;
   allowAddNewAddress?: boolean;
-  omitFieldsOnCompare?: (keyof AnyAddressType)[];
+  showAvailability?: boolean;
+  emptyText?: string;
+  omitFieldsOnCompare?: (keyof MemberAddressType)[];
+  showFilters?: boolean;
 }
 
 interface IEmits {
   (event: "result", value: AnyAddressType): void;
   (event: "addNewAddress"): void;
+  (event: "filterChange"): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -241,12 +286,27 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   addresses: () => [],
   allowAddNewAddress: true,
+  showAvailability: false,
+  showFilters: false,
   omitFieldsOnCompare: () => [],
 });
 
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
+
+const { filterIsApplied, clearFilter, pickupLocationsLoading } = useCartPickupLocations();
+
+function applyFilter() {
+  filterIsApplied.value = true;
+  page.value = 1;
+  emit("filterChange");
+}
+
+function resetFilter() {
+  clearFilter();
+  applyFilter();
+}
 
 const selectedAddress = ref<AnyAddressType>();
 const page = ref(1);
@@ -274,11 +334,15 @@ const columns = computed<ITableColumn[]>(() => {
         { id: "id", title: t("common.labels.active_address"), align: "center" },
       ];
 
+  if (props.showAvailability) {
+    cols.splice(cols.length - 1, 0, { id: "availability", title: t("pages.account.order_details.bopis.availability") });
+  }
+
   return cols;
 });
 
-function getformattedAddress(address: AnyAddressType): string {
-  if (!props.isCorporateAddresses || !address) {
+function getFormattedAddress(address: AnyAddressType): string {
+  if (!address) {
     return "";
   }
 

@@ -71,7 +71,7 @@ export function _useUser() {
   const broadcast = useBroadcast();
   const { refresh } = useAuth();
   const { openModal, closeModal } = useModal();
-  const twoLetterContactLocale = computed(() => user.value?.contact?.defaultLanguage?.split("-")[0]);
+  const contactCultureName = computed(() => user.value?.contact?.defaultLanguage);
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
@@ -371,7 +371,9 @@ export function _useUser() {
       () => user.value?.contact?.organizations?.items && user.value?.contact?.organizations?.items?.length > 1,
     ),
     isOrganizationMaintainer: computed(
-      () => user.value?.roles?.some((role) => role.name === ORGANIZATION_MAINTAINER.name) ?? false,
+      () =>
+        user.value?.roles?.some((role) => role.name.toLowerCase() === ORGANIZATION_MAINTAINER.name.toLowerCase()) ??
+        false,
     ),
     organization,
     allOrganizations,
@@ -403,7 +405,7 @@ export function _useUser() {
         throw new Error("User change is not available.");
       },
     }),
-    twoLetterContactLocale,
+    contactCultureName,
   };
 }
 

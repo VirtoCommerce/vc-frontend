@@ -42,9 +42,10 @@
         :aria-label="ariaLabel ?? label"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
+        :tabindex="tabindex"
         :data-test-id="testIdInput"
         @keydown="keyDown($event)"
-        @click.prevent.stop="inputClick()"
+        @click.stop="inputClick"
         @blur="$emit('blur', $event)"
         @focus="$emit('focus', $event)"
       />
@@ -58,6 +59,8 @@
           variant="no-background"
           class="vc-input__clear"
           :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+          @keydown.enter.stop.prevent
+          @keyup.enter.stop.prevent="clear"
           @click.stop="clear"
         />
       </div>
@@ -85,7 +88,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends string | number | null">
-import { provide, computed, ref } from "vue";
+import { provide, computed, ref, useTemplateRef } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
 export interface IProps {
@@ -111,14 +114,15 @@ export interface IProps {
   maxlength?: string | number;
   center?: boolean;
   truncate?: boolean;
-  type?: "text" | "password" | "number" | "email" | "search";
-  size?: "xs" | "sm" | "md" | "auto";
+  type?: "text" | "password" | "number" | "email" | "search" | "date";
+  size?: VcInputSizeType;
   clearable?: boolean;
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
   testIdInput?: string;
   aria?: Record<string, string | number | null>;
   disableAutocomplete?: boolean;
+  tabindex?: string | number;
 }
 
 defineOptions({
@@ -135,7 +139,10 @@ const props = withDefaults(defineProps<IProps>(), {
   type: "text",
   size: "md",
   browserTooltip: "disabled",
+  tabindex: 0,
 });
+
+const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 const componentId = useComponentId("input");
 const listeners = useListeners();
@@ -149,8 +156,10 @@ const computedAutocomplete = computed(() => {
   return props.autocomplete;
 });
 
-const inputElement = ref<HTMLInputElement>();
+const inputElement = useTemplateRef("inputElement");
 const inputType = computed(() => (props.type === "password" && isPasswordVisible.value ? "text" : props.type));
+
+defineExpose({ inputElement });
 
 const model = defineModel<T>({
   set(value) {
@@ -164,8 +173,8 @@ const model = defineModel<T>({
 
 const _size = computed(() => props.size);
 
-const minValue = computed(() => (props.type === "number" ? props.min : undefined));
-const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
+const minValue = computed(() => (LIMITED_TYPES.includes(props.type) ? props.min : undefined));
+const maxValue = computed(() => (LIMITED_TYPES.includes(props.type) ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
 
 const isPasswordVisible = ref<boolean>(false);
@@ -180,8 +189,10 @@ function focusInput() {
   if (inputElement.value) {
     inputElement.value.focus();
     setTimeout(() => {
-      const len = inputElement.value?.value.length ?? 0;
-      inputElement.value?.setSelectionRange(len, len);
+      if (inputElement.value?.type !== "date") {
+        const len = inputElement.value?.value.length ?? 0;
+        inputElement.value?.setSelectionRange(len, len);
+      }
     }, 0);
   }
 }
@@ -195,9 +206,10 @@ function clear() {
 // Workaround to fix Safari bug
 function keyDown(event: KeyboardEvent) {
   if (props.type === "number") {
-    const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight)/;
-
-    return !event.key.match(allowedCharacter) && event.preventDefault();
+    const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight|ArrowUp|ArrowDown)/;
+    if (!allowedCharacter.test(event.key)) {
+      event.preventDefault();
+    }
   }
 }
 
@@ -316,10 +328,24 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__input {
-    @apply relative m-px px-2 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
+    @apply relative m-px px-2 bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;
+    }
+
+    &::-webkit-calendar-picker-indicator {
+      @apply hidden;
+    }
+
+    &::-moz-calendar-picker-indicator {
+      @apply hidden;
+    }
+
+    &[type="date"] {
+      @apply -me-8;
+
+      clip-path: inset(0 2rem 0 0);
     }
 
     &:autofill {

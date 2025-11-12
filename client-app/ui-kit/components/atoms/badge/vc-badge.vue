@@ -34,13 +34,12 @@ withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   variant: "solid",
-  maxWidth: "",
 });
 </script>
 
 <style lang="scss">
 .vc-badge {
-  $colors: primary, secondary, neutral, info, success, warning, danger;
+  $colors: primary, secondary, neutral, info, success, warning, danger, accent;
 
   $truncate: "";
   $square: "";
@@ -49,14 +48,15 @@ withDefaults(defineProps<IProps>(), {
   --max-width: var(--props-max-width, var(--vc-badge-max-width, 100%));
   --radius: var(--vc-badge-radius, var(--vc-radius, 0.5rem));
 
-  @apply flex-none inline-flex align-top min-h-[--size] min-w-[--size] max-w-[--max-width] border rounded-[--radius] font-bold;
+  @apply flex-none inline-flex align-middle min-h-[--size] min-w-[--size] max-w-[--max-width] border rounded-[--radius] font-bold bg-[--bg-color] border-[--border-color] text-[--text-color];
 
   &--size {
     &--xs {
       --size: 1rem;
       --vc-icon-size: 0.625rem;
+      --gap: 0.25rem;
 
-      @apply gap-1 px-0.5 text-xxs;
+      @apply px-[0.188rem] text-xxs/[1];
 
       &--dot {
         @apply size-1.5;
@@ -66,8 +66,9 @@ withDefaults(defineProps<IProps>(), {
     &--sm {
       --size: 1.125rem;
       --vc-icon-size: 0.75rem;
+      --gap: 0.25rem;
 
-      @apply gap-1.5 px-0.5 text-xs/[1.2];
+      @apply px-[0.188rem] text-xs/[1.2];
 
       &--dot {
         @apply size-2;
@@ -77,8 +78,9 @@ withDefaults(defineProps<IProps>(), {
     &--md {
       --size: 1.375rem;
       --vc-icon-size: 0.875rem;
+      --gap: 0.375rem;
 
-      @apply gap-1.5 px-1 text-sm/[1.2];
+      @apply px-1 text-sm/[1.2];
 
       &--dot {
         @apply size-2.5;
@@ -88,8 +90,9 @@ withDefaults(defineProps<IProps>(), {
     &--lg {
       --size: 1.625rem;
       --vc-icon-size: 1rem;
+      --gap: 0.375rem;
 
-      @apply gap-1.5 px-1 text-base/[1.25];
+      @apply px-1 text-base/[1.25];
 
       &--dot {
         @apply size-3;
@@ -117,41 +120,52 @@ withDefaults(defineProps<IProps>(), {
 
   @each $color in $colors {
     &--solid--#{$color} {
-      @apply bg-[color:var(--color-#{$color}-500)]
-      border-[color:var(--color-#{$color}-500)]
-      text-additional-50;
+      --bg-color: var(--color-#{$color}-500);
+      --border-color: var(--color-#{$color}-500);
+
+      &:not([class*="--warning"]) {
+        --text-color: var(--color-additional-50);
+      }
+
+      &[class*="--warning"] {
+        --text-color: var(--color-neutral-900);
+      }
     }
 
     &--solid-light--#{$color} {
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
+      --text-color: var(--color-#{$color}-800);
       --vc-icon-color: var(--color-#{$color}-700);
-
-      @apply bg-[color:var(--color-#{$color}-100)]
-      border-[color:var(--color-#{$color}-100)]
-      text-[color:var(--color-#{$color}-800)];
     }
 
     &--outline--#{$color} {
+      --bg-color: var(--color-additional-50);
+      --border-color: var(--color-#{$color}-500);
       --vc-icon-color: var(--color-#{$color}-700);
 
-      @apply bg-additional-50
-      border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-#{$color}-800)];
+      &:not([class*="--warning"]) {
+        --text-color: var(--color-#{$color}-500);
+      }
+
+      &[class*="--warning"] {
+        --text-color: var(--color-warning-700);
+      }
     }
 
     &--outline-dark--#{$color} {
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-500);
+      --text-color: var(--color-#{$color}-800);
       --vc-icon-color: var(--color-#{$color}-700);
-
-      @apply bg-[color:var(--color-#{$color}-100)]
-      border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-#{$color}-800)];
     }
   }
 
   &__content {
-    @apply grow gap-[inherit] text-center self-center [word-break:break-word];
+    @apply grow text-center self-center [word-break:break-word];
 
     &:has(.vc-icon) {
-      @apply flex items-center;
+      @apply flex items-center gap-[--gap];
     }
 
     &:not(:has(.vc-icon:first-child)) {
@@ -162,9 +176,8 @@ withDefaults(defineProps<IProps>(), {
       @apply pe-0.5;
     }
 
-    #{$truncate} &,
-    #{$truncate} & * {
-      @apply truncate;
+    #{$truncate} & {
+      @apply min-w-0 max-w-full truncate;
     }
 
     #{$square} & {
@@ -172,7 +185,7 @@ withDefaults(defineProps<IProps>(), {
     }
 
     & > * {
-      @apply text-left;
+      @apply text-start;
 
       #{$truncate} & {
         @apply truncate;

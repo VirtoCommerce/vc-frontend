@@ -8,6 +8,8 @@
 
         <Swiper
           class="image-gallery__images"
+          tabindex="0"
+          :id="swiperId"
           :modules="modules"
           :thumbs="{ swiper: thumbsSwiper }"
           :breakpoints="{
@@ -23,12 +25,13 @@
           data-te-lightbox-init
           @swiper="setImagesSwiper"
           @slide-change="setActiveIndex"
+          @keydown.enter.prevent="openLightbox(swiperId)"
         >
           <SwiperSlide v-for="(image, i) in images" :key="image.url || i">
             <VcImage
-              class="image-gallery__img"
+              :class="['image-gallery__img', { 'image-gallery__img--active': activeIndex === i }]"
               :src="image.url"
-              :alt="image.name"
+              :alt="image.name ?? `${$t('common.accessibility.image')} ${i + 1}`"
               :data-te-img="image.url"
               size-suffix="md"
               lazy
@@ -38,14 +41,24 @@
       </template>
 
       <!-- no-image -->
-      <VcImage v-else class="image-gallery__img" />
+      <VcImage v-else class="image-gallery__img" :alt="$t('common.accessibility.no_image')" />
 
       <div class="image-gallery__badges">
         <slot name="badges" />
       </div>
     </div>
 
-    <VcCarouselPagination v-if="showPagination" class="image-gallery__pagination" data-nav-pagination size="sm" />
+    <VcCarouselPagination
+      v-if="showPagination"
+      class="image-gallery__pagination"
+      data-nav-pagination
+      size="sm"
+      tabindex="0"
+      :id="paginationId"
+      @keydown.arrow-left.prevent="navigateToPrevious"
+      @keydown.arrow-right.prevent="navigateToNext"
+      @keydown.enter.prevent="openLightbox(paginationId)"
+    />
 
     <div v-show="showThumbs" class="image-gallery__thumbs-container">
       <VcNavButton :label="$t('common.buttons.previous')" size="xs" direction="left" data-nav-prev />
@@ -62,6 +75,11 @@
         :loop="showThumbs && images.length > THUMBS_PER_VIEW"
         watch-slides-progress
         @swiper="setThumbsSwiper"
+        tabindex="0"
+        :id="thumbsId"
+        @keydown.arrow-left.prevent="navigateToPrevious"
+        @keydown.arrow-right.prevent="navigateToNext"
+        @keydown.enter.prevent="openLightbox(thumbsId)"
       >
         <SwiperSlide v-for="(image, index) in images" :key="index" class="image-gallery__thumb">
           <VcImage
@@ -72,6 +90,7 @@
               },
             ]"
             :src="image.url"
+            :alt="image.name ?? `${$t('common.accessibility.image')} ${index + 1}`"
             size-suffix="sm"
             lazy
           />
@@ -87,7 +106,7 @@
 import { useBreakpoints } from "@vueuse/core";
 import { Pagination, Navigation, Thumbs } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { ref, onMounted, computed, getCurrentInstance, watch, toRef } from "vue";
+import { ref, onMounted, computed, getCurrentInstance, watch, toRef, onUnmounted } from "vue";
 import { BREAKPOINTS } from "@/core/constants";
 import { extractNumberFromString } from "@/core/utilities";
 import type { ImageType } from "@/core/api/graphql/types";
@@ -102,6 +121,9 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const componentId = `image-gallery_${getCurrentInstance()!.uid}`;
+const swiperId = `swiper_${getCurrentInstance()!.uid}`;
+const paginationId = `pagination_${getCurrentInstance()!.uid}`;
+const thumbsId = `thumbs_${getCurrentInstance()!.uid}`;
 
 const THUMBS_PER_VIEW = 4;
 
@@ -123,6 +145,8 @@ const setThumbsSwiper = (swiper: SwiperCore) => {
   thumbsSwiper.value = swiper;
 };
 
+const focusedElementBeforeLightboxId = ref<string | null>(null);
+
 const modules = [Pagination, Navigation, Thumbs];
 
 const showThumbs = computed(() => isDesktop.value && props.images?.length > 1);
@@ -131,6 +155,26 @@ const showPagination = computed(() => !isDesktop.value && props.images?.length >
 
 function setActiveIndex() {
   activeIndex.value = imagesSwiper.value?.realIndex ?? 0;
+}
+
+function navigateToPrevious() {
+  if (imagesSwiper.value && imagesSwiper.value.allowSlidePrev) {
+    imagesSwiper.value.slidePrev();
+  }
+}
+
+function navigateToNext() {
+  if (imagesSwiper.value && imagesSwiper.value.allowSlideNext) {
+    imagesSwiper.value.slideNext();
+  }
+}
+
+function openLightbox(id: string) {
+  const currentImage = document.querySelector(`#${componentId} .image-gallery__img--active`) as HTMLElement;
+  focusedElementBeforeLightboxId.value = id;
+  if (currentImage) {
+    currentImage.click();
+  }
 }
 
 watch(
@@ -145,6 +189,19 @@ watch(
   },
 );
 
+function handleLightboxClose() {
+  if (focusedElementBeforeLightboxId.value) {
+    const focusedElementBeforeLightbox = document.querySelector(
+      `#${componentId} #${focusedElementBeforeLightboxId.value}`,
+    ) as HTMLElement;
+    if (focusedElementBeforeLightbox) {
+      focusedElementBeforeLightbox.focus();
+    }
+  }
+
+  focusedElementBeforeLightboxId.value = null;
+}
+
 onMounted(async () => {
   // Dynamic import is required to avoid SSR errors
   // SSR is used to generate routes.json
@@ -154,6 +211,12 @@ onMounted(async () => {
     Lightbox: unknown;
   };
   initTE({ Lightbox });
+
+  document.body.addEventListener("close.te.lightbox", handleLightboxClose);
+});
+
+onUnmounted(() => {
+  document.body.removeEventListener("close.te.lightbox", handleLightboxClose);
 });
 </script>
 

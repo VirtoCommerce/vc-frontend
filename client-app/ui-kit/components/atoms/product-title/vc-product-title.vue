@@ -14,7 +14,7 @@
       :to="linkTo"
       :target="to ? target : null"
       :title="title"
-      :tabindex="linkTo ? 0 : -1"
+      :tabindex="linkTo ? tabindex : -1"
       class="vc-product-title__text"
       @click="$emit('click', $event)"
     >
@@ -38,6 +38,7 @@ interface IProps {
   disabled?: boolean;
   fixHeight?: boolean;
   linesNumber?: number | string;
+  tabindex?: number | string;
 }
 
 defineEmits<IEmits>();
@@ -45,6 +46,7 @@ defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   to: null,
   linesNumber: 3,
+  tabindex: 0,
 });
 
 const componentType = computed(() => (!props.disabled && props.to ? "router-link" : "div"));
@@ -82,7 +84,7 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   &__text {
     @apply line-clamp-[--lines-number] text-[--text-color];
 
-    word-wrap: break-word;
+    word-break: break-word;
 
     #{$link}:not(#{$disabled}) & {
       @apply text-[--link-color] cursor-pointer;

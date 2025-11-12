@@ -247,7 +247,7 @@
                   <PaymentProcessingManual v-if="paymentMethodCode === 'DefaultManualPaymentMethod'" />
 
                   <PaymentProcessingAuthorizeNet
-                    v-if="paymentMethodCode === 'AuthorizeNetPaymentMethod'"
+                    v-else-if="paymentMethodCode === 'AuthorizeNetPaymentMethod'"
                     :order="order"
                     :disabled="loading"
                     @success="success = true"
@@ -255,15 +255,37 @@
                   />
 
                   <PaymentProcessingSkyflow
-                    v-if="paymentMethodCode === 'SkyflowPaymentMethod'"
+                    v-else-if="paymentMethodCode === 'SkyflowPaymentMethod'"
                     :order="order"
                     @success="success = true"
                     @fail="failure = true"
                   />
 
                   <PaymentProcessingCyberSource
-                    v-if="paymentMethodCode === 'CyberSourcePaymentMethod'"
+                    v-else-if="paymentMethodCode === 'CyberSourcePaymentMethod'"
                     :order="order"
+                    @success="success = true"
+                    @fail="failure = true"
+                  />
+
+                  <PaymentProcessingDatatrans
+                    v-else-if="paymentMethodCode === 'DatatransPaymentMethod'"
+                    :order="order"
+                    @success="success = true"
+                    @fail="failure = true"
+                  />
+
+                  <ExtensionPointList
+                    v-else-if="
+                      paymentMethodCode &&
+                      $canRenderExtensionPoint('orderPaymentPage', 'payment-methods', {
+                        order: order,
+                        paymentTypeName: paymentMethodCode,
+                      })
+                    "
+                    category="orderPaymentPage"
+                    :order="order"
+                    :payment-type-name="paymentMethodCode"
                     @success="success = true"
                     @fail="failure = true"
                   />
@@ -306,6 +328,7 @@ import type { Optional } from "utility-types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
+import PaymentProcessingDatatrans from "@/shared/payment/components/payment-processing-datatrans.vue";
 import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
 
 interface IProps {
@@ -359,6 +382,9 @@ const paymentMethodType = computed<number | undefined>(() => payment.value?.paym
 const paymentMethodCode = computed<string | undefined>(() => payment.value?.paymentMethod?.code);
 
 function tryAgain() {
+  const url = new URL(globalThis.location.href);
+  url.search = "";
+  globalThis.history.replaceState({}, document.title, url.toString());
   location.reload();
 }
 

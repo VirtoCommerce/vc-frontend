@@ -19,7 +19,19 @@
       "update_cart": "Обновить корзину"
     },
     "accessibility": {
-      "close_alert": "Закрыть уведомление"
+      "close_alert": "Закрыть уведомление",
+      "open_calendar": "Открыть календарь",
+      "product_quantity": "Количество товара",
+      "decrease_quantity": "Уменьшить количество",
+      "increase_quantity": "Увеличить количество",
+      "variant_picker_group": "Варианты товара",
+      "show_more_button": "Показать ещё варианты ({count})",
+      "sidebar": "Боковая панель",
+      "close_chip": "Закрыть чип"
+    },
+    "date_selector": {
+      "min_date_error": "Дата должна быть не ранее {min}",
+      "max_date_error": "Дата должна быть не позднее {max}"
     },
     "labels": {
       "not_available": "Н/Д",
@@ -49,11 +61,11 @@
         "max": "Максимальный заказ {0} шт.",
         "min_max": "Заказ от {0} до {1} шт.",
         "min_not_available": "Минимальный заказ {0} шт. недоступен на складе",
+        "exact_qty": "Вы можете заказать {0} шт.",
         "out_of_stock": "Нет в наличии",
         "positive_number": "Значение должно быть положительным числом",
         "integer_number": "Значение должно быть целым числом",
-        "pack_size": "Заказ в упаковках по {0}",
-        "exact_qty": "Вы можете заказать {0} шт."
+        "pack_size": "Заказ в упаковках по {0}"
       }
     },
     "pagination": {
@@ -97,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Навигация хлебными крошками"
+    },
+    "rating": {
+      "rating_label": "Рейтинг: {value} из {maxValue}",
+      "read_only_button_aria_label": "Рейтинг: {value} из {maxValue}, недоступно для выбора",
+      "set_rating_aria_label": "Установить рейтинг {value} из {maxValue}"
     }
   }
 }

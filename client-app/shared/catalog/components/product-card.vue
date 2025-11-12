@@ -25,7 +25,13 @@
       </VcProductActions>
     </template>
 
-    <VcProductTitle :title="product.name" :to="link" lines-number="2" fix-height />
+    <VcProductTitle
+      :title="product.name"
+      :to="link"
+      lines-number="2"
+      fix-height
+      @click="$emit('linkClick', product, $event)"
+    />
 
     <VcProductVendor v-if="$cfg.vendor_enabled">
       {{ product.vendor?.name }}
@@ -45,8 +51,8 @@
     </VcProductProperties>
 
     <VcProductPrice
-      :actual-price="product.minVariationPrice?.actual ?? product.price.actual"
-      :list-price="product.minVariationPrice?.list ?? product.price.list"
+      :actual-price="actualPrice"
+      :list-price="listPrice"
       :with-from-label="product.hasVariations"
       :single-line="viewMode === 'grid'"
     />
@@ -69,7 +75,7 @@
       :link-to="getProductRoute(product.id, product.slug)"
       :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
-      :target="browserTarget || $cfg.details_browser_target || '_blank'"
+      :target="browserTarget || browserTargetFromSetting"
       @link-click="$emit('linkClick', product, $event)"
     />
 
@@ -79,11 +85,11 @@
       :link-text="$t('pages.catalog.show_on_a_separate_page')"
       :link-to="link"
       :button-text="$t('pages.catalog.variations_button', [variationsCount])"
-      :target="browserTarget || $cfg.details_browser_target || '_blank'"
+      :target="browserTarget || browserTargetFromSetting"
       @link-click="$emit('linkClick', product, $event)"
     />
 
-    <AddToCart v-else :product="product" :reserved-space="viewMode === 'grid'">
+    <AddToCartSimple v-else :product="product" :reserved-space="viewMode === 'grid'">
       <InStock
         :is-in-stock="product.availabilityData?.isInStock"
         :is-digital="product.productType === ProductType.Digital"
@@ -91,26 +97,26 @@
       />
 
       <CountInCart :product-id="product.id" />
-    </AddToCart>
+    </AddToCartSimple>
   </VcProductCard>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, toRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
+import { useBrowserTarget } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { ProductType } from "@/core/enums";
+import { BrowserTargetType, ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
   ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
 } from "@/modules/customer-reviews/constants";
-import { AddToCart } from "@/shared/cart";
-import { useProducts } from "@/shared/catalog";
+import { useProducts } from "@/shared/catalog/composables/useProducts";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
-import { useCustomProductComponents } from "@/shared/common/composables";
+import { useCustomProductComponents } from "@/shared/common/composables/useCustomProductComponents";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
-import { AddToCompareCatalog } from "@/shared/compare";
+import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
 import BadgesWrapper from "./badges-wrapper.vue";
 import CountInCart from "./count-in-cart.vue";
@@ -118,7 +124,7 @@ import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
 import PurchasedBeforeBadge from "./purchased-before-badge.vue";
 import type { Product } from "@/core/api/graphql/types";
-import type { BrowserTargetType } from "@/core/types";
+import AddToCartSimple from "@/shared/cart/components/add-to-cart-simple.vue";
 
 interface IEmits {
   (eventName: "linkClick", product: Product, globalEvent: MouseEvent): void;
@@ -137,8 +143,12 @@ defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   viewMode: "grid",
-  browserTarget: "_blank",
+  browserTarget: BrowserTargetType.BLANK,
 });
+
+const product = toRef(props, "product");
+
+const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
 
 const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
@@ -146,6 +156,17 @@ const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
+
+const actualPrice = computed(() =>
+  product.value.hasVariations
+    ? (product.value.minVariationPrice?.actual ?? product.value.price.actual)
+    : product.value.price.actual,
+);
+const listPrice = computed(() =>
+  product.value.hasVariations
+    ? (product.value.minVariationPrice?.list ?? product.value.price.list)
+    : product.value.price.list,
+);
 
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
