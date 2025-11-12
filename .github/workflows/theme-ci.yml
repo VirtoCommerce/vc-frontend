@@ -225,8 +225,9 @@ jobs:
         uses: VirtoCommerce/vc-github-actions/update-jira-tasks-with-release-number@VCST-3944 #master
         with:
           ghRepository: ${{ github.repository }}
+          ghReleaseTag: '2.34.0' #${{ steps.image.outputs.prefix }}
           jiraCustomFieldId: 'customfield_10297' # 'customfield_10297' corresponds to 'Theme release' field
-          jiraCustomFieldValue: "${{ steps.image.outputs.prefix }}"
+          jiraCustomFieldValue: '2.34.0' #"${{ steps.image.outputs.prefix }}"
           client-id: '${{ secrets.JIRA_USER }}'
           client-secret: '${{ secrets.JIRA_TOKEN }}'
 
