@@ -3,18 +3,22 @@ query GetCartPickupLocations(
   $cultureName: String!
   $cartId: String!
   $keyword: String
+  $filter: String
   $first: Int
   $after: String
   $sort: String
+  $facet: String
 ) {
   cartPickupLocations(
     storeId: $storeId
     cultureName: $cultureName
     cartId: $cartId
     keyword: $keyword
+    filter: $filter
     first: $first
     after: $after
     sort: $sort
+    facet: $facet
   ) {
     totalCount
     items {
@@ -38,6 +42,14 @@ query GetCartPickupLocations(
         regionId
         postalCode
         phone
+      }
+    }
+    term_facets {
+      name
+      terms {
+        term
+        label
+        count
       }
     }
   }

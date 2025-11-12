@@ -564,6 +564,12 @@
           "remove": "Poista vertailusta"
         }
       },
+      "notifications": {
+        "limit_reached": "Vain {productsLimit} tuotetta voidaan vertailla",
+        "added_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> on lisätty vertailulistalle <span class=\"hidden lg:inline\">(jäljellä {itemsLeft} tuotetta)</span>",
+        "removed_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> on poistettu vertailulistalta",
+        "compare_button": "Vertaile"
+      },
       "clear_list_modal": {
         "title": "Vahvista tyhjennys",
         "message": "Vahvistatko, että kaikki tuotteet poistetaan vertailulistalta?"
@@ -1165,7 +1171,9 @@
           "get_directions": "Hae reittiohjeet",
           "point_info": "Pistetiedot",
           "pickup_address": "Nouto-osoite",
-          "cart_pickup_points_not_found": "Näille tuotteille ei ole noutopisteitä. Valitse toinen toimitustapa",
+          "cart_pickup_points_not_found": "Näille tuotteille ei ole noutopisteitä. Valitse toinen toimitustapa.",
+          "cart_pickup_points_not_found_by_filter": "Noutopisteitä ei löytynyt.",
+          "cart_pickup_points_reset_search": "Nollaa haku",
           "availability": "Saatavuus"
         }
       },

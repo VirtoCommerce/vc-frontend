@@ -5,4 +5,5 @@
 interface Window {
   gtag: Gtag.Gtag;
   google: typeof google;
+  dataLayer: Array<unknown>;
 }
