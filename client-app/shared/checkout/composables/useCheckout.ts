@@ -2,7 +2,7 @@ import { createGlobalState, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
 import { useAnalytics, useHistoricalEvents, useThemeContext } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
@@ -63,7 +63,6 @@ export function _useCheckout(cartId?: string) {
   const route = useRoute();
   const notifications = useNotifications();
   const { openModal, closeModal } = useModal();
-  const router = useRouter();
   const { user, isAuthenticated, isCorporateMember } = useUser();
   const {
     addresses: personalAddresses,
@@ -453,8 +452,6 @@ export function _useCheckout(cartId?: string) {
         productIds: placedOrder.value.items?.map((item) => item.productId),
         storeId: globals.storeId,
       });
-
-      await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
     } else {
       notifications.error({
         text: t("common.messages.creating_order_error"),

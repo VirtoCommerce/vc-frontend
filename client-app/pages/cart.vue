@@ -106,7 +106,7 @@
           <template v-if="!$cfg.checkout_multistep_enabled">
             <ShippingDetailsSection v-if="!allItemsAreDigital" />
 
-            <BillingDetailsSection :cart="cart" />
+            <BillingDetailsSection :cart="cart" @validate="isPaymentValid" />
 
             <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
           </template>
@@ -150,7 +150,17 @@
                 {{ $t("common.buttons.go_to_checkout") }}
               </ProceedTo>
 
-              <PlaceOrder data-test-id="checkout-single-page.place-order-button" v-else class="mt-4" />
+              <ProceedTo
+                v-else
+                :disabled="hasOnlyUnselectedLineItems || !isValidCheckout"
+                data-test-id="checkout-single-page.place-order-button"
+                @click="handleCreateOrderFormCart"
+                class="mt-4"
+              >
+                {{ $t("common.buttons.place_order") }}
+              </ProceedTo>
+
+              <!-- <PlaceOrder data-test-id="checkout-single-page.place-order-button" v-else class="mt-4" /> -->
 
               <template v-if="!$cfg.checkout_multistep_enabled">
                 <transition name="slide-fade-top" mode="out-in" appear>
@@ -212,6 +222,7 @@
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
+          <!-- todo: this button should be dumb component -->
           <PlaceOrder data-test-id="checkout-multi-step.place-order-button" v-else class="!mt-2" />
         </div>
       </transition>
@@ -222,6 +233,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { useAnalytics, useBreadcrumbs, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -260,6 +272,7 @@ const { themeContext } = useThemeContext();
 const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
+const router = useRouter();
 const {
   loading: loadingCart,
   cart,
@@ -283,7 +296,17 @@ const {
   shipment,
   payment,
 } = useFullCart();
-const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
+const {
+  loading: loadingCheckout,
+  comment,
+  isValidShipment,
+  isValidCheckout,
+  isValidPayment,
+  initialize,
+  createOrderFromCart,
+  canPayNow,
+  paymentMethod,
+} = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
@@ -331,6 +354,29 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
     "removeItemsFromCart",
     cart.value!.items.filter((item) => itemIds.includes(item.id)),
   );
+}
+
+function isPaymentValid(isValid: boolean) {
+  // This function can be used to track payment validity if needed
+  console.log("cart:", isValid);
+}
+
+async function handleCreateOrderFormCart() {
+  const order = await createOrderFromCart();
+
+  if (canPayNow.value) {
+    if (paymentMethod.value?.allowCartPayment) {
+      // here we should call payment method process
+      // 1) validate input data (we should get this info from payment component)
+      // 2) call native payment
+      // 3) call authorize payment if step 2 is successful
+      // 4) redirect to order completed page if step 3 is successful
+    } else {
+      await router.replace({ name: "CheckoutPayment" });
+    }
+  } else {
+    await router.replace({ name: "CheckoutCompleted" });
+  }
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {

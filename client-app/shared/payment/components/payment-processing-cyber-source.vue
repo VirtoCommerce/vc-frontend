@@ -57,6 +57,7 @@
     <PaymentPolicies />
 
     <VcButton
+      v-if="!hidePaymentButton"
       :disabled="!isValidBankCard"
       :loading="loading"
       class="flex-1 md:order-first md:flex-none"
@@ -73,6 +74,7 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { useScriptTag, useCssVar } from "@vueuse/core";
 import { useForm } from "vee-validate";
 import { computed, onMounted, onUnmounted, ref } from "vue";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { useAnalytics } from "@/core/composables";
@@ -87,6 +89,7 @@ import CardLabels from "@/shared/payment/components/card-labels.vue";
 interface IEmits {
   (event: "success"): void;
   (event: "fail", message?: string | null): void;
+  (event: "validate", isValid: boolean): void;
 }
 
 interface IField {
@@ -379,6 +382,10 @@ function removeScript() {
     scriptTag.value.remove();
   }
 }
+
+watch([isValidBankCard, formErrors], ([validCard, errors]) => {
+  emit("validate", validCard && !errors);
+});
 
 onUnmounted(removeScript);
 </script>

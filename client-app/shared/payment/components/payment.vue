@@ -8,6 +8,7 @@
       :payment="payment"
       :init-payment="initCurrentPayment"
       :authorize-payment="authorizeCurrentPayment"
+      @validate="onValidate"
       @success="onPaymentSuccess()"
       @fail="onPaymentFail()"
     />
@@ -80,6 +81,7 @@ interface IProps {
 interface IEmits {
   (event: "success"): void;
   (event: "fail", message?: string | null): void;
+  (event: "validate", isValid: boolean): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -139,6 +141,11 @@ async function authorizePaymentWithOrder(payload?: Partial<InputAuthorizePayment
 watch(paymentTypeName, () => {
   console.log("Payment type changed:", paymentTypeName.value);
 });
+
+function onValidate(isValid: boolean) {
+  console.log(isValid);
+  emit("validate", isValid);
+}
 
 async function onPaymentSuccess() {
   emit("success");

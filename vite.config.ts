@@ -98,7 +98,8 @@ export default defineConfig(({ command, mode }): UserConfig => {
       headers: {
         "Content-Security-Policy": "frame-ancestors 'self' https://localhost:5001 https://builder.io;",
         "Cross-Origin-Resource-Policy": "cross-origin",
-        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Cross-Origin-Opener-Policy": "unsafe-none",
+        "Cross-Origin-Embedder-Policy": "unsafe-none",
       },
       proxy: {
         "^/api": getProxy(process.env.APP_BACKEND_URL),
