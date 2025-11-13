@@ -80,7 +80,8 @@
       "expand_all": "Expandir tudo",
       "all_products": "Todos os produtos",
       "buy_now": "Comprar agora",
-      "see_all": "Ver tudo"
+      "see_all": "Ver tudo",
+      "report_a_problem": "Reportar um problema"
     },
     "labels": {
       "actions": "Ações",
@@ -193,7 +194,7 @@
       "not_defined": "Indefinido",
       "invalid_coupon": "Este código não corresponde a nenhum cupom ativo. Por favor, verifique se está tudo correto e tente novamente.",
       "fill_all_required": "Por favor, preencha todas as informações obrigatórias para continuar.",
-      "something_went_wrong": "Ops! Algo deu errado. Por favor, verifique se está tudo correto e tente novamente.",
+      "something_went_wrong": "Algo deu errado. Por favor, tente novamente mais tarde.",
       "checkout_pricing_warning": "Disponibilidade, envio, impostos e promoções não são finais até que você conclua seu pedido.",
       "wishlists_available_for_authorized": "As listas de desejos estão disponíveis apenas para usuários autenticados",
       "no_addresses": "Você ainda não tem nenhum endereço",
@@ -204,6 +205,7 @@
       "fail_add_product_to_cart": "Desculpe, este produto não pode ser adicionado ao carrinho. {reason}",
       "fail_to_change_quantity_in_cart": "Desculpe, não é possível atualizar a quantidade do produto no carrinho. {reason}",
       "unhandled_error": "Desculpe pelo transtorno. Nosso servidor está enfrentando problemas técnicos no momento. Por favor, tente novamente mais tarde.",
+      "report_sent_successfully": "Obrigado! Seu relatório foi enviado com sucesso. Vamos analisá-lo.",
       "role_update_successful": "O papel do cliente foi atualizado com sucesso.",
       "role_update_failed": "Ocorreram erros durante a atualização do papel: {0}",
       "passwords_do_not_match": "Os campos de senha devem ter valores correspondentes.",

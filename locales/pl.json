@@ -80,7 +80,8 @@
       "expand_all": "Rozwiń wszystko",
       "all_products": "Wszystkie produkty",
       "buy_now": "Kup teraz",
-      "see_all": "Zobacz wszystko"
+      "see_all": "Zobacz wszystko",
+      "report_a_problem": "Zgłoś problem"
     },
     "labels": {
       "actions": "Akcje",
@@ -193,7 +194,7 @@
       "not_defined": "Niezdefiniowany",
       "invalid_coupon": "Ten kod nie odpowiada żadnym aktywnym kuponom. Proszę sprawdzić, czy wszystko jest poprawne i spróbować ponownie.",
       "fill_all_required": "Proszę wypełnić wszystkie wymagane informacje, aby kontynuować.",
-      "something_went_wrong": "Ups! Coś poszło nie tak. Proszę sprawdzić, czy wszystko jest poprawne i spróbować ponownie.",
+      "something_went_wrong": "Coś poszło nie tak. Proszę spróbować ponownie później.",
       "checkout_pricing_warning": "Dostępność, wysyłka, podatek i promocje nie są ostateczne, dopóki nie ukończysz zamówienia.",
       "wishlists_available_for_authorized": "Listy życzeń są dostępne tylko dla uwierzytelnionych użytkowników",
       "no_addresses": "Nie masz żadnych adresów",
@@ -204,6 +205,7 @@
       "fail_add_product_to_cart": "Przepraszamy, nie można dodać tego produktu do koszyka. {reason}",
       "fail_to_change_quantity_in_cart": "Przepraszamy, nie można zaktualizować ilości produktu w koszyku. {reason}",
       "unhandled_error": "Przepraszamy za niedogodności. Nasz serwer obecnie doświadcza problemów technicznych. Proszę spróbować ponownie później.",
+      "report_sent_successfully": "Dziękujemy! Twój raport został pomyślnie wysłany. Zajmiemy się tym.",
       "role_update_successful": "Rola klienta została pomyślnie zaktualizowana.",
       "role_update_failed": "Wystąpiły błędy podczas aktualizacji roli: {0}",
       "passwords_do_not_match": "Pola hasła muszą mieć dopasowane wartości.",

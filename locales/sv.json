@@ -80,7 +80,8 @@
       "expand_all": "Expandera alla",
       "all_products": "Alla produkter",
       "buy_now": "Köp nu",
-      "see_all": "Se alla"
+      "see_all": "Se alla",
+      "report_a_problem": "Rapportera ett problem"
     },
     "labels": {
       "actions": "Åtgärder",
@@ -193,7 +194,7 @@
       "not_defined": "Odefinierat",
       "invalid_coupon": "Denna kod matchar inte någon aktiv kupong. Kontrollera att allt är korrekt och försök igen.",
       "fill_all_required": "Fyll i all obligatorisk information för att fortsätta.",
-      "something_went_wrong": "Oj! Något gick fel. Kontrollera att allt är korrekt och försök igen.",
+      "something_went_wrong": "Något gick fel. Vänligen försök igen senare.",
       "checkout_pricing_warning": "Tillgänglighet, frakt, skatt och kampanjer är inte definitiva förrän du slutför din beställning.",
       "wishlists_available_for_authorized": "Önskelistor är endast tillgängliga för autentiserade användare",
       "no_addresses": "Du har inga adresser ännu",
@@ -204,6 +205,7 @@
       "fail_add_product_to_cart": "Tyvärr, denna produkt kan inte läggas till i kundvagnen. {reason}",
       "fail_to_change_quantity_in_cart": "Tyvärr, kan inte uppdatera produktantal i kundvagnen. {reason}",
       "unhandled_error": "Ursäkta besväret. Vår server upplever för närvarande tekniska problem. Vänligen försök igen senare.",
+      "report_sent_successfully": "Tack! Din rapport har skickats framgångsrikt. Vi kommer att titta på det.",
       "role_update_successful": "Kundrollen har uppdaterats framgångsrikt",
       "role_update_failed": "Fel uppstod vid uppdatering av rollen: {0}",
       "passwords_do_not_match": "Lösenordsfälten måste ha matchande värden",

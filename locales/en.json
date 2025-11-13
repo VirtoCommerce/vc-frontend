@@ -80,7 +80,8 @@
       "expand_all": "Expand all",
       "all_products": "All products",
       "buy_now": "Buy now",
-      "see_all": "See all"
+      "see_all": "See all",
+      "report_a_problem": "Report a problem"
     },
     "labels": {
       "actions": "Actions",
@@ -193,7 +194,7 @@
       "not_defined": "Undefined",
       "invalid_coupon": "This code does not match any active coupons. Double-check that everything is correct and try again.",
       "fill_all_required": "Complete all required information to proceed.",
-      "something_went_wrong": "Oops! Something went wrong. Double-check that everything is correct and try again.",
+      "something_went_wrong": "Something went wrong. Please try again later.",
       "checkout_pricing_warning": "Availability, shipping, tax and promotions are not final until you complete your order.",
       "wishlists_available_for_authorized": "Wishlists are available only for authenticated users",
       "no_addresses": "You do not have any addresses yet",
@@ -204,6 +205,7 @@
       "fail_add_product_to_cart": "Sorry, this product cannot be added to cart. {reason}",
       "fail_to_change_quantity_in_cart": "Sorry, can't update product quantity in cart. {reason}",
       "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
+      "report_sent_successfully": "Thank you! Your report has been sent successfully. We'll look into it.",
       "role_update_successful": "The customer role has been updated successfully",
       "role_update_failed": "Errors occurred during the role updating: {0}",
       "passwords_do_not_match": "The password fields must have matching values",

@@ -80,7 +80,8 @@
       "expand_all": "Utvid alle",
       "all_products": "Alle produkter",
       "buy_now": "Kjøp nå",
-      "see_all": "Se alle"
+      "see_all": "Se alle",
+      "report_a_problem": "Rapporter et problem"
     },
     "labels": {
       "actions": "Handlinger",
@@ -193,7 +194,7 @@
       "not_defined": "Ikke definert",
       "invalid_coupon": "Denne koden samsvarer ikke med noen aktiv kupong. Kontroller at alt er riktig, og prøv igjen.",
       "fill_all_required": "Fyll ut alle obligatoriske felt for å fortsette.",
-      "something_went_wrong": "Ops! Noe gikk galt. Kontroller at alt er riktig, og prøv igjen.",
+      "something_went_wrong": "Noe gikk galt. Vennligst prøv igjen senere.",
       "checkout_pricing_warning": "Tilgjengelighet, frakt, skatter og kampanjer er ikke endelige før du har fullført bestillingen.",
       "wishlists_available_for_authorized": "Ønskelister er kun tilgjengelige for autentiserte brukere",
       "no_addresses": "Du har ingen adresser ennå",
@@ -204,6 +205,7 @@
       "fail_add_product_to_cart": "Dette produktet kan dessverre ikke legges i handlekurven. {reason}",
       "fail_to_change_quantity_in_cart": "Antallet for produktet kan dessverre ikke oppdateres i handlekurven. {reason}",
       "unhandled_error": "Beklager ulempen. Serveren vår opplever for øyeblikket tekniske problemer. Prøv igjen senere.",
+      "report_sent_successfully": "Takk! Din rapport er sendt. Vi vil se på det.",
       "role_update_successful": "Brukerrollen er oppdatert",
       "role_update_failed": "Feil ved oppdatering av rolle: {0}",
       "passwords_do_not_match": "Passordfeltene samsvarer ikke",
