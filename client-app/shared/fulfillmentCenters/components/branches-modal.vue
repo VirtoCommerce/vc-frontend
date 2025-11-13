@@ -35,13 +35,9 @@
 
           <VcEmptyView
             v-else
-            :text="
-              searchInput.length
-                ? $t('shared.catalog.branches_modal.no_results')
-                : $t('shared.catalog.branches_modal.no_branches')
-            "
+            :text="emptyViewText"
             icon="outline-stock"
-            :variant="searchInput.length ? 'search' : 'empty'"
+            :variant="emptyViewVariant"
             class="h-[23.8rem] max-h-screen-60"
           >
             <template v-if="searchInput.length" #button>
@@ -139,16 +135,7 @@
           </template>
         </div>
 
-        <VcEmptyView
-          v-else
-          :text="
-            searchInput.length
-              ? $t('shared.catalog.branches_modal.no_results')
-              : $t('shared.catalog.branches_modal.no_branches')
-          "
-          icon="outline-stock"
-          :variant="searchInput.length ? 'search' : 'empty'"
-        >
+        <VcEmptyView v-else :text="emptyViewText" icon="outline-stock" :variant="emptyViewVariant">
           <template v-if="searchInput.length" #button>
             <VcButton prepend-icon="reset" @click="searchInput = ''">
               {{ $t("shared.catalog.branches_modal.reset_search_button") }}
@@ -180,6 +167,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 import { useFulfillmentCenters } from "../composables";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
@@ -199,12 +187,20 @@ const props = withDefaults(defineProps<IProps>(), {
   selectedBranches: () => [],
 });
 
+const { t } = useI18n();
 const { loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
 
 const showSelectedBranchesMobile = ref(false);
 const searchInput = ref<string>("");
 const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
 const selectedBranchesIds = ref<string[]>([]);
+
+const emptyViewVariant = computed(() => (searchInput.value.length ? "search" : "empty"));
+const emptyViewText = computed(() =>
+  searchInput.value.length
+    ? t("shared.catalog.branches_modal.no_results")
+    : t("shared.catalog.branches_modal.no_branches"),
+);
 
 onMounted(async () => {
   await loadFulfillmentCenters();
