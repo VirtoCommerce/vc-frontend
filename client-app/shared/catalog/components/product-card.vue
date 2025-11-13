@@ -4,6 +4,7 @@
     :data-product-sku="product.code"
     border
     data-test-id="product-card"
+    ref="productCard"
     :class="['product-card', `product-card--${viewMode}`]"
   >
     <template #media>
@@ -144,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef, ref } from "vue";
+import { computed, toRef, ref, nextTick, useTemplateRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -192,6 +193,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const product = toRef(props, "product");
 const isExpanded = ref(false);
+const productCard = useTemplateRef("productCard");
 
 const { browserTarget: browserTargetFromSetting } = useBrowserTarget();
 
@@ -260,8 +262,28 @@ async function changeVariationsPage(pageNumber: number) {
 
 async function handleVariationsClick() {
   isExpanded.value = !isExpanded.value;
+
   if (isExpanded.value && !variationsLoaded.value) {
     await loadVariations();
+  }
+
+  if (isExpanded.value) {
+    await nextTick();
+    const cardElement = productCard.value?.$el as HTMLElement | null;
+    if (cardElement) {
+      const headerHeightVar = getComputedStyle(document.documentElement).getPropertyValue(
+        "--vc-layout-sidebar-offset-top",
+      );
+      const headerHeight = headerHeightVar ? parseInt(headerHeightVar, 10) : 0;
+
+      const elementPosition = cardElement.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - headerHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
   }
 }
 
@@ -290,7 +312,7 @@ const variationsCount = computed(() => {
     $list: &;
   }
 
-  &__variation-button {
+  &__variations-button {
     @apply hidden;
 
     #{$list} & {
