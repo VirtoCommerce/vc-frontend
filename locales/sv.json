@@ -79,7 +79,9 @@
       "show_less": "Visa mindre",
       "expand_all": "Expandera alla",
       "all_products": "Alla produkter",
-      "buy_now": "Köp nu"
+      "buy_now": "Köp nu",
+      "see_all": "Se alla",
+      "report_a_problem": "Rapportera ett problem"
     },
     "labels": {
       "actions": "Åtgärder",
@@ -104,7 +106,7 @@
       "total": "Totalt",
       "compare": "Jämför",
       "price": "Pris",
-      "product_price": "Ditt pris",
+      "product_price": "Pris",
       "subtotal": "Delsumma",
       "discount": "Rabatt",
       "line_items": "Artiklar",
@@ -192,7 +194,7 @@
       "not_defined": "Odefinierat",
       "invalid_coupon": "Denna kod matchar inte någon aktiv kupong. Kontrollera att allt är korrekt och försök igen.",
       "fill_all_required": "Fyll i all obligatorisk information för att fortsätta.",
-      "something_went_wrong": "Oj! Något gick fel. Kontrollera att allt är korrekt och försök igen.",
+      "something_went_wrong": "Något gick fel. Vänligen försök igen senare.",
       "checkout_pricing_warning": "Tillgänglighet, frakt, skatt och kampanjer är inte definitiva förrän du slutför din beställning.",
       "wishlists_available_for_authorized": "Önskelistor är endast tillgängliga för autentiserade användare",
       "no_addresses": "Du har inga adresser ännu",
@@ -203,6 +205,7 @@
       "fail_add_product_to_cart": "Tyvärr, denna produkt kan inte läggas till i kundvagnen. {reason}",
       "fail_to_change_quantity_in_cart": "Tyvärr, kan inte uppdatera produktantal i kundvagnen. {reason}",
       "unhandled_error": "Ursäkta besväret. Vår server upplever för närvarande tekniska problem. Vänligen försök igen senare.",
+      "report_sent_successfully": "Tack! Din rapport har skickats framgångsrikt. Vi kommer att titta på det.",
       "role_update_successful": "Kundrollen har uppdaterats framgångsrikt",
       "role_update_failed": "Fel uppstod vid uppdatering av rollen: {0}",
       "passwords_do_not_match": "Lösenordsfälten måste ha matchande värden",
@@ -335,6 +338,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Sparat till senare",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -562,6 +566,12 @@
           "remove": "Ta bort från jämförelse"
         }
       },
+      "notifications": {
+        "limit_reached": "Endast {productsLimit} produkter kan jämföras",
+        "added_html": "Produkten <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> har lagts till i jämförelselistan <span class=\"hidden lg:inline\">(antal kvar - {itemsLeft})</span>",
+        "removed_html": "Produkten <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> har tagits bort från jämförelselistan",
+        "compare_button": "Jämför"
+      },
       "clear_list_modal": {
         "title": "Bekräfta rensning",
         "message": "Bekräftar du att alla produkter ska tas bort från jämförelselistan?"
@@ -635,6 +645,7 @@
         "create_configuration_button": "Skapa din egen konfiguration",
         "price_block": {
           "title": "Pris och leverans",
+          "mobile_title": "Dela och mer",
           "add_to_list_button": "Lägg till i lista",
           "product_email_title": "Ta en titt på produkten: {0}"
         },
@@ -821,10 +832,14 @@
         "year_label": "År",
         "year_placeholder": "ÅÅ",
         "security_code_label": "Säkerhetskod",
+        "pay_now_button": "Betala nu",
         "errors": {
+          "card_number": "Ange ett giltigt kreditkortsnummer",
           "month": "Ange en giltig utgångsmånad",
           "year": "Ange ett giltigt utgångsår",
-          "security_code": "Ogiltig säkerhetskod."
+          "expiration_date": "Utgångsdatumet måste vara i framtiden",
+          "security_code": "Ange en giltig säkerhetskod",
+          "cardholder_name": "Ange ett giltigt kortinnehavarnamn"
         },
         "user_error_message": "Kan inte initiera betalning. Vänligen försök igen senare eller använd en annan betalningsmetod",
         "payment_unavailable": "Betalningsmetoden är inte tillgänglig. Vänligen försök igen senare"
@@ -834,27 +849,15 @@
         "privacy_policy_link": "Integritetspolicy",
         "accept_terms_text": "Genom att lägga en beställning accepterar du villkoren i vårt",
         "processing_personal_data_text": "och samtycker till att vi kan behandla dina personuppgifter enligt vår",
-        "pay_now_button": "Betala nu",
         "errors": {
-          "number": "Ange ett giltigt kreditkortsnummer",
-          "month": "Ange en giltig utgångsmånad",
-          "year": "Ange ett giltigt utgångsår",
-          "expiration_date": "Utgångsdatumet måste vara i framtiden",
-          "security_code": "Ange en giltig säkerhetskod",
-          "cardholder_name": "Ange ett giltigt kortinnehavarnamn",
           "incorrect_payment_method": "Felaktig betalningsmetod"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Betala nu"
       },
       "manual": {
         "text": "Den valda betalningsmetoden stöder inte onlinebetalning. Välj en annan metod eller "
       },
       "redirection": {
         "text": "Efter att du klickar på <strong>{0}</strong>, kommer du att omdirigeras till tredjepartsbetalningstjänsten",
-        "pay_now_button": "Betala nu",
-        "try_again_button": "Försök igen",
         "errors": {
           "missing_link": "Omdirigeringslänk saknas",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1170,7 +1173,9 @@
           "get_directions": "Få vägbeskrivning",
           "point_info": "Platsinfo",
           "pickup_address": "Upphämtningsadress",
-          "cart_pickup_points_not_found": "Det finns inga tillgängliga upphämtningsställen för dessa produkter. Välj en annan leveransmetod",
+          "cart_pickup_points_not_found": "Det finns inga tillgängliga upphämtningsställen för dessa produkter. Välj en annan leveransmetod.",
+          "cart_pickup_points_not_found_by_filter": "Hittade inga upphämtningsställen.",
+          "cart_pickup_points_reset_search": "Återställ sökning",
           "availability": "Tillgänglighet"
         }
       },
@@ -1318,6 +1323,7 @@
       "recently_browsed_products": "Nyligen bläddrade",
       "save_for_later": "Spara till senare",
       "saved_for_later": "Sparad till senare",
+      "saved_for_later_not_found": "Du har inte sparat några produkter för senare",
       "move_to_cart": "Flytta till kundvagn"
     },
     "checkout": {

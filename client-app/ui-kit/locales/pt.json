@@ -109,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Navegação de trilha"
+    },
+    "rating": {
+      "rating_label": "Classificação {value} de {maxValue}",
+      "read_only_button_aria_label": "Classificação {value} de {maxValue}, não disponível para seleção",
+      "set_rating_aria_label": "Definir classificação para {value} de {maxValue}"
     }
   }
 }

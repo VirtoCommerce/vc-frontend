@@ -61,6 +61,17 @@ function clear(group?: string, exclude?: boolean) {
     : [];
 }
 
+function update(id: string, updates: Partial<INotificationExtended>) {
+  const index = stack.value.findIndex((item) => item.id === id);
+
+  if (index === -1) {
+    return;
+  }
+
+  Object.assign(stack.value[index], updates);
+  triggerRef(stack);
+}
+
 function info(options: INotification) {
   return open(options);
 }
@@ -94,6 +105,7 @@ export function useNotifications() {
     error,
     close,
     clear,
+    update,
     stack: computed(() => /* https://github.com/vuejs/core/issues/8036 */ stack.value.slice()),
   };
 }

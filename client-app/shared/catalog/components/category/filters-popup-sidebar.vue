@@ -3,10 +3,11 @@
     class="filters-popup-sidebar"
     :is-visible="isVisible"
     :title="isMobile ? $t('common.buttons.filters') : $t('common.buttons.allFilters')"
-    @hide="$emit('hidePopupSidebar')"
+    @hide="onCancel"
   >
     <ProductsFilters
       v-if="localFilters"
+      :id="productsFiltersId"
       :keyword="keywordQueryParam"
       :filters="localFilters"
       :loading="loading || facetsLoading"
@@ -96,9 +97,10 @@
 <script setup lang="ts">
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
-import { watch, ref, computed } from "vue";
+import { watch, ref, computed, nextTick, onMounted, onUnmounted } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
 import { useModal } from "@/shared/modal";
+import { useComponentId, useFocusManagement } from "@/ui-kit/composables";
 import type { SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
@@ -123,6 +125,12 @@ interface IProps {
   popupSidebarFilters: ProductsFiltersType;
   isExistSelectedFacets: boolean;
 }
+
+const productsFiltersId = useComponentId("products-filters");
+
+const { focusFirst } = useFocusManagement({
+  container: `#${productsFiltersId}`,
+});
 
 const localFilters = ref<ProductsFiltersType>({
   filters: [],
@@ -159,9 +167,11 @@ watch(
 
 watch(
   () => props.isVisible,
-  (visible) => {
+  async (visible) => {
     if (visible) {
       beforeChangeFilterState.value = cloneDeep(props.popupSidebarFilters);
+      await nextTick();
+      focusFirst();
     }
   },
 );
@@ -176,7 +186,7 @@ function onProductsFiltersChange(payload: SearchProductFilterResult[]) {
 }
 
 function onCancel() {
-  if (beforeChangeFilterState.value) {
+  if (isPopupSidebarFilterDirty.value && beforeChangeFilterState.value) {
     emit("applyFilters", cloneDeep(beforeChangeFilterState.value));
   }
 
@@ -196,6 +206,13 @@ function onApply() {
   emit("hidePopupSidebar");
 }
 
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === "Escape" && props.isVisible) {
+    event.preventDefault();
+    emit("hidePopupSidebar");
+  }
+}
+
 const { openModal } = useModal();
 function openBranchesModal() {
   openModal({
@@ -213,6 +230,14 @@ function openBranchesModal() {
     },
   });
 }
+
+onMounted(() => {
+  document.addEventListener("keydown", handleKeydown);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("keydown", handleKeydown);
+});
 </script>
 
 <style lang="scss">

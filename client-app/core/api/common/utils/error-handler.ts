@@ -7,18 +7,18 @@ import {
   useBroadcast,
 } from "@/shared/broadcast";
 
-export function errorHandler(error: ServerError | undefined) {
+export function errorHandler(error: ServerError | undefined, errorData?: string) {
   const broadcast = useBroadcast();
 
   switch (error) {
     case ServerError.Unhandled:
-      void broadcast.emit(unhandledErrorEvent, undefined, TabsType.ALL);
+      void broadcast.emit(unhandledErrorEvent, errorData, TabsType.ALL);
       break;
     case ServerError.Unauthorized:
-      void broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.ALL);
+      void broadcast.emit(unauthorizedErrorEvent, errorData, TabsType.ALL);
       break;
     case ServerError.Forbidden:
-      void broadcast.emit(forbiddenEvent, undefined, TabsType.CURRENT);
+      void broadcast.emit(forbiddenEvent, errorData, TabsType.CURRENT);
       break;
   }
 }

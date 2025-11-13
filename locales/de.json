@@ -79,7 +79,9 @@
       "show_less": "Weniger anzeigen",
       "expand_all": "Alle ausklappen",
       "all_products": "Alle Produkte",
-      "buy_now": "Jetzt kaufen"
+      "buy_now": "Jetzt kaufen",
+      "see_all": "Alle anzeigen",
+      "report_a_problem": "Problem melden"
     },
     "labels": {
       "actions": "Aktionen",
@@ -104,7 +106,7 @@
       "total": "Gesamt",
       "compare": "Vergleichen",
       "price": "Preis",
-      "product_price": "Ihr Preis",
+      "product_price": "Preis",
       "subtotal": "Zwischensumme",
       "discount": "Rabatt",
       "line_items": "Artikel",
@@ -192,7 +194,7 @@
       "not_defined": "Nicht definiert",
       "invalid_coupon": "Dieser Code entspricht keinem aktiven Gutschein. Bitte überprüfen Sie alles und versuchen Sie es erneut.",
       "fill_all_required": "Bitte füllen Sie alle erforderlichen Felder aus, um fortzufahren.",
-      "something_went_wrong": "Hoppla! Etwas ist schiefgelaufen. Bitte überprüfen Sie alles und versuchen Sie es erneut.",
+      "something_went_wrong": "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
       "checkout_pricing_warning": "Verfügbarkeit, Versand, Steuern und Aktionen sind erst endgültig, wenn Sie Ihre Bestellung abschließen.",
       "wishlists_available_for_authorized": "Wunschlisten sind nur für authentifizierte Benutzer verfügbar",
       "no_addresses": "Sie haben noch keine Adressen",
@@ -203,6 +205,7 @@
       "fail_add_product_to_cart": "Entschuldigung, dieses Produkt kann nicht zum Warenkorb hinzugefügt werden. {reason}",
       "fail_to_change_quantity_in_cart": "Entschuldigung, die Produktmenge im Warenkorb kann nicht aktualisiert werden. {reason}",
       "unhandled_error": "Entschuldigen Sie die Unannehmlichkeiten. Unser Server hat derzeit technische Probleme. Bitte versuchen Sie es später erneut.",
+      "report_sent_successfully": "Vielen Dank! Ihr Bericht wurde erfolgreich gesendet. Wir werden uns darum kümmern.",
       "role_update_successful": "Die Kundenrolle wurde erfolgreich aktualisiert.",
       "role_update_failed": "Es sind Fehler bei der Aktualisierung der Rolle aufgetreten: {0}",
       "passwords_do_not_match": "Die Passwortfelder müssen übereinstimmende Werte haben.",
@@ -335,6 +338,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Für später gespeichert",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -562,6 +566,12 @@
           "remove": "Vom Vergleich entfernen"
         }
       },
+      "notifications": {
+        "limit_reached": "Es können nur {productsLimit} Produkte verglichen werden",
+        "added_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde der Vergleichsliste hinzugefügt <span class=\"hidden lg:inline\">(verbleibende Artikel - {itemsLeft})</span>",
+        "removed_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde aus der Vergleichsliste entfernt",
+        "compare_button": "Vergleichen"
+      },
       "clear_list_modal": {
         "title": "Löschung bestätigen",
         "message": "Bestätigen Sie die Entfernung aller Produkte aus der Vergleichsliste?"
@@ -635,6 +645,7 @@
         "create_configuration_button": "Konfiguration erstellen",
         "price_block": {
           "title": "Preis und Lieferung",
+          "mobile_title": "Teilen & Mehr",
           "add_to_list_button": "Zur Liste hinzufügen",
           "product_email_title": "Bitte schauen Sie sich das Produkt an: {0}"
         },
@@ -821,10 +832,14 @@
         "year_label": "Jahr",
         "year_placeholder": "JJ",
         "security_code_label": "Sicherheitscode",
+        "pay_now_button": "Jetzt bezahlen",
         "errors": {
+          "card_number": "Bitte geben Sie eine gültige Kreditkartennummer an",
           "month": "Bitte geben Sie einen gültigen Ablaufmonat an",
           "year": "Bitte geben Sie ein gültiges Ablaufjahr an",
-          "security_code": "Ungültiger Sicherheitscode."
+          "expiration_date": "Das Ablaufdatum muss in der Zukunft liegen",
+          "security_code": "Bitte geben Sie einen gültigen Sicherheitscode an",
+          "cardholder_name": "Bitte geben Sie einen gültigen Namen des Karteninhabers an"
         },
         "user_error_message": "Zahlung konnte nicht initialisiert werden. Bitte versuchen Sie es später noch einmal oder wählen Sie eine andere Zahlungsmethode.",
         "payment_unavailable": "Zahlungsmethode ist nicht verfügbar. Bitte versuche es später noch einmal."
@@ -834,27 +849,15 @@
         "privacy_policy_link": "Datenschutzrichtlinie",
         "accept_terms_text": "Durch die Aufgabe einer Bestellung akzeptieren Sie die Bedingungen unserer",
         "processing_personal_data_text": "und stimmen zu, dass wir Ihre personenbezogenen Daten gemäß unserer",
-        "pay_now_button": "Jetzt bezahlen",
         "errors": {
-          "number": "Bitte geben Sie eine gültige Kreditkartennummer an",
-          "month": "Bitte geben Sie einen gültigen Ablaufmonat an",
-          "year": "Bitte geben Sie ein gültiges Ablaufjahr an",
-          "expiration_date": "Das Ablaufdatum muss in der Zukunft liegen",
-          "security_code": "Bitte geben Sie einen gültigen Sicherheitscode an",
-          "cardholder_name": "Bitte geben Sie einen gültigen Namen des Karteninhabers an",
           "incorrect_payment_method": "Ungültige Zahlungsmethode"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Jetzt bezahlen"
       },
       "manual": {
         "text": "Die von Ihnen ausgewählte Zahlungsmethode unterstützt keine Online-Zahlung. Bitte wählen Sie eine andere Methode oder "
       },
       "redirection": {
         "text": "Nachdem Sie auf <strong>{0}</strong> geklickt haben, werden Sie zum Zahlungsdienstleister weitergeleitet",
-        "pay_now_button": "Jetzt bezahlen",
-        "try_again_button": "Erneut versuchen",
         "errors": {
           "missing_link": "Weiterleitungslink fehlt",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1171,6 +1174,8 @@
           "point_info": "Info-Punkt",
           "pickup_address": "Abholadresse",
           "cart_pickup_points_not_found": "Für diese Produkte sind keine Abholpunkte verfügbar. Wählen Sie eine andere Versandart.",
+          "cart_pickup_points_not_found_by_filter": "Abholpunkte nicht gefunden.",
+          "cart_pickup_points_reset_search": "Suche zurücksetzen",
           "availability": "Verfügbarkeit"
         }
       },
@@ -1318,6 +1323,7 @@
       "recently_browsed_products": "Kürzlich angesehen",
       "save_for_later": "Für später speichern",
       "saved_for_later": "Für später gespeichert",
+      "saved_for_later_not_found": "Sie haben noch keine Produkte für später gespeichert",
       "move_to_cart": "In den Warenkorb"
     },
     "checkout": {

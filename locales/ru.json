@@ -79,7 +79,9 @@
       "show_less": "Показать меньше",
       "expand_all": "Развернуть все",
       "all_products": "Все продукты",
-      "buy_now": "Купить сейчас"
+      "buy_now": "Купить сейчас",
+      "see_all": "Смотреть все",
+      "report_a_problem": "Сообщить о проблеме"
     },
     "labels": {
       "actions": "Действия",
@@ -104,7 +106,7 @@
       "total": "Итого",
       "compare": "Сравнить",
       "price": "Цена",
-      "product_price": "Ваша цена",
+      "product_price": "Цена",
       "subtotal": "Промежуточный итог",
       "discount": "Скидка",
       "line_items": "Позиции",
@@ -192,8 +194,8 @@
       "not_defined": "Не определено",
       "invalid_coupon": "Этот код не соответствует ни одному из активных купонов. Проверьте правильность и попробуйте снова.",
       "fill_all_required": "Введите всю необходимую информацию для продолжения.",
-      "something_went_wrong": "Что-то пошло не так. Проверьте данные и попробуйте снова.",
-      "checkout_pricing_warning": "Информация о наличии товаров, стоимости доставки, налогах и акциях является предварительной и может измениться до завершения оформления заказа.",
+      "something_went_wrong": "Что-то пошло не так. Пожалуйста, попробуйте позже.",
+      "checkout_pricing_warning": "Наличие товаров, доставка, налоги и акции не являются окончательными до завершения оформления заказа.",
       "wishlists_available_for_authorized": "Списки желаний доступны только для авторизованных пользователей",
       "no_addresses": "У вас пока нет адресов",
       "confirm_delete_address": "Вы уверены, что хотите удалить этот адрес?",
@@ -203,6 +205,7 @@
       "fail_add_product_to_cart": "Этот товар нельзя добавить в корзину. {reason}",
       "fail_to_change_quantity_in_cart": "Невозможно обновить количество товара в корзине. {reason}",
       "unhandled_error": "Извините за временные неудобства. В данный момент на сервере возникли технические проблемы. Пожалуйста, повтороите попытку позднее.",
+      "report_sent_successfully": "Спасибо! Ваш отчет успешно отправлен. Мы обязательно разберемся с проблемой.",
       "role_update_successful": "Роль клиента была успешно обновлена.",
       "role_update_failed": "Ошибка при обновлении роли: {0}",
       "passwords_do_not_match": "Пароли должны совпадать.",
@@ -335,6 +338,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Отложено",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -562,6 +566,12 @@
           "remove": "Удалить из сравнения"
         }
       },
+      "notifications": {
+        "limit_reached": "Можно сравнить не более {productsLimit} товаров",
+        "added_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> добавлен в список сравнения <span class=\"hidden lg:inline\">(осталось товаров - {itemsLeft})</span>",
+        "removed_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> был удален из списка сравнения",
+        "compare_button": "Сравнить"
+      },
       "clear_list_modal": {
         "title": "Подтвердить удаление",
         "message": "Вы подтверждаете удаление всех товаров из списка?"
@@ -635,6 +645,7 @@
         "create_configuration_button": "Создайте свою конфигурацию",
         "price_block": {
           "title": "Цена и доставка",
+          "mobile_title": "Опции и действия",
           "add_to_list_button": "Добавить в список",
           "product_email_title": "Пожалуйста, ознакомьтесь с товаром: {0}"
         },
@@ -821,10 +832,14 @@
         "year_label": "Год",
         "year_placeholder": "ГГ",
         "security_code_label": "Код безопасности",
+        "pay_now_button": "Оплатить сейчас",
         "errors": {
-          "month": "Укажите действительный месяц истечения срока действия",
-          "year": "Укажите действительный год окончания срока действия",
-          "security_code": "Недействительный код безопасности."
+          "card_number": "Введите корректный номер кредитной карты",
+          "month": "Введите корректный месяц оконччания срока действия",
+          "year": "Введите корректный год окончания срока действия",
+          "expiration_date": "Дата истечения срока действия должна быть в будущем",
+          "security_code": "Введите корректный код безопасности",
+          "cardholder_name": "Введите корректное имя владельца карты"
         },
         "user_error_message": "Не удалось инициализировать платёж. Попробуйте позже или выберите другой способ оплаты",
         "payment_unavailable": "Способ оплаты недоступен. Повторите попытку позже."
@@ -834,27 +849,15 @@
         "privacy_policy_link": "Политике конфиденциальности",
         "accept_terms_text": "Размещая заказ, вы принимаете условия нашего",
         "processing_personal_data_text": "и соглашаетесь на обработку ваших персональных данных согласно нашей",
-        "pay_now_button": "Оплатить сейчас",
         "errors": {
-          "number": "Введите корректный номер кредитной карты",
-          "month": "Введите корректный месяц оконччания срока действия",
-          "year": "Введите корректный год окончания срока действия",
-          "expiration_date": "Дата истечения срока действия должна быть в будущем",
-          "security_code": "Введите корректный код безопасности",
-          "cardholder_name": "Введите корректное имя владельца карты",
           "incorrect_payment_method": "Некорректный способ оплаты"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Оплатить сейчас"
       },
       "manual": {
         "text": "Выбранный вами способ оплаты не поддерживает онлайн-платежи. Пожалуйста, выберите другой способ или "
       },
       "redirection": {
         "text": "После нажатия <strong>{0}</strong> вы будете перенаправлены на сторонний платежный сервис",
-        "pay_now_button": "Оплатить сейчас",
-        "try_again_button": "Попробовать снова",
         "errors": {
           "missing_link": "Ссылка для перенаправления отсутствует",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1170,7 +1173,9 @@
           "get_directions": "Как добраться",
           "point_info": "Информация",
           "pickup_address": "Адрес самовывоза",
-          "cart_pickup_points_not_found": "Для этих товаров нет доступных пунктов выдачи. Выберите другой способ доставки",
+          "cart_pickup_points_not_found": "Для этих товаров нет доступных пунктов выдачи. Выберите другой способ доставки.",
+          "cart_pickup_points_not_found_by_filter": "Пункты выдачи не найдены.",
+          "cart_pickup_points_reset_search": "Очистить поиск",
           "availability": "Доступность"
         }
       },
@@ -1318,6 +1323,7 @@
       "recently_browsed_products": "Недавно просмотренные",
       "save_for_later": "Сохранить на потом",
       "saved_for_later": "Сохранено на потом",
+      "saved_for_later_not_found": "Вы не сохранили ни одного товара на потом",
       "move_to_cart": "В корзину"
     },
     "checkout": {

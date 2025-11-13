@@ -1,138 +1,147 @@
 <template>
-  <VcContainer
-    v-if="product && productTemplate"
-    ref="productComponentAnchor"
-    class="print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7]"
-  >
-    <FiltersPopupSidebar
-      :is-exist-selected-facets="hasSelectedFacets"
-      :popup-sidebar-filters="productsFilters"
-      :facets-loading="fetchingFacets"
-      :is-mobile="isMobile"
-      :is-visible="isFiltersSidebarVisible"
-      :loading="fetchingVariations"
-      :hide-controls="false"
-      @hide-popup-sidebar="hideFiltersSidebar"
-      @reset-facet-filters="resetFacetFilters"
-      @apply-filters="applyFilters"
-    />
+  <template v-if="product && productTemplate">
+    <VcContainer
+      ref="productComponentAnchor"
+      class="print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7]"
+    >
+      <FiltersPopupSidebar
+        :is-exist-selected-facets="hasSelectedFacets"
+        :popup-sidebar-filters="productsFilters"
+        :facets-loading="fetchingFacets"
+        :is-mobile="isMobile"
+        :is-visible="isFiltersSidebarVisible"
+        :loading="fetchingVariations"
+        :hide-controls="false"
+        @hide-popup-sidebar="hideFiltersSidebar"
+        @reset-facet-filters="resetFacetFilters"
+        @apply-filters="applyFilters"
+      />
 
-    <!-- Breadcrumbs -->
-    <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
+      <!-- Breadcrumbs -->
+      <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
 
-    <VcTypography tag="h1">
-      {{ selectedVariationName || product.name }}
-    </VcTypography>
+      <VcTypography tag="h1">
+        {{ selectedVariationName || product.name }}
+      </VcTypography>
 
-    <div class="mt-2 flex flex-wrap gap-1 max-sm:justify-between sm:gap-6">
-      <VcCopyText
-        v-if="!product.hasVariations"
-        :text="product.code"
-        :notification="$t('pages.product.sku_copied_message')"
-      >
-        <span class="text-base text-secondary-900">
-          {{ $t("pages.product.sku_label") }}
-          <span class="font-black">#{{ product.code }}</span>
-        </span>
-      </VcCopyText>
+      <div class="mt-2 flex flex-wrap gap-1 max-sm:justify-between sm:gap-6">
+        <VcCopyText
+          v-if="!product.hasVariations"
+          :text="product.code"
+          :notification="$t('pages.product.sku_copied_message')"
+        >
+          <span class="text-base text-secondary-900">
+            {{ $t("pages.product.sku_label") }}
+            <span class="font-black">#{{ product.code }}</span>
+          </span>
+        </VcCopyText>
 
-      <ProductRating v-if="productReviewsEnabled && product.rating" :rating="product.rating" />
-    </div>
-
-    <VcLayout sidebar-position="right" sticky-sidebar class="mt-5">
-      <div class="space-y-5 xl:space-y-6">
-        <component
-          :is="productInfoSection?.type"
-          v-if="productInfoSection && !productInfoSection.hidden"
-          :product="product"
-          :variations="variations"
-          :model="productInfoSection"
-          :fetching-variations="fetchingVariations"
-        />
-
-        <component
-          :is="productDescriptionSection && 'type' in productDescriptionSection ? productDescriptionSection.type : ''"
-          v-if="productDescriptionSection && !productDescriptionSection.hidden"
-          :product="product"
-          :model="productDescriptionSection"
-          :is-collapsible="false"
-        />
-
-        <ProductConfiguration
-          v-if="product.isConfigurable && configuration?.length"
-          :product-id="productId"
-          :configuration="configuration"
-          :initial-configuration="initialConfiguration"
-        />
-
-        <KeepAlive>
-          <ProductReviews
-            v-if="productReviewsEnabled && !productReviewsSection?.hidden"
-            :product-id="productId"
-            :product-rating="product.rating"
-          />
-        </KeepAlive>
-
-        <component
-          :is="productVariationsBlock?.type"
-          v-if="productVariationsBlock && !productVariationsBlock.hidden && product.hasVariations"
-          :variations="variations"
-          :sort="variationSortInfo"
-          :model="productVariationsBlock"
-          :fetching-variations="fetchingVariations"
-          :page-number="variationsSearchParams.page"
-          :pages-count="variationsPagesCount"
-          :products-filters="productsFilters"
-          :has-selected-filters="hasSelectedFacets"
-          :product-id="productId"
-          :product-name="product.name"
-          @apply-sorting="sortVariations"
-          @change-page="changeVariationsPage"
-          @show-filters="showFiltersSidebar"
-          @reset-filters="resetFacetFilters"
-          @apply-filters="applyFilters"
-        />
+        <ProductRating v-if="productReviewsEnabled && product.rating" :rating="product.rating" />
       </div>
 
-      <template #sidebar>
-        <ProductSidebar
-          :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]"
-          :product="product"
-          :variations="variations"
-          :template-layout="templateLayout"
-        />
+      <VcLayout sidebar-position="right" sticky-sidebar class="mt-5">
+        <div class="space-y-5 xl:space-y-6">
+          <component
+            :is="productInfoSection?.type"
+            v-if="productInfoSection && !productInfoSection.hidden"
+            :product="product"
+            :variations="variations"
+            :model="productInfoSection"
+            :fetching-variations="fetchingVariations"
+          />
 
-        <ProductPickupLocations
-          v-if="xPickupEnabled && pickupLocations?.length > 0"
-          :loading="pickupLocationsLoading"
-          :pickup-locations="pickupLocations"
-        />
-      </template>
-    </VcLayout>
+          <component
+            :is="productDescriptionSection?.type"
+            v-if="productDescriptionSection && !productDescriptionSection.hidden"
+            :product="product"
+            :model="productDescriptionSection"
+            :is-collapsible="false"
+          />
 
-    <component
-      :is="relatedProductsSection?.type"
-      v-if="relatedProductsSection && !relatedProductsSection.hidden"
-      :related-products="relatedProducts"
-      :product-id="productId"
-      :product-name="product.name"
-      class="mt-5 xl:mt-6"
-    />
+          <ProductConfiguration
+            v-if="product.isConfigurable && configuration?.length"
+            :product-id="productId"
+            :configuration="configuration"
+            :initial-configuration="initialConfiguration"
+          />
 
-    <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
+          <KeepAlive>
+            <ProductReviews
+              v-if="productReviewsEnabled && !productReviewsSection?.hidden"
+              :product-id="productId"
+              :product-rating="product.rating"
+            />
+          </KeepAlive>
+
+          <component
+            :is="productVariationsBlock?.type"
+            v-if="productVariationsBlock && !productVariationsBlock.hidden && product.hasVariations"
+            :variations="variations"
+            :sort="variationSortInfo"
+            :model="productVariationsBlock"
+            :fetching-variations="fetchingVariations"
+            :page-number="variationsSearchParams.page"
+            :pages-count="variationsPagesCount"
+            :products-filters="productsFilters"
+            :has-selected-filters="hasSelectedFacets"
+            :product-id="productId"
+            :product-name="product.name"
+            @apply-sorting="sortVariations"
+            @change-page="changeVariationsPage"
+            @show-filters="showFiltersSidebar"
+            @reset-filters="resetFacetFilters"
+            @apply-filters="applyFilters"
+          />
+        </div>
+
+        <template #sidebar>
+          <ProductPriceBlock
+            :product="product"
+            :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]"
+            :is-mobile="isMobile"
+            :template-layout="templateLayout"
+            :variations="variations"
+          />
+
+          <ProductVendor :class="['mt-5', { 'print:hidden': product.hasVariations }]" :product="product" />
+
+          <ProductPickupLocations
+            v-if="xPickupEnabled && pickupLocations?.length > 0"
+            :loading="pickupLocationsLoading"
+            :pickup-locations="pickupLocations"
+            class="mt-5"
+          />
+        </template>
+      </VcLayout>
+
       <component
-        :is="recommendedProductsSection?.type"
-        v-for="{ model, id } in recommendedProductsSection.blocks"
-        :key="id"
-        :recommended-products="recommendedProducts[model as string]"
-        :title="$t(`pages.product.recommended_products.${model}_section_title`)"
-        :model="model"
+        :is="relatedProductsSection?.type"
+        v-if="relatedProductsSection && !relatedProductsSection.hidden"
+        :related-products="relatedProducts"
         :product-id="productId"
         :product-name="product.name"
         class="mt-5 xl:mt-6"
       />
-    </template>
-  </VcContainer>
+
+      <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
+        <component
+          :is="recommendedProductsSection?.type"
+          v-for="{ model, id } in recommendedProductsSection.blocks"
+          :key="id"
+          :recommended-products="recommendedProducts[model as string]"
+          :title="$t(`pages.product.recommended_products.${model}_section_title`)"
+          :model="model"
+          :product-id="productId"
+          :product-name="product.name"
+          class="mt-5 xl:mt-6"
+        />
+      </template>
+    </VcContainer>
+
+    <FloatingBar v-if="isMobile">
+      <ProductPrice :product="product" :variations="variations" :template-layout="templateLayout" />
+    </FloatingBar>
+  </template>
 
   <Error404 v-else-if="!fetchingProduct && productTemplate" />
 </template>
@@ -174,7 +183,8 @@ import { useShortCart } from "@/shared/cart";
 import {
   useProduct,
   useRelatedProducts,
-  ProductSidebar,
+  ProductVendor,
+  ProductPrice,
   ProductConfiguration,
   useProducts,
   useRecommendedProducts,
@@ -186,6 +196,7 @@ import {
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
   PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES,
 } from "@/shared/catalog/constants/product";
+import { FloatingBar } from "@/shared/common";
 import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
 import type { ISortInfo } from "@/core/types";
 import type {
@@ -198,6 +209,7 @@ import type { IPageTemplate } from "@/shared/static-content";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 import ProductPickupLocations from "@/shared/catalog/components/product-pickup-locations.vue";
+import ProductPriceBlock from "@/shared/catalog/components/product-price-block.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
@@ -218,7 +230,7 @@ const configurationId = getUrlSearchParam(CONFIGURATION_URL_SEARCH_PARAM);
 const lineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
-const isMobile = breakpoints.smaller("lg");
+const isMobile = breakpoints.smaller("md");
 
 const productId = toRef(props, "productId");
 const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
@@ -235,7 +247,7 @@ const {
   isFiltersSidebarVisible,
   productsFilters,
   applyFilters: _applyFilters,
-  hideFiltersSidebar,
+  hideFiltersSidebar: _hideFiltersSidebar,
   resetFacetFilters: _resetFacetFilters,
   showFiltersSidebar,
 } = useProducts({
@@ -401,6 +413,14 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
 async function resetFacetFilters(): Promise<void> {
   await _resetFacetFilters();
   void applyFilters(productsFilters.value);
+}
+
+function hideFiltersSidebar(): void {
+  _hideFiltersSidebar();
+  const variationsFiltersButton = document.getElementById(`${productId.value}-variations-filters-button`);
+  if (variationsFiltersButton) {
+    variationsFiltersButton.focus();
+  }
 }
 
 function checkLineItemId() {

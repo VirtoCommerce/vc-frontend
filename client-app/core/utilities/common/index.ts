@@ -192,3 +192,11 @@ export function safeDecode(input: string) {
     }
   }
 }
+
+export function serializeError(error: Error) {
+  return {
+    name: error.name,
+    message: error.message,
+    stack: error.stack,
+  };
+}

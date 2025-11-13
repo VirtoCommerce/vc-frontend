@@ -79,7 +79,9 @@
       "show_less": "Vis mindre",
       "expand_all": "Utvid alle",
       "all_products": "Alle produkter",
-      "buy_now": "Kjøp nå"
+      "buy_now": "Kjøp nå",
+      "see_all": "Se alle",
+      "report_a_problem": "Rapporter et problem"
     },
     "labels": {
       "actions": "Handlinger",
@@ -104,7 +106,7 @@
       "total": "Totalt",
       "compare": "Sammenlign",
       "price": "Pris",
-      "product_price": "Din pris",
+      "product_price": "Pris",
       "subtotal": "Delsum",
       "discount": "Rabatt",
       "line_items": "Produkter",
@@ -192,7 +194,7 @@
       "not_defined": "Ikke definert",
       "invalid_coupon": "Denne koden samsvarer ikke med noen aktiv kupong. Kontroller at alt er riktig, og prøv igjen.",
       "fill_all_required": "Fyll ut alle obligatoriske felt for å fortsette.",
-      "something_went_wrong": "Ops! Noe gikk galt. Kontroller at alt er riktig, og prøv igjen.",
+      "something_went_wrong": "Noe gikk galt. Vennligst prøv igjen senere.",
       "checkout_pricing_warning": "Tilgjengelighet, frakt, skatter og kampanjer er ikke endelige før du har fullført bestillingen.",
       "wishlists_available_for_authorized": "Ønskelister er kun tilgjengelige for autentiserte brukere",
       "no_addresses": "Du har ingen adresser ennå",
@@ -203,6 +205,7 @@
       "fail_add_product_to_cart": "Dette produktet kan dessverre ikke legges i handlekurven. {reason}",
       "fail_to_change_quantity_in_cart": "Antallet for produktet kan dessverre ikke oppdateres i handlekurven. {reason}",
       "unhandled_error": "Beklager ulempen. Serveren vår opplever for øyeblikket tekniske problemer. Prøv igjen senere.",
+      "report_sent_successfully": "Takk! Din rapport er sendt. Vi vil se på det.",
       "role_update_successful": "Brukerrollen er oppdatert",
       "role_update_failed": "Feil ved oppdatering av rolle: {0}",
       "passwords_do_not_match": "Passordfeltene samsvarer ikke",
@@ -335,6 +338,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Lagret til senere",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -562,6 +566,12 @@
           "remove": "Fjern fra sammenligning"
         }
       },
+      "notifications": {
+        "limit_reached": "Bare {productsLimit} produkter kan sammenlignes",
+        "added_html": "Produktet <span class=\"hidden lg:inline\">«<strong>{productName}</strong>»</span> er lagt til sammenligningslisten <span class=\"hidden lg:inline\">(antall igjen – {itemsLeft})</span>",
+        "removed_html": "Produktet <span class=\"hidden lg:inline\">«<strong>{productName}</strong>»</span> er fjernet fra sammenligningslisten",
+        "compare_button": "Sammenlign"
+      },
       "clear_list_modal": {
         "title": "Bekreft tømming",
         "message": "Bekrefter du at alle produkter fjernes fra sammenligningslisten?"
@@ -635,6 +645,7 @@
         "create_configuration_button": "Lag din egen konfigurasjon",
         "price_block": {
           "title": "Pris og levering",
+          "mobile_title": "Del og mer",
           "add_to_list_button": "Legg til i liste",
           "product_email_title": "Se produkt: {0}"
         },
@@ -821,10 +832,14 @@
         "year_label": "År",
         "year_placeholder": "ÅÅ",
         "security_code_label": "Sikkerhetskode",
+        "pay_now_button": "Betal nå",
         "errors": {
+          "card_number": "Skriv inn et gyldig kredittkortnummer",
           "month": "Skriv inn en gyldig utløpsmåned",
           "year": "Skriv inn et gyldig utløpsår",
-          "security_code": "Ugyldig sikkerhetskode."
+          "expiration_date": "Utløpsdatoen må være i fremtiden",
+          "security_code": "Skriv inn en gyldig sikkerhetskode",
+          "cardholder_name": "Skriv inn et gyldig kortinnehavernavn"
         },
         "user_error_message": "Betalingen kan ikke startes. Prøv igjen senere eller bruk en annen betalingsmetode",
         "payment_unavailable": "Betalingsmetoden er ikke tilgjengelig. Prøv igjen senere"
@@ -834,27 +849,15 @@
         "privacy_policy_link": "Personvernerklæring",
         "accept_terms_text": "Ved å bestille godtar du vilkårene",
         "processing_personal_data_text": "og samtykker til at vi kan behandle dine personopplysninger",
-        "pay_now_button": "Betal nå",
         "errors": {
-          "number": "Skriv inn et gyldig kredittkortnummer",
-          "month": "Skriv inn en gyldig utløpsmåned",
-          "year": "Skriv inn et gyldig utløpsår",
-          "expiration_date": "Utløpsdatoen må være i fremtiden",
-          "security_code": "Skriv inn en gyldig sikkerhetskode",
-          "cardholder_name": "Skriv inn et gyldig kortinnehavernavn",
           "incorrect_payment_method": "Ugyldig betalingsmetode"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Betal nå"
       },
       "manual": {
         "text": "Den valgte betalingsmetoden støtter ikke nettbetalinger. Velg en annen metode eller "
       },
       "redirection": {
         "text": "Når du klikker på <strong>{0}</strong>, blir du omdirigert til en tredjeparts betalingstjeneste",
-        "pay_now_button": "Betal nå",
-        "try_again_button": "Prøv igjen",
         "errors": {
           "missing_link": "Omdirigeringslenke mangler",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1170,7 +1173,9 @@
           "get_directions": "Hent veibeskrivelse",
           "point_info": "Punktinformasjon",
           "pickup_address": "Henteadresse",
-          "cart_pickup_points_not_found": "Det finnes ingen tilgjengelige hentepunkter for disse produktene. Velg en annen forsendelsesmetode",
+          "cart_pickup_points_not_found": "Det finnes ingen tilgjengelige hentepunkter for disse produktene. Velg en annen forsendelsesmetode.",
+          "cart_pickup_points_not_found_by_filter": "Ingen hentepunkter funnet.",
+          "cart_pickup_points_reset_search": "Tilbakestill søk",
           "availability": "Tilgjengelighet"
         }
       },
@@ -1318,6 +1323,7 @@
       "recently_browsed_products": "Nylig bladd gjennom",
       "save_for_later": "Lagre til senere",
       "saved_for_later": "Lagret til senere",
+      "saved_for_later_not_found": "Du har ikke lagret noen produkter for senere",
       "move_to_cart": "Flytt til handlekurv"
     },
     "checkout": {
