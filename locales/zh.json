@@ -80,7 +80,8 @@
       "expand_all": "全部展开",
       "all_products": "所有产品",
       "buy_now": "立即购买",
-      "see_all": "查看全部"
+      "see_all": "查看全部",
+      "report_a_problem": "报告问题"
     },
     "labels": {
       "actions": "操作",
@@ -194,7 +195,7 @@
       "not_defined": "未定义",
       "invalid_coupon": "此代码不匹配任何活动优惠券。请仔细检查后再试。",
       "fill_all_required": "请完成所有必填信息以继续。",
-      "something_went_wrong": "糟糕！出了点问题。请仔细检查后再试。",
+      "something_went_wrong": "出了点问题。请稍后再试。",
       "checkout_pricing_warning": "在您完成订单之前，库存、运输、税费和促销信息尚未最终确定。",
       "wishlists_available_for_authorized": "愿望清单仅对已认证用户可用",
       "no_addresses": "您尚未有任何地址",
@@ -205,6 +206,7 @@
       "fail_add_product_to_cart": "抱歉，无法将此商品加入购物车。{reason}",
       "fail_to_change_quantity_in_cart": "抱歉，无法更新购物车中的商品数量。{reason}",
       "unhandled_error": "抱歉给您带来不便。我们的服务器目前遇到技术问题。请稍后再试。",
+      "report_sent_successfully": "谢谢！您的报告已成功发送。我们会查看的。",
       "role_update_successful": "客户角色已成功更新。",
       "role_update_failed": "更新角色时发生错误：{0}",
       "passwords_do_not_match": "密码字段的值必须匹配。",

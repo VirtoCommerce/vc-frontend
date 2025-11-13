@@ -80,7 +80,8 @@
       "expand_all": "Espandi tutto",
       "all_products": "Tutti i prodotti",
       "buy_now": "Acquista ora",
-      "see_all": "Vedi tutto"
+      "see_all": "Vedi tutto",
+      "report_a_problem": "Segnala un problema"
     },
     "labels": {
       "actions": "Azioni",
@@ -194,7 +195,7 @@
       "not_defined": "Non definito",
       "invalid_coupon": "Questo codice non corrisponde a nessun coupon attivo. Controlla che tutto sia corretto e riprova.",
       "fill_all_required": "Completa tutte le informazioni richieste per procedere.",
-      "something_went_wrong": "Oops! Qualcosa è andato storto. Controlla che tutto sia corretto e riprova.",
+      "something_went_wrong": "Qualcosa è andato storto. Per favore, riprova più tardi.",
       "checkout_pricing_warning": "Disponibilità, spedizione, tasse e promozioni non sono definitive fino al completamento dell'ordine.",
       "wishlists_available_for_authorized": "Le liste dei desideri sono disponibili solo per gli utenti autenticati",
       "no_addresses": "Non hai ancora nessun indirizzo",
@@ -205,6 +206,7 @@
       "fail_add_product_to_cart": "Spiacenti, questo prodotto non può essere aggiunto al carrello. {reason}",
       "fail_to_change_quantity_in_cart": "Spiacenti, non è possibile aggiornare la quantità del prodotto nel carrello. {reason}",
       "unhandled_error": "Ci scusiamo per l'inconveniente. Il nostro server sta attualmente riscontrando problemi tecnici. Riprova più tardi.",
+      "report_sent_successfully": "Grazie! Il tuo rapporto è stato inviato con successo. Lo esamineremo.",
       "role_update_successful": "Il ruolo del cliente è stato aggiornato con successo.",
       "role_update_failed": "Si sono verificati errori durante l'aggiornamento del ruolo: {0}",
       "passwords_do_not_match": "I campi della password devono avere valori corrispondenti.",
