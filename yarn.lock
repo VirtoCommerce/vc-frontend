@@ -2984,6 +2984,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hugeicons/core-free-icons@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@hugeicons/core-free-icons@npm:1.2.1"
+  checksum: 10c0/5a3390c7636a83c65933344ac67c3c5d321361b4afdad36ec4a926479abb432b772d3a7076a04640938f9878bcc5057d8b6f25d00ff7b8b8be12196bb82d9f11
+  languageName: node
+  linkType: hard
+
+"@hugeicons/vue@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@hugeicons/vue@npm:1.0.3"
+  peerDependencies:
+    vue: ^2.6.0 || ^3.0.0
+  checksum: 10c0/cccf886e9d03078075ce564c52e15f079c31e8b73ac400533203fe6af8746accdbb26e29b682d644e751ee93aa6816f3673a7b6786738b575a58d73beaa73b7c
+  languageName: node
+  linkType: hard
+
 "@humanfs/core@npm:^0.19.1":
   version: 0.19.1
   resolution: "@humanfs/core@npm:0.19.1"
@@ -15218,6 +15234,8 @@ __metadata:
     "@graphql-codegen/typescript": "npm:4.1.6"
     "@graphql-codegen/typescript-operations": "npm:4.6.1"
     "@headlessui/vue": "npm:^1.7.23"
+    "@hugeicons/core-free-icons": "npm:^1.2.1"
+    "@hugeicons/vue": "npm:^1.0.3"
     "@rollup/plugin-graphql": "npm:^2.0.5"
     "@rushstack/eslint-patch": "npm:^1.14.1"
     "@storybook/addon-a11y": "npm:9.1.16"

@@ -28,6 +28,7 @@ const Product = () => import("@/pages/product.vue");
 const SharedList = () => import("@/pages/shared-list.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
+const TestIcons = () => import("@/pages/test-icons.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
@@ -40,7 +41,12 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/confirm-invitation", name: "ConfirmInvitation", component: ConfirmInvitation, meta: { public: true } },
   { path: "/forgot-password", name: "ForgotPassword", component: ForgotPassword, meta: { public: true } },
   { path: "/reset-password", name: "ResetPassword", component: ResetPassword, meta: { public: true } },
-  { path: ROUTES.CHANGE_PASSWORD.PATH, name: ROUTES.CHANGE_PASSWORD.NAME, component: ChangePassword, meta: { public: false, redirectable: false } },
+  {
+    path: ROUTES.CHANGE_PASSWORD.PATH,
+    name: ROUTES.CHANGE_PASSWORD.NAME,
+    component: ChangePassword,
+    meta: { public: false, redirectable: false },
+  },
   { path: "/set-password", name: "SetPassword", component: ResetPassword, meta: { public: true } },
   { path: "/blocked", name: "Blocked", component: BlockedPage, meta: { public: true, redirectable: false } },
   { path: "/account/confirmemail", name: "ConfirmEmail", component: ConfirmEmail, meta: { public: true } },
@@ -79,6 +85,7 @@ export const mainRoutes: RouteRecordRaw[] = [
     props: (route) => ({ allowSetMeta: true, productId: route.params.productId }),
   },
   { path: "/shared-list/:sharingKey", name: "SharedList", component: SharedList, props: true },
+  { path: "/test-icons", name: "TestIcons", component: TestIcons, meta: { public: true } },
 
   /** NOTE: Always leave it last. */
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },

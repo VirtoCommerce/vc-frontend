@@ -39,3 +39,5 @@ export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";
 export { default as VcTypography } from "./typography/vc-typography.vue";
 export { default as VcVariantPickerGroup } from "./variant-picker-group/vc-variant-picker-group.vue";
+// eslint-disable-next-line sort-exports/sort-exports
+export { default as VcIconNew } from "./icon/vc-icon-new.vue";
