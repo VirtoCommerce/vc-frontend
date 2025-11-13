@@ -22,7 +22,6 @@ export function useAnalyticsUtils() {
   ) {
     analytics("addItemToCart", product, quantity, {
       source_route: sourceRoute.value,
-      search_terms: searchQueryParam.value || undefined,
       search_term: searchQueryParam.value || undefined,
       ...params,
     });
@@ -31,7 +30,6 @@ export function useAnalyticsUtils() {
   function trackAddItemsToCart(products: Product[] | VariationType[], params?: AddToCartParamsAdditionalType) {
     analytics("addItemsToCart", products, {
       source_route: sourceRoute.value,
-      search_terms: searchQueryParam.value || undefined,
       search_term: searchQueryParam.value || undefined,
       ...params,
     });
