@@ -238,7 +238,7 @@ jobs:
     uses: VirtoCommerce/.github/.github/workflows/e2e-autotests.yml@VCST-4086 #v3.800.18
     with:
       installModules: 'false'
-      installCustomModule: 'true'
+      installCustomModule: 'false'
       runTests: 'true'
       vctestingRepoBranch: 'dev'
       frontendZipUrl: 'https://vc3prerelease.blob.core.windows.net/packages/vc-theme-b2b-vue-2.35.0-alpha.2102.zip' #${{ needs.ci.outputs.artifactUrl }}
