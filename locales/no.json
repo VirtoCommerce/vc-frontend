@@ -166,7 +166,8 @@
       "buyer_name": "Kjøpers navn",
       "other": "Annet",
       "vendor_name": "Leverandør: {name}",
-      "not_available": "Ikke tilgjengelig"
+      "not_available": "Ikke tilgjengelig",
+      "product_reviews": "Produktomtaler"
     },
     "prefixes": {
       "please": "Vennligst",

@@ -166,7 +166,8 @@
       "buyer_name": "Köparens namn",
       "other": "Övrigt",
       "vendor_name": "Leverantör: {name}",
-      "not_available": "Ej tillgänglig"
+      "not_available": "Ej tillgänglig",
+      "product_reviews": "Produktrecensioner"
     },
     "prefixes": {
       "please": "Vänligen",

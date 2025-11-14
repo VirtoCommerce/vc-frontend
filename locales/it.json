@@ -166,7 +166,8 @@
       "buyer_name": "Nome dell'acquirente",
       "other": "Altro",
       "vendor_name": "Fornitore: {name}",
-      "not_available": "N/D"
+      "not_available": "N/D",
+      "product_reviews": "Recensioni prodotto"
     },
     "prefixes": {
       "please": "Per favore",

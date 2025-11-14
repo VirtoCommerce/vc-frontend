@@ -166,7 +166,8 @@
       "buyer_name": "購入者名",
       "other": "その他",
       "vendor_name": "ベンダー: {name}",
-      "not_available": "N/A"
+      "not_available": "N/A",
+      "product_reviews": "商品レビュー"
     },
     "prefixes": {
       "please": "お願いします",
