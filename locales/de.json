@@ -1381,7 +1381,8 @@
       "products_icon": "Produktikone",
       "show_all_results": "Alle Ergebnisse anzeigen",
       "load_previous_page": "Vorherige Seite laden",
-      "load_next_page": "Nächste Seite laden"
+      "load_next_page": "Nächste Seite laden",
+      "available_variations": "Keine verfügbaren Variationen | 1 verfügbare Variation | {count} verfügbare Variationen"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
