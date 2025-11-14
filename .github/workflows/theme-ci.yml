@@ -235,13 +235,14 @@ jobs:
     needs: 'ci'
     if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
         (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request') }}
-    uses: VirtoCommerce/.github/.github/workflows/e2e-autotests.yml@v3.800.18
+    uses: VirtoCommerce/.github/.github/workflows/e2e-autotests.yml@VCST-4086 #v3.800.18
     with:
       installModules: 'false'
       installCustomModule: 'true'
       runTests: 'true'
       vctestingRepoBranch: 'dev'
       frontendZipUrl: ${{ needs.ci.outputs.artifactUrl }}
+      customPackagesJsonUrl: 'https://github.com/VirtoCommerce/vc-deploy-dev/raw/refs/heads/vcst-qa/backend/packages.json'
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
       testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
