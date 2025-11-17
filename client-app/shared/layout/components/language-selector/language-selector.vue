@@ -100,6 +100,7 @@ async function select(cultureName: string) {
 
   removeLocaleFromUrl();
   void broadcast.emit(dataChangedEvent);
+  location.reload();
 }
 
 function getCountryCode(language: ILanguage): string {

@@ -10,7 +10,7 @@ export function useGetSlugInfo(payload: MaybeRefOrGetter<QuerySlugInfoArgs>) {
   return useQuery(GetSlugInfoDocument, payload, { fetchPolicy: "cache-and-network" });
 }
 
-export async function getSlugInfo({ permalink, cultureName }: QuerySlugInfoArgs) {
+export async function getSlugInfo({ permalink, cultureName }: { permalink?: string; cultureName?: string }) {
   const { storeId, userId } = globals;
   const variables = { permalink, storeId, userId, cultureName };
 
@@ -21,8 +21,8 @@ export async function getSlugInfo({ permalink, cultureName }: QuerySlugInfoArgs)
     });
 
     return response.data?.slugInfo;
-  } catch {
-    Logger.error(`Failed to get slug info for permalink: ${permalink} and cultureName: ${cultureName}`);
+  } catch (error) {
+    Logger.error(`Failed to get slug info for permalink: ${permalink} and cultureName: ${cultureName}`, error);
 
     return null;
   }
