@@ -1,9 +1,9 @@
 <template>
   <HugeiconsIcon
     v-if="hugeIcon"
-    :class="['vc-icon', sizeClass]"
-    :style="style"
+    class="vc-icon"
     :icon="icon"
+    :size="hugeIconSize"
     :color="_color"
     :stroke-width="strokeWidth"
   />
@@ -17,7 +17,8 @@ import { ref, computed, watch } from "vue";
 import { DEFAULT_ICON_STROKE_WIDTH } from "@/ui-kit/constants";
 import { getColorValue, loadHugeiconsIcon, loadIconRaw } from "@/ui-kit/utilities";
 
-// TODO: change size calculation for HugeiconsIcon & component styles after a complete transition to HugeiconsIcon.
+// TODO: remove size calculation & some component styles after a complete transition to HugeiconsIcon.
+
 interface IProps {
   name?: string;
   size?: VcIconSizeType;
@@ -33,6 +34,16 @@ const props = withDefaults(defineProps<IProps>(), {
   hugeIcon: false,
 });
 
+const hugeIconSizeMap = {
+  xxs: 16,
+  xs: 20,
+  sm: 24,
+  md: 28,
+  lg: 32,
+  xl: 36,
+  xxl: 40,
+};
+
 const icon = ref();
 
 const style = computed(() =>
@@ -45,6 +56,7 @@ const style = computed(() =>
 );
 
 const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--size--${props.size}` : ""));
+const hugeIconSize = computed(() => (typeof props.size === "string" ? hugeIconSizeMap[props.size] : props.size));
 
 const _color = computed(() => getColorValue(props.color));
 
@@ -74,10 +86,8 @@ watch(
 
   $self: &;
 
-  @apply size-[--size];
-
   &--common {
-    @apply flex-none inline-block align-top  leading-none fill-[--color] text-[--color];
+    @apply flex-none inline-block align-top size-[--size] leading-none fill-[--color] text-[--color];
   }
 
   &--size {

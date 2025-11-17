@@ -60,6 +60,8 @@
       </template>
     </VcInput>
 
+    <VcIcon hugeIcon name="Search01Icon" size="lg" color="primary" />
+
     <!-- Dropdown -->
     <transition name="slide-fade-top">
       <div
