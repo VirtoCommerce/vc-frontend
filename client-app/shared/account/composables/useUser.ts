@@ -7,7 +7,7 @@ import {
   inviteUser as _inviteUser,
   registerAccount,
   registerByInvitation,
-  requestPasswordReset,
+  sendPasswordResetEmail,
   resetPasswordByToken,
   updatePersonalData,
   changePassword as _changePassword,
@@ -268,10 +268,12 @@ export function _useUser() {
     try {
       loading.value = true;
 
-      return await requestPasswordReset({
+      const data = await sendPasswordResetEmail({
         loginOrEmail: payload.email,
         urlSuffix: payload.resetPasswordUrlPath,
       });
+
+      return data ?? false;
     } catch (e) {
       Logger.error(`${useUser.name}.${forgotPassword.name}`, e);
       throw e;
