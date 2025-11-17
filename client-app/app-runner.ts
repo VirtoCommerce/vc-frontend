@@ -94,13 +94,9 @@ export default async () => {
   };
 
   // get initialization query parameters
-  const tempRouter = createRouter({ base: "" });
-  const initialRoute = tempRouter.resolve(
-    globalThis.location.pathname + globalThis.location.search + globalThis.location.hash,
-  );
-  let permalink = initialRoute.path;
-  const possibleCultureName = resolvePossibleLocale(permalink);
-  permalink = getPermalink(permalink, getUrlWithoutPossibleLocale);
+  const pathname = globalThis.location.pathname.replace(globalThis.location.origin, "");
+  const possibleCultureName = resolvePossibleLocale(pathname);
+  const permalink = getPermalink(pathname, getUrlWithoutPossibleLocale);
 
   const domain = IS_DEVELOPMENT
     ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
