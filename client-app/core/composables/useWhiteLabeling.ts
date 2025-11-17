@@ -30,14 +30,12 @@ function setWhiteLabelingSettings(payload?: WhiteLabelingSettingsType) {
 
 function _useWhiteLabeling() {
   async function fetchWhiteLabelingSettings(): Promise<void> {
-    if (moduleEnabled.value) {
-      try {
-        whiteLabelingSettings.value = await getGetWhiteLabelingSettings();
-        emit(whiteLabelingSettings.value);
-      } catch (e) {
-        Logger.error(`${_useWhiteLabeling.name}.${fetchWhiteLabelingSettings.name}`, e);
-        throw e;
-      }
+    try {
+      const settingsData = await getGetWhiteLabelingSettings();
+      setWhiteLabelingSettings(settingsData);
+    } catch (e) {
+      Logger.error(`${_useWhiteLabeling.name}.${fetchWhiteLabelingSettings.name}`, e);
+      throw e;
     }
   }
 
