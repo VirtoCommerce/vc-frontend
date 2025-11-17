@@ -59,6 +59,7 @@
 </template>
 
 <script setup lang="ts">
+import { getSlugInfo } from "@/core/api/graphql/slugInfo/queries/getSlugInfo";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { languageToCountryMap } from "@/core/constants";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
@@ -75,20 +76,30 @@ const {
 } = useLanguages();
 const broadcast = useBroadcast();
 
-function select(cultureName: string) {
+async function select(cultureName: string) {
   pinLocale(cultureName);
-  previousCultureSlug.value = {
-    cultureName: currentLanguage.value?.cultureName,
-    slug: getUrlWithoutLocale(location.pathname).slice(1),
-  };
+  const permalink = location.pathname.slice(1);
 
-  if (cultureName !== currentLanguage.value?.cultureName) {
-    removeLocaleFromUrl();
-
-    void broadcast.emit(dataChangedEvent);
-
-    void location.reload();
+  if (cultureName === currentLanguage.value?.cultureName) {
+    return;
   }
+
+  const slugInfo = await getSlugInfo({ permalink, cultureName });
+
+  if (!slugInfo?.entityInfo) {
+    previousCultureSlug.value = {
+      cultureName: currentLanguage.value?.cultureName,
+      slug: getUrlWithoutLocale(location.pathname).slice(1),
+    };
+  } else {
+    previousCultureSlug.value = {
+      cultureName: "",
+      slug: "",
+    };
+  }
+
+  removeLocaleFromUrl();
+  void broadcast.emit(dataChangedEvent);
 }
 
 function getCountryCode(language: ILanguage): string {
