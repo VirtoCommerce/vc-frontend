@@ -65,11 +65,14 @@
       </div>
     </template>
 
+    <SelectAddressFilter v-if="showFilters" @applyFilter="applyFilter" />
+
     <div class="rounded border">
       <VcTable
         :columns="columns"
         :items="paginatedAddresses"
         :description="$t('shared.checkout.select_address_modal.meta.table_description')"
+        :loading="pickupLocationsLoading"
         @page-changed="onPageChange"
       >
         <template #mobile-item="{ item }">
@@ -151,7 +154,14 @@
 
         <template #mobile-empty>
           <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
-            {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
+            <span>{{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}</span>
+
+            <VcButton
+              v-if="showFilters"
+              icon="reset"
+              @click="resetFilter"
+              :aria-label="$t('pages.account.order_details.bopis.cart_pickup_points_reset_search')"
+            />
           </div>
         </template>
 
@@ -225,10 +235,14 @@
         <template #desktop-empty>
           <tr>
             <td :colspan="showAvailability ? 5 : 4">
-              <div class="flex items-center p-5">
+              <div class="flex flex-col items-center p-5">
                 <span class="text-base">
                   {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
                 </span>
+
+                <VcButton v-if="showFilters" class="mt-5" prepend-icon="reset" @click="resetFilter">
+                  {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
+                </VcButton>
               </div>
             </td>
           </tr>
@@ -240,10 +254,12 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, ref, watchEffect } from "vue";
+import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
+import { useCartPickupLocations } from "@/shared/cart";
+import { SelectAddressFilter } from "@/shared/checkout";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
@@ -256,11 +272,13 @@ interface IProps {
   showAvailability?: boolean;
   emptyText?: string;
   omitFieldsOnCompare?: (keyof MemberAddressType)[];
+  showFilters?: boolean;
 }
 
 interface IEmits {
   (event: "result", value: AnyAddressType): void;
   (event: "addNewAddress"): void;
+  (event: "filterChange"): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -269,12 +287,26 @@ const props = withDefaults(defineProps<IProps>(), {
   addresses: () => [],
   allowAddNewAddress: true,
   showAvailability: false,
+  showFilters: false,
   omitFieldsOnCompare: () => [],
 });
 
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
+
+const { filterIsApplied, clearFilter, pickupLocationsLoading } = useCartPickupLocations();
+
+function applyFilter() {
+  filterIsApplied.value = true;
+  page.value = 1;
+  emit("filterChange");
+}
+
+function resetFilter() {
+  clearFilter();
+  applyFilter();
+}
 
 const selectedAddress = ref<AnyAddressType>();
 const page = ref(1);

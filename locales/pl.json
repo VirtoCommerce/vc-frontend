@@ -80,7 +80,8 @@
       "expand_all": "Rozwiń wszystko",
       "all_products": "Wszystkie produkty",
       "buy_now": "Kup teraz",
-      "see_all": "Zobacz wszystko"
+      "see_all": "Zobacz wszystko",
+      "report_a_problem": "Zgłoś problem"
     },
     "labels": {
       "actions": "Akcje",
@@ -165,7 +166,8 @@
       "buyer_name": "Nazwa nabywcy",
       "other": "Inne",
       "vendor_name": "Dostawca: {name}",
-      "not_available": "N/D"
+      "not_available": "N/D",
+      "product_reviews": "Opinie o produkcie"
     },
     "prefixes": {
       "please": "Proszę",
@@ -193,7 +195,7 @@
       "not_defined": "Niezdefiniowany",
       "invalid_coupon": "Ten kod nie odpowiada żadnym aktywnym kuponom. Proszę sprawdzić, czy wszystko jest poprawne i spróbować ponownie.",
       "fill_all_required": "Proszę wypełnić wszystkie wymagane informacje, aby kontynuować.",
-      "something_went_wrong": "Ups! Coś poszło nie tak. Proszę sprawdzić, czy wszystko jest poprawne i spróbować ponownie.",
+      "something_went_wrong": "Coś poszło nie tak. Proszę spróbować ponownie później.",
       "checkout_pricing_warning": "Dostępność, wysyłka, podatek i promocje nie są ostateczne, dopóki nie ukończysz zamówienia.",
       "wishlists_available_for_authorized": "Listy życzeń są dostępne tylko dla uwierzytelnionych użytkowników",
       "no_addresses": "Nie masz żadnych adresów",
@@ -204,6 +206,7 @@
       "fail_add_product_to_cart": "Przepraszamy, nie można dodać tego produktu do koszyka. {reason}",
       "fail_to_change_quantity_in_cart": "Przepraszamy, nie można zaktualizować ilości produktu w koszyku. {reason}",
       "unhandled_error": "Przepraszamy za niedogodności. Nasz serwer obecnie doświadcza problemów technicznych. Proszę spróbować ponownie później.",
+      "report_sent_successfully": "Dziękujemy! Twój raport został pomyślnie wysłany. Zajmiemy się tym.",
       "role_update_successful": "Rola klienta została pomyślnie zaktualizowana.",
       "role_update_failed": "Wystąpiły błędy podczas aktualizacji roli: {0}",
       "passwords_do_not_match": "Pola hasła muszą mieć dopasowane wartości.",
@@ -563,6 +566,12 @@
           "add": "Dodaj do Porównania",
           "remove": "Usuń z Porównania"
         }
+      },
+      "notifications": {
+        "limit_reached": "Można porównać tylko {productsLimit} produkty",
+        "added_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> został dodany do listy porównywania <span class=\"hidden lg:inline\">(pozostało pozycji - {itemsLeft})</span>",
+        "removed_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> został usunięty z listy porównywania",
+        "compare_button": "Porównaj"
       },
       "clear_list_modal": {
         "title": "Potwierdź wyczyszczenie",
@@ -1165,7 +1174,9 @@
           "get_directions": "Wyznacz trasę",
           "point_info": "Punkt informacyjny",
           "pickup_address": "Adres odbioru",
-          "cart_pickup_points_not_found": "Brak dostępnych punktów odbioru dla tych produktów. Wybierz inną metodę wysyłki",
+          "cart_pickup_points_not_found": "Brak dostępnych punktów odbioru dla tych produktów. Wybierz inną metodę wysyłki.",
+          "cart_pickup_points_not_found_by_filter": "Nie znaleziono punktów odbioru.",
+          "cart_pickup_points_reset_search": "Resetuj wyszukiwanie",
           "availability": "Dostępność"
         }
       },
@@ -1370,7 +1381,8 @@
       "products_icon": "Ikona produktu",
       "show_all_results": "Pokaż wszystkie wyniki",
       "load_previous_page": "Załaduj poprzednią stronę",
-      "load_next_page": "Załaduj następną stronę"
+      "load_next_page": "Załaduj następną stronę",
+      "available_variations": "Brak dostępnych wariantów | Dostępny 1 wariant | Dostępnych wariantów: {count}"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

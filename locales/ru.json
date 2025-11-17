@@ -80,7 +80,8 @@
       "expand_all": "Развернуть все",
       "all_products": "Все продукты",
       "buy_now": "Купить сейчас",
-      "see_all": "Смотреть все"
+      "see_all": "Смотреть все",
+      "report_a_problem": "Сообщить о проблеме"
     },
     "labels": {
       "actions": "Действия",
@@ -165,7 +166,8 @@
       "buyer_name": "Имя покупателя",
       "other": "Другое",
       "vendor_name": "Поставщик: {name}",
-      "not_available": "Н/Д"
+      "not_available": "Н/Д",
+      "product_reviews": "Отзывы о товаре"
     },
     "prefixes": {
       "please": "Пожалуйста",
@@ -193,8 +195,8 @@
       "not_defined": "Не определено",
       "invalid_coupon": "Этот код не соответствует ни одному из активных купонов. Проверьте правильность и попробуйте снова.",
       "fill_all_required": "Введите всю необходимую информацию для продолжения.",
-      "something_went_wrong": "Что-то пошло не так. Проверьте данные и попробуйте снова.",
-      "checkout_pricing_warning": "Информация о наличии товаров, стоимости доставки, налогах и акциях является предварительной и может измениться до завершения оформления заказа.",
+      "something_went_wrong": "Что-то пошло не так. Пожалуйста, попробуйте позже.",
+      "checkout_pricing_warning": "Наличие товаров, доставка, налоги и акции не являются окончательными до завершения оформления заказа.",
       "wishlists_available_for_authorized": "Списки желаний доступны только для авторизованных пользователей",
       "no_addresses": "У вас пока нет адресов",
       "confirm_delete_address": "Вы уверены, что хотите удалить этот адрес?",
@@ -204,6 +206,7 @@
       "fail_add_product_to_cart": "Этот товар нельзя добавить в корзину. {reason}",
       "fail_to_change_quantity_in_cart": "Невозможно обновить количество товара в корзине. {reason}",
       "unhandled_error": "Извините за временные неудобства. В данный момент на сервере возникли технические проблемы. Пожалуйста, повтороите попытку позднее.",
+      "report_sent_successfully": "Спасибо! Ваш отчет успешно отправлен. Мы обязательно разберемся с проблемой.",
       "role_update_successful": "Роль клиента была успешно обновлена.",
       "role_update_failed": "Ошибка при обновлении роли: {0}",
       "passwords_do_not_match": "Пароли должны совпадать.",
@@ -563,6 +566,12 @@
           "add": "Добавить в сравнение",
           "remove": "Удалить из сравнения"
         }
+      },
+      "notifications": {
+        "limit_reached": "Можно сравнить не более {productsLimit} товаров",
+        "added_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> добавлен в список сравнения <span class=\"hidden lg:inline\">(осталось товаров - {itemsLeft})</span>",
+        "removed_html": "Товар <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> был удален из списка сравнения",
+        "compare_button": "Сравнить"
       },
       "clear_list_modal": {
         "title": "Подтвердить удаление",
@@ -1165,7 +1174,9 @@
           "get_directions": "Как добраться",
           "point_info": "Информация",
           "pickup_address": "Адрес самовывоза",
-          "cart_pickup_points_not_found": "Для этих товаров нет доступных пунктов выдачи. Выберите другой способ доставки",
+          "cart_pickup_points_not_found": "Для этих товаров нет доступных пунктов выдачи. Выберите другой способ доставки.",
+          "cart_pickup_points_not_found_by_filter": "Пункты выдачи не найдены.",
+          "cart_pickup_points_reset_search": "Очистить поиск",
           "availability": "Доступность"
         }
       },
@@ -1370,7 +1381,8 @@
       "products_icon": "Иконка товара",
       "show_all_results": "Показать все результаты",
       "load_previous_page": "Загрузить предыдущую страницу",
-      "load_next_page": "Загрузить следующую страницу"
+      "load_next_page": "Загрузить следующую страницу",
+      "available_variations": "Нет доступных вариантов | 1 доступный вариант | {count} доступных вариантов"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

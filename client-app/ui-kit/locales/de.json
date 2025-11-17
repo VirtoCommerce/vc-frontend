@@ -109,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Breadcrumb-Navigation"
+    },
+    "rating": {
+      "rating_label": "Bewertung {value} von {maxValue}",
+      "read_only_button_aria_label": "Bewertung {value} von {maxValue}, nicht zur Auswahl verfügbar",
+      "set_rating_aria_label": "Bewertung auf {value} von {maxValue} setzen"
     }
   }
 }

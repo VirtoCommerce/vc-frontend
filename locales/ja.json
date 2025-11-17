@@ -80,7 +80,8 @@
       "expand_all": "すべて展開",
       "all_products": "すべての商品",
       "buy_now": "今すぐ購入",
-      "see_all": "すべてを見る"
+      "see_all": "すべてを見る",
+      "report_a_problem": "問題を報告"
     },
     "labels": {
       "actions": "操作",
@@ -165,7 +166,8 @@
       "buyer_name": "購入者名",
       "other": "その他",
       "vendor_name": "ベンダー: {name}",
-      "not_available": "N/A"
+      "not_available": "N/A",
+      "product_reviews": "商品レビュー"
     },
     "prefixes": {
       "please": "お願いします",
@@ -193,8 +195,8 @@
       "not_defined": "未定義",
       "invalid_coupon": "無効なクーポンです",
       "fill_all_required": "必須項目を入力してください",
-      "something_went_wrong": "エラーが発生しました",
-      "checkout_pricing_warning": "価格は注文確定時に確定されます",
+      "something_went_wrong": "エラーが発生しました。後でもう一度お試しください。",
+      "checkout_pricing_warning": "在庫、配送、税金、プロモーションは注文を完了するまで確定されません。",
       "wishlists_available_for_authorized": "ログインが必要です",
       "no_addresses": "住所が未登録です",
       "confirm_delete_address": "この住所を削除しますか？",
@@ -204,6 +206,7 @@
       "fail_add_product_to_cart": "カートに追加できません: {reason}",
       "fail_to_change_quantity_in_cart": "数量を変更できません: {reason}",
       "unhandled_error": "システムエラーが発生しました",
+      "report_sent_successfully": "ありがとうございます！レポートが正常に送信されました。確認いたします。",
       "role_update_successful": "権限を更新しました",
       "role_update_failed": "権限の更新に失敗: {0}",
       "passwords_do_not_match": "パスワードが一致しません",
@@ -563,6 +566,12 @@
           "add": "比較リストに追加",
           "remove": "比較リストから削除"
         }
+      },
+      "notifications": {
+        "limit_reached": "{productsLimit}個の商品のみ比較できます",
+        "added_html": "商品<span class=\"hidden lg:inline\">「<strong>{productName}</strong>」</span>を比較リストに追加しました<span class=\"hidden lg:inline\">（残り{itemsLeft}個）</span>",
+        "removed_html": "商品<span class=\"hidden lg:inline\">「<strong>{productName}</strong>」</span>を比較リストから削除しました",
+        "compare_button": "比較"
       },
       "clear_list_modal": {
         "title": "クリアの確認",
@@ -1166,6 +1175,8 @@
           "point_info": "ポイント情報",
           "pickup_address": "受取住所",
           "cart_pickup_points_not_found": "この商品を受け取り可能な店舗がありません。別の配送方法を選択してください",
+          "cart_pickup_points_not_found_by_filter": "該当する受取場所が見つかりませんでした。",
+          "cart_pickup_points_reset_search": "検索をリセット",
           "availability": "在庫状況"
         }
       },
@@ -1370,7 +1381,8 @@
       "products_icon": "商品アイコン",
       "show_all_results": "すべての結果を表示",
       "load_previous_page": "前のページを読み込む",
-      "load_next_page": "次のページを読み込む"
+      "load_next_page": "次のページを読み込む",
+      "available_variations": "利用可能なバリエーションはありません | 1つの利用可能なバリエーション | {count}個の利用可能なバリエーション"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

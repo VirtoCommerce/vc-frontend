@@ -20,3 +20,24 @@ export type FacetItemType = {
     max?: number;
   };
 };
+
+export type FacetFilterType = {
+  filterType: string;
+  isGenerated: boolean;
+  label?: string;
+  name: string;
+  rangeValues?: FacetFilterRangeValueType[];
+  termValues?: FacetFilterTermValueType[];
+};
+
+export type FacetFilterRangeValueType = {
+  includeLowerBound: boolean;
+  includeUpperBound: boolean;
+  lower?: string;
+  upper?: string;
+};
+
+export type FacetFilterTermValueType = {
+  label?: string;
+  value: string;
+};

@@ -44,17 +44,21 @@
 
     <div class="flex flex-col items-center gap-3 lg:flex-row">
       <div v-if="isOrganizationMaintainer" class="flex gap-2">
-        <VcTabSwitch v-model="orderScope" value="organization" icon="case" @change="toggleOrdersScope('organization')">
-          <span class="view-mode__text">
-            {{ $t("common.buttons.all_orders") }}
-          </span>
-        </VcTabSwitch>
+        <VcTabSwitch
+          v-model="orderScope"
+          value="organization"
+          icon="case"
+          :label="$t('common.buttons.all_orders')"
+          @change="toggleOrdersScope('organization')"
+        />
 
-        <VcTabSwitch v-model="orderScope" value="private" icon="user" @change="toggleOrdersScope('private')">
-          <span class="view-mode__text">
-            {{ $t("common.buttons.my_orders") }}
-          </span>
-        </VcTabSwitch>
+        <VcTabSwitch
+          v-model="orderScope"
+          value="private"
+          icon="user"
+          :label="$t('common.buttons.my_orders')"
+          @change="toggleOrdersScope('private')"
+        />
       </div>
 
       <div class="flex grow flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5">
