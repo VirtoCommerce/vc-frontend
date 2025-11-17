@@ -144,23 +144,8 @@ export function _useUser() {
     try {
       loading.value = true;
 
-      user.value = await getMe(savedUserId.value);
-      if (user.value && user.value.id !== savedUserId.value) {
-        savedUserId.value = user.value.id;
-      }
-      handlePasswordExpiration();
-
-      if (withBroadcast) {
-        void broadcast.emit(userReloadEvent);
-      }
-
-      if (user.value?.forcePasswordChange || user.value?.passwordExpired) {
-        void broadcast.emit(passwordExpiredEvent);
-      }
-
-      if (user.value?.lockedState) {
-        void broadcast.emit(userLockedEvent, undefined, TabsType.ALL);
-      }
+      const userData = await getMe(savedUserId.value);
+      setUser(userData, { withBroadcast });
     } catch (e) {
       Logger.error(`${useUser.name}.${fetchUser.name}`, e);
       throw e;
