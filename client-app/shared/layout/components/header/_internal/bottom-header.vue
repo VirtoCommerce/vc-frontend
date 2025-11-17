@@ -9,8 +9,6 @@
         <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
       </router-link>
 
-      <VcButton @click="clickHandler()"> Press me </VcButton>
-
       <template v-if="organization">
         <div class="hidden h-6 w-0.5 bg-primary xl:block"></div>
 
@@ -78,7 +76,6 @@
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
 import { computed, nextTick, ref, shallowRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { createOrderFromCart } from "@/core/api/graphql";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
 import { SearchBar } from "@/shared/layout";
@@ -146,10 +143,6 @@ function focusoutDropdown(payload: FocusEvent) {
   if (payload.relatedTarget !== showCatalogMenuButton.value) {
     void closeCatalogDropdown();
   }
-}
-
-function clickHandler() {
-  void createOrderFromCart("qwe");
 }
 
 watch(route, () => {
