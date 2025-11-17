@@ -45,7 +45,6 @@ declare module "vue" {
     VcTotalDisplay: typeof Components.VcTotalDisplay;
     VcTypography: typeof Components.VcTypography;
     VcVariantPickerGroup: typeof Components.VcVariantPickerGroup;
-    VcIconNew: typeof Components.VcIconNew;
   }
 }
 

@@ -45,6 +45,7 @@ const style = computed(() =>
 );
 
 const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--size--${props.size}` : ""));
+
 const _color = computed(() => getColorValue(props.color));
 
 async function loadIcon(name?: string) {
