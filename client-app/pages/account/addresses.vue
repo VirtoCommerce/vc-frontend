@@ -36,7 +36,6 @@
           :pages="pages"
           :page="page"
           :description="$t('pages.account.addresses.meta.table_description')"
-          :skeleton-rows="itemsPerPage"
           @page-changed="onPageChange"
           @header-click="applySorting"
         >

@@ -145,6 +145,7 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { PAGE_LIMIT } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
+import { SKELETON_ROWS_SIZE } from "@/ui-kit/constants";
 import type { BreakpointsType } from "@/core/constants";
 import type { ISortInfo } from "@/core/types";
 
@@ -180,7 +181,7 @@ const props = withDefaults(
     page: 0,
     pageLimit: PAGE_LIMIT,
     mobileBreakpoint: "md",
-    skeletonRows: 5,
+    skeletonRows: SKELETON_ROWS_SIZE,
   },
 );
 

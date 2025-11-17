@@ -135,7 +135,6 @@
             :pages="pages"
             :sort="sort"
             mobile-breakpoint="lg"
-            :skeleton-rows="itemsPerPage"
             @header-click="applySorting"
             @page-changed="onPageChange"
           >

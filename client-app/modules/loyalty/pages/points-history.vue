@@ -21,7 +21,6 @@
           :page="page"
           :hide-default-footer="false"
           mobile-breakpoint="lg"
-          :skeleton-rows="itemsPerPage"
           @page-changed="changePage"
         >
           <template #mobile-item="itemData">
@@ -115,15 +114,7 @@ const columns = computed<ITableColumn[]>(() => [
   { id: "amount", title: t("loyalty.points-history.amount"), sortable: false, align: "right" },
 ]);
 
-const {
-  fetchHistory,
-  sort,
-  loading: historyLoading,
-  historyLogs,
-  itemsPerPage,
-  pages,
-  page,
-} = useLoyaltyPointsHistory();
+const { fetchHistory, sort, loading: historyLoading, historyLogs, pages, page } = useLoyaltyPointsHistory();
 
 const { fetchLoyaltyBalance, loading: balanceLoading, currentBalance } = useLoyaltyBalance();
 

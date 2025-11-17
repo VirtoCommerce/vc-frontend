@@ -24,7 +24,6 @@
             :pages="pages"
             :page="page"
             :description="$t('purchase_requests.meta.table_description')"
-            :skeleton-rows="itemsPerPage"
             @item-click="goToPurchaseRequest"
             @header-click="applySorting"
             @page-changed="changePage"
@@ -99,7 +98,7 @@ usePageHead({
   title: t("purchase_requests.meta.title"),
 });
 
-const { loading, purchaseRequests, itemsPerPage, pages, page, sort } = usePurchaseRequests();
+const { loading, purchaseRequests, pages, page, sort } = usePurchaseRequests();
 
 const columns = ref<ITableColumn[]>([
   {

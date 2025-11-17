@@ -236,7 +236,6 @@
           :pages="pages"
           :page="page"
           :description="$t('pages.company.members.meta.table_description')"
-          :skeleton-rows="itemsPerPage"
           mobile-breakpoint="lg"
           @header-click="applySorting"
           @page-changed="changePage"
@@ -360,7 +359,6 @@ const {
   loading: contactsLoading,
   page,
   pages,
-  itemsPerPage,
   sort,
   keyword,
   filter,

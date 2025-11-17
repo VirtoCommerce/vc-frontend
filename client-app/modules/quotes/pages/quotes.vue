@@ -59,7 +59,6 @@
           :pages="pages"
           :page="page"
           :description="$t('quotes.meta.table_description')"
-          :skeleton-rows="itemsPerPage"
           @item-click="goToQuoteDetails"
           @header-click="applySorting"
           @page-changed="changePage"
@@ -161,7 +160,7 @@ usePageHead({
 
 const { browserTarget } = useBrowserTarget();
 
-const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
+const { quotes, fetching, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
 const { mutate: createQuote } = useMutation(CreateQuoteDocument);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {

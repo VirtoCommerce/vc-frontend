@@ -181,7 +181,6 @@
       :page="page"
       :hide-default-footer="!withPagination"
       :description="$t('pages.account.orders.meta.table_description')"
-      :skeleton-rows="itemsPerPage"
       mobile-breakpoint="lg"
       @header-click="applySorting"
       @page-changed="changePage"
