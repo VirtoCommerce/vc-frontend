@@ -48,3 +48,10 @@ AllIcons.args = {
   size: "md",
   class: "text-secondary-600",
 };
+
+export const HugeIcon = Template.bind({});
+HugeIcon.args = {
+  hugeIcon: true,
+  name: "CheckmarkCircle02Icon",
+  size: "md",
+};

@@ -1,3 +1,4 @@
+import { loadIcon } from "@hugeicons/core-free-icons/loader";
 import DOMPurify from "dompurify";
 import { Logger } from "@/core/utilities";
 
@@ -23,6 +24,19 @@ export async function loadIconRaw(name?: string) {
     return DOMPurify.sanitize(response.default);
   } catch (error) {
     Logger.error(`Failed to load icon: ${name}`, error);
+    return "";
+  }
+}
+
+export async function loadHugeiconsIcon(name?: string) {
+  if (!name) {
+    return "";
+  }
+
+  try {
+    return await loadIcon(name);
+  } catch (error) {
+    Logger.error(`Failed to load hugeicons icon: ${name}`, error);
     return "";
   }
 }

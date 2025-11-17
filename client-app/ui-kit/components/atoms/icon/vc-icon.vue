@@ -1,20 +1,36 @@
 <template>
-  <span :class="['vc-icon', sizeClass]" :style="style" v-html="icon"></span>
+  <HugeiconsIcon
+    v-if="hugeIcon"
+    :class="['vc-icon', sizeClass]"
+    :style="style"
+    :icon="icon"
+    :color="_color"
+    :stroke-width="strokeWidth"
+  />
+
+  <span v-else :class="['vc-icon', 'vc-icon--common', sizeClass]" :style="style" v-html="icon"></span>
 </template>
 
 <script setup lang="ts">
+import { HugeiconsIcon } from "@hugeicons/vue";
 import { ref, computed, watch } from "vue";
-import { getColorValue, loadIconRaw } from "@/ui-kit/utilities";
+import { DEFAULT_ICON_STROKE_WIDTH } from "@/ui-kit/constants";
+import { getColorValue, loadHugeiconsIcon, loadIconRaw } from "@/ui-kit/utilities";
 
+// TODO: change size calculation for HugeiconsIcon & component styles after a complete transition to HugeiconsIcon.
 interface IProps {
   name?: string;
   size?: VcIconSizeType;
   color?: string;
+  hugeIcon?: boolean;
+  strokeWidth?: number;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   name: "document-text",
   color: "",
+  strokeWidth: DEFAULT_ICON_STROKE_WIDTH,
+  hugeIcon: false,
 });
 
 const icon = ref();
@@ -29,11 +45,14 @@ const style = computed(() =>
 );
 
 const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--size--${props.size}` : ""));
-
 const _color = computed(() => getColorValue(props.color));
 
 async function loadIcon(name?: string) {
-  icon.value = await loadIconRaw(name);
+  if (props.hugeIcon) {
+    icon.value = await loadHugeiconsIcon(name);
+  } else {
+    icon.value = await loadIconRaw(name);
+  }
 }
 
 watch(
@@ -54,7 +73,11 @@ watch(
 
   $self: &;
 
-  @apply flex-none inline-block align-top size-[--size] leading-none fill-[--color] text-[--color];
+  @apply size-[--size];
+
+  &--common {
+    @apply flex-none inline-block align-top  leading-none fill-[--color] text-[--color];
+  }
 
   &--size {
     &--xxs {

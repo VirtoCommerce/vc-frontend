@@ -28,7 +28,6 @@ const Product = () => import("@/pages/product.vue");
 const SharedList = () => import("@/pages/shared-list.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
-const TestIcons = () => import("@/pages/test-icons.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
@@ -85,7 +84,6 @@ export const mainRoutes: RouteRecordRaw[] = [
     props: (route) => ({ allowSetMeta: true, productId: route.params.productId }),
   },
   { path: "/shared-list/:sharingKey", name: "SharedList", component: SharedList, props: true },
-  { path: "/test-icons", name: "TestIcons", component: TestIcons, meta: { public: true } },
 
   /** NOTE: Always leave it last. */
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },
