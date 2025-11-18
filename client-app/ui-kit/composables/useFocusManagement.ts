@@ -3,6 +3,7 @@ import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import type { MaybeRefOrGetter } from "vue";
 
 const FOCUS_IGNORE_SELECTOR = ".vc-select input"; // comma separated selectors to exclude from autofocus. For example - we need to exclude input inside vc-select component from autofocus to prevent it auto opening.
+const FOCUS_EXTEND_SELECTOR = ".vc-select__container"; // comma separated selectors to extend the focusable elements.
 
 export interface IUseFocusManagementOptions {
   container?: MaybeRefOrGetter<HTMLElement | string>;
@@ -41,7 +42,10 @@ export function useFocusManagement(options: IUseFocusManagementOptions = {}): IU
       return false;
     }
 
-    return focusFirstElement(containerElement, FOCUS_IGNORE_SELECTOR);
+    return focusFirstElement(containerElement, {
+      ignoreSelector: FOCUS_IGNORE_SELECTOR,
+      extendSelector: FOCUS_EXTEND_SELECTOR,
+    });
   }
 
   onMounted(async () => {
