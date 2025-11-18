@@ -15,6 +15,7 @@ type AffixType = (typeof AFFIX_TYPES)[keyof typeof AFFIX_TYPES];
 const DEFAULT_TOP_OFFSET_VAR = "--sticky-offset-top";
 const DEFAULT_BOTTOM_OFFSET_VAR = "--sticky-offset-bottom";
 const DEFAULT_THROTTLE_DELAY = 50;
+const POSITION_TOLERANCE = 2;
 
 interface ISmartStickyOptions {
   container: MaybeRefOrGetter<HTMLElement | null>;
@@ -79,17 +80,17 @@ function checkScrollingDown(
   elementHeight: number,
   containerBottom: number,
 ): AffixType {
-  if (elementBottom <= viewportBottom - bottomSpacing) {
+  if (elementBottom <= viewportBottom - bottomSpacing + POSITION_TOLERANCE) {
     const wouldBeBottom = viewportBottom - bottomSpacing - elementHeight;
 
-    if (wouldBeBottom + elementHeight <= containerBottom) {
+    if (wouldBeBottom + elementHeight <= containerBottom + POSITION_TOLERANCE) {
       return AFFIX_TYPES.FIXED_BOTTOM;
     }
 
     return AFFIX_TYPES.STATIC_BOTTOM;
   }
 
-  if (elementBottom >= containerBottom) {
+  if (elementBottom >= containerBottom - POSITION_TOLERANCE) {
     return AFFIX_TYPES.STATIC_BOTTOM;
   }
 
@@ -102,17 +103,17 @@ function checkScrollingUp(
   topSpacing: number,
   containerTop: number,
 ): AffixType {
-  if (elementTop >= viewportTop + topSpacing) {
+  if (elementTop >= viewportTop + topSpacing - POSITION_TOLERANCE) {
     const wouldBeTop = viewportTop + topSpacing;
 
-    if (wouldBeTop >= containerTop) {
+    if (wouldBeTop >= containerTop - POSITION_TOLERANCE) {
       return AFFIX_TYPES.FIXED_TOP;
     }
 
     return AFFIX_TYPES.STATIC;
   }
 
-  if (elementTop <= containerTop) {
+  if (elementTop <= containerTop + POSITION_TOLERANCE) {
     return AFFIX_TYPES.STATIC;
   }
 
