@@ -1,6 +1,7 @@
 <template>
   <div class="p-5 md:p-6">
     <PaymentProcessingCyberSource
+      v-if="paymentTypeName === 'CyberSourcePaymentMethod'"
       :order="order"
       :cart="cart"
       :hide-payment-button="hidePaymentButton"
@@ -12,7 +13,7 @@
       @success="onPaymentSuccess()"
       @fail="onPaymentFail()"
     />
-    <PaymentProcessingAuthorizeNet
+    <!-- <PaymentProcessingAuthorizeNet
       v-if="paymentTypeName === 'AuthorizeNetPaymentMethod'"
       :hide-payment-button="hidePaymentButton"
       @success="onPaymentSuccess()"
@@ -46,7 +47,7 @@
       :payment-type-name="paymentTypeName"
       @success="onPaymentSuccess()"
       @fail="onPaymentFail()"
-    />
+    /> -->
   </div>
 </template>
 
@@ -87,11 +88,6 @@ const props = defineProps<IProps>();
 const { analytics } = useAnalytics();
 const paymentMethodComponent = useTemplateRef("paymentMethodComponent");
 
-// const datatrans = useTemplateRef<typeof PaymentProcessingDatatrans>("datatrans");
-
-// const currentPayment = computed<PaymentInType | PaymentType | undefined>(() => {
-//   return props.payment || props.order?.inPayments[0] || props.cart?.payments[0];
-// });
 const paymentTypeName = computed<string | undefined>(
   () =>
     props.payment?.paymentGatewayCode ||

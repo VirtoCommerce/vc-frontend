@@ -123,6 +123,7 @@
             :products="recentlyBrowsedProducts"
           />
         </div>
+
         <template #sidebar>
           <OrderSummary :cart="cart" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
             <template #footer>
@@ -210,6 +211,7 @@
         >
           <div class="text-end text-base font-bold text-neutral-950">
             <span class="me-1">{{ $t("common.labels.total") }}:</span>
+
             <VcPriceDisplay v-if="cart.total" :value="cart.total" />
           </div>
 
@@ -222,7 +224,7 @@
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
-          <!-- todo: this button should be dumb component -->
+          <!-- this button should be dumb component -->
           <PlaceOrder data-test-id="checkout-multi-step.place-order-button" v-else class="!mt-2" />
         </div>
       </transition>
