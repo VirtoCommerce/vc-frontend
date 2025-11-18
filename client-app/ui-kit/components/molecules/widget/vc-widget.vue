@@ -49,9 +49,9 @@
       </slot>
     </component>
 
-    <div v-show="!_collapsed" class="vc-widget__slot-container">
+    <div v-show="!_collapsed" v-if="$slots.default || $slots['default-container']" class="vc-widget__slot-container">
       <slot name="default-container">
-        <div class="vc-widget__slot" :aria-labelledby="ARIAIds.title">
+        <div v-if="$slots.default" class="vc-widget__slot" :aria-labelledby="ARIAIds.title">
           <slot />
         </div>
       </slot>
@@ -227,7 +227,7 @@ watchEffect(() => {
   }
 
   &__slot {
-    @apply pt-4 pb-5 px-[--p-x];
+    @apply pt-4 pb-5 px-[--p-x] empty:hidden;
   }
 
   &__append-icon {

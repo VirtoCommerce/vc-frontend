@@ -173,6 +173,8 @@ const colorSet = {
 module.exports = {
   content: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}", "./node_modules/tw-elements/dist/js/**/*.js"],
 
+  safelist: ["lg:inline"],
+
   theme: {
     ...colorSet,
     screens: BREAKPOINTS,

@@ -14,6 +14,7 @@
         :loading="loading"
         :truncate="truncate"
         :title="title"
+        :append-icon="appendIcon"
         @click="$emit('linkClick', $event)"
       >
         {{ buttonText }}
@@ -65,6 +66,7 @@ interface IProps {
   truncate?: boolean;
   title?: string;
   size?: "sm" | "md";
+  appendIcon?: string;
 }
 
 defineEmits<IEmits>();

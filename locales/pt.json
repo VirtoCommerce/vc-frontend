@@ -80,7 +80,8 @@
       "expand_all": "Expandir tudo",
       "all_products": "Todos os produtos",
       "buy_now": "Comprar agora",
-      "see_all": "Ver tudo"
+      "see_all": "Ver tudo",
+      "report_a_problem": "Reportar um problema"
     },
     "labels": {
       "actions": "Ações",
@@ -105,7 +106,7 @@
       "total": "Total",
       "compare": "Comparar",
       "price": "Preço",
-      "product_price": "Seu preço",
+      "product_price": "Preço",
       "subtotal": "Subtotal",
       "discount": "Desconto",
       "line_items": "Itens",
@@ -165,7 +166,8 @@
       "buyer_name": "Nome do comprador",
       "other": "Outro",
       "vendor_name": "Fornecedor: {name}",
-      "not_available": "N/D"
+      "not_available": "N/D",
+      "product_reviews": "Avaliações de produtos"
     },
     "prefixes": {
       "please": "Por favor",
@@ -193,7 +195,7 @@
       "not_defined": "Indefinido",
       "invalid_coupon": "Este código não corresponde a nenhum cupom ativo. Por favor, verifique se está tudo correto e tente novamente.",
       "fill_all_required": "Por favor, preencha todas as informações obrigatórias para continuar.",
-      "something_went_wrong": "Ops! Algo deu errado. Por favor, verifique se está tudo correto e tente novamente.",
+      "something_went_wrong": "Algo deu errado. Por favor, tente novamente mais tarde.",
       "checkout_pricing_warning": "Disponibilidade, envio, impostos e promoções não são finais até que você conclua seu pedido.",
       "wishlists_available_for_authorized": "As listas de desejos estão disponíveis apenas para usuários autenticados",
       "no_addresses": "Você ainda não tem nenhum endereço",
@@ -204,6 +206,7 @@
       "fail_add_product_to_cart": "Desculpe, este produto não pode ser adicionado ao carrinho. {reason}",
       "fail_to_change_quantity_in_cart": "Desculpe, não é possível atualizar a quantidade do produto no carrinho. {reason}",
       "unhandled_error": "Desculpe pelo transtorno. Nosso servidor está enfrentando problemas técnicos no momento. Por favor, tente novamente mais tarde.",
+      "report_sent_successfully": "Obrigado! Seu relatório foi enviado com sucesso. Vamos analisá-lo.",
       "role_update_successful": "O papel do cliente foi atualizado com sucesso.",
       "role_update_failed": "Ocorreram erros durante a atualização do papel: {0}",
       "passwords_do_not_match": "Os campos de senha devem ter valores correspondentes.",
@@ -564,6 +567,12 @@
           "remove": "Remover de Comparar"
         }
       },
+      "notifications": {
+        "limit_reached": "Apenas {productsLimit} produtos podem ser comparados",
+        "added_html": "Produto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> foi adicionado à lista de comparação <span class=\"hidden lg:inline\">(itens restantes - {itemsLeft})</span>",
+        "removed_html": "Produto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> foi removido da lista de comparação",
+        "compare_button": "Comparar"
+      },
       "clear_list_modal": {
         "title": "Confirmar Limpeza",
         "message": "Você confirma a remoção de todos os produtos da lista de comparação?"
@@ -637,6 +646,7 @@
         "create_configuration_button": "Crie sua própria configuração",
         "price_block": {
           "title": "Preço e Entrega",
+          "mobile_title": "Compartilhar e mais",
           "add_to_list_button": "Adicionar à lista",
           "product_email_title": "Por favor, dê uma olhada no produto: {0}"
         },
@@ -1164,7 +1174,9 @@
           "get_directions": "Obter direções",
           "point_info": "Informações",
           "pickup_address": "Endereço de retirada",
-          "cart_pickup_points_not_found": "Não há pontos de recolha disponíveis para estes produtos. Selecione outro método de envio",
+          "cart_pickup_points_not_found": "Não há pontos de recolha disponíveis para estes produtos. Selecione outro método de envio.",
+          "cart_pickup_points_not_found_by_filter": "Locais de recolha não encontrados.",
+          "cart_pickup_points_reset_search": "Resetar pesquisa",
           "availability": "Disponibilidade"
         }
       },
@@ -1369,7 +1381,8 @@
       "products_icon": "Ícone de produto",
       "show_all_results": "Mostrar todos os resultados",
       "load_previous_page": "Carregar página anterior",
-      "load_next_page": "Carregar próxima página"
+      "load_next_page": "Carregar próxima página",
+      "available_variations": "Nenhuma variação disponível | 1 variação disponível | {count} variações disponíveis"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
