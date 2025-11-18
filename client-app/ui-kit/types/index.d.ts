@@ -1,4 +1,5 @@
 import type { fileSizeUnits, COLORS, MAIN_COLORS } from "@/ui-kit/constants";
+import type { BREAKPOINTS } from "@/ui-kit/constants";
 import type { SwiperOptions } from "swiper";
 import type { SwiperEvents } from "swiper/types";
 import type { Ref } from "vue";
@@ -114,4 +115,16 @@ declare global {
     postalCode?: string;
     regionName?: string;
   };
+
+  type BreakpointsType = keyof typeof BREAKPOINTS;
+
+  interface ISortInfo {
+    column: string;
+    direction: SortDirection;
+  }
+
+  enum SortDirection {
+    Ascending = "asc",
+    Descending = "desc",
+  }
 }

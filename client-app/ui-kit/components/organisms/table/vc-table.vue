@@ -143,11 +143,7 @@
 <script setup lang="ts" generic="T extends ItemType">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
-import { PAGE_LIMIT } from "@/core/constants";
-import { SortDirection } from "@/core/enums";
-import { SKELETON_ROWS_SIZE } from "@/ui-kit/constants";
-import type { BreakpointsType } from "@/core/constants";
-import type { ISortInfo } from "@/core/types";
+import { SKELETON_ROWS_SIZE, PAGE_LIMIT } from "@/ui-kit/constants";
 
 export type ItemType = {
   id?: string | number;
