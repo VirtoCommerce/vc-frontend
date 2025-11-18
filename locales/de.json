@@ -80,7 +80,8 @@
       "expand_all": "Alle ausklappen",
       "all_products": "Alle Produkte",
       "buy_now": "Jetzt kaufen",
-      "see_all": "Alle anzeigen"
+      "see_all": "Alle anzeigen",
+      "report_a_problem": "Problem melden"
     },
     "labels": {
       "actions": "Aktionen",
@@ -105,7 +106,7 @@
       "total": "Gesamt",
       "compare": "Vergleichen",
       "price": "Preis",
-      "product_price": "Ihr Preis",
+      "product_price": "Preis",
       "subtotal": "Zwischensumme",
       "discount": "Rabatt",
       "line_items": "Artikel",
@@ -165,7 +166,8 @@
       "buyer_name": "Name des Käufers",
       "other": "Andere",
       "vendor_name": "Anbieter: {name}",
-      "not_available": "N/V"
+      "not_available": "N/V",
+      "product_reviews": "Produktbewertungen"
     },
     "prefixes": {
       "please": "Bitte",
@@ -194,7 +196,7 @@
       "not_defined": "Nicht definiert",
       "invalid_coupon": "Dieser Code entspricht keinem aktiven Gutschein. Bitte überprüfen Sie alles und versuchen Sie es erneut.",
       "fill_all_required": "Bitte füllen Sie alle erforderlichen Felder aus, um fortzufahren.",
-      "something_went_wrong": "Hoppla! Etwas ist schiefgelaufen. Bitte überprüfen Sie alles und versuchen Sie es erneut.",
+      "something_went_wrong": "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
       "checkout_pricing_warning": "Verfügbarkeit, Versand, Steuern und Aktionen sind erst endgültig, wenn Sie Ihre Bestellung abschließen.",
       "wishlists_available_for_authorized": "Wunschlisten sind nur für authentifizierte Benutzer verfügbar",
       "no_addresses": "Sie haben noch keine Adressen",
@@ -205,6 +207,7 @@
       "fail_add_product_to_cart": "Entschuldigung, dieses Produkt kann nicht zum Warenkorb hinzugefügt werden. {reason}",
       "fail_to_change_quantity_in_cart": "Entschuldigung, die Produktmenge im Warenkorb kann nicht aktualisiert werden. {reason}",
       "unhandled_error": "Entschuldigen Sie die Unannehmlichkeiten. Unser Server hat derzeit technische Probleme. Bitte versuchen Sie es später erneut.",
+      "report_sent_successfully": "Vielen Dank! Ihr Bericht wurde erfolgreich gesendet. Wir werden uns darum kümmern.",
       "role_update_successful": "Die Kundenrolle wurde erfolgreich aktualisiert.",
       "role_update_failed": "Es sind Fehler bei der Aktualisierung der Rolle aufgetreten: {0}",
       "passwords_do_not_match": "Die Passwortfelder müssen übereinstimmende Werte haben.",
@@ -565,6 +568,12 @@
           "remove": "Vom Vergleich entfernen"
         }
       },
+      "notifications": {
+        "limit_reached": "Es können nur {productsLimit} Produkte verglichen werden",
+        "added_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde der Vergleichsliste hinzugefügt <span class=\"hidden lg:inline\">(verbleibende Artikel - {itemsLeft})</span>",
+        "removed_html": "Produkt <span class=\"hidden lg:inline\">„<strong>{productName}</strong>“</span> wurde aus der Vergleichsliste entfernt",
+        "compare_button": "Vergleichen"
+      },
       "clear_list_modal": {
         "title": "Löschung bestätigen",
         "message": "Bestätigen Sie die Entfernung aller Produkte aus der Vergleichsliste?"
@@ -638,6 +647,7 @@
         "create_configuration_button": "Konfiguration erstellen",
         "price_block": {
           "title": "Preis und Lieferung",
+          "mobile_title": "Teilen & Mehr",
           "add_to_list_button": "Zur Liste hinzufügen",
           "product_email_title": "Bitte schauen Sie sich das Produkt an: {0}"
         },
@@ -1166,6 +1176,8 @@
           "point_info": "Info-Punkt",
           "pickup_address": "Abholadresse",
           "cart_pickup_points_not_found": "Für diese Produkte sind keine Abholpunkte verfügbar. Wählen Sie eine andere Versandart.",
+          "cart_pickup_points_not_found_by_filter": "Abholpunkte nicht gefunden.",
+          "cart_pickup_points_reset_search": "Suche zurücksetzen",
           "availability": "Verfügbarkeit"
         }
       },
@@ -1370,7 +1382,8 @@
       "products_icon": "Produktikone",
       "show_all_results": "Alle Ergebnisse anzeigen",
       "load_previous_page": "Vorherige Seite laden",
-      "load_next_page": "Nächste Seite laden"
+      "load_next_page": "Nächste Seite laden",
+      "available_variations": "Keine verfügbaren Variationen | 1 verfügbare Variation | {count} verfügbare Variationen"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

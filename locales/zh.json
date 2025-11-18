@@ -80,7 +80,8 @@
       "expand_all": "全部展开",
       "all_products": "所有产品",
       "buy_now": "立即购买",
-      "see_all": "查看全部"
+      "see_all": "查看全部",
+      "report_a_problem": "报告问题"
     },
     "labels": {
       "actions": "操作",
@@ -105,7 +106,7 @@
       "total": "总计",
       "compare": "比较",
       "price": "价格",
-      "product_price": "您的价格",
+      "product_price": "价格",
       "subtotal": "小计",
       "discount": "折扣",
       "line_items": "商品项",
@@ -165,7 +166,8 @@
       "buyer_name": "买方姓名",
       "other": "其他",
       "vendor_name": "供应商: {name}",
-      "not_available": "不可用"
+      "not_available": "不可用",
+      "product_reviews": "商品评论"
     },
     "prefixes": {
       "please": "请",
@@ -194,7 +196,7 @@
       "not_defined": "未定义",
       "invalid_coupon": "此代码不匹配任何活动优惠券。请仔细检查后再试。",
       "fill_all_required": "请完成所有必填信息以继续。",
-      "something_went_wrong": "糟糕！出了点问题。请仔细检查后再试。",
+      "something_went_wrong": "出了点问题。请稍后再试。",
       "checkout_pricing_warning": "在您完成订单之前，库存、运输、税费和促销信息尚未最终确定。",
       "wishlists_available_for_authorized": "愿望清单仅对已认证用户可用",
       "no_addresses": "您尚未有任何地址",
@@ -205,6 +207,7 @@
       "fail_add_product_to_cart": "抱歉，无法将此商品加入购物车。{reason}",
       "fail_to_change_quantity_in_cart": "抱歉，无法更新购物车中的商品数量。{reason}",
       "unhandled_error": "抱歉给您带来不便。我们的服务器目前遇到技术问题。请稍后再试。",
+      "report_sent_successfully": "谢谢！您的报告已成功发送。我们会查看的。",
       "role_update_successful": "客户角色已成功更新。",
       "role_update_failed": "更新角色时发生错误：{0}",
       "passwords_do_not_match": "密码字段的值必须匹配。",
@@ -565,6 +568,12 @@
           "remove": "从比较中移除"
         }
       },
+      "notifications": {
+        "limit_reached": "最多可以比较 {productsLimit} 件商品",
+        "added_html": "商品 <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> 已添加到比较列表 <span class=\"hidden lg:inline\">（剩余 {itemsLeft} 件）</span>",
+        "removed_html": "商品 <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> 已从比较列表中移除",
+        "compare_button": "比较"
+      },
       "clear_list_modal": {
         "title": "确认清空",
         "message": "您确认要从比较列表中移除所有商品吗？"
@@ -638,6 +647,7 @@
         "create_configuration_button": "创建您的配置",
         "price_block": {
           "title": "价格与运输",
+          "mobile_title": "分享与更多",
           "add_to_list_button": "添加到清单",
           "product_email_title": "请查看产品：{0}"
         },
@@ -1166,6 +1176,8 @@
           "point_info": "积分信息",
           "pickup_address": "自提地址",
           "cart_pickup_points_not_found": "此商品无适用的自提点。请选择其他配送方式",
+          "cart_pickup_points_not_found_by_filter": "未找到自提点。",
+          "cart_pickup_points_reset_search": "重置搜索",
           "availability": "可用性"
         }
       },
@@ -1370,7 +1382,8 @@
       "products_icon": "产品图标",
       "show_all_results": "显示所有结果",
       "load_previous_page": "加载上一页",
-      "load_next_page": "加载下一页"
+      "load_next_page": "加载下一页",
+      "available_variations": "没有可用的款式 | 1 个可用的款式 | {count} 个可用的款式"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

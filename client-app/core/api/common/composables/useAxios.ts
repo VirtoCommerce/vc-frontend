@@ -15,7 +15,7 @@ export const useAxios = (() => {
       return config;
     },
     (error: AxiosError) => {
-      errorHandler(toServerError(error?.cause, undefined));
+      errorHandler(toServerError(error?.cause, undefined), JSON.stringify(error));
       return Promise.reject(error);
     },
   );
@@ -26,7 +26,7 @@ export const useAxios = (() => {
       return response;
     },
     (error: AxiosError) => {
-      errorHandler(toServerError(error?.cause, error?.response?.status));
+      errorHandler(toServerError(error?.cause, error?.response?.status), JSON.stringify(error));
       return Promise.reject(error);
     },
   );

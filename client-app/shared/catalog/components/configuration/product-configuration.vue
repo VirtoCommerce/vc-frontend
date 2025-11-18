@@ -45,7 +45,7 @@
           </div>
         </template>
 
-        <div class="product-configuration__items">
+        <div class="product-configuration__items" @focusin="handleItemsFocusIn">
           <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.product">
             <template v-for="option in section.options" :key="option.id">
               <OptionProduct
@@ -181,6 +181,21 @@ const {
 
 const { openModal } = useModal();
 const notifications = useNotifications();
+
+function handleItemsFocusIn(event: FocusEvent) {
+  const target = event.target as HTMLElement;
+  const itemsContainer = event.currentTarget as HTMLElement;
+  const relatedTarget = event.relatedTarget as HTMLElement | null;
+  if (!itemsContainer) return;
+
+  const isFocusFromOutside = !relatedTarget || !itemsContainer.contains(relatedTarget);
+  if (!isFocusFromOutside || !itemsContainer.contains(target)) return;
+
+  const radioInput = itemsContainer.querySelector('input[type="radio"]:checked');
+  if (radioInput instanceof HTMLInputElement && target !== radioInput) {
+    radioInput.focus();
+  }
+}
 
 watch(
   initialConfiguration,
