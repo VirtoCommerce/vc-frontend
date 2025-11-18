@@ -25,7 +25,7 @@ import {
   userLockedEvent,
   userReloadEvent,
   passwordExpiredEvent,
-  reloadAndOpenMainPage,
+  pageReloadEvent,
 } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
@@ -358,7 +358,7 @@ export function _useUser() {
 
       localStorage.setItem(`organization-id-${user.value?.userName}`, organizationId);
 
-      void broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
+      void broadcast.emit(pageReloadEvent, null, TabsType.ALL);
     } catch (e) {
       Logger.error(switchOrganization.name, e);
     } finally {
