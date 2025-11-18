@@ -23,7 +23,7 @@
       :data-test-id="testIdDropdown"
       @toggle="toggled"
     >
-      <template #trigger="{ open, toggle }">
+      <template #trigger="{ open, toggle, close }">
         <div
           v-if="$slots.selected || $slots.placeholder"
           tabindex="0"
@@ -58,6 +58,7 @@
           @focus="open"
           @clear="clear"
           @click="(autocomplete && open) || (!autocomplete && toggle)"
+          @keydown.esc="close()"
         >
           <template #append>
             <button
@@ -341,7 +342,7 @@ function handleArrowClick(event: MouseEvent, toggle: () => void) {
   }
 
   &__container {
-    @apply relative;
+    @apply relative rounded-[--radius];
   }
 
   &__button {
