@@ -253,7 +253,6 @@ import {
   BillingDetailsSection,
   OrderCommentSection,
   OrderSummary,
-  PlaceOrder,
   ProceedTo,
   ShippingDetailsSection,
   useCheckout,
