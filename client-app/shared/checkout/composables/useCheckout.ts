@@ -17,6 +17,7 @@ import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType } from "@/shared/payment";
 import { BOPIS_CODE } from "./useBopis";
 import type {
+  AuthorizePaymentResultType,
   CartAddressType,
   CustomerOrderType,
   InputAddressType,
@@ -426,7 +427,7 @@ export function _useCheckout(cartId?: string) {
   }
 
   async function createOrderFromCart(
-    paymentProcessor?: (order: CustomerOrderType) => Promise<void>,
+    paymentProcessor?: (order: CustomerOrderType) => Promise<AuthorizePaymentResultType | null>,
   ): Promise<CustomerOrderType | null> {
     loading.value = true;
 
@@ -444,8 +445,8 @@ export function _useCheckout(cartId?: string) {
     if (placedOrder.value) {
       if (paymentProcessor) {
         try {
-          await paymentProcessor(placedOrder.value);
-          orderPayed = true;
+          const result = await paymentProcessor(placedOrder.value);
+          orderPayed = result?.isSuccess ?? false;
         } catch (e) {
           Logger.error(`${useCheckout.name}.${createOrderFromCart.name}.paymentProcessor`, e);
           placedOrder.value = null;

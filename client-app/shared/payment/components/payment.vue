@@ -57,6 +57,7 @@ import { authorizePayment, initializePayment, initializeCartPayment } from "@/co
 import { useAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import type {
+  AuthorizePaymentResultType,
   CartType,
   CustomerOrderType,
   InputInitializeCartPaymentType,
@@ -121,7 +122,7 @@ async function initializeCurrentPayment(
  * Authorize current payment with the provided order, this is the exposed method
  * @param order
  */
-async function authorizeCurrentPaymentWithOrder(order?: CustomerOrderType) {
+async function authorizeCurrentPaymentWithOrder(order?: CustomerOrderType): Promise<AuthorizePaymentResultType | null> {
   const orderToPayment = order || props.order;
 
   if (!orderToPayment) {
@@ -133,24 +134,26 @@ async function authorizeCurrentPaymentWithOrder(order?: CustomerOrderType) {
 
     if (!payload) {
       emit("fail");
-      return;
+      return null;
     }
 
-    const { isSuccess } = await authorizePayment({
+    const result = await authorizePayment({
       orderId: orderToPayment.id,
       paymentId: orderToPayment.inPayments[0].id,
       ...payload,
     });
 
-    if (isSuccess) {
+    if (result.isSuccess) {
       analytics("purchase", orderToPayment);
       emit("success");
     } else {
       emit("fail");
     }
+    return result;
   } catch (error) {
     Logger.error(authorizeCurrentPaymentWithOrder.name, error);
     emit("fail");
+    return null;
   }
 }
 

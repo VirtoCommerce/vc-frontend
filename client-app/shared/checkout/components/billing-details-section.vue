@@ -83,6 +83,7 @@
       </div>
     </div>
   </VcWidget>
+
   <VcWidget
     v-if="paymentMethod && paymentMethod.allowCartPayment && currentPaymentMethod && billingAddress"
     :title="$t('shared.checkout.billing_details_section.title')"
@@ -105,7 +106,7 @@ import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { AddressSelection } from "@/shared/common";
 import { BOPIS_CODE } from "../composables/useBopis";
-import type { CartType, CustomerOrderType } from "@/core/api/graphql/types";
+import type { AuthorizePaymentResultType, CartType, CustomerOrderType } from "@/core/api/graphql/types";
 import Payment from "@/shared/payment/components/payment.vue";
 
 interface IProps {
@@ -136,8 +137,11 @@ const currentPaymentMethod = computed(() => {
 
 const paymentComponent = useTemplateRef("paymentComponent");
 
-async function authorizeCurrentPaymentWithOrder(order?: CustomerOrderType) {
-  await paymentComponent.value?.authorizeCurrentPaymentWithOrder?.(order);
+async function authorizeCurrentPaymentWithOrder(order?: CustomerOrderType): Promise<AuthorizePaymentResultType | null> {
+  if (paymentComponent.value && paymentComponent.value.authorizeCurrentPaymentWithOrder && order) {
+    return await paymentComponent.value.authorizeCurrentPaymentWithOrder(order);
+  }
+  return null;
 }
 
 defineExpose({
