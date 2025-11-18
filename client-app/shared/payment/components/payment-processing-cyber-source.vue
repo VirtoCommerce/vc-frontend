@@ -53,6 +53,7 @@
   </div>
 
   <input id="flexresponse" type="hidden" name="flexresponse" />
+
   <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
     <PaymentPolicies />
 
@@ -258,8 +259,6 @@ async function createToken(options: Record<string, unknown>): Promise<string> {
   });
 }
 
-// IPaymentMethodParameters
-
 async function executeNativePayment(order?: CustomerOrderType) {
   return await sendPaymentData(order);
 }
@@ -267,8 +266,6 @@ async function executeNativePayment(order?: CustomerOrderType) {
 defineExpose({
   executeNativePayment,
 });
-
-// /IPaymentMethodParameters
 
 onMounted(async () => {
   await initPayment();
