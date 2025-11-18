@@ -69,7 +69,7 @@
                   :class="[
                     'vc-table__sort-icon',
                     {
-                      'vc-table__sort-icon--asc': sort.direction === SortDirection.Ascending,
+                      'vc-table__sort-icon--asc': sort.direction === 'asc',
                     },
                   ]"
                   name="chevron-up"
