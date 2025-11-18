@@ -80,7 +80,6 @@
     <PaymentPolicies />
 
     <VcButton
-      v-if="!hidePaymentButton"
       :disabled="!isValidBankCard"
       :loading="loading"
       class="flex-1 md:order-first md:flex-none"
@@ -104,7 +103,7 @@ import { useAnalytics } from "@/core/composables";
 import { Logger, preventNonNumberKeyboard, preventNonNumberPaste } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import PaymentPolicies from "./payment-policies.vue";
-import type { CartType, CustomerOrderType, KeyValueType, PaymentInType, PaymentType } from "@/core/api/graphql/types";
+import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
 
@@ -172,12 +171,8 @@ interface IEmits {
 }
 
 interface IProps {
-  order?: CustomerOrderType;
-  cart?: CartType;
-  paymentIn?: PaymentInType;
-  payment?: PaymentType;
+  order: CustomerOrderType;
   disabled?: boolean;
-  hidePaymentButton?: boolean;
 }
 
 const { t } = useI18n();
@@ -292,24 +287,21 @@ async function initPayment() {
   const uppTransactionId = params.get("uppTransactionId");
   const status3d = params.get("status_3d");
   if (uppTransactionId) {
-    // todo: this should be on the order page
     // return from 3-D Secure, need to finalize payment on the backend
     if (status3d !== SECURE_3D_SUCCESS_STATUS) {
       showError(t("shared.payment.bank_card_form.user_error_message"));
       emit("fail");
       return;
     }
-    await finalizeOnBackend({} as CustomerOrderType, uppTransactionId); // todo: pass order
+    await finalizeOnBackend(uppTransactionId);
     return;
   }
 
   hideForm.value = false;
   loading.value = true;
   const { publicParameters } = await initializePayment({
-    // todo: no parameters here
     orderId: props.order?.id,
-    paymentId:
-      props.order?.inPayments[0].id || props.cart?.payments[0]?.id || props.paymentIn?.id || props.payment?.id || "",
+    paymentId: props.order.inPayments[0].id,
   });
 
   const scriptUrl = getValue(publicParameters, "clientScript");
@@ -365,7 +357,7 @@ function initForm(tx: string) {
     }
 
     // without 3-D Secure, finalize payment right now on the backend
-    await finalizeOnBackend({} as CustomerOrderType, transactionId); // todo: pass order
+    await finalizeOnBackend(transactionId);
   });
 
   secureFields.on("error", async (data: IFieldError) => {
@@ -374,12 +366,12 @@ function initForm(tx: string) {
   });
 }
 
-async function finalizeOnBackend(order: CustomerOrderType, transactionId: string) {
+async function finalizeOnBackend(transactionId: string) {
   loading.value = true;
   try {
     const { isSuccess } = await authorizePayment({
-      orderId: order.id,
-      paymentId: order.inPayments[0].id,
+      orderId: props.order.id,
+      paymentId: props.order.inPayments[0].id,
       parameters: [
         {
           key: "transactionId",
@@ -388,7 +380,7 @@ async function finalizeOnBackend(order: CustomerOrderType, transactionId: string
       ],
     });
     if (isSuccess) {
-      analytics("purchase", order);
+      analytics("purchase", props.order);
       emit("success");
     } else {
       emit("fail");

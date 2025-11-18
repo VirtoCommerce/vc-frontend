@@ -28,7 +28,7 @@ export type ExtensionCategoryMapType = {
   productPage: ExtensionEntryType<{ product?: Product }, (product: Product) => boolean>;
   paymentPage: ExtensionEntryType<
     { order: CustomerOrderType; paymentTypeName: string },
-    ({ order, paymentTypeName }: { order: CustomerOrderType | null; paymentTypeName: string }) => boolean
+    ({ order, paymentTypeName }: { order: CustomerOrderType; paymentTypeName: string }) => boolean
   >;
   orderPaymentPage: ExtensionEntryType<
     { order: CustomerOrderType; paymentTypeName: string },
