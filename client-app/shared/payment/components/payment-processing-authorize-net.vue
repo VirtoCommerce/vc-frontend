@@ -19,7 +19,7 @@
       <CardLabels class="mt-5" />
     </div>
 
-    <div v-if="!hidePaymentButton" class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
+    <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
       <PaymentPolicies />
 
       <VcButton
@@ -59,9 +59,8 @@ interface IEmits {
 }
 
 interface IProps {
-  order?: CustomerOrderType;
+  order: CustomerOrderType;
   disabled?: boolean;
-  hidePaymentButton?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -98,8 +97,8 @@ async function initPayment() {
     publicParameters = [],
     errorMessage = "",
   } = await initializePayment({
-    orderId: props.order?.id,
-    paymentId: props.order?.inPayments[0].id || "todo: fix it",
+    orderId: props.order.id,
+    paymentId: props.order.inPayments[0].id,
   });
 
   if (paymentActionType !== PaymentActionType[PaymentActionType.PreparedForm]) {
@@ -155,7 +154,7 @@ async function pay(opaqueData: Accept.OpaqueData) {
   const {
     id: orderId,
     inPayments: [{ id: paymentId }],
-  } = props.order || { inPayments: [{ id: "" }] }; // TODO: fix it
+  } = props.order;
 
   const { isSuccess, errorMessage } = await sendOpaqueData({ orderId, paymentId, opaqueData });
 
@@ -165,7 +164,7 @@ async function pay(opaqueData: Accept.OpaqueData) {
     /**
      * Send Google Analytics purchase event.
      */
-    analytics("purchase", props.order || ({} as CustomerOrderType)); // TODO: fix it
+    analytics("purchase", props.order);
   } else {
     emit("fail", errorMessage);
   }
@@ -192,6 +191,12 @@ function sendPaymentData() {
     loading.value = false;
   });
 }
+
+defineExpose({
+  loading,
+  initialized,
+  isValidBankCard,
+});
 
 onMounted(async () => {
   await initPayment();
