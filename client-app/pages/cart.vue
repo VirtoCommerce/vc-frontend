@@ -161,8 +161,6 @@
                 {{ $t("common.buttons.place_order") }}
               </ProceedTo>
 
-              <!-- <PlaceOrder data-test-id="checkout-single-page.place-order-button" v-else class="mt-4" /> -->
-
               <template v-if="!$cfg.checkout_multistep_enabled">
                 <transition name="slide-fade-top" mode="out-in" appear>
                   <VcAlert
@@ -224,8 +222,15 @@
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
-          <!-- this button should be dumb component -->
-          <PlaceOrder data-test-id="checkout-multi-step.place-order-button" v-else class="!mt-2" />
+          <ProceedTo
+            v-else
+            :disabled="hasOnlyUnselectedLineItems || !isValidCheckout || !isCardDataValid"
+            data-test-id="checkout-multi-page.place-order-button"
+            @click="handleCreateOrderFormCart"
+            class="!mt-2"
+          >
+            {{ $t("common.buttons.place_order") }}
+          </ProceedTo>
         </div>
       </transition>
     </template>
