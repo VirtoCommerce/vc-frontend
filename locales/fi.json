@@ -181,6 +181,7 @@
       "email_not_unique": "Tämä sähköpostiosoite on jo rekisteröity meillä",
       "max_length": "Tämä kenttä ei saa sisältää enempää kuin {max} merkkiä",
       "creating_order_error": "Virhe tilauksen luomisessa",
+      "payment_processing_error": "Virhe maksun käsittelyssä",
       "item_can_t_be_purchased": "Tätä tuotetta ei voi ostaa",
       "item_is_out_of_stock": "Tämä tuote on loppu varastosta",
       "invalid_value": "Virheellinen arvo",

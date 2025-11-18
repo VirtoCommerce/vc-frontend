@@ -77,12 +77,11 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { useAnalytics } from "@/core/composables";
 import { Logger, preventNonNumberKeyboard, preventNonNumberPaste } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import PaymentPolicies from "./payment-policies.vue";
 import type { IPaymentMethodParameters } from "./types";
-import type { KeyValueType } from "@/core/api/graphql/types";
+import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
 
@@ -116,7 +115,6 @@ interface IFlex {
 }
 
 const emit = defineEmits<IEmits>();
-
 const props = defineProps<IPaymentMethodParameters>();
 
 declare let Flex: FlexConstructorType;
@@ -127,7 +125,6 @@ let microform: IMicroform;
 // Example usage
 
 const { t } = useI18n();
-const { analytics } = useAnalytics();
 const notifications = useNotifications();
 
 const loading = ref(false);
@@ -204,7 +201,10 @@ const expirationDate = computed({
     (month.value && month.value.length > 1) || year.value ? `${month.value ?? "  "} / ${year.value}` : month.value,
   set: (value) => {
     if (value) {
-      const [rawMonth = "", rawYear = ""] = value.split(/\s*\/\s*/);
+      const [rawMonth = "", rawYear = ""] = value.split("/").map((part) => part.trim());
+      month.value = rawMonth;
+      year.value = rawYear;
+
       month.value = rawMonth;
       year.value = rawYear;
     }
@@ -215,8 +215,9 @@ const expirationDateErrors = computed<string>(() =>
   [formErrors.value.month, formErrors.value.year].filter(Boolean).join(". "),
 );
 
-async function sendPaymentData() {
-  if (!isValidBankCard.value || !props.order) {
+async function sendPaymentData(orderToPay: CustomerOrderType | undefined = undefined) {
+  const order = props.order || orderToPay;
+  if (!isValidBankCard.value || !order) {
     return;
   }
   loading.value = true;
@@ -228,28 +229,18 @@ async function sendPaymentData() {
       expirationYear: formValues.year,
     });
 
-    if (props.authorizePayment === undefined) {
-      throw new Error("authorizePayment function is not provided");
-    }
-
-    const { isSuccess } = await props.authorizePayment({
+    return {
       parameters: [
         {
           key: "token",
           value: token,
         },
       ],
-    });
-
-    if (isSuccess) {
-      analytics("purchase", props.order);
-      emit("success");
-    } else {
-      emit("fail");
-    }
+    };
   } catch (e) {
     Logger.error(sendPaymentData.name, e);
     emit("fail");
+    return null;
   } finally {
     loading.value = false;
   }
@@ -266,6 +257,18 @@ async function createToken(options: Record<string, unknown>): Promise<string> {
     });
   });
 }
+
+// IPaymentMethodParameters
+
+async function executeNativePayment(order?: CustomerOrderType) {
+  return await sendPaymentData(order);
+}
+
+defineExpose({
+  executeNativePayment,
+});
+
+// /IPaymentMethodParameters
 
 onMounted(async () => {
   await initPayment();
@@ -383,8 +386,8 @@ function removeScript() {
   }
 }
 
-watch([isValidBankCard, formErrors], ([validCard, errors]) => {
-  emit("validate", validCard && !errors);
+watch([isValidBankCard, meta], ([validCard, metaFormResult]) => {
+  emit("validate", validCard && metaFormResult.valid);
 });
 
 onUnmounted(removeScript);

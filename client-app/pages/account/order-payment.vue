@@ -246,15 +246,8 @@
                 <template v-else-if="isPaymentAvailable">
                   <PaymentProcessingManual v-if="paymentMethodCode === 'DefaultManualPaymentMethod'" />
 
-                  <Payment
+                  <PaymentProcessingAuthorizeNet
                     v-else-if="paymentMethodCode === 'AuthorizeNetPaymentMethod'"
-                    :order="order"
-                    :disabled="loading"
-                    @success="success = true"
-                    @fail="failure = true"
-                  />
-
-                  <!-- <PaymentProcessingAuthorizeNet
                     :order="order"
                     :disabled="loading"
                     @success="success = true"
@@ -280,7 +273,7 @@
                     :order="order"
                     @success="success = true"
                     @fail="failure = true"
-                  /> -->
+                  />
 
                   <ExtensionPointList
                     v-else-if="
@@ -333,10 +326,10 @@ import { PaymentActionType, PaymentProcessingManual, PaymentProcessingRedirectio
 import type { MemberAddressType, OrderPaymentMethodType, PaymentInType } from "@/core/api/graphql/types";
 import type { Optional } from "utility-types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
-// import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
-// import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
-// import PaymentProcessingDatatrans from "@/shared/payment/components/payment-processing-datatrans.vue";
-// import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
+import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
+import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
+import PaymentProcessingDatatrans from "@/shared/payment/components/payment-processing-datatrans.vue";
+import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
 
 interface IProps {
   orderId: string;

@@ -181,6 +181,7 @@
       "email_not_unique": "此电子邮件已在我们这里注册",
       "max_length": "此字段不得超过 {max} 个字符",
       "creating_order_error": "创建订单时出错",
+      "payment_processing_error": "支付处理时出错",
       "item_can_t_be_purchased": "此商品无法购买",
       "item_is_out_of_stock": "此商品缺货",
       "invalid_value": "无效的值",

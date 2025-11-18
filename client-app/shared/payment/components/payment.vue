@@ -6,13 +6,13 @@
       :hide-payment-button="hidePaymentButton"
       :disabled="disabled"
       :payment="payment"
-      :init-payment="initCurrentPayment"
-      :authorize-payment="authorizeCurrentPayment"
+      :init-payment="initializeCurrentPayment"
+      ref="paymentMethodComponent"
       @validate="onValidate"
       @success="onPaymentSuccess()"
       @fail="onPaymentFail()"
     />
-    <!-- <PaymentProcessingAuthorizeNet
+    <PaymentProcessingAuthorizeNet
       v-if="paymentTypeName === 'AuthorizeNetPaymentMethod'"
       :hide-payment-button="hidePaymentButton"
       @success="onPaymentSuccess()"
@@ -20,19 +20,16 @@
     />
     <PaymentProcessingSkyflow
       v-else-if="paymentTypeName === 'SkyflowPaymentMethod'"
-      @success="onPaymentResult(true)"
-      @fail="onPaymentResult(false)"
+      @success="onPaymentSuccess()"
+      @fail="onPaymentFail()"
     />
     <PaymentProcessingCyberSource
       v-else-if="paymentTypeName === 'CyberSourcePaymentMethod'"
-      :order="placedOrder"
-      @success="onPaymentResult(true)"
-      @fail="onPaymentResult(false)"
+      @success="onPaymentSuccess()"
+      @fail="onPaymentFail()"
     />
     <PaymentProcessingDatatrans
       v-else-if="paymentTypeName === 'DatatransPaymentMethod'"
-      ref="datatrans"
-      :order="order"
       @success="onPaymentSuccess()"
       @fail="onPaymentFail()"
     />
@@ -40,27 +37,27 @@
       v-else-if="
         paymentTypeName &&
         $canRenderExtensionPoint('paymentPage', 'payment-methods', {
-          order: placedOrder,
+          order: order ?? null,
           paymentTypeName: paymentTypeName,
         })
       "
       category="paymentPage"
-      :order="placedOrder"
+      :order="order ?? null"
       :payment-type-name="paymentTypeName"
-      @success="onPaymentResult(true)"
-      @fail="onPaymentResult(false)"
-    /> -->
+      @success="onPaymentSuccess()"
+      @fail="onPaymentFail()"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { authorizePayment, initializePayment, initializeCartPayment } from "@/core/api/graphql";
-import type { IPaymentMethodExpose } from "./types";
+import { useAnalytics } from "@/core/composables";
+import { Logger } from "@/core/utilities";
 import type {
   CartType,
   CustomerOrderType,
-  InputAuthorizePaymentType,
   InputInitializeCartPaymentType,
   InputInitializePaymentType,
   PaymentType,
@@ -86,7 +83,9 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
-defineExpose<IPaymentMethodExpose>();
+
+const { analytics } = useAnalytics();
+const paymentMethodComponent = useTemplateRef("paymentMethodComponent");
 
 // const datatrans = useTemplateRef<typeof PaymentProcessingDatatrans>("datatrans");
 
@@ -100,7 +99,9 @@ const paymentTypeName = computed<string | undefined>(
     props.cart?.payments[0]?.paymentGatewayCode,
 );
 
-async function initCurrentPayment(payload?: Partial<InputInitializePaymentType | InputInitializeCartPaymentType>) {
+async function initializeCurrentPayment(
+  payload?: Partial<InputInitializePaymentType | InputInitializeCartPaymentType>,
+) {
   if (props.order) {
     const parameters = {
       orderId: props.order.id,
@@ -120,30 +121,48 @@ async function initCurrentPayment(payload?: Partial<InputInitializePaymentType |
   throw new Error("Either order, payment, or cart must be provided to initialize payment.");
 }
 
-async function authorizeCurrentPayment(payload?: Partial<InputAuthorizePaymentType>) {
-  return await authorizePaymentWithOrder(payload, props.order);
-}
-
-async function authorizePaymentWithOrder(payload?: Partial<InputAuthorizePaymentType>, order?: CustomerOrderType) {
+/**
+ * Authorize current payment with the provided order, this is the exposed method
+ * @param order
+ */
+async function authorizeCurrentPaymentWithOrder(order?: CustomerOrderType) {
   const orderToPayment = order || props.order;
 
   if (!orderToPayment) {
     throw new Error("Order must be provided to authorize payment.");
   }
 
-  return await authorizePayment({
-    orderId: orderToPayment.id,
-    paymentId: orderToPayment.inPayments[0].id,
-    ...payload,
-  });
+  try {
+    const payload = await paymentMethodComponent.value?.executeNativePayment?.(orderToPayment);
+
+    if (!payload) {
+      emit("fail");
+      return;
+    }
+
+    const { isSuccess } = await authorizePayment({
+      orderId: orderToPayment.id,
+      paymentId: orderToPayment.inPayments[0].id,
+      ...payload,
+    });
+
+    if (isSuccess) {
+      analytics("purchase", orderToPayment);
+      emit("success");
+    } else {
+      emit("fail");
+    }
+  } catch (error) {
+    Logger.error(authorizeCurrentPaymentWithOrder.name, error);
+    emit("fail");
+  }
 }
 
-watch(paymentTypeName, () => {
-  console.log("Payment type changed:", paymentTypeName.value);
+defineExpose({
+  authorizeCurrentPaymentWithOrder,
 });
 
 function onValidate(isValid: boolean) {
-  console.log(isValid);
   emit("validate", isValid);
 }
 
@@ -154,8 +173,4 @@ async function onPaymentSuccess() {
 async function onPaymentFail() {
   emit("fail");
 }
-
-onMounted(() => {
-  console.log("Payment component mounted with payment type:", paymentTypeName.value);
-});
 </script>

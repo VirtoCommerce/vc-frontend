@@ -181,6 +181,7 @@
       "email_not_unique": "Denna e-post är redan registrerad hos oss",
       "max_length": "Detta fält får inte innehålla mer än {max} tecken",
       "creating_order_error": "Fel vid skapande av beställning",
+      "payment_processing_error": "Fel vid betalningshantering",
       "item_can_t_be_purchased": "Denna artikel kan inte köpas",
       "item_is_out_of_stock": "Denna artikel är slut i lager",
       "invalid_value": "Ogiltigt värde",

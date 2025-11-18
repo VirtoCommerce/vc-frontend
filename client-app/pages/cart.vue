@@ -106,7 +106,7 @@
           <template v-if="!$cfg.checkout_multistep_enabled">
             <ShippingDetailsSection v-if="!allItemsAreDigital" />
 
-            <BillingDetailsSection :cart="cart" @validate="isPaymentValid" />
+            <BillingDetailsSection ref="billingComponent" :cart="cart" @validate="isPaymentValid" />
 
             <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
           </template>
@@ -152,7 +152,7 @@
 
               <ProceedTo
                 v-else
-                :disabled="hasOnlyUnselectedLineItems || !isValidCheckout"
+                :disabled="hasOnlyUnselectedLineItems || !isValidCheckout || !isCardDataValid"
                 data-test-id="checkout-single-page.place-order-button"
                 @click="handleCreateOrderFormCart"
                 class="mt-4"
@@ -231,9 +231,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { useAnalytics, useBreadcrumbs, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -272,7 +271,6 @@ const { themeContext } = useThemeContext();
 const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
-const router = useRouter();
 const {
   loading: loadingCart,
   cart,
@@ -304,8 +302,6 @@ const {
   isValidPayment,
   initialize,
   createOrderFromCart,
-  canPayNow,
-  paymentMethod,
 } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
@@ -339,6 +335,8 @@ const analyticsLastSentPaymentCode = ref<string | undefined>();
 const isCartLocked = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
+const isCardDataValid = ref(false);
+
 const loading = computed(() => loadingCart.value || loadingCheckout.value || saveForLaterLoading.value);
 const isShowIncompleteDataWarning = computed(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
@@ -357,26 +355,13 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
 }
 
 function isPaymentValid(isValid: boolean) {
-  // This function can be used to track payment validity if needed
-  console.log("cart:", isValid);
+  isCardDataValid.value = isValid;
 }
 
-async function handleCreateOrderFormCart() {
-  const order = await createOrderFromCart();
+const billingComponent = useTemplateRef("billingComponent");
 
-  if (canPayNow.value) {
-    if (paymentMethod.value?.allowCartPayment) {
-      // here we should call payment method process
-      // 1) validate input data (we should get this info from payment component)
-      // 2) call native payment
-      // 3) call authorize payment if step 2 is successful
-      // 4) redirect to order completed page if step 3 is successful
-    } else {
-      await router.replace({ name: "CheckoutPayment" });
-    }
-  } else {
-    await router.replace({ name: "CheckoutCompleted" });
-  }
+async function handleCreateOrderFormCart() {
+  await createOrderFromCart(billingComponent.value?.authorizeCurrentPaymentWithOrder);
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {

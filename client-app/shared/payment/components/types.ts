@@ -12,10 +12,17 @@ import type {
 import type { Ref } from "vue";
 
 export interface IPaymentMethodExpose {
-  authorizePaymentWithOrder: (payload?: Partial<InputAuthorizePaymentType>, order?: CustomerOrderType) => Promise<void>;
-  initializePayment: () => Promise<void>;
-  loading: Ref<boolean, boolean>;
-  initialized: Ref<boolean, boolean>;
+  authorizeCurrentPaymentWithOrder?: (
+    payload?: Partial<InputAuthorizePaymentType>,
+    order?: CustomerOrderType,
+  ) => Promise<unknown>;
+  executeCurrentNativePayment?: (
+    payload?: Partial<InputInitializePaymentType>,
+    order?: CustomerOrderType,
+  ) => Promise<void>;
+  initializeCurrentPayment?: () => Promise<void>;
+  loading?: Ref<boolean, boolean>;
+  initialized?: Ref<boolean, boolean>;
 }
 
 export interface IPaymentMethodParameters {

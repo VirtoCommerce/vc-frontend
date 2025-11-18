@@ -181,6 +181,7 @@
       "email_not_unique": "This email is already registered with us",
       "max_length": "This field must not contain more than {max} characters",
       "creating_order_error": "Error when creating an order",
+      "payment_processing_error": "Error during payment processing",
       "item_can_t_be_purchased": "This item cannot be purchased",
       "item_is_out_of_stock": "This item is out of stock",
       "invalid_value": "Invalid value",
