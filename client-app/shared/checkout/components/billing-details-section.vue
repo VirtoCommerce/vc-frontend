@@ -85,7 +85,7 @@
   </VcWidget>
 
   <VcWidget
-    v-if="paymentMethod && paymentMethod.allowCartPayment && currentPaymentMethod && billingAddress"
+    v-if="cart && paymentMethod && paymentMethod.allowCartPayment && currentPaymentMethod && billingAddress"
     :title="$t('shared.checkout.billing_details_section.title')"
     prepend-icon="cash"
     size="lg"
