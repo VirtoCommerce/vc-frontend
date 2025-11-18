@@ -52,6 +52,7 @@
         </VcMenuItem>
 
         <div v-if="isAnchorAdded" ref="fadeVisibilityAnchor"></div>
+
         <div v-if="hasFade" class="facet-filter-widget__fade"></div>
       </div>
     </template>
@@ -81,6 +82,7 @@
   <!-- Dropdown mode -->
   <VcDropdownMenu
     v-if="mode === 'dropdown'"
+    :disabled="disabled"
     :offset-options="4"
     class="facet-filter-dropdown"
     z-index="10"
@@ -179,6 +181,7 @@ interface IEmits {
 interface IProps {
   facet: FacetItemType;
   loading?: boolean;
+  disabled?: boolean;
   mode: "dropdown" | "collapsable";
   filter?: SearchProductFilterResult;
 }

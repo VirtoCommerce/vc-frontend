@@ -21,7 +21,7 @@ function _useAuth() {
     afterFetch: updateToken,
     onFetchError: (context) => {
       if (context.response?.status !== 400) {
-        errorHandler(toServerError(context.error, context.response?.status));
+        errorHandler(toServerError(context.error, context.response?.status), JSON.stringify(context.error));
       }
       return context;
     },
