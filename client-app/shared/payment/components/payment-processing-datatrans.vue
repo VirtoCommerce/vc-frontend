@@ -300,7 +300,7 @@ async function initPayment() {
   hideForm.value = false;
   loading.value = true;
   const { publicParameters } = await initializePayment({
-    orderId: props.order?.id,
+    orderId: props.order.id,
     paymentId: props.order.inPayments[0].id,
   });
 
