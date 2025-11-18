@@ -13,6 +13,10 @@ const core = {
   schemaPath: `${process.env.APP_BACKEND_URL}/graphql`,
 } as const;
 
+if (process.env.NODE_ENV === "development" && process.env.APP_BACKEND_URL?.startsWith("https://localhost")) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+}
+
 // if a module does not have separated schema - use `core.schemaPath`
 // if a module not used and not installed on The Platform - remove it to avoid console error
 const independentModules: ModuleType[] = [
