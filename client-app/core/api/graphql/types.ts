@@ -3282,6 +3282,7 @@ export type Mutations = {
   saveSearchQuery?: Maybe<Scalars['Boolean']['output']>;
   selectAllCartItems?: Maybe<CartType>;
   selectCartItems?: Maybe<CartType>;
+  sendPasswordResetEmail?: Maybe<Scalars['Boolean']['output']>;
   sendVerifyEmail?: Maybe<Scalars['Boolean']['output']>;
   submitQuoteRequest?: Maybe<QuoteType>;
   unSelectAllCartItems?: Maybe<CartType>;
@@ -3777,6 +3778,11 @@ export type MutationsSelectAllCartItemsArgs = {
 
 export type MutationsSelectCartItemsArgs = {
   command?: InputMaybe<InputChangeCartItemsSelectedType>;
+};
+
+
+export type MutationsSendPasswordResetEmailArgs = {
+  command: SendPasswordResetEmailCommandType;
 };
 
 
@@ -5190,6 +5196,7 @@ export type Query = {
   recentlyBrowsed?: Maybe<GetRecentlyBrowsedResponseType>;
   recommendations?: Maybe<GetRecommendationsResponseType>;
   regions: Array<CountryRegionType>;
+  /** @deprecated Deprecated. Use sendPasswordResetEmail command. */
   requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
   role?: Maybe<RoleType>;
   searchHistory?: Maybe<SearchHistoryResultType>;
@@ -6228,6 +6235,13 @@ export type SearchProductFilterValue = {
   value: Scalars['String']['output'];
 };
 
+export type SendPasswordResetEmailCommandType = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  loginOrEmail: Scalars['String']['input'];
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  urlSuffix?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type SeoInfo = {
   id: Scalars['String']['output'];
   imageAltDescription?: Maybe<Scalars['String']['output']>;
@@ -6385,6 +6399,8 @@ export type StoreResponseType = {
   defaultCurrency: CurrencyType;
   /** Language */
   defaultLanguage: LanguageType;
+  /** Store dynamic property values */
+  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
   /** GraphQL settings */
   graphQLSettings: GraphQlSettingsType;
   /** Store settings */
@@ -6942,6 +6958,13 @@ export type ResetPasswordByTokenMutationVariables = Exact<{
 
 
 export type ResetPasswordByTokenMutation = { resetPasswordByToken?: { succeeded: boolean, errors?: Array<{ code: string, description?: string, parameter?: string }> } };
+
+export type SendPasswordResetEmailMutationVariables = Exact<{
+  command: SendPasswordResetEmailCommandType;
+}>;
+
+
+export type SendPasswordResetEmailMutation = { sendPasswordResetEmail?: boolean };
 
 export type SendVerifyEmailMutationVariables = Exact<{
   command?: InputMaybe<InputSendVerifyEmailType>;
@@ -7852,6 +7875,7 @@ export const RequestRegistrationDocument = {"kind":"Document","definitions":[{"k
 export const RegisterByInvitationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterByInvitation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputRegisterByInvitationType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registerByInvitation"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"succeeded"}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"parameter"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterByInvitationMutation, RegisterByInvitationMutationVariables>;
 export const RemoveAddressFromFavoritesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveAddressFromFavorites"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoveAddressFromFavoritesCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeAddressFromFavorites"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<RemoveAddressFromFavoritesMutation, RemoveAddressFromFavoritesMutationVariables>;
 export const ResetPasswordByTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ResetPasswordByToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"InputResetPasswordByTokenType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resetPasswordByToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"succeeded"}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"parameter"}}]}}]}}]}}]} as unknown as DocumentNode<ResetPasswordByTokenMutation, ResetPasswordByTokenMutationVariables>;
+export const SendPasswordResetEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"sendPasswordResetEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendPasswordResetEmailCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendPasswordResetEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<SendPasswordResetEmailMutation, SendPasswordResetEmailMutationVariables>;
 export const SendVerifyEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendVerifyEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"InputSendVerifyEmailType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendVerifyEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<SendVerifyEmailMutation, SendVerifyEmailMutationVariables>;
 export const UpdateContactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateContact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputUpdateContactType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateContact"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UpdateContactMutation, UpdateContactMutationVariables>;
 export const UpdateMemberAddressesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateMemberAddresses"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputUpdateMemberAddressType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateMemberAddresses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UpdateMemberAddressesMutation, UpdateMemberAddressesMutationVariables>;
@@ -8003,6 +8027,7 @@ export const OperationNames = {
     RegisterByInvitation: 'RegisterByInvitation',
     RemoveAddressFromFavorites: 'RemoveAddressFromFavorites',
     ResetPasswordByToken: 'ResetPasswordByToken',
+    sendPasswordResetEmail: 'sendPasswordResetEmail',
     SendVerifyEmail: 'SendVerifyEmail',
     updateContact: 'updateContact',
     UpdateMemberAddresses: 'UpdateMemberAddresses',
