@@ -1,11 +1,16 @@
 import { vOnClickOutside } from "@vueuse/components";
-import { vMaska } from "maska";
+import { vMaska } from "maska/vue";
 import VueSecureHTML from "vue-html-secure";
 import * as UIKitComponents from "@/ui-kit/components";
 import type { MaskaDetail } from "maska";
-import type { App, FunctionDirective, Plugin } from "vue";
+import type { App, DirectiveBinding, Plugin } from "vue";
 
-type VMaskaType = FunctionDirective<HTMLElement, MaskaDetail | undefined>;
+type VMaskaType = (
+  el: HTMLElement,
+  binding: DirectiveBinding<MaskaDetail | undefined>,
+  vnode: VNode,
+  prevVnode: VNode,
+) => void;
 
 export const uiKit: Plugin = {
   install: (app: App) => {
