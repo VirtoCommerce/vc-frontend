@@ -1,5 +1,5 @@
 <template>
-  <div ref="dropdownElement" class="search-dropdown" :style="dropdownStyle" data-dropdown @focusout="handleFocusOut">
+  <div ref="dropdownElement" class="search-dropdown" data-dropdown @focusout="handleFocusOut">
     <div class="search-dropdown__sidebar">
       <!-- Search history and suggestions -->
       <template v-if="(searchHistoryQueries.length && !searchHistoryLoading) || (suggestions.length && !loading)">
@@ -17,9 +17,9 @@
             truncate
             nowrap
             color="secondary"
-            @click="$emit('historyClick', query)"
-            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
-            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
+            @click="handleSearchHistoryClick(query)"
+            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
+            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
           >
             <template #prepend>
               <VcIcon name="history" size="md" />
@@ -37,8 +37,8 @@
             truncate
             color="secondary"
             @click="$emit('hide')"
-            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
-            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
+            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
+            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
           >
             <span v-html-safe="suggestion.label" class="search-dropdown__text" />
           </VcMenuItem>
@@ -62,8 +62,8 @@
             size="xs"
             color="secondary"
             @click="$emit('hide')"
-            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
-            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
+            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
+            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
           >
             <span v-html-safe="page.name" class="search-dropdown__text" />
           </VcMenuItem>
@@ -85,8 +85,8 @@
             role="menuitem"
             color="secondary"
             @click="$emit('hide')"
-            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
-            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
+            @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
+            @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
           >
             <span v-html-safe="category.name" class="search-dropdown__text" />
           </VcMenuItem>
@@ -106,11 +106,8 @@
             v-for="product in products"
             :key="product.id"
             :product="product"
-            @link-click="
-              $emit('hide');
-              $emit('productSelect', product);
-            "
-            @changeFocus="$emit('focusChange', $event.direction, $event.event)"
+            @link-click="selectItemEvent(product)"
+            @changeFocus="focusPrevNextItem($event.direction, $event.event)"
           />
         </div>
       </template>
@@ -120,9 +117,9 @@
         <VcButton
           size="sm"
           tabindex="0"
-          @click="$emit('search')"
-          @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => $emit('focusChange', 'UP', $event)"
-          @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => $emit('focusChange', 'DOWN', $event)"
+          @click="handleSearch"
+          @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
+          @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
         >
           {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
         </VcButton>
@@ -160,7 +157,7 @@ import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
+import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice, Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
@@ -168,12 +165,10 @@ import { highlightSearchText } from "@/shared/layout/utils";
 import SearchBarProductCard from "../search-bar/_internal/search-bar-product-card.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Product } from "@/core/api/graphql/types";
-import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
   searchPhrase: string;
-  dropdownStyle?: StyleValue;
 }
 
 interface IEmits {
@@ -181,8 +176,8 @@ interface IEmits {
   (e: "productSelect", product: Product): void;
 }
 
-const props = defineProps<IProps>();
 const emit = defineEmits<IEmits>();
+const props = defineProps<IProps>();
 
 const router = useRouter();
 const { themeContext } = useThemeContext();
@@ -198,16 +193,7 @@ const MAX_LENGTH = themeContext.value?.settings?.search_max_chars || 999;
 
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
-const {
-  total,
-  loading,
-  pages,
-  products,
-  suggestions,
-  categories,
-  searchResults,
-  clearSearchResults,
-} = useSearchBar();
+const { total, loading, pages, products, suggestions, categories, searchResults, clearSearchResults } = useSearchBar();
 
 const { isCategoryScope, searchScopeFilterExpression, searchScopeData } = useSearchScore();
 
@@ -251,16 +237,20 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
   );
 
   if (isCategoryScope.value) {
-    return {
+    const categoryRoute: RouteLocationRaw = {
       path: router.currentRoute.value.path,
       query,
     };
-  } else {
-    return {
-      name: ROUTES.SEARCH.NAME,
-      query,
-    };
+
+    return categoryRoute;
   }
+
+  const searchRoute: RouteLocationRaw = {
+    name: ROUTES.SEARCH.NAME,
+    query,
+  };
+
+  return searchRoute;
 }
 
 async function searchAndShowDropdownResults(): Promise<void> {
@@ -346,7 +336,14 @@ function goToSearchResultsPage(phrase?: string) {
 }
 
 function handleSearch() {
-  void saveSearchQuery(trimmedSearchPhrase.value);
+  const savePromise = saveSearchQuery(trimmedSearchPhrase.value);
+
+  if (savePromise) {
+    savePromise.catch((error: unknown) => {
+      Logger.error(`${useSearchBar.name}.handleSearch`, error);
+    });
+  }
+
   goToSearchResultsPage();
 }
 
@@ -358,6 +355,7 @@ function selectItemEvent(product: Product) {
 
 function focusPrevNextItem(direction: "UP" | "DOWN", event: KeyboardEvent) {
   event.preventDefault();
+
   const current = event.target as HTMLElement;
   const dropdown = current.closest("[data-dropdown]");
 
@@ -390,7 +388,9 @@ function handleFocusOut(event: FocusEvent) {
 watch(
   () => props.searchPhrase,
   () => {
-    void onSearchPhraseChanged();
+    onSearchPhraseChanged().catch((error: unknown) => {
+      Logger.error(`${useSearchBar.name}.onSearchPhraseChanged`, error);
+    });
   },
 );
 
@@ -404,7 +404,13 @@ watch(
   { deep: true },
 );
 
-void loadSearchHistory();
+const loadPromise = loadSearchHistory();
+
+if (loadPromise) {
+  loadPromise.catch((error: unknown) => {
+    Logger.error(`${useSearchBar.name}.loadSearchHistory`, error);
+  });
+}
 
 defineExpose({
   dropdownElement,
@@ -413,16 +419,6 @@ defineExpose({
 
 <style lang="scss">
 .search-dropdown {
-  @apply z-20 bg-additional-50;
-
-  @media (width < theme("screens.md")) {
-    @apply fixed top-16 inset-x-0 bottom-0;
-  }
-
-  @media (min-width: theme("screens.md")) {
-    @apply absolute left-0 top-[3.45rem] flex w-full min-w-[640px] max-w-[100vw] overflow-y-auto rounded-[--vc-radius] shadow-lg;
-  }
-
   &__sidebar {
     @media (min-width: theme("screens.md")) {
       @apply flex-shrink-0;

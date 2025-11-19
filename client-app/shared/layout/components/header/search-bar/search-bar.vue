@@ -54,8 +54,9 @@
     <transition name="slide-fade-top">
       <SearchDropdown
         v-if="searchDropdownVisible"
+        class="search-bar__dropdown"
+        :style="searchDropdownStyle"
         :search-phrase="searchPhrase"
-        :dropdown-style="searchDropdownStyle"
         @hide="hideSearchDropdown"
         @product-select="handleProductSelect"
       />
@@ -177,6 +178,10 @@ watch(
 
   &__button {
     @apply ms-1;
+  }
+
+  &__dropdown {
+    @apply z-20 absolute left-0 top-[3.45rem] flex w-full min-w-[640px] max-w-[100vw] overflow-y-auto rounded-[--vc-radius] shadow-lg bg-additional-50;
   }
 }
 </style>
