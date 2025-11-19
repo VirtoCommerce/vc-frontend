@@ -51,6 +51,8 @@ export function useProducts(
     /** @default CATALOG_PAGINATION_MODES.infiniteScroll */
     catalogPaginationMode?: CatalogPaginationModeType;
     facetsToHide?: string[];
+    /** @default true */
+    initialFetchingState?: boolean;
   } = {},
 ) {
   const { themeContext } = useThemeContext();
@@ -59,6 +61,7 @@ export function useProducts(
     withImages = themeContext.value?.settings?.image_carousel_in_product_card_enabled,
     withZeroPrice = themeContext.value?.settings?.zero_price_product_enabled,
     catalogPaginationMode = CATALOG_PAGINATION_MODES.infiniteScroll,
+    initialFetchingState = true,
   } = options;
   const { openModal } = useModal();
   const { isEnabled } = useModuleSettings(INTENT_SEARCH_MODULE_ID);
@@ -106,7 +109,7 @@ export function useProducts(
     defaultValue: "",
   });
 
-  const fetchingProducts = ref(true);
+  const fetchingProducts = ref(initialFetchingState);
   const fetchingMoreProducts = ref(false);
   const fetchingFacets = ref(false);
   const totalProductsCount = ref(0);
