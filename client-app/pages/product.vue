@@ -39,7 +39,7 @@
         <ProductRating v-if="productReviewsEnabled && product.rating" :rating="product.rating" />
       </div>
 
-      <VcLayout sidebar-position="right" sticky-sidebar class="mt-5">
+      <VcLayout sidebar-position="right" sticky class="mt-5">
         <div class="space-y-5 xl:space-y-6">
           <component
             :is="productInfoSection?.type"
