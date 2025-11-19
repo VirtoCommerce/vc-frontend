@@ -4,13 +4,14 @@ import {
   cleanup,
   waitForElementToBeRemoved as _waitForElementToBeRemoved,
 } from "@testing-library/vue";
+import { vMaska } from "maska/vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { VcInput, VcButton, VcInputDetails, VcLabel } from "@/ui-kit/components";
 import BankCardForm from "./bank-card-form.vue";
 import type { RenderResult } from "@testing-library/vue";
-import "@testing-library/jest-dom/vitest";
 import type { DirectiveBinding } from "vue";
 import type { ComponentProps } from "vue-component-type-helpers";
+import "@testing-library/jest-dom/vitest";
 
 vi.mock("vue-i18n", () => {
   return {
@@ -21,6 +22,7 @@ vi.mock("vue-i18n", () => {
   };
 });
 
+const CARD_NUMBER_LABEL = "shared.payment.bank_card_form.number_label";
 const EXPIRATION_FIELD_LABEL = "shared.payment.bank_card_form.expiration_date_label";
 const ERROR_MESSAGES = {
   MONTH: "shared.payment.bank_card_form.errors.month",
@@ -36,6 +38,9 @@ function queryElementByText(text: string) {
 }
 function getExpirationInput() {
   return renderedComponent.getByLabelText<HTMLInputElement>(EXPIRATION_FIELD_LABEL);
+}
+function getCardNumberInput() {
+  return renderedComponent.getByLabelText<HTMLInputElement>(CARD_NUMBER_LABEL);
 }
 
 async function waitForElementToBeRemoved(selector: string) {
@@ -72,6 +77,7 @@ describe("BankCardForm", () => {
           VcTooltip: true,
         },
         directives: {
+          maska: vMaska,
           "html-safe": {
             mounted(el: HTMLElement, binding: DirectiveBinding<string>) {
               el.textContent = binding.value;
@@ -93,7 +99,30 @@ describe("BankCardForm", () => {
     cleanup();
   });
 
-  // describe other fields and general form cases
+  describe("Card Number Field", () => {
+    it("should format input with spaces every 4 digits", async () => {
+      const input = getCardNumberInput();
+
+      await fireEvent.update(input, "1111");
+      expect(input.value).toBe("1111");
+
+      await fireEvent.update(input, "11111");
+      expect(input.value).toBe("1111 1");
+
+      await fireEvent.update(input, "111111111111");
+      expect(input.value).toBe("1111 1111 1111");
+    });
+
+    it("should not allow non-numeric characters", async () => {
+      const input = getCardNumberInput();
+
+      await fireEvent.update(input, "123a");
+      expect(input.value).toBe("123");
+
+      await fireEvent.update(input, "123/");
+      expect(input.value).toBe("123");
+    });
+  });
 
   describe("Expiration Date Field", () => {
     describe("Formatting", () => {
@@ -101,7 +130,10 @@ describe("BankCardForm", () => {
         const input = getExpirationInput();
 
         await fireEvent.update(input, "12");
-        expect(input.value).toBe("12 / ");
+        expect(input.value).toBe("12");
+
+        await fireEvent.update(input, "122");
+        expect(input.value).toBe("12 / 2");
 
         await fireEvent.update(input, "1223");
         expect(input.value).toBe("12 / 23");
@@ -124,10 +156,11 @@ describe("BankCardForm", () => {
         expect(input.value).toBe("1");
       });
 
-      it("should limit input to 4 digits", async () => {
+      it("should limit input to 4 digits (MMYY -> MM / YY)", async () => {
         const input = getExpirationInput();
 
         await fireEvent.update(input, "123456");
+        // 1234 -> 12 / 34. 56 ignored due to mask length
         expect(input.value).toBe("12 / 34");
       });
     });
@@ -167,7 +200,7 @@ describe("BankCardForm", () => {
         expect(await findElementByText(ERROR_MESSAGES.YEAR_INCOMPLETE)).toBeInTheDocument();
 
         // Month and partial year
-        await fireEvent.update(input, "12/2");
+        await fireEvent.update(input, "12 / 2");
         expect(await findElementByText(ERROR_MESSAGES.YEAR_INCOMPLETE)).toBeInTheDocument();
       });
     });
