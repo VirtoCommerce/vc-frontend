@@ -13,6 +13,7 @@
         @click="openInviteModal"
       >
         <span class="md:hidden">{{ $t("pages.company.members.buttons.invite") }}</span>
+
         <span class="hidden md:inline">{{ $t("pages.company.members.buttons.invite_members") }}</span>
       </VcButton>
     </div>
@@ -253,7 +254,7 @@
                 {{ contact.extended.roles[0]?.name }}
               </td>
 
-              <td class="w-1/4 truncate px-4 py-2.5">
+              <td class="w-1/4 max-w-52 truncate px-4 py-2.5" :title="contact.extended.emails[0]">
                 {{ contact.extended.emails[0] }}
               </td>
 
@@ -334,6 +335,7 @@
               </div>
             </div>
           </template>
+
           <template #page-limit-message>
             {{ $t("ui_kit.reach_limit.page_limit_filters") }}
           </template>
