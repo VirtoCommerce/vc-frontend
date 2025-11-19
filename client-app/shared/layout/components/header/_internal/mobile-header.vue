@@ -91,39 +91,8 @@
       <!-- endregion Default slot -->
 
       <!-- region Mobile Search Bar -->
-      <transition name="slide-fade-top">
-        <div v-if="searchBarVisible" class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
-          <div class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
-            <VcInput
-              v-model="searchPhrase"
-              type="search"
-              maxlength="64"
-              :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
-              class="mr-4 grow"
-              :clearable="!!searchPhrase"
-              no-border
-              @clear="reset"
-              @keydown.enter="handleSearch"
-            >
-              <template #append>
-                <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
-              </template>
-            </VcInput>
-
-            <VcButton icon="search" @click="handleSearch" />
-
-            <button type="button" class="-mr-2 ml-2 h-11 appearance-none px-3" @click="hideSearchBar">
-              <VcIcon name="delete-thin" class="fill-additional-50" />
-            </button>
-          </div>
-
-          <SearchDropdown
-            :search-phrase="searchPhrase"
-            @hide="handleSearchDropdownHide"
-            @product-select="handleProductSelect"
-          />
-        </div>
-      </transition>
+      <MobileSearchBar />
+      <!-- endregion Mobile Search Bar -->
     </div>
   </header>
 
@@ -147,27 +116,23 @@
 </template>
 
 <script setup lang="ts">
-import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
+import { syncRefs, useElementSize, useScrollLock } from "@vueuse/core";
 import { computed, ref } from "vue";
-import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
+import { useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { QueryParamName } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
 import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { ShipToSelector } from "@/shared/ship-to-location";
-import BarcodeScanner from "../search-bar/barcode-scanner.vue";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
-import SearchDropdown from "./search-dropdown.vue";
+import MobileSearchBar from "./mobile-search-bar.vue";
 import type { StyleValue } from "vue";
 
 const { customComponents } = useCustomMobileHeaderComponents();
 
-const searchPhrase = ref("");
-const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
 
@@ -175,7 +140,7 @@ const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
-const { searchBarVisible, toggleSearchBar, hideSearchBar, showSearchDropdown, hideSearchDropdown } = useSearchBar();
+const { toggleSearchBar } = useSearchBar();
 
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
@@ -185,44 +150,5 @@ const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
 );
 
-function reset() {
-  searchPhrase.value = "";
-  hideSearchDropdown();
-}
-
-function onBarcodeScanned(value: string) {
-  if (value) {
-    searchPhrase.value = value;
-  }
-}
-
-function handleSearch() {
-  if (searchPhrase.value.trim()) {
-    showSearchDropdown();
-  }
-}
-
-function handleSearchDropdownHide() {
-  hideSearchBar();
-  hideSearchDropdown();
-}
-
-function handleProductSelect() {
-  hideSearchBar();
-  hideSearchDropdown();
-}
-
 syncRefs(mobileMenuVisible, useScrollLock(document.body));
-
-whenever(
-  searchBarVisible,
-  () => {
-    searchPhrase.value = searchPhraseInUrl.value ?? "";
-
-    if (searchPhrase.value.trim()) {
-      showSearchDropdown();
-    }
-  },
-  { immediate: true },
-);
 </script>
