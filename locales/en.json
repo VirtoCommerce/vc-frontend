@@ -166,7 +166,8 @@
       "buyer_name": "Buyer name",
       "other": "Other",
       "vendor_name": "Vendor: {name}",
-      "not_available": "N/A"
+      "not_available": "N/A",
+      "product_reviews": "Product reviews"
     },
     "prefixes": {
       "please": "Please",
@@ -1380,7 +1381,8 @@
       "products_icon": "Product icon",
       "show_all_results": "Show all results",
       "load_previous_page": "Load previous page",
-      "load_next_page": "Load next page"
+      "load_next_page": "Load next page",
+      "available_variations": "No available variations | 1 available variation | {count} available variations"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

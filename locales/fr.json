@@ -166,7 +166,8 @@
       "buyer_name": "Nom de l'acheteur",
       "other": "Autre",
       "vendor_name": "Fournisseur: {name}",
-      "not_available": "N/A"
+      "not_available": "N/A",
+      "product_reviews": "Avis sur le produit"
     },
     "prefixes": {
       "please": "S'il vous plaît",
@@ -1380,7 +1381,8 @@
       "products_icon": "Icône du produit",
       "show_all_results": "Afficher tous les résultats",
       "load_previous_page": "Charger la page précédente",
-      "load_next_page": "Charger la page suivante"
+      "load_next_page": "Charger la page suivante",
+      "available_variations": "Aucune variation disponible | 1 variation disponible | {count} variations disponibles"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

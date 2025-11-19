@@ -11,7 +11,11 @@
         <ProductRating v-if="productRating" :rating="productRating" />
 
         <div v-if="reviews.length" class="max-lg:mt-3 lg:flex">
-          <span class="mr-2 content-center font-bold max-lg:hidden">
+          <VcTypography tag="span" class="mr-2 content-center text-sm font-bold max-lg:hidden">
+            {{ $t("common.labels.sort_by_date") }}
+          </VcTypography>
+
+          <span class="sr-only">
             {{ $t("common.labels.sort_by_date") }}
           </span>
 
@@ -26,64 +30,74 @@
         </div>
       </div>
 
-      <div class="divide-y rounded border">
-        <div v-for="review in reviews" :key="review.id" class="space-y-2 p-4">
+      <section class="divide-y rounded border" :aria-label="$t('common.labels.product_reviews')">
+        <article v-for="review in reviews" :key="review.id" class="space-y-2 p-4">
           <div class="flex items-start justify-between gap-2">
             <div>
-              {{ review.userName }}
-              <div class="text-neutral-400">
+              <VcTypography tag="h3" variant="base" class="text-sm">
+                {{ review.userName }}
+              </VcTypography>
+
+              <VcTypography tag="span" variant="base" class="text-sm text-neutral-500">
                 {{ $d(review.createdDate, "short") }}
-              </div>
+              </VcTypography>
             </div>
 
             <VcRating mode="full" size="sm" :value="review.rating" :with-text="false" read-only />
           </div>
 
-          <div>
+          <VcTypography tag="p" class="text-sm">
             {{ review.review }}
-          </div>
+          </VcTypography>
 
           <div v-if="review.images?.length" class="flex items-center justify-between">
             <VcNavButton
               v-if="review.images.length > displayedReviewImagesCount"
               :id="`images_${review.id}_prev`"
+              :aria-label="`${$t('common.buttons.previous')} ${$t('common.labels.product_review_image')}`"
               :label="$t('common.buttons.previous')"
               size="xs"
+              tabindex="0"
               direction="left"
             />
 
-            <Swiper
-              :slides-per-view="displayedReviewImagesCount"
-              :thumbs="{ swiper: imagesSwiper }"
-              :modules="swiperModules"
-              :navigation="{
-                prevEl: `#images_${review.id}_prev`,
-                nextEl: `#images_${review.id}_next`,
-              }"
-              wrapper-class="items-center"
-              class="mx-0 w-full p-1"
-              data-te-lightbox-init
-            >
-              <SwiperSlide v-for="(image, index) in review.images" :key="index" class="cursor-pointer p-2">
-                <VcImage :src="image.url" :alt="$t('common.labels.product_review_image')" size-suffix="sm" lazy />
-              </SwiperSlide>
-            </Swiper>
+            <section :aria-label="$t('common.labels.product_review_image')">
+              <Swiper
+                :slides-per-view="displayedReviewImagesCount"
+                :thumbs="{ swiper: imagesSwiper }"
+                :modules="swiperModules"
+                :navigation="{
+                  prevEl: `#images_${review.id}_prev`,
+                  nextEl: `#images_${review.id}_next`,
+                }"
+                wrapper-class="items-center"
+                class="mx-0 w-full p-1"
+                data-te-lightbox-init
+              >
+                <SwiperSlide v-for="(image, index) in review.images" :key="index" class="cursor-pointer p-2">
+                  <VcImage :src="image.url" :alt="$t('common.labels.product_review_image')" size-suffix="sm" lazy />
+                </SwiperSlide>
+              </Swiper>
+            </section>
 
             <VcNavButton
               v-if="review.images.length > displayedReviewImagesCount"
               :id="`images_${review.id}_next`"
+              :aria-label="`${$t('common.buttons.next')} ${$t('common.labels.product_review_image')} - ${review.userName}`"
               :label="$t('common.buttons.next')"
               size="xs"
+              tabindex="0"
               direction="right"
             />
           </div>
-        </div>
-      </div>
+        </article>
+      </section>
 
       <div class="mb-6 mt-5 justify-end text-center sm:flex sm:flex-wrap sm:items-center sm:gap-3">
         <VcButton
           v-if="isAuthenticated && feedbackAvailable && !reviewFormVisible && !reviewSubmitted"
           variant="outline"
+          tabindex="0"
           class="max-sm:mb-10 max-sm:w-[18.125rem] sm:order-last"
           @click="reviewFormVisible = true"
         >
@@ -102,25 +116,26 @@
 
     <div v-if="isAuthenticated && feedbackAvailable">
       <div v-if="reviewSubmitted" class="flex items-center gap-3 text-lg font-bold">
-        <VcIcon name="check-circle" :size="48" class="block fill-success" />
+        <VcIcon name="check-circle" :size="48" class="block fill-success" aria-hidden="true" />
         {{ $t("common.messages.thanks_for_feedback") }}
       </div>
 
-      <template v-if="reviewFormVisible && !reviewSubmitted">
+      <form v-if="reviewFormVisible && !reviewSubmitted" @submit.prevent="submitReview">
         <div class="flex justify-between">
-          <div class="text-lg font-bold">
+          <VcTypography tag="h3" variant="h4" text-transform="none">
             {{ $t("common.labels.item_as_described_by_vendor") }}
-          </div>
+          </VcTypography>
 
           <div>
-            <div class="mb-2 font-bold">
+            <VcTypography tag="span" class="text-sm font-bold">
               {{ $t("common.labels.rate_product") }}
               <span class="text-danger">*</span>
-            </div>
+            </VcTypography>
 
             <VcRating
               mode="full"
               size="sm"
+              class="mt-2"
               :read-only="false"
               :value="newReviewRating"
               :with-text="false"
@@ -129,12 +144,18 @@
           </div>
         </div>
 
-        <VcTextarea v-model="newReviewContent" :label="$t('common.labels.comments')" required class="mt-4" />
+        <VcTextarea
+          v-model="newReviewContent"
+          :label="$t('common.labels.comments')"
+          required
+          class="my-4"
+          :aria-label="$t('common.labels.comments')"
+        />
 
-        <div class="mt-4">
+        <VcTypography tag="span" class="text-sm">
           <span class="text-danger">*</span>
           {{ $t("common.labels.fields_required") }}
-        </div>
+        </VcTypography>
 
         <VcWidget class="mt-4">
           <VcFileUploader
@@ -153,6 +174,7 @@
             color="neutral"
             variant="outline"
             min-width="12rem"
+            tabindex="0"
             @click="reviewFormVisible = false"
           >
             {{ $t("common.buttons.cancel") }}
@@ -162,13 +184,14 @@
             :disabled="!newReviewContent || newReviewRating === 0"
             :loading="fetching"
             variant="solid"
+            type="submit"
+            tabindex="0"
             min-width="12rem"
-            @click="submitReview"
           >
             {{ $t("common.buttons.submit") }}
           </VcButton>
         </div>
-      </template>
+      </form>
     </div>
   </VcWidget>
 </template>
