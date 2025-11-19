@@ -131,8 +131,8 @@ const isShippingMethodBopis = computed(() => {
 });
 
 const currentPaymentMethod = computed(() => {
-  const cart = props.cart!;
-  return cart.payments && cart.payments.length > 0 ? cart.payments[0] : null;
+  const cart = props.cart;
+  return cart && cart.payments && cart.payments.length > 0 ? cart.payments[0] : null;
 });
 
 const paymentComponent = useTemplateRef("paymentComponent");
