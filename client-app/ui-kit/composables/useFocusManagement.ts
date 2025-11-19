@@ -2,6 +2,9 @@ import { onMounted, nextTick, toValue } from "vue";
 import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import type { MaybeRefOrGetter } from "vue";
 
+const FOCUS_IGNORE_SELECTOR = ".vc-select input"; // Comma-separated selectors to exclude from autofocus. Add more selectors as needed, e.g. ".vc-select input, .another-selector".
+const FOCUS_EXTEND_SELECTOR = ".vc-select__container"; // comma separated selectors to extend the focusable elements.
+
 export interface IUseFocusManagementOptions {
   container?: MaybeRefOrGetter<HTMLElement | string>;
   autoFocus?: boolean;
@@ -39,7 +42,10 @@ export function useFocusManagement(options: IUseFocusManagementOptions = {}): IU
       return false;
     }
 
-    return focusFirstElement(containerElement);
+    return focusFirstElement(containerElement, {
+      ignoreSelector: FOCUS_IGNORE_SELECTOR,
+      extendSelector: FOCUS_EXTEND_SELECTOR,
+    });
   }
 
   onMounted(async () => {

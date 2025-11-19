@@ -166,7 +166,8 @@
       "buyer_name": "購入者名",
       "other": "その他",
       "vendor_name": "ベンダー: {name}",
-      "not_available": "N/A"
+      "not_available": "N/A",
+      "product_reviews": "商品レビュー"
     },
     "prefixes": {
       "please": "お願いします",
@@ -1380,7 +1381,8 @@
       "products_icon": "商品アイコン",
       "show_all_results": "すべての結果を表示",
       "load_previous_page": "前のページを読み込む",
-      "load_next_page": "次のページを読み込む"
+      "load_next_page": "次のページを読み込む",
+      "available_variations": "利用可能なバリエーションはありません | 1つの利用可能なバリエーション | {count}個の利用可能なバリエーション"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

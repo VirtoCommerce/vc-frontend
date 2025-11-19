@@ -10,7 +10,7 @@
 
       <!-- List details -->
       <template v-else-if="!listLoading && !!list?.items?.length">
-        <VcLayout sidebar-position="right" sticky-sidebar>
+        <VcLayout sidebar-position="right" sticky>
           <VcWidget size="lg">
             <div class="shared-list__items">
               <WishlistLineItems

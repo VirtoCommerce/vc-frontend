@@ -19,7 +19,7 @@
         @apply-filters="applyFilters"
       />
 
-      <VcLayout sticky-sidebar>
+      <VcLayout sticky>
         <template v-if="isSidebarVisible" #sidebar>
           <CategorySelector
             v-if="categoryId || isRoot"
