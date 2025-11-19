@@ -8,25 +8,19 @@
         </header>
 
         <ul class="search-dropdown__list">
-          <VcMenuItem
+          <button
             v-for="query in searchHistoryQueries"
             :key="query"
-            role="menuitem"
-            :label="query"
-            tag="li"
-            truncate
-            nowrap
-            color="secondary"
+            type="button"
+            class="search-dropdown__item"
             @click="handleSearchHistoryClick(query)"
             @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
             @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
           >
-            <template #prepend>
-              <VcIcon name="history" size="md" />
-            </template>
+            <VcIcon name="history" size="xs" />
 
             <span v-html-safe="highlightSearchText(query, searchPhrase)" class="search-dropdown__text" />
-          </VcMenuItem>
+          </button>
 
           <VcMenuItem
             v-for="suggestion in suggestions"
@@ -419,6 +413,8 @@ defineExpose({
 
 <style lang="scss">
 .search-dropdown {
+  @apply pt-1;
+
   &__sidebar {
     @media (min-width: theme("screens.md")) {
       @apply flex-shrink-0;
@@ -426,15 +422,25 @@ defineExpose({
   }
 
   &__head {
-    @apply bg-neutral-100 px-5 py-2 text-xs font-bold text-neutral-600;
+    @apply mt-4 text-xs font-bold text-neutral-600 uppercase;
   }
 
   &__list {
-    @apply px-2 py-3;
+    @apply mt-1.5 border rounded-[--vc-radius] bg-neutral-50 px-2 py-2;
+  }
+
+  &__item {
+    --vc-icon-color: theme("colors.secondary.700");
+
+    @apply flex items-center gap-1 py-[0.325rem] px-2 text-sm text-[--link-color];
+
+    &:hover {
+      @apply text-[--link-hover-color];
+    }
   }
 
   &__grid {
-    @apply grid grid-cols-4 gap-2 px-2 py-3;
+    @apply grid grid-cols-4 gap-2;
   }
 
   &__page-item {
@@ -458,7 +464,7 @@ defineExpose({
   &__not-found {
     --vc-icon-color: theme("colors.primary.500");
 
-    @apply flex items-center gap-1.5 px-4 py-6 text-sm text-neutral-500;
+    @apply flex items-center gap-1.5 mt-3 text-sm text-neutral-500;
   }
 
   &__text {
