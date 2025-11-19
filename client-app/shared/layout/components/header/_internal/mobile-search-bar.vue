@@ -1,42 +1,49 @@
 <template>
-  <transition name="slide-fade-top">
-    <div v-if="searchBarVisible" class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
-      <div class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
+  <div class="mobile-search-bar">
+    <div
+      class="mobile-search-bar__backdrop"
+      role="button"
+      tabindex="-1"
+      :aria-label="$t('common.labels.close')"
+      @click="hideSearchBar"
+      @keydown.enter="hideSearchBar"
+      @keydown.space.prevent="hideSearchBar"
+    ></div>
+
+    <div class="mobile-search-bar__content">
+      <div class="mobile-search-bar__wrapper">
         <VcInput
           v-model="searchPhrase"
           type="search"
           maxlength="64"
           :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
-          class="mr-4 grow"
+          class="mobile-search-bar__input"
           :clearable="!!searchPhrase"
-          no-border
           @clear="reset"
           @keydown.enter="handleSearch"
         >
           <template #append>
             <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
+
+            <VcButton class="mobile-search-bar__button" icon="search" @click="handleSearch" />
           </template>
         </VcInput>
 
-        <VcButton icon="search" @click="handleSearch" />
-
-        <button type="button" class="-mr-2 ml-2 h-11 appearance-none px-3" @click="hideSearchBar">
-          <VcIcon name="delete-thin" class="fill-additional-50" />
-        </button>
+        <button type="button" class="mobile-search-bar__close" @click="hideSearchBar">Cancel</button>
       </div>
 
       <SearchDropdown
+        class="mobile-search-bar__dropdown"
         :search-phrase="searchPhrase"
         @hide="handleSearchDropdownHide"
         @product-select="handleProductSelect"
       />
     </div>
-  </transition>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { whenever } from "@vueuse/core";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
@@ -46,7 +53,7 @@ import SearchDropdown from "./search-dropdown.vue";
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
-const { searchBarVisible, hideSearchBar, showSearchDropdown, hideSearchDropdown } = useSearchBar();
+const { hideSearchBar, showSearchDropdown, hideSearchDropdown } = useSearchBar();
 
 function reset() {
   searchPhrase.value = "";
@@ -75,15 +82,43 @@ function handleProductSelect() {
   hideSearchDropdown();
 }
 
-whenever(
-  searchBarVisible,
-  () => {
-    searchPhrase.value = searchPhraseInUrl.value ?? "";
+onMounted(() => {
+  searchPhrase.value = searchPhraseInUrl.value ?? "";
 
-    if (searchPhrase.value.trim()) {
-      showSearchDropdown();
-    }
-  },
-  { immediate: true },
-);
+  if (searchPhrase.value.trim()) {
+    showSearchDropdown();
+  }
+});
 </script>
+
+<style lang="scss">
+.mobile-search-bar {
+  @apply relative;
+
+  &__backdrop {
+    @apply fixed left-0 right-0 bottom-0 cursor-pointer;
+
+    top: calc(2.125rem + 3.5rem);
+    background-color: rgba(194, 195, 195, 0.6);
+  }
+
+  &__content {
+    @apply relative z-10 bg-[--mobile-search-bar-bg] p-3.5;
+  }
+
+  &__wrapper {
+    @apply flex select-none items-center;
+  }
+
+  &__input {
+    @apply me-2.5 grow;
+  }
+
+  &__close {
+    @apply appearance-none text-[--link-color] text-sm;
+  }
+
+  &__dropdown {
+  }
+}
+</style>

@@ -11,7 +11,7 @@
           <component :is="customSlots.default" />
         </div>
 
-        <div v-else class="relative z-10 flex h-14 w-full items-center justify-between gap-x-2 sm:gap-x-6">
+        <div v-else class="relative z-10 flex h-14 w-full items-center justify-between gap-x-2 border-b sm:gap-x-6">
           <!-- region Left slot -->
           <component :is="customSlots.left" v-if="customSlots.left" />
 
@@ -91,7 +91,9 @@
       <!-- endregion Default slot -->
 
       <!-- region Mobile Search Bar -->
-      <MobileSearchBar />
+      <transition name="slide-fade-top">
+        <MobileSearchBar v-if="searchBarVisible" />
+      </transition>
       <!-- endregion Mobile Search Bar -->
     </div>
   </header>
@@ -140,7 +142,7 @@ const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
-const { toggleSearchBar } = useSearchBar();
+const { searchBarVisible, toggleSearchBar } = useSearchBar();
 
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
@@ -150,5 +152,8 @@ const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
 );
 
-syncRefs(mobileMenuVisible, useScrollLock(document.body));
+const isScrollLocked = computed(() => mobileMenuVisible.value || searchBarVisible.value);
+const scrollLock = useScrollLock(document.body);
+
+syncRefs(isScrollLocked, scrollLock);
 </script>
