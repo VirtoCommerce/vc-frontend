@@ -20,12 +20,12 @@
           class="mobile-search-bar__input"
           :clearable="!!searchPhrase"
           @clear="reset"
-          @keydown.enter="handleSearch"
+          @keydown.enter="searchDropdownRef?.handleSearch()"
         >
           <template #append>
             <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
 
-            <VcButton class="mobile-search-bar__button" icon="search" @click="handleSearch" />
+            <VcButton class="mobile-search-bar__button" icon="search" @click="searchDropdownRef?.handleSearch()" />
           </template>
         </VcInput>
 
@@ -33,6 +33,7 @@
       </div>
 
       <SearchDropdown
+        ref="searchDropdownRef"
         class="mobile-search-bar__dropdown"
         :search-phrase="searchPhrase"
         @hide="handleSearchDropdownHide"
@@ -55,6 +56,8 @@ const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase
 
 const { hideSearchBar, showSearchDropdown, hideSearchDropdown } = useSearchBar();
 
+const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
+
 function reset() {
   searchPhrase.value = "";
   hideSearchDropdown();
@@ -63,12 +66,6 @@ function reset() {
 function onBarcodeScanned(value: string) {
   if (value) {
     searchPhrase.value = value;
-  }
-}
-
-function handleSearch() {
-  if (searchPhrase.value.trim()) {
-    showSearchDropdown();
   }
 }
 
@@ -116,9 +113,6 @@ onMounted(() => {
 
   &__close {
     @apply appearance-none text-[--link-color] text-sm;
-  }
-
-  &__dropdown {
   }
 }
 </style>

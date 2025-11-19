@@ -48,12 +48,21 @@
           :aria-label="$t('shared.layout.search_bar.barcode_detector.title')"
           @scanned-code="onBarcodeScanned"
         />
+
+        <VcButton
+          :aria-label="$t('shared.layout.search_bar.search_button')"
+          icon="search"
+          icon-size="1.25rem"
+          :loading="loading"
+          @click="searchDropdownRef?.handleSearch()"
+        />
       </template>
     </VcInput>
 
     <transition name="slide-fade-top">
       <SearchDropdown
         v-if="searchDropdownVisible"
+        ref="searchDropdownRef"
         class="search-bar__dropdown"
         :style="searchDropdownStyle"
         :search-phrase="searchPhrase"
@@ -79,8 +88,9 @@ import type { StyleValue } from "vue";
 import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
 const searchBarElement = ref<HTMLElement | null>(null);
+const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
 
-const { searchBarVisible, searchDropdownVisible, hideSearchDropdown, showSearchDropdown } = useSearchBar();
+const { searchBarVisible, searchDropdownVisible, loading, hideSearchDropdown, showSearchDropdown } = useSearchBar();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 

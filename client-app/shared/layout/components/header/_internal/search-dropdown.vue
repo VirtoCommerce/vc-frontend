@@ -13,6 +13,7 @@
             :key="query"
             type="button"
             class="search-dropdown__item"
+            tabindex="0"
             @click="handleSearchHistoryClick(query)"
             @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
             @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
@@ -27,7 +28,7 @@
             :key="suggestion.text"
             class="search-dropdown__item"
             :to="getSearchRoute(suggestion.text)"
-            @click="$emit('hide')"
+            @click="handleSuggestionClick"
             @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
             @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
           >
@@ -293,6 +294,10 @@ function handleSearchHistoryClick(query: string) {
   goToSearchResultsPage(query);
 }
 
+function handleSuggestionClick() {
+  emit("hide");
+}
+
 function goToSearchResultsPage(phrase?: string) {
   const searchQuery = phrase || trimmedSearchPhrase.value;
 
@@ -312,13 +317,7 @@ function goToSearchResultsPage(phrase?: string) {
 }
 
 function handleSearch() {
-  const savePromise = saveSearchQuery(trimmedSearchPhrase.value);
-
-  if (savePromise) {
-    savePromise.catch((error: unknown) => {
-      Logger.error(`${useSearchBar.name}.handleSearch`, error);
-    });
-  }
+  void saveSearchQuery(trimmedSearchPhrase.value);
 
   goToSearchResultsPage();
 }
@@ -390,6 +389,7 @@ if (loadPromise) {
 
 defineExpose({
   dropdownElement,
+  handleSearch,
 });
 </script>
 
