@@ -200,7 +200,7 @@ describe("BankCardForm", () => {
         expect(await findElementByText(ERROR_MESSAGES.YEAR_INCOMPLETE)).toBeInTheDocument();
 
         // Month and partial year
-        await fireEvent.update(input, "12 / 2");
+        await fireEvent.update(input, "122");
         expect(await findElementByText(ERROR_MESSAGES.YEAR_INCOMPLETE)).toBeInTheDocument();
       });
     });
