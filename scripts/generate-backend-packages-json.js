@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from "fs";
+import { writeFileSync } from "fs";
 import http from "http";
 import https from "https";
 import { dirname, join } from "path";
@@ -12,50 +12,20 @@ const blobPackagesUrl = "https://vc3prerelease.blob.core.windows.net/packages";
 
 // ANSI color codes
 const GREEN = "\x1b[32m";
-const RED = "\x1b[31m";
 const RESET = "\x1b[0m";
 
 function log(message) {
   console.log(`${GREEN}${message}${RESET}`);
 }
 
-function logError(message) {
-  console.log(`${RED}${message}${RESET}`);
-}
-
 // Read backend URL from .env.local or .env file
 function getBackendUrl() {
-  const envLocalPath = join(__dirname, "..", ".env.local");
-  const envPath = join(__dirname, "..", ".env");
-  let envFilePath;
-
-  if (existsSync(envLocalPath)) {
-    log(`'.env.local' file exists. Using it to get backend URL...`);
-    envFilePath = envLocalPath;
-  } else {
-    logError(`'.env.local' file does not exist. Using '.env' file...`);
-    if (existsSync(envPath)) {
-      log(`'.env' file exists. Using it to get backend URL...`);
-      envFilePath = envPath;
-    } else {
-      logError(`'.env' file does not exist. Exiting...`);
-      process.exit(1);
-    }
-  }
-
-  log(`Getting backend URL from ${envFilePath} file...`);
-
-  try {
-    const envContent = readFileSync(envFilePath, "utf-8");
-    const match = envContent.match(/^APP_BACKEND_URL\s*=\s*(.+)/m);
-    if (!match) {
-      throw new Error(`APP_BACKEND_URL not found in ${envFilePath} file`);
-    }
-    return match[1].trim().split(" ")[0];
-  } catch (error) {
-    console.error(`Error reading ${envFilePath} file: ${error.message}`);
+  const backendUrl = process.env.APP_BACKEND_URL;
+  if (!backendUrl || backendUrl.trim() === "") {
+    console.error("APP_BACKEND_URL environment variable is not set or is empty. Exiting...");
     process.exit(1);
   }
+  return backendUrl;
 }
 
 // Prompt for user input
