@@ -47,7 +47,7 @@ function getBackendUrl() {
 
   try {
     const envContent = readFileSync(envFilePath, "utf-8");
-    const match = envContent.match(/APP_BACKEND_URL\s*=\s*(.+)/);
+    const match = envContent.match(/^APP_BACKEND_URL\s*=\s*(.+)/m);
     if (!match) {
       throw new Error(`APP_BACKEND_URL not found in ${envFilePath} file`);
     }
