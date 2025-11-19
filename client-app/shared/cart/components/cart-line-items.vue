@@ -81,6 +81,7 @@
         :saveable-for-later="!hideControls?.includes('save-for-later')"
         :selected="sharedSelectedItemIds?.includes(item.id)"
         :disabled="disabled"
+        data-test-id="save-for-later-button-after-image"
         @save-for-later="$emit('saveForLater', [item.id])"
       />
     </template>
@@ -90,6 +91,7 @@
         :saveable-for-later="!hideControls?.includes('save-for-later')"
         :selected="sharedSelectedItemIds?.includes(item.id)"
         :disabled="disabled"
+        data-test-id="save-for-later-button-after-title"
         @save-for-later="$emit('saveForLater', [item.id])"
       />
     </template>
