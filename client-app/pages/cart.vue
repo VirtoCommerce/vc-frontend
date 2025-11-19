@@ -155,7 +155,7 @@
                 v-else
                 :disabled="hasOnlyUnselectedLineItems || !isValidCheckout || !isCardDataValid"
                 data-test-id="checkout-single-page.place-order-button"
-                @click="handleCreateOrderFormCart"
+                @click="handleCreateOrderFromCart"
                 class="mt-4"
               >
                 {{ $t("common.buttons.place_order") }}
@@ -226,7 +226,7 @@
             v-else
             :disabled="hasOnlyUnselectedLineItems || !isValidCheckout || !isCardDataValid"
             data-test-id="checkout-multi-page.place-order-button"
-            @click="handleCreateOrderFormCart"
+            @click="handleCreateOrderFromCart"
             class="!mt-2"
           >
             {{ $t("common.buttons.place_order") }}
@@ -366,7 +366,7 @@ function isPaymentValid(isValid: boolean) {
 
 const billingComponent = useTemplateRef("billingComponent");
 
-async function handleCreateOrderFormCart() {
+async function handleCreateOrderFromCart() {
   await createOrderFromCart(billingComponent.value?.authorizeCurrentPaymentWithOrder);
 }
 
