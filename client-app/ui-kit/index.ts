@@ -3,7 +3,7 @@ import { vMaska } from "maska/vue";
 import VueSecureHTML from "vue-html-secure";
 import * as UIKitComponents from "@/ui-kit/components";
 import type { MaskaDetail } from "maska";
-import type { App, DirectiveBinding, Plugin } from "vue";
+import type { App, DirectiveBinding, Plugin, VNode } from "vue";
 
 type VMaskaType = (
   el: HTMLElement,
