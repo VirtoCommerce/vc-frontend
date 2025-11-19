@@ -443,7 +443,7 @@ export function _useCheckout(cartId?: string) {
     let orderPayed = false;
 
     if (placedOrder.value) {
-      if (paymentProcessor) {
+      if (paymentProcessor && paymentProcessor instanceof Function) {
         try {
           const result = await paymentProcessor(placedOrder.value);
           orderPayed = result?.isSuccess ?? false;

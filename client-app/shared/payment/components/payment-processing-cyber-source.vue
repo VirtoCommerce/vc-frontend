@@ -78,6 +78,8 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
+import { initializePayment, authorizePayment } from "@/core/api/graphql";
+import { useAnalytics } from "@/core/composables";
 import { Logger, preventNonNumberKeyboard, preventNonNumberPaste } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import PaymentPolicies from "./payment-policies.vue";
@@ -126,6 +128,7 @@ let microform: IMicroform;
 // Example usage
 
 const { t } = useI18n();
+const { analytics } = useAnalytics();
 const notifications = useNotifications();
 
 const loading = ref(false);
@@ -230,6 +233,27 @@ async function sendPaymentData(orderToPay: CustomerOrderType | undefined = undef
       expirationYear: formValues.year,
     });
 
+    if (!props.hidePaymentButton) {
+      // order payment way, this code is in payment component too, should not be here
+      const { isSuccess } = await authorizePayment({
+        orderId: order.id,
+        paymentId: order.inPayments[0].id,
+        parameters: [
+          {
+            key: "token",
+            value: token,
+          },
+        ],
+      });
+
+      if (isSuccess) {
+        analytics("purchase", order);
+        emit("success");
+      } else {
+        emit("fail");
+      }
+    }
+
     return {
       parameters: [
         {
@@ -268,15 +292,19 @@ defineExpose({
 });
 
 onMounted(async () => {
-  await initPayment();
+  await initPaymentInternal();
 });
 
-async function initPayment() {
-  if (props.initPayment === undefined) {
-    throw new Error("initPayment function is not provided");
-  }
+async function initPaymentInternal() {
   loading.value = true;
-  const { publicParameters } = await props.initPayment();
+
+  const initFunction = props.initPayment || initializePayment;
+
+  const { publicParameters } = await initFunction({
+    orderId: props.order?.id,
+    cartId: props.cart?.id,
+    paymentId: props.order?.inPayments[0].id || props.payment!.id,
+  });
   await initPostProcess(publicParameters);
 }
 

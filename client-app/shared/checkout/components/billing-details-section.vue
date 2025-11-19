@@ -138,7 +138,12 @@ const currentPaymentMethod = computed(() => {
 const paymentComponent = useTemplateRef("paymentComponent");
 
 async function authorizeCurrentPaymentWithOrder(order?: CustomerOrderType): Promise<AuthorizePaymentResultType | null> {
-  if (paymentComponent.value && paymentComponent.value.authorizeCurrentPaymentWithOrder && order) {
+  if (
+    paymentComponent.value &&
+    paymentMethod.value?.allowCartPayment &&
+    paymentComponent.value.authorizeCurrentPaymentWithOrder &&
+    order
+  ) {
     return await paymentComponent.value.authorizeCurrentPaymentWithOrder(order);
   }
   return null;

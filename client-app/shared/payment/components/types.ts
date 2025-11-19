@@ -2,9 +2,7 @@ import type {
   CartType,
   CustomerOrderType,
   InitializeCartPaymentResultType,
-  InitializePaymentResultType,
   InputInitializeCartPaymentType,
-  InputInitializePaymentType,
   PaymentType,
 } from "@/core/api/graphql/types";
 
@@ -14,7 +12,6 @@ export interface IPaymentMethodParameters {
   payment?: PaymentType; // can it be PaymentInType?
   cart?: CartType;
   disabled?: boolean;
-  initPayment?:
-    | ((payload?: Partial<InputInitializePaymentType>) => Promise<InitializePaymentResultType>)
-    | ((payload?: Partial<InputInitializeCartPaymentType>) => Promise<InitializeCartPaymentResultType>);
+  initPayment?: // | ((payload?: Partial<InputInitializePaymentType>) => Promise<InitializePaymentResultType>)
+  (payload?: Partial<InputInitializeCartPaymentType>) => Promise<InitializeCartPaymentResultType>;
 }
