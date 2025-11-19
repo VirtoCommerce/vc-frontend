@@ -74,8 +74,7 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { useScriptTag, useCssVar } from "@vueuse/core";
 import { useForm } from "vee-validate";
-import { computed, onMounted, onUnmounted, ref } from "vue";
-import { watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
@@ -206,8 +205,6 @@ const expirationDate = computed({
   set: (value) => {
     if (value) {
       const [rawMonth = "", rawYear = ""] = value.split("/").map((part) => part.trim());
-      month.value = rawMonth;
-      year.value = rawYear;
 
       month.value = rawMonth;
       year.value = rawYear;
