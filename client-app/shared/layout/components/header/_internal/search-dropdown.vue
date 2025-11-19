@@ -22,20 +22,19 @@
             <span v-html-safe="highlightSearchText(query, searchPhrase)" class="search-dropdown__text" />
           </button>
 
-          <VcMenuItem
+          <VcLink
             v-for="suggestion in suggestions"
             :key="suggestion.text"
+            class="search-dropdown__item"
             :to="getSearchRoute(suggestion.text)"
-            role="menuitem"
-            tag="li"
-            truncate
-            color="secondary"
             @click="$emit('hide')"
             @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
             @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
           >
+            <VcIcon name="search" size="xs" />
+
             <span v-html-safe="suggestion.label" class="search-dropdown__text" />
-          </VcMenuItem>
+          </VcLink>
         </ul>
       </template>
 
@@ -45,22 +44,18 @@
           {{ $t("shared.layout.search_bar.pages_label") }}
         </header>
 
-        <ul class="search-dropdown__grid">
-          <VcMenuItem
+        <ul class="search-dropdown__list">
+          <VcLink
             v-for="(page, index) in pages"
             :key="index"
-            class="search-dropdown__page-item"
-            role="menuitem"
+            class="search-dropdown__item"
             :to="page.permalink"
-            tag="li"
-            size="xs"
-            color="secondary"
             @click="$emit('hide')"
             @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
             @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
           >
             <span v-html-safe="page.name" class="search-dropdown__text" />
-          </VcMenuItem>
+          </VcLink>
         </ul>
       </template>
 
@@ -70,20 +65,18 @@
           {{ $t("shared.layout.search_bar.categories_label") }}
         </header>
 
-        <ul v-for="(column, index) in categoriesColumns" :key="index" class="search-dropdown__grid">
-          <VcMenuItem
-            v-for="category in column"
+        <ul class="search-dropdown__list">
+          <VcLink
+            v-for="category in categories"
             :key="category.name"
+            class="search-dropdown__item"
             :to="categoriesRoutes[category.id]"
-            tag="li"
-            role="menuitem"
-            color="secondary"
             @click="$emit('hide')"
             @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
             @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
           >
             <span v-html-safe="category.name" class="search-dropdown__text" />
-          </VcMenuItem>
+          </VcLink>
         </ul>
       </template>
     </div>
@@ -181,7 +174,6 @@ const { analytics } = useAnalytics();
 const dropdownElement = ref<HTMLElement | null>(null);
 const searchInProgress = ref(false);
 
-const CATEGORIES_ITEMS_PER_COLUMN = 4;
 const SEARCH_BAR_DEBOUNCE_TIME = 200;
 const MAX_LENGTH = themeContext.value?.settings?.search_max_chars || 999;
 
@@ -197,15 +189,6 @@ const { result: searchHistory, load: loadSearchHistory, loading: searchHistoryLo
 const searchHistoryQueries = computed(() => searchHistory.value?.searchHistory?.queries ?? []);
 
 const trimmedSearchPhrase = computed(() => props.searchPhrase.trim());
-
-const categoriesColumns = computed(() => {
-  const columnsCount = Math.ceil(categories.value.length / CATEGORIES_ITEMS_PER_COLUMN);
-
-  return Array.from({ length: columnsCount }).map((_, index) => {
-    const column = index + 1;
-    return categories.value.slice((column - 1) * CATEGORIES_ITEMS_PER_COLUMN, column * CATEGORIES_ITEMS_PER_COLUMN);
-  });
-});
 
 const isExistResults = computed(
   () => !!(categories.value.length || products.value.length || suggestions.value.length || pages.value.length),
@@ -248,7 +231,6 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
 }
 
 async function searchAndShowDropdownResults(): Promise<void> {
-  const COLUMNS = 5;
   const { catalogId, currencyCode } = globals;
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
     themeContext.value.settings;
@@ -273,7 +255,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
     keyword: trimmedSearchPhrase.value,
     filter: filterExpression,
     categories: {
-      itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,
+      itemsPerPage: 10,
     },
     products: {
       itemsPerPage: 6,
@@ -426,7 +408,7 @@ defineExpose({
   }
 
   &__list {
-    @apply mt-1.5 border rounded-[--vc-radius] bg-neutral-50 px-2 py-2;
+    @apply flex flex-col mt-1.5 border rounded-[--vc-radius] bg-neutral-50 px-2 py-2;
   }
 
   &__item {
@@ -437,14 +419,6 @@ defineExpose({
     &:hover {
       @apply text-[--link-hover-color];
     }
-  }
-
-  &__grid {
-    @apply grid grid-cols-4 gap-2;
-  }
-
-  &__page-item {
-    @apply w-full;
   }
 
   &__content {
