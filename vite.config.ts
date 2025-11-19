@@ -98,7 +98,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
       headers: {
         "Content-Security-Policy": "frame-ancestors 'self' https://localhost:5001 https://builder.io;",
         "Cross-Origin-Resource-Policy": "cross-origin",
-        "Cross-Origin-Opener-Policy": "unsafe-none",
         "Cross-Origin-Embedder-Policy": "unsafe-none",
       },
       proxy: {
