@@ -428,7 +428,7 @@ defineExpose({
   }
 
   &__products {
-    @apply grid grid-cols-2 gap-y-0.5 p-3;
+    @apply space-y-0.5;
   }
 
   &__actions {
