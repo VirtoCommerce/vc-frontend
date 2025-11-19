@@ -708,6 +708,7 @@
         "cancel_button": "キャンセル",
         "ok_button": "OK",
         "no_results": "該当する店舗がありません",
+        "no_branches": "該当する店舗が見つかりませんでした",
         "reset_search_button": "検索をリセット"
       },
       "shipment_options": {
