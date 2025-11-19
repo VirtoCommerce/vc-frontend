@@ -11,6 +11,7 @@
       :prepend-icon="!icons ? 'bookmark-solid' : null"
       :variant="selected ? 'no-border' : 'solid-light'"
       :disabled="disabled"
+      data-test-id="save-for-later-button"
       @click="$emit('saveForLater')"
     >
       <span v-if="!icons">{{ $t("pages.cart.save_for_later") }}</span>

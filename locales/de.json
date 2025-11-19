@@ -708,6 +708,7 @@
         "cancel_button": "Abbrechen",
         "ok_button": "Ok",
         "no_results": "Keine Ergebnisse gefunden",
+        "no_branches": "Keine Filialen gefunden",
         "reset_search_button": "Suche zurücksetzen"
       },
       "shipment_options": {
