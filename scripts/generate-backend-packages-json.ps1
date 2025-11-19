@@ -2,7 +2,22 @@ $ApiUrl = "http://localhost:8090"
 $appAuthUrl = "$ApiUrl/connect/token"
 $blobPackagesUrl = "https://vc3prerelease.blob.core.windows.net/packages"
 $checkModulesUrl = "$ApiUrl/api/platform/diagnostics/systeminfo"
-$envFilePath = '.env'
+$envFilePath = '.env.local'
+
+if (Test-Path $envFilePath) {
+    Write-Host "`e[32m'$envFilePath' file exists. Using it to get backend URL..."
+}
+else {
+    Write-Host "`e[31m'$envFilePath' file does not exist. Using '.env' file..."
+    $envFilePath = '.env'
+    if (Test-Path $envFilePath) {
+        Write-Host "`e[32m'$envFilePath' file exists. Using it to get backend URL..."
+    }
+    else {
+        Write-Host "`e[31m'$envFilePath' file does not exist. Exiting..."
+        exit 1
+    }
+}
 
 function Get-AuthToken {
     param (
@@ -20,7 +35,7 @@ function Get-AuthToken {
     return $responseContent.access_token
 }
 
-Write-Host "`e[32mGetting backend URL from ..\..\.env file..."
+Write-Host "`e[32mGetting backend URL from $envFilePath file..."
 $backendUrl = (Get-Content -Path $envFilePath | Select-String -Pattern 'APP_BACKEND_URL').ToString().Split('=')[1]
 $ApiUrl = $backendUrl.split(' ')[0]
 Write-Host "`e[32mBackend URL: $ApiUrl"
