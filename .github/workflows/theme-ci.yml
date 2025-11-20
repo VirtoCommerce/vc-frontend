@@ -237,7 +237,7 @@ jobs:
         id: branch_name
         shell: pwsh
         run: |
-          if (${{ github.event_name == 'pull_request' }} -eq 'true'){
+          if ('${{ github.event_name == 'pull_request' }}' -eq 'true'){
             $branchName = '${{ github.base_ref }}'
           } else {
             $branchName = '${{ github.ref_name }}'
