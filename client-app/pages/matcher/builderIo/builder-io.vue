@@ -75,8 +75,7 @@ async function tryLoadContent(urlPath: string) {
         organizationId,
         isAuthenticated: isAuthenticated.value,
         storeId,
-        userGroups: userGroups.value,
-        groupName: userGroups.value.join(","),
+        groupName: userGroups,
       },
     });
 
