@@ -236,11 +236,15 @@ jobs:
           (github.event_name == 'workflow_dispatch') || ((github.base_ref == 'dev') && (github.event_name == 'pull_request')) }}
         id: branch_name
         shell: pwsh
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
-          if ('${{ github.event_name == 'pull_request' }}' -eq 'true'){
-            $branchName = '${{ github.head_ref }}'
+          if ($env:EVENT_NAME -eq 'pull_request'){
+            $branchName = $env:HEAD_REF
           } else {
-            $branchName = '${{ github.ref_name }}'
+            $branchName = $env:REF_NAME
           }
           Add-Content -Path $env:GITHUB_OUTPUT -Value "branchName=$branchName"
 
