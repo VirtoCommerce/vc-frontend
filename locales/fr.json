@@ -708,6 +708,7 @@
         "cancel_button": "Annuler",
         "ok_button": "Ok",
         "no_results": "Aucun résultat trouvé",
+        "no_branches": "Aucune branche trouvée",
         "reset_search_button": "Réinitialiser la recherche"
       },
       "shipment_options": {

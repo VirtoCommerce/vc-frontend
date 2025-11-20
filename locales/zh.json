@@ -708,6 +708,7 @@
         "cancel_button": "取消",
         "ok_button": "确定",
         "no_results": "未找到结果",
+        "no_branches": "未找到分支",
         "reset_search_button": "重置搜索"
       },
       "shipment_options": {

@@ -15,6 +15,7 @@ export * from "./mutations/registerAccount";
 export * from "./mutations/registerByInvitation";
 export * from "./mutations/removeAddressFromFavorites";
 export * from "./mutations/resetPasswordByToken";
+export * from "./mutations/sendPasswordResetEmail";
 export * from "./mutations/sendVerifyEmail";
 export * from "./mutations/updateContact";
 export * from "./mutations/updateMemberAddresses";
