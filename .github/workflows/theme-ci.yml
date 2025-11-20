@@ -38,6 +38,7 @@ jobs:
     outputs:
       artifactUrl: '${{ steps.artifactUrl.outputs.download_url }}'
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
+      branchName: ${{ steps.branch_name.outputs.branchName }}
 
     steps:
 
@@ -230,6 +231,18 @@ jobs:
           client-id: '${{ secrets.JIRA_USER }}'
           client-secret: '${{ secrets.JIRA_TOKEN }}'
 
+      - name: Set branch name value
+        if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
+          (github.event_name == 'workflow_dispatch') || ((github.base_ref == 'dev') && (github.event_name == 'pull_request')) }}
+        id: branch_name
+        shell: powershell
+        run: |
+          if ('${{ github.event_name == 'pull_request' }}'){
+            $branchName = '${{ github.base_ref }}'
+          } else {
+            $branchName = '${{ github.ref_name }}'
+          }
+          echo "branchName=$branchName" >> $GITHUB_OUTPUT
 
   ui-e2e-auto-tests:
     needs: 'ci'
@@ -242,7 +255,7 @@ jobs:
       runTests: 'true'
       vctestingRepoBranch: 'dev'
       frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
-      customPackagesJsonUrl: 'https://github.com/VirtoCommerce/vc-frontend/raw/refs/heads/${{ github.ref_name }}/backend-packages.json'
+      customPackagesJsonUrl: 'https://github.com/VirtoCommerce/vc-frontend/raw/refs/heads/${{ needs.ci.outputs.branchName }}/backend-packages.json'
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
       testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}

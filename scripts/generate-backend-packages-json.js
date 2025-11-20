@@ -1,9 +1,9 @@
-import { writeFileSync } from "fs";
-import http from "http";
-import https from "https";
-import { dirname, join } from "path";
-import { createInterface } from "readline";
-import { fileURLToPath } from "url";
+import { writeFileSync } from "node:fs";
+import http from "node:http";
+import https from "node:https";
+import { dirname, join } from "node:path";
+import { createInterface } from "node:readline";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -42,6 +42,15 @@ function prompt(question) {
   });
 }
 
+function isControlCharacter(charCode) {
+  return (
+    (charCode >= 0x00 && charCode <= 0x08) ||
+    (charCode >= 0x0b && charCode <= 0x0c) ||
+    (charCode >= 0x0e && charCode <= 0x1f) ||
+    charCode === 0x7f
+  );
+}
+
 // Prompt for password (masked input)
 function promptPassword(question) {
   return new Promise((resolve) => {
@@ -67,15 +76,6 @@ function promptPassword(question) {
       stdin.removeListener("data", onData);
     }
 
-    function isControlCharacter(charCode) {
-      return (
-        (charCode >= 0x00 && charCode <= 0x08) ||
-        (charCode >= 0x0b && charCode <= 0x0c) ||
-        (charCode >= 0x0e && charCode <= 0x1f) ||
-        charCode === 0x7f
-      );
-    }
-
     function onData(key) {
       if (key === "\u0003" || key === "\u0004") {
         // Ctrl+C or Ctrl+D
@@ -94,7 +94,7 @@ function promptPassword(question) {
         }
       } else if (key && key.length === 1) {
         // Check if character is not a control character
-        const charCode = key.charCodeAt(0);
+        const charCode = key.codePointAt(0);
         if (!isControlCharacter(charCode)) {
           // Regular character (not control characters)
           password += key;
@@ -388,7 +388,9 @@ async function main() {
 }
 
 // Run the script
-main().catch((error) => {
+try {
+  await main();
+} catch (error) {
   console.error(`Error: ${error.message}`);
   process.exit(1);
-});
+}
