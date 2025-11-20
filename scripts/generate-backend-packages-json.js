@@ -325,13 +325,39 @@ function processModules(modulesHash) {
 
 // Update packages.json with modules
 function updatePackagesJsonWithModules(packagesJson, updatedReleaseModules, updatedBlobModules) {
-  const azureBlobSource = packagesJson.Sources.find((s) => s.Name === "AzureBlob");
-  if (azureBlobSource) {
+  // Ensure Sources array exists
+  if (!packagesJson.Sources) {
+    packagesJson.Sources = [];
+  }
+
+  // Handle AzureBlob source
+  let azureBlobSource = packagesJson.Sources.find((s) => s.Name === "AzureBlob");
+  if (updatedBlobModules.length > 0) {
+    if (!azureBlobSource) {
+      // Create AzureBlob source if it doesn't exist but we have blob modules
+      azureBlobSource = {
+        Name: "AzureBlob",
+        Container: "packages",
+        ServiceUri: "https://vc3prerelease.blob.core.windows.net",
+        Modules: [],
+      };
+      packagesJson.Sources.push(azureBlobSource);
+    }
     azureBlobSource.Modules = updatedBlobModules;
   }
 
-  const githubReleasesSource = packagesJson.Sources.find((s) => s.Name === "GithubReleases");
-  if (githubReleasesSource) {
+  // Handle GithubReleases source
+  let githubReleasesSource = packagesJson.Sources.find((s) => s.Name === "GithubReleases");
+  if (updatedReleaseModules.length > 0) {
+    if (!githubReleasesSource) {
+      // Create GithubReleases source if it doesn't exist but we have release modules
+      githubReleasesSource = {
+        Name: "GithubReleases",
+        ModuleSources: ["https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"],
+        Modules: [],
+      };
+      packagesJson.Sources.push(githubReleasesSource);
+    }
     githubReleasesSource.Modules = updatedReleaseModules;
   }
 }
