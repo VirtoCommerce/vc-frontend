@@ -107,6 +107,35 @@ function promptPassword(question) {
   });
 }
 
+// Check if hostname is localhost or local IP address
+function isLocalHost(hostname) {
+  if (!hostname) return false;
+  const lowerHostname = hostname.toLowerCase();
+  return (
+    lowerHostname === "localhost" ||
+    lowerHostname === "127.0.0.1" ||
+    lowerHostname === "::1" ||
+    lowerHostname.startsWith("192.168.") ||
+    lowerHostname.startsWith("10.") ||
+    lowerHostname.startsWith("172.16.") ||
+    lowerHostname.startsWith("172.17.") ||
+    lowerHostname.startsWith("172.18.") ||
+    lowerHostname.startsWith("172.19.") ||
+    lowerHostname.startsWith("172.20.") ||
+    lowerHostname.startsWith("172.21.") ||
+    lowerHostname.startsWith("172.22.") ||
+    lowerHostname.startsWith("172.23.") ||
+    lowerHostname.startsWith("172.24.") ||
+    lowerHostname.startsWith("172.25.") ||
+    lowerHostname.startsWith("172.26.") ||
+    lowerHostname.startsWith("172.27.") ||
+    lowerHostname.startsWith("172.28.") ||
+    lowerHostname.startsWith("172.29.") ||
+    lowerHostname.startsWith("172.30.") ||
+    lowerHostname.startsWith("172.31.")
+  );
+}
+
 // Make HTTP request with retry logic
 async function httpRequest(url, options = {}, retries = 5, retryInterval = 5000) {
   const isHttps = url.startsWith("https://");
@@ -126,8 +155,13 @@ async function httpRequest(url, options = {}, retries = 5, retryInterval = 5000)
     path: urlObj.pathname + urlObj.search,
     method: options.method || "GET",
     headers,
-    rejectUnauthorized: false, // Equivalent to -SkipCertificateCheck in PowerShell
   };
+
+  // Only disable certificate verification for localhost/local development environments
+  // This prevents MITM attacks on public endpoints like GitHub
+  if (isHttps && isLocalHost(urlObj.hostname)) {
+    requestOptions.rejectUnauthorized = false;
+  }
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
