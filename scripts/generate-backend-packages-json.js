@@ -92,13 +92,16 @@ function promptPassword(question) {
           password = password.slice(0, -1);
           stdout.write("\b \b");
         }
-      } else if (key && key.length === 1) {
-        // Check if character is not a control character
-        const charCode = key.codePointAt(0);
-        if (!isControlCharacter(charCode)) {
-          // Regular character (not control characters)
-          password += key;
-          stdout.write("*");
+      } else if (key && key.length > 0) {
+        // Handle both single characters and pasted text (multi-character strings)
+        for (let i = 0; i < key.length; i++) {
+          const char = key[i];
+          const charCode = char.codePointAt(0);
+          if (!isControlCharacter(charCode)) {
+            // Regular character (not control characters)
+            password += char;
+            stdout.write("*");
+          }
         }
       }
     }
@@ -335,6 +338,9 @@ function updatePackagesJsonWithModules(packagesJson, updatedReleaseModules, upda
 
 // Check if version is alpha/blob version
 function isAlphaVersion(version) {
+  if (!version || typeof version !== "string") {
+    return false;
+  }
   return version.split(".")[2]?.match(/[A-Za-z-]/);
 }
 
@@ -407,6 +413,11 @@ async function handleRemoteBackend(apiUrl) {
 // Post-process platform version
 function postProcessPlatformVersion(packagesJson) {
   const platformVersion = packagesJson.PlatformVersion;
+  if (!platformVersion) {
+    // PlatformVersion may be undefined if PlatformAssetUrl was already set (alpha version)
+    log("Platform version not set (may be using PlatformAssetUrl for alpha version). Skipping post-processing.");
+    return;
+  }
   if (isAlphaVersion(platformVersion)) {
     log("Platform version is an alpha. Adding PlatformAssetUrl to packages.json");
     packagesJson.PlatformAssetUrl = `${blobPackagesUrl}/VirtoCommerce.Platform.${platformVersion}.zip`;
