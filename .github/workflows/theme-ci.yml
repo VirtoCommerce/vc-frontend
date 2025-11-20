@@ -237,7 +237,7 @@ jobs:
         id: branch_name
         shell: powershell
         run: |
-          if ('${{ github.event_name == 'pull_request' }}'){
+          if (${{ github.event_name == 'pull_request' }} -eq 'true'){
             $branchName = '${{ github.base_ref }}'
           } else {
             $branchName = '${{ github.ref_name }}'
