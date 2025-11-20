@@ -66,6 +66,8 @@
         class="search-bar__dropdown"
         :style="searchDropdownStyle"
         :search-phrase="searchPhrase"
+        :filter-expression="filterExpression"
+        :is-category-scope="isCategoryScope"
         @hide="hideSearchDropdown"
         @product-select="handleProductSelect"
       />
@@ -77,9 +79,12 @@
 import { onClickOutside, useElementBounding, whenever } from "@vueuse/core";
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouteQueryParam } from "@/core/composables";
+import { useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
-import { toCSV } from "@/core/utilities";
+import { globals } from "@/core/globals";
+import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice, toCSV } from "@/core/utilities";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SearchDropdown from "../_internal/search-dropdown.vue";
@@ -89,7 +94,8 @@ import type { StyleValue } from "vue";
 const searchBarElement = ref<HTMLElement | null>(null);
 const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
 
-const { searchBarVisible, searchDropdownVisible, loading, hideSearchDropdown, showSearchDropdown } = useSearchBar();
+const { searchBarVisible, searchDropdownVisible, loading, hideSearchDropdown, showSearchDropdown, clearSearchResults } =
+  useSearchBar();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
@@ -103,9 +109,25 @@ const searchDropdownStyle = computed<StyleValue | undefined>(() => {
 
 onClickOutside(searchBarElement, hideSearchDropdown);
 
-const { searchScopeData, removeScopeItemById, isCategoryScope, preparingScope } = useSearchScore();
+const { searchScopeData, removeScopeItemById, isCategoryScope, preparingScope, searchScopeFilterExpression } =
+  useSearchScore();
 
+const { themeContext } = useThemeContext();
+const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { t } = useI18n();
+
+const filterExpression = computed(() => {
+  const scopeExpression =
+    searchScopeFilterExpression.value || getFilterExpressionForCategorySubtree({ catalogId: globals.catalogId });
+  const { zero_price_product_enabled } = themeContext.value.settings;
+  const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
+
+  return catalog_empty_categories_enabled
+    ? undefined
+    : [scopeExpression, getFilterExpressionForZeroPrice(!!zero_price_product_enabled, globals.currencyCode)]
+        .filter(Boolean)
+        .join(" ");
+});
 
 const searchPlaceholder = computed(() => {
   return isCategoryScope.value
@@ -152,7 +174,16 @@ function handleProductSelect() {
   hideSearchDropdown();
 }
 
-whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
+whenever(
+  searchBarVisible,
+  () => {
+    searchPhrase.value = searchPhraseInUrl.value ?? "";
+    if (!searchPhrase.value.trim()) {
+      clearSearchResults();
+    }
+  },
+  { immediate: true },
+);
 
 onMounted(() => {
   if (searchPhraseInUrl.value) {
@@ -190,7 +221,7 @@ watch(
   }
 
   &__dropdown {
-    @apply z-20 absolute left-0 top-[3.45rem] w-full min-w-[640px] max-w-[100vw];
+    @apply z-20 absolute left-0 top-[3.45rem] w-full min-w-[860px] max-w-[100vw];
   }
 }
 </style>

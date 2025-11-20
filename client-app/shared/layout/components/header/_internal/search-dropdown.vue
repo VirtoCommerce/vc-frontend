@@ -153,14 +153,10 @@ import { computed, ref, toValue, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useRouteQueryParam, useThemeContext, useAnalytics } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
-import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
-import { globals } from "@/core/globals";
-import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice, Logger } from "@/core/utilities";
+import { Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
-import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { highlightSearchText } from "@/shared/layout/utils";
 import SearchBarProductCard from "../search-bar/_internal/search-bar-product-card.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
@@ -169,6 +165,8 @@ import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
   searchPhrase: string;
+  filterExpression?: string;
+  isCategoryScope?: boolean;
 }
 
 interface IEmits {
@@ -179,7 +177,7 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
-const PRODUCTS_LIMIT = 6;
+const PRODUCTS_LIMIT = 7;
 const CATEGORIES_LIMIT = 5;
 const PAGES_LIMIT = 5;
 const SUGGESTIONS_LIMIT = 5;
@@ -195,14 +193,36 @@ const searchInProgress = ref(false);
 const SEARCH_BAR_DEBOUNCE_TIME = 200;
 const MAX_LENGTH = themeContext.value?.settings?.search_max_chars || 999;
 
-const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
-
-const { total, loading, pages, products, suggestions, categories, searchResults, clearSearchResults } = useSearchBar();
-
-const { isCategoryScope, searchScopeFilterExpression, searchScopeData } = useSearchScore();
+const { total, loading, pages, products, suggestions, categories, searchResults } = useSearchBar();
 
 const categoriesRoutes = useCategoriesRoutes(categories);
 const { result: searchHistory, load: loadSearchHistory, loading: searchHistoryLoading } = useGetSearchHistoryQuery();
+
+const facetsParam = useRouteQueryParam<string>(QueryParamName.Facets);
+const sortParam = useRouteQueryParam<string>(QueryParamName.Sort);
+
+function getSearchRoute(phrase: string): RouteLocationRaw {
+  const query = pickBy(
+    {
+      [QueryParamName.SearchPhrase]: phrase,
+      [QueryParamName.Facets]: toValue(facetsParam),
+      [QueryParamName.Sort]: toValue(sortParam),
+    },
+    (value) => !!value,
+  );
+
+  if (props.isCategoryScope) {
+    return {
+      path: router.currentRoute.value.path,
+      query,
+    };
+  }
+
+  return {
+    name: ROUTES.SEARCH.NAME,
+    query,
+  };
+}
 
 const searchHistoryQueries = computed(() => searchHistory.value?.searchHistory?.queries ?? []);
 
@@ -218,38 +238,7 @@ const searchBarListProperties = computed(() => ({
   item_list_name: `Search phrase '${trimmedSearchPhrase.value}'`,
 }));
 
-const facetsParam = useRouteQueryParam<string>(QueryParamName.Facets);
-const sortParam = useRouteQueryParam<string>(QueryParamName.Sort);
-
-function getSearchRoute(phrase: string): RouteLocationRaw {
-  const query = pickBy(
-    {
-      [QueryParamName.SearchPhrase]: phrase,
-      [QueryParamName.Facets]: toValue(facetsParam),
-      [QueryParamName.Sort]: toValue(sortParam),
-    },
-    (value) => !!value,
-  );
-
-  if (isCategoryScope.value) {
-    const categoryRoute: RouteLocationRaw = {
-      path: router.currentRoute.value.path,
-      query,
-    };
-
-    return categoryRoute;
-  }
-
-  const searchRoute: RouteLocationRaw = {
-    name: ROUTES.SEARCH.NAME,
-    query,
-  };
-
-  return searchRoute;
-}
-
 async function searchAndShowDropdownResults(): Promise<void> {
-  const { catalogId, currencyCode } = globals;
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
     themeContext.value.settings;
 
@@ -257,21 +246,9 @@ async function searchAndShowDropdownResults(): Promise<void> {
     return;
   }
 
-  const { zero_price_product_enabled } = themeContext.value.settings;
-  const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
-
-  const filterExpression = catalog_empty_categories_enabled
-    ? undefined
-    : [
-        searchScopeFilterExpression.value || getFilterExpressionForCategorySubtree({ catalogId }),
-        getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
-      ]
-        .filter(Boolean)
-        .join(" ");
-
   const params: GetSearchResultsParamsType = {
     keyword: trimmedSearchPhrase.value,
-    filter: filterExpression,
+    filter: props.filterExpression,
     categories: {
       itemsPerPage: CATEGORIES_LIMIT,
     },
@@ -386,16 +363,6 @@ watch(
   },
 );
 
-watch(
-  () => searchScopeData.value.queryScope,
-  (value) => {
-    if (value !== props.searchPhrase) {
-      clearSearchResults();
-    }
-  },
-  { deep: true },
-);
-
 const loadPromise = loadSearchHistory();
 
 if (loadPromise) {
@@ -415,12 +382,20 @@ defineExpose({
   @apply pt-1;
 
   @media (min-width: theme("screens.md")) {
-    @apply flex gap-5 py-4 px-5 rounded-[--vc-radius] shadow-lg bg-additional-50;
+    @apply flex gap-5 pb-3;
+  }
+
+  @media (min-width: theme("screens.lg")) {
+    @apply pt-4 px-5 pb-5 rounded-[--vc-radius] shadow-lg bg-additional-50;
   }
 
   &__sidebar {
     @media (min-width: theme("screens.md")) {
-      @apply flex-shrink-0 w-[15.875rem];
+      @apply flex-shrink-0 w-[12rem];
+    }
+
+    @media (min-width: theme("screens.xl")) {
+      @apply w-[15.875rem];
     }
   }
 
@@ -459,11 +434,19 @@ defineExpose({
   }
 
   &__products {
-    @apply flex flex-col gap-5 mt-4;
+    @apply mt-4;
+
+    @media (width < theme("screens.sm")) {
+      @apply space-y-5;
+    }
+
+    @media (min-width: theme("screens.sm")) {
+      @apply grid grid-cols-2 gap-5;
+    }
   }
 
   &__view-all {
-    @apply flex justify-center items-center h-[5.5rem] border border-dashed border-secondary-200 rounded-[--vc-radius];
+    @apply flex justify-center items-center min-h-16 border border-dashed border-secondary-200 rounded-[--vc-radius];
   }
 
   &__not-found {

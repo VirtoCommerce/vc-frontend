@@ -40,8 +40,9 @@
           <SearchDropdown
             ref="searchDropdownRef"
             :search-phrase="searchPhrase"
+            :filter-expression="filterExpression"
             @hide="handleSearchDropdownHide"
-            @product-select="handleProductSelect"
+            @product-select="handleSearchDropdownHide"
           />
         </VcScrollbar>
       </div>
@@ -51,9 +52,14 @@
 
 <script setup lang="ts">
 import { useElementBounding } from "@vueuse/core";
-import { computed, onMounted, ref } from "vue";
-import { useRouteQueryParam } from "@/core/composables";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import { useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
+import { globals } from "@/core/globals";
+import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import BarcodeScanner from "../search-bar/barcode-scanner.vue";
 import SearchDropdown from "./search-dropdown.vue";
@@ -65,12 +71,28 @@ interface IProps {
 
 defineProps<IProps>();
 
+const route = useRoute();
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
-const { hideSearchBar, showSearchDropdown, hideSearchDropdown } = useSearchBar();
+const { hideSearchBar, showSearchDropdown, hideSearchDropdown, clearSearchResults } = useSearchBar();
+
+const { themeContext } = useThemeContext();
+const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
+
+const filterExpression = computed(() => {
+  const scopeExpression = getFilterExpressionForCategorySubtree({ catalogId: globals.catalogId });
+  const { zero_price_product_enabled } = themeContext.value.settings;
+  const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
+
+  return catalog_empty_categories_enabled
+    ? undefined
+    : [scopeExpression, getFilterExpressionForZeroPrice(!!zero_price_product_enabled, globals.currencyCode)]
+        .filter(Boolean)
+        .join(" ");
+});
 const contentElement = ref<HTMLElement | null>(null);
 const wrapperElement = ref<HTMLElement | null>(null);
 
@@ -103,12 +125,17 @@ function onBarcodeScanned(value: string) {
 function handleSearchDropdownHide() {
   hideSearchBar();
   hideSearchDropdown();
+  clearSearchResults();
+  searchPhrase.value = "";
 }
 
-function handleProductSelect() {
-  hideSearchBar();
-  hideSearchDropdown();
-}
+watch(
+  () => route.path,
+  () => {
+    searchPhrase.value = "";
+    clearSearchResults();
+  },
+);
 
 onMounted(() => {
   searchPhrase.value = searchPhraseInUrl.value ?? "";
@@ -127,7 +154,7 @@ onMounted(() => {
     top: calc(2.125rem + 3.5rem);
     background-color: rgba(194, 195, 195, 0.6);
 
-    @media (min-width: theme("screens.md")) {
+    @media (min-width: theme("screens.lg")) {
       @apply hidden;
     }
   }
