@@ -85,7 +85,6 @@ import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SearchDropdown from "../_internal/search-dropdown.vue";
 import BarcodeScanner from "./barcode-scanner.vue";
 import type { StyleValue } from "vue";
-import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
 const searchBarElement = ref<HTMLElement | null>(null);
 const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
@@ -191,7 +190,7 @@ watch(
   }
 
   &__dropdown {
-    @apply z-20 absolute left-0 top-[3.45rem] flex w-full min-w-[640px] max-w-[100vw] overflow-y-auto rounded-[--vc-radius] shadow-lg bg-additional-50;
+    @apply z-20 absolute left-0 top-[3.45rem] w-full min-w-[640px] max-w-[100vw];
   }
 }
 </style>
