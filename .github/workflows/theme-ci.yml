@@ -242,7 +242,7 @@ jobs:
           } else {
             $branchName = '${{ github.ref_name }}'
           }
-          echo "branchName=$branchName" >> $GITHUB_OUTPUT
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "branchName=$branchName"
 
   ui-e2e-auto-tests:
     needs: 'ci'
