@@ -35,7 +35,7 @@ const canShowContent = ref(false);
 const content = ref<BuilderContent | null>(null);
 const isLoading = ref(false);
 const { storeId, cultureName: currentCultureName, organizationId } = globals;
-const { isAuthenticated } = useUser();
+const { isAuthenticated, userGroups } = useUser();
 
 const { getUrlWithoutLocale } = useLanguages();
 
@@ -70,12 +70,13 @@ async function tryLoadContent(urlPath: string) {
       options: getBuilderSearchParams(new URLSearchParams(location.search)),
       userAttributes: {
         urlPath: url,
-        /* other attributes */
+        // Additional targeting attributes for Builder.io content delivery
         locale: currentCultureName,
         organizationId,
         isAuthenticated: isAuthenticated.value,
-        storeId: storeId,
-        // groupName: "", // we don't have groups yet
+        storeId,
+        userGroups: userGroups.value,
+        groupName: userGroups.value.join(","),
       },
     });
 
