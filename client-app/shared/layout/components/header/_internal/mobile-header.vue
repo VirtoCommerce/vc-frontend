@@ -4,14 +4,17 @@
       <ShipToSelector />
     </div>
 
-    <div class="relative z-[1] bg-[--header-bottom-bg-color]">
+    <div class="relative z-[1]">
       <!-- region Default slot -->
       <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
-        <div v-if="customSlots.default">
+        <div v-if="customSlots.default" class="relative z-20 bg-[--header-bottom-bg-color]">
           <component :is="customSlots.default" />
         </div>
 
-        <div v-else class="relative z-10 flex h-14 w-full items-center justify-between gap-x-2 border-b sm:gap-x-6">
+        <div
+          v-else
+          class="relative z-20 flex h-14 w-full items-center justify-between gap-x-2 border-b bg-[--header-bottom-bg-color] sm:gap-x-6"
+        >
           <!-- region Left slot -->
           <component :is="customSlots.left" v-if="customSlots.left" />
 
@@ -91,9 +94,7 @@
       <!-- endregion Default slot -->
 
       <!-- region Mobile Search Bar -->
-      <transition name="slide-fade-top">
-        <MobileSearchBar v-if="searchBarVisible" />
-      </transition>
+      <MobileSearchBar :visible="searchBarVisible" />
       <!-- endregion Mobile Search Bar -->
     </div>
   </header>

@@ -1,45 +1,50 @@
 <template>
   <div class="mobile-search-bar">
-    <div
-      class="mobile-search-bar__backdrop"
-      role="button"
-      tabindex="-1"
-      :aria-label="$t('common.labels.close')"
-      @click="hideSearchBar"
-      @keydown.enter="hideSearchBar"
-      @keydown.space.prevent="hideSearchBar"
-    ></div>
+    <transition name="fade">
+      <div
+        v-if="visible"
+        class="mobile-search-bar__backdrop"
+        role="button"
+        tabindex="-1"
+        :aria-label="$t('common.labels.close')"
+        @click="hideSearchBar"
+        @keydown.enter="hideSearchBar"
+        @keydown.space.prevent="hideSearchBar"
+      ></div>
+    </transition>
 
-    <div class="mobile-search-bar__content">
-      <div class="mobile-search-bar__wrapper">
-        <VcInput
-          v-model="searchPhrase"
-          type="search"
-          maxlength="64"
-          :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
-          class="mobile-search-bar__input"
-          :clearable="!!searchPhrase"
-          @clear="reset"
-          @keydown.enter="searchDropdownRef?.handleSearch()"
-        >
-          <template #append>
-            <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
+    <transition name="slide-down">
+      <div v-if="visible" class="mobile-search-bar__content">
+        <div class="mobile-search-bar__wrapper">
+          <VcInput
+            v-model="searchPhrase"
+            type="search"
+            maxlength="64"
+            :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
+            class="mobile-search-bar__input"
+            :clearable="!!searchPhrase"
+            @clear="reset"
+            @keydown.enter="searchDropdownRef?.handleSearch()"
+          >
+            <template #append>
+              <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
 
-            <VcButton class="mobile-search-bar__button" icon="search" @click="searchDropdownRef?.handleSearch()" />
-          </template>
-        </VcInput>
+              <VcButton class="mobile-search-bar__button" icon="search" @click="searchDropdownRef?.handleSearch()" />
+            </template>
+          </VcInput>
 
-        <button type="button" class="mobile-search-bar__close" @click="hideSearchBar">Cancel</button>
+          <button type="button" class="mobile-search-bar__close" @click="hideSearchBar">Cancel</button>
+        </div>
+
+        <SearchDropdown
+          ref="searchDropdownRef"
+          class="mobile-search-bar__dropdown"
+          :search-phrase="searchPhrase"
+          @hide="handleSearchDropdownHide"
+          @product-select="handleProductSelect"
+        />
       </div>
-
-      <SearchDropdown
-        ref="searchDropdownRef"
-        class="mobile-search-bar__dropdown"
-        :search-phrase="searchPhrase"
-        @hide="handleSearchDropdownHide"
-        @product-select="handleProductSelect"
-      />
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -50,6 +55,12 @@ import { QueryParamName } from "@/core/enums";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import BarcodeScanner from "../search-bar/barcode-scanner.vue";
 import SearchDropdown from "./search-dropdown.vue";
+
+interface IProps {
+  visible: boolean;
+}
+
+defineProps<IProps>();
 
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
@@ -90,17 +101,17 @@ onMounted(() => {
 
 <style lang="scss">
 .mobile-search-bar {
-  @apply relative;
-
   &__backdrop {
-    @apply fixed left-0 right-0 bottom-0 cursor-pointer;
+    @apply fixed left-0 right-0 bottom-0 z-10 cursor-pointer;
 
     top: calc(2.125rem + 3.5rem);
     background-color: rgba(194, 195, 195, 0.6);
   }
 
   &__content {
-    @apply relative z-10 bg-[--mobile-search-bar-bg] p-3.5;
+    @apply fixed left-0 right-0 z-10 bg-[--mobile-search-bar-bg] p-3.5;
+
+    top: calc(2.125rem + 3.5rem);
   }
 
   &__wrapper {
@@ -113,6 +124,33 @@ onMounted(() => {
 
   &__close {
     @apply appearance-none text-[--link-color] text-sm;
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.2s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
+  .slide-down-enter-active {
+    transition: transform 0.3s ease;
+    transition-delay: 0.1s;
+  }
+
+  .slide-down-leave-active {
+    transition: transform 0.3s ease;
+  }
+
+  .slide-down-enter-from {
+    transform: translateY(-100%);
+  }
+
+  .slide-down-leave-to {
+    transform: translateY(-100%);
   }
 }
 </style>
