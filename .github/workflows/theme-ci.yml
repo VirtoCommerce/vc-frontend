@@ -242,7 +242,7 @@ jobs:
       runTests: 'true'
       vctestingRepoBranch: 'dev'
       frontendZipUrl: 'https://vc3prerelease.blob.core.windows.net/packages/vc-theme-b2b-vue-2.35.0-alpha.2102.zip' #${{ needs.ci.outputs.artifactUrl }}
-      customPackagesJsonUrl: 'https://github.com/VirtoCommerce/vc-deploy-dev/raw/refs/heads/vcst-qa/backend/packages.json'
+      customPackagesJsonUrl: 'https://github.com/VirtoCommerce/vc-frontend/raw/refs/heads/${{ github.ref_name }}/backend-packages.json'
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
       testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
