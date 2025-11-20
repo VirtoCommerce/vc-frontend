@@ -259,7 +259,7 @@ jobs:
       runTests: 'true'
       vctestingRepoBranch: 'dev'
       frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
-      customPackagesJsonUrl: 'https://github.com/${{ github.repository }}/raw/refs/heads/${{ needs.ci.outputs.branchName }}/backend-packages.json'
+      customPackagesJsonUrl: 'https://github.com/${{ github.repository }}/raw/${{ needs.ci.outputs.branchName }}/backend-packages.json'
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
       testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}

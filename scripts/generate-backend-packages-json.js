@@ -247,15 +247,20 @@ async function fetchJson(url, retries = 5, retryInterval = 5000) {
   }
 }
 
+// Get property value from object (case-insensitive)
+function getPropertyCaseInsensitive(obj, propertyName) {
+  if (!obj) return undefined;
+  const lowerPropertyName = propertyName.toLowerCase();
+  const keys = Object.keys(obj);
+  const matchingKey = keys.find((key) => key.toLowerCase() === lowerPropertyName);
+  return matchingKey ? obj[matchingKey] : undefined;
+}
+
 // Get installed modules from systeminfo (case-insensitive)
 function getInstalledModules(systeminfo) {
   let modules = systeminfo.installedModules || systeminfo.InstalledModules;
   if (!modules) {
-    const keys = Object.keys(systeminfo || {});
-    const installedModulesKey = keys.find((key) => key.toLowerCase() === "installedmodules");
-    if (installedModulesKey) {
-      modules = systeminfo[installedModulesKey];
-    }
+    modules = getPropertyCaseInsensitive(systeminfo, "installedModules");
   }
 
   if (!modules) {
@@ -277,7 +282,11 @@ function getInstalledModules(systeminfo) {
 function processModulesIntoHash(modules) {
   const modulesHash = {};
   modules.forEach((module) => {
-    modulesHash[module.id] = module.version;
+    const moduleId = getPropertyCaseInsensitive(module, "id");
+    const moduleVersion = getPropertyCaseInsensitive(module, "version");
+    if (moduleId && moduleVersion) {
+      modulesHash[moduleId] = moduleVersion;
+    }
   });
   return modulesHash;
 }
@@ -294,7 +303,7 @@ function processModules(modulesHash) {
       if (/[A-Za-z-]/.test(thirdPart)) {
         updatedBlobModules.push({
           Id: moduleId,
-          BlobName: version,
+          BlobName: `${moduleId}_${version}.zip`,
         });
       } else if (/^\d+$/.test(thirdPart)) {
         const versionMatch = version.match(/^\d+\.\d+\.\d+/);
@@ -360,12 +369,17 @@ async function handleLocalBackend(apiUrl) {
   log(`Blob modules count: ${updatedBlobModules.length}`);
 
   const packagesJson = await fetchJson(
-    "https://raw.githubusercontent.com/VirtoCommerce/vc-modules/refs/heads/master/bundles/latest/package.json",
+    "https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/bundles/latest/package.json",
   );
 
   updatePackagesJsonWithModules(packagesJson, updatedReleaseModules, updatedBlobModules);
 
-  const platformVersion = systeminfo.platformVersion;
+  const platformVersion = getPropertyCaseInsensitive(systeminfo, "platformVersion");
+  if (!platformVersion) {
+    console.error("Error: systeminfo.platformVersion is undefined or null");
+    console.error("Available properties:", Object.keys(systeminfo || {}));
+    process.exit(1);
+  }
   if (isAlphaVersion(platformVersion)) {
     packagesJson.PlatformAssetUrl = `${blobPackagesUrl}/VirtoCommerce.Platform.${platformVersion}.zip`;
   } else {
@@ -380,7 +394,7 @@ async function handleRemoteBackend(apiUrl) {
   const virtoCloudEnvName = apiUrl.split("//")[1].split(".")[0];
   log(`Remote backend detected. Getting packages.json from '${virtoCloudEnvName}' branch...`);
 
-  const packagesJsonUrl = `https://raw.githubusercontent.com/VirtoCommerce/vc-deploy-dev/refs/heads/${virtoCloudEnvName}/backend/packages.json`;
+  const packagesJsonUrl = `https://raw.githubusercontent.com/VirtoCommerce/vc-deploy-dev/${virtoCloudEnvName}/backend/packages.json`;
 
   try {
     return await fetchJson(packagesJsonUrl);
@@ -413,7 +427,8 @@ async function main() {
   const apiUrl = getBackendUrl();
   log(`Backend URL: ${apiUrl}`);
 
-  const packagesJson = apiUrl.includes("localhost")
+  const urlObj = new URL(apiUrl);
+  const packagesJson = isLocalHost(urlObj.hostname)
     ? await handleLocalBackend(apiUrl)
     : await handleRemoteBackend(apiUrl);
 
