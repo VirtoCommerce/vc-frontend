@@ -60,17 +60,19 @@
       </template>
     </VcInput>
 
-    <SearchDropdown
-      v-if="searchDropdownVisible"
-      ref="searchDropdownRef"
-      class="search-bar__dropdown"
-      :style="searchDropdownStyle"
-      :search-phrase="searchPhrase"
-      :filter-expression="filterExpression"
-      :is-category-scope="isCategoryScope"
-      @hide="hideSearchDropdown"
-      @product-select="handleProductSelect"
-    />
+    <transition name="slide-fade-top">
+      <SearchDropdown
+        v-if="searchDropdownVisible"
+        ref="searchDropdownRef"
+        class="search-bar__dropdown"
+        :style="searchDropdownStyle"
+        :search-phrase="searchPhrase"
+        :filter-expression="filterExpression"
+        :is-category-scope="isCategoryScope"
+        @hide="hideSearchDropdown"
+        @product-select="handleProductSelect"
+      />
+    </transition>
   </div>
 </template>
 
