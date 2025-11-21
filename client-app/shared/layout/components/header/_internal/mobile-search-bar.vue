@@ -159,8 +159,6 @@ onMounted(() => {
   }
 
   &__dropdown {
-    @apply px-3.5 pb-3.5;
-
     max-height: v-bind(dropdownMaxHeight);
   }
 

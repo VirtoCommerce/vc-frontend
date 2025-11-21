@@ -358,6 +358,10 @@ watch(
 
 onMounted(() => {
   void loadSearchHistory();
+
+  if (trimmedSearchPhrase.value) {
+    void onSearchPhraseChanged();
+  }
 });
 
 defineExpose({
@@ -370,8 +374,12 @@ defineExpose({
 .search-dropdown {
   @apply pt-1;
 
+  @media (width < theme("screens.md")) {
+    @apply px-3.5 pb-3.5;
+  }
+
   @media (min-width: theme("screens.md")) {
-    @apply flex gap-2.5 pb-3 max-h-[inherit];
+    @apply flex gap-2.5 pb-3 max-h-[inherit] min-h-44;
   }
 
   @media (min-width: theme("screens.lg")) {
@@ -419,6 +427,10 @@ defineExpose({
 
     @media (min-width: theme("screens.md")) {
       @apply flex-1 mt-0 max-h-full pe-2.5;
+    }
+
+    &:empty {
+      @apply hidden;
     }
   }
 
