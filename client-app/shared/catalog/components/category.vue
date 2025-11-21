@@ -584,6 +584,10 @@ function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
 whenever(() => !isMobile.value, hideFiltersSidebar);
 const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
 
+const { clearSearchResults } = useSearchBar();
+
+const isMobileLg = breakpoints.smaller("lg");
+
 watch(
   () => props.categoryId,
   async (categoryId) => {
@@ -669,8 +673,6 @@ watchDebounced(
   },
 );
 
-const { clearSearchResults } = useSearchBar();
-
 function changeSearchBarScope(categoryId: string, label?: string) {
   clearCategoryScope();
 
@@ -693,7 +695,10 @@ onBeforeUnmount(() => {
 
 function clearCategoryScope() {
   removeScopeItemByType("category");
-  clearSearchResults();
+
+  if (!isMobileLg.value) {
+    clearSearchResults();
+  }
 }
 
 onMounted(() => {

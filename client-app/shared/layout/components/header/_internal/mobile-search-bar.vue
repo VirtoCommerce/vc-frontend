@@ -33,7 +33,9 @@
             </template>
           </VcInput>
 
-          <button type="button" class="mobile-search-bar__close" @click="hideSearchBar">Cancel</button>
+          <button type="button" class="mobile-search-bar__close" @click="hideSearchBar">
+            {{ $t("common.buttons.cancel") }}
+          </button>
         </div>
 
         <VcScrollbar class="mobile-search-bar__dropdown" vertical :style="dropdownStyle">
@@ -52,14 +54,13 @@
 
 <script setup lang="ts">
 import { useElementBounding } from "@vueuse/core";
-import { computed, onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { computed, onMounted, ref } from "vue";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
+import { getFilterExpressionForZeroPrice } from "@/core/utilities";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import BarcodeScanner from "../search-bar/barcode-scanner.vue";
 import SearchDropdown from "./search-dropdown.vue";
@@ -71,11 +72,10 @@ interface IProps {
 
 defineProps<IProps>();
 
-const route = useRoute();
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
-const { hideSearchBar, showSearchDropdown, hideSearchDropdown, clearSearchResults } = useSearchBar();
+const { hideSearchBar, showSearchDropdown, hideSearchDropdown } = useSearchBar();
 
 const { themeContext } = useThemeContext();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -83,15 +83,16 @@ const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
 
 const filterExpression = computed(() => {
-  const scopeExpression = getFilterExpressionForCategorySubtree({ catalogId: globals.catalogId });
   const { zero_price_product_enabled } = themeContext.value.settings;
   const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
-  return catalog_empty_categories_enabled
-    ? undefined
-    : [scopeExpression, getFilterExpressionForZeroPrice(!!zero_price_product_enabled, globals.currencyCode)]
-        .filter(Boolean)
-        .join(" ");
+  if (catalog_empty_categories_enabled) {
+    return undefined;
+  }
+
+  const zeroPriceExpression = getFilterExpressionForZeroPrice(!!zero_price_product_enabled, globals.currencyCode);
+
+  return zeroPriceExpression || undefined;
 });
 const contentElement = ref<HTMLElement | null>(null);
 const wrapperElement = ref<HTMLElement | null>(null);
@@ -125,17 +126,7 @@ function onBarcodeScanned(value: string) {
 function handleSearchDropdownHide() {
   hideSearchBar();
   hideSearchDropdown();
-  clearSearchResults();
-  searchPhrase.value = "";
 }
-
-watch(
-  () => route.path,
-  () => {
-    searchPhrase.value = "";
-    clearSearchResults();
-  },
-);
 
 onMounted(() => {
   searchPhrase.value = searchPhraseInUrl.value ?? "";
