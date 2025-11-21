@@ -1,15 +1,13 @@
 <template>
   <div class="mobile-search-bar">
     <transition name="fade">
-      <div
+      <button
         v-if="visible"
+        type="button"
         class="mobile-search-bar__backdrop"
-        role="button"
-        tabindex="-1"
         :aria-label="$t('common.labels.close')"
         @click="hideSearchBar"
-        @keydown.prevent="hideSearchBar"
-      ></div>
+      />
     </transition>
 
     <transition name="slide-down">
@@ -37,7 +35,7 @@
           </button>
         </div>
 
-        <VcScrollbar class="mobile-search-bar__dropdown" vertical :style="dropdownStyle">
+        <VcScrollbar class="mobile-search-bar__dropdown" vertical>
           <SearchDropdown
             ref="searchDropdownRef"
             :search-phrase="searchPhrase"
@@ -63,7 +61,6 @@ import { getFilterExpressionForZeroPrice } from "@/core/utilities";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import BarcodeScanner from "../search-bar/barcode-scanner.vue";
 import SearchDropdown from "./search-dropdown.vue";
-import type { StyleValue } from "vue";
 
 interface IProps {
   visible: boolean;
@@ -99,16 +96,9 @@ const wrapperElement = ref<HTMLElement | null>(null);
 const { top: contentTop } = useElementBounding(contentElement);
 const { height: wrapperHeight } = useElementBounding(wrapperElement);
 
-const dropdownStyle = computed<StyleValue>(() => {
+const dropdownMaxHeight = computed(() => {
   const dropdownTop = contentTop.value + wrapperHeight.value;
-
-  if (!dropdownTop || dropdownTop <= 0) {
-    return {};
-  }
-
-  return {
-    maxHeight: `calc(100dvh - ${dropdownTop}px)`,
-  };
+  return dropdownTop > 0 ? `calc(100dvh - ${dropdownTop}px)` : "auto";
 });
 
 function reset() {
@@ -139,9 +129,8 @@ onMounted(() => {
 <style lang="scss">
 .mobile-search-bar {
   &__backdrop {
-    @apply fixed left-0 right-0 bottom-0 z-10 cursor-pointer;
+    @apply fixed inset-0 z-10 cursor-pointer;
 
-    top: calc(2.125rem + 3.5rem);
     background-color: rgba(194, 195, 195, 0.6);
 
     @media (min-width: theme("screens.lg")) {
@@ -150,9 +139,7 @@ onMounted(() => {
   }
 
   &__content {
-    @apply fixed left-0 right-0 z-10 bg-[--mobile-search-bar-bg];
-
-    top: calc(2.125rem + 3.5rem);
+    @apply absolute left-0 right-0 z-10 bg-[--mobile-search-bar-bg];
   }
 
   &__wrapper {
@@ -169,6 +156,8 @@ onMounted(() => {
 
   &__dropdown {
     @apply px-3.5 pb-3.5;
+
+    max-height: v-bind(dropdownMaxHeight);
   }
 
   .fade-enter-active,
