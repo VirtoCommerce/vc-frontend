@@ -35,7 +35,7 @@
           </button>
         </div>
 
-        <VcScrollbar class="mobile-search-bar__dropdown" vertical>
+        <VcScrollbar class="mobile-search-bar__dropdown" :vertical="isMobile">
           <SearchDropdown
             ref="searchDropdownRef"
             :search-phrase="searchPhrase"
@@ -50,10 +50,11 @@
 </template>
 
 <script setup lang="ts">
-import { useElementBounding } from "@vueuse/core";
+import { useElementBounding, useBreakpoints } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { BREAKPOINTS } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -75,6 +76,9 @@ const { hideSearchBar, showSearchDropdown, hideSearchDropdown } = useSearchBar()
 
 const { themeContext } = useThemeContext();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+
+const breakpoints = useBreakpoints(BREAKPOINTS);
+const isMobile = breakpoints.smaller("md");
 
 const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
 

@@ -1,6 +1,6 @@
 <template>
   <div ref="dropdownElement" class="search-dropdown" data-dropdown @focusout="handleFocusOut">
-    <div class="search-dropdown__sidebar">
+    <VcScrollbar class="search-dropdown__sidebar" :vertical="isDesktop">
       <!-- Search history and suggestions -->
       <div
         v-if="(searchHistoryQueries.length && !searchHistoryLoading) || (suggestions.length && !loading)"
@@ -83,9 +83,9 @@
           </VcLink>
         </ul>
       </div>
-    </div>
+    </VcScrollbar>
 
-    <div class="search-dropdown__content">
+    <VcScrollbar class="search-dropdown__content" :vertical="isDesktop">
       <!-- Products -->
       <div v-if="products.length" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
@@ -134,17 +134,18 @@
           </i18n-t>
         </div>
       </div>
-    </div>
+    </VcScrollbar>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, useBreakpoints } from "@vueuse/core";
 import { pickBy } from "lodash";
 import { computed, ref, toValue, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useRouteQueryParam, useThemeContext, useAnalytics } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
+import { BREAKPOINTS } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
@@ -177,6 +178,9 @@ const router = useRouter();
 const { themeContext } = useThemeContext();
 const { saveSearchQuery, useGetSearchHistoryQuery } = useHistoricalEvents();
 const { analytics } = useAnalytics();
+
+const breakpoints = useBreakpoints(BREAKPOINTS);
+const isDesktop = breakpoints.greaterOrEqual("md");
 
 const dropdownElement = ref<HTMLElement | null>(null);
 const searchInProgress = ref(false);
@@ -365,16 +369,16 @@ defineExpose({
   @apply pt-1;
 
   @media (min-width: theme("screens.md")) {
-    @apply flex gap-5 pb-3;
+    @apply flex gap-2.5 pb-3 max-h-[inherit];
   }
 
   @media (min-width: theme("screens.lg")) {
-    @apply pt-4 px-5 pb-5 rounded-[--vc-radius] shadow-lg bg-additional-50;
+    @apply pt-4 ps-5 pe-2.5 pb-5 rounded-[--vc-radius] shadow-lg bg-additional-50;
   }
 
   &__sidebar {
     @media (min-width: theme("screens.md")) {
-      @apply flex-shrink-0 w-[12rem];
+      @apply flex-shrink-0 w-[12rem] max-h-full pe-2.5;
     }
 
     @media (min-width: theme("screens.xl")) {
@@ -412,7 +416,7 @@ defineExpose({
     @apply mt-4;
 
     @media (min-width: theme("screens.md")) {
-      @apply flex-1 mt-0;
+      @apply flex-1 mt-0 max-h-full pe-2.5;
     }
   }
 
