@@ -141,7 +141,7 @@
 <script setup lang="ts">
 import { useDebounceFn, useBreakpoints } from "@vueuse/core";
 import { pickBy } from "lodash";
-import { computed, ref, toValue, watch } from "vue";
+import { computed, onMounted, ref, toValue, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useRouteQueryParam, useThemeContext, useAnalytics } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
@@ -305,8 +305,8 @@ function goToSearchResultsPage(phrase?: string) {
   }
 }
 
-function handleSearch() {
-  void saveSearchQuery(trimmedSearchPhrase.value);
+async function handleSearch() {
+  await saveSearchQuery(trimmedSearchPhrase.value);
 
   goToSearchResultsPage();
 }
@@ -356,7 +356,9 @@ watch(
   },
 );
 
-void loadSearchHistory();
+onMounted(() => {
+  void loadSearchHistory();
+});
 
 defineExpose({
   dropdownElement,

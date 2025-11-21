@@ -10,6 +10,7 @@
       @clear="reset"
       @keyup.esc="hideSearchDropdown"
       @keyup.arrow-down="focusFirstItem"
+      @keydown.enter="searchDropdownRef?.handleSearch()"
       @input="onSearchPhraseChanged"
       @focus="onSearchBarFocused"
     >
