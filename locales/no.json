@@ -406,7 +406,7 @@
         "categories_label": "Kategorier",
         "products_label": "Produkter",
         "pages_label": "Sider",
-        "suggestions_and_history_label": "Forslag og historikk",
+        "suggestions_and_history_label": "Tips",
         "no_results": "Søket ditt etter {keyword} ga ingen resultater",
         "enter_keyword_placeholder": "Søk i hele butikken",
         "enter_keyword_placeholder_category": "Søk i kategorien {category}",

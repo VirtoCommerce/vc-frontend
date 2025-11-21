@@ -406,7 +406,7 @@
         "categories_label": "Kategoriat",
         "products_label": "Tuotteet",
         "pages_label": "Sivut",
-        "suggestions_and_history_label": "Ehdotukset ja historia",
+        "suggestions_and_history_label": "Vinkit",
         "no_results": "Hakusi {keyword} ei tuottanut tuloksia",
         "enter_keyword_placeholder": "Hae koko kaupasta",
         "enter_keyword_placeholder_category": "Hae kategoriasta {category}",

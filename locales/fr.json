@@ -406,7 +406,7 @@
         "categories_label": "Catégories",
         "products_label": "Produits",
         "pages_label": "Pages",
-        "suggestions_and_history_label": "Suggestions et historique",
+        "suggestions_and_history_label": "Indices",
         "no_results": "Votre requête {keyword} n'a retourné aucun résultat",
         "enter_keyword_placeholder": "Rechercher dans toute la boutique",
         "enter_keyword_placeholder_category": "Rechercher dans {category}",

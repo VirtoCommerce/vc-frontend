@@ -406,7 +406,7 @@
         "categories_label": "Категории",
         "products_label": "Товары",
         "pages_label": "Страницы",
-        "suggestions_and_history_label": "Предложения и история",
+        "suggestions_and_history_label": "Подсказки",
         "no_results": "По вашему запросу {keyword} ничего не найдено",
         "enter_keyword_placeholder": "Поиск по магазину",
         "enter_keyword_placeholder_category": "Искать в {category}",

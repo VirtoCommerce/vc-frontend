@@ -406,7 +406,7 @@
         "categories_label": "类别",
         "products_label": "产品",
         "pages_label": "页面",
-        "suggestions_and_history_label": "建议和历史记录",
+        "suggestions_and_history_label": "提示",
         "no_results": "您的 {keyword} 查询未返回任何结果",
         "enter_keyword_placeholder": "搜索全店",
         "enter_keyword_placeholder_category": "在 {category} 中搜索",

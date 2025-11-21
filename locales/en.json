@@ -406,7 +406,7 @@
         "categories_label": "Categories",
         "products_label": "Products",
         "pages_label": "Pages",
-        "suggestions_and_history_label": "Suggestions & history",
+        "suggestions_and_history_label": "Hints",
         "no_results": "Your {keyword} query did not return any results",
         "enter_keyword_placeholder": "Search the entire store",
         "enter_keyword_placeholder_category": "Search within {category}",
