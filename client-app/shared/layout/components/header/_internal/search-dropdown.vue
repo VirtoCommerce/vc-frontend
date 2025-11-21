@@ -146,7 +146,6 @@ import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useRouteQueryParam, useThemeContext, useAnalytics } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { QueryParamName } from "@/core/enums";
-import { Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { highlightSearchText } from "@/shared/layout/utils";
@@ -349,19 +348,11 @@ function handleFocusOut(event: FocusEvent) {
 watch(
   () => props.searchPhrase,
   () => {
-    onSearchPhraseChanged().catch((error: unknown) => {
-      Logger.error(`${useSearchBar.name}.onSearchPhraseChanged`, error);
-    });
+    void onSearchPhraseChanged();
   },
 );
 
-const loadPromise = loadSearchHistory();
-
-if (loadPromise) {
-  loadPromise.catch((error: unknown) => {
-    Logger.error(`${useSearchBar.name}.loadSearchHistory`, error);
-  });
-}
+void loadSearchHistory();
 
 defineExpose({
   dropdownElement,

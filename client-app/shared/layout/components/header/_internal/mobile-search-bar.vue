@@ -8,8 +8,7 @@
         tabindex="-1"
         :aria-label="$t('common.labels.close')"
         @click="hideSearchBar"
-        @keydown.enter="hideSearchBar"
-        @keydown.space.prevent="hideSearchBar"
+        @keydown.prevent="hideSearchBar"
       ></div>
     </transition>
 
