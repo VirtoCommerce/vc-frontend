@@ -73,16 +73,14 @@
 
           <td class="variations-table__col variations-table__col--quantity">
             <component
-              :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
+              :is="getComponent('productCard', EXTENSION_NAMES.productCard.cardButton)"
               v-if="
-                isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-                shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, variation, {
-                  forceProductAsVariation: true,
-                })
+                isRegistered('productCard', EXTENSION_NAMES.productCard.cardButton) &&
+                canRender('productCard', EXTENSION_NAMES.productCard.cardButton, variation)
               "
               :product="variation"
               :is-text-shown="false"
-              v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
+              v-bind="getProps('productCard', EXTENSION_NAMES.productCard.cardButton)"
             />
 
             <AddToCartSimple v-else :product="variation">
@@ -102,8 +100,8 @@ import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
 import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
 import { getPropertyValue, getPropertiesGroupedByName } from "@/core/utilities";
-import { useCustomProductComponents } from "@/shared/common/composables";
-import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
+import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import CountInCart from "../count-in-cart.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
@@ -134,7 +132,7 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
-const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
+const { isRegistered, getComponent, canRender, getProps } = useExtensionRegistry();
 
 const variations = computed(() => props.variations);
 const productProperties = computed<IProductProperties[]>(() => {

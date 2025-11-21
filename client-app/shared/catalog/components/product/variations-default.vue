@@ -16,27 +16,21 @@
         with-properties
         show-placed-price
       >
-        <component
-          :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
-          v-if="
-            isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-            shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, variation, {
-              forceProductAsVariation: true,
-            })
-          "
-          :product="variation"
-          is-text-shown
-          v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
-        />
+        <ExtensionPoint
+          :name="EXTENSION_NAMES.productCard.cardButton"
+          category="productCard"
+          :item="variation"
+          v-if="$canRenderExtensionPoint('productCard', EXTENSION_NAMES.productCard.cardButton, variation)"
+        >
+          <AddToCartSimple :product="variation">
+            <InStock
+              :is-in-stock="variation.availabilityData.isInStock"
+              :quantity="variation.availabilityData.availableQuantity"
+            />
 
-        <AddToCartSimple v-else :product="variation">
-          <InStock
-            :is-in-stock="variation.availabilityData.isInStock"
-            :quantity="variation.availabilityData.availableQuantity"
-          />
-
-          <CountInCart :product-id="variation.id" />
-        </AddToCartSimple>
+            <CountInCart :product-id="variation.id" />
+          </AddToCartSimple>
+        </ExtensionPoint>
       </VcLineItem>
 
       <VcPagination
@@ -57,8 +51,7 @@ import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";
 import { getPropertiesGroupedByName } from "@/core/utilities";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
-import { useCustomProductComponents } from "@/shared/common/composables";
-import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import CountInCart from "../count-in-cart.vue";
 import InStock from "../in-stock.vue";
 import type { Product } from "@/core/api/graphql/types";
@@ -81,8 +74,6 @@ interface IProps {
 const pageNumber = toRef(props, "pageNumber");
 
 const { browserTarget } = useBrowserTarget();
-
-const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 function getProperties(variation: Product) {
   return Object.values(
