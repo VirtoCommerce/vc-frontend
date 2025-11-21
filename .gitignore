@@ -69,3 +69,7 @@ dist-ssr
 
 # https certificates
 .certificates/*
+
+# Storybook build logs
+build-storybook.log
+*.log
