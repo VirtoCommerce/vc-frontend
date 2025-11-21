@@ -26,7 +26,8 @@
       "increase_quantity": "Zwiększ ilość",
       "variant_picker_group": "Warianty produktu",
       "show_more_button": "Pokaż więcej wariantów ({count})",
-      "sidebar": "Panel boczny"
+      "sidebar": "Panel boczny",
+      "close_chip": "Zamknij znacznik"
     },
     "date_selector": {
       "min_date_error": "Data musi być nie wcześniejsza niż {min}",
@@ -108,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Nawigacja okruszkowa"
+    },
+    "rating": {
+      "rating_label": "Ocena {value} na {maxValue}",
+      "read_only_button_aria_label": "Ocena {value} na {maxValue}, niedostępna do wyboru",
+      "set_rating_aria_label": "Ustaw ocenę na {value} z {maxValue}"
     }
   }
 }

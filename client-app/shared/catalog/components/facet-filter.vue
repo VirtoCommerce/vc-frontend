@@ -1,13 +1,6 @@
 <template>
   <!-- Collapsable mode -->
-  <VcWidget
-    v-if="mode === 'collapsable'"
-    class="facet-filter-widget"
-    size="xs"
-    collapsible
-    :title="facet.label"
-    collapsed
-  >
+  <VcWidget v-if="mode === 'collapsable'" class="facet-filter-widget" size="xs" collapsible collapsed>
     <template #default-container>
       <div v-if="searchFieldVisible" class="facet-filter-widget__search">
         <VcInput
@@ -59,6 +52,7 @@
         </VcMenuItem>
 
         <div v-if="isAnchorAdded" ref="fadeVisibilityAnchor"></div>
+
         <div v-if="hasFade" class="facet-filter-widget__fade"></div>
       </div>
     </template>
@@ -66,11 +60,29 @@
     <template v-if="isShowMoreVisible" #footer-container>
       <VcButtonSeeMoreLess v-model="isExpanded" class="facet-filter-widget__more" />
     </template>
+
+    <template #title>
+      <span class="facet-filter-widget__title">
+        <span class="facet-filter-widget__title-label">{{ facet.label }}</span>
+
+        <VcBadge
+          v-if="hasSelected"
+          size="xs"
+          rounded
+          variant="outline"
+          color="secondary"
+          class="facet-filter-widget__title-badge"
+        >
+          {{ selectedFiltersCount }}
+        </VcBadge>
+      </span>
+    </template>
   </VcWidget>
 
   <!-- Dropdown mode -->
   <VcDropdownMenu
     v-if="mode === 'dropdown'"
+    :disabled="disabled"
     :offset-options="4"
     class="facet-filter-dropdown"
     z-index="10"
@@ -169,6 +181,7 @@ interface IEmits {
 interface IProps {
   facet: FacetItemType;
   loading?: boolean;
+  disabled?: boolean;
   mode: "dropdown" | "collapsable";
   filter?: SearchProductFilterResult;
 }
@@ -338,6 +351,10 @@ function isSelected(item: FacetValueItemType) {
 
   &__more {
     @apply m-1;
+  }
+
+  &__title {
+    @apply flex flex-row items-center justify-start gap-2;
   }
 }
 

@@ -22,7 +22,7 @@ import { useShortCart } from "@/shared/cart/composables";
 
 export interface IProps {
   productId?: string;
-  size?: "xs" | "sm" | "md" | "lg";
+  size?: VcChipSizeType;
 }
 
 const props = withDefaults(defineProps<IProps>(), {

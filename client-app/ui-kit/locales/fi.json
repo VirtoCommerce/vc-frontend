@@ -26,7 +26,8 @@
       "increase_quantity": "Lisää määrää",
       "variant_picker_group": "Variantrivaihtoehdot",
       "show_more_button": "Näytä lisää vaihtoehtoja ({count})",
-      "sidebar": "Sivupalkki"
+      "sidebar": "Sivupaneeli",
+      "close_chip": "Sulje merkki"
     },
     "date_selector": {
       "min_date_error": "Päivämäärän on oltava vähintään {min}",
@@ -108,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Murupolun navigointi"
+    },
+    "rating": {
+      "rating_label": "Luokitus {value} / {maxValue}",
+      "read_only_button_aria_label": "Luokitus {value} / {maxValue}, ei valittavissa",
+      "set_rating_aria_label": "Aseta luokitukseksi {value} / {maxValue}"
     }
   }
 }

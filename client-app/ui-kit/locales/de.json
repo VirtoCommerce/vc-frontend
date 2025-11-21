@@ -26,7 +26,8 @@
       "increase_quantity": "Menge erhöhen",
       "variant_picker_group": "Produktvarianten",
       "show_more_button": "Weitere Varianten anzeigen ({count})",
-      "sidebar": "Seitenleiste"
+      "sidebar": "Seitenleiste",
+      "close_chip": "Chip schließen"
     },
     "date_selector": {
       "min_date_error": "Datum muss am oder nach {min} liegen",
@@ -108,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Breadcrumb-Navigation"
+    },
+    "rating": {
+      "rating_label": "Bewertung {value} von {maxValue}",
+      "read_only_button_aria_label": "Bewertung {value} von {maxValue}, nicht zur Auswahl verfügbar",
+      "set_rating_aria_label": "Bewertung auf {value} von {maxValue} setzen"
     }
   }
 }

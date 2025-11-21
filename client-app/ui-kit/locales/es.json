@@ -26,7 +26,8 @@
       "increase_quantity": "Aumentar cantidad",
       "variant_picker_group": "Opciones de variantes",
       "show_more_button": "Ver más opciones ({count})",
-      "sidebar": "Barra lateral"
+      "sidebar": "Barra lateral",
+      "close_chip": "Cerrar chip"
     },
     "date_selector": {
       "min_date_error": "La fecha debe ser igual o posterior al {min}",
@@ -108,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Navegación de migas de pan"
+    },
+    "rating": {
+      "rating_label": "Clasificación {value} de {maxValue}",
+      "read_only_button_aria_label": "Clasificación {value} de {maxValue}, no disponible para seleccionar",
+      "set_rating_aria_label": "Establecer la clasificación en {value} de {maxValue}"
     }
   }
 }

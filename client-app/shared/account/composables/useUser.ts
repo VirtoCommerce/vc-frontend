@@ -7,7 +7,7 @@ import {
   inviteUser as _inviteUser,
   registerAccount,
   registerByInvitation,
-  requestPasswordReset,
+  sendPasswordResetEmail,
   resetPasswordByToken,
   updatePersonalData,
   changePassword as _changePassword,
@@ -25,7 +25,7 @@ import {
   userLockedEvent,
   userReloadEvent,
   passwordExpiredEvent,
-  reloadAndOpenMainPage,
+  pageReloadEvent,
 } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
@@ -277,10 +277,12 @@ export function _useUser() {
     try {
       loading.value = true;
 
-      return await requestPasswordReset({
+      const data = await sendPasswordResetEmail({
         loginOrEmail: payload.email,
         urlSuffix: payload.resetPasswordUrlPath,
       });
+
+      return data ?? false;
     } catch (e) {
       Logger.error(`${useUser.name}.${forgotPassword.name}`, e);
       throw e;
@@ -365,7 +367,7 @@ export function _useUser() {
 
       localStorage.setItem(`organization-id-${user.value?.userName}`, organizationId);
 
-      void broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
+      void broadcast.emit(pageReloadEvent, null, TabsType.ALL);
     } catch (e) {
       Logger.error(switchOrganization.name, e);
     } finally {

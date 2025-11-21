@@ -26,7 +26,8 @@
       "increase_quantity": "Aumenta quantità",
       "variant_picker_group": "Opzioni di variante",
       "show_more_button": "Vedi altre opzioni ({count})",
-      "sidebar": "Barra laterale"
+      "sidebar": "Barra laterale",
+      "close_chip": "Chiudi chip"
     },
     "date_selector": {
       "min_date_error": "La data deve essere successiva o uguale a {min}",
@@ -108,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Navigazione breadcrumb"
+    },
+    "rating": {
+      "rating_label": "Valutazione {value} su {maxValue}",
+      "read_only_button_aria_label": "Valutazione {value} su {maxValue}, non disponibile per la selezione",
+      "set_rating_aria_label": "Imposta valutazione a {value} su {maxValue}"
     }
   }
 }

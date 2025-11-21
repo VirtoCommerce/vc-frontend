@@ -26,7 +26,8 @@
       "increase_quantity": "Увеличить количество",
       "variant_picker_group": "Варианты товара",
       "show_more_button": "Показать ещё варианты ({count})",
-      "sidebar": "Боковая панель"
+      "sidebar": "Боковая панель",
+      "close_chip": "Закрыть чип"
     },
     "date_selector": {
       "min_date_error": "Дата должна быть не ранее {min}",
@@ -108,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Навигация хлебными крошками"
+    },
+    "rating": {
+      "rating_label": "Рейтинг: {value} из {maxValue}",
+      "read_only_button_aria_label": "Рейтинг: {value} из {maxValue}, недоступно для выбора",
+      "set_rating_aria_label": "Установить рейтинг {value} из {maxValue}"
     }
   }
 }

@@ -26,7 +26,8 @@
       "increase_quantity": "增加数量",
       "variant_picker_group": "商品变体选项",
       "show_more_button": "查看更多选项（{count}）",
-      "sidebar": "侧边栏"
+      "sidebar": "侧边栏",
+      "close_chip": "关闭标签"
     },
     "date_selector": {
       "min_date_error": "日期必须在{min}或之后",
@@ -108,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "面包屑导航"
+    },
+    "rating": {
+      "rating_label": "评分 {value}，满分 {maxValue}",
+      "read_only_button_aria_label": "评分 {value}，满分 {maxValue}，不可选择",
+      "set_rating_aria_label": "将评分设置为 {value}，满分 {maxValue}"
     }
   }
 }

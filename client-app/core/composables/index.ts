@@ -14,6 +14,7 @@ export * from "./usePageHead";
 export * from "./usePageTitle";
 export * from "./useProductsRoutes";
 export * from "./useRouteQueryParam";
+export * from "./useSupportReports";
 export * from "./useSyncMutationBatchers";
 export * from "./useThemeContext";
 export * from "./useWhiteLabeling";

@@ -79,7 +79,9 @@
       "show_less": "Show less",
       "expand_all": "Expand all",
       "all_products": "All products",
-      "buy_now": "Buy now"
+      "buy_now": "Buy now",
+      "see_all": "See all",
+      "report_a_problem": "Report a problem"
     },
     "labels": {
       "actions": "Actions",
@@ -104,7 +106,7 @@
       "total": "Total",
       "compare": "Compare",
       "price": "Price",
-      "product_price": "Your price",
+      "product_price": "Price",
       "subtotal": "Subtotal",
       "discount": "Discount",
       "line_items": "Line items",
@@ -164,7 +166,8 @@
       "buyer_name": "Buyer name",
       "other": "Other",
       "vendor_name": "Vendor: {name}",
-      "not_available": "N/A"
+      "not_available": "N/A",
+      "product_reviews": "Product reviews"
     },
     "prefixes": {
       "please": "Please",
@@ -192,7 +195,7 @@
       "not_defined": "Undefined",
       "invalid_coupon": "This code does not match any active coupons. Double-check that everything is correct and try again.",
       "fill_all_required": "Complete all required information to proceed.",
-      "something_went_wrong": "Oops! Something went wrong. Double-check that everything is correct and try again.",
+      "something_went_wrong": "Something went wrong. Please try again later.",
       "checkout_pricing_warning": "Availability, shipping, tax and promotions are not final until you complete your order.",
       "wishlists_available_for_authorized": "Wishlists are available only for authenticated users",
       "no_addresses": "You do not have any addresses yet",
@@ -203,6 +206,7 @@
       "fail_add_product_to_cart": "Sorry, this product cannot be added to cart. {reason}",
       "fail_to_change_quantity_in_cart": "Sorry, can't update product quantity in cart. {reason}",
       "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
+      "report_sent_successfully": "Thank you! Your report has been sent successfully. We'll look into it.",
       "role_update_successful": "The customer role has been updated successfully",
       "role_update_failed": "Errors occurred during the role updating: {0}",
       "passwords_do_not_match": "The password fields must have matching values",
@@ -335,6 +339,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Saved for later",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -562,6 +567,12 @@
           "remove": "Remove from Compare"
         }
       },
+      "notifications": {
+        "limit_reached": "Only {productsLimit} products can be compared",
+        "added_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> is added to compare list <span class=\"hidden lg:inline\">(items left - {itemsLeft})</span>",
+        "removed_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> was removed from the compare list",
+        "compare_button": "Compare"
+      },
       "clear_list_modal": {
         "title": "Confirm clear",
         "message": "Do you confirm the removal of all products from the compare list?"
@@ -635,6 +646,7 @@
         "create_configuration_button": "Create your own configuration",
         "price_block": {
           "title": "Price and delivery",
+          "mobile_title": "Share & Actions",
           "add_to_list_button": "Add to list",
           "product_email_title": "Have a look at the product: {0}"
         },
@@ -695,7 +707,8 @@
         "clear_selection": "Clear selection",
         "cancel_button": "Cancel",
         "ok_button": "Ok",
-        "no_results": "No results found",
+        "no_results": "There are no results found",
+        "no_branches": "There are no branches found",
         "reset_search_button": "Reset search"
       },
       "shipment_options": {
@@ -821,10 +834,14 @@
         "year_label": "Year",
         "year_placeholder": "YY",
         "security_code_label": "Security code",
+        "pay_now_button": "Pay now",
         "errors": {
+          "card_number": "Provide a valid credit card number",
           "month": "Provide a valid expiration month",
           "year": "Provide a valid expiration year",
-          "security_code": "Invalid security code."
+          "expiration_date": "Expiration date must be in the future",
+          "security_code": "Provide a valid security code",
+          "cardholder_name": "Provide a valid cardholder name"
         },
         "user_error_message": "Can't initialize payment. Please try again later or use another payment method",
         "payment_unavailable": "Payment method is unavailable. Please try again later"
@@ -834,27 +851,15 @@
         "privacy_policy_link": "Privacy policy",
         "accept_terms_text": "By placing an order, you accept the terms of our",
         "processing_personal_data_text": "and agree that we may process your personal data as per our",
-        "pay_now_button": "Pay now",
         "errors": {
-          "number": "Provide a valid credit card number",
-          "month": "Provide a valid expiration month",
-          "year": "Provide a valid expiration year",
-          "expiration_date": "Expiration date must be in the future",
-          "security_code": "Provide a valid security code",
-          "cardholder_name": "Provide a valid cardholder name",
           "incorrect_payment_method": "Incorrect payment method"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Pay now"
       },
       "manual": {
         "text": "The payment method you selected does not support online payment. Select another method or "
       },
       "redirection": {
         "text": "After you click <strong>{0}</strong>, you will be redirected to the third-party payment service",
-        "pay_now_button": "Pay now",
-        "try_again_button": "Try again",
         "errors": {
           "missing_link": "Redirect link is missing",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1170,7 +1175,9 @@
           "get_directions": "Get directions",
           "point_info": "Point info",
           "pickup_address": "Pick-up address",
-          "cart_pickup_points_not_found": "There are no available pickup points for these products. Select another shipping method",
+          "cart_pickup_points_not_found": "There are no available pickup points for these products. Select another shipping method.",
+          "cart_pickup_points_not_found_by_filter": "Pickup points not found.",
+          "cart_pickup_points_reset_search": "Reset search",
           "availability": "Availability"
         }
       },
@@ -1318,6 +1325,7 @@
       "recently_browsed_products": "Recently browsed",
       "save_for_later": "Save for later",
       "saved_for_later": "Saved for later",
+      "saved_for_later_not_found": "You haven't saved any products for later",
       "move_to_cart": "Move to cart"
     },
     "checkout": {
@@ -1374,7 +1382,8 @@
       "products_icon": "Product icon",
       "show_all_results": "Show all results",
       "load_previous_page": "Load previous page",
-      "load_next_page": "Load next page"
+      "load_next_page": "Load next page",
+      "available_variations": "No available variations | 1 available variation | {count} available variations"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1413,6 +1422,7 @@
       },
       "title": "Search",
       "header": "Your search for {keyword} returned the following",
+      "header_empty": "Sorry, your search for \"{keyword}\" didn't return any results",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Your <strong>{0}</strong> query did not return any results",

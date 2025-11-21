@@ -1,4 +1,5 @@
 import { setup } from "@storybook/vue3-vite";
+import { presets } from "../client-app/assets/presets";
 import { useThemeContext } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
@@ -74,25 +75,87 @@ setThemeContext({
   },
 } as StoreResponseType);
 
-async function configureThemeSettings() {
-  const module = (await import(`@/assets/presets/coffee.json`)) as {
-    default: IThemeConfigPreset;
-  };
-  const preset = module.default;
+// List of available theme presets
+const PRESETS = Object.keys(presets);
+type PresetNameType = keyof typeof presets;
 
-  if (preset) {
-    const styleElement = document.createElement("style");
-    styleElement.innerText = ":root {";
-    Object.entries(preset).forEach(([key, value]) => {
-      styleElement.innerText += `--${key.replace(/_/g, "-")}: ${value};`;
+let currentStyleElement: HTMLStyleElement | null = null;
+let currentPresetName: PresetNameType | null = null;
+let loadingPreset: PresetNameType | null = null;
+let i18nConfigured = false;
+
+// Enable for debugging: track DOM changes (only in dev mode)
+const ENABLE_DOM_MONITORING = import.meta.env.MODE === "development";
+if (ENABLE_DOM_MONITORING && typeof window !== "undefined") {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === "childList" && mutation.target === document.head) {
+        // eslint-disable-next-line no-console
+        console.log("DOM changed in <head>:", {
+          addedNodes: mutation.addedNodes.length,
+          removedNodes: mutation.removedNodes.length,
+          target: mutation.target,
+        });
+      }
     });
-    styleElement.innerText += "}";
-    document.head.prepend(styleElement);
+  });
+
+  observer.observe(document.head, {
+    childList: true,
+    subtree: false,
+  });
+
+  // eslint-disable-next-line no-console
+  console.log("MutationObserver activated for monitoring <head>");
+}
+
+async function configureThemeSettings(presetName: PresetNameType = "default") {
+  if (currentPresetName === presetName && currentStyleElement) {
+    return;
+  }
+  if (loadingPreset === presetName) {
+    return;
+  }
+
+  loadingPreset = presetName;
+
+  try {
+    const module = (await import(`@/assets/presets/${presetName}.json`)) as {
+      default: IThemeConfigPreset;
+    };
+    const preset = module.default;
+
+    if (preset) {
+      if (currentStyleElement && currentStyleElement.parentNode) {
+        currentStyleElement.parentNode.removeChild(currentStyleElement);
+      }
+
+      currentStyleElement = document.createElement("style");
+      currentStyleElement.innerText = ":root {";
+      Object.entries(preset).forEach(([key, value]) => {
+        currentStyleElement!.innerText += `--${key.replace(/_/g, "-")}: ${value};`;
+      });
+      currentStyleElement.innerText += "}";
+      document.head.prepend(currentStyleElement);
+      currentPresetName = presetName;
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(`Failed to load preset "${presetName}":`, error);
+  } finally {
+    if (loadingPreset === presetName) {
+      loadingPreset = null;
+    }
   }
 }
 
 function configureI18N() {
+  if (i18nConfigured) {
+    return;
+  }
+
   i18n.global.setLocaleMessage(DEFAULT_LOCALE, UI_KIT_DEFAULT_MESSAGE);
+  i18nConfigured = true;
 }
 
 setGlobals({ i18n });
@@ -111,15 +174,28 @@ setup((app) => {
     console.error("Storybook Vue setup error:", error);
   }
 
-  configureThemeSettings().catch(() => {
-    // eslint-disable-next-line no-console
-    console.error("Storybook theme setup error:");
-  });
-
   configureI18N();
 });
 
 const preview: Preview = {
+  globalTypes: {
+    themePreset: {
+      description: "Select theme preset",
+      defaultValue: "default",
+      toolbar: {
+        title: "Theme preset",
+        icon: "paintbrush",
+        items: PRESETS.map((preset) => ({
+          value: preset,
+          title: preset.charAt(0).toUpperCase() + preset.slice(1).replace(/-/g, " "),
+        })),
+        dynamicTitle: true,
+      },
+    },
+  },
+  initialGlobals: {
+    themePreset: "default",
+  },
   parameters: {
     controls: {
       matchers: {
@@ -135,6 +211,20 @@ const preview: Preview = {
     },
     a11y: a11yConfig,
   },
+  decorators: [
+    (story, context) => {
+      const presetName = context.globals.themePreset || "default";
+
+      if (presetName !== currentPresetName && presetName !== loadingPreset) {
+        configureThemeSettings(presetName).catch(() => {
+          // eslint-disable-next-line no-console
+          console.error("Storybook theme setup error");
+        });
+      }
+
+      return story();
+    },
+  ],
   tags: ["autodocs"],
 };
 

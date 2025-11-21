@@ -79,7 +79,9 @@
       "show_less": "Pokaż mniej",
       "expand_all": "Rozwiń wszystko",
       "all_products": "Wszystkie produkty",
-      "buy_now": "Kup teraz"
+      "buy_now": "Kup teraz",
+      "see_all": "Zobacz wszystko",
+      "report_a_problem": "Zgłoś problem"
     },
     "labels": {
       "actions": "Akcje",
@@ -104,7 +106,7 @@
       "total": "Suma",
       "compare": "Porównaj",
       "price": "Cena",
-      "product_price": "Twoja cena",
+      "product_price": "Cena",
       "subtotal": "Razem",
       "discount": "Rabaty",
       "line_items": "Pozycje",
@@ -164,7 +166,8 @@
       "buyer_name": "Nazwa nabywcy",
       "other": "Inne",
       "vendor_name": "Dostawca: {name}",
-      "not_available": "N/D"
+      "not_available": "N/D",
+      "product_reviews": "Opinie o produkcie"
     },
     "prefixes": {
       "please": "Proszę",
@@ -192,7 +195,7 @@
       "not_defined": "Niezdefiniowany",
       "invalid_coupon": "Ten kod nie odpowiada żadnym aktywnym kuponom. Proszę sprawdzić, czy wszystko jest poprawne i spróbować ponownie.",
       "fill_all_required": "Proszę wypełnić wszystkie wymagane informacje, aby kontynuować.",
-      "something_went_wrong": "Ups! Coś poszło nie tak. Proszę sprawdzić, czy wszystko jest poprawne i spróbować ponownie.",
+      "something_went_wrong": "Coś poszło nie tak. Proszę spróbować ponownie później.",
       "checkout_pricing_warning": "Dostępność, wysyłka, podatek i promocje nie są ostateczne, dopóki nie ukończysz zamówienia.",
       "wishlists_available_for_authorized": "Listy życzeń są dostępne tylko dla uwierzytelnionych użytkowników",
       "no_addresses": "Nie masz żadnych adresów",
@@ -203,6 +206,7 @@
       "fail_add_product_to_cart": "Przepraszamy, nie można dodać tego produktu do koszyka. {reason}",
       "fail_to_change_quantity_in_cart": "Przepraszamy, nie można zaktualizować ilości produktu w koszyku. {reason}",
       "unhandled_error": "Przepraszamy za niedogodności. Nasz serwer obecnie doświadcza problemów technicznych. Proszę spróbować ponownie później.",
+      "report_sent_successfully": "Dziękujemy! Twój raport został pomyślnie wysłany. Zajmiemy się tym.",
       "role_update_successful": "Rola klienta została pomyślnie zaktualizowana.",
       "role_update_failed": "Wystąpiły błędy podczas aktualizacji roli: {0}",
       "passwords_do_not_match": "Pola hasła muszą mieć dopasowane wartości.",
@@ -335,6 +339,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Zapisane na później",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -562,6 +567,12 @@
           "remove": "Usuń z Porównania"
         }
       },
+      "notifications": {
+        "limit_reached": "Można porównać tylko {productsLimit} produkty",
+        "added_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> został dodany do listy porównywania <span class=\"hidden lg:inline\">(pozostało pozycji - {itemsLeft})</span>",
+        "removed_html": "Produkt <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> został usunięty z listy porównywania",
+        "compare_button": "Porównaj"
+      },
       "clear_list_modal": {
         "title": "Potwierdź wyczyszczenie",
         "message": "Czy potwierdzasz usunięcie wszystkich produktów z listy porównań?"
@@ -635,6 +646,7 @@
         "create_configuration_button": "Utwórz własną konfigurację",
         "price_block": {
           "title": "Cena i dostawa",
+          "mobile_title": "Udostępnij i więcej",
           "add_to_list_button": "Dodaj do listy",
           "product_email_title": "Proszę spojrzeć na produkt: {0}"
         },
@@ -696,6 +708,7 @@
         "cancel_button": "Anuluj",
         "ok_button": "OK",
         "no_results": "Nie znaleziono wyników",
+        "no_branches": "Nie znaleziono oddziałów",
         "reset_search_button": "Resetuj wyszukiwanie"
       },
       "shipment_options": {
@@ -821,10 +834,14 @@
         "year_label": "Rok",
         "year_placeholder": "RR",
         "security_code_label": "Kod bezpieczeństwa",
+        "pay_now_button": "Zapłać teraz",
         "errors": {
-          "month": "Podaj prawidłowy miesiąc ważności",
-          "year": "Podaj prawidłowy rok ważności",
-          "security_code": "Nieprawidłowy kod zabezpieczający."
+          "card_number": "Proszę podać prawidłowy numer karty kredytowej",
+          "month": "Proszę podać prawidłowy miesiąc ważności",
+          "year": "Proszę podać prawidłowy rok ważności",
+          "expiration_date": "Data ważności musi być w przyszłości",
+          "security_code": "Proszę podać prawidłowy kod bezpieczeństwa",
+          "cardholder_name": "Proszę podać prawidłowe imię i nazwisko posiadacza karty"
         },
         "user_error_message": "Nie można zainicjować płatności. Spróbuj ponownie później lub użyj innej metody płatności",
         "payment_unavailable": "Metoda płatności jest niedostępna. Spróbuj ponownie później."
@@ -834,27 +851,15 @@
         "privacy_policy_link": "Polityka prywatności",
         "accept_terms_text": "Składając zamówienie, akceptujesz warunki naszej",
         "processing_personal_data_text": "i zgadzasz się, że możemy przetwarzać Twoje dane osobowe zgodnie z naszą",
-        "pay_now_button": "Zapłać teraz",
         "errors": {
-          "number": "Proszę podać prawidłowy numer karty kredytowej",
-          "month": "Proszę podać prawidłowy miesiąc ważności",
-          "year": "Proszę podać prawidłowy rok ważności",
-          "expiration_date": "Data ważności musi być w przyszłości",
-          "security_code": "Proszę podać prawidłowy kod bezpieczeństwa",
-          "cardholder_name": "Proszę podać prawidłowe imię i nazwisko posiadacza karty",
           "incorrect_payment_method": "Nieprawidłowa metoda płatności"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Zapłać teraz"
       },
       "manual": {
         "text": "Wybrana metoda płatności nie obsługuje płatności online. Proszę wybrać inną metodę lub "
       },
       "redirection": {
         "text": "Po kliknięciu <strong>{0}</strong> zostaniesz przekierowany do zewnętrznego serwisu płatności",
-        "pay_now_button": "Zapłać teraz",
-        "try_again_button": "Spróbuj ponownie",
         "errors": {
           "missing_link": "Brakuje linku przekierowującego",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1170,7 +1175,9 @@
           "get_directions": "Wyznacz trasę",
           "point_info": "Punkt informacyjny",
           "pickup_address": "Adres odbioru",
-          "cart_pickup_points_not_found": "Brak dostępnych punktów odbioru dla tych produktów. Wybierz inną metodę wysyłki",
+          "cart_pickup_points_not_found": "Brak dostępnych punktów odbioru dla tych produktów. Wybierz inną metodę wysyłki.",
+          "cart_pickup_points_not_found_by_filter": "Nie znaleziono punktów odbioru.",
+          "cart_pickup_points_reset_search": "Resetuj wyszukiwanie",
           "availability": "Dostępność"
         }
       },
@@ -1318,6 +1325,7 @@
       "recently_browsed_products": "Ostatnio przeglądane",
       "save_for_later": "Zapisz na później",
       "saved_for_later": "Zapisano na później",
+      "saved_for_later_not_found": "Nie masz żadnych produktów zapisanych na później",
       "move_to_cart": "Przenieś do koszyka"
     },
     "checkout": {
@@ -1374,7 +1382,8 @@
       "products_icon": "Ikona produktu",
       "show_all_results": "Pokaż wszystkie wyniki",
       "load_previous_page": "Załaduj poprzednią stronę",
-      "load_next_page": "Załaduj następną stronę"
+      "load_next_page": "Załaduj następną stronę",
+      "available_variations": "Brak dostępnych wariantów | Dostępny 1 wariant | Dostępnych wariantów: {count}"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1413,6 +1422,7 @@
       },
       "title": "Szukaj",
       "header": "Twoje wyszukiwanie {keyword} zwróciło następujące wyniki",
+      "header_empty": "Przepraszamy, wyszukiwanie frazy „{keyword}” nie przyniosło żadnych wyników",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "Twoje zapytanie <strong>{0}</strong> nie zwróciło żadnych wyników",

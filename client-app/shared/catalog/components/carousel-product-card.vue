@@ -1,3 +1,4 @@
+<!-- @deprecated This component is deprecated and should not be used -->
 <template>
   <div class="rounded border border-transparent bg-additional-50 lg:p-2 lg:hover:border-neutral-100 lg:hover:shadow-lg">
     <!-- Product image -->
@@ -47,4 +48,7 @@ interface IProps {
 }
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
+
+// eslint-disable-next-line no-console
+console.warn("CarouselProductCard is deprecated and should not be used.");
 </script>

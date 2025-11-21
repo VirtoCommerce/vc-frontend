@@ -26,7 +26,8 @@
       "increase_quantity": "Aumentar quantidade",
       "variant_picker_group": "Opções de variantes",
       "show_more_button": "Ver mais opções ({count})",
-      "sidebar": "Barra lateral"
+      "sidebar": "Barra lateral",
+      "close_chip": "Fechar chip"
     },
     "date_selector": {
       "min_date_error": "A data deve ser igual ou posterior a {min}",
@@ -108,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Navegação de trilha"
+    },
+    "rating": {
+      "rating_label": "Classificação {value} de {maxValue}",
+      "read_only_button_aria_label": "Classificação {value} de {maxValue}, não disponível para seleção",
+      "set_rating_aria_label": "Definir classificação para {value} de {maxValue}"
     }
   }
 }

@@ -79,7 +79,9 @@
       "show_less": "折りたたむ",
       "expand_all": "すべて展開",
       "all_products": "すべての商品",
-      "buy_now": "今すぐ購入"
+      "buy_now": "今すぐ購入",
+      "see_all": "すべてを見る",
+      "report_a_problem": "問題を報告"
     },
     "labels": {
       "actions": "操作",
@@ -104,7 +106,7 @@
       "total": "合計",
       "compare": "比較",
       "price": "価格",
-      "product_price": "販売価格",
+      "product_price": "価格",
       "subtotal": "小計",
       "discount": "割引",
       "line_items": "明細",
@@ -164,7 +166,8 @@
       "buyer_name": "購入者名",
       "other": "その他",
       "vendor_name": "ベンダー: {name}",
-      "not_available": "N/A"
+      "not_available": "N/A",
+      "product_reviews": "商品レビュー"
     },
     "prefixes": {
       "please": "お願いします",
@@ -192,8 +195,8 @@
       "not_defined": "未定義",
       "invalid_coupon": "無効なクーポンです",
       "fill_all_required": "必須項目を入力してください",
-      "something_went_wrong": "エラーが発生しました",
-      "checkout_pricing_warning": "価格は注文確定時に確定されます",
+      "something_went_wrong": "エラーが発生しました。後でもう一度お試しください。",
+      "checkout_pricing_warning": "在庫、配送、税金、プロモーションは注文を完了するまで確定されません。",
       "wishlists_available_for_authorized": "ログインが必要です",
       "no_addresses": "住所が未登録です",
       "confirm_delete_address": "この住所を削除しますか？",
@@ -203,6 +206,7 @@
       "fail_add_product_to_cart": "カートに追加できません: {reason}",
       "fail_to_change_quantity_in_cart": "数量を変更できません: {reason}",
       "unhandled_error": "システムエラーが発生しました",
+      "report_sent_successfully": "ありがとうございます！レポートが正常に送信されました。確認いたします。",
       "role_update_successful": "権限を更新しました",
       "role_update_failed": "権限の更新に失敗: {0}",
       "passwords_do_not_match": "パスワードが一致しません",
@@ -335,6 +339,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "後で保存",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -562,6 +567,12 @@
           "remove": "比較リストから削除"
         }
       },
+      "notifications": {
+        "limit_reached": "{productsLimit}個の商品のみ比較できます",
+        "added_html": "商品<span class=\"hidden lg:inline\">「<strong>{productName}</strong>」</span>を比較リストに追加しました<span class=\"hidden lg:inline\">（残り{itemsLeft}個）</span>",
+        "removed_html": "商品<span class=\"hidden lg:inline\">「<strong>{productName}</strong>」</span>を比較リストから削除しました",
+        "compare_button": "比較"
+      },
       "clear_list_modal": {
         "title": "クリアの確認",
         "message": "比較リストから全ての商品を削除しますか？"
@@ -635,6 +646,7 @@
         "create_configuration_button": "カスタム構成を作成",
         "price_block": {
           "title": "価格・配送",
+          "mobile_title": "共有・操作",
           "add_to_list_button": "リストに追加",
           "product_email_title": "この商品をご確認ください：{0}"
         },
@@ -696,6 +708,7 @@
         "cancel_button": "キャンセル",
         "ok_button": "OK",
         "no_results": "該当する店舗がありません",
+        "no_branches": "該当する店舗が見つかりませんでした",
         "reset_search_button": "検索をリセット"
       },
       "shipment_options": {
@@ -821,10 +834,14 @@
         "year_label": "Year",
         "year_placeholder": "YY",
         "security_code_label": "Security code",
+        "pay_now_button": "Pay Now",
         "errors": {
+          "card_number": "有効なカード番号を入力してください",
           "month": "有効な有効期限月を入力してください",
           "year": "有効な有効期限の年を入力してください",
-          "security_code": "セキュリティコードが無効です。"
+          "expiration_date": "有効な有効期限を入力してください",
+          "security_code": "セキュリティコードが無効です。",
+          "cardholder_name": "カード名義人の名前を入力してください"
         },
         "user_error_message": "決済を開始できません。後でやり直すか、別の支払い方法をご利用ください",
         "payment_unavailable": "お支払い方法をご利用いただけません。しばらくしてからもう一度お試しください"
@@ -834,27 +851,15 @@
         "privacy_policy_link": "Privacy Policy",
         "accept_terms_text": "By placing an order, you accept the terms of our",
         "processing_personal_data_text": "and agree that we may process your personal data as per our",
-        "pay_now_button": "Pay Now",
         "errors": {
-          "number": "Please provide a valid credit card number",
-          "month": "Please provide a valid expiration month",
-          "year": "Please provide a valid expiration year",
-          "expiration_date": "Expiration date must be in the future",
-          "security_code": "Please provide a valid security code",
-          "cardholder_name": "Please provide a valid cardholder name",
           "incorrect_payment_method": "Incorrect payment method"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Pay Now"
       },
       "manual": {
         "text": "The payment method you selected does not support online payment. Please select another method or "
       },
       "redirection": {
         "text": "After you click <strong>{0}</strong>, you will be redirected to the third-party payment service",
-        "pay_now_button": "Pay Now",
-        "try_again_button": "Try Again",
         "errors": {
           "missing_link": "Redirect link is missing",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1171,6 +1176,8 @@
           "point_info": "ポイント情報",
           "pickup_address": "受取住所",
           "cart_pickup_points_not_found": "この商品を受け取り可能な店舗がありません。別の配送方法を選択してください",
+          "cart_pickup_points_not_found_by_filter": "該当する受取場所が見つかりませんでした。",
+          "cart_pickup_points_reset_search": "検索をリセット",
           "availability": "在庫状況"
         }
       },
@@ -1318,6 +1325,7 @@
       "recently_browsed_products": "最近見た商品",
       "save_for_later": "後で保存",
       "saved_for_later": "後で保存",
+      "saved_for_later_not_found": "後で保存した商品はありません",
       "move_to_cart": "カートに入れる"
     },
     "checkout": {
@@ -1374,7 +1382,8 @@
       "products_icon": "商品アイコン",
       "show_all_results": "すべての結果を表示",
       "load_previous_page": "前のページを読み込む",
-      "load_next_page": "次のページを読み込む"
+      "load_next_page": "次のページを読み込む",
+      "available_variations": "利用可能なバリエーションはありません | 1つの利用可能なバリエーション | {count}個の利用可能なバリエーション"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
@@ -1413,6 +1422,7 @@
       },
       "title": "検索",
       "header": "「{keyword}」の検索結果",
+      "header_empty": "申し訳ありません。「{keyword}」の検索では、何も結果がありませんでした",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "「<strong>{0}</strong>」に一致する結果が見つかりませんでした",
