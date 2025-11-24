@@ -2,6 +2,7 @@ import { constants } from "node:fs";
 import { access, mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { generate } from "openapi-typescript-codegen";
+import { runWithValidation as postProcess } from "./post-process";
 
 const DEFAULT_SCHEMA_URL = "https://travel-admin-dev.azurewebsites.net/docs/PlatformUI/swagger.json";
 const OUTPUT_PATH = "client-app/core/api/platform-ui/generated";
@@ -22,6 +23,10 @@ async function run() {
   });
 
   console.log(`Platform UI client has been generated in "${OUTPUT_PATH}".`);
+
+  console.log("Running post-processing...");
+  await postProcess();
+  console.log("Post-processing completed.");
 }
 
 async function resolveSchemaPath(): Promise<string> {
