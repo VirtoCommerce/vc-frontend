@@ -55,6 +55,8 @@ Thumbs.db
 config/draft
 config/drafts
 config/routes.json
+client-app/core/api/platform-ui/generated/
+scripts/api/platform-ui/.cache/
 
 dist-ssr
 *.local
