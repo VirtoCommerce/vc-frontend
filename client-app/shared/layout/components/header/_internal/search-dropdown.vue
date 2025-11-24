@@ -1,6 +1,6 @@
 <template>
   <div ref="dropdownElement" class="search-dropdown" data-dropdown @focusout="handleFocusOut">
-    <VcScrollbar class="search-dropdown__sidebar" :vertical="isDesktop">
+    <VcScrollbar class="search-dropdown__sidebar" :vertical="!isMobile">
       <!-- Search history and suggestions -->
       <div
         v-if="(searchHistoryQueries.length && !searchHistoryLoading) || (suggestions.length && !loading)"
@@ -85,7 +85,7 @@
       </div>
     </VcScrollbar>
 
-    <VcScrollbar class="search-dropdown__content" :vertical="isDesktop">
+    <VcScrollbar class="search-dropdown__content" :vertical="!isMobile">
       <!-- Products -->
       <div v-if="products.length" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
@@ -180,7 +180,7 @@ const { saveSearchQuery, useGetSearchHistoryQuery } = useHistoricalEvents();
 const { analytics } = useAnalytics();
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
-const isDesktop = breakpoints.greaterOrEqual("md");
+const isMobile = breakpoints.smaller("md");
 
 const dropdownElement = ref<HTMLElement | null>(null);
 const searchInProgress = ref(false);
