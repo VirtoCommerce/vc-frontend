@@ -19,18 +19,18 @@
         <ExtensionPoint
           :name="EXTENSION_NAMES.productCard.cardButton"
           category="productCard"
-          :item="variation"
+          :product="variation"
           v-if="$canRenderExtensionPoint('productCard', EXTENSION_NAMES.productCard.cardButton, variation)"
-        >
-          <AddToCartSimple :product="variation">
-            <InStock
-              :is-in-stock="variation.availabilityData.isInStock"
-              :quantity="variation.availabilityData.availableQuantity"
-            />
+        />
 
-            <CountInCart :product-id="variation.id" />
-          </AddToCartSimple>
-        </ExtensionPoint>
+        <AddToCartSimple v-else :product="variation">
+          <InStock
+            :is-in-stock="variation.availabilityData.isInStock"
+            :quantity="variation.availabilityData.availableQuantity"
+          />
+
+          <CountInCart :product-id="variation.id" />
+        </AddToCartSimple>
       </VcLineItem>
 
       <VcPagination

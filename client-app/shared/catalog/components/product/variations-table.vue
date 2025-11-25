@@ -72,15 +72,11 @@
           </td>
 
           <td class="variations-table__col variations-table__col--quantity">
-            <component
-              :is="getComponent('productCard', EXTENSION_NAMES.productCard.cardButton)"
-              v-if="
-                isRegistered('productCard', EXTENSION_NAMES.productCard.cardButton) &&
-                canRender('productCard', EXTENSION_NAMES.productCard.cardButton, variation)
-              "
+            <ExtensionPoint
+              :name="EXTENSION_NAMES.productCard.cardButton"
+              category="productCard"
               :product="variation"
-              :is-text-shown="false"
-              v-bind="getProps('productCard', EXTENSION_NAMES.productCard.cardButton)"
+              v-if="$canRenderExtensionPoint('productCard', EXTENSION_NAMES.productCard.cardButton, variation)"
             />
 
             <AddToCartSimple v-else :product="variation">
@@ -100,7 +96,6 @@ import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
 import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
 import { getPropertyValue, getPropertiesGroupedByName } from "@/core/utilities";
-import { useExtensionRegistry } from "@/shared/common/composables/extensionRegistry/useExtensionRegistry";
 import { EXTENSION_NAMES } from "@/shared/common/constants";
 import CountInCart from "../count-in-cart.vue";
 import type { Product } from "@/core/api/graphql/types";
@@ -131,8 +126,6 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
-
-const { isRegistered, getComponent, canRender, getProps } = useExtensionRegistry();
 
 const variations = computed(() => props.variations);
 const productProperties = computed<IProductProperties[]>(() => {
