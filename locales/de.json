@@ -948,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Ungültige Anforderung",
+      "message": "Der Benutzer darf sich nicht mehr anmelden. Bitte wenden Sie sich an den Administrator.",
+      "img_alt": "Ungültige Anforderung",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Zugriff verweigert",

@@ -6,4 +6,5 @@ export enum IdentityErrors {
   USER_CANNOT_LOGIN_IN_STORE = "user_cannot_login_in_store",
   USER_NOT_FOUND = "user_not_found",
   PASSWORD_EXPIRED = "password_expired",
+  SIGN_IN_NOT_ALLOWED = "sign_in_not_allowed",
 }
