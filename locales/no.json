@@ -708,6 +708,7 @@
         "cancel_button": "Avbryt",
         "ok_button": "OK",
         "no_results": "Ingen resultater funnet",
+        "no_branches": "Ingen filialer funnet",
         "reset_search_button": "Tilbakestill søk"
       },
       "shipment_options": {

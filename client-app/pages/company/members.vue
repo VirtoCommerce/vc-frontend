@@ -211,7 +211,7 @@
       :variant="!!keyword || !!filter ? 'search' : 'empty'"
     >
       <template #button>
-        <VcButton v-if="keyword || filter" prepent-icon="reset" @click="resetFiltersWithKeyword">
+        <VcButton v-if="keyword || filter" prepend-icon="reset" @click="resetFiltersWithKeyword">
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
 
