@@ -1,7 +1,9 @@
 <template>
   <div class="vc-line-item-property">
     <div class="vc-line-item-property__label">{{ label }}</div>
+
     <div class="vc-line-item-property__dots"></div>
+
     <div class="vc-line-item-property__value">
       <slot />
     </div>

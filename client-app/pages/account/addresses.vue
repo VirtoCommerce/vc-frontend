@@ -8,6 +8,7 @@
 
       <VcButton v-if="paginatedAddresses.length" size="sm" variant="outline" @click="openAddOrUpdateAddressModal()">
         <span class="sm:hidden">{{ $t("common.buttons.add_new") }}</span>
+
         <span class="hidden sm:inline">{{ $t("common.buttons.add_new_address") }}</span>
       </VcButton>
     </div>
@@ -98,6 +99,7 @@
                 <span class="text-sm text-neutral-400">
                   {{ $t("common.labels.recipient_name") }}
                 </span>
+
                 <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
               </div>
 
@@ -105,6 +107,7 @@
                 <span class="text-sm text-neutral-400">
                   {{ $t("common.labels.address") }}
                 </span>
+
                 <div class="h-6 animate-pulse bg-neutral-200"></div>
               </div>
 
@@ -112,6 +115,7 @@
                 <span class="text-sm text-neutral-400">
                   {{ $t("common.labels.phone") }}
                 </span>
+
                 <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
               </div>
 
@@ -119,6 +123,7 @@
                 <span class="text-sm text-neutral-400">
                   {{ $t("common.labels.email") }}
                 </span>
+
                 <div class="h-6 animate-pulse bg-neutral-200"></div>
               </div>
             </div>

@@ -26,14 +26,14 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     path: "/checkout/completed",
     name: "CheckoutCompleted",
     component: Completed,
-    meta: { redirectable: false }
+    meta: { redirectable: false },
   },
   {
     path: "/checkout/payment/:status(success|failure)",
     name: "CheckoutPaymentResult",
     component: PaymentResult,
     props: true,
-    meta: { redirectable: false }
+    meta: { redirectable: false },
   },
   {
     path: "/checkout/:cartId?",
