@@ -97,8 +97,8 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
     @apply overflow-y-hidden;
   }
 
-  &#{$horizontal},
-  &#{$vertical} {
+  &#{$horizontal}:not(#{$no-bar}),
+  &#{$vertical}:not(#{$no-bar}) {
     scroll-behavior: smooth;
 
     /* Firefox */
