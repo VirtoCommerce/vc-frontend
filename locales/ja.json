@@ -301,7 +301,9 @@
       "switch_to_grid_view": "グリッド表示に切り替え",
       "switch_to_list_view": "リスト表示に切り替え",
       "no_image": "画像がありません",
-      "image": "画像"
+      "image": "画像",
+      "close_share_menu": "共有メニューを閉じる",
+      "open_share_menu": "共有メニューを開く"
     }
   },
   "shared": {

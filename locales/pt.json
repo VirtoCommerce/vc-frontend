@@ -301,7 +301,9 @@
       "switch_to_grid_view": "Mudar para vista em grade",
       "switch_to_list_view": "Mudar para vista em lista",
       "no_image": "Imagem não disponível",
-      "image": "Imagem"
+      "image": "Imagem",
+      "close_share_menu": "Fechar menu de compartilhamento",
+      "open_share_menu": "Abrir menu de compartilhamento"
     }
   },
   "shared": {

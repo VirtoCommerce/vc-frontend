@@ -301,7 +301,9 @@
       "switch_to_grid_view": "Switch to grid view",
       "switch_to_list_view": "Switch to list view",
       "no_image": "No image available",
-      "image": "Image"
+      "image": "Image",
+      "close_share_menu": "Close share menu",
+      "open_share_menu": "Open share menu"
     }
   },
   "shared": {

@@ -301,7 +301,9 @@
       "switch_to_grid_view": "Bytt til rutenettvisning",
       "switch_to_list_view": "Bytt til listevisning",
       "no_image": "Bilde ikke tilgjengelig",
-      "image": "Bilde"
+      "image": "Bilde",
+      "close_share_menu": "Lukk delingsmeny",
+      "open_share_menu": "Åpne delingsmeny"
     }
   },
   "shared": {
