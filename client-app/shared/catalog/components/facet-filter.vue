@@ -1,6 +1,6 @@
 <template>
   <!-- Collapsable mode -->
-  <VcWidget v-if="mode === 'collapsable'" class="facet-filter-widget" size="xs" collapsible collapsed>
+  <VcWidget v-if="mode === 'collapsable'" class="facet-filter-widget" size="xs" collapsible collapsed v-bind="$attrs">
     <template #default-container>
       <div v-if="searchFieldVisible" class="facet-filter-widget__search">
         <VcInput
@@ -89,6 +89,7 @@
     max-height="20rem"
     width="15rem"
     :dividers="false"
+    v-bind="$attrs"
   >
     <template #trigger="{ opened, triggerProps }">
       <VcButton
@@ -97,6 +98,7 @@
         :color="hasSelected ? 'accent' : 'secondary'"
         variant="outline"
         v-bind="triggerProps"
+        data-test-id="facet-filter-open-button"
       >
         {{ facet.label }}
 
@@ -121,6 +123,7 @@
           :disabled="loading"
           :placeholder="$t('common.labels.search', [facet.label])"
           truncate
+          data-test-id="facet-filter-keyword-input"
         />
       </div>
 

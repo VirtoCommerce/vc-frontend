@@ -5,6 +5,7 @@
     is-mobile-fullscreen
     :is-full-height="!!addresses.length || filterIsApplied"
     class="select-address-map-modal"
+    test-id="select-address-map-modal"
   >
     <div v-if="addresses.length || filterIsApplied" class="select-address-map-modal__container">
       <SelectAddressFilter @applyFilter="applyFilter" />
@@ -116,6 +117,7 @@
                 class="select-address-map-modal__radio-button"
                 size="sm"
                 @change="selectHandler(address, { scrollToSelectedOnMap: true })"
+                data-test-id="select-address-map-model-radio-button"
               >
                 <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
 
@@ -147,11 +149,23 @@
 
     <template #actions="{ close }">
       <div class="select-address-map-modal__actions">
-        <VcButton variant="outline" size="sm" color="neutral" @click="close">
+        <VcButton
+          variant="outline"
+          size="sm"
+          color="neutral"
+          @click="close"
+          data-test-id="select-address-map-modal-cancel-button"
+        >
           {{ $t("common.buttons.cancel") }}
         </VcButton>
 
-        <VcButton variant="solid" size="sm" :disabled="!changed" @click="saveHandler(close)">
+        <VcButton
+          variant="solid"
+          size="sm"
+          :disabled="!changed"
+          @click="saveHandler(close)"
+          data-test-id="select-address-map-modal-save-button"
+        >
           {{ $t("common.buttons.save") }}
         </VcButton>
       </div>

@@ -8,6 +8,7 @@
         :disabled="!filterOptionsCountries.values?.length"
         mode="dropdown"
         @update:filter="applyFilter"
+        data-test-id="select-address-filter-countries"
       />
 
       <FacetFilter
@@ -17,6 +18,7 @@
         :disabled="!filterOptionsRegions.values?.length"
         mode="dropdown"
         @update:filter="applyFilter"
+        data-test-id="select-address-filter-regions"
       />
 
       <FacetFilter
@@ -26,6 +28,7 @@
         :disabled="!filterOptionsCities.values?.length"
         mode="dropdown"
         @update:filter="applyFilter"
+        data-test-id="select-address-filter-cities"
       />
 
       <VcButton
@@ -36,6 +39,7 @@
         no-wrap
         class="select-address-filter__clear-filter-mobile"
         @click="resetFilter"
+        data-test-id="select-address-filter-reset-button-mobile"
       >
         {{ $t("common.buttons.reset_filters") }}
       </VcButton>
@@ -50,6 +54,7 @@
       clearable
       :disabled="pickupLocationsLoading"
       @keyup.enter="applyFilter"
+      test-id-input="select-address-filter-keyword-input"
     >
       <template #append>
         <VcButton
@@ -57,6 +62,7 @@
           :aria-label="$t('common.labels.search')"
           @click="applyFilter"
           :disabled="pickupLocationsLoading"
+          data-test-id="select-address-filter-apply-button"
         />
       </template>
     </VcInput>
