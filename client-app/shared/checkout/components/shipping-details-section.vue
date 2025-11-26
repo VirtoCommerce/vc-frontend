@@ -107,6 +107,7 @@
           ]"
         >
           <VcLoaderOverlay v-if="isLoadingBopisAddresses && isOpeningBopisAddresses" />
+
           <AddressSelection
             :disabled="!cart || isLoadingBopisAddresses || disabled"
             :address="deliveryAddress"

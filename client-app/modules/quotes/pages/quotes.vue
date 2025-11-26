@@ -8,6 +8,7 @@
 
       <VcButton size="sm" variant="outline" prepend-icon="plus" @click="requestQuote">
         <span class="hidden sm:inline">{{ $t("quotes.request_quote_button") }}</span>
+
         <span class="sm:hidden">{{ $t("quotes.request_quote_button") }}</span>
       </VcButton>
     </div>
@@ -112,6 +113,7 @@
                 <span class="text-sm text-neutral-400">
                   {{ $t("quotes.quote_number_label") }}
                 </span>
+
                 <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
               </div>
 
@@ -119,6 +121,7 @@
                 <span class="text-sm text-neutral-400">
                   {{ $t("quotes.date_label") }}
                 </span>
+
                 <div class="h-6 animate-pulse bg-neutral-200"></div>
               </div>
 
@@ -126,6 +129,7 @@
                 <span class="text-sm text-neutral-400">
                   {{ $t("quotes.total_label") }}
                 </span>
+
                 <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
               </div>
 
@@ -133,6 +137,7 @@
                 <span class="text-sm text-neutral-400">
                   {{ $t("quotes.status_label") }}
                 </span>
+
                 <div class="h-6 animate-pulse bg-neutral-200"></div>
               </div>
             </div>

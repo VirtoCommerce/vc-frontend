@@ -16,7 +16,7 @@ const route: RouteRecordRaw = {
     {
       path: "",
       name: ROUTES.ARTICLES.NAME,
-      component: NewsArticles, 
+      component: NewsArticles,
     },
     {
       path: "tag/:tag?",

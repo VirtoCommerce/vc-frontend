@@ -15,6 +15,7 @@
       >
         {{ `${index + 1}. ${getText(configurationItem)}` }}
       </li>
+
       <li>
         <VcButton v-if="allowEdit" size="xs" :to="editRoute" append-icon="edit" variant="outline">
           {{ $t("shared.cart.configuration_items.edit_configuration") }}

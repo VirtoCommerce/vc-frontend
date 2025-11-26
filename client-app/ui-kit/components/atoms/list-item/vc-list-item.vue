@@ -3,6 +3,7 @@
     <slot name="title">
       <div class="vc-list-item__title">{{ title }}</div>
     </slot>
+
     <slot>
       <div class="vc-list-item__description">
         {{ description }}

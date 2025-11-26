@@ -63,6 +63,7 @@
           <td class="min-w-20">
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.workingHours`) }}:</span>
           </td>
+
           <td><VcMarkdownRender :src="pickupLocation.workingHours" /></td>
         </tr>
 
@@ -70,6 +71,7 @@
           <td class="min-w-20">
             <span class="address-info-modal__label">{{ $t(`${TRANSLATION_KEYS_ORIGIN}.instructions`) }}:</span>
           </td>
+
           <td>{{ pickupLocation.description }}</td>
         </tr>
       </template>

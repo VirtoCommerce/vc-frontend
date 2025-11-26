@@ -3,10 +3,12 @@
     <slot v-if="loading" name="loader">
       <VcLoader />
     </slot>
+
     <slot v-else name="loaded">
       <VcIcon v-if="isPageLimitReached || pageNumber >= pagesCount" class="size-7 fill-primary" name="badge-check" />
 
       <span v-if="isPageLimitReached">{{ $t("ui_kit.reach_limit.page_limit_filters") }}</span>
+
       <span v-else-if="pageNumber >= pagesCount">{{ $t("ui_kit.reach_limit.end_list") }}</span>
     </slot>
   </div>
