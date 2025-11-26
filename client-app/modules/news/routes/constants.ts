@@ -1,12 +1,12 @@
 export const ROUTES = {
   ARTICLES: {
-    NAME: "NewsArticles", 
+    NAME: "NewsArticles",
   },
   ARTICLES_BY_AUTHOR: {
-    NAME: "NewsArticlesByAuthor", 
+    NAME: "NewsArticlesByAuthor",
   },
   ARTICLES_BY_TAG: {
-    NAME: "NewsArticlesByTag", 
+    NAME: "NewsArticlesByTag",
   },
   ARTICLE: {
     NAME: "NewsArticle",

@@ -1,11 +1,7 @@
 <template>
   <AccountNavigationItem :item="item">
     <template v-if="isOrdersPage">
-      <div
-        v-for="facet in statusFacet?.items"
-        :key="facet.term"
-        class="flex items-center gap-2 px-3 text-sm"
-      >
+      <div v-for="facet in statusFacet?.items" :key="facet.term" class="flex items-center gap-2 px-3 text-sm">
         <VcIcon class="flex-none fill-primary" size="xs" name="minus" />
 
         <button

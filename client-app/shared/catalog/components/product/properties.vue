@@ -44,11 +44,13 @@
                 <span v-if="isHTML(property)">
                   <VcMarkdownRender :src="String(property.value)" />
                 </span>
+
                 <span v-else-if="isBrand(property)">
                   <a :href="`/${brand?.permalink}`" class="text-[--link-color] hover:text-[--link-hover-color]">
                     {{ property.value }}
                   </a>
                 </span>
+
                 <span v-else>
                   {{ property.value }}
                 </span>
