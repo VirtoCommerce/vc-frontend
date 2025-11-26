@@ -62,7 +62,6 @@
                     height="40"
                     :src="socialSharingService.icon"
                     alt=""
-                    role="presentation"
                   />
                 </a>
               </div>
