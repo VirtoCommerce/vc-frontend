@@ -16,7 +16,7 @@
     :disabled="disabled"
     @click="onClick"
   >
-    <VcIcon :name="icon" :size="iconSize" />
+    <VcIcon :name="icon" :size="iconSize" aria-hidden="true" />
   </button>
 </template>
 

@@ -15,7 +15,7 @@
         <VcTooltip v-else>
           <template #trigger>
             <span class="product-price__unavailable">
-              <VcIcon name="information-circle" size="xs" />
+              <VcIcon name="information-circle" size="xs" aria-hidden="true" />
 
               {{ $t("common.labels.not_available") }}
             </span>
