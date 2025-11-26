@@ -103,7 +103,7 @@
           </GoogleMapMarkerClusterer>
         </GoogleMap>
 
-        <VcScrollbar vertical class="select-address-map-modal__sidebar">
+        <VcScrollbar vertical class="select-address-map-modal__sidebar" data-test-id="select-address-map-modal-list">
           <ul v-if="addresses.length" class="select-address-map-modal__list">
             <li
               v-for="address in addresses"
@@ -117,7 +117,7 @@
                 class="select-address-map-modal__radio-button"
                 size="sm"
                 @change="selectHandler(address, { scrollToSelectedOnMap: true })"
-                data-test-id="select-address-map-model-radio-button"
+                data-test-id="select-address-map-modal-radio-button"
               >
                 <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
 

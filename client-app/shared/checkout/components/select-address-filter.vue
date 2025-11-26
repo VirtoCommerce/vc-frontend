@@ -1,5 +1,5 @@
 <template>
-  <div class="select-address-filter">
+  <div class="select-address-filter" data-test-id="select-address-filter">
     <div class="select-address-filter__filter-group">
       <FacetFilter
         v-if="filterOptionsCountries"
