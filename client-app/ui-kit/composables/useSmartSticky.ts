@@ -234,6 +234,8 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     if (useDirectValues) {
       const containerRect = containerEl.getBoundingClientRect();
       const elementRect = element.getBoundingClientRect();
+      console.log("element:", element);
+      console.log("elementRect:", elementRect);
 
       dimensions.value.containerTop = containerRect.top + dimensions.value.viewportTop;
       dimensions.value.containerHeight = containerRect.height;
@@ -246,6 +248,8 @@ export function useSmartSticky(options: ISmartStickyOptions) {
 
       dimensions.value.elementHeight = elementBounding.height.value;
       dimensions.value.elementWidth = elementBounding.width.value;
+      console.log("element:", element);
+      console.log("elementBounding.width.value:", elementBounding.width.value);
     }
 
     dimensions.value.topSpacing = topSpacingResolved.value;
@@ -253,6 +257,8 @@ export function useSmartSticky(options: ISmartStickyOptions) {
   }
 
   function calculatePosition(useDirectValues = false) {
+    console.log("useDirectValues:", useDirectValues);
+    console.log("calculatePosition stickyElement:", toValue(stickyElement));
     if (!isEnabled.value) {
       resetPosition();
       return;
