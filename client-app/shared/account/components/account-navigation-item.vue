@@ -2,8 +2,10 @@
   <div class="account-navigation-item" :class="{ 'account-navigation-item--active': isActive }">
     <component :is="item?.route ? 'router-link' : 'a'" :to="item?.route" class="account-navigation-item__link">
       <VcIcon size="sm" class="account-navigation-item__icon" :name="item?.icon" />
+
       <span class="account-navigation-item__text">{{ formatTextFunction(item?.title) }}</span>
     </component>
+
     <slot />
   </div>
 </template>
