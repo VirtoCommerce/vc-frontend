@@ -160,14 +160,14 @@ function removeFilterCity(value: string) {
 
 <style lang="scss">
 .select-address-filter {
-  @apply flex flex-row items-center flex-wrap gap-2 pt-0 pb-3;
+  @apply flex items-center flex-wrap gap-2 pt-0 pb-3;
 
   &__filter-group {
-    @apply flex flex-row items-center gap-2 overflow-x-auto;
+    @apply flex items-center gap-2;
   }
 
   &__filter-keyword {
-    @apply grow w-full min-w-[10rem];
+    @apply grow w-full min-w-40;
 
     @media (min-width: theme("screens.md")) {
       @apply w-auto;
