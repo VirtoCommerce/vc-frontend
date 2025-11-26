@@ -71,6 +71,7 @@
 
               <OrderStatus size="sm" :status="order.status" :display-value="order.statusDisplayValue" />
             </div>
+
             <VcAlert
               v-if="order.cancelReason"
               class="mt-2.5"
@@ -150,6 +151,7 @@
                 class="size-12 print:hidden"
                 lazy
               />
+
               <span class="min-w-0 break-words">
                 {{ paymentMethodName }}
               </span>

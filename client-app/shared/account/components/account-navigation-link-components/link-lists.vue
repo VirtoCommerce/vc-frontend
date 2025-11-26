@@ -1,11 +1,7 @@
 <template>
   <AccountNavigationItem :item="item">
     <template v-if="isListDetails">
-      <div
-        v-for="list in lists"
-        :key="list.id"
-        class="flex items-center gap-2 px-3 text-sm"
-      >
+      <div v-for="list in lists" :key="list.id" class="flex items-center gap-2 px-3 text-sm">
         <VcIcon class="flex-none fill-primary" size="xs" name="minus" />
 
         <router-link

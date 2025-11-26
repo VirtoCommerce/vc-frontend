@@ -12,6 +12,7 @@
       <div class="w-full font-bold">
         {{ $t("shared.bulk_order.manually.product_sku_label") }}
       </div>
+
       <div class="w-1/3 max-w-[164px] font-bold xl:w-1/4">
         {{ $t("shared.bulk_order.manually.quantity_label") }}
       </div>
