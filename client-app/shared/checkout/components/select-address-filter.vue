@@ -163,7 +163,7 @@ function removeFilterCity(value: string) {
   @apply flex items-center flex-wrap gap-2 pb-2;
 
   &__filter-group {
-    @apply flex items-center gap-2 -mx-5 -mt-1 pt-1 px-5 pb-1.5;
+    @apply flex items-center gap-2 -mx-5 -my-1 py-1 px-5;
   }
 
   &__filter-keyword {
