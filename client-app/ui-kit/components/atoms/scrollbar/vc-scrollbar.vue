@@ -7,6 +7,7 @@
         'vc-scrollbar--vertical': vertical,
         'vc-scrollbar--horizontal': horizontal,
         'vc-scrollbar--disabled': disabled,
+        'vc-scrollbar--no-bar': noBar,
       },
     ]"
   >
@@ -22,6 +23,7 @@ interface IProps {
   disabled?: boolean;
   vertical?: boolean;
   horizontal?: boolean;
+  noBar?: boolean;
   tag?: string;
   trackColor?: string;
   thumbColor?: string;
@@ -31,6 +33,7 @@ const props = withDefaults(defineProps<IProps>(), {
   vertical: false,
   horizontal: false,
   disabled: false,
+  noBar: false,
   tag: "div",
 });
 
@@ -43,6 +46,7 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
   $vertical: "";
   $horizontal: "";
   $disabled: "";
+  $no-bar: "";
 
   --props-track-color: v-bind(_trackColor);
   --track-color: var(--vc-scrollbar-track-color, var(--props-track-color, theme("colors.neutral.100")));
@@ -68,6 +72,21 @@ const _thumbColor = computed(() => getColorValue(props.thumbColor));
     $disabled: &;
 
     @apply overflow-hidden !important;
+  }
+
+  &--no-bar {
+    $no-bar: &;
+
+    /* Firefox */
+    scrollbar-width: none;
+
+    /* IE and Edge */
+    -ms-overflow-style: none;
+
+    /* WebKit browsers (Chrome, Safari) */
+    &::-webkit-scrollbar {
+      @apply hidden;
+    }
   }
 
   &#{$vertical}:not(#{$horizontal}) {
