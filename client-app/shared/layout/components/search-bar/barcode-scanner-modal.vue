@@ -25,6 +25,7 @@
     >
       <track kind="captions" :label="$t('shared.layout.search_bar.barcode_detector.title')" default disabled src="" />
     </video>
+
     <input
       ref="fileInputRef"
       type="file"
@@ -37,6 +38,7 @@
       <VcButton class="barcode-scanner-modal__action-cancel" color="secondary" variant="outline" @click="close">
         {{ $t("shared.layout.search_bar.barcode_detector.cancel") }}
       </VcButton>
+
       <VcButton
         class="barcode-scanner-modal__action-browse"
         color="secondary"

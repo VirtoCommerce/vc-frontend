@@ -4,7 +4,9 @@
   </component>
 
   <ModalHost />
+
   <NotificationsHost />
+
   <EnvironmentBadge />
 
   <teleport to="body">

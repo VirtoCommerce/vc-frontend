@@ -3,7 +3,7 @@ module.exports = {
   extends: "./.dependency-cruiser.cjs",
   options: {
     exclude: {
-      dynamic: true
-    }
-  }
+      dynamic: true,
+    },
+  },
 };

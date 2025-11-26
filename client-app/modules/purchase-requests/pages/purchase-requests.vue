@@ -64,6 +64,7 @@
                   <span class="text-sm text-neutral-400">
                     {{ $t("purchase_requests.purchase_request_number_label") }}
                   </span>
+
                   <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
                 </div>
 
@@ -71,6 +72,7 @@
                   <span class="text-sm text-neutral-400">
                     {{ $t("purchase_requests.date_label") }}
                   </span>
+
                   <div class="h-6 animate-pulse bg-neutral-200"></div>
                 </div>
               </div>
