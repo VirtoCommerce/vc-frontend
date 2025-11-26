@@ -13,6 +13,7 @@
         :name="section.name"
         data-test-id="custom-input-radio"
       />
+
       <VcInput
         v-model="customInput"
         :maxlength="MAX_LENGTH"

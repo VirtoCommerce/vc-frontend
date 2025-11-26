@@ -94,7 +94,7 @@ export async function fixLocales() {
     }
   }
 
-  console.log('\n✅ Translation completed successfully\n');
+  console.log("\n✅ Translation completed successfully\n");
   const elapsedSeconds = ((Date.now() - startTimeMs) / 1000).toFixed(1);
   console.log(`🕐 Took ${elapsedSeconds}s in total\n---\n`);
 }

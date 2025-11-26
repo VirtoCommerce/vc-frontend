@@ -6,7 +6,6 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 
 // Mock the getCategoryRoute function
 vi.mock("@/core/utilities/categories", () => ({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   getCategoryRoute: vi.fn().mockImplementation((category) => `/category/${category.id}`),
 }));
 

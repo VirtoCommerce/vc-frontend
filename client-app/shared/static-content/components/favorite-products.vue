@@ -11,7 +11,9 @@
       <template v-if="title" #header>
         <VcTypography tag="h3">
           <span :style="{ color: title?.color }">{{ title?.text }}</span>
+
           <span class="text-primary-400"> / </span>
+
           <span :style="{ color: subtitle?.color }">{{ subtitle?.text }}</span>
         </VcTypography>
       </template>
