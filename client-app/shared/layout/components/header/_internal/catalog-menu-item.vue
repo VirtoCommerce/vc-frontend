@@ -9,9 +9,11 @@
     >
       {{ item.title }}
     </a>
+
     <router-link v-else class="catalog-menu-link" :to="item.route ?? '#'" @click="select">
       {{ item.title }}
     </router-link>
+
     <div>
       <template v-for="(child, index) in visibleChildren" :key="index">
         <a
@@ -23,6 +25,7 @@
         >
           {{ child.title }}
         </a>
+
         <router-link v-else class="catalog-menu-child-link" :to="child.route ?? '#'" @click="select">
           {{ child.title }}
         </router-link>

@@ -9,7 +9,7 @@ export function compareConfigurationInputs(
 ): boolean {
   const type1 = input1.type;
   const type2 = input2.type;
-  
+
   if (type1 !== type2) {
     return false;
   }

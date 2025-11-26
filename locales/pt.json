@@ -708,6 +708,7 @@
         "cancel_button": "Cancelar",
         "ok_button": "OK",
         "no_results": "Nenhum resultado encontrado",
+        "no_branches": "Nenhuma filial encontrada",
         "reset_search_button": "Resetar pesquisa"
       },
       "shipment_options": {

@@ -13,6 +13,7 @@
 
       <div class="mb-4 flex justify-between text-base font-black">
         <span>{{ $t("common.labels.subtotal") }}</span>
+
         <span><VcPriceDisplay :value="cart.subTotal!" data-test-id="cart-subtotal-label" /></span>
       </div>
 
@@ -44,6 +45,7 @@
               <li v-for="(discount, index) in cart.discounts" :key="index">
                 <div class="flex items-center justify-between">
                   <span class="text-sm">{{ discount.description || discount.coupon }}</span>
+
                   <VcTotalDisplay
                     :amount="-getDiscountAmount(discount)"
                     :currency-code="currentCurrency.code"
@@ -55,6 +57,7 @@
               <li v-if="lineItemsDiscountTotal > 0">
                 <div class="flex items-center justify-between">
                   <span class="text-sm">{{ $t("common.labels.line_items") }}</span>
+
                   <VcTotalDisplay
                     :amount="-lineItemsDiscountTotal"
                     :currency-code="currentCurrency.code"
@@ -66,6 +69,7 @@
               <li v-if="shippingDiscountTotal > 0">
                 <div class="flex items-center justify-between">
                   <span class="text-sm">{{ $t("common.labels.shipping") }}</span>
+
                   <VcTotalDisplay
                     :amount="-shippingDiscountTotal"
                     :currency-code="currentCurrency.code"
@@ -79,6 +83,7 @@
 
         <div class="flex justify-between">
           <span>{{ $t("common.labels.tax") }}</span>
+
           <span>
             {{ cart.taxTotal?.amount > 0 ? "+" : "" }}
             <VcPriceDisplay v-if="cart.taxTotal" :value="cart.taxTotal" data-test-id="cart-tax-total-label" />
@@ -87,6 +92,7 @@
 
         <div v-if="!noShipping" class="flex justify-between">
           <span>{{ $t("common.labels.shipping_cost") }}</span>
+
           <span>
             {{ shippingPrice?.amount > 0 ? "+" : "" }}
             <VcPriceDisplay :value="shippingPrice" data-test-id="cart-shipping-total-label" />
@@ -96,6 +102,7 @@
 
       <div class="mt-4 flex justify-between text-base font-black">
         <span>{{ $t("common.labels.total") }}</span>
+
         <span class="text-[--price-color] print:text-inherit">
           <VcPriceDisplay v-if="cart.total" :value="cart.total" data-test-id="cart-total-label" />
         </span>

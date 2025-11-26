@@ -5,12 +5,15 @@
         <div class="pt-0.5">
           <VcRadioButton v-model="selectedRoleId" :value="role.id" />
         </div>
+
         <div class="grow">
           <b>{{ role.name }}</b>
+
           <div v-if="role.description">
             {{ role.description }}
           </div>
         </div>
+
         <div class="pt-0.5">
           <RoleIcon :role-id="role.id" />
         </div>
