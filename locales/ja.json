@@ -302,8 +302,7 @@
       "switch_to_list_view": "リスト表示に切り替え",
       "no_image": "画像がありません",
       "image": "画像",
-      "close_share_menu": "共有メニューを閉じる",
-      "open_share_menu": "共有メニューを開く"
+      "share_via_opens_in_new_window": "{service}で共有（新しいウィンドウで開きます）"
     }
   },
   "shared": {

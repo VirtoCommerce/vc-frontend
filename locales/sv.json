@@ -302,8 +302,7 @@
       "switch_to_list_view": "Växla till listvy",
       "no_image": "Ingen bild tillgänglig",
       "image": "Bild",
-      "close_share_menu": "Stäng delningsmenyn",
-      "open_share_menu": "Öppna delningsmenyn"
+      "share_via_opens_in_new_window": "Dela via {service} (öppnas i nytt fönster)"
     }
   },
   "shared": {

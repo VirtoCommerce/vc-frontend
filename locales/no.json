@@ -302,8 +302,7 @@
       "switch_to_list_view": "Bytt til listevisning",
       "no_image": "Bilde ikke tilgjengelig",
       "image": "Bilde",
-      "close_share_menu": "Lukk delingsmeny",
-      "open_share_menu": "Åpne delingsmeny"
+      "share_via_opens_in_new_window": "Del via {service} (åpnes i nytt vindu)"
     }
   },
   "shared": {

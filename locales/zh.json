@@ -302,8 +302,7 @@
       "switch_to_list_view": "切换到列表视图",
       "no_image": "没有可用图片",
       "image": "图片",
-      "close_share_menu": "关闭分享菜单",
-      "open_share_menu": "打开分享菜单"
+      "share_via_opens_in_new_window": "通过{service}分享（在新窗口中打开）"
     }
   },
   "shared": {

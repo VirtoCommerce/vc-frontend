@@ -19,11 +19,11 @@
           <template #default="{ triggerProps, opened }">
             <button
               type="button"
-              :aria-label="$t('common.accessibility.open_share_menu')"
+              :aria-label="$t('common.buttons.share')"
               :class="['product-price-block__share-button', { 'product-price-block__share-button--active': opened }]"
               v-bind="triggerProps"
             >
-              <VcIcon name="share" size="sm" :aria-label="$t('common.buttons.share')" />
+              <VcIcon name="share" size="sm" aria-hidden="true" />
             </button>
           </template>
 
@@ -37,10 +37,10 @@
                 <button
                   class="product-price-block__share-close"
                   type="button"
-                  :aria-label="$t('common.accessibility.close_share_menu')"
+                  :aria-label="$t('ui_kit.buttons.close')"
                   @click="close()"
                 >
-                  <VcIcon name="delete-thin" size="sm" />
+                  <VcIcon name="delete-thin" size="sm" aria-hidden="true" />
                 </button>
               </h3>
 
@@ -49,8 +49,11 @@
                   v-for="socialSharingService in $cfg.social_sharing_services"
                   :key="socialSharingService.name"
                   target="_blank"
+                  rel="noopener noreferrer"
                   :href="getProductSocialShareUrl(socialSharingService.url_template, pageUrl)"
-                  :aria-label="`Share via ${socialSharingService.name}`"
+                  :aria-label="
+                    $t('common.accessibility.share_via_opens_in_new_window', { service: socialSharingService.name })
+                  "
                   class="product-price-block__share-service"
                 >
                   <VcImage
@@ -58,7 +61,8 @@
                     width="40"
                     height="40"
                     :src="socialSharingService.icon"
-                    :alt="socialSharingService.name"
+                    alt=""
+                    role="presentation"
                   />
                 </a>
               </div>
@@ -70,9 +74,10 @@
           :href="mailToLink"
           :aria-label="$t('common.buttons.send_link_email')"
           target="_blank"
+          rel="noopener noreferrer"
           class="product-price-block__mail-link"
         >
-          <VcIcon name="mail" size="sm" />
+          <VcIcon name="mail" size="sm" aria-hidden="true" />
         </a>
 
         <button
@@ -81,7 +86,7 @@
           type="button"
           @click="print()"
         >
-          <VcIcon name="printer" size="sm" />
+          <VcIcon name="printer" size="sm" aria-hidden="true" />
         </button>
       </div>
     </template>

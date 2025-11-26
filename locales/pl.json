@@ -302,8 +302,7 @@
       "switch_to_list_view": "Przełącz na widok listy",
       "no_image": "Obraz niedostępny",
       "image": "Obraz",
-      "close_share_menu": "Zamknij menu udostępniania",
-      "open_share_menu": "Otwórz menu udostępniania"
+      "share_via_opens_in_new_window": "Udostępnij przez {service} (otwiera się w nowym oknie)"
     }
   },
   "shared": {

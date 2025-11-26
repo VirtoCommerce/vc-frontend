@@ -302,8 +302,7 @@
       "switch_to_list_view": "Switch to list view",
       "no_image": "No image available",
       "image": "Image",
-      "close_share_menu": "Close share menu",
-      "open_share_menu": "Open share menu"
+      "share_via_opens_in_new_window": "Share via {service} (opens in new window)"
     }
   },
   "shared": {

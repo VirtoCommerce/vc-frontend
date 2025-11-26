@@ -302,8 +302,7 @@
       "switch_to_list_view": "Zur Listenansicht wechseln",
       "no_image": "Kein Bild verfügbar",
       "image": "Bild",
-      "close_share_menu": "Teilen-Menü schließen",
-      "open_share_menu": "Teilen-Menü öffnen"
+      "share_via_opens_in_new_window": "Über {service} teilen (öffnet in neuem Fenster)"
     }
   },
   "shared": {

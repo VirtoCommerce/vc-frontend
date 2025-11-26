@@ -302,8 +302,7 @@
       "switch_to_list_view": "Vaihda listanäkymään",
       "no_image": "Kuvaa ei ole saatavilla",
       "image": "Kuva",
-      "close_share_menu": "Sulje jakamisvalikko",
-      "open_share_menu": "Avaa jakamisvalikko"
+      "share_via_opens_in_new_window": "Jaa palvelun {service} kautta (avautuu uuteen ikkunaan)"
     }
   },
   "shared": {
