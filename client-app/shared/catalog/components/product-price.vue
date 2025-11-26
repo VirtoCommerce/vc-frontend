@@ -88,7 +88,7 @@
     </template>
 
     <template v-else>
-      <div class="product-price__header product-price__header--centered">
+      <div class="product-price__header">
         <div class="product-price__label">
           {{ $t("pages.product.price_label") }}
         </div>
@@ -182,15 +182,11 @@ const price = computed<PriceType | { actual: MoneyType; list: MoneyType } | unde
 <style lang="scss" scoped>
 .product-price {
   &__header {
-    @apply flex justify-between gap-x-2;
+    @apply flex items-center justify-between gap-x-2;
+  }
 
-    &:not(&--centered) {
-      @apply text-base font-bold;
-    }
-
-    &--centered {
-      @apply items-center;
-    }
+  &__label {
+    @apply text-base font-bold;
   }
 
   &__unavailable {
