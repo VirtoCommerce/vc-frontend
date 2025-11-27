@@ -7,16 +7,30 @@
         'vc-variant-picker--active': checked,
         'vc-variant-picker--unavailable': !checked && !isAvailable,
         'vc-variant-picker--square': type !== 'text',
+        'vc-variant-picker--multicolor': isMultiColor,
       },
     ]"
   >
     <label class="vc-variant-picker__container">
-      <span v-if="type === 'color'" class="vc-variant-picker__color" />
+      <span v-if="type === 'color' && !isMultiColor" class="vc-variant-picker__color" />
 
-      <VcImage v-else-if="type === 'image'" :src="image" :alt="value" class="vc-variant-picker__img" />
+      <span
+        v-else-if="type === 'color' && isMultiColor"
+        class="vc-variant-picker__color-grid"
+        :data-count="colorsList.length"
+      >
+        <span
+          v-for="(colorValue, index) in colorsList"
+          :key="index"
+          class="vc-variant-picker__color-item"
+          :style="{ backgroundColor: colorValue }"
+        />
+      </span>
+
+      <VcImage v-else-if="type === 'image'" :src="image" :alt="displayValue" class="vc-variant-picker__img" />
 
       <span v-else class="vc-variant-picker__text">
-        {{ value }}
+        {{ displayValue }}
       </span>
 
       <VcTooltip :disabled="!tooltip && !$slots.tooltip" class="vc-variant-picker__tooltip">
@@ -25,9 +39,9 @@
             :checked="checked"
             class="vc-variant-picker__input"
             :type="multiple ? 'checkbox' : 'radio'"
-            :aria-label="tooltip ?? value"
+            :aria-label="tooltip ?? valueForComparison"
             :name="name"
-            :value="value"
+            :value="valueForComparison"
             :data-test-id="testId"
             :tabindex="tabindex ?? '0'"
             v-bind="triggerProps"
@@ -52,7 +66,7 @@ import { getColorValue } from "@/ui-kit/utilities";
 interface IProps {
   type?: VcVariantPickerType;
   modelValue?: string | string[];
-  value: string;
+  value: string | string[];
   size?: VcVariantPickerSizeType;
   name?: string;
   isAvailable?: boolean;
@@ -69,32 +83,53 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const model = defineModel<IProps["modelValue"]>();
 
+const normalizedValue = computed(() => (Array.isArray(props.value) ? props.value : [props.value]));
+
+const isMultiColor = computed(
+  () => props.type === "color" && Array.isArray(props.value) && props.value.length >= 2 && props.value.length <= 4,
+);
+
+const colorsList = computed(() => {
+  if (!isMultiColor.value) {
+    const singleValue = normalizedValue.value[0];
+    return [getColorValue(singleValue)].filter(Boolean);
+  }
+
+  return normalizedValue.value.map((v) => getColorValue(v)).filter(Boolean);
+});
+
+const displayValue = computed(() => normalizedValue.value[0]);
+
+const valueForComparison = computed(() => (Array.isArray(props.value) ? props.value.join("|") : props.value));
+
 const multiple = computed(() => Array.isArray(model.value));
+
 const checked = computed(() => {
   if (multiple.value) {
-    return Array.isArray(model.value) && model.value.includes(props.value);
+    return Array.isArray(model.value) && model.value.includes(valueForComparison.value);
   } else {
-    return model.value === props.value;
+    return model.value === valueForComparison.value;
   }
 });
 
-const color = computed(() => (props.type === "color" ? getColorValue(props.value) : undefined));
-const image = computed(() => (props.type === "image" ? props.value : ""));
+const color = computed(() => (props.type === "color" && !isMultiColor.value ? colorsList.value[0] : undefined));
+
+const image = computed(() => (props.type === "image" ? displayValue.value : ""));
 
 function toggleValue(): void {
   if (multiple.value) {
     const currentValue = Array.isArray(model.value) ? model.value : [];
-    const index = currentValue.indexOf(props.value);
+    const index = currentValue.indexOf(valueForComparison.value);
 
     if (index > -1) {
       const newValue = [...currentValue];
       newValue.splice(index, 1);
       model.value = newValue;
     } else {
-      model.value = [...currentValue, props.value];
+      model.value = [...currentValue, valueForComparison.value];
     }
   } else {
-    model.value = props.value;
+    model.value = valueForComparison.value;
   }
 }
 </script>
@@ -225,6 +260,33 @@ function toggleValue(): void {
 
   &__color {
     @apply grow rounded-[calc(var(--radius)-2px)] bg-[--color];
+  }
+
+  &__color-grid {
+    @apply grow grid rounded-[calc(var(--radius)-2px)] overflow-hidden;
+
+    &[data-count="2"] {
+      grid-template-rows: repeat(2, 1fr);
+      grid-template-columns: 1fr;
+    }
+
+    &[data-count="3"] {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+
+      .vc-variant-picker__color-item:first-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    &[data-count="4"] {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }
+  }
+
+  &__color-item {
+    @apply min-h-0 min-w-0;
   }
 
   &__img {

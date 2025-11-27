@@ -108,3 +108,48 @@ export const UnavailableText: StoryType = {
     isAvailable: false,
   },
 };
+
+export const MultiColor1Color: StoryType = {
+  args: {
+    type: "color",
+    value: ["red"],
+    isAvailable: true,
+    tooltip: "Red",
+  },
+};
+
+export const MultiColor2Colors: StoryType = {
+  args: {
+    type: "color",
+    value: ["red", "blue"],
+    isAvailable: true,
+    tooltip: "Red & Blue",
+  },
+};
+
+export const MultiColor3Colors: StoryType = {
+  args: {
+    type: "color",
+    value: ["red", "green", "blue"],
+    isAvailable: true,
+    tooltip: "Red, Green & Blue",
+  },
+};
+
+export const MultiColor4Colors: StoryType = {
+  args: {
+    type: "color",
+    value: ["#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A"],
+    isAvailable: true,
+    tooltip: "Custom colors",
+  },
+};
+
+export const MultiColorUnavailable: StoryType = {
+  args: {
+    type: "color",
+    value: ["red", "blue"],
+    isAvailable: false,
+    tooltip: "Unavailable multicolor",
+  },
+};

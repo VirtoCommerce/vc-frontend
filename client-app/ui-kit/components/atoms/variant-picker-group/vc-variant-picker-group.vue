@@ -5,6 +5,7 @@
     role="radiogroup"
     :aria-label="ariaLabelValue"
     tabindex="-1"
+    @focus="($event.target as HTMLElement).blur()"
     @keydown.tab="onTabKey"
     @keydown.right.prevent="navigateBy('next', $event.target)"
     @keydown.down.prevent="navigateBy('next', $event.target)"

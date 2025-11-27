@@ -361,3 +361,199 @@ export const Tooltips = TemplateTooltips.bind({});
 Tooltips.args = {
   name: "tooltips",
 };
+
+const TemplateMultiColor: StoryFn = (args) => ({
+  components: { VcVariantPickerGroup, VcVariantPicker },
+  setup: () => {
+    const model = ref();
+    return { args, model };
+  },
+  template: `<VcVariantPickerGroup v-bind="args">
+    <VcVariantPicker v-model="model" :name="args.name" :value="['red', 'blue']" is-available tooltip="Red & Blue" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['green', 'yellow']" is-available tooltip="Green & Yellow" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['orange', 'purple']" tooltip="Orange & Purple" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['pink', 'cyan']" is-available tooltip="Pink & Cyan" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['red', 'green', 'blue']" is-available tooltip="RGB" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['yellow', 'magenta', 'cyan']" tooltip="CMY" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['red', 'orange', 'yellow', 'green']" is-available tooltip="Warm Colors" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']" is-available tooltip="Custom Mix" />
+  </VcVariantPickerGroup>`,
+});
+
+export const MultiColor = TemplateMultiColor.bind({});
+MultiColor.args = {
+  name: "multicolor",
+};
+
+const TemplateMultiColorShowMore: StoryFn = (args) => ({
+  components: { VcVariantPickerGroup, VcVariantPicker },
+  setup: () => {
+    const model = ref();
+    return { args, model };
+  },
+  template: `<VcVariantPickerGroup v-bind="args">
+    <VcVariantPicker v-model="model" :name="args.name" value="red" is-available tooltip="Solid Red" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['red', 'blue']" is-available tooltip="Red & Blue" />
+    <VcVariantPicker v-model="model" :name="args.name" value="green" is-available tooltip="Solid Green" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['yellow', 'orange']" is-available tooltip="Yellow & Orange" />
+    <VcVariantPicker v-model="model" :name="args.name" value="purple" is-available tooltip="Solid Purple" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['pink', 'purple', 'blue']" is-available tooltip="Pink, Purple & Blue" />
+    <VcVariantPicker v-model="model" :name="args.name" value="cyan" tooltip="Solid Cyan" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['red', 'orange', 'yellow', 'green']" is-available tooltip="Rainbow" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['black', 'white']" is-available tooltip="Black & White" />
+    <VcVariantPicker v-model="model" :name="args.name" value="brown" tooltip="Solid Brown" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['brown', 'beige']" is-available tooltip="Brown & Beige" />
+    <VcVariantPicker v-model="model" :name="args.name" value="gray" is-available tooltip="Solid Gray" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['navy', 'white', 'red']" is-available tooltip="Nautical" />
+    <VcVariantPicker v-model="model" :name="args.name" value="olive" tooltip="Solid Olive" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['gold', 'silver']" is-available tooltip="Gold & Silver" />
+    <VcVariantPicker v-model="model" :name="args.name" value="maroon" is-available tooltip="Solid Maroon" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['crimson', 'coral', 'salmon']" tooltip="Coral Tones" />
+    <VcVariantPicker v-model="model" :name="args.name" value="teal" is-available tooltip="Solid Teal" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['lime', 'green', 'teal', 'cyan']" is-available tooltip="Green Spectrum" />
+    <VcVariantPicker v-model="model" :name="args.name" value="violet" tooltip="Solid Violet" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['#FF6B6B', '#4ECDC4']" is-available tooltip="Custom Duo 1" />
+    <VcVariantPicker v-model="model" :name="args.name" value="#45B7D1" is-available tooltip="Custom Blue" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['#FFA07A', '#98D8C8', '#F7DC6F']" tooltip="Pastel Mix" />
+    <VcVariantPicker v-model="model" :name="args.name" value="indigo" is-available tooltip="Solid Indigo" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['indigo', 'violet', 'purple', 'magenta']" is-available tooltip="Purple Spectrum" />
+    <VcVariantPicker v-model="model" :name="args.name" value="turquoise" tooltip="Solid Turquoise" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['aqua', 'turquoise']" is-available tooltip="Aqua Mix" />
+    <VcVariantPicker v-model="model" :name="args.name" value="salmon" is-available tooltip="Solid Salmon" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['salmon', 'coral', 'peachpuff']" tooltip="Peachy Tones" />
+    <VcVariantPicker v-model="model" :name="args.name" value="khaki" is-available tooltip="Solid Khaki" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['khaki', 'tan', 'beige', 'wheat']" is-available tooltip="Earth Tones" />
+    <VcVariantPicker v-model="model" :name="args.name" value="plum" tooltip="Solid Plum" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['plum', 'orchid']" is-available tooltip="Plum & Orchid" />
+    <VcVariantPicker v-model="model" :name="args.name" value="chocolate" is-available tooltip="Solid Chocolate" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['chocolate', 'sienna', 'peru']" tooltip="Brown Spectrum" />
+    <VcVariantPicker v-model="model" :name="args.name" value="orange" is-available tooltip="Solid Orange" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['orange', 'red']" is-available tooltip="Warm Duo" />
+    <VcVariantPicker v-model="model" :name="args.name" value="yellow" tooltip="Solid Yellow" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['blue', 'cyan', 'teal']" is-available tooltip="Ocean Tones" />
+    <VcVariantPicker v-model="model" :name="args.name" value="magenta" is-available tooltip="Solid Magenta" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['pink', 'coral']" tooltip="Pink & Coral" />
+    <VcVariantPicker v-model="model" :name="args.name" value="navy" is-available tooltip="Solid Navy" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['gray', 'silver', 'white']" is-available tooltip="Silver Spectrum" />
+    <VcVariantPicker v-model="model" :name="args.name" value="lime" tooltip="Solid Lime" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['crimson', 'maroon']" is-available tooltip="Deep Reds" />
+    <VcVariantPicker v-model="model" :name="args.name" value="coral" is-available tooltip="Solid Coral" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['yellow', 'gold', 'orange', 'red']" tooltip="Fire Spectrum" />
+    <VcVariantPicker v-model="model" :name="args.name" value="peru" is-available tooltip="Solid Peru" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['lavender', 'purple']" is-available tooltip="Lavender & Purple" />
+    <VcVariantPicker v-model="model" :name="args.name" value="sienna" tooltip="Solid Sienna" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['teal', 'turquoise', 'cyan', 'aqua']" is-available tooltip="Aquatic Colors" />
+    <VcVariantPicker v-model="model" :name="args.name" value="tan" is-available tooltip="Solid Tan" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['red', 'pink']" tooltip="Red & Pink" />
+    <VcVariantPicker v-model="model" :name="args.name" value="wheat" is-available tooltip="Solid Wheat" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['blue', 'indigo', 'violet']" is-available tooltip="Blue-Violet Mix" />
+    <VcVariantPicker v-model="model" :name="args.name" value="orchid" tooltip="Solid Orchid" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['green', 'lime', 'yellow']" is-available tooltip="Spring Colors" />
+    <VcVariantPicker v-model="model" :name="args.name" value="tomato" is-available tooltip="Solid Tomato" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['brown', 'chocolate', 'sienna', 'peru']" tooltip="Chocolate Spectrum" />
+    <VcVariantPicker v-model="model" :name="args.name" value="#E91E63" is-available tooltip="Custom Pink" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['#9C27B0', '#673AB7']" tooltip="Custom Purple Duo" />
+    <VcVariantPicker v-model="model" :name="args.name" value="#00BCD4" is-available tooltip="Custom Cyan" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['#FF5722', '#FF9800', '#FFC107']" is-available tooltip="Custom Orange Mix" />
+    <VcVariantPicker v-model="model" :name="args.name" value="#8BC34A" tooltip="Custom Light Green" />
+    <VcVariantPicker v-model="model" :name="args.name" :value="['#3F51B5', '#2196F3', '#03A9F4', '#00BCD4']" is-available tooltip="Custom Blue Gradient" />
+  </VcVariantPickerGroup>`,
+});
+
+export const MultiColorShowMore = TemplateMultiColorShowMore.bind({});
+MultiColorShowMore.args = {
+  truncate: true,
+  name: "multicolor-show-more",
+};
+
+const TemplateMultiColorSizes: StoryFn = (args) => ({
+  components: { VcVariantPickerGroup, VcVariantPicker },
+  setup: () => {
+    const model = ref();
+    return { args, model };
+  },
+  template: `
+    <div class="space-y-6">
+      <div>
+        <h3 class="mb-2 text-sm font-bold">Size: XXS</h3>
+        <VcVariantPickerGroup v-bind="args">
+          <VcVariantPicker v-model="model" :name="args.name" size="xxs" :value="['red', 'blue']" is-available tooltip="Red & Blue" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xxs" :value="['green', 'yellow']" is-available tooltip="Green & Yellow" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xxs" :value="['orange', 'purple']" tooltip="Orange & Purple" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xxs" :value="['pink', 'cyan']" is-available tooltip="Pink & Cyan" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xxs" :value="['red', 'green', 'blue']" is-available tooltip="RGB" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xxs" :value="['yellow', 'magenta', 'cyan']" tooltip="CMY" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xxs" :value="['brown', 'beige', 'tan']" is-available tooltip="Earth Tones" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xxs" :value="['purple', 'pink', 'magenta', 'violet']" tooltip="Purple Mix" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xxs" :value="['red', 'orange', 'yellow', 'green']" is-available tooltip="Rainbow" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xxs" :value="['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']" is-available tooltip="Custom Mix" />
+        </VcVariantPickerGroup>
+      </div>
+      <div>
+        <h3 class="mb-2 text-sm font-bold">Size: XS</h3>
+        <VcVariantPickerGroup v-bind="args">
+          <VcVariantPicker v-model="model" :name="args.name" size="xs" :value="['red', 'blue']" is-available tooltip="Red & Blue" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xs" :value="['green', 'yellow']" is-available tooltip="Green & Yellow" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xs" :value="['orange', 'purple']" tooltip="Orange & Purple" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xs" :value="['pink', 'cyan']" is-available tooltip="Pink & Cyan" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xs" :value="['red', 'green', 'blue']" is-available tooltip="RGB" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xs" :value="['yellow', 'magenta', 'cyan']" tooltip="CMY" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xs" :value="['brown', 'beige', 'tan']" is-available tooltip="Earth Tones" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xs" :value="['purple', 'pink', 'magenta', 'violet']" tooltip="Purple Mix" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xs" :value="['red', 'orange', 'yellow', 'green']" is-available tooltip="Rainbow" />
+          <VcVariantPicker v-model="model" :name="args.name" size="xs" :value="['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']" is-available tooltip="Custom Mix" />
+        </VcVariantPickerGroup>
+      </div>
+      <div>
+        <h3 class="mb-2 text-sm font-bold">Size: SM</h3>
+        <VcVariantPickerGroup v-bind="args">
+          <VcVariantPicker v-model="model" :name="args.name" size="sm" :value="['red', 'blue']" is-available tooltip="Red & Blue" />
+          <VcVariantPicker v-model="model" :name="args.name" size="sm" :value="['green', 'yellow']" is-available tooltip="Green & Yellow" />
+          <VcVariantPicker v-model="model" :name="args.name" size="sm" :value="['orange', 'purple']" tooltip="Orange & Purple" />
+          <VcVariantPicker v-model="model" :name="args.name" size="sm" :value="['pink', 'cyan']" is-available tooltip="Pink & Cyan" />
+          <VcVariantPicker v-model="model" :name="args.name" size="sm" :value="['red', 'green', 'blue']" is-available tooltip="RGB" />
+          <VcVariantPicker v-model="model" :name="args.name" size="sm" :value="['yellow', 'magenta', 'cyan']" tooltip="CMY" />
+          <VcVariantPicker v-model="model" :name="args.name" size="sm" :value="['brown', 'beige', 'tan']" is-available tooltip="Earth Tones" />
+          <VcVariantPicker v-model="model" :name="args.name" size="sm" :value="['purple', 'pink', 'magenta', 'violet']" tooltip="Purple Mix" />
+          <VcVariantPicker v-model="model" :name="args.name" size="sm" :value="['red', 'orange', 'yellow', 'green']" is-available tooltip="Rainbow" />
+          <VcVariantPicker v-model="model" :name="args.name" size="sm" :value="['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']" is-available tooltip="Custom Mix" />
+        </VcVariantPickerGroup>
+      </div>
+      <div>
+        <h3 class="mb-2 text-sm font-bold">Size: MD (default)</h3>
+        <VcVariantPickerGroup v-bind="args">
+          <VcVariantPicker v-model="model" :name="args.name" size="md" :value="['red', 'blue']" is-available tooltip="Red & Blue" />
+          <VcVariantPicker v-model="model" :name="args.name" size="md" :value="['green', 'yellow']" is-available tooltip="Green & Yellow" />
+          <VcVariantPicker v-model="model" :name="args.name" size="md" :value="['orange', 'purple']" tooltip="Orange & Purple" />
+          <VcVariantPicker v-model="model" :name="args.name" size="md" :value="['pink', 'cyan']" is-available tooltip="Pink & Cyan" />
+          <VcVariantPicker v-model="model" :name="args.name" size="md" :value="['red', 'green', 'blue']" is-available tooltip="RGB" />
+          <VcVariantPicker v-model="model" :name="args.name" size="md" :value="['yellow', 'magenta', 'cyan']" tooltip="CMY" />
+          <VcVariantPicker v-model="model" :name="args.name" size="md" :value="['brown', 'beige', 'tan']" is-available tooltip="Earth Tones" />
+          <VcVariantPicker v-model="model" :name="args.name" size="md" :value="['purple', 'pink', 'magenta', 'violet']" tooltip="Purple Mix" />
+          <VcVariantPicker v-model="model" :name="args.name" size="md" :value="['red', 'orange', 'yellow', 'green']" is-available tooltip="Rainbow" />
+          <VcVariantPicker v-model="model" :name="args.name" size="md" :value="['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']" is-available tooltip="Custom Mix" />
+        </VcVariantPickerGroup>
+      </div>
+      <div>
+        <h3 class="mb-2 text-sm font-bold">Size: LG</h3>
+        <VcVariantPickerGroup v-bind="args">
+          <VcVariantPicker v-model="model" :name="args.name" size="lg" :value="['red', 'blue']" is-available tooltip="Red & Blue" />
+          <VcVariantPicker v-model="model" :name="args.name" size="lg" :value="['green', 'yellow']" is-available tooltip="Green & Yellow" />
+          <VcVariantPicker v-model="model" :name="args.name" size="lg" :value="['orange', 'purple']" tooltip="Orange & Purple" />
+          <VcVariantPicker v-model="model" :name="args.name" size="lg" :value="['pink', 'cyan']" is-available tooltip="Pink & Cyan" />
+          <VcVariantPicker v-model="model" :name="args.name" size="lg" :value="['red', 'green', 'blue']" is-available tooltip="RGB" />
+          <VcVariantPicker v-model="model" :name="args.name" size="lg" :value="['yellow', 'magenta', 'cyan']" tooltip="CMY" />
+          <VcVariantPicker v-model="model" :name="args.name" size="lg" :value="['brown', 'beige', 'tan']" is-available tooltip="Earth Tones" />
+          <VcVariantPicker v-model="model" :name="args.name" size="lg" :value="['purple', 'pink', 'magenta', 'violet']" tooltip="Purple Mix" />
+          <VcVariantPicker v-model="model" :name="args.name" size="lg" :value="['red', 'orange', 'yellow', 'green']" is-available tooltip="Rainbow" />
+          <VcVariantPicker v-model="model" :name="args.name" size="lg" :value="['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']" is-available tooltip="Custom Mix" />
+        </VcVariantPickerGroup>
+      </div>
+    </div>
+  `,
+});
+
+export const MultiColorSizes = TemplateMultiColorSizes.bind({});
+MultiColorSizes.args = {
+  name: "multicolor-sizes",
+};
