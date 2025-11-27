@@ -224,6 +224,7 @@
 
 <script setup lang="ts">
 import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
+import { useLocalStorage } from "@vueuse/core";
 import { pickBy } from "lodash";
 import { computed, onMounted, ref, toValue, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -231,11 +232,16 @@ import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { DEFAULT_PAGE_SIZE, IN_STOCK_PRODUCTS_LOCAL_STORAGE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice, toCSV } from "@/core/utilities";
+import {
+  getFilterExpressionForCategorySubtree,
+  getFilterExpressionForInStockVariations,
+  getFilterExpressionForZeroPrice,
+  toCSV,
+} from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
@@ -260,6 +266,8 @@ const CATEGORIES_ITEMS_PER_COLUMN = 4;
 const SEARCH_BAR_DEBOUNCE_TIME = 200;
 
 const MAX_LENGTH = themeContext.value?.settings?.search_max_chars || 999;
+
+const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
 
 const {
   total,
@@ -364,6 +372,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
     : [
         searchScopeFilterExpression.value || getFilterExpressionForCategorySubtree({ catalogId }),
         getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
+        getFilterExpressionForInStockVariations(localStorageInStock.value),
       ]
         .filter(Boolean)
         .join(" ");
