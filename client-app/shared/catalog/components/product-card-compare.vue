@@ -36,6 +36,7 @@
         icon="cube-transparent"
         :target="browserTarget"
       />
+
       <VcProductButton
         v-else-if="product.hasVariations"
         class="mb-4"

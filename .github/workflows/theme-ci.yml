@@ -38,6 +38,7 @@ jobs:
     outputs:
       artifactUrl: '${{ steps.artifactUrl.outputs.download_url }}'
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
+      branchName: ${{ steps.branch_name.outputs.branchName }}
 
     steps:
 
@@ -219,18 +220,46 @@ jobs:
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
+      - name: Update Jira Tasks with Release Number
+        if: ${{ github.ref == 'refs/heads/master' }}
+        uses: VirtoCommerce/vc-github-actions/update-jira-tasks-with-release-number@master
+        with:
+          ghRepository: ${{ github.repository }}
+          ghReleaseTag: ${{ steps.image.outputs.prefix }}
+          jiraCustomFieldId: 'customfield_10297' # 'customfield_10297' corresponds to 'Theme release' field
+          jiraCustomFieldValue: "${{ steps.image.outputs.prefix }}"
+          client-id: '${{ secrets.JIRA_USER }}'
+          client-secret: '${{ secrets.JIRA_TOKEN }}'
+
+      - name: Set branch name value
+        if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
+          (github.event_name == 'workflow_dispatch') || ((github.base_ref == 'dev') && (github.event_name == 'pull_request')) }}
+        id: branch_name
+        shell: pwsh
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if ($env:EVENT_NAME -eq 'pull_request'){
+            $branchName = $env:HEAD_REF
+          } else {
+            $branchName = $env:REF_NAME
+          }
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "branchName=$branchName"
 
   ui-e2e-auto-tests:
     needs: 'ci'
     if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
         (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request') }}
-    uses: VirtoCommerce/.github/.github/workflows/e2e-autotests.yml@v3.800.18
+    uses: VirtoCommerce/.github/.github/workflows/e2e-autotests.yml@v3.800.22
     with:
       installModules: 'false'
-      installCustomModule: 'true'
+      installCustomModule: 'false'
       runTests: 'true'
       vctestingRepoBranch: 'dev'
-      frontendZipUrl: ${{ needs.ci.outputs.artifactUrl }}
+      frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
+      customPackagesJsonUrl: 'https://github.com/${{ github.repository }}/raw/${{ needs.ci.outputs.branchName }}/backend-packages.json'
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
       testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
@@ -240,7 +269,7 @@ jobs:
     if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
       (github.base_ref == 'dev') && (github.event_name == 'pull_request') || 
       (github.event_name == 'workflow_dispatch') }}
-    uses: VirtoCommerce/.github/.github/workflows/ui-autotests.yml@v3.800.17
+    uses: VirtoCommerce/.github/.github/workflows/ui-autotests.yml@v3.800.22
     with:
       installModules: 'true'
       installCustomModule: 'false'

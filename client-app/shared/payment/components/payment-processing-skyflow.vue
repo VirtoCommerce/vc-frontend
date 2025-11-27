@@ -57,7 +57,7 @@
             class="shrink"
             @click="payWithSavedCreditCard"
           >
-            {{ $t("shared.payment.skyflow.pay_now_button") }}
+            {{ $t("shared.payment.bank_card_form.pay_now_button") }}
           </VcButton>
         </div>
       </div>
@@ -82,7 +82,7 @@
           class="flex-1 md:order-first md:flex-none"
           @click="payWithNewCreditCard"
         >
-          {{ $t("shared.payment.skyflow.pay_now_button") }}
+          {{ $t("shared.payment.bank_card_form.pay_now_button") }}
         </VcButton>
       </div>
     </div>

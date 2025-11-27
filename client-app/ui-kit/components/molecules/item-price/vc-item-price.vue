@@ -1,3 +1,4 @@
+<!-- @deprecated This component is deprecated and should not be used -->
 <template>
   <div class="flex flex-col">
     <div class="flex space-x-1">
@@ -7,11 +8,14 @@
         :class="priceColorClass"
         :value="value?.actual"
       />
+
       <VcPriceDisplay v-else class="font-bold text-[--price-color]" :value="value?.list" />
+
       <span class="hidden sm:inline md:hidden xl:inline print:!block">
         {{ $t("ui_kit.suffixes.per_item") }}
       </span>
     </div>
+
     <div class="leading-4">
       <VcPriceDisplay
         v-if="shouldUseActualPrice(value?.list, value?.actual)"
@@ -34,4 +38,7 @@ interface IProps {
 withDefaults(defineProps<IProps>(), {
   priceColorClass: "text-[--price-color]",
 });
+
+// eslint-disable-next-line no-console
+console.warn("[UIKit][warn] VcItemPrice is deprecated and should not be used.");
 </script>

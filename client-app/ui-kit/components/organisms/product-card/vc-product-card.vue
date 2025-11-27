@@ -20,6 +20,8 @@
         <slot />
       </div>
     </div>
+
+    <slot name="expanded-content" />
   </div>
 </template>
 

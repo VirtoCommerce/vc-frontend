@@ -1,6 +1,7 @@
 <template>
   <div class="google-map">
     <div :id="mapElementId" ref="mapContainer" class="google-map__container"></div>
+
     <slot />
   </div>
 </template>

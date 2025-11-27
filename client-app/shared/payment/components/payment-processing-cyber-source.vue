@@ -53,6 +53,7 @@
   </div>
 
   <input id="flexresponse" type="hidden" name="flexresponse" />
+
   <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
     <PaymentPolicies />
 
@@ -63,7 +64,7 @@
       data-test-id="pay-now-button"
       @click="sendPaymentData"
     >
-      {{ $t("shared.payment.authorize_net.pay_now_button") }}
+      {{ $t("shared.payment.bank_card_form.pay_now_button") }}
     </VcButton>
   </div>
 </template>
@@ -259,7 +260,6 @@ async function createToken(options: Record<string, unknown>): Promise<string> {
   return new Promise((resolve, reject) => {
     microform.createToken(options, (err: unknown, token: string) => {
       if (err) {
-        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         reject(err);
       } else {
         resolve(token);
@@ -376,8 +376,8 @@ async function useDynamicScript(url: string, integrity?: string): Promise<void> 
 }
 
 function removeScript() {
-  if (scriptTag.value && scriptTag.value.parentNode) {
-    scriptTag.value.parentNode.removeChild(scriptTag.value);
+  if (scriptTag.value) {
+    scriptTag.value.remove();
   }
 }
 

@@ -79,7 +79,9 @@
       "show_less": "Mostrar menos",
       "expand_all": "Expandir todo",
       "all_products": "Todos los productos",
-      "buy_now": "Comprar ahora"
+      "buy_now": "Comprar ahora",
+      "see_all": "Ver todo",
+      "report_a_problem": "Reportar un problema"
     },
     "labels": {
       "actions": "Acciones",
@@ -104,7 +106,7 @@
       "total": "Total",
       "compare": "Comparar",
       "price": "Precio",
-      "product_price": "Tu precio",
+      "product_price": "Precio",
       "subtotal": "Subtotal",
       "discount": "Descuento",
       "line_items": "Artículos de línea",
@@ -164,7 +166,8 @@
       "buyer_name": "Nombre del comprador",
       "other": "Otro",
       "vendor_name": "Proveedor: {name}",
-      "not_available": "N/D"
+      "not_available": "N/D",
+      "product_reviews": "Reseñas del producto"
     },
     "prefixes": {
       "please": "Por favor",
@@ -192,7 +195,7 @@
       "not_defined": "Indefinido",
       "invalid_coupon": "Este código no coincide con ningún cupón activo. Por favor, verifica que todo esté correcto e inténtalo de nuevo.",
       "fill_all_required": "Por favor, completa toda la información requerida para continuar.",
-      "something_went_wrong": "¡Ups! Algo salió mal. Por favor, verifica que todo esté correcto e inténtalo de nuevo.",
+      "something_went_wrong": "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
       "checkout_pricing_warning": "La disponibilidad, el envío, los impuestos y las promociones no son definitivos hasta que completes tu pedido.",
       "wishlists_available_for_authorized": "Las listas de deseos están disponibles solo para usuarios autenticados",
       "no_addresses": "Aún no tienes ninguna dirección",
@@ -203,6 +206,7 @@
       "fail_add_product_to_cart": "Lo sentimos, este producto no se puede añadir al carrito. {reason}",
       "fail_to_change_quantity_in_cart": "Lo sentimos, no se puede actualizar la cantidad del producto en el carrito. {reason}",
       "unhandled_error": "Disculpa las molestias. Nuestro servidor está experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.",
+      "report_sent_successfully": "¡Gracias! Tu informe ha sido enviado con éxito. Lo revisaremos.",
       "role_update_successful": "El rol del cliente se ha actualizado con éxito.",
       "role_update_failed": "Se produjeron errores durante la actualización del rol: {0}",
       "passwords_do_not_match": "Los campos de contraseña deben tener valores coincidentes.",
@@ -335,6 +339,7 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "Guardado para más tarde",
             "lists": "@:common.links.lists",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
@@ -562,6 +567,12 @@
           "remove": "Eliminar de Comparar"
         }
       },
+      "notifications": {
+        "limit_reached": "Solo se pueden comparar {productsLimit} productos",
+        "added_html": "Producto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> añadido a la lista de comparación <span class=\"hidden lg:inline\">(artículos restantes: {itemsLeft})</span>",
+        "removed_html": "Producto <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> eliminado de la lista de comparación",
+        "compare_button": "Comparar"
+      },
       "clear_list_modal": {
         "title": "Confirmar limpieza",
         "message": "¿Confirmas la eliminación de todos los productos de la lista de comparación?"
@@ -635,6 +646,7 @@
         "create_configuration_button": "Crea tu propia configuración",
         "price_block": {
           "title": "Precio y entrega",
+          "mobile_title": "Compartir y más",
           "add_to_list_button": "Añadir a la lista",
           "product_email_title": "Por favor, echa un vistazo al producto: {0}"
         },
@@ -696,6 +708,7 @@
         "cancel_button": "Cancelar",
         "ok_button": "Aceptar",
         "no_results": "No se encontraron resultados",
+        "no_branches": "No se encontraron sucursales",
         "reset_search_button": "Restablecer búsqueda"
       },
       "shipment_options": {
@@ -821,10 +834,14 @@
         "year_label": "Año",
         "year_placeholder": "AA",
         "security_code_label": "Código de seguridad",
+        "pay_now_button": "Pagar ahora",
         "errors": {
+          "card_number": "Por favor, proporciona un número de tarjeta de crédito válido",
           "month": "Por favor, proporciona un mes de vencimiento válido",
           "year": "Por favor, proporcione un año de vencimiento válido",
-          "security_code": "Código de seguridad no válido."
+          "expiration_date": "La fecha de expiración debe ser en el futuro",
+          "security_code": "Por favor, proporciona un código de seguridad válido",
+          "cardholder_name": "Por favor, proporciona un nombre de titular de tarjeta válido"
         },
         "user_error_message": "No se pudo inicializar el pago. Inténtalo de nuevo más tarde o usa otro método de pago",
         "payment_unavailable": "El método de pago no está disponible. Inténtalo de nuevo más tarde."
@@ -834,27 +851,15 @@
         "privacy_policy_link": "Política de privacidad",
         "accept_terms_text": "Al realizar un pedido, aceptas los términos de nuestro",
         "processing_personal_data_text": "y aceptas que podamos procesar tus datos personales según nuestra",
-        "pay_now_button": "Pagar ahora",
         "errors": {
-          "number": "Por favor, proporciona un número de tarjeta de crédito válido",
-          "month": "Por favor, proporciona un mes de expiración válido",
-          "year": "Por favor, proporciona un año de expiración válido",
-          "expiration_date": "La fecha de expiración debe ser en el futuro",
-          "security_code": "Por favor, proporciona un código de seguridad válido",
-          "cardholder_name": "Por favor, proporciona un nombre de titular de tarjeta válido",
           "incorrect_payment_method": "Método de pago incorrecto"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "Pagar ahora"
       },
       "manual": {
         "text": "El método de pago que seleccionaste no admite pago en línea. Por favor, selecciona otro método o "
       },
       "redirection": {
         "text": "Después de hacer clic en <strong>{0}</strong>, serás redirigido al servicio de pago de terceros",
-        "pay_now_button": "Pagar ahora",
-        "try_again_button": "Inténtalo de nuevo",
         "errors": {
           "missing_link": "Falta el enlace de redirección",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -1170,7 +1175,9 @@
           "get_directions": "Obtener indicaciones",
           "point_info": "Información del punto",
           "pickup_address": "Dirección de recogida",
-          "cart_pickup_points_not_found": "No hay puntos de recogida disponibles para estos productos. Seleccione otro método de envío",
+          "cart_pickup_points_not_found": "No hay puntos de recogida disponibles para estos productos. Seleccione otro método de envío.",
+          "cart_pickup_points_not_found_by_filter": "No se encontraron puntos de recogida.",
+          "cart_pickup_points_reset_search": "Restablecer búsqueda",
           "availability": "Disponibilidad"
         }
       },
@@ -1318,6 +1325,7 @@
       "recently_browsed_products": "Visto recientemente",
       "save_for_later": "Guardar para más tarde",
       "saved_for_later": "Guardado para más tarde",
+      "saved_for_later_not_found": "No has guardado ningún producto para más tarde",
       "move_to_cart": "Mover al carrito"
     },
     "checkout": {
@@ -1374,7 +1382,8 @@
       "products_icon": "Icono de producto",
       "show_all_results": "Mostrar todos los resultados",
       "load_previous_page": "Cargar página anterior",
-      "load_next_page": "Cargar página siguiente"
+      "load_next_page": "Cargar página siguiente",
+      "available_variations": "Sin variaciones disponibles | 1 variación disponible | {count} variaciones disponibles"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

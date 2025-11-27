@@ -4,7 +4,9 @@
       <div v-if="title" class="mb-6 text-center text-2xl font-bold lg:text-5xl">
         {{ title }}
       </div>
+
       <div v-if="subtitle" class="mb-7 text-center text-base">{{ subtitle }}</div>
+
       <div class="relative">
         <Swiper
           :slides-per-view="1"
@@ -26,12 +28,15 @@
                 class="vc-slider__image"
               />
             </component>
+
             <div v-if="item.title" class="my-3 text-2xl font-bold uppercase">
               {{ item.title }}
             </div>
+
             <div v-if="item.text" class="text-sm">{{ item.text }}</div>
           </SwiperSlide>
         </Swiper>
+
         <div class="vc-slider__navigation">
           <div class="vc-slider__btn vc-slider__btn--prev">
             <VcIcon class="-ml-px" name="chevron-left" />

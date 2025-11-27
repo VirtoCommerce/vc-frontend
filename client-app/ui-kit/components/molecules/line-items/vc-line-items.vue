@@ -98,6 +98,7 @@
           </VcLineItem>
         </slot>
       </div>
+
       <slot name="after-items" />
 
       <!-- table footer -->
@@ -127,6 +128,7 @@
 
         <div v-if="withSubtotal" class="vc-line-items__subtotal">
           <span class="vc-line-items__subtotal-label">{{ $t("ui_kit.labels.subtotal") }}:</span>
+
           <span class="vc-line-items__subtotal-sum">{{ $n(subtotal, "currency") }}</span>
         </div>
       </div>

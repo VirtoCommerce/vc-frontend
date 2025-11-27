@@ -11,6 +11,7 @@
     ]"
   >
     <slot />
+
     <span v-if="required" class="vc-label__asterisk">*</span>
   </component>
 </template>

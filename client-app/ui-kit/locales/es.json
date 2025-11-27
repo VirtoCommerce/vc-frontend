@@ -109,6 +109,11 @@
     },
     "breadcrumbs": {
       "aria_label": "Navegación de migas de pan"
+    },
+    "rating": {
+      "rating_label": "Clasificación {value} de {maxValue}",
+      "read_only_button_aria_label": "Clasificación {value} de {maxValue}, no disponible para seleccionar",
+      "set_rating_aria_label": "Establecer la clasificación en {value} de {maxValue}"
     }
   }
 }

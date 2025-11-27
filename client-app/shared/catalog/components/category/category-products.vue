@@ -40,7 +40,7 @@
         <template v-else>
           <ProductCard
             v-for="(item, index) in products"
-            :key="index"
+            :key="item.id"
             :loading="fetchingProducts"
             :view-mode="savedViewMode"
             :lazy="index >= lazyCardsCount"

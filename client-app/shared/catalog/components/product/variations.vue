@@ -40,7 +40,7 @@
         />
       </div>
 
-      <VcButton variant="outline" @click="$emit('showFilters')">
+      <VcButton :id="`${productId}-variations-filters-button`" variant="outline" @click="$emit('showFilters')">
         {{ $t("common.buttons.filters") }}
       </VcButton>
     </div>
@@ -57,9 +57,12 @@
       <div class="variations__loading-skeleton">
         <div v-for="i in 6" :key="i" class="variations__loading-item">
           <div class="variations__loading-image"></div>
+
           <div class="variations__loading-content">
             <div class="variations__loading-title"></div>
+
             <div class="variations__loading-text"></div>
+
             <div class="variations__loading-text"></div>
           </div>
         </div>
