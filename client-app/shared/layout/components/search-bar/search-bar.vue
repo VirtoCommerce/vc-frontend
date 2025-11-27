@@ -223,8 +223,7 @@
 </template>
 
 <script setup lang="ts">
-import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
-import { useLocalStorage } from "@vueuse/core";
+import { onClickOutside, useDebounceFn, useElementBounding, whenever, useLocalStorage } from "@vueuse/core";
 import { pickBy } from "lodash";
 import { computed, onMounted, ref, toValue, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -252,7 +251,6 @@ import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category, Product } from "@/core/api/graphql/types";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import VcButton from "@/ui-kit/components/molecules/button/vc-button.vue";
 
 const { themeContext } = useThemeContext();
 const { saveSearchQuery, useGetSearchHistoryQuery } = useHistoricalEvents();
