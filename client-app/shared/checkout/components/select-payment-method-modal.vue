@@ -23,9 +23,11 @@
         class="flex items-center justify-between space-x-4 px-5 py-6 lg:py-4"
       >
         <VcImage :src="method.logoUrl" class="size-10 object-center" lazy />
+
         <div class="grow overflow-hidden text-ellipsis">
           {{ method.name }}
         </div>
+
         <div class="flex w-20 items-center justify-end lg:justify-center">
           <div
             v-if="method.code === selectedMethod?.code"

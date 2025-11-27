@@ -38,6 +38,7 @@
       autocomplete="off"
       :maxlength="MAX_PASS_LENGTH"
     />
+
     <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
     <VcAlert v-for="error in result?.errors" :key="error.code" color="danger" class="my-5 text-xs" icon>

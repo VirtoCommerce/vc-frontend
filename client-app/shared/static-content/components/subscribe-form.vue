@@ -2,8 +2,11 @@
   <div class="block-subscribe-form py-10 lg:py-24" :class="background">
     <div class="mx-auto w-full max-w-screen-xl px-14 lg:px-32">
       <div class="title mb-4 text-center text-2xl font-bold lg:text-4xl">{{ title }}</div>
+
       <div class="subtitle mb-8 text-center text-lg font-bold">{{ subtitle }}</div>
+
       <VcInput class="mx-auto max-w-lg" :placeholder="placeholder" />
+
       <div class="text-center">
         <div class="checkbox-text mt-4">
           <VcCheckbox class="inline-flex">
