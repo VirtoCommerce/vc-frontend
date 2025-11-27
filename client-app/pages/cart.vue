@@ -106,7 +106,7 @@
           <template v-if="!$cfg.checkout_multistep_enabled">
             <ShippingDetailsSection v-if="!allItemsAreDigital" />
 
-            <BillingDetailsSection ref="billingComponent" :cart="cart" @validate="isPaymentValid" />
+            <BillingDetailsSection ref="billingComponent" :cart="cart" @validate="updatePaymentValidationStatus" />
 
             <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
           </template>
@@ -153,7 +153,7 @@
 
               <ProceedTo
                 v-else
-                :disabled="hasOnlyUnselectedLineItems || !isValidCheckout || !isCardDataValid"
+                :disabled="!canCreateOrderFromCart"
                 data-test-id="checkout-single-page.place-order-button"
                 @click="handleCreateOrderFromCart"
                 class="mt-4"
@@ -224,7 +224,7 @@
 
           <ProceedTo
             v-else
-            :disabled="hasOnlyUnselectedLineItems || !isValidCheckout || !isCardDataValid"
+            :disabled="!canCreateOrderFromCart"
             data-test-id="checkout-multi-page.place-order-button"
             @click="handleCreateOrderFromCart"
             class="!mt-2"
@@ -343,6 +343,10 @@ const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const isCardDataValid = ref(false);
 
+const canCreateOrderFromCart = computed(
+  () => !hasOnlyUnselectedLineItems.value && isValidCheckout.value && isCardDataValid.value,
+);
+
 const loading = computed(() => loadingCart.value || loadingCheckout.value || saveForLaterLoading.value);
 const isShowIncompleteDataWarning = computed(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
@@ -360,7 +364,7 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
   );
 }
 
-function isPaymentValid(isValid: boolean) {
+function updatePaymentValidationStatus(isValid: boolean) {
   isCardDataValid.value = isValid;
 }
 
