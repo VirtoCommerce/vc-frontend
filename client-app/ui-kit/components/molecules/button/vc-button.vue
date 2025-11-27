@@ -11,7 +11,7 @@
     :class="[
       'vc-button group',
       `vc-button--size--${_size}`,
-      `vc-button--color--${color}`,
+      `vc-button--${variant}`,
       `vc-button--${variant}--${color}`,
       {
         'vc-button--icon': !!icon,
@@ -201,9 +201,90 @@ const attrs = computed(() => {
   $loaderIcon: "";
   $noWrap: "";
 
-  @apply relative inline-block px-[--px] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
+  @apply relative inline-block px-[--px] rounded-[--radius] border-2 select-none text-center text-[--color] bg-[--bg-color] border-[--border-color] transition-colors duration-200 ease-in-out;
 
   appearance: button;
+
+  &--solid {
+    @each $color in $colors {
+      &--#{$color} {
+        --bg-color: var(--vc-button-bg-color-solid-#{$color}, var(--color-#{$color}-500));
+        --border-color: var(--vc-button-border-color-solid-#{$color}, var(--bg-color));
+        --color: var(--vc-button-text-color-solid-#{$color}, var(--color-additional-50));
+        --vc-icon-color: var(--vc-button-icon-color-solid-#{$color}, var(--color));
+
+        &:hover {
+          --bg-color: var(--vc-button-bg-color-solid-#{$color}-hover, var(--color-#{$color}-700));
+          --border-color: var(--vc-button-border-color-solid-#{$color}-hover, var(--bg-color));
+        }
+      }
+    }
+  }
+
+  &--outline {
+    --bg-color: var(--color-additional-50);
+
+    @each $color in $colors {
+      &--#{$color} {
+        --border-color: var(--vc-button-border-color-outline-#{$color}, var(--color-#{$color}-500));
+        --color: var(--vc-button-text-color-outline-#{$color}, var(--color-#{$color}-600));
+        --vc-icon-color: var(--vc-button-icon-color-outline-#{$color}, var(--color));
+
+        &:hover {
+          --border-color: var(--vc-button-border-color-outline-#{$color}-hover, var(--color-#{$color}-700));
+          --color: var(--vc-button-text-color-outline-#{$color}-hover, var(--color-#{$color}-700));
+        }
+      }
+    }
+  }
+
+  &--solid-light {
+    @each $color in $colors {
+      &--#{$color} {
+        --bg-color: var(--vc-button-bg-color-solid-light-#{$color}, var(--color-#{$color}-50));
+        --border-color: var(--vc-button-border-color-solid-light-#{$color}, var(--color-#{$color}-50));
+        --color: var(--vc-button-text-color-outline-#{$color}-hover, var(--color-#{$color}-700));
+        --vc-icon-color: var(--vc-button-icon-color-outline-#{$color}, var(--color));
+
+        &:hover {
+          --bg-color: var(--vc-button-bg-color-solid-light-#{$color}-hover, var(--color-#{$color}-100));
+          --border-color: var(--vc-button-border-color-solid-light-#{$color}-hover, var(--color-#{$color}-100));
+        }
+      }
+    }
+  }
+
+  &--no-background {
+    --bg-color: transparent;
+    --border-color: transparent;
+
+    @each $color in $colors {
+      &--#{$color} {
+        --color: var(--vc-button-text-color-outline-#{$color}, var(--color-#{$color}-700));
+        --vc-icon-color: var(--vc-button-icon-color-outline-#{$color}, var(--color));
+
+        &:hover {
+          --color: var(--vc-button-text-color-outline-#{$color}-hover, var(--color-#{$color}-800));
+        }
+      }
+    }
+  }
+
+  &--no-border {
+    --bg-color: var(--color-additional-50);
+    --border-color: var(--color-additional-50);
+
+    @each $color in $colors {
+      &--#{$color} {
+        --color: var(--vc-button-text-color-outline-#{$color}, var(--color-#{$color}-700));
+        --vc-icon-color: var(--vc-button-icon-color-outline-#{$color}, var(--color));
+
+        &:hover {
+          --bg-color: var(--vc-button-bg-color-no-border-#{$color}-hover, var(--color-#{$color}-50));
+        }
+      }
+    }
+  }
 
   &--truncate {
     $truncate: &;
@@ -294,113 +375,6 @@ const attrs = computed(() => {
       --px: theme("padding.5");
 
       @apply text-base/[--line-height] uppercase font-black tracking-[1%];
-    }
-  }
-
-  @each $color in $colors {
-    &--color--#{$color} {
-      &:focus {
-        --outline-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
-      }
-
-      &:not([class*="--solid-"]) #{$loaderIcon} {
-        --loader-border: var(--color-#{$color}-100);
-        --loader-border-r: var(--color-#{$color}-500);
-      }
-    }
-
-    &--solid--#{$color} {
-      --bg-color: var(--color-#{$color}-500);
-      --border-color: var(--color-#{$color}-500);
-
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-additional-50);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-900);
-      }
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-600);
-        --border-color: var(--color-#{$color}-600);
-        --text-color: var(--color-additional-50);
-      }
-
-      & #{$loaderIcon} {
-        --loader-border: var(--color-#{$color}-200);
-        --loader-border-r: var(--color-additional-50);
-      }
-    }
-
-    &--no-border--#{$color} {
-      --bg-color: var(--color-additional-50);
-      --border-color: var(--color-additional-50);
-
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-#{$color}-500);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-700);
-      }
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-100);
-        --border-color: var(--color-#{$color}-100);
-        --text-color: var(--color-#{$color}-700);
-      }
-    }
-
-    &--outline--#{$color} {
-      --bg-color: var(--color-additional-50);
-      --border-color: var(--color-#{$color}-500);
-
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-#{$color}-500);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-700);
-      }
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --text-color: var(--color-#{$color}-600);
-      }
-    }
-
-    &--no-background--#{$color} {
-      --bg-color: transparent;
-      --border-color: transparent;
-
-      &:not([class*="--warning"]) {
-        --text-color: var(--color-#{$color}-500);
-      }
-
-      &[class*="--warning"] {
-        --text-color: var(--color-warning-700);
-      }
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --text-color: var(--color-#{$color}-600);
-      }
-    }
-
-    &--solid-light--#{$color} {
-      --bg-color: var(--color-#{$color}-100);
-      --border-color: var(--color-#{$color}-100);
-      --text-color: var(--color-#{$color}-800);
-
-      &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-50);
-        --border-color: var(--color-#{$color}-50);
-        --text-color: var(--color-#{$color}-700);
-      }
-
-      & #{$loaderIcon} {
-        --loader-border: var(--color-#{$color}-200);
-        --loader-border-r: var(--color-#{$color}-500);
-      }
     }
   }
 
