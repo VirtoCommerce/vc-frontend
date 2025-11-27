@@ -72,5 +72,9 @@ export function init(router: Router, i18n: I18n) {
       component: BackInStockButton,
       condition: (product) => !product.availabilityData?.isInStock && !product.hasVariations,
     });
+    register("productPage", EXTENSION_NAMES.productPage.variationItemButton, {
+      component: BackInStockButton,
+      condition: (product) => !product.availabilityData?.isInStock,
+    });
   }
 }

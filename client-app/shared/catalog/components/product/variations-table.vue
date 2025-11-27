@@ -73,10 +73,10 @@
 
           <td class="variations-table__col variations-table__col--quantity">
             <ExtensionPoint
-              :name="EXTENSION_NAMES.productCard.cardButton"
-              category="productCard"
+              :name="EXTENSION_NAMES.productPage.variationItemButton"
+              category="productPage"
               :product="variation"
-              v-if="$canRenderExtensionPoint('productCard', EXTENSION_NAMES.productCard.cardButton, variation)"
+              v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.variationItemButton, variation)"
             />
 
             <AddToCartSimple v-else :product="variation">
