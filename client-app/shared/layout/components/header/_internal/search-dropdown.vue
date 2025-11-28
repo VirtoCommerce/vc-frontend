@@ -1,11 +1,8 @@
 <template>
-  <div ref="dropdownElement" class="search-dropdown" data-dropdown @focusout="handleFocusOut">
+  <div v-if="hasAnyContent" ref="dropdownElement" class="search-dropdown" data-dropdown @focusout="handleFocusOut">
     <VcScrollbar class="search-dropdown__sidebar" :vertical="!isMobile">
       <!-- Search history and suggestions -->
-      <div
-        v-if="(searchHistoryQueries.length && !searchHistoryLoading) || (suggestions.length && !loading)"
-        class="search-dropdown__suggestions"
-      >
+      <div v-if="hasHistoryOrSuggestions" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
           {{ $t("shared.layout.search_bar.suggestions_and_history_label") }}
         </header>
@@ -43,7 +40,7 @@
       </div>
 
       <!-- Pages -->
-      <div v-if="pages.length" class="search-dropdown__suggestions">
+      <div v-if="hasPages" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
           {{ $t("shared.layout.search_bar.pages_label") }}
         </header>
@@ -64,7 +61,7 @@
       </div>
 
       <!-- Categories -->
-      <div v-if="categories.length" class="search-dropdown__suggestions">
+      <div v-if="hasCategories" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
           {{ $t("shared.layout.search_bar.categories_label") }}
         </header>
@@ -87,7 +84,7 @@
 
     <VcScrollbar class="search-dropdown__content" :vertical="!isMobile">
       <!-- Products -->
-      <div v-if="products.length" class="search-dropdown__suggestions">
+      <div v-if="hasProducts" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
           {{ $t("shared.layout.search_bar.products_label") }}
         </header>
@@ -119,7 +116,7 @@
       </div>
 
       <!-- Not found -->
-      <div v-if="!searchInProgress && !isExistResults && searchPhrase" class="search-dropdown__suggestions">
+      <div v-if="hasNotFoundMessage" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
           {{ $t("shared.layout.search_bar.search_label") }}
         </header>
@@ -223,8 +220,30 @@ const searchHistoryQueries = computed(() => searchHistory.value?.searchHistory?.
 
 const trimmedSearchPhrase = computed(() => props.searchPhrase.trim());
 
+const hasHistoryOrSuggestions = computed(
+  () =>
+    (searchHistoryQueries.value.length && !searchHistoryLoading.value) || (suggestions.value.length && !loading.value),
+);
+
+const hasPages = computed(() => !!pages.value.length);
+
+const hasCategories = computed(() => !!categories.value.length);
+
+const hasProducts = computed(() => !!products.value.length);
+
 const isExistResults = computed(
   () => !!(categories.value.length || products.value.length || suggestions.value.length || pages.value.length),
+);
+
+const hasNotFoundMessage = computed(() => !searchInProgress.value && !isExistResults.value && !!props.searchPhrase);
+
+const hasAnyContent = computed(
+  () =>
+    hasHistoryOrSuggestions.value ||
+    hasPages.value ||
+    hasCategories.value ||
+    hasProducts.value ||
+    hasNotFoundMessage.value,
 );
 
 const searchBarListProperties = computed(() => ({
