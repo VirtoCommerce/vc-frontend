@@ -124,6 +124,7 @@ function reset() {
 function onBarcodeScanned(value: string) {
   if (value) {
     searchPhrase.value = value;
+    searchDropdownRef.value?.handleSearch();
   }
 }
 
