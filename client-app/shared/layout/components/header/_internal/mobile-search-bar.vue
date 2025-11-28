@@ -16,7 +16,7 @@
           <VcInput
             v-model="searchPhrase"
             type="search"
-            maxlength="64"
+            :maxlength="maxSearchLength"
             :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
             class="mobile-search-bar__input"
             :clearable="!!searchPhrase"
@@ -72,7 +72,7 @@ const props = defineProps<IProps>();
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
-const { hideSearchBar, hideSearchDropdown, clearSearchResults } = useSearchBar();
+const { hideSearchBar, hideSearchDropdown, clearSearchResults, maxSearchLength } = useSearchBar();
 
 const { themeContext } = useThemeContext();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);

@@ -183,9 +183,8 @@ const dropdownElement = ref<HTMLElement | null>(null);
 const searchInProgress = ref(false);
 
 const SEARCH_BAR_DEBOUNCE_TIME = 200;
-const MAX_LENGTH = themeContext.value?.settings?.search_max_chars || 999;
 
-const { total, loading, pages, products, suggestions, categories, searchResults } = useSearchBar();
+const { total, loading, pages, products, suggestions, categories, searchResults, maxSearchLength } = useSearchBar();
 
 const categoriesRoutes = useCategoriesRoutes(categories);
 const { result: searchHistory, load: loadSearchHistory, loading: searchHistoryLoading } = useGetSearchHistoryQuery();
@@ -258,7 +257,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
     themeContext.value.settings;
 
-  if (trimmedSearchPhrase.value.length > MAX_LENGTH || trimmedSearchPhrase.value.length === 0) {
+  if (trimmedSearchPhrase.value.length > maxSearchLength.value || trimmedSearchPhrase.value.length === 0) {
     return;
   }
 

@@ -3,7 +3,7 @@
     <VcInput
       v-model="searchPhrase"
       type="search"
-      maxlength="999"
+      :maxlength="maxSearchLength"
       class="search-bar__input"
       :clearable="!!searchPhrase"
       :placeholder="searchPlaceholder"
@@ -101,8 +101,15 @@ import type { StyleValue } from "vue";
 const searchBarElement = ref<HTMLElement | null>(null);
 const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
 
-const { searchBarVisible, searchDropdownVisible, loading, hideSearchDropdown, showSearchDropdown, clearSearchResults } =
-  useSearchBar();
+const {
+  searchBarVisible,
+  searchDropdownVisible,
+  loading,
+  hideSearchDropdown,
+  showSearchDropdown,
+  clearSearchResults,
+  maxSearchLength,
+} = useSearchBar();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
