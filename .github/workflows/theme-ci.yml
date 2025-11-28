@@ -279,6 +279,7 @@ jobs:
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
       testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
+      sendgridApiKey: ${{ secrets.sendgrid-apikey-4e2e-autotests }}
 
   # deploy-cloud:
   #   if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
