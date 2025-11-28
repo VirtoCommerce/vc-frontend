@@ -147,7 +147,7 @@ import { QueryParamName } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { highlightSearchText } from "@/shared/layout/utils";
-import SearchBarProductCard from "../search-bar/_internal/search-bar-product-card.vue";
+import SearchBarProductCard from "./search-bar/_internal/search-bar-product-card.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
@@ -207,13 +207,13 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
     return {
       path: router.currentRoute.value.path,
       query,
-    };
+    } as RouteLocationRaw;
   }
 
   return {
     name: ROUTES.SEARCH.NAME,
     query,
-  };
+  } as RouteLocationRaw;
 }
 
 const searchHistoryQueries = computed(() => searchHistory.value?.searchHistory?.queries ?? []);

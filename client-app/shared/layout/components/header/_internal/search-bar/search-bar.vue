@@ -94,7 +94,7 @@ import {
 } from "@/core/utilities";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
-import SearchDropdown from "../_internal/search-dropdown.vue";
+import SearchDropdown from "../search-dropdown.vue";
 import BarcodeScanner from "./barcode-scanner.vue";
 import type { StyleValue } from "vue";
 

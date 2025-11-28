@@ -60,7 +60,7 @@ import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getFilterExpressionForInStockVariations, getFilterExpressionForZeroPrice } from "@/core/utilities";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
-import BarcodeScanner from "../search-bar/barcode-scanner.vue";
+import BarcodeScanner from "./search-bar/barcode-scanner.vue";
 import SearchDropdown from "./search-dropdown.vue";
 
 interface IProps {
