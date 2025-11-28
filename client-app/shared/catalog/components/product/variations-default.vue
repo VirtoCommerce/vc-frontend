@@ -25,7 +25,6 @@
             })
           "
           :product="variation"
-          is-text-shown
           v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
         />
 
@@ -94,3 +93,13 @@ function changePage(page: number): void {
   emit("changePage", page);
 }
 </script>
+
+<style lang="scss">
+.variations-default {
+  .vc-line-item {
+    &__slot {
+      @apply lg:min-w-[10.625rem] lg:max-w-[10.625rem];
+    }
+  }
+}
+</style>
