@@ -28,6 +28,7 @@
           @download="onFileDownload"
         />
       </VcWidget>
+
       <VcWidget id="products" :title="$t('shared.cart.products_section.title')" prepend-icon="cube" size="lg">
         <QuoteLineItems
           v-if="quote?.items?.length"
@@ -36,6 +37,7 @@
           @remove:item="removeQuoteItem"
         />
       </VcWidget>
+
       <template #sidebar>
         <QuoteSummary v-if="purchaseRequest?.quoteId && quote?.items?.length" :quote="quote">
           <template #footer>

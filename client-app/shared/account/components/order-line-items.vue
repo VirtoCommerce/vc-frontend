@@ -24,6 +24,7 @@
         disabled
       />
     </template>
+
     <template #after-content="{ item }">
       <ConfigurationItems v-if="item.configurationItems?.length" :configuration-items="item.configurationItems" />
     </template>

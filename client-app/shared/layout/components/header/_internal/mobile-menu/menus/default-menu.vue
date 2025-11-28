@@ -9,6 +9,7 @@
           @select-item="$emit('selectItem', item)"
         />
       </template>
+
       <MobileMenuLink
         v-else
         :link="item"
