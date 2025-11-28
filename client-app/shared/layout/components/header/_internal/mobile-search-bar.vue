@@ -41,8 +41,7 @@
             :visible="visible"
             :search-phrase="searchPhrase"
             :filter-expression="filterExpression"
-            @hide="handleSearchDropdownHide"
-            @product-select="handleSearchDropdownHide"
+            @product-select="hideSearchBar"
           />
         </VcScrollbar>
       </div>
@@ -51,8 +50,8 @@
 </template>
 
 <script setup lang="ts">
-import { useElementBounding, useBreakpoints, useLocalStorage, whenever } from "@vueuse/core";
-import { computed, ref, toRef } from "vue";
+import { useElementBounding, useBreakpoints, useLocalStorage } from "@vueuse/core";
+import { computed, onMounted, ref } from "vue";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, IN_STOCK_PRODUCTS_LOCAL_STORAGE } from "@/core/constants";
@@ -68,12 +67,12 @@ interface IProps {
   visible: boolean;
 }
 
-const props = defineProps<IProps>();
+defineProps<IProps>();
 
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
-const { hideSearchBar, hideSearchDropdown, clearSearchResults, maxSearchLength } = useSearchBar();
+const { hideSearchBar, maxSearchLength } = useSearchBar();
 
 const { themeContext } = useThemeContext();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -118,7 +117,6 @@ const dropdownMaxHeight = computed(() => {
 
 function reset() {
   searchPhrase.value = "";
-  hideSearchDropdown();
 }
 
 function onBarcodeScanned(value: string) {
@@ -128,20 +126,11 @@ function onBarcodeScanned(value: string) {
   }
 }
 
-function handleSearchDropdownHide() {
-  hideSearchDropdown();
-}
-
-whenever(
-  toRef(props, "visible"),
-  () => {
-    searchPhrase.value = searchPhraseInUrl.value ?? "";
-    if (!searchPhrase.value.trim()) {
-      clearSearchResults();
-    }
-  },
-  { immediate: true },
-);
+onMounted(() => {
+  if (searchPhraseInUrl.value) {
+    searchPhrase.value = searchPhraseInUrl.value;
+  }
+});
 </script>
 
 <style lang="scss">
