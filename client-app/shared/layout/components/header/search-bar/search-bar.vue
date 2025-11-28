@@ -77,15 +77,21 @@
 </template>
 
 <script setup lang="ts">
-import { onClickOutside, useElementBounding, whenever } from "@vueuse/core";
+import { onClickOutside, useElementBounding, whenever, useLocalStorage } from "@vueuse/core";
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { IN_STOCK_PRODUCTS_LOCAL_STORAGE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice, toCSV } from "@/core/utilities";
+import {
+  getFilterExpressionForCategorySubtree,
+  getFilterExpressionForInStockVariations,
+  getFilterExpressionForZeroPrice,
+  toCSV,
+} from "@/core/utilities";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import SearchDropdown from "../_internal/search-dropdown.vue";
@@ -117,6 +123,8 @@ const { themeContext } = useThemeContext();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const { t } = useI18n();
 
+const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
+
 const filterExpression = computed(() => {
   const scopeExpression =
     searchScopeFilterExpression.value || getFilterExpressionForCategorySubtree({ catalogId: globals.catalogId });
@@ -125,7 +133,11 @@ const filterExpression = computed(() => {
 
   return catalog_empty_categories_enabled
     ? undefined
-    : [scopeExpression, getFilterExpressionForZeroPrice(!!zero_price_product_enabled, globals.currencyCode)]
+    : [
+        scopeExpression,
+        getFilterExpressionForZeroPrice(!!zero_price_product_enabled, globals.currencyCode),
+        getFilterExpressionForInStockVariations(localStorageInStock.value),
+      ]
         .filter(Boolean)
         .join(" ");
 });

@@ -391,11 +391,7 @@ defineExpose({
 
 <style lang="scss">
 .search-dropdown {
-  @apply pt-1;
-
-  @media (width < theme("screens.md")) {
-    @apply px-3.5 pb-3.5;
-  }
+  @apply pt-1 px-3.5 pb-3.5;
 
   @media (min-width: theme("screens.md")) {
     @apply flex gap-2.5 pb-3 max-h-[inherit] min-h-44;
