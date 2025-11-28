@@ -94,7 +94,7 @@ export default async () => {
   };
 
   // get initialization query parameters
-  const pathname = globalThis.location.pathname.replace(globalThis.location.origin, "");
+  const pathname = globalThis.location.pathname;
   const possibleCultureName = resolvePossibleLocale(pathname);
   const permalink = getPermalink(pathname, getUrlWithoutPossibleLocale);
 
@@ -165,7 +165,6 @@ export default async () => {
       cultureName: currentLanguage.value.cultureName,
     } as const;
 
-    // Seed cache only for the normalized permalink ("/" for home, otherwise without leading slash)
     apolloClient.writeQuery({
       query: GetSlugInfoDocument,
       variables: { ...baseVariables, permalink },
