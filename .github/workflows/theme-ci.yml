@@ -271,8 +271,7 @@ jobs:
       (github.event_name == 'workflow_dispatch') }}
     uses: VirtoCommerce/.github/.github/workflows/ui-autotests.yml@VCST-3056 #v3.800.22
     with:
-      customPackagesJsonUrl: https://github.com/VirtoCommerce/vc-frontend/raw/feat/VCST-4174/backend-packages.json
-      installModules: 'false' #'true'
+      installModules: 'true'
       installCustomModule: 'false'
       platformDockerTag: 'linux-latest'
       frontendZipUrl: 'https://vc3prerelease.blob.core.windows.net/packages/vc-theme-b2b-vue-2.36.0-alpha.2118.zip' #'${{ needs.ci.outputs.artifactUrl }}'
