@@ -127,7 +127,6 @@ function onBarcodeScanned(value: string) {
 }
 
 function handleSearchDropdownHide() {
-  hideSearchBar();
   hideSearchDropdown();
 }
 
