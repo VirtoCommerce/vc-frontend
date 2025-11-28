@@ -28,11 +28,15 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
   });
 
   const variables = computed(() => {
+    const rawSeoUrl = toValue(seoUrl);
+    const permalink = rawSeoUrl === "" ? "/" : rawSeoUrl;
+    const resolvedCultureName = cultureName.value || currentCultureName;
+
     return {
       storeId,
       userId,
-      cultureName: cultureName.value,
-      permalink: toValue(seoUrl),
+      cultureName: resolvedCultureName,
+      permalink,
     };
   });
 
