@@ -235,7 +235,9 @@ const isExistResults = computed(
   () => !!(categories.value.length || products.value.length || suggestions.value.length || pages.value.length),
 );
 
-const hasNotFoundMessage = computed(() => !searchInProgress.value && !isExistResults.value && !!props.searchPhrase);
+const hasNotFoundMessage = computed(
+  () => !searchInProgress.value && !isExistResults.value && !!trimmedSearchPhrase.value,
+);
 
 const hasAnyContent = computed(
   () =>
