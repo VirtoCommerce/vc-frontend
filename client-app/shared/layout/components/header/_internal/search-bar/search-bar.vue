@@ -62,8 +62,8 @@
 
     <transition name="slide-fade-top">
       <SearchDropdown
-        v-if="searchDropdownVisible"
         ref="searchDropdownRef"
+        :visible="searchDropdownVisible"
         class="search-bar__dropdown"
         :style="searchDropdownStyle"
         :search-phrase="searchPhrase"

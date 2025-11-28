@@ -1,5 +1,11 @@
 <template>
-  <div v-if="hasAnyContent" ref="dropdownElement" class="search-dropdown" data-dropdown @focusout="handleFocusOut">
+  <div
+    v-if="visible && hasAnyContent"
+    ref="dropdownElement"
+    class="search-dropdown"
+    data-dropdown
+    @focusout="handleFocusOut"
+  >
     <VcScrollbar class="search-dropdown__sidebar" :vertical="!isMobile">
       <!-- Search history and suggestions -->
       <div v-if="hasHistoryOrSuggestions" class="search-dropdown__suggestions">
@@ -153,6 +159,7 @@ import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
+  visible: boolean;
   searchPhrase: string;
   filterExpression?: string;
   isCategoryScope?: boolean;

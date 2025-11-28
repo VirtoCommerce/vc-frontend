@@ -38,6 +38,7 @@
         <VcScrollbar class="mobile-search-bar__dropdown" :vertical="isMobile">
           <SearchDropdown
             ref="searchDropdownRef"
+            :visible="visible"
             :search-phrase="searchPhrase"
             :filter-expression="filterExpression"
             @hide="handleSearchDropdownHide"
