@@ -254,7 +254,7 @@
                 {{ contact.extended.roles[0]?.name }}
               </td>
 
-              <td class="w-1/4 truncate px-4 py-2.5">
+              <td class="w-1/4 max-w-52 truncate px-4 py-2.5" :title="contact.extended.emails[0]">
                 {{ contact.extended.emails[0] }}
               </td>
 

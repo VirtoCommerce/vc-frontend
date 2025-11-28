@@ -81,7 +81,6 @@
                 })
               "
               :product="variation"
-              :is-text-shown="false"
               v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
             />
 
