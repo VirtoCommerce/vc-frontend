@@ -50,8 +50,8 @@
 </template>
 
 <script setup lang="ts">
-import { useElementBounding, useBreakpoints, useLocalStorage } from "@vueuse/core";
-import { computed, onMounted, ref } from "vue";
+import { useElementBounding, useBreakpoints, useLocalStorage, whenever } from "@vueuse/core";
+import { computed, ref, toRef } from "vue";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, IN_STOCK_PRODUCTS_LOCAL_STORAGE } from "@/core/constants";
@@ -67,12 +67,12 @@ interface IProps {
   visible: boolean;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
-const { hideSearchBar, showSearchDropdown, hideSearchDropdown } = useSearchBar();
+const { hideSearchBar, hideSearchDropdown, clearSearchResults } = useSearchBar();
 
 const { themeContext } = useThemeContext();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -126,13 +126,16 @@ function handleSearchDropdownHide() {
   hideSearchDropdown();
 }
 
-onMounted(() => {
-  searchPhrase.value = searchPhraseInUrl.value ?? "";
-
-  if (searchPhrase.value.trim()) {
-    showSearchDropdown();
-  }
-});
+whenever(
+  toRef(props, "visible"),
+  () => {
+    searchPhrase.value = searchPhraseInUrl.value ?? "";
+    if (!searchPhrase.value.trim()) {
+      clearSearchResults();
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">
