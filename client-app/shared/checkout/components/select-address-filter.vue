@@ -1,6 +1,6 @@
 <template>
   <div class="select-address-filter">
-    <div class="select-address-filter__filter-group">
+    <VcScrollbar class="select-address-filter__filter-group" horizontal no-bar>
       <FacetFilter
         v-if="filterOptionsCountries"
         :facet="filterOptionsCountries"
@@ -39,7 +39,7 @@
       >
         {{ $t("common.buttons.reset_filters") }}
       </VcButton>
-    </div>
+    </VcScrollbar>
 
     <VcInput
       v-model="filterKeyword"
@@ -160,14 +160,14 @@ function removeFilterCity(value: string) {
 
 <style lang="scss">
 .select-address-filter {
-  @apply flex flex-row items-center flex-wrap gap-2 pt-0 pb-3;
+  @apply flex items-center flex-wrap gap-2 pb-2;
 
   &__filter-group {
-    @apply flex flex-row items-center gap-2 overflow-x-auto;
+    @apply flex items-center gap-2 -mx-5 -my-1 py-1 px-5;
   }
 
   &__filter-keyword {
-    @apply grow w-full min-w-[10rem];
+    @apply grow w-full min-w-40;
 
     @media (min-width: theme("screens.md")) {
       @apply w-auto;

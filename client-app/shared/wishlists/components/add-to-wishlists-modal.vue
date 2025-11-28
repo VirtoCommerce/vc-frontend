@@ -56,6 +56,7 @@
           <li v-for="(input, index) in newLists" :key="index" class="list-input-item flex items-start px-6">
             <button type="button" class="relative mt-3" @click="removeNewList(index)">
               <VcCheckbox model-value class="relative" />
+
               <div class="absolute inset-0"></div>
             </button>
 

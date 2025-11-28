@@ -1,6 +1,7 @@
 <template>
   <div>
     <VPPageBuilder v-if="isPageBuilderContent" :content="pageDocument?.content" />
+
     <VPBuilderIO v-if="isBulderIOContent" :content="pageDocument?.content" />
   </div>
 </template>

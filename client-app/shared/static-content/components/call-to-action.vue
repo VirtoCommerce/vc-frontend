@@ -3,6 +3,7 @@
     <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
       <div class="flex flex-col items-center justify-between space-y-10 lg:block">
         <div class="text-50 text-center text-2xl font-bold lg:text-3xl">{{ title }}</div>
+
         <div class="flex w-full items-center justify-center space-x-6">
           <VcButton
             v-for="(item, index) in buttons"

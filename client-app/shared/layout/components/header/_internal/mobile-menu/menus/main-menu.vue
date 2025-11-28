@@ -6,6 +6,7 @@
           {{ menuItem.title }}
         </MobileMenuLink>
       </li>
+
       <li v-for="item in mobileMainMenuItems" :key="item.title">
         <component
           :is="(item.id && customLinkComponents[item.id]) || LinkDefault"
@@ -24,6 +25,7 @@
             class="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-accent-300"
           >
             <VcImage v-if="user.photoUrl" :src="user.photoUrl" :alt="user.contact?.fullName" class="size-12" lazy />
+
             <VcIcon v-else name="user" />
           </div>
 

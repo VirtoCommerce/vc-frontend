@@ -5,7 +5,9 @@
         <div :class="['two-column__column', 'two-column__column--left', breakpointClassName('w-1/2')]">
           <slot name="left"></slot>
         </div>
+
         <slot></slot>
+
         <div
           :class="[
             'two-column__column',

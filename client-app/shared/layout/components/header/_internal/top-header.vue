@@ -59,6 +59,7 @@
             <span class="font-bold" data-test-id="main-layout.top-header.operator-name-label">
               {{ operator.contact?.fullName || operator.userName }}
             </span>
+
             <span class="text-neutral-400">
               {{ $t("shared.layout.header.top_header.logged_in_as") }}
             </span>
