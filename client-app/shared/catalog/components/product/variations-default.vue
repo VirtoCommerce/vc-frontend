@@ -16,16 +16,11 @@
         with-properties
         show-placed-price
       >
-        <component
-          :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
-          v-if="
-            isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-            shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, variation, {
-              forceProductAsVariation: true,
-            })
-          "
+        <ExtensionPoint
+          :name="EXTENSION_NAMES.productPage.variationItemButton"
+          category="productPage"
           :product="variation"
-          v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
+          v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.variationItemButton, variation)"
         />
 
         <AddToCartSimple v-else :product="variation">
@@ -56,8 +51,7 @@ import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";
 import { getPropertiesGroupedByName } from "@/core/utilities";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
-import { useCustomProductComponents } from "@/shared/common/composables";
-import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import CountInCart from "../count-in-cart.vue";
 import InStock from "../in-stock.vue";
 import type { Product } from "@/core/api/graphql/types";
@@ -80,8 +74,6 @@ interface IProps {
 const pageNumber = toRef(props, "pageNumber");
 
 const { browserTarget } = useBrowserTarget();
-
-const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 function getProperties(variation: Product) {
   return Object.values(

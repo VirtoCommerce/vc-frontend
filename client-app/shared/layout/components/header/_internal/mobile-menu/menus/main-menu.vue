@@ -8,12 +8,15 @@
       </li>
 
       <li v-for="item in mobileMainMenuItems" :key="item.title">
-        <component
-          :is="(item.id && customLinkComponents[item.id]) || LinkDefault"
+        <ExtensionPoint
+          category="mobileMenu"
+          :name="item.id"
           :item="item"
           @close="$emit('close')"
           @select-item="$emit('selectItem', item)"
-        />
+        >
+          <LinkDefault :item="item" @close="$emit('close')" @select-item="$emit('selectItem', item)" />
+        </ExtensionPoint>
       </li>
     </ul>
 
@@ -114,10 +117,7 @@ import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
 import { ROUTES } from "@/router/routes/constants";
 import { useSignMeOut, useUser } from "@/shared/account";
-import { useCustomMobileMenuLinkComponents } from "@/shared/layout/composables/useCustomMobileMenuLinkComponents";
 import type { ExtendedMenuLinkType } from "@/core/types";
-import LinkCart from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-cart.vue";
-import LinkCompare from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-compare.vue";
 import LinkDefault from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-default.vue";
 import MobileMenuLink from "@/shared/layout/components/header/_internal/mobile-menu/mobile-menu-link.vue";
 
@@ -138,10 +138,6 @@ const { user, operator, isAuthenticated, isCorporateMember } = useUser();
 const { mobileMainMenuItems, mobileCorporateMenuItem, mobileAccountMenuItem } = useNavigations();
 const { t } = useI18n();
 const { supportedCurrencies } = useCurrency();
-const { registerCustomLinkComponent, customLinkComponents } = useCustomMobileMenuLinkComponents();
-
-registerCustomLinkComponent({ id: "cart", component: LinkCart });
-registerCustomLinkComponent({ id: "compare", component: LinkCompare });
 
 const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
   { route: { name: ROUTES.SIGN_IN.NAME }, title: t("shared.layout.header.link_sign_in") },
