@@ -82,12 +82,12 @@
           "Version": "3.802.0"
         },
         {
-          "Id": "VirtoCommerce.CatalogPersonalization",
-          "Version": "3.807.0"
+          "Id": "VirtoCommerce.WhiteLabeling",
+          "Version": "3.908.0"
         },
         {
-          "Id": "VirtoCommerce.CatalogPublishing",
-          "Version": "3.808.0"
+          "Id": "VirtoCommerce.XRecommend",
+          "Version": "3.904.0"
         },
         {
           "Id": "VirtoCommerce.Orders",
@@ -114,8 +114,8 @@
           "Version": "3.839.0"
         },
         {
-          "Id": "VirtoCommerce.CustomerExportImport",
-          "Version": "3.814.0"
+          "Id": "VirtoCommerce.CatalogPersonalization",
+          "Version": "3.807.0"
         },
         {
           "Id": "VirtoCommerce.Pricing",

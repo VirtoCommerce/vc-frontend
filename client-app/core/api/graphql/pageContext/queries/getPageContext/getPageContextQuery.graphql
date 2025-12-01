@@ -1,0 +1,35 @@
+#import "../../../fragments/storeFields.graphql"
+#import "../../../fragments/slugInfoFields.graphql"
+#import "../../../fragments/userFields.graphql"
+#import "../../../fragments/whiteLabelingFields.graphql"
+
+query GetPageContext(
+  $userId: String
+  $organizationId: String
+  $domain: String
+  $storeId: String
+  $permalink: String
+  $cultureName: String
+) {
+  pageContext(
+    userId: $userId
+    organizationId: $organizationId
+    domain: $domain
+    storeId: $storeId
+    permalink: $permalink
+    cultureName: $cultureName
+  ) {
+    user {
+      ...userTypeFields
+    }
+    store {
+      ...storeResponseTypeFields
+    }
+    slugInfo {
+      ...slugInfoResponseTypeFields
+    }
+    whiteLabelingSettings {
+      ...whiteLabelingFields
+    }
+  }
+}

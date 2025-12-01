@@ -1,0 +1,40 @@
+fragment userTypeFields on UserType {
+  id
+  memberId
+  userName
+  email
+  emailConfirmed
+  photoUrl
+  phoneNumber
+  permissions
+  isAdministrator
+  passwordExpired
+  passwordExpiryInDays
+  forcePasswordChange
+  lockedState
+  contact {
+    id
+    firstName
+    lastName
+    fullName
+    organizationId
+    defaultLanguage
+    currencyCode
+    selectedAddressId
+    organizations {
+      items {
+        id
+        name
+      }
+    }
+  }
+  operator {
+    userName
+    contact {
+      fullName
+    }
+  }
+  roles {
+    name
+  }
+}
