@@ -89,6 +89,7 @@
     :title="$t('shared.checkout.billing_details_section.title')"
     prepend-icon="cash"
     size="lg"
+    class="mt-4"
   >
     <Payment hide-payment-button :cart="cart" :payment="currentPaymentMethod" @validate="onValidate" />
   </VcWidget>
