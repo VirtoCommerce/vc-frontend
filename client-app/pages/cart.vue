@@ -111,18 +111,17 @@
           <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
         </template>
 
-          <CartForLater
-            v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
-            :saved-for-later-list="savedForLaterList"
-            :loading="moveFromSavedForLaterOverflowed"
-            @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
-          />
+        <CartForLater
+          v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
+          :saved-for-later-list="savedForLaterList"
+          :loading="moveFromSavedForLaterOverflowed"
+          @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
+        />
 
-          <RecentlyBrowsedProducts
-            v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
-            :products="recentlyBrowsedProducts"
-          />
-        </div>
+        <RecentlyBrowsedProducts
+          v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
+          :products="recentlyBrowsedProducts"
+        />
 
         <template #sidebar>
           <OrderSummary :cart="cart" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
