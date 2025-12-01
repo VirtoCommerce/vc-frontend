@@ -215,7 +215,7 @@
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
-          <PlaceOrder data-test-id="checkout-single-page.place-order-button" v-else class="!mt-2" />
+          <PlaceOrder data-test-id="checkout-multi-step.place-order-button" v-else class="!mt-2" />
         </div>
       </transition>
     </template>
