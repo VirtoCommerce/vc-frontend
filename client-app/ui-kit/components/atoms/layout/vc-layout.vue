@@ -166,21 +166,21 @@ const { style: contentStyle } = useSmartSticky({
 
     #{$left} & {
       @media (min-width: theme("screens.md")) {
-        @apply min-w-52;
+        @apply w-52;
       }
 
       @media (min-width: theme("screens.xl")) {
-        @apply min-w-60;
+        @apply w-60;
       }
     }
 
     #{$right} & {
       @media (min-width: theme("screens.md")) {
-        @apply min-w-64;
+        @apply w-64;
       }
 
       @media (min-width: theme("screens.xl")) {
-        @apply min-w-72;
+        @apply w-72;
       }
     }
   }
