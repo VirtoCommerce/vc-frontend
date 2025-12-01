@@ -147,7 +147,7 @@ function onValidate(isValid: boolean) {
 watch(paymentMethod, () => {
   if (paymentMethod.value) {
     // Emit validation status based on whether the payment method allows cart payment
-    emit("validate", !paymentMethod.value.allowCartPayment);
+    emit("validate", paymentMethod.value.allowCartPayment);
   }
 });
 </script>
