@@ -13,7 +13,14 @@ const core = {
   schemaPath: `${process.env.APP_BACKEND_URL}/graphql`,
 } as const;
 
-if (process.env.NODE_ENV === "development" && process.env.APP_BACKEND_URL?.startsWith("https://localhost")) {
+// WARNING: Disabling TLS certificate validation exposes the application to man-in-the-middle attacks.
+// This must NEVER be enabled in production. Only use for local development with self-signed certificates.
+// To enable, set LOCAL_DEV_ALLOW_INSECURE_TLS="true" in your environment in addition to NODE_ENV="development".
+if (
+  process.env.NODE_ENV === "development" &&
+  process.env.APP_BACKEND_URL?.startsWith("https://localhost") &&
+  process.env.LOCAL_DEV_ALLOW_INSECURE_TLS === "true"
+) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 }
 
