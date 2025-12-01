@@ -90,23 +90,17 @@
     prepend-icon="cash"
     size="lg"
   >
-    <Payment
-      ref="paymentComponent"
-      hide-payment-button
-      :cart="cart"
-      :payment="currentPaymentMethod"
-      @validate="onValidate"
-    />
+    <Payment hide-payment-button :cart="cart" :payment="currentPaymentMethod" @validate="onValidate" />
   </VcWidget>
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef, watch } from "vue";
+import { computed, watch } from "vue";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { AddressSelection } from "@/shared/common";
 import { BOPIS_CODE } from "../composables/useBopis";
-import type { AuthorizePaymentResultType, CartType, CustomerOrderType } from "@/core/api/graphql/types";
+import type { CartType } from "@/core/api/graphql/types";
 import Payment from "@/shared/payment/components/payment.vue";
 
 interface IProps {
@@ -133,24 +127,6 @@ const isShippingMethodBopis = computed(() => {
 const currentPaymentMethod = computed(() => {
   const cart = props.cart;
   return cart && cart.payments && cart.payments.length > 0 ? cart.payments[0] : null;
-});
-
-const paymentComponent = useTemplateRef("paymentComponent");
-
-async function authorizeCurrentPaymentWithOrder(order?: CustomerOrderType): Promise<AuthorizePaymentResultType | null> {
-  if (
-    paymentComponent.value &&
-    paymentMethod.value?.allowCartPayment &&
-    paymentComponent.value.authorizeCurrentPaymentWithOrder &&
-    order
-  ) {
-    return await paymentComponent.value.authorizeCurrentPaymentWithOrder(order);
-  }
-  return null;
-}
-
-defineExpose({
-  authorizeCurrentPaymentWithOrder,
 });
 
 const {

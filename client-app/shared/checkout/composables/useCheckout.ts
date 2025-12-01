@@ -14,10 +14,10 @@ import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
+import { usePayment } from "@/shared/payment";
 import { PaymentMethodGroupType } from "@/shared/payment";
 import { BOPIS_CODE } from "./useBopis";
 import type {
-  AuthorizePaymentResultType,
   CartAddressType,
   CustomerOrderType,
   InputAddressType,
@@ -426,9 +426,9 @@ export function _useCheckout(cartId?: string) {
     }
   }
 
-  async function createOrderFromCart(
-    paymentProcessor?: (order: CustomerOrderType) => Promise<AuthorizePaymentResultType | null>,
-  ): Promise<CustomerOrderType | null> {
+  const { finalizePayment } = usePayment();
+
+  async function createOrderFromCart(): Promise<CustomerOrderType | null> {
     loading.value = true;
 
     await prepareOrderData();
@@ -443,21 +443,19 @@ export function _useCheckout(cartId?: string) {
     let orderPayed = false;
 
     if (placedOrder.value) {
-      if (paymentProcessor && paymentProcessor instanceof Function) {
-        try {
-          const result = await paymentProcessor(placedOrder.value);
-          orderPayed = result?.isSuccess ?? false;
-        } catch (e) {
-          Logger.error(`${useCheckout.name}.${createOrderFromCart.name}.paymentProcessor`, e);
-          placedOrder.value = null;
-          notifications.error({
-            text: t("common.messages.payment_processing_error"),
-            duration: 15000,
-            single: true,
-          });
-          loading.value = false;
-          return null;
-        }
+      try {
+        const result = await finalizePayment(placedOrder.value);
+        orderPayed = result?.isSuccess ?? false;
+      } catch (e) {
+        Logger.error(`${useCheckout.name}.${createOrderFromCart.name}.paymentProcessor`, e);
+        placedOrder.value = null;
+        notifications.error({
+          text: t("common.messages.payment_processing_error"),
+          duration: 15000,
+          single: true,
+        });
+        loading.value = false;
+        return null;
       }
 
       await refetchCart();

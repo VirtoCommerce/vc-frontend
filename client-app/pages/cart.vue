@@ -106,7 +106,7 @@
           <template v-if="!$cfg.checkout_multistep_enabled">
             <ShippingDetailsSection v-if="!allItemsAreDigital" />
 
-            <BillingDetailsSection ref="billingComponent" :cart="cart" @validate="updatePaymentValidationStatus" />
+            <BillingDetailsSection :cart="cart" @validate="updatePaymentValidationStatus" />
 
             <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
           </template>
@@ -238,7 +238,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useTemplateRef, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { useAnalytics, useBreadcrumbs, usePageHead, useThemeContext } from "@/core/composables";
@@ -368,10 +368,8 @@ function updatePaymentValidationStatus(isValid: boolean) {
   isCardDataValid.value = isValid;
 }
 
-const billingComponent = useTemplateRef("billingComponent");
-
 async function handleCreateOrderFromCart() {
-  await createOrderFromCart(billingComponent.value?.authorizeCurrentPaymentWithOrder);
+  await createOrderFromCart();
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {

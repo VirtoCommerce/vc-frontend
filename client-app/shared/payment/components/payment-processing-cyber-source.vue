@@ -77,13 +77,14 @@ import { useForm } from "vee-validate";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { initializePayment, authorizePayment } from "@/core/api/graphql";
+import { authorizePayment, initializePayment, initializeCartPayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables";
 import { Logger, preventNonNumberKeyboard, preventNonNumberPaste } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
+import { usePayment } from "../composables";
 import PaymentPolicies from "./payment-policies.vue";
 import type { IPaymentMethodParameters } from "./types";
-import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
+import type { AuthorizePaymentResultType, CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
 
@@ -129,6 +130,7 @@ let microform: IMicroform;
 const { t } = useI18n();
 const { analytics } = useAnalytics();
 const notifications = useNotifications();
+const { registerPaymentProcessor } = usePayment();
 
 const loading = ref(false);
 
@@ -216,58 +218,6 @@ const expirationDateErrors = computed<string>(() =>
   [formErrors.value.month, formErrors.value.year].filter(Boolean).join(". "),
 );
 
-async function sendPaymentData(orderToPay: CustomerOrderType | undefined = undefined) {
-  const order = props.order || orderToPay;
-  if (!isValidBankCard.value || !order) {
-    return;
-  }
-  loading.value = true;
-  try {
-    const token = await createToken({
-      // cardholderName is optional for cybersource
-      cardholderName: formValues.cardholderName,
-      expirationMonth: formValues.month,
-      expirationYear: formValues.year,
-    });
-
-    if (!props.hidePaymentButton) {
-      // order payment way, this code is in payment component too, should not be here
-      const { isSuccess } = await authorizePayment({
-        orderId: order.id,
-        paymentId: order.inPayments[0].id,
-        parameters: [
-          {
-            key: "token",
-            value: token,
-          },
-        ],
-      });
-
-      if (isSuccess) {
-        analytics("purchase", order);
-        emit("success");
-      } else {
-        emit("fail");
-      }
-    }
-
-    return {
-      parameters: [
-        {
-          key: "token",
-          value: token,
-        },
-      ],
-    };
-  } catch (e) {
-    Logger.error(sendPaymentData.name, e);
-    emit("fail");
-    return null;
-  } finally {
-    loading.value = false;
-  }
-}
-
 async function createToken(options: Record<string, unknown>): Promise<string> {
   return new Promise((resolve, reject) => {
     microform.createToken(options, (err: unknown, token: string) => {
@@ -280,32 +230,26 @@ async function createToken(options: Record<string, unknown>): Promise<string> {
   });
 }
 
-async function executeNativePayment(order?: CustomerOrderType) {
-  return await sendPaymentData(order);
+async function initializeByCartOrOrder() {
+  if (props.cart) {
+    return await initializeCartPayment({
+      cartId: props.cart.id,
+      paymentId: props.payment!.id,
+    });
+  } else if (props.order) {
+    return await initializePayment({
+      orderId: props.order.id,
+      paymentId: props.order.inPayments[0].id,
+    });
+  }
+  return { publicParameters: undefined };
 }
-
-defineExpose({
-  executeNativePayment,
-});
-
-onMounted(async () => {
-  await initPaymentInternal();
-});
 
 async function initPaymentInternal() {
   loading.value = true;
 
-  const initFunction = props.initPayment || initializePayment;
+  const { publicParameters } = await initializeByCartOrOrder();
 
-  const { publicParameters } = await initFunction({
-    orderId: props.order?.id,
-    cartId: props.cart?.id,
-    paymentId: props.order?.inPayments[0].id || props.payment!.id,
-  });
-  await initPostProcess(publicParameters);
-}
-
-async function initPostProcess(publicParameters?: KeyValueType[]) {
   const scriptUrl = getValue(publicParameters, "clientScript");
 
   if (!publicParameters || !scriptUrl) {
@@ -319,7 +263,53 @@ async function initPostProcess(publicParameters?: KeyValueType[]) {
   await initFlex(getValue(publicParameters, "jwt")!);
   initForm();
 
+  registerPaymentProcessor(sendPaymentData);
+
   loading.value = false;
+}
+
+async function sendPaymentData(
+  orderToPay: CustomerOrderType | null = null,
+): Promise<AuthorizePaymentResultType | null> {
+  const order = orderToPay ?? props.order;
+  if (!isValidBankCard.value || !order) {
+    return null;
+  }
+  loading.value = true;
+  try {
+    const token = await createToken({
+      // cardholderName is optional for cybersource
+      cardholderName: formValues.cardholderName,
+      expirationMonth: formValues.month,
+      expirationYear: formValues.year,
+    });
+
+    const result = await authorizePayment({
+      orderId: order?.id,
+      paymentId: order.inPayments[0].id,
+      parameters: [
+        {
+          key: "token",
+          value: token,
+        },
+      ],
+    });
+
+    if (result.isSuccess) {
+      analytics("purchase", order);
+      emit("success");
+    } else {
+      emit("fail");
+    }
+
+    return result;
+  } catch (e) {
+    Logger.error(sendPaymentData.name, e);
+    emit("fail");
+    return null;
+  } finally {
+    loading.value = false;
+  }
 }
 
 function initForm() {
@@ -407,6 +397,10 @@ function removeScript() {
     scriptTag.value.remove();
   }
 }
+
+onMounted(async () => {
+  await initPaymentInternal();
+});
 
 watch([isValidBankCard, meta], ([validCard, metaFormResult]) => {
   emit("validate", validCard && metaFormResult.valid);
