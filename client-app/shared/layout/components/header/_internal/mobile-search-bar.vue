@@ -41,6 +41,7 @@
             :visible="visible"
             :search-phrase="searchPhrase"
             :filter-expression="filterExpression"
+            @hide="hideSearchBar"
             @product-select="hideSearchBar"
           />
         </VcScrollbar>
