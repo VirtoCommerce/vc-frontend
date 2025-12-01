@@ -351,7 +351,7 @@
           "settings": "Innstillinger",
           "currency": "Valuta",
           "search_bar": {
-            "input_placeholder": "Skriv inn nøkkelord, produkt, modell eller reservedelsnummer"
+            "input_placeholder": "Søk"
           },
           "view_all_catalog": "Vis alle produkter i kategorien"
         },
@@ -408,7 +408,7 @@
         "pages_label": "Sider",
         "suggestions_and_history_label": "Tips",
         "no_results": "Søket ditt etter {keyword} ga ingen resultater",
-        "enter_keyword_placeholder": "Søk i hele butikken",
+        "enter_keyword_placeholder": "Søk",
         "enter_keyword_placeholder_category": "Søk i kategorien {category}",
         "search_button": "Søk",
         "view_all_results_button": "Vis alle {total} resultater",

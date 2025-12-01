@@ -351,7 +351,7 @@
           "settings": "Impostazioni",
           "currency": "Valuta",
           "search_bar": {
-            "input_placeholder": "Inserisci parola chiave, articolo, modello o numero parte di ricambio"
+            "input_placeholder": "Cerca"
           },
           "view_all_catalog": "Visualizza tutti i prodotti nella categoria"
         },
@@ -408,7 +408,7 @@
         "pages_label": "Pagine",
         "suggestions_and_history_label": "Suggerimenti",
         "no_results": "La tua ricerca {keyword} non ha prodotto risultati",
-        "enter_keyword_placeholder": "Cerca nell'intero negozio",
+        "enter_keyword_placeholder": "Cerca",
         "enter_keyword_placeholder_category": "Cerca in {category}",
         "search_button": "Cerca",
         "view_all_results_button": "Visualizza tutti i {total} risultati",
