@@ -100,11 +100,6 @@ export function useProducts(
     defaultValue: "",
   });
 
-  /** @deprecated use `searchQueryParam` instead */
-  const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
-    defaultValue: "",
-  });
-
   const facetsQueryParam = useRouteQueryParam<string>(QueryParamName.Facets, {
     defaultValue: "",
   });
@@ -267,11 +262,6 @@ export function useProducts(
     await new Promise((resolve) => setTimeout(resolve, 0));
     // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
     preserveUserQueryQueryParam.value = "yes";
-  }
-
-  /** @deprecated use `searchQueryParam` instead */
-  function resetFilterKeyword(): void {
-    keywordQueryParam.value = "";
   }
 
   function resetSearchKeyword(): void {
@@ -516,8 +506,6 @@ export function useProducts(
     hasSelectedFilters: computed(() => hasSelectedFilters()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
-    /** @deprecated use `searchQueryParam` instead */
-    keywordQueryParam,
     localStorageBranches,
     localStorageInStock,
     localStoragePurchasedBefore,
@@ -544,8 +532,6 @@ export function useProducts(
     hideFiltersSidebar,
     openBranchesModal,
     resetFacetFilters,
-    /** @deprecated use `searchQueryParam` instead */
-    resetFilterKeyword,
     resetSearchKeyword,
     showFiltersSidebar,
     updateProductsFilters,
