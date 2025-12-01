@@ -91,7 +91,6 @@ import CardLabels from "@/shared/payment/components/card-labels.vue";
 interface IEmits {
   (event: "success"): void;
   (event: "fail", message?: string | null): void;
-  (event: "validate", isValid: boolean): void;
 }
 
 interface IField {
@@ -130,7 +129,7 @@ let microform: IMicroform;
 const { t } = useI18n();
 const { analytics } = useAnalytics();
 const notifications = useNotifications();
-const { registerPaymentProcessor } = usePayment();
+const { registerPaymentProcessor, isValidCardData } = usePayment();
 
 const loading = ref(false);
 
@@ -403,7 +402,7 @@ onMounted(async () => {
 });
 
 watch([isValidBankCard, meta], ([validCard, metaFormResult]) => {
-  emit("validate", validCard && metaFormResult.valid);
+  isValidCardData.value = validCard && metaFormResult.valid;
 });
 
 onUnmounted(removeScript);

@@ -106,7 +106,7 @@
         <template v-if="!$cfg.checkout_multistep_enabled">
           <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
 
-          <BillingDetailsSection :cart="cart" @validate="updatePaymentValidationStatus" class="mt-5" />
+          <BillingDetailsSection :cart="cart" class="mt-5" />
 
           <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
         </template>
@@ -115,12 +115,14 @@
           v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
           :saved-for-later-list="savedForLaterList"
           :loading="moveFromSavedForLaterOverflowed"
+          class="mt-5"
           @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
 
         <RecentlyBrowsedProducts
           v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
           :products="recentlyBrowsedProducts"
+          class="mt-5"
         />
 
         <template #sidebar>
@@ -150,15 +152,7 @@
                 {{ $t("common.buttons.go_to_checkout") }}
               </ProceedTo>
 
-              <ProceedTo
-                v-else
-                :disabled="!canCreateOrderFromCart"
-                data-test-id="checkout-single-page.place-order-button"
-                @click="handleCreateOrderFromCart"
-                class="mt-4"
-              >
-                {{ $t("common.buttons.place_order") }}
-              </ProceedTo>
+              <PlaceOrder data-test-id="checkout-single-page.place-order-button" v-else class="mt-4" />
 
               <template v-if="!$cfg.checkout_multistep_enabled">
                 <transition name="slide-fade-top" mode="out-in" appear>
@@ -221,15 +215,7 @@
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
-          <ProceedTo
-            v-else
-            :disabled="!canCreateOrderFromCart"
-            data-test-id="checkout-multi-page.place-order-button"
-            @click="handleCreateOrderFromCart"
-            class="!mt-2"
-          >
-            {{ $t("common.buttons.place_order") }}
-          </ProceedTo>
+          <PlaceOrder data-test-id="checkout-single-page.place-order-button" v-else class="mt-4" />
         </div>
       </transition>
     </template>
@@ -252,6 +238,7 @@ import {
   BillingDetailsSection,
   OrderCommentSection,
   OrderSummary,
+  PlaceOrder,
   ProceedTo,
   ShippingDetailsSection,
   useCheckout,
@@ -300,15 +287,7 @@ const {
   payment,
   changing: isCartUpdating,
 } = useFullCart();
-const {
-  loading: loadingCheckout,
-  comment,
-  isValidShipment,
-  isValidCheckout,
-  isValidPayment,
-  initialize,
-  createOrderFromCart,
-} = useCheckout();
+const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
@@ -341,12 +320,6 @@ const analyticsLastSentPaymentCode = ref<string | undefined>();
 const isCartLocked = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
-const isCardDataValid = ref(false);
-
-const canCreateOrderFromCart = computed(
-  () => !hasOnlyUnselectedLineItems.value && isValidCheckout.value && isCardDataValid.value,
-);
-
 const loading = computed(() => loadingCart.value || loadingCheckout.value || saveForLaterLoading.value);
 const isShowIncompleteDataWarning = computed(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
@@ -362,14 +335,6 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
     "removeItemsFromCart",
     cart.value!.items.filter((item) => itemIds.includes(item.id)),
   );
-}
-
-function updatePaymentValidationStatus(isValid: boolean) {
-  isCardDataValid.value = isValid;
-}
-
-async function handleCreateOrderFromCart() {
-  await createOrderFromCart();
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {

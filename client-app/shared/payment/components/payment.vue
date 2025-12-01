@@ -7,7 +7,6 @@
       :hide-payment-button="hidePaymentButton"
       :disabled="disabled"
       :payment="payment"
-      @validate="onValidate"
       @success="onPaymentSuccess()"
       @fail="onPaymentFail()"
     />
@@ -66,10 +65,6 @@ const paymentTypeName = computed<string | undefined>(
     props.order?.inPayments[0].paymentMethod?.typeName ||
     props.cart?.payments[0]?.paymentGatewayCode,
 );
-
-function onValidate(isValid: boolean) {
-  emit("validate", isValid);
-}
 
 async function onPaymentSuccess() {
   emit("success");

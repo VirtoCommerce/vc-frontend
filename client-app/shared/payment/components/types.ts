@@ -12,5 +12,4 @@ export interface IPaymentMethodParameters {
 export interface IPaymentMethodEmits {
   (event: "success"): void;
   (event: "fail", message?: string | null): void;
-  (event: "validate", isValid: boolean): void;
 }

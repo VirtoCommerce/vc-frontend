@@ -14,8 +14,7 @@ import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { usePayment } from "@/shared/payment";
-import { PaymentMethodGroupType } from "@/shared/payment";
+import { PaymentMethodGroupType, usePayment } from "@/shared/payment";
 import { BOPIS_CODE } from "./useBopis";
 import type {
   CartAddressType,
