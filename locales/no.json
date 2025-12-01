@@ -948,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Ugyldig forespørsel",
+      "message": "Brukeren har ikke lenger tillatelse til å logge på. Kontakt administratoren.",
+      "img_alt": "Ugyldig forespørsel",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Tilgang nektet",

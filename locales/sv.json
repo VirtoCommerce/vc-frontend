@@ -948,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Felaktig begäran",
+      "message": "Användaren får inte längre logga in. Kontakta administratören.",
+      "img_alt": "Felaktig begäran",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Åtkomst nekad",
