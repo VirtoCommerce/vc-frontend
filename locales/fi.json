@@ -709,6 +709,7 @@
         "cancel_button": "Peruuta",
         "ok_button": "OK",
         "no_results": "Tuloksia ei löytynyt",
+        "no_branches": "Toimipisteitä ei löytynyt",
         "reset_search_button": "Nollaa haku"
       },
       "shipment_options": {
@@ -948,6 +949,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Virheellinen pyyntö",
+      "message": "Käyttäjä ei voi enää kirjautua sisään. Ota yhteyttä järjestelmänvalvojaan.",
+      "img_alt": "Virheellinen pyyntö",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Pääsy evätty",

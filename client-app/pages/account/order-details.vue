@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <VcLayout sidebar-position="right" sticky-sidebar>
+    <VcLayout sidebar-position="right" sticky>
       <VcWidget id="line-items-widget" size="lg" class="print:break-inside-auto">
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
@@ -71,6 +71,7 @@
 
               <OrderStatus size="sm" :status="order.status" :display-value="order.statusDisplayValue" />
             </div>
+
             <VcAlert
               v-if="order.cancelReason"
               class="mt-2.5"
@@ -150,6 +151,7 @@
                 class="size-12 print:hidden"
                 lazy
               />
+
               <span class="min-w-0 break-words">
                 {{ paymentMethodName }}
               </span>

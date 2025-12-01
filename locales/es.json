@@ -709,6 +709,7 @@
         "cancel_button": "Cancelar",
         "ok_button": "Aceptar",
         "no_results": "No se encontraron resultados",
+        "no_branches": "No se encontraron sucursales",
         "reset_search_button": "Restablecer búsqueda"
       },
       "shipment_options": {
@@ -948,6 +949,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Solicitud incorrecta",
+      "message": "El usuario ya no tiene permiso para iniciar sesión. Póngase en contacto con el administrador.",
+      "img_alt": "Solicitud incorrecta",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Acceso denegado",

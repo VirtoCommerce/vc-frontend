@@ -11,7 +11,6 @@
         :facets-loading="fetchingFacets"
         :is-mobile="isMobile"
         :is-visible="isFiltersSidebarVisible"
-        :keyword-query-param="keywordQueryParam"
         :loading="fetchingProducts"
         :hide-controls="hideControls"
         @hide-popup-sidebar="hideFiltersSidebar"
@@ -19,7 +18,7 @@
         @apply-filters="applyFilters"
       />
 
-      <VcLayout sticky-sidebar>
+      <VcLayout sticky>
         <template v-if="isSidebarVisible" #sidebar>
           <CategorySelector
             v-if="categoryId || isRoot"
@@ -30,7 +29,6 @@
           />
 
           <ProductsFilters
-            :keyword="keywordQueryParam"
             :filters="filtersToShow"
             :loading="fetchingProducts"
             class="category__product-filters"
@@ -142,7 +140,6 @@
           <CategoryHorizontalFilters
             v-if="isHorizontalFilters && !isMobile"
             :facets-loading="fetchingFacets"
-            :keyword-query-param="keywordQueryParam"
             :sort-query-param="sortQueryParam"
             :loading="fetchingProducts || fetchingFacets"
             :filters="filtersToShow"
@@ -355,7 +352,6 @@ const {
   hasSelectedFacets,
   hasSelectedFilters,
   isFiltersSidebarVisible,
-  keywordQueryParam,
   localStorageBranches,
   localStorageInStock,
   localStoragePurchasedBefore,
@@ -471,7 +467,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
-  keyword: searchQueryParam.value || keywordQueryParam.value || props.keyword,
+  keyword: searchQueryParam.value || props.keyword,
   filter: [
     props.filter,
     facetsQueryParam.value,

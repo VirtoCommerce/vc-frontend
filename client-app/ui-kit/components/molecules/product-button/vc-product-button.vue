@@ -132,7 +132,7 @@ withDefaults(defineProps<IProps>(), {
         }
 
         #{$link} {
-          @apply mt-7;
+          @apply mt-8;
         }
       }
 

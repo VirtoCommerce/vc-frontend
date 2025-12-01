@@ -77,39 +77,39 @@
     </template>
 
     <template v-else>
-      <VcLayout sidebar-position="right" sticky-sidebar>
-        <div class="flex flex-col gap-5">
-          <ProductsSection
-            :grouped="!!$cfg.line_items_group_by_vendor_enabled"
-            :items="cart.items"
-            :items-grouped-by-vendor="lineItemsGroupedByVendor"
-            :selected-item-ids="selectedItemIds"
-            :validation-errors="cart.validationErrors"
-            :disabled="changeItemQuantityBatchedOverflowed || moveToSavedForLaterOverflowed || selectionOverflowed"
-            data-test-id="cart.products-section"
-            :hide-controls="hideControls"
-            @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
-            @select:items="handleSelectItems"
-            @remove:items="handleRemoveItems"
-            @save-for-later="handleSaveForLater"
-            @clear:cart="openClearCartModal"
-            @link-click="selectItemEvent"
-          />
+      <VcLayout sidebar-position="right" sticky>
+        <ProductsSection
+          :grouped="!!$cfg.line_items_group_by_vendor_enabled"
+          :items="cart.items"
+          :items-grouped-by-vendor="lineItemsGroupedByVendor"
+          :selected-item-ids="selectedItemIds"
+          :validation-errors="cart.validationErrors"
+          :disabled="changeItemQuantityBatchedOverflowed || moveToSavedForLaterOverflowed || selectionOverflowed"
+          data-test-id="cart.products-section"
+          :hide-controls="hideControls"
+          @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
+          @select:items="handleSelectItems"
+          @remove:items="handleRemoveItems"
+          @save-for-later="handleSaveForLater"
+          @clear:cart="openClearCartModal"
+          @link-click="selectItemEvent"
+        />
 
-          <GiftsSection
-            v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
-            :gifts="availableExtendedGifts"
-            @toggle:gift="toggleGift"
-          />
+        <GiftsSection
+          v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
+          :gifts="availableExtendedGifts"
+          class="mt-5"
+          @toggle:gift="toggleGift"
+        />
 
-          <!-- Sections for single page checkout -->
-          <template v-if="!$cfg.checkout_multistep_enabled">
-            <ShippingDetailsSection v-if="!allItemsAreDigital" />
+        <!-- Sections for single page checkout -->
+        <template v-if="!$cfg.checkout_multistep_enabled">
+          <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
 
-            <BillingDetailsSection :cart="cart" @validate="updatePaymentValidationStatus" />
+          <BillingDetailsSection :cart="cart" @validate="updatePaymentValidationStatus" class="mt-5" />
 
-            <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
-          </template>
+          <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
+        </template>
 
           <CartForLater
             v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
@@ -299,6 +299,7 @@ const {
   unselectCartItems,
   shipment,
   payment,
+  changing: isCartUpdating,
 } = useFullCart();
 const {
   loading: loadingCheckout,
@@ -412,9 +413,14 @@ function shouldHide(id: string) {
 }
 
 watch(
-  [() => isValidShipment.value, () => shipment.value?.shipmentMethodOption],
+  [() => isValidShipment.value, () => shipment.value?.shipmentMethodOption, isCartUpdating],
   () => {
-    if (themeContext.value?.settings?.checkout_multistep_enabled || !cart.value || !isValidShipment.value) {
+    if (
+      themeContext.value?.settings?.checkout_multistep_enabled ||
+      !cart.value ||
+      !isValidShipment.value ||
+      isCartUpdating.value
+    ) {
       return;
     }
 

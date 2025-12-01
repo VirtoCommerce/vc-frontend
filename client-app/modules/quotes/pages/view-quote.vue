@@ -14,6 +14,7 @@
           <VcButton class="grow" variant="outline" @click="decline">
             {{ $t("common.buttons.decline") }}
           </VcButton>
+
           <VcButton class="grow" @click="approve">
             {{ $t("common.buttons.approve") }}
           </VcButton>
