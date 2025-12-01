@@ -56,7 +56,7 @@
               <VcIcon class="fill-primary" name="search" :size="28" />
             </button>
 
-            <component :is="item" v-for="(item, index) in customComponents" :key="index" class="px-1 py-2 xs:px-2" />
+            <ExtensionPointList category="mobileHeader" class="px-1 py-2 xs:px-2" />
 
             <router-link
               :to="{ name: ROUTES.CART.NAME }"
@@ -127,14 +127,11 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
-import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import MobileSearchBar from "./mobile-search-bar.vue";
 import type { StyleValue } from "vue";
-
-const { customComponents } = useCustomMobileHeaderComponents();
 
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
