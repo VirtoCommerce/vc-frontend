@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { onClickOutside, useElementBounding, whenever, useLocalStorage } from "@vueuse/core";
+import { onClickOutside, useElementBounding, useLocalStorage } from "@vueuse/core";
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
@@ -101,15 +101,8 @@ import type { StyleValue } from "vue";
 const searchBarElement = ref<HTMLElement | null>(null);
 const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
 
-const {
-  searchBarVisible,
-  searchDropdownVisible,
-  loading,
-  hideSearchDropdown,
-  showSearchDropdown,
-  clearSearchResults,
-  maxSearchLength,
-} = useSearchBar();
+const { searchDropdownVisible, loading, hideSearchDropdown, showSearchDropdown, clearSearchResults, maxSearchLength } =
+  useSearchBar();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
@@ -194,40 +187,32 @@ function handleProductSelect() {
   hideSearchDropdown();
 }
 
-whenever(
-  searchBarVisible,
-  () => {
-    searchPhrase.value = searchPhraseInUrl.value ?? "";
-    if (!searchPhrase.value.trim()) {
-      clearSearchResults();
-    }
-  },
-  { immediate: true },
-);
+function onBarcodeScanned(value: string) {
+  if (value) {
+    searchPhrase.value = value;
+    searchDropdownRef.value?.handleSearch();
+  }
+}
+
+watch(isCategoryScope, (isCategory) => {
+  if (!isCategory && searchPhrase.value && !searchPhraseInUrl.value) {
+    searchPhrase.value = "";
+    clearSearchResults();
+  }
+});
+
+watch(searchPhraseInUrl, (newValue) => {
+  searchPhrase.value = newValue ?? "";
+  if (!searchPhrase.value.trim()) {
+    clearSearchResults();
+  }
+});
 
 onMounted(() => {
   if (searchPhraseInUrl.value) {
     searchPhrase.value = searchPhraseInUrl.value;
   }
 });
-
-const onBarcodeScanned = (value: string) => {
-  if (value) {
-    searchPhrase.value = value;
-    searchDropdownRef.value?.handleSearch();
-  }
-};
-
-watch(
-  () => searchScopeData.value.queryScope,
-  (value) => {
-    if (value !== searchPhrase.value) {
-      searchPhrase.value = value;
-      clearSearchResults();
-    }
-  },
-  { deep: true },
-);
 </script>
 
 <style lang="scss">

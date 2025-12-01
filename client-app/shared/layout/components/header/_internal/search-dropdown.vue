@@ -168,6 +168,7 @@ interface IProps {
 interface IEmits {
   (e: "hide"): void;
   (e: "productSelect", product: Product): void;
+  (e: "update:searchPhrase", value: string): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -307,6 +308,7 @@ async function onSearchPhraseChanged() {
 }
 
 function handleSearchHistoryClick(query: string) {
+  emit("update:searchPhrase", query);
   goToSearchResultsPage(query);
 }
 

@@ -43,6 +43,7 @@
             :filter-expression="filterExpression"
             @hide="hideSearchBar"
             @product-select="hideSearchBar"
+            @update:search-phrase="searchPhrase = $event"
           />
         </VcScrollbar>
       </div>
