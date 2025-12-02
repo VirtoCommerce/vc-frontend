@@ -326,7 +326,7 @@ const isShowIncompleteDataWarning = computed(
 );
 
 async function handleRemoveItems(itemIds: string[]): Promise<void> {
-  const removedItems = [...(cart.value!.items.filter((item) => itemIds.includes(item.id)) || [])];
+  const removedItems = cart.value!.items.filter((item) => itemIds.includes(item.id));
 
   await removeItems(itemIds);
 
