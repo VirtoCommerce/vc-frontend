@@ -2,7 +2,7 @@ import type { CartType, CustomerOrderType, PaymentType } from "@/core/api/graphq
 
 export interface IPaymentMethodParameters {
   hidePaymentButton?: boolean;
-  payment?: PaymentType; // can it be PaymentInType?
+  payment?: PaymentType;
   disabled?: boolean;
 
   cart?: CartType;

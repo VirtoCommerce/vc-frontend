@@ -91,12 +91,12 @@
     size="lg"
     class="mt-4"
   >
-    <Payment hide-payment-button :cart="cart" :payment="currentPaymentMethod" @validate="onValidate" />
+    <Payment hide-payment-button :cart="cart" :payment="currentPaymentMethod" />
   </VcWidget>
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed } from "vue";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { AddressSelection } from "@/shared/common";
@@ -109,11 +109,6 @@ interface IProps {
   cart?: CartType;
 }
 
-interface IEmits {
-  (event: "validate", isValid: boolean): void;
-}
-
-const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { allItemsAreDigital, availablePaymentMethods, availableShippingMethods } = useFullCart();
@@ -140,15 +135,4 @@ const {
   isPurchaseOrderNumberEnabled,
   purchaseOrderNumber,
 } = useCheckout();
-
-function onValidate(isValid: boolean) {
-  emit("validate", isValid);
-}
-
-watch(paymentMethod, () => {
-  if (paymentMethod.value) {
-    // Emit validation status based on whether the payment method allows cart payment
-    emit("validate", paymentMethod.value.allowCartPayment);
-  }
-});
 </script>

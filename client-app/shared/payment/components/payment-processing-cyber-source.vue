@@ -129,7 +129,7 @@ let microform: IMicroform;
 const { t } = useI18n();
 const { analytics } = useAnalytics();
 const notifications = useNotifications();
-const { registerPaymentProcessor, isValidCardData } = usePayment();
+const { registerPaymentProcessor, setCardDataValid, setCardDataInvalid } = usePayment();
 
 const loading = ref(false);
 
@@ -401,8 +401,12 @@ onMounted(async () => {
   await initPaymentInternal();
 });
 
-watch([isValidBankCard, meta], ([validCard, metaFormResult]) => {
-  isValidCardData.value = validCard && metaFormResult.valid;
+watch([isValidBankCard, meta], ([isValidCard, metaFormResult]) => {
+  if (isValidCard && metaFormResult.valid) {
+    setCardDataValid();
+  } else {
+    setCardDataInvalid();
+  }
 });
 
 onUnmounted(removeScript);

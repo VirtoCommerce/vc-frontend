@@ -1,5 +1,5 @@
 import { createSharedComposable } from "@vueuse/core";
-import { computed, ref } from "vue";
+import { computed, readonly, ref } from "vue";
 import type { AuthorizePaymentResultType, CustomerOrderType } from "@/core/api/graphql/types";
 
 type PaymentProcessorType = ((order: CustomerOrderType) => Promise<AuthorizePaymentResultType | null>) | null;
@@ -12,6 +12,14 @@ function _usePaymentFactory() {
     return isValidCardData.value || paymentProcessorInternal === null;
   });
 
+  const setCardDataValid = () => {
+    isValidCardData.value = true;
+  };
+
+  const setCardDataInvalid = () => {
+    isValidCardData.value = false;
+  };
+
   const registerPaymentProcessor = (paymentProcessor: PaymentProcessorType) => {
     paymentProcessorInternal = paymentProcessor;
   };
@@ -21,7 +29,9 @@ function _usePaymentFactory() {
   };
 
   return {
-    isValidCardData,
+    isValidCardData: readonly(isValidCardData),
+    setCardDataValid,
+    setCardDataInvalid,
     isCanFinalizePayment,
     registerPaymentProcessor,
     finalizePayment,
