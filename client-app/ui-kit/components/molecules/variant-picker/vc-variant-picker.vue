@@ -92,17 +92,18 @@ const model = defineModel<IProps["modelValue"]>();
 
 const normalizedValue = computed(() => (Array.isArray(props.value) ? props.value : [props.value]));
 
-const isMultiColor = computed(() => props.type === "color" && Array.isArray(props.value) && props.value.length >= 2);
-
 const colorsList = computed(() => {
-  if (!isMultiColor.value) {
-    const singleValue = normalizedValue.value[0];
-    return [getColorValue(singleValue)].filter(Boolean);
+  if (props.type !== "color") {
+    return [];
   }
 
   const allColors = normalizedValue.value.map((v) => getColorValue(v)).filter(Boolean);
   return allColors.slice(0, 4);
 });
+
+const isMultiColor = computed(
+  () => props.type === "color" && Array.isArray(props.value) && colorsList.value.length >= 2,
+);
 
 const displayValue = computed(() => normalizedValue.value[0]);
 
@@ -270,6 +271,12 @@ function toggleValue(): void {
 
   &__color-grid {
     @apply grow grid rounded-[calc(var(--radius)-2px)] overflow-hidden;
+
+    &[data-count="0"],
+    &[data-count="1"] {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+    }
 
     &[data-count="2"] {
       grid-template-rows: repeat(2, 1fr);
