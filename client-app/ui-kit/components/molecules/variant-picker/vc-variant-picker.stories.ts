@@ -247,7 +247,7 @@ export const TooltipSlotWithVariantPickerTeleportEnabled: StoryType = {
         <template #tooltip>
           <div class="flex gap-2 max-w-44 font-normal">
             <div>
-            <VcVariantPicker type="color" size="xs" :value="['red', 'blue', 'green', 'yellow']" isAvailable="false">
+            <VcVariantPicker type="color" size="xs" :value="['red', 'blue', 'green', 'yellow']" isAvailable="false" />
 </div>
 
             <div class="grow">
@@ -267,7 +267,7 @@ export const TooltipSlotWithVariantPickerTeleportEnabled: StoryType = {
             <template #tooltip>
               <div class="flex gap-2 max-w-44 font-normal">
                 <div>
-                <VcVariantPicker type="color" size="xs" :value="['red', 'blue', 'green', 'yellow']" isAvailable="false">
+                <VcVariantPicker type="color" size="xs" :value="['red', 'blue', 'green', 'yellow']" isAvailable="false" />
     </div>
 
                 <div class="grow">
