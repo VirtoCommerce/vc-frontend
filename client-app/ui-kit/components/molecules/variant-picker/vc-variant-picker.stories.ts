@@ -22,6 +22,15 @@ const meta: Meta<typeof VcVariantPicker> = {
     setup: () => ({ args }),
     template: '<VcVariantPicker v-bind="args" />',
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPicker v-bind="args" />
+        `,
+      },
+    },
+  },
 };
 
 export default meta;
@@ -91,6 +100,25 @@ export const TooltipSlotWithImage: StoryType = {
       </VcVariantPicker>
     </div>
   `),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPicker type="image" :value="product-example-1.webp" is-available>
+            <template #tooltip>
+              <div class="flex items-center gap-2 max-w-64 font-normal">
+                <VcImage :src="args.value" alt="Variant preview" class="size-12 rounded-md object-cover" />
+                <div>
+                  <div class="font-bold">Variant preview</div>
+                  <div class="text-xs text-neutral-600">This tooltip content comes from the slot and can include any markup.</div>
+                </div>
+              </div>
+            </template>
+          </VcVariantPicker>
+        `,
+      },
+    },
+  },
 };
 
 export const Text: StoryType = {
@@ -151,5 +179,152 @@ export const MultiColorUnavailable: StoryType = {
     value: ["red", "blue"],
     isAvailable: false,
     tooltip: "Unavailable multicolor",
+  },
+};
+
+export const MultiColorManyColors: StoryType = {
+  args: {
+    type: "color",
+    value: ["red", "orange", "yellow", "green", "blue", "indigo", "violet", "pink", "cyan", "magenta"],
+    isAvailable: true,
+    tooltip: "10 colors (shows first 4 only)",
+  },
+};
+
+export const TooltipSlotWithColor: StoryType = {
+  args: {
+    type: "color",
+    value: "red",
+    isAvailable: true,
+  },
+  render: renderVariantPicker(`
+    <div class="p-6">
+      <VcVariantPicker v-bind="args">
+        <template #tooltip>
+          <div class="flex gap-2 max-w-44 font-normal">
+            <div class="flex-none size-6 rounded-md bg-[red]"></div>
+            <div class="grow">
+              <div class="font-bold">Red Color</div>
+              <div class="text-xs text-neutral-600">This is a custom tooltip for single color variant.</div>
+            </div>
+          </div>
+        </template>
+      </VcVariantPicker>
+    </div>
+  `),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPicker type="color" :value="['red']" is-available>
+            <template #tooltip>
+              <div class="flex gap-2 max-w-44 font-normal">
+                <div class="flex-none size-6 rounded-md bg-[red]"></div>
+                <div class="grow">
+                  <div class="font-bold">Red Color</div>
+                  <div class="text-xs text-neutral-600">This is a custom tooltip for single color variant.</div>
+                </div>
+              </div>
+            </template>
+          </VcVariantPicker>
+        `,
+      },
+    },
+  },
+};
+
+export const TooltipSlotWithVariantPickerTeleportEnabled: StoryType = {
+  args: {
+    type: "color",
+    value: ["red", "blue", "green", "yellow"],
+    isAvailable: true,
+    tooltipEnableTeleport: true,
+    tooltipTeleportSelector: "body",
+  },
+  render: renderVariantPicker(`
+    <div class="p-6">
+      <VcVariantPicker v-bind="args">
+        <template #tooltip>
+          <div class="flex gap-2 max-w-44 font-normal">
+            <div>
+            <VcVariantPicker type="color" size="xs" :value="['red', 'blue', 'green', 'yellow']" isAvailable="false">
+</div>
+
+            <div class="grow">
+              <div class="font-bold">Variant Picker</div>
+              <div class="text-xs text-neutral-600">This variant includes 4 colors: Red, Blue, Green, and Yellow.</div>
+            </div>
+          </div>
+        </template>
+      </VcVariantPicker>
+    </div>
+  `),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPicker type="color" size="xs" :value="['red', 'blue', 'green', 'yellow']" is-available tooltip-enable-teleport tooltip-teleport-selector="body">
+            <template #tooltip>
+              <div class="flex gap-2 max-w-44 font-normal">
+                <div>
+                <VcVariantPicker type="color" size="xs" :value="['red', 'blue', 'green', 'yellow']" isAvailable="false">
+    </div>
+
+                <div class="grow">
+                  <div class="font-bold">Variant Picker</div>
+                  <div class="text-xs text-neutral-600">This variant includes 4 colors: Red, Blue, Green, and Yellow.</div>
+                </div>
+              </div>
+            </template>
+          </VcVariantPicker>
+        `,
+      },
+    },
+  },
+};
+
+export const TooltipSlotWithText: StoryType = {
+  args: {
+    type: "text",
+    value: "Size: MD",
+    isAvailable: true,
+  },
+  render: renderVariantPicker(`
+    <div class="p-6">
+      <VcVariantPicker v-bind="args">
+        <template #tooltip>
+          <div class="flex gap-2 max-w-64 font-normal">
+            <div class="flex-none flex size-12 items-center justify-center rounded-md bg-neutral-100 font-bold">
+              MD
+            </div>
+            <div>
+              <div class="font-bold">Medium Size</div>
+              <div class="text-xs text-neutral-600">This size fits most people. Check size guide for measurements.</div>
+            </div>
+          </div>
+        </template>
+      </VcVariantPicker>
+    </div>
+  `),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPicker type="text" size="xs" :value="['Size: MD']" is-available>
+            <template #tooltip>
+              <div class="flex gap-2 max-w-64 font-normal">
+                <div class="flex-none flex size-12 items-center justify-center rounded-md bg-neutral-100 font-bold">
+                  MD
+                </div>
+                <div>
+                  <div class="font-bold">Medium Size</div>
+                  <div class="text-xs text-neutral-600">This size fits most people. Check size guide for measurements.</div>
+                </div>
+              </div>
+            </template>
+          </VcVariantPicker>
+        `,
+      },
+    },
   },
 };
