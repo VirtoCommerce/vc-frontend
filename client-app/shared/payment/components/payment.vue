@@ -7,8 +7,6 @@
       :hide-payment-button="hidePaymentButton"
       :disabled="disabled"
       :payment="payment"
-      @success="onPaymentSuccess()"
-      @fail="onPaymentFail()"
     />
 
     <!-- TODO: Add support for AuthorizeNet, Skyflow, Datatrans, and extension point payment methods for cart payments when available. -->
@@ -17,10 +15,9 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { IPaymentMethodParameters, IPaymentMethodEmits } from "./types";
+import type { IPaymentMethodParameters } from "./types";
 import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
 
-const emit = defineEmits<IPaymentMethodEmits>();
 const props = defineProps<IPaymentMethodParameters>();
 
 const paymentTypeName = computed<string | undefined>(
@@ -29,12 +26,4 @@ const paymentTypeName = computed<string | undefined>(
     props.order?.inPayments[0].paymentMethod?.typeName ||
     props.cart?.payments[0]?.paymentGatewayCode,
 );
-
-async function onPaymentSuccess() {
-  emit("success");
-}
-
-async function onPaymentFail() {
-  emit("fail");
-}
 </script>

@@ -83,15 +83,10 @@ import { Logger, preventNonNumberKeyboard, preventNonNumberPaste } from "@/core/
 import { useNotifications } from "@/shared/notification";
 import { usePayment } from "../composables";
 import PaymentPolicies from "./payment-policies.vue";
-import type { IPaymentMethodParameters } from "./types";
+import type { IPaymentMethodParameters, IPaymentMethodEmits } from "./types";
 import type { AuthorizePaymentResultType, CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
-
-interface IEmits {
-  (event: "success"): void;
-  (event: "fail", message?: string | null): void;
-}
 
 interface IField {
   load(containerId: string): void;
@@ -116,7 +111,7 @@ interface IFlex {
   microform(options: { styles: Record<string, unknown> }): IMicroform;
 }
 
-const emit = defineEmits<IEmits>();
+const emit = defineEmits<IPaymentMethodEmits>();
 const props = defineProps<IPaymentMethodParameters>();
 
 declare let Flex: FlexConstructorType;
