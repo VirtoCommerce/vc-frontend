@@ -42,7 +42,9 @@
 
       <ul class="-mx-2 flex items-center">
         <li v-for="item in desktopMainMenuItems" :key="item.id">
-          <component :is="(item.id && customLinkComponents[item.id]) || LinkDefault" :item="item" />
+          <ExtensionPoint category="headerMenu" :name="item.id" :item="item">
+            <LinkDefault :item="item" />
+          </ExtensionPoint>
         </li>
       </ul>
     </nav>
@@ -79,7 +81,6 @@ import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
 import { SearchBar } from "@/shared/layout";
-import { useCustomHeaderLinkComponents } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
 import LinkDefault from "@/shared/layout/components/header/_internal/link-components/link-default.vue";
@@ -94,7 +95,6 @@ const router = useRouter();
 const { organization } = useUser();
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
-const { customLinkComponents } = useCustomHeaderLinkComponents();
 
 const bottomHeader = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);

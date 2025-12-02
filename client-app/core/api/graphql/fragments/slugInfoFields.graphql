@@ -1,0 +1,15 @@
+fragment slugInfoResponseTypeFields on SlugInfoResponseType {
+  entityInfo {
+    id
+    isActive
+    languageCode
+    objectId
+    objectType
+    semanticUrl
+    metaDescription
+    metaKeywords
+    pageTitle
+    outline
+  }
+  redirectUrl
+}

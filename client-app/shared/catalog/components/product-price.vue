@@ -97,14 +97,11 @@
       </div>
 
       <div class="product-price__actions">
-        <component
-          :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
-          v-if="
-            isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON) &&
-            shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, product)
-          "
+        <ExtensionPoint
+          v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.sidebarButton, product)"
+          :name="EXTENSION_NAMES.productPage.sidebarButton"
+          category="productPage"
           :product="product"
-          v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
         />
 
         <component v-else :is="product.isConfigurable ? AddToCart : AddToCartSimple" :product="product">
@@ -130,8 +127,7 @@ import { useShortCart } from "@/shared/cart/composables";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES } from "@/shared/catalog/constants/product";
-import { useCustomProductComponents } from "@/shared/common/composables";
-import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import CountInCart from "./count-in-cart.vue";
 import InStock from "./in-stock.vue";
 import Price from "./price.vue";
@@ -152,7 +148,6 @@ const variations = toRef(props, "variations");
 
 const { cart } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
-const { getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 const { variationResult } = useProductVariationProperties(computed(() => variations.value ?? []));
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);

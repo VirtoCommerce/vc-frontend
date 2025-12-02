@@ -4,6 +4,7 @@ import { cartRoutes } from "./cart";
 import { checkoutRoutes } from "./checkout";
 import { corporateRoutes } from "./company";
 import type { RouteRecordRaw } from "vue-router";
+import Error400 from "@/pages/400.vue";
 import Error403 from "@/pages/403.vue";
 import Error404 from "@/pages/404.vue";
 import Error500 from "@/pages/500.vue";
@@ -32,6 +33,7 @@ const Matcher = () => import("@/pages/matcher/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
   { path: "/auth/callback", name: "AuthCallback", component: callback, meta: { public: true, redirectable: false } },
+  { path: "/400", name: "BadRequest", component: Error400, meta: { public: true, redirectable: false } },
   { path: "/403", name: "NoAccess", component: Error403, meta: { public: true, redirectable: false } },
   { path: "/404", name: "NotFound", component: Error404, meta: { public: true, redirectable: false } },
   { path: "/500", name: "InternalError", component: Error500, meta: { public: false, redirectable: false } },

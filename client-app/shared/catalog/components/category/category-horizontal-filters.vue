@@ -2,7 +2,6 @@
   <ProductsFilters
     class="category-horizontal-filters"
     orientation="horizontal"
-    :keyword="keywordQueryParam"
     :filters="filters"
     :loading="loading"
     @change:filters="$emit('change:filters', $event)"
@@ -93,7 +92,6 @@ interface IEmits {
 
 interface IProps {
   loading: boolean;
-  keywordQueryParam: string;
   filters: ProductsFiltersType;
   hideSorting?: boolean;
   hideAllFilters?: boolean;

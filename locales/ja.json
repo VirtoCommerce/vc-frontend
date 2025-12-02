@@ -949,6 +949,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "不正なリクエスト",
+      "message": "ユーザーはサインインできなくなりました。管理者に連絡してください。",
+      "img_alt": "不正なリクエスト",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "アクセス拒否",
