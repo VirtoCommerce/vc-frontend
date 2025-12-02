@@ -17,7 +17,7 @@
       <span
         v-else-if="type === 'color' && isMultiColor"
         class="vc-variant-picker__color-grid"
-        :data-count="colorsList.length"
+        :data-count="Math.min(colorsList.length, 4)"
       >
         <span
           v-for="(colorValue, index) in colorsList"
@@ -33,7 +33,12 @@
         {{ displayValue }}
       </span>
 
-      <VcTooltip :disabled="!tooltip && !$slots.tooltip" class="vc-variant-picker__tooltip">
+      <VcTooltip
+        :disabled="!tooltip && !$slots.tooltip"
+        class="vc-variant-picker__tooltip"
+        :enable-teleport="tooltipEnableTeleport"
+        :teleport-selector="tooltipTeleportSelector"
+      >
         <template #default="{ triggerProps }">
           <input
             :checked="checked"
@@ -71,6 +76,8 @@ interface IProps {
   name?: string;
   isAvailable?: boolean;
   tooltip?: string;
+  tooltipEnableTeleport?: boolean;
+  tooltipTeleportSelector?: string;
   tabindex?: string | number;
   testId?: string;
 }
@@ -85,9 +92,7 @@ const model = defineModel<IProps["modelValue"]>();
 
 const normalizedValue = computed(() => (Array.isArray(props.value) ? props.value : [props.value]));
 
-const isMultiColor = computed(
-  () => props.type === "color" && Array.isArray(props.value) && props.value.length >= 2 && props.value.length <= 4,
-);
+const isMultiColor = computed(() => props.type === "color" && Array.isArray(props.value) && props.value.length >= 2);
 
 const colorsList = computed(() => {
   if (!isMultiColor.value) {
@@ -95,7 +100,8 @@ const colorsList = computed(() => {
     return [getColorValue(singleValue)].filter(Boolean);
   }
 
-  return normalizedValue.value.map((v) => getColorValue(v)).filter(Boolean);
+  const allColors = normalizedValue.value.map((v) => getColorValue(v)).filter(Boolean);
+  return allColors.slice(0, 4);
 });
 
 const displayValue = computed(() => normalizedValue.value[0]);
