@@ -96,23 +96,27 @@ const TemplateMultiselect: StoryFn = (args) => ({
         <VcVariantPicker
           v-model="selectedValues"
           :name="args.name"
+          :multiple="args.multiple"
           value="red"
           is-available
         />
         <VcVariantPicker
           v-model="selectedValues"
           :name="args.name"
+          :multiple="args.multiple"
           value="blue"
           is-available
         />
         <VcVariantPicker
           v-model="selectedValues"
           :name="args.name"
+          :multiple="args.multiple"
           value="green"
         />
         <VcVariantPicker
           v-model="selectedValues"
           :name="args.name"
+          :multiple="args.multiple"
           value="yellow"
         />
       </VcVariantPickerGroup>
@@ -124,12 +128,14 @@ export const Multiselect = TemplateMultiselect.bind({});
 Multiselect.args = {
   name: "multiselect",
   selectedValues: [],
+  multiple: true,
 };
 
 export const SingleSelect = TemplateMultiselect.bind({});
 SingleSelect.args = {
   name: "single-select",
   selectedValues: "red",
+  multiple: false,
 };
 
 const TemplateShowMore: StoryFn = (args) => ({
@@ -556,4 +562,57 @@ const TemplateMultiColorSizes: StoryFn = (args) => ({
 export const MultiColorSizes = TemplateMultiColorSizes.bind({});
 MultiColorSizes.args = {
   name: "multicolor-sizes",
+};
+
+const TemplateMultiColorMultiSelect: StoryFn = (args) => ({
+  components: { VcVariantPickerGroup, VcVariantPicker },
+  setup: () => {
+    const selectedValues = ref<string | string[]>(args.selectedValues || []);
+
+    const options = [
+      { value: "red", label: "Red" },
+      { value: ["red", "blue"], label: "Red & Blue" },
+      { value: "green", label: "Green" },
+      { value: ["yellow", "orange"], label: "Yellow & Orange" },
+      { value: ["red", "green", "blue"], label: "RGB" },
+      { value: "purple", label: "Purple" },
+      { value: ["pink", "purple", "magenta", "violet"], label: "Purple Mix" },
+    ];
+
+    return { args, selectedValues, options };
+  },
+  template: `
+    <div class="space-y-4">
+      <div>
+        <div class="mb-2 text-sm font-bold">Selected: {{ JSON.stringify(selectedValues) }}</div>
+        <VcVariantPickerGroup v-bind="args">
+          <VcVariantPicker
+            v-for="(option, index) in options"
+            :key="index"
+            v-model="selectedValues"
+            :value="option.value"
+            :name="args.name"
+            :multiple="args.multiple"
+            type="color"
+            :is-available="true"
+            :tooltip="option.label"
+          />
+        </VcVariantPickerGroup>
+      </div>
+    </div>
+  `,
+});
+
+export const MultiColorMultiSelect = TemplateMultiColorMultiSelect.bind({});
+MultiColorMultiSelect.args = {
+  name: "multicolor-multi",
+  selectedValues: [["red", "blue"], "green"],
+  multiple: true,
+};
+
+export const MultiColorSingleSelect = TemplateMultiColorMultiSelect.bind({});
+MultiColorSingleSelect.args = {
+  name: "multicolor-single",
+  selectedValues: undefined,
+  multiple: false,
 };

@@ -43,7 +43,7 @@
           <input
             :checked="checked"
             class="vc-variant-picker__input"
-            :type="multiple ? 'checkbox' : 'radio'"
+            :type="props.multiple ? 'checkbox' : 'radio'"
             :aria-label="tooltip ?? serializedValue"
             :name="name"
             :value="serializedValue"
@@ -80,6 +80,7 @@ interface IProps {
   tooltipTeleportSelector?: string;
   tabindex?: string | number;
   testId?: string;
+  multiple?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -107,16 +108,22 @@ const isMultiColor = computed(
 
 const displayValue = computed(() => normalizedValue.value[0]);
 
-const serializedValue = computed(() => (Array.isArray(props.value) ? props.value.join("|") : props.value));
+function serializeValue(value: string | string[]): string {
+  return Array.isArray(value) ? value.join("|") : value;
+}
 
-const multiple = computed(() => Array.isArray(model.value));
+const serializedValue = computed(() => serializeValue(props.value));
 
 const checked = computed(() => {
-  if (multiple.value) {
-    return Array.isArray(model.value) && model.value.includes(serializedValue.value);
-  } else {
-    return model.value === serializedValue.value;
+  if (!model.value) {
+    return false;
   }
+
+  if (props.multiple) {
+    return Array.isArray(model.value) && model.value.some((v) => serializeValue(v) === serializedValue.value);
+  }
+
+  return serializeValue(model.value) === serializedValue.value;
 });
 
 const color = computed(() => (props.type === "color" && !isMultiColor.value ? colorsList.value[0] : undefined));
@@ -124,19 +131,20 @@ const color = computed(() => (props.type === "color" && !isMultiColor.value ? co
 const image = computed(() => (props.type === "image" ? displayValue.value : ""));
 
 function toggleValue(): void {
-  if (multiple.value) {
-    const currentValue = Array.isArray(model.value) ? model.value : [];
-    const index = currentValue.indexOf(serializedValue.value);
+  const valueToSet = Array.isArray(props.value) ? [...props.value] : props.value;
+
+  if (props.multiple) {
+    const currentValue = Array.isArray(model.value) ? [...model.value] : [];
+    const index = currentValue.findIndex((v) => serializeValue(v) === serializedValue.value);
 
     if (index > -1) {
-      const newValue = [...currentValue];
-      newValue.splice(index, 1);
-      model.value = newValue;
+      currentValue.splice(index, 1);
+      model.value = (currentValue.length ? currentValue : []) as string | string[];
     } else {
-      model.value = [...currentValue, serializedValue.value];
+      model.value = [...currentValue, valueToSet] as string | string[];
     }
   } else {
-    model.value = serializedValue.value;
+    model.value = valueToSet;
   }
 }
 </script>
