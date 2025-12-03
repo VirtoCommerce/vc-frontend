@@ -44,9 +44,9 @@
             :checked="checked"
             class="vc-variant-picker__input"
             :type="multiple ? 'checkbox' : 'radio'"
-            :aria-label="tooltip ?? valueForComparison"
+            :aria-label="tooltip ?? serializedValue"
             :name="name"
-            :value="valueForComparison"
+            :value="serializedValue"
             :data-test-id="testId"
             :tabindex="tabindex ?? '0'"
             v-bind="triggerProps"
@@ -107,15 +107,15 @@ const isMultiColor = computed(
 
 const displayValue = computed(() => normalizedValue.value[0]);
 
-const valueForComparison = computed(() => (Array.isArray(props.value) ? props.value.join("|") : props.value));
+const serializedValue = computed(() => (Array.isArray(props.value) ? props.value.join("|") : props.value));
 
 const multiple = computed(() => Array.isArray(model.value));
 
 const checked = computed(() => {
   if (multiple.value) {
-    return Array.isArray(model.value) && model.value.includes(valueForComparison.value);
+    return Array.isArray(model.value) && model.value.includes(serializedValue.value);
   } else {
-    return model.value === valueForComparison.value;
+    return model.value === serializedValue.value;
   }
 });
 
@@ -126,17 +126,17 @@ const image = computed(() => (props.type === "image" ? displayValue.value : ""))
 function toggleValue(): void {
   if (multiple.value) {
     const currentValue = Array.isArray(model.value) ? model.value : [];
-    const index = currentValue.indexOf(valueForComparison.value);
+    const index = currentValue.indexOf(serializedValue.value);
 
     if (index > -1) {
       const newValue = [...currentValue];
       newValue.splice(index, 1);
       model.value = newValue;
     } else {
-      model.value = [...currentValue, valueForComparison.value];
+      model.value = [...currentValue, serializedValue.value];
     }
   } else {
-    model.value = valueForComparison.value;
+    model.value = serializedValue.value;
   }
 }
 </script>
