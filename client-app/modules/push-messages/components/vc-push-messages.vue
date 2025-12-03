@@ -6,62 +6,60 @@
     arrow-enabled
     max-height="none"
   >
-    <template #trigger>
-      <slot name="trigger" />
+    <template #default="{ triggerProps }">
+      <slot name="trigger" :trigger-props="triggerProps" />
     </template>
 
     <template #content="{ close: closeMessages }">
-      <VcDialog dividers class="vc-push-messages__dialog" tabindex="-1">
+      <VcDialog dividers size="xs">
         <VcDialogHeader :closable="false">
-          <template #main>
-            <div class="vc-push-messages__head">
-              <div class="vc-push-messages__title">
-                <span>{{ $t("push_messages.title") }}</span>
+          <div class="vc-push-messages__head">
+            <div class="vc-push-messages__title">
+              <span>{{ $t("push_messages.title") }}</span>
 
-                <VcBadge v-if="unreadCount > 0" variant="outline" size="lg" rounded>
-                  {{ unreadCount }}
-                </VcBadge>
-              </div>
-
-              <VcSwitch v-model="unreadVisibility" size="sm">
-                {{ $t("push_messages.show_unread_only") }}
-              </VcSwitch>
-
-              <VcDropdownMenu
-                :class="['vc-push-messages__options', { 'vc-push-messages__options--invisible': !withOptions }]"
-                placement="bottom-end"
-                width="9rem"
-              >
-                <template #trigger>
-                  <VcButton size="sm" icon variant="no-background">
-                    <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
-                  </VcButton>
-                </template>
-
-                <template #content="{ close: closeMenu }">
-                  <VcMenuItem
-                    truncate
-                    @click="
-                      closeMenu();
-                      $emit('markReadAll');
-                    "
-                  >
-                    <span>{{ $t("push_messages.options.make_all_as_read") }}</span>
-                  </VcMenuItem>
-
-                  <VcMenuItem
-                    truncate
-                    @click="
-                      closeMenu();
-                      $emit('markUnreadAll');
-                    "
-                  >
-                    <span>{{ $t("push_messages.options.make_all_as_unread") }}</span>
-                  </VcMenuItem>
-                </template>
-              </VcDropdownMenu>
+              <VcBadge v-if="unreadCount > 0" variant="outline" size="sm" rounded>
+                {{ unreadCount }}
+              </VcBadge>
             </div>
-          </template>
+
+            <VcSwitch v-model="unreadVisibility" size="sm">
+              {{ $t("push_messages.show_unread_only") }}
+            </VcSwitch>
+
+            <VcDropdownMenu
+              :class="['vc-push-messages__options', { 'vc-push-messages__options--invisible': !withOptions }]"
+              placement="bottom-end"
+              width="9rem"
+            >
+              <template #trigger="{ triggerProps }">
+                <VcButton icon variant="no-background" v-bind="triggerProps">
+                  <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
+                </VcButton>
+              </template>
+
+              <template #content="{ close: closeMenu }">
+                <VcMenuItem
+                  truncate
+                  @click="
+                    closeMenu();
+                    $emit('markReadAll');
+                  "
+                >
+                  <span>{{ $t("push_messages.options.make_all_as_read") }}</span>
+                </VcMenuItem>
+
+                <VcMenuItem
+                  truncate
+                  @click="
+                    closeMenu();
+                    $emit('markUnreadAll');
+                  "
+                >
+                  <span>{{ $t("push_messages.options.make_all_as_unread") }}</span>
+                </VcMenuItem>
+              </template>
+            </VcDropdownMenu>
+          </div>
         </VcDialogHeader>
 
         <VcDialogContent>
@@ -83,34 +81,30 @@
         </VcDialogContent>
 
         <VcDialogFooter>
-          <template #container>
-            <div class="vc-push-messages__foot" tabindex="-1">
-              <VcButton
-                v-if="removable && totalCount"
-                variant="outline"
-                color="secondary"
-                size="xs"
-                class="vc-push-messages__action-start"
-                @click="$emit('clearAll')"
-              >
-                {{ $t("push_messages.clear_all") }}
-              </VcButton>
+          <div class="vc-push-messages__foot">
+            <VcButton
+              v-if="removable && totalCount"
+              variant="outline"
+              color="secondary"
+              class="vc-push-messages__action-start"
+              @click="$emit('clearAll')"
+            >
+              {{ $t("push_messages.clear_all") }}
+            </VcButton>
 
-              <VcButton
-                v-if="canViewAll"
-                variant="outline"
-                color="secondary"
-                size="xs"
-                class="vc-push-messages__action-end"
-                @click="
-                  closeMessages();
-                  $emit('viewAll');
-                "
-              >
-                {{ $t("push_messages.view_all") }}
-              </VcButton>
-            </div>
-          </template>
+            <VcButton
+              v-if="canViewAll"
+              variant="outline"
+              color="secondary"
+              class="vc-push-messages__action-end"
+              @click="
+                closeMessages();
+                $emit('viewAll');
+              "
+            >
+              {{ $t("push_messages.view_all") }}
+            </VcButton>
+          </div>
         </VcDialogFooter>
       </VcDialog>
     </template>
@@ -160,14 +154,16 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
   }
 
   &__head {
-    @apply flex items-center gap-2 w-full min-h-14 ps-4 pe-1 py-1;
+    @apply flex items-center gap-2 w-full;
   }
 
   &__title {
-    @apply flex items-center gap-2 me-auto text-base font-bold;
+    @apply flex items-center gap-2 me-auto;
   }
 
   &__options {
+    @apply -me-3 -my-1;
+
     &--invisible {
       @apply invisible;
     }
@@ -208,7 +204,7 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
   }
 
   &__foot {
-    @apply flex gap-3 px-4 py-2 w-full;
+    @apply flex gap-3 w-full;
   }
 }
 </style>

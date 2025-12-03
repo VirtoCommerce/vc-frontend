@@ -5,7 +5,7 @@
     :keyword="keywordQueryParam"
     :filters="filters"
     :loading="loading"
-    @change="$emit('applyFilters', $event)"
+    @change:filters="$emit('change:filters', $event)"
   >
     <template #prepend>
       <VcButton
@@ -27,12 +27,13 @@
         width="15rem"
         z-index="3"
       >
-        <template #trigger>
+        <template #trigger="{ triggerProps }">
           <VcButton
             size="sm"
             variant="outline"
             prepend-icon="switch-vertical"
             class="category-horizontal-filters__sorting-trigger"
+            v-bind="triggerProps"
           >
             {{ $t("common.buttons.sort_by") }}
           </VcButton>
@@ -74,6 +75,7 @@ import { useI18n } from "vue-i18n";
 import { useRouteQueryParam } from "@/core/composables";
 import { PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
+import type { SearchProductFilterResult } from "@/core/api/graphql/types";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 
@@ -84,7 +86,7 @@ withDefaults(defineProps<IProps>(), {
 });
 
 interface IEmits {
-  (event: "applyFilters", filters: ProductsFiltersType): void;
+  (event: "change:filters", filters: SearchProductFilterResult[]): void;
   (event: "applySort"): void;
   (event: "showPopupSidebar"): void;
 }

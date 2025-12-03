@@ -15,6 +15,7 @@ export * from "./mutations/registerAccount";
 export * from "./mutations/registerByInvitation";
 export * from "./mutations/removeAddressFromFavorites";
 export * from "./mutations/resetPasswordByToken";
+export * from "./mutations/sendPasswordResetEmail";
 export * from "./mutations/sendVerifyEmail";
 export * from "./mutations/updateContact";
 export * from "./mutations/updateMemberAddresses";
@@ -23,9 +24,9 @@ export * from "./mutations/updateWishlistItems";
 
 export * from "./queries/checkEmailUniqueness";
 export * from "./queries/checkUsernameUniqueness";
-export * from "./queries/getDefaultShippingAddress";
 export * from "./queries/getMe";
 export * from "./queries/getMyAddresses";
+export * from "./queries/getSharedWishList";
 export * from "./queries/getWishList";
 export * from "./queries/getWishlists";
 export * from "./queries/requestPasswordReset";

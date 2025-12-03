@@ -36,6 +36,8 @@
             class="min-w-32 basis-1/4"
             required
             test-id-input="expiration-date-input"
+            @keypress="preventNonNumberKeyboard($event)"
+            @paste="preventNonNumberPaste($event)"
           />
 
           <div class="min-w-32 basis-1/4">
@@ -61,7 +63,7 @@
       data-test-id="pay-now-button"
       @click="sendPaymentData"
     >
-      {{ $t("shared.payment.authorize_net.pay_now_button") }}
+      {{ $t("shared.payment.bank_card_form.pay_now_button") }}
     </VcButton>
   </div>
 </template>
@@ -75,7 +77,7 @@ import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables";
-import { Logger } from "@/core/utilities";
+import { Logger, preventNonNumberKeyboard, preventNonNumberPaste } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
@@ -373,8 +375,8 @@ async function useDynamicScript(url: string, integrity?: string): Promise<void> 
 }
 
 function removeScript() {
-  if (scriptTag.value && scriptTag.value.parentNode) {
-    scriptTag.value.parentNode.removeChild(scriptTag.value);
+  if (scriptTag.value) {
+    scriptTag.value.remove();
   }
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div :data-component-id="componentId" :class="wrapperClasses">
+  <div class="slider-block" :data-component-id="componentId" :class="wrapperClasses">
     <div class="relative mx-auto w-full max-w-screen-xl px-5 md:px-12">
       <div v-if="title" class="mb-6 text-center text-2xl font-bold lg:text-5xl">
         {{ title }}
@@ -145,8 +145,7 @@ function getLinkAttr(item: SlideType) {
   --navigation-offset: 0px;
 
   &__btn {
-    @apply absolute top-1/2 z-10 w-[var(--navigation-size)] h-[var(--navigation-size)]
-    flex items-center justify-center text-primary cursor-pointer;
+    @apply absolute top-1/2 z-10 w-[var(--navigation-size)] h-[var(--navigation-size)] flex items-center justify-center text-primary cursor-pointer;
 
     margin-top: calc(0px - (var(--navigation-size) / 2) - var(--navigation-offset));
 
@@ -173,6 +172,12 @@ function getLinkAttr(item: SlideType) {
 
   &__image {
     @apply w-full h-full object-cover object-left;
+  }
+}
+
+.slider-block {
+  &.bg-neutral-800 {
+    color: white;
   }
 }
 </style>

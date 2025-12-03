@@ -1,7 +1,6 @@
-import type { BrowserTargetType } from "./browser-window-target";
 import type { ISocialSharingService } from "./social-sharing";
 import type { DesktopMenuModeType } from "@/core/constants";
-import type { SortDirection } from "@/core/enums";
+import type { BrowserTargetType, SortDirection } from "@/core/enums";
 import type { IOrderStatus, IQuoteStatus } from "@/core/types";
 import type { CatalogPaginationModeType } from "@/shared/catalog/types/catalog";
 
@@ -151,6 +150,8 @@ export interface IThemeConfigPreset {
 }
 
 export interface IThemeConfigSettings {
+  cart_page_browser_target?: BrowserTargetType;
+  product_page_browser_target?: BrowserTargetType;
   details_browser_target?: BrowserTargetType;
 
   search_by_static_content_enabled?: boolean;
@@ -167,6 +168,7 @@ export interface IThemeConfigSettings {
   product_filters_sorting?: boolean;
   product_filters_sorting_direction?: SortDirection | string;
   product_quantity_control?: "stepper" | "button";
+  range_filter_type?: "slider" | "default";
   out_of_stock_order_enabled?: boolean;
   search_suggestions_category_enabled?: boolean;
   search_suggestions_category_limit?: number;
@@ -248,6 +250,8 @@ export interface IThemeConfigSettings {
       [key: string]: number;
     };
   };
+
+  graphql_operation_marking_enabled?: boolean;
 }
 
 export interface IThemeConfig {

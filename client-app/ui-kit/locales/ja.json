@@ -18,6 +18,21 @@
       "toggle_dropdown": "ドロップダウンを切り替え",
       "update_cart": "カートを更新"
     },
+    "accessibility": {
+      "close_alert": "アラートを閉じる",
+      "open_calendar": "カレンダーを開く",
+      "product_quantity": "製品数量",
+      "decrease_quantity": "数量を減らす",
+      "increase_quantity": "数量を増やす",
+      "variant_picker_group": "バリアントの選択",
+      "show_more_button": "さらにオプションを表示（{count}）",
+      "sidebar": "サイドバー",
+      "close_chip": "チップを閉じる"
+    },
+    "date_selector": {
+      "min_date_error": "日付は{min}以降である必要があります",
+      "max_date_error": "日付は{max}以前である必要があります"
+    },
     "labels": {
       "not_available": "N/A",
       "price_per_item": "単価",
@@ -46,11 +61,11 @@
         "max": "最大注文 {0} 個",
         "min_max": "{0} から {1} 個の注文",
         "min_not_available": "最小注文 {0} 個は在庫がありません",
+        "exact_qty": "{0}点を注文できます",
         "out_of_stock": "在庫切れ",
         "positive_number": "値は正の数でなければなりません",
         "integer_number": "値は整数でなければなりません",
-        "pack_size": "{0} のパックで注文",
-        "exact_qty": "{0}点を注文できます"
+        "pack_size": "{0} のパックで注文"
       }
     },
     "pagination": {
@@ -81,7 +96,24 @@
       "page_limit": "これ以上の結果を表示できません。"
     },
     "slider": {
-      "tooltip": "{count} アイテム"
+      "tooltip": "{count} アイテム",
+      "aria_label": "{min} から {max} までの範囲スライダー",
+      "start_input_label": "開始値（{min}～{max}）",
+      "end_input_label": "終了値（{min}～{max}）",
+      "start_input_aria_label": "開始値を入力してください（範囲：{min}～{max}）",
+      "end_input_aria_label": "終了値の入力、範囲は{min}～{max}",
+      "start_input_help": "{min}～{max}の範囲で、{step}刻みで入力してください",
+      "end_input_help": "{min}～{max}の範囲で、{step}刻みで入力してください",
+      "column_aria_label": "{count}アイテムの列、範囲：{from}～{to}",
+      "current_value_announcement": "スライダーの値: {start} から {end}、範囲 {min} から {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "パンくずナビゲーション"
+    },
+    "rating": {
+      "rating_label": "評価：{value}/{maxValue}",
+      "read_only_button_aria_label": "評価：{value}/{maxValue}、選択はできません",
+      "set_rating_aria_label": "評価を{value}/{maxValue}に設定"
     }
   }
 }

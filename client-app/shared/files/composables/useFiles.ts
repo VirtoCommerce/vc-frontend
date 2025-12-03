@@ -34,7 +34,6 @@ const MAX_CONCURRENT_UPLOADS = 3;
  * @param scope Scope files belongs to.
  * @param initialValue One way syncronization source if files is attached to some object. Files state will be reset if attachments change.
  */
-// eslint-disable-next-line sonarjs/cognitive-complexity
 export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAttachedFile[]>) {
   const { translate } = useErrorsTranslator("file_error");
   const { t, n } = useI18n();
@@ -82,6 +81,18 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
         if (newValue && files.value.length === 0) {
           files.value = [...unref(newValue)];
         }
+
+        // Update files that are already attached
+        newValue.forEach((file) => {
+          if (isAttachedFile(file)) {
+            const existingFile = files.value.find((f) => f.name === file.name);
+
+            if (existingFile) {
+              existingFile.status = "attached";
+              existingFile.url = file.url;
+            }
+          }
+        });
       },
       { immediate: true },
     );
@@ -237,7 +248,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       await _uploadFiles(`/api/files/${unref(scope)}`, { data: formData });
 
       processUploadResults(data.value, filesToProcess);
-    } catch (error) {
+    } catch {
       // Mark files as failed
       filesToUpload.forEach((file) => {
         const uploadingFile = uploadingFiles.value.find((f) => f.name === file.name);

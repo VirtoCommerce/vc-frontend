@@ -67,13 +67,13 @@ export function init(router: Router, i18n: I18n) {
     registerComponent({
       id: CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON,
       component: BackInStockButton,
-      shouldRender: (product) => !product.availabilityData.isInStock,
-      props: { isTextShown: true },
+      shouldRender: (product, options) =>
+        !product.availabilityData.isInStock && (options?.forceProductAsVariation === true || !product.hasVariations),
     });
     registerComponent({
       id: CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON,
       component: BackInStockButton,
-      shouldRender: (product) => !product.availabilityData.isInStock,
+      shouldRender: (product) => !product.availabilityData.isInStock && !product.hasVariations,
     });
   }
 }

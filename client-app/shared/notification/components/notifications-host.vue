@@ -1,6 +1,6 @@
 <template>
   <teleport to="body">
-    <div class="notifications-host">
+    <section class="notifications-host" :aria-label="$t('common.labels.notifications')" aria-live="polite">
       <transition-group name="app-notifications" tag="div" class="notifications-host__wrapper">
         <VcAlert
           v-for="notification in stack"
@@ -15,7 +15,9 @@
           @close="close(notification.id!)"
         >
           <component :is="notification.component" v-if="notification.component" v-bind="notification.props" />
+
           <span v-else-if="notification.html" v-html-safe="notification.html" />
+
           <span v-else-if="notification.text" v-text="notification.text" />
 
           <div v-if="notification.button" class="notifications-host__buttons">
@@ -30,12 +32,13 @@
               "
             >
               <span v-if="notification.button.html" v-html-safe="notification.button.html" />
+
               <span v-else-if="notification.button.text" v-text="notification.button.text" />
             </VcButton>
           </div>
         </VcAlert>
       </transition-group>
-    </div>
+    </section>
   </teleport>
 </template>
 

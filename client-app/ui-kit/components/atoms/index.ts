@@ -6,9 +6,7 @@ export { default as VcCarouselPagination } from "./carousel-pagination/vc-carous
 export { default as VcCheckbox } from "./checkbox/vc-checkbox.vue";
 export { default as VcCheckboxGroup } from "./checkbox-group/vc-checkbox-group.vue";
 export { default as VcContainer } from "./container/vc-container.vue";
-export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue";
 export { default as VcDialog } from "./dialog/vc-dialog.vue";
-export { default as VcEmptyView } from "./empty-view/vc-empty-view.vue";
 export { default as VcExpansionPanels } from "./expansion-panels/vc-expansion-panels.vue";
 export { default as VcIcon } from "./icon/vc-icon.vue";
 export { default as VcImage } from "./image/vc-image.vue";
@@ -35,7 +33,9 @@ export { default as VcRadioButton } from "./radio-button/vc-radio-button.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-button.vue";
 export { default as VcScrollbar } from "./scrollbar/vc-scrollbar.vue";
 export { default as VcSwitch } from "./switch/vc-switch.vue";
+/** @deprecated VcTabs is deprecated, use VcTabSwitch instead. */
 export { default as VcTabs } from "./tabs/vc-tabs.vue";
 export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";
 export { default as VcTypography } from "./typography/vc-typography.vue";
+export { default as VcVariantPickerGroup } from "./variant-picker-group/vc-variant-picker-group.vue";

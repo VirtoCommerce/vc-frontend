@@ -5,7 +5,7 @@ import type { I18n } from "@/i18n";
 import type { LocaleMessageValue } from "vue-i18n";
 
 export async function loadModuleLocale(i18n: I18n, moduleName: string): Promise<void> {
-  const { currentLanguage, mergeLocales } = useLanguages();
+  const { currentLanguage, mergeLocalesMessages } = useLanguages();
   const locale = currentLanguage.value?.twoLetterLanguageName || FALLBACK_LOCALE;
 
   try {
@@ -24,12 +24,12 @@ export async function loadModuleLocale(i18n: I18n, moduleName: string): Promise<
       }),
     ]);
 
-    mergeLocales(i18n, locale, moduleMessages);
+    mergeLocalesMessages(i18n, locale, moduleMessages);
 
     if (locale !== FALLBACK_LOCALE) {
-      mergeLocales(i18n, FALLBACK_LOCALE, moduleFallbackMessages);
+      mergeLocalesMessages(i18n, FALLBACK_LOCALE, moduleFallbackMessages);
     }
   } catch (error) {
-    Logger.error(`Error loading the ${moduleName} module locale: "${locale}"`);
+    Logger.error(`Error loading the ${moduleName} module locale: "${locale}"`, error);
   }
 }

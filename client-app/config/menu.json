@@ -13,21 +13,27 @@
         },
         {
           "id": "compare",
-          "route": { "name": "CompareProducts" },
+          "route": {
+            "name": "CompareProducts"
+          },
           "title": "shared.layout.header.menu.compare",
           "icon": "compare",
           "priority": 10
         },
         {
           "id": "lists",
-          "route": { "name": "Lists" },
+          "route": {
+            "name": "Lists"
+          },
           "title": "shared.layout.header.menu.lists",
           "icon": "list-v2",
           "priority": 20
         },
         {
           "id": "orders",
-          "route": { "name": "Orders" },
+          "route": {
+            "name": "Orders"
+          },
           "title": "shared.layout.header.menu.orders",
           "icon": "order",
           "priority": 30
@@ -96,6 +102,15 @@
             "priority": 50
           },
           {
+            "id": "saved-for-later",
+            "route": {
+              "name": "SavedForLater"
+            },
+            "title": "shared.layout.header.mobile.account_menu.saved_for_later",
+            "icon": "list-v2",
+            "priority": 55
+          },
+          {
             "id": "lists",
             "route": {
               "name": "Lists"
@@ -103,15 +118,6 @@
             "title": "shared.account.navigation.links.lists",
             "icon": "list-v2",
             "priority": 60
-          },
-          {
-            "id": "checkoutDefaults",
-            "route": {
-              "name": "CheckoutDefaults"
-            },
-            "title": "shared.account.navigation.links.checkout_defaults",
-            "icon": "check-circle",
-            "priority": 70
           },
           {
             "id": "savedCreditCards",
@@ -216,7 +222,7 @@
           },
           {
             "route": {
-              "name": "ChangePassword"
+              "name": "ChangePasswordAccount"
             },
             "title": "shared.layout.header.mobile.account_menu.change_password",
             "icon": "pass",
@@ -241,19 +247,19 @@
           },
           {
             "route": {
+              "name": "SavedForLater"
+            },
+            "title": "shared.layout.header.mobile.account_menu.saved_for_later",
+            "icon": "list-v2",
+            "priority": 45
+          },
+          {
+            "route": {
               "name": "Lists"
             },
             "title": "shared.layout.header.mobile.account_menu.lists",
             "icon": "list-v2",
             "priority": 50
-          },
-          {
-            "route": {
-              "name": "CheckoutDefaults"
-            },
-            "title": "shared.layout.header.mobile.account_menu.checkout_defaults",
-            "icon": "check-circle",
-            "priority": 60
           },
           {
             "route": {

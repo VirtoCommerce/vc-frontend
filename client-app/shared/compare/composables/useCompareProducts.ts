@@ -1,49 +1,164 @@
 import { useLocalStorage } from "@vueuse/core";
+import { v4 as uuidv4 } from "uuid";
 import { computed } from "vue";
-import { useThemeContext } from "@/core/composables";
+import { useI18n } from "vue-i18n";
+import { useThemeContext } from "@/core/composables/useThemeContext";
+import {
+  CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE,
+  PRODUCT_COMPARE_LIST_IDS_LOCAL_STORAGE,
+  LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
+} from "@/core/constants";
 import { truncate } from "@/core/utilities";
+import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
+import { compareConfigurationInputs } from "@/shared/catalog/utilities/configurations";
 import { useNotifications } from "@/shared/notification";
-import type { Product } from "@/core/api/graphql/types";
+import type { IConfigurationProperty, IConfigProductToCompare } from "../types";
+import type { Product, ConfigurationSectionInput } from "@/core/api/graphql/types";
+import type { LocalConfigurationType } from "@/shared/catalog/types";
 
-const NOTIFICATIONS_GROUP = "compare-pruducts";
+const NOTIFICATIONS_GROUP = "compare-products";
 const DEFAULT_MAX_PRODUCTS = 5;
 const NAME_MAX_LENGTH = 60;
 
-const productsIds = useLocalStorage<string[]>("productCompareListIds", []);
+const productsIds = useLocalStorage<string[]>(PRODUCT_COMPARE_LIST_IDS_LOCAL_STORAGE, []);
+const configProductsToCompare = useLocalStorage<IConfigProductToCompare[]>(
+  CONFIG_PRODUCTS_TO_COMPARE_LOCAL_STORAGE,
+  [],
+);
+const localProductConfigurations = useLocalStorage<LocalConfigurationType[]>(
+  LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
+  [],
+);
+
+function addRegularProductToCompare(product: Product) {
+  if (productsIds.value.includes(product.id)) {
+    return;
+  }
+  productsIds.value.push(product.id);
+}
+
+function removeRegularProductFromCompare(product: Product) {
+  const index = productsIds.value.indexOf(product.id);
+  if (index !== -1) {
+    productsIds.value.splice(index, 1);
+  }
+}
+
+function removeConfiguredProductFromCompare(product: Product, configuration?: ConfigurationSectionInput[]) {
+  const index = findMatchingConfigProductIndex(product, configuration);
+  const configurationLocalId = localProductConfigurations.value[index].localId;
+
+  if (index !== -1) {
+    configProductsToCompare.value.splice(index, 1);
+  }
+
+  const configurationIndex = localProductConfigurations.value.findIndex(
+    (config) => config.localId === configurationLocalId,
+  );
+  if (configurationIndex !== -1) {
+    localProductConfigurations.value.splice(configurationIndex, 1);
+  }
+}
+
+function addConfiguredProductToCompare(
+  product: Product,
+  configurationSectionsInput?: ConfigurationSectionInput[],
+  properties?: IConfigurationProperty[],
+) {
+  if (isInCompareList(product, configurationSectionsInput)) {
+    return;
+  }
+
+  const localId = uuidv4();
+  const configurationSectionsInputWithoutFiles = configurationSectionsInput?.filter(
+    (section) => section.type !== CONFIGURABLE_SECTION_TYPES.file,
+  );
+
+  configProductsToCompare.value.push({
+    localId,
+    productId: product.id,
+    configurationSectionInput: configurationSectionsInputWithoutFiles,
+    properties: properties ?? [],
+  });
+
+  if (configurationSectionsInputWithoutFiles) {
+    localProductConfigurations.value.push({
+      localId,
+      configuration: configurationSectionsInputWithoutFiles.map((section) => ({
+        ...section,
+        ...section.option,
+        id: section.sectionId,
+      })),
+    });
+  }
+}
+
+function isInCompareList(product: Product, configuration?: ConfigurationSectionInput[]) {
+  if (product.isConfigurable && configuration?.length) {
+    return findMatchingConfigProductIndex(product, configuration) !== -1;
+  }
+  return productsIds.value.includes(product.id);
+}
+
+function findMatchingConfigProductIndex(product: Product, configuration?: ConfigurationSectionInput[]) {
+  if (!configuration) {
+    return -1;
+  }
+
+  return configProductsToCompare.value.findIndex((configProduct) => {
+    if (configProduct.productId !== product.id) {
+      return false;
+    }
+
+    if (!configProduct.configurationSectionInput?.length) {
+      return false;
+    }
+
+    return configuration.every((section) => {
+      const matched = configProduct.configurationSectionInput?.find((s) => s.sectionId === section.sectionId);
+      return matched ? compareConfigurationInputs(section, matched) : false;
+    });
+  });
+}
 
 export function useCompareProducts() {
   const { themeContext } = useThemeContext();
   const notifications = useNotifications();
   const productsLimit = themeContext.value?.settings?.product_compare_limit || DEFAULT_MAX_PRODUCTS;
+  const { t } = useI18n();
 
-  function addToCompareList(product: Product) {
-    if (productsIds.value.includes(product.id)) {
-      return;
-    }
-
-    if (productsIds.value.length >= productsLimit) {
+  function addToCompareList(
+    product: Product,
+    configurationSections?: ConfigurationSectionInput[],
+    properties?: IConfigurationProperty[],
+  ) {
+    if (productsIds.value.length + configProductsToCompare.value.length >= productsLimit) {
       notifications.warning({
         duration: 15000,
         group: NOTIFICATIONS_GROUP,
         singleInGroup: true,
-        text: `Only ${productsLimit} products can be compared`,
+        text: t("shared.compare.notifications.limit_reached", { productsLimit }),
       });
 
       return;
     }
 
-    productsIds.value.push(product.id);
+    if (product.isConfigurable && configurationSections?.length) {
+      addConfiguredProductToCompare(product, configurationSections, properties);
+    } else {
+      addRegularProductToCompare(product);
+    }
 
     notifications.success({
       duration: 15000,
       group: NOTIFICATIONS_GROUP,
       singleInGroup: true,
-      html:
-        `Product <span class="hidden lg:inline">“<strong>${truncate(product.name, NAME_MAX_LENGTH)}</strong>”</span> ` +
-        `is added to compare list ` +
-        `<span class="hidden lg:inline">(${productsLimit - productsIds.value.length} items left)</span>`,
+      html: t("shared.compare.notifications.added_html", {
+        productName: truncate(product.name, NAME_MAX_LENGTH),
+        itemsLeft: productsLimit - productsIds.value.length - configProductsToCompare.value.length,
+      }),
       button: {
-        text: "Compare",
+        text: t("shared.compare.notifications.compare_button"),
         to: { path: "/compare" },
         clickHandler() {
           notifications.clear(NOTIFICATIONS_GROUP);
@@ -52,34 +167,38 @@ export function useCompareProducts() {
     });
   }
 
-  function removeFromCompareList(product: Product) {
-    const index = productsIds.value.indexOf(product.id);
-
-    if (index === -1) {
-      return;
+  function removeFromCompareList(product: Product, configurationSections?: ConfigurationSectionInput[]) {
+    if (product.isConfigurable && configurationSections?.length) {
+      removeConfiguredProductFromCompare(product, configurationSections);
+    } else {
+      removeRegularProductFromCompare(product);
     }
-
-    productsIds.value.splice(index, 1);
 
     notifications.warning({
       duration: 15000,
       group: NOTIFICATIONS_GROUP,
       singleInGroup: true,
-      html:
-        `Product <span class="hidden lg:inline">“<strong>${truncate(product.name, NAME_MAX_LENGTH)}</strong>”</span> ` +
-        `was removed from the compare list`,
+      html: t("shared.compare.notifications.removed_html", {
+        productName: truncate(product.name, NAME_MAX_LENGTH),
+      }),
     });
   }
 
   function clearCompareList() {
     productsIds.value = [];
+    configProductsToCompare.value = [];
   }
 
   return {
     addToCompareList,
     removeFromCompareList,
     clearCompareList,
+    isInCompareList,
+
     productsLimit,
-    productsIds: computed(() => productsIds.value.slice(0, productsLimit)),
+    productsIds: computed(() => productsIds.value.slice(0, productsLimit - configProductsToCompare.value.length)),
+    configProductsToCompare: computed(() =>
+      configProductsToCompare.value.slice(0, productsLimit - productsIds.value.length),
+    ),
   };
 }

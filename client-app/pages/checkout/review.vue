@@ -1,5 +1,5 @@
 <template>
-  <VcLayout sidebar-position="right" sticky-sidebar>
+  <VcLayout sidebar-position="right" sticky>
     <VcWidget
       id="line-items-widget"
       :title="$t('common.titles.review_order')"
@@ -131,7 +131,7 @@
             />
           </transition>
 
-          <PlaceOrder />
+          <PlaceOrder data-test-id="checkout-multi-step.place-order-button" />
 
           <transition name="slide-fade-top" mode="out-in" appear>
             <VcAlert v-show="hasValidationErrors" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
@@ -154,8 +154,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
-import { useFullCart, useCoupon } from "@/shared/cart";
-import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
+import { useCoupon, useFullCart } from "@/shared/cart";
+import { AcceptedGifts, OrderCommentSection, OrderSummary, PlaceOrder, useCheckout } from "@/shared/checkout";
 import { AddressSelection, VendorName } from "@/shared/common";
 
 const {

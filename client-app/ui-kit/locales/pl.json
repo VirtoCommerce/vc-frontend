@@ -18,6 +18,21 @@
       "toggle_dropdown": "Przełącz rozwijane",
       "update_cart": "Zaktualizuj koszyk"
     },
+    "accessibility": {
+      "close_alert": "Zamknij powiadomienie",
+      "open_calendar": "Otwórz kalendarz",
+      "product_quantity": "Ilość produktu",
+      "decrease_quantity": "Zmniejsz ilość",
+      "increase_quantity": "Zwiększ ilość",
+      "variant_picker_group": "Warianty produktu",
+      "show_more_button": "Pokaż więcej wariantów ({count})",
+      "sidebar": "Panel boczny",
+      "close_chip": "Zamknij znacznik"
+    },
+    "date_selector": {
+      "min_date_error": "Data musi być nie wcześniejsza niż {min}",
+      "max_date_error": "Data musi być nie późniejsza niż {max}"
+    },
     "labels": {
       "not_available": "N/D",
       "price_per_item": "Cena za sztukę",
@@ -46,11 +61,11 @@
         "max": "Maksymalne zamówienie {0} sztuk(i)",
         "min_max": "Zamów od {0} do {1} sztuk(i)",
         "min_not_available": "Minimalne zamówienie {0} sztuk(i) nie jest dostępne w magazynie",
+        "exact_qty": "Możesz zamówić {0} przedmiot(ów)",
         "out_of_stock": "Brak w magazynie",
         "positive_number": "Wartość musi być liczbą dodatnią",
         "integer_number": "Wartość musi być liczbą całkowitą",
-        "pack_size": "Zamów w paczkach po {0}",
-        "exact_qty": "Możesz zamówić {0} przedmiot(ów)"
+        "pack_size": "Zamów w paczkach po {0}"
       }
     },
     "pagination": {
@@ -81,7 +96,24 @@
       "page_limit": "Nie można wyświetlić więcej wyników."
     },
     "slider": {
-      "tooltip": "{count} przedmiotów"
+      "tooltip": "{count} przedmiotów",
+      "aria_label": "Suwak zakresu od {min} do {max}",
+      "start_input_label": "Wartość początkowa (od {min} do {max})",
+      "end_input_label": "Wartość końcowa (od {min} do {max})",
+      "start_input_aria_label": "Wprowadź wartość początkową, zakres od {min} do {max}",
+      "end_input_aria_label": "Wprowadź wartość końcową, zakres od {min} do {max}",
+      "start_input_help": "Wprowadź liczbę od {min} do {max}, krok {step}",
+      "end_input_help": "Wprowadź liczbę od {min} do {max}, krok {step}",
+      "column_aria_label": "Kolumna z {count} przedmiotami, zakres od {from} do {to}",
+      "current_value_announcement": "Wartość suwaka: {start} do {end}, zakres {min} do {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Nawigacja okruszkowa"
+    },
+    "rating": {
+      "rating_label": "Ocena {value} na {maxValue}",
+      "read_only_button_aria_label": "Ocena {value} na {maxValue}, niedostępna do wyboru",
+      "set_rating_aria_label": "Ustaw ocenę na {value} z {maxValue}"
     }
   }
 }

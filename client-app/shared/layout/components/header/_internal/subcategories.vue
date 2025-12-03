@@ -1,7 +1,7 @@
 <template>
   <Transition name="subcategories--slide">
     <VcScrollbar
-      v-if="item && item.childCategories?.length"
+      v-if="item && item.children?.length"
       class="subcategories"
       role="menubar"
       tabindex="-1"
@@ -15,27 +15,29 @@
     >
       <ul class="subcategories__list" role="none">
         <VcMenuItem
-          v-for="(child, index) in item.childCategories"
-          :id="`subcategory-${child.id}`"
-          :key="child.id"
+          v-for="(child, index) in item.children"
+          :id="child.id ? `subcategory-${child.id}` : null"
+          :key="index"
           class="subcategories__item"
           size="sm"
           color="secondary"
           max-lines="2"
           role="menuitem"
-          :to="routes[child.id]"
+          :to="child.route ?? '#'"
           :active="child.isActive"
-          @keyup.arrow-right="focusMenuItem(child.childCategories[0].id)"
-          @keyup.arrow-left="focusMenuItem(item.id)"
-          @keyup.arrow-up="focusMenuItem(item.childCategories[index - 1].id)"
-          @keyup.arrow-down="focusMenuItem(item.childCategories[index + 1].id)"
+          @keydown.arrow-right="child.children?.length && focusMenuItem(child.children[0].id)"
+          @keydown.arrow-left="focusMenuItem(item.id)"
+          @keydown.arrow-up.prevent="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
+          @keydown.arrow-down.prevent="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
           @click="$emit('close')"
           @focusin="showChildren(child)"
           @mouseover="showChildren(child)"
         >
-          {{ child.name }}
+          <span :class="{ 'font-bold': child.type === 'pinned' }">
+            {{ child.title }}
+          </span>
 
-          <template v-if="child.childCategories?.length" #append>
+          <template v-if="child.children?.length" #append>
             <VcIcon class="subcategories__arrow" name="chevron-right" />
           </template>
         </VcMenuItem>
@@ -48,22 +50,21 @@
     :item="activeItem"
     :on-schedule-hide="scheduleHide"
     :on-cancel-hide="cancelHide"
-    :aria-label="$t('shared.layout.header.mega_menu.aria_labels.subcategories', { category: activeItem.name })"
+    :aria-label="$t('shared.layout.header.mega_menu.aria_labels.subcategories', { category: activeItem.title })"
     @close="$emit('close')"
   />
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount } from "vue";
-import { useCategoriesRoutes } from "@/core/composables";
-import type { IMarkedCategory } from "@/core/types";
+import { ref, onBeforeUnmount } from "vue";
+import type { MarkedMenuLinkType } from "@/core/types";
 
 interface IEmits {
   (e: "close"): void;
 }
 
 interface IProps {
-  item: IMarkedCategory;
+  item?: MarkedMenuLinkType;
   onCancelHide?: () => void;
   onScheduleHide?: () => void;
   ariaLabel?: string;
@@ -72,21 +73,18 @@ interface IProps {
 defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
-const activeItem = ref<IMarkedCategory | null>(null);
+const activeItem = ref<MarkedMenuLinkType | null>(null);
 let timeout: ReturnType<typeof setTimeout> | null = null;
 let switchTimeout: ReturnType<typeof setTimeout> | null = null;
 
-const items = computed(() => props.item.childCategories || []);
-const routes = useCategoriesRoutes(items);
-
-function showChildren(item: IMarkedCategory) {
+function showChildren(item?: MarkedMenuLinkType) {
   cancelHide();
 
   if (switchTimeout) {
     clearTimeout(switchTimeout);
   }
 
-  if (activeItem.value?.id === item.id) {
+  if (!item || (item.id && activeItem.value?.id === item.id)) {
     return;
   }
 
@@ -130,6 +128,19 @@ function focusMenuItem(id?: string) {
   }
 }
 
+function focusPrevNextItem(direction: "UP" | "DOWN", event: KeyboardEvent) {
+  const target = event.target as HTMLElement;
+  const currentItem = target.parentElement as HTMLElement;
+  const prev = currentItem.previousElementSibling?.childNodes[0] as HTMLElement | null;
+  const next = currentItem.nextElementSibling?.childNodes[0] as HTMLElement | null;
+
+  if (direction === "UP" && prev) {
+    prev.focus();
+  } else if (direction === "DOWN" && next) {
+    next.focus();
+  }
+}
+
 onBeforeUnmount(() => {
   if (timeout) {
     clearTimeout(timeout);
@@ -143,7 +154,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .subcategories {
-  @apply relative me-2.5 w-[15rem] max-h-[100%-2.5rem];
+  @apply relative me-2.5 py-px w-[15.75rem] max-h-[calc(100%-2.5rem)];
 
   @media (min-width: theme("screens.2xl")) {
     @apply w-[21.5rem];
@@ -151,6 +162,10 @@ onBeforeUnmount(() => {
 
   &:not(:first-child) {
     @apply ps-2.5 border-l border-secondary-200;
+
+    @media (min-width: theme("screens.2xl")) {
+      @apply w-[21.75rem];
+    }
   }
 
   &--slide {
@@ -182,7 +197,7 @@ onBeforeUnmount(() => {
     @apply flex-none w-[14.375rem];
 
     @media (min-width: theme("screens.2xl")) {
-      @apply w-[20.875rem];
+      @apply w-[20.5rem];
     }
   }
 

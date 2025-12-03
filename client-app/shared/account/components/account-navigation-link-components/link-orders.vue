@@ -4,7 +4,7 @@
       <div
         v-for="facet in statusFacet?.items"
         :key="facet.term"
-        class="flex items-center space-x-1 overflow-hidden text-ellipsis px-3 text-sm"
+        class="flex items-center gap-2 px-3 text-sm"
       >
         <VcIcon class="flex-none fill-primary" size="xs" name="minus" />
 
@@ -15,7 +15,8 @@
           @click="applyOrderFilter(facet.term)"
         >
           <span class="grow overflow-hidden text-ellipsis text-nowrap text-start">{{ facet.label }}</span>
-          <VcBadge variant="outline" rounded>{{ facet.count }}</VcBadge>
+
+          <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
         </button>
       </div>
     </template>

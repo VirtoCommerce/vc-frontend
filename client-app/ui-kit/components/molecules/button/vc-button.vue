@@ -6,6 +6,8 @@
     :type="componentTag === 'button' ? type : null"
     :disabled="!enabled"
     :title="title"
+    :aria-label="ariaLabel || title"
+    :tabindex="tabindex"
     :class="[
       'vc-button group',
       `vc-button--size--${_size}`,
@@ -55,7 +57,8 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { computed, inject } from "vue";
+import { computed, inject, ref } from "vue";
+import { vcDialogKey } from "../../atoms/dialog/vc-dialog-context";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -81,6 +84,7 @@ interface IProps {
   appendIcon?: string;
   icon?: boolean | string;
   title?: string;
+  ariaLabel?: string;
   truncate?: boolean;
   fullWidth?: boolean;
   noWrap?: boolean;
@@ -88,6 +92,7 @@ interface IProps {
   tag?: string;
   iconSize?: string;
   square?: boolean;
+  tabindex?: string | number;
 }
 
 defineEmits<IEmits>();
@@ -102,12 +107,12 @@ const props = withDefaults(defineProps<IProps>(), {
   truncate: false,
   fullWidth: false,
   noWrap: false,
-  minWidth: "",
   tag: "",
-  iconSize: "",
+  tabindex: 0,
 });
 
 const inputContext = inject<VcInputContextType | null>("inputContext", null);
+const dialogContext = inject(vcDialogKey, { size: ref("md") });
 
 const _size = computed(() => {
   if (props.size) {
@@ -115,6 +120,7 @@ const _size = computed(() => {
   }
 
   const inputSize = inputContext?.size.value;
+  const dialogSize = dialogContext?.size.value;
 
   if (inputSize) {
     if (inputSize === "xs") {
@@ -126,6 +132,10 @@ const _size = computed(() => {
     }
 
     return "sm";
+  }
+
+  if (dialogSize) {
+    return dialogSize;
   }
 
   return "md";
@@ -174,6 +184,7 @@ const attrs = computed(() => {
 .vc-button {
   --props-min-width: v-bind(props.minWidth);
   --props-icon-size: v-bind(props.iconSize);
+  --radius: var(--vc-button-radius, var(--vc-radius, 0.5rem));
   --min-w: var(--props-min-width, var(--vc-button-min-width));
 
   --vc-icon-size: var(--vc-button-icon-size, var(--props-icon-size, var(--line-height)));
@@ -190,7 +201,7 @@ const attrs = computed(() => {
   $loaderIcon: "";
   $noWrap: "";
 
-  @apply relative inline-block px-[--px] rounded border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
+  @apply relative inline-block px-[--px] rounded-[--radius] border-2 select-none text-center bg-[--bg-color] border-[--border-color] text-[--text-color];
 
   appearance: button;
 
@@ -301,11 +312,19 @@ const attrs = computed(() => {
     &--solid--#{$color} {
       --bg-color: var(--color-#{$color}-500);
       --border-color: var(--color-#{$color}-500);
-      --text-color: var(--color-additional-50);
+
+      &:not([class*="--warning"]) {
+        --text-color: var(--color-additional-50);
+      }
+
+      &[class*="--warning"] {
+        --text-color: var(--color-warning-900);
+      }
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-700);
-        --border-color: var(--color-#{$color}-700);
+        --bg-color: var(--color-#{$color}-600);
+        --border-color: var(--color-#{$color}-600);
+        --text-color: var(--color-additional-50);
       }
 
       & #{$loaderIcon} {
@@ -317,7 +336,14 @@ const attrs = computed(() => {
     &--no-border--#{$color} {
       --bg-color: var(--color-additional-50);
       --border-color: var(--color-additional-50);
-      --text-color: var(--color-#{$color}-500);
+
+      &:not([class*="--warning"]) {
+        --text-color: var(--color-#{$color}-500);
+      }
+
+      &[class*="--warning"] {
+        --text-color: var(--color-warning-700);
+      }
 
       &:hover:not(#{$loading}, #{$disabled}) {
         --bg-color: var(--color-#{$color}-100);
@@ -326,37 +352,49 @@ const attrs = computed(() => {
       }
     }
 
-    &--outline {
-      &--#{$color} {
-        --bg-color: var(--color-additional-50);
-        --border-color: currentColor;
-        --text-color: var(--color-#{$color}-500);
+    &--outline--#{$color} {
+      --bg-color: var(--color-additional-50);
+      --border-color: var(--color-#{$color}-500);
 
-        &:hover:not(#{$loading}, #{$disabled}) {
-          --text-color: var(--color-#{$color}-700);
-        }
+      &:not([class*="--warning"]) {
+        --text-color: var(--color-#{$color}-500);
+      }
+
+      &[class*="--warning"] {
+        --text-color: var(--color-warning-700);
+      }
+
+      &:hover:not(#{$loading}, #{$disabled}) {
+        --text-color: var(--color-#{$color}-600);
       }
     }
 
     &--no-background--#{$color} {
       --bg-color: transparent;
       --border-color: transparent;
-      --text-color: var(--color-#{$color}-500);
+
+      &:not([class*="--warning"]) {
+        --text-color: var(--color-#{$color}-500);
+      }
+
+      &[class*="--warning"] {
+        --text-color: var(--color-warning-700);
+      }
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        --text-color: var(--color-#{$color}-700);
+        --text-color: var(--color-#{$color}-600);
       }
     }
 
     &--solid-light--#{$color} {
-      --bg-color: var(--color-#{$color}-50);
-      --border-color: var(--color-#{$color}-50);
-      --text-color: var(--color-#{$color}-500);
+      --bg-color: var(--color-#{$color}-100);
+      --border-color: var(--color-#{$color}-100);
+      --text-color: var(--color-#{$color}-800);
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        --bg-color: var(--color-#{$color}-100);
-        --border-color: var(--color-#{$color}-100);
-        --text-color: var(--color-#{$color}-600);
+        --bg-color: var(--color-#{$color}-50);
+        --border-color: var(--color-#{$color}-50);
+        --text-color: var(--color-#{$color}-700);
       }
 
       & #{$loaderIcon} {

@@ -1,9 +1,10 @@
 import { ApolloError, gql } from "@apollo/client/core";
 import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import { createSharedComposable, computedEager } from "@vueuse/core";
-import { sumBy, difference, keyBy, merge, intersection } from "lodash";
+import { difference, keyBy, merge, intersection } from "lodash";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { AbortReason } from "@/core/api/common/enums";
 import {
   useGetShortCartQuery,
@@ -11,6 +12,7 @@ import {
   useValidateCouponQuery,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
+import { handleOptimisticResponseUpdateCartQuantity } from "@/core/api/graphql/config/links/utils";
 import {
   AddBulkItemsCartDocument,
   AddCouponDocument,
@@ -32,6 +34,9 @@ import {
   SelectCartItemsDocument,
   UnselectCartItemsDocument,
   GetShortCartDocument,
+  CreateCartFromWishlistDocument,
+  UpdateShortCartItemQuantityDocument,
+  ShortCartFragmentDoc,
 } from "@/core/api/graphql/types";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
@@ -39,9 +44,11 @@ import { useSyncMutationBatchers } from "@/core/composables/useSyncMutationBatch
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { groupByVendor, Logger } from "@/core/utilities";
+import { createSharedComposableByArgs } from "@/core/utilities/composables";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import ClearCartModal from "../components/clear-cart-modal.vue";
+import { EXTENDED_DEBOUNCE_IN_MS } from "../constants";
 import { CartValidationErrors } from "../enums";
 import type {
   InputNewBulkItemType,
@@ -94,14 +101,14 @@ export function useShortCart() {
   const { cart, refetch, loading } = useSharedShortCart();
   const { storeId, currencyCode, cultureName, userId } = globals;
   const commonVariables = { storeId, currencyCode, cultureName, userId };
-  const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
   const { analytics } = useAnalytics();
+  const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
 
   async function addToCart(
     productId: string,
     quantity: number,
     configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
-  ): Promise<ShortCartFragment | undefined> {
+  ) {
     try {
       const result = await _addToCart(
         {
@@ -128,6 +135,9 @@ export function useShortCart() {
 
       return result?.data?.addItem;
     } catch (err) {
+      if (err instanceof ApolloError && err.networkError?.toString() === (AbortReason.Explicit as string)) {
+        return;
+      }
       Logger.error(err as string);
     }
   }
@@ -180,10 +190,19 @@ export function useShortCart() {
   const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } = useMutation(
     ChangeShortCartItemQuantityDocument,
   );
-  async function changeItemQuantity(lineItemId: string, quantity: number): Promise<ShortCartFragment | undefined> {
+  const {
+    add: changeItemQuantityBatchedMutation,
+    overflowed: changeItemQuantityBatchedOverflowed,
+    loading: changeItemQuantityBatchedLoading,
+  } = useMutationBatcher(_changeItemQuantity);
+  async function changeItemQuantityFunction(
+    lineItemId: string,
+    quantity: number,
+    mutation: typeof _changeItemQuantity | typeof changeItemQuantityBatchedMutation,
+  ) {
     try {
       const lineItem = cart.value?.items.find((item) => item.id === lineItemId);
-      const result = await _changeItemQuantity({
+      const result = await mutation({
         command: { lineItemId, quantity, ...commonVariables },
         skipQuery: false,
       });
@@ -197,15 +216,60 @@ export function useShortCart() {
       Logger.error(err as string);
     }
   }
+  async function changeItemQuantity(lineItemId: string, quantity: number) {
+    return changeItemQuantityFunction(lineItemId, quantity, _changeItemQuantity);
+  }
+  async function changeItemQuantityBatched(lineItemId: string, quantity: number) {
+    return changeItemQuantityFunction(lineItemId, quantity, changeItemQuantityBatchedMutation);
+  }
 
-  function getItemsTotal(productIds: string[]): number {
-    if (!cart.value?.items.length) {
-      return 0;
-    }
+  const { mutate: updateItemCartQuantityMutation, loading: updateItemCartQuantityLoading } = useMutation(
+    UpdateShortCartItemQuantityDocument,
+    {
+      update: (cache, { data }) => {
+        const currentCart = cart.value
+          ? cache.readFragment<CartType>({
+              fragmentName: "shortCart",
+              fragment: ShortCartFragmentDoc,
+              id: cache.identify(cart.value),
+            })
+          : undefined;
 
-    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId));
+        if (data?.updateCartQuantity) {
+          const cartData = {
+            ...data.updateCartQuantity,
+            shipments: currentCart?.shipments ?? [],
+            validationErrors: currentCart?.validationErrors ?? [],
+          };
 
-    return sumBy(filteredItems, (x) => x.extendedPrice.amount);
+          cache.writeQuery({
+            query: GetShortCartDocument,
+            data: { cart: cartData },
+            variables: commonVariables,
+          });
+        }
+      },
+      optimisticResponse: (vars, { IGNORE }) => {
+        const itemsInput = vars.command?.items;
+
+        if (!Array.isArray(itemsInput) || itemsInput.length === 0 || !cart.value) {
+          return IGNORE;
+        }
+
+        return handleOptimisticResponseUpdateCartQuantity(cart.value as CartType, itemsInput);
+      },
+    },
+  );
+  function updateItemCartQuantity(productId: string, quantity: number) {
+    return updateItemCartQuantityMutation({
+      command: { items: [{ productId, quantity }], ...commonVariables, cartId: cart.value?.id },
+    });
+  }
+
+  const { mutate: _createCartFromWishlist, loading: createCartFromWishlistLoading } =
+    useMutation(CreateCartFromWishlistDocument);
+  async function createCartFromWishlist(wishlistId: string) {
+    return await _createCartFromWishlist({ command: { listId: wishlistId } });
   }
 
   return {
@@ -215,28 +279,35 @@ export function useShortCart() {
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
-    getItemsTotal,
+    changeItemQuantityBatched,
+    createCartFromWishlist,
     loading,
+    addToCartLoading,
+    changeItemQuantityBatchedOverflowed,
+    createCartFromWishlistLoading,
+    updateItemCartQuantity,
     changing: computed(
       () =>
         addToCartLoading.value ||
         addItemsToCartLoading.value ||
         addBulkItemsToCartLoading.value ||
-        changeItemQuantityLoading.value,
+        changeItemQuantityLoading.value ||
+        changeItemQuantityBatchedLoading.value ||
+        updateItemCartQuantityLoading.value,
     ),
   };
 }
 
-export function _useFullCart() {
+export function _useFullCart(cartId?: string) {
   const { openModal } = useModal();
   const { analytics } = useAnalytics();
   const { client, resolveClient } = useApolloClient();
   const { storeId, currencyCode, cultureName, userId } = globals;
-  const commonVariables = { storeId, currencyCode, cultureName, userId };
+  const commonVariables = { storeId, currencyCode, cultureName, userId, cartId };
   const notifications = useNotifications();
   const { t } = useI18n();
 
-  const { result: query, load, refetch, loading } = useGetFullCartQuery();
+  const { result: query, load, refetch, loading } = useGetFullCartQuery(cartId);
 
   const forceFetch = async () => (await load()) || (await refetch());
 
@@ -404,6 +475,7 @@ export function _useFullCart() {
     loading: changeItemsQuantityLoading,
   } = useMutationBatcher(_changeItemsQuantity, {
     mergeStrategy: getMergeStrategyUniqueBy("lineItemId"),
+    debounce: EXTENDED_DEBOUNCE_IN_MS,
   });
   async function changeItemQuantityBatched(lineItemId: string, quantity: number): Promise<void> {
     try {
@@ -640,4 +712,11 @@ export function _useFullCart() {
   };
 }
 
-export const useFullCart = createSharedComposable(_useFullCart);
+const useFullCartShared = createSharedComposableByArgs(_useFullCart, (args) => args?.[0] ?? "");
+
+export function useFullCart() {
+  const route = useRoute();
+  const cartId = Array.isArray(route.params?.cartId) ? route.params?.cartId[0] : route.params?.cartId;
+
+  return useFullCartShared(cartId);
+}

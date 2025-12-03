@@ -1,8 +1,11 @@
 <template>
   <div class="vc-quantity-stepper">
     <VcInput
+      ref="vcInputRef"
       v-model.number="model"
+      class="vc-quantity-stepper__input"
       type="number"
+      :aria-label="inputAriaLabel"
       :disabled="disabled"
       :readonly="readonly"
       :loading="loading"
@@ -22,14 +25,21 @@
         'aria-valuemax': max,
         'aria-valuenow': model ?? '',
       }"
+      :data-test-id="testIdInput"
+      @blur="normalize"
+      @keydown.up.prevent="() => handleArrowKey('increment')"
+      @keydown.down.prevent="() => handleArrowKey('decrement')"
     >
       <template v-if="!readonly" #prepend>
         <VcButton
           icon="minus"
+          :aria-label="$t('ui_kit.accessibility.decrease_quantity')"
           :disabled="isDecrementDisabled"
           :loading="loading"
           :color="buttonsColor"
           :variant="buttonsVariant"
+          :data-test-id="testIdDecrement"
+          class="vc-quantity-stepper__decrement"
           @click.stop="handleDecrement"
         />
       </template>
@@ -37,10 +47,13 @@
       <template v-if="!readonly" #append>
         <VcButton
           icon="plus"
+          :aria-label="$t('ui_kit.accessibility.increase_quantity')"
           :disabled="isIncrementDisabled"
           :loading="loading"
           :color="buttonsColor"
           :variant="buttonsVariant"
+          :data-test-id="testIdIncrement"
+          class="vc-quantity-stepper__increment"
           @click.stop="handleIncrement"
         />
       </template>
@@ -53,7 +66,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { calculateStepper, checkIfOperationIsAllowed } from "@/ui-kit/utilities/quantity-stepper";
 
 interface IProps {
@@ -61,6 +75,7 @@ interface IProps {
   value?: number;
   loading?: boolean;
   disabled?: boolean;
+  ariaLabel?: string;
   step?: number;
   min?: number;
   max?: number;
@@ -73,6 +88,9 @@ interface IProps {
   showEmptyDetails?: boolean;
   selectOnClick?: boolean;
   allowZero?: boolean;
+  testIdInput?: string;
+  testIdDecrement?: string;
+  testIdIncrement?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -80,11 +98,18 @@ const props = withDefaults(defineProps<IProps>(), {
   max: Number.MAX_SAFE_INTEGER,
   size: "sm",
   allowZero: true,
+  buttonsColor: "primary",
 });
 
+const lastNonEmptyValue = ref<number | undefined>(undefined);
 const min = computed(() => props.min ?? (props.allowZero ? 0 : 1));
 
+const vcInputRef = useTemplateRef<{ inputElement: HTMLInputElement | undefined }>("vcInputRef");
+
 const model = defineModel<IProps["value"]>();
+
+const { t } = useI18n();
+const inputAriaLabel = computed<string>(() => props.ariaLabel ?? t("ui_kit.labels.product_quantity"));
 
 const isDecrementDisabled = computed(
   () =>
@@ -147,6 +172,49 @@ function handleIncrement() {
 function update(value: number) {
   model.value = value;
 }
+
+function normalize() {
+  if (model.value === undefined && lastNonEmptyValue.value !== undefined) {
+    update(lastNonEmptyValue.value);
+  }
+
+  if (model.value === 0 && vcInputRef.value?.inputElement) {
+    vcInputRef.value.inputElement.value = "0";
+  }
+}
+
+function handleArrowKey(direction: "increment" | "decrement") {
+  if (props.readonly || props.disabled) {
+    return;
+  }
+
+  const isDisabled = direction === "increment" ? isIncrementDisabled.value : isDecrementDisabled.value;
+
+  if (isDisabled) {
+    return;
+  }
+
+  if (model.value === undefined) {
+    model.value = min.value;
+    return;
+  }
+
+  if (direction === "increment") {
+    handleIncrement();
+  } else {
+    handleDecrement();
+  }
+}
+
+watch(
+  model,
+  () => {
+    if (model.value !== undefined && model.value !== lastNonEmptyValue.value) {
+      lastNonEmptyValue.value = model.value;
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">
@@ -160,19 +228,19 @@ function update(value: number) {
   }
 
   @at-root .vc-product-card {
-    #{$self} {
+    $wrapperSelector: "> .vc-product-card__wrapper #{$self}";
+
+    #{$wrapperSelector} {
       grid-area: add-to-cart;
     }
 
     &--view-mode {
-      &--grid {
-        #{$self} {
-          @apply mt-3 order-7;
-        }
+      &--grid #{$wrapperSelector} {
+        @apply mt-3 order-7;
       }
 
       &--list {
-        #{$self} {
+        #{$wrapperSelector} {
           @apply mt-3;
 
           @container (min-width: theme("containers.sm")) {
@@ -190,7 +258,7 @@ function update(value: number) {
       }
 
       &--item {
-        #{$self} {
+        #{$wrapperSelector} {
           @apply mt-3 w-32 self-start;
 
           @container (min-width: theme("containers.xl")) {

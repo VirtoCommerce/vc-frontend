@@ -23,7 +23,7 @@ vi.mock("vue-i18n", () => {
 
 const EXPIRATION_FIELD_LABEL = "shared.payment.bank_card_form.expiration_date_label";
 const ERROR_MESSAGES = {
-  MONTH: "shared.payment.authorize_net.errors.month",
+  MONTH: "shared.payment.bank_card_form.errors.month",
   MONTH_INCOMPLETE: "shared.payment.bank_card_form.month_label must be exactly 2 characters",
   YEAR_INCOMPLETE: "shared.payment.bank_card_form.year_label must be exactly 2 characters",
 } as const;
@@ -122,16 +122,6 @@ describe("BankCardForm", () => {
 
         await fireEvent.update(input, "1");
         expect(input.value).toBe("1");
-      });
-
-      it.skip("should not allow non-numeric input", async () => {
-        const input = getExpirationInput();
-
-        await fireEvent.update(input, "ab");
-        expect(input.value).toBe("");
-
-        await fireEvent.update(input, "12ab34");
-        expect(input.value).toBe("12 / 34");
       });
 
       it("should limit input to 4 digits", async () => {

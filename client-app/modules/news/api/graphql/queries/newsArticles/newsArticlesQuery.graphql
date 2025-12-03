@@ -1,0 +1,41 @@
+query NewsArticles(
+  $storeId: String!
+  $languageCode: String!
+  $keyword: String
+  $tags: [String!]
+  $authorId: String
+  $first: Int
+  $after: String
+  $sort: String
+) {
+  newsArticles(
+    storeId: $storeId
+    languageCode: $languageCode
+    keyword: $keyword
+    tags: $tags
+    authorId: $authorId
+    first: $first
+    after: $after
+    sort: $sort
+  ) {
+    totalCount
+    items {
+      id
+      title
+      publishDate
+      contentPreview
+      content
+      listTitle
+      listPreview
+      tags
+      author {
+        id
+        name
+        iconUrl
+      }
+      seoInfo {
+        semanticUrl
+      }
+    }
+  }
+}

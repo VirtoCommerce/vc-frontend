@@ -1,13 +1,13 @@
 export { default as AccountShell } from "./account-shell.vue";
 export { default as AddressDropdownMenu } from "./address-dropdown-menu.vue";
 export { default as ChangePasswordForm } from "./change-password-form.vue";
-export { default as CheckoutDefaultsSuccessModal } from "./checkout-default-success-modal.vue";
 export { default as CreditCard } from "./credit-card.vue";
 export { default as CreditCardSkeleton } from "./credit-card-skeleton.vue";
 export { default as ForgotPasswordForm } from "./forgot-password-form.vue";
 export { default as OrderLineItems } from "./order-line-items.vue";
 export { default as OrderStatus } from "./order-status.vue";
 export { default as Orders } from "./orders.vue";
+/** @deprecated PageToolbarBlock is deprecated. Consider using a custom implementation. */
 export { default as PageToolbarBlock } from "./page-toolbar-block.vue";
 export { default as PasswordTips } from "./password-tips.vue";
 export { default as ProfileUpdateSuccessModal } from "./profile-update-success-modal.vue";

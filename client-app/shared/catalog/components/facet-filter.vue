@@ -1,13 +1,6 @@
 <template>
   <!-- Collapsable mode -->
-  <VcWidget
-    v-if="mode === 'collapsable'"
-    class="facet-filter-widget"
-    size="xs"
-    collapsible
-    :title="facet.label"
-    collapsed
-  >
+  <VcWidget v-if="mode === 'collapsable'" class="facet-filter-widget" size="xs" collapsible collapsed>
     <template #default-container>
       <div v-if="searchFieldVisible" class="facet-filter-widget__search">
         <VcInput
@@ -30,11 +23,11 @@
         >
           <template #prepend>
             <VcCheckbox
-              v-model="item.selected"
+              :model-value="isSelected(item)"
               tabindex="-1"
               size="xs"
               :disabled="loading"
-              @change="changeFacetValues"
+              @change="handleFacetItemClick(item)"
               @click.stop
             />
           </template>
@@ -59,6 +52,7 @@
         </VcMenuItem>
 
         <div v-if="isAnchorAdded" ref="fadeVisibilityAnchor"></div>
+
         <div v-if="hasFade" class="facet-filter-widget__fade"></div>
       </div>
     </template>
@@ -66,25 +60,43 @@
     <template v-if="isShowMoreVisible" #footer-container>
       <VcButtonSeeMoreLess v-model="isExpanded" class="facet-filter-widget__more" />
     </template>
+
+    <template #title>
+      <span class="facet-filter-widget__title">
+        <span class="facet-filter-widget__title-label">{{ facet.label }}</span>
+
+        <VcBadge
+          v-if="hasSelected"
+          size="xs"
+          rounded
+          variant="outline"
+          color="secondary"
+          class="facet-filter-widget__title-badge"
+        >
+          {{ selectedFiltersCount }}
+        </VcBadge>
+      </span>
+    </template>
   </VcWidget>
 
   <!-- Dropdown mode -->
   <VcDropdownMenu
     v-if="mode === 'dropdown'"
+    :disabled="disabled"
     :offset-options="4"
     class="facet-filter-dropdown"
     z-index="10"
     max-height="20rem"
     width="15rem"
     :dividers="false"
-    data-facet-filter-dropdown
   >
-    <template #trigger="{ opened }">
+    <template #trigger="{ opened, triggerProps }">
       <VcButton
         :class="['facet-filter-dropdown__trigger', { 'facet-filter-dropdown__trigger--opened': opened }]"
         size="sm"
         :color="hasSelected ? 'accent' : 'secondary'"
         variant="outline"
+        v-bind="triggerProps"
       >
         {{ facet.label }}
 
@@ -121,7 +133,7 @@
           size="xs"
           color="secondary"
           truncate
-          :active="item.selected"
+          :active="isSelected(item)"
           :title="item.label"
           @click="
             handleFacetItemClick(item);
@@ -130,13 +142,10 @@
         >
           <template #prepend>
             <VcCheckbox
-              v-model="item.selected"
+              :model-value="isSelected(item)"
               size="xs"
               :disabled="loading"
-              @change="
-                changeFacetValues();
-                close();
-              "
+              @change="handleFacetItemClick(item)"
               @click.stop
             />
           </template>
@@ -156,22 +165,31 @@
 
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
-import { cloneDeep } from "lodash";
-import { computed, ref, watchEffect, shallowRef, toRef } from "vue";
+import { computed, ref, shallowRef, toRef, watch } from "vue";
+import { areStringOrNumberEqual } from "@/core/utilities";
+import type {
+  SearchProductFilterRangeValue,
+  SearchProductFilterResult,
+  SearchProductFilterValue,
+} from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 interface IEmits {
-  (event: "update:facet", facet: FacetItemType): void;
+  (event: "update:filter", filters: SearchProductFilterResult): void;
 }
 
 interface IProps {
   facet: FacetItemType;
   loading?: boolean;
+  disabled?: boolean;
   mode: "dropdown" | "collapsable";
+  filter?: SearchProductFilterResult;
 }
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
+
+const facet = toRef(props, "facet");
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
@@ -184,22 +202,72 @@ const INNER_MARGIN = 0;
 const isMobile = breakpoints.smaller("lg");
 
 const MAX_HEIGHT = ITEM_HEIGHT * (MAX_ITEMS_VISIBLE + 1) + INNER_MARGIN;
+
 const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
 
-const facet = ref<FacetItemType>(cloneDeep(toRef(props, "facet").value));
+const selectedTerms = ref([] as string[]);
 
-function changeFacetValues(): void {
-  emit("update:facet", facet.value);
-}
+const selectedRanges = ref([] as SearchProductFilterRangeValue[]);
 
 function handleFacetItemClick(item: FacetValueItemType): void {
-  item.selected = !item.selected;
-  changeFacetValues();
+  if (facet.value.type === "terms") {
+    const index = selectedTerms.value.findIndex((value) => value === item.value);
+    if (index === -1) {
+      selectedTerms.value.push(item.value);
+    } else {
+      selectedTerms.value.splice(index, 1);
+    }
+  }
+
+  if (facet.value.type === "range") {
+    const index = selectedRanges.value.findIndex((value) => {
+      return (
+        value.includeLowerBound === item.includeFrom &&
+        value.includeUpperBound === item.includeTo &&
+        areStringOrNumberEqual(item.from, value.lower) &&
+        areStringOrNumberEqual(item.to, value.upper)
+      );
+    });
+
+    if (index === -1) {
+      selectedRanges.value.push({
+        includeLowerBound: item.includeFrom || false,
+        includeUpperBound: item.includeTo || false,
+        lower: numberToString(item.from),
+        upper: numberToString(item.to),
+      });
+    } else {
+      selectedRanges.value.splice(index, 1);
+    }
+  }
+
+  emit("update:filter", {
+    isGenerated: false,
+    filterType: facet.value.type,
+    name: facet.value.paramName,
+    termValues: selectedTerms.value.map((value) => ({
+      value,
+      label: facet.value.values.find((el) => el.value === value)?.label || value,
+    })),
+    rangeValues: selectedRanges.value,
+  });
 }
 
-watchEffect(() => {
-  facet.value = cloneDeep(props.facet);
-});
+function numberToString(value?: number): string | undefined {
+  return typeof value === "number" ? String(value) : undefined;
+}
+
+watch(
+  () => [props.filter?.termValues, props.filter?.rangeValues] as const,
+  ([termValues, rangeValues]: readonly [
+    SearchProductFilterValue[] | undefined,
+    SearchProductFilterRangeValue[] | undefined,
+  ]) => {
+    selectedTerms.value = termValues?.map((item) => item.value) || [];
+    selectedRanges.value = rangeValues || [];
+  },
+  { immediate: true },
+);
 
 const isExpanded = ref(false);
 
@@ -232,8 +300,25 @@ const hasFade = computed(
     (filtered.value.length > SHOW_MORE_AMOUNT + 1 && !isExpanded.value) ||
     (isAnchorAdded.value && !fadeVisibilityAnchorIsVisible.value),
 );
-const selectedFiltersCount = computed(() => facet.value.values.filter((item) => item.selected)?.length);
+const selectedFiltersCount = computed(() => facet.value.values.filter((item) => isSelected(item)).length);
 const hasSelected = computed(() => selectedFiltersCount.value > 0);
+
+function isSelected(item: FacetValueItemType) {
+  if (facet.value.type === "terms") {
+    return selectedTerms.value.includes(item.value);
+  }
+
+  if (facet.value.type === "range") {
+    return selectedRanges.value.some((value) => {
+      return (
+        value.includeLowerBound === item.includeFrom &&
+        value.includeUpperBound === item.includeTo &&
+        areStringOrNumberEqual(item.from, value.lower) &&
+        areStringOrNumberEqual(item.to, value.upper)
+      );
+    });
+  }
+}
 </script>
 
 <style lang="scss">
@@ -266,6 +351,10 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
   &__more {
     @apply m-1;
+  }
+
+  &__title {
+    @apply flex flex-row items-center justify-start gap-2;
   }
 }
 

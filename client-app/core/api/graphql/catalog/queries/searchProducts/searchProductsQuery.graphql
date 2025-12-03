@@ -1,7 +1,10 @@
 #import "../../../common/fragments/money.graphql"
+#import "../../../common/fragments/rating.graphql"
+
 #import "../../fragments/property.graphql"
 #import "../../fragments/availabilityData.graphql"
-#import "../../../common/fragments/rating.graphql"
+#import "../../../fragments/rangeFacet.graphql"
+#import "../../../fragments/filter.graphql"
 
 query SearchProducts(
   $storeId: String!
@@ -20,6 +23,8 @@ query SearchProducts(
   $withImages: Boolean!
   $selectedAddressId: String
   $selectedAddress: String
+  $preserveUserQuery: Boolean
+  $previousOutline: String
 ) {
   products(
     storeId: $storeId
@@ -36,6 +41,8 @@ query SearchProducts(
     productIds: $productIds
     selectedAddressId: $selectedAddressId
     selectedAddress: $selectedAddress
+    preserveUserQuery: $preserveUserQuery
+    previousOutline: $previousOutline
   ) {
     totalCount
     items {
@@ -62,6 +69,9 @@ query SearchProducts(
           actual {
             ...money
           }
+        }
+        availabilityData {
+          ...availabilityData
         }
       }
       hasVariations
@@ -117,17 +127,10 @@ query SearchProducts(
       }
     }
     range_facets @include(if: $withFacets) {
-      name
-      label
-      ranges {
-        label
-        count
-        from
-        to
-        includeFrom
-        includeTo
-        isSelected
-      }
+      ...rangeFacet
+    }
+    filters @include(if: $withFacets) {
+      ...filter
     }
   }
 }

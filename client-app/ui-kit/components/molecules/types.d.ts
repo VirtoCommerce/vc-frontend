@@ -12,6 +12,7 @@ declare module "vue" {
     VcCollapsibleContent: typeof Components.VcCollapsibleContent;
     VcCompositeShape: typeof Components.VcCompositeShape;
     VcCopyText: typeof Components.VcCopyText;
+    VcDateSelector: typeof Components.VcDateSelector;
     VcDialogContent: typeof Components.VcDialogContent;
     VcDialogFooter: typeof Components.VcDialogFooter;
     VcDialogHeader: typeof Components.VcDialogHeader;
@@ -42,10 +43,12 @@ declare module "vue" {
     // @deprecated
     VcSelect: typeof Components.VcSelect;
     VcShape: typeof Components.VcShape;
+    VcSlider: typeof Components.VcSlider;
     VcSteps: typeof Components.VcSteps;
     VcTabSwitch: typeof Components.VcTabSwitch;
     VcTextarea: typeof Components.VcTextarea;
     VcRating: typeof Components.VcRating;
+    VcVariantPicker: typeof Components.VcVariantPicker;
     // @deprecated is deprecated, use VendorName instead
     VcVendor: typeof Components.VcVendor;
     VcWidget: typeof Components.VcWidget;

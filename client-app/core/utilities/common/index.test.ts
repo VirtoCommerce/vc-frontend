@@ -1,6 +1,5 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 import {
-  getBaseUrl,
   getReturnUrlValue,
   extractHostname,
   truncate,
@@ -12,49 +11,10 @@ import {
   getLinkAttr,
   uniqByLast,
   toCSV,
+  areStringOrNumberEqual,
+  buildRedirectUrl,
 } from "./index";
-
-describe("getBaseUrl", () => {
-  const originalLocation = window.location;
-
-  afterEach(() => {
-    // Restore the original location after each test
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      value: originalLocation,
-    });
-  });
-
-  it("should return base URL with locale when locale is in pathname", () => {
-    const supportedLocales = ["en", "fr", "de"];
-
-    // Mock location.pathname
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      value: {
-        pathname: "/en/some/path",
-      },
-    });
-
-    const result = getBaseUrl(supportedLocales);
-    expect(result).toBe("/en/");
-  });
-
-  it("should return empty string when locale is not in pathname", () => {
-    const supportedLocales = ["en", "fr", "de"];
-
-    // Mock location.pathname
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      value: {
-        pathname: "/some/path",
-      },
-    });
-
-    const result = getBaseUrl(supportedLocales);
-    expect(result).toBe("");
-  });
-});
+import type { RouteLocationNormalized } from "vue-router";
 
 describe("getReturnUrlValue", () => {
   const originalLocation = window.location;
@@ -416,5 +376,181 @@ describe("toCSV", () => {
   it("should handle undefined", () => {
     const result = toCSV();
     expect(result).toBe("");
+  });
+
+  it("should filter undefined, null and empty string", () => {
+    const result = toCSV([" ", "", undefined, "foo", null, "bar"]);
+    expect(result).toBe("foo, bar");
+  });
+});
+
+describe("areStringOrNumberEqual", () => {
+  it("should return true when both values are null", () => {
+    expect(areStringOrNumberEqual(null, null)).toBe(true);
+  });
+
+  it("should return true when both values are undefined", () => {
+    expect(areStringOrNumberEqual(undefined, undefined)).toBe(true);
+  });
+
+  it("should return true when one value is null and the other is undefined", () => {
+    expect(areStringOrNumberEqual(null, undefined)).toBe(true);
+    expect(areStringOrNumberEqual(undefined, null)).toBe(true);
+  });
+
+  it("should return true when both values are the same string", () => {
+    expect(areStringOrNumberEqual("hello", "hello")).toBe(true);
+  });
+
+  it("should return true when both values are the same number", () => {
+    expect(areStringOrNumberEqual(42, 42)).toBe(true);
+  });
+
+  it("should return true when string and number have the same string representation", () => {
+    expect(areStringOrNumberEqual("42", 42)).toBe(true);
+    expect(areStringOrNumberEqual(42, "42")).toBe(true);
+  });
+
+  it("should return true when number and string have the same string representation", () => {
+    expect(areStringOrNumberEqual(0, "0")).toBe(true);
+    expect(areStringOrNumberEqual("0", 0)).toBe(true);
+  });
+
+  it("should return false when strings are different", () => {
+    expect(areStringOrNumberEqual("hello", "world")).toBe(false);
+  });
+
+  it("should return false when numbers are different", () => {
+    expect(areStringOrNumberEqual(42, 43)).toBe(false);
+  });
+
+  it("should return false when string and number have different string representations", () => {
+    expect(areStringOrNumberEqual("42", 43)).toBe(false);
+    expect(areStringOrNumberEqual(42, "43")).toBe(false);
+  });
+
+  it("should return false when one value is null/undefined and the other is not", () => {
+    expect(areStringOrNumberEqual(null, "hello")).toBe(false);
+    expect(areStringOrNumberEqual(undefined, 42)).toBe(false);
+    expect(areStringOrNumberEqual("hello", null)).toBe(false);
+    expect(areStringOrNumberEqual(42, undefined)).toBe(false);
+  });
+
+  it("should handle edge cases with empty strings and zero", () => {
+    expect(areStringOrNumberEqual("", "")).toBe(true);
+    expect(areStringOrNumberEqual("", 0)).toBe(false);
+    expect(areStringOrNumberEqual(0, "")).toBe(false);
+  });
+});
+
+describe("buildRedirectUrl", () => {
+  it("should return redirect URL when route is redirectable and no return URL keys exist", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }],
+      query: {},
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toEqual({ returnUrl: "/test/path" });
+  });
+
+  it("should return null when route has redirectable: false in meta", () => {
+    const route = {
+      matched: [{ meta: { redirectable: false } }],
+      query: {},
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toBeNull();
+  });
+
+  it("should return null when route has returnUrl in query", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }],
+      query: { returnUrl: "/some/path" },
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toBeNull();
+  });
+
+  it("should return null when route has ReturnUrl in query", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }],
+      query: { ReturnUrl: "/some/path" },
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toBeNull();
+  });
+
+  it("should return null when route has both returnUrl and ReturnUrl in query", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }],
+      query: { returnUrl: "/some/path", ReturnUrl: "/another/path" },
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toBeNull();
+  });
+
+  it("should return redirect URL when route has other query parameters but no return URL keys", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }],
+      query: { otherParam: "value", anotherParam: "value2" },
+      fullPath: "/test/path?otherParam=value&anotherParam=value2",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toEqual({ returnUrl: "/test/path?otherParam=value&anotherParam=value2" });
+  });
+
+  it("should return redirect URL when route has no meta redirectable property", () => {
+    const route = {
+      matched: [{ meta: {} }],
+      query: {},
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toEqual({ returnUrl: "/test/path" });
+  });
+
+  it("should return redirect URL when route has no meta property", () => {
+    const route = {
+      matched: [{}],
+      query: {},
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toEqual({ returnUrl: "/test/path" });
+  });
+
+  it("should return null when any matched route has redirectable: false", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }, { meta: { redirectable: false } }, { meta: { redirectable: true } }],
+      query: {},
+      fullPath: "/test/path",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toBeNull();
+  });
+
+  it("should handle route with complex fullPath including query and hash", () => {
+    const route = {
+      matched: [{ meta: { redirectable: true } }],
+      query: {},
+      fullPath: "/test/path?param=value#section",
+    } as unknown as RouteLocationNormalized;
+
+    const result = buildRedirectUrl(route);
+    expect(result).toEqual({ returnUrl: "/test/path?param=value#section" });
   });
 });

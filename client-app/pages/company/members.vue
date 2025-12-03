@@ -13,6 +13,7 @@
         @click="openInviteModal"
       >
         <span class="md:hidden">{{ $t("pages.company.members.buttons.invite") }}</span>
+
         <span class="hidden md:inline">{{ $t("pages.company.members.buttons.invite_members") }}</span>
       </VcButton>
     </div>
@@ -62,14 +63,7 @@
       </template>
     </VcPopupSidebar>
 
-    <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
-
-    <!-- Page Toolbar -->
-    <PageToolbarBlock
-      :stick="stickyMobileHeaderIsVisible"
-      class="-my-3.5 flex flex-row items-center gap-x-2 py-3.5 lg:flex-row-reverse lg:gap-x-5"
-      shadow
-    >
+    <div class="flex flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5">
       <div class="relative">
         <VcButton
           ref="filtersButtonElement"
@@ -104,7 +98,7 @@
           ref="filtersDropdownElement"
           class="absolute right-0 z-[1] mt-2 w-[27.5rem]"
         >
-          <VcDialog dividers>
+          <VcDialog dividers size="xs">
             <VcDialogHeader @close="hideFilters">
               {{ $t("pages.company.members.filters") }}
             </VcDialogHeader>
@@ -124,7 +118,6 @@
               <VcButton
                 :disabled="!numberOfFacetsApplied && !isFacetsDirty"
                 color="secondary"
-                size="sm"
                 variant="outline"
                 min-width="6.25rem"
                 @click="
@@ -137,7 +130,6 @@
 
               <VcButton
                 :disabled="!numberOfFacetsApplied && !isFacetsDirty"
-                size="sm"
                 variant="outline"
                 min-width="6.25rem"
                 @click="hideFilters()"
@@ -147,7 +139,6 @@
 
               <VcButton
                 :disabled="!isFacetsDirty"
-                size="sm"
                 min-width="6.25rem"
                 @click="
                   applyFilters();
@@ -183,7 +174,7 @@
           </template>
         </VcInput>
       </div>
-    </PageToolbarBlock>
+    </div>
 
     <!-- Filters chips -->
     <div v-if="numberOfFacetsApplied" class="hidden flex-wrap gap-x-3 gap-y-2 lg:flex">
@@ -217,21 +208,20 @@
           : $t('pages.company.members.no_members_message')
       "
       icon="outline-order"
+      :variant="!!keyword || !!filter ? 'search' : 'empty'"
     >
       <template #button>
-        <VcButton v-if="keyword || filter" prepent-icon="reset" @click="resetFiltersWithKeyword">
+        <VcButton v-if="keyword || filter" prepend-icon="reset" @click="resetFiltersWithKeyword">
           {{ $t("pages.company.members.buttons.reset_search") }}
         </VcButton>
 
-        <template v-else>
-          <VcButton v-if="!!continue_shopping_link" :external-link="continue_shopping_link">
-            {{ $t("pages.company.members.buttons.no_members") }}
-          </VcButton>
+        <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+          {{ $t("pages.company.members.buttons.no_members") }}
+        </VcButton>
 
-          <VcButton v-else to="/">
-            {{ $t("pages.company.members.buttons.no_members") }}
-          </VcButton>
-        </template>
+        <VcButton v-else to="/">
+          {{ $t("pages.company.members.buttons.no_members") }}
+        </VcButton>
       </template>
     </VcEmptyView>
 
@@ -246,6 +236,7 @@
           :pages="pages"
           :page="page"
           :description="$t('pages.company.members.meta.table_description')"
+          mobile-breakpoint="lg"
           @header-click="applySorting"
           @page-changed="changePage"
         >
@@ -344,6 +335,7 @@
               </div>
             </div>
           </template>
+
           <template #page-limit-message>
             {{ $t("ui_kit.reach_limit.page_limit_filters") }}
           </template>
@@ -354,7 +346,7 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, computedEager, onClickOutside, useBreakpoints, useElementVisibility } from "@vueuse/core";
+import { breakpointsTailwind, computedEager, onClickOutside, useBreakpoints } from "@vueuse/core";
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
@@ -363,7 +355,7 @@ import { B2B_ROLES } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
-import { PageToolbarBlock, useUser } from "@/shared/account";
+import { useUser } from "@/shared/account";
 import { FacetItem } from "@/shared/common";
 import {
   EditCustomerRoleModal,
@@ -431,10 +423,6 @@ const localKeyword = ref("");
 const filtersVisible = ref(false);
 const filtersButtonElement = shallowRef<HTMLElement | null>(null);
 const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
-
-const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
-const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
-const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
 
@@ -614,6 +602,7 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
         } else {
           notifications.error({
             ...notification,
+
             text: t("common.messages.role_update_failed", [result?.errors?.join(" ")]),
           });
         }

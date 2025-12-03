@@ -92,6 +92,8 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── config
 |   ├── menu.json
 |   └── settings_data.json
+|
+├── examples                         // Code snippets and examples for different use cases.
 |   
 ├── locales                          // Locale files used to provide translated content.
 |   └──...
@@ -110,14 +112,13 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── .editorconfig                    // Common editor settings to sync codestyle.
 ├── .env                             // Envfile to define different Environment Variables.
 ├── .env.local                       // Local envfile to override Environment Variables.
-├── .eslintignore                    // Ignore some files from ESlint.
-├── .eslintrc.cjs                    // ESlint configuration file.
 ├── .gitattributes                   // Set attributes to specified path in Git.
 ├── .gitignore                       // Ignore some files from Git.
 ├── .npmrc                           // Node.js package manager settings and Node.js restrictions
 ├── .prettierignore                  // Ignore some files from Prettier.
 ├── .prettierrc.json                 // Config for Prettier.
 ├── .yarnrc.yml                      // Yarn package manager configuration
+├── eslint.config.js                 // ESlint configuration file.
 ├── graphql-codegen
 |   └── generator.ts                 // Generate GraphQL types 
 ├── index.html                       // Vite Development entry point.
@@ -151,7 +152,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
   - [vc-module-push-messages](https://github.com/VirtoCommerce/vc-module-push-messages)
   - [vc-module-skyflow](https://github.com/VirtoCommerce/vc-module-skyflow)
   - [vc-module-x-recommend](https://github.com/VirtoCommerce/vc-module-x-recommend)
-- Install [Node.js v22](https://nodejs.org/en/download/) (**22.10.0** or later)
+- Install [Node.js v22](https://nodejs.org/en/download/) (**22.12.0** or later)
 - Enable [corepack](https://yarnpkg.com/corepack) *(run as administrator on Windows)*
   ```bash
   corepack enable
@@ -178,8 +179,9 @@ yarn -v
 `Yarn` should be of version **4.1.0** or greater, not 1.XX.
 
 ### Install dependencies
+Use `--immutable` flag to ensure that the dependencies are installed with the correct version.
 ```bash
-yarn install
+yarn install --immutable
 ```
 
 ### Build
@@ -245,29 +247,88 @@ yarn generate:dependency-graph
 ```
 yarn generate:dependency-graph client-app/main.ts client-app/shared/account/components/checkout-default-success-modal.vue
 ```
+If command "dot" is missing - install graphviz on your OS
+
 The generated graph will also be saved in the `artifacts` folder.
 
 ## Localization
-### Check for missing locale keys
+### Language Flow
+- Locale selection checks the URL first - using the supported languages list to tell real locale segments from ordinary path parts (full culture like `fr-FR` or an unambiguous short alias such as `fr`), then your “pinned” locale - your last choice saved in localStorage, then your account’s preferred culture, and finally the store default.
 
+- When a locale is chosen, useLanguages.initLocale lazy-loads its translation file (`xx-YY.json`; if missing it falls back to `xx.json`, then to `en.json`), wires it into Vue I18n and Yup, updates the `<html lang>` tag, and rewrites the URL so default or mismatched locale segments vanish.
+
+- Switching via the header selector stores the new culture, captures the exact slug and culture you were on at that moment (previousCultureSlug in session storage), strips any stale locale prefix from the URL, broadcasts a data refresh, and reloads so the whole app restarts in the new language.
+
+- After that reload, useSlugInfo notices previousCultureSlug; while you stay on the same path it asks the backend for slug data using the recorded culture, so `/hello` is resolved with `en-US` instead of the new `fr-FR`, preventing empty responses before the localized slug is known.
+
+- When product, category, brand, or CMS data brings back a localized permalink (updateLocalizedUrl in those page modules), it uses history.pushState to refresh the browser address with the localized path - keeping locale prefix, query string, and hash - so users see the correct URL without triggering router navigation or extra data fetching.
+
+### Check for missing locale keys
 ```
-yarn check-locales -- path/to/locales_folder path/to/**/locales
+yarn check-locales --source en.json -- path/to/locales_folder path/to/**/locales
 ```
-The command is used to ensure that all locale files have consistent keys across different languages. This helps in maintaining uniformity and avoiding missing translations.
+The command checks for missing keys in locale files by comparing them against a single source-of-truth file (e.g., `en.json`), specified with the `--source` argument. This ensures that all other language files have the same keys as the source file, helping to maintain consistency and avoid missing translations.
 
 The script will output warnings for any missing keys in the locale files. Review these warnings to ensure all necessary translations are present. Also added to the CI pipeline.
 
 ### Fix Missing Locales
 ```
-yarn fix-locales -- path/to/locales_folder path/to/\*\*/locales
+yarn fix-locales --source en.json -- path/to/locales_folder path/to/**/locales
 ```
-This command can be run locally to automatically fix missing translations in locale files by using AI translation. It analyzes all locale files, identifies missing keys, and translates the missing content from the source language to the target language and updates locale files accordingly. 
+This command automatically fixes missing translations by comparing other locale files against a single source-of-truth file (e.g., `en.json`), specified with the `--source` argument. It identifies missing keys, uses an AI to translate them from the source language, and updates the files accordingly.
 
 > [!IMPORTANT]
 > This command requires the `APP_GEMINI_API_KEY` environment variable to be set. You can obtain this API key from the [Google AI Studio](https://aistudio.google.com/app/apikey) website.
 
+You can also override the default translation model, temperature, and inter-file request delay via environment variables:
+- `FIX_LOCALES_MODEL_NAME` (default: "gemini-2.0-flash")
+- `FIX_LOCALES_TEMPERATURE` (default: 0.0)
+- `FIX_LOCALES_DELAY_MS` (default: 4000)
+
 > [!CAUTION]
 > This is an experimental feature and may not work as expected.
+
+### Styles customization
+
+Component styles follow the BEM methodology. To avoid merge conflicts and keep your customizations centralized, **do not edit the core style files**. Instead, put all your overrides into the `client-app/assets/styles/_custom.scss` file.
+
+```scss
+// client-app/assets/styles/_custom.scss
+
+.vc-container {
+  &__bg {
+    background-color: red;
+  }
+}
+```
+
+## Configurable Border Radius
+
+You can easily adjust border-radius values for all components or on a per-component basis using CSS custom properties:
+
+- `--vc-radius`:
+  Sets the **global** border-radius for all components.
+  **Default:** `0.5rem` (8px)
+
+- Per-component overrides:
+  If you need a different radius for a specific component, you can override the global value by defining a custom property scoped to that component. For example:
+  - `--vc-button-radius`
+  - `--vc-widget-radius`
+  - _etc._
+
+- **Recommended** maximum border-radius: 10px (0.625rem). Larger values may appear overly rounded and disrupt visual consistency.
+
+```scss
+// client-app/assets/styles/_custom.scss
+
+:root {
+  // Change the global radius
+  --vc-radius: 0.25rem; // now 4px
+
+  // Override button radius only
+  --vc-button-radius: 0.75rem; // now 12px
+}
+```
 
 ### Troubleshooting
 

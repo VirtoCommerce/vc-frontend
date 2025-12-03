@@ -1,8 +1,13 @@
 import { unref } from "vue";
-import { globals } from "@/core/globals";
-import { isDateString } from "@/core/utilities/date";
+import { getFormattedLabel } from "./common";
 import type { FacetItemType, FacetValueItemType } from "../../types";
-import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/core/api/graphql/types";
+import type {
+  FacetRangeType,
+  FacetTermType,
+  RangeFacet,
+  TermFacet,
+  SearchProductFilterResult,
+} from "@/core/api/graphql/types";
 import type { MaybeRef } from "@vueuse/core";
 
 /**
@@ -38,7 +43,11 @@ export function getFilterExpressionForZeroPrice(value: MaybeRef<boolean>, curren
  * @returns A string representing the availability filter expression
  */
 export function getFilterExpressionForInStock(value: MaybeRef<boolean>): string {
-  return unref(value) ? "availability:InStock" : "";
+  return unref(value) ? "inStock:true" : "";
+}
+
+export function getFilterExpressionForInStockVariations(value: MaybeRef<boolean>): string {
+  return unref(value) ? "inStock_variations:true" : "";
 }
 
 /**
@@ -103,6 +112,38 @@ export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItemType[]>)
 }
 
 /**
+ * Generates a filter expression from prepared filters (SearchProductFilterResult array)
+ * @param filters - Array of SearchProductFilterResult objects
+ * @returns A string representing the combined filter expression from all filters
+ */
+export function generateFilterExpressionFromFilters(filters: SearchProductFilterResult[]): string {
+  const filterExpressions: string[] = [];
+
+  filters.forEach((filter) => {
+    if (filter.termValues?.length) {
+      // Handle term filters
+      const escapedTerms = filter.termValues.map((term) => term.value.replace(/\\/g, "\\\\").replace(/"/g, '\\"'));
+      filterExpressions.push(`"${filter.name}":"${escapedTerms.join('","')}"`);
+    } else if (filter.rangeValues?.length) {
+      // Handle range filters
+      const rangeExpressions = filter.rangeValues.map((range) => {
+        const { lower, upper, includeLowerBound, includeUpperBound } = range;
+        const firstBracket = includeLowerBound ? "[" : "(";
+        const lastBracket = includeUpperBound ? "]" : ")";
+
+        const fromStr = lower ? `${lower} ` : "";
+        const toStr = upper ? ` ${upper}` : "";
+
+        return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
+      });
+      filterExpressions.push(`"${filter.name}":${rangeExpressions.join(",")}`);
+    }
+  });
+
+  return filterExpressions.join(" ");
+}
+
+/**
  * Generates a filter expression from a facet range
  * @param facetRange - Object containing range parameters (from, to, includeFrom, includeTo)
  * @returns A string representing the range filter expression
@@ -127,18 +168,20 @@ export function getFilterExpressionFromFacetRange(
  * @returns A FacetItemType object representing the converted term facet
  */
 export function termFacetToCommonFacet(termFacet: TermFacet): FacetItemType {
+  const facetValues = termFacet.terms
+    .map<FacetValueItemType>((facetTerm: FacetTermType) => ({
+      count: facetTerm.count,
+      label: getFormattedLabel(facetTerm.label),
+      value: facetTerm.term,
+      selected: facetTerm.isSelected,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+
   return {
     type: "terms",
     label: termFacet.label,
     paramName: termFacet.name,
-    values: termFacet.terms
-      .map<FacetValueItemType>((facetTerm: FacetTermType) => ({
-        count: facetTerm.count,
-        label: getFacetLabel(facetTerm.label),
-        value: facetTerm.term,
-        selected: facetTerm.isSelected,
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label)),
+    values: facetValues,
   };
 }
 
@@ -154,31 +197,14 @@ export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItemType {
     paramName: rangeFacet.name,
     values: rangeFacet.ranges.map<FacetValueItemType>((facetRange: FacetRangeType) => ({
       count: facetRange.count,
-      label: getFacetLabel(facetRange.label),
+      label: getFormattedLabel(facetRange.label),
       value: getFilterExpressionFromFacetRange(facetRange),
       selected: facetRange.isSelected,
+      from: facetRange.from,
+      includeFrom: facetRange.includeFrom,
+      to: facetRange.to,
+      includeTo: facetRange.includeTo,
     })),
+    statistics: rangeFacet.statistics,
   };
-}
-
-/**
- * Formats a facet label based on its type
- * @param label - The label to format
- * @returns A formatted string representing the facet label
- */
-function getFacetLabel(label: string): string {
-  const { d, t } = globals.i18n.global;
-
-  if (isDateString(label)) {
-    return d(new Date(label));
-  }
-
-  switch (label.toLowerCase()) {
-    case "true":
-      return t("common.labels.true_property");
-    case "false":
-      return t("common.labels.false_property");
-    default:
-      return label;
-  }
 }

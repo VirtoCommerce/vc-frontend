@@ -3,14 +3,15 @@
     class="filters-popup-sidebar"
     :is-visible="isVisible"
     :title="isMobile ? $t('common.buttons.filters') : $t('common.buttons.allFilters')"
-    @hide="$emit('hidePopupSidebar')"
+    @hide="onCancel"
   >
     <ProductsFilters
       v-if="localFilters"
+      :id="productsFiltersId"
       :keyword="keywordQueryParam"
       :filters="localFilters"
       :loading="loading || facetsLoading"
-      @change="onProductsFiltersChange"
+      @change:filters="onProductsFiltersChange"
     >
       <template #prepend="{ loading: updatingFiltersState }">
         <div class="filters-popup-sidebar__container">
@@ -73,7 +74,6 @@
       <VcButton
         class="filters-popup-sidebar__footer-btn"
         variant="outline"
-        :disabled="!isPopupSidebarFilterDirty"
         min-width="6.25rem"
         size="sm"
         @click="onCancel"
@@ -97,9 +97,11 @@
 <script setup lang="ts">
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
-import { watch, ref, computed } from "vue";
+import { watch, ref, computed, nextTick, onMounted, onUnmounted } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
 import { useModal } from "@/shared/modal";
+import { useComponentId, useFocusManagement } from "@/ui-kit/composables";
+import type { SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
@@ -124,7 +126,19 @@ interface IProps {
   isExistSelectedFacets: boolean;
 }
 
-const localFilters = ref<ProductsFiltersType>();
+const productsFiltersId = useComponentId("products-filters");
+
+const { focusFirst } = useFocusManagement({
+  container: `#${productsFiltersId}`,
+});
+
+const localFilters = ref<ProductsFiltersType>({
+  filters: [],
+  facets: [],
+  branches: [],
+  inStock: false,
+  purchasedBefore: false,
+});
 
 const beforeChangeFilterState = ref<ProductsFiltersType>();
 
@@ -153,9 +167,11 @@ watch(
 
 watch(
   () => props.isVisible,
-  (visible) => {
+  async (visible) => {
     if (visible) {
       beforeChangeFilterState.value = cloneDeep(props.popupSidebarFilters);
+      await nextTick();
+      focusFirst();
     }
   },
 );
@@ -164,13 +180,13 @@ const isPopupSidebarFilterDirty = computed(() => {
   return !isEqual(beforeChangeFilterState.value, localFilters.value);
 });
 
-function onProductsFiltersChange(payload: ProductsFiltersType) {
-  localFilters.value = cloneDeep(payload);
+function onProductsFiltersChange(payload: SearchProductFilterResult[]) {
+  localFilters.value.filters = cloneDeep(payload);
   emit("applyFilters", localFilters.value);
 }
 
 function onCancel() {
-  if (beforeChangeFilterState.value) {
+  if (isPopupSidebarFilterDirty.value && beforeChangeFilterState.value) {
     emit("applyFilters", cloneDeep(beforeChangeFilterState.value));
   }
 
@@ -190,6 +206,13 @@ function onApply() {
   emit("hidePopupSidebar");
 }
 
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === "Escape" && props.isVisible) {
+    event.preventDefault();
+    emit("hidePopupSidebar");
+  }
+}
+
 const { openModal } = useModal();
 function openBranchesModal() {
   openModal({
@@ -207,6 +230,14 @@ function openBranchesModal() {
     },
   });
 }
+
+onMounted(() => {
+  document.addEventListener("keydown", handleKeydown);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("keydown", handleKeydown);
+});
 </script>
 
 <style lang="scss">

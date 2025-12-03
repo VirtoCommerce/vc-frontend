@@ -1,6 +1,8 @@
 <template>
-  <VcWidget :title="$t(`shared.catalog.product_details.price_block.title`)">
-    <slot />
+  <VcWidget :title="widgetTitle">
+    <template v-if="!isMobile" #default>
+      <ProductPrice :product="product" :variations="variations" :template-layout="templateLayout" />
+    </template>
 
     <template #footer-container>
       <div class="flex select-none divide-x print:hidden">
@@ -9,8 +11,11 @@
         <AddToCompareCatalog class="w-1/5 hover:bg-neutral-50" :product="product" :icon-size="20" />
 
         <VcPopover class="w-1/5" y-offset="20" trigger="click" z-index="3" @toggle="handleShareProductPopoverToggle">
-          <template #trigger>
-            <div class="flex cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50">
+          <template #default="{ triggerProps }">
+            <div
+              class="flex cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50"
+              v-bind="triggerProps"
+            >
               <VcIcon
                 name="share"
                 size="sm"
@@ -79,32 +84,40 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, ref, shallowRef } from "vue";
+import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { stringFormat } from "@/core/utilities";
-import { AddToCompareCatalog } from "@/shared/compare";
+import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
 import { VcIcon } from "@/ui-kit/components";
+import ProductPrice from "./product-price.vue";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
+  isMobile?: boolean;
+  variations?: Product[];
+  templateLayout?: string;
 }
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  isMobile: false,
+});
 
 const route = useRoute();
-const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
 
-const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
+const shareProductPopoverShown = ref(false);
+const isMobile = toRef(props, "isMobile");
 
-const isMobile = breakpoints.smaller("lg");
+const widgetTitle = computed(() => {
+  return isMobile.value
+    ? t("shared.catalog.product_details.price_block.mobile_title")
+    : t("shared.catalog.product_details.price_block.title");
+});
 
 const pageUrl = computed(() => location.origin + route.path);
-const shareProductPopoverShown = ref(false);
 
 const mailToLink = computed(
   () =>
@@ -123,9 +136,5 @@ function print() {
 
 function handleShareProductPopoverToggle(isShown: boolean): void {
   shareProductPopoverShown.value = isShown;
-
-  if (isMobile.value && isShown && divUnderSharedPopover.value) {
-    divUnderSharedPopover.value.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
-  }
 }
 </script>

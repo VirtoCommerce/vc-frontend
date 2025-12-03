@@ -10,6 +10,7 @@
         'vc-line-item--deleted': deleted,
       },
     ]"
+    data-test-id="line-item"
     @keydown="changeFocus"
   >
     <div v-if="$slots.before" class="vc-line-item__before">
@@ -26,8 +27,14 @@
         @change="$emit('select', isSelected)"
       />
 
-      <!--  IMAGE -->
-      <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
+      <div v-if="$slots['after-image'] || withImage" class="vc-line-item__img-container">
+        <!--  IMAGE -->
+        <VcImage class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
+
+        <div class="vc-line-item__img-actions">
+          <slot name="after-image" />
+        </div>
+      </div>
 
       <div
         :class="[
@@ -38,16 +45,22 @@
           },
         ]"
       >
-        <VcProductTitle
-          class="vc-line-item__name"
-          :disabled="disabled || deleted"
-          :to="route"
-          :title="name"
-          :target="browserTarget"
-          @click="$emit('linkClick')"
-        >
-          {{ name }}
-        </VcProductTitle>
+        <div class="vc-line-item__name-container">
+          <VcProductTitle
+            class="vc-line-item__name"
+            :disabled="disabled || deleted"
+            :to="route"
+            :title="name"
+            :target="browserTarget"
+            @click="$emit('linkClick')"
+          >
+            {{ name }}
+          </VcProductTitle>
+
+          <div class="vc-line-item__name-actions">
+            <slot name="after-title" />
+          </div>
+        </div>
 
         <div
           v-if="withProperties || withPrice"
@@ -117,6 +130,7 @@
           size="sm"
           variant="no-background"
           icon="delete-thin"
+          data-test-id="remove-item-button"
           :disabled="disabled"
           @click="$emit('remove')"
         />
@@ -208,7 +222,7 @@ watchEffect(() => {
 
   --bg-color: var(--color-additional-50);
 
-  @apply relative flex flex-col gap-2 p-3 rounded border shadow-md bg-[--bg-color];
+  @apply relative flex flex-col gap-2 p-3 rounded-[--vc-radius] border shadow-md bg-[--bg-color];
 
   @container (width > theme("containers.2xl")) {
     @apply p-4 rounded-none border-0 shadow-none;
@@ -270,8 +284,20 @@ watchEffect(() => {
     }
   }
 
+  &__img-container {
+    @apply flex flex-col shrink-0 size-16;
+
+    @container (width > theme("containers.2xl")) {
+      @apply size-12;
+    }
+
+    @container (width > theme("containers.4xl")) {
+      @apply size-16;
+    }
+  }
+
   &__img {
-    @apply shrink-0 size-16 rounded border object-contain object-center;
+    @apply shrink-0 size-16 rounded-[--vc-radius] border object-contain object-center;
 
     @container (width > theme("containers.2xl")) {
       @apply size-12;
@@ -284,6 +310,12 @@ watchEffect(() => {
     #{$disabled} &,
     #{$deleted} & {
       @apply opacity-50;
+    }
+  }
+
+  &__img-actions {
+    @container (width > theme("containers.2xl")) {
+      @apply hidden;
     }
   }
 
@@ -303,8 +335,8 @@ watchEffect(() => {
     }
   }
 
-  &__name {
-    @apply text-sm;
+  &__name-container {
+    @apply flex flex-col;
 
     @container (width > theme("containers.2xl")) {
       @apply grow min-h-0;
@@ -316,6 +348,16 @@ watchEffect(() => {
       @container (width > theme("containers.2xl")) {
         @apply pr-0;
       }
+    }
+  }
+
+  &__name {
+    @apply text-sm;
+  }
+
+  &__name-actions {
+    @container (width <= theme("containers.2xl")) {
+      @apply hidden;
     }
   }
 
@@ -391,10 +433,10 @@ watchEffect(() => {
     }
 
     &:has(
-        .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
-        * .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
-        .vc-product-button
-      ) {
+      .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
+      * .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
+      .vc-product-button
+    ) {
       @apply w-full;
 
       @container (width > theme("containers.md")) {

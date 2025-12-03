@@ -20,11 +20,11 @@
       class="vc-select__container"
       width="100%"
       :disabled="!enabled"
-      disable-trigger-events
       :data-test-id="testIdDropdown"
       @toggle="toggled"
+      tabindex="-1"
     >
-      <template #trigger="{ open, close, toggle }">
+      <template #trigger="{ open, toggle, close }">
         <div
           v-if="$slots.selected || $slots.placeholder"
           tabindex="0"
@@ -54,10 +54,12 @@
           :readonly="readonly || !autocomplete"
           :error="error"
           truncate
+          disable-autocomplete
           @keydown.down.prevent="next(-1)"
           @focus="open"
           @clear="clear"
           @click="(autocomplete && open) || (!autocomplete && toggle)"
+          @keydown.esc="close()"
         >
           <template #append>
             <button
@@ -65,7 +67,7 @@
               type="button"
               tabindex="-1"
               class="vc-select__arrow"
-              @click="handleArrowClick($event, close)"
+              @click="handleArrowClick($event, toggle)"
             >
               <VcIcon :name="isShown ? 'chevron-up' : 'chevron-down'" size="xs" />
             </button>
@@ -108,11 +110,9 @@
 
 <script setup lang="ts">
 // TODO: https://virtocommerce.atlassian.net/browse/ST-5117
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { union, lowerCase, isEqual } from "lodash";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -304,11 +304,9 @@ function clear() {
   }
 }
 
-function handleArrowClick(event: MouseEvent, close: () => void) {
-  if (isShown.value) {
-    event.stopPropagation();
-    close();
-  }
+function handleArrowClick(event: MouseEvent, toggle: () => void) {
+  event.stopPropagation();
+  toggle();
 }
 </script>
 
@@ -319,6 +317,8 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
   $autocomplete: "";
   $opened: "";
   $error: "";
+
+  --radius: var(--vc-select-radius, var(--vc-radius, 0.5rem));
 
   @apply flex flex-col;
 
@@ -343,11 +343,11 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
   }
 
   &__container {
-    @apply relative;
+    @apply relative rounded-[--radius];
   }
 
   &__button {
-    @apply relative flex items-center w-full rounded border bg-additional-50 appearance-none text-left;
+    @apply relative flex items-center w-full rounded-[--radius] border bg-additional-50 appearance-none text-left;
 
     #{$disabled} &,
     &:disabled {
@@ -388,14 +388,6 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
     }
   }
 
-  &__clear {
-    @apply flex items-center h-full px-1 text-primary;
-
-    &:hover {
-      @apply text-primary-600;
-    }
-  }
-
   &__arrow {
     @apply flex items-center h-full pe-3 ps-1 text-neutral-900;
 
@@ -418,14 +410,6 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
     #{$readonly} & {
       @apply hidden;
     }
-  }
-
-  &__dropdown {
-    @apply z-10 overflow-hidden absolute mt-1 w-full bg-additional-50 rounded border border-neutral-100 shadow-lg;
-  }
-
-  &__list {
-    @apply overflow-auto max-h-60;
   }
 }
 </style>

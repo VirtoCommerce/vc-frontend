@@ -1,5 +1,5 @@
 <template>
-  <VcModal :title="title" max-width="60rem" hide-actions is-mobile-fullscreen>
+  <VcModal :title="title" max-width="60rem" hide-actions is-mobile-fullscreen test-id="edit-address-modal">
     <template #default="{ close }">
       <AddressForm
         :model-value="editableAddress"
@@ -8,15 +8,22 @@
         with-personal-info
         required-email
         required-city
+        data-test-id="address-form"
         @save="saveAddress"
       >
         <template #append="{ dirty, valid }">
           <div class="flex flex-wrap items-center justify-between gap-4 pt-2 *:max-xs:flex-1">
-            <VcButton min-width="8rem" color="secondary" variant="outline" @click="close">
+            <VcButton min-width="8rem" color="secondary" variant="outline" data-test-id="cancel-button" @click="close">
               {{ $t("common.buttons.cancel") }}
             </VcButton>
 
-            <VcButton min-width="8rem" :disabled="!dirty || !valid" :loading="loading" type="submit">
+            <VcButton
+              min-width="8rem"
+              :disabled="!dirty || !valid"
+              :loading="loading"
+              data-test-id="submit-button"
+              type="submit"
+            >
               {{ saveButtonLabel }}
             </VcButton>
           </div>

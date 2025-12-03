@@ -1,6 +1,15 @@
-@use "./colors.scss";
-
 @tailwind base;
+
+@layer base {
+  body {
+    --outline-color: rgb(from var(--color-primary-500) r g b / 0.4);
+
+    *:focus,
+    *:focus-visible {
+      @apply outline outline-2 outline-[--outline-color];
+    }
+  }
+}
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
@@ -17,4 +26,8 @@ input[type="number"] {
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
+}
+
+:root {
+  --vc-radius: 0.5rem;
 }

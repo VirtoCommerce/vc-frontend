@@ -1,11 +1,11 @@
 <template>
-  <div class="py-10 lg:py-24" :class="background">
+  <div class="products-block py-10 lg:py-24" :class="background">
     <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
       <VcTypography tag="h2" variant="h1" class="mb-2 text-center lg:mb-4">
         {{ title }}
       </VcTypography>
 
-      <div class="text-center lg:text-lg">{{ subtitle }}</div>
+      <div class="mb-8 text-center lg:text-lg">{{ subtitle }}</div>
 
       <VcProductsGrid
         :columns="{
@@ -62,5 +62,11 @@ watchEffect(async () => {
 <style scoped lang="scss">
 .vc-typography--variant--h1 {
   @apply normal-case;
+}
+
+.products-block {
+  &.bg-neutral-800 {
+    color: white;
+  }
 }
 </style>

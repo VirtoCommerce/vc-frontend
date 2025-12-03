@@ -10,17 +10,13 @@ const BreadcrumbsBlock = defineAsyncComponent(() => import("@/shared/static-cont
 
 export const builderIOComponents: Array<BuilderIOComponentType> = [
   {
-    name: "Category",
+    name: "v2: Category",
     component: Category,
     inputs: [
       {
         name: "title",
         type: "string",
         defaultValue: "Custom Category",
-      },
-      {
-        name: "hideBreadcrumbs",
-        type: "boolean",
       },
       {
         name: "hideSidebar",
@@ -104,8 +100,7 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
       {
         name: "filter",
         type: "string",
-        helperText:
-          "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter",
+        helperText: "Deprecated. Use the CategoryId property.",
       },
       {
         name: "countLimitation",
@@ -386,4 +381,5 @@ type BuilderIOComponentType = {
   inputs?: Array<object>;
   canHaveChildren?: boolean;
   defaultChildren?: Array<object>;
+  hideFromInsertMenu?: boolean;
 };

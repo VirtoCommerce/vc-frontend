@@ -18,7 +18,7 @@
               {{ $t(`shared.cart.add_bulk_items_to_cart_results_modal.groups.${group.name}`) }}
             </span>
 
-            <VcBadge class="flex-none" variant="outline" rounded>
+            <VcBadge class="flex-none" variant="outline" size="sm" rounded>
               {{ group.items.length }}
             </VcBadge>
           </div>
@@ -81,7 +81,7 @@
     </VcExpansionPanels>
 
     <template #actions="{ close }">
-      <VcButton :to="{ name: 'Cart' }" class="max-xs:!min-w-full xs:me-auto" @click="close()">
+      <VcButton :to="{ name: ROUTES.CART.NAME }" class="max-xs:!min-w-full xs:me-auto" @click="close()">
         {{ $t("common.buttons.view_cart") }}
       </VcButton>
 
@@ -105,6 +105,7 @@
 import { computed, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { useProductsRoutes, useWhiteLabeling } from "@/core/composables";
+import { ROUTES } from "@/router/routes/constants";
 import { VcButton } from "@/ui-kit/components";
 import { getImageUrl, getIconUrl } from "@/ui-kit/utilities";
 import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart/types";

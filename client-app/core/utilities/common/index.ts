@@ -1,23 +1,39 @@
-// eslint-disable-next-line import/order
 import uniqBy from "lodash/uniqBy";
-import type { RouteLocationRaw, RouteLocationNormalizedLoaded } from "vue-router";
+import type { RouteLocationRaw, RouteLocationNormalizedLoaded, RouteLocationNormalized } from "vue-router";
 
-export function getBaseUrl(supportedLocales: string[]): string {
-  const localeInPath = location.pathname.split("/")[1];
-  return supportedLocales.includes(localeInPath) ? `/${localeInPath}/` : "";
-}
+const RETURN_URL_KEYS = ["returnUrl", "ReturnUrl"] as const;
 
 export function getReturnUrlValue(): string | null {
   const { searchParams, origin, hostname } = new URL(location.href);
-  const returnUrl = searchParams.get("returnUrl") || searchParams.get("ReturnUrl");
 
-  if (returnUrl) {
-    const returnUrlObj = new URL(returnUrl, origin);
-    if (returnUrlObj.hostname === hostname) {
-      return returnUrl;
+  // Try each return URL key until we find one
+  for (const key of RETURN_URL_KEYS) {
+    const returnUrl = searchParams.get(key);
+    if (returnUrl) {
+      const returnUrlObj = new URL(returnUrl, origin);
+      if (returnUrlObj.hostname === hostname) {
+        return returnUrl;
+      }
     }
   }
+
   return null;
+}
+
+export function buildRedirectUrl(
+  route: RouteLocationNormalized,
+): { [key in (typeof RETURN_URL_KEYS)[0]]: string } | null {
+  if (route.matched.some((r) => r.meta?.redirectable === false)) {
+    return null;
+  }
+
+  for (const key of RETURN_URL_KEYS) {
+    if (route.query && key in route.query) {
+      return null;
+    }
+  }
+
+  return { [RETURN_URL_KEYS[0]]: route.fullPath };
 }
 
 export function extractHostname(url: string) {
@@ -107,8 +123,13 @@ export function getUrlSearchParam(param: string): string | null {
   return urlParams.get(param);
 }
 
-export function toCSV(data?: string[], delimiter = ", "): string {
-  return data?.join(delimiter)?.trim() ?? "";
+export function toCSV(parts?: (string | undefined | null)[], delimiter = ", "): string {
+  return (
+    parts
+      ?.map((part) => (typeof part === "string" ? part.trim() : ""))
+      .filter((part) => part !== "")
+      .join(delimiter) ?? ""
+  );
 }
 
 export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocationNormalizedLoaded) {
@@ -116,7 +137,7 @@ export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocatio
     return link === currentRoute.path;
   }
 
-  if (typeof link === "object" && link !== null) {
+  if (typeof link === "object") {
     if ("name" in link) {
       return (
         link.name === currentRoute.name &&
@@ -130,4 +151,52 @@ export function isActiveRoute(link: RouteLocationRaw, currentRoute: RouteLocatio
   }
 
   return false;
+}
+
+export function areStringOrNumberEqual(
+  a: string | number | null | undefined,
+  b: string | number | null | undefined,
+): boolean {
+  // assume null and undefined are equal
+  if (a == null && b == null) return true;
+
+  return String(a) === String(b);
+}
+
+export function preventNonNumberKeyboard(event: KeyboardEvent) {
+  const isNumber = /^\d$/.test(event.key);
+  if (!isNumber) {
+    event.preventDefault();
+  }
+}
+
+export function preventNonNumberPaste(event: ClipboardEvent) {
+  const text = event.clipboardData?.getData("text");
+  if (text) {
+    const isNumber = /^\d+$/.test(text);
+    console.warn("preventNonNumberPaste", { text, isNumber });
+    if (!isNumber) {
+      event.preventDefault();
+    }
+  }
+}
+
+export function safeDecode(input: string) {
+  try {
+    return decodeURIComponent(input);
+  } catch {
+    try {
+      return decodeURI(input);
+    } catch {
+      return input;
+    }
+  }
+}
+
+export function serializeError(error: Error) {
+  return {
+    name: error.name,
+    message: error.message,
+    stack: error.stack,
+  };
 }

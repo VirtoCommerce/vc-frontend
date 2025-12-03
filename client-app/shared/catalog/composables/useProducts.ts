@@ -4,16 +4,20 @@ import isEqual from "lodash/isEqual";
 import { computed, readonly, ref } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import {
   FFC_LOCAL_STORAGE,
   IN_STOCK_PRODUCTS_LOCAL_STORAGE,
   PAGE_LIMIT,
   PRODUCT_SORTING_LIST,
   PURCHASED_BEFORE_LOCAL_STORAGE,
+  EXCLUDED_FILTER_NAMES,
+  zeroPriceFilter,
 } from "@/core/constants";
+import { INTENT_SEARCH_MODULE_ID, INTENT_SEARCH_ENABLED_KEY } from "@/core/constants/modules";
 import { QueryParamName, SortDirection } from "@/core/enums";
 import {
-  getFilterExpressionFromFacets,
+  generateFilterExpressionFromFilters,
   Logger,
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
@@ -27,8 +31,8 @@ import type {
   ProductsFiltersType,
   ProductsSearchParamsType,
 } from "../types";
-import type { Product, RangeFacet, TermFacet } from "@/core/api/graphql/types";
-import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import type { Product, RangeFacet, TermFacet, SearchProductFilterResult } from "@/core/api/graphql/types";
+import type { FacetItemType } from "@/core/types";
 import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
@@ -47,6 +51,8 @@ export function useProducts(
     /** @default CATALOG_PAGINATION_MODES.infiniteScroll */
     catalogPaginationMode?: CatalogPaginationModeType;
     facetsToHide?: string[];
+    /** @default true */
+    initialFetchingState?: boolean;
   } = {},
 ) {
   const { themeContext } = useThemeContext();
@@ -55,8 +61,11 @@ export function useProducts(
     withImages = themeContext.value?.settings?.image_carousel_in_product_card_enabled,
     withZeroPrice = themeContext.value?.settings?.zero_price_product_enabled,
     catalogPaginationMode = CATALOG_PAGINATION_MODES.infiniteScroll,
+    initialFetchingState = true,
   } = options;
   const { openModal } = useModal();
+  const { isEnabled } = useModuleSettings(INTENT_SEARCH_MODULE_ID);
+  const isIntentSearchEnabled = isEnabled(INTENT_SEARCH_ENABLED_KEY);
 
   const { isPurchasedBeforeEnabled } = usePurchasedBefore();
 
@@ -87,6 +96,11 @@ export function useProducts(
     defaultValue: "",
   });
 
+  const preserveUserQueryQueryParam = useRouteQueryParam<string>(QueryParamName.PreserveUserQuery, {
+    defaultValue: "",
+  });
+
+  /** @deprecated use `searchQueryParam` instead */
   const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
     defaultValue: "",
   });
@@ -95,7 +109,7 @@ export function useProducts(
     defaultValue: "",
   });
 
-  const fetchingProducts = ref(true);
+  const fetchingProducts = ref(initialFetchingState);
   const fetchingMoreProducts = ref(false);
   const fetchingFacets = ref(false);
   const totalProductsCount = ref(0);
@@ -117,7 +131,9 @@ export function useProducts(
     inStock: localStorageInStock.value,
     purchasedBefore: localStoragePurchasedBefore.value,
     facets: [],
+    filters: [],
   });
+  const normalizedFacetsToHide = computed(() => options.facetsToHide?.map((facet) => facet.toLowerCase()));
   const productFiltersSorted = computed(() => {
     return { ...productsFilters.value, facets: getSortedFacets(productsFilters.value.facets) };
   });
@@ -169,11 +185,12 @@ export function useProducts(
     isFiltersSidebarVisible.value = false;
   }
 
-  function applyFilters(newFilters: ProductsFiltersType): void {
-    const facetsFilterExpression: string = getFilterExpressionFromFacets(newFilters.facets);
+  async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
+    // Generate filter expression from filters only
+    const filterExpression: string = generateFilterExpressionFromFilters(newFilters.filters);
 
-    if (options?.useQueryParams && facetsQueryParam.value !== facetsFilterExpression) {
-      facetsQueryParam.value = facetsFilterExpression;
+    if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
+      facetsQueryParam.value = filterExpression;
     }
 
     if (localStorageInStock.value !== newFilters.inStock) {
@@ -188,43 +205,84 @@ export function useProducts(
       localStoragePurchasedBefore.value = newFilters.purchasedBefore;
     }
 
+    await preserveUserQuery();
+
     void resetCurrentPage();
   }
 
-  async function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {
-    const facet = productsFilters.value.facets.find((item) => item.paramName === payload.paramName);
-    const facetValue = facet?.values.find((item) => item.value === payload.value);
+  async function applyFiltersOnly(newFilters: SearchProductFilterResult[]): Promise<void> {
+    // Update only the filters part of productsFilters
+    productsFilters.value = {
+      ...productsFilters.value,
+      filters: newFilters,
+    };
 
-    if (facetValue) {
-      facetValue.selected = false;
-      facetsQueryParam.value = options?.useQueryParams ? getFilterExpressionFromFacets(facets) : "";
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
+    // Generate filter expression from filters only and update query param
+    const filterExpression: string = generateFilterExpressionFromFilters(newFilters);
 
-      void resetCurrentPage();
+    if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
+      facetsQueryParam.value = filterExpression;
     }
+
+    await preserveUserQuery();
+
+    void resetCurrentPage();
+  }
+
+  function applyFacetsOnly(newFacets: FacetItemType[]): void {
+    // Update only the facets part of productsFilters
+    productsFilters.value = {
+      ...productsFilters.value,
+      facets: newFacets,
+    };
+
+    // Generate filter expression from filters only and update query param
+    const filterExpression: string = generateFilterExpressionFromFilters(productsFilters.value.filters);
+
+    if (options?.useQueryParams && facetsQueryParam.value !== filterExpression) {
+      facetsQueryParam.value = filterExpression;
+    }
+
+    void resetCurrentPage();
   }
 
   async function resetFacetFilters() {
-    facetsQueryParam.value = "";
     await new Promise((resolve) => setTimeout(resolve, 0));
     // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
 
-    productsFilters.value.facets.forEach((filter) =>
-      filter.values.forEach((filterItem) => (filterItem.selected = false)),
-    );
+    facetsQueryParam.value = "";
+    await preserveUserQuery();
+
+    productsFilters.value.filters = [];
 
     void resetCurrentPage();
   }
 
+  async function preserveUserQuery() {
+    if (!isIntentSearchEnabled) {
+      preserveUserQueryQueryParam.value = "";
+      return;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
+    preserveUserQueryQueryParam.value = "yes";
+  }
+
+  /** @deprecated use `searchQueryParam` instead */
   function resetFilterKeyword(): void {
     keywordQueryParam.value = "";
+  }
+
+  function resetSearchKeyword(): void {
+    searchQueryParam.value = "";
   }
 
   function updateProductsFilters(newFilters: ProductsFiltersType): void {
     productsFilters.value = {
       ...newFilters,
       facets: getSortedFacets(newFilters.facets),
+      filters: prepareFilters(newFilters.filters),
     };
   }
 
@@ -240,6 +298,7 @@ export function useProducts(
               facets: productsFilters.value.facets,
               inStock: productsFilters.value.inStock,
               purchasedBefore: productsFilters.value.purchasedBefore,
+              filters: productsFilters.value.filters,
             };
 
             updateProductsFilters(newFilters);
@@ -253,9 +312,17 @@ export function useProducts(
   }
 
   function hasSelectedFacets(): boolean {
-    return facets.value?.some((facet) =>
-      facet.values.some((value) => value.selected && !options.facetsToHide?.includes(facet.paramName)),
+    const filteredFacets = facets.value.filter(
+      (facet) => !normalizedFacetsToHide.value?.includes(facet.paramName.toLowerCase()),
     );
+    const filteredFilters = productsFilters.value.filters.filter(
+      (filter) => !normalizedFacetsToHide.value?.includes(filter.name.toLowerCase()),
+    );
+    return !!filteredFacets.length && !!filteredFilters.length;
+  }
+
+  function hasSelectedFilters(): boolean {
+    return !!productsFilters.value.filters.length;
   }
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
@@ -267,12 +334,12 @@ export function useProducts(
     }
 
     facets.value = Array<FacetItemType>().concat(
-      termFacets.map(termFacetToCommonFacet),
       rangeFacets.map(rangeFacetToCommonFacet),
+      termFacets.map(termFacetToCommonFacet),
     );
   }
 
-  async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>) {
+  async function fetchProducts(_searchParams: Partial<ProductsSearchParamsType>, withZeroPriceOverride?: boolean) {
     const searchParams = {
       ..._searchParams,
       page:
@@ -290,13 +357,16 @@ export function useProducts(
       updateCurrentPage(Number(searchParams.page));
     }
 
+    const actualWithZeroPrice = withZeroPriceOverride ?? withZeroPrice;
+
     try {
       const {
         items = [],
         term_facets = [],
         range_facets = [],
         totalCount = 0,
-      } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
+        filters = [],
+      } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice: actualWithZeroPrice });
 
       products.value = items;
       totalProductsCount.value = totalCount;
@@ -318,6 +388,7 @@ export function useProducts(
           purchasedBefore: localStoragePurchasedBefore.value,
           branches: localStorageBranches.value.slice(),
           facets: getSortedFacets(facets.value),
+          filters: prepareFilters(filters),
         };
       }
     } catch (e) {
@@ -404,6 +475,27 @@ export function useProducts(
     }
   }
 
+  function isZeroPriceFilter(value: SearchProductFilterResult): boolean {
+    if (value.rangeValues?.length === 1) {
+      const range = value.rangeValues[0];
+      return (
+        range.lower === zeroPriceFilter.lower &&
+        !range.upper &&
+        range.includeLowerBound === zeroPriceFilter.includeLowerBound &&
+        range.includeUpperBound === zeroPriceFilter.includeUpperBound
+      );
+    }
+    return false;
+  }
+
+  function isExcludedFilter(filter: SearchProductFilterResult): boolean {
+    return EXCLUDED_FILTER_NAMES.includes(filter.name);
+  }
+
+  function prepareFilters(filters: SearchProductFilterResult[]) {
+    return filters.filter((filter) => !isZeroPriceFilter(filter) && !isExcludedFilter(filter));
+  }
+
   async function resetCurrentPage() {
     updateCurrentPage(1);
     if (catalogPaginationMode === CATALOG_PAGINATION_MODES.loadMore) {
@@ -421,8 +513,10 @@ export function useProducts(
     fetchingMoreProducts: readonly(fetchingMoreProducts),
     fetchingProducts: readonly(fetchingProducts),
     hasSelectedFacets: computed(() => hasSelectedFacets()),
+    hasSelectedFilters: computed(() => hasSelectedFilters()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
+    /** @deprecated use `searchQueryParam` instead */
     keywordQueryParam,
     localStorageBranches,
     localStorageInStock,
@@ -433,6 +527,7 @@ export function useProducts(
     productsFilters: productFiltersSorted,
     searchQueryParam,
     sortQueryParam,
+    preserveUserQueryQueryParam,
     totalProductsCount: readonly(totalProductsCount),
 
     currentPage: readonly(currentPage),
@@ -441,14 +536,17 @@ export function useProducts(
     updateCurrentPage,
 
     applyFilters,
+    applyFiltersOnly,
+    applyFacetsOnly,
     getFacets,
     fetchMoreProducts,
     fetchProducts,
     hideFiltersSidebar,
     openBranchesModal,
-    removeFacetFilter,
     resetFacetFilters,
+    /** @deprecated use `searchQueryParam` instead */
     resetFilterKeyword,
+    resetSearchKeyword,
     showFiltersSidebar,
     updateProductsFilters,
   };

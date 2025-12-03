@@ -1,4 +1,5 @@
 import { eagerComputed, useLocalStorage } from "@vueuse/core";
+import { createGlobalState } from "@vueuse/core";
 import { remove } from "lodash";
 import { computed, readonly, ref } from "vue";
 import {
@@ -6,7 +7,7 @@ import {
   inviteUser as _inviteUser,
   registerAccount,
   registerByInvitation,
-  requestPasswordReset,
+  sendPasswordResetEmail,
   resetPasswordByToken,
   updatePersonalData,
   changePassword as _changePassword,
@@ -24,7 +25,7 @@ import {
   userLockedEvent,
   userReloadEvent,
   passwordExpiredEvent,
-  reloadAndOpenMainPage,
+  pageReloadEvent,
 } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
@@ -46,30 +47,31 @@ import type {
   UserPersonalDataType,
 } from "@/shared/account";
 
-const loading = ref(false);
-const user = ref<UserType>();
-
-const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
-const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
-const organization = eagerComputed(
-  () =>
-    user.value?.contact?.organizations?.items?.find((item) => item.id === user.value?.contact?.organizationId) ?? null,
-);
-
-const allOrganizations = computed(() => user.value?.contact?.organizations?.items || []);
-
-const operator = computed(() => user.value?.operator ?? null);
-
 interface IPasswordExpirationEntry {
   userId: string;
   date: Date;
 }
 
-export function useUser() {
+export function _useUser() {
+  const loading = ref(false);
+  const user = ref<UserType>();
+
+  const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
+  const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
+  const organization = eagerComputed(
+    () =>
+      user.value?.contact?.organizations?.items?.find((item) => item.id === user.value?.contact?.organizationId) ??
+      null,
+  );
+
+  const allOrganizations = computed(() => user.value?.contact?.organizations?.items || []);
+
+  const operator = computed(() => user.value?.operator ?? null);
+
   const broadcast = useBroadcast();
   const { refresh } = useAuth();
   const { openModal, closeModal } = useModal();
-  const twoLetterContactLocale = computed(() => user.value?.contact?.defaultLanguage?.split("-")[0]);
+  const contactCultureName = computed(() => user.value?.contact?.defaultLanguage);
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
@@ -266,10 +268,12 @@ export function useUser() {
     try {
       loading.value = true;
 
-      return await requestPasswordReset({
+      const data = await sendPasswordResetEmail({
         loginOrEmail: payload.email,
         urlSuffix: payload.resetPasswordUrlPath,
       });
+
+      return data ?? false;
     } catch (e) {
       Logger.error(`${useUser.name}.${forgotPassword.name}`, e);
       throw e;
@@ -354,7 +358,7 @@ export function useUser() {
 
       localStorage.setItem(`organization-id-${user.value?.userName}`, organizationId);
 
-      void broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
+      void broadcast.emit(pageReloadEvent, null, TabsType.ALL);
     } catch (e) {
       Logger.error(switchOrganization.name, e);
     } finally {
@@ -369,7 +373,9 @@ export function useUser() {
       () => user.value?.contact?.organizations?.items && user.value?.contact?.organizations?.items?.length > 1,
     ),
     isOrganizationMaintainer: computed(
-      () => user.value?.roles?.some((role) => role.name === ORGANIZATION_MAINTAINER.name) ?? false,
+      () =>
+        user.value?.roles?.some((role) => role.name.toLowerCase() === ORGANIZATION_MAINTAINER.name.toLowerCase()) ??
+        false,
     ),
     organization,
     allOrganizations,
@@ -401,6 +407,8 @@ export function useUser() {
         throw new Error("User change is not available.");
       },
     }),
-    twoLetterContactLocale,
+    contactCultureName,
   };
 }
+
+export const useUser = createGlobalState(_useUser);

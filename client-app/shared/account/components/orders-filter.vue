@@ -1,6 +1,6 @@
 <template>
   <div class="w-[27.5rem]">
-    <VcDialog dividers>
+    <VcDialog dividers size="xs">
       <VcDialogHeader @close="$emit('close')">
         {{ $t("shared.account.orders_filter.title") }}
       </VcDialogHeader>
@@ -28,7 +28,8 @@
             >
               <div class="flex w-full max-w-full gap-1">
                 <div class="min-w-0 truncate">{{ facet.label }}</div>
-                <VcBadge variant="outline" rounded>{{ facet.count }}</VcBadge>
+
+                <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
               </div>
             </VcCheckbox>
           </VcCheckboxGroup>
@@ -40,13 +41,12 @@
           color="secondary"
           variant="outline"
           :disabled="isFilterEmpty && !isFilterDirty"
-          size="sm"
           @click="$emit('reset')"
         >
           {{ $t("shared.account.orders_filter.reset_button") }}
         </VcButton>
 
-        <VcButton size="sm" :disabled="!isFilterDirty" @click="$emit('apply')">
+        <VcButton :disabled="!isFilterDirty" @click="$emit('apply')">
           {{ $t("shared.account.orders_filter.apply_button") }}
         </VcButton>
       </VcDialogFooter>

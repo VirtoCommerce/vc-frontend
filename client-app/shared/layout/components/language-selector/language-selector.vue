@@ -1,7 +1,16 @@
 <template>
-  <VcDropdownMenu placement="bottom-end" class="language-selector">
-    <template #trigger="{ opened }">
-      <button type="button" class="language-selector__button" data-test-id="language-selector-button">
+  <VcDropdownMenu
+    placement="bottom-end"
+    class="language-selector"
+    data-test-id="main-layout.top-header.language-selector"
+  >
+    <template #trigger="{ opened, triggerProps }">
+      <button
+        type="button"
+        class="language-selector__button"
+        data-test-id="main-layout.top-header.language-selector-button"
+        v-bind="triggerProps"
+      >
         <span class="language-selector__label">
           {{ $t("shared.layout.language_selector.label") }}
         </span>
@@ -13,7 +22,7 @@
           lazy
         />
 
-        <span class="language-selector__text" data-test-id="current-language-label">
+        <span class="language-selector__text" data-test-id="main-layout.top-header.current-language-label">
           {{ currentLanguage.twoLetterLanguageName }}
         </span>
 
@@ -24,12 +33,13 @@
     <template #content="{ close }">
       <VcMenuItem
         v-for="item in supportedLanguages"
-        :key="item.twoLetterLanguageName"
-        :active="item.twoLetterLanguageName === currentLanguage.twoLetterLanguageName"
-        :data-test-id="`language-selector-item-${item.twoLetterLanguageName}`"
+        :key="item.cultureName"
+        :active="item.cultureName === currentLanguage.cultureName"
+        :data-test-culture-name="item.cultureName"
+        data-test-id="main-layout.top-header.language-selector-item"
         color="secondary"
         @click="
-          select(item.twoLetterLanguageName);
+          select(item.cultureName);
           close();
         "
       >
@@ -49,24 +59,48 @@
 </template>
 
 <script setup lang="ts">
+import { getSlugInfo } from "@/core/api/graphql/slugInfo/queries/getSlugInfo";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { languageToCountryMap } from "@/core/constants";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { getFlagIconUrl } from "@/ui-kit/utilities";
 import type { ILanguage } from "@/core/types";
 
-const { pinedLocale, supportedLanguages, pinLocale, removeLocaleFromUrl, currentLanguage } = useLanguages();
+const {
+  supportedLanguages,
+  pinLocale,
+  removeLocaleFromUrl,
+  currentLanguage,
+  previousCultureSlug,
+  getUrlWithoutLocale,
+} = useLanguages();
 const broadcast = useBroadcast();
 
-function select(locale: string) {
-  if (locale !== pinedLocale.value) {
-    pinLocale(locale);
-    removeLocaleFromUrl();
+async function select(cultureName: string) {
+  pinLocale(cultureName);
+  const permalink = location.pathname.slice(1);
 
-    void broadcast.emit(dataChangedEvent);
-
-    void location.reload();
+  if (cultureName === currentLanguage.value?.cultureName) {
+    return;
   }
+
+  const slugInfo = await getSlugInfo({ permalink, cultureName });
+
+  if (!slugInfo?.entityInfo) {
+    previousCultureSlug.value = {
+      cultureName: currentLanguage.value?.cultureName,
+      slug: getUrlWithoutLocale(location.pathname).slice(1),
+    };
+  } else {
+    previousCultureSlug.value = {
+      cultureName: "",
+      slug: "",
+    };
+  }
+
+  removeLocaleFromUrl();
+  void broadcast.emit(dataChangedEvent);
+  location.reload();
 }
 
 function getCountryCode(language: ILanguage): string {
@@ -80,10 +114,10 @@ function getCountryCode(language: ILanguage): string {
 
 <style lang="scss">
 .language-selector {
-  @apply h-full;
+  @apply flex h-full items-stretch;
 
   &__button {
-    @apply flex h-full items-center gap-3;
+    @apply flex h-full items-center gap-3 p-1;
 
     @media (min-width: theme("screens.lg")) {
       @apply gap-1.5;
@@ -94,7 +128,7 @@ function getCountryCode(language: ILanguage): string {
     @apply hidden;
 
     @media (min-width: theme("screens.lg")) {
-      @apply block text-sm;
+      @apply block text-sm whitespace-nowrap;
     }
   }
 

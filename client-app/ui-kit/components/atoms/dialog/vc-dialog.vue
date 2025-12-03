@@ -1,7 +1,9 @@
 <template>
   <div
+    :id="componentId"
     :class="[
       'vc-dialog',
+      `vc-dialog--size--${props.size}`,
       {
         'vc-dialog--dividers': dividers,
       },
@@ -12,16 +14,30 @@
 </template>
 
 <script setup lang="ts">
+import { provide, toRef } from "vue";
+import { useComponentId, useFocusManagement } from "@/ui-kit/composables";
+import { vcDialogKey } from "./vc-dialog-context";
+
 interface IProps {
   dividers?: boolean;
   width?: string;
   maxHeight?: string;
+  size?: VcDialogSizeType;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  width: "",
-  maxHeight: "",
+  size: "md",
 });
+
+const componentId = useComponentId("dialog");
+
+useFocusManagement({
+  container: `#${componentId}`,
+  autoFocus: true,
+});
+
+const sizeRef = toRef(props, "size");
+provide(vcDialogKey, { size: sizeRef });
 </script>
 
 <style lang="scss">
@@ -30,8 +46,9 @@ const props = withDefaults(defineProps<IProps>(), {
   --props-max-height: v-bind(props.maxHeight);
   --w: var(--props-width, var(--vc-dialog-width, 100%));
   --max-h: var(--props-max-height, var(--vc-dialog-max-height, 100%));
+  --radius: var(--vc-dialog-radius, var(--vc-radius, 0.5rem));
 
-  @apply grid w-[--w] max-h-[--max-h] rounded-md bg-additional-50 shadow-lg transition-all text-start;
+  @apply grid w-[--w] max-h-[--max-h] rounded-[--radius] bg-additional-50 shadow-lg transition-all text-start;
 
   grid-template-areas:
     "vc-dialog-header"

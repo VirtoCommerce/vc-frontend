@@ -18,6 +18,21 @@
       "toggle_dropdown": "切换下拉菜单",
       "update_cart": "更新购物车"
     },
+    "accessibility": {
+      "close_alert": "关闭提醒",
+      "open_calendar": "打开日历",
+      "product_quantity": "产品数量",
+      "decrease_quantity": "减少数量",
+      "increase_quantity": "增加数量",
+      "variant_picker_group": "商品变体选项",
+      "show_more_button": "查看更多选项（{count}）",
+      "sidebar": "侧边栏",
+      "close_chip": "关闭标签"
+    },
+    "date_selector": {
+      "min_date_error": "日期必须在{min}或之后",
+      "max_date_error": "日期必须在{max}或之前"
+    },
     "labels": {
       "not_available": "不可用",
       "price_per_item": "单价",
@@ -46,11 +61,11 @@
         "max": "最大订单 {0} 件",
         "min_max": "订单从 {0} 到 {1} 件",
         "min_not_available": "最小订单 {0} 件库存不足",
+        "exact_qty": "您可以订购 {0} 件商品",
         "out_of_stock": "缺货",
         "positive_number": "值必须是正数",
         "integer_number": "值必须是整数",
-        "pack_size": "按 {0} 的包装订购",
-        "exact_qty": "您可以订购 {0} 件商品"
+        "pack_size": "按 {0} 的包装订购"
       }
     },
     "pagination": {
@@ -81,7 +96,24 @@
       "page_limit": "无法显示更多结果。"
     },
     "slider": {
-      "tooltip": "{count} 件商品"
+      "tooltip": "{count} 件商品",
+      "aria_label": "范围滑块，从 {min} 到 {max}",
+      "start_input_label": "起始值（介于 {min} 和 {max} 之间）",
+      "end_input_label": "结束值（介于 {min} 和 {max} 之间）",
+      "start_input_aria_label": "起始值输入，范围 {min} 到 {max}",
+      "end_input_aria_label": "结束值输入，范围 {min} 到 {max}",
+      "start_input_help": "请输入介于 {min} 和 {max} 之间的数字，步长为 {step}",
+      "end_input_help": "请输入介于 {min} 和 {max} 之间的数字，步长为 {step}",
+      "column_aria_label": "包含 {count} 个项目的列，范围从 {from} 到 {to}",
+      "current_value_announcement": "滑块值：{start} 到 {end}，范围 {min} 到 {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "面包屑导航"
+    },
+    "rating": {
+      "rating_label": "评分 {value}，满分 {maxValue}",
+      "read_only_button_aria_label": "评分 {value}，满分 {maxValue}，不可选择",
+      "set_rating_aria_label": "将评分设置为 {value}，满分 {maxValue}"
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div v-if="order">
-    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
+    <BackButtonInHeader v-if="isMobile" @click="$router.push({ name: 'Orders' })" />
 
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
 
@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <VcLayout sidebar-position="right" sticky-sidebar>
+    <VcLayout sidebar-position="right" sticky>
       <VcWidget id="line-items-widget" size="lg" class="print:break-inside-auto">
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
@@ -71,6 +71,19 @@
 
               <OrderStatus size="sm" :status="order.status" :display-value="order.statusDisplayValue" />
             </div>
+            <VcAlert
+              v-if="order.cancelReason"
+              class="mt-2.5"
+              :color="
+                String(order.status).toLowerCase() === String(OrderStatusCode.CANCELLED).toLowerCase()
+                  ? 'danger'
+                  : 'warning'
+              "
+              icon="exclamation-circle"
+              variant="outline-dark"
+            >
+              {{ order.cancelReason }}
+            </VcAlert>
           </div>
         </VcWidget>
 
@@ -116,8 +129,16 @@
           </VcWidget>
 
           <!-- Shipping Address Card -->
-          <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="$t('common.titles.shipping_address')">
-            <AddressInfo :address="deliveryAddress" class="text-base" />
+          <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="shipToTitle">
+            <AddressInfo :address="deliveryAddress" class="text-base">
+              <template v-if="shipmentType === 'pick_up' && pickupLocation" #actions>
+                <div class="flex items-center justify-between gap-2.5 pt-1">
+                  <VcButton size="xs" prepend-icon="information-circle" variant="outline" @click="openInfo">
+                    {{ $t("pages.account.order_details.bopis.point_info") }}
+                  </VcButton>
+                </div>
+              </template>
+            </AddressInfo>
           </VcWidget>
 
           <!-- Payment Method section -->
@@ -147,13 +168,18 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { OrderStatusCode } from "@/core/constants/order-status.ts";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
+import { BOPIS_CODE } from "@/shared/checkout/composables/useBopis.ts";
 import { AddressInfo, VendorName } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
+import AddressInfoModal from "@/shared/common/components/address-info-modal.vue";
+
+type ShipmentType = "delivery" | "pick_up";
 
 interface IProps {
   orderId: string;
@@ -168,6 +194,7 @@ const {
   orderItems,
   orderItemsGroupedByVendor,
   deliveryAddress,
+  pickupLocation,
   billingAddress,
   shipment,
   payment,
@@ -176,8 +203,12 @@ const {
   clearOrder,
 } = useUserOrder();
 const { cart, addItemsToCart } = useShortCart();
-const { openModal } = useModal();
+const { openModal, closeModal } = useModal();
 const { t } = useI18n();
+
+const shipmentType = computed<ShipmentType>(() => {
+  return shipment.value?.shipmentMethodCode === BOPIS_CODE ? "pick_up" : "delivery";
+});
 
 usePageHead({
   title: computed(() => t("pages.account.order_details.meta.title", [order.value?.number])),
@@ -201,9 +232,32 @@ const showReorderButton = computed<boolean>(() => !!order.value && order.value.s
 const shipmentMethodName = computed<string>(() =>
   t(`common.methods.delivery_by_id.${shipment.value?.shipmentMethodCode}_${shipment.value?.shipmentMethodOption}`),
 );
-const paymentMethodName = computed<string>(() =>
-  t(`common.methods.payment_by_code.${payment.value?.paymentMethod?.code}`),
-);
+const paymentMethodName = computed(() => payment.value?.paymentMethod?.name);
+
+const shipToTitle = computed(() => {
+  return shipmentType.value === "delivery"
+    ? t("common.titles.shipping_address")
+    : t("pages.account.order_details.bopis.pickup_address");
+});
+
+function openInfo() {
+  openModal({
+    component: AddressInfoModal,
+    props: {
+      link: coordsToGoogleMapsLink(pickupLocation.value?.geoLocation),
+      pickupLocation: pickupLocation,
+      onClose: closeModal,
+    },
+  });
+}
+
+function coordsToGoogleMapsLink(geoLocation?: string) {
+  if (!geoLocation || !/^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/.test(geoLocation)) {
+    return;
+  }
+
+  return `https://www.google.com/maps?q=${geoLocation}`;
+}
 
 async function reorderItems() {
   const items = order.value!.items.filter((item) => !item.isGift);

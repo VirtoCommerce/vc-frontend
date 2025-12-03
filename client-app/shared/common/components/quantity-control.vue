@@ -21,6 +21,7 @@
     :show-empty-details="showEmptyDetails"
     :message="message"
     :validate-on-mount="validateOnMount"
+    data-test-id="add-to-cart-component"
     @update:cart-item-quantity="emit('update:cartItemQuantity', $event)"
     @update:validation="emit('update:validation', $event)"
     @update:model-value="value = $event"
@@ -30,13 +31,13 @@
 
   <VcQuantityStepper
     v-else-if="mode === 'stepper'"
-    v-model="quantity"
+    v-model="stepperQuantity"
     :name="name"
     :loading="loading"
     :disabled="isDisabled"
     :readonly="readonly"
     :min="minQuantity"
-    :max="maxQuantity || availableQuantity"
+    :max="maxStepperQuantity"
     :size="size"
     :show-empty-details="showEmptyDetails"
     :error="!isValid"
@@ -126,7 +127,17 @@ const {
 
 const value = defineModel<number>({ default: 0 });
 
-const quantity = ref<number>(value.value || 0);
+const stepperQuantity = ref<number>(value.value || 0);
+
+const maxStepperQuantity = computed(() => {
+  if (availableQuantity.value && maxQuantity.value) {
+    return Math.min(maxQuantity.value, availableQuantity.value);
+  } else if (maxQuantity.value) {
+    return maxQuantity.value;
+  } else if (availableQuantity.value) {
+    return availableQuantity.value;
+  }
+});
 
 const { isDisabled, isValid, errorMessage, validateFields } = useQuantityField({
   modelValue: value,
@@ -143,14 +154,14 @@ const { isDisabled, isValid, errorMessage, validateFields } = useQuantityField({
   allowZero: computed(() => mode.value === "stepper" && allowZero.value),
 });
 
-function applyPreValidationModifiers() {
-  if (quantity.value && quantity.value > LINE_ITEM_QUANTITY_LIMIT) {
-    quantity.value = Number(quantity.value.toString().slice(0, -1));
+function applyStepperPreValidationModifiers() {
+  if (stepperQuantity.value && stepperQuantity.value > LINE_ITEM_QUANTITY_LIMIT) {
+    stepperQuantity.value = Number(stepperQuantity.value.toString().slice(0, -1));
   }
 }
 
-const handleChange = debounce(async () => {
-  const newQuantity = Number(quantity.value);
+const handleStepperChange = debounce(async () => {
+  const newQuantity = Number(stepperQuantity.value);
 
   if (isNaN(newQuantity) || newQuantity === value.value) {
     return;
@@ -182,9 +193,14 @@ onMounted(async () => {
   }
 });
 
-watch(quantity, () => {
-  applyPreValidationModifiers();
-  void handleChange();
+watch(stepperQuantity, () => {
+  applyStepperPreValidationModifiers();
+  void handleStepperChange();
+});
+
+watch(value, () => {
+  stepperQuantity.value = value.value;
+  applyStepperPreValidationModifiers();
 });
 
 watchEffect(() => {

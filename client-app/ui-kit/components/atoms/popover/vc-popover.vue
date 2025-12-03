@@ -1,32 +1,17 @@
 <template>
   <div class="vc-popover">
-    <div v-if="disableTriggerEvents" ref="reference" class="vc-popover__trigger">
-      <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
+    <div v-if="$slots.default" ref="reference" class="vc-popover__trigger">
+      <slot :open="open" :close="close" :toggle="toggle" :opened="opened" :trigger-props="emitTriggerProps" />
     </div>
 
-    <div
-      v-else
-      ref="reference"
-      class="vc-popover__trigger"
-      role="button"
-      tabindex="-1"
-      :aria-label="ariaLabel"
-      :aria-expanded="opened"
-      @mouseenter="hover && open()"
-      @mouseleave="hover && close()"
-      @focusin="hover && open()"
-      @focusout="hover && close()"
-      @blur="hover && close()"
-      @click="!hover && toggle()"
-      @keyup.enter="!hover && open()"
-      @keyup.esc="!hover && close()"
-    >
+    <div v-else-if="$slots.trigger" ref="reference" class="vc-popover__trigger" v-bind="emitTriggerProps">
       <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
     </div>
 
     <teleport :to="teleportSelector" :disabled="!enableTeleport">
       <div
         v-if="$slots.content && !disabled"
+        :id="contentId"
         ref="floating"
         :style="{ zIndex, display, width, ...floatingStyles }"
         class="vc-popover__content"
@@ -53,6 +38,7 @@
 import { flip, offset, shift, useFloating, autoUpdate, arrow } from "@floating-ui/vue";
 import { onClickOutside } from "@vueuse/core";
 import { ref, toRefs, computed, watch } from "vue";
+import { useComponentId } from "@/ui-kit/composables";
 
 interface IEmits {
   (event: "toggle", value: boolean): void;
@@ -90,7 +76,28 @@ const opened = ref(false);
 const reference = ref<HTMLElement | null>(null);
 const floating = ref<HTMLElement | null>(null);
 const floatingArrow = ref<Element | null>(null);
+const contentId = useComponentId("vc-popover");
 const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs(props);
+
+const emitTriggerProps = computed(() => ({
+  role: "button" as const,
+  "aria-haspopup": "dialog" as const,
+  "aria-expanded": opened.value,
+  "aria-controls": opened.value ? contentId : undefined,
+  onMouseenter: props.hover ? open : undefined,
+  onMouseleave: props.hover ? close : undefined,
+  onFocusin: props.hover ? open : undefined,
+  onFocusout: props.hover ? close : undefined,
+  onClick: props.hover ? undefined : toggle,
+  onKeyup: (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      open();
+    }
+    if (e.key === "Escape") {
+      close();
+    }
+  },
+}));
 
 const display = computed(() => (opened.value ? "block" : "none"));
 const arrowLeft = computed(() => (middlewareData.value.arrow?.x != null ? `${middlewareData.value.arrow.x}px` : ""));
@@ -148,6 +155,10 @@ watch(opened, (value: boolean) => emit("toggle", value));
 <style lang="scss">
 .vc-popover {
   $popper: "";
+
+  &__trigger {
+    @apply max-w-full size-full;
+  }
 
   &__popper {
     $popper: &;

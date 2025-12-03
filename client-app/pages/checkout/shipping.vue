@@ -1,5 +1,5 @@
 <template>
-  <VcLayout sidebar-position="right" sticky-sidebar>
+  <VcLayout sidebar-position="right" sticky>
     <ShippingDetailsSection />
 
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
@@ -10,6 +10,7 @@
           <ProceedTo
             :to="{ name: 'Billing' }"
             :disabled="!isValidShipment"
+            test-id="checkout.billing-button"
             @click="
               analytics('addShippingInfo', { ...cart!, items: selectedLineItems }, {}, shipment?.shipmentMethodOption)
             "

@@ -1,5 +1,5 @@
 <template>
-  <div ref="root">
+  <div>
     <template v-if="skyflowCards?.length">
       <VcSelect
         :model-value="selectedSkyflowCard"
@@ -7,7 +7,7 @@
         :items="creditCards"
         size="auto"
         item-size="lg"
-        class="lg:w-2/5"
+        class="mb-4 lg:w-2/5"
         @change="(value) => selectSkyflowCard(value)"
       >
         <template #placeholder>
@@ -42,9 +42,10 @@
       </VcSelect>
 
       <div v-show="!addNewCardSelected">
-        <div v-if="isSavedCardCvvRequired && selectedSkyflowCard" class="-ml-1 mt-4 h-20">
-          <div v-show="cvvCollectorStatus.ready" ref="cvvOnlyContainer"></div>
-          <div v-if="!cvvCollectorStatus.ready" class="ml-1">
+        <div v-if="isSavedCardCvvRequired && selectedSkyflowCard">
+          <div v-show="cvvCollectorStatus.ready" ref="cvvOnlyContainer" class="-mx-1"></div>
+
+          <div v-if="!cvvCollectorStatus.ready" class="ms-1 h-20">
             <VcLoaderWithText />
           </div>
         </div>
@@ -56,23 +57,19 @@
             class="shrink"
             @click="payWithSavedCreditCard"
           >
-            {{ $t("shared.payment.skyflow.pay_now_button") }}
+            {{ $t("shared.payment.bank_card_form.pay_now_button") }}
           </VcButton>
         </div>
       </div>
     </template>
 
     <div v-show="(newCardFormInitialized && !skyflowCards?.length) || addNewCardSelected">
-      <div class="flex flex-col xl:flex-row">
-        <div ref="cardContainer" class="md:w-2/3"></div>
-      </div>
+      <div ref="cardContainer" class="-mx-1 w-full max-w-2xl"></div>
 
-      <div class="mt-6 flex items-center">
-        <div class="shrink">
-          <VcCheckbox v-model="saveCreditCard">
-            {{ $t("common.labels.save_card_for_future_payments") }}
-          </VcCheckbox>
-        </div>
+      <div class="mt-6 flex">
+        <VcCheckbox v-model="saveCreditCard">
+          {{ $t("common.labels.save_card_for_future_payments") }}
+        </VcCheckbox>
       </div>
 
       <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
@@ -85,7 +82,7 @@
           class="flex-1 md:order-first md:flex-none"
           @click="payWithNewCreditCard"
         >
-          {{ $t("shared.payment.skyflow.pay_now_button") }}
+          {{ $t("shared.payment.bank_card_form.pay_now_button") }}
         </VcButton>
       </div>
     </div>
@@ -114,6 +111,12 @@ import type CollectElement from "skyflow-js/types/core/external/collect/collect-
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
 import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
 
+const emit = defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
+
+const CVV_REGEX = "^[0-9]{3,4}$";
+
 interface IProps {
   order: CustomerOrderType;
 }
@@ -122,9 +125,6 @@ interface IEmits {
   (event: "success"): void;
   (event: "fail", message?: string | null): void;
 }
-
-const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
 
 type FieldsType = { [key: string]: string };
 
@@ -136,9 +136,8 @@ const { themeContext } = useThemeContext();
 const notifications = useNotifications();
 
 const loading = ref(false);
-const cardContainer = ref(null);
-const root = ref(null);
-const cvvOnlyContainer = ref(null);
+const cardContainer = ref<HTMLElement | string>("");
+const cvvOnlyContainer = ref<HTMLElement | string>("");
 const saveCreditCard = ref(false);
 const selectedSkyflowCard = ref<{ cardNumber: string; cardExpiration?: string; skyflowId: string }>();
 
@@ -178,47 +177,58 @@ let skyflowClient: Skyflow,
   cvvCollector: CollectContainer | null,
   cvvElement: CollectElement | null;
 
+const vcInputRadius = useCssVar("--vc-input-radius").value;
+const defaultRadius = useCssVar("--vc-radius").value;
+
 // styles for CVV only and for NEW CARD
 const globalStyles = {
   global: {
-    "@use": 'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&display=swap")',
+    "@import":
+      'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&subset=cyrillic&display=swap")',
   },
   fontFamily: "Lato, sans-serif",
-  errorColor: useCssVar("--color-danger-500", root).value,
-  borderColor: useCssVar("--color-neutral-200", root).value,
-  focusOutlineColor: useCssVar("--color-primary-200", root).value,
+  primaryColor: useCssVar("--color-primary-500").value || "#eb9016",
+  errorColor: useCssVar("--color-danger-500").value || "#de3131",
+  borderColor: useCssVar("--color-neutral-400").value || "#a3a3a3",
+  invalidBorder: `1px solid ${useCssVar("--color-danger-500").value || "#de3131"}`,
+  backgroundColor: useCssVar("--color-additional-50").value || "#ffffff",
+  borderRadius: vcInputRadius || defaultRadius || "0.5rem",
+  focusBorder: "1px solid transparent",
+  focusShadow: `0 0 0 3px rgb(from ${useCssVar("--color-primary-500").value || "#eb9016"} r g b / 0.3)`,
+  textColor: useCssVar("--body-text-color").value || "#1f2937",
 };
 
 const baseInputStyles = {
   fontFamily: globalStyles.fontFamily,
   fontStyle: "normal",
-  fontWeight: 400,
-  fontSize: "0.9375rem",
-  lineHeight: "1",
-  borderRadius: "3px",
+  fontWeight: "400",
+  fontSize: "1rem",
+  lineHeight: "1.25rem",
+  backgroundColor: globalStyles.backgroundColor,
+  borderRadius: globalStyles.borderRadius,
   border: `1px solid ${globalStyles.borderColor}`,
-  "&:focus": {
-    border: "1px solid transparent",
-    outline: `4px solid ${globalStyles.focusOutlineColor}`,
-  },
+  textSecurity: "none",
+  textIndent: "initial",
+  "&:focus": `border: ${globalStyles.focusBorder}; box-shadow: ${globalStyles.focusShadow}`,
+  padding: "0.75rem",
+  color: globalStyles.textColor,
 };
 
 const baseLabelStyles = {
   fontFamily: globalStyles.fontFamily,
-  fontSize: "0.9375rem",
-  fontWeight: 700,
+  fontSize: "1rem",
+  fontWeight: "700",
   lineHeight: "1.25rem",
   marginBottom: "0.125rem",
+  color: globalStyles.textColor,
 };
 
 const baseErrorStyles = {
   fontFamily: globalStyles.fontFamily,
-  fontSize: "0.75rem",
+  fontSize: "0.625rem",
   color: globalStyles.errorColor,
-  textTransform: "lowercase",
-  "&::first-letter": {
-    textTransform: "uppercase",
-  },
+  padding: "0 4px",
+  minHeight: "0.75rem",
 };
 // end styles
 
@@ -227,7 +237,7 @@ type ElementType =
   | typeof Skyflow.ElementType.CARD_NUMBER
   | typeof Skyflow.ElementType.CARDHOLDER_NAME
   | typeof Skyflow.ElementType.EXPIRATION_DATE
-  | typeof Skyflow.ElementType.CVV;
+  | typeof Skyflow.ElementType.INPUT_FIELD;
 
 const newCardFormElementsStatus = ref<{
   [key in ElementType]: {
@@ -238,7 +248,7 @@ const newCardFormElementsStatus = ref<{
   [Skyflow.ElementType.CARD_NUMBER]: { valid: false, ready: false },
   [Skyflow.ElementType.CARDHOLDER_NAME]: { valid: false, ready: false },
   [Skyflow.ElementType.EXPIRATION_DATE]: { valid: false, ready: false },
-  [Skyflow.ElementType.CVV]: { valid: false, ready: false },
+  [Skyflow.ElementType.INPUT_FIELD]: { valid: false, ready: false },
 });
 
 function updateValidationStatus({ elementType, isValid }: { elementType: ElementType; isValid: boolean }) {
@@ -282,7 +292,7 @@ async function initNewCardForm(): Promise<void> {
     },
   };
 
-  const container = skyflowClient.container(Skyflow.ContainerType.COMPOSABLE, containerOptions) as ComposableContainer;
+  const container = skyflowClient.container(Skyflow.ContainerType.COMPOSABLE, containerOptions);
 
   container.on(Skyflow.EventName.SUBMIT, () => {
     if (!hasInvalid.value) {
@@ -294,28 +304,28 @@ async function initNewCardForm(): Promise<void> {
     inputStyles: {
       base: {
         ...baseInputStyles,
-        textSecurity: "none",
-        textIndent: "initial",
-        padding: "0.75rem",
+      },
+      invalid: {
+        border: globalStyles.invalidBorder,
       },
       cardIcon: {
         position: "absolute",
-        left: "8px",
-        bottom: "calc(50% - 12px)",
+        left: "12px",
+        bottom: "calc(50% - 14px)",
+        width: "28px",
+        height: "28px",
       },
-      global,
     },
     labelStyles: {
       base: baseLabelStyles,
       requiredAsterisk: {
         color: errorColor,
       },
-      global,
     },
   };
 
   const cardNameStyles = cloneDeep(collectStylesOptions);
-  cardNameStyles.inputStyles.base.textIndent = "42px";
+  cardNameStyles.inputStyles.base.textIndent = "36px";
 
   const cardName = container.create(
     {
@@ -369,10 +379,21 @@ async function initNewCardForm(): Promise<void> {
       ...cvvStyles,
       placeholder: "111",
       label: t("shared.payment.bank_card_form.security_code_label"),
-      type: Skyflow.ElementType.CVV,
+      type: Skyflow.ElementType.INPUT_FIELD,
+      validations: [
+        {
+          type: Skyflow.ValidationRuleType.REGEX_MATCH_RULE,
+          params: {
+            regex: CVV_REGEX,
+            error: t("shared.payment.bank_card_form.errors.security_code"),
+          },
+        },
+      ],
     },
     {
       required: true,
+      masking: true,
+      format: "XXXX",
     },
   );
 
@@ -413,23 +434,24 @@ async function initCvvForm() {
 
   const { global, errorColor } = globalStyles;
 
-  const container = skyflowClient.container(Skyflow.ContainerType.COLLECT) as CollectContainer;
+  const container = skyflowClient.container(Skyflow.ContainerType.COLLECT);
 
   const collectStylesOptions = {
     inputStyles: {
       base: {
         ...baseInputStyles,
-        textSecurity: "disc",
-        width: "6.2rem",
-        margin: "4px",
-        padding: "0.6rem",
+        width: "6rem",
+        margin: "0 0.25rem",
+      },
+      invalid: {
+        border: globalStyles.invalidBorder,
       },
       global,
     },
     labelStyles: {
       base: {
         ...baseLabelStyles,
-        marginLeft: "4px",
+        margin: "0 0.25rem",
       },
       requiredAsterisk: {
         color: errorColor,
@@ -449,10 +471,21 @@ async function initCvvForm() {
       ...collectStylesOptions,
       placeholder: "111",
       label: t("shared.payment.bank_card_form.security_code_label"),
-      type: Skyflow.ElementType.CVV,
+      type: Skyflow.ElementType.INPUT_FIELD,
+      validations: [
+        {
+          type: Skyflow.ValidationRuleType.REGEX_MATCH_RULE,
+          params: {
+            regex: CVV_REGEX,
+            error: t("shared.payment.bank_card_form.errors.security_code"),
+          },
+        },
+      ],
     },
     {
       required: true,
+      masking: true,
+      format: "XXXX",
     },
   );
 
@@ -517,7 +550,7 @@ async function initPayment() {
         env: IS_DEVELOPMENT ? Skyflow.Env.DEV : Skyflow.Env.PROD,
       },
     });
-  } catch (e) {
+  } catch {
     showError(t("shared.payment.bank_card_form.payment_unavailable"));
   }
 }

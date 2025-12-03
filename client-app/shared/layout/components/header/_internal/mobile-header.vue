@@ -1,5 +1,5 @@
 <template>
-  <div ref="headerElement" class="fixed z-40 w-full shadow-md print:hidden">
+  <header ref="headerElement" class="fixed z-40 w-full shadow-md print:hidden">
     <div class="relative z-[2] flex h-[2.125rem] items-center border-b bg-[--header-top-bg-color] px-5 py-1 text-xs">
       <ShipToSelector />
     </div>
@@ -55,7 +55,11 @@
 
             <component :is="item" v-for="(item, index) in customComponents" :key="index" class="px-1 py-2 xs:px-2" />
 
-            <router-link :to="{ name: 'Cart' }" :aria-label="$t('common.links.cart')" class="px-1 py-2 xs:px-2">
+            <router-link
+              :to="{ name: ROUTES.CART.NAME }"
+              :aria-label="$t('common.links.cart')"
+              class="px-1 py-2 xs:px-2"
+            >
               <span class="relative block">
                 <VcIcon class="fill-primary" name="cart" :size="28" />
 
@@ -72,6 +76,8 @@
                     size="sm"
                     class="absolute -right-2 -top-2 transition-transform"
                     rounded
+                    nowrap
+                    max-width="none"
                   >
                     {{ $n(cart.itemsQuantity, { style: "decimal", notation: "compact" }) }}
                   </VcBadge>
@@ -109,7 +115,7 @@
         </button>
       </div>
     </div>
-  </div>
+  </header>
 
   <!-- Height placeholder for mobile header due to fixed position -->
   <div :style="placeholderStyle" class="h-14 print:hidden"></div>
@@ -144,11 +150,13 @@ import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
 import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
+import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import BarcodeScanner from "@/shared/layout/components/search-bar/barcode-scanner.vue";
+
 const router = useRouter();
 
 const { customComponents } = useCustomMobileHeaderComponents();
@@ -165,17 +173,29 @@ const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
 const { saveSearchQuery } = useHistoricalEvents();
+const { isCategoryScope } = useSearchScore();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
 );
 
-const searchPageLink = computed<RouteLocationRaw>(() => ({
-  name: ROUTES.SEARCH.NAME,
-  query: {
-    [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
-  },
-}));
+const searchPageLink = computed<RouteLocationRaw>(() => {
+  if (isCategoryScope.value) {
+    return {
+      path: router.currentRoute.value.path,
+      query: {
+        [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
+      },
+    };
+  } else {
+    return {
+      name: ROUTES.SEARCH.NAME,
+      query: {
+        [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
+      },
+    };
+  }
+});
 
 function reset() {
   searchPhrase.value = "";
@@ -191,7 +211,8 @@ function onBarcodeScanned(value: string) {
 function handleSearch() {
   if (searchPhrase.value) {
     void saveSearchQuery(searchPhrase.value);
-    void router.push(searchPageLink.value);
+
+    void router.replace(searchPageLink.value);
   }
 }
 

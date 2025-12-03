@@ -14,36 +14,47 @@
   </div>
 
   <!-- Desktop table view -->
-  <table v-else class="w-full table-fixed text-left text-sm" :aria-describedby="description">
+  <table v-else :class="['w-full text-left text-sm', isMobile ? 'table-fixed' : 'table-auto']">
+    <caption v-if="description" class="sr-only">
+      {{
+        description
+      }}
+    </caption>
+
     <slot name="header">
       <thead v-if="!hideDefaultHeader && columns.length" class="border-b border-neutral-200">
         <tr>
           <th
             v-for="column in columns"
             :key="column.id"
+            scope="col"
+            :aria-sort="getAriaSort(column.id)"
             class="px-4 py-3 font-bold"
-            :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
-            @click="
-              column.sortable && sort
-                ? $emit('headerClick', { column: column.id, direction: toggleSortDirection(sort.direction) })
-                : null
-            "
+            :class="[column.sortable ? 'cursor-pointer' : '', alignClass(column.align), column.classes]"
           >
-            {{ column.title }}
+            <template v-if="column.sortable && sort">
+              <button
+                type="button"
+                class="inline-flex items-center gap-2"
+                @click="
+                  $emit('headerClick', {
+                    column: column.id,
+                    direction: toggleSortDirection(sort.direction),
+                  })
+                "
+              >
+                {{ column.title }}
 
-            <template v-if="column.sortable && sort && sort.column === column.id">
-              <VcIcon
-                v-if="sort.direction === SortDirection.Descending"
-                class="ms-1 mt-1.5"
-                name="chevron-up"
-                size="xxs"
-              />
-              <VcIcon
-                v-else-if="sort.direction === SortDirection.Ascending"
-                class="ms-1 mt-1.5"
-                name="chevron-down"
-                size="xxs"
-              />
+                <template v-if="sort.column === column.id">
+                  <VcIcon v-if="sort.direction === SortDirection.Descending" name="chevron-up" size="xxs" />
+
+                  <VcIcon v-else-if="sort.direction === SortDirection.Ascending" name="chevron-down" size="xxs" />
+                </template>
+              </button>
+            </template>
+
+            <template v-else>
+              <span>{{ column.title }}</span>
             </template>
           </th>
         </tr>
@@ -60,7 +71,7 @@
       <slot name="desktop-empty" />
     </tbody>
 
-    <!-- Desktop table view -->
+    <!-- Desktop table view (custom body) -->
     <tbody v-else-if="$slots['desktop-body']">
       <slot name="desktop-body" />
     </tbody>
@@ -92,6 +103,7 @@
 
 <script setup lang="ts" generic="T extends ItemType">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { computed } from "vue";
 import { PAGE_LIMIT } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import type { ISortInfo } from "@/core/types";
@@ -102,12 +114,11 @@ export type ItemType = {
 };
 
 const emit = defineEmits<{
-  (event: "itemClick", item: T): void;
   (event: "headerClick", item: ISortInfo): void;
   (event: "pageChanged", page: number): void;
 }>();
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     columns?: ITableColumn[];
     items?: T[];
@@ -119,6 +130,7 @@ withDefaults(
     hideDefaultFooter?: boolean;
     description?: string;
     pageLimit?: number | null;
+    mobileBreakpoint?: "sm" | "md" | "lg" | "xl" | "2xl";
   }>(),
   {
     columns: () => [],
@@ -126,17 +138,40 @@ withDefaults(
     pages: 0,
     page: 0,
     pageLimit: PAGE_LIMIT,
+    mobileBreakpoint: "md",
   },
 );
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("md");
+const isMobile = computed(() => breakpoints.smaller(props.mobileBreakpoint).value);
 
-const onPageUpdate = (newPage: number) => {
+function onPageUpdate(newPage: number) {
   emit("pageChanged", newPage);
-};
+}
 
 function toggleSortDirection(currentDirection: SortDirection): SortDirection {
   return currentDirection === SortDirection.Descending ? SortDirection.Ascending : SortDirection.Descending;
+}
+
+function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
+  if (!props.sort || props.sort.column !== columnId) {
+    return "none";
+  }
+
+  return props.sort.direction === SortDirection.Ascending ? "ascending" : "descending";
+}
+
+const ALIGN_MAP = {
+  left: "text-left",
+  right: "text-right",
+  center: "text-center",
+} as const;
+
+function alignClass(align?: keyof typeof ALIGN_MAP): string {
+  if (!align) {
+    return ALIGN_MAP.left;
+  }
+
+  return ALIGN_MAP[align] ?? ALIGN_MAP.left;
 }
 </script>

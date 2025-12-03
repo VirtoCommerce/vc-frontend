@@ -26,8 +26,6 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  size: "",
-  iconSize: "",
   iconBgColor: "",
 });
 </script>
@@ -38,9 +36,9 @@ const props = withDefaults(defineProps<IProps>(), {
   --props-icon-size: v-bind(props.iconSize);
 
   --size: var(--props-size, var(--vc-composite-shape-size, 15rem));
-  --icon-size: var(--props-icon-size, var(--vc-composite-shape-icon-size, 26.5%));
-  --icon-top: var(--vc-composite-shape-icon-top, 11%);
-  --icon-left: var(--vc-composite-shape-icon-left, -8%);
+  --icon-size: var(--props-icon-size, var(--vc-composite-shape-icon-size, 36%));
+  --icon-top: var(--vc-composite-shape-icon-top, 6%);
+  --icon-left: var(--vc-composite-shape-icon-left, -12.5%);
   --icon-right: var(--vc-composite-shape-icon-right, auto);
   --icon-bottom: var(--vc-composite-shape-icon-bottom, auto);
 

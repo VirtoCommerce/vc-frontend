@@ -1,5 +1,10 @@
 <template>
-  <VcWidget id="order-summary" class="max-md:mt-5 print:break-inside-avoid" :title="$t('common.titles.order_summary')">
+  <VcWidget
+    id="order-summary"
+    class="max-md:mt-5 print:break-inside-avoid"
+    :title="$t('common.titles.order_summary')"
+    data-test-id="order-summary-widget"
+  >
     <slot name="header" />
 
     <!-- Totals block -->
@@ -8,7 +13,7 @@
 
       <div class="mb-4 flex justify-between text-base font-black">
         <span>{{ $t("common.labels.subtotal") }}</span>
-        <span><VcPriceDisplay :value="cart.subTotal!" /></span>
+        <span><VcPriceDisplay :value="cart.subTotal!" data-test-id="cart-subtotal-label" /></span>
       </div>
 
       <div class="border-y py-2 text-base font-normal">
@@ -29,7 +34,7 @@
 
           <span v-if="cart.discountTotal">
             {{ cart.discountTotal?.amount > 0 ? "-" : "" }}
-            <VcPriceDisplay :value="cart.discountTotal" />
+            <VcPriceDisplay :value="cart.discountTotal" data-test-id="cart-discount-total-label" />
           </span>
         </div>
 
@@ -76,7 +81,7 @@
           <span>{{ $t("common.labels.tax") }}</span>
           <span>
             {{ cart.taxTotal?.amount > 0 ? "+" : "" }}
-            <VcPriceDisplay v-if="cart.taxTotal" :value="cart.taxTotal" />
+            <VcPriceDisplay v-if="cart.taxTotal" :value="cart.taxTotal" data-test-id="cart-tax-total-label" />
           </span>
         </div>
 
@@ -84,7 +89,7 @@
           <span>{{ $t("common.labels.shipping_cost") }}</span>
           <span>
             {{ shippingPrice?.amount > 0 ? "+" : "" }}
-            <VcPriceDisplay :value="shippingPrice" />
+            <VcPriceDisplay :value="shippingPrice" data-test-id="cart-shipping-total-label" />
           </span>
         </div>
       </div>
@@ -92,7 +97,7 @@
       <div class="mt-4 flex justify-between text-base font-black">
         <span>{{ $t("common.labels.total") }}</span>
         <span class="text-[--price-color] print:text-inherit">
-          <VcPriceDisplay v-if="cart.total" :value="cart.total" />
+          <VcPriceDisplay v-if="cart.total" :value="cart.total" data-test-id="cart-total-label" />
         </span>
       </div>
     </div>
@@ -113,16 +118,17 @@ import { computed, ref } from "vue";
 import { useCurrency } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useFullCart } from "@/shared/cart";
+import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
 import { useCheckout } from "@/shared/checkout/composables";
 import type {
-  OrderShipmentType,
   CartType,
   CustomerOrderType,
-  LineItemType,
-  OrderLineItemType,
-  ShipmentType,
   DiscountType,
+  LineItemType,
   OrderDiscountType,
+  OrderLineItemType,
+  OrderShipmentType,
+  ShipmentType,
 } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -138,8 +144,9 @@ const { currentLanguage } = useLanguages();
 const { currentCurrency } = useCurrency();
 const { changing: cartChanging } = useFullCart();
 const { changing: checkoutChanging } = useCheckout();
+const { loading: savedForLaterLoading } = useSavedForLater();
 
-const changing = computed(() => cartChanging.value || checkoutChanging.value);
+const changing = computed(() => cartChanging.value || checkoutChanging.value || savedForLaterLoading.value);
 
 const discountsCollapsed = ref(true);
 

@@ -4,7 +4,7 @@
     :shared-selected-item-ids="sharedSelectedItemIds"
     :disabled="disabled"
     :readonly="readonly"
-    :browser-target="$cfg.details_browser_target"
+    :browser-target="browserTarget"
     with-image
     with-properties
     with-price
@@ -30,6 +30,9 @@
         :pack-size="item.packSize"
         :count-in-cart="item.countInCart"
         :available-quantity="item.availabilityData?.availableQuantity"
+        :is-in-stock="item.availabilityData?.isInStock"
+        :is-buyable="item.availabilityData?.isBuyable"
+        :is-available="item.availabilityData?.isAvailable"
         hide-button
         :model-value="item.quantity"
         :name="item.id"
@@ -39,7 +42,7 @@
         @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
       />
 
-      <div v-if="item.availabilityData?.isInStock" class="mt-0.5 text-center">
+      <div v-if="item.availabilityData?.isInStock" class="mt-2 text-center">
         <InStock
           :is-in-stock="item.availabilityData?.isInStock"
           :is-available="!item.deleted"
@@ -71,18 +74,38 @@
         </VcAlert>
       </div>
     </template>
+
+    <template #after-image="{ item }">
+      <CartItemActions
+        icons
+        :saveable-for-later="!hideControls?.includes('save-for-later')"
+        :selected="sharedSelectedItemIds?.includes(item.id)"
+        :disabled="disabled"
+        @save-for-later="$emit('saveForLater', [item.id])"
+      />
+    </template>
+
+    <template #after-title="{ item }">
+      <CartItemActions
+        :saveable-for-later="!hideControls?.includes('save-for-later')"
+        :selected="sharedSelectedItemIds?.includes(item.id)"
+        :disabled="disabled"
+        @save-for-later="$emit('saveForLater', [item.id])"
+      />
+    </template>
   </VcLineItems>
 </template>
 
 <script setup lang="ts">
 import { computed, toRef, watchEffect } from "vue";
-import { useErrorsTranslator } from "@/core/composables";
+import { useBrowserTarget, useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
 import { ConfigurationItems } from "@/shared/common";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import CartItemActions from "@/shared/cart/components/cart-item-actions.vue";
 import QuantityControl from "@/shared/common/components/quantity-control.vue";
 
 interface IProps {
@@ -92,6 +115,7 @@ interface IProps {
   validationErrors?: ValidationErrorType[];
   selectable?: boolean;
   sharedSelectedItemIds?: string[];
+  hideControls?: string[];
 }
 
 interface IEmits {
@@ -99,6 +123,7 @@ interface IEmits {
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "linkClick", value: LineItemType | undefined): void;
+  (event: "saveForLater", value: string[]): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -110,6 +135,8 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const validationErrors = toRef(props, "validationErrors");
+
+const { browserTarget } = useBrowserTarget();
 
 const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
 

@@ -25,6 +25,7 @@
       "register": "注册",
       "reset_password": "重置密码",
       "reset_filters": "重置过滤器",
+      "reset_page": "重置页面",
       "add_to_cart": "加入购物车",
       "apply": "应用",
       "send": "发送",
@@ -75,13 +76,16 @@
       "all_orders": "所有订单",
       "my_orders": "我的订单",
       "scroll_to_top": "回到顶部",
-      "reset_page": "重置页面",
       "show_less": "收起",
       "expand_all": "全部展开",
-      "all_products": "所有产品"
+      "all_products": "所有产品",
+      "buy_now": "立即购买",
+      "see_all": "查看全部",
+      "report_a_problem": "报告问题"
     },
     "labels": {
       "actions": "操作",
+      "notifications": "通知",
       "user_name": "用户名",
       "password": "密码",
       "confirm_password": "确认密码",
@@ -102,7 +106,7 @@
       "total": "总计",
       "compare": "比较",
       "price": "价格",
-      "product_price": "您的价格",
+      "product_price": "价格",
       "subtotal": "小计",
       "discount": "折扣",
       "line_items": "商品项",
@@ -162,7 +166,8 @@
       "buyer_name": "买方姓名",
       "other": "其他",
       "vendor_name": "供应商: {name}",
-      "not_available": "不可用"
+      "not_available": "不可用",
+      "product_reviews": "商品评论"
     },
     "prefixes": {
       "please": "请",
@@ -190,7 +195,7 @@
       "not_defined": "未定义",
       "invalid_coupon": "此代码不匹配任何活动优惠券。请仔细检查后再试。",
       "fill_all_required": "请完成所有必填信息以继续。",
-      "something_went_wrong": "糟糕！出了点问题。请仔细检查后再试。",
+      "something_went_wrong": "出了点问题。请稍后再试。",
       "checkout_pricing_warning": "在您完成订单之前，库存、运输、税费和促销信息尚未最终确定。",
       "wishlists_available_for_authorized": "愿望清单仅对已认证用户可用",
       "no_addresses": "您尚未有任何地址",
@@ -201,6 +206,7 @@
       "fail_add_product_to_cart": "抱歉，无法将此商品加入购物车。{reason}",
       "fail_to_change_quantity_in_cart": "抱歉，无法更新购物车中的商品数量。{reason}",
       "unhandled_error": "抱歉给您带来不便。我们的服务器目前遇到技术问题。请稍后再试。",
+      "report_sent_successfully": "谢谢！您的报告已成功发送。我们会查看的。",
       "role_update_successful": "客户角色已成功更新。",
       "role_update_failed": "更新角色时发生错误：{0}",
       "passwords_do_not_match": "密码字段的值必须匹配。",
@@ -210,7 +216,8 @@
       "password_expired": "您的密码已过期",
       "data_changed": "数据在其他标签中被修改。请刷新页面以显示当前数据。",
       "logo_changed": "标志已成功更改。",
-      "logo_deleted": "标志已被删除。"
+      "logo_deleted": "标志已被删除。",
+      "pending_operations_leaving_page_confirmation": "某些操作仍在进行中。确定要离开此页面吗？未保存的更改可能会丢失。"
     },
     "placeholders": {
       "enter_value": "请输入值",
@@ -243,7 +250,6 @@
       "addresses": "地址",
       "orders": "订单",
       "lists": "清单",
-      "checkout_defaults": "结账默认设置",
       "list_details": "清单详情",
       "cart": "购物车",
       "company_info": "公司信息",
@@ -273,7 +279,8 @@
       "change_role": "更改角色",
       "save_changes": "保存更改",
       "password_expired": "密码即将过期",
-      "error_details": "错误详情"
+      "error_details": "错误详情",
+      "buy_now": "立即购买"
     },
     "roles": {
       "org-maintainer": "组织维护者",
@@ -283,17 +290,18 @@
       "store-manager": "商店经理"
     },
     "methods": {
-      "payment_by_code": {
-        "AuthorizeNetPaymentMethod": "银行卡（Authorize.Net）",
-        "DefaultManualPaymentMethod": "手动",
-        "SkyflowPaymentMethod": "银行卡（Skyflow）",
-        "CyberSourcePaymentMethod": "银行卡（CyberSource）"
-      },
       "delivery_by_id": {
         "FixedRate_Ground": "固定费率（陆运）",
         "FixedRate_Air": "固定费率（空运）",
         "BuyOnlinePickupInStore_Pickup": "门店自提"
       }
+    },
+    "accessibility": {
+      "open_filters": "打开筛选器",
+      "switch_to_grid_view": "切换到网格视图",
+      "switch_to_list_view": "切换到列表视图",
+      "no_image": "没有可用图片",
+      "image": "图片"
     }
   },
   "shared": {
@@ -303,10 +311,12 @@
           "link_dashboard": "@:common.links.dashboard",
           "link_contact_us": "联系方式",
           "call_us_label": "致电我们：",
-          "logged_in_as": "已登录为"
+          "logged_in_as": "已登录为",
+          "account_menu_label": "帐户菜单"
         },
         "bottom_header": {
-          "catalog_menu_button": "目录"
+          "catalog_menu_button": "目录",
+          "main_menu": "主菜单"
         },
         "link_sign_in": "登录",
         "link_register_now": "立即注册",
@@ -329,8 +339,8 @@
             "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
+            "saved_for_later": "稍后保存",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
@@ -347,16 +357,17 @@
         },
         "ship_to_selector": {
           "add_new": "新增",
+          "add_new_address": "添加新地址",
           "search": "搜索",
           "select_address": "选择地址",
-          "title": "运送至：",
-          "add_new_address": "添加新地址"
+          "title": "运送至："
         },
         "mega_menu": {
           "aria_labels": {
             "categories": "类别",
             "subcategories": "子类 {category}",
-            "navigation": "导航"
+            "navigation": "导航",
+            "main_navigation": "主导航"
           }
         }
       },
@@ -395,26 +406,26 @@
         "categories_label": "类别",
         "products_label": "产品",
         "pages_label": "页面",
-        "suggestions_label": "建议",
+        "suggestions_and_history_label": "建议和历史记录",
         "no_results": "您的 {keyword} 查询未返回任何结果",
+        "enter_keyword_placeholder": "搜索全店",
+        "enter_keyword_placeholder_category": "在 {category} 中搜索",
         "search_button": "搜索",
         "view_all_results_button": "查看所有 {total} 个结果",
+        "scope_loading_label": "正在加载搜索上下文",
+        "scope_remove_label": "移除：{label}",
         "barcode_detector": {
           "title": "条码扫描",
           "description": "请启用相机扫描产品条形码以继续。 这将帮助我们快速识别商品并为您提供必要的信息。",
+          "browse": "浏览文件",
+          "cancel": "@:common.buttons.cancel",
           "errors": {
             "no_barcode_detected": "图片中未检测到条形码",
             "wrong_format": "不支持的文件格式",
             "no_file": "未上传文件"
-          },
-          "browse": "浏览文件",
-          "cancel": "@:common.buttons.cancel"
+          }
         },
-        "enter_keyword_placeholder": "搜索全店",
-        "enter_keyword_placeholder_category": "在 {category} 中搜索",
-        "scope_loading_label": "正在加载搜索上下文",
-        "scope_remove_label": "移除：{label}",
-        "suggestions_and_history_label": "建议和历史记录",
+        "suggestions_label": "建议",
         "search_label": "搜索"
       },
       "language_selector": {
@@ -436,7 +447,6 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
-          "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -468,11 +478,6 @@
       },
       "forgot_password_form": {
         "error_alert": "重置密码请求的结果无效。请 "
-      },
-      "checkout_default_success_modal": {
-        "title": "结账默认设置",
-        "message": "默认结账详情已成功更新。",
-        "ok_button": "@:common.buttons.ok"
       },
       "invite_member_modal": {
         "title": "邀请成员",
@@ -562,6 +567,12 @@
           "remove": "从比较中移除"
         }
       },
+      "notifications": {
+        "limit_reached": "最多可以比较 {productsLimit} 件商品",
+        "added_html": "商品 <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> 已添加到比较列表 <span class=\"hidden lg:inline\">（剩余 {itemsLeft} 件）</span>",
+        "removed_html": "商品 <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> 已从比较列表中移除",
+        "compare_button": "比较"
+      },
       "clear_list_modal": {
         "title": "确认清空",
         "message": "您确认要从比较列表中移除所有商品吗？"
@@ -630,10 +641,12 @@
         "description_block_title": "描述",
         "assets_block_title": "文件",
         "vendor_label": "供应商",
+        "all_vendor_products": "所有供应商产品",
         "share_product_label": "分享产品",
         "create_configuration_button": "创建您的配置",
         "price_block": {
           "title": "价格与运输",
+          "mobile_title": "分享与更多",
           "add_to_list_button": "添加到清单",
           "product_email_title": "请查看产品：{0}"
         },
@@ -673,10 +686,18 @@
             "predefined_prefix": "预定义",
             "option_label": "选项 {0}: {1}"
           }
+        },
+        "options": {
+          "title": "选项",
+          "select_to_proceed": "选择选项以继续",
+          "price_unavailable": "该商品无法使用所选货币购买"
         }
       },
       "discount_badge": {
         "off": "-{discount}"
+      },
+      "purchased_before_badge": {
+        "title": "@:pages.catalog.purchased_before_filter_card.title"
       },
       "branches_modal": {
         "title": "选择分支",
@@ -687,10 +708,12 @@
         "cancel_button": "取消",
         "ok_button": "确定",
         "no_results": "未找到结果",
+        "no_branches": "未找到分支",
         "reset_search_button": "重置搜索"
       },
-      "purchased_before_badge": {
-        "title": "@:pages.catalog.purchased_before_filter_card.title"
+      "shipment_options": {
+        "title": "配送选项",
+        "in_store": "门店自提"
       }
     },
     "checkout": {
@@ -805,15 +828,20 @@
         "cardholder_name_label": "持卡人姓名",
         "expiration_date_label": "到期日期",
         "expiration_date_placeholder": "月 / 年",
+        "expiration_date_placeholder_extended": "月 / 年",
         "month_label": "月",
         "month_placeholder": "MM",
         "year_label": "年",
         "year_placeholder": "YY",
         "security_code_label": "安全码",
-        "expiration_date_placeholder_extended": "月 / 年",
+        "pay_now_button": "立即支付",
         "errors": {
-          "month": "请选择有效的月份",
-          "year": "请输入有效的年份"
+          "card_number": "请提供有效的信用卡号码",
+          "month": "请提供有效的到期月份",
+          "year": "请提供有效的到期年份",
+          "expiration_date": "到期日期必须在未来",
+          "security_code": "请提供有效的安全码",
+          "cardholder_name": "请提供有效的持卡人姓名"
         },
         "user_error_message": "无法初始化支付。请稍后再试或使用其他支付方式",
         "payment_unavailable": "支付方式不可用，请稍后重试"
@@ -823,27 +851,15 @@
         "privacy_policy_link": "隐私政策",
         "accept_terms_text": "通过下订单，您接受我们的条款",
         "processing_personal_data_text": "并同意我们可以按照我们的",
-        "pay_now_button": "立即支付",
         "errors": {
-          "number": "请提供有效的信用卡号码",
-          "month": "请提供有效的到期月份",
-          "year": "请提供有效的到期年份",
-          "expiration_date": "到期日期必须在未来",
-          "security_code": "请提供有效的安全码",
-          "cardholder_name": "请提供有效的持卡人姓名",
           "incorrect_payment_method": "支付方式不正确"
         }
-      },
-      "skyflow": {
-        "pay_now_button": "立即支付"
       },
       "manual": {
         "text": "您选择的支付方式不支持在线支付。请选择另一种方式或 "
       },
       "redirection": {
         "text": "点击 <strong>{0}</strong> 后，您将被重定向到第三方支付服务",
-        "pay_now_button": "立即支付",
-        "try_again_button": "再试一次",
         "errors": {
           "missing_link": "重定向链接缺失",
           "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
@@ -888,11 +904,20 @@
         "edit_mode_title": "清单设置",
         "list_name_label": "清单名称",
         "list_name_placeholder": "请输入名称",
+        "sharing_scope_label": "分享选项",
+        "sharing_scope_placeholder": "请选择一个选项",
+        "sharing_link_label": "链接",
         "create_button": "创建清单",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "私人清单",
-        "make_shared": "设为共享"
+        "make_shared": "设为共享",
+        "sharing_scope": {
+          "Private": "私密",
+          "Organization": "组织",
+          "AnyoneAnonymous": "任何人（只读）"
+        },
+        "clipboard_success": "链接已复制"
       },
       "delete_wishlist_modal": {
         "title": "确认删除",
@@ -908,7 +933,8 @@
       },
       "status": {
         "shared": "共享",
-        "private": "私人"
+        "private": "私人",
+        "shared_with_me": "与我共享"
       }
     },
     "sorting": {
@@ -951,7 +977,7 @@
       },
       "sign_in_form_title": "登录",
       "main_banner_block": {
-        "message": "我们可以帮助您 <br />做出明智的<br />决策",
+        "message": "我们可以帮助您{br}做出明智的{br}决策",
         "key_feature_1": "结果导向",
         "key_feature_2": "可信赖",
         "key_feature_3": "可靠"
@@ -1060,21 +1086,6 @@
         "make_default_button": "设为默认",
         "no_addresses_img_alt": "无地址"
       },
-      "checkout_defaults": {
-        "meta": {
-          "title": "@:pages.account.checkout_defaults.title"
-        },
-        "title": "结账默认设置",
-        "select_delivery_method_label": "首选配送方式",
-        "shipping_radio_label": "运输",
-        "pickup_radio_label": "自取",
-        "not_selected_placeholder": "@:common.placeholders.not_selected",
-        "update_button": "@:common.buttons.update",
-        "payment_method_label": "首选支付方式",
-        "payment_method_placeholder": "请选择您的首选支付方式",
-        "shipping_method_label": "首选运输方式",
-        "shipping_method_placeholder": "请选择您的首选运输方式"
-      },
       "dashboard": {
         "meta": {
           "title": "@:pages.account.dashboard.title"
@@ -1117,7 +1128,7 @@
           "title": "@:pages.account.orders.title",
           "table_description": "@:pages.account.orders.title"
         },
-        "search_placeholder": "输入关键词...",
+        "search_placeholder": "按号码、姓名或其他数据搜索",
         "title": "订单",
         "order_number_label": "订单编号",
         "purchase_number_label": "采购订单",
@@ -1149,6 +1160,25 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "bopis": {
+          "eta": "预计到达时间",
+          "emailAndPhone": "致电 {phone} 或发送邮件至 {email}",
+          "emailOnly": "邮箱 {email}",
+          "phoneOnly": "致电 {phone}",
+          "questions": "有问题吗？",
+          "workingHours": "小时",
+          "name": "名称",
+          "instructions": "说明",
+          "address": "地址",
+          "pick_point_info": "自提点信息",
+          "get_directions": "获取路线",
+          "point_info": "积分信息",
+          "pickup_address": "自提地址",
+          "cart_pickup_points_not_found": "此商品无适用的自提点。请选择其他配送方式",
+          "cart_pickup_points_not_found_by_filter": "未找到自提点。",
+          "cart_pickup_points_reset_search": "重置搜索",
+          "availability": "可用性"
         }
       },
       "order_payment": {
@@ -1251,7 +1281,7 @@
           "table_description": "@:pages.company.members.title"
         },
         "title": "公司成员",
-        "search_placeholder": "搜索用户",
+        "search_placeholder": "按姓名、角色或电子邮件搜索",
         "no_members_img_alt": "无成员",
         "no_members_message": "尚无成员",
         "no_results_message": "未找到结果",
@@ -1291,8 +1321,12 @@
       },
       "title": "购物车",
       "empty_cart_description": "您的购物车为空",
+      "empty_cart_search_text": "使用搜索，找到您需要的一切",
       "recently_browsed_products": "最近浏览的产品",
-      "empty_cart_search_text": "使用搜索，找到您需要的一切"
+      "save_for_later": "稍后保存",
+      "saved_for_later": "稍后购买",
+      "saved_for_later_not_found": "您还没有保存任何商品以供稍后购买",
+      "move_to_cart": "加入购物车"
     },
     "checkout": {
       "meta": {
@@ -1319,6 +1353,11 @@
         "checkbox_label": "显示有库存的产品",
         "tooltip_text": "选择以仅显示有库存的产品"
       },
+      "purchased_before_filter_card": {
+        "title": "已购买过",
+        "checkbox_label": "之前购买",
+        "tooltip_text": "选择以仅显示之前购买过的商品"
+      },
       "branch_availability_filter_card": {
         "title": "分支可用性",
         "available_in": "在 {0} 有货",
@@ -1326,6 +1365,8 @@
         "select_branch_text": "选择一个自取分支以查看当前有库存的产品"
       },
       "products_found_message": "结果 | 结果",
+      "products_found_message_search": "找到结果 | 找到结果",
+      "search_in_category": "在 {category} 中搜索“{keyword}”",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
@@ -1342,24 +1383,18 @@
       "show_all_results": "显示所有结果",
       "load_previous_page": "加载上一页",
       "load_next_page": "加载下一页",
-      "purchased_before_filter_card": {
-        "title": "已购买过",
-        "tooltip_text": "选择以仅显示之前购买过的商品",
-        "checkbox_label": "之前购买"
-      },
-      "search_in_category": "在 {category} 中搜索“{keyword}”",
-      "products_found_message_search": "找到结果 | 找到结果"
+      "available_variations": "没有可用的款式 | 1 个可用的款式 | {count} 个可用的款式"
     },
     "product": {
       "sku_label": "@:common.labels.sku",
       "sku_copied_message": "@:common.labels.sku 已成功复制",
-      "variations_total_label": "您的购物车中的总计：",
+      "variations_in_cart_label": "购物车中的商品属性：",
       "view_cart_button": "查看购物车",
       "recommended_products": {
-        "related-products_section_title": "与此商品相关的产品",
+        "related-products_section_title": "为您推荐",
         "bought-together_section_title": "顾客一起购买的产品"
       },
-      "related_product_section_title": "相关产品",
+      "related_product_section_title": "与此商品相关的产品",
       "price_label": "@:common.labels.product_price{':'}"
     },
     "checkout_complete": {
@@ -1385,12 +1420,13 @@
       "meta": {
         "title": "搜索：{0}"
       },
+      "title": "搜索",
       "header": "您搜索的 {keyword} 返回了以下结果",
+      "header_empty": "抱歉，您搜索“{keyword}”未找到任何结果",
       "sort_by_label": "@:common.labels.sort_by",
       "choose_button": "@:common.buttons.choose",
       "no_results_message": "您的 <strong>{0}</strong> 查询未返回任何结果",
-      "home_button": "@:common.buttons.home",
-      "title": "搜索"
+      "home_button": "@:common.buttons.home"
     },
     "bulk_order": {
       "meta": {
@@ -1507,10 +1543,10 @@
       "message": "@:common.messages.blocked"
     },
     "brands": {
-      "search": "搜索",
-      "button_all": "全部",
       "top_brands_title": "热门品牌",
       "title": "品牌",
+      "search": "搜索",
+      "button_all": "全部",
       "no_results": "未找到结果"
     },
     "brand": {

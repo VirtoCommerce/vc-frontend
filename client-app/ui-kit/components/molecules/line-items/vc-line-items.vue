@@ -33,7 +33,7 @@
           {{ $t("ui_kit.labels.price_per_item") }}
         </div>
 
-        <div v-if="$slots.default" class="vc-line-items__slot" :style="{ width: slotWidth }">
+        <div v-if="$slots.titles" class="vc-line-items__slot" :style="{ width: slotWidth }">
           <slot name="titles" />
         </div>
 
@@ -69,6 +69,7 @@
             :selected="selectable && selectedItemIds?.includes(item.id)"
             :browser-target="browserTarget"
             :show-placed-price="item.showPlacedPrice"
+            :data-product-sku="item.sku"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
             @link-click="$emit('linkClick', item)"
@@ -85,6 +86,14 @@
 
             <template #after>
               <slot name="after-content" v-bind="{ item }" />
+            </template>
+
+            <template #after-image>
+              <slot name="after-image" v-bind="{ item }" />
+            </template>
+
+            <template #after-title>
+              <slot name="after-title" v-bind="{ item }" />
             </template>
           </VcLineItem>
         </slot>
@@ -219,7 +228,7 @@ watchEffect(() => {
 
   &__container {
     @container (width > theme("containers.2xl")) {
-      @apply border rounded divide-y;
+      @apply border rounded-[--vc-radius] divide-y;
     }
   }
 
@@ -284,11 +293,11 @@ watchEffect(() => {
       @apply gap-0 space-y-0 divide-y;
 
       &:first-child {
-        @apply rounded-t;
+        @apply rounded-t-[inherit];
       }
 
       &:last-child {
-        @apply rounded-b;
+        @apply rounded-b-[inherit];
       }
     }
   }

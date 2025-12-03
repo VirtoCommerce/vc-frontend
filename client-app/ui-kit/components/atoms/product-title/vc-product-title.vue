@@ -14,6 +14,7 @@
       :to="linkTo"
       :target="to ? target : null"
       :title="title"
+      :tabindex="linkTo ? tabindex : -1"
       class="vc-product-title__text"
       @click="$emit('click', $event)"
     >
@@ -37,6 +38,7 @@ interface IProps {
   disabled?: boolean;
   fixHeight?: boolean;
   linesNumber?: number | string;
+  tabindex?: number | string;
 }
 
 defineEmits<IEmits>();
@@ -44,6 +46,7 @@ defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   to: null,
   linesNumber: 3,
+  tabindex: 0,
 });
 
 const componentType = computed(() => (!props.disabled && props.to ? "router-link" : "div"));
@@ -58,10 +61,11 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
 
   --font-size: var(--vc-product-title-font-size);
   --lines-number: v-bind(linesNumber);
+  --text-color: var(--vc-product-title-text-color, theme("colors.neutral.950"));
   --link-color: var(--vc-product-title-link-color, theme("colors.accent.600"));
   --link-hover-color: var(--vc-product-title-link-hover-color, theme("colors.accent.700"));
 
-  @apply text-[length:var(--font-size)] font-bold line-clamp-[--lines-number];
+  @apply text-[length:var(--font-size)] font-bold;
 
   @apply leading-[1.17em] #{!important};
 
@@ -78,16 +82,15 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   }
 
   &__text {
-    color: var(--body-text-color);
-    word-wrap: break-word;
+    @apply line-clamp-[--lines-number] text-[--text-color];
+
+    word-break: break-word;
 
     #{$link}:not(#{$disabled}) & {
-      @apply cursor-pointer;
-
-      color: var(--link-color);
+      @apply text-[--link-color] cursor-pointer;
 
       &:hover {
-        color: var(--link-hover-color);
+        @apply text-[--link-hover-color];
       }
     }
 
@@ -97,19 +100,21 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   }
 
   @at-root .vc-product-card {
-    #{$self} {
+    $wrapperSelector: "> .vc-product-card__wrapper #{$self}";
+
+    #{$wrapperSelector} {
       grid-area: title;
 
       @apply text-sm;
     }
 
     &--view-mode {
-      &--grid #{$self} {
+      &--grid #{$wrapperSelector} {
         @apply order-2;
       }
 
       &--list {
-        #{$self} {
+        #{$wrapperSelector} {
           @apply self-end;
 
           &:only-child {
@@ -118,25 +123,27 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
         }
 
         @container (min-width: theme("containers.xl")) {
-          &:not(:has(.vc-product-vendor, .vc-product-action)) #{$self} {
+          &:not(:has(.vc-product-vendor, .vc-product-action)) #{$wrapperSelector} {
             @apply self-center;
           }
         }
       }
 
       &--item {
-        #{$self} {
+        #{$wrapperSelector} {
           @apply self-center;
         }
 
-        &:has(.vc-product-vendor) #{$self} {
+        &:has(.vc-product-vendor) #{$wrapperSelector} {
           @apply self-end;
         }
 
         @container (min-width: theme("containers.2xl")) {
-          @apply self-end;
+          #{$wrapperSelector} {
+            @apply self-end;
+          }
 
-          &:not(:has(.vc-product-vendor)) #{$self} {
+          &:not(:has(.vc-product-vendor)) #{$wrapperSelector} {
             @apply self-center;
           }
         }

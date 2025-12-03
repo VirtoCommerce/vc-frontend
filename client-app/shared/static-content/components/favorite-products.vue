@@ -2,7 +2,11 @@
   <VcContainer>
     <VcWidget
       size="lg"
-      :style="{ backgroundColor: widgetBackground?.color, backgroundImage: `url(${widgetBackground?.image})` }"
+      :class="background"
+      :style="{
+        backgroundColor: !background ? widgetBackground?.color : null,
+        backgroundImage: `url(${widgetBackground?.image})`,
+      }"
     >
       <template v-if="title" #header>
         <VcTypography tag="h3">
@@ -45,6 +49,7 @@ import { useProducts } from "@/shared/catalog";
 
 interface IProps {
   id?: string;
+  background?: string | null;
   widgetBackground?: {
     color?: string;
     image?: string;

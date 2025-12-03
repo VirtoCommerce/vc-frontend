@@ -9,7 +9,7 @@
   >
     <VcIcon name="cart" />
 
-    <span class="inline-block min-w-3 text-center">
+    <span class="inline-block min-w-3 text-center" data-test-id="count-in-cart-label">
       {{ countInCart }}
     </span>
   </VcChip>
@@ -22,7 +22,7 @@ import { useShortCart } from "@/shared/cart/composables";
 
 export interface IProps {
   productId?: string;
-  size?: "xs" | "sm" | "md" | "lg";
+  size?: VcChipSizeType;
 }
 
 const props = withDefaults(defineProps<IProps>(), {

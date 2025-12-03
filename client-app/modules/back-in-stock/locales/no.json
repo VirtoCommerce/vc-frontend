@@ -1,0 +1,32 @@
+{
+  "back_in_stock": {
+    "deactivate_modal": {
+      "cancel_button": "@:common.buttons.cancel",
+      "delete_button": "@:common.buttons.delete",
+      "message": "Er du sikker på at du vil avslutte abonnementet på lagervarsler for \"{productName}\"?",
+      "title": "Bekreft sletting"
+    },
+    "list_details": {
+      "empty_list": "Listen din er tom",
+      "no_results_message": "Ingen resultater funnet",
+      "empty_list_button": "Fortsett å bla"
+    },
+    "messages": {
+      "click_to_receive_alert": "Klikk for å motta et varsel",
+      "stock_alert": "Lagervarsel",
+      "you_are_subscribed": "Du er abonnert! Vi gir deg beskjed når produktet er tilbake på lager.",
+      "you_will_be_notified": "Du vil bli varslet"
+    },
+    "navigation": {
+      "route_name": "Tilbake på lager-liste"
+    },
+    "subscriptions": {
+      "meta": {
+        "title": "Tilbake på lager-liste"
+      },
+      "reset_search": "Tilbakestill søk",
+      "search_button": "Søk",
+      "search_placeholder": "Søk etter produktnavn"
+    }
+  }
+}

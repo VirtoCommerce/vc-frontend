@@ -18,6 +18,21 @@
       "toggle_dropdown": "Dropdown umschalten",
       "update_cart": "Warenkorb aktualisieren"
     },
+    "accessibility": {
+      "close_alert": "Benachrichtigung schließen",
+      "open_calendar": "Kalender öffnen",
+      "product_quantity": "Produktmenge",
+      "decrease_quantity": "Menge verringern",
+      "increase_quantity": "Menge erhöhen",
+      "variant_picker_group": "Produktvarianten",
+      "show_more_button": "Weitere Varianten anzeigen ({count})",
+      "sidebar": "Seitenleiste",
+      "close_chip": "Chip schließen"
+    },
+    "date_selector": {
+      "min_date_error": "Datum muss am oder nach {min} liegen",
+      "max_date_error": "Datum muss am oder vor {max} liegen"
+    },
     "labels": {
       "not_available": "N/V",
       "price_per_item": "Preis pro Artikel",
@@ -46,11 +61,11 @@
         "max": "Maximale Bestellung {0} Artikel(n)",
         "min_max": "Bestellen Sie von {0} bis {1} Artikel(n)",
         "min_not_available": "Minimale Bestellung von {0} Artikel(n) ist nicht auf Lager",
+        "exact_qty": "Du kannst {0} Artikel bestellen",
         "out_of_stock": "Nicht auf Lager",
         "positive_number": "Der Wert muss eine positive Zahl sein",
         "integer_number": "Der Wert muss eine ganze Zahl sein",
-        "pack_size": "Bestellen in Packungen von {0}",
-        "exact_qty": "Du kannst {0} Artikel bestellen"
+        "pack_size": "Bestellen in Packungen von {0}"
       }
     },
     "pagination": {
@@ -81,7 +96,24 @@
       "page_limit": "Es konnten keine weiteren Ergebnisse angezeigt werden."
     },
     "slider": {
-      "tooltip": "{count} Artikel"
+      "tooltip": "{count} Artikel",
+      "aria_label": "Schieberegler von {min} bis {max}",
+      "start_input_label": "Startwert (zwischen {min} und {max})",
+      "end_input_label": "Endwert (zwischen {min} und {max})",
+      "start_input_aria_label": "Startwerteingabe, Bereich {min} bis {max}",
+      "end_input_aria_label": "Endwert-Eingabe, Bereich {min} bis {max}",
+      "start_input_help": "Gib eine Zahl zwischen {min} und {max} ein, Schrittweite {step}",
+      "end_input_help": "Gib eine Zahl zwischen {min} und {max} ein, Schrittweite {step}",
+      "column_aria_label": "Spalte mit {count} Artikeln, Bereich von {from} bis {to}",
+      "current_value_announcement": "Schiebereglerwert: {start} bis {end}, Bereich {min} bis {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Breadcrumb-Navigation"
+    },
+    "rating": {
+      "rating_label": "Bewertung {value} von {maxValue}",
+      "read_only_button_aria_label": "Bewertung {value} von {maxValue}, nicht zur Auswahl verfügbar",
+      "set_rating_aria_label": "Bewertung auf {value} von {maxValue} setzen"
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="vc-slider">
+  <fieldset class="vc-slider" :aria-label="$t('ui_kit.slider.aria_label', { min, max })">
     <div v-if="cols.length > 1" class="vc-slider__cols" :style="colsHeight && { height: colsHeight }">
       <VcTooltip
         v-for="(col, i) in normalizedCols"
@@ -21,7 +21,14 @@
         :disabled="!showTooltipOnColHover || !col.count"
       >
         <template #trigger>
-          <button type="button" class="vc-slider__button" @click="updateOnColumnClick && updateModel(col.value)">
+          <button
+            type="button"
+            class="vc-slider__button"
+            :aria-label="
+              $t('ui_kit.slider.column_aria_label', { count: col.count, from: col.value[0], to: col.value[1] })
+            "
+            @click="onColumnClick({ value: [col.value[0], col.value[1]] })"
+          >
             <span class="vc-slider__col-line" :style="{ height: col.height }"></span>
           </button>
         </template>
@@ -35,29 +42,92 @@
     <div ref="sliderRef" class="vc-slider__slider"></div>
 
     <div class="vc-slider__inputs">
-      <VcInput v-model="start" size="sm" class="vc-slider__input" min="min" :max="max" :disabled="disabled" />
+      <label :for="`slider-input-start-${uniqueId}`" class="sr-only">
+        {{ $t("ui_kit.slider.start_input_label", { min, max }) }}
+      </label>
 
-      <template v-if="!isNaN(end)">
-        <b class="vc-slider__dash">&mdash;</b>
+      <VcInput
+        :id="`slider-input-start-${uniqueId}`"
+        v-model="leftInput"
+        size="sm"
+        class="vc-slider__input"
+        :disabled="disabled"
+        type="number"
+        :min="min"
+        :max="max"
+        :step="step"
+        :aria-label="$t('ui_kit.slider.start_input_aria_label', { min, max })"
+        :aria-describedby="`slider-input-start-help-${uniqueId}`"
+        @focus="handleStartInputFocus"
+        @blur="handleInputBlur"
+        @keyup.enter="handleEnterKey"
+      />
 
-        <VcInput v-model="end" size="sm" class="vc-slider__input" min="min" :max="max" :disabled="disabled" />
+      <span :id="`slider-input-start-help-${uniqueId}`" class="sr-only">
+        {{ $t("ui_kit.slider.start_input_help", { min, max, step }) }}
+      </span>
+
+      <template v-if="!isNaN(rightInput)">
+        <b class="vc-slider__dash" aria-hidden="true">&mdash;</b>
+
+        <label :for="`slider-input-end-${uniqueId}`" class="sr-only">
+          {{ $t("ui_kit.slider.end_input_label", { min, max }) }}
+        </label>
+
+        <VcInput
+          :id="`slider-input-end-${uniqueId}`"
+          v-model="rightInput"
+          size="sm"
+          class="vc-slider__input"
+          :disabled="disabled"
+          type="number"
+          :min="min"
+          :max="max"
+          :step="step"
+          :aria-label="$t('ui_kit.slider.end_input_aria_label', { min, max })"
+          :aria-describedby="`slider-input-end-help-${uniqueId}`"
+          @focus="handleEndInputFocus"
+          @blur="handleInputBlur"
+          @keyup.enter="handleEnterKey"
+        />
+
+        <span :id="`slider-input-end-help-${uniqueId}`" class="sr-only">
+          {{ $t("ui_kit.slider.end_input_help", { min, max, step }) }}
+        </span>
       </template>
     </div>
-  </div>
+
+    <!-- Screen reader announcements -->
+    <div aria-live="polite" aria-atomic="true" class="sr-only">
+      {{
+        $t("ui_kit.slider.current_value_announcement", {
+          start: value[0],
+          end: typeof value[1] === "number" ? value[1] : null,
+          min,
+          max,
+        })
+      }}
+    </div>
+  </fieldset>
 </template>
 
 <script setup lang="ts">
+import { useDebounceFn } from "@vueuse/core";
+import { isNaN, isEqual, uniqueId as getUniqueId } from "lodash";
 import { create } from "nouislider";
-import { ref, onMounted, computed, toRefs, watch } from "vue";
+import { ref, onMounted, onUnmounted, computed, toRefs, watch } from "vue";
 import type { API } from "nouislider";
 import "nouislider/dist/nouislider.css";
-import { isNaN } from "lodash";
 
-type RangeType = [number | null, number | null];
-type ColType = { count: number; value: RangeType };
+export type RangeType = [number, number];
+type ColRangeType = [null, number] | [number, number] | [number, null];
+export type ColType = { count: number; value: ColRangeType };
+
+interface IEmits {
+  (event: "change", value: RangeType): void;
+}
 
 interface IProps {
-  value: RangeType;
   min?: number;
   max: number;
   step?: number;
@@ -66,21 +136,42 @@ interface IProps {
   updateOnColumnClick?: boolean;
   showTooltipOnColHover?: boolean;
   disabled?: boolean;
+  value: RangeType;
 }
+
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   step: 1,
   min: 0,
   cols: () => [],
-  colsHeight: "",
   updateOnColumnClick: false,
   showTooltipOnColHover: false,
 });
 
-const model = defineModel<IProps["value"]>("value");
-const { min, max, step, cols } = toRefs(props);
-const start = ref(model.value ? model.value[0] : min.value);
-const end = ref(model.value ? (model.value[1] ?? null) : max.value);
+const DEFAULT_DEBOUNCE_IN_MS = 200;
+
+const { value, min, max, step, cols } = toRefs(props);
+
+const leftInput = ref<number>(0);
+const rightInput = ref<number>();
+const isAnyInputFocused = ref<boolean>(false);
+const uniqueId = getUniqueId("slider");
+
+watch([value, min, max], ([newValue, newMin, newMax]) => {
+  if (slider) {
+    slider.updateOptions(
+      {
+        start: getSliderStart(newValue[0], newValue[1]),
+        range: { min: newMin, max: newMax },
+      },
+      false,
+    );
+  }
+
+  leftInput.value = newValue[0];
+  rightInput.value = typeof newValue[1] === "number" ? newValue[1] : undefined;
+});
 
 const sliderRef = ref<HTMLElement | null>(null);
 let slider: API | null = null;
@@ -101,7 +192,7 @@ const normalizedCols = computed(() => {
       return from > min.value && from < max.value;
     }
 
-    return from && to && to > min.value && from < max.value;
+    return !!from && !!to && to > min.value && from < max.value;
   });
 
   const counts = allowedCols.map((column) => column.count);
@@ -113,7 +204,7 @@ const normalizedCols = computed(() => {
     const _to = to && to < max.value ? to : max.value;
 
     return {
-      value: [_from, _to] as RangeType,
+      value: [_from, _to],
       count: column.count,
       height: `${Math.round((column.count / maxCount) * 100)}%`,
       position: {
@@ -124,29 +215,46 @@ const normalizedCols = computed(() => {
   });
 });
 
-function isRangesEqual(a?: RangeType, b?: RangeType) {
-  if (!a || !b) {
-    return false;
-  }
-
-  return a[0] === b[0] && a[1] === b[1];
+function handleStartInputFocus() {
+  isAnyInputFocused.value = true;
 }
 
-function updateModel(range: RangeType, fromSlider = false) {
-  if (isRangesEqual(model.value, range)) {
-    return;
-  }
-
-  model.value = range;
-
-  if (!fromSlider && slider) {
-    slider.set(range);
-  }
+function handleEndInputFocus() {
+  isAnyInputFocused.value = true;
 }
 
-watch([start, end], ([v1, v2]) => {
-  updateModel([v1, v2]);
-});
+function handleInputBlur() {
+  // Use setTimeout to ensure focus state is updated before checking
+  isAnyInputFocused.value = false;
+
+  setTimeout(() => {
+    // Only apply constraints if no input is focused
+    if (!isAnyInputFocused.value) {
+      applyInputConstraints();
+    }
+  }, 0);
+}
+
+function handleEnterKey() {
+  // Apply constraints immediately when Enter is pressed
+  applyInputConstraints();
+}
+
+function applyInputConstraints() {
+  let newStart = leftInput.value;
+  let newEnd = rightInput.value;
+
+  // Fallback to 0 if inputs are empty
+  [newStart, newEnd] = enforceMinimumDistance(newStart || 0, newEnd || 0);
+
+  leftInput.value = newStart;
+  rightInput.value = newEnd;
+
+  const innerRange = [newStart, newEnd] satisfies RangeType;
+  if (!isEqual(innerRange, props.value)) {
+    emit("change", innerRange);
+  }
+}
 
 onMounted(() => {
   if (!sliderRef.value) {
@@ -154,18 +262,120 @@ onMounted(() => {
   }
 
   slider = create(sliderRef.value, {
-    start: model.value,
+    start: getSliderStart(value.value[0], value.value[1]),
     connect: true,
     step: step.value,
     range: { min: min.value, max: max.value },
   });
 
-  slider.on("update", (v) => {
-    start.value = +v[0];
-    end.value = +v[1];
-    updateModel([+v[0], +v[1]], true);
+  slider.on("update", (v: (string | number)[]) => {
+    const [newStart, newEnd] = enforceMinimumDistance(+v[0], +v[1], leftInput.value);
+    leftInput.value = newStart;
+    rightInput.value = newEnd;
   });
+
+  // Debounced version of the change handler for smoother updates
+  const debouncedChangeHandler = useDebounceFn((v: (string | number)[]) => {
+    const [newStart, newEnd] = enforceMinimumDistance(+v[0], +v[1], leftInput.value);
+    const range: RangeType = [newStart, newEnd];
+    leftInput.value = range[0];
+    rightInput.value = range[1];
+
+    // Only emit if values actually changed
+    if (!isEqual(range, props.value)) {
+      emit("change", range);
+    }
+  }, DEFAULT_DEBOUNCE_IN_MS);
+
+  // Listen for slider changes with debouncing
+  slider.on("change", debouncedChangeHandler);
 });
+
+onUnmounted(() => {
+  if (slider) {
+    slider.destroy();
+    slider = null;
+  }
+});
+
+function onColumnClick(col: { value: [number, number] }): void {
+  if (!props.updateOnColumnClick) {
+    return;
+  }
+
+  const [newStart, newEnd] = enforceMinimumDistance(col.value[0], col.value[1]);
+
+  leftInput.value = newStart;
+  rightInput.value = newEnd;
+
+  slider?.updateOptions(
+    {
+      start: getSliderStart(newStart, newEnd),
+    },
+    false,
+  );
+
+  emit("change", [newStart, newEnd]);
+}
+
+function clampValue(val: number): number {
+  return Math.max(min.value, Math.min(max.value, val));
+}
+
+function adjustForMinimumDistance(startValue: number, endValue: number, previousStart?: number): [number, number] {
+  if (Math.abs(endValue - startValue) < step.value) {
+    if (previousStart !== undefined && startValue === previousStart) {
+      // End handle was moved, adjust start
+      startValue = endValue - step.value;
+      if (startValue < min.value) {
+        startValue = min.value;
+        endValue = Math.min(max.value, startValue + step.value);
+      }
+    } else {
+      // Start handle was moved, adjust end
+      endValue = startValue + step.value;
+      if (endValue > max.value) {
+        endValue = max.value;
+        startValue = Math.max(min.value, endValue - step.value);
+      }
+    }
+  }
+  return [startValue, endValue];
+}
+
+function enforceMinimumDistance(startValue: number, endValue: number, previousStart?: number): [number, number] {
+  // Clamp values to min/max boundaries
+  startValue = clampValue(startValue);
+  endValue = clampValue(endValue);
+
+  // Handle case where start value is higher than end value
+  if (startValue > endValue) {
+    [startValue, endValue] = [endValue, startValue];
+  }
+
+  // Ensure minimum distance between handles
+  [startValue, endValue] = adjustForMinimumDistance(startValue, endValue, previousStart);
+
+  // Final validation to ensure minimum step distance
+  if (Math.abs(endValue - startValue) < step.value) {
+    if (endValue + step.value <= max.value) {
+      endValue = startValue + step.value;
+    } else if (startValue - step.value >= min.value) {
+      startValue = endValue - step.value;
+    } else {
+      // Fallback: center the range with minimum distance
+      const center = (min.value + max.value) / 2;
+      startValue = Math.max(min.value, center - step.value / 2);
+      endValue = Math.min(max.value, center + step.value / 2);
+    }
+  }
+
+  return [startValue, endValue];
+}
+
+function getSliderStart(value1: number, value2: number): [number, number] {
+  return [value1, value2];
+}
 </script>
 
 <style lang="scss">
@@ -173,7 +383,7 @@ onMounted(() => {
   $hoverable: "";
   $clickable: "";
 
-  --props-cols-height: v-bind(colsHeight);
+  --props-cols-height: v-bind(props.colsHeight);
   --cols-height: var(--vc-slider-cols-height, var(--props-cols-height, 2rem));
   --handle-size: 1.125rem;
 
@@ -232,6 +442,7 @@ onMounted(() => {
 
     .noUi-handle {
       @apply top-[calc(var(--handle-size)/-2.5)] right-[calc(var(--handle-size)/-2)] size-[--handle-size] rounded-full bg-additional-50 border-4 border-primary cursor-pointer;
+      @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
 
       &::before,
       &::after {
@@ -245,7 +456,7 @@ onMounted(() => {
   }
 
   &__inputs {
-    @apply flex items-center gap-4 mt-5;
+    @apply flex items-center gap-2 mt-5;
   }
 
   &__input {

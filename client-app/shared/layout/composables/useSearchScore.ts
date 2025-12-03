@@ -1,6 +1,11 @@
 import { createGlobalState } from "@vueuse/core";
 import { ref, computed } from "vue";
 
+type SearchScope = {
+  queryScope: string;
+  searchScope: ScopeItemType[];
+};
+
 type ScopeItemType = {
   id: string | number;
   label: string;
@@ -9,38 +14,50 @@ type ScopeItemType = {
 };
 
 function _useSearchScore() {
-  const searchScope = ref<ScopeItemType[]>([]);
+  const searchScopeData = ref<SearchScope>({
+    queryScope: "",
+    searchScope: [],
+  });
 
   const preparingScope = ref(false);
 
   const isCategoryScope = computed(() => {
-    return searchScope.value.some((el) => el.type === "category");
+    return searchScopeData.value.searchScope.some((el) => el.type === "category");
   });
 
   const searchScopeFilterExpression = computed(() => {
-    return searchScope.value.map((el) => el.filter).join(" ");
+    return searchScopeData.value.searchScope.map((el) => el.filter).join(" ");
   });
 
   function removeScopeItemByType(itemType: ScopeItemType["type"]) {
-    searchScope.value = searchScope.value.filter((el) => el.type !== itemType);
+    searchScopeData.value.searchScope = searchScopeData.value.searchScope.filter((el) => el.type !== itemType);
   }
 
   function removeScopeItemById(itemId: ScopeItemType["id"]) {
-    searchScope.value = searchScope.value.filter((el) => el.id !== itemId);
+    searchScopeData.value.searchScope = searchScopeData.value.searchScope.filter((el) => el.id !== itemId);
   }
 
   function addScopeItem(item: ScopeItemType) {
-    searchScope.value.push(item);
+    searchScopeData.value.searchScope.push(item);
+  }
+
+  function setQueryScope(query: string) {
+    searchScopeData.value = {
+      ...searchScopeData.value,
+      queryScope: query,
+    };
   }
 
   return {
-    searchScope,
+    searchScopeData,
     searchScopeFilterExpression,
     preparingScope,
 
     removeScopeItemByType,
     removeScopeItemById,
     addScopeItem,
+
+    setQueryScope,
 
     isCategoryScope,
   };

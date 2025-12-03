@@ -73,7 +73,6 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
   clickable: true,
-  maxLines: "",
 });
 
 const currentElement = ref<HTMLElement>();
@@ -150,7 +149,7 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full px-3 text-left rounded-[inherit] text-sm/[0.875rem];
+    @apply flex items-center w-full px-3 text-left rounded-[inherit] text-sm/[0.875rem] font-normal;
 
     &:not(:disabled) {
       @apply bg-additional-50 text-neutral-950;
@@ -211,7 +210,7 @@ onMounted(() => {
 
         &:focus,
         &:focus-visible {
-          @apply outline-[--focus-color] -outline-offset-1;
+          @apply outline-[--focus-color] -outline-offset-1 rounded;
         }
 
         &#{$active} {

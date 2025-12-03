@@ -1,0 +1,15 @@
+fragment filter on SearchProductFilterResult {
+  name
+  label
+  filterType
+  rangeValues {
+    includeLowerBound
+    includeUpperBound
+    lower
+    upper
+  }
+  termValues {
+    label
+    value
+  }
+}

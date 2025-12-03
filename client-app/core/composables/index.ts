@@ -1,6 +1,7 @@
 export * from "./useAnalytics";
 export * from "./useAuth";
 export * from "./useBreadcrumbs";
+export * from "./useBrowserTarget";
 export * from "./useCategoriesRoutes";
 export * from "./useCountries";
 export * from "./useCurrency";
@@ -13,6 +14,7 @@ export * from "./usePageHead";
 export * from "./usePageTitle";
 export * from "./useProductsRoutes";
 export * from "./useRouteQueryParam";
+export * from "./useSupportReports";
 export * from "./useSyncMutationBatchers";
 export * from "./useThemeContext";
 export * from "./useWhiteLabeling";

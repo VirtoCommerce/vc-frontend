@@ -13,10 +13,6 @@
       },
     ]"
     v-bind="attrs"
-    tabindex="-1"
-    role="button"
-    @keyup="handleContainerClick($event)"
-    @click="handleContainerClick($event)"
   >
     <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">
       {{ label }}
@@ -24,7 +20,7 @@
 
     <div class="vc-input__container">
       <div v-if="$slots.prepend" class="vc-input__decorator">
-        <slot name="prepend" />
+        <slot name="prepend" :focus-input="focusInput" />
       </div>
 
       <input
@@ -42,13 +38,16 @@
         :minlength="minlength"
         :maxlength="maxlength"
         :step="stepValue"
-        :autocomplete="autocomplete"
+        :autocomplete="computedAutocomplete"
         :aria-label="ariaLabel ?? label"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
+        :tabindex="tabindex"
         :data-test-id="testIdInput"
         @keydown="keyDown($event)"
-        @click.prevent.stop="inputClick()"
+        @click.stop="inputClick"
+        @blur="$emit('blur', $event)"
+        @focus="$emit('focus', $event)"
       />
 
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
@@ -60,6 +59,8 @@
           variant="no-background"
           class="vc-input__clear"
           :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+          @keydown.enter.stop.prevent
+          @keyup.enter.stop.prevent="clear"
           @click.stop="clear"
         />
       </div>
@@ -78,7 +79,7 @@
       </div>
 
       <div v-if="$slots.append" class="vc-input__decorator">
-        <slot name="append" />
+        <slot name="append" :focus-input="focusInput" />
       </div>
     </div>
 
@@ -87,7 +88,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends string | number | null">
-import { provide, computed, ref } from "vue";
+import { provide, computed, ref, useTemplateRef } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
 export interface IProps {
@@ -113,13 +114,15 @@ export interface IProps {
   maxlength?: string | number;
   center?: boolean;
   truncate?: boolean;
-  type?: "text" | "password" | "number" | "email" | "search";
-  size?: "xs" | "sm" | "md" | "auto";
+  type?: "text" | "password" | "number" | "email" | "search" | "date";
+  size?: VcInputSizeType;
   clearable?: boolean;
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
   testIdInput?: string;
   aria?: Record<string, string | number | null>;
+  disableAutocomplete?: boolean;
+  tabindex?: string | number;
 }
 
 defineOptions({
@@ -128,20 +131,35 @@ defineOptions({
 
 const emit = defineEmits<{
   (event: "clear"): void;
+  (event: "blur", blurEvent: FocusEvent): void;
+  (event: "focus", focusEvent: FocusEvent): void;
 }>();
 
 const props = withDefaults(defineProps<IProps>(), {
   type: "text",
   size: "md",
   browserTooltip: "disabled",
+  tabindex: 0,
 });
+
+const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 const componentId = useComponentId("input");
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
-const inputElement = ref<HTMLInputElement>();
+const computedAutocomplete = computed(() => {
+  if (props.disableAutocomplete) {
+    return "none";
+  }
+
+  return props.autocomplete;
+});
+
+const inputElement = useTemplateRef("inputElement");
 const inputType = computed(() => (props.type === "password" && isPasswordVisible.value ? "text" : props.type));
+
+defineExpose({ inputElement });
 
 const model = defineModel<T>({
   set(value) {
@@ -155,8 +173,8 @@ const model = defineModel<T>({
 
 const _size = computed(() => props.size);
 
-const minValue = computed(() => (props.type === "number" ? props.min : undefined));
-const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
+const minValue = computed(() => (LIMITED_TYPES.includes(props.type) ? props.min : undefined));
+const maxValue = computed(() => (LIMITED_TYPES.includes(props.type) ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
 
 const isPasswordVisible = ref<boolean>(false);
@@ -164,30 +182,34 @@ const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ?
 
 function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
+  focusInput();
 }
 
-function handleContainerClick(event: Event) {
-  if (event instanceof KeyboardEvent && event.key === "Tab") {
-    return;
-  }
-
+function focusInput() {
   if (inputElement.value) {
     inputElement.value.focus();
+    setTimeout(() => {
+      if (inputElement.value?.type !== "date") {
+        const len = inputElement.value?.value.length ?? 0;
+        inputElement.value?.setSelectionRange(len, len);
+      }
+    }, 0);
   }
 }
 
 function clear() {
   model.value = undefined;
-  inputElement.value?.focus();
+  focusInput();
   emit("clear");
 }
 
 // Workaround to fix Safari bug
 function keyDown(event: KeyboardEvent) {
   if (props.type === "number") {
-    const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight)/;
-
-    return !event.key.match(allowedCharacter) && event.preventDefault();
+    const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight|ArrowUp|ArrowDown)/;
+    if (!allowedCharacter.test(event.key)) {
+      event.preventDefault();
+    }
   }
 }
 
@@ -217,6 +239,9 @@ provide<VcInputContextType>("inputContext", {
 
   --color: var(--vc-input-base-color, theme("colors.primary.500"));
   --focus-color: rgb(from var(--color) r g b / 0.3);
+
+  --radius: var(--vc-input-radius, var(--vc-radius, 0.5rem));
+  --vc-button-radius: calc(var(--radius) - 2px);
 
   @apply flex flex-col;
 
@@ -261,7 +286,7 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__container {
-    @apply flex items-stretch p-0.5 border border-neutral-400 rounded bg-additional-50 select-none;
+    @apply flex items-stretch p-0.5 border border-neutral-400 rounded-[--radius] bg-additional-50 select-none;
 
     #{$sizeXs} & {
       @apply h-8 text-sm;
@@ -303,10 +328,24 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__input {
-    @apply relative m-px px-2 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
+    @apply relative m-px px-2 bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;
+    }
+
+    &::-webkit-calendar-picker-indicator {
+      @apply hidden;
+    }
+
+    &::-moz-calendar-picker-indicator {
+      @apply hidden;
+    }
+
+    &[type="date"] {
+      @apply -me-8;
+
+      clip-path: inset(0 2rem 0 0);
     }
 
     &:autofill {

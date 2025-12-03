@@ -6,6 +6,7 @@ import {
   deleteWishlist,
   deleteWishlistItem,
   getWishList,
+  getSharedWishList,
   getWishlists,
   updateWishlistItems,
 } from "@/core/api/graphql/account";
@@ -83,6 +84,19 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
       list.value = await getWishList(listId);
     } catch (e) {
       Logger.error(`${useWishlists.name}.${fetchWishList.name}`, e);
+      throw e;
+    } finally {
+      listLoading.value = false;
+    }
+  }
+
+  async function fetchSharedWishList(sharingKey: string) {
+    listLoading.value = true;
+
+    try {
+      list.value = await getSharedWishList(sharingKey);
+    } catch (e) {
+      Logger.error(`${useWishlists.name}.${fetchSharedWishList.name}`, e);
       throw e;
     } finally {
       listLoading.value = false;
@@ -187,6 +201,7 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
   return {
     fetchWishlists,
     fetchWishList,
+    fetchSharedWishList,
     createWishlist,
     removeWishlist,
     addItemsToWishlists,

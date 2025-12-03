@@ -45,7 +45,7 @@
           </div>
         </template>
 
-        <div class="product-configuration__items">
+        <div class="product-configuration__items" @focusin="handleItemsFocusIn">
           <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.product">
             <template v-for="option in section.options" :key="option.id">
               <OptionProduct
@@ -135,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef, watch } from "vue";
+import { nextTick, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
@@ -150,7 +150,7 @@ import OptionNone from "./option-none.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
 import SectionTextFieldset from "./section-text-fieldset.vue";
-import type { ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { CartConfigurationItemType, ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
 const props = defineProps<IProps>();
@@ -161,8 +161,10 @@ const NOTIFICATIONS_GROUP = "product-configuration";
 interface IProps {
   configuration: DeepReadonly<ConfigurationSectionType[]>;
   productId: string;
+  initialConfiguration?: CartConfigurationItemType[];
 }
 
+const initialConfiguration = toRef(props, "initialConfiguration");
 const configurableProductId = toRef(props, "productId");
 
 const { t } = useI18n();
@@ -174,10 +176,35 @@ const {
   changeCartConfiguredItem,
   validationErrors,
   loading: isDataUpdating,
+  updateWithPreselectedValues,
 } = useConfigurableProduct(configurableProductId.value);
 
 const { openModal } = useModal();
 const notifications = useNotifications();
+
+function handleItemsFocusIn(event: FocusEvent) {
+  const target = event.target as HTMLElement;
+  const itemsContainer = event.currentTarget as HTMLElement;
+  const relatedTarget = event.relatedTarget as HTMLElement | null;
+  if (!itemsContainer) return;
+
+  const isFocusFromOutside = !relatedTarget || !itemsContainer.contains(relatedTarget);
+  if (!isFocusFromOutside || !itemsContainer.contains(target)) return;
+
+  const radioInput = itemsContainer.querySelector('input[type="radio"]:checked');
+  if (radioInput instanceof HTMLInputElement && target !== radioInput) {
+    radioInput.focus();
+  }
+}
+
+watch(
+  initialConfiguration,
+  async () => {
+    await nextTick();
+    updateWithPreselectedValues(initialConfiguration.value);
+  },
+  { immediate: true },
+);
 
 watch(
   () => [isConfigurationChanged.value, validationErrors.value.size === 0, isDataUpdating.value],

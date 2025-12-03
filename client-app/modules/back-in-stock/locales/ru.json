@@ -8,11 +8,12 @@
     },
     "list_details": {
       "empty_list": "Список ожидаемых товаров пуст",
+      "no_results_message": "Результаты не найдены",
       "empty_list_button": "Продолжить покупки"
     },
     "messages": {
       "click_to_receive_alert": "Нажмите, чтобы получить уведомление",
-      "notify_me_when_in_stock": "Сообщить о поступлении",
+      "stock_alert": "Оповещение",
       "you_are_subscribed": "Вы подписаны! Мы сообщим вам, когда товар снова появится в наличии.",
       "you_will_be_notified": "Вам будет отправлено уведомление"
     },
@@ -25,7 +26,7 @@
       },
       "reset_search": "Сбросить поиск",
       "search_button": "Поиск",
-      "search_placeholder": "Поиск"
+      "search_placeholder": "По названию товара"
     }
   }
 }

@@ -21,9 +21,11 @@
             :shared-selected-item-ids="selectedItemIds"
             :disabled="disabled"
             :validation-errors="validationErrors"
+            :hide-controls="hideControls"
             @change:item-quantity="$emit('change:itemQuantity', $event)"
             @select:items="$emit('select:items', $event)"
             @remove:items="$emit('remove:items', $event)"
+            @save-for-later="$emit('saveForLater', $event)"
             @link-click="$emit('linkClick', $event)"
           />
         </div>
@@ -37,9 +39,11 @@
         :shared-selected-item-ids="selectedItemIds"
         :disabled="disabled"
         :validation-errors="validationErrors"
+        :hide-controls="hideControls"
         @change:item-quantity="$emit('change:itemQuantity', $event)"
         @select:items="$emit('select:items', $event)"
         @remove:items="$emit('remove:items', $event)"
+        @save-for-later="$emit('saveForLater', $event)"
         @link-click="$emit('linkClick', $event)"
       />
     </template>
@@ -51,6 +55,7 @@
         size="sm"
         class="self-start"
         variant="outline"
+        data-test-id="cart.clear-button"
         @click="$emit('clear:cart')"
       >
         {{ $t("common.buttons.clear_cart") }}
@@ -71,6 +76,7 @@ interface IEmits {
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "clear:cart"): void;
   (event: "linkClick", value: LineItemType | undefined): void;
+  (event: "saveForLater", value: string[]): void;
 }
 
 interface IProps {
@@ -80,6 +86,7 @@ interface IProps {
   selectedItemIds?: string[];
   itemsGroupedByVendor?: VendorGroupType<LineItemType>[];
   validationErrors?: ValidationErrorType[];
+  hideControls?: string[];
 }
 
 defineEmits<IEmits>();

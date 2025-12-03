@@ -6,7 +6,9 @@ fragment property on Property {
     description
   }
   name
+  colorCode
   value
+  valueDisplayOrder
   propertyType
   hidden
   propertyValueType

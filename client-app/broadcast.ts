@@ -2,10 +2,10 @@ import { useApolloClient } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { filterActiveQueryNames } from "@/core/api/graphql";
 import { OperationNames } from "@/core/api/graphql/types";
-import { useThemeContext } from "@/core/composables";
+import { useSupportReports, useThemeContext } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
-import { getReturnUrlValue } from "@/core/utilities";
+import { buildRedirectUrl, getReturnUrlValue } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSignMeOut, useUser } from "@/shared/account";
 import {
@@ -24,6 +24,7 @@ import {
   dataChangedEvent,
 } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
+import type { INotification, NotificationCustomButtonType } from "@/shared/notification";
 
 let installed = false;
 
@@ -43,6 +44,26 @@ export function setupBroadcastGlobalListeners() {
   const { fetchUser, user } = useUser();
   const { signMeOut } = useSignMeOut({ reloadPage: false });
   const { themeContext } = useThemeContext();
+  const { report } = useSupportReports();
+
+  function createReportButton(error: unknown): NotificationCustomButtonType {
+    return {
+      text: t("common.buttons.report_a_problem"),
+      color: "secondary",
+      variant: "outline",
+      clickHandler: (notificationId: string) => {
+        report({ error: error });
+
+        notifications.update(notificationId, {
+          duration: 5000,
+          type: "success",
+          text: t("common.messages.report_sent_successfully"),
+          variant: "solid",
+          button: undefined,
+        });
+      },
+    };
+  }
 
   on(pageReloadEvent, () => location.reload());
   on(reloadAndOpenMainPage, () => {
@@ -62,7 +83,10 @@ export function setupBroadcastGlobalListeners() {
     const route = router.currentRoute.value;
 
     if (route.matched.some((item) => item.name === "Checkout")) {
-      await router.replace({ name: "Cart" });
+      await router.replace({
+        name: route.params.cartId ? "SharedCart" : "Cart",
+        params: { cartId: route.params.cartId },
+      });
     } else {
       await client.refetchQueries({
         include: filterActiveQueryNames(client, [OperationNames.Query.GetFullCart, OperationNames.Query.GetShortCart]),
@@ -77,27 +101,56 @@ export function setupBroadcastGlobalListeners() {
       return;
     }
 
-    const { hash, pathname, search } = location;
-
-    if (pathname !== ROUTES.SIGN_IN.PATH) {
-      location.href = `${ROUTES.SIGN_IN.PATH}?returnUrl=${pathname + search + hash}`;
+    const query = buildRedirectUrl(router.currentRoute.value);
+    if (query && router.currentRoute.value.name !== ROUTES.SIGN_IN.NAME) {
+      void router.push({ name: ROUTES.SIGN_IN.NAME, query });
     }
   });
   on(graphqlErrorEvent, (error) => {
-    notifications.error({
+    const notification: INotification = {
       duration: DEFAULT_NOTIFICATION_DURATION,
-      group: "GraphqlError",
+      variant: "outline-dark",
+      group: "GenericError",
+      singleInGroup: true,
       text: t("common.messages.something_went_wrong"),
-    });
+    };
 
-    throw error;
-  });
-  on(unhandledErrorEvent, () => {
+    if (error) {
+      notification.button = createReportButton(error);
+    }
+
     notifications.error({
-      duration: DEFAULT_NOTIFICATION_DURATION,
-      group: "UnhandledError",
+      ...notification,
+    });
+  });
+  on(unhandledErrorEvent, (error) => {
+    const notification: INotification = {
+      variant: "outline-dark",
+      group: "GenericError",
       singleInGroup: true,
       text: t("common.messages.unhandled_error"),
+    };
+
+    if (error) {
+      notification.button = {
+        text: t("common.buttons.report_a_problem"),
+        color: "secondary",
+        variant: "outline",
+        clickHandler: (notificationId: string) => {
+          report({ error: error });
+          notifications.update(notificationId, {
+            duration: 5000,
+            type: "success",
+            text: t("common.messages.report_sent_successfully"),
+            variant: "solid",
+            button: undefined,
+          });
+        },
+      };
+    }
+
+    notifications.error({
+      ...notification,
     });
   });
   on(openReturnUrl, () => {
@@ -109,16 +162,18 @@ export function setupBroadcastGlobalListeners() {
   });
 
   on(passwordExpiredEvent, () => {
-    const { hash, pathname, search } = location;
-    if (pathname !== "/change-password") {
-      location.href = `/change-password?returnUrl=${pathname + search + hash}`;
+    const query = buildRedirectUrl(router.currentRoute.value);
+
+    if (query && router.currentRoute.value.name !== ROUTES.CHANGE_PASSWORD.NAME) {
+      void router.push({ name: ROUTES.CHANGE_PASSWORD.NAME, query });
     }
   });
 
   on(dataChangedEvent, () => {
     notifications.warning({
+      group: "DataChanged",
+      singleInGroup: true,
       text: t("common.messages.data_changed"),
-      single: true,
     });
   });
 }

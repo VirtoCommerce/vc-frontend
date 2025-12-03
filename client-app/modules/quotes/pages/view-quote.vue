@@ -47,7 +47,7 @@
         prepend-icon="document-text"
         class="mt-5"
       >
-        <ul class="space-y-2 rounded border border-neutral-200 px-3 py-4">
+        <ul class="space-y-2 rounded-[--vc-radius] border border-neutral-200 px-3 py-4">
           <li v-for="(attachment, index) in quote.attachments" :key="index">
             <VcFile :file="getFile(attachment)" @download="onDownload" />
           </li>
@@ -120,7 +120,7 @@ async function approve() {
   try {
     const result = await approveItem(quote.value!.id);
     await router.push({ name: "OrderDetails", params: { orderId: result.orderId } });
-  } catch (e) {
+  } catch {
     notification.error({
       text: t("quote_details.error.approve"),
     });
@@ -131,7 +131,7 @@ async function decline() {
   try {
     await declineItem(quote.value!.id);
     await fetchQuote({ id: props.quoteId });
-  } catch (e) {
+  } catch {
     notification.error({
       text: t("quote_details.error.decline"),
     });

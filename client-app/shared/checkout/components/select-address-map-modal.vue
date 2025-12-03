@@ -3,11 +3,22 @@
     :title="$t('shared.checkout.select_bopis_modal.title')"
     max-width="72rem"
     is-mobile-fullscreen
+    :is-full-height="!!addresses.length || filterIsApplied"
     class="select-address-map-modal"
   >
-    <div class="select-address-map-modal__content">
-      <div class="select-address-map-modal__map">
-        <GoogleMap :api-key="apiKey" :map-id="MAP_ID" :options="{ disableDefaultUI: true }">
+    <div v-if="addresses.length || filterIsApplied" class="select-address-map-modal__container">
+      <SelectAddressFilter @applyFilter="applyFilter" />
+
+      <div class="select-address-map-modal__content">
+        <VcLoaderOverlay v-if="pickupLocationsLoading" />
+
+        <GoogleMap
+          :api-key="apiKey"
+          :map-id="MAP_ID"
+          :options="{ disableDefaultUI: true }"
+          class="select-address-map-modal__map"
+          :key="addressesKey"
+        >
           <GoogleMapMarkerClusterer :map-id="MAP_ID">
             <template v-for="address in addresses" :key="address.id">
               <GoogleMapMarker
@@ -21,6 +32,14 @@
               >
                 <div class="select-address-map-modal__info-window">
                   <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
+
+                  <PickupAvailabilityInfo
+                    show-icon
+                    icon-size="sm"
+                    :availability-type="address.availabilityType"
+                    :availability-note="address.availabilityNote"
+                  />
+
                   <div class="select-address-map-modal__info-window-content">
                     <dl>
                       <dt>
@@ -82,33 +101,49 @@
             </template>
           </GoogleMapMarkerClusterer>
         </GoogleMap>
-      </div>
 
-      <div class="select-address-map-modal__sidebar">
-        <ul class="select-address-map-modal__list">
-          <li
-            v-for="address in addresses"
-            :key="address.id"
-            :data-address-id="address.id"
-            class="select-address-map-modal__list-item"
-          >
-            <VcRadioButton
-              v-model="selectedAddressId"
-              :value="address.id"
-              class="select-address-map-modal__radio-button"
-              size="sm"
-              @change="selectHandler(address, { scrollToSelectedOnMap: true })"
+        <VcScrollbar vertical class="select-address-map-modal__sidebar">
+          <ul v-if="addresses.length" class="select-address-map-modal__list">
+            <li
+              v-for="address in addresses"
+              :key="address.id"
+              :data-address-id="address.id"
+              class="select-address-map-modal__list-item"
             >
-              <div class="flex flex-col">
+              <VcRadioButton
+                v-model="selectedAddressId"
+                :value="address.id"
+                class="select-address-map-modal__radio-button"
+                size="sm"
+                @change="selectHandler(address, { scrollToSelectedOnMap: true })"
+              >
                 <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
 
                 <p class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</p>
-              </div>
-            </VcRadioButton>
-          </li>
-        </ul>
+
+                <PickupAvailabilityInfo
+                  class="select-address-map-modal__radio-button-pickup-availability"
+                  show-icon
+                  icon-size="xs"
+                  :availability-type="address.availabilityType"
+                  :availability-note="address.availabilityNote"
+                />
+              </VcRadioButton>
+            </li>
+          </ul>
+
+          <div v-else class="select-address-map-modal__not-found">
+            <span>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}</span>
+
+            <VcButton prepend-icon="reset" @click="resetFilter">
+              {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
+            </VcButton>
+          </div>
+        </VcScrollbar>
       </div>
     </div>
+
+    <div v-else>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found") }}</div>
 
     <template #actions="{ close }">
       <div class="select-address-map-modal__actions">
@@ -130,15 +165,18 @@ import { computed, ref, toRef, watch } from "vue";
 import { getAddressName } from "@/core/utilities/address";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
 import { Logger } from "@/core/utilities/logger";
+import { useCartPickupLocations } from "@/shared/cart";
+import { SelectAddressFilter } from "@/shared/checkout";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
 import { getColorValue } from "@/ui-kit/utilities/css";
-import type { GetPickupLocationsQuery } from "@/core/api/graphql/types";
+import type { GetCartPickupLocationsQuery } from "@/core/api/graphql/types";
 import GoogleMapMarkerClusterer from "@/shared/common/components/google-maps/google-map-marker-clusterer.vue";
 import GoogleMapMarker from "@/shared/common/components/google-maps/google-map-marker.vue";
 import GoogleMap from "@/shared/common/components/google-maps/google-map.vue";
+import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
-type PickupLocationType = NonNullable<NonNullable<GetPickupLocationsQuery["pickupLocations"]>["items"]>[number];
+type PickupLocationType = NonNullable<NonNullable<GetCartPickupLocationsQuery["cartPickupLocations"]>["items"]>[number];
 
 const emit = defineEmits<IEmits>();
 
@@ -147,6 +185,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const addresses = toRef(props, "addresses");
+const addressesKey = computed(() => addresses.value.map((a) => a.id).join("-"));
 const currentAddress = toRef(props, "currentAddress");
 const selectedAddressId = ref<string | undefined>(currentAddress.value?.id);
 const changed = computed(() => selectedAddressId.value !== currentAddress.value?.id);
@@ -164,7 +203,8 @@ interface IProps {
 }
 
 interface IEmits {
-  result: [string];
+  (event: "result", value: string): void;
+  (event: "filterChange"): void;
 }
 
 const pinColor = getColorValue("primary");
@@ -189,6 +229,18 @@ function createPin() {
     glyph: cloneElement(cube),
     scale: 1.5,
   };
+}
+
+const { filterIsApplied, clearFilter, pickupLocationsLoading } = useCartPickupLocations();
+
+function applyFilter() {
+  filterIsApplied.value = true;
+  emit("filterChange");
+}
+
+function resetFilter() {
+  clearFilter();
+  applyFilter();
 }
 
 function getLatLng(location: string | undefined) {
@@ -243,6 +295,17 @@ watch(
     if (newMarkers.length > 0 && !selectedAddressId.value) {
       zoomToMarkers();
     }
+    if (selectedAddressId.value) {
+      const address = addresses.value.find(({ id }) => id === selectedAddressId.value);
+      if (!address) {
+        zoomToMarkers();
+      } else if (address.geoLocation) {
+        const latLng = getLatLng(address.geoLocation);
+        if (latLng) {
+          zoomToLatLng(latLng);
+        }
+      }
+    }
   },
   {
     immediate: true,
@@ -266,27 +329,41 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 </script>
 
 <style lang="scss">
-$mapHeight: 523px;
-
 .select-address-map-modal {
+  &__container {
+    @apply flex flex-col h-full pt-0;
+  }
+
   &__content {
-    @apply relative w-full flex flex-col lg:h-[#{$mapHeight}] lg:flex-row gap-5;
+    @apply relative flex flex-col gap-3 w-full flex-1 max-h-[90%];
+
+    @media (min-width: theme("screens.md")) {
+      @apply flex-row;
+    }
   }
 
   &__map {
-    @apply h-[#{$mapHeight}] size-full flex-grow rounded-lg overflow-hidden;
+    @apply grow w-full;
+
+    @media (min-width: theme("screens.md")) {
+      @apply h-auto ps-0;
+    }
   }
 
   &__sidebar {
-    @apply min-w-56 max-h-full lg:order-first;
+    @apply shrink-0 min-w-56 max-h-[40%];
+
+    @media (min-width: theme("screens.md")) {
+      @apply order-first max-h-full pe-2.5;
+    }
   }
 
   &__list {
-    @apply flex flex-col gap-3 max-h-full overflow-y-auto;
+    @apply flex flex-col gap-3;
   }
 
   &__list-item {
-    @apply p-2.5 rounded border border-neutral-400;
+    @apply p-2.5 rounded-[--vc-radius] border border-neutral-400;
 
     &:has(:checked) {
       @apply bg-secondary-50;
@@ -303,6 +380,14 @@ $mapHeight: 523px;
     &-address {
       @apply text-xs font-normal;
     }
+
+    &-pickup-availability {
+      @apply text-xs font-normal;
+    }
+  }
+
+  &__not-found {
+    @apply flex flex-col gap-3 w-60;
   }
 
   &__actions {

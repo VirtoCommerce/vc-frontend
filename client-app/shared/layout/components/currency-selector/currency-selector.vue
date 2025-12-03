@@ -1,19 +1,26 @@
 <template>
-  <VcDropdownMenu placement="bottom-end" width="8rem" class="h-full">
-    <template #trigger="{ opened }">
-      <button type="button" class="flex h-full items-center gap-x-1.5" data-test-id="currency-selector-button">
-        <span class="text-sm">
+  <VcDropdownMenu
+    placement="bottom-end"
+    width="8rem"
+    class="currency-selector"
+    data-test-id="main-layout.top-header.currency-selector"
+  >
+    <template #trigger="{ opened, triggerProps }">
+      <button
+        type="button"
+        class="currency-selector__button"
+        data-test-id="main-layout.top-header.currency-selector-button"
+        v-bind="triggerProps"
+      >
+        <span class="currency-selector__label">
           {{ $t("shared.layout.currency_selector.label") }}
         </span>
 
-        <span
-          class="uppercase text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
-          data-test-id="current-currency-label"
-        >
+        <span class="currency-selector__text" data-test-id="main-layout.top-header.current-currency-label">
           {{ currentCurrency.code }}
         </span>
 
-        <VcIcon class="fill-primary" size="xxs" :name="opened ? 'chevron-up' : 'chevron-down'" />
+        <VcIcon class="currency-selector__arrow" size="xxs" :name="opened ? 'chevron-up' : 'chevron-down'" />
       </button>
     </template>
 
@@ -22,7 +29,8 @@
         v-for="item in supportedCurrencies"
         :key="item.code"
         :active="item.code === currentCurrency.code"
-        :data-test-id="`currency-selector-item-${item.code}`"
+        :data-test-currency-code="item.code"
+        data-test-id="main-layout.top-header.currency-selector-item"
         color="secondary"
         truncate
         @click="
@@ -31,7 +39,7 @@
         "
       >
         <template #prepend>
-          <VcBadge rounded color="secondary" size="lg">{{ item.symbol }}</VcBadge>
+          <VcBadge rounded color="secondary">{{ item.symbol }}</VcBadge>
         </template>
 
         <span>{{ item.code }}</span>
@@ -75,3 +83,49 @@ async function select(code: string): Promise<void> {
   }
 }
 </script>
+
+<style lang="scss">
+.currency-selector {
+  @apply flex h-full items-stretch;
+
+  &__button {
+    @apply flex h-full items-center gap-3 p-1;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply gap-1.5;
+    }
+  }
+
+  &__label {
+    @apply hidden;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply block text-sm whitespace-nowrap;
+    }
+  }
+
+  &__img {
+    @apply size-7;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply size-3.5;
+    }
+  }
+
+  &__text {
+    @apply hidden;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply block uppercase text-[--header-top-link-color] hover:text-[--header-top-link-hover-color];
+    }
+  }
+
+  &__arrow {
+    @apply size-4 fill-[--mobile-menu-navigation-color];
+
+    @media (min-width: theme("screens.lg")) {
+      @apply size-2.5 fill-primary;
+    }
+  }
+}
+</style>

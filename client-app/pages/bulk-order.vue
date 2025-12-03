@@ -6,12 +6,18 @@
       {{ $t("pages.bulk_order.title") }}
     </VcTypography>
 
-    <VcTabs v-model="activeTab" :items="tabs" text-field="label" value-field="id" class="mb-5">
-      <template #item="{ item, isActive }">
-        <VcIcon class="me-1" :class="{ 'fill-primary-500': !isActive }" :name="item['icon']" />
-        <span>{{ item["label"] }}</span>
-      </template>
-    </VcTabs>
+    <div class="mb-5 flex gap-1">
+      <VcTabSwitch
+        v-for="tab in tabs"
+        :key="tab.id"
+        :model-value="activeTab"
+        :value="tab.id"
+        :label="toValue(tab.label)"
+        :icon="tab.icon"
+        name="bulk-order-tabs"
+        @change="activeTab = $event"
+      />
+    </div>
 
     <div v-for="tab in additionalTabs" :key="tab.id">
       <component :is="tab.element" :class="{ hidden: activeTab !== tab.id }" />
@@ -37,6 +43,7 @@ import { computed, ref, shallowRef, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { ROUTES } from "@/router/routes/constants";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
 import { useBulkOrderExtensionPoints } from "@/shared/bulk-order/composables/useBulkOrderExtensionPoints";
 import { useShortCart } from "@/shared/cart";
@@ -99,12 +106,12 @@ async function addItems(items: InputNewBulkItemType[]) {
         errorItems: itemsWithErrors.value,
         async onConfirm(): Promise<void> {
           closeAddToCartSkuErrorsModal();
-          await router.push({ name: "Cart" });
+          await router.push({ name: ROUTES.CART.NAME });
         },
       },
     });
   } else {
-    await router.push({ name: "Cart" });
+    await router.push({ name: ROUTES.CART.NAME });
   }
 }
 

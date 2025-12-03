@@ -1,6 +1,6 @@
 <template>
   <VcEmptyPage
-    v-if="!productsIds.length"
+    v-if="!hasProducts"
     :breadcrumbs="breadcrumbs"
     :title="$t('pages.compare.empty_list.title')"
     icon="outline-compare"
@@ -31,7 +31,7 @@
 
         <i18n-t keypath="pages.compare.header_block.counter_message" scope="global" tag="span" class="mb-3 block">
           <template #productsNumber>
-            <strong>{{ productsIds.length }}</strong>
+            <strong>{{ productsCount }}</strong>
           </template>
 
           <template #productsLimit>
@@ -52,20 +52,21 @@
     </div>
 
     <!-- Main block -->
-    <VcWidget size="lg">
+    <VcWidget v-if="productsToShow.length" size="lg">
       <template #default-container>
         <div
           ref="cardsElement"
-          class="hide-scrollbar sticky top-[-7.5rem] z-10 max-w-full overflow-x-auto rounded-t bg-additional-50 shadow-lg lg:top-[-8.25rem] lg:ps-[9.6rem]"
+          class="hide-scrollbar sticky top-[-7.5rem] z-10 max-w-full overflow-x-auto rounded-t-[--radius] bg-additional-50 shadow-lg lg:top-[-8.25rem] lg:ps-[9.6rem]"
         >
           <!-- Product cards block -->
           <div class="float-left flex min-w-full gap-4.5 p-5">
             <ProductCardCompare
-              v-for="product in products"
+              v-for="(product, index) in productsToShow"
               :key="product.id"
               :product="product"
               class="w-[9.625rem] lg:w-[13.625rem]"
-              @remove="removeFromCompareList(product)"
+              :configuration-id="getConfigurationId(product, index)"
+              @remove="handleRemoveFromCompareList(product, index)"
               @link-click="selectItemEvent(product)"
             />
           </div>
@@ -95,26 +96,22 @@
         </div>
       </template>
     </VcWidget>
+
+    <VcLoader v-else />
   </VcContainer>
 </template>
 
 <script setup lang="ts">
-import _ from "lodash";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { getPropertyValue } from "@/core/utilities";
-import { ProductCardCompare, useProducts } from "@/shared/catalog";
-import { useCompareProducts } from "@/shared/compare";
+import { ProductCardCompare } from "@/shared/catalog";
+import { useCompareProducts, useCompareProductsPage } from "@/shared/compare";
 import { useModal } from "@/shared/modal";
 import { VcConfirmationModal } from "@/ui-kit/components";
-import type { Product } from "@/core/api/graphql/types";
-
-interface ICompareProductProperties {
-  [key: string]: { label: string; values: string[] };
-}
+import { useHorizontalScrollSync } from "@/ui-kit/composables";
 
 const { t } = useI18n();
 
@@ -127,9 +124,18 @@ usePageHead({
 });
 
 const { getModuleSettings } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
-const { analytics } = useAnalytics();
-const { fetchProducts, products } = useProducts();
-const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
+const { clearCompareList, productsLimit } = useCompareProducts();
+const {
+  hasProducts,
+  productsToShow,
+  productsCount,
+  properties,
+  propertiesDiffs,
+  showOnlyDifferences,
+  handleRemoveFromCompareList,
+  getConfigurationId,
+  selectItemEvent,
+} = useCompareProductsPage();
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.compare.links.compare_products") }]);
 const { openModal, closeModal } = useModal();
 
@@ -137,56 +143,10 @@ const { continue_shopping_link } = getModuleSettings({
   [MODULE_XAPI_KEYS.CONTINUE_SHOPPING_LINK]: "continue_shopping_link",
 });
 
-const showOnlyDifferences = ref(false);
-
-const properties = ref<ICompareProductProperties>({});
-
 const cardsElement = ref<HTMLElement | null>(null);
 const propertiesElement = ref<HTMLElement | null>(null);
 
-const propertiesDiffs = computed<ICompareProductProperties>(() => {
-  return _.pickBy(properties.value, (prop) => _.uniq(prop.values).length !== 1);
-});
-
-const compareProductsListProperties = computed(() => ({
-  item_list_id: "compare_products",
-  item_list_name: t("pages.compare.header_block.title"),
-}));
-
-async function refreshProducts() {
-  await fetchProducts({ productIds: productsIds.value });
-
-  getProperties();
-}
-
-function getProperties() {
-  properties.value = {};
-
-  if (!products.value.length) {
-    return;
-  }
-
-  const propertiesCombined = _.flatten(_.map(products.value, "properties"));
-  const names = _.uniq(
-    propertiesCombined.map((prop) => {
-      return {
-        name: prop.name,
-        label: prop.label,
-      };
-    }),
-  );
-
-  _.each(names, ({ name, label }) => {
-    properties.value[name] = {
-      label,
-      values: _.map(products.value, (product) => {
-        const property = _.find(product.properties, ["name", name]);
-
-        return property ? (getPropertyValue(property) ?? "\u2013") : "\u2013";
-      }),
-    };
-  });
-}
+useHorizontalScrollSync(cardsElement, propertiesElement);
 
 function openClearListModal() {
   openModal({
@@ -195,7 +155,6 @@ function openClearListModal() {
       variant: "danger",
       title: t("shared.compare.clear_list_modal.title"),
       text: t("shared.compare.clear_list_modal.message"),
-      noIcon: true,
       onConfirm() {
         clearCompareList();
         closeModal();
@@ -203,51 +162,6 @@ function openClearListModal() {
     },
   });
 }
-
-watch(
-  () => productsIds.value,
-  async () => {
-    await refreshProducts();
-  },
-  { immediate: true },
-);
-
-function syncScroll(event: Event) {
-  if (cardsElement.value && propertiesElement.value) {
-    if (event.target === cardsElement.value) {
-      propertiesElement.value.scrollLeft = cardsElement.value.scrollLeft;
-    } else {
-      cardsElement.value.scrollLeft = propertiesElement.value.scrollLeft;
-    }
-  }
-}
-
-function selectItemEvent(product: Product) {
-  analytics("selectItem", product, compareProductsListProperties.value);
-}
-
-/**
- * Send Google Analytics event for related products.
- */
-watch(
-  products,
-  (productsValue) => {
-    if (!productsValue.length) {
-      return;
-    }
-
-    analytics("viewItemList", productsValue, compareProductsListProperties.value);
-  },
-  { immediate: true },
-);
-
-onMounted(() => {
-  // Add scroll event listeners to both elements
-  if (cardsElement.value && propertiesElement.value) {
-    cardsElement.value.addEventListener("scroll", syncScroll);
-    propertiesElement.value.addEventListener("scroll", syncScroll);
-  }
-});
 </script>
 
 <style scoped lang="scss">

@@ -1,14 +1,15 @@
-import { createGlobalState, createSharedComposable, useDebounceFn } from "@vueuse/core";
+import { createGlobalState, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
 import { useAnalytics, useHistoricalEvents, useThemeContext } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
-import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
+import { createSharedComposableByArgs } from "@/core/utilities/composables";
+import { useUser, useUserAddresses } from "@/shared/account";
 import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
@@ -22,7 +23,6 @@ import type {
   InputPaymentType,
   MemberAddressType,
   PaymentMethodType,
-  ShippingMethodType,
 } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
@@ -30,6 +30,7 @@ import SelectAddressModal from "@/shared/checkout/components/select-address-moda
 
 const useGlobalCheckout = createGlobalState(() => {
   const loading = ref(false);
+  const initialized = ref(false);
   const billingAddressEqualsShipping = ref(true);
   const placedOrder = shallowRef<CustomerOrderType | null>(null);
 
@@ -50,18 +51,20 @@ const useGlobalCheckout = createGlobalState(() => {
     _comment,
     purchaseOrderNumberChanging,
     _purchaseOrderNumber,
+    initialized,
     clearState,
   };
 });
 
-export function _useCheckout() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function _useCheckout(cartId?: string) {
   const { analytics } = useAnalytics();
   const { t } = useI18n();
+  const route = useRoute();
   const notifications = useNotifications();
   const { openModal, closeModal } = useModal();
   const router = useRouter();
   const { user, isAuthenticated, isCorporateMember } = useUser();
-  const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
   const {
     addresses: personalAddresses,
     fetchAddresses: fetchPersonalAddresses,
@@ -98,6 +101,7 @@ export function _useCheckout() {
     purchaseOrderNumberChanging,
     _purchaseOrderNumber,
     clearState: clearGlobalCheckoutState,
+    initialized,
   } = useGlobalCheckout();
   const { themeContext } = useThemeContext();
   const { pushHistoricalEvent } = useHistoricalEvents();
@@ -200,15 +204,6 @@ export function _useCheckout() {
     return addresses.value.some((item) => isEqualAddresses(item, address));
   }
 
-  async function setShippingMethod(method: ShippingMethodType): Promise<void> {
-    await updateShipment({
-      id: shipment.value?.id,
-      price: method.price?.amount,
-      shipmentMethodCode: method.code,
-      shipmentMethodOption: method.optionName,
-    });
-  }
-
   async function setPaymentMethod(method: PaymentMethodType): Promise<void> {
     await updatePayment({
       id: payment.value?.id,
@@ -224,33 +219,22 @@ export function _useCheckout() {
   });
 
   async function setCheckoutDefaults(): Promise<void> {
-    const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
-    const defaultShippingMethod = availableShippingMethods.value.find((item) => item.id === shippingMethodId);
-    const defaultPaymentMethod = availablePaymentMethods.value.find((item) => item.code === paymentMethodCode);
-
     if (allItemsAreDigital.value && shipment.value) {
       await removeShipment(shipment.value.id);
     }
 
     // Create at initialization to prevent duplication due to lack of id
-    if (!allItemsAreDigital.value && !shipment.value?.shipmentMethodCode && !shipment.value?.shipmentMethodOption) {
-      if (shippingMethodId && defaultShippingMethod) {
-        await setShippingMethod(defaultShippingMethod);
-      } else if (!shipment.value) {
-        await updateShipment({});
-      }
+    if (!allItemsAreDigital.value && !shipment.value) {
+      await updateShipment({});
     }
 
-    if (!payment.value?.paymentGatewayCode) {
-      if (paymentMethodCode && defaultPaymentMethod) {
-        await setPaymentMethod(defaultPaymentMethod);
-      } else if (!payment.value) {
-        await updatePayment({});
-      }
+    if (!payment.value) {
+      await updatePayment({});
     }
   }
 
   async function initialize(): Promise<void> {
+    initialized.value = false;
     placedOrder.value = null;
     loading.value = true;
 
@@ -261,6 +245,7 @@ export function _useCheckout() {
     analytics("beginCheckout", { ...cart.value!, items: selectedLineItems.value });
 
     loading.value = false;
+    initialized.value = true;
   }
 
   async function updateBillingOrDeliveryAddress(
@@ -487,6 +472,8 @@ export function _useCheckout() {
     clearGlobalCheckoutState();
   }
 
+  watch(() => route.params.cartId, clearState);
+
   return {
     deliveryAddress,
     shipmentMethod,
@@ -508,14 +495,21 @@ export function _useCheckout() {
     initialize,
     onDeliveryAddressChange,
     onBillingAddressChange,
-    setShippingMethod,
     setPaymentMethod,
     createOrderFromCart,
     loading: readonly(loading),
     changing: computed(() => commentChanging.value || purchaseOrderNumberChanging.value),
     placedOrder: computed(() => placedOrder.value),
+    initialized: readonly(initialized),
     allOrderItemsAreDigital,
   };
 }
 
-export const useCheckout = createSharedComposable(_useCheckout);
+const useCheckoutShared = createSharedComposableByArgs(_useCheckout, (args) => args?.[0] ?? "");
+
+export function useCheckout() {
+  const route = useRoute();
+  const cartId = Array.isArray(route.params?.cartId) ? route.params?.cartId[0] : route.params?.cartId;
+
+  return useCheckoutShared(cartId);
+}

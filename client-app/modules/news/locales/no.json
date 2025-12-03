@@ -1,0 +1,17 @@
+{
+  "news": {
+    "list": {
+      "title": "Siste nyheter",
+      "not-found": "Ingen nyheter funnet",
+      "search-placeholder": "Søk",
+      "written-by": "Skrevet av"
+    },
+    "details": {
+      "written-by": "Skrevet av",
+      "last-updated": "Sist oppdatert:",
+      "breadcrumbs": {
+        "news": "Nyheter"
+      }
+    }
+  }
+}

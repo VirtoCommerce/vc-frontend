@@ -1,5 +1,9 @@
 <template>
-  <nav ref="megaMenuElement" class="mega-menu" role="navigation">
+  <nav
+    ref="megaMenuElement"
+    class="mega-menu"
+    :aria-label="$t('shared.layout.header.mega_menu.aria_labels.main_navigation')"
+  >
     <VcPopover
       arrow-enabled
       placement="bottom-start"
@@ -7,12 +11,13 @@
       :aria-label="$t('common.buttons.all_products')"
       role="menu"
     >
-      <template #trigger>
+      <template #default="{ triggerProps }">
         <button
           type="button"
           class="mega-menu__button"
-          tabindex="0"
           :disabled="loading"
+          tabindex="0"
+          v-bind="triggerProps"
           @keyup.arrow-down="focusMenuItem"
         >
           <VcLoader v-if="loading" class="mega-menu__loader" />
@@ -33,20 +38,22 @@
       </template>
     </VcPopover>
 
-    <div class="mega-menu__divider"></div>
+    <template v-if="visibleItems.length">
+      <div class="mega-menu__divider"></div>
 
-    <ul
-      ref="navElement"
-      class="mega-menu__nav"
-      role="menubar"
-      :aria-label="$t('shared.layout.header.mega_menu.aria_labels.navigation')"
-    >
-      <li v-for="(item, index) in visibleItems" :key="index" class="mega-menu__item" menu-item role="none">
-        <VcLink :to="item.route ?? '#'" class="mega-menu__link" role="menuitem">
-          {{ item.title }}
-        </VcLink>
-      </li>
-    </ul>
+      <ul
+        ref="navElement"
+        class="mega-menu__nav"
+        role="menubar"
+        :aria-label="$t('shared.layout.header.mega_menu.aria_labels.navigation')"
+      >
+        <li v-for="(item, index) in visibleItems" :key="index" class="mega-menu__item" menu-item role="none">
+          <VcLink :to="item.route ?? '#'" class="mega-menu__link" role="menuitem">
+            {{ item.title }}
+          </VcLink>
+        </li>
+      </ul>
+    </template>
   </nav>
 </template>
 
@@ -55,12 +62,9 @@ import { useElementBounding, watchDebounced } from "@vueuse/core";
 import { ref, computed, onMounted, useTemplateRef, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { useNavigations } from "@/core/composables";
+import { categoryToExtendedMenuLink } from "@/core/utilities";
 import { useCategory } from "@/shared/catalog";
 import Subcategories from "./subcategories.vue";
-
-interface IProps {}
-
-defineProps<IProps>();
 
 const MENU_PADDING_RIGHT = 20;
 
@@ -70,10 +74,17 @@ const menuRef = useTemplateRef<HTMLElement>("megaMenuElement");
 const visibleItemsCount = ref(1);
 
 const { width: menuRight } = useElementBounding(menuRef);
-const { catalogMenuItems } = useNavigations();
-const { markActiveCategoryTree, category: _category, fetchCategory, loading } = useCategory();
+const { catalogMenuItems, fetchPinnedLinks, pinnedLinks: _pinnedLinks, markLinkTree } = useNavigations();
+const { category: _category, fetchCategory, loading } = useCategory();
 const currentRoute = useRoute();
-const category = computed(() => markActiveCategoryTree(_category.value, currentRoute));
+
+const _categoryLinks = computed(() => (_category.value ? categoryToExtendedMenuLink(_category.value) : undefined));
+const pinnedLinks = computed(() => markLinkTree({ children: _pinnedLinks.value }, currentRoute, "pinned"));
+const categoryLinks = computed(() => markLinkTree(_categoryLinks.value, currentRoute, "category"));
+
+const category = computed(() => ({
+  children: pinnedLinks.value?.children?.concat(categoryLinks.value?.children ?? []),
+}));
 
 const visibleItems = computed(() => catalogMenuItems.value.slice(0, visibleItemsCount.value));
 
@@ -106,13 +117,11 @@ async function calculateVisibleItems() {
 }
 
 function focusMenuItem() {
-  if (!category.value || !category.value.childCategories.length) {
+  if (!category.value || !category.value.children?.length) {
     return;
   }
 
-  const item = document.querySelector(
-    `[id="subcategory-${category.value?.childCategories[0].id}"] > [role="menuitem"]`,
-  ) as HTMLElement;
+  const item = document.querySelector(".subcategories .vc-menu-item > [role='menuitem']") as HTMLElement;
 
   if (item) {
     item.focus();
@@ -134,24 +143,25 @@ watchDebounced(
   { debounce: 100, maxWait: 1000, immediate: true },
 );
 
-onMounted(async () => {
-  await fetchCategory({
+onMounted(() => {
+  void fetchCategory({
     maxLevel: 4,
     onlyActive: true,
   });
+  void fetchPinnedLinks();
 });
 </script>
 
 <style lang="scss">
 .mega-menu {
-  @apply flex gap-4 h-10 bg-[--header-bottom-bg-color] px-5 xl:px-12;
+  @apply flex items-center h-10 bg-[--header-bottom-bg-color] px-5 xl:px-12;
 
   &__popover {
     @apply flex items-stretch;
   }
 
   &__button {
-    @apply flex items-center p-1 h-full gap-2 text-sm text-[--header-bottom-link-color] font-bold whitespace-nowrap border-none rounded;
+    @apply flex items-center me-2.5 p-1.5 gap-2 text-sm text-[--header-bottom-link-color] font-bold whitespace-nowrap border-none rounded-[--vc-radius];
 
     &:hover {
       @apply text-[--header-bottom-link-hover-color];
@@ -171,7 +181,7 @@ onMounted(async () => {
   }
 
   &__divider {
-    @apply self-center h-5 w-px bg-secondary-200;
+    @apply self-center me-4 h-5 w-px bg-secondary-200;
   }
 
   &__nav {
@@ -187,7 +197,7 @@ onMounted(async () => {
   }
 
   &__content {
-    @apply flex min-w-0 max-h-[calc(100vh-11.5rem)] ps-2.5 py-5 bg-[--header-bottom-bg-color] rounded shadow-lg;
+    @apply flex min-w-0 max-h-[calc(100vh-11.5rem)] ps-2.5 py-5 bg-[--header-bottom-bg-color] rounded-[--vc-radius] shadow-lg;
   }
 }
 </style>

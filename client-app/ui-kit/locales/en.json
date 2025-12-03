@@ -11,12 +11,27 @@
       "ok": "OK",
       "remove_all": "Remove all",
       "remove_from_cart": "Remove from cart",
-      "remove_selected": "Remove Selected",
+      "remove_selected": "Remove selected",
       "see_more": "See more",
       "see_less": "See less",
       "show_hide_password": "Show/hide password",
       "toggle_dropdown": "Toggle dropdown",
       "update_cart": "Update cart"
+    },
+    "accessibility": {
+      "close_alert": "Close alert",
+      "open_calendar": "Open calendar",
+      "product_quantity": "Product quantity",
+      "decrease_quantity": "Decrease quantity",
+      "increase_quantity": "Increase quantity",
+      "variant_picker_group": "Variant options",
+      "show_more_button": "See more options ({count})",
+      "sidebar": "Sidebar",
+      "close_chip": "Close chip"
+    },
+    "date_selector": {
+      "min_date_error": "Date must be on or after {min}",
+      "max_date_error": "Date must be on or before {max}"
     },
     "labels": {
       "not_available": "N/A",
@@ -71,7 +86,7 @@
       "any_format": "any",
       "errors": {
         "fix_to_continue": "Fix file upload errors to continue.",
-        "has_max_file_count": "You have uploaded the maximum number of files possible. Futher uploads are not possible.",
+        "has_max_file_count": "You have uploaded the maximum number of files possible. Further uploads are not possible.",
         "tried_more_than_max_file_count": "You tried to upload more than maximum number of files allowed."
       }
     },
@@ -81,7 +96,24 @@
       "page_limit": "No more results could be shown."
     },
     "slider": {
-      "tooltip": "{count} items"
+      "tooltip": "{count} items",
+      "aria_label": "Range slider from {min} to {max}",
+      "start_input_label": "Start value (between {min} and {max})",
+      "end_input_label": "End value (between {min} and {max})",
+      "start_input_aria_label": "Start value input, range {min} to {max}",
+      "end_input_aria_label": "End value input, range {min} to {max}",
+      "start_input_help": "Enter a number between {min} and {max}, step size {step}",
+      "end_input_help": "Enter a number between {min} and {max}, step size {step}",
+      "column_aria_label": "Column with {count} items, range from {from} to {to}",
+      "current_value_announcement": "Slider value: {start} to {end}, range {min} to {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Breadcrumbs navigation"
+    },
+    "rating": {
+      "rating_label": "Rating {value} out of {maxValue}",
+      "read_only_button_aria_label": "Rating {value} out of {maxValue}, not available for selection",
+      "set_rating_aria_label": "Set rating to {value} out of {maxValue}"
     }
   }
 }

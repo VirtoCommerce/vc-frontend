@@ -1,6 +1,6 @@
 import { VcDropdownMenu, VcMenuItem } from "..";
 import { VcIcon } from "../../atoms";
-import type { Meta, StoryFn } from "@storybook/vue3";
+import type { Meta, StoryFn } from "@storybook/vue3-vite";
 
 export default {
   title: "Components/Molecules/VcDropdownMenu",
@@ -12,8 +12,8 @@ const Template: StoryFn = (args) => ({
   setup: () => ({ args }),
   template: `
   <VcDropdownMenu v-bind="args">
-    <template #trigger>
-      <span>Trigger</span>
+    <template #trigger="{ triggerProps }">
+      <span v-bind="triggerProps">Trigger</span>
     </template>
 
     <template #content>

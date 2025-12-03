@@ -15,11 +15,13 @@ import {
   extensionPointsPlugin,
   permissionsPlugin,
 } from "@/core/plugins";
-import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
+import { extractHostname, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
+import { init as initLoyalty } from "@/modules/loyalty";
+import { init as initNews } from "@/modules/news";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
@@ -64,17 +66,16 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { fetchUser, user, twoLetterContactLocale } = useUser();
+  const { fetchUser, user, isAuthenticated } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
-    detectLocale,
     currentLanguage,
-    supportedLocales,
+    currentMaybeShortLocale,
+    defaultStoreCulture,
     initLocale,
     fetchLocaleMessages,
-    getLocaleFromUrl,
-    pinedLocale,
-    mergeLocales,
+    mergeLocalesMessages,
+    resolveLocale,
   } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
@@ -102,22 +103,18 @@ export default async () => {
 
   setThemeContext(store);
 
-  // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
-  const twoLetterAppLocale = detectLocale([
-    pinedLocale.value,
-    twoLetterContactLocale.value,
-    getLocaleFromUrl(),
-    themeContext.value.defaultLanguage.twoLetterLanguageName,
-  ]);
-
   /**
    * Creating plugin instances
    */
   const head = createHead();
-  const i18n = createI18n(twoLetterAppLocale, currentCurrency.value.code, fallback);
-  const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
-  await initLocale(i18n, twoLetterAppLocale);
+  const currentCultureName = resolveLocale();
+  const isDefaultLocaleInUse = defaultStoreCulture.value === currentCultureName;
+
+  const i18n = createI18n(currentCultureName, currentCurrency.value.code, fallback);
+  await initLocale(i18n, currentCultureName);
+
+  const router = createRouter({ base: isDefaultLocaleInUse ? "" : currentMaybeShortLocale.value });
 
   /**
    * Setting global variables
@@ -141,7 +138,9 @@ export default async () => {
   await fetchWhiteLabelingSettings();
   addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
 
-  void fetchCatalogMenu();
+  if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
+    void fetchCatalogMenu();
+  }
 
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
@@ -150,6 +149,8 @@ export default async () => {
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
   void initializeHotjar();
+  void initNews(router, i18n);
+  void initLoyalty(router, i18n);
 
   // Plugins
   app.use(head);
@@ -161,9 +162,9 @@ export default async () => {
   app.use(configPlugin, themeContext.value);
 
   const UIKitMessages = await getUIKitLocales(FALLBACK_LOCALE, currentLanguage.value?.twoLetterLanguageName);
-  mergeLocales(i18n, currentLanguage.value?.twoLetterLanguageName, UIKitMessages.messages);
+  mergeLocalesMessages(i18n, currentLanguage.value?.twoLetterLanguageName, UIKitMessages.messages);
   if (currentLanguage.value?.twoLetterLanguageName !== FALLBACK_LOCALE) {
-    mergeLocales(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
+    mergeLocalesMessages(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
   }
   app.use(uiKit);
 

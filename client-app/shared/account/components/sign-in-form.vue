@@ -4,7 +4,7 @@
     <VcAlert
       v-for="error in errors"
       :key="error.code"
-      :data-test-id="`sign-in-error-${error.code}-alert`"
+      :data-test-id="`sign-in-page.sign-in-error-${error.code}-alert`"
       class="mb-4"
       color="danger"
       size="sm"
@@ -21,7 +21,7 @@
           {{ translate(error) }}
         </span>
         <!-- Keep the A tag to reinitialize the app -->
-        <a href="/change-password" class="text-sm font-bold text-accent-700 hover:text-accent">
+        <a :href="ROUTES.CHANGE_PASSWORD.PATH" class="text-sm font-bold text-accent-700 hover:text-accent">
           {{ $t("common.buttons.set_new_password") }}
         </a>
       </span>
@@ -42,7 +42,7 @@
       :message="validationErrors.email"
       :error="!!validationErrors.email"
       autocomplete="email"
-      test-id-input="sign-in-email-input"
+      test-id-input="sign-in-page.email-input"
     />
 
     <VcInput
@@ -55,8 +55,8 @@
       required
       :message="validationErrors.password"
       :error="!!validationErrors.password"
-      autocomplete="password"
-      test-id-input="sign-in-password-input"
+      autocomplete="current-password"
+      test-id-input="sign-in-page.password-input"
     />
 
     <div class="flex justify-between">
@@ -67,7 +67,7 @@
       <router-link
         to="/forgot-password"
         class="text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]"
-        data-test-id="sign-in-forgot-password-link"
+        data-test-id="sign-in-page.forgot-password-link"
       >
         {{ $t("shared.account.sign_in_form.forgot_password_link") }}
       </router-link>
@@ -75,7 +75,7 @@
 
     <!-- Form actions -->
     <div class="mt-8 flex flex-wrap gap-4" :class="{ 'max-w-sm': !props.growButtons }">
-      <VcButton :loading="loading" type="submit" class="flex-1 shrink" no-wrap data-test-id="sign-in-login-button">
+      <VcButton :loading="loading" type="submit" class="flex-1 shrink" no-wrap data-test-id="sign-in-page.login-button">
         {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
 
@@ -85,7 +85,7 @@
         variant="outline"
         class="flex-1"
         no-wrap
-        data-test-id="sign-in-registration-button"
+        data-test-id="sign-in-page.registration-button"
       >
         {{ $t("shared.account.sign_in_form.registration_button") }}
       </VcButton>
@@ -101,6 +101,7 @@ import { object, string } from "yup";
 import { useAnalytics, useAuth, useErrorsTranslator } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
 import { Logger } from "@/core/utilities";
+import { ROUTES } from "@/router/routes/constants";
 import { useSignMeIn } from "@/shared/account/composables";
 import { ContactAdministratorLink } from "@/shared/common";
 import type { IdentityErrorType } from "@/core/api/graphql/types";

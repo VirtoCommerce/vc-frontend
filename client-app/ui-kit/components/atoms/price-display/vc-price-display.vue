@@ -6,7 +6,7 @@
 import type { MoneyType } from "@/core/api/graphql/types";
 
 interface IProps {
-  value?: MoneyType;
+  value?: Pick<MoneyType, "formattedAmount">;
 }
 
 defineProps<IProps>();

@@ -18,6 +18,21 @@
       "toggle_dropdown": "Alternar desplegable",
       "update_cart": "Actualizar carrito"
     },
+    "accessibility": {
+      "close_alert": "Cerrar alerta",
+      "open_calendar": "Abrir calendario",
+      "product_quantity": "Cantidad del producto",
+      "decrease_quantity": "Disminuir cantidad",
+      "increase_quantity": "Aumentar cantidad",
+      "variant_picker_group": "Opciones de variantes",
+      "show_more_button": "Ver más opciones ({count})",
+      "sidebar": "Barra lateral",
+      "close_chip": "Cerrar chip"
+    },
+    "date_selector": {
+      "min_date_error": "La fecha debe ser igual o posterior al {min}",
+      "max_date_error": "La fecha debe ser igual o anterior al {max}"
+    },
     "labels": {
       "not_available": "N/D",
       "price_per_item": "Precio por artículo",
@@ -46,11 +61,11 @@
         "max": "Pedido máximo {0} artículo(s)",
         "min_max": "Pedido de {0} a {1} artículo(s)",
         "min_not_available": "Pedido mínimo {0} artículo(s) no disponible en stock",
+        "exact_qty": "Puedes pedir {0} artículo(s)",
         "out_of_stock": "Agotado",
         "positive_number": "El valor debe ser un número positivo",
         "integer_number": "El valor debe ser un número entero",
-        "pack_size": "Pedir en paquetes de {0}",
-        "exact_qty": "Puedes pedir {0} artículo(s)"
+        "pack_size": "Pedir en paquetes de {0}"
       }
     },
     "pagination": {
@@ -81,7 +96,24 @@
       "page_limit": "No se pueden mostrar más resultados."
     },
     "slider": {
-      "tooltip": "{count} artículos"
+      "tooltip": "{count} artículos",
+      "aria_label": "Control deslizante de {min} a {max}",
+      "start_input_label": "Valor inicial (entre {min} y {max})",
+      "end_input_label": "Valor final (entre {min} y {max})",
+      "start_input_aria_label": "Valor inicial, rango de {min} a {max}",
+      "end_input_aria_label": "Valor final, rango de {min} a {max}",
+      "start_input_help": "Introduce un número entre {min} y {max}, tamaño de paso {step}",
+      "end_input_help": "Introduce un número entre {min} y {max}, tamaño de paso {step}",
+      "column_aria_label": "Columna con {count} artículos, rango de {from} a {to}",
+      "current_value_announcement": "Valor del control deslizante: {start} a {end}, rango {min} a {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Navegación de migas de pan"
+    },
+    "rating": {
+      "rating_label": "Clasificación {value} de {maxValue}",
+      "read_only_button_aria_label": "Clasificación {value} de {maxValue}, no disponible para seleccionar",
+      "set_rating_aria_label": "Establecer la clasificación en {value} de {maxValue}"
     }
   }
 }

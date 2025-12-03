@@ -18,6 +18,21 @@
       "toggle_dropdown": "Attiva/disattiva menu a tendina",
       "update_cart": "Aggiorna carrello"
     },
+    "accessibility": {
+      "close_alert": "Chiudi avviso",
+      "open_calendar": "Apri calendario",
+      "product_quantity": "Quantità del prodotto",
+      "decrease_quantity": "Diminuisci quantità",
+      "increase_quantity": "Aumenta quantità",
+      "variant_picker_group": "Opzioni di variante",
+      "show_more_button": "Vedi altre opzioni ({count})",
+      "sidebar": "Barra laterale",
+      "close_chip": "Chiudi chip"
+    },
+    "date_selector": {
+      "min_date_error": "La data deve essere successiva o uguale a {min}",
+      "max_date_error": "La data deve essere precedente o uguale a {max}"
+    },
     "labels": {
       "not_available": "N/D",
       "price_per_item": "Prezzo per articolo",
@@ -46,11 +61,11 @@
         "max": "Ordine massimo {0} articolo(i)",
         "min_max": "Ordine da {0} a {1} articolo(i)",
         "min_not_available": "Ordine minimo {0} articolo(i) non disponibile in magazzino",
+        "exact_qty": "Puoi ordinare {0} articolo/i",
         "out_of_stock": "Esaurito",
         "positive_number": "Il valore deve essere un numero positivo",
         "integer_number": "Il valore deve essere un numero intero",
-        "pack_size": "Ordina in pacchi da {0}",
-        "exact_qty": "Puoi ordinare {0} articolo/i"
+        "pack_size": "Ordina in pacchi da {0}"
       }
     },
     "pagination": {
@@ -81,7 +96,24 @@
       "page_limit": "Non è possibile mostrare altri risultati."
     },
     "slider": {
-      "tooltip": "{count} articoli"
+      "tooltip": "{count} articoli",
+      "aria_label": "Slider da {min} a {max}",
+      "start_input_label": "Valore iniziale (compreso tra {min} e {max})",
+      "end_input_label": "Valore finale (tra {min} e {max})",
+      "start_input_aria_label": "Inserisci il valore iniziale, intervallo da {min} a {max}",
+      "end_input_aria_label": "Valore finale, intervallo da {min} a {max}",
+      "start_input_help": "Inserisci un numero tra {min} e {max}, incremento {step}",
+      "end_input_help": "Inserisci un numero tra {min} e {max}, incremento {step}",
+      "column_aria_label": "Colonna con {count} articoli, da {from} a {to}",
+      "current_value_announcement": "Valore slider: {start} a {end}, intervallo {min} a {max}"
+    },
+    "breadcrumbs": {
+      "aria_label": "Navigazione breadcrumb"
+    },
+    "rating": {
+      "rating_label": "Valutazione {value} su {maxValue}",
+      "read_only_button_aria_label": "Valutazione {value} su {maxValue}, non disponibile per la selezione",
+      "set_rating_aria_label": "Imposta valutazione a {value} su {maxValue}"
     }
   }
 }

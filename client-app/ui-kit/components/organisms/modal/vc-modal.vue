@@ -6,9 +6,12 @@
         'vc-modal',
         {
           'vc-modal--mobile-fullscreen': isMobileFullscreen,
+          'vc-modal--full-height': isFullHeight,
         },
+        $attrs.class,
       ]"
       :initial-focus="getActiveElement()"
+      :data-test-id="testId"
       @close="!isPersistent && close()"
     >
       <TransitionChild
@@ -35,14 +38,14 @@
           @after-leave="$emit('close')"
         >
           <DialogPanel class="vc-modal__dialog" :style="{ maxWidth }">
-            <VcDialog :dividers="dividers" :is-mobile-fullscreen="isMobileFullscreen">
-              <DialogTitle>
-                <VcDialogHeader :icon="icon" :color="variant" :closable="!isPersistent" @close="close">
+            <VcDialog :dividers="dividers">
+              <VcDialogHeader :icon="icon" :color="variant" :closable="!isPersistent" @close="close">
+                <DialogTitle>
                   <slot name="title">
                     {{ title }}
                   </slot>
-                </VcDialogHeader>
-              </DialogTitle>
+                </DialogTitle>
+              </VcDialogHeader>
 
               <VcDialogContent>
                 <slot :close="close" />
@@ -72,11 +75,13 @@ interface IProps {
   hideActions?: boolean;
   isPersistent?: boolean;
   isMobileFullscreen?: boolean;
+  isFullHeight?: boolean;
   title?: string;
   icon?: string;
   maxWidth?: string;
   variant?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
   dividers?: boolean;
+  testId?: string;
 }
 
 defineOptions({
@@ -115,11 +120,16 @@ defineExpose({ close });
 <style lang="scss">
 .vc-modal {
   $mobileFullscreen: "";
+  $fullHeight: "";
 
   @apply fixed top-0 left-0 w-full h-full z-50;
 
   &--mobile-fullscreen {
     $mobileFullscreen: &;
+  }
+
+  &--full-height {
+    $fullHeight: &;
   }
 
   &__backdrop {
@@ -143,8 +153,18 @@ defineExpose({ close });
       @media (max-width: theme("screens.md")) {
         @apply h-full max-h-full max-w-full #{!important};
 
-        & > .vc-dialog {
-          @apply max-h-full h-full p-0 rounded-none;
+        & > .vc-dialog,
+        & > .vc-dialog .vc-dialog-content__container {
+          @apply max-h-full h-full rounded-none;
+        }
+      }
+    }
+
+    #{$fullHeight} & {
+      & > .vc-dialog,
+      & > .vc-dialog .vc-dialog-content__container {
+        @media (min-width: theme("screens.md")) {
+          @apply max-h-full h-full;
         }
       }
     }
