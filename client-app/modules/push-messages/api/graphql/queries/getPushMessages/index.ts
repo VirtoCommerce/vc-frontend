@@ -16,14 +16,11 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
   result.subscribeToMore({
     document: OnPushMessageCreatedDocument,
     updateQuery: (previousQueryResult, { subscriptionData }) => {
-      if (!subscriptionData.data) {
-        return previousQueryResult;
-      }
-
       const newPushMessage = subscriptionData.data.pushMessageCreated;
       const items = previousQueryResult.pushMessages?.items ?? [];
+      const alreadyExists = items.some((item) => item.id === newPushMessage.id);
 
-      if (items.some((item) => item.id === newPushMessage.id)) {
+      if (!subscriptionData.data || alreadyExists) {
         return previousQueryResult;
       }
 
