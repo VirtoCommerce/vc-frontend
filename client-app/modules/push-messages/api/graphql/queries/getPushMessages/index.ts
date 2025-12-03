@@ -22,6 +22,11 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
 
       const newPushMessage = subscriptionData.data.pushMessageCreated;
       const items = previousQueryResult.pushMessages?.items ?? [];
+
+      if (items.some((item) => item.id === newPushMessage.id)) {
+        return previousQueryResult;
+      }
+
       const unreadCount = previousQueryResult.unreadCount?.totalCount;
       const unreadCountWithHidden = previousQueryResult.unreadCountWithHidden?.totalCount;
 
