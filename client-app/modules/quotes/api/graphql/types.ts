@@ -1083,11 +1083,6 @@ export type QuoteType = {
   totals: QuoteTotalsType;
 };
 
-
-export type QuoteTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type Rating = {
   /** Total count of customer reviews */
   reviewCount: Scalars['Int']['output'];
