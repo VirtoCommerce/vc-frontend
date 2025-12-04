@@ -17,21 +17,52 @@ export default {
 const Template: StoryFn = (args) => ({
   components: { VcVariantPickerGroup, VcVariantPicker },
   setup: () => {
-    const model = ref();
-    return { args, model };
+    const model = ref<string | string[]>(args.modelValue);
+    const items = [
+      {
+        label: "Red",
+        value: "red",
+        isAvailable: true,
+      },
+      {
+        label: "Blue",
+        value: "blue",
+        isAvailable: true,
+      },
+      {
+        label: "Green",
+        value: "green",
+        isAvailable: false,
+      },
+      {
+        label: "Yellow",
+        value: "yellow",
+        isAvailable: false,
+      },
+      {
+        label: "Orange",
+        value: "orange",
+        isAvailable: true,
+      },
+    ];
+
+    return { args, items, model };
   },
-  template: `<VcVariantPickerGroup v-bind="args">
-    <VcVariantPicker v-model="model" :name="args.name" value="red" is-available :active="false" />
-    <VcVariantPicker v-model="model" :name="args.name" value="blue" is-available :active="false" />
-    <VcVariantPicker v-model="model" :name="args.name" value="green" :active="false" />
-    <VcVariantPicker v-model="model" :name="args.name" value="yellow" :active="false" />
-    <VcVariantPicker v-model="model" :name="args.name" value="orange" is-available :active="false" />
-  </VcVariantPickerGroup>`,
+  template: `
+    <div class="mb-3">Selected: {{ model }}</div>
+
+    <VcVariantPickerGroup v-bind="args" v-model="model">
+      <VcVariantPicker v-for="item in items" v-bind="item" />
+    </VcVariantPickerGroup>
+  `,
 });
 
 export const Basic = Template.bind({});
 Basic.args = {
   name: "basic",
+  type: "color",
+  multiple: false,
+  modelValue: "red",
 };
 
 const TemplateImage: StoryFn = (args) => ({
@@ -40,13 +71,17 @@ const TemplateImage: StoryFn = (args) => ({
     const model = ref();
     return { args, model };
   },
-  template: `<VcVariantPickerGroup v-bind="args">
-    <VcVariantPicker v-model="model" :name="args.name" type="image" value="product-example-1.webp" is-available :active="false" />
-    <VcVariantPicker v-model="model" :name="args.name" type="image" value="product-example-2.webp" is-available :active="false" />
-    <VcVariantPicker v-model="model" :name="args.name" type="image" value="product-example-3.webp" :active="false" />
-    <VcVariantPicker v-model="model" :name="args.name" type="image" value="product-example-4.webp" :active="false" />
-    <VcVariantPicker v-model="model" :name="args.name" type="image" value="product-example-5.webp" is-available :active="false" />
-  </VcVariantPickerGroup>`,
+  template: `
+    <div class="mb-3">Selected: {{ model }}</div>
+
+    <VcVariantPickerGroup v-bind="args">
+      <VcVariantPicker v-model="model" :name="args.name" type="image" value="product-example-1.webp" is-available :active="false" />
+      <VcVariantPicker v-model="model" :name="args.name" type="image" value="product-example-2.webp" is-available :active="false" />
+      <VcVariantPicker v-model="model" :name="args.name" type="image" value="product-example-3.webp" :active="false" />
+      <VcVariantPicker v-model="model" :name="args.name" type="image" value="product-example-4.webp" :active="false" />
+      <VcVariantPicker v-model="model" :name="args.name" type="image" value="product-example-5.webp" is-available :active="false" />
+    </VcVariantPickerGroup>
+  `,
 });
 
 export const Images = TemplateImage.bind({});
@@ -60,13 +95,17 @@ const TemplateText: StoryFn = (args) => ({
     const model = ref();
     return { args, model };
   },
-  template: `<VcVariantPickerGroup v-bind="args">
-    <VcVariantPicker v-model="model" :name="args.name" type="text" value="Size: XS" is-available :active="false" />
-    <VcVariantPicker v-model="model" :name="args.name" type="text" value="Size: SM" is-available :active="false" />
-    <VcVariantPicker v-model="model" :name="args.name" type="text" value="Size: MD" :active="false" />
-    <VcVariantPicker v-model="model" :name="args.name" type="text" value="Size: LG" :active="false" />
-    <VcVariantPicker v-model="model" :name="args.name" type="text" value="Size: XL" is-available :active="false" />
-  </VcVariantPickerGroup>`,
+  template: `
+    <div class="mb-3">Selected: {{ model }}</div>
+
+    <VcVariantPickerGroup v-bind="args">
+      <VcVariantPicker v-model="model" :name="args.name" type="text" value="Size: XS" is-available :active="false" />
+      <VcVariantPicker v-model="model" :name="args.name" type="text" value="Size: SM" is-available :active="false" />
+      <VcVariantPicker v-model="model" :name="args.name" type="text" value="Size: MD" :active="false" />
+      <VcVariantPicker v-model="model" :name="args.name" type="text" value="Size: LG" :active="false" />
+      <VcVariantPicker v-model="model" :name="args.name" type="text" value="Size: XL" is-available :active="false" />
+    </VcVariantPickerGroup>
+  `,
 });
 
 export const Texts = TemplateText.bind({});
@@ -77,46 +116,42 @@ Texts.args = {
 const TemplateMultiselect: StoryFn = (args) => ({
   components: { VcVariantPickerGroup, VcVariantPicker },
   setup: () => {
-    const selectedValues = ref<string | string[]>(args.selectedValues || []);
+    const model = ref<string | string[]>(args.modelValue);
 
     return {
       args,
-      selectedValues,
+      model,
     };
   },
   template: `
     <div>
       <div class="mb-4">
         <strong>Selected values: </strong>
-        <span v-if="Array.isArray(selectedValues) && selectedValues.length === 0" class="text-gray-500">Nothing selected</span>
-        <span v-else-if="Array.isArray(selectedValues)" class="text-blue-600">{{ selectedValues.join(', ') }}</span>
-        <span v-else class="text-blue-600">{{ selectedValues }}</span>
+        <span v-if="Array.isArray(model) && model.length === 0" class="text-gray-500">Nothing selected</span>
+        <span v-else-if="Array.isArray(model)" class="text-blue-600">{{ model.join(', ') }}</span>
+        <span v-else class="text-blue-600">{{ model }}</span>
       </div>
-      <VcVariantPickerGroup v-bind="args">
+
+      <VcVariantPickerGroup v-bind="args" v-model="model">
         <VcVariantPicker
-          v-model="selectedValues"
           :name="args.name"
-          :multiple="args.multiple"
           value="red"
           is-available
         />
+
         <VcVariantPicker
-          v-model="selectedValues"
           :name="args.name"
-          :multiple="args.multiple"
           value="blue"
           is-available
         />
+
         <VcVariantPicker
-          v-model="selectedValues"
           :name="args.name"
-          :multiple="args.multiple"
           value="green"
         />
+
         <VcVariantPicker
-          v-model="selectedValues"
           :name="args.name"
-          :multiple="args.multiple"
           value="yellow"
         />
       </VcVariantPickerGroup>
@@ -127,14 +162,13 @@ const TemplateMultiselect: StoryFn = (args) => ({
 export const Multiselect = TemplateMultiselect.bind({});
 Multiselect.args = {
   name: "multiselect",
-  selectedValues: [],
   multiple: true,
 };
 
 export const SingleSelect = TemplateMultiselect.bind({});
 SingleSelect.args = {
   name: "single-select",
-  selectedValues: "red",
+  modelValue: "red",
   multiple: false,
 };
 
@@ -567,7 +601,7 @@ MultiColorSizes.args = {
 const TemplateMultiColorMultiSelect: StoryFn = (args) => ({
   components: { VcVariantPickerGroup, VcVariantPicker },
   setup: () => {
-    const selectedValues = ref<string | string[]>(args.selectedValues || []);
+    const model = ref<string | string[]>(args.modelValue);
 
     const options = [
       { value: "red", label: "Red" },
@@ -579,21 +613,19 @@ const TemplateMultiColorMultiSelect: StoryFn = (args) => ({
       { value: ["pink", "purple", "magenta", "violet"], label: "Purple Mix" },
     ];
 
-    return { args, selectedValues, options };
+    return { args, model, options };
   },
   template: `
     <div class="space-y-4">
       <div>
-        <div class="mb-2 text-sm font-bold">Selected: {{ JSON.stringify(selectedValues) }}</div>
-        <VcVariantPickerGroup v-bind="args">
+        <div class="mb-2 text-sm font-bold">Selected: {{ JSON.stringify(model) }}</div>
+
+        <VcVariantPickerGroup v-bind="args" v-model="model">
           <VcVariantPicker
             v-for="(option, index) in options"
             :key="index"
-            v-model="selectedValues"
             :value="option.value"
             :name="args.name"
-            :multiple="args.multiple"
-            type="color"
             :is-available="true"
             :tooltip="option.label"
           />
@@ -606,13 +638,16 @@ const TemplateMultiColorMultiSelect: StoryFn = (args) => ({
 export const MultiColorMultiSelect = TemplateMultiColorMultiSelect.bind({});
 MultiColorMultiSelect.args = {
   name: "multicolor-multi",
-  selectedValues: [["red", "blue"], "green"],
+  modelValue: [["red", "blue"], "green"],
   multiple: true,
+  type: "color",
 };
 
 export const MultiColorSingleSelect = TemplateMultiColorMultiSelect.bind({});
 MultiColorSingleSelect.args = {
   name: "multicolor-single",
-  selectedValues: undefined,
+  modelValue: undefined,
   multiple: false,
+  size: "sm",
+  type: "color",
 };

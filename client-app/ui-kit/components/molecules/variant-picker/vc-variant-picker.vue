@@ -7,7 +7,6 @@
         'vc-variant-picker--active': checked,
         'vc-variant-picker--unavailable': !checked && !isAvailable,
         'vc-variant-picker--square': type !== 'text',
-        'vc-variant-picker--multicolor': isMultiColor,
       },
     ]"
   >
@@ -43,10 +42,10 @@
           <input
             :checked="checked"
             class="vc-variant-picker__input"
-            :type="props.multiple ? 'checkbox' : 'radio'"
-            :aria-label="tooltip ?? serializedValue"
+            :type="(groupContext ? groupContext.multiple.value : Array.isArray(modelValue)) ? 'checkbox' : 'radio'"
+            :aria-label="tooltip ?? inputValue"
             :name="name"
-            :value="serializedValue"
+            :value="inputValue"
             :data-test-id="testId"
             :tabindex="tabindex ?? '0'"
             v-bind="triggerProps"
@@ -65,8 +64,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
-import { getColorValue } from "@/ui-kit/utilities";
+import isEqual from "lodash/isEqual";
+import { computed, inject } from "vue";
+import { getColorValue, serialize } from "@/ui-kit/utilities";
+
+interface IEmits {
+  (event: "update:modelValue", value: string | string[]): void;
+  (event: "change", value: string | string[]): void;
+}
 
 interface IProps {
   type?: VcVariantPickerType;
@@ -80,21 +85,26 @@ interface IProps {
   tooltipTeleportSelector?: string;
   tabindex?: string | number;
   testId?: string;
-  multiple?: boolean;
 }
+
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   type: "color",
   size: "md",
-  multiple: false,
 });
 
-const model = defineModel<IProps["modelValue"]>();
+const groupContext = inject<VcVariantPickerGroupContextType | null>("variantPickerGroupContext", null);
+
+const modelValue = computed(() => groupContext?.modelValue.value ?? props.modelValue);
+const multiple = groupContext?.multiple;
+const size = computed(() => groupContext?.size.value ?? props.size);
+const type = computed(() => groupContext?.type.value ?? props.type);
 
 const normalizedValue = computed(() => (Array.isArray(props.value) ? props.value : [props.value]));
 
 const colorsList = computed(() => {
-  if (props.type !== "color") {
+  if (type.value !== "color") {
     return [];
   }
 
@@ -103,49 +113,37 @@ const colorsList = computed(() => {
 });
 
 const isMultiColor = computed(
-  () => props.type === "color" && Array.isArray(props.value) && colorsList.value.length >= 2,
+  () => type.value === "color" && Array.isArray(props.value) && colorsList.value.length > 1,
 );
 
 const displayValue = computed(() => normalizedValue.value[0]);
-
-function serializeValue(value: string | string[]): string {
-  return Array.isArray(value) ? value.join("|") : value;
-}
-
-const serializedValue = computed(() => serializeValue(props.value));
+const inputValue = computed(() => serialize(props.value));
 
 const checked = computed(() => {
-  if (!model.value) {
+  if (!modelValue.value) {
     return false;
   }
 
-  if (props.multiple) {
-    return Array.isArray(model.value) && model.value.some((v) => serializeValue(v) === serializedValue.value);
+  if (multiple?.value) {
+    return Array.isArray(modelValue.value) && modelValue.value.some((v) => isEqual(v, props.value));
   }
 
-  return serializeValue(model.value) === serializedValue.value;
+  return isEqual(modelValue.value, props.value);
 });
 
-const color = computed(() => (props.type === "color" && !isMultiColor.value ? colorsList.value[0] : undefined));
+const color = computed(() => (type.value === "color" && !isMultiColor.value ? colorsList.value[0] : undefined));
 
-const image = computed(() => (props.type === "image" ? displayValue.value : ""));
+const image = computed(() => (type.value === "image" ? displayValue.value : ""));
 
 function toggleValue(): void {
   const valueToSet = Array.isArray(props.value) ? [...props.value] : props.value;
 
-  if (props.multiple) {
-    const currentValue = Array.isArray(model.value) ? [...model.value] : [];
-    const index = currentValue.findIndex((v) => serializeValue(v) === serializedValue.value);
-
-    if (index > -1) {
-      currentValue.splice(index, 1);
-      model.value = (currentValue.length ? currentValue : []) as string | string[];
-    } else {
-      model.value = [...currentValue, valueToSet] as string | string[];
-    }
-  } else {
-    model.value = valueToSet;
+  if (groupContext) {
+    groupContext.toggleValue(valueToSet);
   }
+
+  emit("update:modelValue", valueToSet);
+  emit("change", valueToSet);
 }
 </script>
 

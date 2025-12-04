@@ -5,6 +5,7 @@
     role="radiogroup"
     :aria-label="ariaLabelValue"
     tabindex="-1"
+    :data-test-id="testId"
     @focus="($event.target as HTMLElement).blur()"
     @keydown.tab="onTabKey"
     @keydown.right.prevent="navigateBy('next', $event.target)"
@@ -32,17 +33,31 @@
 
 <script setup lang="ts">
 import { useDebounceFn, useResizeObserver } from "@vueuse/core";
-import { ref, computed, onMounted, nextTick, watch, toRef } from "vue";
+import isEqual from "lodash/isEqual";
+import { ref, computed, onMounted, nextTick, watch, provide, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { Logger } from "@/core/utilities";
 
+interface IEmits {
+  (event: "update:modelValue", value: string | string[]): void;
+  (event: "change", value: string | string[]): void;
+}
+
 interface IProps {
+  modelValue?: string | string[];
+  multiple?: boolean;
+  size?: VcVariantPickerSizeType;
+  type?: VcVariantPickerType;
   truncate?: boolean;
   maxRows?: number;
   ariaLabel?: string;
+  testId?: string;
 }
 
+const emit = defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
+  multiple: false,
   maxRows: 2,
 });
 
@@ -51,12 +66,6 @@ const LAYOUT_CONFIG = {
   RESIZE_DEBOUNCE_MS: 100,
 };
 
-const truncate = toRef(props, "truncate");
-const maxRows = toRef(props, "maxRows");
-const { t } = useI18n();
-
-const ariaLabelValue = computed(() => props.ariaLabel ?? t("ui_kit.accessibility.variant_picker_group"));
-const buttonAriaLabel = computed(() => t("ui_kit.accessibility.show_more_button", { count: hiddenCount.value }));
 const containerRef = ref<HTMLElement | null>(null);
 const buttonWrapperRef = ref<HTMLElement | null>(null);
 const buttonRef = ref<HTMLButtonElement | null>(null);
@@ -65,12 +74,20 @@ const expanded = ref(false);
 const showButton = ref(false);
 const hiddenCount = ref(0);
 const visibleItemsCount = ref(0);
+const { modelValue, multiple, size, type, truncate, maxRows, ariaLabel } = toRefs(props);
+
+const internalModelValue = ref<string | string[]>(modelValue.value ?? (multiple.value ? [] : ""));
+
+const { t } = useI18n();
+const debouncedMeasureAndLayout = useDebounceFn(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
+
+const ariaLabelValue = computed(() => ariaLabel.value ?? t("ui_kit.accessibility.variant_picker_group"));
+const buttonAriaLabel = computed(() => t("ui_kit.accessibility.show_more_button", { count: hiddenCount.value }));
 const isButtonVisible = computed(() => truncate.value && !expanded.value && showButton.value);
 const ariaExpandedValue = computed(() => (expanded.value ? "true" : "false"));
 
-const debouncedMeasureAndLayout = useDebounceFn(measureAndLayout, LAYOUT_CONFIG.RESIZE_DEBOUNCE_MS);
-
 useResizeObserver(containerRef, debouncedMeasureAndLayout);
+
 function getGroupItems(containerEl: HTMLElement | null, onlyVisible = false): HTMLElement[] {
   if (!containerEl?.children) {
     return [];
@@ -371,6 +388,45 @@ function onTabKey(event: KeyboardEvent): void {
   event.preventDefault();
   navigateBy(isShift ? "prev" : "next", event.target);
 }
+
+function toggleValue(value: string | string[]): void {
+  const valueToSet = Array.isArray(value) ? [...value] : value;
+
+  if (multiple.value) {
+    const currentValue = Array.isArray(internalModelValue.value) ? [...internalModelValue.value] : [];
+    const index = currentValue.findIndex((v) => isEqual(v, valueToSet));
+
+    if (index > -1) {
+      currentValue.splice(index, 1);
+      internalModelValue.value = (currentValue.length ? currentValue : []) as string | string[];
+    } else {
+      internalModelValue.value = [...currentValue, valueToSet] as string | string[];
+    }
+  } else {
+    internalModelValue.value = valueToSet;
+  }
+
+  emit("update:modelValue", internalModelValue.value);
+  emit("change", internalModelValue.value);
+}
+
+provide<VcVariantPickerGroupContextType>("variantPickerGroupContext", {
+  modelValue: internalModelValue,
+  multiple,
+  size,
+  type,
+  toggleValue,
+});
+
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (newVal !== undefined) {
+      internalModelValue.value = Array.isArray(newVal) ? [...newVal] : newVal;
+    }
+  },
+  { deep: true, immediate: true },
+);
 
 watch(truncate, (enabled) => {
   if (enabled) {
