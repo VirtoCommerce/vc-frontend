@@ -57,40 +57,45 @@
       <div class="variations__loading-skeleton">
         <div v-for="i in 6" :key="i" class="variations__loading-item">
           <div class="variations__loading-image"></div>
+
           <div class="variations__loading-content">
             <div class="variations__loading-title"></div>
+
             <div class="variations__loading-text"></div>
+
             <div class="variations__loading-text"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <VariationsDefault
-      v-else-if="isSmallScreen || (!isSmallScreen && !isTableView)"
-      :variations="variations || []"
-      :fetching="fetchingVariations"
-      :page-number="pageNumber"
-      :pages-count="pagesCount"
-      @change-page="changePage"
-    />
-
-    <VariationsTable
-      v-else
-      :variations="variations || []"
-      :sort="sort"
-      :fetching="fetchingVariations"
-      :page-number="pageNumber"
-      :pages-count="pagesCount"
-      @apply-sorting="applySorting"
-      @change-page="changePage"
-    />
-
     <VcEmptyView
       v-if="variations?.length === 0 && !fetchingVariations"
       :text="$t('shared.catalog.product_details.variations.no_results')"
       icon="outline-stock"
     />
+
+    <template v-else>
+      <VariationsDefault
+        v-if="isSmallScreen || (!isSmallScreen && !isTableView)"
+        :variations="variations || []"
+        :fetching="fetchingVariations"
+        :page-number="pageNumber"
+        :pages-count="pagesCount"
+        @change-page="changePage"
+      />
+
+      <VariationsTable
+        v-else
+        :variations="variations || []"
+        :sort="sort"
+        :fetching="fetchingVariations"
+        :page-number="pageNumber"
+        :pages-count="pagesCount"
+        @apply-sorting="applySorting"
+        @change-page="changePage"
+      />
+    </template>
   </VcWidget>
 </template>
 

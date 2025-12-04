@@ -80,7 +80,8 @@
       "expand_all": "Expand all",
       "all_products": "All products",
       "buy_now": "Buy now",
-      "see_all": "See all"
+      "see_all": "See all",
+      "report_a_problem": "Report a problem"
     },
     "labels": {
       "actions": "Actions",
@@ -105,7 +106,7 @@
       "total": "Total",
       "compare": "Compare",
       "price": "Price",
-      "product_price": "Your price",
+      "product_price": "Price",
       "subtotal": "Subtotal",
       "discount": "Discount",
       "line_items": "Line items",
@@ -165,7 +166,8 @@
       "buyer_name": "Buyer name",
       "other": "Other",
       "vendor_name": "Vendor: {name}",
-      "not_available": "N/A"
+      "not_available": "N/A",
+      "product_reviews": "Product reviews"
     },
     "prefixes": {
       "please": "Please",
@@ -193,7 +195,7 @@
       "not_defined": "Undefined",
       "invalid_coupon": "This code does not match any active coupons. Double-check that everything is correct and try again.",
       "fill_all_required": "Complete all required information to proceed.",
-      "something_went_wrong": "Oops! Something went wrong. Double-check that everything is correct and try again.",
+      "something_went_wrong": "Something went wrong. Please try again later.",
       "checkout_pricing_warning": "Availability, shipping, tax and promotions are not final until you complete your order.",
       "wishlists_available_for_authorized": "Wishlists are available only for authenticated users",
       "no_addresses": "You do not have any addresses yet",
@@ -204,6 +206,7 @@
       "fail_add_product_to_cart": "Sorry, this product cannot be added to cart. {reason}",
       "fail_to_change_quantity_in_cart": "Sorry, can't update product quantity in cart. {reason}",
       "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
+      "report_sent_successfully": "Thank you! Your report has been sent successfully. We'll look into it.",
       "role_update_successful": "The customer role has been updated successfully",
       "role_update_failed": "Errors occurred during the role updating: {0}",
       "passwords_do_not_match": "The password fields must have matching values",
@@ -564,6 +567,12 @@
           "remove": "Remove from Compare"
         }
       },
+      "notifications": {
+        "limit_reached": "Only {productsLimit} products can be compared",
+        "added_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> is added to compare list <span class=\"hidden lg:inline\">(items left - {itemsLeft})</span>",
+        "removed_html": "Product <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> was removed from the compare list",
+        "compare_button": "Compare"
+      },
       "clear_list_modal": {
         "title": "Confirm clear",
         "message": "Do you confirm the removal of all products from the compare list?"
@@ -637,6 +646,7 @@
         "create_configuration_button": "Create your own configuration",
         "price_block": {
           "title": "Price and delivery",
+          "mobile_title": "Share & Actions",
           "add_to_list_button": "Add to list",
           "product_email_title": "Have a look at the product: {0}"
         },
@@ -697,7 +707,8 @@
         "clear_selection": "Clear selection",
         "cancel_button": "Cancel",
         "ok_button": "Ok",
-        "no_results": "No results found",
+        "no_results": "There are no results found",
+        "no_branches": "There are no branches found",
         "reset_search_button": "Reset search"
       },
       "shipment_options": {
@@ -937,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Bad Request",
+      "message": "The user is no longer allowed to sign in. Please contact the administrator.",
+      "img_alt": "Bad Request",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Access denied",
@@ -1164,7 +1182,9 @@
           "get_directions": "Get directions",
           "point_info": "Point info",
           "pickup_address": "Pick-up address",
-          "cart_pickup_points_not_found": "There are no available pickup points for these products. Select another shipping method",
+          "cart_pickup_points_not_found": "There are no available pickup points for these products. Select another shipping method.",
+          "cart_pickup_points_not_found_by_filter": "Pickup points not found.",
+          "cart_pickup_points_reset_search": "Reset search",
           "availability": "Availability"
         }
       },
@@ -1369,7 +1389,8 @@
       "products_icon": "Product icon",
       "show_all_results": "Show all results",
       "load_previous_page": "Load previous page",
-      "load_next_page": "Load next page"
+      "load_next_page": "Load next page",
+      "available_variations": "No available variations | 1 available variation | {count} available variations"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

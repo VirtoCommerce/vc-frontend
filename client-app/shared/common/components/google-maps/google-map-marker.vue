@@ -70,6 +70,10 @@ function openInfoWindow() {
     return;
   }
 
+  if (isInfoWindowOpen.value) {
+    return;
+  }
+
   isInfoWindowOpen.value = false;
 
   infoWindow.value?.setContent(`<div id="${ACTIVE_INFO_WINDOW_CONTENT_ID}"></div>`);
@@ -108,7 +112,7 @@ const unwatch = watch(
       unwatch();
     }
   },
-  { immediate: true },
+  { immediate: false }, //Using nextTick instead of immediate: false causes the markers to lose reactivity and not render
 );
 
 watch(

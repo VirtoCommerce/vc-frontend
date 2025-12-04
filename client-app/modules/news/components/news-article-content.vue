@@ -1,6 +1,7 @@
 <template>
   <div class="news-article-content">
     <div class="news-article-content__title">{{ newsArticle.title }}</div>
+
     <div class="news-article-content__tags">
       <template v-for="tag in newsArticle.tags" :key="tag">
         <VcChip

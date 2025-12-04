@@ -44,11 +44,13 @@
                 <span v-if="isHTML(property)">
                   <VcMarkdownRender :src="String(property.value)" />
                 </span>
+
                 <span v-else-if="isBrand(property)">
                   <a :href="`/${brand?.permalink}`" class="text-[--link-color] hover:text-[--link-hover-color]">
                     {{ property.value }}
                   </a>
                 </span>
+
                 <span v-else>
                   {{ property.value }}
                 </span>
@@ -83,9 +85,9 @@ const props = defineProps<IProps>();
 const collapsedStates = ref<boolean[]>([]);
 
 const properties = computed(() =>
-  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product))
-    .filter((property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME)
-    .slice(0, 3),
+  Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).filter(
+    (property) => property.name !== PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME,
+  ),
 );
 
 const groupedProperties = computed(() => getGroupedAndSortedProperties(properties.value));

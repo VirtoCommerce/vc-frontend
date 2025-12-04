@@ -3,12 +3,11 @@
     class="filters-popup-sidebar"
     :is-visible="isVisible"
     :title="isMobile ? $t('common.buttons.filters') : $t('common.buttons.allFilters')"
-    @hide="$emit('hidePopupSidebar')"
+    @hide="onCancel"
   >
     <ProductsFilters
       v-if="localFilters"
       :id="productsFiltersId"
-      :keyword="keywordQueryParam"
       :filters="localFilters"
       :loading="loading || facetsLoading"
       @change:filters="onProductsFiltersChange"
@@ -100,7 +99,7 @@ import isEqual from "lodash/isEqual";
 import { watch, ref, computed, nextTick, onMounted, onUnmounted } from "vue";
 import { usePurchasedBefore } from "@/shared/catalog/composables";
 import { useModal } from "@/shared/modal";
-import { useComponentId } from "@/ui-kit/composables";
+import { useComponentId, useFocusManagement } from "@/ui-kit/composables";
 import type { SearchProductFilterResult } from "@/core/api/graphql/types.ts";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
@@ -121,12 +120,15 @@ interface IProps {
   loading?: boolean;
   facetsLoading?: boolean;
   hideControls?: boolean;
-  keywordQueryParam?: string;
   popupSidebarFilters: ProductsFiltersType;
   isExistSelectedFacets: boolean;
 }
 
 const productsFiltersId = useComponentId("products-filters");
+
+const { focusFirst } = useFocusManagement({
+  container: `#${productsFiltersId}`,
+});
 
 const localFilters = ref<ProductsFiltersType>({
   filters: [],
@@ -167,7 +169,7 @@ watch(
     if (visible) {
       beforeChangeFilterState.value = cloneDeep(props.popupSidebarFilters);
       await nextTick();
-      focusFirstElement();
+      focusFirst();
     }
   },
 );
@@ -182,7 +184,7 @@ function onProductsFiltersChange(payload: SearchProductFilterResult[]) {
 }
 
 function onCancel() {
-  if (beforeChangeFilterState.value) {
+  if (isPopupSidebarFilterDirty.value && beforeChangeFilterState.value) {
     emit("applyFilters", cloneDeep(beforeChangeFilterState.value));
   }
 
@@ -200,15 +202,6 @@ function onApply() {
   }
 
   emit("hidePopupSidebar");
-}
-
-function focusFirstElement() {
-  const firstFocusableElement = document
-    .getElementById(productsFiltersId)
-    ?.querySelector("input:not(:disabled), button:not(:disabled)");
-  if (firstFocusableElement && firstFocusableElement instanceof HTMLElement) {
-    firstFocusableElement.focus();
-  }
 }
 
 function handleKeydown(event: KeyboardEvent) {

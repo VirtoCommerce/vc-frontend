@@ -80,7 +80,8 @@
       "expand_all": "Utvid alle",
       "all_products": "Alle produkter",
       "buy_now": "Kjøp nå",
-      "see_all": "Se alle"
+      "see_all": "Se alle",
+      "report_a_problem": "Rapporter et problem"
     },
     "labels": {
       "actions": "Handlinger",
@@ -105,7 +106,7 @@
       "total": "Totalt",
       "compare": "Sammenlign",
       "price": "Pris",
-      "product_price": "Din pris",
+      "product_price": "Pris",
       "subtotal": "Delsum",
       "discount": "Rabatt",
       "line_items": "Produkter",
@@ -165,7 +166,8 @@
       "buyer_name": "Kjøpers navn",
       "other": "Annet",
       "vendor_name": "Leverandør: {name}",
-      "not_available": "Ikke tilgjengelig"
+      "not_available": "Ikke tilgjengelig",
+      "product_reviews": "Produktomtaler"
     },
     "prefixes": {
       "please": "Vennligst",
@@ -193,7 +195,7 @@
       "not_defined": "Ikke definert",
       "invalid_coupon": "Denne koden samsvarer ikke med noen aktiv kupong. Kontroller at alt er riktig, og prøv igjen.",
       "fill_all_required": "Fyll ut alle obligatoriske felt for å fortsette.",
-      "something_went_wrong": "Ops! Noe gikk galt. Kontroller at alt er riktig, og prøv igjen.",
+      "something_went_wrong": "Noe gikk galt. Vennligst prøv igjen senere.",
       "checkout_pricing_warning": "Tilgjengelighet, frakt, skatter og kampanjer er ikke endelige før du har fullført bestillingen.",
       "wishlists_available_for_authorized": "Ønskelister er kun tilgjengelige for autentiserte brukere",
       "no_addresses": "Du har ingen adresser ennå",
@@ -204,6 +206,7 @@
       "fail_add_product_to_cart": "Dette produktet kan dessverre ikke legges i handlekurven. {reason}",
       "fail_to_change_quantity_in_cart": "Antallet for produktet kan dessverre ikke oppdateres i handlekurven. {reason}",
       "unhandled_error": "Beklager ulempen. Serveren vår opplever for øyeblikket tekniske problemer. Prøv igjen senere.",
+      "report_sent_successfully": "Takk! Din rapport er sendt. Vi vil se på det.",
       "role_update_successful": "Brukerrollen er oppdatert",
       "role_update_failed": "Feil ved oppdatering av rolle: {0}",
       "passwords_do_not_match": "Passordfeltene samsvarer ikke",
@@ -564,6 +567,12 @@
           "remove": "Fjern fra sammenligning"
         }
       },
+      "notifications": {
+        "limit_reached": "Bare {productsLimit} produkter kan sammenlignes",
+        "added_html": "Produktet <span class=\"hidden lg:inline\">«<strong>{productName}</strong>»</span> er lagt til sammenligningslisten <span class=\"hidden lg:inline\">(antall igjen – {itemsLeft})</span>",
+        "removed_html": "Produktet <span class=\"hidden lg:inline\">«<strong>{productName}</strong>»</span> er fjernet fra sammenligningslisten",
+        "compare_button": "Sammenlign"
+      },
       "clear_list_modal": {
         "title": "Bekreft tømming",
         "message": "Bekrefter du at alle produkter fjernes fra sammenligningslisten?"
@@ -637,6 +646,7 @@
         "create_configuration_button": "Lag din egen konfigurasjon",
         "price_block": {
           "title": "Pris og levering",
+          "mobile_title": "Del og mer",
           "add_to_list_button": "Legg til i liste",
           "product_email_title": "Se produkt: {0}"
         },
@@ -698,6 +708,7 @@
         "cancel_button": "Avbryt",
         "ok_button": "OK",
         "no_results": "Ingen resultater funnet",
+        "no_branches": "Ingen filialer funnet",
         "reset_search_button": "Tilbakestill søk"
       },
       "shipment_options": {
@@ -937,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Ugyldig forespørsel",
+      "message": "Brukeren har ikke lenger tillatelse til å logge på. Kontakt administratoren.",
+      "img_alt": "Ugyldig forespørsel",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Tilgang nektet",
@@ -1164,7 +1182,9 @@
           "get_directions": "Hent veibeskrivelse",
           "point_info": "Punktinformasjon",
           "pickup_address": "Henteadresse",
-          "cart_pickup_points_not_found": "Det finnes ingen tilgjengelige hentepunkter for disse produktene. Velg en annen forsendelsesmetode",
+          "cart_pickup_points_not_found": "Det finnes ingen tilgjengelige hentepunkter for disse produktene. Velg en annen forsendelsesmetode.",
+          "cart_pickup_points_not_found_by_filter": "Ingen hentepunkter funnet.",
+          "cart_pickup_points_reset_search": "Tilbakestill søk",
           "availability": "Tilgjengelighet"
         }
       },
@@ -1369,7 +1389,8 @@
       "products_icon": "Produktikon",
       "show_all_results": "Vis alle resultater",
       "load_previous_page": "Last inn forrige side",
-      "load_next_page": "Last inn neste side"
+      "load_next_page": "Last inn neste side",
+      "available_variations": "Ingen tilgjengelige varianter | 1 tilgjengelig variant | {count} tilgjengelige varianter"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

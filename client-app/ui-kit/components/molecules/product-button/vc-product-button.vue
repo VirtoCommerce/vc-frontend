@@ -14,6 +14,7 @@
         :loading="loading"
         :truncate="truncate"
         :title="title"
+        :append-icon="appendIcon"
         @click="$emit('linkClick', $event)"
       >
         {{ buttonText }}
@@ -65,6 +66,7 @@ interface IProps {
   truncate?: boolean;
   title?: string;
   size?: "sm" | "md";
+  appendIcon?: string;
 }
 
 defineEmits<IEmits>();
@@ -117,7 +119,9 @@ withDefaults(defineProps<IProps>(), {
   }
 
   @at-root .vc-product-card {
-    #{$self} {
+    $wrapperSelector: "> .vc-product-card__wrapper #{$self}";
+
+    #{$wrapperSelector} {
       @apply mt-3;
 
       grid-area: add-to-cart;
@@ -125,16 +129,16 @@ withDefaults(defineProps<IProps>(), {
 
     &--view-mode {
       &--grid {
-        #{$self} {
+        #{$wrapperSelector} {
           @apply order-7 min-h-[3.375rem];
         }
 
         #{$link} {
-          @apply mt-7;
+          @apply mt-8;
         }
       }
 
-      &--list #{$self} {
+      &--list #{$wrapperSelector} {
         @container (min-width: theme("containers.sm")) {
           @apply w-72;
         }

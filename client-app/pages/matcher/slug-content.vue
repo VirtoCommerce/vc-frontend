@@ -123,28 +123,32 @@ function emitState(state: StateType, redirectUrl?: string) {
   emit("setState", { state, redirectUrl });
 }
 
-watch(slugInfo, () => {
-  const type = slugInfo.value?.entityInfo?.objectType;
-  switch (type) {
-    case ObjectType.CatalogProduct:
-      setMatchingRouteName("Product");
-      break;
-    case ObjectType.Category:
-      setMatchingRouteName("Category");
-      break;
-    case ObjectType.NewsArticle:
-      setMatchingRouteName("NewsArticle");
-      break;
-    case ObjectType.ContentFile:
-      void fetchContent();
-      break;
-    case ObjectType.VirtoPages:
-      void fetchPageDocumentContent();
-      break;
-    default:
-      clearState();
-  }
-});
+watch(
+  slugInfo,
+  () => {
+    const type = slugInfo.value?.entityInfo?.objectType;
+    switch (type) {
+      case ObjectType.CatalogProduct:
+        setMatchingRouteName("Product");
+        break;
+      case ObjectType.Category:
+        setMatchingRouteName("Category");
+        break;
+      case ObjectType.NewsArticle:
+        setMatchingRouteName("NewsArticle");
+        break;
+      case ObjectType.ContentFile:
+        void fetchContent();
+        break;
+      case ObjectType.VirtoPages:
+        void fetchPageDocumentContent();
+        break;
+      default:
+        clearState();
+    }
+  },
+  { immediate: true },
+);
 
 watch(pageContent, (value) => {
   if (value) {

@@ -135,7 +135,7 @@ function onInput() {
   }
 
   &__button {
-    @apply flex gap-1.5 rounded-[--radius] border border-transparent p-[--p] font-bold cursor-pointer select-none;
+    @apply flex items-center gap-1.5 rounded-[--radius] border border-transparent p-[--p] font-bold cursor-pointer select-none;
 
     input:checked ~ & {
       @apply border-neutral-200 shadow-md text-neutral-950 bg-additional-50;

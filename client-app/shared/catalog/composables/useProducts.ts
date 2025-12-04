@@ -51,6 +51,8 @@ export function useProducts(
     /** @default CATALOG_PAGINATION_MODES.infiniteScroll */
     catalogPaginationMode?: CatalogPaginationModeType;
     facetsToHide?: string[];
+    /** @default true */
+    initialFetchingState?: boolean;
   } = {},
 ) {
   const { themeContext } = useThemeContext();
@@ -59,6 +61,7 @@ export function useProducts(
     withImages = themeContext.value?.settings?.image_carousel_in_product_card_enabled,
     withZeroPrice = themeContext.value?.settings?.zero_price_product_enabled,
     catalogPaginationMode = CATALOG_PAGINATION_MODES.infiniteScroll,
+    initialFetchingState = true,
   } = options;
   const { openModal } = useModal();
   const { isEnabled } = useModuleSettings(INTENT_SEARCH_MODULE_ID);
@@ -97,16 +100,11 @@ export function useProducts(
     defaultValue: "",
   });
 
-  /** @deprecated use `searchQueryParam` instead */
-  const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
-    defaultValue: "",
-  });
-
   const facetsQueryParam = useRouteQueryParam<string>(QueryParamName.Facets, {
     defaultValue: "",
   });
 
-  const fetchingProducts = ref(true);
+  const fetchingProducts = ref(initialFetchingState);
   const fetchingMoreProducts = ref(false);
   const fetchingFacets = ref(false);
   const totalProductsCount = ref(0);
@@ -264,11 +262,6 @@ export function useProducts(
     await new Promise((resolve) => setTimeout(resolve, 0));
     // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
     preserveUserQueryQueryParam.value = "yes";
-  }
-
-  /** @deprecated use `searchQueryParam` instead */
-  function resetFilterKeyword(): void {
-    keywordQueryParam.value = "";
   }
 
   function resetSearchKeyword(): void {
@@ -513,8 +506,6 @@ export function useProducts(
     hasSelectedFilters: computed(() => hasSelectedFilters()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
-    /** @deprecated use `searchQueryParam` instead */
-    keywordQueryParam,
     localStorageBranches,
     localStorageInStock,
     localStoragePurchasedBefore,
@@ -541,8 +532,6 @@ export function useProducts(
     hideFiltersSidebar,
     openBranchesModal,
     resetFacetFilters,
-    /** @deprecated use `searchQueryParam` instead */
-    resetFilterKeyword,
     resetSearchKeyword,
     showFiltersSidebar,
     updateProductsFilters,

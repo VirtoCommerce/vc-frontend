@@ -80,7 +80,8 @@
       "expand_all": "Laajenna kaikki",
       "all_products": "Kaikki tuotteet",
       "buy_now": "Osta nyt",
-      "see_all": "Katso kaikki"
+      "see_all": "Katso kaikki",
+      "report_a_problem": "Ilmoita ongelmasta"
     },
     "labels": {
       "actions": "Toiminnot",
@@ -105,7 +106,7 @@
       "total": "Yhteensä",
       "compare": "Vertaa",
       "price": "Hinta",
-      "product_price": "Sinun hintasi",
+      "product_price": "Hinta",
       "subtotal": "Välisumma",
       "discount": "Alennus",
       "line_items": "Tuotteet",
@@ -165,7 +166,8 @@
       "buyer_name": "Ostajan nimi",
       "other": "Muu",
       "vendor_name": "Toimittaja: {name}",
-      "not_available": "Ei saatavilla"
+      "not_available": "Ei saatavilla",
+      "product_reviews": "Tuotearvostelut"
     },
     "prefixes": {
       "please": "Ole hyvä",
@@ -193,7 +195,7 @@
       "not_defined": "Määrittelemätön",
       "invalid_coupon": "Tämä koodi ei vastaa yhtään aktiivista kuponkia. Tarkista, että kaikki on oikein, ja yritä uudelleen.",
       "fill_all_required": "Täytä kaikki pakolliset tiedot jatkaaksesi.",
-      "something_went_wrong": "Hups! Jotain meni pieleen. Tarkista, että kaikki on oikein, ja yritä uudelleen.",
+      "something_went_wrong": "Jotain meni pieleen. Yritä myöhemmin uudelleen.",
       "checkout_pricing_warning": "Saatavuus, toimitus, verot ja kampanjat eivät ole lopullisia ennen kuin olet viimeistellyt tilauksesi.",
       "wishlists_available_for_authorized": "Toivelistat ovat saatavilla vain todennetuille käyttäjille",
       "no_addresses": "Sinulla ei ole vielä osoitteita",
@@ -204,6 +206,7 @@
       "fail_add_product_to_cart": "Valitettavasti tätä tuotetta ei voi lisätä ostoskoriin. {reason}",
       "fail_to_change_quantity_in_cart": "Valitettavasti tuotteen määrää ei voi päivittää ostoskorissa. {reason}",
       "unhandled_error": "Pahoittelut häiriöstä. Palvelimellamme on tällä hetkellä teknisiä ongelmia. Yritä uudelleen myöhemmin.",
+      "report_sent_successfully": "Kiitos! Raporttisi on lähetetty onnistuneesti. Tarkastelemme sitä.",
       "role_update_successful": "Käyttäjärooli on päivitetty onnistuneesti",
       "role_update_failed": "Virhe roolin päivityksessä: {0}",
       "passwords_do_not_match": "Salasanakenttien arvot eivät täsmää",
@@ -564,6 +567,12 @@
           "remove": "Poista vertailusta"
         }
       },
+      "notifications": {
+        "limit_reached": "Vain {productsLimit} tuotetta voidaan vertailla",
+        "added_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> on lisätty vertailulistalle <span class=\"hidden lg:inline\">(jäljellä {itemsLeft} tuotetta)</span>",
+        "removed_html": "Tuote <span class=\"hidden lg:inline\">“<strong>{productName}</strong>”</span> on poistettu vertailulistalta",
+        "compare_button": "Vertaile"
+      },
       "clear_list_modal": {
         "title": "Vahvista tyhjennys",
         "message": "Vahvistatko, että kaikki tuotteet poistetaan vertailulistalta?"
@@ -637,6 +646,7 @@
         "create_configuration_button": "Luo oma kokoonpano",
         "price_block": {
           "title": "Hinta ja toimitus",
+          "mobile_title": "Jaa ja lisää",
           "add_to_list_button": "Lisää listaan",
           "product_email_title": "Katso tuote: {0}"
         },
@@ -698,6 +708,7 @@
         "cancel_button": "Peruuta",
         "ok_button": "OK",
         "no_results": "Tuloksia ei löytynyt",
+        "no_branches": "Toimipisteitä ei löytynyt",
         "reset_search_button": "Nollaa haku"
       },
       "shipment_options": {
@@ -937,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Virheellinen pyyntö",
+      "message": "Käyttäjä ei voi enää kirjautua sisään. Ota yhteyttä järjestelmänvalvojaan.",
+      "img_alt": "Virheellinen pyyntö",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Pääsy evätty",
@@ -1164,7 +1182,9 @@
           "get_directions": "Hae reittiohjeet",
           "point_info": "Pistetiedot",
           "pickup_address": "Nouto-osoite",
-          "cart_pickup_points_not_found": "Näille tuotteille ei ole noutopisteitä. Valitse toinen toimitustapa",
+          "cart_pickup_points_not_found": "Näille tuotteille ei ole noutopisteitä. Valitse toinen toimitustapa.",
+          "cart_pickup_points_not_found_by_filter": "Noutopisteitä ei löytynyt.",
+          "cart_pickup_points_reset_search": "Nollaa haku",
           "availability": "Saatavuus"
         }
       },
@@ -1369,7 +1389,8 @@
       "products_icon": "Tuotekuvake",
       "show_all_results": "Näytä kaikki tulokset",
       "load_previous_page": "Lataa edellinen sivu",
-      "load_next_page": "Lataa seuraava sivu"
+      "load_next_page": "Lataa seuraava sivu",
+      "available_variations": "Ei saatavilla olevia versioita | 1 saatavilla oleva versio | {count} saatavilla olevaa versiota"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

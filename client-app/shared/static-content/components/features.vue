@@ -6,10 +6,13 @@
       </VcTypography>
 
       <div class="text-center text-base">{{ model.subtitle }}</div>
+
       <div class="mt-16 grid grid-cols-1 items-center gap-x-20 gap-y-10 px-8 lg:px-0" :class="classObject">
         <div v-for="(item, index) in model.columns" :key="index" class="text-center">
           <VcImage :src="item.image" class="mx-auto mb-9 h-24" lazy />
+
           <div class="mb-3 text-2xl font-bold uppercase">{{ item.title }}</div>
+
           <div class="text-sm">{{ item.text }}</div>
         </div>
       </div>

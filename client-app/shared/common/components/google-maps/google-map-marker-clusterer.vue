@@ -48,7 +48,7 @@ const unwatch = watch(
       unwatch();
     }
   },
-  { immediate: true },
+  { immediate: false }, //Using nextTick instead of immediate: false causes the markers to lose reactivity and not render
 );
 
 watch(

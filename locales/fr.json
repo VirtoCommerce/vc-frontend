@@ -80,7 +80,8 @@
       "expand_all": "Tout développer",
       "all_products": "Tous les produits",
       "buy_now": "Acheter",
-      "see_all": "Voir tout"
+      "see_all": "Voir tout",
+      "report_a_problem": "Signaler un problème"
     },
     "labels": {
       "actions": "Actions",
@@ -105,7 +106,7 @@
       "total": "Total",
       "compare": "Comparer",
       "price": "Prix",
-      "product_price": "Votre prix",
+      "product_price": "Prix",
       "subtotal": "Sous-total",
       "discount": "Remise",
       "line_items": "Lignes de commande",
@@ -165,7 +166,8 @@
       "buyer_name": "Nom de l'acheteur",
       "other": "Autre",
       "vendor_name": "Fournisseur: {name}",
-      "not_available": "N/A"
+      "not_available": "N/A",
+      "product_reviews": "Avis sur le produit"
     },
     "prefixes": {
       "please": "S'il vous plaît",
@@ -193,7 +195,7 @@
       "not_defined": "Indéfini",
       "invalid_coupon": "Ce code ne correspond à aucun coupon actif. Veuillez vérifier que tout est correct et réessayez.",
       "fill_all_required": "Veuillez compléter toutes les informations requises pour continuer.",
-      "something_went_wrong": "Oups ! Quelque chose s'est mal passé. Veuillez vérifier que tout est correct et réessayez.",
+      "something_went_wrong": "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
       "checkout_pricing_warning": "La disponibilité, l'expédition, les taxes et les promotions ne sont pas définitives tant que vous n'avez pas complété votre commande.",
       "wishlists_available_for_authorized": "Les listes de souhaits ne sont disponibles que pour les utilisateurs authentifiés",
       "no_addresses": "Vous n'avez pas encore d'adresses",
@@ -204,6 +206,7 @@
       "fail_add_product_to_cart": "Désolé, ce produit ne peut pas être ajouté au panier. {reason}",
       "fail_to_change_quantity_in_cart": "Désolé, impossible de mettre à jour la quantité du produit dans le panier. {reason}",
       "unhandled_error": "Nous nous excusons pour le désagrément. Notre serveur rencontre actuellement des problèmes techniques. Veuillez réessayer plus tard.",
+      "report_sent_successfully": "Merci ! Votre rapport a été envoyé avec succès. Nous allons examiner le problème.",
       "role_update_successful": "Le rôle du client a été mis à jour avec succès.",
       "role_update_failed": "Des erreurs se sont produites lors de la mise à jour du rôle : {0}",
       "passwords_do_not_match": "Les champs de mot de passe doivent avoir des valeurs correspondantes.",
@@ -564,6 +567,12 @@
           "remove": "Retirer du comparateur"
         }
       },
+      "notifications": {
+        "limit_reached": "Seulement {productsLimit} produits peuvent être comparés",
+        "added_html": "Le produit <span class=\"hidden lg:inline\">« <strong>{productName}</strong> »</span> a été ajouté à la liste de comparaison <span class=\"hidden lg:inline\">({itemsLeft} articles restants)</span>",
+        "removed_html": "Le produit <span class=\"hidden lg:inline\">« <strong>{productName}</strong> »</span> a été retiré de la liste de comparaison",
+        "compare_button": "Comparer"
+      },
       "clear_list_modal": {
         "title": "Confirmer la suppression",
         "message": "Confirmez-vous la suppression de tous les produits de la liste de comparaison ?"
@@ -637,6 +646,7 @@
         "create_configuration_button": "Créer configuration",
         "price_block": {
           "title": "Prix et Livraison",
+          "mobile_title": "Partager et plus",
           "add_to_list_button": "Ajouter à la liste",
           "product_email_title": "Veuillez jeter un œil au produit : {0}"
         },
@@ -698,6 +708,7 @@
         "cancel_button": "Annuler",
         "ok_button": "Ok",
         "no_results": "Aucun résultat trouvé",
+        "no_branches": "Aucune branche trouvée",
         "reset_search_button": "Réinitialiser la recherche"
       },
       "shipment_options": {
@@ -937,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Mauvaise requête",
+      "message": "L'utilisateur n'est plus autorisé à se connecter. Veuillez contacter l'administrateur.",
+      "img_alt": "Mauvaise requête",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Accès refusé",
@@ -1165,6 +1183,8 @@
           "point_info": "Point d'info",
           "pickup_address": "Adresse de retrait",
           "cart_pickup_points_not_found": "Aucun point de collecte n'est disponible pour ces produits. Veuillez sélectionner un autre mode de livraison.",
+          "cart_pickup_points_not_found_by_filter": "Points de collecte introuvables.",
+          "cart_pickup_points_reset_search": "Réinitialiser la recherche",
           "availability": "Disponibilité"
         }
       },
@@ -1369,7 +1389,8 @@
       "products_icon": "Icône du produit",
       "show_all_results": "Afficher tous les résultats",
       "load_previous_page": "Charger la page précédente",
-      "load_next_page": "Charger la page suivante"
+      "load_next_page": "Charger la page suivante",
+      "available_variations": "Aucune variation disponible | 1 variation disponible | {count} variations disponibles"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

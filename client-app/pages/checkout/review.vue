@@ -1,5 +1,5 @@
 <template>
-  <VcLayout sidebar-position="right" sticky-sidebar>
+  <VcLayout sidebar-position="right" sticky>
     <VcWidget
       id="line-items-widget"
       :title="$t('common.titles.review_order')"
