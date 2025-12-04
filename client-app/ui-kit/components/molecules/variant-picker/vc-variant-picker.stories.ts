@@ -1,5 +1,7 @@
+import { ref } from "vue";
 import { VcVariantPicker } from "..";
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import { VcVariantPickerGroup } from "../../atoms";
+import type { Meta, StoryObj, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xxs", "xs", "sm", "md", "lg"];
 
@@ -46,6 +48,58 @@ export const Basic: StoryType = {
     value: "red",
     isAvailable: true,
   },
+};
+
+export const WithGroup: StoryFn = (args) => ({
+  components: { VcVariantPickerGroup, VcVariantPicker },
+  setup: () => {
+    const model = ref<string | string[]>("red");
+    const items = [
+      { value: "red", isAvailable: true },
+      { value: "blue", isAvailable: true },
+      { value: "green", isAvailable: false },
+      { value: "yellow", isAvailable: true },
+    ];
+    return { args, model, items };
+  },
+  template: `
+    <div class="p-6">
+      <div class="mb-3">Selected: {{ model }}</div>
+      <VcVariantPickerGroup v-model="model" v-bind="args">
+        <VcVariantPicker v-for="item in items" :key="item.value" :value="item.value" :is-available="item.isAvailable" />
+      </VcVariantPickerGroup>
+    </div>
+  `,
+});
+WithGroup.args = {
+  type: "color",
+  multiple: false,
+};
+
+export const WithGroupMultiple: StoryFn = (args) => ({
+  components: { VcVariantPickerGroup, VcVariantPicker },
+  setup: () => {
+    const model = ref<string[]>([]);
+    const items = [
+      { value: "red", isAvailable: true },
+      { value: "blue", isAvailable: true },
+      { value: "green", isAvailable: false },
+      { value: "yellow", isAvailable: true },
+    ];
+    return { args, model, items };
+  },
+  template: `
+    <div class="p-6">
+      <div class="mb-3">Selected: {{ model }}</div>
+      <VcVariantPickerGroup v-model="model" v-bind="args">
+        <VcVariantPicker v-for="item in items" :key="item.value" :value="item.value" :is-available="item.isAvailable" />
+      </VcVariantPickerGroup>
+    </div>
+  `,
+});
+WithGroupMultiple.args = {
+  type: "color",
+  multiple: true,
 };
 
 export const Unavailable: StoryType = {
