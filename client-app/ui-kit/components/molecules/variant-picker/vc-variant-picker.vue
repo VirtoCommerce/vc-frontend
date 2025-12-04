@@ -42,7 +42,7 @@
           <input
             :checked="checked"
             class="vc-variant-picker__input"
-            :type="(groupContext ? groupContext.multiple.value : Array.isArray(modelValue)) ? 'checkbox' : 'radio'"
+            :type="multiple ? 'checkbox' : 'radio'"
             :aria-label="tooltip ?? inputValue"
             :name="name"
             :value="inputValue"
