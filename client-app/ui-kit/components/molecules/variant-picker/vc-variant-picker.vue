@@ -140,10 +140,10 @@ function toggleValue(): void {
 
   if (groupContext) {
     groupContext.toggleValue(valueToSet);
+  } else {
+    emit("update:modelValue", valueToSet);
+    emit("change", valueToSet);
   }
-
-  emit("update:modelValue", valueToSet);
-  emit("change", valueToSet);
 }
 </script>
 
