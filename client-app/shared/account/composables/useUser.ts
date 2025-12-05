@@ -1,4 +1,4 @@
-import { eagerComputed, useLocalStorage } from "@vueuse/core";
+import { useLocalStorage } from "@vueuse/core";
 import { createGlobalState } from "@vueuse/core";
 import { remove } from "lodash";
 import { computed, readonly, ref } from "vue";
@@ -58,13 +58,7 @@ export function _useUser() {
 
   const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
   const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
-  const organization = eagerComputed(
-    () =>
-      user.value?.contact?.organizations?.items?.find((item) => item.id === user.value?.contact?.organizationId) ??
-      null,
-  );
-
-  const allOrganizations = computed(() => user.value?.contact?.organizations?.items || []);
+  const organization = computed(() => user.value?.contact?.organization ?? null);
 
   const operator = computed(() => user.value?.operator ?? null);
 
@@ -380,7 +374,7 @@ export function _useUser() {
     isAuthenticated,
     isCorporateMember,
     isMultiOrganization: computed(
-      () => user.value?.contact?.organizations?.items && user.value?.contact?.organizations?.items?.length > 1,
+      () => user.value?.contact?.organizations?.totalCount && user.value?.contact?.organizations?.totalCount > 1,
     ),
     isOrganizationMaintainer: computed(
       () =>
@@ -388,7 +382,6 @@ export function _useUser() {
         false,
     ),
     organization,
-    allOrganizations,
     operator,
     userGroups,
     checkPermissions,

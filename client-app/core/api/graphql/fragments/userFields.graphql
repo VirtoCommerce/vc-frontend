@@ -21,11 +21,12 @@ fragment userTypeFields on UserType {
     defaultLanguage
     currencyCode
     selectedAddressId
+    organization {
+      id
+      name
+    }
     organizations {
-      items {
-        id
-        name
-      }
+      totalCount
     }
   }
   operator {

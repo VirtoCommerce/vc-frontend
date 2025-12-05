@@ -134,25 +134,7 @@
               </VcButton>
             </div>
 
-            <div v-if="isMultiOrganization" class="border-t py-3">
-              <div class="px-3 py-1 text-xs text-neutral-600">
-                {{ $t("common.labels.organizations") }}
-              </div>
-
-              <VcRadioButton
-                v-for="item in user.contact?.organizations?.items"
-                :key="item.id"
-                v-model="contactOrganizationId"
-                :label="item.name"
-                :value="item.id"
-                class="flex px-3 py-1 text-sm"
-                :max-lines="2"
-                :title="item.name"
-                word-break="break-word"
-                :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${item.name}`"
-                @change="selectOrganization"
-              />
-            </div>
+            <TopHeaderOrganizations v-if="isMultiOrganization" @organization-selected="loginMenuVisible = false" />
           </div>
         </div>
       </template>
@@ -189,25 +171,16 @@ import { useSignMeOut, useUser } from "@/shared/account";
 import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import TopHeaderLink from "./top-header-link.vue";
+import TopHeaderOrganizations from "./top-header-organizations.vue";
 
-const { isAuthenticated, isMultiOrganization, user, operator, organization, switchOrganization } = useUser();
+const { isAuthenticated, user, operator, organization, isMultiOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
-const contactOrganizationId = ref(user.value?.contact?.organizationId);
 
 const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
-
-async function selectOrganization(): Promise<void> {
-  if (!contactOrganizationId.value) {
-    return;
-  }
-
-  await switchOrganization(contactOrganizationId.value);
-  loginMenuVisible.value = false;
-}
 
 onClickOutside(loginMenu, () => {
   loginMenuVisible.value = false;

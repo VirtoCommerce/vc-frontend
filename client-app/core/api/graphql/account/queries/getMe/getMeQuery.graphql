@@ -24,10 +24,11 @@ query GetMe($userId: String) {
       selectedAddressId
       groups
       organizations {
-        items {
-          id
-          name
-        }
+        totalCount
+      }
+      organization {
+        id
+        name
       }
     }
     operator {
