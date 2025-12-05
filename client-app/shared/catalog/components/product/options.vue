@@ -20,7 +20,7 @@
         <div class="options__label">{{ property.label }}</div>
 
         <VcVariantPickerGroup
-          :model-value="getPropertyModelValue(property)"
+          :model-value="getSelectedValue(property)"
           :type="getType(property.propertyValueType)"
           :name="property.label"
           size="xs"
@@ -63,7 +63,8 @@ const fetchingVariations = toRef(props, "fetchingVariations");
 
 const isBlockVisible = computed(() => !props.model.hidden && (properties.value.size > 0 || fetchingVariations.value));
 
-const { properties, select, isSelected, isAvailable, getTooltip } = useProductVariationProperties(variations);
+const { properties, select, isAvailable, getTooltip, getSelectedValue, findOptionByValue } =
+  useProductVariationProperties(variations);
 
 function getType(propertyValueType: PropertyValueTypes): "color" | "text" {
   return propertyValueType === PropertyValueTypes.Color ? "color" : "text";
@@ -75,18 +76,8 @@ function getValue(property: IProperty, option: IPropertyValue): string {
     : String(option.value);
 }
 
-function getPropertyModelValue(property: IProperty): string {
-  const selectedOption = property.values.find((opt) => isSelected(property.name, opt.value));
-  return selectedOption ? getValue(property, selectedOption) : "";
-}
-
 function handlePropertyChange(property: IProperty, groupValue: string | string[]): void {
-  if (!groupValue) {
-    return;
-  }
-
-  const option = property.values.find((opt) => getValue(property, opt) === groupValue);
-
+  const option = findOptionByValue(property, groupValue);
   if (option) {
     select(property.name, option.value);
   }

@@ -1,4 +1,5 @@
 import { createSharedComposable } from "@vueuse/core";
+import { isEqual } from "lodash";
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
@@ -224,6 +225,31 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     return option.label;
   }
 
+  function getSelectedValue(property: IProperty): string {
+    const selectedOption = property.values.find((opt) => isSelected(property.name, opt.value));
+    if (!selectedOption) {
+      return "";
+    }
+
+    return property.propertyValueType === PropertyValueTypes.Color
+      ? (selectedOption.colorCode ?? String(selectedOption.value))
+      : String(selectedOption.value);
+  }
+
+  function findOptionByValue(property: IProperty, value: string | string[]): IPropertyValue | undefined {
+    if (!value) {
+      return undefined;
+    }
+
+    return property.values.find((opt) => {
+      const optionValue =
+        property.propertyValueType === PropertyValueTypes.Color
+          ? (opt.colorCode ?? String(opt.value))
+          : String(opt.value);
+      return isEqual(optionValue, value);
+    });
+  }
+
   watch(
     variations,
     () => {
@@ -243,6 +269,8 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     isAvailable,
 
     getTooltip,
+    getSelectedValue,
+    findOptionByValue,
   };
 }
 
