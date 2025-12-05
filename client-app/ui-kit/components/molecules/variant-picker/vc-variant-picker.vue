@@ -42,7 +42,7 @@
           <input
             :checked="checked"
             class="vc-variant-picker__input"
-            :type="multiple ? 'checkbox' : 'radio'"
+            :type="inputType"
             :aria-label="tooltip ?? inputValue"
             :name="name"
             :value="inputValue"
@@ -118,6 +118,8 @@ const isMultiColor = computed(
 );
 
 const displayValue = computed(() => normalizedValue.value[0]);
+
+const inputType = computed(() => (multiple?.value ? "checkbox" : "radio"));
 const inputValue = computed(() => serialize(props.value));
 
 const checked = computed(() => {
