@@ -48,6 +48,7 @@ interface IProps {
   multiple?: boolean;
   size?: VcVariantPickerSizeType;
   type?: VcVariantPickerType;
+  name?: string;
   truncate?: boolean;
   maxRows?: number;
   ariaLabel?: string;
@@ -74,7 +75,7 @@ const expanded = ref(false);
 const showButton = ref(false);
 const hiddenCount = ref(0);
 const visibleItemsCount = ref(0);
-const { modelValue, multiple, size, type, truncate, maxRows, ariaLabel } = toRefs(props);
+const { modelValue, multiple, size, type, name, truncate, maxRows, ariaLabel } = toRefs(props);
 
 const internalModelValue = ref<string | string[]>(modelValue.value ?? (multiple.value ? [] : ""));
 
@@ -415,6 +416,7 @@ provide<VcVariantPickerGroupContextType>("variantPickerGroupContext", {
   multiple,
   size,
   type,
+  name,
   toggleValue,
 });
 

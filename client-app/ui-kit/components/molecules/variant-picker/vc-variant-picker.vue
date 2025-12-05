@@ -100,6 +100,7 @@ const modelValue = computed(() => groupContext?.modelValue.value ?? props.modelV
 const multiple = groupContext?.multiple;
 const size = computed(() => groupContext?.size.value ?? props.size);
 const type = computed(() => groupContext?.type.value ?? props.type);
+const name = computed(() => groupContext?.name.value ?? props.name);
 
 const normalizedValue = computed(() => (Array.isArray(props.value) ? props.value : [props.value]));
 
