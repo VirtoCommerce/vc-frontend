@@ -8,7 +8,6 @@
     <ProductsFilters
       v-if="localFilters"
       :id="productsFiltersId"
-      :keyword="keywordQueryParam"
       :filters="localFilters"
       :loading="loading || facetsLoading"
       @change:filters="onProductsFiltersChange"
@@ -121,7 +120,6 @@ interface IProps {
   loading?: boolean;
   facetsLoading?: boolean;
   hideControls?: boolean;
-  keywordQueryParam?: string;
   popupSidebarFilters: ProductsFiltersType;
   isExistSelectedFacets: boolean;
 }

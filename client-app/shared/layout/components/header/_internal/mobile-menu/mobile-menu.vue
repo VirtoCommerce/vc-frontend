@@ -33,7 +33,9 @@
         </h2>
 
         <MultiOrganisationMenu v-if="openedItem.id === 'contact-organizations'" />
+
         <SettingsMenu v-else-if="openedItem.id === 'settings'" />
+
         <DefaultMenu v-else :items="sortedFilteredChildren" @close="$emit('close')" @select-item="selectMenuItem" />
         <!-- view all catalog link -->
         <template v-if="openedItem?.isCatalogItem && openedItem?.route">
@@ -48,6 +50,7 @@
           >
             {{ $t("shared.layout.header.mobile.view_all_catalog") }}
           </a>
+
           <router-link v-else class="view-all-link" :to="openedItem.route" @click="$emit('close')">
             {{ $t("shared.layout.header.mobile.view_all_catalog") }}
           </router-link>

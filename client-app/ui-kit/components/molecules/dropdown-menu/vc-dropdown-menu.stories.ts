@@ -1,16 +1,12 @@
-import { VcDropdownMenu, VcMenuItem } from "..";
-import { VcIcon } from "../../atoms";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import { VcDropdownMenu } from "..";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-export default {
+const meta: Meta<typeof VcDropdownMenu> = {
   title: "Components/Molecules/VcDropdownMenu",
   component: VcDropdownMenu,
-} as Meta<typeof VcMenuItem>;
-
-const Template: StoryFn = (args) => ({
-  components: { VcDropdownMenu, VcMenuItem, VcIcon },
-  setup: () => ({ args }),
-  template: `
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `
   <VcDropdownMenu v-bind="args">
     <template #trigger="{ triggerProps }">
       <span v-bind="triggerProps">Trigger</span>
@@ -50,11 +46,16 @@ const Template: StoryFn = (args) => ({
 
   <div class="h-52"></div>
   `,
-});
+  }),
+};
 
-export const Basic = Template.bind({});
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
-export const Disabled = Template.bind({});
-Disabled.args = {
-  disabled: true,
+export const Basic: StoryType = {};
+
+export const Disabled: StoryType = {
+  args: {
+    disabled: true,
+  },
 };

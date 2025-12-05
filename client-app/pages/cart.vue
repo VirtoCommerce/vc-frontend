@@ -326,15 +326,14 @@ const isShowIncompleteDataWarning = computed(
 );
 
 async function handleRemoveItems(itemIds: string[]): Promise<void> {
+  const removedItems = cart.value!.items.filter((item) => itemIds.includes(item.id));
+
   await removeItems(itemIds);
 
   /**
    * Send Google Analytics event for an item was removed from cart.
    */
-  analytics(
-    "removeItemsFromCart",
-    cart.value!.items.filter((item) => itemIds.includes(item.id)),
-  );
+  analytics("removeItemsFromCart", removedItems);
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {

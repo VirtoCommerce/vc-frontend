@@ -15,6 +15,7 @@
         @click="openCreateListModal"
       >
         <span class="hidden sm:inline">{{ $t("pages.account.lists.create_list_button") }}</span>
+
         <span class="sm:hidden">{{ $t("pages.account.lists.create_list_button_mobile") }}</span>
       </VcButton>
     </div>

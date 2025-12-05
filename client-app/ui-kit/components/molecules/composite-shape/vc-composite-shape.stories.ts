@@ -1,28 +1,31 @@
 import { VcCompositeShape } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-export default {
+const meta: Meta<typeof VcCompositeShape> = {
   title: "Components/Molecules/VcCompositeShape",
   component: VcCompositeShape,
-} as Meta<typeof VcCompositeShape>;
-
-const Template: StoryFn = (args) => ({
-  components: { VcCompositeShape },
-  setup: () => ({ args }),
-  template: '<VcCompositeShape v-bind="args" />',
-});
-
-export const Basic = Template.bind({});
-
-export const IconImage = Template.bind({});
-IconImage.args = {
-  icon: "academic-cap",
-  img: "basket.jpg",
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcCompositeShape v-bind="args" />',
+  }),
 };
 
-export const Mask = Template.bind({});
-Mask.args = {
-  img: "basket.jpg",
-  mask: "emoji-happy",
-  iconMask: "ai",
+export default meta;
+type StoryType = StoryObj<typeof meta>;
+
+export const Basic: StoryType = {};
+
+export const IconImage: StoryType = {
+  args: {
+    icon: "academic-cap",
+    img: "basket.jpg",
+  },
+};
+
+export const Mask: StoryType = {
+  args: {
+    img: "basket.jpg",
+    mask: "emoji-happy",
+    iconMask: "ai",
+  },
 };
