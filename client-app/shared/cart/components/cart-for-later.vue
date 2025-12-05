@@ -1,7 +1,12 @@
 <template>
   <VcWidget :title="$t('pages.cart.saved_for_later')" prepend-icon="bookmark" size="lg" class="cart-for-later">
     <template v-slot:append>
-      <VcButton variant="outline" :to="{ name: ROUTES.SAVED_FOR_LATER.NAME }" size="sm">
+      <VcButton
+        variant="outline"
+        data-test-id="cart-for-later.see-all-button"
+        :to="{ name: ROUTES.SAVED_FOR_LATER.NAME }"
+        size="sm"
+      >
         {{ $t("common.buttons.see_all") }}
       </VcButton>
     </template>
@@ -20,7 +25,12 @@
     </VcProductsGrid>
 
     <div v-if="maxVisibleItems < (savedForLaterList?.items.length ?? 0)" class="cart-for-later__show-more">
-      <VcButton variant="no-border" append-icon="chevron-down" @click="maxVisibleItems += VISIBLE_ITEMS_STEP">
+      <VcButton
+        variant="no-border"
+        append-icon="chevron-down"
+        data-test-id="cart-for-later.show-more-button"
+        @click="maxVisibleItems += VISIBLE_ITEMS_STEP"
+      >
         {{ $t("common.buttons.show_more") }}
       </VcButton>
     </div>

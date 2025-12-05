@@ -53,6 +53,7 @@
   </div>
 
   <input id="flexresponse" type="hidden" name="flexresponse" />
+
   <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
     <PaymentPolicies />
 

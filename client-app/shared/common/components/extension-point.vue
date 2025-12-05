@@ -4,6 +4,7 @@
     v-if="name && isRegistered(category, name)"
     v-bind="{ ...getProps(category, name), ...$attrs }"
   />
+
   <slot v-else />
 </template>
 

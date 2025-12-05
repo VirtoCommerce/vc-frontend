@@ -708,6 +708,7 @@
         "cancel_button": "Отмена",
         "ok_button": "ОК",
         "no_results": "Результатов не найдено",
+        "no_branches": "Филиалы не найдены",
         "reset_search_button": "Очистить поиск"
       },
       "shipment_options": {
@@ -947,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Неверный запрос",
+      "message": "Пользователю больше не разрешено входить в систему. Свяжитесь с администратором.",
+      "img_alt": "Неверный запрос",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Доступ запрещен",

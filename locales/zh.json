@@ -708,6 +708,7 @@
         "cancel_button": "取消",
         "ok_button": "确定",
         "no_results": "未找到结果",
+        "no_branches": "未找到分支",
         "reset_search_button": "重置搜索"
       },
       "shipment_options": {
@@ -947,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "错误的请求",
+      "message": "用户已不再允许登录。请联系管理员。",
+      "img_alt": "错误的请求",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "拒绝访问",

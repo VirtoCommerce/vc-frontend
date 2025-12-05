@@ -11,6 +11,7 @@
         {{ pageBuilderContent.settings.header }}
       </VcTypography>
     </div>
+
     <template v-for="item in pageBuilderContent.content">
       <component
         :is="getBlockType(item.type)"

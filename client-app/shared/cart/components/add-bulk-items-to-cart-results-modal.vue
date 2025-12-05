@@ -9,6 +9,7 @@
       <VcExpansionPanel v-for="(group, index) in groups" :key="group.name" :expanded="!index && groups.length === 1">
         <template #icon>
           <VcIcon v-if="group.name === 'added'" class="fill-success" name="check-circle" />
+
           <VcIcon v-else-if="group.name === 'not_added'" class="fill-danger" name="delete" />
         </template>
 
@@ -49,6 +50,7 @@
                 <span class="text-neutral-400 md:hidden">
                   {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                 </span>
+
                 <span class="font-bold max-lg:break-all">{{ item.sku }}</span>
               </div>
 
@@ -63,6 +65,7 @@
                 >
                   {{ item.name }}
                 </router-link>
+
                 <div v-else>
                   {{ item.name }}
                 </div>
@@ -72,6 +75,7 @@
                 <span class="text-neutral-400 md:hidden">
                   {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.quantity") }}
                 </span>
+
                 <span class="font-bold">{{ $n(item.quantity) }}</span>
               </div>
             </li>

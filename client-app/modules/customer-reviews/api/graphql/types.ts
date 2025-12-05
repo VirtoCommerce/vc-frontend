@@ -18,18 +18,6 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
-export type CreateCustomerReviewCommandType = {
-  entityId: Scalars['String']['input'];
-  entityName: Scalars['String']['input'];
-  entityType: Scalars['String']['input'];
-  rating: Scalars['Int']['input'];
-  review: Scalars['String']['input'];
-  storeId: Scalars['String']['input'];
-  title: Scalars['String']['input'];
-  userId: Scalars['String']['input'];
-  userName: Scalars['String']['input'];
-};
-
 export type CreateReviewCommandType = {
   entityId: Scalars['String']['input'];
   entityType: Scalars['String']['input'];
@@ -96,14 +84,7 @@ export enum CustomerReviewStatus {
 }
 
 export type Mutations = {
-  /** @deprecated Use createReview mutation instead. */
-  createCustomerReview?: Maybe<CustomerReview>;
   createReview?: Maybe<CreateReviewResult>;
-};
-
-
-export type MutationsCreateCustomerReviewArgs = {
-  command: CreateCustomerReviewCommandType;
 };
 
 

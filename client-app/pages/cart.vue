@@ -77,7 +77,7 @@
     </template>
 
     <template v-else>
-      <VcLayout sidebar-position="right" sticky-sidebar>
+      <VcLayout sidebar-position="right" sticky>
         <ProductsSection
           :grouped="!!$cfg.line_items_group_by_vendor_enabled"
           :items="cart.items"
@@ -202,6 +202,7 @@
         >
           <div class="text-end text-base font-bold text-neutral-950">
             <span class="me-1">{{ $t("common.labels.total") }}:</span>
+
             <VcPriceDisplay v-if="cart.total" :value="cart.total" />
           </div>
 
@@ -284,6 +285,7 @@ const {
   unselectCartItems,
   shipment,
   payment,
+  changing: isCartUpdating,
 } = useFullCart();
 const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
@@ -324,15 +326,14 @@ const isShowIncompleteDataWarning = computed(
 );
 
 async function handleRemoveItems(itemIds: string[]): Promise<void> {
+  const removedItems = cart.value!.items.filter((item) => itemIds.includes(item.id));
+
   await removeItems(itemIds);
 
   /**
    * Send Google Analytics event for an item was removed from cart.
    */
-  analytics(
-    "removeItemsFromCart",
-    cart.value!.items.filter((item) => itemIds.includes(item.id)),
-  );
+  analytics("removeItemsFromCart", removedItems);
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
@@ -375,9 +376,14 @@ function shouldHide(id: string) {
 }
 
 watch(
-  [() => isValidShipment.value, () => shipment.value?.shipmentMethodOption],
+  [() => isValidShipment.value, () => shipment.value?.shipmentMethodOption, isCartUpdating],
   () => {
-    if (themeContext.value?.settings?.checkout_multistep_enabled || !cart.value || !isValidShipment.value) {
+    if (
+      themeContext.value?.settings?.checkout_multistep_enabled ||
+      !cart.value ||
+      !isValidShipment.value ||
+      isCartUpdating.value
+    ) {
       return;
     }
 

@@ -32,6 +32,7 @@ import { isDefined } from "@vueuse/core";
 import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useHistoricalEvents } from "@/core/composables";
+import { useAnalytics } from "@/core/composables/useAnalytics";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
@@ -54,6 +55,7 @@ const { t } = useI18n();
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
 const { themeContext } = useThemeContext();
+const { analytics } = useAnalytics();
 
 const loading = ref(false);
 const errorMessage = ref<string | undefined>();
@@ -107,8 +109,10 @@ async function onChange() {
 
 async function updateOrAddToCart(productId: string, qty?: number) {
   if (qty === undefined) {
-    return cart.value;
+    return;
   }
+
+  const lineItem = getLineItem(cart.value?.items);
 
   try {
     await updateItemCartQuantity(productId, qty);
@@ -116,8 +120,14 @@ async function updateOrAddToCart(productId: string, qty?: number) {
     Logger.error("Error updating item quantity in add to cart simple component", e);
   }
 
-  trackAddItemToCart(product.value, qty);
-  void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
+  if (lineItem) {
+    // Update
+    analytics("updateCartItem", lineItem?.sku, qty, lineItem?.quantity);
+  } else {
+    // Add
+    trackAddItemToCart(product.value, qty);
+    void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
+  }
 }
 
 function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {

@@ -14,6 +14,7 @@ export const EXTENSION_NAMES = merge({}, INITIAL_EXTENSION_NAMES, {
   },
   productPage: {
     sidebarButton: "sidebar-button",
+    variationItemButton: "variation-item-button",
   },
   paymentPage: {
     paymentMethods: "payment-methods",

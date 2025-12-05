@@ -4,6 +4,7 @@
       class="vc-line-item-price__actual"
       :value="shouldUseActualPrice(listPrice, actualPrice) ? actualPrice : listPrice"
     />
+
     <VcPriceDisplay
       v-if="shouldUseActualPrice(listPrice, actualPrice)"
       class="vc-line-item-price__list"

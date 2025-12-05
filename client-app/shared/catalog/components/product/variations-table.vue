@@ -64,17 +64,11 @@
           </td>
 
           <td class="variations-table__col variations-table__col--quantity">
-            <component
-              :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
-              v-if="
-                isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-                shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, variation, {
-                  forceProductAsVariation: true,
-                })
-              "
+            <ExtensionPoint
+              :name="EXTENSION_NAMES.productPage.variationItemButton"
+              category="productPage"
               :product="variation"
-              :is-text-shown="false"
-              v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
+              v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.variationItemButton, variation)"
             />
 
             <AddToCartSimple v-else :product="variation">
@@ -94,8 +88,7 @@ import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
 import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
 import { getPropertyValue, getPropertiesGroupedByName } from "@/core/utilities";
-import { useCustomProductComponents } from "@/shared/common/composables";
-import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
+import { EXTENSION_NAMES } from "@/shared/common/constants";
 import CountInCart from "../count-in-cart.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
@@ -125,8 +118,6 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
-
-const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const variations = computed(() => props.variations);
 const productProperties = computed<IProductProperties[]>(() => {

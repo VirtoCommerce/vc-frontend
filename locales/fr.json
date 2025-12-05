@@ -708,6 +708,7 @@
         "cancel_button": "Annuler",
         "ok_button": "Ok",
         "no_results": "Aucun résultat trouvé",
+        "no_branches": "Aucune branche trouvée",
         "reset_search_button": "Réinitialiser la recherche"
       },
       "shipment_options": {
@@ -947,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Mauvaise requête",
+      "message": "L'utilisateur n'est plus autorisé à se connecter. Veuillez contacter l'administrateur.",
+      "img_alt": "Mauvaise requête",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Accès refusé",

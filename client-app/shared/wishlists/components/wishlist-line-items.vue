@@ -28,6 +28,7 @@
         :deleted="item.deleted"
         :browser-target="browserTarget"
         :removable="editable"
+        :data-product-sku="item.sku"
         with-image
         with-properties
         with-price
@@ -43,12 +44,14 @@
             icon="cube-transparent"
             :target="browserTarget"
           />
+
           <VcProductButton
             v-else-if="item.hasVariations"
             :to="navigatable ? item.route : undefined"
             :target="browserTarget"
             :button-text="$t('pages.catalog.variations_button', [(item.variations?.length || 0) + 1])"
           />
+
           <VcAddToCart
             v-else
             class="w-full"
@@ -69,6 +72,7 @@
                 ? $t('validation_error.CART_PRODUCT_UNAVAILABLE')
                 : undefined
             "
+            data-test-id="add-to-cart-component"
             @update:model-value="changeItemQuantity(item, $event)"
             @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
             @update:validation="setValidationStatus(item, $event)"

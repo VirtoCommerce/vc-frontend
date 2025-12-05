@@ -707,7 +707,8 @@
         "clear_selection": "Clear selection",
         "cancel_button": "Cancel",
         "ok_button": "Ok",
-        "no_results": "No results found",
+        "no_results": "There are no results found",
+        "no_branches": "There are no branches found",
         "reset_search_button": "Reset search"
       },
       "shipment_options": {
@@ -947,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Bad Request",
+      "message": "The user is no longer allowed to sign in. Please contact the administrator.",
+      "img_alt": "Bad Request",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Access denied",
