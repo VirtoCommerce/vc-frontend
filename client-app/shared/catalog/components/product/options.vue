@@ -24,7 +24,7 @@
           :type="getType(property.propertyValueType)"
           :name="property.label"
           size="xs"
-          @update:model-value="handlePropertyChange(property, $event)"
+          @update:model-value="handlePropertyChange(property, $event as string)"
         >
           <VcVariantPicker
             v-for="option in property.values"
@@ -76,7 +76,7 @@ function getValue(property: IProperty, option: IPropertyValue): string {
     : String(option.value);
 }
 
-function handlePropertyChange(property: IProperty, groupValue: string | string[]): void {
+function handlePropertyChange(property: IProperty, groupValue: string | string[]) {
   const option = findOptionByValue(property, groupValue);
   if (option) {
     select(property.name, option.value);

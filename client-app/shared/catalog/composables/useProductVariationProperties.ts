@@ -242,11 +242,15 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     }
 
     return property.values.find((opt) => {
-      const optionValue =
-        property.propertyValueType === PropertyValueTypes.Color
-          ? (opt.colorCode ?? String(opt.value))
-          : String(opt.value);
-      return isEqual(optionValue, value);
+      if (typeof value === "string") {
+        const optionValue =
+          property.propertyValueType === PropertyValueTypes.Color
+            ? (opt.colorCode ?? String(opt.value))
+            : String(opt.value);
+        return optionValue === value;
+      }
+
+      return isEqual(opt.value, value);
     });
   }
 
