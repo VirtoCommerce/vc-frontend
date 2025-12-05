@@ -399,9 +399,9 @@ function toggleValue(value: string | string[]): void {
 
     if (index > -1) {
       currentValue.splice(index, 1);
-      internalModelValue.value = (currentValue.length ? currentValue : []) as string | string[];
+      internalModelValue.value = currentValue;
     } else {
-      internalModelValue.value = [...currentValue, valueToSet] as string | string[];
+      internalModelValue.value = [...currentValue, valueToSet] as string[];
     }
   } else {
     internalModelValue.value = valueToSet;
