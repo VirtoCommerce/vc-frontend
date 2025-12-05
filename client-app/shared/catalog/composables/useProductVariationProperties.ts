@@ -1,9 +1,9 @@
 import { createSharedComposable } from "@vueuse/core";
-import { isEqual } from "lodash";
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
+import { serialize } from "@/ui-kit/utilities";
 import type { Product, Property } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import type { ComposerTranslation } from "vue-i18n";
@@ -250,7 +250,9 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
         return optionValue === value;
       }
 
-      return isEqual(opt.value, value);
+      //Argument of type 'string | string[]' is not assignable to parameter of type 'PrimitiveValueType'.
+      //TEMP: waiting for multi-color implementation
+      return opt.value === serialize(value);
     });
   }
 
