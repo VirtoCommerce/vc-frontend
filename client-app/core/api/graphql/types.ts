@@ -812,18 +812,6 @@ export type CouponType = {
   isAppliedSuccessfully: Scalars['Boolean']['output'];
 };
 
-export type CreateCustomerReviewCommandType = {
-  entityId: Scalars['String']['input'];
-  entityName: Scalars['String']['input'];
-  entityType: Scalars['String']['input'];
-  rating: Scalars['Int']['input'];
-  review: Scalars['String']['input'];
-  storeId: Scalars['String']['input'];
-  title: Scalars['String']['input'];
-  userId: Scalars['String']['input'];
-  userName: Scalars['String']['input'];
-};
-
 export type CreateQuoteCommandType = {
   cultureName: Scalars['String']['input'];
   currencyCode: Scalars['String']['input'];
@@ -3231,8 +3219,6 @@ export type Mutations = {
   createCartFromWishlist?: Maybe<CartType>;
   createConfiguredLineItem?: Maybe<ConfigurationLineItemType>;
   createContact?: Maybe<ContactType>;
-  /** @deprecated Use createReview mutation instead. */
-  createCustomerReview?: Maybe<CustomerReview>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
   createOrganization?: Maybe<Organization>;
   createQuote?: Maybe<QuoteType>;
@@ -3538,11 +3524,6 @@ export type MutationsCreateConfiguredLineItemArgs = {
 
 export type MutationsCreateContactArgs = {
   command: InputCreateContactType;
-};
-
-
-export type MutationsCreateCustomerReviewArgs = {
-  command: CreateCustomerReviewCommandType;
 };
 
 
@@ -6079,11 +6060,6 @@ export type QuoteType = {
   tag?: Maybe<Scalars['String']['output']>;
   taxDetails: Array<QuoteTaxDetailType>;
   totals: QuoteTotalsType;
-};
-
-
-export type QuoteTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RangeFacet = Facet & {
