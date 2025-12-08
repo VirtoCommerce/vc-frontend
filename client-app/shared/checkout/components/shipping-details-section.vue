@@ -261,6 +261,7 @@ watch(
 function onShipmentMethodChange(method: ShippingMethodType) {
   void updateShipment({
     id: shipment.value?.id,
+    deliveryAddress: shipment.value?.deliveryAddress,
     shipmentMethodCode: method.code,
     shipmentMethodOption: method.optionName,
     price: method.price.amount,

@@ -948,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Richiesta non valida",
+      "message": "L'utente non è più autorizzato ad accedere. Contattare l'amministratore.",
+      "img_alt": "Richiesta non valida",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Accesso negato",
