@@ -1,0 +1,22 @@
+fragment whiteLabelingFields on WhiteLabelingSettingsType {
+  logoUrl
+  secondaryLogoUrl
+  themePresetName
+  isOrganizationLogoUploaded
+  favicons {
+    rel
+    type
+    sizes
+    href
+  }
+  footerLinks {
+    title
+    url
+    priority
+    childItems {
+      title
+      url
+      priority
+    }
+  }
+}
