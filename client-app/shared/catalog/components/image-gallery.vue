@@ -26,7 +26,7 @@
           @swiper="setImagesSwiper"
           @slide-change="setActiveIndex"
           @keydown.enter.prevent="openLightbox(swiperId)"
-          :key="images?.length === 1 ? 'single-image' : 'multiple-images'"
+          :key="imagesMode"
         >
           <SwiperSlide v-for="(image, i) in images" :key="image.url || i">
             <VcImage
@@ -153,6 +153,10 @@ const modules = [Pagination, Navigation, Thumbs];
 const showThumbs = computed(() => isDesktop.value && props.images?.length > 1);
 
 const showPagination = computed(() => !isDesktop.value && props.images?.length > 1);
+
+// Used to force re-initialization of the lightbox when the images change
+// with single image it has no arrows so we need to force re-initialization for multiple images to show them
+const imagesMode = computed(() => (props.images?.length === 1 ? "single-image" : "multiple-images"));
 
 function setActiveIndex() {
   activeIndex.value = imagesSwiper.value?.realIndex ?? 0;
