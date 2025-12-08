@@ -148,6 +148,8 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
   --vc-dialog-width: calc(100vw - 1rem);
   --vc-dialog-max-height: calc(100vh - 5rem);
 
+  @apply text-neutral-800;
+
   @media (min-width: theme("screens.sm")) {
     --vc-dialog-width: 25rem;
     --vc-dialog-max-height: calc(100vh - 10rem);

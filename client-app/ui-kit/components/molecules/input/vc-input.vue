@@ -332,7 +332,7 @@ provide<VcInputContextType>("inputContext", {
   }
 
   &__input {
-    @apply relative m-px px-2 bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal;
+    @apply relative m-px px-2 bg-transparent rounded-[3px] leading-none w-full min-w-0 appearance-none font-normal text-neutral-800;
 
     &::-webkit-search-cancel-button {
       @apply appearance-none;

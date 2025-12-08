@@ -115,8 +115,8 @@ export interface IThemeConfigPreset {
 
   color_price?: string;
 
-  color_hexagon_icon_bg?: string;
-  color_hexagon_icon?: string;
+  color_shape_icon_bg?: string;
+  color_shape_icon?: string;
 
   color_header_top_bg?: string;
   color_header_top_text?: string;
@@ -128,6 +128,7 @@ export interface IThemeConfigPreset {
   color_header_bottom_link?: string;
   color_header_bottom_link_hover?: string;
   color_header_bottom_link_active?: string;
+  color_header_bottom_link_icon?: string;
 
   color_footer_top_bg?: string;
   color_footer_top_text?: string;

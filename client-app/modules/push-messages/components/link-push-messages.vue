@@ -4,7 +4,12 @@
       <BottomHeaderLink :link="item" :count="unreadCount" v-bind="triggerProps">
         <template #icon>
           <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
-            <VcIcon :key="totalCount" :name="item.icon" class="mb-0.5 fill-primary" :size="24" />
+            <VcIcon
+              :key="totalCount"
+              :name="item.icon"
+              class="mb-0.5 fill-[--header-bottom-link-icon-color]"
+              :size="24"
+            />
           </transition>
         </template>
 
