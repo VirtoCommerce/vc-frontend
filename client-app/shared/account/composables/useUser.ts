@@ -72,6 +72,7 @@ export function _useUser() {
   const { refresh } = useAuth();
   const { openModal, closeModal } = useModal();
   const contactCultureName = computed(() => user.value?.contact?.defaultLanguage);
+  const userGroups = computed(() => user.value?.contact?.groups || []);
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
@@ -389,6 +390,7 @@ export function _useUser() {
     organization,
     allOrganizations,
     operator,
+    userGroups,
     checkPermissions,
     fetchUser,
     updateUser,
