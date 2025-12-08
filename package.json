@@ -68,7 +68,7 @@
     "graphql-ws": "^6.0.6",
     "lodash": "^4.17.21",
     "marked": "^13.0.3",
-    "maska": "^2.1.11",
+    "maska": "^3.2.0",
     "nouislider": "^15.8.1",
     "skyflow-js": "2.5.0",
     "swiper": "11.2.10",

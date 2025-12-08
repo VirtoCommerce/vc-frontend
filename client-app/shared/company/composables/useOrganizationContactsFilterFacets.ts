@@ -1,4 +1,3 @@
-import { computedEager } from "@vueuse/core";
 import _ from "lodash";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -43,11 +42,11 @@ export function useOrganizationContactsFilterFacets() {
   const appliedFacets = ref<FacetItemType[]>(_.cloneDeep(initialFacets));
   const selectableFacets = ref<FacetItemType[]>(_.cloneDeep(initialFacets));
 
-  const isFacetsDirty = computedEager<boolean>(() => {
+  const isFacetsDirty = computed<boolean>(() => {
     return !_.isEqual(appliedFacets.value, selectableFacets.value);
   });
 
-  const numberOfFacetsApplied = computedEager<number>(() =>
+  const numberOfFacetsApplied = computed<number>(() =>
     appliedFacets.value.reduce((result, filterFacet) => {
       return result + filterFacet.values.filter((value) => value.selected).length;
     }, 0),

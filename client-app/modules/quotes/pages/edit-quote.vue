@@ -114,7 +114,6 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { computedEager } from "@vueuse/core";
 import { cloneDeep, every, isEqual, remove } from "lodash";
 import { useField } from "vee-validate";
 import { computed, onMounted, ref, watchEffect } from "vue";
@@ -256,7 +255,7 @@ const canSubmit = computed<boolean>(() => {
   return isShippingAddressValid && isBillingAddressValid && isCommentValid && !anyFilesModified.value;
 });
 
-const userHasAddresses = computedEager<boolean>(() => !!accountAddresses.value.length);
+const userHasAddresses = computed<boolean>(() => !!accountAddresses.value.length);
 
 const isBillingAddressEqualsShipping = computed<boolean>(() => {
   if (shippingAddress.value && billingAddress.value) {
