@@ -26,6 +26,7 @@
           @swiper="setImagesSwiper"
           @slide-change="setActiveIndex"
           @keydown.enter.prevent="openLightbox(swiperId)"
+          :key="images?.length === 1 ? 'single-image' : 'multiple-images'"
         >
           <SwiperSlide v-for="(image, i) in images" :key="image.url || i">
             <VcImage
