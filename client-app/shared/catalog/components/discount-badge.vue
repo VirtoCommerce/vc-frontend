@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { computedEager } from "@vueuse/core";
+import { computed } from "vue";
 import type { PriceType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
 });
 
-const discount = computedEager<string | null>(() =>
+const discount = computed<string | null>(() =>
   props.price.discountPercent >= 0.05 ? `${Math.round(props.price.discountPercent * 100)}%` : null,
 );
 </script>
