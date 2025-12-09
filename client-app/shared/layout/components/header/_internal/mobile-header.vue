@@ -4,14 +4,17 @@
       <ShipToSelector />
     </div>
 
-    <div class="relative z-[1] bg-[--header-bottom-bg-color]">
+    <div class="relative z-[1]">
       <!-- region Default slot -->
       <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
-        <div v-if="customSlots.default">
+        <div v-if="customSlots.default" class="relative z-20 bg-[--header-bottom-bg-color]">
           <component :is="customSlots.default" />
         </div>
 
-        <div v-else class="relative z-10 flex h-14 w-full items-center justify-between gap-x-2 sm:gap-x-6">
+        <div
+          v-else
+          class="relative z-20 flex h-14 w-full items-center justify-between gap-x-2 border-b bg-[--header-bottom-bg-color] sm:gap-x-6"
+        >
           <!-- region Left slot -->
           <component :is="customSlots.left" v-if="customSlots.left" />
 
@@ -91,29 +94,8 @@
       <!-- endregion Default slot -->
 
       <!-- region Mobile Search Bar -->
-      <div v-show="searchBarVisible" class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
-        <VcInput
-          v-model="searchPhrase"
-          type="search"
-          maxlength="64"
-          :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
-          class="mr-4 grow"
-          :clearable="!!searchPhrase"
-          no-border
-          @clear="reset"
-          @keydown.enter="handleSearch"
-        >
-          <template #append>
-            <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
-          </template>
-        </VcInput>
-
-        <VcButton :to="searchPhrase && searchPageLink" icon="search" />
-
-        <button type="button" class="-mr-2 ml-2 h-11 appearance-none px-3" @click="hideSearchBar">
-          <VcIcon name="delete-thin" class="fill-additional-50" />
-        </button>
-      </div>
+      <MobileSearchBar :visible="searchBarVisible" />
+      <!-- endregion Mobile Search Bar -->
     </div>
   </header>
 
@@ -137,84 +119,39 @@
 </template>
 
 <script setup lang="ts">
-import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
+import { syncRefs, useElementSize, useScrollLock } from "@vueuse/core";
 import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
-import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
-import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
+import { useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
-import { QueryParamName } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
-import { useSearchScore } from "@/shared/layout/composables/useSearchScore";
 import { ShipToSelector } from "@/shared/ship-to-location";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
+import MobileSearchBar from "./mobile-search-bar.vue";
 import type { StyleValue } from "vue";
-import type { RouteLocationRaw } from "vue-router";
-import BarcodeScanner from "@/shared/layout/components/search-bar/barcode-scanner.vue";
 
-const router = useRouter();
-
-const searchPhrase = ref("");
-const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
+
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
-const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
+const { searchBarVisible, toggleSearchBar } = useSearchBar();
+
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
-const { saveSearchQuery } = useHistoricalEvents();
-const { isCategoryScope } = useSearchScore();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
 );
 
-const searchPageLink = computed<RouteLocationRaw>(() => {
-  if (isCategoryScope.value) {
-    return {
-      path: router.currentRoute.value.path,
-      query: {
-        [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
-      },
-    };
-  } else {
-    return {
-      name: ROUTES.SEARCH.NAME,
-      query: {
-        [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
-      },
-    };
-  }
-});
+const isScrollLocked = computed(() => mobileMenuVisible.value || searchBarVisible.value);
+const scrollLock = useScrollLock(document.body);
 
-function reset() {
-  searchPhrase.value = "";
-}
-
-function onBarcodeScanned(value: string) {
-  if (value) {
-    searchPhrase.value = value;
-    void router.push(searchPageLink.value);
-  }
-}
-
-function handleSearch() {
-  if (searchPhrase.value) {
-    void saveSearchQuery(searchPhrase.value);
-
-    void router.replace(searchPageLink.value);
-  }
-}
-
-syncRefs(mobileMenuVisible, useScrollLock(document.body));
-
-whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
+syncRefs(isScrollLocked, scrollLock);
 </script>
