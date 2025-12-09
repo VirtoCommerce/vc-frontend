@@ -276,21 +276,21 @@ jobs:
       installCustomModule: 'false'
       platformDockerTag: 'linux-latest'
       frontendZipUrl: '${{ needs.ci.outputs.artifactUrl }}'
-      vctestingRepoBranch: 'VCST-4338-dataset-add-notifications-templates-for-data-seeding'
+      vctestingRepoBranch: 'dev'
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
       testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
       sendgridApiKey: ${{ secrets.SENDGRID_APIKEY_4E2E_AUTOTESTS }}
 
-  # deploy-cloud:
-  #   if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
-  #   needs: ci
-  #   uses: ./.github/workflows/deploy-cloud.yml
-  #   with:
-  #     cmPath: 'theme/artifact.json'
-  #     artifactKey: 'URL'
-  #     artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
-  #     environmentId: ${{ ((github.event_name == 'pull_request' && github.base_ref == 'dev') || github.ref == 'refs/heads/master') && 'qa' || 'dev' }}
-  #     jiraKeys: ${{ needs.ci.outputs.jira-keys }}
-  #     forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
-  #   secrets: inherit
+  deploy-cloud:
+    if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
+    needs: ci
+    uses: ./.github/workflows/deploy-cloud.yml
+    with:
+      cmPath: 'theme/artifact.json'
+      artifactKey: 'URL'
+      artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
+      environmentId: ${{ ((github.event_name == 'pull_request' && github.base_ref == 'dev') || github.ref == 'refs/heads/master') && 'qa' || 'dev' }}
+      jiraKeys: ${{ needs.ci.outputs.jira-keys }}
+      forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
+    secrets: inherit
