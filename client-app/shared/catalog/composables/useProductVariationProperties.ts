@@ -123,20 +123,25 @@ function calculateNewSelections(
     const firstMatch = find(variations, (variation) => isVariationCompatible(variation, name, value));
 
     if (firstMatch) {
-      const variationProps = filter(
-        firstMatch.properties,
-        (p) => p.propertyType === PropertyType.Variation && p.name !== name && p.name,
-      ) as Property[];
+      const groupedByName = getVariationPropertiesGroupedByName(firstMatch.properties, PropertyType.Variation);
 
-      variationProps.forEach((prop) => {
-        const normalizedValue = normalizePropertyValue(prop);
+      groupedByName.forEach((propertyList, propertyName) => {
+        if (propertyName === name || propertyList.length === 0) {
+          return;
+        }
+
+        // Aggregate values for properties with the same name (multicolor case)
+        const propertyValue = isMultiColorProperty(propertyList)
+          ? sortBy(map(propertyList, normalizePropertyValue))
+          : normalizePropertyValue(propertyList[0]);
+
         // Check if this property value is compatible with base selections
         const testSelections = new Map(baseSelections);
-        testSelections.set(prop.name, normalizedValue);
+        testSelections.set(propertyName, propertyValue);
         const possibleVariations = getApplicableVariations(variations, testSelections);
 
         if (possibleVariations.length > 0) {
-          baseSelections.set(prop.name, normalizedValue);
+          baseSelections.set(propertyName, propertyValue);
         }
       });
     }
