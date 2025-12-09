@@ -263,6 +263,7 @@ jobs:
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
       testSecretEnvFile: ${{ secrets.VC_TESTING_MODULE_ENV_FILE }}
+      sendgridApiKey: ${{ secrets.SENDGRID_APIKEY_4E2E_AUTOTESTS }}
 
   ui-auto-tests:
     needs: 'ci'
