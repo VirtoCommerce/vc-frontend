@@ -9,7 +9,7 @@ function _usePaymentFactory() {
 
   const isValidCardData = ref(false);
   const isCanFinalizePayment = computed(() => {
-    return isValidCardData.value || paymentProcessorInternal === null;
+    return isValidCardData.value && paymentProcessorInternal === null;
   });
 
   const setCardDataValid = () => {
