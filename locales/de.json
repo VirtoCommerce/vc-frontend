@@ -351,7 +351,7 @@
           "settings": "Einstellungen",
           "currency": "Währung",
           "search_bar": {
-            "input_placeholder": "Stichwort, Artikel, Modell oder Ersatzteilnummer eingeben"
+            "input_placeholder": "Suchen"
           },
           "view_all_catalog": "Alle Produkte in der Kategorie anzeigen"
         },
@@ -406,9 +406,9 @@
         "categories_label": "Kategorien",
         "products_label": "Produkte",
         "pages_label": "Seiten",
-        "suggestions_and_history_label": "Vorschläge & Verlauf",
+        "suggestions_and_history_label": "Hinweise",
         "no_results": "Ihre {keyword} Abfrage hat keine Ergebnisse geliefert",
-        "enter_keyword_placeholder": "Durchsuche den gesamten Shop",
+        "enter_keyword_placeholder": "Suchen",
         "enter_keyword_placeholder_category": "Suche in {category}",
         "search_button": "Suchen",
         "view_all_results_button": "Alle {total} Ergebnisse anzeigen",
