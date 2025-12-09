@@ -529,19 +529,31 @@ describe("Properties Utilities", () => {
         },
         {
           id: "3",
-          name: "no_value",
-          label: "No Value",
+          name: "undefined_value",
+          label: "Undefined Value",
           hidden: false,
           multivalue: false,
           propertyType: PropertyType.Variation,
           propertyValueType: PropertyValueTypes.ShortText,
           value: undefined,
         },
+        {
+          id: "4",
+          name: "null_value",
+          label: "Null Value",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: null,
+        },
       ];
 
       const result = getVariationPropertiesGroupedByName(properties, PropertyType.Variation);
       expect(result.size).toBe(1);
       expect(result.has("valid")).toBe(true);
+      expect(result.has("undefined_value")).toBe(false);
+      expect(result.has("null_value")).toBe(false);
     });
   });
 

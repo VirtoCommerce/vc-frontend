@@ -337,11 +337,8 @@ describe("useProductVariationProperties", () => {
     const { properties } = useProductVariationProperties(variationsWithProblematicValues);
 
     expect(properties.value.has("Color")).toBe(true);
-    expect(properties.value.has("Size")).toBe(true);
-
-    const sizeProperty = properties.value.get("Size");
-    expect(sizeProperty?.values).toHaveLength(1);
-    expect(sizeProperty?.values).toEqual(expect.arrayContaining([{ value: "", label: "", displayOrder: undefined }]));
+    // Properties with null/undefined values should not be created
+    expect(properties.value.has("Size")).toBe(false);
   });
 
   it("has a correct initial state before any selections", () => {
