@@ -44,6 +44,12 @@ function _useSearchBar() {
     }
   }
 
+  function getPageName(item: { title?: string; permalink?: string } | { name?: string; permalink?: string }) {
+    const { name } = item as { name?: string; permalink?: string };
+    const { title } = item as { title?: string; permalink?: string };
+    return name || title || item.permalink || "";
+  }
+
   async function searchResults(params: GetSearchResultsParamsType) {
     const preparedParams: GetSearchResultsParamsType = {
       ...params,
@@ -72,7 +78,7 @@ function _useSearchBar() {
 
       pages.value = pagesItems.map((item) => ({
         ...item,
-        name: highlightSearchText(item.name ?? "", params.keyword),
+        name: highlightSearchText(getPageName(item), params.keyword),
       })) as PageType[]; // TODO: remove type assertion
 
       categories.value = categoriesItems.map((item) => ({
