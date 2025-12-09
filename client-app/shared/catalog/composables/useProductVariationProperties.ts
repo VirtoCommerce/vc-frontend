@@ -31,9 +31,9 @@ type SelectedPropertiesMapType = ReadonlyMap<string, string | string[]>;
 
 /** Checks if a single product variation is compatible with a specific property name and value. */
 function isVariationCompatible(variation: Product, propertyName: string, propertyValue: string | string[]) {
-  if (Array.isArray(propertyValue)) {
-    const variationProps = filter(variation.properties, { name: propertyName });
+  const variationProps = filter(variation.properties, { name: propertyName });
 
+  if (Array.isArray(propertyValue)) {
     if (variationProps.length !== propertyValue.length) {
       return false;
     }
@@ -44,8 +44,12 @@ function isVariationCompatible(variation: Product, propertyName: string, propert
     return isEqual(variationNormalizedValues, sortedPropertyValue);
   }
 
-  const matchingProp = find(variation.properties, { name: propertyName });
-  return !!matchingProp && normalizePropertyValue(matchingProp) === propertyValue;
+  // For single value, variation must have exactly ONE property with this name
+  if (variationProps.length !== 1) {
+    return false;
+  }
+
+  return normalizePropertyValue(variationProps[0]) === propertyValue;
 }
 
 /** Filters a list of variations to only those that match all currently selected properties. */
