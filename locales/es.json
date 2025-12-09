@@ -351,7 +351,7 @@
           "settings": "Configuraciones",
           "currency": "Moneda",
           "search_bar": {
-            "input_placeholder": "Introduce palabra clave, artículo, modelo o número de pieza de repuesto"
+            "input_placeholder": "Buscar"
           },
           "view_all_catalog": "Ver todos los productos en la categoría"
         },
@@ -406,9 +406,9 @@
         "categories_label": "Categorías",
         "products_label": "Productos",
         "pages_label": "Páginas",
-        "suggestions_and_history_label": "Sugerencias e historial",
+        "suggestions_and_history_label": "Pistas",
         "no_results": "Tu consulta {keyword} no devolvió ningún resultado",
-        "enter_keyword_placeholder": "Buscar en toda la tienda",
+        "enter_keyword_placeholder": "Buscar",
         "enter_keyword_placeholder_category": "Buscar en {category}",
         "search_button": "Buscar",
         "view_all_results_button": "Ver todos los {total} resultados",
@@ -948,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Solicitud incorrecta",
+      "message": "El usuario ya no tiene permiso para iniciar sesión. Póngase en contacto con el administrador.",
+      "img_alt": "Solicitud incorrecta",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Acceso denegado",

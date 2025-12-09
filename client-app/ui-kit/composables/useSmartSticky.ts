@@ -314,7 +314,6 @@ export function useSmartSticky(options: ISmartStickyOptions) {
     const baseStyle: CSSProperties = {
       left: "auto",
       right: "auto",
-      width: `${dims.elementWidth}px`,
     };
 
     const stickyTopStyle: CSSProperties = {

@@ -15,8 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { computedEager } from "@vueuse/core";
-import { getCurrentInstance, inject, onBeforeUnmount, ref, watchEffect } from "vue";
+import { getCurrentInstance, inject, onBeforeUnmount, ref, watchEffect, computed } from "vue";
 
 /**
  * This component is used together with the parent component `VcExpansionPanels` or independently.
@@ -47,7 +46,7 @@ const { panels, toggle: providedToggleFn } = inject<TProvidedObjectOfExpansionPa
   },
 );
 
-const isExpanded = computedEager<boolean>(() => panels.value[panelId] ?? props.expanded);
+const isExpanded = computed<boolean>(() => panels.value[panelId] ?? props.expanded);
 
 function toggle() {
   providedToggleFn(panelId);

@@ -351,7 +351,7 @@
           "settings": "設定",
           "currency": "通貨",
           "search_bar": {
-            "input_placeholder": "キーワード、商品番号、型番を入力"
+            "input_placeholder": "検索"
           },
           "view_all_catalog": "カテゴリー内の全商品を表示"
         },
@@ -406,9 +406,9 @@
         "categories_label": "カテゴリー",
         "products_label": "商品",
         "pages_label": "ページ",
-        "suggestions_and_history_label": "候補と履歴",
+        "suggestions_and_history_label": "ヒント",
         "no_results": "{keyword}の検索結果はありません",
-        "enter_keyword_placeholder": "ストア全体を検索",
+        "enter_keyword_placeholder": "検索",
         "enter_keyword_placeholder_category": "{category} 内を検索",
         "search_button": "検索",
         "view_all_results_button": "全{total}件を表示",
@@ -948,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "不正なリクエスト",
+      "message": "ユーザーはサインインできなくなりました。管理者に連絡してください。",
+      "img_alt": "不正なリクエスト",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "アクセス拒否",

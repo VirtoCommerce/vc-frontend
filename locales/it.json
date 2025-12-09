@@ -351,7 +351,7 @@
           "settings": "Impostazioni",
           "currency": "Valuta",
           "search_bar": {
-            "input_placeholder": "Inserisci parola chiave, articolo, modello o numero parte di ricambio"
+            "input_placeholder": "Cerca"
           },
           "view_all_catalog": "Visualizza tutti i prodotti nella categoria"
         },
@@ -406,9 +406,9 @@
         "categories_label": "Categorie",
         "products_label": "Prodotti",
         "pages_label": "Pagine",
-        "suggestions_and_history_label": "Suggerimenti e cronologia",
+        "suggestions_and_history_label": "Suggerimenti",
         "no_results": "La tua ricerca {keyword} non ha prodotto risultati",
-        "enter_keyword_placeholder": "Cerca nell'intero negozio",
+        "enter_keyword_placeholder": "Cerca",
         "enter_keyword_placeholder_category": "Cerca in {category}",
         "search_button": "Cerca",
         "view_all_results_button": "Visualizza tutti i {total} risultati",
@@ -948,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Richiesta non valida",
+      "message": "L'utente non è più autorizzato ad accedere. Contattare l'amministratore.",
+      "img_alt": "Richiesta non valida",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Accesso negato",

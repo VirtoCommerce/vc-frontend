@@ -351,7 +351,7 @@
           "settings": "Paramètres",
           "currency": "Devise",
           "search_bar": {
-            "input_placeholder": "Entrez un mot-clé, un article, un modèle ou un numéro de pièce de rechange"
+            "input_placeholder": "Rechercher"
           },
           "view_all_catalog": "Voir tous les produits de la catégorie"
         },
@@ -406,9 +406,9 @@
         "categories_label": "Catégories",
         "products_label": "Produits",
         "pages_label": "Pages",
-        "suggestions_and_history_label": "Suggestions et historique",
+        "suggestions_and_history_label": "Indices",
         "no_results": "Votre requête {keyword} n'a retourné aucun résultat",
-        "enter_keyword_placeholder": "Rechercher dans toute la boutique",
+        "enter_keyword_placeholder": "Rechercher",
         "enter_keyword_placeholder_category": "Rechercher dans {category}",
         "search_button": "Rechercher",
         "view_all_results_button": "Voir tous les {total} résultats",
@@ -948,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Mauvaise requête",
+      "message": "L'utilisateur n'est plus autorisé à se connecter. Veuillez contacter l'administrateur.",
+      "img_alt": "Mauvaise requête",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Accès refusé",

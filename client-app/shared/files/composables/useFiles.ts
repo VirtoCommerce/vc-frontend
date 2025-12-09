@@ -1,4 +1,4 @@
-import { computedEager, isDefined, useMemoize } from "@vueuse/core";
+import { isDefined, useMemoize } from "@vueuse/core";
 import { v4 as uuidv4 } from "uuid";
 import { computed, onUnmounted, ref, unref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -99,24 +99,24 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   }
 
   const newFiles = computed(() => files.value.filter(isNewfile));
-  const hasNewFiles = computedEager(() => newFiles.value.length > 0);
+  const hasNewFiles = computed(() => newFiles.value.length > 0);
 
   const uploadingFiles = computed(() => files.value.filter(isUploadingFile));
   const failedFiles = computed(() => files.value.filter(isFailedFile));
-  const hasFailedFiles = computedEager(() => failedFiles.value.length > 0);
+  const hasFailedFiles = computed(() => failedFiles.value.length > 0);
 
   const attachedFiles = computed(() => files.value.filter(isAttachedFile));
   const uploadedFiles = computed(() => files.value.filter(isUploadedFile));
 
   const modifiedFiles = computed(() => files.value.filter((file) => !isAttachedFile(file)));
-  const anyFilesModified = computedEager(
+  const anyFilesModified = computed(
     () =>
       modifiedFiles.value.length > 0 ||
       (isDefined(initialValue) && attachedFiles.value.length !== (unref(initialValue) as IAttachedFile[]).length),
   );
 
   const attachedAndUploadedFiles = computed(() => [...attachedFiles.value, ...uploadedFiles.value]);
-  const allFilesAttachedOrUploaded = computedEager(() =>
+  const allFilesAttachedOrUploaded = computed(() =>
     files.value.every((file) => isAttachedFile(file) || isUploadedFile(file)),
   );
 
