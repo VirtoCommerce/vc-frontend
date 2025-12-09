@@ -105,7 +105,10 @@ export function getVariationPropertiesGroupedByName(
   properties: Property[],
   type?: PropertyType,
 ): Map<string, Property[]> {
-  const filtered = filter(properties, (p: Property) => (!type || p.propertyType === type) && p.name && p.value != null);
+  const filtered = filter(
+    properties,
+    (p: Property) => (!type || p.propertyType === type) && p.name && hasPropertyValue(p),
+  );
 
   const grouped = groupBy(filtered, (p: Property) => p.name) as Record<string, Property[]>;
 
