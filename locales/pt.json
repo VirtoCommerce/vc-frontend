@@ -351,7 +351,7 @@
           "settings": "Configurações",
           "currency": "Moeda",
           "search_bar": {
-            "input_placeholder": "Digite palavra-chave, item, modelo ou número de peça de reposição"
+            "input_placeholder": "Pesquisar"
           },
           "view_all_catalog": "Ver todos os produtos na categoria"
         },
@@ -406,9 +406,9 @@
         "categories_label": "Categorias",
         "products_label": "Produtos",
         "pages_label": "Páginas",
-        "suggestions_and_history_label": "Sugestões e histórico",
+        "suggestions_and_history_label": "Dicas",
         "no_results": "Sua pesquisa '{keyword}' não retornou resultados",
-        "enter_keyword_placeholder": "Pesquisar em toda a loja",
+        "enter_keyword_placeholder": "Pesquisar",
         "enter_keyword_placeholder_category": "Pesquisar em {category}",
         "search_button": "Pesquisar",
         "view_all_results_button": "Ver todos os {total} resultados",
