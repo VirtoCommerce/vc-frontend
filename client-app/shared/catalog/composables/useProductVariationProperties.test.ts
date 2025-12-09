@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ref, nextTick } from "vue";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
 import type { useProductVariationProperties as useProductVariationPropertiesType } from "./useProductVariationProperties";
-import type { PrimitiveValueType } from "./useProductVariationProperties";
 import type { Product, Property } from "@/core/api/graphql/types";
+import type { PrimitiveValueType } from "@/core/utilities/properties";
 
 interface IPropertyRecord {
   name: string;
@@ -103,6 +103,19 @@ vi.mock("vue-i18n", () => ({
   }),
 }));
 
+vi.mock("@/core/globals", () => ({
+  globals: {
+    i18n: {
+      global: {
+        t: vi.fn((key: string) => key),
+        d: vi.fn((date: Date) => date.toLocaleDateString()),
+        n: vi.fn((num: number) => num.toString()),
+      },
+    },
+    cultureName: "en-US",
+  },
+}));
+
 describe("useProductVariationProperties", () => {
   let useProductVariationProperties: typeof useProductVariationPropertiesType;
 
@@ -126,8 +139,8 @@ describe("useProductVariationProperties", () => {
     expect(colorProperty?.values.length).toBe(2);
     expect(colorProperty?.values).toEqual(
       expect.arrayContaining([
-        { value: "Red", label: "Red" },
-        { value: "Blue", label: "Blue" },
+        { value: "Red", label: "Red", displayOrder: undefined },
+        { value: "Blue", label: "Blue", displayOrder: undefined },
       ]),
     );
   });
@@ -291,17 +304,17 @@ describe("useProductVariationProperties", () => {
     const availableProp = properties.value.get("Available");
     expect(availableProp?.values).toEqual(
       expect.arrayContaining([
-        { value: true, label: "common.labels.true_property" },
-        { value: false, label: "common.labels.false_property" },
+        { value: "true", label: "common.labels.true_property", displayOrder: undefined },
+        { value: "false", label: "common.labels.false_property", displayOrder: undefined },
       ]),
     );
 
     const countProp = properties.value.get("Count");
-    expect(countProp?.values).toEqual(expect.arrayContaining([{ value: 10, label: "10" }]));
+    expect(countProp?.values).toEqual(expect.arrayContaining([{ value: "10", label: "10", displayOrder: undefined }]));
 
     const releaseDateProp = properties.value.get("ReleaseDate");
     expect(releaseDateProp?.values).toEqual(
-      expect.arrayContaining([{ value: "2023-10-27T10:00:00Z", label: "mock date" }]),
+      expect.arrayContaining([{ value: "2023-10-27T10:00:00Z", label: "mock date", displayOrder: undefined }]),
     );
 
     dateSpy.mockRestore();
@@ -328,7 +341,7 @@ describe("useProductVariationProperties", () => {
 
     const sizeProperty = properties.value.get("Size");
     expect(sizeProperty?.values).toHaveLength(1);
-    expect(sizeProperty?.values).toEqual(expect.arrayContaining([{ value: null, label: "null" }]));
+    expect(sizeProperty?.values).toEqual(expect.arrayContaining([{ value: "", label: "", displayOrder: undefined }]));
   });
 
   it("has a correct initial state before any selections", () => {

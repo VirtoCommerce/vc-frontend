@@ -1,6 +1,14 @@
 import { describe, it, expect, vi } from "vitest";
 import { PropertyValueTypes, PropertyType } from "@/core/api/graphql/types";
-import { getPropertyValue, getPropertiesGroupedByName, getGroupedAndSortedProperties } from "./index";
+import {
+  getPropertyValue,
+  getPropertiesGroupedByName,
+  getGroupedAndSortedProperties,
+  getVariationPropertiesGroupedByName,
+  normalizePropertyValue,
+  isColorProperty,
+  isMultiColorProperty,
+} from "./index";
 import type { Property, PropertyGroup } from "@/core/api/graphql/types";
 
 // Mock the globals.i18n
@@ -418,6 +426,347 @@ describe("Properties Utilities", () => {
       expect(group1Result).toBeDefined();
       expect(group1Result?.properties).toHaveLength(1);
       expect(group1Result?.properties[0].id).toBe("1");
+    });
+  });
+
+  describe("getVariationPropertiesGroupedByName", () => {
+    it("should group variation properties by name preserving all instances", () => {
+      const properties: Property[] = [
+        {
+          id: "1",
+          name: "FabricColor",
+          label: "Fabric Color",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.Color,
+          value: "Red",
+          colorCode: "#ff0000",
+        },
+        {
+          id: "2",
+          name: "FabricColor",
+          label: "Fabric Color",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.Color,
+          value: "Blue",
+          colorCode: "#0000ff",
+        },
+        {
+          id: "3",
+          name: "Size",
+          label: "Size",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: "Large",
+        },
+      ];
+
+      const result = getVariationPropertiesGroupedByName(properties, PropertyType.Variation);
+      expect(result.size).toBe(2);
+      expect(result.get("FabricColor")).toHaveLength(2);
+      expect(result.get("FabricColor")?.[0].value).toBe("Red");
+      expect(result.get("FabricColor")?.[1].value).toBe("Blue");
+      expect(result.get("Size")).toHaveLength(1);
+      expect(result.get("Size")?.[0].value).toBe("Large");
+    });
+
+    it("should filter by property type", () => {
+      const properties: Property[] = [
+        {
+          id: "1",
+          name: "variation_prop",
+          label: "Variation",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: "Variation",
+        },
+        {
+          id: "2",
+          name: "product_prop",
+          label: "Product",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Product,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: "Product",
+        },
+      ];
+
+      const result = getVariationPropertiesGroupedByName(properties, PropertyType.Variation);
+      expect(result.size).toBe(1);
+      expect(result.has("variation_prop")).toBe(true);
+      expect(result.has("product_prop")).toBe(false);
+    });
+
+    it("should skip properties without name or value", () => {
+      const properties: Property[] = [
+        {
+          id: "1",
+          name: "valid",
+          label: "Valid",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: "Value",
+        },
+        {
+          id: "2",
+          name: "",
+          label: "No Name",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: "Value",
+        },
+        {
+          id: "3",
+          name: "no_value",
+          label: "No Value",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: undefined,
+        },
+      ];
+
+      const result = getVariationPropertiesGroupedByName(properties, PropertyType.Variation);
+      expect(result.size).toBe(1);
+      expect(result.has("valid")).toBe(true);
+    });
+  });
+
+  describe("normalizePropertyValue", () => {
+    it("should return colorCode if present", () => {
+      const property: Property = {
+        id: "1",
+        name: "color",
+        label: "Color",
+        hidden: false,
+        multivalue: false,
+        propertyType: PropertyType.Variation,
+        propertyValueType: PropertyValueTypes.Color,
+        value: "Red",
+        colorCode: "#ff0000",
+      };
+
+      const result = normalizePropertyValue(property);
+      expect(result).toBe("#ff0000");
+    });
+
+    it("should return lowercase string value for color properties without colorCode", () => {
+      const property: Property = {
+        id: "1",
+        name: "Color",
+        label: "Color",
+        hidden: false,
+        multivalue: false,
+        propertyType: PropertyType.Variation,
+        propertyValueType: PropertyValueTypes.Color,
+        value: "RED",
+      };
+
+      const result = normalizePropertyValue(property);
+      expect(result).toBe("red");
+    });
+
+    it("should return original string value for non-color properties", () => {
+      const property: Property = {
+        id: "1",
+        name: "Size",
+        label: "Size",
+        hidden: false,
+        multivalue: false,
+        propertyType: PropertyType.Variation,
+        propertyValueType: PropertyValueTypes.ShortText,
+        value: "LARGE",
+      };
+
+      const result = normalizePropertyValue(property);
+      expect(result).toBe("LARGE");
+    });
+
+    it("should handle undefined value", () => {
+      const property: Property = {
+        id: "1",
+        name: "test",
+        label: "Test",
+        hidden: false,
+        multivalue: false,
+        propertyType: PropertyType.Variation,
+        propertyValueType: PropertyValueTypes.ShortText,
+        value: undefined,
+      };
+
+      const result = normalizePropertyValue(property);
+      expect(result).toBe("");
+    });
+
+    it("should handle numeric value", () => {
+      const property: Property = {
+        id: "1",
+        name: "count",
+        label: "Count",
+        hidden: false,
+        multivalue: false,
+        propertyType: PropertyType.Variation,
+        propertyValueType: PropertyValueTypes.Integer,
+        value: 42,
+      };
+
+      const result = normalizePropertyValue(property);
+      expect(result).toBe("42");
+    });
+  });
+
+  describe("isColorProperty", () => {
+    it("should return true for color property type", () => {
+      const property: Property = {
+        id: "1",
+        name: "color",
+        label: "Color",
+        hidden: false,
+        multivalue: false,
+        propertyType: PropertyType.Variation,
+        propertyValueType: PropertyValueTypes.Color,
+        value: "Red",
+      };
+
+      const result = isColorProperty(property);
+      expect(result).toBe(true);
+    });
+
+    it("should return false for non-color property type", () => {
+      const textProperty: Property = {
+        id: "1",
+        name: "size",
+        label: "Size",
+        hidden: false,
+        multivalue: false,
+        propertyType: PropertyType.Variation,
+        propertyValueType: PropertyValueTypes.ShortText,
+        value: "Large",
+      };
+
+      expect(isColorProperty(textProperty)).toBe(false);
+    });
+  });
+
+  describe("isMultiColorProperty", () => {
+    it("should return true for multiple color properties", () => {
+      const properties: Property[] = [
+        {
+          id: "1",
+          name: "FabricColor",
+          label: "Fabric Color",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.Color,
+          value: "Red",
+        },
+        {
+          id: "2",
+          name: "FabricColor",
+          label: "Fabric Color",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.Color,
+          value: "Blue",
+        },
+      ];
+
+      const result = isMultiColorProperty(properties);
+      expect(result).toBe(true);
+    });
+
+    it("should return false for single color property", () => {
+      const properties: Property[] = [
+        {
+          id: "1",
+          name: "FabricColor",
+          label: "Fabric Color",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.Color,
+          value: "Red",
+        },
+      ];
+
+      const result = isMultiColorProperty(properties);
+      expect(result).toBe(false);
+    });
+
+    it("should return false for non-color properties", () => {
+      const properties: Property[] = [
+        {
+          id: "1",
+          name: "Size",
+          label: "Size",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: "Large",
+        },
+        {
+          id: "2",
+          name: "Size",
+          label: "Size",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: "Medium",
+        },
+      ];
+
+      const result = isMultiColorProperty(properties);
+      expect(result).toBe(false);
+    });
+
+    it("should return false for empty list", () => {
+      const result = isMultiColorProperty([]);
+      expect(result).toBe(false);
+    });
+
+    it("should return false for mixed property types", () => {
+      const properties: Property[] = [
+        {
+          id: "1",
+          name: "Mixed",
+          label: "Mixed",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.Color,
+          value: "Red",
+        },
+        {
+          id: "2",
+          name: "Mixed",
+          label: "Mixed",
+          hidden: false,
+          multivalue: false,
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.ShortText,
+          value: "Large",
+        },
+      ];
+
+      const result = isMultiColorProperty(properties);
+      expect(result).toBe(false);
     });
   });
 });

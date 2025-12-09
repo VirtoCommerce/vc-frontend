@@ -1,18 +1,21 @@
 import { createSharedComposable } from "@vueuse/core";
+import { isEqual, sortBy, map, find, some, filter } from "lodash";
 import { ref, computed, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
+import { PropertyType } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
+import {
+  normalizePropertyValue,
+  getVariationPropertiesGroupedByName,
+  isColorProperty,
+  isMultiColorProperty,
+  getPropertyValue,
+} from "@/core/utilities/properties";
 import { serialize } from "@/ui-kit/utilities";
-import type { Product, Property } from "@/core/api/graphql/types";
+import type { Product, Property, PropertyValueTypes } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
-import type { ComposerTranslation } from "vue-i18n";
-
-export type PrimitiveValueType = string | number | boolean | null;
 
 export interface IPropertyValue {
-  colorCode?: string;
-  value: PrimitiveValueType;
+  value: string | string[];
   label: string;
   displayOrder?: number;
 }
@@ -24,36 +27,58 @@ export interface IProperty {
   propertyValueType: PropertyValueTypes;
 }
 
-type SelectedPropertiesMapType = ReadonlyMap<string, PrimitiveValueType>;
+type SelectedPropertiesMapType = ReadonlyMap<string, string | string[]>;
 
 /** Checks if a single product variation is compatible with a specific property name and value. */
-function isVariationCompatible(variation: Product, propertyName: string, propertyValue: PrimitiveValueType) {
-  return variation.properties.some((prop) => prop.name === propertyName && prop.value === propertyValue);
+function isVariationCompatible(variation: Product, propertyName: string, propertyValue: string | string[]) {
+  if (Array.isArray(propertyValue)) {
+    const variationProps = filter(variation.properties, { name: propertyName });
+
+    if (variationProps.length !== propertyValue.length) {
+      return false;
+    }
+
+    const variationNormalizedValues = sortBy(map(variationProps, normalizePropertyValue));
+    const sortedPropertyValue = sortBy(propertyValue);
+
+    return isEqual(variationNormalizedValues, sortedPropertyValue);
+  }
+
+  const matchingProp = find(variation.properties, { name: propertyName });
+  return !!matchingProp && normalizePropertyValue(matchingProp) === propertyValue;
 }
 
 /** Filters a list of variations to only those that match all currently selected properties. */
 function getApplicableVariations(variations: readonly Product[], selected: SelectedPropertiesMapType): Product[] {
-  const selectedEntries = Array.from(selected.entries());
-  if (selectedEntries.length === 0) {
-    return [...variations];
+  if (selected.size === 0) {
+    return variations as Product[];
   }
+
   return variations.filter((variation) =>
-    selectedEntries.every(([name, value]) => isVariationCompatible(variation, name, value)),
+    Array.from(selected.entries()).every(([name, value]) => isVariationCompatible(variation, name, value)),
   );
 }
 
-/** From a list of variations, extracts all unique available property values, grouped by property name. */
-function getAvailablePropertyValues(variations: readonly Product[]): Map<string, PrimitiveValueType[]> {
-  const available = new Map<string, Set<PrimitiveValueType>>();
+/** From a list of variations, extracts all unique available property values (as normalized values), grouped by property name. */
+function getAvailablePropertyValues(variations: readonly Product[]): Map<string, string[]> {
+  const available = new Map<string, Set<string>>();
+
   variations.forEach((variation) => {
     variation.properties.forEach((prop) => {
       if (prop.propertyType !== PropertyType.Variation || !prop.name || prop.value === undefined) {
         return;
       }
+
+      // Skip color properties - they should not be auto-selected as they require user's visual choice
+      if (isColorProperty(prop)) {
+        return;
+      }
+
       if (!available.has(prop.name)) {
         available.set(prop.name, new Set());
       }
-      available.get(prop.name)?.add(prop.value);
+
+      available.get(prop.name)?.add(normalizePropertyValue(prop));
     });
   });
 
@@ -85,16 +110,40 @@ function runAutoSelection(
 /** Calculates the new set of selected properties after a user makes a new selection, discarding incompatible previous choices. */
 function calculateNewSelections(
   name: string,
-  value: PrimitiveValueType,
+  value: string | string[],
   variations: readonly Product[],
   currentSelected: SelectedPropertiesMapType,
 ): SelectedPropertiesMapType {
-  const baseSelections = new Map<string, PrimitiveValueType>();
+  const baseSelections = new Map<string, string | string[]>();
 
   baseSelections.set(name, value);
 
+  // For multicolor properties, find exact matching variation and pre-fill its other properties
+  if (Array.isArray(value)) {
+    const firstMatch = find(variations, (variation) => isVariationCompatible(variation, name, value));
+
+    if (firstMatch) {
+      const variationProps = filter(
+        firstMatch.properties,
+        (p) => p.propertyType === PropertyType.Variation && p.name !== name && p.name,
+      ) as Property[];
+
+      variationProps.forEach((prop) => {
+        const normalizedValue = normalizePropertyValue(prop);
+        // Check if this property value is compatible with base selections
+        const testSelections = new Map(baseSelections);
+        testSelections.set(prop.name, normalizedValue);
+        const possibleVariations = getApplicableVariations(variations, testSelections);
+
+        if (possibleVariations.length > 0) {
+          baseSelections.set(prop.name, normalizedValue);
+        }
+      });
+    }
+  }
+
   Array.from(currentSelected.entries()).forEach(([propertyName, propertyValue]) => {
-    if (propertyName === name) {
+    if (propertyName === name || baseSelections.has(propertyName)) {
       return;
     }
 
@@ -110,17 +159,49 @@ function calculateNewSelections(
   return runAutoSelection(variations, baseSelections);
 }
 
-/** Generates a user-friendly display label for a property based on its value type. */
-function getDisplayLabel(property: Property, t: ComposerTranslation): string {
-  const { value, propertyValueType } = property;
+/** Creates multicolor property value option from multiple color properties */
+function createMulticolorOption(properties: Property[]): IPropertyValue {
+  if (properties.length === 0) {
+    throw new Error("createMulticolorOption: properties array cannot be empty");
+  }
 
-  switch (propertyValueType) {
-    case PropertyValueTypes.Boolean:
-      return value ? t("common.labels.true_property") : t("common.labels.false_property");
-    case PropertyValueTypes.DateTime:
-      return new Date(value as string).toLocaleDateString();
-    default:
-      return String(value);
+  const sortedProps = sortBy(properties, normalizePropertyValue);
+  const valuesArray = map(sortedProps, normalizePropertyValue);
+  const labelsArray = map(sortedProps, (p) => getPropertyValue(p) ?? "");
+
+  return {
+    value: valuesArray,
+    label: labelsArray.join(", "),
+    displayOrder: sortedProps[0].valueDisplayOrder,
+  };
+}
+
+/** Creates single property value option from a property */
+function createSingleOption(prop: Property): IPropertyValue {
+  return {
+    value: normalizePropertyValue(prop),
+    label: getPropertyValue(prop) ?? "",
+    displayOrder: prop.valueDisplayOrder,
+  };
+}
+
+/** Processes property list and adds options to the property */
+function addPropertyOptions(property: IProperty, properties: Property[]): void {
+  if (isMultiColorProperty(properties)) {
+    const multicolorOption = createMulticolorOption(properties);
+    const serializedValues = serialize(multicolorOption.value);
+
+    if (!some(property.values, (v) => serialize(v.value) === serializedValues)) {
+      property.values.push(multicolorOption);
+    }
+  } else {
+    properties.forEach((prop) => {
+      const singleOption = createSingleOption(prop);
+
+      if (!some(property.values, (v) => v.value === singleOption.value)) {
+        property.values.push(singleOption);
+      }
+    });
   }
 }
 
@@ -129,50 +210,42 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
   const selectedProperties = ref<SelectedPropertiesMapType>(new Map());
   const { cultureName } = globals;
 
-  const { t } = useI18n();
-
   const properties = computed<Map<string, IProperty>>(() => {
     const props = new Map<string, IProperty>();
 
-    const allVariationProps = variations.value
-      .flatMap((variation) => variation.properties)
-      .filter((property) => property.propertyType === PropertyType.Variation)
-      .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+    variations.value.forEach((variation) => {
+      const groupedByName = getVariationPropertiesGroupedByName(variation.properties, PropertyType.Variation);
 
-    allVariationProps.forEach((prop) => {
-      const { name, value, label, colorCode, propertyValueType, valueDisplayOrder } = prop;
+      groupedByName.forEach((propertyList, name) => {
+        if (propertyList.length === 0) {
+          return;
+        }
 
-      if (!name || value === undefined) {
-        return;
-      }
+        const firstProp = propertyList[0];
 
-      if (!props.has(name)) {
-        props.set(name, {
-          name,
-          label: label,
-          values: [],
-          propertyValueType,
-        });
-      }
+        if (!props.has(name)) {
+          props.set(name, {
+            name,
+            label: firstProp.label,
+            values: [],
+            propertyValueType: firstProp.propertyValueType,
+          });
+        }
 
-      const property = props.get(name);
-      if (property && !property.values.some((v) => v.value === value)) {
-        property.values.push({
-          colorCode,
-          value,
-          label: getDisplayLabel(prop, t),
-          displayOrder: valueDisplayOrder,
-        });
-      }
+        addPropertyOptions(props.get(name)!, propertyList);
+      });
     });
 
     props.forEach((property) => {
       property.values.sort((a, b) => {
-        if (a.displayOrder !== undefined && b.displayOrder !== undefined && a.displayOrder !== b.displayOrder) {
-          return a.displayOrder - b.displayOrder;
+        const aOrder = a.displayOrder ?? Infinity;
+        const bOrder = b.displayOrder ?? Infinity;
+
+        if (aOrder !== bOrder) {
+          return aOrder - bOrder;
         }
 
-        return String(a.value).localeCompare(String(b.value), cultureName, {
+        return serialize(a.value).localeCompare(serialize(b.value), cultureName, {
           numeric: true,
         });
       });
@@ -181,27 +254,19 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     return props;
   });
 
-  const isCompleted = computed<boolean>(() => {
-    if (properties.value.size === 0) {
-      return false;
-    }
-
-    return selectedProperties.value.size === properties.value.size;
+  const isCompleted = computed(() => {
+    return properties.value.size > 0 && selectedProperties.value.size === properties.value.size;
   });
 
-  const applicableVariations = computed<Product[]>(() => {
-    return getApplicableVariations(variations.value, selectedProperties.value);
-  });
+  const applicableVariations = computed<Product[]>(() =>
+    getApplicableVariations(variations.value, selectedProperties.value),
+  );
 
-  const variationResult = computed<Product | undefined>(() => {
-    if (!isCompleted.value) {
-      return undefined;
-    }
+  const variationResult = computed<Product | undefined>(() =>
+    isCompleted.value && applicableVariations.value.length === 1 ? applicableVariations.value[0] : undefined,
+  );
 
-    return applicableVariations.value.length === 1 ? applicableVariations.value[0] : undefined;
-  });
-
-  function isAvailable(propertyName: string, value: PrimitiveValueType) {
+  function isAvailable(propertyName: string, value: string | string[]) {
     const selectionsWithoutCurrent = new Map(selectedProperties.value);
     selectionsWithoutCurrent.delete(propertyName);
 
@@ -210,14 +275,25 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     return possibleVariations.some((variation) => isVariationCompatible(variation, propertyName, value));
   }
 
-  function isSelected(propertyName: string, value: PrimitiveValueType) {
-    return selectedProperties.value.get(propertyName) === value;
+  function isSelected(propertyName: string, value: string | string[]) {
+    const selected = selectedProperties.value.get(propertyName);
+
+    if (Array.isArray(value) && Array.isArray(selected)) {
+      if (value.length !== selected.length) {
+        return false;
+      }
+
+      return isEqual(sortBy(value), sortBy(selected));
+    }
+
+    return selected === value;
   }
 
-  function select(propertyName: string, value: PrimitiveValueType) {
-    if (selectedProperties.value.get(propertyName) === value) {
+  function select(propertyName: string, value: string | string[]) {
+    if (isSelected(propertyName, value)) {
       return;
     }
+
     selectedProperties.value = calculateNewSelections(propertyName, value, variations.value, selectedProperties.value);
   }
 
@@ -225,15 +301,8 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     return option.label;
   }
 
-  function getSelectedValue(property: IProperty): string {
-    const selectedOption = property.values.find((opt) => isSelected(property.name, opt.value));
-    if (!selectedOption) {
-      return "";
-    }
-
-    return property.propertyValueType === PropertyValueTypes.Color
-      ? (selectedOption.colorCode ?? String(selectedOption.value))
-      : String(selectedOption.value);
+  function getSelectedValue(property: IProperty): string | string[] {
+    return find(property.values, (opt) => isSelected(property.name, opt.value))?.value ?? "";
   }
 
   function findOptionByValue(property: IProperty, value: string | string[]): IPropertyValue | undefined {
@@ -241,19 +310,8 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
       return undefined;
     }
 
-    return property.values.find((opt) => {
-      if (typeof value === "string") {
-        const optionValue =
-          property.propertyValueType === PropertyValueTypes.Color
-            ? (opt.colorCode ?? String(opt.value))
-            : String(opt.value);
-        return optionValue === value;
-      }
-
-      //Argument of type 'string | string[]' is not assignable to parameter of type 'PrimitiveValueType'.
-      //TEMP: waiting for multi-color implementation
-      return opt.value === serialize(value);
-    });
+    const serializedValue = serialize(value);
+    return find(property.values, (opt) => serialize(opt.value) === serializedValue);
   }
 
   watch(
