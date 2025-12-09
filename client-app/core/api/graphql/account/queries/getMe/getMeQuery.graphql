@@ -22,6 +22,7 @@ query GetMe($userId: String) {
       defaultLanguage
       currencyCode
       selectedAddressId
+      groups
       organizations {
         items {
           id

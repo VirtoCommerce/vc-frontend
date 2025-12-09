@@ -33,8 +33,7 @@
         <div class="mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
           <VcInput
             v-model="expirationDate"
-            v-maska
-            data-maska="## / ##"
+            :mask="dateMaskOptions"
             :label="labels.expirationDate"
             :placeholder="labels.datePlaceholder"
             :message="expirationDateErrors"
@@ -47,8 +46,6 @@
             class="min-w-32 basis-1/4"
             required
             test-id-input="expiration-date-input"
-            @keypress="preventNonNumberKeyboard($event)"
-            @paste="preventNonNumberPaste($event)"
           />
 
           <div class="min-w-32 basis-1/4">
@@ -94,13 +91,14 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useScriptTag } from "@vueuse/core";
+import { Mask } from "maska";
 import { useForm } from "vee-validate";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables";
-import { Logger, preventNonNumberKeyboard, preventNonNumberPaste } from "@/core/utilities";
+import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
@@ -180,6 +178,8 @@ const { analytics } = useAnalytics();
 const notifications = useNotifications();
 
 const loading = ref(false);
+const dateMaskOptions = { mask: "## / ##" };
+const dateMask = new Mask(dateMaskOptions);
 
 const labels = computed(() => {
   return {
@@ -243,13 +243,15 @@ const [month] = defineField("month");
 const [year] = defineField("year");
 
 const expirationDate = computed({
-  get: () =>
-    (month.value && month.value.length > 1) || year.value ? `${month.value ?? "  "} / ${year.value}` : month.value,
+  get: () => dateMask.masked((month.value || "") + (year.value || "")),
   set: (value) => {
     if (value) {
-      const [rawMonth = "", rawYear = ""] = value.split(/\s*\/\s*/);
-      month.value = rawMonth;
-      year.value = rawYear;
+      const unmasked = dateMask.unmasked(value);
+      month.value = unmasked.slice(0, 2);
+      year.value = unmasked.slice(2, 4);
+    } else {
+      month.value = "";
+      year.value = "";
     }
   },
 });

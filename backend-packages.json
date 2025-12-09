@@ -1,33 +1,38 @@
 {
-  "ManifestVersion": "2.0",
+"ManifestVersion": "2.0",
   "PlatformVersion": "3.917.0",
   "PlatformImage": "ghcr.io/virtocommerce/platform",
   "PlatformImageTag": "3.917.0",
   "PlatformAssetUrl": "",
-  "ModuleSources": ["https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"],
+
+  "ModuleSources": [
+    "https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"
+  ],
   "Sources": [
     {
       "Name": "AzureBlob",
       "Container": "packages",
       "ServiceUri": "https://vc3prerelease.blob.core.windows.net",
       "Modules": [
-        {
-          "BlobName": "VirtoCommerce.PageBuilderModule_3.828.0-alpha.745-dev.zip"
-        },
-        {
+       {
+          "BlobName": "VirtoCommerce.PageBuilderModule_3.830.0-pr-90-ddb3.zip"
+       },
+       {
           "BlobName": "VirtoCommerce.CyberSourcePayment_3.803.0-pr-7-3538.zip"
-        },
-        {
-          "BlobName": "VirtoCommerce.Payment_3.812.0-alpha.261-vcst-3387.zip"
-        },
-        {
-          "BlobName": "VirtoCommerce.XCart_3.951.0-pr-94-cf48.zip"
-        }
+       },
+       {
+          "BlobName": "VirtoCommerce.Payment_3.812.0-pr-68-baa3.zip"
+       },
+       {
+          "BlobName": "VirtoCommerce.XCart_3.951.0-pr-94-438b.zip"
+       }
       ]
     },
     {
       "Name": "GithubReleases",
-      "ModuleSources": ["https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"],
+      "ModuleSources": [
+        "https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"
+      ],
       "Modules": [
         {
           "Id": "VirtoCommerce.Contentful",
@@ -102,14 +107,6 @@
           "Version": "3.905.0"
         },
         {
-          "Id": "VirtoCommerce.BuilderIO",
-          "Version": "3.806.0"
-        },
-        {
-          "Id": "VirtoCommerce.Notifications",
-          "Version": "3.830.0"
-        },
-        {
           "Id": "VirtoCommerce.XPickup",
           "Version": "3.804.0"
         },
@@ -136,14 +133,6 @@
         {
           "Id": "VirtoCommerce.GoogleSSO",
           "Version": "3.804.0"
-        },
-        {
-          "Id": "VirtoCommerce.Search",
-          "Version": "3.821.0"
-        },
-        {
-          "Id": "VirtoCommerce.Seo",
-          "Version": "3.811.0"
         },
         {
           "Id": "VirtoCommerce.AzureSearch",
@@ -180,10 +169,6 @@
         {
           "Id": "VirtoCommerce.Store",
           "Version": "3.823.0"
-        },
-        {
-          "Id": "VirtoCommerce.Catalog",
-          "Version": "3.904.0"
         },
         {
           "Id": "VirtoCommerce.GoogleEcommerceAnalytics",
@@ -319,12 +304,32 @@
         },
         {
           "Id": "VirtoCommerce.XFrontend",
-          "Version": "3.800.0"
+          "Version": "3.801.0"
+        },
+        {
+          "Id": "VirtoCommerce.Notifications",
+          "Version": "3.830.0"
+        },
+        {
+          "Id": "VirtoCommerce.Catalog",
+          "Version": "3.905.0"
+        },
+        {
+          "Id": "VirtoCommerce.Search",
+          "Version": "3.822.0"
+        },
+        {
+          "Id": "VirtoCommerce.Seo",
+          "Version": "3.812.0"
+        },
+        {
+          "Id": "VirtoCommerce.BuilderIO",
+          "Version": "3.807.0"
         },
         {
           "Id": "VirtoCommerce.Loyalty",
           "Version": "3.800.0"
-        }
+        } 
       ]
     }
   ]

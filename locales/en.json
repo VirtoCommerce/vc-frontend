@@ -352,7 +352,7 @@
           "settings": "Settings",
           "currency": "Currency",
           "search_bar": {
-            "input_placeholder": "Enter keyword, item, model, or replacement part number"
+            "input_placeholder": "Search"
           },
           "view_all_catalog": "View all products in the category"
         },
@@ -407,9 +407,9 @@
         "categories_label": "Categories",
         "products_label": "Products",
         "pages_label": "Pages",
-        "suggestions_and_history_label": "Suggestions & history",
+        "suggestions_and_history_label": "Hints",
         "no_results": "Your {keyword} query did not return any results",
-        "enter_keyword_placeholder": "Search the entire store",
+        "enter_keyword_placeholder": "Search",
         "enter_keyword_placeholder_category": "Search within {category}",
         "search_button": "Search",
         "view_all_results_button": "View all {total} results",

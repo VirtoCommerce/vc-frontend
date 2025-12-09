@@ -172,10 +172,10 @@ onMounted(() => {
         }
 
         &#{$hasTitlePriceOnly} {
-          grid-auto-rows: 1fr min-content min-content 2fr min-content;
+          grid-auto-rows: min-content min-content min-content min-content min-content;
 
           &#{$hasActions} {
-            grid-auto-rows: 1fr min-content min-content 2fr 1.5rem;
+            grid-auto-rows: min-content min-content min-content min-content 1.5rem;
           }
         }
 

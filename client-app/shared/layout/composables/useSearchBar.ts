@@ -1,12 +1,15 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, ref } from "vue";
 import { getSearchResults } from "@/core/api/graphql/catalog";
+import { useThemeContext } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { highlightSearchText, prepareSearchText } from "../utils";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category, PageType, Product } from "@/core/api/graphql/types";
 
 function _useSearchBar() {
+  const { themeContext } = useThemeContext();
+
   const loading = ref(false);
   const searchBarVisible = ref(false);
   const searchDropdownVisible = ref(false);
@@ -16,6 +19,8 @@ function _useSearchBar() {
   const pages = ref<PageType[]>([]);
   const suggestions = ref<{ text: string; label: string }[]>([]);
   const total = ref(0);
+
+  const maxSearchLength = computed(() => themeContext.value?.settings?.search_max_chars || 999);
 
   function showSearchDropdown() {
     if (!searchDropdownVisible.value) {
@@ -106,6 +111,7 @@ function _useSearchBar() {
     searchBarVisible: readonly(searchBarVisible),
     searchDropdownVisible: readonly(searchDropdownVisible),
     searchPhraseOfUploadedResults: readonly(searchPhraseOfUploadedResults),
+    maxSearchLength,
     categories: computed(() => categories.value),
     products: computed(() => products.value),
     pages: computed(() => pages.value),

@@ -352,7 +352,7 @@
           "settings": "Inställningar",
           "currency": "Valuta",
           "search_bar": {
-            "input_placeholder": "Ange nyckelord, artikel, modell eller reservdelsnummer"
+            "input_placeholder": "Sök"
           },
           "view_all_catalog": "Visa alla produkter i kategorin"
         },
@@ -407,9 +407,9 @@
         "categories_label": "Kategorier",
         "products_label": "Produkter",
         "pages_label": "Sidor",
-        "suggestions_and_history_label": "Förslag & historik",
+        "suggestions_and_history_label": "Tips",
         "no_results": "Din sökning efter {keyword} gav inga resultat",
-        "enter_keyword_placeholder": "Sök i hela butiken",
+        "enter_keyword_placeholder": "Sök",
         "enter_keyword_placeholder_category": "Sök inom {category}",
         "search_button": "Sök",
         "view_all_results_button": "Visa alla {total} resultat",
