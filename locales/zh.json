@@ -742,6 +742,7 @@
       },
       "billing_details_section": {
         "title": "支付详情",
+        "payment_data": "支付数据",
         "labels": {
           "billing_address": "账单地址",
           "payment_method": "支付方式",

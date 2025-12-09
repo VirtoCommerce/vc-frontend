@@ -742,6 +742,7 @@
       },
       "billing_details_section": {
         "title": "支払い情報",
+        "payment_data": "支払いデータ",
         "labels": {
           "billing_address": "請求先住所",
           "payment_method": "支払い方法",

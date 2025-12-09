@@ -742,6 +742,7 @@
       },
       "billing_details_section": {
         "title": "Detalles de pago",
+        "payment_data": "Datos de pago",
         "labels": {
           "billing_address": "Dirección de facturación",
           "payment_method": "Método de pago",

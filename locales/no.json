@@ -742,6 +742,7 @@
       },
       "billing_details_section": {
         "title": "Faktureringsdetaljer",
+        "payment_data": "Betalingsdata",
         "labels": {
           "billing_address": "Fakturaadresse",
           "payment_method": "Betalingsmetode",
