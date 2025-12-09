@@ -41,10 +41,11 @@ export type GetSearchResultsParamsType = {
 
 let abortController: AbortController | undefined;
 
+const { isEnabled: virtoPagesEnabled } = useModuleSettings(MODULE_ID_VIRTOPAGES);
+
 export async function getSearchResults(params: GetSearchResultsParamsType) {
   const { storeId, userId, cultureName, currencyCode } = globals;
 
-  const { isEnabled: virtoPagesEnabled } = useModuleSettings(MODULE_ID_VIRTOPAGES);
   const isVirtoPagesEnabled = virtoPagesEnabled(VIRTOPAGES_ENABLED_KEY);
 
   const withSuggestions = !!params.productSuggestions;
