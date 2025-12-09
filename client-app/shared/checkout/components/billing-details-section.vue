@@ -2,6 +2,7 @@
   <VcWidget
     :title="$t('shared.checkout.billing_details_section.title')"
     prepend-icon="cash"
+    class="mt-5"
     size="lg"
     data-test-id="checkout.payment-details-section"
   >
@@ -89,7 +90,7 @@
     :title="$t('shared.checkout.billing_details_section.title')"
     prepend-icon="cash"
     size="lg"
-    class="mt-4"
+    class="mt-5"
   >
     <Payment hide-payment-button :cart="cart" :payment="currentPaymentMethod" />
   </VcWidget>

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-5 md:p-6">
+  <div>
     <PaymentProcessingCyberSource
       v-if="paymentTypeName === 'CyberSourcePaymentMethod'"
       :order="order"
