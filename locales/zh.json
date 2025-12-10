@@ -351,7 +351,7 @@
           "settings": "设置",
           "currency": "货币",
           "search_bar": {
-            "input_placeholder": "输入关键词、商品、型号或替换零件号"
+            "input_placeholder": "搜索"
           },
           "view_all_catalog": "查看类别中的所有产品"
         },
@@ -406,9 +406,9 @@
         "categories_label": "类别",
         "products_label": "产品",
         "pages_label": "页面",
-        "suggestions_and_history_label": "建议和历史记录",
+        "suggestions_and_history_label": "提示",
         "no_results": "您的 {keyword} 查询未返回任何结果",
-        "enter_keyword_placeholder": "搜索全店",
+        "enter_keyword_placeholder": "搜索",
         "enter_keyword_placeholder_category": "在 {category} 中搜索",
         "search_button": "搜索",
         "view_all_results_button": "查看所有 {total} 个结果",
@@ -948,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "错误的请求",
+      "message": "用户已不再允许登录。请联系管理员。",
+      "img_alt": "错误的请求",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "拒绝访问",

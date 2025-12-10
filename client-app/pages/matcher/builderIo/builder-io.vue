@@ -11,6 +11,9 @@ import { useElementVisibility } from "@vueuse/core";
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
 import { usePageTitle } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
+import { globals } from "@/core/globals";
+import { useUser } from "@/shared/account";
 import { builderIOComponents } from "./customComponents";
 import type { StateType, UpdateStateEventArgs } from "@/pages/matcher/priorityManager";
 import type { BuilderContent } from "@builder.io/sdk-vue";
@@ -31,6 +34,10 @@ const props = defineProps<IProps>();
 const canShowContent = ref(false);
 const content = ref<BuilderContent | null>(null);
 const isLoading = ref(false);
+const { storeId, cultureName: currentCultureName, organizationId } = globals;
+const { isAuthenticated, userGroups } = useUser();
+
+const { getUrlWithoutLocale } = useLanguages();
 
 function clearState() {
   content.value = null;
@@ -55,12 +62,20 @@ async function tryLoadContent(urlPath: string) {
 
     emitState("loading");
 
+    const url = getUrlWithoutLocale(urlPath);
+
     content.value = await fetchOneEntry({
       model: "page",
       apiKey: props.apiKey,
       options: getBuilderSearchParams(new URLSearchParams(location.search)),
       userAttributes: {
-        urlPath,
+        urlPath: url,
+        // Additional targeting attributes for Builder.io content delivery
+        locale: currentCultureName,
+        organizationId,
+        isAuthenticated: isAuthenticated.value,
+        storeId,
+        groupName: userGroups.value,
       },
     });
 

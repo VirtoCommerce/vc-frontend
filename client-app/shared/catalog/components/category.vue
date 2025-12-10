@@ -11,7 +11,6 @@
         :facets-loading="fetchingFacets"
         :is-mobile="isMobile"
         :is-visible="isFiltersSidebarVisible"
-        :keyword-query-param="keywordQueryParam"
         :loading="fetchingProducts"
         :hide-controls="hideControls"
         @hide-popup-sidebar="hideFiltersSidebar"
@@ -30,7 +29,6 @@
           />
 
           <ProductsFilters
-            :keyword="keywordQueryParam"
             :filters="filtersToShow"
             :loading="fetchingProducts"
             class="category__product-filters"
@@ -142,7 +140,6 @@
           <CategoryHorizontalFilters
             v-if="isHorizontalFilters && !isMobile"
             :facets-loading="fetchingFacets"
-            :keyword-query-param="keywordQueryParam"
             :sort-query-param="sortQueryParam"
             :loading="fetchingProducts || fetchingFacets"
             :filters="filtersToShow"
@@ -220,14 +217,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  computedEager,
-  useBreakpoints,
-  useElementVisibility,
-  useLocalStorage,
-  watchDebounced,
-  whenever,
-} from "@vueuse/core";
+import { useBreakpoints, useElementVisibility, useLocalStorage, watchDebounced, whenever } from "@vueuse/core";
 import omit from "lodash/omit";
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -355,7 +345,6 @@ const {
   hasSelectedFacets,
   hasSelectedFilters,
   isFiltersSidebarVisible,
-  keywordQueryParam,
   localStorageBranches,
   localStorageInStock,
   localStoragePurchasedBefore,
@@ -466,12 +455,12 @@ function getSelectedAddressArgs(): {
   };
 }
 
-const searchParams = computedEager<ProductsSearchParamsType>(() => ({
+const searchParams = computed<ProductsSearchParamsType>(() => ({
   ...getSelectedAddressArgs(),
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
-  keyword: searchQueryParam.value || keywordQueryParam.value || props.keyword,
+  keyword: searchQueryParam.value || props.keyword,
   filter: [
     props.filter,
     facetsQueryParam.value,
@@ -584,6 +573,10 @@ function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
 whenever(() => !isMobile.value, hideFiltersSidebar);
 const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
 
+const { clearSearchResults } = useSearchBar();
+
+const isMobileLg = breakpoints.smaller("lg");
+
 watch(
   () => props.categoryId,
   async (categoryId) => {
@@ -669,8 +662,6 @@ watchDebounced(
   },
 );
 
-const { clearSearchResults } = useSearchBar();
-
 function changeSearchBarScope(categoryId: string, label?: string) {
   clearCategoryScope();
 
@@ -693,7 +684,10 @@ onBeforeUnmount(() => {
 
 function clearCategoryScope() {
   removeScopeItemByType("category");
-  clearSearchResults();
+
+  if (!isMobileLg.value) {
+    clearSearchResults();
+  }
 }
 
 onMounted(() => {

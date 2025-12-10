@@ -351,7 +351,7 @@
           "settings": "Innstillinger",
           "currency": "Valuta",
           "search_bar": {
-            "input_placeholder": "Skriv inn nøkkelord, produkt, modell eller reservedelsnummer"
+            "input_placeholder": "Søk"
           },
           "view_all_catalog": "Vis alle produkter i kategorien"
         },
@@ -406,9 +406,9 @@
         "categories_label": "Kategorier",
         "products_label": "Produkter",
         "pages_label": "Sider",
-        "suggestions_and_history_label": "Forslag og historikk",
+        "suggestions_and_history_label": "Tips",
         "no_results": "Søket ditt etter {keyword} ga ingen resultater",
-        "enter_keyword_placeholder": "Søk i hele butikken",
+        "enter_keyword_placeholder": "Søk",
         "enter_keyword_placeholder_category": "Søk i kategorien {category}",
         "search_button": "Søk",
         "view_all_results_button": "Vis alle {total} resultater",
@@ -948,6 +948,13 @@
     }
   },
   "pages": {
+    "400": {
+      "error_code": "400",
+      "error_text": "Ugyldig forespørsel",
+      "message": "Brukeren har ikke lenger tillatelse til å logge på. Kontakt administratoren.",
+      "img_alt": "Ugyldig forespørsel",
+      "home_button": "@:common.buttons.home"
+    },
     "403": {
       "error_code": "403",
       "error_text": "Tilgang nektet",

@@ -1,0 +1,1069 @@
+# VirtoCommerce UI Kit - Detailed Component Reference
+
+> Enterprise Vue 3 component library for B2B/B2C e-commerce
+> Tech: Vue 3 Composition API + TypeScript + TailwindCSS + Headless UI
+> Architecture: Atomic Design Pattern (Atoms → Molecules → Organisms)
+> Global registration via plugin, all components prefixed with `Vc`
+
+**Important:** After installation, all UI Kit components are globally registered:
+
+---
+
+## ATOMS
+
+### FORM CONTROLS
+
+**VcCheckbox** (`client-app/ui-kit/components/atoms/checkbox/vc-checkbox.vue`) ⚠️ **ONLY used inside VcMenuItem**
+- Props:
+  - modelValue?: boolean
+  - name?: string
+  - value?: string | number | object
+  - disabled?: boolean
+  - indeterminate?: boolean
+  - size?: "xs" | "sm" | "md" (default: "md")
+  - labelPosition?: "left" | "right" (default: "right")
+  - showEmptyDetails?: boolean
+  - message?: string
+  - error?: boolean
+  - singleLineMessage?: boolean
+  - testId?: string
+  - preventDefault?: boolean
+  - tabindex?: string
+  - tooltip?: { placement?, width?, disabled? }
+- Emits: update:modelValue, change
+- Slots: default (label content), tooltip
+- **Real Usage Pattern:** ONLY inside VcMenuItem (filters, facets, multi-select)
+- Common props: size="xs", tabindex="-1", @click.stop
+- Features: indeterminate state, custom styling, tooltip support, error states
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/checkbox/vc-checkbox.stories.ts)
+
+**VcCheckboxGroup** (`client-app/ui-kit/components/atoms/checkbox-group/vc-checkbox-group.vue`) ⭐ **Real Pattern**
+- Props:
+  - modelValue?: (string | number | object)[] (default: [])
+- Emits: update:modelValue, change
+- Slots: default (VcCheckbox children)
+- Features: manages multiple VcCheckbox components with shared state via provide/inject
+- Types: vc-checkbox-group.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/checkbox-group/vc-checkbox-group.stories.ts)
+
+**VcRadioButton** (`client-app/ui-kit/components/atoms/radio-button/vc-radio-button.vue`) ⭐ **Real Pattern**
+- Props:
+  - v-model (modelValue): string (required)
+  - value: string (required)
+  - label?: string
+  - name?: string
+  - disabled?: boolean
+  - size?: "xs" | "sm" | "md" (default: "md")
+  - labelPosition?: "left" | "right" (default: "right")
+  - showEmptyDetails?: boolean
+  - message?: string
+  - error?: boolean
+  - singleLineMessage?: boolean
+  - wordBreak?: string (for CSS word-break)
+  - maxLines?: number (for line clamping)
+  - testIdInput?: string
+- Emits: input, change, update:modelValue
+- Slots: default (label content, receives {checked, value, label})
+- Features: single selection from group, native radio behavior, label support, line clamping, word-break control
+- Types: vc-radio-button.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/radio-button/vc-radio-button.stories.ts)
+
+**VcSwitch** (`client-app/ui-kit/components/atoms/switch/vc-switch.vue`) ⭐ **Real Pattern**
+- Props:
+  - ariaLabel?: string
+  - modelValue?: boolean
+  - disabled?: boolean
+  - name?: string
+  - value?: boolean
+  - color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger" | "accent" (default: "primary")
+  - size?: "xs" | "sm" | "md" | "lg" (default: "md")
+  - labelPosition?: "left" | "right" (default: "left")
+- Emits: update:modelValue, change
+- Slots: default (label content)
+- Features: toggle switch, label positioning, multiple colors/sizes, aria support
+- Types: vc-switch.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/switch/vc-switch.stories.ts)
+
+**VcLabel** (`client-app/ui-kit/components/atoms/label/vc-label.vue`)
+- Props:
+  - required?: boolean
+  - error?: boolean
+  - forId?: string (renders as <label for="..."> or <div>)
+  - size?: "xs" | "sm" | "md" | "lg" (auto-inherits from inputContext)
+- Slots: default (label text)
+- Features: required indicator (*), error state styling, dynamic size from parent input
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/label/vc-label.stories.ts)
+
+**VcInputDetails** (`atoms/input-details/vc-input-details.vue`)
+- Props: message, error (boolean), type (error/helper)
+- Features: error/helper text display, icon support
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/input-details/vc-input-details.stories.ts)
+
+**VcActionInput** (`atoms/action-input/vc-action-input.vue`)
+- Props: modelValue, placeholder, type, disabled, loading
+- Slots: action (button content)
+- Emits: update:modelValue, action
+- Use case: search bars, quick actions
+
+### DISPLAY COMPONENTS
+
+**VcBadge** (`client-app/ui-kit/components/atoms/badge/vc-badge.vue`)
+- Props: color (primary/secondary/neutral/info/success/warning/danger/accent), size (xs/sm/md/lg/xl), variant (solid/outlined/soft), rounded, truncate, nowrap, square, maxWidth
+- Slots: default (badge content)
+- Features: dot variant (no content), auto-sizing, truncation
+- CSS vars: --vc-badge-max-width, --vc-badge-radius
+- Types: vc-badge.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/badge/vc-badge.stories.ts)
+
+**VcIcon** (`client-app/ui-kit/components/atoms/icon/vc-icon.vue`)
+- Props: name (string, 388 icons), size (number/string), color
+- Features: dynamic SVG loading, custom sizing
+- Icons location: ui-kit/icons/*.svg
+- Types: vc-icon.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/icon/vc-icon.stories.ts)
+- Usage: `<VcIcon name="shopping-cart" :size="24" />`
+
+**VcImage** (`client-app/ui-kit/components/atoms/image/vc-image.vue`)
+- Props: src, alt, lazy, aspectRatio, objectFit
+- Features: lazy loading, placeholder, error state, WebP support
+- Events: load, error
+
+**VcLoader** (`client-app/ui-kit/components/atoms/loader/vc-loader.vue`)
+- Props: size (sm/md/lg), centered
+- Features: spinner animation, inline/block display
+
+**VcTypography** (`client-app/ui-kit/components/atoms/typography/vc-typography.vue`)
+- Props: variant (h1/h2/h3/h4/h5/h6/body1/body2/caption/overline), weight (light/regular/medium/semibold/bold), color, align (left/center/right/justify), truncate
+- Slots: default (text content)
+- Features: semantic HTML tags, responsive sizing
+- Types: vc-typography.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/typography/vc-typography.stories.ts)
+
+**VcMarkdownRender** (`client-app/ui-kit/components/atoms/markdown-render/vc-markdown-render.vue`)
+- Props: content (string)
+- Features: secure rendering via VueSecureHTML, XSS prevention
+
+### NAVIGATION COMPONENTS
+
+**VcBreadcrumbs** (`client-app/ui-kit/components/atoms/breadcrumbs/vc-breadcrumbs.vue`)
+- Props: items (array of {text, route})
+- Features: current page highlighting, router integration, separators
+
+**VcLink** (`client-app/ui-kit/components/atoms/link/vc-link.vue`)
+- Props: to (string/object), external (boolean), disabled
+- Features: router-link wrapper, external link handling, active state
+
+**VcListItem** (`client-app/ui-kit/components/atoms/list-item/vc-list-item.vue`)
+- Props: clickable, active, disabled
+- Slots: default, icon, description
+- Features: hover states, click handling
+
+**VcScrollTopButton** (`client-app/ui-kit/components/atoms/scroll-top-button/vc-scroll-top-button.vue`)
+- Props: threshold (scroll distance to show)
+- Features: smooth scroll, fade in/out animation
+
+### LAYOUT COMPONENTS
+
+**VcLayout** - Smart Two-Column Layout (`client-app/ui-kit/components/atoms/layout/vc-layout.vue`)
+- Props:
+  - sidebarPosition ("left" | "right", default: "left") - sidebar placement
+  - sticky (boolean) - enable smart sticky behavior
+  - sidebarAriaLabel (string) - accessibility label for sidebar
+- Slots:
+  - default (main content area)
+  - sidebar (sidebar content)
+- Features:
+  - **Smart sticky logic**: automatically sticks shorter element (sidebar or content)
+  - If sidebar shorter than content → sidebar becomes sticky
+  - If content shorter than sidebar → content becomes sticky
+  - Disabled on mobile (< md breakpoint)
+  - Uses `useSmartSticky` composable with `useElementBounding` to compare heights
+  - Responsive layout: vertical on mobile, horizontal on desktop
+  - Different sidebar widths by position:
+    - Left: w-52 (md+), w-60 (xl+)
+    - Right: w-64 (md+), w-72 (xl+)
+  - Configurable via CSS variables:
+    - --vc-layout-sidebar-offset-top (default: 0px)
+    - --vc-layout-sidebar-offset-bottom (default: 20px)
+  - Gap between sidebar and content: gap-3 (md+), gap-5 (xl+)
+  - Full ARIA support for accessibility
+- Use cases:
+  - Catalog pages with filters sidebar
+  - Product pages with navigation sidebar
+  - Documentation with table of contents
+  - Account pages with navigation menu
+
+---
+
+**VcContainer** (`client-app/ui-kit/components/atoms/container/vc-container.vue`)
+- Props: fluid (boolean), size (sm/md/lg/xl)
+- Features: max-width constraints, responsive padding
+
+**VcPopover** (`client-app/ui-kit/components/client-app/ui-kit/components/atoms/popover/vc-popover.vue`)
+- Props: placement (top/bottom/left/right), trigger (click/hover), offset
+- Slots: trigger, default (content)
+- Features: Headless UI based, auto-positioning
+- Types: vc-popover.types.d.ts
+
+**VcPopupSidebar** (`client-app/ui-kit/components/atoms/popup-sidebar/vc-popup-sidebar.vue`)
+- Props: modelValue (boolean), position (left/right), width
+- Emits: update:modelValue
+- Features: slide animation, backdrop, scroll lock
+
+**VcTooltip** (`client-app/ui-kit/components/atoms/tooltip/vc-tooltip.vue`)
+- Props:
+  - placement?: VcTooltipPlacementType (default: "bottom") - tooltip position
+  - strategy?: VcTooltipStrategyType - positioning strategy (absolute/fixed)
+  - flipOptions?: VcTooltipFlipOptionsType - flip behavior options
+  - offsetOptions?: VcTooltipOffsetOptionsType (default: 6) - offset from trigger
+  - shiftOptions?: VcTooltipShiftOptionsType - shift behavior options
+  - disabled?: boolean
+  - hover?: boolean (default: true) - show on hover
+  - width?: string (default: "max-content")
+  - enableTeleport?: boolean
+  - teleportSelector?: string
+- Emits: shown (boolean)
+- Slots: default (receives {opened, triggerProps, tooltipId}), trigger (legacy), content
+- Features: VcPopover-based, auto-positioning, hover/focus triggers, teleport support
+- Types: vc-tooltip.types.d.ts
+
+**VcDialog** (`client-app/ui-kit/components/atoms/dialog/vc-dialog.vue`)
+- Props: modelValue (boolean), size (sm/md/lg/xl/full), persistent, closeOnBackdrop
+- Emits: update:modelValue, close
+- Slots: default (content)
+- Features: modal/non-modal, backdrop control, ESC to close, focus trap
+- CSS vars: --vc-dialog-width, --vc-dialog-max-width
+- Types: vc-dialog.types.d.ts, vc-dialog-context.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/dialog/vc-dialog.stories.ts)
+
+**VcExpansionPanels** (`client-app/ui-kit/components/atoms/expansion-panels/vc-expansion-panels.vue`)
+- Props: modelValue (array), multiple (boolean), accordion
+- Emits: update:modelValue
+- Features: single/multiple panel open, smooth transitions
+
+**VcScrollbar** (`client-app/ui-kit/components/atoms/scrollbar/vc-scrollbar.vue`)
+- Props: height, maxHeight
+- Features: custom scrollbar styling, cross-browser
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/scrollbar/vc-scrollbar.stories.ts)
+
+### PRODUCT DISPLAY
+
+**VcProductTitle** (`client-app/ui-kit/components/atoms/product-title/vc-product-title.vue`)
+- Props: title, route, truncate, maxLines
+- Features: router link, SEO-friendly, text truncation
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/product-title/vc-product-title.stories.ts)
+
+**VcProductVendor** (`client-app/ui-kit/components/atoms/product-vendor/vc-product-vendor.vue`)
+- Props: vendor (object: {id, name, route}), showLink
+- Features: vendor page link, badge styling
+
+**VcProductActions** (`client-app/ui-kit/components/atoms/product-actions/vc-product-actions.vue`)
+- Props: product, showLabels
+- Slots: default (custom actions)
+- Events: wishlist, compare, quickView
+- Features: icon-only or with labels
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/product-actions/vc-product-actions.stories.ts)
+
+**VcProductProperties** (`client-app/ui-kit/components/atoms/product-properties/vc-product-properties.vue`)
+- Props: properties (array), collapsible, maxVisible
+- Features: key-value pairs, collapsible sections
+
+**VcProductsGrid** (`client-app/ui-kit/components/atoms/products-grid/vc-products-grid.vue`)
+- Props: columns (1-6), gap (sm/md/lg), responsive
+- Slots: default (product cards)
+- Features: responsive grid, custom gap
+
+### PRICING
+
+**VcPriceDisplay** (`client-app/ui-kit/components/atoms/price-display/vc-price-display.vue`)
+- Props: price (object: {amount, currency, listPrice, tierPrices}), showTax
+- Features: currency formatting, sale price strikethrough, tier pricing
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/price-display/vc-price-display.stories.ts)
+
+**VcPriceDisplayCatalog** (`client-app/ui-kit/components/atoms/price-display-catalog/vc-price-display-catalog.vue`)
+- Props: price, listPrice, currency
+- Features: catalog-specific price display, discount badge
+
+**VcTotalDisplay** (`client-app/ui-kit/components/atoms/total-display/vc-total-display.vue`)
+- Props: total, subtotal, tax, shipping, currency
+- Features: breakdown display, tax information
+
+### CONTENT
+
+**VcProperty** (`client-app/ui-kit/components/atoms/property/vc-property.vue`)
+- Props: label, value, icon, truncate
+- Features: label:value display, icon support, truncation
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/property/vc-property.stories.ts)
+
+### UI INTERACTION
+
+**VcCarouselPagination** (`client-app/ui-kit/components/atoms/carousel-pagination/vc-carousel-pagination.vue`)
+- Props: total, current
+- Events: change
+- Features: dot navigation, active state, clickable
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/carousel-pagination/vc-carousel-pagination.stories.ts)
+
+**VcInfinityScrollLoader** (`client-app/ui-kit/components/atoms/infinity-scroll-loader/vc-infinity-scroll-loader.vue`)
+- Props: loading, hasMore
+- Events: load-more
+- Features: Intersection Observer, loading state
+
+**VcVariantPickerGroup** (`client-app/ui-kit/components/atoms/variant-picker-group/vc-variant-picker-group.vue`)
+- Props: variants (array), modelValue
+- Emits: update:modelValue
+- Features: groups multiple variant pickers, label display
+- Storybook: ✓ [View Story](client-app/ui-kit/components/atoms/variant-picker-group/vc-variant-picker-group.stories.ts)
+
+---
+
+## MOLECULES
+
+### FORMS
+
+**VcInput** (`client-app/ui-kit/components/molecules/input/vc-input.vue`)
+- Props:
+  - v-model (modelValue): string | number | null
+  - type?: "text" | "password" | "number" | "email" | "search" | "date" (default: "text")
+  - placeholder?: string
+  - label?: string
+  - error?: boolean
+  - message?: string (error/helper text)
+  - disabled?: boolean
+  - readonly?: boolean
+  - required?: boolean
+  - name?: string
+  - ariaLabel?: string
+  - maxlength?: string | number
+  - minlength?: string | number
+  - min?: string | number (for number/date types)
+  - max?: string | number (for number/date types)
+  - step?: string | number (for number type)
+  - size?: "xs" | "sm" | "md" (default: "md")
+  - clearable?: boolean
+  - center?: boolean (center text)
+  - truncate?: boolean (truncate long text)
+  - noBorder?: boolean
+  - hidePasswordSwitcher?: boolean
+  - showEmptyDetails?: boolean
+  - singleLineMessage?: boolean
+  - autocomplete?: string
+  - disableAutocomplete?: boolean
+  - browserTooltip?: "enabled" | "disabled" (default: "disabled")
+  - selectOnClick?: boolean
+  - testIdInput?: string
+  - tabindex?: string | number (default: 0)
+  - aria?: Record<string, string | number | null>
+- Slots: prepend (receives focusInput), append (receives focusInput)
+- Emits: update:modelValue, blur, focus, clear
+- Features: validation states, error messages, clearable button, password visibility toggle, auto-complete control
+- Types: vc-input.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/input/vc-input.stories.ts)
+
+**VcTextarea** (`client-app/ui-kit/components/molecules/textarea/vc-textarea.vue`)
+- Props:
+  - v-model (modelValue): string
+  - rows?: number | string (default: 2)
+  - maxLength?: number | string
+  - counter?: boolean - show character counter
+  - error?: boolean
+  - message?: string
+  - label?: string
+  - required?: boolean
+  - disabled?: boolean
+  - readonly?: boolean
+  - name?: string
+  - placeholder?: string
+  - ariaLabel?: string
+  - autocomplete?: string
+  - noResize?: boolean - disable textarea resize
+  - showEmptyDetails?: boolean
+  - singleLineMessage?: boolean
+- Emits: update:modelValue
+- Features: character counter, max length validation, error states, resize control
+
+**VcFilePicker** (`client-app/ui-kit/components/molecules/file-picker/vc-file-picker.vue`)
+- Props: modelValue, accept, multiple, maxSize, maxFiles
+- Emits: update:modelValue, error
+- Features: drag-drop, file validation, preview
+- Types: vc-file-picker.types.d.ts
+
+**VcFileUploader** (`client-app/ui-kit/components/molecules/file-uploader/vc-file-uploader.vue`)
+- Props: uploadUrl, accept, multiple, maxSize
+- Events: upload-start, upload-progress, upload-success, upload-error
+- Features: progress bar, upload queue, error handling, preview
+- Types: vc-file-uploader.types.d.ts
+
+**VcSlider** (`client-app/ui-kit/components/molecules/slider/vc-slider.vue`)
+- Props: modelValue, min, max, step, range (boolean)
+- Emits: update:modelValue
+- Features: single/range mode, step intervals, value labels
+- Types: vc-slider.types.d.ts
+
+### BUTTONS
+
+**VcButton** (`client-app/ui-kit/components/molecules/button/vc-button.vue`)
+- Props:
+  - color?: "primary" | "secondary" | "accent" | "neutral" | "info" | "success" | "warning" | "danger" (default: "primary")
+  - variant?: "solid" | "outline" | "outline-dark" | "soft" | "ghost" | "no-background" | "no-border" (default: "solid")
+  - size?: "xs" | "sm" | "md" | "lg" | "xl" (auto-inherits from inputContext or dialogContext)
+  - type?: "button" | "submit" | "reset" (default: "button")
+  - disabled?: boolean (default: false)
+  - loading?: boolean (default: false)
+  - to?: RouteLocationRaw | null (router-link navigation)
+  - externalLink?: string (external URL)
+  - target?: "_self" | "_blank"
+  - prependIcon?: string (icon name before text)
+  - appendIcon?: string (icon name after text)
+  - icon?: boolean | string (icon-only button or icon name)
+  - iconSize?: string
+  - title?: string
+  - ariaLabel?: string
+  - truncate?: boolean (truncate long text)
+  - fullWidth?: boolean
+  - noWrap?: boolean
+  - minWidth?: string
+  - square?: boolean (square shape for icon buttons)
+  - tag?: string (custom HTML tag)
+  - tabindex?: string | number (default: 0)
+- Slots: default (button text), prepend (before text), append (after text), loader (custom loader)
+- Events: click (MouseEvent)
+- Features: loading state, router/external links, multiple variants/colors, icon support, auto-sizing from context
+- Types: vc-button.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/button/vc-button.stories.ts)
+
+**VcButtonSeeMoreLess** (`client-app/ui-kit/components/molecules/button-see-more-less/vc-button-see-more-less.vue`)
+- Props: expanded (boolean), seeMoreText, seeLessText
+- Emits: update:expanded
+- Types: vc-button-see-more-less.types.d.ts
+
+**VcNavButton** (`client-app/ui-kit/components/molecules/nav-button/vc-nav-button.vue`)
+- Props: to, icon, badge, active, disabled
+- Features: navigation with badge, active state
+- Types: vc-nav-button.types.d.ts
+
+**VcProductButton** (`client-app/ui-kit/components/molecules/product-button/vc-product-button.vue`)
+- Props: loading, disabled, inCart
+- Slots: default
+- Features: add-to-cart styling, loading state
+- Types: vc-product-button.types.d.ts
+
+**VcProductActionsButton** (`client-app/ui-kit/components/molecules/product-actions-button/vc-product-actions-button.vue`)
+- Props: actions (array: {icon, label, handler})
+- Features: dropdown menu, icon buttons
+- Types: vc-product-actions-button.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/product-actions-button/vc-product-actions-button.stories.ts)
+
+### DISPLAY
+
+**VcAlert** (`client-app/ui-kit/components/molecules/alert/vc-alert.vue`)
+- Props:
+  - color?: "success" | "warning" | "danger" | "info" (default: "info")
+  - icon?: boolean | string (true for auto icon, string for custom icon name)
+  - variant?: "solid" | "solid-light" | "outline" | "outline-dark" (default: "solid")
+  - size?: "sm" | "md" (default: "md")
+  - title?: string
+  - shadow?: boolean
+  - closable?: boolean
+- Emits: close
+- Slots: default (message content), main-icon (custom icon), close-icon (custom close button icon)
+
+**VcChip** (`client-app/ui-kit/components/molecules/chip/vc-chip.vue`)
+- Props: color, variant, size, removable, clickable, disabled, avatar
+- Slots: default, icon, avatar
+- Events: click, remove
+- Features: colors/variants, removable, avatar support
+- Types: vc-chip.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/chip/vc-chip.stories.ts)
+
+**VcRating** (`client-app/ui-kit/components/molecules/rating/vc-rating.vue`)
+- Props: modelValue, max, readonly, allowHalf, size, color
+- Emits: update:modelValue
+- Features: interactive/readonly, half-stars, custom icon
+- Types: vc-rating.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/rating/vc-rating.stories.ts)
+
+**VcFile** (`client-app/ui-kit/components/molecules/file/vc-file.vue`)
+- Props: file (object: {name, size, type, url}), removable, downloadable
+- Events: download, remove
+- Features: file icon by type, size display, actions
+- Types: vc-file.types.d.ts
+
+**VcCopyText** (`client-app/ui-kit/components/molecules/copy-text/vc-copy-text.vue`)
+- Props: text, tooltip
+- Events: copied
+- Features: clipboard API, tooltip feedback, success animation
+
+**VcWidget** (`client-app/ui-kit/components/molecules/widget/vc-widget.vue`)
+- Props:
+  - title?: string
+  - prependIcon?: string
+  - appendIcon?: string
+  - size?: "xs" | "sm" | "md" | "lg" (default: "md")
+  - collapsible?: boolean
+  - collapsed?: boolean
+  - shadow?: boolean (default: true)
+  - border?: boolean (default: true)
+- Emits: toggleCollapse (boolean)
+- Slots:
+  - default-container (receives {collapsible, collapsed})
+  - default
+  - header-container (receives {collapsible, collapsed})
+  - header (receives {collapsible, collapsed})
+  - title
+  - prepend
+  - append (receives {collapsible, collapsed})
+  - footer-container
+  - footer
+- Features: header with actions, collapsible behavior, custom sizing, shadow/border control
+- Types: vc-widget.types.d.ts
+
+**VcWidgetSkeleton** (`molecules/widget-skeleton/vc-widget-skeleton.vue`)
+- Props: height, lines
+- Features: shimmer animation, customizable
+- Types: vc-widget-skeleton.types.d.ts
+
+### NAVIGATION
+
+**VcMenuItem** (`client-app/ui-kit/components/molecules/menu-item/vc-menu-item.vue`) ⭐ **Real Pattern**
+- Props:
+  - color?: "primary" | "secondary" | "accent" | "neutral" | "info" | "success" | "warning" | "danger" (default: "primary")
+  - size?: "xs" | "sm" | "md" | "lg" (default: "md")
+  - to?: RouteLocationRaw (router link)
+  - externalLink?: string
+  - target?: "_self" | "_blank"
+  - title?: string
+  - active?: boolean
+  - disabled?: boolean
+  - truncate?: boolean
+  - nowrap?: boolean
+  - maxLines?: number | string (line clamping)
+  - tag?: string (custom wrapper tag)
+  - clickable?: boolean (default: true)
+  - role?: string (ARIA role)
+- Emits: click (MouseEvent)
+- Slots: default (content), prepend (icons/checkboxes), append (badges/icons)
+- Features: router/external links, active state, line clamping, dynamic tag rendering
+- Types: vc-menu-item.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/menu-item/vc-menu-item.stories.ts)
+
+**VcDropdownMenu** (`client-app/ui-kit/components/molecules/dropdown-menu/vc-dropdown-menu.vue`) ⭐ **Real Pattern**
+- Props:
+  - placement?: VcDropdownMenuPlacementType (default: "bottom-start")
+  - maxHeight?: string (CSS value, default: 12rem via CSS var)
+  - offsetOptions?: VcDropdownMenuOffsetOptionsType (default: 4) - offset from trigger
+  - hover?: boolean
+  - disabled?: boolean
+  - width?: string (default: "auto")
+  - zIndex?: number | string
+  - dividers?: boolean (default: true) - divider lines between items
+- Emits: toggle (boolean)
+- Slots:
+  - trigger (receives {toggle, open, close, opened, triggerProps})
+  - content (receives {close})
+- Features: VcPopover-based, keyboard nav, auto-positioning, scrollable list
+- Types: vc-dropdown-menu.types.d.ts
+
+
+**VcTabSwitch** (`client-app/ui-kit/components/molecules/tab-switch/vc-tab-switch.vue`)
+- Props: modelValue, tabs (array: {key, label, icon, disabled})
+- Emits: update:modelValue
+- Features: animated indicator, responsive, icon support
+- Types: vc-tab-switch.types.d.ts
+
+**VcSteps** (`client-app/ui-kit/components/molecules/steps/vc-steps.vue`)
+- Props: steps (array), current, direction (horizontal/vertical), clickable
+- Events: step-click
+- Features: current/completed/upcoming states, clickable steps
+
+### PRODUCT
+
+**VcProductPrice** (`client-app/ui-kit/components/molecules/product-price/vc-product-price.vue`)
+- Props: price, listPrice, currency, quantity, showTax, tierPrices
+- Features: list price with discount, tier pricing, tax info
+- Types: vc-product-price.types.d.ts
+
+**VcProductTotal** (`client-app/ui-kit/components/molecules/product-total/vc-product-total.vue`)
+- Props: price, quantity, currency
+- Features: extended price calculation, quantity display
+- Types: vc-product-total.types.d.ts
+
+**VcLineItem** (`client-app/ui-kit/components/molecules/line-item/vc-line-item.vue`)
+- Props: lineItem (object), editable, removable
+- Events: update-quantity, remove
+- Features: product image/details, quantity/price, remove action
+- Types: vc-line-item.types.d.ts
+
+**VcLineItems** (`client-app/ui-kit/components/molecules/line-items/vc-line-items.vue`)
+- Props: items (array), showHeader, showTotal
+- Slots: header, item, footer
+- Features: group header, total summary, empty state
+- Types: vc-line-items.types.d.ts
+
+**VcVariantPicker** (`client-app/ui-kit/components/client-app/ui-kit/components/molecules/variant-picker/vc-variant-picker.vue`)
+- Props: variants (array), modelValue, type (color/image/text), disabled
+- Emits: update:modelValue
+- Features: swatch display, disabled options, out-of-stock indicators
+- Types: vc-variant-picker.types.d.ts
+- Storybook: ✓ [View Story](client-app/ui-kit/components/molecules/variant-picker/vc-variant-picker.stories.ts)
+
+### LAYOUT
+
+**VcDialogHeader** (`client-app/ui-kit/components/molecules/dialog-header/vc-dialog-header.vue`)
+- Props: title, subtitle, icon, closable, sticky
+- Slots: title, subtitle, actions
+- Events: close
+- Features: close button, icon support, sticky option
+
+**VcDialogContent** (`client-app/ui-kit/components/molecules/dialog-content/vc-dialog-content.vue`)
+- Props: padding, scrollable
+- Slots: default
+- Features: scrollable content, padding control
+
+**VcDialogFooter** (`client-app/ui-kit/components/molecules/dialog-footer/vc-dialog-footer.vue`)
+- Props: align (left/center/right), sticky
+- Slots: default, actions
+- Features: button alignment, sticky footer
+
+**VcExpansionPanel** (`client-app/ui-kit/components/molecules/expansion-panel/vc-expansion-panel.vue`)
+- Props: title, expanded, disabled
+- Slots: header, default
+- Emits: update:expanded
+- Features: icon rotation, transition animation
+
+**VcList** (`client-app/ui-kit/components/molecules/list/vc-list.vue`)
+- Props: divided, padding
+- Slots: default
+- Features: dividers, padding control
+
+**VcCollapsibleContent** (`client-app/ui-kit/components/molecules/collapsible-content/vc-collapsible-content.vue`)
+- Props: expanded, duration
+- Slots: default
+- Features: smooth height animation, controlled/uncontrolled
+- Types: vc-collapsible-content.types.d.ts
+
+### CONTENT
+
+**VcShape** (`client-app/ui-kit/components/molecules/shape/vc-shape.vue`)
+- Props: type (circle/square/triangle/etc), size, color
+- Features: decorative shapes, size/color variants
+- Types: vc-shape.types.d.ts
+
+**VcCompositeShape** (`client-app/ui-kit/components/molecules/composite-shape/vc-composite-shape.vue`)
+- Props: shapes (array), layout
+- Features: multiple shapes, layout control, animation
+- Types: vc-composite-shape.types.d.ts
+
+**VcEmptyView** (`client-app/ui-kit/components/molecules/empty-view/vc-empty-view.vue`)
+- Props: text, icon, variant ("empty" | "search")
+- Slots: default (content), #button (actions), #icon (custom icon)
+- Features: icon or search illustration, text, action button slot
+- Types: vc-empty-view.types.d.ts
+
+**VcEmptyPage** (`client-app/ui-kit/components/molecules/empty-page/vc-empty-page.vue`)
+- Props: title, image, icon, breadcrumbs, hideMobileSide, bgColor, hasBgImage
+- Slots: default (content), #title, #side (for image/icon)
+- Features: breadcrumbs, full-page layout, image/icon composite shape
+
+### UI ELEMENTS
+
+**VcCarousel** (`client-app/ui-kit/components/molecules/carousel/vc-carousel.vue`)
+- Props: slides, navigation, pagination, autoplay, loop, slidesPerView
+- Events: slide-change
+- Features: Swiper-based, navigation arrows, pagination dots, auto-play, responsive breakpoints
+
+**VcLoaderOverlay** (`client-app/ui-kit/components/molecules/loader-overlay/vc-loader-overlay.vue`)
+- Props: visible, message, blur
+- Features: full-screen overlay, backdrop blur, loading spinner/message
+
+**VcLoaderWithText** (`client-app/ui-kit/components/molecules/loader-with-text/vc-loader-with-text.vue`)
+- Props: text, size, inline
+- Features: loader with custom text, inline/block display
+
+---
+
+## ORGANISMS
+
+**VcModal** (`client-app/ui-kit/components/organisms/modal/vc-modal.vue`)
+- Props:
+  - show?: boolean (default: true) - control modal visibility
+  - hideActions?: boolean - hide footer actions slot
+  - isPersistent?: boolean - prevent closing on backdrop click/ESC
+  - isMobileFullscreen?: boolean - full-screen on mobile
+  - isFullHeight?: boolean - full-height modal
+  - title?: string
+  - icon?: string (icon in header)
+  - maxWidth?: string (default: "35.25rem") - CSS max-width value
+  - variant?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent" (default: "info") - header color
+  - dividers?: boolean - show dividers between header/content/footer
+  - testId?: string
+- Emits: close
+- Slots: title, default (receives {close}), actions (receives {close})
+- Features: full-screen on mobile, HeadlessUI-based, animations, backdrop, focus trap
+- Works with: useModal composable
+- Note: No "size" prop - use maxWidth instead
+
+**VcConfirmationModal** (`client-app/ui-kit/components/organisms/confirmation-modal/vc-confirmation-modal.vue`)
+- Props: title, message, variant (default/danger), confirmText, cancelText, loading
+- Events: confirm, cancel
+- Features: destructive action variant, custom buttons, icon support, async actions
+
+**VcProductCard** (`client-app/ui-kit/components/organisms/product-card/vc-product-card.vue`) ⭐ **Complex System**
+Base container component for displaying product cards with three adaptive layout modes.
+
+**Base Container Component:**
+- Props:
+  - viewMode?: "grid" | "list" | "item" (default: "grid") - layout mode
+  - background?: boolean (default: true) - show background color
+  - border?: boolean - show border and shadow
+- Slots:
+  - media - for VcProductImage, VcProductActions, VcRadioButton (auto-moved on mount)
+  - default - for all other product content
+  - expanded-content - for expandable content (e.g., variations list in list mode)
+- Features:
+  - CSS Container Queries for responsive layout
+  - Automatically repositions VcProductImage, VcProductActions, VcRadioButton to media slot
+  - Grid-based layout with named areas (image, title, vendor, properties, price, add-to-cart, total)
+  - Three responsive modes: grid (catalog), list (catalog list), item (cart/orders)
+  - CSS variables: --vc-product-card-bg-color, --vc-product-card-radius
+
+**ProductCard:** (`client-app/`)
+
+**View Modes:**
+- **grid**: Catalog grid view - vertical layout, larger images, actions on top-right
+- **list**: Catalog list view - horizontal layout on large screens, expandable variations
+- **item**: Cart/Orders view - compact horizontal layout, includes VcProductTotal, optional radio button for selection
+
+**Important Notes:**
+- All child components auto-position themselves using grid areas
+- Responsive behavior is built-in using CSS Container Queries
+- VcProductCard doesn't handle data/state - it's a layout container
+- Use shared components (AddToCart, AddToWishlist) in default slot for business logic
+
+**Child Components System:**
+
+1. **VcProductImage** (`client-app/ui-kit/components/organisms/product-image/vc-product-image.vue`)
+   - Props:
+     - images?: ImageType[] - array of images for carousel
+     - alt?: string - image alt text
+     - imgSrc?: string - fallback image URL
+     - lazy?: boolean (default: true) - lazy loading
+     - to?: RouteLocationRaw - link for image
+   - Slot: default (for badges wrapper)
+   - Features: Swiper carousel for multiple images (>1), navigation buttons, bullets pagination, click to next
+   - CSS variable: --vc-product-image-radius
+
+2. **VcProductTitle** (`client-app/ui-kit/components/atoms/product-title/vc-product-title.vue`)
+   - Props:
+     - to?: RouteLocationRaw - link to product page
+     - target?: BrowserTargetType - link target
+     - title?: string - product title
+     - disabled?: boolean - disable link
+     - fixHeight?: boolean - fix height based on lines number
+     - linesNumber?: number | string (default: 3) - max lines to show
+     - tabindex?: number | string (default: 0)
+   - Emits: click (PointerEvent)
+   - Features: line-clamp, clickable link, hover effect
+   - CSS variables: --vc-product-title-font-size, --vc-product-title-text-color, --vc-product-title-link-color
+
+3. **VcProductVendor** (`client-app/ui-kit/components/atoms/product-vendor/vc-product-vendor.vue`)
+   - Slot-only component for vendor name
+   - Features: truncate text, bold font
+
+4. **VcProductProperties** (`atoms/product-properties/vc-product-properties.vue`)
+   - Slot-only container for VcProperty components
+   - Responsive visibility (hidden on small screens in list mode)
+
+5. **VcProperty** (`client-app/ui-kit/components/atoms/property/vc-property.vue`)
+   - Props:
+     - label: string (required) - property label
+     - value?: string | number | boolean | null - property value
+     - disabled?: boolean - disabled state
+   - Slot: default (for custom value content)
+   - Features: label-dots-value layout, truncate, customizable colors
+   - CSS variables: --vc-property-font-size, --vc-property-label-color, --vc-property-value-color
+
+6. **VcProductPrice** (`client-app/ui-kit/components/molecules/product-price/vc-product-price.vue`)
+   - Props:
+     - actualPrice?: Pick<MoneyType, "amount" | "formattedAmount"> - actual price
+     - listPrice?: Pick<MoneyType, "amount" | "formattedAmount"> - list/old price
+     - align?: "start" | "end" - text alignment
+     - singleLine?: boolean - display in single line
+     - truncate?: boolean - truncate long prices
+     - disabled?: boolean - disabled state
+     - withFromLabel?: boolean - show "from" prefix for variations
+   - Features: VcPriceDisplay for formatting, strikethrough for list price, responsive sizing
+   - CSS variable: --vc-product-price-font-size
+
+7. **VcProductButton** (`client-app/ui-kit/components/molecules/product-button/vc-product-button.vue`)
+   - Props:
+     - to?: RouteLocationRaw - button route
+     - linkText?: string - text for bottom link
+     - linkIcon?: string (default: "external-link") - icon for link
+     - linkTo?: RouteLocationRaw - route for link
+     - buttonText?: string - button text
+     - target?: BrowserTargetType - link target
+     - variant?: string (default: "outline") - button variant
+     - color?: string (default: "primary") - button color
+     - icon?: string - prepend icon
+     - noWrap?: boolean - no wrap text
+     - loading?: boolean - loading state
+     - truncate?: boolean (default: true) - truncate text
+     - title?: string - title attribute
+     - size?: "sm" | "md" (default: "sm") - button size
+     - appendIcon?: string - append icon (e.g., chevron for variations)
+   - Emits: linkClick (MouseEvent)
+   - Slots:
+     - button - custom button content
+     - default - custom link content
+   - Features: VcButton + optional external link, used for variations, customization
+   - CSS variables: --vc-product-button-link-icon-color, --vc-product-button-link-color, --vc-product-button-link-hover-color
+
+8. **VcProductActions** (`client-app/ui-kit/components/atoms/product-actions/vc-product-actions.vue`)
+   - Props:
+     - direction?: "horizontal" | "vertical" (default: "horizontal") - layout direction
+     - withBackground?: boolean - show rounded background
+   - Slot: default (for action buttons like AddToWishlist, AddToCompare)
+   - Features: auto-hide when empty, positioned absolutely in grid mode
+
+9. **VcProductTotal** (`client-app/ui-kit/components/molecules/product-total/vc-product-total.vue`)
+   - Props:
+     - actualPrice?: MoneyType - actual price
+     - listPrice?: MoneyType - list price
+     - disabled?: boolean - disabled state
+   - Features: "Total" label + VcProductPrice, only visible in "item" mode
+   - Used in: cart, orders, checkout
+
+10. **VcRating** (`client-app/ui-kit/components/molecules/rating/vc-rating.vue`)
+    - Props:
+      - mode?: "mini" | "full" (default: "mini") - display mode
+      - readOnly?: boolean - read-only state
+      - reviewCount?: number - number of reviews
+      - size?: "xs" | "sm" | "md" (default: "md") - star size
+      - value?: number (default: 0) - rating value
+      - maxValue?: number (default: MAX_RATING) - max rating
+      - withText?: boolean (default: true) - show text value
+      - label?: string - custom label
+      - buttonAriaLabel?: (index: number) => string - custom aria label
+    - Emits: setRating (number)
+    - Features: VcShape stars, half-star support, interactive mode, review count display
+
+**VcAddToCart** (`client-app/ui-kit/components/organisms/add-to-cart/vc-add-to-cart.vue`)
+- Props: product, showQuantity, showVariants, availability
+- Events: add-to-cart, error
+- Features: quantity selector, variant picker integration, availability check, loading states, success feedback, error handling
+- Types: vc-add-to-cart.types.d.ts
+
+**VcPagination** (`client-app/ui-kit/components/organisms/pagination/vc-pagination.vue`) ⭐ **Real Pattern**
+- Props:
+  - page?: number (default: 1) - current page (use v-model:page)
+  - pages?: number (default: 0) - total pages
+  - scrollTarget?: HTMLElement - element to scroll to on page change
+  - scrollOffset?: number (default: 20) - offset from top when scrolling
+  - compact?: boolean - compact mode (icon-only buttons)
+- Emits: update:page (number)
+- Features: scroll to top on page change, ellipsis for many pages, responsive wrapping, compact mode
+- Types: vc-pagination.types.d.ts
+- **Real Usage Pattern:**
+
+**Important:** Use `v-model:page` (NOT `v-model`!), props is `pages` (NOT `total` or `pageSize`!)
+
+**VcQuantityStepper** (`client-app/ui-kit/components/organisms/quantity-stepper/vc-quantity-stepper.vue`)
+- Props: modelValue, min, max, step, disabled, loading, availableQuantity
+- Emits: update:modelValue, error
+- Features: +/- buttons, min/max validation, step intervals, disabled/loading states, custom validation
+- Types: vc-quantity-stepper.types.d.ts
+
+**VcTable** (`client-app/ui-kit/components/organisms/table/vc-table.vue`) ⭐ **Real Pattern**
+- Props:
+  - columns?: ITableColumn[] (default: []) - column definitions {id, title, sortable?, align?, classes?}
+  - items?: T[] (default: []) - data array (generic type T extends ItemType)
+  - sort?: ISortInfo - {column, direction} for sorting state
+  - pages?: number (default: 0) - total pages for pagination
+  - page?: number (default: 0) - current page
+  - loading?: boolean - show skeleton loader
+  - hideDefaultHeader?: boolean - hide auto-generated header
+  - hideDefaultFooter?: boolean - hide auto-generated pagination footer
+  - description?: string - table caption (sr-only)
+  - pageLimit?: number | null (default: PAGE_LIMIT) - max pages to show
+  - mobileBreakpoint?: "sm" | "md" | "lg" | "xl" | "2xl" (default: "md") - breakpoint for mobile view
+- Events: headerClick (ISortInfo), pageChanged (number)
+- Slots:
+  - header (custom header)
+  - desktop-skeleton, desktop-empty, desktop-body, desktop-item (receives {item})
+  - mobile-skeleton, mobile-empty, mobile-item (receives {item})
+  - footer (custom footer)
+  - page-limit-message
+- Features: sortable columns, auto pagination, responsive mobile/desktop views, loading skeleton, empty states
+- **Real Usage Pattern:**
+
+---
+
+## COMPOSABLES (10 Functions)
+
+**useModal** (`composables/index.ts`)
+
+**useQuantityField** (`composables/useQuantityField.ts`)
+
+**useQuantityValidationSchema** (`composables/useQuantityValidationSchema.ts`)
+
+**useFocusManagement** (`composables/useFocusManagement.ts`)
+
+**useComponentId** (`composables/useComponentId.ts`)
+
+**useSmartSticky** (`composables/useSmartSticky.ts`)
+
+Advanced composable for intelligent sticky positioning. Used internally by `VcLayout`.
+
+**How it works:**
+
+1. **Measures dimensions** using `useElementBounding`:
+   - Container top, height
+   - Element top, height, width
+   - Viewport height, scroll position
+
+2. **Determines affix type** based on:
+   - Element height vs viewport height
+   - Scroll direction (up/down)
+   - Position relative to container
+   - Top/bottom spacing requirements
+
+3. **Five positioning modes:**
+   - `FIXED_TOP`: Element shorter than viewport, sticks to top
+   - `FIXED_BOTTOM`: Element taller, scrolling down, sticks to bottom
+   - `ABSOLUTE`: Element taller, scrolling, positioned absolutely
+   - `STATIC`: Default position before reaching sticky threshold
+   - `STATIC_BOTTOM`: Reached bottom of container
+
+4. **Performance optimizations:**
+   - Throttled scroll listener (50ms default)
+   - ResizeObserver for reactive size changes
+   - Passive scroll events
+   - Only calculates when enabled
+
+5. **Returns:**
+   - `style`: Reactive CSSProperties to apply to element
+   - `isActive`: Whether sticky is currently active
+   - `isStuckTop`: Stuck to top of viewport
+   - `isStuckBottom`: Stuck to bottom of viewport
+   - `update()`: Manually trigger recalculation
+   - `destroy()`: Cleanup listeners
+
+**Used by VcLayout:**
+
+**Custom usage example:**
+
+**useHorizontalScrollSync** (`composables/useHorizontalScrollSync.ts`)
+
+**useAttrsOnly** (`composables/useAttrsOnly.ts`)
+
+**useListeners** (`composables/useListeners.ts`)
+
+---
+
+## UTILITIES (15 Modules)
+
+**price.ts**
+
+**file.ts**
+
+**file-size.ts**
+
+**date.ts**
+
+**images.ts**
+
+**css.ts**
+
+**quantity-stepper.ts**
+
+**focus.ts**
+
+---
+
+## STYLING SYSTEM
+
+### CSS Variables
+
+### TailwindCSS Breakpoints
+
+---
+
+## ACCESSIBILITY
+
+### Keyboard Navigation
+- Tab: Navigate elements
+- Enter/Space: Activate buttons
+- Escape: Close modals
+- Arrows: Navigate menus/lists
+- Home/End: Jump to start/end
+
+### WCAG 2.1 Level AA
+- Semantic HTML
+- ARIA attributes
+- Focus management
+- Color contrast 4.5:1 (text), 3:1 (large text)
+- Screen reader support
+
+---
+
+## ICONS
+
+388 SVG icons in `ui-kit/icons/`
+
+Usage: `<VcIcon name="shopping-cart" :size="24" />`
+
+Categories: navigation, actions, social, brands, products, etc.
+
+---
+
+## DIRECTIVES
+
+**v-maska** - Input masking (Maska library)
+
+**v-on-click-outside** - Detect clicks outside
+
+**v-mask** - DEPRECATED, use v-maska
+
+---
+
+## COMMON PATTERNS
+
+### Using UI Kit Components in Your Pages (No Imports!)
+
+### Creating New UI Kit Components (For Library Development)
+
+### Modal Usage
+
+### Form Validation
+
+---
+
+## TECH STACK
+
+- Vue 3 Composition API (`<script setup>`)
+- TypeScript 5 (strict mode, interfaces over types, no enums, no classes)
+- TailwindCSS 3 + SCSS
+- Headless UI + Element Plus
+- VueUse
+- Maska (input masking)
+- VueSecureHTML (XSS prevention)
+- Vite (build tool)
+- Vitest (testing)
+- Storybook (documentation)
+
+---
+
+## KEY RULES SUMMARY
+
+### ⚠️ CRITICAL: Component Imports
+
+**ALL UI Kit components are globally registered after `app.use(uiKit)` - NEVER import them!**
+
+### What to Import
+
+| Category | Import? | Example |
+|----------|---------|---------|
+| **Components** (Vc*) | ❌ NO | VcButton, VcInput, VcModal - globally registered |
+| **Composables** (use*) | ✅ YES | `import { useModal } from "@/ui-kit/composables"` |
+| **Utilities** | ✅ YES | `import { formatPrice } from "@/ui-kit/utilities"` |
+| **Types/Interfaces** | ✅ YES | `import type { Product } from "@/ui-kit/types"` |

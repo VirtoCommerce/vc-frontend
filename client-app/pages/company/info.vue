@@ -108,6 +108,7 @@
             @click="openAddOrUpdateCompanyAddressModal()"
           >
             <span class="sm:hidden">{{ $t("pages.company.info.buttons.add_new_address_mobile") }}</span>
+
             <span class="hidden sm:inline">{{ $t("pages.company.info.buttons.add_new_address") }}</span>
           </VcButton>
         </div>
@@ -144,11 +145,13 @@
                     <div class="mb-1 flex gap-1 empty:hidden">
                       <VcBadge v-if="item.isDefault" color="info" rounded size="sm" variant="outline-dark">
                         <VcIcon name="apply" />
+
                         <span>{{ $t("pages.company.info.labels.default") }}</span>
                       </VcBadge>
 
                       <VcBadge v-if="item.isFavorite" rounded size="sm" variant="outline-dark">
                         <VcIcon name="whishlist" />
+
                         <span>{{ $t("pages.company.info.labels.favorite") }}</span>
                       </VcBadge>
                     </div>
@@ -159,7 +162,9 @@
 
                     <div class="text-sm font-bold text-neutral-950">
                       <span>{{ item.line1 }}</span>
+
                       <template v-if="item.city">, {{ item.city }}</template>
+
                       <template v-if="item.regionName">, {{ item.regionName }}</template>
                     </div>
                   </div>
@@ -275,7 +280,9 @@
 
                 <td class="px-5 py-3">
                   <span>{{ address.line1 }}</span>
+
                   <template v-if="address.city">, {{ address.city }}</template>
+
                   <template v-if="address.regionName">, {{ address.regionName }}</template>
                 </td>
 
@@ -326,7 +333,6 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
@@ -400,7 +406,7 @@ const {
 } = useField<string>("organizationName", toTypedSchema(string().trim().required().max(64)));
 
 const organizationId = computed<string>(() => organization.value!.id);
-const canEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
+const canEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
 
 const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
 const paginatedAddresses = computed<MemberAddressType[]>(() =>

@@ -156,7 +156,6 @@ const send = handleSubmit(async (data) => {
   if (result.succeeded) {
     emit("result", true);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
     modalComponent.value?.close();
 
     notifications.success({

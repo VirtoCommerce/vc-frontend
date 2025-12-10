@@ -11092,10 +11092,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"maska@npm:^2.1.11":
-  version: 2.1.11
-  resolution: "maska@npm:2.1.11"
-  checksum: 10c0/12fa5d0e05dca477b5bc6d60be9fd68fcf128d7b3ebaa94e420b4395b8e2d1064f375952870075794f094054c7035dbdc0fb9f64be43df2903d8640327399ff3
+"maska@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "maska@npm:3.2.0"
+  checksum: 10c0/37950a076cd8ed865d4e8a5928e94d8d351ae5b215e3dffab7de10f0c6bc48a0d097bc580bd1263a215a78f5e61db96e08603180a9124f93869be27138e77f95
   languageName: node
   linkType: hard
 
@@ -15279,7 +15279,7 @@ __metadata:
     lint-staged: "npm:^16.2.6"
     lodash: "npm:^4.17.21"
     marked: "npm:^13.0.3"
-    maska: "npm:^2.1.11"
+    maska: "npm:^3.2.0"
     nouislider: "npm:^15.8.1"
     npm-run-all2: "npm:^6.2.6"
     postcss: "npm:^8.5.6"

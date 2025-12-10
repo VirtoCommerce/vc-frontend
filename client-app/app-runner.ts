@@ -1,7 +1,8 @@
 import { createHead } from "@unhead/vue/client";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
-import { apolloClient, getStore } from "@/core/api/graphql";
+import { apolloClient, getPageContext } from "@/core/api/graphql";
+import { GetSlugInfoDocument } from "@/core/api/graphql/types";
 import { useCurrency, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
@@ -35,7 +36,7 @@ import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
-import type { StoreResponseType } from "./core/api/graphql/types";
+import type { PageContextResponseType } from "./core/api/graphql/types";
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
@@ -66,7 +67,7 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { fetchUser, user, isAuthenticated } = useUser();
+  const { setUser, user, isAuthenticated, savedUserId } = useUser();
   const { themeContext, addPresetToThemeContext, setThemeContext } = useThemeContext();
   const {
     currentLanguage,
@@ -76,11 +77,13 @@ export default async () => {
     fetchLocaleMessages,
     mergeLocalesMessages,
     resolveLocale,
+    getUrlWithoutPossibleLocale,
+    resolvePossibleLocale,
   } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
-  const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
+  const { themePresetName, setWhiteLabelingSettings } = useWhiteLabeling();
 
   const fallback = {
     locale: FALLBACK_LOCALE,
@@ -90,18 +93,41 @@ export default async () => {
     },
   };
 
-  const storePromise = getStore(
-    IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname,
-  ) as Promise<StoreResponseType>;
+  // get initialization query parameters
+  const pathname = globalThis.location.pathname;
+  const possibleCultureName = resolvePossibleLocale(pathname);
+  const permalink = getPermalink(pathname, getUrlWithoutPossibleLocale);
 
-  const [store] = await Promise.all([storePromise, fetchUser(), fallback.setMessage()]);
+  const domain = IS_DEVELOPMENT
+    ? extractHostname(import.meta.env.APP_BACKEND_URL as string)
+    : globalThis.location.hostname;
+  const userId = savedUserId.value;
+
+  const getPageContextPromise = getPageContext({
+    domain: domain,
+    userId: userId,
+    permalink: permalink,
+    cultureName: possibleCultureName,
+  }) as Promise<PageContextResponseType>;
+
+  const [pageContext] = await Promise.all([getPageContextPromise, fallback.setMessage()]);
+
+  const store = pageContext.store;
+  const userResult = pageContext.user;
+  const whiteLabelingSetting = pageContext.whiteLabelingSettings;
 
   if (!store) {
     alert("Related store not found. Please contact your site administrator.");
-    throw new Error("Store not found. Check graphql request, GetStore query");
+    throw new Error("Store not found. Check graphql request, PageContext query");
+  }
+
+  if (!userResult) {
+    alert("Error fetching user. Please contact your site administrator.");
+    throw new Error("Error fetching user. Check graphql request, PageContext query");
   }
 
   setThemeContext(store);
+  setUser(userResult);
 
   /**
    * Creating plugin instances
@@ -131,11 +157,28 @@ export default async () => {
     currencyCode: currentCurrency.value.code,
   });
 
+  // Seed Apollo cache with initial slugInfo from pageContext to avoid the first network call
+  try {
+    const baseVariables = {
+      userId: user.value.id,
+      storeId: themeContext.value.storeId,
+      cultureName: currentLanguage.value.cultureName,
+    } as const;
+
+    apolloClient.writeQuery({
+      query: GetSlugInfoDocument,
+      variables: { ...baseVariables, permalink },
+      data: { slugInfo: pageContext.slugInfo },
+    });
+  } catch (e) {
+    Logger.warn("Failed to seed slugInfo into Apollo cache", e as Error);
+  }
+
   /**
    * Other settings
    */
 
-  await fetchWhiteLabelingSettings();
+  setWhiteLabelingSettings(whiteLabelingSetting);
   await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
 
   if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
@@ -207,3 +250,9 @@ export default async () => {
 
   app.mount(appElement);
 };
+
+function getPermalink(permalink: string, getUrlWithoutPossibleLocale: (fullPath: string) => string) {
+  permalink = getUrlWithoutPossibleLocale(permalink);
+  permalink = permalink === "/" ? "/" : permalink.replace(/^\/+/, "");
+  return permalink;
+}

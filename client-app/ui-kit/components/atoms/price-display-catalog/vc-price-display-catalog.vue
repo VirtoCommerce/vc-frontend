@@ -1,6 +1,7 @@
 <template>
   <div :class="{ 'flex-row-reverse': !isSignFirst }" class="flex [word-break:break-word]">
     <div class="-mt-0.5 text-[60%]">{{ value?.currency?.symbol }}</div>
+
     <div :class="{ 'line-through': isOldPrice }">
       {{ value?.formattedAmountWithoutCurrency ?? "N/A" }}
     </div>
