@@ -45,3 +45,32 @@ export function isDateString(str: string): boolean {
   const date = new Date(str);
   return !isNaN(date.valueOf()) && date.toISOString() === str;
 }
+
+/**
+ * Validates credit card expiration date (month/year).
+ * Accepts month as MM and year as YY or YYYY. Checks that the date is not in the past.
+ */
+export function isExpirationDateValid(month?: string, year?: string): boolean {
+  if (!month || !year) {
+    return false;
+  }
+  if (month.length !== 2 || !/^\d{2}$/.test(month)) {
+    return false;
+  }
+  const m = Number(month);
+  if (m < 1 || m > 12) {
+    return false;
+  }
+  if (!(year.length === 2 || year.length === 4) || !/^\d{2,4}$/.test(year)) {
+    return false;
+  }
+  const fullYear = year.length === 2 ? Number(`20${year}`) : Number(year);
+  if (isNaN(fullYear) || fullYear < 2000) {
+    return false;
+  }
+  const expDate = new Date(fullYear, m - 1, 1);
+  const currentDate = new Date();
+  currentDate.setDate(1);
+  currentDate.setHours(0, 0, 0, 0);
+  return expDate >= currentDate;
+}

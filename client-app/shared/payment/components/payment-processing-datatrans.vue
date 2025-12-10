@@ -99,6 +99,7 @@ import * as yup from "yup";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
+import { isExpirationDateValid } from "@/core/utilities/date";
 import { useNotifications } from "@/shared/notification";
 import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
@@ -217,18 +218,9 @@ const validationSchema = toTypedSchema(
         : schema;
     }),
     fulldate: yup.string().test("exp-date", t("shared.payment.bank_card_form.errors.expiration_date"), function () {
-      const { month, year } = this.parent;
-      if (month && year && month.length === 2 && year.length === 2) {
-        const expMonth = parseInt(month, 10);
-        const expYear = parseInt(year, 10) + 2000;
-
-        const now = new Date();
-        const currentMonth = now.getMonth() + 1;
-        const currentYear = now.getFullYear();
-
-        if (expYear < currentYear || (expYear === currentYear && expMonth < currentMonth)) {
-          return false;
-        }
+      const { month, year } = this.parent as { month?: string; year?: string };
+      if (month && year) {
+        return isExpirationDateValid(month, year);
       }
       return true;
     }),
