@@ -11,26 +11,15 @@
     ]"
   >
     <label class="vc-variant-picker__container">
-      <span v-if="type === 'color' && !isMultiColor" class="vc-variant-picker__color" />
-
-      <span
-        v-else-if="type === 'color' && isMultiColor"
-        class="vc-variant-picker__color-grid"
-        :data-count="Math.min(colorsList.length, 4)"
-      >
-        <span
-          v-for="(colorValue, index) in colorsList"
-          :key="index"
-          class="vc-variant-picker__color-item"
-          :style="{ backgroundColor: colorValue }"
-        />
-      </span>
-
-      <VcImage v-else-if="type === 'image'" :src="image" :alt="displayValue" class="vc-variant-picker__img" />
-
-      <span v-else class="vc-variant-picker__text">
-        {{ displayValue }}
-      </span>
+      <input
+        :checked="checked"
+        class="vc-variant-picker__input"
+        :type="inputType"
+        :aria-label="tooltip ?? inputValue"
+        :name="name"
+        :value="inputValue"
+        :data-test-id="testId"
+      />
 
       <VcTooltip
         class="vc-variant-picker__tooltip"
@@ -39,20 +28,37 @@
         :teleport-selector="tooltipTeleportSelector"
       >
         <template #default="{ triggerProps, tooltipId }">
-          <input
-            :checked="checked"
-            class="vc-variant-picker__input"
-            :type="inputType"
-            :aria-label="tooltip ?? inputValue"
-            :name="name"
-            :value="inputValue"
-            :data-test-id="testId"
+          <button
+            type="button"
+            class="vc-variant-picker__trigger"
             :tabindex="tabindex ?? '0'"
+            :aria-label="accessibleName"
             v-bind="tooltipTriggerEvents(triggerProps, tooltipId)"
             @keydown.enter.prevent="toggleValue"
             @keydown.space.prevent="toggleValue"
             @click="toggleValue"
-          />
+          >
+            <span v-if="type === 'color' && !isMultiColor" class="vc-variant-picker__color" />
+
+            <span
+              v-else-if="type === 'color' && isMultiColor"
+              class="vc-variant-picker__color-grid"
+              :data-count="Math.min(colorsList.length, 4)"
+            >
+              <span
+                v-for="(colorValue, index) in colorsList"
+                :key="index"
+                class="vc-variant-picker__color-item"
+                :style="{ backgroundColor: colorValue }"
+              />
+            </span>
+
+            <VcImage v-else-if="type === 'image'" :src="image" :alt="displayValue" class="vc-variant-picker__img" />
+
+            <span v-else class="vc-variant-picker__text">
+              {{ displayValue }}
+            </span>
+          </button>
         </template>
 
         <template v-if="!tooltipDisabled" #content>
@@ -142,6 +148,18 @@ const color = computed(() => (type.value === "color" && !isMultiColor.value ? co
 const image = computed(() => (type.value === "image" ? displayValue.value : ""));
 
 const tooltipDisabled = computed(() => !props.tooltip && !slots.tooltip);
+
+const accessibleName = computed(() => {
+  if (props.tooltip) {
+    return props.tooltip;
+  }
+
+  if (type.value === "text") {
+    return displayValue.value;
+  }
+
+  return inputValue.value;
+});
 
 function tooltipTriggerEvents(triggerProps: Record<string, unknown>, tooltipId?: string): Record<string, unknown> {
   const events = omit(triggerProps, ["role", "aria-haspopup", "aria-expanded", "aria-controls"]);
@@ -236,7 +254,11 @@ function toggleValue(): void {
     }
   }
 
-  &__container {
+  &__input {
+    @apply hidden;
+  }
+
+  &__trigger {
     @apply relative flex items-stretch justify-center py-0.5
     min-h-[--size] min-w-[--size]
     bg-cover bg-center bg-no-repeat bg-additional-50
@@ -278,14 +300,6 @@ function toggleValue(): void {
         );
       }
     }
-  }
-
-  &__tooltip {
-    @apply absolute inset-0 block;
-  }
-
-  &__input {
-    @apply z-[1] absolute inset-0 opacity-0;
   }
 
   &__color {
