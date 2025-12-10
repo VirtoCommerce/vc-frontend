@@ -1,5 +1,5 @@
 import { createSharedComposable } from "@vueuse/core";
-import { isEqual, sortBy, map, find, some, filter } from "lodash";
+import { isEqual, sortBy, find, some } from "lodash";
 import { ref, computed, watch } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
@@ -31,14 +31,14 @@ type SelectedPropertiesMapType = ReadonlyMap<string, string | string[]>;
 
 /** Checks if a single product variation is compatible with a specific property name and value. */
 function isVariationCompatible(variation: Product, propertyName: string, propertyValue: string | string[]) {
-  const variationProps = filter(variation.properties, { name: propertyName });
+  const variationProps = variation.properties.filter((p) => p.name === propertyName);
 
   if (Array.isArray(propertyValue)) {
     if (variationProps.length !== propertyValue.length) {
       return false;
     }
 
-    const variationNormalizedValues = sortBy(map(variationProps, normalizePropertyValue));
+    const variationNormalizedValues = sortBy(variationProps.map(normalizePropertyValue));
     const sortedPropertyValue = sortBy(propertyValue);
 
     return isEqual(variationNormalizedValues, sortedPropertyValue);
@@ -136,7 +136,7 @@ function calculateNewSelections(
 
         // Aggregate values for properties with the same name (multicolor case)
         const propertyValue = isMultiColorProperty(propertyList)
-          ? sortBy(map(propertyList, normalizePropertyValue))
+          ? sortBy(propertyList.map(normalizePropertyValue))
           : normalizePropertyValue(propertyList[0]);
 
         // Check if this property value is compatible with base selections
@@ -175,8 +175,8 @@ function createMulticolorOption(properties: Property[]): IPropertyValue {
   }
 
   const sortedProps = sortBy(properties, normalizePropertyValue);
-  const valuesArray = map(sortedProps, normalizePropertyValue);
-  const labelsArray = map(sortedProps, (p) => getPropertyValue(p) ?? "");
+  const valuesArray = sortedProps.map(normalizePropertyValue);
+  const labelsArray = sortedProps.map((p) => getPropertyValue(p) ?? "");
 
   return {
     value: valuesArray,
