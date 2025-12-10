@@ -305,15 +305,6 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     return property.values.find((opt) => isSelected(property.name, opt.value))?.value ?? "";
   }
 
-  function findOptionByValue(property: IProperty, value: string | string[]): IPropertyValue | undefined {
-    if (!value || (Array.isArray(value) && value.length === 0)) {
-      return undefined;
-    }
-
-    const serializedValue = serialize(value);
-    return property.values.find((opt) => serialize(opt.value) === serializedValue);
-  }
-
   watch(
     variations,
     () => {
@@ -334,7 +325,6 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
 
     getTooltip,
     getSelectedValue,
-    findOptionByValue,
   };
 }
 

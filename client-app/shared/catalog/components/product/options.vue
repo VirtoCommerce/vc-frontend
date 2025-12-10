@@ -64,8 +64,7 @@ const fetchingVariations = toRef(props, "fetchingVariations");
 
 const isBlockVisible = computed(() => !props.model.hidden && (properties.value.size > 0 || fetchingVariations.value));
 
-const { properties, select, isAvailable, getTooltip, getSelectedValue, findOptionByValue } =
-  useProductVariationProperties(variations);
+const { properties, select, isAvailable, getTooltip, getSelectedValue } = useProductVariationProperties(variations);
 
 function getType(propertyValueType: PropertyValueTypes): "color" | "text" {
   return propertyValueType === PropertyValueTypes.Color ? "color" : "text";
@@ -76,10 +75,8 @@ function getValue(property: IProperty, option: IPropertyValue): string | string[
 }
 
 function handlePropertyChange(property: IProperty, groupValue: string | string[]) {
-  const option = findOptionByValue(property, groupValue);
-
-  if (option) {
-    select(property.name, option.value);
+  if (groupValue && !(Array.isArray(groupValue) && groupValue.length === 0)) {
+    select(property.name, groupValue);
   }
 }
 </script>
