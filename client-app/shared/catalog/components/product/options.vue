@@ -24,7 +24,7 @@
           :type="getType(property.propertyValueType)"
           :name="property.label"
           size="xs"
-          @update:model-value="(value) => handlePropertyChange(property, value)"
+          @update:model-value="(value: string | string[]) => handlePropertyChange(property, value)"
         >
           <VcVariantPicker
             v-for="option in property.values"
