@@ -742,7 +742,7 @@
       },
       "billing_details_section": {
         "title": "Faktureringsdetaljer",
-        "payment_data": "Betalingsdata",
+        "payment_card": "Betalingskort",
         "labels": {
           "billing_address": "Fakturaadresse",
           "payment_method": "Betalingsmetode",

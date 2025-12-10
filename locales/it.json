@@ -742,7 +742,7 @@
       },
       "billing_details_section": {
         "title": "Dettagli pagamento",
-        "payment_data": "Dati di pagamento",
+        "payment_card": "Carta di pagamento",
         "labels": {
           "billing_address": "Indirizzo di fatturazione",
           "payment_method": "Metodo di pagamento",

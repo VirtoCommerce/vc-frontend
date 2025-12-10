@@ -742,7 +742,7 @@
       },
       "billing_details_section": {
         "title": "Laskutustiedot",
-        "payment_data": "Maksutiedot",
+        "payment_card": "Maksukortti",
         "labels": {
           "billing_address": "Laskutusosoite",
           "payment_method": "Maksutapa",

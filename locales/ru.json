@@ -742,7 +742,7 @@
       },
       "billing_details_section": {
         "title": "Детали оплаты",
-        "payment_data": "Платежные данные",
+        "payment_card": "Платежная карта",
         "labels": {
           "billing_address": "Платежный адрес",
           "payment_method": "Способ оплаты",
