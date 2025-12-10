@@ -5,11 +5,10 @@ import type { AuthorizePaymentResultType, CustomerOrderType } from "@/core/api/g
 type PaymentProcessorType = ((order: CustomerOrderType) => Promise<AuthorizePaymentResultType | null>) | null;
 
 function _usePaymentFactory() {
-  let paymentProcessorInternal: PaymentProcessorType = null;
-
+  const paymentProcessorInternal = ref<PaymentProcessorType>(null);
   const isValidCardData = ref(false);
   const isCanFinalizePayment = computed(() => {
-    return isValidCardData.value && paymentProcessorInternal === null;
+    return isValidCardData.value && paymentProcessorInternal.value !== null;
   });
 
   const setCardDataValid = () => {
@@ -21,11 +20,11 @@ function _usePaymentFactory() {
   };
 
   const registerPaymentProcessor = (paymentProcessor: PaymentProcessorType) => {
-    paymentProcessorInternal = paymentProcessor;
+    paymentProcessorInternal.value = paymentProcessor;
   };
 
   const finalizePayment = async (order: CustomerOrderType) => {
-    return paymentProcessorInternal?.(order);
+    return paymentProcessorInternal.value?.(order);
   };
 
   return {
