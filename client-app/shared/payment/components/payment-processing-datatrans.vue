@@ -216,6 +216,22 @@ const validationSchema = toTypedSchema(
             .label(labels.value.yearLabel)
         : schema;
     }),
+    fulldate: yup.string().test("exp-date", t("shared.payment.bank_card_form.errors.expiration_date"), function () {
+      const { month, year } = this.parent;
+      if (month && year && month.length === 2 && year.length === 2) {
+        const expMonth = parseInt(month, 10);
+        const expYear = parseInt(year, 10) + 2000;
+
+        const now = new Date();
+        const currentMonth = now.getMonth() + 1;
+        const currentYear = now.getFullYear();
+
+        if (expYear < currentYear || (expYear === currentYear && expMonth < currentMonth)) {
+          return false;
+        }
+      }
+      return true;
+    }),
   }),
 );
 
@@ -270,7 +286,7 @@ const validationResult = ref<IValidateEvent>({
 const hideForm = ref(true);
 
 const expirationDateErrors = computed<string>(() =>
-  [formErrors.value.month, formErrors.value.year].filter(Boolean).join(". "),
+  [formErrors.value.month, formErrors.value.year, formErrors.value.fulldate].filter(Boolean).join(". "),
 );
 
 function sendPaymentData() {
