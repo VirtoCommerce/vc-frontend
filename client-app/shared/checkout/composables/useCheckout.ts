@@ -105,6 +105,7 @@ export function _useCheckout(cartId?: string) {
   } = useGlobalCheckout();
   const { themeContext } = useThemeContext();
   const { pushHistoricalEvent } = useHistoricalEvents();
+  const { finalizePayment } = usePayment();
 
   const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
   const isShippingMethodBopis = computed(() => shipment.value?.shipmentMethodCode === BOPIS_CODE);
@@ -424,8 +425,6 @@ export function _useCheckout(cartId?: string) {
       });
     }
   }
-
-  const { finalizePayment } = usePayment();
 
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
     loading.value = true;

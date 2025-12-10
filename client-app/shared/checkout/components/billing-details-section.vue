@@ -86,18 +86,19 @@
   </VcWidget>
 
   <VcWidget
-    v-if="cart && paymentMethod && paymentMethod.allowCartPayment && currentPaymentMethod && billingAddress"
+    v-if="paymentCardVisible"
     :title="$t('shared.checkout.billing_details_section.payment_card')"
     prepend-icon="cash"
     size="lg"
     class="mt-5"
   >
-    <Payment hide-payment-button :cart="cart" :payment="currentPaymentMethod" />
+    <Payment hide-payment-button :cart="cart" :payment="currentPaymentMethod!" />
   </VcWidget>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useUser } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { AddressSelection } from "@/shared/common";
@@ -113,6 +114,7 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { allItemsAreDigital, availablePaymentMethods, availableShippingMethods } = useFullCart();
+const { isAuthenticated } = useUser();
 
 const isShippingMethodBopis = computed(() => {
   return (
@@ -124,6 +126,17 @@ const isShippingMethodBopis = computed(() => {
 const currentPaymentMethod = computed(() => {
   const cart = props.cart;
   return cart && cart.payments && cart.payments.length > 0 ? cart.payments[0] : null;
+});
+
+const paymentCardVisible = computed(() => {
+  return (
+    isAuthenticated.value &&
+    props.cart &&
+    paymentMethod.value &&
+    paymentMethod.value.allowCartPayment &&
+    currentPaymentMethod.value &&
+    billingAddress.value
+  );
 });
 
 const {
