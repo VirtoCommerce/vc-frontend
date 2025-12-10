@@ -28,6 +28,7 @@
         ref="inputElement"
         v-model="model"
         v-bind="{ ...listeners, ...aria }"
+        v-maska="mask"
         :type="inputType"
         :name="name"
         :placeholder="placeholder"
@@ -88,8 +89,10 @@
 </template>
 
 <script setup lang="ts" generic="T extends string | number | null">
+import { vMaska } from "maska/vue";
 import { provide, computed, ref, useTemplateRef } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
+import type { MaskOptions } from "maska";
 
 export interface IProps {
   modelModifiers?: Record<string, boolean>;
@@ -123,6 +126,7 @@ export interface IProps {
   aria?: Record<string, string | number | null>;
   disableAutocomplete?: boolean;
   tabindex?: string | number;
+  mask?: string | MaskOptions;
 }
 
 defineOptions({

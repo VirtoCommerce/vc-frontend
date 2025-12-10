@@ -352,7 +352,7 @@
           "settings": "Asetukset",
           "currency": "Valuutta",
           "search_bar": {
-            "input_placeholder": "Syötä avainsanoja, tuote, malli tai varaosan numero"
+            "input_placeholder": "Hae"
           },
           "view_all_catalog": "Näytä kaikki kategorian tuotteet"
         },
@@ -407,9 +407,9 @@
         "categories_label": "Kategoriat",
         "products_label": "Tuotteet",
         "pages_label": "Sivut",
-        "suggestions_and_history_label": "Ehdotukset ja historia",
+        "suggestions_and_history_label": "Vinkit",
         "no_results": "Hakusi {keyword} ei tuottanut tuloksia",
-        "enter_keyword_placeholder": "Hae koko kaupasta",
+        "enter_keyword_placeholder": "Hae",
         "enter_keyword_placeholder_category": "Hae kategoriasta {category}",
         "search_button": "Hae",
         "view_all_results_button": "Näytä kaikki {total} tulosta",
