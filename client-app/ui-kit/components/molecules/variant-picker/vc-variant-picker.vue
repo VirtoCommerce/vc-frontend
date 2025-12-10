@@ -33,12 +33,12 @@
       </span>
 
       <VcTooltip
-        :disabled="!tooltip && !$slots.tooltip"
         class="vc-variant-picker__tooltip"
+        :disabled="tooltipDisabled"
         :enable-teleport="tooltipEnableTeleport"
         :teleport-selector="tooltipTeleportSelector"
       >
-        <template #default="{ triggerProps }">
+        <template #default="{ triggerProps, tooltipId }">
           <input
             :checked="checked"
             class="vc-variant-picker__input"
@@ -48,14 +48,14 @@
             :value="inputValue"
             :data-test-id="testId"
             :tabindex="tabindex ?? '0'"
-            v-bind="triggerProps"
+            v-bind="tooltipTriggerEvents(triggerProps, tooltipId)"
             @keydown.enter.prevent="toggleValue"
             @keydown.space.prevent="toggleValue"
             @click="toggleValue"
           />
         </template>
 
-        <template #content>
+        <template v-if="!tooltipDisabled" #content>
           <slot name="tooltip">{{ tooltip }}</slot>
         </template>
       </VcTooltip>
@@ -65,7 +65,8 @@
 
 <script lang="ts" setup>
 import isEqual from "lodash/isEqual";
-import { computed, inject } from "vue";
+import omit from "lodash/omit";
+import { computed, inject, useSlots } from "vue";
 import { getColorValue, serialize } from "@/ui-kit/utilities";
 
 interface IEmits {
@@ -93,6 +94,8 @@ const props = withDefaults(defineProps<IProps>(), {
   type: "color",
   size: "md",
 });
+
+const slots = useSlots();
 
 const groupContext = inject<VcVariantPickerGroupContextType | null>("variantPickerGroupContext", null);
 
@@ -137,6 +140,17 @@ const checked = computed(() => {
 const color = computed(() => (type.value === "color" && !isMultiColor.value ? colorsList.value[0] : undefined));
 
 const image = computed(() => (type.value === "image" ? displayValue.value : ""));
+
+const tooltipDisabled = computed(() => !props.tooltip && !slots.tooltip);
+
+function tooltipTriggerEvents(triggerProps: Record<string, unknown>, tooltipId?: string): Record<string, unknown> {
+  const events = omit(triggerProps, ["role", "aria-haspopup", "aria-expanded", "aria-controls"]);
+
+  return {
+    ...events,
+    "aria-describedby": tooltipDisabled.value ? undefined : tooltipId,
+  };
+}
 
 function toggleValue(): void {
   const valueToSet = Array.isArray(props.value) ? [...props.value] : props.value;
