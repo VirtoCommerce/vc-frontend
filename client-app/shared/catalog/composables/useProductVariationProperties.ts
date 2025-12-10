@@ -73,11 +73,6 @@ function getAvailablePropertyValues(variations: readonly Product[]): Map<string,
         return;
       }
 
-      // Skip color properties - they should not be auto-selected as they require user's visual choice
-      if (isColorProperty(prop)) {
-        return;
-      }
-
       if (!available.has(prop.name)) {
         available.set(prop.name, new Set());
       }
@@ -101,13 +96,22 @@ function runAutoSelection(
     changedInLoop = false;
     const applicable = getApplicableVariations(variations, newSelected);
     const available = getAvailablePropertyValues(applicable);
+
     for (const [name, values] of available.entries()) {
-      if (!newSelected.has(name) && values.length === 1) {
-        newSelected.set(name, values[0]);
-        changedInLoop = true;
+      if (newSelected.has(name) || values.length !== 1) {
+        continue;
       }
+
+      const prop = applicable[0].properties.find((p) => p.name === name);
+      if (isColorProperty(prop)) {
+        continue;
+      }
+
+      newSelected.set(name, values[0]);
+      changedInLoop = true;
     }
   }
+
   return newSelected;
 }
 

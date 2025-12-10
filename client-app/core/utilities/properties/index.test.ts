@@ -671,6 +671,10 @@ describe("Properties Utilities", () => {
 
       expect(isColorProperty(textProperty)).toBe(false);
     });
+
+    it("should return false for undefined", () => {
+      expect(isColorProperty(undefined)).toBe(false);
+    });
   });
 
   describe("isMultiColorProperty", () => {

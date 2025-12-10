@@ -127,8 +127,8 @@ export function normalizePropertyValue(property: Property): string {
 }
 
 /** Checks if property is a color type property */
-export function isColorProperty(property: Property): boolean {
-  return property.propertyValueType === PropertyValueTypes.Color;
+export function isColorProperty(property: Property | undefined): boolean {
+  return property?.propertyValueType === PropertyValueTypes.Color;
 }
 
 /** Checks if property list represents a multicolor property (multiple color values) */
