@@ -561,4 +561,50 @@ describe("useProductVariationProperties", () => {
     expect(applicableVariations.value.length).toBe(1);
     expect(applicableVariations.value[0].id).toBe("2");
   });
+
+  it("auto-selects non-color properties when multicolor is selected first", () => {
+    const variations = ref(mockData.withMulticolorAndSingleColor);
+    const { select, isSelected, isCompleted } = useProductVariationProperties(variations);
+
+    // Select multicolor as the FIRST choice
+    select("FabricColor", ["red", "blue"]);
+
+    // Size L should be auto-selected (only one size available for this multicolor)
+    expect(isSelected("FabricColor", ["red", "blue"])).toBe(true);
+    expect(isSelected("Size", "L")).toBe(true);
+    expect(isCompleted.value).toBe(true);
+  });
+
+  it("preserves compatible Size when multicolor is selected", () => {
+    const variations = ref(mockData.withMulticolorAndSingleColor);
+    const { select, isSelected } = useProductVariationProperties(variations);
+
+    // First select Size L
+    select("Size", "L");
+    expect(isSelected("Size", "L")).toBe(true);
+
+    // Then select multicolor [red, blue] which is compatible with Size L
+    select("FabricColor", ["red", "blue"]);
+
+    // Size L should be preserved
+    expect(isSelected("FabricColor", ["red", "blue"])).toBe(true);
+    expect(isSelected("Size", "L")).toBe(true);
+  });
+
+  it("resets incompatible Size when multicolor is selected", () => {
+    const variations = ref(mockData.withMulticolorAndSingleColor);
+    const { select, isSelected } = useProductVariationProperties(variations);
+
+    // First select Size M
+    select("Size", "M");
+    expect(isSelected("Size", "M")).toBe(true);
+
+    // Then select multicolor [red, blue] which is NOT compatible with Size M (only Size L available)
+    select("FabricColor", ["red", "blue"]);
+
+    // Size M should be reset, Size L should be auto-selected
+    expect(isSelected("FabricColor", ["red", "blue"])).toBe(true);
+    expect(isSelected("Size", "M")).toBe(false);
+    expect(isSelected("Size", "L")).toBe(true);
+  });
 });
