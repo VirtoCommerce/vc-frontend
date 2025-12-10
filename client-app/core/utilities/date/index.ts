@@ -43,7 +43,7 @@ function toDateObject(dateOnly: string): Date {
  */
 export function isDateString(str: string): boolean {
   const date = new Date(str);
-  return !isNaN(date.valueOf()) && date.toISOString() === str;
+  return !Number.isNaN(date.valueOf()) && date.toISOString() === str;
 }
 
 /**
@@ -65,7 +65,7 @@ export function isExpirationDateValid(month?: string, year?: string): boolean {
     return false;
   }
   const fullYear = year.length === 2 ? Number(`20${year}`) : Number(year);
-  if (isNaN(fullYear) || fullYear < 2000) {
+  if (Number.isNaN(fullYear) || fullYear < 2000) {
     return false;
   }
   const expDate = new Date(fullYear, m - 1, 1);
