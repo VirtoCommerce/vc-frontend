@@ -136,7 +136,7 @@ export default async () => {
    */
 
   await fetchWhiteLabelingSettings();
-  addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
+  await addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
 
   if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
     void fetchCatalogMenu();
