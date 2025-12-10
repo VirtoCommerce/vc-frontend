@@ -288,9 +288,9 @@ function focusPickerAtIndex(index: number): void {
     return;
   }
 
-  const input = target.querySelector<HTMLInputElement>("input.vc-variant-picker__input");
-  if (input) {
-    input.focus();
+  const button = target.querySelector<HTMLInputElement>("button.vc-variant-picker__trigger");
+  if (button) {
+    button.focus();
   }
 }
 
@@ -394,7 +394,14 @@ function toggleValue(value: string | string[]): void {
   const valueToSet = Array.isArray(value) ? [...value] : value;
 
   if (multiple.value) {
-    const currentValue = Array.isArray(internalModelValue.value) ? [...internalModelValue.value] : [];
+    let currentValue: string[];
+    if (Array.isArray(internalModelValue.value)) {
+      currentValue = [...internalModelValue.value];
+    } else if (internalModelValue.value) {
+      currentValue = [internalModelValue.value];
+    } else {
+      currentValue = [];
+    }
     const index = currentValue.findIndex((v) => isEqual(v, valueToSet));
 
     if (index > -1) {
@@ -425,6 +432,8 @@ watch(
   (newVal) => {
     if (newVal !== undefined) {
       internalModelValue.value = Array.isArray(newVal) ? [...newVal] : newVal;
+    } else {
+      internalModelValue.value = multiple.value ? [] : "";
     }
   },
   { deep: true, immediate: true },

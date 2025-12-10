@@ -237,7 +237,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
   }
 
   function findOptionByValue(property: IProperty, value: string | string[]): IPropertyValue | undefined {
-    if (!value) {
+    if (!value || (Array.isArray(value) && value.length === 0)) {
       return undefined;
     }
 
