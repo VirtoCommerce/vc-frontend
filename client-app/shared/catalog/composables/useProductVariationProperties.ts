@@ -1,5 +1,5 @@
 import { createSharedComposable } from "@vueuse/core";
-import { isEqual, sortBy, find, some } from "lodash";
+import { isEqual, sortBy } from "lodash";
 import { ref, computed, watch } from "vue";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
@@ -191,14 +191,14 @@ function addPropertyOptions(property: IProperty, properties: Property[]): void {
     const multicolorOption = createMulticolorOption(properties);
     const serializedValues = serialize(multicolorOption.value);
 
-    if (!some(property.values, (v) => serialize(v.value) === serializedValues)) {
+    if (!property.values.some((v) => serialize(v.value) === serializedValues)) {
       property.values.push(multicolorOption);
     }
   } else {
     properties.forEach((prop) => {
       const singleOption = createSingleOption(prop);
 
-      if (!some(property.values, (v) => v.value === singleOption.value)) {
+      if (!property.values.some((v) => v.value === singleOption.value)) {
         property.values.push(singleOption);
       }
     });
@@ -302,7 +302,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
   }
 
   function getSelectedValue(property: IProperty): string | string[] {
-    return find(property.values, (opt) => isSelected(property.name, opt.value))?.value ?? "";
+    return property.values.find((opt) => isSelected(property.name, opt.value))?.value ?? "";
   }
 
   function findOptionByValue(property: IProperty, value: string | string[]): IPropertyValue | undefined {
@@ -311,7 +311,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     }
 
     const serializedValue = serialize(value);
-    return find(property.values, (opt) => serialize(opt.value) === serializedValue);
+    return property.values.find((opt) => serialize(opt.value) === serializedValue);
   }
 
   watch(
