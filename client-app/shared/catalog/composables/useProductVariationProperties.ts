@@ -3,7 +3,6 @@ import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
-import { serialize } from "@/ui-kit/utilities";
 import type { Product, Property } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import type { ComposerTranslation } from "vue-i18n";
@@ -236,26 +235,6 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
       : String(selectedOption.value);
   }
 
-  function findOptionByValue(property: IProperty, value: string | string[]): IPropertyValue | undefined {
-    if (!value || (Array.isArray(value) && value.length === 0)) {
-      return undefined;
-    }
-
-    return property.values.find((opt) => {
-      if (typeof value === "string") {
-        const optionValue =
-          property.propertyValueType === PropertyValueTypes.Color
-            ? (opt.colorCode ?? String(opt.value))
-            : String(opt.value);
-        return optionValue === value;
-      }
-
-      //Argument of type 'string | string[]' is not assignable to parameter of type 'PrimitiveValueType'.
-      //TEMP: waiting for multi-color implementation
-      return opt.value === serialize(value);
-    });
-  }
-
   watch(
     variations,
     () => {
@@ -276,7 +255,6 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
 
     getTooltip,
     getSelectedValue,
-    findOptionByValue,
   };
 }
 
