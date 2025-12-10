@@ -1,7 +1,7 @@
 import { createSharedComposable } from "@vueuse/core";
 import { isEqual, sortBy, find, some } from "lodash";
 import { ref, computed, watch } from "vue";
-import { PropertyType } from "@/core/api/graphql/types";
+import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import {
   normalizePropertyValue,
@@ -11,7 +11,7 @@ import {
   getPropertyValue,
 } from "@/core/utilities/properties";
 import { serialize } from "@/ui-kit/utilities";
-import type { Product, Property, PropertyValueTypes } from "@/core/api/graphql/types";
+import type { Product, Property } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
 export interface IPropertyValue {
@@ -69,7 +69,12 @@ function getAvailablePropertyValues(variations: readonly Product[]): Map<string,
 
   variations.forEach((variation) => {
     variation.properties.forEach((prop) => {
-      if (prop.propertyType !== PropertyType.Variation || !prop.name || prop.value === undefined) {
+      if (prop.propertyType !== PropertyType.Variation || !prop.name) {
+        return;
+      }
+
+      // Skip null/undefined values, except for Boolean properties where null is valid
+      if (prop.value == null && prop.propertyValueType !== PropertyValueTypes.Boolean) {
         return;
       }
 
@@ -82,6 +87,17 @@ function getAvailablePropertyValues(variations: readonly Product[]): Map<string,
   });
 
   return new Map(Array.from(available.entries(), ([name, values]) => [name, Array.from(values)]));
+}
+
+/** Finds a property by name in any of the variations */
+function findPropertyInVariations(variations: readonly Product[], propertyName: string): Property | undefined {
+  for (const variation of variations) {
+    const prop = variation.properties.find((p) => p.name === propertyName);
+    if (prop) {
+      return prop;
+    }
+  }
+  return undefined;
 }
 
 /** Automatically selects any property that is the only one remaining based on the current selections. */
@@ -102,7 +118,7 @@ function runAutoSelection(
         continue;
       }
 
-      const prop = applicable[0].properties.find((p) => p.name === name);
+      const prop = findPropertyInVariations(applicable, name);
       if (isColorProperty(prop)) {
         continue;
       }
