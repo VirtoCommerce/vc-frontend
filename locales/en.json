@@ -526,7 +526,7 @@
       "orders_filter": {
         "title": "Orders filters",
         "status_label": "Select order status",
-        "created_date_label": "Create date",
+        "created_date_label": "Created date",
         "start_date_label": "Start date",
         "end_date_label": "End date",
         "apply_button": "@:common.buttons.apply",

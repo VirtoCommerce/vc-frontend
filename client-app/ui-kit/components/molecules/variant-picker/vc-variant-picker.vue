@@ -11,51 +11,57 @@
     ]"
   >
     <label class="vc-variant-picker__container">
-      <span v-if="type === 'color' && !isMultiColor" class="vc-variant-picker__color" />
-
-      <span
-        v-else-if="type === 'color' && isMultiColor"
-        class="vc-variant-picker__color-grid"
-        :data-count="Math.min(colorsList.length, 4)"
-      >
-        <span
-          v-for="(colorValue, index) in colorsList"
-          :key="index"
-          class="vc-variant-picker__color-item"
-          :style="{ backgroundColor: colorValue }"
-        />
-      </span>
-
-      <VcImage v-else-if="type === 'image'" :src="image" :alt="displayValue" class="vc-variant-picker__img" />
-
-      <span v-else class="vc-variant-picker__text">
-        {{ displayValue }}
-      </span>
+      <input
+        :checked="checked"
+        class="vc-variant-picker__input"
+        :type="inputType"
+        :aria-label="tooltip ?? inputValue"
+        :name="name"
+        :value="inputValue"
+        :data-test-id="testId"
+      />
 
       <VcTooltip
-        :disabled="!tooltip && !$slots.tooltip"
         class="vc-variant-picker__tooltip"
+        :disabled="tooltipDisabled"
         :enable-teleport="tooltipEnableTeleport"
         :teleport-selector="tooltipTeleportSelector"
       >
-        <template #default="{ triggerProps }">
-          <input
-            :checked="checked"
-            class="vc-variant-picker__input"
-            :type="inputType"
-            :aria-label="tooltip ?? inputValue"
-            :name="name"
-            :value="inputValue"
-            :data-test-id="testId"
+        <template #default="{ triggerProps, tooltipId }">
+          <button
+            type="button"
+            class="vc-variant-picker__trigger"
             :tabindex="tabindex ?? '0'"
-            v-bind="triggerProps"
+            :aria-label="accessibleName"
+            v-bind="tooltipTriggerEvents(triggerProps, tooltipId)"
             @keydown.enter.prevent="toggleValue"
             @keydown.space.prevent="toggleValue"
             @click="toggleValue"
-          />
+          >
+            <span v-if="type === 'color' && !isMultiColor" class="vc-variant-picker__color" />
+
+            <span
+              v-else-if="type === 'color' && isMultiColor"
+              class="vc-variant-picker__color-grid"
+              :data-count="Math.min(colorsList.length, 4)"
+            >
+              <span
+                v-for="(colorValue, index) in colorsList"
+                :key="index"
+                class="vc-variant-picker__color-item"
+                :style="{ backgroundColor: colorValue }"
+              />
+            </span>
+
+            <VcImage v-else-if="type === 'image'" :src="image" :alt="displayValue" class="vc-variant-picker__img" />
+
+            <span v-else class="vc-variant-picker__text">
+              {{ displayValue }}
+            </span>
+          </button>
         </template>
 
-        <template #content>
+        <template v-if="!tooltipDisabled" #content>
           <slot name="tooltip">{{ tooltip }}</slot>
         </template>
       </VcTooltip>
@@ -65,7 +71,8 @@
 
 <script lang="ts" setup>
 import isEqual from "lodash/isEqual";
-import { computed, inject } from "vue";
+import omit from "lodash/omit";
+import { computed, inject, useSlots } from "vue";
 import { getColorValue, serialize } from "@/ui-kit/utilities";
 
 interface IEmits {
@@ -93,6 +100,8 @@ const props = withDefaults(defineProps<IProps>(), {
   type: "color",
   size: "md",
 });
+
+const slots = useSlots();
 
 const groupContext = inject<VcVariantPickerGroupContextType | null>("variantPickerGroupContext", null);
 
@@ -137,6 +146,29 @@ const checked = computed(() => {
 const color = computed(() => (type.value === "color" && !isMultiColor.value ? colorsList.value[0] : undefined));
 
 const image = computed(() => (type.value === "image" ? displayValue.value : ""));
+
+const tooltipDisabled = computed(() => !props.tooltip && !slots.tooltip);
+
+const accessibleName = computed(() => {
+  if (props.tooltip) {
+    return props.tooltip;
+  }
+
+  if (type.value === "text") {
+    return displayValue.value;
+  }
+
+  return inputValue.value;
+});
+
+function tooltipTriggerEvents(triggerProps: Record<string, unknown>, tooltipId?: string): Record<string, unknown> {
+  const events = omit(triggerProps, ["role", "aria-haspopup", "aria-expanded", "aria-controls"]);
+
+  return {
+    ...events,
+    "aria-describedby": tooltipDisabled.value ? undefined : tooltipId,
+  };
+}
 
 function toggleValue(): void {
   const valueToSet = Array.isArray(props.value) ? [...props.value] : props.value;
@@ -222,7 +254,11 @@ function toggleValue(): void {
     }
   }
 
-  &__container {
+  &__input {
+    @apply hidden;
+  }
+
+  &__trigger {
     @apply relative flex items-stretch justify-center py-0.5
     min-h-[--size] min-w-[--size]
     bg-cover bg-center bg-no-repeat bg-additional-50
@@ -264,14 +300,6 @@ function toggleValue(): void {
         );
       }
     }
-  }
-
-  &__tooltip {
-    @apply absolute inset-0 block;
-  }
-
-  &__input {
-    @apply z-[1] absolute inset-0 opacity-0;
   }
 
   &__color {
