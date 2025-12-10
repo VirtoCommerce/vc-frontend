@@ -351,7 +351,7 @@
           "settings": "Настройки",
           "currency": "Валюта",
           "search_bar": {
-            "input_placeholder": "Введите ключевое слово, товар, модель или номер запчасти"
+            "input_placeholder": "Поиск"
           },
           "view_all_catalog": "Просмотреть все товары в категории"
         },
@@ -406,9 +406,9 @@
         "categories_label": "Категории",
         "products_label": "Товары",
         "pages_label": "Страницы",
-        "suggestions_and_history_label": "Предложения и история",
+        "suggestions_and_history_label": "Подсказки",
         "no_results": "По вашему запросу {keyword} ничего не найдено",
-        "enter_keyword_placeholder": "Поиск по магазину",
+        "enter_keyword_placeholder": "Поиск",
         "enter_keyword_placeholder_category": "Искать в {category}",
         "search_button": "Искать",
         "view_all_results_button": "Просмотреть все результаты ({total})",

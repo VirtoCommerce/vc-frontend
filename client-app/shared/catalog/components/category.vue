@@ -217,14 +217,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  computedEager,
-  useBreakpoints,
-  useElementVisibility,
-  useLocalStorage,
-  watchDebounced,
-  whenever,
-} from "@vueuse/core";
+import { useBreakpoints, useElementVisibility, useLocalStorage, watchDebounced, whenever } from "@vueuse/core";
 import omit from "lodash/omit";
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -462,7 +455,7 @@ function getSelectedAddressArgs(): {
   };
 }
 
-const searchParams = computedEager<ProductsSearchParamsType>(() => ({
+const searchParams = computed<ProductsSearchParamsType>(() => ({
   ...getSelectedAddressArgs(),
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
@@ -580,6 +573,10 @@ function isRouteLocationRaw(value: unknown): value is RouteLocationRaw {
 whenever(() => !isMobile.value, hideFiltersSidebar);
 const { addScopeItem, removeScopeItemByType, setQueryScope, preparingScope } = useSearchScore();
 
+const { clearSearchResults } = useSearchBar();
+
+const isMobileLg = breakpoints.smaller("lg");
+
 watch(
   () => props.categoryId,
   async (categoryId) => {
@@ -665,8 +662,6 @@ watchDebounced(
   },
 );
 
-const { clearSearchResults } = useSearchBar();
-
 function changeSearchBarScope(categoryId: string, label?: string) {
   clearCategoryScope();
 
@@ -689,7 +684,10 @@ onBeforeUnmount(() => {
 
 function clearCategoryScope() {
   removeScopeItemByType("category");
-  clearSearchResults();
+
+  if (!isMobileLg.value) {
+    clearSearchResults();
+  }
 }
 
 onMounted(() => {

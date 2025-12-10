@@ -1,5 +1,5 @@
 <template>
-  <VcProductCard view-mode="list">
+  <VcProductCard view-mode="list" :background="false">
     <template #media>
       <router-link :to="link" class="contents" @click="$emit('linkClick', $event)">
         <VcProductImage :img-src="product.imgSrc" :alt="product.name" size-suffix="sm" lazy />
