@@ -183,6 +183,7 @@
       "email_not_unique": "このメールは既に登録済みです",
       "max_length": "{max}文字以内で入力してください",
       "creating_order_error": "注文作成エラー",
+      "payment_processing_error": "支払い処理中にエラーが発生しました",
       "item_can_t_be_purchased": "購入できません",
       "item_is_out_of_stock": "在庫切れです",
       "invalid_value": "無効な値",
@@ -742,6 +743,7 @@
       },
       "billing_details_section": {
         "title": "支払い情報",
+        "payment_card": "支払いカード",
         "labels": {
           "billing_address": "請求先住所",
           "payment_method": "支払い方法",

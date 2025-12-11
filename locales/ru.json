@@ -183,6 +183,7 @@
       "email_not_unique": "Эта эл.почта уже зарегистрирован у нас",
       "max_length": "Это поле не должно содержать более чем {max} символов",
       "creating_order_error": "Ошибка при создании заказа",
+      "payment_processing_error": "Ошибка при обработке платежа",
       "item_can_t_be_purchased": "Этот товар нельзя приобрести",
       "item_is_out_of_stock": "Этот товар отсутствует на складе",
       "invalid_value": "Неверное значение",
@@ -742,6 +743,7 @@
       },
       "billing_details_section": {
         "title": "Детали оплаты",
+        "payment_card": "Платежная карта",
         "labels": {
           "billing_address": "Платежный адрес",
           "payment_method": "Способ оплаты",
