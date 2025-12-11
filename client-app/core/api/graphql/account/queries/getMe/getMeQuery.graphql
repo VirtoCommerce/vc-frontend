@@ -1,3 +1,5 @@
+#import "../../../fragments/organizationFields.graphql"
+
 query GetMe($userId: String) {
   me(userId: $userId) {
     id
@@ -27,8 +29,7 @@ query GetMe($userId: String) {
         totalCount
       }
       organization {
-        id
-        name
+        ...organizationFields
       }
     }
     operator {
