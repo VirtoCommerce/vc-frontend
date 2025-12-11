@@ -408,7 +408,7 @@ function toggleValue(value: string | string[]): void {
       currentValue.splice(index, 1);
       internalModelValue.value = currentValue;
     } else {
-      internalModelValue.value = [...currentValue, valueToSet] as string[];
+      internalModelValue.value = [...currentValue, valueToSet];
     }
   } else {
     internalModelValue.value = valueToSet;
