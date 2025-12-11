@@ -91,7 +91,7 @@
       icon="outline-stock"
       :variant="hasActiveFilters || keyword ? 'search' : 'empty'"
     >
-      <template v-if="hasSelectedFacets || keyword" #button>
+      <template v-if="hasActiveFilters || keyword" #button>
         <VcButton prepend-icon="reset" @click="$emit('resetFilterKeyword')">
           {{ $t("pages.catalog.no_products_button") }}
         </VcButton>
@@ -128,7 +128,6 @@ interface IProps {
   fetchingProducts: boolean;
   fixedProductsCount?: number;
   hasActiveFilters: boolean;
-  hasSelectedFacets: boolean;
   keyword?: string;
   itemsPerPage?: number;
   pagesCount: number;

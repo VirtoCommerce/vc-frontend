@@ -195,7 +195,6 @@
           :has-active-filters="
             hasSelectedFilters || localStorageInStock || localStoragePurchasedBefore || !!localStorageBranches.length
           "
-          :has-selected-facets="hasSelectedFilters"
           :items-per-page="itemsPerPage"
           :pages-count="pagesCount"
           :page-number="currentPage"
@@ -575,6 +574,7 @@ function resetPage() {
 
 async function handleResetFilterKeyword() {
   resetSearchKeyword();
+  void resetFacetAndControlsFilters({ skipPageReset: true });
 
   const back = router.options.history.state?.back;
 

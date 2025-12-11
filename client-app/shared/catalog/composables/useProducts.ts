@@ -276,10 +276,13 @@ export function useProducts(
     }
   }
 
-  async function resetFacetAndControlsFilters() {
+  async function resetFacetAndControlsFilters(resetOptions?: { skipPageReset?: boolean }) {
+    const skipPageReset = resetOptions?.skipPageReset ?? false;
     await resetFacetFilters({ skipPageReset: true });
     await resetControls({ skipPageReset: true });
-    void resetCurrentPage();
+    if (!skipPageReset) {
+      void resetCurrentPage();
+    }
   }
 
   async function preserveUserQuery() {
