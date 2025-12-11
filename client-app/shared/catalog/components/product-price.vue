@@ -1,108 +1,121 @@
 <template>
-  <template v-if="product.hasVariations && templateLayout === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c">
-    <div class="flex justify-between gap-x-2 text-base font-bold">
-      <div>
-        {{ $t("pages.product.price_label") }}
-      </div>
+  <div class="product-price">
+    <template v-if="product.hasVariations && templateLayout === PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES.b2c">
+      <div class="product-price__header">
+        <div class="product-price__label">
+          {{ $t("pages.product.price_label") }}
+        </div>
 
-      <Price v-if="variationResult && variationResult.price?.actual?.amount > 0" :value="variationResult.price" />
-
-      <VcTooltip v-else>
-        <template #trigger>
-          <span class="flex items-center gap-1 text-primary-500">
-            <VcIcon name="information-circle" size="xs" />
-
-            {{ $t("common.labels.not_available") }}
-          </span>
-        </template>
-
-        <template #content>
-          <span v-if="variationResult">
-            {{ $t("shared.catalog.product_details.options.price_unavailable") }}
-          </span>
-
-          <span v-else>
-            {{ $t("shared.catalog.product_details.options.select_to_proceed") }}
-          </span>
-        </template>
-      </VcTooltip>
-    </div>
-
-    <div class="mt-4 print:hidden">
-      <component
-        v-if="variationResult && variationResult.price?.actual?.amount > 0"
-        :is="product.isConfigurable ? AddToCart : AddToCartSimple"
-        :product="variationResult"
-      >
-        <InStock
-          :is-in-stock="variationResult.availabilityData?.isInStock"
-          :is-digital="isDigital"
-          :quantity="variationResult.availabilityData?.availableQuantity"
+        <Price
+          v-if="variationResult && variationResult.price?.actual?.amount > 0"
+          class="product-price__value"
+          :value="variationResult.price"
         />
 
-        <CountInCart :product-id="variationResult.id" />
-      </component>
+        <VcTooltip v-else>
+          <template #trigger>
+            <span class="product-price__unavailable">
+              <VcIcon name="information-circle" size="xs" aria-hidden="true" />
 
-      <div v-else>
-        <VcButton
-          class="w-full cursor-not-allowed"
-          disabled
-          :title="$t('shared.catalog.product_details.options.select_to_proceed')"
+              {{ $t("common.labels.not_available") }}
+            </span>
+          </template>
+
+          <template #content>
+            <span v-if="variationResult">
+              {{ $t("shared.catalog.product_details.options.price_unavailable") }}
+            </span>
+
+            <span v-else>
+              {{ $t("shared.catalog.product_details.options.select_to_proceed") }}
+            </span>
+          </template>
+        </VcTooltip>
+      </div>
+
+      <div class="product-price__actions">
+        <component
+          v-if="variationResult && variationResult.price?.actual?.amount > 0"
+          :is="product.isConfigurable ? AddToCart : AddToCartSimple"
+          :product="variationResult"
         >
-          {{ $t("ui_kit.buttons.add_to_cart") }}
-        </VcButton>
+          <InStock
+            :is-in-stock="variationResult.availabilityData?.isInStock"
+            :is-digital="isDigital"
+            :quantity="variationResult.availabilityData?.availableQuantity"
+          />
 
-        <VcAlert v-if="variationResult" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
-          {{ $t("shared.catalog.product_details.options.price_unavailable") }}
-        </VcAlert>
+          <CountInCart :product-id="variationResult.id" />
+        </component>
+
+        <div v-else>
+          <VcButton
+            class="product-price__disabled-button"
+            disabled
+            :title="$t('shared.catalog.product_details.options.select_to_proceed')"
+          >
+            {{ $t("ui_kit.buttons.add_to_cart") }}
+          </VcButton>
+
+          <VcAlert
+            v-if="variationResult"
+            class="product-price__alert"
+            color="warning"
+            size="sm"
+            variant="solid-light"
+            icon
+          >
+            {{ $t("shared.catalog.product_details.options.price_unavailable") }}
+          </VcAlert>
+        </div>
       </div>
-    </div>
-  </template>
+    </template>
 
-  <template v-else-if="product.hasVariations">
-    <div class="flex flex-wrap justify-between gap-x-2 text-base font-bold">
-      <span>
-        {{ $t("pages.product.variations_in_cart_label") }}
-      </span>
+    <template v-else-if="product.hasVariations">
+      <div class="product-price__variations">
+        <span class="product-price__variations-label">
+          {{ $t("pages.product.variations_in_cart_label") }}
+        </span>
 
-      <span class="text-[--price-color]">
-        {{ variationsInCartQty }}
-      </span>
-    </div>
-
-    <VcButton class="mt-4 print:hidden" :to="{ name: ROUTES.CART.NAME }" full-width>
-      {{ $t("pages.product.view_cart_button") }}
-    </VcButton>
-  </template>
-
-  <template v-else>
-    <div class="flex items-center justify-between gap-x-2">
-      <div class="text-base font-bold">
-        {{ $t("pages.product.price_label") }}
+        <span class="product-price__variations-count">
+          {{ variationsInCartQty }}
+        </span>
       </div>
 
-      <Price :loading="configuredLineItemLoading" :value="price" />
-    </div>
+      <VcButton class="product-price__cart-button" :to="{ name: ROUTES.CART.NAME }" full-width>
+        {{ $t("pages.product.view_cart_button") }}
+      </VcButton>
+    </template>
 
-    <div class="mt-4 print:hidden">
-      <ExtensionPoint
-        v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.sidebarButton, product)"
-        :name="EXTENSION_NAMES.productPage.sidebarButton"
-        category="productPage"
-        :product="product"
-      />
+    <template v-else>
+      <div class="product-price__header">
+        <div class="product-price__label">
+          {{ $t("pages.product.price_label") }}
+        </div>
 
-      <component v-else :is="product.isConfigurable ? AddToCart : AddToCartSimple" :product="product">
-        <InStock
-          :is-in-stock="product.availabilityData?.isInStock"
-          :is-digital="isDigital"
-          :quantity="product.availabilityData?.availableQuantity"
+        <Price class="product-price__value" :loading="configuredLineItemLoading" :value="price" />
+      </div>
+
+      <div class="product-price__actions">
+        <ExtensionPoint
+          v-if="$canRenderExtensionPoint('productPage', EXTENSION_NAMES.productPage.sidebarButton, product)"
+          :name="EXTENSION_NAMES.productPage.sidebarButton"
+          category="productPage"
+          :product="product"
         />
 
-        <CountInCart :product-id="product.id" />
-      </component>
-    </div>
-  </template>
+        <component v-else :is="product.isConfigurable ? AddToCart : AddToCartSimple" :product="product">
+          <InStock
+            :is-in-stock="product.availabilityData?.isInStock"
+            :is-digital="isDigital"
+            :quantity="product.availabilityData?.availableQuantity"
+          />
+
+          <CountInCart :product-id="product.id" />
+        </component>
+      </div>
+    </template>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -160,3 +173,43 @@ const price = computed<PriceType | { actual: MoneyType; list: MoneyType } | unde
   return props.product.price;
 });
 </script>
+
+<style lang="scss" scoped>
+.product-price {
+  &__header {
+    @apply flex items-center justify-between gap-x-2;
+  }
+
+  &__label {
+    @apply text-base font-bold;
+  }
+
+  &__unavailable {
+    @apply flex items-center gap-1 text-primary-500;
+  }
+
+  &__actions {
+    @apply mt-4 print:hidden;
+  }
+
+  &__disabled-button {
+    @apply w-full cursor-not-allowed;
+  }
+
+  &__alert {
+    @apply mt-4;
+  }
+
+  &__variations {
+    @apply flex flex-wrap justify-between gap-x-2 text-base font-bold;
+  }
+
+  &__variations-count {
+    @apply text-[--price-color];
+  }
+
+  &__cart-button {
+    @apply mt-4 print:hidden;
+  }
+}
+</style>
