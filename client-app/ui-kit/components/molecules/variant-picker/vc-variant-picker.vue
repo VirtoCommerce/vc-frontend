@@ -11,33 +11,57 @@
     ]"
   >
     <label class="vc-variant-picker__container">
-      <span v-if="type === 'color'" class="vc-variant-picker__color" />
+      <input
+        :checked="checked"
+        class="vc-variant-picker__input"
+        :type="inputType"
+        :aria-label="tooltip ?? inputValue"
+        :name="name"
+        :value="inputValue"
+        :data-test-id="testId"
+      />
 
-      <VcImage v-else-if="type === 'image'" :src="image" :alt="value" class="vc-variant-picker__img" />
-
-      <span v-else class="vc-variant-picker__text">
-        {{ value }}
-      </span>
-
-      <VcTooltip :disabled="!tooltip && !$slots.tooltip" class="vc-variant-picker__tooltip">
-        <template #default="{ triggerProps }">
-          <input
-            :checked="checked"
-            class="vc-variant-picker__input"
-            :type="multiple ? 'checkbox' : 'radio'"
-            :aria-label="tooltip ?? value"
-            :name="name"
-            :value="value"
-            :data-test-id="testId"
+      <VcTooltip
+        class="vc-variant-picker__tooltip"
+        :disabled="tooltipDisabled"
+        :enable-teleport="tooltipEnableTeleport"
+        :teleport-selector="tooltipTeleportSelector"
+      >
+        <template #default="{ triggerProps, tooltipId }">
+          <button
+            type="button"
+            class="vc-variant-picker__trigger"
             :tabindex="tabindex ?? '0'"
-            v-bind="triggerProps"
+            :aria-label="accessibleName"
+            v-bind="tooltipTriggerEvents(triggerProps, tooltipId)"
             @keydown.enter.prevent="toggleValue"
             @keydown.space.prevent="toggleValue"
             @click="toggleValue"
-          />
+          >
+            <span v-if="type === 'color' && !isMultiColor" class="vc-variant-picker__color" />
+
+            <span
+              v-else-if="type === 'color' && isMultiColor"
+              class="vc-variant-picker__color-grid"
+              :data-count="Math.min(colorsList.length, 4)"
+            >
+              <span
+                v-for="(colorValue, index) in colorsList"
+                :key="index"
+                class="vc-variant-picker__color-item"
+                :style="{ backgroundColor: colorValue }"
+              />
+            </span>
+
+            <VcImage v-else-if="type === 'image'" :src="image" :alt="displayValue" class="vc-variant-picker__img" />
+
+            <span v-else class="vc-variant-picker__text">
+              {{ displayValue }}
+            </span>
+          </button>
         </template>
 
-        <template #content>
+        <template v-if="!tooltipDisabled" #content>
           <slot name="tooltip">{{ tooltip }}</slot>
         </template>
       </VcTooltip>
@@ -46,55 +70,114 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
-import { getColorValue } from "@/ui-kit/utilities";
+import isEqual from "lodash/isEqual";
+import omit from "lodash/omit";
+import { computed, inject, useSlots } from "vue";
+import { getColorValue, serialize } from "@/ui-kit/utilities";
+
+interface IEmits {
+  (event: "update:modelValue", value: string | string[]): void;
+  (event: "change", value: string | string[]): void;
+}
 
 interface IProps {
   type?: VcVariantPickerType;
   modelValue?: string | string[];
-  value: string;
+  value: string | string[];
   size?: VcVariantPickerSizeType;
   name?: string;
   isAvailable?: boolean;
   tooltip?: string;
+  tooltipEnableTeleport?: boolean;
+  tooltipTeleportSelector?: string;
   tabindex?: string | number;
   testId?: string;
 }
 
+const emit = defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
   type: "color",
   size: "md",
-  multiple: false,
 });
 
-const model = defineModel<IProps["modelValue"]>();
+const slots = useSlots();
 
-const multiple = computed(() => Array.isArray(model.value));
-const checked = computed(() => {
-  if (multiple.value) {
-    return Array.isArray(model.value) && model.value.includes(props.value);
-  } else {
-    return model.value === props.value;
+const groupContext = inject<VcVariantPickerGroupContextType | null>("variantPickerGroupContext", null);
+
+const modelValue = computed(() => groupContext?.modelValue.value ?? props.modelValue);
+const multiple = groupContext?.multiple;
+const size = computed(() => groupContext?.size.value ?? props.size);
+const type = computed(() => groupContext?.type.value ?? props.type);
+const name = computed(() => groupContext?.name.value ?? props.name);
+
+const normalizedValue = computed(() => (Array.isArray(props.value) ? props.value : [props.value]));
+
+const colorsList = computed(() => {
+  if (type.value !== "color") {
+    return [];
   }
+
+  const allColors = normalizedValue.value.map((v) => getColorValue(v)).filter(Boolean);
+  return allColors.slice(0, 4);
 });
 
-const color = computed(() => (props.type === "color" ? getColorValue(props.value) : undefined));
-const image = computed(() => (props.type === "image" ? props.value : ""));
+const isMultiColor = computed(
+  () => type.value === "color" && Array.isArray(props.value) && colorsList.value.length > 1,
+);
+
+const displayValue = computed(() => normalizedValue.value[0]);
+
+const inputType = computed(() => (multiple?.value ? "checkbox" : "radio"));
+const inputValue = computed(() => serialize(props.value));
+
+const checked = computed(() => {
+  if (!modelValue.value) {
+    return false;
+  }
+
+  if (multiple?.value) {
+    return Array.isArray(modelValue.value) && modelValue.value.some((v) => isEqual(v, props.value));
+  }
+
+  return isEqual(modelValue.value, props.value);
+});
+
+const color = computed(() => (type.value === "color" && !isMultiColor.value ? colorsList.value[0] : undefined));
+
+const image = computed(() => (type.value === "image" ? displayValue.value : ""));
+
+const tooltipDisabled = computed(() => !props.tooltip && !slots.tooltip);
+
+const accessibleName = computed(() => {
+  if (props.tooltip) {
+    return props.tooltip;
+  }
+
+  if (type.value === "text") {
+    return displayValue.value;
+  }
+
+  return inputValue.value;
+});
+
+function tooltipTriggerEvents(triggerProps: Record<string, unknown>, tooltipId?: string): Record<string, unknown> {
+  const events = omit(triggerProps, ["role", "aria-haspopup", "aria-expanded", "aria-controls"]);
+
+  return {
+    ...events,
+    "aria-describedby": tooltipDisabled.value ? undefined : tooltipId,
+  };
+}
 
 function toggleValue(): void {
-  if (multiple.value) {
-    const currentValue = Array.isArray(model.value) ? model.value : [];
-    const index = currentValue.indexOf(props.value);
+  const valueToSet = Array.isArray(props.value) ? [...props.value] : props.value;
 
-    if (index > -1) {
-      const newValue = [...currentValue];
-      newValue.splice(index, 1);
-      model.value = newValue;
-    } else {
-      model.value = [...currentValue, props.value];
-    }
+  if (groupContext) {
+    groupContext.toggleValue(valueToSet);
   } else {
-    model.value = props.value;
+    emit("update:modelValue", valueToSet);
+    emit("change", valueToSet);
   }
 }
 </script>
@@ -171,7 +254,11 @@ function toggleValue(): void {
     }
   }
 
-  &__container {
+  &__input {
+    @apply hidden;
+  }
+
+  &__trigger {
     @apply relative flex items-stretch justify-center py-0.5
     min-h-[--size] min-w-[--size]
     bg-cover bg-center bg-no-repeat bg-additional-50
@@ -215,16 +302,41 @@ function toggleValue(): void {
     }
   }
 
-  &__tooltip {
-    @apply absolute inset-0 block;
-  }
-
-  &__input {
-    @apply z-[1] absolute inset-0 opacity-0;
-  }
-
   &__color {
     @apply grow rounded-[calc(var(--radius)-2px)] bg-[--color];
+  }
+
+  &__color-grid {
+    @apply grow grid rounded-[calc(var(--radius)-2px)] overflow-hidden;
+
+    &[data-count="0"],
+    &[data-count="1"] {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+    }
+
+    &[data-count="2"] {
+      grid-template-rows: repeat(2, 1fr);
+      grid-template-columns: 1fr;
+    }
+
+    &[data-count="3"] {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+
+      .vc-variant-picker__color-item:first-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    &[data-count="4"] {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }
+  }
+
+  &__color-item {
+    @apply min-h-0 min-w-0;
   }
 
   &__img {
