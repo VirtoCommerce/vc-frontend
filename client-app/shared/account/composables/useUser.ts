@@ -373,9 +373,7 @@ export function _useUser() {
   return {
     isAuthenticated,
     isCorporateMember,
-    isMultiOrganization: computed(
-      () => user.value?.contact?.organizations?.totalCount && user.value?.contact?.organizations?.totalCount > 1,
-    ),
+    isMultiOrganization: computed(() => (user.value?.contact?.organizations?.totalCount ?? 0) > 1),
     isOrganizationMaintainer: computed(
       () =>
         user.value?.roles?.some((role) => role.name.toLowerCase() === ORGANIZATION_MAINTAINER.name.toLowerCase()) ??
