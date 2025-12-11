@@ -306,7 +306,7 @@ async function importComposable() {
 }
 
 describe("useThemeContext - preset loading functions", () => {
-  const originalFetch = global.fetch;
+  const originalFetch = globalThis.fetch;
 
   beforeEach(() => {
     vi.resetModules();
@@ -316,7 +316,7 @@ describe("useThemeContext - preset loading functions", () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    global.fetch = originalFetch;
+    globalThis.fetch = originalFetch;
   });
 
   describe("getPredefinedPreset", () => {
@@ -348,20 +348,20 @@ describe("useThemeContext - preset loading functions", () => {
     it("fetches preset from server when not in cache", async () => {
       const { loadPreset } = await importComposable();
 
-      global.fetch = vi.fn().mockResolvedValue({
+      globalThis.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: async () => hoisted.mockPreset,
       });
 
       const result = await loadPreset("custom-preset");
       expect(result).toEqual(hoisted.mockPreset);
-      expect(global.fetch).toHaveBeenCalledWith("/assets/presets/custom-preset.json");
+      expect(globalThis.fetch).toHaveBeenCalledWith("/assets/presets/custom-preset.json");
     });
 
     it("returns cached preset when available", async () => {
       const { loadPreset } = await importComposable();
 
-      global.fetch = vi.fn().mockResolvedValue({
+      globalThis.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: async () => hoisted.mockPreset,
       });
@@ -375,14 +375,14 @@ describe("useThemeContext - preset loading functions", () => {
       // Second call should use cache
       const result = await loadPreset("cached-preset");
       expect(result).toEqual(hoisted.mockPreset);
-      expect(global.fetch).not.toHaveBeenCalled();
+      expect(globalThis.fetch).not.toHaveBeenCalled();
     });
 
     it("returns null when fetch fails", async () => {
       const { loadPreset } = await importComposable();
 
       const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-      global.fetch = vi.fn().mockRejectedValue(new Error("Network error"));
+      globalThis.fetch = vi.fn().mockRejectedValue(new Error("Network error"));
 
       const result = await loadPreset("failing-preset");
       expect(result).toBeNull();
@@ -397,7 +397,7 @@ describe("useThemeContext - preset loading functions", () => {
     it("returns null when response is not ok", async () => {
       const { loadPreset } = await importComposable();
 
-      global.fetch = vi.fn().mockResolvedValue({
+      globalThis.fetch = vi.fn().mockResolvedValue({
         ok: false,
       });
 
@@ -410,31 +410,31 @@ describe("useThemeContext - preset loading functions", () => {
     it("returns predefined preset when it exists", async () => {
       const { getPreset } = await importComposable();
 
-      global.fetch = vi.fn();
+      globalThis.fetch = vi.fn();
 
       const result = await getPreset("default");
       expect(result).not.toBeNull();
       expect(result?.color_primary_50).toBe("#default");
-      expect(global.fetch).not.toHaveBeenCalled();
+      expect(globalThis.fetch).not.toHaveBeenCalled();
     });
 
     it("returns dynamically loaded preset when not predefined", async () => {
       const { getPreset } = await importComposable();
 
-      global.fetch = vi.fn().mockResolvedValue({
+      globalThis.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: async () => hoisted.mockPreset,
       });
 
       const result = await getPreset("dynamic-preset");
       expect(result).toEqual(hoisted.mockPreset);
-      expect(global.fetch).toHaveBeenCalledWith("/assets/presets/dynamic-preset.json");
+      expect(globalThis.fetch).toHaveBeenCalledWith("/assets/presets/dynamic-preset.json");
     });
 
     it("returns null when preset is not found anywhere", async () => {
       const { getPreset } = await importComposable();
 
-      global.fetch = vi.fn().mockResolvedValue({
+      globalThis.fetch = vi.fn().mockResolvedValue({
         ok: false,
       });
 
@@ -448,7 +448,7 @@ describe("useThemeContext - preset loading functions", () => {
       const { useThemeContext } = await importComposable();
       const { setThemeContext, addPresetToThemeContext, themeContext } = useThemeContext();
 
-      global.fetch = vi.fn();
+      globalThis.fetch = vi.fn();
 
       // Initialize theme context
       setThemeContext({
@@ -462,14 +462,14 @@ describe("useThemeContext - preset loading functions", () => {
 
       expect(themeContext.value.preset).not.toBeNull();
       expect(themeContext.value.preset?.color_primary_50).toBe("#coffee");
-      expect(global.fetch).not.toHaveBeenCalled();
+      expect(globalThis.fetch).not.toHaveBeenCalled();
     });
 
     it("falls back to current preset when requested preset is not found", async () => {
       const { useThemeContext } = await importComposable();
       const { setThemeContext, addPresetToThemeContext, themeContext } = useThemeContext();
 
-      global.fetch = vi.fn().mockResolvedValue({
+      globalThis.fetch = vi.fn().mockResolvedValue({
         ok: false,
       });
 
@@ -485,7 +485,7 @@ describe("useThemeContext - preset loading functions", () => {
 
       expect(themeContext.value.preset).not.toBeNull();
       expect(themeContext.value.preset?.color_primary_50).toBe("#default");
-      expect(global.fetch).toHaveBeenCalledWith("/assets/presets/non-existent-preset.json");
+      expect(globalThis.fetch).toHaveBeenCalledWith("/assets/presets/non-existent-preset.json");
     });
 
     it("falls back to default preset when both requested and current presets are not found", async () => {
@@ -493,7 +493,7 @@ describe("useThemeContext - preset loading functions", () => {
       const { setThemeContext, addPresetToThemeContext, themeContext } = useThemeContext();
 
       // Mock fetch to fail for all requests
-      global.fetch = vi.fn().mockResolvedValue({
+      globalThis.fetch = vi.fn().mockResolvedValue({
         ok: false,
       });
 
@@ -534,7 +534,7 @@ describe("useThemeContext - preset loading functions", () => {
     it("prioritizes predefined presets over dynamic loading", async () => {
       const { getPredefinedPreset, getPreset } = await importComposable();
 
-      global.fetch = vi.fn().mockResolvedValue({
+      globalThis.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: async () => hoisted.mockPreset,
       });
@@ -547,13 +547,13 @@ describe("useThemeContext - preset loading functions", () => {
       const result = await getPreset("default");
       expect(result).not.toBeNull();
       expect(result?.color_primary_50).toBe("#default");
-      expect(global.fetch).not.toHaveBeenCalled();
+      expect(globalThis.fetch).not.toHaveBeenCalled();
     });
 
     it("loads preset dynamically when not predefined", async () => {
       const { getPredefinedPreset, loadPreset } = await importComposable();
 
-      global.fetch = vi.fn().mockResolvedValue({
+      globalThis.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: async () => hoisted.mockPreset,
       });
@@ -563,14 +563,14 @@ describe("useThemeContext - preset loading functions", () => {
 
       const dynamicResult = await loadPreset("dynamic-only");
       expect(dynamicResult).toEqual(hoisted.mockPreset);
-      expect(global.fetch).toHaveBeenCalledWith("/assets/presets/dynamic-only.json");
+      expect(globalThis.fetch).toHaveBeenCalledWith("/assets/presets/dynamic-only.json");
     });
 
     it("handles loading failures gracefully", async () => {
       const { loadPreset } = await importComposable();
 
       const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-      global.fetch = vi.fn().mockRejectedValue(new Error("Network error"));
+      globalThis.fetch = vi.fn().mockRejectedValue(new Error("Network error"));
 
       const result = await loadPreset("completely-missing");
       expect(result).toBeNull();
