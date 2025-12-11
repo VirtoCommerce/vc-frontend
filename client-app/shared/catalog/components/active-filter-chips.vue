@@ -21,6 +21,12 @@
       </template>
     </template>
 
+    <template v-for="control in controls" :key="control.value">
+      <VcChip color="secondary" closable @close="$emit('cancelControl', control.value)">
+        {{ control.label }}
+      </VcChip>
+    </template>
+
     <slot name="actions">
       <VcChip color="secondary" variant="outline" clickable @click="$emit('resetFilters')">
         <span>{{ $t("common.buttons.reset_filters") }}</span>
@@ -35,15 +41,23 @@
 import { toRefs } from "vue";
 import { getFormattedLabel } from "@/core/utilities";
 import type { SearchProductFilterRangeValue, SearchProductFilterResult } from "@/core/api/graphql/types.ts";
+import type { CatalogControl } from "@/shared/catalog/constants/catalog";
 
 interface IEmits {
   (event: "resetFilters"): void;
   (event: "applyFilters", value: SearchProductFilterResult[]): void;
+  (event: "cancelControl", value: CatalogControl): void;
+}
+
+interface IControl {
+  label: string;
+  value: CatalogControl;
 }
 
 interface IProps {
   facetsToHide?: string[];
   filters?: SearchProductFilterResult[];
+  controls?: IControl[];
 }
 
 const emit = defineEmits<IEmits>();

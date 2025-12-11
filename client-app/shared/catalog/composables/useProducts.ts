@@ -241,7 +241,8 @@ export function useProducts(
     void resetCurrentPage();
   }
 
-  async function resetFacetFilters() {
+  async function resetFacetFilters(resetOptions?: { skipPageReset?: boolean }) {
+    const skipPageReset = resetOptions?.skipPageReset ?? false;
     await new Promise((resolve) => setTimeout(resolve, 0));
     // needs to wait for the router to update the query params, because of race condition on setting query params with useRouteQueryParam composable
 
@@ -250,6 +251,34 @@ export function useProducts(
 
     productsFilters.value.filters = [];
 
+    if (!skipPageReset) {
+      void resetCurrentPage();
+    }
+  }
+
+  async function resetControls(resetOptions?: { skipPageReset?: boolean }) {
+    const skipPageReset = resetOptions?.skipPageReset ?? false;
+    localStorageInStock.value = false;
+    localStoragePurchasedBefore.value = false;
+    localStorageBranches.value = [];
+
+    productsFilters.value = {
+      ...productsFilters.value,
+      branches: [],
+      inStock: false,
+      purchasedBefore: false,
+    };
+
+    await preserveUserQuery();
+
+    if (!skipPageReset) {
+      void resetCurrentPage();
+    }
+  }
+
+  async function resetFacetAndControlsFilters() {
+    await resetFacetFilters({ skipPageReset: true });
+    await resetControls({ skipPageReset: true });
     void resetCurrentPage();
   }
 
@@ -531,6 +560,8 @@ export function useProducts(
     fetchProducts,
     hideFiltersSidebar,
     openBranchesModal,
+    resetFacetAndControlsFilters,
+    resetControls,
     resetFacetFilters,
     resetSearchKeyword,
     showFiltersSidebar,

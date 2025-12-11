@@ -154,18 +154,20 @@
           />
 
           <ActiveFilterChips
-            v-if="hasSelectedFilters || isResetPageButtonShown"
+            v-if="hasSelectedFilters || isResetPageButtonShown || activeControls.length"
             :filters="productsFilters.filters"
             :facets-to-hide="normalizedFacetsToHide"
+            :controls="activeControls"
             @apply-filters="applyFiltersOnly"
+            @cancel-control="cancelControl"
           >
             <template #actions>
               <VcChip
-                v-if="hasSelectedFilters"
+                v-if="hasSelectedFilters || activeControls.length"
                 color="secondary"
                 variant="outline"
                 clickable
-                @click="resetFacetFilters"
+                @click="resetFacetAndControlsFilters"
               >
                 <span>{{ $t("common.buttons.reset_filters") }}</span>
 
@@ -241,7 +243,7 @@ import {
 } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
-import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
+import { CATALOG_PAGINATION_MODES, CatalogControl } from "@/shared/catalog/constants/catalog";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar.ts";
 import { useSearchScore } from "@/shared/layout/composables/useSearchScore.ts";
 import { LOCAL_ID_PREFIX, useShipToLocation } from "@/shared/ship-to-location/composables";
@@ -367,6 +369,7 @@ const {
   openBranchesModal,
 
   resetFacetFilters,
+  resetFacetAndControlsFilters,
   resetSearchKeyword,
   showFiltersSidebar,
 
@@ -423,6 +426,31 @@ const showProductsCount = computed(() => {
   return !fetchingProducts.value && !props.hideTotal && !props.fixedProductsCount && !emptyViewSearchOnly.value;
 });
 
+const activeControls = computed(() => {
+  const controls = [];
+
+  if (localStorageInStock.value) {
+    controls.push({
+      label: t("pages.catalog.instock_filter_card.checkbox_label"),
+      value: CatalogControl.InStock,
+    });
+  }
+  if (localStoragePurchasedBefore.value) {
+    controls.push({
+      label: t("pages.catalog.purchased_before_filter_card.checkbox_label"),
+      value: CatalogControl.PurchasedBefore,
+    });
+  }
+  if (localStorageBranches.value.length) {
+    controls.push({
+      label: `${t("pages.catalog.branch_availability_filter_card.available_in")} ${t("pages.catalog.branch_availability_filter_card.branches", { n: localStorageBranches.value.length })}`,
+      value: CatalogControl.Branches,
+    });
+  }
+
+  return controls;
+});
+
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
 
@@ -440,6 +468,18 @@ function getTranslatedProductSortingList() {
 }
 
 const translatedProductSortingList = computed(() => getTranslatedProductSortingList());
+
+function cancelControl(control: CatalogControl) {
+  if (control === CatalogControl.InStock) {
+    localStorageInStock.value = false;
+  } else if (control === CatalogControl.PurchasedBefore) {
+    localStoragePurchasedBefore.value = false;
+  } else if (control === CatalogControl.Branches) {
+    localStorageBranches.value = [];
+  }
+
+  void fetchProducts();
+}
 
 function getSelectedAddressArgs(): {
   selectedAddressId: string | undefined;
