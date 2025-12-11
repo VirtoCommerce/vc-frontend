@@ -183,6 +183,7 @@
       "email_not_unique": "Denne e-postadressen er allerede registrert hos oss",
       "max_length": "Dette feltet kan ikke inneholde flere enn {max} tegn",
       "creating_order_error": "Feil ved opprettelse av bestilling",
+      "payment_processing_error": "Feil under betalingsbehandling",
       "item_can_t_be_purchased": "Dette produktet kan ikke kjøpes",
       "item_is_out_of_stock": "Dette produktet er utsolgt",
       "invalid_value": "Ugyldig verdi",
@@ -741,6 +742,7 @@
       },
       "billing_details_section": {
         "title": "Faktureringsdetaljer",
+        "payment_card": "Betalingskort",
         "labels": {
           "billing_address": "Fakturaadresse",
           "payment_method": "Betalingsmetode",
