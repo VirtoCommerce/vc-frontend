@@ -4,4 +4,5 @@ fragment paymentMethod on PaymentMethodType {
   description
   logoUrl
   paymentMethodGroupType
+  allowCartPayment
 }
