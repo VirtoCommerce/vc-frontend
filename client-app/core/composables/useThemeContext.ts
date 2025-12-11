@@ -91,9 +91,7 @@ function _useThemeContext() {
       preset = await getPreset(presetNameToFileName(defaultPresetName));
     }
 
-    if (!preset) {
-      preset = presets.default;
-    }
+    preset ??= presets.default;
 
     if (preset) {
       themeContext.value.preset = preset;
