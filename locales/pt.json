@@ -183,6 +183,7 @@
       "email_not_unique": "Este e-mail já está registrado conosco",
       "max_length": "Este campo não pode conter mais de {max} caracteres",
       "creating_order_error": "Erro ao criar um pedido",
+      "payment_processing_error": "Erro durante o processamento do pagamento",
       "item_can_t_be_purchased": "Este item não pode ser comprado",
       "item_is_out_of_stock": "Este item está esgotado",
       "invalid_value": "Valor inválido",
@@ -741,6 +742,7 @@
       },
       "billing_details_section": {
         "title": "Detalhes de pagamento",
+        "payment_card": "Cartão de pagamento",
         "labels": {
           "billing_address": "Endereço de cobrança",
           "payment_method": "Método de pagamento",

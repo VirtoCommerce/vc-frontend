@@ -2,6 +2,7 @@
   <VcWidget
     :title="$t('shared.checkout.billing_details_section.title')"
     prepend-icon="cash"
+    class="mt-5"
     size="lg"
     data-test-id="checkout.payment-details-section"
   >
@@ -83,27 +84,58 @@
       </div>
     </div>
   </VcWidget>
+
+  <VcWidget
+    v-if="paymentCardVisible"
+    :title="$t('shared.checkout.billing_details_section.payment_card')"
+    prepend-icon="cash"
+    size="lg"
+    class="mt-5"
+  >
+    <Payment hide-payment-button :cart="cart" :payment="currentPaymentMethod!" />
+  </VcWidget>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useUser } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import { AddressSelection } from "@/shared/common";
 import { BOPIS_CODE } from "../composables/useBopis";
+import type { CartType } from "@/core/api/graphql/types";
+import Payment from "@/shared/payment/components/payment.vue";
 
 interface IProps {
   disabled?: boolean;
+  cart?: CartType;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const { allItemsAreDigital, availablePaymentMethods, availableShippingMethods } = useFullCart();
+const { isAuthenticated } = useUser();
 
 const isShippingMethodBopis = computed(() => {
   return (
     shipmentMethod.value?.code === BOPIS_CODE ||
     (availableShippingMethods.value.length === 1 && availableShippingMethods.value[0].code === BOPIS_CODE)
+  );
+});
+
+const currentPaymentMethod = computed(() => {
+  const cart = props.cart;
+  return cart && cart.payments && cart.payments.length > 0 ? cart.payments[0] : null;
+});
+
+const paymentCardVisible = computed(() => {
+  return (
+    isAuthenticated.value &&
+    props.cart &&
+    paymentMethod.value &&
+    paymentMethod.value.allowCartPayment &&
+    currentPaymentMethod.value &&
+    billingAddress.value
   );
 });
 

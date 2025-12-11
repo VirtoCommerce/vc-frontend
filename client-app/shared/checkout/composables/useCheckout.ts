@@ -14,7 +14,7 @@ import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { PaymentMethodGroupType } from "@/shared/payment";
+import { PaymentMethodGroupType, usePayment } from "@/shared/payment";
 import { BOPIS_CODE } from "./useBopis";
 import type {
   CartAddressType,
@@ -105,6 +105,7 @@ export function _useCheckout(cartId?: string) {
   } = useGlobalCheckout();
   const { themeContext } = useThemeContext();
   const { pushHistoricalEvent } = useHistoricalEvents();
+  const { finalizePayment } = usePayment();
 
   const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
   const isShippingMethodBopis = computed(() => shipment.value?.shipmentMethodCode === BOPIS_CODE);
@@ -437,7 +438,24 @@ export function _useCheckout(cartId?: string) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }
 
+    let orderPayed = false;
+
     if (placedOrder.value) {
+      try {
+        const result = await finalizePayment(placedOrder.value);
+        orderPayed = result?.isSuccess ?? false;
+      } catch (e) {
+        Logger.error(`${useCheckout.name}.${createOrderFromCart.name}.paymentProcessor`, e);
+        placedOrder.value = null;
+        notifications.error({
+          text: t("common.messages.payment_processing_error"),
+          duration: 15000,
+          single: true,
+        });
+        loading.value = false;
+        return null;
+      }
+
       await refetchCart();
 
       if (themeContext.value?.storeSettings?.defaultSelectedForCheckout && cart.value?.items.length) {
@@ -454,7 +472,7 @@ export function _useCheckout(cartId?: string) {
         storeId: globals.storeId,
       });
 
-      await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
+      await router.replace({ name: canPayNow.value && !orderPayed ? "CheckoutPayment" : "CheckoutCompleted" });
     } else {
       notifications.error({
         text: t("common.messages.creating_order_error"),
