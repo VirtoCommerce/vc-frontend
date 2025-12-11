@@ -8,8 +8,58 @@ import { BrowserTargetType } from "../enums";
 import type { StoreResponseType } from "../api/graphql/types";
 import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
 
-// Runtime cache for dynamically loaded presets
-const dynamicPresetsCache = new Map<string, IThemeConfigPreset>();
+const loadedPresets = new Map<string, IThemeConfigPreset>();
+
+export function getPredefinedPreset(presetName: string): IThemeConfigPreset | null {
+  if (presetName in presets) {
+    return presets[presetName];
+  }
+
+  return null;
+}
+
+export async function loadPreset(presetName: string): Promise<IThemeConfigPreset | null> {
+  // Check runtime cache for loaded presets
+  if (loadedPresets.has(presetName)) {
+    return loadedPresets.get(presetName)!;
+  }
+
+  // Attempt to fetch preset from public assets folder
+  try {
+    const response = await fetch(`/assets/presets/${presetName}.json`);
+
+    if (response.ok) {
+      const preset = (await response.json()) as IThemeConfigPreset;
+
+      // Cache the loaded preset
+      loadedPresets.set(presetName, preset);
+
+      return preset;
+    }
+  } catch (error) {
+    // Network or parsing errors - log and return null
+    // eslint-disable-next-line no-console
+    console.warn(`Failed to load preset "${presetName}" from /assets/presets/:`, error);
+  }
+
+  return null;
+}
+
+export async function getPreset(presetName: string): Promise<IThemeConfigPreset | null> {
+  // Check predefined bundled presets first
+  const predefinedPreset = getPredefinedPreset(presetName);
+  if (predefinedPreset) {
+    return predefinedPreset;
+  }
+
+  // Attempt to load preset from json file at runtime
+  const loadedPreset = await loadPreset(presetName);
+  if (loadedPreset) {
+    return loadedPreset;
+  }
+
+  return null;
+}
 
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
@@ -41,6 +91,10 @@ function _useThemeContext() {
       preset = await getPreset(presetNameToFileName(defaultPresetName));
     }
 
+    if (!preset) {
+      preset = presets.default;
+    }
+
     if (preset) {
       themeContext.value.preset = preset;
     } else {
@@ -51,45 +105,13 @@ function _useThemeContext() {
   function getThemeConfig() {
     const data = cloneDeep(settingsData) as IThemeConfig;
 
-    if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
+    if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings != null) {
       data.settings.details_browser_target = BrowserTargetType.SELF;
       data.settings.product_page_browser_target = BrowserTargetType.SELF;
       data.settings.cart_page_browser_target = BrowserTargetType.SELF;
     }
 
     return data;
-  }
-
-  async function getPreset(themePresetName: string): Promise<IThemeConfigPreset | null> {
-    // Check statically bundled presets first
-    if (themePresetName in presets) {
-      return presets[themePresetName];
-    }
-
-    // Check runtime cache for dynamically loaded presets
-    if (dynamicPresetsCache.has(themePresetName)) {
-      return dynamicPresetsCache.get(themePresetName)!;
-    }
-
-    // Attempt to fetch preset from public assets folder
-    try {
-      const response = await fetch(`/assets/presets/${themePresetName}.json`);
-
-      if (response.ok) {
-        const preset = (await response.json()) as IThemeConfigPreset;
-
-        // Cache the dynamically loaded preset
-        dynamicPresetsCache.set(themePresetName, preset);
-
-        return preset;
-      }
-    } catch (error) {
-      // Network or parsing errors - log and fall through to default
-      console.warn(`Failed to load preset "${themePresetName}" from /assets/presets/:`, error);
-    }
-
-    // Fall back to default preset
-    return presets.default;
   }
 
   function presetNameToFileName(name: string): string {
