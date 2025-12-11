@@ -302,7 +302,8 @@
       "switch_to_grid_view": "Zur Rasteransicht wechseln",
       "switch_to_list_view": "Zur Listenansicht wechseln",
       "no_image": "Kein Bild verfügbar",
-      "image": "Bild"
+      "image": "Bild",
+      "share_via_opens_in_new_window": "Über {service} teilen (öffnet in neuem Fenster)"
     }
   },
   "shared": {

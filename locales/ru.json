@@ -302,7 +302,8 @@
       "switch_to_grid_view": "Переключить в сетку",
       "switch_to_list_view": "Переключить в список",
       "no_image": "Изображение недоступно",
-      "image": "Изображение"
+      "image": "Изображение",
+      "share_via_opens_in_new_window": "Поделиться через {service} (откроется в новом окне)"
     }
   },
   "shared": {

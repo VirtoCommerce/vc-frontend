@@ -302,7 +302,8 @@
       "switch_to_grid_view": "Vaihda ruudukkonäkymään",
       "switch_to_list_view": "Vaihda listanäkymään",
       "no_image": "Kuvaa ei ole saatavilla",
-      "image": "Kuva"
+      "image": "Kuva",
+      "share_via_opens_in_new_window": "Jaa palvelun {service} kautta (avautuu uuteen ikkunaan)"
     }
   },
   "shared": {
