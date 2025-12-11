@@ -183,6 +183,7 @@
       "email_not_unique": "This email is already registered with us",
       "max_length": "This field must not contain more than {max} characters",
       "creating_order_error": "Error when creating an order",
+      "payment_processing_error": "Error during payment processing",
       "item_can_t_be_purchased": "This item cannot be purchased",
       "item_is_out_of_stock": "This item is out of stock",
       "invalid_value": "Invalid value",
@@ -526,7 +527,7 @@
       "orders_filter": {
         "title": "Orders filters",
         "status_label": "Select order status",
-        "created_date_label": "Create date",
+        "created_date_label": "Created date",
         "start_date_label": "Start date",
         "end_date_label": "End date",
         "apply_button": "@:common.buttons.apply",
@@ -741,6 +742,7 @@
       },
       "billing_details_section": {
         "title": "Payment details",
+        "payment_card": "Payment card",
         "labels": {
           "billing_address": "Billing address",
           "payment_method": "Payment method",
