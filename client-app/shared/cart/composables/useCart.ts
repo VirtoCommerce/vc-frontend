@@ -1,6 +1,6 @@
 import { ApolloError, gql } from "@apollo/client/core";
 import { useApolloClient, useMutation } from "@vue/apollo-composable";
-import { createSharedComposable, computedEager } from "@vueuse/core";
+import { createSharedComposable } from "@vueuse/core";
 import { difference, keyBy, merge, intersection } from "lodash";
 import { computed, readonly, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -325,7 +325,7 @@ export function _useFullCart(cartId?: string) {
 
   const selectedLineItemsGroupedByVendor = computed(() => groupByVendor(selectedLineItems.value));
 
-  const hasOnlyUnselectedLineItems = computedEager(() => selectedLineItems.value.length === 0);
+  const hasOnlyUnselectedLineItems = computed(() => selectedLineItems.value.length === 0);
 
   const allItemsAreDigital = computed(() =>
     selectedLineItems.value.length > 0
@@ -339,7 +339,7 @@ export function _useFullCart(cartId?: string) {
     (cart.value?.availableGifts ?? []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] })),
   );
 
-  const hasValidationErrors = computedEager(
+  const hasValidationErrors = computed(
     () =>
       cart.value?.validationErrors?.some(
         (error) =>
@@ -350,7 +350,7 @@ export function _useFullCart(cartId?: string) {
       ) ?? selectedLineItems.value?.some((item) => item.validationErrors?.length),
   );
 
-  const hasOnlyUnselectedValidationError = computedEager(
+  const hasOnlyUnselectedValidationError = computed(
     () =>
       cart.value?.validationErrors?.length == 1 &&
       cart.value.validationErrors[0]?.errorCode == CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED,

@@ -289,7 +289,6 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
@@ -363,7 +362,7 @@ const {
 } = useField<string>("organizationName", toTypedSchema(string().trim().required().max(64)));
 
 const organizationId = computed<string>(() => organization.value!.id);
-const canEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
+const canEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
 
 const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
 const paginatedAddresses = computed<MemberAddressType[]>(() =>

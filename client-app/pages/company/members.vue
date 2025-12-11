@@ -318,7 +318,7 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, computedEager, onClickOutside, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, onClickOutside, useBreakpoints } from "@vueuse/core";
 import { computed, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
@@ -395,7 +395,7 @@ const filtersVisible = ref(false);
 const filtersButtonElement = shallowRef<HTMLElement | null>(null);
 const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 
-const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
+const userCanEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
 
 const columns = computed<ITableColumn[]>(() => {
   const result: ITableColumn[] = [
