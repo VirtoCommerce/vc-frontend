@@ -469,12 +469,16 @@ function getTranslatedProductSortingList() {
 const translatedProductSortingList = computed(() => getTranslatedProductSortingList());
 
 function cancelControl(control: CatalogControl) {
-  if (control === CatalogControl.InStock) {
-    localStorageInStock.value = false;
-  } else if (control === CatalogControl.PurchasedBefore) {
-    localStoragePurchasedBefore.value = false;
-  } else if (control === CatalogControl.Branches) {
-    localStorageBranches.value = [];
+  switch (control) {
+    case CatalogControl.InStock:
+      localStorageInStock.value = false;
+      break;
+    case CatalogControl.PurchasedBefore:
+      localStoragePurchasedBefore.value = false;
+      break;
+    case CatalogControl.Branches:
+      localStorageBranches.value = [];
+      break;
   }
 
   void fetchProducts();
