@@ -397,7 +397,7 @@ function toggleValue(value: string | string[]): void {
     let currentValue: (string | string[])[] = [];
 
     if (Array.isArray(internalModelValue.value)) {
-      currentValue = [...internalModelValue.value];
+      currentValue = [...internalModelValue.value] as (string | string[])[];
     } else if (internalModelValue.value) {
       currentValue = [internalModelValue.value];
     }
@@ -406,9 +406,9 @@ function toggleValue(value: string | string[]): void {
 
     if (index > -1) {
       currentValue.splice(index, 1);
-      internalModelValue.value = currentValue;
+      internalModelValue.value = currentValue as string | string[];
     } else {
-      internalModelValue.value = [...currentValue, valueToSet];
+      internalModelValue.value = [...currentValue, valueToSet] as string | string[];
     }
   } else {
     internalModelValue.value = valueToSet;
