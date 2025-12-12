@@ -3,7 +3,7 @@
 
   <StaticPage v-if="pageExists" />
 
-  <NotFound v-if="pageExists === false" />
+  <NotFound v-if="!loading && pageExists === false" />
 </template>
 
 <script setup lang="ts">
