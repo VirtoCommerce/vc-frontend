@@ -9,16 +9,9 @@ export function usePreviewBuilderPage() {
   async function loadPreviewPage(pageId: string) {
     loading.value = true;
     try {
-      const { onResult, onError, load } = useGetPreviewBuilderPage({
+      const { load } = useGetPreviewBuilderPage({
         storeId,
         pageId,
-      });
-      onResult((result) => {
-        loading.value = false;
-        return result;
-      });
-      onError(() => {
-        loading.value = false;
       });
       return await load();
     } finally {

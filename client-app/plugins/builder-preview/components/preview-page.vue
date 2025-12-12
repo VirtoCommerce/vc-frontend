@@ -1,7 +1,9 @@
 <template>
+  <VcWidgetSkeleton v-if="loading" head size="lg" />
+
   <StaticPage v-if="pageExists" />
 
-  <NotFound v-else />
+  <NotFound v-if="!loading && !pageExists" />
 </template>
 
 <script setup lang="ts">
@@ -12,9 +14,9 @@ import { getPreviewPageId } from "../utils";
 import NotFound from "@/pages/404.vue";
 import StaticPage from "@/pages/static-page.vue";
 
-const pageExists = ref(true); // Placeholder logic to determine if the page exists
+const pageExists = ref<boolean>(false);
 
-const { loadPreviewPage } = usePreviewBuilderPage();
+const { loading, loadPreviewPage } = usePreviewBuilderPage();
 const { staticPagePreview: template } = useStaticPage();
 
 onMounted(async () => {
@@ -25,11 +27,11 @@ onMounted(async () => {
       return;
     }
     const result = await loadPreviewPage(pageId);
-    if (result !== false) {
+    if (result && result.builderPage && typeof result.builderPage.content === "string") {
       try {
-        template.value = JSON.parse(result.builderPage?.content || "");
+        template.value = JSON.parse(result.builderPage.content);
       } catch (e) {
-        console.log("Error parsing page content:", e, result.builderPage?.content);
+        console.log("Error parsing page content:", e, result.builderPage.content);
         template.value = undefined;
       }
     }

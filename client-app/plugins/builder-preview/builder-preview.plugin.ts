@@ -181,7 +181,7 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
 }
 
 function modifyRoutes(router: Router, mode: "preview" | "designer") {
-  if (mode == "designer") {
+  if (mode === "designer") {
     const page = <IPageTemplate>(<unknown>{ settings: {}, content: [] });
     staticPagePreview.value = page;
   }
@@ -224,7 +224,7 @@ export default {
       await options.router.push("/designer-preview");
     } else {
       const pageId = getPreviewPageId();
-      await options.router.push(`/designer-preview?pageId=${pageId}`);
+      await options.router.push(`/designer-preview?pageId=${pageId!}`);
     }
   },
 };
