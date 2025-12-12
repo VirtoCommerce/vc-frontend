@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
 import { usePreviewBuilderPage } from "../composables";
 import { getPreviewPageId } from "../utils";
@@ -31,13 +32,13 @@ onMounted(async () => {
       try {
         template.value = JSON.parse(result.builderPage.content);
       } catch (e) {
-        console.log("Error parsing page content:", e, result.builderPage.content);
+        Logger.info("Error parsing page content:", e, result.builderPage.content);
         template.value = undefined;
       }
     }
     pageExists.value = !!template.value;
   } catch (error) {
-    console.error("Error loading preview page:", error);
+    Logger.error("Error loading preview page:", error);
     pageExists.value = false;
   }
 });
