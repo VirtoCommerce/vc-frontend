@@ -3,7 +3,7 @@
 
   <StaticPage v-if="pageExists" />
 
-  <NotFound v-if="!loading && !pageExists" />
+  <NotFound v-if="pageExists === false" />
 </template>
 
 <script setup lang="ts">
@@ -14,7 +14,7 @@ import { getPreviewPageId } from "../utils";
 import NotFound from "@/pages/404.vue";
 import StaticPage from "@/pages/static-page.vue";
 
-const pageExists = ref<boolean>(false);
+const pageExists = ref<boolean | null>(null);
 
 const { loading, loadPreviewPage } = usePreviewBuilderPage();
 const { staticPagePreview: template } = useStaticPage();
