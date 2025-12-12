@@ -26,9 +26,14 @@ onMounted(async () => {
     }
     const result = await loadPreviewPage(pageId);
     if (result !== false) {
-      template.value = JSON.parse(result.builderPage?.content || "");
+      try {
+        template.value = JSON.parse(result.builderPage?.content || "");
+      } catch (e) {
+        console.log("Error parsing page content:", e, result.builderPage?.content);
+        template.value = undefined;
+      }
     }
-    pageExists.value = template.value != null;
+    pageExists.value = !!template.value;
   } catch (error) {
     console.error("Error loading preview page:", error);
     pageExists.value = false;
