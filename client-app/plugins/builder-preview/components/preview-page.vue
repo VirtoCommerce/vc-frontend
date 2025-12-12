@@ -27,13 +27,13 @@ onMounted(async () => {
       pageExists.value = false;
       return;
     }
+    template.value = undefined;
     const result = await loadPreviewPage(pageId);
     if (result && result.builderPage && typeof result.builderPage.content === "string") {
       try {
         template.value = JSON.parse(result.builderPage.content);
       } catch (e) {
         Logger.info("Error parsing page content:", e, result.builderPage.content);
-        template.value = undefined;
       }
     }
     pageExists.value = !!template.value;
