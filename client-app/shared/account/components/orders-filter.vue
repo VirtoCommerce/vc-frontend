@@ -12,7 +12,7 @@
           <slot name="dateFilterType" />
         </div>
 
-        <div class="my-4">
+        <div class="mb-5">
           <slot name="buyerNameFilterType" />
         </div>
 
