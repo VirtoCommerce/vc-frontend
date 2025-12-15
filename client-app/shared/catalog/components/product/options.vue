@@ -19,19 +19,20 @@
       <div v-for="[key, property] in properties" v-else :key="key" class="options__item">
         <div class="options__label">{{ property.label }}</div>
 
-        <VcVariantPickerGroup>
+        <VcVariantPickerGroup
+          :model-value="getSelectedValue(property)"
+          :type="getType(property.propertyValueType)"
+          :name="property.label"
+          size="xs"
+          @update:model-value="handlePropertyChange(property, $event as string)"
+        >
           <VcVariantPicker
             v-for="option in property.values"
-            :key="option.label"
-            :model-value="isSelected(property.name, option.value) ? getValue(property, option) : undefined"
-            :type="getType(property.propertyValueType)"
-            :name="property.label"
+            :key="`${property.name}-${option.value}`"
             :value="getValue(property, option)"
             :is-available="isAvailable(property.name, option.value)"
             class="options__picker"
-            size="xs"
             :tooltip="getTooltip(property, option)"
-            @update:model-value="select(property.name, option.value)"
           />
         </VcVariantPickerGroup>
       </div>
@@ -62,16 +63,30 @@ const fetchingVariations = toRef(props, "fetchingVariations");
 
 const isBlockVisible = computed(() => !props.model.hidden && (properties.value.size > 0 || fetchingVariations.value));
 
-const { properties, select, isSelected, isAvailable, getTooltip } = useProductVariationProperties(variations);
+const { properties, select, isAvailable, getTooltip, getSelectedValue } = useProductVariationProperties(variations);
 
-function getType(propertyValueType: PropertyValueTypes) {
+function getType(propertyValueType: PropertyValueTypes): "color" | "text" {
   return propertyValueType === PropertyValueTypes.Color ? "color" : "text";
 }
 
-function getValue(property: IProperty, option: IPropertyValue) {
+function getValue(property: IProperty, option: IPropertyValue): string {
   return property.propertyValueType === PropertyValueTypes.Color
     ? (option.colorCode ?? String(option.value))
     : String(option.value);
+}
+
+function handlePropertyChange(property: IProperty, groupValue: string) {
+  const option = property.values.find((opt) => {
+    const optionValue =
+      property.propertyValueType === PropertyValueTypes.Color
+        ? (opt.colorCode ?? String(opt.value))
+        : String(opt.value);
+    return optionValue === groupValue;
+  });
+
+  if (option) {
+    select(property.name, option.value);
+  }
 }
 </script>
 

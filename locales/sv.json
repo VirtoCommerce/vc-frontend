@@ -183,6 +183,7 @@
       "email_not_unique": "Denna e-post är redan registrerad hos oss",
       "max_length": "Detta fält får inte innehålla mer än {max} tecken",
       "creating_order_error": "Fel vid skapande av beställning",
+      "payment_processing_error": "Fel vid betalningshantering",
       "item_can_t_be_purchased": "Denna artikel kan inte köpas",
       "item_is_out_of_stock": "Denna artikel är slut i lager",
       "invalid_value": "Ogiltigt värde",
@@ -301,7 +302,8 @@
       "switch_to_grid_view": "Växla till rutnätsvy",
       "switch_to_list_view": "Växla till listvy",
       "no_image": "Ingen bild tillgänglig",
-      "image": "Bild"
+      "image": "Bild",
+      "share_via_opens_in_new_window": "Dela via {service} (öppnas i nytt fönster)"
     }
   },
   "shared": {
@@ -741,6 +743,7 @@
       },
       "billing_details_section": {
         "title": "Betalningsuppgifter",
+        "payment_card": "Betalkort",
         "labels": {
           "billing_address": "Faktureringsadress",
           "payment_method": "Betalningsmetod",

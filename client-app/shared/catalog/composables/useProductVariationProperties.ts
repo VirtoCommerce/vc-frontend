@@ -224,6 +224,17 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     return option.label;
   }
 
+  function getSelectedValue(property: IProperty): string {
+    const selectedOption = property.values.find((opt) => isSelected(property.name, opt.value));
+    if (!selectedOption) {
+      return "";
+    }
+
+    return property.propertyValueType === PropertyValueTypes.Color
+      ? (selectedOption.colorCode ?? String(selectedOption.value))
+      : String(selectedOption.value);
+  }
+
   watch(
     variations,
     () => {
@@ -243,6 +254,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     isAvailable,
 
     getTooltip,
+    getSelectedValue,
   };
 }
 

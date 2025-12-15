@@ -1,5 +1,7 @@
+import { ref } from "vue";
 import { VcVariantPicker } from "..";
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import { VcVariantPickerGroup } from "../../atoms";
+import type { Meta, StoryObj, StoryFn } from "@storybook/vue3-vite";
 
 const SIZES = ["xxs", "xs", "sm", "md", "lg"];
 
@@ -22,6 +24,15 @@ const meta: Meta<typeof VcVariantPicker> = {
     setup: () => ({ args }),
     template: '<VcVariantPicker v-bind="args" />',
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPicker v-bind="args" />
+        `,
+      },
+    },
+  },
 };
 
 export default meta;
@@ -37,6 +48,58 @@ export const Basic: StoryType = {
     value: "red",
     isAvailable: true,
   },
+};
+
+export const WithGroup: StoryFn = (args) => ({
+  components: { VcVariantPickerGroup, VcVariantPicker },
+  setup: () => {
+    const model = ref<string | string[]>("red");
+    const items = [
+      { value: "red", isAvailable: true },
+      { value: "blue", isAvailable: true },
+      { value: "green", isAvailable: false },
+      { value: "yellow", isAvailable: true },
+    ];
+    return { args, model, items };
+  },
+  template: `
+    <div class="p-6">
+      <div class="mb-3">Selected: {{ model }}</div>
+      <VcVariantPickerGroup v-model="model" v-bind="args">
+        <VcVariantPicker v-for="item in items" :key="item.value" :value="item.value" :is-available="item.isAvailable" />
+      </VcVariantPickerGroup>
+    </div>
+  `,
+});
+WithGroup.args = {
+  type: "color",
+  multiple: false,
+};
+
+export const WithGroupMultiple: StoryFn = (args) => ({
+  components: { VcVariantPickerGroup, VcVariantPicker },
+  setup: () => {
+    const model = ref<string[]>([]);
+    const items = [
+      { value: "red", isAvailable: true },
+      { value: "blue", isAvailable: true },
+      { value: "green", isAvailable: false },
+      { value: "yellow", isAvailable: true },
+    ];
+    return { args, model, items };
+  },
+  template: `
+    <div class="p-6">
+      <div class="mb-3">Selected: {{ model }}</div>
+      <VcVariantPickerGroup v-model="model" v-bind="args">
+        <VcVariantPicker v-for="item in items" :key="item.value" :value="item.value" :is-available="item.isAvailable" />
+      </VcVariantPickerGroup>
+    </div>
+  `,
+});
+WithGroupMultiple.args = {
+  type: "color",
+  multiple: true,
 };
 
 export const Unavailable: StoryType = {
@@ -91,6 +154,25 @@ export const TooltipSlotWithImage: StoryType = {
       </VcVariantPicker>
     </div>
   `),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPicker type="image" :value="product-example-1.webp" is-available>
+            <template #tooltip>
+              <div class="flex items-center gap-2 max-w-64 font-normal">
+                <VcImage :src="args.value" alt="Variant preview" class="size-12 rounded-md object-cover" />
+                <div>
+                  <div class="font-bold">Variant preview</div>
+                  <div class="text-xs text-neutral-600">This tooltip content comes from the slot and can include any markup.</div>
+                </div>
+              </div>
+            </template>
+          </VcVariantPicker>
+        `,
+      },
+    },
+  },
 };
 
 export const Text: StoryType = {
@@ -106,5 +188,197 @@ export const UnavailableText: StoryType = {
   args: {
     ...Text.args,
     isAvailable: false,
+  },
+};
+
+export const MultiColor1Color: StoryType = {
+  args: {
+    type: "color",
+    value: ["red"],
+    isAvailable: true,
+    tooltip: "Red",
+  },
+};
+
+export const MultiColor2Colors: StoryType = {
+  args: {
+    type: "color",
+    value: ["red", "blue"],
+    isAvailable: true,
+    tooltip: "Red & Blue",
+  },
+};
+
+export const MultiColor3Colors: StoryType = {
+  args: {
+    type: "color",
+    value: ["red", "green", "blue"],
+    isAvailable: true,
+    tooltip: "Red, Green & Blue",
+  },
+};
+
+export const MultiColor4Colors: StoryType = {
+  args: {
+    type: "color",
+    value: ["#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A"],
+    isAvailable: true,
+    tooltip: "Custom colors",
+  },
+};
+
+export const MultiColorUnavailable: StoryType = {
+  args: {
+    type: "color",
+    value: ["red", "blue"],
+    isAvailable: false,
+    tooltip: "Unavailable multicolor",
+  },
+};
+
+export const MultiColorManyColors: StoryType = {
+  args: {
+    type: "color",
+    value: ["red", "orange", "yellow", "green", "blue", "indigo", "violet", "pink", "cyan", "magenta"],
+    isAvailable: true,
+    tooltip: "10 colors (shows first 4 only)",
+  },
+};
+
+export const TooltipSlotWithColor: StoryType = {
+  args: {
+    type: "color",
+    value: "red",
+    isAvailable: true,
+  },
+  render: renderVariantPicker(`
+    <div class="p-6">
+      <VcVariantPicker v-bind="args">
+        <template #tooltip>
+          <div class="flex gap-2 max-w-44 font-normal">
+            <div class="flex-none size-6 rounded-md bg-[red]"></div>
+            <div class="grow">
+              <div class="font-bold">Red Color</div>
+              <div class="text-xs text-neutral-600">This is a custom tooltip for single color variant.</div>
+            </div>
+          </div>
+        </template>
+      </VcVariantPicker>
+    </div>
+  `),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPicker type="color" :value="['red']" is-available>
+            <template #tooltip>
+              <div class="flex gap-2 max-w-44 font-normal">
+                <div class="flex-none size-6 rounded-md bg-[red]"></div>
+                <div class="grow">
+                  <div class="font-bold">Red Color</div>
+                  <div class="text-xs text-neutral-600">This is a custom tooltip for single color variant.</div>
+                </div>
+              </div>
+            </template>
+          </VcVariantPicker>
+        `,
+      },
+    },
+  },
+};
+
+export const TooltipSlotWithVariantPickerTeleportEnabled: StoryType = {
+  args: {
+    type: "color",
+    value: ["red", "blue", "green", "yellow"],
+    isAvailable: true,
+    tooltipEnableTeleport: true,
+    tooltipTeleportSelector: "body",
+  },
+  render: renderVariantPicker(`
+    <div class="p-6">
+      <VcVariantPicker v-bind="args">
+        <template #tooltip>
+          <div class="flex gap-2 max-w-44 font-normal">
+            <div>
+            <VcVariantPicker type="color" size="xs" :value="['red', 'blue', 'green', 'yellow']" :isAvailable="false" />
+</div>
+
+            <div class="grow">
+              <div class="font-bold">Variant Picker</div>
+              <div class="text-xs text-neutral-600">This variant includes 4 colors: Red, Blue, Green, and Yellow.</div>
+            </div>
+          </div>
+        </template>
+      </VcVariantPicker>
+    </div>
+  `),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPicker type="color" size="xs" :value="['red', 'blue', 'green', 'yellow']" is-available tooltip-enable-teleport tooltip-teleport-selector="body">
+            <template #tooltip>
+              <div class="flex gap-2 max-w-44 font-normal">
+                <div>
+                <VcVariantPicker type="color" size="xs" :value="['red', 'blue', 'green', 'yellow']" :isAvailable="false" />
+    </div>
+
+                <div class="grow">
+                  <div class="font-bold">Variant Picker</div>
+                  <div class="text-xs text-neutral-600">This variant includes 4 colors: Red, Blue, Green, and Yellow.</div>
+                </div>
+              </div>
+            </template>
+          </VcVariantPicker>
+        `,
+      },
+    },
+  },
+};
+
+export const TooltipSlotWithText: StoryType = {
+  args: {
+    type: "text",
+    value: "Size: MD",
+    isAvailable: true,
+  },
+  render: renderVariantPicker(`
+    <div class="p-6">
+      <VcVariantPicker v-bind="args">
+        <template #tooltip>
+          <div class="flex gap-2 max-w-64 font-normal">
+            <div class="flex-none flex size-12 items-center justify-center rounded-md bg-neutral-100 font-bold">
+              MD
+            </div>
+            <div>
+              <div class="font-bold">Medium Size</div>
+              <div class="text-xs text-neutral-600">This size fits most people. Check size guide for measurements.</div>
+            </div>
+          </div>
+        </template>
+      </VcVariantPicker>
+    </div>
+  `),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPicker type="text" size="xs" :value="['Size: MD']" is-available>
+            <template #tooltip>
+              <div class="flex gap-2 max-w-64 font-normal">
+                <div class="flex-none flex size-12 items-center justify-center rounded-md bg-neutral-100 font-bold">
+                  MD
+                </div>
+                <div>
+                  <div class="font-bold">Medium Size</div>
+                  <div class="text-xs text-neutral-600">This size fits most people. Check size guide for measurements.</div>
+                </div>
+              </div>
+            </template>
+          </VcVariantPicker>
+        `,
+      },
+    },
   },
 };

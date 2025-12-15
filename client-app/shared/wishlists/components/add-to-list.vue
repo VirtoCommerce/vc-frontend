@@ -4,7 +4,9 @@
     :icon-size="iconSize"
     :active="localWishlistStatus"
     :disabled="!isAuthenticated"
-    :tooltip-text="tooltipText"
+    :aria-label="ariaLabel"
+    :aria-pressed="isAuthenticated ? localWishlistStatus : undefined"
+    :tooltip-text="ariaLabel"
     @click="openAddToListModal"
   />
 </template>
@@ -40,14 +42,14 @@ watch(
   { immediate: true },
 );
 
-const tooltipText = computed<string>(() => {
+const ariaLabel = computed<string>(() => {
   if (!isAuthenticated.value) {
     return t("common.messages.wishlists_available_for_authorized");
-  } else if (localWishlistStatus.value) {
-    return t("pages.catalog.in_the_list_tooltip");
-  } else {
-    return t("pages.catalog.add_to_wishlist_tooltip");
   }
+
+  return localWishlistStatus.value
+    ? t("pages.catalog.in_the_list_tooltip")
+    : t("pages.catalog.add_to_wishlist_tooltip");
 });
 
 function openAddToListModal() {

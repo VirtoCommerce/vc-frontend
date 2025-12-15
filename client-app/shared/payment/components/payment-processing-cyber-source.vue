@@ -55,6 +55,7 @@
     <PaymentPolicies />
 
     <VcButton
+      v-if="!hidePaymentButton"
       :disabled="!isValidBankCard"
       :loading="loading"
       class="flex-1 md:order-first md:flex-none"
@@ -71,27 +72,20 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { useScriptTag, useCssVar } from "@vueuse/core";
 import { Mask } from "maska";
 import { useForm } from "vee-validate";
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { initializePayment, authorizePayment } from "@/core/api/graphql";
+import { authorizePayment, initializePayment, initializeCartPayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
+import { isExpirationDateValid } from "@/core/utilities/date";
 import { useNotifications } from "@/shared/notification";
+import { usePayment } from "../composables";
 import PaymentPolicies from "./payment-policies.vue";
-import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
+import type { IPaymentMethodParameters, IPaymentMethodEmits } from "./types";
+import type { AuthorizePaymentResultType, CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
-
-interface IEmits {
-  (event: "success"): void;
-  (event: "fail", message?: string | null): void;
-}
-
-interface IProps {
-  order: CustomerOrderType;
-  disabled?: boolean;
-}
 
 interface IField {
   load(containerId: string): void;
@@ -116,9 +110,8 @@ interface IFlex {
   microform(options: { styles: Record<string, unknown> }): IMicroform;
 }
 
-const emit = defineEmits<IEmits>();
-
-const props = defineProps<IProps>();
+const emit = defineEmits<IPaymentMethodEmits>();
+const props = defineProps<IPaymentMethodParameters>();
 
 declare let Flex: FlexConstructorType;
 
@@ -130,6 +123,7 @@ let microform: IMicroform;
 const { t } = useI18n();
 const { analytics } = useAnalytics();
 const notifications = useNotifications();
+const { registerPaymentProcessor, setCardDataValid, setCardDataInvalid } = usePayment();
 
 const loading = ref(false);
 const dateMaskOptions = { mask: "## / ####" };
@@ -165,6 +159,14 @@ const validationSchema = toTypedSchema(
             .matches(/^2[0-1]\d\d$/, t("shared.payment.bank_card_form.errors.year"))
             .label(labels.value.yearLabel)
         : schema;
+    }),
+    fulldate: yup.string().test("expDate", t("shared.payment.bank_card_form.errors.expiration_date"), function () {
+      const { month, year } = this.parent as { month?: string; year?: string };
+      // If month/year present, validate via utility; otherwise leave to individual field validators
+      if (month && year) {
+        return isExpirationDateValid(month, year);
+      }
+      return true;
     }),
   }),
 );
@@ -217,46 +219,8 @@ const expirationDate = computed({
 });
 
 const expirationDateErrors = computed<string>(() =>
-  [formErrors.value.month, formErrors.value.year].filter(Boolean).join(". "),
+  [formErrors.value.month, formErrors.value.year, formErrors.value.fulldate].filter(Boolean).join(". "),
 );
-
-async function sendPaymentData() {
-  if (!isValidBankCard.value) {
-    return;
-  }
-  loading.value = true;
-  try {
-    const token = await createToken({
-      // cardholderName is optional for cybersource
-      cardholderName: formValues.cardholderName,
-      expirationMonth: formValues.month,
-      expirationYear: formValues.year,
-    });
-
-    const { isSuccess } = await authorizePayment({
-      orderId: props.order.id,
-      paymentId: props.order.inPayments[0].id,
-      parameters: [
-        {
-          key: "token",
-          value: token,
-        },
-      ],
-    });
-
-    if (isSuccess) {
-      analytics("purchase", props.order);
-      emit("success");
-    } else {
-      emit("fail");
-    }
-  } catch (e) {
-    Logger.error(sendPaymentData.name, e);
-    emit("fail");
-  } finally {
-    loading.value = false;
-  }
-}
 
 async function createToken(options: Record<string, unknown>): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -270,16 +234,25 @@ async function createToken(options: Record<string, unknown>): Promise<string> {
   });
 }
 
-onMounted(async () => {
-  await initPayment();
-});
+async function initializeByCartOrOrder() {
+  if (props.cart) {
+    return await initializeCartPayment({
+      cartId: props.cart.id,
+      paymentId: props.payment!.id,
+    });
+  } else if (props.order) {
+    return await initializePayment({
+      orderId: props.order.id,
+      paymentId: props.order.inPayments[0].id,
+    });
+  }
+  return { publicParameters: undefined };
+}
 
-async function initPayment() {
+async function initPaymentInternal() {
   loading.value = true;
-  const { publicParameters } = await initializePayment({
-    orderId: props.order.id,
-    paymentId: props.order.inPayments[0].id,
-  });
+
+  const { publicParameters } = await initializeByCartOrOrder();
 
   const scriptUrl = getValue(publicParameters, "clientScript");
 
@@ -294,7 +267,53 @@ async function initPayment() {
   await initFlex(getValue(publicParameters, "jwt")!);
   initForm();
 
+  registerPaymentProcessor(sendPaymentData);
+
   loading.value = false;
+}
+
+async function sendPaymentData(
+  orderToPay: CustomerOrderType | null = null,
+): Promise<AuthorizePaymentResultType | null> {
+  const order = orderToPay ?? props.order;
+  if (!isValidBankCard.value || !order) {
+    return null;
+  }
+  loading.value = true;
+  try {
+    const token = await createToken({
+      // cardholderName is optional for cybersource
+      cardholderName: formValues.cardholderName,
+      expirationMonth: formValues.month,
+      expirationYear: formValues.year,
+    });
+
+    const result = await authorizePayment({
+      orderId: order?.id,
+      paymentId: order.inPayments[0].id,
+      parameters: [
+        {
+          key: "token",
+          value: token,
+        },
+      ],
+    });
+
+    if (result.isSuccess) {
+      analytics("purchase", order);
+      emit("success");
+    } else {
+      emit("fail");
+    }
+
+    return result;
+  } catch (e) {
+    Logger.error(sendPaymentData.name, e);
+    emit("fail");
+    return null;
+  } finally {
+    loading.value = false;
+  }
 }
 
 function initForm() {
@@ -382,6 +401,18 @@ function removeScript() {
     scriptTag.value.remove();
   }
 }
+
+onMounted(async () => {
+  await initPaymentInternal();
+});
+
+watch([isValidBankCard, meta], ([isValidCard, metaFormResult]) => {
+  if (isValidCard && metaFormResult.valid) {
+    setCardDataValid();
+  } else {
+    setCardDataInvalid();
+  }
+});
 
 onUnmounted(removeScript);
 </script>
