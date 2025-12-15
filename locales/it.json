@@ -302,7 +302,8 @@
       "switch_to_grid_view": "Passa alla vista griglia",
       "switch_to_list_view": "Passa alla vista elenco",
       "no_image": "Immagine non disponibile",
-      "image": "Immagine"
+      "image": "Immagine",
+      "share_via_opens_in_new_window": "Condividi tramite {service} (si apre in una nuova finestra)"
     }
   },
   "shared": {

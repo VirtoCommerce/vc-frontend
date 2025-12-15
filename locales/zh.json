@@ -302,7 +302,8 @@
       "switch_to_grid_view": "切换到网格视图",
       "switch_to_list_view": "切换到列表视图",
       "no_image": "没有可用图片",
-      "image": "图片"
+      "image": "图片",
+      "share_via_opens_in_new_window": "通过{service}分享（在新窗口中打开）"
     }
   },
   "shared": {

@@ -302,7 +302,8 @@
       "switch_to_grid_view": "Växla till rutnätsvy",
       "switch_to_list_view": "Växla till listvy",
       "no_image": "Ingen bild tillgänglig",
-      "image": "Bild"
+      "image": "Bild",
+      "share_via_opens_in_new_window": "Dela via {service} (öppnas i nytt fönster)"
     }
   },
   "shared": {
