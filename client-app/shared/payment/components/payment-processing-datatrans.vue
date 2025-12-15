@@ -99,6 +99,7 @@ import * as yup from "yup";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
+import { isExpirationDateValid } from "@/core/utilities/date";
 import { useNotifications } from "@/shared/notification";
 import PaymentPolicies from "./payment-policies.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
@@ -216,6 +217,13 @@ const validationSchema = toTypedSchema(
             .label(labels.value.yearLabel)
         : schema;
     }),
+    fulldate: yup.string().test("exp-date", t("shared.payment.bank_card_form.errors.expiration_date"), function () {
+      const { month, year } = this.parent as { month?: string; year?: string };
+      if (month && year) {
+        return isExpirationDateValid(month, year);
+      }
+      return true;
+    }),
   }),
 );
 
@@ -270,7 +278,7 @@ const validationResult = ref<IValidateEvent>({
 const hideForm = ref(true);
 
 const expirationDateErrors = computed<string>(() =>
-  [formErrors.value.month, formErrors.value.year].filter(Boolean).join(". "),
+  [formErrors.value.month, formErrors.value.year, formErrors.value.fulldate].filter(Boolean).join(". "),
 );
 
 function sendPaymentData() {
@@ -335,19 +343,19 @@ function initForm(tx: string) {
     secureFields.setPlaceholder("cvv", t("shared.payment.bank_card_form.security_code_label"));
   });
 
-  secureFields.on("validate", (event: IValidateEvent & IValidateEventArg) => {
-    const result = { ...validationResult.value };
-    result.fields[event.event.field] = event.fields[event.event.field];
+  function validate(event: IValidateEvent & IValidateEventArg) {
+    let result = { ...validationResult.value };
+    if (event.event.field) {
+      result.fields[event.event.field] = event.fields[event.event.field];
+    } else {
+      result = event;
+    }
     result.hasErrors = event.hasErrors;
     validationResult.value = result;
-  });
+  }
 
-  secureFields.on("change", function (event: IValidateEvent & IValidateEventArg) {
-    const result = { ...validationResult.value };
-    result.fields[event.event.field] = event.fields[event.event.field];
-    result.hasErrors = event.hasErrors;
-    validationResult.value = result;
-  });
+  secureFields.on("validate", validate);
+  secureFields.on("change", validate);
 
   secureFields.on("success", async (data: ISecureFieldsInitResult) => {
     const { transactionId, redirect } = data;

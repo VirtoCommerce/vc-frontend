@@ -183,6 +183,7 @@
       "email_not_unique": "Denne e-postadressen er allerede registrert hos oss",
       "max_length": "Dette feltet kan ikke inneholde flere enn {max} tegn",
       "creating_order_error": "Feil ved opprettelse av bestilling",
+      "payment_processing_error": "Feil under betalingsbehandling",
       "item_can_t_be_purchased": "Dette produktet kan ikke kjøpes",
       "item_is_out_of_stock": "Dette produktet er utsolgt",
       "invalid_value": "Ugyldig verdi",
@@ -301,7 +302,8 @@
       "switch_to_grid_view": "Bytt til rutenettvisning",
       "switch_to_list_view": "Bytt til listevisning",
       "no_image": "Bilde ikke tilgjengelig",
-      "image": "Bilde"
+      "image": "Bilde",
+      "share_via_opens_in_new_window": "Del via {service} (åpnes i nytt vindu)"
     }
   },
   "shared": {
@@ -741,6 +743,7 @@
       },
       "billing_details_section": {
         "title": "Faktureringsdetaljer",
+        "payment_card": "Betalingskort",
         "labels": {
           "billing_address": "Fakturaadresse",
           "payment_method": "Betalingsmetode",
