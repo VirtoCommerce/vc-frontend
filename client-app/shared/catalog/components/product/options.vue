@@ -24,11 +24,11 @@
           :type="getType(property.propertyValueType)"
           :name="property.label"
           size="xs"
-          @update:model-value="handlePropertyChange(property, $event as string)"
+          @update:model-value="(value: string | string[]) => handlePropertyChange(property, value)"
         >
           <VcVariantPicker
             v-for="option in property.values"
-            :key="`${property.name}-${option.value}`"
+            :key="`${property.name}-${serialize(option.value)}`"
             :value="getValue(property, option)"
             :is-available="isAvailable(property.name, option.value)"
             class="options__picker"
@@ -44,6 +44,7 @@
 import { computed, toRef } from "vue";
 import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
+import { serialize } from "@/ui-kit/utilities";
 import type { Product } from "@/core/api/graphql/types";
 import type { IProperty, IPropertyValue } from "@/shared/catalog/composables/useProductVariationProperties";
 import ProductTitledBlock from "@/shared/catalog/components/product-titled-block.vue";
@@ -69,23 +70,13 @@ function getType(propertyValueType: PropertyValueTypes): "color" | "text" {
   return propertyValueType === PropertyValueTypes.Color ? "color" : "text";
 }
 
-function getValue(property: IProperty, option: IPropertyValue): string {
-  return property.propertyValueType === PropertyValueTypes.Color
-    ? (option.colorCode ?? String(option.value))
-    : String(option.value);
+function getValue(property: IProperty, option: IPropertyValue): string | string[] {
+  return option.value;
 }
 
-function handlePropertyChange(property: IProperty, groupValue: string) {
-  const option = property.values.find((opt) => {
-    const optionValue =
-      property.propertyValueType === PropertyValueTypes.Color
-        ? (opt.colorCode ?? String(opt.value))
-        : String(opt.value);
-    return optionValue === groupValue;
-  });
-
-  if (option) {
-    select(property.name, option.value);
+function handlePropertyChange(property: IProperty, groupValue: string | string[]) {
+  if (groupValue && !(Array.isArray(groupValue) && groupValue.length === 0)) {
+    select(property.name, groupValue);
   }
 }
 </script>

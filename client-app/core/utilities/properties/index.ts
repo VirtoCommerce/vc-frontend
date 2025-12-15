@@ -1,7 +1,10 @@
+import { filter, groupBy } from "lodash";
 import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import type { Property, PropertyType, PropertyGroup } from "@/core/api/graphql/types";
 import type { NonUndefined } from "utility-types";
+
+export type PrimitiveValueType = string | number | boolean | null;
 
 interface IGroupedProperties {
   group?: PropertyGroup;
@@ -95,4 +98,44 @@ export function getGroupedAndSortedProperties(source: Property[]): IGroupedPrope
 
       return { group, properties: sortedProps };
     });
+}
+
+/** Groups variation properties by name, preserving all property instances for each name */
+export function getVariationPropertiesGroupedByName(
+  properties: Property[],
+  type?: PropertyType,
+): Map<string, Property[]> {
+  const filtered = filter(
+    properties,
+    (p: Property) => (!type || p.propertyType === type) && p.name && hasPropertyValue(p),
+  );
+
+  const grouped = groupBy(filtered, (p: Property) => p.name) as Record<string, Property[]>;
+
+  return new Map(Object.entries(grouped));
+}
+
+/** Normalizes property value to unified format for comparison and selection logic */
+export function normalizePropertyValue(property: Property): string {
+  if (property.colorCode) {
+    return property.colorCode;
+  }
+
+  const stringValue = String(property.value ?? "");
+
+  return isColorProperty(property) ? stringValue.toLowerCase() : stringValue;
+}
+
+/** Checks if property is a color type property */
+export function isColorProperty(property: Property | undefined): boolean {
+  return property?.propertyValueType === PropertyValueTypes.Color;
+}
+
+/** Checks if property list represents a multicolor property (multiple color values) */
+export function isMultiColorProperty(properties: Property[]): boolean {
+  if (properties.length <= 1) {
+    return false;
+  }
+
+  return properties.every((p) => isColorProperty(p));
 }
