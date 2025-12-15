@@ -8,17 +8,23 @@
     ]"
   >
     <!-- Workarounds to fix Firefox label click bug -->
-    <button v-if="$slots.default" :aria-label="ariaLabel" type="button" class="vc-switch__label" @click="change">
-      <slot />
+    <button
+      v-if="$slots.default || label"
+      :aria-label="ariaLabel || name"
+      type="button"
+      class="vc-switch__label"
+      @click="change"
+    >
+      <slot>{{ label }}</slot>
     </button>
 
-    <button :aria-label="ariaLabel" type="button" class="vc-switch__bg" @click="change">
+    <button :aria-label="ariaLabel || name" type="button" class="vc-switch__bg" @click="change">
       <span class="vc-switch__circle" />
     </button>
 
     <input
       :id="componentId"
-      :aria-label="ariaLabel"
+      :aria-label="ariaLabel || name"
       :value="value"
       :checked="modelValue"
       :aria-checked="modelValue"
@@ -38,7 +44,6 @@ export interface IEmits {
 }
 
 interface IProps {
-  ariaLabel?: string;
   modelValue?: boolean;
   disabled?: boolean;
   name?: string;
@@ -46,6 +51,8 @@ interface IProps {
   color?: VcSwitchColorType;
   size?: "xs" | "sm" | "md" | "lg";
   labelPosition?: "left" | "right";
+  label?: string;
+  ariaLabel?: string;
 }
 
 const emit = defineEmits<IEmits>();
@@ -56,6 +63,14 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const componentId = useComponentId("input");
+
+// Dev warning for accessibility
+if (import.meta.env.DEV) {
+  if (!props.ariaLabel && !props.name) {
+    // eslint-disable-next-line no-console
+    console.warn("VcSwitch: Switch should have ariaLabel or name for accessibility");
+  }
+}
 
 function change() {
   if (props.disabled) {
