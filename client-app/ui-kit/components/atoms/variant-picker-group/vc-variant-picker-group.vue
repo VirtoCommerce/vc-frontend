@@ -394,21 +394,21 @@ function toggleValue(value: string | string[]): void {
   const valueToSet = Array.isArray(value) ? [...value] : value;
 
   if (multiple.value) {
-    let currentValue: string[];
+    let currentValue: (string | string[])[] = [];
+
     if (Array.isArray(internalModelValue.value)) {
-      currentValue = [...internalModelValue.value];
+      currentValue = [...internalModelValue.value] as (string | string[])[];
     } else if (internalModelValue.value) {
       currentValue = [internalModelValue.value];
-    } else {
-      currentValue = [];
     }
+
     const index = currentValue.findIndex((v) => isEqual(v, valueToSet));
 
     if (index > -1) {
       currentValue.splice(index, 1);
-      internalModelValue.value = currentValue;
+      internalModelValue.value = currentValue as string | string[];
     } else {
-      internalModelValue.value = [...currentValue, valueToSet] as string[];
+      internalModelValue.value = [...currentValue, valueToSet] as string | string[];
     }
   } else {
     internalModelValue.value = valueToSet;
