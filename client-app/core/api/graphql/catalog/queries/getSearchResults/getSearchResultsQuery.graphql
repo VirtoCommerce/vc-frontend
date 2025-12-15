@@ -8,6 +8,7 @@ query GetSearchResults(
   $withProducts: Boolean!
   $withCategories: Boolean!
   $withPages: Boolean!
+  $withVirtoPages: Boolean!
   $withSuggestions: Boolean!
   $productsAfter: String
   $productsFirst: Int
@@ -32,6 +33,15 @@ query GetSearchResults(
     totalCount
     items {
       name
+      permalink
+    }
+  }
+
+  pageDocuments(storeId: $storeId, keyword: $query, cultureName: $cultureName, first: $pagesFirst, after: $pagesAfter)
+    @include(if: $withVirtoPages) {
+    totalCount
+    items {
+      title
       permalink
     }
   }

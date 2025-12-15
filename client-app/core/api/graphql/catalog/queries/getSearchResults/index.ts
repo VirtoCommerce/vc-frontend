@@ -2,7 +2,9 @@ import { ApolloError } from "@apollo/client/core";
 import { AbortReason } from "@/core/api/common/enums";
 import { graphqlClient } from "@/core/api/graphql/client";
 import { GetSearchResultsDocument } from "@/core/api/graphql/types";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { MODULE_ID_VIRTOPAGES, VIRTOPAGES_ENABLED_KEY } from "@/core/constants/modules";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities/logger";
 import type { GetSearchResultsQueryVariables } from "@/core/api/graphql/types";
@@ -39,11 +41,16 @@ export type GetSearchResultsParamsType = {
 
 let abortController: AbortController | undefined;
 
+const { isEnabled: virtoPagesEnabled } = useModuleSettings(MODULE_ID_VIRTOPAGES);
+
 export async function getSearchResults(params: GetSearchResultsParamsType) {
   const { storeId, userId, cultureName, currencyCode } = globals;
 
+  const isVirtoPagesEnabled = virtoPagesEnabled(VIRTOPAGES_ENABLED_KEY);
+
   const withSuggestions = !!params.productSuggestions;
-  const withPages = !!params.pages;
+  const withPages = !!params.pages && !isVirtoPagesEnabled;
+  const withVirtoPages = !!params.pages && isVirtoPagesEnabled;
   const withCategories = !!params.categories;
   const withProducts = !!params.products;
 
@@ -80,6 +87,7 @@ export async function getSearchResults(params: GetSearchResultsParamsType) {
     withProducts,
     withCategories,
     withPages,
+    withVirtoPages,
     withSuggestions,
     query: keyword,
     filter,
@@ -91,7 +99,7 @@ export async function getSearchResults(params: GetSearchResultsParamsType) {
     });
   }
 
-  if (withPages) {
+  if (withPages || withVirtoPages) {
     Object.assign(variables, <GetSearchResultsQueryVariables>{
       pagesFirst: staticContentItemsPerPage,
       pagesAfter: String((staticContentPage - 1) * staticContentItemsPerPage),
@@ -136,7 +144,7 @@ export async function getSearchResults(params: GetSearchResultsParamsType) {
 
     return {
       productSuggestions: data.productSuggestions ?? {},
-      pages: data.pages ?? {},
+      pages: data.pages ?? data.pageDocuments ?? {},
       categories: data.categories ?? {},
       products: data.products ?? {},
     };
