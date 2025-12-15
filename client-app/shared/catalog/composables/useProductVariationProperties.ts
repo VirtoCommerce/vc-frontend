@@ -165,7 +165,13 @@ function createMulticolorOption(properties: Property[]): IPropertyValue {
     throw new Error("createMulticolorOption: properties array cannot be empty");
   }
 
-  const sortedProps = sortBy(properties, (p) => p.valueDisplayOrder ?? Infinity);
+  // Check if all valueDisplayOrder are valid numbers
+  const allNumeric = properties.every(
+    (p) => typeof p.valueDisplayOrder === "number" && Number.isFinite(p.valueDisplayOrder),
+  );
+
+  const sortedProps = allNumeric ? sortBy(properties, (p) => p.valueDisplayOrder) : properties;
+
   const valuesArray = sortedProps.map(normalizePropertyValue);
   const labelsArray = sortedProps.map((p) => getPropertyValue(p) ?? "");
 
