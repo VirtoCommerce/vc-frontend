@@ -31,7 +31,7 @@ defineProps<IProps>();
   @apply relative flex flex-wrap items-center gap-x-1;
 
   &__list {
-    @apply mt-0.5 text-xs font-bold text-neutral-400 line-through;
+    @apply mt-0.5 text-xs font-bold text-neutral line-through;
   }
 
   &__actual {
