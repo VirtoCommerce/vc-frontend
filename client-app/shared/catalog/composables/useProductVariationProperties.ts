@@ -38,10 +38,13 @@ function isVariationCompatible(variation: Product, propertyName: string, propert
       return false;
     }
 
-    const variationNormalizedValues = sortBy(variationProps.map(normalizePropertyValue));
-    const sortedPropertyValue = sortBy(propertyValue);
+    // Apply same sorting logic as in createMulticolorOption
+    const propsToCompare = hasAllNumericDisplayOrders(variationProps)
+      ? sortBy(variationProps, (p) => p.valueDisplayOrder)
+      : variationProps;
+    const variationNormalizedValues = propsToCompare.map(normalizePropertyValue);
 
-    return isEqual(variationNormalizedValues, sortedPropertyValue);
+    return isEqual(variationNormalizedValues, propertyValue);
   }
 
   // For single value, variation must have exactly ONE property with this name
@@ -159,18 +162,20 @@ function calculateNewSelections(
   return runAutoSelection(variations, baseSelections);
 }
 
+/** Checks if all properties have valid numeric valueDisplayOrder */
+function hasAllNumericDisplayOrders(properties: Property[]): boolean {
+  return properties.every((p) => typeof p.valueDisplayOrder === "number" && Number.isFinite(p.valueDisplayOrder));
+}
+
 /** Creates multicolor property value option from multiple color properties */
 function createMulticolorOption(properties: Property[]): IPropertyValue {
   if (properties.length === 0) {
     throw new Error("createMulticolorOption: properties array cannot be empty");
   }
 
-  // Check if all valueDisplayOrder are valid numbers
-  const allNumeric = properties.every(
-    (p) => typeof p.valueDisplayOrder === "number" && Number.isFinite(p.valueDisplayOrder),
-  );
-
-  const sortedProps = allNumeric ? sortBy(properties, (p) => p.valueDisplayOrder) : properties;
+  const sortedProps = hasAllNumericDisplayOrders(properties)
+    ? sortBy(properties, (p) => p.valueDisplayOrder)
+    : properties;
 
   const valuesArray = sortedProps.map(normalizePropertyValue);
   const labelsArray = sortedProps.map((p) => getPropertyValue(p) ?? "");
@@ -289,7 +294,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
         return false;
       }
 
-      return isEqual(sortBy(value), sortBy(selected));
+      return isEqual(value, selected);
     }
 
     return selected === value;
