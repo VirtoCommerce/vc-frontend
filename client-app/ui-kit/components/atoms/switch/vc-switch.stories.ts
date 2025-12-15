@@ -40,6 +40,10 @@ export default {
       },
     },
   },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcSwitch v-bind="args" v-model="args.modelValue" />',
+  }),
 } as Meta<typeof VcSwitch>;
 
 type StoryType = StoryObj<typeof VcSwitch>;
@@ -61,7 +65,7 @@ export const WithSlot: StoryType = {
   render: (args) => ({
     components: { VcSwitch },
     setup: () => ({ args }),
-    template: '<VcSwitch v-bind="args">Label from slot</VcSwitch>',
+    template: '<VcSwitch v-bind="args" v-model="args.modelValue">Label from slot</VcSwitch>',
   }),
   args: {
     ariaLabel: "Label from slot",
