@@ -106,7 +106,7 @@
         <template v-if="!$cfg.checkout_multistep_enabled">
           <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
 
-          <BillingDetailsSection class="mt-5" />
+          <BillingDetailsSection :cart="cart" />
 
           <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
         </template>

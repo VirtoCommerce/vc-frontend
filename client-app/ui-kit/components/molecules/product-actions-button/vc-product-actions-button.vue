@@ -1,6 +1,7 @@
 <template>
   <button
-    :aria-label="tooltipText"
+    :aria-label="ariaLabel || tooltipText"
+    :aria-pressed="ariaPressed !== undefined ? ariaPressed : undefined"
     :title="tooltipText"
     type="button"
     tabindex="0"
@@ -15,7 +16,7 @@
     :disabled="disabled"
     @click="onClick"
   >
-    <VcIcon :name="icon" :size="iconSize" />
+    <VcIcon :name="icon" :size="iconSize" aria-hidden="true" />
   </button>
 </template>
 
@@ -29,6 +30,8 @@ interface IProps {
   active?: boolean;
   color?: VcProductActionsButtonColorType;
   tooltipText?: string;
+  ariaLabel?: string;
+  ariaPressed?: boolean;
   icon?: string;
   iconSize?: VcIconSizeType;
 }

@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ref, nextTick } from "vue";
 import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
 import type { useProductVariationProperties as useProductVariationPropertiesType } from "./useProductVariationProperties";
-import type { PrimitiveValueType } from "./useProductVariationProperties";
 import type { Product, Property } from "@/core/api/graphql/types";
+import type { PrimitiveValueType } from "@/core/utilities/properties";
 
 interface IPropertyRecord {
   name: string;
@@ -95,12 +95,116 @@ const mockData = {
     ]),
     createVariation("3", [{ name: "noname", value: "orphaned" }]),
   ],
+
+  withMulticolorAndSingleColor: [
+    // Single color variations
+    {
+      id: "1",
+      properties: [
+        {
+          id: "fabriccolor-red",
+          name: "FabricColor",
+          value: "Red",
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.Color,
+          label: "Fabric Color",
+          hidden: false,
+          multivalue: false,
+        },
+        {
+          id: "size-m",
+          name: "Size",
+          value: "M",
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.ShortText,
+          label: "Size",
+          hidden: false,
+          multivalue: false,
+        },
+      ],
+    } as unknown as Product,
+    // Multicolor variation [Red, Blue]
+    {
+      id: "2",
+      properties: [
+        {
+          id: "fabriccolor-red-1",
+          name: "FabricColor",
+          value: "Red",
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.Color,
+          label: "Fabric Color",
+          hidden: false,
+          multivalue: false,
+        },
+        {
+          id: "fabriccolor-blue-1",
+          name: "FabricColor",
+          value: "Blue",
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.Color,
+          label: "Fabric Color",
+          hidden: false,
+          multivalue: false,
+        },
+        {
+          id: "size-l",
+          name: "Size",
+          value: "L",
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.ShortText,
+          label: "Size",
+          hidden: false,
+          multivalue: false,
+        },
+      ],
+    } as unknown as Product,
+    // Single color Blue
+    {
+      id: "3",
+      properties: [
+        {
+          id: "fabriccolor-blue",
+          name: "FabricColor",
+          value: "Blue",
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.Color,
+          label: "Fabric Color",
+          hidden: false,
+          multivalue: false,
+        },
+        {
+          id: "size-m-2",
+          name: "Size",
+          value: "M",
+          propertyType: PropertyType.Variation,
+          propertyValueType: PropertyValueTypes.ShortText,
+          label: "Size",
+          hidden: false,
+          multivalue: false,
+        },
+      ],
+    } as unknown as Product,
+  ],
 };
 
 vi.mock("vue-i18n", () => ({
   useI18n: () => ({
     t: (key: string) => key,
   }),
+}));
+
+vi.mock("@/core/globals", () => ({
+  globals: {
+    i18n: {
+      global: {
+        t: vi.fn((key: string) => key),
+        d: vi.fn((date: Date) => date.toLocaleDateString()),
+        n: vi.fn((num: number) => num.toString()),
+      },
+    },
+    cultureName: "en-US",
+  },
 }));
 
 describe("useProductVariationProperties", () => {
@@ -126,8 +230,8 @@ describe("useProductVariationProperties", () => {
     expect(colorProperty?.values.length).toBe(2);
     expect(colorProperty?.values).toEqual(
       expect.arrayContaining([
-        { value: "Red", label: "Red" },
-        { value: "Blue", label: "Blue" },
+        { value: "Red", label: "Red", displayOrder: undefined },
+        { value: "Blue", label: "Blue", displayOrder: undefined },
       ]),
     );
   });
@@ -291,17 +395,17 @@ describe("useProductVariationProperties", () => {
     const availableProp = properties.value.get("Available");
     expect(availableProp?.values).toEqual(
       expect.arrayContaining([
-        { value: true, label: "common.labels.true_property" },
-        { value: false, label: "common.labels.false_property" },
+        { value: "true", label: "common.labels.true_property", displayOrder: undefined },
+        { value: "false", label: "common.labels.false_property", displayOrder: undefined },
       ]),
     );
 
     const countProp = properties.value.get("Count");
-    expect(countProp?.values).toEqual(expect.arrayContaining([{ value: 10, label: "10" }]));
+    expect(countProp?.values).toEqual(expect.arrayContaining([{ value: "10", label: "10", displayOrder: undefined }]));
 
     const releaseDateProp = properties.value.get("ReleaseDate");
     expect(releaseDateProp?.values).toEqual(
-      expect.arrayContaining([{ value: "2023-10-27T10:00:00Z", label: "mock date" }]),
+      expect.arrayContaining([{ value: "2023-10-27T10:00:00Z", label: "mock date", displayOrder: undefined }]),
     );
 
     dateSpy.mockRestore();
@@ -324,11 +428,8 @@ describe("useProductVariationProperties", () => {
     const { properties } = useProductVariationProperties(variationsWithProblematicValues);
 
     expect(properties.value.has("Color")).toBe(true);
-    expect(properties.value.has("Size")).toBe(true);
-
-    const sizeProperty = properties.value.get("Size");
-    expect(sizeProperty?.values).toHaveLength(1);
-    expect(sizeProperty?.values).toEqual(expect.arrayContaining([{ value: null, label: "null" }]));
+    // Properties with null/undefined values should not be created
+    expect(properties.value.has("Size")).toBe(false);
   });
 
   it("has a correct initial state before any selections", () => {
@@ -381,5 +482,129 @@ describe("useProductVariationProperties", () => {
     select("Color", "Blue");
     expect(applicableVariations.value.length).toBe(1);
     expect(applicableVariations.value[0].id).toBe("3");
+  });
+
+  it("does not match single-color selection with multicolor variations", () => {
+    const variations = ref(mockData.withMulticolorAndSingleColor);
+    const { select, isAvailable, applicableVariations } = useProductVariationProperties(variations);
+
+    // Select single color "red" (normalized value as it comes from IPropertyValue)
+    select("FabricColor", "red");
+
+    // Should only match variation #1 (single Red), not #2 (multicolor Red+Blue)
+    expect(applicableVariations.value.length).toBe(1);
+    expect(applicableVariations.value[0].id).toBe("1");
+
+    // Size M should be available (from variation #1), Size L should not (from multicolor #2)
+    expect(isAvailable("Size", "M")).toBe(true);
+    expect(isAvailable("Size", "L")).toBe(false);
+  });
+
+  it("does not match multicolor selection with single-color variations", () => {
+    const variations = ref(mockData.withMulticolorAndSingleColor);
+    const { select, applicableVariations } = useProductVariationProperties(variations);
+
+    // Select multicolor ["red", "blue"]
+    select("FabricColor", ["red", "blue"]);
+
+    // Should only match variation #2 (multicolor Red+Blue), not #1 or #3 (single colors)
+    expect(applicableVariations.value.length).toBe(1);
+    expect(applicableVariations.value[0].id).toBe("2");
+  });
+
+  it("correctly distinguishes between different multicolor combinations", () => {
+    const variationsWithMulticolors = ref([
+      mockData.withMulticolorAndSingleColor[1], // Red+Blue, Size L
+      {
+        id: "4",
+        properties: [
+          {
+            id: "fabriccolor-red-2",
+            name: "FabricColor",
+            value: "Red",
+            propertyType: PropertyType.Variation,
+            propertyValueType: PropertyValueTypes.Color,
+            label: "Fabric Color",
+            hidden: false,
+            multivalue: false,
+          },
+          {
+            id: "fabriccolor-green",
+            name: "FabricColor",
+            value: "Green",
+            propertyType: PropertyType.Variation,
+            propertyValueType: PropertyValueTypes.Color,
+            label: "Fabric Color",
+            hidden: false,
+            multivalue: false,
+          },
+          {
+            id: "size-xl",
+            name: "Size",
+            value: "XL",
+            propertyType: PropertyType.Variation,
+            propertyValueType: PropertyValueTypes.ShortText,
+            label: "Size",
+            hidden: false,
+            multivalue: false,
+          },
+        ],
+      } as unknown as Product,
+    ]);
+
+    const { select, applicableVariations } = useProductVariationProperties(variationsWithMulticolors);
+
+    // Select multicolor ["red", "blue"]
+    select("FabricColor", ["red", "blue"]);
+
+    // Should only match the Red+Blue variation, not Red+Green
+    expect(applicableVariations.value.length).toBe(1);
+    expect(applicableVariations.value[0].id).toBe("2");
+  });
+
+  it("auto-selects non-color properties when multicolor is selected first", () => {
+    const variations = ref(mockData.withMulticolorAndSingleColor);
+    const { select, isSelected, isCompleted } = useProductVariationProperties(variations);
+
+    // Select multicolor as the FIRST choice
+    select("FabricColor", ["red", "blue"]);
+
+    // Size L should be auto-selected (only one size available for this multicolor)
+    expect(isSelected("FabricColor", ["red", "blue"])).toBe(true);
+    expect(isSelected("Size", "L")).toBe(true);
+    expect(isCompleted.value).toBe(true);
+  });
+
+  it("preserves compatible Size when multicolor is selected", () => {
+    const variations = ref(mockData.withMulticolorAndSingleColor);
+    const { select, isSelected } = useProductVariationProperties(variations);
+
+    // First select Size L
+    select("Size", "L");
+    expect(isSelected("Size", "L")).toBe(true);
+
+    // Then select multicolor [red, blue] which is compatible with Size L
+    select("FabricColor", ["red", "blue"]);
+
+    // Size L should be preserved
+    expect(isSelected("FabricColor", ["red", "blue"])).toBe(true);
+    expect(isSelected("Size", "L")).toBe(true);
+  });
+
+  it("resets incompatible Size when multicolor is selected", () => {
+    const variations = ref(mockData.withMulticolorAndSingleColor);
+    const { select, isSelected } = useProductVariationProperties(variations);
+
+    // First select Size M
+    select("Size", "M");
+    expect(isSelected("Size", "M")).toBe(true);
+
+    // Then select multicolor [red, blue] which is NOT compatible with Size M (only Size L available)
+    select("FabricColor", ["red", "blue"]);
+
+    // Size M should be reset, Size L should be auto-selected
+    expect(isSelected("FabricColor", ["red", "blue"])).toBe(true);
+    expect(isSelected("Size", "M")).toBe(false);
+    expect(isSelected("Size", "L")).toBe(true);
   });
 });

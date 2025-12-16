@@ -3,6 +3,8 @@
     icon="compare"
     :icon-size="iconSize"
     :active="isInCompareList"
+    :aria-label="tooltipText"
+    :aria-pressed="isInCompareList"
     :tooltip-text="tooltipText"
     @click="toggle"
   />

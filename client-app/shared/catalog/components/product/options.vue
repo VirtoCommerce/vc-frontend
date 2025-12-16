@@ -19,19 +19,20 @@
       <div v-for="[key, property] in properties" v-else :key="key" class="options__item">
         <div class="options__label">{{ property.label }}</div>
 
-        <VcVariantPickerGroup>
+        <VcVariantPickerGroup
+          :model-value="getSelectedValue(property)"
+          :type="getType(property.propertyValueType)"
+          :name="property.label"
+          size="xs"
+          @update:model-value="(value: string | string[]) => handlePropertyChange(property, value)"
+        >
           <VcVariantPicker
             v-for="option in property.values"
-            :key="option.label"
-            :model-value="isSelected(property.name, option.value) ? getValue(property, option) : undefined"
-            :type="getType(property.propertyValueType)"
-            :name="property.label"
+            :key="`${property.name}-${serialize(option.value)}`"
             :value="getValue(property, option)"
             :is-available="isAvailable(property.name, option.value)"
             class="options__picker"
-            size="xs"
             :tooltip="getTooltip(property, option)"
-            @update:model-value="select(property.name, option.value)"
           />
         </VcVariantPickerGroup>
       </div>
@@ -43,6 +44,7 @@
 import { computed, toRef } from "vue";
 import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
+import { serialize } from "@/ui-kit/utilities";
 import type { Product } from "@/core/api/graphql/types";
 import type { IProperty, IPropertyValue } from "@/shared/catalog/composables/useProductVariationProperties";
 import ProductTitledBlock from "@/shared/catalog/components/product-titled-block.vue";
@@ -62,16 +64,20 @@ const fetchingVariations = toRef(props, "fetchingVariations");
 
 const isBlockVisible = computed(() => !props.model.hidden && (properties.value.size > 0 || fetchingVariations.value));
 
-const { properties, select, isSelected, isAvailable, getTooltip } = useProductVariationProperties(variations);
+const { properties, select, isAvailable, getTooltip, getSelectedValue } = useProductVariationProperties(variations);
 
-function getType(propertyValueType: PropertyValueTypes) {
+function getType(propertyValueType: PropertyValueTypes): "color" | "text" {
   return propertyValueType === PropertyValueTypes.Color ? "color" : "text";
 }
 
-function getValue(property: IProperty, option: IPropertyValue) {
-  return property.propertyValueType === PropertyValueTypes.Color
-    ? (option.colorCode ?? String(option.value))
-    : String(option.value);
+function getValue(property: IProperty, option: IPropertyValue): string | string[] {
+  return option.value;
+}
+
+function handlePropertyChange(property: IProperty, groupValue: string | string[]) {
+  if (groupValue && !(Array.isArray(groupValue) && groupValue.length === 0)) {
+    select(property.name, groupValue);
+  }
 }
 </script>
 
