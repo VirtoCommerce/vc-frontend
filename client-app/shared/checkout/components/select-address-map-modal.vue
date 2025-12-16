@@ -103,7 +103,7 @@
         </GoogleMap>
 
         <VcScrollbar vertical class="select-address-map-modal__sidebar">
-          <ul v-if="addresses.length" class="select-address-map-modal__list">
+          <ul v-if="addresses.length" class="select-address-map-modal__list" data-test-id="pickup-locations-list">
             <li
               v-for="address in addresses"
               :key="address.id"
@@ -116,6 +116,7 @@
                 class="select-address-map-modal__radio-button"
                 size="sm"
                 @change="selectHandler(address, { scrollToSelectedOnMap: true })"
+                :data-test-coords="address.geoLocation"
               >
                 <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
 
@@ -147,11 +148,11 @@
 
     <template #actions="{ close }">
       <div class="select-address-map-modal__actions">
-        <VcButton variant="outline" size="sm" color="neutral" @click="close">
+        <VcButton variant="outline" size="sm" color="neutral" @click="close" data-test-id="cancel-button">
           {{ $t("common.buttons.cancel") }}
         </VcButton>
 
-        <VcButton variant="solid" size="sm" :disabled="!changed" @click="saveHandler(close)">
+        <VcButton variant="solid" size="sm" :disabled="!changed" @click="saveHandler(close)" data-test-id="save-button">
           {{ $t("common.buttons.save") }}
         </VcButton>
       </div>
