@@ -243,9 +243,9 @@ const {
 });
 
 const isValidBankCard = computed(() => {
-  const noSecureFieldsErrors = !validationResult.value.hasErrors;
-  const noExpirationErrors = expirationDateErrors.value === "";
-  const noNameErrors = !formErrors.value.cardholderName;
+  const noSecureFieldsErrors = !validationResult.value.hasErrors; // Cart number and CVV errors
+  const noExpirationErrors = expirationDateErrors.value === "" && expirationDate.value.trim() !== "";
+  const noNameErrors = !formErrors.value.cardholderName && cardholderName.value?.trim() !== "";
   return !loading.value && noSecureFieldsErrors && noExpirationErrors && noNameErrors;
 });
 
