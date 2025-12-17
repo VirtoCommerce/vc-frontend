@@ -144,7 +144,7 @@
 <script setup lang="ts">
 import { useDebounceFn, useBreakpoints } from "@vueuse/core";
 import { pickBy } from "lodash";
-import { computed, onMounted, ref, toValue, watch } from "vue";
+import { computed, onMounted, ref, toRefs, toValue, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useRouteQueryParam, useThemeContext, useAnalytics } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
@@ -173,6 +173,8 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
+
+const { visible } = toRefs(props);
 
 const PRODUCTS_LIMIT = 7;
 const CATEGORIES_LIMIT = 5;
@@ -384,6 +386,12 @@ watch(
     void onSearchPhraseChanged();
   },
 );
+
+watch(visible, (isVisible, wasVisible) => {
+  if (isVisible && !wasVisible) {
+    void onSearchPhraseChanged();
+  }
+});
 
 onMounted(() => {
   void loadSearchHistory();

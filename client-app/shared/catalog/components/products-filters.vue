@@ -34,6 +34,7 @@
               :loading="loading"
               :facet="facet"
               :filter="getFiltersByParamName(facet.paramName)"
+              :data-test-id="`filter-${facet.paramName}`"
               @update:filter="onFacetFilterChanged"
             />
           </div>
