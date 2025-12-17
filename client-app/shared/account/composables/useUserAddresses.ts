@@ -86,15 +86,13 @@ export function useUserAddresses() {
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await deleteMemberAddresses(inputAddresses, user.value.memberId!);
+      addresses.value = await deleteMemberAddresses(inputAddresses, user.value.memberId!);
     } catch (e) {
       Logger.error(`${useUserAddresses.name}.${removeAddresses.name}`, e);
       throw e;
     } finally {
       loading.value = false;
     }
-
-    await fetchAddresses();
   }
 
   return {
