@@ -1,10 +1,15 @@
 import { useQuery } from "@vue/apollo-composable";
-import { useCartQueryVariables } from "@/core/api/graphql/cart/composables";
 import { GetShortCartDocument } from "@/core/api/graphql/types";
+import { globals } from "@/core/globals";
 
 export function useGetShortCartQuery() {
-  return useQuery(GetShortCartDocument, useCartQueryVariables(), {
-    notifyOnNetworkStatusChange: true,
-    fetchPolicy: "cache-first",
-  });
+  const { storeId, cultureName, currencyCode, userId } = globals;
+  return useQuery(
+    GetShortCartDocument,
+    { storeId, cultureName, currencyCode, userId },
+    {
+      notifyOnNetworkStatusChange: true,
+      fetchPolicy: "cache-first",
+    },
+  );
 }

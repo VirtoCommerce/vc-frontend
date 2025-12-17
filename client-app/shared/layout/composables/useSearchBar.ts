@@ -7,6 +7,15 @@ import { highlightSearchText, prepareSearchText } from "../utils";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category, PageType, Product } from "@/core/api/graphql/types";
 
+/**
+ * Extracts the display name from a page object.
+ * Handles both PageType (with 'name') and PageDocumentType (with 'title').
+ * Falls back to permalink if neither name nor title is available.
+ */
+function getPageName(item: { title?: string; name?: string; permalink?: string }) {
+  return item.name ?? item.title ?? item.permalink ?? "";
+}
+
 function _useSearchBar() {
   const { themeContext } = useThemeContext();
 
@@ -72,7 +81,7 @@ function _useSearchBar() {
 
       pages.value = pagesItems.map((item) => ({
         ...item,
-        name: highlightSearchText(item.name ?? "", params.keyword),
+        name: highlightSearchText(getPageName(item), params.keyword),
       })) as PageType[]; // TODO: remove type assertion
 
       categories.value = categoriesItems.map((item) => ({

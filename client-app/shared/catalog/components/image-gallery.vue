@@ -81,6 +81,7 @@
         @keydown.arrow-left.prevent="navigateToPrevious"
         @keydown.arrow-right.prevent="navigateToNext"
         @keydown.enter.prevent="openLightbox(thumbsId)"
+        :key="imagesMode"
       >
         <SwiperSlide v-for="(image, index) in images" :key="index" class="image-gallery__thumb">
           <VcImage
