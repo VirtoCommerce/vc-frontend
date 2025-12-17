@@ -45,15 +45,13 @@ export function useUserAddresses() {
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await updateMemberAddresses(user.value.memberId, inputAddresses);
+      addresses.value = await updateMemberAddresses(user.value.memberId, inputAddresses);
     } catch (e) {
       Logger.error(`${useUserAddresses.name}.${updateAddresses.name}`, e);
       throw e;
     } finally {
       loading.value = false;
     }
-
-    await fetchAddresses();
   }
 
   async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
