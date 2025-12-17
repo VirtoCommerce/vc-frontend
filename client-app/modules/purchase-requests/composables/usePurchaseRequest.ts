@@ -1,6 +1,6 @@
 import { useMutation } from "@vue/apollo-composable";
 import { computed, toValue, watch } from "vue";
-import { useAllGlobalVariables } from "@/core/api/graphql/composables";
+import { globals } from "@/core/globals";
 import { useGetPurchaseRequestQuery } from "@/modules/purchase-requests/api/graphql/queries/getPurchaseRequest";
 import { useUserQuote } from "@/modules/quotes/useUserQuote";
 import { toAttachedFile } from "@/ui-kit/utilities/file";
@@ -46,8 +46,15 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
   } = useUserQuote();
 
   async function fetchItems() {
+    const { storeId, cultureName, currencyCode, userId } = globals;
     if (purchaseRequest.value?.quoteId) {
-      await fetchQuote({ id: purchaseRequest.value.quoteId, ...toValue(useAllGlobalVariables()) });
+      await fetchQuote({
+        storeId,
+        cultureName,
+        currencyCode,
+        userId,
+        id: purchaseRequest.value.quoteId,
+      });
     }
   }
 
