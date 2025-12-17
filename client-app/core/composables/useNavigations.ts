@@ -7,6 +7,7 @@ import { getChildCategories, getMenu } from "@/core/api/graphql";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
+import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import {
   convertToExtendedMenuLink,
@@ -159,14 +160,19 @@ export function _useNavigations() {
     const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
     try {
-      if (catalog_menu_link_list_name && typeof catalog_menu_link_list_name === "string") {
-        // Use a list of links
+      // Get white labeling main menu links
+      const { mainMenuLinks: whiteLabelingMainMenuLinks } = useWhiteLabeling();
+
+      if (whiteLabelingMainMenuLinks.value?.length) {
+        // First priority: use white labeling main menu if available
+        catalogMenuItems.value = whiteLabelingMainMenuLinks.value;
+      } else if (catalog_menu_link_list_name && typeof catalog_menu_link_list_name === "string") {
+        // Second priority: use XAPI catalog menu link list setting
         catalogMenuItems.value = (await getMenu(catalog_menu_link_list_name)).map((item) =>
           convertToExtendedMenuLink(item as MenuLinkType, true),
         );
       } else {
-        // Use the query `childCategories`, with `maxLevel` equal to 2
-
+        // Third priority: use category-based menu (query `childCategories`, with `maxLevel` equal to 2)
         const catalogId = themeContext.value.catalogId;
         const currencyCode = currentCurrency.value.code;
 
