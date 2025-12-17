@@ -2095,7 +2095,7 @@ export type InputDynamicPropertyValueType = {
 };
 
 export type InputInitializeCartPaymentType = {
-  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartId: Scalars['String']['input'];
   /** Payment Id */
   paymentId: Scalars['String']['input'];
 };
