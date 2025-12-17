@@ -1,16 +1,12 @@
 <template>
-  <div
-    ref="scrollContainer"
-    v-if="isMultiOrganization"
-    class="multi-organization-menu mt-4 flex grow flex-col gap-y-1 font-normal"
-  >
+  <div ref="scrollContainer" v-if="isMultiOrganization" class="multi-organization-menu">
     <VcRadioButton
       v-if="organization && !loading"
       :model-value="contactOrganizationId"
       :value="organization.id"
-      class="py-2.5"
+      class="multi-organization-menu__radio"
     >
-      <span class="uppercase">
+      <span class="multi-organization-menu__radio-label">
         {{ organization.name }}
       </span>
     </VcRadioButton>
@@ -20,10 +16,10 @@
       :key="item.id"
       v-model="contactOrganizationId"
       :value="item.id"
-      class="py-2.5"
+      class="multi-organization-menu__radio"
       @change="selectOrganization"
     >
-      <span class="uppercase">
+      <span class="multi-organization-menu__radio-label">
         {{ item.name }}
       </span>
     </VcRadioButton>
@@ -35,7 +31,7 @@
       :page-number="currentPage"
       :pages-count="pagesCount"
       distance="50"
-      class="py-2"
+      class="multi-organization-menu__loader"
       @visible="loadOrganizations"
     />
   </div>
@@ -66,6 +62,18 @@ async function selectOrganization(): Promise<void> {
 
 <style scoped lang="scss">
 .multi-organization-menu {
-  @apply h-[calc(100vh-224px)] overflow-y-auto;
+  @apply mt-4 flex grow flex-col gap-y-1 font-normal h-[calc(100vh-224px)] overflow-y-auto;
+
+  &__radio {
+    @apply py-2.5;
+  }
+
+  &__radio-label {
+    @apply uppercase;
+  }
+
+  &__loader {
+    @apply py-2;
+  }
 }
 </style>

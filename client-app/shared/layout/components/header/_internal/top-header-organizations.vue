@@ -1,7 +1,7 @@
 <template>
-  <div class="rounded-b-md border-t bg-neutral-50">
-    <div v-if="isShowSearch" class="border-b bg-neutral-100 p-3 pt-2">
-      <div class="pb-1 text-xs text-neutral-600">
+  <div class="top-header-organizations">
+    <div v-if="isShowSearch" class="top-header-organizations__search">
+      <div class="top-header-organizations__label">
         {{ $t("common.labels.organizations") }}
       </div>
 
@@ -21,11 +21,11 @@
       </VcInput>
     </div>
 
-    <div v-else class="px-3 pt-3 text-xs text-neutral-600">
+    <div v-else class="top-header-organizations__label top-header-organizations__label--static">
       {{ $t("common.labels.organizations") }}
     </div>
 
-    <div ref="scrollContainer" class="my-1 max-h-60 overflow-y-auto">
+    <div ref="scrollContainer" class="top-header-organizations__list">
       <VcRadioButton
         v-if="organization && !loading"
         :model-value="contactOrganizationId"
@@ -35,7 +35,7 @@
         :title="organization.name"
         :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${organization.name}`"
         word-break="break-word"
-        class="flex px-3 py-1 text-sm"
+        class="top-header-organizations__radio"
       />
 
       <VcRadioButton
@@ -44,7 +44,7 @@
         v-model="contactOrganizationId"
         :label="item.name"
         :value="item.id"
-        class="flex px-3 py-1 text-sm"
+        class="top-header-organizations__radio"
         :max-lines="2"
         :title="item.name"
         word-break="break-word"
@@ -59,7 +59,7 @@
         :page-number="currentPage"
         :pages-count="pagesCount"
         distance="50"
-        class="py-2"
+        class="top-header-organizations__loader"
         @visible="loadOrganizations"
       />
     </div>
@@ -119,3 +119,33 @@ async function onSearchClear(): Promise<void> {
   await search();
 }
 </script>
+
+<style scoped lang="scss">
+.top-header-organizations {
+  @apply rounded-b-md border-t bg-neutral-50;
+
+  &__search {
+    @apply border-b bg-neutral-100 p-3 pt-2;
+  }
+
+  &__label {
+    @apply pb-1 text-xs text-neutral-600;
+
+    &--static {
+      @apply px-3 pt-3;
+    }
+  }
+
+  &__list {
+    @apply my-1 max-h-60 overflow-y-auto;
+  }
+
+  &__radio {
+    @apply flex px-3 py-1 text-sm;
+  }
+
+  &__loader {
+    @apply py-2;
+  }
+}
+</style>
