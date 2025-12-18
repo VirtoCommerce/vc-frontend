@@ -164,7 +164,6 @@ export function useShortCart() {
 
   const { mutate: _addBulkItemsToCart, loading: addBulkItemsToCartLoading } = useMutation(AddBulkItemsCartDocument);
   async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
-    console.log("addBulkItemsToCart", items);
     const result = await _addBulkItemsToCart(
       {
         command: { cartItems: items, ...commonVariables },
@@ -211,8 +210,7 @@ export function useShortCart() {
       return;
     }
 
-    const sourceOrder = "/bulk-order";
-    analytics("addBulkItemsToCart", items, { source_order: sourceOrder });
+    analytics("addBulkItemsToCart", items, { source_order: "/bulk-order" });
   }
 
   const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } = useMutation(
