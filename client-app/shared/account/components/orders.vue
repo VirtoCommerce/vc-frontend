@@ -90,7 +90,6 @@
                 v-model="filterData.customerNames"
                 :label="$t('common.labels.buyer_name')"
                 :items="organizationCustomerNames ?? []"
-                class="my-4"
                 multiple
               />
             </template>
