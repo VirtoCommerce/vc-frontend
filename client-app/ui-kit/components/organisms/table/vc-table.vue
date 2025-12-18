@@ -137,9 +137,9 @@
 </template>
 
 <script setup lang="ts" generic="T extends ItemType">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
-import { SKELETON_ROWS_SIZE, PAGE_LIMIT } from "@/ui-kit/constants";
+import { BREAKPOINTS, SKELETON_ROWS_SIZE, PAGE_LIMIT } from "@/ui-kit/constants";
 
 export type ItemType = {
   id?: string | number;
@@ -177,16 +177,12 @@ const props = withDefaults(
   },
 );
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
+const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = computed(() => {
   if (props.mobileBreakpoint === "none") {
     return false;
   }
-  if (props.mobileBreakpoint === "xs") {
-    return true;
-  }
-  const breakpoint: "sm" | "md" | "lg" | "xl" | "2xl" = props.mobileBreakpoint;
-  return breakpoints.smaller(breakpoint).value;
+  return breakpoints.smaller(props.mobileBreakpoint).value;
 });
 
 function onPageUpdate(newPage: number) {
