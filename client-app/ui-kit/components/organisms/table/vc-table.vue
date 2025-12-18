@@ -84,7 +84,7 @@
       <tbody v-if="loading" class="vc-table__body">
         <slot name="desktop-skeleton">
           <!-- Default skeleton template -->
-          <tr v-for="row in skeletonRows" :key="row" class="vc-table__row__skeleton">
+          <tr v-for="row in skeletonRows" :key="row" class="vc-table__skeleton">
             <td
               v-for="column in columns"
               :key="column.id"
