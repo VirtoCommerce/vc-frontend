@@ -188,16 +188,16 @@ export function useShortCart() {
     }));
 
     const successfulItemsToTrack = result?.data?.addBulkItemsCart?.cart?.items
-      ?.filter((item) => {
-        const hasError = result?.data?.addBulkItemsCart?.errors?.some((error) => error.objectId === item.sku);
-        return !hasError;
-      })
       ?.map((item) => {
         const addedQty = items.find(({ productSku }) => productSku === item.sku)?.quantity;
         return {
           ...item,
           quantity: addedQty ?? 0,
         };
+      })
+      ?.filter((item) => {
+        const hasError = result?.data?.addBulkItemsCart?.errors?.some((error) => error.objectId === item.sku);
+        return !hasError && !!item.quantity;
       });
 
     trackAddBulkItemsToCart(successfulItemsToTrack);
