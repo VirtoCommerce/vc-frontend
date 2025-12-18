@@ -1,5 +1,11 @@
-import type { CartType, CustomerOrderType, LineItemType, Product, VariationType } from "@/core/api/graphql/types";
-import type { BulkLineItemFragment } from "@/core/api/graphql/types";
+import type {
+  BulkLineItemFragment,
+  CartType,
+  CustomerOrderType,
+  LineItemType,
+  Product,
+  VariationType,
+} from "@/core/api/graphql/types";
 import type { ICustomAnalyticsEventMap } from "@/core/types/analytics-custom";
 
 export interface IBasicAnalyticsEventMap {
