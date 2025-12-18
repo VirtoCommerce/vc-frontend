@@ -27,14 +27,13 @@
         <slot name="prepend" :loading="loading" />
 
         <template v-for="facet in filtersToShow" :key="facet.paramName">
-          <div data-facet-filter>
+          <div data-facet-filter :data-test-id="`filter-${facet.paramName}`">
             <component
               :is="facetHasBounce(facet.statistics) && isSliderFilterEnabled() ? SliderFilter : FacetFilter"
               :mode="isHorizontal ? 'dropdown' : 'collapsable'"
               :loading="loading"
               :facet="facet"
               :filter="getFiltersByParamName(facet.paramName)"
-              :data-test-id="`filter-${facet.paramName}`"
               @update:filter="onFacetFilterChanged"
             />
           </div>
