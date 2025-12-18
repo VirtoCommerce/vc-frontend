@@ -3,18 +3,16 @@
     <!-- Mobile table view -->
     <div v-if="isMobile && $slots['mobile-item']" class="vc-table__mobile">
       <!-- Mobile skeleton view -->
-      <template v-if="loading">
-        <slot name="mobile-skeleton">
-          <!-- Default mobile skeleton template -->
-          <div v-for="row in skeletonRows" :key="row" class="vc-table__mobile-skeleton-card">
-            <div v-for="block in 4" :key="block" class="vc-table__mobile-skeleton-block">
-              <div class="vc-table__mobile-skeleton-label" />
+      <slot v-if="loading" name="mobile-skeleton">
+        <!-- Default mobile skeleton template -->
+        <div v-for="row in skeletonRows" :key="row" class="vc-table__mobile-skeleton">
+          <div v-for="block in 4" :key="block" class="vc-table__mobile-skeleton-block">
+            <div class="vc-table__mobile-skeleton-label" />
 
-              <div class="vc-table__mobile-skeleton-item" />
-            </div>
+            <div class="vc-table__mobile-skeleton-item" />
           </div>
-        </slot>
-      </template>
+        </div>
+      </slot>
 
       <!-- Mobile empty view -->
       <slot v-else-if="!items.length" name="mobile-empty" />
@@ -42,11 +40,10 @@
               scope="col"
               :aria-sort="getAriaSort(column.id)"
               :class="[
-                'vc-table__cell',
-                'vc-table__cell--head',
-                `vc-table__cell--align--${column.align ?? 'left'}`,
+                'vc-table__title',
+                `vc-table__title--align--${column.align ?? 'left'}`,
                 {
-                  'vc-table__cell--sortable': column.sortable,
+                  'vc-table__title--sortable': column.sortable,
                 },
                 column.classes,
               ]"
@@ -87,14 +84,13 @@
       <tbody v-if="loading" class="vc-table__body">
         <slot name="desktop-skeleton">
           <!-- Default skeleton template -->
-          <tr v-for="row in skeletonRows" :key="row" class="vc-table__row vc-table__row--skeleton">
+          <tr v-for="row in skeletonRows" :key="row" class="vc-table__row__skeleton">
             <td
               v-for="column in columns"
               :key="column.id"
               :class="[
-                'vc-table__cell',
-                'vc-table__cell--skeleton',
-                `vc-table__cell--align--${column.align ?? 'left'}`,
+                'vc-table__skeleton-cell',
+                `vc-table__skeleton-cell--align--${column.align ?? 'left'}`,
                 column.classes,
               ]"
             >
@@ -151,15 +147,15 @@ export type ItemType = {
 };
 
 const emit = defineEmits<{
-  (event: "headerClick", item: ISortInfo): void;
+  (event: "headerClick", item: VcTableSortInfoType): void;
   (event: "pageChanged", page: number): void;
 }>();
 
 const props = withDefaults(
   defineProps<{
-    columns?: ITableColumn[];
+    columns?: VcTableColumnType[];
     items?: T[];
-    sort?: ISortInfo;
+    sort?: VcTableSortInfoType;
     pages?: number;
     page?: number;
     loading?: boolean;
@@ -197,8 +193,8 @@ function onPageUpdate(newPage: number) {
   emit("pageChanged", newPage);
 }
 
-function toggleSortDirection(currentDirection: SortDirection): SortDirection {
-  return currentDirection === SortDirection.Descending ? SortDirection.Ascending : SortDirection.Descending;
+function toggleSortDirection(currentDirection: string): VcTableSortDirectionType {
+  return currentDirection === "desc" ? "asc" : "desc";
 }
 
 function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
@@ -206,18 +202,30 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
     return "none";
   }
 
-  return props.sort.direction === SortDirection.Ascending ? "ascending" : "descending";
+  return props.sort.direction === "asc" ? "ascending" : "descending";
 }
 </script>
 
 <style lang="scss">
 .vc-table {
+  &__mobile-skeleton {
+    @apply grid grid-cols-2 gap-4 border-b border-neutral-200 p-6;
+  }
+
+  &__mobile-skeleton-block {
+    @apply flex flex-col gap-1;
+  }
+
+  &__mobile-skeleton-label {
+    @apply h-3.5 w-20 animate-pulse bg-neutral-200;
+  }
+
+  &__mobile-skeleton-item {
+    @apply h-5 animate-pulse bg-neutral-200;
+  }
+
   &__desktop {
     @apply w-full text-left text-sm;
-
-    &--desktop {
-      @apply table-auto;
-    }
   }
 
   &__caption {
@@ -228,23 +236,11 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
     @apply border-b border-neutral-200;
   }
 
-  &__row {
-    &--skeleton {
-      @apply even:bg-neutral-50;
-    }
-  }
-
-  &__cell {
-    &--head {
-      @apply px-4 py-2 font-bold;
-    }
+  &__title {
+    @apply px-4 py-2 font-bold;
 
     &--sortable {
       @apply cursor-pointer;
-    }
-
-    &--skeleton {
-      @apply px-4 py-3;
     }
 
     &--align {
@@ -260,6 +256,14 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
         @apply text-end;
       }
     }
+  }
+
+  &__skeleton {
+    @apply even:bg-neutral-50;
+  }
+
+  &__skeleton-cell {
+    @apply px-4 py-3;
   }
 
   &__skeleton-item {
@@ -284,22 +288,6 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
 
   &__page-limit-message {
     @apply mb-3 text-center;
-  }
-
-  &__mobile-skeleton-card {
-    @apply grid grid-cols-2 gap-4 border-b border-neutral-200 p-6;
-  }
-
-  &__mobile-skeleton-block {
-    @apply flex flex-col gap-1;
-  }
-
-  &__mobile-skeleton-label {
-    @apply h-3.5 w-20 animate-pulse bg-neutral-200;
-  }
-
-  &__mobile-skeleton-item {
-    @apply h-5 animate-pulse bg-neutral-200;
   }
 }
 </style>

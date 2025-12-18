@@ -38,14 +38,6 @@ declare global {
     hidden?: boolean;
   }
 
-  interface ITableColumn {
-    id: string;
-    title?: string;
-    sortable?: boolean;
-    align?: "center" | "right" | "left";
-    classes?: string;
-  }
-
   type TProvidedObjectOfExpansionPanels = {
     panels: Ref<Record<string, boolean>>;
     toggle: (panelId: string) => void;
@@ -118,12 +110,17 @@ declare global {
 
   type BreakpointsType = keyof typeof BREAKPOINTS;
 
-  interface ISortInfo {
-    column: string;
-    direction: SortDirection;
-  }
+  // Table types - for backward compatibility with ui-kit components
+  /** @deprecated Use VcTableColumnType instead */
+  type ITableColumn = VcTableColumnType;
 
-  enum SortDirection {
+  /** @deprecated Use VcTableSortInfoType instead */
+  type ISortInfo = VcTableSortInfoType;
+
+  /**
+   * @deprecated Use VcTableSortDirectionType for type, or import SortDirection from @/core/enums for values
+   */
+  const enum SortDirection {
     Ascending = "asc",
     Descending = "desc",
   }

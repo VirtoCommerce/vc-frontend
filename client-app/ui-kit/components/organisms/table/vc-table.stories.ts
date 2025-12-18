@@ -1,7 +1,5 @@
 import { ref } from "vue";
-import { SortDirection } from "@/core/enums";
 import { VcTable } from "..";
-import type { ISortInfo } from "@/core/types";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const meta: Meta<typeof VcTable> = {
@@ -14,6 +12,11 @@ const meta: Meta<typeof VcTable> = {
       type: { name: "number", required: false },
     },
   },
+  render: (args) => ({
+    components: { VcTable },
+    setup: () => ({ args }),
+    template: '<VcTable v-bind="args" />',
+  }),
 };
 
 export default meta;
@@ -28,7 +31,7 @@ const sampleItems = [
   { id: 5, name: "Charlie Brown", email: "charlie@example.com", role: "User", status: "Active" },
 ];
 
-const sampleColumns: ITableColumn[] = [
+const sampleColumns: VcTableColumnType[] = [
   { id: "name", title: "Name", sortable: true },
   { id: "email", title: "Email", sortable: true },
   { id: "role", title: "Role" },
@@ -43,9 +46,8 @@ export const Basic: StoryType = {
     page: 1,
   },
   render: (args) => ({
-    setup: () => {
-      return { args };
-    },
+    components: { VcTable },
+    setup: () => ({ args }),
     template: `
       <VcTable v-bind="args">
         <template #desktop-body>
@@ -71,12 +73,13 @@ export const WithSorting: StoryType = {
     items: sampleItems,
     pages: 1,
     page: 1,
-    sort: { column: "name", direction: SortDirection.Ascending },
+    sort: { column: "name", direction: "asc" },
   },
   render: (args) => ({
+    components: { VcTable },
     setup: () => {
-      const sort = ref<ISortInfo | undefined>(args.sort);
-      const handleHeaderClick = (sortInfo: ISortInfo) => {
+      const sort = ref<VcTableSortInfoType | undefined>(args.sort);
+      const handleHeaderClick = (sortInfo: VcTableSortInfoType) => {
         sort.value = sortInfo;
       };
       return { args, sort, handleHeaderClick };
@@ -124,9 +127,8 @@ export const Empty: StoryType = {
     description: "No items found",
   },
   render: (args) => ({
-    setup: () => {
-      return { args };
-    },
+    components: { VcTable },
+    setup: () => ({ args }),
     template: `
       <VcTable v-bind="args">
         <template #desktop-empty>
@@ -149,6 +151,7 @@ export const WithPagination: StoryType = {
     page: 1,
   },
   render: (args) => ({
+    components: { VcTable },
     setup: () => {
       const page = ref(args.page);
       const handlePageChange = (newPage: number) => {
@@ -189,9 +192,8 @@ export const CustomSkeleton: StoryType = {
     skeletonRows: 5,
   },
   render: (args) => ({
-    setup: () => {
-      return { args };
-    },
+    components: { VcTable },
+    setup: () => ({ args }),
     template: `
       <VcTable v-bind="args">
         <template #desktop-skeleton>
@@ -227,9 +229,8 @@ export const WithAlignment: StoryType = {
     page: 1,
   },
   render: (args) => ({
-    setup: () => {
-      return { args };
-    },
+    components: { VcTable },
+    setup: () => ({ args }),
     template: `
       <VcTable v-bind="args">
         <template #desktop-body>
@@ -257,9 +258,8 @@ export const WithoutHeader: StoryType = {
     hideDefaultHeader: true,
   },
   render: (args) => ({
-    setup: () => {
-      return { args };
-    },
+    components: { VcTable },
+    setup: () => ({ args }),
     template: `
       <VcTable v-bind="args">
         <template #header>
