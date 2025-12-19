@@ -187,18 +187,16 @@ export function useShortCart() {
       errors: result?.data?.addBulkItemsCart?.errors?.filter((error) => error.objectId === productSku),
     }));
 
+    const itemsQuantityMap = new Map(items.map(({ productSku, quantity }) => [productSku, quantity]));
+
+    const errorSkus = new Set(result?.data?.addBulkItemsCart?.errors?.map((error) => error.objectId) ?? []);
+
     const successfulItemsToTrack = result?.data?.addBulkItemsCart?.cart?.items
-      ?.map((item) => {
-        const addedQty = items.find(({ productSku }) => productSku === item.sku)?.quantity;
-        return {
-          ...item,
-          quantity: addedQty ?? 0,
-        };
-      })
-      ?.filter((item) => {
-        const hasError = result?.data?.addBulkItemsCart?.errors?.some((error) => error.objectId === item.sku);
-        return !hasError && !!item.quantity;
-      });
+      ?.map((item) => ({
+        ...item,
+        quantity: itemsQuantityMap.get(item.sku) ?? 0,
+      }))
+      ?.filter((item) => !errorSkus.has(item.sku) && item.quantity > 0);
 
     trackAddBulkItemsToCart(successfulItemsToTrack);
 
