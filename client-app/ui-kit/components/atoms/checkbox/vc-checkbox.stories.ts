@@ -1,5 +1,5 @@
 import { VcCheckbox } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md"];
 const LABEL = ["left", "right"];
@@ -31,61 +31,77 @@ export default {
   },
 } as Meta<typeof VcCheckbox>;
 
-const Template: StoryFn = (args) => ({
-  components: { VcCheckbox },
-  setup: () => ({ args }),
-  template: '<VcCheckbox v-bind="args" />',
-});
+type StoryType = StoryObj<typeof VcCheckbox>;
 
-const TemplateLabel: StoryFn = (args) => ({
-  components: { VcCheckbox },
-  setup: () => ({ args }),
-  template: '<VcCheckbox v-bind="args">VcCheckbox Label</VcCheckbox>',
-});
-
-export const Basic = Template.bind({});
-
-export const Label = TemplateLabel.bind({});
-
-export const BasicDisabled = Template.bind({});
-BasicDisabled.args = {
-  disabled: true,
+export const Basic: StoryType = {
+  args: {
+    ariaLabel: "Basic checkbox",
+  },
 };
 
-export const Checked = Template.bind({});
-Checked.args = {
-  modelValue: true,
+export const Label: StoryType = {
+  render: (args) => ({
+    components: { VcCheckbox },
+    setup: () => ({ args }),
+    template: '<VcCheckbox v-bind="args">VcCheckbox Label</VcCheckbox>',
+  }),
 };
 
-export const CheckedDisabled = Template.bind({});
-CheckedDisabled.args = {
-  disabled: true,
-  ...Checked.args,
+export const BasicDisabled: StoryType = {
+  args: {
+    disabled: true,
+    ariaLabel: "Disabled checkbox",
+  },
 };
 
-export const Indeterminate = Template.bind({});
-Indeterminate.args = {
-  indeterminate: true,
+export const Checked: StoryType = {
+  args: {
+    modelValue: true,
+    ariaLabel: "Checked checkbox",
+  },
 };
 
-export const IndeterminateDisabled = Template.bind({});
-IndeterminateDisabled.args = {
-  disabled: true,
-  ...Indeterminate.args,
+export const CheckedDisabled: StoryType = {
+  args: {
+    disabled: true,
+    modelValue: true,
+    ariaLabel: "Checked disabled checkbox",
+  },
 };
 
-export const Message = TemplateLabel.bind({});
-Message.args = {
-  message: "Some smart message",
+export const Indeterminate: StoryType = {
+  args: {
+    indeterminate: true,
+    ariaLabel: "Indeterminate checkbox",
+  },
 };
 
-const TemplateCustomColor: StoryFn = (args) => ({
-  components: { VcCheckbox },
-  setup: () => ({ args }),
-  template: '<VcCheckbox v-bind="args" class="[--vc-checkbox-base-color:red]">VcCheckbox Label</VcCheckbox>',
-});
+export const IndeterminateDisabled: StoryType = {
+  args: {
+    disabled: true,
+    indeterminate: true,
+    ariaLabel: "Indeterminate disabled checkbox",
+  },
+};
 
-export const CustomColor = TemplateCustomColor.bind({});
-CustomColor.args = {
-  modelValue: true,
+export const Message: StoryType = {
+  render: (args) => ({
+    components: { VcCheckbox },
+    setup: () => ({ args }),
+    template: '<VcCheckbox v-bind="args">VcCheckbox Label</VcCheckbox>',
+  }),
+  args: {
+    message: "Some smart message",
+  },
+};
+
+export const CustomColor: StoryType = {
+  render: (args) => ({
+    components: { VcCheckbox },
+    setup: () => ({ args }),
+    template: '<VcCheckbox v-bind="args" class="[--vc-checkbox-base-color:red]">VcCheckbox Label</VcCheckbox>',
+  }),
+  args: {
+    modelValue: true,
+  },
 };
