@@ -41,6 +41,7 @@ export default {
     },
   },
   render: (args) => ({
+    components: { VcSwitch },
     setup: () => ({ args }),
     template: '<VcSwitch v-bind="args" v-model="args.modelValue" />',
   }),
