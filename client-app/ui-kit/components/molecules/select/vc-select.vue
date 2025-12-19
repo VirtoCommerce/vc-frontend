@@ -62,7 +62,7 @@
         >
           <template #append>
             <VcButton
-              v-if="clearable && search && !disabled && !readonly"
+              v-if="isClearButtonVisible"
               :disabled="disabled"
               type="button"
               icon="delete-thin"
@@ -198,6 +198,26 @@ const selected = computed(() => {
   return props.valueField ? props.items.find((item) => item[props.valueField!] === props.modelValue) : props.modelValue;
 });
 
+const hasSelection = computed(() => {
+  if (props.multiple && Array.isArray(props.modelValue)) {
+    return props.modelValue.length > 0;
+  }
+  return props.modelValue !== undefined && props.modelValue !== null;
+});
+
+const isClearButtonVisible = computed(() => {
+  if (!props.clearable || props.disabled || props.readonly) {
+    return false;
+  }
+
+  // In autocomplete mode when dropdown is open - show if there's filterValue or selection
+  if (props.autocomplete && isShown.value) {
+    return !!filterValue.value || hasSelection.value;
+  }
+
+  return hasSelection.value;
+});
+
 const search = computed({
   get() {
     if (props.autocomplete && isShown.value) {
@@ -303,17 +323,19 @@ function toggled(value: boolean) {
 }
 
 function clear() {
-  if (
-    ((!isShown.value && props.autocomplete) || !props.autocomplete) &&
-    props.multiple &&
-    Array.isArray(props.modelValue) &&
-    props.modelValue.length
-  ) {
-    emit("update:modelValue", []);
-  } else if (filterValue.value) {
+  // In autocomplete mode - clear search first, then selection
+  if (props.autocomplete && filterValue.value) {
     filterValue.value = "";
-  } else if (!props.multiple && !isShown.value) {
+    return;
+  }
+
+  // Clear selection
+  if (props.multiple && Array.isArray(props.modelValue) && props.modelValue.length) {
+    emit("update:modelValue", []);
+    emit("change", []);
+  } else if (!props.multiple && hasSelection.value) {
     emit("update:modelValue", undefined);
+    emit("change", undefined);
   }
 }
 
