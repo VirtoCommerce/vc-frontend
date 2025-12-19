@@ -13,13 +13,13 @@
     <label class="vc-checkbox__container">
       <input
         type="checkbox"
-        :aria-label="name"
+        :aria-label="ariaLabel || name"
         :name="name"
         :value="value"
         :disabled="disabled"
         :checked="isChecked"
         :indeterminate="indeterminate"
-        :aria-checked="isChecked"
+        :aria-checked="ariaCheckedValue"
         class="vc-checkbox__input"
         :data-test-id="testId"
         :tabindex="tabindex"
@@ -74,6 +74,7 @@ interface IProps {
   testId?: string;
   preventDefault?: boolean;
   tabindex?: string;
+  ariaLabel?: string;
   tooltip?: {
     placement?: VcPopoverPlacementType;
     width?: string;
@@ -97,6 +98,14 @@ const props = withDefaults(defineProps<IProps>(), {
 const groupContext = inject<VcCheckboxGroupContextType | null>("checkboxGroupContext", null);
 const slots = useSlots();
 
+// Dev warning for accessibility
+if (import.meta.env.DEV) {
+  if (!props.ariaLabel && !props.name && !slots.default) {
+    // eslint-disable-next-line no-console
+    console.warn("VcCheckbox: Checkbox should have ariaLabel, name, or slot content for accessibility");
+  }
+}
+
 const isChecked = computed(() => {
   if (groupContext && !props.modelValue) {
     return includes(groupContext.modelValue.value, props.value);
@@ -104,6 +113,8 @@ const isChecked = computed(() => {
     return props.modelValue;
   }
 });
+
+const ariaCheckedValue = computed(() => (props.indeterminate ? "mixed" : isChecked.value));
 
 const tooltipBindings = computed(() => ({
   placement: props.tooltip?.placement,
@@ -179,7 +190,7 @@ function onClick(event: Event) {
   }
 
   &__container {
-    @apply relative flex items-start cursor-pointer;
+    @apply relative inline-flex items-start cursor-pointer;
 
     #{$disabled} & {
       @apply cursor-not-allowed;
