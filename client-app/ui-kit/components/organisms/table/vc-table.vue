@@ -139,7 +139,7 @@
 <script setup lang="ts" generic="T extends ItemType">
 import { useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
-import { BREAKPOINTS, SKELETON_ROWS_SIZE, PAGE_LIMIT } from "@/ui-kit/constants";
+import { BREAKPOINTS, TABLE_SKELETON_ROWS_SIZE, TABLE_PAGE_LIMIT } from "@/ui-kit/constants";
 
 export type ItemType = {
   id?: string | number;
@@ -171,9 +171,9 @@ const props = withDefaults(
     items: () => [],
     pages: 0,
     page: 0,
-    pageLimit: PAGE_LIMIT,
+    pageLimit: TABLE_PAGE_LIMIT,
     mobileBreakpoint: "md",
-    skeletonRows: SKELETON_ROWS_SIZE,
+    skeletonRows: TABLE_SKELETON_ROWS_SIZE,
   },
 );
 
