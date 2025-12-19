@@ -9,6 +9,7 @@
         v-model="searchPhrase"
         type="search"
         size="sm"
+        data-test-id="main-layout.account_menu.top-header-organizations-search"
         :placeholder="$t('common.labels.search')"
         :clearable="!!searchPhrase"
         @keydown.enter="onSearch"
@@ -25,7 +26,11 @@
       {{ $t("common.labels.organizations") }}
     </div>
 
-    <div ref="scrollContainer" class="top-header-organizations__list">
+    <div
+      ref="scrollContainer"
+      class="top-header-organizations__list"
+      data-test-id="main-layout.top-header.account-menu.organizations-list"
+    >
       <VcRadioButton
         v-if="organization && !loading"
         :model-value="contactOrganizationId"
