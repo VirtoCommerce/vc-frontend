@@ -57,11 +57,24 @@
           disable-autocomplete
           @keydown.down.prevent="next(-1)"
           @focus="open"
-          @clear="clear"
           @click="(autocomplete && open) || (!autocomplete && toggle)"
           @keydown.esc="close()"
         >
           <template #append>
+            <VcButton
+              v-if="clearable && search && !disabled && !readonly"
+              :disabled="disabled"
+              type="button"
+              icon="delete-thin"
+              color="neutral"
+              variant="no-background"
+              class="vc-select__clear"
+              :icon-size="size === 'md' ? '0.875rem' : '0.75rem'"
+              @keydown.enter.stop.prevent
+              @keyup.enter.stop.prevent="clear"
+              @click.stop="clear"
+            />
+
             <button
               :aria-label="$t('ui_kit.buttons.toggle_dropdown')"
               type="button"
