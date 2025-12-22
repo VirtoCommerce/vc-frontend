@@ -145,11 +145,10 @@ onMounted(() => {
     #{$list} & {
       @apply grid items-center;
 
-      @container (max-width: theme("containers.xl")) {
+      @container (max-width: theme("containers.2xl")) {
         grid-template-areas:
           "media title"
           "media vendor"
-          "media properties"
           "media price"
           "media add-to-cart";
         grid-auto-rows: repeat(5, min-content);
@@ -184,13 +183,13 @@ onMounted(() => {
         }
       }
 
-      @container (min-width: theme("containers.xl")) {
+      @container (min-width: theme("containers.2xl")) {
         grid-template-areas:
-          "image title properties price add-to-cart"
-          "image vendor properties price add-to-cart"
-          "image actions properties price add-to-cart";
+          "image title price add-to-cart"
+          "image vendor price add-to-cart"
+          "image actions price add-to-cart";
         grid-auto-rows: 1fr min-content 1fr;
-        grid-auto-columns: min-content 1fr min-content min-content min-content;
+        grid-auto-columns: min-content 1fr min-content min-content;
 
         &:not(#{$hasActions}):not(#{$hasVendor}) {
           grid-auto-rows: 1fr min-content min-content;
@@ -279,7 +278,7 @@ onMounted(() => {
     #{$list} & {
       @apply flex flex-col me-3 self-start items-center;
 
-      @container (min-width: theme("containers.xl")) {
+      @container (min-width: theme("containers.2xl")) {
         @apply contents;
       }
     }

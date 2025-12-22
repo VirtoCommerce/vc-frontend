@@ -51,7 +51,7 @@ defineProps<IProps>();
   $variations: "";
   $singleLine: "";
 
-  --font-size: var(--vc-product-price-font-size);
+  --font-size: var(--vc-product-price-font-size, theme("fontSize.base"));
 
   @apply flex flex-col text-[length:var(--font-size)] text-neutral-950 [word-break:break-word] leading-[1.335];
 
@@ -121,16 +121,16 @@ defineProps<IProps>();
 
       &--list {
         #{$wrapperSelector} {
-          --font-size: theme("fontSize.lg");
+          --font-size: theme("fontSize.base");
 
-          @container (max-width: theme("containers.xl")) {
+          @container (width < theme("containers.2xl")) {
             @apply self-start mt-1 flex-row items-center gap-x-1.5 flex-wrap;
           }
 
-          @container (min-width: theme("containers.xl")) {
+          @container (min-width: theme("containers.2xl")) {
             --font-size: theme("fontSize.sm");
 
-            @apply ms-3 w-[7.5rem] text-end;
+            @apply justify-end ms-3 w-[7.5rem] text-end;
           }
 
           @container (min-width: theme("containers.4xl")) {

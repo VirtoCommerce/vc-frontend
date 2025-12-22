@@ -275,12 +275,8 @@ watchEffect(async () => {
             @apply w-72;
           }
 
-          @container (min-width: theme("containers.xl")) {
-            @apply mt-0 ms-3 w-44;
-          }
-
-          @container (min-width: theme("containers.4xl")) {
-            @apply mt-0 ms-3 w-60;
+          @container (min-width: theme("containers.2xl")) {
+            @apply mt-0 ms-3 w-[10.625rem];
           }
         }
       }
