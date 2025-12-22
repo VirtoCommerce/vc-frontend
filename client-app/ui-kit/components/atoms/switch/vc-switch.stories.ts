@@ -1,5 +1,5 @@
 import { VcSwitch } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "accent", "warning", "danger"];
@@ -40,63 +40,87 @@ export default {
       },
     },
   },
+  render: (args) => ({
+    components: { VcSwitch },
+    setup: () => ({ args }),
+    template: '<VcSwitch v-bind="args" v-model="args.modelValue" />',
+  }),
 } as Meta<typeof VcSwitch>;
 
-const Template: StoryFn = (args) => ({
-  components: { VcSwitch },
-  setup: () => ({ args }),
-  template: '<VcSwitch v-bind="args" v-model="modelValue" />',
-});
+type StoryType = StoryObj<typeof VcSwitch>;
 
-const Label: StoryFn = (args) => ({
-  components: { VcSwitch },
-  setup: () => ({ args }),
-  template: '<VcSwitch v-bind="args">Label</VcSwitch>',
-});
-
-export const Basic = Template.bind({});
-
-export const WithLabel = Label.bind({});
-
-export const LabelPositionRight = Label.bind({});
-
-LabelPositionRight.args = {
-  labelPosition: "right",
+export const Basic: StoryType = {
+  args: {
+    ariaLabel: "Basic switch",
+  },
 };
 
-export const On = Template.bind({});
-On.args = {
-  modelValue: true,
+export const WithLabel: StoryType = {
+  args: {
+    label: "Label",
+    ariaLabel: "Label",
+  },
 };
 
-export const DisabledOff = Template.bind({});
-DisabledOff.args = {
-  disabled: true,
+export const WithSlot: StoryType = {
+  render: (args) => ({
+    components: { VcSwitch },
+    setup: () => ({ args }),
+    template: '<VcSwitch v-bind="args" v-model="args.modelValue">Label from slot</VcSwitch>',
+  }),
+  args: {
+    ariaLabel: "Label from slot",
+  },
 };
 
-export const DisabledOn = Template.bind({});
-DisabledOn.args = {
-  disabled: true,
-  modelValue: true,
+export const LabelPositionRight: StoryType = {
+  args: {
+    label: "Label",
+    labelPosition: "right",
+    ariaLabel: "Label",
+  },
 };
 
-export const AllStates: StoryFn = () => ({
-  components: { VcSwitch },
-  setup: () => ({ colors: COLORS, sizes: SIZES }),
-  template: `<div class="space-y-6">
+export const On: StoryType = {
+  args: {
+    modelValue: true,
+    ariaLabel: "Switch on",
+  },
+};
+
+export const DisabledOff: StoryType = {
+  args: {
+    disabled: true,
+    ariaLabel: "Disabled switch",
+  },
+};
+
+export const DisabledOn: StoryType = {
+  args: {
+    disabled: true,
+    modelValue: true,
+    ariaLabel: "Disabled switch on",
+  },
+};
+
+export const AllStates: StoryType = {
+  render: () => ({
+    components: { VcSwitch },
+    setup: () => ({ colors: COLORS, sizes: SIZES }),
+    template: `<div class="space-y-6">
     <div v-for="size in sizes" class="space-y-6">
       <h2 class="text-lg font-bold">Size: {{ size }}</h2>
 
       <div class="space-y-2">
         <div class="flex flex-wrap gap-3">
-          <VcSwitch v-for="color in colors" :size="size" :color="color" :modelValue="true">
+          <VcSwitch v-for="color in colors" :key="color" :size="size" :color="color" :modelValue="true" :aria-label="\`\${color} switch\`">
             Color: {{ color }}
           </VcSwitch>
         </div>
 
         <h3 class="text-sm font-bold">Disabled</h3>
         <div class="flex flex-wrap gap-3">
-          <VcSwitch v-for="color in colors" :size="size" :color="color" :modelValue="true" :disabled="true">
+          <VcSwitch v-for="color in colors" :key="color" :size="size" :color="color" :modelValue="true" :disabled="true" :aria-label="\`\${color} disabled switch\`">
             Color: {{ color }}
           </VcSwitch>
         </div>
@@ -104,4 +128,5 @@ export const AllStates: StoryFn = () => ({
     </div>
   </div>
   `,
-});
+  }),
+};
