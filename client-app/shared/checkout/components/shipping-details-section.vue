@@ -283,7 +283,7 @@ function onShipmentMethodChange(method: ShippingMethodType) {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .shipping-details-section {
   @apply @container;
 
