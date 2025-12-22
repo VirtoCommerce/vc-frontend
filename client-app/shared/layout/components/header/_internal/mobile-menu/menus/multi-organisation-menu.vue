@@ -60,7 +60,7 @@ async function selectOrganization(): Promise<void> {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .multi-organization-menu {
   @apply mt-4 flex grow flex-col gap-y-1 font-normal h-[calc(100vh-224px)] overflow-y-auto;
 

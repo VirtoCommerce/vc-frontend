@@ -4,7 +4,7 @@ import { getOrganizations } from "@/core/api/graphql/account";
 import { Logger } from "@/core/utilities";
 import type { OrganizationFieldsFragment } from "@/core/api/graphql/types";
 
-const ORGANIZATIONS_PER_PAGE = 30;
+const ORGANIZATIONS_PER_PAGE = 10;
 const SEARCH_THRESHOLD = 10;
 
 function _useUserOrganizations() {

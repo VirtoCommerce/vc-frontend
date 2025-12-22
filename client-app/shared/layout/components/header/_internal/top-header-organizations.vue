@@ -31,31 +31,40 @@
       class="top-header-organizations__list"
       data-test-id="main-layout.account-menu.top-header.organizations-list"
     >
-      <VcRadioButton
-        v-if="organization && !loading"
-        :model-value="contactOrganizationId"
-        :value="organization.id"
-        :label="organization.name"
-        :max-lines="2"
-        :title="organization.name"
-        :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${organization.name}`"
-        word-break="break-word"
-        class="top-header-organizations__radio"
-      />
+      <VcMenuItem v-if="organization && !loading && organizationsWithoutCurrent.length > 0" size="xs">
+        <VcRadioButton
+          :model-value="contactOrganizationId"
+          :value="organization.id"
+          :label="organization.name"
+          :max-lines="2"
+          :title="organization.name"
+          :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${organization.name}`"
+          word-break="break-word"
+        />
+      </VcMenuItem>
 
-      <VcRadioButton
-        v-for="item in organizationsWithoutCurrent"
-        :key="item.id"
-        v-model="contactOrganizationId"
-        :label="item.name"
-        :value="item.id"
-        class="top-header-organizations__radio"
-        :max-lines="2"
-        :title="item.name"
-        word-break="break-word"
-        :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${item.name}`"
-        @change="selectOrganization"
-      />
+      <VcMenuItem v-for="item in organizationsWithoutCurrent" :key="item.id" size="xs">
+        <VcRadioButton
+          v-model="contactOrganizationId"
+          :label="item.name"
+          :value="item.id"
+          :max-lines="2"
+          :title="item.name"
+          word-break="break-word"
+          :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${item.name}`"
+          @change="selectOrganization"
+        />
+      </VcMenuItem>
+
+      <div
+        v-if="organizationsWithoutCurrent.length === 0"
+        class="top-header-organizations__empty"
+        data-test-id="main-layout.top-header.account-menu.organizations-empty"
+      >
+        <VcTypography v-if="organizationsWithoutCurrent.length === 0" size="xs">
+          {{ $t("shared.layout.header.top_header.no_results") }}
+        </VcTypography>
+      </div>
 
       <VcInfinityScrollLoader
         v-if="hasNextPage"
@@ -125,7 +134,7 @@ async function onSearchClear(): Promise<void> {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .top-header-organizations {
   @apply rounded-b-md border-t bg-neutral-50;
 
@@ -151,6 +160,10 @@ async function onSearchClear(): Promise<void> {
 
   &__loader {
     @apply py-2;
+  }
+
+  &__empty {
+    @apply px-3 py-2 text-xs text-neutral-600 text-center;
   }
 }
 </style>
