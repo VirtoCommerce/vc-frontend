@@ -1,6 +1,10 @@
 <template>
   <div class="top-header-organizations">
-    <div v-if="isShowSearch" class="top-header-organizations__search">
+    <div v-if="!isShowSearch" class="top-header-organizations__label top-header-organizations__label--static">
+      {{ $t("common.labels.organizations") }}
+    </div>
+
+    <div v-else class="top-header-organizations__search">
       <div class="top-header-organizations__label">
         {{ $t("common.labels.organizations") }}
       </div>
@@ -20,10 +24,6 @@
           <VcButton icon="search" icon-size="1.25rem" @click="onSearch" />
         </template>
       </VcInput>
-    </div>
-
-    <div v-else class="top-header-organizations__label top-header-organizations__label--static">
-      {{ $t("common.labels.organizations") }}
     </div>
 
     <div
@@ -57,13 +57,11 @@
       </VcMenuItem>
 
       <div
-        v-if="organizationsWithoutCurrent.length === 0"
+        v-if="organizationsWithoutCurrent.length === 0 && !loading"
         class="top-header-organizations__empty"
         data-test-id="main-layout.top-header.account-menu.organizations-empty"
       >
-        <VcTypography v-if="organizationsWithoutCurrent.length === 0" size="xs">
-          {{ $t("shared.layout.header.top_header.no_results") }}
-        </VcTypography>
+        {{ $t("shared.layout.header.top_header.no_results") }}
       </div>
 
       <VcInfinityScrollLoader
@@ -163,7 +161,7 @@ async function onSearchClear(): Promise<void> {
   }
 
   &__empty {
-    @apply px-3 py-2 text-xs text-neutral-600 text-center;
+    @apply px-3 py-2 text-neutral-600 text-center;
   }
 }
 </style>
