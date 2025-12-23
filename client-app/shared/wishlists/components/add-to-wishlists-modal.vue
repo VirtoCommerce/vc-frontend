@@ -139,6 +139,7 @@ import { useAnalytics, useThemeContext } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { asyncForEach } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables";
+import { useConfigurableProduct } from "@/shared/catalog";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { useFocusManagement } from "@/ui-kit/composables";
@@ -180,6 +181,7 @@ const {
 const notifications = useNotifications();
 const { analytics } = useAnalytics();
 const { themeContext } = useThemeContext();
+const { selectedConfigurationInput } = useConfigurableProduct(product.value.id);
 
 const loading = ref(false);
 const selectedListsOtherIds = ref<string[]>([]);
@@ -191,7 +193,9 @@ const listsLimit = themeContext.value?.settings?.wishlists_limit || DEFAULT_WISH
 const creationButtonDisabled = computed(() => lists.value.length + newLists.value.length >= listsLimit);
 
 const listsWithProduct = computed(() =>
-  lists.value.filter((list) => list.items?.some((item) => item.productId === product.value.id)),
+  lists.value.filter((list) =>
+    list.items?.some((item) => item.productId === product.value.id && !product.value.isConfigurable),
+  ),
 );
 
 const listsOther = computed(() => {
@@ -228,6 +232,7 @@ async function addToWishlistsFromListOther() {
     listIds: selectedListsOtherIds.value,
     productId: product.value.id,
     quantity: product.value.minQuantity || 1,
+    configurationSections: product.value.isConfigurable ? selectedConfigurationInput.value : undefined,
   });
 
   /**

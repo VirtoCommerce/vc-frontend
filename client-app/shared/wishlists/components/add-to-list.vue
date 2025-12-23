@@ -37,7 +37,9 @@ const localWishlistStatus = ref(false);
 watch(
   () => props.product.inWishlist,
   (newValue) => {
-    localWishlistStatus.value = newValue;
+    if (!props.product.isConfigurable) {
+      localWishlistStatus.value = newValue;
+    }
   },
   { immediate: true },
 );
