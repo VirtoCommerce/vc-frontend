@@ -1,6 +1,6 @@
 import { useCssVar, useElementBounding, useThrottleFn } from "@vueuse/core";
 import { computed, onBeforeUnmount, onMounted, ref, toValue, watch } from "vue";
-import type { CSSProperties, MaybeRefOrGetter } from "vue";
+import type { CSSProperties, MaybeRefOrGetter, Ref } from "vue";
 
 const AFFIX_TYPES = {
   FIXED_TOP: "FIXED_TOP",
@@ -51,6 +51,15 @@ interface IAffixTypeParams {
   elementTop: number;
   topSpacing: number;
   bottomSpacing: number;
+}
+
+interface IUseSmartStickyReturn {
+  style: Ref<CSSProperties>;
+  isActive: Ref<boolean>;
+  isStuckTop: Ref<boolean>;
+  isStuckBottom: Ref<boolean>;
+  update: () => Promise<void>;
+  destroy: () => void;
 }
 
 const BOUNDING_OPTIONS = { windowResize: true, immediate: true };
@@ -161,7 +170,7 @@ function getAffixType(params: IAffixTypeParams): AffixType {
   return AFFIX_TYPES.ABSOLUTE;
 }
 
-export function useSmartSticky(options: ISmartStickyOptions) {
+export function useSmartSticky(options: ISmartStickyOptions): IUseSmartStickyReturn {
   const {
     container,
     stickyElement,

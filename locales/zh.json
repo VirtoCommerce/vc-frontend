@@ -314,7 +314,8 @@
           "link_contact_us": "联系方式",
           "call_us_label": "致电我们：",
           "logged_in_as": "已登录为",
-          "account_menu_label": "帐户菜单"
+          "account_menu_label": "帐户菜单",
+          "no_results": "未找到结果"
         },
         "bottom_header": {
           "catalog_menu_button": "目录",

@@ -314,7 +314,8 @@
           "link_contact_us": "Kontaktieren Sie uns",
           "call_us_label": "Rufen Sie uns an: ",
           "logged_in_as": "eingeloggt als",
-          "account_menu_label": "Kontomenü"
+          "account_menu_label": "Kontomenü",
+          "no_results": "Keine Ergebnisse gefunden"
         },
         "bottom_header": {
           "catalog_menu_button": "Katalog",
