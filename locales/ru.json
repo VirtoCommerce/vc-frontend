@@ -314,7 +314,8 @@
           "link_contact_us": "Контакты",
           "call_us_label": "Поддержка: ",
           "logged_in_as": "вход под именем",
-          "account_menu_label": "Меню аккаунта"
+          "account_menu_label": "Меню аккаунта",
+          "no_results": "Результаты не найдены"
         },
         "bottom_header": {
           "catalog_menu_button": "Каталог",

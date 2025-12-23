@@ -314,7 +314,8 @@
           "link_contact_us": "Kontakter",
           "call_us_label": "Ring oss: ",
           "logged_in_as": "inloggad som",
-          "account_menu_label": "Kontomeny"
+          "account_menu_label": "Kontomeny",
+          "no_results": "Inga resultat hittades"
         },
         "bottom_header": {
           "catalog_menu_button": "Katalog",

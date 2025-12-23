@@ -607,4 +607,144 @@ describe("useProductVariationProperties", () => {
     expect(isSelected("Size", "M")).toBe(false);
     expect(isSelected("Size", "L")).toBe(true);
   });
+
+  it("auto-selects single color when it is the only option available after selection", () => {
+    const variations = ref([
+      {
+        id: "1",
+        properties: [
+          {
+            id: "color-red",
+            name: "Color",
+            value: "Red",
+            propertyType: PropertyType.Variation,
+            propertyValueType: PropertyValueTypes.Color,
+            label: "Color",
+            hidden: false,
+            multivalue: false,
+          },
+          {
+            id: "size-m",
+            name: "Size",
+            value: "M",
+            propertyType: PropertyType.Variation,
+            propertyValueType: PropertyValueTypes.ShortText,
+            label: "Size",
+            hidden: false,
+            multivalue: false,
+          },
+        ],
+      } as unknown as Product,
+      {
+        id: "2",
+        properties: [
+          {
+            id: "color-blue",
+            name: "Color",
+            value: "Blue",
+            propertyType: PropertyType.Variation,
+            propertyValueType: PropertyValueTypes.Color,
+            label: "Color",
+            hidden: false,
+            multivalue: false,
+          },
+          {
+            id: "size-l",
+            name: "Size",
+            value: "L",
+            propertyType: PropertyType.Variation,
+            propertyValueType: PropertyValueTypes.ShortText,
+            label: "Size",
+            hidden: false,
+            multivalue: false,
+          },
+        ],
+      } as unknown as Product,
+    ]);
+
+    const { select, isSelected, isCompleted } = useProductVariationProperties(variations);
+
+    // Select Size M - only Red color is available for M
+    select("Size", "M");
+
+    // Color Red should be auto-selected
+    expect(isSelected("Color", "red")).toBe(true);
+    expect(isSelected("Size", "M")).toBe(true);
+    expect(isCompleted.value).toBe(true);
+  });
+
+  it("auto-selects multicolor when it is the only option available after selection", () => {
+    const variations = ref([
+      {
+        id: "1",
+        properties: [
+          {
+            id: "color-red",
+            name: "FabricColor",
+            value: "Red",
+            propertyType: PropertyType.Variation,
+            propertyValueType: PropertyValueTypes.Color,
+            label: "Fabric Color",
+            hidden: false,
+            multivalue: false,
+          },
+          {
+            id: "color-blue",
+            name: "FabricColor",
+            value: "Blue",
+            propertyType: PropertyType.Variation,
+            propertyValueType: PropertyValueTypes.Color,
+            label: "Fabric Color",
+            hidden: false,
+            multivalue: false,
+          },
+          {
+            id: "size-l",
+            name: "Size",
+            value: "L",
+            propertyType: PropertyType.Variation,
+            propertyValueType: PropertyValueTypes.ShortText,
+            label: "Size",
+            hidden: false,
+            multivalue: false,
+          },
+        ],
+      } as unknown as Product,
+      {
+        id: "2",
+        properties: [
+          {
+            id: "color-green",
+            name: "FabricColor",
+            value: "Green",
+            propertyType: PropertyType.Variation,
+            propertyValueType: PropertyValueTypes.Color,
+            label: "Fabric Color",
+            hidden: false,
+            multivalue: false,
+          },
+          {
+            id: "size-m",
+            name: "Size",
+            value: "M",
+            propertyType: PropertyType.Variation,
+            propertyValueType: PropertyValueTypes.ShortText,
+            label: "Size",
+            hidden: false,
+            multivalue: false,
+          },
+        ],
+      } as unknown as Product,
+    ]);
+
+    const { select, isSelected, isCompleted } = useProductVariationProperties(variations);
+
+    // Select Size L - only multicolor [Red, Blue] is available for L
+    select("Size", "L");
+
+    // Multicolor should be auto-selected
+    expect(isSelected("FabricColor", ["red", "blue"])).toBe(true);
+    expect(isSelected("Size", "L")).toBe(true);
+    expect(isCompleted.value).toBe(true);
+  });
 });
