@@ -272,7 +272,7 @@ watchEffect(async () => {
           @apply mt-3;
 
           @container (min-width: theme("containers.sm")) {
-            @apply w-72;
+            @apply w-60;
           }
 
           @container (min-width: theme("containers.2xl")) {

@@ -114,29 +114,29 @@ defineProps<IProps>();
 
     &--view-mode {
       &--grid #{$wrapperSelector} {
-        --font-size: theme("fontSize.lg");
+        --vc-product-price-font-size: theme("fontSize.lg");
 
         @apply mt-3 order-6;
       }
 
       &--list {
         #{$wrapperSelector} {
-          --font-size: theme("fontSize.base");
-
           @container (width < theme("containers.2xl")) {
+            --vc-product-price-font-size: theme("fontSize.base");
+
             @apply self-start mt-1 flex-row items-center gap-x-1.5 flex-wrap;
           }
 
           @container (min-width: theme("containers.2xl")) {
-            --font-size: theme("fontSize.sm");
+            --vc-product-price-font-size: theme("fontSize.sm");
 
             @apply justify-end ms-3 w-[7.5rem] text-end;
           }
 
           @container (min-width: theme("containers.4xl")) {
-            --font-size: theme("fontSize.lg");
+            --vc-product-price-font-size: theme("fontSize.lg");
 
-            @apply w-[9.5rem];
+            @apply w-[10.5rem];
           }
         }
 
@@ -154,14 +154,14 @@ defineProps<IProps>();
           @apply hidden;
 
           @container (min-width: theme("containers.4xl")) {
-            --font-size: theme("fontSize.sm");
+            --vc-product-price-font-size: theme("fontSize.sm");
 
             @apply flex flex-col justify-end w-[6.75rem] text-end;
           }
         }
 
         .vc-product-total #{$wrapperSelector} {
-          --font-size: theme("fontSize.base");
+          --vc-product-price-font-size: theme("fontSize.base");
 
           @apply flex;
         }
