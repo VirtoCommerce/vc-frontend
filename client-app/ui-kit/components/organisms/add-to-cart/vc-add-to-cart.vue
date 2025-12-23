@@ -252,7 +252,7 @@ watchEffect(async () => {
   }
 
   &__badges {
-    @apply mt-1.5 flex flex-wrap gap-x-1.5 gap-y-0.5 empty:hidden;
+    @apply mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 empty:hidden;
   }
 
   @at-root .vc-product-card {
