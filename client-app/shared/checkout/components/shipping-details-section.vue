@@ -3,15 +3,19 @@
     :title="$t('shared.checkout.shipping_details_section.title')"
     prepend-icon="truck"
     size="lg"
+    class="shipping-details-section"
     data-test-id="checkout.shipping-details-section"
   >
-    <div class="flex flex-col flex-wrap gap-4 xs:flex-row xs:gap-y-6 lg:gap-8">
-      <div v-if="xPickupEnabled && hasBOPIS && !onlyOneDeliveryMethod">
+    <div class="shipping-details-section__content">
+      <div
+        v-if="xPickupEnabled && hasBOPIS && !onlyOneDeliveryMethod"
+        class="shipping-details-section__delivery-option"
+      >
         <VcLabel>
           {{ $t("shared.checkout.shipping_details_section.labels.delivery_option") }}
         </VcLabel>
 
-        <div class="flex min-h-18 items-center gap-2 rounded-[--vc-radius] border p-4">
+        <div class="shipping-details-section__switcher-container">
           <VcTabSwitch
             v-model="mode"
             :value="SHIPPING_OPTIONS.pickup"
@@ -34,17 +38,20 @@
         </div>
       </div>
 
-      <template v-if="mode === SHIPPING_OPTIONS.shipping">
-        <div class="grow" data-test-id="checkout.shipping-details-section.shipping-address-section">
+      <div v-if="mode === SHIPPING_OPTIONS.shipping" class="shipping-details-section__shipping-section">
+        <div
+          class="shipping-details-section__address-section"
+          data-test-id="checkout.shipping-details-section.shipping-address-section"
+        >
           <VcLabel required>
             {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
           </VcLabel>
 
           <div
             :class="[
-              'flex min-h-18 grow flex-col justify-center divide-y rounded-[--vc-radius] border px-3 py-1.5',
+              'shipping-details-section__address-container',
               {
-                'cursor-not-allowed bg-neutral-50': disabled,
+                'shipping-details-section__address-container--disabled': disabled,
               },
             ]"
           >
@@ -64,45 +71,52 @@
           :disabled="disabled"
           size="auto"
           item-size="lg"
-          :class="xPickupEnabled && hasBOPIS ? 'lg:w-3/12' : 'lg:w-4/12'"
+          class="shipping-details-section__method-select"
           required
           test-id-dropdown="checkout.shipping-details-section.shipping-method-selector"
           @change="onShipmentMethodChange"
         >
           <template #placeholder>
-            <div class="flex items-center gap-3 p-[0.688rem] text-sm">
-              <VcImage class="size-12 rounded bg-neutral-100" src="select-shipping.svg" />
+            <div class="shipping-details-section__method-item">
+              <VcImage
+                class="shipping-details-section__method-image shipping-details-section__method-image--placeholder"
+                src="select-shipping.svg"
+              />
 
               {{ $t("common.placeholders.select_delivery_method") }}
             </div>
           </template>
 
           <template #selected="{ item }">
-            <div class="flex items-center gap-3 p-[0.688rem] text-sm" :data-selected-shipping-method-id="item.id">
-              <VcImage class="size-12 rounded" :src="item.logoUrl" />
+            <div class="shipping-details-section__method-item" :data-selected-shipping-method-id="item.id">
+              <VcImage class="shipping-details-section__method-image" :src="item.logoUrl" />
 
               {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
             </div>
           </template>
 
           <template #item="{ item }">
-            <VcImage class="size-12 rounded" :src="item.logoUrl" />
+            <VcImage class="shipping-details-section__method-image" :src="item.logoUrl" />
 
             <span :data-shipping-method-id="item.id">{{ $t(`common.methods.delivery_by_id.${item.id}`) }}</span>
           </template>
         </VcSelect>
-      </template>
+      </div>
 
-      <div v-else class="grow" data-test-id="checkout.shipping-details-section.pickup-point-section">
+      <div
+        v-else
+        class="shipping-details-section__pickup-section"
+        data-test-id="checkout.shipping-details-section.pickup-point-section"
+      >
         <VcLabel required>
           {{ $t("shared.checkout.shipping_details_section.labels.pickup_point") }}
         </VcLabel>
 
         <div
           :class="[
-            'relative flex min-h-18 grow flex-col justify-center divide-y rounded-[--vc-radius] border px-3 py-1.5',
+            'shipping-details-section__pickup-container',
             {
-              'cursor-not-allowed bg-neutral-50': disabled,
+              'shipping-details-section__pickup-container--disabled': disabled,
             },
           ]"
         >
@@ -268,3 +282,81 @@ function onShipmentMethodChange(method: ShippingMethodType) {
   });
 }
 </script>
+
+<style lang="scss">
+.shipping-details-section {
+  @apply @container;
+
+  &__content {
+    @apply flex flex-col flex-wrap gap-4;
+
+    @container (min-width: theme("containers.xl")) {
+      @apply flex-row gap-y-6;
+    }
+
+    @container (min-width: theme("containers.4xl")) {
+      @apply flex-nowrap gap-8;
+    }
+  }
+
+  &__delivery-option {
+    @apply flex-shrink-0;
+  }
+
+  &__switcher-container {
+    @apply flex min-h-18 items-center gap-2 rounded-[--vc-radius] border p-4;
+  }
+
+  &__shipping-section {
+    @apply flex w-full flex-col gap-4;
+
+    @container (min-width: theme("containers.xl")) {
+      @apply flex-row gap-6;
+    }
+  }
+
+  &__address-section {
+    @apply grow;
+  }
+
+  &__address-container {
+    @apply flex min-h-18 grow flex-col justify-center divide-y rounded-[--vc-radius] border px-3 py-1.5;
+
+    &--disabled {
+      @apply cursor-not-allowed bg-neutral-50;
+    }
+  }
+
+  &__method-select {
+    @apply flex-none;
+
+    @container (min-width: theme("containers.5xl")) {
+      @apply w-4/12;
+    }
+  }
+
+  &__method-item {
+    @apply flex items-center gap-3 p-[0.688rem] text-sm;
+  }
+
+  &__method-image {
+    @apply size-12 rounded;
+
+    &--placeholder {
+      @apply bg-neutral-100;
+    }
+  }
+
+  &__pickup-section {
+    @apply grow;
+  }
+
+  &__pickup-container {
+    @apply relative flex min-h-18 grow flex-col justify-center divide-y rounded-[--vc-radius] border px-3 py-1.5;
+
+    &--disabled {
+      @apply cursor-not-allowed bg-neutral-50;
+    }
+  }
+}
+</style>
