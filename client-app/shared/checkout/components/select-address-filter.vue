@@ -63,19 +63,19 @@
   </div>
 
   <div v-if="!filterSelectsAreEmpty" class="select-address-filter__applied-filter">
-    <template v-for="value in filterCountries?.termValues" :key="value">
+    <template v-for="value in filterCountries?.termValues" :key="value.value">
       <VcChip color="secondary" closable @close="removeFilterCountry(value.value)">
         {{ value.value }}
       </VcChip>
     </template>
 
-    <template v-for="value in filterRegions?.termValues" :key="value">
+    <template v-for="value in filterRegions?.termValues" :key="value.value">
       <VcChip color="secondary" closable @close="removeFilterRegion(value.value)">
         {{ value.value }}
       </VcChip>
     </template>
 
-    <template v-for="value in filterCities?.termValues" :key="value">
+    <template v-for="value in filterCities?.termValues" :key="value.value">
       <VcChip color="secondary" closable @close="removeFilterCity(value.value)">
         {{ value.value }}
       </VcChip>

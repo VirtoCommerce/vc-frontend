@@ -1,3 +1,5 @@
+#import "./organizationFields.graphql"
+
 fragment userTypeFields on UserType {
   id
   memberId
@@ -21,11 +23,11 @@ fragment userTypeFields on UserType {
     defaultLanguage
     currencyCode
     selectedAddressId
+    organization {
+      ...organizationFields
+    }
     organizations {
-      items {
-        id
-        name
-      }
+      totalCount
     }
   }
   operator {
