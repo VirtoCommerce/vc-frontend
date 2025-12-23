@@ -325,12 +325,12 @@
           "Version": "3.847.0"
         },
         {
-          "Id": "VirtoCommerce.ProfileExperienceApiModule",
-          "Version": "3.926.0"
-        },
-        {
           "Id": "VirtoCommerce.Loyalty",
           "Version": "3.800.0"
+        },
+        {
+          "Id": "VirtoCommerce.ProfileExperienceApiModule",
+          "Version": "3.927.0"
         }
       ]
     }
