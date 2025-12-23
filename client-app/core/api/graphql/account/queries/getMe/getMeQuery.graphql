@@ -1,3 +1,5 @@
+#import "../../../fragments/organizationFields.graphql"
+
 query GetMe($userId: String) {
   me(userId: $userId) {
     id
@@ -24,10 +26,10 @@ query GetMe($userId: String) {
       selectedAddressId
       groups
       organizations {
-        items {
-          id
-          name
-        }
+        totalCount
+      }
+      organization {
+        ...organizationFields
       }
     }
     operator {
