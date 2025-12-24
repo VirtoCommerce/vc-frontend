@@ -22,7 +22,7 @@
     </template>
 
     <template v-if="!disabled" #content="{ close }">
-      <VcScrollbar vertical tag="ul" class="vc-dropdown-menu__list">
+      <VcScrollbar vertical tag="ul" class="vc-dropdown-menu__list" :style="{ '--props-max-height': maxHeight }">
         <slot name="content" v-bind="{ close }" />
       </VcScrollbar>
     </template>
@@ -91,7 +91,6 @@ const computedWidth = computed(() => props.width || `${triggerWidth.value}px`);
   }
 
   &__list {
-    --props-max-height: v-bind(props.maxHeight);
     --max-height: var(--props-max-height, var(--vc-dropdown-menu-max-height, 12rem));
     --radius: var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem));
 
