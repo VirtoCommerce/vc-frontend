@@ -1,3 +1,4 @@
+import { ref } from "vue";
 import { VcRadioButton } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
@@ -157,7 +158,7 @@ export const RadioGroup: StoryType = {
   render: (args) => ({
     components: { VcRadioButton },
     setup: () => {
-      const selected = args.modelValue;
+      const selected = ref(args.modelValue);
       return { args, selected };
     },
     template: `<div class="space-y-2">
