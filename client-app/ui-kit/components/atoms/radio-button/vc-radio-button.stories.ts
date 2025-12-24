@@ -1,8 +1,8 @@
 import { VcRadioButton } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md"];
-const LABEL = ["left", "right"];
+const LABEL_POSITIONS = ["left", "right"];
 
 export default {
   title: "Components/Atoms/VcRadioButton",
@@ -20,90 +20,153 @@ export default {
     },
     labelPosition: {
       control: "inline-radio",
-      options: LABEL,
+      options: LABEL_POSITIONS,
       type: { name: "string", required: false },
       table: {
         type: {
-          summary: LABEL.join(" | "),
+          summary: LABEL_POSITIONS.join(" | "),
         },
       },
     },
   },
+  render: (args) => ({
+    components: { VcRadioButton },
+    setup: () => ({ args }),
+    template: '<VcRadioButton v-bind="args" v-model="args.modelValue" />',
+  }),
 } as Meta<typeof VcRadioButton>;
 
-const Template: StoryFn = (args) => ({
-  components: { VcRadioButton },
-  setup: () => ({ args }),
-  template: '<VcRadioButton v-bind="args" />',
-});
+type StoryType = StoryObj<typeof VcRadioButton>;
 
-export const Basic = Template.bind({});
-Basic.args = {
-  value: "value",
+export const Basic: StoryType = {
+  args: {
+    value: "value",
+    ariaLabel: "Basic radio button",
+  },
 };
 
-export const Checked = Template.bind({});
-Checked.args = {
-  value: "value",
-  modelValue: "value",
+export const Checked: StoryType = {
+  args: {
+    value: "value",
+    modelValue: "value",
+    ariaLabel: "Checked radio button",
+  },
 };
 
-export const Label = Template.bind({});
-Label.args = {
-  value: "value",
-  label: "RadioButton Label",
+export const WithLabel: StoryType = {
+  args: {
+    value: "value",
+    label: "RadioButton Label",
+  },
 };
 
-export const LabelLeft = Template.bind({});
-LabelLeft.args = {
-  value: "value",
-  label: "RadioButton Label",
-  labelPosition: "left",
+export const LabelPositionLeft: StoryType = {
+  args: {
+    value: "value",
+    label: "RadioButton Label",
+    labelPosition: "left",
+  },
 };
 
-export const BreakWord = Template.bind({});
-BreakWord.decorators = [
-  () => ({
-    template: '<div class="w-40"><story /></div>',
+export const WithSlot: StoryType = {
+  render: (args) => ({
+    components: { VcRadioButton },
+    setup: () => ({ args }),
+    template: '<VcRadioButton v-bind="args" v-model="args.modelValue">Label from slot</VcRadioButton>',
   }),
-];
-BreakWord.args = {
-  value: "value",
-  label: "RadioButtonLabelLongValueWithoutSpaces",
-  wordBreak: "break-word",
+  args: {
+    value: "value",
+  },
 };
 
-export const MaxLines = Template.bind({});
-MaxLines.decorators = [
-  () => ({
-    template: '<div class="w-40"><story /></div>',
+export const BreakWord: StoryType = {
+  decorators: [
+    () => ({
+      template: '<div class="w-40"><story /></div>',
+    }),
+  ],
+  args: {
+    value: "value",
+    label: "RadioButtonLabelLongValueWithoutSpaces",
+    wordBreak: "break-word",
+  },
+};
+
+export const MaxLines: StoryType = {
+  decorators: [
+    () => ({
+      template: '<div class="w-40"><story /></div>',
+    }),
+  ],
+  args: {
+    value: "value",
+    label: "Radio Button Label With Very Long Value",
+    wordBreak: "break-word",
+    maxLines: 2,
+  },
+};
+
+export const Disabled: StoryType = {
+  args: {
+    value: "value",
+    label: "RadioButton Label",
+    disabled: true,
+  },
+};
+
+export const DisabledChecked: StoryType = {
+  args: {
+    value: "value",
+    modelValue: "value",
+    label: "RadioButton Label",
+    disabled: true,
+  },
+};
+
+export const Message: StoryType = {
+  args: {
+    value: "value",
+    label: "RadioButton Label",
+    message: "Information message",
+  },
+};
+
+export const ErrorMessage: StoryType = {
+  args: {
+    value: "value",
+    label: "RadioButton Label",
+    message: "Error message",
+    error: true,
+  },
+};
+
+export const AllSizes: StoryType = {
+  render: () => ({
+    components: { VcRadioButton },
+    setup: () => ({ sizes: SIZES }),
+    template: `<div class="space-y-4">
+      <div v-for="size in sizes" :key="size" class="flex items-center gap-4">
+        <span class="w-8 text-sm font-medium">{{ size }}</span>
+        <VcRadioButton :size="size" value="option" label="Radio button label" />
+      </div>
+    </div>`,
   }),
-];
-MaxLines.args = {
-  value: "value",
-  label: "Radio Button Label With Very Long Value",
-  wordBreak: "break-word",
-  maxLines: 2,
 };
 
-export const Disabled = Template.bind({});
-Disabled.args = {
-  value: "value",
-  label: "RadioButton Label",
-  disabled: true,
-};
-
-export const Message = Template.bind({});
-Message.args = {
-  value: "value",
-  label: "RadioButton Label",
-  message: "Information message",
-};
-
-export const ErrorMessage = Template.bind({});
-ErrorMessage.args = {
-  value: "value",
-  label: "RadioButton Label",
-  message: "Error message",
-  error: true,
+export const RadioGroup: StoryType = {
+  render: (args) => ({
+    components: { VcRadioButton },
+    setup: () => {
+      const selected = args.modelValue;
+      return { args, selected };
+    },
+    template: `<div class="space-y-2">
+      <VcRadioButton v-model="selected" name="group" value="option1" label="Option 1" />
+      <VcRadioButton v-model="selected" name="group" value="option2" label="Option 2" />
+      <VcRadioButton v-model="selected" name="group" value="option3" label="Option 3" />
+    </div>`,
+  }),
+  args: {
+    modelValue: "option1",
+  },
 };
