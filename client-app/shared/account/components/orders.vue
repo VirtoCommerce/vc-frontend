@@ -84,19 +84,15 @@
             @reset="resetOrderFilters"
             @close="hideFilters"
           >
-            <template #buyerNameFilterType>
-              <VcSelect
-                v-if="showCustomerNameFilter"
-                v-model="filterData.customerNames"
-                :label="$t('common.labels.buyer_name')"
-                :items="organizationCustomerNames ?? []"
-                multiple
-              />
-            </template>
+            <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
 
-            <template #dateFilterType>
-              <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
-            </template>
+            <VcSelect
+              v-if="showCustomerNameFilter"
+              v-model="filterData.customerNames"
+              :label="$t('common.labels.buyer_name')"
+              :items="organizationCustomerNames ?? []"
+              multiple
+            />
           </OrdersFilter>
         </div>
 
