@@ -7,15 +7,16 @@
         'vc-dropdown-menu--dividers': dividers,
       },
     ]"
-    :width="width"
+    :width="computedWidth"
     :placement="placement"
     :offset-options="offsetOptions"
     :z-index="zIndex"
     :disabled="disabled"
+    enable-teleport
     @toggle="$emit('toggle', $event)"
   >
     <template #default="{ toggle, open, close, opened, triggerProps }">
-      <div class="vc-dropdown-menu__trigger">
+      <div ref="trigger" class="vc-dropdown-menu__trigger">
         <slot name="trigger" v-bind="{ toggle, open, close, opened, triggerProps }" />
       </div>
     </template>
@@ -29,6 +30,9 @@
 </template>
 
 <script setup lang="ts">
+import { useElementBounding } from "@vueuse/core";
+import { useTemplateRef, computed } from "vue";
+
 interface IEmits {
   (event: "toggle", value: boolean): void;
 }
@@ -49,9 +53,12 @@ defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   placement: "bottom-start",
   offsetOptions: 4,
-  width: "auto",
   dividers: true,
+  zIndex: 10,
 });
+
+const trugger = useTemplateRef("trigger");
+const computedWidth = computed(() => props.width || `${useElementBounding(trugger).width.value}px`);
 </script>
 
 <style lang="scss">

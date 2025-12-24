@@ -18,7 +18,6 @@
 
     <VcDropdownMenu
       class="vc-select__container"
-      width="100%"
       :disabled="!enabled"
       :data-test-id="testIdDropdown"
       @toggle="toggled"

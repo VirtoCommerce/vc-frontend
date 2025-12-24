@@ -67,7 +67,6 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   zIndex: 1,
   placement: "bottom",
-  width: "auto",
   enableTeleport: false,
   teleportSelector: "[id='popover-host']",
 });
