@@ -4,7 +4,6 @@
       'vc-dropdown-menu',
       {
         'vc-dropdown-menu--disabled': disabled,
-        'vc-dropdown-menu--dividers': dividers,
       },
     ]"
     :width="computedWidth"
@@ -22,7 +21,17 @@
     </template>
 
     <template v-if="!disabled" #content="{ close }">
-      <VcScrollbar vertical tag="ul" class="vc-dropdown-menu__list" :style="{ '--props-max-height': maxHeight }">
+      <VcScrollbar
+        vertical
+        tag="ul"
+        :class="[
+          'vc-dropdown-menu__list',
+          {
+            'vc-dropdown-menu__list--dividers': dividers,
+          },
+        ]"
+        :style="{ '--props-max-height': maxHeight }"
+      >
         <slot name="content" v-bind="{ close }" />
       </VcScrollbar>
     </template>
@@ -74,10 +83,6 @@ const computedWidth = computed(() => props.width || `${triggerWidth.value}px`);
     $disabled: &;
   }
 
-  &--dividers {
-    $dividers: &;
-  }
-
   & > [role="button"] {
     @apply flex items-center h-full;
   }
@@ -96,7 +101,7 @@ const computedWidth = computed(() => props.width || `${triggerWidth.value}px`);
 
     @apply max-h-[--max-height] w-full rounded-[--radius] bg-additional-50 shadow-xl;
 
-    #{$dividers} & {
+    &--dividers {
       @apply divide-y divide-neutral-100;
     }
 
