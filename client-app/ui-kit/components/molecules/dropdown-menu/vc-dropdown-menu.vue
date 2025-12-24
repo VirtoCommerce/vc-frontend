@@ -66,10 +66,6 @@ const computedWidth = computed(() => props.width || `${useElementBounding(trugge
   $disabled: "";
   $dividers: "";
 
-  --props-max-height: v-bind(props.maxHeight);
-  --max-height: var(--vc-dropdown-menu-max-height, var(--props-max-height, 12rem));
-  --radius: var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem));
-
   @apply select-none;
 
   &--disabled {
@@ -93,6 +89,10 @@ const computedWidth = computed(() => props.width || `${useElementBounding(trugge
   }
 
   &__list {
+    --props-max-height: v-bind(props.maxHeight);
+    --max-height: var(--props-max-height, var(--vc-dropdown-menu-max-height, 12rem));
+    --radius: var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem));
+
     @apply max-h-[--max-height] w-full rounded-[--radius] bg-additional-50 shadow-xl;
 
     #{$dividers} & {
