@@ -46,15 +46,13 @@ export function useOrganizationAddresses(organizationId: MaybeRef<string>) {
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await deleteMemberAddresses(inputAddresses, unref(organizationId));
+      addresses.value = await deleteMemberAddresses(inputAddresses, unref(organizationId));
     } catch (e) {
       Logger.error(`${useOrganizationAddresses.name}.${removeAddresses.name}`, e);
       throw e;
     } finally {
       loading.value = false;
     }
-
-    await fetchAddresses();
   }
 
   async function updateAddresses(items: MemberAddressType[]): Promise<void> {
@@ -63,15 +61,13 @@ export function useOrganizationAddresses(organizationId: MaybeRef<string>) {
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await updateMemberAddresses(unref(organizationId), inputAddresses);
+      addresses.value = await updateMemberAddresses(unref(organizationId), inputAddresses);
     } catch (e) {
       Logger.error(`${useOrganizationAddresses.name}.${updateAddresses.name}`, e);
       throw e;
     } finally {
       loading.value = false;
     }
-
-    await fetchAddresses();
   }
 
   async function addOrUpdateAddresses(items: MemberAddressType[]): Promise<void> {
