@@ -57,8 +57,10 @@ const props = withDefaults(defineProps<IProps>(), {
   zIndex: 10,
 });
 
-const trugger = useTemplateRef("trigger");
-const computedWidth = computed(() => props.width || `${useElementBounding(trugger).width.value}px`);
+const trigger = useTemplateRef("trigger");
+const { width: triggerWidth } = useElementBounding(trigger);
+
+const computedWidth = computed(() => props.width || `${triggerWidth.value}px`);
 </script>
 
 <style lang="scss">
