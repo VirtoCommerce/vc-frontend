@@ -410,7 +410,6 @@
         "products_label": "Tuotteet",
         "pages_label": "Sivut",
         "suggestions_and_history_label": "Vinkit",
-        "no_results": "Hakusi {keyword} ei tuottanut tuloksia",
         "enter_keyword_placeholder": "Hae",
         "enter_keyword_placeholder_category": "Hae kategoriasta {category}",
         "search_button": "Hae",
@@ -430,6 +429,10 @@
         },
         "suggestions_label": "Ehdotukset",
         "search_label": "Hae"
+      },
+      "search_dropdown": {
+        "no_results": "Haullasi ei löytynyt mitään. Kokeile muuttaa hakuehtoja.",
+        "check_all_products_button": "Katso kaikki tuotteet"
       },
       "language_selector": {
         "label": "Kieli:"

@@ -410,7 +410,6 @@
         "products_label": "商品",
         "pages_label": "ページ",
         "suggestions_and_history_label": "ヒント",
-        "no_results": "{keyword}の検索結果はありません",
         "enter_keyword_placeholder": "検索",
         "enter_keyword_placeholder_category": "{category} 内を検索",
         "search_button": "検索",
@@ -430,6 +429,10 @@
         },
         "suggestions_label": "おすすめ",
         "search_label": "検索"
+      },
+      "search_dropdown": {
+        "no_results": "検索結果が見つかりませんでした。検索条件を調整してみてください。",
+        "check_all_products_button": "すべての商品を見る"
       },
       "language_selector": {
         "label": "言語:"

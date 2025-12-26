@@ -410,7 +410,6 @@
         "products_label": "Товары",
         "pages_label": "Страницы",
         "suggestions_and_history_label": "Подсказки",
-        "no_results": "По вашему запросу {keyword} ничего не найдено",
         "enter_keyword_placeholder": "Поиск",
         "enter_keyword_placeholder_category": "Искать в {category}",
         "search_button": "Искать",
@@ -430,6 +429,10 @@
         },
         "suggestions_label": "Предложения",
         "search_label": "Поиск"
+      },
+      "search_dropdown": {
+        "no_results": "По вашему запросу ничего не найдено. Попробуйте изменить параметры поиска.",
+        "check_all_products_button": "Смотреть все товары"
       },
       "language_selector": {
         "label": "Язык:"

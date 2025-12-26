@@ -410,7 +410,6 @@
         "products_label": "产品",
         "pages_label": "页面",
         "suggestions_and_history_label": "提示",
-        "no_results": "您的 {keyword} 查询未返回任何结果",
         "enter_keyword_placeholder": "搜索",
         "enter_keyword_placeholder_category": "在 {category} 中搜索",
         "search_button": "搜索",
@@ -430,6 +429,10 @@
         },
         "suggestions_label": "建议",
         "search_label": "搜索"
+      },
+      "search_dropdown": {
+        "no_results": "未找到与您查询相关的内容。请尝试调整搜索条件。",
+        "check_all_products_button": "查看所有产品"
       },
       "language_selector": {
         "label": "中文："

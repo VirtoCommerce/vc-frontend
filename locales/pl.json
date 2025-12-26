@@ -410,7 +410,6 @@
         "products_label": "Produkty",
         "pages_label": "Strony",
         "suggestions_and_history_label": "Wskazówki",
-        "no_results": "Twoje zapytanie {keyword} nie zwróciło żadnych wyników",
         "enter_keyword_placeholder": "Szukaj",
         "enter_keyword_placeholder_category": "Szukaj w {category}",
         "search_button": "Szukaj",
@@ -430,6 +429,10 @@
         },
         "suggestions_label": "Sugestie",
         "search_label": "Szukaj"
+      },
+      "search_dropdown": {
+        "no_results": "Nie znaleziono niczego dla Twojego zapytania. Spróbuj dostosować wyszukiwanie.",
+        "check_all_products_button": "Zobacz wszystkie produkty"
       },
       "language_selector": {
         "label": "Język:"

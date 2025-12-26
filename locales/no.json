@@ -410,7 +410,6 @@
         "products_label": "Produkter",
         "pages_label": "Sider",
         "suggestions_and_history_label": "Tips",
-        "no_results": "Søket ditt etter {keyword} ga ingen resultater",
         "enter_keyword_placeholder": "Søk",
         "enter_keyword_placeholder_category": "Søk i kategorien {category}",
         "search_button": "Søk",
@@ -430,6 +429,10 @@
         },
         "suggestions_label": "Forslag",
         "search_label": "Søk"
+      },
+      "search_dropdown": {
+        "no_results": "Ingenting ble funnet for søket ditt. Prøv å justere søket.",
+        "check_all_products_button": "Se alle produkter"
       },
       "language_selector": {
         "label": "Språk:"

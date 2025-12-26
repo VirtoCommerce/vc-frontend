@@ -410,7 +410,6 @@
         "products_label": "Produkter",
         "pages_label": "Sidor",
         "suggestions_and_history_label": "Tips",
-        "no_results": "Din sökning efter {keyword} gav inga resultat",
         "enter_keyword_placeholder": "Sök",
         "enter_keyword_placeholder_category": "Sök inom {category}",
         "search_button": "Sök",
@@ -430,6 +429,10 @@
         },
         "suggestions_label": "Förslag",
         "search_label": "Sök"
+      },
+      "search_dropdown": {
+        "no_results": "Inget hittades för din sökning. Försök justera din sökning.",
+        "check_all_products_button": "Se alla produkter"
       },
       "language_selector": {
         "label": "Språk:"
