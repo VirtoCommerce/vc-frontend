@@ -1,21 +1,22 @@
 import { createSharedComposable } from "@vueuse/core";
 import { isEqual, sortBy } from "lodash";
 import { ref, computed, watch } from "vue";
-import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
+import { PropertyType } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import {
   normalizePropertyValue,
   getVariationPropertiesGroupedByName,
-  isColorProperty,
   isMultiColorProperty,
   getPropertyValue,
 } from "@/core/utilities/properties";
 import { serialize } from "@/ui-kit/utilities";
-import type { Product, Property } from "@/core/api/graphql/types";
+import type { Product, Property, PropertyValueTypes } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
+type OptionValueType = string | string[];
+
 export interface IPropertyValue {
-  value: string | string[];
+  value: OptionValueType;
   label: string;
   displayOrder?: number;
 }
@@ -27,10 +28,10 @@ export interface IProperty {
   propertyValueType: PropertyValueTypes;
 }
 
-type SelectedPropertiesMapType = ReadonlyMap<string, string | string[]>;
+type SelectedPropertiesMapType = ReadonlyMap<string, OptionValueType>;
 
 /** Checks if a single product variation is compatible with a specific property name and value. */
-function isVariationCompatible(variation: Product, propertyName: string, propertyValue: string | string[]) {
+function isVariationCompatible(variation: Product, propertyName: string, propertyValue: OptionValueType) {
   const variationProps = variation.properties.filter((p) => p.name === propertyName);
 
   if (Array.isArray(propertyValue)) {
@@ -38,11 +39,7 @@ function isVariationCompatible(variation: Product, propertyName: string, propert
       return false;
     }
 
-    // Apply same sorting logic as in createMulticolorOption
-    const propsToCompare = hasAllNumericDisplayOrders(variationProps)
-      ? sortBy(variationProps, (p) => p.valueDisplayOrder)
-      : variationProps;
-    const variationNormalizedValues = propsToCompare.map(normalizePropertyValue);
+    const variationNormalizedValues = sortPropertiesByDisplayOrder(variationProps).map(normalizePropertyValue);
 
     return isEqual(variationNormalizedValues, propertyValue);
   }
@@ -66,41 +63,49 @@ function getApplicableVariations(variations: readonly Product[], selected: Selec
   );
 }
 
-/** From a list of variations, extracts all unique available property values (as normalized values), grouped by property name. */
-function getAvailablePropertyValues(variations: readonly Product[]): Map<string, string[]> {
-  const available = new Map<string, Set<string>>();
-
-  variations.forEach((variation) => {
-    variation.properties.forEach((prop) => {
-      if (prop.propertyType !== PropertyType.Variation || !prop.name) {
-        return;
-      }
-
-      // Skip null/undefined values, except for Boolean properties where null is valid
-      if (prop.value == null && prop.propertyValueType !== PropertyValueTypes.Boolean) {
-        return;
-      }
-
-      if (!available.has(prop.name)) {
-        available.set(prop.name, new Set());
-      }
-
-      available.get(prop.name)?.add(normalizePropertyValue(prop));
-    });
-  });
-
-  return new Map(Array.from(available.entries(), ([name, values]) => [name, Array.from(values)]));
+/** Sorts properties by displayOrder if all values are numeric */
+function sortPropertiesByDisplayOrder(props: Property[]): Property[] {
+  return hasAllNumericDisplayOrders(props) ? sortBy(props, (p) => p.valueDisplayOrder) : props;
 }
 
-/** Finds a property by name in any of the variations */
-function findPropertyInVariations(variations: readonly Product[], propertyName: string): Property | undefined {
+/** Extracts option value from properties array */
+// eslint-disable-next-line sonarjs/function-return-type -- union type by design
+function getOptionValue(props: Property[]): OptionValueType {
+  if (!isMultiColorProperty(props)) {
+    return normalizePropertyValue(props[0]);
+  }
+
+  return sortPropertiesByDisplayOrder(props).map(normalizePropertyValue);
+}
+
+/** Gets available options (including multicolors as single options) for each property */
+function getAvailableOptions(variations: readonly Product[]): Map<string, OptionValueType[]> {
+  const seen = new Map<string, Set<string>>();
+  const result = new Map<string, OptionValueType[]>();
+
   for (const variation of variations) {
-    const prop = variation.properties.find((p) => p.name === propertyName);
-    if (prop) {
-      return prop;
+    const grouped = getVariationPropertiesGroupedByName(variation.properties, PropertyType.Variation);
+
+    for (const [name, props] of grouped) {
+      if (props.length === 0) continue;
+
+      const value = getOptionValue(props);
+      const key = serialize(value);
+      const seenSet = seen.get(name);
+
+      if (seenSet) {
+        if (!seenSet.has(key)) {
+          seenSet.add(key);
+          result.get(name)!.push(value);
+        }
+      } else {
+        seen.set(name, new Set([key]));
+        result.set(name, [value]);
+      }
     }
   }
-  return undefined;
+
+  return result;
 }
 
 /** Automatically selects any property that is the only one remaining based on the current selections. */
@@ -114,19 +119,14 @@ function runAutoSelection(
   while (changedInLoop) {
     changedInLoop = false;
     const applicable = getApplicableVariations(variations, newSelected);
-    const available = getAvailablePropertyValues(applicable);
+    const available = getAvailableOptions(applicable);
 
-    for (const [name, values] of available.entries()) {
-      if (newSelected.has(name) || values.length !== 1) {
+    for (const [name, options] of available.entries()) {
+      if (newSelected.has(name) || options.length !== 1) {
         continue;
       }
 
-      const prop = findPropertyInVariations(applicable, name);
-      if (isColorProperty(prop)) {
-        continue;
-      }
-
-      newSelected.set(name, values[0]);
+      newSelected.set(name, options[0]);
       changedInLoop = true;
     }
   }
@@ -137,11 +137,11 @@ function runAutoSelection(
 /** Calculates the new set of selected properties after a user makes a new selection, discarding incompatible previous choices. */
 function calculateNewSelections(
   name: string,
-  value: string | string[],
+  value: OptionValueType,
   variations: readonly Product[],
   currentSelected: SelectedPropertiesMapType,
 ): SelectedPropertiesMapType {
-  const baseSelections = new Map<string, string | string[]>();
+  const baseSelections = new Map<string, OptionValueType>();
 
   baseSelections.set(name, value);
 
@@ -173,10 +173,7 @@ function createMulticolorOption(properties: Property[]): IPropertyValue {
     throw new Error("createMulticolorOption: properties array cannot be empty");
   }
 
-  const sortedProps = hasAllNumericDisplayOrders(properties)
-    ? sortBy(properties, (p) => p.valueDisplayOrder)
-    : properties;
-
+  const sortedProps = sortPropertiesByDisplayOrder(properties);
   const valuesArray = sortedProps.map(normalizePropertyValue);
   const labelsArray = sortedProps.map((p) => getPropertyValue(p) ?? "");
 
@@ -277,7 +274,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     isCompleted.value && applicableVariations.value.length === 1 ? applicableVariations.value[0] : undefined,
   );
 
-  function isAvailable(propertyName: string, value: string | string[]) {
+  function isAvailable(propertyName: string, value: OptionValueType) {
     const selectionsWithoutCurrent = new Map(selectedProperties.value);
     selectionsWithoutCurrent.delete(propertyName);
 
@@ -286,7 +283,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     return possibleVariations.some((variation) => isVariationCompatible(variation, propertyName, value));
   }
 
-  function isSelected(propertyName: string, value: string | string[]) {
+  function isSelected(propertyName: string, value: OptionValueType) {
     const selected = selectedProperties.value.get(propertyName);
 
     if (Array.isArray(value) && Array.isArray(selected)) {
@@ -300,7 +297,7 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     return selected === value;
   }
 
-  function select(propertyName: string, value: string | string[]) {
+  function select(propertyName: string, value: OptionValueType) {
     if (isSelected(propertyName, value)) {
       return;
     }
@@ -312,7 +309,8 @@ export function _useProductVariationProperties(variations: Ref<readonly Product[
     return option.label;
   }
 
-  function getSelectedValue(property: IProperty): string | string[] {
+  // eslint-disable-next-line sonarjs/function-return-type -- union type by design
+  function getSelectedValue(property: IProperty): OptionValueType {
     return property.values.find((opt) => isSelected(property.name, opt.value))?.value ?? "";
   }
 

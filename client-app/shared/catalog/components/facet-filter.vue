@@ -19,6 +19,7 @@
           :key="item.value"
           size="xs"
           color="secondary"
+          :data-test-id="`filter-${facet.paramName}-${item.value}`"
           @click="handleFacetItemClick(item)"
         >
           <template #prepend>
