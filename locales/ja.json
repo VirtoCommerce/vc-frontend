@@ -406,14 +406,9 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "categories_label": "カテゴリー",
-        "products_label": "商品",
-        "pages_label": "ページ",
-        "suggestions_and_history_label": "ヒント",
         "enter_keyword_placeholder": "検索",
         "enter_keyword_placeholder_category": "{category} 内を検索",
         "search_button": "検索",
-        "view_all_results_button": "全{total}件を表示",
         "scope_loading_label": "検索コンテキストを読み込み中",
         "scope_remove_label": "削除: {label}",
         "barcode_detector": {
@@ -431,6 +426,11 @@
         "search_label": "検索"
       },
       "search_dropdown": {
+        "categories_label": "カテゴリー",
+        "products_label": "商品",
+        "pages_label": "ページ",
+        "suggestions_and_history_label": "ヒント",
+        "view_all_results_button": "全{total}件を表示",
         "no_results": "検索結果が見つかりませんでした。検索条件を調整してみてください。",
         "check_all_products_button": "すべての商品を見る"
       },

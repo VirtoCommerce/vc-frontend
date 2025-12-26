@@ -4,7 +4,7 @@
       <!-- Search history and suggestions -->
       <div v-if="hasHistoryOrSuggestions" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
-          {{ $t("shared.layout.search_bar.suggestions_and_history_label") }}
+          {{ $t("shared.layout.search_dropdown.suggestions_and_history_label") }}
         </header>
 
         <ul class="search-dropdown__list">
@@ -42,7 +42,7 @@
       <!-- Pages -->
       <div v-if="hasPages" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
-          {{ $t("shared.layout.search_bar.pages_label") }}
+          {{ $t("shared.layout.search_dropdown.pages_label") }}
         </header>
 
         <ul class="search-dropdown__list">
@@ -63,7 +63,7 @@
       <!-- Categories -->
       <div v-if="hasCategories" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
-          {{ $t("shared.layout.search_bar.categories_label") }}
+          {{ $t("shared.layout.search_dropdown.categories_label") }}
         </header>
 
         <ul class="search-dropdown__list">
@@ -88,7 +88,7 @@
           <!-- Products -->
           <div v-if="hasProducts" key="products" class="search-dropdown__suggestions">
             <header class="search-dropdown__head">
-              {{ $t("shared.layout.search_bar.products_label") }}
+              {{ $t("shared.layout.search_dropdown.products_label") }}
             </header>
 
             <div class="search-dropdown__products">
@@ -111,7 +111,7 @@
                   @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
                   @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
                 >
-                  {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
+                  {{ $t("shared.layout.search_dropdown.view_all_results_button", { total }) }}
                 </VcButton>
               </div>
             </div>

@@ -406,14 +406,9 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "categories_label": "Categorías",
-        "products_label": "Productos",
-        "pages_label": "Páginas",
-        "suggestions_and_history_label": "Pistas",
         "enter_keyword_placeholder": "Buscar",
         "enter_keyword_placeholder_category": "Buscar en {category}",
         "search_button": "Buscar",
-        "view_all_results_button": "Ver todos los {total} resultados",
         "scope_loading_label": "Cargando contexto de búsqueda",
         "scope_remove_label": "Eliminar: {label}",
         "barcode_detector": {
@@ -431,6 +426,11 @@
         "search_label": "Buscar"
       },
       "search_dropdown": {
+        "categories_label": "Categorías",
+        "products_label": "Productos",
+        "pages_label": "Páginas",
+        "suggestions_and_history_label": "Pistas",
+        "view_all_results_button": "Ver todos los {total} resultados",
         "no_results": "No se encontró nada para tu búsqueda. Intenta ajustar tu búsqueda.",
         "check_all_products_button": "Ver todos los productos"
       },

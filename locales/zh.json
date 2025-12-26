@@ -406,14 +406,9 @@
         "by_virto": "由 Virto Commerce 提供"
       },
       "search_bar": {
-        "categories_label": "类别",
-        "products_label": "产品",
-        "pages_label": "页面",
-        "suggestions_and_history_label": "提示",
         "enter_keyword_placeholder": "搜索",
         "enter_keyword_placeholder_category": "在 {category} 中搜索",
         "search_button": "搜索",
-        "view_all_results_button": "查看所有 {total} 个结果",
         "scope_loading_label": "正在加载搜索上下文",
         "scope_remove_label": "移除：{label}",
         "barcode_detector": {
@@ -431,6 +426,11 @@
         "search_label": "搜索"
       },
       "search_dropdown": {
+        "categories_label": "类别",
+        "products_label": "产品",
+        "pages_label": "页面",
+        "suggestions_and_history_label": "提示",
+        "view_all_results_button": "查看所有 {total} 个结果",
         "no_results": "未找到与您查询相关的内容。请尝试调整搜索条件。",
         "check_all_products_button": "查看所有产品"
       },
