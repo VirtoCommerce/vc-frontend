@@ -1,11 +1,5 @@
 <template>
-  <div
-    v-if="visible && hasAnyContent"
-    ref="dropdownElement"
-    class="search-dropdown"
-    data-dropdown
-    @focusout="handleFocusOut"
-  >
+  <div v-if="visible" ref="dropdownElement" class="search-dropdown" data-dropdown @focusout="handleFocusOut">
     <VcScrollbar v-if="showSidebar" class="search-dropdown__sidebar" :vertical="!isMobile">
       <!-- Search history and suggestions -->
       <div v-if="hasHistoryOrSuggestions" class="search-dropdown__suggestions">
@@ -89,58 +83,61 @@
     </VcScrollbar>
 
     <VcScrollbar class="search-dropdown__content" :vertical="!isMobile">
-      <Transition name="fade">
-        <!-- Products -->
-        <div v-if="hasProducts" class="search-dropdown__suggestions">
-          <header class="search-dropdown__head">
-            {{ $t("shared.layout.search_bar.products_label") }}
-          </header>
+      <div class="search-dropdown__results">
+        <Transition name="crossfade" mode="out-in">
+          <!-- Products -->
+          <div v-if="hasProducts" key="products" class="search-dropdown__suggestions">
+            <header class="search-dropdown__head">
+              {{ $t("shared.layout.search_bar.products_label") }}
+            </header>
 
-          <div class="search-dropdown__products">
-            <SearchBarProductCard
-              v-for="product in products"
-              :key="product.id"
-              :product="product"
-              @link-click="selectItemEvent(product)"
-              @changeFocus="focusPrevNextItem($event.direction, $event.event)"
-            />
+            <div class="search-dropdown__products">
+              <SearchBarProductCard
+                v-for="product in products"
+                :key="product.id"
+                :product="product"
+                @link-click="selectItemEvent(product)"
+                @changeFocus="focusPrevNextItem($event.direction, $event.event)"
+              />
 
-            <div v-if="total > PRODUCTS_LIMIT" class="search-dropdown__view-all">
-              <VcButton
-                size="xs"
-                tabindex="0"
-                color="secondary"
-                variant="outline"
-                append-icon="chevron-right"
-                @click="handleSearch"
-                @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
-                @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
-              >
-                {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
+              <div v-if="total > PRODUCTS_LIMIT" class="search-dropdown__view-all">
+                <VcButton
+                  size="xs"
+                  tabindex="0"
+                  color="secondary"
+                  variant="outline"
+                  append-icon="chevron-right"
+                  @click="handleSearch"
+                  @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
+                  @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
+                >
+                  {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
+                </VcButton>
+              </div>
+            </div>
+          </div>
+
+          <!-- Not found -->
+          <div v-else key="not-found" class="search-dropdown__not-found">
+            <div class="search-dropdown__not-found-icon" v-html="nothingFoundImgRaw"></div>
+
+            <div class="search-dropdown__not-found-content">
+              <div class="search-dropdown__not-found-text">
+                {{ $t("shared.layout.search_dropdown.no_results") }}
+              </div>
+
+              <VcButton size="sm" append-icon="arrow-right" :to="{ name: ROUTES.CATALOG.NAME }" @click="$emit('hide')">
+                {{ $t("shared.layout.search_dropdown.check_all_products_button") }}
               </VcButton>
             </div>
           </div>
-        </div>
-      </Transition>
+        </Transition>
+      </div>
 
       <Transition name="fade">
         <!-- Loader -->
         <div v-if="loading" class="search-dropdown__loader">
-          <VcLoader />
-        </div>
-        <!-- Not found -->
-        <div v-else-if="!hasProducts" class="search-dropdown__not-found">
-          <div class="search-dropdown__not-found-icon" v-html="nothingFoundImgRaw"></div>
-
-          <div class="search-dropdown__not-found-content">
-            <div class="search-dropdown__not-found-text">
-              {{ $t("shared.layout.search_dropdown.no_results") }}
-            </div>
-
-            <VcButton size="sm" append-icon="arrow-right" :to="{ name: ROUTES.CATALOG.NAME }" @click="$emit('hide')">
-              {{ $t("shared.layout.search_dropdown.check_all_products_button") }}
-            </VcButton>
-          </div>
+          <VcLoader v-if="!isMobile" />
         </div>
       </Transition>
     </VcScrollbar>
@@ -248,23 +245,6 @@ const hasCategories = computed(() => !!categories.value.length);
 const showSidebar = computed(() => hasHistoryOrSuggestions.value || hasPages.value || hasCategories.value);
 
 const hasProducts = computed(() => !!products.value.length);
-
-const isExistResults = computed(
-  () => !!(categories.value.length || products.value.length || suggestions.value.length || pages.value.length),
-);
-
-const hasNotFoundMessage = computed(
-  () => !searchInProgress.value && !isExistResults.value && !!trimmedSearchPhrase.value,
-);
-
-const hasAnyContent = computed(
-  () =>
-    hasHistoryOrSuggestions.value ||
-    hasPages.value ||
-    hasCategories.value ||
-    hasProducts.value ||
-    hasNotFoundMessage.value,
-);
 
 const searchBarListProperties = computed(() => ({
   search_term: trimmedSearchPhrase.value,
@@ -488,9 +468,6 @@ defineExpose({
     }
   }
 
-  &__view-all {
-  }
-
   &__text {
     word-break: break-word;
   }
@@ -514,15 +491,30 @@ defineExpose({
   &__not-found-text {
     @apply text-base;
   }
-}
 
-.fade-enter-active,
-.fade-leave-active {
-  @apply transition-opacity duration-200;
-}
+  &__results {
+    @apply min-h-32;
+  }
 
-.fade-enter-from,
-.fade-leave-to {
-  @apply opacity-0;
+  // transitions
+  .crossfade-enter-active,
+  .crossfade-leave-active {
+    @apply transition-opacity duration-150 ease-in-out;
+  }
+
+  .crossfade-enter-from,
+  .crossfade-leave-to {
+    @apply opacity-0;
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    @apply transition-opacity duration-200 ease-in-out;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    @apply opacity-0;
+  }
 }
 </style>
