@@ -432,6 +432,7 @@
         "suggestions_and_history_label": "Hinweise",
         "view_all_results_button": "Alle {total} Ergebnisse anzeigen",
         "no_results": "Für Ihre Anfrage wurde nichts gefunden. Versuchen Sie, Ihre Suche anzupassen.",
+        "start_typing": "Beginnen Sie mit der Eingabe, um zu suchen",
         "check_all_products_button": "Alle Produkte anzeigen"
       },
       "language_selector": {

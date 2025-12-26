@@ -432,6 +432,7 @@
         "suggestions_and_history_label": "Tips",
         "view_all_results_button": "Visa alla {total} resultat",
         "no_results": "Inget hittades för din sökning. Försök justera din sökning.",
+        "start_typing": "Börja skriva för att söka",
         "check_all_products_button": "Se alla produkter"
       },
       "language_selector": {

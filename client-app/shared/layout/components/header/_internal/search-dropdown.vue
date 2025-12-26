@@ -123,7 +123,11 @@
 
             <div class="search-dropdown__not-found-content">
               <div class="search-dropdown__not-found-text">
-                {{ $t("shared.layout.search_dropdown.no_results") }}
+                {{
+                  trimmedSearchPhrase
+                    ? $t("shared.layout.search_dropdown.no_results")
+                    : $t("shared.layout.search_dropdown.start_typing")
+                }}
               </div>
 
               <VcButton size="sm" append-icon="arrow-right" :to="{ name: ROUTES.CATALOG.NAME }" @click="$emit('hide')">

@@ -432,6 +432,7 @@
         "suggestions_and_history_label": "Vinkit",
         "view_all_results_button": "Näytä kaikki {total} tulosta",
         "no_results": "Haullasi ei löytynyt mitään. Kokeile muuttaa hakuehtoja.",
+        "start_typing": "Aloita kirjoittaminen etsiäksesi",
         "check_all_products_button": "Katso kaikki tuotteet"
       },
       "language_selector": {

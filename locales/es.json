@@ -432,6 +432,7 @@
         "suggestions_and_history_label": "Pistas",
         "view_all_results_button": "Ver todos los {total} resultados",
         "no_results": "No se encontró nada para tu búsqueda. Intenta ajustar tu búsqueda.",
+        "start_typing": "Empieza a escribir para buscar",
         "check_all_products_button": "Ver todos los productos"
       },
       "language_selector": {

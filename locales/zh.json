@@ -432,6 +432,7 @@
         "suggestions_and_history_label": "提示",
         "view_all_results_button": "查看所有 {total} 个结果",
         "no_results": "未找到与您查询相关的内容。请尝试调整搜索条件。",
+        "start_typing": "开始输入以搜索",
         "check_all_products_button": "查看所有产品"
       },
       "language_selector": {

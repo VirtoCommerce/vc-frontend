@@ -432,6 +432,7 @@
         "suggestions_and_history_label": "Подсказки",
         "view_all_results_button": "Просмотреть все результаты ({total})",
         "no_results": "По вашему запросу ничего не найдено. Попробуйте изменить параметры поиска.",
+        "start_typing": "Начните вводить для поиска",
         "check_all_products_button": "Смотреть все товары"
       },
       "language_selector": {

@@ -432,6 +432,7 @@
         "suggestions_and_history_label": "Tips",
         "view_all_results_button": "Vis alle {total} resultater",
         "no_results": "Ingenting ble funnet for søket ditt. Prøv å justere søket.",
+        "start_typing": "Begynn å skrive for å søke",
         "check_all_products_button": "Se alle produkter"
       },
       "language_selector": {

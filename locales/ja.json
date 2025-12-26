@@ -432,6 +432,7 @@
         "suggestions_and_history_label": "ヒント",
         "view_all_results_button": "全{total}件を表示",
         "no_results": "検索結果が見つかりませんでした。検索条件を調整してみてください。",
+        "start_typing": "検索するには入力を開始してください",
         "check_all_products_button": "すべての商品を見る"
       },
       "language_selector": {
