@@ -20,6 +20,7 @@
         :value="value"
         :checked="checked"
         :disabled="disabled"
+        :aria-checked="checked"
         :aria-label="ariaLabel || label || undefined"
         :aria-describedby="hasDetails ? detailsId : undefined"
         :aria-invalid="error || undefined"
