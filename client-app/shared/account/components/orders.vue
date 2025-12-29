@@ -92,6 +92,7 @@
               :label="$t('common.labels.buyer_name')"
               :items="organizationCustomerNames ?? []"
               multiple
+              enable-teleport
             />
           </OrdersFilter>
         </div>

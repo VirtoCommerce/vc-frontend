@@ -20,8 +20,8 @@
       class="vc-select__container"
       :disabled="!enabled"
       :data-test-id="testIdDropdown"
-      @toggle="toggled"
       tabindex="-1"
+      @toggle="toggled"
     >
       <template #trigger="{ open, toggle, close }">
         <div
@@ -133,8 +133,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { union, lowerCase, isEqual } from "lodash";
-import { computed, ref, useTemplateRef } from "vue";
+import { computed, ref, useTemplateRef, provide, toRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { vcPopoverKey } from "@/ui-kit/components/atoms/popover/vc-popover-context";
 import { useComponentId } from "@/ui-kit/composables";
 
 interface IProps {
@@ -157,6 +158,7 @@ interface IProps {
   multiple?: boolean;
   clearable?: boolean;
   testIdDropdown?: string;
+  enableTeleport?: boolean;
 }
 
 interface IEmits {
@@ -170,6 +172,8 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   itemSize: "sm",
 });
+
+provide(vcPopoverKey, { enableTeleport: toRef(() => props.enableTeleport ?? false) });
 
 const { t } = useI18n();
 const componentId = useComponentId("select");

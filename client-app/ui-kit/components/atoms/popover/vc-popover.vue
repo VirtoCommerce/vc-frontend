@@ -8,7 +8,7 @@
       <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
     </div>
 
-    <teleport :to="teleportSelector" :disabled="!enableTeleport">
+    <teleport :to="teleportSelector" :disabled="!shouldTeleport">
       <div
         v-if="$slots.content && !disabled"
         :id="contentId"
@@ -37,8 +37,9 @@
 <script setup lang="ts">
 import { flip, offset, shift, useFloating, autoUpdate, arrow } from "@floating-ui/vue";
 import { onClickOutside } from "@vueuse/core";
-import { ref, toRefs, computed, watch } from "vue";
+import { ref, toRefs, computed, watch, inject } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
+import { vcPopoverKey } from "./vc-popover-context";
 
 interface IEmits {
   (event: "toggle", value: boolean): void;
@@ -67,9 +68,11 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   zIndex: 1,
   placement: "bottom",
-  enableTeleport: false,
   teleportSelector: "[id='popover-host']",
 });
+
+const popoverContext = inject(vcPopoverKey, null);
+const shouldTeleport = computed(() => props.enableTeleport ?? popoverContext?.enableTeleport ?? false);
 
 const opened = ref(false);
 const reference = ref<HTMLElement | null>(null);

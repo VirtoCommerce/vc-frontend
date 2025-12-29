@@ -4,6 +4,7 @@
     :label="$t('shared.account.orders_filter.created_date_label')"
     :items="dateFilterTypes"
     text-field="label"
+    enable-teleport
     @change="handleChangeType"
   />
 

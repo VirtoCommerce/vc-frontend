@@ -11,7 +11,6 @@
     :offset-options="offsetOptions"
     :z-index="zIndex"
     :disabled="disabled"
-    enable-teleport
     @toggle="$emit('toggle', $event)"
   >
     <template #default="{ toggle, open, close, opened, triggerProps }">
