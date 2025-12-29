@@ -84,7 +84,11 @@
             @reset="resetOrderFilters"
             @close="hideFilters"
           >
-            <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
+            <DateFilterSelect
+              :date-filter-type="selectedDateFilterType"
+              :label="$t('shared.account.orders_filter.created_date_label')"
+              @change="handleOrdersDateFilterChange"
+            />
 
             <VcSelect
               v-if="showCustomerNameFilter"

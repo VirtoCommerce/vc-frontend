@@ -1,7 +1,7 @@
 <template>
   <VcSelect
     v-model="selectedDateFilter"
-    :label="$t('shared.account.orders_filter.created_date_label')"
+    :label="label"
     :items="dateFilterTypes"
     text-field="label"
     enable-teleport
@@ -39,6 +39,7 @@ interface IEmits {
 
 interface IProps {
   dateFilterType?: DateFilterType;
+  label?: string;
 }
 
 const emit = defineEmits<IEmits>();
