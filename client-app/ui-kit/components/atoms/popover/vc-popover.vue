@@ -59,7 +59,7 @@ interface IProps {
   disableTriggerEvents?: boolean;
   arrowEnabled?: boolean;
   ariaLabel?: string;
-  enableTeleport?: boolean;
+  enableTeleport?: boolean | null;
   teleportSelector?: string;
 }
 
@@ -69,10 +69,13 @@ const props = withDefaults(defineProps<IProps>(), {
   zIndex: 1,
   placement: "bottom",
   teleportSelector: "[id='popover-host']",
+  enableTeleport: null,
 });
 
 const popoverContext = inject(vcPopoverKey, null);
-const shouldTeleport = computed(() => props.enableTeleport ?? popoverContext?.enableTeleport ?? false);
+const shouldTeleport = computed(() =>
+  props.enableTeleport !== null ? props.enableTeleport : (popoverContext?.enableTeleport.value ?? false),
+);
 
 const opened = ref(false);
 const reference = ref<HTMLElement | null>(null);
