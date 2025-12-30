@@ -19,6 +19,7 @@
 </template>
 
 <script setup lang="ts">
+import { useThrottleFn } from "@vueuse/core";
 import { computed, provide, ref, useTemplateRef } from "vue";
 import { getColorValue } from "@/ui-kit/utilities";
 import { vcScrollbarKey } from "./vc-scrollbar-context";
@@ -64,7 +65,7 @@ const wasAtBottom = ref(false);
 const wasAtLeft = ref(true);
 const wasAtRight = ref(false);
 
-function onScroll(event: Event): void {
+const onScroll = useThrottleFn((event: Event) => {
   const target = event.target as HTMLElement;
   if (!target) return;
 
@@ -102,7 +103,7 @@ function onScroll(event: Event): void {
     isAtLeft,
     isAtRight,
   });
-}
+}, 100);
 
 defineExpose({ el });
 
