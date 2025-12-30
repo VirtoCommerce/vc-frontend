@@ -136,7 +136,7 @@ const MAX_DESCRIPTION_LENGTH = 250;
 
 const validationSchema = toTypedSchema(
   object({
-    name: string().required().max(25),
+    name: string().trim().required().max(25),
     description: string().max(MAX_DESCRIPTION_LENGTH),
     sharingScope: string().required(),
   }),
