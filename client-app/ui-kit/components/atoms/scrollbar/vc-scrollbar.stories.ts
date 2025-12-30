@@ -304,7 +304,9 @@ export const WithInfiniteScroll: StoryType = {
       const totalPages = 5;
 
       const loadMore = async () => {
-        if (loading.value || currentPage.value >= totalPages) return;
+        if (loading.value || currentPage.value >= totalPages) {
+          return;
+        }
 
         loading.value = true;
         await new Promise((resolve) => setTimeout(resolve, 800));
@@ -330,7 +332,6 @@ export const WithInfiniteScroll: StoryType = {
             </div>
 
             <VcInfinityScrollLoader
-              v-if="currentPage < totalPages"
               :loading="loading"
               :page-number="currentPage"
               :pages-count="totalPages"

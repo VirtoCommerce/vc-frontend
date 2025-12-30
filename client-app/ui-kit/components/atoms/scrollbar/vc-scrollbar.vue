@@ -65,45 +65,51 @@ const wasAtBottom = ref(false);
 const wasAtLeft = ref(true);
 const wasAtRight = ref(false);
 
-const onScroll = useThrottleFn((event: Event) => {
-  const target = event.target as HTMLElement;
-  if (!target) return;
+const onScroll = useThrottleFn(
+  (event: Event) => {
+    const target = event.target as HTMLElement;
+    if (!target) {
+      return;
+    }
 
-  const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
-  const threshold = props.edgeThreshold;
+    const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
+    const threshold = props.edgeThreshold;
 
-  const isAtTop = scrollTop <= threshold;
-  const isAtBottom = scrollTop + clientHeight >= scrollHeight - threshold;
-  const isAtLeft = scrollLeft <= threshold;
-  const isAtRight = scrollLeft + clientWidth >= scrollWidth - threshold;
+    const isAtTop = scrollTop <= threshold;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - threshold;
+    const isAtLeft = scrollLeft <= threshold;
+    const isAtRight = scrollLeft + clientWidth >= scrollWidth - threshold;
 
-  if (isAtTop && !wasAtTop.value) {
-    emit("reachTop");
-  }
-  if (isAtBottom && !wasAtBottom.value) {
-    emit("reachBottom");
-  }
-  if (isAtLeft && !wasAtLeft.value) {
-    emit("reachLeft");
-  }
-  if (isAtRight && !wasAtRight.value) {
-    emit("reachRight");
-  }
+    if (isAtTop && !wasAtTop.value) {
+      emit("reachTop");
+    }
+    if (isAtBottom && !wasAtBottom.value) {
+      emit("reachBottom");
+    }
+    if (isAtLeft && !wasAtLeft.value) {
+      emit("reachLeft");
+    }
+    if (isAtRight && !wasAtRight.value) {
+      emit("reachRight");
+    }
 
-  wasAtTop.value = isAtTop;
-  wasAtBottom.value = isAtBottom;
-  wasAtLeft.value = isAtLeft;
-  wasAtRight.value = isAtRight;
+    wasAtTop.value = isAtTop;
+    wasAtBottom.value = isAtBottom;
+    wasAtLeft.value = isAtLeft;
+    wasAtRight.value = isAtRight;
 
-  emit("scroll", {
-    scrollTop,
-    scrollLeft,
-    isAtTop,
-    isAtBottom,
-    isAtLeft,
-    isAtRight,
-  });
-}, 50);
+    emit("scroll", {
+      scrollTop,
+      scrollLeft,
+      isAtTop,
+      isAtBottom,
+      isAtLeft,
+      isAtRight,
+    });
+  },
+  100,
+  true,
+);
 
 defineExpose({ el });
 
