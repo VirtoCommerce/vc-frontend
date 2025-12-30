@@ -2,6 +2,7 @@
   <component
     :is="tag"
     ref="el"
+    :data-test-id="testId"
     :tabindex="isScrollable ? 0 : undefined"
     :class="[
       'vc-scrollbar',
@@ -41,6 +42,7 @@ interface IProps {
   trackColor?: string;
   thumbColor?: string;
   edgeThreshold?: number;
+  testId?: string;
 }
 
 const emit = defineEmits<IEmits>();

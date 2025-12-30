@@ -1,5 +1,5 @@
 <template>
-  <div ref="target" class="flex items-center justify-center gap-2 text-base">
+  <div ref="target" :data-test-id="testId" class="flex items-center justify-center gap-2 text-base">
     <slot v-if="loading" name="loader">
       <VcLoader />
     </slot>
@@ -37,6 +37,7 @@ interface IProps {
   isPageLimitReached?: boolean;
   pagesCount: number;
   pageNumber: number;
+  testId?: string;
 }
 
 const scrollbarContext = inject(vcScrollbarKey, null);
