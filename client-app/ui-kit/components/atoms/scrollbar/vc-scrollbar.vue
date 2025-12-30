@@ -103,7 +103,7 @@ const onScroll = useThrottleFn((event: Event) => {
     isAtLeft,
     isAtRight,
   });
-}, 100);
+}, 50);
 
 defineExpose({ el });
 
