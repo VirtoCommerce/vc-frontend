@@ -1,6 +1,8 @@
 <template>
   <component
     :is="tag"
+    ref="el"
+    :tabindex="isScrollable ? 0 : undefined"
     :class="[
       'vc-scrollbar',
       {
@@ -10,14 +12,24 @@
         'vc-scrollbar--no-bar': noBar,
       },
     ]"
+    @scroll="onScroll"
   >
     <slot />
   </component>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, provide, ref, useTemplateRef } from "vue";
 import { getColorValue } from "@/ui-kit/utilities";
+import { vcScrollbarKey } from "./vc-scrollbar-context";
+
+interface IEmits {
+  (event: "reachTop"): void;
+  (event: "reachBottom"): void;
+  (event: "reachLeft"): void;
+  (event: "reachRight"): void;
+  (event: "scroll", payload: VcScrollbarPayloadType): void;
+}
 
 interface IProps {
   disabled?: boolean;
@@ -27,7 +39,10 @@ interface IProps {
   tag?: string;
   trackColor?: string;
   thumbColor?: string;
+  edgeThreshold?: number;
 }
+
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   vertical: false,
@@ -35,7 +50,61 @@ const props = withDefaults(defineProps<IProps>(), {
   disabled: false,
   noBar: false,
   tag: "div",
+  edgeThreshold: 0,
 });
+
+const el = useTemplateRef<HTMLElement>("el");
+
+const isScrollable = computed(() => (props.vertical || props.horizontal) && !props.disabled);
+
+provide(vcScrollbarKey, { el });
+
+const wasAtTop = ref(true);
+const wasAtBottom = ref(false);
+const wasAtLeft = ref(true);
+const wasAtRight = ref(false);
+
+function onScroll(event: Event): void {
+  const target = event.target as HTMLElement;
+  if (!target) return;
+
+  const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target;
+  const threshold = props.edgeThreshold;
+
+  const isAtTop = scrollTop <= threshold;
+  const isAtBottom = scrollTop + clientHeight >= scrollHeight - threshold;
+  const isAtLeft = scrollLeft <= threshold;
+  const isAtRight = scrollLeft + clientWidth >= scrollWidth - threshold;
+
+  if (isAtTop && !wasAtTop.value) {
+    emit("reachTop");
+  }
+  if (isAtBottom && !wasAtBottom.value) {
+    emit("reachBottom");
+  }
+  if (isAtLeft && !wasAtLeft.value) {
+    emit("reachLeft");
+  }
+  if (isAtRight && !wasAtRight.value) {
+    emit("reachRight");
+  }
+
+  wasAtTop.value = isAtTop;
+  wasAtBottom.value = isAtBottom;
+  wasAtLeft.value = isAtLeft;
+  wasAtRight.value = isAtRight;
+
+  emit("scroll", {
+    scrollTop,
+    scrollLeft,
+    isAtTop,
+    isAtBottom,
+    isAtLeft,
+    isAtRight,
+  });
+}
+
+defineExpose({ el });
 
 const _trackColor = computed(() => getColorValue(props.trackColor));
 const _thumbColor = computed(() => getColorValue(props.thumbColor));
