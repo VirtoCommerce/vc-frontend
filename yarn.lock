@@ -13986,9 +13986,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"skyflow-js@npm:2.6.0":
-  version: 2.6.0
-  resolution: "skyflow-js@npm:2.6.0"
+"skyflow-js@npm:2.5.0":
+  version: 2.5.0
+  resolution: "skyflow-js@npm:2.5.0"
   dependencies:
     core-js: "npm:^3.6.5"
     framebus: "npm:^4.0.0"
@@ -14002,7 +14002,7 @@ __metadata:
     mime: "npm:3.0.0"
     regex-parser: "npm:^2.2.11"
     set-value: "npm:^4.0.1"
-  checksum: 10c0/3b910682ff8a83f3247c856d8d41ed40a624bb2db59db5f261550a23241d65b829cda076b87aeb994fffcfd2e660ef35fa502bc2e0617b4ca78397d2b4c383f7
+  checksum: 10c0/3a6fdfe23401b776272717ee7919b984050f2bc05a9159521f7e12517055e0fcd6c597cb5bdd7b17b46e0e650bc9e7891c8c97874c4ccc0de8ddf867d6737330
   languageName: node
   linkType: hard
 
@@ -15568,7 +15568,7 @@ __metadata:
     prettier: "npm:^3.7.4"
     rollup-plugin-visualizer: "npm:^6.0.5"
     sass: "npm:^1.97.1"
-    skyflow-js: "npm:2.6.0"
+    skyflow-js: "npm:2.5.0"
     storybook: "npm:9.1.17"
     storybook-vue3-router: "npm:^7.0.0"
     swiper: "npm:11.2.10"
