@@ -188,6 +188,7 @@ const attrs = computed(() => {
   --min-w: var(--props-min-width, var(--vc-button-min-width));
 
   --vc-icon-size: var(--vc-button-icon-size, var(--props-icon-size, var(--line-height)));
+  --vc-icon-color: currentColor;
 
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
 
