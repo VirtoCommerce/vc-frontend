@@ -406,15 +406,9 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "categories_label": "Kategoriat",
-        "products_label": "Tuotteet",
-        "pages_label": "Sivut",
-        "suggestions_and_history_label": "Vinkit",
-        "no_results": "Hakusi {keyword} ei tuottanut tuloksia",
         "enter_keyword_placeholder": "Hae",
         "enter_keyword_placeholder_category": "Hae kategoriasta {category}",
         "search_button": "Hae",
-        "view_all_results_button": "Näytä kaikki {total} tulosta",
         "scope_loading_label": "Ladataan hakukontekstia",
         "scope_remove_label": "Poista: {label}",
         "barcode_detector": {
@@ -430,6 +424,16 @@
         },
         "suggestions_label": "Ehdotukset",
         "search_label": "Hae"
+      },
+      "search_dropdown": {
+        "categories_label": "Kategoriat",
+        "products_label": "Tuotteet",
+        "pages_label": "Sivut",
+        "suggestions_and_history_label": "Vinkit",
+        "view_all_results_button": "Näytä kaikki {total} tulosta",
+        "no_results": "Haullasi ei löytynyt mitään. Kokeile muuttaa hakuehtoja.",
+        "start_typing": "Aloita kirjoittaminen etsiäksesi",
+        "check_all_products_button": "Katso kaikki tuotteet"
       },
       "language_selector": {
         "label": "Kieli:"
