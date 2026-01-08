@@ -7,6 +7,7 @@
         :filter="filterCountries"
         :disabled="!filterOptionsCountries.values?.length"
         mode="dropdown"
+        data-test-id="filter-country"
         @update:filter="applyFilter"
       />
 
@@ -16,6 +17,7 @@
         :filter="filterRegions"
         :disabled="!filterOptionsRegions.values?.length"
         mode="dropdown"
+        data-test-id="filter-region"
         @update:filter="applyFilter"
       />
 
@@ -25,6 +27,7 @@
         :filter="filterCities"
         :disabled="!filterOptionsCities.values?.length"
         mode="dropdown"
+        data-test-id="filter-city"
         @update:filter="applyFilter"
       />
 
@@ -47,6 +50,7 @@
       :aria-label="$t('common.labels.search')"
       size="sm"
       class="select-address-filter__filter-keyword"
+      test-id-input="search-keyword-input"
       clearable
       :disabled="pickupLocationsLoading"
       @keyup.enter="applyFilter"
@@ -57,6 +61,7 @@
           :aria-label="$t('common.labels.search')"
           @click="applyFilter"
           :disabled="pickupLocationsLoading"
+          data-test-id="search-button"
         />
       </template>
     </VcInput>
@@ -64,24 +69,39 @@
 
   <div v-if="!filterSelectsAreEmpty" class="select-address-filter__applied-filter">
     <template v-for="value in filterCountries?.termValues" :key="value.value">
-      <VcChip color="secondary" closable @close="removeFilterCountry(value.value)">
+      <VcChip
+        color="secondary"
+        closable
+        :data-test-id="`filter-country-${value.value}`"
+        @close="removeFilterCountry(value.value)"
+      >
         {{ value.value }}
       </VcChip>
     </template>
 
     <template v-for="value in filterRegions?.termValues" :key="value.value">
-      <VcChip color="secondary" closable @close="removeFilterRegion(value.value)">
+      <VcChip
+        color="secondary"
+        closable
+        :data-test-id="`filter-region-${value.value}`"
+        @close="removeFilterRegion(value.value)"
+      >
         {{ value.value }}
       </VcChip>
     </template>
 
     <template v-for="value in filterCities?.termValues" :key="value.value">
-      <VcChip color="secondary" closable @close="removeFilterCity(value.value)">
+      <VcChip
+        color="secondary"
+        closable
+        :data-test-id="`filter-city-${value.value}`"
+        @close="removeFilterCity(value.value)"
+      >
         {{ value.value }}
       </VcChip>
     </template>
 
-    <VcChip color="secondary" variant="outline" clickable @click="resetFilter">
+    <VcChip color="secondary" variant="outline" clickable data-test-id="reset-filters-chip" @click="resetFilter">
       <span>{{ $t("common.buttons.reset_filters") }}</span>
 
       <VcIcon name="reset" />
