@@ -16,10 +16,10 @@
         <VcButton
           v-if="applied"
           :aria-label="$t('ui_kit.buttons.deny')"
-          color="danger"
+          color="neutral"
           variant="no-background"
           :disabled="disabled"
-          icon="delete-2"
+          icon="delete-thin"
           size="sm"
           @click="$emit('deny')"
         />
