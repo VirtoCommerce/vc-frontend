@@ -322,6 +322,14 @@ function isSelected(item: FacetValueItemType) {
     });
   }
 }
+
+function resetSearch() {
+  searchKeyword.value = "";
+}
+
+defineExpose({
+  resetSearch,
+});
 </script>
 
 <style lang="scss">

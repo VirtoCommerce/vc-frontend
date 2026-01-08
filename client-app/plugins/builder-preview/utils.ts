@@ -1,12 +1,15 @@
-export function getEpParam() {
-  const urlParams = new URLSearchParams(window.location.search);
+export function getBuilderOrigin() {
+  const urlParams = new URLSearchParams(globalThis.location.search);
   const ep = urlParams.get("ep");
 
   return ep?.replace(/\/$/, "");
 }
 
-export function isPreviewMode(ep?: string): boolean {
-  const referrer = document.referrer?.replace(/\/$/, "");
+export function getPreviewPageId(): string | undefined {
+  const urlParams = new URLSearchParams(globalThis.location.search);
+  return urlParams.get("pageId") ?? undefined;
+}
 
-  return Boolean(referrer && ep && referrer === ep);
+export function isPreviewMode(): boolean {
+  return globalThis.location.pathname === "/designer-preview";
 }

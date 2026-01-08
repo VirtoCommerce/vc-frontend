@@ -3,6 +3,7 @@
     <VcScrollbar class="select-address-filter__filter-group" horizontal no-bar>
       <FacetFilter
         v-if="filterOptionsCountries"
+        ref="facetFilterCountriesRef"
         :facet="filterOptionsCountries"
         :filter="filterCountries"
         :disabled="!filterOptionsCountries.values?.length"
@@ -13,6 +14,7 @@
 
       <FacetFilter
         v-if="filterOptionsRegions"
+        ref="facetFilterRegionsRef"
         :facet="filterOptionsRegions"
         :filter="filterRegions"
         :disabled="!filterOptionsRegions.values?.length"
@@ -23,6 +25,7 @@
 
       <FacetFilter
         v-if="filterOptionsCities"
+        ref="facetFilterCitiesRef"
         :facet="filterOptionsCities"
         :filter="filterCities"
         :disabled="!filterOptionsCities.values?.length"
@@ -110,6 +113,7 @@
 </template>
 
 <script setup lang="ts">
+import { useTemplateRef } from "vue";
 import { CITY_FACET, COUNTRY_NAME_FACET, REGION_NAME_FACET, useCartPickupLocations } from "@/shared/cart";
 import { FacetFilter } from "@/shared/catalog";
 import type { FacetFilterType } from "@/core/types";
@@ -135,6 +139,17 @@ const {
   pickupLocationsLoading,
 } = useCartPickupLocations();
 
+const facetFilterCountriesRef = useTemplateRef<InstanceType<typeof FacetFilter>>("facetFilterCountriesRef");
+const facetFilterRegionsRef = useTemplateRef<InstanceType<typeof FacetFilter>>("facetFilterRegionsRef");
+const facetFilterCitiesRef = useTemplateRef<InstanceType<typeof FacetFilter>>("facetFilterCitiesRef");
+
+function resetFacetSearchAndApply() {
+  facetFilterCountriesRef.value?.resetSearch();
+  facetFilterRegionsRef.value?.resetSearch();
+  facetFilterCitiesRef.value?.resetSearch();
+  emit("applyFilter");
+}
+
 function applyFilter(changedFilter?: FacetFilterType) {
   if (changedFilter?.name === COUNTRY_NAME_FACET) {
     filterCountries.value = changedFilter;
@@ -148,33 +163,33 @@ function applyFilter(changedFilter?: FacetFilterType) {
     filterCities.value = changedFilter;
   }
 
-  emit("applyFilter");
+  resetFacetSearchAndApply();
 }
 
 function resetFilter() {
   clearFilter();
-  emit("applyFilter");
+  resetFacetSearchAndApply();
 }
 
 function removeFilterCountry(value: string) {
   if (filterCountries.value?.termValues?.length) {
     filterCountries.value.termValues = filterCountries.value.termValues.filter((x) => x.value !== value);
   }
-  emit("applyFilter");
+  resetFacetSearchAndApply();
 }
 
 function removeFilterRegion(value: string) {
   if (filterRegions.value?.termValues?.length) {
     filterRegions.value.termValues = filterRegions.value.termValues.filter((x) => x.value !== value);
   }
-  emit("applyFilter");
+  resetFacetSearchAndApply();
 }
 
 function removeFilterCity(value: string) {
   if (filterCities.value?.termValues?.length) {
     filterCities.value.termValues = filterCities.value.termValues.filter((x) => x.value !== value);
   }
-  emit("applyFilter");
+  resetFacetSearchAndApply();
 }
 </script>
 
