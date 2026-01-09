@@ -406,15 +406,9 @@
         "by_virto": "Virto Commerce"
       },
       "search_bar": {
-        "categories_label": "Kategorier",
-        "products_label": "Produkter",
-        "pages_label": "Sider",
-        "suggestions_and_history_label": "Tips",
-        "no_results": "Søket ditt etter {keyword} ga ingen resultater",
         "enter_keyword_placeholder": "Søk",
         "enter_keyword_placeholder_category": "Søk i kategorien {category}",
         "search_button": "Søk",
-        "view_all_results_button": "Vis alle {total} resultater",
         "scope_loading_label": "Laster søkekontekst",
         "scope_remove_label": "Fjern: {label}",
         "barcode_detector": {
@@ -430,6 +424,16 @@
         },
         "suggestions_label": "Forslag",
         "search_label": "Søk"
+      },
+      "search_dropdown": {
+        "categories_label": "Kategorier",
+        "products_label": "Produkter",
+        "pages_label": "Sider",
+        "suggestions_and_history_label": "Tips",
+        "view_all_results_button": "Vis alle {total} resultater",
+        "no_results": "Ingenting ble funnet for søket ditt. Prøv å justere søket.",
+        "start_typing": "Begynn å skrive for å søke",
+        "check_all_products_button": "Se alle produkter"
       },
       "language_selector": {
         "label": "Språk:"

@@ -26,7 +26,12 @@
             <template #append>
               <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
 
-              <VcButton class="mobile-search-bar__button" icon="search" @click="searchDropdownRef?.handleSearch()" />
+              <VcButton
+                class="mobile-search-bar__button"
+                icon="search"
+                :loading="loading"
+                @click="searchDropdownRef?.handleSearch()"
+              />
             </template>
           </VcInput>
 
@@ -74,7 +79,7 @@ defineProps<IProps>();
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
-const { hideSearchBar, maxSearchLength } = useSearchBar();
+const { hideSearchBar, maxSearchLength, loading } = useSearchBar();
 
 const { themeContext } = useThemeContext();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
