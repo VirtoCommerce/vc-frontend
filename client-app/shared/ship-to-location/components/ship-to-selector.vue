@@ -47,6 +47,7 @@
                     variant="outline"
                     color="secondary"
                     prepend-icon="plus"
+                    data-test-id="ship-to-add-new-address"
                     @click="
                       openAddOrUpdateAddressModal();
                       close();
@@ -61,6 +62,7 @@
                     v-model="filter"
                     size="sm"
                     clearable
+                    data-test-id="ship-to-search-field"
                     :placeholder="$t('shared.layout.header.ship_to_selector.search')"
                   />
                 </div>
@@ -94,6 +96,7 @@
                   <VcIcon
                     name="whishlist"
                     :size="16"
+                    data-test-id="ship-to-favorite-icon"
                     :class="[
                       'ship-to-selector__favorite',
                       {
@@ -113,7 +116,12 @@
           <VcDialogFooter v-if="hasAddresses && !filter && allAddresses.length > MAX_ADDRESSES_NUMBER">
             <template #container>
               <div class="ship-to-selector__foot">
-                <VcButtonSeeMoreLess :model-value="isSeeMore" size="xs" @click="isSeeMore = !isSeeMore" />
+                <VcButtonSeeMoreLess
+                  :model-value="isSeeMore"
+                  size="xs"
+                  data-test-id="ship-to-more-button"
+                  @click="isSeeMore = !isSeeMore"
+                />
               </div>
             </template>
           </VcDialogFooter>
