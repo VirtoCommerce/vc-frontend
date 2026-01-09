@@ -52,7 +52,6 @@ query GetSearchResults(
     currencyCode: $currencyCode
     cultureName: $cultureName
     query: $query
-    filter: $filter
     after: $categoriesAfter
     first: $categoriesFirst
     sort: $categoriesSort
