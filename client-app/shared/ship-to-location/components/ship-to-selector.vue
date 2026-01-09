@@ -96,7 +96,7 @@
                   <VcIcon
                     name="whishlist"
                     :size="16"
-                    data-test-id="ship-to-favorite-icon"
+                    :data-test-id="`ship-to-favorite-icon-${address.id}`"
                     :class="[
                       'ship-to-selector__favorite',
                       {
