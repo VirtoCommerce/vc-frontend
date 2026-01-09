@@ -5,6 +5,7 @@ query GetSearchResults(
   $cultureName: String
   $query: String!
   $filter: String
+  $categoriesFilter: String
   $withProducts: Boolean!
   $withCategories: Boolean!
   $withPages: Boolean!
@@ -52,6 +53,7 @@ query GetSearchResults(
     currencyCode: $currencyCode
     cultureName: $cultureName
     query: $query
+    filter: $categoriesFilter
     after: $categoriesAfter
     first: $categoriesFirst
     sort: $categoriesSort

@@ -46,6 +46,7 @@
             :visible="visible"
             :search-phrase="searchPhrase"
             :filter-expression="filterExpression"
+            :categories-filter-expression="categoriesFilterExpression"
             @hide="hideSearchBar"
             @product-select="hideSearchBar"
             @update:search-phrase="searchPhrase = $event"
@@ -65,7 +66,11 @@ import { BREAKPOINTS, IN_STOCK_PRODUCTS_LOCAL_STORAGE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { getFilterExpressionForInStockVariations, getFilterExpressionForZeroPrice } from "@/core/utilities";
+import {
+  getFilterExpressionForCategorySubtree,
+  getFilterExpressionForInStockVariations,
+  getFilterExpressionForZeroPrice,
+} from "@/core/utilities";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import BarcodeScanner from "./search-bar/barcode-scanner.vue";
 import SearchDropdown from "./search-dropdown.vue";
@@ -110,6 +115,16 @@ const filterExpression = computed(() => {
   ].filter(Boolean);
 
   return expressions.length > 0 ? expressions.join(" ") : undefined;
+});
+
+const categoriesFilterExpression = computed(() => {
+  const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
+
+  if (catalog_empty_categories_enabled) {
+    return undefined;
+  }
+
+  return getFilterExpressionForCategorySubtree({ catalogId: globals.catalogId });
 });
 const contentElement = ref<HTMLElement | null>(null);
 const wrapperElement = ref<HTMLElement | null>(null);
