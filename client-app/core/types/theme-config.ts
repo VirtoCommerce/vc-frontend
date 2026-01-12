@@ -166,7 +166,7 @@ export interface IThemeConfigSettings {
   product_compare_enabled?: boolean;
   product_compare_limit?: number;
   product_filters_sorting?: boolean;
-  product_filters_sorting_direction?: SortDirectionType | string;
+  product_filters_sorting_direction?: SortDirectionType;
   product_quantity_control?: "stepper" | "button";
   range_filter_type?: "slider" | "default";
   out_of_stock_order_enabled?: boolean;
