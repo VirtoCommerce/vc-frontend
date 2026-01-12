@@ -254,6 +254,10 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
     }
   }
 
+  &__body {
+    word-break: break-word;
+  }
+
   &__skeleton {
     @apply even:bg-neutral-50;
   }
