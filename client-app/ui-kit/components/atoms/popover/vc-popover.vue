@@ -75,7 +75,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const popoverContext = inject(vcPopoverKey, null);
 const shouldTeleport = computed(() =>
-  props.enableTeleport !== null ? props.enableTeleport : (popoverContext?.enableTeleport.value ?? false),
+  props.enableTeleport === null ? (popoverContext?.enableTeleport.value ?? false) : props.enableTeleport,
 );
 
 const opened = ref(false);
