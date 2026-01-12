@@ -1617,6 +1617,8 @@ export type InputAddOrUpdateOrderPaymentType = {
 };
 
 export type InputAddWishlistBulkItemType = {
+  /** Configurable product support. List of configurable product sections */
+  configurationSections?: InputMaybe<Array<InputMaybe<ConfigurationSectionInput>>>;
   /** Wish list ids */
   listIds: Array<InputMaybe<Scalars['String']['input']>>;
   /** Product id to add */
@@ -1626,6 +1628,8 @@ export type InputAddWishlistBulkItemType = {
 };
 
 export type InputAddWishlistItemType = {
+  /** Configurable product support. List of configurable product sections */
+  configurationSections?: InputMaybe<Array<InputMaybe<ConfigurationSectionInput>>>;
   /** Wish list id */
   listId: Scalars['String']['input'];
   /** Product id to add */
