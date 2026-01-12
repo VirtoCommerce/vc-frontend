@@ -10,8 +10,9 @@
       },
     ]"
   >
-    <label class="vc-radio-button__container">
+    <label :for="inputId" class="vc-radio-button__container">
       <input
+        :id="inputId"
         v-model="model"
         class="vc-radio-button__input"
         type="radio"
@@ -20,6 +21,9 @@
         :checked="checked"
         :disabled="disabled"
         :aria-checked="checked"
+        :aria-label="ariaLabel || label || undefined"
+        :aria-describedby="hasDetails ? detailsId : undefined"
+        :aria-invalid="error || undefined"
         :data-test-id="testIdInput"
         @change="emit('change', value)"
         @input="emit('input', value)"
@@ -33,6 +37,7 @@
     </label>
 
     <VcInputDetails
+      :id="detailsId"
       class="vc-radio-button__details"
       :show-empty="showEmptyDetails"
       :message="message"
@@ -43,7 +48,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, useSlots } from "vue";
+import { useComponentId } from "@/ui-kit/composables";
 
 interface IProps {
   label?: string;
@@ -59,6 +65,7 @@ interface IProps {
   wordBreak?: string;
   maxLines?: number;
   testIdInput?: string;
+  ariaLabel?: string;
 }
 
 const emit = defineEmits<IEmits>();
@@ -70,12 +77,27 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const model = defineModel<IProps["value"]>();
 
+const slots = useSlots();
+
+// Dev warning for accessibility
+if (import.meta.env.DEV) {
+  if (!props.ariaLabel && !props.label && !slots.default) {
+    // eslint-disable-next-line no-console
+    console.warn("VcRadioButton: Radio button should have ariaLabel, label, or slot content for accessibility");
+  }
+}
+
 interface IEmits {
   (event: "input", value: string): void;
   (event: "change", value: string): void;
 }
 
+const componentId = useComponentId("vc-radio-button");
+const inputId = `${componentId}-input`;
+const detailsId = `${componentId}-details`;
+
 const checked = computed(() => model.value === props.value);
+const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
 </script>
 
 <style lang="scss">

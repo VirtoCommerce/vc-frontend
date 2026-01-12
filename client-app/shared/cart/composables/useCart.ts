@@ -61,6 +61,7 @@ import type {
   AddOrUpdateCartShipmentMutationVariables,
   LineItemType,
   ConfigurationSectionInput,
+  BulkLineItemFragment,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
 import type { DeepReadonly } from "vue";
@@ -180,11 +181,34 @@ export function useShortCart() {
       },
     );
 
-    return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
+    const outputItems = items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
       productSku,
       quantity,
       errors: result?.data?.addBulkItemsCart?.errors?.filter((error) => error.objectId === productSku),
     }));
+
+    const itemsQuantityMap = new Map(items.map(({ productSku, quantity }) => [productSku, quantity]));
+
+    const errorSkus = new Set(result?.data?.addBulkItemsCart?.errors?.map((error) => error.objectId) ?? []);
+
+    const successfulItemsToTrack = result?.data?.addBulkItemsCart?.cart?.items
+      ?.map((item) => ({
+        ...item,
+        quantity: itemsQuantityMap.get(item.sku) ?? 0,
+      }))
+      ?.filter((item) => !errorSkus.has(item.sku) && item.quantity > 0);
+
+    trackAddBulkItemsToCart(successfulItemsToTrack);
+
+    return outputItems;
+  }
+
+  function trackAddBulkItemsToCart(items?: BulkLineItemFragment[]) {
+    if (!items?.length) {
+      return;
+    }
+
+    analytics("addBulkItemsToCart", items, { source_order: "/bulk-order" });
   }
 
   const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } = useMutation(

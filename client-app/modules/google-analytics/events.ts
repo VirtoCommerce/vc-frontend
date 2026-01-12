@@ -66,6 +66,31 @@ export const events: TrackerEventsType = {
     });
   },
 
+  addBulkItemsToCart(items, params) {
+    const subtotal = items.reduce(
+      (acc, item) => acc + (item.salePrice?.amount ?? item.listPrice?.amount ?? 0) * item.quantity,
+      0,
+    );
+    const subtotalRound = Math.round(subtotal * 100) / 100;
+    const inputItems = items.map((item, index) => ({
+      index,
+      item_id: item.sku,
+      item_name: item.name,
+      affiliation: item.vendor?.name,
+      currency: item.salePrice?.currency?.code ?? item.listPrice?.currency?.code,
+      discount: item.discountAmount?.amount,
+      price: item.salePrice?.amount ?? item.listPrice?.amount,
+      quantity: item.quantity,
+    }));
+    sendEvent("add_to_cart", {
+      ...params,
+      currency: currencyCode,
+      value: subtotalRound,
+      items: inputItems,
+      items_count: inputItems.length,
+    });
+  },
+
   updateCartItem(itemId, newQuantity, previousQuantity, params) {
     sendEvent("update_cart_item", {
       ...params,
