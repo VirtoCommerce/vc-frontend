@@ -23,7 +23,10 @@
           size="sm"
           icon="reset"
           :title="$t('common.buttons.reset')"
-          @click="resetOrderFilters"
+          @click="
+            resetOrderFilters();
+            hideFilters();
+          "
         />
 
         <VcButton
@@ -36,7 +39,15 @@
           {{ $t("common.buttons.cancel") }}
         </VcButton>
 
-        <VcButton :disabled="!isFilterDirty" size="sm" min-width="6.25rem" @click="applyOrderFilters">
+        <VcButton
+          :disabled="!isFilterDirty"
+          size="sm"
+          min-width="6.25rem"
+          @click="
+            applyOrderFilters();
+            hideFilters();
+          "
+        >
           {{ $t("common.buttons.apply") }}
         </VcButton>
       </template>
@@ -62,44 +73,52 @@
       </div>
 
       <div class="flex grow flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5">
-        <div class="relative">
-          <VcButton
-            ref="filtersButtonElement"
-            :disabled="ordersLoading"
-            :variant="isMobile ? 'solid' : 'outline'"
-            :icon="isMobile"
-            @click="toggleFilters"
-          >
-            <VcIcon name="filter" />
+        <!-- Desktop filters popover -->
+        <VcPopover v-if="!isMobile" placement="bottom-end" :offset-options="8" :disabled="ordersLoading" lazy>
+          <template #default="{ triggerProps }">
+            <VcButton :disabled="ordersLoading" variant="outline" v-bind="triggerProps">
+              <VcIcon name="filter" />
 
-            <span>{{ $t("common.buttons.filters") }}</span>
-          </VcButton>
+              <span>{{ $t("common.buttons.filters") }}</span>
+            </VcButton>
+          </template>
 
-          <!-- Desktop filters dropdown -->
-          <OrdersFilter
-            v-if="filtersVisible && !isMobile"
-            ref="filtersDropdownElement"
-            class="absolute right-0 z-[1] mt-2"
-            @apply="applyOrderFilters"
-            @reset="resetOrderFilters"
-            @close="hideFilters"
-          >
-            <DateFilterSelect
-              :date-filter-type="selectedDateFilterType"
-              :label="$t('shared.account.orders_filter.created_date_label')"
-              @change="handleOrdersDateFilterChange"
-            />
+          <template #content="{ close }">
+            <OrdersFilter
+              @apply="
+                applyOrderFilters();
+                close();
+              "
+              @reset="
+                resetOrderFilters();
+                close();
+              "
+              @close="close"
+            >
+              <DateFilterSelect
+                :date-filter-type="selectedDateFilterType"
+                :label="$t('shared.account.orders_filter.created_date_label')"
+                @change="handleOrdersDateFilterChange"
+              />
 
-            <VcSelect
-              v-if="showCustomerNameFilter"
-              v-model="filterData.customerNames"
-              :label="$t('common.labels.buyer_name')"
-              :items="organizationCustomerNames ?? []"
-              multiple
-              enable-teleport
-            />
-          </OrdersFilter>
-        </div>
+              <VcSelect
+                v-if="showCustomerNameFilter"
+                v-model="filterData.customerNames"
+                :label="$t('common.labels.buyer_name')"
+                :items="organizationCustomerNames ?? []"
+                multiple
+                enable-teleport
+              />
+            </OrdersFilter>
+          </template>
+        </VcPopover>
+
+        <!-- Mobile filters button -->
+        <VcButton v-else :disabled="ordersLoading" icon @click="filtersVisible = true">
+          <VcIcon name="filter" />
+
+          <span>{{ $t("common.buttons.filters") }}</span>
+        </VcButton>
 
         <div class="flex grow gap-6">
           <VcInput
@@ -352,8 +371,8 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints, onClickOutside, useLocalStorage } from "@vueuse/core";
-import { computed, onMounted, ref, shallowRef, toRefs, watch } from "vue";
+import { breakpointsTailwind, useBreakpoints, useLocalStorage } from "@vueuse/core";
+import { computed, onMounted, ref, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBrowserTarget } from "@/core/composables";
@@ -429,8 +448,6 @@ const isMobile = breakpoints.smaller("lg");
 const localKeyword = ref("");
 const filtersVisible = ref(false);
 const selectedDateFilterType = ref<DateFilterType>();
-const filtersButtonElement = shallowRef<HTMLElement | null>(null);
-const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 
 const columns = computed<ITableColumn[]>(() => [
   { id: "number", title: t("pages.account.orders.order_number_label"), sortable: true },
@@ -488,10 +505,6 @@ function resetFiltersWithKeyword() {
   resetOrderFilters();
 }
 
-function toggleFilters() {
-  filtersVisible.value = !filtersVisible.value;
-}
-
 function hideFilters() {
   filtersVisible.value = false;
 }
@@ -515,7 +528,6 @@ function goToOrderDetails(order: CustomerOrderType): void {
 
 function applyOrderFilters(): void {
   applyFilters();
-  hideFilters();
 }
 
 function handleRemoveFilter(item: OrdersFilterChipsItemType): void {
@@ -533,7 +545,6 @@ function resetOrderFilters(): void {
   selectedDateFilterType.value = dateFilterTypes.value[0];
   selectedDateFilterType.value.startDate = undefined;
   selectedDateFilterType.value.endDate = undefined;
-  hideFilters();
 }
 
 function toggleOrdersScope(scope: OrderScopeType): void {
@@ -542,14 +553,6 @@ function toggleOrdersScope(scope: OrderScopeType): void {
 
   resetFiltersWithKeyword();
 }
-
-onClickOutside(
-  filtersDropdownElement,
-  () => {
-    hideFilters();
-  },
-  { ignore: [filtersButtonElement] },
-);
 
 onMounted(() => {
   resetFilters();

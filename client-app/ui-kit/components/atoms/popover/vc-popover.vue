@@ -10,7 +10,7 @@
 
     <teleport :to="teleportSelector" :disabled="!shouldTeleport">
       <div
-        v-if="$slots.content && !disabled"
+        v-if="$slots.content && !disabled && shouldRenderContent"
         :id="contentId"
         ref="floating"
         :style="{ zIndex, display, width, ...floatingStyles }"
@@ -61,6 +61,7 @@ interface IProps {
   ariaLabel?: string;
   enableTeleport?: boolean | null;
   teleportSelector?: string;
+  lazy?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -78,11 +79,14 @@ const shouldTeleport = computed(() =>
 );
 
 const opened = ref(false);
+const hasBeenOpened = ref(false);
 const reference = ref<HTMLElement | null>(null);
 const floating = ref<HTMLElement | null>(null);
 const floatingArrow = ref<Element | null>(null);
 const contentId = useComponentId("vc-popover");
 const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs(props);
+
+const shouldRenderContent = computed(() => !props.lazy || hasBeenOpened.value);
 
 const emitTriggerProps = computed(() => ({
   role: "button" as const,
@@ -127,6 +131,7 @@ function open() {
     return;
   }
 
+  hasBeenOpened.value = true;
   opened.value = true;
 }
 
@@ -143,16 +148,17 @@ function toggle() {
     return;
   }
 
+  if (!opened.value) {
+    hasBeenOpened.value = true;
+  }
+
   opened.value = !opened.value;
 }
 
-onClickOutside(
-  reference,
-  () => {
-    close();
-  },
-  { ignore: [floating] },
-);
+// Reactivity loss is acceptable here: teleportSelector is static after mount,
+// and onClickOutside options are not reactive anyway
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
+onClickOutside(reference, () => close(), { ignore: [floating, props.teleportSelector] });
 
 watch(opened, (value: boolean) => emit("toggle", value));
 </script>
