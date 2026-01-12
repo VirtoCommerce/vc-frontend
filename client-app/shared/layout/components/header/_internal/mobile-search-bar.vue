@@ -96,12 +96,8 @@ const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
 
 const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
 
-/**
- * Note: Unlike desktop search-bar, mobile version does NOT include catalog filter
- * (getFilterExpressionForCategorySubtree) because mobile search bar has no scope selector UI.
- * Mobile always searches across all catalogs.
- */
 const filterExpression = computed(() => {
+  const scopeExpression = getFilterExpressionForCategorySubtree({ catalogId: globals.catalogId });
   const { zero_price_product_enabled } = themeContext.value.settings;
   const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
@@ -110,6 +106,7 @@ const filterExpression = computed(() => {
   }
 
   const expressions = [
+    scopeExpression,
     getFilterExpressionForZeroPrice(!!zero_price_product_enabled, globals.currencyCode),
     getFilterExpressionForInStockVariations(localStorageInStock.value),
   ].filter(Boolean);
