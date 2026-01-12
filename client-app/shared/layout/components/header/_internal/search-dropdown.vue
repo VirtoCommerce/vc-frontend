@@ -170,6 +170,7 @@ interface IProps {
   visible: boolean;
   searchPhrase: string;
   filterExpression?: string;
+  categoriesFilterExpression?: string;
   isCategoryScope?: boolean;
 }
 
@@ -267,6 +268,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
   const params: GetSearchResultsParamsType = {
     keyword: trimmedSearchPhrase.value,
     filter: props.filterExpression,
+    categoriesFilter: props.categoriesFilterExpression,
     categories: {
       itemsPerPage: CATEGORIES_LIMIT,
     },
