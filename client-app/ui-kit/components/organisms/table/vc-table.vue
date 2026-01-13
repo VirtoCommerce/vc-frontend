@@ -18,9 +18,7 @@
       <slot v-else-if="!items.length" name="mobile-empty" />
 
       <!-- Mobile item view -->
-      <template v-else>
-        <slot v-for="(item, index) in items" :key="item.id || index" name="mobile-item" :item="item" />
-      </template>
+      <slot v-else v-for="(item, index) in items" :key="item.id || index" name="mobile-item" :item="item" />
     </div>
 
     <!-- Desktop table view -->
@@ -204,6 +202,10 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
 
 <style lang="scss">
 .vc-table {
+  &__mobile {
+    word-break: break-word;
+  }
+
   &__mobile-skeleton {
     @apply grid grid-cols-2 gap-4 border-b border-neutral-200 p-6;
   }
