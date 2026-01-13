@@ -68,6 +68,7 @@
         :style="searchDropdownStyle"
         :search-phrase="searchPhrase"
         :filter-expression="filterExpression"
+        :categories-filter-expression="categoriesFilterExpression"
         :is-category-scope="isCategoryScope"
         @hide="hideSearchDropdown"
         @product-select="handleProductSelect"
@@ -140,6 +141,18 @@ const filterExpression = computed(() => {
       ]
         .filter(Boolean)
         .join(" ");
+});
+
+const categoriesFilterExpression = computed(() => {
+  const scopeExpression =
+    searchScopeFilterExpression.value || getFilterExpressionForCategorySubtree({ catalogId: globals.catalogId });
+  const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
+
+  if (catalog_empty_categories_enabled) {
+    return undefined;
+  }
+
+  return scopeExpression;
 });
 
 const searchPlaceholder = computed(() => {

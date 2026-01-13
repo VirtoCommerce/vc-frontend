@@ -12,6 +12,7 @@ import type { GetSearchResultsQueryVariables } from "@/core/api/graphql/types";
 export type GetSearchResultsParamsType = {
   keyword: string;
   filter?: string;
+  categoriesFilter?: string;
 
   productSuggestions?: {
     suggestionsSize?: number;
@@ -57,6 +58,7 @@ export async function getSearchResults(params: GetSearchResultsParamsType) {
   const {
     keyword,
     filter,
+    categoriesFilter,
 
     productSuggestions: { suggestionsSize: productSuggestionsSize = DEFAULT_PAGE_SIZE } = {},
 
@@ -108,6 +110,7 @@ export async function getSearchResults(params: GetSearchResultsParamsType) {
 
   if (withCategories) {
     Object.assign(variables, <GetSearchResultsQueryVariables>{
+      categoriesFilter,
       categoriesSort,
       categoriesFuzzy,
       categoriesFuzzyLevel,
