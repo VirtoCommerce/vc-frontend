@@ -26,7 +26,12 @@
             <template #append>
               <BarcodeScanner v-if="!searchPhrase" @scanned-code="onBarcodeScanned" />
 
-              <VcButton class="mobile-search-bar__button" icon="search" @click="searchDropdownRef?.handleSearch()" />
+              <VcButton
+                class="mobile-search-bar__button"
+                icon="search"
+                :loading="loading"
+                @click="searchDropdownRef?.handleSearch()"
+              />
             </template>
           </VcInput>
 
@@ -41,6 +46,7 @@
             :visible="visible"
             :search-phrase="searchPhrase"
             :filter-expression="filterExpression"
+            :categories-filter-expression="categoriesFilterExpression"
             @hide="hideSearchBar"
             @product-select="hideSearchBar"
             @update:search-phrase="searchPhrase = $event"
@@ -60,7 +66,11 @@ import { BREAKPOINTS, IN_STOCK_PRODUCTS_LOCAL_STORAGE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { getFilterExpressionForInStockVariations, getFilterExpressionForZeroPrice } from "@/core/utilities";
+import {
+  getFilterExpressionForCategorySubtree,
+  getFilterExpressionForInStockVariations,
+  getFilterExpressionForZeroPrice,
+} from "@/core/utilities";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import BarcodeScanner from "./search-bar/barcode-scanner.vue";
 import SearchDropdown from "./search-dropdown.vue";
@@ -74,7 +84,7 @@ defineProps<IProps>();
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 
-const { hideSearchBar, maxSearchLength } = useSearchBar();
+const { hideSearchBar, maxSearchLength, loading } = useSearchBar();
 
 const { themeContext } = useThemeContext();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
@@ -86,12 +96,8 @@ const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
 
 const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
 
-/**
- * Note: Unlike desktop search-bar, mobile version does NOT include catalog filter
- * (getFilterExpressionForCategorySubtree) because mobile search bar has no scope selector UI.
- * Mobile always searches across all catalogs.
- */
 const filterExpression = computed(() => {
+  const scopeExpression = getFilterExpressionForCategorySubtree({ catalogId: globals.catalogId });
   const { zero_price_product_enabled } = themeContext.value.settings;
   const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
@@ -100,11 +106,22 @@ const filterExpression = computed(() => {
   }
 
   const expressions = [
+    scopeExpression,
     getFilterExpressionForZeroPrice(!!zero_price_product_enabled, globals.currencyCode),
     getFilterExpressionForInStockVariations(localStorageInStock.value),
   ].filter(Boolean);
 
   return expressions.length > 0 ? expressions.join(" ") : undefined;
+});
+
+const categoriesFilterExpression = computed(() => {
+  const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
+
+  if (catalog_empty_categories_enabled) {
+    return undefined;
+  }
+
+  return getFilterExpressionForCategorySubtree({ catalogId: globals.catalogId });
 });
 const contentElement = ref<HTMLElement | null>(null);
 const wrapperElement = ref<HTMLElement | null>(null);

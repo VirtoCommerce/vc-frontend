@@ -1,16 +1,10 @@
 <template>
-  <div
-    v-if="visible && hasAnyContent"
-    ref="dropdownElement"
-    class="search-dropdown"
-    data-dropdown
-    @focusout="handleFocusOut"
-  >
-    <VcScrollbar class="search-dropdown__sidebar" :vertical="!isMobile">
+  <div v-if="visible" ref="dropdownElement" class="search-dropdown" data-dropdown @focusout="handleFocusOut">
+    <VcScrollbar v-if="showSidebar" class="search-dropdown__sidebar" :vertical="!isMobile">
       <!-- Search history and suggestions -->
       <div v-if="hasHistoryOrSuggestions" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
-          {{ $t("shared.layout.search_bar.suggestions_and_history_label") }}
+          {{ $t("shared.layout.search_dropdown.suggestions_and_history_label") }}
         </header>
 
         <ul class="search-dropdown__list">
@@ -48,7 +42,7 @@
       <!-- Pages -->
       <div v-if="hasPages" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
-          {{ $t("shared.layout.search_bar.pages_label") }}
+          {{ $t("shared.layout.search_dropdown.pages_label") }}
         </header>
 
         <ul class="search-dropdown__list">
@@ -69,7 +63,7 @@
       <!-- Categories -->
       <div v-if="hasCategories" class="search-dropdown__suggestions">
         <header class="search-dropdown__head">
-          {{ $t("shared.layout.search_bar.categories_label") }}
+          {{ $t("shared.layout.search_dropdown.categories_label") }}
         </header>
 
         <ul class="search-dropdown__list">
@@ -89,54 +83,67 @@
     </VcScrollbar>
 
     <VcScrollbar class="search-dropdown__content" :vertical="!isMobile">
-      <!-- Products -->
-      <div v-if="hasProducts" class="search-dropdown__suggestions">
-        <header class="search-dropdown__head">
-          {{ $t("shared.layout.search_bar.products_label") }}
-        </header>
+      <div class="search-dropdown__results">
+        <Transition name="crossfade" mode="out-in">
+          <!-- Products -->
+          <div v-if="hasProducts" key="products" class="search-dropdown__suggestions">
+            <header class="search-dropdown__head">
+              {{ $t("shared.layout.search_dropdown.products_label") }}
+            </header>
 
-        <div class="search-dropdown__products">
-          <SearchBarProductCard
-            v-for="product in products"
-            :key="product.id"
-            :product="product"
-            @link-click="selectItemEvent(product)"
-            @changeFocus="focusPrevNextItem($event.direction, $event.event)"
-          />
+            <div class="search-dropdown__products">
+              <SearchBarProductCard
+                v-for="product in products"
+                :key="product.id"
+                :product="product"
+                @link-click="selectItemEvent(product)"
+                @changeFocus="focusPrevNextItem($event.direction, $event.event)"
+              />
 
-          <div v-if="total > PRODUCTS_LIMIT" class="search-dropdown__view-all">
-            <VcButton
-              size="sm"
-              tabindex="0"
-              color="secondary"
-              variant="solid-light"
-              append-icon="chevron-right"
-              @click="handleSearch"
-              @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
-              @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
-            >
-              {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
-            </VcButton>
+              <div v-if="total > PRODUCTS_LIMIT" class="search-dropdown__view-all">
+                <VcButton
+                  size="xs"
+                  tabindex="0"
+                  color="secondary"
+                  variant="outline"
+                  append-icon="chevron-right"
+                  @click="handleSearch"
+                  @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
+                  @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
+                >
+                  {{ $t("shared.layout.search_dropdown.view_all_results_button", { total }) }}
+                </VcButton>
+              </div>
+            </div>
           </div>
-        </div>
+
+          <!-- Not found -->
+          <div v-else key="not-found" class="search-dropdown__not-found">
+            <div class="search-dropdown__not-found-icon" v-html="nothingFoundImgRaw"></div>
+
+            <div class="search-dropdown__not-found-content">
+              <div class="search-dropdown__not-found-text">
+                {{
+                  trimmedSearchPhrase
+                    ? $t("shared.layout.search_dropdown.no_results")
+                    : $t("shared.layout.search_dropdown.start_typing")
+                }}
+              </div>
+
+              <VcButton size="sm" append-icon="arrow-right" :to="{ name: ROUTES.CATALOG.NAME }" @click="$emit('hide')">
+                {{ $t("shared.layout.search_dropdown.check_all_products_button") }}
+              </VcButton>
+            </div>
+          </div>
+        </Transition>
       </div>
 
-      <!-- Not found -->
-      <div v-if="hasNotFoundMessage" class="search-dropdown__suggestions">
-        <header class="search-dropdown__head">
-          {{ $t("shared.layout.search_bar.search_label") }}
-        </header>
-
-        <div class="search-dropdown__not-found">
-          <VcIcon name="search-not-found" size="sm" />
-
-          <i18n-t keypath="shared.layout.search_bar.no_results" tag="div">
-            <template #keyword>
-              <strong>{{ searchPhrase }}</strong>
-            </template>
-          </i18n-t>
+      <Transition name="fade">
+        <!-- Loader -->
+        <div v-if="loading" class="search-dropdown__loader">
+          <VcLoader v-if="!isMobile" />
         </div>
-      </div>
+      </Transition>
     </VcScrollbar>
   </div>
 </template>
@@ -153,6 +160,7 @@ import { QueryParamName } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { highlightSearchText } from "@/shared/layout/utils";
+import nothingFoundImgRaw from "@/ui-kit/images/nothing-found.svg?raw";
 import SearchBarProductCard from "./search-bar/_internal/search-bar-product-card.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Product } from "@/core/api/graphql/types";
@@ -162,6 +170,7 @@ interface IProps {
   visible: boolean;
   searchPhrase: string;
   filterExpression?: string;
+  categoriesFilterExpression?: string;
   isCategoryScope?: boolean;
 }
 
@@ -176,7 +185,7 @@ const props = defineProps<IProps>();
 
 const { visible } = toRefs(props);
 
-const PRODUCTS_LIMIT = 7;
+const PRODUCTS_LIMIT = 8;
 const CATEGORIES_LIMIT = 5;
 const PAGES_LIMIT = 5;
 const SUGGESTIONS_LIMIT = 5;
@@ -238,24 +247,9 @@ const hasPages = computed(() => !!pages.value.length);
 
 const hasCategories = computed(() => !!categories.value.length);
 
+const showSidebar = computed(() => hasHistoryOrSuggestions.value || hasPages.value || hasCategories.value);
+
 const hasProducts = computed(() => !!products.value.length);
-
-const isExistResults = computed(
-  () => !!(categories.value.length || products.value.length || suggestions.value.length || pages.value.length),
-);
-
-const hasNotFoundMessage = computed(
-  () => !searchInProgress.value && !isExistResults.value && !!trimmedSearchPhrase.value,
-);
-
-const hasAnyContent = computed(
-  () =>
-    hasHistoryOrSuggestions.value ||
-    hasPages.value ||
-    hasCategories.value ||
-    hasProducts.value ||
-    hasNotFoundMessage.value,
-);
 
 const searchBarListProperties = computed(() => ({
   search_term: trimmedSearchPhrase.value,
@@ -274,6 +268,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
   const params: GetSearchResultsParamsType = {
     keyword: trimmedSearchPhrase.value,
     filter: props.filterExpression,
+    categoriesFilter: props.categoriesFilterExpression,
     categories: {
       itemsPerPage: CATEGORIES_LIMIT,
     },
@@ -412,7 +407,7 @@ defineExpose({
   @apply pt-1 px-3.5 pb-3.5;
 
   @media (min-width: theme("screens.md")) {
-    @apply flex gap-2.5 pb-3 max-h-[inherit] min-h-44;
+    @apply flex gap-2.5 pb-3 max-h-[inherit] min-h-36;
   }
 
   @media (min-width: theme("screens.lg")) {
@@ -456,7 +451,7 @@ defineExpose({
   }
 
   &__content {
-    @apply mt-4;
+    @apply relative mt-4;
 
     @media (min-width: theme("screens.md")) {
       @apply flex-1 mt-0 max-h-full pe-2.5;
@@ -468,29 +463,64 @@ defineExpose({
   }
 
   &__products {
-    @apply mt-4;
+    @apply mt-1.5 border rounded-[--vc-radius] p-3;
 
     @media (width < theme("screens.sm")) {
       @apply space-y-5;
     }
 
     @media (min-width: theme("screens.sm")) {
-      @apply grid grid-cols-2 gap-5;
+      @apply grid grid-cols-2 gap-x-8 gap-y-5;
     }
-  }
-
-  &__view-all {
-    @apply flex justify-center items-center min-h-16 border border-dashed border-secondary-200 rounded-[--vc-radius];
-  }
-
-  &__not-found {
-    --vc-icon-color: theme("colors.primary.500");
-
-    @apply flex items-center gap-1.5 mt-3 text-sm text-neutral-500;
   }
 
   &__text {
     word-break: break-word;
+  }
+
+  &__loader {
+    @apply absolute inset-0 flex items-center justify-center bg-additional-50/40 pointer-events-none;
+  }
+
+  &__not-found {
+    @apply flex items-center justify-center gap-5 h-full;
+  }
+
+  &__not-found-icon {
+    @apply size-32;
+  }
+
+  &__not-found-content {
+    @apply grow max-w-[29.5rem] space-y-3;
+  }
+
+  &__not-found-text {
+    @apply text-base;
+  }
+
+  &__results {
+    @apply min-h-32;
+  }
+
+  // transitions
+  .crossfade-enter-active,
+  .crossfade-leave-active {
+    @apply transition-opacity duration-150 ease-in-out;
+  }
+
+  .crossfade-enter-from,
+  .crossfade-leave-to {
+    @apply opacity-0;
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    @apply transition-opacity duration-200 ease-in-out;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    @apply opacity-0;
   }
 }
 </style>
