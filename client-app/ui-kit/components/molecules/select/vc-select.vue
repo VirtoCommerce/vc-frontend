@@ -18,15 +18,15 @@
 
     <VcDropdownMenu
       class="vc-select__container"
-      width="100%"
       :disabled="!enabled"
       :data-test-id="testIdDropdown"
-      @toggle="toggled"
       tabindex="-1"
+      @toggle="toggled"
     >
       <template #trigger="{ open, toggle, close }">
         <div
           v-if="$slots.selected || $slots.placeholder"
+          ref="triggerElement"
           tabindex="0"
           role="button"
           class="vc-select__button"
@@ -45,6 +45,7 @@
 
         <VcInput
           v-else
+          ref="triggerElement"
           v-model="search"
           class="vc-select__input"
           :required="required"
@@ -92,6 +93,7 @@
         <VcMenuItem
           v-for="(item, index) in filteredItems"
           :key="index"
+          :data-vc-select-option="componentId"
           :active="isActiveItem(item)"
           :aria-selected="isActiveItem(item)"
           role="option"
@@ -100,9 +102,13 @@
             select(item);
             !multiple && close();
           "
-          @keyup.esc="close()"
+          @keyup.esc.prevent="
+            focusTrigger();
+            close();
+          "
           @keydown.up.prevent="prev(index)"
           @keydown.down.prevent="next(index)"
+          @keydown.tab.prevent="handleTab($event, index)"
         >
           <VcCheckbox v-if="multiple" :model-value="isActiveItem(item)" tabindex="-1" />
 
@@ -127,8 +133,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { union, lowerCase, isEqual } from "lodash";
-import { computed, ref } from "vue";
+import { computed, ref, useTemplateRef, provide, toRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { vcPopoverKey } from "@/ui-kit/components/atoms/popover/vc-popover-context";
 import { useComponentId } from "@/ui-kit/composables";
 
 interface IProps {
@@ -151,6 +158,7 @@ interface IProps {
   multiple?: boolean;
   clearable?: boolean;
   testIdDropdown?: string;
+  enableTeleport?: boolean;
 }
 
 interface IEmits {
@@ -165,8 +173,11 @@ const props = withDefaults(defineProps<IProps>(), {
   itemSize: "sm",
 });
 
+provide(vcPopoverKey, { enableTeleport: toRef(() => props.enableTeleport ?? false) });
+
 const { t } = useI18n();
 const componentId = useComponentId("select");
+const triggerElement = useTemplateRef<HTMLElement | { $el: HTMLElement }>("triggerElement");
 
 const isShown = ref(false);
 const filterValue = ref("");
@@ -285,7 +296,7 @@ function select(item?: any) {
 }
 
 function getItemsElements() {
-  return Array.from(document.querySelectorAll(`#${componentId} [role='option'] [tabindex='0']`));
+  return Array.from(document.querySelectorAll(`[data-vc-select-option="${componentId}"] [tabindex='0']`));
 }
 
 function next(index: number) {
@@ -342,6 +353,26 @@ function clear() {
 function handleArrowClick(event: MouseEvent, toggle: () => void) {
   event.stopPropagation();
   toggle();
+}
+
+function focusTrigger() {
+  const el = triggerElement.value;
+
+  if (!el) {
+    return;
+  }
+
+  const element = "$el" in el ? el.$el : el;
+  const focusable = element.querySelector<HTMLElement>("[tabindex='0'], input") ?? element;
+  focusable.focus();
+}
+
+function handleTab(event: KeyboardEvent, index: number) {
+  if (event.shiftKey) {
+    prev(index);
+  } else {
+    next(index);
+  }
 }
 </script>
 
