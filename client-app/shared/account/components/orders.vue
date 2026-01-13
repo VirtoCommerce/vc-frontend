@@ -262,42 +262,6 @@
         </button>
       </template>
 
-      <template #mobile-skeleton>
-        <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
-          <div class="flex flex-col">
-            <span class="text-sm text-neutral-400">
-              {{ $t("pages.account.orders.order_number_label") }}
-            </span>
-
-            <div class="mr-4 h-6 animate-pulse bg-neutral-200" />
-          </div>
-
-          <div class="flex flex-col">
-            <span class="text-sm text-neutral-400">
-              {{ $t("pages.account.orders.date_label") }}
-            </span>
-
-            <div class="h-6 animate-pulse bg-neutral-200" />
-          </div>
-
-          <div class="flex flex-col">
-            <span class="text-sm text-neutral-400">
-              {{ $t("pages.account.orders.total_label") }}
-            </span>
-
-            <div class="mr-4 h-6 animate-pulse bg-neutral-200" />
-          </div>
-
-          <div class="flex flex-col">
-            <span class="text-sm text-neutral-400">
-              {{ $t("pages.account.orders.status_label") }}
-            </span>
-
-            <div class="h-6 animate-pulse bg-neutral-200" />
-          </div>
-        </div>
-      </template>
-
       <template #desktop-body>
         <tr
           v-for="order in orders"
@@ -331,34 +295,6 @@
 
           <td class="overflow-hidden text-ellipsis p-5 text-right">
             {{ order.total?.formattedAmount }}
-          </td>
-        </tr>
-      </template>
-
-      <template #desktop-skeleton>
-        <tr v-for="i in itemsPerPage" :key="i" class="even:bg-neutral-50">
-          <td class="p-5">
-            <div class="h-6 animate-pulse bg-neutral-200"></div>
-          </td>
-
-          <td class="w-4/12 p-5">
-            <div class="h-6 animate-pulse bg-neutral-200"></div>
-          </td>
-
-          <td class="p-5">
-            <div class="h-6 animate-pulse bg-neutral-200"></div>
-          </td>
-
-          <td class="p-5">
-            <div class="h-6 animate-pulse bg-neutral-200"></div>
-          </td>
-
-          <td class="p-5">
-            <div class="h-6 animate-pulse bg-neutral-200"></div>
-          </td>
-
-          <td class="p-5">
-            <div class="h-6 animate-pulse bg-neutral-200"></div>
           </td>
         </tr>
       </template>

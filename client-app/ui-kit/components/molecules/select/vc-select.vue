@@ -21,6 +21,7 @@
       :disabled="!enabled"
       :data-test-id="testIdDropdown"
       tabindex="-1"
+      width="trigger"
       @toggle="toggled"
     >
       <template #trigger="{ open, toggle, close }">

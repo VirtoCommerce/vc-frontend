@@ -11,14 +11,6 @@
       @header-click="applySorting"
       @page-changed="changePage"
     >
-      <template #desktop-skeleton>
-        <tr v-for="rowIndex in 5" :key="rowIndex" class="variations-table__row even:bg-neutral-50">
-          <td v-for="columnIndex in columns.length" :key="columnIndex" class="p-5">
-            <div class="h-6 animate-pulse bg-neutral-200" />
-          </td>
-        </tr>
-      </template>
-
       <template #desktop-body>
         <tr v-for="(variation, variationIndex) in variations" :key="variation.code" class="variations-table__row">
           <td class="variations-table__col variations-table__col--title">

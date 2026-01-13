@@ -68,7 +68,12 @@ const props = withDefaults(defineProps<IProps>(), {
 const trigger = useTemplateRef("trigger");
 const { width: triggerWidth } = useElementBounding(trigger);
 
-const computedWidth = computed(() => props.width || `${triggerWidth.value}px`);
+const computedWidth = computed(() => {
+  if (props.width === "trigger") {
+    return `${triggerWidth.value}px`;
+  }
+  return props.width ?? "auto";
+});
 </script>
 
 <style lang="scss">

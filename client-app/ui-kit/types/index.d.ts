@@ -1,4 +1,5 @@
 import type { fileSizeUnits, COLORS, MAIN_COLORS } from "@/ui-kit/constants";
+import type { BREAKPOINTS } from "@/ui-kit/constants";
 import type { SwiperOptions } from "swiper";
 import type { SwiperEvents } from "swiper/types";
 import type { Ref } from "vue";
@@ -35,14 +36,6 @@ declare global {
     route?: RouteLocationRaw;
     disabled?: boolean;
     hidden?: boolean;
-  }
-
-  interface ITableColumn {
-    id: string;
-    title?: string;
-    sortable?: boolean;
-    align?: "center" | "right" | "left";
-    classes?: string;
   }
 
   type TProvidedObjectOfExpansionPanels = {
@@ -114,4 +107,21 @@ declare global {
     postalCode?: string;
     regionName?: string;
   };
+
+  type BreakpointsType = keyof typeof BREAKPOINTS;
+
+  // Table types - for backward compatibility with ui-kit components
+  /** @deprecated Use VcTableColumnType instead */
+  type ITableColumn = VcTableColumnType;
+
+  /** @deprecated Use VcTableSortInfoType instead */
+  type ISortInfo = VcTableSortInfoType;
+
+  /**
+   * @deprecated Use VcTableSortDirectionType for type, or import SortDirection from @/core/enums for values
+   */
+  const enum SortDirection {
+    Ascending = "asc",
+    Descending = "desc",
+  }
 }

@@ -275,18 +275,6 @@
             </tr>
           </template>
 
-          <template #desktop-skeleton>
-            <tr v-for="row in itemsPerPage" :key="row" class="even:bg-neutral-50">
-              <td class="py-2.5 pl-4 pr-0">
-                <div class="size-9 animate-pulse rounded-full bg-neutral-200"></div>
-              </td>
-
-              <td v-for="column in columns.length - 1" :key="column" class="px-4 py-3">
-                <div class="h-5 animate-pulse bg-neutral-200"></div>
-              </td>
-            </tr>
-          </template>
-
           <template #mobile-item="{ item }">
             <div class="flex items-center border-b px-5">
               <div class="py-4.5">
@@ -316,22 +304,6 @@
                   @remove="openDeleteModal(item)"
                   @lock-or-unlock="openLockOrUnlockModal(item, $event)"
                 />
-              </div>
-            </div>
-          </template>
-
-          <template #mobile-skeleton>
-            <div
-              v-for="row in itemsPerPage"
-              :key="row"
-              class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6"
-            >
-              <div class="flex flex-col">
-                <div class="animate-pulse bg-neutral-200 py-6 pl-6"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <div class="animate-pulse bg-neutral-200 py-6 pl-4"></div>
               </div>
             </div>
           </template>
@@ -387,7 +359,6 @@ const {
   loading: contactsLoading,
   page,
   pages,
-  itemsPerPage,
   sort,
   keyword,
   filter,
