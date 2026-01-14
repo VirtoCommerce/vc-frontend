@@ -115,7 +115,7 @@
                 :value="address.id"
                 class="select-address-map-modal__radio-button"
                 size="sm"
-                @change="selectHandler(address, { scrollToSelectedOnMap: true, openInfo: true })"
+                @click="selectHandler(address, { scrollToSelectedOnMap: true, openInfo: true })"
                 :data-test-coords="address.geoLocation"
               >
                 <VcLabel size="xs">{{ address.name }}</VcLabel>
@@ -361,7 +361,7 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 <style lang="scss">
 .select-address-map-modal {
   &__container {
-    @apply flex flex-col h-full pt-0;
+    @apply flex flex-col h-full max-h-full pt-0;
   }
 
   &__content {
