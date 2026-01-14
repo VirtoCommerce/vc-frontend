@@ -1,7 +1,7 @@
 <template>
   <VcModal
     :title="$t('shared.checkout.select_bopis_modal.title')"
-    max-width="72rem"
+    max-width="73rem"
     is-mobile-fullscreen
     :is-full-height="!!addresses.length || filterIsApplied"
     class="select-address-map-modal"
@@ -23,6 +23,7 @@
             <template v-for="address in addresses" :key="address.id">
               <GoogleMapMarker
                 v-if="getLatLng(address.geoLocation)"
+                :ref="(el) => setMarkerRef(address.id, el)"
                 :map-id="MAP_ID"
                 :position="getLatLng(address.geoLocation)!"
                 :pin-options="createPin()"
@@ -34,8 +35,7 @@
                   <h3 class="select-address-map-modal__info-window-title">{{ address.name }}</h3>
 
                   <PickupAvailabilityInfo
-                    show-icon
-                    icon-size="sm"
+                    class="select-address-map-modal__info-window-availability"
                     :availability-type="address.availabilityType"
                     :availability-note="address.availabilityNote"
                   />
@@ -115,17 +115,15 @@
                 :value="address.id"
                 class="select-address-map-modal__radio-button"
                 size="sm"
-                @change="selectHandler(address, { scrollToSelectedOnMap: true })"
+                @change="selectHandler(address, { scrollToSelectedOnMap: true, openInfo: true })"
                 :data-test-coords="address.geoLocation"
               >
-                <h3 class="select-address-map-modal__radio-button-name">{{ address.name }}</h3>
+                <VcLabel size="xs">{{ address.name }}</VcLabel>
 
                 <p class="select-address-map-modal__radio-button-address">{{ getAddressName(address) }}</p>
 
                 <PickupAvailabilityInfo
                   class="select-address-map-modal__radio-button-pickup-availability"
-                  show-icon
-                  icon-size="xs"
                   :availability-type="address.availabilityType"
                   :availability-note="address.availabilityNote"
                 />
@@ -148,11 +146,18 @@
 
     <template #actions="{ close }">
       <div class="select-address-map-modal__actions">
-        <VcButton variant="outline" size="sm" color="neutral" @click="close" data-test-id="cancel-button">
+        <VcButton variant="outline" size="xs" color="secondary" @click="close" data-test-id="cancel-button">
           {{ $t("common.buttons.cancel") }}
         </VcButton>
 
-        <VcButton variant="solid" size="sm" :disabled="!changed" @click="saveHandler(close)" data-test-id="save-button">
+        <VcButton
+          variant="solid"
+          size="xs"
+          color="secondary"
+          :disabled="!changed"
+          @click="saveHandler(close)"
+          data-test-id="save-button"
+        >
           {{ $t("common.buttons.save") }}
         </VcButton>
       </div>
@@ -194,6 +199,18 @@ const changed = computed(() => selectedAddressId.value !== currentAddress.value?
 const MAP_ID = "select-bopis-map-modal";
 
 const { zoomToMarkers, markers, zoomToLatLng, closeInfoWindow, map } = useGoogleMaps(MAP_ID);
+
+interface IMarkerExposed {
+  openInfoWindow: () => void;
+}
+
+const markerRefs = ref<Record<string, IMarkerExposed | null>>({});
+
+function setMarkerRef(id: string | undefined, el: unknown) {
+  if (id) {
+    markerRefs.value[id] = el as IMarkerExposed | null;
+  }
+}
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
@@ -255,7 +272,12 @@ function getLatLng(location: string | undefined) {
 
 function selectHandler(
   address: PickupLocationType,
-  options: { scrollToSelectedOnMap?: boolean; scrollToSelectedOnList?: boolean; closeInfo?: boolean } = {},
+  options: {
+    scrollToSelectedOnMap?: boolean;
+    scrollToSelectedOnList?: boolean;
+    closeInfo?: boolean;
+    openInfo?: boolean;
+  } = {},
 ) {
   if (address.id) {
     selectedAddressId.value = address.id;
@@ -279,6 +301,13 @@ function selectHandler(
 
   if (options.closeInfo) {
     closeInfoWindow();
+  }
+
+  if (options.openInfo && address.id) {
+    const markerRef = markerRefs.value[address.id];
+    if (markerRef) {
+      markerRef.openInfoWindow();
+    }
   }
 }
 
@@ -352,10 +381,10 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
   }
 
   &__sidebar {
-    @apply shrink-0 min-w-56 max-h-[40%];
+    @apply shrink-0 max-h-[40%] pe-2.5;
 
     @media (min-width: theme("screens.md")) {
-      @apply order-first max-h-full pe-2.5;
+      @apply order-first max-h-full w-60;
     }
   }
 
@@ -373,18 +402,18 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 
   &__radio-button {
     @apply flex flex-col gap-0.5;
+  }
 
-    &-name {
-      @apply text-xs font-bold;
-    }
+  &__radio-button-name {
+    @apply text-xs font-bold;
+  }
 
-    &-address {
-      @apply text-xs font-normal;
-    }
+  &__radio-button-address {
+    @apply text-xs font-normal;
+  }
 
-    &-pickup-availability {
-      @apply text-xs font-normal;
-    }
+  &__radio-button-pickup-availability {
+    @apply mt-0.5;
   }
 
   &__not-found {
@@ -393,10 +422,18 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 
   &__actions {
     @apply flex gap-4 justify-end w-full;
+
+    @media (min-width: theme("screens.md")) {
+      @apply justify-between;
+    }
   }
 
   &__info-window {
-    @apply flex flex-col gap-2 font-lato w-52 max-w-full;
+    @apply px-1 w-52 max-w-full;
+  }
+
+  &__info-window-availability {
+    @apply mt-2;
   }
 
   &__info-window-title {
@@ -404,16 +441,16 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
   }
 
   &__info-window-content {
-    dl {
-      @apply flex flex-col gap-1.5;
-    }
-
     dt {
-      @apply text-xxs font-bold break-words;
+      @apply mt-1.5 text-xxs font-bold;
+
+      word-break: break-word;
     }
 
     dd {
-      @apply text-xxs font-normal text-neutral-600 break-words;
+      @apply text-xxs font-normal text-neutral-600;
+
+      word-break: break-word;
     }
   }
 
@@ -426,7 +463,12 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
   }
 
   &__marker-glyph {
-    @apply fill-additional-50 size-7;
+    @apply fill-additional-50 size-6;
+  }
+
+  // Hide default Google Maps InfoWindow close button
+  .gm-style-iw button.gm-ui-hover-effect {
+    display: none !important;
   }
 }
 </style>

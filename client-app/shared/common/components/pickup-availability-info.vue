@@ -1,50 +1,27 @@
 <template>
-  <div
-    v-if="availabilityNote"
-    :class="[
-      'pickup-availability-info__note',
-      {
-        'pickup-availability-info__note--today': availabilityType === ProductPickupAvailabilityType.Today,
-        'pickup-availability-info__note--transfer': availabilityType === ProductPickupAvailabilityType.Transfer,
-        'pickup-availability-info__note--global': availabilityType === ProductPickupAvailabilityType.GlobalTransfer,
-      },
-    ]"
-  >
-    <VcIcon v-if="showIcon" name="truck" :size="iconSize" />
+  <VcChip v-if="availabilityNote" size="sm" :variant="variant" :color="chipColor" icon="truck">
     {{ availabilityNote }}
-  </div>
+  </VcChip>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { ProductPickupAvailabilityType } from "@/core/api/graphql/types";
 
 interface IProps {
   availabilityType?: string;
   availabilityNote?: string;
-
-  showIcon?: boolean;
-  iconSize?: VcIconSizeType;
+  variant?: VcChipVariantType;
 }
 
-defineProps<IProps>();
-</script>
+const props = withDefaults(defineProps<IProps>(), {
+  variant: "solid-light",
+});
 
-<style lang="scss">
-.pickup-availability-info {
-  &__note {
-    @apply font-bold text-sm;
-
-    &--today {
-      @apply text-success;
-    }
-
-    &--transfer {
-      @apply text-accent;
-    }
-
-    &--global {
-      @apply text-accent;
-    }
+const chipColor = computed<VcChipColorType>(() => {
+  if (props.availabilityType === ProductPickupAvailabilityType.Today) {
+    return "success";
   }
-}
-</style>
+  return "accent";
+});
+</script>

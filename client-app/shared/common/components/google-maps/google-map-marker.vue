@@ -66,15 +66,9 @@ function createMarker() {
 }
 
 function openInfoWindow() {
-  if (!slots.default) {
+  if (!slots.default || isInfoWindowOpen.value) {
     return;
   }
-
-  if (isInfoWindowOpen.value) {
-    return;
-  }
-
-  isInfoWindowOpen.value = false;
 
   infoWindow.value?.setContent(`<div id="${ACTIVE_INFO_WINDOW_CONTENT_ID}"></div>`);
 
@@ -137,5 +131,9 @@ onBeforeUnmount(() => {
   if (marker.value) {
     removeMarker(marker.value);
   }
+});
+
+defineExpose({
+  openInfoWindow,
 });
 </script>
