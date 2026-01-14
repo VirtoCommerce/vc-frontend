@@ -12,7 +12,6 @@ declare module "vue" {
     VcProductImage: typeof Components.VcProductImage;
     VcQuantityStepper: typeof Components.VcQuantityStepper;
     VcTable: typeof Components.VcTable;
-    TableStatusBadge: typeof Components.TableStatusBadge;
   }
 }
 

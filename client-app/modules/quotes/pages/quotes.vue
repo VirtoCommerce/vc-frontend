@@ -107,42 +107,6 @@
             </button>
           </template>
 
-          <template #mobile-skeleton>
-            <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.quote_number_label") }}
-                </span>
-
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.date_label") }}
-                </span>
-
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.total_label") }}
-                </span>
-
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("quotes.status_label") }}
-                </span>
-
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-            </div>
-          </template>
-
           <template #desktop-body>
             <tr
               v-for="quote in quotes"
@@ -164,14 +128,6 @@
 
               <td class="overflow-hidden text-ellipsis p-5 text-right">
                 {{ quote.totals?.grandTotalInclTax?.formattedAmount }}
-              </td>
-            </tr>
-          </template>
-
-          <template #desktop-skeleton>
-            <tr v-for="i in itemsPerPage" :key="i" class="even:bg-neutral-50">
-              <td v-for="column in columns" :key="column.id" class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
               </td>
             </tr>
           </template>
@@ -204,7 +160,7 @@ usePageHead({
 
 const { browserTarget } = useBrowserTarget();
 
-const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
+const { quotes, fetching, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
 const { mutate: createQuote } = useMutation(CreateQuoteDocument);
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {

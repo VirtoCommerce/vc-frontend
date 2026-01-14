@@ -93,42 +93,6 @@
             </div>
           </template>
 
-          <template #mobile-skeleton>
-            <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("common.labels.recipient_name") }}
-                </span>
-
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("common.labels.address") }}
-                </span>
-
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("common.labels.phone") }}
-                </span>
-
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("common.labels.email") }}
-                </span>
-
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-            </div>
-          </template>
-
           <template #desktop-body>
             <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-neutral-50">
               <td class="overflow-hidden text-ellipsis p-5">{{ address.firstName }} {{ address.lastName }}</td>
@@ -153,30 +117,6 @@
                   @edit="openAddOrUpdateAddressModal(address)"
                   @delete="removeAddress(address)"
                 />
-              </td>
-            </tr>
-          </template>
-
-          <template #desktop-skeleton>
-            <tr v-for="i in itemsPerPage" :key="i" class="even:bg-neutral-50">
-              <td class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-
-              <td class="w-4/12 p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-
-              <td class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-
-              <td class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-
-              <td class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
               </td>
             </tr>
           </template>
