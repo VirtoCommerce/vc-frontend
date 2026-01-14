@@ -96,9 +96,19 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
       return null;
     }
 
+    const rawContent = contentResult?.value?.page?.content;
+
+    if (typeof rawContent === "string" && isMarkdownWithFrontmatter(rawContent)) {
+      return null;
+    }
+
     let content: unknown;
-    if (typeof contentResult?.value?.page?.content === "string") {
-      content = JSON.parse(contentResult.value.page.content);
+    if (typeof rawContent === "string") {
+      try {
+        content = JSON.parse(rawContent);
+      } catch {
+        return null;
+      }
     }
 
     if (isPageContent(content)) {
@@ -120,6 +130,26 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     const pageTemplate = data as IPageTemplate;
     return Array.isArray(pageTemplate?.content) && typeof pageTemplate?.settings === "object";
   }
+
+  function isMarkdownWithFrontmatter(content: string): boolean {
+    return content.trimStart().startsWith("---");
+  }
+
+  const rawContentString = computed(() => {
+    return contentResult?.value?.page?.content ?? null;
+  });
+
+  const isMarkdownContent = computed(() => {
+    const content = rawContentString.value;
+    return typeof content === "string" && isMarkdownWithFrontmatter(content);
+  });
+
+  const markdownContent = computed(() => {
+    if (isMarkdownContent.value) {
+      return rawContentString.value;
+    }
+    return null;
+  });
 
   watch(
     slugOutline,
@@ -144,5 +174,8 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     hasPageDocumentContent,
     pageDocumentContent,
     fetchPageDocumentContent: loadPageDocumentContent,
+
+    isMarkdownContent,
+    markdownContent,
   };
 }
