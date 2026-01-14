@@ -198,7 +198,7 @@ const changed = computed(() => selectedAddressId.value !== currentAddress.value?
 
 const MAP_ID = "select-bopis-map-modal";
 
-const { zoomToMarkers, markers, zoomToLatLng, closeInfoWindow, map } = useGoogleMaps(MAP_ID);
+const { zoomToMarkers, markers, zoomToLatLng, closeInfoWindow, onceIdle, map } = useGoogleMaps(MAP_ID);
 
 interface IMarkerExposed {
   openInfoWindow: () => void;
@@ -270,6 +270,13 @@ function getLatLng(location: string | undefined) {
   }
 }
 
+function openMarkerInfoWindow(addressId: string) {
+  const markerRef = markerRefs.value[addressId];
+  if (markerRef) {
+    markerRef.openInfoWindow();
+  }
+}
+
 function selectHandler(
   address: PickupLocationType,
   options: {
@@ -287,8 +294,14 @@ function selectHandler(
     const latLng = getLatLng(address.geoLocation);
 
     if (latLng) {
-      zoomToLatLng(latLng);
+      zoomToLatLng(latLng, 17);
+
+      if (options.openInfo && address.id) {
+        onceIdle(() => openMarkerInfoWindow(address.id));
+      }
     }
+  } else if (options.openInfo && address.id) {
+    openMarkerInfoWindow(address.id);
   }
 
   if (options.scrollToSelectedOnList && !isMobile.value) {
@@ -301,13 +314,6 @@ function selectHandler(
 
   if (options.closeInfo) {
     closeInfoWindow();
-  }
-
-  if (options.openInfo && address.id) {
-    const markerRef = markerRefs.value[address.id];
-    if (markerRef) {
-      markerRef.openInfoWindow();
-    }
   }
 }
 
