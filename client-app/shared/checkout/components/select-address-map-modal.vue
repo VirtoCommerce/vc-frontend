@@ -459,7 +459,7 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
   }
 
   &__info-window-actions {
-    @apply flex gap-2 justify-end sticky bottom-0 bg-additional-50 pt-2;
+    @apply flex gap-2 justify-end sticky bottom-0 bg-additional-50 pt-2 pb-1;
   }
 
   &__marker-glyph {

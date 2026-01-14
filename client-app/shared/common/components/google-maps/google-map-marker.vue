@@ -66,13 +66,13 @@ function createMarker() {
 }
 
 function openInfoWindow() {
-  if (!slots.default || isInfoWindowOpen.value) {
+  if (!slots.default || !infoWindow.value || isInfoWindowOpen.value) {
     return;
   }
 
-  infoWindow.value?.setContent(`<div id="${ACTIVE_INFO_WINDOW_CONTENT_ID}"></div>`);
+  infoWindow.value.setContent(`<div id="${ACTIVE_INFO_WINDOW_CONTENT_ID}"></div>`);
 
-  infoWindow.value?.open({
+  infoWindow.value.open({
     anchor: marker.value,
     map: map.value,
   });
