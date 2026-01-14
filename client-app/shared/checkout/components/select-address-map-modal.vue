@@ -211,6 +211,7 @@ function setMarkerRef(id: string | undefined, el: unknown) {
     markerRefs.value[id] = el as IMarkerExposed | null;
   }
 }
+
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 
@@ -297,15 +298,16 @@ function selectHandler(
       zoomToLatLng(latLng, 17);
 
       if (options.openInfo && address.id) {
-        onceIdle(() => openMarkerInfoWindow(address.id));
+        const addressId = address.id;
+        onceIdle(() => openMarkerInfoWindow(addressId));
       }
     }
   } else if (options.openInfo && address.id) {
     openMarkerInfoWindow(address.id);
   }
 
-  if (options.scrollToSelectedOnList && !isMobile.value) {
-    const listElement = document.querySelector(`[data-address-id="${address.id}"]`);
+  if (options.scrollToSelectedOnList && !isMobile.value && address.id) {
+    const listElement = document.querySelector(`[data-address-id="${CSS.escape(address.id)}"]`);
 
     if (listElement) {
       listElement.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -408,10 +410,6 @@ const unwatch = watch([map, currentAddress], ([newMap, newCurrentAddress]) => {
 
   &__radio-button {
     @apply flex flex-col gap-0.5;
-  }
-
-  &__radio-button-name {
-    @apply text-xs font-bold;
   }
 
   &__radio-button-address {

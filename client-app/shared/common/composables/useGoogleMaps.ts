@@ -220,7 +220,8 @@ export function useGoogleMaps(mapId: string) {
     if (currentZoom < zoom) {
       mapInstance.panTo(latLng);
       setTimeout(() => {
-        mapInstance.setZoom(zoom);
+        const inst = mapInstances.get(mapId);
+        inst?.map.value?.setZoom(zoom);
       }, 300);
     } else {
       mapInstance.setZoom(zoom);
