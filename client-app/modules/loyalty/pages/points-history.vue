@@ -63,42 +63,6 @@
             </div>
           </template>
 
-          <template #mobile-skeleton>
-            <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("loyalty.points-history.operation") }}
-                </span>
-
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("loyalty.points-history.operation-type") }}
-                </span>
-
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("loyalty.points-history.date") }}
-                </span>
-
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("loyalty.points-history.amount") }}
-                </span>
-
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-            </div>
-          </template>
-
           <template #desktop-body>
             <tr v-for="log in historyLogs" :key="log.id" class="cursor-default even:bg-neutral-50 hover:bg-neutral-200">
               <td class="overflow-hidden text-ellipsis p-5">
@@ -115,26 +79,6 @@
 
               <td class="overflow-hidden text-ellipsis p-5 text-right">
                 {{ log.amount }}
-              </td>
-            </tr>
-          </template>
-
-          <template #desktop-skeleton>
-            <tr v-for="i in itemsPerPage" :key="i" class="even:bg-neutral-50">
-              <td class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-
-              <td class="w-4/12 p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-
-              <td class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-
-              <td class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
               </td>
             </tr>
           </template>
@@ -170,15 +114,7 @@ const columns = computed<ITableColumn[]>(() => [
   { id: "amount", title: t("loyalty.points-history.amount"), sortable: false, align: "right" },
 ]);
 
-const {
-  fetchHistory,
-  sort,
-  loading: historyLoading,
-  historyLogs,
-  itemsPerPage,
-  pages,
-  page,
-} = useLoyaltyPointsHistory();
+const { fetchHistory, sort, loading: historyLoading, historyLogs, pages, page } = useLoyaltyPointsHistory();
 
 const { fetchLoyaltyBalance, loading: balanceLoading, currentBalance } = useLoyaltyBalance();
 

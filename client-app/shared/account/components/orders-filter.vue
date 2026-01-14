@@ -6,33 +6,27 @@
       </VcDialogHeader>
 
       <VcDialogContent>
-        <VcLabel>{{ $t("shared.account.orders_filter.created_date_label") }}</VcLabel>
+        <div class="flex flex-col gap-5">
+          <slot />
 
-        <div class="mb-5 flex flex-col space-y-5">
-          <slot name="dateFilterType" />
-        </div>
+          <div v-if="facets?.length">
+            <VcLabel>{{ $t("shared.account.orders_filter.status_label") }}</VcLabel>
 
-        <div class="mb-5">
-          <slot name="buyerNameFilterType" />
-        </div>
+            <VcCheckboxGroup v-model="filterData.statuses" class="mt-2 space-y-3.5">
+              <VcCheckbox
+                v-for="facet in statusFacet?.items"
+                :key="facet.term"
+                :value="facet.term"
+                :class="{ 'font-bold': isSelectedStatus(facet.term), 'text-neutral': !isSelectedStatus(facet.term) }"
+              >
+                <div class="flex w-full max-w-full gap-1">
+                  <div class="min-w-0 truncate">{{ facet.label }}</div>
 
-        <div v-if="facets?.length">
-          <VcLabel>{{ $t("shared.account.orders_filter.status_label") }}</VcLabel>
-
-          <VcCheckboxGroup v-model="filterData.statuses" class="mt-2 space-y-3.5">
-            <VcCheckbox
-              v-for="facet in statusFacet?.items"
-              :key="facet.term"
-              :value="facet.term"
-              :class="{ 'font-bold': isSelectedStatus(facet.term), 'text-neutral': !isSelectedStatus(facet.term) }"
-            >
-              <div class="flex w-full max-w-full gap-1">
-                <div class="min-w-0 truncate">{{ facet.label }}</div>
-
-                <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
-              </div>
-            </VcCheckbox>
-          </VcCheckboxGroup>
+                  <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
+                </div>
+              </VcCheckbox>
+            </VcCheckboxGroup>
+          </div>
         </div>
       </VcDialogContent>
 

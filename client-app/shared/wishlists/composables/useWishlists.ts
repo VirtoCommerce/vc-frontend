@@ -13,13 +13,14 @@ import {
 import { SortDirection } from "@/core/enums";
 import { Logger, asyncForEach } from "@/core/utilities";
 import type {
+  ConfigurationSectionInput,
   InputAddWishlistBulkItemType,
   InputRemoveWishlistItemType,
   InputUpdateWishlistItemsType,
   WishlistType,
 } from "@/core/api/graphql/types";
 import type { ChangeWishlistPayloadType, CreateWishlistPayloadType } from "@/core/types";
-import type { Ref } from "vue";
+import type { DeepReadonly, Ref } from "vue";
 
 const loading = ref(true);
 const lists = ref<WishlistType[]>([]);
@@ -122,11 +123,18 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     return result;
   }
 
-  async function addItemsToWishlists(payloads: InputAddWishlistBulkItemType) {
+  async function addItemsToWishlists(
+    payloads: Omit<InputAddWishlistBulkItemType, "configurationSections"> & {
+      configurationSections?: DeepReadonly<ConfigurationSectionInput[]>;
+    },
+  ) {
     loading.value = true;
 
     try {
-      const result = await addWishlistBulkItem(payloads);
+      const result = await addWishlistBulkItem({
+        ...payloads,
+        configurationSections: payloads.configurationSections as ConfigurationSectionInput[] | undefined,
+      });
       if (result.wishlists) {
         lists.value = result.wishlists;
       }
