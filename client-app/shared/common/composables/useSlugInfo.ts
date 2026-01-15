@@ -8,6 +8,10 @@ import { safeDecode } from "@/core/utilities/common";
 import type { IPageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
 
+function isMarkdownWithFrontmatter(content: string): boolean {
+  return content.trimStart().startsWith("---");
+}
+
 /**
  * @param seoUrl path after domain without slash at the beginning
  **/
@@ -129,10 +133,6 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
   function isPageContent(data: unknown): data is IPageTemplate {
     const pageTemplate = data as IPageTemplate;
     return Array.isArray(pageTemplate?.content) && typeof pageTemplate?.settings === "object";
-  }
-
-  function isMarkdownWithFrontmatter(content: string): boolean {
-    return content.trimStart().startsWith("---");
   }
 
   const rawContentString = computed(() => {
