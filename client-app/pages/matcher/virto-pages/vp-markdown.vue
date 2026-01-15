@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10">
+  <div class="vp-markdown">
     <VcMarkdownRender v-if="markdownBody" :src="markdownBody" />
   </div>
 </template>
@@ -64,3 +64,9 @@ useSeoMeta({
   description: () => frontmatter.value.description,
 });
 </script>
+
+<style lang="scss">
+.vp-markdown {
+  @apply mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10;
+}
+</style>
