@@ -33,7 +33,7 @@ withDefaults(defineProps<IProps>(), {
     &--horizontal {
       --vc-icon-size: 1.25rem;
 
-      @container (min-width: theme("containers.xl")) {
+      @container (min-width: theme("containers.2xl")) {
         --vc-icon-size: 1rem;
       }
     }
@@ -64,7 +64,7 @@ withDefaults(defineProps<IProps>(), {
 
         @apply mt-2.5;
 
-        @container (min-width: theme("containers.xl")) {
+        @container (min-width: theme("containers.2xl")) {
           @apply mt-0;
         }
       }

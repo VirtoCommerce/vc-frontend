@@ -241,14 +241,10 @@ watch(
 
       &--list {
         #{$wrapperSelector} {
-          @apply mt-3;
-
-          @container (min-width: theme("containers.sm")) {
-            @apply w-60;
-          }
+          @apply mt-3 w-full max-w-60;
 
           @container (min-width: theme("containers.2xl")) {
-            @apply mt-0 ms-3 w-[10.625rem];
+            @apply mt-0 ms-3 w-[10.625rem] max-w-none;
           }
         }
       }

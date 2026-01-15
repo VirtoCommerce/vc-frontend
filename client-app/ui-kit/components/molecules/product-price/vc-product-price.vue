@@ -143,7 +143,7 @@ defineProps<IProps>();
         #{$variations} {
           @apply inline-block me-1;
 
-          @container (min-width: theme("containers.xl")) {
+          @container (min-width: theme("containers.2xl")) {
             @apply block;
           }
         }

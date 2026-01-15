@@ -101,7 +101,7 @@ withDefaults(defineProps<IProps>(), {
 
     @apply mt-3 flex items-center min-h-4 gap-1 text-xs;
 
-    @media (min-width: theme("screens.xs")) {
+    @container (min-width: theme("containers.2xl")) {
       @apply mt-5;
     }
 
