@@ -58,26 +58,6 @@
               </div>
             </template>
 
-            <template #mobile-skeleton>
-              <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
-                <div class="flex flex-col">
-                  <span class="text-sm text-neutral-400">
-                    {{ $t("purchase_requests.purchase_request_number_label") }}
-                  </span>
-
-                  <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-                </div>
-
-                <div class="flex flex-col">
-                  <span class="text-sm text-neutral-400">
-                    {{ $t("purchase_requests.date_label") }}
-                  </span>
-
-                  <div class="h-6 animate-pulse bg-neutral-200"></div>
-                </div>
-              </div>
-            </template>
-
             <template #desktop-body>
               <tr
                 v-for="purchaseRequest in purchaseRequests"
@@ -91,14 +71,6 @@
 
                 <td class="overflow-hidden text-ellipsis p-5">
                   {{ $d(purchaseRequest.createdDate) }}
-                </td>
-              </tr>
-            </template>
-
-            <template #desktop-skeleton>
-              <tr v-for="i in itemsPerPage" :key="i" class="even:bg-neutral-50">
-                <td v-for="column in columns" :key="column.id" class="p-5">
-                  <div class="h-6 animate-pulse bg-neutral-200"></div>
                 </td>
               </tr>
             </template>
@@ -126,7 +98,7 @@ usePageHead({
   title: t("purchase_requests.meta.title"),
 });
 
-const { loading, purchaseRequests, itemsPerPage, pages, page, sort } = usePurchaseRequests();
+const { loading, purchaseRequests, pages, page, sort } = usePurchaseRequests();
 
 const columns = ref<ITableColumn[]>([
   {
