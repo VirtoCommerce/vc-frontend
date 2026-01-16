@@ -8,7 +8,7 @@
 .vc-product-vendor {
   $self: &;
 
-  @apply text-xs font-bold text-neutral-950 truncate empty:hidden;
+  @apply text-xs font-bold text-neutral-950 truncate;
 
   @at-root .vc-product-card {
     &--view-mode {
@@ -20,7 +20,7 @@
       &--item #{$self} {
         grid-area: vendor;
 
-        @apply mt-1 self-start;
+        @apply mt-1 self-start empty:hidden;
       }
     }
   }
