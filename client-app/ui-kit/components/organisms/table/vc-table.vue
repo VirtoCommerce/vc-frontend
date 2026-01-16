@@ -1,5 +1,14 @@
 <template>
-  <div class="vc-table">
+  <div
+    :class="[
+      'vc-table',
+      {
+        'vc-table--bordered': bordered,
+        'vc-table--rounded': rounded,
+        [`vc-table--overflow-${overflow}`]: overflow,
+      },
+    ]"
+  >
     <!-- Mobile table view -->
     <div v-if="isMobile && $slots['mobile-item']" class="vc-table__mobile">
       <!-- Mobile skeleton view -->
@@ -163,6 +172,9 @@ const props = withDefaults(
     pageLimit?: number | null;
     mobileBreakpoint?: "none" | BreakpointsType;
     skeletonRows?: number;
+    bordered?: boolean;
+    rounded?: boolean;
+    overflow?: OverflowType;
   }>(),
   {
     columns: () => [],
@@ -174,6 +186,8 @@ const props = withDefaults(
     skeletonRows: TABLE_SKELETON_ROWS_SIZE,
   },
 );
+
+type OverflowType = "auto" | "hidden" | "visible";
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = computed(() => {
@@ -202,6 +216,26 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
 
 <style lang="scss">
 .vc-table {
+  &--bordered {
+    @apply border;
+  }
+
+  &--rounded {
+    @apply rounded-[--vc-radius];
+  }
+
+  &--overflow-auto {
+    @apply overflow-x-auto;
+  }
+
+  &--overflow-hidden {
+    @apply overflow-x-hidden;
+  }
+
+  &--overflow-visible {
+    @apply overflow-x-visible;
+  }
+
   &__mobile {
     word-break: break-word;
   }

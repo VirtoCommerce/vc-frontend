@@ -11,6 +11,18 @@ const meta: Meta<typeof VcTable> = {
       control: { type: "number", min: 1, max: 20 },
       type: { name: "number", required: false },
     },
+    bordered: {
+      control: { type: "boolean" },
+      type: { name: "boolean", required: false },
+    },
+    rounded: {
+      control: { type: "boolean" },
+      type: { name: "boolean", required: false },
+    },
+    overflow: {
+      control: { type: "select" },
+      options: [undefined, "auto", "hidden", "visible"],
+    },
   },
   render: (args) => ({
     components: { VcTable },
@@ -282,6 +294,121 @@ export const WithoutHeader: StoryType = {
           </tr>
         </template>
       </VcTable>
+    `,
+  }),
+};
+
+export const Bordered: StoryType = {
+  args: {
+    columns: sampleColumns,
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable },
+    setup: () => ({ args }),
+    template: `
+      <VcTable v-bind="args">
+        <template #desktop-body>
+          <tr
+            v-for="item in args.items"
+            :key="item.id"
+            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+          >
+            <td class="p-5">{{ item.name }}</td>
+            <td class="p-5">{{ item.email }}</td>
+            <td class="p-5">{{ item.role }}</td>
+            <td class="p-5 text-center">{{ item.status }}</td>
+          </tr>
+        </template>
+      </VcTable>
+    `,
+  }),
+};
+
+export const BorderedRounded: StoryType = {
+  args: {
+    columns: sampleColumns,
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+    rounded: true,
+  },
+  render: (args) => ({
+    components: { VcTable },
+    setup: () => ({ args }),
+    template: `
+      <VcTable v-bind="args">
+        <template #desktop-body>
+          <tr
+            v-for="item in args.items"
+            :key="item.id"
+            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+          >
+            <td class="p-5">{{ item.name }}</td>
+            <td class="p-5">{{ item.email }}</td>
+            <td class="p-5">{{ item.role }}</td>
+            <td class="p-5 text-center">{{ item.status }}</td>
+          </tr>
+        </template>
+      </VcTable>
+    `,
+  }),
+};
+
+const wideColumns: VcTableColumnType[] = [
+  { id: "name", title: "Name", sortable: true, classes: "min-w-52" },
+  { id: "email", title: "Email", sortable: true, classes: "min-w-64" },
+  { id: "role", title: "Role", classes: "min-w-40" },
+  { id: "status", title: "Status", sortable: true, align: "center", classes: "min-w-32" },
+  { id: "department", title: "Department", classes: "min-w-48" },
+  { id: "location", title: "Location", classes: "min-w-40" },
+  { id: "phone", title: "Phone", classes: "min-w-36" },
+];
+
+const wideItems = sampleItems.map((item) => ({
+  ...item,
+  department: "Engineering",
+  location: "New York",
+  phone: "+1 234 567 890",
+}));
+
+export const WithOverflowScroll: StoryType = {
+  args: {
+    columns: wideColumns,
+    items: wideItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+    rounded: true,
+    overflow: "auto",
+  },
+  render: (args) => ({
+    components: { VcTable },
+    setup: () => ({ args }),
+    template: `
+      <div class="max-w-2xl">
+        <VcTable v-bind="args">
+          <template #desktop-body>
+            <tr
+              v-for="item in args.items"
+              :key="item.id"
+              class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+            >
+              <td class="p-5 min-w-52">{{ item.name }}</td>
+              <td class="p-5 min-w-64">{{ item.email }}</td>
+              <td class="p-5 min-w-40">{{ item.role }}</td>
+              <td class="p-5 min-w-32 text-center">{{ item.status }}</td>
+              <td class="p-5 min-w-48">{{ item.department }}</td>
+              <td class="p-5 min-w-40">{{ item.location }}</td>
+              <td class="p-5 min-w-36">{{ item.phone }}</td>
+            </tr>
+          </template>
+        </VcTable>
+      </div>
     `,
   }),
 };
