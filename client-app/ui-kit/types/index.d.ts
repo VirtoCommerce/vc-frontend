@@ -110,6 +110,9 @@ declare global {
 
   type BreakpointsType = keyof typeof BREAKPOINTS;
 
+  /** Border side values for components with border prop */
+  type VcBorderSideType = "top" | "bottom" | "left" | "right" | "x" | "y";
+
   // Table types - for backward compatibility with ui-kit components
   /** @deprecated Use VcTableColumnType instead */
   type ITableColumn = VcTableColumnType;

@@ -2,10 +2,9 @@
   <div
     :class="[
       'vc-table',
+      borderClasses,
       {
-        'vc-table--bordered': bordered,
-        'vc-table--rounded': rounded,
-        [`vc-table--overflow-${overflow}`]: overflow,
+        'vc-table--rounded': rounded && !isMobile,
       },
     ]"
   >
@@ -31,97 +30,99 @@
     </div>
 
     <!-- Desktop table view -->
-    <table v-else class="vc-table__desktop">
-      <caption v-if="description" class="vc-table__caption">
-        {{
-          description
-        }}
-      </caption>
+    <VcScrollbar v-else :horizontal="scrollable" class="vc-table__scrollbar">
+      <table class="vc-table__desktop">
+        <caption v-if="description" class="vc-table__caption">
+          {{
+            description
+          }}
+        </caption>
 
-      <slot name="header">
-        <thead v-if="!hideDefaultHeader && columns.length" class="vc-table__head">
-          <tr class="vc-table__row">
-            <th
-              v-for="column in columns"
-              :key="column.id"
-              scope="col"
-              :aria-sort="getAriaSort(column.id)"
-              :class="[
-                'vc-table__title',
-                `vc-table__title--align--${column.align ?? 'left'}`,
-                {
-                  'vc-table__title--sortable': column.sortable,
-                },
-                column.classes,
-              ]"
-            >
-              <button
-                v-if="column.sortable && sort"
-                type="button"
-                class="vc-table__sort-button"
-                @click="
-                  $emit('headerClick', {
-                    column: column.id,
-                    direction: toggleSortDirection(sort.direction),
-                  })
-                "
+        <slot name="header">
+          <thead v-if="!hideDefaultHeader && columns.length" class="vc-table__head">
+            <tr class="vc-table__row">
+              <th
+                v-for="column in columns"
+                :key="column.id"
+                scope="col"
+                :aria-sort="getAriaSort(column.id)"
+                :class="[
+                  'vc-table__title',
+                  `vc-table__title--align--${column.align ?? 'left'}`,
+                  {
+                    'vc-table__title--sortable': column.sortable,
+                  },
+                  column.classes,
+                ]"
               >
-                {{ column.title }}
+                <button
+                  v-if="column.sortable && sort"
+                  type="button"
+                  class="vc-table__sort-button"
+                  @click="
+                    $emit('headerClick', {
+                      column: column.id,
+                      direction: toggleSortDirection(sort.direction),
+                    })
+                  "
+                >
+                  {{ column.title }}
 
-                <VcIcon
-                  v-if="sort.column === column.id"
-                  :class="[
-                    'vc-table__sort-icon',
-                    {
-                      'vc-table__sort-icon--asc': sort.direction === 'asc',
-                    },
-                  ]"
-                  name="chevron-up"
-                  size="xxs"
-                />
-              </button>
+                  <VcIcon
+                    v-if="sort.column === column.id"
+                    :class="[
+                      'vc-table__sort-icon',
+                      {
+                        'vc-table__sort-icon--asc': sort.direction === 'asc',
+                      },
+                    ]"
+                    name="chevron-up"
+                    size="xxs"
+                  />
+                </button>
 
-              <span v-else class="vc-table__column-title">{{ column.title }}</span>
-            </th>
-          </tr>
-        </thead>
-      </slot>
-
-      <!-- Desktop skeleton view -->
-      <tbody v-if="loading" class="vc-table__body">
-        <slot name="desktop-skeleton">
-          <!-- Default skeleton template -->
-          <tr v-for="row in skeletonRows" :key="row" class="vc-table__skeleton">
-            <td
-              v-for="column in columns"
-              :key="column.id"
-              :class="[
-                'vc-table__skeleton-cell',
-                `vc-table__skeleton-cell--align--${column.align ?? 'left'}`,
-                column.classes,
-              ]"
-            >
-              <div class="vc-table__skeleton-item" />
-            </td>
-          </tr>
+                <span v-else class="vc-table__column-title">{{ column.title }}</span>
+              </th>
+            </tr>
+          </thead>
         </slot>
-      </tbody>
 
-      <!-- Desktop empty view -->
-      <tbody v-else-if="!items.length" class="vc-table__body">
-        <slot name="desktop-empty" />
-      </tbody>
+        <!-- Desktop skeleton view -->
+        <tbody v-if="loading" class="vc-table__body">
+          <slot name="desktop-skeleton">
+            <!-- Default skeleton template -->
+            <tr v-for="row in skeletonRows" :key="row" class="vc-table__skeleton">
+              <td
+                v-for="column in columns"
+                :key="column.id"
+                :class="[
+                  'vc-table__skeleton-cell',
+                  `vc-table__skeleton-cell--align--${column.align ?? 'left'}`,
+                  column.classes,
+                ]"
+              >
+                <div class="vc-table__skeleton-item" />
+              </td>
+            </tr>
+          </slot>
+        </tbody>
 
-      <!-- Desktop table view (custom body) -->
-      <tbody v-else-if="$slots['desktop-body']" class="vc-table__body">
-        <slot name="desktop-body" />
-      </tbody>
+        <!-- Desktop empty view -->
+        <tbody v-else-if="!items.length" class="vc-table__body">
+          <slot name="desktop-empty" />
+        </tbody>
 
-      <!-- Desktop table item view -->
-      <tbody v-else-if="items.length && $slots['desktop-item']" class="vc-table__body">
-        <slot v-for="(item, index) in items" :key="item.id || index" name="desktop-item" :item="item" />
-      </tbody>
-    </table>
+        <!-- Desktop table view (custom body) -->
+        <tbody v-else-if="$slots['desktop-body']" class="vc-table__body">
+          <slot name="desktop-body" />
+        </tbody>
+
+        <!-- Desktop table item view -->
+        <tbody v-else-if="items.length && $slots['desktop-item']" class="vc-table__body">
+          <slot v-for="(item, index) in items" :key="item.id || index" name="desktop-item" :item="item" />
+        </tbody>
+      </table>
+    </VcScrollbar>
 
     <!-- Table footer -->
     <slot name="footer">
@@ -172,9 +173,10 @@ const props = withDefaults(
     pageLimit?: number | null;
     mobileBreakpoint?: "none" | BreakpointsType;
     skeletonRows?: number;
-    bordered?: boolean;
+    /** Border sides: true for all, or space-separated values: 'top', 'bottom', 'left', 'right', 'x', 'y' */
+    border?: boolean | string;
     rounded?: boolean;
-    overflow?: OverflowType;
+    scrollable?: boolean;
   }>(),
   {
     columns: () => [],
@@ -187,7 +189,7 @@ const props = withDefaults(
   },
 );
 
-type OverflowType = "auto" | "hidden" | "visible";
+const VALID_BORDER_VALUES: VcBorderSideType[] = ["top", "bottom", "left", "right", "x", "y"];
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = computed(() => {
@@ -195,6 +197,30 @@ const isMobile = computed(() => {
     return false;
   }
   return breakpoints.smaller(props.mobileBreakpoint).value;
+});
+
+const borderClasses = computed(() => {
+  if (!props.border || isMobile.value) {
+    return [];
+  }
+
+  if (props.border === true) {
+    return ["vc-table--border"];
+  }
+
+  const sides = props.border.split(" ").filter(Boolean);
+  const classes: string[] = [];
+
+  for (const side of sides) {
+    if (VALID_BORDER_VALUES.includes(side as VcBorderSideType)) {
+      classes.push(`vc-table--border-${side}`);
+    } else if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.warn(`[VcTable] Invalid border value: "${side}". Valid values: ${VALID_BORDER_VALUES.join(", ")}`);
+    }
+  }
+
+  return classes;
 });
 
 function onPageUpdate(newPage: number) {
@@ -216,24 +242,40 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
 
 <style lang="scss">
 .vc-table {
-  &--bordered {
+  &--border {
     @apply border;
+  }
+
+  &--border-top {
+    @apply border-t;
+  }
+
+  &--border-bottom {
+    @apply border-b;
+  }
+
+  &--border-left {
+    @apply border-l;
+  }
+
+  &--border-right {
+    @apply border-r;
+  }
+
+  &--border-x {
+    @apply border-x;
+  }
+
+  &--border-y {
+    @apply border-y;
   }
 
   &--rounded {
     @apply rounded-[--vc-radius];
   }
 
-  &--overflow-auto {
-    @apply overflow-x-auto;
-  }
-
-  &--overflow-hidden {
-    @apply overflow-x-hidden;
-  }
-
-  &--overflow-visible {
-    @apply overflow-x-visible;
+  &__scrollbar {
+    @apply w-full;
   }
 
   &__mobile {
