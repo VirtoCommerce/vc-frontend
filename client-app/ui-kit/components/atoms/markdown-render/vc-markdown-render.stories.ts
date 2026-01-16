@@ -62,13 +62,101 @@ function greet(name) {
 This concludes the markdown style showcase.
 `;
 
+const FULL_HTML_EXAMPLE = `
+<h1>Heading 1</h1>
+
+<p>This is a paragraph with <strong>bold text</strong>, <em>italic text</em>, and <strong><em>bold italic text</em></strong>. You can also use <del>strikethrough</del> for deleted content.</p>
+
+<h2>Heading 2</h2>
+
+<p>Here is a <a href="https://example.com">link to example</a> and some inline <code>code</code> within a sentence.</p>
+
+<h3>Heading 3</h3>
+
+<p>Unordered list:</p>
+<ul>
+  <li>First item</li>
+  <li>Second item
+    <ul>
+      <li>Nested item A</li>
+      <li>Nested item B</li>
+    </ul>
+  </li>
+  <li>Third item</li>
+</ul>
+
+<h4>Heading 4</h4>
+
+<p>Ordered list:</p>
+<ol>
+  <li>First step</li>
+  <li>Second step</li>
+  <li>Third step</li>
+</ol>
+
+<h5>Heading 5</h5>
+
+<h6>Heading 6</h6>
+
+<blockquote>
+  <p>This is a blockquote. It can contain multiple lines of text and is often used for quotations or important notes.</p>
+  <p>It can span multiple paragraphs.</p>
+</blockquote>
+
+<hr>
+
+<h3>Code Block</h3>
+
+<pre><code>function greet(name) {
+  console.log(\`Hello, \${name}!\`);
+  return true;
+}</code></pre>
+
+<h3>Table</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Price</th>
+      <th>Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Apple</td>
+      <td>$1.00</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>Banana</td>
+      <td>$0.50</td>
+      <td>100</td>
+    </tr>
+    <tr>
+      <td>Orange</td>
+      <td>$0.75</td>
+      <td>75</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Image</h3>
+
+<img src="https://www.shutterstock.com/image-photo/sun-sets-behind-mountain-ranges-600nw-2479236003.jpg" alt="Placeholder Image">
+
+<hr>
+
+<p>This concludes the HTML style showcase.</p>
+`;
+
 export default {
   title: "Components/Atoms/VcMarkdownRender",
   component: VcMarkdownRender,
   argTypes: {
     src: {
       control: "text",
-      description: "Markdown source string to render",
+      description: "Markdown or HTML source string to render",
       type: { name: "string", required: true },
     },
   },
@@ -79,6 +167,12 @@ type StoryType = StoryObj<typeof VcMarkdownRender>;
 export const Basic: StoryType = {
   args: {
     src: FULL_MARKDOWN_EXAMPLE,
+  },
+};
+
+export const BasicHtml: StoryType = {
+  args: {
+    src: FULL_HTML_EXAMPLE,
   },
 };
 
