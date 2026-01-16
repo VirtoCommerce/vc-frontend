@@ -108,6 +108,9 @@
               v-for="address in addresses"
               :key="address.id"
               :data-address-id="address.id"
+              :data-country="address.address?.countryName"
+              :data-region="address.address?.regionId"
+              :data-city="address.address?.city"
               class="select-address-map-modal__list-item"
             >
               <VcRadioButton
