@@ -60,7 +60,7 @@
               {{ operator.contact?.fullName || operator.userName }}
             </span>
 
-            <span class="text-neutral-400">
+            <span class="whitespace-nowrap text-neutral-400">
               {{ $t("shared.layout.header.top_header.logged_in_as") }}
             </span>
           </template>
