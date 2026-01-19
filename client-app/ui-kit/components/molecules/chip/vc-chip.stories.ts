@@ -1,12 +1,11 @@
 import { VcChip } from "..";
-import { VcIcon } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
 const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];
 
-export default {
+const meta: Meta<typeof VcChip> = {
   title: "Components/Molecules/VcChip",
   component: VcChip,
   argTypes: {
@@ -29,15 +28,14 @@ export default {
       table: { type: { summary: VARIANTS.join(" | ") } },
     },
   },
-  // Default render function for most stories
   render: (args) => ({
-    components: { VcChip },
     setup: () => ({ args }),
     template: '<VcChip v-bind="args">Chip text</VcChip>',
   }),
-} as Meta<typeof VcChip>;
+};
 
-type StoryType = StoryObj<typeof VcChip>;
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
 export const Basic: StoryType = { args: {} };
 
@@ -64,7 +62,6 @@ export const Icon: StoryType = {
 export const IconInSlot: StoryType = {
   args: {},
   render: (args) => ({
-    components: { VcChip, VcIcon },
     setup: () => ({ args }),
     template: `<VcChip v-bind="args">
       <VcIcon name="circle-solid" />
@@ -92,7 +89,6 @@ export const IconColorHEX: StoryType = {
 export const Truncate: StoryType = {
   args: { truncate: true },
   render: (args) => ({
-    components: { VcChip },
     setup: () => ({ args }),
     template: `<VcChip v-bind="args" class="w-36">
       <span>Long long long Chip text</span>
@@ -123,7 +119,6 @@ export const WithActions: StoryType = {
     clickable: true,
   },
   render: (args) => ({
-    components: { VcChip },
     setup: () => ({
       args,
       handleClick: () => console.log("click event fired"),
@@ -160,7 +155,6 @@ export const CustomCloseIcon: StoryType = {
     closable: true,
   },
   render: (args) => ({
-    components: { VcChip, VcIcon },
     setup: () => ({
       args,
       handleClose: () => console.log("close event fired with custom icon"),
@@ -180,7 +174,6 @@ export const AllVariants: StoryType = {
     color: "primary",
   },
   render: (args) => ({
-    components: { VcChip },
     setup: () => ({ variants: VARIANTS, args }),
     template: `<div class="flex flex-col items-start gap-3">
       <VcChip v-bind="args" v-for="variant in variants" :variant="variant" icon="circle-solid" closable>
@@ -192,7 +185,6 @@ export const AllVariants: StoryType = {
 
 export const AllStates: StoryType = {
   render: () => ({
-    components: { VcChip },
     setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
     template: `<div class="space-y-8">
       <div v-for="size in sizes" class="space-y-3">

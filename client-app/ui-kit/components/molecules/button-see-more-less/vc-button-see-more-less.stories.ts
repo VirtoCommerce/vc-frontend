@@ -1,7 +1,7 @@
 import { VcButtonSeeMoreLess } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-export default {
+const meta: Meta<typeof VcButtonSeeMoreLess> = {
   title: "Components/Molecules/VcButtonSeeMoreLess",
   component: VcButtonSeeMoreLess,
   argTypes: {
@@ -10,17 +10,19 @@ export default {
   args: {
     modelValue: false,
   },
-} as Meta<typeof VcButtonSeeMoreLess>;
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcButtonSeeMoreLess v-bind="args" />',
+  }),
+};
 
-const Template: StoryFn = (args) => ({
-  components: { VcButtonSeeMoreLess },
-  setup: () => ({ args }),
-  template: '<VcButtonSeeMoreLess v-bind="args" />',
-});
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
-export const Basic = Template.bind({});
+export const Basic: StoryType = {};
 
-export const Toggled = Template.bind({});
-Toggled.args = {
-  modelValue: true,
+export const Toggled: StoryType = {
+  args: {
+    modelValue: true,
+  },
 };

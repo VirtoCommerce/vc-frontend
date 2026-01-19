@@ -1,12 +1,11 @@
 import { VcAlert } from "..";
-import { VcIcon } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const COLORS = ["info", "success", "warning", "danger"];
 const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];
 const SIZES = ["sm", "md"];
 
-export default {
+const meta: Meta<typeof VcAlert> = {
   title: "Components/Molecules/VcAlert",
   component: VcAlert,
   argTypes: {
@@ -48,9 +47,10 @@ export default {
       Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
     </VcAlert>`,
   }),
-} as Meta<typeof VcAlert>;
+};
 
-type StoryType = StoryObj<typeof VcAlert>;
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
 // 1. Basic examples
 export const Basic: StoryType = { args: {} };
@@ -90,7 +90,6 @@ export const IconCustom: StoryType = {
 export const SlotMainIcon: StoryType = {
   args: { icon: false },
   render: (args) => ({
-    components: { VcAlert, VcIcon },
     setup: () => ({ args }),
     template: `<VcAlert v-bind="args">
       <template #main-icon>
@@ -104,7 +103,6 @@ export const SlotMainIcon: StoryType = {
 export const SlotCloseIcon: StoryType = {
   args: { closable: true },
   render: (args) => ({
-    components: { VcAlert, VcIcon },
     setup: () => ({ args }),
     template: `<VcAlert v-bind="args">
       <template #close-icon>
@@ -126,7 +124,6 @@ export const Closable: StoryType = {
 // 7. Kitchen sink
 export const AllStates: StoryType = {
   render: () => ({
-    components: { VcAlert },
     setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
     template: `<div class="space-y-6">
       <div v-for="size in sizes" class="space-y-6">
