@@ -72,7 +72,7 @@
         :columns="columns"
         :items="paginatedAddresses"
         :description="$t('shared.checkout.select_address_modal.meta.table_description')"
-        :loading="pickupLocationsLoading"
+        :loading="loading"
       >
         <template #mobile-item="{ item }">
           <div class="relative flex items-center space-x-3 border-b p-4 last:border-none">
@@ -257,7 +257,6 @@ import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
-import { useCartPickupLocations } from "@/shared/cart";
 import { SelectAddressFilter } from "@/shared/checkout";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
@@ -276,12 +275,15 @@ interface IProps {
   showFilters?: boolean;
   pageSize?: number;
   paginationMode?: PaginationModeType;
+  loading?: boolean;
+  totalCount?: number;
 }
 
 interface IEmits {
   (event: "result", value: AnyAddressType): void;
   (event: "addNewAddress"): void;
   (event: "filterChange"): void;
+  (event: "resetFilter"): void;
   (event: "pageChange", page: number): void;
 }
 
@@ -295,22 +297,21 @@ const props = withDefaults(defineProps<IProps>(), {
   omitFieldsOnCompare: () => [],
   pageSize: 6,
   paginationMode: "client",
+  loading: false,
+  totalCount: 0,
 });
 
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
-const { filterIsApplied, clearFilter, pickupLocationsLoading, pickupLocationsTotalCount } = useCartPickupLocations();
-
 function applyFilter() {
-  filterIsApplied.value = true;
   page.value = 1;
   emit("filterChange");
 }
 
 function resetFilter() {
-  clearFilter();
+  emit("resetFilter");
   applyFilter();
 }
 
@@ -319,7 +320,7 @@ const page = ref(1);
 const itemsPerPage = computed(() => props.pageSize);
 
 const pages = computed(() => {
-  const itemsTotal = props.paginationMode === "server" ? pickupLocationsTotalCount.value : props.addresses.length;
+  const itemsTotal = props.paginationMode === "server" ? props.totalCount : props.addresses.length;
   return Math.max(1, Math.ceil(itemsTotal / itemsPerPage.value));
 });
 const paginatedAddresses = computed(() =>

@@ -18,8 +18,15 @@ export function useBopis() {
   const { availableShippingMethods, updateShipment, shipment } = useFullCart();
   const { isEnabled, getSettingValue } = useModuleSettings(MODULE_ID_SHIPPING);
 
-  const { pickupLocations, fetchPickupLocations, pickupLocationsLoading, filterKeyword, buildFilter, clearFilter } =
-    useCartPickupLocations();
+  const {
+    pickupLocations,
+    fetchPickupLocations,
+    pickupLocationsLoading,
+    pickupLocationsTotalCount,
+    filterKeyword,
+    buildFilter,
+    clearFilter,
+  } = useCartPickupLocations();
 
   const hasBOPIS = computed(() => availableShippingMethods.value.some((method) => method.code === BOPIS_CODE));
   const bopisMethod = computed(() => availableShippingMethods.value.find((method) => method.code === BOPIS_CODE));
@@ -111,6 +118,8 @@ export function useBopis() {
         emptyText: t("pages.account.order_details.bopis.cart_pickup_points_not_found"),
         pageSize: pageSize.value,
         paginationMode: "server",
+        loading: pickupLocationsLoading,
+        totalCount: pickupLocationsTotalCount,
 
         onFilterChange: async () => {
           await fetchAddresses({
@@ -119,6 +128,10 @@ export function useBopis() {
             keyword: filterKeyword.value,
             filter: buildFilter(),
           });
+        },
+
+        onResetFilter: () => {
+          clearFilter();
         },
 
         onPageChange: async (newPage: number) => {
