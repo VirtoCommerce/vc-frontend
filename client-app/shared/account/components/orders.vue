@@ -188,122 +188,118 @@
   </VcEmptyView>
 
   <!-- Content block -->
-  <div
-    v-else
-    :class="[
-      'flex flex-col bg-additional-50 shadow-sm',
-      { 'max-md:-mx-6 lg:rounded-[--vc-radius] lg:border': withSearch },
-    ]"
-  >
-    <VcTable
-      :loading="ordersLoading"
-      :columns="columns"
-      :items="orders"
-      :sort="sort"
-      :pages="pages"
-      :page="page"
-      :hide-default-footer="!withPagination"
-      :description="$t('pages.account.orders.meta.table_description')"
-      mobile-breakpoint="lg"
-      @header-click="applySorting"
-      @page-changed="changePage"
-    >
-      <template #mobile-item="itemData">
-        <button
-          class="grid w-full cursor-pointer grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
-          type="button"
-          tabindex="0"
-          @click="goToOrderDetails(itemData.item)"
-          @keyup.enter="goToOrderDetails(itemData.item)"
-        >
-          <div class="flex flex-col">
-            <span class="text-sm text-neutral-400">
-              {{ $t("pages.account.orders.order_number_label") }}
-            </span>
+  <VcWidget v-else size="lg">
+    <template #default-container>
+      <VcTable
+        :loading="ordersLoading"
+        :columns="columns"
+        :items="orders"
+        :sort="sort"
+        :pages="pages"
+        :page="page"
+        :hide-default-footer="!withPagination"
+        :description="$t('pages.account.orders.meta.table_description')"
+        mobile-breakpoint="lg"
+        @header-click="applySorting"
+        @page-changed="changePage"
+      >
+        <template #mobile-item="itemData">
+          <button
+            class="grid w-full cursor-pointer grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
+            type="button"
+            tabindex="0"
+            @click="goToOrderDetails(itemData.item)"
+            @keyup.enter="goToOrderDetails(itemData.item)"
+          >
+            <div class="flex flex-col">
+              <span class="text-sm text-neutral-400">
+                {{ $t("pages.account.orders.order_number_label") }}
+              </span>
 
-            <span class="overflow-hidden text-ellipsis pr-4 font-black">
-              {{ itemData.item.number }}
-            </span>
-          </div>
+              <span class="overflow-hidden text-ellipsis pr-4 font-black">
+                {{ itemData.item.number }}
+              </span>
+            </div>
 
-          <div class="flex flex-col items-end justify-center">
-            <OrderStatus :status="itemData.item.status" :display-value="itemData.item.statusDisplayValue" />
-          </div>
+            <div class="flex flex-col items-end justify-center">
+              <OrderStatus :status="itemData.item.status" :display-value="itemData.item.statusDisplayValue" />
+            </div>
 
-          <div v-if="orderScope === 'organization' && itemData.item?.customerName" class="flex flex-col">
-            <span class="text-sm text-neutral-400">
-              {{ $t("pages.account.orders.buyer_name_label") }}
-            </span>
+            <div v-if="orderScope === 'organization' && itemData.item?.customerName" class="flex flex-col">
+              <span class="text-sm text-neutral-400">
+                {{ $t("pages.account.orders.buyer_name_label") }}
+              </span>
 
-            <span class="overflow-hidden text-ellipsis">
-              {{ itemData.item?.customerName }}
-            </span>
-          </div>
+              <span class="overflow-hidden text-ellipsis">
+                {{ itemData.item?.customerName }}
+              </span>
+            </div>
 
-          <div class="flex flex-col">
-            <span class="text-sm text-neutral-400">
-              {{ $t("pages.account.orders.date_label") }}
-            </span>
+            <div class="flex flex-col">
+              <span class="text-sm text-neutral-400">
+                {{ $t("pages.account.orders.date_label") }}
+              </span>
 
-            <span class="overflow-hidden text-ellipsis">
-              {{ $d(itemData.item?.createdDate) }}
-            </span>
-          </div>
+              <span class="overflow-hidden text-ellipsis">
+                {{ $d(itemData.item?.createdDate) }}
+              </span>
+            </div>
 
-          <div class="flex flex-col">
-            <span class="text-sm text-neutral-400">
-              {{ $t("pages.account.orders.total_label") }}
-            </span>
+            <div class="flex flex-col">
+              <span class="text-sm text-neutral-400">
+                {{ $t("pages.account.orders.total_label") }}
+              </span>
 
-            <span class="overflow-hidden text-ellipsis font-black">
-              {{ itemData.item.total?.formattedAmount }}
-            </span>
-          </div>
-        </button>
-      </template>
+              <span class="overflow-hidden text-ellipsis font-black">
+                {{ itemData.item.total?.formattedAmount }}
+              </span>
+            </div>
+          </button>
+        </template>
 
-      <template #desktop-body>
-        <tr
-          v-for="order in orders"
-          :key="order.id"
-          class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
-          @click="goToOrderDetails(order)"
-        >
-          <td class="overflow-hidden text-ellipsis p-5">
-            {{ order.number }}
-          </td>
+        <template #desktop-body>
+          <tr
+            v-for="order in orders"
+            :key="order.id"
+            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+            @click="goToOrderDetails(order)"
+          >
+            <td class="overflow-hidden text-ellipsis p-5">
+              {{ order.number }}
+            </td>
 
-          <td v-if="orderScope === 'private'" class="overflow-hidden text-ellipsis p-5">
-            {{ order.purchaseOrderNumber }}
-          </td>
+            <td v-if="orderScope === 'private'" class="overflow-hidden text-ellipsis p-5">
+              {{ order.purchaseOrderNumber }}
+            </td>
 
-          <td v-if="orderScope === 'organization'" class="overflow-hidden text-ellipsis p-5">
-            {{ order.customerName }}
-          </td>
+            <td v-if="orderScope === 'organization'" class="overflow-hidden text-ellipsis p-5">
+              {{ order.customerName }}
+            </td>
 
-          <td class="overflow-hidden text-ellipsis p-5">
-            {{ order.inPayments?.[0]?.number }}
-          </td>
+            <td class="overflow-hidden text-ellipsis p-5">
+              {{ order.inPayments?.[0]?.number }}
+            </td>
 
-          <td class="overflow-hidden text-ellipsis p-5">
-            {{ $d(order?.createdDate) }}
-          </td>
+            <td class="overflow-hidden text-ellipsis p-5">
+              {{ $d(order?.createdDate) }}
+            </td>
 
-          <td class="p-1">
-            <OrderStatus :status="order.status" :display-value="order.statusDisplayValue" class="inline-block" />
-          </td>
+            <td class="p-1">
+              <OrderStatus :status="order.status" :display-value="order.statusDisplayValue" class="inline-block" />
+            </td>
 
-          <td class="overflow-hidden text-ellipsis p-5 text-right">
-            {{ order.total?.formattedAmount }}
-          </td>
-        </tr>
-      </template>
+            <td class="overflow-hidden text-ellipsis p-5 text-right">
+              {{ order.total?.formattedAmount }}
+            </td>
+          </tr>
+        </template>
 
-      <template #page-limit-message>
-        {{ $t("ui_kit.reach_limit.page_limit_filters") }}
-      </template>
-    </VcTable>
-  </div>
+        <template #page-limit-message>
+          {{ $t("ui_kit.reach_limit.page_limit_filters") }}
+        </template>
+      </VcTable>
+    </template>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">

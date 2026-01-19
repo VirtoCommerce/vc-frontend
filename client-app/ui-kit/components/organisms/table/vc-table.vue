@@ -1,13 +1,5 @@
 <template>
-  <div
-    :class="[
-      'vc-table',
-      borderClasses,
-      {
-        'vc-table--rounded': rounded && !isMobile,
-      },
-    ]"
-  >
+  <div class="vc-table">
     <!-- Mobile table view -->
     <div v-if="isMobile && $slots['mobile-item']" class="vc-table__mobile">
       <!-- Mobile skeleton view -->
@@ -144,15 +136,10 @@
   </div>
 </template>
 
-<script setup lang="ts" generic="T extends ItemType">
+<script setup lang="ts" generic="T extends VcTableItemType">
 import { useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { BREAKPOINTS, TABLE_SKELETON_ROWS_SIZE, TABLE_PAGE_LIMIT } from "@/ui-kit/constants";
-
-export type ItemType = {
-  id?: string | number;
-  [key: string]: unknown;
-};
 
 const emit = defineEmits<{
   (event: "headerClick", item: VcTableSortInfoType): void;
@@ -173,9 +160,8 @@ const props = withDefaults(
     pageLimit?: number | null;
     mobileBreakpoint?: "none" | BreakpointsType;
     skeletonRows?: number;
-    /** Border sides: true for all, or space-separated values: 'top', 'bottom', 'left', 'right', 'x', 'y' */
-    border?: boolean | string;
-    rounded?: boolean;
+    bordered?: boolean;
+    mobileBordered?: boolean;
     scrollable?: boolean;
   }>(),
   {
@@ -189,8 +175,6 @@ const props = withDefaults(
   },
 );
 
-const VALID_BORDER_VALUES: VcBorderSideType[] = ["top", "bottom", "left", "right", "x", "y"];
-
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = computed(() => {
   if (props.mobileBreakpoint === "none") {
@@ -199,29 +183,11 @@ const isMobile = computed(() => {
   return breakpoints.smaller(props.mobileBreakpoint).value;
 });
 
-const borderClasses = computed(() => {
-  if (!props.border || isMobile.value) {
-    return [];
-  }
+const desktopBorderWidth = computed(() => (props.bordered ? "1px" : "0"));
+const mobileBorderWidth = computed(() => (props.mobileBordered ? "1px" : "0"));
 
-  if (props.border === true) {
-    return ["vc-table--border"];
-  }
-
-  const sides = props.border.split(" ").filter(Boolean);
-  const classes: string[] = [];
-
-  for (const side of sides) {
-    if (VALID_BORDER_VALUES.includes(side as VcBorderSideType)) {
-      classes.push(`vc-table--border-${side}`);
-    } else if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
-      console.warn(`[VcTable] Invalid border value: "${side}". Valid values: ${VALID_BORDER_VALUES.join(", ")}`);
-    }
-  }
-
-  return classes;
-});
+const desktopRadius = computed(() => (props.bordered ? "var(--radius)" : "0"));
+const mobileRadius = computed(() => (props.mobileBordered ? "var(--radius)" : "0"));
 
 function onPageUpdate(newPage: number) {
   emit("pageChanged", newPage);
@@ -242,44 +208,15 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
 
 <style lang="scss">
 .vc-table {
-  &--border {
-    @apply border;
-  }
-
-  &--border-top {
-    @apply border-t;
-  }
-
-  &--border-bottom {
-    @apply border-b;
-  }
-
-  &--border-left {
-    @apply border-l;
-  }
-
-  &--border-right {
-    @apply border-r;
-  }
-
-  &--border-x {
-    @apply border-x;
-  }
-
-  &--border-y {
-    @apply border-y;
-  }
-
-  &--rounded {
-    @apply rounded-[--vc-radius];
-  }
-
-  &__scrollbar {
-    @apply w-full;
-  }
+  --radius: var(--vc-table-radius, var(--vc-radius, 0.5rem));
 
   &__mobile {
+    @apply border-neutral-200;
+
     word-break: break-word;
+    border-style: solid;
+    border-width: v-bind(mobileBorderWidth);
+    border-radius: v-bind(mobileRadius);
   }
 
   &__mobile-skeleton {
@@ -296,6 +233,14 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
 
   &__mobile-skeleton-item {
     @apply h-5 animate-pulse bg-neutral-200;
+  }
+
+  &__scrollbar {
+    @apply w-full border-neutral-200;
+
+    border-style: solid;
+    border-width: v-bind(desktopBorderWidth);
+    border-radius: v-bind(desktopRadius);
   }
 
   &__desktop {

@@ -6,8 +6,6 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const breakpointOptions = ["none", ...Object.keys(BREAKPOINTS)] as const;
 
-const borderOptions = ["true", "top", "bottom", "left", "right", "x", "y", "top bottom", "left right"];
-
 interface IVcTableStoryArgs {
   columns?: VcTableColumnType[];
   items?: Array<{ id: number | string; [key: string]: unknown }>;
@@ -21,8 +19,8 @@ interface IVcTableStoryArgs {
   pageLimit?: number | null;
   mobileBreakpoint?: "none" | BreakpointsType;
   skeletonRows?: number;
-  border?: boolean | string;
-  rounded?: boolean;
+  bordered?: boolean;
+  mobileBordered?: boolean;
   scrollable?: boolean;
 }
 
@@ -35,14 +33,13 @@ const meta: Meta<IVcTableStoryArgs> = {
       control: { type: "number", min: 1, max: 20 },
       type: { name: "number", required: false },
     },
-    border: {
-      control: { type: "select" },
-      options: borderOptions,
-      description: "Border sides: true for all, or space-separated: top, bottom, left, right, x, y",
-    },
-    rounded: {
+    bordered: {
       control: { type: "boolean" },
-      type: { name: "boolean", required: false },
+      description: "Show border around the table",
+    },
+    mobileBordered: {
+      control: { type: "boolean" },
+      description: "Show border around the mobile table",
     },
     scrollable: {
       control: { type: "boolean" },
@@ -65,11 +62,41 @@ type StoryType = StoryObj<IVcTableStoryArgs>;
 
 // Sample data
 const sampleItems = [
-  { id: 1, name: "John Doe", email: "john@example.com", role: "Admin", status: "Active" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User", status: "Active" },
-  { id: 3, name: "Bob Johnson", email: "bob@example.com", role: "User", status: "Inactive" },
-  { id: 4, name: "Alice Williams", email: "alice@example.com", role: "Moderator", status: "Active" },
-  { id: 5, name: "Charlie Brown", email: "charlie@example.com", role: "User", status: "Active" },
+  {
+    id: 1,
+    name: "John Doe",
+    email: "john@example.com",
+    role: "Admin",
+    status: "Active",
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    email: "jane@example.com",
+    role: "User",
+    status: "Active",
+  },
+  {
+    id: 3,
+    name: "Bob Johnson",
+    email: "bob@example.com",
+    role: "User",
+    status: "Inactive",
+  },
+  {
+    id: 4,
+    name: "Alice Williams",
+    email: "alice@example.com",
+    role: "Moderator",
+    status: "Active",
+  },
+  {
+    id: 5,
+    name: "Charlie Brown",
+    email: "charlie@example.com",
+    role: "User",
+    status: "Active",
+  },
 ];
 
 const sampleColumns: VcTableColumnType[] = [
@@ -236,7 +263,12 @@ const items = ref<IUser[]>([...]);
     </template>
 
     <template #desktop-body>
-      <!-- Desktop view fallback -->
+      <tr v-for="item in items" :key="item.id" class="even:bg-neutral-50">
+        <td class="p-5">{{ item.name }}</td>
+        <td class="p-5">{{ item.email }}</td>
+        <td class="p-5">{{ item.role }}</td>
+        <td class="p-5 text-center">{{ item.status }}</td>
+      </tr>
     </template>
   </VcTable>
 </template>
@@ -361,6 +393,15 @@ export const LoadingMobile: StoryType = {
         <template #mobile-item="{ item }">
           <div class="p-4">{{ item.name }}</div>
         </template>
+
+        <template #desktop-body>
+          <tr v-for="item in args.items" :key="item.id" class="even:bg-neutral-50">
+            <td class="p-5">{{ item.name }}</td>
+            <td class="p-5">{{ item.email }}</td>
+            <td class="p-5">{{ item.role }}</td>
+            <td class="p-5 text-center">{{ item.status }}</td>
+          </tr>
+        </template>
       </VcTable>
     `,
   }),
@@ -373,14 +414,23 @@ export const LoadingMobile: StoryType = {
       source: {
         code: `
 <VcTable
+  :columns="columns"
   :items="[]"
   :loading="true"
   :skeleton-rows="5"
   mobile-breakpoint="md"
 >
   <template #mobile-item="{ item }">
-    <!-- Required to enable mobile view -->
     <div class="p-4">{{ item.name }}</div>
+  </template>
+
+  <template #desktop-body>
+    <tr v-for="item in items" :key="item.id" class="even:bg-neutral-50">
+      <td class="p-5">{{ item.name }}</td>
+      <td class="p-5">{{ item.email }}</td>
+      <td class="p-5">{{ item.role }}</td>
+      <td class="p-5 text-center">{{ item.status }}</td>
+    </tr>
   </template>
 </VcTable>
         `,
@@ -598,6 +648,19 @@ export const WithPaginationMobile: StoryType = {
             <div class="text-sm text-neutral-600">{{ item.email }}</div>
           </div>
         </template>
+
+        <template #desktop-body>
+          <tr
+            v-for="item in args.items"
+            :key="item.id"
+            class="even:bg-neutral-50 hover:bg-neutral-200"
+          >
+            <td class="p-5">{{ item.name }}</td>
+            <td class="p-5">{{ item.email }}</td>
+            <td class="p-5">{{ item.role }}</td>
+            <td class="p-5 text-center">{{ item.status }}</td>
+          </tr>
+        </template>
       </VcTable>
     `,
   }),
@@ -618,6 +681,7 @@ function onPageChange(newPage: number) {
 
 <template>
   <VcTable
+    :columns="columns"
     :items="items"
     :pages="5"
     :page="page"
@@ -629,6 +693,15 @@ function onPageChange(newPage: number) {
         <div class="font-bold">{{ item.name }}</div>
         <div class="text-sm text-neutral-600">{{ item.email }}</div>
       </div>
+    </template>
+
+    <template #desktop-body>
+      <tr v-for="item in items" :key="item.id" class="even:bg-neutral-50 hover:bg-neutral-200">
+        <td class="p-5">{{ item.name }}</td>
+        <td class="p-5">{{ item.email }}</td>
+        <td class="p-5">{{ item.role }}</td>
+        <td class="p-5 text-center">{{ item.status }}</td>
+      </tr>
     </template>
   </VcTable>
 </template>
@@ -724,6 +797,15 @@ export const CustomSkeletonMobile: StoryType = {
             <div class="h-4 w-1/2 animate-pulse bg-neutral-200 rounded" />
           </div>
         </template>
+
+        <template #desktop-body>
+          <tr v-for="item in args.items" :key="item.id" class="even:bg-neutral-50">
+            <td class="p-5">{{ item.name }}</td>
+            <td class="p-5">{{ item.email }}</td>
+            <td class="p-5">{{ item.role }}</td>
+            <td class="p-5 text-center">{{ item.status }}</td>
+          </tr>
+        </template>
       </VcTable>
     `,
   }),
@@ -735,12 +817,13 @@ export const CustomSkeletonMobile: StoryType = {
       source: {
         code: `
 <VcTable
+  :columns="columns"
+  :items="items"
   :loading="true"
   :skeleton-rows="3"
   mobile-breakpoint="md"
 >
   <template #mobile-item="{ item }">
-    <!-- Required to enable mobile view -->
     <div class="p-4">{{ item.name }}</div>
   </template>
 
@@ -754,6 +837,15 @@ export const CustomSkeletonMobile: StoryType = {
       <div class="h-4 w-2/3 animate-pulse bg-neutral-200 rounded" />
       <div class="h-4 w-1/2 animate-pulse bg-neutral-200 rounded" />
     </div>
+  </template>
+
+  <template #desktop-body>
+    <tr v-for="item in items" :key="item.id" class="even:bg-neutral-50">
+      <td class="p-5">{{ item.name }}</td>
+      <td class="p-5">{{ item.email }}</td>
+      <td class="p-5">{{ item.role }}</td>
+      <td class="p-5 text-center">{{ item.status }}</td>
+    </tr>
   </template>
 </VcTable>
         `,
@@ -879,13 +971,13 @@ export const WithoutHeader: StoryType = {
   },
 };
 
-export const BorderAll: StoryType = {
+export const Bordered: StoryType = {
   args: {
     columns: sampleColumns,
     items: sampleItems,
     pages: 1,
     page: 1,
-    border: true,
+    bordered: true,
   },
   render: (args) => ({
     components: { VcTable },
@@ -910,34 +1002,46 @@ export const BorderAll: StoryType = {
   parameters: {
     docs: {
       description: {
-        story: 'Border on all sides using `border` or `:border="true"`.',
+        story: "Table with border using `bordered` prop.",
       },
       source: {
-        code: `
-<VcTable :columns="columns" :items="items" border>
-  <template #desktop-body>
-    <!-- ... -->
-  </template>
-</VcTable>
-        `,
+        code: `<VcTable :columns="columns" :items="items" bordered>...</VcTable>`,
       },
     },
   },
 };
 
-export const BorderTopBottom: StoryType = {
+export const MobileBordered: StoryType = {
   args: {
     columns: sampleColumns,
     items: sampleItems,
     pages: 1,
     page: 1,
-    border: "y",
+    mobileBordered: true,
+    mobileBreakpoint: "md",
   },
   render: (args) => ({
-    components: { VcTable },
+    components: { VcTable, VcBadge },
     setup: () => ({ args }),
     template: `
       <VcTable v-bind="args">
+        <template #mobile-item="{ item }">
+          <div class="border-b border-neutral-200 p-4 last:border-b-0">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold">{{ item.name }}</span>
+              <VcBadge
+                :color="item.status === 'Active' ? 'success' : 'neutral'"
+                variant="solid-light"
+                size="sm"
+              >
+                {{ item.status }}
+              </VcBadge>
+            </div>
+            <div class="text-sm text-neutral-600">{{ item.email }}</div>
+            <div class="text-sm text-neutral-500">{{ item.role }}</div>
+          </div>
+        </template>
+
         <template #desktop-body>
           <tr
             v-for="item in args.items"
@@ -956,163 +1060,25 @@ export const BorderTopBottom: StoryType = {
   parameters: {
     docs: {
       description: {
-        story: 'Border on top and bottom using `border="y"`.',
+        story: "Table with border only on mobile using `mobile-bordered` prop (desktop has no border).",
       },
       source: {
-        code: `
-<VcTable :columns="columns" :items="items" border="y">
-  <template #desktop-body>
-    <!-- ... -->
+        code: `<VcTable
+  :columns="columns"
+  :items="items"
+  mobile-bordered
+  mobile-breakpoint="md"
+>
+  <template #mobile-item="{ item }">
+    <div class="p-4">{{ item.name }}</div>
   </template>
-</VcTable>
-        `,
-      },
-    },
-  },
-};
 
-export const BorderBottom: StoryType = {
-  args: {
-    columns: sampleColumns,
-    items: sampleItems,
-    pages: 1,
-    page: 1,
-    border: "bottom",
-  },
-  render: (args) => ({
-    components: { VcTable },
-    setup: () => ({ args }),
-    template: `
-      <VcTable v-bind="args">
-        <template #desktop-body>
-          <tr
-            v-for="item in args.items"
-            :key="item.id"
-            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
-          >
-            <td class="p-5">{{ item.name }}</td>
-            <td class="p-5">{{ item.email }}</td>
-            <td class="p-5">{{ item.role }}</td>
-            <td class="p-5 text-center">{{ item.status }}</td>
-          </tr>
-        </template>
-      </VcTable>
-    `,
-  }),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Border only on bottom using `border="bottom"`.',
-      },
-      source: {
-        code: `
-<VcTable :columns="columns" :items="items" border="bottom">
   <template #desktop-body>
-    <!-- ... -->
+    <tr v-for="item in items" :key="item.id">
+      <td class="p-5">{{ item.name }}</td>
+    </tr>
   </template>
-</VcTable>
-        `,
-      },
-    },
-  },
-};
-
-export const BorderCombination: StoryType = {
-  args: {
-    columns: sampleColumns,
-    items: sampleItems,
-    pages: 1,
-    page: 1,
-    border: "top left right",
-  },
-  render: (args) => ({
-    components: { VcTable },
-    setup: () => ({ args }),
-    template: `
-      <VcTable v-bind="args">
-        <template #desktop-body>
-          <tr
-            v-for="item in args.items"
-            :key="item.id"
-            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
-          >
-            <td class="p-5">{{ item.name }}</td>
-            <td class="p-5">{{ item.email }}</td>
-            <td class="p-5">{{ item.role }}</td>
-            <td class="p-5 text-center">{{ item.status }}</td>
-          </tr>
-        </template>
-      </VcTable>
-    `,
-  }),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Custom border combination using space-separated values: `border="top left right"`.',
-      },
-      source: {
-        code: `
-<!-- Border on top, left and right (no bottom) -->
-<VcTable :columns="columns" :items="items" border="top left right">
-  <template #desktop-body>
-    <!-- ... -->
-  </template>
-</VcTable>
-
-<!-- Or using shorthand: top + horizontal -->
-<VcTable :columns="columns" :items="items" border="top x">
-  <template #desktop-body>
-    <!-- ... -->
-  </template>
-</VcTable>
-        `,
-      },
-    },
-  },
-};
-
-export const BorderRounded: StoryType = {
-  args: {
-    columns: sampleColumns,
-    items: sampleItems,
-    pages: 1,
-    page: 1,
-    border: true,
-    rounded: true,
-  },
-  render: (args) => ({
-    components: { VcTable },
-    setup: () => ({ args }),
-    template: `
-      <VcTable v-bind="args">
-        <template #desktop-body>
-          <tr
-            v-for="item in args.items"
-            :key="item.id"
-            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
-          >
-            <td class="p-5">{{ item.name }}</td>
-            <td class="p-5">{{ item.email }}</td>
-            <td class="p-5">{{ item.role }}</td>
-            <td class="p-5 text-center">{{ item.status }}</td>
-          </tr>
-        </template>
-      </VcTable>
-    `,
-  }),
-  parameters: {
-    docs: {
-      description: {
-        story: "Border with rounded corners.",
-      },
-      source: {
-        code: `
-<VcTable :columns="columns" :items="items" border rounded>
-  <template #desktop-body>
-    <!-- ... -->
-  </template>
-</VcTable>
-        `,
+</VcTable>`,
       },
     },
   },
@@ -1122,7 +1088,13 @@ const wideColumns: VcTableColumnType[] = [
   { id: "name", title: "Name", sortable: true, classes: "min-w-52" },
   { id: "email", title: "Email", sortable: true, classes: "min-w-64" },
   { id: "role", title: "Role", classes: "min-w-40" },
-  { id: "status", title: "Status", sortable: true, align: "center", classes: "min-w-32" },
+  {
+    id: "status",
+    title: "Status",
+    sortable: true,
+    align: "center",
+    classes: "min-w-32",
+  },
   { id: "department", title: "Department", classes: "min-w-48" },
   { id: "location", title: "Location", classes: "min-w-40" },
   { id: "phone", title: "Phone", classes: "min-w-36" },
@@ -1141,8 +1113,7 @@ export const WithScrollbar: StoryType = {
     items: wideItems,
     pages: 1,
     page: 1,
-    border: true,
-    rounded: true,
+    bordered: true,
     scrollable: true,
   },
   render: (args) => ({
@@ -1191,8 +1162,7 @@ const columns: VcTableColumnType[] = [
   <VcTable
     :columns="columns"
     :items="items"
-    border
-    rounded
+    bordered
     scrollable
   >
     <template #desktop-body>
@@ -1353,8 +1323,7 @@ export const FullExample: StoryType = {
     pages: 5,
     page: 1,
     sort: { column: "name", direction: "asc" },
-    border: true,
-    rounded: true,
+    bordered: true,
   },
   render: (args) => ({
     components: { VcTable, VcBadge },
@@ -1466,8 +1435,7 @@ async function onHeaderClick(sortInfo: VcTableSortInfoType) {
     :pages="pages"
     :page="page"
     :sort="sort"
-    border
-    rounded
+    bordered
     @page-changed="onPageChange"
     @header-click="onHeaderClick"
   >
