@@ -58,6 +58,10 @@
             <span v-else class="vc-variant-picker__text">
               {{ displayValue }}
             </span>
+
+            <span class="vc-variant-picker__marker">
+              <VcIcon name="apply" size="xxs" />
+            </span>
           </button>
         </template>
 
@@ -187,10 +191,16 @@ function toggleValue(): void {
   $square: "";
   $active: "";
   $unavailable: "";
+  $color: "";
+  $colorGrid: "";
+  $image: "";
+  $text: "";
+  $marker: "";
 
   --props-color: v-bind(color);
   --color: var(--props-color, var(--vc-variant-picker-bg-color, theme("colors.additional.50")));
   --radius: var(--vc-variant-picker-radius, var(--vc-radius, 0.5rem));
+  --radius-inner: var(--radius);
   --strike-line-width: 2px;
 
   @apply inline-block;
@@ -209,7 +219,7 @@ function toggleValue(): void {
 
   &--size {
     &--xxs {
-      --size: 1.5rem;
+      --size: 1.625rem;
       --line-height: 0.875rem;
       --px: theme("padding[2.5]");
       --transparency: 44%;
@@ -218,7 +228,7 @@ function toggleValue(): void {
     }
 
     &--xs {
-      --size: 1.875rem;
+      --size: 2rem;
       --line-height: 0.875rem;
       --px: theme("padding.3");
       --transparency: 45%;
@@ -236,7 +246,7 @@ function toggleValue(): void {
     }
 
     &--md {
-      --size: 3rem;
+      --size: 2.75rem;
       --line-height: 1.25rem;
       --px: theme("padding.4");
       --transparency: 48%;
@@ -245,7 +255,7 @@ function toggleValue(): void {
     }
 
     &--lg {
-      --size: 3.5rem;
+      --size: 3.25rem;
       --line-height: 1.5rem;
       --px: theme("padding.5");
       --transparency: 49%;
@@ -258,56 +268,16 @@ function toggleValue(): void {
     @apply hidden;
   }
 
-  &__trigger {
-    @apply relative flex items-stretch justify-center py-0.5
-    min-h-[--size] min-w-[--size]
-    bg-cover bg-center bg-no-repeat bg-additional-50
-    rounded-[--radius] cursor-pointer px-[--px];
-
-    box-shadow: 0 0 0 1px var(--color-neutral-200);
-
-    #{$square} & {
-      @apply size-[--size] px-0.5;
-    }
-
-    &:hover {
-      box-shadow: 0 0 0 1px var(--color-neutral-400);
-    }
-
-    &:focus-within {
-      box-shadow: 0 0 0 2px rgb(from var(--color-primary-500) r g b / 0.5);
-    }
-
-    #{$active} & {
-      box-shadow: 0 0 0 2px var(--color-primary-500);
-    }
-
-    #{$unavailable} & {
-      &::before {
-        @apply content-[""] absolute inset-px rounded-[inherit] bg-additional-50/60;
-      }
-
-      &::after {
-        @apply content-[""] absolute inset-0 rounded-[inherit] opacity-40;
-
-        background: linear-gradient(
-          -45deg,
-          transparent var(--transparency),
-          transparent var(--transparency) calc(50% - var(--strike-line-width) / 2),
-          var(--color-secondary-950) calc(50% - var(--strike-line-width) / 2),
-          var(--color-secondary-950) calc(50% + var(--strike-line-width) / 2),
-          transparent calc(50% + var(--strike-line-width) / 2)
-        );
-      }
-    }
-  }
-
   &__color {
-    @apply grow rounded-[calc(var(--radius)-2px)] bg-[--color];
+    $color: &;
+
+    @apply grow rounded-[--radius-inner] bg-[--color];
   }
 
   &__color-grid {
-    @apply grow grid rounded-[calc(var(--radius)-2px)] overflow-hidden;
+    $colorGrid: &;
+
+    @apply grow grid rounded-[--radius-inner] overflow-hidden;
 
     &[data-count="0"],
     &[data-count="1"] {
@@ -340,11 +310,72 @@ function toggleValue(): void {
   }
 
   &__img {
-    @apply grow rounded-[calc(var(--radius)-2px)] object-cover object-center;
+    $image: &;
+
+    @apply grow rounded-[--radius-inner] object-cover object-center;
   }
 
   &__text {
-    @apply flex items-center text-accent-600 text-center font-bold;
+    $text: &;
+
+    @apply flex items-center px-[--px] text-accent-600 text-center font-bold;
+  }
+
+  &__marker {
+    $marker: &;
+
+    @apply absolute self-center hidden items-center justify-center size-5 border rounded-full bg-additional-50 text-accent-500;
+  }
+
+  &__trigger {
+    @apply relative flex items-stretch justify-center
+    min-h-[--size] min-w-[--size]
+    bg-cover bg-center bg-no-repeat bg-additional-50
+    rounded-[--radius] cursor-pointer;
+
+    box-shadow: 0 0 0 1px var(--color-neutral-200);
+
+    #{$square} & {
+      @apply size-[--size];
+    }
+
+    &:focus-within,
+    &:focus-visible {
+      @apply outline-none;
+
+      box-shadow: 0 0 0 2px rgb(from var(--color-primary-500) r g b / 0.4);
+    }
+
+    #{$active} & {
+      &:has(#{$text}) {
+        box-shadow: 0 0 0 2px var(--color-accent-500);
+      }
+
+      &:has(#{$color}, #{$colorGrid}, #{$image}) {
+        & #{$marker} {
+          @apply flex;
+        }
+      }
+    }
+
+    #{$unavailable} & {
+      &::before {
+        @apply content-[""] absolute inset-0 rounded-[--radius-inner] bg-additional-50/60;
+      }
+
+      &::after {
+        @apply content-[""] absolute inset-0 rounded-[--radius-inner] opacity-40;
+
+        background: linear-gradient(
+          -45deg,
+          transparent var(--transparency),
+          transparent var(--transparency) calc(50% - var(--strike-line-width) / 2),
+          var(--color-secondary-950) calc(50% - var(--strike-line-width) / 2),
+          var(--color-secondary-950) calc(50% + var(--strike-line-width) / 2),
+          transparent calc(50% + var(--strike-line-width) / 2)
+        );
+      }
+    }
   }
 }
 </style>
