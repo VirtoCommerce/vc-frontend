@@ -53,38 +53,188 @@ export default meta;
 type StoryType = StoryObj<typeof meta>;
 
 // 1. Basic examples
-export const Basic: StoryType = { args: {} };
+export const Basic: StoryType = {
+  args: {},
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert>
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
 
-export const WithTitle: StoryType = { args: { title: "Alert" } };
+export const WithTitle: StoryType = {
+  args: { title: "Alert" },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert title="Alert">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
 
 // 2. Variants
 export const VariantSolidLight: StoryType = {
   args: { variant: "solid-light" },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert variant="solid-light">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
 };
 
-export const VariantOutline: StoryType = { args: { variant: "outline" } };
+export const VariantOutline: StoryType = {
+  args: { variant: "outline" },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert variant="outline">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
 
 export const VariantOutlineDark: StoryType = {
   args: { variant: "outline-dark" },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert variant="outline-dark">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
 };
 
 // 3. Sizes
-export const SizeSm: StoryType = { args: { size: "sm" } };
+export const SizeSm: StoryType = {
+  args: { size: "sm" },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert size="sm">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
 
 // 4. Colors
-export const ColorInfo: StoryType = { args: { color: "info" } };
+export const ColorInfo: StoryType = {
+  args: { color: "info" },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert color="info">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
 
-export const ColorSuccess: StoryType = { args: { color: "success" } };
+export const ColorSuccess: StoryType = {
+  args: { color: "success" },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert color="success">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
 
-export const ColorWarning: StoryType = { args: { color: "warning" } };
+export const ColorWarning: StoryType = {
+  args: { color: "warning" },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert color="warning">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
 
-export const ColorDanger: StoryType = { args: { color: "danger" } };
+export const ColorDanger: StoryType = {
+  args: { color: "danger" },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert color="danger">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
 
 // 5. Icons
-export const IconAuto: StoryType = { args: { icon: true } };
+export const IconAuto: StoryType = {
+  args: { icon: true },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert icon>
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
 
 export const IconCustom: StoryType = {
   args: { icon: "cog" },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert icon="cog">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
 };
 
 export const SlotMainIcon: StoryType = {
@@ -98,6 +248,20 @@ export const SlotMainIcon: StoryType = {
       Custom main icon via slot
     </VcAlert>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert>
+            <template #main-icon>
+              <VcIcon name="cart" />
+            </template>
+            Custom main icon via slot
+          </VcAlert>
+        `,
+      },
+    },
+  },
 };
 
 export const SlotCloseIcon: StoryType = {
@@ -111,14 +275,52 @@ export const SlotCloseIcon: StoryType = {
       Custom close icon via slot
     </VcAlert>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert closable>
+            <template #close-icon>
+              <VcIcon name="delete" />
+            </template>
+            Custom close icon via slot
+          </VcAlert>
+        `,
+      },
+    },
+  },
 };
 
 // 6. Shadow & Closable
-export const WithShadow: StoryType = { args: { shadow: true } };
+export const WithShadow: StoryType = {
+  args: { shadow: true },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcAlert shadow>
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
+};
 
 export const Closable: StoryType = {
   args: { closable: true },
-  parameters: { actions: { handles: ["close"] } },
+  parameters: {
+    actions: { handles: ["close"] },
+    docs: {
+      source: {
+        code: `
+          <VcAlert closable @close="handleClose">
+            Lorem praesentium natus cumque tenetur iusto sequi sit repellat! Temporibus tempora fugit vel amet voluptates ipsam Quidem quos repellat at ut earum velit Vero totam voluptates nesciunt eveniet delectus. Quas.
+          </VcAlert>
+        `,
+      },
+    },
+  },
 };
 
 // 7. Kitchen sink

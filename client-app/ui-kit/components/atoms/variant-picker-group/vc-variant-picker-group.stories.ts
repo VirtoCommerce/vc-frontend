@@ -66,6 +66,17 @@ export const Basic: StoryType = {
     multiple: false,
     modelValue: "red",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="color" :model-value="model" v-model="model">
+            <VcVariantPicker v-for="item in items" v-bind="item" />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const Images: StoryType = {
@@ -91,6 +102,21 @@ export const Images: StoryType = {
       </VcVariantPickerGroup>
     `,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="image" v-model="model">
+            <VcVariantPicker type="image" value="product-example-1.webp" is-available />
+            <VcVariantPicker type="image" value="product-example-2.webp" is-available />
+            <VcVariantPicker type="image" value="product-example-3.webp" />
+            <VcVariantPicker type="image" value="product-example-4.webp" />
+            <VcVariantPicker type="image" value="product-example-5.webp" is-available />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const Texts: StoryType = {
@@ -116,6 +142,21 @@ export const Texts: StoryType = {
       </VcVariantPickerGroup>
     `,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="text" v-model="model">
+            <VcVariantPicker type="text" value="Size: XS" is-available />
+            <VcVariantPicker type="text" value="Size: SM" is-available />
+            <VcVariantPicker type="text" value="Size: MD" />
+            <VcVariantPicker type="text" value="Size: LG" />
+            <VcVariantPicker type="text" value="Size: XL" is-available />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const Multiselect: StoryType = {
@@ -151,6 +192,20 @@ export const Multiselect: StoryType = {
       </div>
     `,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="color" multiple v-model="model">
+            <VcVariantPicker value="red" is-available />
+            <VcVariantPicker value="blue" is-available />
+            <VcVariantPicker value="green" />
+            <VcVariantPicker value="yellow" />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const SingleSelect: StoryType = {
@@ -186,6 +241,20 @@ export const SingleSelect: StoryType = {
       </div>
     `,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="color" v-model="model">
+            <VcVariantPicker value="red" is-available />
+            <VcVariantPicker value="blue" is-available />
+            <VcVariantPicker value="green" />
+            <VcVariantPicker value="yellow" />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const ShowMoreButton: StoryType = {
@@ -265,6 +334,17 @@ export const ShowMoreButton: StoryType = {
     <VcVariantPicker v-for="(item, index) in items" :key="index" type="color" :value="item.value" :is-available="item.isAvailable" />
   </VcVariantPickerGroup>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="color" truncate v-model="model">
+            <VcVariantPicker v-for="item in items" :key="item.value" type="color" :value="item.value" :is-available="item.isAvailable" />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const MixedWidths: StoryType = {
@@ -388,6 +468,17 @@ export const MixedTypes: StoryType = {
       <VcVariantPicker v-for="(item, index) in items" :key="index" :type="item.type" :value="item.value" :is-available="item.isAvailable" />
     </VcVariantPickerGroup>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup truncate v-model="model">
+            <VcVariantPicker v-for="item in items" :key="item.value" :type="item.type" :value="item.value" :is-available="item.isAvailable" />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const OneRow: StoryType = {
@@ -445,6 +536,17 @@ export const OneRow: StoryType = {
       <VcVariantPicker v-for="(item, index) in items" :key="index" type="text" :value="item.value" :is-available="item.isAvailable" />
     </VcVariantPickerGroup>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="text" truncate max-rows="1" v-model="model">
+            <VcVariantPicker v-for="item in items" :key="item.value" type="text" :value="item.value" :is-available="item.isAvailable" />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const ThreeRows: StoryType = {
@@ -525,6 +627,17 @@ export const ThreeRows: StoryType = {
       <VcVariantPicker v-for="(item, index) in items" :key="index" type="color" :value="item.value" :is-available="item.isAvailable" />
     </VcVariantPickerGroup>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="color" truncate max-rows="3" v-model="model">
+            <VcVariantPicker v-for="item in items" :key="item.value" type="color" :value="item.value" :is-available="item.isAvailable" />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const Tooltips: StoryType = {
@@ -547,6 +660,17 @@ export const Tooltips: StoryType = {
       <VcVariantPicker v-for="(item, index) in items" :key="index" :type="item.type" :value="item.value" :is-available="item.isAvailable" :tooltip="item.tooltip" />
     </VcVariantPickerGroup>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup v-model="model">
+            <VcVariantPicker v-for="item in items" :key="item.value" :type="item.type" :value="item.value" :is-available="item.isAvailable" :tooltip="item.tooltip" />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const MultiColor: StoryType = {
@@ -571,6 +695,24 @@ export const MultiColor: StoryType = {
       <VcVariantPicker :value="['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']" is-available tooltip="Custom Mix" />
     </VcVariantPickerGroup>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="color" v-model="model">
+            <VcVariantPicker :value="['red', 'blue']" is-available tooltip="Red & Blue" />
+            <VcVariantPicker :value="['green', 'yellow']" is-available tooltip="Green & Yellow" />
+            <VcVariantPicker :value="['orange', 'purple']" tooltip="Orange & Purple" />
+            <VcVariantPicker :value="['pink', 'cyan']" is-available tooltip="Pink & Cyan" />
+            <VcVariantPicker :value="['red', 'green', 'blue']" is-available tooltip="RGB" />
+            <VcVariantPicker :value="['yellow', 'magenta', 'cyan']" tooltip="CMY" />
+            <VcVariantPicker :value="['red', 'orange', 'yellow', 'green']" is-available tooltip="Warm Colors" />
+            <VcVariantPicker :value="['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']" is-available tooltip="Custom Mix" />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const MultiColorShowMore: StoryType = {
@@ -656,6 +798,17 @@ export const MultiColorShowMore: StoryType = {
       <VcVariantPicker v-for="(item, index) in items" :key="index" :value="item.value" :is-available="item.isAvailable" :tooltip="item.tooltip" />
     </VcVariantPickerGroup>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="color" truncate v-model="model">
+            <VcVariantPicker v-for="item in items" :key="item.value" :value="item.value" :is-available="item.isAvailable" :tooltip="item.tooltip" />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const MultiColorSizes: StoryType = {
@@ -709,6 +862,24 @@ export const MultiColorSizes: StoryType = {
       </div>
     `,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="color" v-model="model">
+            <VcVariantPicker
+              v-for="item in items"
+              :key="item.value"
+              :size="size"
+              :value="item.value"
+              :is-available="item.isAvailable"
+              :tooltip="item.tooltip"
+            />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const MultiColorMultiSelect: StoryType = {
@@ -751,6 +922,23 @@ export const MultiColorMultiSelect: StoryType = {
       </div>
     `,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="color" multiple v-model="model">
+            <VcVariantPicker
+              v-for="option in options"
+              :key="option.value"
+              :value="option.value"
+              :is-available="true"
+              :tooltip="option.label"
+            />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };
 
 export const MultiColorSingleSelect: StoryType = {
@@ -794,4 +982,21 @@ export const MultiColorSingleSelect: StoryType = {
       </div>
     `,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcVariantPickerGroup type="color" size="sm" v-model="model">
+            <VcVariantPicker
+              v-for="option in options"
+              :key="option.value"
+              :value="option.value"
+              :is-available="true"
+              :tooltip="option.label"
+            />
+          </VcVariantPickerGroup>
+        `,
+      },
+    },
+  },
 };

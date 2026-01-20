@@ -25,7 +25,19 @@ const meta: Meta<typeof VcCollapsibleContent> = {
 export default meta;
 type StoryType = StoryObj<typeof meta>;
 
-export const Basic: StoryType = {};
+export const Basic: StoryType = {
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcCollapsibleContent v-bind="args">
+            <VcMarkdownRender src='<table><tbody><tr><th colspan="2">System</th></tr><tr><td>Channels</td><td>5.1</td></tr><tr><td>Power</td><td>Total: 1000 W</td></tr><tr><td>DSP Modes</td><td>8</td></tr></tbody></table><table><tbody><tr><th colspan="2">Disc Player</th></tr><tr><td>Disc Loading</td><td>Tray</td></tr><tr><td>Disc Capacity</td><td>1</td></tr><tr><td>Disc Types</td><td>Blu-ray, 3D Blu-ray, DVD, DVD+R, DVD-R, DVD+RW, DVD-RW</td></tr><tr><td>Region</td><td>DVD: 1<br/>Blu-ray: A</td></tr><tr><td>BD Profile</td><td>5.0</td></tr><tr><td>BD Live</td><td>Yes</td></tr><tr><td>DVD Upscaling</td><td>Yes</td></tr><tr><td>Streaming Capability</td><td>Yes</td></tr></tbody></table>' />
+          </VcCollapsibleContent>
+        `,
+      },
+    },
+  },
+};
 
 export const Toggled: StoryType = {
   args: {
@@ -54,4 +66,18 @@ export const Toggled: StoryType = {
       </VcCollapsibleContent>
     `,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcCollapsibleContent collapse style="max-width:640px">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+            aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+            sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </VcCollapsibleContent>
+        `,
+      },
+    },
+  },
 };

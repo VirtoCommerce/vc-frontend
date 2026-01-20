@@ -14,6 +14,15 @@ const meta: Meta<typeof VcButtonSeeMoreLess> = {
     setup: () => ({ args }),
     template: '<VcButtonSeeMoreLess v-bind="args" />',
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcButtonSeeMoreLess />
+        `,
+      },
+    },
+  },
 };
 
 export default meta;
