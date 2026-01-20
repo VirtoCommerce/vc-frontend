@@ -26,10 +26,10 @@
       </VcInput>
     </div>
 
-    <div
-      ref="scrollContainer"
+    <VcScrollbar
+      vertical
       class="top-header-organizations__list"
-      data-test-id="main-layout.account-menu.top-header.organizations-list"
+      test-id="main-layout.account-menu.top-header.organizations-list"
     >
       <VcMenuItem v-if="organization && !loading && organizations.length > 0" size="xs">
         <VcRadioButton
@@ -67,19 +67,18 @@
       <VcInfinityScrollLoader
         v-if="hasNextPage"
         :loading="loading"
-        :viewport="scrollContainer"
         :page-number="currentPage"
         :pages-count="pagesCount"
         distance="50"
         class="top-header-organizations__loader"
         @visible="loadOrganizations"
       />
-    </div>
+    </VcScrollbar>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, useTemplateRef, computed } from "vue";
+import { ref, computed } from "vue";
 import { useUser, useUserOrganizations } from "@/shared/account";
 
 const emit = defineEmits<{
@@ -101,7 +100,6 @@ const {
 } = useUserOrganizations();
 
 const contactOrganizationId = ref(user.value?.contact?.organizationId);
-const scrollContainer = useTemplateRef("scrollContainer");
 
 const organizationsWithoutCurrent = computed(() =>
   organizations.value.filter((item) => item.id !== organization.value?.id),
@@ -149,7 +147,7 @@ async function onSearchClear(): Promise<void> {
   }
 
   &__list {
-    @apply my-1 max-h-60 overflow-y-auto;
+    @apply my-1 max-h-60;
   }
 
   &__radio {
