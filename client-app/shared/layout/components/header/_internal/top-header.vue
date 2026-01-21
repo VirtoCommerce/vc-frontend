@@ -56,7 +56,7 @@
         <div ref="loginMenu" class="relative flex flex-row items-center gap-x-1">
           <!-- Operator -->
           <template v-if="operator">
-            <span class="font-bold" data-test-id="main-layout.top-header.operator-name-label">
+            <span class="whitespace-nowrap font-bold" data-test-id="main-layout.top-header.operator-name-label">
               {{ operator.contact?.fullName || operator.userName }}
             </span>
 
