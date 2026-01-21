@@ -71,7 +71,7 @@ const LAYOUT_CONFIG = {
 
 const containerRef = ref<HTMLElement | null>(null);
 const buttonWrapperRef = ref<HTMLElement | null>(null);
-const buttonRef = ref<HTMLButtonElement | null>(null);
+const buttonRef = ref<VcButtonExposedType | null>(null);
 
 const expanded = ref(false);
 const showButton = ref(false);
@@ -310,7 +310,7 @@ interface INavContext {
   container: HTMLElement;
   items: HTMLElement[];
   currentIndex: number;
-  button: HTMLButtonElement | null;
+  button: VcButtonExposedType | null;
 }
 
 function getNavContext(from: EventTarget | null): INavContext | null {

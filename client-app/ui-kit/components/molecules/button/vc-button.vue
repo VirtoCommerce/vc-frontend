@@ -1,6 +1,7 @@
 <template>
   <component
     :is="componentTag"
+    ref="elementRef"
     v-bind="attrs"
     :target="target"
     :type="componentTag === 'button' ? type : null"
@@ -177,6 +178,22 @@ const attrs = computed(() => {
   }
 
   return attributes;
+});
+
+const elementRef = ref<HTMLElement | null>(null);
+
+function focus(): void {
+  elementRef.value?.focus();
+}
+
+function blur(): void {
+  elementRef.value?.blur();
+}
+
+defineExpose({
+  focus,
+  blur,
+  el: elementRef,
 });
 </script>
 
