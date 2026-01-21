@@ -90,6 +90,7 @@
     max-height="20rem"
     width="15rem"
     :dividers="false"
+    :data-test-id="dataTestId"
   >
     <template #trigger="{ opened, triggerProps }">
       <VcButton
@@ -185,6 +186,7 @@ interface IProps {
   disabled?: boolean;
   mode: "dropdown" | "collapsable";
   filter?: SearchProductFilterResult;
+  dataTestId?: string;
 }
 
 const emit = defineEmits<IEmits>();
