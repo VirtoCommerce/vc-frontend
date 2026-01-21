@@ -6,7 +6,7 @@
         'vc-modal',
         {
           'vc-modal--mobile-fullscreen': isMobileFullscreen,
-          'vc-modal--full-height': isFullHeight,
+          'vc-modal--scrollable': scrollable,
         },
         $attrs.class,
       ]"
@@ -47,7 +47,7 @@
                 </DialogTitle>
               </VcDialogHeader>
 
-              <VcDialogContent>
+              <VcDialogContent :scrollable="scrollable">
                 <slot :close="close" />
               </VcDialogContent>
 
@@ -75,12 +75,12 @@ interface IProps {
   hideActions?: boolean;
   isPersistent?: boolean;
   isMobileFullscreen?: boolean;
-  isFullHeight?: boolean;
   title?: string;
   icon?: string;
   maxWidth?: string;
   variant?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
   dividers?: boolean;
+  scrollable?: boolean;
   testId?: string;
 }
 
@@ -94,6 +94,7 @@ const props = withDefaults(defineProps<IProps>(), {
   show: true,
   variant: "info",
   maxWidth: "35.25rem",
+  scrollable: true,
 });
 
 const isOpen = ref(true);
@@ -120,16 +121,20 @@ defineExpose({ close });
 <style lang="scss">
 .vc-modal {
   $mobileFullscreen: "";
-  $fullHeight: "";
+  $scrollable: "";
 
   @apply fixed top-0 left-0 w-full h-full z-50;
+
+  @media (min-width: theme("screens.md")) {
+    --vc-dialog-max-height: 48rem;
+  }
 
   &--mobile-fullscreen {
     $mobileFullscreen: &;
   }
 
-  &--full-height {
-    $fullHeight: &;
+  &--scrollable {
+    $scrollable: &;
   }
 
   &__backdrop {
@@ -156,15 +161,6 @@ defineExpose({ close });
         & > .vc-dialog,
         & > .vc-dialog .vc-dialog-content__container {
           @apply max-h-full h-full rounded-none;
-        }
-      }
-    }
-
-    #{$fullHeight} & {
-      & > .vc-dialog,
-      & > .vc-dialog .vc-dialog-content__container {
-        @media (min-width: theme("screens.md")) {
-          @apply max-h-full h-full;
         }
       }
     }
