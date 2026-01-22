@@ -21,6 +21,18 @@ function _useUserOrganizations() {
   const currentPage = computed(() => Math.ceil(organizations.value.length / ORGANIZATIONS_PER_PAGE));
   const isShowSearch = computed(() => totalOrganizations.value > SEARCH_THRESHOLD);
 
+  /**
+   * Note: At this moment, Contact/Member query supports filters inside and it breaks encoding.
+   * We need to apply this workaround
+   *  */
+  const formattedSearchPhrase = computed(() => {
+    if (!searchPhrase.value) {
+      return "";
+    }
+    const escaped = searchPhrase.value.replace(/"/g, '\\"');
+    return `"${escaped}"`;
+  });
+
   async function loadOrganizations(): Promise<void> {
     if (loading.value || !hasNextPage.value) {
       return;
@@ -33,7 +45,7 @@ function _useUserOrganizations() {
         after: endCursor.value,
         first: ORGANIZATIONS_PER_PAGE,
         sort: "name:asc",
-        searchPhrase: searchPhrase.value,
+        searchPhrase: formattedSearchPhrase.value,
       });
 
       organizations.value.push(...result.items);
