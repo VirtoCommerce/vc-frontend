@@ -212,7 +212,7 @@ export default async () => {
   }
   app.use(uiKit);
 
-  app.use(applicationInsightsPlugin);
+  app.use(applicationInsightsPlugin, { router });
 
   if (isPageBuilderPreviewMode()) {
     const builderPreviewPlugin = (await import("@/plugins/builder-preview/builder-preview.plugin").catch(Logger.error))
