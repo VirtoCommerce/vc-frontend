@@ -145,7 +145,7 @@ onMounted(() => {
     #{$list} & {
       @apply grid items-center;
 
-      @container (width < theme("containers.xl")) {
+      @container (max-width: theme("containers.xl")) {
         grid-template-areas:
           "media title"
           "media vendor"
@@ -217,7 +217,7 @@ onMounted(() => {
     #{$item} & {
       @apply grid items-center;
 
-      @container (width < theme("containers.2xl")) {
+      @container (max-width: theme("containers.2xl")) {
         grid-template-areas:
           "media title title"
           "media vendor vendor"

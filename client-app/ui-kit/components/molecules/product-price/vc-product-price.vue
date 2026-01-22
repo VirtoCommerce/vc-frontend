@@ -123,7 +123,7 @@ defineProps<IProps>();
         #{$wrapperSelector} {
           --font-size: theme("fontSize.lg");
 
-          @container (width < theme("containers.xl")) {
+          @container (max-width: theme("containers.xl")) {
             @apply self-start mt-1 flex-row items-center gap-x-1.5 flex-wrap;
           }
 
