@@ -569,23 +569,6 @@ export const ListTitleProductButton: StoryType = {
   ),
 };
 
-export const ListTitleProductButtons: StoryType = {
-  args: {
-    viewMode: "list",
-  },
-  render: renderCard(
-    `
-    <VcProductCard v-bind="args">
-      <VcProductImage v-bind="image" />
-      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
-      <VcProductButton buttonText="View product" to="#" />
-      <VcProductButton buttonText="Configure" to="#" variant="solid" />
-    </VcProductCard>
-  `,
-    { listTitle },
-  ),
-};
-
 export const ListTitleVendorPrice: StoryType = {
   args: {
     viewMode: "list",
