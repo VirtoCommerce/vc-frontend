@@ -19,6 +19,8 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
 <style lang="scss">
 .vc-markdown-render {
   --radius: var(--vc-markdown-render-radius, var(--vc-radius, 0.5rem));
+  --link-color: var(--vc-markdown-render-link-color, var(--color-link, theme("colors.accent.600")));
+  --link-hover-color: var(--vc-markdown-render-link-hover-color, var(--color-link-hover, theme("colors.accent.700")));
 
   font-size: 1rem;
   line-height: 1.5;
