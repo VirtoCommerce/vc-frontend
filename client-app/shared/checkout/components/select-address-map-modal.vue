@@ -52,6 +52,10 @@
                 :data-country="address.address?.countryName"
                 :data-region="address.address?.regionId"
                 :data-city="address.address?.city"
+                :data-line1="address.address?.line1"
+                :data-line2="address.address?.line2"
+                :data-pickup-point-name="address.name"
+                :data-coords="address.geoLocation"
                 class="select-address-map-modal__list-item"
               >
                 <VcRadioButton
@@ -59,8 +63,8 @@
                   :value="address.id"
                   class="select-address-map-modal__radio-button"
                   size="sm"
-                  @click="selectHandler(address, { scrollToSelectedOnMap: true, openInfo: true })"
                   :data-test-coords="address.geoLocation"
+                  @click="selectHandler(address, { scrollToSelectedOnMap: true, openInfo: true })"
                 >
                   <VcLabel size="xs">{{ address.name }}</VcLabel>
 

@@ -1,5 +1,8 @@
 <template>
-  <div v-if="isVisible && !loading && (hasContent || objectType || hasPageDocumentContent)" class="slug-content">
+  <div
+    v-if="isVisible && !loading && (hasContent || objectType || hasPageDocumentContent || isMarkdownContent)"
+    class="slug-content"
+  >
     <CatalogComponent v-if="objectType === ObjectType.Catalog" />
 
     <CategoryComponent
@@ -24,6 +27,8 @@
     />
 
     <VirtoPage v-else-if="hasPageDocumentContent" :page-document="pageDocumentContent" />
+
+    <VPMarkdown v-else-if="isMarkdownContent" :content="markdownContent" />
 
     <StaticPage v-else-if="hasContent" />
   </div>
@@ -53,6 +58,7 @@ const CatalogComponent = defineAsyncComponent(() => import("@/pages/catalog.vue"
 const CategoryComponent = defineAsyncComponent(() => import("@/pages/category.vue"));
 const Product = defineAsyncComponent(() => import("@/pages/product.vue"));
 const VirtoPage = defineAsyncComponent(() => import("@/pages/matcher/virto-pages/virto-pages.vue"));
+const VPMarkdown = defineAsyncComponent(() => import("@/pages/matcher/virto-pages/vp-markdown.vue"));
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
 const BrandsPage = defineAsyncComponent(() => import("@/pages/brands.vue"));
 const BrandPage = defineAsyncComponent(() => import("@/pages/brand.vue"));
@@ -81,6 +87,8 @@ const {
   pageContent,
   fetchContent,
   fetchPageDocumentContent,
+  isMarkdownContent,
+  markdownContent,
 } = useSlugInfo(seoUrl);
 
 enum ObjectType {
@@ -109,6 +117,8 @@ watchEffect(() => {
   ) {
     emitState("ready");
   } else if (pageDocumentContent.value) {
+    emitState("ready");
+  } else if (isMarkdownContent.value) {
     emitState("ready");
   } else if (pageContent.value) {
     emitState("ready");
