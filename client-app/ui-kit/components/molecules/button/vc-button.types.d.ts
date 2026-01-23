@@ -6,7 +6,7 @@ declare global {
   type VcButtonExposedType = {
     focus: () => void;
     blur: () => void;
-    el: HTMLElement | null;
+    el: Ref<HTMLElement | null>;
   };
 }
 
