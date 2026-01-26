@@ -48,7 +48,11 @@
               </VcDialogHeader>
 
               <VcDialogContent :scrollable="scrollable">
-                <slot :close="close" />
+                <template v-if="$slots.container" #container>
+                  <slot name="container" :close="close" />
+                </template>
+
+                <slot v-if="!$slots.container && $slots.default" :close="close" />
               </VcDialogContent>
 
               <VcDialogFooter v-if="!hideActions" @close="close">
@@ -152,7 +156,7 @@ defineExpose({ close });
   }
 
   &__dialog {
-    @apply flex items-center justify-center w-full h-[calc(100vh-2rem)] max-h-[calc(100vh-2rem)];
+    @apply flex items-center justify-center w-full h-[calc(100vh-2rem)] max-h-full;
 
     #{$mobileFullscreen} & {
       @media (max-width: theme("screens.md")) {

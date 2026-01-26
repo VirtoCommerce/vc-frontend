@@ -32,6 +32,8 @@ withDefaults(defineProps<IProps>(), {
 
   grid-area: vc-dialog-content;
 
+  @apply min-w-0;
+
   &--scrollable {
     $scrollable: &;
   }
