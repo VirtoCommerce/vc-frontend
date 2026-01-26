@@ -796,7 +796,11 @@
         "working_hours_label": "Orari di lavoro",
         "description_label": "Descrizione",
         "contact_phone_label": "Telefono di contatto",
-        "contact_email_label": "Email di contatto"
+        "contact_email_label": "Email di contatto",
+        "view_list": "Lista",
+        "view_map": "Mappa",
+        "pick_point_info_title": "Info punto di ritiro",
+        "pick_up_here": "Ritira qui"
       }
     },
     "bulk_order": {

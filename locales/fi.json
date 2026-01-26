@@ -796,7 +796,11 @@
         "working_hours_label": "Työajat",
         "description_label": "Kuvaus",
         "contact_phone_label": "Yhteystiedot puhelin",
-        "contact_email_label": "Yhteystiedot sähköposti"
+        "contact_email_label": "Yhteystiedot sähköposti",
+        "view_list": "Lista",
+        "view_map": "Kartta",
+        "pick_point_info_title": "Noutopisteen tiedot",
+        "pick_up_here": "Nouda täältä"
       }
     },
     "bulk_order": {

@@ -796,7 +796,11 @@
         "working_hours_label": "Working hours",
         "description_label": "Description",
         "contact_phone_label": "Contact phone",
-        "contact_email_label": "Contact email"
+        "contact_email_label": "Contact email",
+        "view_list": "List",
+        "view_map": "Map",
+        "pick_point_info_title": "Pick point info",
+        "pick_up_here": "Pick up here"
       }
     },
     "bulk_order": {

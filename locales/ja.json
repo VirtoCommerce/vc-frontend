@@ -796,7 +796,11 @@
         "working_hours_label": "営業時間",
         "description_label": "説明",
         "contact_phone_label": "電話番号",
-        "contact_email_label": "お問い合わせメールアドレス"
+        "contact_email_label": "お問い合わせメールアドレス",
+        "view_list": "リスト",
+        "view_map": "地図",
+        "pick_point_info_title": "受取スポット情報",
+        "pick_up_here": "ここで受け取る"
       }
     },
     "bulk_order": {

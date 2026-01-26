@@ -796,7 +796,11 @@
         "working_hours_label": "Arbetstider",
         "description_label": "Beskrivning",
         "contact_phone_label": "Kontakttelefon",
-        "contact_email_label": "Kontakt-e-post"
+        "contact_email_label": "Kontakt-e-post",
+        "view_list": "Lista",
+        "view_map": "Karta",
+        "pick_point_info_title": "Upphämtningsplatsinfo",
+        "pick_up_here": "Hämta här"
       }
     },
     "bulk_order": {

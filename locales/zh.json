@@ -796,7 +796,11 @@
         "working_hours_label": "工作时间",
         "description_label": "描述",
         "contact_phone_label": "联系电话",
-        "contact_email_label": "联系邮箱"
+        "contact_email_label": "联系邮箱",
+        "view_list": "列表",
+        "view_map": "地图",
+        "pick_point_info_title": "自提点信息",
+        "pick_up_here": "在此取货"
       }
     },
     "bulk_order": {
