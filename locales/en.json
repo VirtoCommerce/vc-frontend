@@ -792,7 +792,7 @@
       },
       "select_bopis_modal": {
         "title": "Pick points",
-        "location_label": "Location",
+        "location_label": "Address",
         "working_hours_label": "Working hours",
         "description_label": "Description",
         "contact_phone_label": "Contact phone",

@@ -792,7 +792,7 @@
       },
       "select_bopis_modal": {
         "title": "Upphämtningsplatser",
-        "location_label": "Plats",
+        "location_label": "Adress",
         "working_hours_label": "Arbetstider",
         "description_label": "Beskrivning",
         "contact_phone_label": "Kontakttelefon",

@@ -792,7 +792,7 @@
       },
       "select_bopis_modal": {
         "title": "Abholpunkte",
-        "location_label": "Standort",
+        "location_label": "Adresse",
         "working_hours_label": "Arbeitszeiten",
         "description_label": "Beschreibung",
         "contact_phone_label": "Telefonnummer",

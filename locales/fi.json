@@ -792,7 +792,7 @@
       },
       "select_bopis_modal": {
         "title": "Noutopaikat",
-        "location_label": "Sijainti",
+        "location_label": "Osoite",
         "working_hours_label": "Työajat",
         "description_label": "Kuvaus",
         "contact_phone_label": "Yhteystiedot puhelin",

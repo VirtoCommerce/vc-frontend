@@ -792,7 +792,7 @@
       },
       "select_bopis_modal": {
         "title": "Punti di ritiro",
-        "location_label": "Posizione",
+        "location_label": "Indirizzo",
         "working_hours_label": "Orari di lavoro",
         "description_label": "Descrizione",
         "contact_phone_label": "Telefono di contatto",

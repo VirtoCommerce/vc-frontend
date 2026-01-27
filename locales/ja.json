@@ -792,7 +792,7 @@
       },
       "select_bopis_modal": {
         "title": "受取スポット",
-        "location_label": "場所",
+        "location_label": "住所",
         "working_hours_label": "営業時間",
         "description_label": "説明",
         "contact_phone_label": "電話番号",

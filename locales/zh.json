@@ -792,7 +792,7 @@
       },
       "select_bopis_modal": {
         "title": "自提点",
-        "location_label": "位置",
+        "location_label": "地址",
         "working_hours_label": "工作时间",
         "description_label": "描述",
         "contact_phone_label": "联系电话",

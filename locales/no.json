@@ -792,7 +792,7 @@
       },
       "select_bopis_modal": {
         "title": "Hentepunkter",
-        "location_label": "Plassering",
+        "location_label": "Adresse",
         "working_hours_label": "Arbeidstimer",
         "description_label": "Beskrivelse",
         "contact_phone_label": "Kontakttelefon",
