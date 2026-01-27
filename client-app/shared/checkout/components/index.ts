@@ -2,7 +2,7 @@ export { default as AcceptedGifts } from "./accepted-gifts.vue";
 export { default as BillingDetailsSection } from "./billing-details-section.vue";
 export { default as OrderCommentSection } from "./order-comment-section.vue";
 export { default as OrderSummary } from "./order-summary.vue";
-export { default as PickupLocationInfoCard } from "./pickup-location-info-card.vue";
+export { default as PickupLocationCard } from "./pickup-location-card.vue";
 export { default as PlaceOrder } from "./place-order.vue";
 export { default as ProceedTo } from "./proceed-to.vue";
 export { default as SelectAddressFilter } from "./select-address-filter.vue";

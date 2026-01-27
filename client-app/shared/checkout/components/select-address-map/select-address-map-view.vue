@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from "vue";
+import { computed } from "vue";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
 import { Logger } from "@/core/utilities/logger";
 import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
@@ -49,8 +49,7 @@ const props = defineProps<IProps>();
 
 const MAP_ID = "select-bopis-map-modal";
 
-const addresses = toRef(props, "addresses");
-const addressesKey = computed(() => addresses.value.map((a) => a.id).join("-"));
+const addressesKey = computed(() => props.addresses.map((a) => a.id).join("-"));
 
 // Pin styling
 const pinColor = getColorValue("primary");

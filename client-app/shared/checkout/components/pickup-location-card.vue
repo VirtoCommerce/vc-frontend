@@ -1,22 +1,22 @@
 <template>
-  <VcDialog v-if="location" dividers class="pickup-location-info-card">
+  <VcDialog v-if="location" dividers class="pickup-location-card">
     <VcDialogHeader @close="$emit('close')">
       {{ $t("shared.checkout.select_bopis_modal.pick_point_info_title") }}
     </VcDialogHeader>
 
     <VcDialogContent>
-      <div class="pickup-location-info-card__content">
-        <div class="pickup-location-info-card__name">
+      <div class="pickup-location-card__content">
+        <div class="pickup-location-card__name">
           {{ location.name }}
         </div>
 
         <PickupAvailabilityInfo
-          class="pickup-location-info-card__availability"
+          class="pickup-location-card__availability"
           :availability-type="location.availabilityType"
           :availability-note="location.availabilityNote"
         />
 
-        <dl class="pickup-location-info-card__info">
+        <dl class="pickup-location-card__info">
           <dt>{{ $t("shared.checkout.select_bopis_modal.location_label") }}</dt>
 
           <dd>{{ getAddressName(location) }}</dd>
@@ -25,7 +25,7 @@
             <dt>{{ $t("shared.checkout.select_bopis_modal.working_hours_label") }}</dt>
 
             <dd>
-              <VcMarkdownRender class="pickup-location-info-card__working-hours" :src="location.workingHours" />
+              <VcMarkdownRender class="pickup-location-card__working-hours" :src="location.workingHours" />
             </dd>
           </template>
 
@@ -92,7 +92,7 @@ function onSelect() {
 </script>
 
 <style lang="scss">
-.pickup-location-info-card {
+.pickup-location-card {
   @apply flex flex-col h-full max-h-full;
 
   &__content {

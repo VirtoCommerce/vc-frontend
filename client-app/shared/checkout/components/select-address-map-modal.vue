@@ -43,6 +43,7 @@ withDefaults(defineProps<IProps>(), {
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
+// Mobile layout for screens smaller than md (768px)
 const isMobile = breakpoints.smaller("md");
 </script>
 

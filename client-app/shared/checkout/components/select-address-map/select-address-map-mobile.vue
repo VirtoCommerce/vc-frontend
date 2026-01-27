@@ -1,5 +1,5 @@
 <template>
-  <div class="select-address-map-mobile">
+  <div class="select-address-map-mobile" data-test-id="select-address-map-mobile">
     <template v-if="addresses.length || filterIsApplied">
       <div class="select-address-map-mobile__container">
         <SelectAddressFilter class="select-address-map-mobile__filter" @applyFilter="applyFilter" />
@@ -23,16 +23,23 @@
           :addresses="addresses"
           :selected-address-id="selectedAddressId"
           class="select-address-map-mobile__map"
+          data-test-id="pickup-locations-map"
           @select="onSelect"
         />
       </div>
 
       <div class="select-address-map-mobile__actions">
-        <VcButton v-if="activeView === 'map'" prepend-icon="list" size="sm" @click="activeView = 'list'">
+        <VcButton
+          v-if="activeView === 'map'"
+          prepend-icon="list"
+          size="sm"
+          data-test-id="view-list-button"
+          @click="activeView = 'list'"
+        >
           {{ $t("shared.checkout.select_bopis_modal.view_list") }}
         </VcButton>
 
-        <VcButton v-else prepend-icon="map" size="sm" @click="activeView = 'map'">
+        <VcButton v-else prepend-icon="map" size="sm" data-test-id="view-map-button" @click="activeView = 'map'">
           {{ $t("shared.checkout.select_bopis_modal.view_map") }}
         </VcButton>
       </div>
@@ -40,9 +47,10 @@
       <!-- Info card with slide-up animation -->
       <div v-if="selectedLocation" class="select-address-map-mobile__info-card">
         <Transition name="slide-up" @after-leave="onTransitionAfterLeave">
-          <PickupLocationInfoCard
+          <PickupLocationCard
             v-if="isInfoCardVisible"
             :location="selectedLocation"
+            data-test-id="pickup-location-card"
             @select="onCardSelect"
             @close="onInfoCardClose"
           />
@@ -61,7 +69,7 @@ import { nextTick, ref, toRef } from "vue";
 import { SelectAddressFilter } from "@/shared/checkout";
 import { useSelectAddressMap } from "@/shared/checkout/composables";
 import { useModal } from "@/shared/modal";
-import PickupLocationInfoCard from "../pickup-location-info-card.vue";
+import PickupLocationCard from "../pickup-location-card.vue";
 import SelectAddressMapList from "./select-address-map-list.vue";
 import SelectAddressMapView from "./select-address-map-view.vue";
 import type { PickupLocationType } from "@/shared/checkout/composables";

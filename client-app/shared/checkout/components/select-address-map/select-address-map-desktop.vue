@@ -1,5 +1,9 @@
 <template>
-  <div v-if="addresses.length || filterIsApplied" class="select-address-map-desktop">
+  <div
+    v-if="addresses.length || filterIsApplied"
+    class="select-address-map-desktop"
+    data-test-id="select-address-map-desktop"
+  >
     <SelectAddressFilter @applyFilter="applyFilter" />
 
     <div class="select-address-map-desktop__content">
@@ -21,14 +25,16 @@
           :addresses="addresses"
           :selected-address-id="selectedAddressId"
           class="select-address-map-desktop__map"
+          data-test-id="pickup-locations-map"
           @select="onMapSelect"
         />
 
         <Transition name="slide">
-          <PickupLocationInfoCard
+          <PickupLocationCard
             v-if="infoCardLocation"
             :location="infoCardLocation"
             :class="['select-address-map-desktop__card', { 'select-address-map-desktop__card--pulse': isPulsing }]"
+            data-test-id="pickup-location-card"
             @close="closeInfoCard"
             @select="onCardSelect"
           />
@@ -45,7 +51,7 @@ import { toRef } from "vue";
 import { SelectAddressFilter } from "@/shared/checkout";
 import { useSelectAddressMap } from "@/shared/checkout/composables";
 import { useModal } from "@/shared/modal";
-import PickupLocationInfoCard from "../pickup-location-info-card.vue";
+import PickupLocationCard from "../pickup-location-card.vue";
 import SelectAddressMapList from "./select-address-map-list.vue";
 import SelectAddressMapView from "./select-address-map-view.vue";
 import type { PickupLocationType } from "@/shared/checkout/composables";
