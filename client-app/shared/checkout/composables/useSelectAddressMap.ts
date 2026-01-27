@@ -18,6 +18,15 @@ interface IUseSelectAddressMapOptions {
 
 const MAP_ID = "select-bopis-map-modal";
 
+function getLatLng(location: string | undefined) {
+  try {
+    return geoLocationStringToLatLng(location);
+  } catch (error) {
+    Logger.warn("Failed to parse geo location", error);
+    return null;
+  }
+}
+
 export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
   const { addresses, currentAddress, onFilterChange } = options;
 
@@ -32,16 +41,6 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
   const infoCardLocation = ref<PickupLocationType | undefined>(undefined);
   const isPulsing = ref(false);
   let pulseTimerId: ReturnType<typeof setTimeout> | null = null;
-
-  // Geo utilities
-  function getLatLng(location: string | undefined) {
-    try {
-      return geoLocationStringToLatLng(location);
-    } catch (error) {
-      Logger.warn("Failed to parse geo location", error);
-      return null;
-    }
-  }
 
   // Info card management
   function showLocationInfoCard(address: PickupLocationType) {
@@ -138,7 +137,7 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
     if (newMap && newCurrentAddress?.id) {
       const address = addresses.value.find(({ id }) => id === newCurrentAddress.id);
 
-      if (address && address.geoLocation) {
+      if (address?.geoLocation) {
         const latLng = getLatLng(address.geoLocation);
         if (latLng) {
           zoomToLatLng(latLng);
