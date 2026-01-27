@@ -205,9 +205,6 @@ function removeFilterCity(value: string) {
 
   &__filter-group {
     @apply inline-flex gap-2 px-5;
-
-    @media (min-width: theme("screens.md")) {
-    }
   }
 
   &__filter-keyword {
