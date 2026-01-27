@@ -99,6 +99,8 @@ function onCardSelect(locationId: string) {
 
 <style lang="scss">
 .select-address-map-desktop {
+  --pulse-animation-duration: 0.2s;
+
   @apply px-6 h-full max-h-full;
 
   &__content {
@@ -125,7 +127,7 @@ function onCardSelect(locationId: string) {
     @apply absolute inset-y-3 left-3 w-60;
 
     &--pulse {
-      animation: pulse-scale 0.2s ease-out;
+      animation: pulse-scale var(--pulse-animation-duration) ease-out;
     }
   }
 

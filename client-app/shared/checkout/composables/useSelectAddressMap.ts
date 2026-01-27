@@ -24,7 +24,7 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
   const { zoomToMarkers, markers, zoomToLatLng, onceIdle, map } = useGoogleMaps(MAP_ID);
   const { filterIsApplied, clearFilter, pickupLocationsLoading } = useCartPickupLocations();
 
-  // Constants
+  // Constants (synced with --pulse-animation-duration in select-address-map-desktop.vue)
   const PULSE_ANIMATION_DURATION_MS = 200;
 
   // State

@@ -24,6 +24,10 @@ const defaults = {
   options: {},
 };
 
+// Animation timing constants
+const PAN_TO_ZOOM_DELAY_MS = 300;
+const IDLE_CALLBACK_TIMEOUT_MS = 500;
+
 // Global storage for all map instances
 const mapInstances = new Map<string, IMapInstance>();
 
@@ -222,14 +226,14 @@ export function useGoogleMaps(mapId: string) {
       setTimeout(() => {
         const inst = mapInstances.get(mapId);
         inst?.map.value?.setZoom(zoom);
-      }, 300);
+      }, PAN_TO_ZOOM_DELAY_MS);
     } else {
       mapInstance.setZoom(zoom);
       mapInstance.panTo(latLng);
     }
   }
 
-  function onceIdle(callback: () => void, timeout: number = 500) {
+  function onceIdle(callback: () => void, timeout: number = IDLE_CALLBACK_TIMEOUT_MS) {
     const currentInstance = mapInstances.get(mapId);
     if (!currentInstance?.map.value) {
       return;

@@ -39,12 +39,12 @@
 
       <!-- Info card with slide-up animation -->
       <div v-if="selectedLocation" class="select-address-map-mobile__info-card">
-        <Transition name="slide-up" @after-leave="selectedLocation = undefined">
+        <Transition name="slide-up" @after-leave="onTransitionAfterLeave">
           <PickupLocationInfoCard
             v-if="isInfoCardVisible"
             :location="selectedLocation"
             @select="onCardSelect"
-            @close="isInfoCardVisible = false"
+            @close="onInfoCardClose"
           />
         </Transition>
       </div>
@@ -88,6 +88,7 @@ const { closeModal } = useModal();
 const activeView = ref<ViewModeType>("list");
 const selectedLocation = ref<PickupLocationType>();
 const isInfoCardVisible = ref(false);
+const closingLocationId = ref<string>();
 
 const { selectedAddressId, filterIsApplied, pickupLocationsLoading, selectAddress, applyFilter, resetFilter } =
   useSelectAddressMap({
@@ -107,6 +108,19 @@ function onSelect(address: PickupLocationType) {
 function onCardSelect(locationId: string) {
   emit("result", locationId);
   closeModal();
+}
+
+function onInfoCardClose() {
+  closingLocationId.value = selectedLocation.value?.id;
+  isInfoCardVisible.value = false;
+}
+
+function onTransitionAfterLeave() {
+  // Only clear if no new location was selected during animation
+  if (selectedLocation.value?.id === closingLocationId.value) {
+    selectedLocation.value = undefined;
+  }
+  closingLocationId.value = undefined;
 }
 </script>
 
