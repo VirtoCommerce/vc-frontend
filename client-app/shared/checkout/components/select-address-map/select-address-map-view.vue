@@ -56,7 +56,7 @@ const addressesKey = computed(() => addresses.value.map((a) => a.id).join("-"));
 const pinColor = getColorValue("primary");
 const parser = new DOMParser();
 const cube = parser.parseFromString(cubeIcon, "image/svg+xml").documentElement;
-cube.classList.add("select-address-map-modal__marker-glyph");
+cube.classList.add("select-address-map-view__marker-glyph");
 
 function cloneElement<T extends Element>(el: T): T {
   return el.cloneNode(true) as T;
@@ -90,5 +90,9 @@ function getLatLng(location: string | undefined) {
 <style lang="scss">
 .select-address-map-view {
   @apply grow w-full h-full;
+
+  &__marker-glyph {
+    @apply fill-additional-50 size-6;
+  }
 }
 </style>

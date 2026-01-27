@@ -1,11 +1,8 @@
-import { computed, ref, watch } from "vue";
-import { getAddressName } from "@/core/utilities/address";
+import { onScopeDispose, ref, watch } from "vue";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
 import { Logger } from "@/core/utilities/logger";
 import { useCartPickupLocations } from "@/shared/cart";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
-import cubeIcon from "@/ui-kit/icons/cube.svg?raw";
-import { getColorValue } from "@/ui-kit/utilities/css";
 import type { GetCartPickupLocationsQuery } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
@@ -27,36 +24,14 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
   const { zoomToMarkers, markers, zoomToLatLng, onceIdle, map } = useGoogleMaps(MAP_ID);
   const { filterIsApplied, clearFilter, pickupLocationsLoading } = useCartPickupLocations();
 
+  // Constants
+  const PULSE_ANIMATION_DURATION_MS = 200;
+
   // State
-  const addressesKey = computed(() => addresses.value.map((a) => a.id).join("-"));
   const selectedAddressId = ref<string | undefined>(currentAddress.value?.id);
   const infoCardLocation = ref<PickupLocationType | undefined>(undefined);
   const isPulsing = ref(false);
-
-  // Pin styling
-  const pinColor = getColorValue("primary");
-  const parser = new DOMParser();
-  const cube = parser.parseFromString(cubeIcon, "image/svg+xml").documentElement;
-  cube.classList.add("select-address-map-modal__marker-glyph");
-
-  function cloneElement<T extends Element>(el: T): T {
-    return el.cloneNode(true) as T;
-  }
-
-  const activePinOptions = {
-    background: getColorValue("success"),
-    borderColor: getColorValue("success"),
-    scale: 1.7,
-  };
-
-  function createPin() {
-    return {
-      background: pinColor,
-      borderColor: pinColor,
-      glyph: cloneElement(cube),
-      scale: 1.5,
-    };
-  }
+  let pulseTimerId: ReturnType<typeof setTimeout> | null = null;
 
   // Geo utilities
   function getLatLng(location: string | undefined) {
@@ -71,10 +46,14 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
   // Info card management
   function showLocationInfoCard(address: PickupLocationType) {
     if (infoCardLocation.value && infoCardLocation.value.id !== address.id) {
+      if (pulseTimerId) {
+        clearTimeout(pulseTimerId);
+      }
       isPulsing.value = true;
-      setTimeout(() => {
+      pulseTimerId = setTimeout(() => {
         isPulsing.value = false;
-      }, 200);
+        pulseTimerId = null;
+      }, PULSE_ANIMATION_DURATION_MS);
     }
     infoCardLocation.value = address;
     if (address.id) {
@@ -170,26 +149,23 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
     }
   });
 
-  return {
-    // Constants
-    MAP_ID,
+  // Cleanup
+  onScopeDispose(() => {
+    if (pulseTimerId) {
+      clearTimeout(pulseTimerId);
+      pulseTimerId = null;
+    }
+  });
 
+  return {
     // State
-    addressesKey,
     selectedAddressId,
     infoCardLocation,
     isPulsing,
     filterIsApplied,
     pickupLocationsLoading,
 
-    // Pin options
-    activePinOptions,
-    createPin,
-
     // Methods
-    getLatLng,
-    getAddressName,
-    showLocationInfoCard,
     closeInfoCard,
     selectAddress,
     applyFilter,

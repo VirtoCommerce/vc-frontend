@@ -49,9 +49,5 @@ const isMobile = breakpoints.smaller("md");
 <style lang="scss">
 .select-address-map-modal {
   --vc-dialog-max-height: 100%;
-
-  &__marker-glyph {
-    @apply fill-additional-50 size-6;
-  }
 }
 </style>
