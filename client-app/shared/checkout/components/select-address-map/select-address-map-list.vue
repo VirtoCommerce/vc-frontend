@@ -22,9 +22,9 @@
           :data-test-coords="address.geoLocation"
           @click="$emit('select', address)"
         >
-          <VcLabel size="xs">{{ address.name }}</VcLabel>
+          <div class="select-address-map-list__label">{{ address.name }}</div>
 
-          <p class="select-address-map-list__address">{{ getAddressName(address) }}</p>
+          <div class="select-address-map-list__address">{{ getAddressName(address) }}</div>
 
           <PickupAvailabilityInfo
             class="select-address-map-list__pickup-availability"
@@ -82,6 +82,14 @@ defineProps<IProps>();
 
   &__radio-button {
     @apply flex flex-col gap-0.5;
+  }
+
+  &__label {
+    @apply mb-0.5 text-base/none font-bold;
+
+    @media (min-width: theme("screens.md")) {
+      @apply text-xs;
+    }
   }
 
   &__address {
