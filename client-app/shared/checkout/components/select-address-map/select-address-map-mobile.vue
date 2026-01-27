@@ -2,7 +2,7 @@
   <div class="select-address-map-mobile" data-test-id="select-address-map-mobile">
     <template v-if="addresses.length || filterIsApplied">
       <div class="select-address-map-mobile__container">
-        <SelectAddressFilter class="select-address-map-mobile__filter" @applyFilter="applyFilter" />
+        <SelectAddressFilter class="select-address-map-mobile__filter" @apply-filter="applyFilter" />
       </div>
 
       <div class="select-address-map-mobile__content">
@@ -51,8 +51,8 @@
             v-if="isInfoCardVisible"
             :location="selectedLocation"
             data-test-id="pickup-location-card"
-            @select="onCardSelect"
             @close="onInfoCardClose"
+            @select="onCardSelect"
           />
         </Transition>
       </div>
@@ -77,7 +77,7 @@ import type { PickupLocationType } from "@/shared/checkout/composables";
 type ViewModeType = "list" | "map";
 
 interface IProps {
-  addresses?: PickupLocationType[];
+  addresses: PickupLocationType[];
   apiKey: string;
   currentAddress?: { id: string };
 }
@@ -88,9 +88,7 @@ interface IEmits {
 }
 
 const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  addresses: () => [],
-});
+const props = defineProps<IProps>();
 
 const { closeModal } = useModal();
 const activeView = ref<ViewModeType>("list");

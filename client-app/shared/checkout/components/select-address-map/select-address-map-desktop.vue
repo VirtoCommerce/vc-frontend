@@ -4,7 +4,7 @@
     class="select-address-map-desktop"
     data-test-id="select-address-map-desktop"
   >
-    <SelectAddressFilter @applyFilter="applyFilter" />
+    <SelectAddressFilter @apply-filter="applyFilter" />
 
     <div class="select-address-map-desktop__content">
       <VcLoaderOverlay v-if="pickupLocationsLoading" />
@@ -57,7 +57,7 @@ import SelectAddressMapView from "./select-address-map-view.vue";
 import type { PickupLocationType } from "@/shared/checkout/composables";
 
 interface IProps {
-  addresses?: PickupLocationType[];
+  addresses: PickupLocationType[];
   apiKey: string;
   currentAddress?: { id: string };
 }
@@ -68,9 +68,7 @@ interface IEmits {
 }
 
 const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  addresses: () => [],
-});
+const props = defineProps<IProps>();
 const { closeModal } = useModal();
 
 const {
