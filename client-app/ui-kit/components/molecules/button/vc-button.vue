@@ -60,6 +60,7 @@
 import { eagerComputed } from "@vueuse/core";
 import { computed, inject, ref } from "vue";
 import { vcDialogKey } from "../../atoms/dialog/vc-dialog-context";
+import type { ComponentPublicInstance } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -180,20 +181,36 @@ const attrs = computed(() => {
   return attributes;
 });
 
-const elementRef = ref<HTMLElement | null>(null);
+const elementRef = ref<HTMLElement | ComponentPublicInstance | null>(null);
+
+function getElement(): HTMLElement | null {
+  const el = elementRef.value;
+  if (!el) {
+    return null;
+  }
+
+  // Native HTML elements (button, a, etc.)
+  if (el instanceof HTMLElement) {
+    return el;
+  }
+
+  // Vue component instances (RouterLink, custom components via tag prop)
+  const rootEl = el.$el;
+  return rootEl instanceof HTMLElement ? rootEl : null;
+}
 
 function focus(): void {
-  elementRef.value?.focus();
+  getElement()?.focus();
 }
 
 function blur(): void {
-  elementRef.value?.blur();
+  getElement()?.blur();
 }
 
 defineExpose({
   focus,
   blur,
-  el: elementRef,
+  el: computed(() => getElement()),
 });
 </script>
 
