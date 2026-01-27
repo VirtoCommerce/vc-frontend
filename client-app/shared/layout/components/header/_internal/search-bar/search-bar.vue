@@ -7,6 +7,7 @@
       class="search-bar__input"
       :clearable="!!searchPhrase"
       :placeholder="searchPlaceholder"
+      test-id-input="global-search-query-input"
       @clear="reset"
       @keyup.esc="hideSearchDropdown"
       @keyup.arrow-down="focusFirstItem"
@@ -55,6 +56,7 @@
           icon="search"
           icon-size="1.25rem"
           :loading="loading"
+          data-test-id="global-search-apply-button"
           @click="searchDropdownRef?.handleSearch()"
         />
       </template>
@@ -70,6 +72,7 @@
         :filter-expression="filterExpression"
         :categories-filter-expression="categoriesFilterExpression"
         :is-category-scope="isCategoryScope"
+        data-test-id="global-search-suggestions-dropdown"
         @hide="hideSearchDropdown"
         @product-select="handleProductSelect"
       />
