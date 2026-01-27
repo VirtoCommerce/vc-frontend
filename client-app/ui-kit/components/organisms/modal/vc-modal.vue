@@ -129,10 +129,6 @@ defineExpose({ close });
 
   @apply fixed top-0 left-0 w-full h-full z-50;
 
-  @media (min-width: theme("screens.md")) {
-    --vc-dialog-max-height: 48rem;
-  }
-
   &--mobile-fullscreen {
     $mobileFullscreen: &;
   }
