@@ -18,5 +18,8 @@ export function highlightSearchText(text: string, rawSearchText: string): string
 
   const searchRegexp = escapeRegExp(cleanedText);
 
-  return text.replace(new RegExp(searchRegexp, "i"), "<span class='font-black'>$&</span>");
+  return text.replace(
+    new RegExp(searchRegexp, "i"),
+    "<span class='font-black' data-test-id='highlighted-text'>$&</span>",
+  );
 }
