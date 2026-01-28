@@ -7,6 +7,7 @@
       class="search-bar__input"
       :clearable="!!searchPhrase"
       :placeholder="searchPlaceholder"
+      test-id-input="global-search-query-input"
       @clear="reset"
       @keyup.esc="hideSearchDropdown"
       @keyup.arrow-down="focusFirstItem"
@@ -55,6 +56,7 @@
           icon="search"
           icon-size="1.25rem"
           :loading="loading"
+          data-test-id="global-search-apply-button"
           @click="searchDropdownRef?.handleSearch()"
         />
       </template>
@@ -70,6 +72,7 @@
         :filter-expression="filterExpression"
         :categories-filter-expression="categoriesFilterExpression"
         :is-category-scope="isCategoryScope"
+        data-test-id="global-search-suggestions-dropdown"
         @hide="hideSearchDropdown"
         @product-select="handleProductSelect"
       />
@@ -79,7 +82,7 @@
 
 <script setup lang="ts">
 import { onClickOutside, useElementBounding, useLocalStorage } from "@vueuse/core";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -99,8 +102,8 @@ import SearchDropdown from "../search-dropdown.vue";
 import BarcodeScanner from "./barcode-scanner.vue";
 import type { StyleValue } from "vue";
 
-const searchBarElement = ref<HTMLElement | null>(null);
-const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
+const searchBarElement = useTemplateRef("searchBarElement");
+const searchDropdownRef = useTemplateRef<InstanceType<typeof SearchDropdown>>("searchDropdownRef");
 
 const { searchDropdownVisible, loading, hideSearchDropdown, showSearchDropdown, clearSearchResults, maxSearchLength } =
   useSearchBar();
