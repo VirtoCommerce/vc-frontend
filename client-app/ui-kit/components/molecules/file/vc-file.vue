@@ -46,6 +46,7 @@
           <VcButton
             v-if="reloadable"
             :class="{ invisible: !reloadable }"
+            :aria-label="$t('ui_kit.file.reload')"
             variant="no-background"
             color="accent"
             size="xxs"
@@ -55,6 +56,7 @@
 
           <VcButton
             v-if="removable"
+            :aria-label="$t('ui_kit.file.remove')"
             variant="no-background"
             color="neutral"
             size="xxs"

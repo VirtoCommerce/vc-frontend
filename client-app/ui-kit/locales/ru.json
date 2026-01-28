@@ -77,7 +77,9 @@
     },
     "file": {
       "progress": "{percent} выполнено",
-      "uploaded": "Загрузка завершена"
+      "uploaded": "Загрузка завершена",
+      "reload": "Перезагрузить файл",
+      "remove": "Удалить файл"
     },
     "file_uploader": {
       "drag_and_drop": "Перетащите файл сюда или",

@@ -77,7 +77,9 @@
     },
     "file": {
       "progress": "{percent} 完了",
-      "uploaded": "アップロード完了"
+      "uploaded": "アップロード完了",
+      "reload": "ファイルを再読み込み",
+      "remove": "ファイルを削除"
     },
     "file_uploader": {
       "drag_and_drop": "ここにファイルをドラッグ＆ドロップまたは",
