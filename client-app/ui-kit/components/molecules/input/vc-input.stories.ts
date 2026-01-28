@@ -63,7 +63,11 @@ const commonArgs = {
   message: "Hint message",
 };
 
-export const Basic: StoryType = {};
+export const Basic: StoryType = {
+  args: {
+    ariaLabel: "Input field",
+  },
+};
 
 export const Common: StoryType = {
   args: commonArgs,
