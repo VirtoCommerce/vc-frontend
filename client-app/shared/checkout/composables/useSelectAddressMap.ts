@@ -86,6 +86,8 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
         if (selectOptions.openInfo) {
           onceIdle(() => showLocationInfoCard(address));
         }
+      } else if (selectOptions.openInfo) {
+        showLocationInfoCard(address);
       }
     } else if (selectOptions.openInfo) {
       showLocationInfoCard(address);
