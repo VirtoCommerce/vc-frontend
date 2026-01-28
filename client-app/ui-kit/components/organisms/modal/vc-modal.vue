@@ -37,8 +37,8 @@
           leave-to="opacity-0 scale-95"
           @after-leave="$emit('close')"
         >
-          <DialogPanel class="vc-modal__dialog" :style="{ maxWidth }">
-            <VcDialog :dividers="dividers">
+          <DialogPanel class="vc-modal__panel" :style="{ maxWidth }">
+            <VcDialog class="vc-modal__dialog" :dividers="dividers">
               <VcDialogHeader :icon="icon" :color="variant" :closable="!isPersistent" @close="close">
                 <DialogTitle>
                   <slot name="title">
@@ -151,7 +151,7 @@ defineExpose({ close });
     }
   }
 
-  &__dialog {
+  &__panel {
     @apply flex items-center justify-center w-full h-[calc(100vh-2rem)] max-h-full;
 
     #{$mobileFullscreen} & {
@@ -163,6 +163,12 @@ defineExpose({ close });
           @apply max-h-full h-full rounded-none;
         }
       }
+    }
+  }
+
+  &__dialog {
+    @media (min-width: theme("screens.md")) {
+      @apply h-full;
     }
   }
 }

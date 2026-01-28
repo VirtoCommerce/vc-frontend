@@ -46,3 +46,11 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 // Mobile layout for screens smaller than md (768px)
 const isMobile = breakpoints.smaller("md");
 </script>
+
+<style lang="scss">
+.select-address-map-modal {
+  @media (min-width: theme("screens.md")) {
+    --vc-dialog-max-height: 48rem;
+  }
+}
+</style>

@@ -155,7 +155,7 @@ function onTransitionAfterLeave() {
   }
 
   &__info-card {
-    @apply absolute inset-0 z-10;
+    @apply absolute inset-0 z-10 p-4 bg-additional-950/40;
 
     .slide-up-enter-active,
     .slide-up-leave-active {
