@@ -92,7 +92,7 @@ export const ErrorState: StoryType = {
 export const TypePassword: StoryType = {
   args: {
     ...commonArgs,
-    autocomplete: "password",
+    autocomplete: "current-password",
     type: "password",
   },
 };
