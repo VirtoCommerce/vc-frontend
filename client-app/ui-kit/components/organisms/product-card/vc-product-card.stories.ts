@@ -471,3 +471,204 @@ export const LineItemQuantityStepper: StoryType = {
     </VcProductCard>
   `),
 };
+
+// ===== List View Stories =====
+
+const listTitle = { ...title, fixHeight: true };
+
+export const ListTitleOnly: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  render: renderCard(
+    `
+    <VcProductCard v-bind="args">
+      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
+    </VcProductCard>
+  `,
+    { listTitle },
+  ),
+};
+
+export const ListImageTitle: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  render: renderCard(
+    `
+    <VcProductCard v-bind="args">
+      <VcProductImage v-bind="image" />
+      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
+    </VcProductCard>
+  `,
+    { listTitle },
+  ),
+};
+
+export const ListTitleVendor: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  render: renderCard(
+    `
+    <VcProductCard v-bind="args">
+      <VcProductImage v-bind="image" />
+      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
+      <VcProductVendor>Product Vendor</VcProductVendor>
+    </VcProductCard>
+  `,
+    { listTitle },
+  ),
+};
+
+export const ListTitlePrice: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  render: renderCard(
+    `
+    <VcProductCard v-bind="args">
+      <VcProductImage v-bind="image" />
+      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
+      <VcProductPrice v-bind="price" />
+    </VcProductCard>
+  `,
+    { listTitle },
+  ),
+};
+
+export const ListTitleAddToCart: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  render: renderCard(
+    `
+    <VcProductCard v-bind="args">
+      <VcProductImage v-bind="image" />
+      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
+      <VcAddToCart v-bind="availabilityData" />
+    </VcProductCard>
+  `,
+    { listTitle },
+  ),
+};
+
+export const ListTitleProductButton: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  render: renderCard(
+    `
+    <VcProductCard v-bind="args">
+      <VcProductImage v-bind="image" />
+      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
+      <VcProductButton buttonText="View product" to="#" />
+    </VcProductCard>
+  `,
+    { listTitle },
+  ),
+};
+
+export const ListTitleVendorPrice: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  render: renderCard(
+    `
+    <VcProductCard v-bind="args">
+      <VcProductImage v-bind="image" />
+      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
+      <VcProductVendor>Product Vendor</VcProductVendor>
+      <VcProductPrice v-bind="price" />
+    </VcProductCard>
+  `,
+    { listTitle },
+  ),
+};
+
+export const ListTitlePriceAddToCart: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  render: renderCard(
+    `
+    <VcProductCard v-bind="args">
+      <VcProductImage v-bind="image" />
+      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
+      <VcProductPrice v-bind="price" />
+      <VcAddToCart v-bind="availabilityData" />
+    </VcProductCard>
+  `,
+    { listTitle },
+  ),
+};
+
+export const ListTitleVendorAddToCart: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  render: renderCard(
+    `
+    <VcProductCard v-bind="args">
+      <VcProductImage v-bind="image" />
+      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
+      <VcProductVendor>Product Vendor</VcProductVendor>
+      <VcAddToCart v-bind="availabilityData" />
+    </VcProductCard>
+  `,
+    { listTitle },
+  ),
+};
+
+export const ListTitleVendorPriceAddToCart: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  render: renderCard(
+    `
+    <VcProductCard v-bind="args">
+      <VcProductImage v-bind="image" />
+      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
+      <VcProductVendor>Product Vendor</VcProductVendor>
+      <VcProductPrice v-bind="price" />
+      <VcAddToCart v-bind="availabilityData" />
+    </VcProductCard>
+  `,
+    { listTitle },
+  ),
+};
+
+export const ListTitlePriceProductButton: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  render: renderCard(
+    `
+    <VcProductCard v-bind="args">
+      <VcProductImage v-bind="image" />
+      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
+      <VcProductPrice v-bind="price" />
+      <VcProductButton buttonText="View product" to="#" />
+    </VcProductCard>
+  `,
+    { listTitle },
+  ),
+};
+
+export const ListTitleVendorPriceProductButton: StoryType = {
+  args: {
+    viewMode: "list",
+  },
+  render: renderCard(
+    `
+    <VcProductCard v-bind="args">
+      <VcProductImage v-bind="image" />
+      <VcProductTitle v-bind="listTitle">Product title Product title</VcProductTitle>
+      <VcProductVendor>Product Vendor</VcProductVendor>
+      <VcProductPrice v-bind="price" />
+      <VcProductButton buttonText="View product" to="#" />
+    </VcProductCard>
+  `,
+    { listTitle },
+  ),
+};

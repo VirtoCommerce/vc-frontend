@@ -199,7 +199,7 @@ function slideChanged(swiper: SwiperInstance) {
       &--list #{$self} {
         @apply size-[4.5rem];
 
-        @container (min-width: theme("containers.xl")) {
+        @container (min-width: theme("containers.2xl")) {
           @apply me-3 size-[5.375rem];
         }
       }
