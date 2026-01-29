@@ -7,7 +7,7 @@
     :class="['vc-nav-button', `vc-nav-button--size--${size}`]"
     @click="$emit('click', $event)"
   >
-    <VcIcon :name="`chevron-${direction}`" aria-hidden="true" />
+    <VcIcon :name="iconName" aria-hidden="true" />
   </button>
 </template>
 
@@ -24,6 +24,7 @@ interface IProps {
   direction?: "left" | "right" | "up" | "down";
   disabled?: boolean;
   label?: string;
+  icon?: string;
 }
 
 defineEmits<IEmits>();
@@ -43,6 +44,7 @@ const directionLabelKeys: Record<NonNullable<IProps["direction"]>, string> = {
   down: "ui_kit.accessibility.nav_down",
 };
 
+const iconName = computed(() => props.icon || `chevron-${props.direction}`);
 const accessibleLabel = computed(() => props.label || t(directionLabelKeys[props.direction]));
 </script>
 
