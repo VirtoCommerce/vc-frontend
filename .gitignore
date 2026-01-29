@@ -34,10 +34,6 @@ tags
 !.vscode/extensions.json
 .history/*
 
-# AI
-CLAUDE.md
-.claude
-
 # Visual Studio 2015/2017 cache/options directory
 .vs/*
 
@@ -73,3 +69,7 @@ dist-ssr
 
 # https certificates
 .certificates/*
+
+# AI tools (local config files only)
+*.local.md
+.claude/**/*.local.*
