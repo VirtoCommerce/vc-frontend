@@ -34,6 +34,10 @@ tags
 !.vscode/extensions.json
 .history/*
 
+# AI
+CLAUDE.md
+.claude
+
 # Visual Studio 2015/2017 cache/options directory
 .vs/*
 
