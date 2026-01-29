@@ -27,7 +27,11 @@
       "variant_picker_group": "Variant options",
       "show_more_button": "See more options ({count})",
       "sidebar": "Sidebar",
-      "close_chip": "Close chip"
+      "close_chip": "Close chip",
+      "nav_previous": "Previous",
+      "nav_next": "Next",
+      "nav_up": "Up",
+      "nav_down": "Down"
     },
     "date_selector": {
       "min_date_error": "Date must be on or after {min}",

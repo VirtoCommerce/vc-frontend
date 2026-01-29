@@ -27,7 +27,11 @@
       "variant_picker_group": "Opções de variantes",
       "show_more_button": "Ver mais opções ({count})",
       "sidebar": "Barra lateral",
-      "close_chip": "Fechar chip"
+      "close_chip": "Fechar chip",
+      "nav_previous": "Anterior",
+      "nav_next": "Próximo",
+      "nav_up": "Acima",
+      "nav_down": "Abaixo"
     },
     "date_selector": {
       "min_date_error": "A data deve ser igual ou posterior a {min}",

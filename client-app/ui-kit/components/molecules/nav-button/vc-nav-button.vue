@@ -1,22 +1,20 @@
 <template>
   <button
     type="button"
-    :aria-label="label"
+    :aria-label="accessibleLabel"
+    :aria-disabled="disabled"
     :disabled="disabled"
-    :class="[
-      'vc-nav-button',
-      `vc-nav-button--size--${size}`,
-      {
-        'vc-nav-button--disabled': disabled,
-      },
-    ]"
+    :class="['vc-nav-button', `vc-nav-button--size--${size}`]"
     @click="$emit('click', $event)"
   >
-    <VcIcon :name="`chevron-${direction}`" />
+    <VcIcon :name="`chevron-${direction}`" aria-hidden="true" />
   </button>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
 export interface IEmits {
   (event: "click", value: MouseEvent): void;
 }
@@ -30,16 +28,32 @@ interface IProps {
 
 defineEmits<IEmits>();
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   direction: "right",
   disabled: false,
 });
+
+const { t } = useI18n();
+
+const directionLabelKeys: Record<NonNullable<IProps["direction"]>, string> = {
+  left: "ui_kit.accessibility.nav_previous",
+  right: "ui_kit.accessibility.nav_next",
+  up: "ui_kit.accessibility.nav_up",
+  down: "ui_kit.accessibility.nav_down",
+};
+
+const accessibleLabel = computed(() => props.label || t(directionLabelKeys[props.direction]));
 </script>
 
 <style lang="scss">
 .vc-nav-button {
   @apply flex-none flex items-center justify-center rounded-full shadow-xl bg-additional-50 text-primary;
+  @apply outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+
+  @media (prefers-reduced-motion: no-preference) {
+    @apply transition-colors;
+  }
 
   &--size {
     &--xs {
@@ -61,13 +75,12 @@ withDefaults(defineProps<IProps>(), {
     }
   }
 
-  &:hover {
+  &:hover:not(:disabled) {
     @apply text-primary-700;
   }
 
-  &:disabled,
-  &--disabled {
-    @apply text-neutral-300;
+  &:disabled {
+    @apply text-neutral-400 cursor-not-allowed;
   }
 }
 </style>
