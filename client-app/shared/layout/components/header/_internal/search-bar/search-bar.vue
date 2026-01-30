@@ -38,6 +38,7 @@
           size="xs"
           variant="solid-light"
           :aria-label="$t('shared.layout.search_bar.scope_remove_label', { label: item.label })"
+          :data-search-scope="item.label"
           @click.stop="onScopeItemClick(item.id)"
         >
           {{ item.label }}

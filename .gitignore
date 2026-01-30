@@ -69,3 +69,7 @@ dist-ssr
 
 # https certificates
 .certificates/*
+
+# AI tools (local config files only)
+*.local.md
+.claude/**/*.local.*
