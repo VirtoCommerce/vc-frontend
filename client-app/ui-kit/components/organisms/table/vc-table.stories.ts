@@ -926,10 +926,68 @@ export const WithoutHeader: StoryType = {
     setup: () => ({ args }),
     template: `
       <VcTable v-bind="args">
+        <template #desktop-body>
+          <tr
+            v-for="item in args.items"
+            :key="item.id"
+            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+          >
+            <td class="p-5">{{ item.name }}</td>
+            <td class="p-5">{{ item.email }}</td>
+            <td class="p-5">{{ item.role }}</td>
+            <td class="p-5 text-center">{{ item.status }}</td>
+          </tr>
+        </template>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story: "Table without header using `hide-default-header` prop.",
+      },
+      source: {
+        code: `
+<VcTable :columns="columns" :items="items" hide-default-header>
+  <template #desktop-body>
+    <tr v-for="item in items" :key="item.id" class="even:bg-neutral-50">
+      <td class="p-5">{{ item.name }}</td>
+      <td class="p-5">{{ item.email }}</td>
+      <td class="p-5">{{ item.role }}</td>
+      <td class="p-5 text-center">{{ item.status }}</td>
+    </tr>
+  </template>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+export const CustomHeader: StoryType = {
+  args: {
+    columns: sampleColumns,
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+  },
+  render: (args) => ({
+    components: { VcTable },
+    setup: () => ({ args }),
+    template: `
+      <VcTable v-bind="args">
         <template #header>
           <thead class="vc-table__head">
-            <tr class="vc-table__row">
-              <th class="vc-table__cell vc-table__cell--head">Custom Header</th>
+            <tr>
+              <th colspan="4" class="px-4 py-3 text-left font-bold text-primary-600 bg-primary-50">
+                Custom Header - User List
+              </th>
+            </tr>
+            <tr>
+              <th class="px-4 py-2 font-medium">Name</th>
+              <th class="px-4 py-2 font-medium">Email</th>
+              <th class="px-4 py-2 font-medium">Role</th>
+              <th class="px-4 py-2 font-medium text-center">Status</th>
             </tr>
           </thead>
         </template>
@@ -950,19 +1008,35 @@ export const WithoutHeader: StoryType = {
   }),
   parameters: {
     docs: {
+      description: {
+        story: "Table with custom header using `#header` slot. The slot completely replaces the default header.",
+      },
       source: {
         code: `
-<VcTable :items="items" hide-default-header>
+<VcTable :columns="columns" :items="items">
   <template #header>
     <thead class="vc-table__head">
       <tr>
-        <th colspan="4" class="px-4 py-2 font-bold">Custom Header</th>
+        <th colspan="4" class="px-4 py-3 text-left font-bold text-primary-600 bg-primary-50">
+          Custom Header - User List
+        </th>
+      </tr>
+      <tr>
+        <th class="px-4 py-2 font-medium">Name</th>
+        <th class="px-4 py-2 font-medium">Email</th>
+        <th class="px-4 py-2 font-medium">Role</th>
+        <th class="px-4 py-2 font-medium text-center">Status</th>
       </tr>
     </thead>
   </template>
 
   <template #desktop-body>
-    <!-- ... -->
+    <tr v-for="item in items" :key="item.id" class="even:bg-neutral-50">
+      <td class="p-5">{{ item.name }}</td>
+      <td class="p-5">{{ item.email }}</td>
+      <td class="p-5">{{ item.role }}</td>
+      <td class="p-5 text-center">{{ item.status }}</td>
+    </tr>
   </template>
 </VcTable>
         `,

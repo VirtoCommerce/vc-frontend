@@ -279,6 +279,28 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
 
   &__body {
     word-break: break-word;
+
+    &:first-child {
+      tr:first-child {
+        td:first-child {
+          @apply rounded-tl-[v-bind(desktopRadius)];
+        }
+
+        td:last-child {
+          @apply rounded-tr-[v-bind(desktopRadius)];
+        }
+      }
+    }
+
+    tr:last-child {
+      td:first-child {
+        @apply rounded-bl-[v-bind(desktopRadius)];
+      }
+
+      td:last-child {
+        @apply rounded-br-[v-bind(desktopRadius)];
+      }
+    }
   }
 
   &__skeleton {
