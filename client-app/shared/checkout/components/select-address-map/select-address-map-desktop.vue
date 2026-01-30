@@ -105,10 +105,10 @@ function onCardSelect(locationId: string) {
 .select-address-map-desktop {
   --pulse-animation-duration: 0.2s;
 
-  @apply px-6 h-full max-h-full;
+  @apply flex flex-col px-6 pb-3 h-full max-h-full;
 
   &__content {
-    @apply relative flex flex-row gap-3 w-full flex-1 max-h-[90%];
+    @apply grow relative flex gap-3 w-full min-h-0;
   }
 
   &__sidebar {

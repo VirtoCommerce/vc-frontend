@@ -10,6 +10,7 @@
         },
         $attrs.class,
       ]"
+      :style="modalStyle"
       :initial-focus="getActiveElement()"
       :data-test-id="testId"
       @close="!isPersistent && close()"
@@ -37,7 +38,7 @@
           leave-to="opacity-0 scale-95"
           @after-leave="$emit('close')"
         >
-          <DialogPanel class="vc-modal__panel" :style="{ maxWidth }">
+          <DialogPanel class="vc-modal__panel">
             <VcDialog class="vc-modal__dialog" :dividers="dividers">
               <VcDialogHeader :icon="icon" :color="variant" :closable="!isPersistent" @close="close">
                 <DialogTitle>
@@ -68,7 +69,7 @@
 
 <script setup lang="ts">
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from "@headlessui/vue";
-import { ref, watchSyncEffect } from "vue";
+import { computed, ref, watchSyncEffect } from "vue";
 
 interface IEmits {
   (event: "close"): void;
@@ -82,6 +83,8 @@ interface IProps {
   title?: string;
   icon?: string;
   maxWidth?: string;
+  height?: string;
+  maxHeight?: string;
   variant?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
   dividers?: boolean;
   scrollable?: boolean;
@@ -97,7 +100,6 @@ defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   show: true,
   variant: "info",
-  maxWidth: "35.25rem",
   scrollable: true,
 });
 
@@ -119,6 +121,12 @@ watchSyncEffect(() => {
   isOpen.value = props.show;
 });
 
+const modalStyle = computed(() => ({
+  "--vc-modal-height": props.height,
+  "--vc-modal-max-height": props.maxHeight,
+  "--vc-modal-max-width": props.maxWidth,
+}));
+
 defineExpose({ close });
 </script>
 
@@ -126,6 +134,10 @@ defineExpose({ close });
 .vc-modal {
   $mobileFullscreen: "";
   $scrollable: "";
+
+  --h: var(--vc-modal-height, auto);
+  --max-h: var(--vc-modal-max-height, 100%);
+  --max-w: var(--vc-modal-max-width, 35.25rem);
 
   @apply fixed top-0 left-0 w-full h-full z-50;
 
@@ -152,7 +164,7 @@ defineExpose({ close });
   }
 
   &__panel {
-    @apply flex items-center justify-center w-full h-[calc(100vh-2rem)] max-h-full;
+    @apply flex items-center justify-center w-full max-w-[--max-w] h-[calc(100vh-2rem)] max-h-full;
 
     #{$mobileFullscreen} & {
       @media (max-width: theme("screens.md")) {
@@ -168,7 +180,7 @@ defineExpose({ close });
 
   &__dialog {
     @media (min-width: theme("screens.md")) {
-      @apply h-full;
+      @apply max-h-[--max-h] h-[--h];
     }
   }
 }
