@@ -1,0 +1,17 @@
+{
+  "name": "Predefined product list",
+  "icon": "local_mall",
+  "displayField": "name",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string"
+    },
+    {
+      "id": "subtitle",
+      "label": "Subtitle",
+      "type": "string"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import FavoriteProducts from "./favorite-products.vue";
 import Features from "./features.vue";
 import ImageBlock from "./image-block.vue";
 import Login from "./login.vue";
+import PredefinedProductList from "./predefined-product-list.vue";
 import ProductInfo from "./product-info.vue";
 import PromoText from "./promo-text.vue";
 import RecommendedProducts from "./recommended-products.vue";
@@ -37,4 +38,5 @@ export const templateBlocks: { [key: string]: Component } = {
   "text-block": TextBlock,
   "title-block": TitleBlock,
   category: Category,
+  "predefined-product-list": PredefinedProductList,
 };
