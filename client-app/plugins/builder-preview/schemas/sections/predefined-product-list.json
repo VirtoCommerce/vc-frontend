@@ -1,5 +1,5 @@
 {
-  "name": "Predefined product list",
+  "name": "Predefined products",
   "icon": "local_mall",
   "displayField": "name",
   "settings": [
@@ -25,7 +25,7 @@
       "element": [
         {
           "id": "sku",
-          "label": "SKU",
+          "label": "Product SKU",
           "type": "string"
         }
       ]

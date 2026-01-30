@@ -235,6 +235,7 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
       {
         name: "skus",
         type: "list",
+        friendlyName: "SKUs",
         subFields: [
           {
             name: "sku",
