@@ -77,7 +77,9 @@
     },
     "file": {
       "progress": "{percent} valmis",
-      "uploaded": "Lataus valmis"
+      "uploaded": "Lataus valmis",
+      "reload": "Lataa tiedosto uudelleen",
+      "remove": "Poista tiedosto"
     },
     "file_uploader": {
       "drag_and_drop": "Vedä ja pudota tiedosto tähän tai",

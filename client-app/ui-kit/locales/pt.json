@@ -77,7 +77,9 @@
     },
     "file": {
       "progress": "{percent} concluído",
-      "uploaded": "Upload concluído"
+      "uploaded": "Upload concluído",
+      "reload": "Recarregar arquivo",
+      "remove": "Remover arquivo"
     },
     "file_uploader": {
       "drag_and_drop": "Arraste e solte o arquivo aqui ou",
