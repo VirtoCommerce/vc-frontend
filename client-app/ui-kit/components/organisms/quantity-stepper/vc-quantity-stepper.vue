@@ -224,7 +224,7 @@ watch(
   @apply @container flex-none;
 
   &__badges {
-    @apply mt-2 flex flex-wrap gap-x-1.5 gap-y-0.5 empty:hidden;
+    @apply mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 empty:hidden;
   }
 
   @at-root .vc-product-card {
@@ -241,18 +241,10 @@ watch(
 
       &--list {
         #{$wrapperSelector} {
-          @apply mt-3;
+          @apply mt-3 w-full max-w-60;
 
-          @container (min-width: theme("containers.sm")) {
-            @apply w-72;
-          }
-
-          @container (min-width: theme("containers.xl")) {
-            @apply mt-0 ms-3 w-44;
-          }
-
-          @container (min-width: theme("containers.4xl")) {
-            @apply mt-0 ms-3 w-60;
+          @container (min-width: theme("containers.2xl")) {
+            @apply mt-0 ms-3 w-[10.625rem] max-w-none;
           }
         }
       }

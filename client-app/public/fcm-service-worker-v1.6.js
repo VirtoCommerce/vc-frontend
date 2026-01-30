@@ -3,7 +3,7 @@
 
 // NOTE: When updating the service worker, make sure to update the version in the service worker module constants "client-app/modules/push-messages/constants/index.ts"
 
-const VERSION = "12.7.0";
+const VERSION = "12.8.0";
 importScripts(
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-app-compat.js`,
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`,
