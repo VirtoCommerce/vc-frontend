@@ -6,12 +6,29 @@
     {
       "id": "title",
       "label": "Title",
-      "type": "string"
+      "type": "string",
+      "tab": "Content"
     },
     {
       "id": "subtitle",
       "label": "Subtitle",
-      "type": "string"
+      "type": "string",
+      "multiline": true,
+      "tab": "Content"
+    },
+    {
+      "id": "skus",
+      "label": "SKUs",
+      "type": "list",
+      "tab": "Content",
+      "default": [],
+      "element": [
+        {
+          "id": "sku",
+          "label": "SKU",
+          "type": "string"
+        }
+      ]
     }
   ]
 }

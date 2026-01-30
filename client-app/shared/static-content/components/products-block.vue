@@ -18,14 +18,14 @@
           '2xl': Number(columnsAmountDesktop),
         }"
       >
-        <ProductCard v-for="item in products" :key="item.id" :card-type="cardType" :product="item" />
+        <ProductCard v-for="item in displayProducts" :key="item.id" :card-type="cardType" :product="item" />
       </VcProductsGrid>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { watchEffect } from "vue";
+import { computed, watchEffect } from "vue";
 import { ProductCard, useProducts } from "@/shared/catalog";
 
 interface IProps {
@@ -39,6 +39,7 @@ interface IProps {
   cardType?: "full" | "short";
   columnsAmountDesktop?: string;
   columnsAmountTablet?: string;
+  skus?: Array<{ sku: string }>;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -50,11 +51,44 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { products, fetchProducts } = useProducts();
 
+const skuCodes = computed(() => {
+  if (!props.skus?.length) {
+    return [];
+  }
+  return props.skus.map((item) => item.sku).filter(Boolean);
+});
+
+const skuFilterExpression = computed(() => {
+  if (!skuCodes.value.length) {
+    return "";
+  }
+  return `"code":"${skuCodes.value.join('","')}"`;
+});
+
+const combinedFilter = computed(() => {
+  const filters = [skuFilterExpression.value, props.filter].filter(Boolean);
+  return filters.join(" ");
+});
+
+const displayProducts = computed(() => {
+  if (!skuCodes.value.length) {
+    return products.value;
+  }
+
+  const skuOrderMap = new Map(skuCodes.value.map((sku, index) => [sku, index]));
+
+  return [...products.value].sort((a, b) => {
+    const orderA = skuOrderMap.get(a.code) ?? Number.MAX_SAFE_INTEGER;
+    const orderB = skuOrderMap.get(b.code) ?? Number.MAX_SAFE_INTEGER;
+    return orderA - orderB;
+  });
+});
+
 watchEffect(async () => {
   await fetchProducts({
-    itemsPerPage: props.count,
+    itemsPerPage: skuCodes.value.length || props.count,
     keyword: props.query,
-    filter: props.filter,
+    filter: combinedFilter.value || undefined,
   });
 });
 </script>
