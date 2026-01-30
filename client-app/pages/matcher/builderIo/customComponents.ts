@@ -202,6 +202,57 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
     ],
   },
   {
+    name: "Predefined Products",
+    component: ProductsBlock,
+    inputs: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Predefined Products",
+      },
+      {
+        name: "subtitle",
+        type: "string",
+      },
+      {
+        name: "cardType",
+        type: "string",
+        defaultValue: "full",
+        enum: ["full", "short"],
+      },
+      {
+        name: "columnsAmountTablet",
+        type: "string",
+        defaultValue: "3",
+        enum: ["3", "2"],
+      },
+      {
+        name: "columnsAmountDesktop",
+        type: "string",
+        defaultValue: "4",
+        enum: ["4", "3"],
+      },
+      {
+        name: "skus",
+        type: "list",
+        subFields: [
+          {
+            name: "sku",
+            type: "string",
+            friendlyName: "Product SKU",
+          },
+        ],
+        onChange: (options: Map<string, Array<{ sku: string }>>) => {
+          const skus = options.get("skus");
+          if (Array.isArray(skus) && skus.length > 12) {
+            options.set("skus", skus.slice(0, 12));
+            alert("Maximum 12 SKUs allowed");
+          }
+        },
+      },
+    ],
+  },
+  {
     component: Slider,
     name: "Slider",
     inputs: [
