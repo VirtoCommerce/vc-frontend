@@ -89,7 +89,7 @@ const onClick = () => {
     &--color--#{$color} {
       --focus-color: var(--color-#{$color}-500);
 
-      @apply text-[--color-#{$color}-500];
+      color: var(--color-#{$color}-500);
 
       #{$loaderIcon} {
         --loader-border: var(--color-#{$color}-200);
