@@ -1,6 +1,6 @@
 <template>
-  <VcChip v-if="availabilityNote" size="sm" :variant="variant" :color="chipColor" icon="truck">
-    {{ availabilityNote }}
+  <VcChip v-if="availabilityNote" size="sm" :variant="variant" :color="chipColor" icon="truck" truncate>
+    <span>{{ availabilityNote }}</span>
   </VcChip>
 </template>
 
