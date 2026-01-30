@@ -85,6 +85,12 @@ const onClick = () => {
     $loading: &;
   }
 
+  &__loader-icon {
+    $loaderIcon: &;
+
+    @apply block size-4 rounded-full animate-spin border-2 border-[--loader-border] border-r-[--loader-border-r];
+  }
+
   @each $color in $colors {
     &--color--#{$color} {
       --focus-color: var(--color-#{$color}-500);
@@ -121,12 +127,6 @@ const onClick = () => {
     #{$loading} & {
       @apply absolute inset-0 flex justify-center items-center;
     }
-  }
-
-  &__loader-icon {
-    $loaderIcon: &;
-
-    @apply block size-4 rounded-full animate-spin border-2 border-[--loader-border] border-r-[--loader-border-r];
   }
 }
 </style>
