@@ -77,7 +77,9 @@
     },
     "file": {
       "progress": "{percent} 完成",
-      "uploaded": "上传完成"
+      "uploaded": "上传完成",
+      "reload": "重新加载文件",
+      "remove": "删除文件"
     },
     "file_uploader": {
       "drag_and_drop": "拖放文件到此处或",

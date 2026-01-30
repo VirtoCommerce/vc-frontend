@@ -77,7 +77,9 @@
     },
     "file": {
       "progress": "{percent} klart",
-      "uploaded": "Uppladdning slutförd"
+      "uploaded": "Uppladdning slutförd",
+      "reload": "Ladda om fil",
+      "remove": "Ta bort fil"
     },
     "file_uploader": {
       "drag_and_drop": "Dra och släpp filen här eller",
