@@ -100,6 +100,7 @@
     "slider": {
       "tooltip": "{count} objekt",
       "aria_label": "Skjutreglage från {min} till {max}",
+      "legend": "Skjutreglage från {min} till {max}",
       "start_input_label": "Startvärde (mellan {min} och {max})",
       "end_input_label": "Slutvärde (mellan {min} och {max})",
       "start_input_aria_label": "Inmatning för startvärde, intervall {min} till {max}",
@@ -107,7 +108,9 @@
       "start_input_help": "Ange ett tal mellan {min} och {max}, steglängd {step}",
       "end_input_help": "Ange ett tal mellan {min} och {max}, steglängd {step}",
       "column_aria_label": "Kolumn med {count} objekt, intervall från {from} till {to}",
-      "current_value_announcement": "Skjutreglagevärde: {start} till {end}, intervall {min} till {max}"
+      "current_value_announcement": "Skjutreglagevärde: {start} till {end}, intervall {min} till {max}",
+      "start_handle_aria_label": "Startvärde {value}, intervall {min} till {max}",
+      "end_handle_aria_label": "Slutvärde {value}, intervall {min} till {max}"
     },
     "breadcrumbs": {
       "aria_label": "Navigering för brödsmulor"

@@ -100,6 +100,7 @@
     "slider": {
       "tooltip": "{count} kohdetta",
       "aria_label": "Liukusäädin alueella {min} - {max}",
+      "legend": "Liukusäädin alueella {min} - {max}",
       "start_input_label": "Alkuarvo (välillä {min} ja {max})",
       "end_input_label": "Loppuarvo (välillä {min} ja {max})",
       "start_input_aria_label": "Alkuarvon syöttö, alue {min} - {max}",
@@ -107,7 +108,9 @@
       "start_input_help": "Syötä numero välillä {min} ja {max}, askelkoko {step}",
       "end_input_help": "Syötä numero välillä {min} ja {max}, askelkoko {step}",
       "column_aria_label": "Sarake, jossa {count} kohdetta, alue {from} - {to}",
-      "current_value_announcement": "Liukusäätimen arvo: {start} - {end}, alue {min} - {max}"
+      "current_value_announcement": "Liukusäätimen arvo: {start} - {end}, alue {min} - {max}",
+      "start_handle_aria_label": "Alkuarvo {value}, alue {min} - {max}",
+      "end_handle_aria_label": "Loppuarvo {value}, alue {min} - {max}"
     },
     "breadcrumbs": {
       "aria_label": "Murupolun navigointi"

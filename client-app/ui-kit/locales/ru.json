@@ -100,6 +100,7 @@
     "slider": {
       "tooltip": "{count} элементов",
       "aria_label": "Ползунок диапазона от {min} до {max}",
+      "legend": "Ползунок диапазона от {min} до {max}",
       "start_input_label": "Начальное значение (между {min} и {max})",
       "end_input_label": "Конечное значение (между {min} и {max})",
       "start_input_aria_label": "Начальное значение, диапазон от {min} до {max}",
@@ -107,7 +108,9 @@
       "start_input_help": "Введите число от {min} до {max}, шаг {step}",
       "end_input_help": "Введите число от {min} до {max}, шаг {step}",
       "column_aria_label": "Столбец с {count} товарами, от {from} до {to}",
-      "current_value_announcement": "Значение: {start} - {end}, диапазон {min} - {max}"
+      "current_value_announcement": "Значение: {start} - {end}, диапазон {min} - {max}",
+      "start_handle_aria_label": "Начальное значение {value}, диапазон от {min} до {max}",
+      "end_handle_aria_label": "Конечное значение {value}, диапазон от {min} до {max}"
     },
     "breadcrumbs": {
       "aria_label": "Навигация хлебными крошками"

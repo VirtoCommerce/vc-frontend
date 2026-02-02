@@ -100,6 +100,7 @@
     "slider": {
       "tooltip": "{count} アイテム",
       "aria_label": "{min} から {max} までの範囲スライダー",
+      "legend": "{min} から {max} までの範囲スライダー",
       "start_input_label": "開始値（{min}～{max}）",
       "end_input_label": "終了値（{min}～{max}）",
       "start_input_aria_label": "開始値を入力してください（範囲：{min}～{max}）",
@@ -107,7 +108,9 @@
       "start_input_help": "{min}～{max}の範囲で、{step}刻みで入力してください",
       "end_input_help": "{min}～{max}の範囲で、{step}刻みで入力してください",
       "column_aria_label": "{count}アイテムの列、範囲：{from}～{to}",
-      "current_value_announcement": "スライダーの値: {start} から {end}、範囲 {min} から {max}"
+      "current_value_announcement": "スライダーの値: {start} から {end}、範囲 {min} から {max}",
+      "start_handle_aria_label": "開始値 {value}、範囲 {min} ～ {max}",
+      "end_handle_aria_label": "終了値 {value}、範囲 {min} ～ {max}"
     },
     "breadcrumbs": {
       "aria_label": "パンくずナビゲーション"

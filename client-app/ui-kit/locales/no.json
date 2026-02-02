@@ -100,6 +100,7 @@
     "slider": {
       "tooltip": "{count} elementer",
       "aria_label": "Skyveknapp fra {min} til {max}",
+      "legend": "Skyveknapp fra {min} til {max}",
       "start_input_label": "Startverdi (mellom {min} og {max})",
       "end_input_label": "Sluttverdi (mellom {min} og {max})",
       "start_input_aria_label": "Inndata for startverdi, område {min} til {max}",
@@ -107,7 +108,9 @@
       "start_input_help": "Skriv inn et tall mellom {min} og {max}, trinnstørrelse {step}",
       "end_input_help": "Skriv inn et tall mellom {min} og {max}, trinnstørrelse {step}",
       "column_aria_label": "Kolonne med {count} elementer, område fra {from} til {to}",
-      "current_value_announcement": "Skyveknappverdi: {start} til {end}, område {min} til {max}"
+      "current_value_announcement": "Skyveknappverdi: {start} til {end}, område {min} til {max}",
+      "start_handle_aria_label": "Startverdi {value}, område {min} til {max}",
+      "end_handle_aria_label": "Sluttverdi {value}, område {min} til {max}"
     },
     "breadcrumbs": {
       "aria_label": "Navigasjon for brødsmuler"

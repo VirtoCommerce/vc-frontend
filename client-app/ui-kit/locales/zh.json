@@ -100,6 +100,7 @@
     "slider": {
       "tooltip": "{count} 件商品",
       "aria_label": "范围滑块，从 {min} 到 {max}",
+      "legend": "范围滑块，从 {min} 到 {max}",
       "start_input_label": "起始值（介于 {min} 和 {max} 之间）",
       "end_input_label": "结束值（介于 {min} 和 {max} 之间）",
       "start_input_aria_label": "起始值输入，范围 {min} 到 {max}",
@@ -107,7 +108,9 @@
       "start_input_help": "请输入介于 {min} 和 {max} 之间的数字，步长为 {step}",
       "end_input_help": "请输入介于 {min} 和 {max} 之间的数字，步长为 {step}",
       "column_aria_label": "包含 {count} 个项目的列，范围从 {from} 到 {to}",
-      "current_value_announcement": "滑块值：{start} 到 {end}，范围 {min} 到 {max}"
+      "current_value_announcement": "滑块值：{start} 到 {end}，范围 {min} 到 {max}",
+      "start_handle_aria_label": "起始值 {value}，范围 {min} 到 {max}",
+      "end_handle_aria_label": "结束值 {value}，范围 {min} 到 {max}"
     },
     "breadcrumbs": {
       "aria_label": "面包屑导航"
