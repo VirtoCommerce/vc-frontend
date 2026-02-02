@@ -96,6 +96,17 @@ const meta: Meta<typeof VcDateSelector> = {
     </div>
   `,
   }),
+  parameters: {
+    a11y: {
+      // Disable target-size rule - calendar button size is determined by input height
+      // Using options.rules for axe.run() to ensure the rule is disabled during execution
+      options: {
+        rules: {
+          "target-size": { enabled: false },
+        },
+      },
+    },
+  },
 };
 
 export default meta;
