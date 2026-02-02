@@ -109,6 +109,8 @@
       "end_input_help": "Syötä numero välillä {min} ja {max}, askelkoko {step}",
       "column_aria_label": "Sarake, jossa {count} kohdetta, alue {from} - {to}",
       "current_value_announcement": "Liukusäätimen arvo: {start} - {end}, alue {min} - {max}",
+      "start_handle_label": "Minimiarvon liukusäädin",
+      "end_handle_label": "Maksimiarvon liukusäädin",
       "start_handle_aria_label": "Alkuarvo {value}, alue {min} - {max}",
       "end_handle_aria_label": "Loppuarvo {value}, alue {min} - {max}"
     },

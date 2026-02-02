@@ -109,6 +109,8 @@
       "end_input_help": "Inserisci un numero tra {min} e {max}, incremento {step}",
       "column_aria_label": "Colonna con {count} articoli, da {from} a {to}",
       "current_value_announcement": "Valore slider: {start} a {end}, intervallo {min} a {max}",
+      "start_handle_label": "Cursore valore minimo",
+      "end_handle_label": "Cursore valore massimo",
       "start_handle_aria_label": "Valore iniziale {value}, intervallo da {min} a {max}",
       "end_handle_aria_label": "Valore finale {value}, intervallo da {min} a {max}"
     },

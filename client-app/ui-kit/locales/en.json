@@ -109,6 +109,8 @@
       "end_input_help": "Enter a number between {min} and {max}, step size {step}",
       "column_aria_label": "Column with {count} items, range from {from} to {to}",
       "current_value_announcement": "Slider value: {start} to {end}, range {min} to {max}",
+      "start_handle_label": "Minimum value handle",
+      "end_handle_label": "Maximum value handle",
       "start_handle_aria_label": "Start value {value}, range {min} to {max}",
       "end_handle_aria_label": "End value {value}, range {min} to {max}"
     },

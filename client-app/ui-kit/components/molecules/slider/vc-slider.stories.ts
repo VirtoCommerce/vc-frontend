@@ -196,3 +196,26 @@ export const NonInteractiveColumns: StoryType = {
     updateOnColumnClick: false,
   },
 };
+
+export const DisabledWithColumns: StoryType = {
+  args: {
+    value: [500, 800],
+    min: 100,
+    max: 900,
+    cols: manyCols,
+    disabled: true,
+  },
+};
+
+export const DisabledWithInteractiveColumns: StoryType = {
+  args: {
+    value: [400, 1100],
+    min: 470,
+    max: 1300,
+    colsHeight: "5rem",
+    cols: similarWidthCol,
+    showTooltipOnColHover: true,
+    updateOnColumnClick: true,
+    disabled: true,
+  },
+};

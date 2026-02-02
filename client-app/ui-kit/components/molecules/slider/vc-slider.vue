@@ -26,6 +26,7 @@
             <button
               type="button"
               class="vc-slider__button"
+              :disabled="disabled"
               :aria-label="
                 $t('ui_kit.slider.column_aria_label', { count: col.count, from: col.value[0], to: col.value[1] })
               "
@@ -145,8 +146,8 @@ interface INormalizedCol {
   count: number;
   height: string;
   position: {
-    left: string | 0;
-    right: string | 0;
+    left: string | number;
+    right: string | number;
   };
 }
 
@@ -246,17 +247,8 @@ watch(disabled, (isDisabled) => {
       slider.enable();
     }
 
-    // Update ARIA attributes on handles
-    if (sliderRef.value) {
-      const handles = sliderRef.value.querySelectorAll<HTMLElement>(".noUi-handle");
-      handles.forEach((handle) => {
-        if (isDisabled) {
-          handle.setAttribute("aria-disabled", "true");
-        } else {
-          handle.removeAttribute("aria-disabled");
-        }
-      });
-    }
+    // Update ARIA attributes on handles (reuse existing function to avoid duplication)
+    updateSliderHandleAria(leftInput.value, rightInput.value ?? leftInput.value);
   }
 });
 
@@ -353,17 +345,24 @@ function updateSliderHandleAria(startValue: number, endValue: number): void {
 
   const handles = sliderRef.value.querySelectorAll<HTMLElement>(".noUi-handle");
   handles.forEach((handle, index) => {
+    const isStartHandle = index === 0;
+    const currentValue = isStartHandle ? startValue : endValue;
+
+    // aria-label describes the control (what it is)
+    const label = isStartHandle ? t("ui_kit.slider.start_handle_label") : t("ui_kit.slider.end_handle_label");
+
+    // aria-valuetext describes the current value in human-readable form
+    const valueText = isStartHandle
+      ? t("ui_kit.slider.start_handle_aria_label", { value: currentValue, min: min.value, max: max.value })
+      : t("ui_kit.slider.end_handle_aria_label", { value: currentValue, min: min.value, max: max.value });
+
     handle.setAttribute("role", "slider");
     handle.setAttribute("aria-orientation", "horizontal");
     handle.setAttribute("aria-valuemin", String(min.value));
     handle.setAttribute("aria-valuemax", String(max.value));
-    handle.setAttribute("aria-valuenow", String(index === 0 ? startValue : endValue));
-    handle.setAttribute(
-      "aria-label",
-      index === 0
-        ? t("ui_kit.slider.start_handle_aria_label", { value: startValue, min: min.value, max: max.value })
-        : t("ui_kit.slider.end_handle_aria_label", { value: endValue, min: min.value, max: max.value }),
-    );
+    handle.setAttribute("aria-valuenow", String(currentValue));
+    handle.setAttribute("aria-valuetext", valueText);
+    handle.setAttribute("aria-label", label);
 
     // Set aria-disabled when the slider is disabled
     if (disabled.value) {
@@ -464,7 +463,7 @@ function getTooltipTriggerEvents(
 }
 
 function onColumnClick(col: { value: [number, number] }): void {
-  if (!props.updateOnColumnClick) {
+  if (!props.updateOnColumnClick || disabled.value) {
     return;
   }
 
@@ -591,6 +590,10 @@ function getSliderStart(value1: number, value2: number): [number, number] {
 
     #{$clickable} & {
       @apply cursor-pointer;
+    }
+
+    &:disabled {
+      @apply cursor-not-allowed opacity-50;
     }
 
     &--non-interactive {

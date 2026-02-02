@@ -109,6 +109,8 @@
       "end_input_help": "Wprowadź liczbę od {min} do {max}, krok {step}",
       "column_aria_label": "Kolumna z {count} przedmiotami, zakres od {from} do {to}",
       "current_value_announcement": "Wartość suwaka: {start} do {end}, zakres {min} do {max}",
+      "start_handle_label": "Uchwyt wartości minimalnej",
+      "end_handle_label": "Uchwyt wartości maksymalnej",
       "start_handle_aria_label": "Wartość początkowa {value}, zakres od {min} do {max}",
       "end_handle_aria_label": "Wartość końcowa {value}, zakres od {min} do {max}"
     },

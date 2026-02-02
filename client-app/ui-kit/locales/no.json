@@ -109,6 +109,8 @@
       "end_input_help": "Skriv inn et tall mellom {min} og {max}, trinnstørrelse {step}",
       "column_aria_label": "Kolonne med {count} elementer, område fra {from} til {to}",
       "current_value_announcement": "Skyveknappverdi: {start} til {end}, område {min} til {max}",
+      "start_handle_label": "Minimumsverdihåndtak",
+      "end_handle_label": "Maksimumsverdihåndtak",
       "start_handle_aria_label": "Startverdi {value}, område {min} til {max}",
       "end_handle_aria_label": "Sluttverdi {value}, område {min} til {max}"
     },
