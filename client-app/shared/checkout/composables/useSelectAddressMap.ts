@@ -104,6 +104,7 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
 
   // Filter management
   function applyFilter() {
+    closeInfoCard();
     filterIsApplied.value = true;
     onFilterChange();
   }
