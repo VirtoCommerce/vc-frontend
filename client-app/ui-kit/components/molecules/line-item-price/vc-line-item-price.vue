@@ -30,7 +30,7 @@ Logger.warn("[UIKit][warn] VcLineItemPrice is deprecated, use VcProductPrice ins
 <style lang="scss">
 .vc-line-item-price {
   --actual-color: var(--vc-line-item-price-actual-color, var(--color-neutral-900));
-  --list-color: var(--vc-line-item-price-list-color, var(--color-neutral-400));
+  --list-color: var(--vc-line-item-price-list-color, var(--color-neutral-500));
 
   @apply flex flex-col items-end;
 

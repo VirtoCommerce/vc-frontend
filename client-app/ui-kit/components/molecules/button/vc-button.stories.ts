@@ -255,6 +255,7 @@ export const RouterNavigation: StoryType = {
 export const Loading: StoryType = {
   args: {
     loading: true,
+    ariaLabel: "Button text",
   },
 };
 

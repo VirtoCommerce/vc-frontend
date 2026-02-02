@@ -115,7 +115,7 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
 
       &--list {
         #{$wrapperSelector} {
-          @apply self-end;
+          @apply self-end flex items-center;
 
           &:only-child {
             @apply self-center;

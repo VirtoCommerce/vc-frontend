@@ -71,12 +71,13 @@ onMounted(() => {
   $hasProperties: ":has(.vc-product-properties)";
   $hasPrice: ":has(.vc-product-price:not(.vc-product-total))";
   $hasTotal: ":has(.vc-product-total)";
-
   $hasAddToCart: ":has(.vc-add-to-cart, .vc-variations-button)";
+
   $hasTitleOnly: ":has(.vc-product-title:only-child)";
   $hasTitleVendorOnly: ":has(.vc-product-vendor:first-child:nth-last-child(2)~.vc-product-title), &:has(.vc-product-title:first-child:nth-last-child(2)~.vc-product-vendor)";
   $hasTitlePriceOnly: ":has(.vc-product-price:first-child:nth-last-child(2)~.vc-product-title), &:has(.vc-product-title:first-child:nth-last-child(2)~.vc-product-price)";
   $hasTitleAddToCartOnly: ":has(.vc-add-to-cart:first-child:nth-last-child(2)~.vc-product-title), &:has(.vc-product-title:first-child:nth-last-child(2)~.vc-add-to-cart)";
+  $hasTitleProductButtonOnly: ":has(.vc-product-title):has(.vc-product-button):not(#{$hasVendor}):not(#{$hasPrice}):not(#{$hasAddToCart}):not(#{$hasProperties}):not(#{$hasTotal})";
 
   --bg: var(--vc-product-card-bg-color, theme("colors.additional.50"));
   --radius: var(--vc-product-card-radius, var(--vc-radius, 0.5rem));
@@ -125,7 +126,7 @@ onMounted(() => {
     #{$background}#{$list} & {
       @apply p-3;
 
-      @container (min-width: theme("containers.xl")) {
+      @container (min-width: theme("containers.2xl")) {
         @apply p-4;
       }
     }
@@ -145,52 +146,50 @@ onMounted(() => {
     #{$list} & {
       @apply grid items-center;
 
-      @container (max-width: theme("containers.xl")) {
+      @container (width < theme("containers.2xl")) {
         grid-template-areas:
           "media title"
           "media vendor"
-          "media properties"
           "media price"
           "media add-to-cart";
-        grid-auto-rows: repeat(5, min-content);
-        grid-auto-columns: min-content 1fr 1fr;
+        grid-auto-rows: min-content min-content min-content min-content;
+        grid-auto-columns: min-content 1fr;
 
         &#{$hasTitleOnly} {
-          grid-auto-rows: 1fr min-content min-content min-content min-content;
-
-          &#{$hasActions} {
-            grid-auto-rows: 1fr min-content min-content min-content 1.5rem;
-          }
+          grid-template-areas: "media title";
+          grid-auto-rows: 1fr;
         }
 
         &#{$hasTitleVendorOnly} {
-          grid-auto-rows: 1fr 1fr min-content min-content min-content;
-
-          &#{$hasActions} {
-            grid-auto-rows: 1fr 1fr min-content min-content 1.5rem;
-          }
+          grid-template-areas:
+            "media title"
+            "media vendor";
+          grid-auto-rows: 1fr 1fr;
         }
 
         &#{$hasTitlePriceOnly} {
-          grid-auto-rows: min-content min-content min-content min-content min-content;
-
-          &#{$hasActions} {
-            grid-auto-rows: min-content min-content min-content min-content 1.5rem;
-          }
+          grid-template-areas:
+            "media title"
+            "media price";
+          grid-auto-rows: 1fr 1fr;
         }
 
-        &#{$hasTitleAddToCartOnly} {
-          grid-auto-rows: min-content min-content min-content min-content min-content;
+        &#{$hasTitleAddToCartOnly},
+        &#{$hasTitleProductButtonOnly} {
+          grid-template-areas:
+            "media title"
+            "media add-to-cart";
+          grid-auto-rows: min-content min-content;
         }
       }
 
-      @container (min-width: theme("containers.xl")) {
+      @container (min-width: theme("containers.2xl")) {
         grid-template-areas:
-          "image title properties price add-to-cart"
-          "image vendor properties price add-to-cart"
-          "image actions properties price add-to-cart";
+          "image title price add-to-cart"
+          "image vendor price add-to-cart"
+          "image actions price add-to-cart";
         grid-auto-rows: 1fr min-content 1fr;
-        grid-auto-columns: min-content 1fr min-content min-content min-content;
+        grid-auto-columns: min-content 1fr min-content min-content;
 
         &:not(#{$hasActions}):not(#{$hasVendor}) {
           grid-auto-rows: 1fr min-content min-content;
@@ -205,7 +204,7 @@ onMounted(() => {
         }
       }
 
-      @container (min-width: theme("containers.3xl")) {
+      @container (min-width: theme("containers.4xl")) {
         grid-template-areas:
           "image title properties price add-to-cart"
           "image vendor properties price add-to-cart"
@@ -217,7 +216,7 @@ onMounted(() => {
     #{$item} & {
       @apply grid items-center;
 
-      @container (max-width: theme("containers.2xl")) {
+      @container (width < theme("containers.2xl")) {
         grid-template-areas:
           "media title title"
           "media vendor vendor"
@@ -279,7 +278,7 @@ onMounted(() => {
     #{$list} & {
       @apply flex flex-col me-3 self-start items-center;
 
-      @container (min-width: theme("containers.xl")) {
+      @container (min-width: theme("containers.2xl")) {
         @apply contents;
       }
     }
@@ -290,6 +289,10 @@ onMounted(() => {
       @container (min-width: theme("containers.2xl")) {
         @apply contents;
       }
+    }
+
+    &:empty {
+      @apply hidden;
     }
   }
 

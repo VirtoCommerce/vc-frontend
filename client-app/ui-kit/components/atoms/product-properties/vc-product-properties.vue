@@ -28,12 +28,12 @@
         #{$self} {
           @apply hidden;
 
-          @container (min-width: theme("containers.3xl")) {
-            @apply block mt-0 ms-3 w-[9.75rem];
+          @container (min-width: theme("containers.4xl")) {
+            @apply block mt-0 ms-3 w-60;
           }
 
           @container (min-width: theme("containers.5xl")) {
-            @apply w-60;
+            @apply w-64;
           }
         }
       }

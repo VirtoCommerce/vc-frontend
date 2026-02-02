@@ -165,7 +165,7 @@
 <script setup lang="ts">
 import { useDebounceFn, useBreakpoints } from "@vueuse/core";
 import { pickBy } from "lodash";
-import { computed, onMounted, ref, toRefs, toValue, watch } from "vue";
+import { computed, onMounted, ref, toRefs, toValue, useTemplateRef, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useRouteQueryParam, useThemeContext, useAnalytics } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
@@ -212,7 +212,7 @@ const { analytics } = useAnalytics();
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
 
-const dropdownElement = ref<HTMLElement | null>(null);
+const dropdownElement = useTemplateRef("dropdownElement");
 const searchInProgress = ref(false);
 
 const SEARCH_BAR_DEBOUNCE_TIME = 200;
