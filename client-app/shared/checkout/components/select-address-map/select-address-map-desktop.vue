@@ -31,7 +31,7 @@
 
         <Transition name="slide">
           <PickupLocationCard
-            v-if="infoCardLocation"
+            v-if="infoCardLocation && addresses.length"
             :location="infoCardLocation"
             :class="['select-address-map-desktop__card', { 'select-address-map-desktop__card--pulse': isPulsing }]"
             data-test-id="pickup-location-card"
