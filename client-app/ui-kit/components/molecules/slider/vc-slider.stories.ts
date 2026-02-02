@@ -150,6 +150,19 @@ export const UpdateOnColumnClickManyDifferentColumns: StoryType = {
     showTooltipOnColHover: true,
     updateOnColumnClick: true,
   },
+  parameters: {
+    // WCAG 2.5.8 Target Size exception: "Essential"
+    // The column widths in this histogram are essential to conveying the data distribution.
+    // Each column's width represents a proportional value range.
+    // Alternative input methods are available: number inputs and slider handles.
+    a11y: {
+      options: {
+        rules: {
+          "target-size": { enabled: false },
+        },
+      },
+    },
+  },
 };
 
 export const NoStartEndColumns: StoryType = {

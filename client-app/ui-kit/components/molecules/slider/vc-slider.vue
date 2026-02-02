@@ -536,6 +536,7 @@ function getSliderStart(value1: number, value2: number): [number, number] {
 .vc-slider {
   $hoverable: "";
   $clickable: "";
+  $focusColumn: "";
 
   --props-cols-height: v-bind(props.colsHeight);
   --cols-height: var(--vc-slider-cols-height, var(--props-cols-height, 2rem));
@@ -564,7 +565,13 @@ function getSliderStart(value1: number, value2: number): [number, number] {
   }
 
   &__button {
-    @apply flex flex-col justify-end w-full h-[var(--cols-height)] border-t border-x border-transparent cursor-default;
+    @apply flex flex-col justify-end w-full h-[var(--cols-height)] border-t border-x border-transparent cursor-default outline-none;
+
+    &:focus {
+      $focusColumn: &;
+
+      @apply outline-none;
+    }
 
     #{$clickable} & {
       @apply cursor-pointer;
@@ -580,6 +587,10 @@ function getSliderStart(value1: number, value2: number): [number, number] {
 
     #{$hoverable} & {
       @apply bg-primary-200 border-primary-300;
+    }
+
+    #{$focusColumn} & {
+      @apply outline outline-2 outline-primary-500/40;
     }
   }
 
