@@ -236,17 +236,27 @@ watch([value, min, max], ([newValue, newMin, newMax]) => {
   rightInput.value = typeof newValue[1] === "number" ? newValue[1] : undefined;
 });
 
-// Watch for disabled prop changes to update ARIA attributes on handles
-watch(disabled, () => {
-  if (slider && sliderRef.value) {
-    const handles = sliderRef.value.querySelectorAll<HTMLElement>(".noUi-handle");
-    handles.forEach((handle) => {
-      if (disabled.value) {
-        handle.setAttribute("aria-disabled", "true");
-      } else {
-        handle.removeAttribute("aria-disabled");
-      }
-    });
+// Watch for disabled prop changes to update slider state and ARIA attributes
+watch(disabled, (isDisabled) => {
+  if (slider) {
+    // Enable or disable the slider interaction
+    if (isDisabled) {
+      slider.disable();
+    } else {
+      slider.enable();
+    }
+
+    // Update ARIA attributes on handles
+    if (sliderRef.value) {
+      const handles = sliderRef.value.querySelectorAll<HTMLElement>(".noUi-handle");
+      handles.forEach((handle) => {
+        if (isDisabled) {
+          handle.setAttribute("aria-disabled", "true");
+        } else {
+          handle.removeAttribute("aria-disabled");
+        }
+      });
+    }
   }
 });
 
@@ -389,8 +399,14 @@ onMounted(() => {
   });
 
   // Set up ARIA attributes on handles after slider is created
+  // and disable the slider if initially disabled
   void nextTick(() => {
     updateSliderHandleAria(value.value[0], value.value[1]);
+
+    // Disable slider if initially disabled
+    if (disabled.value && slider) {
+      slider.disable();
+    }
   });
 
   slider.on("update", (v: (string | number)[]) => {
@@ -621,6 +637,19 @@ function getSliderStart(value1: number, value2: number): [number, number] {
 
     .noUi-touch-area {
       @apply absolute size-[300%] top-[calc(var(--handle-size)/-2)] left-[calc(var(--handle-size)/-2)] rounded-full;
+    }
+
+    // Disabled state styling
+    &[disabled] {
+      @apply opacity-50;
+
+      .noUi-connect {
+        @apply bg-neutral-400;
+      }
+
+      .noUi-handle {
+        @apply cursor-not-allowed border-neutral-400;
+      }
     }
   }
 
