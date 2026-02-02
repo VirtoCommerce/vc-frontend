@@ -468,23 +468,27 @@ function onColumnClick(col: { value: [number, number] }): void {
   }
 
   const [newStart, newEnd] = enforceMinimumDistance(col.value[0], col.value[1]);
+  const newValues: RangeType = [newStart, newEnd];
 
-  leftInput.value = newStart;
-  rightInput.value = newEnd;
+  // Only update if values actually changed
+  if (!isEqual(newValues, props.value)) {
+    leftInput.value = newStart;
+    rightInput.value = newEnd;
 
-  slider?.updateOptions(
-    {
-      start: getSliderStart(newStart, newEnd),
-    },
-    false,
-  );
+    slider?.updateOptions(
+      {
+        start: getSliderStart(newStart, newEnd),
+      },
+      false,
+    );
 
-  // Update ARIA attributes on handles
-  updateSliderHandleAria(newStart, newEnd);
-  // Announce the change to screen readers
-  announceValueChange(newStart, newEnd);
+    // Update ARIA attributes on handles
+    updateSliderHandleAria(newStart, newEnd);
+    // Announce the change to screen readers
+    announceValueChange(newStart, newEnd);
 
-  emit("change", [newStart, newEnd]);
+    emit("change", newValues);
+  }
 }
 
 function clampValue(val: number): number {
