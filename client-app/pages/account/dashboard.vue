@@ -21,7 +21,9 @@
       </template>
 
       <template #default-container>
-        <Orders :items-per-page="4" />
+        <div class="pb-1.5">
+          <Orders :items-per-page="4" />
+        </div>
       </template>
     </VcWidget>
 
