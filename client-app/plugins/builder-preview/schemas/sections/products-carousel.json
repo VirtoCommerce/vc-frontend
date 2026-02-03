@@ -42,6 +42,15 @@
       "tab": "Content"
     },
     {
+      "id": "slidesPerView",
+      "type": "number",
+      "default": 4,
+      "max": 6,
+      "label": "Slides per view",
+      "info": "Number of products visible at once on desktop",
+      "tab": "Content"
+    },
+    {
       "id": "skus",
       "label": "SKUs",
       "type": "list",

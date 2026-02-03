@@ -232,9 +232,9 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
           if (typeof count !== "number") {
             return;
           }
-          if (count > 20) {
-            options.set("count", 20);
-            alert("the maximum number of products is 20");
+          if (count > 12) {
+            options.set("count", 12);
+            alert("The maximum number of products is 12");
           }
         },
       },
