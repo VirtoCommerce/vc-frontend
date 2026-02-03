@@ -792,11 +792,15 @@
       },
       "select_bopis_modal": {
         "title": "Puntos de recogida",
-        "location_label": "Ubicación",
+        "location_label": "Dirección",
         "working_hours_label": "Horario de trabajo",
         "description_label": "Descripción",
         "contact_phone_label": "Teléfono de contacto",
-        "contact_email_label": "Correo electrónico de contacto"
+        "contact_email_label": "Correo electrónico de contacto",
+        "view_list": "Lista",
+        "view_map": "Mapa",
+        "pick_point_info_title": "Info del punto de recogida",
+        "pick_up_here": "Recoger aquí"
       }
     },
     "bulk_order": {

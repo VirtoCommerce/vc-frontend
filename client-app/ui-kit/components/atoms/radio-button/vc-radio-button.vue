@@ -160,7 +160,7 @@ const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
   }
 
   &__container {
-    @apply flex items-center cursor-pointer;
+    @apply flex cursor-pointer;
 
     #{$disabled} & {
       @apply cursor-not-allowed;
