@@ -1,0 +1,77 @@
+{
+  "name": "Products carousel",
+  "icon": "view_carousel",
+  "displayField": "title",
+  "settings": [
+    {
+      "id": "title",
+      "label": "Title",
+      "type": "string",
+      "tab": "Content"
+    },
+    {
+      "id": "subtitle",
+      "label": "Subtitle",
+      "type": "string",
+      "multiline": true,
+      "tab": "Content"
+    },
+    {
+      "id": "cardType",
+      "label": "Card type",
+      "type": "select",
+      "default": "full",
+      "tab": "Settings",
+      "options": [
+        {
+          "label": "Full",
+          "value": "full"
+        },
+        {
+          "label": "Short",
+          "value": "short"
+        }
+      ]
+    },
+    {
+      "id": "count",
+      "type": "number",
+      "default": 8,
+      "min": 1,
+      "max": 20,
+      "label": "Products count",
+      "tab": "Settings"
+    },
+    {
+      "id": "slidesPerView",
+      "type": "number",
+      "default": 4,
+      "min": 1,
+      "max": 6,
+      "label": "Slides per view (desktop)",
+      "tab": "Settings",
+      "info": "Number of products visible at once on desktop"
+    },
+    {
+      "id": "skus",
+      "label": "SKUs",
+      "type": "list",
+      "tab": "Content",
+      "default": [],
+      "element": [
+        {
+          "id": "sku",
+          "label": "Product SKU",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "query",
+      "label": "Keyword",
+      "type": "string",
+      "tab": "Content",
+      "info": "Search products by keyword"
+    }
+  ]
+}
