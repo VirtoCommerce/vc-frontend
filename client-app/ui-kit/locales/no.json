@@ -77,7 +77,9 @@
     },
     "file": {
       "progress": "{percent} ferdig",
-      "uploaded": "Opplasting fullført"
+      "uploaded": "Opplasting fullført",
+      "reload": "Last inn filen på nytt",
+      "remove": "Fjern fil"
     },
     "file_uploader": {
       "drag_and_drop": "Dra og slipp filen her eller",
