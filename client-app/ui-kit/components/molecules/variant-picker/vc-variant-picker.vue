@@ -335,6 +335,10 @@ function toggleValue(): void {
 
     box-shadow: 0 0 0 1px var(--color-neutral-200);
 
+    &:hover {
+      box-shadow: 0 0 0 2px var(--color-neutral-200);
+    }
+
     #{$square} & {
       @apply size-[--size];
     }
@@ -343,7 +347,7 @@ function toggleValue(): void {
     &:focus-visible {
       @apply outline-none;
 
-      box-shadow: 0 0 0 2px rgb(from var(--color-primary-500) r g b / 0.4);
+      box-shadow: 0 0 0 2px rgb(from var(--color-primary-500) r g b / 0.5);
     }
 
     #{$active} & {
