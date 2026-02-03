@@ -1,7 +1,7 @@
 <template>
   <div ref="target" :data-test-id="testId" class="flex items-center justify-center gap-2 text-base">
     <slot v-if="loading" name="loader">
-      <VcLoader />
+      <VcLoader data-test-id="category-products-loader" />
     </slot>
 
     <slot v-else name="loaded">
@@ -9,7 +9,9 @@
 
       <span v-if="isPageLimitReached">{{ $t("ui_kit.reach_limit.page_limit_filters") }}</span>
 
-      <span v-else-if="pageNumber >= pagesCount">{{ $t("ui_kit.reach_limit.end_list") }}</span>
+      <span v-else-if="pageNumber >= pagesCount" data-test-id="end-list-label">{{
+        $t("ui_kit.reach_limit.end_list")
+      }}</span>
     </slot>
   </div>
 </template>
