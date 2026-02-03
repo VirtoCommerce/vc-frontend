@@ -189,6 +189,7 @@
 
   <!-- Content block -->
   <VcTable
+    v-else
     :loading="ordersLoading"
     :columns="columns"
     :items="orders"
