@@ -9,9 +9,9 @@
 
       <span v-if="isPageLimitReached">{{ $t("ui_kit.reach_limit.page_limit_filters") }}</span>
 
-      <span v-else-if="pageNumber >= pagesCount" data-test-id="end-list-label">{{
-        $t("ui_kit.reach_limit.end_list")
-      }}</span>
+      <span v-else-if="pageNumber >= pagesCount" data-test-id="end-list-label">
+        {{ $t("ui_kit.reach_limit.end_list") }}
+      </span>
     </slot>
   </div>
 </template>
