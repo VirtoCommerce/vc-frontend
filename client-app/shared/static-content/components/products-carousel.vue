@@ -86,23 +86,18 @@ const displayProducts = computed(() => {
 
 const carouselOptions = computed<ICarouselOptions>(() => ({
   slidesPerView: 1.5,
-  spaceBetween: 12,
   breakpoints: {
     [xsScreenWidth]: {
       slidesPerView: 2,
-      spaceBetween: 12,
     },
     [smScreenWidth]: {
       slidesPerView: 3,
-      spaceBetween: 16,
     },
     [mdScreenWidth]: {
       slidesPerView: Math.min(props.slidesPerView, 3),
-      spaceBetween: 16,
     },
     [lgScreenWidth]: {
       slidesPerView: props.slidesPerView,
-      spaceBetween: 16,
     },
   },
 }));
