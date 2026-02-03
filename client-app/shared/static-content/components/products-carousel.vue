@@ -19,9 +19,9 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints } from "@vueuse/core";
 import { computed, watchEffect } from "vue";
 import { BREAKPOINTS } from "@/core/constants";
+import { extractNumberFromString } from "@/core/utilities";
 import { ProductCard, useProducts } from "@/shared/catalog";
 
 interface IProps {
@@ -44,10 +44,12 @@ const props = withDefaults(defineProps<IProps>(), {
   skus: () => [],
 });
 
-const breakpoints = useBreakpoints(BREAKPOINTS);
-const isMobile = breakpoints.smaller("md");
-
 const { products, fetchProducts } = useProducts();
+
+const xsScreenWidth = extractNumberFromString(BREAKPOINTS.xs);
+const smScreenWidth = extractNumberFromString(BREAKPOINTS.sm);
+const mdScreenWidth = extractNumberFromString(BREAKPOINTS.md);
+const lgScreenWidth = extractNumberFromString(BREAKPOINTS.lg);
 
 const skuCodes = computed(() => {
   if (!props.skus?.length) {
@@ -82,23 +84,23 @@ const displayProducts = computed(() => {
   });
 });
 
-const carouselOptions = computed(() => ({
-  slidesPerView: isMobile.value ? 1.5 : props.slidesPerView,
-  spaceBetween: isMobile.value ? 12 : 16,
+const carouselOptions = computed<ICarouselOptions>(() => ({
+  slidesPerView: 1.5,
+  spaceBetween: 12,
   breakpoints: {
-    [BREAKPOINTS.xs]: {
+    [xsScreenWidth]: {
       slidesPerView: 2,
       spaceBetween: 12,
     },
-    [BREAKPOINTS.sm]: {
+    [smScreenWidth]: {
       slidesPerView: 3,
       spaceBetween: 16,
     },
-    [BREAKPOINTS.md]: {
+    [mdScreenWidth]: {
       slidesPerView: Math.min(props.slidesPerView, 3),
       spaceBetween: 16,
     },
-    [BREAKPOINTS.lg]: {
+    [lgScreenWidth]: {
       slidesPerView: props.slidesPerView,
       spaceBetween: 16,
     },

@@ -36,8 +36,10 @@
     {
       "id": "count",
       "type": "number",
+      "default": 4,
+      "max": 12,
       "label": "Products count",
-      "tab": "Settings"
+      "tab": "Content"
     },
     {
       "id": "skus",
