@@ -31,6 +31,7 @@
           type="button"
           class="vc-product-image__carousel-btn vc-product-image__carousel-btn--prev"
           data-btn="btn-prev"
+          :aria-label="$t('ui_kit.accessibility.carousel_previous')"
         >
           <span class="vc-product-image__carousel-arrow">
             <VcIcon class="fill-neutral-400" name="chevron-left" size="xs" />
@@ -42,6 +43,7 @@
           type="button"
           class="vc-product-image__carousel-btn vc-product-image__carousel-btn--next"
           data-btn="btn-next"
+          :aria-label="$t('ui_kit.accessibility.carousel_next')"
         >
           <span class="vc-product-image__carousel-arrow">
             <VcIcon class="fill-neutral-400" name="chevron-right" size="xs" />
