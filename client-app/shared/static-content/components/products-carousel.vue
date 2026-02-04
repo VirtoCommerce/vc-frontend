@@ -1,16 +1,16 @@
 <template>
-  <div class="products-carousel py-10 lg:py-24" :class="background">
-    <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
-      <VcTypography v-if="title" tag="h2" variant="h1" class="mb-2 text-center lg:mb-4">
+  <div class="products-carousel" :class="background">
+    <div class="products-carousel__wrapper">
+      <VcTypography v-if="title" tag="h2" variant="h1" class="products-carousel__title">
         {{ title }}
       </VcTypography>
 
-      <div v-if="subtitle" class="mb-8 text-center lg:text-lg">{{ subtitle }}</div>
+      <div v-if="subtitle" class="products-carousel__subtitle">{{ subtitle }}</div>
 
       <VcCarousel v-if="displayProducts.length" :slides="displayProducts" :options="carouselOptions" navigation>
         <template #slide="{ slide: product }">
-          <div class="h-full p-3">
-            <ProductCard class="h-full" :card-type="cardType" :product="product" />
+          <div class="products-carousel__slide">
+            <ProductCard class="products-carousel__card" :card-type="cardType" :product="product" />
           </div>
         </template>
       </VcCarousel>
@@ -119,13 +119,31 @@ watchEffect(async () => {
 </script>
 
 <style scoped lang="scss">
-.vc-typography--variant--h1 {
-  @apply normal-case;
-}
-
 .products-carousel {
+  @apply py-10 lg:py-24;
+
   &.bg-neutral-800 {
-    color: white;
+    @apply text-white;
+  }
+
+  &__wrapper {
+    @apply mx-auto w-full max-w-screen-xl px-5 md:px-12;
+  }
+
+  &__title {
+    @apply mb-2 text-center lg:mb-4 normal-case;
+  }
+
+  &__subtitle {
+    @apply mb-8 text-center lg:text-lg;
+  }
+
+  &__slide {
+    @apply h-full p-3;
+  }
+
+  &__card {
+    @apply h-full;
   }
 }
 </style>
