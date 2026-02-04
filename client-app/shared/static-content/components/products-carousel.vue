@@ -123,7 +123,7 @@ watchEffect(async () => {
   @apply py-10 lg:py-24;
 
   &.bg-neutral-800 {
-    @apply text-white;
+    @apply text-additional-50;
   }
 
   &__wrapper {
