@@ -27,7 +27,9 @@
       "variant_picker_group": "Варианты товара",
       "show_more_button": "Показать ещё варианты ({count})",
       "sidebar": "Боковая панель",
-      "close_chip": "Закрыть чип"
+      "close_chip": "Закрыть чип",
+      "carousel_previous": "Предыдущий слайд",
+      "carousel_next": "Следующий слайд"
     },
     "date_selector": {
       "min_date_error": "Дата должна быть не ранее {min}",

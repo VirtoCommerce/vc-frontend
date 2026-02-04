@@ -27,7 +27,9 @@
       "variant_picker_group": "Variantalternativer",
       "show_more_button": "Se flere alternativer ({count})",
       "sidebar": "Sidepanel",
-      "close_chip": "Lukk chip"
+      "close_chip": "Lukk chip",
+      "carousel_previous": "Forrige bilde",
+      "carousel_next": "Neste bilde"
     },
     "date_selector": {
       "min_date_error": "Datoen må være på eller etter {min}",

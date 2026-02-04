@@ -27,7 +27,9 @@
       "variant_picker_group": "Warianty produktu",
       "show_more_button": "Pokaż więcej wariantów ({count})",
       "sidebar": "Panel boczny",
-      "close_chip": "Zamknij znacznik"
+      "close_chip": "Zamknij znacznik",
+      "carousel_previous": "Poprzedni slajd",
+      "carousel_next": "Następny slajd"
     },
     "date_selector": {
       "min_date_error": "Data musi być nie wcześniejsza niż {min}",

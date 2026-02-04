@@ -27,7 +27,9 @@
       "variant_picker_group": "Variantrivaihtoehdot",
       "show_more_button": "Näytä lisää vaihtoehtoja ({count})",
       "sidebar": "Sivupaneeli",
-      "close_chip": "Sulje merkki"
+      "close_chip": "Sulje merkki",
+      "carousel_previous": "Edellinen kuva",
+      "carousel_next": "Seuraava kuva"
     },
     "date_selector": {
       "min_date_error": "Päivämäärän on oltava vähintään {min}",

@@ -27,7 +27,9 @@
       "variant_picker_group": "Opciones de variantes",
       "show_more_button": "Ver más opciones ({count})",
       "sidebar": "Barra lateral",
-      "close_chip": "Cerrar chip"
+      "close_chip": "Cerrar chip",
+      "carousel_previous": "Diapositiva anterior",
+      "carousel_next": "Diapositiva siguiente"
     },
     "date_selector": {
       "min_date_error": "La fecha debe ser igual o posterior al {min}",
