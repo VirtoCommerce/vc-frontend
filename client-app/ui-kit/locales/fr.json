@@ -27,7 +27,11 @@
       "variant_picker_group": "Options de variantes",
       "show_more_button": "Voir plus d'options ({count})",
       "sidebar": "Barre latérale",
-      "close_chip": "Fermer le chip"
+      "close_chip": "Fermer le chip",
+      "nav_previous": "Précédent",
+      "nav_next": "Suivant",
+      "nav_up": "Haut",
+      "nav_down": "Bas"
     },
     "date_selector": {
       "min_date_error": "La date doit être à partir du {min}",

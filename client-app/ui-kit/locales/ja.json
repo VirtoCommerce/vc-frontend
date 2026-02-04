@@ -27,7 +27,11 @@
       "variant_picker_group": "バリアントの選択",
       "show_more_button": "さらにオプションを表示（{count}）",
       "sidebar": "サイドバー",
-      "close_chip": "チップを閉じる"
+      "close_chip": "チップを閉じる",
+      "nav_previous": "前へ",
+      "nav_next": "次へ",
+      "nav_up": "上へ",
+      "nav_down": "下へ"
     },
     "date_selector": {
       "min_date_error": "日付は{min}以降である必要があります",
