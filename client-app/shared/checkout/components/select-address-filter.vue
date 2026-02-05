@@ -58,6 +58,7 @@
       test-id-input="search-keyword-input"
       clearable
       :disabled="pickupLocationsLoading"
+      @clear="applyFilter"
       @keyup.enter="applyFilter"
     >
       <template #append>
