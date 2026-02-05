@@ -577,8 +577,14 @@ function resetPage() {
 }
 
 async function handleResetFilterKeyword() {
+  const hadKeyword = !!searchQueryParam.value;
+
   resetSearchKeyword();
-  void resetFacetAndControlsFilters({ skipPageReset: true });
+  await resetFacetAndControlsFilters({ skipPageReset: true });
+
+  if (!hadKeyword) {
+    return;
+  }
 
   const back = router.options.history.state?.back;
 
