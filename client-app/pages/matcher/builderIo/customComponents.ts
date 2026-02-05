@@ -241,6 +241,7 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
             name: "sku",
             type: "string",
             friendlyName: "Product SKU",
+            defaultValue: "",
           },
         ],
         onChange: (options: Map<string, Array<{ sku: string }>>) => {
