@@ -27,7 +27,11 @@
       "variant_picker_group": "Opzioni di variante",
       "show_more_button": "Vedi altre opzioni ({count})",
       "sidebar": "Barra laterale",
-      "close_chip": "Chiudi chip"
+      "close_chip": "Chiudi chip",
+      "nav_previous": "Precedente",
+      "nav_next": "Successivo",
+      "nav_up": "Su",
+      "nav_down": "Giù"
     },
     "date_selector": {
       "min_date_error": "La data deve essere successiva o uguale a {min}",
@@ -100,6 +104,7 @@
     "slider": {
       "tooltip": "{count} articoli",
       "aria_label": "Slider da {min} a {max}",
+      "legend": "Slider da {min} a {max}",
       "start_input_label": "Valore iniziale (compreso tra {min} e {max})",
       "end_input_label": "Valore finale (tra {min} e {max})",
       "start_input_aria_label": "Inserisci il valore iniziale, intervallo da {min} a {max}",
@@ -107,7 +112,11 @@
       "start_input_help": "Inserisci un numero tra {min} e {max}, incremento {step}",
       "end_input_help": "Inserisci un numero tra {min} e {max}, incremento {step}",
       "column_aria_label": "Colonna con {count} articoli, da {from} a {to}",
-      "current_value_announcement": "Valore slider: {start} a {end}, intervallo {min} a {max}"
+      "current_value_announcement": "Valore slider: {start} a {end}, intervallo {min} a {max}",
+      "start_handle_label": "Cursore valore minimo",
+      "end_handle_label": "Cursore valore massimo",
+      "start_handle_aria_label": "Valore iniziale {value}, intervallo da {min} a {max}",
+      "end_handle_aria_label": "Valore finale {value}, intervallo da {min} a {max}"
     },
     "breadcrumbs": {
       "aria_label": "Navigazione breadcrumb"

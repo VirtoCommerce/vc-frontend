@@ -27,7 +27,11 @@
       "variant_picker_group": "Warianty produktu",
       "show_more_button": "Pokaż więcej wariantów ({count})",
       "sidebar": "Panel boczny",
-      "close_chip": "Zamknij znacznik"
+      "close_chip": "Zamknij znacznik",
+      "nav_previous": "Poprzedni",
+      "nav_next": "Następny",
+      "nav_up": "W górę",
+      "nav_down": "W dół"
     },
     "date_selector": {
       "min_date_error": "Data musi być nie wcześniejsza niż {min}",
@@ -100,6 +104,7 @@
     "slider": {
       "tooltip": "{count} przedmiotów",
       "aria_label": "Suwak zakresu od {min} do {max}",
+      "legend": "Suwak zakresu od {min} do {max}",
       "start_input_label": "Wartość początkowa (od {min} do {max})",
       "end_input_label": "Wartość końcowa (od {min} do {max})",
       "start_input_aria_label": "Wprowadź wartość początkową, zakres od {min} do {max}",
@@ -107,7 +112,11 @@
       "start_input_help": "Wprowadź liczbę od {min} do {max}, krok {step}",
       "end_input_help": "Wprowadź liczbę od {min} do {max}, krok {step}",
       "column_aria_label": "Kolumna z {count} przedmiotami, zakres od {from} do {to}",
-      "current_value_announcement": "Wartość suwaka: {start} do {end}, zakres {min} do {max}"
+      "current_value_announcement": "Wartość suwaka: {start} do {end}, zakres {min} do {max}",
+      "start_handle_label": "Uchwyt wartości minimalnej",
+      "end_handle_label": "Uchwyt wartości maksymalnej",
+      "start_handle_aria_label": "Wartość początkowa {value}, zakres od {min} do {max}",
+      "end_handle_aria_label": "Wartość końcowa {value}, zakres od {min} do {max}"
     },
     "breadcrumbs": {
       "aria_label": "Nawigacja okruszkowa"

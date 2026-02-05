@@ -6,10 +6,11 @@
         'vc-modal',
         {
           'vc-modal--mobile-fullscreen': isMobileFullscreen,
-          'vc-modal--full-height': isFullHeight,
+          'vc-modal--scrollable': scrollable,
         },
         $attrs.class,
       ]"
+      :style="modalStyle"
       :initial-focus="getActiveElement()"
       :data-test-id="testId"
       @close="!isPersistent && close()"
@@ -37,8 +38,8 @@
           leave-to="opacity-0 scale-95"
           @after-leave="$emit('close')"
         >
-          <DialogPanel class="vc-modal__dialog" :style="{ maxWidth }">
-            <VcDialog :dividers="dividers">
+          <DialogPanel class="vc-modal__panel">
+            <VcDialog class="vc-modal__dialog" :dividers="dividers">
               <VcDialogHeader :icon="icon" :color="variant" :closable="!isPersistent" @close="close">
                 <DialogTitle>
                   <slot name="title">
@@ -47,8 +48,12 @@
                 </DialogTitle>
               </VcDialogHeader>
 
-              <VcDialogContent>
-                <slot :close="close" />
+              <VcDialogContent :scrollable="scrollable">
+                <template v-if="$slots.container" #container>
+                  <slot name="container" :close="close" />
+                </template>
+
+                <slot v-if="!$slots.container && $slots.default" :close="close" />
               </VcDialogContent>
 
               <VcDialogFooter v-if="!hideActions" @close="close">
@@ -64,7 +69,7 @@
 
 <script setup lang="ts">
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from "@headlessui/vue";
-import { ref, watchSyncEffect } from "vue";
+import { computed, ref, watchSyncEffect } from "vue";
 
 interface IEmits {
   (event: "close"): void;
@@ -75,12 +80,14 @@ interface IProps {
   hideActions?: boolean;
   isPersistent?: boolean;
   isMobileFullscreen?: boolean;
-  isFullHeight?: boolean;
   title?: string;
   icon?: string;
   maxWidth?: string;
+  height?: string;
+  maxHeight?: string;
   variant?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
   dividers?: boolean;
+  scrollable?: boolean;
   testId?: string;
 }
 
@@ -93,7 +100,7 @@ defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   show: true,
   variant: "info",
-  maxWidth: "35.25rem",
+  scrollable: true,
 });
 
 const isOpen = ref(true);
@@ -114,13 +121,23 @@ watchSyncEffect(() => {
   isOpen.value = props.show;
 });
 
+const modalStyle = computed(() => ({
+  "--vc-modal-height": props.height,
+  "--vc-modal-max-height": props.maxHeight,
+  "--vc-modal-max-width": props.maxWidth,
+}));
+
 defineExpose({ close });
 </script>
 
 <style lang="scss">
 .vc-modal {
   $mobileFullscreen: "";
-  $fullHeight: "";
+  $scrollable: "";
+
+  --h: var(--vc-modal-height, auto);
+  --max-h: var(--vc-modal-max-height, 100%);
+  --max-w: var(--vc-modal-max-width, 35.25rem);
 
   @apply fixed top-0 left-0 w-full h-full z-50;
 
@@ -128,8 +145,8 @@ defineExpose({ close });
     $mobileFullscreen: &;
   }
 
-  &--full-height {
-    $fullHeight: &;
+  &--scrollable {
+    $scrollable: &;
   }
 
   &__backdrop {
@@ -146,8 +163,8 @@ defineExpose({ close });
     }
   }
 
-  &__dialog {
-    @apply flex items-center justify-center w-full h-[calc(100vh-2rem)] max-h-[calc(100vh-2rem)];
+  &__panel {
+    @apply flex items-center justify-center w-full max-w-[--max-w] h-[calc(100vh-2rem)] max-h-full;
 
     #{$mobileFullscreen} & {
       @media (max-width: theme("screens.md")) {
@@ -159,14 +176,11 @@ defineExpose({ close });
         }
       }
     }
+  }
 
-    #{$fullHeight} & {
-      & > .vc-dialog,
-      & > .vc-dialog .vc-dialog-content__container {
-        @media (min-width: theme("screens.md")) {
-          @apply max-h-full h-full;
-        }
-      }
+  &__dialog {
+    @media (min-width: theme("screens.md")) {
+      @apply max-h-[--max-h] h-[--h];
     }
   }
 }

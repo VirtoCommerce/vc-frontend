@@ -27,7 +27,11 @@
       "variant_picker_group": "Options de variantes",
       "show_more_button": "Voir plus d'options ({count})",
       "sidebar": "Barre latérale",
-      "close_chip": "Fermer le chip"
+      "close_chip": "Fermer le chip",
+      "nav_previous": "Précédent",
+      "nav_next": "Suivant",
+      "nav_up": "Haut",
+      "nav_down": "Bas"
     },
     "date_selector": {
       "min_date_error": "La date doit être à partir du {min}",
@@ -100,6 +104,7 @@
     "slider": {
       "tooltip": "{count} articles",
       "aria_label": "Curseur de plage de {min} à {max}",
+      "legend": "Curseur de plage de {min} à {max}",
       "start_input_label": "Valeur de départ (entre {min} et {max})",
       "end_input_label": "Valeur finale (entre {min} et {max})",
       "start_input_aria_label": "Valeur de départ, plage de {min} à {max}",
@@ -107,7 +112,11 @@
       "start_input_help": "Entrez un nombre entre {min} et {max}, pas de {step}",
       "end_input_help": "Entrez un nombre entre {min} et {max}, pas de {step}",
       "column_aria_label": "Colonne avec {count} articles, de {from} à {to}",
-      "current_value_announcement": "Valeur du curseur : {start} à {end}, plage {min} à {max}"
+      "current_value_announcement": "Valeur du curseur : {start} à {end}, plage {min} à {max}",
+      "start_handle_label": "Curseur de valeur minimale",
+      "end_handle_label": "Curseur de valeur maximale",
+      "start_handle_aria_label": "Valeur de départ {value}, plage de {min} à {max}",
+      "end_handle_aria_label": "Valeur finale {value}, plage de {min} à {max}"
     },
     "breadcrumbs": {
       "aria_label": "Navigation fil d'Ariane"

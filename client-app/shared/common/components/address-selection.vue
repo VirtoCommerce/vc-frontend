@@ -15,14 +15,12 @@
         v-if="!readonly"
         :disabled="disabled"
         variant="outline"
-        icon
+        icon="edit"
         size="xs"
         class="vc-address-selection__button"
         data-test-id="select-address-button"
         @click="$emit('change')"
-      >
-        <VcIcon name="edit" size="xs" />
-      </VcButton>
+      />
     </template>
 
     <p v-else class="vc-address-selection__no-address">
