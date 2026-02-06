@@ -246,9 +246,30 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         ],
         onChange: (options: Map<string, Array<{ sku: string }>>) => {
           const skus = options.get("skus");
-          if (Array.isArray(skus) && skus.length > 12) {
+          if (!Array.isArray(skus)) {
+            return;
+          }
+          if (skus.length > 12) {
             options.set("skus", skus.slice(0, 12));
             alert("Maximum 12 SKUs allowed");
+            return;
+          }
+
+          // SKU is unique, so duplicate values are not allowed.
+          // This also handles Builder.io's "Add Item" behavior, which clones the last item —
+          // the duplicated SKU gets cleared to an empty string.
+          const seen = new Set<string>();
+          let hasDuplicates = false;
+          for (let i = 0; i < skus.length; i++) {
+            const val = skus[i].sku;
+            if (val && seen.has(val)) {
+              skus[i] = { sku: "" };
+              hasDuplicates = true;
+            }
+            seen.add(val);
+          }
+          if (hasDuplicates) {
+            options.set("skus", [...skus]);
           }
         },
       },

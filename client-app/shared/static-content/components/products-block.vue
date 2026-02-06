@@ -52,7 +52,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { products, fetchProducts } = useProducts();
 
 const skuCodes = computed(() => {
-  const skus = props.skus?.filter(Boolean) ?? [];
+  const skus = Array.from(new Set(props.skus?.filter(Boolean) ?? []));
   if (!skus.length) {
     return [];
   }
