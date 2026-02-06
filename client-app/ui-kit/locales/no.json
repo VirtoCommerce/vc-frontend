@@ -29,7 +29,11 @@
       "sidebar": "Sidepanel",
       "close_chip": "Lukk chip",
       "carousel_previous": "Forrige bilde",
-      "carousel_next": "Neste bilde"
+      "carousel_next": "Neste bilde",
+      "nav_previous": "Forrige",
+      "nav_next": "Neste",
+      "nav_up": "Opp",
+      "nav_down": "Ned"
     },
     "date_selector": {
       "min_date_error": "Datoen må være på eller etter {min}",
@@ -102,6 +106,7 @@
     "slider": {
       "tooltip": "{count} elementer",
       "aria_label": "Skyveknapp fra {min} til {max}",
+      "legend": "Skyveknapp fra {min} til {max}",
       "start_input_label": "Startverdi (mellom {min} og {max})",
       "end_input_label": "Sluttverdi (mellom {min} og {max})",
       "start_input_aria_label": "Inndata for startverdi, område {min} til {max}",
@@ -109,7 +114,11 @@
       "start_input_help": "Skriv inn et tall mellom {min} og {max}, trinnstørrelse {step}",
       "end_input_help": "Skriv inn et tall mellom {min} og {max}, trinnstørrelse {step}",
       "column_aria_label": "Kolonne med {count} elementer, område fra {from} til {to}",
-      "current_value_announcement": "Skyveknappverdi: {start} til {end}, område {min} til {max}"
+      "current_value_announcement": "Skyveknappverdi: {start} til {end}, område {min} til {max}",
+      "start_handle_label": "Minimumsverdihåndtak",
+      "end_handle_label": "Maksimumsverdihåndtak",
+      "start_handle_aria_label": "Startverdi {value}, område {min} til {max}",
+      "end_handle_aria_label": "Sluttverdi {value}, område {min} til {max}"
     },
     "breadcrumbs": {
       "aria_label": "Navigasjon for brødsmuler"
