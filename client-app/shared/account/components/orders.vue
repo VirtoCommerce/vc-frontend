@@ -191,7 +191,6 @@
   <VcTable
     v-else
     :loading="ordersLoading"
-    :columns="columns"
     :items="orders"
     :sort="sort"
     :pages="pages"
@@ -203,14 +202,16 @@
     class="bg-additional-50"
     @header-click="applySorting"
     @page-changed="changePage"
+    @row-click="goToOrderDetails"
   >
-    <template #mobile-item="itemData">
+    <!-- Mobile view -->
+    <template #mobile-item="{ item }">
       <button
         class="grid w-full cursor-pointer grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
         type="button"
         tabindex="0"
-        @click="goToOrderDetails(itemData.item)"
-        @keyup.enter="goToOrderDetails(itemData.item)"
+        @click="goToOrderDetails(item)"
+        @keyup.enter="goToOrderDetails(item)"
       >
         <div class="flex flex-col">
           <span class="text-sm text-neutral-400">
@@ -218,21 +219,21 @@
           </span>
 
           <span class="overflow-hidden text-ellipsis pr-4 font-black">
-            {{ itemData.item.number }}
+            {{ item.number }}
           </span>
         </div>
 
         <div class="flex flex-col items-end justify-center">
-          <OrderStatus :status="itemData.item.status" :display-value="itemData.item.statusDisplayValue" />
+          <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" />
         </div>
 
-        <div v-if="orderScope === 'organization' && itemData.item?.customerName" class="flex flex-col">
+        <div v-if="orderScope === 'organization' && item?.customerName" class="flex flex-col">
           <span class="text-sm text-neutral-400">
             {{ $t("pages.account.orders.buyer_name_label") }}
           </span>
 
           <span class="overflow-hidden text-ellipsis">
-            {{ itemData.item?.customerName }}
+            {{ item?.customerName }}
           </span>
         </div>
 
@@ -242,7 +243,7 @@
           </span>
 
           <span class="overflow-hidden text-ellipsis">
-            {{ $d(itemData.item?.createdDate) }}
+            {{ $d(item?.createdDate) }}
           </span>
         </div>
 
@@ -252,48 +253,69 @@
           </span>
 
           <span class="overflow-hidden text-ellipsis font-black">
-            {{ itemData.item.total?.formattedAmount }}
+            {{ item.total?.formattedAmount }}
           </span>
         </div>
       </button>
     </template>
 
-    <template #desktop-body>
-      <tr
-        v-for="order in orders"
-        :key="order.id"
-        class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
-        @click="goToOrderDetails(order)"
-      >
-        <td class="overflow-hidden text-ellipsis p-5">
-          {{ order.number }}
-        </td>
+    <!-- Desktop columns -->
+    <VcTableColumn id="number" :title="$t('pages.account.orders.order_number_label')" sortable v-slot="{ item }">
+      {{ item.number }}
+    </VcTableColumn>
 
-        <td v-if="orderScope === 'private'" class="overflow-hidden text-ellipsis p-5">
-          {{ order.purchaseOrderNumber }}
-        </td>
+    <VcTableColumn
+      v-if="orderScope === 'private'"
+      id="purchaseOrder"
+      :title="$t('pages.account.orders.purchase_number_label')"
+      v-slot="{ item }"
+    >
+      {{ item.purchaseOrderNumber }}
+    </VcTableColumn>
 
-        <td v-if="orderScope === 'organization'" class="overflow-hidden text-ellipsis p-5">
-          {{ order.customerName }}
-        </td>
+    <VcTableColumn
+      v-if="orderScope === 'organization'"
+      id="buyerName"
+      :title="$t('pages.account.orders.buyer_name_label')"
+      class="w-32 xl:w-40"
+      v-slot="{ item }"
+    >
+      {{ item.customerName }}
+    </VcTableColumn>
 
-        <td class="overflow-hidden text-ellipsis p-5">
-          {{ order.inPayments?.[0]?.number }}
-        </td>
+    <VcTableColumn
+      id="invoice"
+      :title="$t('pages.account.orders.invoice_label')"
+      class="w-32 xl:w-40"
+      v-slot="{ item }"
+    >
+      {{ item.inPayments?.[0]?.number }}
+    </VcTableColumn>
 
-        <td class="overflow-hidden text-ellipsis p-5">
-          {{ $d(order?.createdDate) }}
-        </td>
+    <VcTableColumn
+      id="createdDate"
+      :title="$t('pages.account.orders.date_label')"
+      sortable
+      class="w-28"
+      v-slot="{ item }"
+    >
+      {{ $d(item?.createdDate) }}
+    </VcTableColumn>
 
-        <td class="p-1">
-          <OrderStatus :status="order.status" :display-value="order.statusDisplayValue" class="inline-block" />
-        </td>
+    <VcTableColumn id="status" :title="$t('pages.account.orders.status_label')" sortable class="w-36" v-slot="{ item }">
+      <OrderStatus :status="item.status" :display-value="item.statusDisplayValue" class="inline-block" />
+    </VcTableColumn>
 
-        <td class="overflow-hidden text-ellipsis p-5 text-right">
-          {{ order.total?.formattedAmount }}
-        </td>
-      </tr>
-    </template>
+    <VcTableColumn
+      id="total"
+      :title="$t('pages.account.orders.total_label')"
+      sortable
+      align="right"
+      class="w-40"
+      v-slot="{ item }"
+    >
+      {{ item.total?.formattedAmount }}
+    </VcTableColumn>
 
     <template #page-limit-message>
       {{ $t("ui_kit.reach_limit.page_limit_filters") }}
@@ -316,6 +338,7 @@ import { Sort } from "@/core/types";
 import { toDateISOString } from "@/core/utilities";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
 import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
+import { VcTableColumn } from "@/ui-kit/components/organisms";
 import { useUser } from "../composables";
 import DateFilterSelect from "./date-filter-select.vue";
 import MobileOrdersFilter from "./mobile-orders-filter.vue";
@@ -379,21 +402,6 @@ const isMobile = breakpoints.smaller("lg");
 const localKeyword = ref("");
 const filtersVisible = ref(false);
 const selectedDateFilterType = ref<DateFilterType>();
-
-const columns = computed<ITableColumn[]>(() => [
-  { id: "number", title: t("pages.account.orders.order_number_label"), sortable: true },
-  {
-    id: orderScope.value === "private" ? "purchaseOrder" : "buyerName",
-    title:
-      orderScope.value === "private"
-        ? t("pages.account.orders.purchase_number_label")
-        : t("pages.account.orders.buyer_name_label"),
-  },
-  { id: "invoice", title: t("pages.account.orders.invoice_label") },
-  { id: "createdDate", title: t("pages.account.orders.date_label"), sortable: true },
-  { id: "status", title: t("pages.account.orders.status_label"), sortable: true, classes: "!px-3" },
-  { id: "total", title: t("pages.account.orders.total_label"), sortable: true, align: "right" },
-]);
 
 const organizationCustomerNames = computed(() =>
   facets.value?.find((item) => item.name === CUSTOMER_NAME_FACET_NAME)?.items?.map((item) => item.label),
