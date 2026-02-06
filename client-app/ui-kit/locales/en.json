@@ -28,6 +28,8 @@
       "show_more_button": "See more options ({count})",
       "sidebar": "Sidebar",
       "close_chip": "Close chip",
+      "carousel_previous": "Previous slide",
+      "carousel_next": "Next slide",
       "nav_previous": "Previous",
       "nav_next": "Next",
       "nav_up": "Up",

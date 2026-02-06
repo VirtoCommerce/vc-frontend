@@ -28,6 +28,8 @@
       "show_more_button": "さらにオプションを表示（{count}）",
       "sidebar": "サイドバー",
       "close_chip": "チップを閉じる",
+      "carousel_previous": "前のスライド",
+      "carousel_next": "次のスライド",
       "nav_previous": "前へ",
       "nav_next": "次へ",
       "nav_up": "上へ",
