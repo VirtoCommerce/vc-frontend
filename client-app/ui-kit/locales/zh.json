@@ -28,6 +28,8 @@
       "show_more_button": "查看更多选项（{count}）",
       "sidebar": "侧边栏",
       "close_chip": "关闭标签",
+      "carousel_previous": "上一张",
+      "carousel_next": "下一张",
       "nav_previous": "上一个",
       "nav_next": "下一个",
       "nav_up": "向上",

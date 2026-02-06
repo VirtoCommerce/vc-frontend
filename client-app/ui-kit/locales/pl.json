@@ -28,6 +28,8 @@
       "show_more_button": "Pokaż więcej wariantów ({count})",
       "sidebar": "Panel boczny",
       "close_chip": "Zamknij znacznik",
+      "carousel_previous": "Poprzedni slajd",
+      "carousel_next": "Następny slajd",
       "nav_previous": "Poprzedni",
       "nav_next": "Następny",
       "nav_up": "W górę",

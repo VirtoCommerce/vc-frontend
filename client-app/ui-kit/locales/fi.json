@@ -28,6 +28,8 @@
       "show_more_button": "Näytä lisää vaihtoehtoja ({count})",
       "sidebar": "Sivupaneeli",
       "close_chip": "Sulje merkki",
+      "carousel_previous": "Edellinen kuva",
+      "carousel_next": "Seuraava kuva",
       "nav_previous": "Edellinen",
       "nav_next": "Seuraava",
       "nav_up": "Ylös",
