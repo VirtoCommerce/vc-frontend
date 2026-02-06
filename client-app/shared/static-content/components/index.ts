@@ -37,4 +37,5 @@ export const templateBlocks: { [key: string]: Component } = {
   "text-block": TextBlock,
   "title-block": TitleBlock,
   category: Category,
+  "predefined-product-list": ProductsBlock,
 };
