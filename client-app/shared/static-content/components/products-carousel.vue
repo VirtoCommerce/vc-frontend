@@ -52,10 +52,11 @@ const mdScreenWidth = extractNumberFromString(BREAKPOINTS.md);
 const lgScreenWidth = extractNumberFromString(BREAKPOINTS.lg);
 
 const skuCodes = computed(() => {
-  if (!props.skus?.length) {
+  const skus = Array.from(new Set(props.skus?.map((item) => item.sku)?.filter(Boolean) ?? []));
+  if (!skus.length) {
     return [];
   }
-  return props.skus.map((item) => item.sku).filter(Boolean);
+  return skus;
 });
 
 const skuFilterExpression = computed(() => {

@@ -267,11 +267,15 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
             name: "sku",
             type: "string",
             friendlyName: "Product SKU",
+            defaultValue: "",
           },
         ],
         onChange: (options: Map<string, Array<{ sku: string }>>) => {
           const skus = options.get("skus");
-          if (Array.isArray(skus) && skus.length > 12) {
+          if (!Array.isArray(skus)) {
+            return;
+          }
+          if (skus.length > 12) {
             options.set("skus", skus.slice(0, 12));
             alert("Maximum 12 SKUs allowed");
           }
