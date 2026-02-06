@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { VcBadge } from "@/ui-kit/components/atoms";
 import { BREAKPOINTS } from "@/ui-kit/constants";
-import { VcTable } from "..";
+import { VcTable, VcTableColumn } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const breakpointOptions = ["none", ...Object.keys(BREAKPOINTS)] as const;
@@ -1552,6 +1552,563 @@ async function onHeaderClick(sortInfo: VcTableSortInfoType) {
         </td>
       </tr>
     </template>
+  </VcTable>
+</template>
+        `,
+      },
+    },
+  },
+};
+
+export const DeclarativeColumnsDesktop: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    sort: { column: "name", direction: "asc" },
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => {
+      const sort = ref<VcTableSortInfoType | undefined>(args.sort);
+      const handleHeaderClick = (sortInfo: VcTableSortInfoType) => {
+        sort.value = sortInfo;
+      };
+      return { args, sort, handleHeaderClick };
+    },
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :sort="sort"
+        @header-click="handleHeaderClick"
+      >
+        <VcTableColumn id="name" title="Name" sortable v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" sortable v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="role" title="Role" v-slot="{ item }">
+          <VcBadge color="neutral" variant="solid-light" size="sm">
+            {{ item.role }}
+          </VcBadge>
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" sortable align="center" v-slot="{ item }">
+          <VcBadge
+            :color="item.status === 'Active' ? 'success' : 'neutral'"
+            variant="solid-light"
+            size="sm"
+          >
+            {{ item.status }}
+          </VcBadge>
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "**Declarative columns with scoped slots (Desktop only)**. Each `VcTableColumn` defines both the column header and the cell content via its scoped slot. This is the cleanest API for simple tables.",
+      },
+      source: {
+        code: `
+<script setup lang="ts">
+const items = ref([...]);
+const sort = ref<VcTableSortInfoType>({ column: "name", direction: "asc" });
+
+function onHeaderClick(sortInfo: VcTableSortInfoType) {
+  sort.value = sortInfo;
+}
+</script>
+
+<template>
+  <VcTable
+    :items="items"
+    :sort="sort"
+    @header-click="onHeaderClick"
+  >
+    <VcTableColumn id="name" title="Name" sortable v-slot="{ item }">
+      {{ item.name }}
+    </VcTableColumn>
+    <VcTableColumn id="email" title="Email" sortable v-slot="{ item }">
+      {{ item.email }}
+    </VcTableColumn>
+    <VcTableColumn id="role" title="Role" v-slot="{ item }">
+      <VcBadge color="neutral" variant="solid-light" size="sm">
+        {{ item.role }}
+      </VcBadge>
+    </VcTableColumn>
+    <VcTableColumn id="status" title="Status" sortable align="center" v-slot="{ item }">
+      <VcBadge
+        :color="item.status === 'Active' ? 'success' : 'neutral'"
+        variant="solid-light"
+        size="sm"
+      >
+        {{ item.status }}
+      </VcBadge>
+    </VcTableColumn>
+  </VcTable>
+</template>
+        `,
+      },
+    },
+  },
+};
+
+export const DeclarativeColumnsResponsive: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 3,
+    page: 1,
+    sort: { column: "name", direction: "asc" },
+    mobileBreakpoint: "md",
+    bordered: true,
+    mobileBordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => {
+      const page = ref(args.page);
+      const sort = ref<VcTableSortInfoType | undefined>(args.sort);
+      const handlePageChange = (newPage: number) => {
+        page.value = newPage;
+      };
+      const handleHeaderClick = (sortInfo: VcTableSortInfoType) => {
+        sort.value = sortInfo;
+      };
+      return { args, page, sort, handlePageChange, handleHeaderClick };
+    },
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="page"
+        :sort="sort"
+        :mobile-breakpoint="args.mobileBreakpoint"
+        :bordered="args.bordered"
+        :mobile-bordered="args.mobileBordered"
+        @page-changed="handlePageChange"
+        @header-click="handleHeaderClick"
+      >
+        <!-- Mobile view uses mobile-item slot -->
+        <template #mobile-item="{ item }">
+          <div class="border-b border-neutral-200 p-4 last:border-b-0">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold">{{ item.name }}</span>
+              <VcBadge
+                :color="item.status === 'Active' ? 'success' : 'neutral'"
+                variant="solid-light"
+                size="sm"
+              >
+                {{ item.status }}
+              </VcBadge>
+            </div>
+            <div class="text-sm text-neutral-600">{{ item.email }}</div>
+            <div class="text-sm text-neutral-500">{{ item.role }}</div>
+          </div>
+        </template>
+
+        <!-- Desktop view uses declarative VcTableColumn -->
+        <VcTableColumn id="name" title="Name" sortable v-slot="{ item }">
+          <div class="flex items-center gap-2">
+            <div class="size-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-bold">
+              {{ item.name.charAt(0) }}
+            </div>
+            {{ item.name }}
+          </div>
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" sortable v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="role" title="Role" v-slot="{ item }">
+          <VcBadge color="neutral" variant="solid-light" size="sm">
+            {{ item.role }}
+          </VcBadge>
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" sortable align="center" v-slot="{ item }">
+          <VcBadge
+            :color="item.status === 'Active' ? 'success' : 'neutral'"
+            variant="solid-light"
+            size="sm"
+          >
+            {{ item.status }}
+          </VcBadge>
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "**Declarative columns with responsive views**. Combines `VcTableColumn` for desktop with `#mobile-item` slot for mobile. The table automatically switches between views based on `mobile-breakpoint`.",
+      },
+      source: {
+        code: `
+<script setup lang="ts">
+const items = ref([...]);
+const page = ref(1);
+const sort = ref<VcTableSortInfoType>({ column: "name", direction: "asc" });
+
+function onPageChange(newPage: number) {
+  page.value = newPage;
+}
+
+function onHeaderClick(sortInfo: VcTableSortInfoType) {
+  sort.value = sortInfo;
+}
+</script>
+
+<template>
+  <VcTable
+    :items="items"
+    :pages="3"
+    :page="page"
+    :sort="sort"
+    mobile-breakpoint="md"
+    bordered
+    mobile-bordered
+    @page-changed="onPageChange"
+    @header-click="onHeaderClick"
+  >
+    <!-- Mobile view -->
+    <template #mobile-item="{ item }">
+      <div class="border-b border-neutral-200 p-4 last:border-b-0">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold">{{ item.name }}</span>
+          <VcBadge :color="item.status === 'Active' ? 'success' : 'neutral'" ...>
+            {{ item.status }}
+          </VcBadge>
+        </div>
+        <div class="text-sm text-neutral-600">{{ item.email }}</div>
+        <div class="text-sm text-neutral-500">{{ item.role }}</div>
+      </div>
+    </template>
+
+    <!-- Desktop columns -->
+    <VcTableColumn id="name" title="Name" sortable v-slot="{ item }">
+      <div class="flex items-center gap-2">
+        <div class="size-8 rounded-full bg-primary-100 ...">
+          {{ item.name.charAt(0) }}
+        </div>
+        {{ item.name }}
+      </div>
+    </VcTableColumn>
+    <VcTableColumn id="email" title="Email" sortable v-slot="{ item }">
+      {{ item.email }}
+    </VcTableColumn>
+    <VcTableColumn id="role" title="Role" v-slot="{ item }">
+      <VcBadge color="neutral" variant="solid-light" size="sm">
+        {{ item.role }}
+      </VcBadge>
+    </VcTableColumn>
+    <VcTableColumn id="status" title="Status" sortable align="center" v-slot="{ item }">
+      <VcBadge :color="item.status === 'Active' ? 'success' : 'neutral'" ...>
+        {{ item.status }}
+      </VcBadge>
+    </VcTableColumn>
+  </VcTable>
+</template>
+        `,
+      },
+    },
+  },
+};
+
+export const FixedColumnWidths: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    sort: { column: "name", direction: "asc" },
+    bordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => {
+      const sort = ref<VcTableSortInfoType | undefined>(args.sort);
+      const handleHeaderClick = (sortInfo: VcTableSortInfoType) => {
+        sort.value = sortInfo;
+      };
+      return { args, sort, handleHeaderClick };
+    },
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :sort="sort"
+        :bordered="args.bordered"
+        @header-click="handleHeaderClick"
+      >
+        <VcTableColumn id="name" title="Name" sortable width="200px" v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" sortable width="250px" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="role" title="Role" width="120px" v-slot="{ item }">
+          <VcBadge color="neutral" variant="solid-light" size="sm">
+            {{ item.role }}
+          </VcBadge>
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" sortable align="center" width="100px" v-slot="{ item }">
+          <VcBadge
+            :color="item.status === 'Active' ? 'success' : 'neutral'"
+            variant="solid-light"
+            size="sm"
+          >
+            {{ item.status }}
+          </VcBadge>
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "**Fixed column widths for stable layout**. Using the `width` prop on `VcTableColumn` enables `table-layout: fixed`, preventing column width shifts when content changes (e.g., after sorting). This creates a more stable visual experience.",
+      },
+      source: {
+        code: `
+<script setup lang="ts">
+const items = ref([...]);
+const sort = ref<VcTableSortInfoType>({ column: "name", direction: "asc" });
+
+function onHeaderClick(sortInfo: VcTableSortInfoType) {
+  sort.value = sortInfo;
+}
+</script>
+
+<template>
+  <VcTable
+    :items="items"
+    :sort="sort"
+    bordered
+    @header-click="onHeaderClick"
+  >
+    <VcTableColumn id="name" title="Name" sortable width="200px" v-slot="{ item }">
+      {{ item.name }}
+    </VcTableColumn>
+    <VcTableColumn id="email" title="Email" sortable width="250px" v-slot="{ item }">
+      {{ item.email }}
+    </VcTableColumn>
+    <VcTableColumn id="role" title="Role" width="120px" v-slot="{ item }">
+      <VcBadge color="neutral" variant="solid-light" size="sm">
+        {{ item.role }}
+      </VcBadge>
+    </VcTableColumn>
+    <VcTableColumn id="status" title="Status" sortable align="center" width="100px" v-slot="{ item }">
+      <VcBadge
+        :color="item.status === 'Active' ? 'success' : 'neutral'"
+        variant="solid-light"
+        size="sm"
+      >
+        {{ item.status }}
+      </VcBadge>
+    </VcTableColumn>
+  </VcTable>
+</template>
+        `,
+      },
+    },
+  },
+};
+
+export const FixedColumnWidthsWithProps: StoryType = {
+  args: {
+    columns: [
+      { id: "name", title: "Name", sortable: true, width: "200px" },
+      { id: "email", title: "Email", sortable: true, width: "250px" },
+      { id: "role", title: "Role", width: "120px" },
+      { id: "status", title: "Status", sortable: true, align: "center", width: "100px" },
+    ],
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    sort: { column: "name", direction: "asc" },
+    bordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcBadge },
+    setup: () => {
+      const sort = ref<VcTableSortInfoType | undefined>(args.sort);
+      const handleHeaderClick = (sortInfo: VcTableSortInfoType) => {
+        sort.value = sortInfo;
+      };
+      return { args, sort, handleHeaderClick };
+    },
+    template: `
+      <VcTable
+        v-bind="args"
+        :sort="sort"
+        @header-click="handleHeaderClick"
+      >
+        <template #desktop-body>
+          <tr
+            v-for="item in args.items"
+            :key="item.id"
+            class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+          >
+            <td class="p-5">{{ item.name }}</td>
+            <td class="p-5">{{ item.email }}</td>
+            <td class="p-5">
+              <VcBadge color="neutral" variant="solid-light" size="sm">
+                {{ item.role }}
+              </VcBadge>
+            </td>
+            <td class="p-5 text-center">
+              <VcBadge
+                :color="item.status === 'Active' ? 'success' : 'neutral'"
+                variant="solid-light"
+                size="sm"
+              >
+                {{ item.status }}
+              </VcBadge>
+            </td>
+          </tr>
+        </template>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "**Fixed column widths using the columns prop**. The `width` property can also be set in the `columns` array prop for the legacy API approach.",
+      },
+      source: {
+        code: `
+<script setup lang="ts">
+const columns: VcTableColumnType[] = [
+  { id: "name", title: "Name", sortable: true, width: "200px" },
+  { id: "email", title: "Email", sortable: true, width: "250px" },
+  { id: "role", title: "Role", width: "120px" },
+  { id: "status", title: "Status", sortable: true, align: "center", width: "100px" },
+];
+
+const items = ref([...]);
+const sort = ref<VcTableSortInfoType>({ column: "name", direction: "asc" });
+
+function onHeaderClick(sortInfo: VcTableSortInfoType) {
+  sort.value = sortInfo;
+}
+</script>
+
+<template>
+  <VcTable
+    :columns="columns"
+    :items="items"
+    :sort="sort"
+    bordered
+    @header-click="onHeaderClick"
+  >
+    <template #desktop-body>
+      <tr v-for="item in items" :key="item.id" class="even:bg-neutral-50 hover:bg-neutral-200">
+        <td class="p-5">{{ item.name }}</td>
+        <td class="p-5">{{ item.email }}</td>
+        <td class="p-5">
+          <VcBadge color="neutral" variant="solid-light" size="sm">
+            {{ item.role }}
+          </VcBadge>
+        </td>
+        <td class="p-5 text-center">
+          <VcBadge :color="item.status === 'Active' ? 'success' : 'neutral'" ...>
+            {{ item.status }}
+          </VcBadge>
+        </td>
+      </tr>
+    </template>
+  </VcTable>
+</template>
+        `,
+      },
+    },
+  },
+};
+
+export const MixedColumnWidths: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    sort: { column: "name", direction: "asc" },
+    bordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => {
+      const sort = ref<VcTableSortInfoType | undefined>(args.sort);
+      const handleHeaderClick = (sortInfo: VcTableSortInfoType) => {
+        sort.value = sortInfo;
+      };
+      return { args, sort, handleHeaderClick };
+    },
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :sort="sort"
+        :bordered="args.bordered"
+        @header-click="handleHeaderClick"
+      >
+        <VcTableColumn id="name" title="Name" sortable width="180px" v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" sortable v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="role" title="Role" v-slot="{ item }">
+          <VcBadge color="neutral" variant="solid-light" size="sm">
+            {{ item.role }}
+          </VcBadge>
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" sortable align="center" width="100px" v-slot="{ item }">
+          <VcBadge
+            :color="item.status === 'Active' ? 'success' : 'neutral'"
+            variant="solid-light"
+            size="sm"
+          >
+            {{ item.status }}
+          </VcBadge>
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "**Mixed fixed and flexible column widths**. You can mix columns with explicit widths and columns without widths. Columns without a `width` prop will share the remaining space equally.",
+      },
+      source: {
+        code: `
+<template>
+  <VcTable :items="items" :sort="sort" bordered @header-click="onHeaderClick">
+    <!-- Fixed width column -->
+    <VcTableColumn id="name" title="Name" sortable width="180px" v-slot="{ item }">
+      {{ item.name }}
+    </VcTableColumn>
+    <!-- Flexible width columns (share remaining space) -->
+    <VcTableColumn id="email" title="Email" sortable v-slot="{ item }">
+      {{ item.email }}
+    </VcTableColumn>
+    <VcTableColumn id="role" title="Role" v-slot="{ item }">
+      <VcBadge color="neutral" variant="solid-light" size="sm">
+        {{ item.role }}
+      </VcBadge>
+    </VcTableColumn>
+    <!-- Fixed width column -->
+    <VcTableColumn id="status" title="Status" sortable align="center" width="100px" v-slot="{ item }">
+      <VcBadge :color="item.status === 'Active' ? 'success' : 'neutral'" ...>
+        {{ item.status }}
+      </VcBadge>
+    </VcTableColumn>
   </VcTable>
 </template>
         `,

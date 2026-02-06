@@ -6,3 +6,4 @@ export { default as VcProductCard } from "./product-card/vc-product-card.vue";
 export { default as VcProductImage } from "./product-image/vc-product-image.vue";
 export { default as VcQuantityStepper } from "./quantity-stepper/vc-quantity-stepper.vue";
 export { default as VcTable } from "./table/vc-table.vue";
+export { default as VcTableColumn } from "./table/vc-table-column.vue";

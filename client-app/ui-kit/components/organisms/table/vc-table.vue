@@ -1,5 +1,8 @@
 <template>
   <div class="vc-table">
+    <!-- Slot for VcTableColumn children (renderless) -->
+    <slot />
+
     <!-- Mobile table view -->
     <div v-if="isMobile && $slots['mobile-item']" class="vc-table__mobile">
       <!-- Mobile skeleton view -->
@@ -18,23 +21,32 @@
       <slot v-else-if="!items.length" name="mobile-empty" />
 
       <!-- Mobile item view -->
-      <slot v-else v-for="(item, index) in items" :key="item.id || index" name="mobile-item" :item="item" />
+      <slot v-else v-for="(item, index) in items" :key="getItemKey(item, index)" name="mobile-item" :item="item" />
     </div>
 
     <!-- Desktop table view -->
     <VcScrollbar v-else :horizontal="scrollable" class="vc-table__scrollbar">
-      <table class="vc-table__desktop">
+      <table :class="['vc-table__desktop', { 'vc-table__desktop--fixed': hasColumnWidths }]">
         <caption v-if="description" class="vc-table__caption">
           {{
             description
           }}
         </caption>
 
+        <!-- Column width definitions for stable layout -->
+        <colgroup v-if="hasColumnWidths">
+          <col
+            v-for="column in mergedColumns"
+            :key="column.id"
+            :style="column.width ? { width: column.width } : undefined"
+          />
+        </colgroup>
+
         <slot name="header">
-          <thead v-if="!hideDefaultHeader && columns.length" class="vc-table__head">
+          <thead v-if="!hideDefaultHeader && mergedColumns.length" class="vc-table__head">
             <tr class="vc-table__row">
               <th
-                v-for="column in columns"
+                v-for="column in mergedColumns"
                 :key="column.id"
                 scope="col"
                 :aria-sort="getAriaSort(column.id)"
@@ -85,7 +97,7 @@
             <!-- Default skeleton template -->
             <tr v-for="row in skeletonRows" :key="row" class="vc-table__skeleton">
               <td
-                v-for="column in columns"
+                v-for="column in mergedColumns"
                 :key="column.id"
                 :class="[
                   'vc-table__skeleton-cell',
@@ -109,9 +121,30 @@
           <slot name="desktop-body" />
         </tbody>
 
+        <!-- Desktop table view with VcTableColumn slots -->
+        <tbody v-else-if="items.length && hasColumnSlots" class="vc-table__body">
+          <tr
+            v-for="(item, rowIndex) in items"
+            :key="getItemKey(item, rowIndex)"
+            class="vc-table__row"
+            @click="$emit('rowClick', item, rowIndex)"
+          >
+            <td
+              v-for="column in mergedColumns"
+              :key="column.id"
+              :class="['vc-table__cell', `vc-table__cell--align--${column.align ?? 'left'}`, column.classes]"
+            >
+              <component
+                :is="() => getColumnSlot(column.id)?.({ item, index: rowIndex })"
+                v-if="getColumnSlot(column.id)"
+              />
+            </td>
+          </tr>
+        </tbody>
+
         <!-- Desktop table item view -->
         <tbody v-else-if="items.length && $slots['desktop-item']" class="vc-table__body">
-          <slot v-for="(item, index) in items" :key="item.id || index" name="desktop-item" :item="item" />
+          <slot v-for="(item, index) in items" :key="getItemKey(item, index)" name="desktop-item" :item="item" />
         </tbody>
       </table>
     </VcScrollbar>
@@ -138,12 +171,14 @@
 
 <script setup lang="ts" generic="T extends VcTableItemType">
 import { useBreakpoints } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, provide, ref } from "vue";
 import { BREAKPOINTS, TABLE_SKELETON_ROWS_SIZE, TABLE_PAGE_LIMIT } from "@/ui-kit/constants";
+import { vcTableKey } from "./vc-table-context";
 
 const emit = defineEmits<{
   (event: "headerClick", item: VcTableSortInfoType): void;
   (event: "pageChanged", page: number): void;
+  (event: "rowClick", item: T, index: number): void;
 }>();
 
 const props = withDefaults(
@@ -175,6 +210,77 @@ const props = withDefaults(
   },
 );
 
+// Track columns registered by VcTableColumn children
+const childColumns = ref<Map<string, VcTableColumnRegistrationType>>(new Map());
+let columnOrderCounter = 0;
+
+// Provide context to child VcTableColumn components
+provide<VcTableContextType>(vcTableKey, {
+  registerColumn(column: VcTableColumnType, slot?: VcTableColumnSlotFnType) {
+    childColumns.value.set(column.id, { column, order: columnOrderCounter++, slot });
+    // Trigger reactivity
+    childColumns.value = new Map(childColumns.value);
+  },
+  unregisterColumn(columnId: string) {
+    childColumns.value.delete(columnId);
+    childColumns.value = new Map(childColumns.value);
+  },
+});
+
+// Get sorted child column registrations
+const sortedChildColumnRegistrations = computed<VcTableColumnRegistrationType[]>(() => {
+  return Array.from(childColumns.value.values()).sort((a, b) => a.order - b.order);
+});
+
+// Check if any child column has a slot defined (enables slot-based rendering)
+const hasColumnSlots = computed<boolean>(() => {
+  return sortedChildColumnRegistrations.value.some((reg) => reg.slot !== undefined);
+});
+
+// Check if any column has a width defined (enables table-layout: fixed)
+const hasColumnWidths = computed<boolean>(() => {
+  return mergedColumns.value.some((col) => col.width !== undefined);
+});
+
+// Merge prop columns with child columns
+// Child columns take precedence over prop columns when both exist
+const mergedColumns = computed<VcTableColumnType[]>(() => {
+  // If no child columns, just return prop columns (backward compatibility)
+  if (childColumns.value.size === 0) {
+    return props.columns;
+  }
+
+  // If no prop columns, return child columns sorted by order
+  if (props.columns.length === 0) {
+    return sortedChildColumnRegistrations.value.map((item) => item.column);
+  }
+
+  // Merge: child columns take precedence, maintain child order
+  const usedIds = new Set<string>();
+
+  // Create merged result - child columns define the order and override props
+  const result: VcTableColumnType[] = [];
+
+  for (const childReg of sortedChildColumnRegistrations.value) {
+    result.push(childReg.column);
+    usedIds.add(childReg.column.id);
+  }
+
+  // Add any prop columns not overridden by children (at the end)
+  for (const propCol of props.columns) {
+    if (!usedIds.has(propCol.id)) {
+      result.push(propCol);
+    }
+  }
+
+  return result;
+});
+
+// Get column slot by column id
+function getColumnSlot(columnId: string): VcTableColumnSlotFnType | undefined {
+  return childColumns.value.get(columnId)?.slot;
+}
+
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = computed(() => {
   if (props.mobileBreakpoint === "none") {
@@ -203,6 +309,15 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
   }
 
   return props.sort.direction === "asc" ? "ascending" : "descending";
+}
+
+/**
+ * Gets a unique key for table row rendering.
+ * Tries to use item.id if available, otherwise falls back to index.
+ */
+function getItemKey(item: T, index: number): string | number {
+  const itemWithId = item as { id?: string | number };
+  return itemWithId.id ?? index;
 }
 </script>
 
@@ -245,6 +360,10 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
 
   &__desktop {
     @apply w-full text-left text-sm;
+
+    &--fixed {
+      table-layout: fixed;
+    }
   }
 
   &__caption {
@@ -303,12 +422,48 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
     }
   }
 
+  &__row {
+    @apply even:bg-neutral-50 hover:bg-neutral-200;
+  }
+
   &__skeleton {
     @apply even:bg-neutral-50;
   }
 
   &__skeleton-cell {
     @apply px-4 py-3;
+
+    &--align {
+      &--left {
+        @apply text-start;
+      }
+
+      &--center {
+        @apply text-center;
+      }
+
+      &--right {
+        @apply text-end;
+      }
+    }
+  }
+
+  &__cell {
+    @apply px-4 py-3;
+
+    &--align {
+      &--left {
+        @apply text-start;
+      }
+
+      &--center {
+        @apply text-center;
+      }
+
+      &--right {
+        @apply text-end;
+      }
+    }
   }
 
   &__skeleton-item {
@@ -316,7 +471,7 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
   }
 
   &__sort-button {
-    @apply inline-flex items-center gap-2 p-1 rounded;
+    @apply inline-flex items-center gap-2 p-1 -m-1 rounded;
   }
 
   &__sort-icon {
