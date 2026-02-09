@@ -1,7 +1,9 @@
 <template>
   <div class="vc-table">
-    <!-- Slot for VcTableColumn children (renderless) -->
-    <slot />
+    <!-- Hidden container for VcTableColumn children (renderless, needed for provide/inject registration) -->
+    <div v-show="false" aria-hidden="true">
+      <slot />
+    </div>
 
     <!-- Mobile table view -->
     <div v-if="isMobile && $slots['mobile-item']" class="vc-table__mobile">

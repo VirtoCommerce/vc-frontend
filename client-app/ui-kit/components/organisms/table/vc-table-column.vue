@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onBeforeUnmount, onMounted, useAttrs, useSlots } from "vue";
+import { computed, inject, normalizeClass, onBeforeUnmount, onMounted, useAttrs, useSlots, watch } from "vue";
 import { vcTableKey } from "./vc-table-context";
 
 /**
@@ -53,8 +53,6 @@ interface IProps {
   sortable?: boolean;
   /** Text alignment within the column */
   align?: VcTableAlignType;
-  /** Additional CSS classes for the column */
-  classes?: string;
   /** Column width (e.g., "150px", "20%", "auto"). When set, enables table-layout: fixed for stable column widths. */
   width?: string;
 }
@@ -69,28 +67,25 @@ const attrs = useAttrs();
 
 const tableContext = inject(vcTableKey, null);
 
-// Merge classes prop with class attribute for convenience
-const mergedClasses = computed(() => {
-  const attrClass = attrs.class as string | undefined;
-  if (props.classes && attrClass) {
-    return `${props.classes} ${attrClass}`;
-  }
-  return props.classes || attrClass;
-});
+const columnData = computed<VcTableColumnType>(() => ({
+  id: props.id,
+  title: props.title,
+  sortable: props.sortable,
+  align: props.align,
+  classes: attrs.class ? normalizeClass(attrs.class) : undefined,
+  width: props.width,
+}));
 
 onMounted(() => {
   if (tableContext) {
-    tableContext.registerColumn(
-      {
-        id: props.id,
-        title: props.title,
-        sortable: props.sortable,
-        align: props.align,
-        classes: mergedClasses.value,
-        width: props.width,
-      },
-      slots.default,
-    );
+    tableContext.registerColumn(columnData.value, slots.default);
+  }
+});
+
+// Re-register when props change after mount
+watch(columnData, (data) => {
+  if (tableContext) {
+    tableContext.registerColumn(data, slots.default);
   }
 });
 

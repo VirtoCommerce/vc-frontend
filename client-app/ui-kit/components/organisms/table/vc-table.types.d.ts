@@ -42,13 +42,6 @@ declare global {
     registerColumn: (column: VcTableColumnType, slot?: VcTableColumnSlotFnType) => void;
     unregisterColumn: (columnId: string) => void;
   };
-
-  /**
-   * Generic type constraint for table items
-   * Items can have an optional id for keying
-   */
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  type VcTableItemType = {};
 }
 
 export {};
