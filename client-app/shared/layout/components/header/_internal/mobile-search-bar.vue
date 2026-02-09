@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import { useElementBounding, useBreakpoints, useLocalStorage } from "@vueuse/core";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, useTemplateRef } from "vue";
 import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, IN_STOCK_PRODUCTS_LOCAL_STORAGE } from "@/core/constants";
@@ -92,7 +92,7 @@ const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
 
-const searchDropdownRef = ref<{ handleSearch: () => void } | null>(null);
+const searchDropdownRef = useTemplateRef<InstanceType<typeof SearchDropdown>>("searchDropdownRef");
 
 const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
 
@@ -123,8 +123,8 @@ const categoriesFilterExpression = computed(() => {
 
   return getFilterExpressionForCategorySubtree({ catalogId: globals.catalogId });
 });
-const contentElement = ref<HTMLElement | null>(null);
-const wrapperElement = ref<HTMLElement | null>(null);
+const contentElement = useTemplateRef("contentElement");
+const wrapperElement = useTemplateRef("wrapperElement");
 
 const { top: contentTop } = useElementBounding(contentElement);
 const { height: wrapperHeight } = useElementBounding(wrapperElement);

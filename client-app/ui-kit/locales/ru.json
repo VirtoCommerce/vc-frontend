@@ -27,7 +27,13 @@
       "variant_picker_group": "Варианты товара",
       "show_more_button": "Показать ещё варианты ({count})",
       "sidebar": "Боковая панель",
-      "close_chip": "Закрыть чип"
+      "close_chip": "Закрыть чип",
+      "carousel_previous": "Предыдущий слайд",
+      "carousel_next": "Следующий слайд",
+      "nav_previous": "Назад",
+      "nav_next": "Вперёд",
+      "nav_up": "Вверх",
+      "nav_down": "Вниз"
     },
     "date_selector": {
       "min_date_error": "Дата должна быть не ранее {min}",
@@ -77,7 +83,9 @@
     },
     "file": {
       "progress": "{percent} выполнено",
-      "uploaded": "Загрузка завершена"
+      "uploaded": "Загрузка завершена",
+      "reload": "Перезагрузить файл",
+      "remove": "Удалить файл"
     },
     "file_uploader": {
       "drag_and_drop": "Перетащите файл сюда или",
@@ -98,6 +106,7 @@
     "slider": {
       "tooltip": "{count} элементов",
       "aria_label": "Ползунок диапазона от {min} до {max}",
+      "legend": "Ползунок диапазона от {min} до {max}",
       "start_input_label": "Начальное значение (между {min} и {max})",
       "end_input_label": "Конечное значение (между {min} и {max})",
       "start_input_aria_label": "Начальное значение, диапазон от {min} до {max}",
@@ -105,7 +114,11 @@
       "start_input_help": "Введите число от {min} до {max}, шаг {step}",
       "end_input_help": "Введите число от {min} до {max}, шаг {step}",
       "column_aria_label": "Столбец с {count} товарами, от {from} до {to}",
-      "current_value_announcement": "Значение: {start} - {end}, диапазон {min} - {max}"
+      "current_value_announcement": "Значение: {start} - {end}, диапазон {min} - {max}",
+      "start_handle_label": "Ползунок минимального значения",
+      "end_handle_label": "Ползунок максимального значения",
+      "start_handle_aria_label": "Начальное значение {value}, диапазон от {min} до {max}",
+      "end_handle_aria_label": "Конечное значение {value}, диапазон от {min} до {max}"
     },
     "breadcrumbs": {
       "aria_label": "Навигация хлебными крошками"

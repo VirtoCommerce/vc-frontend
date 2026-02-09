@@ -2,6 +2,7 @@
   <div class="vc-file">
     <VcImage
       :src="icon"
+      alt=""
       :class="[
         'vc-file__icon',
         {
@@ -46,6 +47,7 @@
           <VcButton
             v-if="reloadable"
             :class="{ invisible: !reloadable }"
+            :aria-label="$t('ui_kit.file.reload')"
             variant="no-background"
             color="accent"
             size="xxs"
@@ -55,6 +57,7 @@
 
           <VcButton
             v-if="removable"
+            :aria-label="$t('ui_kit.file.remove')"
             variant="no-background"
             color="neutral"
             size="xxs"
@@ -186,7 +189,7 @@ const fileSize = computed(() => getFileSize(props.file.size));
     @apply flex gap-2 justify-between items-center;
 
     &--pending {
-      @apply opacity-50;
+      @apply opacity-60;
     }
   }
 
@@ -224,7 +227,7 @@ const fileSize = computed(() => getFileSize(props.file.size));
   }
 
   &__size {
-    @apply flex-none inline-block text-neutral-400;
+    @apply flex-none inline-block text-neutral-600;
 
     &:not(:first-child) {
       @apply ml-1;

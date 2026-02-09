@@ -40,6 +40,7 @@
           :disabled="page === 1"
           no-wrap
           :icon="compact"
+          :aria-label="$t('ui_kit.pagination.previous')"
           @click="setPage(page - 1)"
         >
           <VcIcon name="chevron-left" />
@@ -56,6 +57,7 @@
           :disabled="page === pages"
           no-wrap
           :icon="compact"
+          :aria-label="$t('ui_kit.pagination.next')"
           @click="setPage(page + 1)"
         >
           <span v-if="!compact">{{ $t("ui_kit.pagination.next") }}</span>

@@ -8,6 +8,8 @@
       :page="pageNumber"
       :pages="pagesCount"
       :hide-default-footer="!pagesCount"
+      bordered
+      scrollable
       @header-click="applySorting"
       @page-changed="changePage"
     >
@@ -213,8 +215,6 @@ function changePage(page: number): void {
 
 <style lang="scss">
 .variations-table {
-  @apply overflow-x-auto rounded border;
-
   &__row {
     @apply even:bg-neutral-50 hover:bg-neutral-100;
   }

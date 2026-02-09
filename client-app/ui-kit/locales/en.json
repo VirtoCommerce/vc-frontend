@@ -27,7 +27,13 @@
       "variant_picker_group": "Variant options",
       "show_more_button": "See more options ({count})",
       "sidebar": "Sidebar",
-      "close_chip": "Close chip"
+      "close_chip": "Close chip",
+      "carousel_previous": "Previous slide",
+      "carousel_next": "Next slide",
+      "nav_previous": "Previous",
+      "nav_next": "Next",
+      "nav_up": "Up",
+      "nav_down": "Down"
     },
     "date_selector": {
       "min_date_error": "Date must be on or after {min}",
@@ -77,7 +83,9 @@
     },
     "file": {
       "progress": "{percent} done",
-      "uploaded": "Upload completed"
+      "uploaded": "Upload completed",
+      "reload": "Reload file",
+      "remove": "Remove file"
     },
     "file_uploader": {
       "drag_and_drop": "Drag and drop file here or",
@@ -98,6 +106,7 @@
     "slider": {
       "tooltip": "{count} items",
       "aria_label": "Range slider from {min} to {max}",
+      "legend": "Range slider from {min} to {max}",
       "start_input_label": "Start value (between {min} and {max})",
       "end_input_label": "End value (between {min} and {max})",
       "start_input_aria_label": "Start value input, range {min} to {max}",
@@ -105,7 +114,11 @@
       "start_input_help": "Enter a number between {min} and {max}, step size {step}",
       "end_input_help": "Enter a number between {min} and {max}, step size {step}",
       "column_aria_label": "Column with {count} items, range from {from} to {to}",
-      "current_value_announcement": "Slider value: {start} to {end}, range {min} to {max}"
+      "current_value_announcement": "Slider value: {start} to {end}, range {min} to {max}",
+      "start_handle_label": "Minimum value handle",
+      "end_handle_label": "Maximum value handle",
+      "start_handle_aria_label": "Start value {value}, range {min} to {max}",
+      "end_handle_aria_label": "End value {value}, range {min} to {max}"
     },
     "breadcrumbs": {
       "aria_label": "Breadcrumbs navigation"
