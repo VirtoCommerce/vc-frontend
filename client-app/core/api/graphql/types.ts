@@ -4341,7 +4341,6 @@ export type PageConnection = {
 export type PageContextResponseType = {
   slugInfo?: Maybe<SlugInfoResponseType>;
   store?: Maybe<StoreResponseType>;
-  /** User info */
   user?: Maybe<UserType>;
   whiteLabelingSettings?: Maybe<WhiteLabelingSettingsType>;
 };
