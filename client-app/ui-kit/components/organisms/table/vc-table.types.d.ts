@@ -35,7 +35,6 @@ declare global {
    */
   type VcTableColumnRegistrationType = {
     column: VcTableColumnType;
-    order: number;
     slot?: VcTableColumnSlotFnType;
   };
 

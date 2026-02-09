@@ -44,7 +44,7 @@
 
         <slot name="header">
           <thead v-if="!hideDefaultHeader && mergedColumns.length" class="vc-table__head">
-            <tr class="vc-table__row">
+            <tr class="vc-table__head-row">
               <th
                 v-for="column in mergedColumns"
                 :key="column.id"
@@ -134,9 +134,11 @@
               :key="column.id"
               :class="['vc-table__cell', `vc-table__cell--align--${column.align ?? 'left'}`, column.classes]"
             >
-              <component
-                :is="() => getColumnSlot(column.id)?.({ item, index: rowIndex })"
+              <CellRenderer
                 v-if="getColumnSlot(column.id)"
+                :slot-fn="getColumnSlot(column.id)"
+                :item="item"
+                :index="rowIndex"
               />
             </td>
           </tr>
@@ -171,9 +173,11 @@
 
 <script setup lang="ts" generic="T extends VcTableItemType">
 import { useBreakpoints } from "@vueuse/core";
-import { computed, provide, ref } from "vue";
+import { computed, defineComponent, Fragment, provide, ref, useSlots } from "vue";
 import { BREAKPOINTS, TABLE_SKELETON_ROWS_SIZE, TABLE_PAGE_LIMIT } from "@/ui-kit/constants";
+import VcTableColumn from "./vc-table-column.vue";
 import { vcTableKey } from "./vc-table-context";
+import type { PropType, VNode } from "vue";
 
 const emit = defineEmits<{
   (event: "headerClick", item: VcTableSortInfoType): void;
@@ -212,13 +216,11 @@ const props = withDefaults(
 
 // Track columns registered by VcTableColumn children
 const childColumns = ref<Map<string, VcTableColumnRegistrationType>>(new Map());
-let columnOrderCounter = 0;
 
 // Provide context to child VcTableColumn components
 provide<VcTableContextType>(vcTableKey, {
   registerColumn(column: VcTableColumnType, slot?: VcTableColumnSlotFnType) {
-    childColumns.value.set(column.id, { column, order: columnOrderCounter++, slot });
-    // Trigger reactivity
+    childColumns.value.set(column.id, { column, slot });
     childColumns.value = new Map(childColumns.value);
   },
   unregisterColumn(columnId: string) {
@@ -227,9 +229,49 @@ provide<VcTableContextType>(vcTableKey, {
   },
 });
 
-// Get sorted child column registrations
+// Extract column IDs from slot VNodes in strict template order
+const slots = useSlots();
+
+function extractColumnIds(vnodes: VNode[]): string[] {
+  const ids: string[] = [];
+  for (const node of vnodes) {
+    if (node.type === VcTableColumn && node.props?.id) {
+      ids.push(String(node.props.id));
+    } else if (node.type === Fragment && Array.isArray(node.children)) {
+      ids.push(...extractColumnIds(node.children as VNode[]));
+    }
+  }
+  return ids;
+}
+
+const templateColumnOrder = computed<string[]>(() => {
+  if (!slots.default) {
+    return [];
+  }
+  return extractColumnIds(slots.default());
+});
+
+// Get sorted child column registrations based on template VNode order
 const sortedChildColumnRegistrations = computed<VcTableColumnRegistrationType[]>(() => {
-  return Array.from(childColumns.value.values()).sort((a, b) => a.order - b.order);
+  const order = templateColumnOrder.value;
+  const registrations = Array.from(childColumns.value.values());
+
+  return registrations.sort((a, b) => {
+    const aIdx = order.indexOf(a.column.id);
+    const bIdx = order.indexOf(b.column.id);
+
+    if (aIdx === -1 && bIdx === -1) {
+      return 0;
+    }
+    if (aIdx === -1) {
+      return 1;
+    }
+    if (bIdx === -1) {
+      return -1;
+    }
+
+    return aIdx - bIdx;
+  });
 });
 
 // Check if any child column has a slot defined (enables slot-based rendering)
@@ -281,6 +323,30 @@ function getColumnSlot(columnId: string): VcTableColumnSlotFnType | undefined {
   return childColumns.value.get(columnId)?.slot;
 }
 
+// Stable cell renderer — avoids creating a new functional component identity on every render
+const CellRenderer = defineComponent({
+  props: {
+    slotFn: {
+      type: Function as PropType<VcTableColumnSlotFnType>,
+      default: undefined,
+    },
+
+    item: {
+      type: Object,
+      required: true,
+    },
+
+    index: {
+      type: Number,
+      required: true,
+    },
+  },
+
+  setup(cellProps) {
+    return () => cellProps.slotFn?.({ item: cellProps.item, index: cellProps.index });
+  },
+});
+
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = computed(() => {
   if (props.mobileBreakpoint === "none") {
@@ -324,14 +390,18 @@ function getItemKey(item: T, index: number): string | number {
 <style lang="scss">
 .vc-table {
   --radius: var(--vc-table-radius, var(--vc-radius, 0.5rem));
+  --desktop-radius: v-bind(desktopRadius);
+  --desktop-border-width: v-bind(desktopBorderWidth);
+  --mobile-border-width: v-bind(mobileBorderWidth);
+  --mobile-radius: v-bind(mobileRadius);
 
   &__mobile {
     @apply border-neutral-200;
 
     word-break: break-word;
     border-style: solid;
-    border-width: v-bind(mobileBorderWidth);
-    border-radius: v-bind(mobileRadius);
+    border-width: var(--mobile-border-width);
+    border-radius: var(--mobile-radius);
   }
 
   &__mobile-skeleton {
@@ -354,8 +424,8 @@ function getItemKey(item: T, index: number): string | number {
     @apply w-full border-neutral-200;
 
     border-style: solid;
-    border-width: v-bind(desktopBorderWidth);
-    border-radius: v-bind(desktopRadius);
+    border-width: var(--desktop-border-width);
+    border-radius: var(--desktop-radius);
   }
 
   &__desktop {
@@ -375,11 +445,7 @@ function getItemKey(item: T, index: number): string | number {
   }
 
   &__title {
-    @apply px-4 py-2 font-bold;
-
-    &--sortable {
-      @apply cursor-pointer;
-    }
+    @apply px-4 py-1 h-10 font-bold;
 
     &--align {
       &--left {
@@ -402,32 +468,40 @@ function getItemKey(item: T, index: number): string | number {
     &:first-child {
       tr:first-child {
         td:first-child {
-          @apply rounded-tl-[v-bind(desktopRadius)];
+          @apply rounded-tl-[--desktop-radius];
         }
 
         td:last-child {
-          @apply rounded-tr-[v-bind(desktopRadius)];
+          @apply rounded-tr-[--desktop-radius];
         }
       }
     }
 
     tr:last-child {
       td:first-child {
-        @apply rounded-bl-[v-bind(desktopRadius)];
+        @apply rounded-bl-[--desktop-radius];
       }
 
       td:last-child {
-        @apply rounded-br-[v-bind(desktopRadius)];
+        @apply rounded-br-[--desktop-radius];
       }
     }
   }
 
   &__row {
-    @apply even:bg-neutral-50 hover:bg-neutral-200;
+    &:nth-child(even) {
+      @apply bg-neutral-50;
+    }
+
+    &:hover {
+      @apply bg-neutral-200;
+    }
   }
 
   &__skeleton {
-    @apply even:bg-neutral-50;
+    &:nth-child(even) {
+      @apply bg-neutral-50;
+    }
   }
 
   &__skeleton-cell {
