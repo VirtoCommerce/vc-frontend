@@ -27,7 +27,13 @@
       "variant_picker_group": "Opciones de variantes",
       "show_more_button": "Ver más opciones ({count})",
       "sidebar": "Barra lateral",
-      "close_chip": "Cerrar chip"
+      "close_chip": "Cerrar chip",
+      "carousel_previous": "Diapositiva anterior",
+      "carousel_next": "Diapositiva siguiente",
+      "nav_previous": "Anterior",
+      "nav_next": "Siguiente",
+      "nav_up": "Arriba",
+      "nav_down": "Abajo"
     },
     "date_selector": {
       "min_date_error": "La fecha debe ser igual o posterior al {min}",
@@ -77,7 +83,9 @@
     },
     "file": {
       "progress": "{percent} completado",
-      "uploaded": "Carga completada"
+      "uploaded": "Carga completada",
+      "reload": "Recargar archivo",
+      "remove": "Eliminar archivo"
     },
     "file_uploader": {
       "drag_and_drop": "Arrastra y suelta el archivo aquí o",
@@ -98,6 +106,7 @@
     "slider": {
       "tooltip": "{count} artículos",
       "aria_label": "Control deslizante de {min} a {max}",
+      "legend": "Control deslizante de {min} a {max}",
       "start_input_label": "Valor inicial (entre {min} y {max})",
       "end_input_label": "Valor final (entre {min} y {max})",
       "start_input_aria_label": "Valor inicial, rango de {min} a {max}",
@@ -105,7 +114,11 @@
       "start_input_help": "Introduce un número entre {min} y {max}, tamaño de paso {step}",
       "end_input_help": "Introduce un número entre {min} y {max}, tamaño de paso {step}",
       "column_aria_label": "Columna con {count} artículos, rango de {from} a {to}",
-      "current_value_announcement": "Valor del control deslizante: {start} a {end}, rango {min} a {max}"
+      "current_value_announcement": "Valor del control deslizante: {start} a {end}, rango {min} a {max}",
+      "start_handle_label": "Control de valor mínimo",
+      "end_handle_label": "Control de valor máximo",
+      "start_handle_aria_label": "Valor inicial {value}, rango de {min} a {max}",
+      "end_handle_aria_label": "Valor final {value}, rango de {min} a {max}"
     },
     "breadcrumbs": {
       "aria_label": "Navegación de migas de pan"

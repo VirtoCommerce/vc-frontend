@@ -792,11 +792,15 @@
       },
       "select_bopis_modal": {
         "title": "Hentepunkter",
-        "location_label": "Plassering",
+        "location_label": "Adresse",
         "working_hours_label": "Arbeidstimer",
         "description_label": "Beskrivelse",
         "contact_phone_label": "Kontakttelefon",
-        "contact_email_label": "Kontakte-post"
+        "contact_email_label": "Kontakte-post",
+        "view_list": "Liste",
+        "view_map": "Kart",
+        "pick_point_info_title": "Hentepunktinfo",
+        "pick_up_here": "Hent her"
       }
     },
     "bulk_order": {

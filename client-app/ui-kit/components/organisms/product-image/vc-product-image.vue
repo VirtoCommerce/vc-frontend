@@ -31,6 +31,7 @@
           type="button"
           class="vc-product-image__carousel-btn vc-product-image__carousel-btn--prev"
           data-btn="btn-prev"
+          :aria-label="$t('ui_kit.accessibility.carousel_previous')"
         >
           <span class="vc-product-image__carousel-arrow">
             <VcIcon class="fill-neutral-400" name="chevron-left" size="xs" />
@@ -42,6 +43,7 @@
           type="button"
           class="vc-product-image__carousel-btn vc-product-image__carousel-btn--next"
           data-btn="btn-next"
+          :aria-label="$t('ui_kit.accessibility.carousel_next')"
         >
           <span class="vc-product-image__carousel-arrow">
             <VcIcon class="fill-neutral-400" name="chevron-right" size="xs" />
@@ -199,7 +201,7 @@ function slideChanged(swiper: SwiperInstance) {
       &--list #{$self} {
         @apply size-[4.5rem];
 
-        @container (min-width: theme("containers.xl")) {
+        @container (min-width: theme("containers.2xl")) {
           @apply me-3 size-[5.375rem];
         }
       }

@@ -20,7 +20,7 @@
       &--item #{$self} {
         grid-area: vendor;
 
-        @apply mt-1 self-start;
+        @apply mt-1 self-start empty:hidden;
       }
     }
   }

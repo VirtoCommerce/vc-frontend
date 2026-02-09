@@ -27,7 +27,13 @@
       "variant_picker_group": "Produktvarianten",
       "show_more_button": "Weitere Varianten anzeigen ({count})",
       "sidebar": "Seitenleiste",
-      "close_chip": "Chip schließen"
+      "close_chip": "Chip schließen",
+      "carousel_previous": "Vorheriges Bild",
+      "carousel_next": "Nächstes Bild",
+      "nav_previous": "Zurück",
+      "nav_next": "Weiter",
+      "nav_up": "Nach oben",
+      "nav_down": "Nach unten"
     },
     "date_selector": {
       "min_date_error": "Datum muss am oder nach {min} liegen",
@@ -77,7 +83,9 @@
     },
     "file": {
       "progress": "{percent} erledigt",
-      "uploaded": "Upload abgeschlossen"
+      "uploaded": "Upload abgeschlossen",
+      "reload": "Datei neu laden",
+      "remove": "Datei entfernen"
     },
     "file_uploader": {
       "drag_and_drop": "Datei hierher ziehen oder",
@@ -98,6 +106,7 @@
     "slider": {
       "tooltip": "{count} Artikel",
       "aria_label": "Schieberegler von {min} bis {max}",
+      "legend": "Schieberegler von {min} bis {max}",
       "start_input_label": "Startwert (zwischen {min} und {max})",
       "end_input_label": "Endwert (zwischen {min} und {max})",
       "start_input_aria_label": "Startwerteingabe, Bereich {min} bis {max}",
@@ -105,7 +114,11 @@
       "start_input_help": "Gib eine Zahl zwischen {min} und {max} ein, Schrittweite {step}",
       "end_input_help": "Gib eine Zahl zwischen {min} und {max} ein, Schrittweite {step}",
       "column_aria_label": "Spalte mit {count} Artikeln, Bereich von {from} bis {to}",
-      "current_value_announcement": "Schiebereglerwert: {start} bis {end}, Bereich {min} bis {max}"
+      "current_value_announcement": "Schiebereglerwert: {start} bis {end}, Bereich {min} bis {max}",
+      "start_handle_label": "Minimalwert-Schieberegler",
+      "end_handle_label": "Maximalwert-Schieberegler",
+      "start_handle_aria_label": "Startwert {value}, Bereich {min} bis {max}",
+      "end_handle_aria_label": "Endwert {value}, Bereich {min} bis {max}"
     },
     "breadcrumbs": {
       "aria_label": "Breadcrumb-Navigation"

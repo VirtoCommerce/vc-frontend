@@ -1,50 +1,52 @@
 <template>
   <div class="select-address-filter">
-    <VcScrollbar class="select-address-filter__filter-group" horizontal no-bar>
-      <FacetFilter
-        v-if="filterOptionsCountries"
-        ref="facetFilterCountriesRef"
-        :facet="filterOptionsCountries"
-        :filter="filterCountries"
-        :disabled="!filterOptionsCountries.values?.length"
-        mode="dropdown"
-        data-test-id="filter-country"
-        @update:filter="applyFilter"
-      />
+    <VcScrollbar class="select-address-filter__filter-container" horizontal no-bar>
+      <div class="select-address-filter__filter-group">
+        <FacetFilter
+          v-if="filterOptionsCountries"
+          ref="facetFilterCountriesRef"
+          :facet="filterOptionsCountries"
+          :filter="filterCountries"
+          :disabled="!filterOptionsCountries.values?.length"
+          mode="dropdown"
+          data-test-id="filter-country"
+          @update:filter="applyFilter"
+        />
 
-      <FacetFilter
-        v-if="filterOptionsRegions"
-        ref="facetFilterRegionsRef"
-        :facet="filterOptionsRegions"
-        :filter="filterRegions"
-        :disabled="!filterOptionsRegions.values?.length"
-        mode="dropdown"
-        data-test-id="filter-region"
-        @update:filter="applyFilter"
-      />
+        <FacetFilter
+          v-if="filterOptionsRegions"
+          ref="facetFilterRegionsRef"
+          :facet="filterOptionsRegions"
+          :filter="filterRegions"
+          :disabled="!filterOptionsRegions.values?.length"
+          mode="dropdown"
+          data-test-id="filter-region"
+          @update:filter="applyFilter"
+        />
 
-      <FacetFilter
-        v-if="filterOptionsCities"
-        ref="facetFilterCitiesRef"
-        :facet="filterOptionsCities"
-        :filter="filterCities"
-        :disabled="!filterOptionsCities.values?.length"
-        mode="dropdown"
-        data-test-id="filter-city"
-        @update:filter="applyFilter"
-      />
+        <FacetFilter
+          v-if="filterOptionsCities"
+          ref="facetFilterCitiesRef"
+          :facet="filterOptionsCities"
+          :filter="filterCities"
+          :disabled="!filterOptionsCities.values?.length"
+          mode="dropdown"
+          data-test-id="filter-city"
+          @update:filter="applyFilter"
+        />
 
-      <VcButton
-        v-if="!filterSelectsAreEmpty"
-        size="sm"
-        color="secondary"
-        variant="outline"
-        no-wrap
-        class="select-address-filter__clear-filter-mobile"
-        @click="resetFilter"
-      >
-        {{ $t("common.buttons.reset_filters") }}
-      </VcButton>
+        <VcButton
+          v-if="!filterSelectsAreEmpty"
+          size="sm"
+          color="secondary"
+          variant="outline"
+          no-wrap
+          class="select-address-filter__clear-filter-mobile"
+          @click="resetFilter"
+        >
+          {{ $t("common.buttons.reset_filters") }}
+        </VcButton>
+      </div>
     </VcScrollbar>
 
     <VcInput
@@ -56,6 +58,7 @@
       test-id-input="search-keyword-input"
       clearable
       :disabled="pickupLocationsLoading"
+      @clear="applyFilter"
       @keyup.enter="applyFilter"
     >
       <template #append>
@@ -197,15 +200,19 @@ function removeFilterCity(value: string) {
 .select-address-filter {
   @apply flex items-center flex-wrap gap-2 pb-2;
 
+  &__filter-container {
+    @apply -mx-5;
+  }
+
   &__filter-group {
-    @apply flex items-center gap-2 -mx-5 -my-1 py-1 px-5;
+    @apply inline-flex gap-2 px-5;
   }
 
   &__filter-keyword {
-    @apply grow w-full min-w-40;
+    @apply w-full;
 
     @media (min-width: theme("screens.md")) {
-      @apply w-auto;
+      @apply grow w-auto min-w-40;
     }
   }
 

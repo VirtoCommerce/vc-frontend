@@ -50,6 +50,7 @@ type StoryType = StoryObj<typeof meta>;
 export const Basic: StoryType = {
   args: {
     items: ["Albania", "Belgium", "China", "India"],
+    label: "Country",
   },
 };
 

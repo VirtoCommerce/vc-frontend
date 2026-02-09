@@ -67,188 +67,187 @@
 
     <SelectAddressFilter v-if="showFilters" @applyFilter="applyFilter" />
 
-    <div class="rounded border">
-      <VcTable
-        :columns="columns"
-        :items="paginatedAddresses"
-        :description="$t('shared.checkout.select_address_modal.meta.table_description')"
-        :loading="pickupLocationsLoading"
-        @page-changed="onPageChange"
-      >
-        <template #mobile-item="{ item }">
-          <div class="relative flex items-center space-x-3 border-b p-4 last:border-none">
-            <div class="w-2/3 grow">
-              <div class="mb-2.5 flex items-center gap-2 empty:hidden">
-                <VcBadge v-if="item.isFavorite" size="sm" variant="outline-dark" rounded color="warning">
-                  <VcIcon name="whishlist" />
+    <VcTable
+      :columns="columns"
+      :items="paginatedAddresses"
+      :description="$t('shared.checkout.select_address_modal.meta.table_description')"
+      :loading="pickupLocationsLoading"
+      bordered
+      @page-changed="onPageChange"
+    >
+      <template #mobile-item="{ item }">
+        <div class="relative flex items-center space-x-3 border-b p-4 last:border-none">
+          <div class="w-2/3 grow">
+            <div class="mb-2.5 flex items-center gap-2 empty:hidden">
+              <VcBadge v-if="item.isFavorite" size="sm" variant="outline-dark" rounded color="warning">
+                <VcIcon name="whishlist" />
 
-                  <span>{{ $t("pages.company.info.labels.favorite") }}</span>
-                </VcBadge>
+                <span>{{ $t("pages.company.info.labels.favorite") }}</span>
+              </VcBadge>
 
-                <VcBadge
-                  v-if="isEqualAddresses(item, currentAddress ?? {}, { omitFields: props.omitFieldsOnCompare })"
-                  size="sm"
-                  variant="outline-dark"
-                  rounded
-                  color="success"
-                >
-                  <VcIcon name="check" />
+              <VcBadge
+                v-if="isEqualAddresses(item, currentAddress ?? {}, { omitFields: props.omitFieldsOnCompare })"
+                size="sm"
+                variant="outline-dark"
+                rounded
+                color="success"
+              >
+                <VcIcon name="check" />
 
-                  <span>{{ $t("common.labels.active_address") }}</span>
-                </VcBadge>
-              </div>
-
-              <div class="text-sm font-bold">
-                <span v-if="isCorporateAddresses">
-                  {{ getFormattedAddress(item) }}
-                </span>
-
-                <span v-else>{{ item.firstName }} {{ item.lastName }}</span>
-              </div>
-
-              <div class="text-sm">
-                <span v-if="isCorporateAddresses">
-                  {{ isMemberAddressType(item) ? item.description : "" }}
-                </span>
-
-                <span v-else>
-                  {{ getFormattedAddress(item) }}
-                </span>
-              </div>
-
-              <div class="text-sm text-neutral-400">
-                <span v-if="!isCorporateAddresses && !!item.phone">
-                  <span class="font-bold">{{ $t("common.labels.phone") }}: </span>
-                  {{ item.phone }}
-                </span>
-              </div>
-
-              <div class="text-sm text-neutral-400">
-                <span v-if="isCorporateAddresses" class="text-xs">{{ item.countryName }}</span>
-
-                <span v-else-if="!!item.email">
-                  <span class="font-bold">{{ $t("common.labels.email") }}: </span>
-                  {{ item.email }}
-                </span>
-              </div>
-
-              <PickupAvailabilityInfo
-                v-if="showAvailability"
-                :availability-type="item.availabilityType"
-                :availability-note="item.availabilityNote"
-              />
+                <span>{{ $t("common.labels.active_address") }}</span>
+              </VcBadge>
             </div>
 
-            <div class="w-10 flex-none text-center">
-              <VcIcon v-if="item.id === selectedAddress?.id" class="fill-secondary" name="check-circle" :size="20" />
-            </div>
-
-            <button
-              v-if="item.id !== selectedAddress?.id"
-              type="button"
-              class="absolute inset-0 opacity-0"
-              @click="setAddress(item)"
-            ></button>
-          </div>
-        </template>
-
-        <template #mobile-empty>
-          <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
-            <span>{{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}</span>
-
-            <VcButton
-              v-if="showFilters"
-              icon="reset"
-              @click="resetFilter"
-              :aria-label="$t('pages.account.order_details.bopis.cart_pickup_points_reset_search')"
-            />
-          </div>
-        </template>
-
-        <template #desktop-item="{ item }">
-          <tr
-            :data-test-id="`customer-address-${item.id}`"
-            :class="[
-              'group border-b last:border-none hover:bg-secondary-50',
-              { 'cursor-pointer': item.id !== selectedAddress?.id },
-            ]"
-            @click="setAddress(item)"
-          >
-            <td class="px-4 py-3.5">
-              <span class="line-clamp-2">
-                <VcIcon
-                  v-if="hasFavoriteAddresses && item.isFavorite"
-                  class="me-1.5 fill-accent"
-                  name="whishlist"
-                  :size="16"
-                />
-
-                <span v-if="isCorporateAddresses">
-                  {{ getFormattedAddress(item) }}
-                </span>
-
-                <span v-else> {{ item.firstName }} {{ item.lastName }} </span>
+            <div class="text-sm font-bold">
+              <span v-if="isCorporateAddresses">
+                {{ getFormattedAddress(item) }}
               </span>
-            </td>
 
-            <td class="px-4 py-3.5 [word-break:break-word]">
-              <span v-if="isCorporateAddresses" class="line-clamp-2">
+              <span v-else>{{ item.firstName }} {{ item.lastName }}</span>
+            </div>
+
+            <div class="text-sm">
+              <span v-if="isCorporateAddresses">
                 {{ isMemberAddressType(item) ? item.description : "" }}
               </span>
 
-              <span v-else class="line-clamp-2">
+              <span v-else>
                 {{ getFormattedAddress(item) }}
               </span>
-            </td>
+            </div>
 
-            <td v-if="!isCorporateAddresses" class="truncate px-4 py-3.5">
-              {{ item.phone }}
-            </td>
-
-            <td class="truncate px-4 py-3.5">
-              <span v-if="isCorporateAddresses">
-                {{ item.countryName }}
+            <div class="text-sm text-neutral-400">
+              <span v-if="!isCorporateAddresses && !!item.phone">
+                <span class="font-bold">{{ $t("common.labels.phone") }}: </span>
+                {{ item.phone }}
               </span>
+            </div>
 
-              <span v-else>
+            <div class="text-sm text-neutral-400">
+              <span v-if="isCorporateAddresses" class="text-xs">{{ item.countryName }}</span>
+
+              <span v-else-if="!!item.email">
+                <span class="font-bold">{{ $t("common.labels.email") }}: </span>
                 {{ item.email }}
               </span>
-            </td>
+            </div>
 
-            <td v-if="showAvailability" class="truncate px-4 py-3.5">
-              <PickupAvailabilityInfo
-                :availability-type="item.availabilityType"
-                :availability-note="item.availabilityNote"
+            <PickupAvailabilityInfo
+              v-if="showAvailability"
+              :availability-type="item.availabilityType"
+              :availability-note="item.availabilityNote"
+            />
+          </div>
+
+          <div class="w-10 flex-none text-center">
+            <VcIcon v-if="item.id === selectedAddress?.id" class="fill-secondary" name="check-circle" :size="20" />
+          </div>
+
+          <button
+            v-if="item.id !== selectedAddress?.id"
+            type="button"
+            class="absolute inset-0 opacity-0"
+            @click="setAddress(item)"
+          ></button>
+        </div>
+      </template>
+
+      <template #mobile-empty>
+        <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
+          <span>{{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}</span>
+
+          <VcButton
+            v-if="showFilters"
+            icon="reset"
+            @click="resetFilter"
+            :aria-label="$t('pages.account.order_details.bopis.cart_pickup_points_reset_search')"
+          />
+        </div>
+      </template>
+
+      <template #desktop-item="{ item }">
+        <tr
+          :data-test-id="`customer-address-${item.id}`"
+          :class="[
+            'group border-b last:border-none hover:bg-secondary-50',
+            { 'cursor-pointer': item.id !== selectedAddress?.id },
+          ]"
+          @click="setAddress(item)"
+        >
+          <td class="px-4 py-3.5">
+            <span class="line-clamp-2">
+              <VcIcon
+                v-if="hasFavoriteAddresses && item.isFavorite"
+                class="me-1.5 fill-accent"
+                name="whishlist"
+                :size="16"
               />
-            </td>
 
-            <td class="h-[3.75rem] py-2.5 text-center">
-              <VcIcon v-if="item.id === selectedAddress?.id" class="fill-success" name="check-circle" />
+              <span v-if="isCorporateAddresses">
+                {{ getFormattedAddress(item) }}
+              </span>
 
-              <VcButton v-else class="invisible group-hover:lg:visible" variant="outline" size="xs">
-                {{ $t("shared.checkout.select_address_modal.select_button") }}
+              <span v-else> {{ item.firstName }} {{ item.lastName }} </span>
+            </span>
+          </td>
+
+          <td class="px-4 py-3.5 [word-break:break-word]">
+            <span v-if="isCorporateAddresses" class="line-clamp-2">
+              {{ isMemberAddressType(item) ? item.description : "" }}
+            </span>
+
+            <span v-else class="line-clamp-2">
+              {{ getFormattedAddress(item) }}
+            </span>
+          </td>
+
+          <td v-if="!isCorporateAddresses" class="truncate px-4 py-3.5">
+            {{ item.phone }}
+          </td>
+
+          <td class="truncate px-4 py-3.5">
+            <span v-if="isCorporateAddresses">
+              {{ item.countryName }}
+            </span>
+
+            <span v-else>
+              {{ item.email }}
+            </span>
+          </td>
+
+          <td v-if="showAvailability" class="truncate px-4 py-3.5">
+            <PickupAvailabilityInfo
+              :availability-type="item.availabilityType"
+              :availability-note="item.availabilityNote"
+            />
+          </td>
+
+          <td class="h-[3.75rem] py-2.5 text-center">
+            <VcIcon v-if="item.id === selectedAddress?.id" class="fill-success" name="check-circle" />
+
+            <VcButton v-else class="invisible group-hover:lg:visible" variant="outline" size="xs">
+              {{ $t("shared.checkout.select_address_modal.select_button") }}
+            </VcButton>
+          </td>
+        </tr>
+      </template>
+
+      <template #desktop-empty>
+        <tr>
+          <td :colspan="showAvailability ? 5 : 4">
+            <div class="flex flex-col items-center p-5">
+              <span class="text-base">
+                {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
+              </span>
+
+              <VcButton v-if="showFilters" class="mt-5" prepend-icon="reset" @click="resetFilter">
+                {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
               </VcButton>
-            </td>
-          </tr>
-        </template>
-
-        <template #desktop-empty>
-          <tr>
-            <td :colspan="showAvailability ? 5 : 4">
-              <div class="flex flex-col items-center p-5">
-                <span class="text-base">
-                  {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
-                </span>
-
-                <VcButton v-if="showFilters" class="mt-5" prepend-icon="reset" @click="resetFilter">
-                  {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
-                </VcButton>
-              </div>
-            </td>
-          </tr>
-        </template>
-      </VcTable>
-    </div>
+            </div>
+          </td>
+        </tr>
+      </template>
+    </VcTable>
   </VcModal>
 </template>
 

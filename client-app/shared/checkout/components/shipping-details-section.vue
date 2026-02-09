@@ -120,7 +120,10 @@
             },
           ]"
         >
-          <VcLoaderOverlay v-if="isLoadingBopisAddresses && isOpeningBopisAddresses" />
+          <VcLoaderOverlay
+            v-if="isLoadingBopisAddresses && isOpeningBopisAddresses"
+            class="shipping-details-section__pickup-loader"
+          />
 
           <AddressSelection
             :disabled="!cart || isLoadingBopisAddresses || disabled"
@@ -351,8 +354,12 @@ function onShipmentMethodChange(method: ShippingMethodType) {
     @apply grow;
   }
 
+  &__pickup-loader {
+    @apply rounded-[--vc-radius];
+  }
+
   &__pickup-container {
-    @apply relative flex min-h-18 grow flex-col justify-center divide-y rounded-[--vc-radius] border px-3 py-1.5;
+    @apply relative flex min-h-18 grow flex-col justify-center rounded-[--vc-radius] border px-3 py-1.5;
 
     &--disabled {
       @apply cursor-not-allowed bg-neutral-50;

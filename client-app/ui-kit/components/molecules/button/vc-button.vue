@@ -1,6 +1,7 @@
 <template>
   <component
     :is="componentTag"
+    ref="elementRef"
     v-bind="attrs"
     :target="target"
     :type="componentTag === 'button' ? type : null"
@@ -59,6 +60,7 @@
 import { eagerComputed } from "@vueuse/core";
 import { computed, inject, ref } from "vue";
 import { vcDialogKey } from "../../atoms/dialog/vc-dialog-context";
+import type { ComponentPublicInstance } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -177,6 +179,38 @@ const attrs = computed(() => {
   }
 
   return attributes;
+});
+
+const elementRef = ref<HTMLElement | ComponentPublicInstance | null>(null);
+
+function getElement(): HTMLElement | null {
+  const el = elementRef.value;
+  if (!el) {
+    return null;
+  }
+
+  // Native HTML elements (button, a, etc.)
+  if (el instanceof HTMLElement) {
+    return el;
+  }
+
+  // Vue component instances (RouterLink, custom components via tag prop)
+  const rootEl = el.$el;
+  return rootEl instanceof HTMLElement ? rootEl : null;
+}
+
+function focus(): void {
+  getElement()?.focus();
+}
+
+function blur(): void {
+  getElement()?.blur();
+}
+
+defineExpose({
+  focus,
+  blur,
+  el: computed(() => getElement()),
 });
 </script>
 

@@ -66,19 +66,13 @@ function createMarker() {
 }
 
 function openInfoWindow() {
-  if (!slots.default) {
+  if (!slots.default || !infoWindow.value || isInfoWindowOpen.value) {
     return;
   }
 
-  if (isInfoWindowOpen.value) {
-    return;
-  }
+  infoWindow.value.setContent(`<div id="${ACTIVE_INFO_WINDOW_CONTENT_ID}"></div>`);
 
-  isInfoWindowOpen.value = false;
-
-  infoWindow.value?.setContent(`<div id="${ACTIVE_INFO_WINDOW_CONTENT_ID}"></div>`);
-
-  infoWindow.value?.open({
+  infoWindow.value.open({
     anchor: marker.value,
     map: map.value,
   });
@@ -137,5 +131,9 @@ onBeforeUnmount(() => {
   if (marker.value) {
     removeMarker(marker.value);
   }
+});
+
+defineExpose({
+  openInfoWindow,
 });
 </script>
