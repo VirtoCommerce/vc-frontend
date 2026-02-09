@@ -28,6 +28,8 @@
       "show_more_button": "Se flere alternativer ({count})",
       "sidebar": "Sidepanel",
       "close_chip": "Lukk chip",
+      "carousel_previous": "Forrige bilde",
+      "carousel_next": "Neste bilde",
       "nav_previous": "Forrige",
       "nav_next": "Neste",
       "nav_up": "Opp",

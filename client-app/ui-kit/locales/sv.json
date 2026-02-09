@@ -28,6 +28,8 @@
       "show_more_button": "Visa fler alternativ ({count})",
       "sidebar": "Sidopanel",
       "close_chip": "Stäng chip",
+      "carousel_previous": "Föregående bild",
+      "carousel_next": "Nästa bild",
       "nav_previous": "Föregående",
       "nav_next": "Nästa",
       "nav_up": "Upp",

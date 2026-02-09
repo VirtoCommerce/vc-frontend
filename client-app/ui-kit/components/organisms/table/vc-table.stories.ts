@@ -454,7 +454,7 @@ export const Empty: StoryType = {
       <VcTable v-bind="args">
         <template #desktop-empty>
           <tr>
-            <td colspan="4" class="p-10 text-center text-neutral-400">
+            <td colspan="4" class="p-10 text-center text-neutral-500">
               No items available
             </td>
           </tr>

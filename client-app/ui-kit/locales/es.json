@@ -28,6 +28,8 @@
       "show_more_button": "Ver más opciones ({count})",
       "sidebar": "Barra lateral",
       "close_chip": "Cerrar chip",
+      "carousel_previous": "Diapositiva anterior",
+      "carousel_next": "Diapositiva siguiente",
       "nav_previous": "Anterior",
       "nav_next": "Siguiente",
       "nav_up": "Arriba",

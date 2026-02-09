@@ -28,6 +28,8 @@
       "show_more_button": "Показать ещё варианты ({count})",
       "sidebar": "Боковая панель",
       "close_chip": "Закрыть чип",
+      "carousel_previous": "Предыдущий слайд",
+      "carousel_next": "Следующий слайд",
       "nav_previous": "Назад",
       "nav_next": "Вперёд",
       "nav_up": "Вверх",

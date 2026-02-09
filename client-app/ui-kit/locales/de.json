@@ -28,6 +28,8 @@
       "show_more_button": "Weitere Varianten anzeigen ({count})",
       "sidebar": "Seitenleiste",
       "close_chip": "Chip schließen",
+      "carousel_previous": "Vorheriges Bild",
+      "carousel_next": "Nächstes Bild",
       "nav_previous": "Zurück",
       "nav_next": "Weiter",
       "nav_up": "Nach oben",
