@@ -55,6 +55,7 @@
                 :product="option.product"
                 :quantity="option.quantity"
                 :list-price="option.listPrice"
+                :sale-price="option.salePrice"
                 :extended-price="option.extendedPrice"
                 :name="section.id"
                 @input="
