@@ -13,6 +13,17 @@ export default {
     maxHeight: "12rem",
     collapse: false,
   },
+  parameters: {
+    // Disable color-contrast check - false positive due to gradient pseudo-element overlay
+    // on collapsed content that axe-core cannot properly evaluate
+    a11y: {
+      options: {
+        rules: {
+          "color-contrast": { enabled: false },
+        },
+      },
+    },
+  },
 } as Meta<typeof VcCollapsibleContent>;
 
 const Template: StoryFn = (args) => ({

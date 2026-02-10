@@ -27,7 +27,13 @@
       "variant_picker_group": "Variantalternativ",
       "show_more_button": "Visa fler alternativ ({count})",
       "sidebar": "Sidopanel",
-      "close_chip": "Stäng chip"
+      "close_chip": "Stäng chip",
+      "carousel_previous": "Föregående bild",
+      "carousel_next": "Nästa bild",
+      "nav_previous": "Föregående",
+      "nav_next": "Nästa",
+      "nav_up": "Upp",
+      "nav_down": "Ner"
     },
     "date_selector": {
       "min_date_error": "Datum måste vara på eller efter {min}",
@@ -77,7 +83,9 @@
     },
     "file": {
       "progress": "{percent} klart",
-      "uploaded": "Uppladdning slutförd"
+      "uploaded": "Uppladdning slutförd",
+      "reload": "Ladda om fil",
+      "remove": "Ta bort fil"
     },
     "file_uploader": {
       "drag_and_drop": "Dra och släpp filen här eller",
@@ -98,6 +106,7 @@
     "slider": {
       "tooltip": "{count} objekt",
       "aria_label": "Skjutreglage från {min} till {max}",
+      "legend": "Skjutreglage från {min} till {max}",
       "start_input_label": "Startvärde (mellan {min} och {max})",
       "end_input_label": "Slutvärde (mellan {min} och {max})",
       "start_input_aria_label": "Inmatning för startvärde, intervall {min} till {max}",
@@ -105,7 +114,11 @@
       "start_input_help": "Ange ett tal mellan {min} och {max}, steglängd {step}",
       "end_input_help": "Ange ett tal mellan {min} och {max}, steglängd {step}",
       "column_aria_label": "Kolumn med {count} objekt, intervall från {from} till {to}",
-      "current_value_announcement": "Skjutreglagevärde: {start} till {end}, intervall {min} till {max}"
+      "current_value_announcement": "Skjutreglagevärde: {start} till {end}, intervall {min} till {max}",
+      "start_handle_label": "Minimivärdeshandtag",
+      "end_handle_label": "Maximivärdeshandtag",
+      "start_handle_aria_label": "Startvärde {value}, intervall {min} till {max}",
+      "end_handle_aria_label": "Slutvärde {value}, intervall {min} till {max}"
     },
     "breadcrumbs": {
       "aria_label": "Navigering för brödsmulor"

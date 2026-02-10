@@ -297,7 +297,7 @@ provide<VcInputContextType>("inputContext", {
     }
 
     #{$sizeSm} & {
-      @apply h-[2.375rem] text-sm;
+      @apply h-[2.375rem] text-base;
     }
 
     #{$sizeMd} & {

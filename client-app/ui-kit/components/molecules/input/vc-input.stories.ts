@@ -63,7 +63,11 @@ const commonArgs = {
   message: "Hint message",
 };
 
-export const Basic: StoryType = {};
+export const Basic: StoryType = {
+  args: {
+    ariaLabel: "Input field",
+  },
+};
 
 export const Common: StoryType = {
   args: commonArgs,
@@ -88,7 +92,7 @@ export const ErrorState: StoryType = {
 export const TypePassword: StoryType = {
   args: {
     ...commonArgs,
-    autocomplete: "password",
+    autocomplete: "current-password",
     type: "password",
   },
 };

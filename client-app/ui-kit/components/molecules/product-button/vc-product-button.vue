@@ -101,7 +101,7 @@ withDefaults(defineProps<IProps>(), {
 
     @apply mt-3 flex items-center min-h-4 gap-1 text-xs;
 
-    @media (min-width: theme("screens.xs")) {
+    @container (min-width: theme("containers.2xl")) {
       @apply mt-5;
     }
 
@@ -134,21 +134,21 @@ withDefaults(defineProps<IProps>(), {
         }
 
         #{$link} {
-          @apply mt-8;
+          @apply mt-7;
         }
       }
 
       &--list #{$wrapperSelector} {
         @container (min-width: theme("containers.sm")) {
-          @apply w-72;
-        }
-
-        @container (min-width: theme("containers.xl")) {
-          @apply mt-0 ms-3 w-44;
-        }
-
-        @container (min-width: theme("containers.4xl")) {
           @apply w-60;
+        }
+
+        @container (min-width: theme("containers.2xl")) {
+          @apply mt-0 ms-3 w-[10.625rem];
+
+          #{$link} {
+            @apply mt-1.5;
+          }
         }
       }
     }
