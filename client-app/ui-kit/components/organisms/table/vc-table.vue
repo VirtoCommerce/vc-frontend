@@ -61,8 +61,15 @@
                   column.classes,
                 ]"
               >
+                <!-- Custom per-column header slot -->
+                <HeaderCellRenderer
+                  v-if="getColumnHeaderSlot(column.id)"
+                  :slot-fn="getColumnHeaderSlot(column.id)"
+                  :column="column"
+                />
+
                 <button
-                  v-if="column.sortable && sort"
+                  v-else-if="column.sortable && sort"
                   type="button"
                   class="vc-table__sort-button"
                   @click="
@@ -128,7 +135,9 @@
           <tr
             v-for="(item, rowIndex) in items"
             :key="getItemKey(item, rowIndex)"
-            class="vc-table__row"
+            :class="['vc-table__row', resolvedRowProps[rowIndex]?.class]"
+            :style="resolvedRowProps[rowIndex]?.style"
+            v-bind="resolvedRowProps[rowIndex]?.attrs"
             @click="$emit('rowClick', item, rowIndex)"
           >
             <td
@@ -204,6 +213,14 @@ const props = withDefaults(
     bordered?: boolean;
     mobileBordered?: boolean;
     scrollable?: boolean;
+    /**
+     * Function that returns class, style, and attrs to apply to each row `<tr>`.
+     * Receives the item and its row index as arguments.
+     *
+     * @example
+     * :row-props="(item) => ({ class: { 'bg-red-100': item.isOverdue } })"
+     */
+    rowProps?: (item: T, index: number) => VcTableRowPropsType;
   }>(),
   {
     columns: () => [],
@@ -221,8 +238,12 @@ const childColumns = ref<Map<string, VcTableColumnRegistrationType>>(new Map());
 
 // Provide context to child VcTableColumn components
 provide<VcTableContextType>(vcTableKey, {
-  registerColumn(column: VcTableColumnType, slot?: VcTableColumnSlotFnType) {
-    childColumns.value.set(column.id, { column, slot });
+  registerColumn(
+    column: VcTableColumnType,
+    slot?: VcTableColumnSlotFnType,
+    headerSlot?: VcTableColumnHeaderSlotFnType,
+  ) {
+    childColumns.value.set(column.id, { column, slot, headerSlot });
     childColumns.value = new Map(childColumns.value);
   },
   unregisterColumn(columnId: string) {
@@ -325,6 +346,22 @@ function getColumnSlot(columnId: string): VcTableColumnSlotFnType | undefined {
   return childColumns.value.get(columnId)?.slot;
 }
 
+// Get column header slot by column id
+function getColumnHeaderSlot(columnId: string): VcTableColumnHeaderSlotFnType | undefined {
+  return childColumns.value.get(columnId)?.headerSlot;
+}
+
+/**
+ * Pre-computed row props for all items.
+ * Avoids calling the rowProps function multiple times per row in the template.
+ */
+const resolvedRowProps = computed<VcTableRowPropsType[]>(() => {
+  if (!props.rowProps) {
+    return [];
+  }
+  return props.items.map((item, index) => props.rowProps!(item, index));
+});
+
 // Stable cell renderer — avoids creating a new functional component identity on every render
 const CellRenderer = defineComponent({
   props: {
@@ -346,6 +383,25 @@ const CellRenderer = defineComponent({
 
   setup(cellProps) {
     return () => cellProps.slotFn?.({ item: cellProps.item, index: cellProps.index });
+  },
+});
+
+// Stable header cell renderer for custom column header slots
+const HeaderCellRenderer = defineComponent({
+  props: {
+    slotFn: {
+      type: Function as PropType<VcTableColumnHeaderSlotFnType>,
+      default: undefined,
+    },
+
+    column: {
+      type: Object as PropType<VcTableColumnType>,
+      required: true,
+    },
+  },
+
+  setup(headerProps) {
+    return () => headerProps.slotFn?.({ column: headerProps.column });
   },
 });
 

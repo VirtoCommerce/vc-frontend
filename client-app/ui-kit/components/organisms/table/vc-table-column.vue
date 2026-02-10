@@ -55,13 +55,22 @@ interface IProps {
   align?: VcTableAlignType;
   /** Column width (e.g., "150px", "20%", "auto"). When set, enables table-layout: fixed for stable column widths. */
   width?: string;
+  /**
+   * Whether the column is visible. When false, the column unregisters from the parent table
+   * but the component stays mounted (watchers remain active). This avoids full mount/unmount
+   * cycles compared to using v-if on VcTableColumn.
+   * @default true
+   */
+  visible?: boolean;
 }
 
 defineOptions({
   inheritAttrs: false,
 });
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  visible: true,
+});
 const slots = useSlots();
 const attrs = useAttrs();
 
@@ -76,22 +85,44 @@ const columnData = computed<VcTableColumnType>(() => ({
   width: props.width,
 }));
 
-onMounted(() => {
+function registerSelf() {
   if (tableContext) {
-    tableContext.registerColumn(columnData.value, slots.default);
+    tableContext.registerColumn(columnData.value, slots.default, slots.header);
   }
-});
+}
 
-// Re-register when props change after mount
-watch(columnData, (data) => {
-  if (tableContext) {
-    tableContext.registerColumn(data, slots.default);
-  }
-});
-
-onBeforeUnmount(() => {
+function unregisterSelf() {
   if (tableContext) {
     tableContext.unregisterColumn(props.id);
   }
+}
+
+onMounted(() => {
+  if (props.visible) {
+    registerSelf();
+  }
+});
+
+// Re-register when props change after mount, respecting visibility
+watch(columnData, () => {
+  if (props.visible) {
+    registerSelf();
+  }
+});
+
+// Watch visibility changes: register when becoming visible, unregister when hidden
+watch(
+  () => props.visible,
+  (isVisible) => {
+    if (isVisible) {
+      registerSelf();
+    } else {
+      unregisterSelf();
+    }
+  },
+);
+
+onBeforeUnmount(() => {
+  unregisterSelf();
 });
 </script>
