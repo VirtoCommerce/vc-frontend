@@ -792,11 +792,15 @@
       },
       "select_bopis_modal": {
         "title": "Пункты выдачи",
-        "location_label": "Местоположение",
+        "location_label": "Адрес",
         "working_hours_label": "Часы работы",
         "description_label": "Описание",
         "contact_phone_label": "Контактный телефон",
-        "contact_email_label": "Email для связи"
+        "contact_email_label": "Email для связи",
+        "view_list": "Список",
+        "view_map": "Карта",
+        "pick_point_info_title": "Информация о пункте выдачи",
+        "pick_up_here": "Забрать здесь"
       }
     },
     "bulk_order": {

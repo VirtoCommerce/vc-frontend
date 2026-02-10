@@ -2,7 +2,11 @@
   <div v-if="visible" ref="dropdownElement" class="search-dropdown" data-dropdown @focusout="handleFocusOut">
     <VcScrollbar v-if="showSidebar" class="search-dropdown__sidebar" :vertical="!isMobile">
       <!-- Search history and suggestions -->
-      <div v-if="hasHistoryOrSuggestions" class="search-dropdown__suggestions">
+      <div
+        v-if="hasHistoryOrSuggestions"
+        class="search-dropdown__suggestions"
+        data-test-id="global-search-history-sections"
+      >
         <header class="search-dropdown__head">
           {{ $t("shared.layout.search_dropdown.suggestions_and_history_label") }}
         </header>
@@ -14,6 +18,7 @@
             type="button"
             class="search-dropdown__item"
             tabindex="0"
+            :data-search-query="query"
             @click="handleSearchHistoryClick(query)"
             @keydown.arrow-up.arrow-left="($event: KeyboardEvent) => focusPrevNextItem('UP', $event)"
             @keydown.arrow-down.arrow-right="($event: KeyboardEvent) => focusPrevNextItem('DOWN', $event)"
@@ -40,7 +45,7 @@
       </div>
 
       <!-- Pages -->
-      <div v-if="hasPages" class="search-dropdown__suggestions">
+      <div v-if="hasPages" class="search-dropdown__suggestions" data-test-id="global-search-pages-suggestions">
         <header class="search-dropdown__head">
           {{ $t("shared.layout.search_dropdown.pages_label") }}
         </header>
@@ -61,7 +66,11 @@
       </div>
 
       <!-- Categories -->
-      <div v-if="hasCategories" class="search-dropdown__suggestions">
+      <div
+        v-if="hasCategories"
+        class="search-dropdown__suggestions"
+        data-test-id="global-search-categories-suggestions"
+      >
         <header class="search-dropdown__head">
           {{ $t("shared.layout.search_dropdown.categories_label") }}
         </header>
@@ -86,7 +95,12 @@
       <div class="search-dropdown__results">
         <Transition name="crossfade" mode="out-in">
           <!-- Products -->
-          <div v-if="hasProducts" key="products" class="search-dropdown__suggestions">
+          <div
+            v-if="hasProducts"
+            key="products"
+            class="search-dropdown__suggestions"
+            data-test-id="global-search-products-suggestions"
+          >
             <header class="search-dropdown__head">
               {{ $t("shared.layout.search_dropdown.products_label") }}
             </header>
@@ -118,7 +132,7 @@
           </div>
 
           <!-- Not found -->
-          <div v-else key="not-found" class="search-dropdown__not-found">
+          <div v-else key="not-found" class="search-dropdown__not-found" data-test-id="global-search-not-found">
             <div class="search-dropdown__not-found-icon" v-html="nothingFoundImgRaw"></div>
 
             <div class="search-dropdown__not-found-content">
@@ -151,7 +165,7 @@
 <script setup lang="ts">
 import { useDebounceFn, useBreakpoints } from "@vueuse/core";
 import { pickBy } from "lodash";
-import { computed, onMounted, ref, toRefs, toValue, watch } from "vue";
+import { computed, onMounted, ref, toRefs, toValue, useTemplateRef, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useRouteQueryParam, useThemeContext, useAnalytics } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
@@ -198,7 +212,7 @@ const { analytics } = useAnalytics();
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("md");
 
-const dropdownElement = ref<HTMLElement | null>(null);
+const dropdownElement = useTemplateRef("dropdownElement");
 const searchInProgress = ref(false);
 
 const SEARCH_BAR_DEBOUNCE_TIME = 200;

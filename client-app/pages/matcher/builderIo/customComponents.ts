@@ -5,6 +5,7 @@ import type { Component } from "vue";
 const Category = defineAsyncComponent(() => import("@/shared/catalog/components/category.vue"));
 const Slider = defineAsyncComponent(() => import("@/shared/static-content/components/slider.vue"));
 const ProductsBlock = defineAsyncComponent(() => import("@/shared/static-content/components/products-block.vue"));
+const ProductsCarousel = defineAsyncComponent(() => import("@/shared/static-content/components/products-carousel.vue"));
 const FavoriteProducts = defineAsyncComponent(() => import("@/shared/static-content/components/favorite-products.vue"));
 const BreadcrumbsBlock = defineAsyncComponent(() => import("@/shared/static-content/components/breadcrumbs-block.vue"));
 
@@ -198,6 +199,155 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         type: "string",
         helperText:
           "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter",
+      },
+    ],
+  },
+  {
+    name: "Products Carousel",
+    component: ProductsCarousel,
+    inputs: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Products Carousel",
+      },
+      {
+        name: "subtitle",
+        type: "string",
+        defaultValue: "",
+      },
+      {
+        name: "cardType",
+        type: "string",
+        defaultValue: "full",
+        enum: ["full", "short"],
+      },
+      {
+        name: "count",
+        type: "number",
+        defaultValue: 8,
+        friendlyName: "Products count",
+        onChange: (options: Map<string, number>) => {
+          const count = options.get("count");
+          if (typeof count !== "number") {
+            return;
+          }
+          if (count > 12) {
+            options.set("count", 12);
+            alert("The maximum number of products is 12");
+          }
+        },
+      },
+      {
+        name: "slidesPerView",
+        type: "number",
+        defaultValue: 4,
+        friendlyName: "Slides per view",
+        helperText: "Number of products visible at once on desktop",
+        onChange: (options: Map<string, number>) => {
+          const slidesPerView = options.get("slidesPerView");
+          if (typeof slidesPerView !== "number") {
+            return;
+          }
+          if (slidesPerView < 1) {
+            options.set("slidesPerView", 1);
+          }
+          if (slidesPerView > 6) {
+            options.set("slidesPerView", 6);
+            alert("the maximum slides per view is 6");
+          }
+        },
+      },
+      {
+        name: "skus",
+        type: "list",
+        friendlyName: "SKUs",
+        subFields: [
+          {
+            name: "sku",
+            type: "string",
+            friendlyName: "Product SKU",
+            defaultValue: "",
+          },
+        ],
+        onChange: (options: Map<string, Array<{ sku: string }>>) => {
+          const skus = options.get("skus");
+          if (!Array.isArray(skus)) {
+            return;
+          }
+          if (skus.length > 12) {
+            options.set("skus", skus.slice(0, 12));
+            alert("Maximum 12 SKUs allowed");
+          }
+        },
+      },
+      {
+        name: "query",
+        friendlyName: "Keyword",
+        type: "string",
+        helperText: "Search products by keyword (ignored if SKUs are provided)",
+      },
+      {
+        name: "filter",
+        type: "string",
+        helperText:
+          "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter",
+      },
+    ],
+  },
+  {
+    name: "Predefined Products",
+    component: ProductsBlock,
+    inputs: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Predefined Products",
+      },
+      {
+        name: "subtitle",
+        type: "string",
+      },
+      {
+        name: "cardType",
+        type: "string",
+        defaultValue: "full",
+        enum: ["full", "short"],
+      },
+      {
+        name: "columnsAmountTablet",
+        type: "string",
+        defaultValue: "3",
+        enum: ["3", "2"],
+      },
+      {
+        name: "columnsAmountDesktop",
+        type: "string",
+        defaultValue: "4",
+        enum: ["4", "3"],
+      },
+      {
+        name: "skus",
+        type: "list",
+        friendlyName: "SKUs",
+        subFields: [
+          {
+            name: "sku",
+            type: "string",
+            friendlyName: "Product SKU",
+            defaultValue: "",
+          },
+        ],
+        onChange: (options: Map<string, Array<{ sku: string }>>) => {
+          const skus = options.get("skus");
+          if (!Array.isArray(skus)) {
+            return;
+          }
+          if (skus.length > 12) {
+            options.set("skus", skus.slice(0, 12));
+            alert("Maximum 12 SKUs allowed");
+          }
+        },
       },
     ],
   },

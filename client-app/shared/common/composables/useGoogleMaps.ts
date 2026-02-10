@@ -24,6 +24,10 @@ const defaults = {
   options: {},
 };
 
+// Animation timing constants
+const PAN_TO_ZOOM_DELAY_MS = 300;
+const IDLE_CALLBACK_TIMEOUT_MS = 500;
+
 // Global storage for all map instances
 const mapInstances = new Map<string, IMapInstance>();
 
@@ -213,8 +217,46 @@ export function useGoogleMaps(mapId: string) {
       return;
     }
 
-    currentInstance.map.value.setCenter(latLng);
-    currentInstance.map.value.setZoom(zoom);
+    const mapInstance = currentInstance.map.value;
+    const currentZoom = mapInstance.getZoom() ?? zoom;
+
+    // If need to zoom in, do it smoothly after pan
+    if (currentZoom < zoom) {
+      mapInstance.panTo(latLng);
+      setTimeout(() => {
+        const inst = mapInstances.get(mapId);
+        inst?.map.value?.setZoom(zoom);
+      }, PAN_TO_ZOOM_DELAY_MS);
+    } else {
+      mapInstance.setZoom(zoom);
+      mapInstance.panTo(latLng);
+    }
+  }
+
+  function onceIdle(callback: () => void, timeout: number = IDLE_CALLBACK_TIMEOUT_MS) {
+    const currentInstance = mapInstances.get(mapId);
+    if (!currentInstance?.map.value) {
+      return;
+    }
+
+    let called = false;
+
+    const timeoutId = setTimeout(() => {
+      if (!called) {
+        called = true;
+        listener.remove();
+        callback();
+      }
+    }, timeout);
+
+    const listener = currentInstance.map.value.addListener("idle", () => {
+      if (!called) {
+        called = true;
+        clearTimeout(timeoutId);
+        listener.remove();
+        callback();
+      }
+    });
   }
 
   onUnmounted(() => {
@@ -239,6 +281,7 @@ export function useGoogleMaps(mapId: string) {
 
     zoomToMarkers,
     zoomToLatLng,
+    onceIdle,
 
     cleanup,
   };

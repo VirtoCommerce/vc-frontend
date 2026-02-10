@@ -16,17 +16,19 @@
     <slot />
 
     <div v-if="truncate" v-show="isButtonVisible" ref="buttonWrapperRef" class="vc-variant-picker-group__wrapper">
-      <button
+      <VcButton
         ref="buttonRef"
-        type="button"
         class="vc-variant-picker-group__button"
-        tabindex="0"
+        :size="size"
+        square
+        color="secondary"
+        variant="solid-light"
         :aria-expanded="ariaExpandedValue"
         :aria-label="buttonAriaLabel"
         @click="expand"
       >
         +{{ hiddenCount }}
-      </button>
+      </VcButton>
     </div>
   </div>
 </template>
@@ -69,7 +71,7 @@ const LAYOUT_CONFIG = {
 
 const containerRef = ref<HTMLElement | null>(null);
 const buttonWrapperRef = ref<HTMLElement | null>(null);
-const buttonRef = ref<HTMLButtonElement | null>(null);
+const buttonRef = ref<VcButtonExposedType | null>(null);
 
 const expanded = ref(false);
 const showButton = ref(false);
@@ -308,7 +310,7 @@ interface INavContext {
   container: HTMLElement;
   items: HTMLElement[];
   currentIndex: number;
-  button: HTMLButtonElement | null;
+  button: VcButtonExposedType | null;
 }
 
 function getNavContext(from: EventTarget | null): INavContext | null {
@@ -463,10 +465,6 @@ onMounted(() => {
 
   &__wrapper {
     @apply flex items-center;
-  }
-
-  &__button {
-    @apply px-1.5 py-2 min-w-8 border border-neutral-200 rounded-xl text-xs font-bold whitespace-nowrap;
   }
 }
 </style>
