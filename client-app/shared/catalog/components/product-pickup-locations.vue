@@ -1,17 +1,25 @@
 <template>
-  <VcWidget :title="$t('shared.catalog.shipment_options.title')" class="pickup-locations">
+  <VcWidget :title="$t('shared.catalog.shipment_options.title')" class="product-pickup-locations">
     <VcLoaderOverlay v-if="loading" />
 
-    <div class="pickup-locations__group">
-      <VcImage src="in-store-pickup.svg" :alt="$t('shared.catalog.shipment_options.in_store')" />
+    <div class="product-pickup-locations__group">
+      <VcImage
+        src="in-store-pickup.svg"
+        :alt="$t('shared.catalog.shipment_options.in_store')"
+        class="product-pickup-locations__img"
+      />
 
-      <div>
-        <div class="pickup-locations__group-header">
+      <div class="product-pickup-locations__content">
+        <div class="product-pickup-locations__header">
           {{ $t("shared.catalog.shipment_options.in_store") }}
         </div>
 
-        <div v-for="pickupLocation in pickupLocations" :key="pickupLocation.id" class="pickup-locations__option">
-          <div class="pickup-locations__option-name">
+        <div
+          v-for="pickupLocation in pickupLocations"
+          :key="pickupLocation.id"
+          class="product-pickup-locations__option"
+        >
+          <div class="product-pickup-locations__name">
             {{ pickupLocation.name }}
           </div>
 
@@ -38,21 +46,29 @@ defineProps<IProps>();
 </script>
 
 <style lang="scss">
-.pickup-locations {
+.product-pickup-locations {
   &__group {
     @apply flex flex-row gap-x-3 items-start border rounded p-3;
   }
 
-  &__group-header {
+  &__content {
+    @apply min-w-0;
+  }
+
+  &__header {
     @apply font-bold text-lg;
+
+    word-break: break-word;
   }
 
   &__option {
     @apply my-3;
   }
 
-  &__option-name {
+  &__name {
     @apply font-bold text-sm;
+
+    word-break: break-word;
   }
 }
 </style>
