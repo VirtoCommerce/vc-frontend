@@ -68,16 +68,6 @@ export function _useNavigations() {
       .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
   );
 
-  const desktopAccountMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-    const schema = menuSchema.value?.header?.desktop?.account
-      ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.account))
-      : undefined;
-    if (Array.isArray(schema?.children)) {
-      schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
-    }
-    return schema;
-  });
-
   const desktopPurchasingMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
     const schema = menuSchema.value?.header?.desktop?.purchasing
       ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.purchasing))
@@ -128,17 +118,42 @@ export function _useNavigations() {
     () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || undefined,
   );
 
-  const mobileAccountMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
-    if (!menuSchema.value) {
-      return undefined;
-    }
+  const mobilePurchasingMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
+    menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.purchasing) : undefined,
+  );
 
-    return getTranslatedMenuLink(menuSchema.value?.header?.mobile?.account);
-  });
+  const mobileMarketingMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
+    menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.marketing) : undefined,
+  );
+
+  const mobileUserMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
+    menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.user) : undefined,
+  );
 
   const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
     menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : undefined,
   );
+
+  // Helper to extract route name from menu item
+  function getRouteNameFromMenuItem(item: ExtendedMenuLinkType): string | null {
+    const route = item.route;
+    return typeof route === "object" && route && "name" in route ? (route.name as string) : null;
+  }
+
+  // Helper to check if section contains route in children
+  function sectionHasRoute(
+    section: ExtendedMenuLinkType | undefined,
+    routeNames: readonly (string | symbol | undefined)[],
+  ): boolean {
+    if (!section?.children) {
+      return false;
+    }
+
+    return section.children.some((child) => {
+      const routeName = getRouteNameFromMenuItem(child);
+      return !!routeName && routeNames.includes(routeName);
+    });
+  }
 
   const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
     const matchedRouteNames = globals.router.currentRoute.value.matched
@@ -146,17 +161,37 @@ export function _useNavigations() {
       .concat(matchingRouteName.value)
       .filter(Boolean);
 
-    let preSelectedLink: ExtendedMenuLinkType | undefined;
-
-    if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
-      preSelectedLink = mobileCatalogMenuItem.value;
-    } else if (matchedRouteNames.includes("Account") && !matchedRouteNames.includes("Dashboard")) {
-      preSelectedLink = mobileAccountMenuItem.value;
-    } else if (matchedRouteNames.includes("Company")) {
-      preSelectedLink = mobileCorporateMenuItem.value;
+    // Don't auto-open any section on Dashboard
+    if (matchedRouteNames.includes("Dashboard")) {
+      return undefined;
     }
 
-    return preSelectedLink;
+    // Special routes that don't belong to section children
+    const specialRoutes: Record<string, ExtendedMenuLinkType | undefined> = {
+      Catalog: mobileCatalogMenuItem.value,
+      Category: mobileCatalogMenuItem.value,
+      Product: mobileCatalogMenuItem.value,
+      Company: mobileCorporateMenuItem.value,
+    };
+
+    // First check special routes
+    const specialRoute = matchedRouteNames
+      .map((route) => specialRoutes[route as string])
+      .find((section) => section !== undefined);
+
+    if (specialRoute) {
+      return specialRoute;
+    }
+
+    // Then search in section children
+    const sections = [
+      mobilePurchasingMenuItem.value,
+      mobileMarketingMenuItem.value,
+      mobileUserMenuItem.value,
+      mobileCorporateMenuItem.value,
+    ];
+
+    return sections.find((section) => sectionHasRoute(section, matchedRouteNames));
   });
 
   const { themeContext } = useThemeContext();
@@ -238,17 +273,23 @@ export function _useNavigations() {
 
   return {
     setMatchingRouteName,
+
+    // Desktop
     desktopMainMenuItems,
-    desktopAccountMenuItems,
     desktopPurchasingMenuItems,
     desktopMarketingMenuItems,
     desktopUserMenuItems,
     desktopCorporateMenuItems,
+
+    // Mobile
     mobileMainMenuItems,
     mobileCatalogMenuItem,
-    mobileAccountMenuItem,
+    mobilePurchasingMenuItem,
+    mobileMarketingMenuItem,
+    mobileUserMenuItem,
     mobileCorporateMenuItem,
     mobilePreSelectedMenuItem,
+
     matchingRouteName: readonly(matchingRouteName),
 
     fetchCatalogMenu,

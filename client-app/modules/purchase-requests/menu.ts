@@ -19,7 +19,7 @@ export const menuItems: DeepPartial<MenuType> = {
       },
     },
     mobile: {
-      account: {
+      purchasing: {
         children: [
           {
             id: "purchaseRequests",
@@ -28,7 +28,7 @@ export const menuItems: DeepPartial<MenuType> = {
             },
             title: "purchase_requests.menu.link.title",
             icon: "purchase-requests",
-            priority: 100,
+            priority: 50,
           },
         ],
       },

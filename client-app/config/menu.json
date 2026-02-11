@@ -49,15 +49,6 @@
           "priority": 100
         }
       ],
-      "account": {
-        "id": "account",
-        "route": {
-          "name": "Account"
-        },
-        "title": "shared.layout.header.mobile.my_account",
-        "icon": "user-circle",
-        "children": []
-      },
       "purchasing": {
         "id": "purchasing",
         "title": "shared.account.navigation.purchasing_title",
@@ -149,9 +140,6 @@
       },
       "corporate": {
         "id": "corporate",
-        "route": {
-          "name": "Company"
-        },
         "title": "shared.layout.header.mobile.corporate",
         "icon": "case",
         "children": [
@@ -214,12 +202,54 @@
           "icon": "mail"
         }
       ],
-      "account": {
-        "id": "account",
-        "route": {
-          "name": "Account"
-        },
-        "title": "shared.layout.header.mobile.my_account",
+      "purchasing": {
+        "id": "purchasing",
+        "title": "shared.account.navigation.purchasing_title",
+        "icon": "user-circle",
+        "children": [
+          {
+            "route": {
+              "name": "Dashboard"
+            },
+            "title": "shared.account.navigation.links.dashboard",
+            "icon": "dashboard-2",
+            "priority": 10
+          },
+          {
+            "route": {
+              "name": "Orders"
+            },
+            "title": "shared.layout.header.mobile.account_menu.orders",
+            "icon": "clipboard-list",
+            "priority": 20
+          },
+          {
+            "route": {
+              "name": "Lists"
+            },
+            "title": "shared.layout.header.mobile.account_menu.lists",
+            "icon": "list-v2",
+            "priority": 30
+          },
+          {
+            "route": {
+              "name": "SavedForLater"
+            },
+            "title": "shared.layout.header.mobile.account_menu.saved_for_later",
+            "icon": "bookmark-solid",
+            "priority": 60
+          }
+        ]
+      },
+      "marketing": {
+        "id": "marketing",
+        "title": "shared.account.navigation.marketing_title",
+        "icon": "user-circle",
+        "children": []
+      },
+      "user": {
+        "id": "user",
+        "title": "shared.account.navigation.user_title",
         "icon": "user-circle",
         "children": [
           {
@@ -228,8 +258,40 @@
             },
             "title": "shared.layout.header.mobile.account_menu.profile",
             "icon": "profile",
-            "priority": 0
+            "priority": 10
           },
+          {
+            "id": "addresses",
+            "route": {
+              "name": "Addresses"
+            },
+            "title": "shared.layout.header.mobile.account_menu.addresses",
+            "icon": "office-building",
+            "priority": 20
+          },
+          {
+            "route": {
+              "name": "ChangePasswordAccount"
+            },
+            "title": "shared.layout.header.mobile.account_menu.change_password",
+            "icon": "pass",
+            "priority": 30
+          },
+          {
+            "route": {
+              "name": "SavedCreditCards"
+            },
+            "title": "shared.layout.header.mobile.account_menu.saved_credit_cards",
+            "icon": "credit-card",
+            "priority": 40
+          }
+        ]
+      },
+      "corporate": {
+        "id": "corporate",
+        "title": "shared.layout.header.mobile.corporate",
+        "icon": "case",
+        "children": [
           {
             "id": "contact-organizations",
             "title": "common.labels.my_organizations",
@@ -239,76 +301,19 @@
           },
           {
             "route": {
-              "name": "ChangePasswordAccount"
-            },
-            "title": "shared.layout.header.mobile.account_menu.change_password",
-            "icon": "pass",
-            "priority": 20
-          },
-          {
-            "id": "addresses",
-            "route": {
-              "name": "Addresses"
-            },
-            "title": "shared.layout.header.mobile.account_menu.addresses",
-            "icon": "office-building",
-            "priority": 30
-          },
-          {
-            "route": {
-              "name": "Orders"
-            },
-            "title": "shared.layout.header.mobile.account_menu.orders",
-            "icon": "clipboard-list",
-            "priority": 40
-          },
-          {
-            "route": {
-              "name": "SavedForLater"
-            },
-            "title": "shared.layout.header.mobile.account_menu.saved_for_later",
-            "icon": "list-v2",
-            "priority": 45
-          },
-          {
-            "route": {
-              "name": "Lists"
-            },
-            "title": "shared.layout.header.mobile.account_menu.lists",
-            "icon": "list-v2",
-            "priority": 50
-          },
-          {
-            "route": {
-              "name": "SavedCreditCards"
-            },
-            "title": "shared.layout.header.mobile.account_menu.saved_credit_cards",
-            "icon": "credit-card",
-            "priority": 70
-          }
-        ]
-      },
-      "corporate": {
-        "id": "corporate",
-        "route": {
-          "name": "Company"
-        },
-        "title": "shared.layout.header.mobile.corporate",
-        "icon": "case",
-        "children": [
-          {
-            "route": {
               "name": "CompanyInfo"
             },
             "title": "shared.layout.header.mobile.corporate_menu.company_info",
-            "icon": "office-building"
+            "icon": "case",
+            "priority": 20
           },
           {
             "route": {
               "name": "CompanyMembers"
             },
             "title": "shared.layout.header.mobile.corporate_menu.company_members",
-            "icon": "user-group"
+            "icon": "user-group",
+            "priority": 30
           }
         ]
       }

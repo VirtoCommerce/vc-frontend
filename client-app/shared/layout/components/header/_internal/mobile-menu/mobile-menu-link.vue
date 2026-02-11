@@ -3,7 +3,7 @@
     <component
       :is="isLink ? 'a' : 'button'"
       :href="getHrefValue(href)"
-      :class="['flex min-h-9 items-center gap-x-3.5 text-left leading-tight tracking-[0.01em]', $attrs.class]"
+      :class="['flex min-h-9 w-full items-center gap-x-3.5 text-left leading-tight tracking-[0.01em]', $attrs.class]"
       @click.prevent="click(navigate)"
     >
       <slot name="icon" v-bind="{ isActive, isExactActive }">

@@ -20,7 +20,7 @@ const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 const menuItems: DeepPartial<MenuType> = {
   header: {
     mobile: {
-      account: {
+      marketing: {
         children: [
           {
             id: "push-messages",
@@ -29,7 +29,7 @@ const menuItems: DeepPartial<MenuType> = {
             },
             title: "push_messages.menu_item_name",
             icon: "notification",
-            priority: 80,
+            priority: 10,
           },
         ],
       },

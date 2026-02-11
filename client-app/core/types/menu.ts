@@ -4,7 +4,6 @@ export type MenuType = {
   header: {
     desktop: {
       main: ExtendedMenuLinkType[];
-      account: ExtendedMenuLinkType;
       purchasing: ExtendedMenuLinkType;
       marketing: ExtendedMenuLinkType;
       user: ExtendedMenuLinkType;
@@ -12,7 +11,9 @@ export type MenuType = {
     };
     mobile: {
       main: ExtendedMenuLinkType[];
-      account: ExtendedMenuLinkType;
+      purchasing: ExtendedMenuLinkType;
+      marketing: ExtendedMenuLinkType;
+      user: ExtendedMenuLinkType;
       corporate: ExtendedMenuLinkType;
     };
   };

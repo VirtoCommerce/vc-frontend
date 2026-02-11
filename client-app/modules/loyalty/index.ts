@@ -41,14 +41,14 @@ const menuItems: DeepPartial<MenuType> = {
       },
     },
     mobile: {
-      account: {
+      marketing: {
         children: [
           {
             id: "points-history",
             route: { name: route.name },
             title: "loyalty.navigation.route_name",
             icon: "cup",
-            priority: 200,
+            priority: 20,
           },
         ],
       },
