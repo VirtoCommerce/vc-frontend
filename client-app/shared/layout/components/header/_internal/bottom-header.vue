@@ -41,7 +41,7 @@
       <SearchBar />
 
       <ul class="-mx-2 flex items-center">
-        <li v-for="item in desktopMainMenuItems" :key="item.id">
+        <li v-for="item in desktopMainMenuItems" :key="item.id" :data-test-id="item.dataTestId">
           <ExtensionPoint category="headerMenu" :name="item.id" :item="item">
             <LinkDefault :item="item" />
           </ExtensionPoint>

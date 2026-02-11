@@ -58,6 +58,7 @@
         :is-page-limit-reached="pageNumber >= PAGE_LIMIT"
         :page-number="pageNumber"
         :pages-count="pagesCount"
+        test-id="category-endless-scroll-loader"
         distance="400"
         class="category-products__infinity"
         @visible="$emit('changePage', pageNumber + 1)"
@@ -102,9 +103,9 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { toRef, computed } from "vue";
+import { computed, toRef } from "vue";
 import { useBrowserTarget } from "@/core/composables";
-import { PAGE_LIMIT, BREAKPOINTS, DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PAGE_LIMIT } from "@/core/constants";
 import { ProductCard, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog/components";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import type { Product } from "@/core/api/graphql/types";
