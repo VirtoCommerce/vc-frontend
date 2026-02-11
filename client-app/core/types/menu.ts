@@ -24,6 +24,7 @@ export type ExtendedMenuLinkType = {
   children?: ExtendedMenuLinkType[];
   priority?: number;
   isCatalogItem?: boolean;
+  dataTestId?: string;
 };
 
 export type MarkedMenuLinkType = ExtendedMenuLinkType & {
