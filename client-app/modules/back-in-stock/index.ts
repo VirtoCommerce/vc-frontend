@@ -28,14 +28,14 @@ const route: RouteRecordRaw = {
 const menuItems: DeepPartial<MenuType> = {
   header: {
     desktop: {
-      account: {
+      purchasing: {
         children: [
           {
             id: "back-in-stock",
             route: { name: "BackInStockSubscriptions" },
             title: "back_in_stock.navigation.route_name",
             icon: "cube",
-            priority: 100,
+            priority: 70,
           },
         ],
       },

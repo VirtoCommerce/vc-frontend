@@ -28,14 +28,14 @@ const route: RouteRecordRaw = {
 const menuItems: DeepPartial<MenuType> = {
   header: {
     desktop: {
-      account: {
+      marketing: {
         children: [
           {
             id: "points-history",
             route: { name: route.name },
             title: "loyalty.navigation.route_name",
-            icon: "star",
-            priority: 200,
+            icon: "cup",
+            priority: 20,
           },
         ],
       },
@@ -47,7 +47,7 @@ const menuItems: DeepPartial<MenuType> = {
             id: "points-history",
             route: { name: route.name },
             title: "loyalty.navigation.route_name",
-            icon: "star",
+            icon: "cup",
             priority: 200,
           },
         ],

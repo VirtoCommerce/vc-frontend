@@ -1,21 +1,23 @@
 <template>
   <AccountNavigationItem :item="item">
-    <template v-if="isOrdersPage">
-      <div v-for="facet in statusFacet?.items" :key="facet.term" class="flex items-center gap-2 px-3 text-sm">
-        <VcIcon class="flex-none fill-primary" size="xs" name="minus" />
+    <div v-if="isOrdersPage && statusFacet?.items" class="account-navigation-orders">
+      <button
+        v-for="facet in statusFacet.items"
+        :key="facet.term"
+        type="button"
+        class="account-navigation-orders__item"
+        :class="{ 'account-navigation-orders__item--active': isSelectedOrderStatus(facet.term) }"
+        @click="applyOrderFilter(facet.term)"
+      >
+        <VcIcon class="account-navigation-orders__icon fill-primary" size="xs" name="minus" />
 
-        <button
-          :class="{ 'font-bold': isSelectedOrderStatus(facet.term) }"
-          class="line-clamp-2 flex w-full cursor-pointer gap-1 py-0.5 hover:text-neutral-950"
-          type="button"
-          @click="applyOrderFilter(facet.term)"
-        >
-          <span class="grow overflow-hidden text-ellipsis text-nowrap text-start">{{ facet.label }}</span>
+        <span class="account-navigation-orders__label">{{ facet.label }}</span>
 
-          <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
-        </button>
-      </div>
-    </template>
+        <VcBadge variant="outline" size="xs" rounded>
+          {{ facet.count }}
+        </VcBadge>
+      </button>
+    </div>
   </AccountNavigationItem>
 </template>
 
@@ -53,3 +55,29 @@ function applyOrderFilter(status: string): void {
   applyFilters();
 }
 </script>
+
+<style lang="scss">
+.account-navigation-orders {
+  @apply py-2 px-2.5 space-y-0.5;
+
+  &__item {
+    @apply flex w-full cursor-pointer items-center gap-2 py-0.5 text-sm px-1.5 rounded;
+
+    &--active {
+      @apply font-bold bg-secondary-100;
+    }
+
+    &:hover:not(&--active) {
+      @apply bg-secondary-50;
+    }
+  }
+
+  &__icon {
+    @apply flex-none;
+  }
+
+  &__label {
+    @apply line-clamp-2 grow overflow-hidden text-ellipsis text-nowrap text-start;
+  }
+}
+</style>

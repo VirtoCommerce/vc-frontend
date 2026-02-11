@@ -56,6 +56,11 @@
         },
         "title": "shared.layout.header.mobile.my_account",
         "icon": "user-circle",
+        "children": []
+      },
+      "purchasing": {
+        "id": "purchasing",
+        "title": "shared.account.navigation.purchasing_title",
         "children": [
           {
             "id": "dashboard",
@@ -67,12 +72,59 @@
             "priority": 10
           },
           {
+            "id": "orders",
+            "route": {
+              "name": "Orders"
+            },
+            "title": "shared.account.navigation.links.orders",
+            "icon": "clipboard-list",
+            "priority": 20
+          },
+          {
+            "id": "lists",
+            "route": {
+              "name": "Lists"
+            },
+            "title": "shared.account.navigation.links.lists",
+            "icon": "list-v2",
+            "priority": 30
+          },
+          {
+            "id": "saved-for-later",
+            "route": {
+              "name": "SavedForLater"
+            },
+            "title": "shared.layout.header.mobile.account_menu.saved_for_later",
+            "icon": "bookmark-solid",
+            "priority": 60
+          }
+        ]
+      },
+      "marketing": {
+        "id": "marketing",
+        "title": "shared.account.navigation.marketing_title",
+        "children": []
+      },
+      "user": {
+        "id": "user",
+        "title": "shared.account.navigation.user_title",
+        "children": [
+          {
             "id": "profile",
             "route": {
               "name": "Profile"
             },
             "title": "shared.account.navigation.links.profile",
             "icon": "profile",
+            "priority": 10
+          },
+          {
+            "id": "addresses",
+            "route": {
+              "name": "Addresses"
+            },
+            "title": "shared.account.navigation.links.addresses",
+            "icon": "office-building",
             "priority": 20
           },
           {
@@ -85,49 +137,13 @@
             "priority": 30
           },
           {
-            "id": "addresses",
-            "route": {
-              "name": "Addresses"
-            },
-            "title": "shared.account.navigation.links.addresses",
-            "icon": "office-building",
-            "priority": 40
-          },
-          {
-            "id": "orders",
-            "route": {
-              "name": "Orders"
-            },
-            "title": "shared.account.navigation.links.orders",
-            "icon": "clipboard-list",
-            "priority": 50
-          },
-          {
-            "id": "saved-for-later",
-            "route": {
-              "name": "SavedForLater"
-            },
-            "title": "shared.layout.header.mobile.account_menu.saved_for_later",
-            "icon": "list-v2",
-            "priority": 55
-          },
-          {
-            "id": "lists",
-            "route": {
-              "name": "Lists"
-            },
-            "title": "shared.account.navigation.links.lists",
-            "icon": "list-v2",
-            "priority": 60
-          },
-          {
             "id": "savedCreditCards",
             "route": {
               "name": "SavedCreditCards"
             },
             "title": "shared.account.navigation.links.saved_credit_cards",
             "icon": "credit-card",
-            "priority": 80
+            "priority": 40
           }
         ]
       },

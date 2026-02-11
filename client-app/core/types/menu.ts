@@ -5,6 +5,9 @@ export type MenuType = {
     desktop: {
       main: ExtendedMenuLinkType[];
       account: ExtendedMenuLinkType;
+      purchasing: ExtendedMenuLinkType;
+      marketing: ExtendedMenuLinkType;
+      user: ExtendedMenuLinkType;
       corporate: ExtendedMenuLinkType;
     };
     mobile: {

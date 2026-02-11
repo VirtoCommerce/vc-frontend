@@ -46,14 +46,14 @@ const route: RouteRecordRaw = {
 const menuItems: DeepPartial<MenuType> = {
   header: {
     desktop: {
-      account: {
+      purchasing: {
         children: [
           {
             id: "quotes",
             route: { name: "Quotes" },
             title: "quotes.navigation.route_name",
             icon: "clipboard-arrow",
-            priority: 90,
+            priority: 40,
           },
         ],
       },

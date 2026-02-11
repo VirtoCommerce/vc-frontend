@@ -78,6 +78,36 @@ export function _useNavigations() {
     return schema;
   });
 
+  const desktopPurchasingMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+    const schema = menuSchema.value?.header?.desktop?.purchasing
+      ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.purchasing))
+      : undefined;
+    if (Array.isArray(schema?.children)) {
+      schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+    }
+    return schema;
+  });
+
+  const desktopMarketingMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+    const schema = menuSchema.value?.header?.desktop?.marketing
+      ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.marketing))
+      : undefined;
+    if (Array.isArray(schema?.children)) {
+      schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+    }
+    return schema;
+  });
+
+  const desktopUserMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+    const schema = menuSchema.value?.header?.desktop?.user
+      ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.user))
+      : undefined;
+    if (Array.isArray(schema?.children)) {
+      schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+    }
+    return schema;
+  });
+
   const desktopCorporateMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
     return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.corporate) : undefined;
   });
@@ -210,6 +240,9 @@ export function _useNavigations() {
     setMatchingRouteName,
     desktopMainMenuItems,
     desktopAccountMenuItems,
+    desktopPurchasingMenuItems,
+    desktopMarketingMenuItems,
+    desktopUserMenuItems,
     desktopCorporateMenuItems,
     mobileMainMenuItems,
     mobileCatalogMenuItem,
