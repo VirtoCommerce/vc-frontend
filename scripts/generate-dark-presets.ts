@@ -8,288 +8,495 @@
  */
 
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
-import { resolve, join } from "node:path";
-import { parse, formatHex, wcagContrast, converter } from "culori";
+import { resolve, join, basename, relative } from "node:path";
+import { parse, formatHex, wcagContrast, converter, clampChroma, displayable } from "culori";
 
-const toOklch = converter("oklch");
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+interface IOklch {
+  mode: "oklch";
+  l: number;
+  c: number;
+  h?: number;
+  alpha?: number;
+}
+
+type PresetType = Record<string, string>;
+
+interface IContrastAdjustment {
+  pair: string;
+  original: number;
+  adjusted: number;
+  foregroundKey: string;
+}
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
 
 const PRESETS_DIR = resolve(import.meta.dirname, "../client-app/assets/presets");
 
 const PALETTE_FAMILIES = ["primary", "secondary", "accent", "neutral", "warning", "danger", "success", "info"] as const;
 const SHADE_LEVELS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const;
 
-// Shade mirror mapping: 50↔950, 100↔900, 200↔800, etc.
-const SHADE_MIRROR: Record<number, number> = {
-  50: 950,
-  100: 900,
-  200: 800,
-  300: 700,
-  400: 600,
-  500: 500,
-  600: 400,
-  700: 300,
-  800: 200,
-  900: 100,
-  950: 50,
-};
-
-// Critical contrast pairs to validate (key suffixes from preset)
-const CONTRAST_PAIRS: Array<{ fg: string; bg: string; minRatio: number; label: string }> = [
-  // Palette-based pairs
-  { fg: "color_neutral_950", bg: "color_neutral_50", minRatio: 4.5, label: "body text on surface" },
-  { fg: "color_neutral_900", bg: "color_neutral_50", minRatio: 4.5, label: "secondary text on surface" },
-  { fg: "color_neutral_950", bg: "color_additional_50", minRatio: 4.5, label: "text on card bg" },
-  { fg: "color_primary_500", bg: "color_additional_50", minRatio: 3.0, label: "primary on card (large text)" },
-  { fg: "color_danger_500", bg: "color_additional_50", minRatio: 4.5, label: "danger on dark surface" },
-  { fg: "color_danger_600", bg: "color_additional_50", minRatio: 4.5, label: "danger-600 on dark surface" },
-  { fg: "color_success_500", bg: "color_additional_50", minRatio: 4.5, label: "success on dark surface" },
-  { fg: "color_success_600", bg: "color_additional_50", minRatio: 4.5, label: "success-600 on dark surface" },
+/** Mirrored shade pairs for lightness inversion. */
+const SHADE_MIRROR_PAIRS: ReadonlyArray<[number, number]> = [
+  [50, 950],
+  [100, 900],
+  [200, 800],
+  [300, 700],
+  [400, 600],
 ];
 
-// Semantic contrast pairs (only checked if both keys exist in preset)
-const SEMANTIC_PAIRS: Array<{ fg: string; bg: string; minRatio: number; label: string }> = [
-  { fg: "color_body_text", bg: "color_body_bg", minRatio: 4.5, label: "body text/bg" },
-  { fg: "color_header_top_text", bg: "color_header_top_bg", minRatio: 4.5, label: "header top text/bg" },
-  { fg: "color_header_top_link", bg: "color_header_top_bg", minRatio: 4.5, label: "header top link/bg" },
-  { fg: "color_header_bottom_text", bg: "color_header_bottom_bg", minRatio: 4.5, label: "header bottom text/bg" },
-  { fg: "color_header_bottom_link", bg: "color_header_bottom_bg", minRatio: 4.5, label: "header bottom link/bg" },
-  { fg: "color_footer_top_text", bg: "color_footer_top_bg", minRatio: 4.5, label: "footer top text/bg" },
-  { fg: "color_footer_top_link", bg: "color_footer_top_bg", minRatio: 4.5, label: "footer top link/bg" },
-  { fg: "color_footer_bottom_text", bg: "color_footer_bottom_bg", minRatio: 4.5, label: "footer bottom text/bg" },
-  { fg: "color_footer_bottom_link", bg: "color_footer_bottom_bg", minRatio: 4.5, label: "footer bottom link/bg" },
-  { fg: "color_link", bg: "color_body_bg", minRatio: 4.5, label: "link on body bg" },
-];
+const WCAG_AA_RATIO = 4.5;
 
-interface IPreset {
-  [key: string]: string;
+const toOklch = converter("oklch");
+
+// ---------------------------------------------------------------------------
+// Color helpers
+// ---------------------------------------------------------------------------
+
+function hexToOklch(hex: string): IOklch {
+  const parsed = parse(hex);
+  if (!parsed) {
+    throw new Error(`Failed to parse color: ${hex}`);
+  }
+  const oklch = toOklch(parsed) as IOklch;
+  return {
+    mode: "oklch",
+    l: oklch.l ?? 0,
+    c: oklch.c ?? 0,
+    h: oklch.h,
+    alpha: oklch.alpha,
+  };
+}
+
+function oklchToHex(color: IOklch): string {
+  // Gamut-map to sRGB so formatHex never produces out-of-range values
+  const clamped = displayable(color) ? color : clampChroma(color, "oklch");
+  return formatHex(clamped);
+}
+
+function clampValue(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+function invertLightness(lightness: number): number {
+  return 1 - lightness;
 }
 
 /**
- * Invert a hex color's lightness in OKLCH space, optionally reducing chroma.
+ * Adjust a foreground color's lightness until it achieves at least `targetRatio`
+ * contrast against the given background hex. Returns the adjusted hex.
  */
-function invertLightness(hex: string, chromaReduction: number = 0.9): string {
-  const color = toOklch(parse(hex));
-  if (!color) {
-    return hex;
+function ensureContrast(fgHex: string, bgHex: string, targetRatio: number): { hex: string; adjusted: boolean } {
+  const ratio = wcagContrast(fgHex, bgHex);
+  if (ratio >= targetRatio) {
+    return { hex: fgHex, adjusted: false };
   }
 
-  color.l = 1 - color.l;
-  color.c = (color.c ?? 0) * chromaReduction;
+  const fgOklch = hexToOklch(fgHex);
+  const bgOklch = hexToOklch(bgHex);
 
-  const result = formatHex(color);
-  return result ?? hex;
-}
+  // Determine direction: if bg is dark, push fg lighter; if bg is light, push fg darker
+  const direction = bgOklch.l < 0.5 ? 1 : -1;
+  const step = 0.01;
+  let bestHex = fgHex;
+  let currentL = fgOklch.l;
 
-/**
- * For palette shades: swap lightness between mirror shades.
- * shade 50 gets the OKLCH lightness of shade 950, preserving its own chroma and hue.
- */
-function invertPaletteShade(shadeHex: string, mirrorShadeHex: string, chromaReduction: number = 0.9): string {
-  const shadeOklch = toOklch(parse(shadeHex));
-  const mirrorOklch = toOklch(parse(mirrorShadeHex));
+  for (let i = 0; i < 100; i++) {
+    currentL += direction * step;
+    currentL = clampValue(currentL, 0, 1);
 
-  if (!shadeOklch || !mirrorOklch) {
-    return shadeHex;
-  }
+    const candidate: IOklch = { ...fgOklch, l: currentL };
+    const candidateHex = oklchToHex(candidate);
+    const candidateRatio = wcagContrast(candidateHex, bgHex);
 
-  // Take lightness from the mirror shade, keep original chroma (reduced) and hue
-  shadeOklch.l = mirrorOklch.l;
-  shadeOklch.c = (shadeOklch.c ?? 0) * chromaReduction;
-
-  const result = formatHex(shadeOklch);
-  return result ?? shadeHex;
-}
-
-/**
- * Ensure a foreground color meets minimum contrast against a background.
- * Adjusts the foreground's OKLCH lightness until the ratio is met.
- */
-function ensureContrast(fgHex: string, bgHex: string, minRatio: number): string {
-  const fgParsed = parse(fgHex);
-  const bgParsed = parse(bgHex);
-
-  if (!fgParsed || !bgParsed) {
-    return fgHex;
-  }
-
-  let ratio = wcagContrast(fgParsed, bgParsed);
-  if (ratio >= minRatio) {
-    return fgHex;
-  }
-
-  const fgOklch = toOklch(fgParsed);
-  const bgOklch = toOklch(bgParsed);
-  if (!fgOklch || !bgOklch) {
-    return fgHex;
-  }
-
-  const bgIsLight = bgOklch.l > 0.5;
-  let iterations = 0;
-
-  while (ratio < minRatio && iterations < 100) {
-    if (bgIsLight) {
-      fgOklch.l = Math.max(0, fgOklch.l - 0.01);
-    } else {
-      fgOklch.l = Math.min(1, fgOklch.l + 0.01);
-    }
-    const adjusted = formatHex(fgOklch);
-    if (!adjusted) {
+    if (candidateRatio >= targetRatio) {
+      bestHex = candidateHex;
       break;
     }
-    ratio = wcagContrast(parse(adjusted)!, bgParsed);
-    iterations++;
+
+    // If we hit the boundary without success, use the best we have
+    if (currentL <= 0 || currentL >= 1) {
+      bestHex = candidateHex;
+      break;
+    }
   }
 
-  return formatHex(fgOklch) ?? fgHex;
+  return { hex: bestHex, adjusted: true };
 }
 
-/**
- * Detect if a key is a palette shade key (e.g., "color_primary_50").
- */
-function parsePaletteKey(key: string): { family: string; shade: number } | null {
-  for (const family of PALETTE_FAMILIES) {
-    const prefix = `color_${family}_`;
-    if (key.startsWith(prefix)) {
-      const shade = parseInt(key.slice(prefix.length), 10);
-      if (SHADE_LEVELS.includes(shade as (typeof SHADE_LEVELS)[number])) {
-        return { family, shade };
-      }
+// ---------------------------------------------------------------------------
+// Palette shade inversion
+// ---------------------------------------------------------------------------
+
+function isPaletteKey(key: string): boolean {
+  return PALETTE_FAMILIES.some((family) => {
+    const regex = new RegExp(`^color_${family}_\\d+$`);
+    return regex.test(key);
+  });
+}
+
+/** Inject minimum chroma for neutral family to prevent pure grey. */
+function applyNeutralWarmth(color: IOklch, minChroma: number): void {
+  color.c = Math.max(color.c, minChroma);
+  color.h = color.h ?? 55;
+}
+
+/** Collect parsed OKLCH shades for a single palette family. */
+function collectFamilyShades(lightPreset: PresetType, family: string): Record<number, IOklch> {
+  const shades: Record<number, IOklch> = {};
+  for (const shade of SHADE_LEVELS) {
+    const key = `color_${family}_${shade}`;
+    const hex = lightPreset[key];
+    if (hex) {
+      shades[shade] = hexToOklch(hex);
     }
+  }
+  return shades;
+}
+
+/** Invert a mirrored pair of shades, swapping their lightness values. */
+function invertMirrorPair(
+  family: string,
+  lowShade: number,
+  highShade: number,
+  shades: Record<number, IOklch>,
+  result: PresetType,
+): void {
+  const lowColor = shades[lowShade];
+  const highColor = shades[highShade];
+
+  if (!lowColor || !highColor) {
+    return;
+  }
+
+  const darkLow: IOklch = { mode: "oklch", l: highColor.l, c: lowColor.c * 0.9, h: lowColor.h };
+  const darkHigh: IOklch = { mode: "oklch", l: lowColor.l, c: highColor.c * 0.9, h: highColor.h };
+
+  if (family === "neutral") {
+    applyNeutralWarmth(darkLow, 0.006);
+    applyNeutralWarmth(darkHigh, 0.008);
+  }
+
+  result[`color_${family}_${lowShade}`] = oklchToHex(darkLow);
+  result[`color_${family}_${highShade}`] = oklchToHex(darkHigh);
+}
+
+/** Invert the 500 (mid) shade with optional clamping for semantic families. */
+function invertMidShade(family: string, shades: Record<number, IOklch>, result: PresetType): void {
+  const mid = shades[500];
+  if (!mid) {
+    return;
+  }
+
+  const invertedL = invertLightness(mid.l);
+  const darkMid: IOklch = {
+    mode: "oklch",
+    l: family === "neutral" ? invertedL : clampValue(invertedL, 0.55, 0.85),
+    c: mid.c * 0.9,
+    h: mid.h,
+  };
+
+  if (family === "neutral") {
+    applyNeutralWarmth(darkMid, 0.007);
+  }
+
+  result[`color_${family}_500`] = oklchToHex(darkMid);
+}
+
+function invertPaletteShades(lightPreset: PresetType): PresetType {
+  const result: PresetType = {};
+
+  for (const family of PALETTE_FAMILIES) {
+    const shades = collectFamilyShades(lightPreset, family);
+
+    for (const [lowShade, highShade] of SHADE_MIRROR_PAIRS) {
+      invertMirrorPair(family, lowShade, highShade, shades, result);
+    }
+
+    invertMidShade(family, shades, result);
+  }
+
+  return result;
+}
+
+// ---------------------------------------------------------------------------
+// Semantic color inversion
+// ---------------------------------------------------------------------------
+
+/** Hardcoded color mappings for specific keys. */
+const HARDCODED_COLORS: Record<string, string> = {
+  color_additional_50: "#141110",
+  color_additional_950: "#f0e6dd",
+  color_mobile_menu_link_active: "#f0e6dd",
+  color_mobile_menu_icon_active: "#f0e6dd",
+};
+
+/** Try to handle a specific named key with custom inversion logic. Returns null if not handled. */
+function invertNamedSemanticKey(key: string, oklch: IOklch): string | null {
+  if (key === "color_body_bg") {
+    return oklchToHex({ mode: "oklch", l: 0.1, c: 0.012, h: oklch.h ?? 50 });
+  }
+  if (key === "color_body_text") {
+    return oklchToHex({ mode: "oklch", l: 0.92, c: 0.015, h: oklch.h ?? 70 });
+  }
+  if (key === "color_price") {
+    return oklchToHex({ ...oklch, l: Math.max(oklch.l, 0.8) });
+  }
+  if (key === "color_empty_list_icon") {
+    return oklchToHex({ ...oklch, l: Math.max(oklch.l, 0.6) });
+  }
+  if (
+    key === "color_mobile_menu_navigation" ||
+    key === "color_mobile_menu_control" ||
+    key === "color_mobile_active_control"
+  ) {
+    return oklchToHex({ ...oklch, l: Math.max(oklch.l, 0.6) });
+  }
+  if (key === "color_shape_icon_bg") {
+    return oklchToHex({ ...oklch, l: clampValue(invertLightness(oklch.l), 0.45, 0.65), c: oklch.c * 0.9 });
+  }
+  if (key === "color_shape_icon") {
+    return oklchToHex({ ...oklch, l: clampValue(invertLightness(oklch.l), 0.85, 0.98) });
   }
   return null;
 }
 
-/**
- * Invert a semantic color based on its role (bg, text, link, icon, etc.).
- */
+/** Invert a semantic color based on its suffix (_bg, _text, _link). Returns null if not handled. */
+function invertBySuffix(key: string, oklch: IOklch): string | null {
+  if (key.endsWith("_bg")) {
+    return oklchToHex({
+      ...oklch,
+      l: clampValue(invertLightness(oklch.l), 0.05, 0.2),
+      c: Math.max(oklch.c * 0.6, 0.008),
+      h: oklch.h,
+    });
+  }
+  if (key.endsWith("_text")) {
+    const targetC = oklch.c < 0.005 ? 0.015 : oklch.c * 0.7;
+    const targetH = oklch.c < 0.005 ? 65 : oklch.h;
+    return oklchToHex({ mode: "oklch", l: clampValue(invertLightness(oklch.l), 0.85, 0.98), c: targetC, h: targetH });
+  }
+  if (key.endsWith("_link") || key.endsWith("_link_hover") || key.endsWith("_link_active")) {
+    return oklchToHex({ ...oklch, l: clampValue(invertLightness(oklch.l), 0.65, 0.85), c: oklch.c * 0.95 });
+  }
+  return null;
+}
+
 function invertSemanticColor(key: string, hex: string): string {
-  const oklch = toOklch(parse(hex));
-  if (!oklch) {
-    return hex;
+  const hardcoded = HARDCODED_COLORS[key];
+  if (hardcoded) {
+    return hardcoded;
   }
 
-  if (key.includes("_bg")) {
-    // Backgrounds should become dark
-    oklch.l = Math.max(0.05, Math.min(0.2, 1 - oklch.l));
-    oklch.c = (oklch.c ?? 0) * 0.8;
-  } else if (key.includes("_text")) {
-    // Text should become light
-    oklch.l = Math.max(0.85, Math.min(0.98, 1 - oklch.l));
-    oklch.c = (oklch.c ?? 0) * 0.7;
-  } else if (key.includes("_link")) {
-    // Links need good contrast on dark backgrounds
-    oklch.l = Math.max(0.55, Math.min(0.85, 1 - oklch.l));
-    oklch.c = (oklch.c ?? 0) * 0.95;
-  } else if (key.includes("_price")) {
-    // Price — light on dark bg
-    oklch.l = Math.max(0.8, 1 - oklch.l);
-  } else {
-    // Generic: simple lightness inversion
-    oklch.l = 1 - oklch.l;
-    oklch.c = (oklch.c ?? 0) * 0.9;
+  const oklch = hexToOklch(hex);
+
+  const namedResult = invertNamedSemanticKey(key, oklch);
+  if (namedResult) {
+    return namedResult;
   }
 
-  return formatHex(oklch) ?? hex;
+  const suffixResult = invertBySuffix(key, oklch);
+  if (suffixResult) {
+    return suffixResult;
+  }
+
+  // Any other semantic color: just invert lightness
+  return oklchToHex({ ...oklch, l: invertLightness(oklch.l) });
 }
 
-/**
- * Invert all colors in a light preset to produce dark palette values.
- */
-function invertPresetColors(lightPreset: IPreset): IPreset {
-  const dark: IPreset = {};
+// ---------------------------------------------------------------------------
+// Contrast validation and fixing
+// ---------------------------------------------------------------------------
 
+/** Check a single fg/bg pair and auto-adjust fg lightness if contrast is below `ratio`. */
+function checkAndFixContrast(
+  darkPreset: PresetType,
+  adjustments: IContrastAdjustment[],
+  fgKey: string,
+  bgKey: string,
+  pairLabel: string,
+  ratio: number = WCAG_AA_RATIO,
+): void {
+  const fgHex = darkPreset[fgKey];
+  const bgHex = darkPreset[bgKey];
+
+  if (!fgHex || !bgHex) {
+    return;
+  }
+
+  const { hex, adjusted } = ensureContrast(fgHex, bgHex, ratio);
+  if (adjusted) {
+    const originalRatio = wcagContrast(fgHex, bgHex);
+    const newRatio = wcagContrast(hex, bgHex);
+    darkPreset[fgKey] = hex;
+    adjustments.push({ pair: pairLabel, original: originalRatio, adjusted: newRatio, foregroundKey: fgKey });
+  }
+}
+
+/** Validate palette 500 shades against dark surfaces. */
+function validatePaletteContrast(darkPreset: PresetType, adjustments: IContrastAdjustment[]): void {
+  const check = (fg: string, bg: string, label: string) => checkAndFixContrast(darkPreset, adjustments, fg, bg, label);
+
+  // 500 shades on neutral_950
+  for (const family of PALETTE_FAMILIES) {
+    check(`color_${family}_500`, "color_neutral_950", `${family}_500 on neutral_950`);
+  }
+
+  // 500 shades on additional_50 (button text contrast)
+  if (darkPreset["color_additional_50"]) {
+    for (const family of PALETTE_FAMILIES) {
+      if (family !== "neutral") {
+        check(`color_${family}_500`, "color_additional_50", `${family}_500 on additional_50`);
+      }
+    }
+  }
+}
+
+/** Validate section (header/footer) text and link contrast. */
+function validateSectionContrast(darkPreset: PresetType, adjustments: IContrastAdjustment[]): void {
+  const check = (fg: string, bg: string, label: string) => checkAndFixContrast(darkPreset, adjustments, fg, bg, label);
+  const sections = ["header_top", "header_bottom", "footer_top", "footer_bottom"] as const;
+  const linkSuffixes = ["_link", "_link_hover", "_link_active"];
+
+  for (const section of sections) {
+    const bgKey = `color_${section}_bg`;
+    check(`color_${section}_text`, bgKey, `${section}_text on ${section}_bg`);
+
+    for (const suffix of linkSuffixes) {
+      const linkKey = `color_${section}${suffix}`;
+      if (darkPreset[linkKey]) {
+        check(linkKey, bgKey, `${section}${suffix} on ${section}_bg`);
+      }
+    }
+  }
+}
+
+/** Validate non-text contrast for input borders (WCAG 1.4.11: 3:1). */
+function validateBorderContrast(darkPreset: PresetType, adjustments: IContrastAdjustment[]): void {
+  const NON_TEXT_RATIO = 3;
+  const borderKey = "color_neutral_300";
+  const surfaces = ["color_additional_50", "color_neutral_50", "color_body_bg"];
+
+  for (const bgKey of surfaces) {
+    checkAndFixContrast(
+      darkPreset,
+      adjustments,
+      borderKey,
+      bgKey,
+      `neutral_300 on ${bgKey.replace("color_", "")}`,
+      NON_TEXT_RATIO,
+    );
+  }
+}
+
+function validateAndFixContrast(darkPreset: PresetType): IContrastAdjustment[] {
+  const adjustments: IContrastAdjustment[] = [];
+  const check = (fg: string, bg: string, label: string) => checkAndFixContrast(darkPreset, adjustments, fg, bg, label);
+
+  validatePaletteContrast(darkPreset, adjustments);
+  check("color_body_text", "color_body_bg", "body_text on body_bg");
+  validateSectionContrast(darkPreset, adjustments);
+  validateBorderContrast(darkPreset, adjustments);
+
+  // Mobile menu
+  if (darkPreset["color_mobile_menu_bg"]) {
+    check("color_mobile_menu_text", "color_mobile_menu_bg", "mobile_menu_text on mobile_menu_bg");
+    check("color_mobile_menu_link", "color_mobile_menu_bg", "mobile_menu_link on mobile_menu_bg");
+    if (darkPreset["color_mobile_menu_link_active"]) {
+      check("color_mobile_menu_link_active", "color_mobile_menu_bg", "mobile_menu_link_active on mobile_menu_bg");
+    }
+  }
+
+  return adjustments;
+}
+
+// ---------------------------------------------------------------------------
+// Main processing
+// ---------------------------------------------------------------------------
+
+function processPreset(filePath: string): { outputPath: string; adjustments: IContrastAdjustment[] } {
+  const raw = readFileSync(filePath, "utf-8");
+  const lightPreset: PresetType = JSON.parse(raw);
+
+  const darkPreset: PresetType = {};
+
+  // 1. Invert palette shades
+  const invertedPalette = invertPaletteShades(lightPreset);
+  Object.assign(darkPreset, invertedPalette);
+
+  // 2. Process semantic (non-palette) colors
   for (const [key, value] of Object.entries(lightPreset)) {
-    const paletteInfo = parsePaletteKey(key);
+    if (isPaletteKey(key)) {
+      continue; // Already handled
+    }
+    darkPreset[key] = invertSemanticColor(key, value);
+  }
 
-    if (paletteInfo) {
-      const mirrorShade = SHADE_MIRROR[paletteInfo.shade];
-      const mirrorKey = `color_${paletteInfo.family}_${mirrorShade}`;
-      const mirrorHex = lightPreset[mirrorKey];
-      dark[key] = mirrorHex ? invertPaletteShade(value, mirrorHex) : invertLightness(value);
-    } else if (key === "color_additional_50") {
-      dark[key] = "#1a1a1e";
-    } else if (key === "color_additional_950") {
-      dark[key] = "#000000";
-    } else if (key.startsWith("color_")) {
-      dark[key] = invertSemanticColor(key, value);
-    } else {
-      dark[key] = value;
+  // 3. Validate and fix WCAG AA contrast
+  const adjustments = validateAndFixContrast(darkPreset);
+
+  // 4. Build output preserving original key order
+  const orderedDark: PresetType = {};
+  for (const key of Object.keys(lightPreset)) {
+    if (key in darkPreset) {
+      orderedDark[key] = darkPreset[key];
     }
   }
 
-  return dark;
+  // Write output file
+  const baseName = basename(filePath, ".json");
+  const outputPath = join(PRESETS_DIR, `${baseName}.dark.json`);
+  writeFileSync(outputPath, JSON.stringify(orderedDark, null, 2) + "\n", "utf-8");
+
+  return { outputPath, adjustments };
 }
 
-/**
- * Validate and fix contrast ratios for a set of color pairs in a preset.
- * Returns true if any pairs could not be fixed.
- */
-function validateContrastPairs(
-  preset: IPreset,
-  pairs: Array<{ fg: string; bg: string; minRatio: number; label: string }>,
-): boolean {
-  let hasWarnings = false;
+function main(): void {
+  console.log("=== Dark Preset Generator ===\n");
 
-  for (const pair of pairs) {
-    if (!preset[pair.fg] || !preset[pair.bg]) {
-      continue;
-    }
-
-    const before = preset[pair.fg];
-    preset[pair.fg] = ensureContrast(preset[pair.fg], preset[pair.bg], pair.minRatio);
-    const ratio = wcagContrast(parse(preset[pair.fg])!, parse(preset[pair.bg])!);
-
-    if (before !== preset[pair.fg]) {
-      console.log(`  [adjusted] ${pair.label}: ${before} -> ${preset[pair.fg]} (ratio: ${ratio.toFixed(2)})`);
-    }
-
-    if (ratio < pair.minRatio) {
-      console.warn(`  [WARN] ${pair.label}: ratio ${ratio.toFixed(2)} < ${pair.minRatio} — could not fix`);
-      hasWarnings = true;
-    }
-  }
-
-  return hasWarnings;
-}
-
-/**
- * Generate a dark preset from a light preset.
- */
-function generateDarkPreset(lightPreset: IPreset): IPreset {
-  const dark = invertPresetColors(lightPreset);
-
-  const hasWarnings = validateContrastPairs(dark, CONTRAST_PAIRS) || validateContrastPairs(dark, SEMANTIC_PAIRS);
-
-  if (hasWarnings) {
-    console.warn("  Some contrast pairs could not be automatically fixed. Manual review needed.");
-  }
-
-  return dark;
-}
-
-/**
- * Main: read all preset JSONs, generate dark variants, write them.
- */
-function main() {
+  // Find all light preset files (not *.dark.json)
   const files = readdirSync(PRESETS_DIR).filter((f) => f.endsWith(".json") && !f.endsWith(".dark.json"));
 
-  console.log(`Found ${files.length} light presets:\n`);
-
-  for (const file of files) {
-    const filePath = join(PRESETS_DIR, file);
-    const lightPreset: IPreset = JSON.parse(readFileSync(filePath, "utf-8"));
-    const darkFile = file.replace(".json", ".dark.json");
-    const darkPath = join(PRESETS_DIR, darkFile);
-
-    console.log(`Generating ${darkFile} from ${file}...`);
-
-    const darkPreset = generateDarkPreset(lightPreset);
-
-    writeFileSync(darkPath, JSON.stringify(darkPreset, null, 2) + "\n", "utf-8");
-    console.log(`  Written: ${darkPath}\n`);
+  if (files.length === 0) {
+    console.log("No light preset files found in", PRESETS_DIR);
+    return;
   }
 
-  console.log("Done! All dark presets generated.");
+  let totalAdjustments = 0;
+
+  const sortedFiles = [...files].sort((a, b) => a.localeCompare(b));
+
+  for (const file of sortedFiles) {
+    const filePath = join(PRESETS_DIR, file);
+    const presetName = basename(file, ".json");
+
+    console.log(`Processing: ${presetName}`);
+
+    const { outputPath, adjustments } = processPreset(filePath);
+
+    if (adjustments.length > 0) {
+      for (const adj of adjustments) {
+        console.log(
+          `  [contrast fix] ${adj.pair}: ${adj.original.toFixed(2)} -> ${adj.adjusted.toFixed(2)} (adjusted ${adj.foregroundKey})`,
+        );
+      }
+      totalAdjustments += adjustments.length;
+    } else {
+      console.log("  All contrast checks passed");
+    }
+
+    console.log(`  -> ${relative(process.cwd(), outputPath)}`);
+  }
+
+  console.log(`\n=== Summary ===`);
+  console.log(`Presets processed: ${files.length}`);
+  console.log(`Contrast adjustments: ${totalAdjustments}`);
+  console.log("Done.");
 }
 
 main();

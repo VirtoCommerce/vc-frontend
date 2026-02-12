@@ -137,9 +137,8 @@ export async function init(router: Router, i18n: I18n) {
     };
     router.addRoute(route); // NOTE: This route must be added before any asynchronous calls. Delaying it can cause a 404 error if accessed prematurely.
 
-    const { useWebPushNotificationsModule } = await import(
-      "./composables/useWebPushNotifications/useWebPushNotificationsModule"
-    );
+    const { useWebPushNotificationsModule } =
+      await import("./composables/useWebPushNotifications/useWebPushNotificationsModule");
     const { initModule } = useWebPushNotificationsModule();
     await initModule();
   } else {

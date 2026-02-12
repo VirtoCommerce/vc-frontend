@@ -26,7 +26,7 @@ export const configPlugin: Plugin<IThemeContext> = {
       let css = `:root { ${presetToCssVars(options.preset)} }`;
 
       // Dark mode variables
-      const presetName = presetNameToFileName(options.defaultPresetName || "default");
+      const presetName = presetNameToFileName(options.activePresetName || options.defaultPresetName || "default");
       const darkPreset = darkPresets[presetName];
       if (darkPreset) {
         css += ` html.dark { ${presetToCssVars(darkPreset)} }`;

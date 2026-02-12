@@ -14,5 +14,6 @@ export interface IThemeContext {
   settings: IThemeConfigSettings;
   preset?: IThemeConfigPreset;
   defaultPresetName: string;
+  activePresetName?: string;
   storeSettings: NonNullable<GetStoreQuery["store"]>["settings"];
 }
