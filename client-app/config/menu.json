@@ -205,7 +205,7 @@
       "purchasing": {
         "id": "purchasing",
         "title": "shared.account.navigation.purchasing_title",
-        "icon": "clipboard-list",
+        "icon": "store",
         "children": [
           {
             "route": {
