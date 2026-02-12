@@ -720,7 +720,8 @@
       },
       "shipment_options": {
         "title": "Versandoptionen",
-        "in_store": "Abholung im Geschäft"
+        "in_store": "Abholung im Geschäft",
+        "view_on_map": "Auf Karte anzeigen"
       }
     },
     "checkout": {

@@ -17,6 +17,7 @@
         <VcRadioButton
           :model-value="selectedAddressId"
           :value="address.id"
+          :no-indicator="!selectable"
           class="select-address-map-list__radio-button"
           size="sm"
           :data-test-coords="address.geoLocation"
@@ -53,6 +54,7 @@ import PickupAvailabilityInfo from "@/shared/common/components/pickup-availabili
 interface IProps {
   addresses: PickupLocationType[];
   selectedAddressId?: string;
+  selectable?: boolean;
 }
 
 interface IEmits {
@@ -61,7 +63,9 @@ interface IEmits {
 }
 
 defineEmits<IEmits>();
-defineProps<IProps>();
+withDefaults(defineProps<IProps>(), {
+  selectable: true,
+});
 </script>
 
 <style lang="scss">

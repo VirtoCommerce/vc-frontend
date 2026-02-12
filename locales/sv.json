@@ -720,7 +720,8 @@
       },
       "shipment_options": {
         "title": "Leveransalternativ",
-        "in_store": "Hämta i butik"
+        "in_store": "Hämta i butik",
+        "view_on_map": "Visa på karta"
       }
     },
     "checkout": {

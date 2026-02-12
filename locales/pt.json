@@ -720,7 +720,8 @@
       },
       "shipment_options": {
         "title": "Opções de envio",
-        "in_store": "Retirada na loja"
+        "in_store": "Retirada na loja",
+        "view_on_map": "Ver no mapa"
       }
     },
     "checkout": {

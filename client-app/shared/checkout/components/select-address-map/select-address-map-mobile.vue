@@ -12,6 +12,7 @@
           v-show="activeView === 'list'"
           :addresses="addresses"
           :selected-address-id="selectedAddressId"
+          :selectable="selectable"
           class="select-address-map-mobile__list"
           @select="onSelect"
           @reset-filter="resetFilter"
@@ -50,6 +51,7 @@
           <PickupLocationCard
             v-if="isInfoCardVisible"
             :location="selectedLocation"
+            :selectable="selectable"
             data-test-id="pickup-location-card"
             @close="onInfoCardClose"
             @select="onCardSelect"
@@ -80,6 +82,7 @@ interface IProps {
   addresses: PickupLocationType[];
   apiKey: string;
   currentAddress?: { id: string };
+  selectable?: boolean;
 }
 
 interface IEmits {
@@ -88,7 +91,9 @@ interface IEmits {
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  selectable: true,
+});
 
 const { closeModal } = useModal();
 const activeView = ref<ViewModeType>("list");

@@ -60,7 +60,7 @@
       </template>
     </VcDialogContent>
 
-    <VcDialogFooter>
+    <VcDialogFooter v-if="selectable">
       <template #container>
         <div class="pickup-location-card__actions">
           <VcButton variant="outline" color="secondary" truncate size="sm" @click="$emit('close')">
@@ -83,6 +83,7 @@ import PickupAvailabilityInfo from "@/shared/common/components/pickup-availabili
 
 interface IProps {
   location?: PickupLocationType;
+  selectable?: boolean;
 }
 
 interface IEmits {
@@ -91,7 +92,9 @@ interface IEmits {
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  selectable: true,
+});
 
 function onSelect() {
   if (props.location?.id) {

@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BOPIS_MAP_API_KEY, BOPIS_MAP_ENABLED_KEY, MODULE_ID_SHIPPING } from "@/core/constants/modules";
 import { useCartPickupLocations, useFullCart } from "@/shared/cart/composables";
+import { createCartFilterContext } from "@/shared/checkout/composables/usePickupFilterContext";
 import { useModal } from "@/shared/modal";
 import type { ProductPickupLocation } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
@@ -83,12 +84,15 @@ export function useBopis() {
       modalOpening.value = false;
     }
 
+    const filterContext = createCartFilterContext();
+
     openModal({
       component: modalComponent.value,
 
       props: {
         addresses: normalizedAddresses,
         apiKey: isBopisMapEnabled.value ? bopisMapApiKey.value : undefined,
+        filterContext,
         currentAddress: {
           ...shipment.value?.deliveryAddress,
           id: shipment.value?.pickupLocation?.id,

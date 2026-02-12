@@ -13,8 +13,9 @@
         <SelectAddressMapList
           :addresses="addresses"
           :selected-address-id="selectedAddressId"
+          :selectable="selectable"
           class="select-address-map-desktop__list"
-          @select="onListSelect"
+          @select="(a: PickupLocationType) => onSelect(a, 'list')"
           @reset-filter="resetFilter"
         />
       </div>
@@ -26,13 +27,14 @@
           :selected-address-id="selectedAddressId"
           class="select-address-map-desktop__map"
           data-test-id="pickup-locations-map"
-          @select="onMapSelect"
+          @select="(a: PickupLocationType) => onSelect(a, 'map')"
         />
 
         <Transition name="slide">
           <PickupLocationCard
             v-if="infoCardLocation && addresses.length"
             :location="infoCardLocation"
+            :selectable="selectable"
             :class="['select-address-map-desktop__card', { 'select-address-map-desktop__card--pulse': isPulsing }]"
             data-test-id="pickup-location-card"
             @close="closeInfoCard"
@@ -60,6 +62,7 @@ interface IProps {
   addresses: PickupLocationType[];
   apiKey: string;
   currentAddress?: { id: string };
+  selectable?: boolean;
 }
 
 interface IEmits {
@@ -68,7 +71,9 @@ interface IEmits {
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  selectable: true,
+});
 const { closeModal } = useModal();
 
 const {
@@ -87,12 +92,12 @@ const {
   onFilterChange: () => emit("filterChange"),
 });
 
-function onListSelect(address: PickupLocationType) {
-  selectAddress(address, { scrollToSelectedOnMap: true, openInfo: true });
-}
-
-function onMapSelect(address: PickupLocationType) {
-  selectAddress(address, { scrollToSelectedOnList: true, openInfo: true });
+function onSelect(address: PickupLocationType, from: "list" | "map") {
+  selectAddress(address, {
+    scrollToSelectedOnMap: from === "list",
+    scrollToSelectedOnList: from === "map",
+    openInfo: true,
+  });
 }
 
 function onCardSelect(locationId: string) {

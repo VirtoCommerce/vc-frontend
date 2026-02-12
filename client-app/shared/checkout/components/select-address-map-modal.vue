@@ -14,6 +14,7 @@
         :addresses="addresses"
         :api-key="apiKey"
         :current-address="currentAddress"
+        :selectable="selectable"
         @result="$emit('result', $event)"
         @filter-change="$emit('filterChange')"
       />
@@ -23,13 +24,18 @@
 
 <script setup lang="ts">
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
+import { toRef } from "vue";
+import { providePickupFilterContext } from "@/shared/checkout/composables";
 import { SelectAddressMapDesktop, SelectAddressMapMobile } from "./select-address-map";
 import type { PickupLocationType } from "./select-address-map";
+import type { IPickupFilterContext } from "@/shared/checkout/composables";
 
 interface IProps {
   addresses?: PickupLocationType[];
   apiKey: string;
   currentAddress?: { id: string };
+  selectable?: boolean;
+  filterContext: IPickupFilterContext;
 }
 
 interface IEmits {
@@ -39,9 +45,12 @@ interface IEmits {
 
 defineEmits<IEmits>();
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   addresses: () => [],
+  selectable: true,
 });
+
+providePickupFilterContext(toRef(props, "filterContext").value);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 // Mobile layout for screens smaller than md (768px)

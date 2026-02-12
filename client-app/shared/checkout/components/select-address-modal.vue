@@ -253,14 +253,15 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, watchEffect, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
-import { useCartPickupLocations } from "@/shared/cart";
 import { SelectAddressFilter } from "@/shared/checkout";
+import { providePickupFilterContext } from "@/shared/checkout/composables";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
+import type { IPickupFilterContext } from "@/shared/checkout/composables";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
 interface IProps {
@@ -272,6 +273,7 @@ interface IProps {
   emptyText?: string;
   omitFieldsOnCompare?: (keyof MemberAddressType)[];
   showFilters?: boolean;
+  filterContext?: IPickupFilterContext;
 }
 
 interface IEmits {
@@ -294,7 +296,13 @@ const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
-const { filterIsApplied, clearFilter, pickupLocationsLoading } = useCartPickupLocations();
+if (props.filterContext) {
+  providePickupFilterContext(props.filterContext);
+}
+
+const filterIsApplied = props.filterContext?.filterIsApplied ?? ref(false);
+const clearFilter = props.filterContext?.clearFilter ?? (() => {});
+const pickupLocationsLoading = props.filterContext?.pickupLocationsLoading ?? ref(false);
 
 function applyFilter() {
   filterIsApplied.value = true;

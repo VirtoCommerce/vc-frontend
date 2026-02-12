@@ -108,7 +108,7 @@
           <ProductPickupLocations
             v-if="xPickupEnabled && pickupLocations?.length > 0"
             :loading="pickupLocationsLoading"
-            :pickup-locations="pickupLocations"
+            :product-id="productId"
             class="mt-5"
           />
         </template>

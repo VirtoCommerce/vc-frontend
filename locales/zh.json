@@ -720,7 +720,8 @@
       },
       "shipment_options": {
         "title": "配送选项",
-        "in_store": "门店自提"
+        "in_store": "门店自提",
+        "view_on_map": "在地图上查看"
       }
     },
     "checkout": {
