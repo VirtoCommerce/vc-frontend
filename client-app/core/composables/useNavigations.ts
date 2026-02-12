@@ -171,7 +171,6 @@ export function _useNavigations() {
       Catalog: mobileCatalogMenuItem.value,
       Category: mobileCatalogMenuItem.value,
       Product: mobileCatalogMenuItem.value,
-      Company: mobileCorporateMenuItem.value,
     };
 
     // First check special routes
