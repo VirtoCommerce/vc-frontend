@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
+    <!-- Prevent flash of wrong color mode -->
+    <script>
+      (function() {
+        var mode = null;
+        try { mode = JSON.parse(localStorage.getItem('vc-color-mode')); } catch(e) {}
+        var isDark = mode === 'dark' ||
+          (mode !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) { document.documentElement.classList.add('dark'); }
+      })();
+    </script>
+
     <!-- Google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

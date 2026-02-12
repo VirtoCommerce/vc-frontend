@@ -18,6 +18,10 @@
     </div>
 
     <div class="ms-auto flex min-w-0 shrink-0 items-center">
+      <DarkModeToggle />
+
+      <span class="mx-3 h-5 w-px bg-primary" />
+
       <!-- Call us block -->
       <div v-if="support_phone_number" class="flex items-center whitespace-nowrap">
         <VcIcon class="me-1.5 fill-primary" name="phone" size="sm" />
@@ -170,6 +174,7 @@ import { ROUTES } from "@/router/routes/constants";
 import { useSignMeOut, useUser } from "@/shared/account";
 import { CurrencySelector, LanguageSelector } from "@/shared/layout/components";
 import { ShipToSelector } from "@/shared/ship-to-location";
+import DarkModeToggle from "./dark-mode-toggle.vue";
 import TopHeaderLink from "./top-header-link.vue";
 import TopHeaderOrganizations from "./top-header-organizations.vue";
 

@@ -315,7 +315,11 @@
           "call_us_label": "Chiamaci: ",
           "logged_in_as": "connesso come",
           "account_menu_label": "Menu account",
-          "no_results": "Nessun risultato trovato"
+          "no_results": "Nessun risultato trovato",
+          "dark_mode": {
+            "switch_to_light": "Passa alla modalità chiara",
+            "switch_to_dark": "Passa alla modalità scura"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "Catalogo",
