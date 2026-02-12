@@ -115,7 +115,7 @@
               "name": "Addresses"
             },
             "title": "shared.account.navigation.links.addresses",
-            "icon": "office-building",
+            "icon": "source-environment",
             "priority": 20
           },
           {
@@ -205,7 +205,7 @@
       "purchasing": {
         "id": "purchasing",
         "title": "shared.account.navigation.purchasing_title",
-        "icon": "user-circle",
+        "icon": "clipboard-list",
         "children": [
           {
             "route": {
@@ -244,7 +244,7 @@
       "marketing": {
         "id": "marketing",
         "title": "shared.account.navigation.marketing_title",
-        "icon": "user-circle",
+        "icon": "receipt-tax",
         "children": []
       },
       "user": {
@@ -266,7 +266,7 @@
               "name": "Addresses"
             },
             "title": "shared.layout.header.mobile.account_menu.addresses",
-            "icon": "office-building",
+            "icon": "source-environment",
             "priority": 20
           },
           {

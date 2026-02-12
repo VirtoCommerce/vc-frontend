@@ -1,22 +1,27 @@
 <template>
   <AccountNavigationItem :item="item">
     <div v-if="isOrdersPage && statusFacet?.items" class="account-navigation-orders">
-      <button
+      <VcMenuItem
+        class="account-navigation-orders__item"
         v-for="facet in statusFacet.items"
         :key="facet.term"
-        type="button"
-        class="account-navigation-orders__item"
-        :class="{ 'account-navigation-orders__item--active': isSelectedOrderStatus(facet.term) }"
+        :active="isSelectedOrderStatus(facet.term)"
+        size="xs"
+        color="secondary"
         @click="applyOrderFilter(facet.term)"
       >
-        <VcIcon class="account-navigation-orders__icon fill-primary" size="xs" name="minus" />
+        <template #prepend>
+          <VcIcon class="account-navigation-orders__icon" size="xs" name="minus" />
+        </template>
 
-        <span class="account-navigation-orders__label">{{ facet.label }}</span>
+        {{ facet.label }}
 
-        <VcBadge variant="outline" size="xs" rounded>
-          {{ facet.count }}
-        </VcBadge>
-      </button>
+        <template #append>
+          <VcBadge variant="outline" size="xs" color="secondary" rounded>
+            {{ facet.count }}
+          </VcBadge>
+        </template>
+      </VcMenuItem>
     </div>
   </AccountNavigationItem>
 </template>
@@ -58,26 +63,10 @@ function applyOrderFilter(status: string): void {
 
 <style lang="scss">
 .account-navigation-orders {
-  @apply py-2 px-2.5 space-y-0.5;
+  @apply py-2 pr-2 pl-2.5 space-y-0.5;
 
   &__item {
-    @apply flex w-full cursor-pointer items-center gap-2 py-0.5 text-sm px-1.5 rounded;
-
-    &--active {
-      @apply font-bold bg-secondary-100;
-    }
-
-    &:hover:not(&--active) {
-      @apply bg-secondary-50;
-    }
-  }
-
-  &__icon {
-    @apply flex-none;
-  }
-
-  &__label {
-    @apply line-clamp-2 grow overflow-hidden text-ellipsis text-nowrap text-start;
+    @apply rounded;
   }
 }
 </style>
