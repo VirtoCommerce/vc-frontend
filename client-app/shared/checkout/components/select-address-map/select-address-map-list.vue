@@ -79,7 +79,8 @@ withDefaults(defineProps<IProps>(), {
   &__item {
     @apply p-2.5 rounded-[--vc-radius] border border-neutral-400;
 
-    &:has(:checked) {
+    &:has(:checked),
+    &:hover {
       @apply bg-secondary-50;
     }
   }

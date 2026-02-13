@@ -720,8 +720,7 @@
       },
       "shipment_options": {
         "title": "Opciones de envío",
-        "in_store": "Recogida en tienda",
-        "view_on_map": "Ver en el mapa"
+        "check_pickup_locations": "Consultar puntos de recogida"
       }
     },
     "checkout": {

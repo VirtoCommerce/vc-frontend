@@ -720,8 +720,7 @@
       },
       "shipment_options": {
         "title": "配送オプション",
-        "in_store": "店舗受取",
-        "view_on_map": "地図で見る"
+        "check_pickup_locations": "受取場所を確認"
       }
     },
     "checkout": {

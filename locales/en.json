@@ -720,8 +720,7 @@
       },
       "shipment_options": {
         "title": "Shipment options",
-        "in_store": "In-Store Pickup",
-        "view_on_map": "View on map"
+        "check_pickup_locations": "Check pickup locations"
       }
     },
     "checkout": {

@@ -720,8 +720,7 @@
       },
       "shipment_options": {
         "title": "Toimitusvaihtoehdot",
-        "in_store": "Nouto myymälästä",
-        "view_on_map": "Näytä kartalla"
+        "check_pickup_locations": "Tarkista noutopisteet"
       }
     },
     "checkout": {

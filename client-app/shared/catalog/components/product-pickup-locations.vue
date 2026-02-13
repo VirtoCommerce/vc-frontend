@@ -1,34 +1,35 @@
 <template>
   <VcWidget :title="$t('shared.catalog.shipment_options.title')" class="product-pickup-locations">
-    <VcLoaderOverlay v-if="loading || modalOpening" />
+    <template #default-container>
+      <div class="product-pickup-locations__container">
+        <VcLoaderOverlay v-if="loading || modalOpening" />
 
-    <div class="product-pickup-locations__group">
-      <VcImage
-        src="in-store-pickup.svg"
-        :alt="$t('shared.catalog.shipment_options.in_store')"
-        class="product-pickup-locations__img"
-      />
+        <div class="product-pickup-locations__group">
+          <VcImage
+            src="in-store-pickup.svg"
+            :alt="$t('shared.catalog.shipment_options.check_pickup_locations')"
+            class="product-pickup-locations__img"
+          />
 
-      <div class="product-pickup-locations__content">
-        <div class="product-pickup-locations__header">
-          {{ $t("shared.catalog.shipment_options.in_store") }}
+          <button type="button" class="product-pickup-locations__link" @click="openMapModal">
+            <span>{{ $t("shared.catalog.shipment_options.check_pickup_locations") }} </span>
+
+            <VcIcon class="product-pickup-locations__icon" name="arrow-right" color="primary" size="xs" />
+          </button>
         </div>
-
-        <VcButton variant="outline" size="sm" class="mt-2" @click="openMapModal">
-          {{ $t("shared.catalog.shipment_options.view_on_map") }}
-        </VcButton>
       </div>
-    </div>
+    </template>
   </VcWidget>
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, ref } from "vue";
+import { computed, ref } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BOPIS_MAP_API_KEY, MODULE_ID_SHIPPING } from "@/core/constants/modules";
 import { useProductPickupLocations } from "@/shared/catalog/composables/useProductPickupLocations";
 import { createProductFilterContext } from "@/shared/checkout/composables/usePickupFilterContext";
 import { useModal } from "@/shared/modal";
+import SelectAddressMapModal from "@/shared/checkout/components/select-address-map-modal.vue";
 
 interface IProps {
   loading: boolean;
@@ -56,10 +57,6 @@ const modalAddresses = computed(() =>
     ...location.address,
     description: location.description,
   })),
-);
-
-const SelectAddressMapModal = defineAsyncComponent(
-  () => import("@/shared/checkout/components/select-address-map-modal.vue"),
 );
 
 function fetchLocations(keyword?: string) {
@@ -106,18 +103,24 @@ async function openMapModal() {
 
 <style lang="scss">
 .product-pickup-locations {
+  &__container {
+    @apply relative py-4 px-5;
+  }
+
   &__group {
-    @apply flex flex-row gap-x-3 items-start border rounded p-3;
+    @apply flex flex-row gap-x-3 items-center border border-neutral-400 rounded p-2.5 min-h-[74px];
   }
 
-  &__content {
-    @apply min-w-0;
+  &__img {
+    @apply size-12 shrink-0 rounded;
   }
 
-  &__header {
-    @apply font-bold text-lg;
+  &__link {
+    @apply inline-flex items-center gap-1 text-sm text-accent cursor-pointer whitespace-nowrap;
 
-    word-break: break-word;
+    &:hover {
+      @apply text-accent-700;
+    }
   }
 }
 </style>

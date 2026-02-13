@@ -720,8 +720,7 @@
       },
       "shipment_options": {
         "title": "Opcje dostawy",
-        "in_store": "Odbiór osobisty",
-        "view_on_map": "Pokaż na mapie"
+        "check_pickup_locations": "Sprawdź punkty odbioru"
       }
     },
     "checkout": {

@@ -720,8 +720,7 @@
       },
       "shipment_options": {
         "title": "Варианты доставки",
-        "in_store": "Самовывоз из магазина",
-        "view_on_map": "Показать на карте"
+        "check_pickup_locations": "Проверить пункты самовывоза"
       }
     },
     "checkout": {
