@@ -58,6 +58,7 @@
         :is-page-limit-reached="pageNumber >= PAGE_LIMIT"
         :page-number="pageNumber"
         :pages-count="pagesCount"
+        test-id="category-endless-scroll-loader"
         distance="400"
         class="category-products__infinity"
         @visible="$emit('changePage', pageNumber + 1)"
@@ -91,7 +92,7 @@
       icon="outline-stock"
       :variant="hasActiveFilters || keyword ? 'search' : 'empty'"
     >
-      <template v-if="hasSelectedFacets || keyword" #button>
+      <template v-if="hasActiveFilters || keyword" #button>
         <VcButton prepend-icon="reset" @click="$emit('resetFilterKeyword')">
           {{ $t("pages.catalog.no_products_button") }}
         </VcButton>
@@ -102,9 +103,9 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { toRef, computed } from "vue";
+import { computed, toRef } from "vue";
 import { useBrowserTarget } from "@/core/composables";
-import { PAGE_LIMIT, BREAKPOINTS, DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PAGE_LIMIT } from "@/core/constants";
 import { ProductCard, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog/components";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
 import type { Product } from "@/core/api/graphql/types";
@@ -128,7 +129,6 @@ interface IProps {
   fetchingProducts: boolean;
   fixedProductsCount?: number;
   hasActiveFilters: boolean;
-  hasSelectedFacets: boolean;
   keyword?: string;
   itemsPerPage?: number;
   pagesCount: number;

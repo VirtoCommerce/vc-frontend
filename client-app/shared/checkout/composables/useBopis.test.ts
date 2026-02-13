@@ -105,6 +105,7 @@ describe("useBopis composable", () => {
       filterSelectsAreEmpty: ref(false) as unknown as ComputedRef<boolean>,
       buildFilter: vi.fn(),
       clearFilter: vi.fn(),
+      pickupLocationsTotalCount: ref(0),
     });
 
     // Setup useFullCart mock

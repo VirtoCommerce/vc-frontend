@@ -13,7 +13,7 @@
     <template #actions="{ close }">
       <div class="flex w-full flex-col gap-3 md:flex-row md:items-center md:justify-end">
         <div v-if="pages > 1" class="flex w-full min-w-0 flex-col items-center md:items-start">
-          <VcPagination v-model:page="page" :pages="Math.min(pages, PAGE_LIMIT)" compact />
+          <VcPagination v-model:page="page" :pages="Math.min(pages, PAGE_LIMIT)" compact @update:page="onPageChange" />
 
           <VcInputDetails v-if="page >= PAGE_LIMIT" :message="$t('ui_kit.reach_limit.page_limit')" />
         </div>
@@ -71,7 +71,7 @@
       :columns="columns"
       :items="paginatedAddresses"
       :description="$t('shared.checkout.select_address_modal.meta.table_description')"
-      :loading="pickupLocationsLoading"
+      :loading="loading"
       bordered
       @page-changed="onPageChange"
     >
@@ -264,6 +264,8 @@ import type { AnyAddressType } from "@/core/types";
 import type { IPickupFilterContext } from "@/shared/checkout/composables";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
+type PaginationModeType = "client" | "server";
+
 interface IProps {
   currentAddress?: AnyAddressType;
   addresses?: AnyAddressType[];
@@ -274,12 +276,18 @@ interface IProps {
   omitFieldsOnCompare?: (keyof MemberAddressType)[];
   showFilters?: boolean;
   filterContext?: IPickupFilterContext;
+  pageSize?: number;
+  paginationMode?: PaginationModeType;
+  loading?: boolean;
+  totalCount?: number;
 }
 
 interface IEmits {
   (event: "result", value: AnyAddressType): void;
   (event: "addNewAddress"): void;
   (event: "filterChange"): void;
+  (event: "resetFilter"): void;
+  (event: "pageChange", page: number): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -290,6 +298,10 @@ const props = withDefaults(defineProps<IProps>(), {
   showAvailability: false,
   showFilters: false,
   omitFieldsOnCompare: () => [],
+  pageSize: 6,
+  paginationMode: "client",
+  loading: false,
+  totalCount: 0,
 });
 
 const { t } = useI18n();
@@ -304,29 +316,34 @@ const filterIsApplied = props.filterContext?.filterIsApplied ?? ref(false);
 const clearFilter = props.filterContext?.clearFilter ?? (() => {});
 const pickupLocationsLoading = props.filterContext?.pickupLocationsLoading ?? ref(false);
 
+
 function applyFilter() {
-  filterIsApplied.value = true;
   page.value = 1;
   emit("filterChange");
 }
 
 function resetFilter() {
-  clearFilter();
+  emit("resetFilter");
   applyFilter();
 }
 
 const selectedAddress = ref<AnyAddressType>();
 const page = ref(1);
-const itemsPerPage = ref(6);
+const itemsPerPage = computed(() => props.pageSize);
 
-const pages = computed(() => Math.ceil(props.addresses.length / itemsPerPage.value));
+const pages = computed(() => {
+  const itemsTotal = props.paginationMode === "server" ? props.totalCount : props.addresses.length;
+  return Math.max(1, Math.ceil(itemsTotal / itemsPerPage.value));
+});
 const paginatedAddresses = computed(() =>
-  props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
+  props.paginationMode === "server"
+    ? props.addresses
+    : props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 const hasFavoriteAddresses = computed(() => props.addresses.some((item) => item.isFavorite));
 
-const columns = computed<ITableColumn[]>(() => {
-  const cols: ITableColumn[] = props.isCorporateAddresses
+const columns = computed<VcTableColumnType[]>(() => {
+  const cols: VcTableColumnType[] = props.isCorporateAddresses
     ? [
         { id: "name", title: t("common.labels.address") },
         { id: "description", title: t("common.labels.description") },
@@ -360,8 +377,8 @@ function getFormattedAddress(address: AnyAddressType): string {
   return parts.join(", ");
 }
 
-function onPageChange(newPage: number): void {
-  page.value = newPage;
+function onPageChange(): void {
+  emit("pageChange", page.value);
 }
 
 function setAddress(address: AnyAddressType): void {
