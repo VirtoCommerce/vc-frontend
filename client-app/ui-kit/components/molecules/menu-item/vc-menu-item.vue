@@ -151,7 +151,7 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full text-left rounded-[inherit] text-sm/[0.875rem] font-normal;
+    @apply flex items-center w-full text-left rounded-[inherit] font-normal;
 
     &:not(:disabled) {
       @apply bg-additional-50 text-neutral-950;

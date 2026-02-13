@@ -20,6 +20,11 @@ export type MenuType = {
   footer: ExtendedMenuLinkType[];
 };
 
+export type MobileMenuSectionType = Exclude<keyof MenuType["header"]["mobile"], "main">;
+export type DesktopMenuSectionType = Exclude<keyof MenuType["header"]["desktop"], "main">;
+
+export type MenuSecionType = MobileMenuSectionType | DesktopMenuSectionType;
+
 export type ExtendedMenuLinkType = {
   id?: string;
   title?: string;

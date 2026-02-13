@@ -2,10 +2,10 @@
   <AccountNavigationItem :item="item">
     <div v-if="isOrdersPage && statusFacet?.items" class="account-navigation-orders">
       <VcMenuItem
-        class="account-navigation-orders__item"
         v-for="facet in statusFacet.items"
         :key="facet.term"
         :active="isSelectedOrderStatus(facet.term)"
+        class="account-navigation-orders__item"
         size="xs"
         color="secondary"
         @click="applyOrderFilter(facet.term)"

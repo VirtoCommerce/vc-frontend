@@ -20,7 +20,14 @@ import {
 } from "@/core/utilities";
 import { globals } from "../globals";
 import type { MenuLinkType } from "../api/graphql/types";
-import type { ExtendedMenuLinkType, MenuType, MarkedMenuLinkType } from "../types";
+import type {
+  ExtendedMenuLinkType,
+  MenuType,
+  MarkedMenuLinkType,
+  MenuSecionType,
+  MobileMenuSectionType,
+  DesktopMenuSectionType,
+} from "../types";
 import type { DeepPartial } from "utility-types";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 
@@ -62,45 +69,35 @@ export function _useNavigations() {
     return markRecursively(link);
   }
 
+  function createMenuComputed(type: "desktop" | "mobile", key: MenuSecionType) {
+    return computed<ExtendedMenuLinkType | undefined>(() => {
+      const raw = menuSchema.value?.header?.[type]?.[key];
+
+      if (!raw) return undefined;
+
+      const schema = clone(getTranslatedMenuLink(raw));
+
+      if (Array.isArray(schema.children)) {
+        schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+      }
+
+      return schema;
+    });
+  }
+
+  function createDesktopMenuComputed(key: DesktopMenuSectionType) {
+    return createMenuComputed("desktop", key);
+  }
+
+  function createMobileMenuComputed(key: MobileMenuSectionType) {
+    return createMenuComputed("mobile", key);
+  }
+
   const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
     (menuSchema.value?.header?.desktop?.main || [])
       .map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item))
       .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
   );
-
-  const desktopPurchasingMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-    const schema = menuSchema.value?.header?.desktop?.purchasing
-      ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.purchasing))
-      : undefined;
-    if (Array.isArray(schema?.children)) {
-      schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
-    }
-    return schema;
-  });
-
-  const desktopMarketingMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-    const schema = menuSchema.value?.header?.desktop?.marketing
-      ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.marketing))
-      : undefined;
-    if (Array.isArray(schema?.children)) {
-      schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
-    }
-    return schema;
-  });
-
-  const desktopUserMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-    const schema = menuSchema.value?.header?.desktop?.user
-      ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.user))
-      : undefined;
-    if (Array.isArray(schema?.children)) {
-      schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
-    }
-    return schema;
-  });
-
-  const desktopCorporateMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-    return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.corporate) : undefined;
-  });
 
   const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
     (menuSchema.value?.header?.mobile?.main || []).map((item: ExtendedMenuLinkType) => {
@@ -118,21 +115,10 @@ export function _useNavigations() {
     () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || undefined,
   );
 
-  const mobilePurchasingMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
-    menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.purchasing) : undefined,
-  );
-
-  const mobileMarketingMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
-    menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.marketing) : undefined,
-  );
-
-  const mobileUserMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
-    menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.user) : undefined,
-  );
-
-  const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
-    menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : undefined,
-  );
+  const mobilePurchasingMenuItem = createMobileMenuComputed("purchasing");
+  const mobileMarketingMenuItem = createMobileMenuComputed("marketing");
+  const mobileUserMenuItem = createMobileMenuComputed("user");
+  const mobileCorporateMenuItem = createMobileMenuComputed("corporate");
 
   // Helper to extract route name from menu item
   function getRouteNameFromMenuItem(item: ExtendedMenuLinkType): string | null {
@@ -275,10 +261,10 @@ export function _useNavigations() {
 
     // Desktop
     desktopMainMenuItems,
-    desktopPurchasingMenuItems,
-    desktopMarketingMenuItems,
-    desktopUserMenuItems,
-    desktopCorporateMenuItems,
+    desktopPurchasingMenuItems: createDesktopMenuComputed("purchasing"),
+    desktopMarketingMenuItems: createDesktopMenuComputed("marketing"),
+    desktopUserMenuItems: createDesktopMenuComputed("user"),
+    desktopCorporateMenuItems: createDesktopMenuComputed("corporate"),
 
     // Mobile
     mobileMainMenuItems,

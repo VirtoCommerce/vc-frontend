@@ -1,7 +1,7 @@
 <template>
   <VcMenuItem color="secondary" :active="isActive" :to="item.route" class="account-navigation-item">
     <template #prepend>
-      <VcIcon size="sm" :name="item?.icon" />
+      <VcIcon size="sm" :name="item.icon" />
     </template>
 
     {{ formatTextFunction(item?.title) }}
