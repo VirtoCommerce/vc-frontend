@@ -30,7 +30,7 @@
 
     <VcProductPrice
       :with-from-label="product.hasVariations || product.isConfigurable"
-      :actual-price="extendedPrice"
+      :actual-price="salePrice"
       :list-price="listPrice"
     />
 
@@ -57,6 +57,7 @@ interface IProps {
   quantity?: number;
   listPrice?: MoneyType;
   extendedPrice?: MoneyType;
+  salePrice?: MoneyType;
   modelValue?: string;
   name: string;
 }

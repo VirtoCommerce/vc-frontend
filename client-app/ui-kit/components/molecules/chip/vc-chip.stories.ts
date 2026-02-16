@@ -1,12 +1,11 @@
 import { VcChip } from "..";
-import { VcIcon } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["sm", "md", "lg"];
 const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
 const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];
 
-export default {
+const meta: Meta<typeof VcChip> = {
   title: "Components/Molecules/VcChip",
   component: VcChip,
   argTypes: {
@@ -29,48 +28,114 @@ export default {
       table: { type: { summary: VARIANTS.join(" | ") } },
     },
   },
-  // Default render function for most stories
   render: (args) => ({
-    components: { VcChip },
     setup: () => ({ args }),
     template: '<VcChip v-bind="args">Chip text</VcChip>',
   }),
-} as Meta<typeof VcChip>;
+};
 
-type StoryType = StoryObj<typeof VcChip>;
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
-export const Basic: StoryType = { args: {} };
+export const Basic: StoryType = {
+  args: {},
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip>Chip text</VcChip>
+        `,
+      },
+    },
+  },
+};
 
 export const Rounded: StoryType = {
   args: { rounded: true },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip rounded>Chip text</VcChip>
+        `,
+      },
+    },
+  },
 };
 
 export const Closable: StoryType = {
   args: { closable: true },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip closable>Chip text</VcChip>
+        `,
+      },
+    },
+  },
 };
 
 export const Clickable: StoryType = {
   args: { clickable: true },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip clickable>Chip text</VcChip>
+        `,
+      },
+    },
+  },
 };
 
 export const Disabled: StoryType = {
   args: { disabled: true },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip disabled>Chip text</VcChip>
+        `,
+      },
+    },
+  },
 };
 
 export const Icon: StoryType = {
   args: { icon: "circle-solid" },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip icon="circle-solid">Chip text</VcChip>
+        `,
+      },
+    },
+  },
 };
 
 export const IconInSlot: StoryType = {
   args: {},
   render: (args) => ({
-    components: { VcChip, VcIcon },
     setup: () => ({ args }),
     template: `<VcChip v-bind="args">
       <VcIcon name="circle-solid" />
       <span>Chip text</span>
     </VcChip>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip>
+            <VcIcon name="circle-solid" />
+            <span>Chip text</span>
+          </VcChip>
+        `,
+      },
+    },
+  },
 };
 
 export const IconColorPallette: StoryType = {
@@ -78,6 +143,15 @@ export const IconColorPallette: StoryType = {
     variant: "outline",
     icon: "circle-solid",
     iconColor: "secondary",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip variant="outline" icon="circle-solid" icon-color="secondary">Chip text</VcChip>
+        `,
+      },
+    },
   },
 };
 
@@ -87,17 +161,36 @@ export const IconColorHEX: StoryType = {
     icon: "circle-solid",
     iconColor: "#ff0000",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip variant="outline" icon="circle-solid" icon-color="#ff0000">Chip text</VcChip>
+        `,
+      },
+    },
+  },
 };
 
 export const Truncate: StoryType = {
   args: { truncate: true },
   render: (args) => ({
-    components: { VcChip },
     setup: () => ({ args }),
     template: `<VcChip v-bind="args" class="w-36">
       <span>Long long long Chip text</span>
     </VcChip>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip truncate class="w-36">
+            <span>Long long long Chip text</span>
+          </VcChip>
+        `,
+      },
+    },
+  },
 };
 
 export const RouterLink: StoryType = {
@@ -105,6 +198,15 @@ export const RouterLink: StoryType = {
     clickable: true,
     to: "/",
     icon: "link",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip clickable to="/" icon="link">Chip text</VcChip>
+        `,
+      },
+    },
   },
 };
 
@@ -115,6 +217,15 @@ export const ExternalLink: StoryType = {
     target: "_blank",
     icon: "external-link",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip clickable external-link="https://example.com" target="_blank" icon="external-link">Chip text</VcChip>
+        `,
+      },
+    },
+  },
 };
 
 export const WithActions: StoryType = {
@@ -123,7 +234,6 @@ export const WithActions: StoryType = {
     clickable: true,
   },
   render: (args) => ({
-    components: { VcChip },
     setup: () => ({
       args,
       handleClick: () => console.log("click event fired"),
@@ -133,11 +243,31 @@ export const WithActions: StoryType = {
       Chip with actions
     </VcChip>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip closable clickable @click="handleClick" @close="handleClose">
+            Chip with actions
+          </VcChip>
+        `,
+      },
+    },
+  },
 };
 
 export const Draggable: StoryType = {
   args: {
     draggable: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip draggable>Chip text</VcChip>
+        `,
+      },
+    },
   },
 };
 
@@ -146,12 +276,30 @@ export const ClosableClickable: StoryType = {
     closable: true,
     clickable: true,
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip closable clickable>Chip text</VcChip>
+        `,
+      },
+    },
+  },
 };
 
 export const DisabledClosable: StoryType = {
   args: {
     disabled: true,
     closable: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip disabled closable>Chip text</VcChip>
+        `,
+      },
+    },
   },
 };
 
@@ -160,7 +308,6 @@ export const CustomCloseIcon: StoryType = {
     closable: true,
   },
   render: (args) => ({
-    components: { VcChip, VcIcon },
     setup: () => ({
       args,
       handleClose: () => console.log("close event fired with custom icon"),
@@ -172,6 +319,20 @@ export const CustomCloseIcon: StoryType = {
       </template>
     </VcChip>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcChip closable @close="handleClose">
+            Custom close
+            <template #close-icon>
+              <VcIcon name="delete" />
+            </template>
+          </VcChip>
+        `,
+      },
+    },
+  },
 };
 
 export const AllVariants: StoryType = {
@@ -180,7 +341,6 @@ export const AllVariants: StoryType = {
     color: "primary",
   },
   render: (args) => ({
-    components: { VcChip },
     setup: () => ({ variants: VARIANTS, args }),
     template: `<div class="flex flex-col items-start gap-3">
       <VcChip v-bind="args" v-for="variant in variants" :variant="variant" icon="circle-solid" closable>
@@ -192,7 +352,6 @@ export const AllVariants: StoryType = {
 
 export const AllStates: StoryType = {
   render: () => ({
-    components: { VcChip },
     setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
     template: `<div class="space-y-8">
       <div v-for="size in sizes" class="space-y-3">

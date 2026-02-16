@@ -26,6 +26,8 @@ export function _useCartPickupLocations() {
   const filterCities = ref<FacetFilterType>();
   const filterKeyword = ref<string>("");
 
+  const pickupLocationsTotalCount = ref(0);
+
   const filterSelectsAreEmpty = computed(
     () =>
       !(
@@ -72,6 +74,7 @@ export function _useCartPickupLocations() {
         ...payload,
       });
       pickupLocations.value = data.items ?? [];
+      pickupLocationsTotalCount.value = data.totalCount ?? 0;
 
       const termFacetCounties = data.term_facets?.find((f) => f.name === COUNTRY_NAME_FACET);
       if (termFacetCounties) {
@@ -121,6 +124,7 @@ export function _useCartPickupLocations() {
   return {
     pickupLocationsLoading,
     pickupLocations,
+    pickupLocationsTotalCount,
     fetchPickupLocations,
 
     filterOptionsCountries,

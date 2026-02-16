@@ -1,10 +1,9 @@
 import { VcDialog } from "..";
-import { VcDialogHeader, VcDialogContent, VcDialogFooter } from "../../molecules";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md"];
 
-export default {
+const meta: Meta<typeof VcDialog> = {
   title: "Components/Atoms/VcDialog",
   component: VcDialog,
   argTypes: {
@@ -19,40 +18,150 @@ export default {
       },
     },
   },
-} as Meta<typeof VcDialog>;
-
-const Template: StoryFn = (args) => ({
-  components: { VcDialog, VcDialogHeader, VcDialogContent, VcDialogFooter },
-  setup: () => ({ args }),
-  template: `
-    <VcDialog v-bind="args">
-      <VcDialogHeader>Title</VcDialogHeader>
-      <VcDialogContent>Content</VcDialogContent>
-      <VcDialogFooter />
-    </VcDialog>
-  `,
-});
-
-export const Basic = Template.bind({});
-
-export const Dividers = Template.bind({});
-Dividers.args = {
-  dividers: true,
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `
+      <VcDialog v-bind="args">
+        <VcDialogHeader>Title</VcDialogHeader>
+        <VcDialogContent>Content</VcDialogContent>
+        <VcDialogFooter />
+      </VcDialog>
+    `,
+  }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcDialog v-bind="args">
+            <VcDialogHeader>Title</VcDialogHeader>
+            <VcDialogContent>Content</VcDialogContent>
+            <VcDialogFooter />
+          </VcDialog>
+        `,
+      },
+    },
+  },
 };
 
-const TemplateIcon: StoryFn = (args) => ({
-  components: { VcDialog, VcDialogHeader, VcDialogContent, VcDialogFooter },
-  setup: () => ({ args }),
-  template: `
-    <VcDialog v-bind="args">
-      <VcDialogHeader icon="check">Title</VcDialogHeader>
-      <VcDialogContent>Content</VcDialogContent>
-      <VcDialogFooter />
-    </VcDialog>
-  `,
-});
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
-export const Icon = TemplateIcon.bind({});
-Icon.args = {
-  icon: "check",
+export const Basic: StoryType = {
+  args: {},
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcDialog>
+            <VcDialogHeader>Title</VcDialogHeader>
+            <VcDialogContent>Content</VcDialogContent>
+            <VcDialogFooter />
+          </VcDialog>
+        `,
+      },
+    },
+  },
+};
+
+export const Dividers: StoryType = {
+  args: {
+    dividers: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcDialog dividers>
+            <VcDialogHeader>Title</VcDialogHeader>
+            <VcDialogContent>Content</VcDialogContent>
+            <VcDialogFooter />
+          </VcDialog>
+        `,
+      },
+    },
+  },
+};
+
+export const Icon: StoryType = {
+  args: {},
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `
+      <VcDialog v-bind="args">
+        <VcDialogHeader icon="check">Title</VcDialogHeader>
+        <VcDialogContent>Content</VcDialogContent>
+        <VcDialogFooter />
+      </VcDialog>
+    `,
+  }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcDialog>
+            <VcDialogHeader icon="check">Title</VcDialogHeader>
+            <VcDialogContent>Content</VcDialogContent>
+            <VcDialogFooter />
+          </VcDialog>
+        `,
+      },
+    },
+  },
+};
+
+export const SizeXS: StoryType = {
+  args: {
+    size: "xs",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcDialog size="xs">
+            <VcDialogHeader>Title</VcDialogHeader>
+            <VcDialogContent>Content</VcDialogContent>
+            <VcDialogFooter />
+          </VcDialog>
+        `,
+      },
+    },
+  },
+};
+
+export const SizeSM: StoryType = {
+  args: {
+    size: "sm",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcDialog size="sm">
+            <VcDialogHeader>Title</VcDialogHeader>
+            <VcDialogContent>Content</VcDialogContent>
+            <VcDialogFooter />
+          </VcDialog>
+        `,
+      },
+    },
+  },
+};
+
+export const SizeMD: StoryType = {
+  args: {
+    size: "md",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcDialog size="md">
+            <VcDialogHeader>Title</VcDialogHeader>
+            <VcDialogContent>Content</VcDialogContent>
+            <VcDialogFooter />
+          </VcDialog>
+        `,
+      },
+    },
+  },
 };

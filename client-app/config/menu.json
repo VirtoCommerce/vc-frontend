@@ -45,6 +45,7 @@
           },
           "title": "shared.layout.header.menu.cart",
           "icon": "cart-2",
+          "dataTestId": "desktop-main-menu-cart-link",
           "priority": 100
         }
       ],
