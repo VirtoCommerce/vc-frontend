@@ -74,7 +74,7 @@
       </VcInput>
     </div>
 
-    <div v-if="!filterSelectsAreEmpty" class="select-address-filter__applied">
+    <div v-if="!filterSelectsAreEmpty" class="select-address-filter__applied-filter">
       <VcChip
         v-for="value in filterCountries?.termValues"
         :key="value.value"
@@ -239,7 +239,7 @@ function removeFilterCity(value: string) {
     }
   }
 
-  &__applied {
+  &__applied-filter {
     @apply hidden;
 
     @media (min-width: theme("screens.md")) {
