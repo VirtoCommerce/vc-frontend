@@ -1,61 +1,71 @@
 <template>
   <div class="account-navigation">
-    <VcWidget class="account-navigation__widget" :title="$t(`shared.account.navigation.purchasing_title`)" size="sm">
-      <ExtensionPoint
-        v-for="link in desktopPurchasingMenuItems?.children"
-        :key="link.id"
-        :item="link"
-        category="accountMenu"
-        :name="link.id"
-      >
-        <LinkDefault :item="link" />
-      </ExtensionPoint>
+    <VcWidget :title="$t(`shared.account.navigation.purchasing_title`)" size="sm">
+      <template #default-container>
+        <div class="account-navigation__container">
+          <ExtensionPoint
+            v-for="link in desktopPurchasingMenuItems?.children"
+            :key="link.id"
+            :item="link"
+            category="accountMenu"
+            :name="link.id"
+          >
+            <LinkDefault :item="link" />
+          </ExtensionPoint>
+        </div>
+      </template>
     </VcWidget>
 
     <VcWidget
       v-if="desktopMarketingMenuItems?.children?.length"
       :title="$t(`shared.account.navigation.marketing_title`)"
       size="sm"
-      class="account-navigation__widget"
     >
-      <ExtensionPoint
-        v-for="link in desktopMarketingMenuItems?.children"
-        :key="link.id"
-        :item="link"
-        category="accountMenu"
-        :name="link.id"
-      >
-        <LinkDefault :item="link" />
-      </ExtensionPoint>
+      <template #default-container>
+        <div class="account-navigation__container">
+          <ExtensionPoint
+            v-for="link in desktopMarketingMenuItems?.children"
+            :key="link.id"
+            :item="link"
+            category="accountMenu"
+            :name="link.id"
+          >
+            <LinkDefault :item="link" />
+          </ExtensionPoint>
+        </div>
+      </template>
     </VcWidget>
 
-    <VcWidget
-      v-if="isCorporateMember"
-      class="account-navigation__widget"
-      :title="$t(`shared.account.navigation.corporate_title`)"
-      size="sm"
-    >
-      <ExtensionPoint
-        v-for="link in desktopCorporateMenuItems?.children"
-        :key="link.id"
-        :item="link"
-        category="accountMenu"
-        :name="link.id"
-      >
-        <LinkDefault :item="link" />
-      </ExtensionPoint>
+    <VcWidget v-if="isCorporateMember" :title="$t(`shared.account.navigation.corporate_title`)" size="sm">
+      <template #default-container>
+        <div class="account-navigation__container">
+          <ExtensionPoint
+            v-for="link in desktopCorporateMenuItems?.children"
+            :key="link.id"
+            :item="link"
+            category="accountMenu"
+            :name="link.id"
+          >
+            <LinkDefault :item="link" />
+          </ExtensionPoint>
+        </div>
+      </template>
     </VcWidget>
 
-    <VcWidget class="account-navigation__widget" :title="$t(`shared.account.navigation.user_title`)" size="sm">
-      <ExtensionPoint
-        v-for="link in filteredDesktopUserMenuItems"
-        :key="link.id"
-        :item="link"
-        category="accountMenu"
-        :name="link.id"
-      >
-        <LinkDefault :item="link" />
-      </ExtensionPoint>
+    <VcWidget :title="$t(`shared.account.navigation.user_title`)" size="sm">
+      <template #default-container>
+        <div class="account-navigation__container">
+          <ExtensionPoint
+            v-for="link in filteredDesktopUserMenuItems"
+            :key="link.id"
+            :item="link"
+            category="accountMenu"
+            :name="link.id"
+          >
+            <LinkDefault :item="link" />
+          </ExtensionPoint>
+        </div>
+      </template>
     </VcWidget>
   </div>
 </template>
@@ -85,9 +95,8 @@ const filteredDesktopUserMenuItems = computed(() => {
 .account-navigation {
   @apply space-y-4;
 
-  &__widget {
-    --vc-widget-slot-padding-top: 0.5rem;
-    --vc-widget-slot-padding-bottom: 1rem;
+  &__container {
+    @apply pt-3 px-4 pb-4;
   }
 }
 </style>
