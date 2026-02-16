@@ -53,8 +53,6 @@ watchEffect(async () => {
   @apply py-2 pr-2 pl-2.5 space-y-0.5;
 
   &__item {
-    --vc-menu-item-px: 0.375rem;
-
     @apply rounded;
   }
 }
