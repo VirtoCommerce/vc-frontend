@@ -126,8 +126,6 @@ watchEffect(() => {
   --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
   --radius: var(--vc-widget-radius, var(--vc-radius, 0.5rem));
   --header-gap: theme("gap.2");
-  --slot-padding-top: var(--vc-widget-slot-padding-top, 1rem);
-  --slot-padding-bottom: var(--vc-widget-slot-padding-bottom, 1.25rem);
 
   @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded-[--radius] divide-y divide-[--divide-color] shadow-md bg-center;
 
@@ -229,7 +227,7 @@ watchEffect(() => {
   }
 
   &__slot {
-    @apply pt-[--slot-padding-top] pb-[--slot-padding-bottom] px-[--p-x] empty:hidden;
+    @apply pt-4 pb-5 px-[--p-x] empty:hidden;
   }
 
   &__append-icon {
