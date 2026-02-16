@@ -24,6 +24,7 @@
           :type="getType(property.propertyValueType)"
           :name="property.label"
           size="xs"
+          :test-id="`variant-picker-group--${property.name}`"
           @update:model-value="(value: string | string[]) => handlePropertyChange(property, value)"
         >
           <VcVariantPicker
@@ -33,6 +34,7 @@
             :is-available="isAvailable(property.name, option.value)"
             class="options__picker"
             :tooltip="getTooltip(property, option)"
+            :test-id="`variant-picker--${property.name}--${option.label}`"
           />
         </VcVariantPickerGroup>
       </div>
