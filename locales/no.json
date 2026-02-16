@@ -315,7 +315,11 @@
           "call_us_label": "Ring oss: ",
           "logged_in_as": "logget inn som",
           "account_menu_label": "Kontomeny",
-          "no_results": "Ingen resultater funnet"
+          "no_results": "Ingen resultater funnet",
+          "dark_mode": {
+            "switch_to_light": "Bytt til lyst modus",
+            "switch_to_dark": "Bytt til mørkt modus"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "Katalog",

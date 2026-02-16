@@ -1,6 +1,17 @@
+import { darkPresets } from "@/assets/presets";
 import { configInjectionKey } from "../injection-keys";
-import type { IThemeContext } from "../types";
+import type { IThemeConfigPreset, IThemeContext } from "../types";
 import type { App, Plugin } from "vue";
+
+function presetToCssVars(preset: IThemeConfigPreset): string {
+  return Object.entries(preset)
+    .map(([key, value]) => `--${key.replace(/_/g, "-")}: ${value};`)
+    .join("");
+}
+
+function presetNameToFileName(name: string): string {
+  return name.toLowerCase().replace(" ", "-");
+}
 
 export const configPlugin: Plugin<IThemeContext> = {
   install: (app: App, options: IThemeContext) => {
@@ -8,15 +19,20 @@ export const configPlugin: Plugin<IThemeContext> = {
     app.provide(configInjectionKey, options.settings);
 
     if (options.preset) {
-      // Set CSS variables to use as TailwindCSS arbitrary values: https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values
       const styleElement = document.createElement("style");
-      styleElement.innerText = ":root {";
+      styleElement.id = "vc-theme-variables";
 
-      Object.entries(options.preset).forEach(([key, value]) => {
-        styleElement.innerText += `--${key.replace(/_/g, "-")}: ${value};`;
-      });
+      // Light mode variables (default)
+      let css = `:root { ${presetToCssVars(options.preset)} }`;
 
-      styleElement.innerText += "}";
+      // Dark mode variables
+      const presetName = presetNameToFileName(options.activePresetName || options.defaultPresetName || "default");
+      const darkPreset = darkPresets[presetName];
+      if (darkPreset) {
+        css += ` html.dark { ${presetToCssVars(darkPreset)} }`;
+      }
+
+      styleElement.innerText = css;
       document.head.prepend(styleElement);
     }
   },

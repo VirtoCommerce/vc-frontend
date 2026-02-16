@@ -194,7 +194,7 @@ function openDeleteProductModal(ids: string[]): void {
         if (hasPagination && isLastPageWithOneItem) {
           pagination.value.page -= 1;
         }
-        // eslint-disable-next-line sonarjs/void-use
+
         void broadcast.emit(dataChangedEvent);
         void fetchProductsAndSubscriptions();
       },

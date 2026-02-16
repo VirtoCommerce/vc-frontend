@@ -31,15 +31,18 @@ function _useThemeContext() {
       throw new Error("The global state should be defined");
     }
 
-    let preset = getPreset(presetNameToFileName(presetName));
+    let resolvedName = presetNameToFileName(presetName);
+    let preset = getPreset(resolvedName);
 
     if (!preset) {
       const defaultPresetName = getThemeConfig().current;
-      preset = getPreset(presetNameToFileName(defaultPresetName));
+      resolvedName = presetNameToFileName(defaultPresetName);
+      preset = getPreset(resolvedName);
     }
 
     if (preset) {
       themeContext.value.preset = preset;
+      themeContext.value.activePresetName = resolvedName;
     } else {
       throw new Error("Missing preset");
     }
