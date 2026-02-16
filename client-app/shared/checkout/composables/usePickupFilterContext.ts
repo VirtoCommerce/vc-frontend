@@ -66,10 +66,7 @@ export function createCartFilterContext(): IPickupFilterContext {
   });
 }
 
-export function createProductFilterContext(options: {
-  onSearch: (keyword: string) => void;
-  loading: Ref<boolean>;
-}): IPickupFilterContext {
+export function createProductFilterContext(options: { loading: Ref<boolean> }): IPickupFilterContext {
   const filterKeyword = ref("");
   const filterIsApplied = ref(false);
 

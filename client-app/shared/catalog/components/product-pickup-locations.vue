@@ -68,9 +68,6 @@ function fetchLocations(keyword?: string) {
 }
 
 const filterContext = createProductFilterContext({
-  onSearch: (keyword: string) => {
-    void fetchLocations(keyword);
-  },
   loading: modalLoading,
 });
 

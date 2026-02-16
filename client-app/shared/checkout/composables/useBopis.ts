@@ -56,24 +56,6 @@ export function useBopis() {
     })),
   );
 
-  async function fetchAddresses({
-    cartId,
-    keyword,
-    filter,
-    sort,
-    first,
-    after,
-  }: {
-    cartId: string;
-    keyword?: string;
-    filter?: string;
-    sort?: string;
-    first?: number;
-    after?: string;
-  }) {
-    await fetchPickupLocations({ cartId, keyword, filter, sort, first, after });
-  }
-
   const { openModal } = useModal();
 
   async function openSelectAddressModal(cartId: string) {
@@ -82,7 +64,7 @@ export function useBopis() {
     clearFilter();
 
     try {
-      await fetchAddresses({
+      await fetchPickupLocations({
         cartId,
         first: pageSize.value,
       });
@@ -126,7 +108,7 @@ export function useBopis() {
         totalCount: pickupLocationsTotalCount,
 
         onFilterChange: async () => {
-          await fetchAddresses({
+          await fetchPickupLocations({
             cartId,
             first: pageSize.value,
             keyword: filterKeyword.value,
@@ -134,12 +116,10 @@ export function useBopis() {
           });
         },
 
-        onResetFilter: () => {
-          clearFilter();
-        },
+        onResetFilter: clearFilter,
 
         onPageChange: async (newPage: number) => {
-          await fetchAddresses({
+          await fetchPickupLocations({
             cartId,
             first: pageSize.value,
             after: ((newPage - 1) * pageSize.value).toString(),
