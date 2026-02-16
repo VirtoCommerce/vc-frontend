@@ -312,11 +312,6 @@ if (props.filterContext) {
   providePickupFilterContext(props.filterContext);
 }
 
-const filterIsApplied = props.filterContext?.filterIsApplied ?? ref(false);
-const clearFilter = props.filterContext?.clearFilter ?? (() => {});
-const pickupLocationsLoading = props.filterContext?.pickupLocationsLoading ?? ref(false);
-
-
 function applyFilter() {
   page.value = 1;
   emit("filterChange");

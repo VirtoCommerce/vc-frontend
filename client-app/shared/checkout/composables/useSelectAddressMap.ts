@@ -111,7 +111,8 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
 
   function resetFilter() {
     clearFilter();
-    applyFilter();
+    closeInfoCard();
+    onFilterChange();
   }
 
   // Watchers

@@ -78,6 +78,7 @@ const modalOpening = ref(false);
 
 async function openMapModal() {
   modalOpening.value = true;
+  filterContext.clearFilter();
 
   try {
     await fetchLocations();

@@ -86,7 +86,6 @@ export function createProductFilterContext(options: {
   function clearFilter() {
     filterKeyword.value = "";
     filterIsApplied.value = false;
-    options.onSearch("");
   }
 
   function buildFilter(): string | undefined {
