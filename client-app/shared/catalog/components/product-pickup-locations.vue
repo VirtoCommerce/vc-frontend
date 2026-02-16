@@ -55,6 +55,7 @@ const modalAddresses = computed(() =>
   modalPickupLocations.value.map((location) => ({
     ...location,
     ...location.address,
+    id: location.id,
     description: location.description,
   })),
 );
