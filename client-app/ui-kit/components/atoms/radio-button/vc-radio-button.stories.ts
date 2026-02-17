@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 const SIZES = ["xs", "sm", "md"];
 const LABEL_POSITIONS = ["left", "right"];
 
-export default {
+const meta: Meta<typeof VcRadioButton> = {
   title: "Components/Atoms/VcRadioButton",
   component: VcRadioButton,
   argTypes: {
@@ -31,13 +31,13 @@ export default {
     },
   },
   render: (args) => ({
-    components: { VcRadioButton },
     setup: () => ({ args }),
     template: '<VcRadioButton v-bind="args" v-model="args.modelValue" />',
   }),
-} as Meta<typeof VcRadioButton>;
+};
 
-type StoryType = StoryObj<typeof VcRadioButton>;
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
 export const Basic: StoryType = {
   args: {
@@ -71,7 +71,6 @@ export const LabelPositionLeft: StoryType = {
 
 export const WithSlot: StoryType = {
   render: (args) => ({
-    components: { VcRadioButton },
     setup: () => ({ args }),
     template: '<VcRadioButton v-bind="args" v-model="args.modelValue">Label from slot</VcRadioButton>',
   }),
@@ -143,7 +142,6 @@ export const ErrorMessage: StoryType = {
 
 export const AllSizes: StoryType = {
   render: () => ({
-    components: { VcRadioButton },
     setup: () => ({ sizes: SIZES }),
     template: `<div class="space-y-4">
       <div v-for="size in sizes" :key="size" class="flex items-center gap-4">
@@ -156,7 +154,6 @@ export const AllSizes: StoryType = {
 
 export const RadioGroup: StoryType = {
   render: (args) => ({
-    components: { VcRadioButton },
     setup: () => {
       const selected = ref(args.modelValue);
       return { args, selected };

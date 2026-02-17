@@ -1,19 +1,21 @@
 import { getMoney } from "@/ui-kit/mocks";
 import { VcPriceDisplay } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-export default {
+const meta: Meta<typeof VcPriceDisplay> = {
   title: "Components/Atoms/VcPriceDisplay",
   component: VcPriceDisplay,
-} as Meta<typeof VcPriceDisplay>;
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcPriceDisplay v-bind="args" />',
+  }),
+};
 
-const Template: StoryFn = (args) => ({
-  components: { VcPriceDisplay },
-  setup: () => ({ args }),
-  template: '<VcPriceDisplay v-bind="args" />',
-});
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
-export const Basic = Template.bind({});
-Basic.args = {
-  value: getMoney(1000.99),
+export const Basic: StoryType = {
+  args: {
+    value: getMoney(1000.99),
+  },
 };

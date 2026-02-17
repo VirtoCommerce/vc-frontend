@@ -1,9 +1,9 @@
 import { VcProductTitle } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const TARGETS = ["_blank", "_self"];
 
-export default {
+const meta: Meta<typeof VcProductTitle> = {
   title: "Components/Atoms/VcProductTitle",
   component: VcProductTitle,
   argTypes: {
@@ -18,31 +18,36 @@ export default {
       },
     },
   },
-} as Meta<typeof VcProductTitle>;
-
-const Template: StoryFn = (args) => ({
-  components: { VcProductTitle },
-  setup: () => ({ args }),
-  template: '<VcProductTitle class="text-sm" v-bind="args">Product title</VcProductTitle>',
-});
-
-export const Basic = Template.bind({});
-
-export const Link = Template.bind({});
-Link.args = {
-  to: "/some/link",
+  args: {
+    title: "Product title",
+  },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcProductTitle class="text-sm" v-bind="args" />',
+  }),
 };
 
-export const Disabled = Template.bind({});
-Disabled.args = {
-  to: "/some/link",
-  disabled: true,
+export default meta;
+type StoryType = StoryObj<typeof meta>;
+
+export const Basic: StoryType = {};
+
+export const Link: StoryType = {
+  args: {
+    to: "/some/link",
+  },
 };
 
-export const RouterNavigation: StoryFn = () => ({
-  components: { VcProductTitle },
-  setup: () => ({}),
-  template: `
+export const Disabled: StoryType = {
+  args: {
+    to: "/some/link",
+    disabled: true,
+  },
+};
+
+export const RouterNavigation: StoryType = {
+  render: () => ({
+    template: `
     <div class="space-y-4 p-6">
       <h2 class="text-xl font-bold">Router Navigation Test</h2>
       <p class="text-gray-600">Click the product titles below to test navigation:</p>
@@ -71,10 +76,12 @@ export const RouterNavigation: StoryFn = () => ({
       </div>
     </div>
   `,
-});
+  }),
+};
 
-export const Responsive: StoryFn = (args) => ({
-  components: { VcProductTitle },
-  setup: () => ({ args }),
-  template: '<VcProductTitle class="text-lg md:text-sm" v-bind="args">Product title</VcProductTitle>',
-});
+export const Responsive: StoryType = {
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcProductTitle class="text-lg md:text-sm" v-bind="args">Product title</VcProductTitle>',
+  }),
+};

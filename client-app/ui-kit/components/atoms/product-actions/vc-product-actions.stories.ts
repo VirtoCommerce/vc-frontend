@@ -1,16 +1,26 @@
 import { VcProductActions } from "..";
-import { VcProductActionsButton } from "../../molecules";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-export default {
+const DIRECTIONS = ["horizontal", "vertical"];
+
+const meta: Meta<typeof VcProductActions> = {
   title: "Components/Atoms/VcProductActions",
   component: VcProductActions,
-} as Meta<typeof VcProductActions>;
-
-const Template: StoryFn = (args) => ({
-  components: { VcProductActions, VcProductActionsButton },
-  setup: () => ({ args }),
-  template: `<VcProductActions v-bind="args">
+  argTypes: {
+    direction: {
+      control: "select",
+      options: DIRECTIONS,
+      type: { name: "string", required: false },
+      table: {
+        type: {
+          summary: DIRECTIONS.join(" | "),
+        },
+      },
+    },
+  },
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<VcProductActions v-bind="args">
   <VcProductActionsButton
     color="danger"
     active
@@ -22,17 +32,23 @@ const Template: StoryFn = (args) => ({
     tooltip-text="VcProductActionsButton"
   />
   </VcProductActions>`,
-});
-
-export const Basic = Template.bind({});
-
-export const Vertical = Template.bind({});
-Vertical.args = {
-  direction: "vertical",
+  }),
 };
 
-export const VerticalWithBg = Template.bind({});
-VerticalWithBg.args = {
-  direction: "vertical",
-  withBackground: true,
+export default meta;
+type StoryType = StoryObj<typeof meta>;
+
+export const Basic: StoryType = {};
+
+export const Vertical: StoryType = {
+  args: {
+    direction: "vertical",
+  },
+};
+
+export const VerticalWithBg: StoryType = {
+  args: {
+    direction: "vertical",
+    withBackground: true,
+  },
 };
