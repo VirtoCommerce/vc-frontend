@@ -1,6 +1,6 @@
 <template>
-  <AccountNavigationItem :item="item">
-    <div v-if="isListDetails && lists.length > 0" class="link-lists">
+  <AccountNavigationItem class="link-lists" :item="item">
+    <div v-if="isListDetails && lists.length > 0" class="link-lists__wrapper">
       <VcMenuItem
         v-for="list in lists"
         :key="list.id"
@@ -50,7 +50,9 @@ watchEffect(async () => {
 
 <style lang="scss">
 .link-lists {
-  @apply py-2 pr-2 pl-2.5 space-y-0.5;
+  &__wrapper {
+    @apply py-2 pr-2 pl-2.5 space-y-0.5;
+  }
 
   &__item {
     @apply rounded;

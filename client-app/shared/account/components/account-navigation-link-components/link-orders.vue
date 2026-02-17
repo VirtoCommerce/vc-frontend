@@ -1,6 +1,6 @@
 <template>
-  <AccountNavigationItem :item="item">
-    <div v-if="isOrdersPage && statusFacet?.items" class="link-orders">
+  <AccountNavigationItem class="link-orders" :item="item">
+    <div v-if="isOrdersPage && statusFacet?.items" class="link-orders__wrapper">
       <VcMenuItem
         v-for="facet in statusFacet.items"
         :key="facet.term"
@@ -63,7 +63,9 @@ function applyOrderFilter(status: string): void {
 
 <style lang="scss">
 .link-orders {
-  @apply py-2 pr-2 pl-2.5 space-y-0.5;
+  &__wrapper {
+    @apply py-2 pr-2 pl-2.5 space-y-0.5;
+  }
 
   &__item {
     @apply rounded;
