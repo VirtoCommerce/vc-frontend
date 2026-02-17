@@ -21,7 +21,7 @@ export interface IPickupFilterContext {
 export const PICKUP_FILTER_KEY: InjectionKey<IPickupFilterContext> = Symbol("pickupFilterContext");
 
 export function providePickupFilterContext(context: IPickupFilterContext): void {
-  provide(PICKUP_FILTER_KEY, context);
+  provide(PICKUP_FILTER_KEY, markRaw(context));
 }
 
 export function usePickupFilterContext(): IPickupFilterContext {
