@@ -123,7 +123,7 @@ watch(
       }
     }
   },
-  { immediate: true },
+  { immediate: true, flush: "post" },
 );
 
 function onSelect(address: PickupLocationType) {
