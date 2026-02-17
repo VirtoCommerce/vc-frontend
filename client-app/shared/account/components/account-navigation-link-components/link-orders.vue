@@ -1,17 +1,17 @@
 <template>
   <AccountNavigationItem :item="item">
-    <div v-if="isOrdersPage && statusFacet?.items" class="account-navigation-orders">
+    <div v-if="isOrdersPage && statusFacet?.items" class="link-orders">
       <VcMenuItem
         v-for="facet in statusFacet.items"
         :key="facet.term"
         :active="isSelectedOrderStatus(facet.term)"
-        class="account-navigation-orders__item"
+        class="link-orders__item"
         size="xs"
         color="secondary"
         @click="applyOrderFilter(facet.term)"
       >
         <template #prepend>
-          <VcIcon class="account-navigation-orders__icon" size="xs" name="minus" />
+          <VcIcon size="xs" name="minus" />
         </template>
 
         {{ facet.label }}
@@ -62,7 +62,7 @@ function applyOrderFilter(status: string): void {
 </script>
 
 <style lang="scss">
-.account-navigation-orders {
+.link-orders {
   @apply py-2 pr-2 pl-2.5 space-y-0.5;
 
   &__item {

@@ -1,12 +1,12 @@
 <template>
   <AccountNavigationItem :item="item">
-    <div v-if="isListDetails && lists.length > 0" class="account-navigation-lists">
+    <div v-if="isListDetails && lists.length > 0" class="link-lists">
       <VcMenuItem
         v-for="list in lists"
         :key="list.id"
         :to="{ name: 'ListDetails', params: { listId: list.id } }"
         :active="isActive(list.id)"
-        class="account-navigation-lists__item"
+        class="link-lists__item"
         size="xs"
         color="secondary"
       >
@@ -49,7 +49,7 @@ watchEffect(async () => {
 </script>
 
 <style lang="scss">
-.account-navigation-lists {
+.link-lists {
   @apply py-2 pr-2 pl-2.5 space-y-0.5;
 
   &__item {
