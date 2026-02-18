@@ -44,6 +44,9 @@
     :message="errorMessage"
     :step="packSize"
     :allow-zero="allowZero"
+    test-id-input="quantity-stepper-input"
+    test-id-decrement="quantity-stepper-decrement"
+    test-id-increment="quantity-stepper-increment"
   >
     <slot />
   </VcQuantityStepper>
