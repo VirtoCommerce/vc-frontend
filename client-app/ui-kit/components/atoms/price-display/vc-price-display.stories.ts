@@ -18,4 +18,11 @@ export const Basic: StoryType = {
   args: {
     value: getMoney(1000.99),
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcPriceDisplay :value="money" />`,
+      },
+    },
+  },
 };

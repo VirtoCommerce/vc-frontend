@@ -30,11 +30,26 @@ const meta: Meta<typeof VcProductTitle> = {
 export default meta;
 type StoryType = StoryObj<typeof meta>;
 
-export const Basic: StoryType = {};
+export const Basic: StoryType = {
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcProductTitle title="Product title" class="text-sm" />`,
+      },
+    },
+  },
+};
 
 export const Link: StoryType = {
   args: {
     to: "/some/link",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcProductTitle title="Product title" to="/some/link" class="text-sm" />`,
+      },
+    },
   },
 };
 
@@ -42,6 +57,13 @@ export const Disabled: StoryType = {
   args: {
     to: "/some/link",
     disabled: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcProductTitle title="Product title" to="/some/link" disabled class="text-sm" />`,
+      },
+    },
   },
 };
 
@@ -77,6 +99,18 @@ export const RouterNavigation: StoryType = {
     </div>
   `,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcProductTitle to="/some/link" class="text-lg">Product Title with Link</VcProductTitle>
+          <VcProductTitle to="/catalog" class="text-lg">Catalog Product</VcProductTitle>
+          <VcProductTitle to="/product/123" class="text-lg">Product #123</VcProductTitle>
+          <VcProductTitle disabled class="text-lg text-gray-400">Disabled Product Title</VcProductTitle>
+        `,
+      },
+    },
+  },
 };
 
 export const Responsive: StoryType = {
@@ -84,4 +118,11 @@ export const Responsive: StoryType = {
     setup: () => ({ args }),
     template: '<VcProductTitle class="text-lg md:text-sm" v-bind="args">Product title</VcProductTitle>',
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcProductTitle title="Product title" class="text-lg md:text-sm" />`,
+      },
+    },
+  },
 };

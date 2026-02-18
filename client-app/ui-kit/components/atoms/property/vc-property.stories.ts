@@ -17,4 +17,11 @@ export const Basic: StoryType = {
   args: {
     label: "Label",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcProperty label="Label">Value</VcProperty>`,
+      },
+    },
+  },
 };

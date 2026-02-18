@@ -38,11 +38,36 @@ const meta: Meta<typeof VcProductActions> = {
 export default meta;
 type StoryType = StoryObj<typeof meta>;
 
-export const Basic: StoryType = {};
+export const Basic: StoryType = {
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcProductActions>
+            <VcProductActionsButton color="danger" active tooltip-text="VcProductActionsButton" />
+            <VcProductActionsButton icon="compare" active tooltip-text="VcProductActionsButton" />
+          </VcProductActions>
+        `,
+      },
+    },
+  },
+};
 
 export const Vertical: StoryType = {
   args: {
     direction: "vertical",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcProductActions direction="vertical">
+            <VcProductActionsButton color="danger" active tooltip-text="VcProductActionsButton" />
+            <VcProductActionsButton icon="compare" active tooltip-text="VcProductActionsButton" />
+          </VcProductActions>
+        `,
+      },
+    },
   },
 };
 
@@ -50,5 +75,17 @@ export const VerticalWithBg: StoryType = {
   args: {
     direction: "vertical",
     withBackground: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcProductActions direction="vertical" with-background>
+            <VcProductActionsButton color="danger" active tooltip-text="VcProductActionsButton" />
+            <VcProductActionsButton icon="compare" active tooltip-text="VcProductActionsButton" />
+          </VcProductActions>
+        `,
+      },
+    },
   },
 };

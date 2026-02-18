@@ -27,11 +27,26 @@ const meta: Meta<typeof VcTypography> = {
 export default meta;
 type StoryType = StoryObj<typeof meta>;
 
-export const Basic: StoryType = {};
+export const Basic: StoryType = {
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcTypography>Lorem ipsum DOLOR</VcTypography>`,
+      },
+    },
+  },
+};
 
 export const H1: StoryType = {
   args: {
     tag: "h1",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcTypography tag="h1">Lorem ipsum DOLOR</VcTypography>`,
+      },
+    },
   },
 };
 
@@ -39,10 +54,24 @@ export const H2: StoryType = {
   args: {
     tag: "h2",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcTypography tag="h2">Lorem ipsum DOLOR</VcTypography>`,
+      },
+    },
+  },
 };
 
 export const H3: StoryType = {
   args: {
     tag: "h3",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcTypography tag="h3">Lorem ipsum DOLOR</VcTypography>`,
+      },
+    },
   },
 };
