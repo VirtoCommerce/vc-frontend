@@ -4,6 +4,7 @@
       "add_to_cart": "Legg til i handlekurven",
       "apply": "Bruk",
       "cancel": "Avbryt",
+      "clear": "Tøm",
       "close": "Lukk",
       "copy": "Kopier",
       "deny": "Nekt",
@@ -79,7 +80,10 @@
       "next": "Neste"
     },
     "select": {
-      "items_selected": "{0} elementer valgt"
+      "items_selected": "{0} elementer valgt",
+      "results_available": "{0} resultater tilgjengelig",
+      "no_results_found": "Ingen resultater funnet",
+      "no_options": "Ingen alternativer tilgjengelig"
     },
     "file": {
       "progress": "{percent} ferdig",

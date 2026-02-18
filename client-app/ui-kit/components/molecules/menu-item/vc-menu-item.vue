@@ -2,10 +2,12 @@
   <component :is="componentTag" :id="componentId" v-bind="$attrs" ref="currentElement" class="vc-menu-item" role="none">
     <component
       :is="innerTag"
+      :id="optionId"
       v-bind="attrs"
       :disabled="disabled"
       :title="title"
       :role="role"
+      :aria-selected="ariaSelected"
       :class="[
         'vc-menu-item__inner',
         `vc-menu-item__inner--size--${size}`,
@@ -37,9 +39,10 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, provide, onMounted } from "vue";
 import { getLinkAttr } from "@/core/utilities/common";
 import { useComponentId } from "@/ui-kit/composables";
+import { INTERACTIVE_PARENT_KEY } from "./vc-menu-item-context";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -61,6 +64,8 @@ interface IProps {
   tag?: string;
   clickable?: boolean;
   role?: string;
+  ariaSelected?: boolean;
+  optionId?: string;
 }
 
 defineOptions({
@@ -111,6 +116,11 @@ const innerTag = computed(() => {
 
   return "span";
 });
+
+const isInteractive = computed(
+  () => innerTag.value === "button" || innerTag.value === "a" || innerTag.value === "router-link",
+);
+provide(INTERACTIVE_PARENT_KEY, isInteractive);
 
 const attrs = computed(() => {
   if (innerTag.value === "router-link") {

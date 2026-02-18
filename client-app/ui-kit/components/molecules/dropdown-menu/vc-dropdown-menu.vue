@@ -23,6 +23,8 @@
       <VcScrollbar
         vertical
         tag="ul"
+        :id="listId"
+        :role="listRole"
         :class="[
           'vc-dropdown-menu__list',
           {
@@ -54,6 +56,8 @@ interface IProps {
   width?: string;
   zIndex?: number | string;
   dividers?: boolean;
+  listRole?: string;
+  listId?: string;
 }
 
 defineEmits<IEmits>();
