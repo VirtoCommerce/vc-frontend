@@ -445,6 +445,9 @@
     "account": {
       "navigation": {
         "main_title": "Konto",
+        "purchasing_title": "Kjøp",
+        "marketing_title": "Markedsføring",
+        "user_title": "Bruker",
         "corporate_title": "Bedrift",
         "links": {
           "dashboard": "@:common.links.dashboard",

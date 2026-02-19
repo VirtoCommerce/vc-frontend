@@ -57,20 +57,33 @@
           </div>
         </div>
 
-        <!-- Account link -->
-        <ul>
+        <!-- Account sections -->
+        <ul class="flex flex-col gap-y-2">
+          <!-- Purchasing -->
           <li>
             <MobileMenuLink
-              v-if="mobileAccountMenuItem"
-              :link="mobileAccountMenuItem"
+              v-if="mobilePurchasingMenuItem"
+              :link="mobilePurchasingMenuItem"
               class="py-1 text-2xl font-bold"
-              @select="$emit('selectItem', mobileAccountMenuItem!)"
+              @select="$emit('selectItem', mobilePurchasingMenuItem!)"
             >
-              {{ mobileAccountMenuItem.title }}
+              {{ mobilePurchasingMenuItem.title }}
             </MobileMenuLink>
           </li>
 
-          <!-- Corporate link -->
+          <!-- Marketing -->
+          <li>
+            <MobileMenuLink
+              v-if="mobileMarketingMenuItem && mobileMarketingMenuItem.children?.length"
+              :link="mobileMarketingMenuItem"
+              class="py-1 text-2xl font-bold"
+              @select="$emit('selectItem', mobileMarketingMenuItem!)"
+            >
+              {{ mobileMarketingMenuItem.title }}
+            </MobileMenuLink>
+          </li>
+
+          <!-- Corporate -->
           <li>
             <MobileMenuLink
               v-if="mobileCorporateMenuItem && isCorporateMember"
@@ -79,6 +92,18 @@
               @select="$emit('selectItem', mobileCorporateMenuItem!)"
             >
               {{ mobileCorporateMenuItem.title }}
+            </MobileMenuLink>
+          </li>
+
+          <!-- User -->
+          <li>
+            <MobileMenuLink
+              v-if="mobileUserMenuItem"
+              :link="mobileUserMenuItem"
+              class="py-1 text-2xl font-bold"
+              @select="$emit('selectItem', mobileUserMenuItem!)"
+            >
+              {{ mobileUserMenuItem.title }}
             </MobileMenuLink>
           </li>
         </ul>
@@ -135,7 +160,13 @@ defineProps<IProps>();
 
 const { signMeOut } = useSignMeOut();
 const { user, operator, isAuthenticated, isCorporateMember } = useUser();
-const { mobileMainMenuItems, mobileCorporateMenuItem, mobileAccountMenuItem } = useNavigations();
+const {
+  mobileMainMenuItems,
+  mobilePurchasingMenuItem,
+  mobileMarketingMenuItem,
+  mobileUserMenuItem,
+  mobileCorporateMenuItem,
+} = useNavigations();
 const { t } = useI18n();
 const { supportedCurrencies } = useCurrency();
 
