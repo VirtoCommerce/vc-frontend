@@ -445,6 +445,9 @@
     "account": {
       "navigation": {
         "main_title": "Konto",
+        "purchasing_title": "Zakupy",
+        "marketing_title": "Marketing",
+        "user_title": "Użytkownik",
         "corporate_title": "Korporacyjne",
         "links": {
           "dashboard": "@:common.links.dashboard",

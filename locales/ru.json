@@ -445,6 +445,9 @@
     "account": {
       "navigation": {
         "main_title": "Аккаунт",
+        "purchasing_title": "Покупки",
+        "marketing_title": "Маркетинг",
+        "user_title": "Пользователь",
         "corporate_title": "Корпоративный",
         "links": {
           "dashboard": "@:common.links.dashboard",
