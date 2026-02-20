@@ -184,7 +184,7 @@ const setPage = (page: number) => {
   }
 
   &__pages {
-    @apply order-2 flex justify-center;
+    @apply order-2 flex justify-center gap-0.5;
 
     #{$wrapped} & {
       @apply flex-wrap;
