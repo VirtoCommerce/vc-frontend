@@ -13,6 +13,7 @@
         :data-pickup-point-name="address.name"
         :data-coords="address.geoLocation"
         class="select-address-map-list__item"
+        data-test-id="pickup-location-item"
       >
         <VcRadioButton
           :model-value="selectedAddressId"
@@ -23,9 +24,11 @@
           :data-test-coords="address.geoLocation"
           @click="$emit('select', address)"
         >
-          <div class="select-address-map-list__label">{{ address.name }}</div>
+          <div class="select-address-map-list__label" data-test-id="pickup-location-name">{{ address.name }}</div>
 
-          <div class="select-address-map-list__address">{{ getAddressName(address) }}</div>
+          <div class="select-address-map-list__address" data-test-id="pickup-location-address">
+            {{ getAddressName(address) }}
+          </div>
 
           <PickupAvailabilityInfo
             class="select-address-map-list__pickup-availability"
@@ -36,10 +39,10 @@
       </li>
     </ul>
 
-    <div v-else class="select-address-map-list__not-found">
+    <div v-else class="select-address-map-list__not-found" data-test-id="pickup-locations-not-found">
       <span>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}</span>
 
-      <VcButton prepend-icon="reset" @click="$emit('resetFilter')">
+      <VcButton prepend-icon="reset" data-test-id="reset-search-button" @click="$emit('resetFilter')">
         {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
       </VcButton>
     </div>

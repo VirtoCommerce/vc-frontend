@@ -1,5 +1,9 @@
 <template>
-  <VcWidget :title="$t('shared.catalog.shipment_options.title')" class="product-pickup-locations">
+  <VcWidget
+    :title="$t('shared.catalog.shipment_options.title')"
+    class="product-pickup-locations"
+    data-test-id="shipment-options-widget"
+  >
     <template #default-container>
       <div class="product-pickup-locations__container">
         <VcLoaderOverlay v-if="loading || modalOpening" />
@@ -11,7 +15,12 @@
             class="product-pickup-locations__img"
           />
 
-          <button type="button" class="product-pickup-locations__link" @click="openMapModal">
+          <button
+            type="button"
+            class="product-pickup-locations__link"
+            data-test-id="check-pickup-locations-button"
+            @click="openMapModal"
+          >
             <span>{{ $t("shared.catalog.shipment_options.check_pickup_locations") }} </span>
 
             <VcIcon class="product-pickup-locations__icon" name="arrow-right" color="primary" size="xs" />

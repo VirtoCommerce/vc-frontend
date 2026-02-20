@@ -1,5 +1,5 @@
 <template>
-  <VcDialog v-if="location" dividers class="pickup-location-card" size="xs">
+  <VcDialog v-if="location" dividers class="pickup-location-card" size="xs" data-test-id="pickup-location-card-dialog">
     <VcDialogHeader @close="$emit('close')">
       <template #main>
         <div class="pickup-location-card__header">
@@ -11,7 +11,7 @@
     <VcDialogContent>
       <template #container>
         <div class="pickup-location-card__content">
-          <div class="pickup-location-card__name">
+          <div class="pickup-location-card__name" data-test-id="pickup-location-card-name">
             {{ location.name }}
           </div>
 
@@ -21,7 +21,7 @@
             :availability-note="location.availabilityNote"
           />
 
-          <dl class="pickup-location-card__info">
+          <dl class="pickup-location-card__info" data-test-id="pickup-location-card-info">
             <dt>{{ $t("shared.checkout.select_bopis_modal.location_label") }}</dt>
 
             <dd>{{ getAddressName(location) }}</dd>
@@ -63,11 +63,18 @@
     <VcDialogFooter v-if="selectable">
       <template #container>
         <div class="pickup-location-card__actions">
-          <VcButton variant="outline" color="secondary" truncate size="sm" @click="$emit('close')">
+          <VcButton
+            variant="outline"
+            color="secondary"
+            truncate
+            size="sm"
+            data-test-id="pickup-location-card-cancel"
+            @click="$emit('close')"
+          >
             {{ $t("common.buttons.cancel") }}
           </VcButton>
 
-          <VcButton truncate size="sm" @click="onSelect">
+          <VcButton truncate size="sm" data-test-id="pickup-location-card-select" @click="onSelect">
             {{ $t("shared.checkout.select_bopis_modal.pick_up_here") }}
           </VcButton>
         </div>

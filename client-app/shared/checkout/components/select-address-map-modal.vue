@@ -7,6 +7,7 @@
     :scrollable="false"
     hide-actions
     class="select-address-map-modal"
+    test-id="pickup-locations-modal"
   >
     <template #container>
       <component
