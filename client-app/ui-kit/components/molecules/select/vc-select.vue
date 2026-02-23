@@ -24,6 +24,7 @@
       width="trigger"
       :list-id="listboxId"
       list-role="listbox"
+      :list-label="accessibleLabel"
       @toggle="toggled"
     >
       <template #trigger="{ open, toggle, close }">
@@ -145,7 +146,7 @@
           </slot>
         </VcMenuItem>
 
-        <VcMenuItem v-if="!filteredItems.length" disabled>
+        <VcMenuItem v-if="!filteredItems.length" role="option" :aria-selected="false" disabled>
           {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
         </VcMenuItem>
       </template>

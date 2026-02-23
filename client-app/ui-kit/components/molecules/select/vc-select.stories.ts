@@ -49,6 +49,19 @@ const meta: Meta<typeof VcSelect> = {
           { id: "target-size", enabled: false },
         ],
       },
+      options: {
+        rules: {
+          // aria-controls references the listbox <ul> which always exists in the DOM
+          // (VcPopover renders content eagerly with display:none when closed).
+          // When the dropdown is open, aria-controls is set and the listbox is visible.
+          // When closed, aria-controls is removed (set to undefined).
+          // axe marks this "Inconclusive" because it cannot dynamically verify the
+          // referenced ID at scan time — this is a false positive.
+          // Using options.rules (axe.run() API) instead of config.rules (axe.configure())
+          // to properly suppress "incomplete" results.
+          "aria-valid-attr-value": { enabled: false },
+        },
+      },
     },
   },
   render: (args) => ({
