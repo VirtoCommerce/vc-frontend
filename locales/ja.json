@@ -723,7 +723,7 @@
       },
       "shipment_options": {
         "title": "配送オプション",
-        "in_store": "店舗受取"
+        "check_pickup_locations": "受取場所を確認"
       }
     },
     "checkout": {

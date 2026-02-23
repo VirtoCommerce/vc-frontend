@@ -723,7 +723,7 @@
       },
       "shipment_options": {
         "title": "Leveransalternativ",
-        "in_store": "Hämta i butik"
+        "check_pickup_locations": "Kontrollera upphämtningsställen"
       }
     },
     "checkout": {
