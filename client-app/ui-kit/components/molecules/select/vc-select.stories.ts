@@ -5,6 +5,12 @@ const SIZES = ["xs", "sm", "md"];
 const ITEM_SIZES = ["xs", "sm", "md", "lg"];
 
 const ITEMS = ["Albania", "Belgium", "China", "India"];
+const OBJECT_ITEMS = [
+  { id: 1, name: "Albania" },
+  { id: 2, name: "Belgium" },
+  { id: 3, name: "China" },
+  { id: 4, name: "India" },
+];
 
 const meta: Meta<typeof VcSelect> = {
   title: "Components/Molecules/VcSelect",
@@ -73,6 +79,10 @@ const meta: Meta<typeof VcSelect> = {
 export default meta;
 type StoryType = StoryObj<typeof meta>;
 
+// =============================================================================
+// Group 1: Basics
+// =============================================================================
+
 export const Basic: StoryType = {
   args: {
     items: ITEMS,
@@ -112,6 +122,32 @@ export const Common: StoryType = {
     },
   },
 };
+
+export const WithoutLabel: StoryType = {
+  args: {
+    items: ITEMS,
+    placeholder: "Select a country",
+    ariaLabel: "Country",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect
+  v-model="selected"
+  :items="['Albania', 'Belgium', 'China', 'India']"
+  placeholder="Select a country"
+  aria-label="Country"
+/>
+        `,
+      },
+    },
+  },
+};
+
+// =============================================================================
+// Group 2: States
+// =============================================================================
 
 export const Required: StoryType = {
   args: {
@@ -182,6 +218,36 @@ export const Disabled: StoryType = {
   },
 };
 
+export const ErrorState: StoryType = {
+  args: {
+    ...Common.args,
+    message: "Error message",
+    required: true,
+    error: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect
+  v-model="selected"
+  :items="['Albania', 'Belgium', 'China', 'India']"
+  label="Label"
+  placeholder="Placeholder"
+  message="Error message"
+  required
+  error
+/>
+        `,
+      },
+    },
+  },
+};
+
+// =============================================================================
+// Group 3: Single-select features
+// =============================================================================
+
 export const Clearable: StoryType = {
   args: {
     ...Common.args,
@@ -205,12 +271,11 @@ export const Clearable: StoryType = {
   },
 };
 
-export const ErrorState: StoryType = {
+export const ClearableRequired: StoryType = {
   args: {
     ...Common.args,
-    message: "Error message",
+    clearable: true,
     required: true,
-    error: true,
   },
   parameters: {
     docs: {
@@ -221,9 +286,9 @@ export const ErrorState: StoryType = {
   :items="['Albania', 'Belgium', 'China', 'India']"
   label="Label"
   placeholder="Placeholder"
-  message="Error message"
+  message="Hint message"
+  clearable
   required
-  error
 />
         `,
       },
@@ -257,6 +322,88 @@ export const Autocomplete: StoryType = {
   },
 };
 
+export const AutocompleteClearable: StoryType = {
+  args: {
+    ...Common.args,
+    placeholder: "Search item",
+    autocomplete: true,
+    clearable: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect
+  v-model="selected"
+  :items="['Albania', 'Belgium', 'China', 'India']"
+  label="Label"
+  placeholder="Search item"
+  message="Hint message"
+  autocomplete
+  clearable
+/>
+        `,
+      },
+    },
+  },
+};
+
+export const AutocompleteError: StoryType = {
+  args: {
+    ...Common.args,
+    placeholder: "Search item",
+    autocomplete: true,
+    message: "Error message",
+    error: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect
+  v-model="selected"
+  :items="['Albania', 'Belgium', 'China', 'India']"
+  label="Label"
+  placeholder="Search item"
+  message="Error message"
+  autocomplete
+  error
+/>
+        `,
+      },
+    },
+  },
+};
+
+export const AutocompleteNoResults: StoryType = {
+  args: {
+    ...Common.args,
+    placeholder: "Search item",
+    autocomplete: true,
+    items: [],
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect
+  v-model="selected"
+  :items="[]"
+  label="Label"
+  placeholder="Search item"
+  message="Hint message"
+  autocomplete
+/>
+        `,
+      },
+    },
+  },
+};
+
+// =============================================================================
+// Group 4: Multiple select
+// =============================================================================
+
 export const MultipleSelect: StoryType = {
   args: {
     ...Common.args,
@@ -277,6 +424,61 @@ export const MultipleSelect: StoryType = {
   message="Hint message"
   required
   multiple
+/>
+        `,
+      },
+    },
+  },
+};
+
+export const MultipleSelectClearable: StoryType = {
+  args: {
+    ...Common.args,
+    placeholder: "Select multiple items",
+    multiple: true,
+    modelValue: [],
+    clearable: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect
+  v-model="selected"
+  :items="['Albania', 'Belgium', 'China', 'India']"
+  label="Label"
+  placeholder="Select multiple items"
+  message="Hint message"
+  multiple
+  clearable
+/>
+        `,
+      },
+    },
+  },
+};
+
+export const MultipleSelectError: StoryType = {
+  args: {
+    ...Common.args,
+    placeholder: "Select multiple items",
+    multiple: true,
+    modelValue: [],
+    message: "Error message",
+    error: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect
+  v-model="selected"
+  :items="['Albania', 'Belgium', 'China', 'India']"
+  label="Label"
+  placeholder="Select multiple items"
+  message="Error message"
+  multiple
+  error
 />
         `,
       },
@@ -344,6 +546,40 @@ export const MultipleSelectAutocompleteClearable: StoryType = {
   },
 };
 
+// =============================================================================
+// Group 5: Object items
+// =============================================================================
+
+export const ObjectItems: StoryType = {
+  args: {
+    items: OBJECT_ITEMS,
+    label: "Country",
+    textField: "name",
+    valueField: "id",
+    placeholder: "Select a country",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect
+  v-model="selected"
+  :items="objectItems"
+  label="Country"
+  text-field="name"
+  value-field="id"
+  placeholder="Select a country"
+/>
+        `,
+      },
+    },
+  },
+};
+
+// =============================================================================
+// Group 6: Visual variants
+// =============================================================================
+
 export const SizeVariants: StoryType = {
   render: (args) => ({
     setup: () => ({ args }),
@@ -372,11 +608,45 @@ export const SizeVariants: StoryType = {
   },
 };
 
-export const WithoutLabel: StoryType = {
+export const ItemSizeVariants: StoryType = {
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: `<div class="flex flex-col gap-4 mb-32">
+    <VcSelect v-bind="args" v-model="args.modelValue" item-size="xs" label="Item size: xs" />
+    <VcSelect v-bind="args" v-model="args.modelValue" item-size="sm" label="Item size: sm" />
+    <VcSelect v-bind="args" v-model="args.modelValue" item-size="md" label="Item size: md" />
+    <VcSelect v-bind="args" v-model="args.modelValue" item-size="lg" label="Item size: lg" />
+  </div>`,
+  }),
   args: {
     items: ITEMS,
     placeholder: "Select a country",
-    ariaLabel: "Country",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<div class="flex flex-col gap-4">
+  <VcSelect v-model="selected" :items="['Albania', 'Belgium', 'China', 'India']" item-size="xs" label="Item size: xs" placeholder="Select a country" />
+  <VcSelect v-model="selected" :items="['Albania', 'Belgium', 'China', 'India']" item-size="sm" label="Item size: sm" placeholder="Select a country" />
+  <VcSelect v-model="selected" :items="['Albania', 'Belgium', 'China', 'India']" item-size="md" label="Item size: md" placeholder="Select a country" />
+  <VcSelect v-model="selected" :items="['Albania', 'Belgium', 'China', 'India']" item-size="lg" label="Item size: lg" placeholder="Select a country" />
+</div>
+        `,
+      },
+    },
+  },
+};
+
+// =============================================================================
+// Group 7: Advanced
+// =============================================================================
+
+export const ShowEmptyDetails: StoryType = {
+  args: {
+    ...Common.args,
+    showEmptyDetails: true,
+    message: "",
   },
   parameters: {
     docs: {
@@ -385,8 +655,35 @@ export const WithoutLabel: StoryType = {
 <VcSelect
   v-model="selected"
   :items="['Albania', 'Belgium', 'China', 'India']"
-  placeholder="Select a country"
-  aria-label="Country"
+  label="Label"
+  placeholder="Placeholder"
+  message=""
+  show-empty-details
+/>
+        `,
+      },
+    },
+  },
+};
+
+export const ReadonlyAutocomplete: StoryType = {
+  args: {
+    ...Common.args,
+    readonly: true,
+    autocomplete: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcSelect
+  v-model="selected"
+  :items="['Albania', 'Belgium', 'China', 'India']"
+  label="Label"
+  placeholder="Placeholder"
+  message="Hint message"
+  readonly
+  autocomplete
 />
         `,
       },

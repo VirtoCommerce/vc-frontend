@@ -1,5 +1,12 @@
 <template>
-  <component :is="componentTag" :id="componentId" v-bind="$attrs" ref="currentElement" class="vc-menu-item" role="none">
+  <component
+    :is="componentTag"
+    :id="componentId"
+    v-bind="$attrs"
+    ref="currentElement"
+    class="vc-menu-item"
+    :role="wrapperRole"
+  >
     <component
       :is="innerTag"
       :id="optionId"
@@ -7,7 +14,7 @@
       :disabled="disabled"
       :title="title"
       :role="role"
-      :aria-selected="ariaSelected"
+      :aria-selected="computedAriaSelected"
       :class="[
         'vc-menu-item__inner',
         `vc-menu-item__inner--size--${size}`,
@@ -136,6 +143,36 @@ const attrs = computed(() => {
   }
 
   return {};
+});
+
+/**
+ * Roles that support the `aria-selected` attribute per WAI-ARIA spec.
+ */
+const ARIA_SELECTED_ROLES = new Set(["option", "tab", "gridcell", "row", "treeitem", "columnheader", "rowheader"]);
+
+/**
+ * Only render `aria-selected` when the inner element has a role that supports it.
+ * Plain buttons (implicit role="button") must not have `aria-selected`.
+ */
+const computedAriaSelected = computed(() => {
+  if (props.role && ARIA_SELECTED_ROLES.has(props.role)) {
+    return props.ariaSelected;
+  }
+  return undefined;
+});
+
+/**
+ * The outer wrapper role:
+ * - When the inner element carries its own ARIA role (e.g. "option" inside a listbox),
+ *   the wrapper is purely presentational → role="none".
+ * - Otherwise, omit the role so that <li> keeps its natural "listitem" semantics
+ *   inside a <ul>, satisfying the "list" a11y rule.
+ */
+const wrapperRole = computed(() => {
+  if (props.role) {
+    return "none";
+  }
+  return undefined;
 });
 
 onMounted(() => {

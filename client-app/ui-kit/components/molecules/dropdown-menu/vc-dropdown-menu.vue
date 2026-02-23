@@ -25,6 +25,7 @@
         tag="ul"
         :id="listId"
         :role="listRole"
+        :aria-label="listLabel"
         :class="[
           'vc-dropdown-menu__list',
           {
@@ -58,6 +59,7 @@ interface IProps {
   dividers?: boolean;
   listRole?: string;
   listId?: string;
+  listLabel?: string;
 }
 
 defineEmits<IEmits>();
