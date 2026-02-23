@@ -106,7 +106,7 @@
           <ProductVendor :class="['mt-5', { 'print:hidden': product.hasVariations }]" :product="product" />
 
           <ProductPickupLocations
-            v-if="xPickupEnabled && pickupLocations?.length > 0"
+            v-if="xPickupEnabled && pickupLocations?.length > 0 && product.availabilityData.isAvailable"
             :loading="pickupLocationsLoading"
             :product-id="productId"
             class="mt-5"
