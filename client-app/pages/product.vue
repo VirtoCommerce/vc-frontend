@@ -450,7 +450,7 @@ useSeoMeta({
   ogType: () => (canSetMeta.value ? "website" : undefined),
 });
 
-const MAX_VISIBLE_PICKUP_LOCATIONS_COUNT = 5;
+const MAX_PICKUP_LOCATIONS_COUNT = 1;
 
 watch(
   productId,
@@ -482,7 +482,7 @@ watch(
     }
 
     if (xPickupEnabled.value && product.value) {
-      await fetchPickupLocations({ productId: productId.value, first: MAX_VISIBLE_PICKUP_LOCATIONS_COUNT });
+      await fetchPickupLocations({ productId: productId.value, first: MAX_PICKUP_LOCATIONS_COUNT });
     }
 
     updateLocalizedUrl(product.value?.slug);

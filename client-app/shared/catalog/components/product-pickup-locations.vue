@@ -124,7 +124,9 @@ async function openMapModal() {
   }
 
   &__link {
-    @apply inline-flex items-center gap-1 text-sm text-accent cursor-pointer whitespace-nowrap;
+    @apply inline-flex items-center text-start gap-1 text-sm text-accent cursor-pointer;
+
+    word-break: break-word;
 
     &:hover {
       @apply text-accent-700;
