@@ -4,7 +4,7 @@ import type { DeepPartial } from "utility-types";
 export const menuItems: DeepPartial<MenuType> = {
   header: {
     desktop: {
-      account: {
+      purchasing: {
         children: [
           {
             id: "purchaseRequests",
@@ -12,14 +12,14 @@ export const menuItems: DeepPartial<MenuType> = {
               name: "PurchaseRequests",
             },
             title: "purchase_requests.menu.link.title",
-            icon: "cloud-upload",
-            priority: 100,
+            icon: "purchase-requests",
+            priority: 50,
           },
         ],
       },
     },
     mobile: {
-      account: {
+      purchasing: {
         children: [
           {
             id: "purchaseRequests",
@@ -27,8 +27,8 @@ export const menuItems: DeepPartial<MenuType> = {
               name: "PurchaseRequests",
             },
             title: "purchase_requests.menu.link.title",
-            icon: "cloud-upload",
-            priority: 100,
+            icon: "purchase-requests",
+            priority: 50,
           },
         ],
       },

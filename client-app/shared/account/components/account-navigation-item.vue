@@ -1,13 +1,13 @@
 <template>
-  <div class="account-navigation-item" :class="{ 'account-navigation-item--active': isActive }">
-    <component :is="item?.route ? 'router-link' : 'a'" :to="item?.route" class="account-navigation-item__link">
-      <VcIcon size="sm" class="account-navigation-item__icon" :name="item?.icon" />
+  <VcMenuItem color="secondary" :active="isActive" :to="item.route" class="account-navigation-item">
+    <template #prepend>
+      <VcIcon size="sm" :name="item.icon" />
+    </template>
 
-      <span class="account-navigation-item__text">{{ formatTextFunction(item?.title) }}</span>
-    </component>
+    {{ formatTextFunction(item?.title) }}
+  </VcMenuItem>
 
-    <slot />
-  </div>
+  <slot />
 </template>
 
 <script setup lang="ts">
@@ -31,46 +31,6 @@ interface IProps {
 
 <style lang="scss">
 .account-navigation-item {
-  $active: "";
-  $hover: "";
-
-  --color: var(--color-neutral-500);
-
-  &--active {
-    $active: &;
-  }
-
-  &:hover {
-    $hover: &;
-  }
-
-  &__link {
-    @apply flex items-center p-2.5;
-
-    #{$active} & {
-      @apply bg-neutral-100;
-    }
-  }
-
-  &__icon {
-    @apply mr-2.5 flex-none;
-
-    #{$active} &,
-    #{$hover} & {
-      --color: var(--color-primary-500);
-    }
-  }
-
-  &__text {
-    @apply overflow-hidden text-ellipsis text-sm font-bold text-neutral;
-
-    #{$active} & {
-      @apply text-neutral-900;
-    }
-
-    #{$hover} & {
-      @apply text-neutral-600;
-    }
-  }
+  @apply rounded-md;
 }
 </style>
