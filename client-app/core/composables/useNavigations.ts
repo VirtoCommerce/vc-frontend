@@ -7,6 +7,7 @@ import { getChildCategories, getMenu } from "@/core/api/graphql";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
+import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import {
   convertToExtendedMenuLink,
@@ -20,7 +21,14 @@ import {
 } from "@/core/utilities";
 import { globals } from "../globals";
 import type { MenuLinkType } from "../api/graphql/types";
-import type { ExtendedMenuLinkType, MenuType, MarkedMenuLinkType } from "../types";
+import type {
+  ExtendedMenuLinkType,
+  MenuType,
+  MarkedMenuLinkType,
+  MenuSecionType,
+  MobileMenuSectionType,
+  DesktopMenuSectionType,
+} from "../types";
 import type { DeepPartial } from "utility-types";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 
@@ -62,25 +70,35 @@ export function _useNavigations() {
     return markRecursively(link);
   }
 
+  function createMenuComputed(type: "desktop" | "mobile", key: MenuSecionType) {
+    return computed<ExtendedMenuLinkType | undefined>(() => {
+      const raw = menuSchema.value?.header?.[type]?.[key];
+
+      if (!raw) return undefined;
+
+      const schema = clone(getTranslatedMenuLink(raw));
+
+      if (Array.isArray(schema.children)) {
+        schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+      }
+
+      return schema;
+    });
+  }
+
+  function createDesktopMenuComputed(key: DesktopMenuSectionType) {
+    return createMenuComputed("desktop", key);
+  }
+
+  function createMobileMenuComputed(key: MobileMenuSectionType) {
+    return createMenuComputed("mobile", key);
+  }
+
   const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
     (menuSchema.value?.header?.desktop?.main || [])
       .map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item))
       .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
   );
-
-  const desktopAccountMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-    const schema = menuSchema.value?.header?.desktop?.account
-      ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.account))
-      : undefined;
-    if (Array.isArray(schema?.children)) {
-      schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
-    }
-    return schema;
-  });
-
-  const desktopCorporateMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-    return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.corporate) : undefined;
-  });
 
   const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
     (menuSchema.value?.header?.mobile?.main || []).map((item: ExtendedMenuLinkType) => {
@@ -98,17 +116,31 @@ export function _useNavigations() {
     () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || undefined,
   );
 
-  const mobileAccountMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
-    if (!menuSchema.value) {
-      return undefined;
+  const mobilePurchasingMenuItem = createMobileMenuComputed("purchasing");
+  const mobileMarketingMenuItem = createMobileMenuComputed("marketing");
+  const mobileUserMenuItem = createMobileMenuComputed("user");
+  const mobileCorporateMenuItem = createMobileMenuComputed("corporate");
+
+  // Helper to extract route name from menu item
+  function getRouteNameFromMenuItem(item: ExtendedMenuLinkType): string | null {
+    const route = item.route;
+    return typeof route === "object" && route && "name" in route ? (route.name as string) : null;
+  }
+
+  // Helper to check if section contains route in children
+  function sectionHasRoute(
+    section: ExtendedMenuLinkType | undefined,
+    routeNames: readonly (string | symbol | undefined)[],
+  ): boolean {
+    if (!section?.children) {
+      return false;
     }
 
-    return getTranslatedMenuLink(menuSchema.value?.header?.mobile?.account);
-  });
-
-  const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
-    menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : undefined,
-  );
+    return section.children.some((child) => {
+      const routeName = getRouteNameFromMenuItem(child);
+      return !!routeName && routeNames.includes(routeName);
+    });
+  }
 
   const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
     const matchedRouteNames = globals.router.currentRoute.value.matched
@@ -116,17 +148,36 @@ export function _useNavigations() {
       .concat(matchingRouteName.value)
       .filter(Boolean);
 
-    let preSelectedLink: ExtendedMenuLinkType | undefined;
-
-    if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
-      preSelectedLink = mobileCatalogMenuItem.value;
-    } else if (matchedRouteNames.includes("Account") && !matchedRouteNames.includes("Dashboard")) {
-      preSelectedLink = mobileAccountMenuItem.value;
-    } else if (matchedRouteNames.includes("Company")) {
-      preSelectedLink = mobileCorporateMenuItem.value;
+    // Don't auto-open any section on Dashboard
+    if (matchedRouteNames.includes("Dashboard")) {
+      return undefined;
     }
 
-    return preSelectedLink;
+    // Special routes that don't belong to section children
+    const specialRoutes: Record<string, ExtendedMenuLinkType | undefined> = {
+      Catalog: mobileCatalogMenuItem.value,
+      Category: mobileCatalogMenuItem.value,
+      Product: mobileCatalogMenuItem.value,
+    };
+
+    // First check special routes
+    const specialRoute = matchedRouteNames
+      .map((route) => specialRoutes[route as string])
+      .find((section) => section !== undefined);
+
+    if (specialRoute) {
+      return specialRoute;
+    }
+
+    // Then search in section children
+    const sections = [
+      mobilePurchasingMenuItem.value,
+      mobileMarketingMenuItem.value,
+      mobileUserMenuItem.value,
+      mobileCorporateMenuItem.value,
+    ];
+
+    return sections.find((section) => sectionHasRoute(section, matchedRouteNames));
   });
 
   const { themeContext } = useThemeContext();
@@ -159,14 +210,19 @@ export function _useNavigations() {
     const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
     try {
-      if (catalog_menu_link_list_name && typeof catalog_menu_link_list_name === "string") {
-        // Use a list of links
+      // Get white labeling main menu links
+      const { mainMenuLinks: whiteLabelingMainMenuLinks } = useWhiteLabeling();
+
+      if (whiteLabelingMainMenuLinks.value?.length) {
+        // First priority: use white labeling main menu if available
+        catalogMenuItems.value = whiteLabelingMainMenuLinks.value;
+      } else if (catalog_menu_link_list_name && typeof catalog_menu_link_list_name === "string") {
+        // Second priority: use XAPI catalog menu link list setting
         catalogMenuItems.value = (await getMenu(catalog_menu_link_list_name)).map((item) =>
           convertToExtendedMenuLink(item as MenuLinkType, true),
         );
       } else {
-        // Use the query `childCategories`, with `maxLevel` equal to 2
-
+        // Third priority: use category-based menu (query `childCategories`, with `maxLevel` equal to 2)
         const catalogId = themeContext.value.catalogId;
         const currencyCode = currentCurrency.value.code;
 
@@ -208,14 +264,23 @@ export function _useNavigations() {
 
   return {
     setMatchingRouteName,
+
+    // Desktop
     desktopMainMenuItems,
-    desktopAccountMenuItems,
-    desktopCorporateMenuItems,
+    desktopPurchasingMenuItems: createDesktopMenuComputed("purchasing"),
+    desktopMarketingMenuItems: createDesktopMenuComputed("marketing"),
+    desktopUserMenuItems: createDesktopMenuComputed("user"),
+    desktopCorporateMenuItems: createDesktopMenuComputed("corporate"),
+
+    // Mobile
     mobileMainMenuItems,
     mobileCatalogMenuItem,
-    mobileAccountMenuItem,
+    mobilePurchasingMenuItem,
+    mobileMarketingMenuItem,
+    mobileUserMenuItem,
     mobileCorporateMenuItem,
     mobilePreSelectedMenuItem,
+
     matchingRouteName: readonly(matchingRouteName),
 
     fetchCatalogMenu,

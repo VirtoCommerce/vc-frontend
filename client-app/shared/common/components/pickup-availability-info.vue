@@ -1,7 +1,14 @@
 <template>
   <VcTooltip v-if="availabilityNote" placement="bottom">
     <template #trigger>
-      <VcChip size="sm" :variant="variant" :color="chipColor" icon="truck" truncate>
+      <VcChip
+        size="sm"
+        :variant="variant"
+        :color="chipColor"
+        icon="truck"
+        truncate
+        data-test-id="pickup-availability-chip"
+      >
         <span>{{ availabilityNote }}</span>
       </VcChip>
     </template>

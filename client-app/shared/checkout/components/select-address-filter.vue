@@ -43,6 +43,7 @@
             variant="outline"
             no-wrap
             class="select-address-filter__clear-mobile"
+            data-test-id="reset-filters-mobile-button"
             @click="resetFilter"
           >
             {{ $t("common.buttons.reset_filters") }}

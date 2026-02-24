@@ -445,6 +445,9 @@
     "account": {
       "navigation": {
         "main_title": "账户",
+        "purchasing_title": "购买",
+        "marketing_title": "营销",
+        "user_title": "用户",
         "corporate_title": "公司",
         "links": {
           "dashboard": "@:common.links.dashboard",

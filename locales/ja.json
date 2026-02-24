@@ -445,6 +445,9 @@
     "account": {
       "navigation": {
         "main_title": "アカウント",
+        "purchasing_title": "購入",
+        "marketing_title": "マーケティング",
+        "user_title": "ユーザー",
         "corporate_title": "法人",
         "links": {
           "dashboard": "@:common.links.dashboard",

@@ -42,7 +42,7 @@
             class=""
             :class="['ml-auto', 'items-center', 'h-3.5', { 'px-1': item.facet.count > 9 }]"
             variant="outline"
-            size="sm"
+            size="xs"
             rounded
             color="secondary"
           >

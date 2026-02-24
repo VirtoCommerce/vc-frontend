@@ -106,7 +106,7 @@
           <ProductVendor :class="['mt-5', { 'print:hidden': product.hasVariations }]" :product="product" />
 
           <ProductPickupLocations
-            v-if="xPickupEnabled && pickupLocations?.length > 0"
+            v-if="xPickupEnabled && pickupLocations?.length > 0 && product.availabilityData.isAvailable"
             :loading="pickupLocationsLoading"
             :product-id="productId"
             class="mt-5"
@@ -450,7 +450,7 @@ useSeoMeta({
   ogType: () => (canSetMeta.value ? "website" : undefined),
 });
 
-const MAX_VISIBLE_PICKUP_LOCATIONS_COUNT = 5;
+const MAX_PICKUP_LOCATIONS_COUNT = 1;
 
 watch(
   productId,
@@ -482,7 +482,7 @@ watch(
     }
 
     if (xPickupEnabled.value && product.value) {
-      await fetchPickupLocations({ productId: productId.value, first: MAX_VISIBLE_PICKUP_LOCATIONS_COUNT });
+      await fetchPickupLocations({ productId: productId.value, first: MAX_PICKUP_LOCATIONS_COUNT });
     }
 
     updateLocalizedUrl(product.value?.slug);
