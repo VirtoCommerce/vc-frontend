@@ -1,6 +1,5 @@
 import { ref } from "vue";
-import { VcMenuItem } from "..";
-import { VcButton, VcDropdownMenu } from "..";
+import { VcMenuItem, VcButton, VcDropdownMenu } from "..";
 import { VcCheckbox, VcRadioButton } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
