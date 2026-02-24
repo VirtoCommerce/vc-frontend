@@ -723,7 +723,7 @@
       },
       "shipment_options": {
         "title": "Shipment options",
-        "in_store": "In-Store Pickup"
+        "check_pickup_locations": "Check pickup locations"
       }
     },
     "checkout": {

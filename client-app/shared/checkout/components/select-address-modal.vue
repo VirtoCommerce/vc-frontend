@@ -253,13 +253,15 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, watchEffect, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
 import { SelectAddressFilter } from "@/shared/checkout";
+import { providePickupFilterContext } from "@/shared/checkout/composables";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
+import type { IPickupFilterContext } from "@/shared/checkout/composables";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
 type PaginationModeType = "client" | "server";
@@ -273,6 +275,7 @@ interface IProps {
   emptyText?: string;
   omitFieldsOnCompare?: (keyof MemberAddressType)[];
   showFilters?: boolean;
+  filterContext?: IPickupFilterContext;
   pageSize?: number;
   paginationMode?: PaginationModeType;
   loading?: boolean;
@@ -304,6 +307,10 @@ const props = withDefaults(defineProps<IProps>(), {
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
+
+if (props.filterContext) {
+  providePickupFilterContext(props.filterContext);
+}
 
 function applyFilter() {
   page.value = 1;

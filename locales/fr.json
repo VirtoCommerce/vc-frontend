@@ -723,7 +723,7 @@
       },
       "shipment_options": {
         "title": "Options de livraison",
-        "in_store": "Ramassage en magasin"
+        "check_pickup_locations": "Vérifier les points de retrait"
       }
     },
     "checkout": {

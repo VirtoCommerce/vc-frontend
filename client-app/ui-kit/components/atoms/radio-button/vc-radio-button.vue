@@ -7,6 +7,7 @@
       {
         'vc-radio-button--disabled': disabled,
         'vc-radio-button--checked': checked,
+        'vc-radio-button--no-indicator': noIndicator,
       },
     ]"
   >
@@ -68,6 +69,7 @@ interface IProps {
   singleLineMessage?: boolean;
   wordBreak?: string;
   maxLines?: number;
+  noIndicator?: boolean;
   testIdInput?: string;
   ariaLabel?: string;
 }
@@ -112,6 +114,7 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
   $self: &;
   $checked: "";
   $disabled: "";
+  $no-indicator: "";
   $left: "";
   $right: "";
 
@@ -162,12 +165,16 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
     $checked: &;
   }
 
+  &--no-indicator {
+    $no-indicator: &;
+  }
+
   &--disabled {
     $disabled: &;
   }
 
   &__container {
-    @apply flex cursor-pointer;
+    @apply flex gap-2 cursor-pointer;
 
     #{$disabled} & {
       @apply cursor-not-allowed;
@@ -176,6 +183,10 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
 
   &__indicator {
     @apply flex-none size-[--size] border-2 rounded-full border-neutral-400 bg-additional-50;
+
+    #{$no-indicator} & {
+      @apply hidden;
+    }
 
     input:focus + & {
       @apply outline-none ring ring-[--focus-color];
@@ -194,11 +205,11 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
     @apply min-w-0 empty:hidden line-clamp-[var(--max-lines)] [word-break:var(--word-break)];
 
     #{$left} & {
-      @apply order-first me-2;
+      @apply order-first;
     }
 
     #{$right} & {
-      @apply order-last ms-2;
+      @apply order-last;
     }
 
     #{$disabled} & {
