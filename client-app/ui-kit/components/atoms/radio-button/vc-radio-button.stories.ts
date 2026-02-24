@@ -344,7 +344,6 @@ export const InsideMenuItem: StoryType = {
             size="sm"
             :value="option.id"
             :label="option.name"
-            @click.stop
           />
         </VcMenuItem>
       </template>
@@ -368,7 +367,7 @@ export const InsideMenuItem: StoryType = {
 
             <template #content="{ close }">
               <VcMenuItem color="secondary" size="sm" @click="selectOption(option.id, close)">
-                <VcRadioButton v-model="selected" size="sm" :value="option.id" :label="option.name" @click.stop />
+                <VcRadioButton v-model="selected" size="sm" :value="option.id" :label="option.name" />
               </VcMenuItem>
             </template>
           </VcDropdownMenu>

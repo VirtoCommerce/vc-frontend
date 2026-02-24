@@ -222,7 +222,7 @@ onMounted(() => {
 
     &--size {
       &--xs {
-        --content-height: 0.875rem;
+        --content-height: 1rem;
 
         @apply gap-1.5 py-1 text-xs/[0.875rem];
       }

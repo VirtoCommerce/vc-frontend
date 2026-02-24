@@ -43,16 +43,23 @@
         />
       </VcMenuItem>
 
-      <VcMenuItem v-for="item in organizationsWithoutCurrent" :key="item.id" size="xs" :clickable="false">
+      <VcMenuItem
+        v-for="item in organizationsWithoutCurrent"
+        :key="item.id"
+        size="xs"
+        @click="
+          contactOrganizationId = item.id;
+          selectOrganization();
+        "
+      >
         <VcRadioButton
-          v-model="contactOrganizationId"
+          :model-value="contactOrganizationId"
           :label="item.name"
           :value="item.id"
           :max-lines="2"
           :title="item.name"
           word-break="break-word"
           :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${item.name}`"
-          @change="selectOrganization"
         />
       </VcMenuItem>
 

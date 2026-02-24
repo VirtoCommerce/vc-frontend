@@ -16,7 +16,7 @@
       <input
         v-if="!isInsideInteractive"
         type="checkbox"
-        class="sr-only"
+        class="vc-checkbox__input"
         :aria-label="ariaLabel || name"
         :name="name"
         :value="value"
@@ -211,6 +211,14 @@ function onClick(event: Event) {
 
   &__container {
     @apply relative inline-flex items-start gap-2 cursor-pointer;
+
+    #{$disabled} & {
+      @apply cursor-not-allowed;
+    }
+  }
+
+  &__input {
+    @apply absolute inset-0 opacity-0 cursor-pointer m-0 w-full h-full z-10;
 
     #{$disabled} & {
       @apply cursor-not-allowed;

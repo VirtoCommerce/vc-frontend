@@ -16,7 +16,7 @@
         v-if="!isInsideInteractive"
         :id="inputId"
         v-model="model"
-        class="sr-only"
+        class="vc-radio-button__input"
         type="radio"
         :name="name"
         :value="value"
@@ -174,7 +174,15 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
   }
 
   &__container {
-    @apply flex gap-2 cursor-pointer;
+    @apply relative flex gap-2 cursor-pointer;
+
+    #{$disabled} & {
+      @apply cursor-not-allowed;
+    }
+  }
+
+  &__input {
+    @apply absolute inset-0 opacity-0 cursor-pointer m-0 w-full h-full z-10;
 
     #{$disabled} & {
       @apply cursor-not-allowed;

@@ -23,14 +23,7 @@
           @click="handleFacetItemClick(item)"
         >
           <template #prepend>
-            <VcCheckbox
-              :model-value="isSelected(item)"
-              tabindex="-1"
-              size="xs"
-              :disabled="loading"
-              @change="handleFacetItemClick(item)"
-              @click.stop
-            />
+            <VcCheckbox :model-value="isSelected(item)" tabindex="-1" size="xs" :disabled="loading" />
           </template>
 
           <span>{{ item.label }}</span>
@@ -143,13 +136,7 @@
           "
         >
           <template #prepend>
-            <VcCheckbox
-              :model-value="isSelected(item)"
-              size="xs"
-              :disabled="loading"
-              @change="handleFacetItemClick(item)"
-              @click.stop
-            />
+            <VcCheckbox :model-value="isSelected(item)" size="xs" :disabled="loading" />
           </template>
 
           {{ item.label }}
