@@ -100,6 +100,7 @@ interface IMicroform {
 interface IFieldOptions {
   placeholder?: string;
   maxLength?: number;
+  type?: string;
   masking?: { character: string };
   styles?: Record<string, unknown>;
 }
@@ -323,12 +324,12 @@ function initForm() {
   const securityCode = microform.createField("securityCode", {
     placeholder: "•••",
     maxLength: 4,
+    type: "password",
     masking: { character: "\u2022" },
     styles: {
       input: {
         "font-size": "1rem",
         "-webkit-text-security": "disc",
-        color: "#0a0a0a",
       },
     },
   });
