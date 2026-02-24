@@ -74,6 +74,7 @@
 
     <VcProductButton
       v-else-if="product.isConfigurable"
+      data-test-id="product-card-configurations-button"
       :to="getProductRoute(product.id, product.slug)"
       :link-text="$t('pages.catalog.customize_button')"
       :link-to="getProductRoute(product.id, product.slug)"
@@ -86,6 +87,7 @@
     <template v-else-if="product.hasVariations">
       <VcProductButton
         class="product-card__variations-button"
+        data-test-id="product-card-variations-button"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
         :link-to="link"
         :button-text="$t('pages.catalog.variations_button', [variationsCount])"
@@ -96,6 +98,7 @@
 
       <VcProductButton
         class="product-card__variations-link-button"
+        data-test-id="product-card-variations-link-button"
         :to="link"
         :link-text="$t('pages.catalog.show_on_a_separate_page')"
         :link-to="link"
@@ -116,7 +119,7 @@
     </AddToCartSimple>
 
     <template v-if="viewMode === 'list'" #expanded-content>
-      <div v-show="isExpanded" class="product-card__variants-wrapper">
+      <div v-show="isExpanded" class="product-card__variants-wrapper" data-test-id="product-card-variants-wrapper">
         <div
           v-if="fetchingVariations && (!variations || variations.length === 0)"
           class="product-card__variants-loader"

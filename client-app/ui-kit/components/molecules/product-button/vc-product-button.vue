@@ -15,6 +15,7 @@
         :truncate="truncate"
         :title="title"
         :append-icon="appendIcon"
+        :data-test-id="dataTestId"
         @click="$emit('linkClick', $event)"
       >
         {{ buttonText }}
@@ -67,6 +68,7 @@ interface IProps {
   title?: string;
   size?: "sm" | "md";
   appendIcon?: string;
+  dataTestId?: string;
 }
 
 defineEmits<IEmits>();
