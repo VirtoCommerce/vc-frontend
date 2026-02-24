@@ -100,6 +100,8 @@ interface IMicroform {
 interface IFieldOptions {
   placeholder?: string;
   maxLength?: number;
+  masking?: { character: string };
+  styles?: Record<string, unknown>;
 }
 
 type FlexConstructorType = {
@@ -321,6 +323,14 @@ function initForm() {
   const securityCode = microform.createField("securityCode", {
     placeholder: "•••",
     maxLength: 4,
+    masking: { character: "\u2022" },
+    styles: {
+      input: {
+        "font-size": "1rem",
+        "-webkit-text-security": "disc",
+        color: "#0a0a0a",
+      },
+    },
   });
   number.load("#cardNumber-container");
   number.on("change", onChange);
