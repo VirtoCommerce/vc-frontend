@@ -197,7 +197,7 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
     }
 
     #{$disabled} & {
-      @apply border-neutral-400 bg-neutral-50;
+      @apply border-neutral-300 bg-neutral-50;
     }
   }
 

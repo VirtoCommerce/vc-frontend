@@ -210,7 +210,7 @@ function onClick(event: Event) {
   }
 
   &__container {
-    @apply relative inline-flex items-start cursor-pointer;
+    @apply relative inline-flex items-start gap-2 cursor-pointer;
 
     #{$disabled} & {
       @apply cursor-not-allowed;
@@ -238,26 +238,22 @@ function onClick(event: Event) {
       background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M4 10a1.5 1.5 0 0 1 1.5-1.5h9a1.5 1.5 0 0 1 1.5 1.5v0a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 4 10z' fill='white'/%3e%3c/svg%3e");
     }
 
+    #{$left} & {
+      @apply order-last;
+    }
+
     #{$disabled} & {
-      @apply bg-neutral-50 cursor-not-allowed;
+      @apply border-neutral-300 bg-neutral-100 cursor-not-allowed;
     }
 
     #{$disabled}#{$checked} &,
     #{$disabled}#{$indeterminate} & {
-      @apply border-neutral-200 bg-neutral-200;
+      @apply bg-neutral-300;
     }
   }
 
   &__label {
     @apply flex items-center min-w-0 min-h-[--size];
-
-    #{$left} & {
-      @apply order-first me-2;
-    }
-
-    #{$right} & {
-      @apply order-last ms-2;
-    }
 
     #{$disabled} & {
       @apply opacity-60;

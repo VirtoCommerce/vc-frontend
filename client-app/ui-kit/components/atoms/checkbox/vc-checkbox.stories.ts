@@ -60,6 +60,38 @@ export const Basic: StoryType = {
   },
 };
 
+export const Checked: StoryType = {
+  args: {
+    modelValue: true,
+    ariaLabel: "Checked checkbox",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcCheckbox :model-value="true" aria-label="Checked checkbox" />
+        `,
+      },
+    },
+  },
+};
+
+export const Indeterminate: StoryType = {
+  args: {
+    indeterminate: true,
+    ariaLabel: "Indeterminate checkbox",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcCheckbox indeterminate aria-label="Indeterminate checkbox" />
+        `,
+      },
+    },
+  },
+};
+
 export const Label: StoryType = {
   render: (args) => ({
     components: { VcCheckbox },
@@ -71,6 +103,26 @@ export const Label: StoryType = {
       source: {
         code: `
 <VcCheckbox>VcCheckbox Label</VcCheckbox>
+        `,
+      },
+    },
+  },
+};
+
+export const LabelPositionLeft: StoryType = {
+  render: (args) => ({
+    components: { VcCheckbox },
+    setup: () => ({ args }),
+    template: '<VcCheckbox v-bind="args">Checkbox Label</VcCheckbox>',
+  }),
+  args: {
+    labelPosition: "left",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+<VcCheckbox label-position="left">Checkbox Label</VcCheckbox>
         `,
       },
     },
@@ -93,22 +145,6 @@ export const BasicDisabled: StoryType = {
   },
 };
 
-export const Checked: StoryType = {
-  args: {
-    modelValue: true,
-    ariaLabel: "Checked checkbox",
-  },
-  parameters: {
-    docs: {
-      source: {
-        code: `
-<VcCheckbox :model-value="true" aria-label="Checked checkbox" />
-        `,
-      },
-    },
-  },
-};
-
 export const CheckedDisabled: StoryType = {
   args: {
     disabled: true,
@@ -120,22 +156,6 @@ export const CheckedDisabled: StoryType = {
       source: {
         code: `
 <VcCheckbox disabled :model-value="true" aria-label="Checked disabled checkbox" />
-        `,
-      },
-    },
-  },
-};
-
-export const Indeterminate: StoryType = {
-  args: {
-    indeterminate: true,
-    ariaLabel: "Indeterminate checkbox",
-  },
-  parameters: {
-    docs: {
-      source: {
-        code: `
-<VcCheckbox indeterminate aria-label="Indeterminate checkbox" />
         `,
       },
     },
@@ -179,20 +199,21 @@ export const Message: StoryType = {
   },
 };
 
-export const CustomColor: StoryType = {
+export const ErrorMessage: StoryType = {
   render: (args) => ({
     components: { VcCheckbox },
     setup: () => ({ args }),
-    template: '<VcCheckbox v-bind="args" class="[--vc-checkbox-base-color:red]">VcCheckbox Label</VcCheckbox>',
+    template: '<VcCheckbox v-bind="args">Checkbox Label</VcCheckbox>',
   }),
   args: {
-    modelValue: true,
+    error: true,
+    message: "Error message",
   },
   parameters: {
     docs: {
       source: {
         code: `
-<VcCheckbox :model-value="true" class="[--vc-checkbox-base-color:red]">VcCheckbox Label</VcCheckbox>
+<VcCheckbox error message="Error message">Checkbox Label</VcCheckbox>
         `,
       },
     },
@@ -223,41 +244,20 @@ export const AllSizes: StoryType = {
   },
 };
 
-export const LabelPositionLeft: StoryType = {
+export const CustomColor: StoryType = {
   render: (args) => ({
     components: { VcCheckbox },
     setup: () => ({ args }),
-    template: '<VcCheckbox v-bind="args">Checkbox Label</VcCheckbox>',
+    template: '<VcCheckbox v-bind="args" class="[--vc-checkbox-base-color:red]">VcCheckbox Label</VcCheckbox>',
   }),
   args: {
-    labelPosition: "left",
+    modelValue: true,
   },
   parameters: {
     docs: {
       source: {
         code: `
-<VcCheckbox label-position="left">Checkbox Label</VcCheckbox>
-        `,
-      },
-    },
-  },
-};
-
-export const ErrorMessage: StoryType = {
-  render: (args) => ({
-    components: { VcCheckbox },
-    setup: () => ({ args }),
-    template: '<VcCheckbox v-bind="args">Checkbox Label</VcCheckbox>',
-  }),
-  args: {
-    error: true,
-    message: "Error message",
-  },
-  parameters: {
-    docs: {
-      source: {
-        code: `
-<VcCheckbox error message="Error message">Checkbox Label</VcCheckbox>
+<VcCheckbox :model-value="true" class="[--vc-checkbox-base-color:red]">VcCheckbox Label</VcCheckbox>
         `,
       },
     },

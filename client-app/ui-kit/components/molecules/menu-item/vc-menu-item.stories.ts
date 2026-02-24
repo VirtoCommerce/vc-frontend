@@ -1,4 +1,7 @@
+import { ref } from "vue";
 import { VcMenuItem } from "..";
+import { VcButton, VcDropdownMenu } from "..";
+import { VcCheckbox, VcRadioButton } from "../../atoms";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
 const SIZES = ["xs", "sm", "md", "lg"];
@@ -131,6 +134,76 @@ export const RouterNavigation: StoryType = {
         </div>
       </div>
     `,
+  }),
+};
+
+export const WithCheckbox: StoryType = {
+  render: (args) => ({
+    components: { VcMenuItem, VcCheckbox, VcButton, VcDropdownMenu },
+    setup: () => {
+      const checked = ref([true, false, true, false]);
+      return { args, checked };
+    },
+    template: `<VcDropdownMenu>
+      <template #trigger="{ triggerProps }">
+        <VcButton v-bind="triggerProps">Open menu</VcButton>
+      </template>
+
+      <template #content>
+        <VcMenuItem v-for="(_, i) in checked" :key="i" color="secondary" size="sm">
+          <VcCheckbox v-model="checked[i]">Option {{ i + 1 }}</VcCheckbox>
+        </VcMenuItem>
+      </template>
+    </VcDropdownMenu>
+
+    <div class="h-52"></div>`,
+  }),
+};
+
+export const WithRadioButton: StoryType = {
+  render: (args) => ({
+    components: { VcMenuItem, VcRadioButton, VcButton, VcDropdownMenu },
+    setup: () => {
+      const selected = ref("option1");
+      const options = [
+        { id: "option1", name: "Option 1" },
+        { id: "option2", name: "Option 2" },
+        { id: "option3", name: "Option 3" },
+        { id: "option4", name: "Option 4" },
+      ];
+
+      function selectOption(id: string, close: () => void) {
+        selected.value = id;
+        close();
+      }
+
+      return { args, selected, options, selectOption };
+    },
+    template: `<VcDropdownMenu>
+      <template #trigger="{ triggerProps }">
+        <VcButton v-bind="triggerProps">Sort by</VcButton>
+      </template>
+
+      <template #content="{ close }">
+        <VcMenuItem
+          v-for="option in options"
+          :key="option.id"
+          color="secondary"
+          size="sm"
+          @click="selectOption(option.id, close)"
+        >
+          <VcRadioButton
+            v-model="selected"
+            size="sm"
+            :value="option.id"
+            :label="option.name"
+            @click.stop
+          />
+        </VcMenuItem>
+      </template>
+    </VcDropdownMenu>
+
+    <div class="h-52"></div>`,
   }),
 };
 
