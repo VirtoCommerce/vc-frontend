@@ -130,10 +130,7 @@
           truncate
           :active="isSelected(item)"
           :title="item.label"
-          @click="
-            handleFacetItemClick(item);
-            close();
-          "
+          @click="handleFacetItemClick(item)"
         >
           <template #prepend>
             <VcCheckbox :model-value="isSelected(item)" size="xs" :disabled="loading" />
