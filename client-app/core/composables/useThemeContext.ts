@@ -3,6 +3,7 @@ import cloneDeep from "lodash/cloneDeep";
 import { computed, ref } from "vue";
 import { presets } from "@/assets/presets";
 import settingsData from "@/config/settings_data.json";
+import { presetNameToFileName } from "@/core/utilities";
 import { IS_DEVELOPMENT } from "../constants";
 import { BrowserTargetType } from "../enums";
 import type { StoreResponseType } from "../api/graphql/types";
@@ -31,15 +32,18 @@ function _useThemeContext() {
       throw new Error("The global state should be defined");
     }
 
-    let preset = getPreset(presetNameToFileName(presetName));
+    let resolvedName = presetNameToFileName(presetName);
+    let preset = getPreset(resolvedName);
 
     if (!preset) {
       const defaultPresetName = getThemeConfig().current;
-      preset = getPreset(presetNameToFileName(defaultPresetName));
+      resolvedName = presetNameToFileName(defaultPresetName);
+      preset = getPreset(resolvedName);
     }
 
     if (preset) {
       themeContext.value.preset = preset;
+      themeContext.value.activePresetName = resolvedName;
     } else {
       throw new Error("Missing preset");
     }
@@ -63,10 +67,6 @@ function _useThemeContext() {
     } else {
       return presets.default;
     }
-  }
-
-  function presetNameToFileName(name: string): string {
-    return name.toLowerCase().replace(" ", "-");
   }
 
   return {

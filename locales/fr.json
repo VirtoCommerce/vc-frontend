@@ -315,7 +315,11 @@
           "call_us_label": "Appelez-nous : ",
           "logged_in_as": "connecté en tant que",
           "account_menu_label": "Menu du compte",
-          "no_results": "Aucun résultat trouvé"
+          "no_results": "Aucun résultat trouvé",
+          "dark_mode": {
+            "switch_to_light": "Passer en mode clair",
+            "switch_to_dark": "Passer en mode sombre"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "Catalogue",

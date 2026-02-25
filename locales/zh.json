@@ -315,7 +315,11 @@
           "call_us_label": "致电我们：",
           "logged_in_as": "已登录为",
           "account_menu_label": "帐户菜单",
-          "no_results": "未找到结果"
+          "no_results": "未找到结果",
+          "dark_mode": {
+            "switch_to_light": "切换到浅色模式",
+            "switch_to_dark": "切换到深色模式"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "目录",

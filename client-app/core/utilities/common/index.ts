@@ -200,3 +200,7 @@ export function serializeError(error: Error) {
     stack: error.stack,
   };
 }
+
+export function presetNameToFileName(name: string): string {
+  return name.toLowerCase().replace(/ /g, "-");
+}

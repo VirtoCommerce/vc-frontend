@@ -1,0 +1,107 @@
+// Dark mode overrides
+// Applied when html.dark class is present (set by useDarkMode composable).
+// The dark preset JSON swaps palette shades (50↔950, 100↔900, etc.),
+// but semantic variables in _colors.scss still reference the light-mode shade numbers.
+// This file remaps them so headers/footers/mobile-menu stay visually correct in dark mode.
+
+html.dark {
+  color-scheme: dark;
+
+  // Header — keep dark backgrounds, light text
+  --header-top-bg-color: var(--color-header-top-bg, var(--color-secondary-200));
+  --header-top-text-color: var(--color-header-top-text, var(--color-neutral-900));
+  --header-top-link-color: var(--color-header-top-link, var(--color-accent-600));
+  --header-top-link-hover-color: var(--color-header-top-link-hover, var(--color-neutral-950));
+  --header-top-link-active-color: var(--color-header-top-link-active, var(--color-accent-600));
+
+  // Header bottom
+  --header-bottom-bg-color: var(--color-header-bottom-bg, var(--color-additional-50));
+  --header-bottom-text-color: var(--color-header-bottom-text, var(--color-neutral-900));
+  --header-bottom-link-color: var(--color-header-bottom-link, var(--color-secondary-700));
+  --header-bottom-link-hover-color: var(--color-header-bottom-link-hover, var(--color-neutral-900));
+  --header-bottom-link-active-color: var(--color-header-bottom-link-active, var(--color-neutral-900));
+
+  // Footer top
+  --footer-top-bg-color: var(--color-footer-top-bg, var(--color-secondary-200));
+  --footer-top-text-color: var(--color-footer-top-text, var(--color-neutral-900));
+  --footer-top-link-color: var(--color-footer-top-link, var(--color-neutral-600));
+  --footer-top-link-hover-color: var(--color-footer-top-link-hover, var(--color-neutral-950));
+  --footer-top-link-active-color: var(--color-footer-top-link-active, var(--color-neutral-950));
+
+  // Footer bottom
+  --footer-bottom-bg-color: var(--color-footer-bottom-bg, var(--color-secondary-100));
+  --footer-bottom-text-color: var(--color-footer-bottom-text, var(--color-neutral-900));
+  --footer-bottom-link-color: var(--color-footer-bottom-link, var(--color-accent-600));
+  --footer-bottom-link-hover-color: var(--color-footer-bottom-link-hover, var(--color-neutral-950));
+  --footer-bottom-link-active-color: var(--color-footer-bottom-link-active, var(--color-neutral-950));
+
+  // Mobile menu
+  --mobile-menu-bg-color: var(--color-mobile-menu-bg, var(--color-secondary-200));
+  --mobile-menu-text-color: var(--color-mobile-menu-text, var(--color-neutral-900));
+  --mobile-menu-link-color: var(--color-mobile-menu-link, var(--color-neutral-800));
+  --mobile-search-bar-bg: var(--color-mobile-search-bar-bg, var(--color-neutral-200));
+
+  // Footer section headings: text-additional-50 becomes invisible on dark bg
+  .footer-links__title {
+    color: var(--color-neutral-950);
+  }
+
+  // Input placeholder text: ensure readability on dark surfaces
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-neutral-600);
+  }
+
+  // Solid buttons: in dark mode additional-50 is near-black, so text must
+  // use the light end (additional-950 = cream).
+  .vc-button--solid--primary,
+  .vc-button--solid--secondary,
+  .vc-button--solid--accent,
+  .vc-button--solid--success,
+  .vc-button--solid--danger,
+  .vc-button--solid--info {
+    --text-color: var(--color-additional-950);
+  }
+
+  // Per-color solid overrides: use -400 (dark in inverted scale) for WCAG AA
+  // contrast with cream text. Hover lightens to -500 (standard dark-mode pattern).
+  @each $color in primary, secondary, accent, success, danger, info {
+    .vc-button--solid--#{$color} {
+      --bg-color: var(--color-#{$color}-400);
+      --border-color: var(--color-#{$color}-400);
+
+      &:hover:not([class*="--loading"], [class*="--disabled"]) {
+        --bg-color: var(--color-#{$color}-500);
+        --border-color: var(--color-#{$color}-500);
+      }
+    }
+  }
+
+  // Outline buttons: bg is neutral-100 (dark in inverted scale).
+  // Text at -500 is 4.43:1, bump to -600 for WCAG AA.
+  @each $color in primary, secondary, accent, success, danger, info {
+    .vc-button--outline--#{$color} {
+      --bg-color: var(--color-neutral-100);
+      --text-color: var(--color-#{$color}-600);
+      --border-color: var(--color-#{$color}-600);
+    }
+  }
+
+  // No-border buttons: default -500 text falls just below 4.5:1 on dark bg.
+  // Bump to -600 (lighter in inverted scale) for ~5.9:1 WCAG AA compliance.
+  @each $color in primary, secondary, accent {
+    .vc-button--no-border--#{$color} {
+      --bg-color: transparent;
+      --border-color: transparent;
+      --text-color: var(--color-#{$color}-600);
+    }
+  }
+
+  // No-background buttons: text at -500 lacks contrast on dark surfaces.
+  // Bump to -600 for WCAG AA. Neutral uses -600 for icon-only buttons too.
+  @each $color in primary, secondary, accent, neutral {
+    .vc-button--no-background--#{$color} {
+      --text-color: var(--color-#{$color}-600);
+    }
+  }
+}
