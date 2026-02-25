@@ -445,6 +445,9 @@
     "account": {
       "navigation": {
         "main_title": "Konto",
+        "purchasing_title": "Zakupy",
+        "marketing_title": "Marketing",
+        "user_title": "Użytkownik",
         "corporate_title": "Korporacyjne",
         "links": {
           "dashboard": "@:common.links.dashboard",
@@ -720,7 +723,7 @@
       },
       "shipment_options": {
         "title": "Opcje dostawy",
-        "in_store": "Odbiór osobisty"
+        "check_pickup_locations": "Sprawdź punkty odbioru"
       }
     },
     "checkout": {

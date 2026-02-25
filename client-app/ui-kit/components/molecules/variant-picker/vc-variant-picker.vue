@@ -18,7 +18,6 @@
         :aria-label="tooltip ?? inputValue"
         :name="name"
         :value="inputValue"
-        :data-test-id="testId"
       />
 
       <VcTooltip
@@ -33,6 +32,7 @@
             class="vc-variant-picker__trigger"
             :tabindex="tabindex ?? '0'"
             :aria-label="accessibleName"
+            :data-test-id="testId"
             v-bind="tooltipTriggerEvents(triggerProps, tooltipId)"
             @keydown.enter.prevent="toggleValue"
             @keydown.space.prevent="toggleValue"

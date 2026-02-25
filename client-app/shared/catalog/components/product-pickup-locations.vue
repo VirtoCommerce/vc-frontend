@@ -1,74 +1,136 @@
 <template>
-  <VcWidget :title="$t('shared.catalog.shipment_options.title')" class="product-pickup-locations">
-    <VcLoaderOverlay v-if="loading" />
+  <VcWidget
+    :title="$t('shared.catalog.shipment_options.title')"
+    class="product-pickup-locations"
+    data-test-id="shipment-options-widget"
+  >
+    <template #default-container>
+      <div class="product-pickup-locations__container">
+        <VcLoaderOverlay v-if="loading || modalOpening" />
 
-    <div class="product-pickup-locations__group">
-      <VcImage
-        src="in-store-pickup.svg"
-        :alt="$t('shared.catalog.shipment_options.in_store')"
-        class="product-pickup-locations__img"
-      />
-
-      <div class="product-pickup-locations__content">
-        <div class="product-pickup-locations__header">
-          {{ $t("shared.catalog.shipment_options.in_store") }}
-        </div>
-
-        <div
-          v-for="pickupLocation in pickupLocations"
-          :key="pickupLocation.id"
-          class="product-pickup-locations__option"
-        >
-          <div class="product-pickup-locations__name">
-            {{ pickupLocation.name }}
-          </div>
-
-          <PickupAvailabilityInfo
-            :availability-type="pickupLocation.availabilityType"
-            :availability-note="pickupLocation.availabilityNote"
+        <div class="product-pickup-locations__group">
+          <VcImage
+            src="in-store-pickup.svg"
+            :alt="$t('shared.catalog.shipment_options.check_pickup_locations')"
+            class="product-pickup-locations__img"
           />
+
+          <button
+            type="button"
+            class="product-pickup-locations__link"
+            data-test-id="check-pickup-locations-button"
+            @click="openMapModal"
+          >
+            <span>{{ $t("shared.catalog.shipment_options.check_pickup_locations") }} </span>
+
+            <VcIcon class="product-pickup-locations__icon" name="arrow-right" color="primary" size="xs" />
+          </button>
         </div>
       </div>
-    </div>
+    </template>
   </VcWidget>
 </template>
 
 <script setup lang="ts">
-import type { ProductPickupLocation } from "@/core/api/graphql/types";
-import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
+import { computed, ref } from "vue";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { BOPIS_MAP_API_KEY, MODULE_ID_SHIPPING } from "@/core/constants/modules";
+import { useProductPickupLocations } from "@/shared/catalog/composables/useProductPickupLocations";
+import { createProductFilterContext } from "@/shared/checkout/composables/usePickupFilterContext";
+import { useModal } from "@/shared/modal";
+import SelectAddressMapModal from "@/shared/checkout/components/select-address-map-modal.vue";
 
 interface IProps {
-  pickupLocations?: ProductPickupLocation[];
   loading: boolean;
+  productId: string;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
+
+const MODAL_FETCH_LIMIT = 50;
+
+const { getSettingValue } = useModuleSettings(MODULE_ID_SHIPPING);
+const apiKey = computed(() => getSettingValue(BOPIS_MAP_API_KEY));
+
+const { openModal } = useModal();
+
+const {
+  pickupLocations: modalPickupLocations,
+  fetchPickupLocations: fetchModalPickupLocations,
+  pickupLocationsLoading: modalLoading,
+} = useProductPickupLocations();
+
+const modalAddresses = computed(() =>
+  modalPickupLocations.value.map((location) => ({
+    ...location,
+    ...location.address,
+    id: location.id,
+    description: location.description,
+  })),
+);
+
+function fetchLocations(keyword?: string) {
+  return fetchModalPickupLocations({
+    productId: props.productId,
+    first: MODAL_FETCH_LIMIT,
+    keyword: keyword || undefined,
+  });
+}
+
+const filterContext = createProductFilterContext({
+  loading: modalLoading,
+});
+
+const modalOpening = ref(false);
+
+async function openMapModal() {
+  modalOpening.value = true;
+  filterContext.clearFilter();
+
+  try {
+    await fetchLocations();
+  } finally {
+    modalOpening.value = false;
+  }
+
+  openModal({
+    component: SelectAddressMapModal,
+    props: {
+      addresses: modalAddresses,
+      apiKey: apiKey.value,
+      selectable: false,
+      filterContext,
+
+      onFilterChange: () => {
+        void fetchLocations(filterContext.filterKeyword.value);
+      },
+    },
+  });
+}
 </script>
 
 <style lang="scss">
 .product-pickup-locations {
+  &__container {
+    @apply relative py-4 px-5;
+  }
+
   &__group {
-    @apply flex flex-row gap-x-3 items-start border rounded p-3;
+    @apply flex flex-row gap-x-3 items-center border border-neutral-400 rounded p-2.5 min-h-[74px];
   }
 
-  &__content {
-    @apply min-w-0;
+  &__img {
+    @apply size-12 shrink-0 rounded;
   }
 
-  &__header {
-    @apply font-bold text-lg;
+  &__link {
+    @apply inline-flex items-center text-start gap-1 text-sm text-accent cursor-pointer;
 
     word-break: break-word;
-  }
 
-  &__option {
-    @apply my-3;
-  }
-
-  &__name {
-    @apply font-bold text-sm;
-
-    word-break: break-word;
+    &:hover {
+      @apply text-accent-700;
+    }
   }
 }
 </style>

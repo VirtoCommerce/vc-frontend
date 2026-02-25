@@ -167,6 +167,8 @@ watch(opened, (value: boolean) => emit("toggle", value));
 .vc-popover {
   $popper: "";
 
+  @apply max-w-full;
+
   &__trigger {
     @apply max-w-full size-full;
   }

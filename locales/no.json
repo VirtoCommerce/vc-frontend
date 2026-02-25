@@ -445,6 +445,9 @@
     "account": {
       "navigation": {
         "main_title": "Konto",
+        "purchasing_title": "Kjøp",
+        "marketing_title": "Markedsføring",
+        "user_title": "Bruker",
         "corporate_title": "Bedrift",
         "links": {
           "dashboard": "@:common.links.dashboard",
@@ -720,7 +723,7 @@
       },
       "shipment_options": {
         "title": "Forsendelsesalternativer",
-        "in_store": "Henting i butikk"
+        "check_pickup_locations": "Sjekk hentesteder"
       }
     },
     "checkout": {

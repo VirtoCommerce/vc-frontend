@@ -1,8 +1,8 @@
 import { onScopeDispose, ref, watch } from "vue";
 import { geoLocationStringToLatLng } from "@/core/utilities/geo";
 import { Logger } from "@/core/utilities/logger";
-import { useCartPickupLocations } from "@/shared/cart";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
+import { usePickupFilterContext } from "./usePickupFilterContext";
 import type { GetCartPickupLocationsQuery } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
@@ -31,7 +31,7 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
   const { addresses, currentAddress, onFilterChange } = options;
 
   const { zoomToMarkers, markers, zoomToLatLng, onceIdle, map } = useGoogleMaps(MAP_ID);
-  const { filterIsApplied, clearFilter, pickupLocationsLoading } = useCartPickupLocations();
+  const { filterIsApplied, clearFilter, pickupLocationsLoading } = usePickupFilterContext();
 
   // Constants (synced with --pulse-animation-duration in select-address-map-desktop.vue)
   const PULSE_ANIMATION_DURATION_MS = 200;
@@ -111,7 +111,8 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
 
   function resetFilter() {
     clearFilter();
-    applyFilter();
+    closeInfoCard();
+    onFilterChange();
   }
 
   // Watchers

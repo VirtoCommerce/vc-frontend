@@ -445,6 +445,9 @@
     "account": {
       "navigation": {
         "main_title": "Tili",
+        "purchasing_title": "Ostoihin liittyvät",
+        "marketing_title": "Markkinointi",
+        "user_title": "Käyttäjä",
         "corporate_title": "Yritys",
         "links": {
           "dashboard": "@:common.links.dashboard",
@@ -720,7 +723,7 @@
       },
       "shipment_options": {
         "title": "Toimitusvaihtoehdot",
-        "in_store": "Nouto myymälästä"
+        "check_pickup_locations": "Tarkista noutopisteet"
       }
     },
     "checkout": {

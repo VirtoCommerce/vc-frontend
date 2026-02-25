@@ -445,6 +445,9 @@
     "account": {
       "navigation": {
         "main_title": "アカウント",
+        "purchasing_title": "購入",
+        "marketing_title": "マーケティング",
+        "user_title": "ユーザー",
         "corporate_title": "法人",
         "links": {
           "dashboard": "@:common.links.dashboard",
@@ -720,7 +723,7 @@
       },
       "shipment_options": {
         "title": "配送オプション",
-        "in_store": "店舗受取"
+        "check_pickup_locations": "受取場所を確認"
       }
     },
     "checkout": {

@@ -51,6 +51,9 @@ function _useWhiteLabeling() {
     footerLinks: computed(() =>
       whiteLabelingSettings.value?.footerLinks?.map((item) => convertToExtendedMenuLink(item)),
     ),
+    mainMenuLinks: computed(() =>
+      whiteLabelingSettings.value?.mainMenuLinks?.map((item) => convertToExtendedMenuLink(item)),
+    ),
     favIcons: computed(() => whiteLabelingSettings.value?.favicons),
     themePresetName: computed(() => whiteLabelingSettings.value?.themePresetName),
     fetchWhiteLabelingSettings,

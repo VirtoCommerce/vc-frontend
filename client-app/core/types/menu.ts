@@ -4,17 +4,26 @@ export type MenuType = {
   header: {
     desktop: {
       main: ExtendedMenuLinkType[];
-      account: ExtendedMenuLinkType;
+      purchasing: ExtendedMenuLinkType;
+      marketing: ExtendedMenuLinkType;
+      user: ExtendedMenuLinkType;
       corporate: ExtendedMenuLinkType;
     };
     mobile: {
       main: ExtendedMenuLinkType[];
-      account: ExtendedMenuLinkType;
+      purchasing: ExtendedMenuLinkType;
+      marketing: ExtendedMenuLinkType;
+      user: ExtendedMenuLinkType;
       corporate: ExtendedMenuLinkType;
     };
   };
   footer: ExtendedMenuLinkType[];
 };
+
+export type MobileMenuSectionType = Exclude<keyof MenuType["header"]["mobile"], "main">;
+export type DesktopMenuSectionType = Exclude<keyof MenuType["header"]["desktop"], "main">;
+
+export type MenuSecionType = MobileMenuSectionType | DesktopMenuSectionType;
 
 export type ExtendedMenuLinkType = {
   id?: string;

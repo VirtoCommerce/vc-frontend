@@ -149,7 +149,7 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full px-3 text-left rounded-[inherit] text-sm/[0.875rem] font-normal;
+    @apply flex items-center w-full px-3 text-left rounded-[inherit] font-normal;
 
     &:not(:disabled) {
       @apply bg-additional-50 text-neutral-950;
@@ -177,25 +177,25 @@ onMounted(() => {
       &--xs {
         --content-height: 0.875rem;
 
-        @apply gap-1.5 py-1.5;
+        @apply gap-1.5 py-1 text-xs/[0.875rem];
       }
 
       &--sm {
         --content-height: 1rem;
 
-        @apply gap-1.5 py-2.5;
+        @apply gap-1.5 py-2.5 text-sm/[0.875rem];
       }
 
       &--md {
         --content-height: 1.25rem;
 
-        @apply gap-1.5 py-2.5;
+        @apply gap-1.5 py-2.5 text-sm/[0.875rem];
       }
 
       &--lg {
         --content-height: 2rem;
 
-        @apply gap-2 py-2;
+        @apply gap-2 py-2 text-sm/[0.875rem];
       }
     }
 

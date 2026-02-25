@@ -445,6 +445,9 @@
     "account": {
       "navigation": {
         "main_title": "Account",
+        "purchasing_title": "Purchasing",
+        "marketing_title": "Marketing",
+        "user_title": "User",
         "corporate_title": "Corporate",
         "links": {
           "dashboard": "@:common.links.dashboard",
@@ -720,7 +723,7 @@
       },
       "shipment_options": {
         "title": "Shipment options",
-        "in_store": "In-Store Pickup"
+        "check_pickup_locations": "Check pickup locations"
       }
     },
     "checkout": {

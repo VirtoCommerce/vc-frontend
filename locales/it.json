@@ -445,6 +445,9 @@
     "account": {
       "navigation": {
         "main_title": "Account",
+        "purchasing_title": "Acquisti",
+        "marketing_title": "Marketing",
+        "user_title": "Utente",
         "corporate_title": "Aziendale",
         "links": {
           "dashboard": "@:common.links.dashboard",
@@ -720,7 +723,7 @@
       },
       "shipment_options": {
         "title": "Opzioni di spedizione",
-        "in_store": "Ritiro in negozio"
+        "check_pickup_locations": "Verifica punti di ritiro"
       }
     },
     "checkout": {
