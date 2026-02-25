@@ -149,8 +149,8 @@ export const WithCheckbox: StoryType = {
       </template>
 
       <template #content>
-        <VcMenuItem v-for="(_, i) in checked" :key="i" color="secondary" size="sm">
-          <VcCheckbox v-model="checked[i]">Option {{ i + 1 }}</VcCheckbox>
+        <VcMenuItem v-for="(_, i) in checked" :key="i" color="secondary" size="sm" @click="checked[i] = !checked[i]">
+          <VcCheckbox :model-value="checked[i]">Option {{ i + 1 }}</VcCheckbox>
         </VcMenuItem>
       </template>
     </VcDropdownMenu>
@@ -192,11 +192,10 @@ export const WithRadioButton: StoryType = {
           @click="selectOption(option.id, close)"
         >
           <VcRadioButton
-            v-model="selected"
+            :model-value="selected"
             size="sm"
             :value="option.id"
             :label="option.name"
-            @click.stop
           />
         </VcMenuItem>
       </template>
