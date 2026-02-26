@@ -543,6 +543,11 @@
         "end_date_label": "Data di fine",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expired": "Scaduto",
+        "click_to_copy": "Clicca per copiare",
+        "clipboard_success": "Coupon copiato con successo"
       }
     },
     "company": {
@@ -1268,6 +1273,9 @@
         "title": "Impersonificazione",
         "success": "Impersonificazione riuscita",
         "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi"
+      },
+      "promotion_coupons": {
+        "title": "Tutti i coupon e le promozioni"
       }
     },
     "company": {

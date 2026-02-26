@@ -543,6 +543,11 @@
         "end_date_label": "Fecha de finalización",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expired": "Expirado",
+        "click_to_copy": "Haz clic para copiar",
+        "clipboard_success": "Cupón copiado con éxito"
       }
     },
     "company": {
@@ -1268,6 +1273,9 @@
         "title": "Suplantación",
         "success": "Suplantación exitosa",
         "error": "Algunos problemas durante la suplantación. Verifica tus permisos"
+      },
+      "promotion_coupons": {
+        "title": "Todos los cupones y promociones"
       }
     },
     "company": {

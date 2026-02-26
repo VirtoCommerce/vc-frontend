@@ -543,6 +543,11 @@
         "end_date_label": "Дата окончания",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expired": "Истекший",
+        "click_to_copy": "Нажмите, чтобы скопировать",
+        "clipboard_success": "Купон успешно скопирован"
       }
     },
     "company": {
@@ -1268,6 +1273,9 @@
         "title": "Имперсонализация",
         "success": "Имперсонализация прошла успешно",
         "error": "Возникли проблемы при имперсонализации. Проверьте ваши права доступа"
+      },
+      "promotion_coupons": {
+        "title": "Все купоны и акции"
       }
     },
     "company": {

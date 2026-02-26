@@ -543,6 +543,11 @@
         "end_date_label": "終了日",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expired": "期限切れ",
+        "click_to_copy": "コピーするにはクリック",
+        "clipboard_success": "クーポンをコピーしました"
       }
     },
     "company": {
@@ -1268,6 +1273,9 @@
         "title": "代理ログイン",
         "success": "代理ログイン成功",
         "error": "代理ログイン中に問題が発生しました。権限を確認してください"
+      },
+      "promotion_coupons": {
+        "title": "すべてのクーポンとプロモーション"
       }
     },
     "company": {

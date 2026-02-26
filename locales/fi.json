@@ -543,6 +543,11 @@
         "end_date_label": "Lopetuspäivämäärä",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expired": "Vanhentunut",
+        "click_to_copy": "Kopioi napsauttamalla",
+        "clipboard_success": "Kuponki kopioitu onnistuneesti"
       }
     },
     "company": {
@@ -1268,6 +1273,9 @@
         "title": "Henkilöllisyyden jäljittely",
         "success": "Henkilöllisyyden jäljittely onnistui",
         "error": "Henkilöllisyyden jäljittelyssä ilmeni ongelmia. Tarkista käyttöoikeutesi"
+      },
+      "promotion_coupons": {
+        "title": "Kaikki kupongit ja tarjoukset"
       }
     },
     "company": {

@@ -543,6 +543,11 @@
         "end_date_label": "Enddatum",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expired": "Abgelaufen",
+        "click_to_copy": "Zum Kopieren anklicken",
+        "clipboard_success": "Gutschein erfolgreich kopiert"
       }
     },
     "company": {
@@ -1268,6 +1273,9 @@
         "title": "Nachahmung",
         "success": "Impersonation erfolgreich",
         "error": "Einige Probleme während der Nachahmung. Überprüfen Sie Ihre Berechtigungen"
+      },
+      "promotion_coupons": {
+        "title": "Alle Gutscheine & Aktionen"
       }
     },
     "company": {

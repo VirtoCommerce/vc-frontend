@@ -543,6 +543,11 @@
         "end_date_label": "Slutdatum",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expired": "Gått ut",
+        "click_to_copy": "Klicka för att kopiera",
+        "clipboard_success": "Kupong kopierad"
       }
     },
     "company": {
@@ -1268,6 +1273,9 @@
         "title": "Impersonation",
         "success": "Impersonation lyckades",
         "error": "Några problem uppstod under impersonation. Kontrollera dina behörigheter"
+      },
+      "promotion_coupons": {
+        "title": "Alla kuponger & kampanjer"
       }
     },
     "company": {

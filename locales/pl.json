@@ -543,6 +543,11 @@
         "end_date_label": "Data zakończenia",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expired": "Wygaśnięte",
+        "click_to_copy": "Kliknij, aby skopiować",
+        "clipboard_success": "Kupon pomyślnie skopiowany"
       }
     },
     "company": {
@@ -1268,6 +1273,9 @@
         "title": "Podrabianie",
         "success": "Podrobienie zakończone",
         "error": "Wystąpiły problemy podczas podrabiania. Sprawdź swoje uprawnienia"
+      },
+      "promotion_coupons": {
+        "title": "Wszystkie kupony i promocje"
       }
     },
     "company": {
