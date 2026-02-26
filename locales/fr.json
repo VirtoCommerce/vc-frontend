@@ -251,6 +251,7 @@
       "addresses": "Adresses",
       "orders": "Commandes",
       "lists": "Listes",
+      "promotion_coupons": "Coupons et promotions",
       "list_details": "Détails de la liste",
       "cart": "Panier",
       "company_info": "Informations sur l'entreprise",
@@ -457,6 +458,7 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
+          "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"

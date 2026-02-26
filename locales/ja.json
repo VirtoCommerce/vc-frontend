@@ -251,6 +251,7 @@
       "addresses": "住所",
       "orders": "注文履歴",
       "lists": "リスト",
+      "promotion_coupons": "クーポンとプロモーション",
       "list_details": "リスト詳細",
       "cart": "カート",
       "company_info": "会社情報",
@@ -457,6 +458,7 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
+          "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
