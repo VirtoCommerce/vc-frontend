@@ -317,8 +317,9 @@
           "account_menu_label": "Tilivalikko",
           "no_results": "Ei tuloksia",
           "dark_mode": {
-            "switch_to_light": "Vaihda vaaleaan tilaan",
-            "switch_to_dark": "Vaihda tummaan tilaan"
+            "system": "Teema: automaattinen",
+            "dark": "Teema: tumma",
+            "light": "Teema: vaalea"
           }
         },
         "bottom_header": {

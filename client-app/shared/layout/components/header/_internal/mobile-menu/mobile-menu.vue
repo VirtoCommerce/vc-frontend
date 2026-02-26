@@ -37,6 +37,7 @@
         <SettingsMenu v-else-if="openedItem.id === 'settings'" />
 
         <DefaultMenu v-else :items="sortedFilteredChildren" @close="$emit('close')" @select-item="selectMenuItem" />
+
         <!-- view all catalog link -->
         <template v-if="openedItem?.isCatalogItem && openedItem?.route">
           <div class="my-5 h-px bg-gradient-to-r from-accent to-transparent"></div>

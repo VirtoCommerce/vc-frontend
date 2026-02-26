@@ -13,12 +13,12 @@ function _useDarkMode() {
   const systemPrefersDark = useMediaQuery("(prefers-color-scheme: dark)");
   const activePresetName = ref<string>();
 
-  const darkModeAvailable = computed(() => {
+  const isDarkModeAvailable = computed(() => {
     return !!activePresetName.value && activePresetName.value in darkPresets;
   });
 
   const isDark = computed(() => {
-    if (!darkModeAvailable.value) {
+    if (!isDarkModeAvailable.value) {
       return false;
     }
     if (storedMode.value === "system") {
@@ -44,21 +44,34 @@ function _useDarkMode() {
     // Force DOM sync now that the preset is known
     document.documentElement.classList.toggle("dark", isDark.value);
     // Persist availability flag so the FOUC script in index.html can check it
-    localStorage.setItem(DARK_AVAILABLE_KEY, JSON.stringify(darkModeAvailable.value));
+    localStorage.setItem(DARK_AVAILABLE_KEY, JSON.stringify(isDarkModeAvailable.value));
   }
 
   function toggle() {
-    if (storedMode.value === "system") {
-      storedMode.value = systemPrefersDark.value ? "light" : "dark";
-    } else {
-      storedMode.value = storedMode.value === "dark" ? "light" : "dark";
-    }
+    // Adaptive cycle: first click from "system" always gives a visible change
+    // System dark:  system → light → dark → system
+    // System light: system → dark → light → system
+    const cycle: ColorModeType[] = systemPrefersDark.value ? ["system", "light", "dark"] : ["system", "dark", "light"];
+    const currentIndex = cycle.indexOf(storedMode.value);
+    storedMode.value = cycle[(currentIndex + 1) % cycle.length];
   }
+
+  const colorModeIcon = computed(() => {
+    switch (storedMode.value) {
+      case "dark":
+        return "moon";
+      case "light":
+        return "sun";
+      default:
+        return "desktop-computer";
+    }
+  });
 
   return {
     isDark,
-    darkModeAvailable,
+    isDarkModeAvailable,
     colorMode: storedMode,
+    colorModeIcon,
     setActivePreset,
     toggle,
   };

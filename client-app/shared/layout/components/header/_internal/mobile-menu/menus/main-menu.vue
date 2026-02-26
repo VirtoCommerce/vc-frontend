@@ -1,6 +1,23 @@
 <template>
   <section class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
     <ul class="flex flex-col gap-y-2 px-9 py-6">
+      <!-- Dark mode toggle -->
+      <li v-if="isDarkModeAvailable">
+        <button
+          type="button"
+          class="flex min-h-9 w-full items-center gap-x-3.5 py-1 text-left text-2xl font-bold leading-tight tracking-[0.01em]"
+          data-test-id="mobile-dark-mode-toggle"
+          :aria-label="$t(`shared.layout.header.top_header.dark_mode.${colorMode}`)"
+          @click="toggleDarkMode"
+        >
+          <VcIcon :name="colorModeIcon" :size="32" class="fill-[--mobile-menu-icon-color]" />
+
+          <span class="text-[--mobile-menu-link-color]">
+            {{ $t(`shared.layout.header.top_header.dark_mode.${colorMode}`) }}
+          </span>
+        </button>
+      </li>
+
       <li>
         <MobileMenuLink :link="menuItem" class="py-1 text-2xl font-bold" @close="$emit('close')">
           {{ menuItem.title }}
@@ -35,7 +52,7 @@
           <div class="flex flex-col leading-tight">
             <div class="flex flex-wrap items-center gap-x-1 text-accent-100">
               <template v-if="operator">
-                <span class="line-clamp-3 font-bold [word-break:break-word]">
+                <span class="line-clamp-3 font-bold text-[--mobile-menu-text-color] [word-break:break-word]">
                   {{ operator.contact?.fullName || operator.userName }}
                 </span>
 
@@ -44,7 +61,7 @@
                 </span>
               </template>
 
-              <span class="line-clamp-3 font-bold [word-break:break-word]">
+              <span class="line-clamp-3 font-bold text-[--mobile-menu-text-color] [word-break:break-word]">
                 {{ user.contact?.fullName || user.userName }}
               </span>
             </div>
@@ -139,7 +156,7 @@
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import { useCurrency, useNavigations } from "@/core/composables";
+import { useCurrency, useDarkMode, useNavigations } from "@/core/composables";
 import { ROUTES } from "@/router/routes/constants";
 import { useSignMeOut, useUser } from "@/shared/account";
 import type { ExtendedMenuLinkType } from "@/core/types";
@@ -160,6 +177,7 @@ defineProps<IProps>();
 
 const { signMeOut } = useSignMeOut();
 const { user, operator, isAuthenticated, isCorporateMember } = useUser();
+const { isDarkModeAvailable, colorMode, colorModeIcon, toggle: toggleDarkMode } = useDarkMode();
 const {
   mobileMainMenuItems,
   mobilePurchasingMenuItem,

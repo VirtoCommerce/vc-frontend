@@ -317,8 +317,9 @@
           "account_menu_label": "帐户菜单",
           "no_results": "未找到结果",
           "dark_mode": {
-            "switch_to_light": "切换到浅色模式",
-            "switch_to_dark": "切换到深色模式"
+            "system": "主题：自动",
+            "dark": "主题：深色",
+            "light": "主题：浅色"
           }
         },
         "bottom_header": {

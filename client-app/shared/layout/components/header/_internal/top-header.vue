@@ -18,7 +18,7 @@
     </div>
 
     <div class="ms-auto flex min-w-0 shrink-0 items-center">
-      <template v-if="darkModeAvailable">
+      <template v-if="isDarkModeAvailable">
         <DarkModeToggle />
 
         <span class="mx-3 h-5 w-px bg-primary" />
@@ -183,7 +183,7 @@ import TopHeaderOrganizations from "./top-header-organizations.vue";
 
 const { isAuthenticated, user, operator, organization, isMultiOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
-const { darkModeAvailable } = useDarkMode();
+const { isDarkModeAvailable } = useDarkMode();
 const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 const loginMenu = ref(null);

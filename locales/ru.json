@@ -317,8 +317,9 @@
           "account_menu_label": "Меню аккаунта",
           "no_results": "Результаты не найдены",
           "dark_mode": {
-            "switch_to_light": "Светлая тема",
-            "switch_to_dark": "Тёмная тема"
+            "system": "Тема: авто",
+            "dark": "Тема: тёмная",
+            "light": "Тема: светлая"
           }
         },
         "bottom_header": {

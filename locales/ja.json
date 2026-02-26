@@ -317,8 +317,9 @@
           "account_menu_label": "アカウントメニュー",
           "no_results": "結果が見つかりません",
           "dark_mode": {
-            "switch_to_light": "ライトモードに切り替え",
-            "switch_to_dark": "ダークモードに切り替え"
+            "system": "テーマ：自動",
+            "dark": "テーマ：ダーク",
+            "light": "テーマ：ライト"
           }
         },
         "bottom_header": {

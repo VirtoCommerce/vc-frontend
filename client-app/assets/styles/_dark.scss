@@ -7,45 +7,6 @@
 html.dark {
   color-scheme: dark;
 
-  // Header — keep dark backgrounds, light text
-  --header-top-bg-color: var(--color-header-top-bg, var(--color-secondary-200));
-  --header-top-text-color: var(--color-header-top-text, var(--color-neutral-900));
-  --header-top-link-color: var(--color-header-top-link, var(--color-accent-600));
-  --header-top-link-hover-color: var(--color-header-top-link-hover, var(--color-neutral-950));
-  --header-top-link-active-color: var(--color-header-top-link-active, var(--color-accent-600));
-
-  // Header bottom
-  --header-bottom-bg-color: var(--color-header-bottom-bg, var(--color-additional-50));
-  --header-bottom-text-color: var(--color-header-bottom-text, var(--color-neutral-900));
-  --header-bottom-link-color: var(--color-header-bottom-link, var(--color-secondary-700));
-  --header-bottom-link-hover-color: var(--color-header-bottom-link-hover, var(--color-neutral-900));
-  --header-bottom-link-active-color: var(--color-header-bottom-link-active, var(--color-neutral-900));
-
-  // Footer top
-  --footer-top-bg-color: var(--color-footer-top-bg, var(--color-secondary-200));
-  --footer-top-text-color: var(--color-footer-top-text, var(--color-neutral-900));
-  --footer-top-link-color: var(--color-footer-top-link, var(--color-neutral-600));
-  --footer-top-link-hover-color: var(--color-footer-top-link-hover, var(--color-neutral-950));
-  --footer-top-link-active-color: var(--color-footer-top-link-active, var(--color-neutral-950));
-
-  // Footer bottom
-  --footer-bottom-bg-color: var(--color-footer-bottom-bg, var(--color-secondary-100));
-  --footer-bottom-text-color: var(--color-footer-bottom-text, var(--color-neutral-900));
-  --footer-bottom-link-color: var(--color-footer-bottom-link, var(--color-accent-600));
-  --footer-bottom-link-hover-color: var(--color-footer-bottom-link-hover, var(--color-neutral-950));
-  --footer-bottom-link-active-color: var(--color-footer-bottom-link-active, var(--color-neutral-950));
-
-  // Mobile menu
-  --mobile-menu-bg-color: var(--color-mobile-menu-bg, var(--color-secondary-200));
-  --mobile-menu-text-color: var(--color-mobile-menu-text, var(--color-neutral-900));
-  --mobile-menu-link-color: var(--color-mobile-menu-link, var(--color-neutral-800));
-  --mobile-search-bar-bg: var(--color-mobile-search-bar-bg, var(--color-neutral-200));
-
-  // Footer section headings: text-additional-50 becomes invisible on dark bg
-  .footer-links__title {
-    color: var(--color-neutral-950);
-  }
-
   // Input placeholder text: ensure readability on dark surfaces
   input::placeholder,
   textarea::placeholder {

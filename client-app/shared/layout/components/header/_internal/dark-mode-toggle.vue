@@ -1,20 +1,25 @@
 <template>
-  <button
-    type="button"
-    class="flex cursor-pointer items-center p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
-    :aria-label="
-      isDark
-        ? $t('shared.layout.header.top_header.dark_mode.switch_to_light')
-        : $t('shared.layout.header.top_header.dark_mode.switch_to_dark')
-    "
-    @click="toggle"
-  >
-    <VcIcon :name="isDark ? 'sun' : 'moon'" size="sm" />
-  </button>
+  <VcTooltip placement="bottom">
+    <template #trigger>
+      <button
+        type="button"
+        class="flex cursor-pointer items-center p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
+        data-test-id="dark-mode-toggle"
+        :aria-label="$t(`shared.layout.header.top_header.dark_mode.${colorMode}`)"
+        @click="toggle"
+      >
+        <VcIcon :name="colorModeIcon" size="sm" />
+      </button>
+    </template>
+
+    <template #content>
+      {{ $t(`shared.layout.header.top_header.dark_mode.${colorMode}`) }}
+    </template>
+  </VcTooltip>
 </template>
 
 <script setup lang="ts">
 import { useDarkMode } from "@/core/composables";
 
-const { isDark, toggle } = useDarkMode();
+const { colorMode, colorModeIcon, toggle } = useDarkMode();
 </script>

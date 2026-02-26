@@ -317,8 +317,9 @@
           "account_menu_label": "Menú de cuenta",
           "no_results": "No se encontraron resultados",
           "dark_mode": {
-            "switch_to_light": "Cambiar a modo claro",
-            "switch_to_dark": "Cambiar a modo oscuro"
+            "system": "Tema: automático",
+            "dark": "Tema: oscuro",
+            "light": "Tema: claro"
           }
         },
         "bottom_header": {

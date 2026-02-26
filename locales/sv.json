@@ -317,8 +317,9 @@
           "account_menu_label": "Kontomeny",
           "no_results": "Inga resultat hittades",
           "dark_mode": {
-            "switch_to_light": "Växla till ljust läge",
-            "switch_to_dark": "Växla till mörkt läge"
+            "system": "Tema: automatiskt",
+            "dark": "Tema: mörkt",
+            "light": "Tema: ljust"
           }
         },
         "bottom_header": {
