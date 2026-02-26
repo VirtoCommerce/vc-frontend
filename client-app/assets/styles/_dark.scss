@@ -13,20 +13,26 @@ html.dark {
     color: var(--color-neutral-600);
   }
 
+  // Autofill: browser forces light background; override with dark surface + light text
+  input:autofill,
+  textarea:autofill {
+    -webkit-text-fill-color: var(--color-neutral-100);
+
+    &:disabled {
+      -webkit-text-fill-color: var(--color-neutral-500);
+    }
+  }
+
   // Solid buttons: in dark mode additional-50 is near-black, so text must
   // use the light end (additional-950 = cream).
-  .vc-button--solid--primary,
-  .vc-button--solid--secondary,
-  .vc-button--solid--accent,
-  .vc-button--solid--success,
-  .vc-button--solid--danger,
-  .vc-button--solid--info {
+  [class*="vc-button--solid--"],
+  [class*="vc-badge--solid--"] {
     --text-color: var(--color-additional-950);
   }
 
   // Per-color solid overrides: use -400 (dark in inverted scale) for WCAG AA
   // contrast with cream text. Hover lightens to -500 (standard dark-mode pattern).
-  @each $color in primary, secondary, accent, success, danger, info {
+  @each $color in primary, secondary, accent, neutral, success, danger, info, warning {
     .vc-button--solid--#{$color} {
       --bg-color: var(--color-#{$color}-400);
       --border-color: var(--color-#{$color}-400);
@@ -36,33 +42,46 @@ html.dark {
         --border-color: var(--color-#{$color}-500);
       }
     }
-  }
 
-  // Outline buttons: bg is neutral-100 (dark in inverted scale).
-  // Text at -500 is 4.43:1, bump to -600 for WCAG AA.
-  @each $color in primary, secondary, accent, success, danger, info {
-    .vc-button--outline--#{$color} {
-      --bg-color: var(--color-neutral-100);
-      --text-color: var(--color-#{$color}-600);
+    .vc-button--outline--#{$color},
+    .vc-badge--outline--#{$color} {
+      --text-color: var(--color-#{$color}-900);
       --border-color: var(--color-#{$color}-600);
     }
-  }
 
-  // No-border buttons: default -500 text falls just below 4.5:1 on dark bg.
-  // Bump to -600 (lighter in inverted scale) for ~5.9:1 WCAG AA compliance.
-  @each $color in primary, secondary, accent {
     .vc-button--no-border--#{$color} {
       --bg-color: transparent;
       --border-color: transparent;
-      --text-color: var(--color-#{$color}-600);
+      --text-color: var(--color-#{$color}-900);
+    }
+
+    .vc-button--no-background--#{$color} {
+      --text-color: var(--color-#{$color}-900);
+    }
+
+    .vc-button--solid-light--#{$color},
+    .vc-badge--solid-light--#{$color} {
+      --bg-color: var(--color-#{$color}-200);
+      --text-color: var(--color-#{$color}-900);
     }
   }
 
-  // No-background buttons: text at -500 lacks contrast on dark surfaces.
-  // Bump to -600 for WCAG AA. Neutral uses -600 for icon-only buttons too.
-  @each $color in primary, secondary, accent, neutral {
-    .vc-button--no-background--#{$color} {
-      --text-color: var(--color-#{$color}-600);
-    }
+  // Solid chips: same additional-50→950 swap for text and icons.
+  .vc-chip--variant--solid {
+    --text-color: var(--color-additional-950);
+    --main-icon-color: var(--color-additional-950);
+    --close-button-icon-color: var(--color-additional-950);
+  }
+
+  // Solid alerts: same additional-50→950 swap for text and icons.
+  .vc-alert--solid {
+    --text-color: var(--color-additional-950);
+    --icon-color: var(--color-additional-950);
+  }
+
+  // Disabled buttons: neutral-600 text is too dark on dark surfaces.
+  .vc-button[class*="--disabled"]:not([class*="--loading"]) {
+    --text-color: var(--color-neutral-800);
+    --vc-icon-color: var(--color-neutral-600);
   }
 }
