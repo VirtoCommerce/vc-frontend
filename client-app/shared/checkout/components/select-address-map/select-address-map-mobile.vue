@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, toRef } from "vue";
+import { nextTick, ref, toRef, watch } from "vue";
 import { SelectAddressFilter } from "@/shared/checkout";
 import { useSelectAddressMap } from "@/shared/checkout/composables";
 import { useModal } from "@/shared/modal";
@@ -107,6 +107,24 @@ const { selectedAddressId, filterIsApplied, pickupLocationsLoading, selectAddres
     currentAddress: toRef(props, "currentAddress"),
     onFilterChange: () => emit("filterChange"),
   });
+
+// Automatically scroll to current address in list and position map
+watch(
+  () => props.addresses,
+  (addresses) => {
+    if (props.currentAddress?.id && addresses.length) {
+      const currentLocation = addresses.find((addr) => addr.id === props.currentAddress?.id);
+
+      if (currentLocation) {
+        selectAddress(currentLocation, {
+          scrollToSelectedOnMap: true,
+          scrollToSelectedOnList: true,
+        });
+      }
+    }
+  },
+  { immediate: true, flush: "post" },
+);
 
 function onSelect(address: PickupLocationType) {
   selectAddress(address, { scrollToSelectedOnMap: true });
