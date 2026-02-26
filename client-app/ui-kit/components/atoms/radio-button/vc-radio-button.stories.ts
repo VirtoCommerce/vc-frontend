@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 const SIZES = ["xs", "sm", "md"];
 const LABEL_POSITIONS = ["left", "right"];
 
-export default {
+const meta: Meta<typeof VcRadioButton> = {
   title: "Components/Atoms/VcRadioButton",
   component: VcRadioButton,
   argTypes: {
@@ -31,18 +31,25 @@ export default {
     },
   },
   render: (args) => ({
-    components: { VcRadioButton },
     setup: () => ({ args }),
     template: '<VcRadioButton v-bind="args" v-model="args.modelValue" />',
   }),
-} as Meta<typeof VcRadioButton>;
+};
 
-type StoryType = StoryObj<typeof VcRadioButton>;
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
 export const Basic: StoryType = {
   args: {
     value: "value",
     ariaLabel: "Basic radio button",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRadioButton value="value" aria-label="Basic radio button" />`,
+      },
+    },
   },
 };
 
@@ -52,12 +59,26 @@ export const Checked: StoryType = {
     modelValue: "value",
     ariaLabel: "Checked radio button",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRadioButton value="value" v-model="value" aria-label="Checked radio button" />`,
+      },
+    },
+  },
 };
 
 export const WithLabel: StoryType = {
   args: {
     value: "value",
     label: "RadioButton Label",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRadioButton value="value" label="RadioButton Label" />`,
+      },
+    },
   },
 };
 
@@ -67,16 +88,29 @@ export const LabelPositionLeft: StoryType = {
     label: "RadioButton Label",
     labelPosition: "left",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRadioButton value="value" label="RadioButton Label" label-position="left" />`,
+      },
+    },
+  },
 };
 
 export const WithSlot: StoryType = {
   render: (args) => ({
-    components: { VcRadioButton },
     setup: () => ({ args }),
     template: '<VcRadioButton v-bind="args" v-model="args.modelValue">Label from slot</VcRadioButton>',
   }),
   args: {
     value: "value",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRadioButton value="value">Label from slot</VcRadioButton>`,
+      },
+    },
   },
 };
 
@@ -90,6 +124,13 @@ export const BreakWord: StoryType = {
     value: "value",
     label: "RadioButtonLabelLongValueWithoutSpaces",
     wordBreak: "break-word",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRadioButton value="value" label="RadioButtonLabelLongValueWithoutSpaces" word-break="break-word" />`,
+      },
+    },
   },
 };
 
@@ -105,6 +146,13 @@ export const MaxLines: StoryType = {
     wordBreak: "break-word",
     maxLines: 2,
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRadioButton value="value" label="Radio Button Label With Very Long Value" word-break="break-word" :max-lines="2" />`,
+      },
+    },
+  },
 };
 
 export const Disabled: StoryType = {
@@ -112,6 +160,13 @@ export const Disabled: StoryType = {
     value: "value",
     label: "RadioButton Label",
     disabled: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRadioButton value="value" label="RadioButton Label" disabled />`,
+      },
+    },
   },
 };
 
@@ -122,6 +177,13 @@ export const DisabledChecked: StoryType = {
     label: "RadioButton Label",
     disabled: true,
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRadioButton value="value" v-model="value" label="RadioButton Label" disabled />`,
+      },
+    },
+  },
 };
 
 export const Message: StoryType = {
@@ -129,6 +191,13 @@ export const Message: StoryType = {
     value: "value",
     label: "RadioButton Label",
     message: "Information message",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRadioButton value="value" label="RadioButton Label" message="Information message" />`,
+      },
+    },
   },
 };
 
@@ -139,11 +208,17 @@ export const ErrorMessage: StoryType = {
     message: "Error message",
     error: true,
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcRadioButton value="value" label="RadioButton Label" message="Error message" error />`,
+      },
+    },
+  },
 };
 
 export const AllSizes: StoryType = {
   render: () => ({
-    components: { VcRadioButton },
     setup: () => ({ sizes: SIZES }),
     template: `<div class="space-y-4">
       <div v-for="size in sizes" :key="size" class="flex items-center gap-4">
@@ -152,11 +227,21 @@ export const AllSizes: StoryType = {
       </div>
     </div>`,
   }),
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcRadioButton size="xs" value="option" label="Radio button label" />
+          <VcRadioButton size="sm" value="option" label="Radio button label" />
+          <VcRadioButton size="md" value="option" label="Radio button label" />
+        `,
+      },
+    },
+  },
 };
 
 export const RadioGroup: StoryType = {
   render: (args) => ({
-    components: { VcRadioButton },
     setup: () => {
       const selected = ref(args.modelValue);
       return { args, selected };
@@ -169,5 +254,16 @@ export const RadioGroup: StoryType = {
   }),
   args: {
     modelValue: "option1",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+          <VcRadioButton v-model="selected" name="group" value="option1" label="Option 1" />
+          <VcRadioButton v-model="selected" name="group" value="option2" label="Option 2" />
+          <VcRadioButton v-model="selected" name="group" value="option3" label="Option 3" />
+        `,
+      },
+    },
   },
 };
