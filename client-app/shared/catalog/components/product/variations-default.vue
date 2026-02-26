@@ -11,6 +11,7 @@
         :actual-price="variation.price.actual"
         :vendor="$cfg.vendor_enabled ? variation.vendor : undefined"
         :browser-target="browserTarget"
+        :route="getProductRoute(variation.id, variation.slug)"
         with-image
         with-price
         with-properties
@@ -49,7 +50,7 @@ import { sortBy } from "lodash";
 import { toRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useBrowserTarget } from "@/core/composables";
-import { getPropertiesGroupedByName } from "@/core/utilities";
+import { getPropertiesGroupedByName, getProductRoute } from "@/core/utilities";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_NAME } from "@/shared/catalog/constants/product";
 import { EXTENSION_NAMES } from "@/shared/common/constants";
 import CountInCart from "../count-in-cart.vue";
