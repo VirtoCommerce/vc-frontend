@@ -251,6 +251,7 @@
       "addresses": "Endereços",
       "orders": "Pedidos",
       "lists": "Listas",
+      "promotion_coupons": "Cupons e promoções",
       "list_details": "Detalhes da Lista",
       "cart": "Carrinho",
       "company_info": "Informações da Empresa",
@@ -457,6 +458,7 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
+          "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -541,6 +543,11 @@
         "end_date_label": "Data de término",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expired": "Expirado",
+        "click_to_copy": "Clique para copiar",
+        "clipboard_success": "Cupom copiado com sucesso"
       }
     },
     "company": {
@@ -1266,6 +1273,9 @@
         "title": "Impersonação",
         "success": "Impersonificação bem-sucedida",
         "error": "Alguns problemas durante a personificação. Verifique suas permissões"
+      },
+      "promotion_coupons": {
+        "title": "Todos os cupons e promoções"
       }
     },
     "company": {

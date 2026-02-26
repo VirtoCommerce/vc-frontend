@@ -14,6 +14,7 @@ const ListDetails = () => import("@/pages/account/list-details.vue");
 const SavedForLaterDetails = () => import("@/pages/account/saved-for-later-details.vue");
 const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
 const Impersonate = () => import("@/pages/account/impersonate.vue");
+const PromotionCoupons = () => import("@/pages/account/promotion-coupons.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
@@ -84,5 +85,10 @@ export const accountRoutes: RouteRecordRaw[] = [
     name: "Impersonate",
     props: true,
     component: Impersonate,
+  },
+  {
+    path: "coupons",
+    name: "PromotionCoupons",
+    component: PromotionCoupons,
   },
 ];

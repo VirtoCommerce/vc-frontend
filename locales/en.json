@@ -251,6 +251,7 @@
       "addresses": "Addresses",
       "orders": "Orders",
       "lists": "Lists",
+      "promotion_coupons": "Coupons & Promotions",
       "list_details": "List details",
       "cart": "Cart",
       "company_info": "Company info",
@@ -457,6 +458,7 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
+          "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -541,6 +543,11 @@
         "end_date_label": "End date",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expired": "Expired",
+        "click_to_copy": "Click to copy",
+        "clipboard_success": "Coupon copied successfully"
       }
     },
     "company": {
@@ -1266,6 +1273,9 @@
         "title": "Impersonation",
         "success": "Impersonation succeeded",
         "error": "Some problems occurred during impersonation. Check your permissions"
+      },
+      "promotion_coupons": {
+        "title": "All coupons & promotions"
       }
     },
     "company": {

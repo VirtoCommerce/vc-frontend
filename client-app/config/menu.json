@@ -94,7 +94,17 @@
       "marketing": {
         "id": "marketing",
         "title": "shared.account.navigation.marketing_title",
-        "children": []
+        "children": [
+          {
+            "id": "promotion-coupons",
+            "route": {
+              "name": "PromotionCoupons"
+            },
+            "title": "shared.account.navigation.links.promotion_coupons",
+            "icon": "receipt-tax",
+            "priority": 10
+          }
+        ]
       },
       "user": {
         "id": "user",
@@ -245,7 +255,17 @@
         "id": "marketing",
         "title": "shared.account.navigation.marketing_title",
         "icon": "receipt-tax",
-        "children": []
+        "children": [
+          {
+            "id": "promotion-coupons",
+            "route": {
+              "name": "PromotionCoupons"
+            },
+            "title": "shared.account.navigation.links.promotion_coupons",
+            "icon": "receipt-tax",
+            "priority": 10
+          }
+        ]
       },
       "user": {
         "id": "user",

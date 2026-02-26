@@ -251,6 +251,7 @@
       "addresses": "Адреса",
       "orders": "Заказы",
       "lists": "Списки",
+      "promotion_coupons": "Купоны и акции",
       "list_details": "Детали списка",
       "cart": "Корзина",
       "company_info": "Информация о компании",
@@ -457,6 +458,7 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
+          "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -541,6 +543,11 @@
         "end_date_label": "Дата окончания",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expired": "Истекший",
+        "click_to_copy": "Нажмите, чтобы скопировать",
+        "clipboard_success": "Купон успешно скопирован"
       }
     },
     "company": {
@@ -1266,6 +1273,9 @@
         "title": "Имперсонализация",
         "success": "Имперсонализация прошла успешно",
         "error": "Возникли проблемы при имперсонализации. Проверьте ваши права доступа"
+      },
+      "promotion_coupons": {
+        "title": "Все купоны и акции"
       }
     },
     "company": {
