@@ -315,7 +315,12 @@
           "call_us_label": "Ring oss: ",
           "logged_in_as": "inloggad som",
           "account_menu_label": "Kontomeny",
-          "no_results": "Inga resultat hittades"
+          "no_results": "Inga resultat hittades",
+          "dark_mode": {
+            "system": "Tema: automatiskt",
+            "dark": "Tema: mörkt",
+            "light": "Tema: ljust"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "Katalog",

@@ -111,7 +111,7 @@
 
     <slot name="footer" />
 
-    <div v-if="footnote" class="mt-4 text-xs font-normal text-neutral-400">
+    <div v-if="footnote" class="mt-4 text-xs font-normal text-neutral-500">
       <slot name="footnote">
         {{ $t("common.messages.checkout_pricing_warning") }}
       </slot>

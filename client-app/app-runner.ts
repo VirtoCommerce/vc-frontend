@@ -3,7 +3,7 @@ import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { apolloClient, getPageContext } from "@/core/api/graphql";
 import { GetSlugInfoDocument } from "@/core/api/graphql/types";
-import { useCurrency, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
+import { useCurrency, useDarkMode, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
@@ -85,6 +85,7 @@ export default async () => {
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
   const { themePresetName, setWhiteLabelingSettings } = useWhiteLabeling();
+  const { setActivePreset } = useDarkMode();
 
   const fallback = {
     locale: FALLBACK_LOCALE,
@@ -181,6 +182,7 @@ export default async () => {
 
   setWhiteLabelingSettings(whiteLabelingSetting);
   addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
+  setActivePreset(themeContext.value.activePresetName ?? themeContext.value.defaultPresetName);
 
   if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
     void fetchCatalogMenu();

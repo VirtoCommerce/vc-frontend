@@ -1,0 +1,93 @@
+// Dark mode overrides
+// Applied when html.dark class is present (set by useDarkMode composable).
+// The dark preset JSON swaps palette shades (50↔950, 100↔900, etc.),
+// but semantic variables in _colors.scss still reference the light-mode shade numbers.
+// This file remaps them so headers/footers/mobile-menu stay visually correct in dark mode.
+
+html.dark {
+  color-scheme: dark;
+
+  --link-color: var(--color-accent-700);
+
+  // Input placeholder text: ensure readability on dark surfaces
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-neutral-600);
+  }
+
+  // Autofill: browser forces light background; override with dark surface + light text
+  input:autofill,
+  textarea:autofill {
+    -webkit-text-fill-color: var(--color-neutral-100);
+
+    &:disabled {
+      -webkit-text-fill-color: var(--color-neutral-500);
+    }
+  }
+
+  // Solid buttons: in dark mode additional-50 is near-black, so text must
+  // use the light end (additional-950 = cream).
+  [class*="vc-button--solid--"],
+  [class*="vc-badge--solid--"] {
+    --text-color: var(--color-additional-950);
+  }
+
+  // Per-color solid overrides: use -400 (dark in inverted scale) for WCAG AA
+  // contrast with cream text. Hover lightens to -500 (standard dark-mode pattern).
+  @each $color in primary, secondary, accent, neutral, success, danger, info, warning {
+    .vc-button--solid--#{$color} {
+      --bg-color: var(--color-#{$color}-400);
+      --border-color: var(--color-#{$color}-400);
+
+      &:hover:not([class*="--loading"], [class*="--disabled"]) {
+        --bg-color: var(--color-#{$color}-500);
+        --border-color: var(--color-#{$color}-500);
+      }
+    }
+
+    .vc-button--outline--#{$color},
+    .vc-badge--outline--#{$color} {
+      --text-color: var(--color-#{$color}-900);
+      --border-color: var(--color-#{$color}-600);
+    }
+
+    .vc-button--no-border--#{$color} {
+      --bg-color: transparent;
+      --border-color: transparent;
+      --text-color: var(--color-#{$color}-900);
+    }
+
+    .vc-button--no-background--#{$color} {
+      --text-color: var(--color-#{$color}-900);
+    }
+
+    .vc-button--solid-light--#{$color},
+    .vc-badge--solid-light--#{$color} {
+      --bg-color: var(--color-#{$color}-200);
+      --text-color: var(--color-#{$color}-900);
+    }
+  }
+
+  // Solid chips: same additional-50→950 swap for text and icons.
+  .vc-chip--variant--solid {
+    --text-color: var(--color-additional-950);
+    --main-icon-color: var(--color-additional-950);
+    --close-button-icon-color: var(--color-additional-950);
+  }
+
+  // Solid alerts: same additional-50→950 swap for text and icons.
+  .vc-alert--solid {
+    --text-color: var(--color-additional-950);
+    --icon-color: var(--color-additional-950);
+  }
+
+  // Disabled buttons: neutral-600 text is too dark on dark surfaces.
+  .vc-button[class*="--disabled"]:not([class*="--loading"]) {
+    --text-color: var(--color-neutral-800);
+    --vc-icon-color: var(--color-neutral-600);
+  }
+
+  .product-pickup-locations__link {
+    color: var(--color-accent-700);
+  }
+}

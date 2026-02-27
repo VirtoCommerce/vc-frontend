@@ -11,6 +11,7 @@
 }
 
 @include meta.load-css("print");
+@include meta.load-css("dark");
 
 /* Use for custom themes only */
 @include meta.load-css("custom");

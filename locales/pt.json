@@ -315,7 +315,12 @@
           "call_us_label": "Ligue para nós: ",
           "logged_in_as": "logado como",
           "account_menu_label": "Menu da conta",
-          "no_results": "Nenhum resultado encontrado"
+          "no_results": "Nenhum resultado encontrado",
+          "dark_mode": {
+            "system": "Tema: automático",
+            "dark": "Tema: escuro",
+            "light": "Tema: claro"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "Catálogo",

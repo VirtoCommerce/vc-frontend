@@ -315,7 +315,12 @@
           "call_us_label": "Zadzwoń do nas: ",
           "logged_in_as": "zalogowany jako",
           "account_menu_label": "Menu konta",
-          "no_results": "Nie znaleziono wyników"
+          "no_results": "Nie znaleziono wyników",
+          "dark_mode": {
+            "system": "Motyw: automatyczny",
+            "dark": "Motyw: ciemny",
+            "light": "Motyw: jasny"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "Katalog",
