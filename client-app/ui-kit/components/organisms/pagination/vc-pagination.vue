@@ -184,7 +184,7 @@ const setPage = (page: number) => {
   }
 
   &__pages {
-    @apply order-2 flex justify-center gap-0.5;
+    @apply order-2 flex justify-center;
 
     #{$wrapped} & {
       @apply flex-wrap;
@@ -196,6 +196,12 @@ const setPage = (page: number) => {
 
     &[type="button"] {
       @apply bg-additional-50 text-neutral-950;
+    }
+
+    &:focus-visible,
+    &:focus {
+      position: relative;
+      z-index: 1;
     }
 
     &:hover {
