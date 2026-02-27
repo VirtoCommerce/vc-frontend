@@ -14,6 +14,18 @@
         <VcImage v-else :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="max-h-9" lazy />
       </div>
 
+      <!-- Dark mode toggle -->
+      <button
+        v-if="isDarkModeAvailable"
+        type="button"
+        class="appearance-none p-2"
+        data-test-id="mobile-dark-mode-toggle"
+        :aria-label="$t(`shared.layout.header.top_header.dark_mode.${colorMode}`)"
+        @click="toggleDarkMode"
+      >
+        <VcIcon :name="colorModeIcon" :size="22" class="fill-[--mobile-menu-navigation-color]" />
+      </button>
+
       <!-- Language block -->
       <LanguageSelector v-if="supportedLanguages.length > 1" />
 
@@ -28,7 +40,7 @@
           <VcIcon name="arrow-circle-left" size="lg" />
         </button>
 
-        <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-additional-50">
+        <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-[--mobile-menu-text-color]">
           {{ openedItem?.title }}
         </h2>
 
@@ -74,7 +86,7 @@
 <script setup lang="ts">
 import { computed, onMounted, shallowRef, triggerRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useNavigations } from "@/core/composables";
+import { useDarkMode, useNavigations } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { getLinkAttr } from "@/core/utilities";
 import { useUser } from "@/shared/account";
@@ -94,6 +106,7 @@ defineEmits<IEmits>();
 
 const { t } = useI18n();
 
+const { isDarkModeAvailable, colorMode, colorModeIcon, toggle: toggleDarkMode } = useDarkMode();
 const { supportedLanguages } = useLanguages();
 const { isAuthenticated, organization, isCorporateMember, isMultiOrganization } = useUser();
 const { mobilePreSelectedMenuItem } = useNavigations();
@@ -173,7 +186,7 @@ onMounted(() => {
 }
 
 .view-all-link {
-  @apply text-lg tracking-[0.01em] text-additional-50;
+  @apply text-lg tracking-[0.01em] text-[--mobile-menu-link-active-color];
 }
 
 .mobile-menu__overlay {
