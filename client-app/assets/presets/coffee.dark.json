@@ -36,15 +36,15 @@
   "color_accent_950": "#eaf8ff",
 
   "color_neutral_50": "#1c1c1c",
-  "color_neutral_100": "#2c2c2c",
-  "color_neutral_200": "#3c3c3c",
-  "color_neutral_300": "#4d4d4d",
-  "color_neutral_400": "#5d5d5d",
-  "color_neutral_500": "#6d6d6d",
-  "color_neutral_600": "#888888",
-  "color_neutral_700": "#a3a3a3",
-  "color_neutral_800": "#bfbfbf",
-  "color_neutral_900": "#dadada",
+  "color_neutral_100": "#313131",
+  "color_neutral_200": "#464646",
+  "color_neutral_300": "#5a5a5a",
+  "color_neutral_400": "#6f6f6f",
+  "color_neutral_500": "#848484",
+  "color_neutral_600": "#9b9b9b",
+  "color_neutral_700": "#b1b1b1",
+  "color_neutral_800": "#c8c8c8",
+  "color_neutral_900": "#dedede",
   "color_neutral_950": "#f5f5f5",
 
   "color_warning_50": "#261400",
@@ -98,7 +98,7 @@
   "color_additional_50": "#110f0e",
   "color_additional_950": "#f0e6dd",
 
-  "color_body_bg": "#191615",
+  "color_body_bg": "#1c1c1c",
   "color_body_text": "#eee2dd",
 
   "color_shape_icon_bg": "#36647c",
