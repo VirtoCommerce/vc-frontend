@@ -6,7 +6,7 @@ import type { App, Plugin } from "vue";
 
 function presetToCssVars(preset: IThemeConfigPreset): string {
   return Object.entries(preset)
-    .map(([key, value]) => `--${key.replace(/_/g, "-")}: ${value};`)
+    .map(([key, value]) => `--${key.replaceAll("_", "-")}: ${value};`)
     .join("");
 }
 

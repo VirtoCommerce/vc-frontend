@@ -8,10 +8,10 @@
     <script>
       (function() {
         var darkAvailable = false;
-        try { darkAvailable = JSON.parse(localStorage.getItem('vc-dark-available')); } catch(e) {}
+        try { darkAvailable = JSON.parse(localStorage.getItem('vc-dark-available')); } catch(e) { /* localStorage may be unavailable */ }
         if (!darkAvailable) return;
         var mode = null;
-        try { mode = JSON.parse(localStorage.getItem('vc-color-mode')); } catch(e) {}
+        try { mode = JSON.parse(localStorage.getItem('vc-color-mode')); } catch(e) { /* localStorage may be unavailable */ }
         var isDark = mode === 'dark' ||
           (mode !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
         if (isDark) { document.documentElement.classList.add('dark'); }
