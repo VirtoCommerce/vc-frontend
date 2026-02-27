@@ -198,6 +198,12 @@ const setPage = (page: number) => {
       @apply bg-additional-50 text-neutral-950;
     }
 
+    &:focus-visible,
+    &:focus {
+      position: relative;
+      z-index: 1;
+    }
+
     &:hover {
       @apply bg-primary-50;
     }
