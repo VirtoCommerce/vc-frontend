@@ -7,7 +7,7 @@
 html.dark {
   color-scheme: dark;
 
-  --vc-product-title-link-color: var(--color-accent-700);
+  --link-color: var(--color-accent-700);
 
   // Input placeholder text: ensure readability on dark surfaces
   input::placeholder,
@@ -85,5 +85,9 @@ html.dark {
   .vc-button[class*="--disabled"]:not([class*="--loading"]) {
     --text-color: var(--color-neutral-800);
     --vc-icon-color: var(--color-neutral-600);
+  }
+
+  .product-pickup-locations__link {
+    color: var(--color-accent-700);
   }
 }
