@@ -15,16 +15,12 @@
       </div>
 
       <!-- Dark mode toggle -->
-      <button
-        v-if="isDarkModeAvailable"
-        type="button"
-        class="appearance-none p-2"
-        data-test-id="mobile-dark-mode-toggle"
-        :aria-label="$t(`shared.layout.header.top_header.dark_mode.${colorMode}`)"
-        @click="toggleDarkMode"
-      >
-        <VcIcon :name="colorModeIcon" :size="22" class="fill-[--mobile-menu-navigation-color]" />
-      </button>
+      <DarkModeToggle
+        :tooltip="false"
+        :icon-size="22"
+        test-id="mobile-dark-mode-toggle"
+        class="appearance-none fill-[--mobile-menu-navigation-color] p-2"
+      />
 
       <!-- Language block -->
       <LanguageSelector v-if="supportedLanguages.length > 1" />
@@ -86,12 +82,13 @@
 <script setup lang="ts">
 import { computed, onMounted, shallowRef, triggerRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useDarkMode, useNavigations } from "@/core/composables";
+import { useNavigations } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { getLinkAttr } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { RouteLocationRaw } from "vue-router";
+import DarkModeToggle from "@/shared/layout/components/header/_internal/dark-mode-toggle.vue";
 import DefaultMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/default-menu.vue";
 import MainMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/main-menu.vue";
 import MultiOrganisationMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/multi-organisation-menu.vue";
@@ -106,7 +103,6 @@ defineEmits<IEmits>();
 
 const { t } = useI18n();
 
-const { isDarkModeAvailable, colorMode, colorModeIcon, toggle: toggleDarkMode } = useDarkMode();
 const { supportedLanguages } = useLanguages();
 const { isAuthenticated, organization, isCorporateMember, isMultiOrganization } = useUser();
 const { mobilePreSelectedMenuItem } = useNavigations();

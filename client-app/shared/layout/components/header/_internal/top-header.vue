@@ -19,7 +19,12 @@
 
     <div class="ms-auto flex min-w-0 shrink-0 items-center">
       <template v-if="isDarkModeAvailable">
-        <DarkModeToggle />
+        <DarkModeToggle
+          tooltip
+          test-id="dark-mode-toggle"
+          icon-size="sm"
+          class="p-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
+        />
 
         <span class="mx-3 h-5 w-px bg-primary" />
       </template>
