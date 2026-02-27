@@ -39,7 +39,7 @@
                   {{ operator.contact?.fullName || operator.userName }}
                 </span>
 
-                <span class="text-accent-200">
+                <span class="text-[--mobile-menu-text-color]">
                   {{ $t("shared.layout.header.top_header.logged_in_as") }}
                 </span>
               </template>
