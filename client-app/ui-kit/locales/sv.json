@@ -4,6 +4,7 @@
       "add_to_cart": "Lägg till i kundvagnen",
       "apply": "Tillämpa",
       "cancel": "Avbryt",
+      "clear": "Rensa",
       "close": "Stäng",
       "copy": "Kopiera",
       "deny": "Neka",
@@ -79,7 +80,10 @@
       "next": "Nästa"
     },
     "select": {
-      "items_selected": "{0} objekt valda"
+      "items_selected": "{0} objekt valda",
+      "results_available": "{0} resultat tillgängliga",
+      "no_results_found": "Inga resultat hittades",
+      "no_options": "Inga alternativ tillgängliga"
     },
     "file": {
       "progress": "{percent} klart",

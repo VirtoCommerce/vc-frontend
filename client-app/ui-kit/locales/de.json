@@ -4,6 +4,7 @@
       "add_to_cart": "In den Warenkorb",
       "apply": "Anwenden",
       "cancel": "Abbrechen",
+      "clear": "Löschen",
       "close": "Schließen",
       "copy": "Kopieren",
       "deny": "Verweigern",
@@ -79,7 +80,10 @@
       "next": "Nächste"
     },
     "select": {
-      "items_selected": "{0} Artikel ausgewählt"
+      "items_selected": "{0} Artikel ausgewählt",
+      "results_available": "{0} Ergebnisse verfügbar",
+      "no_results_found": "Keine Ergebnisse gefunden",
+      "no_options": "Keine Optionen verfügbar"
     },
     "file": {
       "progress": "{percent} erledigt",
