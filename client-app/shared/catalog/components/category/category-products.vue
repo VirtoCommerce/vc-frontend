@@ -105,9 +105,10 @@
 import { useBreakpoints } from "@vueuse/core";
 import { computed, toRef } from "vue";
 import { useBrowserTarget } from "@/core/composables";
-import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PAGE_LIMIT } from "@/core/constants";
+import { DEFAULT_PAGE_SIZE, PAGE_LIMIT } from "@/core/constants";
 import { ProductCard, ProductSkeletonGrid, ProductSkeletonList } from "@/shared/catalog/components";
 import { CATALOG_PAGINATION_MODES } from "@/shared/catalog/constants/catalog";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { Product } from "@/core/api/graphql/types";
 import type { CatalogPaginationModeType } from "@/shared/catalog/types/catalog";
 
