@@ -1,45 +1,72 @@
-// Solid buttons: in dark mode additional-50 is near-black, so text must
-// use the light end (additional-950 = cream).
-[class*="vc-button--solid--"] {
-  --text-color: var(--color-additional-950);
-}
+.vc-button {
+  $colors: primary, secondary, accent, neutral, success, danger, info, warning;
+  $loading: "";
+  $disabled: "";
 
-// Per-color solid overrides: use -400 (dark in inverted scale) for WCAG AA
-// contrast with cream text. Hover lightens to -500 (standard dark-mode pattern).
-@each $color in primary, secondary, accent, neutral, success, danger, info, warning {
-  .vc-button--solid--#{$color} {
-    --bg-color: var(--color-#{$color}-400);
-    --border-color: var(--color-#{$color}-400);
+  &--loading {
+    $loading: &;
+  }
 
-    &:hover:not([class*="--loading"], [class*="--disabled"]) {
-      --bg-color: var(--color-#{$color}-500);
-      --border-color: var(--color-#{$color}-500);
+  &--disabled {
+    $disabled: &;
+
+    &:not(#{$loading}) {
+      --text-color: var(--color-neutral-800);
+      --vc-icon-color: var(--color-neutral-600);
     }
   }
 
-  .vc-button--outline--#{$color} {
-    --text-color: var(--color-#{$color}-900);
-    --border-color: var(--color-#{$color}-600);
+  &[class*="vc-button--solid--"] {
+    --text-color: var(--color-additional-950);
   }
 
-  .vc-button--no-border--#{$color} {
-    --bg-color: transparent;
-    --border-color: transparent;
-    --text-color: var(--color-#{$color}-900);
+  &--solid {
+    @each $color in $colors {
+      &--#{$color} {
+        --bg-color: var(--color-#{$color}-400);
+        --border-color: var(--color-#{$color}-400);
+
+        &:hover:not(#{$loading}, #{$disabled}) {
+          --bg-color: var(--color-#{$color}-500);
+          --border-color: var(--color-#{$color}-500);
+        }
+      }
+    }
   }
 
-  .vc-button--no-background--#{$color} {
-    --text-color: var(--color-#{$color}-900);
+  &--outline {
+    @each $color in $colors {
+      &--#{$colors} {
+        --text-color: var(--color-#{$color}-900);
+        --border-color: var(--color-#{$color}-600);
+      }
+    }
   }
 
-  .vc-button--solid-light--#{$color} {
-    --bg-color: var(--color-#{$color}-200);
-    --text-color: var(--color-#{$color}-900);
+  &--no-border {
+    @each $color in $colors {
+      &--#{$colors} {
+        --bg-color: transparent;
+        --border-color: transparent;
+        --text-color: var(--color-#{$color}-900);
+      }
+    }
   }
-}
 
-// Disabled buttons: neutral-600 text is too dark on dark surfaces.
-.vc-button[class*="--disabled"]:not([class*="--loading"]) {
-  --text-color: var(--color-neutral-800);
-  --vc-icon-color: var(--color-neutral-600);
+  &--no-background {
+    @each $color in $colors {
+      &--#{$colors} {
+        --text-color: var(--color-#{$color}-900);
+      }
+    }
+  }
+
+  &--solid-light {
+    @each $color in $colors {
+      &--#{$colors} {
+        --bg-color: var(--color-#{$color}-200);
+        --text-color: var(--color-#{$color}-900);
+      }
+    }
+  }
 }
