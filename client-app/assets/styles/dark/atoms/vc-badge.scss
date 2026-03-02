@@ -1,0 +1,20 @@
+[class*="vc-badge--solid--"] {
+  --text-color: var(--color-additional-950);
+}
+
+@each $color in primary, secondary, accent, neutral, success, danger, info, warning {
+  .vc-badge--solid--#{$color} {
+    --bg-color: var(--color-#{$color}-400);
+    --border-color: var(--color-#{$color}-400);
+  }
+
+  .vc-badge--outline--#{$color} {
+    --text-color: var(--color-#{$color}-900);
+    --border-color: var(--color-#{$color}-600);
+  }
+
+  .vc-badge--solid-light--#{$color} {
+    --bg-color: var(--color-#{$color}-200);
+    --text-color: var(--color-#{$color}-900);
+  }
+}

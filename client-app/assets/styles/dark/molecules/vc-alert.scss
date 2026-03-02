@@ -1,0 +1,5 @@
+// Solid alerts: same additional-50→950 swap for text and icons.
+.vc-alert--solid {
+  --text-color: var(--color-additional-950);
+  --icon-color: var(--color-additional-950);
+}
