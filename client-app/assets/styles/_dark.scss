@@ -7,6 +7,9 @@
 // Per-component files remap them so UI stays visually correct in dark mode.
 
 html.dark {
+  color-scheme: dark;
+  --link-color: var(--color-accent-700);
+
   @include meta.load-css("dark/globals");
   @include meta.load-css("dark/atoms/vc-badge");
   @include meta.load-css("dark/molecules/vc-button");
