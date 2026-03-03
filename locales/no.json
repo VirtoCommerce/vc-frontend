@@ -723,7 +723,7 @@
       },
       "shipment_options": {
         "title": "Forsendelsesalternativer",
-        "in_store": "Henting i butikk"
+        "check_pickup_locations": "Sjekk hentesteder"
       }
     },
     "checkout": {

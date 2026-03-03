@@ -7,6 +7,7 @@
       {
         'vc-radio-button--disabled': disabled,
         'vc-radio-button--checked': checked,
+        'vc-radio-button--no-indicator': noIndicator,
       },
     ]"
   >
@@ -64,6 +65,7 @@ interface IProps {
   singleLineMessage?: boolean;
   wordBreak?: string;
   maxLines?: number;
+  noIndicator?: boolean;
   testIdInput?: string;
   ariaLabel?: string;
 }
@@ -105,6 +107,7 @@ const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
   $self: &;
   $checked: "";
   $disabled: "";
+  $no-indicator: "";
   $left: "";
   $right: "";
 
@@ -155,12 +158,16 @@ const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
     $checked: &;
   }
 
+  &--no-indicator {
+    $no-indicator: &;
+  }
+
   &--disabled {
     $disabled: &;
   }
 
   &__container {
-    @apply flex cursor-pointer;
+    @apply flex gap-2 cursor-pointer;
 
     #{$disabled} & {
       @apply cursor-not-allowed;
@@ -169,6 +176,10 @@ const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
 
   &__input {
     @apply flex-none size-[--size] appearance-none border-2 rounded-full border-neutral-400 bg-additional-50;
+
+    #{$no-indicator} & {
+      @apply hidden;
+    }
 
     &:checked {
       @apply border-[--base-color] border-[length:var(--border-width)];
@@ -187,11 +198,11 @@ const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
     @apply min-w-0 empty:hidden line-clamp-[var(--max-lines)] [word-break:var(--word-break)];
 
     #{$left} & {
-      @apply order-first me-2;
+      @apply order-first;
     }
 
     #{$right} & {
-      @apply order-last ms-2;
+      @apply order-last;
     }
 
     #{$disabled} & {

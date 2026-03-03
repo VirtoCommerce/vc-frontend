@@ -199,7 +199,6 @@ export default async () => {
   // Plugins
   app.use(head);
   app.use(i18n);
-  app.use(router);
   app.use(permissionsPlugin);
   app.use(extensionPointsPlugin);
   app.use(contextPlugin, themeContext.value);
@@ -230,6 +229,9 @@ export default async () => {
       app.use(builderIoPreviewPlugin, { router });
     }
   }
+
+  // router must be registered after all plugins because some of them are using router.beforeEach to protect routes or add functionality before route changes, and we want to make sure that those are registered before we start using the router
+  app.use(router);
 
   // Register Page builder components globally
   Object.entries(templateBlocks).forEach(([name, component]) => app.component(name, component));

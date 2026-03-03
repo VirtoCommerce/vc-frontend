@@ -1,8 +1,8 @@
 {
   "ManifestVersion": "2.0",
-  "PlatformVersion": "3.1004.0",
+  "PlatformVersion": "3.1005.0",
   "PlatformImage": "ghcr.io/virtocommerce/platform",
-  "PlatformImageTag": "3.1004.0",
+  "PlatformImageTag": "3.1005.0",
   "PlatformAssetUrl": "",
   "ModuleSources": ["https://raw.githubusercontent.com/VirtoCommerce/vc-modules/master/modules_v3.json"],
   "Sources": [
@@ -27,10 +27,6 @@
         {
           "Id": "VirtoCommerce.NativePaymentMethods",
           "Version": "3.802.0"
-        },
-        {
-          "Id": "VirtoCommerce.MarketingExperienceApi",
-          "Version": "3.901.0"
         },
         {
           "Id": "VirtoCommerce.Skyflow",
@@ -109,16 +105,8 @@
           "Version": "3.809.0"
         },
         {
-          "Id": "VirtoCommerce.AvalaraTax",
-          "Version": "3.805.0"
-        },
-        {
           "Id": "VirtoCommerce.Quote",
           "Version": "3.913.0"
-        },
-        {
-          "Id": "VirtoCommerce.CustomerReviews",
-          "Version": "3.907.0"
         },
         {
           "Id": "VirtoCommerce.XFrontend",
@@ -137,10 +125,6 @@
           "Version": "3.907.0"
         },
         {
-          "Id": "VirtoCommerce.SqlQueries",
-          "Version": "3.803.0"
-        },
-        {
           "Id": "VirtoCommerce.Subscription",
           "Version": "3.813.0"
         },
@@ -153,16 +137,8 @@
           "Version": "3.908.0"
         },
         {
-          "Id": "VirtoCommerce.Xapi",
-          "Version": "3.1001.0"
-        },
-        {
           "Id": "VirtoCommerce.FileExperienceApi",
           "Version": "3.1000.0"
-        },
-        {
-          "Id": "VirtoCommerce.ProfileExperienceApiModule",
-          "Version": "3.928.0"
         },
         {
           "Id": "VirtoCommerce.Search",
@@ -183,10 +159,6 @@
         {
           "Id": "VirtoCommerce.EventBus",
           "Version": "3.1000.0"
-        },
-        {
-          "Id": "VirtoCommerce.XOrder",
-          "Version": "3.916.0"
         },
         {
           "Id": "VirtoCommerce.Store",
@@ -313,10 +285,6 @@
           "Version": "3.1000.0"
         },
         {
-          "Id": "VirtoCommerce.Catalog",
-          "Version": "3.1001.0"
-        },
-        {
           "Id": "VirtoCommerce.XCatalog",
           "Version": "3.1000.0"
         },
@@ -326,6 +294,38 @@
         },
         {
           "Id": "VirtoCommerce.XCart",
+          "Version": "3.1000.0"
+        },
+        {
+          "Id": "VirtoCommerce.Catalog",
+          "Version": "3.1002.0"
+        },
+        {
+          "Id": "VirtoCommerce.XOrder",
+          "Version": "3.1000.0"
+        },
+        {
+          "Id": "VirtoCommerce.SqlQueries",
+          "Version": "3.1000.0"
+        },
+        {
+          "Id": "VirtoCommerce.AvalaraTax",
+          "Version": "3.1000.0"
+        },
+        {
+          "Id": "VirtoCommerce.ProfileExperienceApiModule",
+          "Version": "3.1000.0"
+        },
+        {
+          "Id": "VirtoCommerce.MarketingExperienceApi",
+          "Version": "3.902.0"
+        },
+        {
+          "Id": "VirtoCommerce.Xapi",
+          "Version": "3.1003.0"
+        },
+        {
+          "Id": "VirtoCommerce.CustomerReviews",
           "Version": "3.1000.0"
         },
         {

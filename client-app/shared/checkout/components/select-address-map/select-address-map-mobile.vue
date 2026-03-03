@@ -12,6 +12,7 @@
           v-show="activeView === 'list'"
           :addresses="addresses"
           :selected-address-id="selectedAddressId"
+          :selectable="selectable"
           class="select-address-map-mobile__list"
           @select="onSelect"
           @reset-filter="resetFilter"
@@ -50,6 +51,7 @@
           <PickupLocationCard
             v-if="isInfoCardVisible"
             :location="selectedLocation"
+            :selectable="selectable"
             data-test-id="pickup-location-card"
             @close="onInfoCardClose"
             @select="onCardSelect"
@@ -65,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, toRef } from "vue";
+import { nextTick, ref, toRef, watch } from "vue";
 import { SelectAddressFilter } from "@/shared/checkout";
 import { useSelectAddressMap } from "@/shared/checkout/composables";
 import { useModal } from "@/shared/modal";
@@ -80,6 +82,7 @@ interface IProps {
   addresses: PickupLocationType[];
   apiKey: string;
   currentAddress?: { id: string };
+  selectable?: boolean;
 }
 
 interface IEmits {
@@ -88,7 +91,9 @@ interface IEmits {
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  selectable: true,
+});
 
 const { closeModal } = useModal();
 const activeView = ref<ViewModeType>("list");
@@ -102,6 +107,24 @@ const { selectedAddressId, filterIsApplied, pickupLocationsLoading, selectAddres
     currentAddress: toRef(props, "currentAddress"),
     onFilterChange: () => emit("filterChange"),
   });
+
+// Automatically scroll to current address in list and position map
+watch(
+  () => props.addresses,
+  (addresses) => {
+    if (props.currentAddress?.id && addresses.length) {
+      const currentLocation = addresses.find((addr) => addr.id === props.currentAddress?.id);
+
+      if (currentLocation) {
+        selectAddress(currentLocation, {
+          scrollToSelectedOnMap: true,
+          scrollToSelectedOnList: true,
+        });
+      }
+    }
+  },
+  { immediate: true, flush: "post" },
+);
 
 function onSelect(address: PickupLocationType) {
   selectAddress(address, { scrollToSelectedOnMap: true });

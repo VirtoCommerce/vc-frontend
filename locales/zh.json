@@ -723,7 +723,7 @@
       },
       "shipment_options": {
         "title": "配送选项",
-        "in_store": "门店自提"
+        "check_pickup_locations": "查看自提点"
       }
     },
     "checkout": {

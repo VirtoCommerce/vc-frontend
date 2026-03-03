@@ -723,7 +723,7 @@
       },
       "shipment_options": {
         "title": "Versandoptionen",
-        "in_store": "Abholung im Geschäft"
+        "check_pickup_locations": "Abholstandorte prüfen"
       }
     },
     "checkout": {
