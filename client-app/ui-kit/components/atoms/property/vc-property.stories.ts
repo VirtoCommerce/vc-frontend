@@ -1,18 +1,27 @@
 import { VcProperty } from "..";
-import type { Meta, StoryFn } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-export default {
+const meta: Meta<typeof VcProperty> = {
   title: "Components/Atoms/VcProperty",
   component: VcProperty,
-} as Meta<typeof VcProperty>;
+  render: (args) => ({
+    setup: () => ({ args }),
+    template: '<VcProperty v-bind="args">Value</VcProperty>',
+  }),
+};
 
-const Template: StoryFn = (args) => ({
-  components: { VcProperty },
-  setup: () => ({ args }),
-  template: '<VcProperty v-bind="args">Value</VcProperty>',
-});
+export default meta;
+type StoryType = StoryObj<typeof meta>;
 
-export const Basic = Template.bind({});
-Basic.args = {
-  label: "Label",
+export const Basic: StoryType = {
+  args: {
+    label: "Label",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcProperty label="Label">Value</VcProperty>`,
+      },
+    },
+  },
 };
