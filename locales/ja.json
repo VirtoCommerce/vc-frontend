@@ -547,7 +547,8 @@
       "promotion_coupons": {
         "expired": "期限切れ",
         "click_to_copy": "コピーするにはクリック",
-        "clipboard_success": "クーポンをコピーしました"
+        "clipboard_success": "クーポンをコピーしました",
+        "tap_to_copy": "タップしてコピー"
       }
     },
     "company": {

@@ -547,7 +547,8 @@
       "promotion_coupons": {
         "expired": "已过期",
         "click_to_copy": "点击复制",
-        "clipboard_success": "优惠券已复制"
+        "clipboard_success": "优惠券已复制",
+        "tap_to_copy": "点击复制"
       }
     },
     "company": {

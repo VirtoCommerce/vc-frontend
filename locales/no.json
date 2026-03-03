@@ -547,7 +547,8 @@
       "promotion_coupons": {
         "expired": "Utløpt",
         "click_to_copy": "Klikk for å kopiere",
-        "clipboard_success": "Kupong kopiert vellykket"
+        "clipboard_success": "Kupong kopiert vellykket",
+        "tap_to_copy": "Trykk for å kopiere"
       }
     },
     "company": {

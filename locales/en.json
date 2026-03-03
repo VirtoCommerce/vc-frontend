@@ -547,7 +547,8 @@
       "promotion_coupons": {
         "expired": "Expired",
         "click_to_copy": "Click to copy",
-        "clipboard_success": "Coupon copied successfully"
+        "clipboard_success": "Coupon copied successfully",
+        "tap_to_copy": "Tap to copy"
       }
     },
     "company": {

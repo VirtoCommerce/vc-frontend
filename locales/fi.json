@@ -547,7 +547,8 @@
       "promotion_coupons": {
         "expired": "Vanhentunut",
         "click_to_copy": "Kopioi napsauttamalla",
-        "clipboard_success": "Kuponki kopioitu onnistuneesti"
+        "clipboard_success": "Kuponki kopioitu onnistuneesti",
+        "tap_to_copy": "Napauta kopioidaksesi"
       }
     },
     "company": {

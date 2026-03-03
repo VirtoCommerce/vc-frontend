@@ -547,7 +547,8 @@
       "promotion_coupons": {
         "expired": "Истекший",
         "click_to_copy": "Нажмите, чтобы скопировать",
-        "clipboard_success": "Купон успешно скопирован"
+        "clipboard_success": "Купон успешно скопирован",
+        "tap_to_copy": "Нажмите, чтобы скопировать"
       }
     },
     "company": {
