@@ -1,6 +1,7 @@
 import blackGold from './black-gold.json'
 import coffeeDark from './coffee.dark.json'
 import coffee from './coffee.json'
+import defaultDark from './default.dark.json'
 import defaultPreset from './default.json'
 import mercuryDark from './mercury.dark.json'
 import mercury from './mercury.json'
@@ -18,6 +19,7 @@ export const presets: Record<string, IThemeConfigPreset> = {
 };
 
 export const darkPresets: Record<string, IThemeConfigPreset> = {
+  default: defaultDark,
   coffee: coffeeDark,
   mercury: mercuryDark,
 };
