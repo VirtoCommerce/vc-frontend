@@ -1276,7 +1276,8 @@
         "error": "Einige Probleme während der Nachahmung. Überprüfen Sie Ihre Berechtigungen"
       },
       "promotion_coupons": {
-        "title": "Alle Gutscheine & Aktionen"
+        "title": "Alle Gutscheine & Aktionen",
+        "no_lists": "Sie haben keine Gutscheine oder Aktionen"
       }
     },
     "company": {

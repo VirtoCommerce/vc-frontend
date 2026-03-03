@@ -1276,7 +1276,8 @@
         "error": "Problemer med identitetsetterligning. Kontroller tilgangsrettighetene dine"
       },
       "promotion_coupons": {
-        "title": "Alle kuponger og kampanjer"
+        "title": "Alle kuponger og kampanjer",
+        "no_lists": "Du har ingen kuponger eller kampanjer"
       }
     },
     "company": {

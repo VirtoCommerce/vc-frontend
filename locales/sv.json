@@ -1276,7 +1276,8 @@
         "error": "Några problem uppstod under impersonation. Kontrollera dina behörigheter"
       },
       "promotion_coupons": {
-        "title": "Alla kuponger & kampanjer"
+        "title": "Alla kuponger & kampanjer",
+        "no_lists": "Du har inga kuponger eller kampanjer"
       }
     },
     "company": {

@@ -1276,7 +1276,8 @@
         "error": "Some problems occurred during impersonation. Check your permissions"
       },
       "promotion_coupons": {
-        "title": "All coupons & promotions"
+        "title": "All coupons & promotions",
+        "no_lists": "You don't have any coupons or promotions"
       }
     },
     "company": {

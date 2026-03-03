@@ -1276,7 +1276,8 @@
         "error": "Alguns problemas durante a personificação. Verifique suas permissões"
       },
       "promotion_coupons": {
-        "title": "Todos os cupons e promoções"
+        "title": "Todos os cupons e promoções",
+        "no_lists": "Você não tem cupons ou promoções"
       }
     },
     "company": {

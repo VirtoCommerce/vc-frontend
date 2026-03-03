@@ -1276,7 +1276,8 @@
         "error": "Algunos problemas durante la suplantación. Verifica tus permisos"
       },
       "promotion_coupons": {
-        "title": "Todos los cupones y promociones"
+        "title": "Todos los cupones y promociones",
+        "no_lists": "No tienes cupones ni promociones"
       }
     },
     "company": {

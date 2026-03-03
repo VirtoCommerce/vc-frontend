@@ -1276,7 +1276,8 @@
         "error": "Des problèmes sont survenus lors de l'imitation. Vérifiez vos autorisations"
       },
       "promotion_coupons": {
-        "title": "Tous les coupons et promotions"
+        "title": "Tous les coupons et promotions",
+        "no_lists": "Vous n'avez aucun coupon ni promotion"
       }
     },
     "company": {

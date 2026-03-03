@@ -1276,7 +1276,8 @@
         "error": "Henkilöllisyyden jäljittelyssä ilmeni ongelmia. Tarkista käyttöoikeutesi"
       },
       "promotion_coupons": {
-        "title": "Kaikki kupongit ja tarjoukset"
+        "title": "Kaikki kupongit ja tarjoukset",
+        "no_lists": "Sinulla ei ole kuponkeja tai tarjouksia"
       }
     },
     "company": {

@@ -1276,7 +1276,8 @@
         "error": "Wystąpiły problemy podczas podrabiania. Sprawdź swoje uprawnienia"
       },
       "promotion_coupons": {
-        "title": "Wszystkie kupony i promocje"
+        "title": "Wszystkie kupony i promocje",
+        "no_lists": "Nie masz żadnych kuponów ani promocji"
       }
     },
     "company": {

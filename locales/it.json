@@ -1276,7 +1276,8 @@
         "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi"
       },
       "promotion_coupons": {
-        "title": "Tutti i coupon e le promozioni"
+        "title": "Tutti i coupon e le promozioni",
+        "no_lists": "Non hai coupon o promozioni"
       }
     },
     "company": {
