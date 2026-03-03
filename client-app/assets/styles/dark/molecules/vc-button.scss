@@ -20,53 +20,43 @@
     --text-color: var(--color-additional-950);
   }
 
-  &--solid {
-    @each $color in $colors {
-      &--#{$color} {
-        --bg-color: var(--color-#{$color}-400);
-        --border-color: var(--color-#{$color}-400);
+  @each $color in $colors {
+    &--solid--#{$color} {
+      --bg-color: var(--color-#{$color}-400);
+      --border-color: var(--color-#{$color}-400);
 
-        &:hover:not(#{$loading}, #{$disabled}) {
-          --bg-color: var(--color-#{$color}-500);
-          --border-color: var(--color-#{$color}-500);
-        }
+      &:hover:not(#{$loading}, #{$disabled}) {
+        --bg-color: var(--color-#{$color}-500);
+        --border-color: var(--color-#{$color}-500);
       }
     }
   }
 
-  &--outline {
-    @each $color in $colors {
-      &--#{$colors} {
-        --text-color: var(--color-#{$color}-900);
-        --border-color: var(--color-#{$color}-600);
-      }
+  @each $color in $colors {
+    &--outline--#{$colors} {
+      --text-color: var(--color-#{$color}-900);
+      --border-color: var(--color-#{$color}-600);
     }
   }
 
-  &--no-border {
-    @each $color in $colors {
-      &--#{$colors} {
-        --bg-color: transparent;
-        --border-color: transparent;
-        --text-color: var(--color-#{$color}-900);
-      }
+  @each $color in $colors {
+    &--no-border--#{$colors} {
+      --bg-color: transparent;
+      --border-color: transparent;
+      --text-color: var(--color-#{$color}-900);
     }
   }
 
-  &--no-background {
-    @each $color in $colors {
-      &--#{$colors} {
-        --text-color: var(--color-#{$color}-900);
-      }
+  @each $color in $colors {
+    &--no-background--#{$colors} {
+      --text-color: var(--color-#{$color}-900);
     }
   }
 
-  &--solid-light {
-    @each $color in $colors {
-      &--#{$colors} {
-        --bg-color: var(--color-#{$color}-200);
-        --text-color: var(--color-#{$color}-900);
-      }
+  @each $color in $colors {
+    &--solid-light--#{$colors} {
+      --bg-color: var(--color-#{$color}-200);
+      --text-color: var(--color-#{$color}-900);
     }
   }
 }
