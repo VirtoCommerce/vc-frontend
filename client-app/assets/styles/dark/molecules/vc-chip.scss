@@ -1,0 +1,35 @@
+// Solid chips: same additional-50→950 swap for text and icons.
+.vc-chip {
+  $colors: primary, secondary, accent, neutral, success, danger, info, warning;
+  $solid: "";
+  $solidLight: "";
+
+  &--variant {
+    &--solid {
+      $solid: &;
+
+      --text-color: var(--color-additional-950);
+      --main-icon-color: var(--color-additional-950);
+      --close-button-icon-color: var(--color-additional-950);
+    }
+
+    &--solid-light {
+      $solidLight: &;
+    }
+  }
+
+  &--color {
+    @each $color in $colors {
+      &--#{$color} {
+        &#{$solid} {
+          --bg-color: var(--color-#{$color}-400);
+          --border-color: var(--color-#{$color}-400);
+        }
+
+        &#{$solidLight} {
+          --bg-color: var(--color-#{$color}-100);
+        }
+      }
+    }
+  }
+}

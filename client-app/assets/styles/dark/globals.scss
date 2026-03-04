@@ -1,0 +1,15 @@
+// Input placeholder text: ensure readability on dark surfaces
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-neutral-600);
+}
+
+// Autofill: browser forces light background; override with dark surface + light text
+input:autofill,
+textarea:autofill {
+  -webkit-text-fill-color: var(--color-neutral-100);
+
+  &:disabled {
+    -webkit-text-fill-color: var(--color-neutral-500);
+  }
+}
