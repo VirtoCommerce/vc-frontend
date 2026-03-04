@@ -53,13 +53,6 @@
               :value="sortingOption.id"
               :label="sortingOption.name"
               class="category-horizontal-filters__sorting-input"
-              @change="
-                () => {
-                  emit('applySort');
-                  close();
-                }
-              "
-              @click.stop
             />
           </VcMenuItem>
         </template>
@@ -102,11 +95,6 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
 });
 
-function sortingItemClickHandler(id: string, close: () => void) {
-  sortQueryParam.value = id;
-  close();
-}
-
 const { t } = useI18n();
 
 function getTranslatedProductSortingList() {
@@ -117,6 +105,12 @@ function getTranslatedProductSortingList() {
 }
 
 const translatedProductSortingList = computed(() => getTranslatedProductSortingList());
+
+function sortingItemClickHandler(id: string, close: () => void) {
+  sortQueryParam.value = id;
+  emit("applySort");
+  close();
+}
 </script>
 
 <style lang="scss">
