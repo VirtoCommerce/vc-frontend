@@ -1,43 +1,81 @@
 import { ApolloError } from "@apollo/client/core";
-import { useMutation } from "@vue/apollo-composable";
+import { useMutation, useLazyQuery } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { AbortReason } from "@/core/api/common/enums";
-import { getSavedForLater as getSavedForLaterQuery } from "@/core/api/graphql/cart/queries/getSavedForLater";
-import { MoveToSavedForLaterDocument, MoveFromSavedForLaterDocument } from "@/core/api/graphql/types";
-import { useMutationBatcher } from "@/core/composables/useMutationBatcher";
+import {
+  MoveToSavedForLaterDocument,
+  MoveFromSavedForLaterDocument,
+  GetSavedForLaterDocument,
+} from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import type { SavedForLaterListFragment } from "@/core/api/graphql/types";
+import { useFullCart } from "@/shared/cart";
 
 function _useSavedForLater() {
   const { storeId, currencyCode, cultureName, userId } = globals;
 
-  const savedForLaterList = ref<SavedForLaterListFragment>();
+  const { cart } = useFullCart();
 
-  const { mutate: _moveToSavedForLater, loading: _moveToSavedForLaterLoading } =
-    useMutation(MoveToSavedForLaterDocument);
+  const savedForLaterList = computed(() => _savedForLaterQueryResult.value?.getSavedForLater);
 
   const {
-    add: _moveToSavedForLaterBatched,
-    overflowed: moveToSavedForLaterOverflowed,
-    loading: _moveToSavedForLaterBatchedLoading,
-  } = useMutationBatcher(_moveToSavedForLater);
+    load: getSavedForLater,
+    loading: _getSavedForLaterLoading,
+    result: _savedForLaterQueryResult,
+  } = useLazyQuery(
+    GetSavedForLaterDocument,
+    {
+      storeId,
+      userId,
+      cultureName,
+      currencyCode,
+    },
+    {
+      notifyOnNetworkStatusChange: true,
+      fetchPolicy: "cache-first",
+    },
+  );
 
-  async function moveToSavedForLater(cartId: string, itemIds: string[]) {
+  const { mutate: _moveToSavedForLater, loading: _moveToSavedForLaterLoading } = useMutation(
+    MoveToSavedForLaterDocument,
+    {
+      optimisticResponse(vars, { IGNORE }) {
+        const movedItemIds = vars.command?.lineItemIds;
+
+        if (!movedItemIds?.length || !cart.value || !savedForLaterList.value) {
+          return IGNORE;
+        }
+
+        return {
+          moveToSavedForLater: {
+            cart: {
+              ...cart.value,
+              items: cart.value.items.filter((item) => !movedItemIds.includes(item.id)),
+            },
+            list: savedForLaterList.value,
+          },
+        };
+      },
+    },
+  );
+
+  async function moveToSavedForLater(itemIds: string[]) {
+    if (!cart.value) {
+      return;
+    }
+
     try {
-      const moveResult = await _moveToSavedForLaterBatched({
+      await _moveToSavedForLater({
         command: {
           storeId,
           userId,
           cultureName,
           currencyCode,
-          cartId,
+          cartId: cart.value.id,
           lineItemIds: itemIds,
         },
       });
-
-      savedForLaterList.value = moveResult?.data?.moveToSavedForLater?.list;
     } catch (err) {
       if (err instanceof ApolloError && err.networkError?.toString() === (AbortReason.Explicit as string)) {
         return;
@@ -46,29 +84,45 @@ function _useSavedForLater() {
     }
   }
 
-  const { mutate: _moveFromSavedForLater, loading: _moveFromSavedForLaterLoading } =
-    useMutation(MoveFromSavedForLaterDocument);
+  const { mutate: _moveFromSavedForLater, loading: _moveFromSavedForLaterLoading } = useMutation(
+    MoveFromSavedForLaterDocument,
+    {
+      optimisticResponse(vars, { IGNORE }) {
+        const movedItemIds = vars.command?.lineItemIds;
 
-  const {
-    add: _moveFromSavedForLaterBatched,
-    overflowed: moveFromSavedForLaterOverflowed,
-    loading: _moveFromSavedForLaterBatchedLoading,
-  } = useMutationBatcher(_moveFromSavedForLater);
+        if (!movedItemIds?.length || !cart.value || !savedForLaterList.value) {
+          return IGNORE;
+        }
 
-  async function moveFromSavedForLater(cartId: string, itemIds: string[]) {
+        return {
+          moveFromSavedForLater: {
+            cart: cart.value,
+            list: {
+              ...savedForLaterList.value,
+              items: savedForLaterList.value.items.filter((item) => !movedItemIds.includes(item.id)),
+            },
+          },
+        };
+      },
+    },
+  );
+
+  async function moveFromSavedForLater(itemIds: string[]) {
+    if (!cart.value) {
+      return;
+    }
+
     try {
-      const moveResult = await _moveFromSavedForLaterBatched({
+      await _moveFromSavedForLater({
         command: {
           storeId,
           userId,
           cultureName,
           currencyCode,
-          cartId,
+          cartId: cart.value.id,
           lineItemIds: itemIds,
         },
       });
-
-      savedForLaterList.value = moveResult?.data?.moveFromSavedForLater?.list;
     } catch (err) {
       if (err instanceof ApolloError && err.networkError?.toString() === (AbortReason.Explicit as string)) {
         return;
@@ -77,34 +131,15 @@ function _useSavedForLater() {
     }
   }
 
-  const _getSavedForLaterLoading = ref(false);
-  async function getSavedForLater() {
-    try {
-      _getSavedForLaterLoading.value = true;
-      savedForLaterList.value = await getSavedForLaterQuery();
-    } catch (err) {
-      Logger.error(`useSavedForLater.${getSavedForLater.name}`, err);
-    } finally {
-      _getSavedForLaterLoading.value = false;
-    }
-  }
-
   return {
     savedForLaterList,
 
     moveToSavedForLater,
-    moveToSavedForLaterOverflowed,
     moveFromSavedForLater,
-    moveFromSavedForLaterOverflowed,
     getSavedForLater,
 
     loading: computed(
-      () =>
-        _moveToSavedForLaterLoading.value ||
-        _moveToSavedForLaterBatchedLoading.value ||
-        _moveFromSavedForLaterLoading.value ||
-        _moveFromSavedForLaterBatchedLoading.value ||
-        _getSavedForLaterLoading.value,
+      () => _getSavedForLaterLoading.value || _moveToSavedForLaterLoading.value || _moveFromSavedForLaterLoading.value,
     ),
   };
 }
