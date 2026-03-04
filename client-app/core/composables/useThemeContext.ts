@@ -8,6 +8,59 @@ import { BrowserTargetType } from "../enums";
 import type { StoreResponseType } from "../api/graphql/types";
 import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
 
+const loadedPresets = new Map<string, IThemeConfigPreset>();
+
+export function getPredefinedPreset(presetName: string): IThemeConfigPreset | null {
+  if (presetName in presets) {
+    return presets[presetName];
+  }
+
+  return null;
+}
+
+export async function loadPreset(presetName: string): Promise<IThemeConfigPreset | null> {
+  // Check runtime cache for loaded presets
+  if (loadedPresets.has(presetName)) {
+    return loadedPresets.get(presetName)!;
+  }
+
+  // Attempt to fetch preset from public assets folder
+  try {
+    const response = await fetch(`/assets/presets/${presetName}.json`);
+
+    if (response.ok) {
+      const preset = (await response.json()) as IThemeConfigPreset;
+
+      // Cache the loaded preset
+      loadedPresets.set(presetName, preset);
+
+      return preset;
+    }
+  } catch (error) {
+    // Network or parsing errors - log and return null
+    // eslint-disable-next-line no-console
+    console.warn(`Failed to load preset "${presetName}" from /assets/presets/:`, error);
+  }
+
+  return null;
+}
+
+export async function getPreset(presetName: string): Promise<IThemeConfigPreset | null> {
+  // Check predefined bundled presets first
+  const predefinedPreset = getPredefinedPreset(presetName);
+  if (predefinedPreset) {
+    return predefinedPreset;
+  }
+
+  // Attempt to load preset from json file at runtime
+  const loadedPreset = await loadPreset(presetName);
+  if (loadedPreset) {
+    return loadedPreset;
+  }
+
+  return null;
+}
+
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
 
@@ -26,17 +79,19 @@ function _useThemeContext() {
     };
   }
 
-  function addPresetToThemeContext(presetName: string): void {
+  async function addPresetToThemeContext(presetName: string): Promise<void> {
     if (!themeContext.value) {
       throw new Error("The global state should be defined");
     }
 
-    let preset = getPreset(presetNameToFileName(presetName));
+    let preset = await getPreset(presetNameToFileName(presetName));
 
     if (!preset) {
       const defaultPresetName = getThemeConfig().current;
-      preset = getPreset(presetNameToFileName(defaultPresetName));
+      preset = await getPreset(presetNameToFileName(defaultPresetName));
     }
+
+    preset ??= presets.default;
 
     if (preset) {
       themeContext.value.preset = preset;
@@ -48,21 +103,13 @@ function _useThemeContext() {
   function getThemeConfig() {
     const data = cloneDeep(settingsData) as IThemeConfig;
 
-    if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
+    if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings != null) {
       data.settings.details_browser_target = BrowserTargetType.SELF;
       data.settings.product_page_browser_target = BrowserTargetType.SELF;
       data.settings.cart_page_browser_target = BrowserTargetType.SELF;
     }
 
     return data;
-  }
-
-  function getPreset(themePresetName: string): IThemeConfigPreset {
-    if (themePresetName in presets) {
-      return presets[themePresetName];
-    } else {
-      return presets.default;
-    }
   }
 
   function presetNameToFileName(name: string): string {
