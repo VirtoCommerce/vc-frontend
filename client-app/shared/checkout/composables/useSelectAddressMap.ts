@@ -27,6 +27,14 @@ function getLatLng(location: string | undefined) {
   }
 }
 
+function scrollToAddressInList(addressId: string) {
+  const listElement = document.querySelector(`[data-address-id="${CSS.escape(addressId)}"]`);
+
+  if (listElement) {
+    listElement.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
 export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
   const { addresses, currentAddress, onFilterChange } = options;
 
@@ -94,11 +102,7 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
     }
 
     if (selectOptions.scrollToSelectedOnList && address.id) {
-      const listElement = document.querySelector(`[data-address-id="${CSS.escape(address.id)}"]`);
-
-      if (listElement) {
-        listElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
+      scrollToAddressInList(address.id);
     }
   }
 
@@ -146,6 +150,17 @@ export function useSelectAddressMap(options: IUseSelectAddressMapOptions) {
         if (latLng) {
           zoomToLatLng(latLng);
         }
+      }
+
+      // Automatically open info card and scroll to selected item in list
+      if (address) {
+        onceIdle(() => {
+          showLocationInfoCard(address);
+
+          if (address.id) {
+            scrollToAddressInList(address.id);
+          }
+        });
       }
 
       unwatch();
