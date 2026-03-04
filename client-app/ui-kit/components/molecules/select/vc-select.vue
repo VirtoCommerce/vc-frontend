@@ -12,7 +12,7 @@
       },
     ]"
   >
-    <VcLabel v-if="label" :required="required" :error="error">
+    <VcLabel v-if="label" :for-id="triggerId" :required="required" :error="error">
       {{ label }}
     </VcLabel>
 
@@ -22,15 +22,27 @@
       :data-test-id="testIdDropdown"
       tabindex="-1"
       width="trigger"
+      :list-id="listboxId"
+      list-role="listbox"
+      :list-label="accessibleLabel"
       @toggle="toggled"
     >
       <template #trigger="{ open, toggle, close }">
         <div
           v-if="$slots.selected || $slots.placeholder"
+          :id="triggerId"
           ref="triggerElement"
           tabindex="0"
           role="button"
-          :aria-label="label"
+          :aria-label="accessibleLabel"
+          :aria-expanded="isShown"
+          aria-haspopup="listbox"
+          :aria-controls="isShown ? listboxId : undefined"
+          :aria-activedescendant="activeDescendantId"
+          :aria-invalid="error || undefined"
+          :aria-required="required || undefined"
+          :aria-disabled="disabled || undefined"
+          :aria-describedby="detailsId"
           class="vc-select__button"
           @click="toggle"
           @keydown.enter="toggle"
@@ -50,7 +62,19 @@
           ref="triggerElement"
           v-model="search"
           class="vc-select__input"
-          :aria-label="label"
+          :aria-label="accessibleLabel"
+          :aria="{
+            id: triggerId,
+            role: 'combobox',
+            'aria-expanded': String(isShown),
+            'aria-haspopup': 'listbox',
+            'aria-controls': isShown ? listboxId : null,
+            'aria-activedescendant': activeDescendantId ?? null,
+            'aria-invalid': error ? 'true' : null,
+            'aria-required': required ? 'true' : null,
+            'aria-autocomplete': autocomplete ? 'list' : null,
+            'aria-describedby': detailsId,
+          }"
           :required="required"
           :size="size"
           :placeholder="placeholderText"
@@ -67,6 +91,7 @@
           <template #append>
             <VcButton
               v-if="isClearButtonVisible"
+              :aria-label="$t('ui_kit.buttons.clear')"
               :disabled="disabled"
               type="button"
               icon="delete-thin"
@@ -96,6 +121,7 @@
         <VcMenuItem
           v-for="(item, index) in filteredItems"
           :key="index"
+          :option-id="getOptionId(index)"
           :data-vc-select-option="componentId"
           :active="isActiveItem(item)"
           :aria-selected="isActiveItem(item)"
@@ -113,20 +139,28 @@
           @keydown.down.prevent="next(index)"
           @keydown.tab.prevent="handleTab($event, index)"
         >
-          <VcCheckbox v-if="multiple" :model-value="isActiveItem(item)" tabindex="-1" />
+          <VcCheckbox v-if="multiple" :model-value="isActiveItem(item)" :aria-label="getItemText(item)" tabindex="-1" />
 
           <slot name="item" v-bind="{ item, index }">
             {{ getItemText(item) }}
           </slot>
         </VcMenuItem>
 
-        <VcMenuItem v-if="filterValue && !filteredItems.length" disabled>
-          {{ $t("ui_kit.messages.no_results") }}
+        <VcMenuItem v-if="!filteredItems.length" role="option" :aria-selected="false" disabled>
+          {{ $t(filterValue ? "ui_kit.messages.no_results" : "ui_kit.select.no_options") }}
         </VcMenuItem>
       </template>
     </VcDropdownMenu>
 
-    <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" :single-line="singleLineMessage" />
+    <VcInputDetails
+      :id="detailsId"
+      :show-empty="showEmptyDetails"
+      :message="message"
+      :error="error"
+      :single-line="singleLineMessage"
+    />
+
+    <span aria-live="polite" class="sr-only">{{ liveRegionMessage }}</span>
   </div>
 </template>
 
@@ -136,7 +170,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { union, lowerCase, isEqual } from "lodash";
-import { computed, ref, useTemplateRef, provide, toRef } from "vue";
+import { computed, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/atoms/popover/vc-popover-context";
 import { useComponentId } from "@/ui-kit/composables";
@@ -144,6 +178,7 @@ import { useComponentId } from "@/ui-kit/composables";
 interface IProps {
   modelValue?: object | string | Array<object | string>;
   label?: string;
+  ariaLabel?: string;
   required?: boolean;
   disabled?: boolean;
   readonly?: boolean;
@@ -180,10 +215,29 @@ provide(vcPopoverKey, { enableTeleport: toRef(() => props.enableTeleport ?? fals
 
 const { t } = useI18n();
 const componentId = useComponentId("select");
+const triggerId = componentId + "-trigger";
+const detailsId = componentId + "-details";
+const listboxId = componentId + "-listbox";
 const triggerElement = useTemplateRef<HTMLElement | { $el: HTMLElement }>("triggerElement");
+
+const accessibleLabel = computed(() => props.ariaLabel ?? props.label);
 
 const isShown = ref(false);
 const filterValue = ref("");
+const focusedOptionIndex = ref(-1);
+
+function getOptionId(index: number) {
+  return `${componentId}-option-${index}`;
+}
+
+const activeDescendantId = computed(() => {
+  if (isShown.value && focusedOptionIndex.value >= 0) {
+    return getOptionId(focusedOptionIndex.value);
+  }
+  return undefined;
+});
+
+const liveRegionMessage = ref("");
 
 const getItemText = (item: any) => (props.textField && item ? item[props.textField] : item);
 const getItemValue = (item: any) => (props.valueField && item ? item[props.valueField] : item);
@@ -258,6 +312,18 @@ const filteredItems = computed(() => {
   return union(first, items);
 });
 
+watch(filteredItems, (items) => {
+  focusedOptionIndex.value = -1;
+
+  if (isShown.value && filterValue.value) {
+    liveRegionMessage.value = items.length
+      ? t("ui_kit.select.results_available", [items.length])
+      : t("ui_kit.select.no_results_found");
+  } else {
+    liveRegionMessage.value = "";
+  }
+});
+
 function isActiveItem(item: any) {
   const itemValue = getItemValue(item);
 
@@ -307,6 +373,7 @@ function next(index: number) {
 
   if (elements?.length) {
     const focusItemIndex = index === elements?.length - 1 ? 0 : index + 1;
+    focusedOptionIndex.value = focusItemIndex;
     const nextElement = elements[focusItemIndex];
 
     if (nextElement instanceof HTMLElement) {
@@ -320,6 +387,7 @@ function prev(index: number) {
 
   if (elements?.length) {
     const focusItemIndex = index === 0 ? elements?.length - 1 : index - 1;
+    focusedOptionIndex.value = focusItemIndex;
     const prevElement = elements[focusItemIndex];
 
     if (prevElement instanceof HTMLElement) {
@@ -333,6 +401,7 @@ function toggled(value: boolean) {
 
   if (!isShown.value) {
     filterValue.value = "";
+    focusedOptionIndex.value = -1;
   }
 }
 
@@ -466,6 +535,10 @@ function handleTab(event: KeyboardEvent, index: number) {
 
     #{$disabled} & {
       @apply text-neutral;
+    }
+
+    #{$readonly} & {
+      @apply hidden;
     }
   }
 

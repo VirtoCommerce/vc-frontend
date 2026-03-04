@@ -1,11 +1,20 @@
 <template>
-  <component :is="componentTag" :id="componentId" v-bind="$attrs" ref="currentElement" class="vc-menu-item" role="none">
+  <component
+    :is="componentTag"
+    :id="componentId"
+    v-bind="$attrs"
+    ref="currentElement"
+    class="vc-menu-item"
+    :role="wrapperRole"
+  >
     <component
       :is="innerTag"
+      :id="optionId"
       v-bind="attrs"
       :disabled="disabled"
       :title="title"
       :role="role"
+      :aria-selected="computedAriaSelected"
       :class="[
         'vc-menu-item__inner',
         `vc-menu-item__inner--size--${size}`,
@@ -37,9 +46,10 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, provide, onMounted } from "vue";
 import { getLinkAttr } from "@/core/utilities/common";
 import { useComponentId } from "@/ui-kit/composables";
+import { INTERACTIVE_PARENT_KEY } from "./vc-menu-item-context";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -61,6 +71,8 @@ interface IProps {
   tag?: string;
   clickable?: boolean;
   role?: string;
+  ariaSelected?: boolean;
+  optionId?: string;
 }
 
 defineOptions({
@@ -112,6 +124,11 @@ const innerTag = computed(() => {
   return "span";
 });
 
+const isInteractive = computed(
+  () => innerTag.value === "button" || innerTag.value === "a" || innerTag.value === "router-link",
+);
+provide(INTERACTIVE_PARENT_KEY, isInteractive);
+
 const attrs = computed(() => {
   if (innerTag.value === "router-link") {
     return { to: props.to, target: props.target, tabindex: 0 };
@@ -126,6 +143,36 @@ const attrs = computed(() => {
   }
 
   return {};
+});
+
+/**
+ * Roles that support the `aria-selected` attribute per WAI-ARIA spec.
+ */
+const ARIA_SELECTED_ROLES = new Set(["option", "tab", "gridcell", "row", "treeitem", "columnheader", "rowheader"]);
+
+/**
+ * Only render `aria-selected` when the inner element has a role that supports it.
+ * Plain buttons (implicit role="button") must not have `aria-selected`.
+ */
+const computedAriaSelected = computed(() => {
+  if (props.role && ARIA_SELECTED_ROLES.has(props.role)) {
+    return props.ariaSelected;
+  }
+  return undefined;
+});
+
+/**
+ * The outer wrapper role:
+ * - When the inner element carries its own ARIA role (e.g. "option" inside a listbox),
+ *   the wrapper is purely presentational → role="none".
+ * - Otherwise, omit the role so that <li> keeps its natural "listitem" semantics
+ *   inside a <ul>, satisfying the "list" a11y rule.
+ */
+const wrapperRole = computed(() => {
+  if (props.role) {
+    return "none";
+  }
+  return undefined;
 });
 
 onMounted(() => {
@@ -175,7 +222,7 @@ onMounted(() => {
 
     &--size {
       &--xs {
-        --content-height: 0.875rem;
+        --content-height: 1rem;
 
         @apply gap-1.5 py-1 text-xs/[0.875rem];
       }
