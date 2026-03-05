@@ -61,12 +61,12 @@ function _useThemeContext() {
     return data;
   }
 
-  function getPreset(themePresetName: string): IThemeConfigPreset {
+  function getPreset(themePresetName: string): IThemeConfigPreset | undefined {
     if (themePresetName in presets) {
       return presets[themePresetName];
-    } else {
-      return presets.default;
     }
+
+    return undefined;
   }
 
   return {
