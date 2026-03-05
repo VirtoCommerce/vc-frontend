@@ -7,6 +7,12 @@
 html.dark {
   color-scheme: dark;
 
+  // Focus ring: in light mode --outline-color uses primary-500 at 40% opacity
+  // (defined in preflight.scss). On dark backgrounds this produces insufficient
+  // contrast (≈1.64:1 for coffee dark). Bump to primary-700 at 80% opacity so
+  // the ring meets WCAG 2.4.7 visible-focus requirements in every dark preset.
+  --outline-color: rgb(from var(--color-primary-700) r g b / 0.8);
+
   --link-color: var(--color-accent-700);
 
   // Input placeholder text: ensure readability on dark surfaces
@@ -28,6 +34,7 @@ html.dark {
   // Solid buttons: in dark mode additional-50 is near-black, so text must
   // use the light end (additional-950 = cream).
   [class*="vc-button--solid--"],
+  [class*="vc-button--solid--"]:hover,
   [class*="vc-badge--solid--"] {
     --text-color: var(--color-additional-950);
   }
@@ -66,6 +73,86 @@ html.dark {
       --bg-color: var(--color-#{$color}-200);
       --text-color: var(--color-#{$color}-900);
     }
+  }
+
+  // Focus ring: buttons override --outline-color per-color at 0.3 opacity.
+  // Bump to -700 at 0.8 for dark-mode visibility (matches global override above).
+  @each $color in primary, secondary, accent, neutral, success, danger, info, warning {
+    .vc-button--color--#{$color}:focus {
+      --outline-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
+    }
+  }
+
+  // Focus ring: chips override --outline-color per-color at 0.4 opacity.
+  @each $color in primary, secondary, accent, neutral, success, danger, info, warning {
+    .vc-chip--color--#{$color} {
+      --outline-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Focus ring: form inputs/controls use --focus-color at 0.3 opacity.
+  // Bump to 0.8 in dark mode for WCAG-compliant visibility.
+  // ---------------------------------------------------------------------------
+  .vc-input {
+    --focus-color: rgb(from var(--color) r g b / 0.8);
+  }
+
+  .vc-checkbox {
+    --focus-color: rgb(from var(--base-color) r g b / 0.8);
+  }
+
+  .vc-radio-button {
+    --focus-color: rgb(from var(--base-color) r g b / 0.8);
+  }
+
+  .vc-tab-switch {
+    --focus-color: rgb(from var(--color) r g b / 0.8);
+  }
+
+  // Focus ring: menu-item inner elements use --focus-color per-color at 0.3 opacity.
+  // Bump to -700 at 0.8 in dark mode.
+  @each $color in primary, secondary, accent, neutral, success, danger, info, warning {
+    .vc-menu-item__inner--color--#{$color} {
+      --focus-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
+    }
+  }
+
+  // Focus ring: payment iframe wrappers use --focus-color at 0.3 opacity.
+  .cyber-source-input-wrap {
+    --focus-color: rgb(from var(--color) r g b / 0.8);
+  }
+
+  .datatrans-input-wrap {
+    --focus-color: rgb(from var(--color) r g b / 0.8);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Ring offset: Tailwind defaults --tw-ring-offset-color to white.
+  // In dark mode, match the dark body background so the offset gap is invisible.
+  // ---------------------------------------------------------------------------
+  .vc-nav-button {
+    --tw-ring-offset-color: var(--color-additional-50);
+  }
+
+  .vc-slider__slider .noUi-handle {
+    --tw-ring-offset-color: var(--color-additional-50);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Focus ring: product-actions-button uses --focus-color at full opacity with
+  // -500 shades. Bump to -700 in dark mode for better contrast on dark surfaces.
+  // ---------------------------------------------------------------------------
+  @each $color in primary, secondary, accent, neutral, success, danger, info, warning {
+    .vc-product-actions-button--color--#{$color} {
+      --focus-color: var(--color-#{$color}-700);
+    }
+  }
+
+  // Inactive (non-active) product-actions-button defaults to neutral-500.
+  // Bump to neutral-700 in dark mode.
+  .vc-product-actions-button:not(.vc-product-actions-button--active) {
+    --focus-color: var(--color-neutral-700);
   }
 
   // Solid chips: same additional-50→950 swap for text and icons.
