@@ -315,7 +315,12 @@
           "call_us_label": "Поддержка: ",
           "logged_in_as": "вход под именем",
           "account_menu_label": "Меню аккаунта",
-          "no_results": "Результаты не найдены"
+          "no_results": "Результаты не найдены",
+          "dark_mode": {
+            "system": "Тема: авто",
+            "dark": "Тема: тёмная",
+            "light": "Тема: светлая"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "Каталог",

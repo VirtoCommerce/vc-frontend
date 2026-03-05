@@ -5,6 +5,7 @@ export * from "./useBrowserTarget";
 export * from "./useCategoriesRoutes";
 export * from "./useCountries";
 export * from "./useCurrency";
+export * from "./useDarkMode";
 export * from "./useErrorsTranslator";
 export * from "./useHistoricalEvents";
 export * from "./useImpersonate";
