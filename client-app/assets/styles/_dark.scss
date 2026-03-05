@@ -59,7 +59,6 @@ html.dark {
     }
 
     .vc-button--no-border--#{$color} {
-      --bg-color: transparent;
       --border-color: transparent;
       --text-color: var(--color-#{$color}-900);
     }

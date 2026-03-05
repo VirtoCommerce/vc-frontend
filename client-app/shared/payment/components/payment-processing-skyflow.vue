@@ -213,19 +213,19 @@ const baseInputStyles = {
   borderRadius: globalStyles.borderRadius,
   border: `1px solid ${globalStyles.borderColor}`,
   textSecurity: "none",
-  textIndent: "initial",
   "&:focus": `border: ${globalStyles.focusBorder}; box-shadow: ${globalStyles.focusShadow}`,
   padding: "0.75rem",
   color: globalStyles.textColor,
+  width: "100%",
 };
 
 const baseLabelStyles = {
   fontFamily: globalStyles.fontFamily,
   fontSize: "1rem",
   fontWeight: "700",
-  lineHeight: "1.25rem",
-  paddingBottom: "0.125rem",
+  paddingBottom: "0.25rem",
   color: globalStyles.textColor,
+  background: globalStyles.backgroundColor,
 };
 
 const baseErrorStyles = {
@@ -330,7 +330,6 @@ async function initNewCardForm(): Promise<void> {
   };
 
   const cardNameStyles = cloneDeep(collectStylesOptions);
-  cardNameStyles.inputStyles.base.textIndent = "36px";
 
   const cardName = container.create(
     {
