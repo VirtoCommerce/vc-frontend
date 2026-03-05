@@ -1,0 +1,9 @@
+// Focus ring: menu-item inner elements use --focus-color per-color at 0.3 opacity.
+// Bump to -700 at 0.8 in dark mode.
+$colors: primary, secondary, accent, neutral, success, danger, info, warning;
+
+@each $color in $colors {
+  .vc-menu-item__inner--color--#{$color} {
+    --focus-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
+  }
+}

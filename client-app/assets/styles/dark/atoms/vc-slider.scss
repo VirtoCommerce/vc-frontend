@@ -1,0 +1,4 @@
+// Ring offset: match dark body background so the offset gap is invisible.
+.vc-slider__slider .noUi-handle {
+  --tw-ring-offset-color: var(--color-additional-50);
+}
