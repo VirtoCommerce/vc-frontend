@@ -4,12 +4,21 @@ import { darkPresets } from "@/assets/presets";
 
 type ColorModeType = "light" | "dark" | "system";
 
+const VALID_MODES: ColorModeType[] = ["light", "dark", "system"];
+
 const DARK_AVAILABLE_KEY = "vc-dark-available";
 
 function _useDarkMode() {
   // IMPORTANT: The serialized format of this value is read by the inline FOUC
   // script in index.html. If you change the serializer, update that script too.
   const storedMode = useLocalStorage<ColorModeType>("vc-color-mode", "system");
+
+  // Sanitise value coming from localStorage – if the stored string is not
+  // one of the valid modes (e.g. manually corrupted), fall back to "system".
+  if (!VALID_MODES.includes(storedMode.value)) {
+    storedMode.value = "system";
+  }
+
   const systemPrefersDark = useMediaQuery("(prefers-color-scheme: dark)");
   const activePresetName = ref<string>();
 

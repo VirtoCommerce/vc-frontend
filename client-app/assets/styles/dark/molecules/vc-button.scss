@@ -59,4 +59,12 @@
       --text-color: var(--color-#{$color}-900);
     }
   }
+
+  // Focus ring: buttons override --outline-color per-color at 0.3 opacity.
+  // Bump to -700 at 0.8 for dark-mode visibility.
+  @each $color in $colors {
+    &--color--#{$color}:focus {
+      --outline-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
+    }
+  }
 }

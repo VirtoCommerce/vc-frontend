@@ -4,6 +4,7 @@
       "add_to_cart": "Ajouter au panier",
       "apply": "Appliquer",
       "cancel": "Annuler",
+      "clear": "Effacer",
       "close": "Fermer",
       "copy": "Copier",
       "deny": "Refuser",
@@ -79,7 +80,10 @@
       "next": "Suivant"
     },
     "select": {
-      "items_selected": "{0} articles sélectionnés"
+      "items_selected": "{0} articles sélectionnés",
+      "results_available": "{0} résultats disponibles",
+      "no_results_found": "Aucun résultat trouvé",
+      "no_options": "Aucune option disponible"
     },
     "file": {
       "progress": "{percent} terminé",
