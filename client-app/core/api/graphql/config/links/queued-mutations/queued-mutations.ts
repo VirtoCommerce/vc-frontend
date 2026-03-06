@@ -6,7 +6,7 @@ import type { IQueueConfig, IQueueTargetConfig, IQueueTarget, IOperationState, I
 import type { UpdateShortCartItemQuantityMutationVariables } from "@/core/api/graphql/types";
 import type { DefaultContext } from "@apollo/client/core";
 
-const DEFAULT_DEBOUNCE_MS = 1000;
+export const DEFAULT_DEBOUNCE_MS = 1000;
 
 /**
  * Creates a queued mutations link.
@@ -206,7 +206,7 @@ const updateShortCartItemQuantityConfig: IQueueTargetConfig<UpdateShortCartItemQ
  * This preserves type safety when defining each target while allowing
  * heterogeneous targets in the config array.
  */
-function createQueueTarget<TVars extends Record<string, unknown>>(
+export function createQueueTarget<TVars extends Record<string, unknown>>(
   name: string,
   config: IQueueTargetConfig<TVars>,
 ): IQueueTarget {
