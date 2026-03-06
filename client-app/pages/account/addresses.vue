@@ -163,7 +163,7 @@ const paginatedAddresses = computed(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 
-const columns = computed<ITableColumn[]>(() => [
+const columns = computed<VcTableColumnType[]>(() => [
   {
     id: "firstName",
     title: t("common.labels.recipient_name"),

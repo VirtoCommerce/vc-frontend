@@ -18,14 +18,8 @@ export { default as VcFile } from "./file/vc-file.vue";
 export { default as VcFilePicker } from "./file-picker/vc-file-picker.vue";
 export { default as VcFileUploader } from "./file-uploader/vc-file-uploader.vue";
 export { default as VcInput } from "./input/vc-input.vue";
-/** @deprecated VcItemPrice is deprecated and should not be used. */
-export { default as VcItemPrice } from "./item-price/vc-item-price.vue";
 export { default as VcItemPriceCatalog } from "./item-price-catalog/vc-item-price-catalog.vue";
 export { default as VcLineItem } from "./line-item/vc-line-item.vue";
-/** @deprecated VcLineItemPrice is deprecated, use VcProductPrice instead. */
-export { default as VcLineItemPrice } from "./line-item-price/vc-line-item-price.vue";
-/** @deprecated VcLineItemTotal is deprecated, use VcProductPrice instead. */
-export { default as VcLineItemTotal } from "./line-item-total/vc-line-item-total.vue";
 export { default as VcLineItems } from "./line-items/vc-line-items.vue";
 export { default as VcList } from "./list/vc-list.vue";
 export { default as VcLoaderOverlay } from "./loader-overlay/vc-loader-overlay.vue";
@@ -44,6 +38,5 @@ export { default as VcSteps } from "./steps/vc-steps.vue";
 export { default as VcTabSwitch } from "./tab-switch/vc-tab-switch.vue";
 export { default as VcTextarea } from "./textarea/vc-textarea.vue";
 export { default as VcVariantPicker } from "./variant-picker/vc-variant-picker.vue";
-export { default as VcVendor } from "./vendor/vc-vendor.vue";
 export { default as VcWidget } from "./widget/vc-widget.vue";
 export { default as VcWidgetSkeleton } from "./widget-skeleton/vc-widget-skeleton.vue";

@@ -118,19 +118,4 @@ declare global {
     id?: string | number;
     [key: string]: unknown;
   };
-
-  // Table types - for backward compatibility with ui-kit components
-  /** @deprecated Use VcTableColumnType instead */
-  type ITableColumn = VcTableColumnType;
-
-  /** @deprecated Use VcTableSortInfoType instead */
-  type ISortInfo = VcTableSortInfoType;
-
-  /**
-   * @deprecated Use VcTableSortDirectionType for type, or import SortDirection from @/core/enums for values
-   */
-  const enum SortDirection {
-    Ascending = "asc",
-    Descending = "desc",
-  }
 }
