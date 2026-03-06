@@ -24,8 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import type { BreakpointsType } from "@/core/constants";
-
 defineOptions({
   inheritAttrs: false,
 });

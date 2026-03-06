@@ -1,3 +1,4 @@
+/** @deprecated Use `BREAKPOINTS` from `@/ui-kit/constants` instead */
 export const BREAKPOINTS = {
   xs: "480px",
   sm: "640px",
@@ -7,4 +8,5 @@ export const BREAKPOINTS = {
   "2xl": "1500px",
 } as const;
 
+/** @deprecated Use `BreakpointsType` from `@/ui-kit/constants` instead */
 export type BreakpointsType = keyof typeof BREAKPOINTS;

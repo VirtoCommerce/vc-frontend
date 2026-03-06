@@ -109,8 +109,8 @@ import { useBreakpoints } from "@vueuse/core";
 import { Pagination, Navigation, Thumbs } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { ref, onMounted, computed, getCurrentInstance, watch, toRef, onUnmounted } from "vue";
-import { BREAKPOINTS } from "@/core/constants";
 import { extractNumberFromString } from "@/core/utilities";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { ImageType } from "@/core/api/graphql/types";
 import type SwiperCore from "swiper";
 

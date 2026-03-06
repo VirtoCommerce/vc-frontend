@@ -37,7 +37,7 @@
 import { useBreakpoints, useElementBounding } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { BREAKPOINTS } from "@/core/constants";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import { useSmartSticky } from "../../../composables/useSmartSticky";
 
 interface IProps {

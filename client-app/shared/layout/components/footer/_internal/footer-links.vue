@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { BREAKPOINTS } from "@/core/constants";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import FooterLink from "./footer-link.vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
