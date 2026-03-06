@@ -397,8 +397,8 @@ const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 
 const userCanEditOrganization = computed<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
 
-const columns = computed<ITableColumn[]>(() => {
-  const result: ITableColumn[] = [
+const columns = computed<VcTableColumnType[]>(() => {
+  const result: VcTableColumnType[] = [
     {
       id: "roleIcon",
       classes: "w-14",
