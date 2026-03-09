@@ -315,7 +315,12 @@
           "call_us_label": "Soita meille: ",
           "logged_in_as": "kirjautuneena nimellä",
           "account_menu_label": "Tilivalikko",
-          "no_results": "Ei tuloksia"
+          "no_results": "Ei tuloksia",
+          "dark_mode": {
+            "system": "Teema: automaattinen",
+            "dark": "Teema: tumma",
+            "light": "Teema: vaalea"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "Luettelo",
