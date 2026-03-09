@@ -7,11 +7,13 @@
       {
         'vc-radio-button--disabled': disabled,
         'vc-radio-button--checked': checked,
+        'vc-radio-button--no-indicator': noIndicator,
       },
     ]"
   >
-    <label :for="inputId" class="vc-radio-button__container">
+    <component :is="containerTag" :for="isInsideInteractive ? undefined : inputId" class="vc-radio-button__container">
       <input
+        v-if="!isInsideInteractive"
         :id="inputId"
         v-model="model"
         class="vc-radio-button__input"
@@ -29,12 +31,14 @@
         @input="emit('input', value)"
       />
 
+      <span class="vc-radio-button__indicator" aria-hidden="true" />
+
       <span class="vc-radio-button__label">
         <slot v-bind="{ checked, value, label }">
           {{ label }}
         </slot>
       </span>
-    </label>
+    </component>
 
     <VcInputDetails
       :id="detailsId"
@@ -48,7 +52,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useSlots } from "vue";
+import { computed, inject, ref, useSlots } from "vue";
+import { INTERACTIVE_PARENT_KEY } from "@/ui-kit/components/molecules/menu-item/vc-menu-item-context";
 import { useComponentId } from "@/ui-kit/composables";
 
 interface IProps {
@@ -64,8 +69,14 @@ interface IProps {
   singleLineMessage?: boolean;
   wordBreak?: string;
   maxLines?: number;
+  noIndicator?: boolean;
   testIdInput?: string;
   ariaLabel?: string;
+}
+
+interface IEmits {
+  (event: "input", value: string): void;
+  (event: "change", value: string): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -77,6 +88,8 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const model = defineModel<IProps["value"]>();
 
+const isInsideInteractive = inject(INTERACTIVE_PARENT_KEY, ref(false));
+
 const slots = useSlots();
 
 // Dev warning for accessibility
@@ -87,17 +100,13 @@ if (import.meta.env.DEV) {
   }
 }
 
-interface IEmits {
-  (event: "input", value: string): void;
-  (event: "change", value: string): void;
-}
-
 const componentId = useComponentId("vc-radio-button");
 const inputId = `${componentId}-input`;
 const detailsId = `${componentId}-details`;
 
 const checked = computed(() => model.value === props.value);
 const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
+const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label"));
 </script>
 
 <style lang="scss">
@@ -105,6 +114,7 @@ const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
   $self: &;
   $checked: "";
   $disabled: "";
+  $no-indicator: "";
   $left: "";
   $right: "";
 
@@ -155,12 +165,16 @@ const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
     $checked: &;
   }
 
+  &--no-indicator {
+    $no-indicator: &;
+  }
+
   &--disabled {
     $disabled: &;
   }
 
   &__container {
-    @apply flex cursor-pointer;
+    @apply relative flex gap-2 cursor-pointer;
 
     #{$disabled} & {
       @apply cursor-not-allowed;
@@ -168,18 +182,30 @@ const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
   }
 
   &__input {
-    @apply flex-none size-[--size] appearance-none border-2 rounded-full border-neutral-400 bg-additional-50;
+    @apply absolute inset-0 opacity-0 cursor-pointer m-0 w-full h-full z-10;
 
-    &:checked {
-      @apply border-[--base-color] border-[length:var(--border-width)];
+    #{$disabled} & {
+      @apply cursor-not-allowed;
+    }
+  }
+
+  &__indicator {
+    @apply flex-none size-[--size] border-2 rounded-full border-neutral-400 bg-additional-50;
+
+    #{$no-indicator} & {
+      @apply hidden;
     }
 
-    &:focus {
+    input:focus + & {
       @apply outline-none ring ring-[--focus-color];
     }
 
-    &:disabled {
-      @apply border-neutral-400 bg-neutral-50;
+    #{$checked} & {
+      @apply border-[--base-color] border-[length:var(--border-width)];
+    }
+
+    #{$disabled} & {
+      @apply border-neutral-300 bg-neutral-50;
     }
   }
 
@@ -187,11 +213,11 @@ const hasDetails = computed(() => props.showEmptyDetails || !!props.message);
     @apply min-w-0 empty:hidden line-clamp-[var(--max-lines)] [word-break:var(--word-break)];
 
     #{$left} & {
-      @apply order-first me-2;
+      @apply order-first;
     }
 
     #{$right} & {
-      @apply order-last ms-2;
+      @apply order-last;
     }
 
     #{$disabled} & {

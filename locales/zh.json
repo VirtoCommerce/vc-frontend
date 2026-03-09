@@ -315,7 +315,12 @@
           "call_us_label": "致电我们：",
           "logged_in_as": "已登录为",
           "account_menu_label": "帐户菜单",
-          "no_results": "未找到结果"
+          "no_results": "未找到结果",
+          "dark_mode": {
+            "system": "主题：自动",
+            "dark": "主题：深色",
+            "light": "主题：浅色"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "目录",
@@ -445,6 +450,9 @@
     "account": {
       "navigation": {
         "main_title": "账户",
+        "purchasing_title": "购买",
+        "marketing_title": "营销",
+        "user_title": "用户",
         "corporate_title": "公司",
         "links": {
           "dashboard": "@:common.links.dashboard",
@@ -720,7 +728,7 @@
       },
       "shipment_options": {
         "title": "配送选项",
-        "in_store": "门店自提"
+        "check_pickup_locations": "查看自提点"
       }
     },
     "checkout": {

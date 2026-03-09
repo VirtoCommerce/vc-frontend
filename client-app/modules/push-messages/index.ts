@@ -20,7 +20,7 @@ const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 const menuItems: DeepPartial<MenuType> = {
   header: {
     mobile: {
-      account: {
+      marketing: {
         children: [
           {
             id: "push-messages",
@@ -28,8 +28,8 @@ const menuItems: DeepPartial<MenuType> = {
               name: "Notifications",
             },
             title: "push_messages.menu_item_name",
-            icon: "notification-v2",
-            priority: 80,
+            icon: "notification",
+            priority: 10,
           },
         ],
       },
@@ -43,7 +43,7 @@ const menuItems: DeepPartial<MenuType> = {
           priority: 40,
         },
       ],
-      account: {
+      marketing: {
         children: [
           {
             id: "push-messages",
@@ -51,8 +51,8 @@ const menuItems: DeepPartial<MenuType> = {
             route: {
               name: "Notifications",
             },
-            icon: "notification-v2",
-            priority: 75,
+            icon: "notification",
+            priority: 10,
           },
         ],
       },
@@ -137,9 +137,8 @@ export async function init(router: Router, i18n: I18n) {
     };
     router.addRoute(route); // NOTE: This route must be added before any asynchronous calls. Delaying it can cause a 404 error if accessed prematurely.
 
-    const { useWebPushNotificationsModule } = await import(
-      "./composables/useWebPushNotifications/useWebPushNotificationsModule"
-    );
+    const { useWebPushNotificationsModule } =
+      await import("./composables/useWebPushNotifications/useWebPushNotificationsModule");
     const { initModule } = useWebPushNotificationsModule();
     await initModule();
   } else {

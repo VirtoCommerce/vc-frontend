@@ -45,7 +45,14 @@
           </div>
         </template>
 
-        <div class="product-configuration__items" @focusin="handleItemsFocusIn">
+        <div
+          class="product-configuration__items"
+          role="radiogroup"
+          :aria-label="section.name"
+          tabindex="-1"
+          @mousedown="isMouseInteraction = true"
+          @focusin="handleItemsFocusIn"
+        >
           <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.product">
             <template v-for="option in section.options" :key="option.id">
               <OptionProduct
@@ -136,7 +143,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, toRef, watch } from "vue";
+import { nextTick, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
@@ -183,7 +190,14 @@ const {
 const { openModal } = useModal();
 const notifications = useNotifications();
 
+const isMouseInteraction = ref(false);
+
 function handleItemsFocusIn(event: FocusEvent) {
+  if (isMouseInteraction.value) {
+    isMouseInteraction.value = false;
+    return;
+  }
+
   const target = event.target as HTMLElement;
   const itemsContainer = event.currentTarget as HTMLElement;
   const relatedTarget = event.relatedTarget as HTMLElement | null;

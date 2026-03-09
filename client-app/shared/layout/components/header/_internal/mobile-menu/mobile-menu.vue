@@ -14,6 +14,14 @@
         <VcImage v-else :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="max-h-9" lazy />
       </div>
 
+      <!-- Dark mode toggle -->
+      <DarkModeToggle
+        :tooltip="false"
+        :icon-size="22"
+        test-id="mobile-dark-mode-toggle"
+        class="appearance-none fill-[--mobile-menu-navigation-color] p-2"
+      />
+
       <!-- Language block -->
       <LanguageSelector v-if="supportedLanguages.length > 1" />
 
@@ -28,7 +36,7 @@
           <VcIcon name="arrow-circle-left" size="lg" />
         </button>
 
-        <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-additional-50">
+        <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-[--mobile-menu-text-color]">
           {{ openedItem?.title }}
         </h2>
 
@@ -37,6 +45,7 @@
         <SettingsMenu v-else-if="openedItem.id === 'settings'" />
 
         <DefaultMenu v-else :items="sortedFilteredChildren" @close="$emit('close')" @select-item="selectMenuItem" />
+
         <!-- view all catalog link -->
         <template v-if="openedItem?.isCatalogItem && openedItem?.route">
           <div class="my-5 h-px bg-gradient-to-r from-accent to-transparent"></div>
@@ -79,6 +88,7 @@ import { getLinkAttr } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { RouteLocationRaw } from "vue-router";
+import DarkModeToggle from "@/shared/layout/components/header/_internal/dark-mode-toggle.vue";
 import DefaultMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/default-menu.vue";
 import MainMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/main-menu.vue";
 import MultiOrganisationMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/multi-organisation-menu.vue";
@@ -172,7 +182,7 @@ onMounted(() => {
 }
 
 .view-all-link {
-  @apply text-lg tracking-[0.01em] text-additional-50;
+  @apply text-lg tracking-[0.01em] text-[--mobile-menu-link-active-color];
 }
 
 .mobile-menu__overlay {

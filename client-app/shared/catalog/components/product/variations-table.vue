@@ -16,7 +16,7 @@
       <template #desktop-body>
         <tr v-for="(variation, variationIndex) in variations" :key="variation.code" class="variations-table__row">
           <td class="variations-table__col variations-table__col--title">
-            <VcProductTitle :lines-number="2">
+            <VcProductTitle :to="getProductRoute(variation.id, variation.slug)" :lines-number="2">
               {{ variation.name }}
             </VcProductTitle>
           </td>
@@ -89,7 +89,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
 import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
-import { getPropertyValue, getPropertiesGroupedByName } from "@/core/utilities";
+import { getPropertyValue, getPropertiesGroupedByName, getProductRoute } from "@/core/utilities";
 import { EXTENSION_NAMES } from "@/shared/common/constants";
 import CountInCart from "../count-in-cart.vue";
 import type { Product } from "@/core/api/graphql/types";

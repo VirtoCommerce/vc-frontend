@@ -315,7 +315,12 @@
           "call_us_label": "Chiamaci: ",
           "logged_in_as": "connesso come",
           "account_menu_label": "Menu account",
-          "no_results": "Nessun risultato trovato"
+          "no_results": "Nessun risultato trovato",
+          "dark_mode": {
+            "system": "Tema: automatico",
+            "dark": "Tema: scuro",
+            "light": "Tema: chiaro"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "Catalogo",
@@ -445,6 +450,9 @@
     "account": {
       "navigation": {
         "main_title": "Account",
+        "purchasing_title": "Acquisti",
+        "marketing_title": "Marketing",
+        "user_title": "Utente",
         "corporate_title": "Aziendale",
         "links": {
           "dashboard": "@:common.links.dashboard",
@@ -720,7 +728,7 @@
       },
       "shipment_options": {
         "title": "Opzioni di spedizione",
-        "in_store": "Ritiro in negozio"
+        "check_pickup_locations": "Verifica punti di ritiro"
       }
     },
     "checkout": {

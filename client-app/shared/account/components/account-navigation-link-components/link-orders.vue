@@ -1,21 +1,28 @@
 <template>
-  <AccountNavigationItem :item="item">
-    <template v-if="isOrdersPage">
-      <div v-for="facet in statusFacet?.items" :key="facet.term" class="flex items-center gap-2 px-3 text-sm">
-        <VcIcon class="flex-none fill-primary" size="xs" name="minus" />
+  <AccountNavigationItem class="link-orders" :item="item">
+    <div v-if="isOrdersPage && statusFacet?.items" class="link-orders__wrapper">
+      <VcMenuItem
+        v-for="facet in statusFacet.items"
+        :key="facet.term"
+        :active="isSelectedOrderStatus(facet.term)"
+        class="link-orders__item"
+        size="xs"
+        color="secondary"
+        @click="applyOrderFilter(facet.term)"
+      >
+        <template #prepend>
+          <VcIcon size="xs" name="minus" />
+        </template>
 
-        <button
-          :class="{ 'font-bold': isSelectedOrderStatus(facet.term) }"
-          class="line-clamp-2 flex w-full cursor-pointer gap-1 py-0.5 hover:text-neutral-950"
-          type="button"
-          @click="applyOrderFilter(facet.term)"
-        >
-          <span class="grow overflow-hidden text-ellipsis text-nowrap text-start">{{ facet.label }}</span>
+        {{ facet.label }}
 
-          <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
-        </button>
-      </div>
-    </template>
+        <template #append>
+          <VcBadge variant="outline" size="xs" color="secondary" rounded>
+            {{ facet.count }}
+          </VcBadge>
+        </template>
+      </VcMenuItem>
+    </div>
   </AccountNavigationItem>
 </template>
 
@@ -53,3 +60,15 @@ function applyOrderFilter(status: string): void {
   applyFilters();
 }
 </script>
+
+<style lang="scss">
+.link-orders {
+  &__wrapper {
+    @apply py-2 pr-2 pl-2.5 space-y-0.5;
+  }
+
+  &__item {
+    @apply rounded;
+  }
+}
+</style>

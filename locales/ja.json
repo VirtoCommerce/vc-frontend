@@ -315,7 +315,12 @@
           "call_us_label": "お電話: ",
           "logged_in_as": "ログインユーザー:",
           "account_menu_label": "アカウントメニュー",
-          "no_results": "結果が見つかりません"
+          "no_results": "結果が見つかりません",
+          "dark_mode": {
+            "system": "テーマ：自動",
+            "dark": "テーマ：ダーク",
+            "light": "テーマ：ライト"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "カタログ",
@@ -445,6 +450,9 @@
     "account": {
       "navigation": {
         "main_title": "アカウント",
+        "purchasing_title": "購入",
+        "marketing_title": "マーケティング",
+        "user_title": "ユーザー",
         "corporate_title": "法人",
         "links": {
           "dashboard": "@:common.links.dashboard",
@@ -720,7 +728,7 @@
       },
       "shipment_options": {
         "title": "配送オプション",
-        "in_store": "店舗受取"
+        "check_pickup_locations": "受取場所を確認"
       }
     },
     "checkout": {

@@ -1,18 +1,21 @@
 <template>
-  <AccountNavigationItem :item="item">
-    <template v-if="isListDetails">
-      <div v-for="list in lists" :key="list.id" class="flex items-center gap-2 px-3 text-sm">
-        <VcIcon class="flex-none fill-primary" size="xs" name="minus" />
-
-        <router-link
-          :to="{ name: 'ListDetails', params: { listId: list.id } }"
-          class="line-clamp-2 cursor-pointer py-0.5 font-bold text-neutral hover:text-additional-950"
-          active-class="!text-neutral-950"
-        >
-          {{ list.name }}
-        </router-link>
-      </div>
-    </template>
+  <AccountNavigationItem class="link-lists" :item="item">
+    <div v-if="isListDetails && lists.length > 0" class="link-lists__wrapper">
+      <VcMenuItem
+        v-for="list in lists"
+        :key="list.id"
+        :to="{ name: 'ListDetails', params: { listId: list.id } }"
+        :active="isActive(list.id)"
+        class="link-lists__item"
+        size="xs"
+        color="secondary"
+      >
+        <template #prepend>
+          <VcIcon size="xs" name="minus" />
+        </template>
+        {{ list.name }}
+      </VcMenuItem>
+    </div>
   </AccountNavigationItem>
 </template>
 
@@ -23,19 +26,36 @@ import { useWishlists } from "@/shared/wishlists";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import AccountNavigationItem from "@/shared/account/components/account-navigation-item.vue";
 
-defineProps<IProps>();
-
-const { lists, fetchWishlists } = useWishlists();
-const isListDetails = computed(() => route.name === "ListDetails");
-
 interface IProps {
   item: ExtendedMenuLinkType;
 }
 
+defineProps<IProps>();
+
 const route = useRoute();
+
+const { lists, fetchWishlists } = useWishlists();
+const isListDetails = computed(() => ["Lists", "ListDetails"].includes(route.name as string));
+
+function isActive(listId: string) {
+  return route.name === "ListDetails" && route.params.listId === listId;
+}
+
 watchEffect(async () => {
   if (isListDetails.value) {
     await fetchWishlists();
   }
 });
 </script>
+
+<style lang="scss">
+.link-lists {
+  &__wrapper {
+    @apply py-2 pr-2 pl-2.5 space-y-0.5;
+  }
+
+  &__item {
+    @apply rounded;
+  }
+}
+</style>

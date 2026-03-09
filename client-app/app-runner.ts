@@ -3,7 +3,7 @@ import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { apolloClient, getPageContext } from "@/core/api/graphql";
 import { GetSlugInfoDocument } from "@/core/api/graphql/types";
-import { useCurrency, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
+import { useCurrency, useDarkMode, useThemeContext, useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
@@ -85,6 +85,7 @@ export default async () => {
   const { init: initializeHotjar } = useHotjar();
   const { fetchCatalogMenu } = useNavigations();
   const { themePresetName, setWhiteLabelingSettings } = useWhiteLabeling();
+  const { setActivePreset } = useDarkMode();
 
   const fallback = {
     locale: FALLBACK_LOCALE,
@@ -181,6 +182,7 @@ export default async () => {
 
   setWhiteLabelingSettings(whiteLabelingSetting);
   addPresetToThemeContext(themePresetName.value ?? themeContext.value.defaultPresetName);
+  setActivePreset(themeContext.value.activePresetName ?? themeContext.value.defaultPresetName);
 
   if (isAuthenticated.value || themeContext.value.storeSettings.anonymousUsersAllowed) {
     void fetchCatalogMenu();
@@ -199,7 +201,6 @@ export default async () => {
   // Plugins
   app.use(head);
   app.use(i18n);
-  app.use(router);
   app.use(permissionsPlugin);
   app.use(extensionPointsPlugin);
   app.use(contextPlugin, themeContext.value);
@@ -230,6 +231,9 @@ export default async () => {
       app.use(builderIoPreviewPlugin, { router });
     }
   }
+
+  // router must be registered after all plugins because some of them are using router.beforeEach to protect routes or add functionality before route changes, and we want to make sure that those are registered before we start using the router
+  app.use(router);
 
   // Register Page builder components globally
   Object.entries(templateBlocks).forEach(([name, component]) => app.component(name, component));

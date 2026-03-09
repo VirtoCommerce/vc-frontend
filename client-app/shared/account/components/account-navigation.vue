@@ -1,27 +1,71 @@
 <template>
-  <div class="space-y-6">
-    <VcWidget :title="$t(`shared.account.navigation.main_title`)" size="sm">
-      <ExtensionPoint
-        v-for="link in filteredDesktopAccountMenuItems"
-        :key="link.id"
-        :item="link"
-        category="accountMenu"
-        :name="link.id"
-      >
-        <LinkDefault :item="link" />
-      </ExtensionPoint>
+  <div class="account-navigation">
+    <VcWidget :title="$t(`shared.account.navigation.purchasing_title`)" size="sm">
+      <template #default-container>
+        <div class="account-navigation__container">
+          <ExtensionPoint
+            v-for="link in desktopPurchasingMenuItems?.children"
+            :key="link.id"
+            :item="link"
+            category="accountMenu"
+            :name="link.id"
+          >
+            <LinkDefault :item="link" />
+          </ExtensionPoint>
+        </div>
+      </template>
+    </VcWidget>
+
+    <VcWidget
+      v-if="desktopMarketingMenuItems?.children?.length"
+      :title="$t(`shared.account.navigation.marketing_title`)"
+      size="sm"
+    >
+      <template #default-container>
+        <div class="account-navigation__container">
+          <ExtensionPoint
+            v-for="link in desktopMarketingMenuItems?.children"
+            :key="link.id"
+            :item="link"
+            category="accountMenu"
+            :name="link.id"
+          >
+            <LinkDefault :item="link" />
+          </ExtensionPoint>
+        </div>
+      </template>
     </VcWidget>
 
     <VcWidget v-if="isCorporateMember" :title="$t(`shared.account.navigation.corporate_title`)" size="sm">
-      <ExtensionPoint
-        v-for="link in desktopCorporateMenuItems?.children"
-        :key="link.id"
-        :item="link"
-        category="accountMenu"
-        :name="link.id"
-      >
-        <LinkDefault :item="link" />
-      </ExtensionPoint>
+      <template #default-container>
+        <div class="account-navigation__container">
+          <ExtensionPoint
+            v-for="link in desktopCorporateMenuItems?.children"
+            :key="link.id"
+            :item="link"
+            category="accountMenu"
+            :name="link.id"
+          >
+            <LinkDefault :item="link" />
+          </ExtensionPoint>
+        </div>
+      </template>
+    </VcWidget>
+
+    <VcWidget :title="$t(`shared.account.navigation.user_title`)" size="sm">
+      <template #default-container>
+        <div class="account-navigation__container">
+          <ExtensionPoint
+            v-for="link in filteredDesktopUserMenuItems"
+            :key="link.id"
+            :item="link"
+            category="accountMenu"
+            :name="link.id"
+          >
+            <LinkDefault :item="link" />
+          </ExtensionPoint>
+        </div>
+      </template>
     </VcWidget>
   </div>
 </template>
@@ -35,13 +79,24 @@ import type { ExtendedMenuLinkType } from "@/core/types";
 
 const { isCorporateMember } = useUser();
 
-const { desktopAccountMenuItems, desktopCorporateMenuItems } = useNavigations();
+const { desktopPurchasingMenuItems, desktopMarketingMenuItems, desktopUserMenuItems, desktopCorporateMenuItems } =
+  useNavigations();
 
 function canShowItem(item: ExtendedMenuLinkType) {
   return !(item.id === "addresses" && isCorporateMember.value);
 }
 
-const filteredDesktopAccountMenuItems = computed(() => {
-  return desktopAccountMenuItems.value?.children ? desktopAccountMenuItems.value?.children.filter(canShowItem) : [];
+const filteredDesktopUserMenuItems = computed(() => {
+  return desktopUserMenuItems.value?.children ? desktopUserMenuItems.value.children.filter(canShowItem) : [];
 });
 </script>
+
+<style lang="scss">
+.account-navigation {
+  @apply space-y-4;
+
+  &__container {
+    @apply pt-3 px-4 pb-4;
+  }
+}
+</style>
