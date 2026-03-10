@@ -98,10 +98,10 @@ async function copyCoupon(text?: string) {
     @media (min-width: theme("screens.2xl")) {
       @apply col-span-4;
     }
+  }
 
-    &-text {
-      @apply line-clamp-4;
-    }
+  &__description-text {
+    @apply line-clamp-4;
   }
 
   &__end-date {
@@ -114,14 +114,14 @@ async function copyCoupon(text?: string) {
     @media (min-width: theme("screens.2xl")) {
       @apply col-span-1;
     }
+  }
 
-    &-label {
-      @apply text-neutral-600;
-    }
+  &__end-date-label {
+    @apply text-neutral-600;
+  }
 
-    &-value {
-      @apply font-bold;
-    }
+  &__end-date-value {
+    @apply font-bold;
   }
 
   &__code {
@@ -130,17 +130,17 @@ async function copyCoupon(text?: string) {
     @media (min-width: theme("screens.lg")) {
       @apply order-none col-span-2;
     }
+  }
 
-    &-value {
-      @apply font-bold uppercase leading-5;
-    }
+  &__code-value {
+    @apply font-bold uppercase leading-5;
+  }
 
-    &-button {
-      @apply w-full bg-secondary-50 border transition-colors border-dashed border-secondary-400 px-2.5 py-3 rounded flex flex-col;
+  &__code-button {
+    @apply w-full bg-secondary-50 border transition-colors border-dashed border-secondary-400 px-2.5 py-3 rounded flex flex-col;
 
-      &:hover {
-        @apply bg-secondary-100;
-      }
+    &:hover {
+      @apply bg-secondary-100;
     }
   }
 
