@@ -1,6 +1,6 @@
 <template>
   <div class="mt-4 flex grow flex-col gap-y-1 font-normal">
-    <header class="-mt-1 mb-1 text-2xl uppercase text-additional-50">
+    <header class="-mt-1 mb-1 text-2xl uppercase text-[--mobile-menu-text-color]">
       {{ $t("shared.layout.header.mobile.currency") }}
     </header>
 
@@ -12,7 +12,7 @@
       class="py-2.5"
       @click="changeCurrency(currencyItem.code)"
     >
-      <span :class="{ 'text-additional-50': currentCurrency?.code === currencyItem.code }" class="uppercase">
+      <span class="uppercase">
         {{ currencyItem.code }}
       </span>
     </VcRadioButton>
