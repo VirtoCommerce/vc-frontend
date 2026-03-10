@@ -4,7 +4,7 @@ import { darkPresets } from "@/assets/presets";
 
 type ColorModeType = "light" | "dark" | "system";
 
-const VALID_MODES: ColorModeType[] = ["light", "dark", "system"];
+const VALID_MODES = new Set<ColorModeType>(["light", "dark", "system"]);
 
 const DARK_AVAILABLE_KEY = "vc-dark-available";
 
@@ -15,7 +15,7 @@ function _useDarkMode() {
 
   // Sanitise value coming from localStorage – if the stored string is not
   // one of the valid modes (e.g. manually corrupted), fall back to "system".
-  if (!VALID_MODES.includes(storedMode.value)) {
+  if (!VALID_MODES.has(storedMode.value)) {
     storedMode.value = "system";
   }
 

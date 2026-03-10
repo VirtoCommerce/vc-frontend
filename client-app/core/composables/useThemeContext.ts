@@ -9,6 +9,24 @@ import { BrowserTargetType } from "../enums";
 import type { StoreResponseType } from "../api/graphql/types";
 import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
 
+function getThemeConfig() {
+  const data = cloneDeep(settingsData) as IThemeConfig;
+
+  if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
+    data.settings.details_browser_target = BrowserTargetType.SELF;
+    data.settings.product_page_browser_target = BrowserTargetType.SELF;
+    data.settings.cart_page_browser_target = BrowserTargetType.SELF;
+  }
+
+  return data;
+}
+
+function getPreset(themePresetName: string): IThemeConfigPreset | undefined {
+  if (themePresetName in presets) {
+    return presets[themePresetName];
+  }
+}
+
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
 
@@ -46,26 +64,6 @@ function _useThemeContext() {
       themeContext.value.activePresetName = resolvedName;
     } else {
       throw new Error("Missing preset");
-    }
-  }
-
-  function getThemeConfig() {
-    const data = cloneDeep(settingsData) as IThemeConfig;
-
-    if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
-      data.settings.details_browser_target = BrowserTargetType.SELF;
-      data.settings.product_page_browser_target = BrowserTargetType.SELF;
-      data.settings.cart_page_browser_target = BrowserTargetType.SELF;
-    }
-
-    return data;
-  }
-
-  function getPreset(themePresetName: string): IThemeConfigPreset {
-    if (themePresetName in presets) {
-      return presets[themePresetName];
-    } else {
-      return presets.default;
     }
   }
 
