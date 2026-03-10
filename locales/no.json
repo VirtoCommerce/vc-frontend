@@ -545,7 +545,7 @@
         "reset_button": "@:common.buttons.reset"
       },
       "promotion_coupons": {
-        "expired": "Utløpt",
+        "expires": "Utløper",
         "click_to_copy": "Klikk for å kopiere",
         "clipboard_success": "Kupong kopiert vellykket",
         "tap_to_copy": "Trykk for å kopiere"

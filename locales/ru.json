@@ -545,7 +545,7 @@
         "reset_button": "@:common.buttons.reset"
       },
       "promotion_coupons": {
-        "expired": "Истекший",
+        "expires": "Истекает",
         "click_to_copy": "Нажмите, чтобы скопировать",
         "clipboard_success": "Купон успешно скопирован",
         "tap_to_copy": "Нажмите, чтобы скопировать"

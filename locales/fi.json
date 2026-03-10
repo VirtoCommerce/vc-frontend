@@ -545,7 +545,7 @@
         "reset_button": "@:common.buttons.reset"
       },
       "promotion_coupons": {
-        "expired": "Vanhentunut",
+        "expires": "Vanhenee",
         "click_to_copy": "Kopioi napsauttamalla",
         "clipboard_success": "Kuponki kopioitu onnistuneesti",
         "tap_to_copy": "Napauta kopioidaksesi"

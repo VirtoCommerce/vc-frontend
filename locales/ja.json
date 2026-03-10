@@ -545,7 +545,7 @@
         "reset_button": "@:common.buttons.reset"
       },
       "promotion_coupons": {
-        "expired": "期限切れ",
+        "expires": "有効期限",
         "click_to_copy": "コピーするにはクリック",
         "clipboard_success": "クーポンをコピーしました",
         "tap_to_copy": "タップしてコピー"

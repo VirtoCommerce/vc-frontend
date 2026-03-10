@@ -545,7 +545,7 @@
         "reset_button": "@:common.buttons.reset"
       },
       "promotion_coupons": {
-        "expired": "Expiré",
+        "expires": "Expire",
         "click_to_copy": "Cliquez pour copier",
         "clipboard_success": "Coupon copié avec succès",
         "tap_to_copy": "Appuyez pour copier"

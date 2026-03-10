@@ -14,7 +14,7 @@
 
     <div class="coupon-item__end-date">
       <template v-if="coupon.endDate">
-        <span class="coupon-item__end-date-label">{{ $t("shared.account.promotion_coupons.expired") }}</span>
+        <span class="coupon-item__end-date-label">{{ $t("shared.account.promotion_coupons.expires") }}</span>
 
         <span class="coupon-item__end-date-value">{{ $d(coupon.endDate, "short") }}</span>
       </template>
@@ -38,6 +38,8 @@
 
 <script setup lang="ts">
 import { useClipboard } from "@vueuse/core";
+import { useI18n } from "vue-i18n";
+import { useNotifications } from "@/shared/notification";
 import type { PromotionCouponType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -46,11 +48,18 @@ interface IProps {
 
 defineProps<IProps>();
 
+const { t } = useI18n();
 const { copy, isSupported } = useClipboard();
+const notifications = useNotifications();
 
 async function copyCoupon(text?: string) {
   if (isSupported && text?.trim()) {
     await copy(text);
+    notifications.success({
+      text: t("shared.account.promotion_coupons.clipboard_success"),
+      duration: 4000,
+      single: true,
+    });
   }
 }
 </script>
