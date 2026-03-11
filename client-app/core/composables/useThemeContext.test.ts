@@ -376,6 +376,7 @@ describe("useThemeContext - preset loading functions", () => {
       const result = await loadPreset("cached-preset");
       expect(result).toEqual(hoisted.mockPreset);
       expect(globalThis.fetch).not.toHaveBeenCalled();
+      expect(result?.color_primary_50).toBe("#f0f9ff");
     });
 
     it("returns null when fetch fails", async () => {
