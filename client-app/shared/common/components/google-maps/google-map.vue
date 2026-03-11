@@ -1,5 +1,5 @@
 <template>
-  <div class="google-map">
+  <div :key="mapRenderKey" class="google-map">
     <div :id="mapElementId" ref="mapContainer" class="google-map__container"></div>
 
     <slot />
@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import uniqueId from "lodash/uniqueId";
-import { computed, onBeforeUnmount, onMounted, ref, toRefs, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRefs, watch } from "vue";
 import { useDarkMode } from "@/core/composables/useDarkMode";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 
@@ -41,29 +41,14 @@ const { apiKey, center, zoom, elementId, mapId } = toRefs(props);
 const mapElementId = computed(() => (elementId.value ? elementId.value : uniqueId(MAP_ELEMENT_ID_PREFIX)));
 
 const mapContainer = ref<HTMLDivElement>();
+const mapRenderKey = ref(0);
 
 const { isDark } = useDarkMode();
 const { initMap, map } = useGoogleMaps(mapId.value);
 
 const colorScheme = computed(() => (isDark.value ? "DARK" : "LIGHT"));
 
-watch(colorScheme, (value) => {
-  map.value?.setOptions({ colorScheme: value });
-});
-
-onMounted(async () => {
-  await initMap({
-    apiKey: apiKey.value,
-    elementId: mapElementId.value,
-    options: {
-      center: center.value,
-      zoom: zoom.value,
-      ...props.options,
-      // Dark mode system controls colorScheme — must override props.options
-      colorScheme: colorScheme.value,
-    },
-  });
-
+function bindBoundariesListener() {
   if (!props.listenToBounds) {
     return;
   }
@@ -74,6 +59,43 @@ onMounted(async () => {
       emit("boundariesChanged", bounds);
     }
   });
+}
+
+async function createMap(scheme: "DARK" | "LIGHT", mapCenter: google.maps.LatLngLiteral, mapZoom: number) {
+  await initMap({
+    apiKey: apiKey.value,
+    elementId: mapElementId.value,
+    options: {
+      center: mapCenter,
+      zoom: mapZoom,
+      ...props.options,
+      // Dark mode system controls colorScheme — must override props.options
+      colorScheme: scheme,
+    },
+  });
+}
+
+watch(colorScheme, async (value) => {
+  if (!map.value) {
+    return;
+  }
+
+  const mapCenter = map.value.getCenter()?.toJSON() ?? center.value;
+  const mapZoom = map.value.getZoom() ?? zoom.value;
+
+  listener?.remove();
+  listener = undefined;
+
+  mapRenderKey.value++;
+  await nextTick();
+
+  await createMap(value, mapCenter, mapZoom);
+  bindBoundariesListener();
+});
+
+onMounted(async () => {
+  await createMap(colorScheme.value, center.value, zoom.value);
+  bindBoundariesListener();
 });
 
 onBeforeUnmount(() => {
