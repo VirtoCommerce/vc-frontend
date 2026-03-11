@@ -35,16 +35,16 @@
           <div class="flex flex-col leading-tight">
             <div class="flex flex-wrap items-center gap-x-1 text-accent-100">
               <template v-if="operator">
-                <span class="line-clamp-3 font-bold [word-break:break-word]">
+                <span class="line-clamp-3 font-bold text-[--mobile-menu-text-color] [word-break:break-word]">
                   {{ operator.contact?.fullName || operator.userName }}
                 </span>
 
-                <span class="text-accent-200">
+                <span class="text-[--mobile-menu-text-color]">
                   {{ $t("shared.layout.header.top_header.logged_in_as") }}
                 </span>
               </template>
 
-              <span class="line-clamp-3 font-bold [word-break:break-word]">
+              <span class="line-clamp-3 font-bold text-[--mobile-menu-text-color] [word-break:break-word]">
                 {{ user.contact?.fullName || user.userName }}
               </span>
             </div>

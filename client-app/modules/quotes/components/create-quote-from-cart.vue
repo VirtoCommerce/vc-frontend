@@ -1,6 +1,6 @@
 <template>
   <VcWidget v-if="isAuthenticated" :title="$t('quotes.cart_widget.title')" class="print:hidden">
-    <p class="mb-5 text-xs font-normal text-neutral-400">
+    <p class="mb-5 text-xs font-normal text-neutral-500">
       {{ $t("quotes.cart_widget.quote_request_hint") }}
     </p>
 

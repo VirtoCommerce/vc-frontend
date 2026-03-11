@@ -98,7 +98,7 @@ import Skyflow from "skyflow-js";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
-import { useAnalytics, useThemeContext } from "@/core/composables";
+import { useAnalytics, useDarkMode, useThemeContext } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger, replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
@@ -133,6 +133,7 @@ const { user, isAuthenticated } = useUser();
 const { skyflowCards, fetchSkyflowCards } = useSkyflowCards();
 const { analytics } = useAnalytics();
 const { themeContext } = useThemeContext();
+const { isDark } = useDarkMode();
 const notifications = useNotifications();
 
 const loading = ref(false);
@@ -188,13 +189,17 @@ const globalStyles = {
   },
   fontFamily: "Lato, sans-serif",
   primaryColor: useCssVar("--color-primary-500").value || "#eb9016",
-  errorColor: useCssVar("--color-danger-500").value || "#de3131",
+  errorColor: isDark.value
+    ? useCssVar("--color-danger-700").value || "#f87171"
+    : useCssVar("--color-danger-500").value || "#de3131",
   borderColor: useCssVar("--color-neutral-400").value || "#a3a3a3",
   invalidBorder: `1px solid ${useCssVar("--color-danger-500").value || "#de3131"}`,
   backgroundColor: useCssVar("--color-additional-50").value || "#ffffff",
   borderRadius: vcInputRadius || defaultRadius || "0.5rem",
   focusBorder: "1px solid transparent",
-  focusShadow: `0 0 0 3px rgb(from ${useCssVar("--color-primary-500").value || "#eb9016"} r g b / 0.3)`,
+  focusShadow: isDark.value
+    ? `0 0 0 3px rgb(from ${useCssVar("--color-primary-700").value || "#fbbf24"} r g b / 0.8)`
+    : `0 0 0 3px rgb(from ${useCssVar("--color-primary-500").value || "#eb9016"} r g b / 0.3)`,
   textColor: useCssVar("--body-text-color").value || "#1f2937",
 };
 
@@ -204,31 +209,31 @@ const baseInputStyles = {
   fontWeight: "400",
   fontSize: "1rem",
   lineHeight: "1.25rem",
-  backgroundColor: globalStyles.backgroundColor,
+  background: globalStyles.backgroundColor,
   borderRadius: globalStyles.borderRadius,
   border: `1px solid ${globalStyles.borderColor}`,
   textSecurity: "none",
-  textIndent: "initial",
   "&:focus": `border: ${globalStyles.focusBorder}; box-shadow: ${globalStyles.focusShadow}`,
   padding: "0.75rem",
   color: globalStyles.textColor,
+  width: "100%",
 };
 
 const baseLabelStyles = {
   fontFamily: globalStyles.fontFamily,
   fontSize: "1rem",
   fontWeight: "700",
-  lineHeight: "1.25rem",
-  marginBottom: "0.125rem",
+  paddingBottom: "0.25rem",
   color: globalStyles.textColor,
+  background: globalStyles.backgroundColor,
 };
 
 const baseErrorStyles = {
   fontFamily: globalStyles.fontFamily,
   fontSize: "0.625rem",
   color: globalStyles.errorColor,
-  padding: "0 4px",
   minHeight: "0.75rem",
+  background: globalStyles.backgroundColor,
 };
 // end styles
 
@@ -282,8 +287,8 @@ async function initNewCardForm(): Promise<void> {
         fontFamily,
         width: "100%",
         gap: "24px",
-        margin: "4px 0",
         padding: "0 4px",
+        background: globalStyles.backgroundColor,
       },
     },
     errorTextStyles: {
@@ -325,7 +330,6 @@ async function initNewCardForm(): Promise<void> {
   };
 
   const cardNameStyles = cloneDeep(collectStylesOptions);
-  cardNameStyles.inputStyles.base.textIndent = "36px";
 
   const cardName = container.create(
     {
@@ -441,7 +445,6 @@ async function initCvvForm() {
       base: {
         ...baseInputStyles,
         width: "6rem",
-        margin: "0 0.25rem",
       },
       invalid: {
         border: globalStyles.invalidBorder,
@@ -451,7 +454,6 @@ async function initCvvForm() {
     labelStyles: {
       base: {
         ...baseLabelStyles,
-        margin: "0 0.25rem",
       },
       requiredAsterisk: {
         color: errorColor,
