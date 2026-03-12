@@ -1,0 +1,5 @@
+query GetPreviewBuilderPage($storeId: String!, $pageId: String!) {
+  builderPage(storeId: $storeId, pageId: $pageId) {
+    content
+  }
+}

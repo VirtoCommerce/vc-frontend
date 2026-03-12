@@ -28,7 +28,7 @@ import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
 import { BUILDER_IO_TRACE_MARKER, consoleIgnoredErrors } from "@/pages/matcher/builderIo/console-ignored-errors";
 import { isPreviewMode as isBuilderIoPreviewMode } from "@/plugins/builder-io-preview/utils";
-import { getEpParam, isPreviewMode as isPageBuilderPreviewMode } from "@/plugins/builder-preview/utils";
+import { isPreviewMode as isPageBuilderPreviewMode } from "@/plugins/builder-preview/utils";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
@@ -37,6 +37,7 @@ import { uiKit } from "@/ui-kit";
 import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
 import type { PageContextResponseType } from "./core/api/graphql/types";
+import type { PageBuilderPluginOptionsType } from "./plugins/builder-preview/models/PageBuilderPluginOptionsType";
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
@@ -213,12 +214,11 @@ export default async () => {
 
   app.use(applicationInsightsPlugin);
 
-  const builderOrigin = getEpParam();
-  if (builderOrigin && isPageBuilderPreviewMode(builderOrigin)) {
+  if (isPageBuilderPreviewMode()) {
     const builderPreviewPlugin = (await import("@/plugins/builder-preview/builder-preview.plugin").catch(Logger.error))
       ?.default;
     if (builderPreviewPlugin) {
-      app.use(builderPreviewPlugin, { router, builderOrigin });
+      app.use(builderPreviewPlugin, <PageBuilderPluginOptionsType>{ router });
     }
   }
 
