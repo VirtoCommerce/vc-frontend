@@ -8,7 +8,8 @@
 
 <script setup lang="ts">
 import uniqueId from "lodash/uniqueId";
-import { computed, onBeforeUnmount, onMounted, ref, toRefs } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, toRefs, watch } from "vue";
+import { useDarkMode } from "@/core/composables/useDarkMode";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 
 const emit = defineEmits<IEmits>();
@@ -25,7 +26,7 @@ interface IProps {
   elementId?: string;
   center?: google.maps.LatLngLiteral;
   zoom?: number;
-  options?: Omit<google.maps.MapOptions, "center" | "zoom" | "mapId">;
+  options?: Omit<google.maps.MapOptions, "center" | "zoom" | "mapId" | "colorScheme">;
   listenToBounds?: boolean;
   mapId: string;
 }
@@ -41,7 +42,14 @@ const mapElementId = computed(() => (elementId.value ? elementId.value : uniqueI
 
 const mapContainer = ref<HTMLDivElement>();
 
+const { isDark } = useDarkMode();
 const { initMap, map } = useGoogleMaps(mapId.value);
+
+const colorScheme = computed(() => (isDark.value ? "DARK" : "LIGHT"));
+
+watch(colorScheme, (value) => {
+  map.value?.setOptions({ colorScheme: value });
+});
 
 onMounted(async () => {
   await initMap({
@@ -51,6 +59,8 @@ onMounted(async () => {
       center: center.value,
       zoom: zoom.value,
       ...props.options,
+      // Dark mode system controls colorScheme — must override props.options
+      colorScheme: colorScheme.value,
     },
   });
 
