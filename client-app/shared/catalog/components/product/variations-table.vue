@@ -151,7 +151,7 @@ const productProperties = computed<IProductProperties[]>(() => {
   return properties;
 });
 
-const propertiesTitles = computed<ITableColumn[]>(() =>
+const propertiesTitles = computed<VcTableColumnType[]>(() =>
   productProperties.value.map((item) => ({
     id: item.name,
     title: item.label,
@@ -161,7 +161,7 @@ const propertiesTitles = computed<ITableColumn[]>(() =>
   })),
 );
 
-const columns = computed<ITableColumn[]>(() => [
+const columns = computed<VcTableColumnType[]>(() => [
   {
     id: "name",
     title: t("shared.catalog.product_details.variations.columns.item"),

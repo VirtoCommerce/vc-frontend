@@ -39,8 +39,6 @@ declare module "vue" {
     VcRadioButton: typeof Components.VcRadioButton;
     VcScrollTopButton: typeof Components.VcScrollTopButton;
     VcSwitch: typeof Components.VcSwitch;
-    /** @deprecated VcTabs is deprecated, use VcTabSwitch instead. */
-    VcTabs: typeof Components.VcTabs;
     VcTooltip: typeof Components.VcTooltip;
     VcTotalDisplay: typeof Components.VcTotalDisplay;
     VcTypography: typeof Components.VcTypography;
