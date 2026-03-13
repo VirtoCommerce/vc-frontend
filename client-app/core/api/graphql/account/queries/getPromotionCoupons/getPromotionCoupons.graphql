@@ -1,0 +1,27 @@
+query GetPromotionCoupons(
+  $cultureName: String!
+  $storeId: String!
+  $userId: String!
+  $first: Int
+  $after: String
+  $sort: String
+) {
+  promotionCoupons(
+    cultureName: $cultureName
+    storeId: $storeId
+    userId: $userId
+    first: $first
+    after: $after
+    sort: $sort
+  ) {
+    totalCount
+    items {
+      id
+      endDate
+      name
+      description
+      couponCode
+      systemName
+    }
+  }
+}
