@@ -9,6 +9,50 @@ import { BrowserTargetType } from "../enums";
 import type { StoreResponseType } from "../api/graphql/types";
 import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
 
+const loadedPresets = new Map<string, IThemeConfigPreset>();
+
+export function getPredefinedPreset(presetName: string): IThemeConfigPreset | null {
+  if (presetName in presets) {
+    return presets[presetName];
+  }
+  return null;
+}
+
+export async function loadPreset(presetName: string): Promise<IThemeConfigPreset | null> {
+  if (loadedPresets.has(presetName)) {
+    return loadedPresets.get(presetName)!;
+  }
+
+  try {
+    const response = await fetch(`/assets/presets/${presetName}.json`);
+
+    if (response.ok) {
+      const preset = (await response.json()) as IThemeConfigPreset;
+      loadedPresets.set(presetName, preset);
+      return preset;
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn(`Failed to load preset "${presetName}" from /assets/presets/:`, error);
+  }
+
+  return null;
+}
+
+export async function getPreset(presetName: string): Promise<IThemeConfigPreset | null> {
+  const predefinedPreset = getPredefinedPreset(presetName);
+  if (predefinedPreset) {
+    return predefinedPreset;
+  }
+
+  const loadedPreset = await loadPreset(presetName);
+  if (loadedPreset) {
+    return loadedPreset;
+  }
+
+  return null;
+}
+
 function getThemeConfig() {
   const data = cloneDeep(settingsData) as IThemeConfig;
 
@@ -19,12 +63,6 @@ function getThemeConfig() {
   }
 
   return data;
-}
-
-function getPreset(themePresetName: string): IThemeConfigPreset | undefined {
-  if (themePresetName in presets) {
-    return presets[themePresetName];
-  }
 }
 
 function _useThemeContext() {
@@ -45,18 +83,18 @@ function _useThemeContext() {
     };
   }
 
-  function addPresetToThemeContext(presetName: string): void {
+  async function addPresetToThemeContext(presetName: string): Promise<void> {
     if (!themeContext.value) {
       throw new Error("The global state should be defined");
     }
 
     let resolvedName = presetNameToFileName(presetName);
-    let preset = getPreset(resolvedName);
+    let preset = await getPreset(resolvedName);
 
     if (!preset) {
       const defaultPresetName = getThemeConfig().current;
       resolvedName = presetNameToFileName(defaultPresetName);
-      preset = getPreset(resolvedName);
+      preset = await getPreset(resolvedName);
     }
 
     if (preset) {
