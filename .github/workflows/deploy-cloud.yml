@@ -3,10 +3,6 @@ name: VC cloud deployment
 on:
   workflow_call:
     inputs:
-      argoServer:
-        required: false
-        default: 'argo.virtocommerce.cloud'
-        type: string
       cmPath:
         description: 'JSON configuration map file path (with quotes)'
         required: false
@@ -34,12 +30,13 @@ on:
         required: false
         default: false
         type: boolean
+      cloudUrl:
+        description: 'Cloud URL for checking status'
+        default: 'https://portal.virtocommerce.cloud'
+        required: false
+        type: string
   workflow_dispatch:
     inputs:
-      argoServer:
-        required: false
-        default: 'argo.virtocommerce.cloud'
-        type: string
       cmPath:
         description: 'JSON configuration map file path (with quotes)'
         required: false
@@ -72,7 +69,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      ARGO_SERVER: ${{ inputs.argoServer }}
       CLIENT_ID: ${{secrets.CLIENT_ID}}
       CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
       CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
