@@ -122,7 +122,7 @@ jobs:
       timeout-minutes: 5
       run: |
         dotnet tool install --global VirtoCommerce.GlobalTool || true
-        vc-build CloudEnvStatus -CloudUrl ${{ env.CLOUD_URL }} -CloudToken ${{ env.VIRTOCLOUD_KEY }} -EnvironmentName ${{ steps.deployConfig.outputs.deployAppName }} -HealthStatus Healthy -SyncStatus Synced
+        vc-build CloudEnvStatus -CloudUrl $CLOUD_URL -CloudToken $VIRTOCLOUD_KEY -EnvironmentName ${{ steps.deployConfig.outputs.deployAppName }} -HealthStatus Healthy -SyncStatus Synced
       shell: bash
 
     - name: DEPLOY_STATE::successful
