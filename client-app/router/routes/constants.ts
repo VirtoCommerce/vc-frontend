@@ -26,7 +26,7 @@ export const ROUTES = {
   SAVED_FOR_LATER: {
     NAME: "SavedForLater",
   },
-  PROMITION_COUPONS: {
+  PROMOTION_COUPONS: {
     NAME: "PromotionCoupons",
     PATH: "coupons",
   },
