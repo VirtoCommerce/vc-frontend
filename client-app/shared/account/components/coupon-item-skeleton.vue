@@ -1,33 +1,35 @@
 <template>
   <VcWidget class="coupon-item-skeleton">
-    <div class="coupon-item-skeleton__wrapper">
-      <div class="coupon-item-skeleton__title">
-        <div class="coupon-item-skeleton__line">&nbsp;</div>
-      </div>
+    <template #default-container>
+      <div class="coupon-item-skeleton__wrapper">
+        <div class="coupon-item-skeleton__title">
+          <div class="coupon-item-skeleton__line">&nbsp;</div>
+        </div>
 
-      <div class="coupon-item-skeleton__name">
-        <div class="coupon-item-skeleton__line">&nbsp;</div>
-      </div>
+        <div class="coupon-item-skeleton__name">
+          <div class="coupon-item-skeleton__line">&nbsp;</div>
+        </div>
 
-      <div class="coupon-item-skeleton__description">
-        <div class="coupon-item-skeleton__line">&nbsp;</div>
-      </div>
+        <div class="coupon-item-skeleton__description">
+          <div class="coupon-item-skeleton__line">&nbsp;</div>
+        </div>
 
-      <div class="coupon-item-skeleton__end-date">
-        <div class="coupon-item-skeleton__line">&nbsp;</div>
-      </div>
+        <div class="coupon-item-skeleton__end-date">
+          <div class="coupon-item-skeleton__line">&nbsp;</div>
+        </div>
 
-      <div class="coupon-item-skeleton__code">
-        <div class="coupon-item-skeleton__line">&nbsp;</div>
+        <div class="coupon-item-skeleton__code">
+          <div class="coupon-item-skeleton__line">&nbsp;</div>
+        </div>
       </div>
-    </div>
+    </template>
   </VcWidget>
 </template>
 
 <style lang="scss">
 .coupon-item-skeleton {
   &__wrapper {
-    @apply grid grid-cols-3 gap-4 animate-pulse;
+    @apply p-4 grid grid-cols-3 gap-4 animate-pulse;
 
     @media (min-width: theme("screens.lg")) {
       @apply grid-cols-12 gap-5;
