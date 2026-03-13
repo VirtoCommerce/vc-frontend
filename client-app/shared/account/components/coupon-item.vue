@@ -151,18 +151,18 @@ async function copyCoupon(text?: string) {
   }
 
   &__click-label {
-    @apply hidden text-xs text-secondary-500;
+    @apply text-xs text-secondary-500;
 
-    @media (min-width: theme("screens.lg")) {
-      @apply inline;
+    @media (pointer: coarse) {
+      @apply hidden;
     }
   }
 
   &__tap-label {
-    @apply text-xs text-secondary-500;
+    @apply hidden text-xs text-secondary-500;
 
-    @media (min-width: theme("screens.lg")) {
-      @apply hidden;
+    @media (pointer: coarse) {
+      @apply inline;
     }
   }
 }

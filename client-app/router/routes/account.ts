@@ -87,8 +87,8 @@ export const accountRoutes: RouteRecordRaw[] = [
     component: Impersonate,
   },
   {
-    path: "coupons",
-    name: "PromotionCoupons",
+    path: ROUTES.PROMITION_COUPONS.PATH,
+    name: ROUTES.PROMITION_COUPONS.NAME,
     component: PromotionCoupons,
   },
 ];
