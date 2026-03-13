@@ -91,82 +91,82 @@ jobs:
         envName: ${{ inputs.environmentId }}
         deployConfigPath: .deployment/theme/cloudDeploy.json
 
-    # - name: Start deployment
-    #   uses: bobheadxi/deployments@main
-    #   id: deployment
-    #   with:
-    #     step: start
-    #     token: ${{ env.GITHUB_TOKEN }}
-    #     env: ${{ steps.deployConfig.outputs.environmentName }}
-    #     override: true
+    - name: Start deployment
+      uses: bobheadxi/deployments@main
+      id: deployment
+      with:
+        step: start
+        token: ${{ env.GITHUB_TOKEN }}
+        env: ${{ steps.deployConfig.outputs.environmentName }}
+        override: true
 
-    # - name: Deploy to ${{ steps.deployConfig.outputs.environmentName }}
-    #   uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
-    #   with:
-    #     githubToken: ${{ env.GITHUB_TOKEN }}
-    #     deployRepo: ${{ steps.deployConfig.outputs.deployRepo }}
-    #     deployBranch: ${{ steps.deployConfig.outputs.deployBranch }}
-    #     cmPath: ${{ inputs.cmPath || steps.deployConfig.outputs.cmPath }}
-    #     artifactKey: '"${{ inputs.artifactKey || steps.deployConfig.outputs.artifactKey }}"'
-    #     artifactUrl: '"${{ inputs.artifactUrl }}"'
-    #     taskNumber: ${{ inputs.jiraKeys }}
-    #     forceCommit: ${{ inputs.forceCommit }}
+    - name: Deploy to ${{ steps.deployConfig.outputs.environmentName }}
+      uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
+      with:
+        githubToken: ${{ env.GITHUB_TOKEN }}
+        deployRepo: ${{ steps.deployConfig.outputs.deployRepo }}
+        deployBranch: ${{ steps.deployConfig.outputs.deployBranch }}
+        cmPath: ${{ inputs.cmPath || steps.deployConfig.outputs.cmPath }}
+        artifactKey: '"${{ inputs.artifactKey || steps.deployConfig.outputs.artifactKey }}"'
+        artifactUrl: '"${{ inputs.artifactUrl }}"'
+        taskNumber: ${{ inputs.jiraKeys }}
+        forceCommit: ${{ inputs.forceCommit }}
 
-    # - name: Sleep for ${{ env.SLEEP_TIME }}
-    #   if: ${{ inputs.forceCommit }}
-    #   run: sleep ${{ env.SLEEP_TIME }}
-    #   shell: bash
+    - name: Sleep for ${{ env.SLEEP_TIME }}
+      if: ${{ inputs.forceCommit }}
+      run: sleep ${{ env.SLEEP_TIME }}
+      shell: bash
 
     - name: Check deployment status
-      # if: ${{ inputs.forceCommit }}
+      if: ${{ inputs.forceCommit }}
       timeout-minutes: 5
       run: |
         dotnet tool install --global VirtoCommerce.GlobalTool || true
         vc-build CloudEnvStatus -CloudUrl ${{ env.CLOUD_URL }} -CloudToken ${{ env.VIRTOCLOUD_KEY }} -EnvironmentName ${{ steps.deployConfig.outputs.deployAppName }} -HealthStatus Healthy -SyncStatus Synced
       shell: bash
 
-    # - name: DEPLOY_STATE::successful
-    #   if: success()
-    #   run: echo "DEPLOY_STATE=successful" >> $GITHUB_ENV
+    - name: DEPLOY_STATE::successful
+      if: success()
+      run: echo "DEPLOY_STATE=successful" >> $GITHUB_ENV
 
-    # - name: DEPLOY_STATE::failed
-    #   if: failure()
-    #   run: echo "DEPLOY_STATE=failed"  >> $GITHUB_ENV
+    - name: DEPLOY_STATE::failed
+      if: failure()
+      run: echo "DEPLOY_STATE=failed"  >> $GITHUB_ENV
 
-    # - name: Update GitHub deployment status
-    #   uses: bobheadxi/deployments@main
-    #   if: always()
-    #   with:
-    #     step: finish
-    #     token: ${{ env.GITHUB_TOKEN }}
-    #     status: ${{ job.status }}
-    #     env: ${{ steps.deployment.outputs.env }}
-    #     deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+    - name: Update GitHub deployment status
+      uses: bobheadxi/deployments@main
+      if: always()
+      with:
+        step: finish
+        token: ${{ env.GITHUB_TOKEN }}
+        status: ${{ job.status }}
+        env: ${{ steps.deployment.outputs.env }}
+        deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
-    # - name: Push Deployment Info to Jira
-    #   if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && inputs.jiraKeys != '' && always() }}
-    #   id: push_deployment_info_to_jira
-    #   uses: VirtoCommerce/jira-upload-deployment-info@master
-    #   env:
-    #     CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
-    #     CLIENT_ID: ${{secrets.CLIENT_ID}}
-    #     CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
-    #   with:
-    #     cloud-instance-base-url: ${{ secrets.CLOUD_INSTANCE_BASE_URL }}
-    #     client-id: ${{ secrets.CLIENT_ID }}
-    #     client-secret: ${{ secrets.CLIENT_SECRET }}
-    #     deployment-sequence-number: ${{ github.run_id }}
-    #     update-sequence-number: ${{ github.run_id }}
-    #     issue-keys: ${{ inputs.jiraKeys }}
-    #     display-name: ${{ steps.deployConfig.outputs.deployAppName }}
-    #     url: ${{ steps.deployConfig.outputs.environmentUrl }}
-    #     label: ${{ steps.deployConfig.outputs.environmentName }}
-    #     description: 'Deployment to the ${{ steps.deployConfig.outputs.environmentName }} environment'
-    #     last-updated: '${{github.event.head_commit.timestamp}}'
-    #     state: '${{ env.DEPLOY_STATE }}'
-    #     pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
-    #     pipeline-display-name: 'Workflow: ${{ github.workflow }} (#${{ github.run_number }})'
-    #     pipeline-url: '${{github.event.repository.html_url}}/actions/runs/${{github.run_id}}'
-    #     environment-id: ${{ steps.deployConfig.outputs.environmentId }}
-    #     environment-display-name: ${{ steps.deployConfig.outputs.environmentName }}
-    #     environment-type: ${{ steps.deployConfig.outputs.environmentType }}
+    - name: Push Deployment Info to Jira
+      if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && inputs.jiraKeys != '' && always() }}
+      id: push_deployment_info_to_jira
+      uses: VirtoCommerce/jira-upload-deployment-info@master
+      env:
+        CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
+        CLIENT_ID: ${{secrets.CLIENT_ID}}
+        CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
+      with:
+        cloud-instance-base-url: ${{ secrets.CLOUD_INSTANCE_BASE_URL }}
+        client-id: ${{ secrets.CLIENT_ID }}
+        client-secret: ${{ secrets.CLIENT_SECRET }}
+        deployment-sequence-number: ${{ github.run_id }}
+        update-sequence-number: ${{ github.run_id }}
+        issue-keys: ${{ inputs.jiraKeys }}
+        display-name: ${{ steps.deployConfig.outputs.deployAppName }}
+        url: ${{ steps.deployConfig.outputs.environmentUrl }}
+        label: ${{ steps.deployConfig.outputs.environmentName }}
+        description: 'Deployment to the ${{ steps.deployConfig.outputs.environmentName }} environment'
+        last-updated: '${{github.event.head_commit.timestamp}}'
+        state: '${{ env.DEPLOY_STATE }}'
+        pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
+        pipeline-display-name: 'Workflow: ${{ github.workflow }} (#${{ github.run_number }})'
+        pipeline-url: '${{github.event.repository.html_url}}/actions/runs/${{github.run_id}}'
+        environment-id: ${{ steps.deployConfig.outputs.environmentId }}
+        environment-display-name: ${{ steps.deployConfig.outputs.environmentName }}
+        environment-type: ${{ steps.deployConfig.outputs.environmentType }}
