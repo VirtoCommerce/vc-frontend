@@ -118,7 +118,7 @@ jobs:
     #   shell: bash
 
     - name: Check deployment status
-      if: ${{ inputs.forceCommit }}
+      # if: ${{ inputs.forceCommit }}
       timeout-minutes: 5
       run: |
         dotnet tool install --global VirtoCommerce.GlobalTool || true
