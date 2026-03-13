@@ -1,39 +1,41 @@
 <template>
-  <div class="coupon-item">
-    <div class="coupon-item__title">
-      <p>{{ coupon.systemName }}</p>
+  <VcWidget class="coupon-item">
+    <div class="coupon-item__wrapper">
+      <div class="coupon-item__title">
+        <p>{{ coupon.systemName }}</p>
+      </div>
+
+      <div class="coupon-item__name">
+        <p>{{ coupon.name }}</p>
+      </div>
+
+      <div class="coupon-item__description">
+        <p class="coupon-item__description-text">{{ coupon.description }}</p>
+      </div>
+
+      <div class="coupon-item__end-date">
+        <template v-if="coupon.endDate">
+          <span class="coupon-item__end-date-label">{{ $t("shared.account.promotion_coupons.expires") }}</span>
+
+          <span class="coupon-item__end-date-value">{{ $d(coupon.endDate, "short") }}</span>
+        </template>
+      </div>
+
+      <div class="coupon-item__code">
+        <button type="button" class="coupon-item__code-button" @click="copyCoupon(coupon.couponCode?.toUpperCase())">
+          <span class="coupon-item__code-value">{{ coupon.couponCode?.toUpperCase() }}</span>
+
+          <span class="coupon-item__click-label">
+            {{ $t("shared.account.promotion_coupons.click_to_copy") }}
+          </span>
+
+          <span class="coupon-item__tap-label">
+            {{ $t("shared.account.promotion_coupons.tap_to_copy") }}
+          </span>
+        </button>
+      </div>
     </div>
-
-    <div class="coupon-item__name">
-      <p>{{ coupon.name }}</p>
-    </div>
-
-    <div class="coupon-item__description">
-      <p class="coupon-item__description-text">{{ coupon.description }}</p>
-    </div>
-
-    <div class="coupon-item__end-date">
-      <template v-if="coupon.endDate">
-        <span class="coupon-item__end-date-label">{{ $t("shared.account.promotion_coupons.expires") }}</span>
-
-        <span class="coupon-item__end-date-value">{{ $d(coupon.endDate, "short") }}</span>
-      </template>
-    </div>
-
-    <div class="coupon-item__code">
-      <button type="button" class="coupon-item__code-button" @click="copyCoupon(coupon.couponCode?.toUpperCase())">
-        <span class="coupon-item__code-value">{{ coupon.couponCode?.toUpperCase() }}</span>
-
-        <span class="coupon-item__click-label">
-          {{ $t("shared.account.promotion_coupons.click_to_copy") }}
-        </span>
-
-        <span class="coupon-item__tap-label">
-          {{ $t("shared.account.promotion_coupons.tap_to_copy") }}
-        </span>
-      </button>
-    </div>
-  </div>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">
@@ -66,14 +68,16 @@ async function copyCoupon(text?: string) {
 
 <style lang="scss">
 .coupon-item {
-  @apply bg-additional-50 rounded-md shadow-md p-4 grid grid-cols-3 gap-4;
+  &__wrapper {
+    @apply grid grid-cols-3 gap-4;
 
-  @media (min-width: theme("screens.lg")) {
-    @apply grid-cols-12 gap-5;
+    @media (min-width: theme("screens.lg")) {
+      @apply grid-cols-12 gap-5;
+    }
   }
 
   &__title {
-    @apply order-1 col-span-1 flex items-center justify-center font-bold text-xl text-success-500;
+    @apply order-1 col-span-1 flex items-center justify-center font-bold text-xl text-success-500 text-center;
 
     @media (min-width: theme("screens.lg")) {
       @apply order-none col-span-2;
