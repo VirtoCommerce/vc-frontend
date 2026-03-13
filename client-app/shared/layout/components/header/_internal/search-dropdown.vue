@@ -169,11 +169,11 @@ import { computed, onMounted, ref, toRefs, toValue, useTemplateRef, watch } from
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useRouteQueryParam, useThemeContext, useAnalytics } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
-import { BREAKPOINTS } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
 import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { highlightSearchText } from "@/shared/layout/utils";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import nothingFoundImgRaw from "@/ui-kit/images/nothing-found.svg?raw";
 import SearchBarProductCard from "./search-bar/_internal/search-bar-product-card.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";

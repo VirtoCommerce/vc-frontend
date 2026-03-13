@@ -18,8 +18,7 @@
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
 import { computed, useSlots } from "vue";
-import { BREAKPOINTS } from "@/core/constants";
-import type { BreakpointsType } from "@/core/constants";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { VNode } from "vue";
 
 interface IProps {

@@ -158,7 +158,6 @@ import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import {
-  BREAKPOINTS,
   LOCAL_PRODUCT_CONFIGURATIONS_LOCAL_STORAGE,
   CONFIGURATION_URL_SEARCH_PARAM,
   LINE_ITEM_ID_URL_SEARCH_PARAM,
@@ -199,6 +198,7 @@ import {
 } from "@/shared/catalog/constants/product";
 import { FloatingBar } from "@/shared/common";
 import { useXPickup } from "@/shared/x-pickup/composables/useXPickup";
+import { BREAKPOINTS } from "@/ui-kit/constants";
 import type { ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, LocalConfigurationType, ProductsFiltersType } from "@/shared/catalog";
 import type { IPageTemplate } from "@/shared/static-content";
