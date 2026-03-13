@@ -2,11 +2,11 @@ import { ApolloLink, Observable } from "@apollo/client/core";
 import { AbortReason } from "@/core/api/common/enums";
 import { useQueuedMutations } from "@/core/composables/useQueuedMutations";
 import { isMutation, defaultMergeVariables } from "../utils";
-import type { IQueueConfig, IQueueTargetConfig, IOperationState, IObserver } from "./types";
+import type { IQueueConfig, IQueueTargetConfig, IQueueTarget, IOperationState, IObserver } from "./types";
 import type { UpdateShortCartItemQuantityMutationVariables } from "@/core/api/graphql/types";
 import type { DefaultContext } from "@apollo/client/core";
 
-const DEFAULT_DEBOUNCE_MS = 1000;
+export const DEFAULT_DEBOUNCE_MS = 1000;
 
 /**
  * Creates a queued mutations link.
@@ -14,12 +14,11 @@ const DEFAULT_DEBOUNCE_MS = 1000;
  * Further actions happening while network request is in flight + debounce time are queued and will be merged with the next network request.
  * @param config @link{IQueueConfig} - The configuration for the queued mutations link.
  */
-export function createQueuedMutationsLink<TVars extends Record<string, unknown>>(
-  config: IQueueConfig<TVars>,
-): ApolloLink {
+export function createQueuedMutationsLink(config: IQueueConfig): ApolloLink {
+  type TVarsType = Record<string, unknown>;
   const targets = new Set<string>(Array.from(config.targets.map((t) => t.name)));
 
-  const targetConfigMap = new Map<string, Required<IQueueTargetConfig<TVars>>>(
+  const targetConfigMap = new Map<string, Required<IQueueTargetConfig<TVarsType>>>(
     config.targets.map((target) => [
       target.name,
       {
@@ -29,17 +28,17 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
     ]),
   );
 
-  const stateByOperation = new Map<string, IOperationState<TVars>>();
+  const stateByOperation = new Map<string, IOperationState<TVarsType>>();
   const { setQueuedTotal } = useQueuedMutations();
 
-  function getState(opName: string): IOperationState<TVars> {
+  function getState(opName: string): IOperationState<TVarsType> {
     const state = stateByOperation.get(opName);
 
     if (state) {
       return state;
     }
 
-    const newState: IOperationState<TVars> = {
+    const newState: IOperationState<TVarsType> = {
       inFlight: false,
       timer: null,
       mergedVariables: null,
@@ -89,7 +88,7 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
     }, debounceMs);
   }
 
-  function enqueue(opName: string, variables: TVars, observer: IObserver): void {
+  function enqueue(opName: string, variables: TVarsType, observer: IObserver): void {
     const state = getState(opName);
     const { mergeQueued } = getTargetConfig(opName);
 
@@ -168,7 +167,7 @@ export function createQueuedMutationsLink<TVars extends Record<string, unknown>>
         state.forward = forward;
       }
 
-      enqueue(opName, operation.variables as TVars, observer as IObserver);
+      enqueue(opName, operation.variables as TVarsType, observer as IObserver);
 
       // Cleanup function
       return () => {
@@ -202,11 +201,18 @@ const updateShortCartItemQuantityConfig: IQueueTargetConfig<UpdateShortCartItemQ
   },
 };
 
+/**
+ * Helper function to create a properly typed queue target.
+ * This preserves type safety when defining each target while allowing
+ * heterogeneous targets in the config array.
+ */
+export function createQueueTarget<TVars extends Record<string, unknown>>(
+  name: string,
+  config: IQueueTargetConfig<TVars>,
+): IQueueTarget {
+  return { name, config: config as IQueueTargetConfig };
+}
+
 export const queuedMutationsLink = createQueuedMutationsLink({
-  targets: [
-    {
-      name: "UpdateShortCartItemQuantity",
-      config: updateShortCartItemQuantityConfig,
-    },
-  ],
+  targets: [createQueueTarget("UpdateShortCartItemQuantity", updateShortCartItemQuantityConfig)],
 });

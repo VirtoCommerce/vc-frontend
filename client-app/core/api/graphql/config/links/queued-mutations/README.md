@@ -84,20 +84,22 @@ If an observer unsubscribes (e.g., component unmounts):
 ### Configuration
 
 ```typescript
+const myConfig: IQueueTargetConfig<MyMutationVariables> = {
+  debounceMs: 1000,
+  mergeQueued: (a, b) => {
+    // Custom merge logic with full type safety for MyMutationVariables
+    return { ...a, ...b };
+  },
+};
+
 createQueuedMutationsLink({
   targets: [
-    {
-      name: "UpdateShortCartItemQuantity",
-      config: {
-        debounceMs: 1000,
-        mergeQueued: (variables1, variables2) => {
-          // Custom merge variables logic
-        }
-      }
-    }
-  ]
+    createQueueTarget("MyMutation", myConfig),
+  ],
 })
 ```
+
+The `createQueueTarget` helper preserves type safety for each target's `mergeQueued` function while allowing heterogeneous targets (different mutation variable types) in the same config array.
 
 ### Target Config
 
@@ -124,7 +126,8 @@ The link exposes `queuedTotal` via `useQueuedMutations()` composable for UI feed
 
 ### Adding New Mutations
 
-1. Add target to `queuedMutationsLink` configuration
+1. Define a typed config: `const myConfig: IQueueTargetConfig<MyMutationVariables> = { ... }`
 2. Implement custom `mergeQueued` function if needed
-3. Define appropriate `debounceMs` for your use case
+3. Add target using `createQueueTarget("MyMutation", myConfig)` to the `queuedMutationsLink` targets array
+4. Define appropriate `debounceMs` for your use case
 
