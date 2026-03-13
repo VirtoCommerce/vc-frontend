@@ -1,8 +1,10 @@
+@use "sass:meta";
+
 // Dark mode overrides
 // Applied when html.dark class is present (set by useDarkMode composable).
 // The dark preset JSON swaps palette shades (50↔950, 100↔900, etc.),
 // but semantic variables in _colors.scss still reference the light-mode shade numbers.
-// This file remaps them so headers/footers/mobile-menu stay visually correct in dark mode.
+// Per-component files remap them so UI stays visually correct in dark mode.
 
 html.dark {
   color-scheme: dark;
@@ -15,165 +17,19 @@ html.dark {
 
   --link-color: var(--color-accent-700);
 
-  // Input placeholder text: ensure readability on dark surfaces
-  input::placeholder,
-  textarea::placeholder {
-    color: var(--color-neutral-600);
-  }
-
-  // Autofill: browser forces light background; override with dark surface + light text
-  input:autofill,
-  textarea:autofill {
-    -webkit-text-fill-color: var(--color-neutral-100);
-
-    &:disabled {
-      -webkit-text-fill-color: var(--color-neutral-500);
-    }
-  }
-
-  // Solid buttons: in dark mode additional-50 is near-black, so text must
-  // use the light end (additional-950 = cream).
-  [class*="vc-button--solid--"],
-  [class*="vc-button--solid--"]:hover,
-  [class*="vc-badge--solid--"] {
-    --text-color: var(--color-additional-950);
-  }
-
-  // Per-color solid overrides: use -400 (dark in inverted scale) for WCAG AA
-  // contrast with cream text. Hover lightens to -500 (standard dark-mode pattern).
-  @each $color in primary, secondary, accent, neutral, success, danger, info, warning {
-    .vc-button--solid--#{$color} {
-      --bg-color: var(--color-#{$color}-400);
-      --border-color: var(--color-#{$color}-400);
-
-      &:hover:not([class*="--loading"], [class*="--disabled"]) {
-        --bg-color: var(--color-#{$color}-500);
-        --border-color: var(--color-#{$color}-500);
-      }
-    }
-
-    .vc-button--outline--#{$color},
-    .vc-badge--outline--#{$color} {
-      --text-color: var(--color-#{$color}-900);
-      --border-color: var(--color-#{$color}-600);
-    }
-
-    .vc-button--no-border--#{$color} {
-      --border-color: transparent;
-      --text-color: var(--color-#{$color}-900);
-    }
-
-    .vc-button--no-background--#{$color} {
-      --text-color: var(--color-#{$color}-900);
-    }
-
-    .vc-button--solid-light--#{$color},
-    .vc-badge--solid-light--#{$color} {
-      --bg-color: var(--color-#{$color}-200);
-      --text-color: var(--color-#{$color}-900);
-    }
-  }
-
-  // Focus ring: buttons override --outline-color per-color at 0.3 opacity.
-  // Bump to -700 at 0.8 for dark-mode visibility (matches global override above).
-  @each $color in primary, secondary, accent, neutral, success, danger, info, warning {
-    .vc-button--color--#{$color}:focus {
-      --outline-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
-    }
-  }
-
-  // Focus ring: chips override --outline-color per-color at 0.4 opacity.
-  @each $color in primary, secondary, accent, neutral, success, danger, info, warning {
-    .vc-chip--color--#{$color} {
-      --outline-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  // Focus ring: form inputs/controls use --focus-color at 0.3 opacity.
-  // Bump to 0.8 in dark mode for WCAG-compliant visibility.
-  // ---------------------------------------------------------------------------
-  .vc-input {
-    --focus-color: rgb(from var(--color) r g b / 0.8);
-  }
-
-  .vc-checkbox {
-    --focus-color: rgb(from var(--base-color) r g b / 0.8);
-  }
-
-  .vc-radio-button {
-    --focus-color: rgb(from var(--base-color) r g b / 0.8);
-  }
-
-  .vc-tab-switch {
-    --focus-color: rgb(from var(--color) r g b / 0.8);
-  }
-
-  // Focus ring: menu-item inner elements use --focus-color per-color at 0.3 opacity.
-  // Bump to -700 at 0.8 in dark mode.
-  @each $color in primary, secondary, accent, neutral, success, danger, info, warning {
-    .vc-menu-item__inner--color--#{$color} {
-      --focus-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
-    }
-  }
-
-  // Focus ring: payment iframe wrappers use --focus-color at 0.3 opacity.
-  .cyber-source-input-wrap {
-    --focus-color: rgb(from var(--color) r g b / 0.8);
-  }
-
-  .datatrans-input-wrap {
-    --focus-color: rgb(from var(--color) r g b / 0.8);
-  }
-
-  // ---------------------------------------------------------------------------
-  // Ring offset: Tailwind defaults --tw-ring-offset-color to white.
-  // In dark mode, match the dark body background so the offset gap is invisible.
-  // ---------------------------------------------------------------------------
-  .vc-nav-button {
-    --tw-ring-offset-color: var(--color-additional-50);
-  }
-
-  .vc-slider__slider .noUi-handle {
-    --tw-ring-offset-color: var(--color-additional-50);
-  }
-
-  // ---------------------------------------------------------------------------
-  // Focus ring: product-actions-button uses --focus-color at full opacity with
-  // -500 shades. Bump to -700 in dark mode for better contrast on dark surfaces.
-  // ---------------------------------------------------------------------------
-  @each $color in primary, secondary, accent, neutral, success, danger, info, warning {
-    .vc-product-actions-button--color--#{$color} {
-      --focus-color: var(--color-#{$color}-700);
-    }
-  }
-
-  // Inactive (non-active) product-actions-button defaults to neutral-500.
-  // Bump to neutral-700 in dark mode.
-  .vc-product-actions-button:not(.vc-product-actions-button--active) {
-    --focus-color: var(--color-neutral-700);
-  }
-
-  // Solid chips: same additional-50→950 swap for text and icons.
-  .vc-chip--variant--solid {
-    --text-color: var(--color-additional-950);
-    --main-icon-color: var(--color-additional-950);
-    --close-button-icon-color: var(--color-additional-950);
-  }
-
-  // Solid alerts: same additional-50→950 swap for text and icons.
-  .vc-alert--solid {
-    --text-color: var(--color-additional-950);
-    --icon-color: var(--color-additional-950);
-  }
-
-  // Disabled buttons: neutral-600 text is too dark on dark surfaces.
-  .vc-button[class*="--disabled"]:not([class*="--loading"]) {
-    --text-color: var(--color-neutral-800);
-    --vc-icon-color: var(--color-neutral-600);
-  }
-
-  .product-pickup-locations__link {
-    color: var(--color-accent-700);
-  }
+  @include meta.load-css("dark/globals");
+  @include meta.load-css("dark/atoms/vc-badge");
+  @include meta.load-css("dark/atoms/vc-input");
+  @include meta.load-css("dark/atoms/vc-checkbox");
+  @include meta.load-css("dark/atoms/vc-radio-button");
+  @include meta.load-css("dark/atoms/vc-tab-switch");
+  @include meta.load-css("dark/atoms/vc-slider");
+  @include meta.load-css("dark/molecules/vc-button");
+  @include meta.load-css("dark/molecules/vc-chip");
+  @include meta.load-css("dark/molecules/vc-alert");
+  @include meta.load-css("dark/molecules/vc-menu-item");
+  @include meta.load-css("dark/molecules/vc-nav-button");
+  @include meta.load-css("dark/molecules/vc-product-actions-button");
+  @include meta.load-css("dark/molecules/payment-inputs");
+  @include meta.load-css("dark/pages/product-pickup");
 }

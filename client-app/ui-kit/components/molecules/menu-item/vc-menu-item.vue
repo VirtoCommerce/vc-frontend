@@ -196,10 +196,10 @@ onMounted(() => {
   &__inner {
     --vc-icon-size: var(--content-height);
 
-    @apply flex items-center w-full px-3 text-left rounded-[inherit] font-normal;
+    @apply flex items-center w-full px-3 bg-additional-50 text-left rounded-[inherit] font-normal;
 
     &:not(:disabled) {
-      @apply bg-additional-50 text-neutral-950;
+      @apply text-neutral-950;
     }
 
     &--active {
@@ -270,7 +270,7 @@ onMounted(() => {
     &--disabled {
       --vc-icon-color: var(--color-neutral-400);
 
-      @apply bg-additional-50 text-neutral-400 cursor-not-allowed;
+      @apply text-neutral-400 cursor-not-allowed;
     }
   }
 

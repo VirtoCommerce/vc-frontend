@@ -1,0 +1,70 @@
+.vc-button {
+  $colors: primary, secondary, accent, neutral, success, danger, info, warning;
+  $loading: "";
+  $disabled: "";
+
+  &--loading {
+    $loading: &;
+  }
+
+  &--disabled {
+    $disabled: &;
+
+    &:not(#{$loading}) {
+      --text-color: var(--color-neutral-800);
+      --vc-icon-color: var(--color-neutral-600);
+    }
+  }
+
+  &[class*="vc-button--solid--"] {
+    --text-color: var(--color-additional-950);
+  }
+
+  @each $color in $colors {
+    &--solid--#{$color} {
+      --bg-color: var(--color-#{$color}-400);
+      --border-color: var(--color-#{$color}-400);
+
+      &:hover:not(#{$loading}, #{$disabled}) {
+        --bg-color: var(--color-#{$color}-500);
+        --border-color: var(--color-#{$color}-500);
+      }
+    }
+  }
+
+  @each $color in $colors {
+    &--outline--#{$colors} {
+      --text-color: var(--color-#{$color}-900);
+      --border-color: var(--color-#{$color}-600);
+    }
+  }
+
+  @each $color in $colors {
+    &--no-border--#{$colors} {
+      --bg-color: transparent;
+      --border-color: transparent;
+      --text-color: var(--color-#{$color}-900);
+    }
+  }
+
+  @each $color in $colors {
+    &--no-background--#{$colors} {
+      --text-color: var(--color-#{$color}-900);
+    }
+  }
+
+  @each $color in $colors {
+    &--solid-light--#{$colors} {
+      --bg-color: var(--color-#{$color}-200);
+      --text-color: var(--color-#{$color}-900);
+    }
+  }
+
+  // Focus ring: buttons override --outline-color per-color at 0.3 opacity.
+  // Bump to -700 at 0.8 for dark-mode visibility.
+  @each $color in $colors {
+    &--color--#{$color}:focus {
+      --outline-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
+    }
+  }
+}

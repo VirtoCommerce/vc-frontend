@@ -1,0 +1,4 @@
+// Focus ring: bump opacity for dark-mode visibility.
+.vc-tab-switch {
+  --focus-color: rgb(from var(--color) r g b / 0.8);
+}

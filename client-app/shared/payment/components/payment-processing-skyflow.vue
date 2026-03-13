@@ -223,6 +223,7 @@ const baseLabelStyles = {
   fontFamily: globalStyles.fontFamily,
   fontSize: "1rem",
   fontWeight: "700",
+  lineHeight: "1.25rem",
   paddingBottom: "0.25rem",
   color: globalStyles.textColor,
   background: globalStyles.backgroundColor,

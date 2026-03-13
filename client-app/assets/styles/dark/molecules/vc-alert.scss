@@ -1,0 +1,16 @@
+// Solid alerts: same additional-50→950 swap for text and icons.
+.vc-alert {
+  $colors: success, warning, danger, info;
+
+  &--solid {
+    --text-color: var(--color-additional-950);
+    --icon-color: var(--color-additional-950);
+
+    @each $color in $colors {
+      &--#{$color} {
+        --bg-color: var(--color-#{$color}-400);
+        --border-color: var(--color-#{$color}-400);
+      }
+    }
+  }
+}
