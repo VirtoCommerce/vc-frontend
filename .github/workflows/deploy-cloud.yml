@@ -3,10 +3,6 @@ name: VC cloud deployment
 on:
   workflow_call:
     inputs:
-      argoServer:
-        required: false
-        default: 'argo.virtocommerce.cloud'
-        type: string
       cmPath:
         description: 'JSON configuration map file path (with quotes)'
         required: false
@@ -34,12 +30,13 @@ on:
         required: false
         default: false
         type: boolean
+      cloudUrl:
+        description: 'Cloud URL for checking status'
+        default: 'https://portal.virtocommerce.cloud'
+        required: false
+        type: string
   workflow_dispatch:
     inputs:
-      argoServer:
-        required: false
-        default: 'argo.virtocommerce.cloud'
-        type: string
       cmPath:
         description: 'JSON configuration map file path (with quotes)'
         required: false
@@ -62,18 +59,24 @@ on:
         required: false
         default: ''
         type: string
+      cloudUrl:
+        description: 'Cloud URL for checking status'
+        default: 'https://portal.virtocommerce.cloud'
+        required: false
+        type: string
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      ARGO_SERVER: ${{ inputs.argoServer }}
       CLIENT_ID: ${{secrets.CLIENT_ID}}
       CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
       CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
+      CLOUD_URL: ${{ inputs.cloudUrl }}
       DEPLOY_STATE: ''
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       SLEEP_TIME: '3m'
+      VIRTOCLOUD_KEY: ${{ secrets.VIRTOCLOUD_KEY_VCPT_VCST }}
 
     steps:
 
@@ -110,15 +113,13 @@ jobs:
       run: sleep ${{ env.SLEEP_TIME }}
       shell: bash
 
-    - name: Wait for environment is up
+    - name: Check deployment status
       if: ${{ inputs.forceCommit }}
       timeout-minutes: 5
-      uses: VirtoCommerce/vc-github-actions/vc-argocd-cli@master
-      with:
-        server: ${{ env.ARGO_SERVER }}
-        username: ${{ secrets.VIRTOCLOUD_LOGIN }}
-        password: ${{ secrets.VIRTOCLOUD_PASSWORD }}
-        command: app wait ${{ steps.deployConfig.outputs.deployAppName }}
+      run: |
+        dotnet tool install --global VirtoCommerce.GlobalTool || true
+        vc-build CloudEnvStatus -CloudUrl $CLOUD_URL -CloudToken $VIRTOCLOUD_KEY -EnvironmentName ${{ steps.deployConfig.outputs.deployAppName }} -HealthStatus Healthy -SyncStatus Synced
+      shell: bash
 
     - name: DEPLOY_STATE::successful
       if: success()
