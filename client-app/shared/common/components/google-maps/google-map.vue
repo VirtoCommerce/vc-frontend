@@ -61,6 +61,22 @@ async function createMap() {
   });
 }
 
+function syncBoundsListener() {
+  listener?.remove();
+  listener = undefined;
+
+  if (!props.listenToBounds || !map.value) {
+    return;
+  }
+
+  listener = map.value.addListener("bounds_changed", () => {
+    const bounds = map.value?.getBounds();
+    if (bounds) {
+      emit("boundariesChanged", bounds);
+    }
+  });
+}
+
 // colorScheme cannot be changed via setOptions after map init (Google Maps API limitation).
 // :key="colorScheme" recreates the DOM subtree (including slot children like markers),
 // but does NOT re-trigger this component's onMounted — so we must call createMap manually.
@@ -68,21 +84,12 @@ watch(colorScheme, async () => {
   map.value = null;
   await nextTick();
   await createMap();
+  syncBoundsListener();
 });
 
 onMounted(async () => {
   await createMap();
-
-  if (!props.listenToBounds) {
-    return;
-  }
-
-  listener = map.value?.addListener("bounds_changed", () => {
-    const bounds = map.value?.getBounds();
-    if (bounds) {
-      emit("boundariesChanged", bounds);
-    }
-  });
+  syncBoundsListener();
 });
 
 onBeforeUnmount(() => {

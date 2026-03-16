@@ -91,9 +91,15 @@ export function useGoogleMaps(mapId: string) {
       const { Map: GoogleMap } = await loader.importLibrary("maps");
       await loader.importLibrary("places");
 
-      mapElement.innerHTML = "";
+      const currentMapElement = document.getElementById(elementId);
+      if (!currentMapElement) {
+        Logger.error(`Map container element with id "${elementId}" not found`);
+        return;
+      }
 
-      const mapInstance = new GoogleMap(mapElement, {
+      currentMapElement.innerHTML = "";
+
+      const mapInstance = new GoogleMap(currentMapElement, {
         mapId: uniqueId("map-"),
         ...params.options,
       });
