@@ -3,10 +3,29 @@ import cloneDeep from "lodash/cloneDeep";
 import { computed, ref } from "vue";
 import { presets } from "@/assets/presets";
 import settingsData from "@/config/settings_data.json";
+import { presetNameToFileName } from "@/core/utilities";
 import { IS_DEVELOPMENT } from "../constants";
 import { BrowserTargetType } from "../enums";
 import type { StoreResponseType } from "../api/graphql/types";
 import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
+
+function getThemeConfig() {
+  const data = cloneDeep(settingsData) as IThemeConfig;
+
+  if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
+    data.settings.details_browser_target = BrowserTargetType.SELF;
+    data.settings.product_page_browser_target = BrowserTargetType.SELF;
+    data.settings.cart_page_browser_target = BrowserTargetType.SELF;
+  }
+
+  return data;
+}
+
+function getPreset(themePresetName: string): IThemeConfigPreset | undefined {
+  if (themePresetName in presets) {
+    return presets[themePresetName];
+  }
+}
 
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
@@ -31,42 +50,21 @@ function _useThemeContext() {
       throw new Error("The global state should be defined");
     }
 
-    let preset = getPreset(presetNameToFileName(presetName));
+    let resolvedName = presetNameToFileName(presetName);
+    let preset = getPreset(resolvedName);
 
     if (!preset) {
       const defaultPresetName = getThemeConfig().current;
-      preset = getPreset(presetNameToFileName(defaultPresetName));
+      resolvedName = presetNameToFileName(defaultPresetName);
+      preset = getPreset(resolvedName);
     }
 
     if (preset) {
       themeContext.value.preset = preset;
+      themeContext.value.activePresetName = resolvedName;
     } else {
       throw new Error("Missing preset");
     }
-  }
-
-  function getThemeConfig() {
-    const data = cloneDeep(settingsData) as IThemeConfig;
-
-    if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
-      data.settings.details_browser_target = BrowserTargetType.SELF;
-      data.settings.product_page_browser_target = BrowserTargetType.SELF;
-      data.settings.cart_page_browser_target = BrowserTargetType.SELF;
-    }
-
-    return data;
-  }
-
-  function getPreset(themePresetName: string): IThemeConfigPreset {
-    if (themePresetName in presets) {
-      return presets[themePresetName];
-    } else {
-      return presets.default;
-    }
-  }
-
-  function presetNameToFileName(name: string): string {
-    return name.toLowerCase().replace(" ", "-");
   }
 
   return {
