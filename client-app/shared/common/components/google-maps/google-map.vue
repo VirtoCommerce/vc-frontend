@@ -48,6 +48,8 @@ const { initMap, map } = useGoogleMaps(mapId.value);
 const colorScheme = computed(() => (isDark.value ? "DARK" : "LIGHT"));
 
 async function createMap() {
+  listener?.remove();
+
   await initMap({
     apiKey: apiKey.value,
     elementId: mapElementId.value,
@@ -59,6 +61,15 @@ async function createMap() {
       colorScheme: colorScheme.value,
     },
   });
+
+  if (props.listenToBounds) {
+    listener = map.value?.addListener("bounds_changed", () => {
+      const bounds = map.value?.getBounds();
+      if (bounds) {
+        emit("boundariesChanged", bounds);
+      }
+    });
+  }
 }
 
 // colorScheme cannot be changed via setOptions after map init (Google Maps API limitation).
@@ -70,20 +81,7 @@ watch(colorScheme, async () => {
   await createMap();
 });
 
-onMounted(async () => {
-  await createMap();
-
-  if (!props.listenToBounds) {
-    return;
-  }
-
-  listener = map.value?.addListener("bounds_changed", () => {
-    const bounds = map.value?.getBounds();
-    if (bounds) {
-      emit("boundariesChanged", bounds);
-    }
-  });
-});
+onMounted(() => createMap());
 
 onBeforeUnmount(() => {
   listener?.remove();
