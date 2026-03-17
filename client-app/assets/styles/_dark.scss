@@ -13,11 +13,10 @@ html.dark {
   // (defined in preflight.scss). On dark backgrounds this produces insufficient
   // contrast (≈1.64:1 for coffee dark). Bump to primary-700 at 80% opacity so
   // the ring meets WCAG 2.4.7 visible-focus requirements in every dark preset.
-  --outline-color: rgb(from var(--color-primary-700) r g b / 0.8);
+  body {
+    --outline-color: rgb(from var(--color-primary-600) r g b / 0.8);
+  }
 
-  --link-color: var(--color-accent-700);
-
-  @include meta.load-css("dark/globals");
   @include meta.load-css("dark/atoms/vc-badge");
   @include meta.load-css("dark/atoms/vc-input");
   @include meta.load-css("dark/atoms/vc-checkbox");
