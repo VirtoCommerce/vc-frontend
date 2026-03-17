@@ -1,0 +1,24 @@
+#import "../../../fragments/memberAddressFields.graphql"
+
+query GetCurrentUserAddresses(
+  $after: String
+  $first: Int
+  $sort: String
+  $countryCodes: [String]
+  $regionIds: [String]
+  $cities: [String]
+) {
+  currentCustomerAddresses(
+    after: $after
+    first: $first
+    sort: $sort
+    countryCodes: $countryCodes
+    regionIds: $regionIds
+    cities: $cities
+  ) {
+    totalCount
+    items {
+      ...memberAddressFields
+    }
+  }
+}

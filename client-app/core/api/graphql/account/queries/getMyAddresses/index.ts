@@ -1,14 +1,12 @@
 import { GetMyAddressesDocument } from "@/core/api/graphql/types";
 import { graphqlClient } from "../../../client";
-import type { ContactTypeAddressesArgs, MemberAddressFieldsFragment } from "@/core/api/graphql/types";
+import type { GetMyAddressesQueryVariables, MemberAddressFieldsFragment } from "@/core/api/graphql/types";
 
-export async function getMyAddresses(payload?: ContactTypeAddressesArgs): Promise<MemberAddressFieldsFragment[]> {
+export async function getMyAddresses(payload?: GetMyAddressesQueryVariables): Promise<MemberAddressFieldsFragment[]> {
   const { data } = await graphqlClient.query({
     query: GetMyAddressesDocument,
-    variables: {
-      ...payload,
-    },
+    variables: payload,
   });
 
-  return data.me?.contact?.addresses?.items ?? [];
+  return data.currentCustomerAddresses?.items ?? [];
 }
