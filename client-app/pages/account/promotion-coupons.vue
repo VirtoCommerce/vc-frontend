@@ -8,10 +8,17 @@
       <CouponItemSkeleton v-for="item in 5" :key="item" />
     </div>
 
-    <div v-else-if="coupons.length" class="promotion-coupons__wrapper">
-      <CouponItem v-for="coupon in coupons" :key="coupon.id" :coupon="coupon" />
+    <div v-else-if="coupons.length">
+      <div class="promotion-coupons__wrapper">
+        <CouponItem v-for="coupon in coupons" :key="coupon.id" :coupon="coupon" />
+      </div>
 
-      <VcPagination v-if="pagesCount > 1" v-model:page="page" :pages="pagesCount" />
+      <VcPagination
+        v-if="pagesCount > 1"
+        v-model:page="page"
+        :pages="pagesCount"
+        class="promotion-coupons__pagination"
+      />
     </div>
 
     <VcEmptyView v-else :text="$t('pages.account.promotion_coupons.no_lists')" icon="outline-lists" />
@@ -29,6 +36,10 @@ const { loading, coupons, page, pagesCount } = usePromotionCoupons();
 .promotion-coupons {
   &__wrapper {
     @apply space-y-2.5;
+  }
+
+  &__pagination {
+    @apply mt-5;
   }
 }
 </style>
