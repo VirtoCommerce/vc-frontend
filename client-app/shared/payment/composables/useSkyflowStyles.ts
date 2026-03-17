@@ -33,6 +33,8 @@ export function useSkyflowStyles() {
   const backgroundColor = useCssVar("--color-additional-50").value || FALLBACK_BACKGROUND;
   const textColor = useCssVar("--body-text-color").value || FALLBACK_TEXT;
 
+  const resolvedErrorColor = isDark.value ? errorColorDark : errorColor;
+
   const globalStyles = {
     global: {
       "@import":
@@ -40,9 +42,9 @@ export function useSkyflowStyles() {
     },
     fontFamily: "Lato, sans-serif",
     primaryColor,
-    errorColor: isDark.value ? errorColorDark : errorColor,
+    errorColor: resolvedErrorColor,
     borderColor,
-    invalidBorder: `1px solid ${errorColor}`,
+    invalidBorder: `1px solid ${resolvedErrorColor}`,
     backgroundColor,
     borderRadius: vcInputRadius || defaultRadius || FALLBACK_RADIUS,
     focusBorder: "1px solid transparent",
