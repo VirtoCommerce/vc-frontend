@@ -46,7 +46,7 @@
 
     <div ref="skyflowContainer" class="-mx-1 w-full max-w-2xl bg-additional-50"></div>
 
-    <div v-if="addNewCardSelected || !skyflowCards?.length">
+    <div v-if="(addNewCardSelected || !skyflowCards?.length) && newCardFormInitialized">
       <div class="mt-6 flex">
         <VcCheckbox v-model="saveCreditCard">
           {{ $t("common.labels.save_card_for_future_payments") }}
@@ -382,10 +382,9 @@ async function initCvvForm() {
   CVV.on(Skyflow.EventName.CHANGE, ({ isValid }: { isValid: boolean }) => {
     cvvCollectorStatus.value.valid = isValid;
   });
-  CVV.on(Skyflow.EventName.READY, () => {
-    cvvCollectorStatus.value.ready = true;
-  });
   container.mount(skyflowContainer.value);
+
+  cvvCollectorStatus.value.ready = true;
 
   cvvCollector = container;
   cvvElement = CVV;
