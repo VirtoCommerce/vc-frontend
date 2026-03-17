@@ -351,6 +351,17 @@ async function initPayment() {
   loading.value = false;
 }
 
+function validate(event: IValidateEvent & IValidateEventArg) {
+  let result = { ...validationResult.value };
+  if (event.event.field) {
+    result.fields[event.event.field] = event.fields[event.event.field];
+  } else {
+    result = event;
+  }
+  result.hasErrors = event.hasErrors;
+  validationResult.value = result;
+}
+
 function initForm(tx: string) {
   secureFields = new SecureFields();
   secureFields.init(
@@ -369,17 +380,6 @@ function initForm(tx: string) {
     secureFields.setPlaceholder("cardNumber", t("shared.payment.bank_card_form.number_label"));
     secureFields.setPlaceholder("cvv", t("shared.payment.bank_card_form.security_code_label"));
   });
-
-  function validate(event: IValidateEvent & IValidateEventArg) {
-    let result = { ...validationResult.value };
-    if (event.event.field) {
-      result.fields[event.event.field] = event.fields[event.event.field];
-    } else {
-      result = event;
-    }
-    result.hasErrors = event.hasErrors;
-    validationResult.value = result;
-  }
 
   secureFields.on("validate", validate);
   secureFields.on("change", validate);
