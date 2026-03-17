@@ -18,10 +18,10 @@ query GetPromotionCoupons(
     items {
       id
       endDate
+      label
       name
       description
       couponCode
-      systemName
     }
   }
 }

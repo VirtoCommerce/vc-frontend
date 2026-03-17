@@ -3,7 +3,7 @@
     <template #default-container>
       <div class="coupon-item__wrapper">
         <div class="coupon-item__title">
-          <p>{{ coupon.systemName }}</p>
+          <p>{{ coupon.label }}</p>
         </div>
 
         <div class="coupon-item__name">
