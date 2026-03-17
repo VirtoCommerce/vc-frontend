@@ -337,13 +337,13 @@ const isSavedCardPayBtnDisabled = computed(() => {
 const cvvCollectorStatus = ref({ valid: false, ready: false });
 
 async function initCvvForm() {
+  fullCardCollector?.unmount();
+
   if (!isSavedCardCvvRequired.value) {
     return;
   }
 
   await initPayment();
-
-  fullCardCollector?.unmount();
   clearCvv();
 
   const containerOptions = {
@@ -382,9 +382,10 @@ async function initCvvForm() {
   CVV.on(Skyflow.EventName.CHANGE, ({ isValid }: { isValid: boolean }) => {
     cvvCollectorStatus.value.valid = isValid;
   });
+  CVV.on(Skyflow.EventName.READY, () => {
+    cvvCollectorStatus.value.ready = true;
+  });
   container.mount(skyflowContainer.value);
-
-  cvvCollectorStatus.value.ready = true;
 
   cvvCollector = container;
   cvvElement = CVV;
