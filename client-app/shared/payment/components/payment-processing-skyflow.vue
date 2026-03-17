@@ -343,8 +343,8 @@ async function initCvvForm() {
     return;
   }
 
-  await initPayment();
   clearCvv();
+  await initPayment();
 
   const containerOptions = {
     layout: [1],
