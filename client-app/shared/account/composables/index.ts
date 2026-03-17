@@ -1,4 +1,5 @@
 export * from "./usePasswordRequirements";
+export * from "./usePromotionCoupons";
 export * from "./useSignMeIn";
 export * from "./useSignMeOut";
 export * from "./useUser";
