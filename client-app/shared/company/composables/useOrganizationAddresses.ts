@@ -21,6 +21,9 @@ const sort = ref<ISortInfo>({
   direction: SortDirection.Descending,
 });
 
+/**
+ * @deprecated use useCurrentOrganizatoinAddresses instead
+ */
 export function useOrganizationAddresses(organizationId: MaybeRef<string>) {
   async function fetchAddresses() {
     try {
