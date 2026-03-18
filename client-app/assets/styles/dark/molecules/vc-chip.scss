@@ -18,6 +18,14 @@
     }
   }
 
+  // Focus ring: chips override --outline-color per-color at 0.4 opacity.
+  // Bump to -700 at 0.8 for dark-mode visibility.
+  @each $color in $colors {
+    &--color--#{$color} {
+      --outline-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
+    }
+  }
+
   &--color {
     @each $color in $colors {
       &--#{$color} {

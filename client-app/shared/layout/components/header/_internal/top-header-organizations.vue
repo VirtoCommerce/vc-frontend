@@ -31,7 +31,7 @@
       class="top-header-organizations__list"
       test-id="main-layout.account-menu.top-header.organizations-list"
     >
-      <VcMenuItem v-if="organization && !loading && organizations.length > 0" size="xs">
+      <VcMenuItem v-if="organization && !loading && organizations.length > 0" size="xs" :clickable="false">
         <VcRadioButton
           :model-value="contactOrganizationId"
           :value="organization.id"
@@ -43,16 +43,23 @@
         />
       </VcMenuItem>
 
-      <VcMenuItem v-for="item in organizationsWithoutCurrent" :key="item.id" size="xs">
+      <VcMenuItem
+        v-for="item in organizationsWithoutCurrent"
+        :key="item.id"
+        size="xs"
+        @click="
+          contactOrganizationId = item.id;
+          selectOrganization();
+        "
+      >
         <VcRadioButton
-          v-model="contactOrganizationId"
+          :model-value="contactOrganizationId"
           :label="item.name"
           :value="item.id"
           :max-lines="2"
           :title="item.name"
           word-break="break-word"
           :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${item.name}`"
-          @change="selectOrganization"
         />
       </VcMenuItem>
 

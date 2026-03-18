@@ -10,7 +10,7 @@
           </li>
 
           <li class="vc-breadcrumbs__item">
-            <span class="vc-breadcrumbs__slash">/</span>
+            <span class="vc-breadcrumbs__slash" aria-hidden="true">/</span>
           </li>
         </template>
 
@@ -48,7 +48,7 @@ defineProps<IProps>();
   }
 
   &__slash {
-    @apply mx-2 text-neutral-300;
+    @apply mx-2 text-neutral-400;
   }
 }
 </style>

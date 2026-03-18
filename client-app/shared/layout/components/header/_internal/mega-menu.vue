@@ -171,10 +171,6 @@ onMounted(() => {
     &:disabled {
       @apply cursor-not-allowed text-neutral-400;
     }
-
-    &:focus {
-      @apply outline-none ring-2 ring-primary-100;
-    }
   }
 
   &__icon {

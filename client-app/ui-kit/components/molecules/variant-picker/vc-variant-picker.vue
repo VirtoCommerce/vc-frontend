@@ -364,7 +364,7 @@ function toggleValue(): void {
 
     #{$unavailable} & {
       &::before {
-        @apply content-[""] absolute inset-0 rounded-[--radius-inner] bg-additional-50/60;
+        @apply content-[""] absolute inset-0 rounded-[--radius-inner] bg-additional-50/40;
       }
 
       &::after {
