@@ -100,9 +100,15 @@
 
   "color_body_bg": "#040303",
   "color_body_text": "#ebe5e5",
+
+  "color_link": "#f4a6a5",
+  "color_link_hover": "#f8c5c5",
+
+  "color_price": "#eeeeec",
+
   "color_shape_icon_bg": "#e73433",
   "color_shape_icon": "#fef5f5",
-  "color_price": "#eeeeec",
+
   "color_empty_list_icon": "#cbd198",
 
   "color_mobile_menu_bg": "#040303",
