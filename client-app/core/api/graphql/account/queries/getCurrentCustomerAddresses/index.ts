@@ -4,5 +4,5 @@ import type { GetCurrentUserAddressesQueryVariables } from "@/core/api/graphql/t
 import type { MaybeRef } from "vue";
 
 export function useGetCurrentCustomerAddressesQuery(variables?: MaybeRef<GetCurrentUserAddressesQueryVariables>) {
-  return useQuery(GetCurrentUserAddressesDocument, variables, { fetchPolicy: "network-only" });
+  return useQuery(GetCurrentUserAddressesDocument, variables ?? {}, { fetchPolicy: "network-only" });
 }

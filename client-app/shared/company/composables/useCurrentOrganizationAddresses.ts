@@ -1,22 +1,24 @@
 import { computed, ref, toValue } from "vue";
 import {
+  addAddressToFavorites,
   deleteMemberAddresses,
+  removeAddressFromFavorites,
   updateMemberAddresses,
-  useGetCurrentCustomerAddressesQuery,
 } from "@/core/api/graphql/account";
+import { useGetCurrentOrganizationAddressesQuery } from "@/core/api/graphql/organization";
 import { SortDirection } from "@/core/enums";
 import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
-import { useUser } from "./useUser";
 import type { InputMemberAddressType, MemberAddressFieldsFragment } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { MaybeRefOrGetter } from "vue";
 
-export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6) {
-  const { user } = useUser();
-
+export function useCurrentOrganizationAddresses(
+  organizationId: MaybeRefOrGetter<string>,
+  itemsPerPage: MaybeRefOrGetter<number> = 6,
+) {
   const sort = ref<ISortInfo>({
-    column: "lastName",
-    direction: SortDirection.Ascending,
+    column: "isFavorite",
+    direction: SortDirection.Descending,
   });
 
   const page = ref(1);
@@ -33,42 +35,64 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6)
     cities: filterCities.value.length ? filterCities.value : undefined,
   }));
 
-  const { result, loading, refetch } = useGetCurrentCustomerAddressesQuery(variables);
+  const { result, loading, refetch } = useGetCurrentOrganizationAddressesQuery(variables);
 
-  const addresses = computed(() => result.value?.currentCustomerAddresses?.items ?? []);
-  const totalCount = computed(() => result.value?.currentCustomerAddresses?.totalCount ?? 0);
+  const addresses = computed(() => result.value?.currentOrganizationAddresses?.items ?? []);
+  const totalCount = computed(() => result.value?.currentOrganizationAddresses?.totalCount ?? 0);
   const pages = computed(() => Math.ceil(totalCount.value / toValue(itemsPerPage)));
 
   async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
-    if (!items.length || !user.value.memberId) {
+    if (!items.length || !toValue(organizationId)) {
       return;
     }
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await updateMemberAddresses(user.value.memberId, inputAddresses);
+      await updateMemberAddresses(toValue(organizationId), inputAddresses);
       void refetch();
     } catch (e) {
-      Logger.error(`${useCustomerAddresses.name}.${addOrUpdateAddresses.name}`, e);
+      Logger.error(`${useCurrentOrganizationAddresses.name}.${addOrUpdateAddresses.name}`, e);
       throw e;
     }
   }
 
   async function removeAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
-    if (!items.length || !user.value.memberId) {
+    if (!items.length || !toValue(organizationId)) {
       return;
     }
 
     const inputAddresses: InputMemberAddressType[] = items.map(toInputAddress);
 
     try {
-      await deleteMemberAddresses(inputAddresses, user.value.memberId);
+      await deleteMemberAddresses(inputAddresses, toValue(organizationId));
       void refetch();
     } catch (e) {
-      Logger.error(`${useCustomerAddresses.name}.${removeAddresses.name}`, e);
+      Logger.error(`${useCurrentOrganizationAddresses.name}.${removeAddresses.name}`, e);
       throw e;
     }
+  }
+
+  async function addAddressToFavorite(addressId: string): Promise<void> {
+    try {
+      await addAddressToFavorites(addressId);
+    } catch (e) {
+      Logger.error(`${useCurrentOrganizationAddresses.name}.${addAddressToFavorite.name}`, e);
+      throw e;
+    }
+
+    void refetch();
+  }
+
+  async function removeAddressFromFavorite(addressId: string): Promise<void> {
+    try {
+      await removeAddressFromFavorites(addressId);
+    } catch (e) {
+      Logger.error(`${useCurrentOrganizationAddresses.name}.${removeAddressFromFavorite.name}`, e);
+      throw e;
+    }
+
+    void refetch();
   }
 
   return {
@@ -83,5 +107,7 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6)
     filterCities,
     addOrUpdateAddresses,
     removeAddresses,
+    addAddressToFavorite,
+    removeAddressFromFavorite,
   };
 }

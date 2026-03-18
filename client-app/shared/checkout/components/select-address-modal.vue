@@ -71,7 +71,7 @@
       :columns="columns"
       :items="paginatedAddresses"
       :description="$t('shared.checkout.select_address_modal.meta.table_description')"
-      :loading="resolvedLoading"
+      :loading="loading"
       bordered
       @page-changed="onPageChange"
     >
@@ -257,7 +257,6 @@ import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
-import { useCustomerAddresses } from "@/shared/account";
 import { SelectAddressFilter } from "@/shared/checkout";
 import { providePickupFilterContext } from "@/shared/checkout/composables";
 import type { MemberAddressType } from "@/core/api/graphql/types";
@@ -294,6 +293,7 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
+  addresses: () => [],
   allowAddNewAddress: true,
   showAvailability: false,
   showFilters: false,
@@ -308,39 +308,16 @@ const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
-const isFetchingInternally = computed(() => props.addresses === undefined && !props.isCorporateAddresses);
-
-const {
-  addresses: internalAddresses,
-  loading: internalLoading,
-  filterCountryCodes,
-  filterRegionIds,
-  filterCities,
-} = useCustomerAddresses();
-
-const resolvedAddresses = computed<AnyAddressType[]>(() =>
-  isFetchingInternally.value ? internalAddresses.value : (props.addresses ?? []),
-);
-
-const resolvedLoading = computed(() => (isFetchingInternally.value ? internalLoading.value : props.loading));
-
 if (props.filterContext) {
   providePickupFilterContext(props.filterContext);
 }
 
 function applyFilter() {
   page.value = 1;
-  if (!isFetchingInternally.value) {
-    emit("filterChange");
-  }
+  emit("filterChange");
 }
 
 function resetFilter() {
-  if (isFetchingInternally.value) {
-    filterCountryCodes.value = [];
-    filterRegionIds.value = [];
-    filterCities.value = [];
-  }
   emit("resetFilter");
   applyFilter();
 }
@@ -350,15 +327,15 @@ const page = ref(1);
 const itemsPerPage = computed(() => props.pageSize);
 
 const pages = computed(() => {
-  const itemsTotal = props.paginationMode === "server" ? props.totalCount : resolvedAddresses.value.length;
+  const itemsTotal = props.paginationMode === "server" ? props.totalCount : props.addresses.length;
   return Math.max(1, Math.ceil(itemsTotal / itemsPerPage.value));
 });
 const paginatedAddresses = computed(() =>
   props.paginationMode === "server"
-    ? resolvedAddresses.value
-    : resolvedAddresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
+    ? props.addresses
+    : props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
-const hasFavoriteAddresses = computed(() => resolvedAddresses.value.some((item) => item.isFavorite));
+const hasFavoriteAddresses = computed(() => props.addresses.some((item) => item.isFavorite));
 
 const columns = computed<VcTableColumnType[]>(() => {
   const cols: VcTableColumnType[] = props.isCorporateAddresses
@@ -410,7 +387,7 @@ function save(): void {
 }
 
 watchEffect(() => {
-  selectedAddress.value = resolvedAddresses.value.find((item) =>
+  selectedAddress.value = props.addresses.find((item) =>
     isEqualAddresses(item, props.currentAddress ?? {}, { omitFields: props.omitFieldsOnCompare }),
   );
 });

@@ -9,9 +9,9 @@ import { AddressType, ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { createSharedComposableByArgs } from "@/core/utilities/composables";
-import { useUser, useUserAddresses } from "@/shared/account";
+import { useCustomerAddresses, useUser } from "@/shared/account";
 import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
-import { useOrganizationAddresses } from "@/shared/company";
+import { useCurrentOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType, usePayment } from "@/shared/payment";
@@ -67,14 +67,18 @@ export function _useCheckout(cartId?: string) {
   const { user, isAuthenticated, isCorporateMember } = useUser();
   const {
     addresses: personalAddresses,
-    fetchAddresses: fetchPersonalAddresses,
+    loading: personalAddressesLoading,
+    totalCount: personalAddressesTotalCount,
+    page: personalAddressesPage,
     addOrUpdateAddresses: addOrUpdatePersonalAddresses,
-  } = useUserAddresses();
+  } = useCustomerAddresses();
   const {
     addresses: organizationsAddresses,
-    fetchAddresses: fetchOrganizationAddresses,
+    loading: organizationAddressesLoading,
+    totalCount: organizationAddressesTotalCount,
+    page: organizationAddressesPage,
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
-  } = useOrganizationAddresses(user.value.contact?.organizationId || "");
+  } = useCurrentOrganizationAddresses(() => user.value.contact?.organizationId ?? "");
   const {
     refetch: refetchCart,
     cart,
@@ -241,8 +245,6 @@ export function _useCheckout(cartId?: string) {
 
     await setCheckoutDefaults();
 
-    void fetchAddresses();
-
     analytics("beginCheckout", { ...cart.value!, items: selectedLineItems.value });
 
     loading.value = false;
@@ -300,10 +302,20 @@ export function _useCheckout(cartId?: string) {
       component: SelectAddressModal,
 
       props: {
-        addresses: addresses.value,
+        addresses,
         currentAddress:
           addressType === AddressType.Billing ? payment.value?.billingAddress : shipment.value?.deliveryAddress,
         isCorporateAddresses: isCorporateMember.value,
+        paginationMode: "server",
+        loading: isCorporateMember.value ? organizationAddressesLoading : personalAddressesLoading,
+        totalCount: isCorporateMember.value ? organizationAddressesTotalCount : personalAddressesTotalCount,
+        onPageChange(newPage: number) {
+          if (isCorporateMember.value) {
+            organizationAddressesPage.value = newPage;
+          } else {
+            personalAddressesPage.value = newPage;
+          }
+        },
 
         async onResult(address?: MemberAddressType) {
           if (!address) {
@@ -327,28 +339,26 @@ export function _useCheckout(cartId?: string) {
     });
   }
 
-  async function fetchAddresses(): Promise<void> {
-    if (!isAuthenticated.value) {
-      return;
-    }
-
-    if (isCorporateMember.value) {
-      await fetchOrganizationAddresses();
-    } else {
-      await fetchPersonalAddresses();
-    }
-  }
-
   function onDeliveryAddressChange(): void {
-    addresses.value.length
-      ? openSelectAddressModal(AddressType.Shipping)
-      : openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
+    const totalCount = isCorporateMember.value
+      ? organizationAddressesTotalCount.value
+      : personalAddressesTotalCount.value;
+    if (totalCount > 0) {
+      openSelectAddressModal(AddressType.Shipping);
+    } else {
+      openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
+    }
   }
 
   function onBillingAddressChange(): void {
-    addresses.value.length
-      ? openSelectAddressModal(AddressType.Billing)
-      : openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);
+    const totalCount = isCorporateMember.value
+      ? organizationAddressesTotalCount.value
+      : personalAddressesTotalCount.value;
+    if (totalCount > 0) {
+      openSelectAddressModal(AddressType.Billing);
+    } else {
+      openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);
+    }
   }
 
   function getNewAddresses(payload: {

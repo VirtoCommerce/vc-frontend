@@ -8,5 +8,5 @@ export async function getMyAddresses(payload?: GetMyAddressesQueryVariables): Pr
     variables: payload,
   });
 
-  return data.currentCustomerAddresses?.items ?? [];
+  return data.me?.contact?.addresses?.items ?? [];
 }

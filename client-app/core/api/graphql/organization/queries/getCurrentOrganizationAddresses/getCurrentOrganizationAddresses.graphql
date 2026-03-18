@@ -1,0 +1,24 @@
+#import "../../../fragments/memberAddressFields.graphql"
+
+query GetCurrentOrganizationAddresses(
+  $after: String
+  $first: Int
+  $sort: String
+  $countryCodes: [String]
+  $regionIds: [String]
+  $cities: [String]
+) {
+  currentOrganizationAddresses(
+    after: $after
+    first: $first
+    sort: $sort
+    countryCodes: $countryCodes
+    regionIds: $regionIds
+    cities: $cities
+  ) {
+    totalCount
+    items {
+      ...memberAddressFields
+    }
+  }
+}
