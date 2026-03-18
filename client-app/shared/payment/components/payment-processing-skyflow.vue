@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <div v-else-if="selectedSkyflowCard && skyflowCards?.length">
+    <div v-else-if="selectedSkyflowCard && skyflowCards?.length && !addNewCardSelected">
       <div class="mt-6 flex justify-center md:justify-start">
         <VcButton
           :disabled="isSavedCardPayBtnDisabled"
