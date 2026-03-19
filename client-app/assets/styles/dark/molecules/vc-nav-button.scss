@@ -1,0 +1,5 @@
+// Ring offset: Tailwind defaults --tw-ring-offset-color to white.
+// In dark mode, match the dark body background so the offset gap is invisible.
+.vc-nav-button {
+  --tw-ring-offset-color: var(--color-additional-50);
+}

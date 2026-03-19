@@ -1,0 +1,4 @@
+// Focus ring: bump opacity for dark-mode visibility.
+.vc-radio-button {
+  --focus-color: rgb(from var(--base-color) r g b / 0.8);
+}

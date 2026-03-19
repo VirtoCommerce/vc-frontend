@@ -251,6 +251,7 @@
       "addresses": "地址",
       "orders": "订单",
       "lists": "清单",
+      "promotion_coupons": "优惠券与促销",
       "list_details": "清单详情",
       "cart": "购物车",
       "company_info": "公司信息",
@@ -462,6 +463,7 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
+          "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -546,6 +548,12 @@
         "end_date_label": "结束日期",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expires": "到期",
+        "click_to_copy": "点击复制",
+        "clipboard_success": "优惠券已复制",
+        "tap_to_copy": "点击复制"
       }
     },
     "company": {
@@ -1271,6 +1279,10 @@
         "title": "冒充",
         "success": "冒充成功",
         "error": "冒充时出现一些问题。检查您的权限"
+      },
+      "promotion_coupons": {
+        "title": "所有优惠券与促销",
+        "no_lists": "您目前没有任何优惠券或促销活动"
       }
     },
     "company": {
