@@ -499,14 +499,14 @@ export const EmptyMobile: StoryType = {
         </template>
 
         <template #mobile-empty>
-          <div class="p-10 text-center text-neutral-400">
+          <div class="p-10 text-center text-neutral-500">
             <p>No items available</p>
           </div>
         </template>
 
         <template #desktop-empty>
           <tr>
-            <td colspan="4" class="p-10 text-center text-neutral-400">
+            <td colspan="4" class="p-10 text-center text-neutral-500">
               <p>No items available</p>
             </td>
           </tr>
@@ -536,7 +536,7 @@ export const EmptyMobile: StoryType = {
 
   <template #desktop-empty>
     <tr>
-      <td :colspan="columns.length" class="p-10 text-center text-neutral-400">
+      <td :colspan="columns.length" class="p-10 text-center text-neutral-500">
         <svg class="mx-auto h-12 w-12 text-neutral-300 mb-4" ...>...</svg>
         <p>No items available</p>
       </td>

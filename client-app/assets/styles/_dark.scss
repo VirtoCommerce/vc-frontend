@@ -1,0 +1,34 @@
+@use "sass:meta";
+
+// Dark mode overrides
+// Applied when html.dark class is present (set by useDarkMode composable).
+// The dark preset JSON swaps palette shades (50↔950, 100↔900, etc.),
+// but semantic variables in _colors.scss still reference the light-mode shade numbers.
+// Per-component files remap them so UI stays visually correct in dark mode.
+
+html.dark {
+  color-scheme: dark;
+
+  // Focus ring: in light mode --outline-color uses primary-500 at 40% opacity
+  // (defined in preflight.scss). On dark backgrounds this produces insufficient
+  // contrast (≈1.64:1 for coffee dark). Bump to primary-700 at 80% opacity so
+  // the ring meets WCAG 2.4.7 visible-focus requirements in every dark preset.
+  body {
+    --outline-color: rgb(from var(--color-primary-600) r g b / 0.8);
+  }
+
+  @include meta.load-css("dark/atoms/vc-badge");
+  @include meta.load-css("dark/atoms/vc-input");
+  @include meta.load-css("dark/atoms/vc-checkbox");
+  @include meta.load-css("dark/atoms/vc-radio-button");
+  @include meta.load-css("dark/atoms/vc-tab-switch");
+  @include meta.load-css("dark/atoms/vc-slider");
+  @include meta.load-css("dark/molecules/vc-button");
+  @include meta.load-css("dark/molecules/vc-chip");
+  @include meta.load-css("dark/molecules/vc-alert");
+  @include meta.load-css("dark/molecules/vc-menu-item");
+  @include meta.load-css("dark/molecules/vc-nav-button");
+  @include meta.load-css("dark/molecules/vc-product-actions-button");
+  @include meta.load-css("dark/molecules/payment-inputs");
+  @include meta.load-css("dark/pages/product-pickup");
+}

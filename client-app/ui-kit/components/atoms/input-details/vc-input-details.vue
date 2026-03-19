@@ -1,5 +1,6 @@
 <template>
   <div
+    :id="id"
     :class="[
       'vc-input-details',
       {
@@ -34,6 +35,7 @@
 
 <script setup lang="ts">
 interface IProps {
+  id?: string;
   message?: string;
   singleLine?: boolean;
   error?: boolean;

@@ -127,12 +127,26 @@ const text = useVModel(props, "modelValue", emit);
       @apply resize-none;
     }
 
-    &:focus,
-    &:focus-visible {
-      @apply outline-none ring ring-primary-100;
+    &::placeholder {
+      @apply text-neutral-600 font-normal;
 
       #{$error} & {
-        @apply ring-danger-100;
+        @apply text-danger-500;
+      }
+    }
+
+    &:autofill {
+      -webkit-text-fill-color: var(--color-neutral-100);
+
+      &:disabled {
+        -webkit-text-fill-color: var(--color-neutral-500);
+      }
+    }
+
+    &:focus,
+    &:focus-visible {
+      #{$error} & {
+        @apply outline-danger-100;
       }
     }
 
