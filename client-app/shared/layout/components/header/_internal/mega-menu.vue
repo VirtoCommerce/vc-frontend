@@ -6,6 +6,7 @@
   >
     <VcPopover
       arrow-enabled
+      shadow
       placement="bottom-start"
       class="mega-menu__popover"
       :aria-label="$t('common.buttons.all_products')"
@@ -155,6 +156,8 @@ onMounted(() => {
 
 <style lang="scss">
 .mega-menu {
+  --vc-popover-bg-color: var(--header-bottom-bg-color);
+
   @apply flex items-center h-10 bg-[--header-bottom-bg-color] px-5 xl:px-12;
 
   &__popover {
@@ -194,7 +197,7 @@ onMounted(() => {
   }
 
   &__content {
-    @apply flex min-w-0 max-h-[calc(100vh-11.5rem)] ps-2.5 py-5 bg-[--header-bottom-bg-color] rounded-[--vc-radius] shadow-lg;
+    @apply flex min-w-0 max-h-[calc(100vh-11.5rem)] ps-2.5 py-5;
   }
 }
 </style>
