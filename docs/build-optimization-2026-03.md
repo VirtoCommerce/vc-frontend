@@ -6,15 +6,42 @@ Reduce developer friction by speeding up build, lint, and type-check cycles, and
 
 ## Benchmark Results
 
-| Metric                     | Before | After  | Change   |
-| -------------------------- | ------ | ------ | -------- |
-| Production build           | 2m 0s  | 41.2s  | **-65%** |
-| Lint (oxlint+oxfmt+ESLint) | 4m 2s  | ~1.0m  | **-75%** |
-| Type check                 | 2m 25s | 1m 19s | **-46%** |
-| Dev server startup         | 2.0s   | 1.4s   | **-30%** |
-| JS bundle (gzip)           | 1.69MB | 1.65MB | -2%      |
-| CSS bundle                 | 456KB  | 389KB  | **-15%** |
-| Vendor chunks (gzip)       | 526KB  | 467KB  | -11%     |
+Measured on the same machine with clean `node_modules` and cleared caches for both runs.
+
+**Cold (first run):**
+
+| Metric             | Before | After | Change   |
+| ------------------ | ------ | ----- | -------- |
+| Production build   | 1m 1s  | 49s   | **-21%** |
+| Lint               | 1m 51s | 2m 0s | ~same    |
+| Type check         | 1m 30s | 34s   | **-62%** |
+| JS bundle (gzip)   | 1.69MB | 1.65MB | -2%     |
+| CSS bundle         | 456KB  | 389KB | **-15%** |
+| Vendor chunks (gzip) | 527KB | 467KB | **-11%** |
+
+**Warm (median of 3 runs):**
+
+| Metric             | Before | After | Change   |
+| ------------------ | ------ | ----- | -------- |
+| Production build   | 1m 3s  | 45s   | **-29%** |
+| Lint               | 2m 24s | 2m 0s | **-18%** |
+| Type check         | 1m 34s | 1.9s  | **-98%** |
+
+### Running benchmarks
+
+```bash
+# On dev branch (before):
+rm -rf node_modules && yarn install
+cp /path/to/updated/scripts/benchmark.sh scripts/benchmark.sh
+bash scripts/benchmark.sh
+
+# On perf branch (after):
+rm -rf node_modules && yarn install
+bash scripts/benchmark.sh
+
+# Compare results:
+bash scripts/benchmark.sh compare artifacts/benchmark-before.json artifacts/benchmark-after.json
+```
 
 ---
 
@@ -161,6 +188,22 @@ Added `no-useless-assignment: "warn"` as a fast native replacement for the two d
 **Decision:** The key to identical output was `printWidth: 120`. The project's `.editorconfig` has `max_line_length = 120`. Prettier used its own `printWidth: 80` but its wrapping algorithm is lenient — it allows overflow up to ~120 chars when breaking would produce worse output. Oxfmt with `printWidth: 80` wraps strictly at 80, causing 355 files to differ. Setting `printWidth: 120` to match `.editorconfig` produces zero diffs on all TS/Vue files.
 
 **Restriction:** Oxfmt does not support `endOfLine: "auto"` (prettier did). Defaults to `"lf"`. All project files already use LF, so no impact. If CRLF files appear, oxfmt will convert them to LF.
+
+### 9. Type-check scope & incremental builds
+
+**Reason:** `vue-tsc --build --force` type-checked `client-app/**/*` three times (via `tsconfig.app.json`, `tsconfig.storybook.json`, and `tsconfig.vitest.json`) and the `--force` flag discarded the incremental cache every run.
+
+**What changed:**
+
+- `validate:types` now targets `tsconfig.app.json` and `tsconfig.node.json` directly instead of root `tsconfig.json`
+- Removed `--force` flag — incremental builds are reliable in vue-tsc 3.x / TypeScript 5.9
+- Root `tsconfig.json` kept unchanged for IDE support (all 4 project references remain)
+
+**Decision:** `--force` was added in Dec 2023 (commit `c7a04580e`) when upgrading to `create-vue` conventions with vue-tsc 1.x. Since then vue-tsc was rewritten (1.x → 3.x on Volar 2.x) and TypeScript went from 5.3 → 5.9, fixing incremental build reliability. Storybook type-checking is unnecessary in `validate:types` because `storybook:build` uses its own bundler.
+
+**Result:** Cold: 1m 30s → 34s (-62%). Warm (incremental): 1m 34s → 1.9s (-98%).
+
+**Restriction:** If incremental cache produces stale errors, run `vue-tsc --build --force tsconfig.app.json tsconfig.node.json` to force a clean check.
 
 ---
 
