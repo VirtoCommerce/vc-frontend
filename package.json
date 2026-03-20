@@ -18,7 +18,7 @@
     "build:dev": "yarn precheck && yarn build-only --mode=development",
     "build:watch": "yarn precheck && yarn build-only --watch",
     "build-only": "yarn precheck && vite build",
-    "validate:types": "yarn precheck && vue-tsc --build --force",
+    "validate:types": "yarn precheck && vue-tsc --build tsconfig.app.json tsconfig.node.json",
     "validate:dependencies": "yarn precheck && depcruise client-app",
     "validate": "yarn precheck && yarn validate:types && yarn validate:dependencies",
     "commitlint": "yarn precheck && commitlint --edit",
