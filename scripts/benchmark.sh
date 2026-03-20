@@ -7,7 +7,6 @@
 #   ./scripts/benchmark.sh build        # Run only build benchmark
 #   ./scripts/benchmark.sh lint         # Run only lint benchmark
 #   ./scripts/benchmark.sh typecheck    # Run only type-check benchmark
-#   ./scripts/benchmark.sh devserver    # Run only dev server startup benchmark
 #   ./scripts/benchmark.sh sizes        # Run only bundle size analysis
 #   ./scripts/benchmark.sh install      # Run only install benchmark
 #   ./scripts/benchmark.sh compare <before.json> <after.json>
@@ -47,6 +46,17 @@ ok()     { echo -e "${GREEN}  ✓${NC} $*" >&2; }
 warn()   { echo -e "${YELLOW}  ⚠${NC} $*" >&2; }
 header() { echo -e "\n${BOLD}${CYAN}━━━ $* ━━━${NC}\n" >&2; }
 
+# Clear all tool caches to ensure cold runs are truly cold
+clear_caches() {
+  rm -rf "$PROJECT_DIR/dist"
+  rm -rf "$PROJECT_DIR/node_modules/.tmp"
+  rm -rf "$PROJECT_DIR/node_modules/.cache"
+  rm -rf "$PROJECT_DIR/node_modules/.vite"
+  rm -f "$PROJECT_DIR"/tsconfig.tsbuildinfo
+  rm -f "$PROJECT_DIR"/*.tsbuildinfo
+  log "Cleared all caches"
+}
+
 # Write a key=value to the raw file (append, immediately flushed)
 record() {
   echo "$1=$2" >> "$RAW_FILE"
@@ -66,7 +76,7 @@ time_ms() {
   echo $(( (end - start) / 1000000 ))
 }
 
-# Run N times, return median
+# Run N times, return "first|median" (pipe-separated)
 median_of() {
   local runs="$1"
   shift
@@ -80,9 +90,10 @@ median_of() {
     log "  → ${t}ms"
   done
 
+  local first="${times[0]}"
   local -a sorted
   IFS=$'\n' read -r -d '' -a sorted < <(printf '%s\n' "${times[@]}" | sort -n; printf '\0') || true
-  echo "${sorted[$(( runs / 2 ))]}"
+  echo "${first}|${sorted[$(( runs / 2 ))]}"
 }
 
 fmt_ms() {
@@ -155,15 +166,15 @@ trap on_exit EXIT
 # ─── Benchmarks ───────────────────────────────────────────────────────────────
 
 bench_build() {
-  header "Production Build (median of $RUNS runs)"
+  header "Production Build ($RUNS runs)"
 
-  rm -rf "$PROJECT_DIR/dist"
+  local result first median
+  result=$(median_of "$RUNS" yarn vite build)
+  first="${result%%|*}" median="${result##*|}"
 
-  local median
-  median=$(median_of "$RUNS" yarn vite build)
-
+  record build_first_ms "$first"
   record build_ms "$median"
-  ok "Production build: $(fmt_ms "$median")"
+  ok "Production build: first $(fmt_ms "$first"), median $(fmt_ms "$median")"
 }
 
 bench_sizes() {
@@ -249,77 +260,27 @@ bench_sizes() {
 }
 
 bench_lint() {
-  header "Lint (median of $RUNS runs)"
-  local median
-  median=$(median_of "$RUNS" yarn lint --quiet)
+  header "Lint ($RUNS runs)"
+  local result first median
+  result=$(median_of "$RUNS" yarn lint --quiet)
+  first="${result%%|*}" median="${result##*|}"
+
+  record lint_first_ms "$first"
   record lint_ms "$median"
-  ok "Lint: $(fmt_ms "$median")"
+  ok "Lint: first $(fmt_ms "$first"), median $(fmt_ms "$median")"
 }
 
 bench_typecheck() {
-  header "Type Checking (median of $RUNS runs)"
-  local median
-  median=$(median_of "$RUNS" yarn validate:types)
+  header "Type Checking ($RUNS runs)"
+  local result first median
+  result=$(median_of "$RUNS" yarn validate:types)
+  first="${result%%|*}" median="${result##*|}"
+
+  record typecheck_first_ms "$first"
   record typecheck_ms "$median"
-  ok "Type check: $(fmt_ms "$median")"
+  ok "Type check: first $(fmt_ms "$first"), median $(fmt_ms "$median")"
 }
 
-bench_devserver() {
-  header "Dev Server Startup"
-
-  # Kill any leftover process on benchmark port
-  local existing_pid
-  existing_pid=$(lsof -ti:4173 2>/dev/null || true)
-  if [ -n "$existing_pid" ]; then
-    kill "$existing_pid" 2>/dev/null || true
-    sleep 1
-  fi
-
-  local tmp_out
-  tmp_out=$(mktemp)
-
-  log "Starting dev server on port 4173..."
-  local start
-  start=$(date +%s%N)
-
-  stdbuf -oL yarn vite --host 127.0.0.1 --port 4173 > "$tmp_out" 2>&1 &
-  local pid=$!
-
-  local timeout_secs=120 waited=0
-  while ! grep -q "ready in" "$tmp_out" 2>/dev/null; do
-    sleep 0.2
-    waited=$((waited + 1))
-    if (( waited > timeout_secs * 5 )); then
-      warn "Dev server didn't start within ${timeout_secs}s"
-      kill "$pid" 2>/dev/null || true; wait "$pid" 2>/dev/null || true
-      rm -f "$tmp_out"
-      return 0
-    fi
-    if ! kill -0 "$pid" 2>/dev/null; then
-      warn "Dev server process died"
-      rm -f "$tmp_out"
-      return 0
-    fi
-  done
-
-  local end
-  end=$(date +%s%N)
-  local startup_ms=$(( (end - start) / 1000000 ))
-
-  local vite_time
-  vite_time=$(grep -oP 'ready in \K[0-9]+' "$tmp_out" 2>/dev/null || echo "")
-
-  kill "$pid" 2>/dev/null || true; wait "$pid" 2>/dev/null || true
-  rm -f "$tmp_out"
-
-  record devserver_startup_ms "$startup_ms"
-  ok "Dev server startup (wall): $(fmt_ms "$startup_ms")"
-
-  if [ -n "$vite_time" ]; then
-    record devserver_vite_reported_ms "$vite_time"
-    ok "Dev server (Vite reported): ${vite_time}ms"
-  fi
-}
 
 bench_install() {
   header "Clean Install"
@@ -401,10 +362,12 @@ compare() {
       console.log('  '+label.padEnd(24)+fmt(bv).padStart(12)+' → '+fmt(av).padStart(12)+'  '+c+a+' '+s+pct+'%'+N);
     };
 
-    console.log(B+'  Timing'+N); console.log('  '+'─'.repeat(68));
-    [['build_ms','Build'],['lint_ms','ESLint'],['typecheck_ms','Type Check'],['devserver_startup_ms','Dev Server'],['install_ms','Install']].forEach(([k,l])=>row(l,before.results?.[k],after.results?.[k],fms));
-    console.log(); console.log(B+'  Sizes'+N); console.log('  '+'─'.repeat(68));
+    const r = (obj, key, fallback) => obj.results?.[key] ?? obj.results?.[fallback] ?? null;
+    console.log(B+'  Cold (first run)'+N); console.log('  '+'─'.repeat(68));
+    [['build','Build'],['lint','Lint'],['typecheck','Type Check']].forEach(([k,l])=>row(l,r(before,k+'_first_ms',k+'_ms'),r(after,k+'_first_ms',k+'_ms'),fms));
     [['dist_total_bytes','Total dist'],['js_total_bytes','JS'],['js_total_gzip_bytes','JS (gzip)'],['css_total_bytes','CSS'],['css_total_gzip_bytes','CSS (gzip)'],['vendor_chunk_bytes','Vendor'],['vendor_chunk_gzip_bytes','Vendor (gzip)'],['app_chunk_bytes','App'],['app_chunk_gzip_bytes','App (gzip)'],['node_modules_bytes','node_modules']].forEach(([k,l])=>row(l,before.results?.[k],after.results?.[k],fby));
+    console.log(); console.log(B+'  Warm (median)'+N); console.log('  '+'─'.repeat(68));
+    [['build_ms','Build'],['lint_ms','Lint'],['typecheck_ms','Type Check'],['install_ms','Install']].forEach(([k,l])=>row(l,before.results?.[k],after.results?.[k],fms));
   " -- "$before" "$after" >&2
 }
 
@@ -414,14 +377,19 @@ print_summary() {
   if [ ! -f "$RAW_FILE" ]; then return; fi
 
   header "Summary"
-  printf "  ${BOLD}%-26s  %-14s %s${NC}\n" "Metric" "Raw" "Gzip" >&2
+  printf "  ${BOLD}%-26s  %-14s %s${NC}\n" "Metric" "First" "Median" >&2
   echo "  ─────────────────────────────────────────────────" >&2
 
-  local v
-  v=$(read_record build_ms);              [ -n "$v" ] && printf "  %-26s  %s\n" "Production build" "$(fmt_ms "$v")" >&2
-  v=$(read_record lint_ms);               [ -n "$v" ] && printf "  %-26s  %s\n" "ESLint" "$(fmt_ms "$v")" >&2
-  v=$(read_record typecheck_ms);          [ -n "$v" ] && printf "  %-26s  %s\n" "Type check" "$(fmt_ms "$v")" >&2
-  v=$(read_record devserver_startup_ms);  [ -n "$v" ] && printf "  %-26s  %s\n" "Dev server startup" "$(fmt_ms "$v")" >&2
+  local v f
+  f=$(read_record build_first_ms); v=$(read_record build_ms)
+  [ -n "$v" ] && printf "  %-26s  %-14s %s\n" "Production build" "$(fmt_ms "${f:-$v}")" "$(fmt_ms "$v")" >&2
+  f=$(read_record lint_first_ms); v=$(read_record lint_ms)
+  [ -n "$v" ] && printf "  %-26s  %-14s %s\n" "Lint" "$(fmt_ms "${f:-$v}")" "$(fmt_ms "$v")" >&2
+  f=$(read_record typecheck_first_ms); v=$(read_record typecheck_ms)
+  [ -n "$v" ] && printf "  %-26s  %-14s %s\n" "Type check" "$(fmt_ms "${f:-$v}")" "$(fmt_ms "$v")" >&2
+
+  echo "" >&2
+  printf "  ${BOLD}%-26s  %-14s %s${NC}\n" "" "Raw" "Gzip" >&2
 
   local raw gz
   raw=$(read_record js_total_bytes); gz=$(read_record js_total_gzip_bytes)
@@ -465,24 +433,23 @@ main() {
   record _git_commit "$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
 
   case "$cmd" in
-    build)     run_bench build bench_build ;;
+    build)     clear_caches; run_bench build bench_build ;;
     sizes)     run_bench sizes bench_sizes ;;
-    lint)      run_bench lint bench_lint ;;
-    typecheck) run_bench typecheck bench_typecheck ;;
-    devserver) run_bench devserver bench_devserver ;;
+    lint)      clear_caches; run_bench lint bench_lint ;;
+    typecheck) clear_caches; run_bench typecheck bench_typecheck ;;
     install)   run_bench install bench_install ;;
     stats)     run_bench stats bench_source_stats ;;
     compare)   compare "${2:-}" "${3:-}"; exit 0 ;;
     all)
+      clear_caches
       run_bench stats     bench_source_stats
       run_bench build     bench_build
       run_bench sizes     bench_sizes
       run_bench lint      bench_lint
       run_bench typecheck bench_typecheck
-      run_bench devserver bench_devserver
       ;;
     *)
-      echo "Usage: $0 {all|build|sizes|lint|typecheck|devserver|install|stats|compare}" >&2
+      echo "Usage: $0 {all|build|sizes|lint|typecheck|install|stats|compare}" >&2
       exit 1
       ;;
   esac
