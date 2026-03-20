@@ -1,5 +1,5 @@
 import { setup } from "@storybook/vue3-vite";
-import { presets } from "../client-app/assets/presets";
+import { darkPresets, presets } from "../client-app/assets/presets";
 import { useThemeContext } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
@@ -109,6 +109,17 @@ if (ENABLE_DOM_MONITORING && typeof window !== "undefined") {
   console.log("MutationObserver activated for monitoring <head>");
 }
 
+function presetToCssVars(preset: IThemeConfigPreset): string {
+  return Object.entries(preset)
+    .map(([key, value]) => `--${key.replace(/_/g, "-")}: ${value};`)
+    .join("");
+}
+
+function applyDarkMode(mode: "light" | "dark" | "system") {
+  const isDark = mode === "dark" || (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.classList.toggle("dark", isDark);
+}
+
 async function configureThemeSettings(presetName: PresetNameType = "default") {
   if (currentPresetName === presetName && currentStyleElement) {
     return;
@@ -131,11 +142,14 @@ async function configureThemeSettings(presetName: PresetNameType = "default") {
       }
 
       currentStyleElement = document.createElement("style");
-      currentStyleElement.innerText = ":root {";
-      Object.entries(preset).forEach(([key, value]) => {
-        currentStyleElement!.innerText += `--${key.replace(/_/g, "-")}: ${value};`;
-      });
-      currentStyleElement.innerText += "}";
+      let css = `:root { ${presetToCssVars(preset)} }`;
+
+      const darkPreset = darkPresets[presetName];
+      if (darkPreset) {
+        css += ` html.dark { ${presetToCssVars(darkPreset)} }`;
+      }
+
+      currentStyleElement.textContent = css;
       document.head.prepend(currentStyleElement);
       currentPresetName = presetName;
     }
@@ -179,6 +193,18 @@ setup((app) => {
 
 const preview: Preview = {
   globalTypes: {
+    darkMode: {
+      description: "Select color mode",
+      defaultValue: "light",
+      toolbar: {
+        icon: "sun",
+        items: [
+          { value: "light", title: "Light", icon: "sun" },
+          { value: "dark", title: "Dark", icon: "moon" },
+        ],
+        dynamicIcon: true,
+      },
+    },
     themePreset: {
       description: "Select theme preset",
       defaultValue: "default",
@@ -194,6 +220,7 @@ const preview: Preview = {
     },
   },
   initialGlobals: {
+    darkMode: "light",
     themePreset: "default",
   },
   parameters: {
@@ -214,6 +241,7 @@ const preview: Preview = {
   decorators: [
     (story, context) => {
       const presetName = context.globals.themePreset || "default";
+      const darkMode = (context.globals.darkMode || "light") as "light" | "dark" | "system";
 
       if (presetName !== currentPresetName && presetName !== loadingPreset) {
         configureThemeSettings(presetName).catch(() => {
@@ -221,6 +249,8 @@ const preview: Preview = {
           console.error("Storybook theme setup error");
         });
       }
+
+      applyDarkMode(darkMode);
 
       return story();
     },
