@@ -32,12 +32,14 @@ Configure the following settings in the Virto Commerce backend:
 3. Both can work independently or together
 
 The GTM implementation follows Google's best practices:
+
 - GTM script is injected in the `<head>` section
 - `dataLayer` is properly initialized before GTM loads
 
 ### Event Handling
 
 The module automatically sends ecommerce events regardless of whether you use:
+
 - **GTM Only**: Events are pushed directly to `dataLayer` for GTM to capture
 - **GA4 Only**: Events are sent via `gtag()` API
 - **Both GTM + GA4**: Events are sent via `gtag()` which pushes to `dataLayer`, allowing both systems to track

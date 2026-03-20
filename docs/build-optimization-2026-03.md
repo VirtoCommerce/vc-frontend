@@ -6,15 +6,15 @@ Reduce developer friction by speeding up build, lint, and type-check cycles, and
 
 ## Benchmark Results
 
-| Metric | Before | After | Change |
-|--------|--------|-------|--------|
-| Production build | 2m 0s | 41.2s | **-65%** |
-| Lint (oxlint+oxfmt+ESLint) | 4m 2s | ~1.0m | **-75%** |
-| Type check | 2m 25s | 1m 19s | **-46%** |
-| Dev server startup | 2.0s | 1.4s | **-30%** |
-| JS bundle (gzip) | 1.69MB | 1.65MB | -2% |
-| CSS bundle | 456KB | 389KB | **-15%** |
-| Vendor chunks (gzip) | 526KB | 467KB | -11% |
+| Metric                     | Before | After  | Change   |
+| -------------------------- | ------ | ------ | -------- |
+| Production build           | 2m 0s  | 41.2s  | **-65%** |
+| Lint (oxlint+oxfmt+ESLint) | 4m 2s  | ~1.0m  | **-75%** |
+| Type check                 | 2m 25s | 1m 19s | **-46%** |
+| Dev server startup         | 2.0s   | 1.4s   | **-30%** |
+| JS bundle (gzip)           | 1.69MB | 1.65MB | -2%      |
+| CSS bundle                 | 456KB  | 389KB  | **-15%** |
+| Vendor chunks (gzip)       | 526KB  | 467KB  | -11%     |
 
 ---
 
@@ -25,11 +25,13 @@ Reduce developer friction by speeding up build, lint, and type-check cycles, and
 **Reason:** Vite 8 replaces Rollup with Rolldown (Rust-based bundler), delivering 2-7x faster builds.
 
 **What changed:**
+
 - `vite` upgraded from `^7.3.1` to `^8.0.1`
 - Rolldown produces different chunk splitting than Rollup — the old monolithic `index-*.js` (1.89MB) is now split into `index-*.js` (258KB) + `utilities-*.js` + `components-*.js` + `catalog-*.js` etc.
 - `rollupOptions` is preserved (Vite 8 has a compatibility layer for Rollup config)
 
 **Restrictions:**
+
 - `@storybook/vue3-vite` peer dependency warns about Vite 8 — Storybook hasn't updated its peer range yet. Storybook dev/build still works.
 - `@rollup/plugin-graphql` continues to work via Rolldown's Rollup compatibility layer.
 
@@ -38,8 +40,9 @@ Reduce developer friction by speeding up build, lint, and type-check cycles, and
 **Reason:** Vite 8 defaults to LightningCSS for CSS minification (100x faster than esbuild, produces smaller output).
 
 **What changed:**
+
 - Removed 4 `@apply bg-[--color-#{$color}-*]` patterns in `vc-menu-item.vue` and `vc-menu-item.scss` that used SCSS interpolation inside Tailwind utility classes. Replaced with plain CSS `background-color: var(--color-#{$color}-*)`.
-- Replaced 1 dynamic Tailwind class in `environment-badge.vue` (`` bg-[--color-${badgeColor}-500] ``) with `:style` binding.
+- Replaced 1 dynamic Tailwind class in `environment-badge.vue` (`bg-[--color-${badgeColor}-500]`) with `:style` binding.
 
 **Decision:** SCSS `#{$color}` interpolation in selectors and `var()` values is fine — SCSS compiles those to valid CSS before LightningCSS sees them. Only `@apply` with interpolated arbitrary values was problematic because Tailwind's PostCSS plugin scans raw source and generates CSS classes with literal `#{$color}`, which LightningCSS can't parse.
 
@@ -50,6 +53,7 @@ Reduce developer friction by speeding up build, lint, and type-check cycles, and
 **Reason:** `lodash` (CommonJS) cannot be tree-shaken. `lodash-es` (ESM) enables Rolldown to eliminate unused functions.
 
 **What changed:**
+
 - Replaced `lodash` with `lodash-es` in `package.json`
 - Updated 70 files: `from "lodash"` → `from "lodash-es"`, `from "lodash/x"` → `from "lodash-es/x"`
 - Converted 4 files using `import _ from "lodash"` (default import) to named imports:
@@ -64,6 +68,7 @@ Reduce developer friction by speeding up build, lint, and type-check cycles, and
 **Reason:** `tw-elements` is ~15MB installed but only its Lightbox component was used (2 files). PhotoSwipe is ~5KB gzipped and purpose-built for image lightboxes.
 
 **What changed:**
+
 - Removed `tw-elements` from dependencies and Tailwind config (plugin + content path)
 - Added `photoswipe` as a dependency
 - `image-gallery.vue`: Replaced `initTE({ Lightbox })` with programmatic PhotoSwipe. Images are opened via `@click` handlers. PhotoSwipe dynamically loads image dimensions via `gettingData` event since the API doesn't provide width/height. Focus restoration on close is preserved.
@@ -79,6 +84,7 @@ Reduce developer friction by speeding up build, lint, and type-check cycles, and
 **Reason:** A single `vendor.js` chunk (1.62MB) meant any dependency update invalidated the entire cache for all users. Splitting enables independent caching.
 
 **What changed in `vite.config.ts`:**
+
 ```js
 manualChunks(id) {
   if (!id.includes("node_modules")) return;
@@ -105,6 +111,7 @@ manualChunks(id) {
 **Reason:** ESLint was the slowest step at 4m 2s. Oxlint (Rust-based) runs 50-100x faster and covers many of the same rules.
 
 **What changed:**
+
 - Added `oxlint` and `eslint-plugin-oxlint` as dev dependencies
 - `eslint.config.js`: Added `...oxlint.configs["flat/recommended"]` before prettier config. This disables ESLint rules that Oxlint already covers.
 - `package.json` lint scripts: `oxlint && eslint .` (oxlint runs first in 292ms, then ESLint handles Vue/Tailwind/accessibility rules)
@@ -123,12 +130,12 @@ manualChunks(id) {
 
 Disabled 4 slow/irrelevant sonarjs rules:
 
-| Rule | Time | Reason for disabling |
-|------|------|---------------------|
-| `sonarjs/no-commented-code` | 82s | Parses every comment as potential code. Low value, extreme cost. |
-| `sonarjs/no-async-constructor` | 20s | TypeScript already catches this (TS1089: `'async' modifier cannot appear on a constructor declaration`). Fully redundant. |
-| `sonarjs/no-redundant-assignments` | 6s | Replaced by ESLint native `no-useless-assignment` (faster). |
-| `sonarjs/no-dead-store` | 5s | Replaced by ESLint native `no-useless-assignment` (faster). |
+| Rule                               | Time | Reason for disabling                                                                                                      |
+| ---------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------- |
+| `sonarjs/no-commented-code`        | 82s  | Parses every comment as potential code. Low value, extreme cost.                                                          |
+| `sonarjs/no-async-constructor`     | 20s  | TypeScript already catches this (TS1089: `'async' modifier cannot appear on a constructor declaration`). Fully redundant. |
+| `sonarjs/no-redundant-assignments` | 6s   | Replaced by ESLint native `no-useless-assignment` (faster).                                                               |
+| `sonarjs/no-dead-store`            | 5s   | Replaced by ESLint native `no-useless-assignment` (faster).                                                               |
 
 Disabled 17 `sonarjs/aws-*` rules (~6s total). These check for AWS infrastructure security misconfigurations (S3 bucket policies, IAM privileges, RDS encryption, etc.) — completely irrelevant for a Vue.js frontend project. Auto-included by `sonarjs.configs.recommended`.
 
@@ -143,6 +150,7 @@ Added `no-useless-assignment: "warn"` as a fast native replacement for the two d
 **Reason:** `prettier/prettier` ESLint rule took 19s (~26% of remaining ESLint time). Oxfmt is a Rust-based formatter from the same oxc project as oxlint, ~3x faster with identical output.
 
 **What changed:**
+
 - Removed `prettier` and `eslint-plugin-prettier` from devDependencies
 - Added `oxfmt` as devDependency
 - Added `.oxfmtrc.json` with `printWidth: 120` (matching `.editorconfig`'s `max_line_length`)

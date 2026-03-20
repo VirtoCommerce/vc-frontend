@@ -1,6 +1,7 @@
 AI generated translations based on the English version.
 
 Added languages:
+
 - Deutsch
 - Español (Castellano)
 - Français

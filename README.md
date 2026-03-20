@@ -24,7 +24,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 - **[Atomic Design Pattern.](https://virtocommerce.com/atomic-architecture)** The Frontend Application UI is based on Atoms, Molecules and Organisms, combined within Pages and shared Components. This provides a high level of code reusability.
 - **Fully responsive.** We made our Frontend Application work on multiple devices from Desktops to Mobile phones, concentrating both on UI and UX.
 - **Simple styling and customization.** We use TailwindCSS to provide the easiest and most convenient way of CSS usage. Write as less of code as possible, and reuse existing highly customizable framework features.
-- **Fully aligned with Virto Commerce Platform.** The SPA is fully aligned with the [Virto Commerce Platform](https://github.com/VirtoCommerce/vc-platform) to provide all common B2B and B2C scenarios. 
+- **Fully aligned with Virto Commerce Platform.** The SPA is fully aligned with the [Virto Commerce Platform](https://github.com/VirtoCommerce/vc-platform) to provide all common B2B and B2C scenarios.
 
 ## The Application structure
 
@@ -94,7 +94,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 |   └── settings_data.json
 |
 ├── examples                         // Code snippets and examples for different use cases.
-|   
+|
 ├── locales                          // Locale files used to provide translated content.
 |   └──...
 |
@@ -120,7 +120,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── .yarnrc.yml                      // Yarn package manager configuration
 ├── eslint.config.js                 // ESlint configuration file.
 ├── graphql-codegen
-|   └── generator.ts                 // Generate GraphQL types 
+|   └── generator.ts                 // Generate GraphQL types
 ├── index.html                       // Vite Development entry point.
 ├── LICENSE.txt
 ├── package.json                     // NPM Package description.
@@ -153,7 +153,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
   - [vc-module-skyflow](https://github.com/VirtoCommerce/vc-module-skyflow)
   - [vc-module-x-recommend](https://github.com/VirtoCommerce/vc-module-x-recommend)
 - Install [Node.js v22](https://nodejs.org/en/download/) (**22.12.0** or later)
-- Enable [corepack](https://yarnpkg.com/corepack) *(run as administrator on Windows)*
+- Enable [corepack](https://yarnpkg.com/corepack) _(run as administrator on Windows)_
   ```bash
   corepack enable
   ```
@@ -163,23 +163,28 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
     npm uninstall --global yarn
     ```
   - or through your Operation System installation tools
-     - `Control Panel`, `Chocolatey` or `Scoop` on *Windows*
-     - `Launchpad`, `Finder`, `Homebrew` or `MacPorts` on *macOs*
-     - Native package manager such as `apt` on *Linux*
+    - `Control Panel`, `Chocolatey` or `Scoop` on _Windows_
+    - `Launchpad`, `Finder`, `Homebrew` or `MacPorts` on _macOs_
+    - Native package manager such as `apt` on _Linux_
 
 ### Clone repository
+
 ```bash
 git clone https://github.com/VirtoCommerce/vc-frontend.git "C:\vc-frontend\"
 ```
 
 ### Check yarn version
+
 ```bash
 yarn -v
 ```
+
 `Yarn` should be of version **4.1.0** or greater, not 1.XX.
 
 ### Install dependencies
+
 Use `--immutable` flag to ensure that the dependencies are installed with the correct version.
+
 ```bash
 yarn install --immutable
 ```
@@ -220,6 +225,7 @@ yarn build:watch
 ## Types generation
 
 Command:
+
 ```
 yarn generate:graphql-types
 ```
@@ -232,27 +238,35 @@ If independent modules are not installed on `The Platform`, types can still be s
 ### Bundle Size Analysis
 
 To examine the sizes of various chunks such as `vendor.js` or `index.js`, execute the following command:
+
 ```
 yarn generate:bundle-map
 ```
+
 The results will be located in the `artifacts` folder.
 
 ### Visualizing the Dependency Graph
 
 To create a visual representation of the dependency graph, use the following command:
+
 ```
 yarn generate:dependency-graph
 ```
+
 **Note**: This command requires parameters to run successfully. For example:
+
 ```
 yarn generate:dependency-graph client-app/main.ts client-app/shared/account/components/checkout-default-success-modal.vue
 ```
+
 If command "dot" is missing - install graphviz on your OS
 
 The generated graph will also be saved in the `artifacts` folder.
 
 ## Localization
+
 ### Language Flow
+
 - Locale selection checks the URL first - using the supported languages list to tell real locale segments from ordinary path parts (full culture like `fr-FR` or an unambiguous short alias such as `fr`), then your “pinned” locale - your last choice saved in localStorage, then your account’s preferred culture, and finally the store default.
 
 - When a locale is chosen, useLanguages.initLocale lazy-loads its translation file (`xx-YY.json`; if missing it falls back to `xx.json`, then to `en.json`), wires it into Vue I18n and Yup, updates the `<html lang>` tag, and rewrites the URL so default or mismatched locale segments vanish.
@@ -264,23 +278,28 @@ The generated graph will also be saved in the `artifacts` folder.
 - When product, category, brand, or CMS data brings back a localized permalink (updateLocalizedUrl in those page modules), it uses history.pushState to refresh the browser address with the localized path - keeping locale prefix, query string, and hash - so users see the correct URL without triggering router navigation or extra data fetching.
 
 ### Check for missing locale keys
+
 ```
 yarn check-locales --source en.json -- path/to/locales_folder path/to/**/locales
 ```
+
 The command checks for missing keys in locale files by comparing them against a single source-of-truth file (e.g., `en.json`), specified with the `--source` argument. This ensures that all other language files have the same keys as the source file, helping to maintain consistency and avoid missing translations.
 
 The script will output warnings for any missing keys in the locale files. Review these warnings to ensure all necessary translations are present. Also added to the CI pipeline.
 
 ### Fix Missing Locales
+
 ```
 yarn fix-locales --source en.json -- path/to/locales_folder path/to/**/locales
 ```
+
 This command automatically fixes missing translations by comparing other locale files against a single source-of-truth file (e.g., `en.json`), specified with the `--source` argument. It identifies missing keys, uses an AI to translate them from the source language, and updates the files accordingly.
 
 > [!IMPORTANT]
 > This command requires the `APP_GEMINI_API_KEY` environment variable to be set. You can obtain this API key from the [Google AI Studio](https://aistudio.google.com/app/apikey) website.
 
 You can also override the default translation model, temperature, and inter-file request delay via environment variables:
+
 - `FIX_LOCALES_MODEL_NAME` (default: "gemini-2.0-flash")
 - `FIX_LOCALES_TEMPERATURE` (default: 0.0)
 - `FIX_LOCALES_DELAY_MS` (default: 4000)

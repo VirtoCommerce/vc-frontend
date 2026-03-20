@@ -1,8 +1,8 @@
 # Router Localization Examples
 
-This folder shows how to localize your routes. 
+This folder shows how to localize your routes.
 
-For example, you can have a route like `/cart` and you want to localize it to `/carrinho` in Portuguese. 
+For example, you can have a route like `/cart` and you want to localize it to `/carrinho` in Portuguese.
 
 You can also have a route like `/product/:productId` and you want to localize it to `/produkt/:productId` in German.
 
