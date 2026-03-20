@@ -1,5 +1,5 @@
 <template>
-  <div :class="['vc-popover', { 'vc-popover--shadow': shadow }]">
+  <div :class="['vc-popover', {}]">
     <div v-if="$slots.default" ref="reference" class="vc-popover__trigger">
       <slot :open="open" :close="close" :toggle="toggle" :opened="opened" :trigger-props="emitTriggerProps" />
     </div>
@@ -14,7 +14,12 @@
         :id="contentId"
         ref="floating"
         :style="{ zIndex, display, width, ...floatingStyles }"
-        class="vc-popover__body"
+        :class="[
+          'vc-popover__body',
+          {
+            'vc-popover__body--shadow': shadow,
+          },
+        ]"
         :role="role"
       >
         <div
@@ -174,16 +179,7 @@ watch(opened, (value: boolean) => emit("toggle", value));
   $popper: "";
   $shadow: "";
 
-  --props-bg-color: v-bind(_bgColor);
-  --bg-color: var(--props-bg-color, var(--vc-popover-bg-color, transparent));
-  --arrow-color: var(--props-bg-color, var(--vc-popover-bg-color, var(--color-additional-50)));
-  --radius: var(--vc-popover-radius, var(--vc-radius, 0.5rem));
-
   @apply max-w-full;
-
-  &--shadow {
-    $shadow: &;
-  }
 
   &__trigger {
     @apply max-w-full size-full;
@@ -204,10 +200,20 @@ watch(opened, (value: boolean) => emit("toggle", value));
   }
 
   &__body {
+    // For teleportation cases, variables are declared in &__body
+    --props-bg-color: v-bind(_bgColor);
+    --bg-color: var(--props-bg-color, var(--vc-popover-bg-color, transparent));
+    --radius: var(--vc-popover-radius, var(--vc-radius, 0.5rem));
+    --arrow-color: var(--props-bg-color, var(--vc-popover-bg-color, var(--color-additional-50)));
+
     @apply max-w-[100vw];
 
     &:has(#{$popper}) {
       @apply pt-2.5;
+    }
+
+    &--shadow {
+      $shadow: &;
     }
   }
 
