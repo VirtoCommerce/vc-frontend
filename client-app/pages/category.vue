@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, toRefs } from "vue";
+import { toRefs, watch } from "vue";
 import { useBreadcrumbs } from "@/core/composables";
 import { buildBreadcrumbs } from "@/core/utilities";
 import { useCategory } from "@/shared/catalog/composables/useCategory";
@@ -25,9 +25,13 @@ const { category: currentCategory, fetchCategory } = useCategory();
 
 const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(currentCategory.value?.breadcrumbs));
 
-onMounted(() => {
-  if (categoryId.value) {
-    void fetchCategory({ categoryId: categoryId.value, maxLevel: 0 });
-  }
-});
+watch(
+  categoryId,
+  (newCategoryId) => {
+    if (newCategoryId) {
+      void fetchCategory({ categoryId: newCategoryId, maxLevel: 0 });
+    }
+  },
+  { immediate: true },
+);
 </script>
