@@ -9,7 +9,7 @@ Reduce developer friction by speeding up build, lint, and type-check cycles, and
 | Metric | Before | After | Change |
 |--------|--------|-------|--------|
 | Production build | 2m 0s | 41.2s | **-65%** |
-| ESLint | 4m 2s | ~1.3m | **-68%** |
+| Lint (oxlint+oxfmt+ESLint) | 4m 2s | ~1.0m | **-75%** |
 | Type check | 2m 25s | 1m 19s | **-46%** |
 | Dev server startup | 2.0s | 1.4s | **-30%** |
 | JS bundle (gzip) | 1.69MB | 1.65MB | -2% |
@@ -113,7 +113,7 @@ manualChunks(id) {
 
 **What Oxlint handles:** JavaScript/TypeScript rules from `@eslint/js`, `@typescript-eslint`, `eslint-plugin-import`, `eslint-plugin-sonarjs`.
 
-**What ESLint still handles:** `eslint-plugin-vue`, `eslint-plugin-vuejs-accessibility`, `eslint-plugin-tailwindcss`, `eslint-plugin-storybook`, `eslint-plugin-prettier`, `eslint-plugin-sort-exports`.
+**What ESLint still handles:** `eslint-plugin-vue`, `eslint-plugin-vuejs-accessibility`, `eslint-plugin-tailwindcss`, `eslint-plugin-storybook`, `eslint-config-prettier`, `eslint-plugin-sort-exports`.
 
 ### 7. SonarJS Rule Profiling & Cleanup
 
@@ -134,9 +134,25 @@ Disabled 17 `sonarjs/aws-*` rules (~6s total). These check for AWS infrastructur
 
 Added `no-useless-assignment: "warn"` as a fast native replacement for the two disabled sonarjs assignment rules.
 
-**Result:** ESLint time dropped from ~180s to ~72s (-60%). Remaining top rules are all valuable: `prettier/prettier` (19s), `@typescript-eslint/no-misused-promises` (17s), `import/no-cycle` (7s).
+**Result:** ESLint time dropped from ~180s to ~53s (-70%). Remaining top rules are all valuable: `@typescript-eslint/no-misused-promises` (17s), `import/no-cycle` (7s).
 
 **Restriction:** When updating sonarjs, new AWS/cloud rules may be added by `sonarjs.configs.recommended`. Check `TIMING=all` after sonarjs updates.
+
+### 8. Oxfmt replaces Prettier
+
+**Reason:** `prettier/prettier` ESLint rule took 19s (~26% of remaining ESLint time). Oxfmt is a Rust-based formatter from the same oxc project as oxlint, ~3x faster with identical output.
+
+**What changed:**
+- Removed `prettier` and `eslint-plugin-prettier` from devDependencies
+- Added `oxfmt` as devDependency
+- Added `.oxfmtrc.json` with `printWidth: 120` (matching `.editorconfig`'s `max_line_length`)
+- `eslint.config.js`: Replaced `eslint-plugin-prettier/recommended` with `eslint-config-prettier` (only disables conflicting ESLint rules, formatting no longer runs inside ESLint)
+- `package.json` lint scripts: `oxfmt --check .` runs before ESLint (5s vs 19s inside ESLint)
+- `lint-staged`: `prettier --write` → `oxfmt --write` for JSON/GraphQL files
+
+**Decision:** The key to identical output was `printWidth: 120`. The project's `.editorconfig` has `max_line_length = 120`. Prettier used its own `printWidth: 80` but its wrapping algorithm is lenient — it allows overflow up to ~120 chars when breaking would produce worse output. Oxfmt with `printWidth: 80` wraps strictly at 80, causing 355 files to differ. Setting `printWidth: 120` to match `.editorconfig` produces zero diffs on all TS/Vue files.
+
+**Restriction:** Oxfmt does not support `endOfLine: "auto"` (prettier did). Defaults to `"lf"`. All project files already use LF, so no impact. If CRLF files appear, oxfmt will convert them to LF.
 
 ---
 
