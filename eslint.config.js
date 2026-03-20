@@ -206,9 +206,34 @@ export default defineConfigWithVueTs(
       "sonarjs/todo-tag": "warn",
       "sonarjs/void-use": "warn",
 
+      // Replaced by ESLint native no-useless-assignment (faster)
+      "sonarjs/no-redundant-assignments": "off",
+      "sonarjs/no-dead-store": "off",
+      "no-useless-assignment": "warn",
+
       // Disabled rules
       "@typescript-eslint/no-non-null-assertion": "off",
+      "sonarjs/no-async-constructor": "off", // TypeScript already catches this (TS1089)
+      "sonarjs/no-commented-code": "off", // 82s for low-value checks
       "sonarjs/no-duplicate-string": "off",
+      // AWS infra security rules — irrelevant for a Vue.js frontend
+      "sonarjs/aws-apigateway-public-api": "off",
+      "sonarjs/aws-ec2-rds-dms-public": "off",
+      "sonarjs/aws-ec2-unencrypted-ebs-volume": "off",
+      "sonarjs/aws-efs-unencrypted": "off",
+      "sonarjs/aws-iam-all-privileges": "off",
+      "sonarjs/aws-iam-privilege-escalation": "off",
+      "sonarjs/aws-iam-public-access": "off",
+      "sonarjs/aws-opensearchservice-domain": "off",
+      "sonarjs/aws-rds-unencrypted-databases": "off",
+      "sonarjs/aws-restricted-ip-admin-access": "off",
+      "sonarjs/aws-s3-bucket-granted-access": "off",
+      "sonarjs/aws-s3-bucket-insecure-http": "off",
+      "sonarjs/aws-s3-bucket-public-access": "off",
+      "sonarjs/aws-s3-bucket-versioning": "off",
+      "sonarjs/aws-sagemaker-unencrypted-notebook": "off",
+      "sonarjs/aws-sns-unencrypted-topics": "off",
+      "sonarjs/aws-sqs-unencrypted-queue": "off",
       "tailwindcss/no-custom-classname": "off",
       "vue/multi-word-component-names": "off",
       "vue/require-default-prop": "off",

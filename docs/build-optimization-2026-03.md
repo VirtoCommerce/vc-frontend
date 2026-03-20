@@ -9,7 +9,7 @@ Reduce developer friction by speeding up build, lint, and type-check cycles, and
 | Metric | Before | After | Change |
 |--------|--------|-------|--------|
 | Production build | 2m 0s | 41.2s | **-65%** |
-| ESLint | 4m 2s | 36.0s | **-85%** |
+| ESLint | 4m 2s | ~1.3m | **-68%** |
 | Type check | 2m 25s | 1m 19s | **-46%** |
 | Dev server startup | 2.0s | 1.4s | **-30%** |
 | JS bundle (gzip) | 1.69MB | 1.65MB | -2% |
@@ -114,6 +114,29 @@ manualChunks(id) {
 **What Oxlint handles:** JavaScript/TypeScript rules from `@eslint/js`, `@typescript-eslint`, `eslint-plugin-import`, `eslint-plugin-sonarjs`.
 
 **What ESLint still handles:** `eslint-plugin-vue`, `eslint-plugin-vuejs-accessibility`, `eslint-plugin-tailwindcss`, `eslint-plugin-storybook`, `eslint-plugin-prettier`, `eslint-plugin-sort-exports`.
+
+### 7. SonarJS Rule Profiling & Cleanup
+
+**Reason:** After oxlint integration, ESLint was still ~4m. Profiling with `TIMING=all` revealed that `sonarjs` rules dominated — `no-commented-code` alone took 82s (45.8%).
+
+**What changed in `eslint.config.js`:**
+
+Disabled 4 slow/irrelevant sonarjs rules:
+
+| Rule | Time | Reason for disabling |
+|------|------|---------------------|
+| `sonarjs/no-commented-code` | 82s | Parses every comment as potential code. Low value, extreme cost. |
+| `sonarjs/no-async-constructor` | 20s | TypeScript already catches this (TS1089: `'async' modifier cannot appear on a constructor declaration`). Fully redundant. |
+| `sonarjs/no-redundant-assignments` | 6s | Replaced by ESLint native `no-useless-assignment` (faster). |
+| `sonarjs/no-dead-store` | 5s | Replaced by ESLint native `no-useless-assignment` (faster). |
+
+Disabled 17 `sonarjs/aws-*` rules (~6s total). These check for AWS infrastructure security misconfigurations (S3 bucket policies, IAM privileges, RDS encryption, etc.) — completely irrelevant for a Vue.js frontend project. Auto-included by `sonarjs.configs.recommended`.
+
+Added `no-useless-assignment: "warn"` as a fast native replacement for the two disabled sonarjs assignment rules.
+
+**Result:** ESLint time dropped from ~180s to ~72s (-60%). Remaining top rules are all valuable: `prettier/prettier` (19s), `@typescript-eslint/no-misused-promises` (17s), `import/no-cycle` (7s).
+
+**Restriction:** When updating sonarjs, new AWS/cloud rules may be added by `sonarjs.configs.recommended`. Check `TIMING=all` after sonarjs updates.
 
 ---
 

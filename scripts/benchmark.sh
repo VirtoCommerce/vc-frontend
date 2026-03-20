@@ -249,9 +249,9 @@ bench_sizes() {
 }
 
 bench_lint() {
-  header "ESLint (median of $RUNS runs)"
+  header "Lint (median of $RUNS runs)"
   local median
-  median=$(median_of "$RUNS" yarn eslint . --quiet)
+  median=$(median_of "$RUNS" yarn lint --quiet)
   record lint_ms "$median"
   ok "Lint: $(fmt_ms "$median")"
 }
