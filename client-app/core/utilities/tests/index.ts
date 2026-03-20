@@ -1,4 +1,4 @@
-import merge from "lodash/merge";
+import merge from "lodash-es/merge";
 import { createI18n } from "vue-i18n";
 import type { Component } from "vue";
 

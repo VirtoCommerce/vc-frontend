@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { useDebounceFn, useResizeObserver } from "@vueuse/core";
-import isEqual from "lodash/isEqual";
+import isEqual from "lodash-es/isEqual";
 import { ref, computed, onMounted, nextTick, watch, provide, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { Logger } from "@/core/utilities";

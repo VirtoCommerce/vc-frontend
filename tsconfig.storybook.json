@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.app.json",
   "include": [".storybook/**/*", "client-app/**/*", "config/*.json", "locales/*.json", "package.json"],
-  "exclude": ["./storybook/main.ts"]
+  "exclude": ["./.storybook/main.ts"]
 }

@@ -93,7 +93,7 @@
 
 <script setup lang="ts">
 import { useCssVar } from "@vueuse/core";
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "lodash-es";
 import Skyflow from "skyflow-js";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";

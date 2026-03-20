@@ -99,7 +99,7 @@
 </template>
 
 <script lang="ts" setup>
-import keyBy from "lodash/keyBy";
+import keyBy from "lodash-es/keyBy";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
@@ -194,7 +194,7 @@ function openDeleteProductModal(ids: string[]): void {
         if (hasPagination && isLastPageWithOneItem) {
           pagination.value.page -= 1;
         }
-        // eslint-disable-next-line sonarjs/void-use
+
         void broadcast.emit(dataChangedEvent);
         void fetchProductsAndSubscriptions();
       },

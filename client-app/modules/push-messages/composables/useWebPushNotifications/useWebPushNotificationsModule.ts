@@ -2,7 +2,7 @@ import { provideApolloClient, useMutation } from "@vue/apollo-composable";
 import { createGlobalState, useLocalStorage, useEventBus } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken } from "firebase/messaging";
-import omit from "lodash/omit";
+import omit from "lodash-es/omit";
 import { computed, ref, watch } from "vue";
 import faviconSVG from "@/assets/icons/favicon.svg";
 import { apolloClient } from "@/core/api/graphql";

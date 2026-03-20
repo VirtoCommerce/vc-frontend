@@ -1,5 +1,5 @@
 import { Loader } from "@googlemaps/js-api-loader";
-import uniqueId from "lodash/uniqueId";
+import uniqueId from "lodash-es/uniqueId";
 import { ref, shallowRef, onUnmounted } from "vue";
 import { Logger } from "@/core/utilities/logger";
 import type { Ref, ShallowRef } from "vue";

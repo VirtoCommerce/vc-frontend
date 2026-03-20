@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import uniqueId from "lodash/uniqueId";
+import uniqueId from "lodash-es/uniqueId";
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from "vue";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 

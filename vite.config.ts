@@ -82,9 +82,25 @@ export default defineConfig(({ command, mode }): UserConfig => {
       rollupOptions: {
         output: {
           manualChunks(id) {
-            if (id.includes("node_modules")) {
-              return "vendor";
+            if (!id.includes("node_modules")) {
+              return;
             }
+            if (id.includes("firebase")) {
+              return "vendor-firebase";
+            }
+            if (id.includes("@apollo") || id.includes("graphql")) {
+              return "vendor-apollo";
+            }
+            if (id.includes("swiper")) {
+              return "vendor-swiper";
+            }
+            if (id.includes("lodash-es")) {
+              return "vendor-lodash";
+            }
+            if (id.includes("photoswipe")) {
+              return;
+            }
+            return "vendor";
           },
         },
       },

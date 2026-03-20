@@ -1,6 +1,6 @@
 import { createGlobalState } from "@vueuse/core";
-import clone from "lodash/clone";
-import mergeWith from "lodash/mergeWith";
+import clone from "lodash-es/clone";
+import mergeWith from "lodash-es/mergeWith";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import menuData from "@/config/menu.json";
 import { getChildCategories, getMenu } from "@/core/api/graphql";

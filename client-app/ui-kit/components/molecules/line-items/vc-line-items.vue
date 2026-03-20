@@ -137,7 +137,7 @@
 </template>
 
 <script setup lang="ts">
-import { intersection, map, sumBy } from "lodash";
+import { intersection, map, sumBy } from "lodash-es";
 import { computed, ref, watchEffect } from "vue";
 import type { PreparedLineItemType } from "@/core/types";
 

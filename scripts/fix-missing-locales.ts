@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import groupBy from "lodash/groupBy.js";
+import groupBy from "lodash-es/groupBy.js";
 import { main as getMissingKeys } from "./check-locales-missing-keys.js";
 import {
   buildNewLocaleContent,

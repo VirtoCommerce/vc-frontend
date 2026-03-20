@@ -130,7 +130,7 @@
 
 <script setup lang="ts">
 import { useDebounceFn } from "@vueuse/core";
-import { isNaN, isEqual, omit, uniqueId as getUniqueId } from "lodash";
+import { isNaN, isEqual, omit, uniqueId as getUniqueId } from "lodash-es";
 import { create } from "nouislider";
 import { ref, onMounted, onUnmounted, computed, toRefs, watch, nextTick } from "vue";
 import { useI18n } from "vue-i18n";

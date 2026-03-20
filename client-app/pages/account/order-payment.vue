@@ -311,7 +311,7 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "lodash-es";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";

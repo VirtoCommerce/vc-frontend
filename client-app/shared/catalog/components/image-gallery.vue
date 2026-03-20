@@ -22,7 +22,6 @@
             clickable: true,
             el: `#${componentId} [data-nav-pagination]`,
           }"
-          data-te-lightbox-init
           @swiper="setImagesSwiper"
           @slide-change="setActiveIndex"
           @keydown.enter.prevent="openLightbox(swiperId)"
@@ -33,9 +32,9 @@
               :class="['image-gallery__img', { 'image-gallery__img--active': activeIndex === i }]"
               :src="image.url"
               :alt="image.name ?? `${$t('common.accessibility.image')} ${i + 1}`"
-              :data-te-img="image.url"
               size-suffix="md"
               lazy
+              @click="openLightbox(swiperId, i)"
             />
           </SwiperSlide>
         </Swiper>
@@ -108,7 +107,7 @@
 import { useBreakpoints } from "@vueuse/core";
 import { Pagination, Navigation, Thumbs } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { ref, onMounted, computed, getCurrentInstance, watch, toRef, onUnmounted } from "vue";
+import { ref, computed, getCurrentInstance, watch, toRef } from "vue";
 import { BREAKPOINTS } from "@/core/constants";
 import { extractNumberFromString } from "@/core/utilities";
 import type { ImageType } from "@/core/api/graphql/types";
@@ -175,12 +174,36 @@ function navigateToNext() {
   }
 }
 
-function openLightbox(id: string) {
-  const currentImage = document.querySelector(`#${componentId} .image-gallery__img--active`) as HTMLElement;
+async function openPhotoSwipe(startIndex: number) {
+  const { default: PhotoSwipe } = await import("photoswipe");
+  await import("photoswipe/style.css");
+
+  const pswp = new PhotoSwipe({
+    dataSource: images.value.map((img) => ({ src: img.url || "", w: 0, h: 0 })),
+    index: startIndex,
+  });
+
+  pswp.on("gettingData", ({ data }) => {
+    if (!data.w || !data.h) {
+      data.w = window.innerWidth;
+      data.h = window.innerHeight;
+      const img = new Image();
+      img.onload = () => {
+        data.w = img.naturalWidth;
+        data.h = img.naturalHeight;
+        pswp.refreshSlideContent(pswp.currIndex);
+      };
+      img.src = data.src as string;
+    }
+  });
+
+  pswp.on("close", handleLightboxClose);
+  pswp.init();
+}
+
+function openLightbox(id: string, index?: number) {
   focusedElementBeforeLightboxId.value = id;
-  if (currentImage) {
-    currentImage.click();
-  }
+  openPhotoSwipe(index ?? activeIndex.value);
 }
 
 watch(
@@ -207,23 +230,6 @@ function handleLightboxClose() {
 
   focusedElementBeforeLightboxId.value = null;
 }
-
-onMounted(async () => {
-  // Dynamic import is required to avoid SSR errors
-  // SSR is used to generate routes.json
-  // https://virtocommerce.atlassian.net/browse/ST-5051
-  const { initTE, Lightbox } = (await import("tw-elements")) as unknown as {
-    initTE: (args: unknown) => void;
-    Lightbox: unknown;
-  };
-  initTE({ Lightbox });
-
-  document.body.addEventListener("close.te.lightbox", handleLightboxClose);
-});
-
-onUnmounted(() => {
-  document.body.removeEventListener("close.te.lightbox", handleLightboxClose);
-});
 </script>
 
 <style lang="scss">

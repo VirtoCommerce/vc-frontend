@@ -1,5 +1,5 @@
 import { createSharedComposable } from "@vueuse/core";
-import { isEqual, sortBy } from "lodash";
+import { isEqual, sortBy } from "lodash-es";
 import { ref, computed, watch } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";

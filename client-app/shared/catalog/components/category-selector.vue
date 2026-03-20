@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import pickBy from "lodash/pickBy";
+import pickBy from "lodash-es/pickBy";
 import { computed, toValue } from "vue";
 import { useRoute } from "vue-router";
 import { useCategoriesRoutes, useRouteQueryParam } from "@/core/composables";

@@ -1,4 +1,4 @@
-import groupBy from "lodash/groupBy.js";
+import groupBy from "lodash-es/groupBy.js";
 import { main as checkLocales } from "./check-locales-missing-keys.js";
 import type { MissingKeyType } from "./check-locales-missing-keys.js";
 

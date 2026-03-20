@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { useElementBounding, watchDebounced } from "@vueuse/core";
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "lodash-es";
 import { watch, shallowRef, ref, nextTick, computed } from "vue";
 import { useThemeContext } from "@/core/composables";
 import FacetFilter from "./facet-filter.vue";

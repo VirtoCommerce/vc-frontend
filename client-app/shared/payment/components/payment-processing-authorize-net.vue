@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { clone } from "lodash";
+import { clone } from "lodash-es";
 import { computed, onMounted, ref, shallowRef, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment } from "@/core/api/graphql";

@@ -62,8 +62,8 @@
 </template>
 
 <script setup lang="ts">
-import cloneDeep from "lodash/cloneDeep";
-import keyBy from "lodash/keyBy";
+import cloneDeep from "lodash-es/cloneDeep";
+import keyBy from "lodash-es/keyBy";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics, usePageHead } from "@/core/composables";

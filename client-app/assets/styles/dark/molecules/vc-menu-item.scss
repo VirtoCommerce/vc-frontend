@@ -18,11 +18,11 @@
         --focus-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
 
         &:hover {
-          @apply bg-[--color-#{$color}-100];
+          background-color: var(--color-#{$color}-100);
         }
 
         &#{$active} {
-          @apply bg-[--color-#{$color}-100];
+          background-color: var(--color-#{$color}-100);
         }
       }
     }

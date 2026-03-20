@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { uniqBy } from "lodash";
+import { uniqBy } from "lodash-es";
 import { computed, ref, shallowRef, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";

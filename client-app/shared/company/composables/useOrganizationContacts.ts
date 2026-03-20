@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { map } from "lodash-es";
 import { computed, readonly, ref, shallowRef, unref } from "vue";
 import { useI18n } from "vue-i18n";
 import {
@@ -55,7 +55,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
 
       const contactFullNameFallback: string = t("pages.company.members.invite_sent");
 
-      contacts.value = _.map(response.items, (item: ContactType) =>
+      contacts.value = map(response.items, (item: ContactType) =>
         convertToExtendedContact(item, contactFullNameFallback),
       );
       pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);

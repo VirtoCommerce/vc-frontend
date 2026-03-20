@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import cloneDeep from "lodash/cloneDeep";
+import cloneDeep from "lodash-es/cloneDeep";
 import { computed, ref } from "vue";
 import { presets } from "@/assets/presets";
 import settingsData from "@/config/settings_data.json";

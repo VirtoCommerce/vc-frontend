@@ -1,5 +1,5 @@
 import { createGlobalState, useDebounceFn } from "@vueuse/core";
-import { omit } from "lodash";
+import { omit } from "lodash-es";
 import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -56,7 +56,6 @@ const useGlobalCheckout = createGlobalState(() => {
   };
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function _useCheckout(cartId?: string) {
   const { analytics } = useAnalytics();
   const { t } = useI18n();

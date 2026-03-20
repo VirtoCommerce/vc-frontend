@@ -171,7 +171,7 @@ const colorSet = {
 };
 
 module.exports = {
-  content: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}", "./node_modules/tw-elements/dist/js/**/*.js"],
+  content: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}"],
 
   safelist: ["lg:inline"],
 
@@ -294,5 +294,5 @@ module.exports = {
     },
   },
 
-  plugins: [require("@tailwindcss/container-queries"), require("tw-elements/dist/plugin.cjs")],
+  plugins: [require("@tailwindcss/container-queries")],
 } satisfies Config;

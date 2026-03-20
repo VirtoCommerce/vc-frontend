@@ -117,7 +117,7 @@
 
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { cloneDeep, isEqual, keyBy, pick } from "lodash";
+import { cloneDeep, isEqual, keyBy, pick } from "lodash-es";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from "vue-router";

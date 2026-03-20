@@ -1,4 +1,4 @@
-import { sumBy } from "lodash";
+import { sumBy } from "lodash-es";
 import { globals } from "@/core/globals";
 import { Logger, toCSV } from "@/core/utilities";
 import { DEBUG_PREFIX } from "./constants";

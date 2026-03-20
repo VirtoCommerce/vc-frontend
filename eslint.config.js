@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
 import importPlugin from "eslint-plugin-import";
+import oxlint from "eslint-plugin-oxlint";
 import prettierPlugin from "eslint-plugin-prettier/recommended";
 import sonarjs from "eslint-plugin-sonarjs";
 import sortExportAll from "eslint-plugin-sort-export-all";
@@ -384,6 +385,9 @@ export default defineConfigWithVueTs(
     files: ["**/*.js", "**/*.cjs"],
     ...tseslint.configs.disableTypeChecked,
   },
+
+  // Oxlint disables ESLint rules already covered by oxlint
+  ...oxlint.configs["flat/recommended"],
 
   // Prettier must be last
   prettierPlugin,

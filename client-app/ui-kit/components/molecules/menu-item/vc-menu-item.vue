@@ -252,7 +252,8 @@ onMounted(() => {
         --focus-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
 
         &:hover {
-          @apply bg-[--color-#{$color}-50] outline-none;
+          background-color: var(--color-#{$color}-50);
+          @apply outline-none;
         }
 
         &:focus,
@@ -261,7 +262,7 @@ onMounted(() => {
         }
 
         &#{$active} {
-          @apply bg-[--color-#{$color}-100];
+          background-color: var(--color-#{$color}-100);
         }
       }
     }

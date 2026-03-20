@@ -72,9 +72,13 @@
                 }"
                 wrapper-class="items-center"
                 class="mx-0 w-full p-1"
-                data-te-lightbox-init
               >
-                <SwiperSlide v-for="(image, index) in review.images" :key="index" class="cursor-pointer p-2">
+                <SwiperSlide
+                  v-for="(image, index) in review.images"
+                  :key="index"
+                  class="cursor-pointer p-2"
+                  @click="openReviewLightbox(review.images, index)"
+                >
                   <VcImage :src="image.url" :alt="$t('common.labels.product_review_image')" size-suffix="sm" lazy />
                 </SwiperSlide>
               </Swiper>
@@ -278,6 +282,32 @@ async function changeSortByDate(value: string): Promise<void> {
   productReviewsPayload.value.sort = value;
 
   await fetchCustomerReviews(productReviewsPayload.value);
+}
+
+async function openReviewLightbox(reviewImages: { url?: string | null }[], startIndex: number) {
+  const { default: PhotoSwipe } = await import("photoswipe");
+  await import("photoswipe/style.css");
+
+  const pswp = new PhotoSwipe({
+    dataSource: reviewImages.map((img) => ({ src: img.url || "", w: 0, h: 0 })),
+    index: startIndex,
+  });
+
+  pswp.on("gettingData", ({ data }) => {
+    if (!data.w || !data.h) {
+      data.w = window.innerWidth;
+      data.h = window.innerHeight;
+      const img = new Image();
+      img.onload = () => {
+        data.w = img.naturalWidth;
+        data.h = img.naturalHeight;
+        pswp.refreshSlideContent(pswp.currIndex);
+      };
+      img.src = data.src as string;
+    }
+  });
+
+  pswp.init();
 }
 
 async function changePage(page: number): Promise<void> {

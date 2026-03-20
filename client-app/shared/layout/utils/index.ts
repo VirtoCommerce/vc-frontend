@@ -1,4 +1,4 @@
-import { escapeRegExp, trim } from "lodash";
+import { escapeRegExp, trim } from "lodash-es";
 
 export function prepareSearchText(rawText: string): string {
   // add logic if necessary

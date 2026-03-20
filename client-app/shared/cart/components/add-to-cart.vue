@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { isDefined } from "@vueuse/core";
-import { clone } from "lodash";
+import { clone } from "lodash-es";
 import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";

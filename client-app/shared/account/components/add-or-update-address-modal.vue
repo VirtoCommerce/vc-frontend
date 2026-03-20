@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { clone } from "lodash";
+import { clone } from "lodash-es";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCountries } from "@/core/composables";

@@ -138,7 +138,7 @@
 </template>
 
 <script setup lang="ts">
-import omit from "lodash/omit";
+import omit from "lodash-es/omit";
 import { computed, ref, watch } from "vue";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useFullCart } from "@/shared/cart";

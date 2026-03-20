@@ -74,8 +74,8 @@
 </template>
 
 <script lang="ts" setup>
-import isEqual from "lodash/isEqual";
-import omit from "lodash/omit";
+import isEqual from "lodash-es/isEqual";
+import omit from "lodash-es/omit";
 import { computed, inject, useSlots } from "vue";
 import { getColorValue, serialize } from "@/ui-kit/utilities";
 
