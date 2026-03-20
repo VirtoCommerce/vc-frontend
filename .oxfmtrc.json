@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 120,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    ".deployment",
+    ".github",
+    ".husky",
+    "!.storybook",
+    ".vscode",
+    ".yarn",
+    "artifacts",
+    "assets",
+    "node_modules",
+    "storybook-static",
+    "client-app/modules/**/api/graphql/types.ts",
+    "client-app/core/api/graphql/**/types.ts",
+    "client-app/core/api/graphql/schema.json"
+  ]
+}

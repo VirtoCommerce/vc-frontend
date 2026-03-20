@@ -23,10 +23,10 @@
     "validate": "yarn precheck && yarn validate:types && yarn validate:dependencies",
     "commitlint": "yarn precheck && commitlint --edit",
     "lint-staged": "yarn precheck && lint-staged",
-    "lint": "yarn precheck && oxlint && eslint .",
-    "lint:fix": "yarn precheck && oxlint --fix && eslint . --fix",
-    "prettier": "yarn precheck && prettier --check client-app/",
-    "prettier:fix": "yarn precheck && yarn prettier --write",
+    "lint": "yarn precheck && oxlint && oxfmt --check . && eslint .",
+    "lint:fix": "yarn precheck && oxlint --fix && oxfmt --write . && eslint . --fix",
+    "format": "yarn precheck && oxfmt --check .",
+    "format:fix": "yarn precheck && oxfmt --write .",
     "test:unit": "yarn precheck && vitest",
     "test:typing": "yarn precheck && vitest --typecheck",
     "test:coverage": "yarn precheck && vitest --coverage",
@@ -125,7 +125,6 @@
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-oxlint": "^0.16.10",
-    "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-sonarjs": "^3.0.7",
     "eslint-plugin-sort-export-all": "^2.1.0",
     "eslint-plugin-sort-exports": "^0.9.1",
@@ -139,10 +138,10 @@
     "jsdom": "^27.4.0",
     "lint-staged": "^16.2.7",
     "npm-run-all2": "^6.2.6",
+    "oxfmt": "^0.41.0",
     "oxlint": "^0.16.10",
     "postcss": "^8.5.6",
     "postcss-import": "^16.1.1",
-    "prettier": "^3.8.1",
     "rollup-plugin-visualizer": "^6.0.5",
     "sass": "^1.97.3",
     "storybook": "9.1.17",
@@ -167,7 +166,7 @@
       "eslint --fix"
     ],
     "*.{graphql,json}": [
-      "prettier --write"
+      "oxfmt --write"
     ]
   },
   "engines": {
