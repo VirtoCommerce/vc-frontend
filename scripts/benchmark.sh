@@ -259,7 +259,7 @@ bench_lint() {
 bench_typecheck() {
   header "Type Checking (median of $RUNS runs)"
   local median
-  median=$(median_of "$RUNS" yarn vue-tsc --build --force)
+  median=$(median_of "$RUNS" yarn validate:types)
   record typecheck_ms "$median"
   ok "Type check: $(fmt_ms "$median")"
 }
