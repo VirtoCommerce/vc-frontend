@@ -1,5 +1,5 @@
 <template>
-  <div :class="['vc-popover', {}]">
+  <div class="vc-popover">
     <div v-if="$slots.default" ref="reference" class="vc-popover__trigger">
       <slot :open="open" :close="close" :toggle="toggle" :opened="opened" :trigger-props="emitTriggerProps" />
     </div>
@@ -191,14 +191,6 @@ watch(opened, (value: boolean) => emit("toggle", value));
     @apply absolute top-0 w-5 h-2.5 p-1 overflow-hidden;
   }
 
-  &__arrow {
-    @apply w-3 h-3 rotate-45 bg-[--arrow-color];
-
-    #{$shadow} & {
-      @apply shadow-md;
-    }
-  }
-
   &__body {
     // For teleportation cases, variables are declared in &__body
     --props-bg-color: v-bind(_bgColor);
@@ -214,6 +206,14 @@ watch(opened, (value: boolean) => emit("toggle", value));
 
     &--shadow {
       $shadow: &;
+    }
+  }
+
+  &__arrow {
+    @apply w-3 h-3 rotate-45 bg-[--arrow-color];
+
+    #{$shadow} & {
+      @apply shadow-md;
     }
   }
 
