@@ -25,6 +25,7 @@ export function useCurrentOrganizationAddresses(
   const filterCountryCodes = ref<string[]>([]);
   const filterRegionIds = ref<string[]>([]);
   const filterCities = ref<string[]>([]);
+  const keyword = ref("");
 
   const variables = computed(() => ({
     first: toValue(itemsPerPage),
@@ -33,6 +34,7 @@ export function useCurrentOrganizationAddresses(
     countryCodes: filterCountryCodes.value.length ? filterCountryCodes.value : undefined,
     regionIds: filterRegionIds.value.length ? filterRegionIds.value : undefined,
     cities: filterCities.value.length ? filterCities.value : undefined,
+    keyword: keyword.value ?? null,
   }));
 
   const { result, loading, refetch } = useGetCurrentOrganizationAddressesQuery(variables);
@@ -40,6 +42,7 @@ export function useCurrentOrganizationAddresses(
   const addresses = computed(() => result.value?.currentOrganizationAddresses?.items ?? []);
   const totalCount = computed(() => result.value?.currentOrganizationAddresses?.totalCount ?? 0);
   const pages = computed(() => Math.ceil(totalCount.value / toValue(itemsPerPage)));
+  const termFacets = computed(() => result.value?.currentOrganizationAddresses?.term_facets ?? []);
 
   async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
     if (!items.length || !toValue(organizationId)) {
@@ -105,6 +108,8 @@ export function useCurrentOrganizationAddresses(
     filterCountryCodes,
     filterRegionIds,
     filterCities,
+    keyword,
+    termFacets,
     addOrUpdateAddresses,
     removeAddresses,
     addAddressToFavorite,

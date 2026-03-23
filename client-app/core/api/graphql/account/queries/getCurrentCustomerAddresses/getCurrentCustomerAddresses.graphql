@@ -7,6 +7,7 @@ query GetCurrentUserAddresses(
   $countryCodes: [String]
   $regionIds: [String]
   $cities: [String]
+  $keyword: String
 ) {
   currentCustomerAddresses(
     after: $after
@@ -15,10 +16,19 @@ query GetCurrentUserAddresses(
     countryCodes: $countryCodes
     regionIds: $regionIds
     cities: $cities
+    keyword: $keyword
   ) {
     totalCount
     items {
       ...memberAddressFields
+    }
+    term_facets {
+      name
+      terms {
+        term
+        label
+        count
+      }
     }
   }
 }

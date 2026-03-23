@@ -16,6 +16,7 @@ import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType, usePayment } from "@/shared/payment";
 import { BOPIS_CODE } from "./useBopis";
+import { createAddressFilterContext } from "./usePickupFilterContext";
 import type {
   CartAddressType,
   CustomerOrderType,
@@ -70,6 +71,11 @@ export function _useCheckout(cartId?: string) {
     loading: personalAddressesLoading,
     totalCount: personalAddressesTotalCount,
     page: personalAddressesPage,
+    keyword: personalAddressesKeyword,
+    filterCountryCodes: personalFilterCountryCodes,
+    filterRegionIds: personalFilterRegionIds,
+    filterCities: personalFilterCities,
+    termFacets: personalTermFacets,
     addOrUpdateAddresses: addOrUpdatePersonalAddresses,
   } = useCustomerAddresses();
   const {
@@ -77,6 +83,11 @@ export function _useCheckout(cartId?: string) {
     loading: organizationAddressesLoading,
     totalCount: organizationAddressesTotalCount,
     page: organizationAddressesPage,
+    keyword: organizationAddressesKeyword,
+    filterCountryCodes: organizationFilterCountryCodes,
+    filterRegionIds: organizationFilterRegionIds,
+    filterCities: organizationFilterCities,
+    termFacets: organizationTermFacets,
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
   } = useCurrentOrganizationAddresses(() => user.value.contact?.organizationId ?? "");
   const {
@@ -107,6 +118,13 @@ export function _useCheckout(cartId?: string) {
     clearState: clearGlobalCheckoutState,
     initialized,
   } = useGlobalCheckout();
+  const addressFilterContext = createAddressFilterContext({
+    loading: computed(() =>
+      isCorporateMember.value ? organizationAddressesLoading.value : personalAddressesLoading.value,
+    ),
+    termFacets: computed(() => (isCorporateMember.value ? organizationTermFacets.value : personalTermFacets.value)),
+  });
+
   const { themeContext } = useThemeContext();
   const { pushHistoricalEvent } = useHistoricalEvents();
   const { finalizePayment } = usePayment();
@@ -309,11 +327,32 @@ export function _useCheckout(cartId?: string) {
         paginationMode: "server",
         loading: isCorporateMember.value ? organizationAddressesLoading : personalAddressesLoading,
         totalCount: isCorporateMember.value ? organizationAddressesTotalCount : personalAddressesTotalCount,
+        filterContext: addressFilterContext,
+        showFilters: true,
         onPageChange(newPage: number) {
           if (isCorporateMember.value) {
             organizationAddressesPage.value = newPage;
           } else {
             personalAddressesPage.value = newPage;
+          }
+        },
+        onFilterChange() {
+          const keyword = addressFilterContext.filterKeyword.value;
+          const countryCodes = addressFilterContext.filterCountries.value?.termValues?.map((v) => v.value) ?? [];
+          const regionIds = addressFilterContext.filterRegions.value?.termValues?.map((v) => v.value) ?? [];
+          const cities = addressFilterContext.filterCities.value?.termValues?.map((v) => v.value) ?? [];
+          if (isCorporateMember.value) {
+            organizationAddressesPage.value = 1;
+            organizationAddressesKeyword.value = keyword;
+            organizationFilterCountryCodes.value = countryCodes;
+            organizationFilterRegionIds.value = regionIds;
+            organizationFilterCities.value = cities;
+          } else {
+            personalAddressesPage.value = 1;
+            personalAddressesKeyword.value = keyword;
+            personalFilterCountryCodes.value = countryCodes;
+            personalFilterRegionIds.value = regionIds;
+            personalFilterCities.value = cities;
           }
         },
 

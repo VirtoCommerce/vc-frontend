@@ -7,6 +7,7 @@ query GetCurrentOrganizationAddresses(
   $countryCodes: [String]
   $regionIds: [String]
   $cities: [String]
+  $keyword: String
 ) {
   currentOrganizationAddresses(
     after: $after
@@ -15,10 +16,19 @@ query GetCurrentOrganizationAddresses(
     countryCodes: $countryCodes
     regionIds: $regionIds
     cities: $cities
+    keyword: $keyword
   ) {
     totalCount
     items {
       ...memberAddressFields
+    }
+    term_facets {
+      name
+      terms {
+        term
+        label
+        count
+      }
     }
   }
 }

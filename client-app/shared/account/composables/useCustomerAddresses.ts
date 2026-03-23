@@ -23,6 +23,7 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6)
   const filterCountryCodes = ref<string[]>([]);
   const filterRegionIds = ref<string[]>([]);
   const filterCities = ref<string[]>([]);
+  const keyword = ref("");
 
   const variables = computed(() => ({
     first: toValue(itemsPerPage),
@@ -31,12 +32,14 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6)
     countryCodes: filterCountryCodes.value.length ? filterCountryCodes.value : undefined,
     regionIds: filterRegionIds.value.length ? filterRegionIds.value : undefined,
     cities: filterCities.value.length ? filterCities.value : undefined,
+    keyword: keyword.value ?? null,
   }));
 
   const { result, loading, refetch } = useGetCurrentCustomerAddressesQuery(variables);
 
   const addresses = computed(() => result.value?.currentCustomerAddresses?.items ?? []);
   const totalCount = computed(() => result.value?.currentCustomerAddresses?.totalCount ?? 0);
+  const termFacets = computed(() => result.value?.currentCustomerAddresses?.term_facets ?? []);
   const pages = computed(() => Math.ceil(totalCount.value / toValue(itemsPerPage)));
 
   async function addOrUpdateAddresses(items: MemberAddressFieldsFragment[]): Promise<void> {
@@ -81,6 +84,8 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6)
     filterCountryCodes,
     filterRegionIds,
     filterCities,
+    keyword,
+    termFacets,
     addOrUpdateAddresses,
     removeAddresses,
   };
