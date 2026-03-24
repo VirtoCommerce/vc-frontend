@@ -25,6 +25,7 @@
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
+import { useAnalytics } from "@/core/composables";
 import { useNotifications } from "@/shared/notification";
 import PaymentProcessingDatatransLightbox from "./payment-processing-datatrans-lightbox.vue";
 import PaymentProcessingDatatransSecureFields from "./payment-processing-datatrans-secure-fields.vue";
@@ -44,6 +45,7 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
+const { analytics } = useAnalytics();
 const notifications = useNotifications();
 
 const initializing = ref(true);
@@ -86,6 +88,7 @@ onMounted(async () => {
 
   if (mode === "Lightbox") {
     if (!txId || !script) {
+      initializing.value = false;
       showError(t("shared.payment.bank_card_form.user_error_message"));
       emit("fail");
       return;
@@ -110,6 +113,7 @@ async function finalizeLightboxReturn(datatransTrxId: string) {
       ],
     });
     if (isSuccess) {
+      analytics("purchase", props.order);
       emit("success");
     } else {
       emit("fail");
