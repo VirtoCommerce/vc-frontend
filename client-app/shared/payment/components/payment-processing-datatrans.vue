@@ -89,6 +89,7 @@ onMounted(async () => {
   if (mode === "Lightbox") {
     if (!txId || !script) {
       showError(t("shared.payment.bank_card_form.user_error_message"));
+      initializing.value = false;
       emit("fail");
       return;
     }
