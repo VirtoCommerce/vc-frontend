@@ -11,6 +11,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { Logger } from "@/core/utilities";
+import { isMarkdownWithFrontmatter } from "@/core/utilities/common";
 import { useStaticPage } from "@/shared/static-content";
 import { usePreviewBuilderPage } from "../composables";
 import { getPreviewPageId } from "../utils";
@@ -23,10 +24,6 @@ const markdownContent = ref<string | null>(null);
 
 const { loading, loadPreviewPage } = usePreviewBuilderPage();
 const { staticPagePreview: template } = useStaticPage();
-
-function isMarkdownWithFrontmatter(content: string): boolean {
-  return content.trimStart().startsWith("---");
-}
 
 onMounted(async () => {
   try {
