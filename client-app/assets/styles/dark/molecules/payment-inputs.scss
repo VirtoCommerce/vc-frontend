@@ -1,0 +1,9 @@
+// Focus ring: payment iframe wrappers use --focus-color at 0.3 opacity.
+// Bump to 0.8 in dark mode for visibility.
+.cyber-source-input-wrap {
+  --focus-color: rgb(from var(--color) r g b / 0.8);
+}
+
+.datatrans-input-wrap {
+  --focus-color: rgb(from var(--color) r g b / 0.8);
+}

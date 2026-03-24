@@ -1,0 +1,8 @@
+// Product pickup page: accent link color for dark mode.
+.product-pickup-locations__link {
+  color: var(--color-accent-700);
+}
+
+.select-address-map-view__marker-glyph {
+  @apply fill-additional-950;
+}

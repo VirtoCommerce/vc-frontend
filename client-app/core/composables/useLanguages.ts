@@ -210,7 +210,7 @@ export function useLanguages() {
     const normalizedPermalink = permalink.startsWith("/") ? permalink : `/${permalink}`;
     const permalinkWithLocale = localeFromUrl ? `/${localeFromUrl}${normalizedPermalink}` : normalizedPermalink;
 
-    history.pushState(history.state, "", `${permalinkWithLocale}${location.search}${location.hash}`);
+    history.replaceState(history.state, "", `${permalinkWithLocale}${location.search}${location.hash}`);
   }
 
   return {
