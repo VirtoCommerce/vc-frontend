@@ -107,7 +107,7 @@
   "color_price": "#e2deda",
 
   "color_shape_icon_bg": "#cd9a3a",
-  "color_shape_icon": "#2a1e08",
+  "color_shape_icon": "#f9f9f9",
 
   "color_empty_list_icon": "#ffc471",
 
@@ -134,13 +134,13 @@
 
   "color_footer_top_bg": "#020202",
   "color_footer_top_text": "#e2deda",
-  "color_footer_top_link": "#d6ad5c",
-  "color_footer_top_link_hover": "#ead3aa",
-  "color_footer_top_link_active": "#f4e7d0",
+  "color_footer_top_link": "#ead3aa",
+  "color_footer_top_link_hover": "#f9f9f9",
+  "color_footer_top_link_active": "#f9f9f9",
 
   "color_footer_bottom_bg": "#020202",
   "color_footer_bottom_text": "#cbc7c3",
-  "color_footer_bottom_link": "#e0c082",
-  "color_footer_bottom_link_hover": "#ead3aa",
-  "color_footer_bottom_link_active": "#f4e7d0"
+  "color_footer_bottom_link": "#ead3aa",
+  "color_footer_bottom_link_hover": "#f9f9f9",
+  "color_footer_bottom_link_active": "#f9f9f9"
 }
