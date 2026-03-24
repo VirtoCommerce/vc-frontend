@@ -874,6 +874,10 @@
         "user_error_message": "Betalingen kan ikke startes. Prøv igjen senere eller bruk en annen betalingsmetode",
         "payment_unavailable": "Betalingsmetoden er ikke tilgjengelig. Prøv igjen senere"
       },
+      "datatrans_lightbox": {
+        "title": "Sikker betaling",
+        "description": "Du vil bli videresendt til et sikkert Datatrans-betalingsvindu for å fullføre kjøpet."
+      },
       "authorize_net": {
         "user_agreement_link": "Brukeravtale",
         "privacy_policy_link": "Personvernerklæring",

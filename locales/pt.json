@@ -874,6 +874,10 @@
         "user_error_message": "Não foi possível inicializar o pagamento. Tente novamente mais tarde ou use outro método de pagamento",
         "payment_unavailable": "O método de pagamento não está disponível. Tente novamente mais tarde"
       },
+      "datatrans_lightbox": {
+        "title": "Pagamento seguro",
+        "description": "Você será redirecionado para uma janela de pagamento Datatrans segura para concluir sua compra."
+      },
       "authorize_net": {
         "user_agreement_link": "Acordo de Usuário",
         "privacy_policy_link": "Política de Privacidade",
