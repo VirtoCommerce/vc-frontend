@@ -18,17 +18,19 @@ html.dark {
   }
 
   @include meta.load-css("dark/atoms/vc-badge");
-  @include meta.load-css("dark/atoms/vc-input");
   @include meta.load-css("dark/atoms/vc-checkbox");
   @include meta.load-css("dark/atoms/vc-radio-button");
-  @include meta.load-css("dark/atoms/vc-tab-switch");
-  @include meta.load-css("dark/atoms/vc-slider");
+  @include meta.load-css("dark/molecules/vc-input");
+  @include meta.load-css("dark/molecules/vc-tab-switch");
+  @include meta.load-css("dark/molecules/vc-slider");
   @include meta.load-css("dark/molecules/vc-button");
   @include meta.load-css("dark/molecules/vc-chip");
   @include meta.load-css("dark/molecules/vc-alert");
   @include meta.load-css("dark/molecules/vc-menu-item");
   @include meta.load-css("dark/molecules/vc-nav-button");
   @include meta.load-css("dark/molecules/vc-product-actions-button");
-  @include meta.load-css("dark/molecules/payment-inputs");
-  @include meta.load-css("dark/pages/product-pickup");
+  @include meta.load-css("dark/shared/catalog/product-pickup-locations");
+  @include meta.load-css("dark/shared/payment/payment-processing-cyber-source");
+  @include meta.load-css("dark/shared/payment/payment-processing-datatrans");
+  @include meta.load-css("dark/shared/checkout/select-address-map-view");
 }
