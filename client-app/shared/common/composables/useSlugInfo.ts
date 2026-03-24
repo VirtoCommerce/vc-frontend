@@ -8,7 +8,7 @@ import { safeDecode } from "@/core/utilities/common";
 import type { IPageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
 
-function isMarkdownWithFrontmatter(content: string): boolean {
+export function isMarkdownWithFrontmatter(content: string): boolean {
   return content.trimStart().startsWith("---");
 }
 
