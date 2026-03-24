@@ -20,7 +20,7 @@ export const configPlugin: Plugin<IThemeContext> = {
       styleElement.id = "vc-theme-variables";
 
       // Light mode variables (default)
-      let css = `:root { ${presetToCssVars(options.preset)} }`;
+      let css = `:root:not(.dark) { ${presetToCssVars(options.preset)} }`;
 
       // Dark mode variables
       const presetName = presetNameToFileName(options.activePresetName || options.defaultPresetName || "default");
