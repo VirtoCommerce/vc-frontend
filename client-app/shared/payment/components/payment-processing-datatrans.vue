@@ -1,5 +1,5 @@
 <template>
-  <VcLoaderOverlay v-if="initializing" fixed />
+  <VcLoaderOverlay v-if="initializing" fixed-spinner />
 
   <PaymentProcessingDatatransLightbox
     v-else-if="paymentMode === 'Lightbox'"
@@ -14,8 +14,6 @@
     v-else
     :order="order"
     :disabled="disabled"
-    :initial-transaction-id="transactionId"
-    :initial-client-script="clientScript"
     @success="emit('success')"
     @fail="(msg) => emit('fail', msg)"
   />

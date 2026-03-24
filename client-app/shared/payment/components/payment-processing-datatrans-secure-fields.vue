@@ -172,10 +172,6 @@ interface IEmits {
 interface IProps {
   order: CustomerOrderType;
   disabled?: boolean;
-  /** Pre-initialized transaction ID from parent wrapper (skips initializePayment call) */
-  initialTransactionId?: string;
-  /** Pre-initialized client script URL from parent wrapper */
-  initialClientScript?: string;
 }
 
 const { t } = useI18n();
@@ -316,26 +312,15 @@ async function initPayment() {
 
   hideForm.value = false;
   loading.value = true;
+  const { publicParameters } = await initializePayment({
+    orderId: props.order.id,
+    paymentId: props.order.inPayments[0].id,
+  });
 
-  let scriptUrl: string | undefined;
-  let transactionId: string | undefined;
+  const scriptUrl = getValue(publicParameters, "clientScript");
+  const transactionId = getValue(publicParameters, "transactionId");
 
-  if (props.initialTransactionId && props.initialClientScript) {
-    // Use pre-initialized values from the wrapper component
-    scriptUrl = props.initialClientScript;
-    transactionId = props.initialTransactionId;
-  } else {
-    // Self-initialize (standalone usage)
-    const { publicParameters } = await initializePayment({
-      orderId: props.order.id,
-      paymentId: props.order.inPayments[0].id,
-    });
-
-    scriptUrl = getValue(publicParameters, "clientScript");
-    transactionId = getValue(publicParameters, "transactionId");
-  }
-
-  if (!scriptUrl || !transactionId) {
+  if (!publicParameters || !scriptUrl || !transactionId) {
     showError(t("shared.payment.bank_card_form.user_error_message"));
     return;
   }
