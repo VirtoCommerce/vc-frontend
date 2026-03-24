@@ -850,14 +850,16 @@ export type CreateReviewResult = {
 export type CurrencyType = {
   /** Currency code may be used ISO 4217 */
   code: Scalars['String']['output'];
-  /** Currency English name */
+  /** Currency culture name */
   cultureName: Scalars['String']['output'];
   /** Currency custom formatting */
   customFormatting?: Maybe<Scalars['String']['output']>;
-  /** Currency English name */
+  /** Currency english name */
   englishName: Scalars['String']['output'];
   /** Exchange rate */
   exchangeRate: Scalars['Decimal']['output'];
+  /** Currency name */
+  name: Scalars['String']['output'];
   /** Symbol */
   symbol: Scalars['String']['output'];
 };
@@ -1117,11 +1119,6 @@ export type DynamicContentItemType = {
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   priority: Scalars['Int']['output'];
-};
-
-
-export type DynamicContentItemTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** A connection from an object to a list of objects of type `DynamicProperty`. */
@@ -4343,6 +4340,7 @@ export type PageConnection = {
 export type PageContextResponseType = {
   slugInfo?: Maybe<SlugInfoResponseType>;
   store?: Maybe<StoreResponseType>;
+  /** User info */
   user?: Maybe<UserType>;
   whiteLabelingSettings?: Maybe<WhiteLabelingSettingsType>;
 };
@@ -5211,8 +5209,6 @@ export type Query = {
   contacts?: Maybe<ContactConnection>;
   contract?: Maybe<ContractType>;
   countries: Array<CountryType>;
-  currentCustomerAddresses?: Maybe<MemberAddressConnection>;
-  currentOrganizationAddresses?: Maybe<MemberAddressConnection>;
   customerReviews?: Maybe<CustomerReviewConnection>;
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
@@ -5442,28 +5438,6 @@ export type QueryContactsArgs = {
 
 export type QueryContractArgs = {
   id?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryCurrentCustomerAddressesArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  cities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  countryCodes?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  keyword?: InputMaybe<Scalars['String']['input']>;
-  regionIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryCurrentOrganizationAddressesArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  cities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  countryCodes?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  keyword?: InputMaybe<Scalars['String']['input']>;
-  regionIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 

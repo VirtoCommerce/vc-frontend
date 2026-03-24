@@ -240,14 +240,16 @@ export type CreateQuoteFromCartCommandType = {
 export type CurrencyType = {
   /** Currency code may be used ISO 4217 */
   code: Scalars['String']['output'];
-  /** Currency English name */
+  /** Currency culture name */
   cultureName: Scalars['String']['output'];
   /** Currency custom formatting */
   customFormatting?: Maybe<Scalars['String']['output']>;
-  /** Currency English name */
+  /** Currency english name */
   englishName: Scalars['String']['output'];
   /** Exchange rate */
   exchangeRate: Scalars['Decimal']['output'];
+  /** Currency name */
+  name: Scalars['String']['output'];
   /** Symbol */
   symbol: Scalars['String']['output'];
 };
