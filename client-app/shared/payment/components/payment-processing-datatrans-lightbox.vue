@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
@@ -66,6 +66,7 @@ declare const Datatrans: {
 interface IEmits {
   (event: "success"): void;
   (event: "fail", message?: string | null): void;
+  (event: "reinitialize"): void;
 }
 
 interface IProps {
@@ -86,6 +87,7 @@ const ready = ref(false);
 const orderTotal = computed(() => props.order.total?.formattedAmount);
 
 let scriptElement: HTMLScriptElement | null = null;
+let scriptLoaded = false;
 
 onMounted(() => {
   if (!props.clientScript || !props.transactionId) {
@@ -99,10 +101,18 @@ onMounted(() => {
 });
 
 function loadScript(url: string) {
+  // If the Datatrans script is already loaded, skip re-adding it
+  if (scriptLoaded) {
+    loading.value = false;
+    ready.value = true;
+    return;
+  }
+
   scriptElement = document.createElement("script");
   scriptElement.src = url;
 
   scriptElement.onload = () => {
+    scriptLoaded = true;
     loading.value = false;
     ready.value = true;
   };
@@ -132,11 +142,15 @@ function openLightbox() {
     },
     loaded: () => {
       Logger.info("Datatrans Lightbox loaded");
+      loading.value = false;
     },
     closed: () => {
-      // User closed the popup without completing payment
+      // User closed the popup without completing payment.
+      // Datatrans transactionIds are single-use — we must request a fresh one for retry.
       Logger.info("Datatrans Lightbox closed by user");
-      loading.value = false;
+      loading.value = true;
+      ready.value = false;
+      emit("reinitialize");
     },
     error: (data) => {
       Logger.error("Datatrans Lightbox error", data);
@@ -145,10 +159,18 @@ function openLightbox() {
       emit("fail", data.message);
     },
   });
-
-  // Note: On successful payment, Datatrans redirects the browser to the returnUrl.
-  // The "closed" callback only fires when the user manually closes the popup.
 }
+
+// When the parent provides a fresh transactionId (after reinitialize), re-enable the button
+watch(
+  () => props.transactionId,
+  (newId) => {
+    if (newId) {
+      loading.value = false;
+      ready.value = true;
+    }
+  },
+);
 
 function showError(message: string) {
   notifications.error({
@@ -159,9 +181,6 @@ function showError(message: string) {
 }
 
 onUnmounted(() => {
-  if (scriptElement) {
-    scriptElement.remove();
-    scriptElement = null;
-  }
+  // Don't remove the script — it can be reused across retries
 });
 </script>

@@ -8,6 +8,7 @@
     :client-script="clientScript"
     @success="emit('success')"
     @fail="(msg) => emit('fail', msg)"
+    @reinitialize="reinitializeLightbox"
   />
 
   <PaymentProcessingDatatransSecureFields
@@ -70,7 +71,10 @@ onMounted(async () => {
     return;
   }
 
-  // Initialize payment to determine mode
+  await initializeLightboxPayment();
+});
+
+async function initializeLightboxPayment() {
   const { publicParameters } = await initializePayment({
     orderId: props.order.id,
     paymentId: props.order.inPayments[0].id,
@@ -80,7 +84,6 @@ onMounted(async () => {
   const txId = getValue(publicParameters, "transactionId");
   const script = getValue(publicParameters, "clientScript");
 
-  // Store initialization data for both modes
   transactionId.value = txId ?? "";
   clientScript.value = script ?? "";
 
@@ -96,7 +99,29 @@ onMounted(async () => {
   }
 
   initializing.value = false;
-});
+}
+
+async function reinitializeLightbox() {
+  // Datatrans transactionIds are single-use — after the user closes the Lightbox
+  // popup, the old transactionId is consumed and cannot be reused.
+  // We must create a fresh transaction for the retry.
+  const { publicParameters } = await initializePayment({
+    orderId: props.order.id,
+    paymentId: props.order.inPayments[0].id,
+  });
+
+  const txId = getValue(publicParameters, "transactionId");
+  const script = getValue(publicParameters, "clientScript");
+
+  if (!txId || !script) {
+    showError(t("shared.payment.bank_card_form.user_error_message"));
+    emit("fail");
+    return;
+  }
+
+  transactionId.value = txId;
+  clientScript.value = script;
+}
 
 async function finalizeLightboxReturn(datatransTrxId: string) {
   try {
