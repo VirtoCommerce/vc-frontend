@@ -924,7 +924,7 @@
       "label": "Files (max size 5MB)",
       "type": "files",
       "multiple": true,
-      "maxFileSize": 242880,
+      "maxFileSize": 5242880,
       "element": [
         {
           "id": "url",
@@ -999,9 +999,6 @@
       "type": "markdown",
       "resultType": "html",
       "styles": null,
-      "uploadAssetsRequest": {
-        "url": "https://placeholder.example.com/api/assets/upload"
-      },
       "default": null
     },
     {
@@ -1011,9 +1008,6 @@
       "type": "markdown",
       "resultType": "markdown",
       "styles": null,
-      "uploadAssetsRequest": {
-        "url": "https://placeholder.example.com/api/assets/upload"
-      },
       "default": null
     },
     {
@@ -1023,9 +1017,6 @@
       "type": "markdown",
       "resultType": "mixed",
       "styles": null,
-      "uploadAssetsRequest": {
-        "url": "https://placeholder.example.com/api/assets/upload"
-      },
       "default": null
     },
     {
