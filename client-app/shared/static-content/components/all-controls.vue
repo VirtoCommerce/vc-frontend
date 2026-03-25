@@ -619,7 +619,7 @@ function formatDatetime(value: string | null | undefined): string {
 <style lang="scss" scoped>
 .all-controls-demo {
   &__hero {
-    @apply mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-neutral-800 to-neutral-900 px-8 py-10 text-center text-white;
+    @apply mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-neutral-800 to-neutral-900 px-8 py-10 text-center text-neutral-50;
   }
 
   &__hero-title {
