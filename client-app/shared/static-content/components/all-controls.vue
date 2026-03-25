@@ -632,7 +632,7 @@ function formatDatetime(value: string | null | undefined): string {
 }
 
 .demo-card {
-  @apply flex flex-col rounded-xl border border-neutral-200 bg-white p-5 shadow-sm;
+  @apply flex flex-col rounded-xl border border-neutral-200 bg-neutral-50 p-5 shadow-sm;
 
   &__type {
     @apply mb-1 text-xs font-semibold uppercase tracking-widest text-neutral-400;
@@ -648,10 +648,10 @@ function formatDatetime(value: string | null | undefined): string {
 
   // Color swatch circle
   &__swatch {
-    @apply size-9 rounded-full border-2 border-white shadow transition-transform hover:scale-110;
+    @apply size-9 rounded-full border-2 border-neutral-50 shadow transition-transform hover:scale-110;
 
     &--filled {
-      @apply border-white;
+      @apply border-neutral-50;
     }
 
     &--empty {
@@ -682,7 +682,7 @@ function formatDatetime(value: string | null | undefined): string {
   }
 
   &__toggle-dot {
-    @apply pointer-events-none absolute size-3.5 rounded-full bg-white shadow transition-all duration-200;
+    @apply pointer-events-none absolute size-3.5 rounded-full bg-neutral-50 shadow transition-all duration-200;
 
     .demo-card__toggle--on & {
       @apply right-0.5;
