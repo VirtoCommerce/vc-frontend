@@ -1,0 +1,1126 @@
+{
+  "name": "All controls",
+  "icon": "text_snippet",
+  "displayField": "title",
+  "includeShared": ["title"],
+  "settings": [
+    {
+      "id": "headerBasic",
+      "tab": "Text Blocks",
+      "type": "header",
+      "content": "Section settings"
+    },
+    {
+      "id": "paragraphDescription",
+      "tab": "Text Blocks",
+      "type": "paragraph",
+      "content": "Configure the appearance and content of this section."
+    },
+    {
+      "id": "headerAdvanced",
+      "tab": "Text Blocks",
+      "type": "header",
+      "content": "Advanced options"
+    },
+    {
+      "id": "paragraphWarning",
+      "tab": "Text Blocks",
+      "type": "paragraph",
+      "content": "Changes here affect all pages that use this section."
+    },
+    {
+      "id": "headerLong",
+      "tab": "Text Blocks",
+      "type": "header",
+      "content": "This is a very long heading that might wrap across multiple lines depending on the available width of the settings panel"
+    },
+    {
+      "id": "paragraphLong",
+      "tab": "Text Blocks",
+      "type": "paragraph",
+      "content": "This is a longer paragraph that contains multiple sentences. It explains in detail the purpose of the settings below and provides useful context to the editor. The text is intentionally long to test how the layout handles multi-line content inside the settings panel."
+    },
+    {
+      "id": "calendarDate",
+      "tab": "Basic",
+      "mode": "date",
+      "label": "Calendar",
+      "type": "calendar",
+      "default": null
+    },
+    {
+      "id": "calendarDatetime",
+      "tab": "Basic",
+      "mode": "datetime",
+      "label": "Calendar Datetime",
+      "type": "calendar",
+      "default": null
+    },
+    {
+      "id": "calendarTime",
+      "tab": "Basic",
+      "mode": "time",
+      "label": "Calendar Time",
+      "type": "calendar",
+      "default": null
+    },
+    {
+      "id": "calendarMonth",
+      "tab": "Basic",
+      "mode": "month",
+      "label": "Calendar Month",
+      "type": "calendar",
+      "default": null
+    },
+    {
+      "id": "calendarYear",
+      "tab": "Basic",
+      "mode": "year",
+      "label": "Calendar Year",
+      "type": "calendar",
+      "default": null
+    },
+    {
+      "id": "calendarMinToday",
+      "tab": "Calendar Limits",
+      "mode": "date",
+      "label": "Min: today (future only)",
+      "type": "calendar",
+      "minDate": "today",
+      "default": null
+    },
+    {
+      "id": "calendarMaxToday",
+      "tab": "Calendar Limits",
+      "mode": "date",
+      "label": "Max: today (past only)",
+      "type": "calendar",
+      "maxDate": "today",
+      "default": null
+    },
+    {
+      "id": "calendarMinTomorrow",
+      "tab": "Calendar Limits",
+      "mode": "date",
+      "label": "Min: tomorrow",
+      "type": "calendar",
+      "minDate": "tomorrow",
+      "default": null
+    },
+    {
+      "id": "calendarCurrentWeek",
+      "tab": "Calendar Limits",
+      "mode": "date",
+      "label": "Min: this week",
+      "type": "calendar",
+      "minDate": "this week",
+      "default": null
+    },
+    {
+      "id": "calendarCurrentMonth",
+      "tab": "Calendar Limits",
+      "mode": "date",
+      "label": "Min: this month",
+      "type": "calendar",
+      "minDate": "this month",
+      "default": null
+    },
+    {
+      "id": "calendarLastMonth",
+      "tab": "Calendar Limits",
+      "mode": "date",
+      "label": "Min: last month",
+      "type": "calendar",
+      "minDate": "last month",
+      "default": null
+    },
+    {
+      "id": "calendarNextWeek",
+      "tab": "Calendar Limits",
+      "mode": "date",
+      "label": "Min: next week",
+      "type": "calendar",
+      "minDate": "next week",
+      "default": null
+    },
+    {
+      "id": "calendarNext7Days",
+      "tab": "Calendar Limits",
+      "mode": "date",
+      "label": "Max: in 7 days",
+      "type": "calendar",
+      "minDate": "today",
+      "maxDate": "in 7 days",
+      "default": null
+    },
+    {
+      "id": "calendarFixedMin",
+      "tab": "Calendar Limits",
+      "mode": "date",
+      "label": "Min: fixed date (2025-01-01)",
+      "type": "calendar",
+      "minDate": "2025-01-01",
+      "default": null
+    },
+    {
+      "id": "calendarFixedMax",
+      "tab": "Calendar Limits",
+      "mode": "date",
+      "label": "Max: fixed date (2025-12-31)",
+      "type": "calendar",
+      "maxDate": "2025-12-31",
+      "default": null
+    },
+    {
+      "id": "calendarFixedRange",
+      "tab": "Calendar Limits",
+      "mode": "date",
+      "label": "Fixed range (2025-06-01 – 2025-08-31)",
+      "type": "calendar",
+      "minDate": "2025-06-01",
+      "maxDate": "2025-08-31",
+      "default": null
+    },
+    {
+      "id": "calendarFixedDatetime",
+      "tab": "Calendar Limits",
+      "mode": "datetime",
+      "label": "Datetime fixed range",
+      "type": "calendar",
+      "minDate": "2025-01-01T00:00:00",
+      "maxDate": "2025-12-31T23:59:59",
+      "default": null
+    },
+    {
+      "id": "calendarDateInline",
+      "inline": true,
+      "tab": "Inline",
+      "mode": "date",
+      "label": "Calendar",
+      "type": "calendar",
+      "default": null
+    },
+    {
+      "id": "calendarDatetimeInline",
+      "inline": true,
+      "tab": "Inline",
+      "mode": "datetime",
+      "label": "Calendar Datetime",
+      "type": "calendar",
+      "default": null
+    },
+    {
+      "id": "calendarTimeInline",
+      "inline": true,
+      "tab": "Inline",
+      "mode": "time",
+      "label": "Calendar Time",
+      "type": "calendar",
+      "default": null
+    },
+    {
+      "id": "calendarMonthInline",
+      "inline": true,
+      "tab": "Inline",
+      "mode": "month",
+      "label": "Calendar Month",
+      "type": "calendar",
+      "default": null
+    },
+    {
+      "id": "calendarYearInline",
+      "inline": true,
+      "tab": "Inline",
+      "mode": "year",
+      "label": "Calendar Year",
+      "type": "calendar",
+      "default": null
+    },
+    {
+      "id": "colorBasic",
+      "tab": "Color",
+      "label": "Color (default)",
+      "type": "color",
+      "default": null
+    },
+    {
+      "id": "colorNoAlpha",
+      "tab": "Color",
+      "label": "Color (no alpha)",
+      "type": "color",
+      "disableAlpha": true,
+      "default": null
+    },
+    {
+      "id": "colorWithDefault",
+      "tab": "Color",
+      "label": "Color (default value)",
+      "type": "color",
+      "default": "#3b82f6"
+    },
+    {
+      "id": "colorWithClear",
+      "tab": "Color",
+      "label": "Color (with clear)",
+      "type": "color",
+      "clearValue": null,
+      "default": "#ef4444"
+    },
+    {
+      "id": "colorPresets",
+      "tab": "Color",
+      "label": "Color (presets)",
+      "type": "color",
+      "colorMode": "presets",
+      "presets": ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#8b5cf6", "#ec4899", "#000000", "#ffffff"],
+      "default": null
+    },
+    {
+      "id": "colorPresetsNoAlpha",
+      "tab": "Color",
+      "label": "Color (presets, no alpha)",
+      "type": "color",
+      "colorMode": "presets",
+      "disableAlpha": true,
+      "presets": ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#8b5cf6", "#ec4899", "#000000", "#ffffff"],
+      "default": null
+    },
+    {
+      "id": "colorInline",
+      "tab": "Color",
+      "label": "Color (inline)",
+      "type": "color",
+      "inline": true,
+      "default": null
+    },
+    {
+      "id": "colorInlineNoAlpha",
+      "tab": "Color",
+      "label": "Color (inline, no alpha)",
+      "type": "color",
+      "inline": true,
+      "disableAlpha": true,
+      "default": null
+    },
+    {
+      "id": "colorInlinePresets",
+      "tab": "Color",
+      "label": "Color (inline presets)",
+      "type": "color",
+      "inline": true,
+      "colorMode": "presets",
+      "presets": ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#8b5cf6", "#ec4899", "#000000", "#ffffff"],
+      "default": null
+    },
+    {
+      "id": "stringBasic",
+      "tab": "String",
+      "label": "String (basic)",
+      "type": "string",
+      "default": null
+    },
+    {
+      "id": "stringWithDefault",
+      "tab": "String",
+      "label": "String (default value)",
+      "type": "string",
+      "default": "Hello world"
+    },
+    {
+      "id": "stringWithPlaceholder",
+      "tab": "String",
+      "label": "String (placeholder)",
+      "type": "string",
+      "placeholder": "Enter text here...",
+      "default": null
+    },
+    {
+      "id": "stringWithHint",
+      "tab": "String",
+      "label": "String (hint)",
+      "type": "string",
+      "hint": "This is a tooltip hint",
+      "default": null
+    },
+    {
+      "id": "stringWithInfo",
+      "tab": "String",
+      "label": "String (info)",
+      "type": "string",
+      "info": "This is a helper info message shown below the field",
+      "default": null
+    },
+    {
+      "id": "stringMultiline",
+      "tab": "String",
+      "label": "String (multiline, default rows)",
+      "type": "string",
+      "multiline": true,
+      "default": null
+    },
+    {
+      "id": "stringMultilineWithPlaceholder",
+      "tab": "String",
+      "label": "String (multiline + placeholder)",
+      "type": "string",
+      "multiline": true,
+      "placeholder": "Enter multiline text...",
+      "default": null
+    },
+    {
+      "id": "stringMultilineMin2Max4",
+      "tab": "String",
+      "label": "String (multiline, min 2, max 4)",
+      "type": "string",
+      "multiline": true,
+      "minRowsCount": 2,
+      "maxRowsCount": 4,
+      "default": null
+    },
+    {
+      "id": "stringMultilineMin1Max8",
+      "tab": "String",
+      "label": "String (multiline, min 1, max 8)",
+      "type": "string",
+      "multiline": true,
+      "minRowsCount": 1,
+      "maxRowsCount": 8,
+      "default": null
+    },
+    {
+      "id": "stringMultilineMin3Max3",
+      "tab": "String",
+      "label": "String (multiline, fixed 3 rows)",
+      "type": "string",
+      "multiline": true,
+      "minRowsCount": 3,
+      "maxRowsCount": 3,
+      "default": null
+    },
+    {
+      "id": "textBasic",
+      "tab": "Text",
+      "label": "Text (basic)",
+      "type": "text",
+      "default": null
+    },
+    {
+      "id": "textWithDefault",
+      "tab": "Text",
+      "label": "Text (default value)",
+      "type": "text",
+      "default": "<p>Hello <strong>world</strong></p>"
+    },
+    {
+      "id": "textWithConfig",
+      "tab": "Text",
+      "label": "Text (custom toolbar)",
+      "type": "text",
+      "config": {
+        "toolbar": [
+          ["Bold", "Italic", "Underline", "Strike"],
+          ["NumberedList", "BulletedList"],
+          ["Link", "Unlink"],
+          ["Source"]
+        ]
+      },
+      "default": null
+    },
+    {
+      "id": "checkboxBasic",
+      "tab": "Checkbox",
+      "label": "Checkbox (no default)",
+      "type": "checkbox",
+      "default": null
+    },
+    {
+      "id": "checkboxDefaultTrue",
+      "tab": "Checkbox",
+      "label": "Checkbox (default true)",
+      "type": "checkbox",
+      "default": true
+    },
+    {
+      "id": "checkboxDefaultFalse",
+      "tab": "Checkbox",
+      "label": "Checkbox (default false)",
+      "type": "checkbox",
+      "default": false
+    },
+    {
+      "id": "checkboxWithHint",
+      "tab": "Checkbox",
+      "label": "Checkbox (with hint)",
+      "type": "checkbox",
+      "hint": "Toggle to enable this option",
+      "default": false
+    },
+    {
+      "id": "checkboxWithInfo",
+      "tab": "Checkbox",
+      "label": "Checkbox (with info)",
+      "type": "checkbox",
+      "info": "Enabling this option will affect the block behavior",
+      "default": false
+    },
+    {
+      "id": "numberBasic",
+      "tab": "Number",
+      "label": "Number (basic)",
+      "type": "number",
+      "default": null
+    },
+    {
+      "id": "numberWithDefault",
+      "tab": "Number",
+      "label": "Number (default value)",
+      "type": "number",
+      "default": 42
+    },
+    {
+      "id": "numberMinMax",
+      "tab": "Number",
+      "label": "Number (min 0, max 100)",
+      "type": "number",
+      "min": 0,
+      "max": 100,
+      "default": null
+    },
+    {
+      "id": "numberWithStep",
+      "tab": "Number",
+      "label": "Number (step 0.5)",
+      "type": "number",
+      "min": 0,
+      "max": 10,
+      "step": 0.5,
+      "default": null
+    },
+    {
+      "id": "numberThumb",
+      "tab": "Number",
+      "label": "Number (slider)",
+      "type": "number",
+      "thumb": true,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 50
+    },
+    {
+      "id": "numberThumbStep5",
+      "tab": "Number",
+      "label": "Number (slider, step 5)",
+      "type": "number",
+      "thumb": true,
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 50
+    },
+    {
+      "id": "selectBasic",
+      "tab": "Select",
+      "label": "Select (single)",
+      "type": "select",
+      "options": [
+        {
+          "label": "Small",
+          "value": "sm"
+        },
+        {
+          "label": "Medium",
+          "value": "md"
+        },
+        {
+          "label": "Large",
+          "value": "lg"
+        },
+        {
+          "label": "Extra Large",
+          "value": "xl"
+        }
+      ],
+      "default": null
+    },
+    {
+      "id": "selectWithDefault",
+      "tab": "Select",
+      "label": "Select (default value)",
+      "type": "select",
+      "options": [
+        {
+          "label": "Small",
+          "value": "sm"
+        },
+        {
+          "label": "Medium",
+          "value": "md"
+        },
+        {
+          "label": "Large",
+          "value": "lg"
+        },
+        {
+          "label": "Extra Large",
+          "value": "xl"
+        }
+      ],
+      "default": "md"
+    },
+    {
+      "id": "selectMultiple",
+      "tab": "Select",
+      "label": "Select (multiple)",
+      "type": "select",
+      "multiple": true,
+      "options": [
+        {
+          "label": "Bold",
+          "value": "bold"
+        },
+        {
+          "label": "Italic",
+          "value": "italic"
+        },
+        {
+          "label": "Underline",
+          "value": "underline"
+        },
+        {
+          "label": "Strike",
+          "value": "strike"
+        }
+      ],
+      "default": null
+    },
+    {
+      "id": "selectSearchable",
+      "tab": "Select",
+      "label": "Select (searchable)",
+      "type": "select",
+      "searchable": true,
+      "options": [
+        {
+          "label": "Red",
+          "value": "red"
+        },
+        {
+          "label": "Green",
+          "value": "green"
+        },
+        {
+          "label": "Blue",
+          "value": "blue"
+        },
+        {
+          "label": "Yellow",
+          "value": "yellow"
+        },
+        {
+          "label": "Purple",
+          "value": "purple"
+        },
+        {
+          "label": "Orange",
+          "value": "orange"
+        },
+        {
+          "label": "Pink",
+          "value": "pink"
+        },
+        {
+          "label": "Cyan",
+          "value": "cyan"
+        }
+      ],
+      "default": null
+    },
+    {
+      "id": "selectWithGroups",
+      "tab": "Select",
+      "label": "Select (groups)",
+      "type": "select",
+      "options": [
+        {
+          "label": "Heading 1",
+          "value": "h1",
+          "group": "Headings"
+        },
+        {
+          "label": "Heading 2",
+          "value": "h2",
+          "group": "Headings"
+        },
+        {
+          "label": "Heading 3",
+          "value": "h3",
+          "group": "Headings"
+        },
+        {
+          "label": "Paragraph",
+          "value": "p",
+          "group": "Text"
+        },
+        {
+          "label": "Small",
+          "value": "small",
+          "group": "Text"
+        },
+        {
+          "label": "Caption",
+          "value": "caption",
+          "group": "Text"
+        }
+      ],
+      "default": null
+    },
+    {
+      "id": "selectRequired",
+      "tab": "Select",
+      "label": "Select (required)",
+      "type": "select",
+      "required": true,
+      "options": [
+        {
+          "label": "Option A",
+          "value": "a"
+        },
+        {
+          "label": "Option B",
+          "value": "b"
+        },
+        {
+          "label": "Option C",
+          "value": "c"
+        }
+      ],
+      "default": null
+    },
+    {
+      "id": "selectCategories",
+      "tab": "Select",
+      "label": "Select (categories from VirtoCommerce)",
+      "type": "select",
+      "equalKey": "id",
+      "searchable": true,
+      "default": null,
+      "request": {
+        "url": "/api/catalog/search/categories",
+        "method": "post",
+        "body": {
+          "storeId": "B2B-store",
+          "keyword": "{{__searchQuery}}",
+          "skip": 0,
+          "take": 10
+        },
+        "response": {
+          "result": "items",
+          "isArray": true,
+          "value": ["id", "name", "code"]
+        },
+        "label": "name"
+      }
+    },
+    {
+      "id": "objectBasic",
+      "tab": "Object",
+      "label": "Object (basic)",
+      "type": "object",
+      "displayField": "title",
+      "element": [
+        {
+          "id": "title",
+          "type": "string",
+          "label": "Title",
+          "default": null
+        },
+        {
+          "id": "subtitle",
+          "type": "string",
+          "label": "Subtitle",
+          "default": null
+        },
+        {
+          "id": "enabled",
+          "type": "checkbox",
+          "label": "Enabled",
+          "default": true
+        },
+        {
+          "id": "count",
+          "type": "number",
+          "label": "Count",
+          "min": 0,
+          "default": null
+        },
+        {
+          "id": "color",
+          "type": "color",
+          "label": "Color",
+          "default": null
+        }
+      ],
+      "default": null
+    },
+    {
+      "id": "collectionBasic",
+      "tab": "Collection",
+      "label": "Collection (basic)",
+      "type": "list",
+      "displayField": "label",
+      "element": [
+        {
+          "id": "label",
+          "type": "string",
+          "label": "Label",
+          "default": null
+        },
+        {
+          "id": "value",
+          "type": "string",
+          "label": "Value",
+          "default": null
+        },
+        {
+          "id": "enabled",
+          "type": "checkbox",
+          "label": "Enabled",
+          "default": true
+        }
+      ],
+      "default": null
+    },
+    {
+      "id": "collectionWithOptions",
+      "tab": "Collection",
+      "label": "Collection (add text + max count)",
+      "type": "list",
+      "displayField": "label",
+      "addText": "Add element",
+      "maxCount": 5,
+      "element": [
+        {
+          "id": "label",
+          "type": "string",
+          "label": "Label",
+          "default": null
+        },
+        {
+          "id": "value",
+          "type": "string",
+          "label": "Value",
+          "default": null
+        },
+        {
+          "id": "enabled",
+          "type": "checkbox",
+          "label": "Enabled",
+          "default": true
+        }
+      ],
+      "default": null
+    },
+    {
+      "id": "collectionNoConfirm",
+      "tab": "Collection",
+      "label": "Collection (no remove confirmation)",
+      "type": "list",
+      "displayField": "title",
+      "skipRemoveConfirmation": true,
+      "element": [
+        {
+          "id": "title",
+          "type": "string",
+          "label": "Title",
+          "default": null
+        },
+        {
+          "id": "url",
+          "type": "string",
+          "label": "URL",
+          "default": null
+        }
+      ],
+      "default": null
+    },
+    {
+      "id": "filesBasic",
+      "tab": "Files",
+      "tabOrder": 1,
+      "label": "Files (single)",
+      "type": "files",
+      "multiple": false
+    },
+    {
+      "id": "filesMultiple",
+      "tab": "Files",
+      "label": "Files (multiple)",
+      "type": "files",
+      "multiple": true,
+      "sortable": false,
+      "element": [
+        {
+          "id": "hint",
+          "type": "string",
+          "label": "Hint",
+          "default": null
+        },
+        {
+          "id": "name",
+          "type": "string",
+          "label": "Name",
+          "default": null
+        }
+      ]
+    },
+    {
+      "id": "filesSortable",
+      "tab": "Files",
+      "label": "Files (multiple + sortable)",
+      "type": "files",
+      "multiple": true,
+      "sortable": true,
+      "element": [
+        {
+          "id": "url",
+          "type": "string",
+          "label": "URL",
+          "default": null
+        },
+        {
+          "id": "name",
+          "type": "string",
+          "label": "Name",
+          "default": null
+        }
+      ]
+    },
+    {
+      "id": "filesAccept",
+      "tab": "Files",
+      "label": "Files (accept PDF only)",
+      "type": "files",
+      "multiple": true,
+      "accept": ".pdf",
+      "element": [
+        {
+          "id": "url",
+          "type": "string",
+          "label": "URL",
+          "default": null
+        },
+        {
+          "id": "name",
+          "type": "string",
+          "label": "Name",
+          "default": null
+        }
+      ]
+    },
+    {
+      "id": "filesMaxSize",
+      "tab": "Files",
+      "label": "Files (max size 5MB)",
+      "type": "files",
+      "multiple": true,
+      "maxFileSize": 242880,
+      "element": [
+        {
+          "id": "url",
+          "type": "string",
+          "label": "URL",
+          "default": null
+        },
+        {
+          "id": "name",
+          "type": "string",
+          "label": "Name",
+          "default": null
+        }
+      ]
+    },
+    {
+      "id": "imagesBasic",
+      "tab": "Images",
+      "label": "Images (single)",
+      "type": "images",
+      "default": null,
+      "multiple": false
+    },
+    {
+      "id": "imagesMultiple",
+      "tab": "Images",
+      "label": "Images (multiple)",
+      "type": "images",
+      "multiple": true,
+      "sortable": false,
+      "element": [
+        {
+          "id": "title",
+          "type": "string",
+          "label": "Title",
+          "default": null
+        },
+        {
+          "id": "alt",
+          "type": "string",
+          "label": "Alt text",
+          "default": null
+        }
+      ]
+    },
+    {
+      "id": "imagesSortable",
+      "tab": "Images",
+      "label": "Images (multiple + sortable)",
+      "type": "images",
+      "multiple": true,
+      "sortable": true,
+      "element": [
+        {
+          "id": "alt",
+          "type": "string",
+          "label": "Alt text",
+          "default": null
+        },
+        {
+          "id": "title",
+          "type": "string",
+          "label": "Title",
+          "default": null
+        }
+      ]
+    },
+    {
+      "id": "markdownHtml",
+      "tab": "Markdown",
+      "label": "Markdown (result: html)",
+      "type": "markdown",
+      "resultType": "html",
+      "styles": null,
+      "uploadAssetsRequest": {
+        "url": "https://placeholder.example.com/api/assets/upload"
+      },
+      "default": null
+    },
+    {
+      "id": "markdownMd",
+      "tab": "Markdown",
+      "label": "Markdown (result: markdown)",
+      "type": "markdown",
+      "resultType": "markdown",
+      "styles": null,
+      "uploadAssetsRequest": {
+        "url": "https://placeholder.example.com/api/assets/upload"
+      },
+      "default": null
+    },
+    {
+      "id": "markdownMixed",
+      "tab": "Markdown",
+      "label": "Markdown (result: mixed)",
+      "type": "markdown",
+      "resultType": "mixed",
+      "styles": null,
+      "uploadAssetsRequest": {
+        "url": "https://placeholder.example.com/api/assets/upload"
+      },
+      "default": null
+    },
+    {
+      "id": "searchBasic",
+      "tab": "Search",
+      "label": "Search (basic)",
+      "type": "search",
+      "nodataText": "No results found",
+      "button": false,
+      "request": {
+        "url": "/api/catalog/search/products",
+        "method": "POST",
+        "body": {
+          "storeId": "B2B-store",
+          "searchPhrase": "{{__searchQuery}}",
+          "skip": 0,
+          "take": 1
+        },
+        "response": {
+          "result": "items",
+          "isArray": false,
+          "value": ["id", "name", "code"]
+        }
+      },
+      "requests": {},
+      "displayInfo": [
+        {
+          "label": "Name",
+          "path": "name",
+          "type": "text"
+        },
+        {
+          "label": "Code",
+          "path": "code",
+          "type": "text"
+        }
+      ],
+      "default": null
+    },
+    {
+      "id": "selectProductTypeForSearch",
+      "tab": "Search",
+      "label": "ProductType",
+      "type": "select",
+      "options": [
+        {
+          "label": "Physical",
+          "value": "Physical"
+        },
+        {
+          "label": "Digital",
+          "value": "Digital"
+        }
+      ]
+    },
+    {
+      "id": "searchWithButton",
+      "tab": "Search",
+      "label": "Search (with button)",
+      "type": "search",
+      "nodataText": "No results found",
+      "button": true,
+      "request": {
+        "url": "/api/catalog/search/products",
+        "method": "POST",
+        "body": {
+          "productType": "{{=this.model.selectProductTypeForSearch}}",
+          "storeId": "B2B-store",
+          "skip": 0,
+          "take": 1
+        },
+        "response": {
+          "result": "items",
+          "isArray": false,
+          "value": ["id", "name", "code", "imgSrc"]
+        }
+      },
+      "displayInfo": [
+        {
+          "label": "Image",
+          "path": "imgSrc",
+          "type": "image"
+        },
+        {
+          "label": "Name",
+          "path": "name",
+          "type": "text"
+        },
+        {
+          "label": "Code",
+          "path": "code",
+          "type": "text"
+        }
+      ],
+      "default": null
+    }
+  ]
+}
