@@ -116,22 +116,27 @@ async function reinitializeLightbox() {
   // Datatrans transactionIds are single-use — after the user closes the Lightbox
   // popup, the old transactionId is consumed and cannot be reused.
   // We must create a fresh transaction for the retry.
-  const { publicParameters } = await initializePayment({
-    orderId: props.order.id,
-    paymentId: props.order.inPayments[0].id,
-  });
+  try {
+    const { publicParameters } = await initializePayment({
+      orderId: props.order.id,
+      paymentId: props.order.inPayments[0].id,
+    });
 
-  const txId = getValue(publicParameters, "transactionId");
-  const script = getValue(publicParameters, "clientScript");
+    const txId = getValue(publicParameters, "transactionId");
+    const script = getValue(publicParameters, "clientScript");
 
-  if (!txId || !script) {
+    if (!txId || !script) {
+      showError(t("shared.payment.bank_card_form.user_error_message"));
+      emit("fail");
+      return;
+    }
+
+    transactionId.value = txId;
+    clientScript.value = script;
+  } catch {
     showError(t("shared.payment.bank_card_form.user_error_message"));
     emit("fail");
-    return;
   }
-
-  transactionId.value = txId;
-  clientScript.value = script;
 }
 
 async function finalizeLightboxReturn(datatransTrxId: string) {
