@@ -155,9 +155,11 @@ async function finalizeLightboxReturn(datatransTrxId: string) {
       analytics("purchase", props.order);
       emit("success");
     } else {
+      showError(t("shared.payment.bank_card_form.user_error_message"));
       emit("fail");
     }
   } catch {
+    showError(t("shared.payment.bank_card_form.user_error_message"));
     emit("fail");
   } finally {
     initializing.value = false;
