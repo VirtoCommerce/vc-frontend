@@ -11,6 +11,13 @@
     @reinitialize="reinitializeLightbox"
   />
 
+  <!--
+    SecureFields self-initializes (calls initializePayment again) instead of receiving
+    pre-initialized props. This intentionally creates a second transaction because
+    VueUse's useScriptTag composable requires an await before it is called, which only
+    the child's own initializePayment provides. The first transaction is harmless —
+    Datatrans only charges on authorization, and the backend overwrites payment.OuterId.
+  -->
   <PaymentProcessingDatatransSecureFields
     v-else
     :order="order"
@@ -75,30 +82,34 @@ onMounted(async () => {
 });
 
 async function initializeLightboxPayment() {
-  const { publicParameters } = await initializePayment({
-    orderId: props.order.id,
-    paymentId: props.order.inPayments[0].id,
-  });
+  try {
+    const { publicParameters } = await initializePayment({
+      orderId: props.order.id,
+      paymentId: props.order.inPayments[0].id,
+    });
 
-  const mode = getValue(publicParameters, "paymentMode");
-  const txId = getValue(publicParameters, "transactionId");
-  const script = getValue(publicParameters, "clientScript");
+    const mode = getValue(publicParameters, "paymentMode");
+    const txId = getValue(publicParameters, "transactionId");
+    const script = getValue(publicParameters, "clientScript");
 
-  transactionId.value = txId ?? "";
-  clientScript.value = script ?? "";
+    transactionId.value = txId ?? "";
+    clientScript.value = script ?? "";
 
-  if (mode === "Lightbox") {
-    if (!txId || !script) {
-      showError(t("shared.payment.bank_card_form.user_error_message"));
-      initializing.value = false;
-      emit("fail");
-      return;
+    if (mode === "Lightbox") {
+      if (!txId || !script) {
+        showError(t("shared.payment.bank_card_form.user_error_message"));
+        emit("fail");
+        return;
+      }
+
+      paymentMode.value = "Lightbox";
     }
-
-    paymentMode.value = "Lightbox";
+  } catch {
+    showError(t("shared.payment.bank_card_form.user_error_message"));
+    emit("fail");
+  } finally {
+    initializing.value = false;
   }
-
-  initializing.value = false;
 }
 
 async function reinitializeLightbox() {
