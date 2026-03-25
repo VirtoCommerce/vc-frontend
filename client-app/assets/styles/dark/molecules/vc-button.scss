@@ -41,8 +41,6 @@
 
   @each $color in $colors {
     &--no-border--#{$color} {
-      --bg-color: transparent;
-      --border-color: transparent;
       --text-color: var(--color-#{$color}-900);
     }
   }
