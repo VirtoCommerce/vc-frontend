@@ -669,11 +669,11 @@ function formatDatetime(value: string | null | undefined): string {
     @apply relative inline-flex h-5 w-9 shrink-0 cursor-default items-center rounded-full transition-colors duration-200;
 
     &--on {
-      @apply bg-green-500;
+      @apply bg-success-500;
     }
 
     &--off {
-      @apply bg-red-400;
+      @apply bg-danger-500;
     }
 
     &--null {
@@ -699,11 +699,11 @@ function formatDatetime(value: string | null | undefined): string {
     @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
 
     &--green {
-      @apply bg-green-100 text-green-700;
+      @apply bg-success-100 text-success-700;
     }
 
     &--red {
-      @apply bg-red-100 text-red-700;
+      @apply bg-danger-100 text-danger-700;
     }
 
     &--gray {
@@ -720,11 +720,11 @@ function formatDatetime(value: string | null | undefined): string {
     @apply h-full rounded-full transition-all duration-300;
 
     &--blue {
-      @apply bg-blue-500;
+      @apply bg-primary-500;
     }
 
     &--purple {
-      @apply bg-purple-500;
+      @apply bg-accent-500;
     }
   }
 
@@ -751,7 +751,7 @@ function formatDatetime(value: string | null | undefined): string {
     }
 
     &--highlight {
-      @apply border-blue-100 bg-blue-50;
+      @apply border-primary-100 bg-primary-50;
     }
 
     &--multi {
@@ -764,19 +764,19 @@ function formatDatetime(value: string | null | undefined): string {
     @apply inline-flex items-center rounded-full px-3 py-0.5 text-sm font-medium;
 
     &--blue {
-      @apply bg-blue-100 text-blue-700;
+      @apply bg-primary-100 text-primary-700;
     }
 
     &--green {
-      @apply bg-green-100 text-green-700;
+      @apply bg-success-100 text-success-700;
     }
 
     &--purple {
-      @apply bg-purple-100 text-purple-700;
+      @apply bg-accent-100 text-accent-700;
     }
 
     &--orange {
-      @apply bg-orange-100 text-orange-700;
+      @apply bg-warning-100 text-warning-700;
     }
   }
 
@@ -797,7 +797,7 @@ function formatDatetime(value: string | null | undefined): string {
     }
 
     :deep(a) {
-      @apply text-blue-600 underline;
+      @apply text-primary-600 underline;
     }
 
     :deep(ul),
