@@ -90,7 +90,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { useScriptTag } from "@vueuse/core";
+import { useCssVar, useScriptTag } from "@vueuse/core";
 import { Mask } from "maska";
 import { useForm } from "vee-validate";
 import { computed, onMounted, onUnmounted, ref } from "vue";
@@ -124,6 +124,7 @@ declare class SecureFields {
         inputType: string;
       };
     },
+    config?: { styles?: Record<string, Record<string, string>> },
   ): void;
 
   submit(params: { expm: string; expy: string }): void;
@@ -177,6 +178,25 @@ interface IProps {
 const { t } = useI18n();
 const { analytics } = useAnalytics();
 const notifications = useNotifications();
+
+// CSS custom properties are read once — Datatrans iframes do not support dynamic style updates
+const backgroundColor = useCssVar("--color-additional-50").value || "#ffffff";
+const textColor = useCssVar("--body-text-color").value || "#1f2937";
+const placeholderColor = useCssVar("--color-neutral-400").value || "#a3a3a3";
+
+const secureFieldsStyles: Record<string, Record<string, string>> = {
+  "*": {
+    backgroundColor,
+    color: textColor,
+    fontSize: "1rem",
+  },
+  "*::placeholder": {
+    color: placeholderColor,
+  },
+  "*:focus": {
+    outline: "none",
+  },
+};
 
 const loading = ref(false);
 const dateMaskOptions = { mask: "## / ##" };
@@ -331,31 +351,35 @@ async function initPayment() {
   loading.value = false;
 }
 
+function validate(event: IValidateEvent & IValidateEventArg) {
+  let result = { ...validationResult.value };
+  if (event.event.field) {
+    result.fields[event.event.field] = event.fields[event.event.field];
+  } else {
+    result = event;
+  }
+  result.hasErrors = event.hasErrors;
+  validationResult.value = result;
+}
+
 function initForm(tx: string) {
   secureFields = new SecureFields();
-  secureFields.init(tx, {
-    cardNumber: "cardNumberPlaceholder",
-    cvv: {
-      placeholderElementId: "cvvPlaceholder",
-      inputType: "password",
+  secureFields.init(
+    tx,
+    {
+      cardNumber: "cardNumberPlaceholder",
+      cvv: {
+        placeholderElementId: "cvvPlaceholder",
+        inputType: "password",
+      },
     },
-  });
+    { styles: secureFieldsStyles },
+  );
 
   secureFields.on("ready", () => {
     secureFields.setPlaceholder("cardNumber", t("shared.payment.bank_card_form.number_label"));
     secureFields.setPlaceholder("cvv", t("shared.payment.bank_card_form.security_code_label"));
   });
-
-  function validate(event: IValidateEvent & IValidateEventArg) {
-    let result = { ...validationResult.value };
-    if (event.event.field) {
-      result.fields[event.event.field] = event.fields[event.event.field];
-    } else {
-      result = event;
-    }
-    result.hasErrors = event.hasErrors;
-    validationResult.value = result;
-  }
 
   secureFields.on("validate", validate);
   secureFields.on("change", validate);
