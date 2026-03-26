@@ -666,7 +666,7 @@
         "vendor_label": "Поставщик",
         "all_vendor_products": "Все Товары Поставщика",
         "share_product_label": "Поделиться товаром",
-        "create_configuration_button": "Создайте свою конфигурацию",
+        "create_configuration_button": "Создать новую конфигурацию",
         "price_block": {
           "title": "Цена и доставка",
           "mobile_title": "Опции и действия",

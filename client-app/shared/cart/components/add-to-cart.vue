@@ -1,5 +1,28 @@
 <template>
+  <VcAddToCart
+    v-if="isConfigurable"
+    :model-value="enteredQuantity"
+    :name="product.id"
+    :count-in-cart="countInCart"
+    :min-quantity="product.minQuantity"
+    :max-quantity="maxQty"
+    :is-active="product.availabilityData?.isActive"
+    :is-available="product.availabilityData?.isAvailable"
+    :is-buyable="product.availabilityData?.isBuyable"
+    :is-in-stock="product.availabilityData?.isInStock"
+    :available-quantity="product.availabilityData?.availableQuantity"
+    :message="errorMessage || notAvailableMessage"
+    :disabled="disabled"
+    :loading="loading"
+    hide-input
+    @update:cart-item-quantity="onChange"
+    @update:validation="onValidationUpdate"
+  >
+    <slot />
+  </VcAddToCart>
+
   <QuantityControl
+    v-else
     :mode="$cfg.product_quantity_control"
     :model-value="enteredQuantity"
     :name="product.id"
@@ -69,7 +92,7 @@ const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 const {
   selectedConfigurationInput,
-  changeCartConfiguredItemBatched,
+  changeCartConfiguredItem,
   validateSections: validateConfigurableInput,
 } = useConfigurableProduct(product.value.id);
 const { trackAddItemToCart } = useAnalyticsUtils();
@@ -143,6 +166,11 @@ async function onChange() {
       return;
     }
 
+    if (enteredQuantity.value === 0) {
+      loading.value = false;
+      return;
+    }
+
     handleUpdateResult(updatedCart, mode);
   } finally {
     loading.value = false;
@@ -155,7 +183,7 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
   }
   if (mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value !== undefined) {
     return isConfigurable.value
-      ? await changeCartConfiguredItemBatched(lineItem.id, enteredQuantity.value, selectedConfigurationInput.value)
+      ? await changeCartConfiguredItem(lineItem.id, undefined, selectedConfigurationInput.value)
       : await changeItemQuantityBatched(lineItem.id, enteredQuantity.value);
   }
 

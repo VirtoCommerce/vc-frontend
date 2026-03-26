@@ -666,7 +666,7 @@
         "vendor_label": "Fornitore",
         "all_vendor_products": "Tutti I Prodotti Del Fornitore",
         "share_product_label": "Condividi prodotto",
-        "create_configuration_button": "Crea la tua configurazione",
+        "create_configuration_button": "Crea nuova configurazione",
         "price_block": {
           "title": "Prezzo e consegna",
           "mobile_title": "Condividi e altro",

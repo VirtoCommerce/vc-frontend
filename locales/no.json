@@ -666,7 +666,7 @@
         "vendor_label": "Leverandør",
         "all_vendor_products": "Alle leverandørens produkter",
         "share_product_label": "Del produkt",
-        "create_configuration_button": "Lag din egen konfigurasjon",
+        "create_configuration_button": "Lag ny konfigurasjon",
         "price_block": {
           "title": "Pris og levering",
           "mobile_title": "Del og mer",
