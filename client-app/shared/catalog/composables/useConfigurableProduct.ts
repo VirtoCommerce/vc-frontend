@@ -79,10 +79,14 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
 
   const hiddenSectionIds = computed(() => {
     const hidden = new Set<string>();
-    // Iterate until stable — handles transitive dependencies (A depends on B depends on C)
+    // Iterate until stable — handles transitive dependencies (A depends on B depends on C).
+    // Bounded by section count to guard against circular dependency in backend data.
     let changed = true;
-    while (changed) {
+    let iterations = 0;
+    const maxIterations = configuration.value.length;
+    while (changed && iterations < maxIterations) {
       changed = false;
+      iterations++;
       for (const section of configuration.value) {
         if (hidden.has(section.id)) {
           continue;

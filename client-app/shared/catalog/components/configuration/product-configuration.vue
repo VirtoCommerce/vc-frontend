@@ -10,7 +10,7 @@
     <div class="product-configuration__widgets">
       <VcWidget
         v-for="(section, index) in configuration"
-        v-show="isSectionVisible(section.id)"
+        v-if="isSectionVisible(section.id)"
         :key="section.id"
         data-test-id="section"
         collapsible
