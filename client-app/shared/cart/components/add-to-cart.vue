@@ -55,12 +55,13 @@ import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM, LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
-import { getUrlSearchParam, Logger } from "@/core/utilities";
+import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
@@ -89,7 +90,12 @@ const { cart, addToCart, changeItemQuantityBatched, addToCartLoading, changeItem
   useShortCart();
 const { t } = useI18n();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
-const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
+const route = useRoute();
+const router = useRouter();
+const configurableLineItemId = computed(() => {
+  const param = route.query[LINE_ITEM_ID_URL_SEARCH_PARAM];
+  return typeof param === "string" ? param : undefined;
+});
 const {
   selectedConfigurationInput,
   changeCartConfiguredItem,
@@ -157,11 +163,21 @@ async function onChange() {
   }
 
   loading.value = true;
+  const existingItemIds =
+    isConfigurable.value && mode === AddToCartModeType.Add
+      ? new Set(cart.value?.items?.map((item) => item.id))
+      : undefined;
 
   try {
     const updatedCart = await updateOrAddToCart(lineItem, mode);
 
-    if ((isConfigurable.value && mode === AddToCartModeType.Add) || enteredQuantity.value === 0) {
+    if (isConfigurable.value && mode === AddToCartModeType.Add) {
+      const newItem = updatedCart?.items?.find(
+        (item) => item.productId === product.value.id && !existingItemIds!.has(item.id),
+      );
+      if (newItem) {
+        void router.replace({ query: { ...route.query, [LINE_ITEM_ID_URL_SEARCH_PARAM]: newItem.id } });
+      }
       loading.value = false;
       return;
     }
@@ -239,7 +255,7 @@ function getValidationErrors(): string {
 
 function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
   if (isConfigurable.value) {
-    return configurableLineItemId ? items?.find((item) => item.id === configurableLineItemId) : undefined;
+    return configurableLineItemId.value ? items?.find((item) => item.id === configurableLineItemId.value) : undefined;
   } else {
     return items?.find((item) => item.productId === product.value.id);
   }

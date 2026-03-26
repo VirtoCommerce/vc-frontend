@@ -124,9 +124,9 @@
 
 <script setup lang="ts">
 import { computed, toRef } from "vue";
+import { useRoute } from "vue-router";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { ProductType } from "@/core/enums";
-import { getUrlSearchParam } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { AddToCart } from "@/shared/cart";
 import { useShortCart } from "@/shared/cart/composables";
@@ -155,7 +155,11 @@ const variations = toRef(props, "variations");
 const { cart } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
 const { variationResult } = useProductVariationProperties(computed(() => variations.value ?? []));
-const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
+const route = useRoute();
+const configurableLineItemId = computed(() => {
+  const param = route.query[LINE_ITEM_ID_URL_SEARCH_PARAM];
+  return typeof param === "string" ? param : undefined;
+});
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 
