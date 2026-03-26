@@ -8,6 +8,7 @@
       arrow-enabled
       shadow
       placement="bottom-start"
+      bg-color="--header-bottom-bg-color"
       class="mega-menu__popover"
       :aria-label="$t('common.buttons.all_products')"
       role="menu"
@@ -156,8 +157,6 @@ onMounted(() => {
 
 <style lang="scss">
 .mega-menu {
-  --vc-popover-bg-color: var(--header-bottom-bg-color);
-
   @apply flex items-center h-10 bg-[--header-bottom-bg-color] px-5 xl:px-12;
 
   &__popover {

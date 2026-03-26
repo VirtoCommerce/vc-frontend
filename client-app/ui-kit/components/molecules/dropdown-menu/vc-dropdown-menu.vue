@@ -106,10 +106,13 @@ const computedWidth = computed(() => {
     }
   }
 
+  .vc-popover__body:has(&__list) {
+    --vc-popover-radius: var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem));
+    --vc-popover-bg-color: var(--vc-dropdown-menu-bg-color, var(--color-additional-50));
+  }
+
   &__list {
     --max-height: var(--props-max-height, var(--vc-dropdown-menu-max-height, 12rem));
-    --vc-popover-radius: var(--vc-dropdown-menu-radius, var(--vc-radius, 0.5rem));
-    --vc-popover-bg-color: var(--color-additional-50);
 
     @apply max-h-[--max-height] w-full rounded-[inherit];
 

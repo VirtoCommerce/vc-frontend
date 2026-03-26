@@ -67,10 +67,12 @@ const tooltipContentId = useComponentId("vc-tooltip");
 
 <style lang="scss">
 .vc-tooltip {
-  &__content {
+  .vc-popover__body:has(&__content) {
     --vc-popover-radius: var(--vc-tooltip-radius, var(--vc-radius, 0.5rem));
-    --vc-popover-bg-color: var(--color-neutral-50);
+    --vc-popover-bg-color: var(--vc-tooltip-bg-color, var(--color-neutral-50));
+  }
 
+  &__content {
     @apply max-w-full py-1.5 px-3.5 text-xs text-neutral-900;
   }
 }

@@ -62,6 +62,7 @@ interface IProps {
   disabled?: boolean;
   shadow?: boolean;
   bgColor?: string;
+  radius?: string;
   width?: string;
   zIndex?: number | string;
   role?: string;
@@ -121,6 +122,7 @@ const emitTriggerProps = computed(() => ({
 const display = computed(() => (opened.value ? "block" : "none"));
 const arrowLeft = computed(() => (middlewareData.value.arrow?.x != null ? `${middlewareData.value.arrow.x}px` : ""));
 const _bgColor = computed(() => getColorValue(props.bgColor));
+const _radius = computed(() => props.radius);
 
 const { floatingStyles, middlewareData } = useFloating(reference, floating, {
   placement,
@@ -194,8 +196,9 @@ watch(opened, (value: boolean) => emit("toggle", value));
   &__body {
     // For teleportation cases, variables are declared in &__body
     --props-bg-color: v-bind(_bgColor);
+    --props-radius: v-bind(_radius);
     --bg-color: var(--props-bg-color, var(--vc-popover-bg-color, transparent));
-    --radius: var(--vc-popover-radius, var(--vc-radius, 0.5rem));
+    --radius: var(--props-radius, var(--vc-popover-radius, var(--vc-radius, 0.5rem)));
     --arrow-color: var(--props-bg-color, var(--vc-popover-bg-color, var(--color-additional-50)));
 
     @apply max-w-[100vw];
