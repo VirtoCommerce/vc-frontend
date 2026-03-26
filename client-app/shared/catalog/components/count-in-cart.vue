@@ -22,7 +22,7 @@ import { useShortCart } from "@/shared/cart/composables";
 
 export interface IProps {
   productId?: string;
-  lineItemId?: string | null;
+  lineItemId?: string;
   size?: VcChipSizeType;
 }
 

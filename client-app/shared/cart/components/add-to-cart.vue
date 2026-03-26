@@ -1,22 +1,16 @@
 <template>
   <VcAddToCart
     v-if="isConfigurable"
-    :model-value="enteredQuantity"
-    :name="product.id"
     :count-in-cart="countInCart"
-    :min-quantity="product.minQuantity"
-    :max-quantity="maxQty"
     :is-active="product.availabilityData?.isActive"
     :is-available="product.availabilityData?.isAvailable"
     :is-buyable="product.availabilityData?.isBuyable"
     :is-in-stock="product.availabilityData?.isInStock"
-    :available-quantity="product.availabilityData?.availableQuantity"
-    :message="errorMessage || notAvailableMessage"
     :disabled="disabled"
     :loading="loading"
     hide-input
+    :validate-on-mount="false"
     @update:cart-item-quantity="onChange"
-    @update:validation="onValidationUpdate"
   >
     <slot />
   </VcAddToCart>
@@ -63,7 +57,7 @@ import { LINE_ITEM_ID_URL_SEARCH_PARAM, LINE_ITEM_QUANTITY_LIMIT } from "@/core/
 import { ValidationErrorObjectType } from "@/core/enums";
 import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
-import { useConfigurableProduct } from "@/shared/catalog/composables";
+import { useConfigurableLineItemId, useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
 import { AddToCartModeType } from "@/ui-kit/enums";
 import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
@@ -92,10 +86,7 @@ const { t } = useI18n();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const route = useRoute();
 const router = useRouter();
-const configurableLineItemId = computed(() => {
-  const param = route.query[LINE_ITEM_ID_URL_SEARCH_PARAM];
-  return typeof param === "string" ? param : undefined;
-});
+const { configurableLineItemId } = useConfigurableLineItemId();
 const {
   selectedConfigurationInput,
   changeCartConfiguredItem,
