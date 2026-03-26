@@ -5,6 +5,7 @@ import defaultDark from './default.dark.json'
 import defaultPreset from './default.json'
 import mercuryDark from './mercury.dark.json'
 import mercury from './mercury.json'
+import purplePinkDark from './purple-pink.dark.json'
 import purplePink from './purple-pink.json'
 import watermelonDark from './watermelon.dark.json'
 import watermelon from './watermelon.json'
@@ -24,4 +25,5 @@ export const darkPresets: Record<string, IThemeConfigPreset> = {
   coffee: coffeeDark,
   mercury: mercuryDark,
   watermelon: watermelonDark,
+  ['purple-pink']: purplePinkDark,
 };
