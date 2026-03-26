@@ -62,6 +62,13 @@ export const Basic: StoryType = {
   args: {
     ariaLabel: "Comment field",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcTextarea aria-label="Comment field" />`,
+      },
+    },
+  },
 };
 
 export const Common: StoryType = {
@@ -79,6 +86,13 @@ export const Required: StoryType = {
   args: {
     ...commonArgs,
     required: true,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcTextarea label="Comment" placeholder="Write your comment here…" message="Max 500 characters" required />`,
+      },
+    },
   },
 };
 
@@ -134,6 +148,13 @@ export const Disabled: StoryType = {
     disabled: true,
     modelValue: "This content cannot be edited.",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcTextarea label="Comment" placeholder="Write your comment here…" message="Max 500 characters" disabled model-value="This content cannot be edited." />`,
+      },
+    },
+  },
 };
 
 export const Readonly: StoryType = {
@@ -141,5 +162,12 @@ export const Readonly: StoryType = {
     ...commonArgs,
     readonly: true,
     modelValue: "Read-only content that cannot be modified.",
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcTextarea label="Comment" placeholder="Write your comment here…" message="Max 500 characters" readonly model-value="Read-only content that cannot be modified." />`,
+      },
+    },
   },
 };

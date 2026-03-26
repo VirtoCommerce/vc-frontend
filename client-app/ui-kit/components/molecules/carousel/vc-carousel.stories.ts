@@ -1,9 +1,10 @@
 import { VcCarousel } from "..";
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 
-const meta: Meta<typeof VcCarousel> = {
+const meta = {
   title: "Components/Molecules/VcCarousel",
-  component: VcCarousel,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: VcCarousel as any,
   argTypes: {
     navigation: {
       control: "boolean",
@@ -23,7 +24,7 @@ const meta: Meta<typeof VcCarousel> = {
       template: '<div class="mx-auto max-w-xl p-8"><story /></div>',
     }),
   ],
-};
+} satisfies Meta<typeof VcCarousel>;
 
 export default meta;
 type StoryType = StoryObj<typeof meta>;
