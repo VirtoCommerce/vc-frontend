@@ -73,3 +73,6 @@ dist-ssr
 # AI tools (local config files only)
 *.local.md
 .claude/**/*.local.*
+
+# Playwright MCP
+.playwright-mcp/
