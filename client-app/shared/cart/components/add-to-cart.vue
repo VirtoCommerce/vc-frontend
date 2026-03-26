@@ -90,6 +90,7 @@ const { configurableLineItemId } = useConfigurableLineItemId();
 const {
   selectedConfigurationInput,
   changeCartConfiguredItem,
+  markConfigurationAsSaved,
   validateSections: validateConfigurableInput,
 } = useConfigurableProduct(product.value.id);
 const { trackAddItemToCart } = useAnalyticsUtils();
@@ -154,6 +155,8 @@ async function onChange() {
   }
 
   loading.value = true;
+  // TODO: Workaround — comparing cart items before/after to find the newly added lineItemId.
+  // Replace once backend provides the lineItemId directly (new mutation or updated response).
   const existingItemIds =
     isConfigurable.value && mode === AddToCartModeType.Add
       ? new Set(cart.value?.items?.map((item) => item.id))
@@ -163,6 +166,7 @@ async function onChange() {
     const updatedCart = await updateOrAddToCart(lineItem, mode);
 
     if (isConfigurable.value && mode === AddToCartModeType.Add) {
+      markConfigurationAsSaved();
       const newItem = updatedCart?.items?.find(
         (item) => item.productId === product.value.id && !existingItemIds!.has(item.id),
       );
@@ -260,10 +264,7 @@ function onValidationUpdate(validation: { isValid: true } | { isValid: false; er
   }
 }
 
-watch(
-  () => product.value.id,
-  () => {
-    enteredQuantity.value = !disabled.value ? defaultQuantity.value : undefined;
-  },
-);
+watch([() => product.value.id, configurableLineItemId], () => {
+  enteredQuantity.value = !disabled.value ? defaultQuantity.value : undefined;
+});
 </script>

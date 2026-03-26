@@ -175,6 +175,7 @@ const configurableProductId = toRef(props, "productId");
 
 const { t } = useI18n();
 const {
+  fetchProductConfiguration,
   selectSectionValue,
   selectedConfiguration,
   selectedConfigurationInput,
@@ -218,6 +219,12 @@ watch(
   },
   { immediate: true },
 );
+
+watch(configurableLineItemId, (newValue, oldValue) => {
+  if (!newValue && oldValue) {
+    void fetchProductConfiguration();
+  }
+});
 
 watch(
   () => [isConfigurationChanged.value, validationErrors.value.size === 0, isDataUpdating.value],
