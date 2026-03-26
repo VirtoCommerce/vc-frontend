@@ -12,6 +12,7 @@
     role="tooltip"
     :enable-teleport="enableTeleport"
     :teleport-selector="teleportSelector"
+    shadow
   >
     <template v-if="$slots.default" #default="{ opened, triggerProps }">
       <slot
@@ -66,10 +67,13 @@ const tooltipContentId = useComponentId("vc-tooltip");
 
 <style lang="scss">
 .vc-tooltip {
-  --radius: var(--vc-tooltip-radius, var(--vc-radius, 0.5rem));
+  .vc-popover__body:has(&__content) {
+    --vc-popover-radius: var(--vc-tooltip-radius, var(--vc-radius, 0.5rem));
+    --vc-popover-bg-color: var(--vc-tooltip-bg-color, var(--color-neutral-50));
+  }
 
   &__content {
-    @apply max-w-full rounded-[--radius] bg-additional-50 py-1.5 px-3.5 text-xs text-neutral-800 shadow-md;
+    @apply max-w-full py-1.5 px-3.5 text-xs text-neutral-900;
   }
 }
 </style>

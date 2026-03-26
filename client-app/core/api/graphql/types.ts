@@ -1119,11 +1119,6 @@ export type DynamicContentItemType = {
   priority: Scalars['Int']['output'];
 };
 
-
-export type DynamicContentItemTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-};
-
 /** A connection from an object to a list of objects of type `DynamicProperty`. */
 export type DynamicPropertyConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -4343,6 +4338,7 @@ export type PageConnection = {
 export type PageContextResponseType = {
   slugInfo?: Maybe<SlugInfoResponseType>;
   store?: Maybe<StoreResponseType>;
+  /** User info */
   user?: Maybe<UserType>;
   whiteLabelingSettings?: Maybe<WhiteLabelingSettingsType>;
 };
@@ -5211,8 +5207,6 @@ export type Query = {
   contacts?: Maybe<ContactConnection>;
   contract?: Maybe<ContractType>;
   countries: Array<CountryType>;
-  currentCustomerAddresses?: Maybe<MemberAddressConnection>;
-  currentOrganizationAddresses?: Maybe<MemberAddressConnection>;
   customerReviews?: Maybe<CustomerReviewConnection>;
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
@@ -5442,28 +5436,6 @@ export type QueryContactsArgs = {
 
 export type QueryContractArgs = {
   id?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryCurrentCustomerAddressesArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  cities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  countryCodes?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  keyword?: InputMaybe<Scalars['String']['input']>;
-  regionIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryCurrentOrganizationAddressesArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  cities?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  countryCodes?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  keyword?: InputMaybe<Scalars['String']['input']>;
-  regionIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 
