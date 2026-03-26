@@ -10,6 +10,7 @@
     <div class="product-configuration__widgets">
       <VcWidget
         v-for="(section, index) in configuration"
+        v-show="isSectionVisible(section.id)"
         :key="section.id"
         data-test-id="section"
         collapsible
@@ -185,6 +186,7 @@ const {
   validationErrors,
   loading: isDataUpdating,
   updateWithPreselectedValues,
+  isSectionVisible,
 } = useConfigurableProduct(configurableProductId.value);
 
 const { openModal } = useModal();

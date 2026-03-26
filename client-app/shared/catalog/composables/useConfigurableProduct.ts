@@ -77,6 +77,39 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     return selectedConfigurationValue.value.map((value) => preselectedValueToInputSection(value));
   });
 
+  const hiddenSectionIds = computed(() => {
+    const hidden = new Set<string>();
+    // Iterate until stable — handles transitive dependencies (A depends on B depends on C)
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const section of configuration.value) {
+        if (hidden.has(section.id)) {
+          continue;
+        }
+        if (!section.dependsOnSectionId) {
+          continue;
+        }
+        const dependsOnHidden = hidden.has(section.dependsOnSectionId);
+        const dependsOnEmpty =
+          !dependsOnHidden &&
+          isEmptyValue(
+            section.dependsOnSectionId,
+            selectedConfigurationValue.value.find((v) => v.sectionId === section.dependsOnSectionId),
+          );
+        if (dependsOnHidden || dependsOnEmpty) {
+          hidden.add(section.id);
+          changed = true;
+        }
+      }
+    }
+    return hidden;
+  });
+
+  function isSectionVisible(sectionId: string) {
+    return !hiddenSectionIds.value.has(sectionId);
+  }
+
   const selectedConfiguration = computed(() => {
     return selectedConfigurationValue.value
       ?.filter((value) => isValidValue(value.sectionId, value))
@@ -107,8 +140,23 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
 
   function selectSectionValue(payload: SectionValueType) {
     changeSelectionValue(payload);
+
+    // Clear values & errors of sections that become hidden due to this change
+    clearHiddenSectionValues();
+
     void createConfiguredLineItem();
     validateSection(payload.sectionId);
+  }
+
+  function clearHiddenSectionValues() {
+    const hidden = new Set(hiddenSectionIds.value);
+    if (hidden.size === 0) {
+      return;
+    }
+    selectedConfigurationValue.value = selectedConfigurationValue.value.filter((v) => !hidden.has(v.sectionId));
+    for (const sectionId of hidden) {
+      validationErrors.value.delete(sectionId);
+    }
   }
 
   function getSelectedOptionTextValue(section: SectionValueType, sectionId: string) {
@@ -167,6 +215,13 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     if (!section) {
       return;
     }
+
+    // Skip validation for hidden sections — they are not shown to the user
+    if (!isSectionVisible(section.id)) {
+      validationErrors.value.delete(section.id);
+      return;
+    }
+
     const input = selectedConfigurationValue.value.find((value) => value.sectionId === section.id);
 
     if (!input && section.isRequired) {
@@ -329,7 +384,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
 
   function updateWithDefaultValues() {
     configuration.value.forEach((section) => {
-      if (!section.isRequired) {
+      if (!section.isRequired || !isSectionVisible(section.id)) {
         return;
       }
       switch (section.type) {
@@ -385,6 +440,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     changeCartConfiguredItemBatched,
     validateSections,
     updateWithPreselectedValues,
+    isSectionVisible,
 
     loading: readonly(loading),
     changeCartConfiguredItemOverflowed: batchedChangeCartConfiguredItemOverflowed,
