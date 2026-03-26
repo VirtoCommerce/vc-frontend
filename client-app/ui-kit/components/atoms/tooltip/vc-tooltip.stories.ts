@@ -61,7 +61,7 @@ export const Basic: StoryType = {
         <VcButton>Hover over me</VcButton>
       </template>
       <template #content>Tooltip text</template>
-    </c>`,
+    </VcTooltip>`,
   }),
   parameters: {
     docs: {
