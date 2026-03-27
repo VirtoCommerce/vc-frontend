@@ -1,19 +1,21 @@
 <template>
-  <VcAddToCart
-    v-if="isConfigurable"
-    :count-in-cart="countInCart"
-    :is-active="product.availabilityData?.isActive"
-    :is-available="product.availabilityData?.isAvailable"
-    :is-buyable="product.availabilityData?.isBuyable"
-    :is-in-stock="product.availabilityData?.isInStock"
-    :disabled="disabled"
-    :loading="loading"
-    hide-input
-    :validate-on-mount="false"
-    @update:cart-item-quantity="onChange"
-  >
-    <slot />
-  </VcAddToCart>
+  <div v-if="isConfigurable">
+    <VcButton
+      :variant="countInCart ? 'solid' : 'outline'"
+      :loading="loading"
+      :disabled="disabled"
+      :title="configurableButtonText"
+      truncate
+      full-width
+      @click="onConfigurableSubmit"
+    >
+      {{ configurableButtonText }}
+    </VcButton>
+
+    <div class="mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 empty:hidden">
+      <slot />
+    </div>
+  </div>
 
   <QuantityControl
     v-else
@@ -109,6 +111,9 @@ const notAvailableMessage = computed(() => {
 
 const defaultMinQuantity = computed(() => (themeContext.value.settings.product_quantity_control === "button" ? 1 : 0));
 const isConfigurable = computed(() => "isConfigurable" in product.value && product.value.isConfigurable);
+const configurableButtonText = computed(() =>
+  countInCart.value ? t("ui_kit.buttons.update_cart") : t("ui_kit.buttons.add_to_cart"),
+);
 const disabled = computed(() => loading.value || !product.value.availabilityData?.isAvailable);
 const disabledStepper = computed(
   () =>
@@ -143,42 +148,59 @@ function onInput(value: number): void {
 }
 
 /**
+ * Process configurable product button click (Add to cart / Update cart).
+ */
+async function onConfigurableSubmit() {
+  const lineItem = getLineItem(cart.value?.items);
+  const mode = lineItem ? AddToCartModeType.Update : AddToCartModeType.Add;
+
+  if (!validateConfigurableInput()) {
+    displayErrorMessage(mode, t("shared.catalog.product_details.product_configuration.check_your_configuration"));
+    return;
+  }
+
+  loading.value = true;
+
+  try {
+    if (mode === AddToCartModeType.Update && lineItem) {
+      await changeCartConfiguredItem(lineItem.id, undefined, selectedConfigurationInput.value);
+      markConfigurationAsSaved();
+      return;
+    }
+
+    // TODO: Workaround — comparing cart items before/after to find the newly added lineItemId.
+    // Replace once backend provides the lineItemId directly (new mutation or updated response).
+    const existingItemIds = new Set(cart.value?.items?.map((item) => item.id));
+    const updatedCart = await addToCart(product.value.id, minQty.value, selectedConfigurationInput.value);
+
+    trackAddItemToCart(product.value, minQty.value);
+    void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
+
+    markConfigurationAsSaved();
+    const newItem = updatedCart?.items?.find(
+      (item) => item.productId === product.value.id && !existingItemIds.has(item.id),
+    );
+    if (newItem) {
+      void router.replace({ query: { ...route.query, [LINE_ITEM_ID_URL_SEARCH_PARAM]: newItem.id } });
+    }
+  } finally {
+    loading.value = false;
+  }
+}
+
+/**
  * Process button click to add/update cart line item.
  */
 async function onChange() {
   const lineItem = getLineItem(cart.value?.items);
   const mode = lineItem ? AddToCartModeType.Update : AddToCartModeType.Add;
 
-  if (isConfigurable.value && !validateConfigurableInput()) {
-    displayErrorMessage(mode, t("shared.catalog.product_details.product_configuration.check_your_configuration"));
-    return;
-  }
-
   loading.value = true;
-  // TODO: Workaround — comparing cart items before/after to find the newly added lineItemId.
-  // Replace once backend provides the lineItemId directly (new mutation or updated response).
-  const existingItemIds =
-    isConfigurable.value && mode === AddToCartModeType.Add
-      ? new Set(cart.value?.items?.map((item) => item.id))
-      : undefined;
 
   try {
     const updatedCart = await updateOrAddToCart(lineItem, mode);
 
-    if (isConfigurable.value && mode === AddToCartModeType.Add) {
-      markConfigurationAsSaved();
-      const newItem = updatedCart?.items?.find(
-        (item) => item.productId === product.value.id && !existingItemIds!.has(item.id),
-      );
-      if (newItem) {
-        void router.replace({ query: { ...route.query, [LINE_ITEM_ID_URL_SEARCH_PARAM]: newItem.id } });
-      }
-      loading.value = false;
-      return;
-    }
-
     if (enteredQuantity.value === 0) {
-      loading.value = false;
       return;
     }
 
@@ -193,14 +215,11 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
     return cart.value;
   }
   if (mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value !== undefined) {
-    return isConfigurable.value
-      ? await changeCartConfiguredItem(lineItem.id, undefined, selectedConfigurationInput.value)
-      : await changeItemQuantityBatched(lineItem.id, enteredQuantity.value);
+    return await changeItemQuantityBatched(lineItem.id, enteredQuantity.value);
   }
 
   const quantity = enteredQuantity.value || minQty.value;
-  const config = isConfigurable.value ? selectedConfigurationInput.value : undefined;
-  const updatedCart = await addToCart(product.value.id, quantity, config);
+  const updatedCart = await addToCart(product.value.id, quantity);
 
   trackAddItemToCart(product.value, quantity);
   void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });

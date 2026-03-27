@@ -117,16 +117,6 @@
             :line-item-id="product.isConfigurable ? configurableLineItemId : undefined"
           />
         </component>
-
-        <VcLink
-          v-if="product.isConfigurable && configurableLineItemId"
-          class="product-price__create-config"
-          :to="createNewConfigurationRoute"
-        >
-          <VcIcon color="secondary" name="cube-transparent" size="xs" />
-
-          {{ $t("shared.catalog.product_details.create_configuration_button") }}
-        </VcLink>
       </div>
     </template>
   </div>
@@ -134,8 +124,6 @@
 
 <script setup lang="ts">
 import { computed, toRef } from "vue";
-import { useRoute } from "vue-router";
-import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { ProductType } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
 import { AddToCart } from "@/shared/cart";
@@ -165,15 +153,7 @@ const variations = toRef(props, "variations");
 const { cart } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
 const { variationResult } = useProductVariationProperties(computed(() => variations.value ?? []));
-const route = useRoute();
 const { configurableLineItemId } = useConfigurableLineItemId();
-
-const createNewConfigurationRoute = computed(() => {
-  const query = Object.fromEntries(
-    Object.entries(route.query).filter(([key]) => key !== LINE_ITEM_ID_URL_SEARCH_PARAM),
-  );
-  return { path: route.path, query };
-});
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 
@@ -215,10 +195,6 @@ const price = computed<PriceType | { actual: MoneyType; list: MoneyType } | unde
 
   &__actions {
     @apply mt-4 print:hidden;
-  }
-
-  &__create-config {
-    @apply mt-3 flex items-center gap-1 text-xs font-bold;
   }
 
   &__disabled-button {

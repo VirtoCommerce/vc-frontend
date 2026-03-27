@@ -1,7 +1,6 @@
 <template>
   <div class="vc-add-to-cart" :class="{ 'vc-add-to-cart--hide-button': hideButton }">
     <VcInput
-      v-if="!hideInput"
       v-model.number="quantity"
       :name="name"
       type="number"
@@ -51,20 +50,6 @@
       </template>
     </VcInput>
 
-    <VcButton
-      v-else
-      :variant="isButtonOutlined ? 'outline' : 'solid'"
-      :loading="loading"
-      :disabled="disabled || !isAvailable || !isBuyable || !isInStock || !isActive"
-      :title="buttonText"
-      truncate
-      full-width
-      data-test-id="add-to-cart-text-button"
-      @click.stop="$emit('update:cartItemQuantity', quantity!)"
-    >
-      {{ buttonText }}
-    </VcButton>
-
     <div v-if="$slots.default" class="vc-add-to-cart__badges">
       <slot></slot>
     </div>
@@ -106,7 +91,6 @@ interface IProps {
   showEmptyDetails?: boolean;
   error?: boolean;
   hideButton?: boolean;
-  hideInput?: boolean;
   readonly?: boolean;
   timeout?: number;
   validateOnMount?: boolean;

@@ -7,6 +7,16 @@
         :variations="variations"
         :template-layout="templateLayout"
       />
+
+      <VcLink
+        v-if="product.isConfigurable && configurableLineItemId"
+        class="product-price-block__create-config"
+        :to="createNewConfigurationRoute"
+      >
+        <VcIcon color="primary" name="cube-transparent" size="xs" />
+
+        {{ $t("shared.catalog.product_details.create_configuration_button") }}
+      </VcLink>
     </template>
 
     <template #footer-container>
@@ -96,7 +106,9 @@
 import { computed, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
+import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { stringFormat } from "@/core/utilities";
+import { useConfigurableLineItemId } from "@/shared/catalog/composables";
 import { AddToCompareCatalog } from "@/shared/compare/components";
 import { AddToList } from "@/shared/wishlists";
 import { VcIcon } from "@/ui-kit/components";
@@ -118,6 +130,14 @@ const route = useRoute();
 const { t } = useI18n();
 
 const isMobile = toRef(props, "isMobile");
+const { configurableLineItemId } = useConfigurableLineItemId();
+
+const createNewConfigurationRoute = computed(() => {
+  const query = Object.fromEntries(
+    Object.entries(route.query).filter(([key]) => key !== LINE_ITEM_ID_URL_SEARCH_PARAM),
+  );
+  return { path: route.path, query };
+});
 
 const widgetTitle = computed(() => {
   return isMobile.value
@@ -145,6 +165,16 @@ function print() {
 
 <style lang="scss" scoped>
 .product-price-block {
+  &__create-config {
+    @apply mt-3 flex items-center gap-1 text-xs font-bold;
+
+    color: var(--link-color);
+
+    &:hover {
+      color: var(--link-hover-color);
+    }
+  }
+
   &__actions {
     @apply flex select-none divide-x print:hidden;
   }

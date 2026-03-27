@@ -36,7 +36,9 @@ const lineItemInCart = computed(() => {
   if (props.lineItemId) {
     return cart.value?.items.find((item) => item.id === props.lineItemId);
   }
+
   return cart.value?.items.find((item) => item.productId === props.productId);
 });
+
 const countInCart = eagerComputed<number>(() => lineItemInCart.value?.quantity ?? 0);
 </script>
