@@ -14,6 +14,7 @@ import type { Preview } from "@storybook/vue3-vite";
 
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
+import "../client-app/assets/styles/_dark.scss";
 
 const DEFAULT_LOCALE = "en";
 const DEFAULT_CURRENCY = "USD";
