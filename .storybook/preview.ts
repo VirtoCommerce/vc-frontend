@@ -84,6 +84,7 @@ let currentStyleElement: HTMLStyleElement | null = null;
 let currentPresetName: PresetNameType | null = null;
 let loadingPreset: PresetNameType | null = null;
 let i18nConfigured = false;
+let wasMissingDarkPreset = false;
 
 // Enable for debugging: track DOM changes (only in dev mode)
 const ENABLE_DOM_MONITORING = import.meta.env.MODE === "development";
@@ -253,7 +254,26 @@ const preview: Preview = {
 
       applyDarkMode(darkMode);
 
-      return story();
+      const isDark =
+        darkMode === "dark" || (darkMode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      const noDarkPreset = isDark && !(presetName in darkPresets);
+
+      if (noDarkPreset && !wasMissingDarkPreset) {
+        alert(`Dark preset not found\n\nPreset "${presetName}" has no dark variant.`);
+      }
+      wasMissingDarkPreset = noDarkPreset;
+
+      return {
+        components: { Story: story() },
+        setup: () => ({ noDarkPreset, presetName }),
+        template: `
+          <div v-if="noDarkPreset" style="position:fixed;bottom:16px;right:16px;z-index:9999;background:#1e293b;color:#f8fafc;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.4;max-width:280px;box-shadow:0 4px 12px rgba(0,0,0,.4);">
+            <strong>Dark preset not found</strong><br/>
+            Preset <em>{{ presetName }}</em> has no dark variant.
+          </div>
+          <Story />
+        `,
+      };
     },
   ],
   tags: ["autodocs"],
