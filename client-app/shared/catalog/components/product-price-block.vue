@@ -1,7 +1,8 @@
 <template>
   <VcWidget class="product-price-block" :title="widgetTitle">
-    <template v-if="!isMobile" #default>
+    <template #default>
       <ProductPrice
+        v-if="!isMobile"
         class="product-price-block__product-price"
         :product="product"
         :variations="variations"
@@ -166,9 +167,13 @@ function print() {
 <style lang="scss" scoped>
 .product-price-block {
   &__create-config {
-    @apply mt-3 flex items-center gap-1 text-xs font-bold;
+    @apply flex items-center gap-1 text-xs font-bold;
 
     color: var(--link-color);
+
+    &:not(:first-child) {
+      @apply mt-3;
+    }
 
     &:hover {
       color: var(--link-hover-color);
