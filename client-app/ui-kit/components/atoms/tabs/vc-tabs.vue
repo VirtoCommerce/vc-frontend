@@ -1,21 +1,14 @@
 <template>
-  <nav class="flex gap-1">
+  <nav class="vc-tabs">
     <button
       v-for="(item, index) in items"
       :key="index"
       :disabled="isDisabled"
-      :class="isActiveItem(item) ? 'cursor-default' : 'text-[--link-color] hover:text-[--link-hover-color]'"
+      :class="['vc-tabs__button', isActiveItem(item) ? 'vc-tabs__button--active' : 'vc-tabs__button--inactive']"
       type="button"
-      class="appearance-none disabled:opacity-40"
       @click="select(item)"
     >
-      <span
-        :class="[
-          { 'rounded bg-additional-50  shadow-md': isActiveItem(item) },
-          isActiveItem(item) ? 'text-neutral-900' : 'text-primary-700',
-        ]"
-        class="block appearance-none px-1.5 py-2"
-      >
+      <span :class="['vc-tabs__label', isActiveItem(item) ? 'vc-tabs__label--active' : 'vc-tabs__label--inactive']">
         <slot name="item" v-bind="{ item, index, isActive: isActiveItem(item) }">
           {{ textField && isItemObject(item) ? item[textField] : item }}
         </slot>
@@ -85,3 +78,33 @@ function isItemObject(item: unknown): item is ItemType {
 
 console.warn("[UIKit][warn] VcTabs is deprecated, use VcTabSwitch instead.");
 </script>
+
+<style lang="scss">
+.vc-tabs {
+  @apply flex gap-1;
+
+  &__button {
+    @apply appearance-none disabled:opacity-40;
+
+    &--active {
+      @apply cursor-default;
+    }
+
+    &--inactive {
+      @apply text-[--link-color] hover:text-[--link-hover-color];
+    }
+  }
+
+  &__label {
+    @apply block appearance-none px-1.5 py-2;
+
+    &--active {
+      @apply rounded bg-additional-50 shadow-md text-neutral-900;
+    }
+
+    &--inactive {
+      @apply text-primary-700;
+    }
+  }
+}
+</style>
