@@ -84,6 +84,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     let changed = true;
     let iterations = 0;
     const maxIterations = configuration.value.length;
+    const valueMap = new Map(selectedConfigurationValue.value.map((v) => [v.sectionId, v]));
     while (changed && iterations < maxIterations) {
       changed = false;
       iterations++;
@@ -96,11 +97,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
         }
         const dependsOnHidden = hidden.has(section.dependsOnSectionId);
         const dependsOnEmpty =
-          !dependsOnHidden &&
-          isEmptyValue(
-            section.dependsOnSectionId,
-            selectedConfigurationValue.value.find((v) => v.sectionId === section.dependsOnSectionId),
-          );
+          !dependsOnHidden && isEmptyValue(section.dependsOnSectionId, valueMap.get(section.dependsOnSectionId));
         if (dependsOnHidden || dependsOnEmpty) {
           hidden.add(section.id);
           changed = true;
