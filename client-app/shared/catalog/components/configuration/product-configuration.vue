@@ -201,10 +201,14 @@ function handleItemsFocusIn(event: FocusEvent) {
   const target = event.target as HTMLElement;
   const itemsContainer = event.currentTarget as HTMLElement;
   const relatedTarget = event.relatedTarget as HTMLElement | null;
-  if (!itemsContainer) return;
+  if (!itemsContainer) {
+    return;
+  }
 
   const isFocusFromOutside = !relatedTarget || !itemsContainer.contains(relatedTarget);
-  if (!isFocusFromOutside || !itemsContainer.contains(target)) return;
+  if (!isFocusFromOutside || !itemsContainer.contains(target)) {
+    return;
+  }
 
   const radioInput = itemsContainer.querySelector('input[type="radio"]:checked');
   if (radioInput instanceof HTMLInputElement && target !== radioInput) {

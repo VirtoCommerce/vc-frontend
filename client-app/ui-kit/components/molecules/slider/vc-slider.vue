@@ -201,7 +201,9 @@ const isStartInputInvalid = computed(() => {
 
 const isEndInputInvalid = computed(() => {
   const endVal = rightInput.value;
-  if (endVal == null) return false;
+  if (endVal == null) {
+    return false;
+  }
   const startVal = leftInput.value;
   // Invalid if outside range or if end < start
   const isOutOfRange = endVal < min.value || endVal > max.value;
@@ -341,7 +343,9 @@ function applyInputConstraints() {
  * Updates ARIA attributes on slider handles for accessibility
  */
 function updateSliderHandleAria(startValue: number, endValue: number): void {
-  if (!sliderRef.value) return;
+  if (!sliderRef.value) {
+    return;
+  }
 
   const handles = sliderRef.value.querySelectorAll<HTMLElement>(".noUi-handle");
   handles.forEach((handle, index) => {

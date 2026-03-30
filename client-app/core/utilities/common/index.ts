@@ -158,7 +158,9 @@ export function areStringOrNumberEqual(
   b: string | number | null | undefined,
 ): boolean {
   // assume null and undefined are equal
-  if (a == null && b == null) return true;
+  if (a == null && b == null) {
+    return true;
+  }
 
   return String(a) === String(b);
 }

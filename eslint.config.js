@@ -385,6 +385,14 @@ export default defineConfigWithVueTs(
     ...tseslint.configs.disableTypeChecked,
   },
 
-  // Prettier must be last
+  // Prettier must be last to disable conflicting formatting rules
   prettierPlugin,
+
+  // `curly` does not conflict with Prettier, but eslint-config-prettier disables it anyway.
+  // Re-enable it here as recommended: https://github.com/prettier/eslint-config-prettier#curly
+  {
+    rules: {
+      curly: "error",
+    },
+  },
 );
