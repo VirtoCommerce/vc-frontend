@@ -874,6 +874,10 @@
         "user_error_message": "Zahlung konnte nicht initialisiert werden. Bitte versuchen Sie es später noch einmal oder wählen Sie eine andere Zahlungsmethode.",
         "payment_unavailable": "Zahlungsmethode ist nicht verfügbar. Bitte versuche es später noch einmal."
       },
+      "datatrans_lightbox": {
+        "title": "Sichere Zahlung",
+        "description": "Sie werden zu einem sicheren Datatrans-Zahlungsfenster weitergeleitet, um Ihren Einkauf abzuschließen."
+      },
       "authorize_net": {
         "user_agreement_link": "Nutzungsbedingungen",
         "privacy_policy_link": "Datenschutzrichtlinie",
