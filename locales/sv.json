@@ -874,6 +874,10 @@
         "user_error_message": "Kan inte initiera betalning. Vänligen försök igen senare eller använd en annan betalningsmetod",
         "payment_unavailable": "Betalningsmetoden är inte tillgänglig. Vänligen försök igen senare"
       },
+      "datatrans_lightbox": {
+        "title": "Säker betalning",
+        "description": "Du kommer att omdirigeras till ett säkert Datatrans-betalningsfönster för att slutföra ditt köp."
+      },
       "authorize_net": {
         "user_agreement_link": "Användaravtal",
         "privacy_policy_link": "Integritetspolicy",

@@ -874,6 +874,10 @@
         "user_error_message": "決済を開始できません。後でやり直すか、別の支払い方法をご利用ください",
         "payment_unavailable": "お支払い方法をご利用いただけません。しばらくしてからもう一度お試しください"
       },
+      "datatrans_lightbox": {
+        "title": "安全な決済",
+        "description": "安全なDatatrans決済ウィンドウにリダイレクトされ、お買い物を完了できます。"
+      },
       "authorize_net": {
         "user_agreement_link": "User Agreement",
         "privacy_policy_link": "Privacy Policy",

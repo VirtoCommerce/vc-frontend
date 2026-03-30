@@ -874,6 +874,10 @@
         "user_error_message": "Impossible d'initialiser le paiement. Veuillez réessayer plus tard ou utiliser un autre mode de paiement",
         "payment_unavailable": "Le mode de paiement est indisponible. Veuillez réessayer plus tard."
       },
+      "datatrans_lightbox": {
+        "title": "Paiement sécurisé",
+        "description": "Vous serez redirigé vers une fenêtre de paiement Datatrans sécurisée pour finaliser votre achat."
+      },
       "authorize_net": {
         "user_agreement_link": "Contrat d'utilisation",
         "privacy_policy_link": "Politique de confidentialité",

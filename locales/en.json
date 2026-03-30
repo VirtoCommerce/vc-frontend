@@ -874,6 +874,10 @@
         "user_error_message": "Can't initialize payment. Please try again later or use another payment method",
         "payment_unavailable": "Payment method is unavailable. Please try again later"
       },
+      "datatrans_lightbox": {
+        "title": "Secure Payment",
+        "description": "You will be redirected to a secure Datatrans payment window to complete your purchase."
+      },
       "authorize_net": {
         "user_agreement_link": "User agreement",
         "privacy_policy_link": "Privacy policy",
