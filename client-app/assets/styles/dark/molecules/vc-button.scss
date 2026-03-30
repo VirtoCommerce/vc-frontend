@@ -41,8 +41,6 @@
 
   @each $color in $colors {
     &--no-border--#{$color} {
-      --bg-color: transparent;
-      --border-color: transparent;
       --text-color: var(--color-#{$color}-900);
     }
   }
@@ -56,7 +54,13 @@
   @each $color in $colors {
     &--solid-light--#{$color} {
       --bg-color: var(--color-#{$color}-200);
+      --border-color: var(--color-#{$color}-200);
       --text-color: var(--color-#{$color}-900);
+
+      &:hover:not(#{$loading}, #{$disabled}) {
+        --bg-color: var(--color-#{$color}-100);
+        --border-color: var(--color-#{$color}-100);
+      }
     }
   }
 
