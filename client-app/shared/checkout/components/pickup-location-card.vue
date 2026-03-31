@@ -1,5 +1,13 @@
 <template>
-  <VcDialog v-if="location" dividers class="pickup-location-card" size="xs" data-test-id="pickup-location-card-dialog">
+  <VcDialog
+    v-if="location"
+    dividers
+    :auto-focus="false"
+    class="pickup-location-card"
+    size="xs"
+    data-test-id="pickup-location-card-dialog"
+    @keydown="onKeydown"
+  >
     <VcDialogHeader @close="$emit('close')">
       <template #main>
         <div class="pickup-location-card__header">
@@ -102,6 +110,46 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   selectable: true,
 });
+
+// Local selector that includes data-skip-autofocus elements (unlike the shared FOCUSABLE_SELECTOR
+// from focus.ts). The close button has data-skip-autofocus to prevent auto-focus on mount,
+// but must remain in the Tab trap cycle.
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === "Escape") {
+    event.stopPropagation();
+    emit("close");
+    return;
+  }
+
+  if (event.key !== "Tab") {
+    return;
+  }
+
+  const card = event.currentTarget as HTMLElement;
+  const focusableElements = [...card.querySelectorAll(FOCUSABLE_SELECTOR)] as HTMLElement[];
+
+  if (focusableElements.length === 0) {
+    return;
+  }
+
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  if (event.shiftKey) {
+    if (document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+    }
+  } else {
+    if (document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  }
+}
 
 function onSelect() {
   if (props.location?.id) {

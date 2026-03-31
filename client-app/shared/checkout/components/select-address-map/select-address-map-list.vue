@@ -23,6 +23,7 @@
           size="sm"
           :data-test-coords="address.geoLocation"
           @click="$emit('select', address)"
+          @keydown.enter="$emit('select', address)"
         >
           <div class="select-address-map-list__label" data-test-id="pickup-location-name">{{ address.name }}</div>
 
