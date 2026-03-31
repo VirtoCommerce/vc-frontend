@@ -305,9 +305,18 @@ const filteredItems = computed(() => {
   }
 
   const searching = filterValue.value.toLowerCase();
-  const items = props.items.filter((item) => getItemText(item).toLowerCase().includes(searching));
+  const items = props.items.filter((item) =>
+    String(getItemText(item) ?? "")
+      .toLowerCase()
+      .includes(searching),
+  );
 
-  const first = items.filter((item) => getItemText(item).toLowerCase().indexOf(searching) === 0);
+  const first = items.filter(
+    (item) =>
+      String(getItemText(item) ?? "")
+        .toLowerCase()
+        .indexOf(searching) === 0,
+  );
 
   return union(first, items);
 });
