@@ -244,6 +244,4 @@ watch(
     immediate: true,
   },
 );
-
-void fetchQuotes();
 </script>
