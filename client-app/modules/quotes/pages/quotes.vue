@@ -167,7 +167,7 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: "createdDate:desc",
 });
 
-const columns = ref<ITableColumn[]>([
+const columns = ref<VcTableColumnType[]>([
   {
     id: "number",
     title: t("quotes.quote_number_label"),

@@ -107,7 +107,7 @@ import type { LoyaltyOperationLog } from "../api/graphql/types";
 
 const { t } = useI18n();
 
-const columns = computed<ITableColumn[]>(() => [
+const columns = computed<VcTableColumnType[]>(() => [
   { id: "operation", title: t("loyalty.points-history.operation"), sortable: false },
   { id: "operationType", title: t("loyalty.points-history.operation-type"), sortable: false },
   { id: "createdDate", title: t("loyalty.points-history.date"), sortable: false, classes: "!px-3" },
