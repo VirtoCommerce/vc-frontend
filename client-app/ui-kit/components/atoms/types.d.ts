@@ -8,7 +8,6 @@ declare module "vue" {
     VcBadge: typeof Components.VcBadge;
     VcBreadcrumbs: typeof Components.VcBreadcrumbs;
     VcButton: typeof Components.VcButton;
-    VcCardSkeleton: typeof Components.VcCardSkeleton;
     VcCarouselPagination: typeof Components.VcCarouselPagination;
     VcCheckbox: typeof Components.VcCheckbox;
     VcCheckboxGroup: typeof Components.VcCheckboxGroup;

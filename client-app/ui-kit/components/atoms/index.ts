@@ -1,7 +1,6 @@
 export { default as VcActionInput } from "./action-input/vc-action-input.vue";
 export { default as VcBadge } from "./badge/vc-badge.vue";
 export { default as VcBreadcrumbs } from "./breadcrumbs/vc-breadcrumbs.vue";
-export { default as VcCardSkeleton } from "./card-skeleton/vc-card-skeleton.vue";
 export { default as VcCarouselPagination } from "./carousel-pagination/vc-carousel-pagination.vue";
 export { default as VcCheckbox } from "./checkbox/vc-checkbox.vue";
 export { default as VcCheckboxGroup } from "./checkbox-group/vc-checkbox-group.vue";
