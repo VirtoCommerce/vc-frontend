@@ -4,6 +4,9 @@ import { useThemeContext } from "../client-app/core/composables";
 import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
+import atomsIndex from "../client-app/ui-kit/components/atoms/index.ts?raw";
+import moleculesIndex from "../client-app/ui-kit/components/molecules/index.ts?raw";
+import organismsIndex from "../client-app/ui-kit/components/organisms/index.ts?raw";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
 import { a11yConfig } from "./a11y-config";
 import { createStorybookRouter } from "./router";
@@ -14,6 +17,33 @@ import type { Preview } from "@storybook/vue3-vite";
 
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
+
+// Build a map of deprecated component names to their deprecation messages.
+// To avoid regexes with super-linear backtracking, we work line by line
+// and only use simple, linear-time patterns.
+const deprecatedComponents = new Map<string, string>();
+for (const source of [atomsIndex, moleculesIndex, organismsIndex]) {
+  const lines = source.split(/\r?\n/);
+  const deprecatedCommentRe = /\/\*\*\s*@deprecated\s+([^*]*)/;
+  const exportLineRe = /export\s*\{[^}]*\bas\s+(\w+)/;
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const commentLine = lines[i];
+    const deprecatedMatch = deprecatedCommentRe.exec(commentLine);
+    if (!deprecatedMatch) {
+      continue;
+    }
+
+    const message = deprecatedMatch[1].trim();
+    const exportLine = lines[i + 1] ?? "";
+    const exportMatch = exportLineRe.exec(exportLine);
+
+    if (exportMatch) {
+      const componentName = exportMatch[1];
+      deprecatedComponents.set(componentName, message);
+    }
+  }
+}
 
 const DEFAULT_LOCALE = "en";
 const DEFAULT_CURRENCY = "USD";
@@ -222,7 +252,20 @@ const preview: Preview = {
         });
       }
 
-      return story();
+      const componentName = context.title.split("/").pop() || "";
+      const deprecationMessage = deprecatedComponents.get(componentName) || "";
+
+      return {
+        components: { Story: story() },
+        setup: () => ({ presetName, deprecationMessage }),
+        template: `
+          <div v-if="deprecationMessage" style="position:fixed;bottom:0px;left:16px;z-index:9999;background:#78350f;color:#fef3c7;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.4;max-width:320px;box-shadow:0 4px 12px rgba(0,0,0,.4);">
+            <strong>⚠ Deprecated</strong><br/>
+            {{ deprecationMessage }}
+          </div>
+          <Story />
+        `,
+      };
     },
   ],
   tags: ["autodocs"],
