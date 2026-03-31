@@ -4,13 +4,9 @@ import { useGetPage, useGetPageDocument, useGetSlugInfo } from "@/core/api/graph
 import { useLanguages } from "@/core/composables/useLanguages";
 import { NAVIGATION_OUTLINE } from "@/core/constants";
 import { globals } from "@/core/globals";
-import { safeDecode } from "@/core/utilities/common";
+import { isMarkdownWithFrontmatter, safeDecode } from "@/core/utilities/common";
 import type { IPageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
-
-function isMarkdownWithFrontmatter(content: string): boolean {
-  return content.trimStart().startsWith("---");
-}
 
 /**
  * @param seoUrl path after domain without slash at the beginning
