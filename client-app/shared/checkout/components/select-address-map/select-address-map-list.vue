@@ -18,6 +18,7 @@
         <VcRadioButton
           :model-value="selectedAddressId"
           :value="address.id"
+          name="pickup-location"
           :no-indicator="!selectable"
           class="select-address-map-list__radio-button"
           size="sm"
