@@ -23,17 +23,21 @@ interface IProps {
   width?: string;
   maxHeight?: string;
   size?: VcDialogSizeType;
+  autoFocus?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
+  autoFocus: true,
 });
 
 const componentId = useComponentId("dialog");
 
+const autoFocusRef = toRef(props, "autoFocus");
+
 useFocusManagement({
   container: `#${componentId}`,
-  autoFocus: true,
+  autoFocus: autoFocusRef,
 });
 
 const sizeRef = toRef(props, "size");

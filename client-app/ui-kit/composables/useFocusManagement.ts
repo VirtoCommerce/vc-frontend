@@ -7,7 +7,7 @@ const FOCUS_EXTEND_SELECTOR = ".vc-select__container"; // comma separated select
 
 export interface IUseFocusManagementOptions {
   container?: MaybeRefOrGetter<HTMLElement | string>;
-  autoFocus?: boolean;
+  autoFocus?: MaybeRefOrGetter<boolean>;
   focusDelay?: number;
 }
 
@@ -49,7 +49,7 @@ export function useFocusManagement(options: IUseFocusManagementOptions = {}): IU
   }
 
   onMounted(async () => {
-    if (autoFocus) {
+    if (toValue(autoFocus)) {
       const focus = () => {
         if (focusDelay > 0) {
           setTimeout(() => focusFirst(), focusDelay);
