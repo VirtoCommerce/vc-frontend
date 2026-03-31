@@ -99,6 +99,7 @@ export function measureElement(element: HTMLElement): {
 }
 
 let templateUrl: string | undefined;
+let previewToken: string | null = null;
 
 function modifyRequests() {
   const { onRequest } = useGlobalInterceptors();
@@ -106,6 +107,10 @@ function modifyRequests() {
   onRequest.value.push((_, init) => {
     if (init?.headers) {
       Object.assign(init.headers, { ["x-template-builder"]: "preview-mode" });
+
+      if (previewToken) {
+        Object.assign(init.headers, { Authorization: `Bearer ${previewToken}` });
+      }
     }
   });
 }
@@ -174,6 +179,17 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
       case "settings":
         updateSettings(app, event.data.settings!);
         break;
+      case "auth": {
+        const tokenData = (event.data as Record<string, unknown>).token as
+          | {
+              access_token?: string;
+            }
+          | undefined;
+        if (tokenData?.access_token) {
+          previewToken = tokenData.access_token;
+        }
+        break;
+      }
       default:
         Logger.warn(`Unknown message type: ${event.data.type}`);
     }
