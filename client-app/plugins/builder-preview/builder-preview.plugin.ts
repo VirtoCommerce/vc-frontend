@@ -184,10 +184,9 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
           | {
               access_token?: string;
             }
+          | null
           | undefined;
-        if (tokenData?.access_token) {
-          previewToken = tokenData.access_token;
-        }
+        previewToken = tokenData?.access_token ?? null;
         break;
       }
       default:
