@@ -71,18 +71,14 @@ export function useFocusManagement(options: IUseFocusManagementOptions = {}): IU
     }
 
     const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+    const lastElement = focusableElements.at(-1)!;
 
-    if (event.shiftKey) {
-      if (document.activeElement === firstElement) {
-        event.preventDefault();
-        lastElement.focus();
-      }
-    } else {
-      if (document.activeElement === lastElement) {
-        event.preventDefault();
-        firstElement.focus();
-      }
+    if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
     }
   }
 
