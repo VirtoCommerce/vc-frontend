@@ -66,8 +66,8 @@ async function updatePreview(data: TransferDataType, options: { router: Router }
     initialSectionId = data.sectionId;
   }
 
-  if (savedScrollPosition !== null) {
-    savedScrollPosition = null;
+  if (pendingScrollRestore) {
+    pendingScrollRestore = false;
     if (initialSectionId) {
       scrollToSection(initialSectionId);
     }
@@ -86,7 +86,7 @@ function updateSettings(app: App, settings: IThemeConfig) {
   keys
     .filter(([key]) => key.startsWith("color"))
     .forEach(([key, value]) => {
-      document.documentElement.style.setProperty(`--${key.replaceAll("_", "-")}`, value as string);
+      document.documentElement.style.setProperty(`--${key.replaceAll('_', "-")}`, value as string);
     });
 }
 
@@ -123,22 +123,26 @@ export function measureElement(element: HTMLElement): {
 }
 
 let templateUrl: string | undefined;
-let previewToken: string | null = null;
-let savedScrollPosition: number | null = null;
+let previewToken: string | null | undefined;
+let pendingScrollRestore = false;
 let initialSectionId: string | undefined;
 
 function modifyRequests() {
   const { onRequest } = useGlobalInterceptors();
 
   onRequest.value.push((_, init) => {
-    if (init?.headers) {
-      Object.assign(init.headers, { ["x-template-builder"]: "preview-mode" });
+    if (!init) {
+      return;
+    }
+    if (!init.headers) {
+      init.headers = {};
+    }
+    Object.assign(init.headers, { ["x-template-builder"]: "preview-mode" });
 
-      if (previewToken) {
-        Object.assign(init.headers, { Authorization: `Bearer ${previewToken}` });
-      } else {
-        delete (init.headers as Record<string, string>).Authorization;
-      }
+    if (previewToken) {
+      Object.assign(init.headers, { Authorization: `Bearer ${previewToken}` });
+    } else if (previewToken === null) {
+      delete (init.headers as Record<string, string>).Authorization;
     }
   });
 }
@@ -187,18 +191,9 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
       case "hover":
         // ignore now
         break;
-      case "select": {
-        const element = document.getElementById("__scroll__" + event.data.sectionId);
-        if (element) {
-          const rect = measureElement(element);
-          const targetPosition = (rect.top || 0) - window.innerHeight / 10;
-          window.scroll({
-            top: targetPosition,
-            behavior: "smooth",
-          });
-        }
+      case "select":
+        scrollToSection(event.data.sectionId!);
         break;
-      }
       case "navigate": {
         // we will know about template it or not in the next message
         templateUrl = event.data.url;
@@ -215,8 +210,8 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
           | null
           | undefined;
         previewToken = tokenData?.access_token ?? null;
-        // Save scroll position and force remount of all blocks with new token
-        savedScrollPosition = window.scrollY;
+        // Force remount of all blocks with new token and restore scroll afterward
+        pendingScrollRestore = true;
         staticPagePreview.value = undefined;
         break;
       }
