@@ -25,7 +25,6 @@
         'aria-valuemax': max,
         'aria-valuenow': model ?? '',
       }"
-      :data-test-id="testIdInput"
       @blur="normalize"
       @keydown.up.prevent="() => handleArrowKey('increment')"
       @keydown.down.prevent="() => handleArrowKey('decrement')"
@@ -38,7 +37,6 @@
           :loading="loading"
           :color="buttonsColor"
           :variant="buttonsVariant"
-          :data-test-id="testIdDecrement"
           class="vc-quantity-stepper__decrement"
           @click.stop="handleDecrement"
         />
@@ -52,7 +50,6 @@
           :loading="loading"
           :color="buttonsColor"
           :variant="buttonsVariant"
-          :data-test-id="testIdIncrement"
           class="vc-quantity-stepper__increment"
           @click.stop="handleIncrement"
         />
@@ -88,9 +85,6 @@ interface IProps {
   showEmptyDetails?: boolean;
   selectOnClick?: boolean;
   allowZero?: boolean;
-  testIdInput?: string;
-  testIdDecrement?: string;
-  testIdIncrement?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {

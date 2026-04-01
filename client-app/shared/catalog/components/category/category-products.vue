@@ -18,19 +18,9 @@
       </div>
 
       <div
-        :class="[
-          'category-products__list',
-          {
-            'category-products__list--list': savedViewMode === 'list',
-            'category-products__list--grid': savedViewMode === 'grid',
-          },
-        ]"
+        :class="`category-products__list category-products__list--${savedViewMode}`"
         :data-test-id="
-          savedViewMode === 'list'
-            ? 'category-page.products-list-view'
-            : savedViewMode === 'grid'
-              ? 'category-page.products-grid-view'
-              : ''
+          savedViewMode === 'list' ? 'products-list-view' : savedViewMode === 'grid' ? 'products-grid-view' : ''
         "
       >
         <template v-if="fetchingProducts">
