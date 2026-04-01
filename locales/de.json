@@ -697,6 +697,7 @@
           "changed_confirmation": "Die Produktkonfiguration wurde geändert. Möchten Sie sie speichern?",
           "check_your_configuration": "Überprüfe deine Produktkonfiguration",
           "required_section": "Abschnitt erforderlich",
+          "max_length_exceeded": "Der Text darf {max} Zeichen nicht überschreiten",
           "optional_no_selected": "Personalisieren Sie Ihre Auswahl weiter (optional)",
           "required_no_selected": "Bitte alle erforderlichen Optionen auswählen, um Ihre Auswahl abzuschließen.",
           "section-text-fieldset": {

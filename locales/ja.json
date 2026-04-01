@@ -697,6 +697,7 @@
           "changed_confirmation": "商品の設定が変更されました。保存しますか？",
           "check_your_configuration": "製品構成を確認してください",
           "required_section": "セクションは必須です",
+          "max_length_exceeded": "テキストは {max} 文字を超えることはできません",
           "optional_no_selected": "さらに選択をパーソナライズ（任意）",
           "required_no_selected": "すべての必須オプションを選択して、完了してください",
           "section-text-fieldset": {
