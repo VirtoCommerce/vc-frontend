@@ -1,5 +1,6 @@
 export * from "./useBrands";
 export * from "./useCategory";
+export * from "./useConfigurableLineItemId";
 export * from "./useConfigurableProduct";
 export * from "./useProduct";
 export * from "./useProductPickupLocations";
