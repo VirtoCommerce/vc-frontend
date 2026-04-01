@@ -37,8 +37,7 @@ async function updatePreview(data: TransferDataType, options: { router: Router }
   const newTemplate = { ...template, content: <IPageContent[]>[] };
 
   template.content.forEach((block: IPageContent) => {
-    newTemplate.content.push({ type: "scroll-to", id: "__scroll__" + block.id });
-    newTemplate.content.push(block);
+    newTemplate.content.push({ type: "scroll-to", id: "__scroll__" + block.id }, block);
   });
 
   if (!data.templateKey) {
@@ -62,7 +61,7 @@ function updateSettings(app: App, settings: IThemeConfig) {
   keys
     .filter(([key]) => key.startsWith("color"))
     .forEach(([key, value]) => {
-      document.documentElement.style.setProperty(`--${key.replace(/_/g, "-")}`, value as string);
+      document.documentElement.style.setProperty(`--${key.replaceAll("_", "-")}`, value as string);
     });
 }
 
@@ -110,6 +109,8 @@ function modifyRequests() {
 
       if (previewToken) {
         Object.assign(init.headers, { Authorization: `Bearer ${previewToken}` });
+      } else {
+        delete (init.headers as Record<string, string>).Authorization;
       }
     }
   });
@@ -187,6 +188,8 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
           | null
           | undefined;
         previewToken = tokenData?.access_token ?? null;
+        // Force remount of all blocks so they re-fetch data with the new token
+        staticPagePreview.value = undefined;
         break;
       }
       default:
@@ -213,10 +216,10 @@ function modifyRoutes(router: Router, mode: "preview" | "designer") {
   router.addRoute(matcher);
 
   router.beforeEach((to, from, next) => {
-    if (to.path !== "/designer-preview") {
-      next({ path: "/designer-preview", query: to.query, hash: to.hash });
-    } else {
+    if (to.path === "/designer-preview") {
       next();
+    } else {
+      next({ path: "/designer-preview", query: to.query, hash: to.hash });
     }
   });
 }
