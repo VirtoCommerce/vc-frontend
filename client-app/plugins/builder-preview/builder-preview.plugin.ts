@@ -28,6 +28,17 @@ declare type TransferDataType = {
   settings?: IThemeConfig;
 };
 
+function scrollToSection(sectionId: string) {
+  requestAnimationFrame(() => {
+    const element = document.getElementById("__scroll__" + sectionId);
+    if (element) {
+      const rect = measureElement(element);
+      const targetPosition = (rect.top || 0) - window.innerHeight / 10;
+      window.scroll({ top: targetPosition, behavior: "smooth" });
+    }
+  });
+}
+
 async function updatePreview(data: TransferDataType, options: { router: Router }) {
   const template = data.template;
   if (data.model) {
@@ -49,6 +60,20 @@ async function updatePreview(data: TransferDataType, options: { router: Router }
     await options.router.push(templateUrl);
   }
   templateUrl = undefined;
+
+  // Remember the initially selected section for scroll restoration after auth changes
+  if (data.sectionId) {
+    initialSectionId = data.sectionId;
+  }
+
+  if (savedScrollPosition !== null) {
+    savedScrollPosition = null;
+    if (initialSectionId) {
+      scrollToSection(initialSectionId);
+    }
+  } else if (data.type === "page" && initialSectionId) {
+    scrollToSection(initialSectionId);
+  }
 }
 
 function updateSettings(app: App, settings: IThemeConfig) {
@@ -99,6 +124,8 @@ export function measureElement(element: HTMLElement): {
 
 let templateUrl: string | undefined;
 let previewToken: string | null = null;
+let savedScrollPosition: number | null = null;
+let initialSectionId: string | undefined;
 
 function modifyRequests() {
   const { onRequest } = useGlobalInterceptors();
@@ -188,7 +215,8 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
           | null
           | undefined;
         previewToken = tokenData?.access_token ?? null;
-        // Force remount of all blocks so they re-fetch data with the new token
+        // Save scroll position and force remount of all blocks with new token
+        savedScrollPosition = window.scrollY;
         staticPagePreview.value = undefined;
         break;
       }
