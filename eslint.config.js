@@ -302,7 +302,7 @@ export default defineConfigWithVueTs(
 
   // Configuration for Storybook files
   {
-    files: [".storybook/preview.ts", ".storybook/docs-page.ts", "**/*.stories.ts"],
+    files: [".storybook/preview.ts", ".storybook/docs-page.ts", ".storybook/manager.ts", "**/*.stories.ts"],
     languageOptions: {
       parserOptions: {
         project: tsconfigs.storybook,

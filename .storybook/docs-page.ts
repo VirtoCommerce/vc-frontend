@@ -1,32 +1,8 @@
 import { Controls, Description, DocsContext, Primary, Stories, Subtitle, Title } from "@storybook/addon-docs/blocks";
 import { createElement, useContext } from "react";
-import atomsIndex from "../client-app/ui-kit/components/atoms/index.ts?raw";
-import moleculesIndex from "../client-app/ui-kit/components/molecules/index.ts?raw";
-import organismsIndex from "../client-app/ui-kit/components/organisms/index.ts?raw";
+import deprecatedJson from "./generated/deprecated-components.json";
 
-// Build a map of deprecated component names to their deprecation messages
-export const deprecatedComponents = new Map<string, string>();
-for (const source of [atomsIndex, moleculesIndex, organismsIndex]) {
-  const lines = source.split(/\r?\n/);
-  const deprecatedCommentRe = /\/\*\*\s*@deprecated\s+([^*]*)/;
-  const exportLineRe = /export\s*\{[^}]*\bas\s+(\w+)/;
-
-  for (let i = 0; i < lines.length; i += 1) {
-    const commentLine = lines[i];
-    const deprecatedMatch = deprecatedCommentRe.exec(commentLine);
-    if (!deprecatedMatch) {
-      continue;
-    }
-
-    const message = deprecatedMatch[1].trim();
-    const exportLine = lines[i + 1] ?? "";
-    const exportMatch = exportLineRe.exec(exportLine);
-
-    if (exportMatch) {
-      deprecatedComponents.set(exportMatch[1], message);
-    }
-  }
-}
+const deprecatedComponents = new Map<string, string>(Object.entries(deprecatedJson));
 
 const bannerStyle = {
   background: "#78350f",
@@ -40,7 +16,7 @@ const bannerStyle = {
 };
 
 function DeprecatedBanner() {
-  const context = useContext(DocsContext);
+  const context = useContext<typeof DocsContext>(DocsContext);
   const story = context.storyById();
   const title = story?.title ?? "";
   const componentName = title.split("/").pop() || "";
