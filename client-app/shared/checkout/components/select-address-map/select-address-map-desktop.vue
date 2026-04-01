@@ -114,7 +114,7 @@ function onCardClose() {
   closeInfoCard();
   void nextTick(() => {
     const radio = document.querySelector<HTMLElement>(
-      `[data-address-id="${selectedAddressId.value}"] input[type="radio"]`,
+      `[data-address-id="${CSS.escape(selectedAddressId.value ?? "")}"] input[type="radio"]`,
     );
     radio?.focus();
   });
