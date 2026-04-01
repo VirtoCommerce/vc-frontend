@@ -26,6 +26,7 @@ declare type TransferDataType = {
   sectionId?: string;
   url?: string;
   settings?: IThemeConfig;
+  token?: { access_token?: string } | null;
 };
 
 function scrollToSection(sectionId: string) {
@@ -201,13 +202,7 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
         updateSettings(app, event.data.settings!);
         break;
       case "auth": {
-        const tokenData = (event.data as Record<string, unknown>).token as
-          | {
-              access_token?: string;
-            }
-          | null
-          | undefined;
-        previewToken = tokenData?.access_token || null;
+        previewToken = event.data.token?.access_token || null;
         // Force remount of all blocks with new token and restore scroll afterward
         pendingScrollRestore = true;
         staticPagePreview.value = undefined;
