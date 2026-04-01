@@ -134,9 +134,7 @@ function modifyRequests() {
     if (!init) {
       return;
     }
-    if (!init.headers) {
-      init.headers = {};
-    }
+    init.headers ??= {};
     Object.assign(init.headers, { ["x-template-builder"]: "preview-mode" });
 
     if (previewToken) {
@@ -209,7 +207,7 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
             }
           | null
           | undefined;
-        previewToken = tokenData?.access_token ?? null;
+        previewToken = tokenData?.access_token || null;
         // Force remount of all blocks with new token and restore scroll afterward
         pendingScrollRestore = true;
         staticPagePreview.value = undefined;
