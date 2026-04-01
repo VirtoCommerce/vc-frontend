@@ -19,6 +19,7 @@
           :model-value="selectedAddressId"
           :value="address.id"
           :no-indicator="!selectable"
+          name="pickup-location"
           class="select-address-map-list__radio-button"
           size="sm"
           :data-test-coords="address.geoLocation"
