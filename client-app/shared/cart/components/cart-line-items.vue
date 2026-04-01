@@ -61,7 +61,7 @@
         :route="item.route"
       />
 
-      <div v-if="localizedItemsErrors[item.id]" class="flex flex-col gap-1">
+      <div v-if="localizedItemsErrors[item.id]" class="flex flex-col gap-1 [&:not(:first-child)]:mt-2">
         <VcAlert
           v-for="(validationError, index) in localizedItemsErrors[item.id]"
           :key="index"
