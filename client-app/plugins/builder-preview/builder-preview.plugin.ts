@@ -134,7 +134,18 @@ let initialSectionId: string | undefined;
 function modifyRequests() {
   const { onRequest } = useGlobalInterceptors();
 
-  onRequest.value.push((_, init) => {
+  // Take all previously registered interceptors (e.g. auth plugin)
+  // and replace them with a single wrapper that runs them sequentially,
+  // then applies preview overrides last.
+  // This avoids the Promise.all race where auth's async refresh()
+  // could overwrite the preview Authorization header.
+  const existingInterceptors = onRequest.value.splice(0);
+
+  onRequest.value.push(async (input, init) => {
+    for (const intercept of existingInterceptors) {
+      await intercept(input, init);
+    }
+
     if (!init) {
       return;
     }
