@@ -13,7 +13,7 @@
         v-model="searchPhrase"
         type="search"
         size="sm"
-        data-test-id="main-layout.account-menu.top-header.organizations-search"
+        data-test-id="organizations-search"
         :placeholder="$t('common.labels.search')"
         :clearable="!!searchPhrase"
         @keydown.enter="onSearch"
@@ -21,16 +21,12 @@
         @clear="onSearchClear"
       >
         <template #append>
-          <VcButton icon="search" icon-size="1.25rem" @click="onSearch" />
+          <VcButton icon="search" icon-size="1.25rem" data-test-id="organizations-search-button" @click="onSearch" />
         </template>
       </VcInput>
     </div>
 
-    <VcScrollbar
-      vertical
-      class="top-header-organizations__list"
-      test-id="main-layout.account-menu.top-header.organizations-list"
-    >
+    <VcScrollbar vertical class="top-header-organizations__list" test-id="organizations-list">
       <VcMenuItem v-if="organization && !loading && organizations.length > 0" size="xs" :clickable="false">
         <VcRadioButton
           :model-value="contactOrganizationId"
@@ -38,7 +34,7 @@
           :label="organization.name"
           :max-lines="2"
           :title="organization.name"
-          :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${organization.name}`"
+          :data-organization-name="organization.name"
           word-break="break-word"
         />
       </VcMenuItem>
@@ -59,14 +55,14 @@
           :max-lines="2"
           :title="item.name"
           word-break="break-word"
-          :data-test-id="`main-layout.top-header.account-menu.organization-selector-item-${item.name}`"
+          :data-organization-name="item.name"
         />
       </VcMenuItem>
 
       <div
         v-if="organizations.length === 0 && !loading"
         class="top-header-organizations__empty"
-        data-test-id="main-layout.top-header.account-menu.organizations-empty"
+        data-test-id="organizations-empty-list"
       >
         {{ $t("shared.layout.header.top_header.no_results") }}
       </div>
@@ -85,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
 import { useUser, useUserOrganizations } from "@/shared/account";
 
 const emit = defineEmits<{
