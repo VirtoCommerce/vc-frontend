@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Lisää uusi",
           "add_new_address": "Lisää uusi osoite",
+          "no_results": "Ei osoitteita, jotka vastaavat hakua",
           "search": "Hae",
           "select_address": "Valitse osoite",
           "title": "Toimitusosoite:"
