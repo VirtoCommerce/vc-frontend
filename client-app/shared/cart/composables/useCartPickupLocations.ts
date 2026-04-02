@@ -78,7 +78,7 @@ export function _useCartPickupLocations() {
 
       const termFacetCounties = data.term_facets?.find((f) => f.name === COUNTRY_NAME_FACET);
       if (termFacetCounties) {
-        filterOptionsCountries.value = termFacetToCommonFacet(termFacetCounties, true);
+        filterOptionsCountries.value = termFacetToCommonFacet(termFacetCounties);
         filterOptionsCountries.value.label = t("common.labels.country");
       } else {
         filterOptionsCountries.value = {
@@ -91,7 +91,7 @@ export function _useCartPickupLocations() {
 
       const termFacetRegions = data.term_facets?.find((f) => f.name === REGION_NAME_FACET);
       if (termFacetRegions) {
-        filterOptionsRegions.value = termFacetToCommonFacet(termFacetRegions, true);
+        filterOptionsRegions.value = termFacetToCommonFacet(termFacetRegions);
         filterOptionsRegions.value.label = t("common.labels.region");
       } else {
         filterOptionsRegions.value = {
@@ -104,7 +104,7 @@ export function _useCartPickupLocations() {
 
       const termFacetCities = data.term_facets?.find((f) => f.name === CITY_FACET);
       if (termFacetCities) {
-        filterOptionsCities.value = termFacetToCommonFacet(termFacetCities, true);
+        filterOptionsCities.value = termFacetToCommonFacet(termFacetCities);
         filterOptionsCities.value.label = t("common.labels.city");
       } else {
         filterOptionsCities.value = {

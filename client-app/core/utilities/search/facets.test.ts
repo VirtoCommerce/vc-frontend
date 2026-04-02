@@ -192,7 +192,7 @@ describe("termFacetToCommonFacet", () => {
       ],
     };
 
-    const result = termFacetToCommonFacet(termFacet, true);
+    const result = termFacetToCommonFacet(termFacet);
     expect(result).toEqual({
       type: "terms",
       label: "Color",
@@ -215,7 +215,7 @@ describe("termFacetToCommonFacet", () => {
       ],
     };
 
-    const result = termFacetToCommonFacet(termFacet, true);
+    const result = termFacetToCommonFacet(termFacet);
     expect(result).toEqual({
       type: "terms",
       label: "Creation Date",
@@ -261,7 +261,7 @@ describe("termFacetToCommonFacet", () => {
       ],
     };
 
-    const result = termFacetToCommonFacet(termFacet, true);
+    const result = termFacetToCommonFacet(termFacet);
     expect(result).toEqual({
       type: "terms",
       label: "Active Status",

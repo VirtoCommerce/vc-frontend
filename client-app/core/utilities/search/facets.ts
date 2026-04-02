@@ -167,7 +167,7 @@ export function getFilterExpressionFromFacetRange(
  * @param termFacet - The term facet to convert
  * @returns A FacetItemType object representing the converted term facet
  */
-export function termFacetToCommonFacet(termFacet: TermFacet, sorting: boolean = false): FacetItemType {
+export function termFacetToCommonFacet(termFacet: TermFacet, sortValues: boolean = true): FacetItemType {
   const facetValues = termFacet.terms.map<FacetValueItemType>((facetTerm: FacetTermType) => ({
     count: facetTerm.count,
     label: getFormattedLabel(facetTerm.label),
@@ -175,7 +175,7 @@ export function termFacetToCommonFacet(termFacet: TermFacet, sorting: boolean = 
     selected: facetTerm.isSelected,
   }));
 
-  if (sorting) {
+  if (sortValues) {
     facetValues.sort((a, b) => a.label.localeCompare(b.label));
   }
 
