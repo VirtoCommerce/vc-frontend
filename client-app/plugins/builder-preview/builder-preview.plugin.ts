@@ -211,6 +211,7 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
         // ignore now
         break;
       case "select":
+        initialSectionId = event.data.sectionId;
         scrollToSection(event.data.sectionId!);
         break;
       case "navigate": {
