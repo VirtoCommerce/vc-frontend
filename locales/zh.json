@@ -251,6 +251,7 @@
       "addresses": "地址",
       "orders": "订单",
       "lists": "清单",
+      "promotion_coupons": "优惠券与促销",
       "list_details": "清单详情",
       "cart": "购物车",
       "company_info": "公司信息",
@@ -462,6 +463,7 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
+          "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -546,6 +548,12 @@
         "end_date_label": "结束日期",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expires": "到期",
+        "click_to_copy": "点击复制",
+        "clipboard_success": "优惠券已复制",
+        "tap_to_copy": "点击复制"
       }
     },
     "company": {
@@ -658,7 +666,7 @@
         "vendor_label": "供应商",
         "all_vendor_products": "所有供应商产品",
         "share_product_label": "分享产品",
-        "create_configuration_button": "创建您的配置",
+        "create_configuration_button": "创建新配置",
         "price_block": {
           "title": "价格与运输",
           "mobile_title": "分享与更多",
@@ -865,6 +873,10 @@
         },
         "user_error_message": "无法初始化支付。请稍后再试或使用其他支付方式",
         "payment_unavailable": "支付方式不可用，请稍后重试"
+      },
+      "datatrans_lightbox": {
+        "title": "安全支付",
+        "description": "您将被重定向到安全的Datatrans支付窗口以完成购买。"
       },
       "authorize_net": {
         "user_agreement_link": "用户协议",
@@ -1271,6 +1283,10 @@
         "title": "冒充",
         "success": "冒充成功",
         "error": "冒充时出现一些问题。检查您的权限"
+      },
+      "promotion_coupons": {
+        "title": "所有优惠券与促销",
+        "no_lists": "您目前没有任何优惠券或促销活动"
       }
     },
     "company": {

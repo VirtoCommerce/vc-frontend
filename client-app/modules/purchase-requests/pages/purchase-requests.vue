@@ -100,7 +100,7 @@ usePageHead({
 
 const { loading, purchaseRequests, pages, page, sort } = usePurchaseRequests();
 
-const columns = ref<ITableColumn[]>([
+const columns = ref<VcTableColumnType[]>([
   {
     id: "number",
     title: t("purchase_requests.purchase_request_number_label"),
