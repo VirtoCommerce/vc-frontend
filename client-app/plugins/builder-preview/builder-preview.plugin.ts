@@ -152,10 +152,16 @@ function modifyRequests() {
     init.headers ??= {};
     Object.assign(init.headers, { ["x-template-builder"]: "preview-mode" });
 
+    // Override Authorization on both init.headers and init itself,
+    // because auth plugin may place it on either depending on
+    // whether init.headers existed (HTTP requests vs WebSocket connectionParams).
+    const target = init as Record<string, unknown>;
     if (previewToken) {
-      Object.assign(init.headers, { Authorization: `Bearer ${previewToken}` });
+      (init.headers as Record<string, string>).Authorization = `Bearer ${previewToken}`;
+      target.Authorization = `Bearer ${previewToken}`;
     } else if (previewToken === null) {
       delete (init.headers as Record<string, string>).Authorization;
+      delete target.Authorization;
     }
   });
 }
