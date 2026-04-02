@@ -666,7 +666,7 @@
         "vendor_label": "Sprzedawca",
         "all_vendor_products": "Wszystkie Produkty Sprzedawcy",
         "share_product_label": "Udostępnij produkt",
-        "create_configuration_button": "Utwórz własną konfigurację",
+        "create_configuration_button": "Utwórz nową konfigurację",
         "price_block": {
           "title": "Cena i dostawa",
           "mobile_title": "Udostępnij i więcej",
@@ -873,6 +873,10 @@
         },
         "user_error_message": "Nie można zainicjować płatności. Spróbuj ponownie później lub użyj innej metody płatności",
         "payment_unavailable": "Metoda płatności jest niedostępna. Spróbuj ponownie później."
+      },
+      "datatrans_lightbox": {
+        "title": "Bezpieczna płatność",
+        "description": "Zostaniesz przekierowany do bezpiecznego okna płatności Datatrans, aby dokończyć zakup."
       },
       "authorize_net": {
         "user_agreement_link": "Umowa użytkownika",

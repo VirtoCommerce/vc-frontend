@@ -666,7 +666,7 @@
         "vendor_label": "Toimittaja",
         "all_vendor_products": "Kaikki toimittajan tuotteet",
         "share_product_label": "Jaa tuote",
-        "create_configuration_button": "Luo oma kokoonpano",
+        "create_configuration_button": "Luo uusi kokoonpano",
         "price_block": {
           "title": "Hinta ja toimitus",
           "mobile_title": "Jaa ja lisää",
@@ -873,6 +873,10 @@
         },
         "user_error_message": "Maksua ei voi aloittaa. Yritä uudelleen myöhemmin tai käytä toista maksutapaa",
         "payment_unavailable": "Maksutapa ei ole saatavilla. Yritä uudelleen myöhemmin"
+      },
+      "datatrans_lightbox": {
+        "title": "Turvallinen maksu",
+        "description": "Sinut ohjataan turvalliseen Datatrans-maksuikkunaan ostoksesi viimeistelemiseksi."
       },
       "authorize_net": {
         "user_agreement_link": "Käyttäjäsopimus",

@@ -6,7 +6,9 @@
   >
     <VcPopover
       arrow-enabled
+      shadow
       placement="bottom-start"
+      bg-color="--header-bottom-bg-color"
       class="mega-menu__popover"
       :aria-label="$t('common.buttons.all_products')"
       role="menu"
@@ -194,7 +196,7 @@ onMounted(() => {
   }
 
   &__content {
-    @apply flex min-w-0 max-h-[calc(100vh-11.5rem)] ps-2.5 py-5 bg-[--header-bottom-bg-color] rounded-[--vc-radius] shadow-lg;
+    @apply flex min-w-0 max-h-[calc(100vh-11.5rem)] ps-2.5 py-5;
   }
 }
 </style>

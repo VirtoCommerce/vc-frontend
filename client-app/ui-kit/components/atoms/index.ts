@@ -1,7 +1,6 @@
 export { default as VcActionInput } from "./action-input/vc-action-input.vue";
 export { default as VcBadge } from "./badge/vc-badge.vue";
 export { default as VcBreadcrumbs } from "./breadcrumbs/vc-breadcrumbs.vue";
-export { default as VcCardSkeleton } from "./card-skeleton/vc-card-skeleton.vue";
 export { default as VcCarouselPagination } from "./carousel-pagination/vc-carousel-pagination.vue";
 export { default as VcCheckbox } from "./checkbox/vc-checkbox.vue";
 export { default as VcCheckboxGroup } from "./checkbox-group/vc-checkbox-group.vue";
@@ -33,8 +32,6 @@ export { default as VcRadioButton } from "./radio-button/vc-radio-button.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-button.vue";
 export { default as VcScrollbar } from "./scrollbar/vc-scrollbar.vue";
 export { default as VcSwitch } from "./switch/vc-switch.vue";
-/** @deprecated VcTabs is deprecated, use VcTabSwitch instead. */
-export { default as VcTabs } from "./tabs/vc-tabs.vue";
 export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";
 export { default as VcTypography } from "./typography/vc-typography.vue";
