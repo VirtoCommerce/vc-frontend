@@ -1,4 +1,5 @@
 import { useGlobalInterceptors } from "@/core/api/common";
+import { globals, setGlobals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useStaticPage } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
@@ -27,6 +28,7 @@ declare type TransferDataType = {
   url?: string;
   settings?: IThemeConfig;
   token?: { access_token?: string } | null;
+  userId?: string | null;
 };
 
 function scrollToSection(sectionId: string) {
@@ -125,6 +127,7 @@ export function measureElement(element: HTMLElement): {
 
 let templateUrl: string | undefined;
 let previewToken: string | null | undefined;
+let originalUserId: string | undefined;
 let pendingScrollRestore = false;
 let initialSectionId: string | undefined;
 
@@ -203,6 +206,10 @@ function handleMessages(app: App, options: PageBuilderPluginOptionsType, bodyEl:
         break;
       case "auth": {
         previewToken = event.data.token?.access_token || null;
+        if (!originalUserId) {
+          originalUserId = globals.userId;
+        }
+        setGlobals({ userId: event.data.userId || originalUserId });
         // Force remount of all blocks with new token and restore scroll afterward
         pendingScrollRestore = true;
         staticPagePreview.value = undefined;
