@@ -251,6 +251,7 @@
       "addresses": "Indirizzi",
       "orders": "Ordini",
       "lists": "Liste",
+      "promotion_coupons": "Coupon e promozioni",
       "list_details": "Dettagli lista",
       "cart": "Carrello",
       "company_info": "Informazioni azienda",
@@ -462,6 +463,7 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
+          "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -546,6 +548,12 @@
         "end_date_label": "Data di fine",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expires": "Scade",
+        "click_to_copy": "Clicca per copiare",
+        "clipboard_success": "Coupon copiato con successo",
+        "tap_to_copy": "Tocca per copiare"
       }
     },
     "company": {
@@ -658,7 +666,7 @@
         "vendor_label": "Fornitore",
         "all_vendor_products": "Tutti I Prodotti Del Fornitore",
         "share_product_label": "Condividi prodotto",
-        "create_configuration_button": "Crea la tua configurazione",
+        "create_configuration_button": "Crea nuova configurazione",
         "price_block": {
           "title": "Prezzo e consegna",
           "mobile_title": "Condividi e altro",
@@ -865,6 +873,10 @@
         },
         "user_error_message": "Impossibile inizializzare il pagamento. Riprova più tardi o usa un altro metodo di pagamento",
         "payment_unavailable": "Metodo di pagamento non disponibile. Riprova più tardi."
+      },
+      "datatrans_lightbox": {
+        "title": "Pagamento sicuro",
+        "description": "Verrai reindirizzato a una finestra di pagamento Datatrans sicura per completare il tuo acquisto."
       },
       "authorize_net": {
         "user_agreement_link": "Accordo utente",
@@ -1271,6 +1283,10 @@
         "title": "Impersonificazione",
         "success": "Impersonificazione riuscita",
         "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi"
+      },
+      "promotion_coupons": {
+        "title": "Tutti i coupon e le promozioni",
+        "no_lists": "Non hai coupon o promozioni"
       }
     },
     "company": {

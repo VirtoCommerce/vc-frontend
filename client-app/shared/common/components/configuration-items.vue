@@ -1,16 +1,23 @@
 <template>
-  <div class="rounded border bg-neutral-50 px-4 py-2">
-    <button type="button" class="flex items-center gap-1 text-xs font-bold" @click="isCollapsed = !isCollapsed">
+  <div
+    :class="[
+      'configuration-items',
+      {
+        'configuration-items--collapsed': isCollapsed,
+      },
+    ]"
+  >
+    <button type="button" class="configuration-items__toggle" @click="isCollapsed = !isCollapsed">
       <span>{{ $t("shared.cart.configuration_items.title") }}</span>
 
-      <VcIcon class="text-primary" :name="isCollapsed ? 'chevron-down' : 'chevron-up'" size="xs" />
+      <VcIcon color="primary" :name="isCollapsed ? 'chevron-down' : 'chevron-up'" size="xs" />
     </button>
 
-    <ul class="space-y-1.5 pt-2 text-xs" :class="{ hidden: isCollapsed }">
+    <ul class="configuration-items__list">
       <li
         v-for="(configurationItem, index) in configurationItems"
         :key="configurationItem.id"
-        class="max-w-lg truncate"
+        class="configuration-items__item"
         :title="getText(configurationItem)"
       >
         {{ `${index + 1}. ${getText(configurationItem)}` }}
@@ -72,3 +79,33 @@ function getText(configurationItem: CartConfigurationItemType | OrderConfigurati
   }
 }
 </script>
+
+<style lang="scss">
+.configuration-items {
+  $collapsed: "";
+
+  @apply border bg-neutral-50 px-4 py-2;
+
+  border-radius: var(--vc-radius);
+
+  &--collapsed {
+    $collapsed: &;
+  }
+
+  &__toggle {
+    @apply flex items-center gap-1 text-xs font-bold;
+  }
+
+  &__list {
+    @apply space-y-1.5 pt-2 text-xs;
+
+    #{$collapsed} & {
+      @apply hidden;
+    }
+  }
+
+  &__item {
+    @apply max-w-lg truncate;
+  }
+}
+</style>

@@ -380,7 +380,7 @@ const localKeyword = ref("");
 const filtersVisible = ref(false);
 const selectedDateFilterType = ref<DateFilterType>();
 
-const columns = computed<ITableColumn[]>(() => [
+const columns = computed<VcTableColumnType[]>(() => [
   { id: "number", title: t("pages.account.orders.order_number_label"), sortable: true },
   {
     id: orderScope.value === "private" ? "purchaseOrder" : "buyerName",

@@ -1,5 +1,5 @@
 <template>
-  <div class="google-map">
+  <div :key="colorScheme" class="google-map">
     <div :id="mapElementId" ref="mapContainer" class="google-map__container"></div>
 
     <slot />
@@ -8,7 +8,8 @@
 
 <script setup lang="ts">
 import uniqueId from "lodash/uniqueId";
-import { computed, onBeforeUnmount, onMounted, ref, toRefs } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRefs, watch } from "vue";
+import { useDarkMode } from "@/core/composables/useDarkMode";
 import { useGoogleMaps } from "@/shared/common/composables/useGoogleMaps";
 
 const emit = defineEmits<IEmits>();
@@ -25,7 +26,7 @@ interface IProps {
   elementId?: string;
   center?: google.maps.LatLngLiteral;
   zoom?: number;
-  options?: Omit<google.maps.MapOptions, "center" | "zoom" | "mapId">;
+  options?: Omit<google.maps.MapOptions, "center" | "zoom" | "mapId" | "colorScheme">;
   listenToBounds?: boolean;
   mapId: string;
 }
@@ -41,9 +42,14 @@ const mapElementId = computed(() => (elementId.value ? elementId.value : uniqueI
 
 const mapContainer = ref<HTMLDivElement>();
 
+const { isDark } = useDarkMode();
 const { initMap, map } = useGoogleMaps(mapId.value);
 
-onMounted(async () => {
+const colorScheme = computed(() => (isDark.value ? "DARK" : "LIGHT"));
+
+async function createMap() {
+  listener?.remove();
+
   await initMap({
     apiKey: apiKey.value,
     elementId: mapElementId.value,
@@ -51,20 +57,31 @@ onMounted(async () => {
       center: center.value,
       zoom: zoom.value,
       ...props.options,
+      // Dark mode system controls colorScheme — must override props.options
+      colorScheme: colorScheme.value,
     },
   });
 
-  if (!props.listenToBounds) {
-    return;
+  if (props.listenToBounds) {
+    listener = map.value?.addListener("bounds_changed", () => {
+      const bounds = map.value?.getBounds();
+      if (bounds) {
+        emit("boundariesChanged", bounds);
+      }
+    });
   }
+}
 
-  listener = map.value?.addListener("bounds_changed", () => {
-    const bounds = map.value?.getBounds();
-    if (bounds) {
-      emit("boundariesChanged", bounds);
-    }
-  });
+// colorScheme cannot be changed via setOptions after map init (Google Maps API limitation).
+// :key="colorScheme" recreates the DOM subtree (including slot children like markers),
+// but does NOT re-trigger this component's onMounted — so we must call createMap manually.
+watch(colorScheme, async () => {
+  map.value = null;
+  await nextTick();
+  await createMap();
 });
+
+onMounted(() => createMap());
 
 onBeforeUnmount(() => {
   listener?.remove();

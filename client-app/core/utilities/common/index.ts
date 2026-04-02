@@ -204,3 +204,7 @@ export function serializeError(error: Error) {
 export function presetNameToFileName(name: string): string {
   return name.toLowerCase().replaceAll(" ", "-");
 }
+
+export function isMarkdownWithFrontmatter(content: string): boolean {
+  return content.trimStart().startsWith("---");
+}
