@@ -1,6 +1,12 @@
 <template>
   <VcScrollbar vertical class="select-address-map-list">
-    <ul v-if="addresses.length" class="select-address-map-list__list" data-test-id="pickup-locations-list">
+    <ul
+      v-if="addresses.length"
+      role="radiogroup"
+      :aria-label="$t('pages.checkout.shipping.links.select_pickup_point')"
+      class="select-address-map-list__list"
+      data-test-id="pickup-locations-list"
+    >
       <li
         v-for="address in addresses"
         :key="address.id"
@@ -20,7 +26,6 @@
           :value="address.id"
           name="pickup-location"
           :no-indicator="!selectable"
-          name="pickup-location"
           class="select-address-map-list__radio-button"
           size="sm"
           :data-test-coords="address.geoLocation"
