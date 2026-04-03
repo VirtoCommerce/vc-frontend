@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "新規追加",
           "add_new_address": "新しい住所を追加",
+          "no_results": "検索条件に一致する住所はありません",
           "search": "検索",
           "select_address": "住所を選択",
           "title": "配送先："

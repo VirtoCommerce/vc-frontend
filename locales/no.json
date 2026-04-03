@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Legg til ny",
           "add_new_address": "Legg til ny adresse",
+          "no_results": "Ingen adresser samsvarer med søket ditt",
           "search": "Søk",
           "select_address": "Velg adresse",
           "title": "Leveringsadresse:"

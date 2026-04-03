@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Dodaj nowy",
           "add_new_address": "Dodaj nowy adres",
+          "no_results": "Nie znaleziono adresów pasujących do Twojego wyszukiwania",
           "search": "Szukaj",
           "select_address": "Wybierz adres",
           "title": "Wyślij do:"

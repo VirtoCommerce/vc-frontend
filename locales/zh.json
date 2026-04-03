@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "新增",
           "add_new_address": "添加新地址",
+          "no_results": "没有找到匹配您搜索的地址",
           "search": "搜索",
           "select_address": "选择地址",
           "title": "运送至："
