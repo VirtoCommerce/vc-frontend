@@ -8,7 +8,7 @@ const triggerElements = ref<Map<string, HTMLElement>>(new Map());
 export function useModal() {
   function openModal(options: IModal): CloseModalHandleType {
     const id = options.id ?? uniqueId();
-    triggerElements.value.set(id, document.activeElement as HTMLElement);
+    triggerElements.value.set(id, options.triggerElement ?? (document.activeElement as HTMLElement));
 
     stack.value.push({
       id,
