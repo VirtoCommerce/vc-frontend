@@ -1,5 +1,5 @@
 <template>
-  <template v-if="!cart?.items?.length && !recentlyBrowsedProducts?.length">
+  <template v-if="!cart?.items?.length && !savedForLaterList?.items?.length && !recentlyBrowsedProducts?.length">
     <VcLoaderOverlay v-if="loading" no-bg />
 
     <VcEmptyPage
@@ -62,15 +62,14 @@
       </VcWidget>
 
       <CartForLater
-        v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
+        v-if="!shouldHideSavedForLater && savedForLaterList?.items?.length"
         :saved-for-later-list="savedForLaterList"
-        :loading="moveFromSavedForLaterOverflowed"
         class="mt-5"
         @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
       />
 
       <RecentlyBrowsedProducts
-        v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
+        v-if="recentlyBrowsedProducts.length && !shouldHideRecentlyBrowsed"
         :products="recentlyBrowsedProducts"
         class="mt-5"
       />
@@ -84,7 +83,7 @@
           :items-grouped-by-vendor="lineItemsGroupedByVendor"
           :selected-item-ids="selectedItemIds"
           :validation-errors="cart.validationErrors"
-          :disabled="changeItemQuantityBatchedOverflowed || moveToSavedForLaterOverflowed || selectionOverflowed"
+          :disabled="changeItemQuantityBatchedOverflowed || selectionOverflowed"
           data-test-id="cart.products-section"
           :hide-controls="hideControls"
           @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
@@ -112,15 +111,14 @@
         </template>
 
         <CartForLater
-          v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
+          v-if="!shouldHideSavedForLater && savedForLaterList?.items?.length"
           :saved-for-later-list="savedForLaterList"
-          :loading="moveFromSavedForLaterOverflowed"
           class="mt-5"
           @add-to-cart="(lineItemId) => handleMoveToCart([lineItemId])"
         />
 
         <RecentlyBrowsedProducts
-          v-if="recentlyBrowsedProducts.length && !shouldHide('recently-browsed-products')"
+          v-if="recentlyBrowsedProducts.length && !shouldHideRecentlyBrowsed"
           :products="recentlyBrowsedProducts"
           class="mt-5"
         />
@@ -294,9 +292,7 @@ const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeC
 const {
   savedForLaterList,
   moveToSavedForLater,
-  moveToSavedForLaterOverflowed,
   moveFromSavedForLater,
-  moveFromSavedForLaterOverflowed,
   getSavedForLater,
   loading: saveForLaterLoading,
 } = useSavedForLater();
@@ -345,19 +341,19 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
 }
 
 async function handleSaveForLater(itemIds: string[]) {
-  if (!itemIds?.length || !cart.value?.id) {
+  if (!itemIds?.length) {
     return;
   }
 
-  await moveToSavedForLater(cart.value.id, itemIds);
+  await moveToSavedForLater(itemIds);
 }
 
 async function handleMoveToCart(itemIds: string[]) {
-  if (!itemIds?.length || !cart.value?.id) {
+  if (!itemIds?.length) {
     return;
   }
 
-  await moveFromSavedForLater(cart.value.id, itemIds);
+  await moveFromSavedForLater(itemIds);
 }
 
 function selectItemEvent(item: LineItemType | undefined): void {
@@ -370,6 +366,10 @@ function selectItemEvent(item: LineItemType | undefined): void {
     item_list_name: t("pages.cart.title"),
   });
 }
+
+const shouldHideSavedForLater = computed(() => !isAuthenticated.value || shouldHide("cart-for-later"));
+
+const shouldHideRecentlyBrowsed = computed(() => shouldHide("recently-browsed-products"));
 
 function shouldHide(id: string) {
   return props.blocksToHide?.includes(id);
@@ -437,10 +437,10 @@ void (async () => {
   }
 
   const isXRecommendModuleEnabled = isEnabledXRecommend(XRECOMMEND_ENABLED_KEY);
-  if (isAuthenticated.value && isXRecommendModuleEnabled && !shouldHide("recently-browsed-products")) {
+  if (isAuthenticated.value && isXRecommendModuleEnabled && !shouldHideRecentlyBrowsed.value) {
     recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
   }
-  if (isAuthenticated.value && !shouldHide("cart-for-later")) {
+  if (!shouldHideSavedForLater.value) {
     await getSavedForLater();
   }
 })();
