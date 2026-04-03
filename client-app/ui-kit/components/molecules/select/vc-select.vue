@@ -169,7 +169,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { union, lowerCase, isEqual } from "lodash";
+import { union, isEqual } from "lodash";
 import { computed, ref, useTemplateRef, provide, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { vcPopoverKey } from "@/ui-kit/components/atoms/popover/vc-popover-context";
@@ -304,10 +304,19 @@ const filteredItems = computed(() => {
     return props.items;
   }
 
-  const searching = lowerCase(filterValue.value);
-  const items = props.items.filter((item) => lowerCase(getItemText(item)).includes(searching));
+  const searching = filterValue.value.toLowerCase();
+  const items = props.items.filter((item) =>
+    String(getItemText(item) ?? "")
+      .toLowerCase()
+      .includes(searching),
+  );
 
-  const first = items.filter((item) => lowerCase(getItemText(item)).indexOf(searching) === 0);
+  const first = items.filter(
+    (item) =>
+      String(getItemText(item) ?? "")
+        .toLowerCase()
+        .indexOf(searching) === 0,
+  );
 
   return union(first, items);
 });

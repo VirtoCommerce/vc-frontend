@@ -666,7 +666,7 @@
         "vendor_label": "Anbieter",
         "all_vendor_products": "Alle Anbieterprodukte",
         "share_product_label": "Produkt teilen",
-        "create_configuration_button": "Konfiguration erstellen",
+        "create_configuration_button": "Neue Konfiguration erstellen",
         "price_block": {
           "title": "Preis und Lieferung",
           "mobile_title": "Teilen & Mehr",
@@ -873,6 +873,10 @@
         },
         "user_error_message": "Zahlung konnte nicht initialisiert werden. Bitte versuchen Sie es später noch einmal oder wählen Sie eine andere Zahlungsmethode.",
         "payment_unavailable": "Zahlungsmethode ist nicht verfügbar. Bitte versuche es später noch einmal."
+      },
+      "datatrans_lightbox": {
+        "title": "Sichere Zahlung",
+        "description": "Sie werden zu einem sicheren Datatrans-Zahlungsfenster weitergeleitet, um Ihren Einkauf abzuschließen."
       },
       "authorize_net": {
         "user_agreement_link": "Nutzungsbedingungen",

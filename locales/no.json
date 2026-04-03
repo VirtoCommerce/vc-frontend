@@ -666,7 +666,7 @@
         "vendor_label": "Leverandør",
         "all_vendor_products": "Alle leverandørens produkter",
         "share_product_label": "Del produkt",
-        "create_configuration_button": "Lag din egen konfigurasjon",
+        "create_configuration_button": "Lag ny konfigurasjon",
         "price_block": {
           "title": "Pris og levering",
           "mobile_title": "Del og mer",
@@ -873,6 +873,10 @@
         },
         "user_error_message": "Betalingen kan ikke startes. Prøv igjen senere eller bruk en annen betalingsmetode",
         "payment_unavailable": "Betalingsmetoden er ikke tilgjengelig. Prøv igjen senere"
+      },
+      "datatrans_lightbox": {
+        "title": "Sikker betaling",
+        "description": "Du vil bli videresendt til et sikkert Datatrans-betalingsvindu for å fullføre kjøpet."
       },
       "authorize_net": {
         "user_agreement_link": "Brukeravtale",

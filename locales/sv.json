@@ -666,7 +666,7 @@
         "vendor_label": "Leverantör",
         "all_vendor_products": "Alla leverantörens produkter",
         "share_product_label": "Dela produkt",
-        "create_configuration_button": "Skapa din egen konfiguration",
+        "create_configuration_button": "Skapa ny konfiguration",
         "price_block": {
           "title": "Pris och leverans",
           "mobile_title": "Dela och mer",
@@ -873,6 +873,10 @@
         },
         "user_error_message": "Kan inte initiera betalning. Vänligen försök igen senare eller använd en annan betalningsmetod",
         "payment_unavailable": "Betalningsmetoden är inte tillgänglig. Vänligen försök igen senare"
+      },
+      "datatrans_lightbox": {
+        "title": "Säker betalning",
+        "description": "Du kommer att omdirigeras till ett säkert Datatrans-betalningsfönster för att slutföra ditt köp."
       },
       "authorize_net": {
         "user_agreement_link": "Användaravtal",

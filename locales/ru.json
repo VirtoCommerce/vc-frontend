@@ -666,7 +666,7 @@
         "vendor_label": "Поставщик",
         "all_vendor_products": "Все Товары Поставщика",
         "share_product_label": "Поделиться товаром",
-        "create_configuration_button": "Создайте свою конфигурацию",
+        "create_configuration_button": "Создать новую конфигурацию",
         "price_block": {
           "title": "Цена и доставка",
           "mobile_title": "Опции и действия",
@@ -873,6 +873,10 @@
         },
         "user_error_message": "Не удалось инициализировать платёж. Попробуйте позже или выберите другой способ оплаты",
         "payment_unavailable": "Способ оплаты недоступен. Повторите попытку позже."
+      },
+      "datatrans_lightbox": {
+        "title": "Безопасная оплата",
+        "description": "Вы будете перенаправлены в безопасное окно оплаты Datatrans для завершения покупки."
       },
       "authorize_net": {
         "user_agreement_link": "Пользовательского соглашения",

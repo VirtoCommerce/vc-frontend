@@ -22,6 +22,7 @@ import { useShortCart } from "@/shared/cart/composables";
 
 export interface IProps {
   productId?: string;
+  lineItemId?: string;
   size?: VcChipSizeType;
 }
 
@@ -31,6 +32,13 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { cart } = useShortCart();
 
-const lineItemInCart = computed(() => cart.value?.items.find((item) => item.productId === props.productId));
+const lineItemInCart = computed(() => {
+  if (props.lineItemId) {
+    return cart.value?.items.find((item) => item.id === props.lineItemId);
+  }
+
+  return cart.value?.items.find((item) => item.productId === props.productId);
+});
+
 const countInCart = eagerComputed<number>(() => lineItemInCart.value?.quantity ?? 0);
 </script>
