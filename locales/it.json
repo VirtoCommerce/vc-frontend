@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Aggiungi nuovo",
           "add_new_address": "Aggiungi nuovo indirizzo",
+          "no_results": "Nessun indirizzo corrisponde alla tua ricerca",
           "search": "Cerca",
           "select_address": "Seleziona indirizzo",
           "title": "Spedire a:"
