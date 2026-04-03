@@ -1,13 +1,13 @@
 <template>
   <VcScrollbar vertical class="select-address-map-list">
-    <ul
+    <div
       v-if="addresses.length"
       role="radiogroup"
       :aria-label="$t('pages.checkout.shipping.links.select_pickup_point')"
       class="select-address-map-list__list"
       data-test-id="pickup-locations-list"
     >
-      <li
+      <div
         v-for="address in addresses"
         :key="address.id"
         :data-address-id="address.id"
@@ -44,8 +44,8 @@
             :availability-note="address.availabilityNote"
           />
         </VcRadioButton>
-      </li>
-    </ul>
+      </div>
+    </div>
 
     <div v-else class="select-address-map-list__not-found" data-test-id="pickup-locations-not-found">
       <span>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}</span>
