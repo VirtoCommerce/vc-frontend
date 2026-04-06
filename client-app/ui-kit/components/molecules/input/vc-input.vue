@@ -352,16 +352,6 @@ provide<VcInputContextType>("inputContext", {
       clip-path: inset(0 2rem 0 0);
     }
 
-    &:autofill {
-      &:disabled {
-        box-shadow: 0 0 0 1000px #f9fafb inset;
-      }
-
-      &:not(:disabled) {
-        box-shadow: 0 0 0 1000px #fff inset;
-      }
-    }
-
     &:focus {
       @apply outline-none;
     }
@@ -371,11 +361,22 @@ provide<VcInputContextType>("inputContext", {
       @apply text-neutral-500 cursor-not-allowed;
     }
 
+    &:autofill {
+      &:disabled {
+        box-shadow: 0 0 0 1000px var(--color-neutral-200) inset;
+        opacity: 0.6;
+      }
+
+      &:not(:disabled) {
+        box-shadow: 0 0 0 1000px var(--color-additional-50) inset;
+      }
+    }
+
     &::placeholder {
-      @apply text-neutral-400 font-normal;
+      @apply text-neutral-500 font-normal;
 
       #{$error} & {
-        @apply text-danger-400;
+        @apply text-danger-500;
       }
     }
 

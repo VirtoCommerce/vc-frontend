@@ -71,9 +71,15 @@
               :error="!!input.errorMessage"
             />
 
-            <button type="button" class="mt-3.5 text-danger" @click="removeNewList(index)">
-              <VcIcon name="delete" :size="16" />
-            </button>
+            <VcButton
+              class="mt-2"
+              color="neutral"
+              size="xs"
+              variant="no-background"
+              icon="delete-thin"
+              :disabled="loading"
+              @click="removeNewList(index)"
+            />
           </li>
         </transition-group>
 

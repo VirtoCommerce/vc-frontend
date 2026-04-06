@@ -251,6 +251,7 @@
       "addresses": "Adresser",
       "orders": "Beställningar",
       "lists": "Listor",
+      "promotion_coupons": "Kuponger & Erbjudanden",
       "list_details": "Listdetaljer",
       "cart": "Kundvagn",
       "company_info": "Företagsinformation",
@@ -315,7 +316,12 @@
           "call_us_label": "Ring oss: ",
           "logged_in_as": "inloggad som",
           "account_menu_label": "Kontomeny",
-          "no_results": "Inga resultat hittades"
+          "no_results": "Inga resultat hittades",
+          "dark_mode": {
+            "system": "Tema: automatiskt",
+            "dark": "Tema: mörkt",
+            "light": "Tema: ljust"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "Katalog",
@@ -361,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Lägg till ny",
           "add_new_address": "Lägg till ny adress",
+          "no_results": "Inga adresser matchar din sökning",
           "search": "Sök",
           "select_address": "Välj adress",
           "title": "Skicka till:"
@@ -445,6 +452,9 @@
     "account": {
       "navigation": {
         "main_title": "Konto",
+        "purchasing_title": "Inköp",
+        "marketing_title": "Marknadsföring",
+        "user_title": "Användare",
         "corporate_title": "Företag",
         "links": {
           "dashboard": "@:common.links.dashboard",
@@ -454,6 +464,7 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
+          "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -538,6 +549,12 @@
         "end_date_label": "Slutdatum",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expires": "Går ut",
+        "click_to_copy": "Klicka för att kopiera",
+        "clipboard_success": "Kupong kopierad",
+        "tap_to_copy": "Tryck för att kopiera"
       }
     },
     "company": {
@@ -650,7 +667,7 @@
         "vendor_label": "Leverantör",
         "all_vendor_products": "Alla leverantörens produkter",
         "share_product_label": "Dela produkt",
-        "create_configuration_button": "Skapa din egen konfiguration",
+        "create_configuration_button": "Skapa ny konfiguration",
         "price_block": {
           "title": "Pris och leverans",
           "mobile_title": "Dela och mer",
@@ -720,7 +737,7 @@
       },
       "shipment_options": {
         "title": "Leveransalternativ",
-        "in_store": "Hämta i butik"
+        "check_pickup_locations": "Kontrollera upphämtningsställen"
       }
     },
     "checkout": {
@@ -857,6 +874,10 @@
         },
         "user_error_message": "Kan inte initiera betalning. Vänligen försök igen senare eller använd en annan betalningsmetod",
         "payment_unavailable": "Betalningsmetoden är inte tillgänglig. Vänligen försök igen senare"
+      },
+      "datatrans_lightbox": {
+        "title": "Säker betalning",
+        "description": "Du kommer att omdirigeras till ett säkert Datatrans-betalningsfönster för att slutföra ditt köp."
       },
       "authorize_net": {
         "user_agreement_link": "Användaravtal",
@@ -1197,7 +1218,8 @@
           "cart_pickup_points_not_found": "Det finns inga tillgängliga upphämtningsställen för dessa produkter. Välj en annan leveransmetod.",
           "cart_pickup_points_not_found_by_filter": "Hittade inga upphämtningsställen.",
           "cart_pickup_points_reset_search": "Återställ sökning",
-          "availability": "Tillgänglighet"
+          "availability": "Tillgänglighet",
+          "search_pickup_locations": "Sök upphämtningsplatser"
         }
       },
       "order_payment": {
@@ -1263,6 +1285,10 @@
         "title": "Impersonation",
         "success": "Impersonation lyckades",
         "error": "Några problem uppstod under impersonation. Kontrollera dina behörigheter"
+      },
+      "promotion_coupons": {
+        "title": "Alla kuponger & kampanjer",
+        "no_lists": "Du har inga kuponger eller kampanjer"
       }
     },
     "company": {

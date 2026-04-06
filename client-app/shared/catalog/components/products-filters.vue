@@ -197,11 +197,3 @@ function isSliderFilterEnabled() {
   return themeContext.value.settings.range_filter_type === "slider";
 }
 </script>
-
-<style scoped lang="scss">
-:deep(.facet-filter--dropdown:last-child) {
-  .vc-popover__content {
-    @apply right-0 left-auto #{!important};
-  }
-}
-</style>

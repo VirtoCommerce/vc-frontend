@@ -5,13 +5,14 @@
         <SelectAddressFilter class="select-address-map-mobile__filter" @apply-filter="applyFilter" />
       </div>
 
-      <div class="select-address-map-mobile__content">
+      <div class="select-address-map-mobile__content" @keydown.tab="onContentTab">
         <VcLoaderOverlay v-if="pickupLocationsLoading" />
 
         <SelectAddressMapList
           v-show="activeView === 'list'"
           :addresses="addresses"
           :selected-address-id="selectedAddressId"
+          :selectable="selectable"
           class="select-address-map-mobile__list"
           @select="onSelect"
           @reset-filter="resetFilter"
@@ -48,8 +49,10 @@
       <div v-if="selectedLocation" class="select-address-map-mobile__info-card">
         <Transition name="slide-up" @after-leave="onTransitionAfterLeave">
           <PickupLocationCard
+            ref="pickupCardRef"
             v-if="isInfoCardVisible"
             :location="selectedLocation"
+            :selectable="selectable"
             data-test-id="pickup-location-card"
             @close="onInfoCardClose"
             @select="onCardSelect"
@@ -65,10 +68,11 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, toRef } from "vue";
+import { nextTick, ref, toRef, useTemplateRef, watch } from "vue";
 import { SelectAddressFilter } from "@/shared/checkout";
 import { useSelectAddressMap } from "@/shared/checkout/composables";
 import { useModal } from "@/shared/modal";
+import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import PickupLocationCard from "../pickup-location-card.vue";
 import SelectAddressMapList from "./select-address-map-list.vue";
 import SelectAddressMapView from "./select-address-map-view.vue";
@@ -80,6 +84,7 @@ interface IProps {
   addresses: PickupLocationType[];
   apiKey: string;
   currentAddress?: { id: string };
+  selectable?: boolean;
 }
 
 interface IEmits {
@@ -88,7 +93,9 @@ interface IEmits {
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  selectable: true,
+});
 
 const { closeModal } = useModal();
 const activeView = ref<ViewModeType>("list");
@@ -102,6 +109,24 @@ const { selectedAddressId, filterIsApplied, pickupLocationsLoading, selectAddres
     currentAddress: toRef(props, "currentAddress"),
     onFilterChange: () => emit("filterChange"),
   });
+
+// Automatically scroll to current address in list and position map
+watch(
+  () => props.addresses,
+  (addresses) => {
+    if (props.currentAddress?.id && addresses.length) {
+      const currentLocation = addresses.find((addr) => addr.id === props.currentAddress?.id);
+
+      if (currentLocation) {
+        selectAddress(currentLocation, {
+          scrollToSelectedOnMap: true,
+          scrollToSelectedOnList: true,
+        });
+      }
+    }
+  },
+  { immediate: true, flush: "post" },
+);
 
 function onSelect(address: PickupLocationType) {
   selectAddress(address, { scrollToSelectedOnMap: true });
@@ -119,6 +144,12 @@ function onCardSelect(locationId: string) {
 function onInfoCardClose() {
   closingLocationId.value = selectedLocation.value?.id;
   isInfoCardVisible.value = false;
+  void nextTick(() => {
+    const radio = document.querySelector<HTMLElement>(
+      `[data-address-id="${CSS.escape(selectedAddressId.value ?? "")}"] input[type="radio"]`,
+    );
+    radio?.focus();
+  });
 }
 
 function onTransitionAfterLeave() {
@@ -127,6 +158,20 @@ function onTransitionAfterLeave() {
     selectedLocation.value = undefined;
   }
   closingLocationId.value = undefined;
+}
+
+const pickupCardRef = useTemplateRef<InstanceType<typeof PickupLocationCard>>("pickupCardRef");
+
+function onContentTab(event: KeyboardEvent) {
+  if (event.shiftKey || !isInfoCardVisible.value || !pickupCardRef.value) {
+    return;
+  }
+
+  const cardElement = pickupCardRef.value.$el as HTMLElement;
+  if (cardElement) {
+    event.preventDefault();
+    focusFirstElement(cardElement, {});
+  }
 }
 </script>
 

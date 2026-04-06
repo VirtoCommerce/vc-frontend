@@ -251,6 +251,7 @@
       "addresses": "Adresy",
       "orders": "Zamówienia",
       "lists": "Listy",
+      "promotion_coupons": "Kupony i promocje",
       "list_details": "Szczegóły listy",
       "cart": "Koszyk",
       "company_info": "Informacje o firmie",
@@ -315,7 +316,12 @@
           "call_us_label": "Zadzwoń do nas: ",
           "logged_in_as": "zalogowany jako",
           "account_menu_label": "Menu konta",
-          "no_results": "Nie znaleziono wyników"
+          "no_results": "Nie znaleziono wyników",
+          "dark_mode": {
+            "system": "Motyw: automatyczny",
+            "dark": "Motyw: ciemny",
+            "light": "Motyw: jasny"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "Katalog",
@@ -361,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Dodaj nowy",
           "add_new_address": "Dodaj nowy adres",
+          "no_results": "Nie znaleziono adresów pasujących do Twojego wyszukiwania",
           "search": "Szukaj",
           "select_address": "Wybierz adres",
           "title": "Wyślij do:"
@@ -445,6 +452,9 @@
     "account": {
       "navigation": {
         "main_title": "Konto",
+        "purchasing_title": "Zakupy",
+        "marketing_title": "Marketing",
+        "user_title": "Użytkownik",
         "corporate_title": "Korporacyjne",
         "links": {
           "dashboard": "@:common.links.dashboard",
@@ -454,6 +464,7 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
+          "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -538,6 +549,12 @@
         "end_date_label": "Data zakończenia",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expires": "Wygasa",
+        "click_to_copy": "Kliknij, aby skopiować",
+        "clipboard_success": "Kupon pomyślnie skopiowany",
+        "tap_to_copy": "Dotknij, aby skopiować"
       }
     },
     "company": {
@@ -650,7 +667,7 @@
         "vendor_label": "Sprzedawca",
         "all_vendor_products": "Wszystkie Produkty Sprzedawcy",
         "share_product_label": "Udostępnij produkt",
-        "create_configuration_button": "Utwórz własną konfigurację",
+        "create_configuration_button": "Utwórz nową konfigurację",
         "price_block": {
           "title": "Cena i dostawa",
           "mobile_title": "Udostępnij i więcej",
@@ -720,7 +737,7 @@
       },
       "shipment_options": {
         "title": "Opcje dostawy",
-        "in_store": "Odbiór osobisty"
+        "check_pickup_locations": "Sprawdź punkty odbioru"
       }
     },
     "checkout": {
@@ -857,6 +874,10 @@
         },
         "user_error_message": "Nie można zainicjować płatności. Spróbuj ponownie później lub użyj innej metody płatności",
         "payment_unavailable": "Metoda płatności jest niedostępna. Spróbuj ponownie później."
+      },
+      "datatrans_lightbox": {
+        "title": "Bezpieczna płatność",
+        "description": "Zostaniesz przekierowany do bezpiecznego okna płatności Datatrans, aby dokończyć zakup."
       },
       "authorize_net": {
         "user_agreement_link": "Umowa użytkownika",
@@ -1197,7 +1218,8 @@
           "cart_pickup_points_not_found": "Brak dostępnych punktów odbioru dla tych produktów. Wybierz inną metodę wysyłki.",
           "cart_pickup_points_not_found_by_filter": "Nie znaleziono punktów odbioru.",
           "cart_pickup_points_reset_search": "Resetuj wyszukiwanie",
-          "availability": "Dostępność"
+          "availability": "Dostępność",
+          "search_pickup_locations": "Szukaj punktów odbioru"
         }
       },
       "order_payment": {
@@ -1263,6 +1285,10 @@
         "title": "Podrabianie",
         "success": "Podrobienie zakończone",
         "error": "Wystąpiły problemy podczas podrabiania. Sprawdź swoje uprawnienia"
+      },
+      "promotion_coupons": {
+        "title": "Wszystkie kupony i promocje",
+        "no_lists": "Nie masz żadnych kuponów ani promocji"
       }
     },
     "company": {

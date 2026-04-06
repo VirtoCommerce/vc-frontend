@@ -1,0 +1,43 @@
+// Solid chips: same additional-50→950 swap for text and icons.
+.vc-chip {
+  $colors: primary, secondary, accent, neutral, success, danger, info, warning;
+  $solid: "";
+  $solidLight: "";
+
+  &--variant {
+    &--solid {
+      $solid: &;
+
+      --text-color: var(--color-additional-950);
+      --main-icon-color: var(--color-additional-950);
+      --close-button-icon-color: var(--color-additional-950);
+    }
+
+    &--solid-light {
+      $solidLight: &;
+    }
+  }
+
+  // Focus ring: chips override --outline-color per-color at 0.4 opacity.
+  // Bump to -700 at 0.8 for dark-mode visibility.
+  @each $color in $colors {
+    &--color--#{$color} {
+      --outline-color: rgb(from var(--color-#{$color}-700) r g b / 0.8);
+    }
+  }
+
+  &--color {
+    @each $color in $colors {
+      &--#{$color} {
+        &#{$solid} {
+          --bg-color: var(--color-#{$color}-400);
+          --border-color: var(--color-#{$color}-400);
+        }
+
+        &#{$solidLight} {
+          --bg-color: var(--color-#{$color}-100);
+        }
+      }
+    }
+  }
+}

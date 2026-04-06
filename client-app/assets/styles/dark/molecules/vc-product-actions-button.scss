@@ -1,0 +1,15 @@
+// Focus ring: product-actions-button uses --focus-color at full opacity with
+// -500 shades. Bump to -700 in dark mode for better contrast on dark surfaces.
+$colors: primary, secondary, accent, neutral, success, danger, info, warning;
+
+@each $color in $colors {
+  .vc-product-actions-button--color--#{$color} {
+    --focus-color: var(--color-#{$color}-700);
+  }
+}
+
+// Inactive (non-active) product-actions-button defaults to neutral-500.
+// Bump to neutral-700 in dark mode.
+.vc-product-actions-button:not(.vc-product-actions-button--active) {
+  --focus-color: var(--color-neutral-700);
+}

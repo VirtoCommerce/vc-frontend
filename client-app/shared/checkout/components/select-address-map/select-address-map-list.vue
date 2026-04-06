@@ -1,7 +1,13 @@
 <template>
   <VcScrollbar vertical class="select-address-map-list">
-    <ul v-if="addresses.length" class="select-address-map-list__list" data-test-id="pickup-locations-list">
-      <li
+    <div
+      v-if="addresses.length"
+      role="radiogroup"
+      :aria-label="$t('pages.checkout.shipping.links.select_pickup_point')"
+      class="select-address-map-list__list"
+      data-test-id="pickup-locations-list"
+    >
+      <div
         v-for="address in addresses"
         :key="address.id"
         :data-address-id="address.id"
@@ -13,18 +19,24 @@
         :data-pickup-point-name="address.name"
         :data-coords="address.geoLocation"
         class="select-address-map-list__item"
+        data-test-id="pickup-location-item"
       >
         <VcRadioButton
           :model-value="selectedAddressId"
           :value="address.id"
+          name="pickup-location"
+          :no-indicator="!selectable"
           class="select-address-map-list__radio-button"
           size="sm"
           :data-test-coords="address.geoLocation"
           @click="$emit('select', address)"
+          @keydown.enter="$emit('select', address)"
         >
-          <div class="select-address-map-list__label">{{ address.name }}</div>
+          <div class="select-address-map-list__label" data-test-id="pickup-location-name">{{ address.name }}</div>
 
-          <div class="select-address-map-list__address">{{ getAddressName(address) }}</div>
+          <div class="select-address-map-list__address" data-test-id="pickup-location-address">
+            {{ getAddressName(address) }}
+          </div>
 
           <PickupAvailabilityInfo
             class="select-address-map-list__pickup-availability"
@@ -32,13 +44,13 @@
             :availability-note="address.availabilityNote"
           />
         </VcRadioButton>
-      </li>
-    </ul>
+      </div>
+    </div>
 
-    <div v-else class="select-address-map-list__not-found">
+    <div v-else class="select-address-map-list__not-found" data-test-id="pickup-locations-not-found">
       <span>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}</span>
 
-      <VcButton prepend-icon="reset" @click="$emit('resetFilter')">
+      <VcButton prepend-icon="reset" data-test-id="reset-search-button" @click="$emit('resetFilter')">
         {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
       </VcButton>
     </div>
@@ -53,6 +65,7 @@ import PickupAvailabilityInfo from "@/shared/common/components/pickup-availabili
 interface IProps {
   addresses: PickupLocationType[];
   selectedAddressId?: string;
+  selectable?: boolean;
 }
 
 interface IEmits {
@@ -61,7 +74,9 @@ interface IEmits {
 }
 
 defineEmits<IEmits>();
-defineProps<IProps>();
+withDefaults(defineProps<IProps>(), {
+  selectable: true,
+});
 </script>
 
 <style lang="scss">
@@ -75,7 +90,8 @@ defineProps<IProps>();
   &__item {
     @apply p-2.5 rounded-[--vc-radius] border border-neutral-400;
 
-    &:has(:checked) {
+    &:has(:checked),
+    &:hover {
       @apply bg-secondary-50;
     }
   }

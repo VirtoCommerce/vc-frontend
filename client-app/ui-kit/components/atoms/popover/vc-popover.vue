@@ -14,7 +14,12 @@
         :id="contentId"
         ref="floating"
         :style="{ zIndex, display, width, ...floatingStyles }"
-        class="vc-popover__content"
+        :class="[
+          'vc-popover__body',
+          {
+            'vc-popover__body--shadow': shadow,
+          },
+        ]"
         :role="role"
       >
         <div
@@ -28,7 +33,9 @@
           <div class="vc-popover__arrow"></div>
         </div>
 
-        <slot name="content" :close="close" />
+        <div class="vc-popover__content">
+          <slot name="content" :close="close" />
+        </div>
       </div>
     </teleport>
   </div>
@@ -39,6 +46,7 @@ import { flip, offset, shift, useFloating, autoUpdate, arrow } from "@floating-u
 import { onClickOutside } from "@vueuse/core";
 import { ref, toRefs, computed, watch, inject } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
+import { getColorValue } from "@/ui-kit/utilities";
 import { vcPopoverKey } from "./vc-popover-context";
 
 interface IEmits {
@@ -52,6 +60,9 @@ interface IProps {
   offsetOptions?: VcPopoverOffsetOptionsType;
   shiftOptions?: VcPopoverShiftOptionsType;
   disabled?: boolean;
+  shadow?: boolean;
+  bgColor?: string;
+  radius?: string;
   width?: string;
   zIndex?: number | string;
   role?: string;
@@ -110,6 +121,8 @@ const emitTriggerProps = computed(() => ({
 
 const display = computed(() => (opened.value ? "block" : "none"));
 const arrowLeft = computed(() => (middlewareData.value.arrow?.x != null ? `${middlewareData.value.arrow.x}px` : ""));
+const _bgColor = computed(() => getColorValue(props.bgColor));
+const _radius = computed(() => props.radius);
 
 const { floatingStyles, middlewareData } = useFloating(reference, floating, {
   placement,
@@ -166,6 +179,9 @@ watch(opened, (value: boolean) => emit("toggle", value));
 <style lang="scss">
 .vc-popover {
   $popper: "";
+  $shadow: "";
+
+  @apply max-w-full;
 
   &__trigger {
     @apply max-w-full size-full;
@@ -177,15 +193,38 @@ watch(opened, (value: boolean) => emit("toggle", value));
     @apply absolute top-0 w-5 h-2.5 p-1 overflow-hidden;
   }
 
-  &__arrow {
-    @apply w-3 h-3 bg-additional-50 rotate-45 shadow-md;
-  }
+  &__body {
+    // For teleportation cases, variables are declared in &__body
+    --props-bg-color: v-bind(_bgColor);
+    --props-radius: v-bind(_radius);
+    --bg-color: var(--props-bg-color, var(--vc-popover-bg-color, transparent));
+    --radius: var(--props-radius, var(--vc-popover-radius, var(--vc-radius, 0.5rem)));
+    --arrow-color: var(--props-bg-color, var(--vc-popover-bg-color, var(--color-additional-50)));
 
-  &__content {
     @apply max-w-[100vw];
 
     &:has(#{$popper}) {
       @apply pt-2.5;
+    }
+
+    &--shadow {
+      $shadow: &;
+    }
+  }
+
+  &__arrow {
+    @apply w-3 h-3 rotate-45 bg-[--arrow-color];
+
+    #{$shadow} & {
+      @apply shadow-md;
+    }
+  }
+
+  &__content {
+    @apply bg-[--bg-color] rounded-[--radius];
+
+    #{$shadow} & {
+      @apply shadow-lg;
     }
   }
 }

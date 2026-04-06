@@ -1,7 +1,22 @@
 <template>
-  <VcChip v-if="availabilityNote" size="sm" :variant="variant" :color="chipColor" icon="truck" truncate>
-    <span>{{ availabilityNote }}</span>
-  </VcChip>
+  <VcTooltip v-if="availabilityNote" placement="bottom">
+    <template #trigger>
+      <VcChip
+        size="sm"
+        :variant="variant"
+        :color="chipColor"
+        icon="truck"
+        truncate
+        data-test-id="pickup-availability-chip"
+      >
+        <span>{{ availabilityNote }}</span>
+      </VcChip>
+    </template>
+
+    <template #content>
+      {{ availabilityNote }}
+    </template>
+  </VcTooltip>
 </template>
 
 <script setup lang="ts">

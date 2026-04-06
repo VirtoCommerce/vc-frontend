@@ -3,7 +3,7 @@
     :is="tag"
     ref="el"
     :data-test-id="testId"
-    :tabindex="isScrollable ? 0 : undefined"
+    :tabindex="focusable ? 0 : undefined"
     :class="[
       'vc-scrollbar',
       {
@@ -38,6 +38,7 @@ interface IProps {
   vertical?: boolean;
   horizontal?: boolean;
   noBar?: boolean;
+  focusable?: boolean;
   tag?: string;
   trackColor?: string;
   thumbColor?: string;
@@ -52,13 +53,12 @@ const props = withDefaults(defineProps<IProps>(), {
   horizontal: false,
   disabled: false,
   noBar: false,
+  focusable: false,
   tag: "div",
   edgeThreshold: 0,
 });
 
 const el = useTemplateRef<HTMLElement>("el");
-
-const isScrollable = computed(() => (props.vertical || props.horizontal) && !props.disabled);
 
 provide(vcScrollbarKey, { el });
 

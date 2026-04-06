@@ -251,6 +251,7 @@
       "addresses": "Indirizzi",
       "orders": "Ordini",
       "lists": "Liste",
+      "promotion_coupons": "Coupon e promozioni",
       "list_details": "Dettagli lista",
       "cart": "Carrello",
       "company_info": "Informazioni azienda",
@@ -315,7 +316,12 @@
           "call_us_label": "Chiamaci: ",
           "logged_in_as": "connesso come",
           "account_menu_label": "Menu account",
-          "no_results": "Nessun risultato trovato"
+          "no_results": "Nessun risultato trovato",
+          "dark_mode": {
+            "system": "Tema: automatico",
+            "dark": "Tema: scuro",
+            "light": "Tema: chiaro"
+          }
         },
         "bottom_header": {
           "catalog_menu_button": "Catalogo",
@@ -361,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Aggiungi nuovo",
           "add_new_address": "Aggiungi nuovo indirizzo",
+          "no_results": "Nessun indirizzo corrisponde alla tua ricerca",
           "search": "Cerca",
           "select_address": "Seleziona indirizzo",
           "title": "Spedire a:"
@@ -445,6 +452,9 @@
     "account": {
       "navigation": {
         "main_title": "Account",
+        "purchasing_title": "Acquisti",
+        "marketing_title": "Marketing",
+        "user_title": "Utente",
         "corporate_title": "Aziendale",
         "links": {
           "dashboard": "@:common.links.dashboard",
@@ -454,6 +464,7 @@
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
           "list_details": "@:common.links.list_details",
+          "promotion_coupons": "@:common.links.promotion_coupons",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards"
@@ -538,6 +549,12 @@
         "end_date_label": "Data di fine",
         "apply_button": "@:common.buttons.apply",
         "reset_button": "@:common.buttons.reset"
+      },
+      "promotion_coupons": {
+        "expires": "Scade",
+        "click_to_copy": "Clicca per copiare",
+        "clipboard_success": "Coupon copiato con successo",
+        "tap_to_copy": "Tocca per copiare"
       }
     },
     "company": {
@@ -650,7 +667,7 @@
         "vendor_label": "Fornitore",
         "all_vendor_products": "Tutti I Prodotti Del Fornitore",
         "share_product_label": "Condividi prodotto",
-        "create_configuration_button": "Crea la tua configurazione",
+        "create_configuration_button": "Crea nuova configurazione",
         "price_block": {
           "title": "Prezzo e consegna",
           "mobile_title": "Condividi e altro",
@@ -720,7 +737,7 @@
       },
       "shipment_options": {
         "title": "Opzioni di spedizione",
-        "in_store": "Ritiro in negozio"
+        "check_pickup_locations": "Verifica punti di ritiro"
       }
     },
     "checkout": {
@@ -857,6 +874,10 @@
         },
         "user_error_message": "Impossibile inizializzare il pagamento. Riprova più tardi o usa un altro metodo di pagamento",
         "payment_unavailable": "Metodo di pagamento non disponibile. Riprova più tardi."
+      },
+      "datatrans_lightbox": {
+        "title": "Pagamento sicuro",
+        "description": "Verrai reindirizzato a una finestra di pagamento Datatrans sicura per completare il tuo acquisto."
       },
       "authorize_net": {
         "user_agreement_link": "Accordo utente",
@@ -1197,7 +1218,8 @@
           "cart_pickup_points_not_found": "Non ci sono punti di ritiro disponibili per questi prodotti. Seleziona un altro metodo di spedizione.",
           "cart_pickup_points_not_found_by_filter": "Punti di ritiro non trovati.",
           "cart_pickup_points_reset_search": "Reimposta ricerca",
-          "availability": "Disponibilità"
+          "availability": "Disponibilità",
+          "search_pickup_locations": "Cerca punti di ritiro"
         }
       },
       "order_payment": {
@@ -1263,6 +1285,10 @@
         "title": "Impersonificazione",
         "success": "Impersonificazione riuscita",
         "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi"
+      },
+      "promotion_coupons": {
+        "title": "Tutti i coupon e le promozioni",
+        "no_lists": "Non hai coupon o promozioni"
       }
     },
     "company": {

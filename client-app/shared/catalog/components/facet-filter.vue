@@ -8,6 +8,7 @@
           size="sm"
           maxlength="30"
           :disabled="loading"
+          :aria-label="$t('common.labels.search', [facet.label])"
           :placeholder="$t('common.labels.search', [facet.label])"
           truncate
         />
@@ -23,14 +24,7 @@
           @click="handleFacetItemClick(item)"
         >
           <template #prepend>
-            <VcCheckbox
-              :model-value="isSelected(item)"
-              tabindex="-1"
-              size="xs"
-              :disabled="loading"
-              @change="handleFacetItemClick(item)"
-              @click.stop
-            />
+            <VcCheckbox :model-value="isSelected(item)" tabindex="-1" size="xs" :disabled="loading" />
           </template>
 
           <span>{{ item.label }}</span>
@@ -39,7 +33,7 @@
             <VcBadge
               :class="{ 'px-1': item.count && item.count > 9 }"
               variant="outline"
-              size="sm"
+              size="xs"
               rounded
               color="secondary"
             >
@@ -121,6 +115,7 @@
           size="sm"
           maxlength="30"
           :disabled="loading"
+          :aria-label="$t('common.labels.search', [facet.label])"
           :placeholder="$t('common.labels.search', [facet.label])"
           truncate
         />
@@ -137,25 +132,16 @@
           truncate
           :active="isSelected(item)"
           :title="item.label"
-          @click="
-            handleFacetItemClick(item);
-            close();
-          "
+          @click="handleFacetItemClick(item)"
         >
           <template #prepend>
-            <VcCheckbox
-              :model-value="isSelected(item)"
-              size="xs"
-              :disabled="loading"
-              @change="handleFacetItemClick(item)"
-              @click.stop
-            />
+            <VcCheckbox :model-value="isSelected(item)" size="xs" :disabled="loading" />
           </template>
 
           {{ item.label }}
 
           <template #append>
-            <VcBadge variant="outline" size="sm" rounded color="secondary">
+            <VcBadge variant="outline" size="xs" rounded color="secondary">
               {{ $n(item.count as number, "decimal") }}
             </VcBadge>
           </template>
