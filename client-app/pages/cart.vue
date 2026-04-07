@@ -62,7 +62,7 @@
       </VcWidget>
 
       <CartForLater
-        v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
+        v-if="hasAvailableSavedForLaterItems && !shouldHide('cart-for-later')"
         :saved-for-later-list="savedForLaterList"
         :loading="moveFromSavedForLaterOverflowed"
         class="mt-5"
@@ -112,7 +112,7 @@
         </template>
 
         <CartForLater
-          v-if="savedForLaterList?.items?.length && !shouldHide('cart-for-later')"
+          v-if="hasAvailableSavedForLaterItems && !shouldHide('cart-for-later')"
           :saved-for-later-list="savedForLaterList"
           :loading="moveFromSavedForLaterOverflowed"
           class="mt-5"
@@ -298,6 +298,7 @@ const {
   moveFromSavedForLater,
   moveFromSavedForLaterOverflowed,
   getSavedForLater,
+  hasAvailableItems: hasAvailableSavedForLaterItems,
   loading: saveForLaterLoading,
 } = useSavedForLater();
 

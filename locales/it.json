@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Aggiungi nuovo",
           "add_new_address": "Aggiungi nuovo indirizzo",
+          "no_results": "Nessun indirizzo corrisponde alla tua ricerca",
           "search": "Cerca",
           "select_address": "Seleziona indirizzo",
           "title": "Spedire a:"
@@ -666,7 +667,7 @@
         "vendor_label": "Fornitore",
         "all_vendor_products": "Tutti I Prodotti Del Fornitore",
         "share_product_label": "Condividi prodotto",
-        "create_configuration_button": "Crea la tua configurazione",
+        "create_configuration_button": "Crea nuova configurazione",
         "price_block": {
           "title": "Prezzo e consegna",
           "mobile_title": "Condividi e altro",
@@ -1217,7 +1218,8 @@
           "cart_pickup_points_not_found": "Non ci sono punti di ritiro disponibili per questi prodotti. Seleziona un altro metodo di spedizione.",
           "cart_pickup_points_not_found_by_filter": "Punti di ritiro non trovati.",
           "cart_pickup_points_reset_search": "Reimposta ricerca",
-          "availability": "Disponibilità"
+          "availability": "Disponibilità",
+          "search_pickup_locations": "Cerca punti di ritiro"
         }
       },
       "order_payment": {

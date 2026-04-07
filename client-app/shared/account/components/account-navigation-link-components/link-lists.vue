@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watchEffect } from "vue";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useWishlists } from "@/shared/wishlists";
 import type { ExtendedMenuLinkType } from "@/core/types";
@@ -34,18 +34,12 @@ defineProps<IProps>();
 
 const route = useRoute();
 
-const { lists, fetchWishlists } = useWishlists();
+const { lists } = useWishlists();
 const isListDetails = computed(() => ["Lists", "ListDetails"].includes(route.name as string));
 
 function isActive(listId: string) {
   return route.name === "ListDetails" && route.params.listId === listId;
 }
-
-watchEffect(async () => {
-  if (isListDetails.value) {
-    await fetchWishlists();
-  }
-});
 </script>
 
 <style lang="scss">

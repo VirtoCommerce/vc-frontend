@@ -190,7 +190,7 @@ const containerTag = computed(() => (isInsideInteractive.value ? "span" : "label
   }
 
   &__indicator {
-    @apply flex-none size-[--size] border-2 rounded-full border-neutral-400 bg-additional-50;
+    @apply flex-none size-[--size] border-2 rounded-full border-neutral-500 bg-additional-50;
 
     #{$no-indicator} & {
       @apply hidden;
