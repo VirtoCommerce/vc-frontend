@@ -1,5 +1,6 @@
 import { Logger, toCSV } from "@/core/utilities";
 import { canUseDOM, DEBUG_PREFIX } from "./constants";
+import type { ConfiguredPriceType } from "./types";
 import type {
   Breadcrumb,
   LineItemType,
@@ -23,17 +24,26 @@ export function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eve
   }
 }
 
-export function productToGtagItem(item: Product | VariationType, index?: number): Gtag.Item {
+export function productToGtagItem(
+  item: Product | VariationType,
+  index?: number,
+  priceOverride?: ConfiguredPriceType,
+): Gtag.Item {
   const categories: Record<string, string> =
     item && typeof item === "object" && "breadcrumbs" in item ? getCategories(item.breadcrumbs) : {};
+
+  const listPrice = priceOverride?.list ?? item.price?.list?.amount;
+  const discount = priceOverride
+    ? Math.max(priceOverride.list - priceOverride.actual, 0) || undefined
+    : item.price?.discountAmount?.amount;
 
   return {
     index,
     item_id: item.code,
     item_name: item.name,
     affiliation: item.vendor?.name,
-    price: item.price?.list?.amount,
-    discount: item.price?.discountAmount?.amount,
+    price: listPrice,
+    discount,
     quantity: item.availabilityData?.availableQuantity,
     ...categories,
   };
