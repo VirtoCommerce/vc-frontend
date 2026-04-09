@@ -303,12 +303,6 @@ export default defineConfigWithVueTs(
   // Configuration for Storybook files
   {
     files: [".storybook/preview.ts", "**/*.stories.ts"],
-    languageOptions: {
-      parserOptions: {
-        project: tsconfigs.storybook,
-        tsconfigRootDir,
-      },
-    },
     settings: {
       "import/resolver": {
         typescript: {
