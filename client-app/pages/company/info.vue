@@ -370,8 +370,8 @@ const paginatedAddresses = computed<MemberAddressType[]>(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 
-const columns = computed<ITableColumn[]>(() => {
-  const result: ITableColumn[] = [
+const columns = computed<VcTableColumnType[]>(() => {
+  const result: VcTableColumnType[] = [
     {
       id: "isFavorite",
       sortable: false,

@@ -8,6 +8,7 @@
         'vc-dialog--dividers': dividers,
       },
     ]"
+    @keydown="trapFocus ? onTrapKeydown($event) : undefined"
   >
     <slot />
   </div>
@@ -23,17 +24,25 @@ interface IProps {
   width?: string;
   maxHeight?: string;
   size?: VcDialogSizeType;
+  autoFocus?: boolean;
+  trapFocus?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
+  autoFocus: true,
 });
 
 const componentId = useComponentId("dialog");
 
-useFocusManagement({
+const autoFocusRef = toRef(props, "autoFocus");
+
+const trapFocusRef = toRef(props, "trapFocus");
+
+const { onKeydown: onTrapKeydown } = useFocusManagement({
   container: `#${componentId}`,
-  autoFocus: true,
+  autoFocus: autoFocusRef,
+  trapFocus: trapFocusRef,
 });
 
 const sizeRef = toRef(props, "size");
