@@ -74,7 +74,9 @@ export function _useNavigations() {
     return computed<ExtendedMenuLinkType | undefined>(() => {
       const raw = menuSchema.value?.header?.[type]?.[key];
 
-      if (!raw) return undefined;
+      if (!raw) {
+        return undefined;
+      }
 
       const schema = clone(getTranslatedMenuLink(raw));
 

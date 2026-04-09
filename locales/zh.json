@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "新增",
           "add_new_address": "添加新地址",
+          "no_results": "没有找到匹配您搜索的地址",
           "search": "搜索",
           "select_address": "选择地址",
           "title": "运送至："
@@ -1217,7 +1218,8 @@
           "cart_pickup_points_not_found": "此商品无适用的自提点。请选择其他配送方式",
           "cart_pickup_points_not_found_by_filter": "未找到自提点。",
           "cart_pickup_points_reset_search": "重置搜索",
-          "availability": "可用性"
+          "availability": "可用性",
+          "search_pickup_locations": "搜索取货地点"
         }
       },
       "order_payment": {

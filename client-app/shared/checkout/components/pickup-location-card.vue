@@ -1,5 +1,14 @@
 <template>
-  <VcDialog v-if="location" dividers class="pickup-location-card" size="xs" data-test-id="pickup-location-card-dialog">
+  <VcDialog
+    v-if="location"
+    dividers
+    :auto-focus="false"
+    trap-focus
+    class="pickup-location-card"
+    size="xs"
+    data-test-id="pickup-location-card-dialog"
+    @keydown.escape.stop="$emit('close')"
+  >
     <VcDialogHeader @close="$emit('close')">
       <template #main>
         <div class="pickup-location-card__header">

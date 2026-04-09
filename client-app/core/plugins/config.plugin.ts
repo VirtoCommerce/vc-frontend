@@ -19,14 +19,18 @@ export const configPlugin: Plugin<IThemeContext> = {
       const styleElement = document.createElement("style");
       styleElement.id = "vc-theme-variables";
 
-      // Light mode variables (default)
-      let css = `:root { ${presetToCssVars(options.preset)} }`;
-
-      // Dark mode variables
+      // Resolve dark preset
       const presetName = presetNameToFileName(options.activePresetName || options.defaultPresetName || "default");
       const darkPreset = darkPresets[presetName];
+
+      let css: string;
       if (darkPreset) {
+        // Light and dark variants exist — scope each to its mode
+        css = `:root:not(.dark) { ${presetToCssVars(options.preset)} }`;
         css += ` html.dark { ${presetToCssVars(darkPreset)} }`;
+      } else {
+        // No dark variant — apply light preset unconditionally
+        css = `:root { ${presetToCssVars(options.preset)} }`;
       }
 
       styleElement.textContent = css;
