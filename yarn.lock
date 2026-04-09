@@ -11368,6 +11368,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"map-or-similar@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "map-or-similar@npm:1.5.0"
+  checksum: 10c0/33c6ccfdc272992e33e4e99a69541a3e7faed9de3ac5bc732feb2500a9ee71d3f9d098980a70b7746e7eeb7f859ff7dfb8aa9b5ecc4e34170a32ab78cfb18def
+  languageName: node
+  linkType: hard
+
 "marked@npm:^13.0.3":
   version: 13.0.3
   resolution: "marked@npm:13.0.3"
@@ -11395,6 +11402,15 @@ __metadata:
   version: 2.12.2
   resolution: "mdn-data@npm:2.12.2"
   checksum: 10c0/b22443b71d70f72ccc3c6ba1608035431a8fc18c3c8fc53523f06d20e05c2ac10f9b53092759a2ca85cf02f0d37036f310b581ce03e7b99ac74d388ef8152ade
+  languageName: node
+  linkType: hard
+
+"memoizerific@npm:^1.11.3":
+  version: 1.11.3
+  resolution: "memoizerific@npm:1.11.3"
+  dependencies:
+    map-or-similar: "npm:^1.5.0"
+  checksum: 10c0/661bf69b7afbfad57f0208f0c63324f4c96087b480708115b78ee3f0237d86c7f91347f6db31528740b2776c2e34c709bcb034e1e910edee2270c9603a0a469e
   languageName: node
   linkType: hard
 
@@ -14173,6 +14189,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"storybook-addon-tag-badges@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "storybook-addon-tag-badges@npm:3.1.0"
+  dependencies:
+    memoizerific: "npm:^1.11.3"
+  peerDependencies:
+    storybook: ^10.0.0
+  checksum: 10c0/29c1aea1a9f03ec749815862c147ee43d56374bbc153c5b2188b3ec98922b1a02de605ad1d8d048e013eef496672e88130a2f3b882ab314cdf3c53f18dfe0a36
+  languageName: node
+  linkType: hard
+
 "storybook-vue3-router@npm:^7.0.0":
   version: 7.0.0
   resolution: "storybook-vue3-router@npm:7.0.0"
@@ -15545,6 +15572,7 @@ __metadata:
     sass: "npm:^1.97.3"
     skyflow-js: "npm:2.7.3"
     storybook: "npm:9.1.17"
+    storybook-addon-tag-badges: "npm:^3.1.0"
     storybook-vue3-router: "npm:^7.0.0"
     swiper: "npm:11.2.10"
     tailwindcss: "npm:^3.4.19"

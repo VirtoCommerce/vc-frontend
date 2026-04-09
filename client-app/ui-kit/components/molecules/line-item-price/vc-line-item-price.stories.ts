@@ -5,6 +5,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 const meta: Meta<typeof VcLineItemPrice> = {
   title: "Components/Molecules/VcLineItemPrice",
   component: VcLineItemPrice,
+  tags: ["deprecated"],
   render: (args) => ({
     setup: () => ({ args }),
     template: '<VcLineItemPrice v-bind="args" />',

@@ -5,8 +5,8 @@ import deprecatedJson from "./generated/deprecated-components.json";
 const deprecatedComponents = new Map<string, string>(Object.entries(deprecatedJson));
 
 const bannerStyle = {
-  background: "#78350f",
-  color: "#fef3c7",
+  background: "#FFCA7A",
+  color: "#3D2500",
   padding: "12px 16px",
   borderRadius: "8px",
   fontSize: "14px",
