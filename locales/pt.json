@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Adicionar novo",
           "add_new_address": "Adicionar novo endereço",
+          "no_results": "Nenhum endereço corresponde à sua pesquisa",
           "search": "Pesquisar",
           "select_address": "Selecionar endereço",
           "title": "Enviar para:"
@@ -1217,7 +1218,8 @@
           "cart_pickup_points_not_found": "Não há pontos de recolha disponíveis para estes produtos. Selecione outro método de envio.",
           "cart_pickup_points_not_found_by_filter": "Locais de recolha não encontrados.",
           "cart_pickup_points_reset_search": "Resetar pesquisa",
-          "availability": "Disponibilidade"
+          "availability": "Disponibilidade",
+          "search_pickup_locations": "Pesquisar locais de retirada"
         }
       },
       "order_payment": {

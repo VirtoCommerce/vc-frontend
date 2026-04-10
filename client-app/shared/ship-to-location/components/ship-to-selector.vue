@@ -76,6 +76,14 @@
                 <VcLoader />
               </div>
 
+              <div
+                v-else-if="!hasAddresses && filter"
+                class="ship-to-selector__empty"
+                data-test-id="ship-to-no-results"
+              >
+                {{ $t("shared.layout.header.ship_to_selector.no_results") }}
+              </div>
+
               <div v-else class="ship-to-selector__items" data-test-id="shipping-addresses-list">
                 <button
                   v-for="address in addresses"
@@ -269,6 +277,10 @@ onMounted(() => {
 
   &__title {
     @apply flex items-center gap-2 me-auto text-base font-bold;
+  }
+
+  &__empty {
+    @apply flex items-center justify-center min-h-20 text-neutral-400 text-sm;
   }
 
   &__items {

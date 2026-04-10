@@ -59,6 +59,7 @@ export function useBopis() {
   const { openModal } = useModal();
 
   async function openSelectAddressModal(cartId: string) {
+    const trigger = document.activeElement as HTMLElement;
     modalOpening.value = true;
 
     clearFilter();
@@ -75,6 +76,7 @@ export function useBopis() {
     const filterContext = createCartFilterContext();
 
     openModal({
+      triggerElement: trigger,
       component: modalComponent.value,
 
       props: {
