@@ -278,19 +278,32 @@ export type CartConfigurationItemFileType = {
 export type CartConfigurationItemType = {
   /** Custom text for 'Text' configuration item section */
   customText?: Maybe<Scalars['String']['output']>;
+  /** Extended price */
+  extendedPrice: MoneyType;
   /** List of files for 'File' configuration item section */
   files?: Maybe<Array<Maybe<CartConfigurationItemFileType>>>;
   /** Configuration item ID */
   id: Scalars['String']['output'];
+  /** Configuration item image URL */
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  /** List price */
+  listPrice: MoneyType;
   /** Configuration item name */
   name?: Maybe<Scalars['String']['output']>;
+  product?: Maybe<Product>;
   /** Configuration item product ID */
   productId?: Maybe<Scalars['String']['output']>;
   /** Configuration item product quantity */
   quantity?: Maybe<Scalars['Int']['output']>;
+  /** Sale price */
+  salePrice: MoneyType;
   /** Configuration item section ID */
   sectionId: Scalars['String']['output'];
-  /** Configuration item type. Possible values: 'Product', 'Text', 'File' */
+  /** Whether the configuration item is selected for checkout */
+  selectedForCheckout: Scalars['Boolean']['output'];
+  /** Configuration item SKU */
+  sku?: Maybe<Scalars['String']['output']>;
+  /** Configuration item type. Possible values: 'Product', 'Variation', 'Text', 'File' */
   type: Scalars['String']['output'];
 };
 
@@ -495,6 +508,8 @@ export type CatalogDiscountType = {
 };
 
 export type Category = {
+  /** Assets */
+  assets: Array<Asset>;
   /** Breadcrumbs */
   breadcrumbs: Array<Breadcrumb>;
   childCategories: Array<Category>;
@@ -612,6 +627,8 @@ export type ConfigurableProductOptionInput = {
   productId: Scalars['String']['input'];
   /** Quantity of product */
   quantity: Scalars['Int']['input'];
+  /** Whether the configuration item is selected for checkout */
+  selectedForCheckout?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type ConfigurationItemsResponseType = {
@@ -652,7 +669,7 @@ export type ConfigurationSectionInput = {
   option?: InputMaybe<ConfigurableProductOptionInput>;
   /** Configuration section ID */
   sectionId: Scalars['String']['input'];
-  /** Configuration section type. Possible values: 'Product', 'Text', 'File' */
+  /** Configuration section type. Possible values: 'Product', 'Variation', 'Text', 'File' */
   type: Scalars['String']['input'];
 };
 
@@ -854,14 +871,16 @@ export type CreateReviewResult = {
 export type CurrencyType = {
   /** Currency code may be used ISO 4217 */
   code: Scalars['String']['output'];
-  /** Currency English name */
+  /** Currency culture name */
   cultureName: Scalars['String']['output'];
   /** Currency custom formatting */
   customFormatting?: Maybe<Scalars['String']['output']>;
-  /** Currency English name */
+  /** Currency english name */
   englishName: Scalars['String']['output'];
   /** Exchange rate */
   exchangeRate: Scalars['Decimal']['output'];
+  /** Currency name */
+  name: Scalars['String']['output'];
   /** Symbol */
   symbol: Scalars['String']['output'];
 };
@@ -1505,6 +1524,34 @@ export type InputAddBulkItemsType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+export type InputAddConfigurationItemType = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  /** Configuration section to add */
+  configurationSection: ConfigurationSectionInput;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Line item ID */
+  lineItemId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+export type InputAddConfigurationItemsType = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  /** List of configuration sections to add */
+  configurationSections: Array<ConfigurationSectionInput>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Line item ID */
+  lineItemId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
@@ -2242,7 +2289,15 @@ export type InputNewBulkItemType = {
 };
 
 export type InputNewCartItemType = {
+  /** Comment */
+  comment?: InputMaybe<Scalars['String']['input']>;
+  /** Configurable product sections */
+  configurationSections?: InputMaybe<Array<InputMaybe<ConfigurationSectionInput>>>;
+  /** Line item created date override */
+  createdDate?: InputMaybe<Scalars['DateTime']['input']>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
+  /** Price */
+  price?: InputMaybe<Scalars['Decimal']['input']>;
   /** Product Id */
   productId: Scalars['String']['input'];
   /** Product quantity */
@@ -2456,6 +2511,34 @@ export type InputRemoveCartType = {
   /** Cart Id */
   cartId: Scalars['String']['input'];
   /** User Id */
+  userId: Scalars['String']['input'];
+};
+
+export type InputRemoveConfigurationItemType = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  /** Configuration section to remove */
+  configurationSection: ConfigurationSectionInput;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Line item ID */
+  lineItemId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+export type InputRemoveConfigurationItemsType = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  /** List of configuration sections to remove */
+  configurationSections: Array<ConfigurationSectionInput>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Line item ID */
+  lineItemId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
 
@@ -2726,6 +2809,34 @@ export type InputUpdateCartShipmentDynamicPropertiesType = {
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
   /** Shipment Id */
   shipmentId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+export type InputUpdateConfigurationItemType = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  /** Configuration section with updated quantity */
+  configurationSection: ConfigurationSectionInput;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Line item ID */
+  lineItemId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+export type InputUpdateConfigurationItemsType = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  /** List of configuration sections to update */
+  configurationSections: Array<ConfigurationSectionInput>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Line item ID */
+  lineItemId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
@@ -3218,6 +3329,8 @@ export type Mutations = {
   addAddressToFavorites?: Maybe<Scalars['Boolean']['output']>;
   addBulkItemsCart?: Maybe<BulkCartType>;
   addCartAddress?: Maybe<CartType>;
+  addConfigurationItem?: Maybe<CartType>;
+  addConfigurationItems?: Maybe<CartType>;
   addCoupon?: Maybe<CartType>;
   addFcmToken?: Maybe<Scalars['Boolean']['output']>;
   addGiftItems?: Maybe<CartType>;
@@ -3299,6 +3412,8 @@ export type Mutations = {
   removeCartAddress?: Maybe<CartType>;
   removeCartItem?: Maybe<CartType>;
   removeCartItems?: Maybe<CartType>;
+  removeConfigurationItem?: Maybe<CartType>;
+  removeConfigurationItems?: Maybe<CartType>;
   removeCoupon?: Maybe<CartType>;
   removeMemberFromOrganization?: Maybe<ContactType>;
   removeQuoteItem?: Maybe<QuoteType>;
@@ -3322,6 +3437,8 @@ export type Mutations = {
   updateCartPaymentDynamicProperties?: Maybe<CartType>;
   updateCartQuantity?: Maybe<CartType>;
   updateCartShipmentDynamicProperties?: Maybe<CartType>;
+  updateConfigurationItem?: Maybe<CartType>;
+  updateConfigurationItems?: Maybe<CartType>;
   updateContact?: Maybe<ContactType>;
   updateMemberAddresses?: Maybe<MemberType>;
   updateMemberDynamicProperties?: Maybe<MemberType>;
@@ -3357,6 +3474,16 @@ export type MutationsAddBulkItemsCartArgs = {
 
 export type MutationsAddCartAddressArgs = {
   command: InputAddOrUpdateCartAddressType;
+};
+
+
+export type MutationsAddConfigurationItemArgs = {
+  command: InputAddConfigurationItemType;
+};
+
+
+export type MutationsAddConfigurationItemsArgs = {
+  command: InputAddConfigurationItemsType;
 };
 
 
@@ -3750,6 +3877,16 @@ export type MutationsRemoveCartItemsArgs = {
 };
 
 
+export type MutationsRemoveConfigurationItemArgs = {
+  command: InputRemoveConfigurationItemType;
+};
+
+
+export type MutationsRemoveConfigurationItemsArgs = {
+  command: InputRemoveConfigurationItemsType;
+};
+
+
 export type MutationsRemoveCouponArgs = {
   command: InputRemoveCouponType;
 };
@@ -3862,6 +3999,16 @@ export type MutationsUpdateCartQuantityArgs = {
 
 export type MutationsUpdateCartShipmentDynamicPropertiesArgs = {
   command: InputUpdateCartShipmentDynamicPropertiesType;
+};
+
+
+export type MutationsUpdateConfigurationItemArgs = {
+  command: InputUpdateConfigurationItemType;
+};
+
+
+export type MutationsUpdateConfigurationItemsArgs = {
+  command: InputUpdateConfigurationItemsType;
 };
 
 
@@ -4034,15 +4181,32 @@ export type OrderConfigurationItemFileType = {
 };
 
 export type OrderConfigurationItemType = {
-  /** Configuration item custom text */
+  /** Custom text for 'Text' configuration item section */
   customText?: Maybe<Scalars['String']['output']>;
+  /** Extended price */
+  extendedPrice: MoneyType;
   /** List of files for 'File' configuration item section */
   files?: Maybe<Array<Maybe<OrderConfigurationItemFileType>>>;
   /** Configuration item ID */
   id: Scalars['String']['output'];
+  /** Configuration item image URL */
+  imageUrl?: Maybe<Scalars['String']['output']>;
   /** Configuration item name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Configuration item type. Possible values: 'Product', 'Text', 'File' */
+  /** List price */
+  price: MoneyType;
+  product?: Maybe<Product>;
+  /** Configuration item product ID */
+  productId?: Maybe<Scalars['String']['output']>;
+  /** Configuration item product quantity */
+  quantity?: Maybe<Scalars['Int']['output']>;
+  /** Sale price */
+  salePrice: MoneyType;
+  /** Configuration item section ID */
+  sectionId: Scalars['String']['output'];
+  /** Configuration item SKU */
+  sku?: Maybe<Scalars['String']['output']>;
+  /** Configuration item type. Possible values: 'Product', 'Variation', 'Text', 'File' */
   type: Scalars['String']['output'];
 };
 

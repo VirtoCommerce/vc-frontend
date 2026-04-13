@@ -157,7 +157,8 @@ import OptionNone from "./option-none.vue";
 import OptionProductNone from "./option-product-none.vue";
 import OptionProduct from "./option-product.vue";
 import SectionTextFieldset from "./section-text-fieldset.vue";
-import type { CartConfigurationItemType, ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { LocalConfigurationItemType } from "@/shared/catalog/types";
 import type { DeepReadonly } from "vue";
 
 const props = defineProps<IProps>();
@@ -168,7 +169,7 @@ const NOTIFICATIONS_GROUP = "product-configuration";
 interface IProps {
   configuration: DeepReadonly<ConfigurationSectionType[]>;
   productId: string;
-  initialConfiguration?: CartConfigurationItemType[];
+  initialConfiguration?: LocalConfigurationItemType[];
 }
 
 const initialConfiguration = toRef(props, "initialConfiguration");

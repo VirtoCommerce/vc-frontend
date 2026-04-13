@@ -14,7 +14,7 @@ import { compareConfigurationInputs } from "@/shared/catalog/utilities/configura
 import { useNotifications } from "@/shared/notification";
 import type { IConfigurationProperty, IConfigProductToCompare } from "../types";
 import type { Product, ConfigurationSectionInput } from "@/core/api/graphql/types";
-import type { LocalConfigurationType } from "@/shared/catalog/types";
+import type { LocalConfigurationItemType, LocalConfigurationType } from "@/shared/catalog/types";
 
 const NOTIFICATIONS_GROUP = "compare-products";
 const DEFAULT_MAX_PRODUCTS = 5;
@@ -88,7 +88,7 @@ function addConfiguredProductToCompare(
         ...section,
         ...section.option,
         id: section.sectionId,
-      })),
+      })) as LocalConfigurationItemType[],
     });
   }
 }
