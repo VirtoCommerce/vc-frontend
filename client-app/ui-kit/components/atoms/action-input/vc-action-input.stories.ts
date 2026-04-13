@@ -4,6 +4,10 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 const meta: Meta<typeof VcActionInput> = {
   title: "Components/Atoms/VcActionInput",
   component: VcActionInput,
+  tags: ["deprecated"],
+  parameters: {
+    deprecated: "Test message",
+  },
   argTypes: {
     modelValue: {
       control: "text",

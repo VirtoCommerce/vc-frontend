@@ -1,27 +1,5 @@
 import { Controls, Description, DocsContext, Primary, Stories, Subtitle, Title } from "@storybook/addon-docs/blocks";
 import { createElement, useContext } from "react";
-import atomsIndex from "../client-app/ui-kit/components/atoms/index.ts?raw";
-import moleculesIndex from "../client-app/ui-kit/components/molecules/index.ts?raw";
-import organismsIndex from "../client-app/ui-kit/components/organisms/index.ts?raw";
-
-const deprecatedCommentRe = /\/\*\*\s*@deprecated\s+([^*]*)/;
-const exportLineRe = /export\s*\{[^}]*\bas\s+(\w+)/;
-
-const deprecatedComponents = new Map<string, string>();
-for (const source of [atomsIndex, moleculesIndex, organismsIndex]) {
-  const lines = source.split(/\r?\n/);
-  for (let i = 0; i < lines.length; i++) {
-    const deprecatedMatch = deprecatedCommentRe.exec(lines[i]);
-    if (!deprecatedMatch) {
-      continue;
-    }
-    const message = deprecatedMatch[1].trim();
-    const exportMatch = exportLineRe.exec(lines[i + 1] ?? "");
-    if (exportMatch) {
-      deprecatedComponents.set(exportMatch[1], message);
-    }
-  }
-}
 
 const bannerStyle = {
   background: "#FFCA7A",
@@ -37,9 +15,7 @@ const bannerStyle = {
 function DeprecatedBanner() {
   const context = useContext<typeof DocsContext>(DocsContext);
   const story = context.storyById();
-  const title = story?.title ?? "";
-  const componentName = title.split("/").pop() || "";
-  const message = deprecatedComponents.get(componentName);
+  const message = story?.parameters?.deprecated ?? "";
 
   if (!message) {
     return null;
