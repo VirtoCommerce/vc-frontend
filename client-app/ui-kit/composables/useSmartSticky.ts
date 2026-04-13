@@ -167,6 +167,10 @@ function getAffixType(params: IAffixTypeParams): AffixType {
     return checkScrollingUp(elementTop, viewportTop, topSpacing, containerTop);
   }
 
+  if (viewportTop + topSpacing <= containerTop + POSITION_TOLERANCE) {
+    return AFFIX_TYPES.STATIC;
+  }
+
   return AFFIX_TYPES.ABSOLUTE;
 }
 
@@ -340,13 +344,6 @@ export function useSmartSticky(options: ISmartStickyOptions): IUseSmartStickyRet
       alignSelf: "flex-end",
     };
 
-    const absoluteStyle: CSSProperties = {
-      ...baseStyle,
-      position: "absolute",
-      top: `${translate.value}px`,
-      bottom: "auto",
-    };
-
     switch (affixType) {
       case AFFIX_TYPES.FIXED_TOP: {
         style.value = stickyTopStyle;
@@ -373,7 +370,14 @@ export function useSmartSticky(options: ISmartStickyOptions): IUseSmartStickyRet
       }
 
       case AFFIX_TYPES.ABSOLUTE: {
-        style.value = absoluteStyle;
+        translate.value = elementTop - containerTop;
+        style.value = {
+          ...baseStyle,
+          position: "absolute",
+          top: `${translate.value}px`,
+          bottom: "auto",
+        };
+
         break;
       }
     }
@@ -459,7 +463,6 @@ export function useSmartSticky(options: ISmartStickyOptions): IUseSmartStickyRet
   watch([elementBounding.height, containerBounding.height], updateImmediate);
 
   watch(isEnabled, (value) => {
-    // eslint-disable-next-line sonarjs/no-selector-parameter
     if (value) {
       void update();
     } else {

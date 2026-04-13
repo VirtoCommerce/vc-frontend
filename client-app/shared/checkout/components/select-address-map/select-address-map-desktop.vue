@@ -6,7 +6,7 @@
       <VcLoaderOverlay v-if="pickupLocationsLoading" />
 
       <template v-else-if="!pickupLocationsLoading && (addresses.length || filterIsApplied)">
-        <div class="select-address-map-desktop__sidebar">
+        <div class="select-address-map-desktop__sidebar" @keydown.tab="onSidebarTab">
           <SelectAddressMapList
             :addresses="addresses"
             :selected-address-id="selectedAddressId"
@@ -29,12 +29,13 @@
 
           <Transition name="slide">
             <PickupLocationCard
+              ref="pickupCardRef"
               v-if="infoCardLocation && addresses.length"
               :location="infoCardLocation"
               :selectable="selectable"
               :class="['select-address-map-desktop__card', { 'select-address-map-desktop__card--pulse': isPulsing }]"
               data-test-id="pickup-location-card"
-              @close="closeInfoCard"
+              @close="onCardClose"
               @select="onCardSelect"
             />
           </Transition>
@@ -57,10 +58,11 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from "vue";
+import { nextTick, toRef, useTemplateRef } from "vue";
 import { SelectAddressFilter } from "@/shared/checkout";
 import { useSelectAddressMap } from "@/shared/checkout/composables";
 import { useModal } from "@/shared/modal";
+import { focusFirstElement } from "@/ui-kit/utilities/focus";
 import PickupLocationCard from "../pickup-location-card.vue";
 import SelectAddressMapList from "./select-address-map-list.vue";
 import SelectAddressMapView from "./select-address-map-view.vue";
@@ -108,9 +110,33 @@ function onSelect(address: PickupLocationType, from: "list" | "map") {
   });
 }
 
+function onCardClose() {
+  closeInfoCard();
+  void nextTick(() => {
+    const radio = document.querySelector<HTMLElement>(
+      `[data-address-id="${CSS.escape(selectedAddressId.value ?? "")}"] input[type="radio"]`,
+    );
+    radio?.focus();
+  });
+}
+
 function onCardSelect(locationId: string) {
   emit("result", locationId);
   closeModal();
+}
+
+const pickupCardRef = useTemplateRef<InstanceType<typeof PickupLocationCard>>("pickupCardRef");
+
+function onSidebarTab(event: KeyboardEvent) {
+  if (event.shiftKey || !infoCardLocation.value || !pickupCardRef.value) {
+    return;
+  }
+
+  const cardElement = pickupCardRef.value.$el as HTMLElement;
+  if (cardElement) {
+    event.preventDefault();
+    focusFirstElement(cardElement, {});
+  }
 }
 </script>
 

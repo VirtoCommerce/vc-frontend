@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Legg til ny",
           "add_new_address": "Legg til ny adresse",
+          "no_results": "Ingen adresser samsvarer med søket ditt",
           "search": "Søk",
           "select_address": "Velg adresse",
           "title": "Leveringsadresse:"
@@ -1218,7 +1219,8 @@
           "cart_pickup_points_not_found": "Det finnes ingen tilgjengelige hentepunkter for disse produktene. Velg en annen forsendelsesmetode.",
           "cart_pickup_points_not_found_by_filter": "Ingen hentepunkter funnet.",
           "cart_pickup_points_reset_search": "Tilbakestill søk",
-          "availability": "Tilgjengelighet"
+          "availability": "Tilgjengelighet",
+          "search_pickup_locations": "Søk hentesteder"
         }
       },
       "order_payment": {
