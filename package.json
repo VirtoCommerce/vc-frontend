@@ -36,9 +36,8 @@
     "generate:bundle-map": "yarn precheck && GENERATE_BUNDLE_MAP=true yarn build-only",
     "generate:dependency-graph": "yarn precheck && depcruise $0 --focus $0 --focus-depth 0 --reaches $1 --config .dependency-graph.cjs --output-type dot | dot -T svg | depcruise-wrap-stream-in-html > artifacts/dependency-graph.html",
     "storybook:styles": "yarn precheck && npx tailwindcss -i storybook-styles/preflight.scss -o storybook-styles/dist/preflight.css",
-    "storybook:deprecated": "node scripts/generate-deprecated-components.js",
-    "storybook:dev": "yarn precheck && yarn generate:certificates && yarn storybook:deprecated && yarn storybook:styles && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
-    "storybook:build": "yarn precheck && yarn storybook:deprecated && yarn storybook:styles && storybook build",
+    "storybook:dev": "yarn precheck && yarn generate:certificates && yarn storybook:styles && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
+    "storybook:build": "yarn precheck && yarn storybook:styles && storybook build",
     "postinstall": "yarn precheck && husky",
     "check-locales": "yarn precheck && vite-node scripts/check-and-show-missing-locales.ts --source en.json locales client-app/ui-kit/locales client-app/modules/**/locales",
     "fix-locales": "yarn precheck && vite-node scripts/fix-missing-locales.ts --source en.json locales client-app/ui-kit/locales client-app/modules/**/locales"
