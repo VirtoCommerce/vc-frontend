@@ -111,7 +111,11 @@
             :quantity="product.availabilityData?.availableQuantity"
           />
 
-          <CountInCart :product-id="product.id" />
+          <CountInCart
+            v-if="!product.isConfigurable || configurableLineItemId"
+            :product-id="product.id"
+            :line-item-id="product.isConfigurable ? configurableLineItemId : undefined"
+          />
         </component>
       </div>
     </template>
@@ -124,7 +128,7 @@ import { ProductType } from "@/core/enums";
 import { ROUTES } from "@/router/routes/constants";
 import { AddToCart } from "@/shared/cart";
 import { useShortCart } from "@/shared/cart/composables";
-import { useConfigurableProduct } from "@/shared/catalog/composables";
+import { useConfigurableLineItemId, useConfigurableProduct } from "@/shared/catalog/composables";
 import { useProductVariationProperties } from "@/shared/catalog/composables/useProductVariationProperties";
 import { PRODUCT_VARIATIONS_LAYOUT_PROPERTY_VALUES } from "@/shared/catalog/constants/product";
 import { EXTENSION_NAMES } from "@/shared/common/constants";
@@ -149,6 +153,7 @@ const variations = toRef(props, "variations");
 const { cart } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
 const { variationResult } = useProductVariationProperties(computed(() => variations.value ?? []));
+const { configurableLineItemId } = useConfigurableLineItemId();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 

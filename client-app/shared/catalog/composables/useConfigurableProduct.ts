@@ -434,6 +434,10 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     };
   }
 
+  function markConfigurationAsSaved() {
+    initialSelectedConfigurationInput.value = selectedConfigurationInput.value;
+  }
+
   return {
     fetchProductConfiguration,
     selectSectionValue,
@@ -442,6 +446,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     validateSections,
     updateWithPreselectedValues,
     isSectionVisible,
+    markConfigurationAsSaved,
 
     loading: readonly(loading),
     changeCartConfiguredItemOverflowed: batchedChangeCartConfiguredItemOverflowed,

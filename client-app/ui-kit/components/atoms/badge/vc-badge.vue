@@ -56,7 +56,7 @@ withDefaults(defineProps<IProps>(), {
       --vc-icon-size: 0.625rem;
       --gap: 0.25rem;
 
-      @apply px-[0.188rem] text-xxs/[1];
+      @apply pb-px px-[0.188rem] text-xxs/[1];
 
       &--dot {
         @apply size-1.5;

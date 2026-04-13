@@ -30,7 +30,7 @@ export default defineConfigWithVueTs(
       "artifacts/",
       "storybook-static/",
       "storybook-styles/dist/",
-      "client-app/public/fcm-service-worker-v1.7.js",
+      "client-app/public/fcm-service-worker-v1.8.js",
       ".deployment/",
       ".github/",
       ".husky/",
@@ -385,6 +385,14 @@ export default defineConfigWithVueTs(
     ...tseslint.configs.disableTypeChecked,
   },
 
-  // Prettier must be last
+  // Prettier must be last to disable conflicting formatting rules
   prettierPlugin,
+
+  // `curly` does not conflict with Prettier, but eslint-config-prettier disables it anyway.
+  // Re-enable it here as recommended: https://github.com/prettier/eslint-config-prettier#curly
+  {
+    rules: {
+      curly: "error",
+    },
+  },
 );

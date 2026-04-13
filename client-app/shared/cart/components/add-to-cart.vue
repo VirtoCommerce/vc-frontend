@@ -1,5 +1,24 @@
 <template>
+  <div v-if="isConfigurable">
+    <VcButton
+      :variant="countInCart ? 'solid' : 'outline'"
+      :loading="loading"
+      :disabled="disabled"
+      :title="configurableButtonText"
+      truncate
+      full-width
+      @click="onConfigurableSubmit"
+    >
+      {{ configurableButtonText }}
+    </VcButton>
+
+    <div class="mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 empty:hidden">
+      <slot />
+    </div>
+  </div>
+
   <QuantityControl
+    v-else
     :mode="$cfg.product_quantity_control"
     :model-value="enteredQuantity"
     :name="product.id"
@@ -32,14 +51,15 @@ import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import { useErrorsTranslator, useHistoricalEvents } from "@/core/composables";
 import { useAnalyticsUtils } from "@/core/composables/useAnalyticsUtils";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM, LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
-import { getUrlSearchParam, Logger } from "@/core/utilities";
+import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
-import { useConfigurableProduct } from "@/shared/catalog/composables";
+import { useConfigurableLineItemId, useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
 import { AddToCartModeType } from "@/ui-kit/enums";
 import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
@@ -66,11 +86,15 @@ const { cart, addToCart, changeItemQuantityBatched, addToCartLoading, changeItem
   useShortCart();
 const { t } = useI18n();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
-const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
+const route = useRoute();
+const router = useRouter();
+const { configurableLineItemId } = useConfigurableLineItemId();
 const {
   selectedConfigurationInput,
-  changeCartConfiguredItemBatched,
+  changeCartConfiguredItem,
+  markConfigurationAsSaved,
   validateSections: validateConfigurableInput,
+  configuredLineItem,
 } = useConfigurableProduct(product.value.id);
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
@@ -88,6 +112,9 @@ const notAvailableMessage = computed(() => {
 
 const defaultMinQuantity = computed(() => (themeContext.value.settings.product_quantity_control === "button" ? 1 : 0));
 const isConfigurable = computed(() => "isConfigurable" in product.value && product.value.isConfigurable);
+const configurableButtonText = computed(() =>
+  countInCart.value ? t("ui_kit.buttons.update_cart") : t("ui_kit.buttons.add_to_cart"),
+);
 const disabled = computed(() => loading.value || !product.value.availabilityData?.isAvailable);
 const disabledStepper = computed(
   () =>
@@ -122,13 +149,13 @@ function onInput(value: number): void {
 }
 
 /**
- * Process button click to add/update cart line item.
+ * Process configurable product button click (Add to cart / Update cart).
  */
-async function onChange() {
+async function onConfigurableSubmit() {
   const lineItem = getLineItem(cart.value?.items);
   const mode = lineItem ? AddToCartModeType.Update : AddToCartModeType.Add;
 
-  if (isConfigurable.value && !validateConfigurableInput()) {
+  if (!validateConfigurableInput()) {
     displayErrorMessage(mode, t("shared.catalog.product_details.product_configuration.check_your_configuration"));
     return;
   }
@@ -136,10 +163,54 @@ async function onChange() {
   loading.value = true;
 
   try {
+    if (mode === AddToCartModeType.Update && lineItem) {
+      await changeCartConfiguredItem(lineItem.id, undefined, selectedConfigurationInput.value);
+      markConfigurationAsSaved();
+      return;
+    }
+
+    // TODO: Workaround — comparing cart items before/after to find the newly added lineItemId.
+    // Replace once backend provides the lineItemId directly (new mutation or updated response).
+    const existingItemIds = new Set(cart.value?.items?.map((item) => item.id));
+    const updatedCart = await addToCart(product.value.id, minQty.value, selectedConfigurationInput.value);
+
+    // configuredLineItem reflects the latest price preview from CreateConfiguredLineItem mutation.
+    // ShortLineItemFragment in the cart response does not include price data.
+    trackAddItemToCart(product.value, minQty.value, {
+      configuredPrice: configuredLineItem.value
+        ? {
+            list: configuredLineItem.value.listPrice?.amount ?? 0,
+            actual: configuredLineItem.value.salePrice?.amount ?? 0,
+          }
+        : undefined,
+    });
+    void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
+
+    markConfigurationAsSaved();
+    const newItem = updatedCart?.items?.find(
+      (item) => item.productId === product.value.id && !existingItemIds.has(item.id),
+    );
+    if (newItem) {
+      void router.replace({ query: { ...route.query, [LINE_ITEM_ID_URL_SEARCH_PARAM]: newItem.id } });
+    }
+  } finally {
+    loading.value = false;
+  }
+}
+
+/**
+ * Process button click to add/update cart line item.
+ */
+async function onChange() {
+  const lineItem = getLineItem(cart.value?.items);
+  const mode = lineItem ? AddToCartModeType.Update : AddToCartModeType.Add;
+
+  loading.value = true;
+
+  try {
     const updatedCart = await updateOrAddToCart(lineItem, mode);
 
-    if ((isConfigurable.value && mode === AddToCartModeType.Add) || enteredQuantity.value === 0) {
-      loading.value = false;
+    if (enteredQuantity.value === 0) {
       return;
     }
 
@@ -154,14 +225,11 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
     return cart.value;
   }
   if (mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value !== undefined) {
-    return isConfigurable.value
-      ? await changeCartConfiguredItemBatched(lineItem.id, enteredQuantity.value, selectedConfigurationInput.value)
-      : await changeItemQuantityBatched(lineItem.id, enteredQuantity.value);
+    return await changeItemQuantityBatched(lineItem.id, enteredQuantity.value);
   }
 
   const quantity = enteredQuantity.value || minQty.value;
-  const config = isConfigurable.value ? selectedConfigurationInput.value : undefined;
-  const updatedCart = await addToCart(product.value.id, quantity, config);
+  const updatedCart = await addToCart(product.value.id, quantity);
 
   trackAddItemToCart(product.value, quantity);
   void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
@@ -211,7 +279,7 @@ function getValidationErrors(): string {
 
 function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
   if (isConfigurable.value) {
-    return configurableLineItemId ? items?.find((item) => item.id === configurableLineItemId) : undefined;
+    return configurableLineItemId.value ? items?.find((item) => item.id === configurableLineItemId.value) : undefined;
   } else {
     return items?.find((item) => item.productId === product.value.id);
   }
@@ -225,10 +293,7 @@ function onValidationUpdate(validation: { isValid: true } | { isValid: false; er
   }
 }
 
-watch(
-  () => product.value.id,
-  () => {
-    enteredQuantity.value = !disabled.value ? defaultQuantity.value : undefined;
-  },
-);
+watch([() => product.value.id, configurableLineItemId], () => {
+  enteredQuantity.value = !disabled.value ? defaultQuantity.value : undefined;
+});
 </script>
