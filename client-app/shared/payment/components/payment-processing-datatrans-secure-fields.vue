@@ -97,7 +97,6 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
-import { useAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { isExpirationDateValid } from "@/core/utilities/date";
 import { useNotifications } from "@/shared/notification";
@@ -176,7 +175,7 @@ interface IProps {
 }
 
 const { t } = useI18n();
-const { analytics } = useAnalytics();
+
 const notifications = useNotifications();
 
 // CSS custom properties are read once — Datatrans iframes do not support dynamic style updates
@@ -417,7 +416,6 @@ async function finalizeOnBackend(transactionId: string) {
       ],
     });
     if (isSuccess) {
-      analytics("purchase", props.order);
       emit("success");
     } else {
       emit("fail");

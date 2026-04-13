@@ -1,5 +1,6 @@
 import { createSharedComposable } from "@vueuse/core";
 import { computed, readonly, ref } from "vue";
+import { useAnalytics } from "@/core/composables/useAnalytics";
 import type { AuthorizePaymentResultType, CustomerOrderType } from "@/core/api/graphql/types";
 
 type PaymentProcessorType = ((order: CustomerOrderType) => Promise<AuthorizePaymentResultType | null>) | null;
@@ -27,6 +28,11 @@ function _usePaymentFactory() {
     return paymentProcessorInternal.value?.(order);
   };
 
+  function onPurchaseCompleted(order: CustomerOrderType) {
+    const { analytics } = useAnalytics();
+    analytics("purchase", order);
+  }
+
   return {
     isValidCardData: readonly(isValidCardData),
     setCardDataValid,
@@ -34,6 +40,7 @@ function _usePaymentFactory() {
     isCanFinalizePayment,
     registerPaymentProcessor,
     finalizePayment,
+    onPurchaseCompleted,
   };
 }
 
