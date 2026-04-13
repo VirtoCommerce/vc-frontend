@@ -387,8 +387,10 @@ function save(): void {
 }
 
 watchEffect(() => {
-  selectedAddress.value = props.addresses.find((item) =>
-    isEqualAddresses(item, props.currentAddress ?? {}, { omitFields: props.omitFieldsOnCompare }),
-  );
+  if (props.paginationMode === "client") {
+    selectedAddress.value = props.addresses.find((item) =>
+      isEqualAddresses(item, props.currentAddress ?? {}, { omitFields: props.omitFieldsOnCompare }),
+    );
+  }
 });
 </script>

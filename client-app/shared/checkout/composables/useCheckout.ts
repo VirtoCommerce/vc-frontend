@@ -223,10 +223,6 @@ export function _useCheckout(cartId?: string) {
     placedOrder.value?.items?.every((item) => item.productType === ProductType.Digital),
   );
 
-  function isExistAddress(address: AnyAddressType): boolean {
-    return addresses.value.some((item) => isEqualAddresses(item, address));
-  }
-
   async function setPaymentMethod(method: PaymentMethodType): Promise<void> {
     await updatePayment({
       id: payment.value?.id,
@@ -316,6 +312,12 @@ export function _useCheckout(cartId?: string) {
   }
 
   function openSelectAddressModal(addressType: AddressType): void {
+    if (isCorporateMember.value) {
+      organizationAddressesPage.value = 1;
+    } else {
+      personalAddressesPage.value = 1;
+    }
+
     openModal({
       component: SelectAddressModal,
 
@@ -406,7 +408,7 @@ export function _useCheckout(cartId?: string) {
   }): MemberAddressType[] {
     const newAddresses: MemberAddressType[] = [];
 
-    if (payload.shippingAddress && !isExistAddress(payload.shippingAddress)) {
+    if (payload.shippingAddress) {
       newAddresses.push({
         ...payload.shippingAddress,
         isDefault: false,
@@ -416,7 +418,6 @@ export function _useCheckout(cartId?: string) {
     }
     if (
       payload.billingAddress &&
-      !isExistAddress(payload.billingAddress) &&
       (!payload.shippingAddress || !isEqualAddresses(payload.shippingAddress, payload.billingAddress))
     ) {
       newAddresses.push({
