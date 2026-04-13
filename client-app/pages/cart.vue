@@ -327,7 +327,9 @@ const isShowIncompleteDataWarning = computed(
 );
 
 async function handleRemoveItems(itemIds: string[]): Promise<void> {
-  const removedItems = cart.value!.items.filter((item) => itemIds.includes(item.id));
+  const cartBeforeRemove = cart.value!;
+  const removedItems = cartBeforeRemove.items.filter((item) => itemIds.includes(item.id));
+  const cartWillBeEmpty = cartBeforeRemove.items.length === removedItems.length;
 
   await removeItems(itemIds);
 
@@ -335,6 +337,10 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
    * Send Google Analytics event for an item was removed from cart.
    */
   analytics("removeItemsFromCart", removedItems);
+
+  if (cartWillBeEmpty) {
+    analytics("clearCart", cartBeforeRemove);
+  }
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
