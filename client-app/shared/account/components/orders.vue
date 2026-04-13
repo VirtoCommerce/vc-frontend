@@ -53,8 +53,8 @@
       </template>
     </VcPopupSidebar>
 
-    <div class="flex flex-col items-center gap-3 lg:flex-row">
-      <div v-if="isOrganizationMaintainer" class="flex gap-2">
+    <div class="orders__toolbar">
+      <div v-if="isOrganizationMaintainer" class="orders__scope-tabs">
         <VcTabSwitch
           v-model="orderScope"
           value="organization"
@@ -72,7 +72,7 @@
         />
       </div>
 
-      <div class="flex grow flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5">
+      <div class="orders__search-bar">
         <!-- Desktop filters popover -->
         <VcPopover v-if="!isMobile" placement="bottom-end" :offset-options="8" :disabled="ordersLoading" lazy>
           <template #default="{ triggerProps }">
@@ -120,12 +120,12 @@
           <span>{{ $t("common.buttons.filters") }}</span>
         </VcButton>
 
-        <div class="flex grow gap-6">
+        <div class="orders__search-input-wrapper">
           <VcInput
             v-model="localKeyword"
             maxlength="64"
             clearable
-            class="w-full"
+            class="orders__search-input"
             :disabled="ordersLoading"
             :placeholder="$t('pages.account.orders.search_placeholder')"
             @keydown.enter="applyKeyword"
@@ -146,7 +146,7 @@
     </div>
 
     <!-- Filters chips -->
-    <div v-if="!isFilterEmpty" class="hidden flex-wrap gap-x-3 gap-y-2 lg:flex">
+    <div v-if="!isFilterEmpty" class="orders__chips">
       <template v-for="item in filterChipsItems" :key="item.value">
         <VcChip color="secondary" closable @close="handleRemoveFilter(item)">
           {{ item.label }}
@@ -200,58 +200,58 @@
     :description="$t('pages.account.orders.meta.table_description')"
     :bordered="withSearch"
     mobile-breakpoint="lg"
-    class="bg-additional-50"
+    class="orders__table"
     @header-click="applySorting"
     @page-changed="changePage"
   >
     <template #mobile-item="itemData">
       <button
-        class="grid w-full cursor-pointer grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
+        class="orders__mobile-row"
         type="button"
         tabindex="0"
         @click="goToOrderDetails(itemData.item)"
         @keyup.enter="goToOrderDetails(itemData.item)"
       >
-        <div class="flex flex-col">
-          <span class="text-sm text-neutral-400">
+        <div class="orders__mobile-cell">
+          <span class="orders__mobile-label">
             {{ $t("pages.account.orders.order_number_label") }}
           </span>
 
-          <span class="overflow-hidden text-ellipsis pr-4 font-black">
+          <span class="orders__mobile-value orders__mobile-value--bold orders__mobile-value--pr">
             {{ itemData.item.number }}
           </span>
         </div>
 
-        <div class="flex flex-col items-end justify-center">
+        <div class="orders__mobile-cell orders__mobile-cell--end">
           <OrderStatus :status="itemData.item.status" :display-value="itemData.item.statusDisplayValue" />
         </div>
 
-        <div v-if="orderScope === 'organization' && itemData.item?.customerName" class="flex flex-col">
-          <span class="text-sm text-neutral-400">
+        <div v-if="orderScope === 'organization' && itemData.item?.customerName" class="orders__mobile-cell">
+          <span class="orders__mobile-label">
             {{ $t("pages.account.orders.buyer_name_label") }}
           </span>
 
-          <span class="overflow-hidden text-ellipsis">
+          <span class="orders__mobile-value">
             {{ itemData.item?.customerName }}
           </span>
         </div>
 
-        <div class="flex flex-col">
-          <span class="text-sm text-neutral-400">
+        <div class="orders__mobile-cell">
+          <span class="orders__mobile-label">
             {{ $t("pages.account.orders.date_label") }}
           </span>
 
-          <span class="overflow-hidden text-ellipsis">
+          <span class="orders__mobile-value">
             {{ $d(itemData.item?.createdDate) }}
           </span>
         </div>
 
-        <div class="flex flex-col">
-          <span class="text-sm text-neutral-400">
+        <div class="orders__mobile-cell">
+          <span class="orders__mobile-label">
             {{ $t("pages.account.orders.total_label") }}
           </span>
 
-          <span class="overflow-hidden text-ellipsis font-black">
+          <span class="orders__mobile-value orders__mobile-value--bold">
             {{ itemData.item.total?.formattedAmount }}
           </span>
         </div>
@@ -259,37 +259,32 @@
     </template>
 
     <template #desktop-body>
-      <tr
-        v-for="order in orders"
-        :key="order.id"
-        class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
-        @click="goToOrderDetails(order)"
-      >
-        <td class="overflow-hidden text-ellipsis p-5">
+      <tr v-for="order in orders" :key="order.id" class="orders__desktop-row" @click="goToOrderDetails(order)">
+        <td class="orders__desktop-cell">
           {{ order.number }}
         </td>
 
-        <td v-if="orderScope === 'private'" class="overflow-hidden text-ellipsis p-5">
+        <td v-if="orderScope === 'private'" class="orders__desktop-cell">
           {{ order.purchaseOrderNumber }}
         </td>
 
-        <td v-if="orderScope === 'organization'" class="overflow-hidden text-ellipsis p-5">
+        <td v-if="orderScope === 'organization'" class="orders__desktop-cell">
           {{ order.customerName }}
         </td>
 
-        <td class="overflow-hidden text-ellipsis p-5">
+        <td class="orders__desktop-cell">
           {{ order.inPayments?.[0]?.number }}
         </td>
 
-        <td class="overflow-hidden text-ellipsis p-5">
+        <td class="orders__desktop-cell">
           {{ $d(order?.createdDate) }}
         </td>
 
-        <td class="p-1">
+        <td class="orders__desktop-cell orders__desktop-cell--status">
           <OrderStatus :status="order.status" :display-value="order.statusDisplayValue" class="inline-block" />
         </td>
 
-        <td class="overflow-hidden text-ellipsis p-5 text-right">
+        <td class="orders__desktop-cell orders__desktop-cell--total">
           {{ order.total?.formattedAmount }}
         </td>
       </tr>
@@ -503,3 +498,79 @@ watch(
   { deep: true },
 );
 </script>
+
+<style lang="scss">
+.orders {
+  &__toolbar {
+    @apply flex flex-col items-center gap-3 lg:flex-row;
+  }
+
+  &__scope-tabs {
+    @apply flex gap-2;
+  }
+
+  &__search-bar {
+    @apply flex grow flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5;
+  }
+
+  &__search-input-wrapper {
+    @apply flex grow gap-6;
+  }
+
+  &__search-input {
+    @apply w-full;
+  }
+
+  &__chips {
+    @apply hidden flex-wrap gap-x-3 gap-y-2 lg:flex;
+  }
+
+  &__table {
+    @apply bg-additional-50;
+  }
+
+  &__mobile-row {
+    @apply grid w-full cursor-pointer grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left;
+  }
+
+  &__mobile-cell {
+    @apply flex flex-col;
+
+    &--end {
+      @apply items-end justify-center;
+    }
+  }
+
+  &__mobile-label {
+    @apply text-sm text-neutral-400;
+  }
+
+  &__mobile-value {
+    @apply overflow-hidden text-ellipsis;
+
+    &--bold {
+      @apply font-black;
+    }
+
+    &--pr {
+      @apply pr-4;
+    }
+  }
+
+  &__desktop-row {
+    @apply cursor-pointer even:bg-neutral-50 hover:bg-neutral-200;
+  }
+
+  &__desktop-cell {
+    @apply overflow-hidden text-ellipsis p-5;
+
+    &--status {
+      @apply p-1;
+    }
+
+    &--total {
+      @apply text-right;
+    }
+  }
+}
+</style>
