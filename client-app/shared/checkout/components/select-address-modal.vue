@@ -157,7 +157,7 @@
           <span>{{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}</span>
 
           <VcButton
-            v-if="showFilters"
+            v-if="showFilters && filterContext?.filterIsApplied.value"
             icon="reset"
             @click="resetFilter"
             :aria-label="$t('pages.account.order_details.bopis.cart_pickup_points_reset_search')"
@@ -240,7 +240,12 @@
                 {{ emptyText ?? $t("shared.checkout.select_address_modal.no_addresses_message") }}
               </span>
 
-              <VcButton v-if="showFilters" class="mt-5" prepend-icon="reset" @click="resetFilter">
+              <VcButton
+                v-if="showFilters && filterContext?.filterIsApplied.value"
+                class="mt-5"
+                prepend-icon="reset"
+                @click="resetFilter"
+              >
                 {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
               </VcButton>
             </div>
