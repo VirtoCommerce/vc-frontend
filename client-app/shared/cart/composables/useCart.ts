@@ -668,8 +668,9 @@ export function _useFullCart(cartId?: string) {
       component: ClearCartModal,
       props: {
         async onResult() {
+          const cartBeforeClear = cart.value!;
           await clearCart();
-          analytics("clearCart", cart.value!);
+          analytics("clearCart", cartBeforeClear);
         },
       },
     });
