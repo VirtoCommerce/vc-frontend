@@ -8,6 +8,7 @@
           size="sm"
           maxlength="30"
           :disabled="loading"
+          :aria-label="$t('common.labels.search', [facet.label])"
           :placeholder="$t('common.labels.search', [facet.label])"
           truncate
         />
@@ -114,6 +115,7 @@
           size="sm"
           maxlength="30"
           :disabled="loading"
+          :aria-label="$t('common.labels.search', [facet.label])"
           :placeholder="$t('common.labels.search', [facet.label])"
           truncate
         />

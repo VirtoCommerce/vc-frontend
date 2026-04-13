@@ -158,7 +158,9 @@ export function areStringOrNumberEqual(
   b: string | number | null | undefined,
 ): boolean {
   // assume null and undefined are equal
-  if (a == null && b == null) return true;
+  if (a == null && b == null) {
+    return true;
+  }
 
   return String(a) === String(b);
 }
@@ -203,4 +205,8 @@ export function serializeError(error: Error) {
 
 export function presetNameToFileName(name: string): string {
   return name.toLowerCase().replaceAll(" ", "-");
+}
+
+export function isMarkdownWithFrontmatter(content: string): boolean {
+  return content.trimStart().startsWith("---");
 }

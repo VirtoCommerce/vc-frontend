@@ -8,4 +8,5 @@ export interface IModal {
   // TODO: https://virtocommerce.atlassian.net/browse/ST-5119
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props?: Record<string, any>;
+  triggerElement?: HTMLElement;
 }

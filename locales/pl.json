@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Dodaj nowy",
           "add_new_address": "Dodaj nowy adres",
+          "no_results": "Nie znaleziono adresów pasujących do Twojego wyszukiwania",
           "search": "Szukaj",
           "select_address": "Wybierz adres",
           "title": "Wyślij do:"
@@ -666,7 +667,7 @@
         "vendor_label": "Sprzedawca",
         "all_vendor_products": "Wszystkie Produkty Sprzedawcy",
         "share_product_label": "Udostępnij produkt",
-        "create_configuration_button": "Utwórz własną konfigurację",
+        "create_configuration_button": "Utwórz nową konfigurację",
         "price_block": {
           "title": "Cena i dostawa",
           "mobile_title": "Udostępnij i więcej",
@@ -1217,7 +1218,8 @@
           "cart_pickup_points_not_found": "Brak dostępnych punktów odbioru dla tych produktów. Wybierz inną metodę wysyłki.",
           "cart_pickup_points_not_found_by_filter": "Nie znaleziono punktów odbioru.",
           "cart_pickup_points_reset_search": "Resetuj wyszukiwanie",
-          "availability": "Dostępność"
+          "availability": "Dostępność",
+          "search_pickup_locations": "Szukaj punktów odbioru"
         }
       },
       "order_payment": {
