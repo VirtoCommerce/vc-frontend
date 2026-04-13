@@ -472,7 +472,7 @@ export function _useCheckout(cartId?: string) {
         storeId: globals.storeId,
       });
 
-      if (orderPayed) {
+      if (!canPayNow.value) {
         analytics("purchase", placedOrder.value);
       }
 
