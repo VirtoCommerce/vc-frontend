@@ -1,3 +1,4 @@
+import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
 import mutationDocument from "./initializeCartPaymentMutation.graphql";
 import type {
@@ -16,7 +17,11 @@ export async function initializeCartPayment(
   >({
     mutation: mutationDocument,
     variables: {
-      command: payload,
+      command: {
+        storeId: globals.storeId,
+        cultureName: globals.cultureName,
+        ...payload,
+      },
     },
   });
 
