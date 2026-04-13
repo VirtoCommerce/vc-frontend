@@ -1,16 +1,21 @@
 <template>
   <!-- Mobile filters -->
-  <div v-if="isMobile" class="flex flex-col gap-4 lg:gap-5">
+  <div v-if="isMobile" class="mobile-orders-filter">
     <VcWidget v-if="facets?.length" :title="$t('shared.account.orders_filter.status_label')" size="sm" collapsible>
-      <VcCheckboxGroup v-model="filterData.statuses" class="space-y-4">
+      <VcCheckboxGroup v-model="filterData.statuses" class="mobile-orders-filter__statuses">
         <VcCheckbox
           v-for="facet in statusFacet?.items"
           :key="facet.term"
           :value="facet.term"
-          :class="[{ 'font-bold': isSelectedStatus(facet.term), 'text-neutral': !isSelectedStatus(facet.term) }]"
+          :class="[
+            'mobile-orders-filter__status',
+            {
+              'mobile-orders-filter__status--selected': isSelectedStatus(facet.term),
+            },
+          ]"
         >
-          <div class="flex gap-1">
-            <div class="min-w-0 grow truncate">{{ facet.label }}</div>
+          <div class="mobile-orders-filter__status-content">
+            <div class="mobile-orders-filter__status-label">{{ facet.label }}</div>
 
             <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
           </div>
@@ -21,7 +26,7 @@
     <slot name="buyerNameFilterType" />
 
     <VcWidget :title="$t('shared.account.orders_filter.created_date_label')" size="sm">
-      <div class="flex flex-col space-y-3">
+      <div class="mobile-orders-filter__date-section">
         <slot name="dateFilterType" />
       </div>
     </VcWidget>
@@ -47,3 +52,33 @@ function isSelectedStatus(status: string) {
   return filterData.value.statuses.indexOf(status) !== -1;
 }
 </script>
+
+<style lang="scss">
+.mobile-orders-filter {
+  @apply flex flex-col gap-4 lg:gap-5;
+
+  &__statuses {
+    @apply space-y-4;
+  }
+
+  &__status {
+    @apply text-neutral;
+
+    &--selected {
+      @apply font-bold text-inherit;
+    }
+  }
+
+  &__status-content {
+    @apply flex gap-1;
+  }
+
+  &__status-label {
+    @apply min-w-0 grow truncate;
+  }
+
+  &__date-section {
+    @apply flex flex-col space-y-3;
+  }
+}
+</style>

@@ -8,19 +8,19 @@
     @change="handleChangeType"
   />
 
-  <div v-if="selectedDateFilter.id === DateFilterId.CUSTOM" class="flex items-end gap-3 max-lg:flex-col">
+  <div v-if="selectedDateFilter.id === DateFilterId.CUSTOM" class="date-filter-select__custom">
     <VcDateSelector
       v-model="selectedDateFilter.startDate"
-      class="grow max-lg:w-full"
+      class="date-filter-select__date"
       :label="$t('shared.account.orders_filter.start_date_label')"
       @update:model-value="$emit('change', selectedDateFilter)"
     />
 
-    <div class="text-2xl/[2.75rem] max-lg:hidden">&mdash;</div>
+    <div class="date-filter-select__separator">&mdash;</div>
 
     <VcDateSelector
       v-model="selectedDateFilter.endDate"
-      class="grow max-lg:w-full"
+      class="date-filter-select__date"
       :label="$t('shared.account.orders_filter.end_date_label')"
       @update:model-value="$emit('change', selectedDateFilter)"
     />
@@ -61,3 +61,19 @@ function handleChangeType(): void {
   emit("change", selectedDateFilter.value);
 }
 </script>
+
+<style lang="scss">
+.date-filter-select {
+  &__custom {
+    @apply flex items-end gap-3 max-lg:flex-col;
+  }
+
+  &__date {
+    @apply grow max-lg:w-full;
+  }
+
+  &__separator {
+    @apply text-2xl/[2.75rem] max-lg:hidden;
+  }
+}
+</style>

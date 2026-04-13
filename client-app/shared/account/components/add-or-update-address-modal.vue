@@ -12,7 +12,7 @@
         @save="saveAddress"
       >
         <template #append="{ dirty, valid }">
-          <div class="flex flex-wrap items-center justify-between gap-4 pt-2 *:max-xs:flex-1">
+          <div class="add-or-update-address-modal__actions">
             <VcButton min-width="8rem" color="secondary" variant="outline" data-test-id="cancel-button" @click="close">
               {{ $t("common.buttons.cancel") }}
             </VcButton>
@@ -78,3 +78,11 @@ watchEffect(() => {
   editableAddress.value = clone(props.address);
 });
 </script>
+
+<style lang="scss">
+.add-or-update-address-modal {
+  &__actions {
+    @apply flex flex-wrap items-center justify-between gap-4 pt-2 *:max-xs:flex-1;
+  }
+}
+</style>
