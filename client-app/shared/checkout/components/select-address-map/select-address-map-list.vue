@@ -50,7 +50,7 @@
     <div v-else class="select-address-map-list__not-found" data-test-id="pickup-locations-not-found">
       <span>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}</span>
 
-      <VcButton prepend-icon="reset" data-test-id="reset-search-button" @click="$emit('resetFilter')">
+      <VcButton v-if="filtered" prepend-icon="reset" data-test-id="reset-search-button" @click="$emit('resetFilter')">
         {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
       </VcButton>
     </div>
@@ -66,6 +66,7 @@ interface IProps {
   addresses: PickupLocationType[];
   selectedAddressId?: string;
   selectable?: boolean;
+  filtered?: boolean;
 }
 
 interface IEmits {
