@@ -1,8 +1,8 @@
 <template>
-  <form class="text-start" @submit="onSubmit">
+  <form class="reset-password-form" @submit="onSubmit">
     <VcInput
       v-model="password"
-      class="mb-4 w-full"
+      class="reset-password-form__input"
       :label="$t('common.labels.password')"
       :placeholder="$t('common.placeholders.password')"
       type="password"
@@ -15,7 +15,7 @@
 
     <VcInput
       v-model="confirmPassword"
-      class="mb-4 w-full"
+      class="reset-password-form__input"
       :label="$t('common.labels.confirm_password')"
       :placeholder="$t('common.placeholders.confirm_password')"
       type="password"
@@ -26,13 +26,13 @@
       :maxlength="64"
     />
 
-    <div>
+    <div class="reset-password-form__footer">
       <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
       <VcAlert
         v-for="error in result?.errors"
         :key="error.code"
-        class="my-5 text-xs"
+        class="reset-password-form__error"
         color="danger"
         size="sm"
         variant="solid-light"
@@ -41,7 +41,12 @@
         {{ translate(error) }}
       </VcAlert>
 
-      <VcButton type="submit" class="mt-6 w-full lg:w-52" :loading="loading" :disabled="!meta.valid || meta.pending">
+      <VcButton
+        type="submit"
+        class="reset-password-form__submit"
+        :loading="loading"
+        :disabled="!meta.valid || meta.pending"
+      >
         {{ $t(isResetMode ? "common.buttons.reset_password" : "common.buttons.save") }}
       </VcButton>
     </div>
@@ -117,3 +122,21 @@ const onSubmit = handleSubmit(async (data) => {
   }
 });
 </script>
+
+<style lang="scss">
+.reset-password-form {
+  @apply text-start;
+
+  &__input {
+    @apply mb-4 w-full;
+  }
+
+  &__error {
+    @apply my-5 text-xs;
+  }
+
+  &__submit {
+    @apply mt-6 w-full lg:w-52;
+  }
+}
+</style>
