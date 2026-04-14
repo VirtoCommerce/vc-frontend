@@ -236,9 +236,6 @@ export default defineConfigWithVueTs(
       parser: vueParser,
       parserOptions: {
         parser: tseslint.parser,
-        projectService: {
-          defaultProject: tsconfigs.app,
-        },
         tsconfigRootDir,
         extraFileExtensions: [".vue"],
       },
@@ -298,9 +295,6 @@ export default defineConfigWithVueTs(
     files: ["client-app/**/*.test.ts", "client-app/**/*.spec.ts"],
     languageOptions: {
       parserOptions: {
-        projectService: {
-          defaultProject: tsconfigs.vitest,
-        },
         tsconfigRootDir,
       },
     },
@@ -321,9 +315,6 @@ export default defineConfigWithVueTs(
     files: [".storybook/preview.ts", ".storybook/docs-page.ts", "**/*.stories.ts"],
     languageOptions: {
       parserOptions: {
-        projectService: {
-          defaultProject: tsconfigs.storybook,
-        },
         tsconfigRootDir,
       },
     },
@@ -344,9 +335,6 @@ export default defineConfigWithVueTs(
     files: ["*.config.js", "*.config.ts", "scripts/**/*.ts", ".storybook/main.ts"],
     languageOptions: {
       parserOptions: {
-        projectService: {
-          defaultProject: tsconfigs.node,
-        },
         tsconfigRootDir,
       },
     },
@@ -367,9 +355,6 @@ export default defineConfigWithVueTs(
     files: ["examples/**/*.ts", "examples/**/*.vue"],
     languageOptions: {
       parserOptions: {
-        projectService: {
-          defaultProject: tsconfigs.examples,
-        },
         tsconfigRootDir,
       },
     },
