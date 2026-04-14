@@ -1,4 +1,3 @@
-/** @deprecated Use bla bla vs bla bla */
 export { default as VcActionInput } from "./action-input/vc-action-input.vue";
 export { default as VcBadge } from "./badge/vc-badge.vue";
 export { default as VcBreadcrumbs } from "./breadcrumbs/vc-breadcrumbs.vue";
