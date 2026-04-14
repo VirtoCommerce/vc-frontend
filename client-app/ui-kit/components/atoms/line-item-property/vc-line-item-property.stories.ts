@@ -4,6 +4,11 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 const meta: Meta<typeof VcLineItemProperty> = {
   title: "Components/Atoms/VcLineItemProperty",
   component: VcLineItemProperty,
+  tags: ["deprecated"],
+  parameters: {
+    deprecated:
+      "This component is not used in the application and will be removed. Use VcProperty or VcProductProperties instead.",
+  },
   argTypes: {
     label: {
       control: "text",

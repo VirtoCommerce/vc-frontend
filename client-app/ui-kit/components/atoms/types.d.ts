@@ -21,6 +21,7 @@ declare module "vue" {
     VcInfinityScrollLoader: typeof Components.VcInfinityScrollLoader;
     VcLabel: typeof Components.VcLabel;
     VcLayout: typeof Components.VcLayout;
+    /** @deprecated Use VcProperty or VcProductProperties instead */
     VcLineItemProperty: typeof Components.VcLineItemProperty;
     VcListItem: typeof Components.VcListItem;
     VcLoader: typeof Components.VcLoader;
@@ -28,6 +29,7 @@ declare module "vue" {
     VcPopover: typeof Components.VcPopover;
     VcPopupSidebar: typeof Components.VcPopupSidebar;
     VcPriceDisplay: typeof Components.VcPriceDisplay;
+    /** @deprecated Use VcPriceDisplay or VcProductPrice instead */
     VcPriceDisplayCatalog: typeof Components.VcPriceDisplayCatalog;
     VcProductActions: typeof Components.VcProductActions;
     VcProductProperties: typeof Components.VcProductProperties;
