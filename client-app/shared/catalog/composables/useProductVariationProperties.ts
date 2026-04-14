@@ -87,7 +87,9 @@ function getAvailableOptions(variations: readonly Product[]): Map<string, Option
     const grouped = getVariationPropertiesGroupedByName(variation.properties, PropertyType.Variation);
 
     for (const [name, props] of grouped) {
-      if (props.length === 0) continue;
+      if (props.length === 0) {
+        continue;
+      }
 
       const value = getOptionValue(props);
       const key = serialize(value);

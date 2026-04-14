@@ -94,6 +94,7 @@ const {
   changeCartConfiguredItem,
   markConfigurationAsSaved,
   validateSections: validateConfigurableInput,
+  configuredLineItem,
 } = useConfigurableProduct(product.value.id);
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
@@ -173,7 +174,16 @@ async function onConfigurableSubmit() {
     const existingItemIds = new Set(cart.value?.items?.map((item) => item.id));
     const updatedCart = await addToCart(product.value.id, minQty.value, selectedConfigurationInput.value);
 
-    trackAddItemToCart(product.value, minQty.value);
+    // configuredLineItem reflects the latest price preview from CreateConfiguredLineItem mutation.
+    // ShortLineItemFragment in the cart response does not include price data.
+    trackAddItemToCart(product.value, minQty.value, {
+      configuredPrice: configuredLineItem.value
+        ? {
+            list: configuredLineItem.value.listPrice?.amount ?? 0,
+            actual: configuredLineItem.value.salePrice?.amount ?? 0,
+          }
+        : undefined,
+    });
     void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
 
     markConfigurationAsSaved();

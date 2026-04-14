@@ -3,6 +3,7 @@ import { globals } from "@/core/globals";
 import { Logger, toCSV } from "@/core/utilities";
 import { DEBUG_PREFIX } from "./constants";
 import { lineItemToGtagItem, productToGtagItem, sendEvent } from "./utils";
+import type { ConfiguredPriceType } from "./types";
 import type { TrackerEventsType } from "@/core/types/analytics";
 
 const { currencyCode } = globals;
@@ -44,12 +45,17 @@ export const events: TrackerEventsType = {
   },
 
   addItemToCart(item, quantity, params) {
-    const inputItem = productToGtagItem(item);
+    const { configuredPrice, ...eventParams } = (params ?? {}) as { configuredPrice?: ConfiguredPriceType } & Record<
+      string,
+      unknown
+    >;
+    const inputItem = productToGtagItem(item, undefined, configuredPrice);
     inputItem.quantity = quantity;
+    const unitPrice = configuredPrice?.actual ?? item.price?.actual?.amount ?? 0;
     sendEvent("add_to_cart", {
-      ...params,
+      ...eventParams,
       currency: currencyCode,
-      value: (item.price?.actual?.amount || 0) * (quantity ?? 1),
+      value: unitPrice * (quantity ?? 1),
       items: [inputItem],
     });
   },
