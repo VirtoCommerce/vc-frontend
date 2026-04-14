@@ -76,6 +76,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
 import { authorizePayment, initializePayment, initializeCartPayment } from "@/core/api/graphql";
+import { useAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { isExpirationDateValid } from "@/core/utilities/date";
 import { useNotifications } from "@/shared/notification";
@@ -120,7 +121,7 @@ let microform: IMicroform;
 // Example usage
 
 const { t } = useI18n();
-
+const { analytics } = useAnalytics();
 const notifications = useNotifications();
 const { registerPaymentProcessor, setCardDataValid, setCardDataInvalid } = usePayment();
 
@@ -299,6 +300,9 @@ async function sendPaymentData(
     });
 
     if (result.isSuccess) {
+      if (!orderToPay) {
+        analytics("purchase", order);
+      }
       emit("success");
     } else {
       emit("fail");

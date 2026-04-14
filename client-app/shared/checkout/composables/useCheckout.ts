@@ -105,7 +105,7 @@ export function _useCheckout(cartId?: string) {
   } = useGlobalCheckout();
   const { themeContext } = useThemeContext();
   const { pushHistoricalEvent } = useHistoricalEvents();
-  const { finalizePayment, onPurchaseCompleted } = usePayment();
+  const { finalizePayment } = usePayment();
 
   const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
   const isShippingMethodBopis = computed(() => shipment.value?.shipmentMethodCode === BOPIS_CODE);
@@ -473,7 +473,7 @@ export function _useCheckout(cartId?: string) {
       });
 
       if (orderPayed) {
-        onPurchaseCompleted(placedOrder.value);
+        analytics("purchase", placedOrder.value);
       }
 
       await router.replace({ name: canPayNow.value && !orderPayed ? "CheckoutPayment" : "CheckoutCompleted" });
