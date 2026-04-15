@@ -504,7 +504,11 @@ watch(
 <style lang="scss">
 .orders {
   &__toolbar {
-    @apply flex flex-col items-center gap-3 lg:flex-row;
+    @apply flex flex-col items-center gap-3;
+
+    @media (width >= theme("screens.lg")) {
+      @apply flex-row;
+    }
   }
 
   &__scope-tabs {
@@ -512,7 +516,11 @@ watch(
   }
 
   &__search-bar {
-    @apply flex grow flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5;
+    @apply flex grow flex-row items-center gap-x-2;
+
+    @media (width >= theme("screens.lg")) {
+      @apply flex-row-reverse gap-x-5;
+    }
   }
 
   &__search-input-wrapper {
@@ -524,7 +532,11 @@ watch(
   }
 
   &__chips {
-    @apply hidden flex-wrap gap-x-3 gap-y-2 lg:flex;
+    @apply hidden flex-wrap gap-x-3 gap-y-2;
+
+    @media (width >= theme("screens.lg")) {
+      @apply flex;
+    }
   }
 
   &__table {
@@ -560,7 +572,15 @@ watch(
   }
 
   &__desktop-row {
-    @apply cursor-pointer even:bg-neutral-50 hover:bg-neutral-200;
+    @apply cursor-pointer;
+
+    &:nth-child(even) {
+      @apply bg-neutral-50;
+    }
+
+    &:hover {
+      @apply bg-neutral-200;
+    }
   }
 
   &__desktop-cell {
