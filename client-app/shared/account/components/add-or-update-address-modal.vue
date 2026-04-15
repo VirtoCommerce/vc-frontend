@@ -89,7 +89,13 @@ watchEffect(() => {
 <style lang="scss">
 .add-or-update-address-modal {
   &__actions {
-    @apply flex flex-wrap items-center justify-between gap-4 pt-2 *:max-xs:flex-1;
+    @apply flex flex-wrap items-center justify-between gap-4 pt-2;
+
+    @media (width < theme("screens.xs")) {
+      & > * {
+        @apply flex-1;
+      }
+    }
   }
 }
 </style>

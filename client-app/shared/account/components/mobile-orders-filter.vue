@@ -55,7 +55,11 @@ function isSelectedStatus(status: string) {
 
 <style lang="scss">
 .mobile-orders-filter {
-  @apply flex flex-col gap-4 lg:gap-5;
+  @apply flex flex-col gap-4;
+
+  @media (width >= theme("screens.lg")) {
+    @apply gap-5;
+  }
 
   &__statuses {
     @apply space-y-4;

@@ -67,15 +67,27 @@ function handleChangeType(): void {
 <style lang="scss">
 .date-filter-select {
   &__custom {
-    @apply flex items-end gap-3 max-lg:flex-col;
+    @apply flex items-end gap-3;
+
+    @media (width < theme("screens.lg")) {
+      @apply flex-col;
+    }
   }
 
   &__date {
-    @apply grow max-lg:w-full;
+    @apply grow;
+
+    @media (width < theme("screens.lg")) {
+      @apply w-full;
+    }
   }
 
   &__separator {
-    @apply text-2xl/[2.75rem] max-lg:hidden;
+    @apply text-2xl/[2.75rem];
+
+    @media (width < theme("screens.lg")) {
+      @apply hidden;
+    }
   }
 }
 </style>
