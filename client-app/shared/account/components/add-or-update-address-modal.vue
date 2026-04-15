@@ -1,5 +1,12 @@
 <template>
-  <VcModal :title="title" max-width="60rem" hide-actions is-mobile-fullscreen test-id="edit-address-modal">
+  <VcModal
+    class="add-or-update-address-modal"
+    :title="title"
+    max-width="60rem"
+    hide-actions
+    is-mobile-fullscreen
+    test-id="edit-address-modal"
+  >
     <template #default="{ close }">
       <AddressForm
         :model-value="editableAddress"

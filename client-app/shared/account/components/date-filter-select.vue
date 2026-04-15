@@ -1,29 +1,31 @@
 <template>
-  <VcSelect
-    v-model="selectedDateFilter"
-    :label="label"
-    :items="dateFilterTypes"
-    text-field="label"
-    enable-teleport
-    @change="handleChangeType"
-  />
-
-  <div v-if="selectedDateFilter.id === DateFilterId.CUSTOM" class="date-filter-select__custom">
-    <VcDateSelector
-      v-model="selectedDateFilter.startDate"
-      class="date-filter-select__date"
-      :label="$t('shared.account.orders_filter.start_date_label')"
-      @update:model-value="$emit('change', selectedDateFilter)"
+  <div class="date-filter-select">
+    <VcSelect
+      v-model="selectedDateFilter"
+      :label="label"
+      :items="dateFilterTypes"
+      text-field="label"
+      enable-teleport
+      @change="handleChangeType"
     />
 
-    <div class="date-filter-select__separator">&mdash;</div>
+    <div v-if="selectedDateFilter.id === DateFilterId.CUSTOM" class="date-filter-select__custom">
+      <VcDateSelector
+        v-model="selectedDateFilter.startDate"
+        class="date-filter-select__date"
+        :label="$t('shared.account.orders_filter.start_date_label')"
+        @update:model-value="$emit('change', selectedDateFilter)"
+      />
 
-    <VcDateSelector
-      v-model="selectedDateFilter.endDate"
-      class="date-filter-select__date"
-      :label="$t('shared.account.orders_filter.end_date_label')"
-      @update:model-value="$emit('change', selectedDateFilter)"
-    />
+      <div class="date-filter-select__separator">&mdash;</div>
+
+      <VcDateSelector
+        v-model="selectedDateFilter.endDate"
+        class="date-filter-select__date"
+        :label="$t('shared.account.orders_filter.end_date_label')"
+        @update:model-value="$emit('change', selectedDateFilter)"
+      />
+    </div>
   </div>
 </template>
 

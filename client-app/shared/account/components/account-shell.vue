@@ -1,5 +1,5 @@
 <template>
-  <VcContainer>
+  <VcContainer class="account-shell">
     <VcLayout>
       <template v-if="!$route.meta?.hideLeftSidebar" #sidebar>
         <AccountNavigation class="max-md:hidden" />
