@@ -96,7 +96,11 @@ watch(email, () => {
   }
 
   &__actions {
-    @apply mt-8 md:mt-9;
+    @apply mt-8;
+
+    @media (width >= theme("screens.md")) {
+      @apply mt-9;
+    }
   }
 
   &__error {
@@ -104,7 +108,11 @@ watch(email, () => {
   }
 
   &__submit {
-    @apply mt-6 w-full lg:mt-3 lg:w-48;
+    @apply mt-6 w-full;
+
+    @media (width >= theme("screens.lg")) {
+      @apply mt-3 w-48;
+    }
   }
 }
 </style>

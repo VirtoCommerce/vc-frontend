@@ -136,7 +136,11 @@ const onSubmit = handleSubmit(async (data) => {
   }
 
   &__actions {
-    @apply mt-5 max-sm:text-center;
+    @apply mt-5;
+
+    @media (width < theme("screens.sm")) {
+      @apply text-center;
+    }
   }
 }
 </style>

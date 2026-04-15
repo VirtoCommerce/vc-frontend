@@ -185,7 +185,11 @@ watch(meta, (value) => {
   }
 
   &__change-password-link {
-    @apply text-sm font-bold text-accent-700 hover:text-accent;
+    @apply text-sm font-bold text-accent-700;
+
+    &:hover {
+      @apply text-accent;
+    }
   }
 
   &__input {
@@ -197,7 +201,11 @@ watch(meta, (value) => {
   }
 
   &__forgot-password-link {
-    @apply text-sm font-bold text-[--link-color] hover:text-[--link-hover-color];
+    @apply text-sm font-bold text-[--link-color];
+
+    &:hover {
+      @apply text-[--link-hover-color];
+    }
   }
 
   &__actions {

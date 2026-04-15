@@ -136,7 +136,11 @@ const onSubmit = handleSubmit(async (data) => {
   }
 
   &__submit {
-    @apply mt-6 w-full lg:w-52;
+    @apply mt-6 w-full;
+
+    @media (width >= theme("screens.lg")) {
+      @apply w-52;
+    }
   }
 }
 </style>
