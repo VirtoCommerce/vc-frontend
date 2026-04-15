@@ -165,7 +165,7 @@
         },
         {
           "Id": "VirtoCommerce.Payment",
-          "Version": "3.1001.0"
+          "Version": "3.1002.0"
         },
         {
           "Id": "VirtoCommerce.Sanity",
@@ -193,7 +193,7 @@
         },
         {
           "Id": "VirtoCommerce.XOrder",
-          "Version": "3.1001.0"
+          "Version": "3.1002.0"
         },
         {
           "Id": "VirtoCommerce.PriceExportImport",
@@ -273,7 +273,7 @@
         },
         {
           "Id": "VirtoCommerce.XCart",
-          "Version": "3.1005.0"
+          "Version": "3.1006.0"
         },
         {
           "Id": "VirtoCommerce.Cart",
