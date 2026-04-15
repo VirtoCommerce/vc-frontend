@@ -27,28 +27,28 @@
     </div>
 
     <!-- Desktop table view -->
-    <VcScrollbar v-else :horizontal="scrollable" class="vc-table__scrollbar">
-      <table :class="['vc-table__desktop', { 'vc-table__desktop--fixed': hasColumnWidths }]">
+    <VcScrollbar
+      v-else
+      :horizontal="scrollable"
+      :vertical="!!maxHeight"
+      :style="scrollbarStyle"
+      class="vc-table__scrollbar"
+    >
+      <table :class="['vc-table__desktop', { 'vc-table__desktop--scrollable': scrollable }]">
         <caption v-if="description" class="vc-table__caption">
           {{
             description
           }}
         </caption>
 
-        <!-- Column width definitions for stable layout -->
-        <colgroup v-if="hasColumnWidths">
-          <col
-            v-for="column in mergedColumns"
-            :key="column.id"
-            :style="column.width ? { width: column.width } : undefined"
-          />
-        </colgroup>
-
         <slot name="header">
-          <thead v-if="!hideDefaultHeader && mergedColumns.length" class="vc-table__head">
+          <thead
+            v-if="!hideDefaultHeader && orderedColumns.length"
+            :class="['vc-table__head', { 'vc-table__head--sticky': stickyHeader || maxHeight }]"
+          >
             <tr class="vc-table__head-row">
               <th
-                v-for="column in mergedColumns"
+                v-for="column in orderedColumns"
                 :key="column.id"
                 scope="col"
                 :aria-sort="getAriaSort(column.id)"
@@ -58,8 +58,10 @@
                   {
                     'vc-table__title--sortable': column.sortable,
                   },
+                  getColumnFixedClasses(column, 'vc-table__title'),
                   column.classes,
                 ]"
+                :style="getColumnStyle(column)"
               >
                 <!-- Custom per-column header slot -->
                 <HeaderCellRenderer
@@ -106,13 +108,15 @@
             <!-- Default skeleton template -->
             <tr v-for="row in skeletonRows" :key="row" class="vc-table__skeleton">
               <td
-                v-for="column in mergedColumns"
+                v-for="column in orderedColumns"
                 :key="column.id"
                 :class="[
                   'vc-table__skeleton-cell',
                   `vc-table__skeleton-cell--align--${column.align ?? 'left'}`,
+                  getColumnFixedClasses(column, 'vc-table__skeleton-cell'),
                   column.classes,
                 ]"
+                :style="getColumnStyle(column)"
               >
                 <div class="vc-table__skeleton-item" />
               </td>
@@ -141,9 +145,15 @@
             @click="$emit('rowClick', item, rowIndex)"
           >
             <td
-              v-for="column in mergedColumns"
+              v-for="column in orderedColumns"
               :key="column.id"
-              :class="['vc-table__cell', `vc-table__cell--align--${column.align ?? 'left'}`, column.classes]"
+              :class="[
+                'vc-table__cell',
+                `vc-table__cell--align--${column.align ?? 'left'}`,
+                getColumnFixedClasses(column, 'vc-table__cell'),
+                column.classes,
+              ]"
+              :style="getColumnStyle(column)"
             >
               <CellRenderer
                 v-if="getColumnSlot(column.id)"
@@ -214,6 +224,20 @@ const props = withDefaults(
     mobileBordered?: boolean;
     scrollable?: boolean;
     /**
+     * Makes the table header sticky. When used without `maxHeight`, the header
+     * sticks to the top of the viewport during page scroll. When used with
+     * `maxHeight`, the header sticks to the top of the scrollable container.
+     */
+    stickyHeader?: boolean;
+    /**
+     * Maximum height of the table. When set, enables vertical scrolling
+     * within the table container. Automatically enables sticky header.
+     *
+     * @example max-height="400px"
+     * @example max-height="50vh"
+     */
+    maxHeight?: string;
+    /**
      * Function that returns class, style, and attrs to apply to each row `<tr>`.
      * Receives the item and its row index as arguments.
      *
@@ -232,6 +256,8 @@ const props = withDefaults(
     skeletonRows: TABLE_SKELETON_ROWS_SIZE,
   },
 );
+
+const FIXED_COLUMN_DEFAULT_WIDTH = "150px";
 
 // Track columns registered by VcTableColumn children
 const childColumns = ref<Map<string, VcTableColumnRegistrationType>>(new Map());
@@ -302,9 +328,33 @@ const hasColumnSlots = computed<boolean>(() => {
   return sortedChildColumnRegistrations.value.some((reg) => reg.slot !== undefined);
 });
 
-// Check if any column has a width defined (enables table-layout: fixed)
-const hasColumnWidths = computed<boolean>(() => {
-  return mergedColumns.value.some((col) => col.width !== undefined);
+// Compute cumulative sticky offsets for fixed columns
+const columnOffsets = computed<Map<string, string>>(() => {
+  const offsets = new Map<string, string>();
+  const cols = orderedColumns.value;
+
+  // Start offsets
+  let startOffset = 0;
+  for (const col of cols) {
+    if (col.fixed === "start") {
+      const width = col.width ?? FIXED_COLUMN_DEFAULT_WIDTH;
+      offsets.set(col.id, `${startOffset}px`);
+      startOffset += parseFloat(width);
+    }
+  }
+
+  // End offsets (iterate from the end)
+  let endOffset = 0;
+  for (let i = cols.length - 1; i >= 0; i--) {
+    const col = cols[i];
+    if (col.fixed === "end") {
+      const width = col.width ?? FIXED_COLUMN_DEFAULT_WIDTH;
+      offsets.set(col.id, `${endOffset}px`);
+      endOffset += parseFloat(width);
+    }
+  }
+
+  return offsets;
 });
 
 // Merge prop columns with child columns
@@ -341,6 +391,16 @@ const mergedColumns = computed<VcTableColumnType[]>(() => {
   return result;
 });
 
+// Reorder columns: fixed-start → normal → fixed-end
+// This ensures fixed columns are always at the edges, regardless of template order
+const orderedColumns = computed<VcTableColumnType[]>(() => {
+  const cols = mergedColumns.value;
+  const start = cols.filter((col) => col.fixed === "start");
+  const center = cols.filter((col) => !col.fixed);
+  const end = cols.filter((col) => col.fixed === "end");
+  return [...start, ...center, ...end];
+});
+
 // Get column slot by column id
 function getColumnSlot(columnId: string): VcTableColumnSlotFnType | undefined {
   return childColumns.value.get(columnId)?.slot;
@@ -349,6 +409,49 @@ function getColumnSlot(columnId: string): VcTableColumnSlotFnType | undefined {
 // Get column header slot by column id
 function getColumnHeaderSlot(columnId: string): VcTableColumnHeaderSlotFnType | undefined {
   return childColumns.value.get(columnId)?.headerSlot;
+}
+
+// Detect edge fixed columns for shadow rendering
+const lastFixedStartId = computed<string | undefined>(() => {
+  const cols = orderedColumns.value.filter((col) => col.fixed === "start");
+  return cols.length ? cols[cols.length - 1].id : undefined;
+});
+
+const firstFixedEndId = computed<string | undefined>(() => {
+  return orderedColumns.value.find((col) => col.fixed === "end")?.id;
+});
+
+// Get inline style for fixed (sticky) columns
+function getColumnStyle(column: VcTableColumnType): Record<string, string> | undefined {
+  const style: Record<string, string> = {};
+
+  if (column.fixed && columnOffsets.value.has(column.id)) {
+    const width = column.width ?? FIXED_COLUMN_DEFAULT_WIDTH;
+    const cssProperty = column.fixed === "start" ? "inset-inline-start" : "inset-inline-end";
+    style.position = "sticky";
+    style[cssProperty] = columnOffsets.value.get(column.id)!;
+    style.zIndex = "3";
+    style.width = width;
+    style.minWidth = width;
+    style.maxWidth = width;
+  } else if (column.width) {
+    style.minWidth = column.width;
+  }
+
+  if (Object.keys(style).length === 0) {
+    return undefined;
+  }
+
+  return style;
+}
+
+// Get fixed column CSS classes (fixed flag + edge shadow markers)
+function getColumnFixedClasses(column: VcTableColumnType, baseClass: string): Record<string, boolean> {
+  return {
+    [`${baseClass}--fixed`]: !!column.fixed,
+    [`${baseClass}--fixed--start`]: column.id === lastFixedStartId.value,
+    [`${baseClass}--fixed--end`]: column.id === firstFixedEndId.value,
+  };
 }
 
 /**
@@ -413,6 +516,13 @@ const isMobile = computed(() => {
   return breakpoints.smaller(props.mobileBreakpoint).value;
 });
 
+const scrollbarStyle = computed(() => {
+  if (props.maxHeight) {
+    return { "--vc-table-max-height": props.maxHeight };
+  }
+  return undefined;
+});
+
 const desktopBorderWidth = computed(() => (props.bordered ? "1px" : "0"));
 const mobileBorderWidth = computed(() => (props.mobileBordered ? "1px" : "0"));
 
@@ -423,11 +533,11 @@ function onPageUpdate(newPage: number) {
   emit("pageChanged", newPage);
 }
 
-function toggleSortDirection(currentDirection: string): VcTableSortDirectionType {
+function toggleSortDirection(currentDirection: VcTableSortDirectionType): VcTableSortDirectionType {
   return currentDirection === "desc" ? "asc" : "desc";
 }
 
-function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
+function getAriaSort(columnId: string): "ascending" | "descending" | "none" {
   if (!props.sort || props.sort.column !== columnId) {
     return "none";
   }
@@ -439,14 +549,18 @@ function getAriaSort(columnId: unknown): "ascending" | "descending" | "none" {
  * Gets a unique key for table row rendering.
  * Tries to use item.id if available, otherwise falls back to index.
  */
-function getItemKey(item: T, index: number): string | number {
+function getItemKey(item: T, index: number): string {
   const itemWithId = item as { id?: string | number };
-  return itemWithId.id ?? index;
+  return String(itemWithId.id ?? index);
 }
 </script>
 
 <style lang="scss">
 .vc-table {
+  $headSticky: "";
+  $row: "";
+  $skeleton: "";
+
   --radius: var(--vc-table-radius, var(--vc-radius, 0.5rem));
   --desktop-radius: v-bind(desktopRadius);
   --desktop-border-width: v-bind(desktopBorderWidth);
@@ -481,6 +595,7 @@ function getItemKey(item: T, index: number): string | number {
   &__scrollbar {
     @apply w-full border-neutral-200;
 
+    max-height: var(--vc-table-max-height, none);
     border-style: solid;
     border-width: var(--desktop-border-width);
     border-radius: var(--desktop-radius);
@@ -489,8 +604,8 @@ function getItemKey(item: T, index: number): string | number {
   &__desktop {
     @apply w-full text-left text-sm;
 
-    &--fixed {
-      table-layout: fixed;
+    &--scrollable {
+      @apply w-auto min-w-full;
     }
   }
 
@@ -500,6 +615,20 @@ function getItemKey(item: T, index: number): string | number {
 
   &__head {
     @apply border-b border-neutral-200;
+
+    &--sticky {
+      $headSticky: &;
+
+      @apply sticky z-20 bg-additional-50;
+
+      top: var(--vc-table-sticky-offset, 0px);
+
+      &::after {
+        @apply pointer-events-none absolute inset-x-0 bottom-0 border-b border-neutral-200;
+
+        content: "";
+      }
+    }
   }
 
   &__title {
@@ -516,6 +645,30 @@ function getItemKey(item: T, index: number): string | number {
 
       &--right {
         @apply text-end;
+      }
+    }
+
+    &--fixed {
+      @apply bg-additional-50;
+
+      #{$headSticky} & {
+        z-index: 30;
+      }
+
+      &--start {
+        &::after {
+          @apply pointer-events-none absolute inset-y-0 right-0 w-0.5 bg-neutral-300;
+
+          content: "";
+        }
+      }
+
+      &--end {
+        &::before {
+          @apply pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-neutral-300;
+
+          content: "";
+        }
       }
     }
   }
@@ -547,6 +700,8 @@ function getItemKey(item: T, index: number): string | number {
   }
 
   &__row {
+    $row: &;
+
     &:nth-child(even) {
       @apply bg-neutral-50;
     }
@@ -557,6 +712,8 @@ function getItemKey(item: T, index: number): string | number {
   }
 
   &__skeleton {
+    $skeleton: &;
+
     &:nth-child(even) {
       @apply bg-neutral-50;
     }
@@ -578,6 +735,30 @@ function getItemKey(item: T, index: number): string | number {
         @apply text-end;
       }
     }
+
+    &--fixed {
+      @apply bg-additional-50;
+
+      #{$skeleton}:nth-child(even) & {
+        @apply bg-neutral-50;
+      }
+
+      &--start {
+        &::after {
+          @apply pointer-events-none absolute inset-y-0 right-0 w-0.5 bg-neutral-300;
+
+          content: "";
+        }
+      }
+
+      &--end {
+        &::before {
+          @apply pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-neutral-300;
+
+          content: "";
+        }
+      }
+    }
   }
 
   &__cell {
@@ -594,6 +775,34 @@ function getItemKey(item: T, index: number): string | number {
 
       &--right {
         @apply text-end;
+      }
+    }
+
+    &--fixed {
+      @apply bg-additional-50;
+
+      #{$row}:nth-child(even) & {
+        @apply bg-neutral-50;
+      }
+
+      #{$row}:hover & {
+        @apply bg-neutral-200;
+      }
+
+      &--start {
+        &::after {
+          @apply pointer-events-none absolute inset-y-0 right-0 w-0.5 bg-neutral-300;
+
+          content: "";
+        }
+      }
+
+      &--end {
+        &::before {
+          @apply pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-neutral-300;
+
+          content: "";
+        }
       }
     }
   }

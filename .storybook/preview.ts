@@ -210,6 +210,9 @@ const preview: Preview = {
       },
     },
     a11y: a11yConfig,
+    docs: {
+      codePanel: true,
+    },
   },
   decorators: [
     (story, context) => {

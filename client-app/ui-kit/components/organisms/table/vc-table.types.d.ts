@@ -10,8 +10,10 @@ declare global {
     sortable?: boolean;
     align?: VcTableAlignType;
     classes?: string;
-    /** Column width (e.g., "150px", "20%", "auto"). When set, enables table-layout: fixed for stable column widths. */
+    /** Column width (e.g., "150px"). When used with `fixed`, defaults to "150px" if not specified. */
     width?: string;
+    /** Pins the column to the start or end edge. The column is automatically reordered to the corresponding edge of the table. Uses a default width of 150px if `width` is not specified. */
+    fixed?: "start" | "end";
   };
 
   type VcTableSortInfoType = {

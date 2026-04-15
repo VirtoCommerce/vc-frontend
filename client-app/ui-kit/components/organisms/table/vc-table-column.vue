@@ -53,24 +53,17 @@ interface IProps {
   sortable?: boolean;
   /** Text alignment within the column */
   align?: VcTableAlignType;
-  /** Column width (e.g., "150px", "20%", "auto"). When set, enables table-layout: fixed for stable column widths. */
+  /** Column width (e.g., "150px"). When used with `fixed`, defaults to "150px" if not specified. */
   width?: string;
-  /**
-   * Whether the column is visible. When false, the column unregisters from the parent table
-   * but the component stays mounted (watchers remain active). This avoids full mount/unmount
-   * cycles compared to using v-if on VcTableColumn.
-   * @default true
-   */
-  visible?: boolean;
+  /** Pins the column to the start or end edge. The column is automatically reordered to the corresponding edge of the table. Uses a default width of 150px if `width` is not specified. */
+  fixed?: "start" | "end";
 }
 
 defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<IProps>(), {
-  visible: true,
-});
+const props = defineProps<IProps>();
 const slots = useSlots();
 const attrs = useAttrs();
 
@@ -83,6 +76,7 @@ const columnData = computed<VcTableColumnType>(() => ({
   align: props.align,
   classes: attrs.class ? normalizeClass(attrs.class) : undefined,
   width: props.width,
+  fixed: props.fixed,
 }));
 
 function registerSelf() {
@@ -98,27 +92,14 @@ function unregisterSelf() {
 }
 
 onMounted(() => {
-  if (props.visible) {
-    registerSelf();
-  }
+  registerSelf();
 });
 
-// Re-register when props change after mount, respecting visibility
-watch(columnData, () => {
-  if (props.visible) {
-    registerSelf();
-  }
-});
-
-// Watch visibility changes: register when becoming visible, unregister when hidden
+// Re-register when props change after mount
 watch(
-  () => props.visible,
-  (isVisible) => {
-    if (isVisible) {
-      registerSelf();
-    } else {
-      unregisterSelf();
-    }
+  () => [props.id, props.title, props.sortable, props.align, props.width, props.fixed, attrs.class],
+  () => {
+    registerSelf();
   },
 );
 

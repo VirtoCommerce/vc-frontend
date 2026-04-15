@@ -146,7 +146,7 @@ export const Default: StoryType = {
     components: { VcTable, VcTableColumn },
     setup: () => ({ args }),
     template: `
-      <VcTable :items="args.items" :pages="args.pages" :page="args.page">
+      <VcTable v-bind="args">
         <VcTableColumn id="name" title="Name" v-slot="{ item }">
           {{ item.name }}
         </VcTableColumn>
@@ -596,82 +596,7 @@ export const MixedColumnWidths: StoryType = {
   },
 };
 
-// 8. ColumnVisibility
-export const ColumnVisibility: StoryType = {
-  args: {
-    items: sampleItems,
-    pages: 1,
-    page: 1,
-    bordered: true,
-  },
-  render: (args) => ({
-    components: { VcTable, VcTableColumn },
-    setup: () => {
-      const showEmail = ref(true);
-      const showRole = ref(true);
-      return { args, showEmail, showRole };
-    },
-    template: `
-      <div>
-        <div class="mb-4 flex gap-4">
-          <label class="flex items-center gap-2">
-            <input type="checkbox" v-model="showEmail" />
-            Show Email
-          </label>
-          <label class="flex items-center gap-2">
-            <input type="checkbox" v-model="showRole" />
-            Show Role
-          </label>
-        </div>
-
-        <VcTable :items="args.items" :pages="args.pages" :page="args.page" :bordered="args.bordered">
-          <VcTableColumn id="name" title="Name" v-slot="{ item }">
-            {{ item.name }}
-          </VcTableColumn>
-          <VcTableColumn id="email" title="Email" :visible="showEmail" v-slot="{ item }">
-            {{ item.email }}
-          </VcTableColumn>
-          <VcTableColumn id="role" title="Role" :visible="showRole" v-slot="{ item }">
-            {{ item.role }}
-          </VcTableColumn>
-          <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">
-            {{ item.status }}
-          </VcTableColumn>
-        </VcTable>
-      </div>
-    `,
-  }),
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Toggle columns with `visible` prop. The component stays mounted — only registration is toggled, avoiding full mount/unmount cycles.",
-      },
-      source: {
-        code: `
-<script setup lang="ts">
-const showEmail = ref(true);
-</script>
-
-<template>
-  <label><input type="checkbox" v-model="showEmail" /> Show Email</label>
-
-  <VcTable :items="items" bordered>
-    <VcTableColumn id="name" title="Name" v-slot="{ item }">
-      {{ item.name }}
-    </VcTableColumn>
-    <VcTableColumn id="email" title="Email" :visible="showEmail" v-slot="{ item }">
-      {{ item.email }}
-    </VcTableColumn>
-  </VcTable>
-</template>
-        `,
-      },
-    },
-  },
-};
-
-// 9. ConditionalColumns
+// 8. ConditionalColumns
 export const ConditionalColumns: StoryType = {
   args: {
     items: sampleItems,
@@ -1201,7 +1126,486 @@ export const Scrollable: StoryType = {
   },
 };
 
-// 17. FullExample
+// 17. StickyHeader
+const manySampleItems = Array.from({ length: 10 }, (_, batch) =>
+  sampleItems.map((item) => ({ ...item, id: item.id + batch * 100 })),
+).flat();
+
+export const StickyHeaderContainer: StoryType = {
+  args: {
+    items: manySampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => ({ args }),
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :bordered="args.bordered"
+        max-height="300px"
+      >
+        <VcTableColumn id="name" title="Name" v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="role" title="Role" v-slot="{ item }">
+          {{ item.role }}
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">
+          <VcBadge
+            :color="item.status === 'Active' ? 'success' : 'neutral'"
+            variant="solid-light"
+            size="sm"
+          >
+            {{ item.status }}
+          </VcBadge>
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Sticky header with `max-height`. The table body scrolls within a fixed-height container while the header stays pinned at the top.",
+      },
+      source: {
+        code: `
+<VcTable :items="items" max-height="300px" bordered>
+  <VcTableColumn id="name" title="Name" v-slot="{ item }">
+    {{ item.name }}
+  </VcTableColumn>
+  <VcTableColumn id="email" title="Email" v-slot="{ item }">
+    {{ item.email }}
+  </VcTableColumn>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+export const StickyHeaderViewport: StoryType = {
+  args: {
+    items: manySampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => ({ args }),
+    template: `
+      <div>
+        <div class="mb-4 p-3 bg-neutral-100 rounded text-sm">
+          Scroll the page down — the header sticks to the top of the viewport.
+        </div>
+
+        <VcTable
+          :items="args.items"
+          :pages="args.pages"
+          :page="args.page"
+          :bordered="args.bordered"
+          sticky-header
+        >
+          <VcTableColumn id="name" title="Name" v-slot="{ item }">
+            {{ item.name }}
+          </VcTableColumn>
+          <VcTableColumn id="email" title="Email" v-slot="{ item }">
+            {{ item.email }}
+          </VcTableColumn>
+          <VcTableColumn id="role" title="Role" v-slot="{ item }">
+            {{ item.role }}
+          </VcTableColumn>
+          <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">
+            <VcBadge
+              :color="item.status === 'Active' ? 'success' : 'neutral'"
+              variant="solid-light"
+              size="sm"
+            >
+              {{ item.status }}
+            </VcBadge>
+          </VcTableColumn>
+        </VcTable>
+      </div>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Sticky header with `sticky-header` prop (no `max-height`). The header sticks to the top of the viewport as the page scrolls.",
+      },
+      source: {
+        code: `
+<VcTable :items="items" sticky-header bordered>
+  <VcTableColumn id="name" title="Name" v-slot="{ item }">
+    {{ item.name }}
+  </VcTableColumn>
+  <VcTableColumn id="email" title="Email" v-slot="{ item }">
+    {{ item.email }}
+  </VcTableColumn>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+export const StickyColumn: StoryType = {
+  args: {
+    items: manySampleItems.slice(0, 10),
+    pages: 1,
+    page: 1,
+    bordered: true,
+    scrollable: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => ({ args }),
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :bordered="args.bordered"
+        :scrollable="args.scrollable"
+      >
+        <VcTableColumn id="name" title="Name" fixed="start" width="150px" v-slot="{ item }">
+          <span class="font-medium whitespace-nowrap">{{ item.name }}</span>
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" width="250px" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="role" title="Role" width="180px" v-slot="{ item }">
+          {{ item.role }}
+        </VcTableColumn>
+        <VcTableColumn id="department" title="Department" width="200px" v-slot="{ item }">
+          {{ item.department }}
+        </VcTableColumn>
+        <VcTableColumn id="phone" title="Phone" width="200px" v-slot="{ item }">
+          {{ item.phone }}
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" fixed="end" width="120px" align="center" v-slot="{ item }">
+          <VcBadge
+            :color="item.status === 'Active' ? 'success' : 'neutral'"
+            variant="solid-light"
+            size="sm"
+          >
+            {{ item.status }}
+          </VcBadge>
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Single sticky column on each side. Name pinned start, Status pinned end — scroll horizontally to see them stay in place.",
+      },
+      source: {
+        code: `
+<VcTable :items="items" bordered scrollable>
+  <VcTableColumn id="name" title="Name" fixed="start" width="150px" v-slot="{ item }">
+    {{ item.name }}
+  </VcTableColumn>
+  <VcTableColumn id="email" title="Email" width="250px" v-slot="{ item }">
+    {{ item.email }}
+  </VcTableColumn>
+  <!-- ... more columns ... -->
+  <VcTableColumn id="status" title="Status" fixed="end" width="120px" align="center" v-slot="{ item }">
+    <VcBadge
+      :color="item.status === 'Active' ? 'success' : 'neutral'"
+      variant="solid-light"
+      size="sm"
+    >
+      {{ item.status }}
+    </VcBadge>
+  </VcTableColumn>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+export const StickyColumnsMultiple: StoryType = {
+  args: {
+    items: manySampleItems.slice(0, 10),
+    pages: 1,
+    page: 1,
+    bordered: true,
+    scrollable: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => ({ args }),
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :bordered="args.bordered"
+        :scrollable="args.scrollable"
+      >
+        <VcTableColumn id="name" title="Name" fixed="start" width="150px" v-slot="{ item }">
+          <span class="font-medium whitespace-nowrap">{{ item.name }}</span>
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" fixed="start" width="200px" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="role" title="Role" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.role }}
+        </VcTableColumn>
+        <VcTableColumn id="department" title="Department" width="200px" v-slot="{ item }">
+          {{ item.department }}
+        </VcTableColumn>
+        <VcTableColumn id="phone" title="Phone" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.phone }}
+        </VcTableColumn>
+        <VcTableColumn id="role2" title="Role (copy)" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.role }}
+        </VcTableColumn>
+        <VcTableColumn id="department2" title="Department (copy)" width="200px" v-slot="{ item }">
+          {{ item.department }}
+        </VcTableColumn>
+        <VcTableColumn id="phone2" title="Phone (copy)" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.phone }}
+        </VcTableColumn>
+        <VcTableColumn id="email2" title="Email (copy)" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="name2" title="Name (copy)" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" fixed="end" width="120px" align="center" v-slot="{ item }">
+          <VcBadge
+            :color="item.status === 'Active' ? 'success' : 'neutral'"
+            variant="solid-light"
+            size="sm"
+          >
+            {{ item.status }}
+          </VcBadge>
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Multiple sticky columns on the start side. Name and Email are both pinned start with cumulative offsets. Status pinned end.",
+      },
+      source: {
+        code: `
+<VcTable :items="items" bordered scrollable>
+  <!-- Both pinned start — offsets calculated automatically -->
+  <VcTableColumn id="name" title="Name" fixed="start" width="150px" v-slot="{ item }">
+    {{ item.name }}
+  </VcTableColumn>
+  <VcTableColumn id="email" title="Email" fixed="start" width="200px" v-slot="{ item }">
+    {{ item.email }}
+  </VcTableColumn>
+  <!-- Scrollable columns -->
+  <VcTableColumn id="role" title="Role" width="180px" v-slot="{ item }">
+    {{ item.role }}
+  </VcTableColumn>
+  <!-- ... -->
+  <VcTableColumn id="status" title="Status" fixed="end" width="120px" v-slot="{ item }">
+    {{ item.status }}
+  </VcTableColumn>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+// 18. StickyColumnReorder — fixed column in the middle is auto-reordered to the edge
+export const StickyColumnReorder: StoryType = {
+  args: {
+    items: manySampleItems.slice(0, 5),
+    pages: 1,
+    page: 1,
+    bordered: true,
+    scrollable: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => ({ args }),
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :bordered="args.bordered"
+        :scrollable="args.scrollable"
+      >
+        <VcTableColumn id="name" title="Name" class="whitespace-nowrap" v-slot="{ item }">
+          <span class="font-medium">{{ item.name }}</span>
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" fixed="start" width="120px" align="center" v-slot="{ item }">
+          <VcBadge
+            :color="item.status === 'Active' ? 'success' : 'neutral'"
+            variant="solid-light"
+            size="sm"
+          >
+            {{ item.status }}
+          </VcBadge>
+        </VcTableColumn>
+        <VcTableColumn id="role" title="Role" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.role }}
+        </VcTableColumn>
+        <VcTableColumn id="department" title="Department" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.department }}
+        </VcTableColumn>
+        <VcTableColumn id="phone" title="Phone" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.phone }}
+        </VcTableColumn>
+        <VcTableColumn id="phone2" title="Phone (copy)" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.phone }}
+        </VcTableColumn>
+        <VcTableColumn id="email2" title="Email (copy)" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="name2" title="Name (copy)" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Status column is declared 3rd in the template but has `fixed="start"`. It is automatically reordered to the start edge of the table. This demonstrates that fixed columns are always moved to their respective edge regardless of template position.',
+      },
+      source: {
+        code: `
+<!-- Status is declared 3rd but rendered 1st (auto-reordered to start edge) -->
+<VcTable :items="items" bordered scrollable>
+  <VcTableColumn id="name" title="Name" v-slot="{ item }">
+    {{ item.name }}
+  </VcTableColumn>
+  <VcTableColumn id="email" title="Email" v-slot="{ item }">
+    {{ item.email }}
+  </VcTableColumn>
+  <!-- This column will be moved to the start edge automatically -->
+  <VcTableColumn id="status" title="Status" fixed="start" width="120px" align="center" v-slot="{ item }">
+    <VcBadge :color="item.status === 'Active' ? 'success' : 'neutral'" variant="solid-light" size="sm">
+      {{ item.status }}
+    </VcBadge>
+  </VcTableColumn>
+  <VcTableColumn id="role" title="Role" v-slot="{ item }">
+    {{ item.role }}
+  </VcTableColumn>
+  <!-- ... more columns ... -->
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+// 19. StickyHeaderAndColumns — sticky header + sticky columns combined
+export const StickyHeaderAndColumns: StoryType = {
+  args: {
+    items: manySampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+    scrollable: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => ({ args }),
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :bordered="args.bordered"
+        :scrollable="args.scrollable"
+        max-height="400px"
+      >
+        <VcTableColumn id="name" title="Name" fixed="start" width="150px" v-slot="{ item }">
+          <span class="font-medium whitespace-nowrap">{{ item.name }}</span>
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" fixed="start" width="200px" v-slot="{ item }">
+          <span class="whitespace-nowrap">{{ item.email }}</span>
+        </VcTableColumn>
+        <VcTableColumn id="role" title="Role" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.role }}
+        </VcTableColumn>
+        <VcTableColumn id="department" title="Department" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.department }}
+        </VcTableColumn>
+        <VcTableColumn id="phone" title="Phone" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.phone }}
+        </VcTableColumn>
+        <VcTableColumn id="role2" title="Role (copy)" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.role }}
+        </VcTableColumn>
+        <VcTableColumn id="department2" title="Department (copy)" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.department }}
+        </VcTableColumn>
+        <VcTableColumn id="phone2" title="Phone (copy)" class="whitespace-nowrap" v-slot="{ item }">
+          {{ item.phone }}
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" fixed="end" width="120px" align="center" v-slot="{ item }">
+          <VcBadge
+            :color="item.status === 'Active' ? 'success' : 'neutral'"
+            variant="solid-light"
+            size="sm"
+          >
+            {{ item.status }}
+          </VcBadge>
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Combines sticky columns (horizontal) with sticky header (vertical) via `max-height`. Both scroll directions work independently — the header stays visible when scrolling down, and fixed columns stay visible when scrolling right.",
+      },
+      source: {
+        code: `
+<VcTable :items="items" bordered scrollable max-height="400px">
+  <VcTableColumn id="name" title="Name" fixed="start" width="150px" v-slot="{ item }">
+    {{ item.name }}
+  </VcTableColumn>
+  <VcTableColumn id="email" title="Email" fixed="start" width="200px" v-slot="{ item }">
+    {{ item.email }}
+  </VcTableColumn>
+  <!-- Scrollable columns -->
+  <VcTableColumn id="role" title="Role" v-slot="{ item }">
+    {{ item.role }}
+  </VcTableColumn>
+  <!-- ... -->
+  <VcTableColumn id="status" title="Status" fixed="end" width="120px" v-slot="{ item }">
+    {{ item.status }}
+  </VcTableColumn>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+// 20. FullExample
 export const FullExample: StoryType = {
   args: {
     items: sampleItems,
@@ -1365,7 +1769,7 @@ const rowProps = (item) => ({
 // Slots API (Alternative approach)
 // =============================================================================
 
-// 18. SlotsApiDefault
+// 19. SlotsApiDefault
 export const SlotsApiDefault: StoryType = {
   args: {
     columns: sampleColumns,
@@ -1437,7 +1841,7 @@ const items = ref([
   },
 };
 
-// 19. SlotsApiDesktopItem
+// 20. SlotsApiDesktopItem
 export const SlotsApiDesktopItem: StoryType = {
   args: {
     columns: sampleColumns,
@@ -1573,7 +1977,7 @@ export const SlotsApiDesktopItem: StoryType = {
   },
 };
 
-// 20. SlotsApiResponsive
+// 21. SlotsApiResponsive
 export const SlotsApiResponsive: StoryType = {
   args: {
     columns: sampleColumns,
@@ -1687,7 +2091,7 @@ const items = ref<IUser[]>([...]);
   },
 };
 
-// 21. SlotsApiSorting
+// 22. SlotsApiSorting
 export const SlotsApiSorting: StoryType = {
   args: {
     columns: sampleColumns,
@@ -1767,7 +2171,7 @@ function onHeaderClick(sortInfo: VcTableSortInfoType) {
   },
 };
 
-// 22. SlotsApiCustomSkeleton
+// 23. SlotsApiCustomSkeleton
 export const SlotsApiCustomSkeleton: StoryType = {
   args: {
     columns: sampleColumns,
@@ -1827,7 +2231,7 @@ export const SlotsApiCustomSkeleton: StoryType = {
   },
 };
 
-// 23. SlotsApiCustomHeader
+// 24. SlotsApiCustomHeader
 export const SlotsApiCustomHeader: StoryType = {
   args: {
     columns: sampleColumns,
@@ -1909,7 +2313,7 @@ export const SlotsApiCustomHeader: StoryType = {
   },
 };
 
-// 24. SlotsApiWithoutHeader
+// 25. SlotsApiWithoutHeader
 export const SlotsApiWithoutHeader: StoryType = {
   args: {
     columns: sampleColumns,
@@ -1961,7 +2365,7 @@ export const SlotsApiWithoutHeader: StoryType = {
   },
 };
 
-// 25. SlotsApiScrollable
+// 26. SlotsApiScrollable
 const wideColumns: VcTableColumnType[] = [
   { id: "name", title: "Name", sortable: true, classes: "min-w-52" },
   { id: "email", title: "Email", sortable: true, classes: "min-w-64" },
@@ -2057,7 +2461,7 @@ const columns: VcTableColumnType[] = [
   },
 };
 
-// 26. SlotsApiFull
+// 27. SlotsApiFull
 export const SlotsApiFull: StoryType = {
   args: {
     columns: sampleColumns,
