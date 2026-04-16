@@ -64,6 +64,27 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
 
   const loading = computed(() => fetching.value || creating.value || changeCartConfiguredItemLoading.value);
 
+  /**
+   * Whether all visible required configuration sections have valid values.
+   * Read-only check — does NOT mutate validationErrors (safe for use in computed/template bindings).
+   */
+  const isRequiredConfigurationComplete = computed(() => {
+    if (configuration.value.length === 0) {
+      return false;
+    }
+    const valueMap = new Map(selectedConfigurationValue.value.map((v) => [v.sectionId, v]));
+    return configuration.value.every((section) => {
+      if (!isSectionVisible(section.id)) {
+        return true;
+      }
+      if (!section.isRequired) {
+        const value = valueMap.get(section.id);
+        return !value || validateValue(section.id, value).isValid;
+      }
+      return validateValue(section.id, valueMap.get(section.id)).isValid;
+    });
+  });
+
   const isConfigurationChanged = computed(() => {
     if (initialSelectedConfigurationInput.value.length !== selectedConfigurationValue.value.length) {
       return true;
@@ -456,6 +477,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     configuredLineItem: readonly(configuredLineItem),
     isConfigurationChanged: readonly(isConfigurationChanged),
     validationErrors: readonly(validationErrors),
+    isRequiredConfigurationComplete: readonly(isRequiredConfigurationComplete),
   };
 }
 
