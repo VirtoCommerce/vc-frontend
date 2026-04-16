@@ -752,74 +752,7 @@ export const CustomColumnHeader: StoryType = {
   },
 };
 
-// 11. RowProps
-export const RowProps: StoryType = {
-  args: {
-    items: sampleItems,
-    pages: 1,
-    page: 1,
-    bordered: true,
-  },
-  render: (args) => ({
-    components: { VcTable, VcTableColumn, VcBadge },
-    setup: () => {
-      const rowProps = (item: Record<string, unknown>) => ({
-        class: { "bg-danger-50": item.status === "Inactive" },
-      });
-      return { args, rowProps };
-    },
-    template: `
-      <VcTable :items="args.items" :pages="args.pages" :page="args.page" :bordered="args.bordered" :row-props="rowProps">
-        <VcTableColumn id="name" title="Name" v-slot="{ item }">
-          {{ item.name }}
-        </VcTableColumn>
-        <VcTableColumn id="email" title="Email" v-slot="{ item }">
-          {{ item.email }}
-        </VcTableColumn>
-        <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">
-          <VcBadge
-            :color="item.status === 'Active' ? 'success' : 'neutral'"
-            variant="solid-light"
-            size="sm"
-          >
-            {{ item.status }}
-          </VcBadge>
-        </VcTableColumn>
-      </VcTable>
-    `,
-  }),
-  parameters: {
-    docs: {
-      description: {
-        story: "Dynamic row styling via `rowProps` function. Returns `{ class, style, attrs }` for each row `<tr>`.",
-      },
-      source: {
-        code: `
-<script setup lang="ts">
-const rowProps = (item) => ({
-  class: { 'bg-danger-50': item.status === 'Inactive' },
-});
-</script>
-
-<template>
-  <VcTable :items="items" :row-props="rowProps" bordered>
-    <VcTableColumn id="name" title="Name" v-slot="{ item }">
-      {{ item.name }}
-    </VcTableColumn>
-    <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">
-      <VcBadge :color="item.status === 'Active' ? 'success' : 'neutral'" variant="solid-light" size="sm">
-        {{ item.status }}
-      </VcBadge>
-    </VcTableColumn>
-  </VcTable>
-</template>
-        `,
-      },
-    },
-  },
-};
-
-// 12. RowClick
+// 11. RowClick
 export const RowClick: StoryType = {
   args: {
     items: sampleItems,
@@ -847,7 +780,6 @@ export const RowClick: StoryType = {
           :pages="args.pages"
           :page="args.page"
           :bordered="args.bordered"
-          :row-props="() => ({ class: 'cursor-pointer' })"
           @row-click="handleRowClick"
         >
           <VcTableColumn id="name" title="Name" v-slot="{ item }">
@@ -866,24 +798,90 @@ export const RowClick: StoryType = {
   parameters: {
     docs: {
       description: {
-        story: "Row click event via `@row-click`. Emits `(item, index)` when a row is clicked.",
+        story:
+          'Row click using `@row-click` on VcTable. Automatically adds `cursor-pointer` and `role="button"` to each row.',
+      },
+      source: {
+        code: `
+<VcTable :items="items" bordered @row-click="onRowClick">
+  <VcTableColumn id="name" title="Name" v-slot="{ item }">
+    {{ item.name }}
+  </VcTableColumn>
+</VcTable>
+        `,
+      },
+    },
+  },
+};
+
+// 12. RowStyling
+export const RowStyling: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => {
+      const rowClass = (item: Record<string, unknown>) => ({
+        "bg-danger-50": item.status === "Inactive",
+      });
+      return { args, rowClass };
+    },
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :bordered="args.bordered"
+        :row-class="rowClass"
+      >
+        <VcTableColumn id="name" title="Name" v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">
+          <VcBadge
+            :color="item.status === 'Active' ? 'success' : 'neutral'"
+            variant="solid-light"
+            size="sm"
+          >
+            {{ item.status }}
+          </VcBadge>
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story: "Dynamic row styling using `row-class` prop on VcTable. Returns class bindings for each row `<tr>`.",
       },
       source: {
         code: `
 <script setup lang="ts">
-function onRowClick(item, index) {
-  router.push(\`/details/\${item.id}\`);
-}
+const rowClass = (item) => ({
+  'bg-danger-50': item.status === 'Inactive',
+});
 </script>
 
 <template>
-  <VcTable
-    :items="items"
-    :row-props="() => ({ class: 'cursor-pointer' })"
-    @row-click="onRowClick"
-  >
+  <VcTable :items="items" :row-class="rowClass" bordered>
     <VcTableColumn id="name" title="Name" v-slot="{ item }">
       {{ item.name }}
+    </VcTableColumn>
+    <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">
+      <VcBadge
+        :color="item.status === 'Active' ? 'success' : 'neutral'"
+        variant="solid-light"
+        size="sm"
+      >
+        {{ item.status }}
+      </VcBadge>
     </VcTableColumn>
   </VcTable>
 </template>
@@ -1637,14 +1635,7 @@ export const FullExample: StoryType = {
         alert(`Clicked: ${item.name}`);
       };
 
-      const rowProps = (item: Record<string, unknown>) => ({
-        class: {
-          "cursor-pointer": true,
-          "bg-danger-50": item.status === "Inactive",
-        },
-      });
-
-      return { args, page, sort, sortedItems, handlePageChange, handleHeaderClick, handleRowClick, rowProps };
+      return { args, page, sort, sortedItems, handlePageChange, handleHeaderClick, handleRowClick };
     },
     template: `
       <VcTable
@@ -1655,7 +1646,7 @@ export const FullExample: StoryType = {
         :bordered="args.bordered"
         :mobile-bordered="args.mobileBordered"
         :mobile-breakpoint="args.mobileBreakpoint"
-        :row-props="rowProps"
+        :row-class="(item) => ({ 'bg-danger-50': item.status === 'Inactive' })"
         @page-changed="handlePageChange"
         @header-click="handleHeaderClick"
         @row-click="handleRowClick"
@@ -1709,7 +1700,7 @@ export const FullExample: StoryType = {
     docs: {
       description: {
         story:
-          "Kitchen sink: sorting, pagination, mobile view, bordered, badges, row click, row props — all features combined.",
+          "Kitchen sink: sorting, pagination, mobile view, bordered, badges, row click, row styling — all features combined.",
       },
       source: {
         code: `
@@ -1717,9 +1708,9 @@ export const FullExample: StoryType = {
 const page = ref(1);
 const sort = ref<VcTableSortInfoType>({ column: "name", direction: "asc" });
 
-const rowProps = (item) => ({
-  class: { 'cursor-pointer': true, 'bg-danger-50': item.status === 'Inactive' },
-});
+function goToDetails(item) {
+  router.push(\`/details/\${item.id}\`);
+}
 </script>
 
 <template>
@@ -1728,10 +1719,10 @@ const rowProps = (item) => ({
     :pages="5"
     :page="page"
     :sort="sort"
+    :row-class="(item) => ({ 'bg-danger-50': item.status === 'Inactive' })"
     bordered
     mobile-bordered
     mobile-breakpoint="md"
-    :row-props="rowProps"
     @page-changed="page = $event"
     @header-click="sort = $event"
     @row-click="goToDetails"

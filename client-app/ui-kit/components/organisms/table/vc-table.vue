@@ -140,10 +140,11 @@
           <tr
             v-for="(item, rowIndex) in items"
             :key="getItemKey(item, rowIndex)"
-            :class="['vc-table__row', resolvedRowProps[rowIndex]?.class]"
-            :style="resolvedRowProps[rowIndex]?.style"
-            v-bind="resolvedRowProps[rowIndex]?.attrs"
-            @click="$emit('rowClick', item, rowIndex)"
+            :class="['vc-table__row', resolvedRowClass(item, rowIndex)]"
+            :tabindex="hasRowClickListener ? 0 : undefined"
+            :role="hasRowClickListener ? 'button' : undefined"
+            @click="handleRowClick(item, rowIndex)"
+            @keydown.enter="handleRowClick(item, rowIndex)"
           >
             <td
               v-for="column in orderedColumns"
@@ -195,7 +196,7 @@
 
 <script setup lang="ts" generic="T extends VcTableItemType">
 import { useBreakpoints } from "@vueuse/core";
-import { computed, defineComponent, Fragment, provide, ref, useSlots } from "vue";
+import { computed, defineComponent, Fragment, getCurrentInstance, provide, ref, useSlots } from "vue";
 import { BREAKPOINTS, TABLE_SKELETON_ROWS_SIZE, TABLE_PAGE_LIMIT } from "@/ui-kit/constants";
 import VcTableColumn from "./vc-table-column.vue";
 import { vcTableKey } from "./vc-table-context";
@@ -239,13 +240,11 @@ const props = withDefaults(
      */
     maxHeight?: string;
     /**
-     * Function that returns class, style, and attrs to apply to each row `<tr>`.
-     * Receives the item and its row index as arguments.
+     * Dynamic per-item class for rows. Receives the item and row index.
      *
-     * @example
-     * :row-props="(item) => ({ class: { 'bg-red-100': item.isOverdue } })"
+     * @example :row-class="(item) => ({ 'bg-red-100': item.isOverdue })"
      */
-    rowProps?: (item: T, index: number) => VcTableRowPropsType;
+    rowClass?: string | Record<string, boolean> | ((item: T, index: number) => string | Record<string, boolean>);
   }>(),
   {
     columns: () => [],
@@ -455,16 +454,28 @@ function getColumnFixedClasses(column: VcTableColumnType, baseClass: string): Re
   };
 }
 
-/**
- * Pre-computed row props for all items.
- * Avoids calling the rowProps function multiple times per row in the template.
- */
-const resolvedRowProps = computed<VcTableRowPropsType[]>(() => {
-  if (!props.rowProps) {
-    return [];
+// Detect if @row-click listener is bound (for auto cursor-pointer)
+const instance = getCurrentInstance();
+const hasRowClickListener = computed(() => !!instance?.vnode.props?.onRowClick);
+
+// Resolve row class from VcTable prop
+function resolvedRowClass(item: T, index: number): unknown {
+  const classes: unknown[] = [];
+
+  if (props.rowClass) {
+    classes.push(typeof props.rowClass === "function" ? props.rowClass(item, index) : props.rowClass);
   }
-  return props.items.map((item, index) => props.rowProps!(item, index));
-});
+
+  if (hasRowClickListener.value) {
+    classes.push("cursor-pointer");
+  }
+
+  return classes.length ? classes : undefined;
+}
+
+function handleRowClick(item: T, index: number) {
+  emit("rowClick", item, index);
+}
 
 // Stable cell renderer — avoids creating a new functional component identity on every render
 const CellRenderer = defineComponent({
@@ -701,8 +712,6 @@ function getItemKey(item: T, index: number): string {
   }
 
   &__row {
-    $row: &;
-
     &:nth-child(even) {
       @apply bg-neutral-50;
     }

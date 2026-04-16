@@ -1,4 +1,4 @@
-import type { Slot, StyleValue } from "vue";
+import type { Slot } from "vue";
 
 declare global {
   type VcTableSortDirectionType = "asc" | "desc";
@@ -19,16 +19,6 @@ declare global {
   type VcTableSortInfoType = {
     column: string;
     direction: VcTableSortDirectionType;
-  };
-
-  /**
-   * Return type for the `rowProps` function prop on VcTable.
-   * Allows consumers to apply dynamic class, style, and attributes to each row `<tr>`.
-   */
-  type VcTableRowPropsType = {
-    class?: string | Record<string, boolean> | string[];
-    style?: StyleValue;
-    attrs?: Record<string, unknown>;
   };
 
   /**
