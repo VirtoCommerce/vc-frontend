@@ -41,6 +41,7 @@
         :step="stepValue"
         :autocomplete="computedAutocomplete"
         :aria-label="ariaLabel ?? label"
+        :aria-describedby="counter || message ? detailsId : undefined"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
         :tabindex="tabindex"
@@ -85,6 +86,7 @@
     </div>
 
     <VcInputDetails
+      :id="counter || message ? detailsId : undefined"
       :show-empty="showEmptyDetails"
       :counter="counter"
       :message="message"
@@ -158,6 +160,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 const componentId = useComponentId("input");
+const detailsId = componentId + "-details";
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
