@@ -812,7 +812,7 @@ function getItemKey(item: T, index: number): string {
   }
 
   &__sort-button {
-    @apply inline-flex items-center gap-2 p-1 -m-1 rounded;
+    @apply inline-flex cursor-pointer items-center gap-2 p-1 -m-1 rounded;
   }
 
   &__sort-icon {
