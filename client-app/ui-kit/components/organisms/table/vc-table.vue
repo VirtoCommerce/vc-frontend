@@ -326,29 +326,28 @@ const hasColumnSlots = computed<boolean>(() => {
   return sortedChildColumnRegistrations.value.some((reg) => reg.slot !== undefined);
 });
 
-// Compute cumulative sticky offsets for fixed columns
+// Compute cumulative sticky offsets for fixed columns.
+// Uses calc() to support any CSS unit (px, rem, em, etc.), not just pixels.
 const columnOffsets = computed<Map<string, string>>(() => {
   const offsets = new Map<string, string>();
   const cols = orderedColumns.value;
 
   // Start offsets
-  let startOffset = 0;
+  const startWidths: string[] = [];
   for (const col of cols) {
     if (col.fixed === "start") {
-      const width = col.width ?? FIXED_COLUMN_DEFAULT_WIDTH;
-      offsets.set(col.id, `${startOffset}px`);
-      startOffset += Number.parseFloat(width);
+      offsets.set(col.id, startWidths.length ? `calc(${startWidths.join(" + ")})` : "0px");
+      startWidths.push(col.width ?? FIXED_COLUMN_DEFAULT_WIDTH);
     }
   }
 
   // End offsets (iterate from the end)
-  let endOffset = 0;
+  const endWidths: string[] = [];
   for (let i = cols.length - 1; i >= 0; i--) {
     const col = cols[i];
     if (col.fixed === "end") {
-      const width = col.width ?? FIXED_COLUMN_DEFAULT_WIDTH;
-      offsets.set(col.id, `${endOffset}px`);
-      endOffset += Number.parseFloat(width);
+      offsets.set(col.id, endWidths.length ? `calc(${endWidths.join(" + ")})` : "0px");
+      endWidths.push(col.width ?? FIXED_COLUMN_DEFAULT_WIDTH);
     }
   }
 
