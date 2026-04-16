@@ -141,10 +141,11 @@
             v-for="(item, rowIndex) in items"
             :key="getItemKey(item, rowIndex)"
             :class="['vc-table__row', resolvedRowClass(item, rowIndex)]"
+            :style="resolvedRowStyle(item, rowIndex)"
             :tabindex="hasRowClickListener ? 0 : undefined"
             :role="hasRowClickListener ? 'button' : undefined"
-            @click="handleRowClick(item, rowIndex)"
-            @keydown.enter="handleRowClick(item, rowIndex)"
+            @click="$emit('rowClick', item, rowIndex)"
+            @keydown.enter="$emit('rowClick', item, rowIndex)"
           >
             <td
               v-for="column in orderedColumns"
@@ -187,7 +188,7 @@
           v-if="!hideDefaultFooter && items.length && pages > 1"
           :page="page"
           :pages="Math.min(pages, pageLimit || pages)"
-          @update:page="onPageUpdate"
+          @update:page="$emit('pageChanged', $event)"
         />
       </div>
     </slot>
@@ -202,7 +203,7 @@ import VcTableColumn from "./vc-table-column.vue";
 import { vcTableKey } from "./vc-table-context";
 import type { PropType, VNode } from "vue";
 
-const emit = defineEmits<{
+defineEmits<{
   (event: "headerClick", item: VcTableSortInfoType): void;
   (event: "pageChanged", page: number): void;
   (event: "rowClick", item: T, index: number): void;
@@ -245,6 +246,12 @@ const props = withDefaults(
      * @example :row-class="(item) => ({ 'bg-red-100': item.isOverdue })"
      */
     rowClass?: string | Record<string, boolean> | ((item: T, index: number) => string | Record<string, boolean>);
+    /**
+     * Dynamic per-item inline style for rows. Receives the item and row index.
+     *
+     * @example :row-style="(item) => ({ opacity: item.isDisabled ? '0.5' : '1' })"
+     */
+    rowStyle?: string | Record<string, string> | ((item: T, index: number) => string | Record<string, string>);
   }>(),
   {
     columns: () => [],
@@ -309,17 +316,8 @@ const sortedChildColumnRegistrations = computed<VcTableColumnRegistrationType[]>
     const aIdx = order.indexOf(a.column.id);
     const bIdx = order.indexOf(b.column.id);
 
-    if (aIdx === -1 && bIdx === -1) {
-      return 0;
-    }
-    if (aIdx === -1) {
-      return 1;
-    }
-    if (bIdx === -1) {
-      return -1;
-    }
-
-    return aIdx - bIdx;
+    // Items not in template order sort to the end; preserve relative order among them
+    return (aIdx === -1 ? Infinity : aIdx) - (bIdx === -1 ? Infinity : bIdx);
   });
 });
 
@@ -423,26 +421,19 @@ const firstFixedEndId = computed<string | undefined>(() => {
 
 // Get inline style for fixed (sticky) columns
 function getColumnStyle(column: VcTableColumnType): Record<string, string> | undefined {
-  const style: Record<string, string> = {};
+  const offset = columnOffsets.value.get(column.id);
 
-  if (column.fixed && columnOffsets.value.has(column.id)) {
+  if (column.fixed && offset !== undefined) {
     const width = column.width ?? FIXED_COLUMN_DEFAULT_WIDTH;
     const cssProperty = column.fixed === "start" ? "inset-inline-start" : "inset-inline-end";
-    style.position = "sticky";
-    style[cssProperty] = columnOffsets.value.get(column.id)!;
-    style.zIndex = "3";
-    style.width = width;
-    style.minWidth = width;
-    style.maxWidth = width;
-  } else if (column.width) {
-    style.minWidth = column.width;
+    return { position: "sticky", [cssProperty]: offset, zIndex: "3", width, minWidth: width, maxWidth: width };
   }
 
-  if (Object.keys(style).length === 0) {
-    return undefined;
+  if (column.width) {
+    return { minWidth: column.width };
   }
 
-  return style;
+  return undefined;
 }
 
 // Get fixed column CSS classes (fixed flag + edge shadow markers)
@@ -459,64 +450,55 @@ const instance = getCurrentInstance();
 const hasRowClickListener = computed(() => !!instance?.vnode.props?.onRowClick);
 
 // Resolve row class from VcTable prop
-function resolvedRowClass(item: T, index: number): unknown {
-  const classes: unknown[] = [];
-
+function resolvedRowClass(item: T, index: number): unknown[] | undefined {
+  let rowClassValue: unknown;
   if (props.rowClass) {
-    classes.push(typeof props.rowClass === "function" ? props.rowClass(item, index) : props.rowClass);
+    rowClassValue = typeof props.rowClass === "function" ? props.rowClass(item, index) : props.rowClass;
+  }
+  const clickClass = hasRowClickListener.value ? "cursor-pointer" : undefined;
+
+  if (!rowClassValue && !clickClass) {
+    return undefined;
   }
 
-  if (hasRowClickListener.value) {
-    classes.push("cursor-pointer");
-  }
-
-  return classes.length ? classes : undefined;
+  return [rowClassValue, clickClass];
 }
 
-function handleRowClick(item: T, index: number) {
-  emit("rowClick", item, index);
+// Resolve row style from VcTable prop
+function resolvedRowStyle(item: T, index: number): string | Record<string, string> | undefined {
+  if (!props.rowStyle) {
+    return undefined;
+  }
+
+  if (typeof props.rowStyle === "function") {
+    return props.rowStyle(item, index);
+  }
+
+  return props.rowStyle;
 }
 
 // Stable cell renderer — avoids creating a new functional component identity on every render
 const CellRenderer = defineComponent({
   props: {
-    slotFn: {
-      type: Function as PropType<VcTableColumnSlotFnType>,
-      default: undefined,
-    },
-
-    item: {
-      type: Object,
-      required: true,
-    },
-
-    index: {
-      type: Number,
-      required: true,
-    },
+    slotFn: { type: Function as PropType<VcTableColumnSlotFnType>, default: undefined },
+    item: { type: Object, required: true },
+    index: { type: Number, required: true },
   },
 
-  setup(cellProps) {
-    return () => cellProps.slotFn?.({ item: cellProps.item, index: cellProps.index });
+  setup(p) {
+    return () => p.slotFn?.({ item: p.item, index: p.index });
   },
 });
 
 // Stable header cell renderer for custom column header slots
 const HeaderCellRenderer = defineComponent({
   props: {
-    slotFn: {
-      type: Function as PropType<VcTableColumnHeaderSlotFnType>,
-      default: undefined,
-    },
-
-    column: {
-      type: Object as PropType<VcTableColumnType>,
-      required: true,
-    },
+    slotFn: { type: Function as PropType<VcTableColumnHeaderSlotFnType>, default: undefined },
+    column: { type: Object as PropType<VcTableColumnType>, required: true },
   },
 
-  setup(headerProps) {
-    return () => headerProps.slotFn?.({ column: headerProps.column });
+  setup(p) {
+    return () => p.slotFn?.({ column: p.column });
   },
 });
 
@@ -540,10 +522,6 @@ const mobileBorderWidth = computed(() => (props.mobileBordered ? "1px" : "0"));
 
 const desktopRadius = computed(() => (props.bordered ? "var(--radius)" : "0"));
 const mobileRadius = computed(() => (props.mobileBordered ? "var(--radius)" : "0"));
-
-function onPageUpdate(newPage: number) {
-  emit("pageChanged", newPage);
-}
 
 function toggleSortDirection(currentDirection: VcTableSortDirectionType): VcTableSortDirectionType {
   return currentDirection === "desc" ? "asc" : "desc";
@@ -570,6 +548,40 @@ function getItemKey(item: T, index: number): string {
 <style lang="scss">
 .vc-table {
   $headSticky: "";
+
+  @mixin column-align {
+    &--align {
+      &--left {
+        @apply text-start;
+      }
+
+      &--center {
+        @apply text-center;
+      }
+
+      &--right {
+        @apply text-end;
+      }
+    }
+  }
+
+  @mixin fixed-column-separators {
+    &--start {
+      &::after {
+        @apply pointer-events-none absolute inset-y-0 right-0 w-0.5 bg-neutral-300;
+
+        content: "";
+      }
+    }
+
+    &--end {
+      &::before {
+        @apply pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-neutral-300;
+
+        content: "";
+      }
+    }
+  }
   $row: "";
   $skeleton: "";
 
@@ -646,19 +658,7 @@ function getItemKey(item: T, index: number): string {
   &__title {
     @apply px-4 py-1 h-10 font-bold;
 
-    &--align {
-      &--left {
-        @apply text-start;
-      }
-
-      &--center {
-        @apply text-center;
-      }
-
-      &--right {
-        @apply text-end;
-      }
-    }
+    @include column-align;
 
     &--fixed {
       @apply bg-additional-50;
@@ -667,21 +667,7 @@ function getItemKey(item: T, index: number): string {
         z-index: 30;
       }
 
-      &--start {
-        &::after {
-          @apply pointer-events-none absolute inset-y-0 right-0 w-0.5 bg-neutral-300;
-
-          content: "";
-        }
-      }
-
-      &--end {
-        &::before {
-          @apply pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-neutral-300;
-
-          content: "";
-        }
-      }
+      @include fixed-column-separators;
     }
   }
 
@@ -734,19 +720,7 @@ function getItemKey(item: T, index: number): string {
   &__skeleton-cell {
     @apply px-4 py-3;
 
-    &--align {
-      &--left {
-        @apply text-start;
-      }
-
-      &--center {
-        @apply text-center;
-      }
-
-      &--right {
-        @apply text-end;
-      }
-    }
+    @include column-align;
 
     &--fixed {
       @apply bg-additional-50;
@@ -755,40 +729,14 @@ function getItemKey(item: T, index: number): string {
         @apply bg-neutral-50;
       }
 
-      &--start {
-        &::after {
-          @apply pointer-events-none absolute inset-y-0 right-0 w-0.5 bg-neutral-300;
-
-          content: "";
-        }
-      }
-
-      &--end {
-        &::before {
-          @apply pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-neutral-300;
-
-          content: "";
-        }
-      }
+      @include fixed-column-separators;
     }
   }
 
   &__cell {
     @apply px-4 py-3;
 
-    &--align {
-      &--left {
-        @apply text-start;
-      }
-
-      &--center {
-        @apply text-center;
-      }
-
-      &--right {
-        @apply text-end;
-      }
-    }
+    @include column-align;
 
     &--fixed {
       @apply bg-additional-50;
@@ -801,21 +749,7 @@ function getItemKey(item: T, index: number): string {
         @apply bg-neutral-200;
       }
 
-      &--start {
-        &::after {
-          @apply pointer-events-none absolute inset-y-0 right-0 w-0.5 bg-neutral-300;
-
-          content: "";
-        }
-      }
-
-      &--end {
-        &::before {
-          @apply pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-neutral-300;
-
-          content: "";
-        }
-      }
+      @include fixed-column-separators;
     }
   }
 

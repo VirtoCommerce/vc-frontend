@@ -891,7 +891,85 @@ const rowClass = (item) => ({
   },
 };
 
-// 13. Loading
+// 13. RowInlineStyle
+export const RowInlineStyle: StoryType = {
+  args: {
+    items: sampleItems,
+    pages: 1,
+    page: 1,
+    bordered: true,
+  },
+  render: (args) => ({
+    components: { VcTable, VcTableColumn, VcBadge },
+    setup: () => {
+      const rowStyle = (item: Record<string, unknown>) => ({
+        opacity: item.status === "Inactive" ? "0.5" : "1",
+      });
+      return { args, rowStyle };
+    },
+    template: `
+      <VcTable
+        :items="args.items"
+        :pages="args.pages"
+        :page="args.page"
+        :bordered="args.bordered"
+        :row-style="rowStyle"
+      >
+        <VcTableColumn id="name" title="Name" v-slot="{ item }">
+          {{ item.name }}
+        </VcTableColumn>
+        <VcTableColumn id="email" title="Email" v-slot="{ item }">
+          {{ item.email }}
+        </VcTableColumn>
+        <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">
+          <VcBadge
+            :color="item.status === 'Active' ? 'success' : 'neutral'"
+            variant="solid-light"
+            size="sm"
+          >
+            {{ item.status }}
+          </VcBadge>
+        </VcTableColumn>
+      </VcTable>
+    `,
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Dynamic row inline styling using `row-style` prop on VcTable. Returns style bindings for each row `<tr>`.",
+      },
+      source: {
+        code: `
+<script setup lang="ts">
+const rowStyle = (item) => ({
+  opacity: item.status === 'Inactive' ? '0.5' : '1',
+});
+</script>
+
+<template>
+  <VcTable :items="items" :row-style="rowStyle" bordered>
+    <VcTableColumn id="name" title="Name" v-slot="{ item }">
+      {{ item.name }}
+    </VcTableColumn>
+    <VcTableColumn id="status" title="Status" align="center" v-slot="{ item }">
+      <VcBadge
+        :color="item.status === 'Active' ? 'success' : 'neutral'"
+        variant="solid-light"
+        size="sm"
+      >
+        {{ item.status }}
+      </VcBadge>
+    </VcTableColumn>
+  </VcTable>
+</template>
+        `,
+      },
+    },
+  },
+};
+
+// 14. Loading
 export const Loading: StoryType = {
   args: {
     items: [],
