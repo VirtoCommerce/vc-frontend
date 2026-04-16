@@ -82,7 +82,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__counter {
-    @apply text-right whitespace-nowrap;
+    @apply ms-auto text-right whitespace-nowrap;
   }
 }
 </style>

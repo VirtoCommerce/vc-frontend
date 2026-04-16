@@ -84,7 +84,15 @@
       </div>
     </div>
 
-    <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" :single-line="singleLineMessage" />
+    <VcInputDetails
+      :show-empty="showEmptyDetails"
+      :counter="counter"
+      :message="message"
+      :error="error"
+      :text-length="textLength"
+      :max-length="maxlength"
+      :single-line="singleLineMessage"
+    />
   </div>
 </template>
 
@@ -110,6 +118,7 @@ export interface IProps {
   noBorder?: boolean;
   hidePasswordSwitcher?: boolean;
   showEmptyDetails?: boolean;
+  counter?: boolean;
   min?: string | number;
   max?: string | number;
   step?: string | number;
@@ -174,6 +183,8 @@ const model = defineModel<T>({
     return !(props.type === "number" && value === "") ? value : undefined;
   },
 });
+
+const textLength = computed(() => String(model.value ?? "").length);
 
 const _size = computed(() => props.size);
 
