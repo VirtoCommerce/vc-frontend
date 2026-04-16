@@ -712,6 +712,8 @@ function getItemKey(item: T, index: number): string {
   }
 
   &__row {
+    $row: &;
+
     &:nth-child(even) {
       @apply bg-neutral-50;
     }
