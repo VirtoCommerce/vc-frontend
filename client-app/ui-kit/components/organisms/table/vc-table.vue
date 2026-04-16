@@ -31,6 +31,7 @@
       v-else
       :horizontal="scrollable"
       :vertical="!!maxHeight"
+      :focusable="scrollable || !!maxHeight"
       :style="scrollbarStyle"
       class="vc-table__scrollbar"
     >

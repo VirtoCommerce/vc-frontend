@@ -690,7 +690,7 @@ export const CustomColumnHeader: StoryType = {
         </VcTableColumn>
         <VcTableColumn id="email" title="Email">
           <template #header="{ column }">
-            <span class="text-primary-600 font-bold uppercase">{{ column.title }}</span>
+            <span class="text-primary-700 font-bold uppercase">{{ column.title }}</span>
           </template>
           <template #default="{ item }">
             {{ item.email }}
@@ -2249,7 +2249,7 @@ export const SlotsApiCustomHeader: StoryType = {
         <template #header>
           <thead class="vc-table__head">
             <tr>
-              <th colspan="4" class="px-4 py-3 text-left font-bold text-primary-600 bg-primary-50">
+              <th colspan="4" class="px-4 py-3 text-left font-bold text-primary-700 bg-primary-50">
                 Custom Header - User List
               </th>
             </tr>
