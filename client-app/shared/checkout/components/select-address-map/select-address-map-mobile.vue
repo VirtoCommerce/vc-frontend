@@ -13,6 +13,7 @@
           :addresses="addresses"
           :selected-address-id="selectedAddressId"
           :selectable="selectable"
+          :filtered="filterIsApplied"
           class="select-address-map-mobile__list"
           @select="onSelect"
           @reset-filter="resetFilter"
