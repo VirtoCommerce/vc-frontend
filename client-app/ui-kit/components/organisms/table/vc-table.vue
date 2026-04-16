@@ -339,7 +339,7 @@ const columnOffsets = computed<Map<string, string>>(() => {
     if (col.fixed === "start") {
       const width = col.width ?? FIXED_COLUMN_DEFAULT_WIDTH;
       offsets.set(col.id, `${startOffset}px`);
-      startOffset += parseFloat(width);
+      startOffset += Number.parseFloat(width);
     }
   }
 
@@ -350,7 +350,7 @@ const columnOffsets = computed<Map<string, string>>(() => {
     if (col.fixed === "end") {
       const width = col.width ?? FIXED_COLUMN_DEFAULT_WIDTH;
       offsets.set(col.id, `${endOffset}px`);
-      endOffset += parseFloat(width);
+      endOffset += Number.parseFloat(width);
     }
   }
 

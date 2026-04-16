@@ -117,8 +117,10 @@ function sortItems<T extends Record<string, unknown>>(items: T[], sort?: VcTable
     return items;
   }
   return [...items].sort((a, b) => {
-    const aVal = String(a[sort.column] ?? "");
-    const bVal = String(b[sort.column] ?? "");
+    const aRaw = a[sort.column];
+    const bRaw = b[sort.column];
+    const aVal = typeof aRaw === "string" || typeof aRaw === "number" ? String(aRaw) : "";
+    const bVal = typeof bRaw === "string" || typeof bRaw === "number" ? String(bRaw) : "";
     const cmp = aVal.localeCompare(bVal);
     return sort.direction === "asc" ? cmp : -cmp;
   });

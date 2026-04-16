@@ -95,13 +95,13 @@ onMounted(() => {
   registerSelf();
 });
 
-// Re-register when props change after mount
-watch(
-  () => [props.id, props.title, props.sortable, props.align, props.width, props.fixed, attrs.class],
-  () => {
-    registerSelf();
-  },
-);
+// Re-register when props change after mount; unregister old id if it changed
+watch(columnData, (_, oldValue) => {
+  if (oldValue && oldValue.id !== props.id) {
+    tableContext?.unregisterColumn(oldValue.id);
+  }
+  registerSelf();
+});
 
 onBeforeUnmount(() => {
   unregisterSelf();
