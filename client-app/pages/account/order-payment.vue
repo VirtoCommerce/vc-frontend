@@ -144,16 +144,10 @@
                 </p>
 
                 <p class="truncate">
-                  <span class="font-bold">
-                    {{ $t("pages.account.order_payment.phone_label") }}
-                  </span>
                   {{ payment?.billingAddress?.phone }}
                 </p>
 
                 <p class="truncate">
-                  <span class="font-bold">
-                    {{ $t("pages.account.order_payment.email_label") }}
-                  </span>
                   {{ payment?.billingAddress?.email }}
                 </p>
               </div>
