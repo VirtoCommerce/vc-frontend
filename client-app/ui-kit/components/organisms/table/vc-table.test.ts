@@ -61,7 +61,10 @@ async function mountWithSlots(options: {
             VcTableColumn,
             { id: col.id, title: col.title },
             {
-              default: ({ item }: { item: VcTableItemType }) => h("span", String(item[col.id] ?? "")),
+              default: ({ item }: { item: VcTableItemType }) => {
+                const value = item[col.id];
+                return h("span", typeof value === "string" || typeof value === "number" ? String(value) : "");
+              },
             },
           ),
         ),
