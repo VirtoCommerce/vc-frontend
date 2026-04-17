@@ -10,11 +10,12 @@ import { SortDirection } from "@/core/enums";
 import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
 import type { InputMemberAddressType, MemberAddressFieldsFragment } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
-import type { MaybeRefOrGetter } from "vue";
+import type { MaybeRef, MaybeRefOrGetter } from "vue";
 
 export function useCurrentOrganizationAddresses(
   organizationId: MaybeRefOrGetter<string>,
   itemsPerPage: MaybeRefOrGetter<number> = 6,
+  enabled?: MaybeRef<boolean>,
 ) {
   const sort = ref<ISortInfo>({
     column: "isFavorite",
@@ -34,10 +35,10 @@ export function useCurrentOrganizationAddresses(
     countryCodes: filterCountryCodes.value.length ? filterCountryCodes.value : undefined,
     regionIds: filterRegionIds.value.length ? filterRegionIds.value : undefined,
     cities: filterCities.value.length ? filterCities.value : undefined,
-    keyword: keyword.value ?? null,
+    keyword: keyword.value,
   }));
 
-  const { result, loading, refetch } = useGetCurrentOrganizationAddressesQuery(variables);
+  const { result, loading, refetch } = useGetCurrentOrganizationAddressesQuery(variables, enabled);
 
   const addresses = computed(() => result.value?.currentOrganizationAddresses?.items ?? []);
   const totalCount = computed(() => result.value?.currentOrganizationAddresses?.totalCount ?? 0);

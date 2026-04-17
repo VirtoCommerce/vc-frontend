@@ -77,7 +77,10 @@ export function _useCheckout(cartId?: string) {
     filterCities: personalFilterCities,
     termFacets: personalTermFacets,
     addOrUpdateAddresses: addOrUpdatePersonalAddresses,
-  } = useCustomerAddresses();
+  } = useCustomerAddresses(
+    6,
+    computed(() => isAuthenticated.value && !isCorporateMember.value),
+  );
   const {
     addresses: organizationsAddresses,
     loading: organizationAddressesLoading,
@@ -89,7 +92,11 @@ export function _useCheckout(cartId?: string) {
     filterCities: organizationFilterCities,
     termFacets: organizationTermFacets,
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
-  } = useCurrentOrganizationAddresses(() => user.value.contact?.organizationId ?? "");
+  } = useCurrentOrganizationAddresses(
+    () => user.value.contact?.organizationId ?? "",
+    6,
+    computed(() => isAuthenticated.value && isCorporateMember.value),
+  );
   const {
     refetch: refetchCart,
     cart,

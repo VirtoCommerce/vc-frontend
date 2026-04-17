@@ -9,9 +9,9 @@ import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
 import { useUser } from "./useUser";
 import type { InputMemberAddressType, MemberAddressFieldsFragment } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
-import type { MaybeRefOrGetter } from "vue";
+import type { MaybeRefOrGetter, MaybeRef } from "vue";
 
-export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6) {
+export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6, enabled?: MaybeRef<boolean>) {
   const { user } = useUser();
 
   const sort = ref<ISortInfo>({
@@ -32,10 +32,10 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6)
     countryCodes: filterCountryCodes.value.length ? filterCountryCodes.value : undefined,
     regionIds: filterRegionIds.value.length ? filterRegionIds.value : undefined,
     cities: filterCities.value.length ? filterCities.value : undefined,
-    keyword: keyword.value ?? null,
+    keyword: keyword.value,
   }));
 
-  const { result, loading, refetch } = useGetCurrentCustomerAddressesQuery(variables);
+  const { result, loading, refetch } = useGetCurrentCustomerAddressesQuery(variables, enabled);
 
   const addresses = computed(() => result.value?.currentCustomerAddresses?.items ?? []);
   const totalCount = computed(() => result.value?.currentCustomerAddresses?.totalCount ?? 0);

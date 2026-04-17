@@ -5,6 +5,7 @@ import type { MaybeRef } from "vue";
 
 export function useGetCurrentOrganizationAddressesQuery(
   variables?: MaybeRef<GetCurrentOrganizationAddressesQueryVariables>,
+  enabled?: MaybeRef<boolean>,
 ) {
-  return useQuery(GetCurrentOrganizationAddressesDocument, variables ?? {}, { fetchPolicy: "network-only" });
+  return useQuery(GetCurrentOrganizationAddressesDocument, variables ?? {}, { fetchPolicy: "network-only", enabled });
 }

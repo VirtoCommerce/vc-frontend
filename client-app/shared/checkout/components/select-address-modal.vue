@@ -140,11 +140,11 @@
           </div>
 
           <div class="w-10 flex-none text-center">
-            <VcIcon v-if="item.id === selectedAddress?.id" class="fill-secondary" name="check-circle" :size="20" />
+            <VcIcon v-if="isSelected(item)" class="fill-secondary" name="check-circle" :size="20" />
           </div>
 
           <button
-            v-if="item.id !== selectedAddress?.id"
+            v-if="!isSelected(item)"
             type="button"
             class="absolute inset-0 opacity-0"
             @click="setAddress(item)"
@@ -168,10 +168,7 @@
       <template #desktop-item="{ item }">
         <tr
           :data-test-id="`customer-address-${item.id}`"
-          :class="[
-            'group border-b last:border-none hover:bg-secondary-50',
-            { 'cursor-pointer': item.id !== selectedAddress?.id },
-          ]"
+          :class="['group border-b last:border-none hover:bg-secondary-50', { 'cursor-pointer': !isSelected(item) }]"
           @click="setAddress(item)"
         >
           <td class="px-4 py-3.5">
@@ -223,7 +220,7 @@
           </td>
 
           <td class="h-[3.75rem] py-2.5 text-center">
-            <VcIcon v-if="item.id === selectedAddress?.id" class="fill-success" name="check-circle" />
+            <VcIcon v-if="isSelected(item)" class="fill-success" name="check-circle" />
 
             <VcButton v-else class="invisible group-hover:lg:visible" variant="outline" size="xs">
               {{ $t("shared.checkout.select_address_modal.select_button") }}
@@ -253,7 +250,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, ref, watchEffect } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
@@ -376,6 +373,10 @@ function onPageChange(): void {
   emit("pageChange", page.value);
 }
 
+function isSelected(address: AnyAddressType): boolean {
+  return !!selectedAddress.value && isEqualAddresses(address, selectedAddress.value);
+}
+
 function setAddress(address: AnyAddressType): void {
   selectedAddress.value = address;
 }
@@ -386,8 +387,10 @@ function save(): void {
   }
 }
 
-watchEffect(() => {
-  if (props.paginationMode === "client") {
+onMounted(() => {
+  if (props.paginationMode === "server") {
+    selectedAddress.value = props.currentAddress;
+  } else {
     selectedAddress.value = props.addresses.find((item) =>
       isEqualAddresses(item, props.currentAddress ?? {}, { omitFields: props.omitFieldsOnCompare }),
     );
