@@ -11,6 +11,7 @@
             :addresses="addresses"
             :selected-address-id="selectedAddressId"
             :selectable="selectable"
+            :filtered="filterIsApplied"
             class="select-address-map-desktop__list"
             @select="(a: PickupLocationType) => onSelect(a, 'list')"
             @reset-filter="resetFilter"
