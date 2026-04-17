@@ -200,3 +200,58 @@ export const WithDateTime: StoryType = {
     },
   },
 };
+
+export const EventsDemo: StoryType = {
+  args: (() => {
+    const today = new Date().toISOString().split("T")[0];
+    const currentYear = new Date().getFullYear();
+
+    return {
+      modelValue: today,
+      min: `${currentYear}-01-01`,
+      max: `${currentYear}-12-31`,
+    };
+  })(),
+  render: (args) => ({
+    setup() {
+      return { args };
+    },
+    template: `
+    <div class="w-96 space-y-4">
+      <VcDateSelector
+        v-bind="args"
+        v-model="args.modelValue"
+        @input="onInput"
+        @change="onChange"
+        @blur="onBlur"
+      />
+      <div class="text-sm space-y-1">
+        <div class="font-bold">Last events:</div>
+        <pre class="bg-neutral-100 p-2 rounded text-xs overflow-auto max-h-48">{{ log }}</pre>
+      </div>
+    </div>
+  `,
+    data() {
+      return { log: "" };
+    },
+    methods: {
+      onInput(e: VcDateSelectorEventType) {
+        this.log = `@input: ${JSON.stringify(e, null, 2)}\n\n${this.log}`.slice(0, 2000);
+      },
+      onChange(e: VcDateSelectorEventType) {
+        this.log = `@change: ${JSON.stringify(e, null, 2)}\n\n${this.log}`.slice(0, 2000);
+      },
+      onBlur(e: VcDateSelectorEventType) {
+        this.log = `@blur: ${JSON.stringify(e, null, 2)}\n\n${this.log}`.slice(0, 2000);
+      },
+    },
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Interactive demo showing @input (every keystroke), @change (meaningful transitions), and @blur events with structured VcDateSelectorEventType payload. Edit the date to see events fire in real time.",
+      },
+    },
+  },
+};
