@@ -667,6 +667,8 @@ export type ConfigurationSectionType = {
   id: Scalars['String']['output'];
   /** Is configuration section required */
   isRequired: Scalars['Boolean']['output'];
+  /** Maximum text length for Text-type section */
+  maxLength?: Maybe<Scalars['Int']['output']>;
   /** Configuration section name */
   name?: Maybe<Scalars['String']['output']>;
   options?: Maybe<Array<Maybe<ConfigurationLineItemType>>>;
