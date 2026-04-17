@@ -312,12 +312,13 @@ const sortedChildColumnRegistrations = computed<VcTableColumnRegistrationType[]>
   const order = templateColumnOrder.value;
   const registrations = Array.from(childColumns.value.values());
 
+  const fallback = registrations.length;
   return registrations.sort((a, b) => {
     const aIdx = order.indexOf(a.column.id);
     const bIdx = order.indexOf(b.column.id);
 
     // Items not in template order sort to the end; preserve relative order among them
-    return (aIdx === -1 ? Infinity : aIdx) - (bIdx === -1 ? Infinity : bIdx);
+    return (aIdx === -1 ? fallback : aIdx) - (bIdx === -1 ? fallback : bIdx);
   });
 });
 
