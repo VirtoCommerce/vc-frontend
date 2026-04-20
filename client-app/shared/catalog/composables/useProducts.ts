@@ -357,7 +357,7 @@ export function useProducts(
 
     facets.value = Array<FacetItemType>().concat(
       rangeFacets.map(rangeFacetToCommonFacet),
-      termFacets.map(termFacetToCommonFacet),
+      termFacets.map((f) => termFacetToCommonFacet(f, false)),
     );
   }
 
@@ -478,7 +478,7 @@ export function useProducts(
       range_facets.sort((a, b) => a.label.localeCompare(b.label));
 
       return Array<FacetItemType>().concat(
-        term_facets.map(termFacetToCommonFacet),
+        term_facets.map((f) => termFacetToCommonFacet(f, false)),
         range_facets.map(rangeFacetToCommonFacet),
       );
     } catch (e) {
