@@ -667,6 +667,8 @@ export type ConfigurationSectionType = {
   id: Scalars['String']['output'];
   /** Is configuration section required */
   isRequired: Scalars['Boolean']['output'];
+  /** Maximum text length for Text-type section */
+  maxLength?: Maybe<Scalars['Int']['output']>;
   /** Configuration section name */
   name?: Maybe<Scalars['String']['output']>;
   options?: Maybe<Array<Maybe<ConfigurationLineItemType>>>;
@@ -1706,12 +1708,16 @@ export type InputAssignRoleType = {
 };
 
 export type InputAuthorizePaymentType = {
+  /** Culture name (e.g. "en-US"); when omitted falls back to store default language */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   /** Order Id */
   orderId?: InputMaybe<Scalars['String']['input']>;
   /** Input parameters */
   parameters?: InputMaybe<Array<InputMaybe<InputKeyValueType>>>;
   /** Payment Id */
   paymentId: Scalars['String']['input'];
+  /** Store Id (optional, validated against the order's store when provided) */
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputCartItemQuantityType = {
@@ -2102,17 +2108,25 @@ export type InputDynamicPropertyValueType = {
 
 export type InputInitializeCartPaymentType = {
   cartId: Scalars['String']['input'];
+  /** Culture name (e.g. "en-US"); when omitted falls back to store default language */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   /** Payment Id */
   paymentId: Scalars['String']['input'];
+  /** Store Id (optional, validated against the cart's store when provided) */
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputInitializePaymentType = {
+  /** Culture name (e.g. "en-US"); when omitted falls back to store default language */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   /** Order Id */
   orderId?: InputMaybe<Scalars['String']['input']>;
   /** Input parameters */
   parameters?: InputMaybe<Array<InputMaybe<InputKeyValueType>>>;
   /** Payment Id */
   paymentId: Scalars['String']['input'];
+  /** Store Id (optional, validated against the order's store when provided) */
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputInviteUserType = {

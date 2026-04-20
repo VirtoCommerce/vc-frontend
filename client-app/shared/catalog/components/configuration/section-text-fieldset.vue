@@ -62,7 +62,10 @@ import { useI18n } from "vue-i18n";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
-type SectionType = Pick<ConfigurationSectionType, "allowTextOptions" | "allowCustomText" | "isRequired" | "name"> & {
+type SectionType = Pick<
+  ConfigurationSectionType,
+  "allowTextOptions" | "allowCustomText" | "isRequired" | "name" | "maxLength"
+> & {
   options?: { id?: string; text?: string }[];
 };
 
@@ -81,7 +84,7 @@ const isInitialized = ref(false);
 
 const TRANSLATION_KEYS_ORIGIN = "shared.catalog.product_details.product_configuration.section-text-fieldset";
 
-const MAX_LENGTH = 255;
+const MAX_LENGTH = computed(() => props.section.maxLength ?? 255);
 
 const NOT_SELECTED_VALUE = computed(() => t(constructLocaleKey("no_selection")));
 const CUSTOM_VALUE = computed(() => t(constructLocaleKey("custom_input")));
