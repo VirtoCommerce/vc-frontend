@@ -277,11 +277,9 @@ provide<VcTableContextType>(vcTableKey, {
     headerSlot?: VcTableColumnHeaderSlotFnType,
   ) {
     childColumns.value.set(column.id, { column, slot, headerSlot });
-    childColumns.value = new Map(childColumns.value);
   },
   unregisterColumn(columnId: string) {
     childColumns.value.delete(columnId);
-    childColumns.value = new Map(childColumns.value);
   },
 });
 
