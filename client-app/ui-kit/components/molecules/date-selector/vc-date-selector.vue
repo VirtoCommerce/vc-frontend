@@ -155,20 +155,15 @@ function buildPayload(eventSource: VcDateSelectorEventSourceType): VcDateSelecto
   return { value, complete, valid, eventSource };
 }
 
-/**
- * Guard against duplicate native "input" events caused by the maska input-mask library,
- * which re-dispatches a synthetic "input" event after processing the original one.
- */
-let inputGuard = false;
-
-function onNativeInput(): void {
-  if (inputGuard) {
+function onNativeInput(event: Event): void {
+  /**
+   * VcInput applies the `v-maska` directive unconditionally. Even when no mask
+   * is passed, maska installs an input listener and re-dispatches a synthetic
+   * `CustomEvent("input")` after processing. Skip those to avoid double firing.
+   */
+  if (event instanceof CustomEvent) {
     return;
   }
-  inputGuard = true;
-  queueMicrotask(() => {
-    inputGuard = false;
-  });
 
   const source: VcDateSelectorEventSourceType = pickerOpen ? "picker" : "input";
   pickerOpen = false;
