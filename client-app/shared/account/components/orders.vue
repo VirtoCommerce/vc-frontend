@@ -1,301 +1,304 @@
 <template>
-  <div class="orders">
-    <template v-if="withSearch">
-      <!-- Mobile filters sidebar -->
-      <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
-        <MobileOrdersFilter>
-          <template #buyerNameFilterType>
-            <VcWidget v-if="showCustomerNameFilter" :title="$t('common.labels.buyer_name')" size="sm">
-              <VcSelect v-model="filterData.customerNames" :items="organizationCustomerNames ?? []" multiple />
-            </VcWidget>
-          </template>
-
-          <template #dateFilterType>
-            <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
-          </template>
-        </MobileOrdersFilter>
-
-        <template #footer>
-          <VcButton
-            :disabled="isFilterEmpty && !isFilterDirty"
-            class="me-auto"
-            color="secondary"
-            variant="outline"
-            size="sm"
-            icon="reset"
-            :title="$t('common.buttons.reset')"
-            @click="
-              resetOrderFilters();
-              hideFilters();
-            "
-          />
-
-          <VcButton
-            :disabled="isFilterEmpty && !isFilterDirty"
-            variant="outline"
-            size="sm"
-            min-width="6.25rem"
-            @click="hideFilters"
-          >
-            {{ $t("common.buttons.cancel") }}
-          </VcButton>
-
-          <VcButton
-            :disabled="!isFilterDirty"
-            size="sm"
-            min-width="6.25rem"
-            @click="
-              applyOrderFilters();
-              hideFilters();
-            "
-          >
-            {{ $t("common.buttons.apply") }}
-          </VcButton>
+  <template v-if="withSearch">
+    <!-- Mobile filters sidebar -->
+    <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
+      <MobileOrdersFilter>
+        <template #buyerNameFilterType>
+          <VcWidget v-if="showCustomerNameFilter" :title="$t('common.labels.buyer_name')" size="sm">
+            <VcSelect v-model="filterData.customerNames" :items="organizationCustomerNames ?? []" multiple />
+          </VcWidget>
         </template>
-      </VcPopupSidebar>
 
-      <div class="orders__toolbar">
-        <div v-if="isOrganizationMaintainer" class="orders__scope-tabs">
-          <VcTabSwitch
-            v-model="orderScope"
-            value="organization"
-            icon="case"
-            :label="$t('common.buttons.all_orders')"
-            @change="toggleOrdersScope('organization')"
-          />
+        <template #dateFilterType>
+          <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersDateFilterChange" />
+        </template>
+      </MobileOrdersFilter>
 
-          <VcTabSwitch
-            v-model="orderScope"
-            value="private"
-            icon="user"
-            :label="$t('common.buttons.my_orders')"
-            @change="toggleOrdersScope('private')"
-          />
-        </div>
+      <template #footer>
+        <VcButton
+          :disabled="isFilterEmpty && !isFilterDirty"
+          class="me-auto"
+          color="secondary"
+          variant="outline"
+          size="sm"
+          icon="reset"
+          :title="$t('common.buttons.reset')"
+          @click="
+            resetOrderFilters();
+            hideFilters();
+          "
+        />
 
-        <div class="orders__search-bar">
-          <!-- Desktop filters popover -->
-          <VcPopover v-if="!isMobile" placement="bottom-end" :offset-options="8" :disabled="ordersLoading" lazy>
-            <template #default="{ triggerProps }">
-              <VcButton :disabled="ordersLoading" variant="outline" v-bind="triggerProps">
-                <VcIcon name="filter" />
+        <VcButton
+          :disabled="isFilterEmpty && !isFilterDirty"
+          variant="outline"
+          size="sm"
+          min-width="6.25rem"
+          @click="hideFilters"
+        >
+          {{ $t("common.buttons.cancel") }}
+        </VcButton>
 
-                <span>{{ $t("common.buttons.filters") }}</span>
-              </VcButton>
-            </template>
+        <VcButton
+          :disabled="!isFilterDirty"
+          size="sm"
+          min-width="6.25rem"
+          @click="
+            applyOrderFilters();
+            hideFilters();
+          "
+        >
+          {{ $t("common.buttons.apply") }}
+        </VcButton>
+      </template>
+    </VcPopupSidebar>
 
-            <template #content="{ close }">
-              <OrdersFilter
-                @apply="
-                  applyOrderFilters();
-                  close();
-                "
-                @reset="
-                  resetOrderFilters();
-                  close();
-                "
-                @close="close"
-              >
-                <DateFilterSelect
-                  :date-filter-type="selectedDateFilterType"
-                  :label="$t('shared.account.orders_filter.created_date_label')"
-                  @change="handleOrdersDateFilterChange"
-                />
+    <div class="flex flex-col items-center gap-3 lg:flex-row">
+      <div v-if="isOrganizationMaintainer" class="flex gap-2">
+        <VcTabSwitch
+          v-model="orderScope"
+          value="organization"
+          icon="case"
+          :label="$t('common.buttons.all_orders')"
+          @change="toggleOrdersScope('organization')"
+        />
 
-                <VcSelect
-                  v-if="showCustomerNameFilter"
-                  v-model="filterData.customerNames"
-                  :label="$t('common.labels.buyer_name')"
-                  :items="organizationCustomerNames ?? []"
-                  multiple
-                  enable-teleport
-                />
-              </OrdersFilter>
-            </template>
-          </VcPopover>
+        <VcTabSwitch
+          v-model="orderScope"
+          value="private"
+          icon="user"
+          :label="$t('common.buttons.my_orders')"
+          @change="toggleOrdersScope('private')"
+        />
+      </div>
 
-          <!-- Mobile filters button -->
-          <VcButton v-else :disabled="ordersLoading" icon @click="filtersVisible = true">
-            <VcIcon name="filter" />
+      <div class="flex grow flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5">
+        <!-- Desktop filters popover -->
+        <VcPopover v-if="!isMobile" placement="bottom-end" :offset-options="8" :disabled="ordersLoading" lazy>
+          <template #default="{ triggerProps }">
+            <VcButton :disabled="ordersLoading" variant="outline" v-bind="triggerProps">
+              <VcIcon name="filter" />
 
-            <span>{{ $t("common.buttons.filters") }}</span>
-          </VcButton>
+              <span>{{ $t("common.buttons.filters") }}</span>
+            </VcButton>
+          </template>
 
-          <div class="orders__search-input-wrapper">
-            <VcInput
-              v-model="localKeyword"
-              maxlength="64"
-              clearable
-              class="orders__search-input"
-              :disabled="ordersLoading"
-              :placeholder="$t('pages.account.orders.search_placeholder')"
-              @keydown.enter="applyKeyword"
-              @clear="resetKeyword"
+          <template #content="{ close }">
+            <OrdersFilter
+              @apply="
+                applyOrderFilters();
+                close();
+              "
+              @reset="
+                resetOrderFilters();
+                close();
+              "
+              @close="close"
             >
-              <template #append>
-                <VcButton
-                  :disabled="ordersLoading"
-                  :aria-label="$t('commmon.buttons.search_orders')"
-                  icon="search"
-                  icon-size="1.25rem"
-                  @click="applyKeyword"
-                />
-              </template>
-            </VcInput>
-          </div>
+              <DateFilterSelect
+                :date-filter-type="selectedDateFilterType"
+                :label="$t('shared.account.orders_filter.created_date_label')"
+                @change="handleOrdersDateFilterChange"
+              />
+
+              <VcSelect
+                v-if="showCustomerNameFilter"
+                v-model="filterData.customerNames"
+                :label="$t('common.labels.buyer_name')"
+                :items="organizationCustomerNames ?? []"
+                multiple
+                enable-teleport
+              />
+            </OrdersFilter>
+          </template>
+        </VcPopover>
+
+        <!-- Mobile filters button -->
+        <VcButton v-else :disabled="ordersLoading" icon @click="filtersVisible = true">
+          <VcIcon name="filter" />
+
+          <span>{{ $t("common.buttons.filters") }}</span>
+        </VcButton>
+
+        <div class="flex grow gap-6">
+          <VcInput
+            v-model="localKeyword"
+            maxlength="64"
+            clearable
+            class="w-full"
+            :disabled="ordersLoading"
+            :placeholder="$t('pages.account.orders.search_placeholder')"
+            @keydown.enter="applyKeyword"
+            @clear="resetKeyword"
+          >
+            <template #append>
+              <VcButton
+                :disabled="ordersLoading"
+                :aria-label="$t('commmon.buttons.search_orders')"
+                icon="search"
+                icon-size="1.25rem"
+                @click="applyKeyword"
+              />
+            </template>
+          </VcInput>
         </div>
       </div>
+    </div>
 
-      <!-- Filters chips -->
-      <div v-if="!isFilterEmpty" class="orders__chips">
-        <template v-for="item in filterChipsItems" :key="item.value">
-          <VcChip color="secondary" closable @close="handleRemoveFilter(item)">
-            {{ item.label }}
-          </VcChip>
-        </template>
-
-        <VcChip color="secondary" variant="outline" clickable @click="resetOrderFilters">
-          <span>{{ $t("common.buttons.reset_filters") }}</span>
-
-          <VcIcon name="reset" />
+    <!-- Filters chips -->
+    <div v-if="!isFilterEmpty" class="hidden flex-wrap gap-x-3 gap-y-2 lg:flex">
+      <template v-for="item in filterChipsItems" :key="item.value">
+        <VcChip color="secondary" closable @close="handleRemoveFilter(item)">
+          {{ item.label }}
         </VcChip>
-      </div>
+      </template>
+
+      <VcChip color="secondary" variant="outline" clickable @click="resetOrderFilters">
+        <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+        <VcIcon name="reset" />
+      </VcChip>
+    </div>
+  </template>
+
+  <!-- Empty view -->
+  <VcEmptyView
+    v-if="!orders.length && !ordersLoading"
+    :text="
+      keyword || !isFilterEmpty
+        ? $t('pages.account.orders.no_results_message')
+        : $t('pages.account.orders.no_orders_message')
+    "
+    icon="outline-order"
+    :variant="!!keyword || !isFilterEmpty ? 'search' : 'empty'"
+  >
+    <template #button>
+      <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
+        {{ $t("pages.account.orders.buttons.reset_search") }}
+      </VcButton>
+
+      <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
+        {{ $t("pages.account.orders.buttons.no_orders") }}
+      </VcButton>
+
+      <VcButton v-else to="/">
+        {{ $t("pages.account.orders.buttons.no_orders") }}
+      </VcButton>
+    </template>
+  </VcEmptyView>
+
+  <!-- Content block -->
+  <VcTable
+    v-else
+    :loading="ordersLoading"
+    :columns="columns"
+    :items="orders"
+    :sort="sort"
+    :pages="pages"
+    :page="page"
+    :hide-default-footer="!withPagination"
+    :description="$t('pages.account.orders.meta.table_description')"
+    :bordered="withSearch"
+    mobile-breakpoint="lg"
+    class="bg-additional-50"
+    @header-click="applySorting"
+    @page-changed="changePage"
+  >
+    <template #mobile-item="itemData">
+      <button
+        class="grid w-full cursor-pointer grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
+        type="button"
+        tabindex="0"
+        @click="goToOrderDetails(itemData.item)"
+        @keyup.enter="goToOrderDetails(itemData.item)"
+      >
+        <div class="flex flex-col">
+          <span class="text-sm text-neutral-400">
+            {{ $t("pages.account.orders.order_number_label") }}
+          </span>
+
+          <span class="overflow-hidden text-ellipsis pr-4 font-black">
+            {{ itemData.item.number }}
+          </span>
+        </div>
+
+        <div class="flex flex-col items-end justify-center">
+          <OrderStatus :status="itemData.item.status" :display-value="itemData.item.statusDisplayValue" />
+        </div>
+
+        <div v-if="orderScope === 'organization' && itemData.item?.customerName" class="flex flex-col">
+          <span class="text-sm text-neutral-400">
+            {{ $t("pages.account.orders.buyer_name_label") }}
+          </span>
+
+          <span class="overflow-hidden text-ellipsis">
+            {{ itemData.item?.customerName }}
+          </span>
+        </div>
+
+        <div class="flex flex-col">
+          <span class="text-sm text-neutral-400">
+            {{ $t("pages.account.orders.date_label") }}
+          </span>
+
+          <span class="overflow-hidden text-ellipsis">
+            {{ $d(itemData.item?.createdDate) }}
+          </span>
+        </div>
+
+        <div class="flex flex-col">
+          <span class="text-sm text-neutral-400">
+            {{ $t("pages.account.orders.total_label") }}
+          </span>
+
+          <span class="overflow-hidden text-ellipsis font-black">
+            {{ itemData.item.total?.formattedAmount }}
+          </span>
+        </div>
+      </button>
     </template>
 
-    <!-- Empty view -->
-    <VcEmptyView
-      v-if="!orders.length && !ordersLoading"
-      :text="
-        keyword || !isFilterEmpty
-          ? $t('pages.account.orders.no_results_message')
-          : $t('pages.account.orders.no_orders_message')
-      "
-      icon="outline-order"
-      :variant="!!keyword || !isFilterEmpty ? 'search' : 'empty'"
-    >
-      <template #button>
-        <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
-          {{ $t("pages.account.orders.buttons.reset_search") }}
-        </VcButton>
+    <template #desktop-body>
+      <tr
+        v-for="order in orders"
+        :key="order.id"
+        class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+        @click="goToOrderDetails(order)"
+      >
+        <td class="overflow-hidden text-ellipsis p-5">
+          {{ order.number }}
+        </td>
 
-        <VcButton v-else-if="!!continue_shopping_link" :external-link="continue_shopping_link">
-          {{ $t("pages.account.orders.buttons.no_orders") }}
-        </VcButton>
+        <td v-if="orderScope === 'private'" class="overflow-hidden text-ellipsis p-5">
+          {{ order.purchaseOrderNumber }}
+        </td>
 
-        <VcButton v-else to="/">
-          {{ $t("pages.account.orders.buttons.no_orders") }}
-        </VcButton>
-      </template>
-    </VcEmptyView>
+        <td v-if="orderScope === 'organization'" class="overflow-hidden text-ellipsis p-5">
+          {{ order.customerName }}
+        </td>
 
-    <!-- Content block -->
-    <VcTable
-      v-else
-      :loading="ordersLoading"
-      :columns="columns"
-      :items="orders"
-      :sort="sort"
-      :pages="pages"
-      :page="page"
-      :hide-default-footer="!withPagination"
-      :description="$t('pages.account.orders.meta.table_description')"
-      :bordered="withSearch"
-      mobile-breakpoint="lg"
-      class="orders__table"
-      @header-click="applySorting"
-      @page-changed="changePage"
-    >
-      <template #mobile-item="itemData">
-        <button
-          class="orders__mobile-row"
-          type="button"
-          tabindex="0"
-          @click="goToOrderDetails(itemData.item)"
-          @keyup.enter="goToOrderDetails(itemData.item)"
-        >
-          <div class="orders__mobile-cell">
-            <span class="orders__mobile-label">
-              {{ $t("pages.account.orders.order_number_label") }}
-            </span>
+        <td class="overflow-hidden text-ellipsis p-5">
+          {{ order.inPayments?.[0]?.number }}
+        </td>
 
-            <span class="orders__mobile-value orders__mobile-value--bold orders__mobile-value--pr">
-              {{ itemData.item.number }}
-            </span>
-          </div>
+        <td class="overflow-hidden text-ellipsis p-5">
+          {{ $d(order?.createdDate) }}
+        </td>
 
-          <div class="orders__mobile-cell orders__mobile-cell--end">
-            <OrderStatus :status="itemData.item.status" :display-value="itemData.item.statusDisplayValue" />
-          </div>
+        <td class="p-1">
+          <OrderStatus :status="order.status" :display-value="order.statusDisplayValue" class="inline-block" />
+        </td>
 
-          <div v-if="orderScope === 'organization' && itemData.item?.customerName" class="orders__mobile-cell">
-            <span class="orders__mobile-label">
-              {{ $t("pages.account.orders.buyer_name_label") }}
-            </span>
+        <td class="overflow-hidden text-ellipsis p-5 text-right">
+          {{ order.total?.formattedAmount }}
+        </td>
+      </tr>
+    </template>
 
-            <span class="orders__mobile-value">
-              {{ itemData.item?.customerName }}
-            </span>
-          </div>
-
-          <div class="orders__mobile-cell">
-            <span class="orders__mobile-label">
-              {{ $t("pages.account.orders.date_label") }}
-            </span>
-
-            <span class="orders__mobile-value">
-              {{ $d(itemData.item?.createdDate) }}
-            </span>
-          </div>
-
-          <div class="orders__mobile-cell">
-            <span class="orders__mobile-label">
-              {{ $t("pages.account.orders.total_label") }}
-            </span>
-
-            <span class="orders__mobile-value orders__mobile-value--bold">
-              {{ itemData.item.total?.formattedAmount }}
-            </span>
-          </div>
-        </button>
-      </template>
-
-      <template #desktop-body>
-        <tr v-for="order in orders" :key="order.id" class="orders__desktop-row" @click="goToOrderDetails(order)">
-          <td class="orders__desktop-cell">
-            {{ order.number }}
-          </td>
-
-          <td v-if="orderScope === 'private'" class="orders__desktop-cell">
-            {{ order.purchaseOrderNumber }}
-          </td>
-
-          <td v-if="orderScope === 'organization'" class="orders__desktop-cell">
-            {{ order.customerName }}
-          </td>
-
-          <td class="orders__desktop-cell">
-            {{ order.inPayments?.[0]?.number }}
-          </td>
-
-          <td class="orders__desktop-cell">
-            {{ $d(order?.createdDate) }}
-          </td>
-
-          <td class="orders__desktop-cell orders__desktop-cell--status">
-            <OrderStatus :status="order.status" :display-value="order.statusDisplayValue" class="inline-block" />
-          </td>
-
-          <td class="orders__desktop-cell orders__desktop-cell--total">
-            {{ order.total?.formattedAmount }}
-          </td>
-        </tr>
-      </template>
-
-      <template #page-limit-message>
-        {{ $t("ui_kit.reach_limit.page_limit_filters") }}
-      </template>
-    </VcTable>
-  </div>
+    <template #page-limit-message>
+      {{ $t("ui_kit.reach_limit.page_limit_filters") }}
+    </template>
+  </VcTable>
 </template>
 
 <script setup lang="ts">
@@ -500,99 +503,3 @@ watch(
   { deep: true },
 );
 </script>
-
-<style lang="scss">
-.orders {
-  &__toolbar {
-    @apply flex flex-col items-center gap-3;
-
-    @media (width >= theme("screens.lg")) {
-      @apply flex-row;
-    }
-  }
-
-  &__scope-tabs {
-    @apply flex gap-2;
-  }
-
-  &__search-bar {
-    @apply flex grow flex-row items-center gap-x-2;
-
-    @media (width >= theme("screens.lg")) {
-      @apply flex-row-reverse gap-x-5;
-    }
-  }
-
-  &__search-input-wrapper {
-    @apply flex grow gap-6;
-  }
-
-  &__search-input {
-    @apply w-full;
-  }
-
-  &__chips {
-    @apply hidden flex-wrap gap-x-3 gap-y-2;
-
-    @media (width >= theme("screens.lg")) {
-      @apply flex;
-    }
-  }
-
-  &__table {
-    @apply bg-additional-50;
-  }
-
-  &__mobile-row {
-    @apply grid w-full cursor-pointer grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left;
-  }
-
-  &__mobile-cell {
-    @apply flex flex-col;
-
-    &--end {
-      @apply items-end justify-center;
-    }
-  }
-
-  &__mobile-label {
-    @apply text-sm text-neutral-400;
-  }
-
-  &__mobile-value {
-    @apply overflow-hidden text-ellipsis;
-
-    &--bold {
-      @apply font-black;
-    }
-
-    &--pr {
-      @apply pr-4;
-    }
-  }
-
-  &__desktop-row {
-    @apply cursor-pointer;
-
-    &:nth-child(even) {
-      @apply bg-neutral-50;
-    }
-
-    &:hover {
-      @apply bg-neutral-200;
-    }
-  }
-
-  &__desktop-cell {
-    @apply overflow-hidden text-ellipsis p-5;
-
-    &--status {
-      @apply p-1;
-    }
-
-    &--total {
-      @apply text-right;
-    }
-  }
-}
-</style>
