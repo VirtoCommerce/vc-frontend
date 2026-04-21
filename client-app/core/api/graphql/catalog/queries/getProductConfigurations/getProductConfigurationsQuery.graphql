@@ -23,6 +23,7 @@ query GetProductConfigurations(
       allowCustomText
       allowTextOptions
       dependsOnSectionId
+      maxLength
       options {
         id
         text

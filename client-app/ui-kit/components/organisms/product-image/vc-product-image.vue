@@ -18,8 +18,10 @@
           :src="image.url"
           :alt="alt"
           size-suffix="md"
-          :class="{ 'cursor-pointer': swiperInstance?.allowSlideNext }"
-          class="vc-product-image__carousel-img"
+          :class="[
+            'vc-product-image__carousel-img',
+            { 'vc-product-image__carousel-img--clickable': swiperInstance?.allowSlideNext },
+          ]"
           :lazy="lazy || index > 0"
           @click="swiperInstance?.slideNext()"
         />
@@ -34,7 +36,7 @@
           :aria-label="$t('ui_kit.accessibility.carousel_previous')"
         >
           <span class="vc-product-image__carousel-arrow">
-            <VcIcon class="fill-neutral-400" name="chevron-left" size="xs" />
+            <VcIcon name="chevron-left" size="xs" />
           </span>
         </button>
 
@@ -46,7 +48,7 @@
           :aria-label="$t('ui_kit.accessibility.carousel_next')"
         >
           <span class="vc-product-image__carousel-arrow">
-            <VcIcon class="fill-neutral-400" name="chevron-right" size="xs" />
+            <VcIcon name="chevron-right" size="xs" />
           </span>
         </button>
 
@@ -137,6 +139,10 @@ function slideChanged(swiper: SwiperInstance) {
     $carouselImg: &;
 
     @apply w-full aspect-square select-none rounded-[--radius] object-contain object-center;
+
+    &--clickable {
+      @apply cursor-pointer;
+    }
   }
 
   &__carousel-btn {
@@ -153,6 +159,10 @@ function slideChanged(swiper: SwiperInstance) {
 
   &__carousel-arrow {
     @apply flex h-6 w-6 items-center justify-center rounded-full bg-additional-50;
+
+    .vc-icon {
+      @apply fill-neutral-400;
+    }
   }
 
   &__carousel-bullets {
