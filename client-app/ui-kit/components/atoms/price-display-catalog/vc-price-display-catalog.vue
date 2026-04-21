@@ -19,6 +19,11 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+if (import.meta.env.DEV) {
+  // eslint-disable-next-line no-console
+  console.warn("[VcPriceDisplayCatalog] This component is deprecated. Use VcPriceDisplay or VcProductPrice instead.");
+}
+
 const isSignFirst = computed<boolean>(
   () => (props.value?.formattedAmount.search(/\d/) && props.value?.formattedAmount.search(/\d/) > 0) || false,
 );

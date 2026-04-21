@@ -23,6 +23,7 @@ declare module "vue" {
     VcFile: typeof Components.VcFile;
     VcFilePicker: typeof Components.VcFilePicker;
     VcInput: typeof Components.VcInput;
+    /** @deprecated Use VcProductPrice instead */
     VcItemPriceCatalog: typeof Components.VcItemPriceCatalog;
     VcLineItem: typeof Components.VcLineItem;
     VcLineItems: typeof Components.VcLineItems;
@@ -35,7 +36,6 @@ declare module "vue" {
     VcProductButton: typeof Components.VcProductButton;
     VcProductPrice: typeof Components.VcProductPrice;
     VcProductTotal: typeof Components.VcProductTotal;
-    // @deprecated
     VcSelect: typeof Components.VcSelect;
     VcShape: typeof Components.VcShape;
     VcSlider: typeof Components.VcSlider;
