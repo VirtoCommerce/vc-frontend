@@ -1,8 +1,8 @@
 <template>
-  <div :class="{ 'flex-row-reverse': !isSignFirst }" class="flex [word-break:break-word]">
-    <div class="-mt-0.5 text-[60%]">{{ value?.currency?.symbol }}</div>
+  <div :class="['vc-price-display-catalog', { 'vc-price-display-catalog--sign-last': !isSignFirst }]">
+    <div class="vc-price-display-catalog__symbol">{{ value?.currency?.symbol }}</div>
 
-    <div :class="{ 'line-through': isOldPrice }">
+    <div :class="{ 'vc-price-display-catalog__amount--old': isOldPrice }" class="vc-price-display-catalog__amount">
       {{ value?.formattedAmountWithoutCurrency ?? "N/A" }}
     </div>
   </div>
@@ -23,3 +23,23 @@ const isSignFirst = computed<boolean>(
   () => (props.value?.formattedAmount.search(/\d/) && props.value?.formattedAmount.search(/\d/) > 0) || false,
 );
 </script>
+
+<style lang="scss">
+.vc-price-display-catalog {
+  @apply flex [word-break:break-word];
+
+  &--sign-last {
+    @apply flex-row-reverse;
+  }
+
+  &__symbol {
+    @apply -mt-0.5 text-[60%];
+  }
+
+  &__amount {
+    &--old {
+      @apply line-through;
+    }
+  }
+}
+</style>

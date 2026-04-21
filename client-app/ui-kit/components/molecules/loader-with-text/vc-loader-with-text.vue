@@ -1,8 +1,8 @@
 <template>
-  <div class="flex items-center gap-2" :class="{ 'justify-center': centered }">
-    <VcLoader class="inline-block size-6 text-primary" />
+  <div :class="['vc-loader-with-text', { 'vc-loader-with-text--centered': centered }]">
+    <VcLoader class="vc-loader-with-text__loader" />
 
-    <span class="animate-pulse font-bold">
+    <span class="vc-loader-with-text__text">
       {{ text ?? $t("ui_kit.messages.loading_text") }}
     </span>
   </div>
@@ -16,3 +16,21 @@ interface IProps {
 
 defineProps<IProps>();
 </script>
+
+<style lang="scss">
+.vc-loader-with-text {
+  @apply flex items-center gap-2;
+
+  &--centered {
+    @apply justify-center;
+  }
+
+  &__loader {
+    @apply inline-block size-6 text-primary;
+  }
+
+  &__text {
+    @apply animate-pulse font-bold;
+  }
+}
+</style>
