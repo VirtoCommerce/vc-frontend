@@ -135,7 +135,7 @@
               <template #append>
                 <VcButton
                   :disabled="ordersLoading"
-                  :aria-label="$t('commmon.buttons.search_orders')"
+                  :aria-label="$t('common.buttons.search_orders')"
                   icon="search"
                   icon-size="1.25rem"
                   @click="applyKeyword"
