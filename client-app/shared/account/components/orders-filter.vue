@@ -13,18 +13,13 @@
             <VcLabel>{{ $t("shared.account.orders_filter.status_label") }}</VcLabel>
 
             <VcCheckboxGroup v-model="filterData.statuses" class="orders-filter__statuses">
-              <VcCheckbox
-                v-for="facet in statusFacet?.items"
-                :key="facet.term"
-                :value="facet.term"
-                :class="[
-                  'orders-filter__status',
-                  {
-                    'orders-filter__status--selected': isSelectedStatus(facet.term),
-                  },
-                ]"
-              >
-                <div class="orders-filter__status-content">
+              <VcCheckbox v-for="facet in statusFacet?.items" :key="facet.term" :value="facet.term">
+                <div
+                  :class="[
+                    'orders-filter__status-content',
+                    { 'orders-filter__status-content--selected': isSelectedStatus(facet.term) },
+                  ]"
+                >
                   <div class="orders-filter__status-label">{{ facet.label }}</div>
 
                   <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
@@ -89,16 +84,12 @@ function isSelectedStatus(status: string) {
     @apply mt-2 space-y-3.5;
   }
 
-  &__status {
-    @apply text-neutral;
+  &__status-content {
+    @apply flex w-full max-w-full gap-1 text-neutral;
 
     &--selected {
       @apply font-bold text-inherit;
     }
-  }
-
-  &__status-content {
-    @apply flex w-full max-w-full gap-1;
   }
 
   &__status-label {
