@@ -661,6 +661,8 @@ export type ConfigurationSectionType = {
   allowCustomText: Scalars['Boolean']['output'];
   /** Is predefined text options allowed for Text-type section */
   allowTextOptions: Scalars['Boolean']['output'];
+  /** ID of the section this section depends on. Section is shown only when the dependent section has a value selected */
+  dependsOnSectionId?: Maybe<Scalars['String']['output']>;
   /** Configuration section description */
   description?: Maybe<Scalars['String']['output']>;
   /** Configuration section id */

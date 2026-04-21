@@ -25,7 +25,7 @@ const CompareProducts = () => import("@/pages/compare-products.vue");
 const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
 const Category = () => import("@/pages/category.vue");
-const Product = () => import("@/pages/product.vue");
+const ProductRoute = () => import("@/pages/product-route.vue");
 const SharedList = () => import("@/pages/shared-list.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
@@ -82,7 +82,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   {
     path: "/product/:productId",
     name: "Product",
-    component: Product,
+    component: ProductRoute,
     props: (route) => ({ allowSetMeta: true, productId: route.params.productId }),
   },
   { path: "/shared-list/:sharingKey", name: "SharedList", component: SharedList, props: true },
