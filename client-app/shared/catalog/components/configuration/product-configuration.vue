@@ -181,8 +181,10 @@ const {
   selectedConfiguration,
   selectedConfigurationInput,
   isConfigurationChanged,
+  validateSections,
   changeCartConfiguredItem,
   validationErrors,
+  isRequiredConfigurationComplete,
   loading: isDataUpdating,
   updateWithPreselectedValues,
   isSectionVisible,
@@ -233,9 +235,9 @@ watch(configurableLineItemId, (newValue, oldValue) => {
 });
 
 watch(
-  () => [isConfigurationChanged.value, validationErrors.value.size === 0, isDataUpdating.value],
-  ([isChanged, isValid, isUpdating]) => {
-    if (isChanged && configurableLineItemId.value && isValid && !isUpdating) {
+  () => [isConfigurationChanged.value, isRequiredConfigurationComplete.value, isDataUpdating.value],
+  ([isChanged, isConfigurationValid, isUpdating]) => {
+    if (isChanged && configurableLineItemId.value && isConfigurationValid && !isUpdating) {
       notifications.info({
         text: t("shared.catalog.product_details.product_configuration.changed_notification"),
         singleInGroup: true,
@@ -290,7 +292,7 @@ async function openSaveChangesModal(): Promise<boolean> {
         message: t("shared.catalog.product_details.product_configuration.changed_confirmation"),
         onConfirm: async () => {
           closeModal();
-          if (validationErrors.value.size > 0) {
+          if (!validateSections()) {
             notifications.error({
               text: t("shared.catalog.product_details.product_configuration.check_your_configuration"),
               singleInGroup: true,
