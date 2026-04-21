@@ -17,6 +17,7 @@
       <VcInput
         v-model="customInput"
         :maxlength="MAX_LENGTH"
+        counter
         class="section-text-fieldset__input"
         :aria-label="$t(constructLocaleKey('enter_custom_text'))"
         data-test-id="custom-input"
