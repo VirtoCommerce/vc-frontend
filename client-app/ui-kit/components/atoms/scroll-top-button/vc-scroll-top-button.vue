@@ -2,11 +2,11 @@
   <button
     v-if="showScrollButton"
     type="button"
-    class="fixed bottom-10 right-3 z-20 opacity-60 hover:opacity-100"
+    class="vc-scroll-top-button"
     :aria-label="$t('common.buttons.scroll_to_top')"
     @click="scrollToTop"
   >
-    <VcIcon class="fill-primary" name="arrow-circle-up" size="xl" />
+    <VcIcon class="vc-scroll-top-button__icon" name="arrow-circle-up" size="xl" />
   </button>
 </template>
 
@@ -30,3 +30,13 @@ window.onscroll = () => {
   }
 };
 </script>
+
+<style lang="scss">
+.vc-scroll-top-button {
+  @apply fixed bottom-10 right-3 z-20 opacity-60 hover:opacity-100;
+
+  &__icon {
+    @apply fill-primary;
+  }
+}
+</style>
