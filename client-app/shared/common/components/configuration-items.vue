@@ -37,19 +37,26 @@ import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { toCSV } from "@/core/utilities/common";
 import { CONFIGURABLE_SECTION_TYPES } from "@/shared/catalog/constants/configurableProducts";
-import type { CartConfigurationItemType, OrderConfigurationItemType } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
-const props = defineProps<IProps>();
-
-const { t } = useI18n();
+type ConfigurationItemLikeType = {
+  id: string;
+  type: string;
+  name?: string | null;
+  customText?: string | null;
+  files?: Array<{ name: string } | null> | null;
+};
 
 interface IProps {
-  configurationItems?: CartConfigurationItemType[] | OrderConfigurationItemType[];
+  configurationItems?: ConfigurationItemLikeType[];
   lineItemId?: string;
   allowEdit?: boolean;
   route?: RouteLocationRaw;
 }
+
+const props = defineProps<IProps>();
+
+const { t } = useI18n();
 
 const configurationItems = toRef(props, "configurationItems");
 const lineItemId = toRef(props, "lineItemId");
@@ -66,14 +73,18 @@ const editRoute = computed(() => {
   return "";
 });
 
-function getText(configurationItem: CartConfigurationItemType | OrderConfigurationItemType): string {
+function getText(configurationItem: ConfigurationItemLikeType): string {
   switch (configurationItem.type) {
     case CONFIGURABLE_SECTION_TYPES.text:
       return t("shared.cart.configuration_items.selected_text", { text: configurationItem.customText ?? "" });
     case CONFIGURABLE_SECTION_TYPES.product:
       return configurationItem.name ?? "";
     case CONFIGURABLE_SECTION_TYPES.file:
-      return toCSV(configurationItem.files?.map((file) => file.name) ?? []);
+      return toCSV(
+        configurationItem.files
+          ?.filter((file): file is NonNullable<typeof file> => file != null)
+          .map((file) => file.name) ?? [],
+      );
     default:
       return "";
   }

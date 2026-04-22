@@ -31,6 +31,7 @@ export function getMoney(amount: number, culture = "en-US", currencyCode = "USD"
       symbol: currencyFormat.formatToParts().find((part) => part.type === "currency")?.value || "",
       cultureName: "",
       englishName: "",
+      name: "",
     },
   };
 }
