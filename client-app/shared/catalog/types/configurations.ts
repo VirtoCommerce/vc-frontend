@@ -2,7 +2,7 @@ import type { CartConfigurationItemType } from "@/core/api/graphql/types";
 
 export type LocalConfigurationItemType = Pick<
   CartConfigurationItemType,
-  "id" | "sectionId" | "type" | "productId" | "quantity" | "customText" | "selectedForCheckout"
+  "id" | "sectionId" | "type" | "productId" | "quantity" | "customText"
 >;
 
 export type LocalConfigurationType = {
