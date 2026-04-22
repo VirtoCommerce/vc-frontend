@@ -21,7 +21,10 @@ import type {
 } from "@/core/api/graphql/types";
 import type { DeepReadonly, MaybeRef } from "vue";
 
-type SectionValueType = Omit<CartConfigurationItemType, "id">;
+type SectionValueType = Pick<
+  CartConfigurationItemType,
+  "sectionId" | "type" | "productId" | "quantity" | "customText" | "files"
+>;
 
 type SelectedConfigurationType = {
   productId: string | undefined;
@@ -434,7 +437,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     });
   }
 
-  function updateWithPreselectedValues(preselectedValues?: CartConfigurationItemType[]) {
+  function updateWithPreselectedValues(preselectedValues?: SectionValueType[]) {
     preselectedValues?.forEach((value) => {
       const section = configuration.value.find(({ id }) => id === value.sectionId);
       const isPreselectedValueValid = !!section && isValidValue(section.id, value);

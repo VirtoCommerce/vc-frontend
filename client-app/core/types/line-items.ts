@@ -39,6 +39,7 @@ export type AnyLineItemType = {
     name?: string;
     customText?: string;
     type: string;
+    files?: Array<{ name: string } | null> | null;
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;
@@ -79,6 +80,7 @@ export type PreparedLineItemType = {
     name?: string;
     customText?: string;
     type: string;
+    files?: Array<{ name: string } | null> | null;
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;

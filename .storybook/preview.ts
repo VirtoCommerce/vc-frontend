@@ -44,6 +44,7 @@ setThemeContext({
     cultureName: "en-US",
     englishName: "US Dollar",
     exchangeRate: 1,
+    name: "US Dollar",
     isInvariant: false,
   },
   availableLanguages: [],
