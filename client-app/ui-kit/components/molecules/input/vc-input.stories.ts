@@ -34,6 +34,10 @@ const meta: Meta = {
     step: { table: { type: { summary: "string|number" } } },
     minlength: { table: { type: { summary: "string|number" } } },
     maxlength: { table: { type: { summary: "string|number" } } },
+    counter: {
+      control: "boolean",
+      description: "Shows a character counter below the input",
+    },
     modelValue: { table: { type: { summary: "string|number" } } },
   },
   args: {
@@ -44,6 +48,7 @@ const meta: Meta = {
     center: false,
     hidePasswordSwitcher: false,
     error: false,
+    counter: false,
     showEmptyDetails: false,
     type: "text",
     size: "md",
@@ -129,4 +134,35 @@ export const WithButton: StoryType = {
       </template>
     </VcInput>`,
   }),
+};
+
+export const WithCounter: StoryType = {
+  args: {
+    label: "Label",
+    placeholder: "Placeholder",
+    counter: true,
+    maxlength: 30,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcInput label="Label" counter :maxlength="30" />`,
+      },
+    },
+  },
+};
+
+export const WithMessageAndCounter: StoryType = {
+  args: {
+    ...commonArgs,
+    counter: true,
+    maxlength: 30,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<VcInput label="Label" message="Hint message" counter :maxlength="30" />`,
+      },
+    },
+  },
 };

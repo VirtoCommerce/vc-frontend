@@ -3,7 +3,7 @@
     <VcButton
       :variant="countInCart ? 'solid' : 'outline'"
       :loading="loading"
-      :disabled="disabled"
+      :disabled="configurableDisabled"
       :title="configurableButtonText"
       truncate
       full-width
@@ -94,6 +94,9 @@ const {
   changeCartConfiguredItem,
   markConfigurationAsSaved,
   validateSections: validateConfigurableInput,
+  configuredLineItem,
+  isRequiredConfigurationComplete,
+  loading: configLoading,
 } = useConfigurableProduct(product.value.id);
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
@@ -115,6 +118,13 @@ const configurableButtonText = computed(() =>
   countInCart.value ? t("ui_kit.buttons.update_cart") : t("ui_kit.buttons.add_to_cart"),
 );
 const disabled = computed(() => loading.value || !product.value.availabilityData?.isAvailable);
+const configurableDisabled = computed(
+  () =>
+    loading.value ||
+    !product.value.availabilityData?.isAvailable ||
+    configLoading.value ||
+    !isRequiredConfigurationComplete.value,
+);
 const disabledStepper = computed(
   () =>
     !product.value.availabilityData?.isAvailable || changeItemQuantityBatchedOverflowed.value || addToCartLoading.value,
@@ -173,7 +183,16 @@ async function onConfigurableSubmit() {
     const existingItemIds = new Set(cart.value?.items?.map((item) => item.id));
     const updatedCart = await addToCart(product.value.id, minQty.value, selectedConfigurationInput.value);
 
-    trackAddItemToCart(product.value, minQty.value);
+    // configuredLineItem reflects the latest price preview from CreateConfiguredLineItem mutation.
+    // ShortLineItemFragment in the cart response does not include price data.
+    trackAddItemToCart(product.value, minQty.value, {
+      configuredPrice: configuredLineItem.value
+        ? {
+            list: configuredLineItem.value.listPrice?.amount ?? 0,
+            actual: configuredLineItem.value.salePrice?.amount ?? 0,
+          }
+        : undefined,
+    });
     void pushHistoricalEvent({ eventType: "addToCart", productId: product.value.id });
 
     markConfigurationAsSaved();

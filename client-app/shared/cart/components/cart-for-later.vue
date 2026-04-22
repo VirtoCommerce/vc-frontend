@@ -24,7 +24,7 @@
       />
     </VcProductsGrid>
 
-    <div v-if="maxVisibleItems < (savedForLaterList?.items.length ?? 0)" class="cart-for-later__show-more">
+    <div v-if="maxVisibleItems < availableItems.length" class="cart-for-later__show-more">
       <VcButton
         variant="no-border"
         append-icon="chevron-down"
@@ -63,7 +63,8 @@ const savedForLaterList = toRef(props, "savedForLaterList");
 
 const VISIBLE_ITEMS_STEP = 6;
 const maxVisibleItems = ref(6);
-const visibleItems = computed(() => savedForLaterList.value?.items.slice(0, maxVisibleItems.value));
+const availableItems = computed(() => savedForLaterList.value?.items.filter((item) => item.product) ?? []);
+const visibleItems = computed(() => availableItems.value.slice(0, maxVisibleItems.value));
 
 const listProperties = computed(() => ({
   item_list_id: "recently_browsed_products",

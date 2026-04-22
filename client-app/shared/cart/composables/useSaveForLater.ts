@@ -89,8 +89,11 @@ function _useSavedForLater() {
     }
   }
 
+  const hasAvailableItems = computed(() => !!savedForLaterList.value?.items.some((item) => item.product));
+
   return {
     savedForLaterList,
+    hasAvailableItems,
 
     moveToSavedForLater,
     moveToSavedForLaterOverflowed,

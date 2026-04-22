@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "新規追加",
           "add_new_address": "新しい住所を追加",
+          "no_results": "検索条件に一致する住所はありません",
           "search": "検索",
           "select_address": "住所を選択",
           "title": "配送先："
@@ -697,6 +698,7 @@
           "changed_confirmation": "商品の設定が変更されました。保存しますか？",
           "check_your_configuration": "製品構成を確認してください",
           "required_section": "セクションは必須です",
+          "max_length_exceeded": "テキストは {max} 文字を超えることはできません",
           "optional_no_selected": "さらに選択をパーソナライズ（任意）",
           "required_no_selected": "すべての必須オプションを選択して、完了してください",
           "section-text-fieldset": {
@@ -1217,7 +1219,8 @@
           "cart_pickup_points_not_found": "この商品を受け取り可能な店舗がありません。別の配送方法を選択してください",
           "cart_pickup_points_not_found_by_filter": "該当する受取場所が見つかりませんでした。",
           "cart_pickup_points_reset_search": "検索をリセット",
-          "availability": "在庫状況"
+          "availability": "在庫状況",
+          "search_pickup_locations": "受取場所を検索"
         }
       },
       "order_payment": {

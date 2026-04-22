@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Add new",
           "add_new_address": "Add new address",
+          "no_results": "No addresses match your search",
           "search": "Search",
           "select_address": "Select address",
           "title": "Ship to:"
@@ -697,6 +698,7 @@
           "changed_confirmation": "The product configuration has been changed. Do you want to save it?",
           "check_your_configuration": "Check your product configuration",
           "required_section": "Section is required",
+          "max_length_exceeded": "Text must not exceed {max} characters",
           "optional_no_selected": "Personalize your selection further (optional)",
           "required_no_selected": "Complete all required options to finalize your selection",
           "section-text-fieldset": {
@@ -1217,7 +1219,8 @@
           "cart_pickup_points_not_found": "There are no available pickup points for these products. Select another shipping method.",
           "cart_pickup_points_not_found_by_filter": "Pickup points not found.",
           "cart_pickup_points_reset_search": "Reset search",
-          "availability": "Availability"
+          "availability": "Availability",
+          "search_pickup_locations": "Search pickup locations"
         }
       },
       "order_payment": {

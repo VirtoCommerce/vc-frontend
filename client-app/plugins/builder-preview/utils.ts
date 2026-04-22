@@ -1,8 +1,13 @@
-export function getBuilderOrigin() {
-  const urlParams = new URLSearchParams(globalThis.location.search);
-  const ep = urlParams.get("ep");
+let cachedBuilderOrigin: string | undefined;
 
-  return ep?.replace(/\/$/, "");
+export function getBuilderOrigin() {
+  if (cachedBuilderOrigin === undefined) {
+    const urlParams = new URLSearchParams(globalThis.location.search);
+    const ep = urlParams.get("ep");
+    cachedBuilderOrigin = ep?.replace(/\/$/, "") ?? "";
+  }
+
+  return cachedBuilderOrigin || undefined;
 }
 
 export function getPreviewPageId(): string | undefined {

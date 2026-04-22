@@ -529,6 +529,10 @@ export function _useCheckout(cartId?: string) {
         storeId: globals.storeId,
       });
 
+      if (orderPayed) {
+        analytics("purchase", placedOrder.value);
+      }
+
       await router.replace({ name: canPayNow.value && !orderPayed ? "CheckoutPayment" : "CheckoutCompleted" });
     } else {
       notifications.error({

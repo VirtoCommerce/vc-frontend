@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Dodaj nowy",
           "add_new_address": "Dodaj nowy adres",
+          "no_results": "Nie znaleziono adresów pasujących do Twojego wyszukiwania",
           "search": "Szukaj",
           "select_address": "Wybierz adres",
           "title": "Wyślij do:"
@@ -697,6 +698,7 @@
           "changed_confirmation": "Konfiguracja produktu została zmieniona. Chcesz ją zapisać?",
           "check_your_configuration": "Sprawdź konfigurację produktu",
           "required_section": "Sekcja jest wymagana",
+          "max_length_exceeded": "Tekst nie może przekraczać {max} znaków",
           "optional_no_selected": "Spersonalizuj swój wybór (opcjonalne)",
           "required_no_selected": "Uzupełnij wszystkie wymagane opcje, aby sfinalizować wybór",
           "section-text-fieldset": {
@@ -1217,7 +1219,8 @@
           "cart_pickup_points_not_found": "Brak dostępnych punktów odbioru dla tych produktów. Wybierz inną metodę wysyłki.",
           "cart_pickup_points_not_found_by_filter": "Nie znaleziono punktów odbioru.",
           "cart_pickup_points_reset_search": "Resetuj wyszukiwanie",
-          "availability": "Dostępność"
+          "availability": "Dostępność",
+          "search_pickup_locations": "Szukaj punktów odbioru"
         }
       },
       "order_payment": {

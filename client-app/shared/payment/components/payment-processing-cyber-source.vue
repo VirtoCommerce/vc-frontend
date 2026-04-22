@@ -300,7 +300,9 @@ async function sendPaymentData(
     });
 
     if (result.isSuccess) {
-      analytics("purchase", order);
+      if (!orderToPay) {
+        analytics("purchase", order);
+      }
       emit("success");
     } else {
       emit("fail");

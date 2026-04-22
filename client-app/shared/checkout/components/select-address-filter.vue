@@ -54,7 +54,7 @@
       <VcInput
         v-model="filterKeyword"
         :placeholder="$t('common.labels.search')"
-        :aria-label="$t('common.labels.search')"
+        :aria-label="$t('pages.account.order_details.bopis.search_pickup_locations')"
         size="sm"
         class="select-address-filter__keyword"
         test-id-input="search-keyword-input"
