@@ -8,136 +8,137 @@
     <div id="product-configuration-anchor" />
 
     <div class="product-configuration__widgets">
-      <VcWidget
-        v-for="(section, index) in configuration"
-        :key="section.id"
-        data-test-id="section"
-        collapsible
-        size="xs"
-        :collapsed="index !== 0"
-      >
-        <template #title>
-          <div class="product-configuration__title" data-test-id="section-title">
-            {{ section.name }}
-            <span v-if="section.isRequired" class="product-configuration__required">*</span>
-          </div>
-
-          <div class="product-configuration__subtitle" data-test-id="section-description">
-            {{ section.description }}
-
-            <div v-if="validationErrors.get(section.id)" class="product-configuration__error">
-              {{ validationErrors.get(section.id) }}
-            </div>
-
-            <div
-              v-else
-              data-test-id="section-subtitle"
-              class="product-configuration__value"
-              :class="[
-                hasSelectedOption(section.id)
-                  ? 'product-configuration__value--selected'
-                  : 'product-configuration__value--not-selected',
-                section.isRequired ? 'product-configuration__value--required' : '',
-              ]"
-            >
-              {{ getSectionSubtitle(section) }}
-            </div>
-          </div>
-        </template>
-
-        <div
-          class="product-configuration__items"
-          role="radiogroup"
-          :aria-label="section.name"
-          tabindex="-1"
-          @mousedown="isMouseInteraction = true"
-          @focusin="handleItemsFocusIn"
+      <template v-for="(section, index) in configuration" :key="section.id">
+        <VcWidget
+          v-if="isSectionVisible(section.id)"
+          data-test-id="section"
+          collapsible
+          size="xs"
+          :collapsed="index !== 0"
         >
-          <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.product">
-            <template v-for="option in section.options" :key="option.id">
-              <OptionProduct
-                v-if="option.product"
-                data-test-id="product-option"
-                :model-value="selectedConfiguration[section.id]?.productId"
-                :product="option.product"
-                :quantity="option.quantity"
-                :list-price="option.listPrice"
-                :sale-price="option.salePrice"
-                :extended-price="option.extendedPrice"
+          <template #title>
+            <div class="product-configuration__title" data-test-id="section-title">
+              {{ section.name }}
+              <span v-if="section.isRequired" class="product-configuration__required">*</span>
+            </div>
+
+            <div class="product-configuration__subtitle" data-test-id="section-description">
+              {{ section.description }}
+
+              <div v-if="validationErrors.get(section.id)" class="product-configuration__error">
+                {{ validationErrors.get(section.id) }}
+              </div>
+
+              <div
+                v-else
+                data-test-id="section-subtitle"
+                class="product-configuration__value"
+                :class="[
+                  hasSelectedOption(section.id)
+                    ? 'product-configuration__value--selected'
+                    : 'product-configuration__value--not-selected',
+                  section.isRequired ? 'product-configuration__value--required' : '',
+                ]"
+              >
+                {{ getSectionSubtitle(section) }}
+              </div>
+            </div>
+          </template>
+
+          <div
+            class="product-configuration__items"
+            role="radiogroup"
+            :aria-label="section.name"
+            tabindex="-1"
+            @mousedown="isMouseInteraction = true"
+            @focusin="handleItemsFocusIn"
+          >
+            <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.product">
+              <template v-for="option in section.options" :key="option.id">
+                <OptionProduct
+                  v-if="option.product"
+                  data-test-id="product-option"
+                  :model-value="selectedConfiguration[section.id]?.productId"
+                  :product="option.product"
+                  :quantity="option.quantity"
+                  :list-price="option.listPrice"
+                  :sale-price="option.salePrice"
+                  :extended-price="option.extendedPrice"
+                  :name="section.id"
+                  @input="
+                    selectSectionValue({
+                      sectionId: section.id,
+                      productId: option.product.id,
+                      quantity: option.quantity ?? 1,
+                      type: section.type,
+                    })
+                  "
+                />
+              </template>
+
+              <OptionProductNone
+                v-if="!section.isRequired"
                 :name="section.id"
+                :selected="selectedConfiguration[section.id]?.productId === undefined"
                 @input="
                   selectSectionValue({
                     sectionId: section.id,
-                    productId: option.product.id,
-                    quantity: option.quantity ?? 1,
                     type: section.type,
                   })
                 "
               />
             </template>
 
-            <OptionProductNone
-              v-if="!section.isRequired"
-              :name="section.id"
-              :selected="selectedConfiguration[section.id]?.productId === undefined"
-              @input="
+            <SectionTextFieldset
+              v-if="section.type === CONFIGURABLE_SECTION_TYPES.text"
+              data-test-id="text-option"
+              :section="section"
+              :initial-value="selectedConfiguration[section.id]?.selectedOptionTextValue"
+              @update="
                 selectSectionValue({
                   sectionId: section.id,
-                  type: section.type,
-                })
-              "
-            />
-          </template>
-
-          <SectionTextFieldset
-            v-if="section.type === CONFIGURABLE_SECTION_TYPES.text"
-            data-test-id="text-option"
-            :section="section"
-            :initial-value="selectedConfiguration[section.id]?.selectedOptionTextValue"
-            @update="
-              selectSectionValue({
-                sectionId: section.id,
-                customText: $event,
-                type: section.type,
-              })
-            "
-          />
-
-          <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.file">
-            <OptionFile
-              :is-required="section.isRequired"
-              :name="section.id"
-              :value="selectedConfiguration[section.id]?.files"
-              @input="
-                selectSectionValue({
-                  sectionId: section.id,
-                  files: $event,
-                  type: section.type,
-                })
-              "
-              @remove-files="
-                selectSectionValue({
-                  sectionId: section.id,
-                  files: $event,
+                  customText: $event,
                   type: section.type,
                 })
               "
             />
 
-            <OptionNone
-              v-if="!section.isRequired"
-              :name="section.id"
-              :selected="selectedConfiguration[section.id]?.selectedOptionTextValue === undefined"
-              @input="
-                selectSectionValue({
-                  sectionId: section.id,
-                  type: section.type,
-                })
-              "
-            />
-          </template>
-        </div>
-      </VcWidget>
+            <template v-if="section.type === CONFIGURABLE_SECTION_TYPES.file">
+              <OptionFile
+                :is-required="section.isRequired"
+                :name="section.id"
+                :value="selectedConfiguration[section.id]?.files"
+                @input="
+                  selectSectionValue({
+                    sectionId: section.id,
+                    files: $event,
+                    type: section.type,
+                  })
+                "
+                @remove-files="
+                  selectSectionValue({
+                    sectionId: section.id,
+                    files: $event,
+                    type: section.type,
+                  })
+                "
+              />
+
+              <OptionNone
+                v-if="!section.isRequired"
+                :name="section.id"
+                :selected="selectedConfiguration[section.id]?.selectedOptionTextValue === undefined"
+                @input="
+                  selectSectionValue({
+                    sectionId: section.id,
+                    type: section.type,
+                  })
+                "
+              />
+            </template>
+          </div>
+        </VcWidget>
+      </template>
     </div>
   </VcWidget>
 </template>
@@ -180,10 +181,13 @@ const {
   selectedConfiguration,
   selectedConfigurationInput,
   isConfigurationChanged,
+  validateSections,
   changeCartConfiguredItem,
   validationErrors,
+  isRequiredConfigurationComplete,
   loading: isDataUpdating,
   updateWithPreselectedValues,
+  isSectionVisible,
 } = useConfigurableProduct(configurableProductId.value);
 
 const { openModal } = useModal();
@@ -231,9 +235,9 @@ watch(configurableLineItemId, (newValue, oldValue) => {
 });
 
 watch(
-  () => [isConfigurationChanged.value, validationErrors.value.size === 0, isDataUpdating.value],
-  ([isChanged, isValid, isUpdating]) => {
-    if (isChanged && configurableLineItemId.value && isValid && !isUpdating) {
+  () => [isConfigurationChanged.value, isRequiredConfigurationComplete.value, isDataUpdating.value],
+  ([isChanged, isConfigurationValid, isUpdating]) => {
+    if (isChanged && configurableLineItemId.value && isConfigurationValid && !isUpdating) {
       notifications.info({
         text: t("shared.catalog.product_details.product_configuration.changed_notification"),
         singleInGroup: true,
@@ -288,7 +292,7 @@ async function openSaveChangesModal(): Promise<boolean> {
         message: t("shared.catalog.product_details.product_configuration.changed_confirmation"),
         onConfirm: async () => {
           closeModal();
-          if (validationErrors.value.size > 0) {
+          if (!validateSections()) {
             notifications.error({
               text: t("shared.catalog.product_details.product_configuration.check_your_configuration"),
               singleInGroup: true,

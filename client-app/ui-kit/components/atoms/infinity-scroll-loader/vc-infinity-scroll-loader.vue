@@ -1,11 +1,15 @@
 <template>
-  <div ref="target" :data-test-id="testId" class="flex items-center justify-center gap-2 text-base">
+  <div ref="target" :data-test-id="testId" class="vc-infinity-scroll-loader">
     <slot v-if="loading" name="loader">
       <VcLoader data-test-id="category-products-loader" />
     </slot>
 
     <slot v-else name="loaded">
-      <VcIcon v-if="isPageLimitReached || pageNumber >= pagesCount" class="size-7 fill-primary" name="badge-check" />
+      <VcIcon
+        v-if="isPageLimitReached || pageNumber >= pagesCount"
+        class="vc-infinity-scroll-loader__icon"
+        name="badge-check"
+      />
 
       <span v-if="isPageLimitReached">{{ $t("ui_kit.reach_limit.page_limit_filters") }}</span>
 
@@ -79,3 +83,13 @@ onBeforeUnmount(() => {
 
 watch([resolvedViewport, () => props.distance], initObserver);
 </script>
+
+<style lang="scss">
+.vc-infinity-scroll-loader {
+  @apply flex items-center justify-center gap-2 text-base;
+
+  &__icon {
+    @apply size-7 fill-primary;
+  }
+}
+</style>
