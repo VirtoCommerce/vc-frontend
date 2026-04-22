@@ -1,62 +1,54 @@
-import { computed, readonly, ref, watchEffect } from "vue";
-import { useI18n } from "vue-i18n";
+import { computed, readonly, ref } from "vue";
 import { useFullCart } from "@/shared/cart/composables/useCart";
-import type { CouponType } from "@/core/api/graphql/types";
 
-const couponCode = ref("");
-const validationError = ref("");
+const errorCouponCode = ref<string>();
 
 export function useCoupon() {
-  const { t } = useI18n();
   const { cart, validateCartCoupon, addCartCoupon, removeCartCoupon } = useFullCart();
 
-  const INVALID_COUPON_MESSAGE = t("common.messages.invalid_coupon");
+  const appliedCouponCode = computed(
+    () => cart.value?.coupons?.find((coupon) => coupon.isAppliedSuccessfully)?.code ?? undefined,
+  );
 
-  const firstCouponInCart = computed<CouponType | undefined>(() => cart.value?.coupons?.[0]);
-  const isApplied = computed<boolean>(() => Boolean(firstCouponInCart.value?.isAppliedSuccessfully));
-
-  const trimmedCoupon = computed(() => {
-    return couponCode.value.trim();
-  });
-
-  function clearValidationError() {
-    validationError.value = "";
+  function clearError() {
+    errorCouponCode.value = undefined;
   }
 
-  async function applyCoupon() {
-    clearValidationError();
+  async function applyCoupon(code: string) {
+    clearError();
 
-    if (!trimmedCoupon.value) {
+    const trimmed = code.trim();
+    if (!trimmed) {
       return;
     }
 
-    const validationResult = await validateCartCoupon(trimmedCoupon.value);
-
-    if (validationResult) {
-      await addCartCoupon(trimmedCoupon.value);
-    } else {
-      validationError.value = INVALID_COUPON_MESSAGE;
+    if (appliedCouponCode.value && appliedCouponCode.value !== trimmed) {
+      await removeCartCoupon(appliedCouponCode.value);
     }
-  }
 
-  async function removeCoupon() {
-    if (!trimmedCoupon.value) {
+    const isValid = await validateCartCoupon(trimmed);
+    if (!isValid) {
+      errorCouponCode.value = trimmed;
       return;
     }
 
-    await removeCartCoupon(trimmedCoupon.value);
+    await addCartCoupon(trimmed);
   }
 
-  watchEffect(() => {
-    couponCode.value = firstCouponInCart.value?.code ?? "";
-  });
+  async function removeCoupon(code: string) {
+    const trimmed = code.trim();
+    if (!trimmed) {
+      return;
+    }
+
+    await removeCartCoupon(trimmed);
+  }
 
   return {
-    couponCode,
+    appliedCouponCode,
+    errorCouponCode: readonly(errorCouponCode),
     applyCoupon,
     removeCoupon,
-    couponIsApplied: isApplied,
-    clearCouponValidationError: clearValidationError,
-    couponValidationError: readonly(validationError),
+    clearError,
   };
 }

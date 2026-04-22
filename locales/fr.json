@@ -194,7 +194,7 @@
       "min_value": "La valeur minimale est {value}",
       "empty_wish_list": "Il n'y a pas d'articles dans la liste",
       "not_defined": "Indéfini",
-      "invalid_coupon": "Ce code ne correspond à aucun coupon actif. Veuillez vérifier que tout est correct et réessayez.",
+      "invalid_coupon": "Ce code n'est pas valide",
       "fill_all_required": "Veuillez compléter toutes les informations requises pour continuer.",
       "something_went_wrong": "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
       "checkout_pricing_warning": "La disponibilité, l'expédition, les taxes et les promotions ne sont pas définitives tant que vous n'avez pas complété votre commande.",
@@ -235,7 +235,6 @@
       "password": "Entrez votre mot de passe",
       "confirm_password": "Confirmez votre mot de passe",
       "purchase_order_number": "Entrez un numéro de commande d'achat",
-      "promotion_code": "Entrez un code promo",
       "select_credit_card": "Sélectionnez une carte de crédit"
     },
     "links": {
@@ -644,6 +643,13 @@
         "title": "Liste des composants",
         "edit_configuration": "Modifier la configuration",
         "selected_text": "Texte sélectionné : {text}"
+      },
+      "coupons_section": {
+        "title": "Réductions et coupons",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Code personnalisé",
+        "enter_custom_code": "Entrez un code personnalisé",
+        "all_coupons": "Voir tous les coupons et promotions"
       }
     },
     "catalog": {

@@ -128,20 +128,6 @@
         <template #sidebar>
           <OrderSummary :cart="cart" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
             <template #footer>
-              <!-- Promotion code -->
-              <VcActionInput
-                v-if="$cfg.checkout_coupon_enabled"
-                v-model="couponCode"
-                :label="$t('common.labels.promotion_code')"
-                :placeholder="$t('common.placeholders.promotion_code')"
-                :applied="couponIsApplied"
-                :error-message="couponValidationError"
-                class="mt-4"
-                @apply="applyCoupon"
-                @deny="removeCoupon"
-                @update:model-value="clearCouponValidationError"
-              />
-
               <ProceedTo
                 v-if="$cfg.checkout_multistep_enabled"
                 :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
@@ -183,6 +169,8 @@
               </transition>
             </template>
           </OrderSummary>
+
+          <CouponsSection class="mt-5" />
 
           <component
             :is="item.element"
@@ -231,7 +219,7 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, MODULE_XAPI_KEYS, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
 import { ROUTES } from "@/router/routes/constants";
 import { useUser } from "@/shared/account";
-import { useCoupon, useFullCart } from "@/shared/cart";
+import { useFullCart } from "@/shared/cart";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
 import { useSavedForLater } from "@/shared/cart/composables/useSaveForLater";
 import {
@@ -245,6 +233,7 @@ import {
 } from "@/shared/checkout";
 import type { LineItemType, Product } from "@/core/api/graphql/types";
 import CartForLater from "@/shared/cart/components/cart-for-later.vue";
+import CouponsSection from "@/shared/cart/components/coupons-section.vue";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
@@ -288,8 +277,6 @@ const {
   changing: isCartUpdating,
 } = useFullCart();
 const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
-const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
-  useCoupon();
 
 const {
   savedForLaterList,
