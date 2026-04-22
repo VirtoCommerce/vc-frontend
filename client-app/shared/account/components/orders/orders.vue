@@ -313,12 +313,12 @@ import { Sort } from "@/core/types";
 import { toDateISOString } from "@/core/utilities";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
 import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
-import { useUser } from "../composables";
-import DateFilterSelect from "./date-filter-select.vue";
-import MobileOrdersFilter from "./mobile-orders-filter.vue";
-import OrderStatus from "./order-status.vue";
-import OrdersFilter from "./orders-filter.vue";
-import type { OrderScopeType, OrdersFilterChipsItemType } from "../types";
+import { useUser } from "../../composables";
+import DateFilterSelect from "../date-filter-select.vue";
+import MobileOrdersFilter from "../mobile-orders-filter.vue";
+import OrderStatus from "../order-status.vue";
+import OrdersFilter from "../orders-filter.vue";
+import type { OrderScopeType, OrdersFilterChipsItemType } from "../../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { DateFilterType, ISortInfo } from "@/core/types";
 
