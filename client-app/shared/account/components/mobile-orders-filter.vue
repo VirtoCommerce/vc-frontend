@@ -3,18 +3,15 @@
   <div v-if="isMobile" class="mobile-orders-filter">
     <VcWidget v-if="facets?.length" :title="$t('shared.account.orders_filter.status_label')" size="sm" collapsible>
       <VcCheckboxGroup v-model="filterData.statuses" class="mobile-orders-filter__statuses">
-        <VcCheckbox
-          v-for="facet in statusFacet?.items"
-          :key="facet.term"
-          :value="facet.term"
-          :class="[
-            'mobile-orders-filter__status',
-            {
-              'mobile-orders-filter__status--selected': isSelectedStatus(facet.term),
-            },
-          ]"
-        >
-          <div class="mobile-orders-filter__status-content">
+        <VcCheckbox v-for="facet in statusFacet?.items" :key="facet.term" :value="facet.term">
+          <div
+            :class="[
+              'mobile-orders-filter__status-content',
+              {
+                'mobile-orders-filter__status-content--selected': isSelectedStatus(facet.term),
+              },
+            ]"
+          >
             <div class="mobile-orders-filter__status-label">{{ facet.label }}</div>
 
             <VcBadge variant="outline" size="sm" rounded>{{ facet.count }}</VcBadge>
@@ -65,16 +62,12 @@ function isSelectedStatus(status: string) {
     @apply space-y-4;
   }
 
-  &__status {
-    @apply text-neutral;
+  &__status-content {
+    @apply flex gap-1 text-neutral;
 
     &--selected {
       @apply font-bold text-inherit;
     }
-  }
-
-  &__status-content {
-    @apply flex gap-1;
   }
 
   &__status-label {

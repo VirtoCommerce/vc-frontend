@@ -66,6 +66,12 @@ function handleChangeType(): void {
 
 <style lang="scss">
 .date-filter-select {
+  @apply flex flex-col gap-3;
+
+  @media (width >= theme("screens.lg")) {
+    @apply gap-5;
+  }
+
   &__custom {
     @apply flex items-end gap-3;
 
