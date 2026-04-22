@@ -5,7 +5,7 @@
     :loading="lazy ? 'lazy' : 'eager'"
     :data-src="fallbackEnabled ? src : null"
     :data-size-suffix="fallbackEnabled || originalEnabled ? sizeSuffix : null"
-    :class="{ 'object-scale-down object-center': fallbackEnabled || !src }"
+    :class="['vc-image', { 'vc-image--fallback': fallbackEnabled || !src }]"
     @error="setFallback"
   />
 </template>
@@ -86,3 +86,11 @@ watch(
   },
 );
 </script>
+
+<style lang="scss">
+.vc-image {
+  &--fallback {
+    @apply object-scale-down object-center;
+  }
+}
+</style>

@@ -3,7 +3,7 @@
     <VcButton
       :variant="countInCart ? 'solid' : 'outline'"
       :loading="loading"
-      :disabled="disabled"
+      :disabled="configurableDisabled"
       :title="configurableButtonText"
       truncate
       full-width
@@ -95,6 +95,8 @@ const {
   markConfigurationAsSaved,
   validateSections: validateConfigurableInput,
   configuredLineItem,
+  isRequiredConfigurationComplete,
+  loading: configLoading,
 } = useConfigurableProduct(product.value.id);
 const { trackAddItemToCart } = useAnalyticsUtils();
 const { pushHistoricalEvent } = useHistoricalEvents();
@@ -116,6 +118,13 @@ const configurableButtonText = computed(() =>
   countInCart.value ? t("ui_kit.buttons.update_cart") : t("ui_kit.buttons.add_to_cart"),
 );
 const disabled = computed(() => loading.value || !product.value.availabilityData?.isAvailable);
+const configurableDisabled = computed(
+  () =>
+    loading.value ||
+    !product.value.availabilityData?.isAvailable ||
+    configLoading.value ||
+    !isRequiredConfigurationComplete.value,
+);
 const disabledStepper = computed(
   () =>
     !product.value.availabilityData?.isAvailable || changeItemQuantityBatchedOverflowed.value || addToCartLoading.value,
