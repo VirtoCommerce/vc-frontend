@@ -1,7 +1,13 @@
 <template>
   <VcScrollbar vertical class="select-address-map-list">
-    <ul v-if="addresses.length" class="select-address-map-list__list">
-      <li
+    <div
+      v-if="addresses.length"
+      role="radiogroup"
+      :aria-label="$t('pages.checkout.shipping.links.select_pickup_point')"
+      class="select-address-map-list__list"
+      data-test-id="pickup-locations-list"
+    >
+      <div
         v-for="address in addresses"
         :key="address.id"
         :data-country="address.address?.countryName"
@@ -16,8 +22,8 @@
         <VcRadioButton
           :model-value="selectedAddressId"
           :value="address.id"
-          :no-indicator="!selectable"
           name="pickup-location"
+          :no-indicator="!selectable"
           class="select-address-map-list__radio-button"
           size="sm"
           :data-test-coords="address.geoLocation"
@@ -36,13 +42,13 @@
             :availability-note="address.availabilityNote"
           />
         </VcRadioButton>
-      </li>
-    </ul>
+      </div>
+    </div>
 
     <div v-else class="select-address-map-list__not-found" data-test-id="pickup-locations-not-found">
       <span>{{ $t("pages.account.order_details.bopis.cart_pickup_points_not_found_by_filter") }}</span>
 
-      <VcButton prepend-icon="reset" data-test-id="reset-search-button" @click="$emit('resetFilter')">
+      <VcButton v-if="filtered" prepend-icon="reset" data-test-id="reset-search-button" @click="$emit('resetFilter')">
         {{ $t("pages.account.order_details.bopis.cart_pickup_points_reset_search") }}
       </VcButton>
     </div>
@@ -58,6 +64,7 @@ interface IProps {
   addresses: PickupLocationType[];
   selectedAddressId?: string;
   selectable?: boolean;
+  filtered?: boolean;
 }
 
 interface IEmits {

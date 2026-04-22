@@ -15,7 +15,7 @@
 
     <BrandPage v-else-if="objectType === ObjectType.Brand" :brand-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
 
-    <Product
+    <ProductRoute
       v-else-if="objectType === ObjectType.CatalogProduct"
       :product-id="slugInfo?.entityInfo?.objectId"
       allow-set-meta
@@ -56,7 +56,7 @@ const props = defineProps<IProps>();
 
 const CatalogComponent = defineAsyncComponent(() => import("@/pages/catalog.vue"));
 const CategoryComponent = defineAsyncComponent(() => import("@/pages/category.vue"));
-const Product = defineAsyncComponent(() => import("@/pages/product.vue"));
+const ProductRoute = defineAsyncComponent(() => import("@/pages/product-route.vue"));
 const VirtoPage = defineAsyncComponent(() => import("@/pages/matcher/virto-pages/virto-pages.vue"));
 const VPMarkdown = defineAsyncComponent(() => import("@/pages/matcher/virto-pages/vp-markdown.vue"));
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));

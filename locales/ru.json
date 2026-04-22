@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Добавить новый",
           "add_new_address": "Добавить новый адрес",
+          "no_results": "Нет адресов, соответствующих вашему запросу",
           "search": "Поиск",
           "select_address": "Выберите адрес",
           "title": "Доставка в:"
@@ -697,6 +698,7 @@
           "changed_confirmation": "Конфигурация товара была изменена. Вы хотите ее сохранить?",
           "check_your_configuration": "Проверьте конфигурацию товара",
           "required_section": "Раздел обязателен",
+          "max_length_exceeded": "Текст не должен превышать {max} символов",
           "optional_no_selected": "Персонализируйте свой выбор (необязательно)",
           "required_no_selected": "Завершите выбор, указав все необходимые параметры",
           "section-text-fieldset": {
@@ -1217,7 +1219,8 @@
           "cart_pickup_points_not_found": "Для этих товаров нет доступных пунктов выдачи. Выберите другой способ доставки.",
           "cart_pickup_points_not_found_by_filter": "Пункты выдачи не найдены.",
           "cart_pickup_points_reset_search": "Очистить поиск",
-          "availability": "Доступность"
+          "availability": "Доступность",
+          "search_pickup_locations": "Поиск пунктов выдачи"
         }
       },
       "order_payment": {

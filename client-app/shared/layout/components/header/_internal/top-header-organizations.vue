@@ -81,12 +81,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
 import { useUser, useUserOrganizations } from "@/shared/account";
+import { useDebounceFn } from "@vueuse/core";
+import { computed, ref } from "vue";
 
 const emit = defineEmits<{
   organizationSelected: [];
 }>();
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 const { user, switchOrganization, organization } = useUser();
 const {
@@ -121,9 +124,13 @@ async function onSearch(): Promise<void> {
   await search();
 }
 
+const debouncedSearch = useDebounceFn(search, SEARCH_DEBOUNCE_MS);
+
 async function onSearchInput(): Promise<void> {
   if (!searchPhrase.value.trim()) {
     await search();
+  } else {
+    void debouncedSearch();
   }
 }
 

@@ -5,6 +5,10 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 const meta: Meta<typeof VcItemPriceCatalog> = {
   title: "Components/Molecules/VcItemPriceCatalog",
   component: VcItemPriceCatalog,
+  tags: ["deprecated"],
+  parameters: {
+    deprecated: "This component is not used in the application. Use VcProductPrice instead.",
+  },
   argTypes: {
     withFromLabel: {
       control: "boolean",
