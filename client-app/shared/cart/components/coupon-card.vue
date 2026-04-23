@@ -14,11 +14,11 @@
       <VcInput
         v-model="code"
         size="xs"
-        :readonly="!custom || view === 'applied'"
+        :readonly="!custom || view === 'applied' || loading"
         :placeholder="$t('shared.cart.coupons_section.enter_custom_code')"
       >
         <template #append>
-          <VcButton v-bind="viewConfig.button" @click="handleClick" />
+          <VcButton v-bind="viewConfig.button" :loading="loading" @click="handleClick" />
         </template>
       </VcInput>
 
@@ -43,6 +43,7 @@ interface IProps {
   error?: string;
   custom?: boolean;
   modelValue?: string;
+  loading?: boolean;
 }
 
 interface IEmits {
@@ -62,7 +63,7 @@ interface IViewConfig {
 }
 
 const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), { custom: false, modelValue: "" });
+const props = withDefaults(defineProps<IProps>(), { custom: false, modelValue: "", loading: false });
 
 const code = computed({
   get: () => (props.custom ? props.modelValue : (props.coupon?.couponCode ?? "")),

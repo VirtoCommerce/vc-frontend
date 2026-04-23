@@ -2,6 +2,7 @@ import { computed, readonly, ref } from "vue";
 import { useFullCart } from "@/shared/cart/composables/useCart";
 
 const errorCouponCode = ref<string>();
+const loadingCouponCode = ref<string>();
 
 export function useCoupon() {
   const { cart, validateCartCoupon, addCartCoupon, removeCartCoupon } = useFullCart();
@@ -22,17 +23,23 @@ export function useCoupon() {
       return;
     }
 
-    if (appliedCouponCode.value && appliedCouponCode.value !== trimmed) {
-      await removeCartCoupon(appliedCouponCode.value);
-    }
+    try {
+      loadingCouponCode.value = trimmed;
 
-    const isValid = await validateCartCoupon(trimmed);
-    if (!isValid) {
-      errorCouponCode.value = trimmed;
-      return;
-    }
+      if (appliedCouponCode.value && appliedCouponCode.value !== trimmed) {
+        await removeCartCoupon(appliedCouponCode.value);
+      }
 
-    await addCartCoupon(trimmed);
+      const isValid = await validateCartCoupon(trimmed);
+      if (!isValid) {
+        errorCouponCode.value = trimmed;
+        return;
+      }
+
+      await addCartCoupon(trimmed);
+    } finally {
+      loadingCouponCode.value = undefined;
+    }
   }
 
   async function removeCoupon(code: string) {
@@ -41,12 +48,19 @@ export function useCoupon() {
       return;
     }
 
-    await removeCartCoupon(trimmed);
+    try {
+      loadingCouponCode.value = trimmed;
+
+      await removeCartCoupon(trimmed);
+    } finally {
+      loadingCouponCode.value = undefined;
+    }
   }
 
   return {
     appliedCouponCode,
     errorCouponCode: readonly(errorCouponCode),
+    loadingCouponCode: readonly(loadingCouponCode),
     applyCoupon,
     removeCoupon,
     clearError,

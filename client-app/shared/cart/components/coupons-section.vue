@@ -8,6 +8,7 @@
           :coupon="coupon"
           :view="getView(coupon.couponCode)"
           :error="coupon.couponCode === errorCouponCode ? $t('common.messages.invalid_coupon') : undefined"
+          :loading="!!coupon.couponCode && coupon.couponCode === loadingCouponCode"
           @apply="applyCoupon"
           @remove="removeCoupon"
         />
@@ -17,6 +18,7 @@
           custom
           :view="getView(customCode)"
           :error="customCode && customCode === errorCouponCode ? $t('common.messages.invalid_coupon') : undefined"
+          :loading="!!customCode && customCode === loadingCouponCode"
           @apply="applyCoupon"
           @remove="removeCoupon"
         />
@@ -40,7 +42,7 @@ import CouponCard from "./coupon-card.vue";
 const COUPONS_PER_PAGE = 4;
 
 const { coupons } = usePromotionCoupons(COUPONS_PER_PAGE);
-const { appliedCouponCode, errorCouponCode, applyCoupon, removeCoupon } = useCoupon();
+const { appliedCouponCode, errorCouponCode, loadingCouponCode, applyCoupon, removeCoupon } = useCoupon();
 
 const customCode = ref("");
 
