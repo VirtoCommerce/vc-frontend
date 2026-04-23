@@ -25,7 +25,7 @@ import type {
   MemberAddressType,
   PaymentMethodType,
 } from "@/core/api/graphql/types";
-import type { AnyAddressType } from "@/core/types";
+import type { AnyAddressType, ISortInfo } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
@@ -76,6 +76,7 @@ export function _useCheckout(cartId?: string) {
     filterRegionIds: personalFilterRegionIds,
     filterCities: personalFilterCities,
     termFacets: personalTermFacets,
+    sort: personalAddressesSort,
     addOrUpdateAddresses: addOrUpdatePersonalAddresses,
   } = useCustomerAddresses(
     6,
@@ -91,12 +92,14 @@ export function _useCheckout(cartId?: string) {
     filterRegionIds: organizationFilterRegionIds,
     filterCities: organizationFilterCities,
     termFacets: organizationTermFacets,
+    sort: organizationAddressesSort,
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
   } = useCurrentOrganizationAddresses(
     () => user.value.contact?.organizationId ?? "",
     6,
     computed(() => isAuthenticated.value && isCorporateMember.value),
   );
+
   const {
     refetch: refetchCart,
     cart,
@@ -336,13 +339,24 @@ export function _useCheckout(cartId?: string) {
         paginationMode: "server",
         loading: isCorporateMember.value ? organizationAddressesLoading : personalAddressesLoading,
         totalCount: isCorporateMember.value ? organizationAddressesTotalCount : personalAddressesTotalCount,
+        sort: isCorporateMember.value ? organizationAddressesSort : personalAddressesSort,
         filterContext: addressFilterContext,
         showFilters: true,
+        sortableColumns: ["name"],
         onPageChange(newPage: number) {
           if (isCorporateMember.value) {
             organizationAddressesPage.value = newPage;
           } else {
             personalAddressesPage.value = newPage;
+          }
+        },
+        onUpdateSort(newSort: ISortInfo) {
+          if (isCorporateMember.value) {
+            organizationAddressesPage.value = 1;
+            organizationAddressesSort.value = newSort;
+          } else {
+            personalAddressesPage.value = 1;
+            personalAddressesSort.value = newSort;
           }
         },
         onFilterChange() {

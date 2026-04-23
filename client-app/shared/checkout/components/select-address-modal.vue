@@ -72,8 +72,10 @@
       :items="paginatedAddresses"
       :description="$t('shared.checkout.select_address_modal.meta.table_description')"
       :loading="loading"
+      :sort="sort"
       bordered
       @page-changed="onPageChange"
+      @header-click="onSortChange"
     >
       <template #mobile-item="{ item }">
         <div class="relative flex items-center space-x-3 border-b p-4 last:border-none">
@@ -255,6 +257,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { sortBy } from "lodash";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { PAGE_LIMIT } from "@/core/constants";
@@ -262,7 +265,7 @@ import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
 import { SelectAddressFilter } from "@/shared/checkout";
 import { providePickupFilterContext } from "@/shared/checkout/composables";
 import type { MemberAddressType } from "@/core/api/graphql/types";
-import type { AnyAddressType } from "@/core/types";
+import type { AnyAddressType, ISortInfo } from "@/core/types";
 import type { IPickupFilterContext } from "@/shared/checkout/composables";
 import PickupAvailabilityInfo from "@/shared/common/components/pickup-availability-info.vue";
 
@@ -282,6 +285,8 @@ interface IProps {
   paginationMode?: PaginationModeType;
   loading?: boolean;
   totalCount?: number;
+  sort?: ISortInfo;
+  sortableColumns?: string[];
 }
 
 interface IEmits {
@@ -290,6 +295,7 @@ interface IEmits {
   (event: "filterChange"): void;
   (event: "resetFilter"): void;
   (event: "pageChange", page: number): void;
+  (event: "updateSort", value: ISortInfo): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -304,6 +310,7 @@ const props = withDefaults(defineProps<IProps>(), {
   paginationMode: "client",
   loading: false,
   totalCount: 0,
+  sortableColumns: () => [],
 });
 
 const { t } = useI18n();
@@ -332,10 +339,19 @@ const pages = computed(() => {
   const itemsTotal = props.paginationMode === "server" ? props.totalCount : props.addresses.length;
   return Math.max(1, Math.ceil(itemsTotal / itemsPerPage.value));
 });
+
+const sortedAddresses = computed<AnyAddressType[]>(() => {
+  if (props.paginationMode === "server" || !props.sort) {
+    return props.addresses;
+  }
+  const sorted = sortBy(props.addresses, props.sort.column);
+  return props.sort.direction === "desc" ? sorted.reverse() : sorted;
+});
+
 const paginatedAddresses = computed(() =>
   props.paginationMode === "server"
     ? props.addresses
-    : props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
+    : sortedAddresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 const hasFavoriteAddresses = computed(() => props.addresses.some((item) => item.isFavorite));
 
@@ -359,7 +375,7 @@ const columns = computed<VcTableColumnType[]>(() => {
     cols.splice(cols.length - 1, 0, { id: "availability", title: t("pages.account.order_details.bopis.availability") });
   }
 
-  return cols;
+  return cols.map((col) => ({ ...col, sortable: props.sortableColumns.includes(col.id) }));
 });
 
 function getFormattedAddress(address: AnyAddressType): string {
@@ -376,6 +392,11 @@ function getFormattedAddress(address: AnyAddressType): string {
 
 function onPageChange(): void {
   emit("pageChange", page.value);
+}
+
+function onSortChange(info: VcTableSortInfoType): void {
+  page.value = 1;
+  emit("updateSort", info);
 }
 
 function isSelected(address: AnyAddressType): boolean {
