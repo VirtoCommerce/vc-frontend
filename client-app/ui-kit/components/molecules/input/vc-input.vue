@@ -41,6 +41,7 @@
         :step="stepValue"
         :autocomplete="computedAutocomplete"
         :aria-label="ariaLabel ?? label"
+        :aria-describedby="counter || message ? detailsId : undefined"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
         :tabindex="tabindex"
@@ -84,7 +85,16 @@
       </div>
     </div>
 
-    <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" :single-line="singleLineMessage" />
+    <VcInputDetails
+      :id="counter || message ? detailsId : undefined"
+      :show-empty="showEmptyDetails"
+      :counter="counter"
+      :message="message"
+      :error="error"
+      :text-length="textLength"
+      :max-length="maxlength"
+      :single-line="singleLineMessage"
+    />
   </div>
 </template>
 
@@ -110,6 +120,7 @@ export interface IProps {
   noBorder?: boolean;
   hidePasswordSwitcher?: boolean;
   showEmptyDetails?: boolean;
+  counter?: boolean;
   min?: string | number;
   max?: string | number;
   step?: string | number;
@@ -149,6 +160,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const LIMITED_TYPES: IProps["type"][] = ["number", "date"];
 
 const componentId = useComponentId("input");
+const detailsId = componentId + "-details";
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
@@ -174,6 +186,8 @@ const model = defineModel<T>({
     return !(props.type === "number" && value === "") ? value : undefined;
   },
 });
+
+const textLength = computed(() => String(model.value ?? "").length);
 
 const _size = computed(() => props.size);
 

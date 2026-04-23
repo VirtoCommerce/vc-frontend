@@ -186,6 +186,18 @@ export default defineConfigWithVueTs(
       "vue/prefer-define-options": "warn",
       "vue/require-emit-validator": "warn",
       "vue/padding-line-between-tags": ["error", [{ blankLine: "always", prev: "*", next: "*" }]],
+      "vue/no-restricted-html-elements": [
+        "warn",
+        {
+          element: "VcLineItemProperty",
+          message: "VcLineItemProperty is deprecated. Use VcProperty or VcProductProperties instead.",
+        },
+        {
+          element: "VcPriceDisplayCatalog",
+          message: "VcPriceDisplayCatalog is deprecated. Use VcPriceDisplay or VcProductPrice instead.",
+        },
+        { element: "VcItemPriceCatalog", message: "VcItemPriceCatalog is deprecated. Use VcProductPrice instead." },
+      ],
       "vuejs-accessibility/click-events-have-key-events": "warn",
       "vuejs-accessibility/no-static-element-interactions": "warn",
 
@@ -300,7 +312,7 @@ export default defineConfigWithVueTs(
 
   // Configuration for Storybook files
   {
-    files: [".storybook/preview.ts", "**/*.stories.ts"],
+    files: [".storybook/preview.ts", ".storybook/docs-page.ts", "**/*.stories.ts"],
     languageOptions: {
       parserOptions: {
         tsconfigRootDir,

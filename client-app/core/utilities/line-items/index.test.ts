@@ -38,6 +38,7 @@ function createMoney(value: number): MoneyType {
       englishName: "United States Dollar",
       exchangeRate: 1,
       symbol: "$",
+      name: "",
     },
     decimalDigits: 2,
     formattedAmount: `$${value.toFixed(2)}`,
@@ -451,7 +452,18 @@ describe("prepareLineItem", () => {
   });
 
   it("should include configurationItems if provided", () => {
-    const configurationItems = [{ id: "conf1", sectionId: "section1", name: "Config 1", type: "text" }];
+    const configurationItems = [
+      {
+        id: "conf1",
+        sectionId: "section1",
+        name: "Config 1",
+        type: "text",
+        extendedPrice: createMoney(0),
+        listPrice: createMoney(0),
+        salePrice: createMoney(0),
+        selectedForCheckout: true,
+      },
+    ];
     const lineItem = createMockLineItem({
       configurationItems,
     });
