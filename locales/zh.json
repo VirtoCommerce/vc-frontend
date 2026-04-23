@@ -698,7 +698,6 @@
           "changed_confirmation": "产品配置已更改。您要保存吗？",
           "check_your_configuration": "检查您的产品配置",
           "required_section": "此部分为必填项",
-          "max_length_exceeded": "文本长度不能超过 {max} 个字符",
           "optional_no_selected": "个性化您的选择（可选）",
           "required_no_selected": "请填写所有必填选项以完成选择",
           "section-text-fieldset": {
