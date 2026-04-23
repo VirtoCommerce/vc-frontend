@@ -698,7 +698,6 @@
           "changed_confirmation": "Tuotteen kokoonpano on muuttunut. Haluatko tallentaa sen?",
           "check_your_configuration": "Tarkista tuotteen kokoonpano",
           "required_section": "Osio on pakollinen",
-          "max_length_exceeded": "Teksti ei voi ylittää {max} merkkiä",
           "optional_no_selected": "Mukauta valintaasi lisää (valinnainen)",
           "required_no_selected": "Täytä kaikki pakolliset vaihtoehdot viimeistelläksesi valintasi",
           "section-text-fieldset": {
