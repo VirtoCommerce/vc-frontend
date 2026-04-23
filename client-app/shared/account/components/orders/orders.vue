@@ -189,112 +189,21 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <VcTable
+    <OrdersTable
       v-else
       :loading="ordersLoading"
+      :orders="orders"
       :columns="columns"
-      :items="orders"
       :sort="sort"
       :pages="pages"
       :page="page"
       :hide-default-footer="!withPagination"
-      :description="$t('pages.account.orders.meta.table_description')"
       :bordered="withSearch"
-      mobile-breakpoint="lg"
-      class="orders__table"
+      :order-scope="orderScope"
       @header-click="applySorting"
       @page-changed="changePage"
-    >
-      <template #mobile-item="itemData">
-        <button
-          class="orders__mobile-row"
-          type="button"
-          tabindex="0"
-          @click="goToOrderDetails(itemData.item)"
-          @keyup.enter="goToOrderDetails(itemData.item)"
-        >
-          <div class="orders__mobile-cell">
-            <span class="orders__mobile-label">
-              {{ $t("pages.account.orders.order_number_label") }}
-            </span>
-
-            <span class="orders__mobile-value orders__mobile-value--bold orders__mobile-value--pr">
-              {{ itemData.item.number }}
-            </span>
-          </div>
-
-          <div class="orders__mobile-cell orders__mobile-cell--end">
-            <OrderStatus :status="itemData.item.status" :display-value="itemData.item.statusDisplayValue" />
-          </div>
-
-          <div v-if="orderScope === 'organization' && itemData.item?.customerName" class="orders__mobile-cell">
-            <span class="orders__mobile-label">
-              {{ $t("pages.account.orders.buyer_name_label") }}
-            </span>
-
-            <span class="orders__mobile-value">
-              {{ itemData.item?.customerName }}
-            </span>
-          </div>
-
-          <div class="orders__mobile-cell">
-            <span class="orders__mobile-label">
-              {{ $t("pages.account.orders.date_label") }}
-            </span>
-
-            <span class="orders__mobile-value">
-              {{ $d(itemData.item?.createdDate) }}
-            </span>
-          </div>
-
-          <div class="orders__mobile-cell">
-            <span class="orders__mobile-label">
-              {{ $t("pages.account.orders.total_label") }}
-            </span>
-
-            <span class="orders__mobile-value orders__mobile-value--bold">
-              {{ itemData.item.total?.formattedAmount }}
-            </span>
-          </div>
-        </button>
-      </template>
-
-      <template #desktop-body>
-        <tr v-for="order in orders" :key="order.id" class="orders__desktop-row" @click="goToOrderDetails(order)">
-          <td class="orders__desktop-cell">
-            {{ order.number }}
-          </td>
-
-          <td v-if="orderScope === 'private'" class="orders__desktop-cell">
-            {{ order.purchaseOrderNumber }}
-          </td>
-
-          <td v-if="orderScope === 'organization'" class="orders__desktop-cell">
-            {{ order.customerName }}
-          </td>
-
-          <td class="orders__desktop-cell">
-            {{ order.inPayments?.[0]?.number }}
-          </td>
-
-          <td class="orders__desktop-cell">
-            {{ $d(order?.createdDate) }}
-          </td>
-
-          <td class="orders__desktop-cell orders__desktop-cell--status">
-            <OrderStatus :status="order.status" :display-value="order.statusDisplayValue" class="inline-block" />
-          </td>
-
-          <td class="orders__desktop-cell orders__desktop-cell--total">
-            {{ order.total?.formattedAmount }}
-          </td>
-        </tr>
-      </template>
-
-      <template #page-limit-message>
-        {{ $t("ui_kit.reach_limit.page_limit_filters") }}
-      </template>
-    </VcTable>
+      @row-click="goToOrderDetails"
+    />
   </div>
 </template>
 
@@ -316,8 +225,8 @@ import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersF
 import { useUser } from "../../composables";
 import DateFilterSelect from "../date-filter-select.vue";
 import MobileOrdersFilter from "../mobile-orders-filter.vue";
-import OrderStatus from "../order-status.vue";
 import OrdersFilter from "../orders-filter.vue";
+import OrdersTable from "./orders-table.vue";
 import type { OrderScopeType, OrdersFilterChipsItemType } from "../../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { DateFilterType, ISortInfo } from "@/core/types";
@@ -536,62 +445,6 @@ watch(
 
     @media (width >= theme("screens.lg")) {
       @apply flex;
-    }
-  }
-
-  &__table {
-    @apply bg-additional-50;
-  }
-
-  &__mobile-row {
-    @apply grid w-full cursor-pointer grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left;
-  }
-
-  &__mobile-cell {
-    @apply flex flex-col;
-
-    &--end {
-      @apply items-end justify-center;
-    }
-  }
-
-  &__mobile-label {
-    @apply text-sm text-neutral-400;
-  }
-
-  &__mobile-value {
-    @apply overflow-hidden text-ellipsis;
-
-    &--bold {
-      @apply font-black;
-    }
-
-    &--pr {
-      @apply pr-4;
-    }
-  }
-
-  &__desktop-row {
-    @apply cursor-pointer;
-
-    &:nth-child(even) {
-      @apply bg-neutral-50;
-    }
-
-    &:hover {
-      @apply bg-neutral-200;
-    }
-  }
-
-  &__desktop-cell {
-    @apply overflow-hidden text-ellipsis p-5;
-
-    &--status {
-      @apply p-1;
-    }
-
-    &--total {
-      @apply text-right;
     }
   }
 }
