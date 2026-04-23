@@ -5,12 +5,6 @@ import { globals } from "@/core/globals";
 import type { GetPromotionCouponsQueryVariables } from "@/core/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
-export interface IGetPromotionCouponsParams {
-  page?: number;
-  pageSize?: number;
-  sort?: string;
-}
-
 export function getPromotionCoupons(payload?: MaybeRefOrGetter<Partial<GetPromotionCouponsQueryVariables>>) {
   return useQuery(
     GetPromotionCouponsDocument,
