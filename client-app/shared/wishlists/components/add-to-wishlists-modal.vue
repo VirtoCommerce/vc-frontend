@@ -15,7 +15,7 @@
               class="flex justify-between px-6 py-4 sm:pb-3 sm:pt-4 last:sm:pb-7"
             >
               <VcCheckbox
-                model-value
+                :model-value="!removedLists.includes(list.id || '')"
                 :value="list.id"
                 :disabled="loading"
                 class="grow"
