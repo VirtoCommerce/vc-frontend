@@ -1,7 +1,10 @@
 import { computed, readonly, ref } from "vue";
 import { useFullCart } from "@/shared/cart/composables/useCart";
 
-const errorCouponCode = ref<string>();
+type ErrorType = "invalid" | "failed";
+type CouponErrorType = { code: string; type: ErrorType };
+
+const couponError = ref<CouponErrorType>();
 const loadingCouponCode = ref<string>();
 
 export function useCoupon() {
@@ -12,7 +15,7 @@ export function useCoupon() {
   );
 
   function clearError() {
-    errorCouponCode.value = undefined;
+    couponError.value = undefined;
   }
 
   async function applyCoupon(code: string) {
@@ -32,17 +35,21 @@ export function useCoupon() {
 
       const isValid = await validateCartCoupon(trimmed);
       if (!isValid) {
-        errorCouponCode.value = trimmed;
+        couponError.value = { code: trimmed, type: "invalid" };
         return;
       }
 
       await addCartCoupon(trimmed);
+    } catch {
+      couponError.value = { code: trimmed, type: "failed" };
     } finally {
       loadingCouponCode.value = undefined;
     }
   }
 
   async function removeCoupon(code: string) {
+    clearError();
+
     const trimmed = code.trim();
     if (!trimmed) {
       return;
@@ -52,6 +59,8 @@ export function useCoupon() {
       loadingCouponCode.value = trimmed;
 
       await removeCartCoupon(trimmed);
+    } catch {
+      couponError.value = { code: trimmed, type: "failed" };
     } finally {
       loadingCouponCode.value = undefined;
     }
@@ -59,7 +68,7 @@ export function useCoupon() {
 
   return {
     appliedCouponCode,
-    errorCouponCode: readonly(errorCouponCode),
+    couponError: readonly(couponError),
     loadingCouponCode: readonly(loadingCouponCode),
     applyCoupon,
     removeCoupon,

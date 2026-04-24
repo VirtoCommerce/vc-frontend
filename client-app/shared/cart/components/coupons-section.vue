@@ -7,7 +7,7 @@
           :key="coupon.id"
           :coupon="coupon"
           :view="getView(coupon.couponCode)"
-          :error="coupon.couponCode === errorCouponCode ? $t('common.messages.invalid_coupon') : undefined"
+          :error="getError(coupon.couponCode)"
           :loading="!!coupon.couponCode && coupon.couponCode === loadingCouponCode"
           @apply="applyCoupon"
           @remove="removeCoupon"
@@ -17,7 +17,7 @@
           v-model="customCode"
           custom
           :view="getView(customCode)"
-          :error="customCode && customCode === errorCouponCode ? $t('common.messages.invalid_coupon') : undefined"
+          :error="getError(customCode)"
           :loading="!!customCode && customCode === loadingCouponCode"
           @apply="applyCoupon"
           @remove="removeCoupon"
@@ -34,6 +34,7 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
+import { useI18n } from "vue-i18n";
 import { ROUTES } from "@/router/routes/constants";
 import { usePromotionCoupons } from "@/shared/account";
 import { useCoupon } from "@/shared/cart";
@@ -41,8 +42,9 @@ import CouponCard from "./coupon-card.vue";
 
 const COUPONS_PER_PAGE = 4;
 
+const { t } = useI18n();
 const { coupons } = usePromotionCoupons(COUPONS_PER_PAGE);
-const { appliedCouponCode, errorCouponCode, loadingCouponCode, applyCoupon, removeCoupon } = useCoupon();
+const { appliedCouponCode, couponError, loadingCouponCode, applyCoupon, removeCoupon } = useCoupon();
 
 const customCode = ref("");
 
@@ -68,10 +70,19 @@ function getView(code: string | undefined): "default" | "applied" | "error" {
   if (code === appliedCouponCode.value) {
     return "applied";
   }
-  if (code === errorCouponCode.value) {
+  if (code === couponError.value?.code) {
     return "error";
   }
   return "default";
+}
+
+function getError(code: string | undefined): string | undefined {
+  if (!code || code !== couponError.value?.code) {
+    return undefined;
+  }
+  return couponError.value.type === "failed"
+    ? t("common.messages.something_went_wrong")
+    : t("common.messages.invalid_coupon");
 }
 </script>
 
