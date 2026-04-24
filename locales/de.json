@@ -195,6 +195,7 @@
       "empty_wish_list": "Es befinden sich keine Artikel auf der Liste",
       "not_defined": "Nicht definiert",
       "invalid_coupon": "Dieser Code ist nicht gültig",
+      "failed_coupon": "Mit dem Gutschein ist etwas schiefgelaufen. Bitte versuche es erneut.",
       "fill_all_required": "Bitte füllen Sie alle erforderlichen Felder aus, um fortzufahren.",
       "something_went_wrong": "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
       "checkout_pricing_warning": "Verfügbarkeit, Versand, Steuern und Aktionen sind erst endgültig, wenn Sie Ihre Bestellung abschließen.",

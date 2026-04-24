@@ -80,9 +80,7 @@ function getError(code: string | undefined): string | undefined {
   if (!code || code !== couponError.value?.code) {
     return undefined;
   }
-  return couponError.value.type === "failed"
-    ? t("common.messages.something_went_wrong")
-    : t("common.messages.invalid_coupon");
+  return couponError.value.type === "failed" ? t("common.messages.failed_coupon") : t("common.messages.invalid_coupon");
 }
 </script>
 

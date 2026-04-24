@@ -195,6 +195,7 @@
       "empty_wish_list": "列表中没有商品",
       "not_defined": "未定义",
       "invalid_coupon": "此代码无效",
+      "failed_coupon": "优惠券出现问题。请重试。",
       "fill_all_required": "请完成所有必填信息以继续。",
       "something_went_wrong": "出了点问题。请稍后再试。",
       "checkout_pricing_warning": "在您完成订单之前，库存、运输、税费和促销信息尚未最终确定。",

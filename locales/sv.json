@@ -195,6 +195,7 @@
       "empty_wish_list": "Det finns inga artiklar i listan",
       "not_defined": "Odefinierat",
       "invalid_coupon": "Den här koden är inte giltig",
+      "failed_coupon": "Något gick fel med kupongen. Försök igen.",
       "fill_all_required": "Fyll i all obligatorisk information för att fortsätta.",
       "something_went_wrong": "Något gick fel. Vänligen försök igen senare.",
       "checkout_pricing_warning": "Tillgänglighet, frakt, skatt och kampanjer är inte definitiva förrän du slutför din beställning.",

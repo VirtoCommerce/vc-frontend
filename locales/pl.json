@@ -195,6 +195,7 @@
       "empty_wish_list": "Lista życzeń nie zawiera żadnych przedmiotów",
       "not_defined": "Niezdefiniowany",
       "invalid_coupon": "Ten kod nie jest prawidłowy",
+      "failed_coupon": "Coś poszło nie tak z kuponem. Spróbuj ponownie.",
       "fill_all_required": "Proszę wypełnić wszystkie wymagane informacje, aby kontynuować.",
       "something_went_wrong": "Coś poszło nie tak. Proszę spróbować ponownie później.",
       "checkout_pricing_warning": "Dostępność, wysyłka, podatek i promocje nie są ostateczne, dopóki nie ukończysz zamówienia.",

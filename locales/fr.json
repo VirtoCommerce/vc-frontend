@@ -195,6 +195,7 @@
       "empty_wish_list": "Il n'y a pas d'articles dans la liste",
       "not_defined": "Indéfini",
       "invalid_coupon": "Ce code n'est pas valide",
+      "failed_coupon": "Un problème est survenu avec le coupon. Veuillez réessayer.",
       "fill_all_required": "Veuillez compléter toutes les informations requises pour continuer.",
       "something_went_wrong": "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
       "checkout_pricing_warning": "La disponibilité, l'expédition, les taxes et les promotions ne sont pas définitives tant que vous n'avez pas complété votre commande.",

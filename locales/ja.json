@@ -195,6 +195,7 @@
       "empty_wish_list": "リストが空です",
       "not_defined": "未定義",
       "invalid_coupon": "このコードは無効です",
+      "failed_coupon": "クーポンの適用に失敗しました。もう一度お試しください。",
       "fill_all_required": "必須項目を入力してください",
       "something_went_wrong": "エラーが発生しました。後でもう一度お試しください。",
       "checkout_pricing_warning": "在庫、配送、税金、プロモーションは注文を完了するまで確定されません。",

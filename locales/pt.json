@@ -195,6 +195,7 @@
       "empty_wish_list": "Não há itens na lista",
       "not_defined": "Indefinido",
       "invalid_coupon": "Este código não é válido",
+      "failed_coupon": "Algo deu errado com o cupom. Por favor, tente novamente.",
       "fill_all_required": "Por favor, preencha todas as informações obrigatórias para continuar.",
       "something_went_wrong": "Algo deu errado. Por favor, tente novamente mais tarde.",
       "checkout_pricing_warning": "Disponibilidade, envio, impostos e promoções não são finais até que você conclua seu pedido.",

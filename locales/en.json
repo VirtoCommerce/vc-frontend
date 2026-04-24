@@ -195,6 +195,7 @@
       "empty_wish_list": "There are no items in the list",
       "not_defined": "Undefined",
       "invalid_coupon": "This code is not valid",
+      "failed_coupon": "Something went wrong with the coupon. Please try again.",
       "fill_all_required": "Complete all required information to proceed.",
       "something_went_wrong": "Something went wrong. Please try again later.",
       "checkout_pricing_warning": "Availability, shipping, tax and promotions are not final until you complete your order.",
