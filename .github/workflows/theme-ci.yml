@@ -249,6 +249,8 @@ jobs:
           Add-Content -Path $env:GITHUB_OUTPUT -Value "branchName=$branchName"
   auto-tests:
     needs: ci
+    if: ${{ ((github.ref == 'refs/heads/dev') && (github.event_name == 'push')) ||
+        (github.event_name == 'workflow_dispatch') || (github.base_ref == 'dev') && (github.event_name == 'pull_request') }}
     uses: VirtoCommerce/.github/.github/workflows/pytest-tests.yml@v3.800.30
     with:
       installModules: 'false'
