@@ -29,6 +29,8 @@ import type { AnyAddressType, ISortInfo } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
+const ADDRESSES_PER_PAGE = 6;
+
 const useGlobalCheckout = createGlobalState(() => {
   const loading = ref(false);
   const initialized = ref(false);
@@ -79,7 +81,7 @@ export function _useCheckout(cartId?: string) {
     sort: personalAddressesSort,
     addOrUpdateAddresses: addOrUpdatePersonalAddresses,
   } = useCustomerAddresses(
-    6,
+    ADDRESSES_PER_PAGE,
     computed(() => isAuthenticated.value && !isCorporateMember.value),
   );
   const {
@@ -96,7 +98,7 @@ export function _useCheckout(cartId?: string) {
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
   } = useCurrentOrganizationAddresses(
     () => user.value.contact?.organizationId ?? "",
-    6,
+    ADDRESSES_PER_PAGE,
     computed(() => isAuthenticated.value && isCorporateMember.value),
   );
 
