@@ -11,7 +11,7 @@ import type { InputMemberAddressType, MemberAddressFieldsFragment } from "@/core
 import type { ISortInfo } from "@/core/types";
 import type { MaybeRefOrGetter, MaybeRef } from "vue";
 
-export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6, enabled?: MaybeRef<boolean>) {
+export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6, queryEnabled?: MaybeRef<boolean>) {
   const { user } = useUser();
 
   const sort = ref<ISortInfo>({
@@ -35,7 +35,7 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6,
     keyword: keyword.value,
   }));
 
-  const { result, loading, refetch } = useGetCurrentCustomerAddressesQuery(variables, enabled);
+  const { result, loading, refetch } = useGetCurrentCustomerAddressesQuery(variables, queryEnabled);
 
   const addresses = computed(() => result.value?.currentCustomerAddresses?.items ?? []);
   const totalCount = computed(() => result.value?.currentCustomerAddresses?.totalCount ?? 0);

@@ -15,7 +15,7 @@ import type { MaybeRef, MaybeRefOrGetter } from "vue";
 export function useCurrentOrganizationAddresses(
   organizationId: MaybeRefOrGetter<string>,
   itemsPerPage: MaybeRefOrGetter<number> = 6,
-  enabled?: MaybeRef<boolean>,
+  queryEnabled?: MaybeRef<boolean>,
 ) {
   const sort = ref<ISortInfo>({
     column: "isFavorite",
@@ -38,7 +38,7 @@ export function useCurrentOrganizationAddresses(
     keyword: keyword.value,
   }));
 
-  const { result, loading, refetch } = useGetCurrentOrganizationAddressesQuery(variables, enabled);
+  const { result, loading, refetch } = useGetCurrentOrganizationAddressesQuery(variables, queryEnabled);
 
   const addresses = computed(() => result.value?.currentOrganizationAddresses?.items ?? []);
   const totalCount = computed(() => result.value?.currentOrganizationAddresses?.totalCount ?? 0);
