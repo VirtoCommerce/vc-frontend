@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Legg til ny",
           "add_new_address": "Legg til ny adresse",
+          "no_results": "Ingen adresser samsvarer med søket ditt",
           "search": "Søk",
           "select_address": "Velg adresse",
           "title": "Leveringsadresse:"
@@ -666,7 +667,7 @@
         "vendor_label": "Leverandør",
         "all_vendor_products": "Alle leverandørens produkter",
         "share_product_label": "Del produkt",
-        "create_configuration_button": "Lag din egen konfigurasjon",
+        "create_configuration_button": "Lag ny konfigurasjon",
         "price_block": {
           "title": "Pris og levering",
           "mobile_title": "Del og mer",
@@ -1217,7 +1218,8 @@
           "cart_pickup_points_not_found": "Det finnes ingen tilgjengelige hentepunkter for disse produktene. Velg en annen forsendelsesmetode.",
           "cart_pickup_points_not_found_by_filter": "Ingen hentepunkter funnet.",
           "cart_pickup_points_reset_search": "Tilbakestill søk",
-          "availability": "Tilgjengelighet"
+          "availability": "Tilgjengelighet",
+          "search_pickup_locations": "Søk hentesteder"
         }
       },
       "order_payment": {

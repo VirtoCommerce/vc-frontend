@@ -15,8 +15,13 @@ export interface IQueueTargetConfig<TVars extends Record<string, unknown> = Reco
   mergeQueued?: MergeQueuedFnType<TVars>;
 }
 
-export interface IQueueConfig<TVars extends Record<string, unknown> = Record<string, unknown>> {
-  targets: Array<{ name: string; config?: IQueueTargetConfig<TVars> }>;
+export interface IQueueTarget<TVars extends Record<string, unknown> = Record<string, unknown>> {
+  name: string;
+  config?: IQueueTargetConfig<TVars>;
+}
+
+export interface IQueueConfig {
+  targets: IQueueTarget<Record<string, unknown>>[];
 }
 
 export interface IObserver {

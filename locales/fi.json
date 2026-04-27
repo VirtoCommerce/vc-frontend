@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Lisää uusi",
           "add_new_address": "Lisää uusi osoite",
+          "no_results": "Ei osoitteita, jotka vastaavat hakua",
           "search": "Hae",
           "select_address": "Valitse osoite",
           "title": "Toimitusosoite:"
@@ -666,7 +667,7 @@
         "vendor_label": "Toimittaja",
         "all_vendor_products": "Kaikki toimittajan tuotteet",
         "share_product_label": "Jaa tuote",
-        "create_configuration_button": "Luo oma kokoonpano",
+        "create_configuration_button": "Luo uusi kokoonpano",
         "price_block": {
           "title": "Hinta ja toimitus",
           "mobile_title": "Jaa ja lisää",
@@ -1217,7 +1218,8 @@
           "cart_pickup_points_not_found": "Näille tuotteille ei ole noutopisteitä. Valitse toinen toimitustapa.",
           "cart_pickup_points_not_found_by_filter": "Noutopisteitä ei löytynyt.",
           "cart_pickup_points_reset_search": "Nollaa haku",
-          "availability": "Saatavuus"
+          "availability": "Saatavuus",
+          "search_pickup_locations": "Hae noutopisteitä"
         }
       },
       "order_payment": {

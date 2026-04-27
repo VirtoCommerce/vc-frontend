@@ -6,6 +6,7 @@ import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
 import { a11yConfig } from "./a11y-config";
+import { DocsPage } from "./docs-page";
 import { createStorybookRouter } from "./router";
 import type { StoreResponseType } from "../client-app/core/api/graphql/types";
 import type { IThemeConfigPreset } from "../client-app/core/types";
@@ -44,6 +45,7 @@ setThemeContext({
     cultureName: "en-US",
     englishName: "US Dollar",
     exchangeRate: 1,
+    name: "US Dollar",
     isInvariant: false,
   },
   availableLanguages: [],
@@ -239,6 +241,9 @@ const preview: Preview = {
       },
     },
     a11y: a11yConfig,
+    docs: {
+      page: DocsPage,
+    },
   },
   decorators: [
     (story, context) => {

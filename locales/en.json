@@ -367,6 +367,7 @@
         "ship_to_selector": {
           "add_new": "Add new",
           "add_new_address": "Add new address",
+          "no_results": "No addresses match your search",
           "search": "Search",
           "select_address": "Select address",
           "title": "Ship to:"
@@ -666,7 +667,7 @@
         "vendor_label": "Vendor",
         "all_vendor_products": "All vendor products",
         "share_product_label": "Share product",
-        "create_configuration_button": "Create your own configuration",
+        "create_configuration_button": "Create new configuration",
         "price_block": {
           "title": "Price and delivery",
           "mobile_title": "Share & Actions",
@@ -1217,7 +1218,8 @@
           "cart_pickup_points_not_found": "There are no available pickup points for these products. Select another shipping method.",
           "cart_pickup_points_not_found_by_filter": "Pickup points not found.",
           "cart_pickup_points_reset_search": "Reset search",
-          "availability": "Availability"
+          "availability": "Availability",
+          "search_pickup_locations": "Search pickup locations"
         }
       },
       "order_payment": {
