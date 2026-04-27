@@ -215,18 +215,10 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
           : { isValid, error: t("shared.catalog.product_details.product_configuration.required_section") };
       }
       case CONFIGURABLE_SECTION_TYPES.text: {
-        if (section.isRequired && !value?.customText?.trim()) {
-          return { isValid: false, error: t("shared.catalog.product_details.product_configuration.required_section") };
-        }
-        if (section.maxLength && value?.customText && value.customText.length > section.maxLength) {
-          return {
-            isValid: false,
-            error: t("shared.catalog.product_details.product_configuration.max_length_exceeded", {
-              max: section.maxLength,
-            }),
-          };
-        }
-        return { isValid: true };
+        const isValid = !section.isRequired || !!value?.customText?.trim();
+        return isValid
+          ? { isValid }
+          : { isValid, error: t("shared.catalog.product_details.product_configuration.required_section") };
       }
       case CONFIGURABLE_SECTION_TYPES.file: {
         const isValid = !section.isRequired || !!value?.files?.length;

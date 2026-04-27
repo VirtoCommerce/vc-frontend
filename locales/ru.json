@@ -698,7 +698,6 @@
           "changed_confirmation": "Конфигурация товара была изменена. Вы хотите ее сохранить?",
           "check_your_configuration": "Проверьте конфигурацию товара",
           "required_section": "Раздел обязателен",
-          "max_length_exceeded": "Текст не должен превышать {max} символов",
           "optional_no_selected": "Персонализируйте свой выбор (необязательно)",
           "required_no_selected": "Завершите выбор, указав все необходимые параметры",
           "section-text-fieldset": {

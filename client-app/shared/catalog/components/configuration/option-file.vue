@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs, onMounted } from "vue";
+import { computed, toRefs, onMounted, watch } from "vue";
 import { downloadFile, useFiles } from "@/shared/files";
 import { toAttachedFile } from "@/ui-kit/utilities";
 import type { CartConfigurationItemFileType } from "@/core/api/graphql/types";
@@ -67,6 +67,12 @@ function onFileDownload(file: FileType) {
     void downloadFile(file.url, file.name);
   }
 }
+
+watch(value, (newValue) => {
+  if (!newValue?.length && files.value.length > 0) {
+    void removeFiles([...files.value]);
+  }
+});
 
 onMounted(() => {
   void fetchFileOptions();
