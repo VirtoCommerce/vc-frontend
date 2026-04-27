@@ -905,8 +905,7 @@
         "list_edit_button": "编辑",
         "remove_list_button": "删除",
         "make_private_button": "设为私人",
-        "share_button": "分享",
-        "saved": "已保存"
+        "share_button": "分享"
       },
       "list_details": {
         "add_all_to_cart_button": "全部加入购物车",
