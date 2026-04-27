@@ -705,7 +705,6 @@
           "changed_confirmation": "Produktkonfigurasjonen er endret. Vil du lagre den?",
           "check_your_configuration": "Sjekk produktkonfigurasjonen",
           "required_section": "Seksjonen er obligatorisk",
-          "max_length_exceeded": "Teksten kan ikke overstige {max} tegn",
           "optional_no_selected": "Tilpass valget ditt ytterligere (valgfritt)",
           "required_no_selected": "Fyll ut alle obligatoriske alternativer for å fullføre valget ditt",
           "section-text-fieldset": {

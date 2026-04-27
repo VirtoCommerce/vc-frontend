@@ -705,7 +705,6 @@
           "changed_confirmation": "The product configuration has been changed. Do you want to save it?",
           "check_your_configuration": "Check your product configuration",
           "required_section": "Section is required",
-          "max_length_exceeded": "Text must not exceed {max} characters",
           "optional_no_selected": "Personalize your selection further (optional)",
           "required_no_selected": "Complete all required options to finalize your selection",
           "section-text-fieldset": {

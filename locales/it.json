@@ -705,7 +705,6 @@
           "changed_confirmation": "La configurazione del prodotto è stata modificata. Vuoi salvarla?",
           "check_your_configuration": "Verifica la configurazione del prodotto",
           "required_section": "Sezione obbligatoria",
-          "max_length_exceeded": "Il testo non deve superare {max} caratteri",
           "optional_no_selected": "Personalizza ulteriormente la tua selezione (opzionale)",
           "required_no_selected": "Completa tutte le opzioni obbligatorie per finalizzare la selezione",
           "section-text-fieldset": {

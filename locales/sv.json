@@ -705,7 +705,6 @@
           "changed_confirmation": "Produktkonfigurationen har ändrats. Vill du spara den?",
           "check_your_configuration": "Kontrollera din produktkonfiguration",
           "required_section": "Sektionen är obligatorisk",
-          "max_length_exceeded": "Texten får inte överstiga {max} tecken",
           "optional_no_selected": "Anpassa ditt val ytterligare (valfritt)",
           "required_no_selected": "Slutför alla obligatoriska alternativ för att slutföra ditt val",
           "section-text-fieldset": {
