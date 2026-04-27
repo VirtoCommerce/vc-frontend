@@ -21,7 +21,10 @@ import type {
 } from "@/core/api/graphql/types";
 import type { DeepReadonly, MaybeRef } from "vue";
 
-type SectionValueType = Omit<CartConfigurationItemType, "id">;
+type SectionValueType = Pick<
+  CartConfigurationItemType,
+  "sectionId" | "type" | "productId" | "quantity" | "customText" | "files"
+>;
 
 type SelectedConfigurationType = {
   productId: string | undefined;
@@ -212,18 +215,10 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
           : { isValid, error: t("shared.catalog.product_details.product_configuration.required_section") };
       }
       case CONFIGURABLE_SECTION_TYPES.text: {
-        if (section.isRequired && !value?.customText?.trim()) {
-          return { isValid: false, error: t("shared.catalog.product_details.product_configuration.required_section") };
-        }
-        if (section.maxLength && value?.customText && value.customText.length > section.maxLength) {
-          return {
-            isValid: false,
-            error: t("shared.catalog.product_details.product_configuration.max_length_exceeded", {
-              max: section.maxLength,
-            }),
-          };
-        }
-        return { isValid: true };
+        const isValid = !section.isRequired || !!value?.customText?.trim();
+        return isValid
+          ? { isValid }
+          : { isValid, error: t("shared.catalog.product_details.product_configuration.required_section") };
       }
       case CONFIGURABLE_SECTION_TYPES.file: {
         const isValid = !section.isRequired || !!value?.files?.length;
@@ -434,7 +429,7 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
     });
   }
 
-  function updateWithPreselectedValues(preselectedValues?: CartConfigurationItemType[]) {
+  function updateWithPreselectedValues(preselectedValues?: SectionValueType[]) {
     preselectedValues?.forEach((value) => {
       const section = configuration.value.find(({ id }) => id === value.sectionId);
       const isPreselectedValueValid = !!section && isValidValue(section.id, value);
