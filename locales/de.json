@@ -194,7 +194,8 @@
       "min_value": "Der minimale Wert beträgt {value}",
       "empty_wish_list": "Es befinden sich keine Artikel auf der Liste",
       "not_defined": "Nicht definiert",
-      "invalid_coupon": "Dieser Code entspricht keinem aktiven Gutschein. Bitte überprüfen Sie alles und versuchen Sie es erneut.",
+      "invalid_coupon": "Dieser Code ist nicht gültig",
+      "failed_coupon": "Mit dem Gutschein ist etwas schiefgelaufen. Bitte versuche es erneut.",
       "fill_all_required": "Bitte füllen Sie alle erforderlichen Felder aus, um fortzufahren.",
       "something_went_wrong": "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
       "checkout_pricing_warning": "Verfügbarkeit, Versand, Steuern und Aktionen sind erst endgültig, wenn Sie Ihre Bestellung abschließen.",
@@ -235,7 +236,6 @@
       "password": "Geben Sie Ihr Passwort ein",
       "confirm_password": "Bestätigen Sie Ihr Passwort",
       "purchase_order_number": "Geben Sie eine Bestellnummer ein",
-      "promotion_code": "Geben Sie einen Promo-Gutschein ein",
       "select_credit_card": "Wählen Sie eine Kreditkarte"
     },
     "links": {
@@ -644,6 +644,13 @@
         "title": "Komponentenliste",
         "edit_configuration": "Konfiguration bearbeiten",
         "selected_text": "Ausgewählter Text: {text}"
+      },
+      "coupons_section": {
+        "title": "Rabatte & Gutscheine",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Benutzerdefinierter Code",
+        "enter_custom_code": "Benutzerdefinierten Code eingeben",
+        "all_coupons": "Alle Gutscheine & Aktionen anzeigen"
       }
     },
     "catalog": {

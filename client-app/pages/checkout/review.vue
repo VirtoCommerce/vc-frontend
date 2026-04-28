@@ -122,8 +122,8 @@
           <!-- Promotion code -->
           <transition name="slide-fade-top" mode="in-out" appear>
             <VcActionInput
-              v-if="couponCode"
-              :model-value="couponCode"
+              v-if="appliedCouponCode"
+              :model-value="appliedCouponCode"
               :label="$t('common.labels.promotion_code')"
               class="mt-4"
               disabled
@@ -170,7 +170,7 @@ const {
   allItemsAreDigital,
 } = useFullCart();
 const { comment, billingAddress, purchaseOrderNumber, isPurchaseOrderNumberEnabled } = useCheckout();
-const { couponCode } = useCoupon();
+const { appliedCouponCode } = useCoupon();
 
 const shippingMethodId = computed(
   () => shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,

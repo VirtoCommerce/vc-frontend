@@ -194,7 +194,8 @@
       "min_value": "Minsta värde är {value}",
       "empty_wish_list": "Det finns inga artiklar i listan",
       "not_defined": "Odefinierat",
-      "invalid_coupon": "Denna kod matchar inte någon aktiv kupong. Kontrollera att allt är korrekt och försök igen.",
+      "invalid_coupon": "Den här koden är inte giltig",
+      "failed_coupon": "Något gick fel med kupongen. Försök igen.",
       "fill_all_required": "Fyll i all obligatorisk information för att fortsätta.",
       "something_went_wrong": "Något gick fel. Vänligen försök igen senare.",
       "checkout_pricing_warning": "Tillgänglighet, frakt, skatt och kampanjer är inte definitiva förrän du slutför din beställning.",
@@ -235,7 +236,6 @@
       "password": "Ange ditt lösenord",
       "confirm_password": "Bekräfta ditt lösenord",
       "purchase_order_number": "Ange ett inköpsordernummer",
-      "promotion_code": "Ange en kampanjkod",
       "select_credit_card": "Välj kreditkort"
     },
     "links": {
@@ -644,6 +644,13 @@
         "title": "Komponentlista",
         "edit_configuration": "Redigera konfiguration",
         "selected_text": "Vald text: {text}"
+      },
+      "coupons_section": {
+        "title": "Rabatt & kuponger",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Anpassad kod",
+        "enter_custom_code": "Ange anpassad kod",
+        "all_coupons": "Visa alla kuponger & kampanjer"
       }
     },
     "catalog": {
