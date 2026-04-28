@@ -1,3 +1,4 @@
+export * from "./useCustomerAddresses";
 export * from "./usePasswordRequirements";
 export * from "./usePromotionCoupons";
 export * from "./useSignMeIn";
