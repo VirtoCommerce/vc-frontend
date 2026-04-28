@@ -4,7 +4,7 @@
     prepend-icon="cash"
     class="mt-5"
     size="lg"
-    data-test-id="checkout.payment-details-section"
+    data-test-id="payment-details-section"
   >
     <div class="flex flex-col gap-6 lg:flex-row lg:gap-8">
       <div class="lg:w-3/5">
@@ -18,6 +18,7 @@
             v-model="billingAddressEqualsShipping"
             :disabled="disabled"
             name="billingAddressEqualsShipping"
+            data-test-id="billing-address-equals-shipping-checkbox"
             class="p-3"
           >
             {{ $t("shared.checkout.billing_details_section.labels.same_as_shipping_address") }}
@@ -46,7 +47,7 @@
           :disabled="disabled"
           size="auto"
           required
-          test-id-dropdown="checkout.payment-method-selector"
+          test-id-dropdown="payment-method-selector"
           @change="(value) => setPaymentMethod(value)"
         >
           <template #placeholder>

@@ -9,7 +9,7 @@
       <VcButton
         color="secondary"
         variant="outline"
-        data-test-id="clear-cart-modal.yes-button"
+        data-test-id="yes-button"
         @click="
           $emit('result');
           close();
@@ -18,7 +18,7 @@
         {{ $t("common.buttons.yes") }}
       </VcButton>
 
-      <VcButton data-test-id="clear-cart-modal.no-button" @click="close()">
+      <VcButton data-test-id="no-button" @click="close()">
         {{ $t("common.buttons.no") }}
       </VcButton>
     </template>
