@@ -64,34 +64,14 @@
         {{ $t("shared.account.sign_in_form.remember_me_label") }}
       </VcCheckbox>
 
-      <router-link
-        to="/forgot-password"
-<<<<<<< HEAD
-        class="text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]"
-        data-test-id="forgot-password-link"
-=======
-        class="sign-in-form__forgot-password-link"
-        data-test-id="sign-in-page.forgot-password-link"
->>>>>>> dev
-      >
+      <router-link to="/forgot-password" class="sign-in-form__forgot-password-link" data-test-id="forgot-password-link">
         {{ $t("shared.account.sign_in_form.forgot_password_link") }}
       </router-link>
     </div>
 
     <!-- Form actions -->
-<<<<<<< HEAD
-    <div class="mt-8 flex flex-wrap gap-4" :class="{ 'max-w-sm': !props.growButtons }">
-      <VcButton :loading="loading" type="submit" class="flex-1 shrink" no-wrap data-test-id="login-button">
-=======
     <div :class="['sign-in-form__actions', { 'sign-in-form__actions--constrained': !props.growButtons }]">
-      <VcButton
-        :loading="loading"
-        type="submit"
-        class="sign-in-form__submit"
-        no-wrap
-        data-test-id="sign-in-page.login-button"
-      >
->>>>>>> dev
+      <VcButton :loading="loading" type="submit" class="sign-in-form__submit" no-wrap data-test-id="login-button">
         {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
 
@@ -110,17 +90,17 @@
 </template>
 
 <script setup lang="ts">
-import type { IdentityErrorType } from "@/core/api/graphql/types";
+import { toTypedSchema } from "@vee-validate/yup";
+import { useField, useForm } from "vee-validate";
+import { ref, watch } from "vue";
+import { object, string } from "yup";
 import { useAnalytics, useAuth, useErrorsTranslator } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
 import { Logger } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
 import { useSignMeIn } from "@/shared/account/composables";
 import { ContactAdministratorLink } from "@/shared/common";
-import { toTypedSchema } from "@vee-validate/yup";
-import { useField, useForm } from "vee-validate";
-import { ref, watch } from "vue";
-import { object, string } from "yup";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
 
