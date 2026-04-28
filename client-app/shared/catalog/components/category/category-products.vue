@@ -19,9 +19,7 @@
 
       <div
         :class="`category-products__list category-products__list--${savedViewMode}`"
-        :data-test-id="
-          savedViewMode === 'list' ? 'products-list-view' : savedViewMode === 'grid' ? 'products-grid-view' : ''
-        "
+        :data-test-id="`products-${savedViewMode}-view`"
       >
         <template v-if="fetchingProducts">
           <component :is="skeletonComponent" v-for="i in itemsPerPage" :key="i" />
