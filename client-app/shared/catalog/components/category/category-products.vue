@@ -18,20 +18,8 @@
       </div>
 
       <div
-        :class="[
-          'category-products__list',
-          {
-            'category-products__list--list': savedViewMode === 'list',
-            'category-products__list--grid': savedViewMode === 'grid',
-          },
-        ]"
-        :data-test-id="
-          savedViewMode === 'list'
-            ? 'category-page.products-list-view'
-            : savedViewMode === 'grid'
-              ? 'category-page.products-grid-view'
-              : ''
-        "
+        :class="`category-products__list category-products__list--${savedViewMode}`"
+        :data-test-id="`products-${savedViewMode}-view`"
       >
         <template v-if="fetchingProducts">
           <component :is="skeletonComponent" v-for="i in itemsPerPage" :key="i" />

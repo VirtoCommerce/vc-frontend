@@ -12,22 +12,11 @@
     </i18n-t>
 
     <template #actions="{ close }">
-      <VcButton
-        :loading="loading"
-        color="danger"
-        data-test-id="delete-wishlist-product-modal.delete-button"
-        @click="remove(close)"
-      >
+      <VcButton :loading="loading" color="danger" data-test-id="delete-button" @click="remove(close)">
         {{ $t("shared.wishlists.delete_wishlist_product_modal.delete_button") }}
       </VcButton>
 
-      <VcButton
-        color="secondary"
-        variant="outline"
-        data-test-id="delete-wishlist-product-modal.cancel-button"
-        class="ms-auto"
-        @click="close"
-      >
+      <VcButton color="secondary" variant="outline" data-test-id="cancel-button" class="ms-auto" @click="close">
         {{ $t("shared.wishlists.delete_wishlist_product_modal.cancel_button") }}
       </VcButton>
     </template>
