@@ -86,10 +86,6 @@ type CartValidationResultType = {
   items?: Array<ShortLineItemFragment & { validationErrors?: ValidationErrorType[] }>;
 };
 
-function isDefinedString(value: string | undefined): value is string {
-  return Boolean(value);
-}
-
 const product = toRef(props, "product");
 const { cart, addToCart, changeItemQuantityBatched, addToCartLoading, changeItemQuantityBatchedOverflowed } =
   useShortCart();
@@ -195,7 +191,7 @@ async function onConfigurableSubmit() {
       return;
     }
 
-    // TODO: Workaround — comparing cart items before/after to find the newly added lineItemId.
+    // TODO: Workaround - comparing cart items before/after to find the newly added lineItemId.
     // Replace once backend provides the lineItemId directly (new mutation or updated response).
     const existingItemIds = new Set(cart.value?.items?.map((item) => item.id));
     const updatedCart = await addToCart(product.value.id, minQty.value, selectedConfigurationInput.value);
@@ -317,14 +313,14 @@ function getConfigurableValidationErrors(updatedCart?: CartValidationResultType,
           (lineItemId && error.objectId === lineItemId && error.objectType === ValidationErrorObjectType.LineItem),
       )
       .map(translate)
-      .filter(isDefinedString) ?? [];
+      .filter(Boolean) ?? [];
   const lineItemValidationErrors =
     updatedCart?.items
       ?.find((item) => item.id === lineItemId)
       ?.validationErrors?.map(translate)
-      .filter(isDefinedString) ?? [];
+      .filter(Boolean) ?? [];
 
-  return [...new Set([...cartValidationErrors, ...lineItemValidationErrors])];
+  return [...new Set([...cartValidationErrors, ...lineItemValidationErrors])] as string[];
 }
 
 function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
