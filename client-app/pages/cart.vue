@@ -132,13 +132,13 @@
                 v-if="$cfg.checkout_multistep_enabled"
                 :to="{ name: 'Checkout', params: { cartId: $route.params.cartId } }"
                 :disabled="hasOnlyUnselectedLineItems"
-                test-id="cart.checkout-button"
+                test-id="checkout-button"
                 class="mt-4"
               >
                 {{ $t("common.buttons.go_to_checkout") }}
               </ProceedTo>
 
-              <PlaceOrder data-test-id="checkout-single-page.place-order-button" v-else class="mt-4" />
+              <PlaceOrder data-test-id="place-order-button" v-else class="mt-4" />
 
               <template v-if="!$cfg.checkout_multistep_enabled">
                 <transition name="slide-fade-top" mode="out-in" appear>
@@ -203,7 +203,7 @@
             {{ $t("common.buttons.go_to_checkout") }}
           </ProceedTo>
 
-          <PlaceOrder data-test-id="checkout-multi-step.place-order-button" v-else class="!mt-2" />
+          <PlaceOrder data-test-id="sticked-place-order-button" v-else class="!mt-2" />
         </div>
       </transition>
     </template>

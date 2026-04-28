@@ -10,7 +10,6 @@
       <div
         v-for="address in addresses"
         :key="address.id"
-        :data-address-id="address.id"
         :data-country="address.address?.countryName"
         :data-region="address.address?.regionId"
         :data-city="address.address?.city"
@@ -19,7 +18,6 @@
         :data-pickup-point-name="address.name"
         :data-coords="address.geoLocation"
         class="select-address-map-list__item"
-        data-test-id="pickup-location-item"
       >
         <VcRadioButton
           :model-value="selectedAddressId"

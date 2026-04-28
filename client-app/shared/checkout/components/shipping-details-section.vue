@@ -4,7 +4,7 @@
     prepend-icon="truck"
     size="lg"
     class="shipping-details-section"
-    data-test-id="checkout.shipping-details-section"
+    data-test-id="shipping-details-section"
   >
     <div class="shipping-details-section__content">
       <div
@@ -22,7 +22,7 @@
             icon="cube"
             :label="$t('shared.checkout.shipping_details_section.switchers.pickup')"
             :disabled="cartChanging"
-            data-test-id="checkout.shipping-details-section.pickup-switcher"
+            data-test-id="pickup-switcher"
             @change="switchShippingOptions($event)"
           />
 
@@ -32,17 +32,14 @@
             icon="truck"
             :label="$t('shared.checkout.shipping_details_section.switchers.shipping')"
             :disabled="cartChanging"
-            data-test-id="checkout.shipping-details-section.shipping-switcher"
+            data-test-id="shipping-switcher"
             @change="switchShippingOptions($event)"
           />
         </div>
       </div>
 
       <div v-if="mode === SHIPPING_OPTIONS.shipping" class="shipping-details-section__shipping-section">
-        <div
-          class="shipping-details-section__address-section"
-          data-test-id="checkout.shipping-details-section.shipping-address-section"
-        >
+        <div class="shipping-details-section__address-section" data-test-id="shipping-address-section">
           <VcLabel required>
             {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
           </VcLabel>
@@ -73,7 +70,7 @@
           item-size="lg"
           class="shipping-details-section__method-select"
           required
-          test-id-dropdown="checkout.shipping-details-section.shipping-method-selector"
+          test-id-dropdown="shipping-method-selector"
           @change="onShipmentMethodChange"
         >
           <template #placeholder>
@@ -103,11 +100,7 @@
         </VcSelect>
       </div>
 
-      <div
-        v-else
-        class="shipping-details-section__pickup-section"
-        data-test-id="checkout.shipping-details-section.pickup-point-section"
-      >
+      <div v-else class="shipping-details-section__pickup-section" data-test-id="pickup-location-section">
         <VcLabel required>
           {{ $t("shared.checkout.shipping_details_section.labels.pickup_point") }}
         </VcLabel>

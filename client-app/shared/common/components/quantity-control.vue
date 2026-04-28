@@ -21,7 +21,7 @@
     :show-empty-details="showEmptyDetails"
     :message="message"
     :validate-on-mount="validateOnMount"
-    data-test-id="add-to-cart-component"
+    data-test-id="add-to-cart-button"
     @update:cart-item-quantity="emit('update:cartItemQuantity', $event)"
     @update:validation="emit('update:validation', $event)"
     @update:model-value="value = $event"
@@ -44,9 +44,7 @@
     :message="errorMessage"
     :step="packSize"
     :allow-zero="allowZero"
-    test-id-input="quantity-stepper-input"
-    test-id-decrement="quantity-stepper-decrement"
-    test-id-increment="quantity-stepper-increment"
+    data-test-id="quantity-stepper"
   >
     <slot />
   </VcQuantityStepper>
