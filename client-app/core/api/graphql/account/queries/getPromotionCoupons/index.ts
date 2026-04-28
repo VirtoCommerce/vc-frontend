@@ -3,9 +3,12 @@ import { computed, toValue } from "vue";
 import { GetPromotionCouponsDocument } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import type { GetPromotionCouponsQueryVariables } from "@/core/api/graphql/types";
-import type { MaybeRefOrGetter } from "vue";
+import type { MaybeRef, MaybeRefOrGetter } from "vue";
 
-export function getPromotionCoupons(payload?: MaybeRefOrGetter<Partial<GetPromotionCouponsQueryVariables>>) {
+export function getPromotionCoupons(
+  payload?: MaybeRefOrGetter<Partial<GetPromotionCouponsQueryVariables>>,
+  enabled?: MaybeRef<boolean>,
+) {
   return useQuery(
     GetPromotionCouponsDocument,
     computed(() => {
@@ -22,6 +25,7 @@ export function getPromotionCoupons(payload?: MaybeRefOrGetter<Partial<GetPromot
       fetchPolicy: "cache-and-network",
       nextFetchPolicy: "cache-first",
       keepPreviousResult: true,
+      enabled,
     },
   );
 }

@@ -36,14 +36,15 @@
 import { ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { ROUTES } from "@/router/routes/constants";
-import { usePromotionCoupons } from "@/shared/account";
+import { usePromotionCoupons, useUser } from "@/shared/account";
 import { useCoupon } from "@/shared/cart";
 import CouponCard from "./coupon-card.vue";
 
 const COUPONS_PER_PAGE = 4;
 
 const { t } = useI18n();
-const { coupons } = usePromotionCoupons(COUPONS_PER_PAGE);
+const { isAuthenticated } = useUser();
+const { coupons } = usePromotionCoupons(COUPONS_PER_PAGE, undefined, isAuthenticated);
 const { appliedCouponCode, couponError, loadingCouponCode, applyCoupon, removeCoupon } = useCoupon();
 
 const customCode = ref("");

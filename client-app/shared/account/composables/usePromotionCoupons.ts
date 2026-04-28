@@ -5,11 +5,12 @@ import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import type { GetPromotionCouponsQueryVariables } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
-import type { MaybeRefOrGetter } from "vue";
+import type { MaybeRefOrGetter, MaybeRef } from "vue";
 
 export function usePromotionCoupons(
   itemsPerPage?: MaybeRefOrGetter<number>,
   variables?: Partial<GetPromotionCouponsQueryVariables>,
+  queryEnabled?: MaybeRef<boolean>,
 ) {
   const pageSize = ref(toValue(itemsPerPage) ?? DEFAULT_PAGE_SIZE);
   const page = ref(1);
@@ -22,6 +23,7 @@ export function usePromotionCoupons(
       sort: sort.value.toString(),
       ...variables,
     })),
+    queryEnabled,
   );
 
   const coupons = computed(() => result.value?.promotionCoupons?.items ?? []);
