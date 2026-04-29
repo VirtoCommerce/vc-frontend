@@ -13,6 +13,9 @@ const sort = ref<ISortInfo>({
   direction: SortDirection.Ascending,
 });
 
+/**
+ * @deprecated use useCustomerAddresses instead
+ */
 export function useUserAddresses() {
   const { user } = useUser();
 

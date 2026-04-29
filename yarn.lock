@@ -15638,6 +15638,7 @@ __metadata:
     sass: "npm:^1.99.0"
     skyflow-js: "npm:2.7.4"
     storybook: "npm:9.1.20"
+    storybook-addon-tag-badges: "npm:^3.1.0"
     storybook-vue3-router: "npm:^7.0.0"
     swiper: "npm:11.2.10"
     tailwindcss: "npm:^3.4.19"
