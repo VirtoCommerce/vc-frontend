@@ -24,6 +24,7 @@ export * from "./mutations/updateWishlistItems";
 
 export * from "./queries/checkEmailUniqueness";
 export * from "./queries/checkUsernameUniqueness";
+export * from "./queries/getCurrentCustomerAddresses";
 export * from "./queries/getMe";
 export * from "./queries/getMyAddresses";
 export * from "./queries/getOrganizations";

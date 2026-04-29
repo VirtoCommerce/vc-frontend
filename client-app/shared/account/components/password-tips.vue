@@ -1,6 +1,6 @@
 <template>
-  <VcAlert color="info" variant="outline" icon :title="$t('password_tips.title')">
-    <ul class="ml-3.5 mt-1 list-disc">
+  <VcAlert class="password-tips" color="info" variant="outline" icon :title="$t('password_tips.title')">
+    <ul class="password-tips__list">
       <li v-for="(requirementLabel, index) in requirementsLabels" :key="index">
         {{ requirementLabel }}
       </li>
@@ -54,3 +54,11 @@ const requirementsLabels = computed<string[]>(() => {
   return result;
 });
 </script>
+
+<style lang="scss">
+.password-tips {
+  &__list {
+    @apply ml-3.5 mt-1 list-disc;
+  }
+}
+</style>

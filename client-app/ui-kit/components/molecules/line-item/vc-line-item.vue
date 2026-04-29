@@ -10,7 +10,6 @@
         'vc-line-item--deleted': deleted,
       },
     ]"
-    data-test-id="line-item"
     @keydown="changeFocus"
   >
     <div v-if="$slots.before" class="vc-line-item__before">
@@ -145,7 +144,7 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
-import type { Property, MoneyType, CommonVendor } from "@/core/api/graphql/types";
+import type { CommonVendor, MoneyType, Property } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {

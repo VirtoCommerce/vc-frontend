@@ -195,6 +195,7 @@
       "empty_wish_list": "Listalla ei ole yhtään tuotetta",
       "not_defined": "Määrittelemätön",
       "invalid_coupon": "Tämä koodi ei vastaa yhtään aktiivista kuponkia. Tarkista, että kaikki on oikein, ja yritä uudelleen.",
+      "failed_coupon": "Kupongissa tapahtui virhe. Yritä uudelleen.",
       "fill_all_required": "Täytä kaikki pakolliset tiedot jatkaaksesi.",
       "something_went_wrong": "Jotain meni pieleen. Yritä myöhemmin uudelleen.",
       "checkout_pricing_warning": "Saatavuus, toimitus, verot ja kampanjat eivät ole lopullisia ennen kuin olet viimeistellyt tilauksesi.",
@@ -235,7 +236,6 @@
       "password": "Syötä salasanasi",
       "confirm_password": "Vahvista salasanasi",
       "purchase_order_number": "Syötä ostotilauksen numero",
-      "promotion_code": "Syötä kampanjakoodi",
       "select_credit_card": "Valitse luottokortti"
     },
     "links": {
@@ -644,6 +644,13 @@
         "title": "Komponenttilista",
         "edit_configuration": "Muokkaa kokoonpanoa",
         "selected_text": "Valittu teksti: {text}"
+      },
+      "coupons_section": {
+        "title": "Alennukset & kupongit",
+        "expires": "@:shared.account.promotion_coupons.expires",
+        "custom_code": "Mukautettu koodi",
+        "enter_custom_code": "Syötä mukautettu koodi",
+        "all_coupons": "Näytä kaikki kupongit & tarjoukset"
       }
     },
     "catalog": {
