@@ -1,5 +1,6 @@
 {
   "name": "Login",
+  "description": "Storefront sign-in form — renders the standard customer login form. No configurable settings of its own. Use when: building a dedicated sign-in page. Skip when: anything else — this section has no other use.",
   "icon": "image",
   "settings": []
 }
