@@ -63,7 +63,7 @@
         },
         {
           "Id": "VirtoCommerce.Content",
-          "Version": "3.1000.0"
+          "Version": "3.1001.0"
         },
         {
           "Id": "VirtoCommerce.Return",
@@ -319,7 +319,7 @@
         },
         {
           "Id": "VirtoCommerce.XCart",
-          "Version": "3.1010.0"
+          "Version": "3.1011.0"
         },
         {
           "Id": "VirtoCommerce.ProfileExperienceApiModule",
