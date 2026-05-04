@@ -1299,11 +1299,11 @@
         "submit_button": "验证并继续",
         "cancel_button": "取消",
         "back_to_home": "返回首页",
+        "switching_in_progress": "正在切换到客户视图…",
         "success": "验证成功。正在切换到客户视图…",
         "error": "冒充时出现一些问题。检查您的权限",
         "errors": {
           "invalid_user_id": "客户引用无效。请返回 Back Office 重试。",
-          "user_not_found": "未找到客户账户或您无权模拟该用户。",
           "impersonate_failed": "验证成功,但切换到客户账户失败。请重试。",
           "generic": "出错了。请重试。"
         }

@@ -1299,11 +1299,11 @@
         "submit_button": "Bestätigen und fortfahren",
         "cancel_button": "Abbrechen",
         "back_to_home": "Zurück zur Startseite",
+        "switching_in_progress": "Wechsel zur Kundenansicht…",
         "success": "Überprüfung erfolgreich. Wechsel zur Kundenansicht…",
         "error": "Einige Probleme während der Nachahmung. Überprüfen Sie Ihre Berechtigungen",
         "errors": {
           "invalid_user_id": "Ungültige Kundenreferenz. Kehren Sie zum Back Office zurück und versuchen Sie es erneut.",
-          "user_not_found": "Kundenkonto nicht gefunden oder Sie haben keine Berechtigung, sich als dieser Benutzer auszugeben.",
           "impersonate_failed": "Überprüfung erfolgreich, aber der Wechsel zum Kundenkonto ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
           "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
         }
