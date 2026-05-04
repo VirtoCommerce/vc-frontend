@@ -1299,11 +1299,11 @@
         "submit_button": "Verifica e continua",
         "cancel_button": "Annulla",
         "back_to_home": "Torna alla home",
+        "switching_in_progress": "Passaggio alla vista cliente…",
         "success": "Verifica riuscita. Passaggio alla vista cliente…",
         "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi",
         "errors": {
           "invalid_user_id": "Riferimento cliente non valido. Torna al Back Office e riprova.",
-          "user_not_found": "Account cliente non trovato o non hai i permessi per impersonare questo utente.",
           "impersonate_failed": "Verifica riuscita, ma il passaggio all'account cliente è fallito. Riprova.",
           "generic": "Qualcosa è andato storto. Riprova."
         }

@@ -1299,11 +1299,11 @@
         "submit_button": "Verificar y continuar",
         "cancel_button": "Cancelar",
         "back_to_home": "Volver al inicio",
+        "switching_in_progress": "Cambiando a la vista del cliente…",
         "success": "Verificación exitosa. Cambiando a la vista del cliente…",
         "error": "Algunos problemas durante la suplantación. Verifica tus permisos",
         "errors": {
           "invalid_user_id": "Referencia de cliente inválida. Vuelva al Back Office e inténtelo de nuevo.",
-          "user_not_found": "Cuenta de cliente no encontrada o no tiene permiso para suplantar a este usuario.",
           "impersonate_failed": "La verificación fue exitosa, pero el cambio a la cuenta del cliente falló. Inténtelo de nuevo.",
           "generic": "Algo salió mal. Inténtelo de nuevo."
         }

@@ -8,6 +8,7 @@ export enum StorefrontPermissions {
   CanViewUsers = "storefront:user:view",
   CanViewOrders = "storefront:order:view",
   CanChangeOrderStatus = "storefront:order:changestatus",
+  CanImpersonate = "platform:security:loginOnBehalf",
 }
 
 export enum XApiPermissions {

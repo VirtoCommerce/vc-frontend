@@ -1299,11 +1299,11 @@
         "submit_button": "Potwierdź i kontynuuj",
         "cancel_button": "Anuluj",
         "back_to_home": "Powrót do strony głównej",
+        "switching_in_progress": "Przełączanie do widoku klienta…",
         "success": "Weryfikacja udana. Przełączanie do widoku klienta…",
         "error": "Wystąpiły problemy podczas podrabiania. Sprawdź swoje uprawnienia",
         "errors": {
           "invalid_user_id": "Nieprawidłowe odniesienie do klienta. Wróć do Back Office i spróbuj ponownie.",
-          "user_not_found": "Konto klienta nie zostało znalezione lub nie masz uprawnień do podszywania się pod tego użytkownika.",
           "impersonate_failed": "Weryfikacja powiodła się, ale przełączenie na konto klienta nie powiodło się. Spróbuj ponownie.",
           "generic": "Coś poszło nie tak. Spróbuj ponownie."
         }

@@ -1299,11 +1299,11 @@
         "submit_button": "Verificar e continuar",
         "cancel_button": "Cancelar",
         "back_to_home": "Voltar ao início",
+        "switching_in_progress": "Mudando para a visão do cliente…",
         "success": "Verificação bem-sucedida. Mudando para a visão do cliente…",
         "error": "Alguns problemas durante a personificação. Verifique suas permissões",
         "errors": {
           "invalid_user_id": "Referência de cliente inválida. Volte ao Back Office e tente novamente.",
-          "user_not_found": "Conta de cliente não encontrada ou você não tem permissão para se passar por este usuário.",
           "impersonate_failed": "Verificação bem-sucedida, mas a mudança para a conta do cliente falhou. Tente novamente.",
           "generic": "Algo deu errado. Tente novamente."
         }

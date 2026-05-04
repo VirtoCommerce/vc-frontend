@@ -1299,11 +1299,11 @@
         "submit_button": "Verifiera och fortsätt",
         "cancel_button": "Avbryt",
         "back_to_home": "Tillbaka till start",
+        "switching_in_progress": "Växlar till kundvyn…",
         "success": "Verifiering lyckades. Växlar till kundvyn…",
         "error": "Några problem uppstod under impersonation. Kontrollera dina behörigheter",
         "errors": {
           "invalid_user_id": "Ogiltig kundreferens. Återgå till Back Office och försök igen.",
-          "user_not_found": "Kundkonto hittades inte eller så har du inte behörighet att efterlikna denna användare.",
           "impersonate_failed": "Verifiering lyckades, men växling till kundkontot misslyckades. Försök igen.",
           "generic": "Något gick fel. Försök igen."
         }

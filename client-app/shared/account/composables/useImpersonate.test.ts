@@ -150,7 +150,12 @@ describe("useImpersonate", () => {
     auth.setRefreshToken.mockReset();
 
     const fetchState = await getFetchState();
-    fetchState.useFetch.mockClear();
+    fetchState.useFetch.mockReset();
+    fetchState.useFetch.mockImplementation(() => ({
+      post: () => ({
+        json: () => Promise.resolve(fetchState.fetchResult),
+      }),
+    }));
     fetchState.fetchResult.data.value = undefined;
     fetchState.fetchResult.error.value = undefined;
 
@@ -300,6 +305,63 @@ describe("useImpersonate", () => {
     await promise;
 
     expect(step.value).toBe("success");
+    expect(loading.value).toBe(false);
+  });
+
+  it("impersonateAuthenticated happy path: skips authorize and ends in success", async () => {
+    const auth = await getAuthState();
+    const fetchState = await getFetchState();
+
+    setSuccessfulImpersonateResponse(fetchState);
+
+    const { useImpersonate } = await importComposable();
+    const { impersonateAuthenticated, step, failedStep, loading, errors } = useImpersonate();
+
+    await impersonateAuthenticated("target-user-id");
+
+    expect(auth.authorize).not.toHaveBeenCalled();
+    expect(fetchState.useFetch).toHaveBeenCalledWith("/connect/token");
+    expect(auth.setAccessToken).toHaveBeenCalledWith("access");
+    expect(auth.setRefreshToken).toHaveBeenCalledWith("refresh");
+    expect(step.value).toBe("success");
+    expect(failedStep.value).toBeNull();
+    expect(loading.value).toBe(false);
+    expect(errors.value).toEqual([]);
+  });
+
+  it("impersonateAuthenticated empty targetUserId: skips doImpersonate and reports invalid_user_id", async () => {
+    const auth = await getAuthState();
+    const fetchState = await getFetchState();
+
+    const { useImpersonate } = await importComposable();
+    const { impersonateAuthenticated, step, failedStep, errors } = useImpersonate();
+
+    await impersonateAuthenticated("");
+
+    expect(auth.authorize).not.toHaveBeenCalled();
+    expect(fetchState.useFetch).not.toHaveBeenCalled();
+    expect(failedStep.value).toBe("verify");
+    expect(errors.value).toEqual([{ code: "invalid_user_id" }]);
+    expect(step.value).toBe("idle");
+  });
+
+  it("impersonateAuthenticated failure: sets failedStep impersonate and impersonate_failed error", async () => {
+    const auth = await getAuthState();
+    const fetchState = await getFetchState();
+
+    setFailedImpersonateResponse(fetchState);
+
+    const { useImpersonate } = await importComposable();
+    const { impersonateAuthenticated, step, failedStep, errors, loading } = useImpersonate();
+
+    await impersonateAuthenticated("target-user-id");
+
+    expect(auth.authorize).not.toHaveBeenCalled();
+    expect(fetchState.useFetch).toHaveBeenCalledTimes(1);
+    expect(auth.setAccessToken).not.toHaveBeenCalled();
+    expect(failedStep.value).toBe("impersonate");
+    expect(errors.value).toEqual([{ code: "impersonate_failed" }]);
+    expect(step.value).toBe("idle");
     expect(loading.value).toBe(false);
   });
 

@@ -1299,11 +1299,11 @@
         "submit_button": "Verify and continue",
         "cancel_button": "Cancel",
         "back_to_home": "Back to home",
+        "switching_in_progress": "Switching to customer view…",
         "success": "Verification successful. Switching to customer view…",
         "error": "Some problems occurred during impersonation. Check your permissions",
         "errors": {
           "invalid_user_id": "Invalid customer reference. Please return to Back Office and try again.",
-          "user_not_found": "Customer account not found or you don't have permission to impersonate this user.",
           "impersonate_failed": "Verification succeeded, but switching to the customer account failed. Please try again.",
           "generic": "Something went wrong. Please try again."
         }

@@ -117,7 +117,11 @@ export function useImpersonate() {
     }
 
     step.value = "verify";
-    await authorize(supportEmail, supportPassword);
+    try {
+      await authorize(supportEmail, supportPassword);
+    } catch (e) {
+      Logger.error(impersonate.name, e);
+    }
 
     const verifyErrors = authErrors.value;
     if (verifyErrors && verifyErrors.length > 0) {
@@ -140,8 +144,37 @@ export function useImpersonate() {
     step.value = "success";
   }
 
+  /**
+   * Single-step flow for users that are already authenticated and have
+   * permission to impersonate. Skips the verify step and goes straight to
+   * grant_type=impersonate. Use this when the Support user is already signed
+   * in to storefront — there's no need to re-collect credentials.
+   */
+  async function impersonateAuthenticated(targetUserId: string): Promise<void> {
+    resetState();
+
+    if (!targetUserId) {
+      failedStep.value = "verify";
+      errors.value = [{ code: "invalid_user_id" }];
+      return;
+    }
+
+    step.value = "impersonate";
+    await doImpersonate(targetUserId);
+
+    if (impersonateStatus.value === "error") {
+      failedStep.value = "impersonate";
+      errors.value = [{ code: "impersonate_failed" }];
+      step.value = "idle";
+      return;
+    }
+
+    step.value = "success";
+  }
+
   return {
     impersonate,
+    impersonateAuthenticated,
     loading,
     step,
     failedStep,
