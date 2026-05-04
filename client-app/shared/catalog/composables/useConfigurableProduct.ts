@@ -408,25 +408,74 @@ function _useConfigurableProduct(configurableProductId: MaybeRef<string>) {
   }
 
   function updateWithDefaultValues() {
-    configuration.value.forEach((section) => {
-      if (!section.isRequired || !isSectionVisible(section.id)) {
-        return;
+    let hasChanges = true;
+    let iterations = 0;
+    const maxIterations = configuration.value.length;
+
+    while (hasChanges && iterations < maxIterations) {
+      hasChanges = false;
+      iterations++;
+
+      for (const section of configuration.value) {
+        if (!isSectionVisible(section.id)) {
+          continue;
+        }
+
+        if (selectedConfigurationValue.value.some((value) => value.sectionId === section.id)) {
+          continue;
+        }
+
+        const defaultValue = getDefaultSectionValue(section);
+        if (!defaultValue) {
+          continue;
+        }
+
+        changeSelectionValue(defaultValue);
+        hasChanges = true;
       }
-      switch (section.type) {
-        case CONFIGURABLE_SECTION_TYPES.product:
-          changeSelectionValue({
+    }
+  }
+
+  function getDefaultSectionValue(section: ConfigurationSectionType): SectionValueType | undefined {
+    switch (section.type) {
+      case CONFIGURABLE_SECTION_TYPES.product: {
+        const defaultOption = section.options?.find((option) => option?.isDefault) ?? undefined;
+        const fallbackOption = section.isRequired ? section.options?.[0] : undefined;
+        const selectedOption = defaultOption ?? fallbackOption;
+
+        if (!selectedOption?.product?.id) {
+          return;
+        }
+
+        return {
+          sectionId: section.id,
+          type: section.type,
+          productId: selectedOption.product.id,
+          quantity: selectedOption.quantity ?? 1,
+          customText: undefined,
+          files: undefined,
+        };
+      }
+      case CONFIGURABLE_SECTION_TYPES.text: {
+        const defaultOption = section.options?.find((option) => option?.isDefault && option.text?.trim()) ?? undefined;
+
+        if (defaultOption?.text) {
+          return {
             sectionId: section.id,
             type: section.type,
-            productId: section.options?.[0]?.product?.id ?? "",
-            quantity: section.options?.[0]?.quantity ?? 1,
-          });
-          break;
-        case CONFIGURABLE_SECTION_TYPES.text:
-          break;
-        case CONFIGURABLE_SECTION_TYPES.file:
-          break;
+            customText: defaultOption.text,
+            productId: undefined,
+            quantity: undefined,
+            files: undefined,
+          };
+        }
+
+        return;
       }
-    });
+      case CONFIGURABLE_SECTION_TYPES.file:
+      default:
+        return;
+    }
   }
 
   function updateWithPreselectedValues(preselectedValues?: SectionValueType[]) {
