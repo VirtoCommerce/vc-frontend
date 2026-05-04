@@ -1289,9 +1289,24 @@
         "update_error_alert": "Wystąpił błąd podczas aktualizacji profilu"
       },
       "impersonate": {
-        "title": "Podrabianie",
-        "success": "Podrobienie zakończone",
-        "error": "Wystąpiły problemy podczas podrabiania. Sprawdź swoje uprawnienia"
+        "title": "Weryfikacja bezpieczeństwa",
+        "subtitle": "Potwierdź swoją tożsamość, aby kontynuować",
+        "description": "Logujesz się w imieniu klienta. Sesja zostanie zarejestrowana w celach audytu.",
+        "email_label": "Email",
+        "email_placeholder": "Wprowadź email",
+        "password_label": "Hasło",
+        "password_placeholder": "Wprowadź hasło",
+        "submit_button": "Potwierdź i kontynuuj",
+        "cancel_button": "Anuluj",
+        "back_to_home": "Powrót do strony głównej",
+        "success": "Weryfikacja udana. Przełączanie do widoku klienta…",
+        "error": "Wystąpiły problemy podczas podrabiania. Sprawdź swoje uprawnienia",
+        "errors": {
+          "invalid_user_id": "Nieprawidłowe odniesienie do klienta. Wróć do Back Office i spróbuj ponownie.",
+          "user_not_found": "Konto klienta nie zostało znalezione lub nie masz uprawnień do podszywania się pod tego użytkownika.",
+          "impersonate_failed": "Weryfikacja powiodła się, ale przełączenie na konto klienta nie powiodło się. Spróbuj ponownie.",
+          "generic": "Coś poszło nie tak. Spróbuj ponownie."
+        }
       },
       "promotion_coupons": {
         "title": "Wszystkie kupony i promocje",
