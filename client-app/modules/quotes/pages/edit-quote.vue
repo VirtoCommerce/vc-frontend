@@ -126,17 +126,17 @@ import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { asyncForEach, isEqualAddresses } from "@/core/utilities";
 import { FILE_UPLOAD_SCOPE_NAME, MODULE_ID } from "@/modules/quotes/constants";
-import { useUser, useUserAddresses } from "@/shared/account";
-import { SelectAddressModal } from "@/shared/checkout";
+import { useCustomerAddresses, useUser } from "@/shared/account";
+import { createAddressFilterContext, SelectAddressModal } from "@/shared/checkout";
 import { AddressSelection, SaveChangesModal } from "@/shared/common";
-import { useOrganizationAddresses } from "@/shared/company";
+import { useCurrentOrganizationAddresses } from "@/shared/company";
 import { downloadFile, useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import QuoteLineItems from "../components/quote-line-items.vue";
 import { useUserQuote } from "../useUserQuote";
 import type { MemberAddressFieldsFragment } from "@/core/api/graphql/types";
-import type { AnyAddressType } from "@/core/types";
+import type { AnyAddressType, FacetFilterTermValueType, ISortInfo } from "@/core/types";
 import type { QuoteAddressType, QuoteItemType, QuoteType } from "@/modules/quotes/api/graphql/types";
 import type { StringSchema } from "yup";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
@@ -151,16 +151,53 @@ const router = useRouter();
 const { t } = useI18n();
 const { openModal, closeModal } = useModal();
 const { user, isAuthenticated, isCorporateMember } = useUser();
+
+const ADDRESSES_PER_PAGE = 6;
+const isPersonalAddressesQueryEnabled = computed(() => isAuthenticated.value && !isCorporateMember.value);
+const isOrganizationAddressesQueryEnabled = computed(() => isAuthenticated.value && isCorporateMember.value);
+
 const {
   addresses: personalAddresses,
-  fetchAddresses: fetchPersonalAddresses,
+  loading: personalAddressesLoading,
+  totalCount: personalAddressesTotalCount,
+  page: personalAddressesPage,
+  keyword: personalAddressesKeyword,
+  filterCountryCodes: personalFilterCountryCodes,
+  filterRegionIds: personalFilterRegionIds,
+  filterCities: personalFilterCities,
+  termFacets: personalTermFacets,
+  sort: personalAddressesSort,
   addOrUpdateAddresses: addOrUpdatePersonalAddresses,
-} = useUserAddresses();
+} = useCustomerAddresses(ADDRESSES_PER_PAGE, isPersonalAddressesQueryEnabled);
+
 const {
   addresses: organizationsAddresses,
-  fetchAddresses: fetchOrganizationAddresses,
+  loading: organizationAddressesLoading,
+  totalCount: organizationAddressesTotalCount,
+  page: organizationAddressesPage,
+  keyword: organizationAddressesKeyword,
+  filterCountryCodes: organizationFilterCountryCodes,
+  filterRegionIds: organizationFilterRegionIds,
+  filterCities: organizationFilterCities,
+  termFacets: organizationTermFacets,
+  sort: organizationAddressesSort,
   addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
-} = useOrganizationAddresses(user.value.contact?.organizationId || "");
+} = useCurrentOrganizationAddresses(
+  () => user.value.contact?.organizationId ?? "",
+  ADDRESSES_PER_PAGE,
+  isOrganizationAddressesQueryEnabled,
+);
+
+const addressFilterContext = createAddressFilterContext({
+  loading: computed(() =>
+    isCorporateMember.value ? organizationAddressesLoading.value : personalAddressesLoading.value,
+  ),
+  termFacets: computed(() => (isCorporateMember.value ? organizationTermFacets.value : personalTermFacets.value)),
+});
+
+const totalAddressesCount = computed(() =>
+  isCorporateMember.value ? organizationAddressesTotalCount.value : personalAddressesTotalCount.value,
+);
 const {
   fetching,
   quote,
@@ -255,7 +292,7 @@ const canSubmit = computed<boolean>(() => {
   return isShippingAddressValid && isBillingAddressValid && isCommentValid && !anyFilesModified.value;
 });
 
-const userHasAddresses = computed<boolean>(() => !!accountAddresses.value.length);
+const userHasAddresses = computed<boolean>(() => totalAddressesCount.value > 0);
 
 const isBillingAddressEqualsShipping = computed<boolean>(() => {
   if (shippingAddress.value && billingAddress.value) {
@@ -287,10 +324,6 @@ async function editComment(): Promise<void> {
 
   const result = await validateComment();
   commentValid.value = result.valid;
-}
-
-function accountAddressExists(address: AnyAddressType): boolean {
-  return accountAddresses.value.some((item) => isEqualAddresses(item, address));
 }
 
 function onRemoveItem(itemId: string): void {
@@ -327,10 +360,6 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
         // Save address in account
         const addressToSave = { ...updatedAddress, addressType: AddressType.BillingAndShipping };
 
-        if (accountAddressExists(addressToSave)) {
-          return;
-        }
-
         if (isCorporateMember.value) {
           await addOrUpdateOrganizationAddresses([addressToSave]);
         } else {
@@ -344,12 +373,62 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
 }
 
 function openSelectAddressModal(addressType: AddressType): void {
+  if (isCorporateMember.value) {
+    organizationAddressesPage.value = 1;
+  } else {
+    personalAddressesPage.value = 1;
+  }
+
   openModal({
     component: SelectAddressModal,
     props: {
-      addresses: accountAddresses.value,
+      addresses: accountAddresses,
       currentAddress: cloneDeep(addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value),
       isCorporateAddresses: isCorporateMember.value,
+      paginationMode: "server",
+      loading: isCorporateMember.value ? organizationAddressesLoading : personalAddressesLoading,
+      totalCount: isCorporateMember.value ? organizationAddressesTotalCount : personalAddressesTotalCount,
+      sort: isCorporateMember.value ? organizationAddressesSort : personalAddressesSort,
+      filterContext: addressFilterContext,
+      showFilters: true,
+      sortableColumns: ["name"],
+
+      onPageChange(newPage: number) {
+        if (isCorporateMember.value) {
+          organizationAddressesPage.value = newPage;
+        } else {
+          personalAddressesPage.value = newPage;
+        }
+      },
+      onUpdateSort(newSort: ISortInfo) {
+        if (isCorporateMember.value) {
+          organizationAddressesPage.value = 1;
+          organizationAddressesSort.value = newSort;
+        } else {
+          personalAddressesPage.value = 1;
+          personalAddressesSort.value = newSort;
+        }
+      },
+      onFilterChange() {
+        const keyword = addressFilterContext.filterKeyword.value;
+        const toValues = (terms?: FacetFilterTermValueType[]) => terms?.map((v) => v.value) ?? [];
+        const countryCodes = toValues(addressFilterContext.filterCountries.value?.termValues);
+        const regionIds = toValues(addressFilterContext.filterRegions.value?.termValues);
+        const cities = toValues(addressFilterContext.filterCities.value?.termValues);
+        if (isCorporateMember.value) {
+          organizationAddressesPage.value = 1;
+          organizationAddressesKeyword.value = keyword;
+          organizationFilterCountryCodes.value = countryCodes;
+          organizationFilterRegionIds.value = regionIds;
+          organizationFilterCities.value = cities;
+        } else {
+          personalAddressesPage.value = 1;
+          personalAddressesKeyword.value = keyword;
+          personalFilterCountryCodes.value = countryCodes;
+          personalFilterRegionIds.value = regionIds;
+          personalFilterCities.value = cities;
+        }
+      },
 
       onResult(selectedAddress: MemberAddressFieldsFragment): void {
         const quoteAddress = cloneDeep({ ...selectedAddress, addressType }) as QuoteAddressType;
@@ -436,18 +515,6 @@ async function submit(): Promise<void> {
   void router.replace({ name: "Quotes" });
 }
 
-async function fetchAddresses(): Promise<void> {
-  if (!isAuthenticated.value) {
-    return;
-  }
-
-  if (isCorporateMember.value) {
-    await fetchOrganizationAddresses();
-  } else {
-    await fetchPersonalAddresses();
-  }
-}
-
 function onFileDownload(file: FileType) {
   if (file && file.url) {
     void downloadFile(file.url, file.name);
@@ -468,7 +535,7 @@ onMounted(() => {
 });
 
 watchEffect(async () => {
-  await Promise.all([fetchFileOptions(), fetchAddresses(), fetchQuote({ id: props.quoteId })]);
+  await Promise.all([fetchFileOptions(), fetchQuote({ id: props.quoteId })]);
 
   originalQuote.value = cloneDeep(quote.value);
   comment.value = quote.value?.comment;

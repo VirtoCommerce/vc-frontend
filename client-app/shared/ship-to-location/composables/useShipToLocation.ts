@@ -5,15 +5,17 @@ import { computed, ref } from "vue";
 import { updateContact } from "@/core/api/graphql/account";
 import { XApiPermissions } from "@/core/enums";
 import { Logger, stringifyAddress } from "@/core/utilities";
-import { useUser, useUserAddresses } from "@/shared/account";
+import { useCustomerAddresses, useUser } from "@/shared/account";
 import { useFullCart, useShortCart } from "@/shared/cart";
 import { BOPIS_CODE } from "@/shared/checkout/composables/useBopis";
-import { AddOrUpdateCompanyAddressModal, useOrganizationAddresses } from "@/shared/company";
+import { AddOrUpdateCompanyAddressModal, useCurrentOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
+
+const ALL_ADDRESSES_LIMIT = 9999;
 
 export const MAX_ADDRESSES_NUMBER = 6;
 export const USER_TYPE = {
@@ -44,19 +46,39 @@ export function useShipToLocation() {
     fetchUser,
   } = useUser();
 
+  const userType = computed<UserType>(() => {
+    if (!isAuthenticated.value) {
+      return USER_TYPE.ANONYMOUS;
+    }
+
+    if (isCorporateMember.value) {
+      const canEditOrganization = checkPermissions(XApiPermissions.CanEditOrganization);
+      return canEditOrganization ? USER_TYPE.CORPORATE : USER_TYPE.CORPORATE_LIMITED;
+    }
+
+    return USER_TYPE.PERSONAL;
+  });
+
+  const isPersonalAddressesQueryEnabled = computed(() => userType.value === USER_TYPE.PERSONAL);
+  const isOrganizationAddressesQueryEnabled = computed(
+    () => userType.value === USER_TYPE.CORPORATE || userType.value === USER_TYPE.CORPORATE_LIMITED,
+  );
+
   const {
     addresses: personalAddresses,
-    fetchAddresses: fetchPersonalAddresses,
     addOrUpdateAddresses: addOrUpdatePersonalAddresses,
     loading: loadingUserAddresses,
-  } = useUserAddresses();
+  } = useCustomerAddresses(ALL_ADDRESSES_LIMIT, isPersonalAddressesQueryEnabled);
 
   const {
     addresses: organizationsAddresses,
-    fetchAddresses: fetchOrganizationAddresses,
-    loading: loadingOrganizationAddresses,
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
-  } = useOrganizationAddresses(organization.value?.id ?? "");
+    loading: loadingOrganizationAddresses,
+  } = useCurrentOrganizationAddresses(
+    () => organization.value?.id ?? "",
+    ALL_ADDRESSES_LIMIT,
+    isOrganizationAddressesQueryEnabled,
+  );
 
   const { updateShipment: updateShipmentCart, shipment: currentShipment, forceFetch: forceFetchCart } = useFullCart();
   const { cart: shortCart } = useShortCart();
@@ -72,19 +94,6 @@ export function useShipToLocation() {
     `${localStorageKeyPrefix}selected_address_id${userSuffix.value}`,
     null,
   );
-
-  const userType = computed<UserType>(() => {
-    if (!isAuthenticated.value) {
-      return USER_TYPE.ANONYMOUS;
-    }
-
-    if (isCorporateMember.value) {
-      const canEditOrganization = checkPermissions(XApiPermissions.CanEditOrganization);
-      return canEditOrganization ? USER_TYPE.CORPORATE : USER_TYPE.CORPORATE_LIMITED;
-    }
-
-    return USER_TYPE.PERSONAL;
-  });
 
   const accountAddresses = computed<AnyAddressType[]>(() => {
     switch (userType.value) {
@@ -145,20 +154,6 @@ export function useShipToLocation() {
 
   function getLimitedAddresses(limit = MAX_ADDRESSES_NUMBER): AnyAddressType[] {
     return accountAddresses.value.slice(0, limit);
-  }
-
-  async function fetchAddresses() {
-    switch (userType.value) {
-      case USER_TYPE.ANONYMOUS:
-        break;
-      case USER_TYPE.PERSONAL:
-        await fetchPersonalAddresses();
-        break;
-      case USER_TYPE.CORPORATE:
-      case USER_TYPE.CORPORATE_LIMITED:
-        await fetchOrganizationAddresses();
-        break;
-    }
   }
 
   async function updateContactWithAddress(address: AnyAddressType) {
@@ -292,7 +287,6 @@ export function useShipToLocation() {
     selectedAddress,
     organizationsAddresses,
 
-    fetchAddresses,
     selectAddress,
 
     getFilteredAddresses,

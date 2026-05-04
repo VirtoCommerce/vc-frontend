@@ -35,7 +35,7 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6,
     keyword: keyword.value,
   }));
 
-  const { result, loading, refetch } = useGetCurrentCustomerAddressesQuery(variables, queryEnabled);
+  const { result, loading } = useGetCurrentCustomerAddressesQuery(variables, queryEnabled);
 
   const addresses = computed(() => result.value?.currentCustomerAddresses?.items ?? []);
   const totalCount = computed(() => result.value?.currentCustomerAddresses?.totalCount ?? 0);
@@ -51,7 +51,6 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6,
 
     try {
       await updateMemberAddresses(user.value.memberId, inputAddresses);
-      void refetch();
     } catch (e) {
       Logger.error(`${useCustomerAddresses.name}.${addOrUpdateAddresses.name}`, e);
       throw e;
@@ -67,7 +66,6 @@ export function useCustomerAddresses(itemsPerPage: MaybeRefOrGetter<number> = 6,
 
     try {
       await deleteMemberAddresses(inputAddresses, user.value.memberId);
-      void refetch();
     } catch (e) {
       Logger.error(`${useCustomerAddresses.name}.${removeAddresses.name}`, e);
       throw e;

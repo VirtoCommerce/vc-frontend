@@ -4,7 +4,6 @@ export * from "./usePromotionCoupons";
 export * from "./useSignMeIn";
 export * from "./useSignMeOut";
 export * from "./useUser";
-export * from "./useUserAddresses";
 export * from "./useUserOrder";
 export * from "./useUserOrders";
 export * from "./useUserOrganizations";
